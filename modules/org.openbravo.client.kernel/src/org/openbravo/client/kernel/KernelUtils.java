@@ -461,7 +461,7 @@ public class KernelUtils {
     return DalUtil.getPropertyFromPath(entity, field.getProperty());
   }
 
-  public class ModuleDependencyCycleException extends OBException {
+  private class ModuleDependencyCycleException extends OBException {
 
     private static final long serialVersionUID = 1L;
 
