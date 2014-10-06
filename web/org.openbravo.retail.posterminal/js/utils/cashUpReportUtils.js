@@ -235,9 +235,55 @@
         if (!OB.UTIL.isNullOrUndefined(OB.MobileApp.model.get('terminal'))) {
           OB.MobileApp.model.get('terminal').cashUpId = cashUp.at(0).get('id');
         }
-        if (callback) {
-          callback();
-        }
+        OB.Dal.find(OB.Model.PaymentMethodCashUp, {
+          'cashup_id': cashUp.at(0).get('id')
+        }, function (lastCashUpPayments) {
+        	//We add new payment methods to local ddbb
+            _.each(OB.MobileApp.model.get('payments'), function (payment) {
+              var pAux, startingCash = payment.currentBalance;
+              if (lastCashUpPayments) {
+                pAux = lastCashUpPayments.filter(function (payMthd) {
+                  return payMthd.get('paymentmethod_id') === payment.payment.id;
+                })[0];
+                if (OB.UTIL.isNullOrUndefined(pAux)) {
+                  OB.Dal.save(new OB.Model.PaymentMethodCashUp({
+                    id: OB.Dal.get_uuid(),
+                    paymentmethod_id: payment.payment.id,
+                    searchKey: payment.payment.searchKey,
+                    name: payment.payment._identifier,
+                    startingCash: startingCash,
+                    totalSales: OB.DEC.Zero,
+                    totalReturns: OB.DEC.Zero,
+                    rate: payment.rate,
+                    isocode: payment.isocode,
+                    cashup_id: cashUp.at(0).get('id')
+                  }), null, null, true);
+                }
+              }
+            }, this);
+          //We remove old payment methods from the local ddbb
+            _.each(lastCashUpPayments.models, function (lastCashUpPayment) {
+              var pAux, payments = OB.MobileApp.model.get('payments');
+              if (payments) {
+                pAux = payments.filter(function (payMthd) {
+                  return lastCashUpPayment.get('paymentmethod_id') === payMthd.payment.id;
+                })[0];
+                if (OB.UTIL.isNullOrUndefined(pAux) && lastCashUpPayment.get('totalReturns') === OB.DEC.Zero && lastCashUpPayment.get('totalSales') === OB.DEC.Zero) {
+                  OB.Dal.remove(lastCashUpPayment, null, function (tx, err) {
+                    OB.UTIL.showError(err);
+                  });
+                }
+              }
+            }, this);
+          //We do not need to wait to execute callback. Callback should not be affected by this process.
+          if (callback) {
+            callback();
+          }
+        }, function () { //in case of error
+          if (callback) {
+            callback();
+          }
+        }, this);
       }
     });
   };
