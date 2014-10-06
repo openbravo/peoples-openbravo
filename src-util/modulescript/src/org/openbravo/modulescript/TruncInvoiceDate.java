@@ -27,6 +27,9 @@ import javax.servlet.ServletException;
 
 import org.openbravo.database.ConnectionProvider;
 
+/*
+ * Related to issue #27089: Trunc Invoice Date and Accounting Date
+ */
 public class TruncInvoiceDate extends ModuleScript {
 	
   private static final Logger log4j = Logger.getLogger(TruncInvoiceDate.class);
@@ -35,13 +38,14 @@ public class TruncInvoiceDate extends ModuleScript {
   public void execute() {
     try {
       ConnectionProvider cp = getConnectionProvider();
-      int count = TruncInvoiceDateData.updateInvoiceDate(cp);
-      if (count > 0)
-        log4j.info("Updated " + count + " invoices.");
-      
-      count = TruncInvoiceDateData.updateInvoiceDateAcct(cp);
-      if (count > 0)
-        log4j.info("Updated " + count + " invoices.");
+      boolean isModuleScriptExecuted= TruncInvoiceDateData.isModuleScriptExecuted(cp);
+      if (!isModuleScriptExecuted){
+        int count = TruncInvoiceDateData.updateDateInvoicedAndDateAcct(cp);
+        if (count > 0) {
+          log4j.info("Fixed " + count + " invoices.");
+        }
+        TruncInvoiceDateData.createPreference(cp);
+      }
     } catch (Exception e) {
       handleError(e);
     }

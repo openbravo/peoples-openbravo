@@ -27,6 +27,9 @@ import javax.servlet.ServletException;
 
 import org.openbravo.database.ConnectionProvider;
 
+/*
+ * Related to issue #26826: Fix allow period control flag
+ */
 public class Issue26826_Org_AllowPeriodControl extends ModuleScript {
   private static final Logger log4j = Logger.getLogger(Issue26826_Org_AllowPeriodControl.class);
   
@@ -35,9 +38,14 @@ public class Issue26826_Org_AllowPeriodControl extends ModuleScript {
   // neither a business unit nor a legal entity with accounting
   public void execute() {
     try {
-      int updatedOrgs = Issue26826OrgAllowPeriodControlData.updateOrganizations(getConnectionProvider());
-      if (updatedOrgs > 0 ) {
-        log4j.info("Updated " + updatedOrgs+ " organizations. ");
+      ConnectionProvider cp = getConnectionProvider();
+      boolean isModuleScriptExecuted= Issue26826OrgAllowPeriodControlData.isModuleScriptExecuted(cp);
+      if (!isModuleScriptExecuted) {
+        int updatedOrgs = Issue26826OrgAllowPeriodControlData.updateOrganizations(cp);
+        if (updatedOrgs > 0 ) {
+          log4j.info("Fixed " + updatedOrgs+ " organizations. ");
+        }
+        Issue26826OrgAllowPeriodControlData.createPreference(cp);
       }
     } catch (Exception e) {
       handleError(e);

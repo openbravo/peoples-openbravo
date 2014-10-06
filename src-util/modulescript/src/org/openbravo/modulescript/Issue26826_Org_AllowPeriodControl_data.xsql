@@ -23,7 +23,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-         SELECT '' as dummy FROM DUAL
+         SELECT '' as exist FROM DUAL
       ]]>
     </Sql>
   </SqlMethod>
@@ -41,5 +41,28 @@
                         )
       ]]>
     </Sql>
+  </SqlMethod>
+  <SqlMethod name="isModuleScriptExecuted" type="preparedStatement" return="boolean">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT count(*) as exist
+        FROM ad_preference
+        WHERE attribute = 'Issue26826OrgAllowPeriodControlModuleScriptExecuted'
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="createPreference" type="preparedStatement" return="rowcount">
+      <SqlMethodComment></SqlMethodComment>
+       <Sql> 
+       <![CDATA[ 
+           INSERT INTO ad_preference (
+           ad_preference_id, ad_client_id, ad_org_id, isactive,
+           createdby, created, updatedby, updated, attribute
+           ) VALUES (
+           get_uuid(), '0', '0', 'Y', 
+           '0', NOW(), '0', NOW(),'Issue26826OrgAllowPeriodControlModuleScriptExecuted')
+         ]]>
+        </Sql>
   </SqlMethod>
 </SqlClass>

@@ -22,26 +22,40 @@
   <SqlMethod name="select" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[
-      SELECT '' as ad_client_id FROM DUAL
+      SELECT '' as exist FROM DUAL
       ]]>
     </Sql>
   </SqlMethod>
-   <SqlMethod name="updateInvoiceDate" type="preparedStatement" return="rowcount">
+   <SqlMethod name="updateDateInvoicedAndDateAcct" type="preparedStatement" return="rowcount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        update c_invoice set updated=now(), dateinvoiced=trunc(dateinvoiced)
-        where dateinvoiced<>trunc(dateinvoiced)
+        update c_invoice set updated=now(), dateinvoiced=trunc(dateinvoiced), dateacct=trunc(dateacct)
+        where dateinvoiced<>trunc(dateinvoiced) or dateacct<>trunc(dateacct)
       ]]>
     </Sql>
   </SqlMethod>
-   <SqlMethod name="updateInvoiceDateAcct" type="preparedStatement" return="rowcount">
+  <SqlMethod name="isModuleScriptExecuted" type="preparedStatement" return="boolean">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        update c_invoice set updated=now(), dateacct=trunc(dateacct)
-        where dateacct<>trunc(dateacct)
+        SELECT count(*) as exist
+        FROM ad_preference
+        WHERE attribute = 'TruncInvoiceDateModuleScriptExecuted'
       ]]>
     </Sql>
+  </SqlMethod>
+  <SqlMethod name="createPreference" type="preparedStatement" return="rowcount">
+      <SqlMethodComment></SqlMethodComment>
+       <Sql> 
+       <![CDATA[ 
+           INSERT INTO ad_preference (
+           ad_preference_id, ad_client_id, ad_org_id, isactive,
+           createdby, created, updatedby, updated, attribute
+           ) VALUES (
+           get_uuid(), '0', '0', 'Y', 
+           '0', NOW(), '0', NOW(),'TruncInvoiceDateModuleScriptExecuted')
+         ]]>
+        </Sql>
   </SqlMethod>
 </SqlClass>
