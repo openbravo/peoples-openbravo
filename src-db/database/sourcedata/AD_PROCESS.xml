@@ -192,7 +192,7 @@
 <!--109-->  <VALUE><![CDATA[M_InOut Post]]></VALUE>
 <!--109-->  <NAME><![CDATA[Process Shipment]]></NAME>
 <!--109-->  <DESCRIPTION><![CDATA[Process Shipment (Update Inventory)]]></DESCRIPTION>
-<!--109-->  <HELP><![CDATA[Process Shipment will move products out of inventory and mark line items as shipped.]]></HELP>
+<!--109-->  <HELP><![CDATA[This process will move products in/out of inventory and mark line items as received/shipped.]]></HELP>
 <!--109-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
 <!--109-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--109-->  <PROCEDURENAME><![CDATA[M_InOut_Post0]]></PROCEDURENAME>
@@ -6038,7 +6038,7 @@ If the Generic Product already has any Variant created the process returns an er
 <!--49DEE812BF0545269781FCEBF2235924-->  <VALUE><![CDATA[Process Shipment Java]]></VALUE>
 <!--49DEE812BF0545269781FCEBF2235924-->  <NAME><![CDATA[Process Shipment Java]]></NAME>
 <!--49DEE812BF0545269781FCEBF2235924-->  <DESCRIPTION><![CDATA[Process Shipment (Update Inventory)]]></DESCRIPTION>
-<!--49DEE812BF0545269781FCEBF2235924-->  <HELP><![CDATA[Process Shipment will move products out of inventory and mark line items as shipped.]]></HELP>
+<!--49DEE812BF0545269781FCEBF2235924-->  <HELP><![CDATA[This process will move products in/out of inventory and mark line items as received/shipped.]]></HELP>
 <!--49DEE812BF0545269781FCEBF2235924-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
 <!--49DEE812BF0545269781FCEBF2235924-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--49DEE812BF0545269781FCEBF2235924-->  <ISREPORT><![CDATA[N]]></ISREPORT>
