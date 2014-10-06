@@ -216,7 +216,7 @@ enyo.kind({
       this.$.changelbl.hide();
     }
     if (paymentstatus.overpayment) {
-      this.$.overpayment.setContent(paymentstatus.overpayment);
+      this.$.overpayment.setContent(OB.I18N.formatCurrencyWithSymbol(paymentstatus.overpayment, symbol, symbolAtRight));
       this.$.overpayment.show();
       this.$.overpaymentlbl.show();
     } else {
