@@ -25,7 +25,7 @@ enyo.kind({
     onCreateOrderFromQuotation: ''
   },
   tap: function () {
-    var checked = !this.parent.children[1].children[0].checked;
+    var checked = !this.owner.$.updateprices.checked;
     this.parent.parent.parent.parent.theQuotation.createOrderFromQuotation(checked);
     this.doHideThisPopup();
   }
@@ -49,7 +49,9 @@ enyo.kind({
   kind: 'OB.UI.ModalAction',
   name: 'OB.UI.ModalCreateOrderFromQuotation',
   myId: 'modalCreateOrderFromQuotation',
-  bodyContent: {},
+  bodyContent: {
+    i18nContent: 'OBPOS_QuotationUpdatePricesText'
+  },
   bodyButtons: {
     components: [{
       style: 'height: 40px; width: 120px; float:left;'
