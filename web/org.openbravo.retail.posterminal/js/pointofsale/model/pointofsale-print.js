@@ -167,58 +167,7 @@
           printPDF(receipt, args);
         }
       } else {
-        OB.POS.hwserver.print(args.template, {
-          order: receipt
-        }, function (result) {
-          var myreceipt = receipt;
-          if (result && result.exception) {
-            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'), OB.I18N.getLabel('OBPOS_MsgPrintAgain'), [{
-              label: OB.I18N.getLabel('OBMOBC_LblOk'),
-              isConfirmButton: true,
-              action: function () {
-                me.print(receipt, printargs);
-                return true;
-              }
-            }, {
-              label: OB.I18N.getLabel('OBMOBC_LblCancel'),
-              action: function () {
-                if (args.callback) {
-                  args.callback();
-                }
-                return true;
-              }
-            }], {
-              onHideFunction: function (dialog) {
-                if (printargs.offline && OB.MobileApp.model.get('terminal').printoffline) {
-                  OB.Dal.save(new OB.Model.OfflinePrinter({
-                    data: result.data,
-                    sendfunction: '_send'
-                  }));
-                }
-                if (args.callback) {
-                  args.callback();
-                }
-              }
-            });
-          } else {
-            // Success. Try to print the pending receipts.
-            OB.Model.OfflinePrinter.printPendingJobs();
-            if (args.callback) {
-              args.callback();
-            }
-          }
-        });
-        if (!OB.POS.hwserver.url) {
-          if (args.callback) {
-            args.callback();
-          }
-        }
-        //Print again when it is a return and the preference is 'Y' or when one of the payments method has the print twice checked
-        if ((receipt.get('orderType') === 1 && !OB.MobileApp.model.hasPermission('OBPOS_print.once')) || _.filter(receipt.get('payments').models, function (iter) {
-          if (iter.get('printtwice')) {
-            return iter;
-          }
-        }).length > 0) {
+        if (receipt.get('print')) { //Print option of order property
           OB.POS.hwserver.print(args.template, {
             order: receipt
           }, function (result) {
@@ -226,12 +175,19 @@
             if (result && result.exception) {
               OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'), OB.I18N.getLabel('OBPOS_MsgPrintAgain'), [{
                 label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                isConfirmButton: true,
                 action: function () {
                   me.print(receipt, printargs);
                   return true;
                 }
               }, {
-                label: OB.I18N.getLabel('OBMOBC_LblCancel')
+                label: OB.I18N.getLabel('OBMOBC_LblCancel'),
+                action: function () {
+                  if (args.callback) {
+                    args.callback();
+                  }
+                  return true;
+                }
               }], {
                 onHideFunction: function (dialog) {
                   if (printargs.offline && OB.MobileApp.model.get('terminal').printoffline) {
@@ -240,14 +196,66 @@
                       sendfunction: '_send'
                     }));
                   }
+                  if (args.callback) {
+                    args.callback();
+                  }
                 }
               });
             } else {
               // Success. Try to print the pending receipts.
               OB.Model.OfflinePrinter.printPendingJobs();
+              if (args.callback) {
+                args.callback();
+              }
             }
           });
+        } else {
+          if (args.callback) {
+            args.callback();
+          }
+        } // order property.
+        if (!OB.POS.hwserver.url) {
+          if (args.callback) {
+            args.callback();
+          }
         }
+        //Print again when it is a return and the preference is 'Y' or when one of the payments method has the print twice checked
+        if (receipt.get('print')) { //Print option of order property
+          if ((receipt.get('orderType') === 1 && !OB.MobileApp.model.hasPermission('OBPOS_print.once')) || _.filter(receipt.get('payments').models, function (iter) {
+            if (iter.get('printtwice')) {
+              return iter;
+            }
+          }).length > 0) {
+            OB.POS.hwserver.print(args.template, {
+              order: receipt
+            }, function (result) {
+              var myreceipt = receipt;
+              if (result && result.exception) {
+                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'), OB.I18N.getLabel('OBPOS_MsgPrintAgain'), [{
+                  label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                  action: function () {
+                    me.print(receipt, printargs);
+                    return true;
+                  }
+                }, {
+                  label: OB.I18N.getLabel('OBMOBC_LblCancel')
+                }], {
+                  onHideFunction: function (dialog) {
+                    if (printargs.offline && OB.MobileApp.model.get('terminal').printoffline) {
+                      OB.Dal.save(new OB.Model.OfflinePrinter({
+                        data: result.data,
+                        sendfunction: '_send'
+                      }));
+                    }
+                  }
+                });
+              } else {
+                // Success. Try to print the pending receipts.
+                OB.Model.OfflinePrinter.printPendingJobs();
+              }
+            });
+          }
+        } // order property.
       }
     });
   };
