@@ -67,6 +67,15 @@ isc.OBFKFilterTextItem.addProperties({
     this.displayField = this.criteriaDisplayField || OB.Constants.IDENTIFIER;
     this.valueField = this.criteriaDisplayField || OB.Constants.IDENTIFIER;
 
+    // if this field was being filtered by its id before being recreated, reset its filter type an its filterAuxCache
+    if (this.grid && this.grid.sourceWidget && this.grid.sourceWidget.filterByIdFields && this.grid.sourceWidget.filterByIdFields.contains(this.name)) {
+      this.filterType = 'id';
+      if (this.grid.sourceWidget.fkCache && this.grid.sourceWidget.fkCache.find('fieldName', this.name)) {
+        this.filterAuxCache = this.grid.sourceWidget.fkCache.find('fieldName', this.name).cache;
+      }
+
+    }
+
     this.pickListProperties = {
 
       // make sure that we send the same parameters as the grid

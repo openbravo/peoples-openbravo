@@ -996,45 +996,6 @@ isc.OBViewGrid.addProperties({
     return '(' + isc.Comm.serialize(state, false) + ')';
   },
 
-  // returns an object containing the foreign key filter cache of all the filter fields whose current filter type is 'id'
-  getFKFilterAuxiliaryCache: function (criteria) {
-    var filterField, criterion, filterLength = criteria.criteria.length,
-        fkFilterAuxCache = [],
-        innerCache = [],
-        filterEditForm, cacheElement, i;
-    if (!this.filterEditor || !this.filterEditor.getEditForm()) {
-      return fkFilterAuxCache;
-    }
-    filterEditForm = this.filterEditor.getEditForm();
-    for (i = 0; i < filterLength; i++) {
-      criterion = criteria.criteria[i];
-      filterField = filterEditForm.getField(criterion.fieldName);
-      innerCache = [];
-      if (filterField && filterField.filterType === 'id') {
-        if (criterion.criteria) {
-          for (i = 0; i < criterion.criteria.length; i++) {
-            cacheElement = {};
-            cacheElement.fieldName = criterion.criteria[i].fieldName;
-            cacheElement[OB.Constants.ID] = criterion.criteria[i].value;
-            cacheElement[OB.Constants.IDENTIFIER] = filterField.getRecordIdentifierFromId(criterion.criteria[i].value);
-            innerCache.add(cacheElement);
-          }
-        } else {
-          cacheElement = {};
-          cacheElement.fieldName = criterion.fieldName;
-          cacheElement[OB.Constants.ID] = criterion.value;
-          cacheElement[OB.Constants.IDENTIFIER] = filterField.getRecordIdentifierFromId(criterion.value);
-          innerCache.add(cacheElement);
-        }
-        fkFilterAuxCache.add({
-          fieldName: criterion.fieldName,
-          cache: innerCache
-        });
-      }
-    }
-    return fkFilterAuxCache;
-  },
-
   setViewState: function (state, settingDefault) {
     var localState, i, fld, hasSummaryFunction, hasDefaultSavedView;
 
