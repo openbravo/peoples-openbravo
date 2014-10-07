@@ -568,7 +568,7 @@ isc.OBFKFilterTextItem.addProperties({
   // if the filterType is ID, try to return the record ids instead of the record identifiers
   getCriteriaValue: function () {
     var value, values = this.getValue(),
-        record, i, criteriaValues = [],
+        record, i, j, criteriaValues = [],
         recordIds;
     if (values && this.filterType === 'id') {
       for (i = 0; i < values.length; i++) {
@@ -582,7 +582,11 @@ isc.OBFKFilterTextItem.addProperties({
           // if the record is not found  or it does not have an id, use the standard criteria value
           return this.Super('getCriteriaValue', arguments);
         } else {
-          criteriaValues.addAll(recordIds);
+          for (j = 0; j < recordIds.length; j++) {
+            if (!criteriaValues.contains(recordIds[j])) {
+              criteriaValues.add(recordIds[j]);
+            }
+          }
         }
       }
       return criteriaValues;
