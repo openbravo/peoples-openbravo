@@ -18,12 +18,20 @@ import javax.inject.Inject;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.DalUtil;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
+import org.openbravo.model.ad.domain.ModelImplementation;
+import org.openbravo.model.ad.domain.ModelImplementationParameter;
 import org.openbravo.model.common.enterprise.OrganizationInformation;
 import org.openbravo.retail.posterminal.InitialValidations;
 import org.openbravo.retail.posterminal.OBPOSApplications;
@@ -94,6 +102,21 @@ public class Terminal extends ProcessHQLQuery {
       whereOrgImage = " and image.id ='" + myOrgInfo.getYourCompanyDocumentImage().getId() + "'";
     }
 
+    int sessionTimeout;
+    try {
+      String sessionShouldExpire = Preferences.getPreferenceValue("OBPOS_SessionExpiration", true,
+          OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
+              .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
+              .getOBContext().getRole(), null);
+      if (sessionShouldExpire.equalsIgnoreCase("Y")) {
+        sessionTimeout = 0;
+      } else {
+        sessionTimeout = getSessionTimeoutFromDatabase();
+      }
+    } catch (PropertyException e) {
+      sessionTimeout = getSessionTimeoutFromDatabase();
+    }
+
     return Arrays.asList(new String[] { "select " + "'" + pricesList.getId() + "' as priceList, "
         + "'" + pricesList.getCurrency().getId() + "' as currency, " + "'"
         + pricesList.getCurrency().getIdentifier() + "' as " + getIdentifierAlias("currency")
@@ -102,8 +125,8 @@ public class Terminal extends ProcessHQLQuery {
         + "' as symbol, " + "'" + warehouseId + "' as warehouse, " + lastDocumentNumber
         + " as lastDocumentNumber, " + lastQuotationDocumentNumber
         + " as lastQuotationDocumentNumber, " + "'" + regionId + "'" + " as organizationRegionId, "
-        + "'" + countryId + "'" + " as organizationCountryId, " + selectOrgImage
-        + regularTerminalHQLProperties.getHqlSelect()
+        + "'" + countryId + "'" + " as organizationCountryId, " + sessionTimeout
+        + " as sessionTimeout, " + selectOrgImage + regularTerminalHQLProperties.getHqlSelect()
         + " from OBPOS_Applications AS pos inner join pos.obposTerminaltype as postype "
         + fromOrgImage + " where pos.$readableCriteria and pos.searchKey = '"
         + pOSTerminal.getSearchKey() + "' " + whereOrgImage });
@@ -116,5 +139,19 @@ public class Terminal extends ProcessHQLQuery {
   @Override
   protected boolean bypassPreferenceCheck() {
     return true;
+  }
+
+  private int getSessionTimeoutFromDatabase() {
+    OBCriteria<ModelImplementation> timeoutModelObjectCrit = OBDal.getInstance().createCriteria(
+        ModelImplementation.class);
+    timeoutModelObjectCrit.add(Restrictions.eq(ModelImplementation.PROPERTY_OBJECTTYPE, "ST"));
+    ModelImplementation timeoutModelObj = (ModelImplementation) timeoutModelObjectCrit
+        .uniqueResult();
+    for (ModelImplementationParameter param : timeoutModelObj.getModelImplementationParameterList()) {
+      if (param.getName().equalsIgnoreCase("Timeout")) {
+        return Integer.parseInt(param.getSearchKey()) - 1;
+      }
+    }
+    return 59;
   }
 }

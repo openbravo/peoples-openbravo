@@ -614,6 +614,12 @@
         me.set('loggedUsingCache', false);
         me.renderTerminalMain();
       }
+
+      if (!this.sessionPing && this.get('terminal').sessionTimeout) {
+        this.sessionPing = setInterval(function () {
+          new OB.DS.Process('org.openbravo.mobile.core.login.ContextInformation').exec(null, function () {});
+        }, this.get('terminal').sessionTimeout * 60 * 1000);
+      }
     },
 
     cleanSessionInfo: function () {
