@@ -838,10 +838,10 @@ isc.OBGrid.addProperties({
   setFields: function (newFields) {
     this.filterByIdFields = this.getFilterByIdFields();
     if (this.filterByIdFields.length > 0) {
-      this.fkCache = this.getFKFilterAuxiliaryCache(this.getCriteria());
+      this.fkCacheCopy = this.getFKFilterAuxiliaryCache(this.getCriteria());
     }
     this.Super('setFields', arguments);
-    delete this.fkCache;
+    delete this.fkCacheCopy;
     delete this.filterByIdFields;
   },
 

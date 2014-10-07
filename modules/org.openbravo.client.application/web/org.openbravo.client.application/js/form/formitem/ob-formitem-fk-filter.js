@@ -70,8 +70,8 @@ isc.OBFKFilterTextItem.addProperties({
     // if this field was being filtered by its id before being recreated, reset its filter type an its filterAuxCache
     if (this.grid && this.grid.sourceWidget && this.grid.sourceWidget.filterByIdFields && this.grid.sourceWidget.filterByIdFields.contains(this.name)) {
       this.filterType = 'id';
-      if (this.grid.sourceWidget.fkCache && this.grid.sourceWidget.fkCache.find('fieldName', this.name)) {
-        this.filterAuxCache = this.grid.sourceWidget.fkCache.find('fieldName', this.name).cache;
+      if (this.grid.sourceWidget.fkCacheCopy && this.grid.sourceWidget.fkCacheCopy.find('fieldName', this.name)) {
+        this.filterAuxCache = this.grid.sourceWidget.fkCacheCopy.find('fieldName', this.name).cache;
       }
 
     }
