@@ -2756,7 +2756,7 @@ Are you sure you want to use %0 of %1 's credit to complete this receipt?]]></MS
 <!--83AD323E73C842BDAD3CACF165FAD0C1-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--83AD323E73C842BDAD3CACF165FAD0C1-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--83AD323E73C842BDAD3CACF165FAD0C1-->  <VALUE><![CDATA[OBPOS_OverpaymentWarningBody]]></VALUE>
-<!--83AD323E73C842BDAD3CACF165FAD0C1-->  <MSGTEXT><![CDATA[One of your payments has generated an overpayment (meaning that the total paid amount is greater than the total amount of the ticket). Are you sure you want to proceed?]]></MSGTEXT>
+<!--83AD323E73C842BDAD3CACF165FAD0C1-->  <MSGTEXT><![CDATA[One of your payments has generated an %0 overpayment (meaning that the total paid amount is greater than the total amount of the ticket). Are you sure you want to proceed?]]></MSGTEXT>
 <!--83AD323E73C842BDAD3CACF165FAD0C1-->  <MSGTYPE><![CDATA[W]]></MSGTYPE>
 <!--83AD323E73C842BDAD3CACF165FAD0C1-->  <AD_MODULE_ID><![CDATA[FF808181326CC34901326D53DBCF0018]]></AD_MODULE_ID>
 <!--83AD323E73C842BDAD3CACF165FAD0C1-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
