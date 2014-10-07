@@ -889,80 +889,49 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
     }
     for (Object o : query.list()) {
       Map<String, Object> myMap = new HashMap<String, Object>();
-      StorageDetail sd = (StorageDetail) o;
-      if (selectedIds.size() > 0) {
-        for (int i = 0; i < selectedIds.size(); i++) {
-          if (!sd.getId().equals(selectedIds.get(i))) {
+      OrderLine orderLine = (OrderLine) o;
+      myMap.put("id", orderLine.getId());
+      myMap.put("obSelected", false);
+      myMap.put("reservationStock", null);
+      myMap.put("reservationStock$_identifier", "");
+      myMap.put("storageBin$_identifier", "");
+      myMap.put("storageBin", "");
+      myMap.put("warehouse", (orderLine.getSalesOrder().getWarehouse() != null) ? orderLine
+          .getSalesOrder().getWarehouse().getId() : null);
+      myMap.put("warehouse$_identifier",
+          (orderLine.getSalesOrder().getWarehouse() != null) ? orderLine.getSalesOrder()
+              .getWarehouse().getIdentifier() : "");
+      myMap.put("attributeSetValue", orderLine.getAttributeSetValue() != null ? orderLine
+          .getAttributeSetValue().getId() : null);
+      myMap.put("attributeSetValue$_identifier",
+          orderLine.getAttributeSetValue() != null ? orderLine.getAttributeSetValue()
+              .getIdentifier() : "");
+      myMap.put("purchaseOrderLine", orderLine.getId());
+      myMap.put("purchaseOrderLine$_identifier", orderLine.getIdentifier());
+      // Check Filter Criterias
 
-            // Check Filter Criterias
-            if (availableQtyFilterCriteria != null && !"".equals(availableQtyFilterCriteria)
-                && !isInScope("availableQty", availableQtyFilterCriteria, sd.getQuantityOnHand())) {
-              continue;
-            }
-            BigDecimal reservedinothers = getQtyReserved(reservation, reservation.getProduct(),
-                sd.getAttributeSetValue(), sd.getStorageBin());
-
-            if (reservedinothersFilterCriteria != null
-                && !"".equals(reservedinothersFilterCriteria)
-                && !isInScope("reservedinothers", reservedinothersFilterCriteria, reservedinothers)) {
-              continue;
-            }
-            if (releasedFilterCriteria != null && !"".equals(releasedFilterCriteria)
-                && !isInScope("released", releasedFilterCriteria, BigDecimal.ZERO)) {
-              continue;
-            }
-            result = tomap(sd, false, result, reservedinothers, reservation);
-          }
-        }
-      } else {
-
-        OrderLine orderLine = (OrderLine) o;
-        myMap.put("id", orderLine.getId());
-        myMap.put("obSelected", false);
-        myMap.put("reservationStock", null);
-        myMap.put("reservationStock$_identifier", "");
-        myMap.put("storageBin$_identifier", "");
-        myMap.put("storageBin", "");
-        myMap.put("warehouse", (orderLine.getSalesOrder().getWarehouse() != null) ? orderLine
-            .getSalesOrder().getWarehouse().getId() : null);
-        myMap.put("warehouse$_identifier",
-            (orderLine.getSalesOrder().getWarehouse() != null) ? orderLine.getSalesOrder()
-                .getWarehouse().getIdentifier() : "");
-        myMap.put("attributeSetValue", orderLine.getAttributeSetValue() != null ? orderLine
-            .getAttributeSetValue().getId() : null);
-        myMap.put("attributeSetValue$_identifier",
-            orderLine.getAttributeSetValue() != null ? orderLine.getAttributeSetValue()
-                .getIdentifier() : "");
-        myMap.put("purchaseOrderLine", orderLine.getId());
-        myMap.put("purchaseOrderLine$_identifier", orderLine.getIdentifier());
-        // Check Filter Criterias
-
-        if (availableQtyFilterCriteria != null
-            && !"".equals(availableQtyFilterCriteria)
-            && !isInScope("availableQty", availableQtyFilterCriteria,
-                orderLine.getOrderedQuantity())) {
-          continue;
-        }
-        BigDecimal reservedinothers = getQtyReserved(reservation, orderLine);
-        if (reservedinothersFilterCriteria != null && !"".equals(reservedinothersFilterCriteria)
-            && !isInScope("reservedinothers", reservedinothersFilterCriteria, reservedinothers)) {
-          continue;
-        }
-        if (releasedFilterCriteria != null && !"".equals(releasedFilterCriteria)
-            && !isInScope("released", releasedFilterCriteria, BigDecimal.ZERO)) {
-          continue;
-        }
-        myMap.put("availableQty",
-            orderLine.getOrderedQuantity().subtract(getDeliveredQuantity(orderLine)));
-        myMap.put("reservedinothers", reservedinothers);
-        myMap.put("quantity", BigDecimal.ZERO);
-        myMap.put("reservationQuantity", reservation.getQuantity());
-        myMap.put("released", BigDecimal.ZERO);
-        myMap.put("allocated", false);
-        result.add(myMap);
+      if (availableQtyFilterCriteria != null && !"".equals(availableQtyFilterCriteria)
+          && !isInScope("availableQty", availableQtyFilterCriteria, orderLine.getOrderedQuantity())) {
+        continue;
       }
+      BigDecimal reservedinothers = getQtyReserved(reservation, orderLine);
+      if (reservedinothersFilterCriteria != null && !"".equals(reservedinothersFilterCriteria)
+          && !isInScope("reservedinothers", reservedinothersFilterCriteria, reservedinothers)) {
+        continue;
+      }
+      if (releasedFilterCriteria != null && !"".equals(releasedFilterCriteria)
+          && !isInScope("released", releasedFilterCriteria, BigDecimal.ZERO)) {
+        continue;
+      }
+      myMap.put("availableQty",
+          orderLine.getOrderedQuantity().subtract(getDeliveredQuantity(orderLine)));
+      myMap.put("reservedinothers", reservedinothers);
+      myMap.put("quantity", BigDecimal.ZERO);
+      myMap.put("reservationQuantity", reservation.getQuantity());
+      myMap.put("released", BigDecimal.ZERO);
+      myMap.put("allocated", false);
+      result.add(myMap);
     }
-
     return result;
   }
 
