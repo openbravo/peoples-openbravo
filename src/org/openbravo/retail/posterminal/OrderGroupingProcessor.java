@@ -287,6 +287,7 @@ public class OrderGroupingProcessor {
         paymentScheduleInvoice.getFINPaymentScheduleDetailInvoicePaymentScheduleList().add(
             paymentScheduleDetail);
         paymentScheduleDetail.setInvoicePaymentSchedule(paymentScheduleInvoice);
+        paymentScheduleDetail.setInvoicePaid(Boolean.TRUE);
 
         paymentScheduleInvoice.setAmount(paymentScheduleInvoice.getAmount().add(
             paymentScheduleDetail.getAmount()));
