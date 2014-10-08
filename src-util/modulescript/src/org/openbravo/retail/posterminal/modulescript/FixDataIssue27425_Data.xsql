@@ -29,7 +29,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        UPDATE fin_payment_schedule AS a
+        UPDATE fin_payment_schedule a
         SET paidamt = amount
         WHERE  exists (
         SELECT c_invoice.c_invoice_id
@@ -47,7 +47,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        UPDATE c_invoice AS a
+        UPDATE c_invoice a
         SET totalpaid = grandtotal,
             outstandingamt = 0,
             finalsettlement = created,
@@ -68,7 +68,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        UPDATE c_invoice AS a
+        UPDATE c_invoice a
         SET totalpaid = 0,
             outstandingamt = 0,
             finalsettlement = created,
