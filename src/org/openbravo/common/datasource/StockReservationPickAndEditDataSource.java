@@ -271,6 +271,9 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
                     Restrictions.ilike(Warehouse.PROPERTY_NAME, "%" + myJSONObject.get("value")
                         + "%"));
               }
+            } else if (myJSONObject.get("fieldName").equals("warehouse")
+                && myJSONObject.get("operator").equals("equals") && myJSONObject.has("value")) {
+              myCriterion = Restrictions.eq(Warehouse.PROPERTY_ID, myJSONObject.get("value"));
             }
           }
           if (myCriterion != null) {
@@ -396,6 +399,9 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
                     Restrictions.ilike(Locator.PROPERTY_SEARCHKEY, "%" + myJSONObject.get("value")
                         + "%"));
               }
+            } else if (myJSONObject.get("fieldName").equals("storageBin")
+                && operator.equals("equals") && myJSONObject.has("value")) {
+              myCriterion = Restrictions.eq(Locator.PROPERTY_ID, myJSONObject.get("value"));
             }
           }
           if (myCriterion != null) {
@@ -500,7 +506,8 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
                   .equals(criteria.getString("operator")))) {
           filterCriteria.put(criteria.getString("fieldName"), criteria.toString());
         } else if (criteria.has("operator")
-            && ("iEquals".equals(criteria.getString("operator")) || "iContains".equals(criteria
+            && ("equals".equals(criteria.getString("operator"))
+                || "iEquals".equals(criteria.getString("operator")) || "iContains".equals(criteria
                 .getString("operator")))) {
 
           if (filterCriteria.containsKey(criteria.getString("fieldName"))) {
@@ -526,24 +533,40 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
     Reservation reservation = null;
     // Filters
     List<Warehouse> warehousesFiltered = null;
-    if (filterCriteria.get("warehouse$_identifier") != null) {
-      warehousesFiltered = getFilteredWarehouse(filterCriteria.get("warehouse$_identifier"),
-          parameters);
+    if (filterCriteria.get("warehouse$_identifier") != null
+        || filterCriteria.get("warehouse") != null) {
+      String warehouseCriteria = filterCriteria.get("warehouse$_identifier");
+      if (warehouseCriteria == null) {
+        warehouseCriteria = filterCriteria.get("warehouse");
+      }
+      warehousesFiltered = getFilteredWarehouse(warehouseCriteria, parameters);
     }
     List<Locator> locatorsFiltered = null;
-    if (filterCriteria.get("storageBin$_identifier") != null) {
-      locatorsFiltered = getFilteredStorageBin(filterCriteria.get("storageBin$_identifier"),
-          parameters);
+    if (filterCriteria.get("storageBin$_identifier") != null
+        || filterCriteria.get("storageBin") != null) {
+      String locatorCriteria = filterCriteria.get("storageBin$_identifier");
+      if (locatorCriteria == null) {
+        locatorCriteria = filterCriteria.get("storageBin");
+      }
+      locatorsFiltered = getFilteredStorageBin(locatorCriteria, parameters);
     }
     List<AttributeSetInstance> attributesFiltered = null;
-    if (filterCriteria.get("attributeSetValue$_identifier") != null) {
-      attributesFiltered = getFilteredAttribute(
-          filterCriteria.get("attributeSetValue$_identifier"), parameters);
+    if (filterCriteria.get("attributeSetValue$_identifier") != null
+        || filterCriteria.get("attributeSetValue") != null) {
+      String attributesCriteria = filterCriteria.get("attributeSetValue$_identifier");
+      if (attributesCriteria == null) {
+        attributesCriteria = filterCriteria.get("attributeSetValue");
+      }
+      attributesFiltered = getFilteredAttribute(attributesCriteria, parameters);
     }
     List<OrderLine> orderLinesFiltered = null;
-    if (filterCriteria.get("purchaseOrderLine$_identifier") != null) {
-      orderLinesFiltered = getFilteredOrderline(
-          filterCriteria.get("purchaseOrderLine$_identifier"), parameters);
+    if (filterCriteria.get("purchaseOrderLine$_identifier") != null
+        || filterCriteria.get("purchaseOrderLine") != null) {
+      String orderLinesCriteria = filterCriteria.get("purchaseOrderLine$_identifier");
+      if (orderLinesCriteria == null) {
+        orderLinesCriteria = filterCriteria.get("purchaseOrderLine");
+      }
+      orderLinesFiltered = getFilteredOrderline(orderLinesCriteria, parameters);
     }
     String availableQtyFilterCriteria = "";
     if (filterCriteria.get("availableQty") != null) {
@@ -694,6 +717,10 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
                     Restrictions.ilike(AttributeSetInstance.PROPERTY_DESCRIPTION, "%"
                         + myJSONObject.get("value") + "%"));
               }
+            } else if (myJSONObject.get("fieldName").equals("attributeSetValue")
+                && operator.equals("equals") && myJSONObject.has("value")) {
+              myCriterion = Restrictions.eq(AttributeSetInstance.PROPERTY_ID,
+                  myJSONObject.get("value"));
             }
           }
           if (myCriterion != null) {
@@ -747,6 +774,11 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
                         + org.openbravo.model.common.order.Order.PROPERTY_DOCUMENTNO, "%"
                         + getOrderDocumentNo((String) myJSONObject.get("value")) + "%"));
               }
+            } else if (myJSONObject.getString("fieldName").equals("purchaseOrderLine")
+                && operator.equals("equals") && myJSONObject.has("value")) {
+              myCriterion = Restrictions.eq("o."
+                  + org.openbravo.model.common.order.Order.PROPERTY_ID,
+                  getOrderDocumentNo((String) myJSONObject.get("value")));
             }
           }
           if (myCriterion != null) {
