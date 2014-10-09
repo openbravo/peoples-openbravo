@@ -327,6 +327,8 @@ public class ReturnFromCustomerPickEditLineDatasource extends DefaultDataSourceS
           if (fieldName.equals("product$_identifier")) {
             filterClause.append(" AND COALESCE(rol.m_product_identifier,ip.name) ilike '%" + value
                 + "%'");
+          } else if (fieldName.equals("product")) {
+            filterClause.append(" AND rol.m_product_id = '" + value + "'");
           } else if (fieldName.equals("inOutDocumentNumber")) {
             filterClause.append(" AND i.documentno ilike '%" + value + "%'");
           } else if (fieldName.equals("movementDate")) {
@@ -336,11 +338,16 @@ public class ReturnFromCustomerPickEditLineDatasource extends DefaultDataSourceS
             filterClause.append(buildComplexFilter("il.movementqty", operatorName, value));
           } else if (fieldName.equals("uOM$_identifier")) {
             filterClause.append(" AND c_uom_id ilike '%" + value + "%'");
+          } else if (fieldName.equals("uOM")) {
+            filterClause.append(" AND rol.c_uom_id = '" + value + "'");
           } else if (fieldName.equals("attributeSetValue$_identifier")) {
             filterClause
                 .append(" AND COALESCE(rol.m_attributesetinstance_identifier, iat.description) ilike '%"
                     + value + "%'");
+          } else if (fieldName.equals("attributeSetValue")) {
+            filterClause.append(" AND rol.m_attributesetinstance_id = '" + value + "'");
           }
+
         }
       }
     } catch (JSONException e) {
