@@ -45,8 +45,6 @@
     }
 
     function submitThisPage(strCommand) {
-      disableButton('buttonOK');
-      disableButton('buttonCancel');
       if (validate(strCommand)) {
         var inp= document.frmMain.inpId;
         var total = document.frmMain.inpId.length;
@@ -54,6 +52,8 @@
             inp[i].removeAttribute("disabled");
         }       
         submitCommandForm(strCommand, false, null, null);
+        disableButton('buttonOK');
+        disableButton('buttonCancel');
         return true;
       }
       return true;
