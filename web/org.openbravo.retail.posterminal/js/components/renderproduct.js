@@ -32,9 +32,6 @@ enyo.kind({
     style: 'float: left; width: 38%; ',
     components: [{
       name: 'identifier'
-    }, {
-      style: 'color: #888888',
-      name: 'bottonLine'
     }]
   }, {
     name: 'price',
@@ -43,7 +40,12 @@ enyo.kind({
     style: 'clear:both;'
   }, {
     name: 'generic',
-    style: 'float: right; width: 20%; text-align: right; font-style: italic; color: grey; padding: 15px'
+    style: 'float: right; width: 20%; text-align: right; font-style: italic; color: grey; padding: 15px; font-weight: bold;'
+  }, {
+    style: 'clear:both;'
+  }, {
+    style: 'color: #888888; float: left; width: 100%; text-align: left; font-style: italic; color: grey; font-size: 13px; padding-top: 10px;',
+    name: 'bottonLine'
   }],
   initComponents: function () {
     this.inherited(arguments);
