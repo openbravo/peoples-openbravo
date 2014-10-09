@@ -741,8 +741,9 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
         if (FIN_Utility.invoicePaymentStatus(payment) == null) {
           msg.setType("Error");
           msg.setTitle(Utility.messageBD(conProvider, "Error", language));
-          msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
-              "@APRM_NoPaymentMethod@" + ": " + payment.getAccount().getName()));
+          msg.setMessage(String.format(OBMessageUtils.messageBD("APRM_NoPaymentMethod"), payment
+              .getPaymentMethod().getIdentifier(), payment.getDocumentNo(), payment.getAccount()
+              .getName()));
           bundle.setResult(msg);
           return;
         }
