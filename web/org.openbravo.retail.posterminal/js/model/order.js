@@ -38,8 +38,8 @@
         this.set('net', attributes.net);
         this.set('promotions', attributes.promotions);
         this.set('priceIncludesTax', attributes.priceIncludesTax);
-        if (!attributes.grossListPrice && attributes.product && attributes.product.listPrice) {
-          this.set('grossListPrice', attributes.product.listPrice);
+        if (!attributes.grossListPrice && attributes.product && _.isNumber(attributes.priceList)) {
+          this.set('grossListPrice', attributes.priceList);
         }
       }
     },
@@ -373,13 +373,17 @@
         gross = OB.DEC.sub(gross, totalDiscount);
         price = OB.DEC.div(gross, line.get('qty'));
 
+        if (grossListPrice === undefined) {
+          grossListPrice = price;
+        }
+
         if (this.get('priceIncludesTax')) {
           line.set({
             net: OB.UTIL.getFirstValidValue([OB.DEC.toNumber(line.get('discountedNet')), line.get('net'), OB.DEC.div(gross, line.get('linerate'))]),
             pricenet: line.get('discountedNet') ? OB.DEC.div(line.get('discountedNet'), line.get('qty')) : OB.DEC.div(OB.DEC.div(gross, line.get('linerate')), line.get('qty')),
-            listPrice: OB.DEC.div((grossListPrice || price), line.get('linerate')),
+            listPrice: OB.DEC.div(grossListPrice, line.get('linerate')),
             standardPrice: OB.DEC.div((grossListPrice || price), line.get('linerate')),
-            grossListPrice: grossListPrice || price,
+            grossListPrice: grossListPrice,
             grossUnitPrice: price,
             lineGrossAmount: gross
           }, {
@@ -2014,12 +2018,12 @@
         i++;
       });
       desc += '] Payments: [';
-      i=0;
+      i = 0;
       this.get('payments').forEach(function (l) {
         if (i !== 0) {
           desc += ",";
         }
-        desc += '{PaymentMethod: ' + l.get('kind') + ', Amount: ' + l.get('amount') + ' OrigAmount: ' + l.get('origAmount') + ' Date: '+l.get('date')+' isocode: '+l.get('isocode')+'}';
+        desc += '{PaymentMethod: ' + l.get('kind') + ', Amount: ' + l.get('amount') + ' OrigAmount: ' + l.get('origAmount') + ' Date: ' + l.get('date') + ' isocode: ' + l.get('isocode') + '}';
         i++;
       });
       desc += ']';
@@ -2216,7 +2220,7 @@
           });
           order.set('orderDate', moment(model.orderDate.toString(), "YYYY-MM-DD").toDate());
           order.set('creationDate', moment(model.creationDate.toString(), "YYYY-MM-DD hh:m:ss.s").toDate());
-           //order.set('payments', model.receiptPayments);
+          //order.set('payments', model.receiptPayments);
           payments = new PaymentLineList();
           _.each(model.receiptPayments, function (iter) {
             var paymentProp;
