@@ -996,7 +996,7 @@ public class OrderLoader extends POSDataSynchronizationProcess {
       orderline.setLineNetAmount(BigDecimal.valueOf(jsonOrderLine.getDouble("net")).setScale(
           stdPrecision, RoundingMode.HALF_UP));
 
-      if (!isLayaway && !partialpayLayaway && (createShipment || isQuotation)) {
+      if (!isLayaway && !partialpayLayaway && createShipment) {
         // shipment is created, so all is delivered
         orderline.setDeliveredQuantity(orderline.getOrderedQuantity());
       }
