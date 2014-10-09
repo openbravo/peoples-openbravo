@@ -68,7 +68,10 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
     if (!json.getString("endDate").isEmpty()) {
       hqlPaidReceipts += " and ord.orderDate <='" + json.getString("endDate") + "'";
     }
-    if (json.getBoolean("isLayaway")) {
+
+    if (json.has("isQuotation") && json.getBoolean("isQuotation")) {
+      // not more filters
+    } else if (json.getBoolean("isLayaway")) {
       // (It is Layaway)
       hqlPaidReceipts += " and (select sum(deliveredQuantity) from ord.orderLineList where orderedQuantity > 0)=0 and ord.documentStatus = 'CO' ";
     } else if (json.getBoolean("isReturn")) {
