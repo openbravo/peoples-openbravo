@@ -67,7 +67,7 @@
 
         receipt.set('obposAppCashup', OB.MobileApp.model.get('terminal').cashUpId);
         // convert returns
-        if (receipt.get('gross') < 0) {
+        if (receipt.getGross() < 0) {
           _.forEach(receipt.get('payments').models, function (item) {
             item.set('amount', -item.get('amount'));
             item.set('origAmount', -item.get('origAmount'));
@@ -76,7 +76,7 @@
         }
         receipt.set('json', JSON.stringify(receipt.serializeToJSON()));
 
-        OB.trace('Calculationg cashup information.');
+        OB.trace('Calculating cashup information.');
 
         auxReceipt.clearWith(receipt);
         OB.UTIL.cashUpReport(auxReceipt, OB.UTIL.calculateCurrentCash);
