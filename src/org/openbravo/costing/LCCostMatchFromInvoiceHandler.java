@@ -106,6 +106,7 @@ public class LCCostMatchFromInvoiceHandler extends BaseProcessActionHandler {
         match = OBProvider.getInstance().get(LCMatched.class);
         // TODO: Review this
         // match.setNewOBObject(true);
+        match.setOrganization(lcc.getOrganization());
         match.setLandedCostCost(lcc);
         match.setInvoiceLine(il);
         match.setAmount(BigDecimal.ZERO);
