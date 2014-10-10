@@ -114,7 +114,12 @@
                 });
               }
             } else if (data[0]) {
+              // load the OB.MobileApp.model.get('terminal') attributes
               terminalModel.set(me.properties[0], data[0]);
+
+              // update the local database with the document sequence received
+              OB.MobileApp.model.saveDocumentSequence(OB.MobileApp.model.get('terminal').lastDocumentNumber, OB.MobileApp.model.get('terminal').lastQuotationDocumentNumber);
+
               window.localStorage.setItem('terminalId', data[0].id);
               terminalModel.set('useBarcode', terminalModel.get('terminal').terminalType.usebarcodescanner);
               OB.MobileApp.view.scanningFocus(true);
@@ -513,11 +518,10 @@
 
       });
 
-      this.on('seqNoReady', function () {
-        this.trigger('ready'); //NAVIGATE
-      }, this);
+      // force the initialization of the document sequence info
+      this.saveDocumentSequence();
 
-      this.setDocumentSequence();
+      this.trigger('ready');
     },
 
     postLoginActions: function () {
@@ -595,134 +599,143 @@
       });
     },
 
-    compareDocSeqWithPendingOrdersAndSave: function (maxDocumentSequence, maxQuotationDocumentSequence) {
-      var orderDocNo, quotationDocNo;
-      // compare the last document number returned from the ERP with
-      // the last document number of the unprocessed pending lines (if any)
-      OB.Dal.find(OB.Model.Order, {}, function (fetchedOrderList) {
-        var criteria, maxDocumentSequencePendingOrders;
-        if (!fetchedOrderList || fetchedOrderList.length === 0) {
-          // There are no pending orders, the initial document sequence
-          // will be the one fetched from the database
-          OB.MobileApp.model.saveDocumentSequenceAndGo(maxDocumentSequence, maxQuotationDocumentSequence);
-        } else {
-          // There are pending orders. The document sequence will be set
-          // to the maximum of the pending order document sequence and the
-          // document sequence retrieved from the server
-          maxDocumentSequencePendingOrders = OB.MobileApp.model.getMaxDocumentSequenceFromPendingOrders(fetchedOrderList.models);
-          if (maxDocumentSequencePendingOrders.orderDocNo > maxDocumentSequence) {
-            orderDocNo = maxDocumentSequencePendingOrders.orderDocNo;
-          } else {
-            orderDocNo = maxDocumentSequence;
-          }
-          if (maxDocumentSequencePendingOrders.quotationDocNo > maxQuotationDocumentSequence) {
-            quotationDocNo = maxDocumentSequencePendingOrders.quotationDocNo;
-          } else {
-            quotationDocNo = maxQuotationDocumentSequence;
-          }
-          OB.MobileApp.model.saveDocumentSequenceAndGo(orderDocNo, quotationDocNo);
-        }
-      }, function () {
-        // If c_order does not exist yet, go with the sequence
-        // number fetched from the server
-        OB.MobileApp.model.saveDocumentSequenceAndGo(maxDocumentSequence, maxQuotationDocumentSequence);
-      });
-    },
+    // these variables will keep the minimum value that the document order could have
+    // they feed from the local database, and the server
+    documentnoThreshold: -1,
+    quotationnoThreshold: -1,
 
-    getMaxDocumentSequenceFromPendingOrders: function (pendingOrders) {
-      var nPreviousOrders = pendingOrders.length,
-          maxDocumentSequence = OB.MobileApp.model.get('terminal').lastDocumentNumber,
-          maxQuotationDocumentSequence = OB.MobileApp.model.get('terminal').lastQuotationDocumentNumber,
-          orderCompleteDocumentNo, orderDocumentSequence, i;
-      for (i = 0; i < nPreviousOrders; i++) {
-        orderCompleteDocumentNo = pendingOrders[i].get('documentNo');
-        if (!pendingOrders[i].get('isQuotation')) {
-          orderDocumentSequence = OB.UTIL.getNumberOfSequence(pendingOrders[i].get('documentNo'), false);
-          if (orderDocumentSequence > maxDocumentSequence) {
-            maxDocumentSequence = orderDocumentSequence;
-          }
-        } else {
-          orderDocumentSequence = OB.UTIL.getNumberOfSequence(pendingOrders[i].get('documentNo'), true);
-          if (orderDocumentSequence > maxQuotationDocumentSequence) {
-            maxQuotationDocumentSequence = orderDocumentSequence;
-          }
-        }
-      }
-      return {
-        orderDocNo: maxDocumentSequence,
-        quotationDocNo: maxQuotationDocumentSequence
-      };
-    },
+    /**
+     * Save the new values if are higher than the last knowwn values
+     * - the minimum sequence number can only grow
+     */
+    saveDocumentSequence: function (documentnoSuffix, quotationnoSuffix) {
+      var me = this;
 
-    saveDocumentSequenceAndGo: function (documentSequence, quotationDocumentSequence) {
-      this.set('documentsequence', documentSequence);
-      this.set('quotationDocumentSequence', quotationDocumentSequence);
-      this.trigger('seqNoReady');
-    },
-
-    setDocumentSequence: function () {
-      // Obtains the persisted document number (documentno of the last processed order)
-      OB.Dal.find(OB.Model.DocumentSequence, {
-        'posSearchKey': OB.MobileApp.model.terminalName
-      }, function (documentsequence) {
-        var lastInternalDocumentSequence, lastInternalQuotationSequence, max, maxquote;
-        if (documentsequence && documentsequence.length > 0) {
-          lastInternalDocumentSequence = documentsequence.at(0).get('documentSequence');
-          lastInternalQuotationSequence = documentsequence.at(0).get('quotationDocumentSequence');
-          // Compares the persisted document number with the fetched from the server
-          if (lastInternalDocumentSequence > OB.MobileApp.model.get('terminal').lastDocumentNumber) {
-            max = lastInternalDocumentSequence;
-          } else {
-            max = OB.MobileApp.model.get('terminal').lastDocumentNumber;
+      /**
+       * If for whatever reason the maxSuffix is not the current order suffix (most likely, the server returning a higher docno value)
+       * 1. if there is a current order
+       * 2. and has no lines (no product added, etc)
+       * 3. if the current order suffix is lower than the minNumbers
+       * 4. delete the order
+       */
+      var synchronizeCurrentOrder = function () {
+          var orderlist = OB.MobileApp.model.orderList;
+          if (orderlist && orderlist.models.length > 0 && orderlist.current) {
+            if (orderlist.current.get('lines') && orderlist.current.get('lines').length === 0) {
+              if (orderlist.current.get('documentnoSuffix') <= me.documentnoThreshold) {
+                orderlist.deleteCurrent();
+              }
+            }
           }
-          if (lastInternalQuotationSequence > OB.MobileApp.model.get('terminal').lastQuotationDocumentNumber) {
-            maxquote = lastInternalQuotationSequence;
-          } else {
-            maxquote = OB.MobileApp.model.get('terminal').lastQuotationDocumentNumber;
-          }
-          // Compares the maximum with the document number of the paid pending orders
-          OB.MobileApp.model.compareDocSeqWithPendingOrdersAndSave(max, maxquote);
-        } else {
-          max = OB.MobileApp.model.get('terminal').lastDocumentNumber;
-          maxquote = OB.MobileApp.model.get('terminal').lastQuotationDocumentNumber;
-          // Compares the maximum with the document number of the paid pending orders
-          OB.MobileApp.model.compareDocSeqWithPendingOrdersAndSave(max, maxquote);
-        }
-
-      }, function () {
-        var max = OB.MobileApp.model.get('terminal').lastDocumentNumber,
-            maxquote = OB.MobileApp.model.get('terminal').lastQuotationDocumentNumber;
-        // Compares the maximum with the document number of the paid pending orders
-        OB.MobileApp.model.compareDocSeqWithPendingOrdersAndSave(max, maxquote);
-      });
-    },
-
-    saveDocumentSequenceInDB: function () {
-      var me = this,
-          documentSequence = this.get('documentsequence'),
-          quotationDocumentSequence = this.get('quotationDocumentSequence'),
-          criteria = {
-          'posSearchKey': this.get('terminal').searchKey
           };
-      OB.Dal.find(OB.Model.DocumentSequence, criteria, function (documentSequenceList) {
+
+      // verify that the values are higher than the local variables
+      if (documentnoSuffix > this.documentnoThreshold) {
+        this.documentnoThreshold = documentnoSuffix;
+      }
+      if (quotationnoSuffix > this.quotationnoThreshold) {
+        this.quotationnoThreshold = quotationnoSuffix;
+      }
+
+      // verify the database values
+      OB.Dal.find(OB.Model.DocumentSequence, {
+        'posSearchKey': this.get('terminal').searchKey
+      }, function (documentSequenceList) {
+
         var docSeq;
-        if (documentSequenceList && documentSequenceList.length !== 0) {
+        if (documentSequenceList && documentSequenceList.length > 0) {
           // There can only be one documentSequence model in the list (posSearchKey is unique)
           docSeq = documentSequenceList.models[0];
-          // There exists already a document sequence, update it
-          docSeq.set('documentSequence', documentSequence);
-          docSeq.set('quotationDocumentSequence', quotationDocumentSequence);
+          // verify if the new values are higher
+          if (docSeq.get('documentSequence') > me.documentnoThreshold) {
+            me.documentnoThreshold = docSeq.get('documentSequence');
+          }
+          if (docSeq.get('quotationDocumentSequence') > me.quotationnoThreshold) {
+            me.quotationnoThreshold = docSeq.get('quotationDocumentSequence');
+          }
         } else {
           // There is not a document sequence for the pos, create it
           docSeq = new OB.Model.DocumentSequence();
           docSeq.set('posSearchKey', me.get('terminal').searchKey);
-          docSeq.set('documentSequence', documentSequence);
-          docSeq.set('quotationDocumentSequence', quotationDocumentSequence);
         }
-        OB.Dal.save(docSeq, null, function () {
-          OB.error(arguments);
+
+        // update the database
+        docSeq.set('documentSequence', me.documentnoThreshold);
+        docSeq.set('quotationDocumentSequence', me.quotationnoThreshold);
+        OB.Dal.save(docSeq, function () {
+          synchronizeCurrentOrder();
+        }, function () {
+          // nothing to do
         });
+
+      }, function () {
+        OB.debug("The 'c_document_sequence' table is locked");
       });
+    },
+
+    /**
+     * Updates the document sequence. This method should only be called when an order has been sent to the server
+     * If the order is a quotation, only update the quotationno
+     */
+    updateDocumentSequenceWhenOrderSaved: function (documentnoSuffix, quotationnoSuffix) {
+      if (quotationnoSuffix >= 0) {
+        documentnoSuffix = -1;
+      }
+      this.saveDocumentSequence(documentnoSuffix, quotationnoSuffix);
+    },
+
+    // get the first document number available
+    getLastDocumentnoSuffixInOrderlist: function () {
+      var lastSuffix = null;
+      if (OB.MobileApp.model.orderList.length > 0) {
+        var i = OB.MobileApp.model.orderList.models.length - 1;
+        while (lastSuffix === null && i >= 0) {
+          var order = OB.MobileApp.model.orderList.models[i];
+          if (!order.get('isPaid') && !order.get('isQuotation')) {
+            lastSuffix = order.get('documentnoSuffix');
+          }
+          i--;
+        }
+      }
+      if (lastSuffix === null || lastSuffix < this.documentnoThreshold) {
+        lastSuffix = this.documentnoThreshold;
+      }
+      return lastSuffix;
+    },
+    // get the first quotation number available
+    getLastQuotationnoSuffixInOrderlist: function () {
+      var lastSuffix = null;
+      if (OB.MobileApp.model.orderList.length > 0) {
+        var i = OB.MobileApp.model.orderList.models.length - 1;
+        while (lastSuffix === null && i >= 0) {
+          var order = OB.MobileApp.model.orderList.models[i];
+          if (order.get('isQuotation')) {
+            lastSuffix = order.get('quotationnoSuffix');
+          }
+          i--;
+        }
+      }
+      if (lastSuffix === null || lastSuffix < this.quotationnoThreshold) {
+        lastSuffix = this.quotationnoThreshold;
+      }
+      return lastSuffix;
+    },
+
+    // call this method to get a new order document number
+    getNextDocumentno: function () {
+      var next = this.getLastDocumentnoSuffixInOrderlist() + 1;
+      return {
+        documentnoSuffix: next,
+        documentNo: OB.MobileApp.model.get('terminal').docNoPrefix + '/' + OB.UTIL.padNumber(next, 7)
+      };
+    },
+    // call this method to get a new quotation document number
+    getNextQuotationno: function () {
+      var next = this.getLastQuotationnoSuffixInOrderlist() + 1;
+      return {
+        quotationnoSuffix: next,
+        documentNo: OB.MobileApp.model.get('terminal').quotationDocNoPrefix + '/' + OB.UTIL.padNumber(next, 7)
+      };
     },
 
     getPaymentName: function (key) {
