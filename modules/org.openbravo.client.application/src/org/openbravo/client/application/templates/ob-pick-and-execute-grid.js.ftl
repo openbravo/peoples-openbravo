@@ -47,7 +47,10 @@
   </#if>
   <#if data.lazyFiltering>
   lazyFiltering: ${data.lazyFiltering?string},
-  </#if>    
+  </#if>  
+  <#if data.alwaysFilterFksByIdentifier>
+  alwaysFilterFksByIdentifier: ${data.alwaysFilterFksByIdentifier?string},
+  </#if>   
   dummy: true
 </@compress>
 }

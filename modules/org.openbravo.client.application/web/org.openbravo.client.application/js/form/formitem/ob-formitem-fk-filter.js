@@ -167,7 +167,7 @@ isc.OBFKFilterTextItem.addProperties({
     this.multipleValueSeparator = ' or ';
 
     // if the filter by identifier has been disabled using grid configuration, set the filter type to 'id'
-    if (this.allowFkFilterByIdentifier === false) {
+    if (this.allowFkFilterByIdentifier === false && !grid.alwaysFilterFksByIdentifier) {
       this.filterType = 'id';
     }
   },
@@ -394,7 +394,7 @@ isc.OBFKFilterTextItem.addProperties({
       crit = this.replaceCriterionOperator(crit, value, this.operator);
     }
 
-    if (this.allowFkFilterByIdentifier === false) {
+    if (this.allowFkFilterByIdentifier === false && !this.grid.view.alwaysFilterFksByIdentifier) {
       this.filterType = 'id';
     }
 
@@ -554,7 +554,7 @@ isc.OBFKFilterTextItem.addProperties({
   },
 
   handleChanged: function (value) {
-    if (this._pickingValue || this.allowFkFilterByIdentifier === false) {
+    if (!this.grid.sourceWidget.alwaysFilterFksByIdentifier && (this._pickingValue || this.allowFkFilterByIdentifier === false)) {
       // if the filter text has changed because a value has been ficked from the filter drop down, use the id filter
       // do this also if the only filter type allowed is 'id'
       this.filterType = 'id';
