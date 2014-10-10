@@ -348,7 +348,9 @@ public class OrderGroupingProcessor {
     copyObject(orderLine, invoiceLine);
     invoiceLine.setTaxableAmount(BigDecimal.ZERO);
     invoiceLine.setInvoicedQuantity(orderLine.getOrderedQuantity());
-    invoiceLine.setGrossAmount(orderLine.getLineGrossAmount());
+    if (orderLine.getSalesOrder().getPriceList().isPriceIncludesTax()) {
+      invoiceLine.setGrossAmount(orderLine.getLineGrossAmount());
+    }
     invoiceLine.setSalesOrderLine(origOrderLine);
     origOrderLine.getInvoiceLineList().add(invoiceLine);
     origOrderLine.setInvoicedQuantity(origOrderLine.getOrderedQuantity());

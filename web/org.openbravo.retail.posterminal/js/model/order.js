@@ -402,11 +402,6 @@
           }, {
             silent: true
           });
-          if (!this.get('isQuotation')) {
-            line.set('price', 0, {
-              silent: true
-            });
-          }
         }
       }, this);
 
