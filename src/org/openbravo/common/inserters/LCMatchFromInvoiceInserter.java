@@ -38,7 +38,6 @@ public class LCMatchFromInvoiceInserter extends HqlInserter {
     Check.isTrue(IsIDFilter.instance.accept(strInvoiceLineID), "Value " + strInvoiceLineID
         + " is not a valid id.");
     String strWhereClause = " (il is null or il.id = :invlineid) ";
-    strWhereClause += "and (lcc.matched = false or lcc.invoiceLine.id = :invlineid) ";
     queryNamedParameters.put("invlineid", strInvoiceLineID);
 
     final String strInvoiceLineId = requestParameters.get("@InvoiceLine.id@");
