@@ -610,6 +610,13 @@
      */
     saveDocumentSequence: function (documentnoSuffix, quotationnoSuffix) {
       var me = this;
+      if (me.restartingDocNo === true) {
+        return;
+      }
+      //If documentnoSuffix === 0 || quotationnoSuffix === 0, it means that we have restarted documentNo prefix, so we block this method while we save the new documentNo in localStorage
+      if (documentnoSuffix === 0 || quotationnoSuffix === 0) {
+        me.restartingDocNo = true;
+      }
 
       /**
        * If for whatever reason the maxSuffix is not the current order suffix (most likely, the server returning a higher docno value)
@@ -622,7 +629,7 @@
           var orderlist = OB.MobileApp.model.orderList;
           if (orderlist && orderlist.models.length > 0 && orderlist.current) {
             if (orderlist.current.get('lines') && orderlist.current.get('lines').length === 0) {
-              if (orderlist.current.get('documentnoSuffix') <= me.documentnoThreshold) {
+              if (orderlist.current.get('documentnoSuffix') <= me.documentnoThreshold || me.documentnoThreshold === 0) {
                 orderlist.deleteCurrent();
               }
             }
@@ -630,10 +637,10 @@
           };
 
       // verify that the values are higher than the local variables
-      if (documentnoSuffix > this.documentnoThreshold) {
+      if (documentnoSuffix > this.documentnoThreshold || documentnoSuffix === 0) {
         this.documentnoThreshold = documentnoSuffix;
       }
-      if (quotationnoSuffix > this.quotationnoThreshold) {
+      if (quotationnoSuffix > this.quotationnoThreshold || quotationnoSuffix === 0) {
         this.quotationnoThreshold = quotationnoSuffix;
       }
 
@@ -646,11 +653,11 @@
         if (documentSequenceList && documentSequenceList.length > 0) {
           // There can only be one documentSequence model in the list (posSearchKey is unique)
           docSeq = documentSequenceList.models[0];
-          // verify if the new values are higher
-          if (docSeq.get('documentSequence') > me.documentnoThreshold) {
+          // verify if the new values are higher and if it is not undefined or 0
+          if (docSeq.get('documentSequence') > me.documentnoThreshold && documentnoSuffix !== 0) {
             me.documentnoThreshold = docSeq.get('documentSequence');
           }
-          if (docSeq.get('quotationDocumentSequence') > me.quotationnoThreshold) {
+          if (docSeq.get('quotationDocumentSequence') > me.quotationnoThreshold && quotationnoSuffix !== 0) {
             me.quotationnoThreshold = docSeq.get('quotationDocumentSequence');
           }
         } else {
@@ -664,12 +671,14 @@
         docSeq.set('quotationDocumentSequence', me.quotationnoThreshold);
         OB.Dal.save(docSeq, function () {
           synchronizeCurrentOrder();
+          me.restartingDocNo = false;
         }, function () {
           // nothing to do
+          me.restartingDocNo = false;
         });
 
       }, function () {
-        OB.debug("The 'c_document_sequence' table is locked");
+        me.restartingDocNo = false;
       });
     },
 
@@ -691,7 +700,7 @@
         var i = OB.MobileApp.model.orderList.models.length - 1;
         while (lastSuffix === null && i >= 0) {
           var order = OB.MobileApp.model.orderList.models[i];
-          if (!order.get('isPaid') && !order.get('isQuotation')) {
+          if (!order.get('isPaid') && !order.get('isQuotation') && order.get('docNoPrefix') === OB.MobileApp.model.get('terminal').docNoPrefix) {
             lastSuffix = order.get('documentnoSuffix');
           }
           i--;
@@ -709,7 +718,7 @@
         var i = OB.MobileApp.model.orderList.models.length - 1;
         while (lastSuffix === null && i >= 0) {
           var order = OB.MobileApp.model.orderList.models[i];
-          if (order.get('isQuotation')) {
+          if (order.get('isQuotation') && order.get('quotationDocNoPrefix') === OB.MobileApp.model.get('terminal').quotationDocNoPrefix) {
             lastSuffix = order.get('quotationnoSuffix');
           }
           i--;
