@@ -1585,15 +1585,6 @@
         delete item.product.img;
       });
 
-      // convert returns
-      if (jsonorder.gross < 0) {
-        _.forEach(jsonorder.payments, function (item) {
-          item.amount = -item.amount;
-          item.origAmount = -item.origAmount;
-          item.paid = -item.paid;
-        });
-      }
-
       return jsonorder;
     },
 

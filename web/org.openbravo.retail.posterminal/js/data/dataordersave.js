@@ -111,6 +111,14 @@
         OB.trace('Execution of pre order save hook OK.');
 
         receipt.set('obposAppCashup', OB.MobileApp.model.get('terminal').cashUpId);
+        // convert returns
+        if (receipt.getGross() < 0) {
+          _.forEach(receipt.get('payments').models, function (item) {
+            item.set('amount', -item.get('amount'));
+            item.set('origAmount', -item.get('origAmount'));
+            item.set('paid', -item.get('paid'));
+          });
+        }
         receipt.set('json', JSON.stringify(receipt.serializeToJSON()));
 
         OB.trace('Calculationg cashup information.');
