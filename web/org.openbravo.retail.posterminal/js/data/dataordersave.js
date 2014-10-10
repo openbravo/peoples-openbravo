@@ -30,9 +30,9 @@
           creationDate = new Date(),
           creationDateTransformed = new Date(creationDate.getUTCFullYear(), creationDate.getUTCMonth(), creationDate.getUTCDate(), creationDate.getUTCHours(), creationDate.getUTCMinutes(), creationDate.getUTCSeconds());
 
-      if(this.receipt.get('isQuotation')){
+      if (this.receipt.get('isQuotation')) {
         // The receipt is a quotation, verify the creationDate exist
-        if(this.receipt.get('creationDate')){
+        if (this.receipt.get('creationDate')) {
           creationDate = this.receipt.get('creationDate');
           creationDateTransformed = new Date(creationDate.getUTCFullYear(), creationDate.getUTCMonth(), creationDate.getUTCDate(), creationDate.getUTCHours(), creationDate.getUTCMinutes(), creationDate.getUTCSeconds());
         }
@@ -97,7 +97,7 @@
       this.receipt.set('created', creationDate.getTime());
       this.receipt.set('obposCreatedabsolute', OB.I18N.formatDateISO(creationDate)); // Absolute date in ISO format
       OB.trace('Executing pre order save hook.');
-      
+
       OB.UTIL.HookManager.executeHooks('OBPOS_PreOrderSave', {
         context: this,
         model: model,
