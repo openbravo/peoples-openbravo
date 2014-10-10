@@ -67,7 +67,7 @@ BEGIN
       END IF;    
     END IF;
     IF(DELETING) THEN
-      IF(v_Processed='Y' and :new.ismatchadjustment = 'N') THEN
+      IF(v_Processed='Y' and :old.ismatchadjustment = 'N') THEN
         RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
       END IF;
     END IF;
