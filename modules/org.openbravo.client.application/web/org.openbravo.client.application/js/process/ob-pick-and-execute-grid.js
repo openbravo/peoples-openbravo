@@ -142,6 +142,7 @@ isc.OBPickAndExecuteGrid.addProperties({
 
     this.orderByClause = this.gridProperties.orderByClause;
     this.sqlOrderByClause = this.gridProperties.sqlOrderByClause;
+    this.alwaysFilterFksByIdentifier = this.gridProperties.alwaysFilterFksByIdentifier;
 
     this.checkboxFieldProperties = isc.addProperties({}, this.checkboxFieldProperties | {}, {
       canFilter: true,
