@@ -239,6 +239,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     });
     this.set('order', receipt);
     orderList = new OB.Collection.OrderList(receipt);
+    OB.MobileApp.model.orderList = orderList;
     this.set('orderList', orderList);
     this.set('customer', new OB.Model.BusinessPartner());
     this.set('customerAddr', new OB.Model.BPLocation());
