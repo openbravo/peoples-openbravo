@@ -112,9 +112,6 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
       });
     }, this);
 
-    this.convertExpected();
-    this.setIgnoreStep3();
-
     this.set('cashUpReport', new Backbone.Collection());
     OB.Dal.find(OB.Model.CashUp, {
       'isbeingprocessed': 'N'
@@ -530,12 +527,5 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
         }
       }, null, null);
     }, null, this);
-  },
-  convertExpected: function () {
-    _.each(this.get('paymentList').models, function (model) {
-      model.set('foreignExpected', model.get('expected'));
-      var cExpected = OB.UTIL.currency.toDefaultCurrency(model.get('paymentMethod').currency, model.get('expected'));
-      model.set('expected', cExpected);
-    }, this);
   }
 });
