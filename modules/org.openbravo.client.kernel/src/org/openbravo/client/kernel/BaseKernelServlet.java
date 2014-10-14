@@ -103,6 +103,11 @@ public abstract class BaseKernelServlet extends HttpSecureAppServlet {
       super(response);
     }
 
+    @Override
+    public void sendRedirect(String arg0) throws IOException {
+      setRedirectTarget(arg0);
+    }
+
     public boolean isDoLogout() {
       return doLogout;
     }
