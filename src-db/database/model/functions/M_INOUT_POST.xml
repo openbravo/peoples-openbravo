@@ -114,6 +114,7 @@
     v_released  NUMBER;
     
     v_bp_isactive c_bpartner.isactive%Type;
+    v_IsQtyVariable M_Product.IsQuantityVariable%TYPE;
 
   BEGIN
   
@@ -227,7 +228,7 @@
       if(v_isreturndoctype = 'N' AND v_isSoTrx = 'Y' and v_DocAction<>'RC') then
         v_message := null;
         for Cur_OrderLine in (
-          select c_orderline_id, line
+          select c_orderline_id, line, m_product_id
           from m_inoutline
           where m_inout_id = v_Record_ID
           and c_orderline_id is not null
@@ -244,13 +245,19 @@
           from c_orderline
           where c_orderline_id = Cur_OrderLine.c_orderline_id;
 
-          if(v_QuantityOrder < v_qty) then
-            if v_message is null THEN
-              v_message := Cur_OrderLine.line;
-            ELSE
-              v_message := v_message || ', ' || Cur_OrderLine.line;
-            END IF;
-          end if;
+          SELECT IsQuantityVariable INTO v_IsQtyVariable
+          FROM M_Product
+          WHERE M_Product_ID = Cur_OrderLine.M_Product_ID;
+
+          IF(v_IsQtyVariable='N') THEN
+            if(v_QuantityOrder < v_qty) then
+              if v_message is null THEN
+                v_message := Cur_OrderLine.line;
+              ELSE
+                v_message := v_message || ', ' || Cur_OrderLine.line;
+              END IF;
+            end if;
+          END IF;
         end loop;
         if v_message is not null then
           RAISE_APPLICATION_ERROR(-20000, '@MovementQtyCheck@'||' '||'@Inlines@'||' '||v_message);
