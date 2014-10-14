@@ -1556,7 +1556,7 @@ OB.ViewFormProperties = {
     callback = function (resp, data, req) {
       var index1, index2, view = form.view,
           localRecord, status = resp.status,
-          sessionProperties, keepSelection, gridRefreshCallback, theGrid, theId, id = form.getValue('id');
+          sessionProperties, keepSelection, gridRefreshCallback, theGrid, theId, id;
 
       if (this.hasOwnProperty('previousExplicitOffline')) {
         isc.Offline.explicitOffline = this.previousExplicitOffline;
@@ -1565,6 +1565,7 @@ OB.ViewFormProperties = {
 
       // if no recordIndex then select explicitly
       if (recordIndex === -1) {
+        id = form.getValue('id');
         record = view.viewGrid.data.find('id', id);
         recordIndex = view.viewGrid.data.indexOf(record);
       }
@@ -1651,15 +1652,10 @@ OB.ViewFormProperties = {
         // remove any edit info in the grid
         view.viewGrid.discardEdits(recordIndex, null, false, isc.ListGrid.PROGRAMMATIC, true);
 
-        // Check if Id has changed 
-        if (id === form.getValue('id')) {
-          // Change some labels, set isNew as false
-          form.setNewState(false);
-        } else {
-          // New record, set isNew as true
-          form.setNewState(true);
-        }
-
+        // Change some labels:
+        //  * set isNew as false if we continue editing same record or we move to an existent one
+        //  * set isNew to true if autosaving record to start editing a new one
+        form.setNewState(form.isNewRecord());
 
         view.refreshParentRecord();
 
