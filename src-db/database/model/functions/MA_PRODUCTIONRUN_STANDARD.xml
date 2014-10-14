@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2015 Openbravo SLU
+* All portions are Copyright (C) 2001-2016 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -314,18 +314,32 @@
               v_warehouse_rule_id VARCHAR2(32);
             BEGIN
               v_AD_Pinstance_ID := GET_UUID();
-              
-              SELECT COALESCE(wrpp.m_warehouse_rule_id, sp.m_warehouse_rule_id) INTO v_warehouse_rule_id
-              FROM ma_wrphaseproduct wrpp
-                  JOIN ma_sequenceproduct sp ON wrpp.ma_sequenceproduct_id = sp.ma_sequenceproduct_id
-              WHERE wrpp.ma_wrphaseproduct_id = cur_wrpused.ma_wrphaseproduct_id;
+
+              BEGIN
+                SELECT COALESCE(wrpp.m_warehouse_rule_id, sp.m_warehouse_rule_id)
+                INTO v_warehouse_rule_id
+                FROM ma_wrphaseproduct wrpp
+                JOIN ma_sequenceproduct sp
+                ON wrpp.ma_sequenceproduct_id = sp.ma_sequenceproduct_id
+                WHERE wrpp.ma_wrphaseproduct_id = cur_wrpused.ma_wrphaseproduct_id;
+              EXCEPTION WHEN NO_DATA_FOUND THEN
+                v_warehouse_rule_id := NULL;
+              END;
+
               --Review no warehouse as parameter
-              M_GET_STOCK_PARAM(v_AD_Pinstance_ID, v_Record_ID, v_DoneQuantity*Cur_WRPUsed.MovementQty, v_Product_old, null, null, null, v_PlanOrg_ID, null, v_User_ID, v_Client_ID, v_warehouse_rule_id, v_UOM_old, v_Product_UOM_old, '325', v_Production_ID, v_PlanLine, '800105', null, 'N', v_pinstance_result, v_pinstance_msg);              
+              M_GET_STOCK_PARAM(v_AD_Pinstance_ID, v_Record_ID, v_DoneQuantity*Cur_WRPUsed.MovementQty, v_Product_old, null, null, null, v_PlanOrg_ID, null, v_User_ID, v_Client_ID, v_warehouse_rule_id, v_UOM_old, v_Product_UOM_old, '325', v_Production_ID, v_PlanLine, '800105', null, 'N', v_pinstance_result, v_pinstance_msg);
+
               -- Check result
-              SELECT result, errormsg
+              BEGIN
+                SELECT result, errormsg
                 INTO v_pinstance_result, v_pinstance_msg
-              FROM ad_pinstance
-              WHERE ad_pinstance_id = v_ad_pinstance_id;
+                FROM ad_pinstance
+                WHERE ad_pinstance_id = v_ad_pinstance_id;
+              EXCEPTION WHEN NO_DATA_FOUND THEN
+                v_pinstance_result := NULL;
+                v_pinstance_msg := NULL;
+              END;
+
               IF (v_pinstance_result = 0) THEN
                 -- Error on m_get_stock
                 RAISE_APPLICATION_ERROR(-20000, v_pinstance_msg);
