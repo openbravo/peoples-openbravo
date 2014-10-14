@@ -598,7 +598,7 @@ export.database: exports database structure and data to xml files.
   </target>
 
   <target name="run.api.test.javascript">
-    <ant dir="${base.src}" target="run.api.test.javascript" inheritAll="true" inheritRefs="true" />
+    <ant dir="${base.src.test}" target="run.api.test.javascript" inheritAll="true" inheritRefs="true" />
   </target>
   
   <target name="run.api.test.model" 

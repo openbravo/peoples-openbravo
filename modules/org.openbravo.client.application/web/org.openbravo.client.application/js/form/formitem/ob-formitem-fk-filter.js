@@ -67,6 +67,15 @@ isc.OBFKFilterTextItem.addProperties({
     this.displayField = this.criteriaDisplayField || OB.Constants.IDENTIFIER;
     this.valueField = this.criteriaDisplayField || OB.Constants.IDENTIFIER;
 
+    // if this field was being filtered by its id before being recreated, reset its filter type an its filterAuxCache
+    if (this.grid && this.grid.sourceWidget && this.grid.sourceWidget.filterByIdFields && this.grid.sourceWidget.filterByIdFields.contains(this.name)) {
+      this.filterType = 'id';
+      if (this.grid.sourceWidget.fkCacheCopy && this.grid.sourceWidget.fkCacheCopy.find('fieldName', this.name)) {
+        this.filterAuxCache = this.grid.sourceWidget.fkCacheCopy.find('fieldName', this.name).cache;
+      }
+
+    }
+
     this.pickListProperties = {
 
       // make sure that we send the same parameters as the grid
@@ -158,7 +167,7 @@ isc.OBFKFilterTextItem.addProperties({
     this.multipleValueSeparator = ' or ';
 
     // if the filter by identifier has been disabled using grid configuration, set the filter type to 'id'
-    if (this.allowFkFilterByIdentifier === false) {
+    if (this.allowFkFilterByIdentifier === false && !grid.alwaysFilterFksByIdentifier) {
       this.filterType = 'id';
     }
   },
@@ -385,7 +394,7 @@ isc.OBFKFilterTextItem.addProperties({
       crit = this.replaceCriterionOperator(crit, value, this.operator);
     }
 
-    if (this.allowFkFilterByIdentifier === false) {
+    if (this.allowFkFilterByIdentifier === false && !this.grid.view.alwaysFilterFksByIdentifier) {
       this.filterType = 'id';
     }
 
@@ -545,7 +554,7 @@ isc.OBFKFilterTextItem.addProperties({
   },
 
   handleChanged: function (value) {
-    if (this._pickingValue || this.allowFkFilterByIdentifier === false) {
+    if (!this.grid.sourceWidget.alwaysFilterFksByIdentifier && (this._pickingValue || this.allowFkFilterByIdentifier === false)) {
       // if the filter text has changed because a value has been ficked from the filter drop down, use the id filter
       // do this also if the only filter type allowed is 'id'
       this.filterType = 'id';
@@ -559,8 +568,8 @@ isc.OBFKFilterTextItem.addProperties({
   // if the filterType is ID, try to return the record ids instead of the record identifiers
   getCriteriaValue: function () {
     var value, values = this.getValue(),
-        record, i, criteriaValues = [],
-        recordId;
+        record, i, j, criteriaValues = [],
+        recordIds;
     if (values && this.filterType === 'id') {
       for (i = 0; i < values.length; i++) {
         value = values[i];
@@ -568,12 +577,16 @@ isc.OBFKFilterTextItem.addProperties({
           // if the value has the equals operator prefix, get rid of it
           value = value.substring(2);
         }
-        recordId = this.getRecordIdFromIdentifier(value);
-        if (!recordId) {
+        recordIds = this.getRecordIdsFromIdentifier(value);
+        if (!recordIds) {
           // if the record is not found  or it does not have an id, use the standard criteria value
           return this.Super('getCriteriaValue', arguments);
         } else {
-          criteriaValues.add(recordId);
+          for (j = 0; j < recordIds.length; j++) {
+            if (!criteriaValues.contains(recordIds[j])) {
+              criteriaValues.add(recordIds[j]);
+            }
+          }
         }
       }
       return criteriaValues;
@@ -582,14 +595,19 @@ isc.OBFKFilterTextItem.addProperties({
     }
   },
 
-  getRecordIdFromIdentifier: function (identifier) {
-    var recordId;
+  // given an identifier, returns an array of the filter picklist records that have that identifier 
+  getRecordIdsFromIdentifier: function (identifier) {
+    var records, recordIds = [],
+        i;
     if (this.pickList && this.pickList.data.find(OB.Constants.IDENTIFIER, identifier)) {
-      recordId = this.pickList.data.find(OB.Constants.IDENTIFIER, identifier)[OB.Constants.ID];
+      records = this.pickList.data.findAll(OB.Constants.IDENTIFIER, identifier);
     } else if (this.filterAuxCache && this.filterAuxCache.find(OB.Constants.IDENTIFIER, identifier)) {
-      recordId = this.filterAuxCache.find(OB.Constants.IDENTIFIER, identifier)[OB.Constants.ID];
+      records = this.filterAuxCache.findAll(OB.Constants.IDENTIFIER, identifier);
     }
-    return recordId;
+    for (i = 0; i < records.length; i++) {
+      recordIds.add(records[i][OB.Constants.ID]);
+    }
+    return recordIds;
   },
 
   getRecordIdentifierFromId: function (id) {

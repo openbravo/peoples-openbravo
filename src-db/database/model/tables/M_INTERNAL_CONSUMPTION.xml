@@ -61,11 +61,60 @@
         <default><![CDATA[DR]]></default>
         <onCreateDefault><![CDATA[CASE PROCESSED WHEN 'N' THEN 'DR' ELSE 'CO' END]]></onCreateDefault>
       </column>
+      <column name="AD_ORGTRX_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="C_PROJECT_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="C_CAMPAIGN_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="C_ACTIVITY_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="USER1_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="USER2_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="C_COSTCENTER_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="AD_CLIENT_MINTERNALCONSUMPTION">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MINTERNAL_CONSUMPTION">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="AD_ORGTRX_MINTERNALCONSUMPTION">
+        <reference local="AD_ORGTRX_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_ACTIVITY" name="C_ACTIVITYMINTERNALCONSUMPTION">
+        <reference local="C_ACTIVITY_ID" foreign="C_ACTIVITY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_CAMPAIGN" name="C_CAMPAIGNMINTERNALCONSUMPTION">
+        <reference local="C_CAMPAIGN_ID" foreign="C_CAMPAIGN_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_COSTCENTER" name="C_COSTCNTRMINTERNALCONSUMPTION">
+        <reference local="C_COSTCENTER_ID" foreign="C_COSTCENTER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_PROJECT" name="C_PROJECT_MINTERNALCONSUMPTION">
+        <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="USER1" name="USER1_M_INTERNALCONSUMPTION">
+        <reference local="USER1_ID" foreign="USER1_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="USER2" name="USER2_M_INTERNALCONSUMPTION">
+        <reference local="USER2_ID" foreign="USER2_ID"/>
       </foreign-key>
       <check name="M_INTERNAL_CONSUMPTION_ISA_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="M_INTERNAL_PROCESSED_CHECK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>

@@ -221,4 +221,19 @@ public class OBDateUtils {
     return date1.after(date2);
   }
 
+  /**
+   * Returns the last second of the day passed as argument
+   * 
+   * @param date
+   * 
+   */
+  public static Date getEndOfDay(Date day) {
+    Calendar cal = Calendar.getInstance();
+    cal.setTime(day);
+    cal.set(Calendar.HOUR_OF_DAY, cal.getMaximum(Calendar.HOUR_OF_DAY));
+    cal.set(Calendar.MINUTE, cal.getMaximum(Calendar.MINUTE));
+    cal.set(Calendar.SECOND, cal.getMaximum(Calendar.SECOND));
+    return cal.getTime();
+  }
+
 }

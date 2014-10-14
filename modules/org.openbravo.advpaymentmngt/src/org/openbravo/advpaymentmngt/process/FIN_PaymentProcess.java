@@ -738,6 +738,15 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
           return;
         }
 
+        if (FIN_Utility.invoicePaymentStatus(payment) == null) {
+          msg.setType("Error");
+          msg.setTitle(Utility.messageBD(conProvider, "Error", language));
+          msg.setMessage(String.format(OBMessageUtils.messageBD("APRM_NoPaymentMethod"), payment
+              .getPaymentMethod().getIdentifier(), payment.getDocumentNo(), payment.getAccount()
+              .getName()));
+          bundle.setResult(msg);
+          return;
+        }
         // Do not restore paid amounts if the payment is awaiting execution.
         boolean restorePaidAmounts = (FIN_Utility.seqnumberpaymentstatus(payment.getStatus())) == (FIN_Utility
             .seqnumberpaymentstatus(FIN_Utility.invoicePaymentStatus(payment)));

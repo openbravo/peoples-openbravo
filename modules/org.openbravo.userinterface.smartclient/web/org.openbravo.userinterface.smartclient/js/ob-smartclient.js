@@ -520,15 +520,12 @@ isc.TextItem.addProperties({
     return this.Super('useDisabledEventMask', arguments);
   },
 
-  // handles a corner case where the event of the previous field is called for the current field,
-  // refer issue https://issues.openbravo.com/view.php?id=26817. In this case, the event is not triggered.
-  handleKeyPress: function (event, eventInfo) {
-    var key = isc.EH.lastEvent.keyName;
-    if (key === 'Enter' && event.itemInfo && event.itemInfo.item && event.itemInfo.item.name && event.itemInfo.item.name !== this.name) {
-      return true;
-    } else {
-      return this.Super('handleKeyPress', arguments);
-    }
+  // store the item that was focused when the key is pressed
+  // this information is then used in the OBViewGrid.cellEditEnd function. See issue https://issues.openbravo.com/view.php?id=27730
+  _original_handleKeyDown: isc.TextItem.getPrototype().handleKeyDown,
+  handleKeyDown: function (event, eventInfo) {
+    this.form.lastKeyDownItem = this;
+    return this._original_handleKeyDown(event, eventInfo);
   }
 });
 
@@ -774,7 +771,7 @@ isc.RPCManager.addClassProperties({
   },
   _originalEvalResult: isc.RPCManager.evalResult,
   evalResult: function (request, response, results) {
-	// if the response contains an error status, call the errorCallback
+    // if the response contains an error status, call the errorCallback
     if (response.status !== isc.RPCResponse.STATUS_SUCCESS && isc.isA.Function(request.errorCallback)) {
       request.errorCallback(request, response);
     }

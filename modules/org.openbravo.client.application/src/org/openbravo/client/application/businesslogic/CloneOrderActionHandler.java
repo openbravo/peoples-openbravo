@@ -20,6 +20,7 @@ package org.openbravo.client.application.businesslogic;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -77,8 +78,15 @@ public class CloneOrderActionHandler extends BaseActionHandler {
       // Setting order date and scheduled delivery date of header and the order lines to current
       // date to avoid issues with tax rates. Refer issue
       // https://issues.openbravo.com/view.php?id=23671
-      objCloneOrder.setOrderDate(new Date());
-      objCloneOrder.setScheduledDeliveryDate(new Date());
+      Date date = new Date();
+      Calendar cal = Calendar.getInstance();
+      cal.setTime(date);
+      cal.set(Calendar.HOUR_OF_DAY, 0);
+      cal.set(Calendar.MINUTE, 0);
+      cal.set(Calendar.SECOND, 0);
+      cal.set(Calendar.MILLISECOND, 0);
+      objCloneOrder.setOrderDate(cal.getTime());
+      objCloneOrder.setScheduledDeliveryDate(cal.getTime());
 
       // save the cloned order object
       OBDal.getInstance().save(objCloneOrder);

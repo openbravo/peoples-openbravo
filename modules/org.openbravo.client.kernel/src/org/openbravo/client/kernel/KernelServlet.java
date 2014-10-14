@@ -84,8 +84,7 @@ public class KernelServlet extends BaseKernelServlet {
   // the inc and dec by passauthentication count must be synchronized
   // and static, there might be multiple kernelservlets and multiple threads
   // may use the same kernelservlet
-  // TODO: synchronize on the session object instead of on a static
-  protected static synchronized void incBypassAuthenticationCount(HttpServletRequest request) {
+  private static synchronized void incBypassAuthenticationCount(HttpServletRequest request) {
     HttpSession session = request.getSession(true);
     OBContext context = OBContext.getOBContext();
     boolean sessionForThisRequest = context == null
@@ -106,12 +105,18 @@ public class KernelServlet extends BaseKernelServlet {
         count += 1;
       }
       session.setAttribute("forcedSessionsRequestCount", count);
-      log.warn("The KernelServlet should not be used for unauthenticated access, this functionality is deprecated, "
+      log.warn("The KernelServlet should not be used for unauthenticated access (this request url: "
+          + request.getRequestURL()
+          + " - "
+          + request.getQueryString()
+          + "). This functionality is deprecated, "
+          + "use 'org.openbravo.mobile.core' instead of 'org.openbravo.client.kernel'; "
           + "see this issue https://issues.openbravo.com/view.php?id=27248 for more information");
     }
   }
 
-  protected static synchronized void decBypassAuthenticationCount(HttpSession session) {
+  private static synchronized void decBypassAuthenticationCount(HttpSession session,
+      HttpServletRequest request) {
     if (session != null && "Y".equals(session.getAttribute("forceLogin"))) {
       Integer count = (Integer) session.getAttribute("forcedSessionsRequestCount");
       count = (count != null ? count : 0) - 1;
@@ -122,7 +127,12 @@ public class KernelServlet extends BaseKernelServlet {
       } else {
         session.setAttribute("forcedSessionsRequestCount", count);
       }
-      log.warn("The KernelServlet should not be used for unauthenticated access, this functionality is deprecated, "
+      log.warn("The KernelServlet should not be used for unauthenticated access (this request url: "
+          + request.getRequestURL()
+          + " - "
+          + request.getQueryString()
+          + "). This functionality is deprecated, "
+          + "use 'org.openbravo.mobile.core' instead of 'org.openbravo.client.kernel'; "
           + "see this issue https://issues.openbravo.com/view.php?id=27248 for more information");
     }
   }
@@ -159,7 +169,7 @@ public class KernelServlet extends BaseKernelServlet {
 
     if (bypassAuthentication) {
       HttpSession session = request.getSession(false);
-      decBypassAuthenticationCount(session);
+      decBypassAuthenticationCount(session, request);
     }
   }
 

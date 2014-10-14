@@ -18,6 +18,8 @@
  */
 package org.openbravo.costing;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -46,6 +48,7 @@ import org.openbravo.service.db.DalBaseProcess;
  */
 public class CostingBackground extends DalBaseProcess {
   private static final Logger log4j = Logger.getLogger(CostingBackground.class);
+  public static final String AD_PROCESS_ID = "3F2B4AAC707B4CE7B98D2005CF7310B5";
   private ProcessLogger logger;
   private int maxTransactions = 0;
 
@@ -54,6 +57,7 @@ public class CostingBackground extends DalBaseProcess {
 
     logger = bundle.getLogger();
     OBError result = new OBError();
+    List<String> orgsWithRule = new ArrayList<String>();
     try {
       OBContext.setAdminMode(false);
       result.setType("Success");
@@ -73,7 +77,6 @@ public class CostingBackground extends DalBaseProcess {
       OBQuery<Organization> orgQry = OBDal.getInstance().createQuery(Organization.class,
           where.toString());
       List<Organization> orgs = orgQry.list();
-      List<String> orgsWithRule = new ArrayList<String>();
       if (orgs.size() == 0) {
         log4j.debug("No organizations with Costing Rule defined");
         logger.logln(OBMessageUtils.messageBD("Success"));
@@ -87,55 +90,60 @@ public class CostingBackground extends DalBaseProcess {
       // Fix the Not Processed flag for those Transactions with Cost Not Calculated
       setNotProcessedWhenNotCalculatedTransactions(orgsWithRule);
 
-      List<MaterialTransaction> trxs = getTransactionsBatch(orgsWithRule);
-      int counter = 0, total = trxs.size(), batch = 0;
-      while (counter < maxTransactions) {
-        batch++;
-        for (MaterialTransaction transaction : trxs) {
+      ScrollableResults trxs = getTransactions(orgsWithRule);
+      int counter = 0;
+      try {
+        while (trxs.next()) {
+          MaterialTransaction transaction = (MaterialTransaction) trxs.get()[0];
           counter++;
-          try {
-            log4j.debug("Start transaction process: " + transaction.getId());
-            CostingServer transactionCost = new CostingServer(transaction);
-            transactionCost.process();
-            transaction.setProcessed(true);
-            log4j.debug("Transaction processed: " + counter + "/" + total + " batch: " + batch);
-          } catch (OBException e) {
-            String resultMsg = OBMessageUtils.parseTranslation(e.getMessage());
-            log4j.error(e);
-            logger.logln(resultMsg);
-            result.setType("Error");
-            result.setTitle(OBMessageUtils.messageBD("Error"));
-            result.setMessage(resultMsg);
-            bundle.setResult(result);
-            return;
-          } catch (Exception e) {
-            result = OBMessageUtils.translateError(bundle.getConnection(), bundle.getContext()
-                .toVars(), OBContext.getOBContext().getLanguage().getLanguage(), e.getMessage());
-            log4j.error(result.getMessage(), e);
-            logger.logln(result.getMessage());
-            bundle.setResult(result);
-            return;
+          if ("S".equals(transaction.getCostingStatus())) {
+            // Do not calculate trx in skip status.
+            continue;
           }
-
+          log4j.debug("Start transaction process: " + transaction.getId());
+          OBDal.getInstance().refresh(transaction);
+          CostingServer transactionCost = new CostingServer(transaction);
+          transactionCost.process();
+          log4j.debug("Transaction processed: " + counter + "/" + maxTransactions);
           // If cost has been calculated successfully do a commit.
-          OBDal.getInstance().getConnection().commit();
+          OBDal.getInstance().getConnection(true).commit();
+          if (counter % 1 == 0) {
+            OBDal.getInstance().getSession().clear();
+          }
         }
-        OBDal.getInstance().getSession().clear();
-        trxs = getTransactionsBatch(orgsWithRule);
-        total += trxs.size();
+      } finally {
+        try {
+          trxs.close();
+        } catch (Exception ignore) {
+        }
       }
 
       logger.logln(OBMessageUtils.messageBD("Success"));
       bundle.setResult(result);
     } catch (OBException e) {
       OBDal.getInstance().rollbackAndClose();
+      String message = OBMessageUtils.parseTranslation(bundle.getConnection(), bundle.getContext()
+          .toVars(), OBContext.getOBContext().getLanguage().getLanguage(), e.getMessage());
+      result.setMessage(message);
+      result.setType("Error");
+      log4j.error(message, e);
+      logger.logln(message);
+      bundle.setResult(result);
+      return;
+    } catch (Exception e) {
       result = OBMessageUtils.translateError(bundle.getConnection(), bundle.getContext().toVars(),
           OBContext.getOBContext().getLanguage().getLanguage(), e.getMessage());
+      result.setType("Error");
+      result.setTitle(OBMessageUtils.messageBD("Error"));
       log4j.error(result.getMessage(), e);
       logger.logln(result.getMessage());
       bundle.setResult(result);
       return;
     } finally {
+      // Set the processed flag to true to those transactions whose cost has been calculated.
+      if (!orgsWithRule.isEmpty()) {
+        setCalculatedTransactionsAsProcessed(orgsWithRule);
+      }
       OBContext.restorePreviousMode();
     }
   }
@@ -144,22 +152,32 @@ public class CostingBackground extends DalBaseProcess {
     ScrollableResults trxs = getTransactionsNotCalculated(orgsWithRule);
     while (trxs.next()) {
       MaterialTransaction transaction = (MaterialTransaction) trxs.get(0);
-      transaction.setProcessed(false);
+      transaction.setProcessed(Boolean.FALSE);
       OBDal.getInstance().save(transaction);
     }
     OBDal.getInstance().flush();
   }
 
-  private List<MaterialTransaction> getTransactionsBatch(List<String> orgsWithRule) {
+  private void setCalculatedTransactionsAsProcessed(List<String> orgsWithRule) {
+    ScrollableResults trxs = getTransactionsCalculated(orgsWithRule);
+    while (trxs.next()) {
+      MaterialTransaction transaction = (MaterialTransaction) trxs.get(0);
+      transaction.setProcessed(Boolean.TRUE);
+      OBDal.getInstance().save(transaction);
+    }
+    OBDal.getInstance().flush();
+  }
+
+  private ScrollableResults getTransactions(List<String> orgsWithRule) {
     StringBuffer where = new StringBuffer();
     where.append(" as trx");
     where.append(" join trx." + MaterialTransaction.PROPERTY_PRODUCT + " as p");
     where.append(" where trx." + MaterialTransaction.PROPERTY_ISPROCESSED + " = false");
-    where.append("   and trx." + MaterialTransaction.PROPERTY_COSTINGSTATUS + " <> 'S'");
     where.append("   and p." + Product.PROPERTY_PRODUCTTYPE + " = 'I'");
     where.append("   and p." + Product.PROPERTY_STOCKED + " = true");
     where.append("   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " <= :now");
     where.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
+    // TODO: Check order for backdated transactions ??
     where.append(" order by trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE);
     where.append("   , trx." + MaterialTransaction.PROPERTY_MOVEMENTLINE);
     // This makes M- to go before M+. In Oracle it must go with desc as if not, M+ would go before
@@ -172,6 +190,7 @@ public class CostingBackground extends DalBaseProcess {
     }
     OBQuery<MaterialTransaction> trxQry = OBDal.getInstance().createQuery(
         MaterialTransaction.class, where.toString());
+
     trxQry.setNamedParameter("now", new Date());
     trxQry.setFilterOnReadableOrganization(false);
     trxQry.setNamedParameter("orgs", orgsWithRule);
@@ -179,9 +198,14 @@ public class CostingBackground extends DalBaseProcess {
     if (maxTransactions == 0) {
       maxTransactions = trxQry.count();
     }
-    trxQry.setMaxResult(1000);
+    try {
+      OBDal.getInstance().getConnection().setHoldability(ResultSet.HOLD_CURSORS_OVER_COMMIT);
+    } catch (SQLException e) {
+      log4j.error("error: " + e.getMessage(), e);
+      throw new OBException(e.getMessage());
+    }
 
-    return trxQry.list();
+    return trxQry.scroll(ScrollMode.FORWARD_ONLY);
   }
 
   /**
@@ -198,6 +222,24 @@ public class CostingBackground extends DalBaseProcess {
     trxQry.setFilterOnReadableOrganization(false);
     trxQry.setNamedParameter("orgs", orgsWithRule);
     trxQry.setFetchSize(10);
+
+    return trxQry.scroll(ScrollMode.FORWARD_ONLY);
+  }
+
+  /**
+   * Get Transactions with Processed flag = 'N' but it's cost is Calculated
+   */
+  private ScrollableResults getTransactionsCalculated(List<String> orgsWithRule) {
+    StringBuffer where = new StringBuffer();
+    where.append(" as trx");
+    where.append(" where trx." + MaterialTransaction.PROPERTY_ISPROCESSED + " = false");
+    where.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
+    where.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
+    OBQuery<MaterialTransaction> trxQry = OBDal.getInstance().createQuery(
+        MaterialTransaction.class, where.toString());
+    trxQry.setFilterOnReadableOrganization(false);
+    trxQry.setNamedParameter("orgs", orgsWithRule);
+    trxQry.setFetchSize(100);
 
     return trxQry.scroll(ScrollMode.FORWARD_ONLY);
   }

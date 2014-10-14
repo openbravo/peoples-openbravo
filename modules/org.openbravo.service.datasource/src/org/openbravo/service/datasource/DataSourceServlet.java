@@ -48,6 +48,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
+import org.hibernate.exception.SQLGrammarException;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Entity;
@@ -706,6 +707,9 @@ public class DataSourceServlet extends BaseKernelServlet {
 
   private void handleException(Exception e, HttpServletResponse response) throws IOException {
     log4j.error(e.getMessage(), e);
+    if (e instanceof SQLGrammarException) {
+      log.error(((SQLGrammarException) e).getSQL());
+    }
     if (!response.isCommitted()) {
       final JSONObject jsonResult = new JSONObject();
       final JSONObject jsonResponse = new JSONObject();

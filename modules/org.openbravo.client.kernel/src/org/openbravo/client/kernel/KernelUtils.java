@@ -292,7 +292,7 @@ public class KernelUtils {
     }
   }
 
-  private int computeLowLevelCode(Module module, List<Module> modules) {
+  protected int computeLowLevelCode(Module module, List<Module> modules) {
     if (module.getId().equals("0")) {
       return 0;
     }

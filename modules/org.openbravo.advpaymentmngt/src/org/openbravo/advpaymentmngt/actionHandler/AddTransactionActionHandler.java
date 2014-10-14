@@ -56,7 +56,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class AddTransactionActionHandler extends BaseProcessActionHandler {
-  final private static Logger log = LoggerFactory.getLogger(AddTransactionActionHandler.class);
+  private static final Logger log = LoggerFactory.getLogger(AddTransactionActionHandler.class);
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {

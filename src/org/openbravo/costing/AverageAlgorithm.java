@@ -23,10 +23,12 @@ import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.costing.CostingServer.TrxType;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
@@ -43,18 +45,7 @@ public class AverageAlgorithm extends CostingAlgorithm {
     BigDecimal trxCost = super.getTransactionCost();
     // If it is a transaction whose cost has not been calculated based on current average cost
     // calculate new average cost.
-    switch (trxType) {
-    case Receipt:
-    case ReceiptVoid:
-    case ShipmentVoid:
-    case ShipmentReturn:
-    case ShipmentNegative:
-    case InventoryIncrease:
-    case IntMovementTo:
-    case InternalConsNegative:
-    case InternalConsVoid:
-    case BOMProduct:
-    case ManufacturingProduced:
+    if (modifiesAverage(trxType)) {
       Costing currentCosting = getProductCost();
       BigDecimal trxCostWithSign = (transaction.getMovementQuantity().signum() == -1) ? trxCost
           .negate() : trxCost;
@@ -83,8 +74,6 @@ public class AverageAlgorithm extends CostingAlgorithm {
       }
       insertCost(currentCosting, newCost, currentStock, trxCostWithSign);
 
-    default:
-      break;
     }
     return trxCost;
   }
@@ -107,6 +96,17 @@ public class AverageAlgorithm extends CostingAlgorithm {
   }
 
   /**
+   * Closing inventories cost is calculated with the current stock balance.
+   */
+  protected BigDecimal getInventoryClosingCost() {
+    BigDecimal cost = CostAdjustmentUtils.getValuedStockOnMovementDateByAttrAndLocator(
+        transaction.getProduct(), costOrg, transaction.getMovementDate(), costDimensions,
+        transaction.getStorageBin(), transaction.getAttributeSetValue(), costCurrency,
+        costingRule.isBackdatedTransactionsFixed());
+    return cost;
+  }
+
+  /**
    * In case the Default Cost is used it prioritizes the existence of an average cost.
    */
   @Override
@@ -115,6 +115,14 @@ public class AverageAlgorithm extends CostingAlgorithm {
       return getOutgoingTransactionCost();
     }
     return super.getDefaultCost();
+  }
+
+  @Override
+  protected BigDecimal getReceiptDefaultCost() {
+    if (getProductCost() != null) {
+      return getOutgoingTransactionCost();
+    }
+    return super.getReceiptDefaultCost();
   }
 
   private void insertCost(Costing currentCosting, BigDecimal newCost, BigDecimal currentStock,
@@ -132,6 +140,8 @@ public class AverageAlgorithm extends CostingAlgorithm {
       }
     }
     Costing cost = OBProvider.getInstance().get(Costing.class);
+    // TODO: Review this
+    // cost.setNewOBObject(true);
     cost.setCost(newCost);
     cost.setCurrency(costCurrency);
     cost.setStartingDate(transaction.getTransactionProcessDate());
@@ -205,8 +215,12 @@ public class AverageAlgorithm extends CostingAlgorithm {
   }
 
   private Costing getProductCost() {
-    Product product = transaction.getProduct();
-    Date date = transaction.getTransactionProcessDate();
+    return getProductCost(transaction.getTransactionProcessDate(), transaction.getProduct(),
+        costDimensions, costOrg);
+  }
+
+  protected static Costing getProductCost(Date date, Product product,
+      HashMap<CostDimension, BaseOBObject> costDimensions, Organization costOrg) {
     StringBuffer where = new StringBuffer();
     where.append(Costing.PROPERTY_PRODUCT + ".id = :product");
     where.append("  and " + Costing.PROPERTY_STARTINGDATE + " <= :startingDate");
@@ -234,9 +248,9 @@ public class AverageAlgorithm extends CostingAlgorithm {
     }
     // FIXME: remove when manufacturing costs are fully migrated
     if (product.isProduction()) {
-      costQry.setNamedParameter("client", costOrg.getClient());
+      costQry.setNamedParameter("client", costOrg.getClient().getId());
     } else {
-      costQry.setNamedParameter("org", costOrg);
+      costQry.setNamedParameter("org", costOrg.getId());
     }
 
     List<Costing> costList = costQry.list();
@@ -259,6 +273,26 @@ public class AverageAlgorithm extends CostingAlgorithm {
       // Error parsing the date.
       log4j.error("Error parsing the date.", e);
       return null;
+    }
+  }
+
+  protected static boolean modifiesAverage(TrxType trxType) {
+    switch (trxType) {
+    case Receipt:
+    case ReceiptVoid:
+    case ShipmentVoid:
+    case ShipmentReturn:
+    case ShipmentNegative:
+    case InventoryIncrease:
+    case InventoryOpening:
+    case IntMovementTo:
+    case InternalConsNegative:
+    case InternalConsVoid:
+    case BOMProduct:
+    case ManufacturingProduced:
+      return true;
+    default:
+      return false;
     }
   }
 

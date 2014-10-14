@@ -45,8 +45,6 @@
     }
 
     function submitThisPage(strCommand) {
-      disableButton('buttonOK');
-      disableButton('buttonCancel');
       if (validate(strCommand)) {
         var inp= document.frmMain.inpId; 
         var total = document.frmMain.inpId.length;
@@ -55,6 +53,8 @@
             document.frmMain['inpmovementqty' + inp[i].value].removeAttribute("disabled");
         }
         submitCommandForm(strCommand, false, null, '../ad_actionButton/CreateFrom.html', '_self');
+        disableButton('buttonOK');
+        disableButton('buttonCancel');
         return true;
       }
       return true;
