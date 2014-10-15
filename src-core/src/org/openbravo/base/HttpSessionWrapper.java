@@ -69,20 +69,26 @@ public class HttpSessionWrapper implements HttpSession {
     return null;
   }
 
-  @Deprecated
+  /**
+   * @deprecated
+   */
   @Override
   public javax.servlet.http.HttpSessionContext getSessionContext() {
     // TODO Auto-generated method stub
     return null;
   }
 
-  @Deprecated
+  /**
+   * @deprecated
+   */
   @Override
   public Object getValue(String arg0) {
     return null;
   }
 
-  @Deprecated
+  /**
+   * @deprecated
+   */
   @Override
   public String[] getValueNames() {
     return null;
@@ -100,6 +106,9 @@ public class HttpSessionWrapper implements HttpSession {
     return false;
   }
 
+  /**
+   * @deprecated
+   */
   @Deprecated
   @Override
   public void putValue(String arg0, Object arg1) {
@@ -112,7 +121,9 @@ public class HttpSessionWrapper implements HttpSession {
     setAttribute(arg0, null);
   }
 
-  @Deprecated
+  /**
+   * @deprecated
+   */
   @Override
   public void removeValue(String arg0) {
     // TODO Auto-generated method stub
