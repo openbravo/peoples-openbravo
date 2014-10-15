@@ -140,6 +140,7 @@ public class PriceDifferenceProcess {
 
     materialTransaction.setCheckpricedifference(Boolean.FALSE);
     OBDal.getInstance().save(materialTransaction);
+    OBDal.getInstance().flush();
   }
 
   public static JSONObject processPriceDifferenceTransaction(MaterialTransaction materialTransaction)
