@@ -2206,6 +2206,10 @@
           });
           order.set('orderDate', moment(model.orderDate.toString(), "YYYY-MM-DD").toDate());
           order.set('creationDate', moment(model.creationDate.toString(), "YYYY-MM-DD hh:m:ss.s").toDate());
+          if (model.isQuotation) {
+            // isQuotation Set milliseconds to 0.
+            order.set('creationDate', moment(model.creationDate.toString(), "YYYY-MM-DD hh:m:ss").toDate());
+          }
           //order.set('payments', model.receiptPayments);
           payments = new PaymentLineList();
           _.each(model.receiptPayments, function (iter) {
