@@ -768,12 +768,9 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
         try {
           BusinessPartner businessPartner = payment.getBusinessPartner();
           BigDecimal paidAmount = BigDecimal.ZERO;
-          String fromCurrency = payment.getCurrency().getId();
-          String toCurrency = "";
           if (!(businessPartner == null)) {
             // When credit is used (consumed) we compensate so_creditused as this amount is already
             // included in the payment details. Credit consumed should not affect to so_creditused
-            toCurrency = businessPartner.getCurrency().getId();
             if (payment.getGeneratedCredit().compareTo(BigDecimal.ZERO) == 0
                 && payment.getUsedCredit().compareTo(BigDecimal.ZERO) != 0) {
               if (isReceipt) {
@@ -842,11 +839,13 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                         .getInvoicePaymentSchedule() != null ? paymentScheduleDetail
                         .getInvoicePaymentSchedule().getInvoice() : null;
                     paidAmount = BigDecimal.ZERO;
-                    fromCurrency = payment.getCurrency().getId();
-                    toCurrency = "";
                     if (!(businessPartner == null)) {
-                      toCurrency = businessPartner.getCurrency().getId();
-                      if (!fromCurrency.equals(toCurrency)) {
+                      final Currency fromCurrency = payment.getCurrency();
+                      // At this point the BP must have a currency, because it is set when
+                      // processing the payment associated to the invoice
+                      final Currency toCurrency = businessPartner.getCurrency();
+                      if (fromCurrency != null && toCurrency != null
+                          && !fromCurrency.getId().equals(toCurrency.getId())) {
                         BigDecimal exchangeRate = BigDecimal.ZERO;
                         // check at invoice document level
                         List<ConversionRateDoc> conversionRateDocumentForInvoice = getConversionRateDocumentForInvoice(
@@ -856,7 +855,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                         } else {
                           // global
                           exchangeRate = getConversionRate(payment.getOrganization().getId(),
-                              fromCurrency, toCurrency,
+                              fromCurrency.getId(), toCurrency.getId(),
                               invoiceForConversion != null ? invoiceForConversion.getInvoiceDate()
                                   : payment.getPaymentDate());
                         }
