@@ -285,7 +285,9 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
           + objCloneOrder.getDocumentNo() + " @beenCreated@");
       bundle.setResult(result);
     } catch (Exception e) {
-      throw new OBException(e.getMessage());
+      final OBError error = OBMessageUtils.translateError(bundle.getConnection(), vars,
+          vars.getLanguage(), e.getCause().getMessage());
+      bundle.setResult(error);
     }
   }
 
