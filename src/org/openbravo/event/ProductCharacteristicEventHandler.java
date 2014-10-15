@@ -33,6 +33,7 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.client.kernel.event.EntityDeleteEvent;
 import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
@@ -55,8 +56,18 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
     return entities;
   }
 
-  public void onSave(@Observes
-  EntityNewEvent event) {
+  public void onDelete(@Observes EntityDeleteEvent event) {
+    if (!isValidEvent(event)) {
+      return;
+    }
+    final ProductCharacteristic prCh = (ProductCharacteristic) event.getTargetInstance();
+    if (prCh.isVariant() && prCh.getProduct().isGeneric()
+        && !prCh.getProduct().getProductGenericProductList().isEmpty()) {
+      throw new OBException(OBMessageUtils.messageBD("DeleteVariantChWithVariantsError"));
+    }
+  }
+
+  public void onSave(@Observes EntityNewEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -97,8 +108,7 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
     }
   }
 
-  public void onUpdate(@Observes
-  EntityUpdateEvent event) {
+  public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
