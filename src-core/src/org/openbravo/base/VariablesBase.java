@@ -67,7 +67,8 @@ public class VariablesBase {
   @SuppressWarnings("unchecked")
   public VariablesBase(HttpServletRequest request) {
     if (request == null) {
-      log4j.warn("Creating a VariablesBase with a null request");
+      // logging exception to obtain stack trace to pinpoint the cause
+      log4j.warn("Creating a VariablesBase with a null request", new Exception());
       this.session = new HttpSessionWrapper();
       this.isMultipart = false;
     } else {
