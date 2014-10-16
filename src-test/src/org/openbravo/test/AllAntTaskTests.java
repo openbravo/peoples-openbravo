@@ -149,9 +149,8 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     ClassicSelectorTest.class,
 
     // Accounting
-    RecordID2Test.class,
+   RecordID2Test.class })
 
-    // Costing
-    TestCosting.class })
+
 public class AllAntTaskTests {
 }

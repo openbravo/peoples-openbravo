@@ -81,6 +81,7 @@ public class DimensionDisplayUtility {
   public static final String ARCreditMemo = "ARC";
   public static final String Reconciliation = "REC";
   public static final String ARReceipt = "ARR";
+  public static final String MatInternalConsumption = "MIC";
 
   /** Session variable **/
   public static final String IsAcctDimCentrally = "$IsAcctDimCentrally";

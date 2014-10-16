@@ -18,7 +18,9 @@
  */
 package org.openbravo.costing;
 
+import java.text.ParseException;
 import java.util.Date;
+import java.util.Map;
 import java.util.Set;
 
 import org.codehaus.jettison.json.JSONException;
@@ -27,6 +29,7 @@ import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
@@ -37,107 +40,136 @@ import org.openbravo.model.materialmgmt.cost.CostAdjustment;
 import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
 import org.openbravo.model.materialmgmt.cost.CostingRule;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
-import org.openbravo.scheduling.Process;
-import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.scheduling.ProcessLogger;
 import org.openbravo.service.db.DbUtility;
+import org.openbravo.service.json.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FixBackdatedTransactionsProcess implements Process {
+public class FixBackdatedTransactionsProcess extends BaseProcessActionHandler {
   private ProcessLogger logger;
   private static final Logger log4j = LoggerFactory
       .getLogger(FixBackdatedTransactionsProcess.class);
   private static CostAdjustment costAdjHeader = null;
 
   @Override
-  public void execute(ProcessBundle bundle) throws Exception {
+  protected JSONObject doExecute(Map<String, Object> parameters, String content) {
     costAdjHeader = null;
-    logger = bundle.getLogger();
+    JSONObject jsonResponse = new JSONObject();
+
     OBError msg = new OBError();
-    final String ruleId = (String) bundle.getParams().get("M_Costing_Rule_ID");
-    CostingRule rule = OBDal.getInstance().get(CostingRule.class, ruleId);
-    rule.setBackdatedTransactionsFixed(Boolean.TRUE);
-    OBDal.getInstance().save(rule);
-
+    JSONObject jsonRequest;
     try {
-      OBContext.setAdminMode(false);
-      OrganizationStructureProvider osp = OBContext.getOBContext()
-          .getOrganizationStructureProvider(rule.getClient().getId());
-      final Set<String> childOrgs = osp.getChildTree(rule.getOrganization().getId(), true);
+      jsonRequest = new JSONObject(content);
+      JSONObject jsonparams = jsonRequest.getJSONObject("_params");
+      final String ruleId = jsonRequest.getString("M_Costing_Rule_ID");
+      Date fixbackdatedfrom = null;
+      CostingRule rule = OBDal.getInstance().get(CostingRule.class, ruleId);
+      rule.setBackdatedTransactionsFixed(Boolean.TRUE);
+      OBDal.getInstance().save(rule);
 
-      // TODO: Discuss filter by date when there are periods closed.
-      ScrollableResults transactions = getTransactions(childOrgs, rule.getStartingDate(),
-          rule.getEndingDate());
-      int i = 0;
+      if (jsonparams.has("fixbackdatedfrom")) {
+        try {
+          fixbackdatedfrom = JsonUtils.createDateFormat().parse(
+              jsonparams.getString("fixbackdatedfrom"));
+        } catch (ParseException ignore) {
+        }
+      } else {
+        fixbackdatedfrom = rule.getStartingDate();
+      }
+      rule.setFixbackdatedfrom(fixbackdatedfrom);
       try {
-        while (transactions.next()) {
-          MaterialTransaction trx = (MaterialTransaction) transactions.get()[0];
-          if (CostAdjustmentUtils.isNeededBackdatedCostAdjustment(trx,
-              rule.isWarehouseDimension(), rule.getStartingDate())) {
-            createCostAdjustmenHeader(rule.getOrganization());
-            CostAdjustmentLine cal = CostAdjustmentUtils.insertCostAdjustmentLine(trx,
-                costAdjHeader, null, Boolean.TRUE, trx.getMovementDate());
-            cal.setBackdatedTrx(Boolean.TRUE);
-            OBDal.getInstance().save(cal);
-            i++;
-            OBDal.getInstance().flush();
-            if ((i % 100) == 0) {
-              OBDal.getInstance().getSession().clear();
-              // Reload rule after clear session.
-              rule = OBDal.getInstance().get(CostingRule.class, ruleId);
+        OBContext.setAdminMode(false);
+        OrganizationStructureProvider osp = OBContext.getOBContext()
+            .getOrganizationStructureProvider(rule.getClient().getId());
+        final Set<String> childOrgs = osp.getChildTree(rule.getOrganization().getId(), true);
+
+        ScrollableResults transactions = getTransactions(childOrgs, fixbackdatedfrom,
+            rule.getEndingDate());
+        int i = 0;
+        try {
+          while (transactions.next()) {
+            MaterialTransaction trx = (MaterialTransaction) transactions.get()[0];
+            if (CostAdjustmentUtils.isNeededBackdatedCostAdjustment(trx,
+                rule.isWarehouseDimension(), rule.getStartingDate())) {
+              createCostAdjustmenHeader(rule.getOrganization());
+              CostAdjustmentLine cal = CostAdjustmentUtils.insertCostAdjustmentLine(trx,
+                  costAdjHeader, null, Boolean.TRUE, trx.getMovementDate());
+              cal.setBackdatedTrx(Boolean.TRUE);
+              OBDal.getInstance().save(cal);
+              i++;
+              OBDal.getInstance().flush();
+              if ((i % 100) == 0) {
+                OBDal.getInstance().getSession().clear();
+                // Reload rule after clear session.
+                rule = OBDal.getInstance().get(CostingRule.class, ruleId);
+              }
             }
           }
-        }
-      } finally {
-        transactions.close();
-      }
-
-    } catch (final Exception e) {
-      OBDal.getInstance().rollbackAndClose();
-      String message = DbUtility.getUnderlyingSQLException(e).getMessage();
-      logger.log(message);
-      log4j.error(message, e);
-      msg.setType("Error");
-      msg.setTitle(OBMessageUtils.messageBD("Error"));
-      msg.setMessage(message);
-      bundle.setResult(msg);
-      return;
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-
-    if (costAdjHeader != null) {
-      try {
-        JSONObject message = CostAdjustmentProcess.doProcessCostAdjustment(costAdjHeader);
-
-        if (message.get("severity") != "success") {
-          throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@") + ": "
-              + costAdjHeader.getDocumentNo() + " - " + message.getString("text"));
+        } finally {
+          transactions.close();
         }
 
-        msg.setType((String) message.get("severity"));
-        msg.setTitle((String) message.get("title"));
-        msg.setMessage((String) message.get("text"));
-      } catch (JSONException e) {
-        throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@"));
-      } catch (Exception e) {
+      } catch (final Exception e) {
         OBDal.getInstance().rollbackAndClose();
         String message = DbUtility.getUnderlyingSQLException(e).getMessage();
         logger.log(message);
         log4j.error(message, e);
-        msg.setType("Error");
-        msg.setTitle(OBMessageUtils.messageBD("Error"));
-        msg.setMessage(message);
-        bundle.setResult(msg);
-        return;
-      }
-    } else {
-      msg.setType("Success");
-      msg.setTitle(OBMessageUtils.messageBD("Success"));
-    }
 
-    bundle.setResult(msg);
+        JSONObject errorMessage = new JSONObject();
+        errorMessage.put("severity", "error");
+        errorMessage.put("text", e.getMessage());
+        jsonResponse.put("message", message);
+        return jsonResponse;
+
+      } finally {
+        OBContext.restorePreviousMode();
+      }
+
+      if (costAdjHeader != null) {
+        try {
+          JSONObject message = CostAdjustmentProcess.doProcessCostAdjustment(costAdjHeader);
+
+          if (message.get("severity") != "success") {
+            throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@")
+                + ": " + costAdjHeader.getDocumentNo() + " - " + message.getString("text"));
+          }
+
+          msg.setType((String) message.get("severity"));
+          msg.setTitle((String) message.get("title"));
+          msg.setMessage((String) message.get("text"));
+        } catch (JSONException e) {
+          throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@"));
+        } catch (Exception e) {
+          OBDal.getInstance().rollbackAndClose();
+          String message = DbUtility.getUnderlyingSQLException(e).getMessage();
+          logger.log(message);
+          log4j.error(message, e);
+          JSONObject errorMessage = new JSONObject();
+
+          errorMessage.put("severity", "error");
+          errorMessage.put("text", e.getMessage());
+          jsonResponse.put("message", message);
+          return jsonResponse;
+
+        }
+      } else {
+        msg.setType("Success");
+        msg.setMessage(OBMessageUtils.messageBD("Success"));
+      }
+
+      JSONObject errorMessage = new JSONObject();
+
+      errorMessage.put("severity", "success");
+      errorMessage.put("text", msg.getMessage());
+      jsonResponse.put("message", errorMessage);
+
+    } catch (JSONException e2) {
+
+      e2.printStackTrace();
+    }
+    return jsonResponse;
+
   }
 
   private ScrollableResults getTransactions(Set<String> childOrgs, Date startDate, Date endDate) {
@@ -171,4 +203,5 @@ public class FixBackdatedTransactionsProcess implements Process {
       costAdjHeader = CostAdjustmentUtils.insertCostAdjustmentHeader(org, "BDT");
     }
   }
+
 }

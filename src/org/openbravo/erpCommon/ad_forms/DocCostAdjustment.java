@@ -24,10 +24,12 @@ import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 
 public class DocCostAdjustment extends AcctServer {
@@ -52,8 +54,8 @@ public class DocCostAdjustment extends AcctServer {
     super(AD_Client_ID, AD_Org_ID, connectionProvider);
   }
 
-  public void loadObjectFieldProvider(ConnectionProvider conn, @SuppressWarnings("hiding")
-  String AD_Client_ID, String Id) throws ServletException {
+  public void loadObjectFieldProvider(ConnectionProvider conn,
+      @SuppressWarnings("hiding") String AD_Client_ID, String Id) throws ServletException {
     setObjectFieldProvider(DocCostAdjustmentData.selectRegistro(conn, AD_Client_ID, Id));
   }
 
@@ -65,7 +67,6 @@ public class DocCostAdjustment extends AcctServer {
   public boolean loadDocumentDetails(FieldProvider[] data, ConnectionProvider conn) {
     C_Currency_ID = NO_CURRENCY;
 
-    // TODO: SACAR CURRENCY
     DocumentType = AcctServer.DOCTYPE_CostAdjustment;
     log4jDocCostAdjustment.debug("loadDocumentDetails - C_Currency_ID : " + C_Currency_ID);
     DateDoc = data[0].getField("DateTrx");
@@ -146,15 +147,15 @@ public class DocCostAdjustment extends AcctServer {
     // Select specific definition
     String strClassname = AcctServerData
         .selectTemplateDoc(conn, as.m_C_AcctSchema_ID, DocumentType);
-    if (strClassname.equals(""))
+    if (StringUtils.isEmpty(strClassname)) {
       strClassname = AcctServerData.selectTemplate(conn, as.m_C_AcctSchema_ID, AD_Table_ID);
-    if (!strClassname.equals("")) {
+    } else {
       try {
         DocCostAdjustmentTemplate newTemplate = (DocCostAdjustmentTemplate) Class.forName(
             strClassname).newInstance();
         return newTemplate.createFact(this, as, conn, con, vars);
       } catch (Exception e) {
-        log4j.error("Error while creating new instance for DocCostAdjustmentTemplate - " + e);
+        log4j.error("Error while creating new instance for DocCostAdjustmentTemplate - ", e);
       }
     }
     C_Currency_ID = as.getC_Currency_ID();
@@ -182,9 +183,9 @@ public class DocCostAdjustment extends AcctServer {
 
         if (line.isTransactionNegative()) {
           amtDebit = "";
-          amtCredit = amount.toString();
+          amtCredit = amount.toPlainString();
         } else {
-          amtDebit = amount.toString();
+          amtDebit = amount.toPlainString();
           amtCredit = "";
         }
         fact.createLine(line, p.getAccount(ProductInfo.ACCTTYPE_P_Cogs, as, conn),
@@ -196,13 +197,12 @@ public class DocCostAdjustment extends AcctServer {
       } else if (transactionType.equals(DocLine_CostAdjustment.TRXTYPE_RECEIPT)) {
         Account acct = null;
         // Inventory Asset DR
-        if (line.getIsSource() && line.getSourceProcess().equals("PDC")) { // Price Diff
-                                                                           // Correction
+        if (line.getIsSource() && ("PDC").equals(line.getSourceProcess())) { // Price Diff
+          // Correction
           // Invoice Price Variance CR
           acct = p.getAccount(ProductInfo.ACCTTYPE_P_IPV, as, conn);
-        } else if (line.getIsSource() && line.getSourceProcess().equals("LC")) {
-          throw new IllegalStateException(
-              "DocCostAdjustment - Error: landed cost should not generate accounting");
+        } else if (line.getIsSource() && ("LC").equals(line.getSourceProcess())) {
+          throw new IllegalStateException(OBMessageUtils.messageBD("LCNotAccounting"));
         } else {
           // Product Exp CR
           acct = getAccountByWarehouse(AcctServer.ACCTTYPE_InvDifferences, as,
@@ -211,11 +211,11 @@ public class DocCostAdjustment extends AcctServer {
         log4jDocCostAdjustment.debug("********** DocCostAdjustment - factAcct - account - "
             + p.getAccount(ProductInfo.ACCTTYPE_P_Expense, as, conn).C_ValidCombination_ID);
         if (line.isTransactionNegative()) {
-          amtDebit = amount.toString();
+          amtDebit = amount.toPlainString();
           amtCredit = "";
         } else {
           amtDebit = "";
-          amtCredit = amount.toString();
+          amtCredit = amount.toPlainString();
         }
         fact.createLine(line, acct, line.m_C_Currency_ID, amtDebit, amtCredit, Fact_Acct_Group_ID,
             nextSeqNo(SeqNo), DocumentType, line.m_DateAcct, null, conn);
@@ -229,11 +229,11 @@ public class DocCostAdjustment extends AcctServer {
             + getAccountByWarehouse(AcctServer.ACCTTYPE_InvDifferences, as, line.getWarehouseId(),
                 conn).C_ValidCombination_ID);
         if (line.isTransactionNegative()) {
-          amtDebit = amount.toString();
+          amtDebit = amount.toPlainString();
           amtCredit = "";
         } else {
           amtDebit = "";
-          amtCredit = amount.toString();
+          amtCredit = amount.toPlainString();
         }
         fact.createLine(
             line,
@@ -251,11 +251,11 @@ public class DocCostAdjustment extends AcctServer {
             + getAccountByWarehouse(AcctServer.ACCTTYPE_InvDifferences, as, line.getWarehouseId(),
                 conn).C_ValidCombination_ID);
         if (line.isTransactionNegative()) {
-          amtDebit = amount.toString();
+          amtDebit = amount.toPlainString();
           amtCredit = "";
         } else {
           amtDebit = "";
-          amtCredit = amount.toString();
+          amtCredit = amount.toPlainString();
         }
         fact.createLine(line, p.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
             line.m_C_Currency_ID, amtDebit, amtCredit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
@@ -274,11 +274,11 @@ public class DocCostAdjustment extends AcctServer {
             + getAccountByWarehouse(AcctServer.ACCTTYPE_InvDifferences, as, line.getWarehouseId(),
                 conn).C_ValidCombination_ID);
         if (line.isTransactionNegative()) {
-          amtDebit = amount.toString();
+          amtDebit = amount.toPlainString();
           amtCredit = "";
         } else {
           amtDebit = "";
-          amtCredit = amount.toString();
+          amtCredit = amount.toPlainString();
         }
         fact.createLine(
             line,
@@ -289,7 +289,6 @@ public class DocCostAdjustment extends AcctServer {
             line.m_C_Currency_ID, amtCredit, amtDebit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
             DocumentType, line.m_DateAcct, null, conn);
       } else if (transactionType.equals(DocLine_CostAdjustment.TRXTYPE_INTERNALCONSUMPTION)) {
-        // TODO: review if the accounting generated by internalconsumption is similar
         // Inventory Asset DR
         // Inventory Adjustment CR
         M_Warehouse_ID = line.getWarehouseId();
@@ -297,11 +296,11 @@ public class DocCostAdjustment extends AcctServer {
             + getAccountByWarehouse(AcctServer.ACCTTYPE_InvDifferences, as, line.getWarehouseId(),
                 conn).C_ValidCombination_ID);
         if (line.isTransactionNegative()) {
-          amtDebit = amount.toString();
+          amtDebit = amount.toPlainString();
           amtCredit = "";
         } else {
           amtDebit = "";
-          amtCredit = amount.toString();
+          amtCredit = amount.toPlainString();
         }
         fact.createLine(line, p.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
             line.m_C_Currency_ID, amtDebit, amtCredit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
@@ -320,11 +319,11 @@ public class DocCostAdjustment extends AcctServer {
             + getAccountByWarehouse(AcctServer.ACCTTYPE_InvDifferences, as, line.getWarehouseId(),
                 conn).C_ValidCombination_ID);
         if (line.isTransactionNegative()) {
-          amtDebit = amount.toString();
+          amtDebit = amount.toPlainString();
           amtCredit = "";
         } else {
           amtDebit = "";
-          amtCredit = amount.toString();
+          amtCredit = amount.toPlainString();
         }
         fact.createLine(
             line,
@@ -343,11 +342,11 @@ public class DocCostAdjustment extends AcctServer {
             + getAccountByWarehouse(AcctServer.ACCTTYPE_InvDifferences, as, line.getWarehouseId(),
                 conn).C_ValidCombination_ID);
         if (line.isTransactionNegative()) {
-          amtDebit = amount.toString();
+          amtDebit = amount.toPlainString();
           amtCredit = "";
         } else {
           amtDebit = "";
-          amtCredit = amount.toString();
+          amtCredit = amount.toPlainString();
         }
         fact.createLine(
             line,
@@ -448,9 +447,6 @@ public class DocCostAdjustment extends AcctServer {
           + ", Record=" + Record_ID);
       return null;
     }
-    // if (log4j.isDebugEnabled())
-    // log4j.debug("AcctServer - *******************************getAccount 4");
-    // Return Account
     Account acct = null;
     try {
       acct = Account.getAccount(conn, Account_ID);
@@ -475,7 +471,7 @@ public class DocCostAdjustment extends AcctServer {
     for (int i = 0; local_p_lines != null && i < local_p_lines.length; i++) {
       DocLine_CostAdjustment line = (DocLine_CostAdjustment) local_p_lines[i];
       BigDecimal amount = new BigDecimal(line.getAmount());
-      if (amount.compareTo(BigDecimal.ZERO) != 0) {
+      if (amount.signum() != 0) {
         isGeneratedAccounting = true;
       }
     }
@@ -491,15 +487,11 @@ public class DocCostAdjustment extends AcctServer {
     AcctServerData[] data = null;
     try {
       if (AcctType.equals(ACCTTYPE_NotInvoicedReceipts)) {
-        if (log4j.isDebugEnabled())
-          log4j.debug("AcctServer - getAccount - ACCTYPE_NotInvoicedReceipts - C_BPartner_ID - "
-              + C_BPartner_ID);
         data = AcctServerData.selectNotInvoicedReceiptsAcct(conn, bpId, as.getC_AcctSchema_ID());
       }
 
     } catch (ServletException e) {
-      log4j.warn(e);
-      e.printStackTrace();
+      log4j.warn("SelectNotInvoicedReceiptsAcct" + e);
     }
 
     // Get Acct
@@ -518,8 +510,7 @@ public class DocCostAdjustment extends AcctServer {
     try {
       acct = Account.getAccount(conn, Account_ID);
     } catch (ServletException e) {
-      log4j.warn(e);
-      e.printStackTrace();
+      log4j.warn("Get Account" + e);
     }
     return acct;
 

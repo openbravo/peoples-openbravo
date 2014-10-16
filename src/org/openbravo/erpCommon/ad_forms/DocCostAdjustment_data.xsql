@@ -20,17 +20,7 @@
 
 <SqlClass name="DocCostAdjustmentData" package="org.openbravo.erpCommon.ad_forms">
   <SqlClassComment></SqlClassComment>
-  <SqlMethod name="select" type="preparedStatement" return="multiple">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        SELECT '' AS M_COSTADJUSTMENT_ID, '' AS AD_CLIENT_ID, '' AS AD_ORG_ID, '' AS ISACTIVE,
-          '' AS CREATED, '' AS CREATEDBY, '' AS UPDATED, '' AS UPDATEDBY, '' AS DATETRX, '' AS PROCESSING,
-          '' AS PROCESSED, '' AS POSTED, '' AS DATEACCT, '' AS DATEDOC, '' AS C_DOCTYPE_ID
-        FROM DUAL
-      ]]>
-    </Sql>
-  </SqlMethod>
+  
   <SqlMethod name="selectRegistro" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>

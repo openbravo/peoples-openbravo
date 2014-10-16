@@ -20,7 +20,9 @@ package org.openbravo.costing;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 
@@ -41,7 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PriceDifferenceByDateProcess extends BaseProcessActionHandler {
-  final static private Logger log = LoggerFactory.getLogger(PriceDifferenceByDateProcess.class);
+  private static final Logger log = LoggerFactory.getLogger(PriceDifferenceByDateProcess.class);
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
@@ -55,7 +57,7 @@ public class PriceDifferenceByDateProcess extends BaseProcessActionHandler {
       JSONArray productIds = params.getJSONArray("M_Product_ID");
       String mvdate = params.getString("movementdate");
       String orgId = params.getString("ad_org_id");
-
+      productIds.toString();
       Date movementdate = JsonUtils.createDateFormat().parse(mvdate);
       doChecks(orgId, movementdate);
 
@@ -66,24 +68,27 @@ public class PriceDifferenceByDateProcess extends BaseProcessActionHandler {
           + " FROM  ProcurementReceiptInvoiceMatch mpo"
           + " WHERE trx.isCostCalculated = 'Y' and mpo.goodsShipmentLine.id = trx.goodsShipmentLine.id  "
           + " AND trx.movementDate >= :date and trx.organization.id in (:orgIds))";
-      for (int i = 0; i < productIds.length(); i++) {
-        final String strProductId = productIds.getString(i);
-        if (i == 0) {
-          strUpdate += " AND (product.id = '" + strProductId + "' ";
-        } else {
-          strUpdate += " OR product.id = '" + strProductId + "' ";
-        }
-        if (i == productIds.length() - 1) {
-          strUpdate += ")";
-        }
+
+      if (productIds.length() > 0) {
+        strUpdate = strUpdate.concat(" AND product.id IN :productIds ");
       }
 
+      Set<String> products = new HashSet<String>();
+      for (int i = 0; i < productIds.length(); i++) {
+        products.add(productIds.getString(i));
+      }
       Query update = OBDal.getInstance().getSession().createQuery(strUpdate);
+
+      if (productIds.length() > 0) {
+        update.setParameterList("productIds", products);
+      }
       update.setParameterList("orgIds",
           new OrganizationStructureProvider().getChildTree(orgId, true));
       update.setDate("date", movementdate);
 
       int updated = update.executeUpdate();
+
+      PriceDifferenceProcess.processPriceDifference(null, null);
 
       Map<String, String> map = new HashMap<String, String>();
       map.put("trxsNumber", Integer.toString(updated));

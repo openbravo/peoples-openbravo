@@ -79,19 +79,10 @@ public class CostAdjustmentProcess {
       message.put("severity", "success");
       message.put("title", "");
       message.put("text", OBMessageUtils.messageBD("Success"));
-      long t1 = System.currentTimeMillis();
       doChecks(costAdjustment.getId(), message);
-      long t2 = System.currentTimeMillis();
-      log.debug("Checks done: time {}", t2 - t1);
       initializeLines(costAdjustment);
-      long t3 = System.currentTimeMillis();
-      log.debug("Lines initialized: time {}", t3 - t2);
       calculateAdjustmentAmount(costAdjustment.getId());
-      long t4 = System.currentTimeMillis();
-      log.debug("Adjustments done: time {}", t4 - t3);
       doPostProcessChecks(costAdjustment.getId(), message);
-      long t5 = System.currentTimeMillis();
-      log.debug("Post Process checks: time {} - total time {}", t5 - t4, t5 - t1);
 
       costAdjustment = OBDal.getInstance().get(CostAdjustment.class, costAdjustment.getId());
       costAdjustment.setProcessed(true);

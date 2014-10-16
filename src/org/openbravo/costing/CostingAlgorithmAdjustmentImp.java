@@ -58,7 +58,7 @@ import org.slf4j.LoggerFactory;
 
 @ApplicationScoped
 public abstract class CostingAlgorithmAdjustmentImp {
-  protected static Logger log4j = LoggerFactory.getLogger(CostingAlgorithmAdjustmentImp.class);
+  private static final Logger log4j = LoggerFactory.getLogger(CostingAlgorithmAdjustmentImp.class);
   protected String strCostAdjLineId;
   protected String strCostAdjId;
   protected String strTransactionId;
@@ -98,7 +98,8 @@ public abstract class CostingAlgorithmAdjustmentImp {
     strCostingRuleId = costingRule.getId();
     startingDate = costingRule.getStartingDate();
     strClientId = costingRule.getClient().getId();
-    areBackdatedTrxFixed = costingRule.isBackdatedTransactionsFixed();
+    areBackdatedTrxFixed = costingRule.isBackdatedTransactionsFixed()
+        && !transaction.getTransactionProcessDate().before(costingRule.getFixbackdatedfrom());
 
     HashMap<CostDimension, BaseOBObject> costDimensions = CostingUtils.getEmptyDimensions();
     // Production products cannot be calculated by warehouse dimension.
@@ -193,6 +194,17 @@ public abstract class CostingAlgorithmAdjustmentImp {
     }
   }
 
+  /**
+   * Inserts a new cost adjustment line
+   * 
+   * @param trx
+   *          Material transaction
+   * @param adjustmentamt
+   *          Adjustment amount
+   * @param _parentLine
+   *          Cost Adjustment Line
+   * 
+   */
   protected CostAdjustmentLine insertCostAdjustmentLine(MaterialTransaction trx,
       BigDecimal adjustmentamt, CostAdjustmentLine _parentLine) {
     Date dateAcct = trx.getMovementDate();
@@ -522,7 +534,7 @@ public abstract class CostingAlgorithmAdjustmentImp {
     BigDecimal trxCalculatedCost = CostAdjustmentUtils.getTrxCost(trx, true, getCostCurrency());
     BigDecimal trxExpectedCost = CostAdjustmentUtils.getValuedStockOnMovementDateByAttrAndLocator(
         trx.getProduct(), getCostOrg(), trx.getMovementDate(), getCostDimensions(),
-        trx.getStorageBin(), trx.getAttributeSetValue(), getCostCurrency(), areBackdatedTrxFixed);
+        trx.getStorageBin(), trx.getAttributeSetValue(), getCostCurrency(), true);
 
     return trxExpectedCost.subtract(trxCalculatedCost);
   }

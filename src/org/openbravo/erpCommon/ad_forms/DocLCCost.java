@@ -55,8 +55,8 @@ public class DocLCCost extends AcctServer {
     super(AD_Client_ID, AD_Org_ID, connectionProvider);
   }
 
-  public void loadObjectFieldProvider(ConnectionProvider conn, @SuppressWarnings("hiding")
-  String AD_Client_ID, String Id) throws ServletException {
+  public void loadObjectFieldProvider(ConnectionProvider conn,
+      @SuppressWarnings("hiding") String AD_Client_ID, String Id) throws ServletException {
     setObjectFieldProvider(DocLCCostData.selectRegistro(conn, AD_Client_ID, Id));
   }
 
@@ -68,7 +68,6 @@ public class DocLCCost extends AcctServer {
   public boolean loadDocumentDetails(FieldProvider[] data, ConnectionProvider conn) {
     C_Currency_ID = NO_CURRENCY;
 
-    // TODO: SACAR CURRENCY
     DocumentType = AcctServer.DOCTYPE_LandedCostCost;
     log4jDocLCCost.debug("loadDocumentDetails - C_Currency_ID : " + C_Currency_ID);
     DateDoc = data[0].getField("DateTrx");
@@ -238,8 +237,6 @@ public class DocLCCost extends AcctServer {
 
           DocLine line4 = new DocLine(DocumentType, Record_ID, line.m_TrxLine_ID);
           line4.copyInfo(line);
-
-          // TODO: revisar con EAR si hay que pasar más dimensiones o no
           line4.m_C_BPartner_ID = "";
           line4.m_M_Product_ID = lineRcpt.mProductId;
           line4.m_C_Project_ID = "";
@@ -258,9 +255,6 @@ public class DocLCCost extends AcctServer {
 
         }
 
-      } else {
-        // if the difference is not adjusted, then no accounting is generated
-        ;
       }
     }
 

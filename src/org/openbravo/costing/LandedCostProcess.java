@@ -259,8 +259,6 @@ public class LandedCostProcess {
 
   private void matchCostWithInvoiceLine(LandedCostCost lcc) {
     LCMatched lcm = OBProvider.getInstance().get(LCMatched.class);
-    // TODO: Review this
-    // lcm.setNewOBObject(true);
     lcm.setOrganization(lcc.getOrganization());
     lcm.setLandedCostCost(lcc);
     lcm.setAmount(lcc.getAmount());
