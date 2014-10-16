@@ -7,11 +7,10 @@
  ************************************************************************************
  */
 
-/*global B,_*/
+/*global OB,_*/
 
 (function () {
 
-  OB = window.OB || {};
   OB.UTILS = window.OB.UTILS || {};
 
   function findAndSave(cashuptaxes, i, finishCallback) {
@@ -48,10 +47,12 @@
   function updateCashUpInfo(cashUp, receipt, j, callback) {
     var cashuptaxes, order;
     if (j < receipt.length) {
+      var orderType;
       order = receipt[j];
       orderType = order.get('orderType');
       if (cashUp.length !== 0) {
         _.each(order.get('lines').models, function (line) {
+          var gross;
           if (order.get('priceIncludesTax')) {
             gross = line.get('lineGrossAmount');
           } else {
@@ -78,11 +79,11 @@
         });
         cashUp.at(0).set('totalRetailTransactions', OB.DEC.sub(cashUp.at(0).get('grossSales'), cashUp.at(0).get('grossReturns')));
         OB.Dal.save(cashUp.at(0), null, null);
- 
+
         // group and sum the taxes
         cashuptaxes = [];
         order.get('lines').each(function(line, taxIndex) {
-          var taxLines, taxLine;
+          var taxLines, taxLine, taxOrderType;
           taxLines = line.get('taxLines');
           if (orderType === 1 || line.get('qty') < 0) {
             taxOrderType = 1;
@@ -91,17 +92,27 @@
           }
 
           _.each(taxLines, function (taxLine) {
-            if (line.get('qty') > 0 && orderType !== 3) {
+            var taxAmount;
+            if (line.get('qty') > 0 && orderType !== 3 && !order.get('isLayaway')) {
               taxAmount = taxLine.amount;
-            } else {
+            } else if (line.get('qty') < 0 && orderType !== 3 && !order.get('isLayaway')) {
               taxAmount = -taxLine.amount;
+            } else if (orderType === 3) {
+              if (line.get('qty') > 0) {
+                taxAmount = -taxLine.amount;
+              } else {
+                taxAmount = taxLine.amount;
+              }
             }
-            cashuptaxes.push({
-              taxName: taxLine.name,
-              taxAmount: taxAmount,
-              taxOrderType: taxOrderType.toString(),
-              cashupID: cashUp.at(0).get('id')
-            });
+
+            if (!OB.UTIL.isNullOrUndefined(taxAmount)) {
+              cashuptaxes.push({
+                taxName: taxLine.name,
+                taxAmount: taxAmount,
+                taxOrderType: taxOrderType.toString(),
+                cashupID: cashUp.at(0).get('id')
+              });
+            }
           });
         });
 
@@ -109,7 +120,7 @@
           'cashup_id': cashUp.at(0).get('id')
         }, function (payMthds) { //OB.Dal.find success
           _.each(order.get('payments').models, function (payment) {
-            auxPay = payMthds.filter(function (payMthd) {
+            var auxPay = payMthds.filter(function (payMthd) {
               return payMthd.get('searchKey') === payment.get('kind') && !payment.get('isPrePayment');
             })[0];
             if (!auxPay) { //We cannot find this payment in local database, it must be a new payment method, we skip it.
