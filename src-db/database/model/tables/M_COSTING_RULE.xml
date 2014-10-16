@@ -77,6 +77,10 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
+      <column name="FIXBACKDATEDFROM" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="M_COSTING_ALGORITHM" name="M_COSTING_RULE_ALGORITHM">
         <reference local="M_COSTING_ALGORITHM_ID" foreign="M_COSTING_ALGORITHM_ID"/>
       </foreign-key>

@@ -251,8 +251,6 @@ public class CostingRuleProcess implements Process {
         MaterialTransaction trx = (MaterialTransaction) trxs.get(0);
 
         TransactionCost transactionCost = OBProvider.getInstance().get(TransactionCost.class);
-        // TODO: Review this
-        // transactionCost.setNewOBObject(true);
         transactionCost.setInventoryTransaction(trx);
         transactionCost.setCostDate(trx.getTransactionProcessDate());
         transactionCost.setClient(trx.getClient());
@@ -410,8 +408,6 @@ public class CostingRuleProcess implements Process {
     String clientId = (String) DalUtil.getId(rule.getClient());
     String orgId = (String) DalUtil.getId(rule.getOrganization());
     CostingRuleInit cri = OBProvider.getInstance().get(CostingRuleInit.class);
-    // TODO:Review this. Why onjectr is not saved??
-    // cri.setNewOBObject(true);
     cri.setClient((Client) OBDal.getInstance().getProxy(Client.ENTITY_NAME, clientId));
     cri.setOrganization((Organization) OBDal.getInstance()
         .getProxy(Organization.ENTITY_NAME, orgId));
@@ -456,8 +452,6 @@ public class CostingRuleProcess implements Process {
       BigDecimal qtyBook, BigDecimal orderQtyCount, BigDecimal orderQtyBook, Long lineNo,
       InventoryCountLine relatedInventoryLine) {
     InventoryCountLine icl = OBProvider.getInstance().get(InventoryCountLine.class);
-    // TODO: Review this. Why object is not saved
-    // icl.setNewOBObject(true);
     icl.setClient(inventory.getClient());
     icl.setOrganization(inventory.getOrganization());
     icl.setPhysInventory(inventory);
@@ -505,8 +499,6 @@ public class CostingRuleProcess implements Process {
           // Insert transaction cost record big ZERO cost.
           cur = trx.getClient().getCurrency();
           TransactionCost transactionCost = OBProvider.getInstance().get(TransactionCost.class);
-          // TODO: Review this. Object not saved??
-          // transactionCost.setNewOBObject(true);
           transactionCost.setInventoryTransaction(trx);
           transactionCost.setCostDate(trx.getTransactionProcessDate());
           transactionCost.setClient(trx.getClient());

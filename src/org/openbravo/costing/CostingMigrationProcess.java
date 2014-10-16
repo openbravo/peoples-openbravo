@@ -165,8 +165,6 @@ public class CostingMigrationProcess implements Process {
       Client client0 = OBDal.getInstance().get(Client.class, "0");
 
       legacyCostAvailableAlert = OBProvider.getInstance().get(AlertRule.class);
-      // TODO: Review this
-      legacyCostAvailableAlert.setNewOBObject(true);
       legacyCostAvailableAlert.setClient(client0);
       legacyCostAvailableAlert.setOrganization(org0);
       legacyCostAvailableAlert.setName(alertRuleName);
@@ -831,8 +829,6 @@ public class CostingMigrationProcess implements Process {
 
   private CostingRule createCostingRule(Organization org) {
     CostingRule rule = OBProvider.getInstance().get(CostingRule.class);
-    // TODO: Review this
-    rule.setNewOBObject(true);
     rule.setClient(org.getClient());
     rule.setOrganization(org);
     rule.setCostingAlgorithm(getAverageAlgorithm());
@@ -894,8 +890,6 @@ public class CostingMigrationProcess implements Process {
     Client client0 = OBDal.getInstance().get(Client.class, "0");
 
     Preference newPref = OBProvider.getInstance().get(Preference.class);
-    // TODO: Review this
-    newPref.setNewOBObject(true);
     newPref.setClient(client0);
     newPref.setOrganization(org0);
     newPref.setPropertyList(false);

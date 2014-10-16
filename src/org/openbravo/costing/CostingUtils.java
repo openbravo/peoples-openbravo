@@ -65,7 +65,7 @@ import org.openbravo.model.pricing.pricelist.ProductPrice;
 import org.openbravo.service.db.DalConnectionProvider;
 
 public class CostingUtils {
-  protected static Logger log4j = Logger.getLogger(CostingUtils.class);
+  private static Logger log4j = Logger.getLogger(CostingUtils.class);
 
   /**
    * Calls {@link #getTransactionCost(MaterialTransaction, Date, boolean, Currency)} setting the

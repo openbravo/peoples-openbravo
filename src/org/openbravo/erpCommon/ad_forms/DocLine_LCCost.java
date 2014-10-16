@@ -21,7 +21,7 @@ package org.openbravo.erpCommon.ad_forms;
 import org.apache.log4j.Logger;
 
 public class DocLine_LCCost extends DocLine {
-  static Logger log4jDocLine_LCCost = Logger.getLogger(DocLine_LCCost.class);
+  private static final Logger log4jDocLine_LCCost = Logger.getLogger(DocLine_LCCost.class);
 
   public DocLine_LCCost(String DocumentType, String TrxHeader_ID, String TrxLine_ID) {
     super(DocumentType, TrxHeader_ID, TrxLine_ID);
@@ -76,4 +76,8 @@ public class DocLine_LCCost extends DocLine {
   public String getServletInfo() {
     return "Servlet for the accounting";
   } // end of getServletInfo() method
+
+  public static Logger getLog4jdoclineLccost() {
+    return log4jDocLine_LCCost;
+  }
 }

@@ -23,6 +23,7 @@ import java.util.Map;
 
 import javax.servlet.ServletException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.costing.CostingStatus;
@@ -96,7 +97,7 @@ public class DocInternalConsumption extends AcctServer {
         docLine.loadAttributes(data[i], this);
         log4jDocInternalConsumption.debug("MovementQty = " + data[i].getField("movementqty"));
         BigDecimal MovementQty = new BigDecimal(data[i].getField("movementqty"));
-        docLine.setQty(MovementQty.toString(), conn);
+        docLine.setQty(MovementQty.toPlainString(), conn);
         docLine.m_M_Locator_ID = data[i].getField("mLocatorId");
 
         // Get related M_Transaction_ID
@@ -156,9 +157,9 @@ public class DocInternalConsumption extends AcctServer {
     // Select specific definition
     String strClassname = AcctServerData
         .selectTemplateDoc(conn, as.m_C_AcctSchema_ID, DocumentType);
-    if (strClassname.equals(""))
+    if (StringUtils.isEmpty(strClassname)) {
       strClassname = AcctServerData.selectTemplate(conn, as.m_C_AcctSchema_ID, AD_Table_ID);
-    if (!strClassname.equals("")) {
+    } else {
       try {
         DocInternalConsumptionTemplate newTemplate = (DocInternalConsumptionTemplate) Class
             .forName(strClassname).newInstance();
@@ -195,7 +196,7 @@ public class DocInternalConsumption extends AcctServer {
       String costs = line.getProductCosts(DateAcct, as, conn, con);
       log4jDocInternalConsumption.debug("CreateFact - before DR - Costs: " + costs);
       BigDecimal b_Costs = new BigDecimal(costs);
-      String strCosts = b_Costs.toString();
+      String strCosts = b_Costs.toPlainString();
       Account cogsAccount = line.getAccount(ProductInfo.ACCTTYPE_P_Cogs, as, conn);
       Product product = OBDal.getInstance().get(Product.class, line.m_M_Product_ID);
       if (cogsAccount == null) {

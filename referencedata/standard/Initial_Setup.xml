@@ -675,6 +675,31 @@
     <return>false</return>
     <documentTypeForOrder xsi:nil="true"/>
   </DocumentType>
+  <DocumentType id="56AA9305B32C44A08554D3DB16E2B4E2" identifier="Return Material Sales Invoice">
+    <id>56AA9305B32C44A08554D3DB16E2B4E2</id>
+    <active>true</active>
+    <name>Return Material Sales Invoice</name>
+    <printText>Return Material Sales Invoice</printText>
+    <description xsi:nil="true"/>
+    <documentCategory>ARI_RM</documentCategory>
+    <salesTransaction>true</salesTransaction>
+    <sOSubType xsi:nil="true"/>
+    <documentTypeForShipment xsi:nil="true"/>
+    <documentTypeForInvoice xsi:nil="true"/>
+    <sequencedDocument>true</sequencedDocument>
+    <documentSequence id="CD179732385848B09607674D35D1C447" entity-name="ADSequence" identifier="Return Material Sales Invoice"/>
+    <gLCategory id="102C08DF5D4341D5B7FDF758632503D2" entity-name="FinancialMgmtGLCategory" identifier="AR Invoice"/>
+    <comments xsi:nil="true"/>
+    <default>false</default>
+    <numberOfCopies>1</numberOfCopies>
+    <table id="318" entity-name="ADTable" identifier="C_Invoice"/>
+    <filterByOrganization>false</filterByOrganization>
+    <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
+    <reversal>false</reversal>
+    <return>true</return>
+    <documentTypeForOrder xsi:nil="true"/>
+  </DocumentType>
   <DocumentType id="5C6E02993E9B4FCA81C07955EF676C62" identifier="AP Invoice">
     <id>5C6E02993E9B4FCA81C07955EF676C62</id>
     <active>true</active>
@@ -1075,31 +1100,6 @@
     <return>false</return>
     <documentTypeForOrder xsi:nil="true"/>
   </DocumentType>
-  <DocumentType id="56AA9305B32C44A08554D3DB16E2B4E2" identifier="Return Material Sales Invoice">
-    <id>56AA9305B32C44A08554D3DB16E2B4E2</id>
-    <active>true</active>
-    <name>Return Material Sales Invoice</name>
-    <printText>Return Material Sales Invoice</printText>
-    <description xsi:nil="true"/>
-    <documentCategory>ARI_RM</documentCategory>
-    <salesTransaction>true</salesTransaction>
-    <sOSubType xsi:nil="true"/>
-    <documentTypeForShipment xsi:nil="true"/>
-    <documentTypeForInvoice xsi:nil="true"/>
-    <sequencedDocument>true</sequencedDocument>
-    <documentSequence id="CD179732385848B09607674D35D1C447" entity-name="ADSequence" identifier="Return Material Sales Invoice"/>
-    <gLCategory id="102C08DF5D4341D5B7FDF758632503D2" entity-name="FinancialMgmtGLCategory" identifier="AR Invoice"/>
-    <comments xsi:nil="true"/>
-    <default>false</default>
-    <numberOfCopies>1</numberOfCopies>
-    <table id="318" entity-name="ADTable" identifier="C_Invoice"/>
-    <filterByOrganization>false</filterByOrganization>
-    <documentCancelled xsi:nil="true"/>
-    <expense>false</expense>
-    <reversal>false</reversal>
-    <return>true</return>
-    <documentTypeForOrder xsi:nil="true"/>
-  </DocumentType>
   <DocumentType id="AFFD4594FB734E9682D5769669A9D471" identifier="Reversed Purchase Invoice">
     <id>AFFD4594FB734E9682D5769669A9D471</id>
     <active>true</active>
@@ -1325,6 +1325,31 @@
     <return>false</return>
     <documentTypeForOrder xsi:nil="true"/>
   </DocumentType>
+  <DocumentType id="E664C8BE572A41558E12063E99081B15" identifier="Material Internal Consumption">
+    <id>E664C8BE572A41558E12063E99081B15</id>
+    <active>true</active>
+    <name>Material Internal Consumption</name>
+    <printText>Material Internal Consumption</printText>
+    <description xsi:nil="true"/>
+    <documentCategory>MIC</documentCategory>
+    <salesTransaction>false</salesTransaction>
+    <sOSubType xsi:nil="true"/>
+    <documentTypeForShipment xsi:nil="true"/>
+    <documentTypeForInvoice xsi:nil="true"/>
+    <sequencedDocument>true</sequencedDocument>
+    <documentSequence id="733AF9614B5F45BA91AF10D624089C0C" entity-name="ADSequence" identifier="Material Internal Consumption"/>
+    <gLCategory id="745A2B441A2644DF934D1B1E462292E9" entity-name="FinancialMgmtGLCategory" identifier="None"/>
+    <comments xsi:nil="true"/>
+    <default>false</default>
+    <numberOfCopies>1</numberOfCopies>
+    <table id="800168" entity-name="ADTable" identifier="M_Internal_Consumption"/>
+    <filterByOrganization>false</filterByOrganization>
+    <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
+    <reversal>false</reversal>
+    <return>false</return>
+    <documentTypeForOrder xsi:nil="true"/>
+  </DocumentType>
   <DocumentType id="E7F4802D902A42A59143DCCBEDE4DE85" identifier="Credit Order">
     <id>E7F4802D902A42A59143DCCBEDE4DE85</id>
     <active>false</active>
@@ -1367,7 +1392,7 @@
     <comments xsi:nil="true"/>
     <default>false</default>
     <numberOfCopies>1</numberOfCopies>
-    <table id="F6B6AD5679FF4A798D2A3D44B232C52C" entity-name="ADTable" identifier="M_CA_INVENTORYAMT"/>
+    <table id="F6B6AD5679FF4A798D2A3D44B232C52C" entity-name="ADTable" identifier="M_CA_InventoryAmt"/>
     <filterByOrganization>false</filterByOrganization>
     <documentCancelled xsi:nil="true"/>
     <expense>false</expense>
@@ -1582,6 +1607,18 @@
     <usedForRecordID>false</usedForRecordID>
     <restartSequenceEveryYear>false</restartSequenceEveryYear>
   </ADSequence>
+  <ADSequence id="733AF9614B5F45BA91AF10D624089C0C" identifier="Material Internal Consumption">
+    <id>733AF9614B5F45BA91AF10D624089C0C</id>
+    <active>true</active>
+    <name>Material Internal Consumption</name>
+    <description>Material Internal Consumption</description>
+    <valueFormat xsi:nil="true"/>
+    <autoNumbering>true</autoNumbering>
+    <incrementBy>1</incrementBy>
+    <startingNo>1000000</startingNo>
+    <usedForRecordID>false</usedForRecordID>
+    <restartSequenceEveryYear>false</restartSequenceEveryYear>
+  </ADSequence>
   <ADSequence id="74C3CC2BCDDA45F5BBFE8DF603728749" identifier="Purchase Requisition">
     <id>74C3CC2BCDDA45F5BBFE8DF603728749</id>
     <active>true</active>
@@ -1683,18 +1720,6 @@
     <active>true</active>
     <name>Cash Journal</name>
     <description xsi:nil="true"/>
-    <valueFormat xsi:nil="true"/>
-    <autoNumbering>true</autoNumbering>
-    <incrementBy>1</incrementBy>
-    <startingNo>1000000</startingNo>
-    <usedForRecordID>false</usedForRecordID>
-    <restartSequenceEveryYear>false</restartSequenceEveryYear>
-  </ADSequence>
-  <ADSequence id="CD179732385848B09607674D35D1C447" identifier="Return Material Sales Invoice">
-    <id>CD179732385848B09607674D35D1C447</id>
-    <active>true</active>
-    <name>Return Material Sales Invoice</name>
-    <description>Return Material Sales Invoice</description>
     <valueFormat xsi:nil="true"/>
     <autoNumbering>true</autoNumbering>
     <incrementBy>1</incrementBy>
@@ -1819,6 +1844,18 @@
     <autoNumbering>true</autoNumbering>
     <incrementBy>1</incrementBy>
     <startingNo>10000</startingNo>
+    <usedForRecordID>false</usedForRecordID>
+    <restartSequenceEveryYear>false</restartSequenceEveryYear>
+  </ADSequence>
+  <ADSequence id="CD179732385848B09607674D35D1C447" identifier="Return Material Sales Invoice">
+    <id>CD179732385848B09607674D35D1C447</id>
+    <active>true</active>
+    <name>Return Material Sales Invoice</name>
+    <description>Return Material Sales Invoice</description>
+    <valueFormat xsi:nil="true"/>
+    <autoNumbering>true</autoNumbering>
+    <incrementBy>1</incrementBy>
+    <startingNo>1000000</startingNo>
     <usedForRecordID>false</usedForRecordID>
     <restartSequenceEveryYear>false</restartSequenceEveryYear>
   </ADSequence>
@@ -1966,18 +2003,6 @@
     <showlogo>true</showlogo>
     <headermargin xsi:nil="true"/>
   </DocumentTemplate>
-  <DocumentTemplate id="B1D6986BD45E4E108B0C3121FC90D3B5" identifier="Return Material Sales Invoice Report template">
-    <id>B1D6986BD45E4E108B0C3121FC90D3B5</id>
-    <active>true</active>
-    <documentType id="56AA9305B32C44A08554D3DB16E2B4E2" entity-name="DocumentType" identifier="Return Material Sales Invoice"/>
-    <name>Return Material Sales Invoice Report template</name>
-    <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
-    <reportFilename>Return Material Invoice-@our_ref@</reportFilename>
-    <templateFilename>RptC_Invoice_new.jrxml</templateFilename>
-    <showcompanydata>true</showcompanydata>
-    <showlogo>true</showlogo>
-    <headermargin xsi:nil="true"/>
-  </DocumentTemplate>
   <DocumentTemplate id="70AEA0C77DB743A4A89058BFE091FEEA" identifier="Standard order report template">
     <id>70AEA0C77DB743A4A89058BFE091FEEA</id>
     <active>true</active>
@@ -2070,6 +2095,18 @@
     <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
     <reportFilename>Sales Order-@our_ref@</reportFilename>
     <templateFilename>C_OrderJR_new.jrxml</templateFilename>
+    <showcompanydata>true</showcompanydata>
+    <showlogo>true</showlogo>
+    <headermargin xsi:nil="true"/>
+  </DocumentTemplate>
+  <DocumentTemplate id="B1D6986BD45E4E108B0C3121FC90D3B5" identifier="Return Material Sales Invoice Report template">
+    <id>B1D6986BD45E4E108B0C3121FC90D3B5</id>
+    <active>true</active>
+    <documentType id="56AA9305B32C44A08554D3DB16E2B4E2" entity-name="DocumentType" identifier="Return Material Sales Invoice"/>
+    <name>Return Material Sales Invoice Report template</name>
+    <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
+    <reportFilename>Return Material Invoice-@our_ref@</reportFilename>
+    <templateFilename>RptC_Invoice_new.jrxml</templateFilename>
     <showcompanydata>true</showcompanydata>
     <showlogo>true</showlogo>
     <headermargin xsi:nil="true"/>

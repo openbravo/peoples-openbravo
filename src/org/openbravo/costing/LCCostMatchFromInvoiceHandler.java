@@ -40,7 +40,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class LCCostMatchFromInvoiceHandler extends BaseProcessActionHandler {
-  final private static Logger log = LoggerFactory.getLogger(LCCostMatchFromInvoiceHandler.class);
+  private static final Logger log = LoggerFactory.getLogger(LCCostMatchFromInvoiceHandler.class);
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
@@ -104,8 +104,6 @@ public class LCCostMatchFromInvoiceHandler extends BaseProcessActionHandler {
       if (strLCMatchedId.isEmpty()) {
         // Create new match record
         match = OBProvider.getInstance().get(LCMatched.class);
-        // TODO: Review this
-        // match.setNewOBObject(true);
         match.setOrganization(lcc.getOrganization());
         match.setLandedCostCost(lcc);
         match.setInvoiceLine(il);

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -80,8 +80,8 @@ public class SL_InvAmtUpd_ProductRefDate extends SimpleCallout {
       }
       currentValuedStock = CostAdjustmentUtils.getValuedStockOnMovementDate(product, organization,
           referenceDate, costDimensions, currency, costRule.isBackdatedTransactionsFixed());
-      currentStock = CostAdjustmentUtils.getStockOnMovementDate(product, organization, referenceDate,
-          costDimensions, costRule.isBackdatedTransactionsFixed());
+      currentStock = CostAdjustmentUtils.getStockOnMovementDate(product, organization,
+          referenceDate, costDimensions, costRule.isBackdatedTransactionsFixed());
       info.addResult("inpcurInventoryAmount", currentValuedStock);
       info.addResult("inponhandqty", currentStock);
       info.addResult(

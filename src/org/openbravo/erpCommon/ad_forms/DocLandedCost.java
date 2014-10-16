@@ -51,8 +51,8 @@ public class DocLandedCost extends AcctServer {
     super(AD_Client_ID, AD_Org_ID, connectionProvider);
   }
 
-  public void loadObjectFieldProvider(ConnectionProvider conn, @SuppressWarnings("hiding")
-  String AD_Client_ID, String Id) throws ServletException {
+  public void loadObjectFieldProvider(ConnectionProvider conn,
+      @SuppressWarnings("hiding") String AD_Client_ID, String Id) throws ServletException {
     setObjectFieldProvider(DocLandedCostData.selectRegistro(conn, AD_Client_ID, Id));
   }
 
@@ -64,7 +64,6 @@ public class DocLandedCost extends AcctServer {
   public boolean loadDocumentDetails(FieldProvider[] data, ConnectionProvider conn) {
     C_Currency_ID = NO_CURRENCY;
 
-    // TODO: SACAR CURRENCY
     DocumentType = AcctServer.DOCTYPE_LandedCost;
     log4jDocLandedCost.debug("loadDocumentDetails - C_Currency_ID : " + C_Currency_ID);
     DateDoc = data[0].getField("DateTrx");
@@ -165,7 +164,7 @@ public class DocLandedCost extends AcctServer {
     C_Currency_ID = as.getC_Currency_ID();
     // create Fact Header
     Fact fact = new Fact(this, as, Fact.POST_Actual);
-    String Fact_Acct_Group_ID = SequenceIdData.getUUID();
+    String fact_Acct_Group_ID = SequenceIdData.getUUID();
     String amtDebit = "0";
     String amtCredit = "0";
     // Lines
@@ -181,7 +180,7 @@ public class DocLandedCost extends AcctServer {
       amtCredit = amount.toString();
 
       fact.createLine(line, p.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
-          line.m_C_Currency_ID, amtCredit, amtDebit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+          line.m_C_Currency_ID, amtCredit, amtDebit, fact_Acct_Group_ID, nextSeqNo(SeqNo),
           DocumentType, line.m_DateAcct, null, conn);
 
       DocLine line2 = new DocLine(DocumentType, Record_ID, line.m_TrxLine_ID);
@@ -198,7 +197,7 @@ public class DocLandedCost extends AcctServer {
       line2.m_A_Asset_ID = "";
 
       fact.createLine(line2, getLandedCostAccount(line.getLandedCostTypeId(), amount, as, conn),
-          line.m_C_Currency_ID, amtDebit, amtCredit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+          line.m_C_Currency_ID, amtDebit, amtCredit, fact_Acct_Group_ID, nextSeqNo(SeqNo),
           DocumentType, line.m_DateAcct, null, conn);
 
     }

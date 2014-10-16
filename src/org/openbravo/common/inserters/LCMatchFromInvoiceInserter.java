@@ -40,8 +40,7 @@ public class LCMatchFromInvoiceInserter extends HqlInserter {
     String strWhereClause = " (il is null or il.id = :invlineid) ";
     queryNamedParameters.put("invlineid", strInvoiceLineID);
 
-    final String strInvoiceLineId = requestParameters.get("@InvoiceLine.id@");
-    InvoiceLine invLine = OBDal.getInstance().get(InvoiceLine.class, strInvoiceLineId);
+    InvoiceLine invLine = OBDal.getInstance().get(InvoiceLine.class, strInvoiceLineID);
     if (invLine.getProduct() != null) {
       strWhereClause += " and lct." + LandedCostType.PROPERTY_PRODUCT + ".id = :product ";
       queryNamedParameters.put("product", invLine.getProduct().getId());
