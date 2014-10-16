@@ -459,7 +459,6 @@ enyo.kind({
         return true;
       }
       this.model.get('order').setOrderInvoice();
-      this.model.get('orderList').saveCurrent();
       return true;
     }
     if (this.model.get('leftColumnViewManager').isMultiOrder()) {
@@ -518,7 +517,6 @@ enyo.kind({
         return true;
       }
       this.model.get('order').resetOrderInvoice();
-      this.model.get('orderList').saveCurrent();
       return true;
     }
     if (this.model.get('leftColumnViewManager').isMultiOrder()) {
