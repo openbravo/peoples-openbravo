@@ -42,7 +42,9 @@
         <%if (order.get('orderType') === 3){%>
                <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tckfooter_voidLayaway')) %></text>
         <% } else { %>
-               <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tckfooter_layaway')) %></text>
+            <%if (order.getGross() !== 0){%>
+                    <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tckfooter_layaway')) %></text>
+            <% } %>
         <% } %>
     </line>
     <line size="1">
@@ -188,7 +190,11 @@
            if (order.get('orderType') === 3){%>
                   <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tckfooter_notReturned')) %></text>
            <% } else { %>
-                  <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tckfooter_notPaid')) %></text>
+                <%if (order.getGross() === 0){%>
+                    <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tckfooter_line1')) %></text>
+                <% } else { %>
+                    <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tckfooter_notPaid')) %></text>
+                <% } %>
            <% }
        } %>
     </line>
