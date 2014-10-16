@@ -90,17 +90,26 @@
           }
 
           _.each(taxLines, function (taxLine) {
-            if (line.get('qty') > 0 && orderType !== 3) {
+            if (line.get('qty') > 0 && orderType !== 3 && !order.get('isLayaway')) {
               taxAmount = taxLine.amount;
-            } else {
+            } else if (line.get('qty') < 0 && orderType !== 3 && !order.get('isLayaway')) {
               taxAmount = -taxLine.amount;
+            } else if (orderType === 3) {
+              if (line.get('qty') > 0) {
+                taxAmount = -taxLine.amount;
+              } else {
+                taxAmount = taxLine.amount;
+              }
             }
-            cashuptaxes.push({
-              taxName: taxLine.name,
-              taxAmount: taxAmount,
-              taxOrderType: taxOrderType.toString(),
-              cashupID: cashUp.at(0).get('id')
-            });
+
+            if (!OB.UTIL.isNullOrUndefined(taxAmount)) {
+              cashuptaxes.push({
+                taxName: taxLine.name,
+                taxAmount: taxAmount,
+                taxOrderType: taxOrderType.toString(),
+                cashupID: cashUp.at(0).get('id')
+              });
+            }
           });
         });
 
