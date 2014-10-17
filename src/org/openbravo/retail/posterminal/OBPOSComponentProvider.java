@@ -119,7 +119,6 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/modalreceiptlineproperties",
         "components/modalnoteditableorder",
         "components/modalnoteditableline",
-        "components/obpos-approval",
         // Web POS window
         "utils/cashUpReportUtils",
         "components/keypadcoins",
