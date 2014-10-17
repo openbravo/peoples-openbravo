@@ -138,7 +138,7 @@
 
             //If there are no elements in the hook, we can execute the callback asynchronusly with the synchronization process
             OB.MobileApp.model.runSyncProcess(function () {
-              successCallback();
+              successCallback(model);
             });
             if (eventParams && eventParams.callback) {
               eventParams.callback();
