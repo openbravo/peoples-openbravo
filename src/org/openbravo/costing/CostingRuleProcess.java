@@ -118,6 +118,7 @@ public class CostingRuleProcess implements Process {
           OBDal.getInstance().flush();
         }
         createCostingRuleInits(ruleId, childOrgs, startingDate);
+        rule.setFixbackdatedfrom(startingDate);
 
         // Update cost of inventories and process starting physical inventories.
         updateInventoriesCostAndProcessInitInventories(ruleId, startingDate, existsPreviousRule);
