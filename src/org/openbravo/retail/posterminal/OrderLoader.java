@@ -201,6 +201,10 @@ public class OrderLoader extends POSDataSynchronizationProcess {
 
       long t113 = System.currentTimeMillis();
       if (createShipment) {
+        if (order.getWarehouse().getLocatorList().isEmpty()) {
+          throw new OBException(Utility.messageBD(new DalConnectionProvider(false),
+              "OBPOS_WarehouseNotStorageBin", OBContext.getOBContext().getLanguage().getLanguage()));
+        }
         // Shipment header
         shipment = OBProvider.getInstance().get(ShipmentInOut.class);
         createShipment(shipment, order, jsonorder);
