@@ -22,7 +22,6 @@ package org.openbravo.service.json;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +43,7 @@ import org.openbravo.base.structure.ActiveEnabled;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -363,7 +363,7 @@ public class DataToJsonConverter {
       if (property.getDomainType() instanceof TimestampDomainType) {
 
         Timestamp localTime = (Timestamp) value;
-        Date UTCTime = convertToUTC(localTime);
+        Date UTCTime = OBDateUtils.convertToUTC(localTime);
 
         return xmlTimeFormatWithoutMTOffset.format(UTCTime);
       } else if (property.getDomainType() instanceof AbsoluteTimeDomainType) {
@@ -386,20 +386,6 @@ public class DataToJsonConverter {
       return Base64.encodeBase64String((byte[]) value);
     }
     return value;
-  }
-
-  private static Date convertToUTC(Date localTime) {
-    Calendar now = Calendar.getInstance();
-    Calendar calendar = Calendar.getInstance();
-    calendar.setTime(localTime);
-    calendar.set(Calendar.DATE, now.get(Calendar.DATE));
-    calendar.set(Calendar.MONTH, now.get(Calendar.MONTH));
-    calendar.set(Calendar.YEAR, now.get(Calendar.YEAR));
-
-    int gmtMillisecondOffset = (now.get(Calendar.ZONE_OFFSET) + now.get(Calendar.DST_OFFSET));
-    calendar.add(Calendar.MILLISECOND, -gmtMillisecondOffset);
-
-    return calendar.getTime();
   }
 
   protected Object convertPrimitiveValue(Object value) {
