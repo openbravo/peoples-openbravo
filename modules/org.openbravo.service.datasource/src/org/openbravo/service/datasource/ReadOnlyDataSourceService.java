@@ -28,6 +28,8 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.service.json.DataToJsonConverter;
 import org.openbravo.service.json.DefaultJsonDataService.QueryResultWriter;
@@ -127,10 +129,16 @@ public abstract class ReadOnlyDataSourceService extends DefaultDataSourceService
     if (endRowStr != null) {
       endRow = Integer.parseInt(endRowStr);
     }
+    Entity entity = null;
+    final String tableId = parameters.get("tableId");
+    if (tableId != null) {
+      entity = ModelProvider.getInstance().getEntityByTableId(tableId);
+    }
     final List<Map<String, Object>> data = getData(parameters, startRow, endRow);
     final DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(
         DataToJsonConverter.class);
     toJsonConverter.setAdditionalProperties(JsonUtils.getAdditionalProperties(parameters));
+    toJsonConverter.setEntity(entity);
     return toJsonConverter.convertToJsonObjects(data);
   }
 
