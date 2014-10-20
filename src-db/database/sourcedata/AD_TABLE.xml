@@ -11408,7 +11408,7 @@ from LandedCostCost as lcc
 where (lcc.matched = false or lcm is not null)
   and @additional_filters@
   and @insertion_point_0@
-group by  coalesce(lcm.id, lcc.id), lcc, lct.name, lcc.amount, lcc.currency.iSOCode, lcm.amount, case when lcm is not null then true else false end, lc.referenceDate, lcc.matched, lcc.isMatchingAdjusted, lcm.id, lcc.id, il, lc.documentNo, lcc.lineNo, lcm.amountInInvoiceCurrency]]></HQLQUERY>
+group by  coalesce(lcm.id, lcc.id), lcc, lct.name, lcc.amount, lcc.currency.iSOCode, lcm.amount, case when lcm is not null then true else false end, lc.referenceDate, lcc.matched, lcc.isMatchingAdjusted, lcm.id, lcc.id, il, lc.documentNo, lcc.lineNo, lcc.processed, lcm.amountInInvoiceCurrency]]></HQLQUERY>
 <!--B2960E2BDCCD4F7599A2433F2681847F-->  <ENTITY_ALIAS><![CDATA[lcc]]></ENTITY_ALIAS>
 <!--B2960E2BDCCD4F7599A2433F2681847F--></AD_TABLE>
 
