@@ -29,16 +29,20 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        UPDATE fin_payment_schedule AS a
+        UPDATE fin_payment_schedule a
         SET paidamt = amount
-        WHERE a.c_invoice_id IN (
+        WHERE  exists (
         SELECT c_invoice.c_invoice_id
         FROM c_invoice
         INNER JOIN c_invoiceline ON c_invoice.c_invoice_id = c_invoiceline.c_invoice_id
         LEFT JOIN fin_payment_schedule ON c_invoice.c_invoice_id = fin_payment_schedule.c_invoice_id
+        INNER JOIN fin_payment_scheduledetail on fin_payment_schedule.fin_payment_schedule_id=fin_payment_scheduledetail.fin_payment_schedule_invoice
+        INNER JOIN fin_payment_detail det on fin_payment_scheduledetail.fin_payment_detail_id=det.fin_payment_detail_id
         INNER JOIN c_orderline ON c_invoiceline.c_orderline_id = c_orderline.c_orderline_id
         INNER JOIN c_order ON c_orderline.c_order_id = c_order.c_order_id
-        WHERE c_order.em_obpos_app_cashup_id IS NOT null AND fin_payment_schedule.fin_payment_schedule_id IS NOT NULL AND c_invoice.ispaid = 'N'
+        WHERE c_order.em_obpos_app_cashup_id IS NOT null AND c_invoice.c_invoice_id=a.c_invoice_id AND fin_payment_schedule.fin_payment_schedule_id IS NOT NULL AND c_invoice.ispaid = 'N'
+        AND (SELECT sum(pd.amount) from fin_payment_scheduledetail psd, fin_payment_detail pd WHERE pd.fin_payment_detail_id=psd.fin_payment_detail_id 
+     and psd.fin_payment_schedule_invoice =fin_payment_schedule.fin_payment_schedule_id)=c_invoice.grandtotal
         )
       ]]>
     </Sql>
@@ -47,19 +51,23 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        UPDATE c_invoice AS a
+        UPDATE c_invoice a
         SET totalpaid = grandtotal,
             outstandingamt = 0,
             finalsettlement = created,
             ispaid = 'Y'
-        WHERE a.c_invoice_id IN (
+        WHERE exists (
         SELECT c_invoice.c_invoice_id
         FROM c_invoice
         INNER JOIN c_invoiceline ON c_invoice.c_invoice_id = c_invoiceline.c_invoice_id
         LEFT JOIN fin_payment_schedule ON c_invoice.c_invoice_id = fin_payment_schedule.c_invoice_id
+        INNER JOIN fin_payment_scheduledetail on fin_payment_schedule.fin_payment_schedule_id=fin_payment_scheduledetail.fin_payment_schedule_invoice
+        INNER JOIN fin_payment_detail det on fin_payment_scheduledetail.fin_payment_detail_id=det.fin_payment_detail_id
         INNER JOIN c_orderline ON c_invoiceline.c_orderline_id = c_orderline.c_orderline_id
         INNER JOIN c_order ON c_orderline.c_order_id = c_order.c_order_id
-        WHERE c_order.em_obpos_app_cashup_id IS NOT null AND fin_payment_schedule.fin_payment_schedule_id IS NOT NULL AND c_invoice.ispaid = 'N'
+        WHERE c_order.em_obpos_app_cashup_id IS NOT null AND c_invoice.c_invoice_id=a.c_invoice_id AND fin_payment_schedule.fin_payment_schedule_id IS NOT NULL AND c_invoice.ispaid = 'N'
+        AND (SELECT sum(pd.amount) from fin_payment_scheduledetail psd, fin_payment_detail pd WHERE pd.fin_payment_detail_id=psd.fin_payment_detail_id 
+     and psd.fin_payment_schedule_invoice =fin_payment_schedule.fin_payment_schedule_id)=c_invoice.grandtotal
         )
       ]]>
     </Sql>
@@ -68,19 +76,19 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        UPDATE c_invoice AS a
+        UPDATE c_invoice a
         SET totalpaid = 0,
             outstandingamt = 0,
             finalsettlement = created,
             ispaid = 'Y'
-        WHERE a.c_invoice_id IN (
+        WHERE exists (
         SELECT c_invoice.c_invoice_id
         FROM c_invoice
         INNER JOIN c_invoiceline ON c_invoice.c_invoice_id = c_invoiceline.c_invoice_id
         LEFT JOIN fin_payment_schedule ON c_invoice.c_invoice_id = fin_payment_schedule.c_invoice_id
         INNER JOIN c_orderline ON c_invoiceline.c_orderline_id = c_orderline.c_orderline_id
         INNER JOIN c_order ON c_orderline.c_order_id = c_order.c_order_id
-        WHERE c_order.em_obpos_app_cashup_id IS NOT null AND fin_payment_schedule.fin_payment_schedule_id IS NULL AND (c_invoice.totalpaid + c_invoice.outstandingamt = 0) AND c_invoice.ispaid = 'N'
+        WHERE c_order.em_obpos_app_cashup_id IS NOT null AND c_invoice.c_invoice_id=a.c_invoice_id AND fin_payment_schedule.fin_payment_schedule_id IS NULL AND (c_invoice.totalpaid + c_invoice.outstandingamt = 0) AND c_invoice.ispaid = 'N'
         )
       ]]>
     </Sql>
