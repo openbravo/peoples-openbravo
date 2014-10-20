@@ -2207,7 +2207,8 @@
           order.set('orderDate', moment(model.orderDate.toString(), "YYYY-MM-DD").toDate());
           order.set('creationDate', moment(model.creationDate.toString(), "YYYY-MM-DD hh:m:ss.s").toDate());
           if (model.isQuotation) {
-            // isQuotation Set milliseconds to 0.
+            // isQuotation Set milliseconds to 0, if the date is with milisecond, the date with miliseconds is rounded to seconds:
+            // so, the second can change, and the creationDate in quotation should not be changed when quotation is reactivated
             order.set('creationDate', moment(model.creationDate.toString(), "YYYY-MM-DD hh:m:ss").toDate());
           }
           //order.set('payments', model.receiptPayments);
