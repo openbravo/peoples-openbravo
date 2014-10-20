@@ -82,6 +82,10 @@ public class DataToJsonConverter {
   // display property used for table reference fields
   private String displayProperty = null;
 
+  // entity of the data being converted. will be used in the convertToJsonObjects, as there are no
+  // BaseOBObjects from which to infer the entity
+  private Entity entity;
+
   private static final Logger log = LoggerFactory.getLogger(DataToJsonConverter.class);
 
   /**
@@ -97,12 +101,26 @@ public class DataToJsonConverter {
       for (Map<String, Object> dataInstance : data) {
         final JSONObject jsonObject = new JSONObject();
         for (String key : dataInstance.keySet()) {
+          Property property = null;
+          if (this.entity != null) {
+            property = entity.getProperty(key);
+          }
           final Object value = dataInstance.get(key);
           if (value instanceof BaseOBObject) {
             addBaseOBObject(jsonObject, null, key, null, (BaseOBObject) value);
           } else {
-            // TODO: format!
-            jsonObject.put(key, convertPrimitiveValue(value));
+            Object convertedValue = null;
+            if (value != null && property != null && property.isPrimitive()) {
+              // if the property is known and the value is not null, use the
+              // convertPrimitiveValue(property, value) method to convert the value. It is more
+              // complete than convertPrimitiveValue(value) as the former converts dates from the
+              // server timezone offset to UTC, among other things
+              convertedValue = convertPrimitiveValue(property, value);
+            } else {
+              // TODO: format!
+              convertedValue = convertPrimitiveValue(value);
+            }
+            jsonObject.put(key, convertedValue);
           }
         }
         jsonObjects.add(jsonObject);
@@ -424,5 +442,9 @@ public class DataToJsonConverter {
 
   public void setDisplayProperty(String displayPropertyValue) {
     displayProperty = displayPropertyValue;
+  }
+
+  public void setEntity(Entity entity) {
+    this.entity = entity;
   }
 }
