@@ -56,7 +56,8 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
     return entities;
   }
 
-  public void onDelete(@Observes EntityDeleteEvent event) {
+  public void onDelete(@Observes
+  EntityDeleteEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -67,7 +68,8 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
     }
   }
 
-  public void onSave(@Observes EntityNewEvent event) {
+  public void onSave(@Observes
+  EntityNewEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -108,7 +110,8 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
     }
   }
 
-  public void onUpdate(@Observes EntityUpdateEvent event) {
+  public void onUpdate(@Observes
+  EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -203,7 +206,8 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
         if (StringUtils.isBlank(strCode)) {
           strCode = subsetValue.getCharacteristicValue().getCode();
         }
-        String[] strValues = { subsetValue.getCharacteristicValue().getId(), strCode };
+        String[] strValues = { subsetValue.getCharacteristicValue().getId(), strCode,
+            subsetValue.getCharacteristicValue().isActive().toString() };
         chValues.add(strValues);
       }
       return chValues;
