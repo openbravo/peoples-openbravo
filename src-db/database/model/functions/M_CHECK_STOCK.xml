@@ -28,39 +28,33 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2006 Openbravo SLU
+* All portions are Copyright (C) 2001-2014 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
   v_ResultStr VARCHAR2(2000):='';
   v_ExistsNegativeStock NUMBER;
-  v_Stock CHAR:='N';
-  v_Name VARCHAR2(60) ;
-  v_AD_Client_ID VARCHAR2(32);
+  v_AllowsNegativeStock CHAR:='N';
 BEGIN
   v_ResultStr:='Checking stock';
   p_Result:=1;
   SELECT ALLOWNEGATIVESTOCK
-  INTO v_Stock
+  INTO v_AllowsNegativeStock
   FROM AD_CLIENTINFO
   WHERE AD_CLIENT_ID=p_AD_Client_ID;
-  IF v_Stock='N' THEN
-    SELECT COUNT(*)
+  IF v_AllowsNegativeStock='N' THEN
+    SELECT count(1) from DUAL
     INTO v_ExistsNegativeStock
-    FROM
-      ( SELECT ROUND(COALESCE(QTYONHAND, 0), 2) AS QTY,
-        ROUND(COALESCE(QTYORDERONHAND, 0), 2) AS QTYORDER
+    WHERE EXISTS
+      ( SELECT 1
       FROM M_STORAGE_DETAIL
       WHERE M_PRODUCT_ID=p_M_Product_ID
         AND AD_CLIENT_ID=p_AD_Client_ID
         AND AD_ORG_ID=p_AD_Org_ID
-      )
-      A
-    WHERE QTY<0
-      OR QTYORDER<0;
-    IF v_ExistsNegativeStock<>0 THEN
+      AND (QTYONHAND<0 OR COALESCE(QTYORDERONHAND,0)<0));    
+    IF(v_ExistsNegativeStock <> 0) THEN
       p_Result:=0;
-      p_Message:='@NotEnoughStocked@';
+      p_Message:='@NotEnoughStocked@' || 'v_ExistsNegativeStock: ' || v_ExistsNegativeStock || ' p_M_Product_ID: ' || p_M_Product_ID || ' p_AD_Client_ID: ' || p_AD_Client_ID || ' p_AD_Org_ID: ' || p_AD_Org_ID;
     END IF;
   END IF;
   RETURN;
