@@ -8297,7 +8297,7 @@ This tab is used to indicate the different toolsets used in the selected process
 <!--800223-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
 <!--800223-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1E14B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--800223-->  <DATAORIGINTYPE><![CDATA[Table]]></DATAORIGINTYPE>
-<!--800223-->  <ISTREE><![CDATA[Y]]></ISTREE>
+<!--800223-->  <ISTREE><![CDATA[N]]></ISTREE>
 <!--800223--></AD_TABLE>
 
 <!--800224--><AD_TABLE>
