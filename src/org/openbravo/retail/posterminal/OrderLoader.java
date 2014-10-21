@@ -176,6 +176,7 @@ public class OrderLoader extends POSDataSynchronizationProcess {
       JSONArray orderlines = jsonorder.getJSONArray("lines");
       if (fullpayLayaway) {
         order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
+        order.setObposAppCashup(jsonorder.getString("obposAppCashup"));
         order.setDelivered(true);
         for (int i = 0; i < order.getOrderLineList().size(); i++) {
           lineReferences.add(order.getOrderLineList().get(i));
@@ -184,6 +185,7 @@ public class OrderLoader extends POSDataSynchronizationProcess {
         }
       } else if (partialpayLayaway) {
         order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
+        order.setObposAppCashup(jsonorder.getString("obposAppCashup"));
       } else {
         order = OBProvider.getInstance().get(Order.class);
         createOrder(order, jsonorder);
