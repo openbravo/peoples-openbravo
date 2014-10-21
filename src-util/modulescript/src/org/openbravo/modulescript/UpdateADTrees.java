@@ -37,6 +37,8 @@ public class UpdateADTrees extends ModuleScript {
       UpdateADTreesData.update(cp);
       // See issue https://issues.openbravo.com/view.php?id=27918
       UpdateADTreesData.fixAccountingReportSetup(cp);
+      // Manually set to null the TreeType column of the FinancialMgmtAccountingReport table. Needs to be done manually to prevent a constraint exception that happens because of this design defect https://issues.openbravo.com/view.php?id=12577
+      UpdateADTreesData.deleteTreeTypeFromFinancialMgmtAccountingReport(cp);
     } catch (Exception e) {
       handleError(e);
     }
