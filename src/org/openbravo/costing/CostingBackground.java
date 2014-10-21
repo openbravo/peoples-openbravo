@@ -186,6 +186,7 @@ public class CostingBackground extends DalBaseProcess {
       where.append("   , trx." + MaterialTransaction.PROPERTY_MOVEMENTTYPE + " desc ");
     } else {
       where.append("   , trx." + MaterialTransaction.PROPERTY_MOVEMENTTYPE);
+      where.append(" , trx." + MaterialTransaction.PROPERTY_ID);
     }
     OBQuery<MaterialTransaction> trxQry = OBDal.getInstance().createQuery(
         MaterialTransaction.class, where.toString());

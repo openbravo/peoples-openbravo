@@ -465,8 +465,11 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     wh.append("       trxtype." + CostAdjustmentUtils.propADListPriority + " > :trxtypeprio");
     wh.append("       or (");
     wh.append("        trxtype." + CostAdjustmentUtils.propADListPriority + " = :trxtypeprio");
-    wh.append("        and trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " <= :trxqty");
-    wh.append("    ))))");
+    wh.append("        and trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " < :trxqty");
+    wh.append("         or (");
+    wh.append("          trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " = :trxqty");
+    wh.append("          and trx." + MaterialTransaction.PROPERTY_ID + " < :trxid");
+    wh.append("    )))))");
     wh.append("    and trx.id != :trxid");
     wh.append(" ))))");
     wh.append("  and org.id in (:orgs)");
@@ -486,6 +489,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     wh.append(" trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE);
     wh.append(" , trxtype." + CostAdjustmentUtils.propADListPriority);
     wh.append(" , trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " desc");
+    wh.append(" , trx." + MaterialTransaction.PROPERTY_ID);
 
     OBQuery<MaterialTransaction> trxQry = OBDal.getInstance().createQuery(
         MaterialTransaction.class, wh.toString());
@@ -607,6 +611,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     where.append(" trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " desc ");
     where.append(" , trxtype." + CostAdjustmentUtils.propADListPriority + " desc ");
     where.append(" , trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY);
+    where.append(" , trx." + MaterialTransaction.PROPERTY_ID);
 
     OBQuery<Costing> qryCost = OBDal.getInstance().createQuery(Costing.class, where.toString());
     qryCost.setNamedParameter("refid", CostAdjustmentUtils.MovementTypeRefID);

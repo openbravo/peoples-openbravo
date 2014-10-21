@@ -381,9 +381,12 @@ public class CostAdjustmentUtils {
     select.append("       trxtype." + propADListPriority + " < :trxtypeprio");
     select.append("       or (");
     select.append("        trxtype." + propADListPriority + " = :trxtypeprio");
-    select.append("        and trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY
-        + " >= :trxqty");
-    select.append("    )))");
+    select
+        .append("        and trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " > :trxqty");
+    select.append("        or (");
+    select.append("         trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " = :trxqty");
+    select.append("         and trx." + MaterialTransaction.PROPERTY_ID + " >= :trxid");
+    select.append("    ))))");
     select.append("  )))))");
     if (costDimensions.get(CostDimension.Warehouse) != null) {
       select.append("  and locator." + Locator.PROPERTY_WAREHOUSE + ".id = :warehouse");
@@ -396,6 +399,7 @@ public class CostAdjustmentUtils {
     trxQry.setParameter("trxdate", trx.getTransactionProcessDate());
     trxQry.setParameter("trxtypeprio", getTrxTypePrio(trx.getMovementType()));
     trxQry.setParameter("trxqty", trx.getMovementQuantity());
+    trxQry.setParameter("trxid", trx.getId());
     CostingRule costingRule = CostingUtils.getCostDimensionRule(costorg,
         trx.getTransactionProcessDate());
     if (costingRule.isBackdatedTransactionsFixed()) {
@@ -620,8 +624,11 @@ public class CostAdjustmentUtils {
     select.append("    trxtype." + propADListPriority + " < :trxtypeprio");
     select.append("    or (");
     select.append("     trxtype." + propADListPriority + " = :trxtypeprio");
-    select.append("     and trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " >= :trxqty");
-    select.append("  ))))");
+    select.append("     and trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " > :trxqty");
+    select.append("        or (");
+    select.append("         trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " = :trxqty");
+    select.append("         and trx." + MaterialTransaction.PROPERTY_ID + " >= :trxid");
+    select.append("  )))))");
     select.append(" )))");
 
     if (costDimensions.get(CostDimension.Warehouse) != null) {
@@ -644,6 +651,7 @@ public class CostAdjustmentUtils {
     }
     trxQry.setParameter("trxtypeprio", getTrxTypePrio(trx.getMovementType()));
     trxQry.setParameter("trxqty", trx.getMovementQuantity());
+    trxQry.setParameter("trxid", trx.getId());
     CostingRule costingRule = CostingUtils.getCostDimensionRule(costorg,
         trx.getTransactionProcessDate());
     if (costingRule.isBackdatedTransactionsFixed()) {
