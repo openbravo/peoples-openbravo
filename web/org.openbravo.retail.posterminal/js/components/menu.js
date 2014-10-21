@@ -436,8 +436,6 @@ enyo.kind({
     if (!model.get('isQuotation')) {
       this.show();
       this.adjustVisibilityBasedOnPermissions();
-    } else {
-      this.hide();
     }
   },
   init: function (model) {
