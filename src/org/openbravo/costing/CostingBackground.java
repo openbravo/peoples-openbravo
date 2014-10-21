@@ -183,6 +183,7 @@ public class CostingBackground extends DalBaseProcess {
     where.append(" order by trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE);
     where.append(" , trxtype." + CostAdjustmentUtils.propADListPriority);
     where.append(" , trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " desc");
+    where.append(" , trx." + MaterialTransaction.PROPERTY_ID);
     OBQuery<MaterialTransaction> trxQry = OBDal.getInstance().createQuery(
         MaterialTransaction.class, where.toString());
 
