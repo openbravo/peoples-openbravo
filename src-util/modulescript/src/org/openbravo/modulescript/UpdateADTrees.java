@@ -35,6 +35,8 @@ public class UpdateADTrees extends ModuleScript {
       ConnectionProvider cp = getConnectionProvider();
       // Fills in the ad_table_id column of the existing ad_tree table, using the treetype property to patch each ad_tree with its corresponding ad_table
       UpdateADTreesData.update(cp);
+      // See issue https://issues.openbravo.com/view.php?id=27918
+      UpdateADTreesData.fixAccountingReportSetup(cp);
     } catch (Exception e) {
       handleError(e);
     }
