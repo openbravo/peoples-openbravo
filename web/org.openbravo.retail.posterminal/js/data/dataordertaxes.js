@@ -149,8 +149,9 @@
                       //We could have other taxes based on this, we save tha amount in case it is needed.
                       taxeslineAux[taxId] = {};
                       taxeslineAux[taxId].amount = new BigDecimal(String(orggross)).multiply(rate);
-                      taxeslineAux[taxId].discAmount = new BigDecimal(String(discountedGross)).multiply(rate);
-
+                      if (!(_.isNull(discountedGross) || _.isUndefined(discountedGross))) {
+                        taxeslineAux[taxId].discAmount = new BigDecimal(String(discountedGross)).multiply(rate);
+                      }
                     } else {
                       linetaxid = taxRate.get('id');
                     }
