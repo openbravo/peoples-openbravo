@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
@@ -580,9 +581,9 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
     if (filterCriteria.get("released") != null) {
       releasedFilterCriteria = filterCriteria.get("released");
     }
-    Boolean allocatedCriteria = null;
+    String allocatedCriteria = "";
     if (filterCriteria.get("allocated") != null) {
-      allocatedCriteria = "true".equals(filterCriteria.get("allocated"));
+      allocatedCriteria = filterCriteria.get("allocated");
     }
 
     if (ol != null && !"".equals(ol)) {
@@ -870,7 +871,7 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
       Set<String> organizations, List<Warehouse> warehousesFiltered,
       List<AttributeSetInstance> attributeSetInstancesFiltered, List<OrderLine> orderLinesFiltered,
       String availableQtyFilterCriteria, String reservedinothersFilterCriteria,
-      String releasedFilterCriteria, Boolean allocatedCriteria, ArrayList<String> selectedIds) {
+      String releasedFilterCriteria, String allocatedCriteria, ArrayList<String> selectedIds) {
     List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
     final StringBuilder hqlString = new StringBuilder();
     hqlString.append("select ol from OrderLine as ol ");
@@ -963,9 +964,8 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
           && !isInScope("released", releasedFilterCriteria, BigDecimal.ZERO)) {
         continue;
       }
-      if (allocatedCriteria == Boolean.TRUE) {
-        // Purchase Order Lines are inserted with allocated FALSE by default. So filtering by
-        // allocated = true results in filtering out all.
+      if (StringUtils.isNotBlank(allocatedCriteria)
+          && !isInScope("allocated", allocatedCriteria, false)) {
         continue;
       }
 
@@ -985,7 +985,7 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
       Set<String> organizations, List<Warehouse> warehousesFiltered,
       List<Locator> locatorsFiltered, List<AttributeSetInstance> attributeSetInstancesFiltered,
       String availableQtyFilterCriteria, String reservedinothersFilterCriteria,
-      String releasedFilterCriteria, Boolean allocatedCriteria, ArrayList<String> selectedIds) {
+      String releasedFilterCriteria, String allocatedCriteria, ArrayList<String> selectedIds) {
     List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
     final StringBuilder hqlString = new StringBuilder();
     hqlString.append("select sd from MaterialMgmtStorageDetail as sd ");
@@ -1087,9 +1087,8 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
                 && !isInScope("released", releasedFilterCriteria, BigDecimal.ZERO)) {
               continue;
             }
-            if (allocatedCriteria == Boolean.TRUE) {
-              // Storage Details are inserted with allocated FALSE by default. So filterin by
-              // allocated = true results in filtering out all.
+            if (StringUtils.isNotBlank(allocatedCriteria)
+                && !isInScope("allocated", allocatedCriteria, false)) {
               continue;
             }
             result = tomap(sd, false, result, reservedinothers, reservation);
@@ -1112,9 +1111,8 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
             && !isInScope("released", releasedFilterCriteria, BigDecimal.ZERO)) {
           continue;
         }
-        if (allocatedCriteria == Boolean.TRUE) {
-          // Storage Details are inserted with allocated FALSE by default. So filterin by
-          // allocated = true results in filtering out all.
+        if (StringUtils.isNotBlank(allocatedCriteria)
+            && !isInScope("allocated", allocatedCriteria, false)) {
           continue;
         }
         result = tomap(sd, false, result, reservedinothers, reservation);
@@ -1187,6 +1185,30 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
           return amount.compareTo(new BigDecimal(filterCriteria)) == 0;
         } catch (NumberFormatException e) {
         }
+      }
+    } catch (JSONException e) {
+      log4j.error("Error parsing criteria", e);
+    }
+    return true;
+  }
+
+  private boolean isInScope(String fieldName, String filterCriteria, boolean flag) {
+    try {
+      if (filterCriteria.startsWith("[")) {
+        JSONArray myJSON = new JSONArray(filterCriteria);
+        if (myJSON.getJSONObject(0).getString("fieldName").equals(fieldName)) {
+          return isInScope(fieldName, myJSON.getJSONObject(0).toString(), flag);
+        }
+      } else if (filterCriteria.startsWith("{")) {
+        JSONObject myJSON = new JSONObject(filterCriteria);
+        if (myJSON.getString("fieldName").equals(fieldName)) {
+          if (myJSON.getString("operator").equals("equals")) {
+            return flag == myJSON.getBoolean("value");
+          }
+        }
+
+      } else {
+        return flag == "true".equals(filterCriteria);
       }
     } catch (JSONException e) {
       log4j.error("Error parsing criteria", e);
