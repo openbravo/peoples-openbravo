@@ -557,6 +557,10 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
     if (filterCriteria.get("released") != null) {
       releasedFilterCriteria = filterCriteria.get("released");
     }
+    Boolean allocatedCriteria = null;
+    if (filterCriteria.get("allocated") != null) {
+      allocatedCriteria = "true".equals(filterCriteria.get("allocated"));
+    }
 
     if (ol != null && !"".equals(ol)) {
       reservation = ReservationUtils.getReservationFromOrder(OBDal.getInstance().get(
@@ -574,14 +578,18 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
     try {
       result.addAll(getSelectedLines(reservation));
       if (orderLinesFiltered == null || orderLinesFiltered.size() == 0) {
-        result.addAll(getStorageDetail(reservation, organizations, warehousesFiltered,
-            locatorsFiltered, attributesFiltered, availableQtyFilterCriteria,
-            reservedinothersFilterCriteria, releasedFilterCriteria, selectedIds));
+        result
+            .addAll(getStorageDetail(reservation, organizations, warehousesFiltered,
+                locatorsFiltered, attributesFiltered, availableQtyFilterCriteria,
+                reservedinothersFilterCriteria, releasedFilterCriteria, allocatedCriteria,
+                selectedIds));
       }
       if (locatorsFiltered == null || locatorsFiltered.size() == 0) {
-        result.addAll(getPurchaseOrderLines(reservation, organizations, warehousesFiltered,
-            attributesFiltered, orderLinesFiltered, availableQtyFilterCriteria,
-            reservedinothersFilterCriteria, releasedFilterCriteria, selectedIds));
+        result
+            .addAll(getPurchaseOrderLines(reservation, organizations, warehousesFiltered,
+                attributesFiltered, orderLinesFiltered, availableQtyFilterCriteria,
+                reservedinothersFilterCriteria, releasedFilterCriteria, allocatedCriteria,
+                selectedIds));
       }
     } finally {
       OBContext.restorePreviousMode();
@@ -830,7 +838,7 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
       Set<String> organizations, List<Warehouse> warehousesFiltered,
       List<AttributeSetInstance> attributeSetInstancesFiltered, List<OrderLine> orderLinesFiltered,
       String availableQtyFilterCriteria, String reservedinothersFilterCriteria,
-      String releasedFilterCriteria, ArrayList<String> selectedIds) {
+      String releasedFilterCriteria, Boolean allocatedCriteria, ArrayList<String> selectedIds) {
     List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
     final StringBuilder hqlString = new StringBuilder();
     hqlString.append("select ol from OrderLine as ol ");
@@ -923,6 +931,12 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
           && !isInScope("released", releasedFilterCriteria, BigDecimal.ZERO)) {
         continue;
       }
+      if (allocatedCriteria == Boolean.TRUE) {
+        // Purchase Order Lines are inserted with allocated FALSE by default. So filtering by
+        // allocated = true results in filtering out all.
+        continue;
+      }
+
       myMap.put("availableQty",
           orderLine.getOrderedQuantity().subtract(getDeliveredQuantity(orderLine)));
       myMap.put("reservedinothers", reservedinothers);
@@ -939,7 +953,7 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
       Set<String> organizations, List<Warehouse> warehousesFiltered,
       List<Locator> locatorsFiltered, List<AttributeSetInstance> attributeSetInstancesFiltered,
       String availableQtyFilterCriteria, String reservedinothersFilterCriteria,
-      String releasedFilterCriteria, ArrayList<String> selectedIds) {
+      String releasedFilterCriteria, Boolean allocatedCriteria, ArrayList<String> selectedIds) {
     List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
     final StringBuilder hqlString = new StringBuilder();
     hqlString.append("select sd from MaterialMgmtStorageDetail as sd ");
@@ -1041,6 +1055,11 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
                 && !isInScope("released", releasedFilterCriteria, BigDecimal.ZERO)) {
               continue;
             }
+            if (allocatedCriteria == Boolean.TRUE) {
+              // Storage Details are inserted with allocated FALSE by default. So filterin by
+              // allocated = true results in filtering out all.
+              continue;
+            }
             result = tomap(sd, false, result, reservedinothers, reservation);
           }
         }
@@ -1059,6 +1078,11 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
         }
         if (releasedFilterCriteria != null && !"".equals(releasedFilterCriteria)
             && !isInScope("released", releasedFilterCriteria, BigDecimal.ZERO)) {
+          continue;
+        }
+        if (allocatedCriteria == Boolean.TRUE) {
+          // Storage Details are inserted with allocated FALSE by default. So filterin by
+          // allocated = true results in filtering out all.
           continue;
         }
         result = tomap(sd, false, result, reservedinothers, reservation);
