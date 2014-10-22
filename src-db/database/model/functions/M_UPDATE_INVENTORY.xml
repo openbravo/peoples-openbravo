@@ -60,13 +60,12 @@
   v_qtyorder NUMBER;
   v_preqtyorder NUMBER;
   v_Storage_ID VARCHAR2(32);
+  v_attributesetinstance VARCHAR2(32);
 
 BEGIN
   v_qtyorder:=p_qtyorder;
   v_preqtyorder:=p_preqtyorder;
-  IF(p_attributesetinstance IS NULL) THEN
-    p_attributesetinstance :='0';
-  END IF;
+  v_attributesetinstance :=COALESCE(p_attributesetinstance,'0');
   SELECT count(1)
   INTO v_count
   FROM DUAL WHERE EXISTS(
@@ -74,7 +73,7 @@ BEGIN
   FROM M_STORAGE_DETAIL
   WHERE M_PRODUCT_ID=p_product
     AND M_LOCATOR_ID=p_locator
-    AND M_ATTRIBUTESETINSTANCE_ID=p_attributesetinstance
+    AND M_ATTRIBUTESETINSTANCE_ID=v_attributesetinstance
     AND C_UOM_ID=p_uom
     AND COALESCE(M_PRODUCT_UOM_ID, '-1')=COALESCE(p_product_uom, '-1'));
   IF(p_product_uom IS NOT NULL) THEN
@@ -99,7 +98,7 @@ BEGIN
       (
         get_uuid(), p_client, p_org, 'Y',
         now(), p_user, now(), p_user,
-        p_product, p_locator, p_attributesetinstance, p_uom,
+        p_product, p_locator, v_attributesetinstance, p_uom,
         p_product_uom, COALESCE(p_qty, 0), v_qtyorder, p_datelastinventory,
         COALESCE(p_preqty, 0), v_preqtyorder
       )
@@ -117,7 +116,7 @@ BEGIN
       UPDATEDBY=p_user
     WHERE M_PRODUCT_ID=p_product
       AND M_LOCATOR_ID=p_locator
-      AND M_ATTRIBUTESETINSTANCE_ID=p_attributesetinstance
+      AND M_ATTRIBUTESETINSTANCE_ID=v_attributesetinstance
       AND C_UOM_ID=p_uom
       AND COALESCE(M_PRODUCT_UOM_ID, '-1')=COALESCE(p_product_uom, '-1') ;
    
@@ -126,7 +125,7 @@ BEGIN
     FROM m_product p join m_attributeset aset ON p.m_attributeset_id = aset.m_attributeset_id 
                      JOIN M_STORAGE_DETAIL SD ON SD.M_PRODUCT_ID=p.m_product_id
             AND SD.M_LOCATOR_ID=p_locator
-            AND SD.M_ATTRIBUTESETINSTANCE_ID=p_attributesetinstance
+            AND SD.M_ATTRIBUTESETINSTANCE_ID=v_attributesetinstance
             AND SD.C_UOM_ID=p_uom
             AND COALESCE(SD.M_PRODUCT_UOM_ID, '-1')=COALESCE(p_product_uom, '-1')
     WHERE COALESCE(p.attrsetvaluetype, '-') <> 'F'
