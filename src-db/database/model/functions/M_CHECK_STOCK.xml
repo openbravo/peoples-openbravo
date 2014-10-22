@@ -43,8 +43,9 @@ BEGIN
   FROM AD_CLIENTINFO
   WHERE AD_CLIENT_ID=p_AD_Client_ID;
   IF v_AllowsNegativeStock='N' THEN
-    SELECT count(1) from DUAL
+    SELECT count(1)
     INTO v_ExistsNegativeStock
+    FROM DUAL
     WHERE EXISTS
       ( SELECT 1
       FROM M_STORAGE_DETAIL
