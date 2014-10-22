@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, enyo, Backbone, console, _ */
+/*global OB, enyo, Backbone, _ */
 
 OB.UTIL = window.OB.UTIL || {};
 
@@ -73,10 +73,14 @@ OB.UTIL.getNumberOfSequence = function (documentNo, isQuotation) {
 OB.UTIL.currency = {
   conversions: [],
   webPOSDefaultCurrencyId: function () {
-    return parseInt(OB.MobileApp.model.get('currency').id, 10);
+    return OB.MobileApp.model.get('currency').id.toString();
   },
   isDefaultCurrencyId: function (currencyId) {
-    currencyId = parseInt(currencyId, 10);
+    // argument checks
+    OB.UTIL.Debug.isDefined(currencyId, "Missing required argument 'currencyId' in OB.UTIL.currency.isDefaultCurrencyId");
+
+    currencyId = currencyId.toString();
+
     return currencyId === OB.UTIL.currency.webPOSDefaultCurrencyId();
   },
   /**
@@ -86,19 +90,24 @@ OB.UTIL.currency = {
    * @param {float}         rate              exchange rate to calculate the resulting amount
    */
   addConversion: function (fromCurrencyId, toCurrencyId, rate) {
-    fromCurrencyId = parseInt(fromCurrencyId, 10);
-    toCurrencyId = parseInt(toCurrencyId, 10);
+    // argument checks
+    OB.UTIL.Debug.isDefined(fromCurrencyId, "Missing required argument 'fromCurrencyId' in OB.UTIL.currency.addConversion");
+    OB.UTIL.Debug.isDefined(toCurrencyId, "Missing required argument 'toCurrencyId' in OB.UTIL.currency.addConversion");
+    OB.UTIL.Debug.isDefined(rate, "Missing required argument 'rate' in OB.UTIL.currency.addConversion");
+
+    fromCurrencyId = fromCurrencyId.toString();
+    toCurrencyId = toCurrencyId.toString();
     rate = parseFloat(rate, 10);
 
     if (fromCurrencyId === toCurrencyId) {
-      OB.error('DEVELOPER: there is no point in converting a currencyId to itself');
+      OB.error('There is no point in converting a currencyId to itself');
       return;
     }
 
     var conversionAlreadyExists = this.findConverter(fromCurrencyId, toCurrencyId);
     if (conversionAlreadyExists) {
       if (conversionAlreadyExists.rate !== rate) {
-        OB.error('DEVELOPER: The rate for a currency is trying to be changed. If you are not trying to change the rate, something needs critical and inmediate fixing. If you really want to change the rate and know what you are doing, clean the OB.UTIL.currency.conversions array and fill it again.');
+        OB.error('The rate for a currency is trying to be changed. If you are not trying to change the rate, something needs critical and inmediate fixing. If you really want to change the rate and know what you are doing, clean the OB.UTIL.currency.conversions array and fill it again.');
       }
       return; // the conversor is already present. this is fine, unless a lot of calls are finishing here
     }
@@ -117,7 +126,7 @@ OB.UTIL.currency = {
        */
       getTangibleOf: function (amountToRound) {
         if (this.toCurrencyId === OB.UTIL.currency.webPOSDefaultCurrencyId()) {
-          OB.error('DEVELOPER: You cannot get a tangible of a foreign currency because it has already a value in local currency. If you are trying to get the amount for a financial account, use the getFinancialAmountOf function');
+          OB.error('You cannot get a tangible of a foreign currency because it has already a value in local currency. If you are trying to get the amount for a financial account, use the getFinancialAmountOf function');
           return;
         }
         return OB.DEC.mul(amountToRound, rate, OB.UTIL.currency.toCurrencyIdPrecision);
@@ -130,7 +139,7 @@ OB.UTIL.currency = {
        */
       getFinancialAmountOf: function (amount) {
         if (this.fromCurrencyId === OB.UTIL.currency.webPOSDefaultCurrencyId()) {
-          OB.error('DEVELOPER: You are trying to get a financial amount value that is not from a foreign currency');
+          OB.error('You are trying to get a financial amount value that is not from a foreign currency');
           return;
         }
         return OB.DEC.mul(amount, rate);
@@ -152,6 +161,13 @@ OB.UTIL.currency = {
    * Developer: you, most likely, won't need this function. If so, change this comment
    */
   findConverter: function (fromCurrencyId, toCurrencyId) {
+    // argument checks
+    OB.UTIL.Debug.isDefined(fromCurrencyId, "Missing required argument 'fromCurrencyId' in OB.UTIL.currency.findConverter");
+    OB.UTIL.Debug.isDefined(toCurrencyId, "Missing required argument 'toCurrencyId' in OB.UTIL.currency.findConverter");
+
+    fromCurrencyId = fromCurrencyId.toString();
+    toCurrencyId = toCurrencyId.toString();
+
     return _.find(this.conversions, function (c) {
       return (c.fromCurrencyId === fromCurrencyId) && (c.toCurrencyId === toCurrencyId);
     });
@@ -163,11 +179,16 @@ OB.UTIL.currency = {
    * @return {converter}                 the converter to convert amounts from the fromCurrencyId currency to the toCurrencyId currency
    */
   getConverter: function (fromCurrencyId, toCurrencyId) {
-    fromCurrencyId = parseInt(fromCurrencyId, 10);
-    toCurrencyId = parseInt(toCurrencyId, 10);
+    // argument checks
+    OB.UTIL.Debug.isDefined(fromCurrencyId, "Missing required argument 'fromCurrencyId' in OB.UTIL.currency.getConverter");
+    OB.UTIL.Debug.isDefined(toCurrencyId, "Missing required argument 'toCurrencyId' in OB.UTIL.currency.getConverter");
+
+    fromCurrencyId = fromCurrencyId.toString();
+    toCurrencyId = toCurrencyId.toString();
+
     var found = this.findConverter(fromCurrencyId, toCurrencyId);
     if (!found) {
-      OB.error('DEVELOPER: Currency converter not added: ' + fromCurrencyId + ' -> ' + toCurrencyId);
+      OB.error('Currency converter not added: ' + fromCurrencyId + ' -> ' + toCurrencyId);
     }
     return found;
   },
@@ -179,7 +200,11 @@ OB.UTIL.currency = {
    * @return {converter}                  the converter to convert amounts from fromCurrencyId to the WebPOS default currency
    */
   getToLocalConverter: function (fromCurrencyId) {
-    fromCurrencyId = parseInt(fromCurrencyId, 10);
+    // argument checks
+    OB.UTIL.Debug.isDefined(fromCurrencyId, "Missing required argument 'fromCurrencyId' in OB.UTIL.currency.getToLocalConverter");
+
+    fromCurrencyId = fromCurrencyId.toString();
+
     return this.getConverter(fromCurrencyId, this.webPOSDefaultCurrencyId());
   },
   /**
@@ -189,7 +214,11 @@ OB.UTIL.currency = {
    * @return {converter}                the converter to convert amounts from WebPOS default currency to toCurrencyId
    */
   getFromLocalConverter: function (toCurrencyId) {
-    toCurrencyId = parseInt(toCurrencyId, 10);
+     // argument checks
+    OB.UTIL.Debug.isDefined(toCurrencyId, "Missing required argument 'toCurrencyId' in OB.UTIL.currency.getFromLocalConverter");
+
+    toCurrencyId = toCurrencyId.toString();
+
     return this.getConverter(this.webPOSDefaultCurrencyId(), toCurrencyId);
   },
   /**
@@ -199,10 +228,12 @@ OB.UTIL.currency = {
    * @return {float}                        the converted amount
    */
   toDefaultCurrency: function (fromCurrencyId, amount) {
-    if (OB.UTIL.isNullOrUndefined(amount)) {
-      OB.error('DEVELOPER: you are missing one parameter');
-    }
-    fromCurrencyId = parseInt(fromCurrencyId, 10);
+     // argument checks
+    OB.UTIL.Debug.isDefined(fromCurrencyId, "Missing required argument 'fromCurrencyId' in OB.UTIL.currency.toDefaultCurrency");
+    OB.UTIL.Debug.isDefined(amount, "Missing required argument 'amount' in OB.UTIL.currency.toDefaultCurrency");
+
+    fromCurrencyId = fromCurrencyId.toString();
+
     if (fromCurrencyId === this.webPOSDefaultCurrencyId()) {
       return amount;
     }
@@ -217,10 +248,12 @@ OB.UTIL.currency = {
    * @return {float}                        the converted amount
    */
   toForeignCurrency: function (toCurrencyId, amount) {
-    if (OB.UTIL.isNullOrUndefined(amount)) {
-      OB.error('DEVELOPER: you are missing one parameter');
-    }
-    toCurrencyId = parseInt(toCurrencyId, 10);
+     // argument checks
+    OB.UTIL.Debug.isDefined(toCurrencyId, "Missing required argument 'toCurrencyId' in OB.UTIL.currency.toForeignCurrency");
+    OB.UTIL.Debug.isDefined(amount, "Missing required argument 'amount' in OB.UTIL.currency.toForeignCurrency");
+
+    toCurrencyId = toCurrencyId.toString();
+
     if (toCurrencyId === this.webPOSDefaultCurrencyId()) {
       return amount;
     }
