@@ -514,7 +514,7 @@ enyo.kind({
 
   cancelReceiptToInvoice: function (inSender, inEvent) {
     if (this.model.get('leftColumnViewManager').isOrder()) {
-      if (this.model.get('order').get('isEditable') === false) {
+      if (this.model.get('order').get('isEditable') === false && !this.model.get('order').get('isLayaway')) {
         this.doShowPopup({
           popup: 'modalNotEditableOrder'
         });
