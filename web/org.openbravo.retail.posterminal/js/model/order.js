@@ -2257,6 +2257,13 @@
       this.loadCurrent(true);
     },
 
+    addThisOrder: function (model) {
+      this.saveCurrent();
+      this.current = model;
+      this.add(this.current);
+      this.loadCurrent();
+    },
+
     addFirstOrder: function () {
       this.addNewOrder();
     },
