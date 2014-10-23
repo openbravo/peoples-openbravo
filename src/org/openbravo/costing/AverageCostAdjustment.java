@@ -468,7 +468,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     wh.append("        and trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " < :trxqty");
     wh.append("         or (");
     wh.append("          trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " = :trxqty");
-    wh.append("          and trx." + MaterialTransaction.PROPERTY_ID + " < :trxid");
+    wh.append("          and trx." + MaterialTransaction.PROPERTY_ID + " > :trxid");
     wh.append("    )))))");
     wh.append("    and trx.id != :trxid");
     wh.append(" ))))");
