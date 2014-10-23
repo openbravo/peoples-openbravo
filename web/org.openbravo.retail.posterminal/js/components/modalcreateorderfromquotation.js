@@ -75,10 +75,14 @@ enyo.kind({
     }]
   },
   init: function (model) {
+    var salesOrder;
     this.model = model;
     var receipt = this.model.get('order');
     receipt.on('orderCreatedFromQuotation', function () {
-      this.model.get('orderList').add(this.theQuotation);
+      salesOrder = OB.UTIL.clone(this.theQuotation);
+      salesOrder.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentType);
+      salesOrder.set('quotationnoSuffix', -1);
+      this.model.get('orderList').addThisOrder(salesOrder);
     }, this);
     this.theQuotation = receipt;
   }
