@@ -60,7 +60,7 @@ public class CheckRecordChangedActionHandler extends BaseActionHandler {
       Date bbddBSLUpdated = bsline.getUpdated();
       // Remove milliseconds to compare against updated from UI
       Calendar calendar = Calendar.getInstance();
-      calendar.setTime(OBDateUtils.convertToUTC(bbddBSLUpdated));
+      calendar.setTime(OBDateUtils.convertDateToUTC(bbddBSLUpdated));
       calendar.setLenient(true);
       calendar.set(Calendar.MILLISECOND, 0);
       if (date.getTime() != calendar.getTimeInMillis()) {

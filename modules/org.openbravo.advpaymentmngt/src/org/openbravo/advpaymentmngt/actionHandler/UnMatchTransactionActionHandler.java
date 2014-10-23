@@ -63,7 +63,7 @@ public class UnMatchTransactionActionHandler extends BaseActionHandler {
       Date bbddBSLUpdated = bsline.getUpdated();
       // Remove milis
       Calendar calendar = Calendar.getInstance();
-      calendar.setTime(OBDateUtils.convertToUTC(bbddBSLUpdated));
+      calendar.setTime(OBDateUtils.convertDateToUTC(bbddBSLUpdated));
       calendar.setLenient(true);
       calendar.set(Calendar.MILLISECOND, 0);
       if (date.getTime() != calendar.getTimeInMillis()) {
