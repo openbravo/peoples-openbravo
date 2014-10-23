@@ -55,7 +55,7 @@ BEGIN
       AND (QTYONHAND<0 OR COALESCE(QTYORDERONHAND,0)<0));    
     IF(v_ExistsNegativeStock <> 0) THEN
       p_Result:=0;
-      p_Message:='@NotEnoughStocked@' || 'v_ExistsNegativeStock: ' || v_ExistsNegativeStock || ' p_M_Product_ID: ' || p_M_Product_ID || ' p_AD_Client_ID: ' || p_AD_Client_ID || ' p_AD_Org_ID: ' || p_AD_Org_ID;
+      p_Message:='@NotEnoughStocked@';
     END IF;
   END IF;
   RETURN;
