@@ -197,6 +197,10 @@ enyo.kind({
           me.updateVisibility(false);
           return;
         }
+        if (newValue.get('isEditable') === true && newValue.get('isQuotation')) {
+          me.updateVisibility(false);
+          return;
+        }
       }
       me.updateVisibility(true);
     }, this);
@@ -287,15 +291,26 @@ enyo.kind({
     }
 
   },
+  updateVisibility: function (isVisible) {
+    if (!OB.MobileApp.model.hasPermission(this.permission)) {
+      this.hide();
+      return;
+    }
+    if (!isVisible) {
+      this.hide();
+      return;
+    }
+    this.show();
+  },
   init: function (model) {
     this.model = model;
     var receipt = model.get('order'),
         me = this;
     receipt.on('change:isQuotation change:isLayaway', function (model) {
       if (!model.get('isQuotation') || model.get('isLayaway')) {
-        me.show();
+        me.updateVisibility(true);
       } else {
-        me.hide();
+        me.updateVisibility(false);
       }
     }, this);
     receipt.on('change:bp', function (model) {
@@ -306,11 +321,15 @@ enyo.kind({
     receipt.on('change:isEditable', function (newValue) {
       if (newValue) {
         if (newValue.get('isEditable') === false && !newValue.get('isLayaway')) {
-          this.setShowing(false);
+          this.updateVisibility(false);
+          return;
+        }
+        if (newValue.get('isEditable') === true && newValue.get('isQuotation')) {
+          this.updateVisibility(false);
           return;
         }
       }
-      this.setShowing(true);
+      this.updateVisibility(true);
     }, this);
   }
 });
