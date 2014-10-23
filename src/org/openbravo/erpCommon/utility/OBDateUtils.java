@@ -236,10 +236,17 @@ public class OBDateUtils {
     return cal.getTime();
   }
 
-  public static Date convertToUTC(Date localTime) {
+  /**
+   * Returns a new Date converted to UTC
+   * 
+   * @param date
+   *          Date to be converted to UTC
+   * 
+   */
+  public static Date convertDateToUTC(Date date) {
     Calendar now = Calendar.getInstance();
     Calendar calendar = Calendar.getInstance();
-    calendar.setTime(localTime);
+    calendar.setTime(date);
 
     int gmtMillisecondOffset = (now.get(Calendar.ZONE_OFFSET) + now.get(Calendar.DST_OFFSET));
     calendar.add(Calendar.MILLISECOND, -gmtMillisecondOffset);
