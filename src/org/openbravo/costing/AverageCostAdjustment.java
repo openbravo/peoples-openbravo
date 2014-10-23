@@ -129,6 +129,29 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     }
     log.debug("Starting average cost {}", cost == null ? "not cost" : cost.toPlainString());
     if (AverageAlgorithm.modifiesAverage(trxType) && cost != null) {
+      BigDecimal trxCost = CostAdjustmentUtils.getTrxCost(basetrx, false, getCostCurrency());
+      BigDecimal trxPrice = trxCost.add(adjustmentBalance).divide(
+          basetrx.getMovementQuantity().abs(), costCurPrecission, RoundingMode.HALF_UP);
+      if (checkNegativeStockCorrection && currentStock.compareTo(basetrx.getMovementQuantity()) < 0
+          && cost.compareTo(trxPrice) != 0) {
+        // stock was negative and cost different than trx price then Negative Stock Correction
+        // is added
+        BigDecimal trxSignMultiplier = new BigDecimal(basetrx.getMovementQuantity().signum());
+        BigDecimal negCorrAmt = trxPrice.multiply(currentStock)
+            .setScale(stdCurPrecission, RoundingMode.HALF_UP).subtract(currentValueAmt)
+            .subtract(adjustmentBalance);
+        adjustmentBalance = adjustmentBalance.add(negCorrAmt.multiply(trxSignMultiplier));
+        // If there is a difference insert a cost adjustment line.
+        CostAdjustmentLine newCAL = insertCostAdjustmentLine(basetrx, negCorrAmt, null);
+        newCAL.setNegativeStockCorrection(true);
+        newCAL.setRelatedTransactionAdjusted(true);
+        newCAL.setUnitCost(Boolean.FALSE);
+        OBDal.getInstance().save(newCAL);
+        cost = trxPrice;
+        log.debug("Negative stock correction. Amount: {}, new cost {}", negCorrAmt.toPlainString(),
+            cost.toPlainString());
+      }
+
       Costing curCosting = basetrx.getMaterialMgmtCostingList().get(0);
       if (curCosting.getCost().compareTo(cost) != 0) {
         // Update existing costing
