@@ -385,7 +385,7 @@ public class CostAdjustmentUtils {
         .append("        and trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " > :trxqty");
     select.append("        or (");
     select.append("         trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " = :trxqty");
-    select.append("         and trx." + MaterialTransaction.PROPERTY_ID + " >= :trxid");
+    select.append("         and trx." + MaterialTransaction.PROPERTY_ID + " <= :trxid");
     select.append("    ))))");
     select.append("  )))))");
     if (costDimensions.get(CostDimension.Warehouse) != null) {
@@ -627,7 +627,7 @@ public class CostAdjustmentUtils {
     select.append("     and trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " > :trxqty");
     select.append("        or (");
     select.append("         trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " = :trxqty");
-    select.append("         and trx." + MaterialTransaction.PROPERTY_ID + " >= :trxid");
+    select.append("         and trx." + MaterialTransaction.PROPERTY_ID + " <= :trxid");
     select.append("  )))))");
     select.append(" )))");
 
