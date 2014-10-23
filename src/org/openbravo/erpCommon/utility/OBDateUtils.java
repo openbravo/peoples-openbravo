@@ -240,9 +240,6 @@ public class OBDateUtils {
     Calendar now = Calendar.getInstance();
     Calendar calendar = Calendar.getInstance();
     calendar.setTime(localTime);
-    calendar.set(Calendar.DATE, now.get(Calendar.DATE));
-    calendar.set(Calendar.MONTH, now.get(Calendar.MONTH));
-    calendar.set(Calendar.YEAR, now.get(Calendar.YEAR));
 
     int gmtMillisecondOffset = (now.get(Calendar.ZONE_OFFSET) + now.get(Calendar.DST_OFFSET));
     calendar.add(Calendar.MILLISECOND, -gmtMillisecondOffset);
