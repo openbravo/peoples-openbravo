@@ -292,7 +292,7 @@ public class CostAdjustmentProcess {
               trx.getCurrency(), accountingDate, trx.getOrganization(), "C");
         }
         trxCost.setCost(convertedAmt);
-        trxCost.setCurrency(line.getCurrency());
+        trxCost.setCurrency(trx.getCurrency());
 
         OBDal.getInstance().save(trxCost);
         OBDal.getInstance().flush();

@@ -219,6 +219,7 @@ public class LandedCostProcess {
           referenceDate);
       cal.setNeedsPosting(Boolean.FALSE);
       cal.setUnitCost(Boolean.FALSE);
+      cal.setCurrency(landedCost.getCurrency());
       OBDal.getInstance().save(cal);
 
       if (i % 100 == 0) {
