@@ -90,7 +90,7 @@ public class CostingRuleEventHandler extends EntityPersistenceEventObserver {
     final Session session = OBDal.getInstance().getSession();
     hql.append("select min(p.startingDate)  from FinancialMgmtPeriodControl pc"
         + " inner join  pc.period p" + " where  periodstatus='O' " + " and p.client= :client"
-        + " and p.organization= :org ");
+        + " and pc.organization= :org ");
 
     final Query query = session.createQuery(hql.toString());
     query.setParameter("client", rule.getClient());
