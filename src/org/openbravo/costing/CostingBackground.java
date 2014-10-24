@@ -130,6 +130,7 @@ public class CostingBackground extends DalBaseProcess {
       bundle.setResult(result);
       return;
     } catch (Exception e) {
+      OBDal.getInstance().rollbackAndClose();
       result = OBMessageUtils.translateError(bundle.getConnection(), bundle.getContext().toVars(),
           OBContext.getOBContext().getLanguage().getLanguage(), e.getMessage());
       result.setType("Error");

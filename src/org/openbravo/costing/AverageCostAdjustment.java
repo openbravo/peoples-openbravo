@@ -20,7 +20,6 @@ package org.openbravo.costing;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -435,8 +434,12 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     // adjusted transaction. But for transactions with the same movement date only those with a
     // transaction date after the process date of the adjusted transaction.
     wh.append(" and (");
-    wh.append("  (trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " < :fixbdt");
-    wh.append("  and (");
+
+    if (costingRule.isBackdatedTransactionsFixed()) {
+      wh.append("  (trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " < :fixbdt");
+      wh.append("  and (");
+    }
+
     wh.append("   trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " > :trxdate");
     wh.append("   or (");
     wh.append("    trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " = :trxdate");
@@ -444,34 +447,39 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     wh.append("     trxtype." + CostAdjustmentUtils.propADListPriority + " > :trxtypeprio");
     wh.append("     or (");
     wh.append("      trxtype." + CostAdjustmentUtils.propADListPriority + " = :trxtypeprio");
-    wh.append("      and trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " <= :trxqty");
-    wh.append("  ))))");
-    wh.append("  and trx.id != :trxid");
+    wh.append("      and trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " < :trxqty");
+    wh.append("      or (");
+    wh.append("        trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " = :trxqty");
+    wh.append("        and trx." + MaterialTransaction.PROPERTY_ID + " > :trxid");
+    wh.append("  )))))");
 
-    wh.append(" ) or (");
+    if (costingRule.isBackdatedTransactionsFixed()) {
+      wh.append(" ) or (");
 
-    wh.append("  trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " >= :fixbdt");
-    wh.append("  and (");
-    wh.append("   trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " > :mvtdate");
-    wh.append("   or (");
-    wh.append("    trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " = :mvtdate");
-    // If there are more than one trx on the same trx process date filter out those types with less
-    // priority and / or higher quantity.
-    wh.append("    and (");
-    wh.append("     trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " > :trxdate");
-    wh.append("     or (");
-    wh.append("      trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " = :trxdate");
-    wh.append("      and (");
-    wh.append("       trxtype." + CostAdjustmentUtils.propADListPriority + " > :trxtypeprio");
-    wh.append("       or (");
-    wh.append("        trxtype." + CostAdjustmentUtils.propADListPriority + " = :trxtypeprio");
-    wh.append("        and trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " < :trxqty");
-    wh.append("         or (");
-    wh.append("          trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " = :trxqty");
-    wh.append("          and trx." + MaterialTransaction.PROPERTY_ID + " > :trxid");
-    wh.append("    )))))");
-    wh.append("    and trx.id != :trxid");
-    wh.append(" ))))");
+      wh.append("  trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " >= :fixbdt");
+      wh.append("  and (");
+      wh.append("   trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " > :mvtdate");
+      wh.append("   or (");
+      wh.append("    trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " = :mvtdate");
+      // If there are more than one trx on the same trx process date filter out those types with
+      // less
+      // priority and / or higher quantity.
+      wh.append("    and (");
+      wh.append("     trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " > :trxdate");
+      wh.append("     or (");
+      wh.append("      trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " = :trxdate");
+      wh.append("      and (");
+      wh.append("       trxtype." + CostAdjustmentUtils.propADListPriority + " > :trxtypeprio");
+      wh.append("       or (");
+      wh.append("        trxtype." + CostAdjustmentUtils.propADListPriority + " = :trxtypeprio");
+      wh.append("        and trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " < :trxqty");
+      wh.append("         or (");
+      wh.append("          trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " = :trxqty");
+      wh.append("          and trx." + MaterialTransaction.PROPERTY_ID + " > :trxid");
+      wh.append("    )))))");
+      wh.append(" )))");
+    }
+    wh.append(")");
     wh.append("  and org.id in (:orgs)");
     if (warehouse != null) {
       wh.append("  and loc." + Locator.PROPERTY_WAREHOUSE + " = :warehouse");
@@ -497,13 +505,9 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     trxQry.setFilterOnReadableClients(false);
     trxQry.setNamedParameter("refid", CostAdjustmentUtils.MovementTypeRefID);
     trxQry.setNamedParameter("product", trx.getProduct());
-    trxQry.setNamedParameter("mvtdate", trx.getMovementDate());
     if (costingRule.isBackdatedTransactionsFixed()) {
+      trxQry.setNamedParameter("mvtdate", trx.getMovementDate());
       trxQry.setNamedParameter("fixbdt", costingRule.getFixbackdatedfrom());
-    } else {
-      Calendar cal = Calendar.getInstance();
-      cal.set(9999, 12, 31);
-      trxQry.setNamedParameter("fixbdt", cal.getTime());
     }
     trxQry.setNamedParameter("trxtypeprio",
         CostAdjustmentUtils.getTrxTypePrio(trx.getMovementType()));
