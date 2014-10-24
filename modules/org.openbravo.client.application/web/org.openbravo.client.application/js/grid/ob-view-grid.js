@@ -2897,7 +2897,9 @@ isc.OBViewGrid.addProperties({
     this.view.standardWindow.autoSaveDone(this.view, true);
 
     // if nothing else got selected, select ourselves then
-    if (!this.getSelectedRecord() || (this.getSelectedRecord().id === record._originalId)) {
+    // if there is already a record selected, only force reselecting that record if the editCompletionEvent was 'programmatic', 
+    // otherwise ('enter', 'tab', etc) it is not needed, and doing it causes https://issues.openbravo.com/view.php?id=27957  
+    if (!this.getSelectedRecord() || (editCompletionEvent === 'programmatic' && this.getSelectedRecord().id === record._originalId)) {
       this.selectRecord(record);
       keepSelection = true;
       this.view.refreshChildViews(keepSelection);
