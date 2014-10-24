@@ -1539,6 +1539,8 @@ IF (NOT FINISH_PROCESS) THEN
         p_DateInvoiced DATE;
         v_totalQtyInvoiced NUMBER;
         v_ODocumentNo C_ORDER.DocumentNo%TYPE;
+        v_invoiceRule C_ORDER.InvoiceRule%TYPE;
+        v_NewPendingToDeliver C_ORDERLINE.QtyDelivered%TYPE;
         v_NewPendingToInvoice NUMBER;
         v_deliveredQty NUMBER;
         v_inOutStatus varchar2(60) ;
@@ -1552,12 +1554,19 @@ IF (NOT FINISH_PROCESS) THEN
         LOOP
           IF (CurLines.C_OrderLine_ID IS NOT NULL) THEN
             --Check that qty pending to invoice is higher or equal to the qty being invoiced
-            SELECT o.documentno, ABS(ol.qtyordered) - ABS(ol.qtyinvoiced + CurLines.QtyInvoiced), p.isquantityvariable
-              INTO v_ODocumentNo, v_NewPendingToInvoice, v_Isquantityvariable
+            SELECT o.documentno, o.invoicerule, ABS(ol.qtydelivered) - ABS(ol.qtyinvoiced + CurLines.QtyInvoiced) , ABS(ol.qtyordered) - ABS(ol.qtyinvoiced + CurLines.QtyInvoiced), p.isquantityvariable
+              INTO v_ODocumentNo, v_invoiceRule, v_NewPendingToDeliver, v_NewPendingToInvoice, v_Isquantityvariable
             FROM c_order o, c_orderline ol
             LEFT JOIN m_product p ON p.m_product_id = ol.m_product_id
             WHERE o.c_order_id = ol.c_order_id
               AND ol.c_orderline_id = CurLines.c_orderline_id;
+            IF (v_Isquantityvariable <> 'Y' AND v_invoiceRule = 'D' AND v_NewPendingToDeliver < 0) THEN
+              v_Message := '@NotPossibleCompleteInvoice@' || ' ' || v_DocumentNo;
+              v_Message := v_Message || ' ' || '@line@' || ' ' || CurLines.line || '. ';
+              v_Message := v_Message || '@OrderDocumentno@' || ' ' || v_ODocumentNo;
+              v_Message := v_Message || ': ' || '@QtyInvoicedHigherDelivered@' || '.';
+              RAISE_APPLICATION_ERROR(-20000, v_Message);
+            END IF;
             IF (v_Isquantityvariable <> 'Y' AND v_NewPendingToInvoice <0) THEN
               v_Message := '@NotPossibleCompleteInvoice@' || ' ' || v_DocumentNo;
               v_Message := v_Message || ' ' || '@line@' || ' ' || CurLines.line || '. ';
