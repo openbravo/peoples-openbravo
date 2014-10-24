@@ -2480,8 +2480,10 @@ public abstract class AcctServer {
         } else {
           throw new OBException("@NotConvertible@");
         }
-        amtFromSourcecurrency = amtFrom.multiply(_amount).divide(amtTo, conversionRatePrecision,
-            BigDecimal.ROUND_HALF_EVEN);
+        if (amtTo.compareTo(BigDecimal.ZERO) != 0)
+               amtFromSourcecurrency = amtFrom.multiply(_amount).divide(amtTo, conversionRatePrecision,
+                               BigDecimal.ROUND_HALF_EVEN);
+        else  amtFromSourcecurrency = amtFrom;
       }
     }
     amtDiff = (amtTo).subtract(amtFrom);
