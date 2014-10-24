@@ -20,7 +20,6 @@ package org.openbravo.costing;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -331,6 +330,8 @@ public class CostAdjustmentUtils {
       orgs = osp.getChildTree("0", false);
       costDimensions = CostingUtils.getEmptyDimensions();
     }
+    CostingRule costingRule = CostingUtils.getCostDimensionRule(costorg,
+        trx.getTransactionProcessDate());
 
     StringBuffer select = new StringBuffer();
     select
@@ -346,8 +347,13 @@ public class CostAdjustmentUtils {
     select.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
 
     select.append("  and ( ");
-    select.append("  ( trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " < :fixbdt");
-    select.append("   and  (");
+
+    if (costingRule.isBackdatedTransactionsFixed()) {
+      select.append("  (");
+      select.append("   trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " < :fixbdt");
+      select.append("   and  (");
+    }
+
     // If there are more than one trx on the same trx process date filter out those types with less
     // priority and / or higher quantity.
     select.append("    trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " < :trxdate");
@@ -358,36 +364,41 @@ public class CostAdjustmentUtils {
     select.append("      trxtype." + propADListPriority + " < :trxtypeprio");
     select.append("      or (");
     select.append("       trxtype." + propADListPriority + " = :trxtypeprio");
-    select
-        .append("       and trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " >= :trxqty");
-    select.append("   ))))");
-
-    select.append(" ) or (");
-
-    select.append("  trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " >= :fixbdt");
-    select.append("  and (");
-    select.append("   trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " < :mvtdate");
-    select.append("   or (");
-    select.append("    trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " = :mvtdate");
-    // If there are more than one trx on the same trx process date filter out those types with less
-    // priority and / or higher quantity.
-    select.append("    and (");
-    select
-        .append("     trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " < :trxdate");
-    select.append("     or (");
-    select.append("      trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
-        + " = :trxdate");
-    select.append("      and (");
-    select.append("       trxtype." + propADListPriority + " < :trxtypeprio");
-    select.append("       or (");
-    select.append("        trxtype." + propADListPriority + " = :trxtypeprio");
-    select
-        .append("        and trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " > :trxqty");
+    select.append("       and trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " > :trxqty");
     select.append("        or (");
     select.append("         trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " = :trxqty");
     select.append("         and trx." + MaterialTransaction.PROPERTY_ID + " <= :trxid");
-    select.append("    ))))");
-    select.append("  )))))");
+    select.append("   ))))");
+    if (costingRule.isBackdatedTransactionsFixed()) {
+      select.append(" )) or (");
+
+      select.append("  trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " >= :fixbdt");
+      select.append("  and (");
+      select.append("   trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " < :mvtdate");
+      select.append("   or (");
+      select.append("    trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " = :mvtdate");
+      // If there are more than one trx on the same trx process date filter out those types with
+      // less
+      // priority and / or higher quantity.
+      select.append("    and (");
+      select.append("     trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
+          + " < :trxdate");
+      select.append("     or (");
+      select.append("      trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
+          + " = :trxdate");
+      select.append("      and (");
+      select.append("       trxtype." + propADListPriority + " < :trxtypeprio");
+      select.append("       or (");
+      select.append("        trxtype." + propADListPriority + " = :trxtypeprio");
+      select.append("        and trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY
+          + " > :trxqty");
+      select.append("        or (");
+      select.append("         trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " = :trxqty");
+      select.append("         and trx." + MaterialTransaction.PROPERTY_ID + " <= :trxid");
+      select.append("    ))))");
+      select.append("   ))))");
+    }
+    select.append("  )");
     if (costDimensions.get(CostDimension.Warehouse) != null) {
       select.append("  and locator." + Locator.PROPERTY_WAREHOUSE + ".id = :warehouse");
     }
@@ -395,19 +406,14 @@ public class CostAdjustmentUtils {
     Query trxQry = OBDal.getInstance().getSession().createQuery(select.toString());
     trxQry.setParameter("refid", MovementTypeRefID);
     trxQry.setParameter("product", trx.getProduct());
-    trxQry.setParameter("mvtdate", trx.getMovementDate());
     trxQry.setParameter("trxdate", trx.getTransactionProcessDate());
     trxQry.setParameter("trxtypeprio", getTrxTypePrio(trx.getMovementType()));
     trxQry.setParameter("trxqty", trx.getMovementQuantity());
     trxQry.setParameter("trxid", trx.getId());
-    CostingRule costingRule = CostingUtils.getCostDimensionRule(costorg,
-        trx.getTransactionProcessDate());
+
     if (costingRule.isBackdatedTransactionsFixed()) {
+      trxQry.setParameter("mvtdate", trx.getMovementDate());
       trxQry.setParameter("fixbdt", costingRule.getFixbackdatedfrom());
-    } else {
-      Calendar cal = Calendar.getInstance();
-      cal.set(9999, 12, 31);
-      trxQry.setParameter("fixbdt", cal.getTime());
     }
 
     if (costDimensions.get(CostDimension.Warehouse) != null) {
@@ -572,6 +578,8 @@ public class CostAdjustmentUtils {
       orgs = osp.getChildTree("0", false);
       costDimensions = CostingUtils.getEmptyDimensions();
     }
+    CostingRule costingRule = CostingUtils.getCostDimensionRule(costorg,
+        trx.getTransactionProcessDate());
 
     StringBuffer select = new StringBuffer();
     select.append(" select sum(case");
@@ -592,13 +600,16 @@ public class CostAdjustmentUtils {
 
     select.append("  and trx." + MaterialTransaction.PROPERTY_PRODUCT + " = :product");
     // Include only transactions that have its cost calculated
-    select.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
+    select.append("  and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
+    select.append("  and (");
 
-    select.append("  and ( ");
-    select.append("   ( trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " < :fixbdt");
+    if (costingRule.isBackdatedTransactionsFixed()) {
+      select.append("   ( trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
+          + " < :fixbdt");
+      select.append(" and (");
+    }
     // If there are more than one trx on the same trx process date filter out those types with less
     // priority and / or higher quantity.
-    select.append(" and (");
     select.append("  trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " < :trxdate");
     select.append("  or (");
     select.append("   trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " = :trxdate");
@@ -606,30 +617,40 @@ public class CostAdjustmentUtils {
     select.append("    trxtype." + propADListPriority + " < :trxtypeprio");
     select.append("    or (");
     select.append("     trxtype." + propADListPriority + " = :trxtypeprio");
-    select.append("     and trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " >= :trxqty");
-    select.append(" ))))");
-
-    select.append(" ) or (");
-
-    select.append("   trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " < :mvtdate");
-    select.append("   or (");
-    select.append("    trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " = :mvtdate");
-    // If there are more than one trx on the same trx process date filter out those types with less
-    // priority and / or higher quantity.
-    select.append(" and (");
-    select.append("  trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " < :trxdate");
-    select.append("  or (");
-    select.append("   trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " = :trxdate");
-    select.append("   and (");
-    select.append("    trxtype." + propADListPriority + " < :trxtypeprio");
-    select.append("    or (");
-    select.append("     trxtype." + propADListPriority + " = :trxtypeprio");
-    select.append("     and trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " > :trxqty");
+    select.append("     and trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " = :trxqty");
     select.append("        or (");
     select.append("         trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " = :trxqty");
     select.append("         and trx." + MaterialTransaction.PROPERTY_ID + " <= :trxid");
-    select.append("  )))))");
-    select.append(" )))");
+    select.append(" ))))");
+
+    if (costingRule.isBackdatedTransactionsFixed()) {
+      select.append(" )) or (");
+      select
+          .append("   trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " >= :fixbdt");
+
+      select.append("   and (trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " < :mvtdate");
+      select.append("   or (");
+      select.append("    trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " = :mvtdate");
+      // If there are more than one trx on the same trx process date filter out those types with
+      // less
+      // priority and / or higher quantity.
+      select.append(" and (");
+      select.append("  trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " < :trxdate");
+      select.append("  or (");
+      select
+          .append("   trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " = :trxdate");
+      select.append("   and (");
+      select.append("    trxtype." + propADListPriority + " < :trxtypeprio");
+      select.append("    or (");
+      select.append("     trxtype." + propADListPriority + " = :trxtypeprio");
+      select.append("     and trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " > :trxqty");
+      select.append("        or (");
+      select.append("         trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " = :trxqty");
+      select.append("         and trx." + MaterialTransaction.PROPERTY_ID + " <= :trxid");
+      select.append("  ))))))");
+      select.append(" ))");
+    }
+    select.append(" )");
 
     if (costDimensions.get(CostDimension.Warehouse) != null) {
       select.append("  and locator." + Locator.PROPERTY_WAREHOUSE + ".id = :warehouse");
@@ -642,24 +663,17 @@ public class CostAdjustmentUtils {
     Query trxQry = OBDal.getInstance().getSession().createQuery(select.toString());
     trxQry.setParameter("refid", MovementTypeRefID);
     trxQry.setParameter("product", trx.getProduct());
-
-    trxQry.setParameter("mvtdate", trx.getMovementDate());
-
-    trxQry.setParameter("trxdate", trx.getTransactionProcessDate());
     if (costDimensions.get(CostDimension.Warehouse) != null) {
       trxQry.setParameter("warehouse", costDimensions.get(CostDimension.Warehouse).getId());
     }
+
+    trxQry.setParameter("trxdate", trx.getTransactionProcessDate());
     trxQry.setParameter("trxtypeprio", getTrxTypePrio(trx.getMovementType()));
     trxQry.setParameter("trxqty", trx.getMovementQuantity());
     trxQry.setParameter("trxid", trx.getId());
-    CostingRule costingRule = CostingUtils.getCostDimensionRule(costorg,
-        trx.getTransactionProcessDate());
     if (costingRule.isBackdatedTransactionsFixed()) {
+      trxQry.setParameter("mvtdate", trx.getMovementDate());
       trxQry.setParameter("fixbdt", costingRule.getFixbackdatedfrom());
-    } else {
-      Calendar cal = Calendar.getInstance();
-      cal.set(9999, 12, 31);
-      trxQry.setParameter("fixbdt", cal.getTime());
     }
 
     trxQry.setParameterList("orgs", orgs);
