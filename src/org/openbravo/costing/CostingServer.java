@@ -194,6 +194,7 @@ public class CostingServer {
 
             LCReceipt lcReceipt = OBProvider.getInstance().get(LCReceipt.class);
             lcReceipt.setLandedCost(landedCost);
+            lcReceipt.setOrganization(organization);
             lcReceipt.setGoodsShipment(transaction.getGoodsShipmentLine().getShipmentReceipt());
             OBDal.getInstance().save(lcReceipt);
 
