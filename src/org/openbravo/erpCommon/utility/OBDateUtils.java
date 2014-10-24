@@ -244,11 +244,11 @@ public class OBDateUtils {
    * 
    */
   public static Date convertDateToUTC(Date date) {
-    Calendar now = Calendar.getInstance();
     Calendar calendar = Calendar.getInstance();
     calendar.setTime(date);
 
-    int gmtMillisecondOffset = (now.get(Calendar.ZONE_OFFSET) + now.get(Calendar.DST_OFFSET));
+    int gmtMillisecondOffset = (calendar.get(Calendar.ZONE_OFFSET) + calendar
+        .get(Calendar.DST_OFFSET));
     calendar.add(Calendar.MILLISECOND, -gmtMillisecondOffset);
 
     return calendar.getTime();
