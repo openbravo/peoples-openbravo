@@ -647,7 +647,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
   private void extendPreviousCosting(Costing bdCosting) {
     StringBuffer where = new StringBuffer();
     where.append(" as c");
-    where.append("  join c." + Costing.PROPERTY_INVENTORYTRANSACTION + " as trx");
+    where.append("  left join c." + Costing.PROPERTY_INVENTORYTRANSACTION + " as trx");
     where.append(" where c." + Costing.PROPERTY_PRODUCT + " = :product");
     where.append("   and c." + Costing.PROPERTY_ORGANIZATION + " = :org");
     where.append("   and c." + Costing.PROPERTY_COSTTYPE + " = 'AVA'");

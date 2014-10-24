@@ -173,7 +173,7 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
     InventoryAmountUpdateLine line = OBDal.getInstance().get(InventoryAmountUpdateLine.class,
         lineId);
     ScrollableResults stockLines = getStockLines(childOrgs, date, line.getProduct(), warehouse,
-        costRule.isFixBackdatedTransactions());
+        costRule.isBackdatedTransactionsFixed());
     // The key of the Map is the concatenation of orgId and warehouseId
     Map<String, String> inventories = new HashMap<String, String>();
     Map<String, Long> maxLineNumbers = new HashMap<String, Long>();
