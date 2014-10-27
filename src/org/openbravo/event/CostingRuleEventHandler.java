@@ -99,12 +99,17 @@ public class CostingRuleEventHandler extends EntityPersistenceEventObserver {
 
     try {
       if (isbackdatedtransaction) {
+        if (rule.getFixbackdatedfrom() == null && !(rule.getStartingDate() == null)) {
+          rule.setFixbackdatedfrom(rule.getStartingDate());
+        }
+      }
+      if (rule.getFixbackdatedfrom() != null) {
         if (rule.getFixbackdatedfrom().before(
             OBDateUtils.getDate(OBDateUtils.formatDate((Date) query.uniqueResult())))) {
           throw new OBException(OBMessageUtils.messageBD("WrongFixBackdatedFrom"));
         }
-
       }
+
     } catch (HibernateException e) {
       logger.error("Error executing process", e);
     } catch (ParseException e) {
