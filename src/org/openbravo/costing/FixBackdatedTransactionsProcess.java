@@ -68,7 +68,8 @@ public class FixBackdatedTransactionsProcess extends BaseProcessActionHandler {
       rule.setBackdatedTransactionsFixed(Boolean.TRUE);
       OBDal.getInstance().save(rule);
 
-      if (jsonparams.has("fixbackdatedfrom")) {
+      if (jsonparams.has("fixbackdatedfrom")
+          && !jsonparams.getString("fixbackdatedfrom").equals("null")) {
         try {
           fixbackdatedfrom = JsonUtils.createDateFormat().parse(
               jsonparams.getString("fixbackdatedfrom"));

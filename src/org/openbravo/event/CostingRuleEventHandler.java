@@ -98,10 +98,12 @@ public class CostingRuleEventHandler extends EntityPersistenceEventObserver {
     query.uniqueResult();
 
     try {
-      if (isbackdatedtransaction
-          && (rule.getFixbackdatedfrom()).before(OBDateUtils.getDate(OBDateUtils
-              .formatDate((Date) query.uniqueResult())))) {
-        throw new OBException(OBMessageUtils.messageBD("WrongFixBackdatedFrom"));
+      if (isbackdatedtransaction) {
+        if (rule.getFixbackdatedfrom().before(
+            OBDateUtils.getDate(OBDateUtils.formatDate((Date) query.uniqueResult())))) {
+          throw new OBException(OBMessageUtils.messageBD("WrongFixBackdatedFrom"));
+        }
+
       }
     } catch (HibernateException e) {
       logger.error("Error executing process", e);
