@@ -118,7 +118,7 @@ public class CostingRuleProcess implements Process {
           OBDal.getInstance().flush();
         }
         createCostingRuleInits(ruleId, childOrgs, startingDate);
-        if (rule.getFixbackdatedfrom() == null) {
+        if (rule.getFixbackdatedfrom() == null && rule.isBackdatedTransactionsFixed()) {
           rule.setFixbackdatedfrom(startingDate);
         }
 
