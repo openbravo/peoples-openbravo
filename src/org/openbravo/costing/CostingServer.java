@@ -201,6 +201,8 @@ public class CostingServer {
           }
           final LandedCostCost landedCostCost = (LandedCostCost) lcLines.get()[0];
           landedCostCost.setLandedCost(landedCost);
+          landedCost.getLandedCostCostList().add(landedCostCost);
+          OBDal.getInstance().save(landedCost);
           OBDal.getInstance().save(landedCostCost);
         }
 
