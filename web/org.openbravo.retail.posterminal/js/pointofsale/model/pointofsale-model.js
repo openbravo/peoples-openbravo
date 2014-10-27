@@ -641,13 +641,13 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         me, args.approvals, function (approved, supervisor, approvalType) {
           if (approved) {
             me.trigger('approvalChecked', {
-              approved: args.approved
+              approved: (args.approved !== undefined) ? args.approved : true
             });
           }
         });
       } else {
         me.trigger('approvalChecked', {
-          approved: true
+          approved: (args.approved !== undefined) ? args.approved : true
         });
       }
     });
