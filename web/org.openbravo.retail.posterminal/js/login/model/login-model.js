@@ -84,7 +84,7 @@
       this.addPropertiesLoader({
         properties: ['terminal'],
         loadFunction: function (terminalModel) {
-          OB.debug('Loading... ' + this.properties);
+          OB.info('[terminal] Loading... ' + this.properties);
           var me = this;
           new OB.DS.Request('org.openbravo.retail.posterminal.term.Terminal').exec(null, function (data) {
             if (data.exception) {
@@ -156,7 +156,7 @@
         properties: ['context'],
         sync: false,
         loadFunction: function (terminalModel) {
-          OB.debug('Loading... ' + this.properties);
+          OB.info('[terminal] Loading... ' + this.properties);
           var me = this;
           new OB.DS.Request('org.openbravo.mobile.core.login.Context').exec({
             terminal: OB.MobileApp.model.get('terminalName'),
@@ -173,7 +173,7 @@
       this.addPropertiesLoader({
         properties: ['payments'],
         loadFunction: function (terminalModel) {
-          OB.debug('loading... ' + this.properties);
+          OB.info('[terminal] Loading... ' + this.properties);
           var me = this;
           new OB.DS.Request('org.openbravo.retail.posterminal.term.Payments').exec(null, function (data) {
             if (data) {
@@ -188,7 +188,7 @@
       this.addPropertiesLoader({
         properties: ['cashMgmtDepositEvents'],
         loadFunction: function (terminalModel) {
-          OB.debug('loading... ' + this.properties);
+          OB.info('[terminal] Loading... ' + this.properties);
           var me = this;
           new OB.DS.Request('org.openbravo.retail.posterminal.term.CashMgmtDepositEvents').exec(null, function (data) {
             if (data) {
@@ -202,7 +202,7 @@
       this.addPropertiesLoader({
         properties: ['cashMgmtDropEvents'],
         loadFunction: function (terminalModel) {
-          OB.debug('loading... ' + this.properties);
+          OB.info('[terminal] Loading... ' + this.properties);
           var me = this;
           new OB.DS.Request('org.openbravo.retail.posterminal.term.CashMgmtDropEvents').exec(null, function (data) {
             if (data) {
@@ -216,7 +216,7 @@
       this.addPropertiesLoader({
         properties: ['businesspartner'],
         loadFunction: function (terminalModel) {
-          OB.debug('loading... ' + this.properties);
+          OB.info('[terminal] Loading... ' + this.properties);
           var me = this;
           new OB.DS.Request('org.openbravo.retail.posterminal.term.BusinessPartner').exec(null, function (data) {
             if (data[0]) {
@@ -231,7 +231,7 @@
       this.addPropertiesLoader({
         properties: ['location'],
         loadFunction: function (terminalModel) {
-          OB.debug('loading... ' + this.properties);
+          OB.info('[terminal] Loading... ' + this.properties);
           var me = this;
           new OB.DS.Request('org.openbravo.retail.posterminal.term.Location').exec(null, function (data) {
             if (data[0]) {
@@ -245,7 +245,7 @@
       this.addPropertiesLoader({
         properties: ['pricelist'],
         loadFunction: function (terminalModel) {
-          OB.debug('loading... ' + this.properties);
+          OB.info('[terminal] Loading... ' + this.properties);
           var me = this;
           new OB.DS.Request('org.openbravo.retail.posterminal.term.PriceList').exec(null, function (data) {
             if (data[0]) {
@@ -259,7 +259,7 @@
       this.addPropertiesLoader({
         properties: ['warehouses'],
         loadFunction: function (terminalModel) {
-          OB.debug('loading... ' + this.properties);
+          OB.info('[terminal] Loading... ' + this.properties);
           var me = this;
           new OB.DS.Request('org.openbravo.retail.posterminal.term.Warehouses').exec(null, function (data) {
             if (data && data.exception) {
@@ -276,7 +276,7 @@
       this.addPropertiesLoader({
         properties: ['writableOrganizations'],
         loadFunction: function (terminalModel) {
-          OB.debug('loading... ' + this.properties);
+          OB.info('[terminal] Loading... ' + this.properties);
           var me = this;
           new OB.DS.Process('org.openbravo.retail.posterminal.term.WritableOrganizations').exec(null, function (data) {
             if (data.length > 0) {
@@ -290,7 +290,7 @@
       this.addPropertiesLoader({
         properties: ['pricelistversion'],
         loadFunction: function (terminalModel) {
-          OB.debug('loading... ' + this.properties);
+          OB.info('[terminal] Loading... ' + this.properties);
           var me = this;
           var params = {};
           var currentDate = new Date();
@@ -308,7 +308,7 @@
       this.addPropertiesLoader({
         properties: ['currency'],
         loadFunction: function (terminalModel) {
-          OB.debug('loading... ' + this.properties);
+          OB.info('[terminal] Loading... ' + this.properties);
           var me = this;
           new OB.DS.Request('org.openbravo.retail.posterminal.term.Currency').exec(null, function (data) {
             if (data[0]) {
@@ -408,18 +408,18 @@
       var me = this;
 
       function run() {
-        OB.debug('Executing pre synch hook.');
+        OB.debug('runSyncProcess: executing pre synchronization hook');
         OB.UTIL.HookManager.executeHooks('OBPOS_PreSynchData', {}, function () {
           OB.UTIL.showI18NWarning('OBPOS_SynchronizingDataMessage', 'OBPOS_SynchronizationWasSuccessfulMessage');
-          OB.debug('Synch all models.');
+          OB.debug('runSyncProcess: synchronize all models');
           OB.MobileApp.model.syncAllModels(function () {
             OB.UTIL.showI18NSuccess('OBPOS_SynchronizationWasSuccessfulMessage', 'OBPOS_SynchronizingDataMessage');
-            OB.info('Synch success.');
+            OB.info('runSyncProcess: synchronization successfully done');
             if (successCallback) {
               successCallback();
             }
           }, function () {
-            OB.warn("runSyncProcess failed. The WebPOS is most likely to be offline, but a real error could be present.");
+            OB.warn("runSyncProcess failed: the WebPOS is most likely to be offline, but a real error could be present.");
             // OB.UTIL.showI18NError('OBPOS_SynchronizationFailedMessage', 'OBPOS_SynchronizingDataMessage');
             if (errorCallback) {
               errorCallback();

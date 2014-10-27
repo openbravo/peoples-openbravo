@@ -400,9 +400,11 @@ enyo.kind({
       // Check with the step if can go next.
       this.model.verifyStep(this.$.cashupMultiColumn.$.leftPanel.$, function () {
         me.moveStep(direction);
+        OB.info("Cashup step: " + me.model.get('step'));
       });
     } else {
       this.moveStep(direction);
+      OB.info("Cashup step: " + me.model.get('step'));
     }
   },
   cancelCashup: function (inSender, inEvent) {

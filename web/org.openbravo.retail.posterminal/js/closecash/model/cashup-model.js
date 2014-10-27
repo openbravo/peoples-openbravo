@@ -469,8 +469,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
       for (i = 0; i < me.additionalProperties.length; i++) {
         objToSend.set(me.additionalProperties[i], me.propertyFunctions[i](OB.MobileApp.model.get('terminal').id, cashUp.at(0)));
       }
+      OB.info("Cash up main info:", JSON.stringify(cashUp));
       _.each(me.get('paymentList').models, function (curModel) {
-
         var cashCloseInfo = {
           expected: 0,
           difference: 0,
@@ -483,6 +483,10 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
         cashCloseInfo.expected = curModel.get('expected');
         cashCloseInfo.foreignExpected = curModel.get('foreignExpected');
         curModel.get('paymentMethod').amountToKeep = curModel.get('qtyToKeep');
+        cashCloseInfo.fullData = JSON.parse(JSON.stringify(curModel));
+        cashCloseInfo.fullData.paymentMethod = null;
+        cashCloseInfo.fullData.coinsCollection = null;
+        OB.info("Payment Method cash up info:" + JSON.stringify(cashCloseInfo));
         cashCloseInfo.paymentMethod = curModel.get('paymentMethod');
         objToSend.get('cashCloseInfo').push(cashCloseInfo);
       }, this);
