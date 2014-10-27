@@ -21,7 +21,7 @@
 
     this.receipt.on('closed', function (eventParams) {
       this.receipt = model.get('order');
-      OB.warn('Ticket closed', this.receipt.getOrderDescription());
+      OB.info('Ticket closed', this.receipt.getOrderDescription());
       var me = this,
           docno = this.receipt.get('documentNo'),
           isLayaway = (this.receipt.get('orderType') === 2 || this.receipt.get('isLayaway')),
@@ -190,7 +190,7 @@
 
     this.context.get('multiOrders').on('closed', function (receipt) {
 
-      OB.warn('Multiorders ticket closed.');
+      OB.info('Multiorders ticket closed.');
 
       if (!_.isUndefined(receipt)) {
         this.receipt = receipt;
