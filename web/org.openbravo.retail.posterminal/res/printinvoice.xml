@@ -26,10 +26,17 @@
       <text><%= OB.UTIL.encodeXMLComponent(order.get('documentNo')) %></text>
     </line>
     <line>
-      <text align="left" length="22"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_datetime')) %></text>
-      <text><%= OB.I18N.formatDate(order.get('orderDate')) %></text>
-      <text> </text>
-      <text><%= OB.I18N.formatHour(order.get('orderDate')) %></text>
+     <text align="left" length="22"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_datetime')) %></text>
+     <text><%= OB.I18N.formatDate(order.get('orderDate')) %></text>
+       <text> </text>
+       <% var time;
+       if(!_.isNull(order.get('created'))){
+         time = new Date(order.get('created'));       
+       } else {
+         time = new Date(); 
+       }
+       %>
+      <text><%= OB.I18N.formatHour(time) %></text>
     </line>
     <line>
       <text align="left" length="22"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_cashierPOS')) %></text>
