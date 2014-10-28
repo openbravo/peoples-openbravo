@@ -111,6 +111,8 @@ public class LandedCostDistributionByAmount extends LandedCostDistributionAlgori
       LCReceiptLineAmt lcrla = OBProvider.getInstance().get(LCReceiptLineAmt.class);
       lcrla.setLandedCostCost((LandedCostCost) OBDal.getInstance().getProxy(
           LandedCostCost.ENTITY_NAME, lcCost.getId()));
+      lcCost = (LandedCostCost) OBDal.getInstance().getProxy(LandedCostCost.ENTITY_NAME,
+          lcCost.getId());
       lcrla.setLandedCostReceipt(lcrl);
       lcrla.setGoodsShipmentLine(receiptline);
       lcrla.setMatchingAdjustment(isMatching);
