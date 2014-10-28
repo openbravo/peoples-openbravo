@@ -30,14 +30,14 @@ import org.apache.tools.ant.Project;
  * @author inigosanchez
  * 
  */
-public class ConfigureOption {
+class ConfigureOption {
   private static int TYPE_OPT_CHOOSE = 0;
   private static int TYPE_OPT_STRING = 1;
   private String askInfo, chooseString;
   private ArrayList<String> opt;
   private int choose, type;
 
-  public ConfigureOption(int typ, String info, ArrayList<String> options) {
+  ConfigureOption(int typ, String info, ArrayList<String> options) {
     type = typ;
     askInfo = info;
     opt = options;
@@ -51,7 +51,7 @@ public class ConfigureOption {
    * @param num
    * @return boolean
    */
-  public boolean setChoose(int num) {
+  boolean setChoose(int num) {
     if (num >= 0 && num < opt.size()) {
       choose = num;
       return true;
@@ -59,17 +59,30 @@ public class ConfigureOption {
       return false;
     }
   }
+  /**
+   * This function getMax() return number of numeric option.
+   * 
+   * @return int
+   */
+  int getMax() {
+	  return opt.size();
+  }
 
-  public int getChoose() {
+  /**
+   * This function getChoose() return numeric option.
+   * 
+   * @return int
+   */
+  int getChoose() {
     return choose;
   }
 
   /**
    * This function setChooseString() set a choose string option.
    * 
-   * @param line
+   * @param String
    */
-  public void setChooseString(String line) {
+  void setChooseString(String line) {
     chooseString = line;
     if (type == TYPE_OPT_CHOOSE) {
       int i = 0;
@@ -82,31 +95,31 @@ public class ConfigureOption {
     }
   }
 
-  public String getChooseString() {
+  String getChooseString() {
     return chooseString;
   }
 
-  public int getType() {
+  int getType() {
     return type;
   }
 
-  public String getAskInfo() {
+  String getAskInfo() {
     return askInfo;
   }
 
   /**
-   * Function getOptions() list options.
+   * Function getOptions(Project p) list options.
    */
-  public void getOptions(Project p) {
+  void getOptions(Project p) {
     // Choose options
     if (type == TYPE_OPT_CHOOSE) {
       int i = 0;
       for (final String opts : opt) {
         p.log("[" + i++ + "]" + opts);
       }
-      p.log("Please, choose an option [" + getChoose() + "]: ");
+      p.log("\nPlease, choose an option [" + getChoose() + "]: ");
     } else if (type == TYPE_OPT_STRING) {
-      p.log("Please, introduce here: [" + getChooseString() + "]: ");
+      p.log("\nPlease, introduce here: [" + getChooseString() + "]: ");
     }
   }
 
@@ -115,7 +128,7 @@ public class ConfigureOption {
    * 
    * @return option in String
    */
-  public String getOptionChoose() {
+  String getOptionChoose() {
     String res = "";
     if (type == TYPE_OPT_CHOOSE) {
       int i = 0;
@@ -130,4 +143,5 @@ public class ConfigureOption {
     }
     return res;
   }
+
 }
