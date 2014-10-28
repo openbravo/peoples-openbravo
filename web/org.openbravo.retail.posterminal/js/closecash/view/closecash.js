@@ -92,6 +92,8 @@ enyo.kind({
     i18nLabel: 'OBPOS_LblNextStep',
     stepCount: 1,
     span: 4,
+    isEnableButton: false,
+    isEnableNextButton: false,
     handlers: {
       onDisableNextButton: 'disableNextButton',
       onEnableNextButton: 'enableNextButton',
@@ -102,18 +104,30 @@ enyo.kind({
       this.setDisabled(true);
     },
     enableButton: function () {
-      this.setDisabled(false);
+      this.isEnableButton = true;
+      if (this.isEnableNextButton) {
+        this.setDisabled(false);
+        if (this.hasClass('btn-over')) {
+          this.removeClass('btn-over');
+        }
+      }
     },
     enableNextButton: function () {
-      this.setDisabled(false);
-      if (this.hasClass('btn-over')) {
-        this.removeClass('btn-over');
+      this.isEnableNextButton = true;
+      if (this.isEnableButton) {
+        this.setDisabled(false);
+        if (this.hasClass('btn-over')) {
+          this.removeClass('btn-over');
+        }
       }
     },
     disableNextButton: function (inSender, inEvent) {
-      this.setDisabled(inEvent.disable);
-      if (this.hasClass('btn-over')) {
-        this.removeClass('btn-over');
+      this.isEnableNextButton = !inEvent.disable;
+      if (this.isEnableButton) {
+        this.setDisabled(inEvent.disable);
+        if (this.hasClass('btn-over')) {
+          this.removeClass('btn-over');
+        }
       }
     }
   }]
