@@ -42,6 +42,7 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.materialmgmt.cost.CostAdjustment;
 import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
 import org.openbravo.model.materialmgmt.cost.LCDistributionAlgorithm;
@@ -196,11 +197,14 @@ public class LandedCostProcess {
 
     StringBuffer hql = new StringBuffer();
     hql.append(" select sum(rla." + LCReceiptLineAmt.PROPERTY_AMOUNT + ") as amt");
+    hql.append("   , rla." + LCReceiptLineAmt.PROPERTY_LANDEDCOSTCOST
+        + ".currency.id as lcCostCurrency");
     hql.append("   , rla." + LCReceipt.PROPERTY_GOODSSHIPMENTLINE + ".id as receipt");
     hql.append(" from " + LCReceiptLineAmt.ENTITY_NAME + " as rla");
     hql.append("   join rla." + LCReceiptLineAmt.PROPERTY_LANDEDCOSTRECEIPT + " as rl");
     hql.append(" where rl." + LCReceipt.PROPERTY_LANDEDCOST + " = :lc");
-    hql.append(" group by rla." + LCReceipt.PROPERTY_GOODSSHIPMENTLINE + ".id");
+    hql.append(" group by rla." + LCReceiptLineAmt.PROPERTY_LANDEDCOSTCOST + ".currency.id");
+    hql.append(" , rla." + LCReceipt.PROPERTY_GOODSSHIPMENTLINE + ".id");
 
     Query qryLCRLA = OBDal.getInstance().getSession().createQuery(hql.toString());
     qryLCRLA.setParameter("lc", landedCost);
@@ -211,15 +215,16 @@ public class LandedCostProcess {
       log.debug("Process receipt amounts");
       Object[] receiptAmt = receiptamts.get();
       BigDecimal amt = (BigDecimal) receiptAmt[0];
+      Currency lcCostCurrency = OBDal.getInstance().get(Currency.class, (String) receiptAmt[1]);
       ShipmentInOutLine receiptLine = OBDal.getInstance().get(ShipmentInOutLine.class,
-          (String) receiptAmt[1]);
+          (String) receiptAmt[2]);
       // MaterialTransaction receiptLine = (MaterialTransaction) record[1];
       MaterialTransaction trx = receiptLine.getMaterialMgmtMaterialTransactionList().get(0);
       CostAdjustmentLine cal = CostAdjustmentUtils.insertCostAdjustmentLine(trx, ca, amt, true,
           referenceDate);
       cal.setNeedsPosting(Boolean.FALSE);
       cal.setUnitCost(Boolean.FALSE);
-      cal.setCurrency(landedCost.getCurrency());
+      cal.setCurrency(lcCostCurrency);
       OBDal.getInstance().save(cal);
 
       if (i % 100 == 0) {
