@@ -51,8 +51,6 @@ public class Discount extends ProcessHQLQuery {
     }
 
     String hql = "from PricingAdjustment p ";
-    // hql += "where active = true ";
-    // hql += "and client.id = '" + OBContext.getOBContext().getCurrentClient().getId() + "' ";
     hql += "where client.id = '" + OBContext.getOBContext().getCurrentClient().getId() + "' ";
     hql += "and (endingDate is null or endingDate>:today) ";
 
