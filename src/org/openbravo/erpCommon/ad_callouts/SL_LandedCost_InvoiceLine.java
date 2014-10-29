@@ -28,7 +28,7 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.invoice.InvoiceLine;
-import org.openbravo.model.materialmgmt.cost.LandedCost;
+import org.openbravo.model.materialmgmt.cost.LandedCostCost;
 
 public class SL_LandedCost_InvoiceLine extends SimpleCallout {
 
@@ -37,7 +37,7 @@ public class SL_LandedCost_InvoiceLine extends SimpleCallout {
   @Override
   protected void execute(CalloutInfo info) throws ServletException {
     VariablesSecureApp vars = info.vars;
-    String strLCId = vars.getStringParameter("inpmLandedcostId");
+    String strLcCostId = vars.getStringParameter("inpmLcCostId");
     String strInvLineId = vars.getStringParameter("inpcInvoicelineId");
     String strAmount = "";
     String strCurrencyId = "";
@@ -47,8 +47,8 @@ public class SL_LandedCost_InvoiceLine extends SimpleCallout {
       strCurrencyId = invoiceLine.getInvoice().getCurrency().getId();
     } else {
       strAmount = "0";
-      LandedCost landedCost = OBDal.getInstance().get(LandedCost.class, strLCId);
-      strCurrencyId = landedCost.getCurrency().getId();
+      LandedCostCost lcCost = OBDal.getInstance().get(LandedCostCost.class, strLcCostId);
+      strCurrencyId = lcCost.getCurrency().getId();
     }
     info.addResult("inpamount", strAmount);
     info.addResult("inpcCurrencyId", strCurrencyId);

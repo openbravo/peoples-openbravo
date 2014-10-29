@@ -46,19 +46,16 @@ public class LandedCostDistributionByAmount extends LandedCostDistributionAlgori
   public void distributeAmount(LandedCostCost lcCost, boolean isMatching) {
     // Calculate total amount of all receipt lines assigned to the landed cost.
     LandedCost landedCost = lcCost.getLandedCost();
-    String strCurId = landedCost.getCurrency().getId();
+    // Get the currency of the Landed Cost Cost
+    String strCurId = lcCost.getCurrency().getId();
     String strOrgId = landedCost.getOrganization().getId();
     Date dateReference = landedCost.getReferenceDate();
-    int precission = landedCost.getCurrency().getStandardPrecision().intValue();
+    int precission = lcCost.getCurrency().getStandardPrecision().intValue();
     BigDecimal baseAmt;
     if (isMatching) {
       baseAmt = lcCost.getMatchingAmount().subtract(lcCost.getAmount());
     } else {
       baseAmt = lcCost.getAmount();
-    }
-    if (!lcCost.getCurrency().getId().equals(strCurId)) {
-      baseAmt = FinancialUtils.getConvertedAmount(baseAmt, lcCost.getCurrency(),
-          landedCost.getCurrency(), dateReference, landedCost.getOrganization(), "C");
     }
 
     BigDecimal totalAmt = BigDecimal.ZERO;
