@@ -188,7 +188,6 @@ public class CostingServer {
             landedCost.setReferenceDate(new Date());
             landedCost.setDocumentType(docType);
             landedCost.setDocumentNo(docNo);
-            landedCost.setCurrency(currency);
             landedCost.setOrganization(organization);
             OBDal.getInstance().save(landedCost);
 
