@@ -463,7 +463,8 @@ BEGIN
                   fin_payment_schedule_order,
                   fin_payment_schedule_invoice,
                   fin_payment_detail_id,
-                  amount
+                  amount,
+                  c_bpartner_id
                 )
                 VALUES
                 (
@@ -472,7 +473,8 @@ BEGIN
                   order_schdet.fin_payment_schedule_order,
                   null,
                   order_schdet.fin_payment_detail_id,
-                  v_differenceamount
+                  v_differenceamount,
+                  v_BPartner_ID
                 );
                 -- update amount of the current payment schedule detail
                 UPDATE fin_payment_scheduledetail
@@ -563,7 +565,8 @@ BEGIN
               fin_payment_schedule_order,
               fin_payment_schedule_invoice,
               fin_payment_detail_id,
-              amount
+              amount,
+              c_bpartner_id
             )
             VALUES
             (
@@ -572,7 +575,8 @@ BEGIN
               null,
               v_payment_schedule_invoice,
               null,
-              v_scheduledamount
+              v_scheduledamount,
+              v_BPartner_ID
             );
           END IF;
         END LOOP;
