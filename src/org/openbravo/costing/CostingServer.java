@@ -273,6 +273,7 @@ public class CostingServer {
       CostAdjustmentLine cal = CostAdjustmentUtils.insertCostAdjustmentLine(transaction,
           costAdjustmentHeader, null, Boolean.TRUE, acctDate);
       cal.setNegativeStockCorrection(Boolean.TRUE);
+      cal.setUnitCost(Boolean.FALSE);
       OBDal.getInstance().save(cal);
       OBDal.getInstance().flush();
 
