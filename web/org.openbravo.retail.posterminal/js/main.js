@@ -7,23 +7,33 @@
  ************************************************************************************
  */
 
-/*global B, $, _, Backbone, window, confirm, console, localStorage */
-
-var OB = window.OB || {};
+/*global OB, console*/
 
 (function () {
 
-
-  // alert all errors
+  /**
+   * catches application wide uncaught exceptions
+   * overrides the mobile.core's 'onerror' assignment
+   */
   window.onerror = function (e, url, line) {
-    var errorInfo;
     if (typeof (e) === 'string') {
-      errorInfo = e + '. Line number: ' + line + '. File uuid: ' + url + '.';
-      OB.UTIL.showError(errorInfo);
-      OB.error("main.js: " + errorInfo);
+      var errorMessage = "posterminal.main.js: " + e + "; line: " + url + ":" + line;
+      // try to log the error in the backend
+      if (OB.error) {
+        OB.error(errorMessage);
+        if (OB.UTIL && OB.UTIL.showError) {
+          OB.UTIL.showError(errorMessage);
+        }
+      } else {
+        console.error(errorMessage);
+      }
     }
   };
 
+
+  /**
+   * Global versions for mobile.core
+   */
   // Add the current WebPOS version
   OB.UTIL.VersionManagement.current.posterminal = {
     year: '14',
@@ -37,5 +47,31 @@ var OB = window.OB || {};
     displayName: 'Openbravo Web POS',
     dbVersion: OB.UTIL.VersionManagement.current.posterminal.year + "." + OB.UTIL.VersionManagement.current.posterminal.major + OB.UTIL.VersionManagement.current.posterminal.minor
   };
+
+  /**
+   * Register active deprecations.
+   * Deprecations must be registered before calling the 'deprecated' method
+   */
+  OB.UTIL.VersionManagement.registerDeprecation(27366, {
+    year: '14',
+    major: '4',
+    minor: '0'
+  }, "The use of 'OB.POS.terminal' is deprecated. Please use 'OB.MobileApp.view' instead.");
+
+  OB.UTIL.VersionManagement.registerDeprecation(27367, {
+    year: '14',
+    major: '4',
+    minor: '0'
+  }, "The use of 'OB.POS.terminal.terminal' is deprecated. Please use 'OB.MobileApp.model' instead.");
+
+  OB.UTIL.VersionManagement.registerDeprecation(27646, {
+    year: '14',
+    major: '4',
+    minor: '0'
+  }, "The use of 'OB.POS.modelterminal' is deprecated. Please use 'OB.MobileApp.model' instead.");
+
+  /**
+   * Global deprecations have to be executed somewhere, this is a good place
+   */
 
 }());
