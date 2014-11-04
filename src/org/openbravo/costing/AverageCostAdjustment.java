@@ -132,7 +132,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
       BigDecimal trxPrice = trxCost.add(adjustmentBalance).divide(
           basetrx.getMovementQuantity().abs(), costCurPrecission, RoundingMode.HALF_UP);
       if (checkNegativeStockCorrection && currentStock.compareTo(basetrx.getMovementQuantity()) < 0
-          && cost.compareTo(trxPrice) != 0) {
+          && cost.compareTo(trxPrice) != 0 && !baseCAL.isNegativeStockCorrection()) {
         // stock was negative and cost different than trx price then Negative Stock Correction
         // is added
         BigDecimal trxSignMultiplier = new BigDecimal(basetrx.getMovementQuantity().signum());
