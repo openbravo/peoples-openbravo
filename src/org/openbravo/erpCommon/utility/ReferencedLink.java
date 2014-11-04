@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.utility;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collections;
+import java.util.List;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -29,17 +30,20 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.Sqlc;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.model.ad.datamodel.Table;
+import org.openbravo.model.ad.domain.TableNavigation;
 import org.openbravo.model.ad.system.Language;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.WindowTrl;
@@ -144,6 +148,7 @@ public class ReferencedLink extends HttpSecureAppServlet {
   }
 
   private String getTabId(VariablesSecureApp vars) throws ServletException {
+    // TODO
     String strKeyReferenceColumnName = vars.getRequiredStringParameter("inpKeyReferenceColumnName");
     // String strKeyReferenceName =
     // vars.getRequiredStringParameter("inpKeyReferenceName");
@@ -153,7 +158,9 @@ public class ReferencedLink extends HttpSecureAppServlet {
     if (vars.hasParameter("inpEntityName")) {
       String entityName = vars.getStringParameter("inpEntityName");
       strTableReferenceId = ModelProvider.getInstance().getEntity(entityName).getTableId();
-    } else {
+    }
+    // TODO DOUBT Cuando se alcanza este código??
+    else {
       strTableReferenceId = vars.getRequiredStringParameter("inpTableReferenceId");
     }
     String strKeyReferenceId = vars.getStringParameter("inpKeyReferenceId");
@@ -251,7 +258,41 @@ public class ReferencedLink extends HttpSecureAppServlet {
     ReferencedLinkData[] data = ReferencedLinkData.select(this, strWindowId, strTableReferenceId);
     if (data == null || data.length == 0)
       throw new ServletException("Window not found: " + strWindowId);
-    String tabId = data[0].adTabId;
+    // Beginning of my customization TODO
+    String tabId = null;
+    OBContext.setAdminMode(true);
+    try {
+      OBCriteria<TableNavigation> tableNavigationCriteria = OBDal.getInstance().createCriteria(
+          TableNavigation.class);
+      tableNavigationCriteria.add(Restrictions.eq("table.id", strTableReferenceId));
+      tableNavigationCriteria.addOrderBy(TableNavigation.PROPERTY_SEQUENCENUMBER, true);
+      List<TableNavigation> tableNavigationList = tableNavigationCriteria.list();
+      for (TableNavigation tableNavigation : tableNavigationList) {
+        // Evaluate HQL logic
+        final String hqlWhere = tableNavigation.getHqllogic();
+
+        Table table = tableNavigation.getTable();
+        Entity obEntity = (Entity) ModelProvider.getInstance().getEntityByTableId(table.getId());
+        Class<?> entityClass = obEntity.getMappingClass();
+        // BaseOBObject obObjectInstance = (BaseOBObject) OBDal.getInstance().get(entityClass,
+        // paymentId);
+        //
+        // final OBQuery<?> query = OBDal.getInstance().createQuery(obEntity.getMappingClass(),
+        // hqlWhere);
+        // final List<?> selectors = query.list();
+        // if (!selectors.isEmpty()) {
+        // tabId = tableNavigation.getTab().getId();
+        // break;
+        // }
+      }
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    if (tabId == null) {
+      tabId = data[0].adTabId;
+    }
+    // End of my customization
+    // String tabId = data[0].adTabId;
     if (strKeyReferenceId.equals("")) {
       data = ReferencedLinkData.selectParent(this, strWindowId);
       if (data == null || data.length == 0)

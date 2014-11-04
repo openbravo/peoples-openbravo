@@ -45,6 +45,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="AD_TABLE_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="AD_TABLE_NAVIGATION_ADCLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -53,6 +57,9 @@
       </foreign-key>
       <foreign-key foreignTable="AD_TAB" name="AD_TABLE_NAVIGATION_ADTABID">
         <reference local="AD_TAB_ID" foreign="AD_TAB_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_TABLE" name="AD_TABLE_NAVIGATION_ADTABLEID">
+        <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
       </foreign-key>
     </table>
   </database>
