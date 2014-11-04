@@ -20603,6 +20603,7 @@ When it is active this field will be focused by default when the tab is opened.]
 <!--000AC0F629015A1FE050007F010018C3-->  <COLUMNNAME><![CDATA[IsUnitCost]]></COLUMNNAME>
 <!--000AC0F629015A1FE050007F010018C3-->  <NAME><![CDATA[Unit Cost]]></NAME>
 <!--000AC0F629015A1FE050007F010018C3-->  <PRINTNAME><![CDATA[Unit Cost]]></PRINTNAME>
+<!--000AC0F629015A1FE050007F010018C3-->  <DESCRIPTION><![CDATA[When checked the cost amount is considered part of the unit cost of the transaction or a cost added like freight costs or insurance costs.]]></DESCRIPTION>
 <!--000AC0F629015A1FE050007F010018C3-->  <HELP><![CDATA[When checked the cost amount is considered part of the unit cost of the transaction or a cost added like freight costs or insurance costs.]]></HELP>
 <!--000AC0F629015A1FE050007F010018C3-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--000AC0F629015A1FE050007F010018C3-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
@@ -20616,6 +20617,7 @@ When it is active this field will be focused by default when the tab is opened.]
 <!--001D6CB1D0B467ABE050007F0100057B-->  <COLUMNNAME><![CDATA[M_Lc_Type_ID]]></COLUMNNAME>
 <!--001D6CB1D0B467ABE050007F0100057B-->  <NAME><![CDATA[Landed Cost Type]]></NAME>
 <!--001D6CB1D0B467ABE050007F0100057B-->  <PRINTNAME><![CDATA[Landed Cost Type]]></PRINTNAME>
+<!--001D6CB1D0B467ABE050007F0100057B-->  <DESCRIPTION><![CDATA[Defines a type of Landed Cost Amount that can be assigned to a Receipt]]></DESCRIPTION>
 <!--001D6CB1D0B467ABE050007F0100057B-->  <HELP><![CDATA[Defines a type of Landed Cost Amount that can be assigned to a Receipt]]></HELP>
 <!--001D6CB1D0B467ABE050007F0100057B-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--001D6CB1D0B467ABE050007F0100057B-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
@@ -20629,6 +20631,7 @@ When it is active this field will be focused by default when the tab is opened.]
 <!--001D6CBF9C75E9C4E050007F01000559-->  <COLUMNNAME><![CDATA[M_Lc_Distribution_Alg_ID]]></COLUMNNAME>
 <!--001D6CBF9C75E9C4E050007F01000559-->  <NAME><![CDATA[Landed Cost Distribution Algorithm]]></NAME>
 <!--001D6CBF9C75E9C4E050007F01000559-->  <PRINTNAME><![CDATA[Landed Cost Distribution Algorithm]]></PRINTNAME>
+<!--001D6CBF9C75E9C4E050007F01000559-->  <DESCRIPTION><![CDATA[Identifies the Algorithm to be used to distribute the Landed Cost amounts through all the Receipt Lines.]]></DESCRIPTION>
 <!--001D6CBF9C75E9C4E050007F01000559-->  <HELP><![CDATA[Identifies the Algorithm to be used to distribute the Landed Cost amounts through all the Receipt Lines.]]></HELP>
 <!--001D6CBF9C75E9C4E050007F01000559-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--001D6CBF9C75E9C4E050007F01000559-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
@@ -20642,6 +20645,7 @@ When it is active this field will be focused by default when the tab is opened.]
 <!--0056819E5113679FE050007F01000569-->  <COLUMNNAME><![CDATA[M_LC_Cost_ID]]></COLUMNNAME>
 <!--0056819E5113679FE050007F01000569-->  <NAME><![CDATA[Landed Cost Cost]]></NAME>
 <!--0056819E5113679FE050007F01000569-->  <PRINTNAME><![CDATA[Landed Cost Cost]]></PRINTNAME>
+<!--0056819E5113679FE050007F01000569-->  <DESCRIPTION><![CDATA[Each Landed Cost amount to be included in the Landed Cost document.]]></DESCRIPTION>
 <!--0056819E5113679FE050007F01000569-->  <HELP><![CDATA[Each Landed Cost amount to be included in the Landed Cost document.]]></HELP>
 <!--0056819E5113679FE050007F01000569-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--0056819E5113679FE050007F01000569-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
@@ -20655,6 +20659,7 @@ When it is active this field will be focused by default when the tab is opened.]
 <!--0056819E5126679FE050007F01000569-->  <COLUMNNAME><![CDATA[M_Lc_Receipt_ID]]></COLUMNNAME>
 <!--0056819E5126679FE050007F01000569-->  <NAME><![CDATA[Landed Cost Receipt]]></NAME>
 <!--0056819E5126679FE050007F01000569-->  <PRINTNAME><![CDATA[Landed Cost Receipt Line]]></PRINTNAME>
+<!--0056819E5126679FE050007F01000569-->  <DESCRIPTION><![CDATA[Identifies each Receipt assigned to the Landed Cost Document with the corresponding amount.]]></DESCRIPTION>
 <!--0056819E5126679FE050007F01000569-->  <HELP><![CDATA[Identifies each Receipt assigned to the Landed Cost Document with the corresponding amount.]]></HELP>
 <!--0056819E5126679FE050007F01000569-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--0056819E5126679FE050007F01000569-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
@@ -20668,6 +20673,7 @@ When it is active this field will be focused by default when the tab is opened.]
 <!--00568254CB598733E050007F01000513-->  <COLUMNNAME><![CDATA[M_Landedcost_ID]]></COLUMNNAME>
 <!--00568254CB598733E050007F01000513-->  <NAME><![CDATA[Landed Cost]]></NAME>
 <!--00568254CB598733E050007F01000513-->  <PRINTNAME><![CDATA[Landed Cost]]></PRINTNAME>
+<!--00568254CB598733E050007F01000513-->  <DESCRIPTION><![CDATA[Document that relates Landed Costs like Freights or Custom Taxes to Receipts]]></DESCRIPTION>
 <!--00568254CB598733E050007F01000513-->  <HELP><![CDATA[Document that relates Landed Costs like Freights or Custom Taxes to Receipts]]></HELP>
 <!--00568254CB598733E050007F01000513-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--00568254CB598733E050007F01000513-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
@@ -20681,6 +20687,7 @@ When it is active this field will be focused by default when the tab is opened.]
 <!--005AE3B9D4E73F7BE050007F010019F4-->  <COLUMNNAME><![CDATA[M_Lc_Receiptline_Amt_ID]]></COLUMNNAME>
 <!--005AE3B9D4E73F7BE050007F010019F4-->  <NAME><![CDATA[Landed Cost Receipt Line Amount]]></NAME>
 <!--005AE3B9D4E73F7BE050007F010019F4-->  <PRINTNAME><![CDATA[Landed Cost Receipt Line Amount]]></PRINTNAME>
+<!--005AE3B9D4E73F7BE050007F010019F4-->  <DESCRIPTION><![CDATA[Identifies the corresponding amount of each Landed Cost Cost assigned to each Receipt Line]]></DESCRIPTION>
 <!--005AE3B9D4E73F7BE050007F010019F4-->  <HELP><![CDATA[Identifies the corresponding amount of each Landed Cost Cost assigned to each Receipt Line]]></HELP>
 <!--005AE3B9D4E73F7BE050007F010019F4-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--005AE3B9D4E73F7BE050007F010019F4-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
@@ -20694,6 +20701,7 @@ When it is active this field will be focused by default when the tab is opened.]
 <!--00FC088B51CB944FE050007F01001D28-->  <COLUMNNAME><![CDATA[Inventory_Type]]></COLUMNNAME>
 <!--00FC088B51CB944FE050007F01001D28-->  <NAME><![CDATA[Inventory Type]]></NAME>
 <!--00FC088B51CB944FE050007F01001D28-->  <PRINTNAME><![CDATA[Inventory Type]]></PRINTNAME>
+<!--00FC088B51CB944FE050007F01001D28-->  <DESCRIPTION><![CDATA[Defines the type of inventory being performed.]]></DESCRIPTION>
 <!--00FC088B51CB944FE050007F01001D28-->  <HELP><![CDATA[Defines the type of inventory being performed.]]></HELP>
 <!--00FC088B51CB944FE050007F01001D28-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--00FC088B51CB944FE050007F01001D28-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
@@ -20734,6 +20742,7 @@ When it is active this field will be focused by default when the tab is opened.]
 <!--01A04D782909E4AAE050007F01000F57-->  <COLUMNNAME><![CDATA[IsCostPermanent]]></COLUMNNAME>
 <!--01A04D782909E4AAE050007F01000F57-->  <NAME><![CDATA[Is Cost Permanent]]></NAME>
 <!--01A04D782909E4AAE050007F01000F57-->  <PRINTNAME><![CDATA[Is Cost Permanent]]></PRINTNAME>
+<!--01A04D782909E4AAE050007F01000F57-->  <DESCRIPTION><![CDATA[Determines whether the cost is permanently adjusted or not.  ]]></DESCRIPTION>
 <!--01A04D782909E4AAE050007F01000F57-->  <HELP><![CDATA[Determines whether the cost is permanently adjusted or not.  ]]></HELP>
 <!--01A04D782909E4AAE050007F01000F57-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--01A04D782909E4AAE050007F01000F57-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
@@ -20788,6 +20797,7 @@ When it is active this field will be focused by default when the tab is opened.]
 <!--01DDF5AB692DDB9EE050007F01002DD8-->  <COLUMNNAME><![CDATA[M_Lc_Matched_ID]]></COLUMNNAME>
 <!--01DDF5AB692DDB9EE050007F01002DD8-->  <NAME><![CDATA[Matched Landed Cost]]></NAME>
 <!--01DDF5AB692DDB9EE050007F01002DD8-->  <PRINTNAME><![CDATA[Matched Landed Cost]]></PRINTNAME>
+<!--01DDF5AB692DDB9EE050007F01002DD8-->  <DESCRIPTION><![CDATA[Determines an amount of Landed Cost that it is matched with a final document.]]></DESCRIPTION>
 <!--01DDF5AB692DDB9EE050007F01002DD8-->  <HELP><![CDATA[Determines an amount of Landed Cost that it is matched with a final document.]]></HELP>
 <!--01DDF5AB692DDB9EE050007F01002DD8-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--01DDF5AB692DDB9EE050007F01002DD8-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
@@ -32496,6 +32506,20 @@ Processes with "Requires Explicit Access Permission" flag set to true, do not in
 <!--DBB02A64470D4093A2534F0DFC8BF855-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--DBB02A64470D4093A2534F0DFC8BF855--></AD_ELEMENT>
 
+<!--DD118282B81E4345A62EAE0C0D6E42BF--><AD_ELEMENT>
+<!--DD118282B81E4345A62EAE0C0D6E42BF-->  <AD_ELEMENT_ID><![CDATA[DD118282B81E4345A62EAE0C0D6E42BF]]></AD_ELEMENT_ID>
+<!--DD118282B81E4345A62EAE0C0D6E42BF-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--DD118282B81E4345A62EAE0C0D6E42BF-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--DD118282B81E4345A62EAE0C0D6E42BF-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--DD118282B81E4345A62EAE0C0D6E42BF-->  <COLUMNNAME><![CDATA[fixbackdatedfrom]]></COLUMNNAME>
+<!--DD118282B81E4345A62EAE0C0D6E42BF-->  <NAME><![CDATA[Fix Backdated From]]></NAME>
+<!--DD118282B81E4345A62EAE0C0D6E42BF-->  <PRINTNAME><![CDATA[Fix Backdated From]]></PRINTNAME>
+<!--DD118282B81E4345A62EAE0C0D6E42BF-->  <DESCRIPTION><![CDATA[Starting date in the costing rule to fix backdated transactions]]></DESCRIPTION>
+<!--DD118282B81E4345A62EAE0C0D6E42BF-->  <HELP><![CDATA[Starting date in the costing rule to fix backdated transactions]]></HELP>
+<!--DD118282B81E4345A62EAE0C0D6E42BF-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--DD118282B81E4345A62EAE0C0D6E42BF-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
+<!--DD118282B81E4345A62EAE0C0D6E42BF--></AD_ELEMENT>
+
 <!--DD64C1EFFA364FE7E040007F01002A49--><AD_ELEMENT>
 <!--DD64C1EFFA364FE7E040007F01002A49-->  <AD_ELEMENT_ID><![CDATA[DD64C1EFFA364FE7E040007F01002A49]]></AD_ELEMENT_ID>
 <!--DD64C1EFFA364FE7E040007F01002A49-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -32823,6 +32847,8 @@ Processes with "Requires Explicit Access Permission" flag set to true, do not in
 <!--E5584E0B72E84511AD1B246A26F4C993-->  <COLUMNNAME><![CDATA[Backdatedtrxsfixed]]></COLUMNNAME>
 <!--E5584E0B72E84511AD1B246A26F4C993-->  <NAME><![CDATA[Backdated Transactions Fixed]]></NAME>
 <!--E5584E0B72E84511AD1B246A26F4C993-->  <PRINTNAME><![CDATA[Backdated Transactions Fixed]]></PRINTNAME>
+<!--E5584E0B72E84511AD1B246A26F4C993-->  <DESCRIPTION><![CDATA[If checked Fix Backdated Transactions has been executed for the Costing Rule.]]></DESCRIPTION>
+<!--E5584E0B72E84511AD1B246A26F4C993-->  <HELP><![CDATA[If checked Fix Backdated Transactions has been executed for the Costing Rule.]]></HELP>
 <!--E5584E0B72E84511AD1B246A26F4C993-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--E5584E0B72E84511AD1B246A26F4C993-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--E5584E0B72E84511AD1B246A26F4C993--></AD_ELEMENT>
@@ -33526,6 +33552,9 @@ This field is populated in case the used price list includes taxes.]]></HELP>
 <!--FF64EAFEF0974E47A41D944E72285A57-->  <COLUMNNAME><![CDATA[Backdatedtrxsfixedprocess]]></COLUMNNAME>
 <!--FF64EAFEF0974E47A41D944E72285A57-->  <NAME><![CDATA[Fix Backdated Transactions]]></NAME>
 <!--FF64EAFEF0974E47A41D944E72285A57-->  <PRINTNAME><![CDATA[Fix Backdated Transactions]]></PRINTNAME>
+<!--FF64EAFEF0974E47A41D944E72285A57-->  <DESCRIPTION><![CDATA[Fix Backdated Transactions process]]></DESCRIPTION>
+<!--FF64EAFEF0974E47A41D944E72285A57-->  <HELP><![CDATA[Process that recalculates costs of backdated transactions until the given date. 
+Run process from Costing Rules window.]]></HELP>
 <!--FF64EAFEF0974E47A41D944E72285A57-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--FF64EAFEF0974E47A41D944E72285A57-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--FF64EAFEF0974E47A41D944E72285A57--></AD_ELEMENT>

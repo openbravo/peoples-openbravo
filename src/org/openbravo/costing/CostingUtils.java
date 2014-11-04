@@ -65,7 +65,7 @@ import org.openbravo.model.pricing.pricelist.ProductPrice;
 import org.openbravo.service.db.DalConnectionProvider;
 
 public class CostingUtils {
-  protected static Logger log4j = Logger.getLogger(CostingUtils.class);
+  private static Logger log4j = Logger.getLogger(CostingUtils.class);
 
   /**
    * Calls {@link #getTransactionCost(MaterialTransaction, Date, boolean, Currency)} setting the
@@ -484,7 +484,7 @@ public class CostingUtils {
 
   public static CostingRule getCostDimensionRule(Organization org, Date date) {
     StringBuffer where = new StringBuffer();
-    where.append(CostingRule.PROPERTY_ORGANIZATION + " = :organization");
+    where.append(CostingRule.PROPERTY_ORGANIZATION + ".id = :organization");
     where.append(" and (" + CostingRule.PROPERTY_STARTINGDATE + " is null ");
     where.append("   or " + CostingRule.PROPERTY_STARTINGDATE + " <= :startdate)");
     where.append(" and (" + CostingRule.PROPERTY_ENDINGDATE + " is null");
@@ -495,7 +495,7 @@ public class CostingUtils {
     OBQuery<CostingRule> crQry = OBDal.getInstance().createQuery(CostingRule.class,
         where.toString());
     crQry.setFilterOnReadableOrganization(false);
-    crQry.setNamedParameter("organization", org);
+    crQry.setNamedParameter("organization", org.getId());
     crQry.setNamedParameter("startdate", date);
     crQry.setNamedParameter("enddate", date);
     crQry.setMaxResult(1);

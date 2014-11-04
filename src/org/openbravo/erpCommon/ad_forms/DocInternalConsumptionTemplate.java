@@ -56,4 +56,11 @@ public abstract class DocInternalConsumptionTemplate {
   public String getServletInfo() {
     return "Servlet for the accounting";
   } // end of getServletInfo() method
+
+  /**
+   * @return the serialVersionUID
+   */
+  public static long getSerialVersionUID() {
+    return serialVersionUID;
+  }
 }

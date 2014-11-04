@@ -236,4 +236,22 @@ public class OBDateUtils {
     return cal.getTime();
   }
 
+  /**
+   * Returns a new Date converted to UTC
+   * 
+   * @param date
+   *          Date to be converted to UTC
+   * 
+   */
+  public static Date convertDateToUTC(Date date) {
+    Calendar calendar = Calendar.getInstance();
+    calendar.setTime(date);
+
+    int gmtMillisecondOffset = (calendar.get(Calendar.ZONE_OFFSET) + calendar
+        .get(Calendar.DST_OFFSET));
+    calendar.add(Calendar.MILLISECOND, -gmtMillisecondOffset);
+
+    return calendar.getTime();
+  }
+
 }

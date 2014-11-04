@@ -31,7 +31,8 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 
 public class DocLine_CostAdjustment extends DocLine {
-  static Logger log4jDocLine_CostAdjustment = Logger.getLogger(DocLine_CostAdjustment.class);
+  private static final Logger log4jDocLine_CostAdjustment = Logger
+      .getLogger(DocLine_CostAdjustment.class);
 
   public DocLine_CostAdjustment(String DocumentType, String TrxHeader_ID, String TrxLine_ID) {
     super(DocumentType, TrxHeader_ID, TrxLine_ID);

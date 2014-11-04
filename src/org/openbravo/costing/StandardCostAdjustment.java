@@ -26,7 +26,6 @@ import java.util.Set;
 
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
-import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.costing.CostingAlgorithm.CostDimension;
@@ -124,9 +123,10 @@ public class StandardCostAdjustment extends CostingAlgorithmAdjustmentImp {
 
     StringBuffer where = new StringBuffer();
     where.append(" as trx");
-    where.append(" join trx." + Product.PROPERTY_ORGANIZATION + " as org");
-    where.append(" join trx." + Product.PROPERTY_STORAGEBIN + " as loc");
-    where.append(" where trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
+    where.append("\n join trx." + Product.PROPERTY_ORGANIZATION + " as org");
+    where.append("\n join trx." + Product.PROPERTY_STORAGEBIN + " as loc");
+
+    where.append("\n where trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
     where.append("  and trx." + MaterialTransaction.PROPERTY_PRODUCT + " = :product");
     where.append("  and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " >= :mvtdate");
     where.append("  and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " <= :enddate");
@@ -135,19 +135,8 @@ public class StandardCostAdjustment extends CostingAlgorithmAdjustmentImp {
       where.append("  and loc." + Locator.PROPERTY_WAREHOUSE + " = :warehouse");
     }
     where.append("  and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
-        + " > :startdate ))");
+        + " > :startdate");
 
-    where.append(" order by trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE);
-    where.append("   , trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE);
-    where.append("   , trx." + MaterialTransaction.PROPERTY_MOVEMENTLINE);
-    // This makes M- to go before M+. In Oracle it must go with desc as if not, M+ would go before
-    // M-.
-    if (OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty("bbdd.rdbms")
-        .equalsIgnoreCase("oracle")) {
-      where.append("   , trx." + MaterialTransaction.PROPERTY_MOVEMENTTYPE + " desc ");
-    } else {
-      where.append("   , trx." + MaterialTransaction.PROPERTY_MOVEMENTTYPE);
-    }
     OBQuery<MaterialTransaction> trxQry = OBDal.getInstance().createQuery(
         MaterialTransaction.class, where.toString());
     trxQry.setFilterOnReadableOrganization(false);

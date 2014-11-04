@@ -185,23 +185,23 @@ public class CostingServer {
             final String docNo = FIN_Utility.getDocumentNo(docType, strTableLandedCost);
 
             landedCost = OBProvider.getInstance().get(LandedCost.class);
-            // TODO: Review this
-            // landedCost.setNewOBObject(true);
             landedCost.setReferenceDate(new Date());
             landedCost.setDocumentType(docType);
             landedCost.setDocumentNo(docNo);
-            landedCost.setCurrency(currency);
             landedCost.setOrganization(organization);
             OBDal.getInstance().save(landedCost);
 
             LCReceipt lcReceipt = OBProvider.getInstance().get(LCReceipt.class);
             lcReceipt.setLandedCost(landedCost);
+            lcReceipt.setOrganization(organization);
             lcReceipt.setGoodsShipment(transaction.getGoodsShipmentLine().getShipmentReceipt());
             OBDal.getInstance().save(lcReceipt);
 
           }
           final LandedCostCost landedCostCost = (LandedCostCost) lcLines.get()[0];
           landedCostCost.setLandedCost(landedCost);
+          landedCost.getLandedCostCostList().add(landedCostCost);
+          OBDal.getInstance().save(landedCost);
           OBDal.getInstance().save(landedCostCost);
         }
 
@@ -273,6 +273,7 @@ public class CostingServer {
       CostAdjustmentLine cal = CostAdjustmentUtils.insertCostAdjustmentLine(transaction,
           costAdjustmentHeader, null, Boolean.TRUE, acctDate);
       cal.setNegativeStockCorrection(Boolean.TRUE);
+      cal.setUnitCost(Boolean.FALSE);
       OBDal.getInstance().save(cal);
       OBDal.getInstance().flush();
 
@@ -403,8 +404,6 @@ public class CostingServer {
 
   private void createTransactionCost() {
     TransactionCost transactionCost = OBProvider.getInstance().get(TransactionCost.class);
-    // TODO:Review this
-    // transactionCost.setNewOBObject(true);
     transactionCost.setInventoryTransaction(transaction);
     transactionCost.setOrganization(transaction.getOrganization());
     transactionCost.setCost(trxCost);

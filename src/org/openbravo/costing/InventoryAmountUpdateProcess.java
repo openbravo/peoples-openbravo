@@ -61,7 +61,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class InventoryAmountUpdateProcess extends BaseActionHandler {
-  private static Logger log = LoggerFactory.getLogger(InventoryAmountUpdateProcess.class);
+  private static final Logger log = LoggerFactory.getLogger(InventoryAmountUpdateProcess.class);
 
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String data) {
@@ -112,6 +112,7 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
         OBDal.getInstance().flush();
 
         try {
+          // to ensure that the closed inventory is created before opening inventory
           Thread.sleep(2000);
         } catch (InterruptedException e) {
           log.error("Error waiting between processing close an open inventories", e);
@@ -138,11 +139,6 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
         } finally {
           invLines.close();
         }
-
-        // // Process closing physical inventories.
-        // for (InvAmtUpdLnInventories inv : line.getInventoryAmountUpdateLineInventoriesList()) {
-        // new InventoryCountProcess().processInventory(inv.getInitInventory(), false);
-        // }
 
       } finally {
         scrollLines.close();
@@ -177,7 +173,7 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
     InventoryAmountUpdateLine line = OBDal.getInstance().get(InventoryAmountUpdateLine.class,
         lineId);
     ScrollableResults stockLines = getStockLines(childOrgs, date, line.getProduct(), warehouse,
-        costRule.isFixBackdatedTransactions());
+        costRule.isBackdatedTransactionsFixed());
     // The key of the Map is the concatenation of orgId and warehouseId
     Map<String, String> inventories = new HashMap<String, String>();
     Map<String, Long> maxLineNumbers = new HashMap<String, Long>();
@@ -339,8 +335,6 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
     String clientId = (String) DalUtil.getId(invLine.getClient());
     String orgId = (String) DalUtil.getId(invLine.getOrganization());
     InvAmtUpdLnInventories inv = OBProvider.getInstance().get(InvAmtUpdLnInventories.class);
-    // TODO: Review this
-    // inv.setNewOBObject(true);
     inv.setClient((Client) OBDal.getInstance().getProxy(Client.ENTITY_NAME, clientId));
     inv.setOrganization((Organization) OBDal.getInstance()
         .getProxy(Organization.ENTITY_NAME, orgId));
@@ -385,8 +379,6 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
       BigDecimal qtyBook, BigDecimal orderQtyCount, BigDecimal orderQtyBook, Long lineNo,
       InventoryCountLine relatedInventoryLine, BigDecimal cost) {
     InventoryCountLine icl = OBProvider.getInstance().get(InventoryCountLine.class);
-    // TODO: Review this
-    // icl.setNewOBObject(true);
     icl.setClient(inventory.getClient());
     icl.setOrganization(inventory.getOrganization());
     icl.setPhysInventory(inventory);

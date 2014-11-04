@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
@@ -580,6 +581,10 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
     if (filterCriteria.get("released") != null) {
       releasedFilterCriteria = filterCriteria.get("released");
     }
+    String allocatedCriteria = "";
+    if (filterCriteria.get("allocated") != null) {
+      allocatedCriteria = filterCriteria.get("allocated");
+    }
 
     if (ol != null && !"".equals(ol)) {
       reservation = ReservationUtils.getReservationFromOrder(OBDal.getInstance().get(
@@ -597,14 +602,18 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
     try {
       result.addAll(getSelectedLines(reservation));
       if (orderLinesFiltered == null || orderLinesFiltered.size() == 0) {
-        result.addAll(getStorageDetail(reservation, organizations, warehousesFiltered,
-            locatorsFiltered, attributesFiltered, availableQtyFilterCriteria,
-            reservedinothersFilterCriteria, releasedFilterCriteria, selectedIds));
+        result
+            .addAll(getStorageDetail(reservation, organizations, warehousesFiltered,
+                locatorsFiltered, attributesFiltered, availableQtyFilterCriteria,
+                reservedinothersFilterCriteria, releasedFilterCriteria, allocatedCriteria,
+                selectedIds));
       }
       if (locatorsFiltered == null || locatorsFiltered.size() == 0) {
-        result.addAll(getPurchaseOrderLines(reservation, organizations, warehousesFiltered,
-            attributesFiltered, orderLinesFiltered, availableQtyFilterCriteria,
-            reservedinothersFilterCriteria, releasedFilterCriteria, selectedIds));
+        result
+            .addAll(getPurchaseOrderLines(reservation, organizations, warehousesFiltered,
+                attributesFiltered, orderLinesFiltered, availableQtyFilterCriteria,
+                reservedinothersFilterCriteria, releasedFilterCriteria, allocatedCriteria,
+                selectedIds));
       }
     } finally {
       OBContext.restorePreviousMode();
@@ -862,7 +871,7 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
       Set<String> organizations, List<Warehouse> warehousesFiltered,
       List<AttributeSetInstance> attributeSetInstancesFiltered, List<OrderLine> orderLinesFiltered,
       String availableQtyFilterCriteria, String reservedinothersFilterCriteria,
-      String releasedFilterCriteria, ArrayList<String> selectedIds) {
+      String releasedFilterCriteria, String allocatedCriteria, ArrayList<String> selectedIds) {
     List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
     final StringBuilder hqlString = new StringBuilder();
     hqlString.append("select ol from OrderLine as ol ");
@@ -955,6 +964,11 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
           && !isInScope("released", releasedFilterCriteria, BigDecimal.ZERO)) {
         continue;
       }
+      if (StringUtils.isNotBlank(allocatedCriteria)
+          && !isInScope("allocated", allocatedCriteria, false)) {
+        continue;
+      }
+
       myMap.put("availableQty",
           orderLine.getOrderedQuantity().subtract(getDeliveredQuantity(orderLine)));
       myMap.put("reservedinothers", reservedinothers);
@@ -971,7 +985,7 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
       Set<String> organizations, List<Warehouse> warehousesFiltered,
       List<Locator> locatorsFiltered, List<AttributeSetInstance> attributeSetInstancesFiltered,
       String availableQtyFilterCriteria, String reservedinothersFilterCriteria,
-      String releasedFilterCriteria, ArrayList<String> selectedIds) {
+      String releasedFilterCriteria, String allocatedCriteria, ArrayList<String> selectedIds) {
     List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
     final StringBuilder hqlString = new StringBuilder();
     hqlString.append("select sd from MaterialMgmtStorageDetail as sd ");
@@ -1073,6 +1087,10 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
                 && !isInScope("released", releasedFilterCriteria, BigDecimal.ZERO)) {
               continue;
             }
+            if (StringUtils.isNotBlank(allocatedCriteria)
+                && !isInScope("allocated", allocatedCriteria, false)) {
+              continue;
+            }
             result = tomap(sd, false, result, reservedinothers, reservation);
           }
         }
@@ -1091,6 +1109,10 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
         }
         if (releasedFilterCriteria != null && !"".equals(releasedFilterCriteria)
             && !isInScope("released", releasedFilterCriteria, BigDecimal.ZERO)) {
+          continue;
+        }
+        if (StringUtils.isNotBlank(allocatedCriteria)
+            && !isInScope("allocated", allocatedCriteria, false)) {
           continue;
         }
         result = tomap(sd, false, result, reservedinothers, reservation);
@@ -1163,6 +1185,30 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
           return amount.compareTo(new BigDecimal(filterCriteria)) == 0;
         } catch (NumberFormatException e) {
         }
+      }
+    } catch (JSONException e) {
+      log4j.error("Error parsing criteria", e);
+    }
+    return true;
+  }
+
+  private boolean isInScope(String fieldName, String filterCriteria, boolean flag) {
+    try {
+      if (filterCriteria.startsWith("[")) {
+        JSONArray myJSON = new JSONArray(filterCriteria);
+        if (myJSON.getJSONObject(0).getString("fieldName").equals(fieldName)) {
+          return isInScope(fieldName, myJSON.getJSONObject(0).toString(), flag);
+        }
+      } else if (filterCriteria.startsWith("{")) {
+        JSONObject myJSON = new JSONObject(filterCriteria);
+        if (myJSON.getString("fieldName").equals(fieldName)) {
+          if (myJSON.getString("operator").equals("equals")) {
+            return flag == myJSON.getBoolean("value");
+          }
+        }
+
+      } else {
+        return flag == "true".equals(filterCriteria);
       }
     } catch (JSONException e) {
       log4j.error("Error parsing criteria", e);

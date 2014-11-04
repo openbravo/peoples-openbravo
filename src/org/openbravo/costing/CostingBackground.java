@@ -28,7 +28,6 @@ import org.apache.log4j.Logger;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
@@ -131,6 +130,7 @@ public class CostingBackground extends DalBaseProcess {
       bundle.setResult(result);
       return;
     } catch (Exception e) {
+      OBDal.getInstance().rollbackAndClose();
       result = OBMessageUtils.translateError(bundle.getConnection(), bundle.getContext().toVars(),
           OBContext.getOBContext().getLanguage().getLanguage(), e.getMessage());
       result.setType("Error");
@@ -172,25 +172,23 @@ public class CostingBackground extends DalBaseProcess {
     StringBuffer where = new StringBuffer();
     where.append(" as trx");
     where.append(" join trx." + MaterialTransaction.PROPERTY_PRODUCT + " as p");
-    where.append(" where trx." + MaterialTransaction.PROPERTY_ISPROCESSED + " = false");
+    where.append("\n , " + org.openbravo.model.ad.domain.List.ENTITY_NAME + " as trxtype");
+    where.append("\n where trx." + MaterialTransaction.PROPERTY_ISPROCESSED + " = false");
     where.append("   and p." + Product.PROPERTY_PRODUCTTYPE + " = 'I'");
     where.append("   and p." + Product.PROPERTY_STOCKED + " = true");
+    where.append("   and trxtype." + CostAdjustmentUtils.propADListReference + ".id = :refid");
+    where.append("   and trxtype." + CostAdjustmentUtils.propADListValue + " = trx."
+        + MaterialTransaction.PROPERTY_MOVEMENTTYPE);
     where.append("   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " <= :now");
     where.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
-    // TODO: Check order for backdated transactions ??
     where.append(" order by trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE);
-    where.append("   , trx." + MaterialTransaction.PROPERTY_MOVEMENTLINE);
-    // This makes M- to go before M+. In Oracle it must go with desc as if not, M+ would go before
-    // M-.
-    if (OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty("bbdd.rdbms")
-        .equalsIgnoreCase("oracle")) {
-      where.append("   , trx." + MaterialTransaction.PROPERTY_MOVEMENTTYPE + " desc ");
-    } else {
-      where.append("   , trx." + MaterialTransaction.PROPERTY_MOVEMENTTYPE);
-    }
+    where.append(" , trxtype." + CostAdjustmentUtils.propADListPriority);
+    where.append(" , trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " desc");
+    where.append(" , trx." + MaterialTransaction.PROPERTY_ID);
     OBQuery<MaterialTransaction> trxQry = OBDal.getInstance().createQuery(
         MaterialTransaction.class, where.toString());
 
+    trxQry.setNamedParameter("refid", CostAdjustmentUtils.MovementTypeRefID);
     trxQry.setNamedParameter("now", new Date());
     trxQry.setFilterOnReadableOrganization(false);
     trxQry.setNamedParameter("orgs", orgsWithRule);
@@ -221,7 +219,6 @@ public class CostingBackground extends DalBaseProcess {
         MaterialTransaction.class, where.toString());
     trxQry.setFilterOnReadableOrganization(false);
     trxQry.setNamedParameter("orgs", orgsWithRule);
-    trxQry.setFetchSize(10);
 
     return trxQry.scroll(ScrollMode.FORWARD_ONLY);
   }
@@ -239,7 +236,6 @@ public class CostingBackground extends DalBaseProcess {
         MaterialTransaction.class, where.toString());
     trxQry.setFilterOnReadableOrganization(false);
     trxQry.setNamedParameter("orgs", orgsWithRule);
-    trxQry.setFetchSize(100);
 
     return trxQry.scroll(ScrollMode.FORWARD_ONLY);
   }

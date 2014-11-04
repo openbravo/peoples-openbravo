@@ -98,6 +98,7 @@ public class AverageAlgorithm extends CostingAlgorithm {
   /**
    * Closing inventories cost is calculated with the current stock balance.
    */
+  @Override
   protected BigDecimal getInventoryClosingCost() {
     BigDecimal cost = CostAdjustmentUtils.getValuedStockOnMovementDateByAttrAndLocator(
         transaction.getProduct(), costOrg, transaction.getMovementDate(), costDimensions,
@@ -140,8 +141,6 @@ public class AverageAlgorithm extends CostingAlgorithm {
       }
     }
     Costing cost = OBProvider.getInstance().get(Costing.class);
-    // TODO: Review this
-    // cost.setNewOBObject(true);
     cost.setCost(newCost);
     cost.setCurrency(costCurrency);
     cost.setStartingDate(transaction.getTransactionProcessDate());
@@ -276,6 +275,9 @@ public class AverageAlgorithm extends CostingAlgorithm {
     }
   }
 
+  /**
+   * Return true if the transaction type should be modify the average
+   */
   protected static boolean modifiesAverage(TrxType trxType) {
     switch (trxType) {
     case Receipt:

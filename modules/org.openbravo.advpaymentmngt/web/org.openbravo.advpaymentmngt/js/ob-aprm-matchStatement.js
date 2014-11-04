@@ -106,8 +106,9 @@ isc.APRMMatchStatGridButtonsComponent.addProperties({
             process, 
             callback, 
             bankStatementLineId = me.record.id, 
-            updated = me.record.bslUpdated.getTime() + me.record.bslUpdated.getTimezoneOffset() * 60000,
+            updated = new Date(),
             view = me.grid.view;
+            updated.setTime(me.record.bslUpdated.getTime());
 	    callback = function (response, data, request) {
 	      view.onRefreshFunction(view);
 	      if (data && data.message && data.message.severity === 'error') {
@@ -144,8 +145,9 @@ isc.APRMMatchStatGridButtonsComponent.addProperties({
             process, 
             callback, 
             bankStatementLineId = me.record.id, 
-            updated = me.record.bslUpdated.getTime() + me.record.bslUpdated.getTimezoneOffset() * 60000,
+            updated = new Date(),
             view = me.grid.view;
+            updated.setTime(me.record.bslUpdated.getTime());
 	    callback = function (response, data, request) {
 	      view.onRefreshFunction(view);
 	      if (data && data.message && data.message.severity === 'error') {
@@ -175,8 +177,10 @@ isc.APRMMatchStatGridButtonsComponent.addProperties({
       originalPrompt: OB.I18N.getLabel('APRM_MATCHTRANSACTION_DELETE_BUTTON'),
       prompt: OB.I18N.getLabel('APRM_MATCHTRANSACTION_DELETE_BUTTON'),
       action: function () {
-        var callback, bankStatementLineId = me.record.id, updated = me.record.bslUpdated.getTime() + me.record.bslUpdated.getTimezoneOffset() * 60000,
+        var callback, bankStatementLineId = me.record.id, 
+            updated = new Date(),
             view = me.grid.view;
+            updated.setTime(me.record.bslUpdated.getTime());
         callback = function (response, data, request) {
           view.onRefreshFunction(view);
           if (data && data.message && data.message.severity === 'error') {

@@ -44,9 +44,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CancelCostAdjustment extends BaseActionHandler {
-  private static Logger log = LoggerFactory.getLogger(CancelCostAdjustment.class);
-  final static String strCategoryCostAdj = "CAD";
-  final static String strTableCostAdj = "M_CostAdjustment";
+  private static final Logger log = LoggerFactory.getLogger(CancelCostAdjustment.class);
+  private static final String strCategoryCostAdj = "CAD";
+  private static final String strTableCostAdj = "M_CostAdjustment";
 
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String data) {
@@ -86,8 +86,6 @@ public class CancelCostAdjustment extends BaseActionHandler {
         strCategoryCostAdj);
     final String docNo = FIN_Utility.getDocumentNo(docType, strTableCostAdj);
     costAdjustmentCancel.setDocumentNo(docNo);
-    // TODO: review setNewOBObject
-    // costAdjustmentCancel.setNewOBObject(true);
     costAdjustmentCancel.setUpdated(new Date());
     costAdjustmentCancel.setUpdatedBy(OBContext.getOBContext().getUser());
     costAdjustmentCancel.setCreationDate(new Date());
@@ -114,8 +112,6 @@ public class CancelCostAdjustment extends BaseActionHandler {
       while (scrollLines.next()) {
         final CostAdjustmentLine lineOrig = (CostAdjustmentLine) scrollLines.get()[0];
         CostAdjustmentLine lineCancel = (CostAdjustmentLine) DalUtil.copy(lineOrig, false);
-        // TODO: review setNewOBObject
-        // lineCancel.setNewOBObject(true);
         lineCancel.setUpdated(new Date());
         lineCancel.setUpdatedBy(OBContext.getOBContext().getUser());
         lineCancel.setCreationDate(new Date());

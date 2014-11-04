@@ -218,6 +218,41 @@
     FROM C_DOCTYPE
     WHERE C_DocType_ID=v_DocTypetarget_ID;
 
+  IF(v_isreturndoctype='Y' AND v_DocAction='CO') THEN
+    DECLARE
+    v_RefReturnQty NUMBER:=0;
+    v_RefMovementQty NUMBER:=0;
+    BEGIN
+      v_Message:=NULL;
+      FOR Cur_line IN
+        (SELECT OL.M_INOUTLINE_ID, OL.LINE, OL.QTYORDERED
+        FROM C_ORDERLINE OL
+        WHERE OL.C_Order_ID = v_Record_ID
+        AND OL.M_INOUTLINE_ID IS NOT NULL
+        )
+      LOOP
+        SELECT COALESCE(SUM(OL.QtyOrdered),0) INTO v_RefReturnQty
+        FROM C_ORDERLINE OL, C_ORDER O
+        WHERE OL.M_INOUTLINE_ID = Cur_line.M_INOUTLINE_ID
+        AND OL.C_ORDER_ID = O.C_ORDER_ID
+        AND O.PROCESSED='Y';
+        SELECT MovementQty INTO v_RefMovementQty
+        FROM M_INOUTLINE WHERE M_INOUTLINE_ID = Cur_line.M_INOUTLINE_ID;
+        v_RefReturnQty:=ABS(v_RefReturnQty) + ABS(Cur_Line.QtyOrdered);
+        IF(v_RefReturnQty > v_RefMovementQty) THEN
+          IF(v_Message IS NULL) THEN
+            v_Message:=Cur_line.LINE;
+          ELSE
+            v_Message:=v_Message||', '||Cur_line.LINE;
+          END IF;
+        END IF;
+      END LOOP;
+      IF(v_Message IS NOT NULL) THEN
+        RAISE_APPLICATION_ERROR(-20000,'@ReturnQtyMismatch@'||v_Message);
+      END IF;
+    END;
+  END IF;
+
     --Check whether warehouse belongs to the organization.
     SELECT count(AD_ORG_ID)
     INTO v_count

@@ -85,7 +85,6 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
       if (costAdjLine.isSource() && !costAdjLine.isRelatedTransactionAdjusted()
           && !costAdjLine.getId().equals(strCostAdjLineId)) {
         searchRelatedTransactionCosts(costAdjLine);
-        // OBDal.getInstance().refresh(costAdjLine);
       }
 
       costAdjLine.setRelatedTransactionAdjusted(Boolean.TRUE);
@@ -129,6 +128,29 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     }
     log.debug("Starting average cost {}", cost == null ? "not cost" : cost.toPlainString());
     if (AverageAlgorithm.modifiesAverage(trxType) && cost != null) {
+      BigDecimal trxCost = CostAdjustmentUtils.getTrxCost(basetrx, false, getCostCurrency());
+      BigDecimal trxPrice = trxCost.add(adjustmentBalance).divide(
+          basetrx.getMovementQuantity().abs(), costCurPrecission, RoundingMode.HALF_UP);
+      if (checkNegativeStockCorrection && currentStock.compareTo(basetrx.getMovementQuantity()) < 0
+          && cost.compareTo(trxPrice) != 0) {
+        // stock was negative and cost different than trx price then Negative Stock Correction
+        // is added
+        BigDecimal trxSignMultiplier = new BigDecimal(basetrx.getMovementQuantity().signum());
+        BigDecimal negCorrAmt = trxPrice.multiply(currentStock)
+            .setScale(stdCurPrecission, RoundingMode.HALF_UP).subtract(currentValueAmt)
+            .subtract(adjustmentBalance);
+        adjustmentBalance = adjustmentBalance.add(negCorrAmt.multiply(trxSignMultiplier));
+        // If there is a difference insert a cost adjustment line.
+        CostAdjustmentLine newCAL = insertCostAdjustmentLine(basetrx, negCorrAmt, null);
+        newCAL.setNegativeStockCorrection(true);
+        newCAL.setRelatedTransactionAdjusted(true);
+        newCAL.setUnitCost(Boolean.FALSE);
+        OBDal.getInstance().save(newCAL);
+        cost = trxPrice;
+        log.debug("Negative stock correction. Amount: {}, new cost {}", negCorrAmt.toPlainString(),
+            cost.toPlainString());
+      }
+
       Costing curCosting = basetrx.getMaterialMgmtCostingList().get(0);
       if (curCosting.getCost().compareTo(cost) != 0) {
         // Update existing costing
@@ -181,7 +203,6 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
         for (CostAdjustmentLine existingCAL : existingAdjLines) {
           if (existingCAL.isSource() && !existingCAL.isRelatedTransactionAdjusted()) {
             searchRelatedTransactionCosts(existingCAL);
-            // OBDal.getInstance().refresh(costAdjLine);
           }
           if (existingCAL.getTransactionCostList().isEmpty()
               && !existingCAL.isRelatedTransactionAdjusted()) {
@@ -307,8 +328,6 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
         currentCosting.setEndingDate(newDate);
         OBDal.getInstance().save(currentCosting);
         Costing newCosting = OBProvider.getInstance().get(Costing.class);
-        // TODO: Review this
-        // newCosting.setNewOBObject(true);
         newCosting.setCost(cost);
         newCosting.setCurrency((Currency) OBDal.getInstance().getProxy(Currency.ENTITY_NAME,
             strCurrentCurId));
@@ -400,69 +419,95 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     Warehouse warehouse = (Warehouse) costDimensions.get(CostDimension.Warehouse);
     MaterialTransaction trx = getTransaction();
 
-    StringBuffer where = new StringBuffer();
-    where.append(" as trx");
-    where.append("\n join trx." + Product.PROPERTY_ORGANIZATION + " as org");
-    where.append("\n join trx." + Product.PROPERTY_STORAGEBIN + " as loc");
-    where.append("\n , " + org.openbravo.model.ad.domain.List.ENTITY_NAME + " as trxtype");
-    where.append("\n where trxtype." + CostAdjustmentUtils.propADListReference + ".id = :refid");
-    where.append("  and trxtype." + CostAdjustmentUtils.propADListValue + " = trx."
+    StringBuffer wh = new StringBuffer();
+    wh.append(" as trx");
+    wh.append("\n join trx." + Product.PROPERTY_ORGANIZATION + " as org");
+    wh.append("\n join trx." + Product.PROPERTY_STORAGEBIN + " as loc");
+    wh.append("\n , " + org.openbravo.model.ad.domain.List.ENTITY_NAME + " as trxtype");
+    wh.append("\n where trxtype." + CostAdjustmentUtils.propADListReference + ".id = :refid");
+    wh.append("  and trxtype." + CostAdjustmentUtils.propADListValue + " = trx."
         + MaterialTransaction.PROPERTY_MOVEMENTTYPE);
 
-    where.append("  and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
-    where.append("  and trx." + MaterialTransaction.PROPERTY_PRODUCT + " = :product");
+    wh.append("  and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
+    wh.append("  and trx." + MaterialTransaction.PROPERTY_PRODUCT + " = :product");
     // Consider only transactions with movement date equal or later than the movement date of the
     // adjusted transaction. But for transactions with the same movement date only those with a
     // transaction date after the process date of the adjusted transaction.
-    if (areBackdatedTrxFixed) {
-      where.append("  and (");
-      where.append("   trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " > :mvtdate");
-      where.append("   or (");
-      where.append("    trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " = :mvtdate");
-    }
-    // If there are more than one trx on the same trx process date filter out those types with less
-    // priority and / or higher quantity.
-    where.append(" and (");
-    where.append("  trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " > :trxdate");
-    where.append("  or (");
-    where.append("   trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " = :trxdate");
-    where.append("   and (");
-    where.append("    trxtype." + CostAdjustmentUtils.propADListPriority + " > :trxtypeprio");
-    where.append("    or (");
-    where.append("     trxtype." + CostAdjustmentUtils.propADListPriority + " = :trxtypeprio");
-    where.append("     and trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " <= :trxqty");
-    where.append(" ))))");
-    where.append(" and trx.id != :trxid");
+    wh.append(" and (");
 
-    if (areBackdatedTrxFixed) {
-      where.append("  ))");
+    if (costingRule.isBackdatedTransactionsFixed()) {
+      wh.append("  (trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " < :fixbdt");
+      wh.append("  and (");
     }
-    where.append("  and org.id in (:orgs)");
+
+    wh.append("   trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " > :trxdate");
+    wh.append("   or (");
+    wh.append("    trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " = :trxdate");
+    wh.append("    and (");
+    wh.append("     trxtype." + CostAdjustmentUtils.propADListPriority + " > :trxtypeprio");
+    wh.append("     or (");
+    wh.append("      trxtype." + CostAdjustmentUtils.propADListPriority + " = :trxtypeprio");
+    wh.append("      and trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " < :trxqty");
+    wh.append("      or (");
+    wh.append("        trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " = :trxqty");
+    wh.append("        and trx." + MaterialTransaction.PROPERTY_ID + " > :trxid");
+    wh.append("  )))))");
+
+    if (costingRule.isBackdatedTransactionsFixed()) {
+      wh.append(" ) or (");
+
+      wh.append("  trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " >= :fixbdt");
+      wh.append("  and (");
+      wh.append("   trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " > :mvtdate");
+      wh.append("   or (");
+      wh.append("    trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " = :mvtdate");
+      // If there are more than one trx on the same trx process date filter out those types with
+      // less
+      // priority and / or higher quantity.
+      wh.append("    and (");
+      wh.append("     trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " > :trxdate");
+      wh.append("     or (");
+      wh.append("      trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " = :trxdate");
+      wh.append("      and (");
+      wh.append("       trxtype." + CostAdjustmentUtils.propADListPriority + " > :trxtypeprio");
+      wh.append("       or (");
+      wh.append("        trxtype." + CostAdjustmentUtils.propADListPriority + " = :trxtypeprio");
+      wh.append("        and trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " < :trxqty");
+      wh.append("         or (");
+      wh.append("          trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " = :trxqty");
+      wh.append("          and trx." + MaterialTransaction.PROPERTY_ID + " > :trxid");
+      wh.append("    )))))");
+      wh.append(" )))");
+    }
+    wh.append(")");
+    wh.append("  and org.id in (:orgs)");
     if (warehouse != null) {
-      where.append("  and loc." + Locator.PROPERTY_WAREHOUSE + " = :warehouse");
+      wh.append("  and loc." + Locator.PROPERTY_WAREHOUSE + " = :warehouse");
     }
     if (costingRule.getEndingDate() != null) {
-      where.append("  and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
-          + " <= :enddate");
+      wh.append("  and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " <= :enddate");
     }
-    where.append("  and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
-        + " > :startdate ");
-    where.append("\n order by ");
+    wh.append("  and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " > :startdate ");
+    wh.append("\n order by ");
     if (areBackdatedTrxFixed) {
-      where.append(" trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + ", ");
+      // CASE WHEN trx.trxprocessdate < :fixfrom THEN 1-1-1900
+      // ELSE trx.movmenetdate END
+      wh.append(" trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + ", ");
     }
-    where.append(" trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE);
-    where.append(" , trxtype." + CostAdjustmentUtils.propADListPriority);
-    where.append(" , trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " desc");
+    wh.append(" trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE);
+    wh.append(" , trxtype." + CostAdjustmentUtils.propADListPriority);
+    wh.append(" , trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " desc");
+    wh.append(" , trx." + MaterialTransaction.PROPERTY_ID);
 
     OBQuery<MaterialTransaction> trxQry = OBDal.getInstance().createQuery(
-        MaterialTransaction.class, where.toString());
+        MaterialTransaction.class, wh.toString());
     trxQry.setFilterOnReadableOrganization(false);
     trxQry.setFilterOnReadableClients(false);
     trxQry.setNamedParameter("refid", CostAdjustmentUtils.MovementTypeRefID);
     trxQry.setNamedParameter("product", trx.getProduct());
-    if (areBackdatedTrxFixed) {
+    if (costingRule.isBackdatedTransactionsFixed()) {
       trxQry.setNamedParameter("mvtdate", trx.getMovementDate());
+      trxQry.setNamedParameter("fixbdt", costingRule.getFixbackdatedfrom());
     }
     trxQry.setNamedParameter("trxtypeprio",
         CostAdjustmentUtils.getTrxTypePrio(trx.getMovementType()));
@@ -494,10 +539,12 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
   @Override
   protected void calculateNegativeStockCorrectionAdjustmentAmount(CostAdjustmentLine costAdjLine) {
     MaterialTransaction basetrx = costAdjLine.getInventoryTransaction();
+    boolean areBaseTrxBackdatedFixed = getCostingRule().isBackdatedTransactionsFixed()
+        && !getCostingRule().getFixbackdatedfrom().before(basetrx.getTransactionProcessDate());
     BigDecimal currentStock = CostAdjustmentUtils.getStockOnTransactionDate(getCostOrg(), basetrx,
-        getCostDimensions(), isManufacturingProduct, areBackdatedTrxFixed);
+        getCostDimensions(), isManufacturingProduct, areBaseTrxBackdatedFixed);
     BigDecimal currentValueAmt = CostAdjustmentUtils.getValuedStockOnTransactionDate(getCostOrg(),
-        basetrx, getCostDimensions(), isManufacturingProduct, areBackdatedTrxFixed,
+        basetrx, getCostDimensions(), isManufacturingProduct, areBaseTrxBackdatedFixed,
         getCostCurrency());
     int precission = getCostCurrency().getCostingPrecision().intValue();
 
@@ -568,6 +615,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     where.append(" trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " desc ");
     where.append(" , trxtype." + CostAdjustmentUtils.propADListPriority + " desc ");
     where.append(" , trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY);
+    where.append(" , trx." + MaterialTransaction.PROPERTY_ID);
 
     OBQuery<Costing> qryCost = OBDal.getInstance().createQuery(Costing.class, where.toString());
     qryCost.setNamedParameter("refid", CostAdjustmentUtils.MovementTypeRefID);
@@ -599,7 +647,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
   private void extendPreviousCosting(Costing bdCosting) {
     StringBuffer where = new StringBuffer();
     where.append(" as c");
-    where.append("  join c." + Costing.PROPERTY_INVENTORYTRANSACTION + " as trx");
+    where.append("  left join c." + Costing.PROPERTY_INVENTORYTRANSACTION + " as trx");
     where.append(" where c." + Costing.PROPERTY_PRODUCT + " = :product");
     where.append("   and c." + Costing.PROPERTY_ORGANIZATION + " = :org");
     where.append("   and c." + Costing.PROPERTY_COSTTYPE + " = 'AVA'");
@@ -611,9 +659,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     where.append("   and c." + Costing.PROPERTY_ENDINGDATE + " = :endDate");
 
     where.append(" order by ");
-    if (areBackdatedTrxFixed) {
-      where.append(" trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " desc, ");
-    }
+    where.append(" trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " desc, ");
     where.append(" trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " desc");
 
     OBQuery<Costing> qryCosting = OBDal.getInstance().createQuery(Costing.class, where.toString());

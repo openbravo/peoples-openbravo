@@ -19,6 +19,8 @@
 
 package org.openbravo.advpaymentmngt.actionHandler;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
@@ -28,8 +30,10 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.financialmgmt.payment.FIN_BankStatementLine;
+import org.openbravo.service.json.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,16 +48,22 @@ public class CheckRecordChangedActionHandler extends BaseActionHandler {
       OBContext.setAdminMode(true);
       final JSONObject jsonData = new JSONObject(data);
       final String strBankStatementLineId = jsonData.getString("bankStatementLineId");
-      final long updated = jsonData.getLong("updated");
+      String dateStr = jsonData.getString("updated");
+      SimpleDateFormat xmlDateTimeFormat = JsonUtils.createJSTimeFormat();
+      Date date = null;
+      try {
+        date = xmlDateTimeFormat.parse(dateStr);
+      } catch (ParseException e) {
+      }
       final FIN_BankStatementLine bsline = OBDal.getInstance().get(FIN_BankStatementLine.class,
           strBankStatementLineId);
       Date bbddBSLUpdated = bsline.getUpdated();
       // Remove milliseconds to compare against updated from UI
       Calendar calendar = Calendar.getInstance();
-      calendar.setTime(bbddBSLUpdated);
+      calendar.setTime(OBDateUtils.convertDateToUTC(bbddBSLUpdated));
       calendar.setLenient(true);
       calendar.set(Calendar.MILLISECOND, 0);
-      if (updated != calendar.getTimeInMillis()) {
+      if (date.getTime() != calendar.getTimeInMillis()) {
         errorMessage = new JSONObject();
         errorMessage.put("severity", "error");
         errorMessage.put("title", "Error");

@@ -7330,8 +7330,9 @@ This tab is used to indicate the different toolsets used in the selected process
 <!--800178-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
 <!--800178-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
 <!--800178-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1E14B84E040007F01006125]]></AD_PACKAGE_ID>
+<!--800178-->  <TREETYPE><![CDATA[AR]]></TREETYPE>
 <!--800178-->  <DATAORIGINTYPE><![CDATA[Table]]></DATAORIGINTYPE>
-<!--800178-->  <ISTREE><![CDATA[N]]></ISTREE>
+<!--800178-->  <ISTREE><![CDATA[Y]]></ISTREE>
 <!--800178--></AD_TABLE>
 
 <!--800179--><AD_TABLE>
@@ -8295,9 +8296,8 @@ This tab is used to indicate the different toolsets used in the selected process
 <!--800223-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
 <!--800223-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
 <!--800223-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1E14B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--800223-->  <TREETYPE><![CDATA[AR]]></TREETYPE>
 <!--800223-->  <DATAORIGINTYPE><![CDATA[Table]]></DATAORIGINTYPE>
-<!--800223-->  <ISTREE><![CDATA[Y]]></ISTREE>
+<!--800223-->  <ISTREE><![CDATA[N]]></ISTREE>
 <!--800223--></AD_TABLE>
 
 <!--800224--><AD_TABLE>
@@ -11408,7 +11408,7 @@ from LandedCostCost as lcc
 where (lcc.matched = false or lcm is not null)
   and @additional_filters@
   and @insertion_point_0@
-group by  coalesce(lcm.id, lcc.id), lcc, lct.name, lcc.amount, lcc.currency.iSOCode, lcm.amount, case when lcm is not null then true else false end, lc.referenceDate, lcc.matched, lcc.isMatchingAdjusted, lcm.id, lcc.id, il, lc.documentNo, lcc.lineNo, lcm.amountInInvoiceCurrency]]></HQLQUERY>
+group by  coalesce(lcm.id, lcc.id), lcc, lct.name, lcc.amount, lcc.currency.iSOCode, lcm.amount, case when lcm is not null then true else false end, lc.referenceDate, lcc.matched, lcc.isMatchingAdjusted, lcm.id, lcc.id, il, lc.documentNo, lcc.lineNo, lcc.processed, lcm.amountInInvoiceCurrency]]></HQLQUERY>
 <!--B2960E2BDCCD4F7599A2433F2681847F-->  <ENTITY_ALIAS><![CDATA[lcc]]></ENTITY_ALIAS>
 <!--B2960E2BDCCD4F7599A2433F2681847F--></AD_TABLE>
 

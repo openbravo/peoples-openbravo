@@ -33,6 +33,7 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.client.kernel.event.EntityDeleteEvent;
 import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
@@ -53,6 +54,18 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
   @Override
   protected Entity[] getObservedEntities() {
     return entities;
+  }
+
+  public void onDelete(@Observes
+  EntityDeleteEvent event) {
+    if (!isValidEvent(event)) {
+      return;
+    }
+    final ProductCharacteristic prCh = (ProductCharacteristic) event.getTargetInstance();
+    if (prCh.isVariant() && prCh.getProduct().isGeneric()
+        && !prCh.getProduct().getProductGenericProductList().isEmpty()) {
+      throw new OBException(OBMessageUtils.messageBD("DeleteVariantChWithVariantsError"));
+    }
   }
 
   public void onSave(@Observes
@@ -193,7 +206,8 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
         if (StringUtils.isBlank(strCode)) {
           strCode = subsetValue.getCharacteristicValue().getCode();
         }
-        String[] strValues = { subsetValue.getCharacteristicValue().getId(), strCode };
+        String[] strValues = { subsetValue.getCharacteristicValue().getId(), strCode,
+            subsetValue.getCharacteristicValue().isActive().toString() };
         chValues.add(strValues);
       }
       return chValues;

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,7 +28,6 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.invoice.InvoiceLine;
-import org.openbravo.model.materialmgmt.cost.LandedCost;
 
 public class SL_LandedCost_InvoiceLine extends SimpleCallout {
 
@@ -37,7 +36,6 @@ public class SL_LandedCost_InvoiceLine extends SimpleCallout {
   @Override
   protected void execute(CalloutInfo info) throws ServletException {
     VariablesSecureApp vars = info.vars;
-    String strLCId = vars.getStringParameter("inpmLandedcostId");
     String strInvLineId = vars.getStringParameter("inpcInvoicelineId");
     String strAmount = "";
     String strCurrencyId = "";
@@ -45,13 +43,11 @@ public class SL_LandedCost_InvoiceLine extends SimpleCallout {
       InvoiceLine invoiceLine = OBDal.getInstance().get(InvoiceLine.class, strInvLineId);
       strAmount = getAmount(invoiceLine);
       strCurrencyId = invoiceLine.getInvoice().getCurrency().getId();
+      info.addResult("inpcCurrencyId", strCurrencyId);
     } else {
       strAmount = "0";
-      LandedCost landedCost = OBDal.getInstance().get(LandedCost.class, strLCId);
-      strCurrencyId = landedCost.getCurrency().getId();
     }
     info.addResult("inpamount", strAmount);
-    info.addResult("inpcCurrencyId", strCurrencyId);
   }
 
   private String getAmount(InvoiceLine invoiceLine) {

@@ -28,7 +28,7 @@ import org.openbravo.database.ConnectionProvider;
 
 public abstract class DocCostAdjustmentTemplate {
   private static final long serialVersionUID = 1L;
-  static Logger log4jDocCostAdjustment = Logger.getLogger(DocCostAdjustment.class);
+  private static final Logger log4jDocCostAdjustment = Logger.getLogger(DocCostAdjustment.class);
 
   /**
    * Constructor
@@ -58,7 +58,12 @@ public abstract class DocCostAdjustmentTemplate {
   public abstract Fact createFact(DocCostAdjustment docCostAdjustment, AcctSchema as,
       ConnectionProvider conn, Connection con, VariablesSecureApp vars) throws ServletException;
 
-  public String getServletInfo() {
-    return "Servlet for the accounting";
-  } // end of getServletInfo() method
+  public static Logger getLog4jdoccostadjustment() {
+    return log4jDocCostAdjustment;
+  }
+
+  public static long getSerialversionuid() {
+    return serialVersionUID;
+  }
+
 }
