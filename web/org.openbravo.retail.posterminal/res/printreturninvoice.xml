@@ -30,7 +30,7 @@
       <text><%= OB.I18N.formatDate(order.get('orderDate')) %></text>
        <text> </text>
        <% var time;
-       if(!_.isNull(order.get('created'))){
+       if(!OB.UTIL.isNullOrUndefined(order.get('created'))){
          time = new Date(order.get('created'));       
        } else {
          time = new Date(); 
