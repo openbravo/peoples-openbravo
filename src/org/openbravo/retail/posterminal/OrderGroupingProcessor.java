@@ -514,6 +514,11 @@ public class OrderGroupingProcessor {
     origPaymentSchedule.setAmount(grossamount);
 
     if (grossamount.compareTo(BigDecimal.ZERO) == 0) {
+      for (FIN_PaymentScheduleDetail detail : paymentSchedule
+          .getFINPaymentScheduleDetailInvoicePaymentScheduleList()) {
+        detail.setInvoicePaymentSchedule(null);
+      }
+      paymentSchedule.getFINPaymentScheduleDetailInvoicePaymentScheduleList().clear();
       paymentSchedule.setActive(false);
       OBDal.getInstance().remove(paymentSchedule);
       OBDal.getInstance().remove(origPaymentSchedule);
