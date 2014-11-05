@@ -21,6 +21,7 @@ public class TaxZoneProperties extends ModelExtension {
         add(new HQLProperty("financialMgmtTaxZone.destinationCountry.id", "destinationCountry"));
         add(new HQLProperty("financialMgmtTaxZone.fromRegion.id", "fromRegion"));
         add(new HQLProperty("financialMgmtTaxZone.destinationRegion.id", "destinationRegion"));
+        add(new HQLProperty("financialMgmtTaxZone.active", "active"));
       }
     };
     return list;

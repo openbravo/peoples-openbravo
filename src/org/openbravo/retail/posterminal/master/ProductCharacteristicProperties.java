@@ -22,6 +22,7 @@ public class ProductCharacteristicProperties extends ModelExtension {
         add(new HQLProperty("pcv.characteristicValue.id", "ch_value_id"));
         add(new HQLProperty("pcv.characteristicValue.name", "ch_value"));
         add(new HQLProperty("pcv.characteristic.name", "_identifier"));
+        add(new HQLProperty("pcv.characteristic.active", "active"));
       }
     };
     return list;

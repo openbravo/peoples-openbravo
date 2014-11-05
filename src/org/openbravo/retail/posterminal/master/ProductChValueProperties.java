@@ -20,6 +20,7 @@ public class ProductChValueProperties extends ModelExtension {
         add(new HQLProperty("cv.characteristic.id", "characteristic_id"));
         add(new HQLProperty("node.reportSet", "parent"));
         add(new HQLProperty("cv.name", "_identifier"));
+        add(new HQLProperty("cv.active", "active"));
       }
     };
     return list;

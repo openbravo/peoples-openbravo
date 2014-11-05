@@ -44,6 +44,7 @@ public class BusinessPartnerProperties extends ModelExtension {
         add(new HQLProperty("bpl.businessPartner.creditLimit", "creditLimit"));
         add(new HQLProperty("bpl.businessPartner.creditUsed", "creditUsed"));
         add(new HQLProperty("bpl.businessPartner.taxExempt", "taxExempt"));
+        add(new HQLProperty("bpl.businessPartner.active", "active"));
       }
     };
     return list;

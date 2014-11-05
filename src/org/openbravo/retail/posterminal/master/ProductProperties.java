@@ -138,6 +138,7 @@ public class ProductProperties extends ModelExtension {
         if (ProductPrice.hasProperty("algorithm") == true) {
           add(new HQLProperty("ppp.algorithm", "algorithm"));
         }
+        add(new HQLProperty("product.active", "active"));
       }
     };
     return list;

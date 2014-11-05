@@ -82,29 +82,25 @@ public class Product extends ProcessHQLQuery {
 
     HQLPropertyList regularProductsHQLProperties = ModelExtensionUtils.getPropertyExtensions(
         extensions, args);
-
+    Long lastUpdated = jsonsent.has("lastUpdated")
+        && !jsonsent.get("lastUpdated").equals("undefined") ? jsonsent.getLong("lastUpdated")
+        : null;
     // regular products
-    products
-        .add("select"
-            + regularProductsHQLProperties.getHqlSelect()
-            + "FROM OBRETCO_Prol_Product as pli left outer join pli.product.image img inner join pli.product as product, "
-            + "PricingProductPrice ppp, "
-            + "PricingPriceListVersion pplv "
-            + "WHERE (pli.obretcoProductlist = '"
-            + productList.getId()
-            + "') "
-            + "AND ("
-            + "pplv.id='"
-            + priceListVersion.getId()
-            + "'"
-            + ") AND ("
-            + "ppp.priceListVersion.id = pplv.id"
-            + ") AND ("
-            + "pli.product.id = ppp.product.id"
-            + ") AND ("
-            + "pli.product.active = true"
-            + ") AND "
-            + "((pli.$incrementalUpdateCriteria) or (pli.product.$incrementalUpdateCriteria) or (ppp.$incrementalUpdateCriteria) ) order by pli.product.name");
+    String hql = "select"
+        + regularProductsHQLProperties.getHqlSelect()
+        + "FROM OBRETCO_Prol_Product as pli left outer join pli.product.image img inner join pli.product as product, "
+        + "PricingProductPrice ppp, " + "PricingPriceListVersion pplv "
+        + "WHERE (pli.obretcoProductlist = '" + productList.getId() + "') " + "AND (" + "pplv.id='"
+        + priceListVersion.getId() + "'" + ") AND (" + "ppp.priceListVersion.id = pplv.id"
+        + ") AND (" + "pli.product.id = ppp.product.id" + ") ";
+
+    if (lastUpdated != null) {
+      hql += "AND ((pli.product.$incrementalUpdateCriteria) OR (pli.$incrementalUpdateCriteria) OR (ppp.$incrementalUpdateCriteria)) ";
+    } else {
+      hql += "AND (pli.product.$incrementalUpdateCriteria) ";
+    }
+    hql += "order by pli.product.name";
+    products.add(hql);
 
     // discounts which type is defined as category
     String discountNameTrl;
@@ -127,7 +123,6 @@ public class Product extends ProcessHQLQuery {
             + "  from PricingAdjustment as p left outer join p.obdiscImage img" //
             + " where p.discountType.obposIsCategory = true "//
             + "   and p.discountType.active = true " //
-            + "   and p.active = true"//
             + "   and p.$readableClientCriteria"//
             + "   and (p.endingDate is null or p.endingDate >= TO_DATE('"
             + format.format(now.getTime())
@@ -149,7 +144,7 @@ public class Product extends ProcessHQLQuery {
     products
         .add("select "
             + regularProductsHQLProperties.getHqlSelect()
-            + " from Product product left outer join product.image img left join product.oBRETCOProlProductList as pli left outer join product.pricingProductPriceList ppp where exists (select 1 from Product product2 left join product2.oBRETCOProlProductList as pli2, PricingProductPrice ppp2 where product.id = product2.genericProduct.id and product2 = ppp2.product and ppp2.priceListVersion.id = '"
+            + " from Product product left outer join product.image img left join product.oBRETCOProlProductList as pli left outer join product.pricingProductPriceList ppp where (product.$incrementalUpdateCriteria) and exists (select 1 from Product product2 left join product2.oBRETCOProlProductList as pli2, PricingProductPrice ppp2 where product.id = product2.genericProduct.id and product2 = ppp2.product and ppp2.priceListVersion.id = '"
             + priceListVersion.getId() + "' and pli2.obretcoProductlist.id = '"
             + productList.getId() + "')");
 

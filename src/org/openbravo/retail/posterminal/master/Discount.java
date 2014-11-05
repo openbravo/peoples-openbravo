@@ -33,12 +33,18 @@ public class Discount extends ProcessHQLQuery {
   }
 
   protected String getPromotionsHQL(JSONObject jsonsent) throws JSONException {
+    return getPromotionsHQL(jsonsent, false);
+  }
+
+  protected String getPromotionsHQL(JSONObject jsonsent, boolean addIncrementalUpdateFilter)
+      throws JSONException {
     String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
 
     PriceList priceList = POSUtils.getPriceListByOrgId(orgId);
     String priceListId = priceList.getId();
 
     String posPrecision = "";
+
     try {
       OBContext.setAdminMode();
       posPrecision = (priceList.getCurrency().getObposPosprecision() == null ? priceList
@@ -53,6 +59,9 @@ public class Discount extends ProcessHQLQuery {
     String hql = "from PricingAdjustment p ";
     hql += "where client.id = '" + OBContext.getOBContext().getCurrentClient().getId() + "' ";
     hql += "and (endingDate is null or endingDate>:today) ";
+    if (addIncrementalUpdateFilter) {
+      hql += "and (p.$incrementalUpdateCriteria) ";
+    }
 
     // price list
     hql += "and ((includePriceLists='Y' ";
@@ -102,18 +111,25 @@ public class Discount extends ProcessHQLQuery {
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
     JSONObject today = new JSONObject();
     JSONObject value = new JSONObject();
+
     value.put("type", "DATE");
     Calendar now = Calendar.getInstance();
     now.add(Calendar.DAY_OF_MONTH, -1);
     value.put("value", JsonUtils.createDateFormat().format(new Date(now.getTimeInMillis())));
     today.put("today", value);
     jsonsent.put("parameters", today);
+    Long lastUpdated = jsonsent.has("lastUpdated")
+        && !jsonsent.get("lastUpdated").equals("undefined") ? jsonsent.getLong("lastUpdated")
+        : null;
+    // if it is a total refresh we need to ensure that all(AND) entities are active. In a
+    // incremental refresh, we need to retrieve it if some (OR) ot the entities have changed
+    jsonsent.put("operator", lastUpdated == null ? " AND " : " OR ");
 
     return prepareQuery(jsonsent);
   }
 
   protected List<String> prepareQuery(JSONObject jsonsent) throws JSONException {
-    String hql = getPromotionsHQL(jsonsent);
+    String hql = getPromotionsHQL(jsonsent, true);
     hql += "order by priority, id";
 
     return Arrays.asList(new String[] { hql });

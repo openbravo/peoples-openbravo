@@ -41,6 +41,9 @@ public class BPLocationProperties extends ModelExtension {
         add(new HQLProperty(
             "COALESCE(bploc.locationAddress.addressLine1, bploc.locationAddress.addressLine2, bploc.locationAddress.postalCode, bploc.locationAddress.cityName)",
             "_identifier"));
+        add(new HQLProperty(
+            "(case when bploc.active = 'Y' and bploc.businessPartner.active = 'Y' then true else false end)",
+            "active"));
       }
     };
     return list;

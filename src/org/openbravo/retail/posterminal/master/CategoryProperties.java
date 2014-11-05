@@ -36,6 +36,7 @@ public class CategoryProperties extends ModelExtension {
     list.add(new HQLProperty(nameTrl, "name"));
     list.add(new HQLProperty(nameTrl, "_identifier"));
     list.add(new HQLProperty("img.bindaryData", "img"));
+    list.add(new HQLProperty("pCat.active", "active"));
     return list;
   }
 

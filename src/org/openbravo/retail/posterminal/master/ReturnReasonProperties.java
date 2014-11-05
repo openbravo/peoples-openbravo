@@ -19,6 +19,7 @@ public class ReturnReasonProperties extends ModelExtension {
         add(new HQLProperty("reason.searchKey", "searchKey"));
         add(new HQLProperty("reason.name", "name"));
         add(new HQLProperty("reason.name", "_identifier"));
+        add(new HQLProperty("reason.active", "active"));
       }
     };
     return list;

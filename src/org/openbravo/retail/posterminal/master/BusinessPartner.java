@@ -35,39 +35,40 @@ public class BusinessPartner extends ProcessHQLQuery {
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
     HQLPropertyList regularBusinessPartnerHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions);
-
-    return Arrays
-        .asList(new String[] {
-            "SELECT "
-                + regularBusinessPartnerHQLProperties.getHqlSelect() //
-                + "FROM BusinessPartnerLocation AS bpl left outer join bpl.businessPartner.aDUserList AS ulist "
-                + "WHERE "
-                + "bpl.invoiceToAddress = true AND "
-                + "bpl.businessPartner.customer = true AND "
-                + "bpl.businessPartner.priceList IS NOT NULL AND "
-                + "bpl.$readableClientCriteria AND "
-                + "bpl.$naturalOrgCriteria AND"
-                + "(bpl.$incrementalUpdateCriteria or bpl.businessPartner.$incrementalUpdateCriteria or bpl.locationAddress.$incrementalUpdateCriteria or ulist.$incrementalUpdateCriteria) AND bpl.businessPartner.active=true"
-                + " and bpl.id in (select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls where bpls.invoiceToAddress = true and bpls.$readableClientCriteria AND "
-                + " bpls.$naturalOrgCriteria group by bpls.businessPartner.id)"
-                + " and (not exists (select 1 from ADUser usr where usr.businessPartner = bpl.businessPartner)) "
-                + " GROUP BY " + regularBusinessPartnerHQLProperties.getHqlGroupBy()
-                + " ORDER BY bpl.businessPartner.name",
-            "SELECT"
-                + regularBusinessPartnerHQLProperties.getHqlSelect() //
-                + "FROM BusinessPartnerLocation AS bpl left outer join bpl.businessPartner.aDUserList AS ulist "
-                + "WHERE "
-                + "bpl.invoiceToAddress = true AND "
-                + "bpl.businessPartner.customer = true AND "
-                + "bpl.businessPartner.priceList IS NOT NULL AND "
-                + "bpl.$readableClientCriteria AND "
-                + "bpl.$naturalOrgCriteria AND"
-                + " (bpl.$incrementalUpdateCriteria or bpl.businessPartner.$incrementalUpdateCriteria or bpl.locationAddress.$incrementalUpdateCriteria or ulist.$incrementalUpdateCriteria) AND bpl.businessPartner.active=true"
-                + " and bpl.id in (select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls where bpls.invoiceToAddress = true and bpls.$readableClientCriteria AND "
-                + " bpls.$naturalOrgCriteria group by bpls.businessPartner.id)"
-                + " and (ulist.id in (select max(ulist2.id) from ADUser as ulist2 where ulist2.businessPartner is not null group by ulist2.businessPartner))"
-                + " GROUP BY " + regularBusinessPartnerHQLProperties.getHqlGroupBy()
-                + " ORDER BY bpl.businessPartner.name" });
+    Long lastUpdated = jsonsent.has("lastUpdated")
+        && !jsonsent.get("lastUpdated").equals("undefined") ? jsonsent.getLong("lastUpdated")
+        : null;
+    String hql = "SELECT "
+        + regularBusinessPartnerHQLProperties.getHqlSelect() //
+        + "FROM BusinessPartnerLocation AS bpl left outer join bpl.businessPartner.aDUserList AS ulist "
+        + "WHERE "
+        + "bpl.invoiceToAddress = true AND "
+        + "bpl.businessPartner.customer = true AND "
+        + "bpl.businessPartner.priceList IS NOT NULL AND "
+        + "bpl.$readableClientCriteria AND "
+        + "bpl.$naturalOrgCriteria AND"
+        + "(bpl.businessPartner.$incrementalUpdateCriteria) "
+        + " and bpl.id in (select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls where bpls.invoiceToAddress = true and bpls.$readableClientCriteria AND "
+        + " bpls.$naturalOrgCriteria group by bpls.businessPartner.id)"
+        + " and (not exists (select 1 from ADUser usr where usr.businessPartner = bpl.businessPartner)) "
+        + " GROUP BY " + regularBusinessPartnerHQLProperties.getHqlGroupBy()
+        + " ORDER BY bpl.businessPartner.name";
+    String hql2 = "SELECT"
+        + regularBusinessPartnerHQLProperties.getHqlSelect() //
+        + "FROM BusinessPartnerLocation AS bpl left outer join bpl.businessPartner.aDUserList AS ulist "
+        + "WHERE "
+        + "bpl.invoiceToAddress = true AND "
+        + "bpl.businessPartner.customer = true AND "
+        + "bpl.businessPartner.priceList IS NOT NULL AND "
+        + "bpl.$readableClientCriteria AND "
+        + "bpl.$naturalOrgCriteria AND"
+        + "(bpl.businessPartner.$incrementalUpdateCriteria) "
+        + " and bpl.id in (select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls where bpls.invoiceToAddress = true and bpls.$readableClientCriteria AND "
+        + " bpls.$naturalOrgCriteria group by bpls.businessPartner.id)"
+        + " and (ulist.id in (select max(ulist2.id) from ADUser as ulist2 where ulist2.businessPartner is not null group by ulist2.businessPartner))"
+        + " GROUP BY " + regularBusinessPartnerHQLProperties.getHqlGroupBy()
+        + " ORDER BY bpl.businessPartner.name";
+    return Arrays.asList(new String[] { hql, hql2 });
   }
 
   @Override

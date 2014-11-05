@@ -19,6 +19,7 @@ public class SalesRepresentativeProperties extends ModelExtension {
         add(new HQLProperty("user.name", "name"));
         add(new HQLProperty("user.username", "username"));
         add(new HQLProperty("user.name", "_identifier"));
+        add(new HQLProperty("user.active", "active"));
       }
     };
     return list;

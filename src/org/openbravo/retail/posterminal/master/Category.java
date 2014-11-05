@@ -73,7 +73,7 @@ public class Category extends ProcessHQLQuery {
         + productList.getId() + "') " + "AND (pplv.id='" + priceListVersion.getId() + "') AND ("
         + "ppp.priceListVersion.id = pplv.id" + ") AND (" + "pli.product.id = ppp.product.id"
         + ") AND (" + "pli.product.active = true" + ")) " + " AND pCat.$incrementalUpdateCriteria"
-        + "AND pCat.active = true order by pCat.name");
+        + " order by pCat.name");
 
     String promoNameTrl;
     if (OBContext.hasTranslationInstalled()) {
@@ -93,7 +93,6 @@ public class Category extends ProcessHQLQuery {
         + " as _identifier"
         + " from PromotionType as pt left outer join pt.obposImage img " //
         + "where pt.obposIsCategory = true "//
-        + "  and pt.active = true "//
         + "  and pt.$readableClientCriteria" //
         + "  and (pt.$incrementalUpdateCriteria)"//
         + "  and exists (select 1"//

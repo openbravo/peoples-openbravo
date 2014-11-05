@@ -38,28 +38,30 @@ public class BPLocation extends ProcessHQLQuery {
 
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
-
+    Long lastUpdated = jsonsent.has("lastUpdated")
+        && !jsonsent.get("lastUpdated").equals("undefined") ? jsonsent.getLong("lastUpdated")
+        : null;
+    // if it is a total refresh we need to ensure that all(AND) entities are active. In a
+    // incremental refresh, we need to retrieve it if some (OR) ot the entities have changed
+    String operator = lastUpdated == null ? " AND " : " OR ";
     List<String> hqlQueries = new ArrayList<String>();
     Organization org = POSUtils.getOrganization(OBContext.getOBContext().getCurrentOrganization()
         .getId());
 
     HQLPropertyList regularBPLocationHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions);
-
-    hqlQueries
-        .add("select"
-            + regularBPLocationHQLProperties.getHqlSelect()
-            + "from BusinessPartnerLocation AS bploc "
-            + "where exists ("
-            + "SELECT "
-            + "bp.id FROM BusinessPartner AS bp "
-            + "WHERE "
-            + "bp.customer = true AND "
-            + "bp.priceList IS NOT NULL AND "
-            + "bploc.businessPartner.id = bp.id) AND "
-            + "(bploc.$incrementalUpdateCriteria  OR bploc.locationAddress.$incrementalUpdateCriteria) AND "
-            + "bploc.$readableClientCriteria AND " + "bploc.$naturalOrgCriteria "
-            + "ORDER BY bploc.locationAddress.addressLine1");
+    String hql = "select" + regularBPLocationHQLProperties.getHqlSelect()
+        + "from BusinessPartnerLocation AS bploc " + "where exists (" + "SELECT "
+        + "bp.id FROM BusinessPartner AS bp " + "WHERE " + "bp.customer = true AND "
+        + "bp.priceList IS NOT NULL AND " + "bploc.businessPartner.id = bp.id) AND "
+        + "(bploc.$incrementalUpdateCriteria" + operator
+        + "bploc.businessPartner.$incrementalUpdateCriteria) ";
+    if (lastUpdated != null) {
+      hql += " OR (bploc.locationAddress.$incrementalUpdateCriteria) ";
+    }
+    hql += " and bploc.$readableClientCriteria AND " + "bploc.$naturalOrgCriteria "
+        + "ORDER BY bploc.locationAddress.addressLine1";
+    hqlQueries.add(hql);
     return hqlQueries;
   }
 

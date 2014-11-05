@@ -39,14 +39,10 @@ public class BPCategory extends ProcessHQLQuery {
     HQLPropertyList regularBPCategoryHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions);
 
-    hqlQueries
-        .add("select "
-            + regularBPCategoryHQLProperties.getHqlSelect()
-            + "from BusinessPartnerCategory bpcat "
-            + "where "
-            + "bpcat.$readableClientCriteria AND "
-            + "bpcat.$naturalOrgCriteria AND "
-            + "(bpcat.$incrementalUpdateCriteria) AND (bpcat.$incrementalUpdateCriteria)) order by bpcat.name");
+    hqlQueries.add("select " + regularBPCategoryHQLProperties.getHqlSelect()
+        + "from BusinessPartnerCategory bpcat " + "where " + "bpcat.$readableClientCriteria AND "
+        + "bpcat.$naturalOrgCriteria AND " + "(bpcat.$incrementalUpdateCriteria) "
+        + " order by bpcat.name");
 
     return hqlQueries;
   }

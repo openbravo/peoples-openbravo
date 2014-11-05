@@ -19,6 +19,7 @@ public class BPCategoryProperties extends ModelExtension {
         add(new HQLProperty("bpcat.searchKey", "searchKey"));
         add(new HQLProperty("bpcat.name", "name"));
         add(new HQLProperty("bpcat.name", "_identifier"));
+        add(new HQLProperty("bpcat.active", "active"));
       }
     };
     return list;
