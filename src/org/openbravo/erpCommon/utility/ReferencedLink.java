@@ -270,20 +270,14 @@ public class ReferencedLink extends HttpSecureAppServlet {
       for (TableNavigation tableNavigation : tableNavigationList) {
         // Evaluate HQL logic
         final String hqlWhere = tableNavigation.getHqllogic();
-
         Table table = tableNavigation.getTable();
         Entity obEntity = (Entity) ModelProvider.getInstance().getEntityByTableId(table.getId());
-        Class<?> entityClass = obEntity.getMappingClass();
-        // BaseOBObject obObjectInstance = (BaseOBObject) OBDal.getInstance().get(entityClass,
-        // paymentId);
-        //
-        // final OBQuery<?> query = OBDal.getInstance().createQuery(obEntity.getMappingClass(),
-        // hqlWhere);
-        // final List<?> selectors = query.list();
-        // if (!selectors.isEmpty()) {
-        // tabId = tableNavigation.getTab().getId();
-        // break;
-        // }
+        final OBQuery<?> query = OBDal.getInstance().createQuery(obEntity.getName(), hqlWhere);
+        final List<?> selectors = query.list();
+        if (!selectors.isEmpty()) {
+          tabId = tableNavigation.getTab().getId();
+          break;
+        }
       }
     } finally {
       OBContext.restorePreviousMode();
