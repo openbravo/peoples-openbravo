@@ -54,7 +54,9 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.domain.ReferencedTable;
+import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.ui.Tab;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.db.DalConnectionProvider;
 
 /**
@@ -211,9 +213,27 @@ public class AdvancedQueryBuilder {
 
     if (subEntity != null) {
       // if there's subentity, process it as a subquery with "exists"
-      String subEntityClientOrg = " and e.organization.id "
+
+      String orgPath;
+      if (subEntity.getMappingClass().isAssignableFrom(Organization.class)) {
+        // special case subentity is Organization, so no extra path required to get it
+        orgPath = "e";
+      } else {
+        orgPath = "e.organization";
+      }
+
+      String subEntityClientOrg = " and " + orgPath + ".id "
           + createInClause(OBContext.getOBContext().getReadableOrganizations());
-      subEntityClientOrg += " and e.client.id "
+
+      String clientPath;
+      if (subEntity.getMappingClass().isAssignableFrom(Client.class)) {
+        // special case subentity is Client, so no extra path required to get it
+        clientPath = "e";
+      } else {
+        clientPath = "e.client";
+      }
+
+      subEntityClientOrg += " and " + clientPath + ".id "
           + createInClause(OBContext.getOBContext().getReadableClients());
 
       AdvancedQueryBuilder subEntityQueryBuilder = subDataEntityQueryService.getQueryBuilder();
