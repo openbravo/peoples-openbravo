@@ -468,3 +468,12 @@ OB.Utilities.Date.roundToNextHalfHour = function (date) {
   }
   return newDate;
 };
+
+//** {{{ OB.Utilities.Date.getDateSeparator }}} **
+//
+// Returns the date separator
+OB.Utilities.Date.getDateSeparator = function (dateFormat) {
+  // obtains the date separator by selecting the first characters that is not 'D', 'M' or 'Y'
+  return dateFormat.toUpperCase().replace(/D/g, '').replace(/M/g, '').replace(/Y/g, '').substr(0, 1);
+
+};
