@@ -338,7 +338,11 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
         evt.get('receipt').trigger('discountsApplied');
       }
     } else {
-      evt.get('receipt').calculateGross();
+      if (this.get('eventQueue').filter(function (p) {
+        return p.get('receipt') === evt.get('receipt');
+      }).length === 0) {
+        evt.get('receipt').calculateGross();
+      }
     }
 
     // Forcing local db save. Rule implementations could (should!) do modifications
