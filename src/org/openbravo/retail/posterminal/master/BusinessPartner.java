@@ -35,9 +35,6 @@ public class BusinessPartner extends ProcessHQLQuery {
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
     HQLPropertyList regularBusinessPartnerHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions);
-    Long lastUpdated = jsonsent.has("lastUpdated")
-        && !jsonsent.get("lastUpdated").equals("undefined") ? jsonsent.getLong("lastUpdated")
-        : null;
     String hql = "SELECT "
         + regularBusinessPartnerHQLProperties.getHqlSelect() //
         + "FROM BusinessPartnerLocation AS bpl left outer join bpl.businessPartner.aDUserList AS ulist "

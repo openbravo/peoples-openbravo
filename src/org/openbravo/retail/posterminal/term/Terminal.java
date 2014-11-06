@@ -128,7 +128,8 @@ public class Terminal extends ProcessHQLQuery {
         + "'" + countryId + "'" + " as organizationCountryId, " + sessionTimeout
         + " as sessionTimeout, " + selectOrgImage + regularTerminalHQLProperties.getHqlSelect()
         + " from OBPOS_Applications AS pos inner join pos.obposTerminaltype as postype "
-        + fromOrgImage + " where pos.$readableCriteria and pos.searchKey = '"
+        + fromOrgImage
+        + " where pos.$readableCriteria and pos.$activeCriteria and pos.searchKey = '"
         + pOSTerminal.getSearchKey() + "' " + whereOrgImage });
   }
 

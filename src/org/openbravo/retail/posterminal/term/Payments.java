@@ -44,7 +44,7 @@ public class Payments extends JSONProcessSimple {
           + "p.financialAccount.currency.symbol as symbol, p.financialAccount.currency.currencySymbolAtTheRight as currencySymbolAtTheRight, "
           + "p.financialAccount.currentBalance as currentBalance "
           + "from OBPOS_App_Payment as p where p.obposApplications.id=? "
-          + "and p.$readableCriteria order by p.line, p.commercialName";
+          + "and p.$readableCriteria and p.$activeCriteria order by p.line, p.commercialName";
 
       SimpleQueryBuilder querybuilder = new SimpleQueryBuilder(hqlPayments, OBContext
           .getOBContext().getCurrentClient().getId(), OBContext.getOBContext()

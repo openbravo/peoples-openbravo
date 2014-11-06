@@ -28,7 +28,7 @@ public class Warehouses extends ProcessHQLQuery {
     String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
     return Arrays
         .asList(new String[] { "select ow.warehouse.id as warehouseid, ow.warehouse.name as warehousename, ow.priority as priority "
-            + "from OrganizationWarehouse as ow where ow.$readableCriteria and ow.organization.id = '"
+            + "from OrganizationWarehouse as ow where ow.$readableCriteria and ow.$activeCriteria and ow.organization.id = '"
             + orgId + "'" + "order by priority asc" });
   }
 }

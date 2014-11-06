@@ -29,7 +29,7 @@ public class PriceList extends ProcessHQLQuery {
     String priceListId = POSUtils.getPriceListByTerminalId(
         RequestContext.get().getSessionAttribute("POSTerminal").toString()).getId();
     return Arrays.asList(new String[] { "from PricingPriceList where id ='" + priceListId
-        + "' and $readableCriteria" });
+        + "' and $readableCriteria and $activeCriteria" });
   }
 
   @Override
