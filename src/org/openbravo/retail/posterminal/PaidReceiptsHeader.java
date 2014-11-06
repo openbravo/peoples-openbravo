@@ -14,7 +14,6 @@ import java.util.List;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.openbravo.service.json.JsonUtils;
 
 public class PaidReceiptsHeader extends ProcessHQLQuery {
 
@@ -44,9 +43,9 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
 
     if (!json.getString("filterText").isEmpty()) {
       hqlPaidReceipts += " and (ord.documentNo like '%"
-          + JsonUtils.sanitizeString(json.getString("filterText"))
+          + sanitizeString(json.getString("filterText"))
           + "%' or REPLACE(ord.documentNo, '/', '') like '%"
-          + JsonUtils.sanitizeString(json.getString("filterText"))
+          + sanitizeString(json.getString("filterText"))
           + "%' or upper(ord.businessPartner.name) like upper('%" + json.getString("filterText")
           + "%')) ";
     }
@@ -85,6 +84,16 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
     }
     hqlPaidReceipts += " order by ord.orderDate desc, ord.documentNo desc";
     return Arrays.asList(new String[] { hqlPaidReceipts });
+  }
+
+  protected String sanitizeString(String oldString) {
+    String result = oldString;
+    // Cleaning '
+    result = result.replace("'", "");
+    // Cleaing -
+    result = result.replace("-", "");
+    // Cleaning other characters here...
+    return result;
   }
 
   @Override
