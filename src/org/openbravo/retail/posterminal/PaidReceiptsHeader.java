@@ -14,6 +14,7 @@ import java.util.List;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.service.json.JsonUtils;
 
 public class PaidReceiptsHeader extends ProcessHQLQuery {
 
@@ -42,9 +43,10 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
         + "' and ord.obposApplications is not null";
 
     if (!json.getString("filterText").isEmpty()) {
-      hqlPaidReceipts += " and (ord.documentNo like '%" + json.getString("filterText")
+      hqlPaidReceipts += " and (ord.documentNo like '%"
+          + JsonUtils.sanitizeString(json.getString("filterText"))
           + "%' or REPLACE(ord.documentNo, '/', '') like '%"
-          + json.getString("filterText").replace("-", "")
+          + JsonUtils.sanitizeString(json.getString("filterText"))
           + "%' or upper(ord.businessPartner.name) like upper('%" + json.getString("filterText")
           + "%')) ";
     }
