@@ -66,34 +66,34 @@ public class DataSourceServiceProvider {
       try {
         DataSource dataSource = OBDal.getInstance().get(DataSource.class, name);
         if (dataSource == null) {
-
           final OBCriteria<DataSource> obCriteria = OBDal.getInstance().createCriteria(
               DataSource.class);
           obCriteria.add(Restrictions.eq(DataSource.PROPERTY_NAME, name));
           if (!obCriteria.list().isEmpty()) {
             dataSource = obCriteria.list().get(0);
           }
-        }
-        if (dataSource == null) {
-          final OBCriteria<Table> qTable = OBDal.getInstance().createCriteria(Table.class);
-          qTable.add(Restrictions.eq(Table.PROPERTY_NAME, name));
-          if (!qTable.list().isEmpty()) {
-            Table table = (Table) qTable.list().get(0);
-            if (ApplicationConstants.DATASOURCEBASEDTABLE.equals(table.getDataOriginType())) {
-              dataSource = table.getObserdsDatasource();
-              ds.setEntity(ModelProvider.getInstance().getEntityByTableId(table.getId()));
-            } else if (ApplicationConstants.HQLBASEDTABLE.equals(table.getDataOriginType())) {
-              dataSource = OBDal.getInstance().get(DataSource.class,
-                  ApplicationConstants.HQL_TABLE_DATASOURCE_ID);
+
+          if (dataSource == null) {
+            final OBCriteria<Table> qTable = OBDal.getInstance().createCriteria(Table.class);
+            qTable.add(Restrictions.eq(Table.PROPERTY_NAME, name));
+            if (!qTable.list().isEmpty()) {
+              Table table = (Table) qTable.list().get(0);
+              if (ApplicationConstants.DATASOURCEBASEDTABLE.equals(table.getDataOriginType())) {
+                dataSource = table.getObserdsDatasource();
+                ds.setEntity(ModelProvider.getInstance().getEntityByTableId(table.getId()));
+              } else if (ApplicationConstants.HQLBASEDTABLE.equals(table.getDataOriginType())) {
+                dataSource = OBDal.getInstance().get(DataSource.class,
+                    ApplicationConstants.HQL_TABLE_DATASOURCE_ID);
+              }
             }
           }
-          if (dataSource == null) {
-            ds = weldUtils.getInstance(DefaultDataSourceService.class);
-            ds.setName(name);
-            ds.setEntity(ModelProvider.getInstance().getEntity(name));
-            dataSources.put(name, ds);
-          }
+        }
 
+        if (dataSource == null) {
+          ds = weldUtils.getInstance(DefaultDataSourceService.class);
+          ds.setName(name);
+          ds.setEntity(ModelProvider.getInstance().getEntity(name));
+          dataSources.put(name, ds);
         } else {
           if (dataSource.getJavaClassName() != null) {
             final Class<DataSourceService> clz = (Class<DataSourceService>) OBClassLoader
