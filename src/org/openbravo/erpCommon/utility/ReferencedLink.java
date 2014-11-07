@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -269,7 +270,8 @@ public class ReferencedLink extends HttpSecureAppServlet {
       List<TableNavigation> tableNavigationList = tableNavigationCriteria.list();
       for (TableNavigation tableNavigation : tableNavigationList) {
         // Evaluate HQL logic
-        final String hqlWhere = tableNavigation.getHqllogic();
+        String hqlWhere = "AS e WHERE " + tableNavigation.getHqllogic();
+        hqlWhere = hqlWhere.replaceAll("@id@", "'" + strKeyReferenceId + "'");
         Table table = tableNavigation.getTable();
         Entity obEntity = (Entity) ModelProvider.getInstance().getEntityByTableId(table.getId());
         final OBQuery<?> query = OBDal.getInstance().createQuery(obEntity.getName(), hqlWhere);
@@ -279,6 +281,8 @@ public class ReferencedLink extends HttpSecureAppServlet {
           break;
         }
       }
+    } catch (Exception e) {
+      throw new OBException(e.getMessage());
     } finally {
       OBContext.restorePreviousMode();
     }
