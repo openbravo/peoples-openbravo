@@ -26,6 +26,7 @@ import javax.inject.Inject;
 
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.util.OBClassLoader;
 import org.openbravo.base.weld.WeldUtils;
@@ -137,7 +138,6 @@ public class DataSourceServiceProvider {
       // if no dataSource is provided, return the DefaultDataSourceService
       ds = weldUtils.getInstance(DefaultDataSourceService.class);
       ds.setName(dataSourceIdentifier);
-      ds.setEntity(ModelProvider.getInstance().getEntity(dataSourceIdentifier));
     } else {
       // try to retrieve the DataSourceService through the dataSource java class name, otherwise
       // return the DefaultDataSourceService
@@ -150,6 +150,12 @@ public class DataSourceServiceProvider {
         ds = new DefaultDataSourceService();
       }
       ds.setDataSource(dataSource);
+    }
+    // don't fail if the entity does not exist, just don't assign it to the DataSourceService
+    boolean checkIfNotExists = false;
+    Entity entity = ModelProvider.getInstance().getEntity(dataSourceIdentifier, checkIfNotExists);
+    if (entity != null) {
+      ds.setEntity(entity);
     }
     return ds;
   }
