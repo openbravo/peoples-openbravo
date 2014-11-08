@@ -352,13 +352,25 @@
 
       this.get('dataSyncModels').push({
         model: OB.Model.CashUp,
+        isPersistent: true,
         className: 'org.openbravo.retail.posterminal.ProcessCashClose',
         timeout: 600000,
-        criteria: {
-          'isbeingprocessed': 'Y'
-        },
+        criteria: {},
         postProcessingFunction: function (data, callback) {
           OB.UTIL.initCashUp(function () {
+            var cashUpId = data.at(0).get('id');
+            OB.Dal.find(OB.Model.CashUp, {
+              id: cashUpId
+            }, function (cU) {
+              if (cU.length !== 0) {
+                if (!cU.at(0).get('objToSend')) {
+                  OB.UTIL.composeCashupInfo(data, null, function () {
+                    OB.MobileApp.model.runSyncProcess();
+                  });
+                }
+              }
+            });
+            // Get Cashup id, if objToSend is not filled compose and Syn  
             OB.UTIL.deleteCashUps(data);
             callback();
           });
@@ -535,7 +547,7 @@
           OB.UTIL.currency.addConversion(fromCurrencyId, toCurrencyId, paymentMethod.mulrate);
         }
       }, this);
-
+      
       OB.MobileApp.model.on('window:ready', function () {
         if (window.localStorage.getItem('terminalAuthentication') === 'Y') {
           var process = new OB.DS.Process('org.openbravo.retail.posterminal.CheckTerminalAuth');
@@ -967,8 +979,7 @@
   var initializeOBModelTerminal = new OB.Model.POSTerminal();
 
   OB.POS = {
-    modelterminal: OB.MobileApp.model,
-    // kept fot backward compatibility. Deprecation id: 27646
+    modelterminal: OB.MobileApp.model, // kept fot backward compatibility. Deprecation id: 27646
     paramWindow: OB.UTIL.getParameterByName("window") || "retail.pointofsale",
     paramTerminal: window.localStorage.getItem('terminalAuthentication') === 'Y' ? window.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"),
     hrefWindow: function (windowname) {

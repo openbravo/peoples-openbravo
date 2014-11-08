@@ -218,12 +218,12 @@ enyo.kind({
 
     total = OB.DEC.add(0, this.model.get('startingCash'));
     total = OB.DEC.add(total, this.model.get('totalSales'));
-    total = OB.DEC.sub(total, this.model.get('totalReturns'));
+    total = OB.DEC.sub(total, OB.DEC.abs(this.model.get('totalReturns')));
     var totalDeposits = _.reduce(transactionsArray, function (accum, trx) {
       if (trx.get('type') === 'deposit') {
         return OB.DEC.add(accum, trx.get('origAmount'));
       } else {
-        return OB.DEC.sub(accum, trx.get('origAmount'));
+        return OB.DEC.sub(accum, OB.DEC.abs(trx.get('origAmount')));
       }
     }, 0);
     total = OB.DEC.add(total, totalDeposits);

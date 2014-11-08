@@ -25,7 +25,7 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
     this.set('cashMgmtDepositEvents', new Backbone.Collection(OB.MobileApp.model.get('cashMgmtDepositEvents')));
 
     OB.Dal.find(OB.Model.CashUp, {
-      'isbeingprocessed': 'N'
+      'isprocessed': 'N'
     }, function (cashUp) {
       OB.Dal.find(OB.Model.PaymentMethodCashUp, {
         'cashup_id': cashUp.at(0).get('id'),
@@ -68,7 +68,7 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
       }
 
       OB.Dal.find(OB.Model.CashUp, {
-        'isbeingprocessed': 'N'
+        'isprocessed': 'N'
       }, function (cashUp) {
         addedCashMgmt = new OB.Model.CashManagement({
           id: OB.Dal.get_uuid(),
@@ -141,6 +141,7 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
       // Sending drops/deposits to backend
       _.each(this.depsdropstosave.models, function (depdrop, index) {
         OB.Dal.save(depdrop, function () {
+          OB.UTIL.sumCashManagementToCashup(depdrop);
           OB.UTIL.calculateCurrentCash();
           runSyncProcessCM();
         }, function (error) {
