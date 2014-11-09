@@ -90,31 +90,46 @@ public class DataSourceServiceProvider {
    */
   private DataSource getRealDataSource(String dataSourceIdentifier) {
     // Checks if the dataSourceIdentifier the ID of the DataSource
-    DataSource dataSource = OBDal.getInstance().get(DataSource.class, dataSourceIdentifier);
+    DataSource dataSource = getDataSourceFromDataSourceId(dataSourceIdentifier);
     if (dataSource == null) {
       // If it is not the ID of the DataSource, checks if it is its name
-      final OBCriteria<DataSource> obCriteria = OBDal.getInstance()
-          .createCriteria(DataSource.class);
-      obCriteria.add(Restrictions.eq(DataSource.PROPERTY_NAME, dataSourceIdentifier));
-      if (!obCriteria.list().isEmpty()) {
-        dataSource = obCriteria.list().get(0);
-      }
+      dataSource = getDataSourceFromDataSourceName(dataSourceIdentifier);
       if (dataSource == null) {
         // If the dataSourceIdentifier is not the DataSource ID nor its name, checks if it is the
         // name of a Table
-        final OBCriteria<Table> qTable = OBDal.getInstance().createCriteria(Table.class);
-        qTable.add(Restrictions.eq(Table.PROPERTY_NAME, dataSourceIdentifier));
-        if (!qTable.list().isEmpty()) {
-          Table table = (Table) qTable.list().get(0);
-          if (ApplicationConstants.DATASOURCEBASEDTABLE.equals(table.getDataOriginType())) {
-            // If the table is based on a manual datasource, return that particular datasource
-            dataSource = table.getObserdsDatasource();
-          } else if (ApplicationConstants.HQLBASEDTABLE.equals(table.getDataOriginType())) {
-            // If the table is based on a HQL table, use the 'HQL Tables Datasource'
-            dataSource = OBDal.getInstance().get(DataSource.class,
-                ApplicationConstants.HQL_TABLE_DATASOURCE_ID);
-          }
-        }
+        dataSource = getDataSourceFromTableName(dataSourceIdentifier);
+      }
+    }
+    return dataSource;
+  }
+
+  private DataSource getDataSourceFromDataSourceId(String dataSourceId) {
+    return OBDal.getInstance().get(DataSource.class, dataSourceId);
+  }
+
+  private DataSource getDataSourceFromDataSourceName(String dataSourceName) {
+    DataSource dataSource = null;
+    final OBCriteria<DataSource> obCriteria = OBDal.getInstance().createCriteria(DataSource.class);
+    obCriteria.add(Restrictions.eq(DataSource.PROPERTY_NAME, dataSourceName));
+    if (!obCriteria.list().isEmpty()) {
+      dataSource = obCriteria.list().get(0);
+    }
+    return dataSource;
+  }
+
+  private DataSource getDataSourceFromTableName(String tableName) {
+    DataSource dataSource = null;
+    final OBCriteria<Table> qTable = OBDal.getInstance().createCriteria(Table.class);
+    qTable.add(Restrictions.eq(Table.PROPERTY_NAME, tableName));
+    if (!qTable.list().isEmpty()) {
+      Table table = (Table) qTable.list().get(0);
+      if (ApplicationConstants.DATASOURCEBASEDTABLE.equals(table.getDataOriginType())) {
+        // If the table is based on a manual datasource, return that particular datasource
+        dataSource = table.getObserdsDatasource();
+      } else if (ApplicationConstants.HQLBASEDTABLE.equals(table.getDataOriginType())) {
+        // If the table is based on a HQL table, use the 'HQL Tables Datasource'
+        dataSource = OBDal.getInstance().get(DataSource.class,
+            ApplicationConstants.HQL_TABLE_DATASOURCE_ID);
       }
     }
     return dataSource;
