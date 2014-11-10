@@ -1741,15 +1741,21 @@
           //Filter lines which can be merged
           linesToMerge = _.filter(me.get('lines').models, function (line) {
             var qtyReserved = 0;
-            (line.get('promotions') || []).forEach(
-
-            function (p) {
-              qtyReserved = OB.DEC.add(qtyReserved, p.qtyOfferReserved || 0);
-            });
-            if (l !== line && l.get('product').id === line.get('product').id && l.get('price') === line.get('price') && OB.DEC.sub(line.get('qty'), qtyReserved) > 0 && !_.find(line.get('promotions'), function (promo) {
-              return promo.manual || promo.doNotMerge;
-            })) {
-              return line;
+            var promotions = line.get('promotions') || [];
+            if (promotions.length > 0) {
+              promotions.forEach(function (p) {
+                qtyReserved = OB.DEC.add(qtyReserved, p.qtyOfferReserved || 0);
+              });
+            }
+            if (l !== line && l.get('product').id === line.get('product').id && l.get('price') === line.get('price')) {
+              if (OB.DEC.sub(Math.abs(line.get('qty')), qtyReserved) > 0) {
+                var isManualOrNotMerge = _.find(line.get('promotions'), function (promo) {
+                  return promo.manual || promo.doNotMerge;
+                });
+                if (!isManualOrNotMerge) {
+                  return line;
+                }
+              }
             }
           });
           // sort by qty asc to fix issue 28120
