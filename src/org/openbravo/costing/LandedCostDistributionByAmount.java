@@ -45,6 +45,8 @@ public class LandedCostDistributionByAmount extends LandedCostDistributionAlgori
   @Override
   public void distributeAmount(LandedCostCost lcCost, boolean isMatching) {
     // Calculate total amount of all receipt lines assigned to the landed cost.
+    lcCost = (LandedCostCost) OBDal.getInstance().getProxy(LandedCostCost.ENTITY_NAME,
+        lcCost.getId());
     LandedCost landedCost = lcCost.getLandedCost();
     // Get the currency of the Landed Cost Cost
     String strCurId = lcCost.getCurrency().getId();
