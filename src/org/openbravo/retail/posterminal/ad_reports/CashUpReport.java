@@ -130,7 +130,7 @@ public class CashUpReport extends HttpSecureAppServlet {
     cashupId = vars.getStringParameter("inpobposAppCashupId");
     parameters = new HashMap<String, Object>();
 
-    OBContext.setAdminMode(true);
+    OBContext.setAdminMode();
     try {
       cashup = OBDal.getInstance().get(OBPOSAppCashup.class, cashupId);
       String hqlRecons = " rec where cashUp.id=:cashUpId order by rec.paymentType.commercialName ";
