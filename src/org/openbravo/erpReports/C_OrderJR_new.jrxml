@@ -65,6 +65,9 @@
 	<parameter name="SUBREP_C_OrderLinesJR_new" class="net.sf.jasperreports.engine.JasperReport" isForPrompting="false"/>
 	<parameter name="SUBREP_C_OrderLinesTaxIncludedJR_new" class="net.sf.jasperreports.engine.JasperReport" isForPrompting="false"/>
 	<parameter name="SUBREP_RptC_Order_TaxLines_new" class="net.sf.jasperreports.engine.JasperReport" isForPrompting="false"/>
+	<parameter name="SHOW_LOGO" isForPrompting="true" class="java.lang.String"/>
+	<parameter name="SHOW_COMPANYDATA" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="HEADER_MARGIN" isForPrompting="true" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[SELECT C_ORDER.C_ORDER_ID, C_ORDER.ISSOTRX,C_BPARTNER.NAME, L.ADDRESS1 ||
 (CASE WHEN (L.POSTAL||L.CITY||R.NAME) IS NOT NULL THEN (CHR(10)||L.POSTAL || (CASE WHEN L.POSTAL IS NOT NULL THEN (' - '||TO_CHAR(L.CITY)) END) ||
@@ -77,13 +80,12 @@ C_LOCATION_DESCRIPTION(AD_ORGINFO.C_LOCATION_ID) AS LOCATION,  AD_ORG.ad_org_id 
 COALESCE(TO_CHAR(ADDRESS1), '') || CASE WHEN ADDRESS1 IS null THEN '' ELSE CHR(13) END || COALESCE(TO_CHAR(POSTAL), '') || CASE WHEN POSTAL IS null THEN '' ELSE CHR(13) END ||
 COALESCE(TO_CHAR(L.CITY), '') || CASE WHEN L.CITY IS null THEN '' ELSE CHR(13) END || COALESCE(TO_CHAR(CO.NAME), '') || CASE WHEN CO.NAME IS null THEN '' ELSE CHR(13) END ||
 COALESCE(TO_CHAR(C_BPARTNER_LOCATION.PHONE), '') || CASE WHEN C_BPARTNER_LOCATION.PHONE IS null THEN '' ELSE CHR(13) END || COALESCE(TO_CHAR(C_BPARTNER_LOCATION.FAX), '') ||
-CASE WHEN C_BPARTNER_LOCATION.FAX IS null THEN '' ELSE CHR(13) END) AS BP_DATA, AD_ORGINFO.TAXID AS ORG_TAXID, SHOWLOGO, SHOWCOMPANYDATA, HEADERMARGIN,
-AD_ORG.NAME AS ORG_NAME, DELIVERYRULE.NAME AS DELIVERYTERM, PAYMENTTERM.TERM AS PAYMENTTERM, C_POC_DOCTYPE_TEMPLATE.NAME AS DOC_TYPE, C_CURRENCY.ISO_CODE as CURRENCY_ISO, M_PRICELIST.ISTAXINCLUDED
+CASE WHEN C_BPARTNER_LOCATION.FAX IS null THEN '' ELSE CHR(13) END) AS BP_DATA, AD_ORGINFO.TAXID AS ORG_TAXID, $P{SHOW_LOGO} AS SHOWLOGO, $P{SHOW_COMPANYDATA} AS SHOWCOMPANYDATA, $P{HEADER_MARGIN} AS HEADERMARGIN,
+AD_ORG.NAME AS ORG_NAME, DELIVERYRULE.NAME AS DELIVERYTERM, PAYMENTTERM.TERM AS PAYMENTTERM, C_CURRENCY.ISO_CODE as CURRENCY_ISO, M_PRICELIST.ISTAXINCLUDED
 FROM C_BPARTNER_LOCATION left join C_LOCATION L on C_BPARTNER_LOCATION.C_LOCATION_ID = L.C_LOCATION_ID
              left join C_COUNTRY CO ON L.C_COUNTRY_ID = CO.C_COUNTRY_ID
              left join  C_REGION R on L.C_REGION_ID = R.C_REGION_ID,
-     AD_USER right join C_ORDER on AD_USER.AD_USER_ID = C_ORDER.AD_USER_ID
-                         left join C_POC_DOCTYPE_TEMPLATE ON C_POC_DOCTYPE_TEMPLATE.C_DOCTYPE_ID = C_ORDER.C_DOCTYPETARGET_ID,
+     AD_USER right join C_ORDER on AD_USER.AD_USER_ID = C_ORDER.AD_USER_ID,
 C_BPARTNER, AD_ORGINFO, AD_CLIENT, AD_ORG,
    (SELECT VALUE, NAME
     FROM AD_REF_LIST_V
@@ -128,7 +130,6 @@ AND C_CURRENCY.C_CURRENCY_ID=C_ORDER.C_CURRENCY_ID]]>
 	<field name="org_name" class="java.lang.String"/>
 	<field name="deliveryterm" class="java.lang.String"/>
 	<field name="paymentterm" class="java.lang.String"/>
-	<field name="doc_type" class="java.lang.String"/>
 	<field name="currency_iso" class="java.lang.String"/>
 	<field name="istaxincluded" class="java.lang.String"/>
 	<variable name="SHOWLOGO" class="java.lang.String"/>
