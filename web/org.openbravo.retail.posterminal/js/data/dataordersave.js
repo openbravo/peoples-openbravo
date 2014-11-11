@@ -98,7 +98,7 @@
         }
       }
       OB.trace('Receipt integrity: OK');
-
+      this.receipt.trigger('integrityOk');
       OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(this.receipt.get('documentnoSuffix'), this.receipt.get('quotationnoSuffix'));
 
       delete this.receipt.attributes.json;
@@ -220,7 +220,7 @@
           creationDateTransformed = new Date(creationDate.getUTCFullYear(), creationDate.getUTCMonth(), creationDate.getUTCDate(), creationDate.getUTCHours(), creationDate.getUTCMinutes(), creationDate.getUTCSeconds());
 
       this.receipt.set('hasbeenpaid', 'Y');
-
+      this.receipt.trigger('integrityOk');
       OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(this.receipt.get('documentnoSuffix'), this.receipt.get('quotationnoSuffix'));
 
       delete this.receipt.attributes.json;
