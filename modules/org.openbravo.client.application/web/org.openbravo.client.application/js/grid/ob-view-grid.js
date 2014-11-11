@@ -3806,6 +3806,52 @@ isc.OBViewGrid.addProperties({
         }
       }
     }
+  },
+
+  updateRecord: function (recordIndex, data, req) {
+    var sessionProperties = this.view.getContextInfo(true, true, false, true),
+        me = this;
+    data = OB.Utilities.Date.convertUTCTimeToLocalTime(data, this.completeFields);
+    if (this.data.updateCacheData) {
+      this.data.updateCacheData(data, req);
+    }
+    if (this.isGrouped) {
+      // if the grid is group update its values to show the updated data
+      this.setEditValues(recordIndex, data[0]);
+    }
+    this.selectRecord(this.getRecord(recordIndex));
+    this.refreshRow(recordIndex);
+    this.redraw();
+    if (!this.view.isShowingForm) {
+      OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', sessionProperties, {
+        MODE: 'SETSESSION',
+        TAB_ID: this.view.tabId,
+        PARENT_ID: this.view.getParentId(),
+        ROW_ID: this.getSelectedRecord() ? this.getSelectedRecord().id : this.view.getCurrentValues().id
+      }, function (response, data, request) {
+        var sessionAttributes = data.sessionAttributes,
+            auxInputs = data.auxiliaryInputValues,
+            attachmentExists = data.attachmentExists,
+            prop;
+        if (sessionAttributes) {
+          me.view.viewForm.sessionAttributes = sessionAttributes;
+        }
+
+        if (auxInputs) {
+          this.auxInputs = {};
+          for (prop in auxInputs) {
+            if (auxInputs.hasOwnProperty(prop)) {
+              me.view.viewForm.setValue(prop, auxInputs[prop].value);
+              me.view.viewForm.auxInputs[prop] = auxInputs[prop].value;
+            }
+          }
+        }
+        me.view.viewForm.view.attachmentExists = attachmentExists;
+        //compute and apply tab display logic again after fetching auxilary inputs.
+        me.view.handleDefaultTreeView();
+        me.view.updateSubtabVisibility();
+      });
+    }
   }
 });
 

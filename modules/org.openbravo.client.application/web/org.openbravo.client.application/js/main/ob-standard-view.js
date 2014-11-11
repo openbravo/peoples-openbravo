@@ -2007,7 +2007,6 @@ isc.OBStandardView.addProperties({
     });
 
     callback = function (resp, data, req) {
-      var sessionProperties = me.getContextInfo(true, true, false, true);
       // this line does not work, but it should:
       //      me.getDataSource().updateCaches(resp, req);
       // therefore do an explicit update of the visual components
@@ -2016,47 +2015,7 @@ isc.OBStandardView.addProperties({
       }
       if (me.viewGrid.data) {
         var recordIndex = me.viewGrid.getRecordIndex(me.viewGrid.getSelectedRecord());
-        data = OB.Utilities.Date.convertUTCTimeToLocalTime(data, me.viewGrid.completeFields);
-        if (me.viewGrid.data.updateCacheData) {
-          me.viewGrid.data.updateCacheData(data, req);
-        }
-        if (me.viewGrid.isGrouped) {
-          // if the grid is group update its values to show the updated data
-          me.viewGrid.setEditValues(recordIndex, data[0]);
-        }
-        me.viewGrid.selectRecord(me.viewGrid.getRecord(recordIndex));
-        me.viewGrid.refreshRow(recordIndex);
-        me.viewGrid.redraw();
-        if (!me.isShowingForm) {
-          OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', sessionProperties, {
-            MODE: 'SETSESSION',
-            TAB_ID: me.tabId,
-            PARENT_ID: me.getParentId(),
-            ROW_ID: me.viewGrid.getSelectedRecord() ? me.viewGrid.getSelectedRecord().id : me.getCurrentValues().id
-          }, function (response, data, request) {
-            var sessionAttributes = data.sessionAttributes,
-                auxInputs = data.auxiliaryInputValues,
-                attachmentExists = data.attachmentExists,
-                prop;
-            if (sessionAttributes) {
-              me.viewForm.sessionAttributes = sessionAttributes;
-            }
-
-            if (auxInputs) {
-              this.auxInputs = {};
-              for (prop in auxInputs) {
-                if (auxInputs.hasOwnProperty(prop)) {
-                  me.viewForm.setValue(prop, auxInputs[prop].value);
-                  me.viewForm.auxInputs[prop] = auxInputs[prop].value;
-                }
-              }
-            }
-            me.viewForm.view.attachmentExists = attachmentExists;
-            //compute and apply tab display logic again after fetching auxilary inputs.
-            me.handleDefaultTreeView();
-            me.updateSubtabVisibility();
-          });
-        }
+        me.viewGrid.updateRecord(recordIndex, data, req);
       }
 
 
