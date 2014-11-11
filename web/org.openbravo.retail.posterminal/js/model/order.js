@@ -1781,7 +1781,7 @@
           // firstly the discount is applied to the lines with minus quantity, so the discount is applied to all quantity of the line
           // and if it is needed (promotion.qty > line.qty) the rest of promotion will be applied to the other line
           linesToMerge = _.sortBy(linesToMerge, function (lsb) {
-            lsb.getQty()
+            lsb.getQty();
           });
           if (linesToMerge.length > 0) {
             _.each(linesToMerge, function (line) {
