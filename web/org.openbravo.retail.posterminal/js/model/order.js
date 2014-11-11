@@ -1761,6 +1761,12 @@
               return line;
             }
           });
+          // sort by qty asc to fix issue 28120
+          // firstly the discount is applied to the lines with minus quantity, so the discount is applied to all quantity of the line
+          // and if it is needed (promotion.qty > line.qty) the rest of promotion will be applied to the other line
+          linesToMerge = _.sortBy(linesToMerge, function (lsb) {
+            lsb.getQty();
+          });
           if (linesToMerge.length > 0) {
             _.each(linesToMerge, function (line) {
               line.set('promotionCandidates', l.get('promotionCandidates'));
