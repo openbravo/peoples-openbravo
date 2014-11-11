@@ -965,7 +965,8 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
         continue;
       }
       if (StringUtils.isNotBlank(allocatedCriteria)
-          && !isInScope("allocated", allocatedCriteria, false)) {
+          && !isInScope("allocated", allocatedCriteria, orderLine.getSalesOrder().getWarehouse()
+              .isAllocated())) {
         continue;
       }
 
@@ -975,7 +976,7 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
       myMap.put("quantity", BigDecimal.ZERO);
       myMap.put("reservationQuantity", reservation.getQuantity());
       myMap.put("released", BigDecimal.ZERO);
-      myMap.put("allocated", false);
+      myMap.put("allocated", orderLine.getSalesOrder().getWarehouse().isAllocated());
       result.add(myMap);
     }
     return result;
@@ -1088,7 +1089,8 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
               continue;
             }
             if (StringUtils.isNotBlank(allocatedCriteria)
-                && !isInScope("allocated", allocatedCriteria, false)) {
+                && !isInScope("allocated", allocatedCriteria, sd.getStorageBin().getWarehouse()
+                    .isAllocated())) {
               continue;
             }
             result = tomap(sd, false, result, reservedinothers, reservation);
@@ -1112,7 +1114,8 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
           continue;
         }
         if (StringUtils.isNotBlank(allocatedCriteria)
-            && !isInScope("allocated", allocatedCriteria, false)) {
+            && !isInScope("allocated", allocatedCriteria, sd.getStorageBin().getWarehouse()
+                .isAllocated())) {
           continue;
         }
         result = tomap(sd, false, result, reservedinothers, reservation);
@@ -1147,7 +1150,7 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
     myMap.put("reservationQuantity", reservation.getQuantity());
     myMap.put("quantity", BigDecimal.ZERO);
     myMap.put("released", BigDecimal.ZERO);
-    myMap.put("allocated", false);
+    myMap.put("allocated", sd.getStorageBin().getWarehouse().isAllocated());
     result.add(myMap);
 
     return result;
