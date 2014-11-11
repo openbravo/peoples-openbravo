@@ -958,8 +958,19 @@ OB.ViewFormProperties = {
   refresh: function () {
     var criteria = {
       id: this.getValue(OB.Constants.ID)
+    },
+        me = this,
+        callback;
+    callback = function (dsResponse, data, dsRequest) {
+      var index;
+      if (data[0]) {
+        index = me.view.viewGrid.getRecordIndex(me.view.viewGrid.getSelectedRecord());
+        if (index !== -1) {
+          me.view.viewGrid.updateRecord(index, data, dsRequest);
+        }
+      }
     };
-    this.fetchData(criteria);
+    this.fetchData(criteria, callback);
   },
 
   processColumnValue: function (columnName, columnValue, gridEditInformation, mode) {
