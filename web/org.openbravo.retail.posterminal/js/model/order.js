@@ -1754,26 +1754,25 @@
           }
         } else {
           //Filter lines which can be merged
-          linesToMerge = _.filter(me.get('lines').models, function(line) {
-              var qtyReserved = 0;
-              var promotions = line.get('promotions') || [];
-              if (promotions.length > 0) {
-                  promotions.forEach(function(p) {
-                      qtyReserved = OB.DEC.add(qtyReserved, p.qtyOfferReserved || 0);
-                  });
+          linesToMerge = _.filter(me.get('lines').models, function (line) {
+            var qtyReserved = 0;
+            var promotions = line.get('promotions') || [];
+            if (promotions.length > 0) {
+              promotions.forEach(function (p) {
+                qtyReserved = OB.DEC.add(qtyReserved, p.qtyOfferReserved || 0);
+              });
+            }
+            if (l !== line && l.get('product').id === line.get('product').id && l.get('price') === line.get('price')) {
+              if (OB.DEC.sub(Math.abs(line.get('qty')), qtyReserved) > 0) {
+                var isManualOrNotMerge = _.find(line.get('promotions'), function (promo) {
+                  return promo.manual || promo.doNotMerge;
+                });
+                if (!isManualOrNotMerge) {
+                  return line;
+                }
               }
-              if (l !== line && l.get('product').id === line.get('product').id && l.get('price') === line.get('price')) {
-                  if (OB.DEC.sub(Math.abs(line.get('qty')), qtyReserved) > 0) {
-                      var isManualOrNotMerge = _.find(line.get('promotions'), function(promo) {
-                          return promo.manual || promo.doNotMerge;
-                      });
-                      if (!isManualOrNotMerge) {
-                          return line;
-                      }
-                  }
-              }
+            }
           });
-
           if (linesToMerge.length > 0) {
             _.each(linesToMerge, function (line) {
               line.set('promotionCandidates', l.get('promotionCandidates'));
