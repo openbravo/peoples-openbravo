@@ -1,0 +1,121 @@
+<?xml version="1.0"?>
+  <database name="FUNCTION M_INITIALIZE_STOCK_VALUATION">
+    <function name="M_INITIALIZE_STOCK_VALUATION" type="NULL">
+      <parameter name="p_client" type="VARCHAR" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_org" type="VARCHAR" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_product" type="VARCHAR" mode="in">
+        <default/>
+      </parameter>
+      <body><![CDATA[/*************************************************************************
+* The contents of this file are subject to the Openbravo  Public  License
+* Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
+* Version 1.1  with a permitted attribution clause; you may not  use this
+* file except in compliance with the License. You  may  obtain  a copy of
+* the License at http://www.openbravo.com/legal/license.html
+* Software distributed under the License  is  distributed  on  an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+* License for the specific  language  governing  rights  and  limitations
+* under the License.
+* The Original Code is Openbravo ERP.
+* The Initial Developer of the Original Code is Openbravo SLU
+* All portions are Copyright (C) 2014 Openbravo SLU
+* All Rights Reserved.
+* Contributor(s):  ______________________________________.
+************************************************************************/
+  
+  -- Parameter
+  TYPE RECORD IS REF CURSOR;
+  Cur_legal_entities RECORD;
+  Cur_products RECORD;
+  Cur_values RECORD;
+  
+  -- Parameter Variables
+  v_currency_ID    				VARCHAR2(32);
+
+BEGIN
+
+  FOR Cur_legal_entities IN (
+ 
+    SELECT ad_org_id, warehouse_dimension
+    FROM m_costing_rule cr
+    WHERE isvalidated = 'Y'
+      AND COALESCE(datefrom, TO_DATE('01-01-1900', 'DD-MM-YYYY')) <= now()
+      AND COALESCE(dateto, TO_DATE('01-01-9999', 'DD-MM-YYYY')) >= now()
+      AND ad_client_id = p_client
+      AND (p_org IS NULL OR ad_org_id IN (SELECT ad_org_id
+                                          FROM ad_org
+                                          WHERE (ad_isorgincluded(ad_org_id, p_org, p_client) <> -1
+                                          OR ad_isorgincluded(p_org, ad_org_id, p_client) <> -1
+                                          OR ad_org_id = '0'))
+      AND ad_client_id = p_client)
+
+  ) LOOP
+    
+    SELECT c_currency_id
+    INTO v_currency_ID
+    FROM ad_org
+    WHERE ad_org_id = Cur_legal_entities.ad_org_id;
+
+    FOR Cur_products IN (
+       SELECT m_product_id
+       FROM m_product
+       WHERE ad_org_id IN (SELECT ad_org_id
+                           FROM ad_org
+                           WHERE (ad_isorgincluded(ad_org_id, cur_legal_entities.ad_org_id, p_client) <> -1
+                           OR ad_isorgincluded(cur_legal_entities.ad_org_id, ad_org_id, p_client) <> -1
+                           OR ad_org_id = '0'))
+       AND ad_client_id = p_client
+       AND isstocked = 'Y'
+       AND producttype = 'I'
+       AND (p_product IS NULL OR m_product_id = p_product)
+       
+    ) LOOP
+    
+      DBMS_OUTPUT.PUT_LINE( 'product' || cur_products.m_product_id);
+    
+      FOR Cur_values IN (
+      
+        SELECT COALESCE(SUM(aa.qty),0) as stock, COALESCE(SUM(aa.total_cost),0) as valuation, COUNT(*), aux_warehouse_id as m_warehouse_id
+        FROM (SELECT a.m_product_id, CASE a.iscostcalculated
+                                       WHEN 'Y' THEN c_currency_convert_precision(sumcost, a.c_currency_id, v_currency_id, a.movementdate, NULL, p_client, Cur_legal_entities.ad_org_id, 'C')
+                                       ELSE NULL
+                                     END AS total_cost, a.qty, aux_warehouse_id
+              FROM (SELECT trx.m_product_id,  SUM(trx.movementqty) AS qty, SUM (CASE WHEN trx.movementqty < 0 THEN -tc.cost ELSE tc.cost END) AS sumcost, trx.iscostcalculated, 
+                           tc.c_currency_id, tc.dateacct AS movementdate, (CASE WHEN Cur_legal_entities.warehouse_dimension = 'N' THEN NULL ELSE l.m_warehouse_id END) AS aux_warehouse_id
+                    FROM m_transaction trx
+                      JOIN m_locator l ON (trx.m_locator_id=l.m_locator_id)
+                      LEFT JOIN m_transaction_cost tc ON (trx.m_transaction_id = tc.m_transaction_id)
+                    WHERE trx.m_product_id = cur_products.m_product_id
+                      AND trx.iscostcalculated = 'Y'
+                      AND trx.ad_org_id IN (SELECT ad_org_id
+                                            FROM ad_org
+                                            WHERE (ad_isorgincluded(ad_org_id, Cur_legal_entities.ad_org_id, ad_client_id) <> -1
+                                            OR ad_isorgincluded(Cur_legal_entities.ad_org_id, ad_org_id, ad_client_id) <> -1
+                                            OR ad_org_id = '0'))
+                      AND trx.ad_client_id = p_client
+                      AND trx.ad_client_id = p_client
+                    GROUP BY trx.m_transaction_id, trx.m_product_id, trx.iscostcalculated, tc.c_currency_id, tc.dateacct, aux_warehouse_id) a
+              WHERE a.sumcost <> 0) aa
+         GROUP BY aux_warehouse_id
+
+      ) LOOP
+     
+        M_UPDATE_STOCK_VALUATION(p_client, Cur_legal_entities.ad_org_id, '0', Cur_values.m_warehouse_id, cur_products.m_product_id, Cur_values.stock, ROUND(Cur_values.valuation,c_get_currency_precision(v_currency_ID, 'C'))); 
+     
+      END LOOP;      
+    END LOOP;
+  END LOOP;    
+
+RETURN;
+
+EXCEPTION
+WHEN OTHERS THEN
+  RAISE;
+END M_INITIALIZE_STOCK_VALUATION
+]]></body>
+    </function>
+  </database>
