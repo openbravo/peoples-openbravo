@@ -32,7 +32,7 @@
 
 
   /**
-   * Global versions for mobile.core
+   * Global versions for WebPOS
    */
   // Add the current WebPOS version
   OB.UTIL.VersionManagement.current.posterminal = {
@@ -69,6 +69,12 @@
     major: '4',
     minor: '0'
   }, "The use of 'OB.POS.modelterminal' is deprecated. Please use 'OB.MobileApp.model' instead.");
+
+  OB.UTIL.VersionManagement.registerDeprecation(27911, {
+    year: '14',
+    major: '2',
+    minor: '5'
+  }, "The use of OB.MobileApp.model.get('documentsequence'), OB.MobileApp.model.get('quotationDocumentSequence') and the 'seqNoReady' event are deprecated. Please use 'OB.MobileApp.model.getNextDocumentno()' and 'OB.MobileApp.model.getNextQuotationno()' instead.");
 
   /**
    * Global deprecations have to be executed somewhere, this is a good place
