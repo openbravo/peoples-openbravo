@@ -603,6 +603,7 @@
     // they feed from the local database, and the server
     documentnoThreshold: -1,
     quotationnoThreshold: -1,
+    isSeqNoReadyEventSent: false, // deprecation 27911
 
     /**
      * Save the new values if are higher than the last knowwn values
@@ -666,6 +667,15 @@
           docSeq.set('posSearchKey', me.get('terminal').searchKey);
         }
 
+        // deprecation 27911 starts
+        OB.MobileApp.model.set('documentsequence', me.getLastDocumentnoSuffixInOrderlist());
+        OB.MobileApp.model.set('quotationDocumentSequence', me.getLastQuotationnoSuffixInOrderlist());
+        if(!me.isSeqNoReadyEventSent) {
+          me.isSeqNoReadyEventSent = true;
+          me.trigger('seqNoReady');
+        }
+        // deprecation 27911 ends
+
         // update the database
         docSeq.set('documentSequence', me.documentnoThreshold);
         docSeq.set('quotationDocumentSequence', me.quotationnoThreshold);
@@ -696,11 +706,11 @@
     // get the first document number available
     getLastDocumentnoSuffixInOrderlist: function () {
       var lastSuffix = null;
-      if (OB.MobileApp.model.orderList.length > 0) {
+      if (OB.MobileApp.model.orderList && OB.MobileApp.model.orderList.length > 0) {
         var i = OB.MobileApp.model.orderList.models.length - 1;
         while (lastSuffix === null && i >= 0) {
           var order = OB.MobileApp.model.orderList.models[i];
-          if (!order.get('isPaid') && !order.get('isQuotation') && order.get('docNoPrefix') === OB.MobileApp.model.get('terminal').docNoPrefix) {
+          if (!order.get('isPaid') && !order.get('isQuotation') && order.get('documentnoPrefix') === OB.MobileApp.model.get('terminal').docNoPrefix) {
             lastSuffix = order.get('documentnoSuffix');
           }
           i--;
@@ -714,11 +724,11 @@
     // get the first quotation number available
     getLastQuotationnoSuffixInOrderlist: function () {
       var lastSuffix = null;
-      if (OB.MobileApp.model.orderList.length > 0) {
+      if (OB.MobileApp.model.orderList && OB.MobileApp.model.orderList.length > 0) {
         var i = OB.MobileApp.model.orderList.models.length - 1;
         while (lastSuffix === null && i >= 0) {
           var order = OB.MobileApp.model.orderList.models[i];
-          if (order.get('isQuotation') && order.get('quotationDocNoPrefix') === OB.MobileApp.model.get('terminal').quotationDocNoPrefix) {
+          if (order.get('isQuotation') && order.get('quotationnoPrefix') === OB.MobileApp.model.get('terminal').quotationDocNoPrefix) {
             lastSuffix = order.get('quotationnoSuffix');
           }
           i--;

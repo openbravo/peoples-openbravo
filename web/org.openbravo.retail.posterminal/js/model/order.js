@@ -267,8 +267,8 @@
         this.set('posTerminal', attributes.posTerminal);
         this.set('posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, attributes['posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER]);
         this.set('orderDate', new Date(attributes.orderDate));
-        this.set('quotationDocNoPrefix', attributes.quotationDocNoPrefix);
-        this.set('docNoPrefix', attributes.docNoPrefix);
+        this.set('documentnoPrefix', attributes.documentnoPrefix);
+        this.set('quotationnoPrefix', attributes.quotationnoPrefix);
         this.set('documentnoSuffix', attributes.documentnoSuffix);
         this.set('quotationnoSuffix', attributes.quotationnoSuffix);
         this.set('documentNo', attributes.documentNo);
@@ -582,8 +582,8 @@
       this.set('posTerminal', null);
       this.set('posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, null);
       this.set('orderDate', new Date());
-      this.set('quotationDocNoPrefix', -1);
-      this.set('docNoPrefix', -1);
+      this.set('documentnoPrefix', -1);
+      this.set('quotationnoPrefix', -1);
       this.set('documentnoSuffix', -1);
       this.set('quotationnoSuffix', -1);
       this.set('documentNo', '');
@@ -1384,9 +1384,8 @@
       this.set('isPaid', false);
       this.set('isEditable', true);
       this.set('orderDate', new Date());
-      this.set('quotationDocNoPrefix', OB.MobileApp.model.get('terminal').quotationDocNoPrefix);
-      this.set('docNoPrefix', OB.MobileApp.model.get('terminal').docNoPrefix);
       var nextDocumentno = OB.MobileApp.model.getNextDocumentno();
+      this.set('documentnoPrefix', OB.MobileApp.model.get('terminal').docNoPrefix);
       this.set('documentnoSuffix', nextDocumentno.documentnoSuffix);
       this.set('documentNo', nextDocumentno.documentNo);
       this.set('posTerminal', OB.POS.modelterminal.get('terminal').id);
@@ -2084,9 +2083,8 @@
       order.set('isLayaway', false);
       order.set('taxes', null);
 
-      order.set('quotationDocNoPrefix', OB.MobileApp.model.get('terminal').quotationDocNoPrefix);
-      order.set('docNoPrefix', OB.MobileApp.model.get('terminal').docNoPrefix);
       var nextDocumentno = OB.MobileApp.model.getNextDocumentno();
+      order.set('documentnoPrefix', OB.MobileApp.model.get('terminal').docNoPrefix);
       order.set('documentnoSuffix', nextDocumentno.documentnoSuffix);
       order.set('documentNo', nextDocumentno.documentNo);
 
@@ -2283,11 +2281,11 @@
       var documentseq, documentseqstr;
       this.saveCurrent();
       this.current = this.newOrder();
-      OB.POS.modelterminal.set('documentsequence', OB.POS.modelterminal.get('documentsequence') - 1);
       this.current.set('isQuotation', true);
       this.current.set('generateInvoice', false);
       this.current.set('documentType', OB.POS.modelterminal.get('terminal').terminalType.documentTypeForQuotations);
       var nextQuotationno = OB.MobileApp.model.getNextQuotationno();
+      this.current.set('quotationDocNoPrefix', OB.MobileApp.model.get('terminal').quotationDocNoPrefix);
       this.current.set('quotationnoSuffix', nextQuotationno.quotationnoSuffix);
       this.current.set('documentNo', nextQuotationno.documentNo);
 
