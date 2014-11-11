@@ -60,7 +60,6 @@ public class ReferencedLink extends HttpSecureAppServlet {
 
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
-    log4j.error("Enlace pulsado");
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -149,7 +148,6 @@ public class ReferencedLink extends HttpSecureAppServlet {
   }
 
   private String getTabId(VariablesSecureApp vars) throws ServletException {
-    // TODO
     String strKeyReferenceColumnName = vars.getRequiredStringParameter("inpKeyReferenceColumnName");
     // String strKeyReferenceName =
     // vars.getRequiredStringParameter("inpKeyReferenceName");
@@ -159,9 +157,7 @@ public class ReferencedLink extends HttpSecureAppServlet {
     if (vars.hasParameter("inpEntityName")) {
       String entityName = vars.getStringParameter("inpEntityName");
       strTableReferenceId = ModelProvider.getInstance().getEntity(entityName).getTableId();
-    }
-    // TODO DOUBT Cuando se alcanza este código??
-    else {
+    } else {
       strTableReferenceId = vars.getRequiredStringParameter("inpTableReferenceId");
     }
     String strKeyReferenceId = vars.getStringParameter("inpKeyReferenceId");
@@ -259,7 +255,7 @@ public class ReferencedLink extends HttpSecureAppServlet {
     ReferencedLinkData[] data = ReferencedLinkData.select(this, strWindowId, strTableReferenceId);
     if (data == null || data.length == 0)
       throw new ServletException("Window not found: " + strWindowId);
-    // Beginning of my customization TODO
+    // Beginning of my customization
     String tabId = null;
     OBContext.setAdminMode(true);
     try {
