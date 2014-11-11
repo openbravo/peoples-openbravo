@@ -192,7 +192,11 @@ isc.OBToolbar.addClassProperties({
 
   REFRESH_BUTTON_PROPERTIES: {
     action: function () {
-      this.view.refresh();
+      if (this.view.isShowingForm) {
+        this.view.viewForm.refresh();
+      } else {
+        this.view.refresh();
+      }
     },
     disabled: false,
     buttonType: 'refresh',
