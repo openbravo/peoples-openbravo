@@ -47,6 +47,9 @@ enyo.kind({
       this.$.totalpending.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(pending, payment.mulrate), payment.symbol, payment.currencySymbolAtTheRight));
     }
     this.checkEnoughCashAvailable(paymentstatus, payment);
+    if(this.receipt.get('isLayaway')){
+      this.$.layawayaction.updateVisibility(true);
+    }
   },
   components: [{
     style: 'background-color: #363636; color: white; height: 200px; margin: 5px; padding: 5px; position: relative;',
@@ -757,6 +760,17 @@ enyo.kind({
   init: function (model) {
     this.model = model;
     this.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
+  },
+  updateVisibility: function (isVisible) {
+    if (!OB.MobileApp.model.hasPermission(this.permission)) {
+      this.hide();
+      return;
+    }
+    if (!isVisible) {
+      this.hide();
+      return;
+    }
+    this.show();
   },
   tap: function () {
     var receipt = this.owner.receipt,
