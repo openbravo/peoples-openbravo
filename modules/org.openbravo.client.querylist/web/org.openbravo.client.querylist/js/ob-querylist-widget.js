@@ -58,7 +58,7 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
     if (this.fields) {
       for (i = 0; i < this.fields.length; i++) {
         field = this.fields[i];
-        if (field.isLink && !field.clientClass) {
+        if (!OB.User.isPortal && field.isLink && !field.clientClass) {
           field.clientClass = 'OBQLCanvasItem_Link';
         }
       }

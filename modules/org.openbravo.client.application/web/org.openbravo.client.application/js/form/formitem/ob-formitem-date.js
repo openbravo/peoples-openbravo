@@ -52,7 +52,7 @@ OB.DateItemProperties = {
 
     dateFormatUpper = this.dateFormat.toUpperCase();
     length = dateFormatUpper.length;
-    this.dateSeparator = this.dateFormat.toUpperCase().replace(/D/g, '').replace(/M/g, '').replace(/Y/g, '').substr(0, 1);
+    this.dateSeparator = OB.Utilities.Date.getDateSeparator(this.dateFormat);
 
     for (i = 0; i < length; i++) {
       if (this.isSeparator(dateFormatUpper, i)) {
@@ -224,7 +224,7 @@ OB.DateItemProperties = {
   },
 
   isSeparator: function (str, position) {
-    return str.charAt(position) === '-' || str.charAt(position) === '\\' || str.charAt(position) === '/';
+    return str.charAt(position) === '-' || str.charAt(position) === '\\' || str.charAt(position) === '/' || str.charAt(position) === OB.Utilities.Date.getDateSeparator(OB.Format.date);
   },
 
   hasSeparator: function (str) {

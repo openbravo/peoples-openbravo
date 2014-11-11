@@ -153,7 +153,7 @@ public class PriceDifferenceProcess {
       OBDal.getInstance().flush();
       JSONObject message = CostAdjustmentProcess.doProcessCostAdjustment(costAdjHeader);
       try {
-
+        message.put("documentNo", costAdjHeader.getDocumentNo());
         if (message.get("severity") != "success") {
           throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@") + ": "
               + costAdjHeader.getDocumentNo() + " - " + message.getString("text"));
@@ -161,6 +161,7 @@ public class PriceDifferenceProcess {
       } catch (JSONException e) {
         throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@"));
       }
+
       return message;
     } else {
       JSONObject message = new JSONObject();

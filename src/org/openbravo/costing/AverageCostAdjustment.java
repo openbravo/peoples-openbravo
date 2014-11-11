@@ -132,7 +132,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
       BigDecimal trxPrice = trxCost.add(adjustmentBalance).divide(
           basetrx.getMovementQuantity().abs(), costCurPrecission, RoundingMode.HALF_UP);
       if (checkNegativeStockCorrection && currentStock.compareTo(basetrx.getMovementQuantity()) < 0
-          && cost.compareTo(trxPrice) != 0) {
+          && cost.compareTo(trxPrice) != 0 && !baseCAL.isNegativeStockCorrection()) {
         // stock was negative and cost different than trx price then Negative Stock Correction
         // is added
         BigDecimal trxSignMultiplier = new BigDecimal(basetrx.getMovementQuantity().signum());
@@ -321,6 +321,10 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
       // This is the current costing rule. Check if current average cost needs to be updated.
       Costing currentCosting = AverageAlgorithm.getProductCost(new Date(), basetrx.getProduct(),
           getCostDimensions(), getCostOrg());
+      // if (currentStock.signum() != 0) {
+      // cost = currentValueAmt.add(adjustmentBalance).divide(currentStock, costCurPrecission,
+      // RoundingMode.HALF_UP);
+      // }
       if (currentCosting.getCost().compareTo(cost) != 0) {
         basetrx = getTransaction();
         Date newDate = new Date();

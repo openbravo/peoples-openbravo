@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2012 Openbravo SLU
+ * All portions are Copyright (C) 2011-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -89,7 +89,13 @@ OB.RM.RMShipmentQtyValidate = function (item, validator, value, record) {
       selectedRecords = item.grid.getSelectedRecords(),
       selectedRecordsLength = selectedRecords.length,
       editedRecord = null,
-      i;
+      storageBin = record.storageBin,
+      i; 
+  //Cheking available stock
+  if (storageBin === null){
+	item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_RM_NotAvailableStock', [record.rMOrderNo]));
+	return false;
+  }
   // check value is positive and below available qty and pending qty
   if (value === null || value < 0 || value > record.pending || value > record.availableQty) {
     if (record.pending < record.availableQty) {
@@ -110,6 +116,7 @@ OB.RM.RMShipmentQtyValidate = function (item, validator, value, record) {
       }
     }
   }
+  
   return true;
 };
 
@@ -123,9 +130,15 @@ OB.RM.RMShipmentSelectionChange = function (grid, record, state) {
       selectedRecords = grid.getSelectedRecords(),
       pending = new BigDecimal(String(record.pending)),
       availableQty = new BigDecimal(String(record.availableQty)),
+      storageBin = record.storageBin,
       editedRecord = null,
       i;
   if (state) {
+	//Cheking available stock
+	if (storageBin === null){
+	  grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_RM_NotAvailableStock', [record.rMOrderNo]));
+	  return false;
+	}
     // calculate already shipped qty on grid
     for (i = 0; i < selectedRecords.length; i++) {
       editedRecord = isc.addProperties({}, selectedRecords[i], grid.getEditedRecord(selectedRecords[i]));

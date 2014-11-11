@@ -97,6 +97,7 @@ public class LandedCostProcess {
       landedCost.setDocumentStatus("CO");
       landedCost.setProcessed(Boolean.TRUE);
       OBDal.getInstance().save(landedCost);
+      message.put("documentNo", ca.getDocumentNo());
     } catch (JSONException ignore) {
     } finally {
       OBContext.restorePreviousMode();
@@ -225,6 +226,7 @@ public class LandedCostProcess {
       cal.setNeedsPosting(Boolean.FALSE);
       cal.setUnitCost(Boolean.FALSE);
       cal.setCurrency(lcCostCurrency);
+      cal.setLineNo((i + 1) * 10L);
       OBDal.getInstance().save(cal);
 
       if (i % 100 == 0) {

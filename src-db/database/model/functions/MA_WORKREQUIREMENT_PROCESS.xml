@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2006 Openbravo SLU
+* All portions are Copyright (C) 2001-2014 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -165,7 +165,7 @@
               now(), v_User_ID, Cur_Sequence.MA_Process_ID, Cur_Sequence.CostCenterUse,
               Cur_Sequence.Preptime, v_Multiplier*v_Quantity, 0,
               Cur_Sequence.SeqNo, 'N', Cur_Sequence.NoQty, Cur_Sequence.GroupUse, Cur_Sequence.Outsourced,
-              v_Startdate, v_Enddate, v_Multiplier*v_Quantity*Cur_Sequence.Estimatedtime, Cur_Sequence.Usedmaterial
+              v_Startdate, ADD_HMS(v_Startdate, v_Multiplier*v_Quantity*Cur_Sequence.Estimatedtime, 0 , 0), v_Multiplier*v_Quantity*Cur_Sequence.Estimatedtime, Cur_Sequence.Usedmaterial
             )
             ;
           FOR Cur_SeqProduct IN

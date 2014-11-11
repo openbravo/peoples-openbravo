@@ -21,6 +21,7 @@ package org.openbravo.test;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
+import org.openbravo.test.datasource.FKDropDownDatasource;
 import org.openbravo.test.datasource.ProductSelectorDataSourceTest;
 import org.openbravo.test.datasource.SelectorFieldPropertySelectorDSTest;
 import org.openbravo.test.datasource.TestCSVEncoding;
@@ -46,6 +47,7 @@ WSReadTest.class, //
     TestCSVEncoding.class, //
     SelectorFieldPropertySelectorDSTest.class, //
     ProductSelectorDataSourceTest.class, //
-    TestComboDatasource.class })
+    TestComboDatasource.class, //
+    FKDropDownDatasource.class })
 public class AllWebserviceTests {
 }
