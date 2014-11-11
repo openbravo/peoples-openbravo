@@ -150,8 +150,8 @@ isc.OBToolbarActionButton.addProperties({
         currentView = this.view,
         afterRefresh, isAfterRefreshAlreadyExecuted, parsePathPart, parts;
 
-    afterRefresh = function (doRefresh) {
-      var undef, refresh = (doRefresh === undef || doRefresh),
+    afterRefresh = function () {
+      var undef,
           autosaveDone = false,
           currentRecordId, recordsAfterRefresh;
 
@@ -178,18 +178,6 @@ isc.OBToolbarActionButton.addProperties({
         // let's set half for each in order to see the message
         contextView.setHalfSplit();
       }
-      // Refresh in order to show possible new records
-      if (refresh) {
-        // The selected record should be shown after the refresh, even
-        // if the filter would exclude it
-        // See issue https://issues.openbravo.com/view.php?id=20722
-        if (currentView.parentTabId) {
-          recordsAfterRefresh = currentView.newRecordsAfterRefresh[currentView.parentTabId];
-        } else {
-          recordsAfterRefresh = currentView.newRecordsAfterRefresh;
-        }
-        currentView.refresh(null, autosaveDone, recordsAfterRefresh);
-      }
       if (contextView.viewGrid.isGrouped) {
         // if the grid is grouped refresh the grid to show the records properly
         contextView.viewGrid.refreshGrid();
@@ -212,7 +200,7 @@ isc.OBToolbarActionButton.addProperties({
       }
     } else {
       // If the button is not autosave, do not refresh but get message.
-      afterRefresh(false);
+      afterRefresh();
     }
 
     OB.ActionButton.executingProcess = null;
