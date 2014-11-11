@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013 Openbravo SLU 
+ * All portions are Copyright (C) 2013-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,7 +21,6 @@ package org.openbravo.erpCommon.ad_callouts;
 
 import javax.servlet.ServletException;
 
-import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.filter.RequestFilter;
 import org.openbravo.base.filter.ValueListFilter;
@@ -41,20 +40,20 @@ public class SE_Order_Organization extends SimpleCallout {
     boolean updateWarehouse = true;
     FieldProvider[] td = null;
 
-    // Sales flow only (from the organization)
-    if (StringUtils.equals("Y", strinpissotrx)) {
-      final String strOrgId = info.getStringParameter("inpadOrgId", IsIDFilter.instance);
-      final String calculatedIsCashVat = CashVATUtil.getOrganizationIsCashVAT(strOrgId);
-      if (calculatedIsCashVat != null && filterYesNo.accept(calculatedIsCashVat)) {
-        info.addResult("inpiscashvat", calculatedIsCashVat);
-      }
-    }
+    final String strOrgId = info.getStringParameter("inpadOrgId", IsIDFilter.instance);
+    final String strBPartnerId = info.getStringParameter("inpcBpartnerId", IsIDFilter.instance);
+    final String strBPartnerLocationId = info.getStringParameter("inpcBpartnerLocationId",
+        IsIDFilter.instance);
+
+    info.addResult("inpiscashvat",
+        CashVATUtil.isCashVAT(strinpissotrx, strOrgId, strBPartnerId, strBPartnerLocationId));
 
     try {
       ComboTableData comboTableData = new ComboTableData(info.vars, this, "TABLE",
-          "M_Warehouse_ID", "197", "C4053C0CD3DC420A9924F24FC1F860A0", Utility.getReferenceableOrg(
-              info.vars, info.vars.getStringParameter("inpadOrgId")), Utility.getContext(this,
-              info.vars, "#User_Client", info.getWindowId()), 0);
+          "M_Warehouse_ID", "197", strinpissotrx.equals("Y") ? "C4053C0CD3DC420A9924F24FC1F860A0"
+              : "", Utility.getReferenceableOrg(info.vars,
+              info.vars.getStringParameter("inpadOrgId")), Utility.getContext(this, info.vars,
+              "#User_Client", info.getWindowId()), 0);
       Utility.fillSQLParameters(this, info.vars, null, comboTableData, info.getWindowId(), "");
       td = comboTableData.select(false);
       comboTableData = null;

@@ -135,13 +135,19 @@ isc.OBTreeViewGrid.addProperties({
       // the new callback checks if the node movement has to be reverted
       var newCallback = function (dsResponse, data, dsRequest) {
           var i, node, parentNode;
-          for (i = 0; i < data.length; i++) {
-            node = data[i];
-            if (node.revertMovement) {
-              parentNode = dsRequest.dragTree.find('id', node.parentId);
-              if (parentNode) {
-                // move the node back to its previous index
-                dsRequest.dragTree.move(node, parentNode, node.prevIndex);
+          if (dsRequest.newParentNode && dsRequest.dragTree && dsRequest.newParentNode.nodeId === dsRequest.dragTree.rootValue) {
+            // if the node is being moved to the root, reload the grid to force
+            // displaying properly the node in its new position. see issue https://issues.openbravo.com/view.php?id=26898
+            dsRequest.dragTree.invalidateCache();
+          } else {
+            for (i = 0; i < data.length; i++) {
+              node = data[i];
+              if (node.revertMovement) {
+                parentNode = dsRequest.dragTree.find('id', node.parentId);
+                if (parentNode) {
+                  // move the node back to its previous index
+                  dsRequest.dragTree.move(node, parentNode, node.prevIndex);
+                }
               }
             }
           }
@@ -299,8 +305,14 @@ isc.OBTreeViewGrid.addProperties({
   movedToSameParent: function (nodes, newParent) {
     var i, len = nodes.length;
     for (i = 0; i < len; i++) {
-      if (nodes[i].parentId !== newParent.id) {
-        return false;
+      if (nodes[i].parentId === this.dataProperties.rootValue) {
+        if (nodes[i].parentId !== newParent.nodeId) {
+          return false;
+        }
+      } else {
+        if (nodes[i].parentId !== newParent.id) {
+          return false;
+        }
       }
     }
     return true;
@@ -430,6 +442,8 @@ isc.OBTreeViewGrid.addProperties({
   },
 
   dataArrived: function (startRow, endRow) {
+	// reset noDataEmptyMessage to prevent showing "loading..." indefinitely if the datasource does not return any data
+    this.noDataEmptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUIAPP_NoDataInGrid') + '</span>';
     this.resetEmptyMessage();
     if (this.actionAfterDataArrived) {
       this.actionAfterDataArrived();
@@ -453,5 +467,9 @@ isc.OBTreeViewGrid.addProperties({
       this.setData([]);
       this.fetchData(this.getCriteria());
     }
+  },
+
+  isWritable: function (record) {
+    return !record._readOnly;
   }
 });

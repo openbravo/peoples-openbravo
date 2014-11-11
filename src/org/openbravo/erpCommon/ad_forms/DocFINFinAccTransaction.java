@@ -300,6 +300,9 @@ public class DocFINFinAccTransaction extends AcctServer {
                         : (paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
                             .getCostCenter() != null ? paymentDetails.get(i)
                             .getFINPaymentScheduleDetailList().get(0).getCostCenter().getId() : "")));
+        FieldProviderFactory.setField(data[i], "recordId2",
+            paymentDetails.get(i).isPrepayment() ? (pso != null ? pso.getId() : "")
+                : (psi != null ? psi.getId() : ""));
 
       }
     } finally {
@@ -396,6 +399,7 @@ public class DocFINFinAccTransaction extends AcctServer {
         docLine.setPrepaymentAgainstInvoice("Y".equals(data[i]
             .getField("isPaymentDatePriorToInvoiceDate")) ? true : false);
         docLine.loadAttributes(data[i], this);
+        docLine.m_Record_Id2 = data[i].getField("recordId2");
         list.add(docLine);
       } finally {
         OBContext.restorePreviousMode();
@@ -426,8 +430,10 @@ public class DocFINFinAccTransaction extends AcctServer {
           AcctSchemaTableDocType.class, whereClause.toString());
       final List<AcctSchemaTableDocType> acctSchemaTableDocTypes = obqParameters.list();
 
-      if (acctSchemaTableDocTypes != null && acctSchemaTableDocTypes.size() > 0)
+      if (acctSchemaTableDocTypes != null && acctSchemaTableDocTypes.size() > 0
+          && acctSchemaTableDocTypes.get(0).getCreatefactTemplate() != null) {
         strClassname = acctSchemaTableDocTypes.get(0).getCreatefactTemplate().getClassname();
+      }
 
       if (strClassname.equals("")) {
         final StringBuilder whereClause2 = new StringBuilder();
@@ -682,8 +688,12 @@ public class DocFINFinAccTransaction extends AcctServer {
           !isReceipt, DateAcct, TABLEID_Payment, transaction.getFinPayment().getId(),
           paymentCurrency.getId(), as.m_C_Currency_ID, null, as, fact, Fact_Acct_Group_ID,
           nextSeqNo(SeqNo), conn);
+      DocLine_FINFinAccTransaction line = new DocLine_FINFinAccTransaction(DocumentType,
+          transaction.getId(), "");
+      line.m_description = transaction.getFinPayment().getDescription();
+      line.m_Record_Id2 = transaction.getFinPayment().getId();
       fact.createLine(
-          null,
+          line,
           getAccountPayment(conn, transaction.getFinPayment().getPaymentMethod(), transaction
               .getFinPayment().getAccount(), as, transaction.getFinPayment().isReceipt()),
           paymentCurrency.getId(), !isReceipt ? convertedAmount.toString() : "",
@@ -693,6 +703,7 @@ public class DocFINFinAccTransaction extends AcctServer {
     DocLine_FINFinAccTransaction line = new DocLine_FINFinAccTransaction(DocumentType,
         transaction.getId(), "");
     line.m_description = transaction.getFinPayment().getDescription();
+    line.m_Record_Id2 = transaction.getId();
     if (exceptionPosting) {
       // The Payment FinAcct and Transaction FinAcct are different. To post the transaction
       // the amount of the payment need to be moved from destiny account of the payment of FinAcct1

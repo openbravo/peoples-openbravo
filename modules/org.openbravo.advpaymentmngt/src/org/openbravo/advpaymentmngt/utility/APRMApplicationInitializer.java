@@ -41,7 +41,6 @@ public class APRMApplicationInitializer implements ApplicationInitializer {
         new StandardSQLFunction("ad_message_get2", StandardBasicTypes.STRING));
     OBDal.getInstance().registerSQLFunction("hqlagg",
         new SQLFunctionTemplate(StandardBasicTypes.STRING, getAggregationSQL()));
-
     OBDal.getInstance().registerSQLFunction("get_uuid",
         new StandardSQLFunction("get_uuid", StandardBasicTypes.STRING));
   }
@@ -51,9 +50,9 @@ public class APRMApplicationInitializer implements ApplicationInitializer {
       if (is11R2orNewer()) {
         return "listagg(to_char(?1), ',') WITHIN GROUP (ORDER BY ?1)";
       } else if (existsStrAgg()) {
-        return "stragg(to_char(?1)";
+        return "stragg(to_char(?1))";
       } else {
-        return "wm_concat(to_char(?1)";
+        return "wm_concat(to_char(?1))";
       }
     } else {
       return "array_to_string(array_agg(?1), ',')";
@@ -75,8 +74,8 @@ public class APRMApplicationInitializer implements ApplicationInitializer {
     try {
       dbVersion = SystemInfo.getDatabaseVersion(new DalConnectionProvider(false));
     } catch (ServletException ignore) {
-    }
 
+    }
     if (dbVersion == null) {
       return false;
     }

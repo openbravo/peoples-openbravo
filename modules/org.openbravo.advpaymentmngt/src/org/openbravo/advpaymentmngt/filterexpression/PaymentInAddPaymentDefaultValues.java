@@ -26,6 +26,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.advpaymentmngt.utility.APRMConstants;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 
 @ComponentProvider.Qualifier(APRMConstants.PAYMENT_IN_WINDOW_ID)
@@ -38,71 +39,127 @@ public class PaymentInAddPaymentDefaultValues extends AddPaymentDefaultValuesHan
   }
 
   @Override
-  String getDefaultExpectedAmount(Map<String, String> requestMap) throws JSONException {
+  public String getDefaultExpectedAmount(Map<String, String> requestMap) throws JSONException {
     // Expected amount is the amount on the editing payment
     BigDecimal pendingAmt = getPayment(requestMap).getAmount();
     return pendingAmt.toPlainString();
   }
 
   @Override
-  String getDefaultActualAmount(Map<String, String> requestMap) throws JSONException {
+  public String getDefaultActualAmount(Map<String, String> requestMap) throws JSONException {
     // Actual amount is the amount on the editing payment
     BigDecimal pendingAmt = getPayment(requestMap).getAmount();
     return pendingAmt.toPlainString();
   }
 
   @Override
-  String getDefaultIsSOTrx(Map<String, String> requestMap) {
+  public String getDefaultIsSOTrx(Map<String, String> requestMap) {
     return "Y";
   }
 
   @Override
-  String getDefaultTransactionType(Map<String, String> requestMap) {
+  public String getDefaultTransactionType(Map<String, String> requestMap) {
     return "I";
   }
 
   @Override
-  String getDefaultPaymentType(Map<String, String> requestMap) throws JSONException {
+  public String getDefaultPaymentType(Map<String, String> requestMap) throws JSONException {
     JSONObject context = new JSONObject(requestMap.get("context"));
     return context.getString("inpfinPaymentId");
   }
 
   @Override
-  String getDefaultOrderType(Map<String, String> requestMap) throws JSONException {
+  public String getDefaultOrderType(Map<String, String> requestMap) throws JSONException {
     return "";
   }
 
   @Override
-  String getDefaultInvoiceType(Map<String, String> requestMap) throws JSONException {
+  public String getDefaultInvoiceType(Map<String, String> requestMap) throws JSONException {
     return "";
   }
 
   @Override
-  String getDefaultDocumentNo(Map<String, String> requestMap) throws JSONException {
+  public String getDefaultDocumentNo(Map<String, String> requestMap) throws JSONException {
+    // Document Number of the current Payment
     FIN_Payment payment = getPayment(requestMap);
-
     return payment.getDocumentNo();
   }
 
   private FIN_Payment getPayment(Map<String, String> requestMap) throws JSONException {
+    // Current Payment
     JSONObject context = new JSONObject(requestMap.get("context"));
-    String strFinPaymentId = context.getString("inpfinPaymentId");
+    String strFinPaymentId = "";
+    if (context.has("inpfinPaymentId") && !context.isNull("inpfinPaymentId")) {
+      strFinPaymentId = context.getString("inpfinPaymentId");
+    }
+    if (context.has("Fin_Payment_ID") && !context.isNull("Fin_Payment_ID")) {
+      strFinPaymentId = context.getString("Fin_Payment_ID");
+    }
     FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, strFinPaymentId);
     return payment;
   }
 
   @Override
-  String getDefaultConversionRate(Map<String, String> requestMap) throws JSONException {
+  public String getDefaultConversionRate(Map<String, String> requestMap) throws JSONException {
     // Conversion Rate of the current Payment
     FIN_Payment payment = getPayment(requestMap);
     return payment.getFinancialTransactionConvertRate().toPlainString();
   }
 
   @Override
-  String getDefaultConvertedAmount(Map<String, String> requestMap) throws JSONException {
+  public String getDefaultConvertedAmount(Map<String, String> requestMap) throws JSONException {
     // Converted Amount of the current Payment
     FIN_Payment payment = getPayment(requestMap);
     return payment.getFinancialTransactionAmount().toPlainString();
+  }
+
+  @Override
+  public String getDefaultReceivedFrom(Map<String, String> requestMap) throws JSONException {
+    // Business Partner of the current Payment
+    FIN_Payment payment = getPayment(requestMap);
+    if (payment.getBusinessPartner() != null) {
+      return payment.getBusinessPartner().getId();
+    } else {
+      return "";
+    }
+  }
+
+  @Override
+  public String getDefaultStandardPrecision(Map<String, String> requestMap) throws JSONException {
+    // Standard Precision of the currency
+    FIN_Payment payment = getPayment(requestMap);
+    return payment.getCurrency().getStandardPrecision().toString();
+  }
+
+  @Override
+  public String getDefaultCurrency(Map<String, String> requestMap) throws JSONException {
+    // Currency of the current Payment
+    FIN_Payment payment = getPayment(requestMap);
+    return payment.getCurrency().getId();
+  }
+
+  @Override
+  public String getOrganization(Map<String, String> requestMap) throws JSONException {
+    // Organization of the current Payment
+    return getPayment(requestMap).getOrganization().getId();
+  }
+
+  @Override
+  public String getDefaultPaymentDate(Map<String, String> requestMap) throws JSONException {
+    // Payment Date of the current payment
+    return OBDateUtils.formatDate(getPayment(requestMap).getPaymentDate());
+  }
+
+  @Override
+  public String getDefaultDocument(Map<String, String> requestMap) throws JSONException {
+    // Document Type
+    return "";
+  }
+
+  @Override
+  public String getBankStatementLineAmount(Map<String, String> requestMap) throws JSONException {
+    // BankStatementLineAmount
+    return "";
   }
 
 }

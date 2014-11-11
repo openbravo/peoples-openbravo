@@ -51,7 +51,7 @@
   <PARAMETER id="paramSelectedGroupBy" name="groupbyselected" attribute="value" default=""/>
   <PARAMETER id="paramPageNo" name="PageNo" attribute="value"/>
   <PARAMETER id="fieldCheck" name="check" default="Y"/>
-  <PARAMETER id="fieldNotInitialBalance" name="notInitialBalance" boolean="checked" withId="fieldCheck"/>
+  <PARAMETER id="fieldNotInitialBalance" name="notInitialBalance" boolean="checked" withId="fieldCheck"/> 
 
   <SUBREPORT id="reportCBPartnerId_IN" name="reportCBPartnerId_IN" report="org/openbravo/erpCommon/reference/List">
     <ARGUMENT name="parameterListSelected" withId="paramVacio"/>

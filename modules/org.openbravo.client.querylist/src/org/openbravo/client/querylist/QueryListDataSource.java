@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,6 +73,7 @@ import org.openbravo.model.ad.ui.Window;
 import org.openbravo.portal.PortalAccessible;
 import org.openbravo.service.datasource.DataSourceProperty;
 import org.openbravo.service.datasource.ReadOnlyDataSourceService;
+import org.openbravo.service.json.AdvancedQueryBuilder;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonUtils;
 
@@ -83,6 +85,7 @@ import org.openbravo.service.json.JsonUtils;
 public class QueryListDataSource extends ReadOnlyDataSourceService implements PortalAccessible {
   private static final String OPTIONAL_FILTERS = "@optional_filters@";
   private static final Logger log = Logger.getLogger(QueryListDataSource.class);
+  private static final String OPERATOR = "$OPERATOR";
 
   /**
    * Returns the count of objects based on the passed parameters.
@@ -151,6 +154,8 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
         for (int i = 0; i < criterias.length(); i++) {
           final JSONObject criteria = criterias.getJSONObject(i);
           parameters.put(criteria.getString("fieldName"), criteria.getString("value"));
+          parameters
+              .put(criteria.getString("fieldName") + OPERATOR, criteria.getString("operator"));
         }
       } catch (JSONException e) {
         // Ignore exception.
@@ -159,6 +164,16 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
       String HQL = widgetClass.getOBCQLWidgetQueryList().get(0).getHQL();
       // Parse the HQL in case that optional filters are required
       HQL = parseOptionalFilters(HQL, viewMode, parameters, columns, xmlDateFormat);
+
+      if (parameters.containsKey(JsonConstants.SUMMARY_PARAMETER)) {
+        // if the request comes from the summary row, update the select clause so that it obtains
+        // the values for the summary fields
+        HQL = updateHQLWithSummaryFields(HQL, parameters.get(JsonConstants.SUMMARY_PARAMETER));
+      }
+
+      if (parameters.containsKey(JsonConstants.SORTBY_PARAMETER)) {
+        HQL = updateSortByFields(HQL, parameters.get(JsonConstants.SORTBY_PARAMETER));
+      }
 
       Query widgetQuery = OBDal.getInstance().getSession().createQuery(HQL);
       String[] queryAliases = widgetQuery.getReturnAliases();
@@ -204,51 +219,77 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
       }
 
       final List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
-      for (Object objResult : widgetQuery.list()) {
-        final Map<String, Object> data = new LinkedHashMap<String, Object>();
-        Object[] resultList = new Object[1];
-        if (objResult instanceof Object[]) {
-          resultList = (Object[]) objResult;
-        } else {
-          resultList[0] = objResult;
+
+      if (parameters.containsKey(JsonConstants.SUMMARY_PARAMETER)) {
+        // process the response for the summary row
+        Map<String, Object> summaryData = new LinkedHashMap<String, Object>();
+        try {
+          JSONObject summaryFieldsObject = new JSONObject(
+              parameters.get(JsonConstants.SUMMARY_PARAMETER));
+          Iterator<?> summaryFieldNameIterator = summaryFieldsObject.keys();
+          Object uniqueResult = widgetQuery.uniqueResult();
+          if (uniqueResult instanceof Object[]) {
+            // handles the case where the values of several summary fields are request
+            Object[] summaryValues = (Object[]) uniqueResult;
+            int i = 0;
+            while (summaryFieldNameIterator.hasNext()) {
+              String summaryFieldName = (String) summaryFieldNameIterator.next();
+              summaryData.put(summaryFieldName, summaryValues[i++]);
+            }
+          } else {
+            // handles the case where the value of just one summary field is request
+            String summaryFieldName = (String) summaryFieldsObject.names().get(0);
+            summaryData.put(summaryFieldName, uniqueResult);
+          }
+          summaryData.put("isGridSummary", true);
+        } catch (Exception e) {
         }
+        result.add(summaryData);
 
-        for (OBCQL_QueryColumn column : columns) {
-          UIDefinition uiDefinition = UIDefinitionController.getInstance().getUIDefinition(
-              column.getReference());
-          DomainType domainType = uiDefinition.getDomainType();
-          // TODO: throw an exception if the display expression doesn't match any returned alias.
-          for (int i = 0; i < queryAliases.length; i++) {
-            if (queryAliases[i].equals(column.getDisplayExpression())
-                || (!isExport && queryAliases[i].equals(column.getLinkExpression()))) {
-              Object value = resultList[i];
-              if (value instanceof Timestamp) {
-                value = xmlDateTimeFormat.format(value);
-                value = JsonUtils.convertToCorrectXSDFormat((String) value);
-              }
-              if (value instanceof Date) {
-                value = xmlDateFormat.format(value);
-              }
+      } else {
+        // process the response for the grid
+        for (Object objResult : widgetQuery.list()) {
+          final Map<String, Object> data = new LinkedHashMap<String, Object>();
+          Object[] resultList = new Object[1];
+          if (objResult instanceof Object[]) {
+            resultList = (Object[]) objResult;
+          } else {
+            resultList[0] = objResult;
+          }
 
-              if (domainType instanceof BooleanDomainType) {
-                if (value instanceof String) {
-                  value = ((PrimitiveDomainType) domainType).createFromString((String) value);
+          for (OBCQL_QueryColumn column : columns) {
+            UIDefinition uiDefinition = UIDefinitionController.getInstance().getUIDefinition(
+                column.getReference());
+            DomainType domainType = uiDefinition.getDomainType();
+            // TODO: throw an exception if the display expression doesn't match any returned alias.
+            for (int i = 0; i < queryAliases.length; i++) {
+              if (queryAliases[i].equals(column.getDisplayExpression())
+                  || (!isExport && queryAliases[i].equals(column.getLinkExpression()))) {
+                Object value = resultList[i];
+                if (domainType instanceof DateDomainType || domainType instanceof DateDomainType) {
+                    value = xmlDateFormat.format(value);
+                  }
+                else if (value instanceof Timestamp) {
+                  value = xmlDateTimeFormat.format(value);
+                  value = JsonUtils.convertToCorrectXSDFormat((String) value);
                 }
-              }
 
-              if (!isExport) {
-                data.put(queryAliases[i], value);
-              } else {
-                data.put(QueryListUtils.getColumnLabel(column), value);
+                if (domainType instanceof BooleanDomainType) {
+                  if (value instanceof String) {
+                    value = ((PrimitiveDomainType) domainType).createFromString((String) value);
+                  }
+                }
+
+                if (!isExport) {
+                  data.put(queryAliases[i], value);
+                } else {
+                  data.put(QueryListUtils.getColumnLabel(column), value);
+                }
               }
             }
           }
+          result.add(data);
         }
-        result.add(data);
-      }
-      String sortBy = parameters.get("_sortBy");
-      if (StringUtils.isNotEmpty(sortBy)) {
-        sort(sortBy, result);
       }
       return result;
     } finally {
@@ -256,7 +297,126 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
     }
   }
 
-  // Checks if the widget is embedded in a tab accessible by the user
+  /**
+   * Updates the order by clause of the HQL query so that it obtains the values for the summary
+   * fields. If the HQL query already contains order by fields, the new fields are appended for the
+   * existing fields.
+   * 
+   * @param hQL
+   *          original HQL query
+   * @param sortByParametersString
+   *          parameter that contains sortBy field values
+   * @return an updated HQL query that will set the order by fields
+   */
+  private String updateSortByFields(String hql, String sortBy) {
+    String[] fieldList = null;
+    String sortByClause = "", hqlString = hql;
+    if (sortBy.contains(",")) {
+      fieldList = sortBy.split(",");
+    }
+    if (hqlString.toLowerCase().contains("order by")) {
+      if (fieldList == null) {
+        sortByClause = sortBy.startsWith("-") ? sortBy.substring(1, sortBy.length()) + " desc "
+            : sortBy;
+      } else {
+        // sort by multiple columns
+        for (String field : fieldList) {
+          sortByClause = field.startsWith("-") ? sortByClause.concat(field.substring(1,
+              field.length()))
+              + " desc " : sortByClause.concat(field);
+        }
+      }
+      int sortByIndex = hqlString.toLowerCase().indexOf("order by");
+      hqlString = hqlString.substring(0, sortByIndex + "order by".length() + 1) + sortByClause
+          + "," + hqlString.substring(sortByIndex + "order by".length() + 1);
+    } else {
+      hqlString = hqlString.concat(" order by " + sortByClause);
+    }
+    return hqlString;
+  }
+
+  /**
+   * Updates the select clause of the HQL query so that it obtains the values for the summary fields
+   * 
+   * @param hQL
+   *          original HQL query
+   * @param summaryParametersString
+   *          parameter that contains pairs of summaryField - summaryFunction values
+   * @return an updated HQL query that will obtain the values for the summary fields
+   */
+  private String updateHQLWithSummaryFields(String hQL, String summaryParametersString) {
+    // get rid of the original select clause, a new one is going to be built
+    String updatedHQL = removeSelectClause(hQL);
+    // the order clause is not needed when obtaining the values for the summary fields
+    updatedHQL = removeOrderByClause(updatedHQL);
+    try {
+      JSONObject summaryFieldsObject = new JSONObject(summaryParametersString);
+      Iterator<?> summaryFieldNameIterator = summaryFieldsObject.keys();
+      StringBuilder selectClause = new StringBuilder("select ");
+      boolean first = true;
+      while (summaryFieldNameIterator.hasNext()) {
+        String summaryFieldName = (String) summaryFieldNameIterator.next();
+        String summaryFunction = summaryFieldsObject.getString(summaryFieldName);
+        if (!first) {
+          selectClause.append(", ");
+        } else {
+          first = false;
+        }
+        // only three summary functions are available for the columns of Query/List widgets: count,
+        // sum and avg
+        if ("count".equals(summaryFunction)) {
+          selectClause.append("count(*)");
+        } else if ("sum".equals(summaryFunction)) {
+          selectClause.append("sum(" + summaryFieldName + ")");
+        } else if ("avg".equals(summaryFunction)) {
+          selectClause.append("sum(" + summaryFieldName + ")/count(*)");
+        }
+      }
+      updatedHQL = selectClause.toString() + " " + updatedHQL;
+    } catch (JSONException e) {
+      log.error("Error obtaining the values of the summary fields", e);
+    }
+    return updatedHQL;
+  }
+
+  /**
+   * Removes the select clause of a hql query
+   * 
+   * @param hql
+   *          the original hql query
+   * @return the original hql query without its select clause
+   */
+  private String removeSelectClause(String hql) {
+    String hqlWithoutSelectClause = hql;
+    if (hqlWithoutSelectClause.toLowerCase().indexOf(" from ") != -1) {
+      hqlWithoutSelectClause = hqlWithoutSelectClause.substring(hqlWithoutSelectClause
+          .toLowerCase().indexOf(" from "));
+    } else if (hqlWithoutSelectClause.toLowerCase().indexOf("\nfrom ") != -1) {
+      hqlWithoutSelectClause = hqlWithoutSelectClause.substring(hqlWithoutSelectClause
+          .toLowerCase().indexOf("\nfrom "));
+    }
+    return hqlWithoutSelectClause;
+  }
+
+  /**
+   * Removes the order by clause of a hql query
+   * 
+   * @param hql
+   *          the original hql query
+   * @return the original hql query without its select clause
+   */
+  private String removeOrderByClause(String hql) {
+    String hqlWithoutOrderByClause = hql;
+    if (hqlWithoutOrderByClause.toLowerCase().indexOf(" order by ") != -1) {
+      hqlWithoutOrderByClause = hqlWithoutOrderByClause.substring(0, hqlWithoutOrderByClause
+          .toLowerCase().indexOf(" order by "));
+    } else if (hqlWithoutOrderByClause.toLowerCase().indexOf("\norder by ") != -1) {
+      hqlWithoutOrderByClause = hqlWithoutOrderByClause.substring(0, hqlWithoutOrderByClause
+          .toLowerCase().indexOf("\norder by "));
+    }
+    return hqlWithoutOrderByClause;
+  } // Checks if the widget is embedded in a tab accessible by the user
+
   private boolean isAccessibleWidgetInForm(WidgetClass widgetClass) {
     OBCriteria<WidgetReference> widgetInFormCriteria = OBDal.getInstance().createCriteria(
         WidgetReference.class);
@@ -371,6 +531,7 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
       for (OBCQL_QueryColumn column : columns) {
         if (column.isCanBeFiltered()) {
           String value = parameters.get(column.getDisplayExpression());
+          String operator = parameters.get(column.getDisplayExpression() + OPERATOR);
           if (column.getReference().getName().equals("YesNo") && value != null) {
             if (value.equals("true")) {
               value = "Y";
@@ -380,7 +541,7 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
           }
           String whereClause = " 1=1 ";
           if (value != null) {
-            whereClause = getWhereClause(value, column, xmlDateFormat);
+            whereClause = getWhereClause(value, column, xmlDateFormat, operator);
           }
 
           if (HQL.contains("@" + column.getDisplayExpression() + "@")) {
@@ -396,13 +557,18 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
   }
 
   private String getWhereClause(String value, OBCQL_QueryColumn column,
-      SimpleDateFormat xmlDateFormat) {
+      SimpleDateFormat xmlDateFormat, String operator) {
     String whereClause = "";
     DomainType domainType = ModelProvider.getInstance().getReference(column.getReference().getId())
         .getDomainType();
     if (domainType.getClass().getSuperclass().equals(BigDecimalDomainType.class)
         || domainType.getClass().equals(LongDomainType.class)) {
-      whereClause = column.getWhereClauseLeftPart() + " = " + value;
+      if (StringUtils.isNotEmpty(value)) {
+        whereClause = column.getWhereClauseLeftPart() + " "
+            + AdvancedQueryBuilder.getHqlOperator(operator) + " " + value;
+      } else {
+        whereClause = " 1=1 ";
+      }
     } else if (domainType.getClass().equals(DateDomainType.class)) {
       try {
         final Calendar cal = Calendar.getInstance();

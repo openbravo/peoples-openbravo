@@ -42,6 +42,11 @@ isc.OBFKFilterTextItem.addProperties({
   changeOnKeypress: true,
   addUnknownValues: true,
   defaultToFirstOption: false,
+  // filterType = {'id', 'identifier'}
+  // filterType = 'id' means that the foreign key will be filtered using the record ids. This is only possible when filtering the grid by selecting a record from the filter drop down
+  // filterType = 'identifier' means that the foreign key will be filtered using the record ids
+  filterType: 'identifier',
+  filterAuxCache: [],
 
   emptyPickListMessage: OB.I18N.getLabel('OBUISC_ListGrid.emptyMessage'),
 
@@ -62,6 +67,15 @@ isc.OBFKFilterTextItem.addProperties({
     this.displayField = this.criteriaDisplayField || OB.Constants.IDENTIFIER;
     this.valueField = this.criteriaDisplayField || OB.Constants.IDENTIFIER;
 
+    // if this field was being filtered by its id before being recreated, reset its filter type an its filterAuxCache
+    if (this.grid && this.grid.sourceWidget && this.grid.sourceWidget.filterByIdFields && this.grid.sourceWidget.filterByIdFields.contains(this.name)) {
+      this.filterType = 'id';
+      if (this.grid.sourceWidget.fkCacheCopy && this.grid.sourceWidget.fkCacheCopy.find('fieldName', this.name)) {
+        this.filterAuxCache = this.grid.sourceWidget.fkCacheCopy.find('fieldName', this.name).cache;
+      }
+
+    }
+
     this.pickListProperties = {
 
       // make sure that we send the same parameters as the grid
@@ -71,6 +85,11 @@ isc.OBFKFilterTextItem.addProperties({
         requestProperties.params = grid.getFetchRequestParams(requestProperties.params) || {};
         if (gridView) {
           requestProperties.params.tabId = gridView.tabId || (grid.viewProperties && grid.viewProperties.tabId) || (gridView.sourceView && gridView.sourceView.tabId);
+        }
+        // send the display field in request params to add it to the list of fields to be fetched in DefaultJsonDataService.
+        // used for displaying table references properly. Refer issue https://issues.openbravo.com/view.php?id=26696
+        if (this.formItem && this.formItem.displayProperty) {
+          requestProperties.params.displayProperty = this.formItem.displayProperty;
         }
         delete me.forceReload;
       },
@@ -146,6 +165,11 @@ isc.OBFKFilterTextItem.addProperties({
     this.observe(grid, "dataArrived", "observer.setForceReload()");
 
     this.multipleValueSeparator = ' or ';
+
+    // if the filter by identifier has been disabled using grid configuration, set the filter type to 'id'
+    if (this.allowFkFilterByIdentifier === false && !grid.alwaysFilterFksByIdentifier) {
+      this.filterType = 'id';
+    }
   },
 
   destroy: function () {
@@ -162,13 +186,13 @@ isc.OBFKFilterTextItem.addProperties({
   handleEditorExit: function () {
     var value = this.getValue(),
         performFetch = false,
-        rows,i;
+        rows, i;
     if (this.pickList && this.pickList.data && (this.pickList.data.allRows || this.pickList.data.localData)) {
       rows = this.pickList.data.allRows || this.pickList.data.localData;
     }
     if (value && isc.isA.Array(value) && value.length > 0 && rows) {
       for (i = 0; i < value.length; i++) {
-        if (value[i].indexOf("==") === 0) {
+        if (value[i].indexOf('==') === 0) {
           value[i] = value[i].substring(2, value[i].length);
           if (rows.find('name', value[i]) === undefined) {
             performFetch = true;
@@ -195,11 +219,40 @@ isc.OBFKFilterTextItem.addProperties({
   },
 
   blur: function () {
-    if (this._hasChanged) {
+    if (this._hasChanged && this.allowFkFilterByIdentifier === false) {
+      // close the picklist if the item is due to a user tab action
+      if (isc.EH.getKeyName() === 'Tab') {
+        this.pickList.hide();
+      }
+      // restore the filter editor with the previous criteria
+      this.setCriterion(this.getAppliedCriteria());
+      // do not perform a filter action on blur if the filtering by identifier is not allowed
+    } else if (this._hasChanged && this.allowFkFilterByIdentifier !== false) {
       this.form.grid.performAction();
     }
     delete this._hasChanged;
     this.Super('blur', arguments);
+  },
+
+  // returns the criteria for this field that is applied to the data that the grid is currently showing
+  // this.getCriteria() would return the modified criteria that needs to be reverted
+  getAppliedCriteria: function () {
+    var currentGridCriteria = this.grid.sourceWidget.getCriteria(),
+        i, emptyCriteria = {
+        operator: "and",
+        _constructor: "AdvancedCriteria",
+        criteria: []
+        };
+    if (!currentGridCriteria || !currentGridCriteria.criteria) {
+      return emptyCriteria;
+    }
+    for (i = 0; i < currentGridCriteria.criteria.length; i++) {
+      if (currentGridCriteria.criteria[i].fieldName === this.name) {
+        return currentGridCriteria.criteria[i];
+      }
+    }
+    // if no criteria was found for this field, return an empty criteria
+    return emptyCriteria;
   },
 
   // overridden otherwise the picklist fields from the grid field
@@ -239,7 +292,8 @@ isc.OBFKFilterTextItem.addProperties({
   // combine the value of the field with the overall grid
   // filter values
   getPickListFilterCriteria: function () {
-    var pickListCriteria = this.getCriterion(),
+    var forceFilterByIdentifier = true,
+        pickListCriteria = this.getCriterion(null, forceFilterByIdentifier),
         gridCriteria, i, criteriaFieldName = this.getCriteriaFieldName();
 
     if (this.form.grid.sourceWidget.lazyFiltering) {
@@ -304,10 +358,15 @@ isc.OBFKFilterTextItem.addProperties({
     }
   },
 
-  getCriterion: function (textMatchStyle) {
-    var value = this.getCriteriaValue(),
-        operator, fieldName, crit;
+  getCriterion: function (textMatchStyle, forceFilterByIdentifier) {
+    var value, operator, fieldName, crit;
 
+    // sometimes (i.e. when the filter drop down is populated) it is needed to force a filter using the identifier
+    // if the filter using the identifier is not allowed, the filter type will be reverted to 'id' at the end of this function
+    if (forceFilterByIdentifier) {
+      this.filterType = 'identifier';
+    }
+    value = this.getCriteriaValue();
     if (value === null || isc.is.emptyString(value)) {
       return;
     }
@@ -335,14 +394,22 @@ isc.OBFKFilterTextItem.addProperties({
       crit = this.replaceCriterionOperator(crit, value, this.operator);
     }
 
+    if (this.allowFkFilterByIdentifier === false && !this.grid.view.alwaysFilterFksByIdentifier) {
+      this.filterType = 'id';
+    }
+
     return crit;
   },
 
   getOperator: function (textMatchStyle) {
-    if (this.operator && this.operator !== 'iContains') {
-      return this.operator;
+    if (this.filterType === 'id') {
+      return 'equals';
     } else {
-      return this.Super('getOperator', arguments);
+      if (this.operator && this.operator !== 'iContains') {
+        return this.operator;
+      } else {
+        return this.Super('getOperator', arguments);
+      }
     }
   },
 
@@ -366,15 +433,21 @@ isc.OBFKFilterTextItem.addProperties({
 
   setCriterion: function (criterion) {
     var i, value, values = [],
-        operators, valueSet = false,
-        criteria = criterion ? criterion.criteria : null;
+        operators = isc.DataSource.getSearchOperators(),
+        valueSet = false,
+        criteria = criterion ? criterion.criteria : null,
+        identifier;
     if (criteria && criteria.length && criterion.operator === 'or') {
-      operators = isc.DataSource.getSearchOperators();
       for (i = 0; i < criteria.length; i++) {
         //handles case where column filter symbols are removed. Refer Issue https://issues.openbravo.com/view.php?id=23925
         if (criteria[i].operator !== "iContains" && criteria[i].operator !== "contains" && criteria[i].operator !== "regexp") {
-          if (operators[criteria[i].operator] && (operators[criteria[i].operator].ID === criteria[i].operator) && operators[criteria[i].operator].symbol && criteria[i].value && (criteria[i].value.indexOf(operators[criteria[i].operator].symbol) === -1)) {
-            values.push(operators[criteria[i].operator].symbol + criteria[i].value);
+          value = criteria[i].value;
+          if (operators[criteria[i].operator] && (operators[criteria[i].operator].ID === criteria[i].operator) && operators[criteria[i].operator].symbol && value && (value.indexOf(operators[criteria[i].operator].symbol) === -1)) {
+            identifier = this.getRecordIdentifierFromId(value);
+            if (this.filterType === 'id' && identifier) {
+              value = identifier;
+            }
+            values.push(operators[criteria[i].operator].symbol + value);
             valueSet = true;
           }
         }
@@ -386,6 +459,17 @@ isc.OBFKFilterTextItem.addProperties({
       this.setValue(values);
     } else {
       value = this.buildValueExpressions(criterion);
+      if (this.filterType === 'id') {
+        identifier = this.getRecordIdentifierFromId(value);
+        if (identifier) {
+          value = identifier;
+        }
+      }
+      if (criterion.operator !== "iContains" && criterion.operator !== "contains" && criterion.operator !== "regexp") {
+        if (operators[criterion.operator] && (operators[criterion.operator].ID === criterion.operator) && operators[criterion.operator].symbol && value && (value.indexOf(operators[criterion.operator].symbol) === -1)) {
+          value = operators[criterion.operator].symbol + value;
+        }
+      }
       this.setValue(value);
     }
     // if iBetweenInclusive operator is used, delete the ZZZZZZZZZZ
@@ -400,7 +484,11 @@ isc.OBFKFilterTextItem.addProperties({
   // see also the setValuesAsCriteria in ob-grid-js which again translates
   // back
   getCriteriaFieldName: function () {
-    return this.criteriaField || this.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER;
+    if (this.filterType === 'id') {
+      return this.name;
+    } else {
+      return this.criteriaField || this.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER;
+    }
   },
 
   // solve a small bug in the value expressions
@@ -456,5 +544,79 @@ isc.OBFKFilterTextItem.addProperties({
       }
     }
     return false;
+  },
+
+  pickValue: function (value) {
+    // this is needed to discern if the text has been changed automatically when a record is selected, or manually by the user
+    this._pickingValue = true;
+    this.Super('pickValue', arguments);
+    delete this._pickingValue;
+  },
+
+  handleChanged: function (value) {
+    if (!this.grid.sourceWidget.alwaysFilterFksByIdentifier && (this._pickingValue || this.allowFkFilterByIdentifier === false)) {
+      // if the filter text has changed because a value has been ficked from the filter drop down, use the id filter
+      // do this also if the only filter type allowed is 'id'
+      this.filterType = 'id';
+    } else {
+      // otherwise use the standard filter using the record identifier
+      this.filterType = 'identifier';
+    }
+    this.Super('handleChanged', arguments);
+  },
+
+  // if the filterType is ID, try to return the record ids instead of the record identifiers
+  getCriteriaValue: function () {
+    var value, values = this.getValue(),
+        record, i, j, criteriaValues = [],
+        recordIds;
+    if (values && this.filterType === 'id') {
+      for (i = 0; i < values.length; i++) {
+        value = values[i];
+        if (value.startsWith('==')) {
+          // if the value has the equals operator prefix, get rid of it
+          value = value.substring(2);
+        }
+        recordIds = this.getRecordIdsFromIdentifier(value);
+        if (!recordIds) {
+          // if the record is not found  or it does not have an id, use the standard criteria value
+          return this.Super('getCriteriaValue', arguments);
+        } else {
+          for (j = 0; j < recordIds.length; j++) {
+            if (!criteriaValues.contains(recordIds[j])) {
+              criteriaValues.add(recordIds[j]);
+            }
+          }
+        }
+      }
+      return criteriaValues;
+    } else {
+      return this.Super('getCriteriaValue', arguments);
+    }
+  },
+
+  // given an identifier, returns an array of the filter picklist records that have that identifier 
+  getRecordIdsFromIdentifier: function (identifier) {
+    var records, recordIds = [],
+        i;
+    if (this.pickList && this.pickList.data.find(OB.Constants.IDENTIFIER, identifier)) {
+      records = this.pickList.data.findAll(OB.Constants.IDENTIFIER, identifier);
+    } else if (this.filterAuxCache && this.filterAuxCache.find(OB.Constants.IDENTIFIER, identifier)) {
+      records = this.filterAuxCache.findAll(OB.Constants.IDENTIFIER, identifier);
+    }
+    for (i = 0; i < records.length; i++) {
+      recordIds.add(records[i][OB.Constants.ID]);
+    }
+    return recordIds;
+  },
+
+  getRecordIdentifierFromId: function (id) {
+    var recordIdentifier;
+    if (this.pickList && this.pickList.data.find(OB.Constants.ID, id)) {
+      recordIdentifier = this.pickList.data.find(OB.Constants.ID, id)[OB.Constants.IDENTIFIER];
+    } else if (this.filterAuxCache && this.filterAuxCache.find(OB.Constants.ID, id)) {
+      recordIdentifier = this.filterAuxCache.find(OB.Constants.ID, id)[OB.Constants.IDENTIFIER];
+    }
+    return recordIdentifier;
   }
 });

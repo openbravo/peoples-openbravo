@@ -242,13 +242,15 @@ public class FIN_AddPayment {
       // Detail for this payment already exists. Payment being edited
       // If amount has changed payment schedule details needs to be updated. Aggregate amount
       // coming from unpaid schedule detail which remains unpaid
-      if (paymentScheduleDetail.getAmount().compareTo(paymentDetailAmount) != 0) {
+      if (paymentScheduleDetail.getAmount().add(paymentScheduleDetail.getWriteoffAmount())
+          .compareTo(paymentDetailAmount) != 0) {
         // update Amounts as they have changed
         assignedAmount = assignedAmount.subtract(paymentScheduleDetail.getPaymentDetails()
             .getAmount());
         // update detail with the new value
         List<FIN_PaymentScheduleDetail> outStandingPSDs = getOutstandingPSDs(paymentScheduleDetail);
-        BigDecimal difference = paymentScheduleDetail.getAmount().subtract(paymentDetailAmount);
+        BigDecimal difference = paymentScheduleDetail.getAmount()
+            .add(paymentScheduleDetail.getWriteoffAmount()).subtract(paymentDetailAmount);
         // Assume doubtful debt is always positive
         BigDecimal doubtFulDebtAmount = BigDecimal.ZERO;
         if (outStandingPSDs.size() == 0) {
@@ -260,9 +262,14 @@ public class FIN_AddPayment {
             FIN_PaymentScheduleDetail outstandingPSD = (FIN_PaymentScheduleDetail) DalUtil.copy(
                 paymentScheduleDetail, false);
             outstandingPSD.setAmount(difference);
+            outstandingPSD.setWriteoffAmount(BigDecimal.ZERO);
             outstandingPSD.setDoubtfulDebtAmount(paymentScheduleDetail.getDoubtfulDebtAmount()
                 .subtract(doubtFulDebtAmount));
             outstandingPSD.setPaymentDetails(null);
+            paymentScheduleDetail.setAmount(paymentScheduleDetail.getAmount().add(
+                paymentScheduleDetail.getWriteoffAmount()));
+            paymentScheduleDetail.setWriteoffAmount(BigDecimal.ZERO);
+            paymentScheduleDetail.getPaymentDetails().setWriteoffAmount(BigDecimal.ZERO);
             OBDal.getInstance().save(outstandingPSD);
           } else {
             // If it is write Off then incorporate all doubtful debt
@@ -294,6 +301,8 @@ public class FIN_AddPayment {
                   paymentScheduleDetail.getDoubtfulDebtAmount().subtract(doubtFulDebtAmount)));
               OBDal.getInstance().save(outstandingPSD);
             }
+            paymentScheduleDetail.setWriteoffAmount(BigDecimal.ZERO);
+            paymentScheduleDetail.getPaymentDetails().setWriteoffAmount(BigDecimal.ZERO);
           } else {
             paymentScheduleDetail.setWriteoffAmount(difference.add(outstandingPSD.getAmount()));
             doubtFulDebtAmount = outstandingPSD.getDoubtfulDebtAmount().add(
@@ -1129,7 +1138,11 @@ public class FIN_AddPayment {
    *          Amount of the Payment Schedule Detail or Payment Detail
    * @param writeOffAmount
    *          Write off amount, null or 0 if not applicable.
+   * 
+   * @Deprecated This method doesn't support Cash VAT flow, so it's better to use
+   *             {@link #updatePaymentDetail(FIN_PaymentScheduleDetail, FIN_Payment, BigDecimal, boolean)}
    */
+  @Deprecated
   public static void updatePaymentScheduleAmounts(FIN_PaymentSchedule paymentSchedule,
       BigDecimal amount, BigDecimal writeOffAmount) {
     updatePaymentScheduleAmounts(null, paymentSchedule, amount, writeOffAmount);
@@ -1200,8 +1213,10 @@ public class FIN_AddPayment {
             finalSettlementDate));
       }
       invoice.setPaymentComplete(true);
-    } else
+    } else {
       invoice.setPaymentComplete(false);
+      invoice.setFinalSettlementDate(null);
+    }
     List<FIN_PaymentSchedule> paymentSchedList = invoice.getFINPaymentScheduleList();
     Date firstDueDate = null;
     for (FIN_PaymentSchedule paymentSchedule : paymentSchedList) {
@@ -1349,10 +1364,33 @@ public class FIN_AddPayment {
    */
   public static OBError processPayment(VariablesSecureApp vars, ConnectionProvider conn,
       String strAction, FIN_Payment payment) throws Exception {
+    OBError myMessage = processPayment(vars, conn, strAction, payment, null);
+    return myMessage;
+  }
+
+  /**
+   * It calls the PAyment Process for the given payment, action and origin.
+   * 
+   * @param vars
+   *          VariablesSecureApp with the session data.
+   * @param conn
+   *          ConnectionProvider with the connection being used.
+   * @param strAction
+   *          String with the action of the process. {P, D, R}
+   * @param payment
+   *          FIN_Payment that needs to be processed.
+   * @param comingFrom
+   *          Origin where the process is invoked
+   * @return a OBError with the result message of the process.
+   * @throws Exception
+   */
+  public static OBError processPayment(VariablesSecureApp vars, ConnectionProvider conn,
+      String strAction, FIN_Payment payment, String comingFrom) throws Exception {
     ProcessBundle pb = new ProcessBundle("6255BE488882480599C81284B70CD9B3", vars).init(conn);
     HashMap<String, Object> parameters = new HashMap<String, Object>();
     parameters.put("action", strAction);
     parameters.put("Fin_Payment_ID", payment.getId());
+    parameters.put("comingFrom", comingFrom);
     pb.setParams(parameters);
     OBError myMessage = null;
     new FIN_PaymentProcess().execute(pb);

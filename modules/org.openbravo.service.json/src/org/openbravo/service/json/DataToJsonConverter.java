@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.ObjectNotFoundException;
@@ -78,6 +79,13 @@ public class DataToJsonConverter {
   // limit the json serialization to these properties
   private List<String> selectedProperties = new ArrayList<String>();
 
+  // display property used for table reference fields
+  private String displayProperty = null;
+
+  // entity of the data being converted. will be used in the convertToJsonObjects, as there are no
+  // BaseOBObjects from which to infer the entity
+  private Entity entity;
+
   private static final Logger log = LoggerFactory.getLogger(DataToJsonConverter.class);
 
   /**
@@ -93,12 +101,26 @@ public class DataToJsonConverter {
       for (Map<String, Object> dataInstance : data) {
         final JSONObject jsonObject = new JSONObject();
         for (String key : dataInstance.keySet()) {
+          Property property = null;
+          if (this.entity != null) {
+            property = entity.getProperty(key);
+          }
           final Object value = dataInstance.get(key);
           if (value instanceof BaseOBObject) {
             addBaseOBObject(jsonObject, null, key, null, (BaseOBObject) value);
           } else {
-            // TODO: format!
-            jsonObject.put(key, convertPrimitiveValue(value));
+            Object convertedValue = null;
+            if (value != null && property != null && property.isPrimitive()) {
+              // if the property is known and the value is not null, use the
+              // convertPrimitiveValue(property, value) method to convert the value. It is more
+              // complete than convertPrimitiveValue(value) as the former converts dates from the
+              // server timezone offset to UTC, among other things
+              convertedValue = convertPrimitiveValue(property, value);
+            } else {
+              // TODO: format!
+              convertedValue = convertPrimitiveValue(value);
+            }
+            jsonObject.put(key, convertedValue);
           }
         }
         jsonObjects.add(jsonObject);
@@ -204,6 +226,19 @@ public class DataToJsonConverter {
           } else {
             jsonObject.put(replaceDots(additionalProperty), convertPrimitiveValue(property, value));
           }
+        }
+      }
+      // When table references are set, the identifier should contain the display property for as it
+      // is done in the grid data. Refer https://issues.openbravo.com/view.php?id=26696
+      if (StringUtils.isNotEmpty(displayProperty)) {
+        if (jsonObject.has(displayProperty + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER)
+            && !jsonObject.get(displayProperty + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER)
+                .equals(jsonObject.NULL)) {
+          jsonObject.put(JsonConstants.IDENTIFIER,
+              jsonObject.get(displayProperty + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER));
+        } else if (jsonObject.has(displayProperty)
+            && !jsonObject.get(displayProperty).equals(jsonObject.NULL)) {
+          jsonObject.put(JsonConstants.IDENTIFIER, jsonObject.get(displayProperty));
         }
       }
 
@@ -374,11 +409,11 @@ public class DataToJsonConverter {
       // See issue https://issues.openbravo.com/view.php?id=22971
       return "";
     }
-    if (value instanceof Date) {
-      return xmlDateFormat.format(value);
-    }
     if (value instanceof Timestamp) {
       return xmlDateTimeFormat.format(value);
+    }
+    if (value instanceof Date) {
+      return xmlDateFormat.format(value);
     }
     return value;
   }
@@ -403,5 +438,13 @@ public class DataToJsonConverter {
       if (!selectedProp.isEmpty())
         selectedProperties.add(selectedProp);
     }
+  }
+
+  public void setDisplayProperty(String displayPropertyValue) {
+    displayProperty = displayPropertyValue;
+  }
+
+  public void setEntity(Entity entity) {
+    this.entity = entity;
   }
 }

@@ -60,15 +60,21 @@ public class FKComboUIDefinition extends ForeignKeyUIDefinition {
       Reference referenceSearchKey = column.getReferenceSearchKey();
       if (referenceSearchKey != null && referenceSearchKey.getADReferencedTableList().size() > 0) {
         ReferencedTable referencedTable = referenceSearchKey.getADReferencedTableList().get(0);
-        if (referencedTable != null
-            && isTableWithMultipleIdentifierColumns(referencedTable.getTable())) {
+        if (referencedTable != null) {
           Property prop = KernelUtils.getInstance().getPropertyFromColumn(column);
           Property referencedProp = KernelUtils.getInstance().getPropertyFromColumn(
               referencedTable.getDisplayedColumn());
           if (prop != null && referencedProp != null) {
-            criteriaField = ", criteriaField: " + "'" + prop.getName() + DalUtil.FIELDSEPARATOR
-                + referencedProp.getName() + "', criteriaDisplayField: '"
-                + referencedProp.getName() + "'";
+            if (isTableWithMultipleIdentifierColumns(referencedTable.getTable())) {
+              criteriaField = ", criteriaField: " + "'" + prop.getName() + DalUtil.FIELDSEPARATOR
+                  + referencedProp.getName() + "', criteriaDisplayField: '"
+                  + referencedProp.getName() + "'";
+            }
+            // always pass the display property in case of table references. This is used to fetch
+            // the record properly in grid filter.
+            // refer issue https://issues.openbravo.com/view.php?id=26696
+            criteriaField = criteriaField.concat(", displayProperty: '" + referencedProp.getName()
+                + "'");
           }
         }
       }

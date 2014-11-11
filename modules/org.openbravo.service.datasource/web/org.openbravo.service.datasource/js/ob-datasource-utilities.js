@@ -188,6 +188,17 @@ isc.OBRestDataSource.addProperties({
     if (dsRequest.params && this.requestProperties && this.requestProperties.params) {
       isc.addProperties(dsRequest.params, this.requestProperties.params);
     }
+    // if the datasource is not paginated, paginate them in case of selectors working in 2.50 UI.
+    // in other cases error is thrown from server side.
+    // refer issue https://issues.openbravo.com/view.php?id=26734
+    if (dsRequest.componentId === 'isc_OBSelectorWidget_0') {
+      if (dsRequest.startRow === undefined) {
+        dsRequest.startRow = 0;
+      }
+      if (dsRequest.endRow === undefined) {
+        dsRequest.endRow = 75;
+      }
+    }
     this.Super('sendDSRequest', arguments);
   },
 

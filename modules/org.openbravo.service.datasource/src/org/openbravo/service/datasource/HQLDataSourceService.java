@@ -19,6 +19,7 @@
 package org.openbravo.service.datasource;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +32,7 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.ScrollableResults;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -133,12 +134,23 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     String hqlQuery = countQuery.getQueryString();
     int nRows = -1;
     if (hqlQuery.toUpperCase().contains(GROUPBY)) {
-      // No risk in using list, the request is done always paginated
-      nRows = countQuery.list().size();
+      justCount = false;
+      countQuery = getQuery(table, parameters, justCount);
+      return getGroupedCount(countQuery);
     } else {
       nRows = ((Number) countQuery.uniqueResult()).intValue();
     }
     return nRows;
+  }
+
+  protected int getGroupedCount(Query countQuery) {
+    int nRows = -1;
+    ScrollableResults scrollableResults = countQuery.scroll();
+    if (scrollableResults.last()) {
+      nRows = scrollableResults.getRowNumber();
+    }
+    scrollableResults.close();
+    return nRows + 1;
   }
 
   @Override
@@ -301,7 +313,12 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
       // Injection and transforms might have modified the query removing named parameters. Check
       // that key is still in the query.
       if (hqlQuery.contains(key)) {
-        query.setParameter(key, queryNamedParameters.get(key));
+        Object parameter = queryNamedParameters.get(key);
+        if (parameter instanceof Collection<?>) {
+          query.setParameterList(key, (Collection<?>) parameter);
+        } else {
+          query.setParameter(key, parameter);
+        }
       }
     }
 
@@ -609,10 +626,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     if (property == null) {
       orderByClause = ORDERBY + propertyName;
     } else {
-      OBCriteria<Column> columnCriteria = OBDal.getInstance().createCriteria(Column.class);
-      columnCriteria.add(Restrictions.eq(Column.PROPERTY_TABLE, table));
-      columnCriteria.add(Restrictions.eq(Column.PROPERTY_NAME, property.getColumnName()));
-      Column column = (Column) columnCriteria.uniqueResult();
+    Column column = OBDal.getInstance().get(Column.class, property.getColumnId());
       if (!orderByClause.isEmpty()) {
         orderByClause = ORDERBY + column.getEntityAlias();
         if (property.getTargetEntity() != null) {

@@ -63,6 +63,11 @@ public class ForeignKeyUIDefinition extends UIDefinition {
       }
     }
 
+    Boolean allowFkFilterByIdentifier = (Boolean) readGridConfigurationSetting("allowFkFilterByIdentifier");
+    if (Boolean.FALSE.equals(allowFkFilterByIdentifier)) {
+      append = append + ", allowFkFilterByIdentifier: " + allowFkFilterByIdentifier.toString();
+    }
+
     return super.getFilterEditorPropertiesProperty(field) + append;
   }
 

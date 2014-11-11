@@ -41,7 +41,7 @@ public class AddPaymentOnProcessActionHandler extends BaseActionHandler {
   protected JSONObject execute(Map<String, Object> parameters, String data) {
     JSONObject result = new JSONObject();
     JSONObject errorMessage = new JSONObject();
-    OBContext.setAdminMode();
+    OBContext.setAdminMode(true);
     try {
       final JSONObject jsonData = new JSONObject(data);
       boolean isReceipt = "true".equals(jsonData.getString("issotrx"));

@@ -266,7 +266,11 @@ OB.ViewFormProperties = {
   },
 
   editNewRecord: function (preventFocus) {
+    var grid = this.view.viewGrid;
     this.clearValues();
+    if (grid.lazyFiltering && !isc.isA.ResultSet(grid.data)) {
+      OB.Utilities.createResultSetManually(grid);
+    }
     var ret = this.Super('editNewRecord', arguments);
     this.doEditRecordActions(preventFocus, true);
     return ret;
@@ -1032,7 +1036,7 @@ OB.ViewFormProperties = {
       isDate = field.type && (typeInstance.inheritsFrom === 'date' || typeInstance.inheritsFrom === 'time');
       isDateTime = field.type && typeInstance.inheritsFrom === 'datetime';
       isImage = field.type && typeInstance.inheritsFrom === 'image';
-      if (isDateTime && typeInstance.editorType && new Function('return isc.' + typeInstance.editorType + '.getPrototype().isAbsoluteDateTime')()) {
+      if (isDateTime && typeInstance.editorType && OB.Utilities.getCanvasProp(typeInstance.editorType, 'isAbsoluteDateTime')) {
         isAbsoluteDateTime = true;
         isDateTime = false;
       }
@@ -1556,7 +1560,7 @@ OB.ViewFormProperties = {
     callback = function (resp, data, req) {
       var index1, index2, view = form.view,
           localRecord, status = resp.status,
-          sessionProperties, keepSelection, gridRefreshCallback, theGrid, theId, id = form.getValue('id');
+          sessionProperties, keepSelection, gridRefreshCallback, theGrid, theId, id;
 
       if (this.hasOwnProperty('previousExplicitOffline')) {
         isc.Offline.explicitOffline = this.previousExplicitOffline;
@@ -1565,8 +1569,11 @@ OB.ViewFormProperties = {
 
       // if no recordIndex then select explicitly
       if (recordIndex === -1) {
+        id = form.getValue('id');
         record = view.viewGrid.data.find('id', id);
-        recordIndex = view.viewGrid.data.indexOf(record);
+        if (record !== null) {
+          recordIndex = view.viewGrid.data.indexOf(record);
+        }
       }
 
       // not in the filter, insert the record in the cachedata so it will be made visible
@@ -1651,15 +1658,10 @@ OB.ViewFormProperties = {
         // remove any edit info in the grid
         view.viewGrid.discardEdits(recordIndex, null, false, isc.ListGrid.PROGRAMMATIC, true);
 
-        // Check if Id has changed 
-        if (id === form.getValue('id')) {
-          // Change some labels, set isNew as false
-          form.setNewState(false);
-        } else {
-          // New record, set isNew as true
-          form.setNewState(true);
-        }
-
+        // Change some labels:
+        //  * set isNew as false if we continue editing same record or we move to an existent one
+        //  * set isNew to true if autosaving record to start editing a new one
+        form.setNewState(form.isNewRecord());
 
         view.refreshParentRecord();
 

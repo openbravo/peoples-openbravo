@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2013 Openbravo SLU
+ * All portions are Copyright (C) 2012-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -20,25 +20,41 @@ package org.openbravo.costing;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.ScrollMode;
+import org.hibernate.ScrollableResults;
+import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.util.OBClassLoader;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.OBDateUtils;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.model.common.currency.Currency;
+import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.materialmgmt.cost.CostAdjustment;
+import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
 import org.openbravo.model.materialmgmt.cost.CostingRule;
+import org.openbravo.model.materialmgmt.cost.LCReceipt;
+import org.openbravo.model.materialmgmt.cost.LandedCost;
+import org.openbravo.model.materialmgmt.cost.LandedCostCost;
 import org.openbravo.model.materialmgmt.cost.TransactionCost;
 import org.openbravo.model.materialmgmt.transaction.InternalConsumption;
 import org.openbravo.model.materialmgmt.transaction.InternalMovement;
 import org.openbravo.model.materialmgmt.transaction.InventoryCount;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ProductionTransaction;
+import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.model.procurement.ReceiptInvoiceMatch;
 
 /**
@@ -52,6 +68,8 @@ public class CostingServer {
   private CostingRule costingRule;
   private Currency currency;
   private Organization organization;
+  final static String strCategoryLandedCost = "LDC";
+  final static String strTableLandedCost = "M_LandedCost";
 
   public CostingServer(MaterialTransaction transaction) {
     this.transaction = transaction;
@@ -68,8 +86,9 @@ public class CostingServer {
   /**
    * Calculates and stores in the database the cost of the transaction.
    * 
+   * 
    */
-  public void process() throws OBException {
+  public void process() {
     if (trxCost != null) {
       // Transaction cost has already been calculated. Nothing to do.
       return;
@@ -101,11 +120,177 @@ public class CostingServer {
       // insert on m_transaction_cost
       createTransactionCost();
       OBDal.getInstance().save(transaction);
+      OBDal.getInstance().flush();
+
       setNotPostedTransaction();
+      checkCostAdjustments();
     } finally {
       OBContext.restorePreviousMode();
     }
     return;
+  }
+
+  private void checkCostAdjustments() {
+    TrxType trxType = TrxType.getTrxType(transaction);
+    if (trxType == TrxType.InventoryClosing) {
+      OBDal.getInstance().refresh(transaction.getPhysicalInventoryLine().getPhysInventory());
+      if (transaction.getPhysicalInventoryLine().getPhysInventory()
+          .getCostingRuleInitCloseInventoryList().size() > 0) {
+        // Closing inventories from costing rule process are not automatically adjusted.
+        return;
+      }
+    }
+    boolean checkPriceCorrectionTrxs = false;
+    boolean checkNegativeStockCorrectionTrxs = false;
+    // check if price correction is needed
+    try {
+      checkPriceCorrectionTrxs = Preferences.getPreferenceValue(
+          CostAdjustmentUtils.ENABLE_AUTO_PRICE_CORRECTION_PREF, true,
+          OBContext.getOBContext().getCurrentClient(),
+          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+          OBContext.getOBContext().getRole(), null).equals("Y");
+    } catch (PropertyException e1) {
+      checkPriceCorrectionTrxs = false;
+    }
+    if (checkPriceCorrectionTrxs && transaction.isCheckpricedifference()) {
+      PriceDifferenceProcess.processPriceDifferenceTransaction(transaction);
+    }
+
+    // check if landed cost need to be processed
+    if (trxType == TrxType.Receipt || trxType == TrxType.ReceiptReturn
+        || trxType == TrxType.ReceiptNegative) {
+      StringBuffer where = new StringBuffer();
+      where.append(" as lc");
+      where.append(" where not exists ");
+      where.append("   (select 1 from " + MaterialTransaction.ENTITY_NAME + " mtrans");
+      where.append("     join mtrans." + MaterialTransaction.PROPERTY_GOODSSHIPMENTLINE + " iol");
+      where.append("   where iol." + ShipmentInOutLine.PROPERTY_SHIPMENTRECEIPT + ".id = :inoutId");
+      where.append("     and mtrans." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + "= false");
+      where.append("   )");
+      where.append("   and lc." + LandedCostCost.PROPERTY_LANDEDCOST + " is null");
+      where.append("   and lc." + LandedCostCost.PROPERTY_GOODSSHIPMENT + ".id = :inoutId");
+      OBQuery<LandedCostCost> qry = OBDal.getInstance().createQuery(LandedCostCost.class,
+          where.toString());
+      qry.setNamedParameter("inoutId", transaction.getGoodsShipmentLine().getShipmentReceipt()
+          .getId());
+
+      ScrollableResults lcLines = qry.scroll(ScrollMode.FORWARD_ONLY);
+      try {
+        LandedCost landedCost = null;
+
+        while (lcLines.next()) {
+          if (landedCost == null) {
+            final DocumentType docType = FIN_Utility.getDocumentType(organization,
+                strCategoryLandedCost);
+            final String docNo = FIN_Utility.getDocumentNo(docType, strTableLandedCost);
+
+            landedCost = OBProvider.getInstance().get(LandedCost.class);
+            landedCost.setReferenceDate(new Date());
+            landedCost.setDocumentType(docType);
+            landedCost.setDocumentNo(docNo);
+            landedCost.setOrganization(organization);
+            OBDal.getInstance().save(landedCost);
+
+            LCReceipt lcReceipt = OBProvider.getInstance().get(LCReceipt.class);
+            lcReceipt.setLandedCost(landedCost);
+            lcReceipt.setOrganization(organization);
+            lcReceipt.setGoodsShipment(transaction.getGoodsShipmentLine().getShipmentReceipt());
+            OBDal.getInstance().save(lcReceipt);
+
+          }
+          final LandedCostCost landedCostCost = (LandedCostCost) lcLines.get()[0];
+          landedCostCost.setLandedCost(landedCost);
+          landedCost.getLandedCostCostList().add(landedCostCost);
+          OBDal.getInstance().save(landedCost);
+          OBDal.getInstance().save(landedCostCost);
+        }
+
+        if (landedCost != null) {
+          OBDal.getInstance().flush();
+          JSONObject message = LandedCostProcess.doProcessLandedCost(landedCost);
+
+          if (message.get("severity") != "success") {
+            throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingLandedCost@")
+                + ": " + landedCost.getDocumentNo() + " - " + message.getString("text"));
+          }
+        }
+      } catch (JSONException e) {
+        throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingLandedCost@"));
+      } finally {
+        lcLines.close();
+      }
+    }
+
+    if (getCostingRule().isBackdatedTransactionsFixed()
+        && transaction.getMovementDate().after(getCostingRule().getStartingDate())
+        && CostAdjustmentUtils.isNeededBackdatedCostAdjustment(transaction, getCostingRule()
+            .isWarehouseDimension(), getCostingRule().getStartingDate())) {
+      // BDT= Backdated transaction
+      CostAdjustment costAdjustmentHeader = CostAdjustmentUtils.insertCostAdjustmentHeader(
+          transaction.getOrganization(), "BDT");
+
+      CostAdjustmentLine cal = CostAdjustmentUtils.insertCostAdjustmentLine(transaction,
+          costAdjustmentHeader, null, Boolean.TRUE, transaction.getMovementDate());
+      cal.setBackdatedTrx(Boolean.TRUE);
+      OBDal.getInstance().save(cal);
+
+      OBDal.getInstance().flush();
+      JSONObject message = CostAdjustmentProcess.doProcessCostAdjustment(costAdjustmentHeader);
+
+      try {
+        if (message.get("severity") != "success") {
+          throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@") + ": "
+              + costAdjustmentHeader.getDocumentNo() + " - " + message.getString("text"));
+        }
+      } catch (JSONException ignore) {
+        throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@"));
+      }
+    }
+
+    // check if negative stock correction should be done
+    try {
+      checkNegativeStockCorrectionTrxs = Preferences.getPreferenceValue(
+          CostAdjustmentUtils.ENABLE_NEGATIVE_STOCK_CORRECTION_PREF, true,
+          OBContext.getOBContext().getCurrentClient(),
+          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+          OBContext.getOBContext().getRole(), null).equals("Y");
+    } catch (PropertyException e1) {
+      checkNegativeStockCorrectionTrxs = false;
+    }
+
+    boolean modifiesAvg = AverageAlgorithm.modifiesAverage(TrxType.getTrxType(transaction));
+    BigDecimal currentStock = CostAdjustmentUtils.getStockOnTransactionDate(getOrganization(),
+        transaction, getCostingAlgorithm().costDimensions, transaction.getProduct().isProduction(),
+        costingRule.isBackdatedTransactionsFixed());
+    // the stock previous to transaction was negative
+    if (checkNegativeStockCorrectionTrxs
+        && currentStock.compareTo(transaction.getMovementQuantity()) < 0 && modifiesAvg) {
+
+      CostAdjustment costAdjustmentHeader = CostAdjustmentUtils.insertCostAdjustmentHeader(
+          transaction.getOrganization(), "NSC"); // NSC= Negative Stock Correction
+
+      Date acctDate = transaction.getMovementDate();
+      CostAdjustmentLine cal = CostAdjustmentUtils.insertCostAdjustmentLine(transaction,
+          costAdjustmentHeader, null, Boolean.TRUE, acctDate);
+      cal.setNegativeStockCorrection(Boolean.TRUE);
+      cal.setUnitCost(Boolean.FALSE);
+      OBDal.getInstance().save(cal);
+      OBDal.getInstance().flush();
+
+      JSONObject message = CostAdjustmentProcess.doProcessCostAdjustment(costAdjustmentHeader);
+
+      try {
+        if (!"success".equals(message.get("severity"))) {
+          throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@") + ": "
+              + costAdjustmentHeader.getDocumentNo() + " - " + message.getString("text"));
+        }
+      } catch (JSONException e) {
+        throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@"));
+      }
+    }
+    // update trxCost after cost adjustments
+    transaction = OBDal.getInstance().get(MaterialTransaction.class, transaction.getId());
+    trxCost = CostAdjustmentUtils.getTrxCost(transaction, false, getCostCurrency());
   }
 
   private void setNotPostedTransaction() {
@@ -139,7 +324,9 @@ public class CostingServer {
       break;
     }
     case InventoryDecrease:
-    case InventoryIncrease: {
+    case InventoryIncrease:
+    case InventoryOpening:
+    case InventoryClosing: {
       InventoryCount inventory = transaction.getPhysicalInventoryLine().getPhysInventory();
       if (!"N".equals(inventory.getPosted()) || !"Y".equals(inventory.getPosted())) {
         inventory.setPosted("N");
@@ -222,6 +409,8 @@ public class CostingServer {
     transactionCost.setCost(trxCost);
     transactionCost.setCurrency(currency);
     transactionCost.setCostDate(transaction.getTransactionProcessDate());
+    transactionCost.setAccountingDate(transaction.getMovementDate());
+    transactionCost.setUnitCost(Boolean.TRUE);
     OBDal.getInstance().save(transactionCost);
     transaction.getTransactionCostList().add(transactionCost);
   }
@@ -301,11 +490,11 @@ public class CostingServer {
    * Transaction types implemented on the cost engine.
    */
   public enum TrxType {
-    Shipment, ShipmentReturn, ShipmentVoid, ShipmentNegative, Receipt, ReceiptReturn, ReceiptVoid, ReceiptNegative, InventoryIncrease, InventoryDecrease, IntMovementFrom, IntMovementTo, InternalCons, InternalConsNegative, InternalConsVoid, BOMPart, BOMProduct, ManufacturingConsumed, ManufacturingProduced, Unknown;
+    Shipment, ShipmentReturn, ShipmentVoid, ShipmentNegative, Receipt, ReceiptReturn, ReceiptVoid, ReceiptNegative, InventoryIncrease, InventoryDecrease, InventoryOpening, InventoryClosing, IntMovementFrom, IntMovementTo, InternalCons, InternalConsNegative, InternalConsVoid, BOMPart, BOMProduct, ManufacturingConsumed, ManufacturingProduced, Unknown;
     /**
      * Given a Material Management transaction returns its type.
      */
-    static TrxType getTrxType(MaterialTransaction transaction) {
+    public static TrxType getTrxType(MaterialTransaction transaction) {
       if (transaction.getGoodsShipmentLine() != null) {
         // Receipt / Shipment
         org.openbravo.model.materialmgmt.transaction.ShipmentInOut inout = transaction
@@ -347,6 +536,13 @@ public class CostingServer {
         }
       } else if (transaction.getPhysicalInventoryLine() != null) {
         // Physical Inventory
+        String invType = transaction.getPhysicalInventoryLine().getPhysInventory()
+            .getInventoryType();
+        if ("O".equals(invType)) {
+          return InventoryOpening;
+        } else if ("C".equals(invType)) {
+          return InventoryClosing;
+        }
         if (transaction.getMovementQuantity().compareTo(BigDecimal.ZERO) > 0) {
           log4j.debug("Physical inventory, increments stock: "
               + transaction.getPhysicalInventoryLine().getIdentifier());
@@ -402,6 +598,5 @@ public class CostingServer {
       }
       return Unknown;
     }
-
   }
 }

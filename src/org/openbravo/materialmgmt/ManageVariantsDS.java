@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013 Openbravo SLU
+ * All portions are Copyright (C) 2013-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -127,6 +127,10 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
         prChUseCode.put(prCh, prChAux);
         i++;
       }
+
+      if (variantNumber > 1000) {
+        return result;
+      }
       totalMaxLength += Long.toString(variantNumber).length();
       boolean useCodes = totalMaxLength <= searchKeyLength;
 
@@ -158,8 +162,9 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
                 && filteredValues.contains(currentValues[i].getCharacteristicValue());
           }
 
-          if (useCodes && prChConfAux.isUseCode()) {
-            searchKey += prChConf.getCode();
+          if (useCodes && prChConfAux.isUseCode() && prChConf != null
+              && StringUtils.isNotBlank(prChConf.getCode())) {
+            searchKey += "_" + prChConf.getCode() + "_";
           }
         }
         for (int j = 0; j < (Long.toString(variantNumber).length() - Integer.toString(productNo)

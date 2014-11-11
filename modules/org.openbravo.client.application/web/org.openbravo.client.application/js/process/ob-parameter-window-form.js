@@ -39,7 +39,7 @@ isc.OBParameterWindowForm.addProperties({
   // this function is invoked on the blur action of the formitems
   // this is the proper place to execute the client-side callouts
   handleItemChange: function (item) {
-    var affectedParams, i, field;
+    var affectedParams, i, field, me = this;
     // Execute onChangeFunctions if they exist
     if (this && OB.OnChangeRegistry.hasOnChange(this.paramWindow.viewId, item)) {
       OB.OnChangeRegistry.call(this.paramWindow.viewId, item, this.paramWindow, this, this.paramWindow.viewGrid);
@@ -58,8 +58,26 @@ isc.OBParameterWindowForm.addProperties({
     }
     // evaluate explicitly the display logic for the grid fields
     this.paramWindow.handleDisplayLogicForGridColumns();
-    // force a redraw to reevaluate the display logic of the parameters
-    this.redraw();
-    this.paramWindow.okButton.setEnabled(this.paramWindow.allRequiredParametersSet());
+    this.markForRedraw();
+    // this timeout is needed to ensure that the availability of the ok button is updated after the redrawal of the form because:
+    // - the availability of the ok button must be updated after the form redrawal
+    // - at this point the form cannot be directly redrawn because otherwise the focus does not behave properly, that's why markForRedraw is used
+    // - there is no way to assign a callback to the markForRedraw function
+    setTimeout(function () {
+      me.paramWindow.okButton.setEnabled(me.paramWindow.allRequiredParametersSet());
+    }, 200);
+    item._hasChanged = false;
+  },
+
+  setFieldSections: function () {
+    var i, item, length;
+
+    length = this.getItems().length;
+    for (i = 0; i < length; i++) {
+      item = this.getItem(i);
+      if (item && item.setSectionItemInContent) {
+        item.setSectionItemInContent(this);
+      }
+    }
   }
 });

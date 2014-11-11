@@ -1610,11 +1610,12 @@ public class CreateFrom extends HttpSecureAppServlet {
                   data[i].description, data[i].mProductId, data[i].cUomId, data[i].id, priceList,
                   priceActual, priceLimit, lineNetAmt.toString(), C_Tax_ID, taxAmt.toPlainString(),
                   data[i].quantityorder, data[i].mProductUomId, data[i].mAttributesetinstanceId,
-                  priceStd, lineNetAmt.toString(), priceGross, grossAmt.toString(),
-                  priceListGross.toString(), priceStdGross.toString(), isDeferred, planType,
-                  periodNumber, startingPeriodId, data[i].aAssetId, data[i].cProjectId,
-                  data[i].cCostcenterId, data[i].user1Id, data[i].user2Id, data[i].explode,
-                  data[i].isorder);
+                  priceStd, lineNetAmt.toString(), priceGross, grossAmt.toString(), priceListGross
+                      .toString(), priceStdGross.toString(), isDeferred, planType, periodNumber,
+                  startingPeriodId, data[i].aAssetId, data[i].cProjectId, data[i].cCostcenterId,
+                  data[i].user1Id, data[i].user2Id, data[i].explode,
+                  data[i].mInoutlineId.equals("") || data[i].mInoutlineId == null ? data[i].isorder
+                      : "N");
 
               if (!data[i].mInoutlineId.isEmpty() && strType.equals("SHIPMENT")) {
                 CreateFromInvoiceData.insertShipmentAcctDimension(conn, this, strSequence,
@@ -1883,8 +1884,12 @@ public class CreateFrom extends HttpSecureAppServlet {
         if (!strPO.equals("")) {
           try {
             final int total = CreateFromShipmentData.deleteC_Order_ID(conn, this, strKey, strPO);
-            if (total == 0)
-              CreateFromShipmentData.updateC_Order_ID(conn, this, strPO, strKey);
+            if (total == 0) {
+              int noOfOrders = Integer.valueOf(CreateFromShipmentData.countOrders(conn, this, strKey));
+              if (noOfOrders == 1) {
+                CreateFromShipmentData.updateC_Order_ID(conn, this, strPO, strKey);
+              }
+            }
           } catch (final ServletException ex) {
             myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
             releaseRollbackConnection(conn);

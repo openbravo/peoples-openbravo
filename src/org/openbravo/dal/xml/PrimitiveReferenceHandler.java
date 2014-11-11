@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,6 +29,7 @@ import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.model.ad.alert.Alert;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.utility.Attachment;
@@ -203,8 +204,13 @@ public class PrimitiveReferenceHandler implements OBSingleton {
   public Entity getPrimitiveReferencedEntity(BaseOBObject obObject, Property property) {
     if (property.getEntity().getName().equals(TreeNode.ENTITY_NAME)) {
       final TreeNode treeNode = (TreeNode) obObject;
-      final Entity entity = ModelProvider.getInstance().getEntityFromTreeType(
+      Entity entity = ModelProvider.getInstance().getEntityFromTreeType(
           treeNode.getTree().getTypeArea());
+      if (entity == null && treeNode.getTree().getTable() != null) {
+        entity = ModelProvider.getInstance().getEntityByTableId(
+            (String) DalUtil.getId(treeNode.getTree().getTable()));
+      }
+
       if (entity == null) {
         throw new OBException("No entity found for treetype " + treeNode.getTree().getTypeArea());
       }

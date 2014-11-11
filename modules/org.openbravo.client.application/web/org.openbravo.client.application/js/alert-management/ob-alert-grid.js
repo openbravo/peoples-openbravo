@@ -166,6 +166,8 @@ isc.OBAlertGrid.addProperties({
       // fetch to the datasource with an empty criteria to get all the rows
       requestProperties.params = requestProperties.params || {};
       requestProperties.params[OB.Constants.WHERE_PARAMETER] = this.getFilterClause();
+      requestProperties.params._startRow = 0;
+      requestProperties.params._endRow = this.dataPageSize;
       requestProperties.clientContext = {
         alertStatus: this.alertStatus
       };

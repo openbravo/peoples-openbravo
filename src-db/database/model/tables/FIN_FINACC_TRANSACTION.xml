@@ -49,7 +49,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="DATEACCT" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false">
+      <column name="DATEACCT" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -101,11 +101,11 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="TRXTYPE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+      <column name="TRXTYPE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="STATEMENTDATE" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false">
+      <column name="STATEMENTDATE" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -209,9 +209,13 @@
         <index-column name="FIN_RECONCILIATION_ID"/>
         <index-column name="STATUS"/>
       </index>
+      <index name="FIN_FINACC_TRANSACTION_POSTED" unique="false">
+        <index-column name="POSTED"/>
+      </index>
       <unique name="FIN_FINACC_TRANSACTION_UN">
         <unique-column name="FIN_PAYMENT_ID"/>
       </unique>
+      <check name="FIN_TRANS_AMOUNTS_CHK"><![CDATA[(PAYMENTAMT <> 0) OR (DEPOSITAMT <> 0)]]></check>
       <check name="FIN_TRANS_CREATE_ALGORITHM_CHK"><![CDATA[CREATEDBYALGORITHM IN ('Y', 'N')]]></check>
       <check name="FIN_TRANS_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>

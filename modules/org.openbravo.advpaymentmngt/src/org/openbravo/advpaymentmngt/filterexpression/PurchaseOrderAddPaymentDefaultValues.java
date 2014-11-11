@@ -19,6 +19,7 @@
 package org.openbravo.advpaymentmngt.filterexpression;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.Map;
 
 import org.codehaus.jettison.json.JSONException;
@@ -26,6 +27,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.advpaymentmngt.utility.APRMConstants;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.model.common.order.Order;
 
 @ComponentProvider.Qualifier(APRMConstants.PURCHASE_ORDER_WINDOW_ID)
@@ -38,8 +40,8 @@ public class PurchaseOrderAddPaymentDefaultValues extends AddPaymentDefaultValue
   }
 
   @Override
-  String getDefaultExpectedAmount(Map<String, String> requestMap) throws JSONException {
-    // Expected amount is the amount pending to pay on the Sales Order
+  public String getDefaultExpectedAmount(Map<String, String> requestMap) throws JSONException {
+    // Expected amount is the amount pending to pay on the Purchase Order
     JSONObject context = new JSONObject(requestMap.get("context"));
     String strOrderId = context.getString("inpcOrderId");
     BigDecimal pendingAmt = getPendingAmt(strOrderId);
@@ -47,8 +49,8 @@ public class PurchaseOrderAddPaymentDefaultValues extends AddPaymentDefaultValue
   }
 
   @Override
-  String getDefaultActualAmount(Map<String, String> requestMap) throws JSONException {
-    // Actual amount is the amount pending to pay on the Sales Order
+  public String getDefaultActualAmount(Map<String, String> requestMap) throws JSONException {
+    // Actual amount is the amount pending to pay on the Purchase Order
     JSONObject context = new JSONObject(requestMap.get("context"));
     String strOrderId = context.getString("inpcOrderId");
     BigDecimal pendingAmt = getPendingAmt(strOrderId);
@@ -56,45 +58,95 @@ public class PurchaseOrderAddPaymentDefaultValues extends AddPaymentDefaultValue
   }
 
   @Override
-  String getDefaultIsSOTrx(Map<String, String> requestMap) {
+  public String getDefaultIsSOTrx(Map<String, String> requestMap) {
     return "N";
   }
 
   @Override
-  String getDefaultTransactionType(Map<String, String> requestMap) {
+  public String getDefaultTransactionType(Map<String, String> requestMap) {
     return "O";
   }
 
   private BigDecimal getPendingAmt(String strOrderId) {
-    // TODO check multicurrency
     Order order = OBDal.getInstance().get(Order.class, strOrderId);
     BigDecimal pendingAmt = getPendingAmt(order.getFINPaymentScheduleList());
     return pendingAmt;
   }
 
   @Override
-  String getDefaultPaymentType(Map<String, String> requestMap) throws JSONException {
+  public String getDefaultPaymentType(Map<String, String> requestMap) throws JSONException {
     return "";
   }
 
   @Override
-  String getDefaultOrderType(Map<String, String> requestMap) throws JSONException {
+  public String getDefaultOrderType(Map<String, String> requestMap) throws JSONException {
     JSONObject context = new JSONObject(requestMap.get("context"));
     return context.getString("inpcOrderId");
   }
 
   @Override
-  String getDefaultInvoiceType(Map<String, String> requestMap) throws JSONException {
+  public String getDefaultInvoiceType(Map<String, String> requestMap) throws JSONException {
     return "";
   }
 
   @Override
-  String getDefaultConversionRate(Map<String, String> requestMap) throws JSONException {
+  public String getDefaultConversionRate(Map<String, String> requestMap) throws JSONException {
     return "";
   }
 
   @Override
-  String getDefaultConvertedAmount(Map<String, String> requestMap) throws JSONException {
+  public String getDefaultConvertedAmount(Map<String, String> requestMap) throws JSONException {
+    return "";
+  }
+
+  @Override
+  public String getDefaultReceivedFrom(Map<String, String> requestMap) throws JSONException {
+    // Business Partner of the current Purchase Order
+    JSONObject context = new JSONObject(requestMap.get("context"));
+    Order order = getOrder(context);
+    return order.getBusinessPartner().getId();
+  }
+
+  @Override
+  public String getDefaultStandardPrecision(Map<String, String> requestMap) throws JSONException {
+    // Standard Precision of the currency
+    JSONObject context = new JSONObject(requestMap.get("context"));
+    Order order = getOrder(context);
+    return order.getCurrency().getStandardPrecision().toString();
+  }
+
+  @Override
+  public String getDefaultCurrency(Map<String, String> requestMap) throws JSONException {
+    // Currency of the current Purchase Order
+    JSONObject context = new JSONObject(requestMap.get("context"));
+    Order order = getOrder(context);
+    return order.getCurrency().getId();
+  }
+
+  @Override
+  public String getOrganization(Map<String, String> requestMap) throws JSONException {
+    // Organization of the current Purchase Order
+    return getOrder(new JSONObject(requestMap.get("context"))).getOrganization().getId();
+  }
+
+  @Override
+  public String getDefaultDocument(Map<String, String> requestMap) throws JSONException {
+    // Document Type
+    return "";
+  }
+
+  Order getOrder(JSONObject context) throws JSONException {
+    return OBDal.getInstance().get(Order.class, context.getString("inpcOrderId"));
+  }
+
+  @Override
+  public String getDefaultPaymentDate(Map<String, String> requestMap) throws JSONException {
+    return OBDateUtils.formatDate(new Date());
+  }
+
+  @Override
+  public String getBankStatementLineAmount(Map<String, String> requestMap) throws JSONException {
+    // BankStatementLineAmount
     return "";
   }
 

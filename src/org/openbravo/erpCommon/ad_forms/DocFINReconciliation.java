@@ -323,6 +323,9 @@ public class DocFINReconciliation extends AcctServer {
         FieldProviderFactory.setField(data[i], "user2Id", paymentDetails.get(i)
             .getFINPaymentScheduleDetailList().get(0).getNdDimension() != null ? paymentDetails
             .get(i).getFINPaymentScheduleDetailList().get(0).getNdDimension().getId() : "");
+        FieldProviderFactory.setField(data[i], "recordId2",
+            paymentDetails.get(i).isPrepayment() ? (pso != null ? pso.getId() : "")
+                : (psi != null ? psi.getId() : ""));
       }
     } finally {
       OBContext.restorePreviousMode();
@@ -553,8 +556,10 @@ public class DocFINReconciliation extends AcctServer {
           AcctSchemaTableDocType.class, whereClause.toString());
       final List<AcctSchemaTableDocType> acctSchemaTableDocTypes = obqParameters.list();
 
-      if (acctSchemaTableDocTypes != null && acctSchemaTableDocTypes.size() > 0)
+      if (acctSchemaTableDocTypes != null && acctSchemaTableDocTypes.size() > 0
+          && acctSchemaTableDocTypes.get(0).getCreatefactTemplate() != null) {
         strClassname = acctSchemaTableDocTypes.get(0).getCreatefactTemplate().getClassname();
+      }
 
       if (strClassname.equals("")) {
         final StringBuilder whereClause2 = new StringBuilder();
@@ -659,6 +664,7 @@ public class DocFINReconciliation extends AcctServer {
           dateFormat.format(transaction.getDateAcct()), TABLEID_Transaction, transaction.getId(),
           C_Currency_ID, as.m_C_Currency_ID, line, as, fact, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
           conn);
+      line.m_Record_Id2 = transaction.getId();
       fact.createLine(line, getAccountTransactionPayment(conn, payment, as), C_Currency_ID,
           !payment.isReceipt() ? transactionAmount.toString() : "",
           payment.isReceipt() ? transactionAmount.toString() : "", Fact_Acct_Group_ID,
@@ -689,6 +695,7 @@ public class DocFINReconciliation extends AcctServer {
         detail.m_C_Costcenter_ID = data[i].getField("cCostcenterId");
         detail.setAmount(data[i].getField("Amount"));
         final String finPaymentDetailID = data[i].getField("FIN_Payment_Detail_ID");
+        detail.m_Record_Id2 = data[i].getField("recordId2");
         // Cambiar line to reflect BPs
         FIN_PaymentDetail paymentDetail = OBDal.getInstance().get(FIN_PaymentDetail.class,
             finPaymentDetailID);
@@ -703,12 +710,19 @@ public class DocFINReconciliation extends AcctServer {
           dateFormat.format(transaction.getDateAcct()), TABLEID_Payment, line.getFinPaymentId(),
           C_Currency_ID, as.m_C_Currency_ID, line, as, fact, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
           conn);
+      line.m_Record_Id2 = payment.getId();
       fact.createLine(line, getAccountPayment(conn, payment, as), C_Currency_ID,
           !payment.isReceipt() ? paymentAmount.toString() : "",
           payment.isReceipt() ? paymentAmount.toString() : "", Fact_Acct_Group_ID,
           nextSeqNo(SeqNo), DocumentType, line.m_DateAcct, null, conn);
     }
-    fact.createLine(line, getAccountReconciliation(conn, payment, as), C_Currency_ID,
+    // Use different line to clear record_id2 info which is not required for this last booking
+    DocLine_FINReconciliation paymentTypeLine = new DocLine_FINReconciliation(DocumentType,
+        Record_ID, line.Line_ID);
+    paymentTypeLine.copyInfo(line);
+    paymentTypeLine.m_Record_Id2 = "";
+    paymentTypeLine.setFinFinAccTransactionId(transaction.getId());
+    fact.createLine(paymentTypeLine, getAccountReconciliation(conn, payment, as), C_Currency_ID,
         payment.isReceipt() ? line.getAmount() : "", !payment.isReceipt() ? line.getAmount() : "",
         Fact_Acct_Group_ID, "999999", DocumentType, line.m_DateAcct, null, conn);
     if (!getDocumentPaymentConfirmation(payment)

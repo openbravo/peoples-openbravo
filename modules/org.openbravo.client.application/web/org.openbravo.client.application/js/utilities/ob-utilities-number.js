@@ -119,6 +119,9 @@ OB.Utilities.Number.OBPlainToOBMasked = function (number, maskNumeric, decSepara
     return number;
   }
 
+  if (groupInterval === null || groupInterval === undefined) {
+    groupInterval = OB.Format.defaultGroupingSize;
+  }
   // Management of the mask
   if (maskNumeric.indexOf('+') === 0 || maskNumeric.indexOf('-') === 0) {
     maskNumeric = maskNumeric.substring(1, maskNumeric.length);

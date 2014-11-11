@@ -12,7 +12,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2013 Openbravo SLU
+* All portions are Copyright (C) 2001-2014 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************
@@ -250,12 +250,14 @@ export.database: exports database structure and data to xml files.
     </fileset>
     <fileset dir="${base.lib}">
       <include name="**/*.jar" />
+      <exclude name="**/test/*.jar" />
     </fileset>
     <fileset dir="${base.db}/lib/">
       <include name="**/*.jar" />
     </fileset>
     <fileset dir="${base.modules}">
       <include name="*/lib/**" />
+       <exclude name="**/test/*.jar" />
     </fileset>
   </path>
 
@@ -575,24 +577,28 @@ export.database: exports database structure and data to xml files.
     <ant dir="${base.src}" target="generate.entities.quick.forked" inheritAll="true" inheritRefs="true" />
   </target>
 
+  <target name="compile.test" depends="init">
+    <ant dir="${base.src.test}" target="compile.test" inheritAll="true" inheritRefs="true" />
+  </target>
+  
   <target name="run.tests" depends="init">
-    <ant dir="${base.src}" target="run.tests" inheritAll="true" inheritRefs="true" />
+    <ant dir="${base.src.test}" target="run.tests" inheritAll="true" inheritRefs="true" />
   </target>
 
   <target name="run.all.tests" depends="init">
-    <ant dir="${base.src}" target="run.all.tests" inheritAll="true" inheritRefs="true" />
+    <ant dir="${base.src.test}" target="run.all.tests" inheritAll="true" inheritRefs="true" />
   </target>
 
   <target name="run.webservice.tests" depends="init">
-      <ant dir="${base.src}" target="run.webservice.tests" inheritAll="true" inheritRefs="true" />
+      <ant dir="${base.src.test}" target="run.webservice.tests" inheritAll="true" inheritRefs="true" />
   </target>
 
   <target name="run.quick.tests" depends="init">
-    <ant dir="${base.src}" target="run.quick.tests" inheritAll="true" inheritRefs="true" />
+    <ant dir="${base.src.test}" target="run.quick.tests" inheritAll="true" inheritRefs="true" />
   </target>
 
   <target name="run.api.test.javascript">
-    <ant dir="${base.src}" target="run.api.test.javascript" inheritAll="true" inheritRefs="true" />
+    <ant dir="${base.src.test}" target="run.api.test.javascript" inheritAll="true" inheritRefs="true" />
   </target>
   
   <target name="run.api.test.model" 
@@ -1152,9 +1158,9 @@ export.database: exports database structure and data to xml files.
         <pathelement path="${base.lib}/runtime/postgresql-9.0-801.jdbc4.jar" />
         <pathelement path="${base.lib}/runtime/ojdbc6.jar" />
         <pathelement path="${base.lib}/runtime/commons-collectionsi-3.2.1.jar" />
-        <pathelement path="${base.lib}/runtime/ant-1.7.1.jar" />
-        <pathelement path="${base.lib}/runtime/ant-launcher.jar" />
-        <pathelement path="${base.lib}/runtime/ant-apache-log4j.jar" />
+        <pathelement path="${base.lib}/runtime/ant-1.9.2.jar" />
+        <pathelement path="${base.lib}/runtime/ant-launcher-1.9.2.jar" />
+        <pathelement path="${base.lib}/runtime/ant-apache-log4j-1.9.2.jar" />
         <pathelement path="${base.lib}/runtime/ant-nodeps.jar" />
       </classpath>
     </java>

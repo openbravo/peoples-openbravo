@@ -156,8 +156,10 @@ public class FIN_BankStatementProcess implements org.openbravo.scheduling.Proces
 
     final OBQuery<FIN_BankStatementLine> obData = OBDal.getInstance().createQuery(
         FIN_BankStatementLine.class, whereClause.toString(), parameters);
-    if (obData.count() > 0) {
-      return obData.list().get(0).getTransactionDate();
+    obData.setMaxResult(1);
+    FIN_BankStatementLine line = obData.uniqueResult();
+    if (line != null) {
+      return line.getTransactionDate();
     }
 
     // If no previous bank statement is found get the ending date of the last reconciliation

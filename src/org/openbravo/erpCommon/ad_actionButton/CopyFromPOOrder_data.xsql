@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -30,7 +30,7 @@
         '' as stdprecision, '' as priceprecision, '' as enforcepricelimit, '' as pricelist, '' as pricelimit, '' as validfrom,
         '' AS DESCRIPTION, '' AS PRICESTD, '' AS M_OFFER_ID, '' as orderline, O.DATEPROMISED AS DATEPROMISED, O.DATEORDERED AS DATEORDERED,
         O.ISSOTRX AS ISSOTRX, '' AS M_ATTRIBUTESETINSTANCE_ID, '' as USER1_ID, '' as USER2_ID,
-        '' as C_COSTCENTER_ID, '' as A_ASSET_ID
+        '' as C_COSTCENTER_ID, '' as A_ASSET_ID, '' AS EXPLODE, '' AS BOM_PARENT_ID
         FROM C_ORDER O LEFT JOIN C_ORDERLINE OL ON O.C_ORDER_ID = OL.C_ORDER_ID
         WHERE O.C_ORDER_ID = ?
         GROUP BY O.C_BPARTNER_ID, O.C_BPARTNER_LOCATION_ID, O.M_WAREHOUSE_ID, O.C_CURRENCY_ID, O.C_PROJECT_ID,
@@ -50,10 +50,11 @@
         COALESCE(OL.USER1_ID, O.USER1_ID) AS USER1_ID,
         COALESCE(OL.USER2_ID, O.USER2_ID) AS USER2_ID,
         COALESCE(OL.C_COSTCENTER_ID, O.C_COSTCENTER_ID) AS C_COSTCENTER_ID,
-        COALESCE(OL.A_ASSET_ID, O.A_ASSET_ID) AS A_ASSET_ID
+        COALESCE(OL.A_ASSET_ID, O.A_ASSET_ID) AS A_ASSET_ID, OL.EXPLODE, OL.BOM_PARENT_ID
         FROM C_ORDERLINE OL, C_ORDER O
         WHERE OL.C_ORDER_ID = ?
               AND OL.C_ORDER_ID = O.C_ORDER_ID
+              AND OL.C_ORDER_DISCOUNT_ID IS NULL
         ORDER BY OL.LINE ASC
       ]]>
     </Sql>

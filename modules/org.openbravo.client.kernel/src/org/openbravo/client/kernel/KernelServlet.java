@@ -51,7 +51,7 @@ import org.openbravo.service.web.WebServiceUtil;
  */
 public class KernelServlet extends BaseKernelServlet {
   // private static final Logger log = Logger.getLogger(DataSourceServlet.class);
-  private static final Logger log4j = Logger.getLogger(KernelServlet.class);
+  private static final Logger log = Logger.getLogger(KernelServlet.class);
 
   // this is needed to support logout deep in the code...
   // TODO: make it easier to get to the authentication manager from
@@ -81,6 +81,62 @@ public class KernelServlet extends BaseKernelServlet {
     return servletPathPart;
   }
 
+  // the inc and dec by passauthentication count must be synchronized
+  // and static, there might be multiple kernelservlets and multiple threads
+  // may use the same kernelservlet
+  private static synchronized void incBypassAuthenticationCount(HttpServletRequest request) {
+    HttpSession session = request.getSession(true);
+    OBContext context = OBContext.getOBContext();
+    boolean sessionForThisRequest = context == null
+        || session.getAttribute("#Authenticated_user") == null;
+
+    if (sessionForThisRequest) {
+      session.setAttribute("forceLogin", "Y");
+    }
+
+    if (session != null && "Y".equals(session.getAttribute("forceLogin"))) {
+      // session has been created to retrieve a non authenticated component, it might be several
+      // non authenticated components sharing the same session, count them to invalidate the
+      // session after all of them are done
+      Integer count = (Integer) session.getAttribute("forcedSessionsRequestCount");
+      if (count == null || count == 0) {
+        count = 1;
+      } else {
+        count += 1;
+      }
+      session.setAttribute("forcedSessionsRequestCount", count);
+      log.warn("The KernelServlet should not be used for unauthenticated access (this request url: "
+          + request.getRequestURL()
+          + " - "
+          + request.getQueryString()
+          + "). This functionality is deprecated, "
+          + "use 'org.openbravo.mobile.core' instead of 'org.openbravo.client.kernel'; "
+          + "see this issue https://issues.openbravo.com/view.php?id=27248 for more information");
+    }
+  }
+
+  private static synchronized void decBypassAuthenticationCount(HttpSession session,
+      HttpServletRequest request) {
+    if (session != null && "Y".equals(session.getAttribute("forceLogin"))) {
+      Integer count = (Integer) session.getAttribute("forcedSessionsRequestCount");
+      count = (count != null ? count : 0) - 1;
+
+      if (count <= 0) {
+        session.invalidate();
+        log.debug("Invalidating session created for bypass authentication elements");
+      } else {
+        session.setAttribute("forcedSessionsRequestCount", count);
+      }
+      log.warn("The KernelServlet should not be used for unauthenticated access (this request url: "
+          + request.getRequestURL()
+          + " - "
+          + request.getQueryString()
+          + "). This functionality is deprecated, "
+          + "use 'org.openbravo.mobile.core' instead of 'org.openbravo.client.kernel'; "
+          + "see this issue https://issues.openbravo.com/view.php?id=27248 for more information");
+    }
+  }
+
   @Inject
   @Any
   private Instance<ComponentProvider> componentProviders;
@@ -97,7 +153,6 @@ public class KernelServlet extends BaseKernelServlet {
   public void service(final HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
-    boolean sessionForThisRequest = false;
     boolean bypassAuthentication = false;
 
     final String action = request.getParameter(KernelConstants.ACTION_PARAMETER);
@@ -106,34 +161,7 @@ public class KernelServlet extends BaseKernelServlet {
 
       if (component instanceof BaseComponent && ((BaseComponent) component).bypassAuthentication()) {
         bypassAuthentication = true;
-        OBContext context = OBContext.getOBContext();
-
-        sessionForThisRequest = context == null
-            || request.getSession().getAttribute("#Authenticated_user") == null;
-
-        HttpSession session = request.getSession(true);
-        if (sessionForThisRequest) {
-          // creating session for this request marked as forceLogin
-          session = request.getSession(true);
-          session.setAttribute("forceLogin", "Y");
-        } else {
-          // there is already a session, don't touch it
-          session = request.getSession(false);
-        }
-
-        if (session != null && "Y".equals(session.getAttribute("forceLogin"))) {
-          // session has been created to retrieve a non authenticated component, it might be several
-          // non authenticated components sharing the same session, count them to invalidate the
-          // session after all of them are done
-          Integer count = (Integer) session.getAttribute("forcedSessionsRequestCount");
-          if (count == null || count == 0) {
-            count = 1;
-          } else {
-            count += 1;
-          }
-          session.setAttribute("forcedSessionsRequestCount", count);
-        }
-
+        incBypassAuthenticationCount(request);
       }
     }
 
@@ -141,17 +169,7 @@ public class KernelServlet extends BaseKernelServlet {
 
     if (bypassAuthentication) {
       HttpSession session = request.getSession(false);
-      if (session != null && "Y".equals(session.getAttribute("forceLogin"))) {
-        Integer count = (Integer) session.getAttribute("forcedSessionsRequestCount");
-        count = (count != null ? count : 0) - 1;
-
-        if (count <= 0) {
-          session.invalidate();
-          log4j.info("Invalidating session created for bypass authentication elements");
-        } else {
-          session.setAttribute("forcedSessionsRequestCount", count);
-        }
-      }
+      decBypassAuthenticationCount(session, request);
     }
   }
 
@@ -171,6 +189,8 @@ public class KernelServlet extends BaseKernelServlet {
     }
   }
 
+  // NOTE: this exact same method is present in the MobileCoreComponentServlet in the mobile core
+  // module, if changed here, please also check the method in the MobileCoreComponentServlet class
   private Component getComponent(HttpServletRequest request) {
 
     final int nameIndex = request.getRequestURI().indexOf(servletPathPart);
@@ -197,6 +217,8 @@ public class KernelServlet extends BaseKernelServlet {
     return component;
   }
 
+  // NOTE: this exact same method is present in the MobileCoreComponentServlet in the mobile core
+  // module, if changed here, please also check the method in the MobileCoreComponentServlet class
   protected void processComponentRequest(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
     Component component = getComponent(request);
@@ -229,7 +251,7 @@ public class KernelServlet extends BaseKernelServlet {
       pw.write(result);
       pw.close();
     } catch (Exception e) {
-      log4j.error(e.getMessage(), e);
+      log.error(e.getMessage(), e);
       if (!response.isCommitted()) {
         response.setContentType(KernelConstants.JAVASCRIPT_CONTENTTYPE);
         response.setHeader(RESPONSE_HEADER_CONTENTTYPE, KernelConstants.JAVASCRIPT_CONTENTTYPE);
@@ -261,7 +283,7 @@ public class KernelServlet extends BaseKernelServlet {
 
       if (OBContext.getOBContext() != null && OBContext.getOBContext().isPortalRole()) {
         if (!(actionHandler instanceof PortalAccessible)) {
-          log4j.error("Portal user " + OBContext.getOBContext().getUser() + " with role "
+          log.error("Portal user " + OBContext.getOBContext().getUser() + " with role "
               + OBContext.getOBContext().getRole()
               + " is trying to access to non granted action handler " + request.getRequestURL()
               + "?" + request.getQueryString());
@@ -271,7 +293,7 @@ public class KernelServlet extends BaseKernelServlet {
 
       actionHandler.execute();
     } catch (Exception e) {
-      log4j.error("Error executing action " + action + " error: " + e.getMessage(), e);
+      log.error("Error executing action " + action + " error: " + e.getMessage(), e);
       if (!response.isCommitted()) {
         response.setContentType(KernelConstants.JAVASCRIPT_CONTENTTYPE);
         response.setHeader(RESPONSE_HEADER_CONTENTTYPE, KernelConstants.JAVASCRIPT_CONTENTTYPE);

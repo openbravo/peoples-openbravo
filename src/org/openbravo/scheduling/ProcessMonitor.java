@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -127,6 +127,7 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
       ProcessRunData.insert(getConnection(), ctx.getOrganization(), ctx.getClient(), ctx.getUser(),
           ctx.getUser(), executionId, PROCESSING, null, null, jec.getJobDetail().getName());
 
+      bundle.setProcessRunId(executionId);
       jec.put(EXECUTION_ID, executionId);
       jec.put(ProcessBundle.CONNECTION, getConnection());
       jec.put(ProcessBundle.CONFIG_PARAMS, getConfigParameters());
@@ -139,7 +140,7 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
 
   public void jobWasExecuted(JobExecutionContext jec, JobExecutionException jee) {
     final ProcessBundle bundle = (ProcessBundle) jec.getMergedJobDataMap().get(ProcessBundle.KEY);
-    if (bundle == null) {
+    if (bundle == null || bundle.isGroup()) {
       return;
     }
     try {
@@ -161,7 +162,12 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
             getDuration(jec.getJobRunTime()), executionLog, executionId);
       }
 
-    } catch (final ServletException e) {
+      if (bundle.getGroupInfo() != null) {
+        // Manage Process Group
+        manageGroup(bundle, (jee == null ? SUCCESS : ERROR), executionId);
+      }
+
+    } catch (Exception e) {
       log.error(e.getMessage(), e);
     } finally {
       // return connection to pool and remove it from current thread
@@ -257,60 +263,85 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
 
     // Checking if there is another instance in execution for this process
 
-    for (JobExecutionContext job : jobs) {
-      if (job.getTrigger().getJobDataMap().get(Process.PROCESS_ID)
-          .equals(trigger.getJobDataMap().get(Process.PROCESS_ID))
-          && !job.getJobInstance().equals(jec.getJobInstance())) {
+    if (!trigger.getJobDataMap().get(Process.PROCESS_ID).equals(GroupInfo.processGroupId)) {
+      // The process is not a group
+      for (JobExecutionContext job : jobs) {
+        if (job.getTrigger().getJobDataMap().get(Process.PROCESS_ID)
+            .equals(trigger.getJobDataMap().get(Process.PROCESS_ID))
+            && !job.getJobInstance().equals(jec.getJobInstance())) {
 
-        ProcessBundle jobAlreadyScheduled = (ProcessBundle) job.getTrigger().getJobDataMap()
-            .get("org.openbravo.scheduling.ProcessBundle.KEY");
+          ProcessBundle jobAlreadyScheduled = (ProcessBundle) job.getTrigger().getJobDataMap()
+              .get("org.openbravo.scheduling.ProcessBundle.KEY");
+          ProcessBundle newJob = (ProcessBundle) trigger.getJobDataMap().get(
+              "org.openbravo.scheduling.ProcessBundle.KEY");
+
+          boolean isSameClient = isSameParam(jobAlreadyScheduled, newJob, "Client");
+
+          if (!isSameClient
+              || (isSameClient && !isSameParam(jobAlreadyScheduled, newJob, "Organization"))) {
+            continue;
+          }
+
+          log.info("There's another instance running, so leaving" + processName);
+          stopConcurrency(trigger, jec, processName);
+          return true;
+        }
+      }
+      log.debug("No other instance");
+      return false;
+    } else {
+      // The process it's a group
+      try {
         ProcessBundle newJob = (ProcessBundle) trigger.getJobDataMap().get(
             "org.openbravo.scheduling.ProcessBundle.KEY");
-
-        boolean isSameClient = isSameParam(jobAlreadyScheduled, newJob, "Client");
-
-        if (!isSameClient
-            || (isSameClient && !isSameParam(jobAlreadyScheduled, newJob, "Organization"))) {
-          continue;
+        String concurrent = ProcessRunData.selectConcurrent(getConnection(),
+            newJob.getProcessRequestId());
+        if (!concurrent.equals("0")) {
+          log.info("There's another instance running, so leaving" + processName);
+          stopConcurrency(trigger, jec, processName);
+          return true;
         }
-
-        log.info("There's another instance running, so leaving" + processName);
-
-        try {
-          if (!trigger.mayFireAgain()) {
-            // This is last execution of this trigger, so set it as complete
-            ProcessRequestData.update(getConnection(), COMPLETE, trigger.getName());
-          }
-
-          // Create a process run as error
-          final ProcessBundle bundle = (ProcessBundle) jec.getMergedJobDataMap().get(
-              ProcessBundle.KEY);
-          if (bundle == null) {
-            return true;
-          }
-
-          final ProcessContext ctx = bundle.getContext();
-          final String executionId = SequenceIdData.getUUID();
-          ProcessRunData.insert(getConnection(), ctx.getOrganization(), ctx.getClient(),
-              ctx.getUser(), ctx.getUser(), executionId, PROCESSING, null, null, trigger.getName());
-          ProcessRunData.update(getConnection(), ctx.getUser(), ERROR, getDuration(0),
-              "Concurrent attempt to execute", executionId);
-
-        } catch (Exception e) {
-          log.error("Error updating conetext for non executed process due to concurrency "
-              + processName, e);
-        } finally {
-          // return connection to pool and remove it from current thread only in case the process is
-          // not going to be executed because of concurrency, other case leave the connection to be
-          // closed after the process finishes
-          SessionInfo.init();
-        }
-        return true;
+      } catch (Exception ex) {
+        log.error("Error handling concurrency in process groups", ex);
       }
+      log.debug("No other instance");
+      return false;
     }
 
-    log.debug("No other instance");
-    return false;
+  }
+
+  private void stopConcurrency(Trigger trigger, JobExecutionContext jec, String processName) {
+    try {
+      if (!trigger.mayFireAgain()) {
+        // This is last execution of this trigger, so set it as complete
+        ProcessRequestData.update(getConnection(), COMPLETE, trigger.getName());
+      }
+
+      // Create a process run as error
+      final ProcessBundle bundle = (ProcessBundle) jec.getMergedJobDataMap().get(ProcessBundle.KEY);
+      if (bundle != null) {
+        final ProcessContext ctx = bundle.getContext();
+        final String executionId = SequenceIdData.getUUID();
+        ProcessRunData.insert(getConnection(), ctx.getOrganization(), ctx.getClient(),
+            ctx.getUser(), ctx.getUser(), executionId, PROCESSING, null, null, trigger.getName());
+        ProcessRunData.update(getConnection(), ctx.getUser(), ERROR, getDuration(0),
+            "Concurrent attempt to execute", executionId);
+
+        if (bundle.getGroupInfo() != null) {
+          // Manage Process Group
+          manageGroup(bundle, Process.ERROR, executionId);
+        }
+      }
+
+    } catch (Exception e) {
+      log.error(
+          "Error updating context for non executed process due to concurrency " + processName, e);
+    } finally {
+      // return connection to pool and remove it from current thread only in case the process is
+      // not going to be executed because of concurrency, other case leave the connection to be
+      // closed after the process finishes
+      SessionInfo.init();
+    }
   }
 
   private boolean isSameParam(ProcessBundle jobAlreadyScheduled, ProcessBundle newJob, String param) {
@@ -402,5 +433,33 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
    */
   public String getName() {
     return name;
+  }
+
+  /**
+   * Manage Group actions
+   * 
+   * @param bundle
+   *          the Process Bundle part of the process
+   * @param status
+   *          the status of the execution Process.SUCCESS or Process.ERROR
+   * @param executionId
+   *          the AD_ProcessRun_ID if needed to update the Process Run info
+   * @throws Exception
+   */
+  private void manageGroup(ProcessBundle bundle, String status, String executionId)
+      throws Exception {
+    GroupInfo groupInfo = bundle.getGroupInfo();
+    groupInfo.logProcess(status);
+    ProcessRunData.updateGroup(getConnection(), groupInfo.getProcessRun().getId(), executionId);
+
+    // Execute next process
+    String result = groupInfo.executeNextProcess();
+    if (result.equals(GroupInfo.END)) {
+      // End of process group execution
+      ProcessRunData.update(getConnection(), bundle.getContext().getUser(), groupInfo.getStatus(),
+          getDuration(groupInfo.getDuration()), groupInfo.getLog(), groupInfo.getProcessRun()
+              .getId());
+    }
+
   }
 }

@@ -32,6 +32,7 @@ import org.openbravo.client.application.FilterExpression;
 import org.openbravo.client.application.OBBindingsConstants;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +52,7 @@ public class AddPaymentDefaultValuesExpression implements FilterExpression {
 
       AddPaymentDefaultValuesHandler handler = getHandler(strWindowId);
       if (handler == null) {
-        throw new OBException("No handler found");
+        throw new OBException(String.format(OBMessageUtils.messageBD("APRM_NOHANDLER")));
       }
       strCurrentParam = requestMap.get("currentParam");
       Parameters param = Parameters.getParameter(strCurrentParam);
@@ -95,9 +96,20 @@ public class AddPaymentDefaultValuesExpression implements FilterExpression {
           return handler.getDefaultGeneratedCredit(requestMap);
         case DocumentCategory:
           return handler.getDefaultDocumentCategory(requestMap);
+        case ReferenceNo:
+          return handler.getDefaultReferenceNo(requestMap);
+        case Currency:
+          return handler.getDefaultCurrency(requestMap);
+        case Organization:
+          return handler.getOrganization(requestMap);
+        case Document:
+          return handler.getDefaultDocument(requestMap);
+        case BankStatementLineAmount:
+          return handler.getBankStatementLineAmount(requestMap);
         }
       } catch (Exception e) {
-        log.error("Error trying to get default value of " + strCurrentParam + e.getMessage(), e);
+        log.error("Error trying to get default value of " + strCurrentParam + " " + e.getMessage(),
+            e);
         return null;
       }
     } catch (JSONException ignore) {
@@ -110,8 +122,13 @@ public class AddPaymentDefaultValuesExpression implements FilterExpression {
 
   private String getWindowId(Map<String, String> requestMap) throws JSONException {
     final String strContext = requestMap.get("context");
-    JSONObject context = new JSONObject(strContext);
-    return context.getString(OBBindingsConstants.WINDOW_ID_PARAM);
+    if (strContext != null) {
+      JSONObject context = new JSONObject(strContext);
+      if (context != null && context.has(OBBindingsConstants.WINDOW_ID_PARAM)) {
+        return context.getString(OBBindingsConstants.WINDOW_ID_PARAM);
+      }
+    }
+    return "NULLWINDOWID";
   }
 
   private AddPaymentDefaultValuesHandler getHandler(String strWindowId) {
@@ -138,7 +155,9 @@ public class AddPaymentDefaultValuesExpression implements FilterExpression {
         "fin_paymentmethod_id"), TransactionType("transaction_type"), CustomerCredit(
         "customer_credit"), IsSOTrx("issotrx"), Payment("fin_payment_id"), Invoice("c_invoice_id"), Order(
         "c_order_id"), ConversionRate("conversion_rate"), ConvertedAmount("converted_amount"), StandardPrecision(
-        "StdPrecision"), GenerateCredit("generateCredit"), DocumentCategory("DOCBASETYPE");
+        "StdPrecision"), GenerateCredit("generateCredit"), DocumentCategory("DOCBASETYPE"), ReferenceNo(
+        "reference_no"), Currency("c_currency_id"), Organization("ad_org_id"), Document("trxtype"), BankStatementLineAmount(
+        "bslamount");
 
     private String columnname;
 

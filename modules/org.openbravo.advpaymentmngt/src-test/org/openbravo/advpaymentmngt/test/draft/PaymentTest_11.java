@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011 Openbravo SLU
+ * All portions are Copyright (C) 2011-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -19,11 +19,16 @@
 
 package org.openbravo.advpaymentmngt.test.draft;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.junit.Before;
+import org.junit.Test;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -46,9 +51,9 @@ import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
 import org.openbravo.model.financialmgmt.payment.PaymentTerm;
 import org.openbravo.model.financialmgmt.tax.TaxRate;
 import org.openbravo.model.pricing.pricelist.PriceList;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
-public class PaymentTest_11 extends BaseTest {
+public class PaymentTest_11 extends OBBaseTest {
 
   // 1) Create an order without discount
   // 2) Invoice the complete order (without discount)
@@ -70,13 +75,17 @@ public class PaymentTest_11 extends BaseTest {
 
   /**
    * Initial Set up.
+   * 
+   * This before method is named setUpP11() to avoid overwriting the super 
+   * setUp method that is invoke automatically before this one.
+   * 
    */
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
+  @Before
+  public void setUpP11() throws Exception {
     TestUtility.setTestContextSpain();
   }
 
+  @Test
   public void testRunPayment_11() {
     boolean exception = false;
     FIN_Payment payment = null;

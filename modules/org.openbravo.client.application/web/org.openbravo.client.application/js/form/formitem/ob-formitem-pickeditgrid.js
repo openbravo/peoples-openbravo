@@ -29,9 +29,37 @@ isc.OBPickEditGridItem.addProperties({
   // validator at item level, check grid has no errors
   validators: {
     condition: function (item) {
-      var viewGrid = item.canvas.viewGrid;
-      viewGrid.endEditing();
-      return !viewGrid.hasErrors();
+      var grid = item.canvas.viewGrid,
+          hasErrors = false,
+          undef, i, j, fields, selection, len, allRows, record, lineNumbers;
+      grid.endEditing();
+      fields = grid.getFields();
+      selection = grid.getSelectedRecords() || [];
+      len = selection.length;
+      allRows = grid.data.allRows || grid.data.localData || grid.data;
+      for (i = 0; i < len; i++) {
+        record = grid.getEditedRecord(grid.getRecordIndex(selection[i]));
+        for (j = 0; j < fields.length; j++) {
+          if (fields[j].required) {
+            if (record[fields[j].name] === null || record[fields[j].name] === '' || record[fields[j] === undef]) {
+              hasErrors = true;
+              if (lineNumbers === undef) {
+                lineNumbers = grid.getRecordIndex(selection[i]).toString();
+              } else {
+                lineNumbers = lineNumbers + ',' + grid.getRecordIndex(selection[i]).toString();
+              }
+            }
+          }
+        }
+      }
+      if (hasErrors) {
+        if (item.form.errorMessage) {
+          item.form.errorMessage = item.form.errorMessage + '. ' + item.title + ': ' + lineNumbers;
+        } else {
+          item.form.errorMessage = item.title + ': ' + lineNumbers;
+        }
+      }
+      return !(hasErrors || grid.hasErrors());
     }
   },
 
@@ -44,10 +72,14 @@ isc.OBPickEditGridItem.addProperties({
     pickAndExecuteViewProperties.onGridLoadFunction = this.onGridLoadFunction;
     if (this.view.isPickAndExecuteWindow) {
       this.view.resized = function (messagebarVisible) {
+        var heightCorrection = 95;
+        if (me.view.isExpandedRecord) {
+          heightCorrection = heightCorrection - 61;
+        }
         if (messagebarVisible) {
-          me.canvas.setHeight(me.view.height - (95 + me.view.messageBar.height));
+          me.canvas.setHeight(me.view.height - (heightCorrection + me.view.messageBar.height));
         } else {
-          me.canvas.setHeight(me.view.height - 95);
+          me.canvas.setHeight(me.view.height - heightCorrection);
         }
         me.canvas.redraw();
       };

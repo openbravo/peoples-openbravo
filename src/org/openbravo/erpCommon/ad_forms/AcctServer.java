@@ -39,6 +39,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.APRM_FinaccTransactionV;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.RequestContext;
@@ -52,6 +53,7 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.exception.NoConnectionAvailableException;
@@ -130,6 +132,8 @@ public abstract class AcctServer {
   protected static final String NO_CURRENCY = "-1";
   // This is just for the initialization of the accounting
   public String m_IsOpening = "N";
+  // To match balances
+  public String m_Record_Id2 = "";
 
   public Fact[] m_fact = null;
   public AcctSchema[] m_as = null;
@@ -250,6 +254,8 @@ public abstract class AcctServer {
   public static final String DOCTYPE_MatMovement = "MMM";
   /** Material Production */
   public static final String DOCTYPE_MatProduction = "MMP";
+  /** Material Internal Consumption */
+  public static final String DOCTYPE_MatInternalConsumption = "MIC";
 
   /** Match Invoice */
   public static final String DOCTYPE_MatMatchInv = "MXI";
@@ -273,6 +279,12 @@ public abstract class AcctServer {
   public static final String DOCTYPE_Reconciliation = "REC";
   // FinBankStatement
   public static final String DOCTYPE_FinBankStatement = "BST";
+  // CostAdjustment
+  public static final String DOCTYPE_CostAdjustment = "CAD";
+  // LandedCost
+  public static final String DOCTYPE_LandedCost = "LDC";
+  // LandedCostCost
+  public static final String DOCTYPE_LandedCostCost = "LCC";
 
   /*************************************************************************/
 
@@ -468,7 +480,7 @@ public abstract class AcctServer {
         || AD_Table_ID.equals("407") || AD_Table_ID.equals("392") || AD_Table_ID.equals("259")
         || AD_Table_ID.equals("800019") || AD_Table_ID.equals("319") || AD_Table_ID.equals("321")
         || AD_Table_ID.equals("323") || AD_Table_ID.equals("325") || AD_Table_ID.equals("224")
-        || AD_Table_ID.equals("472")) {
+        || AD_Table_ID.equals("472") || AD_Table_ID.equals("800168")) {
       switch (Integer.parseInt(AD_Table_ID)) {
       case 318:
         acct = new DocInvoice(AD_Client_ID, AD_Org_ID, connectionProvider);
@@ -569,6 +581,13 @@ public abstract class AcctServer {
         acct.tableName = "M_MatchInv";
         acct.strDateColumn = "DateTrx";
         acct.AD_Table_ID = "472";
+        acct.reloadAcctSchemaArray();
+        break;
+      case 800168:
+        acct = new DocInternalConsumption(AD_Client_ID, AD_Org_ID, connectionProvider);
+        acct.tableName = "M_Internal_Consumption";
+        acct.strDateColumn = "MovementDate";
+        acct.AD_Table_ID = "800168";
         acct.reloadAcctSchemaArray();
         break;
       // case 473: acct = new
@@ -705,8 +724,8 @@ public abstract class AcctServer {
         errors++;
         Status = AcctServer.STATUS_Error;
         save(conn, vars.getUser());
-        log4j.warn(e);
-        e.printStackTrace();
+        log4j.error(
+            "An error ocurred posting RecordId: " + strClave + " - tableId: " + AD_Table_ID, e);
       }
     } catch (ServletException e) {
       log4j.error(e);
@@ -1084,9 +1103,21 @@ public abstract class AcctServer {
     // createFacts
     try {
       m_fact[index] = createFact(m_as[index], conn, con, vars);
+    } catch (OBException e) {
+      log4j.warn(
+          "Accounting process failed. RecordID: " + Record_ID + " - TableId: " + AD_Table_ID, e);
+      String strMessageError = e.getMessage();
+      if (strMessageError.indexOf("") != -1) {
+        setMessageResult(OBMessageUtils.translateError(strMessageError));
+        if ("@NotConvertible@".equals(strMessageError)) {
+          return STATUS_NotConvertible;
+        }
+      }
+      return STATUS_Error;
     } catch (Exception e) {
-      log4j.warn(e);
-      e.printStackTrace();
+      log4j.warn(
+          "Accounting process failed. RecordID: " + Record_ID + " - TableId: " + AD_Table_ID, e);
+      return STATUS_Error;
     }
     if (!Status.equals(STATUS_NotPosted))
       return Status;
@@ -2391,8 +2422,13 @@ public abstract class AcctServer {
       if (conversionRateDoc != null) {
         amtFrom = applyRate(_amount, conversionRateDoc, false);
       } else {
-        amtFrom = new BigDecimal(getConvertedAmt(_amount.toString(), currencyIDFrom, currencyIDTo,
-            conversionDate, "", AD_Client_ID, AD_Org_ID, conn));
+        String convertedAmt = getConvertedAmt(_amount.toString(), currencyIDFrom, currencyIDTo,
+            conversionDate, "", AD_Client_ID, AD_Org_ID, conn);
+        if (convertedAmt != null && !"".equals(convertedAmt)) {
+          amtFrom = new BigDecimal(convertedAmt);
+        } else {
+          throw new OBException("@NotConvertible@");
+        }
       }
     }
     ConversionRateDoc conversionRateCurrentDoc = getConversionRateDoc(AD_Table_ID, Record_ID,
@@ -2416,6 +2452,8 @@ public abstract class AcctServer {
       conversionDate = dateFormat.format(transaction.getDateAcct());
       conversionRateCurrentDoc = getConversionRateDoc(TABLEID_Transaction, transaction.getId(),
           currencyIDFrom, currencyIDTo);
+    } else {
+      conversionDate = dateAcct;
     }
     if (conversionRateCurrentDoc != null) {
       amtTo = applyRate(_amount, conversionRateCurrentDoc, true);
@@ -2435,10 +2473,17 @@ public abstract class AcctServer {
         amtTo = applyRate(_amount, conversionRateCurrentDoc, false);
         amtFromSourcecurrency = applyRate(amtFrom, conversionRateCurrentDoc, true);
       } else {
-        amtTo = new BigDecimal(getConvertedAmt(_amount.toString(), currencyIDFrom, currencyIDTo,
-            conversionDate, "", AD_Client_ID, AD_Org_ID, conn));
-        amtFromSourcecurrency = amtFrom.multiply(_amount).divide(amtTo, conversionRatePrecision,
-            BigDecimal.ROUND_HALF_EVEN);
+        String convertedAmt = getConvertedAmt(_amount.toString(), currencyIDFrom, currencyIDTo,
+            conversionDate, "", AD_Client_ID, AD_Org_ID, conn);
+        if (convertedAmt != null && !"".equals(convertedAmt)) {
+          amtTo = new BigDecimal(convertedAmt);
+        } else {
+          throw new OBException("@NotConvertible@");
+        }
+        if (amtTo.compareTo(BigDecimal.ZERO) != 0)
+               amtFromSourcecurrency = amtFrom.multiply(_amount).divide(amtTo, conversionRatePrecision,
+                               BigDecimal.ROUND_HALF_EVEN);
+        else  amtFromSourcecurrency = amtFrom;
       }
     }
     amtDiff = (amtTo).subtract(amtFrom);

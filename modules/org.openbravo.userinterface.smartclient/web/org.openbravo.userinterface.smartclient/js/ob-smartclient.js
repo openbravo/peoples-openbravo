@@ -116,7 +116,10 @@ isc.ResultTree.addProperties({
   dataArrived: function (parentNode) {
     var children = this.getChildren(parentNode),
         target = window[this.componentId];
-    target.transformData(children);
+    if (target.transformData) {
+      target.transformData(children);
+    }
+    this.Super('dataArrived', arguments);
   }
 });
 
@@ -515,8 +518,15 @@ isc.TextItem.addProperties({
       return false;
     }
     return this.Super('useDisabledEventMask', arguments);
-  }
+  },
 
+  // store the item that was focused when the key is pressed
+  // this information is then used in the OBViewGrid.cellEditEnd function. See issue https://issues.openbravo.com/view.php?id=27730
+  _original_handleKeyDown: isc.TextItem.getPrototype().handleKeyDown,
+  handleKeyDown: function (event, eventInfo) {
+    this.form.lastKeyDownItem = this;
+    return this._original_handleKeyDown(event, eventInfo);
+  }
 });
 
 // NOTE BEWARE: methods/props added here will overwrite and NOT extend FormItem
@@ -758,6 +768,14 @@ isc.RPCManager.addClassProperties({
     if (!request.willHandleError) {
       isc.RPCManager.handleError(response, request);
     }
+  },
+  _originalEvalResult: isc.RPCManager.evalResult,
+  evalResult: function (request, response, results) {
+    // if the response contains an error status, call the errorCallback
+    if (response.status !== isc.RPCResponse.STATUS_SUCCESS && isc.isA.Function(request.errorCallback)) {
+      request.errorCallback(request, response);
+    }
+    return this._originalEvalResult(request, response, results);
   }
 });
 

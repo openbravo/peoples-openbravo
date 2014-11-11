@@ -37,5 +37,7 @@ public class KernelApplicationInitializer implements ApplicationInitializer {
         new StandardSQLFunction("ad_org_getcalendarowner", new StringType()));
     OBDal.getInstance().registerSQLFunction("ad_org_getperiodcontrolallow",
         new StandardSQLFunction("ad_org_getperiodcontrolallow", new StringType()));
+    OBDal.getInstance().registerSQLFunction("m_isparent_ch_value",
+        new StandardSQLFunction("m_isparent_ch_value", new StringType()));
   }
 }

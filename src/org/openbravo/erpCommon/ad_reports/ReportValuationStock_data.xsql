@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -40,19 +40,15 @@
                        ELSE NULL
                      END AS TOTAL_COST,  A.ISCOSTCALCULATED, A.AD_CLIENT_ID, A.MOVEMENTDATE, A.C_CURRENCY_ID
               FROM M_PRODUCT_CATEGORY,
-                   (SELECT trx.M_PRODUCT_ID, sum(trx.MOVEMENTQTY) AS QTY, sum(CASE WHEN trx.MOVEMENTQTY < 0 THEN- tc.trxcost ELSE tc.trxcost END) AS Suma, 
-                   trx.C_UOM_ID, trx.AD_CLIENT_ID, trx.iscostcalculated, tc.c_currency_id, coalesce(io.dateacct,trx.movementdate) as movementdate
+                   (SELECT trx.m_transaction_id, trx.M_PRODUCT_ID, trx.MOVEMENTQTY AS QTY, sum(CASE WHEN trx.MOVEMENTQTY < 0 THEN- tc.cost ELSE tc.cost END) AS Suma, 
+                   trx.C_UOM_ID, trx.AD_CLIENT_ID, trx.iscostcalculated, tc.c_currency_id, coalesce(tc.dateacct, tc.COSTDATE) as movementdate
                     FROM M_TRANSACTION trx 
-                      JOIN M_LOCATOR l ON trx.M_LOCATOR_ID = l.M_LOCATOR_ID 
-                      LEFT JOIN M_INOUTLINE iol ON trx.M_INOUTLINE_ID = iol.M_INOUTLINE_ID 
-                      LEFT JOIN M_INOUT io ON iol.M_INOUT_ID = io.M_INOUT_ID 
-                      LEFT JOIN (SELECT sum(cost) AS trxcost, m_transaction_id, c_currency_id
-                                 FROM M_TRANSACTION_COST
-                                 WHERE costdate < to_date(?)
-                                 GROUP BY m_transaction_id, c_currency_id) tc ON trx.m_transaction_id = tc.m_transaction_id
+                      JOIN M_LOCATOR l ON trx.M_LOCATOR_ID = l.M_LOCATOR_ID
+                      LEFT JOIN M_TRANSACTION_COST tc ON trx.m_transaction_id = tc.m_transaction_id
                     WHERE trx.MOVEMENTDATE < to_date(?)
+                    AND COALESCE(tc.DATEACCT, tc.COSTDATE) < to_date(?)
               AND l.M_WAREHOUSE_ID = ?
-                    GROUP BY trx.M_PRODUCT_ID, trx.C_UOM_ID, trx.AD_CLIENT_ID, trx.iscostcalculated, tc.c_currency_id, coalesce(io.dateacct,trx.movementdate)) A,
+                    GROUP BY trx.m_transaction_id, trx.M_PRODUCT_ID, trx.MOVEMENTQTY, trx.C_UOM_ID, trx.AD_CLIENT_ID, trx.iscostcalculated, tc.c_currency_id, coalesce(tc.dateacct, tc.COSTDATE)) A,
                    C_UOM,
                    M_PRODUCT
               WHERE A.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID

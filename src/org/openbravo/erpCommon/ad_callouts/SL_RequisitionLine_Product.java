@@ -182,10 +182,12 @@ public class SL_RequisitionLine_Product extends HttpSecureAppServlet {
       } finally {
         OBContext.restorePreviousMode();
       }
-      strResult.append("new Array(\"inpattributeset\", \"" + FormatUtilities.replaceJS(strAttrSet)
+      strResult.append("new Array(\"inpattributeset\", \"" 
+          + (strAttrSet == null || strAttrSet.equals("") ? "" : FormatUtilities.replaceJS(strAttrSet))
           + "\"),\n");
-      strResult.append("new Array(\"inpattrsetvaluetype\", \""
-          + FormatUtilities.replaceJS(strAttrSetValueType) + "\"),\n");
+      strResult.append("new Array(\"inpattrsetvaluetype\", \"" 
+          + (strAttrSetValueType == null || strAttrSetValueType.equals("") ? "" : FormatUtilities.replaceJS(strAttrSetValueType))
+          + "\"),\n");
       String strHasSecondaryUOM = SLRequisitionLineProductData.hasSecondaryUOM(this, strMProductID);
       strResult.append("new Array(\"inphasseconduom\", " + strHasSecondaryUOM + "),\n");
       strResult.append("new Array(\"inpmProductUomId\", ");

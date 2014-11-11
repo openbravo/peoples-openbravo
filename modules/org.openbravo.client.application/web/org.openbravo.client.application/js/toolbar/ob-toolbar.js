@@ -108,7 +108,6 @@ isc.OBToolbar.addClassProperties({
     action: function () {
       var view = this.view,
           grid = view.viewGrid;
-
       // In case of no record selected getRecordIndex(undefined) returns -1,
       // which is the top position, other case it adds bellow current selected row.
       if (grid.getSelectedRecord()) {
@@ -131,7 +130,8 @@ isc.OBToolbar.addClassProperties({
 
   NEW_DOC_BUTTON_PROPERTIES: {
     action: function () {
-      this.view.newDocument();
+      var view = this.view;
+      view.newDocument();
     },
     buttonType: 'newDoc',
     sortPosition: 10,
@@ -159,16 +159,20 @@ isc.OBToolbar.addClassProperties({
     updateState: function () {
       var view = this.view,
           form = view.viewForm,
-          grid = view.viewGrid,
-          selectedRecords = grid.getSelectedRecords(),
-          length = selectedRecords.length,
-          i;
+          currentGrid, length, selectedRecords, i;
+      if (view.isShowingTree) {
+        currentGrid = view.treeGrid;
+      } else {
+        currentGrid = view.viewGrid;
+      }
+      selectedRecords = currentGrid.getSelectedRecords();
+      length = selectedRecords.length;
       if (!this.view.isDeleteableTable) {
         this.setDisabled(true);
         return;
       }
       for (i = 0; i < length; i++) {
-        if (!grid.isWritable(selectedRecords[i])) {
+        if (!currentGrid.isWritable(selectedRecords[i])) {
           this.setDisabled(true);
           return;
         }
@@ -180,7 +184,7 @@ isc.OBToolbar.addClassProperties({
       if (view.isShowingForm) {
         this.setDisabled(form.isSaving || form.readOnly || view.singleRecord || !view.hasValidState() || form.isNew || (view.standardWindow.allowDelete === 'N'));
       } else {
-        this.setDisabled(view.readOnly || view.singleRecord || !view.hasValidState() || !grid.getSelectedRecords() || grid.getSelectedRecords().length === 0 || (view.standardWindow.allowDelete === 'N'));
+        this.setDisabled(view.readOnly || view.singleRecord || !view.hasValidState() || !currentGrid.getSelectedRecords() || currentGrid.getSelectedRecords().length === 0 || (view.standardWindow.allowDelete === 'N'));
       }
     },
     keyboardShortcutId: 'ToolBar_Eliminate'
@@ -242,7 +246,7 @@ isc.OBToolbar.addClassProperties({
     sortPosition: 80,
     prompt: OB.I18N.getLabel('OBUIAPP_ExportGrid'),
     updateState: function () {
-      this.setDisabled(this.view.isShowingForm || this.view.viewGrid.getTotalRows() === 0 || OB.PropertyStore.get("ExportToCsv", this.view.standardWindow.windowId) === 'N');
+      this.setDisabled(this.view.isShowingForm || this.view.viewGrid.getTotalRows() === 0 || OB.PropertyStore.get("ExportToCsv", this.view.standardWindow.windowId) === 'N' || this.view.isShowingTree);
     },
     keyboardShortcutId: 'ToolBar_Export'
   },
@@ -1513,6 +1517,8 @@ isc.OBToolbar.addProperties({
       }
     }
   },
+
+
 
   addMembers: 'null',
 

@@ -171,6 +171,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
       String strPageNo = vars.getRequestGlobalVariable("inpPageNo", "ReportTrialBalance|PageNo");
       String strNotInitialBalance = vars.getStringParameter("inpNotInitialBalance", "N");
       vars.setSessionValue("ReportTrialBalance|notInitialBalance", strNotInitialBalance);
+
       if (vars.commandIn("PDF"))
         printPageDataPDF(request, response, vars, strDateFrom, strDateTo, strOrg, strLevel,
             strcElementValueFrom, strcElementValueFromDes, strcElementValueTo,
@@ -531,6 +532,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
             Utility.messageBD(this, "ProcessStatus-W", vars.getLanguage()),
             Utility.messageBD(this, "NoDataFound", vars.getLanguage()));
       } else {
+
         AcctSchema acctSchema = OBDal.getInstance().get(AcctSchema.class, strcAcctSchemaId);
 
         String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportTrialBalanceExcel.jrxml";
@@ -616,6 +618,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
             Utility.messageBD(this, "ProcessStatus-W", vars.getLanguage()),
             Utility.messageBD(this, "NoDataFound", vars.getLanguage()));
       } else {
+
         AcctSchema acctSchema = OBDal.getInstance().get(AcctSchema.class, strcAcctSchemaId);
 
         String strLanguage = vars.getLanguage();

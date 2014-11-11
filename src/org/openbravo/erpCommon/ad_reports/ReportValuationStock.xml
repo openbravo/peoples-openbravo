@@ -44,7 +44,7 @@
     <FIELD id="fieldCategoryName" replaceCharacters="html">categoryName</FIELD>
     <FIELD id="idfieldmProductId" attribute="onclick" replace="xx">mProductId</FIELD>
     <FIELD id="fieldProductName"  replaceCharacters="html">productName</FIELD>
-    <FIELD id="fieldQty">qty</FIELD>
+    <FIELD id="fieldQty" format="euroInform">qty</FIELD>
     <FIELD id="fieldUomName"  replaceCharacters="html">uomName</FIELD>
     <FIELD id="fieldAverageCost" format="euroInform">averageCost</FIELD>
     <FIELD id="fieldTotalCost" format="euroInform">totalCost</FIELD>

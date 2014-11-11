@@ -346,7 +346,10 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       roleError.setType("Error");
       roleError.setMessage(msg);
       invalidLogin(request, response, roleError);
-
+      return;
+    } catch (final IllegalStateException ise) {
+      log4j.error("HTTPSecureAppServlet.service() - exception caught: ", ise);
+      invalidateSession(request);
       return;
     } catch (final Exception e) {
       // Re-login

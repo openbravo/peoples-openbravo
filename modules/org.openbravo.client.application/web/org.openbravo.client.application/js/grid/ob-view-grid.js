@@ -963,7 +963,10 @@ isc.OBViewGrid.addProperties({
 
     if (includeFilter) {
       state.filter = this.getCriteria();
-
+      if (state.filter) {
+        // store the foreign key filter auxiliary cache. this is needed if the grid contains any filter column whose current filter type is 'id'
+        state.filterAuxCache = this.getFKFilterAuxiliaryCache(state.filter);
+      }
       if (!this.filterClause) {
         state.noFilterClause = true;
       }
@@ -994,7 +997,7 @@ isc.OBViewGrid.addProperties({
   },
 
   setViewState: function (state, settingDefault) {
-    var localState, i, fld, hasSummaryFunction;
+    var localState, i, fld, hasSummaryFunction, hasDefaultSavedView;
 
     localState = this.evalViewState(state, 'viewState');
 
@@ -1006,6 +1009,10 @@ isc.OBViewGrid.addProperties({
     if (!localState) {
       return;
     }
+
+    // by default, there are no summary functions
+    hasSummaryFunction = false;
+    this.setShowGridSummary(false);
 
     if (this.getDataSource()) {
       // old versions stored selected records in grid view, this can cause
@@ -1024,9 +1031,7 @@ isc.OBViewGrid.addProperties({
             delete fld.summaryFunction;
           }
         }
-        this.setShowGridSummary(hasSummaryFunction);
       }
-
       // remove focus as this results in blur behavior before the
       // (filter)editor is redrawn with new fields when
       // doing setviewstate
@@ -1061,6 +1066,14 @@ isc.OBViewGrid.addProperties({
 
       this.Super('setViewState', ['(' + isc.Comm.serialize(localState, false) + ')']);
 
+      hasDefaultSavedView = this.view && this.view.standardWindow && this.view.standardWindow.checkIfDefaultSavedView();
+      if (hasSummaryFunction && (!settingDefault || !hasDefaultSavedView)) {
+        // setting summary functions only once, if not causes several requests (see issue #27157)
+        // it is set when setting saved view, or setting defaults (grid configuration) if there is no saved view
+        this.recalculateGridSummary();
+        this.setShowGridSummary(true);
+      }
+
       // Focus on the first filterable item
       if (this.view.isActiveView()) {
         this.focusInFirstFilterEditor();
@@ -1088,10 +1101,28 @@ isc.OBViewGrid.addProperties({
       if (this.filterEditor && !this.filterEditor.getEditForm()) {
         this.filterEditor.setValuesAsCriteria(localState.filter);
       }
+      // if any filter fields of the stored view was using the 'id' filter type, load its auxiliary cache
+      this.loadFilterAuxiliaryCache(localState.filterAuxCache);
       // this initial criteria needs to be removed in order to properly
       // manage filtering clean up
       this.initialCriteriaSetBySavedView = true;
       this.setCriteria(localState.filter);
+    }
+  },
+
+  // loads the foreign key filter auxiliary cache of all the filter fields that were using the 'id' filter type when the view was saved
+  loadFilterAuxiliaryCache: function (filterAuxCache) {
+    var i, cacheElement, filterField;
+    if (!filterAuxCache || !isc.isA.Array(filterAuxCache) || filterAuxCache.length === 0) {
+      return;
+    }
+    for (i = 0; i < filterAuxCache.length; i++) {
+      cacheElement = filterAuxCache[i];
+      filterField = this.filterEditor.getEditForm().getField(cacheElement.fieldName);
+      filterField.filterType = 'id';
+      if (filterField) {
+        filterField.filterAuxCache = cacheElement.cache;
+      }
     }
   },
 
@@ -1179,7 +1210,7 @@ isc.OBViewGrid.addProperties({
   },
 
   setView: function (view) {
-    var dataPageSizeaux, length, i, crit, groupByMaxRecords;
+    var dataPageSizeaux, length, i, crit, groupByMaxRecords, fkCache;
 
     this.view = view;
 
@@ -1204,6 +1235,10 @@ isc.OBViewGrid.addProperties({
     if (this.view.tabId === this.view.standardWindow.additionalCriteriaTabId && this.view.standardWindow.additionalCriteria) {
       crit = isc.JSON.decode(unescape(this.view.standardWindow.additionalCriteria));
       this.setCriteria(crit);
+      if (this.view.standardWindow.fkCache) {
+        this.fkCache = isc.JSON.decode(unescape(this.view.standardWindow.fkCache));
+        // cannot apply the fkCache yet because the grid might not have a filter editor yet
+      }
       delete this.view.standardWindow.additionalCriteria;
     }
     // if there is no autoexpand field then just divide the space
@@ -1472,6 +1507,12 @@ isc.OBViewGrid.addProperties({
 
     this.resetEmptyMessage();
     this.view.updateTabTitle();
+    // apply the fk cache to ensure the identifiers of the filtered foreign keys are shown
+    if (this.fkCache) {
+      this.loadFilterAuxiliaryCache(this.fkCache);
+      // delete it to avoid loading the cache more than once
+      delete this.fkCache;
+    }
 
     /*
      * In case the url contains advanced criteria, the initial criteria contains the criteria to be applied. So it should not be deleted.
@@ -1584,11 +1625,16 @@ isc.OBViewGrid.addProperties({
       // ui-pattern: single record/edit mode
       this.view.openDefaultEditView(this.getRecord(startRow));
     } else if (this.data && this.data.getLength() === 1) {
-      // one record select it directly
-      record = this.getRecord(0);
-      // this select method prevents state changing if the record
-      // was already selected
-      this.doSelectSingleRecord(record);
+
+      // Prevent the selection of an old record
+      // See issue https://issues.openbravo.com/view.php?id=26679
+      if (!this.view.viewForm.isNew) {
+        // one record select it directly
+        record = this.getRecord(0);
+        // this select method prevents state changing if the record
+        // was already selected
+        this.doSelectSingleRecord(record);
+      }
 
       // Call to updateButtonState to force a call to the FIC in setsession mode
       // See issue https://issues.openbravo.com/view.php?id=22655
@@ -1615,6 +1661,12 @@ isc.OBViewGrid.addProperties({
       this.actionAfterDataArrived = null;
     }
 
+
+    if (this.data.manualResultSet && !this.data.useClientFiltering) {
+      this.data.useClientFiltering = true;
+    }
+    //  update the state of the toolbar buttons, as the availability of some of them depends on the number of records loaded
+    this.view.toolBar.updateButtonState(true);
     return ret;
   },
 
@@ -1860,6 +1912,10 @@ isc.OBViewGrid.addProperties({
 
     // note pass in criteria otherwise infinite looping!
     this.resetEmptyMessage(criteria);
+    //convert relative dates to absolute dates. Refer issue https://issues.openbravo.com/view.php?id=27679
+    if (this.dataSource) {
+      criteria = this.dataSource.convertRelativeDates(criteria);
+    }
     if (this.view.parentProperty && !this.isOpenDirectMode) {
       if (this.view.parentView.isShowingTree) {
         selectedValues = this.view.parentView.treeGrid.getSelectedRecords();
@@ -1933,6 +1989,10 @@ isc.OBViewGrid.addProperties({
               shouldRemove = true;
             }
           }
+        } else if (criterion.fieldName === this.view.parentProperty + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER && criterion.operator === 'iEquals') {
+          // Prevent the filtering of a parent column if it is shown on grid
+          // See issue https://issues.openbravo.com/view.php?id=26767
+          shouldRemove = true;
         }
 
         if (shouldRemove) {
@@ -1947,13 +2007,19 @@ isc.OBViewGrid.addProperties({
           }
 
           for (j = 0; j < this.fields.length; j++) {
-            if (this.fields[j].name === fieldName && isc.SimpleType.getType(this.fields[j].type).inheritsFrom === 'datetime') {
-              if (criteria.criteria[i].criteria) {
-                for (k = 0; k < criteria.criteria[i].criteria.length; k++) {
-                  criteria.criteria[i].criteria[k].minutesTimezoneOffset = currentTimeZoneOffsetInMinutes;
+            if (this.fields[j].name === fieldName) {
+              if (isc.SimpleType.getType(this.fields[j].type).inheritsFrom === 'datetime') {
+                if (criteria.criteria[i].criteria) {
+                  for (k = 0; k < criteria.criteria[i].criteria.length; k++) {
+                    criteria.criteria[i].criteria[k].minutesTimezoneOffset = currentTimeZoneOffsetInMinutes;
+                  }
+                } else {
+                  criteria.criteria[i].minutesTimezoneOffset = currentTimeZoneOffsetInMinutes;
                 }
-              } else {
-                criteria.criteria[i].minutesTimezoneOffset = currentTimeZoneOffsetInMinutes;
+              } else if (isc.SimpleType.getType(this.fields[j].type).inheritsFrom === 'text' && (criterion.operator === 'iBetweenInclusive' || criterion.operator === 'betweenInclusive') && criterion.end.indexOf('ZZZZZZZZZZ') === -1) {
+                // Fix of iBetweenInclusive criteria
+                // See issue https://issues.openbravo.com/view.php?id=26504
+                criterion.end = criterion.end + 'ZZZZZZZZZZ';
               }
               break;
             }
@@ -2008,6 +2074,7 @@ isc.OBViewGrid.addProperties({
       this.data.totalRows = 0;
       this.data.cachedRows = 0;
     }
+    this.setFechingData();
 
     requestProperties = requestProperties || {};
     requestProperties.params = this.getFetchRequestParams(requestProperties.params);
@@ -2259,7 +2326,8 @@ isc.OBViewGrid.addProperties({
       menuItems.add({
         title: OB.I18N.getLabel('OBUIAPP_UseAsFilter'),
         click: function () {
-          var value;
+          var value, filterFormItem = grid.filterEditor.getEditForm().getField(field.name),
+              cacheElement = {};
           // a foreign key field, use the displayfield/identifier
           if (field.fkField && field.displayField) {
             value = record[field.displayField];
@@ -2268,9 +2336,18 @@ isc.OBViewGrid.addProperties({
           }
           // assume a date range filter item
           if (isc.isA.Date(value) && field.filterEditorType === 'OBMiniDateRangeItem') {
-            grid.filterEditor.getEditForm().getField(field.name).setSingleDateValue(value);
+            filterFormItem.setSingleDateValue(value);
           } else {
             grid.filterEditor.getEditForm().setValue(field.name, OB.Utilities.encodeSearchOperator(value));
+          }
+          if (field.filterEditorType === 'OBFKFilterTextItem' && filterFormItem) {
+            filterFormItem.filterType = 'id';
+            if (!filterFormItem.getRecordIdentifierFromId(record[field.name])) {
+              // if the filter editor does not know about this record, add the its id and its identifier to the auxiliary filter cache              
+              cacheElement[OB.Constants.ID] = record[field.name];
+              cacheElement[OB.Constants.IDENTIFIER] = record[field.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER];
+              filterFormItem.filterAuxCache.add(cacheElement);
+            }
           }
           var criteria = grid.filterEditor.getEditForm().getValuesAsCriteria();
           grid.checkShowFilterFunnelIcon(criteria);
@@ -2332,6 +2409,8 @@ isc.OBViewGrid.addProperties({
     }
     return false;
   },
+
+
 
   // +++++++++++++++++++++++++++++ Record Selection Handling +++++++++++++++++++++++
   updateSelectedCountDisplay: function () {
@@ -2696,6 +2775,11 @@ isc.OBViewGrid.addProperties({
     } else {
       insertRow = rowNum + 1;
     }
+
+    if (this.lazyFiltering && !isc.isA.ResultSet(this.data)) {
+      OB.Utilities.createResultSetManually(this);
+    }
+
     this.createNewRecordForEditing(insertRow);
     this.startEditing(insertRow);
     this.recomputeCanvasComponents(insertRow);
@@ -2872,7 +2956,9 @@ isc.OBViewGrid.addProperties({
     this.view.standardWindow.autoSaveDone(this.view, true);
 
     // if nothing else got selected, select ourselves then
-    if (!this.getSelectedRecord() || (this.getSelectedRecord().id === record._originalId)) {
+    // if there is already a record selected, only force reselecting that record if the editCompletionEvent was 'programmatic', 
+    // otherwise ('enter', 'tab', etc) it is not needed, and doing it causes https://issues.openbravo.com/view.php?id=27957  
+    if (!this.getSelectedRecord() || (editCompletionEvent === 'programmatic' && this.getSelectedRecord().id === record._originalId)) {
       this.selectRecord(record);
       keepSelection = true;
       this.view.refreshChildViews(keepSelection);
@@ -3040,6 +3126,13 @@ isc.OBViewGrid.addProperties({
     var nextEditCell = ((rowNum || rowNum === 0) && (colNum || colNum === 0) ? this.getNextEditCell(rowNum, colNum, editCompletionEvent) : null);
     var newRow = nextEditCell && nextEditCell[0] !== rowNum;
     var enterKey = editCompletionEvent === 'enter';
+
+    // if event was triggered by pressing the enter key, do not continue if the current edit field is not the one focused when the enter key was pressed
+    // this happens for instance when a value is selected from a pick list by pressing enter. if that happens the value is selected, the focus is moved to the 
+    // next form item and the cellEditEnd function can be invoked for the form item that just got the focus
+    if (enterKey && editField.name !== this.getEditForm().lastKeyDownItem.name) {
+      return;
+    }
 
     // no newValue, compute it, this because in the super method there is a check
     // how many arguments are passed on, sometimes the newValue is not passed in
@@ -3652,8 +3745,6 @@ isc.OBViewGrid.addProperties({
       } else {
         component.showEditOpen();
       }
-    } else if (isEditRecord) {
-      return null;
     } else {
       return this.Super('updateRecordComponent', arguments);
     }

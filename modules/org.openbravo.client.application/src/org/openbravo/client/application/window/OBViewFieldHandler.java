@@ -145,7 +145,7 @@ public class OBViewFieldHandler {
             propertiesInButtonFieldDisplayLogic.add(property.getName());
           }
         } else {
-          if (!fieldExpression.isDisplayed()) {
+          if (!fieldExpression.isDisplayed() || !fieldExpression.isShowInGridView()) {
             Property property = entity.getPropertyByColumnName(fieldExpression.getColumn()
                 .getDBColumnName());
             if (!hiddenPropertiesInDisplayLogic.contains(property.getName())) {
@@ -1216,6 +1216,10 @@ public class OBViewFieldHandler {
           && field.getTab().getWindow().getWindowType().equals("OBUIAPP_PickAndExecute")) {
         props = props + ", canFilter: false";
       }
+      if (!props.contains("canSort") && field.getTab().isObuiappCanAdd()
+          && field.getTab().getWindow().getWindowType().equals("OBUIAPP_PickAndExecute")) {
+        props = props + ", canSort: false";
+      }
       return props;
     }
 
@@ -1319,7 +1323,7 @@ public class OBViewFieldHandler {
       getUIDefinition().establishGridConfigurationSettings(field);
 
       if (getClientClass().length() > 0) {
-        return "editorType: 'OBClientClassCanvasItem', filterEditorType: 'TextItem', ";
+        return "editorType: 'OBClientClassCanvasItem', ";
       }
 
       String jsonString = getUIDefinition().getFieldProperties(field).trim();

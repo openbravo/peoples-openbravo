@@ -44,6 +44,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.service.json.JsonToDataConverter.JsonConversionError;
+import org.openbravo.userinterface.selector.SelectorConstants;
 
 /**
  * Implements generic data operations which have parameters and json as an input and return results
@@ -88,6 +89,26 @@ public class DefaultJsonDataService implements JsonDataService {
       Check.isNotNull(parameters, "The parameters should not be null");
 
       String selectedProperties = parameters.get(JsonConstants.SELECTEDPROPERTIES_PARAMETER);
+      // The display property is present only for displaying table references in filter.
+      // This parameter is used to set the identifier with the display column value.
+      // Refer https://issues.openbravo.com/view.php?id=26696
+      String displayField = parameters.get(JsonConstants.DISPLAYFIELD_PARAMETER);
+      if (StringUtils.isNotEmpty(displayField) && StringUtils.isNotEmpty(selectedProperties)) {
+        boolean propertyPresent = false;
+        for (String selectedProp : selectedProperties.split(",")) {
+          if (selectedProp.equals(displayField)) {
+            propertyPresent = true;
+            break;
+          }
+        }
+        if (!propertyPresent) {
+          if (StringUtils.isNotEmpty(selectedProperties)) {
+            selectedProperties = selectedProperties.concat("," + displayField);
+          } else {
+            selectedProperties = displayField;
+          }
+        }
+      }
 
       final JSONObject jsonResult = new JSONObject();
       final JSONObject jsonResponse = new JSONObject();
@@ -216,6 +237,9 @@ public class DefaultJsonDataService implements JsonDataService {
           DataToJsonConverter.class);
       toJsonConverter.setAdditionalProperties(JsonUtils.getAdditionalProperties(parameters));
       toJsonConverter.setSelectedProperties(selectedProperties);
+      if (StringUtils.isNotEmpty(displayField) && (!displayField.equals(JsonConstants.IDENTIFIER))) {
+        toJsonConverter.setDisplayProperty(displayField);
+      }
       final List<JSONObject> jsonObjects = toJsonConverter.toJsonObjects(bobs);
 
       addWritableAttribute(jsonObjects);
@@ -362,7 +386,7 @@ public class DefaultJsonDataService implements JsonDataService {
     final JSONObject criteria = JsonUtils.buildCriteria(parameters);
 
     if ((StringUtils.isEmpty(startRowStr) || StringUtils.isEmpty(endRowStr))
-        && !isIDCriteria(criteria)) {
+        && !isIDCriteria(criteria) && !parameters.containsKey("exportAs")) {
       // pagination is not set, this is most likely a bug
       String paramMsg = "";
       for (String paramKey : parameters.keySet()) {
@@ -371,11 +395,8 @@ public class DefaultJsonDataService implements JsonDataService {
       log.warn("Fetching data without pagination, this can cause perfomance issues. Parameters: "
           + paramMsg);
 
-      if (parameters.containsKey(JsonConstants.TAB_PARAMETER)) {
-        // || parameters.containsKey(SelectorConstants.DS_REQUEST_SELECTOR_ID_PARAMETER)
-        // FIXME: Some selectors working in 2.50 windows are incorrectly unpaged (see issue #26734)
-        // for now we are not preventing unpaged selector requests till this issue is properly fixed
-        // after that they should be prevented again
+      if (parameters.containsKey(JsonConstants.TAB_PARAMETER)
+          || parameters.containsKey(SelectorConstants.DS_REQUEST_SELECTOR_ID_PARAMETER)) {
 
         // for standard tab and selector datasources pagination is mandatory
         throw new OBException(OBMessageUtils.messageBD("OBJSON_NoPagedFetch"));

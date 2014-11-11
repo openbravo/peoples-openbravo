@@ -33,6 +33,7 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.ad_forms.AcctServer;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.currency.ConversionRateDoc;
 import org.openbravo.model.financialmgmt.accounting.FIN_FinancialAccountAccounting;
@@ -63,14 +64,17 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
       final String strAction = (String) bundle.getParams().get("action");
 
       // retrieve standard params
-      final String recordID = (String) bundle.getParams().get("Fin_FinAcc_Transaction_ID");
+      String recordID = (String) bundle.getParams().get("Fin_FinAcc_Transaction_ID");
+      if (recordID == null) {
+        recordID = (String) bundle.getParams().get("Fin_Finacc_Transaction_ID");
+      }
       final FIN_FinaccTransaction transaction = dao
           .getObject(FIN_FinaccTransaction.class, recordID);
       final VariablesSecureApp vars = bundle.getContext().toVars();
       final ConnectionProvider conProvider = bundle.getConnection();
       final String language = bundle.getContext().getLanguage();
 
-      OBContext.setAdminMode();
+      OBContext.setAdminMode(false);
       try {
         if (strAction.equals("P")) {
           // ***********************
@@ -132,6 +136,7 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
               && getConversionRateDocument(transaction).size() == 0) {
             insertConversionRateDocument(transaction);
           }
+          transaction.setAprmProcessed("R");
           OBDal.getInstance().save(financialAccount);
           OBDal.getInstance().save(transaction);
           OBDal.getInstance().flush();
@@ -159,6 +164,19 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
             bundle.setResult(msg);
             return;
           }
+
+          // Payment Method associated to payment not longer in financial account
+          final FIN_Payment payment = transaction.getFinPayment();
+          if (payment != null && FIN_Utility.invoicePaymentStatus(payment) == null) {
+            msg.setType("Error");
+            msg.setTitle(Utility.messageBD(conProvider, "Error", language));
+            msg.setMessage(String.format(OBMessageUtils.messageBD("APRM_NoPaymentMethod"), payment
+                .getPaymentMethod().getIdentifier(), payment.getDocumentNo(), payment.getAccount()
+                .getName()));
+            bundle.setResult(msg);
+            return;
+          }
+
           // Remove conversion rate at document level for the given transaction
           OBContext.setAdminMode();
           try {
@@ -180,7 +198,6 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
           OBDal.getInstance().save(financialAccount);
           OBDal.getInstance().save(transaction);
           OBDal.getInstance().flush();
-          FIN_Payment payment = transaction.getFinPayment();
           if (payment != null) {
             Boolean invoicePaidold = false;
             for (FIN_PaymentDetail pd : payment.getFINPaymentDetailList()) {
@@ -202,6 +219,7 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
             transaction.setStatus(transaction.getDepositAmount().compareTo(
                 transaction.getPaymentAmount()) > 0 ? "RPR" : "PPM");
           }
+          transaction.setAprmProcessed("P");
           OBDal.getInstance().save(transaction);
           OBDal.getInstance().flush();
           bundle.setResult(msg);

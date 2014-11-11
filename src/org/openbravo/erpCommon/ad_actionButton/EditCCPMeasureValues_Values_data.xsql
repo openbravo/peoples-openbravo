@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -34,7 +34,7 @@
               and v.MA_CCP_ID = c.MA_CCP_ID 
               and t.MA_MEASURE_GROUP_ID = ?
             union all
-              select to_date('31/12/9999'), v.seqno, c.name || (CASE c.CRITICAL WHEN 'Y' THEN ' (PC)' ELSE '' END) AS name, ' ' as value, identific, '0' as valueid, 'hidden' as type,  'hidden' as validatetype, 'N' as valuec
+              select to_date('31/12/9999', 'DD/MM/YYYY'), v.seqno, c.name || (CASE c.CRITICAL WHEN 'Y' THEN ' (PC)' ELSE '' END) AS name, ' ' as value, identific, '0' as valueid, 'hidden' as type,  'hidden' as validatetype, 'N' as valuec
               from ma_measure_time t, ma_measure_values v, ma_ccp c, 
                 (select VALUE-1 as identific from ad_INTEGER 
                  where VALUE<=(

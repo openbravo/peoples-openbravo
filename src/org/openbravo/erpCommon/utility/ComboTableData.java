@@ -1124,6 +1124,7 @@ public class ComboTableData {
         }
 
         if (includeActual && actual != null && !actual.equals("")) {
+
           String[] discard = { "filter", "orderBy", "CLIENT_LIST", "ORG_LIST" };
           String strSqlDisc = getQuery(true, discard, null, null, null, null, false);
           PreparedStatement stInactive = conn.getPreparedStatement(strSqlDisc);
@@ -1188,24 +1189,47 @@ public class ComboTableData {
       result.close();
 
       if (includeActual && actual != null && !actual.equals("") && !idFound) {
-        conn.releasePreparedStatement(st);
-        String[] discard = { "filter", "orderBy", "CLIENT_LIST", "ORG_LIST" };
-        strSql = getQuery(true, discard, null, null, null, null, false);
-        if (log4j.isDebugEnabled())
-          log4j.debug("SQL Actual ID: " + strSql);
-        st = conn.getPreparedStatement(strSql);
-        iParameter = setSQLParameters(st, lparameters, 0, discard);
-        UtilSql.setValue(st, ++iParameter, 12, null, actual);
-        result = st.executeQuery();
-        while (result.next()) {
-          SQLReturnObject sqlReturnObject = new SQLReturnObject();
-          sqlReturnObject.setData("ID", UtilSql.getValue(result, "ID"));
-          String strName = UtilSql.getValue(result, "NAME");
-          if (!strName.startsWith(INACTIVE_DATA))
-            strName = INACTIVE_DATA + strName;
-          sqlReturnObject.setData("NAME", strName);
-          vector.addElement(sqlReturnObject);
-          idFound = true;
+        boolean allDataInSinglePage;
+        if (startRow != null && endRow != null) {
+          allDataInSinglePage = startRow == 0 && vector.size() < endRow - startRow;
+        } else {
+          // This method is invoked with startRow = endRow = null for lists. Lists always have load
+          // all data in a single page
+          allDataInSinglePage = true;
+        }
+        if (!allDataInSinglePage) {
+          // retrieved a partial set of data, checking if current id is in a page different that the
+          // served applying the same criteria, if so, do not add it again to the list (it will
+          // appear in its own page)
+          conn.releasePreparedStatement(st);
+          strSql = getQuery(true, null, null, 0, 1, conn, !StringUtils.isEmpty(filterValue));
+          log4j.debug("SQL to check if actual ID is in another page: " + strSql);
+          st = conn.getPreparedStatement(strSql);
+          setSQLParameters(st, lparameters, 0, null, actual, filterValue);
+          result = st.executeQuery();
+          idFound = result.next();
+          result.close();
+        }
+        if (!idFound) {
+          conn.releasePreparedStatement(st);
+          String[] discard = { "filter", "orderBy", "CLIENT_LIST", "ORG_LIST" };
+          strSql = getQuery(true, discard, null, null, null, null, false);
+          if (log4j.isDebugEnabled())
+            log4j.debug("SQL Actual ID: " + strSql);
+          st = conn.getPreparedStatement(strSql);
+          iParameter = setSQLParameters(st, lparameters, 0, discard);
+          UtilSql.setValue(st, ++iParameter, 12, null, actual);
+          result = st.executeQuery();
+          if (result.next()) {
+            SQLReturnObject sqlReturnObject = new SQLReturnObject();
+            sqlReturnObject.setData("ID", UtilSql.getValue(result, "ID"));
+            String strName = UtilSql.getValue(result, "NAME");
+            if (!strName.startsWith(INACTIVE_DATA))
+              strName = INACTIVE_DATA + strName;
+            sqlReturnObject.setData("NAME", strName);
+            vector.addElement(sqlReturnObject);
+            idFound = true;
+          }
         }
         result.close();
         if (!idFound) {
@@ -1318,7 +1342,7 @@ public class ComboTableData {
               actual_value, false);
           if (log4j.isDebugEnabled())
             log4j.debug("Combo Parameter: " + strAux + " - Value: " + value);
-          if (value == null || value.equals(""))
+          if (value == null || value.equals("") || "null".equals(value))
             lparameters.remove(strAux.toUpperCase());
           else
             lparameters.put(strAux.toUpperCase(), value);

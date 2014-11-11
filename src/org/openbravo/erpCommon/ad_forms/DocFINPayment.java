@@ -76,6 +76,7 @@ public class DocFINPayment extends AcctServer {
   @Override
   public boolean loadDocumentDetails(FieldProvider[] data, ConnectionProvider conn) {
     DateDoc = data[0].getField("PaymentDate");
+    m_Record_Id2 = data[0].getField("recordId2");
     Amounts[AMTTYPE_Gross] = data[0].getField("Amount");
     generatedAmount = data[0].getField("GeneratedCredit");
     usedAmount = data[0].getField("UsedCredit");
@@ -262,6 +263,9 @@ public class DocFINPayment extends AcctServer {
             .getNdDimension().getId() : (paymentDetails.get(i).getFINPaymentScheduleDetailList()
             .get(0).getNdDimension() != null ? paymentDetails.get(i)
             .getFINPaymentScheduleDetailList().get(0).getNdDimension().getId() : "")));
+        FieldProviderFactory.setField(data[i], "recordId2",
+            paymentDetails.get(i).isPrepayment() ? (pso != null ? pso.getId() : "")
+                : (psi != null ? psi.getId() : ""));
 
       }
     } finally {
@@ -296,6 +300,7 @@ public class DocFINPayment extends AcctServer {
                 && detail.getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule() != null ? detail
                 .getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule().getInvoice()
                 : null);
+        docLine.m_Record_Id2 = data[i].getField("recordId2");
         docLine.setInvoiceTaxCashVAT_V(detail.getFinPayment().getId());
         list.add(docLine);
       } finally {
@@ -331,8 +336,10 @@ public class DocFINPayment extends AcctServer {
           AcctSchemaTableDocType.class, whereClause.toString());
       final List<AcctSchemaTableDocType> acctSchemaTableDocTypes = obqParameters.list();
 
-      if (acctSchemaTableDocTypes != null && acctSchemaTableDocTypes.size() > 0)
+      if (acctSchemaTableDocTypes != null && acctSchemaTableDocTypes.size() > 0
+          && acctSchemaTableDocTypes.get(0).getCreatefactTemplate() != null) {
         strClassname = acctSchemaTableDocTypes.get(0).getCreatefactTemplate().getClassname();
+      }
 
       if (strClassname.equals("")) {
         final StringBuilder whereClause2 = new StringBuilder();
@@ -681,7 +688,8 @@ public class DocFINPayment extends AcctServer {
       FieldProviderFactory.setField(data[0], "User2_ID", paymentInfo[0].user2Id);
       FieldProviderFactory.setField(data[0], "C_Costcenter_ID", paymentInfo[0].cCostcenterId);
     }
-
+    // Used to match balances
+    FieldProviderFactory.setField(data[0], "recordId2", payment.getId());
     setObjectFieldProvider(data);
   }
 

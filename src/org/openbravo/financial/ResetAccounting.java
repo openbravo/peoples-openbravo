@@ -114,8 +114,8 @@ public class ResetAccounting {
               String exceptionsSql = myQuery + consDate.toString();
               consDate
                   .append(" and not exists (select a from FinancialMgmtAccountingFact a where a.recordID = e.recordID and a.table.id = e.table.id and (a.accountingDate < :dateFrom or a.accountingDate > :dateTo))");
-              final Query query = OBDal.getInstance().getSession()
-                  .createQuery(myQuery + consDate.toString());
+              final Query query = OBDal.getInstance().getSession().createQuery(
+                  myQuery + consDate.toString());
               if (recordId != null && !"".equals(recordId)) {
                 query.setString("recordId", recordId);
               }
@@ -214,6 +214,17 @@ public class ResetAccounting {
     String tableName = "";
     OBContext.setAdminMode(false);
     try {
+      // First undo date balancing for those balanced entries
+      String strUpdateBalanced = "update FinancialMgmtAccountingFact fact set dateBalanced = null "
+          + "where fact.dateBalanced is not null "
+          + "and exists (select 1 from FinancialMgmtAccountingFact f "
+          + "where f.recordID in :transactions " + "and  f.table.id = :tableId "
+          + "and f.client.id=:clientId and f.recordID2=fact.recordID2)";
+      final Query updateBalanced = OBDal.getInstance().getSession().createQuery(strUpdateBalanced);
+      updateBalanced.setString("tableId", tableId);
+      updateBalanced.setParameterList("transactions", transactions);
+      updateBalanced.setString("clientId", client);
+      int balancedUpdated = updateBalanced.executeUpdate();
       Table table = OBDal.getInstance().get(Table.class, tableId);
       tableName = table.getName();
       String strUpdate = "update "
@@ -361,7 +372,8 @@ public class ResetAccounting {
       String dateto, String orgPeriodControl) {
     if (!"".equals(recordId)) {
       List<Period> periods = new ArrayList<Period>();
-      periods.add(getDocumentPeriod(clientId, tableId, recordId, docBaseType, orgPeriodControl));
+      periods.add(getDocumentPeriod(clientId, tableId, recordId, docBaseType, orgPeriodControl,
+          orgIds));
       return periods;
 
     }
@@ -397,14 +409,15 @@ public class ResetAccounting {
   }
 
   private static Period getDocumentPeriod(String clientId, String tableId, String recordId,
-      String docBaseType, String orgPeriodControl) {
-    String myQuery = "select distinct e.period from FinancialMgmtAccountingFact e , FinancialMgmtPeriodControl p where p.period=e.period and p.periodStatus = 'O' and e.client.id = :clientId and e.table.id = :tableId and e.recordID=:recordId and p.documentCategory = :docbasetype and p.organization.id  = :orgPeriodControl";
+      String docBaseType, String orgPeriodControl, Set<String> orgIds) {
+    String myQuery = "select distinct e.period from FinancialMgmtAccountingFact e , FinancialMgmtPeriodControl p where p.period=e.period and p.periodStatus = 'O' and e.client.id = :clientId and e.table.id = :tableId and e.recordID=:recordId and p.documentCategory = :docbasetype and p.organization.id  = :orgPeriodControl and e.organization.id in (:orgIds)";
     Query query = OBDal.getInstance().getSession().createQuery(myQuery);
     query.setString("clientId", clientId);
     query.setString("tableId", tableId);
     query.setString("recordId", recordId);
     query.setString("docbasetype", docBaseType);
     query.setString("orgPeriodControl", orgPeriodControl);
+    query.setParameterList("orgIds", orgIds);
     query.setMaxResults(1);
     Period period = (Period) query.uniqueResult();
     if (period == null) {
@@ -423,7 +436,7 @@ public class ResetAccounting {
         dates[1] = period.getEndingDate();
         result.add(dates);
       }
-    } catch (Exception e) {
+    } finally {
       OBContext.restorePreviousMode();
     }
     return result;
@@ -485,10 +498,10 @@ public class ResetAccounting {
       OBCriteria<AccountingFact> factCrit = OBDal.getInstance()
           .createCriteria(AccountingFact.class);
       factCrit.add(Restrictions.eq(AccountingFact.PROPERTY_RECORDID, transaction));
-      factCrit.add(Restrictions.eq(AccountingFact.PROPERTY_TABLE,
-          OBDal.getInstance().get(Table.class, table)));
-      factCrit.add(Restrictions.eq(AccountingFact.PROPERTY_CLIENT,
-          OBDal.getInstance().get(Client.class, client)));
+      factCrit.add(Restrictions.eq(AccountingFact.PROPERTY_TABLE, OBDal.getInstance().get(
+          Table.class, table)));
+      factCrit.add(Restrictions.eq(AccountingFact.PROPERTY_CLIENT, OBDal.getInstance().get(
+          Client.class, client)));
       List<AccountingFact> facts = factCrit.list();
       Set<Date> exceptionDates = new HashSet<Date>();
       for (AccountingFact fact : facts) {

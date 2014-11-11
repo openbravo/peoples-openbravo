@@ -22,7 +22,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.util.Check;
@@ -32,6 +34,7 @@ import org.openbravo.client.application.Process;
 import org.openbravo.client.application.ProcessAccess;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.client.kernel.KernelConstants;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -49,6 +52,8 @@ import org.openbravo.model.ad.ui.Window;
 public abstract class BaseProcessActionHandler extends BaseActionHandler {
 
   private static final Logger log = Logger.getLogger(BaseProcessActionHandler.class);
+
+  private static final String GRID_REFERENCE_ID = "FF80818132D8F0F30132D9BC395D0038";
 
   @Override
   protected final JSONObject execute(Map<String, Object> parameters, String content) {
@@ -74,11 +79,19 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
         return jsonRequest;
       }
 
+      JSONObject context = null;
+      if (StringUtils.isNotEmpty(content)) {
+        try {
+          context = new JSONObject(content);
+        } catch (JSONException e) {
+          log.error("Error getting context for process definition " + processDefinition, e);
+        }
+      }
       for (Parameter param : processDefinition.getOBUIAPPParameterList()) {
         if (param.isFixed()) {
           if (param.isEvaluateFixedValue()) {
             parameters.put(param.getDBColumnName(),
-                ParameterUtils.getParameterFixedValue(fixRequestMap(parameters), param));
+                ParameterUtils.getParameterFixedValue(fixRequestMap(parameters, context), param));
           } else {
             parameters.put(param.getDBColumnName(), param.getFixedValue());
           }
@@ -95,14 +108,45 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
       Process process = OBDal.getInstance().get(Process.class, processId);
       String updatedContent = content;
       if (process.isGridlegacy()) {
+        log.warn("Process "
+            + process.getName()
+            + " is marked as Grid Legacy, you should consider migrating it to prevent parameter conversion");
+
         JSONObject jsonRequest = new JSONObject(content);
         if (!jsonRequest.isNull("_params")) {
-          JSONObject jsonparams = jsonRequest.getJSONObject("_params");
-          String gridParamName = jsonparams.names().getString(0);
-          JSONObject jsongrid = jsonparams.getJSONObject(gridParamName);
-          jsonRequest.put("_selection", jsongrid.getJSONArray("_selection"));
-          jsonRequest.put("_allRows", jsongrid.getJSONArray("_allRows"));
-          updatedContent = jsonRequest.toString();
+          try {
+            Parameter gridParameter = null;
+            boolean shouldConvert = false;
+            for (Parameter param : process.getOBUIAPPParameterList()) {
+              if (GRID_REFERENCE_ID.equals(DalUtil.getId(param.getReference()))) {
+                if (gridParameter != null) {
+                  log.error("Error while trying to conver parameters to legacy mode. There are more than one grid parameter. Not converting it.");
+                  shouldConvert = false;
+                } else {
+                  gridParameter = param;
+                  shouldConvert = true;
+                }
+              }
+            }
+
+            if (gridParameter == null) {
+              log.info("There is no grid parameter in proces " + process.getName()
+                  + ". No conversion is needed so Grid Legacy can be safelly unflagged.");
+            }
+
+            if (shouldConvert) {
+              JSONObject jsonparams = jsonRequest.getJSONObject("_params");
+              if (jsonparams.has(gridParameter.getDBColumnName())
+                  && !jsonparams.isNull(gridParameter.getDBColumnName())) {
+                JSONObject jsongrid = jsonparams.getJSONObject(gridParameter.getDBColumnName());
+                jsonRequest.put("_selection", jsongrid.getJSONArray("_selection"));
+                jsonRequest.put("_allRows", jsongrid.getJSONArray("_allRows"));
+              }
+              updatedContent = jsonRequest.toString();
+            }
+          } catch (Exception e) {
+            log.error("Error while converting parameters. Sending them without conversion", e);
+          }
         }
       }
       return doExecute(parameters, updatedContent);
@@ -166,11 +210,21 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
     return qAccess.count() > 0;
   }
 
-  /*
+  /**
    * The request map is <String, Object> because includes the HTTP request and HTTP session, is not
    * required to handle process parameters
+   * 
+   * @deprecated use {@link BaseProcessActionHandler#fixRequestMap(Map, JSONObject)}
    */
   protected Map<String, String> fixRequestMap(Map<String, Object> parameters) {
+    return fixRequestMap(parameters, null);
+  }
+
+  /**
+   * Fixes the request map adding an "context" key to include context info in order to make it
+   * available to be evaluated by FilterExpression
+   */
+  protected Map<String, String> fixRequestMap(Map<String, Object> parameters, JSONObject context) {
     final Map<String, String> retval = new HashMap<String, String>();
     for (Entry<String, Object> entries : parameters.entrySet()) {
       if (entries.getKey().equals(KernelConstants.HTTP_REQUEST)
@@ -178,6 +232,9 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
         continue;
       }
       retval.put(entries.getKey(), entries.getValue().toString());
+    }
+    if (context != null) {
+      retval.put("context", context.toString());
     }
     return retval;
   }

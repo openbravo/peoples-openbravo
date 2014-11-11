@@ -36,11 +36,14 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.datamodel.Column;
+import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
@@ -50,6 +53,7 @@ import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.uom.UOM;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.service.datasource.ReadOnlyDataSourceService;
+import org.openbravo.service.json.AdvancedQueryBuilder;
 import org.openbravo.service.json.DataToJsonConverter;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonUtils;
@@ -61,6 +65,8 @@ public class ReturnToVendorPickAndEditDataSource extends ReadOnlyDataSourceServi
   private final SimpleDateFormat xmlDateTimeFormat = JsonUtils.createDateTimeFormat();
   private static final String AD_TABLE_ID = "FCB35AE2A9CA48EFAACCB06CCD17BED5";
   private List<Map<String, Object>> data;
+  private static final String AND = " AND ";
+  private static final String WHERE = " WHERE ";
 
   @Override
   public Entity getEntity() {
@@ -120,32 +126,27 @@ public class ReturnToVendorPickAndEditDataSource extends ReadOnlyDataSourceServi
     Order order = OBDal.getInstance().get(Order.class, strOrderId);
     String where = parameters.get("_where");
     OBContext.setAdminMode(true);
+    AdvancedQueryBuilder queryBuilder = new AdvancedQueryBuilder();
+
     try {
+      JSONObject criteria = JsonUtils.buildCriteria(parameters);
       Map<String, String> filterCriteria = getFilterCriteria(parameters);
       final StringBuilder hqlString = new StringBuilder();
       hqlString.append("select count(iol.id)");
-      hqlString.append(" from MaterialMgmtShipmentInOutLine as iol");
-      hqlString.append(" join iol.shipmentReceipt as io");
-      // Adds joins when required by filters
-      hqlString.append(getJoinArgumentsFromFilters(filterCriteria, ""));
-      // Starting where clause
-      hqlString.append(" where io.businessPartner = :businessPartner");
-      hqlString.append(" and io.processed = true");
-      hqlString.append(" and io.documentStatus <> 'VO'");
-      hqlString.append(" and io.salesTransaction = false");
-      hqlString.append(" and iol.organization in :organizations");
-      hqlString
-          .append(" and not exists (select 1 from OrderLine as ol where ol.salesOrder = :order and ol.goodsShipmentLine = iol)");
-      if (where != null && !"".equals(where) && !"null".equalsIgnoreCase(where)) {
-        hqlString.append(" and " + where);
-      }
-      // Adds filters
-      hqlString.append(getWhereArgumentsFromFilters(filterCriteria));
+
+      hqlString.append(getQuery(order, getOrganizations(order.getOrganization()), where, criteria,
+          queryBuilder));
+
       final Session session = OBDal.getInstance().getSession();
       final Query query = session.createQuery(hqlString.toString());
       query.setParameter("order", order);
       query.setParameter("businessPartner", order.getBusinessPartner());
       query.setParameterList("organizations", getOrganizations(order.getOrganization()));
+
+      for (String key : queryBuilder.getNamedParameters().keySet()) {
+        query.setParameter(key, queryBuilder.getNamedParameters().get(key));
+      }
+
       for (Object o : query.list()) {
         if (o != null && o instanceof Long) {
           count = (Long) o;
@@ -178,13 +179,15 @@ public class ReturnToVendorPickAndEditDataSource extends ReadOnlyDataSourceServi
         result = getReturnReasonFilterData(parameters, order);
       }
     } else {
-      Map<String, String> filterCriteria = getFilterCriteria(parameters);
+
+      JSONObject criteria = JsonUtils.buildCriteria(parameters);
+
       String where = parameters.get("_where");
       if (startRow == 0) {
         result.addAll(getSelectedLines(order));
       }
       result.addAll(getReceiptLines(order, getOrganizations(order.getOrganization()), where,
-          filterCriteria, parameters.get("_sortBy"), startRow, endRow));
+          criteria, parameters.get("_sortBy"), startRow, endRow));
 
     }
     return result;
@@ -297,36 +300,30 @@ public class ReturnToVendorPickAndEditDataSource extends ReadOnlyDataSourceServi
   }
 
   private List<Map<String, Object>> getReceiptLines(Order order, Set<Organization> organizations,
-      String where, Map<String, String> filterCriteria, String sortBy, int startRow, int endRow) {
+      String where, JSONObject criteria, String sortBy, int startRow, int endRow) {
     List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+    AdvancedQueryBuilder queryBuilder = new AdvancedQueryBuilder();
     OBContext.setAdminMode(true);
     try {
-      final StringBuilder hqlString = new StringBuilder();
-      hqlString.append("select iol");
-      hqlString.append(" from MaterialMgmtShipmentInOutLine as iol");
-      hqlString.append(" join iol.shipmentReceipt as io");
-      // Adds joins when required by filters
-      hqlString.append(getJoinArgumentsFromFilters(filterCriteria, sortBy));
-      // Starting where clause
-      hqlString.append(" where io.businessPartner = :businessPartner");
-      hqlString.append(" and io.processed = true");
-      hqlString.append(" and io.documentStatus <> 'VO'");
-      hqlString.append(" and io.salesTransaction = false");
-      hqlString.append(" and iol.organization in :organizations");
-      hqlString
-          .append(" and not exists (select 1 from OrderLine as ol where ol.salesOrder = :order and ol.goodsShipmentLine = iol)");
-      if (where != null && !"".equals(where) && !"null".equalsIgnoreCase(where)) {
-        hqlString.append(" and " + where);
+      StringBuilder hqlString = new StringBuilder();
+      if (sortBy != null && !"".equals(sortBy) && !"null".equalsIgnoreCase(sortBy)) {
+        queryBuilder.setOrderBy(sortBy);
       }
-      // Adds filters
-      hqlString.append(getWhereArgumentsFromFilters(filterCriteria));
-      // Adds ordering
-      hqlString.append(getOrderBy(sortBy));
+
+      hqlString.append("select iol");
+      hqlString.append(getQuery(order, organizations, where, criteria, queryBuilder));
+      // hqlString.append(getOrderBy(sortBy));
+      hqlString.append(queryBuilder.getOrderByClause());
       final Session session = OBDal.getInstance().getSession();
       final Query query = session.createQuery(hqlString.toString());
       query.setParameter("order", order);
       query.setParameter("businessPartner", order.getBusinessPartner());
       query.setParameterList("organizations", organizations);
+
+      for (String key : queryBuilder.getNamedParameters().keySet()) {
+        query.setParameter(key, queryBuilder.getNamedParameters().get(key));
+      }
+
       query.setFirstResult(startRow);
       query.setMaxResults(endRow - startRow);
       query.setFetchSize(endRow - startRow);
@@ -338,6 +335,41 @@ public class ReturnToVendorPickAndEditDataSource extends ReadOnlyDataSourceServi
       OBContext.restorePreviousMode();
     }
     return result;
+  }
+
+  private StringBuilder getQuery(Order order, Set<Organization> organizations, String where,
+      JSONObject criteria, AdvancedQueryBuilder queryBuilder) {
+    String tablename = "MaterialMgmtShipmentInOutLine";
+    final StringBuilder hqlString = new StringBuilder();
+
+    queryBuilder.setEntity(ModelProvider.getInstance().getEntity(tablename));
+    queryBuilder.setCriteria(criteria);
+    queryBuilder.setMainAlias("iol");
+    hqlString.append(" from MaterialMgmtShipmentInOutLine ");
+    // Adds joins when required by filters
+    hqlString.append(queryBuilder.getJoinClause());
+    hqlString.append(" join iol.shipmentReceipt as io");
+    // Starting where clause
+    hqlString.append(" where io.businessPartner = :businessPartner");
+    hqlString.append(" and io.processed = true");
+    hqlString.append(" and io.documentStatus <> 'VO'");
+    hqlString.append(" and io.salesTransaction = false");
+    hqlString.append(" and iol.organization in :organizations");
+    hqlString
+        .append(" and not exists (select 1 from OrderLine as ol where ol.salesOrder = :order and ol.goodsShipmentLine = iol)");
+    if (where != null && !"".equals(where) && !"null".equalsIgnoreCase(where)) {
+      hqlString.append(" and " + where);
+    }
+
+    String whereClause = queryBuilder.getWhereClause();
+
+    if (!whereClause.trim().isEmpty()) {
+      // if the filter where clause contains the string 'where', get rid of it
+      whereClause = whereClause.replaceAll("(?i)" + WHERE, " ");
+      hqlString.append(AND + whereClause);
+    }
+
+    return hqlString;
   }
 
   private Object getOrderBy(String sortBy) {
@@ -581,8 +613,7 @@ public class ReturnToVendorPickAndEditDataSource extends ReadOnlyDataSourceServi
     BigDecimal returnedInOthers = getReturnedQty(inOutLine);
 
     myMap.put("returnQtyOtherRM", returnedInOthers);
-    myMap.put("returned", orderLine == null ? BigDecimal.ZERO : orderLine.getOrderedQuantity()
-        .negate());
+    myMap.put("returned", orderLine == null ? "" : orderLine.getOrderedQuantity().negate());
 
     if (orderLine != null && orderLine.getReturnReason() != null) {
       myMap.put("returnReason", orderLine.getReturnReason().getId());
@@ -740,6 +771,58 @@ public class ReturnToVendorPickAndEditDataSource extends ReadOnlyDataSourceServi
       organizations.add(OBDal.getInstance().get(Organization.class, orgId));
     }
     return organizations;
+  }
+
+  /**
+   * This method replace the column names with their alias
+   * 
+   * @param table
+   *          the table being filtered
+   * @param whereClause
+   *          the filter criteria
+   * @return an updated filter criteria that uses the alias of the columns instead of their names
+   */
+  private String replaceParametersWithAlias(Table table, String whereClause) {
+    if (whereClause.trim().isEmpty()) {
+      return whereClause;
+    }
+    String updatedWhereClause = whereClause.toString();
+    Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
+    for (Column column : table.getADColumnList()) {
+      // look for the property name, replace it with the column alias
+      Property property = entity.getPropertyByColumnName(column.getDBColumnName());
+      Map<String, String> replacementMap = new HashMap<String, String>();
+      String propertyNameBefore = null;
+      String propertyNameAfter = null;
+      if (property.isPrimitive()) {
+        // if the property is a primitive, just replace the property name with the column alias
+        propertyNameBefore = property.getName();
+        propertyNameAfter = column.getEntityAlias();
+      } else {
+        // if the property is a FK, then the name of the identifier property of the referenced
+        // entity has to be appended
+
+        if (column.isLinkToParentColumn()) {
+          propertyNameBefore = property.getName() + "." + JsonConstants.ID;
+          propertyNameAfter = column.getEntityAlias() + "." + JsonConstants.ID;
+        } else {
+          Entity refEntity = property.getReferencedProperty().getEntity();
+          String identifierPropertyName = refEntity.getIdentifierProperties().get(0).getName();
+          propertyNameBefore = property.getName() + "." + identifierPropertyName;
+          propertyNameAfter = column.getEntityAlias() + "." + identifierPropertyName;
+        }
+
+      }
+      replacementMap.put(" " + propertyNameBefore + " ", " " + propertyNameAfter + " ");
+      replacementMap.put("(" + propertyNameBefore + ")", "(" + propertyNameAfter + ")");
+      for (String toBeReplaced : replacementMap.keySet()) {
+        if (updatedWhereClause.contains(toBeReplaced)) {
+          updatedWhereClause = updatedWhereClause.replace(toBeReplaced,
+              replacementMap.get(toBeReplaced));
+        }
+      }
+    }
+    return updatedWhereClause;
   }
 
 }

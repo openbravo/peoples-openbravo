@@ -389,9 +389,24 @@ isc.OBStandardView.addProperties({
 
   },
 
-  handleDefaultTreeView: function (parentContextInfo) {
+  // ** {{{ handleDefaultTreeView }}} **
+  //
+  // Evaluates the 'Default Tree View Logic' to show the grid view or the tree view
+  //
+  // Parameters:
+  // * {{{handleCurrent}}}: 'false' by default. It specifies if the logic should be applied in current record.
+  // * {{{handleChilds}}}: 'true' by default. It specifies if the logic should be applied in child records.
+  // * {{{parentContextInfo}}}: the context info of the parent. To ensure that the childs (if 'handleChilds' is 'true') have also the context info of its parent.
+  handleDefaultTreeView: function (handleCurrent, handleChilds, parentContextInfo) {
     var contextInfo, tabViewPane, length, i, p;
     contextInfo = this.getContextInfo(false, true, true);
+
+    if (!handleCurrent) {
+      handleCurrent = false;
+    }
+    if (!handleChilds) {
+      handleChilds = true;
+    }
 
     for (p in parentContextInfo) {
       // While evaluating the 'defaultTreeViewLogicIf' the parent contextInfo is needed
@@ -402,27 +417,30 @@ isc.OBStandardView.addProperties({
       }
     }
 
-    if (this.treeGrid && isc.isA.Function(this.defaultTreeViewLogicIf)) {
-      if (this.defaultTreeViewLogicIf(contextInfo)) {
-        if (!this.isShowingTree) {
-          if (this.treeGrid.getDataSource()) {
-            OB.ToolbarUtils.showTreeGrid(this);
-          } else {
-            this.defaultTreeView = true;
+    if (handleCurrent) {
+      if (this.treeGrid && isc.isA.Function(this.defaultTreeViewLogicIf)) {
+        if (this.defaultTreeViewLogicIf(contextInfo)) {
+          if (!this.isShowingTree) {
+            if (this.treeGrid.getDataSource()) {
+              OB.ToolbarUtils.showTreeGrid(this);
+            } else {
+              this.defaultTreeView = true;
+            }
           }
+        } else if (this.isShowingTree) {
+          OB.ToolbarUtils.hideTreeGrid(this);
         }
-      } else if (this.isShowingTree) {
-        OB.ToolbarUtils.hideTreeGrid(this);
       }
     }
 
-    if (this.childTabSet) {
+
+    if (handleChilds && this.childTabSet) {
       length = this.childTabSet.tabs.length;
       for (i = 0; i < length; i++) {
         tabViewPane = this.childTabSet.tabs[i].pane;
         if (tabViewPane.handleDefaultTreeView) {
           this.addPreferenceValues(contextInfo, tabViewPane);
-          tabViewPane.handleDefaultTreeView(contextInfo);
+          tabViewPane.handleDefaultTreeView(true, true, contextInfo);
         }
       }
     }
@@ -684,7 +702,7 @@ isc.OBStandardView.addProperties({
 
   getDirectLinkUrl: function () {
     var url = window.location.href,
-        crit;
+        crit, fkCache;
     var qIndex = url.indexOf('?');
     var dIndex = url.indexOf('#');
     var index = -1;
@@ -717,6 +735,13 @@ isc.OBStandardView.addProperties({
           prettyPrint: false,
           dateFormat: 'dateConstructor'
         }));
+        fkCache = this.viewGrid.getFKFilterAuxiliaryCache(crit);
+        if (isc.isA.Array(fkCache) && fkCache.length > 0) {
+          url = url + '&fkCache=' + escape(isc.JSON.encode(fkCache, {
+            prettyPrint: false,
+            dateFormat: 'dateConstructor'
+          })) + '&';
+        }
       }
     }
 
@@ -737,9 +762,10 @@ isc.OBStandardView.addProperties({
 
     this.standardWindow.addView(childView);
 
-    if (this.childTabSet.tabs.length > 0) {
-      // If it is a child tab that is not in the first position, load a basic child view
-      // to ensure a lazy inizialitazion of the contents.
+    if (this.childTabSet.tabs.length > 0 && !this.standardWindow.targetTabId) {
+      // If it is a child tab that is not in the first position and if it is not a
+      // direct navigation to the record (issue 27008), load a basic child view
+      // to ensure a lazy initialization of the contents.
       // Once the tab be selected, the proper content will be loaded.
       this.prepareBasicChildView(childView);
     } else {
@@ -815,7 +841,6 @@ isc.OBStandardView.addProperties({
       // the logic doesn't pass through the 'setAsActiveView' so the 'prepareFullChildView' should be done
       // on the tab selection instead.
       me.prepareFullChildView(childView, childTabDef);
-      childTabDef.pane.parentTabSet.doHandleClick();
     };
 
     childTabDef.pane.destroy = function () {
@@ -1745,18 +1770,23 @@ isc.OBStandardView.addProperties({
 
   getParentRecord: function () {
     var grid = null;
-    if (!this.parentView || !this.parentView.viewGrid.getSelectedRecords() || this.parentView.viewGrid.getSelectedRecords().length !== 1) {
+    // if there is no parent view, there is no parent record
+    if (!this.parentView) {
       return null;
     }
-
-    // a new parent is not a real parent
-    if (this.parentView.viewGrid.getSelectedRecord()._new) {
-      return null;
-    }
+    // use the standard tree of the tree grid depending on the view being shown
     if (this.parentView.isShowingTree) {
       grid = this.parentView.treeGrid;
     } else {
       grid = this.parentView.viewGrid;
+    }
+    // if the parent grid does not have exactly one selected record, return null
+    if (!grid.getSelectedRecords() || grid.getSelectedRecords().length !== 1) {
+      return null;
+    }
+    // a new parent is not a real parent
+    if (!this.parentView.isShowingTree && this.parentView.viewGrid.getSelectedRecord()._new) {
+      return null;
     }
     return grid.getSelectedRecord();
   },
@@ -1903,7 +1933,12 @@ isc.OBStandardView.addProperties({
       if (refreshCallback) {
         refreshCallback();
       }
-      me.viewForm.refresh();
+      // only perform refresh if the viewForm has a valid record.
+      // else a request is done with incomplete criteria which results in non paginated request.
+      // Refer issue https://issues.openbravo.com/view.php?id=26838
+      if (me.viewForm.getValues()[OB.Constants.ID]) {
+        me.viewForm.refresh();
+      }
     };
 
     if (!newRecordsToBeIncluded) {
@@ -2076,7 +2111,7 @@ isc.OBStandardView.addProperties({
 
   deleteSelectedRows: function (autoSaveDone) {
     var msg, dialogTitle, view = this,
-        deleteCount, callback;
+        deleteCount, callback, currentGrid;
 
     if (!this.readOnly && this.isDeleteableTable) {
       // first save what we have edited
@@ -2089,14 +2124,18 @@ isc.OBStandardView.addProperties({
         this.standardWindow.doActionAfterAutoSave(actionObject, false);
         return;
       }
-
-      deleteCount = this.viewGrid.getSelection().length;
+      if (this.isShowingTree) {
+        currentGrid = this.treeGrid;
+      } else {
+        currentGrid = this.viewGrid;
+      }
+      deleteCount = currentGrid.getSelection().length;
 
       if (deleteCount === 1) {
         msg = OB.I18N.getLabel('OBUIAPP_DeleteConfirmationSingle');
         dialogTitle = OB.I18N.getLabel('OBUIAPP_DialogTitle_DeleteRecord');
       } else {
-        msg = OB.I18N.getLabel('OBUIAPP_DeleteConfirmationMultiple', [this.viewGrid.getSelection().length]);
+        msg = OB.I18N.getLabel('OBUIAPP_DeleteConfirmationMultiple', [deleteCount]);
         dialogTitle = OB.I18N.getLabel('OBUIAPP_DialogTitle_DeleteRecords');
       }
 
@@ -2114,7 +2153,7 @@ isc.OBStandardView.addProperties({
 
         removeCallBack = function (resp, data, req) {
           var length, localData = resp.dataObject || resp.data || data,
-              i, updateTotalRows;
+              i, updateTotalRows, currentGrid;
 
           if (!localData) {
             // bail out, an error occured which should be displayed to the user now
@@ -2130,6 +2169,11 @@ isc.OBStandardView.addProperties({
             status = localData.response.status;
           }
           if (status === isc.RPCResponse.STATUS_SUCCESS) {
+            if (view.isShowingTree) {
+              currentGrid = view.treeGrid;
+            } else {
+              currentGrid = view.viewGrid;
+            }
             if (view.isShowingForm) {
               view.switchFormGridVisibility();
             }
@@ -2137,7 +2181,7 @@ isc.OBStandardView.addProperties({
             if (deleteData) {
               // note totalrows is used when inserting a new row, to determine after which
               // record to add a new row
-              updateTotalRows = (view.viewGrid.data.getLength() === view.viewGrid.data.totalRows);
+              updateTotalRows = (currentGrid.data.getLength() === currentGrid.data.totalRows);
               // deleteData is computed below
               length = deleteData.ids.length;
               for (i = 0; i < length; i++) {
@@ -2146,21 +2190,22 @@ isc.OBStandardView.addProperties({
                 });
               }
               view.viewGrid.data.handleUpdate('remove', recordInfos, false, req);
+              if (view.treeGrid) {
+                view.treeGrid.data.handleUpdate('remove', recordInfos, false, req);
+              }
               if (updateTotalRows) {
-                view.viewGrid.data.totalRows = view.viewGrid.data.getLength();
+                currentGrid.data.totalRows = currentGrid.data.getLength();
               }
             } else if (doUpdateTotalRows) {
-              view.viewGrid.data.totalRows = view.viewGrid.data.getLength();
+              currentGrid.data.totalRows = currentGrid.data.getLength();
             }
             view.viewGrid.updateRowCountDisplay();
-
             // Refresh the grid based on Refresh After Deletion preference
             if (OB.PropertyStore.get("OBUIAPP_RefreshAfterDeletion", view.standardWindow.windowId) === 'Y') {
               view.viewGrid.refreshGrid();
             } else {
               view.refreshChildViews();
             }
-
             view.refreshParentRecord();
           } else {
             // get the error message from the dataObject 
@@ -2180,9 +2225,16 @@ isc.OBStandardView.addProperties({
           isc.clearPrompt();
         };
         if (ok) {
-          selection = view.viewGrid.getSelection().duplicate();
+
+          if (view.isShowingTree) {
+            currentGrid = view.treeGrid;
+          } else {
+            currentGrid = view.viewGrid;
+          }
+
+          selection = currentGrid.getSelection().duplicate();
           // deselect the current records
-          view.viewGrid.deselectAllRecords();
+          currentGrid.deselectAllRecords();
 
           if (selection.length > 1) {
             deleteData = {};
@@ -2196,9 +2248,16 @@ isc.OBStandardView.addProperties({
               refreshGrid: true
             });
           } else {
+            if (view.isShowingTree) {
+              deleteData = {};
+              deleteData.entity = view.entity;
+              deleteData.ids = [];
+              length = selection.length;
+              deleteData.ids.push(selection[0][OB.Constants.ID]);
+            }
             // note totalrows is used when inserting a new row, to determine after which
             // record to add a new row
-            doUpdateTotalRows = (view.viewGrid.data.getLength() === view.viewGrid.data.totalRows);
+            doUpdateTotalRows = (currentGrid.data.getLength() === currentGrid.data.totalRows);
             // note remove data expects only the id, the record key as the first param
             view.viewGrid.removeData({
               id: selection[0].id
@@ -2297,7 +2356,6 @@ isc.OBStandardView.addProperties({
   },
 
   setHalfSplit: function () {
-    this.setHeight('100%');
     var i, tab, pane;
     if (this.members[1]) {
       // divide the space between the first and second level
@@ -2309,7 +2367,6 @@ isc.OBStandardView.addProperties({
         // makes a difference what the order of resizing is, first resize the 
         // one which will be larger, then the one which will be smaller.
         this.members[1].setHeight('50%');
-        this.members[0].setHeight('50%');
       }
       this.members[1].setState(isc.OBStandardView.STATE_IN_MID);
     } else {
@@ -2466,7 +2523,7 @@ isc.OBStandardView.addProperties({
         field = component.getField(propertyObj.property);
         if (field && field.editorType //
         && Object.prototype.toString.call(value) === '[object Date]' //
-        && new Function('return isc.' + field.editorType + '.getPrototype().isAbsoluteDateTime')()) { //
+        && OB.Utilities.getCanvasProp(field.editorType, 'isAbsoluteDateTime')) {
           // In the case of an absolute datetime, it needs to be converted in order to avoid the UTC conversion
           // http://forums.smartclient.com/showthread.php?p=116135
           value = OB.Utilities.Date.addTimezoneOffset(value);
@@ -2565,7 +2622,8 @@ isc.OBStandardView.addProperties({
     return null;
   },
 
-  setContextInfo: function (sessionProperties, callbackFunction, forced) {
+  // if defined, the errorCallbackFunction will be executed if the FIC call returns with an error status (i.e. connectivity error)
+  setContextInfo: function (sessionProperties, callbackFunction, forced, errorCallbackFunction) {
     var newCallback, me = this,
         gridVisibleProperties = [],
         len, i, originalID;
@@ -2622,7 +2680,7 @@ isc.OBStandardView.addProperties({
       TAB_ID: this.tabId,
       PARENT_ID: this.getParentId(),
       ROW_ID: this.viewGrid.getSelectedRecord() ? this.viewGrid.getSelectedRecord().id : this.getCurrentValues().id
-    }, newCallback);
+    }, newCallback, null, errorCallbackFunction);
 
   },
 
