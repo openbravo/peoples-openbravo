@@ -26,13 +26,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
 public class CalloutHttpServletResponse extends HttpServletResponseWrapper {
-  HttpServletResponse wrappedResponse;
   StringWriter sWriter = new StringWriter();
   PrintWriter writer = new PrintWriter(sWriter);
 
   public CalloutHttpServletResponse(HttpServletResponse wrappedResponse) {
     super(wrappedResponse);
-    this.wrappedResponse = wrappedResponse;
   }
 
   public String getOutputFromWriter() {
