@@ -1376,6 +1376,11 @@ isc.ClassFactory.defineClass('OBViewGridBody', 'GridBody');
 isc.OBViewGridBody.addProperties({
   redraw: function () {
     var newDrawArea, grid, drawArea, firstRecord, loading;
+    // Dont redraw while the grid is being refreshed with a selected record to 
+    // prevent unneeded requests. See issue https://issues.openbravo.com/view.php?id=25811
+    if (this.grid.refreshingWithSelectedRecord) {
+      return;
+    }
 
     this.Super('redraw', arguments);
 

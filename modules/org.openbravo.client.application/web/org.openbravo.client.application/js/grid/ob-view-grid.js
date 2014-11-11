@@ -206,8 +206,17 @@ isc.OBViewGrid.addProperties({
       // clone to prevent side effects
       var requestProperties = isc.clone(this.context);
       this.context.params = this.grid.getFetchRequestParams(requestProperties.params);
-
+      if (this.grid.refreshingWithSelectedRecord) {
+        // if the grid was refreshed with a record selected, use the range that contained that record 
+        //  instead of using targetRecordId to improve the performance
+        startRow = this.grid.selectedRecordInitInterval;
+        endRow = this.grid.selectedRecordendInterval;
+      }
       return this.Super('fetchRemoteData', arguments);
+    },
+
+    sendDSRequest: function (dsRequest) {
+      this.Super('sendDSRequest', arguments);
     },
 
     clearLoadingMarkers: function (start, end) {
@@ -1627,7 +1636,7 @@ isc.OBViewGrid.addProperties({
       // so just show grid mode
       // don't need to do anything here
       delete this.targetOpenGrid;
-    } else if (this.targetRecordId) {
+    } else if (this.targetRecordId || this.selectedRecordId) {
       // direct link from other tab to a specific record
       this.delayedHandleTargetRecord(startRow, endRow);
     } else if (this.view.shouldOpenDefaultEditMode()) {
@@ -1687,7 +1696,7 @@ isc.OBViewGrid.addProperties({
 
   refreshGrid: function (callback, newRecordsToBeIncluded) {
     var originalCriteria, criteria = {},
-        newRecordsCriteria, newRecordsLength, i, index;
+        newRecordsCriteria, newRecordsLength, i, index, selectedRecordIndex;
 
     //check whether newRecordsToBeIncluded contains records not part of the current grid and remove them.
     if (newRecordsToBeIncluded && newRecordsToBeIncluded.length > 0 && this.data) {
@@ -1702,8 +1711,18 @@ isc.OBViewGrid.addProperties({
     }
 
     if (this.getSelectedRecord()) {
-      this.targetRecordId = this.getSelectedRecord()[OB.Constants.ID];
-      // as the record is already selected it is already in the filter
+      // this property is used to prevent an unneeded request in OBViewGridBody.redraw
+      this.refreshingWithSelectedRecord = true;
+      // obtain a range that contains the selected record
+      selectedRecordIndex = this.getRecordIndex(this.getSelectedRecord());
+      if (selectedRecordIndex !== -1) {
+        this.selectedRecordId = this.getSelectedRecord()[OB.Constants.ID];
+        this.selectedRecordInitInterval = selectedRecordIndex - Math.round(this.data.resultSize / 2);
+        if (this.selectedRecordInitInterval < 0) {
+          this.selectedRecordInitInterval = 0;
+        }
+        this.selectedRecordendInterval = this.selectedRecordInitInterval + this.data.resultSize;
+      }
       this.notRemoveFilter = true;
     }
     this.actionAfterDataArrived = callback;
@@ -1755,7 +1774,7 @@ isc.OBViewGrid.addProperties({
   // with a delay to handle the target record when the body has been drawn
   delayedHandleTargetRecord: function (startRow, endRow) {
     var rowTop, recordIndex, i, data = this.data,
-        tmpTargetRecordId = this.targetRecordId;
+        tmpTargetRecordId = this.targetRecordId || this.selectedRecordId;
     if (!this.targetRecordId) {
       delete this.isOpenDirectModeLeaf;
       return;
@@ -1816,7 +1835,7 @@ isc.OBViewGrid.addProperties({
 
   filterData: function (criteria, callback, requestProperties) {
     var theView = this.view,
-        newCallBack;
+        newCallBack, me = this;
 
     if (!requestProperties) {
       requestProperties = {};
@@ -1826,6 +1845,8 @@ isc.OBViewGrid.addProperties({
 
     newCallBack = function () {
       theView.recordSelected();
+      delete me.refreshingWithSelectedRecord;
+      me.markForRedraw();
       if (typeof callback === 'function') {
         callback();
       }
