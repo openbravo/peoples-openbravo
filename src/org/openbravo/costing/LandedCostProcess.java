@@ -97,6 +97,7 @@ public class LandedCostProcess {
       landedCost.setDocumentStatus("CO");
       landedCost.setProcessed(Boolean.TRUE);
       OBDal.getInstance().save(landedCost);
+      message.put("documentNo", ca.getDocumentNo());
     } catch (JSONException ignore) {
     } finally {
       OBContext.restorePreviousMode();

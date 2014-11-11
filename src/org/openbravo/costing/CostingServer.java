@@ -132,6 +132,7 @@ public class CostingServer {
 
   private void checkCostAdjustments() {
     TrxType trxType = TrxType.getTrxType(transaction);
+    boolean adjustmentAlreadyCreated = false;
     if (trxType == TrxType.InventoryClosing) {
       OBDal.getInstance().refresh(transaction.getPhysicalInventoryLine().getPhysInventory());
       if (transaction.getPhysicalInventoryLine().getPhysInventory()
@@ -153,7 +154,10 @@ public class CostingServer {
       checkPriceCorrectionTrxs = false;
     }
     if (checkPriceCorrectionTrxs && transaction.isCheckpricedifference()) {
-      PriceDifferenceProcess.processPriceDifferenceTransaction(transaction);
+      JSONObject message = PriceDifferenceProcess.processPriceDifferenceTransaction(transaction);
+      if (message.has("documentNo")) {
+        adjustmentAlreadyCreated = true;
+      }
     }
 
     // check if landed cost need to be processed
@@ -208,6 +212,9 @@ public class CostingServer {
         if (landedCost != null) {
           OBDal.getInstance().flush();
           JSONObject message = LandedCostProcess.doProcessLandedCost(landedCost);
+          if (message.has("documentNo")) {
+            adjustmentAlreadyCreated = true;
+          }
 
           if (message.get("severity") != "success") {
             throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingLandedCost@")
@@ -242,6 +249,7 @@ public class CostingServer {
           throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@") + ": "
               + costAdjustmentHeader.getDocumentNo() + " - " + message.getString("text"));
         }
+        adjustmentAlreadyCreated = true;
       } catch (JSONException ignore) {
         throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@"));
       }
@@ -264,7 +272,8 @@ public class CostingServer {
         costingRule.isBackdatedTransactionsFixed());
     // the stock previous to transaction was negative
     if (checkNegativeStockCorrectionTrxs
-        && currentStock.compareTo(transaction.getMovementQuantity()) < 0 && modifiesAvg) {
+        && currentStock.compareTo(transaction.getMovementQuantity()) < 0 && modifiesAvg
+        && !adjustmentAlreadyCreated) {
 
       CostAdjustment costAdjustmentHeader = CostAdjustmentUtils.insertCostAdjustmentHeader(
           transaction.getOrganization(), "NSC"); // NSC= Negative Stock Correction
