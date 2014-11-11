@@ -272,6 +272,15 @@ isc.OBViewGrid.addProperties({
           // increase one to request additional page to backend
         }
 
+        var scrollUp = false;
+        if (this.grid.body.lastScrollTop !== undefined && this.grid.body.lastScrollTop > this.grid.body.getScrollTop()) {
+          scrollUp = true;
+        }
+
+        if (scrollUp) {
+          dsResponse.totalRows = this.localData.length;
+        }
+
         // get rid of old loading markers, this has to be done explicitly
         // as we can return another rowset than requested
         // call with a delay otherwise the grid will keep requesting rows while processing the
