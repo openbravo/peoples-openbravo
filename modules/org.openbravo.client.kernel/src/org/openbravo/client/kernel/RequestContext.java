@@ -47,9 +47,6 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
  * <li>Makes it possible to set request parameters to simulate a request from a client to a server.</li>
  * </ul>
  * 
- * Note: compiling through ant gives a deprecated api usage warning, this seems to be a javac bug:
- * http://bugs.sun.com/view_bug.do?bug_id=6460147
- * 
  * @author mtaal
  */
 @SuppressWarnings("deprecation")
