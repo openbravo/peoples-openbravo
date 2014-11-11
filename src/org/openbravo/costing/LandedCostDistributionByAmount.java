@@ -52,7 +52,7 @@ public class LandedCostDistributionByAmount extends LandedCostDistributionAlgori
     String strCurId = lcCost.getCurrency().getId();
     String strOrgId = landedCost.getOrganization().getId();
     Date dateReference = landedCost.getReferenceDate();
-    int precission = lcCost.getCurrency().getStandardPrecision().intValue();
+    int precission = lcCost.getCurrency().getCostingPrecision().intValue();
     BigDecimal baseAmt;
     if (isMatching) {
       baseAmt = lcCost.getMatchingAmount().subtract(lcCost.getAmount());

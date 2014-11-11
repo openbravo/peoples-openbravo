@@ -225,6 +225,7 @@ public class LandedCostProcess {
       cal.setNeedsPosting(Boolean.FALSE);
       cal.setUnitCost(Boolean.FALSE);
       cal.setCurrency(lcCostCurrency);
+      cal.setLineNo((i + 1) * 10L);
       OBDal.getInstance().save(cal);
 
       if (i % 100 == 0) {
