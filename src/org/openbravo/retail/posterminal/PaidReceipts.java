@@ -72,6 +72,14 @@ public class PaidReceipts extends JSONProcessSimple {
         JSONObject paidReceipt = hqlProperties.getJSONObjectRow(objpaidReceipts);
         paidReceipt.put("orderid", orderid);
 
+        // get the Invoice for the Order
+        String hqlPaidReceiptsInvoice = "select inv.id from Invoice as inv where inv.salesOrder.id = :orderId";
+        Query PaidReceiptsInvoiceQuery = OBDal.getInstance().getSession()
+            .createQuery(hqlPaidReceiptsInvoice);
+        PaidReceiptsInvoiceQuery.setString("orderId", orderid);
+        if (!PaidReceiptsInvoiceQuery.list().isEmpty())
+          paidReceipt.put("generateInvoice", true);
+
         JSONArray listpaidReceiptsLines = new JSONArray();
 
         // get the details of each line
