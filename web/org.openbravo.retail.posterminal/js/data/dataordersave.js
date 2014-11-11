@@ -37,6 +37,7 @@
       }
       this.receipt.set('hasbeenpaid', 'Y');
 
+      this.receipt.trigger('integrityOk');
       OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(this.receipt.get('documentnoSuffix'), this.receipt.get('quotationnoSuffix'));
 
 
@@ -172,7 +173,7 @@
       }
 
       this.receipt.set('hasbeenpaid', 'Y');
-
+      this.context.get('multiOrders').trigger('integrityOk', this.receipt);
       OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(this.receipt.get('documentnoSuffix'), this.receipt.get('quotationnoSuffix'));
 
       delete this.receipt.attributes.json;
