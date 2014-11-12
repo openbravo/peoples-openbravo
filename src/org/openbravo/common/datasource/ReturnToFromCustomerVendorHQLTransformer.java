@@ -29,7 +29,7 @@ import org.openbravo.service.datasource.hql.HqlQueryTransformer;
 @ComponentProvider.Qualifier("CDB9DC9655F24DF8AB41AA0ADBD04390")
 public class ReturnToFromCustomerVendorHQLTransformer extends HqlQueryTransformer {
 
-  private static final String returnToVendorTabId = "CA841F390E5D4E10B68EFAC108278262";
+  private static final String returnToVendorTabId = "5A5CCFC8359B4D79BA705DC487FE8173";
 
   private static final String rtv_unitPriceLeftClause = "(case when (select e.salesOrderLine.salesOrder.priceList.priceIncludesTax from ProcurementPOInvoiceMatch as e where e.goodsShipmentLine = iol) = true then  coalesce((select ol.unitPrice from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol), (select e.salesOrderLine.grossUnitPrice from ProcurementPOInvoiceMatch as e where e.goodsShipmentLine = iol)) else   coalesce((select ol.unitPrice from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol), (select e.salesOrderLine.unitPrice from ProcurementPOInvoiceMatch as e where e.goodsShipmentLine = iol)) end)";
   private static final String rtv_orderNoLeftClause = " coalesce ((select e.salesOrderLine.salesOrder.documentNo from ProcurementPOInvoiceMatch as e where e.goodsShipmentLine = iol), '0')";
