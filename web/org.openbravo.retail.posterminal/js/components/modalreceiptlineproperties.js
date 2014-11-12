@@ -16,6 +16,15 @@ enyo.kind({
     onApplyChanges: 'applyChanges'
   },
   executeOnShow: function () {
+    if (this.currentLine) {
+      var diff = this.propertycomponents;
+      var att;
+      for (att in diff) {
+        if (diff.hasOwnProperty(att)) {
+          this.loadValue(att, diff[att]);
+        }
+      }
+    }
     this.autoDismiss = true;
     if (this && this.args && this.args.autoDismiss === false) {
       this.autoDismiss = false;
