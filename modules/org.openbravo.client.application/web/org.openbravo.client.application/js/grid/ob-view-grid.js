@@ -1775,7 +1775,7 @@ isc.OBViewGrid.addProperties({
   delayedHandleTargetRecord: function (startRow, endRow) {
     var rowTop, recordIndex, i, data = this.data,
         tmpTargetRecordId = this.targetRecordId || this.selectedRecordId;
-    if (!this.targetRecordId) {
+    if (!tmpTargetRecordId) {
       delete this.isOpenDirectModeLeaf;
       return;
     }
