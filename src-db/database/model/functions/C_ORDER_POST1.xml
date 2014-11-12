@@ -127,8 +127,6 @@
   v_iscashvat C_Order.IsCashVat%TYPE;
   v_recalculateDiscounts VARCHAR(1):='Y';
   v_isactive VARCHAR2(1):='N';
-  
-  v_has_M_InOut NUMBER;
 
   BEGIN
     IF (p_PInstance_ID IS NOT NULL) THEN
@@ -413,22 +411,6 @@
         IF (v_DocSubTypeSO IN ('WR', 'WI')) THEN
           RAISE_APPLICATION_ERROR(-20000, '@ActionNotSupported@');
         END IF;
-        
-        --Verify that have not Goods Receipt related
-        
-        select count(1) into v_has_M_InOut from dual
-        where exists (select 1 from m_inoutline iol, c_orderline ol
-                      where  iol.c_orderline_id = ol.c_orderline_id
-                      and ol.c_order_id = v_record_id);
-        
-        if (v_has_M_InOut > 0) then
-          if (v_issotrx = 'N') then
-            RAISE_APPLICATION_ERROR(-20000, '@OrderReactivateHasGoodsReceipt@');
-          else
-            RAISE_APPLICATION_ERROR(-20000, '@OrderReactivateHasGoodsShipment@');
-          end if;
-        end if;
-        
         --Verify not managed debtPayments added by ALO
         --Added by P.Sarobe. New messages
         SELECT max(c_debt_payment_id), COUNT(*)
