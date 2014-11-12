@@ -248,7 +248,8 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
           log.debug("New average cost: {}", cost.toPlainString());
           Costing curCosting = trx.getMaterialMgmtCostingList().get(0);
           BigDecimal trxPrice = curCosting.getPrice().multiply(trx.getMovementQuantity().abs())
-              .add(trxAdjAmt).divide(trx.getMovementQuantity().abs());
+              .add(trxAdjAmt)
+              .divide(trx.getMovementQuantity().abs(), costCurPrecission, RoundingMode.HALF_UP);
 
           if (checkNegativeStockCorrection && currentStock.compareTo(trx.getMovementQuantity()) < 0
               && cost.compareTo(trxPrice) != 0) {
@@ -292,7 +293,8 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
           }
         } else if (!trx.isCostPermanent() && cost != null && !isVoidedTrx(trx, currentTrxType)) {
           // Check current trx unit cost matches new expected cost
-          BigDecimal expectedCost = cost.multiply(trx.getMovementQuantity().abs());
+          BigDecimal expectedCost = cost.multiply(trx.getMovementQuantity().abs()
+              .setScale(costCurPrecission, RoundingMode.HALF_UP));
           BigDecimal unitCost = CostAdjustmentUtils.getTrxCost(trx, true,
               OBDal.getInstance().get(Currency.class, strCurrentCurId));
           unitCost = unitCost.add(trxAdjAmt);
@@ -407,7 +409,8 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
           costCurrency, trx.getTransactionProcessDate(), getCostOrg(),
           FinancialUtils.PRECISION_COSTING);
     }
-    BigDecimal expectedCostAmt = trx.getMovementQuantity().abs().multiply(cost);
+    BigDecimal expectedCostAmt = trx.getMovementQuantity().abs().multiply(cost)
+        .setScale(costCurPrecission, RoundingMode.HALF_UP);
     BigDecimal currentCost = trx.getTransactionCost();
     return expectedCostAmt.subtract(currentCost);
   }
@@ -555,7 +558,8 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
 
     Costing curCosting = basetrx.getMaterialMgmtCostingList().get(0);
     BigDecimal trxPrice = curCosting.getPrice();
-    BigDecimal adjustAmt = currentStock.multiply(trxPrice).subtract(currentValueAmt);
+    BigDecimal adjustAmt = currentStock.multiply(trxPrice)
+        .setScale(stdCurPrecission, RoundingMode.HALF_UP).subtract(currentValueAmt);
 
     costAdjLine.setCurrency((Currency) OBDal.getInstance().getProxy(Currency.ENTITY_NAME,
         strCostCurrencyId));
