@@ -211,6 +211,9 @@ isc.OBViewGrid.addProperties({
         //  instead of using targetRecordId to improve the performance
         startRow = this.grid.selectedRecordInitInterval;
         endRow = this.grid.selectedRecordendInterval;
+        this.grid.preventRedraw = true;
+      } else if (this.grid.refreshingWithScrolledGrid && startRow > 0) {
+        this.grid.preventRedraw = true;
       }
       return this.Super('fetchRemoteData', arguments);
     },
@@ -1696,7 +1699,7 @@ isc.OBViewGrid.addProperties({
 
   refreshGrid: function (callback, newRecordsToBeIncluded) {
     var originalCriteria, criteria = {},
-        newRecordsCriteria, newRecordsLength, i, index, selectedRecordIndex;
+        newRecordsCriteria, newRecordsLength, i, index, selectedRecordIndex, visibleRows, filterDataCallback, me = this;
 
     //check whether newRecordsToBeIncluded contains records not part of the current grid and remove them.
     if (newRecordsToBeIncluded && newRecordsToBeIncluded.length > 0 && this.data) {
@@ -1724,6 +1727,12 @@ isc.OBViewGrid.addProperties({
         this.selectedRecordendInterval = this.selectedRecordInitInterval + this.data.resultSize;
       }
       this.notRemoveFilter = true;
+    } else {
+      visibleRows = this.getVisibleRows();
+      if (visibleRows && visibleRows[0] > 0) {
+        this.refreshingWithScrolledGrid = true;
+      }
+
     }
     this.actionAfterDataArrived = callback;
     this.invalidateCache();
@@ -1763,7 +1772,14 @@ isc.OBViewGrid.addProperties({
     } else {
       criteria = originalCriteria;
     }
-    this.filterData(criteria, null, context);
+    filterDataCallback = function () {
+      delete me.refreshingWithScrolledGrid;
+      delete me.preventRedraw;
+      delete me.selectedRecordInitInterval;
+      delete me.selectedRecordendInterval;
+      delete me.selectedRecordId;
+    };
+    this.filterData(criteria, filterDataCallback, context);
     // At this point the original criteria should be restored, to prevent
     // the 'or' clause that was just added to be used in subsequent refreshes.
     // It is not possible to do it here, though, because a this.setCriteria(originalCriteria)

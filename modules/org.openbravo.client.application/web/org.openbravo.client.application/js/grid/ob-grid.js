@@ -1378,7 +1378,9 @@ isc.OBViewGridBody.addProperties({
     var newDrawArea, grid, drawArea, firstRecord, loading;
     // Dont redraw while the grid is being refreshed with a selected record to 
     // prevent unneeded requests. See issue https://issues.openbravo.com/view.php?id=25811
-    if (this.grid.refreshingWithSelectedRecord) {
+    // Also dont redraw if the user has refreshed after scrolling down if 
+    // a page other than the first one is going to be requested
+    if (this.grid.preventRedraw) {
       return;
     }
 
