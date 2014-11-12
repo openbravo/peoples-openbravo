@@ -108,7 +108,8 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
 
   private void createOrderLines(JSONObject jsonRequest, List<String> idList) throws JSONException,
       OBException {
-    JSONArray selectedLines = jsonRequest.getJSONArray("_selection");
+    JSONObject grid = jsonRequest.getJSONObject("_params").getJSONObject("grid");
+    JSONArray selectedLines = grid.getJSONArray("_selection");
     final String strOrderId = jsonRequest.getString("C_Order_ID");
     Order order = OBDal.getInstance().get(Order.class, strOrderId);
     boolean isSOTrx = order.isSalesTransaction();
