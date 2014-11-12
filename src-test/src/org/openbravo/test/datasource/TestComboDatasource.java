@@ -24,9 +24,11 @@ package org.openbravo.test.datasource;
  * @author Shankar Balachandran 
  */
 
+import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
@@ -36,11 +38,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.Test;
-import org.openbravo.client.kernel.RequestContext;
-import org.openbravo.client.kernel.reference.FKComboUIDefinition;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBDal;
-import org.openbravo.model.ad.ui.Field;
 import org.openbravo.service.json.JsonConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -250,20 +248,21 @@ public class TestComboDatasource extends BaseDataSourceTestDal {
    */
   @Test
   public void testForIssue27612() throws Exception {
-    setOBContext("100");
-    RequestContext rq = RequestContext.get();
-    FKComboUIDefinition fkCombo = new FKComboUIDefinition();
-    Field field = OBDal.getInstance().get(Field.class, "2052");
-    rq.setRequestParameter("inpadOrgId", "");
-    rq.setRequestParameter("CHANGED_COLUMN", "inpadOrgId");
-    try {
-      OBContext.setAdminMode();
-      fkCombo.setReference(field.getColumn().getReference());
-      JSONObject jsonObject = new JSONObject(fkCombo.getFieldProperties(field, true));
-      assertTrue("".equals(jsonObject.get("_identifier")));
-    } finally {
-      OBContext.restorePreviousMode();
-    }
+    String ficRequest = "/org.openbravo.client.kernel?_action=org.openbravo.client.application.window.FormInitializationComponent" //
+        + "&MODE=CHANGE" //
+        + "&PARENT_ID=null" //
+        + "&TAB_ID=186" // Sales Order
+        + "&ROW_ID=null" //
+        + "&CHANGED_COLUMN=inpadOrgId";
+
+    // Executes a FIC in mode change for an empty ad_org, before the fix it returned default value,
+    // now it should return empty
+
+    String response = doRequest(ficRequest, new HashMap<String, String>(), 200, "POST");
+    JSONObject jsonResponse = new JSONObject(response);
+    assertTrue(jsonResponse.toString() != null);
+    assertThat(jsonResponse.getJSONObject("columnValues").getJSONObject("AD_Org_ID")
+        .getString("id"), isEmptyOrNullString());
   }
 
   /**

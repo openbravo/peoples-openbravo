@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2011 Openbravo S.L.U.
+ * Copyright (C) 2001-2014 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -66,19 +66,26 @@ public class VariablesBase {
    */
   @SuppressWarnings("unchecked")
   public VariablesBase(HttpServletRequest request) {
-    this.session = request.getSession(true);
-    this.httpRequest = request;
-    this.isMultipart = ServletFileUpload.isMultipartContent(new ServletRequestContext(request));
-    if (isMultipart) {
-      DiskFileItemFactory factory = new DiskFileItemFactory();
-      // factory.setSizeThreshold(yourMaxMemorySize);
-      // factory.setRepositoryPath(yourTempDirectory);
-      ServletFileUpload upload = new ServletFileUpload(factory);
-      // upload.setSizeMax(yourMaxRequestSize);
-      try {
-        items = upload.parseRequest(request);
-      } catch (Exception ex) {
-        ex.printStackTrace();
+    if (request == null) {
+      // logging exception to obtain stack trace to pinpoint the cause
+      log4j.warn("Creating a VariablesBase with a null request", new Exception());
+      this.session = new HttpSessionWrapper();
+      this.isMultipart = false;
+    } else {
+      this.session = request.getSession(true);
+      this.httpRequest = request;
+      this.isMultipart = ServletFileUpload.isMultipartContent(new ServletRequestContext(request));
+      if (isMultipart) {
+        DiskFileItemFactory factory = new DiskFileItemFactory();
+        // factory.setSizeThreshold(yourMaxMemorySize);
+        // factory.setRepositoryPath(yourTempDirectory);
+        ServletFileUpload upload = new ServletFileUpload(factory);
+        // upload.setSizeMax(yourMaxRequestSize);
+        try {
+          items = upload.parseRequest(request);
+        } catch (Exception ex) {
+          ex.printStackTrace();
+        }
       }
     }
   }
@@ -128,10 +135,10 @@ public class VariablesBase {
    * @return
    */
   private String computeHash() {
-
-    long t = 0;
-    if (log4j.isDebugEnabled())
-      t = System.currentTimeMillis();
+    long t = System.currentTimeMillis();
+    if (httpRequest == null) {
+      return Long.toString(t);
+    }
     StringBuffer postString = new StringBuffer();
 
     for (String parameter : sortedParameters()) {
@@ -169,15 +176,19 @@ public class VariablesBase {
    */
   private List<String> sortedParameters() {
     if (sortedParameters == null) {
-      sortedParameters = new ArrayList<String>();
-      for (@SuppressWarnings("rawtypes")
-      Enumeration e = httpRequest.getParameterNames(); e.hasMoreElements();) {
-        String parameter = (String) e.nextElement();
-        if (!parameter.equalsIgnoreCase("Command") && !parameter.contains("ProcessId")) {
-          sortedParameters.add(parameter);
+      if (httpRequest == null) {
+        sortedParameters = new ArrayList<String>();
+      } else {
+        sortedParameters = new ArrayList<String>();
+        for (@SuppressWarnings("rawtypes")
+        Enumeration e = httpRequest.getParameterNames(); e.hasMoreElements();) {
+          String parameter = (String) e.nextElement();
+          if (!parameter.equalsIgnoreCase("Command") && !parameter.contains("ProcessId")) {
+            sortedParameters.add(parameter);
+          }
         }
+        Collections.sort(sortedParameters);
       }
-      Collections.sort(sortedParameters);
     }
     return sortedParameters;
   }
