@@ -1992,27 +1992,29 @@ isc.OBStandardView.addProperties({
       // this line does not work, but it should:
       //      me.getDataSource().updateCaches(resp, req);
       // therefore do an explicit update of the visual components
-      if (me.isShowingForm) {
-        me.viewForm.refresh();
-      }
       if (me.viewGrid.data) {
         var recordIndex = me.viewGrid.getRecordIndex(me.viewGrid.getSelectedRecord());
         me.viewGrid.updateRecord(recordIndex, data, req);
       }
-
 
       if (callBackFunction) {
         callBackFunction();
       }
     };
 
-
     if (this.viewForm && this.viewForm.contextInfo) {
       this.viewForm.contextInfo = null;
     }
 
-    criteria = this.buildCriteriaToRefreshSelectedRecord();
-    this.getDataSource().fetchData(criteria, callback);
+    if (this.isShowingForm) {
+      // Refresh the form. This function will also update the info of the selected record with
+      // the data returned by the datasource request done to update the form
+      this.viewForm.refresh(callBackFunction);
+    } else {
+      // Make a request to refresh the grid
+      criteria = this.buildCriteriaToRefreshSelectedRecord();
+      this.getDataSource().fetchData(criteria, callback);
+    }
     this.refreshParentRecord(callBackFunction);
   },
 

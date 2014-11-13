@@ -955,13 +955,13 @@ OB.ViewFormProperties = {
     }
   },
 
-  refresh: function () {
+  refresh: function (callback) {
     var criteria = {
       id: this.getValue(OB.Constants.ID)
     },
         me = this,
-        callback;
-    callback = function (dsResponse, data, dsRequest) {
+        innerCallback;
+    innerCallback = function (dsResponse, data, dsRequest) {
       var index;
       if (data[0]) {
         index = me.view.viewGrid.getRecordIndex(me.view.viewGrid.getSelectedRecord());
@@ -969,8 +969,11 @@ OB.ViewFormProperties = {
           me.view.viewGrid.updateRecord(index, data, dsRequest);
         }
       }
+      if (callback && isc.isA.Function(callback)) {
+        callback();
+      }
     };
-    this.fetchData(criteria, callback);
+    this.fetchData(criteria, innerCallback);
   },
 
   processColumnValue: function (columnName, columnValue, gridEditInformation, mode) {
