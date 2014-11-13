@@ -496,10 +496,8 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
         addEntryToReplacementMap(replacementMap, propertyNameBefore, propertyNameAfter);
       }
       for (String toBeReplaced : replacementMap.keySet()) {
-        if (updatedWhereClause.contains(toBeReplaced)) {
-          updatedWhereClause = updatedWhereClause.replaceAll(toBeReplaced,
-              replacementMap.get(toBeReplaced));
-        }
+        updatedWhereClause = updatedWhereClause.replaceAll(toBeReplaced,
+            replacementMap.get(toBeReplaced));
       }
     }
     return updatedWhereClause;
@@ -512,9 +510,9 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
   private void addEntryToReplacementMap(Map<String, String> replacementMap, String oldName,
       String newName) {
     replacementMap.put(" " + oldName + " ", " " + newName + " ");
-    replacementMap.put("(" + oldName + ")", "(" + newName + ")");
-    replacementMap.put("(" + oldName + " ", "(" + newName + " ");
-    replacementMap.put(" " + oldName + ")", " " + newName + ")");
+    replacementMap.put("[(]" + oldName + "[)]", "(" + newName + ")");
+    replacementMap.put("[(]" + oldName + " ", "(" + newName + " ");
+    replacementMap.put(" " + oldName + "[)]", " " + newName + ")");
   }
 
   /**
