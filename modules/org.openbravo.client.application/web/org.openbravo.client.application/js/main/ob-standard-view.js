@@ -1977,7 +1977,7 @@ isc.OBStandardView.addProperties({
 
   refreshCurrentRecord: function (callBackFunction) {
     var me = this,
-        record, criteria, callback;
+        criteria, callback;
 
     if (!this.viewGrid.getSelectedRecord()) {
       return;
@@ -1987,24 +1987,6 @@ isc.OBStandardView.addProperties({
     if (this.viewGrid.showGridSummary) {
       this.viewGrid.getSummaryRow();
     }
-
-    record = this.viewGrid.getSelectedRecord();
-
-    criteria = {
-      operator: 'and',
-      _constructor: "AdvancedCriteria",
-      criteria: []
-    };
-
-    // add a dummy criteria to force a fetch
-    criteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
-
-    // and add a criteria for the record itself
-    criteria.criteria.push({
-      fieldName: OB.Constants.ID,
-      operator: 'equals',
-      value: record.id
-    });
 
     callback = function (resp, data, req) {
       // this line does not work, but it should:
@@ -2024,12 +2006,33 @@ isc.OBStandardView.addProperties({
       }
     };
 
+
     if (this.viewForm && this.viewForm.contextInfo) {
       this.viewForm.contextInfo = null;
     }
 
+    criteria = this.buildCriteriaToRefreshSelectedRecord();
     this.getDataSource().fetchData(criteria, callback);
     this.refreshParentRecord(callBackFunction);
+  },
+
+  buildCriteriaToRefreshSelectedRecord: function () {
+    var record, criteria = {
+      operator: 'and',
+      _constructor: "AdvancedCriteria",
+      criteria: []
+    };
+    // add a dummy criteria to force a fetch
+    criteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
+
+    record = this.viewGrid.getSelectedRecord();
+    // and add a criteria for the record itself
+    criteria.criteria.push({
+      fieldName: OB.Constants.ID,
+      operator: 'equals',
+      value: record.id
+    });
+    return criteria;
   },
 
   hasNotChanged: function () {
