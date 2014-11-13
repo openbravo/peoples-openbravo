@@ -474,6 +474,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     for (Column column : table.getADColumnList()) {
       // look for the property name, replace it with the column alias
       Property property = entity.getPropertyByColumnName(column.getDBColumnName());
+      // Map used to replace the property name used in the criteria with its alias
       Map<String, String> replacementMap = new HashMap<String, String>();
       String propertyNameBefore = null;
       String propertyNameAfter = null;
@@ -481,25 +482,19 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
         // if the property is a primitive, just replace the property name with the column alias
         propertyNameBefore = property.getName();
         propertyNameAfter = column.getEntityAlias();
+        addEntryToReplacementMap(replacementMap, propertyNameBefore, propertyNameAfter);
       } else {
-        // if the property is a FK, then the name of the identifier property of the referenced
-        // entity has to be appended
-
-        if (column.isLinkToParentColumn()) {
-          propertyNameBefore = property.getName() + "." + JsonConstants.ID;
-          propertyNameAfter = column.getEntityAlias() + "." + JsonConstants.ID;
-        } else {
-          Entity refEntity = property.getReferencedProperty().getEntity();
-          String identifierPropertyName = refEntity.getIdentifierProperties().get(0).getName();
-          propertyNameBefore = property.getName() + "." + identifierPropertyName;
-          propertyNameAfter = column.getEntityAlias() + "." + identifierPropertyName;
-        }
-
+        // the criteria can refer to the foreign key via its ID...
+        propertyNameBefore = property.getName() + "." + JsonConstants.ID;
+        propertyNameAfter = column.getEntityAlias() + "." + JsonConstants.ID;
+        addEntryToReplacementMap(replacementMap, propertyNameBefore, propertyNameAfter);
+        // ... or through its identifier
+        Entity refEntity = property.getReferencedProperty().getEntity();
+        String identifierPropertyName = refEntity.getIdentifierProperties().get(0).getName();
+        propertyNameBefore = property.getName() + "." + identifierPropertyName;
+        propertyNameAfter = column.getEntityAlias() + "." + identifierPropertyName;
+        addEntryToReplacementMap(replacementMap, propertyNameBefore, propertyNameAfter);
       }
-      replacementMap.put(" " + propertyNameBefore + " ", " " + propertyNameAfter + " ");
-      replacementMap.put("(" + propertyNameBefore + ")", "(" + propertyNameAfter + ")");
-      replacementMap.put("(" + propertyNameBefore + " ", "(" + propertyNameAfter + " ");
-      replacementMap.put(" " + propertyNameBefore + ")", " " + propertyNameAfter + ")");
       for (String toBeReplaced : replacementMap.keySet()) {
         if (updatedWhereClause.contains(toBeReplaced)) {
           updatedWhereClause = updatedWhereClause.replaceAll(toBeReplaced,
@@ -508,6 +503,18 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
       }
     }
     return updatedWhereClause;
+  }
+
+  /**
+   * Adds a pair oldName-newName to the replacement map All possible parenthesis combinations are
+   * added to the replacement map
+   */
+  private void addEntryToReplacementMap(Map<String, String> replacementMap, String oldName,
+      String newName) {
+    replacementMap.put(" " + oldName + " ", " " + newName + " ");
+    replacementMap.put("(" + oldName + ")", "(" + newName + ")");
+    replacementMap.put("(" + oldName + " ", "(" + newName + " ");
+    replacementMap.put(" " + oldName + ")", " " + newName + ")");
   }
 
   /**
