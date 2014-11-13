@@ -1395,8 +1395,12 @@ public class OrderLoader extends POSDataSynchronizationProcess {
       // FIXME: Coversion should be only in one direction: (USD-->EUR)
       if (payment.has("mulrate") && payment.getDouble("mulrate") != 1) {
         mulrate = BigDecimal.valueOf(payment.getDouble("mulrate"));
-        origAmount = amount.multiply(BigDecimal.valueOf(payment.getDouble("mulrate"))).setScale(
-            stdPrecision, RoundingMode.HALF_UP);
+        if (payment.has("amount")) {
+          origAmount = BigDecimal.valueOf(payment.getDouble("amount")).setScale(stdPrecision,
+              RoundingMode.HALF_UP);
+        } else {
+          origAmount = amount.multiply(mulrate).setScale(stdPrecision, RoundingMode.HALF_UP);
+        }
       }
 
       // writeoffAmt.divide(BigDecimal.valueOf(payment.getDouble("rate")));
