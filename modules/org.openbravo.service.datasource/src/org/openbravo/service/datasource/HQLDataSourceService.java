@@ -177,9 +177,9 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     for (Object row : query.list()) {
       Map<String, Object> record = new HashMap<String, Object>();
       if (distinct != null) {
-        // TODO: Find a better way to do this, use the proper id
-        record.put(JsonConstants.ID, row);
-        record.put(JsonConstants.IDENTIFIER, row);
+        Object[] result = (Object[]) row;
+        record.put(JsonConstants.ID, result[0]);
+        record.put(JsonConstants.IDENTIFIER, result[1]);
       } else {
         Object[] properties = (Object[]) row;
         for (int i = 0; i < returnAliases.length; i++) {
@@ -258,7 +258,8 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
         hqlQuery = "select count(distinct " + distinctColumn.getEntityAlias() + "."
             + getNameOfFirstIdentifierProperty(property.getTargetEntity()) + ") " + formClause;
       } else {
-        hqlQuery = "select distinct " + distinctColumn.getEntityAlias() + "."
+        hqlQuery = "select distinct " + distinctColumn.getEntityAlias() + ".id,"
+            + distinctColumn.getEntityAlias() + "."
             + getNameOfFirstIdentifierProperty(property.getTargetEntity()) + " " + formClause;
       }
     }
