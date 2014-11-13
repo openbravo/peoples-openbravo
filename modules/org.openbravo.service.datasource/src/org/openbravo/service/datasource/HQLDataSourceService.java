@@ -46,7 +46,6 @@ import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.client.kernel.reference.YesNoUIDefinition;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.datamodel.Table;
@@ -626,7 +625,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     if (property == null) {
       orderByClause = ORDERBY + propertyName;
     } else {
-    Column column = OBDal.getInstance().get(Column.class, property.getColumnId());
+      Column column = OBDal.getInstance().get(Column.class, property.getColumnId());
       if (!orderByClause.isEmpty()) {
         orderByClause = ORDERBY + column.getEntityAlias();
         if (property.getTargetEntity() != null) {

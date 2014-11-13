@@ -114,6 +114,7 @@ public class ReturnToFromCustomerVendorHQLTransformer extends HqlQueryTransforme
       transformedHqlQuery = transformedHqlQuery.replace("@returnReasonLeftClause@.name",
           returnReasonLeftClause);
     }
+    transformedHqlQuery = transformedHqlQuery.replace("ORDER BY", "ORDER BY obSelected desc,");
     return transformedHqlQuery;
   }
 
