@@ -366,6 +366,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
               }
               curCosting.setPrice(trxPrice);
               curCosting.setCost(cost);
+              curCosting.setPermanent(Boolean.TRUE);
               OBDal.getInstance().save(curCosting);
             }
           }
