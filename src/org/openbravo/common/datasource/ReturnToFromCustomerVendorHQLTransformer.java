@@ -75,8 +75,8 @@ public class ReturnToFromCustomerVendorHQLTransformer extends HqlQueryTransforme
           .replaceAll("@unitPriceProperty@", unitPriceProperty);
     }
 
-    String tabId = requestParameters.get("tabId");
-    if (returnToVendorTabId.equals(tabId)) {
+    String buttonOwnerViewTabId = requestParameters.get("tabId");
+    if (returnToVendorTabId.equals(buttonOwnerViewTabId)) {
       transformedHqlQuery = transformHqlQueryReturnToVendor(transformedHqlQuery, requestParameters,
           salesOrderId);
     } else {

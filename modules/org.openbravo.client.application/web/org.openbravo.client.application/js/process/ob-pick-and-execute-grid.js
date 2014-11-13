@@ -176,8 +176,13 @@ isc.OBPickAndExecuteGrid.addProperties({
         isc.addProperties(dsRequest.params, me.view.theForm.getValues());
       }
       dsRequest.params[OB.Constants.ORG_PARAMETER] = me.getOrgParameter();
+      // Add to the params the tabId of the P&E window
+      if (me.viewProperties && me.viewProperties.tabId) {
+        dsRequest.params.tabId = me.viewProperties.tabId;
+      }
+      // Add to the params the tabId owner of the button that opens the P&E window
       if (me.view && me.view.buttonOwnerView && me.view.buttonOwnerView.tabId) {
-        dsRequest.params.tabId = me.view.buttonOwnerView.tabId;
+        dsRequest.params.buttonOwnerViewTabId = me.view.buttonOwnerView.tabId;
       }
       return this.Super('transformRequest', arguments);
     };
