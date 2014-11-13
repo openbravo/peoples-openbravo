@@ -18,11 +18,16 @@
  */
 package org.openbravo.client.application;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
@@ -60,6 +65,10 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
 
   @Inject
   private PersonalizationHandler personalizationHandler;
+
+  @Inject
+  @Any
+  private Instance<ExtraSettingsInjector> extraSettings;
 
   protected JSONObject execute(Map<String, Object> parameters, String data) {
 
@@ -191,6 +200,39 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
         }
         ps.put(KernelUtils.getProperty(f).getName());
       }
+
+      List<String> extraCallbacks = new ArrayList<String>();
+
+      // Add the extraSettings injected
+      for (ExtraSettingsInjector nextSetting : extraSettings) {
+        Map<String, Object> settingsToAdd = nextSetting.doAddSetting(json);
+        for (Entry<String, Object> setting : settingsToAdd.entrySet()) {
+          String settingKey = setting.getKey();
+          Object settingValue = setting.getValue();
+          if (json.has(settingKey)) {
+            log4j.warn("You are trying to override " + settingKey + " property");
+            continue;
+          }
+          if (settingKey.equals("extraCallbacks")) {
+            if (settingValue instanceof List<?>) {
+              for (Object callbackExtra : (List<?>) settingValue) {
+                if (callbackExtra instanceof String) {
+                  extraCallbacks.add((String) callbackExtra);
+                } else {
+                  log4j.warn("You are trying to set a wrong instance of extraCallbacks");
+                }
+              }
+            } else if (settingValue instanceof String) {
+              extraCallbacks.add((String) settingValue);
+            } else {
+              log4j.warn("You are trying to set a wrong instance of extraCallbacks");
+            }
+          } else {
+            json.put(settingKey, settingValue);
+          }
+        }
+      }
+      json.put("extraCallbacks", extraCallbacks);
 
       return json;
     } catch (Exception e) {
