@@ -67,8 +67,13 @@ public class CopyFromOrder extends HttpSecureAppServlet {
       String strTabId = vars.getStringParameter("inpTabId");
       String strBpartner = vars.getStringParameter("inpcBpartnerId");
       String strmPricelistId = vars.getStringParameter("inpmPricelistId");
+      OBContext.setAdminMode();
+      try {
       printPageDataSheet(response, vars, strKey, strWindowId, strTabId, strSOTrx, strBpartner,
           strmPricelistId);
+      } finally {
+    	  OBContext.restorePreviousMode();
+      }
     } else if (vars.commandIn("SAVE")) {
       String strRownum = null;
       try {
