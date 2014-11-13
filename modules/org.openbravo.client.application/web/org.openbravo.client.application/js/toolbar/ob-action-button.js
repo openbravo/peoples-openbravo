@@ -151,8 +151,7 @@ isc.OBToolbarActionButton.addProperties({
         afterRefresh, isAfterRefreshAlreadyExecuted, parsePathPart, parts;
 
     afterRefresh = function () {
-      var undef,
-          autosaveDone = false,
+      var undef, autosaveDone = false,
           currentRecordId, recordsAfterRefresh;
 
       if (isAfterRefreshAlreadyExecuted) {
@@ -182,6 +181,8 @@ isc.OBToolbarActionButton.addProperties({
         // if the grid is grouped refresh the grid to show the records properly
         contextView.viewGrid.refreshGrid();
       }
+      contextView.refreshParentRecord();
+      contextView.refreshChildViews();
     };
 
     if (this.autosave) {
