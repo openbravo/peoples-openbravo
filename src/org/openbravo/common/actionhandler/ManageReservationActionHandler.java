@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013 Openbravo SLU 
+ * All portions are Copyright (C) 2013-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -186,8 +186,11 @@ public class ManageReservationActionHandler extends BaseProcessActionHandler {
     if (idList.size() > 0) {
       for (String id : idList) {
         ReservationStock resStock = OBDal.getInstance().get(ReservationStock.class, id);
-        reservation.getMaterialMgmtReservationStockList().remove(resStock);
-        OBDal.getInstance().remove(resStock);
+        if(resStock.getReleased() == null
+            || resStock.getReleased().compareTo(BigDecimal.ZERO) == 0) {
+          reservation.getMaterialMgmtReservationStockList().remove(resStock);
+          OBDal.getInstance().remove(resStock);
+        }
       }
       OBDal.getInstance().save(reservation);
       OBDal.getInstance().flush();
