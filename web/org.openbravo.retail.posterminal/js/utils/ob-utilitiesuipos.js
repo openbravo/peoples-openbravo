@@ -261,4 +261,16 @@ OB.UTIL.currency = {
     var foreignAmount = converter.getTangibleOf(amount);
     return foreignAmount;
   }
+
+};
+
+// Experimental method that could be introduced in ECMAScript 6. If this happens, this method should be removed and the calling methods should replace it with 'Math.sign'
+// As of now, Nov 2014, Math.sign is supported by chrome v38 but not by Safari
+OB.UTIL.Math = window.OB.UTIL.Math || {};
+OB.UTIL.Math.sign = function (x) {
+  x = +x; // convert to a number
+  if (x === 0 || isNaN(x)) {
+    return x;
+  }
+  return x > 0 ? 1 : -1;
 };
