@@ -1747,7 +1747,7 @@
                 qtyReserved = OB.DEC.add(qtyReserved, p.qtyOfferReserved || 0);
               });
             }
-            if (l !== line && l.get('product').id === line.get('product').id && l.get('price') === line.get('price') && Math.sign(line.get('qty')) === Math.sign(l.get('qty'))) {
+            if (l !== line && l.get('product').id === line.get('product').id && l.get('price') === line.get('price') && OB.UTIL.Math.sign(line.get('qty')) === OB.UTIL.Math.sign(l.get('qty'))) {
               if (OB.DEC.sub(Math.abs(line.get('qty')), qtyReserved) > 0) {
                 var isManualOrNotMerge = _.find(line.get('promotions'), function (promo) {
                   return promo.manual || promo.doNotMerge;
