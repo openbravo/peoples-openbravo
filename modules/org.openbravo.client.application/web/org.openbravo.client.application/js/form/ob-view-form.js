@@ -967,6 +967,7 @@ OB.ViewFormProperties = {
         index = me.view.viewGrid.getRecordIndex(me.view.viewGrid.getSelectedRecord());
         if (index !== -1) {
           me.view.viewGrid.updateRecord(index, data, dsRequest);
+          me.view.refreshChildViews();
         }
       }
       if (callback && isc.isA.Function(callback)) {
