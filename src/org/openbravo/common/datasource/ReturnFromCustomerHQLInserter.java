@@ -31,7 +31,7 @@ import org.openbravo.service.datasource.hql.HqlInserter;
  */
 public class ReturnFromCustomerHQLInserter extends HqlInserter {
 
-  private final static String RETURN_FROM_CUSTOMER_TAB_ID = "B01BFDF1E6B24CF4941807CA7F77A073";
+  private final static String RETURN_FROM_CUSTOMER_TAB_ID = "AF4090093CFF1431E040007F010048A5";
 
   @Override
   public String insertHql(Map<String, String> requestParameters,
@@ -39,8 +39,8 @@ public class ReturnFromCustomerHQLInserter extends HqlInserter {
 
     // if the table is being used in the Return From Customer tab, add a filter to exclude the
     // discounts
-    String tabId = requestParameters.get("tabId");
-    if (RETURN_FROM_CUSTOMER_TAB_ID.equals(tabId)) {
+    String buttonOwnerViewTabId = requestParameters.get("buttonOwnerViewTabId");
+    if (RETURN_FROM_CUSTOMER_TAB_ID.equals(buttonOwnerViewTabId)) {
       return " iol.salesOrderLine.orderDiscount is null";
     } else {
       return null;
