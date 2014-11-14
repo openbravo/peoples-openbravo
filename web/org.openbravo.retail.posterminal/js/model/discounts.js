@@ -154,7 +154,9 @@
           skipSave: skipSave
         }), true);
       } else {
-        lines = receipt.get('lines');
+        lines = _.sortBy(receipt.get('lines').models, function (lo) {
+          return -lo.getQty();
+        });
         if (lines.length === 0) {
           // Removing last line, recalculate total
           receipt.calculateGross();
