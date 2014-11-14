@@ -377,6 +377,10 @@ enyo.kind({
       this.$.header.setContent(OB.I18N.getLabel('OBPOS_LblLayaways'));
     } else {
       this.$.header.setContent(OB.I18N.getLabel('OBPOS_LblPaidReceipts'));
+      if (this.params.isReturn && this.params.bpartner) {
+        this.$.body.$.listPRs.$.prslistitemprinter.$.theader.$.modalPRScrollableHeader.$.filterText.setValue(this.params.bpartner.get('name'));
+        this.$.body.$.listPRs.$.prslistitemprinter.$.theader.$.modalPRScrollableHeader.searchAction();
+      }
     }
   },
   init: function (model) {
