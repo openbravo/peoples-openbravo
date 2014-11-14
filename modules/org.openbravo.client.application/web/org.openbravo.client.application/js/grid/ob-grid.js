@@ -271,7 +271,7 @@ isc.OBGrid.addProperties({
       return null;
     }
 
-    if (field.isLink && !field.clientClass && record[field.name]) {
+    if (!OB.User.isPortal && field.isLink && !field.clientClass && record[field.name]) {
       // To keep compatibility with < 3.0MP20 versions that didn't implement 'clientClass' and only have 'isLink' property
       field.clientClass = 'OBGridLinkCellClick';
     }

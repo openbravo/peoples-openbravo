@@ -34,6 +34,7 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.cost.CostAdjustment;
 import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
@@ -77,11 +78,12 @@ public class PriceDifferenceProcess {
     BigDecimal expectedCost = BigDecimal.ZERO;
     BigDecimal invoiceQty = BigDecimal.ZERO;
     for (ReceiptInvoiceMatch matchInv : receiptLine.getProcurementReceiptInvoiceMatchList()) {
-      if (matchInv.getInvoiceLine().getInvoice().getDocumentStatus().equals("VO")) {
+      Invoice invoice = matchInv.getInvoiceLine().getInvoice();
+      if (invoice.getDocumentStatus().equals("VO")) {
         // Skip voided invoices.
         continue;
       }
-      if (!matchInv.getInvoiceLine().getInvoice().isProcessed()) {
+      if (!invoice.isProcessed()) {
         // Skip not processed invoices.
         continue;
       }
@@ -92,12 +94,13 @@ public class PriceDifferenceProcess {
         invoiceQty = invoiceQty.add(matchInv.getQuantity());
       }
       invoiceAmt = matchInv.getQuantity().multiply(matchInv.getInvoiceLine().getUnitPrice());
-      invoiceAmt = FinancialUtils.getConvertedAmount(invoiceAmt, matchInv.getInvoiceLine()
-          .getInvoice().getCurrency(), trxCurrency, trxDate, trxOrg,
-          FinancialUtils.PRECISION_STANDARD);
+
+      invoiceAmt = FinancialUtils.getConvertedAmount(invoiceAmt, invoice.getCurrency(),
+          trxCurrency, trxDate, trxOrg, FinancialUtils.PRECISION_STANDARD,
+          invoice.getCurrencyConversionRateDocList());
       expectedCost = expectedCost.add(invoiceAmt);
 
-      Date invoiceDate = matchInv.getInvoiceLine().getInvoice().getInvoiceDate();
+      Date invoiceDate = invoice.getInvoiceDate();
       if (costAdjDateAcct == null || costAdjDateAcct.before(invoiceDate)) {
         costAdjDateAcct = invoiceDate;
       }
@@ -153,7 +156,7 @@ public class PriceDifferenceProcess {
       OBDal.getInstance().flush();
       JSONObject message = CostAdjustmentProcess.doProcessCostAdjustment(costAdjHeader);
       try {
-
+        message.put("documentNo", costAdjHeader.getDocumentNo());
         if (message.get("severity") != "success") {
           throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@") + ": "
               + costAdjHeader.getDocumentNo() + " - " + message.getString("text"));
@@ -161,6 +164,7 @@ public class PriceDifferenceProcess {
       } catch (JSONException e) {
         throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@"));
       }
+
       return message;
     } else {
       JSONObject message = new JSONObject();

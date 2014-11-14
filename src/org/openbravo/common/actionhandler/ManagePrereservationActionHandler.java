@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2012 Openbravo SLU 
+ * All portions are Copyright (C) 2012-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -134,6 +134,9 @@ public class ManagePrereservationActionHandler extends BaseProcessActionHandler 
 
       final BigDecimal qty = new BigDecimal(
           selectedLine.getString(PrereservationManualPickEdit.PROPERTY_RESERVEDQTY));
+      final boolean allocated = selectedLine
+          .getBoolean(PrereservationManualPickEdit.PROPERTY_ALLOCATED);
+      resStock.setAllocated(allocated);
       resStock.setQuantity(qty);
 
       OBDal.getInstance().save(resStock);

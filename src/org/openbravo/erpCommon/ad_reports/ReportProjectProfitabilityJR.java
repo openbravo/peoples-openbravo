@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -211,7 +211,7 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
     hsqlScript.append("   where tel.timeSheet = true ");
     hsqlScript.append("         and tel.uOM.id = unitofmeasure.id ");
     hsqlScript.append("         and tel.uOM.id <> '101' ");
-    hsqlScript.append("         and es.processed = true ");
+    hsqlScript.append("         and es.processed = 'Y' ");
     if (!"".equals(strProject)) {
       hsqlScript.append("    and p.id = ?");
       parameters.add(strProject);

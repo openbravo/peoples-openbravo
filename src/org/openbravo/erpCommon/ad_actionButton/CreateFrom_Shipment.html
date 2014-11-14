@@ -89,6 +89,7 @@
     }
 
     function onloadFunctions() {
+        disableFieldButton('buttonBPartnerSel');
     }
     
 
@@ -364,10 +365,10 @@
                       <input type="hidden" name="inpcBpartnerId" id="paramBPartnerId" value="">
                     </td>
                     <td class="TextBox_ContentCell">
-                      <input type="text" class="dojoValidateValid TextBox_btn_TwoCells_width" maxlength="22" name="inpBpartnerId_DES" id="paramBPartnerDescription" value=""></input>
+                      <input type="text" class="dojoValidateValid TextBox_btn_TwoCells_width" maxlength="22" name="inpBpartnerId_DES" id="paramBPartnerDescription" value="" disabled></input>
                     </td>
                     <td class="FieldButton_ContentCell">
-                      <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Business Partner'; return true;" onblur=" window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="openSearch(null, null, '../info/BusinessPartner.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBpartnerId', 'inpBpartnerId_DES', document.frmMain.inpBpartnerId_DES.value, 'WindowID', 'xx');return false;" >
+                      <a id="buttonBPartnerSel" class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Business Partner'; return true;" onblur=" window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="openSearch(null, null, '../info/BusinessPartner.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBpartnerId', 'inpBpartnerId_DES', document.frmMain.inpBpartnerId_DES.value, 'WindowID', 'xx');return false;" >
                         <table class="FieldButton"onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Business Partner';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
                           <tr>
                             <td class="FieldButton_bg">
