@@ -171,28 +171,32 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
               Utility.messageBD(this, "TaxNotFound", vars.getLanguage()));
           return myError;
         }
-        // Processing for taxincluded
-        if (order.getPriceList().isPriceIncludesTax()) {
-          BigDecimal grossAmount, grossUnitPrice, qtyOrdered, priceActual;
+        OBContext.setAdminMode(true);
+        try {
+          // Processing for taxincluded
+          if (order.getPriceList().isPriceIncludesTax()) {
+            BigDecimal grossAmount, grossUnitPrice, qtyOrdered, priceActual;
 
-          strGrossUnitPrice = strPriceActual;
-          strGrossBaseUnitPrice = strGrossUnitPrice;
-          grossUnitPrice = (strGrossUnitPrice.equals("") ? ZERO
-              : (new BigDecimal(strGrossUnitPrice))).setScale(pricePrecision,
-              BigDecimal.ROUND_HALF_UP);
-          qtyOrdered = (data[i].qtyordered.equals("") ? ZERO : new BigDecimal(data[i].qtyordered));
-          grossAmount = qtyOrdered.multiply(grossUnitPrice).setScale(stdPrecision,
-              BigDecimal.ROUND_HALF_UP);
-          priceActual = FinancialUtils.calculateNetFromGross(strCTaxID, grossAmount,
-              pricePrecision, grossAmount, qtyOrdered);
+            strGrossUnitPrice = strPriceActual;
+            strGrossBaseUnitPrice = strGrossUnitPrice;
+            grossUnitPrice = (strGrossUnitPrice.equals("") ? ZERO : (new BigDecimal(
+                strGrossUnitPrice))).setScale(pricePrecision, BigDecimal.ROUND_HALF_UP);
+            qtyOrdered = (data[i].qtyordered.equals("") ? ZERO : new BigDecimal(data[i].qtyordered));
+            grossAmount = qtyOrdered.multiply(grossUnitPrice).setScale(stdPrecision,
+                BigDecimal.ROUND_HALF_UP);
+            priceActual = FinancialUtils.calculateNetFromGross(strCTaxID, grossAmount,
+                pricePrecision, grossAmount, qtyOrdered);
 
-          strGrossPriceList = strPriceList;
-          strPriceActual = priceActual.toString();
-          strNetPriceList = priceActual.toString();
-          strPriceLimit = priceActual.toString();
-          strGrossAmount = grossAmount.toString();
-        } else {
-          strNetPriceList = strPriceList;
+            strGrossPriceList = strPriceList;
+            strPriceActual = priceActual.toString();
+            strNetPriceList = priceActual.toString();
+            strPriceLimit = priceActual.toString();
+            strGrossAmount = grossAmount.toString();
+          } else {
+            strNetPriceList = strPriceList;
+          }
+        } finally {
+          OBContext.restorePreviousMode();
         }
 
         int line = Integer.valueOf(orderData[0].line.equals("") ? "0" : orderData[0].line)
@@ -259,6 +263,7 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
       myError = Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
     }
     try {
+      OBContext.setAdminMode(true);
       for (String strOrderLine : strOrderLineList) {
         OBContext.setAdminMode(true);
         org.openbravo.model.ad.ui.Process process = OBDal.getInstance().get(
