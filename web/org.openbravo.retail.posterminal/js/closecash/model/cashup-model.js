@@ -142,21 +142,33 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
         '_orderByClause': 'name asc'
       }, function (payMthds) { //OB.Dal.find success
         cashUpReport.set('totalStartings', _.reduce(payMthds.models, function (accum, trx) {
-          var fromCurrencyId = OB.MobileApp.model.paymentnames[trx.get('searchKey')].paymentMethod.currency;
-          var cStartingCash = OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, trx.get('startingCash'));
-          return OB.DEC.add(accum, cStartingCash);
+          if (OB.MobileApp.model.paymentnames[trx.get('searchKey')]) {
+            var fromCurrencyId = OB.MobileApp.model.paymentnames[trx.get('searchKey')].paymentMethod.currency;
+            var cStartingCash = OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, trx.get('startingCash'));
+            return OB.DEC.add(accum, cStartingCash);
+          } else {
+            return 0;
+          }
         }, 0));
 
         cashUpReport.set('totalDeposits', _.reduce(payMthds.models, function (accum, trx) {
-          var fromCurrencyId = OB.MobileApp.model.paymentnames[trx.get('searchKey')].paymentMethod.currency;
-          var cTotalDeposits = OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, OB.DEC.add(trx.get('totalDeposits'), trx.get('totalSales')));
-          return OB.DEC.add(accum, cTotalDeposits);
+          if (OB.MobileApp.model.paymentnames[trx.get('searchKey')]) {
+            var fromCurrencyId = OB.MobileApp.model.paymentnames[trx.get('searchKey')].paymentMethod.currency;
+            var cTotalDeposits = OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, OB.DEC.add(trx.get('totalDeposits'), trx.get('totalSales')));
+            return OB.DEC.add(accum, cTotalDeposits);
+          } else {
+            return 0;
+          }
         }, 0));
 
         cashUpReport.set('totalDrops', _.reduce(payMthds.models, function (accum, trx) {
-          var fromCurrencyId = OB.MobileApp.model.paymentnames[trx.get('searchKey')].paymentMethod.currency;
-          var cTotalDrops = OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, OB.DEC.add(trx.get('totalDrops'), trx.get('totalReturns')));
-          return OB.DEC.add(accum, cTotalDrops);
+          if (OB.MobileApp.model.paymentnames[trx.get('searchKey')]) {
+            var fromCurrencyId = OB.MobileApp.model.paymentnames[trx.get('searchKey')].paymentMethod.currency;
+            var cTotalDrops = OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, OB.DEC.add(trx.get('totalDrops'), trx.get('totalReturns')));
+            return OB.DEC.add(accum, cTotalDrops);
+          } else {
+            return 0;
+          }
         }, 0));
 
         _.each(payMthds.models, function (p, index) {
