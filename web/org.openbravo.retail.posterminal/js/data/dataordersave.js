@@ -98,7 +98,7 @@
         }
       }
       OB.trace('Receipt integrity: OK');
-      this.receipt.trigger('integrityOk'); // Absolute date in ISO format
+      this.receipt.trigger('integrityOk');
       OB.trace('Executing pre order save hook.');
 
       OB.UTIL.HookManager.executeHooks('OBPOS_PreOrderSave', {
