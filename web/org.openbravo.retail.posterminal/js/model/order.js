@@ -57,7 +57,7 @@
     },
 
     printDiscount: function () {
-      var disc = OB.DEC.sub(this.get('product').get('standardPrice'), this.get('price'));
+      var disc = OB.DEC.mul(OB.DEC.sub(this.get('product').get('standardPrice'), this.get('price')), this.get('qty'));
       var prom = this.getTotalAmountOfPromotions();
       // if there is a discount no promotion then only discount no promotion is shown
       // if there is not a discount no promotion and there is a promotion then promotion is shown
@@ -74,7 +74,7 @@
 
     // returns the discount to substract in total
     discountInTotal: function () {
-      var disc = OB.DEC.sub(this.get('product').get('standardPrice'), this.get('price'));
+      var disc = OB.DEC.mul(OB.DEC.sub(this.get('product').get('standardPrice'), this.get('price')), this.get('qty'));
       // if there is a discount no promotion then total is price*qty
       // otherwise total is price*qty - discount
       if (OB.DEC.compare(disc) === 0) {
