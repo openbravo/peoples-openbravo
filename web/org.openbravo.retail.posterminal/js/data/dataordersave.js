@@ -98,13 +98,7 @@
         }
       }
       OB.trace('Receipt integrity: OK');
-      this.receipt.trigger('integrityOk');
-      OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(this.receipt.get('documentnoSuffix'), this.receipt.get('quotationnoSuffix'));
-
-      delete this.receipt.attributes.json;
-      this.receipt.set('timezoneOffset', creationDate.getTimezoneOffset());
-      this.receipt.set('created', creationDate.getTime());
-      this.receipt.set('obposCreatedabsolute', OB.I18N.formatDateISO(creationDate)); // Absolute date in ISO format
+      this.receipt.trigger('integrityOk'); // Absolute date in ISO format
       OB.trace('Executing pre order save hook.');
 
       OB.UTIL.HookManager.executeHooks('OBPOS_PreOrderSave', {
@@ -117,6 +111,13 @@
             currentDocNo = receipt.get('documentNo') || docno;
 
         OB.trace('Execution of pre order save hook OK.');
+
+        OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(receipt.get('documentnoSuffix'), receipt.get('quotationnoSuffix'));
+
+        delete receipt.attributes.json;
+        receipt.set('timezoneOffset', creationDate.getTimezoneOffset());
+        receipt.set('created', creationDate.getTime());
+        receipt.set('obposCreatedabsolute', OB.I18N.formatDateISO(creationDate));
 
         receipt.set('obposAppCashup', OB.MobileApp.model.get('terminal').cashUpId);
         // convert returns
