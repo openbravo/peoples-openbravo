@@ -47,9 +47,6 @@
       // sum the amounts of the lines
       var oldGross = this.receipt.getGross();
       var realGross = 0;
-      var hasPromotions = true;
-      var discountedAmt = 0;
-      var verifyIsNotZero = true;
       this.receipt.get('lines').forEach(function (line) {
         line.calculateGross();
         var amountToAdd;
@@ -58,31 +55,11 @@
         } else {
           amountToAdd = line.get('discountedGross');
         }
-        // Check if the receipt contains returns
-        if (amountToAdd < 0) {
-          // if it contains returns, the total amount could be zero
-          verifyIsNotZero = false;
-        }
         realGross = OB.DEC.add(realGross, amountToAdd);
-        discountedAmt = 0;
-        // Sum the discounted amount for this line
-        if (line.get('promotions')) {
-          line.get('promotions').forEach(function (promo) {
-            var amt = 0;
-            if (promo.amt) {
-              amt = promo.amt;
-            }
-            discountedAmt = OB.DEC.add(discountedAmt, amt);
-          });
-        }
-        // Check if the discounts are 100% of the amount of the line
-        if (discountedAmt < line.get('gross') || line.get('gross') === 0) {
-          hasPromotions = false;
-        }
       });
 
       // check if the amount of the lines is different from the gross
-      if (oldGross !== realGross || (oldGross === 0 && hasPromotions === false && verifyIsNotZero)) {
+      if (oldGross !== realGross) {
         OB.error("Receipt integrity: FAILED");
         if (OB.MobileApp.model.hasPermission('OBPOS_TicketIntegrityCheck', true)) {
           if (this.receipt.get('id')) {
