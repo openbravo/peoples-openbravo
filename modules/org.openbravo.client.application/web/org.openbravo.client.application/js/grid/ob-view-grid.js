@@ -210,7 +210,7 @@ isc.OBViewGrid.addProperties({
         // if the grid was refreshed with a record selected, use the range that contained that record 
         //  instead of using targetRecordId to improve the performance
         startRow = this.grid.selectedRecordInitInterval;
-        endRow = this.grid.selectedRecordendInterval;
+        endRow = this.grid.selectedRecordEndInterval;
         this.grid.preventRedraw = true;
       } else if (this.grid.refreshingWithScrolledGrid && startRow > 0) {
         this.grid.preventRedraw = true;
@@ -1724,7 +1724,7 @@ isc.OBViewGrid.addProperties({
         if (this.selectedRecordInitInterval < 0) {
           this.selectedRecordInitInterval = 0;
         }
-        this.selectedRecordendInterval = this.selectedRecordInitInterval + this.data.resultSize;
+        this.selectedRecordEndInterval = this.selectedRecordInitInterval + this.data.resultSize;
       }
       this.notRemoveFilter = true;
     } else {
@@ -1776,7 +1776,7 @@ isc.OBViewGrid.addProperties({
       delete me.refreshingWithScrolledGrid;
       delete me.preventRedraw;
       delete me.selectedRecordInitInterval;
-      delete me.selectedRecordendInterval;
+      delete me.selectedRecordEndInterval;
       delete me.selectedRecordId;
     };
     this.filterData(criteria, filterDataCallback, context);
