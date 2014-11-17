@@ -202,6 +202,7 @@
   }, {
     name: 'locName',
     column: 'c_bpartnerlocation_name',
+    filter: true,
     type: 'TEXT'
   }, {
     name: 'postalCode',

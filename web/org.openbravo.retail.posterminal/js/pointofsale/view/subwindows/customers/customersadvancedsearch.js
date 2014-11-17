@@ -118,13 +118,31 @@ enyo.kind({
       style: 'float: left;',
       name: 'address'
     }, {
+      style: 'float: left;',
+      name: 'phone'
+    }, {
+      style: 'float: left;',
+      name: 'email'
+    }, {
+      style: 'float: left;',
+      name: 'taxID'
+    }, {
       style: 'clear: both;'
     }]
   }],
   create: function () {
     this.inherited(arguments);
-    this.$.identifier.setContent(this.model.get('_identifier') + ' / ');
-    this.$.address.setContent(this.model.get('locName'));
+    this.$.identifier.setContent(this.model.get('_identifier'));
+    this.$.address.setContent(' / ' + this.model.get('locName'));
+    if (this.model.get('phone')) {
+      this.$.phone.setContent(' / ' + this.model.get('phone'));
+    }
+    if (this.model.get('email')) {
+      this.$.email.setContent(' / ' + this.model.get('email'));
+    }
+    if (this.model.get('taxID')) {
+      this.$.taxID.setContent(' / ' + this.model.get('taxID'));
+    }
   }
 });
 
