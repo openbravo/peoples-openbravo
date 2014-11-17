@@ -265,7 +265,6 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
     try {
       OBContext.setAdminMode(true);
       for (String strOrderLine : strOrderLineList) {
-        OBContext.setAdminMode(true);
         org.openbravo.model.ad.ui.Process process = OBDal.getInstance().get(
             org.openbravo.model.ad.ui.Process.class, "DFC78024B1F54CBB95DC73425BA6687F");
 
