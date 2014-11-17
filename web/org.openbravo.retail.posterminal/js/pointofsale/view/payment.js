@@ -47,7 +47,7 @@ enyo.kind({
       this.$.totalpending.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(pending, payment.mulrate), payment.symbol, payment.currencySymbolAtTheRight));
     }
     this.checkEnoughCashAvailable(paymentstatus, payment);
-    if(this.receipt.get('isLayaway')){
+    if (this.receipt.get('isLayaway')) {
       this.$.layawayaction.updateVisibility(true);
     }
   },
@@ -390,7 +390,7 @@ enyo.kind({
 
   checkEnoughCashAvailable: function (paymentstatus, selectedPayment) {
     var currentCash = OB.DEC.Zero,
-        requiredCash, hasEnoughCash;
+        requiredCash, hasEnoughCash, hasAllEnoughCash = true;
     if (selectedPayment && selectedPayment.paymentMethod.iscash) {
       currentCash = selectedPayment.currentCash || OB.DEC.Zero;
     }
@@ -400,8 +400,14 @@ enyo.kind({
     } else if (paymentstatus.isNegative) {
       requiredCash = paymentstatus.pendingAmt;
       paymentstatus.payments.each(function (payment) {
+        var paymentmethod;
         if (payment.get('kind') === selectedPayment.payment.searchKey) {
           requiredCash = OB.DEC.add(requiredCash, payment.get('amount'));
+        } else {
+          paymentmethod = OB.POS.terminal.terminal.paymentnames[payment.get('kind')];
+          if (paymentmethod && payment.get('amount') > paymentmethod.currentCash) {
+            hasAllEnoughCash = false;
+          }
         }
       });
     } else {
@@ -409,7 +415,7 @@ enyo.kind({
     }
 
     hasEnoughCash = OB.DEC.compare(OB.DEC.sub(currentCash, requiredCash)) >= 0;
-    if (hasEnoughCash) {
+    if (hasEnoughCash && hasAllEnoughCash) {
       this.$.noenoughchangelbl.hide();
       this.$.payments.scrollAreaMaxHeight = '150px';
       this.$.doneButton.setDisabled(false);
