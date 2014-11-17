@@ -41,13 +41,11 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
         + json.getString("organization")
         + "' and ord.obposApplications is not null";
 
-    if (!json.getString("filterText").isEmpty()) {
-      hqlPaidReceipts += " and (ord.documentNo like '%"
-          + sanitizeString(json.getString("filterText"))
-          + "%' or REPLACE(ord.documentNo, '/', '') like '%"
-          + sanitizeString(json.getString("filterText"))
-          + "%' or upper(ord.businessPartner.name) like upper('%" + json.getString("filterText")
-          + "%')) ";
+    final String filterText = sanitizeString(json.getString("filterText"));
+    if (!filterText.isEmpty()) {
+      hqlPaidReceipts += " and (ord.documentNo like '%" + filterText
+          + "%' or REPLACE(ord.documentNo, '/', '') like '%" + filterText
+          + "%' or upper(ord.businessPartner.name) like upper('%" + filterText + "%')) ";
     }
     if (!json.isNull("documentType")) {
       JSONArray docTypes = json.getJSONArray("documentType");
