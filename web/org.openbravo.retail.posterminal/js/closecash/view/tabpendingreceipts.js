@@ -63,7 +63,16 @@ enyo.kind({
     this.$.printGross.setContent(this.model.printGross());
   },
   voidOrder: function (inSender, inEvent) {
-    this.doVoidOrder();
+    var me = this;
+    OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_ConfirmDeletion'), OB.I18N.getLabel('OBPOS_MsgConfirmDelete'), [{
+      label: OB.I18N.getLabel('OBPOS_LblYesDelete'),
+      isConfirmButton: true,
+      action: function () {
+        me.doVoidOrder();
+      }
+    }, {
+      label: OB.I18N.getLabel('OBMOBC_LblCancel')
+    }]);
   }
 });
 
@@ -105,7 +114,7 @@ enyo.kind({
               initComponents: function () {
                 this.setContent(OB.I18N.getLabel('OBPOS_DeleteAll'));
               },
-              ontap: 'voidAllOrders'
+              ontap: 'voidAllPendingReceipts'
             }, {
               style: 'clear: both;'
             }]
@@ -160,6 +169,18 @@ enyo.kind({
         }, OB.UTIL.showError);
       }
     });
+  },
+  voidAllPendingReceipts: function (inSender, inEvent) {
+    var me = this;
+    OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_ConfirmDeletion'), OB.I18N.getLabel('OBPOS_cannotBeUndone'), [{
+      label: OB.I18N.getLabel('OBPOS_LblYesDelete'),
+      isConfirmButton: true,
+      action: function () {
+        me.voidAllOrders();
+      }
+    }, {
+      label: OB.I18N.getLabel('OBMOBC_LblCancel')
+    }]);
   },
   voidAllOrders: function (inSender, inEvent) {
     var me = this;
