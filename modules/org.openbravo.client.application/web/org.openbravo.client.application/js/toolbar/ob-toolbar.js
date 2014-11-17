@@ -192,8 +192,10 @@ isc.OBToolbar.addClassProperties({
 
   REFRESH_BUTTON_PROPERTIES: {
     action: function () {
+      var refreshChildren = true;
       if (this.view.isShowingForm) {
-        this.view.viewForm.refresh();
+        // Refresh the form and its children records
+        this.view.viewForm.refresh(refreshChildren);
       } else {
         this.view.refresh();
       }

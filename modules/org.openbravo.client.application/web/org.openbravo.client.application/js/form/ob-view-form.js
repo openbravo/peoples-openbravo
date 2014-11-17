@@ -955,7 +955,7 @@ OB.ViewFormProperties = {
     }
   },
 
-  refresh: function (callback) {
+  refresh: function (callback, refreshChildren) {
     var criteria = {
       id: this.getValue(OB.Constants.ID)
     },
@@ -967,7 +967,12 @@ OB.ViewFormProperties = {
         index = me.view.viewGrid.getRecordIndex(me.view.viewGrid.getSelectedRecord());
         if (index !== -1) {
           me.view.viewGrid.updateRecord(index, data, dsRequest);
-          me.view.refreshChildViews();
+          if (refreshChildren) {
+            // only refresh the children when needed.
+            // i.e. when a sub tab is saved the form view of its parent tab is refreshed,
+            // but then there is no need to refresh the sub tab
+            me.view.refreshChildViews();
+          }
         }
       }
       if (callback && isc.isA.Function(callback)) {
