@@ -211,9 +211,13 @@ isc.OBViewGrid.addProperties({
         //  instead of using targetRecordId to improve the performance
         startRow = this.grid.selectedRecordInitInterval;
         endRow = this.grid.selectedRecordEndInterval;
-        this.grid.preventRedraw = true;
-      } else if (this.grid.refreshingWithScrolledGrid && startRow > 0) {
-        this.grid.preventRedraw = true;
+        this.grid.refreshingWithRecordSelected = true;
+      } else if (this.grid.refreshingWithScrolledGrid) {
+        if (startRow === 0) {
+          // the grid was scrolled down so little that the first data page
+          // is being requested
+          delete this.grid.refreshingWithScrolledGrid;
+        }
       }
       return this.Super('fetchRemoteData', arguments);
     },
@@ -769,6 +773,10 @@ isc.OBViewGrid.addProperties({
 
   // overridden to load all data in one request
   requestVisibleRows: function () {
+    if (this.refreshingWithRecordSelected || this.refreshingWithScrolledGrid) {
+      // don't make a request for the visible rows if the grid is already being refreshed
+      return;
+    }
     // fake smartclient to think that there groupByMaxRecords + 1 records
     if (this.data && this.isGrouped && !this.data.allRows) {
       this.data.totalRows = this.groupByMaxRecords + 1;
@@ -1731,6 +1739,9 @@ isc.OBViewGrid.addProperties({
       visibleRows = this.getVisibleRows();
       if (visibleRows && visibleRows[0] > 0) {
         this.refreshingWithScrolledGrid = true;
+        // save the index of the record placed in the middle of the viewport to 
+        // move the scroll to it after receiving the response
+        this.recordIndexToScroll = Math.round((visibleRows[0] + visibleRows[1]) / 2);
       }
 
     }
@@ -1773,8 +1784,16 @@ isc.OBViewGrid.addProperties({
       criteria = originalCriteria;
     }
     filterDataCallback = function () {
+      if (me.refreshingWithScrolledGrid) {
+        // move the scroll to part of the grid that contains the data that was just received to
+        // prevent unneded requests (see https://issues.openbravo.com/view.php?id=25811)
+        // the adjustment is needed to show the records in the same exact position where they were
+        // placed before refreshing the grid, if no records were added/removed
+        me.scrollCellIntoView(me.recordIndexToScroll + 1, null, true, true);
+      }
+      delete me.recordIndexToScroll;
       delete me.refreshingWithScrolledGrid;
-      delete me.preventRedraw;
+      delete me.refreshingWithRecordSelected;
       delete me.selectedRecordInitInterval;
       delete me.selectedRecordEndInterval;
       delete me.selectedRecordId;
@@ -3717,6 +3736,10 @@ isc.OBViewGrid.addProperties({
       // an edit id
       rowNum = this.getEditSessionRowNum(rowNum);
       return this.Super('getRecord', [rowNum]);
+    }
+    if (this.refreshingWithRecordSelected || this.refreshingWithScrolledGrid) {
+      // if the grid if being refreshed do not try to return a record, just notify that is being loaded
+      return Array.LOADING;
     }
     return this.Super('getRecord', arguments);
   },

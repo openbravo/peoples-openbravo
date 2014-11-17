@@ -1380,10 +1380,6 @@ isc.OBViewGridBody.addProperties({
     // prevent unneeded requests. See issue https://issues.openbravo.com/view.php?id=25811
     // Also dont redraw if the user has refreshed after scrolling down if 
     // a page other than the first one is going to be requested
-    if (this.grid.preventRedraw) {
-      return;
-    }
-
     this.Super('redraw', arguments);
 
     grid = this.grid;
