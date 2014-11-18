@@ -147,11 +147,11 @@
     </line>
     <%
     _.each(cashup.summary.expectedSummary, function(payment){
-    if(payment.get('foreignExpected') && payment.get('foreignExpected')!==payment.get('value')){
+    if(payment.get('second') && payment.get('second')!==payment.get('value')){
     %>
     <line>
       <text align ="left" length="18"><%=OB.UTIL.encodeXMLComponent(payment.get('name')) %></text>
-      <text align ="right" length="11"><%= '('+OB.I18N.formatCurrency(payment.get('foreignExpected'))+' '+payment.get('isocode')+')' %></text>
+      <text align ="right" length="11"><%= '('+OB.I18N.formatCurrency(payment.get('second'))+' '+payment.get('isocode')+')' %></text>
       <text align ="right" length="10"><%= OB.I18N.formatCurrency(payment.get('value')) %></text>
     </line>
     <%
@@ -173,11 +173,11 @@
     </line>
     <%
     _.each(cashup.summary.countedSummary, function(payment){
-   if(payment.get('foreignCounted') && payment.get('foreignCounted')!==payment.get('value')){
+   if(payment.get('second') && payment.get('second')!==payment.get('value')){
     %>
     <line>
       <text align ="left" length="18"><%=OB.UTIL.encodeXMLComponent(payment.get('name')) %></text>
-      <text align ="right" length="11"><%= '('+OB.I18N.formatCurrency(payment.get('foreignCounted'))+' '+payment.get('isocode')+')' %></text>
+      <text align ="right" length="11"><%= '('+OB.I18N.formatCurrency(payment.get('second'))+' '+payment.get('isocode')+')' %></text>
       <text align ="right" length="10"><%= OB.I18N.formatCurrency(payment.get('value')) %></text>
     </line>
     <%
@@ -199,11 +199,11 @@
     </line>
     <%
     _.each(cashup.summary.differenceSummary, function(payment){
-   if(payment.get('foreignDifference') && payment.get('foreignDifference')!==payment.get('value')){
+   if(payment.get('second') && payment.get('second')!==payment.get('value')){
     %>
     <line>
       <text align ="left" length="18"><%=OB.UTIL.encodeXMLComponent(payment.get('name')) %></text>
-      <text align ="right" length="11"><%= '('+OB.I18N.formatCurrency(payment.get('foreignDifference'))+' '+payment.get('isocode')+')' %></text>
+      <text align ="right" length="11"><%= '('+OB.I18N.formatCurrency(payment.get('second'))+' '+payment.get('isocode')+')' %></text>
       <text align ="right" length="10"><%= OB.I18N.formatCurrency(payment.get('value')) %></text>
     </line>
     <%
