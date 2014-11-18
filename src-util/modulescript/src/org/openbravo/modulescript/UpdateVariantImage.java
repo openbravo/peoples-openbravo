@@ -42,8 +42,8 @@ public class UpdateVariantImage extends ModuleScript {
           if (count > 0) {
             UpdateVariantImageData.updateVariantImage(cp, generatedId, variantsImage.mProductId);
           }
-          UpdateVariantImageData.createPreference(cp);
         }
+        UpdateVariantImageData.createPreference(cp);
       }
     } catch (Exception e) {
       handleError(e);
