@@ -211,13 +211,6 @@ isc.OBViewGrid.addProperties({
         //  instead of using targetRecordId to improve the performance
         startRow = this.grid.selectedRecordInitInterval;
         endRow = this.grid.selectedRecordEndInterval;
-        this.grid.refreshingWithRecordSelected = true;
-      } else if (this.grid.refreshingWithScrolledGrid) {
-        if (startRow === 0) {
-          // the grid was scrolled down so little that the first data page
-          // is being requested
-          delete this.grid.refreshingWithScrolledGrid;
-        }
       }
       return this.Super('fetchRemoteData', arguments);
     },
@@ -1738,7 +1731,6 @@ isc.OBViewGrid.addProperties({
     } else {
       visibleRows = this.getVisibleRows();
       if (visibleRows && visibleRows[0] > 0) {
-        this.refreshingWithScrolledGrid = true;
         // save the index of the record placed in the middle of the viewport to 
         // move the scroll to it after receiving the response
         this.recordIndexToScroll = Math.round((visibleRows[0] + visibleRows[1]) / 2);
@@ -1799,6 +1791,13 @@ isc.OBViewGrid.addProperties({
       delete me.selectedRecordId;
     };
     this.filterData(criteria, filterDataCallback, context);
+    // Set the refreshingWithRecordSelected and refreshingWithScrolledGrid flags to true when needed after
+    // actually start filtering the data. These flags will prevent unneeded multiple datasource requests
+    if (this.selectedRecordInitInterval !== undefined) {
+      this.refreshingWithRecordSelected = true;
+    } else if (this.recordIndexToScroll) {
+      this.refreshingWithScrolledGrid = true;
+    }
     // At this point the original criteria should be restored, to prevent
     // the 'or' clause that was just added to be used in subsequent refreshes.
     // It is not possible to do it here, though, because a this.setCriteria(originalCriteria)
