@@ -110,6 +110,10 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
       OBException {
     JSONObject grid = jsonRequest.getJSONObject("_params").getJSONObject("grid");
     JSONArray selectedLines = grid.getJSONArray("_selection");
+    JSONObject orphanlinesgrid = jsonRequest.getJSONObject("_params").getJSONObject(
+        "orphanlinesgrid");
+    JSONArray selectedLinesOrphan = orphanlinesgrid.getJSONArray("_selection");
+
     final String strOrderId = jsonRequest.getString("C_Order_ID");
     Order order = OBDal.getInstance().get(Order.class, strOrderId);
     boolean isSOTrx = order.isSalesTransaction();
@@ -125,6 +129,10 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
     Object o = obc.list().get(0);
     if (o != null) {
       lineNo = (Long) o;
+    }
+    for (long i = 0; i < selectedLinesOrphan.length(); i++) {
+      JSONObject selectedLineOrphan = selectedLinesOrphan.getJSONObject((int) i);
+      selectedLines.put(selectedLineOrphan);
     }
 
     for (long i = 0; i < selectedLines.length(); i++) {

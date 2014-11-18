@@ -37,9 +37,9 @@ public class ReturnToFromCustomerVendorHQLTransformer extends HqlQueryTransforme
   private static final String rfc_orderNoLeftClause = " coalesce ((iol.salesOrderLine.salesOrder.documentNo), '0')";
   private static final String returnedLeftClause = " coalesce((select ol.orderedQuantity from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol),0)";
   private static final String returnedOthersLeftClause = " coalesce((select sum(ol.orderedQuantity) from OrderLine as ol left join ol.salesOrder as o where ol.goodsShipmentLine = iol and o.processed = true and o.documentStatus <> 'VO'), 0)";
-  private static final String returnReasonLeftClause = " coalesce((select ol.returnReason from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol), '')";
-  private static final String returnReasonCountQuery = " select count(distinct e.name) from ReturnReason as e where exists (select distinct ol.returnReason from OrderLine as ol where ol.returnReason = e and ol.salesOrder.id = :salesOrderId) ";
-  private static final String returnReasonDataQuery = " select distinct e.name from ReturnReason as e where exists (select distinct ol.returnReason from OrderLine as ol where ol.returnReason = e and ol.salesOrder.id = :salesOrderId) ";
+  private static final String returnReasonLeftClause = " coalesce((select ol.returnReason.id from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol), '')";
+  private static final String returnReasonCountQuery = " select count(distinct e.name) from ReturnReason as e where exists (select distinct ol.returnReason from OrderLine as ol where ol.returnReason = e and ol.salesOrder.id = :salesOrderId  and ol.goodsShipmentLine is not null) ";
+  private static final String returnReasonDataQuery = " select distinct e.id, e.name  from ReturnReason as e where exists (select distinct ol.returnReason from OrderLine as ol where ol.returnReason = e and ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine is not null) ";
   private static final String unitPriceProperty = "unitPrice";
   private static final String grossUnitPriceProperty = "grossUnitPrice";
 
@@ -83,7 +83,12 @@ public class ReturnToFromCustomerVendorHQLTransformer extends HqlQueryTransforme
       transformedHqlQuery = transformHqlQueryReturnFromCustomer(transformedHqlQuery,
           requestParameters, salesOrderId);
     }
-    transformedHqlQuery = transformedHqlQuery.replace("ORDER BY", "ORDER BY obSelected desc,");
+    String distinctProperty = requestParameters.get("_distinct");
+    if (distinctProperty != null) {
+      transformedHqlQuery = transformedHqlQuery.replace("ORDER BY obSelected des", "ORDER BY");
+    } else {
+      transformedHqlQuery = transformedHqlQuery.replace("ORDER BY", "ORDER BY obSelected desc,");
+    }
     return transformedHqlQuery;
   }
 
@@ -111,7 +116,7 @@ public class ReturnToFromCustomerVendorHQLTransformer extends HqlQueryTransforme
         transformedHqlQuery = returnReasonDataQuery;
       }
     } else {
-      transformedHqlQuery = transformedHqlQuery.replace("@returnReasonLeftClause@.name",
+      transformedHqlQuery = transformedHqlQuery.replace("@returnReasonLeftClause@.id",
           returnReasonLeftClause);
     }
     return transformedHqlQuery;

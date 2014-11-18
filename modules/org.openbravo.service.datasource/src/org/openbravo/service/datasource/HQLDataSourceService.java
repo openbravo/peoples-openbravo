@@ -175,6 +175,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     String[] returnAliases = query.getReturnAliases();
     boolean checkIsNotNull = false;
     for (Object row : query.list()) {
+
       Map<String, Object> record = new HashMap<String, Object>();
       if (distinct != null) {
         Object[] result = (Object[]) row;
