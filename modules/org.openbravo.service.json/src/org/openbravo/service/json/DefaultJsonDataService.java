@@ -261,9 +261,14 @@ public class DefaultJsonDataService implements JsonDataService {
     final DataEntityQueryService queryService = createSetQueryService(parameters, false);
     queryService.setEntityName(entityName);
 
+    String selectedProperties = parameters.get(JsonConstants.SELECTEDPROPERTIES_PARAMETER);
+
     final DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(
         DataToJsonConverter.class);
     toJsonConverter.setAdditionalProperties(JsonUtils.getAdditionalProperties(parameters));
+    // Convert to Json only the properties specified in the request. If no properties are specified,
+    // all of them will be converted to Json
+    toJsonConverter.setSelectedProperties(selectedProperties);
 
     final ScrollableResults scrollableResults = queryService.scroll();
     try {
