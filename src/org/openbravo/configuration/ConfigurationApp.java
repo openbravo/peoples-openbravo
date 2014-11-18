@@ -44,9 +44,6 @@ import org.apache.tools.ant.Project;
  */
 public class ConfigurationApp extends org.apache.tools.ant.Task {
 
-  private static int TYPE_OPT_CHOOSE = 0;
-  private static int TYPE_OPT_STRING = 1;
-
   private static HashMap<Integer, ConfigureOption> optionLast = new HashMap<Integer, ConfigureOption>();
   private static HashMap<Integer, ConfigureOption> optionOracle = new HashMap<Integer, ConfigureOption>();
   private static HashMap<Integer, ConfigureOption> optionPostgreSQL = new HashMap<Integer, ConfigureOption>();
@@ -67,6 +64,10 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
   private final static String LOG4J_LCF = BASEDIR_CONFIG + "log4j.lcf";
   private final static String USERCONFIG_XML_TEMPLATE = BASEDIR_CONFIG + "userconfig.xml.template";
   private final static String USERCONFIG_XML = BASEDIR_CONFIG + "userconfig.xml";
+  private final static String COMMON_COMPONENT_TEMPLATE = ".settings/org.eclipse.wst.common.component.template";
+  private final static String COMMON_COMPONENT = ".settings/org.eclipse.wst.common.component";
+  private final static String CLASSPATH_TEMPLATE = ".classpath.template";
+  private final static String CLASSPATH = ".classpath";
 
   private final static String OPENBRAVO_LICENSE = BASEDIR + "/legal/Licensing.txt";
   private static final int LINES_SHOWING_LICENSE = 50;
@@ -84,6 +85,8 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     fileCopyTemplate(LOG4J_LCF_TAMPLATE, LOG4J_LCF, p);
     fileCopyTemplate(USERCONFIG_XML_TEMPLATE, USERCONFIG_XML, p);
     fileCopyTemplate(OPENBRAVO_PROPERTIES_TEMPLATE, OPENBRAVO_PROPERTIES, p);
+    fileCopyTemplate(COMMON_COMPONENT_TEMPLATE, COMMON_COMPONENT, p);
+    fileCopyTemplate(CLASSPATH_TEMPLATE, CLASSPATH, p);
 
     while (mainOption != -1) {
       switch (mainOption) {
@@ -179,7 +182,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         String typeDDBB = "";
         Map<Integer, ConfigureOption> treeMap = new TreeMap<Integer, ConfigureOption>(optionFirst);
         for (Map.Entry<Integer, ConfigureOption> entry : treeMap.entrySet()) {
-          if (entry.getValue().getType() == TYPE_OPT_CHOOSE) {
+          if (entry.getValue().getType() == ConfigureOption.TYPE_OPT_CHOOSE) {
             p.log("Please select " + entry.getValue().getAskInfo());
             entry.getValue().getOptions(p);
             numberOk = false;
@@ -201,7 +204,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
                 }
               }
             } while (!numberOk);
-          } else if (entry.getValue().getType() == TYPE_OPT_STRING) {
+          } else if (entry.getValue().getType() == ConfigureOption.TYPE_OPT_STRING) {
             p.log("\nPlease introduce " + entry.getValue().getAskInfo());
             entry.getValue().getOptions(p);
             optionString = inp.nextLine();
@@ -314,7 +317,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
           keyOpt = optionBBDD1.next();
           if (keyOpt == optionMod - 1) {
             ConfigureOption optionChange = optionFirst.get(keyOpt);
-            if (optionChange.getType() == TYPE_OPT_CHOOSE) {
+            if (optionChange.getType() == ConfigureOption.TYPE_OPT_CHOOSE) {
               p.log("Please select " + optionChange.getAskInfo());
               optionChange.getOptions(p);
               numberOk = false;
@@ -337,7 +340,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
                   }
                 }
               } while (!numberOk);
-            } else if (optionChange.getType() == TYPE_OPT_STRING) {
+            } else if (optionChange.getType() == ConfigureOption.TYPE_OPT_STRING) {
               p.log("\nPlease introduce " + optionChange.getAskInfo());
               optionChange.getOptions(p);
               optionString = inp.nextLine();
@@ -380,7 +383,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       case 7:
         Map<Integer, ConfigureOption> treeMapO = new TreeMap<Integer, ConfigureOption>(optionOracle);
         for (Map.Entry<Integer, ConfigureOption> entryO : treeMapO.entrySet()) {
-          if (entryO.getValue().getType() == TYPE_OPT_CHOOSE) {
+          if (entryO.getValue().getType() == ConfigureOption.TYPE_OPT_CHOOSE) {
             p.log("Please select " + entryO.getValue().getAskInfo());
             entryO.getValue().getOptions(p);
             numberOk = false;
@@ -403,7 +406,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
                 }
               }
             } while (!numberOk);
-          } else if (entryO.getValue().getType() == TYPE_OPT_STRING) {
+          } else if (entryO.getValue().getType() == ConfigureOption.TYPE_OPT_STRING) {
             p.log("\nPlease introduce " + entryO.getValue().getAskInfo());
             entryO.getValue().getOptions(p);
             optionString = inp.nextLine();
@@ -426,7 +429,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         Map<Integer, ConfigureOption> treeMapP = new TreeMap<Integer, ConfigureOption>(
             optionPostgreSQL);
         for (Map.Entry<Integer, ConfigureOption> entryP : treeMapP.entrySet()) {
-          if (entryP.getValue().getType() == TYPE_OPT_CHOOSE) {
+          if (entryP.getValue().getType() == ConfigureOption.TYPE_OPT_CHOOSE) {
             p.log("Please select " + entryP.getValue().getAskInfo());
             entryP.getValue().getOptions(p);
             numberOk = false;
@@ -449,7 +452,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
                 }
               }
             } while (!numberOk);
-          } else if (entryP.getValue().getType() == TYPE_OPT_STRING) {
+          } else if (entryP.getValue().getType() == ConfigureOption.TYPE_OPT_STRING) {
             p.log("\nPlease introduce " + entryP.getValue().getAskInfo());
             entryP.getValue().getOptions(p);
             optionString = inp.nextLine();
@@ -470,7 +473,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       case 9:
         Map<Integer, ConfigureOption> treeMapL = new TreeMap<Integer, ConfigureOption>(optionLast);
         for (Map.Entry<Integer, ConfigureOption> entryL : treeMapL.entrySet()) {
-          if (entryL.getValue().getType() == TYPE_OPT_CHOOSE) {
+          if (entryL.getValue().getType() == ConfigureOption.TYPE_OPT_CHOOSE) {
             p.log("Please select " + entryL.getValue().getAskInfo());
             entryL.getValue().getOptions(p);
             numberOk = false;
@@ -493,7 +496,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
                 }
               }
             } while (!numberOk);
-          } else if (entryL.getValue().getType() == TYPE_OPT_STRING) {
+          } else if (entryL.getValue().getType() == ConfigureOption.TYPE_OPT_STRING) {
             p.log("\nPlease introduce " + entryL.getValue().getAskInfo());
             entryL.getValue().getOptions(p);
             optionString = inp.nextLine();
@@ -548,7 +551,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
             keyOracle = optionBBDDoracle.next();
             if (keyOracle == optionMod - 1) {
               ConfigureOption optionChange = optionOracle.get(keyOracle);
-              if (optionChange.getType() == TYPE_OPT_CHOOSE) {
+              if (optionChange.getType() == ConfigureOption.TYPE_OPT_CHOOSE) {
                 p.log("Please select " + optionChange.getAskInfo());
                 optionChange.getOptions(p);
                 numberOk = false;
@@ -571,7 +574,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
                     }
                   }
                 } while (!numberOk);
-              } else if (optionChange.getType() == TYPE_OPT_STRING) {
+              } else if (optionChange.getType() == ConfigureOption.TYPE_OPT_STRING) {
                 p.log("\nPlease introduce " + optionChange.getAskInfo());
                 optionChange.getOptions(p);
                 optionString = inp.nextLine();
@@ -594,7 +597,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
             keyPostgre = optionBBDDpostgre.next();
             if (keyPostgre == optionMod - 1) {
               ConfigureOption optionChange = optionPostgreSQL.get(keyPostgre);
-              if (optionChange.getType() == TYPE_OPT_CHOOSE) {
+              if (optionChange.getType() == ConfigureOption.TYPE_OPT_CHOOSE) {
                 p.log("Please select " + optionChange.getAskInfo());
                 optionChange.getOptions(p);
                 numberOk = false;
@@ -617,7 +620,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
                     }
                   }
                 } while (!numberOk);
-              } else if (optionChange.getType() == TYPE_OPT_STRING) {
+              } else if (optionChange.getType() == ConfigureOption.TYPE_OPT_STRING) {
                 p.log("\nPlease introduce " + optionChange.getAskInfo());
                 optionChange.getOptions(p);
                 optionString = inp.nextLine();
@@ -644,7 +647,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
           keyLast = optionBBDDlast.next();
           if (keyLast == optionMod - 1) {
             ConfigureOption optionChange = optionLast.get(keyLast);
-            if (optionChange.getType() == TYPE_OPT_CHOOSE) {
+            if (optionChange.getType() == ConfigureOption.TYPE_OPT_CHOOSE) {
               p.log("Please select " + optionChange.getAskInfo());
               optionChange.getOptions(p);
               numberOk = false;
@@ -667,7 +670,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
                   }
                 }
               } while (!numberOk);
-            } else if (optionChange.getType() == TYPE_OPT_STRING) {
+            } else if (optionChange.getType() == ConfigureOption.TYPE_OPT_STRING) {
               p.log("\nPlease introduce " + optionChange.getAskInfo());
               optionChange.getOptions(p);
               optionString = inp.nextLine();
@@ -718,11 +721,13 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         }
       }
     }
+    inp.close();
+    licenseIn.close();
     p.log("---------------------------------------------------------------------------- \n Thanks for use Openbravo ERP Setup. \n----------------------------------------------------------------------------");
   }
 
   /**
-   * This function showWelcome() whow a welcome to install application.
+   * This function showWelcome() show a welcome to install application.
    * 
    * @param p1
    *          : Project
@@ -1003,7 +1008,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     optChoosen.add("DDMMYYYY");
     optChoosen.add("MMDDYYYY");
     optChoosen.add("YYYYMMDD");
-    ConfigureOption o0 = new ConfigureOption(TYPE_OPT_CHOOSE, askInfo, optChoosen);
+    ConfigureOption o0 = new ConfigureOption(ConfigureOption.TYPE_OPT_CHOOSE, askInfo, optChoosen);
     String compareDateformat = searchOptionsProperties(fileO, "dateFormat.sql", p).substring(0, 1);
     if (compareDateformat.equalsIgnoreCase("d")) {
       o0.setChooseString("DDMMYYYY");
@@ -1020,7 +1025,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     optChoosen.add("/");
     optChoosen.add(".");
     optChoosen.add(":");
-    ConfigureOption o1 = new ConfigureOption(TYPE_OPT_CHOOSE, askInfo, optChoosen);
+    ConfigureOption o1 = new ConfigureOption(ConfigureOption.TYPE_OPT_CHOOSE, askInfo, optChoosen);
     compareDateformat = searchOptionsProperties(fileO, "dateTimeFormat.sql", p).substring(0, 9);
     if (compareDateformat.contains("-")) {
       o1.setChooseString("-");
@@ -1039,7 +1044,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     optChoosen = new ArrayList<String>();
     optChoosen.add("12h");
     optChoosen.add("24h");
-    ConfigureOption o2 = new ConfigureOption(TYPE_OPT_CHOOSE, askInfo, optChoosen);
+    ConfigureOption o2 = new ConfigureOption(ConfigureOption.TYPE_OPT_CHOOSE, askInfo, optChoosen);
 
     if (searchOptionsProperties(fileO, "dateTimeFormat.java", p).contains("a")) {
       o2.setChooseString("12h");
@@ -1052,7 +1057,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     optChoosen = new ArrayList<String>();
     optChoosen.add(":");
     optChoosen.add(".");
-    ConfigureOption o3 = new ConfigureOption(TYPE_OPT_CHOOSE, askInfo, optChoosen);
+    ConfigureOption o3 = new ConfigureOption(ConfigureOption.TYPE_OPT_CHOOSE, askInfo, optChoosen);
     compareDateformat = searchOptionsProperties(fileO, "dateTimeFormat.sql", p).substring(10);
     if (compareDateformat.contains(":")) {
       o3.setChooseString(":");
@@ -1064,7 +1069,8 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     options.put(3, o3);
 
     askInfo = "Attachments directory: ";
-    ConfigureOption o4 = new ConfigureOption(TYPE_OPT_STRING, askInfo, new ArrayList<String>());
+    ConfigureOption o4 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
+        new ArrayList<String>());
     String optionValueString = searchOptionsProperties(fileO, "attach.path", p);
     if (optionValueString.equals("")) {
       o4.setChooseString("/opt/openbravo/attachments");
@@ -1074,7 +1080,8 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     options.put(4, o4);
 
     askInfo = "Context name: ";
-    ConfigureOption o5 = new ConfigureOption(TYPE_OPT_STRING, askInfo, new ArrayList<String>());
+    ConfigureOption o5 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
+        new ArrayList<String>());
     optionValueString = searchOptionsProperties(fileO, "context.name", p);
     if (optionValueString.equals("")) {
       o5.setChooseString("openbravo");
@@ -1084,7 +1091,8 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     options.put(5, o5);
 
     askInfo = "Web URL: ";
-    ConfigureOption o6 = new ConfigureOption(TYPE_OPT_STRING, askInfo, new ArrayList<String>());
+    ConfigureOption o6 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
+        new ArrayList<String>());
     optionValueString = searchOptionsProperties(fileO, "web.url", p);
     if (optionValueString.equals("")) {
       o6.setChooseString("@actual_url_context@/web");
@@ -1094,7 +1102,8 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     options.put(6, o6);
 
     askInfo = "Context URL :";
-    ConfigureOption o7 = new ConfigureOption(TYPE_OPT_STRING, askInfo, new ArrayList<String>());
+    ConfigureOption o7 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
+        new ArrayList<String>());
     optionValueString = searchOptionsProperties(fileO, "context.url", p);
     if (optionValueString.equals("")) {
       o7.setChooseString("http://localhost:8080/openbravo");
@@ -1104,7 +1113,8 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     options.put(7, o7);
 
     askInfo = "Output script location: ";
-    ConfigureOption o8 = new ConfigureOption(TYPE_OPT_STRING, askInfo, new ArrayList<String>());
+    ConfigureOption o8 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
+        new ArrayList<String>());
     optionValueString = searchOptionsProperties(fileO, "bbdd.outputscript", p);
     if (optionValueString.equals("")) {
       o8.setChooseString("databasescript.sql");
@@ -1117,7 +1127,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     optChoosen = new ArrayList<String>();
     optChoosen.add("Oracle");
     optChoosen.add("PostgreSQL");
-    ConfigureOption o9 = new ConfigureOption(TYPE_OPT_CHOOSE, askInfo, optChoosen);
+    ConfigureOption o9 = new ConfigureOption(ConfigureOption.TYPE_OPT_CHOOSE, askInfo, optChoosen);
     if (searchOptionsProperties(fileO, "bbdd.rdbms", p).equals("ORACLE")) {
       o9.setChooseString("Oracle");
     } else if (searchOptionsProperties(fileO, "bbdd.rdbms", p).equals("POSTGRE")) {
@@ -1142,7 +1152,8 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     File fileO = new File(OPENBRAVO_PROPERTIES);
 
     String askInfo = "Tomcat Manager URL: ";
-    ConfigureOption o0 = new ConfigureOption(TYPE_OPT_STRING, askInfo, new ArrayList<String>());
+    ConfigureOption o0 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
+        new ArrayList<String>());
     String optionValueString = searchOptionsProperties(fileO, "tomcat.manager.url", p);
     if (optionValueString.equals("")) {
       o0.setChooseString("http://localhost:8080/manager");
@@ -1152,7 +1163,8 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     options.put(0, o0);
 
     askInfo = "Tomcat manager username: ";
-    ConfigureOption o1 = new ConfigureOption(TYPE_OPT_STRING, askInfo, new ArrayList<String>());
+    ConfigureOption o1 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
+        new ArrayList<String>());
     optionValueString = searchOptionsProperties(fileO, "tomcat.manager.username", p);
     if (optionValueString.equals("")) {
       o1.setChooseString("admin");
@@ -1162,7 +1174,8 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     options.put(1, o1);
 
     askInfo = "Tomcat manager password: ";
-    ConfigureOption o2 = new ConfigureOption(TYPE_OPT_STRING, askInfo, new ArrayList<String>());
+    ConfigureOption o2 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
+        new ArrayList<String>());
     optionValueString = searchOptionsProperties(fileO, "tomcat.manager.password", p);
     if (optionValueString.equals("")) {
       o2.setChooseString("admin");
@@ -1172,7 +1185,8 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     options.put(2, o2);
 
     askInfo = "Authentication class: ";
-    ConfigureOption o3 = new ConfigureOption(TYPE_OPT_STRING, askInfo, new ArrayList<String>());
+    ConfigureOption o3 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
+        new ArrayList<String>());
     optionValueString = searchOptionsProperties(fileO, "authentication.class", p);
     if (optionValueString.equals("")) {
       o3.setChooseString("");
@@ -1199,7 +1213,8 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     }
 
     String askInfo = "SID: ";
-    ConfigureOption o0 = new ConfigureOption(TYPE_OPT_STRING, askInfo, new ArrayList<String>());
+    ConfigureOption o0 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
+        new ArrayList<String>());
     String optionValueString = searchOptionsProperties(fileO, "bbdd.sid", p);
     if (optionValueString.equals("")) {
       o0.setChooseString("xe");
@@ -1209,7 +1224,8 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     option.put(0, o0);
 
     askInfo = "System User: ";
-    ConfigureOption o1 = new ConfigureOption(TYPE_OPT_STRING, askInfo, new ArrayList<String>());
+    ConfigureOption o1 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
+        new ArrayList<String>());
     optionValueString = searchOptionsProperties(fileO, "bbdd.systemUser", p);
     if (optionValueString.equals("")) {
       o1.setChooseString("SYSTEM");
@@ -1219,7 +1235,8 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     option.put(1, o1);
 
     askInfo = "System Password: ";
-    ConfigureOption o2 = new ConfigureOption(TYPE_OPT_STRING, askInfo, new ArrayList<String>());
+    ConfigureOption o2 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
+        new ArrayList<String>());
     optionValueString = searchOptionsProperties(fileO, "bbdd.systemPassword", p);
     if (optionValueString.equals("")) {
       o2.setChooseString("SYSTEM");
@@ -1229,7 +1246,8 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     option.put(2, o2);
 
     askInfo = "DB User: ";
-    ConfigureOption o3 = new ConfigureOption(TYPE_OPT_STRING, askInfo, new ArrayList<String>());
+    ConfigureOption o3 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
+        new ArrayList<String>());
     optionValueString = searchOptionsProperties(fileO, "bbdd.user", p);
     if (optionValueString.equals("")) {
       o3.setChooseString("TAD");
@@ -1239,7 +1257,8 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     option.put(3, o3);
 
     askInfo = "DB User Password: ";
-    ConfigureOption o4 = new ConfigureOption(TYPE_OPT_STRING, askInfo, new ArrayList<String>());
+    ConfigureOption o4 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
+        new ArrayList<String>());
     optionValueString = searchOptionsProperties(fileO, "bbdd.password", p);
     if (optionValueString.equals("")) {
       o4.setChooseString("TAD");
@@ -1255,12 +1274,14 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     String[] separateUrl = separateString.split(":");
 
     askInfo = "DB Server Address: ";
-    ConfigureOption o5 = new ConfigureOption(TYPE_OPT_STRING, askInfo, new ArrayList<String>());
+    ConfigureOption o5 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
+        new ArrayList<String>());
     o5.setChooseString(separateUrl[3].substring(1));
     option.put(5, o5);
 
     askInfo = "DB Server Port: ";
-    ConfigureOption o6 = new ConfigureOption(TYPE_OPT_STRING, askInfo, new ArrayList<String>());
+    ConfigureOption o6 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
+        new ArrayList<String>());
     o6.setChooseString(separateUrl[4]);
     option.put(6, o6);
 
@@ -1284,27 +1305,32 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     }
 
     askInfo = "SID: ";
-    ConfigureOption o0 = new ConfigureOption(TYPE_OPT_STRING, askInfo, new ArrayList<String>());
+    ConfigureOption o0 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
+        new ArrayList<String>());
     o0.setChooseString(searchOptionsProperties(fileO, "bbdd.sid", p));
     option.put(0, o0);
 
     askInfo = "System User: ";
-    ConfigureOption o1 = new ConfigureOption(TYPE_OPT_STRING, askInfo, new ArrayList<String>());
+    ConfigureOption o1 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
+        new ArrayList<String>());
     o1.setChooseString(searchOptionsProperties(fileO, "bbdd.systemUser", p));
     option.put(1, o1);
 
     askInfo = "System Password: ";
-    ConfigureOption o2 = new ConfigureOption(TYPE_OPT_STRING, askInfo, new ArrayList<String>());
+    ConfigureOption o2 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
+        new ArrayList<String>());
     o2.setChooseString(searchOptionsProperties(fileO, "bbdd.systemPassword", p));
     option.put(2, o2);
 
     askInfo = "DB User: ";
-    ConfigureOption o3 = new ConfigureOption(TYPE_OPT_STRING, askInfo, new ArrayList<String>());
+    ConfigureOption o3 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
+        new ArrayList<String>());
     o3.setChooseString(searchOptionsProperties(fileO, "bbdd.user", p));
     option.put(3, o3);
 
     askInfo = "DB User Password: ";
-    ConfigureOption o4 = new ConfigureOption(TYPE_OPT_STRING, askInfo, new ArrayList<String>());
+    ConfigureOption o4 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
+        new ArrayList<String>());
     o4.setChooseString(searchOptionsProperties(fileO, "bbdd.password", p));
     option.put(4, o4);
 
@@ -1312,12 +1338,14 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     String[] separateUrl = separateString.split(":");
 
     askInfo = "DB Server Address: ";
-    ConfigureOption o5 = new ConfigureOption(TYPE_OPT_STRING, askInfo, new ArrayList<String>());
+    ConfigureOption o5 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
+        new ArrayList<String>());
     o5.setChooseString(separateUrl[2].substring(2));
     option.put(5, o5);
 
     askInfo = "DB Server Port: ";
-    ConfigureOption o6 = new ConfigureOption(TYPE_OPT_STRING, askInfo, new ArrayList<String>());
+    ConfigureOption o6 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
+        new ArrayList<String>());
     o6.setChooseString(separateUrl[3]);
     option.put(6, o6);
 
@@ -1418,9 +1446,8 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       e.printStackTrace();
     } finally {
       try {
-        if (fr != null) {
-          fr.close();
-        }
+        fr.close();
+        br.close();
       } catch (Exception e2) {
         e2.printStackTrace();
       }

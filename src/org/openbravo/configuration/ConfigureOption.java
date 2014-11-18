@@ -30,9 +30,12 @@ import org.apache.tools.ant.Project;
  * @author inigosanchez
  * 
  */
+
 class ConfigureOption {
-  private static int TYPE_OPT_CHOOSE = 0;
-  private static int TYPE_OPT_STRING = 1;
+
+  static int TYPE_OPT_CHOOSE = 0;
+  static int TYPE_OPT_STRING = 1;
+
   private String askInfo, chooseString;
   private ArrayList<String> opt;
   private int choose, type;
