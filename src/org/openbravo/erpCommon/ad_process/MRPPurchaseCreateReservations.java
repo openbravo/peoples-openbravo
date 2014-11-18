@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2012-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2012-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -137,7 +137,8 @@ public class MRPPurchaseCreateReservations extends DalBaseProcess {
               if (incomingLine.getTransactionType().equals("PP")
                   && incomingLine.getSalesOrderLine() != null) {
                 ReservationUtils.reserveStockManual(reservation, incomingLine.getSalesOrderLine(),
-                    consumedQuantity, "N");
+                    consumedQuantity, incomingLine.getSalesOrderLine().getSalesOrder()
+                        .getWarehouse().isAllocated() ? "Y" : "N");
               }
 
               if (quantity.signum() < 1 && reservation.getRESStatus().equals("DR")) {

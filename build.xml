@@ -877,7 +877,7 @@ export.database: exports database structure and data to xml files.
   <target name="tomcat.restart.do" description="Restart the tomcat server process">
     <echo message="Restarting Tomcat at ${env.CATALINA_HOME}" />
     <java classname="org.apache.catalina.startup.Bootstrap" fork="true">
-      <classpath path=":${env.CATALINA_HOME}/bin/bootstrap.jar:${env.CATALINA_HOME}/bin/commons-logging-api.jar" />
+      <classpath path=":${env.CATALINA_HOME}/bin/bootstrap.jar:${env.CATALINA_HOME}/bin/commons-logging-api.jar:${env.CATALINA_HOME}/bin/tomcat-juli.jar" />
       <jvmarg value="-Dcatalina.home=${env.CATALINA_HOME}" />
       <jvmarg value="-Dcatalina.base=${env.CATALINA_BASE}" />
       <arg line="stop" />
@@ -888,7 +888,7 @@ export.database: exports database structure and data to xml files.
     <antcall target="copy.files.jarsync"/>
 
     <java classname="org.apache.catalina.startup.Bootstrap" fork="true" spawn="true">
-      <classpath path=":${env.CATALINA_HOME}/bin/bootstrap.jar:${env.CATALINA_HOME}/bin/commons-logging-api.jar" />
+      <classpath path=":${env.CATALINA_HOME}/bin/bootstrap.jar:${env.CATALINA_HOME}/bin/commons-logging-api.jar:${env.CATALINA_HOME}/bin/tomcat-juli.jar" />
       <!-- note because CATALINA_OPTS can be multi argument the line attribute has to be used! -->
       <jvmarg line="${env.CATALINA_OPTS}" />
       <jvmarg value="-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager" />

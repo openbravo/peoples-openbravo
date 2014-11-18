@@ -45,20 +45,19 @@ public class LandedCostDistributionByAmount extends LandedCostDistributionAlgori
   @Override
   public void distributeAmount(LandedCostCost lcCost, boolean isMatching) {
     // Calculate total amount of all receipt lines assigned to the landed cost.
+    lcCost = (LandedCostCost) OBDal.getInstance().getProxy(LandedCostCost.ENTITY_NAME,
+        lcCost.getId());
     LandedCost landedCost = lcCost.getLandedCost();
-    String strCurId = landedCost.getCurrency().getId();
+    // Get the currency of the Landed Cost Cost
+    String strCurId = lcCost.getCurrency().getId();
     String strOrgId = landedCost.getOrganization().getId();
     Date dateReference = landedCost.getReferenceDate();
-    int precission = landedCost.getCurrency().getStandardPrecision().intValue();
+    int precission = lcCost.getCurrency().getCostingPrecision().intValue();
     BigDecimal baseAmt;
     if (isMatching) {
       baseAmt = lcCost.getMatchingAmount().subtract(lcCost.getAmount());
     } else {
       baseAmt = lcCost.getAmount();
-    }
-    if (!lcCost.getCurrency().getId().equals(strCurId)) {
-      baseAmt = FinancialUtils.getConvertedAmount(baseAmt, lcCost.getCurrency(),
-          landedCost.getCurrency(), dateReference, landedCost.getOrganization(), "C");
     }
 
     BigDecimal totalAmt = BigDecimal.ZERO;
@@ -111,6 +110,8 @@ public class LandedCostDistributionByAmount extends LandedCostDistributionAlgori
       LCReceiptLineAmt lcrla = OBProvider.getInstance().get(LCReceiptLineAmt.class);
       lcrla.setLandedCostCost((LandedCostCost) OBDal.getInstance().getProxy(
           LandedCostCost.ENTITY_NAME, lcCost.getId()));
+      lcCost = (LandedCostCost) OBDal.getInstance().getProxy(LandedCostCost.ENTITY_NAME,
+          lcCost.getId());
       lcrla.setLandedCostReceipt(lcrl);
       lcrla.setGoodsShipmentLine(receiptline);
       lcrla.setMatchingAdjustment(isMatching);

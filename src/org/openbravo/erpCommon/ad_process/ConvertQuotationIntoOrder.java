@@ -55,6 +55,7 @@ import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DalBaseProcess;
 import org.openbravo.service.db.DalConnectionProvider;
+import org.openbravo.service.db.DbUtility;
 
 public class ConvertQuotationIntoOrder extends DalBaseProcess {
 
@@ -285,8 +286,9 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
           + objCloneOrder.getDocumentNo() + " @beenCreated@");
       bundle.setResult(result);
     } catch (Exception e) {
+      Throwable t = DbUtility.getUnderlyingSQLException(e);
       final OBError error = OBMessageUtils.translateError(bundle.getConnection(), vars,
-          vars.getLanguage(), e.getCause().getMessage());
+          vars.getLanguage(), t.getMessage());
       bundle.setResult(error);
     }
   }

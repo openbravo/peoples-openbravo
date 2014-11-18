@@ -33,6 +33,7 @@ import java.util.Set;
 import java.util.Vector;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -43,6 +44,7 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -2175,7 +2177,20 @@ public abstract class AcctServer {
    */
   public void setMessageResult(ConnectionProvider conn, String _strStatus, String strMessageType,
       Map<String, String> _parameters) {
-    VariablesSecureApp vars = new VariablesSecureApp(RequestContext.get().getRequest());
+    HttpServletRequest request = RequestContext.get().getRequest();
+    VariablesSecureApp vars;
+
+    if (request != null) {
+      // getting context info from session
+      vars = new VariablesSecureApp(RequestContext.get().getRequest());
+    } else {
+      // there is no session, getting context info from OBContext
+      OBContext ctx = OBContext.getOBContext();
+      vars = new VariablesSecureApp((String) DalUtil.getId(ctx.getUser()),
+          (String) DalUtil.getId(ctx.getCurrentClient()), (String) DalUtil.getId(ctx
+              .getCurrentOrganization()), (String) DalUtil.getId(ctx.getRole()), ctx.getLanguage()
+              .getLanguage());
+    }
     setMessageResult(conn, vars, _strStatus, strMessageType, _parameters);
   }
 
@@ -2480,8 +2495,10 @@ public abstract class AcctServer {
         } else {
           throw new OBException("@NotConvertible@");
         }
-        amtFromSourcecurrency = amtFrom.multiply(_amount).divide(amtTo, conversionRatePrecision,
-            BigDecimal.ROUND_HALF_EVEN);
+        if (amtTo.compareTo(BigDecimal.ZERO) != 0)
+               amtFromSourcecurrency = amtFrom.multiply(_amount).divide(amtTo, conversionRatePrecision,
+                               BigDecimal.ROUND_HALF_EVEN);
+        else  amtFromSourcecurrency = amtFrom;
       }
     }
     amtDiff = (amtTo).subtract(amtFrom);

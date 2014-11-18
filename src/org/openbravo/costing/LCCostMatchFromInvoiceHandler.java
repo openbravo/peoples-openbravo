@@ -45,6 +45,7 @@ public class LCCostMatchFromInvoiceHandler extends BaseProcessActionHandler {
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
     JSONObject jsonResponse = new JSONObject();
+    JSONObject jsonMessage = null;
     OBContext.setAdminMode(true);
     try {
       JSONObject jsonRequest = new JSONObject(content);
@@ -58,11 +59,13 @@ public class LCCostMatchFromInvoiceHandler extends BaseProcessActionHandler {
       }
 
       JSONArray selectedLines = jsonparams.getJSONObject("LCCosts").getJSONArray("_selection");
-      processSelectedLines(il, selectedLines, existingMatchings);
+      jsonMessage = processSelectedLines(il, selectedLines, existingMatchings);
 
-      JSONObject jsonMessage = new JSONObject();
-      jsonMessage.put("severity", "success");
-      jsonMessage.put("text", OBMessageUtils.messageBD("Success"));
+      if (jsonMessage == null) {
+        jsonMessage = new JSONObject();
+        jsonMessage.put("severity", "success");
+        jsonMessage.put("text", OBMessageUtils.messageBD("Success"));
+      }
       jsonResponse.put("message", jsonMessage);
 
     } catch (JSONException e) {
@@ -88,8 +91,9 @@ public class LCCostMatchFromInvoiceHandler extends BaseProcessActionHandler {
     return jsonResponse;
   }
 
-  private void processSelectedLines(InvoiceLine il, JSONArray selectedLines,
+  private JSONObject processSelectedLines(InvoiceLine il, JSONArray selectedLines,
       List<String> existingMatchings) throws JSONException {
+    JSONObject message = null;
     for (int i = 0; i < selectedLines.length(); i++) {
       JSONObject line = selectedLines.getJSONObject(i);
       final String strLCMatchedId = line.getString("matchedLandedCost");
@@ -135,8 +139,9 @@ public class LCCostMatchFromInvoiceHandler extends BaseProcessActionHandler {
         lcCost.setMatchingAdjusted(isMatchingAdjusted);
         OBDal.getInstance().save(lcCost);
       }
+      OBDal.getInstance().flush();
       if (processMatching) {
-        LCMatchingProcess.doProcessLCMatching(lcCost);
+        message = LCMatchingProcess.doProcessLCMatching(lcCost);
       }
     }
     // Delete unselected matches
@@ -158,5 +163,6 @@ public class LCCostMatchFromInvoiceHandler extends BaseProcessActionHandler {
       }
       OBDal.getInstance().save(il);
     }
+    return message;
   }
 }

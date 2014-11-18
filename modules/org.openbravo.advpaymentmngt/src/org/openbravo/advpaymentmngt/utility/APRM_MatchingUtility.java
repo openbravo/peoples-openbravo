@@ -661,14 +661,16 @@ public class APRM_MatchingUtility {
   private static Date getClearItemsMaxDate(FIN_Reconciliation reconciliation) {
     OBCriteria<FIN_ReconciliationLine_v> obc = OBDal.getInstance().createCriteria(
         FIN_ReconciliationLine_v.class);
+    obc.createAlias(FIN_ReconciliationLine_v.PROPERTY_BANKSTATEMENTLINE, "bsl");
     obc.setFilterOnReadableClients(false);
     obc.setFilterOnReadableOrganization(false);
     obc.add(Restrictions.eq(FIN_ReconciliationLine_v.PROPERTY_RECONCILIATION, reconciliation));
-    obc.addOrder(Order.desc(FIN_ReconciliationLine_v.PROPERTY_TRANSACTIONDATE));
+    obc.addOrder(Order.desc("bsl." + FIN_BankStatementLine.PROPERTY_TRANSACTIONDATE));
     obc.setMaxResults(1);
     FIN_ReconciliationLine_v line = ((FIN_ReconciliationLine_v) obc.uniqueResult());
     // If there are no lines use reconciliation ending Date
-    return line != null ? line.getTransactionDate() : reconciliation.getEndingDate();
+    return line != null ? line.getBankStatementLine().getTransactionDate() : reconciliation
+        .getEndingDate();
   }
 
   /**

@@ -132,6 +132,7 @@ public class CostingServer {
 
   private void checkCostAdjustments() {
     TrxType trxType = TrxType.getTrxType(transaction);
+    boolean adjustmentAlreadyCreated = false;
     if (trxType == TrxType.InventoryClosing) {
       OBDal.getInstance().refresh(transaction.getPhysicalInventoryLine().getPhysInventory());
       if (transaction.getPhysicalInventoryLine().getPhysInventory()
@@ -153,7 +154,10 @@ public class CostingServer {
       checkPriceCorrectionTrxs = false;
     }
     if (checkPriceCorrectionTrxs && transaction.isCheckpricedifference()) {
-      PriceDifferenceProcess.processPriceDifferenceTransaction(transaction);
+      JSONObject message = PriceDifferenceProcess.processPriceDifferenceTransaction(transaction);
+      if (message.has("documentNo")) {
+        adjustmentAlreadyCreated = true;
+      }
     }
 
     // check if landed cost need to be processed
@@ -188,24 +192,29 @@ public class CostingServer {
             landedCost.setReferenceDate(new Date());
             landedCost.setDocumentType(docType);
             landedCost.setDocumentNo(docNo);
-            landedCost.setCurrency(currency);
             landedCost.setOrganization(organization);
             OBDal.getInstance().save(landedCost);
 
             LCReceipt lcReceipt = OBProvider.getInstance().get(LCReceipt.class);
             lcReceipt.setLandedCost(landedCost);
+            lcReceipt.setOrganization(organization);
             lcReceipt.setGoodsShipment(transaction.getGoodsShipmentLine().getShipmentReceipt());
             OBDal.getInstance().save(lcReceipt);
 
           }
           final LandedCostCost landedCostCost = (LandedCostCost) lcLines.get()[0];
           landedCostCost.setLandedCost(landedCost);
+          landedCost.getLandedCostCostList().add(landedCostCost);
+          OBDal.getInstance().save(landedCost);
           OBDal.getInstance().save(landedCostCost);
         }
 
         if (landedCost != null) {
           OBDal.getInstance().flush();
           JSONObject message = LandedCostProcess.doProcessLandedCost(landedCost);
+          if (message.has("documentNo")) {
+            adjustmentAlreadyCreated = true;
+          }
 
           if (message.get("severity") != "success") {
             throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingLandedCost@")
@@ -240,6 +249,7 @@ public class CostingServer {
           throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@") + ": "
               + costAdjustmentHeader.getDocumentNo() + " - " + message.getString("text"));
         }
+        adjustmentAlreadyCreated = true;
       } catch (JSONException ignore) {
         throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@"));
       }
@@ -262,7 +272,8 @@ public class CostingServer {
         costingRule.isBackdatedTransactionsFixed());
     // the stock previous to transaction was negative
     if (checkNegativeStockCorrectionTrxs
-        && currentStock.compareTo(transaction.getMovementQuantity()) < 0 && modifiesAvg) {
+        && currentStock.compareTo(transaction.getMovementQuantity()) < 0 && modifiesAvg
+        && !adjustmentAlreadyCreated) {
 
       CostAdjustment costAdjustmentHeader = CostAdjustmentUtils.insertCostAdjustmentHeader(
           transaction.getOrganization(), "NSC"); // NSC= Negative Stock Correction
@@ -271,6 +282,7 @@ public class CostingServer {
       CostAdjustmentLine cal = CostAdjustmentUtils.insertCostAdjustmentLine(transaction,
           costAdjustmentHeader, null, Boolean.TRUE, acctDate);
       cal.setNegativeStockCorrection(Boolean.TRUE);
+      cal.setUnitCost(Boolean.FALSE);
       OBDal.getInstance().save(cal);
       OBDal.getInstance().flush();
 

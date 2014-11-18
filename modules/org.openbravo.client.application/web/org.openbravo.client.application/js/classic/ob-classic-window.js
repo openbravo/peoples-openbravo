@@ -46,7 +46,10 @@ isc.defineClass('OBClassicWindow', isc.HTMLPane).addProperties({
   // ignore the tab info update for one time, to prevent double history entries
   ignoreTabInfoUpdate: true,
   hasBeenDrawnOnce: false,
-  appFrameWindow: null
+  appFrameWindow: null,
+  // forcing this this tab to be in the bottom in order to make context menu of
+  // other tabs work in chrome, see https://issues.openbravo.com/view.php?id=27959
+  zIndex: 1
 });
 
 isc.OBClassicWindow.addMethods({

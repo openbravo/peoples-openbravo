@@ -531,12 +531,15 @@ public abstract class CostingAlgorithmAdjustmentImp {
 
   private BigDecimal getInventoryClosingAmt(CostAdjustmentLine costAdjLine) {
     MaterialTransaction trx = costAdjLine.getInventoryTransaction();
-    BigDecimal trxCalculatedCost = CostAdjustmentUtils.getTrxCost(trx, true, getCostCurrency());
-    BigDecimal trxExpectedCost = CostAdjustmentUtils.getValuedStockOnMovementDateByAttrAndLocator(
-        trx.getProduct(), getCostOrg(), trx.getMovementDate(), getCostDimensions(),
-        trx.getStorageBin(), trx.getAttributeSetValue(), getCostCurrency(), true);
+    // currentBalanceOnDate already includes the cost of the inventory closing. The balance after an
+    // inventory closing should be zero, so the adjustment amount should be de current balance
+    // negated.
+    BigDecimal currentBalanceOnDate = CostAdjustmentUtils
+        .getValuedStockOnMovementDateByAttrAndLocator(trx.getProduct(), getCostOrg(),
+            trx.getMovementDate(), getCostDimensions(), trx.getStorageBin(),
+            trx.getAttributeSetValue(), getCostCurrency(), true);
 
-    return trxExpectedCost.subtract(trxCalculatedCost);
+    return currentBalanceOnDate.negate();
   }
 
   /**

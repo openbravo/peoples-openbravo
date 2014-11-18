@@ -141,8 +141,7 @@ public class VariantAutomaticGenerationProcess implements Process {
         variant.setProductAccountsList(Collections.<ProductAccounts> emptyList());
         variant.setGeneric(false);
         for (ProductCharacteristic prCh : variant.getProductCharacteristicList()) {
-          prCh
-              .setProductCharacteristicConfList(Collections.<ProductCharacteristicConf> emptyList());
+          prCh.setProductCharacteristicConfList(Collections.<ProductCharacteristicConf> emptyList());
         }
 
         String searchKey = product.getSearchKey();
@@ -171,6 +170,7 @@ public class VariantAutomaticGenerationProcess implements Process {
           newPrChValue.setCharacteristic(prChConf.getCharacteristicOfProduct().getCharacteristic());
           newPrChValue.setCharacteristicValue(prChConf.getCharacteristicValue());
           newPrChValue.setProduct(variant);
+          newPrChValue.setOrganization(product.getOrganization());
           if (StringUtils.isNotBlank(strChDesc)) {
             strChDesc += ", ";
           }
