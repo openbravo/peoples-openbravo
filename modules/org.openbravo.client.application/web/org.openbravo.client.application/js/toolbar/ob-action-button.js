@@ -186,18 +186,18 @@ isc.OBToolbarActionButton.addProperties({
     };
 
     if (this.autosave) {
-      if (currentView.parentView) {
-        currentView.parentView.setChildsToRefresh();
+      if (contextView.parentView) {
+        contextView.parentView.setChildsToRefresh();
       } else {
-        currentView.setChildsToRefresh();
+        contextView.setChildsToRefresh();
       }
 
-      if (currentView.viewGrid.getSelectedRecord()) {
+      if (contextView.viewGrid.getSelectedRecord()) {
         // There is a record selected, refresh it and its parent
-        currentView.refreshCurrentRecord(afterRefresh);
+        contextView.refreshCurrentRecord(afterRefresh);
       } else {
         // No record selected, refresh parent
-        currentView.refreshParentRecord(afterRefresh);
+        contextView.refreshParentRecord(afterRefresh);
       }
     } else {
       // If the button is not autosave, do not refresh but get message.
