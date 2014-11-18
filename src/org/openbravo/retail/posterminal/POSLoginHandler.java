@@ -96,6 +96,32 @@ public class POSLoginHandler extends MobileCoreLoginHandler {
           }
         }
       }
+      // Issue 28142: We also need to check if the organization of the user belongs to the natural
+      // organization tree of the Terminal
+      OBQuery<OBPOSApplications> appQry = OBDal.getInstance().createQuery(
+          OBPOSApplications.class,
+          "where searchKey = '" + terminalSearchKey + "'" + " and ((ad_isorgincluded("
+              + "(select organization from ADUser where id='" + userId + "')"
+              + ", organization, client.id) <> -1) or " + "(ad_isorgincluded(organization, "
+              + "(select organization from ADUser where id='" + userId + "')"
+              + ", client.id) <> -1)) ");
+      appQry.setFilterOnReadableClients(false);
+      appQry.setFilterOnReadableOrganization(false);
+      List<OBPOSApplications> appList = appQry.list();
+      if (appList.isEmpty()) {
+        try {
+          errorLogin(res, vars, session, "OBPOS_USER_NO_ACCESS_TO_TERMINAL_TITLE",
+              "OBPOS_USER_TERMINAL_DIFFERENT_ORG_MSG", new ArrayList<String>() {
+                private static final long serialVersionUID = 1L;
+                {
+                  add(terminalSearchKey);
+                }
+              });
+        } catch (Exception e) {
+          log4j.error("Error in login", e);
+          return null;
+        }
+      }
     } finally {
       OBContext.restorePreviousMode();
     }

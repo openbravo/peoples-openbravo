@@ -103,9 +103,12 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
         + "exists (from ADRoleOrganization ro where ro.role = role and ro.organization = terminal.organization) and "
         + "(not exists(from OBPOS_TerminalAccess ta where ta.userContact = user) or exists(from OBPOS_TerminalAccess ta where ta.userContact = user and ta.pOSTerminal=terminal)) and "
         + "terminal.searchKey = :theTerminalSearchKey and "
-        + "user.id = userRoles.userContact.id and " + "userRoles.role.id = role.id and "
+        + "user.id = userRoles.userContact.id and "
+        + "userRoles.role.id = role.id and "
         + "userRoles.role.id = formAccess.role.id and "
-        + "formAccess.specialForm.id = :webPOSFormId ";
+        + "formAccess.specialForm.id = :webPOSFormId and "
+        + "((ad_isorgincluded(user.organization, terminal.organization, terminal.client.id) <> -1) or "
+        + "(ad_isorgincluded(terminal.organization, user.organization, terminal.client.id) <> -1)) ";
 
     if (approvalType.length() != 0) {
       // checking supervisor users for sent approval type
