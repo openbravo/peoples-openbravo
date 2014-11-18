@@ -59,13 +59,14 @@ class ConfigureOption {
       return false;
     }
   }
+
   /**
    * This function getMax() return number of numeric option.
    * 
    * @return int
    */
   int getMax() {
-	  return opt.size();
+    return opt.size();
   }
 
   /**

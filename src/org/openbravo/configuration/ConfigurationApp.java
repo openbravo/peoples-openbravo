@@ -74,17 +74,17 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
   public void execute() {
     Scanner licenseIn = new Scanner(System.in);
     Scanner inp = new Scanner(System.in);
-    int option, menuOption=0, optionMod = 0, numOptionsDDBB = 0, mainOption = 0, optionConfigure=0;
-    String optionString = "",optionS, input,menuOptionS;
-    boolean numberOk, isChange, isChangeO, isChangeL,menuOptionOk;
+    int option, menuOption = 0, optionMod = 0, numOptionsDDBB = 0, mainOption = 0, optionConfigure = 0;
+    String optionString = "", optionS, input, menuOptionS;
+    boolean numberOk, isChange, isChangeO, isChangeL, menuOptionOk;
     Project p = getProject();
-    
+
     // Copy templates and rename files
     fileCopyTemplate(FORMAT_XML_TEMPLATE, FORMAT_XML, p);
     fileCopyTemplate(LOG4J_LCF_TAMPLATE, LOG4J_LCF, p);
     fileCopyTemplate(USERCONFIG_XML_TEMPLATE, USERCONFIG_XML, p);
     fileCopyTemplate(OPENBRAVO_PROPERTIES_TEMPLATE, OPENBRAVO_PROPERTIES, p);
-    
+
     while (mainOption != -1) {
       switch (mainOption) {
       case 0:
@@ -117,15 +117,15 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         break;
       case 2:
         menuOptionOk = false;
-        do{
-        	menuOptionS = inp.nextLine();
-            try{ 
-            	menuOption = Integer.parseInt(menuOptionS); 
-            	menuOptionOk = true;
-            }catch(NumberFormatException e){ 
-        		p.log("Please, introduce a correct option: ");       	   
-           	}	            
-        } while (!menuOptionOk); 
+        do {
+          menuOptionS = inp.nextLine();
+          try {
+            menuOption = Integer.parseInt(menuOptionS);
+            menuOptionOk = true;
+          } catch (NumberFormatException e) {
+            p.log("Please, introduce a correct option: ");
+          }
+        } while (!menuOptionOk);
         // Create options one-by-one
         if (menuOption == 1) {
           if (optionFirst.isEmpty()) {
@@ -171,8 +171,8 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
           mainOption = 4;
         } else if (menuOption == 3) {
           mainOption = 22;
-        }else{
-        	p.log("Please, introduce a correct option: ");
+        } else {
+          p.log("Please, introduce a correct option: ");
         }
         break;
       case 3:
@@ -183,36 +183,37 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
             p.log("Please select " + entry.getValue().getAskInfo());
             entry.getValue().getOptions(p);
             numberOk = false;
-            do{
-	            optionS = inp.nextLine();
-	            try{ 
-	            	option = Integer.parseInt(optionS); 
-	            	if (option >= 0 && option < entry.getValue().getMax()){
-	            		entry.getValue().setChoose(option);
-	            		numberOk = true;
-	            	}else{
-	            		p.log("Please, introduce a correct option: ");
-	            	}
-	            }catch(NumberFormatException e){ 
-	        	   if(optionS.equals("")){
-	        		   numberOk = true;
-	        	   }else{
-	        		   p.log("Please, introduce a correct option: ");
-	        	   }        	   
-	           	}	            
-            } while (!numberOk);   
+            do {
+              optionS = inp.nextLine();
+              try {
+                option = Integer.parseInt(optionS);
+                if (option >= 0 && option < entry.getValue().getMax()) {
+                  entry.getValue().setChoose(option);
+                  numberOk = true;
+                } else {
+                  p.log("Please, introduce a correct option: ");
+                }
+              } catch (NumberFormatException e) {
+                if (optionS.equals("")) {
+                  numberOk = true;
+                } else {
+                  p.log("Please, introduce a correct option: ");
+                }
+              }
+            } while (!numberOk);
           } else if (entry.getValue().getType() == TYPE_OPT_STRING) {
             p.log("\nPlease introduce " + entry.getValue().getAskInfo());
             entry.getValue().getOptions(p);
-            optionString = inp.nextLine();                      
-            if(!optionString.equals("")){
-            	entry.getValue().setChooseString(optionString);
-            }          
+            optionString = inp.nextLine();
+            if (!optionString.equals("")) {
+              entry.getValue().setChooseString(optionString);
+            }
           }
-          //review
+          // review
           optionFirst.put(entry.getKey(), entry.getValue());
           typeDDBB = entry.getValue().getOptionChoose();
-          p.log("\n-------------------------\nYour choice " + typeDDBB + "\n-------------------------\n\n");
+          p.log("\n-------------------------\nYour choice " + typeDDBB
+              + "\n-------------------------\n\n");
         }
         // Select Oracle or PostgreSQL
         if (typeDDBB.equals("Oracle")) {
@@ -276,19 +277,20 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         p.log("---------------------------------------------------------------------------- \n Do you change any option? \n----------------------------------------------------------------------------");
         p.log("Choose [0] for continue with configuration or a number option for modify: ");
         menuOptionOk = false;
-        do{
-        	menuOptionS = inp.nextLine();
-            try{ 
-            	optionMod = Integer.parseInt(menuOptionS); 
-            	if(optionMod >= 0 && optionMod <= optionFirst.size() + optionLast.size() + numOptionsDDBB){
-            		menuOptionOk = true;
-            	}else{
-            		p.log("Choose a real option: ");
-            	}
-            }catch(NumberFormatException e){ 
-        		p.log("Choose a real option: ");       	   
-           	}	            
-        } while (!menuOptionOk); 
+        do {
+          menuOptionS = inp.nextLine();
+          try {
+            optionMod = Integer.parseInt(menuOptionS);
+            if (optionMod >= 0
+                && optionMod <= optionFirst.size() + optionLast.size() + numOptionsDDBB) {
+              menuOptionOk = true;
+            } else {
+              p.log("Choose a real option: ");
+            }
+          } catch (NumberFormatException e) {
+            p.log("Choose a real option: ");
+          }
+        } while (!menuOptionOk);
         // Accept all configuration
         if (optionMod == 0) {
           mainOption = 10;
@@ -301,7 +303,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         } else if (optionMod > optionFirst.size() + numOptionsDDBB
             && optionMod <= optionFirst.size() + optionLast.size() + numOptionsDDBB) {
           mainOption = 12;
-        } 
+        }
         break;
       // Change a option in optionFirst[]...
       case 6:
@@ -316,35 +318,36 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
               p.log("Please select " + optionChange.getAskInfo());
               optionChange.getOptions(p);
               numberOk = false;
-              do{
-  	            optionS = inp.nextLine();
-  	            try{ 
-  	            	option = Integer.parseInt(optionS); 
-  	            	if (option >= 0 && option < optionChange.getMax()){
-  	            		optionChange.setChoose(option);
-  	            		optionChange.setChooseString(optionChange.getOptionChoose());
-  	            		numberOk = true;
-  	            	}else{
-  	            		p.log("Please, introduce a correct option: ");
-  	            	}
-  	            }catch(NumberFormatException e){ 
-  	        	   if(optionS.equals("")){
-  	        		   numberOk = true;
-  	        	   }else{
-  	        		   p.log("Please, introduce a correct option: ");
-  	        	   }        	   
-  	           	}	            
-              } while (!numberOk);   
+              do {
+                optionS = inp.nextLine();
+                try {
+                  option = Integer.parseInt(optionS);
+                  if (option >= 0 && option < optionChange.getMax()) {
+                    optionChange.setChoose(option);
+                    optionChange.setChooseString(optionChange.getOptionChoose());
+                    numberOk = true;
+                  } else {
+                    p.log("Please, introduce a correct option: ");
+                  }
+                } catch (NumberFormatException e) {
+                  if (optionS.equals("")) {
+                    numberOk = true;
+                  } else {
+                    p.log("Please, introduce a correct option: ");
+                  }
+                }
+              } while (!numberOk);
             } else if (optionChange.getType() == TYPE_OPT_STRING) {
-            	p.log("\nPlease introduce " + optionChange.getAskInfo());
-            	optionChange.getOptions(p);
-            	optionString = inp.nextLine();
-            	if(!optionString.equals("")){
-            		optionChange.setChooseString(optionString);
-            	}           
+              p.log("\nPlease introduce " + optionChange.getAskInfo());
+              optionChange.getOptions(p);
+              optionString = inp.nextLine();
+              if (!optionString.equals("")) {
+                optionChange.setChooseString(optionString);
+              }
             }
             optionFirst.put(optionMod - 1, optionChange);
-            p.log("\n-------------------------\nYour choice " + optionChange.getOptionChoose() + "\n-------------------------\n\n");
+            p.log("\n-------------------------\nYour choice " + optionChange.getOptionChoose()
+                + "\n-------------------------\n\n");
             isChange = true;
             // Check a change in type of database
             File fileO = new File(OPENBRAVO_PROPERTIES);
@@ -379,37 +382,38 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         for (Map.Entry<Integer, ConfigureOption> entryO : treeMapO.entrySet()) {
           if (entryO.getValue().getType() == TYPE_OPT_CHOOSE) {
             p.log("Please select " + entryO.getValue().getAskInfo());
-            entryO.getValue().getOptions(p);          
+            entryO.getValue().getOptions(p);
             numberOk = false;
-            do{
-	            optionS = inp.nextLine();
-	            try{ 
-	            	option = Integer.parseInt(optionS); 
-	            	if (option >= 0 && option < entryO.getValue().getMax()){
-	            		entryO.getValue().setChoose(option);
-	            		entryO.getValue().setChooseString(entryO.getValue().getOptionChoose());
-	            		numberOk = true;
-	            	}else{
-	            		p.log("Please, introduce a correct option: ");
-	            	}
-	            }catch(NumberFormatException e){ 
-	        	   if(optionS.equals("")){
-	        		   numberOk = true;
-	        	   }else{
-	        		   p.log("Please, introduce a correct option: ");
-	        	   }        	   
-	           	}	            
-            } while (!numberOk);  
+            do {
+              optionS = inp.nextLine();
+              try {
+                option = Integer.parseInt(optionS);
+                if (option >= 0 && option < entryO.getValue().getMax()) {
+                  entryO.getValue().setChoose(option);
+                  entryO.getValue().setChooseString(entryO.getValue().getOptionChoose());
+                  numberOk = true;
+                } else {
+                  p.log("Please, introduce a correct option: ");
+                }
+              } catch (NumberFormatException e) {
+                if (optionS.equals("")) {
+                  numberOk = true;
+                } else {
+                  p.log("Please, introduce a correct option: ");
+                }
+              }
+            } while (!numberOk);
           } else if (entryO.getValue().getType() == TYPE_OPT_STRING) {
             p.log("\nPlease introduce " + entryO.getValue().getAskInfo());
             entryO.getValue().getOptions(p);
             optionString = inp.nextLine();
-            if(!optionString.equals("")){
-            	entryO.getValue().setChooseString(optionString);
-            }        
+            if (!optionString.equals("")) {
+              entryO.getValue().setChooseString(optionString);
+            }
           }
           optionPostgreSQL.put(entryO.getKey(), entryO.getValue());
-          p.log("\n-------------------------\nYour choice " + entryO.getValue().getOptionChoose() + "\n-------------------------\n\n");
+          p.log("\n-------------------------\nYour choice " + entryO.getValue().getOptionChoose()
+              + "\n-------------------------\n\n");
         }
         // All information are introduced. Configure now last options
         if (optionLast.isEmpty()) {
@@ -424,37 +428,38 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         for (Map.Entry<Integer, ConfigureOption> entryP : treeMapP.entrySet()) {
           if (entryP.getValue().getType() == TYPE_OPT_CHOOSE) {
             p.log("Please select " + entryP.getValue().getAskInfo());
-            entryP.getValue().getOptions(p);        
+            entryP.getValue().getOptions(p);
             numberOk = false;
-            do{
-	            optionS = inp.nextLine();
-	            try{ 
-	            	option = Integer.parseInt(optionS); 
-	            	if (option >= 0 && option < entryP.getValue().getMax()){
-	            		entryP.getValue().setChoose(option);
-	            		entryP.getValue().setChooseString(entryP.getValue().getOptionChoose());
-	            		numberOk = true;
-	            	}else{
-	            		p.log("Please, introduce a correct option: ");
-	            	}
-	            }catch(NumberFormatException e){ 
-	        	   if(optionS.equals("")){
-	        		   numberOk = true;
-	        	   }else{
-	        		   p.log("Please, introduce a correct option: ");
-	        	   }        	   
-	           	}	            
-            } while (!numberOk);       
+            do {
+              optionS = inp.nextLine();
+              try {
+                option = Integer.parseInt(optionS);
+                if (option >= 0 && option < entryP.getValue().getMax()) {
+                  entryP.getValue().setChoose(option);
+                  entryP.getValue().setChooseString(entryP.getValue().getOptionChoose());
+                  numberOk = true;
+                } else {
+                  p.log("Please, introduce a correct option: ");
+                }
+              } catch (NumberFormatException e) {
+                if (optionS.equals("")) {
+                  numberOk = true;
+                } else {
+                  p.log("Please, introduce a correct option: ");
+                }
+              }
+            } while (!numberOk);
           } else if (entryP.getValue().getType() == TYPE_OPT_STRING) {
             p.log("\nPlease introduce " + entryP.getValue().getAskInfo());
             entryP.getValue().getOptions(p);
             optionString = inp.nextLine();
-            if(!optionString.equals("")){
-            	entryP.getValue().setChooseString(optionString);
+            if (!optionString.equals("")) {
+              entryP.getValue().setChooseString(optionString);
             }
           }
           optionPostgreSQL.put(entryP.getKey(), entryP.getValue());
-          p.log("\n-------------------------\nYour choice " + entryP.getValue().getOptionChoose() + "\n-------------------------\n\n");
+          p.log("\n-------------------------\nYour choice " + entryP.getValue().getOptionChoose()
+              + "\n-------------------------\n\n");
         }
         // All information are introduced. Configure now last options
         if (optionLast.isEmpty()) {
@@ -467,37 +472,38 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         for (Map.Entry<Integer, ConfigureOption> entryL : treeMapL.entrySet()) {
           if (entryL.getValue().getType() == TYPE_OPT_CHOOSE) {
             p.log("Please select " + entryL.getValue().getAskInfo());
-            entryL.getValue().getOptions(p);          
+            entryL.getValue().getOptions(p);
             numberOk = false;
-            do{
-	            optionS = inp.nextLine();
-	            try{ 
-	            	option = Integer.parseInt(optionS); 
-	            	if (option >= 0 && option < entryL.getValue().getMax()){
-	            		entryL.getValue().setChoose(option);
-	            		entryL.getValue().setChooseString(entryL.getValue().getOptionChoose());
-	            		numberOk = true;
-	            	}else{
-	            		p.log("Please, introduce a correct option: ");
-	            	}
-	            }catch(NumberFormatException e){ 
-	        	   if(optionS.equals("")){
-	        		   numberOk = true;
-	        	   }else{
-	        		   p.log("Please, introduce a correct option: ");
-	        	   }        	   
-	           	}	            
-            } while (!numberOk);            
+            do {
+              optionS = inp.nextLine();
+              try {
+                option = Integer.parseInt(optionS);
+                if (option >= 0 && option < entryL.getValue().getMax()) {
+                  entryL.getValue().setChoose(option);
+                  entryL.getValue().setChooseString(entryL.getValue().getOptionChoose());
+                  numberOk = true;
+                } else {
+                  p.log("Please, introduce a correct option: ");
+                }
+              } catch (NumberFormatException e) {
+                if (optionS.equals("")) {
+                  numberOk = true;
+                } else {
+                  p.log("Please, introduce a correct option: ");
+                }
+              }
+            } while (!numberOk);
           } else if (entryL.getValue().getType() == TYPE_OPT_STRING) {
             p.log("\nPlease introduce " + entryL.getValue().getAskInfo());
             entryL.getValue().getOptions(p);
             optionString = inp.nextLine();
-            if(!optionString.equals("")){
-            	entryL.getValue().setChooseString(optionString);
+            if (!optionString.equals("")) {
+              entryL.getValue().setChooseString(optionString);
             }
           }
           optionLast.put(entryL.getKey(), entryL.getValue());
-          p.log("\n-------------------------\nYour choice " + entryL.getValue().getOptionChoose() + "\n-------------------------\n\n");
+          p.log("\n-------------------------\nYour choice " + entryL.getValue().getOptionChoose()
+              + "\n-------------------------\n\n");
         }
         mainOption = 10;
         break;
@@ -506,17 +512,17 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         p.log("[1]. Accept.");
         p.log("[2]. Back to preview configuration.");
         p.log("[3]. Exit without saving.");
-        p.log("Choose an option: ");    
-        menuOptionOk=false;
-        do{
-        	menuOptionS = inp.nextLine();
-            try{ 
-            	optionConfigure = Integer.parseInt(menuOptionS); 
-            	menuOptionOk = true;
-            }catch(NumberFormatException e){ 
-        		p.log("Choose a real option: ");       	   
-           	}	            
-        } while (!menuOptionOk); 
+        p.log("Choose an option: ");
+        menuOptionOk = false;
+        do {
+          menuOptionS = inp.nextLine();
+          try {
+            optionConfigure = Integer.parseInt(menuOptionS);
+            menuOptionOk = true;
+          } catch (NumberFormatException e) {
+            p.log("Choose a real option: ");
+          }
+        } while (!menuOptionOk);
         switch (optionConfigure) {
         case 1:
           mainOption = 20;
@@ -544,37 +550,38 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
               ConfigureOption optionChange = optionOracle.get(keyOracle);
               if (optionChange.getType() == TYPE_OPT_CHOOSE) {
                 p.log("Please select " + optionChange.getAskInfo());
-                optionChange.getOptions(p);        
+                optionChange.getOptions(p);
                 numberOk = false;
-                do{
-    	            optionS = inp.nextLine();
-    	            try{ 
-    	            	option = Integer.parseInt(optionS); 
-    	            	if (option >= 0 && option < optionChange.getMax()){
-    	            		optionChange.setChoose(option);
-    	            		optionChange.setChooseString(optionChange.getOptionChoose());
-    	            		numberOk = true;
-    	            	}else{
-    	            		p.log("Please, introduce a correct option: ");
-    	            	}
-    	            }catch(NumberFormatException e){ 
-    	        	   if(optionS.equals("")){
-    	        		   numberOk = true;
-    	        	   }else{
-    	        		   p.log("Please, introduce a correct option: ");
-    	        	   }        	   
-    	           	}	            
-                } while (!numberOk);                                          
+                do {
+                  optionS = inp.nextLine();
+                  try {
+                    option = Integer.parseInt(optionS);
+                    if (option >= 0 && option < optionChange.getMax()) {
+                      optionChange.setChoose(option);
+                      optionChange.setChooseString(optionChange.getOptionChoose());
+                      numberOk = true;
+                    } else {
+                      p.log("Please, introduce a correct option: ");
+                    }
+                  } catch (NumberFormatException e) {
+                    if (optionS.equals("")) {
+                      numberOk = true;
+                    } else {
+                      p.log("Please, introduce a correct option: ");
+                    }
+                  }
+                } while (!numberOk);
               } else if (optionChange.getType() == TYPE_OPT_STRING) {
                 p.log("\nPlease introduce " + optionChange.getAskInfo());
                 optionChange.getOptions(p);
                 optionString = inp.nextLine();
-                if(!optionString.equals("")){
-                	optionChange.setChooseString(optionString);
+                if (!optionString.equals("")) {
+                  optionChange.setChooseString(optionString);
                 }
               }
               optionOracle.put(optionMod - 1, optionChange);
-              p.log("\n-------------------------\nYour choice " + optionChange.getOptionChoose() + "\n-------------------------\n\n");
+              p.log("\n-------------------------\nYour choice " + optionChange.getOptionChoose()
+                  + "\n-------------------------\n\n");
               isChangeO = true;
             }
           }
@@ -591,35 +598,36 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
                 p.log("Please select " + optionChange.getAskInfo());
                 optionChange.getOptions(p);
                 numberOk = false;
-                do{
-    	            optionS = inp.nextLine();
-    	            try{ 
-    	            	option = Integer.parseInt(optionS); 
-    	            	if (option >= 0 && option < optionChange.getMax()){
-    	            		optionChange.setChoose(option);
-    	            		optionChange.setChooseString(optionChange.getOptionChoose());
-    	            		numberOk = true;
-    	            	}else{
-    	            		p.log("Please, introduce a correct option: ");
-    	            	}
-    	            }catch(NumberFormatException e){ 
-    	        	   if(optionS.equals("")){
-    	        		   numberOk = true;
-    	        	   }else{
-    	        		   p.log("Please, introduce a correct option: ");
-    	        	   }        	   
-    	           	}	            
-                } while (!numberOk); 
+                do {
+                  optionS = inp.nextLine();
+                  try {
+                    option = Integer.parseInt(optionS);
+                    if (option >= 0 && option < optionChange.getMax()) {
+                      optionChange.setChoose(option);
+                      optionChange.setChooseString(optionChange.getOptionChoose());
+                      numberOk = true;
+                    } else {
+                      p.log("Please, introduce a correct option: ");
+                    }
+                  } catch (NumberFormatException e) {
+                    if (optionS.equals("")) {
+                      numberOk = true;
+                    } else {
+                      p.log("Please, introduce a correct option: ");
+                    }
+                  }
+                } while (!numberOk);
               } else if (optionChange.getType() == TYPE_OPT_STRING) {
                 p.log("\nPlease introduce " + optionChange.getAskInfo());
                 optionChange.getOptions(p);
                 optionString = inp.nextLine();
-                if(!optionString.equals("")){
-                	optionChange.setChooseString(optionString);
+                if (!optionString.equals("")) {
+                  optionChange.setChooseString(optionString);
                 }
               }
               optionPostgreSQL.put(optionMod - 1, optionChange);
-              p.log("\n-------------------------\nYour choice " + optionChange.getOptionChoose() + "\n-------------------------\n\n");
+              p.log("\n-------------------------\nYour choice " + optionChange.getOptionChoose()
+                  + "\n-------------------------\n\n");
               isChangeP = true;
             }
           }
@@ -640,35 +648,36 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
               p.log("Please select " + optionChange.getAskInfo());
               optionChange.getOptions(p);
               numberOk = false;
-              do{
-  	            optionS = inp.nextLine();
-  	            try{ 
-  	            	option = Integer.parseInt(optionS); 
-  	            	if (option >= 0 && option < optionChange.getMax()){
-  	            		optionChange.setChoose(option);
-  	            		optionChange.setChooseString(optionChange.getOptionChoose());
-  	            		numberOk = true;
-  	            	}else{
-  	            		p.log("Please, introduce a correct option: ");
-  	            	}
-  	            }catch(NumberFormatException e){ 
-  	        	   if(optionS.equals("")){
-  	        		   numberOk = true;
-  	        	   }else{
-  	        		   p.log("Please, introduce a correct option: ");
-  	        	   }        	   
-  	           	}	            
+              do {
+                optionS = inp.nextLine();
+                try {
+                  option = Integer.parseInt(optionS);
+                  if (option >= 0 && option < optionChange.getMax()) {
+                    optionChange.setChoose(option);
+                    optionChange.setChooseString(optionChange.getOptionChoose());
+                    numberOk = true;
+                  } else {
+                    p.log("Please, introduce a correct option: ");
+                  }
+                } catch (NumberFormatException e) {
+                  if (optionS.equals("")) {
+                    numberOk = true;
+                  } else {
+                    p.log("Please, introduce a correct option: ");
+                  }
+                }
               } while (!numberOk);
             } else if (optionChange.getType() == TYPE_OPT_STRING) {
               p.log("\nPlease introduce " + optionChange.getAskInfo());
               optionChange.getOptions(p);
               optionString = inp.nextLine();
-              if(!optionString.equals("")){
-            	  optionChange.setChooseString(optionString);
+              if (!optionString.equals("")) {
+                optionChange.setChooseString(optionString);
               }
             }
             optionLast.put(optionMod - 1, optionChange);
-            p.log("\n-------------------------\nYour choice " + optionChange.getOptionChoose() + "\n-------------------------\n\n");
+            p.log("\n-------------------------\nYour choice " + optionChange.getOptionChoose()
+                + "\n-------------------------\n\n");
             isChangeL = true;
           }
         }
@@ -715,7 +724,8 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
   /**
    * This function showWelcome() whow a welcome to install application.
    * 
-   * @param p1: Project
+   * @param p1
+   *          : Project
    */
   private static void showWelcome(Project p1) {
     Scanner inp = new Scanner(System.in);
@@ -759,8 +769,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         replaceProperties.put("web.url", entry.getValue().getOptionChoose());
       } else if (entry.getValue().getAskInfo().equals("Output script location: ")) {
         replaceProperties.put("bbdd.outputscript", entry.getValue().getOptionChoose());
-      } 
-      else if (entry.getValue().getAskInfo().equals("Context URL :")) {
+      } else if (entry.getValue().getAskInfo().equals("Context URL :")) {
         replaceProperties.put("context.url", entry.getValue().getOptionChoose());
       }
     }
@@ -785,7 +794,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
             + "yyyy hh" + timeSeparator + "mm" + timeSeparator + "ss a");
       } else if (dateFormat.substring(0, 1).equals("Y")) {
         replaceProperties.put("dateTimeFormat.java", "yyyy" + dateSeparator + "MM" + dateSeparator
-            + "dd hh"+ timeSeparator + "mm" + timeSeparator + "ss a");
+            + "dd hh" + timeSeparator + "mm" + timeSeparator + "ss a");
       }
     } else if (timeFormat.equals("24h")) {
       if (dateFormat.substring(0, 1).equals("D")) {
@@ -896,8 +905,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         replaceProperties.put("tomcat.manager.username", entryL.getValue().getOptionChoose());
       } else if (entryL.getValue().getAskInfo().equals("Tomcat manager password: ")) {
         replaceProperties.put("tomcat.manager.password", entryL.getValue().getOptionChoose());
-      } 
-      else if (entryL.getValue().getAskInfo().equals("Authentication class: ")) {
+      } else if (entryL.getValue().getAskInfo().equals("Authentication class: ")) {
         replaceProperties.put("authentication.class", entryL.getValue().getOptionChoose());
       }
     }
@@ -931,8 +939,8 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         }
         fw.write(line + "\n");
       }
-      if(!isFound){
-    	  fw.write(searchOption + changeOption);
+      if (!isFound) {
+        fw.write(searchOption + changeOption);
       }
       fr.close();
       fw.close();
@@ -1013,7 +1021,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     optChoosen.add(".");
     optChoosen.add(":");
     ConfigureOption o1 = new ConfigureOption(TYPE_OPT_CHOOSE, askInfo, optChoosen);
-    compareDateformat = searchOptionsProperties(fileO, "dateTimeFormat.sql",p).substring(0, 9);
+    compareDateformat = searchOptionsProperties(fileO, "dateTimeFormat.sql", p).substring(0, 9);
     if (compareDateformat.contains("-")) {
       o1.setChooseString("-");
     } else if (compareDateformat.contains("/")) {
@@ -1022,7 +1030,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       o1.setChooseString(".");
     } else if (compareDateformat.contains(":")) {
       o1.setChooseString(":");
-    }else{
+    } else {
       o1.setChooseString("-");
     }
     options.put(1, o1);
@@ -1033,7 +1041,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     optChoosen.add("24h");
     ConfigureOption o2 = new ConfigureOption(TYPE_OPT_CHOOSE, askInfo, optChoosen);
 
-    if (searchOptionsProperties(fileO, "dateTimeFormat.java",p).contains("a")) {
+    if (searchOptionsProperties(fileO, "dateTimeFormat.java", p).contains("a")) {
       o2.setChooseString("12h");
     } else {
       o2.setChooseString("24h");
@@ -1050,58 +1058,58 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       o3.setChooseString(":");
     } else if (compareDateformat.contains(".")) {
       o3.setChooseString(".");
-    }else{
-    	o3.setChooseString(":");
+    } else {
+      o3.setChooseString(":");
     }
     options.put(3, o3);
 
     askInfo = "Attachments directory: ";
     ConfigureOption o4 = new ConfigureOption(TYPE_OPT_STRING, askInfo, new ArrayList<String>());
     String optionValueString = searchOptionsProperties(fileO, "attach.path", p);
-    if(optionValueString.equals("")){
-    	o4.setChooseString("/opt/openbravo/attachments");
-    }else{
-    	o4.setChooseString(optionValueString);
+    if (optionValueString.equals("")) {
+      o4.setChooseString("/opt/openbravo/attachments");
+    } else {
+      o4.setChooseString(optionValueString);
     }
     options.put(4, o4);
 
     askInfo = "Context name: ";
     ConfigureOption o5 = new ConfigureOption(TYPE_OPT_STRING, askInfo, new ArrayList<String>());
     optionValueString = searchOptionsProperties(fileO, "context.name", p);
-    if(optionValueString.equals("")){
-    	o5.setChooseString("openbravo");
-    }else{
-    	o5.setChooseString(optionValueString);
+    if (optionValueString.equals("")) {
+      o5.setChooseString("openbravo");
+    } else {
+      o5.setChooseString(optionValueString);
     }
     options.put(5, o5);
 
     askInfo = "Web URL: ";
-    ConfigureOption o6 = new ConfigureOption(TYPE_OPT_STRING, askInfo, new ArrayList<String>());  
+    ConfigureOption o6 = new ConfigureOption(TYPE_OPT_STRING, askInfo, new ArrayList<String>());
     optionValueString = searchOptionsProperties(fileO, "web.url", p);
-    if(optionValueString.equals("")){
-    	o6.setChooseString("@actual_url_context@/web");
-    }else{
-    	o6.setChooseString(optionValueString);
+    if (optionValueString.equals("")) {
+      o6.setChooseString("@actual_url_context@/web");
+    } else {
+      o6.setChooseString(optionValueString);
     }
     options.put(6, o6);
 
     askInfo = "Context URL :";
     ConfigureOption o7 = new ConfigureOption(TYPE_OPT_STRING, askInfo, new ArrayList<String>());
-    optionValueString = searchOptionsProperties(fileO, "context.url",p);
-    if(optionValueString.equals("")){
-    	o7.setChooseString("http://localhost:8080/openbravo");
-    }else{
-    	o7.setChooseString(optionValueString);
+    optionValueString = searchOptionsProperties(fileO, "context.url", p);
+    if (optionValueString.equals("")) {
+      o7.setChooseString("http://localhost:8080/openbravo");
+    } else {
+      o7.setChooseString(optionValueString);
     }
     options.put(7, o7);
 
     askInfo = "Output script location: ";
     ConfigureOption o8 = new ConfigureOption(TYPE_OPT_STRING, askInfo, new ArrayList<String>());
-    optionValueString = searchOptionsProperties(fileO, "bbdd.outputscript",p);
-    if(optionValueString.equals("")){
-    	o8.setChooseString("databasescript.sql");
-    }else{
-    	o8.setChooseString(optionValueString);
+    optionValueString = searchOptionsProperties(fileO, "bbdd.outputscript", p);
+    if (optionValueString.equals("")) {
+      o8.setChooseString("databasescript.sql");
+    } else {
+      o8.setChooseString(optionValueString);
     }
     options.put(8, o8);
 
@@ -1112,9 +1120,9 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     ConfigureOption o9 = new ConfigureOption(TYPE_OPT_CHOOSE, askInfo, optChoosen);
     if (searchOptionsProperties(fileO, "bbdd.rdbms", p).equals("ORACLE")) {
       o9.setChooseString("Oracle");
-    } else if (searchOptionsProperties(fileO, "bbdd.rdbms",p).equals("POSTGRE")) {
+    } else if (searchOptionsProperties(fileO, "bbdd.rdbms", p).equals("POSTGRE")) {
       o9.setChooseString("PostgreSQL");
-    }else{
+    } else {
       o9.setChooseString("PostgreSQL");
     }
     options.put(9, o9);
@@ -1135,41 +1143,41 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
 
     String askInfo = "Tomcat Manager URL: ";
     ConfigureOption o0 = new ConfigureOption(TYPE_OPT_STRING, askInfo, new ArrayList<String>());
-    String optionValueString = searchOptionsProperties(fileO, "tomcat.manager.url",p);
-    if(optionValueString.equals("")){
-    	o0.setChooseString("http://localhost:8080/manager");
-    }else{
-    	o0.setChooseString(optionValueString);
+    String optionValueString = searchOptionsProperties(fileO, "tomcat.manager.url", p);
+    if (optionValueString.equals("")) {
+      o0.setChooseString("http://localhost:8080/manager");
+    } else {
+      o0.setChooseString(optionValueString);
     }
     options.put(0, o0);
 
     askInfo = "Tomcat manager username: ";
     ConfigureOption o1 = new ConfigureOption(TYPE_OPT_STRING, askInfo, new ArrayList<String>());
-    optionValueString = searchOptionsProperties(fileO, "tomcat.manager.username",p);
-    if(optionValueString.equals("")){
-    	o1.setChooseString("admin");
-    }else{
-    	o1.setChooseString(optionValueString);
+    optionValueString = searchOptionsProperties(fileO, "tomcat.manager.username", p);
+    if (optionValueString.equals("")) {
+      o1.setChooseString("admin");
+    } else {
+      o1.setChooseString(optionValueString);
     }
     options.put(1, o1);
 
     askInfo = "Tomcat manager password: ";
-    ConfigureOption o2 = new ConfigureOption(TYPE_OPT_STRING, askInfo, new ArrayList<String>());   
-    optionValueString = searchOptionsProperties(fileO, "tomcat.manager.password",p);
-    if(optionValueString.equals("")){
-    	o2.setChooseString("admin");
-    }else{
-    	o2.setChooseString(optionValueString);
+    ConfigureOption o2 = new ConfigureOption(TYPE_OPT_STRING, askInfo, new ArrayList<String>());
+    optionValueString = searchOptionsProperties(fileO, "tomcat.manager.password", p);
+    if (optionValueString.equals("")) {
+      o2.setChooseString("admin");
+    } else {
+      o2.setChooseString(optionValueString);
     }
     options.put(2, o2);
 
     askInfo = "Authentication class: ";
     ConfigureOption o3 = new ConfigureOption(TYPE_OPT_STRING, askInfo, new ArrayList<String>());
-    optionValueString = searchOptionsProperties(fileO, "authentication.class",p);
-    if(optionValueString.equals("")){
-    	o3.setChooseString("");
-    }else{
-    	o3.setChooseString(optionValueString);
+    optionValueString = searchOptionsProperties(fileO, "authentication.class", p);
+    if (optionValueString.equals("")) {
+      o3.setChooseString("");
+    } else {
+      o3.setChooseString(optionValueString);
     }
     options.put(3, o3);
 
@@ -1186,63 +1194,63 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     HashMap<Integer, ConfigureOption> option = new HashMap<Integer, ConfigureOption>();
     File fileO = new File(OPENBRAVO_PROPERTIES);
     // Modify Openbravo.properties file if Oracle's options have been disabled.
-    if (searchOptionsProperties(fileO, "bbdd.rdbms",p).equals("POSTGRE")) {
+    if (searchOptionsProperties(fileO, "bbdd.rdbms", p).equals("POSTGRE")) {
       changeOraclePostgresql(p);
     }
 
     String askInfo = "SID: ";
     ConfigureOption o0 = new ConfigureOption(TYPE_OPT_STRING, askInfo, new ArrayList<String>());
-    String optionValueString = searchOptionsProperties(fileO, "bbdd.sid",p);
-    if(optionValueString.equals("")){
-    	o0.setChooseString("xe");
-    }else{
-    	o0.setChooseString(optionValueString);
+    String optionValueString = searchOptionsProperties(fileO, "bbdd.sid", p);
+    if (optionValueString.equals("")) {
+      o0.setChooseString("xe");
+    } else {
+      o0.setChooseString(optionValueString);
     }
     option.put(0, o0);
 
     askInfo = "System User: ";
     ConfigureOption o1 = new ConfigureOption(TYPE_OPT_STRING, askInfo, new ArrayList<String>());
-    optionValueString = searchOptionsProperties(fileO, "bbdd.systemUser",p);
-    if(optionValueString.equals("")){
-    	o1.setChooseString("SYSTEM");
-    }else{
-    	o1.setChooseString(optionValueString);
+    optionValueString = searchOptionsProperties(fileO, "bbdd.systemUser", p);
+    if (optionValueString.equals("")) {
+      o1.setChooseString("SYSTEM");
+    } else {
+      o1.setChooseString(optionValueString);
     }
     option.put(1, o1);
 
     askInfo = "System Password: ";
     ConfigureOption o2 = new ConfigureOption(TYPE_OPT_STRING, askInfo, new ArrayList<String>());
-    optionValueString = searchOptionsProperties(fileO, "bbdd.systemPassword",p);
-    if(optionValueString.equals("")){
-    	o2.setChooseString("SYSTEM");
-    }else{
-    	o2.setChooseString(optionValueString);
+    optionValueString = searchOptionsProperties(fileO, "bbdd.systemPassword", p);
+    if (optionValueString.equals("")) {
+      o2.setChooseString("SYSTEM");
+    } else {
+      o2.setChooseString(optionValueString);
     }
     option.put(2, o2);
 
     askInfo = "DB User: ";
     ConfigureOption o3 = new ConfigureOption(TYPE_OPT_STRING, askInfo, new ArrayList<String>());
-    optionValueString = searchOptionsProperties(fileO, "bbdd.user",p);
-    if(optionValueString.equals("")){
-    	o3.setChooseString("TAD");
-    }else{
-    	o3.setChooseString(optionValueString);
+    optionValueString = searchOptionsProperties(fileO, "bbdd.user", p);
+    if (optionValueString.equals("")) {
+      o3.setChooseString("TAD");
+    } else {
+      o3.setChooseString(optionValueString);
     }
     option.put(3, o3);
 
     askInfo = "DB User Password: ";
     ConfigureOption o4 = new ConfigureOption(TYPE_OPT_STRING, askInfo, new ArrayList<String>());
-    optionValueString = searchOptionsProperties(fileO, "bbdd.password",p);
-    if(optionValueString.equals("")){
-    	o4.setChooseString("TAD");
-    }else{
-    	o4.setChooseString(optionValueString);
+    optionValueString = searchOptionsProperties(fileO, "bbdd.password", p);
+    if (optionValueString.equals("")) {
+      o4.setChooseString("TAD");
+    } else {
+      o4.setChooseString(optionValueString);
     }
     option.put(4, o4);
 
-    String separateString = searchOptionsProperties(fileO, "bbdd.url",p);
-    if(separateString.equals("")){
-    	separateString = "jdbc:oracle:thin:@localhost:1521:xe";
+    String separateString = searchOptionsProperties(fileO, "bbdd.url", p);
+    if (separateString.equals("")) {
+      separateString = "jdbc:oracle:thin:@localhost:1521:xe";
     }
     String[] separateUrl = separateString.split(":");
 
@@ -1271,13 +1279,13 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     String askInfo;
     File fileO = new File(OPENBRAVO_PROPERTIES);
     // Modify Openbravo.properties file if PostgreSQL's options have been disabled.
-    if (searchOptionsProperties(fileO, "bbdd.rdbms",p).equals("ORACLE")) {
+    if (searchOptionsProperties(fileO, "bbdd.rdbms", p).equals("ORACLE")) {
       changeOraclePostgresql(p);
     }
 
     askInfo = "SID: ";
     ConfigureOption o0 = new ConfigureOption(TYPE_OPT_STRING, askInfo, new ArrayList<String>());
-    o0.setChooseString(searchOptionsProperties(fileO, "bbdd.sid",p));
+    o0.setChooseString(searchOptionsProperties(fileO, "bbdd.sid", p));
     option.put(0, o0);
 
     askInfo = "System User: ";
