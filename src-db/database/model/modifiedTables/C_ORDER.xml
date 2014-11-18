@@ -33,8 +33,5 @@
       <index name="EM_OBPOS_ORDERDATE" unique="false">
         <index-column name="DATEORDERED"/>
       </index>
-      <index name="EM_OBPOS_TOTALAMT" unique="false">
-        <index-column name="GRANDTOTAL"/>
-      </index>
     </table>
   </database>
