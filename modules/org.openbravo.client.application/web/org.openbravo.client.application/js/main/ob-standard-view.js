@@ -2534,6 +2534,10 @@ isc.OBStandardView.addProperties({
             if (propertyObj.type && convertToClassicFormat) {
               type = isc.SimpleType.getType(propertyObj.type);
               if (type.createClassicString) {
+                if (type.editorType === 'OBDateTimeItem') {
+                  // converting time to UTC before it is sent to FIC
+                  value = OB.Utilities.Date.addTimezoneOffset(value);
+                }
                 contextInfo[properties[i].inpColumn] = type.createClassicString(value);
               } else {
                 contextInfo[properties[i].inpColumn] = this.convertContextValue(value, propertyObj.type);

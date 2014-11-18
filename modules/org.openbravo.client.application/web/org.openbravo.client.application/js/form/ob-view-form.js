@@ -1046,7 +1046,8 @@ OB.ViewFormProperties = {
           delete field.textField._textChanged;
         }
       } else if (isDateTime) {
-        jsDateTime = isc.Date.parseStandardDate(columnValue.value);
+        // FIC returns date-time in UTC
+        jsDateTime = isc.Date.parseSchemaDate(columnValue.value);
         this.setItemValue(field.name, jsDateTime);
         if (field.textField) {
           delete field.textField._textChanged;
