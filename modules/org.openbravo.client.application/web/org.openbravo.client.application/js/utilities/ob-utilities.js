@@ -213,7 +213,8 @@ OB.Utilities.createLoadingLayout = function (label) {
   loadingLayout.addMember(isc.Label.create({
     contents: label,
     styleName: OB.Styles.LoadingPrompt.loadingTextStyleName,
-    width: 1,
+    width: 100,
+    align: 'right',
     overflow: 'visible'
   }));
   loadingLayout.addMember(isc.Img.create(OB.Styles.LoadingPrompt.loadingImage));

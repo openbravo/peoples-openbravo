@@ -153,7 +153,23 @@ public class ProcessInvoice extends HttpSecureAppServlet {
             return;
           }
         }
+        // check BP currency
+        if ("CO".equals(strdocaction)) {
+            // check BP currency
+            if (invoice.getBusinessPartner().getCurrency() == null) {
+            	String errorMSG =  
+            			Utility.messageBD(this, "InitBPCurrencyLnk", vars.getLanguage(), false);
+               msg = new OBError();
+               msg.setType("Error");
+               msg.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
+               msg.setMessage(String.format(errorMSG, invoice.getBusinessPartner().getId(), invoice.getBusinessPartner().getName()));
 
+               vars.setMessage(strTabId, msg);
+               printPageClosePopUp(response, vars, Utility.getTabURL(strTabId, "R", true));
+               return;
+            }
+        }
+        
         OBContext.setAdminMode(true);
         Process process = null;
         try {
