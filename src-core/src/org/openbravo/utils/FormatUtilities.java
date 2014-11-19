@@ -46,6 +46,10 @@ public class FormatUtilities {
   }
 
   public static String replaceJS(String strIni, boolean isUnderQuotes) {
+    if (strIni == null) {
+      // nothing to return if the provided string is null
+      return null;
+    }
     return Replace
         .replace(
             Replace.replace(Replace.replace(
