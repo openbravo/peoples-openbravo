@@ -151,7 +151,7 @@ isc.OBToolbarActionButton.addProperties({
         afterRefresh, isAfterRefreshAlreadyExecuted, parsePathPart, parts;
 
     afterRefresh = function () {
-      var undef, autosaveDone = false,
+      var autosaveDone = false,
           currentRecordId, recordsAfterRefresh;
 
       if (isAfterRefreshAlreadyExecuted) {
