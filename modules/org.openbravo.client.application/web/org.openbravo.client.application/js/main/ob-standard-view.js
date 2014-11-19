@@ -2021,7 +2021,7 @@ isc.OBStandardView.addProperties({
   buildCriteriaToRefreshSelectedRecord: function () {
     var record, criteria = {
       operator: 'and',
-      _constructor: "AdvancedCriteria",
+      _constructor: 'AdvancedCriteria',
       criteria: []
     };
     // add a dummy criteria to force a fetch
