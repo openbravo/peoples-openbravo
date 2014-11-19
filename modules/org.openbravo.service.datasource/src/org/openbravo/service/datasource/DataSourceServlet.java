@@ -555,7 +555,10 @@ public class DataSourceServlet extends BaseKernelServlet {
           } else if (keyValue instanceof Number && keyValue != null) {
             DecimalFormat format = formats.get(key);
             if (format == null) {
-              keyValue = keyValue.toString().replace(".", decimalSeparator);
+              // if the CSV decimal separator property is defined, used it over the character
+              // defined in Format.xml
+              keyValue = keyValue.toString().replace(".",
+                  prefDecimalSeparator != null ? prefDecimalSeparator : decimalSeparator);
             } else {
               keyValue = format.format(new BigDecimal(keyValue.toString()));
               if (prefDecimalSeparator != null) {
