@@ -215,10 +215,6 @@ isc.OBViewGrid.addProperties({
       return this.Super('fetchRemoteData', arguments);
     },
 
-    sendDSRequest: function (dsRequest) {
-      this.Super('sendDSRequest', arguments);
-    },
-
     clearLoadingMarkers: function (start, end) {
       var j;
       if (this.localData) {
