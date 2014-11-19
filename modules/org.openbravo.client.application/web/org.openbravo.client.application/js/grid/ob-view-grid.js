@@ -238,7 +238,7 @@ isc.OBViewGrid.addProperties({
     },
 
     transformData: function (newData, dsResponse) {
-      var i, length, timeFields, responseToFilter, newTotalRows, scrollUp;
+      var i, length, timeFields, responseToFilter, newTotalRows;
 
       // when the data is received from the datasource, time fields are formatted in UTC time. They have to be converted to local time
       if (dsResponse && dsResponse.context && (dsResponse.context.operationType === 'fetch' || dsResponse.context.operationType === 'update' || dsResponse.context.operationType === 'add')) {
@@ -277,12 +277,10 @@ isc.OBViewGrid.addProperties({
           // increase one to request additional page to backend
         }
 
-        scrollUp = false;
+        // detects if the request was issued due to having scrolled up
         if (this.grid.body.lastScrollTop !== undefined && this.grid.body.lastScrollTop > this.grid.body.getScrollTop()) {
-          scrollUp = true;
-        }
-
-        if (scrollUp) {
+          // in that case, set the totalRows of the response to the length of the localData, to avoid
+          // setting the totalRows of the grid to an invalid value
           dsResponse.totalRows = this.localData.length;
         }
 
