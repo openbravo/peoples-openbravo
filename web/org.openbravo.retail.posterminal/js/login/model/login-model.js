@@ -369,7 +369,7 @@
         OB.debug("next process: 'retail.pointofsale' window");
 
         var terminal = this.get('terminal');
-        OB.UTIL.initCashUp();
+        OB.UTIL.initCashUp(OB.UTIL.calculateCurrentCash);
         // Set Hardware..
         OB.POS.hwserver = new OB.DS.HWServer(terminal.hardwareurl, terminal.scaleurl);
 
