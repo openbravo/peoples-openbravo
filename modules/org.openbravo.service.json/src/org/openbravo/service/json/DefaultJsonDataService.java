@@ -388,12 +388,8 @@ public class DefaultJsonDataService implements JsonDataService {
     if ((StringUtils.isEmpty(startRowStr) || StringUtils.isEmpty(endRowStr))
         && !isIDCriteria(criteria) && !parameters.containsKey("exportAs")) {
       // pagination is not set, this is most likely a bug
-      String paramMsg = "";
-      for (String paramKey : parameters.keySet()) {
-        paramMsg += paramKey + ":" + parameters.get(paramKey) + "\n";
-      }
       log.warn("Fetching data without pagination, this can cause perfomance issues. Parameters: "
-          + paramMsg);
+          + convertParameterToString(parameters));
 
       if (parameters.containsKey(JsonConstants.TAB_PARAMETER)
           || parameters.containsKey(SelectorConstants.DS_REQUEST_SELECTOR_ID_PARAMETER)) {
@@ -406,6 +402,12 @@ public class DefaultJsonDataService implements JsonDataService {
     boolean directNavigation = parameters.containsKey("_directNavigation")
         && "true".equals(parameters.get("_directNavigation"))
         && parameters.containsKey(JsonConstants.TARGETRECORDID_PARAMETER);
+
+    if (parameters.containsKey(JsonConstants.TARGETRECORDID_PARAMETER)
+        && !"true".equals(parameters.get("_directNavigation"))) {
+      log.warn("Datasource request with targetRecordId but without directNavigation detected. This type of requests should be avoided because they result in a query that performs poorly. Parameters: "
+          + convertParameterToString(parameters));
+    }
 
     if (!directNavigation) {
       // set the where/org filter parameters and the @ parameters
@@ -497,6 +499,15 @@ public class DefaultJsonDataService implements JsonDataService {
       // queryService.setJoinAssociatedEntities(true);
     }
     return queryService;
+  }
+
+  // Given a map of parameters, returns a string with the pairs key:value
+  private String convertParameterToString(Map<String, String> parameters) {
+    String paramMsg = "";
+    for (String paramKey : parameters.keySet()) {
+      paramMsg += paramKey + ":" + parameters.get(paramKey) + "\n";
+    }
+    return paramMsg;
   }
 
   private void addWritableAttribute(List<JSONObject> jsonObjects) throws JSONException {
