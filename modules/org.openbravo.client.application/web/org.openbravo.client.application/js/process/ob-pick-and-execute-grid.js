@@ -572,6 +572,10 @@ isc.OBPickAndExecuteGrid.addProperties({
   },
 
   clearFilter: function () {
+    if (this.lazyFiltering && this.filterClause) {
+      // store that the filter has been removed to enable showing potential new records
+      this.filterClauseJustRemoved = true;
+    }
     this.filterClause = null;
     this._cleaningFilter = true;
     this.contentView.messageBar.hide();
@@ -876,6 +880,11 @@ isc.OBPickAndExecuteGrid.addProperties({
     } else {
       this.Super('getMinFieldWidth', arguments);
     }
+  },
+
+  refreshGrid: function () {
+    // fetch the data with the current criteria and context info
+    this.filterData(this.getCriteria(), null, this.getContextInfo());
   }
 
 });
