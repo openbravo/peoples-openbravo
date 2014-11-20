@@ -409,6 +409,8 @@ public class DefaultJsonDataService implements JsonDataService {
         && parameters.containsKey(JsonConstants.TARGETRECORDID_PARAMETER);
 
     if (parameters.containsKey(JsonConstants.TARGETRECORDID_PARAMETER)
+        && parameters.get(JsonConstants.TARGETRECORDID_PARAMETER) != null
+        && parameters.get(JsonConstants.TARGETRECORDID_PARAMETER) != "null"
         && !"true".equals(parameters.get("_directNavigation"))) {
       log.warn("Datasource request with targetRecordId but without directNavigation detected. This type of requests should be avoided because they result in a query that performs poorly. Parameters: "
           + convertParameterToString(parameters));
