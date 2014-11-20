@@ -411,7 +411,8 @@ public class OBScheduler {
 
           } else if (data.frequency.equals(FREQUENCY_DAILY)) {
             if ("".equals(data.dailyOption)) {
-              trigger = TriggerUtils.makeDailyTrigger(hour, minute);
+              final String cronExpression = second + " " + minute + " " + hour + " ? * *";
+              trigger = new CronTrigger(name, OB_GROUP, cronExpression);
 
             } else if (data.dailyOption.equals(EVERY_N_DAYS)) {
               try {

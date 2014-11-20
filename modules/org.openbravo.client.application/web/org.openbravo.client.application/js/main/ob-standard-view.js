@@ -1977,7 +1977,7 @@ isc.OBStandardView.addProperties({
 
   refreshCurrentRecord: function (callBackFunction) {
     var me = this,
-        record, criteria, callback;
+        criteria, callback;
 
     if (!this.viewGrid.getSelectedRecord()) {
       return;
@@ -1988,77 +1988,14 @@ isc.OBStandardView.addProperties({
       this.viewGrid.getSummaryRow();
     }
 
-    record = this.viewGrid.getSelectedRecord();
-
-    criteria = {
-      operator: 'and',
-      _constructor: "AdvancedCriteria",
-      criteria: []
-    };
-
-    // add a dummy criteria to force a fetch
-    criteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
-
-    // and add a criteria for the record itself
-    criteria.criteria.push({
-      fieldName: OB.Constants.ID,
-      operator: 'equals',
-      value: record.id
-    });
-
     callback = function (resp, data, req) {
-      var sessionProperties = me.getContextInfo(true, true, false, true);
       // this line does not work, but it should:
       //      me.getDataSource().updateCaches(resp, req);
       // therefore do an explicit update of the visual components
-      if (me.isShowingForm) {
-        me.viewForm.refresh();
-      }
       if (me.viewGrid.data) {
         var recordIndex = me.viewGrid.getRecordIndex(me.viewGrid.getSelectedRecord());
-        data = OB.Utilities.Date.convertUTCTimeToLocalTime(data, me.viewGrid.completeFields);
-        if (me.viewGrid.data.updateCacheData) {
-          me.viewGrid.data.updateCacheData(data, req);
-        }
-        if (me.viewGrid.isGrouped) {
-          // if the grid is group update its values to show the updated data
-          me.viewGrid.setEditValues(recordIndex, data[0]);
-        }
-        me.viewGrid.selectRecord(me.viewGrid.getRecord(recordIndex));
-        me.viewGrid.refreshRow(recordIndex);
-        me.viewGrid.redraw();
-        if (!me.isShowingForm) {
-          OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', sessionProperties, {
-            MODE: 'SETSESSION',
-            TAB_ID: me.tabId,
-            PARENT_ID: me.getParentId(),
-            ROW_ID: me.viewGrid.getSelectedRecord() ? me.viewGrid.getSelectedRecord().id : me.getCurrentValues().id
-          }, function (response, data, request) {
-            var sessionAttributes = data.sessionAttributes,
-                auxInputs = data.auxiliaryInputValues,
-                attachmentExists = data.attachmentExists,
-                prop;
-            if (sessionAttributes) {
-              me.viewForm.sessionAttributes = sessionAttributes;
-            }
-
-            if (auxInputs) {
-              this.auxInputs = {};
-              for (prop in auxInputs) {
-                if (auxInputs.hasOwnProperty(prop)) {
-                  me.viewForm.setValue(prop, auxInputs[prop].value);
-                  me.viewForm.auxInputs[prop] = auxInputs[prop].value;
-                }
-              }
-            }
-            me.viewForm.view.attachmentExists = attachmentExists;
-            //compute and apply tab display logic again after fetching auxilary inputs.
-            me.handleDefaultTreeView();
-            me.updateSubtabVisibility();
-          });
-        }
+        me.viewGrid.updateRecord(recordIndex, data, req);
       }
-
 
       if (callBackFunction) {
         callBackFunction();
@@ -2069,8 +2006,35 @@ isc.OBStandardView.addProperties({
       this.viewForm.contextInfo = null;
     }
 
-    this.getDataSource().fetchData(criteria, callback);
+    if (this.isShowingForm) {
+      // Refresh the form. This function will also update the info of the selected record with
+      // the data returned by the datasource request done to update the form
+      this.viewForm.refresh(callBackFunction);
+    } else {
+      // Make a request to refresh the grid
+      criteria = this.buildCriteriaToRefreshSelectedRecord();
+      this.getDataSource().fetchData(criteria, callback);
+    }
     this.refreshParentRecord(callBackFunction);
+  },
+
+  buildCriteriaToRefreshSelectedRecord: function () {
+    var record, criteria = {
+      operator: 'and',
+      _constructor: 'AdvancedCriteria',
+      criteria: []
+    };
+    // add a dummy criteria to force a fetch
+    criteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
+
+    record = this.viewGrid.getSelectedRecord();
+    // and add a criteria for the record itself
+    criteria.criteria.push({
+      fieldName: OB.Constants.ID,
+      operator: 'equals',
+      value: record.id
+    });
+    return criteria;
   },
 
   hasNotChanged: function () {
@@ -2534,6 +2498,10 @@ isc.OBStandardView.addProperties({
             if (propertyObj.type && convertToClassicFormat) {
               type = isc.SimpleType.getType(propertyObj.type);
               if (type.createClassicString) {
+                if (type.editorType === 'OBDateTimeItem') {
+                  // converting time to UTC before it is sent to FIC
+                  value = OB.Utilities.Date.addTimezoneOffset(value);
+                }
                 contextInfo[properties[i].inpColumn] = type.createClassicString(value);
               } else {
                 contextInfo[properties[i].inpColumn] = this.convertContextValue(value, propertyObj.type);

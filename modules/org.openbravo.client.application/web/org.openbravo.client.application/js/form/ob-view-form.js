@@ -955,11 +955,31 @@ OB.ViewFormProperties = {
     }
   },
 
-  refresh: function () {
+  refresh: function (callback, refreshChildren) {
     var criteria = {
       id: this.getValue(OB.Constants.ID)
+    },
+        me = this,
+        innerCallback;
+    innerCallback = function (dsResponse, data, dsRequest) {
+      var index;
+      if (data[0]) {
+        index = me.view.viewGrid.getRecordIndex(me.view.viewGrid.getSelectedRecord());
+        if (index !== -1) {
+          me.view.viewGrid.updateRecord(index, data, dsRequest);
+          if (refreshChildren) {
+            // only refresh the children when needed.
+            // i.e. when a sub tab is saved the form view of its parent tab is refreshed,
+            // but then there is no need to refresh the sub tab
+            me.view.refreshChildViews();
+          }
+        }
+      }
+      if (callback && isc.isA.Function(callback)) {
+        callback();
+      }
     };
-    this.fetchData(criteria);
+    this.fetchData(criteria, innerCallback);
   },
 
   processColumnValue: function (columnName, columnValue, gridEditInformation, mode) {
@@ -1046,7 +1066,8 @@ OB.ViewFormProperties = {
           delete field.textField._textChanged;
         }
       } else if (isDateTime) {
-        jsDateTime = isc.Date.parseStandardDate(columnValue.value);
+        // FIC returns date-time in UTC
+        jsDateTime = isc.Date.parseSchemaDate(columnValue.value);
         this.setItemValue(field.name, jsDateTime);
         if (field.textField) {
           delete field.textField._textChanged;

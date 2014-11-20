@@ -319,7 +319,7 @@ isc.OBParameterWindowView.addProperties({
   handleResponse: function (refreshParent, message, responseActions, retryExecution, data) {
     var window = this.parentWindow,
         tab = OB.MainView.TabSet.getTab(this.viewTabId),
-        i;
+        i, afterRefreshCallback, me = this;
 
     // change title to done
     if (tab) {
@@ -385,13 +385,18 @@ isc.OBParameterWindowView.addProperties({
 
     if (this.popup && !retryExecution) {
       this.buttonOwnerView.setAsActiveView();
-
+      afterRefreshCallback = function () {
+        if (me.buttonOwnerView && isc.isA.Function(me.buttonOwnerView.refreshParentRecord) && isc.isA.Function(me.buttonOwnerView.refreshChildViews)) {
+          me.buttonOwnerView.refreshParentRecord();
+          me.buttonOwnerView.refreshChildViews();
+        }
+      };
       if (refreshParent) {
         if (this.callerField && this.callerField.view && typeof this.callerField.view.onRefreshFunction === 'function') {
           // In this case we are inside a process called from another process, so we want to refresh the caller process instead of the main window.
           this.callerField.view.onRefreshFunction(this.callerField.view);
         } else {
-          window.refresh();
+          this.buttonOwnerView.refreshCurrentRecord(afterRefreshCallback);
         }
       }
 

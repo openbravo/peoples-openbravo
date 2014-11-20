@@ -415,6 +415,18 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                         .getInvoicePaymentSchedule().getInvoice() : null;
                     paidAmount = BigDecimal.ZERO;
                     String fromCurrency = payment.getCurrency().getId();
+                    if (businessPartner.getCurrency() == null) {
+                    	String errorMSG = 
+                    			Utility.messageBD(conProvider, "InitBPCurrencyLnk", language, false);
+                    	
+                    	 msg.setType("Error");
+                         msg.setTitle(Utility.messageBD(conProvider, "Error", language));
+                         msg.setMessage(String.format(errorMSG, businessPartner.getId(), businessPartner.getName()));
+                         bundle.setResult(msg);
+                         OBDal.getInstance().rollbackAndClose();
+                         return;
+                    	
+                    }
                     String toCurrency = businessPartner.getCurrency().getId();
                     if (!fromCurrency.equals(toCurrency)) {
                       BigDecimal exchangeRate = BigDecimal.ZERO;

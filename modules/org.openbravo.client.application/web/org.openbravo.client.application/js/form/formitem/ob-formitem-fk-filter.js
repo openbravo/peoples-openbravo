@@ -301,7 +301,8 @@ isc.OBFKFilterTextItem.addProperties({
 
     if (this.form.grid.sourceWidget.lazyFiltering) {
       // Fetch the criteria from the current values of the filter editor
-      gridCriteria = this.form.grid.getValues();
+      // Invoke the convertCriteria function to filter by the record selected in the parent tab if needed
+      gridCriteria = this.grid.sourceWidget.convertCriteria(this.form.grid.getValues());
     } else {
       gridCriteria = this.form.grid.sourceWidget.getCriteria();
     }

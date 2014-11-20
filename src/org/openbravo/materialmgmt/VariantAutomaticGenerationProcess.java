@@ -137,6 +137,12 @@ public class VariantAutomaticGenerationProcess implements Process {
         product = OBDal.getInstance().get(Product.class, recordID);
         Product variant = (Product) DalUtil.copy(product);
 
+        if (product.getImage() != null) {
+          Image newPrImage = (Image) DalUtil.copy(product.getImage(), false);
+          OBDal.getInstance().save(newPrImage);
+          variant.setImage(newPrImage);
+        }
+
         variant.setGenericProduct(product);
         variant.setProductAccountsList(Collections.<ProductAccounts> emptyList());
         variant.setGeneric(false);

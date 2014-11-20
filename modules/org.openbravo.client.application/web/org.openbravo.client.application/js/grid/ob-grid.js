@@ -697,7 +697,9 @@ isc.OBGrid.addProperties({
           if (!this._iconEnabled) {
             return;
           }
-          if (grid.filterHasChanged) {
+          if (grid.filterHasChanged || grid.filterClauseJustRemoved) {
+            // the filter clause can only be removed once
+            delete grid.filterClauseJustRemoved;
             // Do not change the sorting after receiving the data from the datasource
             grid._filteringAndSortingManually = true;
             grid.filterEditor.performFilter(true, true);
@@ -1376,7 +1378,6 @@ isc.ClassFactory.defineClass('OBViewGridBody', 'GridBody');
 isc.OBViewGridBody.addProperties({
   redraw: function () {
     var newDrawArea, grid, drawArea, firstRecord, loading;
-
     this.Super('redraw', arguments);
 
     grid = this.grid;

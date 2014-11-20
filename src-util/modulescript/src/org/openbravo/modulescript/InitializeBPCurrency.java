@@ -37,11 +37,21 @@ public class InitializeBPCurrency extends ModuleScript {
         InitializeBPCurrencyData.initializeCurrency(cp);
         InitializeBPCurrencyData.createPreference(cp);
         InitializeBPCurrencyData.createUpdatePreference(cp);
+        // update bp currency if it is not updated by initializeCurrency
+        // and there exists completed invoice in same currency 
+        // for any business partner
+        InitializeBPCurrencyData.UpdateBpCurrency(cp);
+        InitializeBPCurrencyData.createUpdateFromInvoicePref(cp);
       } else {
         boolean isUpdated = InitializeBPCurrencyData.isUpdated(cp);
         if(!isUpdated) {
           InitializeBPCurrencyData.initializeCurrency(cp);
           InitializeBPCurrencyData.createUpdatePreference(cp);
+        }
+        boolean isUpdatedFromInv = InitializeBPCurrencyData.isUpdatedFromInvoice(cp);
+        if(!isUpdatedFromInv) {
+          InitializeBPCurrencyData.UpdateBpCurrency(cp);
+          InitializeBPCurrencyData.createUpdateFromInvoicePref(cp);
         }
       }
     } catch (Exception e) {

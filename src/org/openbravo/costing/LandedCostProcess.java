@@ -97,6 +97,7 @@ public class LandedCostProcess {
       landedCost.setDocumentStatus("CO");
       landedCost.setProcessed(Boolean.TRUE);
       OBDal.getInstance().save(landedCost);
+      message.put("documentNo", ca.getDocumentNo());
     } catch (JSONException ignore) {
     } finally {
       OBContext.restorePreviousMode();
@@ -200,11 +201,16 @@ public class LandedCostProcess {
     hql.append("   , rla." + LCReceiptLineAmt.PROPERTY_LANDEDCOSTCOST
         + ".currency.id as lcCostCurrency");
     hql.append("   , rla." + LCReceipt.PROPERTY_GOODSSHIPMENTLINE + ".id as receipt");
+    hql.append("   , (select " + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " from "
+        + MaterialTransaction.ENTITY_NAME + " as transaction where "
+        + MaterialTransaction.PROPERTY_GOODSSHIPMENTLINE + ".id = rla."
+        + LCReceipt.PROPERTY_GOODSSHIPMENTLINE + ".id) as trxprocessdate");
     hql.append(" from " + LCReceiptLineAmt.ENTITY_NAME + " as rla");
     hql.append("   join rla." + LCReceiptLineAmt.PROPERTY_LANDEDCOSTRECEIPT + " as rl");
     hql.append(" where rl." + LCReceipt.PROPERTY_LANDEDCOST + " = :lc");
     hql.append(" group by rla." + LCReceiptLineAmt.PROPERTY_LANDEDCOSTCOST + ".currency.id");
     hql.append(" , rla." + LCReceipt.PROPERTY_GOODSSHIPMENTLINE + ".id");
+    hql.append(" order by trxprocessdate, amt");
 
     Query qryLCRLA = OBDal.getInstance().getSession().createQuery(hql.toString());
     qryLCRLA.setParameter("lc", landedCost);
@@ -225,6 +231,7 @@ public class LandedCostProcess {
       cal.setNeedsPosting(Boolean.FALSE);
       cal.setUnitCost(Boolean.FALSE);
       cal.setCurrency(lcCostCurrency);
+      cal.setLineNo((i + 1) * 10L);
       OBDal.getInstance().save(cal);
 
       if (i % 100 == 0) {
