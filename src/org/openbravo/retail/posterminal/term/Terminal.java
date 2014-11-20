@@ -82,8 +82,16 @@ public class Terminal extends ProcessHQLQuery {
 
     final OrganizationInformation myOrgInfo = pOSTerminal.getOrganization()
         .getOrganizationInformationList().get(0);
+
+    String storeAddress = "";
     String regionId = "";
     String countryId = "";
+
+    if (myOrgInfo.getLocationAddress() != null
+        && myOrgInfo.getLocationAddress().getIdentifier().length() > 0) {
+      storeAddress = myOrgInfo.getLocationAddress().getIdentifier();
+    }
+
     if (myOrgInfo.getLocationAddress().getRegion() != null) {
       regionId = myOrgInfo.getLocationAddress().getRegion().getId();
     }
@@ -125,7 +133,7 @@ public class Terminal extends ProcessHQLQuery {
         + "' as symbol, " + "'" + warehouseId + "' as warehouse, " + lastDocumentNumber
         + " as lastDocumentNumber, " + lastQuotationDocumentNumber
         + " as lastQuotationDocumentNumber, " + "'" + regionId + "'" + " as organizationRegionId, "
-        + "'" + countryId + "'" + " as organizationCountryId, " + sessionTimeout
+        + "'" + countryId + "'" + " as organizationCountryId, " + storeAddress + " as organizationAddressIdentifier, " + sessionTimeout
         + " as sessionTimeout, " + selectOrgImage + regularTerminalHQLProperties.getHqlSelect()
         + " from OBPOS_Applications AS pos inner join pos.obposTerminaltype as postype "
         + fromOrgImage
