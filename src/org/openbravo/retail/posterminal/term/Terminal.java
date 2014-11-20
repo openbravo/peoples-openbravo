@@ -133,7 +133,7 @@ public class Terminal extends ProcessHQLQuery {
         + "' as symbol, " + "'" + warehouseId + "' as warehouse, " + lastDocumentNumber
         + " as lastDocumentNumber, " + lastQuotationDocumentNumber
         + " as lastQuotationDocumentNumber, " + "'" + regionId + "'" + " as organizationRegionId, "
-        + "'" + countryId + "'" + " as organizationCountryId, " + storeAddress + " as organizationAddressIdentifier, " + sessionTimeout
+        + "'" + countryId + "'" + " as organizationCountryId, '" + storeAddress + "' as organizationAddressIdentifier, " + sessionTimeout
         + " as sessionTimeout, " + selectOrgImage + regularTerminalHQLProperties.getHqlSelect()
         + " from OBPOS_Applications AS pos inner join pos.obposTerminaltype as postype "
         + fromOrgImage
