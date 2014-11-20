@@ -69,10 +69,10 @@ public class CopyFromOrder extends HttpSecureAppServlet {
       String strmPricelistId = vars.getStringParameter("inpmPricelistId");
       OBContext.setAdminMode();
       try {
-      printPageDataSheet(response, vars, strKey, strWindowId, strTabId, strSOTrx, strBpartner,
-          strmPricelistId);
+        printPageDataSheet(response, vars, strKey, strWindowId, strTabId, strSOTrx, strBpartner,
+            strmPricelistId);
       } finally {
-    	  OBContext.restorePreviousMode();
+        OBContext.restorePreviousMode();
       }
     } else if (vars.commandIn("SAVE")) {
       String strRownum = null;
@@ -88,7 +88,13 @@ public class CopyFromOrder extends HttpSecureAppServlet {
         strRownum = strRownum.substring(1, strRownum.length() - 1);
       }
       strRownum = Replace.replace(strRownum, "'", "");
-      OBError myError = copyLines(vars, strRownum, strKey);
+      OBError myError = new OBError();
+      OBContext.setAdminMode();
+      try {
+        myError = copyLines(vars, strRownum, strKey);
+      } finally {
+        OBContext.restorePreviousMode();
+      }
 
       String strWindowPath = Utility.getTabURL(strTabId, "R", true);
       if (strWindowPath.equals(""))
