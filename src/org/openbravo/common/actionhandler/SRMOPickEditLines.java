@@ -182,7 +182,7 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
         tax = shipmentLine.getSalesOrderLine().getTax();
       } else {
         String taxId = "";
-        if (selectedLine.get("tax").equals(null)) {
+        if (selectedLine.get("tax").equals(null) || selectedLine.get("tax").equals("")) {
           List<Object> parameters = new ArrayList<Object>();
 
           parameters.add(product.getId());

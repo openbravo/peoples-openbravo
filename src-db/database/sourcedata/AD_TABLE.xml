@@ -11791,12 +11791,6 @@ join iol.shipmentReceipt as io
 where io.businessPartner.id = :businessPartnerId 
 and io.processed = true and io.documentStatus <> 'VO' 
 and io.salesTransaction = @isSalesTransaction@ 
-and iol.movementQuantity > coalesce((select sum(ol.orderedQuantity)
-from OrderLine as ol
-left join ol.salesOrder as o
-where ol.goodsShipmentLine = iol
-and o.processed = true
-and o.documentStatus <> 'VO'), 0)
 and @insertion_point_0@
 and @additional_filters@]]></HQLQUERY>
 <!--CDB9DC9655F24DF8AB41AA0ADBD04390-->  <ENTITY_ALIAS><![CDATA[iol]]></ENTITY_ALIAS>
