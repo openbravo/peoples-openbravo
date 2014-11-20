@@ -42,7 +42,8 @@ public class Payments extends JSONProcessSimple {
           + "c_currency_rate(p.financialAccount.currency, p.obposApplications.organization.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as rate, c_currency_rate(p.obposApplications.organization.currency, p.financialAccount.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as mulrate, "
           + "p.financialAccount.currency.iSOCode as isocode, "
           + "p.financialAccount.currency.symbol as symbol, p.financialAccount.currency.currencySymbolAtTheRight as currencySymbolAtTheRight, "
-          + "p.financialAccount.currentBalance as currentBalance "
+          + "p.financialAccount.currentBalance as currentBalance, "
+          + "p.financialAccount.currency.obposPosprecision as obposPosprecision "
           + "from OBPOS_App_Payment as p where p.obposApplications.id=? "
           + "and p.$readableCriteria and p.$activeCriteria order by p.line, p.commercialName";
 
@@ -76,6 +77,7 @@ public class Payments extends JSONProcessSimple {
         payment.put("symbol", objPayment[5]);
         payment.put("currencySymbolAtTheRight", objPayment[6]);
         payment.put("currentBalance", objPayment[7]);
+        payment.put("obposPosprecision", objPayment[8]);
         respArray.put(payment);
 
       }

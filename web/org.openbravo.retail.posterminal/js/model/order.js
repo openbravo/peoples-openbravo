@@ -1440,6 +1440,18 @@
         this.save();
       }
     },
+    getPrecision: function (payment) {
+      var precision = 2;
+      var i, p, max;
+      for (i = 0, max = OB.MobileApp.model.get('payments').length; i < max; i++) {
+        p = OB.MobileApp.model.get('payments')[i];
+        if (p.payment.searchKey === payment.paymenttype) {
+          if (p.obposPrecision) {
+            return p.obposPrecision;
+          }
+        }
+      }
+    },
     adjustPayment: function () {
       var i, max, p;
       var payments = this.get('payments');
@@ -1452,9 +1464,11 @@
       var prevCash = OB.DEC.Zero;
       var paidCash = OB.DEC.Zero;
       var pcash;
+      var precision;
 
       for (i = 0, max = payments.length; i < max; i++) {
         p = payments.at(i);
+        precision = this.getPrecision(p);
         if (p.get('rate') && p.get('rate') !== '1') {
           p.set('origAmount', OB.DEC.mul(p.get('amount'), p.get('rate')));
         } else {
@@ -1495,7 +1509,7 @@
           this.set('payment', total);
           //The change value will be computed through a rounded total value, to ensure that the total plus change
           //add up to the paid amount without any kind of precission loss
-          this.set('change', OB.DEC.sub(OB.DEC.add(OB.DEC.add(nocash, cash), origCash), OB.Utilities.Number.roundJSNumber(total, 2)));
+          this.set('change', OB.DEC.sub(OB.DEC.add(OB.DEC.add(nocash, cash, precision), origCash, precision), OB.Utilities.Number.roundJSNumber(total, 2), precision));
         } else {
           pcash.set('paid', auxCash);
           this.set('payment', OB.DEC.add(OB.DEC.add(nocash, cash), origCash));
@@ -2412,6 +2426,18 @@
         'payments': this.get('payments')
       };
     },
+    getPrecision: function (payment) {
+      var precision = 2;
+      var i, p, max;
+      for (i = 0, max = OB.MobileApp.model.get('payments').length; i < max; i++) {
+        p = OB.MobileApp.model.get('payments')[i];
+        if (p.payment.searchKey === payment.paymenttype) {
+          if (p.obposPrecision) {
+            return p.obposPrecision;
+          }
+        }
+      }
+    },
     adjustPayment: function () {
       var i, max, p;
       var payments = this.get('payments');
@@ -2424,9 +2450,11 @@
       var prevCash = OB.DEC.Zero;
       var paidCash = OB.DEC.Zero;
       var pcash;
+      var precision;
 
       for (i = 0, max = payments.length; i < max; i++) {
         p = payments.at(i);
+        precision = this.getPrecision(p);
         if (p.get('rate') && p.get('rate') !== '1') {
           p.set('origAmount', OB.DEC.mul(p.get('amount'), p.get('rate')));
         } else {
@@ -2467,7 +2495,7 @@
           this.set('payment', total);
           //The change value will be computed through a rounded total value, to ensure that the total plus change
           //add up to the paid amount without any kind of precission loss
-          this.set('change', OB.DEC.sub(OB.DEC.add(OB.DEC.add(nocash, cash), origCash), OB.Utilities.Number.roundJSNumber(total, 2)));
+          this.set('change', OB.DEC.sub(OB.DEC.add(OB.DEC.add(nocash, cash, precision), origCash, precision), OB.Utilities.Number.roundJSNumber(total, 2), precision));
         } else {
           pcash.set('paid', auxCash);
           this.set('payment', OB.DEC.add(OB.DEC.add(nocash, cash), origCash));
