@@ -79,12 +79,22 @@
     </line>
     <%
     _.each(cashup.report.get('startings'), function(starting){
+    if(starting.get('amount') !== starting.get('origAmount')){
+    %>
+    <line>
+      <text align ="left" length="10"><%=OB.UTIL.encodeXMLComponent(starting.get('description')) %></text>
+      <text align ="right" length="17"><%= '('+OB.I18N.formatCurrency(starting.get('amount'))+' '+starting.get('isocode')+')' %></text>
+      <text align ="right" length="12"><%= OB.I18N.formatCurrency(OB.DEC.mul(starting.get('amount'), starting.get('rate'))) %></text>
+    </line>
+    <%
+    }else{
     %>
     <line>
       <text align ="left" length="25"><%=OB.UTIL.encodeXMLComponent(starting.get('description')) %></text>
       <text align ="right" length="14"><%= OB.I18N.formatCurrency(OB.DEC.mul(starting.get('amount'), starting.get('rate'))) %></text>
     </line>
     <%
+    }
     });
     %>
      <line>
