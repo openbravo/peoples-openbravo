@@ -26,6 +26,7 @@ import org.openbravo.test.datasource.ProductSelectorDataSourceTest;
 import org.openbravo.test.datasource.SelectorFieldPropertySelectorDSTest;
 import org.openbravo.test.datasource.TestCSVEncoding;
 import org.openbravo.test.datasource.TestComboDatasource;
+import org.openbravo.test.webservice.JSONWebServices;
 import org.openbravo.test.webservice.PerformanceTest;
 import org.openbravo.test.webservice.WSAddRecordWithComputedColumns;
 import org.openbravo.test.webservice.WSReadTest;
@@ -48,6 +49,7 @@ WSReadTest.class, //
     SelectorFieldPropertySelectorDSTest.class, //
     ProductSelectorDataSourceTest.class, //
     TestComboDatasource.class, //
-    FKDropDownDatasource.class })
+    FKDropDownDatasource.class, //
+    JSONWebServices.class })
 public class AllWebserviceTests {
 }
