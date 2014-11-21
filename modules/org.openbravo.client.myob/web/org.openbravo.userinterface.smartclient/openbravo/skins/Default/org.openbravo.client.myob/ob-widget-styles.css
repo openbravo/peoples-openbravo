@@ -235,7 +235,7 @@
   font-size: 16px;
   background-repeat: no-repeat;
   background-position: center 6px;
-  background-image: url(../../../../../../utility/ShowImageLogo?logo=banner-production);
+  background-image: url(../../utility/ShowImageLogo?logo=banner-production);
 }
 
 .OBWidgetAboutLabels {
