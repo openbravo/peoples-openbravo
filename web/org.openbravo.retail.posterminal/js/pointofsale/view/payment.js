@@ -414,7 +414,12 @@ enyo.kind({
       requiredCash = paymentstatus.changeAmt;
     }
 
-    hasEnoughCash = OB.DEC.compare(OB.DEC.sub(currentCash, requiredCash)) >= 0;
+    if (requiredCash === 0) {
+      hasEnoughCash = true;
+    } else {
+      hasEnoughCash = OB.DEC.compare(OB.DEC.sub(currentCash, requiredCash)) >= 0;
+    }
+
     if (hasEnoughCash && hasAllEnoughCash) {
       this.$.noenoughchangelbl.hide();
       this.$.payments.scrollAreaMaxHeight = '150px';
