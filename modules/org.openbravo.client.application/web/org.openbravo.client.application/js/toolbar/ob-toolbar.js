@@ -218,7 +218,12 @@ isc.OBToolbar.addClassProperties({
     sortPosition: 70,
     prompt: OB.I18N.getLabel('OBUIAPP_RefreshData'),
     updateState: function () {
-      this.setDisabled(this.view.isRefreshing || !this.view.hasNotChanged());
+      var gridVisibleAndWithValidationErrors = false;
+      if (!this.view.isShowingForm && this.view.viewGrid.gridHasValidationErrors()) {
+        // do not allow refreshing the grid if it has validation errors
+        gridVisibleAndWithValidationErrors = true;
+      }
+      this.setDisabled(gridVisibleAndWithValidationErrors || this.view.isRefreshing || !this.view.hasNotChanged());
     },
     keyboardShortcutId: 'ToolBar_Refresh'
   },
