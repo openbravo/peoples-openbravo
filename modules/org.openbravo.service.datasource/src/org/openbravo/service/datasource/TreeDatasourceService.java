@@ -746,9 +746,10 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
     }
     String hqlCopy = new String(hqlTreeWhereClause);
     for (String key : replacements.keySet()) {
-      // Value is equals 'null' when can not find in parameters.
+      // if the key is not found in the request parameters, its value in the replacement list will
+      // be 'null'
       if (replacements.get(key).equals("'null'")) {
-        // Obtain variable without the "@"
+        // Strip the "@" from the key
         String keyWithoutAt = key.substring(1, key.length() - 1);
         hqlCopy = hqlCopy.replaceAll(key,
             "'" + (String) RequestContext.get().getSessionAttribute(keyWithoutAt) + "'");
