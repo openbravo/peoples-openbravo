@@ -240,12 +240,13 @@ isc.OBToolbar.addClassProperties({
     sortPosition: 50,
     prompt: OB.I18N.getLabel('OBUIAPP_CancelEdit'),
     updateState: function () {
+      var recordWithValidationErrorsSelected = false;
       if (this.view.isShowingForm) {
         this.setDisabled(false);
       } else {
         // Only enabled when the grid is being edited or when
         // the selected records have errors
-        this.setDisabled(!this.view.isEditingGrid && this.view.hasNotChanged());
+        this.setDisabled(!this.view.isEditingGrid && this.view.hasNotChanged() && !this.view.viewGrid.selectedRecordHasValidationErrors());
       }
     },
     keyboardShortcutId: 'ToolBar_Undo'

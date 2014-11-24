@@ -2933,7 +2933,9 @@ isc.OBViewGrid.addProperties({
     }
     record._hasValidationErrors = true;
     this.recordIdsWithValidationError = this.recordIdsWithValidationError || [];
-    this.recordIdsWithValidationError.push(record[OB.Constants.ID]);
+    if (!this.recordIdsWithValidationError.contains(record[OB.Constants.ID])) {
+      this.recordIdsWithValidationError.push(record[OB.Constants.ID]);
+    }
   },
 
   removeRecordFromValidationErrorList: function (record) {
@@ -2943,6 +2945,16 @@ isc.OBViewGrid.addProperties({
     delete record._hasValidationErrors;
     this.recordIdsWithValidationError = this.recordIdsWithValidationError || [];
     this.recordIdsWithValidationError.remove(record[OB.Constants.ID]);
+  },
+
+  selectedRecordHasValidationErrors: function () {
+    var record;
+    // if the number of selected records is not 1, return false
+    if (this.getSelectedRecords().length !== 1 || !isc.isA.Array(this.recordIdsWithValidationError)) {
+      return false;
+    }
+    record = this.getSelectedRecord();
+    return this.recordIdsWithValidationError.contains(record[OB.Constants.ID]);
   },
 
   gridHasValidationErrors: function () {
@@ -3091,6 +3103,7 @@ isc.OBViewGrid.addProperties({
     for (i = 0; i < length; i++) {
       var rowNum = this.getRecordIndex(selectedRecords[i]);
       var record = selectedRecords[i];
+      this.removeRecordFromValidationErrorList(record);
       this.Super('discardEdits', [rowNum, false, false, isc.ListGrid.PROGRAMMATIC]);
       // remove the record if new
       if (record._new) {
