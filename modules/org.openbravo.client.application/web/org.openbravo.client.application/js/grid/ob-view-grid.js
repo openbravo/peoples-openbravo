@@ -1733,7 +1733,6 @@ isc.OBViewGrid.addProperties({
     }
     this.actionAfterDataArrived = callback;
     this.invalidateCache();
-    this.discardAllEdits();
 
     var context = {
       showPrompt: false
