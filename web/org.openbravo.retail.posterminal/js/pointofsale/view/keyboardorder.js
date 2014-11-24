@@ -466,7 +466,7 @@ enyo.kind({
   name: 'OB.UI.BarcodeActionHandler',
   kind: 'OB.UI.AbstractBarcodeActionHandler',
   addWhereFilter: function (txt) {
-    return "where product.upc like '" + txt + "'";
+    return "where upper(product.upc) = upper('" + txt + "')";
   },
   findProductByBarcode: function (txt, callback) {
     var criteria;
