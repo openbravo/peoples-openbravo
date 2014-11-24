@@ -195,7 +195,7 @@ public class DataSourceServlet extends BaseKernelServlet {
       getRequestContent(request);
     }
     try {
-      if (!hasAccess(request, parameters.get("tabId"))) {
+      if (true || !hasAccess(request, parameters.get("tabId"))) {
         throw new OBUserException("AccessTableNoView");
       }
 

@@ -84,6 +84,7 @@ public class DefaultJsonDataService implements JsonDataService {
    */
   public String fetch(Map<String, String> parameters) {
     try {
+      Thread.sleep(5000);
       final String entityName = parameters.get(JsonConstants.ENTITYNAME);
       Check.isNotNull(entityName, "The name of the service/entityname should not be null");
       Check.isNotNull(parameters, "The parameters should not be null");
