@@ -336,6 +336,7 @@
         model: OB.Model.Order,
         className: 'org.openbravo.retail.posterminal.OrderLoader',
         timeout: 20000,
+        timePerRecord: 1000,
         criteria: {
           hasbeenpaid: 'Y'
         }
@@ -355,6 +356,7 @@
         isPersistent: true,
         className: 'org.openbravo.retail.posterminal.ProcessCashClose',
         timeout: 600000,
+        timePerRecord: 10000,
         criteria: {},
         postProcessingFunction: function (data, callback) {
           OB.UTIL.initCashUp(function () {
