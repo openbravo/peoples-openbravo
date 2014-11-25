@@ -531,6 +531,10 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
         advisePopUp(request, response, "WARNING",
             Utility.messageBD(this, "ProcessStatus-W", vars.getLanguage()),
             Utility.messageBD(this, "NoDataFound", vars.getLanguage()));
+      } else if (data.length > 65532) {
+        advisePopUp(request, response, "ERROR",
+            Utility.messageBD(this, "ProcessStatus-E", vars.getLanguage()),
+            Utility.messageBD(this, "numberOfRowsExceeded", vars.getLanguage()));
       } else {
 
         AcctSchema acctSchema = OBDal.getInstance().get(AcctSchema.class, strcAcctSchemaId);

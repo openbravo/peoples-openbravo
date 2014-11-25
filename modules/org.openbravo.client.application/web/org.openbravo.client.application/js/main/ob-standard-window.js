@@ -548,8 +548,8 @@ isc.OBStandardWindow.addProperties({
 
     // find the default view, the personalizations are
     // returned in order of prio, then do sort by name
-    if (this.getClass().personalization.views) {
-      views = this.getClass().personalization.views;
+    views = this.getClass().personalization.views;
+    if (views && isc.isA.Array(views) && views.length > 0) {
       length = views.length;
 
       this.getClass().personalization.views.sort(function (v1, v2) {
@@ -597,6 +597,13 @@ isc.OBStandardWindow.addProperties({
             }
           }
         }
+      }
+    } else {
+      if (this.view.dataLoadDelayedForDefaultSavedView) {
+        // it might happen that the load of the initial grid data was delayed because it had a 
+        // default saved view, but then the default saved view is not returned by the WindowSettingsActionHandler.
+        // in that case, detect it and load the grid now
+        this.view.viewGrid.fetchData(this.view.viewGrid.getCriteria());
       }
     }
 

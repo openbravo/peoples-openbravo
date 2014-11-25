@@ -269,8 +269,8 @@ isc.OBImageItem.addProperties({
       });
     }
     //Buttons will not be shown if the form is readonly
-    this.canvas.deleteButton.updateState(newValue && (this.form && !this.form.readOnly) && !this.readOnly);
-    this.canvas.selectorButton.updateState((this.form && !this.form.readOnly) && !this.readOnly);
+    this.canvas.deleteButton.updateState(newValue && (this.form && !this.form.readOnly) && !this.disabled);
+    this.canvas.selectorButton.updateState((this.form && !this.form.readOnly) && !this.disabled);
     return this.Super('setValue', arguments);
   },
   refreshImage: function (imageId) {
@@ -281,6 +281,20 @@ isc.OBImageItem.addProperties({
     }
     this.setValue(imageId);
     this.form.itemChangeActions();
+  },
+  //This function has been overwritten because this class needs to do specific things if the object is
+  //disabled. It is necessary to hide the delete and selector buttons when the status is disabled 
+  //and to show them when enabled.
+  
+  setDisabled: function (disabled) {
+    if (disabled) {
+      this.canvas.deleteButton.hide();
+      this.canvas.selectorButton.hide();
+    } else {
+      this.canvas.deleteButton.show();
+      this.canvas.selectorButton.show();
+    }
+    this.Super('setDisabled', arguments);
   }
 });
 

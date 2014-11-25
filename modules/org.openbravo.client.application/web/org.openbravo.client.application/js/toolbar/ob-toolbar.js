@@ -192,12 +192,25 @@ isc.OBToolbar.addClassProperties({
 
   REFRESH_BUTTON_PROPERTIES: {
     action: function () {
-      var refreshChildren = true;
-      if (this.view.isShowingForm) {
-        // Refresh the form and its children records
-        this.view.viewForm.refresh(null, refreshChildren);
-      } else {
-        this.view.refresh();
+      var refreshChildren = true,
+          callbackEnableButton, me = this;
+      this.view.isRefreshing = true;
+      // Disable the refresh button until the refresh is finished
+      this.setDisabled(true);
+      callbackEnableButton = function () {
+        // Enable the refresh button in the callback
+        delete me.view.isRefreshing;
+        me.setDisabled(false);
+      };
+      try {
+        if (this.view.isShowingForm) {
+          // Refresh the form and its children records
+          this.view.viewForm.refresh(callbackEnableButton, refreshChildren);
+        } else {
+          this.view.refresh(callbackEnableButton);
+        }
+      } catch (e) {
+        callbackEnableButton();
       }
     },
     disabled: false,
@@ -205,7 +218,12 @@ isc.OBToolbar.addClassProperties({
     sortPosition: 70,
     prompt: OB.I18N.getLabel('OBUIAPP_RefreshData'),
     updateState: function () {
-      this.setDisabled(!this.view.hasNotChanged());
+      var gridVisibleAndWithValidationErrors = false;
+      if (!this.view.isShowingForm && this.view.viewGrid.gridHasValidationErrors()) {
+        // do not allow refreshing the grid if it has validation errors
+        gridVisibleAndWithValidationErrors = true;
+      }
+      this.setDisabled(gridVisibleAndWithValidationErrors || this.view.isRefreshing || !this.view.hasNotChanged());
     },
     keyboardShortcutId: 'ToolBar_Refresh'
   },
@@ -222,12 +240,13 @@ isc.OBToolbar.addClassProperties({
     sortPosition: 50,
     prompt: OB.I18N.getLabel('OBUIAPP_CancelEdit'),
     updateState: function () {
+      var recordWithValidationErrorsSelected = false;
       if (this.view.isShowingForm) {
         this.setDisabled(false);
       } else {
         // Only enabled when the grid is being edited or when
         // the selected records have errors
-        this.setDisabled(!this.view.isEditingGrid && this.view.hasNotChanged());
+        this.setDisabled(!this.view.isEditingGrid && this.view.hasNotChanged() && !this.view.viewGrid.selectedRecordHasValidationErrors());
       }
     },
     keyboardShortcutId: 'ToolBar_Undo'

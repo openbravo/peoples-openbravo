@@ -2894,7 +2894,7 @@ isc.OBViewGrid.addProperties({
     // set the default error message,
     // is possibly overridden in the next call
     if (record) {
-      record._hasValidationErrors = true;
+      this.addRecordToValidationErrorList(record);
       if (!record[isc.OBViewGrid.ERROR_MESSAGE_PROP]) {
         this.setRecordErrorMessage(rowNum, OB.I18N.getLabel('OBUIAPP_ErrorInFields'));
         // do not automatically remove this message
@@ -2923,6 +2923,45 @@ isc.OBViewGrid.addProperties({
     isNewRecord = (form === null) ? false : form.isNew;
     if (isNewRecord) {
       delete this.view._savingNewRecord;
+    }
+  },
+
+  addRecordToValidationErrorList: function (record) {
+    if (!record) {
+      return;
+    }
+    record._hasValidationErrors = true;
+    this.recordIdsWithValidationError = this.recordIdsWithValidationError || [];
+    if (!this.recordIdsWithValidationError.contains(record[OB.Constants.ID])) {
+      this.recordIdsWithValidationError.push(record[OB.Constants.ID]);
+    }
+  },
+
+  removeRecordFromValidationErrorList: function (record) {
+    if (!record) {
+      return;
+    }
+    delete record._hasValidationErrors;
+    this.recordIdsWithValidationError = this.recordIdsWithValidationError || [];
+    this.recordIdsWithValidationError.remove(record[OB.Constants.ID]);
+  },
+
+  selectedRecordHasValidationErrors: function () {
+    var record;
+    // if the number of selected records is not 1, return false
+    if (this.getSelectedRecords().length !== 1 || !isc.isA.Array(this.recordIdsWithValidationError)) {
+      return false;
+    }
+    record = this.getSelectedRecord();
+    return this.recordIdsWithValidationError.contains(record[OB.Constants.ID]);
+  },
+
+  gridHasValidationErrors: function () {
+    if (!isc.isA.Array(this.recordIdsWithValidationError)) {
+      return false;
+    } else {
+      // return true if the list of record ids with validation errors is not empty
+      return !this.recordIdsWithValidationError.isEmpty();
     }
   },
 
@@ -2982,6 +3021,9 @@ isc.OBViewGrid.addProperties({
     if (!record) {
       return;
     }
+
+    // the record has been sucessfully saved so it does not have validation errors
+    this.removeRecordFromValidationErrorList(record);
 
     // a new id has been computed use that now
     if (record && record._newId) {
@@ -3060,6 +3102,7 @@ isc.OBViewGrid.addProperties({
     for (i = 0; i < length; i++) {
       var rowNum = this.getRecordIndex(selectedRecords[i]);
       var record = selectedRecords[i];
+      this.removeRecordFromValidationErrorList(record);
       this.Super('discardEdits', [rowNum, false, false, isc.ListGrid.PROGRAMMATIC]);
       // remove the record if new
       if (record._new) {
@@ -3101,6 +3144,10 @@ isc.OBViewGrid.addProperties({
         editForm = this.getEditForm(),
         totalRows, me = this,
         record = this.getRecord(rowNum);
+
+    if (record) {
+      this.removeRecordFromValidationErrorList(record);
+    }
 
     if (!preventConfirm && ((editForm && editForm.hasChanged) || this.rowHasErrors(rowNum))) {
       me.Super('discardEdits', localArguments);

@@ -763,10 +763,16 @@ isc.DateItem.changeDefaults('textFieldDefaults', {
 // if not overridden then also errors handled by OB are shown in a popup
 // see https://issues.openbravo.com/view.php?id=17136
 isc.RPCManager.addClassProperties({
-  _handleError: isc.RPCManager.getPrototype().handleError,
+  _originalhandleError: isc.RPCManager.handleError,
   handleError: function (response, request) {
+    var target = window[request.componentId];
+    // refresh the toolbar buttons if possible to ensure that the refresh button is enabled
+    if (target && target.view && target.view.toolBar && isc.isA.Function(target.view.toolBar.updateButtonState)) {
+      delete target.view.isRefreshing;
+      target.view.toolBar.updateButtonState();
+    }
     if (!request.willHandleError) {
-      isc.RPCManager.handleError(response, request);
+      this._originalhandleError(response, request);
     }
   },
   _originalEvalResult: isc.RPCManager.evalResult,
