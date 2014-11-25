@@ -549,7 +549,7 @@
           OB.UTIL.currency.addConversion(fromCurrencyId, toCurrencyId, paymentMethod.mulrate);
         }
       }, this);
-      
+
       OB.MobileApp.model.on('window:ready', function () {
         if (window.localStorage.getItem('terminalAuthentication') === 'Y') {
           var process = new OB.DS.Process('org.openbravo.retail.posterminal.CheckTerminalAuth');
@@ -688,8 +688,8 @@
     // they feed from the local database, and the server
     documentnoThreshold: -1,
     quotationnoThreshold: -1,
-    isSeqNoReadyEventSent: false, // deprecation 27911
-
+    isSeqNoReadyEventSent: false,
+    // deprecation 27911
     /**
      * Save the new values if are higher than the last knowwn values
      * - the minimum sequence number can only grow
@@ -755,12 +755,11 @@
         // deprecation 27911 starts
         OB.MobileApp.model.set('documentsequence', me.getLastDocumentnoSuffixInOrderlist());
         OB.MobileApp.model.set('quotationDocumentSequence', me.getLastQuotationnoSuffixInOrderlist());
-        if(!me.isSeqNoReadyEventSent) {
+        if (!me.isSeqNoReadyEventSent) {
           me.isSeqNoReadyEventSent = true;
           me.trigger('seqNoReady');
         }
         // deprecation 27911 ends
-
         // update the database
         docSeq.set('documentSequence', me.documentnoThreshold);
         docSeq.set('quotationDocumentSequence', me.quotationnoThreshold);
@@ -994,7 +993,8 @@
   var initializeOBModelTerminal = new OB.Model.POSTerminal();
 
   OB.POS = {
-    modelterminal: OB.MobileApp.model, // kept fot backward compatibility. Deprecation id: 27646
+    modelterminal: OB.MobileApp.model,
+    // kept fot backward compatibility. Deprecation id: 27646
     paramWindow: OB.UTIL.getParameterByName("window") || "retail.pointofsale",
     paramTerminal: window.localStorage.getItem('terminalAuthentication') === 'Y' ? window.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"),
     hrefWindow: function (windowname) {
