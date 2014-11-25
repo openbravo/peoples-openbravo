@@ -812,7 +812,7 @@
     },
 
     isUserCacheAvailable: function () {
-      return false;
+      return true;
     },
    
     dialog: null,
