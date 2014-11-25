@@ -126,7 +126,7 @@ public class AccessLevelTest extends OBBaseTest {
     final Client clientZero = OBDal.getInstance().get(Client.class, "0");
     final Organization orgZero = OBDal.getInstance().get(Organization.class, "0");
     for (Entity e : entities) {
-      if (e.isDataSourceBased()) {
+      if (e.isDataSourceBased() || e.isHQLBased()) {
         // The entity is not associated with a database table, so it does not apply
         continue;
       }
