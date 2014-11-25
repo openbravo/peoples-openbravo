@@ -886,6 +886,10 @@
       });
     },
 
+    isUserCacheAvailable: function () {
+      return false;
+    },
+
     dialog: null,
     preLoadContext: function (callback) {
       if (!window.localStorage.getItem('terminalKeyIdentifier') && !window.localStorage.getItem('terminalName') && window.localStorage.getItem('terminalAuthentication') === 'Y') {
