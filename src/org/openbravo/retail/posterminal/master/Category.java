@@ -93,7 +93,7 @@ public class Category extends ProcessHQLQuery {
         + " as _identifier"
         + " from PromotionType as pt left outer join pt.obposImage img " //
         + "where pt.obposIsCategory = true "//
-        + "  and pt.$readableClientCriteria" //
+        + "  and pt.$readableSimpleClientCriteria" //
         + "  and (pt.$incrementalUpdateCriteria)"//
         + "  and exists (select 1"//
         + "                from PricingAdjustment p " //

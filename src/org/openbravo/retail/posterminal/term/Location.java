@@ -28,7 +28,7 @@ public class Location extends ProcessHQLQuery {
     String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
     return Arrays
         .asList(new String[] { "from Location where id = (select min(locationAddress) from OrganizationInformation where organization.id = '"
-            + orgId + "' and $readableCriteria and $activeCriteria)" });
+            + orgId + "' and $readableSimpleCriteria and $activeCriteria)" });
   }
 
   @Override

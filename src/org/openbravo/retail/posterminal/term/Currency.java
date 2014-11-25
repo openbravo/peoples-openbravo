@@ -31,7 +31,7 @@ public class Currency extends ProcessHQLQuery {
             RequestContext.get().getSessionAttribute("POSTerminal").toString()).getCurrency()
         .getId();
     return Arrays.asList(new String[] { "from Currency where id ='" + currId
-        + "' and $readableCriteria and $activeCriteria" });
+        + "' and $readableSimpleCriteria and $activeCriteria" });
   }
 
   @Override

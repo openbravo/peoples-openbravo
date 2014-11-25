@@ -51,7 +51,7 @@ public class ProductChValue extends ProcessHQLQuery {
             + regularProductsChValueHQLProperties.getHqlSelect()
             + "from CharacteristicValue cv, ADTreeNode node "
             + "where cv.characteristic.tree =  node.tree and cv.id = node.node "
-            + "and cv.$naturalOrgCriteria and cv.$readableClientCriteria and (cv.$incrementalUpdateCriteria)");
+            + "and cv.$naturalOrgCriteria and cv.$readableSimpleClientCriteria and (cv.$incrementalUpdateCriteria)");
 
     return hqlQueries;
   }

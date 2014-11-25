@@ -33,6 +33,12 @@ public class BusinessPartner extends ProcessHQLQuery {
 
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
+    Long lastUpdated = jsonsent.has("lastUpdated")
+        && !jsonsent.get("lastUpdated").equals("undefined") ? jsonsent.getLong("lastUpdated")
+        : null;
+    // if it is a total refresh we need to ensure that all(AND) entities are active. In a
+    // incremental refresh, we need to retrieve it if some (OR) ot the entities have changed
+    String operator = lastUpdated == null ? " AND " : " OR ";
     HQLPropertyList regularBusinessPartnerHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions);
     String hql = "SELECT "
@@ -42,10 +48,12 @@ public class BusinessPartner extends ProcessHQLQuery {
         + "bpl.invoiceToAddress = true AND "
         + "bpl.businessPartner.customer = true AND "
         + "bpl.businessPartner.priceList IS NOT NULL AND "
-        + "bpl.$readableClientCriteria AND "
-        + "bpl.$naturalOrgCriteria AND"
-        + "(bpl.businessPartner.$incrementalUpdateCriteria) "
-        + " and bpl.id in (select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls where bpls.invoiceToAddress = true and bpls.$readableClientCriteria AND "
+        + "bpl.$readableSimpleClientCriteria AND "
+        + "bpl.$naturalOrgCriteria AND "
+        + "(bpl.$incrementalUpdateCriteria"
+        + operator
+        + "bpl.businessPartner.$incrementalUpdateCriteria) "
+        + " and bpl.id in (select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls where bpls.invoiceToAddress = true and bpls.$readableSimpleClientCriteria AND "
         + " bpls.$naturalOrgCriteria group by bpls.businessPartner.id)"
         + " and (not exists (select 1 from ADUser usr where usr.businessPartner = bpl.businessPartner)) "
         + " GROUP BY " + regularBusinessPartnerHQLProperties.getHqlGroupBy()
@@ -57,10 +65,12 @@ public class BusinessPartner extends ProcessHQLQuery {
         + "bpl.invoiceToAddress = true AND "
         + "bpl.businessPartner.customer = true AND "
         + "bpl.businessPartner.priceList IS NOT NULL AND "
-        + "bpl.$readableClientCriteria AND "
-        + "bpl.$naturalOrgCriteria AND"
-        + "(bpl.businessPartner.$incrementalUpdateCriteria) "
-        + " and bpl.id in (select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls where bpls.invoiceToAddress = true and bpls.$readableClientCriteria AND "
+        + "bpl.$readableSimpleClientCriteria AND "
+        + "bpl.$naturalOrgCriteria AND "
+        + "(bpl.$incrementalUpdateCriteria"
+        + operator
+        + "bpl.businessPartner.$incrementalUpdateCriteria) "
+        + " and bpl.id in (select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls where bpls.invoiceToAddress = true and bpls.$readableSimpleClientCriteria AND "
         + " bpls.$naturalOrgCriteria group by bpls.businessPartner.id)"
         + " and (ulist.id in (select max(ulist2.id) from ADUser as ulist2 where ulist2.businessPartner is not null group by ulist2.businessPartner))"
         + " GROUP BY " + regularBusinessPartnerHQLProperties.getHqlGroupBy()

@@ -59,7 +59,7 @@ public class BPLocation extends ProcessHQLQuery {
     if (lastUpdated != null) {
       hql += " OR (bploc.locationAddress.$incrementalUpdateCriteria) ";
     }
-    hql += " and bploc.$readableClientCriteria AND " + "bploc.$naturalOrgCriteria "
+    hql += " and bploc.$readableSimpleClientCriteria AND " + "bploc.$naturalOrgCriteria "
         + "ORDER BY bploc.locationAddress.addressLine1";
     hqlQueries.add(hql);
     return hqlQueries;

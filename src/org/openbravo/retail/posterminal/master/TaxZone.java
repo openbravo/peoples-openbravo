@@ -97,7 +97,7 @@ public class TaxZone extends ProcessHQLQuery {
 
     String hql = "select " + regularTaxZoneHQLProperties.getHqlSelect()
         + " from FinancialMgmtTaxZone as financialMgmtTaxZone where "
-        + "financialMgmtTaxZone.$readableClientCriteria AND "
+        + "financialMgmtTaxZone.$readableSimpleClientCriteria AND "
         + "financialMgmtTaxZone.$naturalOrgCriteria AND "
         + "(financialMgmtTaxZone.$incrementalUpdateCriteria) "
         + "and financialMgmtTaxZone.tax in (" + hqlTax + ")";

@@ -123,7 +123,7 @@ public class Product extends ProcessHQLQuery {
             + "  from PricingAdjustment as p left outer join p.obdiscImage img" //
             + " where p.discountType.obposIsCategory = true "//
             + "   and p.discountType.active = true " //
-            + "   and p.$readableClientCriteria"//
+            + "   and p.$readableSimpleClientCriteria"//
             + "   and (p.endingDate is null or p.endingDate >= TO_DATE('"
             + format.format(now.getTime())
             + "', 'yyyy/MM/dd'))" //

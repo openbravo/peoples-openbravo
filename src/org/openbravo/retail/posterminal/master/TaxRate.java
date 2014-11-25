@@ -50,7 +50,7 @@ public class TaxRate extends ProcessHQLQuery {
     final Region fromRegion = storeInfo.getLocationAddress().getRegion();
 
     String hql = "from FinancialMgmtTaxRate as financialMgmtTaxRate where "
-        + "financialMgmtTaxRate.$readableClientCriteria AND "
+        + "financialMgmtTaxRate.$readableSimpleClientCriteria AND "
         + "financialMgmtTaxRate.$naturalOrgCriteria AND "
         + "(financialMgmtTaxRate.$incrementalUpdateCriteria) "
         + "and financialMgmtTaxRate.salesPurchaseType in ('S', 'B') ";
@@ -80,7 +80,7 @@ public class TaxRate extends ProcessHQLQuery {
     } else {
       hql = hql + "and financialMgmtTaxRate.region is null ";
     }
-    hql = hql + "and $readableCriteria order by validFromDate desc ";
+    hql = hql + "and $readableSimpleCriteria order by validFromDate desc ";
 
     return Arrays.asList(new String[] { hql });
   }
