@@ -61,11 +61,11 @@ public class DateTimeUIDefinition extends DateUIDefinition {
       return (String) value;
     }
 
-    StringBuffer convertedValue = convertLocalTimeToUTC((Date) value);
+    StringBuffer convertedValue = convertLocalDateTimeToUTC((Date) value);
     return convertedValue.toString();
   }
 
-  private StringBuffer convertLocalTimeToUTC(Date UTCDate) {
+  private StringBuffer convertLocalDateTimeToUTC(Date UTCDate) {
     StringBuffer localTimeColumnValue = null;
     Calendar now = Calendar.getInstance();
 
