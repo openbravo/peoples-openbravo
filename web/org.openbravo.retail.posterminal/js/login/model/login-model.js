@@ -535,12 +535,14 @@
             OB.MobileApp.model.loadModels(null, true);
             if (me.get('loggedUsingCache')) {
               me.set('loggedUsingCache', false);
+              me.set('isLoggingIn', false);
               me.renderTerminalMain();
             }
           }, 3000);
         } else {
           if (me.get('loggedUsingCache')) {
             me.set('loggedUsingCache', false);
+            me.set('isLoggingIn', false);
             me.renderTerminalMain();
           }
         }
@@ -550,6 +552,7 @@
         setInterval(loadModelsIncFunc, minIncRefresh);
       } else if (me.get('loggedUsingCache')) {
         me.set('loggedUsingCache', false);
+        me.set('isLoggingIn', false);
         me.renderTerminalMain();
       }
     },
