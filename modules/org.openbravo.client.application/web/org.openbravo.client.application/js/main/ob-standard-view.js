@@ -369,6 +369,8 @@ isc.OBStandardView.addProperties({
       if (!lazyFiltering) {
         if (!this.standardWindow.checkIfDefaultSavedView()) {
           this.viewGrid.fetchData(this.viewGrid.getCriteria());
+        } else {
+          this.dataLoadDelayedForDefaultSavedView = true;
         }
       }
       this.refreshContents = false;
