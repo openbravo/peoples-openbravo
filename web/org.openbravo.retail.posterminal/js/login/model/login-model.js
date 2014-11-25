@@ -810,6 +810,11 @@
     databaseCannotBeResetAction: function () {
       OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_ResetNeededNotSafeTitle'), OB.I18N.getLabel('OBPOS_ResetNeededNotSafeMessage', [window.localStorage.getItem('terminalName')]));
     },
+
+    isUserCacheAvailable: function () {
+      return false;
+    },
+   
     dialog: null,
     preLoadContext: function (callback) {
       if (!window.localStorage.getItem('terminalKeyIdentifier') && !window.localStorage.getItem('terminalName') && window.localStorage.getItem('terminalAuthentication') === 'Y') {
