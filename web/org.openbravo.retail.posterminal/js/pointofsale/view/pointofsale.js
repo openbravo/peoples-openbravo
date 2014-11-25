@@ -308,8 +308,8 @@ enyo.kind({
   },
   paidReceipts: function (inSender, inEvent) {
     var receipt = this.model.get('order');
-    if(inEvent.isReturn){
-      if(receipt.get('bp').get('id') !== OB.MobileApp.model.get('businessPartner').get('id')){
+    if (inEvent && inEvent.isReturn) {
+      if (receipt.get('bp').get('id') !== OB.MobileApp.model.get('businessPartner').get('id')) {
         inEvent.bpartner = receipt.get('bp');
       }
     }
