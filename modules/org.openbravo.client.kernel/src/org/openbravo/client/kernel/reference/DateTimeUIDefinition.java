@@ -19,7 +19,6 @@
 package org.openbravo.client.kernel.reference;
 
 import java.text.FieldPosition;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -62,29 +61,25 @@ public class DateTimeUIDefinition extends DateUIDefinition {
       return (String) value;
     }
 
-    StringBuffer convertedValue = convertLocalTimeToUTC(value.toString());
+    StringBuffer convertedValue = convertLocalTimeToUTC((Date) value);
     return convertedValue.toString();
   }
 
-  private StringBuffer convertLocalTimeToUTC(String value) {
+  private StringBuffer convertLocalTimeToUTC(Date UTCDate) {
     StringBuffer localTimeColumnValue = null;
-    try {
-      Date UTCDate = ficDateFormat.parse(value);
-      Calendar now = Calendar.getInstance();
+    Calendar now = Calendar.getInstance();
 
-      Calendar calendar = Calendar.getInstance();
-      calendar.setTime(UTCDate);
-      calendar.set(Calendar.DATE, now.get(Calendar.DATE));
-      calendar.set(Calendar.MONTH, now.get(Calendar.MONTH));
-      calendar.set(Calendar.YEAR, now.get(Calendar.YEAR));
+    Calendar calendar = Calendar.getInstance();
+    calendar.setTime(UTCDate);
+    calendar.set(Calendar.DATE, now.get(Calendar.DATE));
+    calendar.set(Calendar.MONTH, now.get(Calendar.MONTH));
+    calendar.set(Calendar.YEAR, now.get(Calendar.YEAR));
 
-      int gmtMillisecondOffset = (now.get(Calendar.ZONE_OFFSET) + now.get(Calendar.DST_OFFSET));
-      calendar.add(Calendar.MILLISECOND, -gmtMillisecondOffset);
-      localTimeColumnValue = getClassicFormat().format(calendar.getTime(), new StringBuffer(),
-          new FieldPosition(0));
-    } catch (ParseException e) {
-      throw new OBException("Exception when parsing date ", e);
-    }
+    int gmtMillisecondOffset = (now.get(Calendar.ZONE_OFFSET) + now.get(Calendar.DST_OFFSET));
+    calendar.add(Calendar.MILLISECOND, -gmtMillisecondOffset);
+    localTimeColumnValue = getClassicFormat().format(calendar.getTime(), new StringBuffer(),
+        new FieldPosition(0));
+
     return localTimeColumnValue;
   }
 
