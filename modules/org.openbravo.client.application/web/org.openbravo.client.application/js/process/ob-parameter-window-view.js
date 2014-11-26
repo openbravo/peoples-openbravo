@@ -190,14 +190,17 @@ isc.OBParameterWindowView.addProperties({
       } catch (_exception) {
         isc.warn(_exception + ' ' + _exception.message + ' ' + _exception.stack);
       }
-      if (item.getType() === 'OBPickEditGridItem') {
-        if (originalShowIfValue && item.defaultFilter !== null && !isc.isA.emptyObject(item.defaultFilter)) {
-          item.canvas.viewGrid.setFilterEditorCriteria(item.defaultFilter);
-          item.canvas.viewGrid.filterByEditor();
-        } else if (originalShowIfValue && item.canvas && item.canvas.viewGrid && !isc.isA.ResultSet(item.canvas.viewGrid.data)) {
-          // if the item is a grid that has display logic and is being displayed for the 
-          // first time (its data is not a ResultSet), load it 
-          item.canvas.viewGrid.refreshGrid();
+      if (originalShowIfValue && item.getType() === 'OBPickEditGridItem') {
+        // load the grid if it is being shown for the first time
+        if (item.canvas && item.canvas.viewGrid && !isc.isA.ResultSet(item.canvas.viewGrid.data)) {
+          if (item.defaultFilter !== null && !isc.isA.emptyObject(item.defaultFilter)) {
+            // if it has a default filter, apply it and use it when filtering
+            item.canvas.viewGrid.setFilterEditorCriteria(item.defaultFilter);
+            item.canvas.viewGrid.filterByEditor();
+          } else {
+            // if it does not have a default filter, just refresh the grid
+            item.canvas.viewGrid.refreshGrid();
+          }
         }
       }
       if (this.view && this.view.theForm) {
