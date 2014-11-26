@@ -683,6 +683,10 @@
     },
 
     setPrice: function (line, price, options) {
+      if (this.get('isQuotation') && this.get('hasbeenpaid') === 'Y') {
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationClosed'));
+        return;
+      }
       options = options || {};
       options.setUndo = (_.isUndefined(options.setUndo) || _.isNull(options.setUndo) || options.setUndo !== false) ? true : options.setUndo;
 
@@ -1033,6 +1037,10 @@
     },
 
     addPromotion: function (line, rule, discount) {
+      if (this.get('isQuotation') && this.get('hasbeenpaid') === 'Y') {
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationClosed'));
+        return;
+      }
       var promotions = line.get('promotions') || [],
           disc = {},
           i, replaced = false;

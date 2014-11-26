@@ -151,7 +151,8 @@ enyo.kind({
   events: {
     onDeleteLine: '',
     onEditLine: '',
-    onReturnLine: ''
+    onReturnLine: '',
+    onShowPopup: ''
   },
   handlers: {
     onCheckBoxBehaviorForTicketLine: 'checkBoxBehavior'
@@ -203,6 +204,12 @@ enyo.kind({
           classes: 'btnlink-orange',
           tap: function () {
             var me = this;
+            if (me.owner.receipt.get('isQuotation') && me.owner.receipt.get('hasbeenpaid') === 'Y') {
+              me.owner.doShowPopup({
+                popup: 'modalNotEditableOrder'
+              });
+              return;
+            }
             OB.UTIL.Approval.requestApproval(
             me.model, 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
               if (approved) {
@@ -229,6 +236,12 @@ enyo.kind({
           i18nContent: 'OBPOS_LblDescription',
           classes: 'btnlink-orange',
           tap: function () {
+            if (this.owner.receipt.get('isQuotation') && this.owner.receipt.get('hasbeenpaid') === 'Y') {
+              this.owner.doShowPopup({
+                popup: 'modalNotEditableOrder'
+              });
+              return;
+            }
             this.owner.doEditLine({
               line: this.owner.line
             });
