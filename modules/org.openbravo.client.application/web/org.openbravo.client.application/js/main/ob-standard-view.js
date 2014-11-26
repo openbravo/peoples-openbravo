@@ -1360,6 +1360,11 @@ isc.OBStandardView.addProperties({
       if (this.isActiveView()) {
         this.viewForm.focus();
       }
+      if (this.viewForm.getFocusItem() && this.viewForm.getFocusItem().type === 'OBAuditSectionItem') {
+        // if the does not have any editable fields, the first OBAuditSectionItem will be focused
+        // in that case move the form scroll to the top to show the first batch of fields (see issue https://issues.openbravo.com/view.php?id=28231)
+        this.formContainerLayout.scrollToTop();
+      }
       this.isShowingForm = true;
     } else {
       this.statusBarFormLayout.hide();
