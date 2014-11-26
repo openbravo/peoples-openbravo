@@ -305,9 +305,11 @@ public abstract class FIN_BankStatementImport {
     OBContext.setAdminMode();
     try {
       whereClause.append(" as bsl ");
-      whereClause.append(" where translate(bsl." + FIN_BankStatementLine.PROPERTY_BPARTNERNAME
-          + ",'0123456789', '          ') = translate( ?,'0123456789', '          ')");
-      parameters.add(partnername);
+      whereClause
+          .append(" where translate(replace(bsl."
+              + FIN_BankStatementLine.PROPERTY_BPARTNERNAME
+              + ",' ', ''),'0123456789', '          ') = translate( replace(?,' ',''),'0123456789', '          ')");
+      parameters.add(partnername.replaceAll("\\r\\n|\\r|\\n", " "));
       whereClause.append(" and (bsl." + FIN_BankStatementLine.PROPERTY_BUSINESSPARTNER
           + " is not null or bsl." + FIN_BankStatementLine.PROPERTY_GLITEM + " is not null)");
       whereClause.append(" and bsl." + FIN_BankStatementLine.PROPERTY_BANKSTATEMENT + ".");
@@ -321,7 +323,7 @@ public abstract class FIN_BankStatementImport {
       final OBQuery<FIN_BankStatementLine> bsl = OBDal.getInstance().createQuery(
           FIN_BankStatementLine.class, whereClause.toString(), parameters);
       bsl.setFilterOnReadableOrganization(false);
-      // Just look in las 10 matches
+      // Just look in 10 matches
       bsl.setMaxResult(10);
       for (FIN_BankStatementLine line : bsl.list()) {
         if (line.getGLItem() != null && "".equals(result.get("GLItemID"))) {
