@@ -219,18 +219,45 @@ enyo.kind({
           break;
         }
       }
-      myWindowModel.addPayment(new OB.Model.PaymentLine({
-        kind: me.paymenttype,
-        name: OB.MobileApp.model.getPaymentName(me.paymenttype),
-        amount: OB.DEC.number(me.amount),
-        rate: p.rate,
-        mulrate: p.mulrate,
-        isocode: p.isocode,
-        isCash: isCash,
-        allowOpenDrawer: allowOpenDrawer,
-        openDrawer: openDrawer,
-        printtwice: printtwice
-      }));
+      // Calculate total amount to pay with selected PaymentMethod  
+      var amountToPay = me.amount;
+      var receiptToPay = myWindowModel.isValidMultiOrderState() ? multiOrders : receipt;
+      if (receiptToPay.get("payments").length > 0) {
+        receiptToPay.get("payments").each(function (item) {
+          if (item.get("kind") === me.paymenttype) {
+            amountToPay += item.get("amount");
+          }
+        });
+      }
+      // Check Max. Limit Amount
+      var paymentMethod = OB.POS.terminal.terminal.paymentnames[this.paymenttype].paymentMethod;
+      if (paymentMethod.maxLimitAmount && amountToPay > paymentMethod.maxLimitAmount) {
+        // Show error and abort payment
+        this.bubble('onMaxLimitAmountError', {
+          show: true,
+          maxLimitAmount: paymentMethod.maxLimitAmount,
+          currency: paymentMethod.currency$_identifier === 'EUR' ? '€' : paymentMethod.currency$_identifier
+        });
+      } else {
+        // Hide error and process payment
+        this.bubble('onMaxLimitAmountError', {
+          show: false,
+          maxLimitAmount: 0,
+          currency: ''
+        });
+        myWindowModel.addPayment(new OB.Model.PaymentLine({
+          kind: me.paymenttype,
+          name: OB.MobileApp.model.getPaymentName(me.paymenttype),
+          amount: OB.DEC.number(me.amount),
+          rate: p.rate,
+          mulrate: p.mulrate,
+          isocode: p.isocode,
+          isCash: isCash,
+          allowOpenDrawer: allowOpenDrawer,
+          openDrawer: openDrawer,
+          printtwice: printtwice
+        }));
+      }
     }
   }
 });

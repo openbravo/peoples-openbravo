@@ -64,6 +64,7 @@ enyo.kind({
     onStatusChanged: 'statusChanged',
     onLayaways: 'layaways',
     onChangeSalesRepresentative: 'changeSalesRepresentative',
+    onMaxLimitAmountError: 'maxLimitAmountError',
     onMultiOrders: 'multiOrders',
     onSelectMultiOrders: 'selectMultiOrders',
     onRemoveMultiOrders: 'removeMultiOrders',
@@ -860,6 +861,10 @@ enyo.kind({
     this.doShowPopup({
       popup: 'modalMultiOrders'
     });
+    return true;
+  },
+  maxLimitAmountError: function (inSender, inEvent) {
+    this.waterfallDown('onMaxLimitAmountError', inEvent);
     return true;
   },
   selectBrand: function (inSender, inEvent) {

@@ -103,18 +103,43 @@ enyo.kind({
           }
         });
       } else {
-        this.model.addPayment(new OB.Model.PaymentLine({
-          'kind': key,
-          'name': name,
-          'amount': amount,
-          'rate': rate,
-          'mulrate': mulrate,
-          'isocode': isocode,
-          'allowOpenDrawer': paymentMethod.allowopendrawer,
-          'isCash': paymentMethod.iscash,
-          'openDrawer': paymentMethod.openDrawer,
-          'printtwice': paymentMethod.printtwice
-        }));
+        // Calculate total amount to pay with selected PaymentMethod  
+        var amountToPay = amount;
+        if (receiptToPay.get("payments").length > 0) {
+          receiptToPay.get("payments").each(function (item) {
+            if (item.get("kind") === key) {
+              amountToPay += item.get("amount");
+            }
+          });
+        }
+        // Check Max. Limit Amount
+        if (paymentMethod.maxLimitAmount && amountToPay > paymentMethod.maxLimitAmount) {
+          // Show error and abort payment
+          this.bubble('onMaxLimitAmountError', {
+            show: true,
+            maxLimitAmount: paymentMethod.maxLimitAmount,
+            currency: paymentMethod.currency$_identifier === 'EUR' ? '€' : paymentMethod.currency$_identifier
+          });
+        } else {
+          // Hide error and process payment
+          this.bubble('onMaxLimitAmountError', {
+            show: false,
+            maxLimitAmount: 0,
+            currency: ''
+          });
+          this.model.addPayment(new OB.Model.PaymentLine({
+            'kind': key,
+            'name': name,
+            'amount': amount,
+            'rate': rate,
+            'mulrate': mulrate,
+            'isocode': isocode,
+            'allowOpenDrawer': paymentMethod.allowopendrawer,
+            'isCash': paymentMethod.iscash,
+            'openDrawer': paymentMethod.openDrawer,
+            'printtwice': paymentMethod.printtwice
+          }));
+        }
       }
     }
   },

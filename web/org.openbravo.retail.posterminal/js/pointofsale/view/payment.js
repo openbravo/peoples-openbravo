@@ -15,7 +15,8 @@ enyo.kind({
     receipt: null
   },
   handlers: {
-    onButtonStatusChanged: 'buttonStatusChanged'
+    onButtonStatusChanged: 'buttonStatusChanged',
+    onMaxLimitAmountError: 'maxLimitAmountError'
   },
   getSelectedPayment: function () {
     if (this.receipt && this.receipt.selectedPayment) {
@@ -28,6 +29,14 @@ enyo.kind({
     payment = inEvent.value.payment || OB.MobileApp.model.paymentnames[OB.MobileApp.model.get('paymentcash')];
     if (_.isUndefined(payment)) {
       return true;
+    }
+    // Clear limit amount error when click on PaymentMethod button
+    if (OB.POS.terminal.terminal.paymentnames[inEvent.value.status]) {
+      this.bubble('onMaxLimitAmountError', {
+        show: false,
+        maxLimitAmount: 0,
+        currency: ''
+      });
     }
     isMultiOrders = this.model.isValidMultiOrderState();
     change = this.model.getChange();
@@ -50,6 +59,28 @@ enyo.kind({
     if (this.receipt.get('isLayaway')) {
       this.$.layawayaction.updateVisibility(true);
     }
+  },
+  maxLimitAmountError: function (inSender, inEvent) {
+    var maxHeight;
+    if (inEvent.show) {
+      maxHeight = 115;
+      this.$.errorMaxlimitamount.setContent(OB.I18N.getLabel('OBPOS_PaymentMaxLimitAmount', [inEvent.maxLimitAmount, inEvent.currency]));
+    } else {
+      maxHeight = 150;
+      this.$.errorMaxlimitamount.setContent('');
+    }
+    // Resize scroll area to fix parent panel
+    var component = this.model.isValidMultiOrderState() ? this.$.multiPayments : this.$.payments;
+    if (component.$.tempty.getShowing()) {
+      maxHeight -= component.$.tempty.getBounds().height;
+    }
+    component.$.scrollArea.setStyle("height: " + maxHeight + "px");
+    // Scroll to bottom
+    var height = 0;
+    component.$.tbody.children.forEach(function (line) {
+      height += line.getBounds().height;
+    });
+    component.$.scrollArea.setScrollTop(height - maxHeight);
   },
   components: [{
     style: 'background-color: #363636; color: white; height: 200px; margin: 5px; padding: 5px; position: relative;',
@@ -146,6 +177,12 @@ enyo.kind({
         }]
       }]
 
+    }, {
+      classes: 'span12',
+      components: [{
+        name: 'errorMaxlimitamount',
+        style: 'color: red'
+      }]
     }]
   }],
 
@@ -655,7 +692,11 @@ enyo.kind({
       this.deleting = true;
       this.removeClass('btn-icon-clearPayment');
       this.addClass('btn-icon-loading');
-
+      this.bubble('onMaxLimitAmountError', {
+        show: false,
+        maxLimitAmount: 0,
+        currency: ''
+      });
       this.doRemovePayment({
         payment: this.owner.model,
         removeCallback: function () {
