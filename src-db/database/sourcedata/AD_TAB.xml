@@ -17692,7 +17692,7 @@ AND e.pending <> 0]]></HQLWHERECLAUSE>
 <!--B01BFDF1E6B24CF4941807CA7F77A073-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--B01BFDF1E6B24CF4941807CA7F77A073-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--B01BFDF1E6B24CF4941807CA7F77A073-->  <HQLORDERBYCLAUSE><![CDATA[obSelected desc, io.movementDate desc, io.documentNo desc, iol.lineNo]]></HQLORDERBYCLAUSE>
-<!--B01BFDF1E6B24CF4941807CA7F77A073-->  <HQLFILTERCLAUSE><![CDATA[(io.movementDate >= (now() - 90) or (io.salesTransaction =false and case when (select ('Y') from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol) is null then false else true end = true))]]></HQLFILTERCLAUSE>
+<!--B01BFDF1E6B24CF4941807CA7F77A073-->  <HQLFILTERCLAUSE><![CDATA[(io.movementDate >= (now() - 90) or (case when (select ('Y') from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol) is null then false else true end) = true)]]></HQLFILTERCLAUSE>
 <!--B01BFDF1E6B24CF4941807CA7F77A073-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--B01BFDF1E6B24CF4941807CA7F77A073-->  <DISABLE_PARENT_KEY_PROPERTY><![CDATA[N]]></DISABLE_PARENT_KEY_PROPERTY>
 <!--B01BFDF1E6B24CF4941807CA7F77A073-->  <ISREADONLYTREE><![CDATA[N]]></ISREADONLYTREE>
