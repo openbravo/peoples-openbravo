@@ -113,7 +113,11 @@ public class ReportingUtils {
         log.debug("list of parameters available in the jasper report");
         for (Iterator<String> keys = parameters.keySet().iterator(); keys.hasNext();) {
           String key = keys.next();
-          log.debug("parameter name: " + key + " value: " + parameters.get(key).toString());
+          String value = "null";
+          if (parameters.get(key) != null) {
+            value = parameters.get(key).toString();
+          }
+          log.debug("parameter name: " + key + " value: " + value);
         }
       }
 
