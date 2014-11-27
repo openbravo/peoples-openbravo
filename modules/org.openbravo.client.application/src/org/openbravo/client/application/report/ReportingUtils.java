@@ -21,6 +21,7 @@ package org.openbravo.client.application.report;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.Iterator;
 import java.util.Map;
 
 import net.sf.jasperreports.engine.JREmptyDataSource;
@@ -46,11 +47,14 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.utility.FileType;
 import org.openbravo.service.db.DalConnectionProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ReportingUtils {
   public static final String JASPER_PARAM_OBCONTEXT = "jasper_obContext";
   public static final String JASPER_PARAM_HBSESSION = "jasper_hbSession";
   public static final String JASPER_PARAM_PROCESS = "jasper_process";
+  private static final Logger log = LoggerFactory.getLogger(ReportingUtils.class);
 
   public static String exportJR(ReportDefinition report, Map<String, Object> parameters,
       String strFileName, String jasperFilePath, ExportType expType) {
@@ -103,6 +107,14 @@ public class ReportingUtils {
         // start using the virtualizer when having more than 100 pages of data
         virtualizer = new JRSwapFileVirtualizer(100, swap);
         parameters.put(JRParameter.REPORT_VIRTUALIZER, virtualizer);
+      }
+
+      if (log.isDebugEnabled()) {
+        log.debug("list of parameters available in the jasper report");
+        for (Iterator<String> keys = parameters.keySet().iterator(); keys.hasNext();) {
+          String key = keys.next();
+          log.debug("parameter name: " + key + " value: " + parameters.get(key).toString());
+        }
       }
 
       JasperPrint jasperPrint = null;
