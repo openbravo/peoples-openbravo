@@ -114,8 +114,8 @@ public class ResetAccounting {
               String exceptionsSql = myQuery + consDate.toString();
               consDate
                   .append(" and not exists (select a from FinancialMgmtAccountingFact a where a.recordID = e.recordID and a.table.id = e.table.id and (a.accountingDate < :dateFrom or a.accountingDate > :dateTo))");
-              final Query query = OBDal.getInstance().getSession().createQuery(
-                  myQuery + consDate.toString());
+              final Query query = OBDal.getInstance().getSession()
+                  .createQuery(myQuery + consDate.toString());
               if (recordId != null && !"".equals(recordId)) {
                 query.setString("recordId", recordId);
               }
@@ -186,10 +186,13 @@ public class ResetAccounting {
           obc.add(Restrictions.eq(AccountingFact.PROPERTY_RECORDID, recordId));
           obc.add(Restrictions.eq(AccountingFact.PROPERTY_TABLE, table));
           if (obc.list().size() == 0) {
+            String tableName = table.getDBTableName();
+            String tableIdName = table.getDBTableName() + "_Id";
             String strUpdate = "update "
-                + table.getName()
-                + " set posted='N', processNow=false where (posted<>'N' or posted is null or processNow = false) and id = :recordID ";
-            final Query update = OBDal.getInstance().getSession().createQuery(strUpdate);
+                + tableName
+                + " set posted='N', processing='N' where (posted<>'N' or posted is null or processing='N') and "
+                + tableIdName + " = :recordID ";
+            final Query update = OBDal.getInstance().getSession().createSQLQuery(strUpdate);
             update.setParameter("recordID", recordId);
             updated = update.executeUpdate();
             return results;
@@ -212,6 +215,7 @@ public class ResetAccounting {
       return result;
     }
     String tableName = "";
+    String tableIdName = "";
     OBContext.setAdminMode(false);
     try {
       // First undo date balancing for those balanced entries
@@ -226,12 +230,14 @@ public class ResetAccounting {
       updateBalanced.setString("clientId", client);
       int balancedUpdated = updateBalanced.executeUpdate();
       Table table = OBDal.getInstance().get(Table.class, tableId);
-      tableName = table.getName();
+      tableName = table.getDBTableName();
+      tableIdName = table.getDBTableName() + "_Id";
       String strUpdate = "update "
           + tableName
-          + " set posted='N', processNow=false where (posted<>'N' or posted is null or processNow = false) and id in (:transactions) ";
+          + " set posted='N', processing='N' where (posted<>'N' or posted is null or processing='N') and "
+          + tableIdName + " in (:transactions) ";
       String strDelete = "delete from FinancialMgmtAccountingFact where table.id = :tableId and recordID in (:transactions) and client.id=:clientId";
-      final Query update = OBDal.getInstance().getSession().createQuery(strUpdate);
+      final Query update = OBDal.getInstance().getSession().createSQLQuery(strUpdate);
       update.setParameterList("transactions", transactions);
       int updated = update.executeUpdate();
       final Query delete = OBDal.getInstance().getSession().createQuery(strDelete);
@@ -498,10 +504,10 @@ public class ResetAccounting {
       OBCriteria<AccountingFact> factCrit = OBDal.getInstance()
           .createCriteria(AccountingFact.class);
       factCrit.add(Restrictions.eq(AccountingFact.PROPERTY_RECORDID, transaction));
-      factCrit.add(Restrictions.eq(AccountingFact.PROPERTY_TABLE, OBDal.getInstance().get(
-          Table.class, table)));
-      factCrit.add(Restrictions.eq(AccountingFact.PROPERTY_CLIENT, OBDal.getInstance().get(
-          Client.class, client)));
+      factCrit.add(Restrictions.eq(AccountingFact.PROPERTY_TABLE,
+          OBDal.getInstance().get(Table.class, table)));
+      factCrit.add(Restrictions.eq(AccountingFact.PROPERTY_CLIENT,
+          OBDal.getInstance().get(Client.class, client)));
       List<AccountingFact> facts = factCrit.list();
       Set<Date> exceptionDates = new HashSet<Date>();
       for (AccountingFact fact : facts) {
