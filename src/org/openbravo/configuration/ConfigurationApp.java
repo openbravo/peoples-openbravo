@@ -642,7 +642,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         int keyLast = 0;
         isChangeL = false;
         Iterator<Integer> optionBBDDlast = optionLast.keySet().iterator();
-        optionMod = optionMod - optionFirst.size() - optionPostgreSQL.size();
+        optionMod = optionMod - optionFirst.size() - numOptionsDDBB;
         while ((optionBBDDlast.hasNext() && !isChangeL)) {
           keyLast = optionBBDDlast.next();
           if (keyLast == optionMod - 1) {
