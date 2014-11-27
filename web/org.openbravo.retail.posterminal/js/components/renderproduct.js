@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global enyo */
+/*global enyo, _ */
 
 enyo.kind({
   name: 'OB.UI.RenderProduct',
@@ -32,6 +32,10 @@ enyo.kind({
     style: 'float: left; width: 38%; ',
     components: [{
       name: 'identifier'
+    }, {
+      style: 'color: #888888',
+      name: 'filterAttr',
+      allowHtml: true
     }]
   }, {
     name: 'price',
@@ -49,7 +53,19 @@ enyo.kind({
   }],
   initComponents: function () {
     this.inherited(arguments);
+    // Build filter info from filter attributes
+    var filterTxt = '',
+        filterAttr = this.model.get("filterAttr");
+    if (filterAttr && _.isArray(filterAttr) && filterAttr.length > 0) {
+      filterAttr.forEach(function (attr) {
+        if (filterTxt !== '') {
+          filterTxt = filterTxt + attr.separator;
+        }
+        filterTxt = filterTxt + attr.value;
+      });
+    }
     this.$.identifier.setContent(this.setIdentifierContent());
+    this.$.filterAttr.setContent(filterTxt);
     if (this.model.get('showchdesc')) {
       this.$.bottonLine.setContent(this.model.get('characteristicDescription'));
     }

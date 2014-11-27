@@ -71,6 +71,7 @@ enyo.kind({
     onRightToolDisabled: 'rightToolbarDisabled',
     onSelectCharacteristicValue: 'selectCharacteristicValue',
     onSelectBrand: 'selectBrand',
+    onSelectFilter: 'selectFilter',
     onShowLeftHeader: 'doShowLeftHeader',
     onWarehouseSelected: 'warehouseSelected',
     onClearUserInput: 'clearUserInput'
@@ -187,6 +188,9 @@ enyo.kind({
     }, {
       kind: 'OB.UI.ModalProductBrand',
       name: "modalproductbrand"
+    }, {
+      kind: 'OB.UI.ModalSearchFilterBuilder',
+      name: 'modalsearchfilterbuilder'
     }]
   }, {
     name: 'mainSubWindow',
@@ -871,6 +875,9 @@ enyo.kind({
     this.waterfall('onUpdateBrandFilter', {
       value: inEvent
     });
+  },
+  selectFilter: function (inSender, inEvent) {
+    this.waterfall('onCustomFilterUpdate', inEvent);
   },
   warehouseSelected: function (inSender, inEvent) {
     this.waterfall('onModifyWarehouse', inEvent);

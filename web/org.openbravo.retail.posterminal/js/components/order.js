@@ -66,7 +66,7 @@ enyo.kind({
   handlers: {
     onCheckBoxBehaviorForTicketLine: 'checkBoxForTicketLines'
   },
-  style: 'position: relative; padding: 10px;',
+  style: 'position: relative; padding: 10px; height: 35px',
   components: [{
     name: 'lblTotal',
     style: 'float: left; width: 40%;'
@@ -81,6 +81,11 @@ enyo.kind({
   }],
   renderTotal: function (newTotal) {
     this.$.totalgross.setContent(OB.I18N.formatCurrency(newTotal));
+    OB.MobileApp.model.hookManager.executeHooks('OBPOS_UpdateTotalReceiptLine', {
+      totalline: this
+    }, function (args) {
+      //All should be done in module side
+    });
   },
   renderQty: function (newQty) {
     this.$.totalqty.setContent(newQty);
@@ -99,6 +104,11 @@ enyo.kind({
   initComponents: function () {
     this.inherited(arguments);
     this.$.lblTotal.setContent(OB.I18N.getLabel('OBPOS_LblTotal'));
+    OB.MobileApp.model.hookManager.executeHooks('OBPOS_RenderTotalReceiptLine', {
+      totalline: this
+    }, function (args) {
+      //All should be done in module side
+    });
   }
 });
 

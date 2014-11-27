@@ -830,6 +830,11 @@
             }
             if (args.line) {
               args.receipt.addUnit(args.line, args.qty);
+              if (!_.isUndefined(args.attrs)) {
+                _.each(_.keys(args.attrs), function (key) {
+                  args.line.set(key, attrs[key]);
+                });
+              }
               args.line.trigger('selected', args.line);
               line = args.line;
               newLine = false;
@@ -1173,6 +1178,7 @@
         }
       }
       var newline = new OrderLine({
+        id: OB.Dal.get_uuid(),
         product: p,
         uOM: p.get('uOM'),
         qty: OB.DEC.number(units),

@@ -311,6 +311,7 @@ enyo.kind({
   tap: function () {
     OB.MobileApp.view.scanningFocus(false);
     if (this.disabled === false) {
+      OB.UI.SearchProductCharacteristic.prototype.filtersCustomClear();
       this.doTabChange({
         tabPanel: this.tabPanel,
         keyboard: false,
