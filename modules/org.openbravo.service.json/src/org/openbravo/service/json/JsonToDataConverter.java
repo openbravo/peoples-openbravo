@@ -47,6 +47,7 @@ import org.openbravo.base.model.domaintype.BigDecimalDomainType;
 import org.openbravo.base.model.domaintype.BinaryDomainType;
 import org.openbravo.base.model.domaintype.EncryptedStringDomainType;
 import org.openbravo.base.model.domaintype.HashedStringDomainType;
+import org.openbravo.base.model.domaintype.ProductCharacteristicsDomainType;
 import org.openbravo.base.model.domaintype.TimestampDomainType;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
@@ -227,6 +228,10 @@ public class JsonToDataConverter {
         }
       } else if (value instanceof String && property.getDomainType() instanceof BinaryDomainType) {
         return Base64.decodeBase64((String) value);
+      } else if (property.getDomainType() instanceof ProductCharacteristicsDomainType) {
+        // under certain conditions the Product Characteristics value needs to be fixed
+        // see issue https://issues.openbravo.com/view.php?id=28187
+        return ProductCharacteristicsDomainType.fixValue(value);
       }
       return value;
     } catch (Exception e) {

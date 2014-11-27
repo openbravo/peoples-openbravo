@@ -6113,7 +6113,7 @@ There is no any kind of timezone conversion. The stored date-time does not have 
 <!--C632F1CFF5A1453EB28BDF44A70478F8-->  <NAME><![CDATA[Product Characteristics]]></NAME>
 <!--C632F1CFF5A1453EB28BDF44A70478F8-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--C632F1CFF5A1453EB28BDF44A70478F8-->  <ISBASEREFERENCE><![CDATA[Y]]></ISBASEREFERENCE>
-<!--C632F1CFF5A1453EB28BDF44A70478F8-->  <MODEL_IMPL><![CDATA[org.openbravo.base.model.domaintype.StringDomainType]]></MODEL_IMPL>
+<!--C632F1CFF5A1453EB28BDF44A70478F8-->  <MODEL_IMPL><![CDATA[org.openbravo.base.model.domaintype.ProductCharacteristicsDomainType]]></MODEL_IMPL>
 <!--C632F1CFF5A1453EB28BDF44A70478F8-->  <WAD_IMPL><![CDATA[org.openbravo.wad.controls.WADText]]></WAD_IMPL>
 <!--C632F1CFF5A1453EB28BDF44A70478F8-->  <UI_IMPL><![CDATA[org.openbravo.reference.ui.UIText]]></UI_IMPL>
 <!--C632F1CFF5A1453EB28BDF44A70478F8-->  <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
