@@ -38,6 +38,16 @@ isc.ClassFactory.defineClass('<#if !data.popup>processDefinition</#if>${data.win
     <#if button_index == 0>buttons:{</#if>
     '${button.searchKey?js_string}':'${button.name?js_string}'<#if button_has_next>,<#else>},</#if>
     </#list>
+    <#if data.report>
+        isReport: true,
+        reportId: '${data.reportId?js_string}',
+        <#if data.pdfExport>
+            pdfExport: true,
+        </#if>
+        <#if data.xlsExport>
+            xlsExport: true,
+        </#if>
+    </#if>
     viewProperties: {
       fields: [
     <#list data.paramHandler.parameters as param>

@@ -25,12 +25,14 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.Process;
+import org.openbravo.client.application.ReportDefinition;
 import org.openbravo.client.kernel.BaseTemplateComponent;
 import org.openbravo.client.kernel.KernelConstants;
 import org.openbravo.client.kernel.Template;
@@ -149,6 +151,41 @@ public class ParameterWindowComponent extends BaseTemplateComponent {
       }
     }
     return new ArrayList<org.openbravo.model.ad.domain.List>();
+  }
+
+  public boolean isReport() {
+    return "OBUIAPP_Report".equals(process.getUIPattern());
+  }
+
+  public String getReportId() {
+    ReportDefinition report = getReportDefinition();
+    if (report == null) {
+      return "";
+    }
+    return report.getId();
+  }
+
+  public boolean isXlsExport() {
+    ReportDefinition report = getReportDefinition();
+    if (report == null) {
+      return false;
+    }
+    return StringUtils.isNotEmpty(report.getXLSTemplate()) || report.isUsePDFAsXLSTemplate();
+  }
+
+  public boolean isPdfExport() {
+    ReportDefinition report = getReportDefinition();
+    if (report == null) {
+      return false;
+    }
+    return StringUtils.isNotEmpty(report.getPDFTemplate());
+  }
+
+  private ReportDefinition getReportDefinition() {
+    if (process.getOBUIAPPReportList().isEmpty()) {
+      return null;
+    }
+    return process.getOBUIAPPReportList().get(0);
   }
 
   public String getDynamicColumns() {

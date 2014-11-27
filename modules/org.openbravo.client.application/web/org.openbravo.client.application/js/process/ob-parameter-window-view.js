@@ -44,6 +44,11 @@ isc.OBParameterWindowView.addProperties({
 
   addNewButton: null,
 
+  isReport: false,
+  reportId: null,
+  pdfExport: false,
+  xlsExport: false,
+
   gridFields: [],
   members: [],
 
@@ -83,6 +88,20 @@ isc.OBParameterWindowView.addProperties({
       click: actionClick
     });
 
+    this.pdfButton = isc.OBFormButton.create({
+      title: OB.I18N.getLabel('OBUIAPP_PDFExport'),
+      realTitle: '',
+      _buttonValue: 'PDF',
+      click: actionClick
+    });
+
+    this.xlsButton = isc.OBFormButton.create({
+      title: OB.I18N.getLabel('OBUIAPP_XLSExport'),
+      realTitle: '',
+      _buttonValue: 'XLS',
+      click: actionClick
+    });
+
     if (this.popup) {
       buttonLayout.push(isc.LayoutSpacer.create({}));
     }
@@ -109,13 +128,22 @@ isc.OBParameterWindowView.addProperties({
         }
       }
     } else {
-      buttonLayout.push(this.okButton);
-      // TODO: check if this is used, and remove as it is already registered
-      OB.TestRegistry.register('org.openbravo.client.application.process.pickandexecute.button.ok', this.okButton);
-      if (this.popup) {
-        buttonLayout.push(isc.LayoutSpacer.create({
-          width: 32
-        }));
+      if (this.isReport) {
+        if (this.pdfExport) {
+          buttonLayout.push(this.pdfButton);
+        }
+        if (this.xlsExport) {
+          buttonLayout.push(this.xlsButton);
+        }
+      } else {
+        buttonLayout.push(this.okButton);
+        // TODO: check if this is used, and remove as it is already registered
+        OB.TestRegistry.register('org.openbravo.client.application.process.pickandexecute.button.ok', this.okButton);
+        if (this.popup) {
+          buttonLayout.push(isc.LayoutSpacer.create({
+            width: 32
+          }));
+        }
       }
     }
 
@@ -253,7 +281,15 @@ isc.OBParameterWindowView.addProperties({
 
 
     if (this.popup) {
-      this.firstFocusedItem = this.okButton;
+      if (this.isReport) {
+        if (this.pdfExport) {
+          this.firstFocusedItem = this.pdfButton;
+        } else if (this.xlsExport) {
+          this.firstFocusedItem = this.xlsButton;
+        }
+      } else {
+        this.firstFocusedItem = this.okButton;
+      }
       this.popupButtons = isc.HLayout.create({
         align: 'center',
         width: '100%',
@@ -458,6 +494,7 @@ isc.OBParameterWindowView.addProperties({
       me.showProcessing(true);
       OB.RemoteCallManager.call(me.actionHandler, allProperties, {
         processId: me.processId,
+        reportId: me.reportId,
         windowId: me.windowId
       }, function (rpcResponse, data, rpcRequest) {
         view.handleResponse(true, (data && data.message), (data && data.responseActions), (data && data.retryExecution), data);
@@ -530,6 +567,8 @@ isc.OBParameterWindowView.addProperties({
     this.theForm.markForRedraw();
 
     this.okButton.setEnabled(this.allRequiredParametersSet());
+    this.pdfButton.setEnabled(this.allRequiredParametersSet());
+    this.xlsButton.setEnabled(this.allRequiredParametersSet());
 
     this.handleDisplayLogicForGridColumns();
   },

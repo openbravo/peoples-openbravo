@@ -293,6 +293,10 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/process/ob-parameter-window-view.js", false));
 
+    // Reporting
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/report/ob-reporting-action.js", false));
+
     // Return Material
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/return-material/ob-return-material.js", false));
