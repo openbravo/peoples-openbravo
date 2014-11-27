@@ -33,6 +33,7 @@ import javax.mail.internet.MimeUtility;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -106,6 +107,8 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
 
     JSONObject result = new JSONObject();
     try {
+      result.put("retryExecution", true);
+      result.put("showResultsInProcessView", true);
 
       final JSONObject jsonContent = new JSONObject(content);
       final String action = jsonContent.getString(ApplicationConstants.BUTTON_VALUE);
@@ -117,17 +120,17 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
       JSONObject msg = new JSONObject();
       try {
         msg.put("severity", "error");
-        msg.put("message", OBMessageUtils.translateError(e.getMessage()).getMessage());
+        msg.put("text", OBMessageUtils.translateError(e.getMessage()).getMessage());
         result.put("message", msg);
       } catch (JSONException ignore) {
       }
       return result;
-    } catch (JSONException e) {
+    } catch (Exception e) {
       log.error("Error in process", e);
       JSONObject msg = new JSONObject();
       try {
         msg.put("severity", "error");
-        msg.put("message", OBMessageUtils.translateError(e.getMessage()).getMessage());
+        msg.put("text", OBMessageUtils.translateError(e.getMessage()).getMessage());
         result.put("message", msg);
       } catch (JSONException ignore) {
       }
@@ -181,6 +184,20 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
     final ReportDefinition report = OBDal.getInstance().get(ReportDefinition.class,
         parameters.get("reportId"));
     String strFileName = getPDFFileName(report, parameters, expType);
+    String strJRPath = "";
+    switch (expType) {
+    case XLS:
+      strJRPath = report.getXLSTemplate();
+      if (StringUtils.isNotEmpty(strJRPath) || !report.isUsePDFAsXLSTemplate()) {
+        break;
+      }
+    case PDF:
+      strJRPath = report.getPDFTemplate();
+    }
+    if (StringUtils.isEmpty(strJRPath)) {
+      throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoJRTemplateFound"));
+    }
+
     final String jrTemplatePath = DalContextListener.getServletContext().getRealPath(
         report.getPDFTemplate());
     HashMap<String, Object> jrParams = new HashMap<String, Object>();
@@ -203,9 +220,6 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
     final JSONArray actions = new JSONArray();
     actions.put(0, reportAction);
     result.put("responseActions", actions);
-
-    result.put("retryExecution", true);
-    result.put("showResultsInProcessView", true);
   }
 
   private void doValidations(Map<String, Object> parameters, JSONObject jsonContent) {
