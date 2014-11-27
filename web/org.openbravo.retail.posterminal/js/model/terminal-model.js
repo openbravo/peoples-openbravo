@@ -32,10 +32,15 @@
      */
     checkApproval: function (approvalType, username, password, callback) {
       OB.Dal.initCache(OB.Model.Supervisor, [], null, null);
+      var approvalList = [];
+      approvalType.forEach(function (approvalType) {
+        approvalList.push(typeof (approvalType) === 'object' ? approvalType.approval : approvalType);
+      });
+
       new OB.DS.Process('org.openbravo.retail.posterminal.utility.CheckApproval').exec({
         u: username,
         p: password,
-        approvalType: JSON.stringify(approvalType)
+        approvalType: JSON.stringify(approvalList)
       }, enyo.bind(this, function (response, message) {
         var approved = false;
         if (response.exception) {

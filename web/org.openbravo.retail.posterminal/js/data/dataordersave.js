@@ -100,6 +100,13 @@
         receipt.set('created', creationDate.getTime());
         receipt.set('obposCreatedabsolute', OB.I18N.formatDateISO(creationDate));
 
+        receipt.get("approvals").forEach(function (approval) {
+          if (typeof (approval.approvalType) === 'object') {
+            approval.approvalMessage = OB.I18N.getLabel(approval.approvalType.message, approval.approvalType.params);
+            approval.approvalType = approval.approvalType.approval;
+          }
+        });
+
         receipt.set('obposAppCashup', OB.MobileApp.model.get('terminal').cashUpId);
         // convert returns
         if (receipt.getGross() < 0) {
