@@ -62,13 +62,9 @@ isc.OBTimeItem.addProperties({
     if (disabled) {
       this.previousStyleName = this.textBoxStyle;
       this.textBoxStyle = this.textBoxStyle + 'Disabled';
-    } else {
-
-      if (this.textBoxStyle.endsWith("Disabled")) {
-        this.textBoxStyle = (this.previousStyleName || this.textBoxStyle.substring(0, this.textBoxStyle.length - 8));
-        delete this.previousStyleName;
-      }
-
+    } else if (this.textBoxStyle.endsWith('Disabled')) {
+      this.textBoxStyle = (this.previousStyleName || this.textBoxStyle.substring(0, this.textBoxStyle.length - 8));
+      delete this.previousStyleName;
     }
     this.Super('setDisabled', arguments);
   },
