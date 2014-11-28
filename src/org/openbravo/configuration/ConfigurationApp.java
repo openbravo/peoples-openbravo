@@ -53,28 +53,21 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
   private final static String BASEDIR = System.getProperty("user.dir");
   private final static String BASEDIR_CONFIG = BASEDIR + "/config/";
 
-  private final static String OPENBRAVO_PROPERTIES_TEMPLATE = BASEDIR_CONFIG
-      + "Openbravo.properties.template";
   private final static String OPENBRAVO_PROPERTIES = BASEDIR_CONFIG + "Openbravo.properties";
   private final static String OPENBRAVO_PROPERTIES_AUX = BASEDIR_CONFIG
       + "Openbravo.properties.aux";
-  private final static String FORMAT_XML_TEMPLATE = BASEDIR_CONFIG + "Format.xml.template";
   private final static String FORMAT_XML = BASEDIR_CONFIG + "Format.xml";
-  private final static String LOG4J_LCF_TAMPLATE = BASEDIR_CONFIG + "log4j.lcf.template";
   private final static String LOG4J_LCF = BASEDIR_CONFIG + "log4j.lcf";
-  private final static String USERCONFIG_XML_TEMPLATE = BASEDIR_CONFIG + "userconfig.xml.template";
   private final static String USERCONFIG_XML = BASEDIR_CONFIG + "userconfig.xml";
-  private final static String COMMON_COMPONENT_TEMPLATE = ".settings/org.eclipse.wst.common.component.template";
   private final static String COMMON_COMPONENT = ".settings/org.eclipse.wst.common.component";
-  private final static String CLASSPATH_TEMPLATE = ".classpath.template";
   private final static String CLASSPATH = ".classpath";
 
   private final static String OPENBRAVO_LICENSE = BASEDIR + "/legal/Licensing.txt";
   private final static int LINES_SHOWING_LICENSE = 50;
 
-  private int optionMod = 0, numOptionsDDBB = 0, mainOption = 0;
-  private Scanner licenseIn = new Scanner(System.in);
-  private Scanner inp = new Scanner(System.in);
+  private int optionForModify = 0, numberOptionsDDBB = 0, mainFlowOption = 0;
+  private Scanner agreementLicense = new Scanner(System.in);
+  private Scanner infoCollected = new Scanner(System.in);
 
   /**
    * This is the main method that is invoke by ant setup task.
@@ -84,8 +77,8 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     Project p = getProject();
     // Copy templates and rename files
     fileCopySomeTemplates(p);
-    while (mainOption != -1) {
-      switch (mainOption) {
+    while (mainFlowOption != -1) {
+      switch (mainFlowOption) {
       case 0:
         showWelcome(p);
         try {
@@ -111,7 +104,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         askForChangeAnOption(p);
         break;
       case 6:
-        changeOptionFirst(p);
+        changeAnOptionFirst(p);
         break;
       case 7:
         changeAllOptionsDatabase(p, optionOracle);
@@ -126,10 +119,10 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         showFinalMenu(p);
         break;
       case 11:
-        changeOptionDatabase(p);
+        changeAnOptionDatabase(p);
         break;
       case 12:
-        changeOptionLast(p);
+        changeAnOptionLast(p);
         break;
       case 20:
         // All options have been selected... configure Openbravo.properties file.
@@ -151,9 +144,8 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
    * @param p
    */
   private void finishConfigurationProcess(Project p) {
-    // TODO Auto-generated method stub
     p.log("---------------------------------------------------------------------------- \n Configuration complete. \n----------------------------------------------------------------------------");
-    mainOption = -1;
+    mainFlowOption = -1;
   }
 
   /**
@@ -170,7 +162,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         entryP.getValue().getOptions(p);
         boolean numberOk = false;
         do {
-          String optionS = inp.nextLine();
+          String optionS = infoCollected.nextLine();
           try {
             int option = Integer.parseInt(optionS);
             if (option >= 0 && option < entryP.getValue().getMax()) {
@@ -191,7 +183,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       } else if (entryP.getValue().getType() == ConfigureOption.TYPE_OPT_STRING) {
         p.log("\nPlease introduce " + entryP.getValue().getAskInfo());
         entryP.getValue().getOptions(p);
-        String optionString = inp.nextLine();
+        String optionString = infoCollected.nextLine();
         if (!optionString.equals("")) {
           entryP.getValue().setChooseString(optionString);
         }
@@ -202,9 +194,9 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     }
     // All information are introduced. Configure now last options
     if (optionLast.isEmpty()) {
-      optionLast = createOP2(p);
+      optionLast = createLastOpenbravoProperties(p);
     }
-    mainOption = 9;
+    mainFlowOption = 9;
   }
 
   /**
@@ -213,8 +205,8 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
    * @param p
    */
   private void closeExitProgram(Project p) {
-    inp.close();
-    licenseIn.close();
+    infoCollected.close();
+    agreementLicense.close();
     p.log("---------------------------------------------------------------------------- \n Thanks for use Openbravo ERP Setup. \n----------------------------------------------------------------------------");
   }
 
@@ -225,19 +217,19 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
    */
   private void reConfirmExit(Project p) {
     p.log("Do you want to exit this program? [y/n]: ");
-    String input = licenseIn.nextLine();
+    String input = agreementLicense.nextLine();
     while (!("Y".equalsIgnoreCase(input) || "N".equalsIgnoreCase(input))) {
       p.log("Please, introduce a correct option. Do you want to exit this program? [y/n]: ");
-      input = licenseIn.nextLine();
+      input = agreementLicense.nextLine();
     }
     if ("Y".equalsIgnoreCase(input)) {
       p.log("---------------------------------------------------------------------------- \n You have not successfully completed the configuration process.");
-      mainOption = -1;
+      mainFlowOption = -1;
     } else if ("N".equalsIgnoreCase(input)) {
       if (optionFirst.isEmpty()) {
-        mainOption = 1;
+        mainFlowOption = 1;
       } else {
-        mainOption = 10;
+        mainFlowOption = 10;
       }
     }
   }
@@ -254,7 +246,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       String keyForFile = keySetIterator.next();
       replaceOptionsProperties(keyForFile + "=", replaceProperties.get(keyForFile), p);
     }
-    mainOption = 21;
+    mainFlowOption = 21;
   }
 
   /**
@@ -263,21 +255,21 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
    * 
    * @param p
    */
-  private void changeOptionLast(Project p) {
+  private void changeAnOptionLast(Project p) {
     int keyLast = 0;
     boolean isChangeL = false;
     Iterator<Integer> optionBBDDlast = optionLast.keySet().iterator();
-    optionMod = optionMod - optionFirst.size() - numOptionsDDBB;
+    optionForModify = optionForModify - optionFirst.size() - numberOptionsDDBB;
     while ((optionBBDDlast.hasNext() && !isChangeL)) {
       keyLast = optionBBDDlast.next();
-      if (keyLast == optionMod - 1) {
+      if (keyLast == optionForModify - 1) {
         ConfigureOption optionChange = optionLast.get(keyLast);
         if (optionChange.getType() == ConfigureOption.TYPE_OPT_CHOOSE) {
           p.log("Please select " + optionChange.getAskInfo());
           optionChange.getOptions(p);
           boolean numberOk = false;
           do {
-            String optionS = inp.nextLine();
+            String optionS = infoCollected.nextLine();
             try {
               int option = Integer.parseInt(optionS);
               if (option >= 0 && option < optionChange.getMax()) {
@@ -298,18 +290,18 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         } else if (optionChange.getType() == ConfigureOption.TYPE_OPT_STRING) {
           p.log("\nPlease introduce " + optionChange.getAskInfo());
           optionChange.getOptions(p);
-          String optionString = inp.nextLine();
+          String optionString = infoCollected.nextLine();
           if (!optionString.equals("")) {
             optionChange.setChooseString(optionString);
           }
         }
-        optionLast.put(optionMod - 1, optionChange);
+        optionLast.put(optionForModify - 1, optionChange);
         p.log("\n-------------------------\nYour choice " + optionChange.getOptionChoose()
             + "\n-------------------------\n\n");
         isChangeL = true;
       }
     }
-    mainOption = 4;
+    mainFlowOption = 4;
   }
 
   /**
@@ -318,24 +310,24 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
    * 
    * @param p
    */
-  private void changeOptionDatabase(Project p) {
+  private void changeAnOptionDatabase(Project p) {
     String optionS, optionString;
     int option;
     if (!optionOracle.isEmpty()) {
       int keyOracle = 0;
       boolean isChangeO = false;
       Iterator<Integer> optionBBDDoracle = optionOracle.keySet().iterator();
-      optionMod = optionMod - optionFirst.size();
+      optionForModify = optionForModify - optionFirst.size();
       while ((optionBBDDoracle.hasNext() && !isChangeO)) {
         keyOracle = optionBBDDoracle.next();
-        if (keyOracle == optionMod - 1) {
+        if (keyOracle == optionForModify - 1) {
           ConfigureOption optionChange = optionOracle.get(keyOracle);
           if (optionChange.getType() == ConfigureOption.TYPE_OPT_CHOOSE) {
             p.log("Please select " + optionChange.getAskInfo());
             optionChange.getOptions(p);
             boolean numberOk = false;
             do {
-              optionS = inp.nextLine();
+              optionS = infoCollected.nextLine();
               try {
                 option = Integer.parseInt(optionS);
                 if (option >= 0 && option < optionChange.getMax()) {
@@ -356,12 +348,12 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
           } else if (optionChange.getType() == ConfigureOption.TYPE_OPT_STRING) {
             p.log("\nPlease introduce " + optionChange.getAskInfo());
             optionChange.getOptions(p);
-            optionString = inp.nextLine();
+            optionString = infoCollected.nextLine();
             if (!optionString.equals("")) {
               optionChange.setChooseString(optionString);
             }
           }
-          optionOracle.put(optionMod - 1, optionChange);
+          optionOracle.put(optionForModify - 1, optionChange);
           p.log("\n-------------------------\nYour choice " + optionChange.getOptionChoose()
               + "\n-------------------------\n\n");
           isChangeO = true;
@@ -371,17 +363,17 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       int keyPostgre = 0;
       boolean isChangeP = false;
       Iterator<Integer> optionBBDDpostgre = optionPostgreSQL.keySet().iterator();
-      optionMod = optionMod - optionFirst.size();
+      optionForModify = optionForModify - optionFirst.size();
       while ((optionBBDDpostgre.hasNext() && !isChangeP)) {
         keyPostgre = optionBBDDpostgre.next();
-        if (keyPostgre == optionMod - 1) {
+        if (keyPostgre == optionForModify - 1) {
           ConfigureOption optionChange = optionPostgreSQL.get(keyPostgre);
           if (optionChange.getType() == ConfigureOption.TYPE_OPT_CHOOSE) {
             p.log("Please select " + optionChange.getAskInfo());
             optionChange.getOptions(p);
             boolean numberOk = false;
             do {
-              optionS = inp.nextLine();
+              optionS = infoCollected.nextLine();
               try {
                 option = Integer.parseInt(optionS);
                 if (option >= 0 && option < optionChange.getMax()) {
@@ -402,19 +394,19 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
           } else if (optionChange.getType() == ConfigureOption.TYPE_OPT_STRING) {
             p.log("\nPlease introduce " + optionChange.getAskInfo());
             optionChange.getOptions(p);
-            optionString = inp.nextLine();
+            optionString = infoCollected.nextLine();
             if (!optionString.equals("")) {
               optionChange.setChooseString(optionString);
             }
           }
-          optionPostgreSQL.put(optionMod - 1, optionChange);
+          optionPostgreSQL.put(optionForModify - 1, optionChange);
           p.log("\n-------------------------\nYour choice " + optionChange.getOptionChoose()
               + "\n-------------------------\n\n");
           isChangeP = true;
         }
       }
     }
-    mainOption = 4;
+    mainFlowOption = 4;
   }
 
   /**
@@ -431,7 +423,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     boolean menuOptionOk = false;
     int optionConfigure = 0;
     do {
-      String menuOptionS = inp.nextLine();
+      String menuOptionS = infoCollected.nextLine();
       try {
         optionConfigure = Integer.parseInt(menuOptionS);
         menuOptionOk = true;
@@ -442,15 +434,15 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     switch (optionConfigure) {
     case 1:
       // Accept
-      mainOption = 20;
+      mainFlowOption = 20;
       break;
     case 2:
       // Preview configuration
-      mainOption = 4;
+      mainFlowOption = 4;
       break;
     case 3:
       // Reconfirm exit
-      mainOption = 22;
+      mainFlowOption = 22;
       break;
     default:
       p.log("Choose a real option: ");
@@ -470,7 +462,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         entryL.getValue().getOptions(p);
         boolean numberOk = false;
         do {
-          String optionS = inp.nextLine();
+          String optionS = infoCollected.nextLine();
           try {
             int option = Integer.parseInt(optionS);
             if (option >= 0 && option < entryL.getValue().getMax()) {
@@ -491,7 +483,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       } else if (entryL.getValue().getType() == ConfigureOption.TYPE_OPT_STRING) {
         p.log("\nPlease introduce " + entryL.getValue().getAskInfo());
         entryL.getValue().getOptions(p);
-        String optionString = inp.nextLine();
+        String optionString = infoCollected.nextLine();
         if (!optionString.equals("")) {
           entryL.getValue().setChooseString(optionString);
         }
@@ -500,7 +492,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       p.log("\n-------------------------\nYour choice " + entryL.getValue().getOptionChoose()
           + "\n-------------------------\n\n");
     }
-    mainOption = 10;
+    mainFlowOption = 10;
   }
 
   /**
@@ -508,20 +500,20 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
    * 
    * @param p
    */
-  private void changeOptionFirst(Project p) {
+  private void changeAnOptionFirst(Project p) {
     int keyOpt = 0;
     boolean isChange = false;
     Iterator<Integer> optionBBDD1 = optionFirst.keySet().iterator();
     while ((optionBBDD1.hasNext() && !isChange)) {
       keyOpt = optionBBDD1.next();
-      if (keyOpt == optionMod - 1) {
+      if (keyOpt == optionForModify - 1) {
         ConfigureOption optionChange = optionFirst.get(keyOpt);
         if (optionChange.getType() == ConfigureOption.TYPE_OPT_CHOOSE) {
           p.log("Please select " + optionChange.getAskInfo());
           optionChange.getOptions(p);
           boolean numberOk = false;
           do {
-            String optionS = inp.nextLine();
+            String optionS = infoCollected.nextLine();
             try {
               int option = Integer.parseInt(optionS);
               if (option >= 0 && option < optionChange.getMax()) {
@@ -542,12 +534,12 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         } else if (optionChange.getType() == ConfigureOption.TYPE_OPT_STRING) {
           p.log("\nPlease introduce " + optionChange.getAskInfo());
           optionChange.getOptions(p);
-          String optionString = inp.nextLine();
+          String optionString = infoCollected.nextLine();
           if (!optionString.equals("")) {
             optionChange.setChooseString(optionString);
           }
         }
-        optionFirst.put(optionMod - 1, optionChange);
+        optionFirst.put(optionForModify - 1, optionChange);
         p.log("\n-------------------------\nYour choice " + optionChange.getOptionChoose()
             + "\n-------------------------\n\n");
         isChange = true;
@@ -557,7 +549,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
           if (searchOptionsProperties(fileO, "bbdd.rdbms", p).equals("POSTGRE")) {
             if (optionOracle.isEmpty()) {
               optionOracle = createOPOracle(p);
-              numOptionsDDBB = optionOracle.size();
+              numberOptionsDDBB = optionOracle.size();
             }
             if (!optionPostgreSQL.isEmpty()) {
               optionPostgreSQL.clear();
@@ -567,7 +559,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
           if (searchOptionsProperties(fileO, "bbdd.rdbms", p).equals("ORACLE")) {
             if (optionPostgreSQL.isEmpty()) {
               optionPostgreSQL = createOPPostgreSQL(p);
-              numOptionsDDBB = optionPostgreSQL.size();
+              numberOptionsDDBB = optionPostgreSQL.size();
             }
             if (!optionOracle.isEmpty()) {
               optionOracle.clear();
@@ -576,7 +568,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         }
       }
     }
-    mainOption = 4;
+    mainFlowOption = 4;
   }
 
   /**
@@ -590,10 +582,11 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     p.log("Choose [0] for continue with configuration or a number option for modify: ");
     boolean menuOptionOk = false;
     do {
-      String menuOptionS = inp.nextLine();
+      String menuOptionS = infoCollected.nextLine();
       try {
-        optionMod = Integer.parseInt(menuOptionS);
-        if (optionMod >= 0 && optionMod <= optionFirst.size() + optionLast.size() + numOptionsDDBB) {
+        optionForModify = Integer.parseInt(menuOptionS);
+        if (optionForModify >= 0
+            && optionForModify <= optionFirst.size() + optionLast.size() + numberOptionsDDBB) {
           menuOptionOk = true;
         } else {
           p.log("Choose a real option: ");
@@ -603,16 +596,17 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       }
     } while (!menuOptionOk);
     // Accept all configuration
-    if (optionMod == 0) {
-      mainOption = 10;
+    if (optionForModify == 0) {
+      mainFlowOption = 10;
       // Options 0 to numberLastOptions + NUM_OPTIONS_LAST, change a particular option
-    } else if (optionMod > 0 && optionMod <= optionFirst.size()) {
-      mainOption = 6;
-    } else if (optionMod > optionFirst.size() && optionMod <= optionFirst.size() + numOptionsDDBB) {
-      mainOption = 11;
-    } else if (optionMod > optionFirst.size() + numOptionsDDBB
-        && optionMod <= optionFirst.size() + optionLast.size() + numOptionsDDBB) {
-      mainOption = 12;
+    } else if (optionForModify > 0 && optionForModify <= optionFirst.size()) {
+      mainFlowOption = 6;
+    } else if (optionForModify > optionFirst.size()
+        && optionForModify <= optionFirst.size() + numberOptionsDDBB) {
+      mainFlowOption = 11;
+    } else if (optionForModify > optionFirst.size() + numberOptionsDDBB
+        && optionForModify <= optionFirst.size() + optionLast.size() + numberOptionsDDBB) {
+      mainFlowOption = 12;
     }
   }
 
@@ -653,7 +647,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
           + entry.getValue().getOptionChoose());
       numberOption = numberOption + 1;
     }
-    mainOption = 5;
+    mainFlowOption = 5;
   }
 
   /**
@@ -670,7 +664,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         entry.getValue().getOptions(p);
         boolean numberOk = false;
         do {
-          String optionS = inp.nextLine();
+          String optionS = infoCollected.nextLine();
           try {
             int option = Integer.parseInt(optionS);
             if (option >= 0 && option < entry.getValue().getMax()) {
@@ -690,7 +684,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       } else if (entry.getValue().getType() == ConfigureOption.TYPE_OPT_STRING) {
         p.log("\nPlease introduce " + entry.getValue().getAskInfo());
         entry.getValue().getOptions(p);
-        String optionString = inp.nextLine();
+        String optionString = infoCollected.nextLine();
         if (!optionString.equals("")) {
           entry.getValue().setChooseString(optionString);
         }
@@ -705,21 +699,21 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     if (typeDDBB.equals("Oracle")) {
       if (optionOracle.isEmpty()) {
         optionOracle = createOPOracle(p);
-        numOptionsDDBB = optionOracle.size();
+        numberOptionsDDBB = optionOracle.size();
       }
       if (!optionPostgreSQL.isEmpty()) {
         optionPostgreSQL.clear();
       }
-      mainOption = 7;
+      mainFlowOption = 7;
     } else if (typeDDBB.equals("PostgreSQL")) {
       if (optionPostgreSQL.isEmpty()) {
         optionPostgreSQL = createOPPostgreSQL(p);
-        numOptionsDDBB = optionPostgreSQL.size();
+        numberOptionsDDBB = optionPostgreSQL.size();
       }
       if (!optionOracle.isEmpty()) {
         optionOracle.clear();
       }
-      mainOption = 8;
+      mainFlowOption = 8;
     }
   }
 
@@ -732,7 +726,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     boolean menuOptionOk = false;
     int menuOption = 3;
     do {
-      String menuOptionS = inp.nextLine();
+      String menuOptionS = infoCollected.nextLine();
       try {
         menuOption = Integer.parseInt(menuOptionS);
         menuOptionOk = true;
@@ -743,7 +737,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     // Create options one-by-one
     if (menuOption == 1) {
       if (optionFirst.isEmpty()) {
-        optionFirst = createOP(p);
+        optionFirst = createOpenbravoProperties(p);
       }
       // Create optionsDDBB
       // Oracle or Postgresql options
@@ -754,16 +748,16 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       } while (!(keyValueS.equals("PostgreSQL") || keyValueS.equals("Oracle")));
       if (keyValueS.equals("Oracle")) {
         optionOracle = createOPOracle(p);
-        numOptionsDDBB = optionOracle.size();
+        numberOptionsDDBB = optionOracle.size();
       } else if (keyValueS.equals("PostgreSQL")) {
         optionPostgreSQL = createOPPostgreSQL(p);
-        numOptionsDDBB = optionPostgreSQL.size();
+        numberOptionsDDBB = optionPostgreSQL.size();
       }
-      mainOption = 3;
+      mainFlowOption = 3;
       // Create all options by default.
     } else if (menuOption == 2) {
       if (optionFirst.isEmpty()) {
-        optionFirst = createOP(p);
+        optionFirst = createOpenbravoProperties(p);
       }
       // Oracle or Postgresql options
       String keyValue = "";
@@ -773,18 +767,18 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       } while (!(keyValue.equals("PostgreSQL") || keyValue.equals("Oracle")));
       if (keyValue.equals("Oracle")) {
         optionOracle = createOPOracle(p);
-        numOptionsDDBB = optionOracle.size();
+        numberOptionsDDBB = optionOracle.size();
       } else if (keyValue.equals("PostgreSQL")) {
         optionPostgreSQL = createOPPostgreSQL(p);
-        numOptionsDDBB = optionPostgreSQL.size();
+        numberOptionsDDBB = optionPostgreSQL.size();
       }
       if (optionLast.isEmpty()) {
-        optionLast = createOP2(p);
+        optionLast = createLastOpenbravoProperties(p);
       }
       // Go to preview options configurate by default
-      mainOption = 4;
+      mainFlowOption = 4;
     } else if (menuOption == 3) {
-      mainOption = 22;
+      mainFlowOption = 22;
     } else {
       p.log("Please, introduce a correct option: ");
     }
@@ -801,7 +795,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     p.log("[2]. Default configuration.");
     p.log("[3]. Exit without saving.");
     p.log("Choose an option: ");
-    mainOption++;
+    mainFlowOption++;
   }
 
   /**
@@ -811,16 +805,16 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
    */
   private void acceptLicense(Project p) {
     p.log("Do you accept this license? [y/n]: ");
-    String input = licenseIn.nextLine();
+    String input = agreementLicense.nextLine();
     while (!("Y".equalsIgnoreCase(input) || "N".equalsIgnoreCase(input))) {
       p.log("Please, introduce a correct option. Do you accept this license? [y/n]: ");
-      input = licenseIn.nextLine();
+      input = agreementLicense.nextLine();
     }
     if ("Y".equalsIgnoreCase(input)) {
-      mainOption++;
+      mainFlowOption++;
     } else if ("N".equalsIgnoreCase(input)) {
       p.log("---------------------------------------------------------------------------- \n You have not successfully completed the configuration process.");
-      mainOption = -1;
+      mainFlowOption = -1;
     }
   }
 
@@ -830,12 +824,12 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
    * @param p
    */
   private static void fileCopySomeTemplates(Project p) {
-    fileCopyTemplate(FORMAT_XML_TEMPLATE, FORMAT_XML, p);
-    fileCopyTemplate(LOG4J_LCF_TAMPLATE, LOG4J_LCF, p);
-    fileCopyTemplate(USERCONFIG_XML_TEMPLATE, USERCONFIG_XML, p);
-    fileCopyTemplate(OPENBRAVO_PROPERTIES_TEMPLATE, OPENBRAVO_PROPERTIES, p);
-    fileCopyTemplate(COMMON_COMPONENT_TEMPLATE, COMMON_COMPONENT, p);
-    fileCopyTemplate(CLASSPATH_TEMPLATE, CLASSPATH, p);
+    fileCopyTemplate(FORMAT_XML + ".template", FORMAT_XML, p);
+    fileCopyTemplate(LOG4J_LCF + ".template", LOG4J_LCF, p);
+    fileCopyTemplate(USERCONFIG_XML + ".template", USERCONFIG_XML, p);
+    fileCopyTemplate(OPENBRAVO_PROPERTIES + ".template", OPENBRAVO_PROPERTIES, p);
+    fileCopyTemplate(COMMON_COMPONENT + ".template", COMMON_COMPONENT, p);
+    fileCopyTemplate(CLASSPATH + ".template", CLASSPATH, p);
   }
 
   /**
@@ -1109,7 +1103,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
    * 
    * @return HashMap<Integer,Option>
    */
-  private static HashMap<Integer, ConfigureOption> createOP(Project p) {
+  private static HashMap<Integer, ConfigureOption> createOpenbravoProperties(Project p) {
     HashMap<Integer, ConfigureOption> options = new HashMap<Integer, ConfigureOption>();
     File fileO = new File(OPENBRAVO_PROPERTIES);
 
@@ -1257,7 +1251,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
    * 
    * @return HashMap<Integer, Option>
    */
-  private static HashMap<Integer, ConfigureOption> createOP2(Project p) {
+  private static HashMap<Integer, ConfigureOption> createLastOpenbravoProperties(Project p) {
     HashMap<Integer, ConfigureOption> options = new HashMap<Integer, ConfigureOption>();
     File fileO = new File(OPENBRAVO_PROPERTIES);
 
@@ -1466,6 +1460,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
    * This function disables options Oracle or PostgreSQL, using the [#] at the beginning of the
    * options to disable them.
    * 
+   * @param p
    */
   private static void changeOraclePostgresql(Project p) {
     try {
@@ -1512,6 +1507,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
    * 
    * @param sourceFile
    * @param destinationFile
+   * @param p
    */
   private static void fileCopyTemplate(String sourceFile, String destinationFile, Project p) {
     try {
@@ -1529,6 +1525,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
    * This function shows license terms for installing OpenBravo. License is located in
    * OPENBRAVO_LICENSE.
    * 
+   * @param p
    * @throws IOException
    */
   private static void readLicense(Project p) throws IOException {
@@ -1537,7 +1534,6 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     BufferedReader br = null;
     Scanner in = new Scanner(System.in);
     int lineConsole = 0;
-
     try {
       license = new File(OPENBRAVO_LICENSE);
       fr = new FileReader(license);
