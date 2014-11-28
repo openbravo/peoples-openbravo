@@ -20,10 +20,16 @@ package org.openbravo.erpCommon.businessUtility;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.common.currency.Currency;
@@ -42,6 +48,10 @@ import org.openbravo.model.common.plm.Product;
  */
 public class PriceAdjustment {
   private static final Logger log = Logger.getLogger(PriceAdjustment.class);
+
+  @Inject
+  @Any
+  private Instance<PriceAdjustmentHqlExtension> extensions;
 
   /**
    * Calculates price actual from price standard applying the Price Adjustments that fit the rules.
@@ -249,6 +259,17 @@ public class PriceAdjustment {
     hql += "          and m_isparent_ch_value(pcv.characteristicValue.id, pac.chValue.id, pac.characteristic.id) != -1 ";
     hql += "          )) ";
     hql += "    ) ";
+
+    PriceAdjustment priceAdInstance = WeldUtils
+        .getInstanceFromStaticBeanManager(PriceAdjustment.class);
+
+    if (priceAdInstance.extensions != null) {
+      for (Iterator<? extends Object> extIter = priceAdInstance.extensions.iterator(); extIter
+          .hasNext();) {
+        PriceAdjustmentHqlExtension ext = (PriceAdjustmentHqlExtension) extIter.next();
+        hql += ext.getHQLStringExtension();
+      }
+    }
 
     hql += " order by priority, id";
 
