@@ -2112,6 +2112,11 @@
       order.set('priceIncludesTax', OB.MobileApp.model.get('pricelist').priceIncludesTax);
       if (OB.MobileApp.model.hasPermission('OBPOS_receipt.invoice')) {
         if (OB.MobileApp.model.hasPermission('OBPOS_retail.restricttaxidinvoice', true) && !OB.MobileApp.model.get('businessPartner').get('taxID')) {
+          if (OB.MobileApp.model.get('terminal').terminalType.generateInvoice) {
+            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BP_No_Taxid'));
+          } else {
+            OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_BP_No_Taxid'));
+          }
           order.set('generateInvoice', false);
         } else {
           order.set('generateInvoice', OB.MobileApp.model.get('terminal').terminalType.generateInvoice);

@@ -284,7 +284,11 @@ enyo.kind({
     if (!OB.MobileApp.model.hasPermission('OBPOS_receipt.invoice')) {
       this.doCancelReceiptToInvoice();
     } else if (OB.MobileApp.model.hasPermission('OBPOS_retail.restricttaxidinvoice', true) && !model.get('bp').get('taxID')) {
-      OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_BP_No_Taxid'));
+      if (OB.MobileApp.model.get('terminal').terminalType.generateInvoice) {
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BP_No_Taxid'));
+      } else {
+        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_BP_No_Taxid'));
+      }
       this.doCancelReceiptToInvoice();
     } else {
       this.doReceiptToInvoice();
