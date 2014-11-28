@@ -699,7 +699,7 @@ public class DocFINReconciliation extends AcctServer {
         // Cambiar line to reflect BPs
         FIN_PaymentDetail paymentDetail = OBDal.getInstance().get(FIN_PaymentDetail.class,
             finPaymentDetailID);
-        detail.setInvoiceTaxCashVAT_V(paymentDetail.getFinPayment().getId());
+        detail.setInvoiceTaxCashVAT_V(finPaymentDetailID);
         fact = createFactPaymentDetails(detail, paymentDetail, as, conn, fact, Fact_Acct_Group_ID,
             Fact_Acct_Group_ID2);
       }
