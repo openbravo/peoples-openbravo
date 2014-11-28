@@ -546,6 +546,10 @@ enyo.kind({
         this.setContent(OB.I18N.getLabel('OBPOS_LblDone'));
       }
     }, this);
+    this.model.get('order').on('paymentCancel', function () {
+      OB.UTIL.showLoading(false);
+      this.setDisabled(false);
+    }, this);
   },
   tap: function () {
     var myModel = this.owner.model,
