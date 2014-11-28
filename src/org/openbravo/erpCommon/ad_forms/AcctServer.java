@@ -754,9 +754,10 @@ public abstract class AcctServer {
     // Create Fact per AcctSchema
     // if (log4j.isDebugEnabled()) log4j.debug("POSTLOADING ARRAY: " +
     // AD_Client_ID);
-    if (!DocumentType.equals(DOCTYPE_GLJournal))
+    if (!String.valueOf(data[0].getField("multiGl")).equals("N")) {
       // m_as = AcctSchema.getAcctSchemaArray(conn, AD_Client_ID, AD_Org_ID);
       reloadAcctSchemaArray(AD_Org_ID);
+    }
     // if (log4j.isDebugEnabled())
     // log4j.debug("AcctServer - Post - Antes de new Fact - C_CURRENCY_ID = "
     // + C_Currency_ID);
@@ -1338,7 +1339,6 @@ public abstract class AcctServer {
       log4j.debug("AcctServer - getConvertedAmount - starting method - Amt : " + Amt
           + " - CurFrom_ID : " + CurFrom_ID + " - CurTo_ID : " + CurTo_ID + "- ConvDate: "
           + ConvDate + " - RateType:" + RateType + " - client:" + client + "- org:" + org);
-
     if (Amt.equals(""))
       throw new IllegalArgumentException(
           "AcctServer - getConvertedAmt - required parameter missing - Amt");

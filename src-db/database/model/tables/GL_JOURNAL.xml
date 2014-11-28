@@ -49,7 +49,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="C_ACCTSCHEMA_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+      <column name="C_ACCTSCHEMA_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -161,6 +161,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="MULTI_GL" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="C_ACCTSCHEMA" name="C_ACCTSCHEMA_GL_JOURNAL">
         <reference local="C_ACCTSCHEMA_ID" foreign="C_ACCTSCHEMA_ID"/>
       </foreign-key>
@@ -220,6 +224,8 @@
       <check name="GL_JOURNAL_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="GL_JOURNAL_ISAPPROVED_CHECK"><![CDATA[ISAPPROVED IN ('Y', 'N')]]></check>
       <check name="GL_JOURNAL_ISPRINTED_CHECK"><![CDATA[ISPRINTED IN ('Y', 'N')]]></check>
+      <check name="GL_JOURNAL_MULTI_GL_CHECK"><![CDATA[MULTI_GL IN ('Y', 'N')]]></check>
+      <check name="GL_JOURNAL_MULTIACCT_CHECK"><![CDATA[((MULTI_GL = 'Y') AND (C_ACCTSCHEMA_ID IS NULL)) OR ((MULTI_GL = 'N') AND (C_ACCTSCHEMA_ID IS NOT NULL))]]></check>
       <check name="GL_JOURNAL_PROCESSED_CHECK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
     </table>
   </database>

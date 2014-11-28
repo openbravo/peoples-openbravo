@@ -29,7 +29,8 @@
         SELECT G.AD_CLIENT_ID, G.AD_ORG_ID, G.DOCUMENTNO, G.DATEACCT, G.DATEDOC,
         G.C_CURRENCY_ID, G.C_DOCTYPE_ID, G.POSTED, G.POSTINGTYPE, G.ISOPENING,
         G.C_CAMPAIGN_ID, G.C_PROJECT_ID, G.USER1_ID, G.USER2_ID, G.C_COSTCENTER_ID,
-        G.A_ASSET_ID, G.C_BPARTNER_ID, G.M_PRODUCT_ID, G.C_PERIOD_ID AS PERIOD
+        G.A_ASSET_ID, G.C_BPARTNER_ID, G.M_PRODUCT_ID, G.C_PERIOD_ID AS PERIOD, 
+        '' AS FININVCOUNT,'' AS FINACCTCOUNT, G.MULTI_GL
         FROM GL_JOURNAL G
         WHERE AD_CLIENT_ID=?
         AND GL_JOURNAL_ID=?
@@ -65,4 +66,30 @@
       </Sql>
       <Parameter name="period"/>
    </SqlMethod>   
+ 
+ <SqlMethod name="selectFinInvCount" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT (SELECT COUNT(DISTINCT GL_JOURNALLINE.ACCOUNT_ID)
+               FROM GL_JOURNALLINE
+                 INNER JOIN GL_JOURNAL ON GL_JOURNALLINE.GL_JOURNAL_ID = GL_JOURNAL.GL_JOURNAL_ID
+               WHERE GL_JOURNAL.MULTI_GL = 'Y'
+               AND   GL_JOURNAL.GL_JOURNAL_ID = ?) AS FININVCOUNT,
+               (SELECT COUNT(DISTINCT GLACT.C_GLITEM_ID)
+                FROM GL_JOURNALLINE
+                  INNER JOIN GL_JOURNAL ON GL_JOURNALLINE.GL_JOURNAL_ID = GL_JOURNAL.GL_JOURNAL_ID
+                  JOIN C_GLITEM_ACCT GLACT ON (GL_JOURNALLINE.ACCOUNT_ID = GLACT.C_GLITEM_ID)
+                WHERE GL_JOURNAL.MULTI_GL = 'Y'
+                AND   GL_JOURNAL.GL_JOURNAL_ID = ?
+                AND   GL_JOURNAL.C_ACCTSCHEMA_ID = ?) AS FINACCTCOUNT
+        FROM DUAL
+     ]]>
+     </Sql>
+     <Parameter name="gl_journal"/>
+     <Parameter name="gl_journal"/>
+     <Parameter name="acctschema_id"/>
+   </SqlMethod>
+     
+   
  </SqlClass>
