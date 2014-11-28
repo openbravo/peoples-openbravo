@@ -2073,7 +2073,7 @@
       order.set('priceList', OB.MobileApp.model.get('terminal').priceList);
       order.set('priceIncludesTax', OB.MobileApp.model.get('pricelist').priceIncludesTax);
       if (OB.MobileApp.model.hasPermission('OBPOS_receipt.invoice')) {
-        if (OB.MobileApp.model.hasPermission('OBPOS_retail.restricttaxidinvoice') && !OB.MobileApp.model.get('businessPartner').get('taxID')) {
+        if (OB.MobileApp.model.hasPermission('OBPOS_retail.restricttaxidinvoice', true) && !OB.MobileApp.model.get('businessPartner').get('taxID')) {
           order.set('generateInvoice', false);
         } else {
           order.set('generateInvoice', OB.MobileApp.model.get('terminal').terminalType.generateInvoice);
