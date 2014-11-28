@@ -247,6 +247,9 @@
                         sendfunction: '_send'
                       }));
                     }
+                    if (args.callback) {
+                      args.callback();
+                    }
                   }
                 });
               } else {
