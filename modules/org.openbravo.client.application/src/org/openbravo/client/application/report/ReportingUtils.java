@@ -21,15 +21,18 @@ package org.openbravo.client.application.report;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import net.sf.jasperreports.engine.JREmptyDataSource;
+import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.export.JExcelApiExporter;
+import net.sf.jasperreports.engine.export.JExcelApiExporterParameter;
 import net.sf.jasperreports.engine.fill.JRSwapFileVirtualizer;
 import net.sf.jasperreports.engine.util.JRSwapFile;
 
@@ -63,7 +66,8 @@ public class ReportingUtils {
       parameters.put(JASPER_PARAM_HBSESSION, OBDal.getInstance().getSession());
       parameters.put(JASPER_PARAM_OBCONTEXT, OBContext.getOBContext());
       parameters.put(JASPER_PARAM_PROCESS, process);
-      parameters.put("IS_IGNORE_PAGINATION", false);
+
+      parameters.putAll(expType.getExportParameters());
 
       {
         final FormatDefinition reportFormat = UIDefinitionController.getInstance()
@@ -130,18 +134,34 @@ public class ReportingUtils {
             .getConnection());
 
       } else {
-        jasperPrint = JasperFillManager.fillReport(jasperFilePath, parameters,
-            new JREmptyDataSource(1));
+        jasperPrint = JasperFillManager.fillReport(jasperFilePath, parameters);
       }
       String target = getTempFolder();
       if (!target.endsWith("/")) {
         target += "/";
       }
       target += strFileName;
-      JasperExportManager.exportReportToPdfFile(jasperPrint, target);
+      switch (expType) {
+      case PDF:
+        JasperExportManager.exportReportToPdfFile(jasperPrint, target);
+        break;
+      case XLS:
+        JExcelApiExporter exporter = new JExcelApiExporter();
+        Map<Object, Object> exportParameters = new HashMap<Object, Object>();
+        exportParameters.put(JRExporterParameter.JASPER_PRINT, jasperPrint);
+        exportParameters.put(JRExporterParameter.OUTPUT_FILE_NAME, target);
+        exportParameters.put(JExcelApiExporterParameter.IS_ONE_PAGE_PER_SHEET, Boolean.FALSE);
+        exportParameters.put(JExcelApiExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_ROWS,
+            Boolean.TRUE);
+        exportParameters.put(JExcelApiExporterParameter.IS_DETECT_CELL_TYPE, true);
+        exporter.setParameters(exportParameters);
+        exporter.exportReport();
+        break;
+      }
 
       return target;
     } catch (Exception e) {
+      log.error("Error generating Jasper Report", e);
       throw new OBException("Error exporting for process: " + process.getName() + " to pdf", e);
     }
   }
@@ -154,13 +174,24 @@ public class ReportingUtils {
   }
 
   public enum ExportType {
-    PDF("pdf", "103"), XLS("xls", "101");
+    PDF("pdf", "103", new HashMap<String, Object>() {
+      {
+        put("IS_IGNORE_PAGINATION", false);
+      }
+    }), //
+    XLS("xls", "101", new HashMap<String, Object>() {
+      {
+        put("IS_IGNORE_PAGINATION", true);
+      }
+    });
     private final String extension;
     private final FileType fileType;
+    private final Map<String, Object> params;
 
-    ExportType(String extension, String strFileTypeId) {
+    ExportType(String extension, String strFileTypeId, Map<String, Object> params) {
       this.extension = extension;
       this.fileType = OBDal.getInstance().get(FileType.class, strFileTypeId);
+      this.params = params;
     }
 
     public String getExtension() {
@@ -169,6 +200,10 @@ public class ReportingUtils {
 
     public String getContentType() {
       return fileType.getFormat();
+    }
+
+    public Map<String, Object> getExportParameters() {
+      return params;
     }
 
     public static ExportType getExportType(String action) {
