@@ -146,7 +146,7 @@ public class ReturnToFromCustomerVendorHQLTransformer extends HqlQueryTransforme
         transformedHqlQuery = returnReasonDataQuery;
       }
     } else {
-      transformedHqlQuery = transformedHqlQuery.replace("@returnReasonLeftClause@.name",
+      transformedHqlQuery = transformedHqlQuery.replace("@returnReasonLeftClause@.id",
           returnReasonLeftClause);
     }
     return transformedHqlQuery;
