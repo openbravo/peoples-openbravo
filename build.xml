@@ -996,19 +996,18 @@ export.database: exports database structure and data to xml files.
   </target>
   
   <target name="setup.compile">
-          <echo message="Compiling application configuration classes..." />
-	   <mkdir dir="build/classes" />
-          <javac srcdir="src/org/openbravo/configuration" destdir="build/classes" includeantruntime="false">
-             <classpath refid="project.class.path"/>  
-          </javac>
+	<mkdir dir="build/classes" />
+    <javac srcdir="src/org/openbravo/configuration" destdir="build/classes" includeantruntime="false">
+      <classpath refid="project.class.path"/>  
+    </javac>
   </target>
 
   <target name="setup" depends="setup.compile">    
-      <echo message="Launching configuration application..."/>
-      <taskdef name="configurationApp" classname="org.openbravo.configuration.ConfigurationApp">
-        <classpath refid="project.class.path" />
-      </taskdef>
-      <configurationApp/>
+    <echo message="Launching configuration application..."/>
+    <taskdef name="configurationApp" classname="org.openbravo.configuration.ConfigurationApp">
+      <classpath refid="project.class.path" />
+    </taskdef>
+    <configurationApp/>
     </target>
   
   <target name="package.core" depends="init, set.version.number">
