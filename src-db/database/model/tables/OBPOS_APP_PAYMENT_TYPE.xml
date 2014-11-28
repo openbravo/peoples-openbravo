@@ -140,7 +140,7 @@
       <column name="MAX_LIMIT_AMOUNT" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
         <default/>
         <onCreateDefault/>
-      </column>        
+      </column>
       <column name="SHOWKEYPAD" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[Y]]></default>
         <onCreateDefault><![CDATA['Y']]></onCreateDefault>
