@@ -119,7 +119,7 @@ class ConfigureOption {
     if (type == TYPE_OPT_CHOOSE) {
       int i = 0;
       for (final String opts : opt) {
-        p.log("[" + i++ + "]" + opts);
+        ConfigurationApp.printOptionWithStyle(i++, opts, p);
       }
       p.log("\nPlease, choose an option [" + getChoose() + "]: ");
     } else if (type == TYPE_OPT_STRING) {

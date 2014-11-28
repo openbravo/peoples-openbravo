@@ -75,8 +75,6 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
    */
   public void execute() {
     Project p = getProject();
-    // Copy templates and rename files
-    fileCopySomeTemplates(p);
     while (mainFlowOption != -1) {
       switch (mainFlowOption) {
       case 0:
@@ -145,6 +143,8 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
    */
   private void finishConfigurationProcess(Project p) {
     p.log("---------------------------------------------------------------------------- \n Configuration complete. \n----------------------------------------------------------------------------");
+    // Copy templates and rename files
+    fileCopySomeTemplates(p);
     mainFlowOption = -1;
   }
 
@@ -633,18 +633,18 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     }
     // Show all options by order asc
     for (Map.Entry<Integer, ConfigureOption> entry : previewOptions1.entrySet()) {
-      p.log("[" + numberOption + "] " + entry.getValue().getAskInfo() + " "
-          + entry.getValue().getOptionChoose());
+      printOptionWithStyle(numberOption, entry.getValue().getAskInfo() + " "
+          + entry.getValue().getOptionChoose(), p);
       numberOption = numberOption + 1;
     }
     for (Map.Entry<Integer, ConfigureOption> entry : previewOptions2.entrySet()) {
-      p.log("[" + numberOption + "] " + entry.getValue().getAskInfo() + " "
-          + entry.getValue().getOptionChoose());
+      printOptionWithStyle(numberOption, entry.getValue().getAskInfo() + " "
+          + entry.getValue().getOptionChoose(), p);
       numberOption = numberOption + 1;
     }
     for (Map.Entry<Integer, ConfigureOption> entry : previewOptions3.entrySet()) {
-      p.log("[" + numberOption + "] " + entry.getValue().getAskInfo() + " "
-          + entry.getValue().getOptionChoose());
+      printOptionWithStyle(numberOption, entry.getValue().getAskInfo() + " "
+          + entry.getValue().getOptionChoose(), p);
       numberOption = numberOption + 1;
     }
     mainFlowOption = 5;
@@ -734,6 +734,8 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         p.log("Please, introduce a correct option: ");
       }
     } while (!menuOptionOk);
+    // Copy if not exists Openbravo.properties
+    fileCopyTemplate(OPENBRAVO_PROPERTIES + ".template", OPENBRAVO_PROPERTIES, p);
     // Create options one-by-one
     if (menuOption == 1) {
       if (optionFirst.isEmpty()) {
@@ -791,11 +793,22 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
    */
   private void showMainMenu(Project p) {
     p.log("---------------------------------------------------------------------------- \n Please choose one option. \n----------------------------------------------------------------------------");
-    p.log("[1]. Step-by-step configuration.");
-    p.log("[2]. Default configuration.");
-    p.log("[3]. Exit without saving.");
+    printOptionWithStyle(1, "Step-by-step configuration.", p);
+    printOptionWithStyle(2, "Default configuration.", p);
+    printOptionWithStyle(3, "Exit without saving.", p);
     p.log("Choose an option: ");
     mainFlowOption++;
+  }
+
+  /**
+   * This method prints options with the same style.
+   * 
+   * @param numberOption
+   * @param textOption
+   * @param p
+   */
+  static void printOptionWithStyle(int numberOption, String textOption, Project p) {
+    p.log("[" + numberOption + "]. " + textOption);
   }
 
   /**
@@ -827,7 +840,6 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     fileCopyTemplate(FORMAT_XML + ".template", FORMAT_XML, p);
     fileCopyTemplate(LOG4J_LCF + ".template", LOG4J_LCF, p);
     fileCopyTemplate(USERCONFIG_XML + ".template", USERCONFIG_XML, p);
-    fileCopyTemplate(OPENBRAVO_PROPERTIES + ".template", OPENBRAVO_PROPERTIES, p);
     fileCopyTemplate(COMMON_COMPONENT + ".template", COMMON_COMPONENT, p);
     fileCopyTemplate(CLASSPATH + ".template", CLASSPATH, p);
   }
