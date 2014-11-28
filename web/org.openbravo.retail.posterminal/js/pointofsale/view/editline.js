@@ -151,7 +151,7 @@ enyo.kind({
           classes: 'btnlink-orange',
           tap: function () {
             var me = this;
-            if (me.owner.receipt.get('isQuotation') && me.owner.receipt.get('hasbeenpaid') === 'Y') {
+            if (me.owner && me.owner.receipt && me.owner.receipt.get('isQuotation') && me.owner.receipt.get('hasbeenpaid') === 'Y') {
               me.owner.doShowPopup({
                 popup: 'modalNotEditableOrder'
               });
