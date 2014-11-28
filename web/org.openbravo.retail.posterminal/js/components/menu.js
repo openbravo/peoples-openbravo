@@ -279,7 +279,7 @@ enyo.kind({
   taxIdValidation: function (model) {
     if (!OB.POS.modelterminal.hasPermission('OBPOS_receipt.invoice')) {
       this.doCancelReceiptToInvoice();
-    } else if (OB.POS.modelterminal.hasPermission('OBPOS_retail.restricttaxidinvoice') && !model.get('bp').get('taxID')) {
+    } else if (OB.POS.modelterminal.hasPermission('OBPOS_retail.restricttaxidinvoice', true) && !model.get('bp').get('taxID')) {
       OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_BP_No_Taxid'));
       this.doCancelReceiptToInvoice();
     } else {

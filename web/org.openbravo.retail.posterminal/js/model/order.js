@@ -2065,7 +2065,7 @@
       order.set('priceList', OB.POS.modelterminal.get('terminal').priceList);
       order.set('priceIncludesTax', OB.POS.modelterminal.get('pricelist').priceIncludesTax);
       if (OB.POS.modelterminal.hasPermission('OBPOS_receipt.invoice')) {
-        if (OB.POS.modelterminal.hasPermission('OBPOS_retail.restricttaxidinvoice') && !OB.POS.modelterminal.get('businessPartner').get('taxID')) {
+        if (OB.POS.modelterminal.hasPermission('OBPOS_retail.restricttaxidinvoice', true) && !OB.POS.modelterminal.get('businessPartner').get('taxID')) {
           order.set('generateInvoice', false);
         } else {
           order.set('generateInvoice', OB.POS.modelterminal.get('terminal').terminalType.generateInvoice);
