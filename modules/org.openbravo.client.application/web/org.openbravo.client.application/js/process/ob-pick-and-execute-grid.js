@@ -451,7 +451,7 @@ isc.OBPickAndExecuteGrid.addProperties({
 
   dataArrived: function (startRow, endRow) {
     var record, i, rows, selectedLen = this.selectedIds.length,
-        len, savedRecord, index, j, fields;
+        len, savedRecord, index, j, fields, allRequiredSet;
     fields = this.getFields();
     for (i = 0; i < selectedLen; i++) {
       record = this.data.findByKey(this.selectedIds[i]);
@@ -494,7 +494,10 @@ isc.OBPickAndExecuteGrid.addProperties({
     this.Super('dataArrived', arguments);
     if (this.onGridLoadFunction) {
       this.onGridLoadFunction(this);
-      this.view.okButton.setEnabled(this.view.allRequiredParametersSet());
+      allRequiredSet = this.view.allRequiredParametersSet();
+      this.view.okButton.setEnabled(allRequiredSet);
+      this.view.pdfButton.setEnabled(allRequiredSet);
+      this.view.xlsButton.setEnabled(allRequiredSet);
     }
   },
 

@@ -60,7 +60,6 @@ import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.dal.core.DalContextListener;
-import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.userinterface.selector.reference.FKMultiSelectorUIDefinition;
@@ -222,7 +221,7 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
     result.put("responseActions", actions);
   }
 
-  private void doValidations(Map<String, Object> parameters, JSONObject jsonContent) {
+  protected void doValidations(Map<String, Object> parameters, JSONObject jsonContent) {
 
   }
 
@@ -330,7 +329,6 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
       fileDir = "";
     }
     jrParams.put("SUBREPORT_DIR", fileDir);
-    jrParams.put("OBCONTEXT", OBContext.getOBContext());
 
     addAdditionalParameters(report, jsonContent, jrParams);
   }

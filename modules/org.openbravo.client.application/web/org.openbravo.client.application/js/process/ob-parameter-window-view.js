@@ -512,7 +512,8 @@ isc.OBParameterWindowView.addProperties({
     var i, field, def, defaults = result.defaults,
         filterExpressions = result.filterExpressions,
         defaultFilter = {},
-        gridsToBeFiltered = [];
+        gridsToBeFiltered = [],
+        allRequiredSet;
     if (!this.theForm) {
       if (this.onLoadFunction) {
         this.onLoadFunction(this);
@@ -566,9 +567,10 @@ isc.OBParameterWindowView.addProperties({
     // redraw to execute display logic
     this.theForm.markForRedraw();
 
-    this.okButton.setEnabled(this.allRequiredParametersSet());
-    this.pdfButton.setEnabled(this.allRequiredParametersSet());
-    this.xlsButton.setEnabled(this.allRequiredParametersSet());
+    allRequiredSet = this.allRequiredParametersSet();
+    this.okButton.setEnabled(allRequiredSet);
+    this.pdfButton.setEnabled(allRequiredSet);
+    this.xlsButton.setEnabled(allRequiredSet);
 
     this.handleDisplayLogicForGridColumns();
   },
@@ -655,6 +657,10 @@ isc.OBParameterWindowView.addProperties({
     for (i = 0; i < length; i++) {
       item = this.theForm.getItems()[i];
       value = item.getValue();
+      // Multiple selectors value is an array, check that it is not empty
+      if (item.editorType === 'OBMultiSelectorItem' && value.length === 0) {
+        value = null;
+      }
       // do not take into account the grid parameters when looking for required parameters without value
       if (item.type !== 'OBPickEditGridItem' && item.required && item.isVisible() && value !== false && value !== 0 && !value) {
         return false;

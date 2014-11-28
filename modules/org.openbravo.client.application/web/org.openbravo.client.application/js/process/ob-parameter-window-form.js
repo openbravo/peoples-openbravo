@@ -32,14 +32,17 @@ isc.OBParameterWindowForm.addProperties({
   showErrorIcons: false,
   colWidths: ['*', '*', '*', '*'],
   itemChanged: function (item, newValue) {
+    var allRequiredSet = this.paramWindow.allRequiredParametersSet();
     this.paramWindow.handleReadOnlyLogic();
-    this.paramWindow.okButton.setEnabled(this.paramWindow.allRequiredParametersSet());
+    this.paramWindow.okButton.setEnabled(allRequiredSet);
+    this.paramWindow.pdfButton.setEnabled(allRequiredSet);
+    this.paramWindow.xlsButton.setEnabled(allRequiredSet);
   },
 
   // this function is invoked on the blur action of the formitems
   // this is the proper place to execute the client-side callouts
   handleItemChange: function (item) {
-    var affectedParams, i, field;
+    var affectedParams, i, field, allRequiredSet;
     // Execute onChangeFunctions if they exist
     if (this && OB.OnChangeRegistry.hasOnChange(this.paramWindow.viewId, item)) {
       OB.OnChangeRegistry.call(this.paramWindow.viewId, item, this.paramWindow, this, this.paramWindow.viewGrid);
@@ -66,6 +69,9 @@ isc.OBParameterWindowForm.addProperties({
     } else {
       this.redraw();
     }
-    this.paramWindow.okButton.setEnabled(this.paramWindow.allRequiredParametersSet());
+    allRequiredSet = this.paramWindow.allRequiredParametersSet();
+    this.paramWindow.okButton.setEnabled(allRequiredSet);
+    this.paramWindow.pdfButton.setEnabled(allRequiredSet);
+    this.paramWindow.xlsButton.setEnabled(allRequiredSet);
   }
 });
