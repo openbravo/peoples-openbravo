@@ -748,6 +748,7 @@ isc.OBGrid.addProperties({
       if (this.sorter) {
         this.filterHasChanged = true;
         this.sorter.enable();
+        this.filterImage.hide();
       }
     }
     if (!keepFilterClause) {
