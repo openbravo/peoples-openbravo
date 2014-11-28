@@ -1277,7 +1277,7 @@ public class OrderLoader extends POSDataSynchronizationProcess {
       }
 
       FIN_PaymentSchedule paymentScheduleInvoice = null;
-      if (invoice != null) {
+      if (invoice != null && invoice.getGrandTotalAmount().compareTo(BigDecimal.ZERO) != 0) {
         paymentScheduleInvoice = OBProvider.getInstance().get(FIN_PaymentSchedule.class);
         paymentScheduleInvoice.setCurrency(order.getCurrency());
         paymentScheduleInvoice.setInvoice(invoice);
@@ -1317,6 +1317,10 @@ public class OrderLoader extends POSDataSynchronizationProcess {
         JSONObject payment = payments.getJSONObject(i);
         OBPOSAppPayment paymentType = null;
         if (payment.has("isPrePayment") && payment.getBoolean("isPrePayment")) {
+          continue;
+        }
+        BigDecimal paid = BigDecimal.valueOf(payment.getDouble("paid"));
+        if (paid.compareTo(BigDecimal.ZERO) == 0){
           continue;
         }
         String paymentTypeName = payment.getString("kind");
