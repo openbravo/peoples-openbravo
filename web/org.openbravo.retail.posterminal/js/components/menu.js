@@ -414,6 +414,17 @@ enyo.kind({
     if (OB.MobileApp.model.hasPermission(this.permission)) {
       this.doPrintReceipt();
     }
+  },
+  init: function (model) {
+    var receipt = model.get('order'),
+        me = this;
+    receipt.on('change:isQuotation', function (model) {
+      if (!model.get('isQuotation')) {
+        me.show();
+      } else {
+        me.hide();
+      }
+    }, this);
   }
 });
 
