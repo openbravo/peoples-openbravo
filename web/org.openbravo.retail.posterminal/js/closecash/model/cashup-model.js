@@ -458,8 +458,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
         var i, paymentMethodInfo, objToSend = JSON.parse(cashUp.at(0).get('objToSend'));
         objToSend.cashUpDate = me.get('cashUpReport').at(0).get('time');
         for (i = 0; i < me.additionalProperties.length; i++) {
-          var pos = me.additionalProperties[i];
-          objToSend.pos = me.propertyFunctions[i](OB.MobileApp.model.get('terminal').id, cashUp.at(0));
+          objToSend[me.additionalProperties[i]] = me.propertyFunctions[i](OB.POS.modelterminal.get('terminal').id, cashUp.at(0));
         }
         var cashCloseArray = [];
         objToSend.cashCloseInfo = cashCloseArray;
