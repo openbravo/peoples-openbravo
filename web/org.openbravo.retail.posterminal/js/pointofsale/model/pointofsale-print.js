@@ -150,6 +150,8 @@
         if (receipt.get('isPaid')) {
           if (receipt.get('orderType') === 1) {
             args.template = me.templatereturn;
+          } else if (receipt.get('isQuotation')) {
+            args.template = me.templatequotation;
           } else {
             args.template = me.templateclosedreceipt;
           }
@@ -158,6 +160,8 @@
             args.template = me.templatereturn;
           } else if (receipt.get('orderType') === 2 || receipt.get('isLayaway') || receipt.get('orderType') === 3) {
             args.template = me.templatelayaway;
+          } else if (receipt.get('isQuotation')) {
+            args.template = me.templatequotation;
           } else {
             args.template = me.templatereceipt;
           }
