@@ -98,6 +98,19 @@ import org.openbravo.service.json.JsonToDataConverter;
 @DataSynchronization(entity = "Order")
 public class OrderLoader extends POSDataSynchronizationProcess {
 
+  private static final Logger log = Logger.getLogger(OrderLoader.class);
+
+  private static final BigDecimal NEGATIVE_ONE = new BigDecimal(-1);
+
+  // DocumentNo Handler are used to collect all needed document numbers and create and set
+  // them as late in the process as possible
+  private static ThreadLocal<List<DocumentNoHandler>> documentNoHandlers = new ThreadLocal<List<DocumentNoHandler>>();
+
+  private static void addDocumentNoHandler(BaseOBObject bob, Entity entity,
+      DocumentType docTypeTarget, DocumentType docType) {
+    documentNoHandlers.get().add(new DocumentNoHandler(bob, entity, docTypeTarget, docType));
+  }
+
   HashMap<String, DocumentType> paymentDocTypes = new HashMap<String, DocumentType>();
   HashMap<String, DocumentType> invoiceDocTypes = new HashMap<String, DocumentType>();
   HashMap<String, DocumentType> shipmentDocTypes = new HashMap<String, DocumentType>();
@@ -107,9 +120,6 @@ public class OrderLoader extends POSDataSynchronizationProcess {
   boolean fullpayLayaway = false;
   boolean createShipment = true;
   Locator binForRetuns = null;
-  private static final Logger log = Logger.getLogger(OrderLoader.class);
-
-  private static final BigDecimal NEGATIVE_ONE = new BigDecimal(-1);
 
   @Inject
   @Any
@@ -121,172 +131,192 @@ public class OrderLoader extends POSDataSynchronizationProcess {
 
   @Override
   public JSONObject saveRecord(JSONObject jsonorder) throws Exception {
-    executeHooks(orderPreProcesses, jsonorder, null, null, null);
-    boolean wasPaidOnCredit = false;
-    boolean isQuotation = jsonorder.has("isQuotation") && jsonorder.getBoolean("isQuotation");
-    if (jsonorder.getLong("orderType") != 2 && !jsonorder.getBoolean("isLayaway") && !isQuotation
-        && verifyOrderExistance(jsonorder)
-        && (!jsonorder.has("preserveId") || jsonorder.getBoolean("preserveId"))) {
-      return successMessage(jsonorder);
-    }
-    long t0 = System.currentTimeMillis();
-    long t1, t11, t2, t3;
-    Order order = null;
-    OrderLine orderLine = null;
-    ShipmentInOut shipment = null;
-    Invoice invoice = null;
-    boolean sendEmail, createInvoice = false;
-    TriggerHandler.getInstance().disable();
-    isLayaway = jsonorder.has("orderType") && jsonorder.getLong("orderType") == 2
-        && jsonorder.getDouble("payment") < jsonorder.getDouble("gross");
-    partialpayLayaway = jsonorder.getBoolean("isLayaway")
-        && jsonorder.getDouble("payment") < jsonorder.getDouble("gross");
-    fullpayLayaway = jsonorder.getBoolean("isLayaway")
-        && jsonorder.getDouble("payment") >= jsonorder.getDouble("gross");
+
+    documentNoHandlers.set(new ArrayList<OrderLoader.DocumentNoHandler>());
     try {
-      if (jsonorder.has("oldId") && !jsonorder.getString("oldId").equals("null")
-          && jsonorder.has("isQuotation") && jsonorder.getBoolean("isQuotation")) {
-        deleteOldDocument(jsonorder);
+      executeHooks(orderPreProcesses, jsonorder, null, null, null);
+      boolean wasPaidOnCredit = false;
+      boolean isQuotation = jsonorder.has("isQuotation") && jsonorder.getBoolean("isQuotation");
+      if (jsonorder.getLong("orderType") != 2 && !jsonorder.getBoolean("isLayaway") && !isQuotation
+          && verifyOrderExistance(jsonorder)
+          && (!jsonorder.has("preserveId") || jsonorder.getBoolean("preserveId"))) {
+        return successMessage(jsonorder);
       }
-
-      t1 = System.currentTimeMillis();
-      // An invoice will be automatically created if:
-      // - The order is not a layaway and is not completely paid (ie. it's paid on credit)
-      // - Or, the order is a normal order or a fully paid layaway, and has the "generateInvoice"
-      // flag
-      wasPaidOnCredit = !isLayaway
-          && !partialpayLayaway
-          && !fullpayLayaway
-          && !isQuotation
-          && Math.abs(jsonorder.getDouble("payment")) < Math.abs(new Double(jsonorder
-              .getDouble("gross")));
-      createInvoice = wasPaidOnCredit
-          || (!isQuotation && (!isLayaway && !partialpayLayaway || fullpayLayaway) && (jsonorder
-              .has("generateInvoice") && jsonorder.getBoolean("generateInvoice")));
-      createShipment = !isQuotation && (!isLayaway && !partialpayLayaway || fullpayLayaway);
-      if (jsonorder.has("generateShipment")) {
-        createShipment &= jsonorder.getBoolean("generateShipment");
-        createInvoice &= jsonorder.getBoolean("generateShipment");
-      }
-      sendEmail = (jsonorder.has("sendEmail") && jsonorder.getBoolean("sendEmail"));
-      // Order header
-      long t111 = System.currentTimeMillis();
-      ArrayList<OrderLine> lineReferences = new ArrayList<OrderLine>();
-      JSONArray orderlines = jsonorder.getJSONArray("lines");
-      if (fullpayLayaway) {
-        order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
-        order.setObposAppCashup(jsonorder.getString("obposAppCashup"));
-        order.setDelivered(true);
-        for (int i = 0; i < order.getOrderLineList().size(); i++) {
-          lineReferences.add(order.getOrderLineList().get(i));
-          orderLine = order.getOrderLineList().get(i);
-          orderLine.setDeliveredQuantity(orderLine.getOrderedQuantity());
+      long t0 = System.currentTimeMillis();
+      long t1, t11, t2, t3;
+      Order order = null;
+      OrderLine orderLine = null;
+      ShipmentInOut shipment = null;
+      Invoice invoice = null;
+      boolean sendEmail, createInvoice = false;
+      TriggerHandler.getInstance().disable();
+      isLayaway = jsonorder.has("orderType") && jsonorder.getLong("orderType") == 2
+          && jsonorder.getDouble("payment") < jsonorder.getDouble("gross");
+      partialpayLayaway = jsonorder.getBoolean("isLayaway")
+          && jsonorder.getDouble("payment") < jsonorder.getDouble("gross");
+      fullpayLayaway = jsonorder.getBoolean("isLayaway")
+          && jsonorder.getDouble("payment") >= jsonorder.getDouble("gross");
+      try {
+        if (jsonorder.has("oldId") && !jsonorder.getString("oldId").equals("null")
+            && jsonorder.has("isQuotation") && jsonorder.getBoolean("isQuotation")) {
+          deleteOldDocument(jsonorder);
         }
-      } else if (partialpayLayaway) {
-        order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
-        order.setObposAppCashup(jsonorder.getString("obposAppCashup"));
-      } else {
-        order = OBProvider.getInstance().get(Order.class);
-        createOrder(order, jsonorder);
-        OBDal.getInstance().save(order);
-        lineReferences = new ArrayList<OrderLine>();
-        createOrderLines(order, jsonorder, orderlines, lineReferences);
-      }
-      long t112 = System.currentTimeMillis();
-      // Order lines
 
-      if (jsonorder.has("oldId") && !jsonorder.getString("oldId").equals("null")
-          && (!jsonorder.has("isQuotation") || !jsonorder.getBoolean("isQuotation"))) {
-        // This order comes from a quotation, we need to associate both
-        associateOrderToQuotation(jsonorder, order);
-      }
-
-      long t113 = System.currentTimeMillis();
-      if (createShipment) {
-        if (order.getWarehouse().getLocatorList().isEmpty()) {
-          throw new OBException(Utility.messageBD(new DalConnectionProvider(false),
-              "OBPOS_WarehouseNotStorageBin", OBContext.getOBContext().getLanguage().getLanguage()));
+        t1 = System.currentTimeMillis();
+        // An invoice will be automatically created if:
+        // - The order is not a layaway and is not completely paid (ie. it's paid on credit)
+        // - Or, the order is a normal order or a fully paid layaway, and has the "generateInvoice"
+        // flag
+        wasPaidOnCredit = !isLayaway
+            && !partialpayLayaway
+            && !fullpayLayaway
+            && !isQuotation
+            && Math.abs(jsonorder.getDouble("payment")) < Math.abs(new Double(jsonorder
+                .getDouble("gross")));
+        createInvoice = wasPaidOnCredit
+            || (!isQuotation && (!isLayaway && !partialpayLayaway || fullpayLayaway) && (jsonorder
+                .has("generateInvoice") && jsonorder.getBoolean("generateInvoice")));
+        createShipment = !isQuotation && (!isLayaway && !partialpayLayaway || fullpayLayaway);
+        if (jsonorder.has("generateShipment")) {
+          createShipment &= jsonorder.getBoolean("generateShipment");
+          createInvoice &= jsonorder.getBoolean("generateShipment");
         }
-        // Shipment header
-        shipment = OBProvider.getInstance().get(ShipmentInOut.class);
-        createShipment(shipment, order, jsonorder);
-        if (shipment != null) {
-          OBDal.getInstance().save(shipment);
+        sendEmail = (jsonorder.has("sendEmail") && jsonorder.getBoolean("sendEmail"));
+        // Order header
+        long t111 = System.currentTimeMillis();
+        ArrayList<OrderLine> lineReferences = new ArrayList<OrderLine>();
+        JSONArray orderlines = jsonorder.getJSONArray("lines");
+        if (fullpayLayaway) {
+          order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
+          order.setObposAppCashup(jsonorder.getString("obposAppCashup"));
+          order.setDelivered(true);
+          for (int i = 0; i < order.getOrderLineList().size(); i++) {
+            lineReferences.add(order.getOrderLineList().get(i));
+            orderLine = order.getOrderLineList().get(i);
+            orderLine.setDeliveredQuantity(orderLine.getOrderedQuantity());
+          }
+        } else if (partialpayLayaway) {
+          order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
+          order.setObposAppCashup(jsonorder.getString("obposAppCashup"));
+        } else {
+          order = OBProvider.getInstance().get(Order.class);
+          createOrder(order, jsonorder);
+          OBDal.getInstance().save(order);
+          lineReferences = new ArrayList<OrderLine>();
+          createOrderLines(order, jsonorder, orderlines, lineReferences);
         }
-        // Shipment lines
-        createShipmentLines(shipment, order, jsonorder, orderlines, lineReferences);
+        long t112 = System.currentTimeMillis();
+        // Order lines
 
-      }
-      long t115 = System.currentTimeMillis();
-      if (createInvoice) {
-        // Invoice header
-        invoice = OBProvider.getInstance().get(Invoice.class);
-        createInvoice(invoice, order, jsonorder);
-        OBDal.getInstance().save(invoice);
-
-        // Invoice lines
-        createInvoiceLines(invoice, order, jsonorder, orderlines, lineReferences);
-      }
-
-      long t116 = System.currentTimeMillis();
-      createApprovals(order, jsonorder);
-
-      t11 = System.currentTimeMillis();
-
-      t2 = System.currentTimeMillis();
-      updateAuditInfo(order, invoice, jsonorder);
-      t3 = System.currentTimeMillis();
-
-      if (!isQuotation) {
-        if (!isLayaway && !partialpayLayaway && createShipment) {
-          // Stock manipulation
-          handleStock(shipment);
-          // Send email
+        if (jsonorder.has("oldId") && !jsonorder.getString("oldId").equals("null")
+            && (!jsonorder.has("isQuotation") || !jsonorder.getBoolean("isQuotation"))) {
+          // This order comes from a quotation, we need to associate both
+          associateOrderToQuotation(jsonorder, order);
         }
+
+        long t113 = System.currentTimeMillis();
+        if (createShipment) {
+          if (order.getWarehouse().getLocatorList().isEmpty()) {
+            throw new OBException(Utility.messageBD(new DalConnectionProvider(false),
+                "OBPOS_WarehouseNotStorageBin", OBContext.getOBContext().getLanguage()
+                    .getLanguage()));
+          }
+          // Shipment header
+          shipment = OBProvider.getInstance().get(ShipmentInOut.class);
+          createShipment(shipment, order, jsonorder);
+          if (shipment != null) {
+            OBDal.getInstance().save(shipment);
+          }
+          // Shipment lines
+          createShipmentLines(shipment, order, jsonorder, orderlines, lineReferences);
+
+        }
+        long t115 = System.currentTimeMillis();
+        if (createInvoice) {
+          // Invoice header
+          invoice = OBProvider.getInstance().get(Invoice.class);
+          createInvoice(invoice, order, jsonorder);
+          OBDal.getInstance().save(invoice);
+
+          // Invoice lines
+          createInvoiceLines(invoice, order, jsonorder, orderlines, lineReferences);
+        }
+
+        long t116 = System.currentTimeMillis();
+        createApprovals(order, jsonorder);
+
+        t11 = System.currentTimeMillis();
+
+        t2 = System.currentTimeMillis();
+        updateAuditInfo(order, invoice, jsonorder);
+        t3 = System.currentTimeMillis();
+
+        if (!isQuotation) {
+          if (!isLayaway && !partialpayLayaway && createShipment) {
+            // Stock manipulation
+            handleStock(shipment);
+            // Send email
+          }
+        }
+
+        long t4 = System.currentTimeMillis();
+
+        log.debug("Creation of bobs. Order: " + (t112 - t111) + "; Orderlines: " + (t113 - t112)
+            + "; Shipment: " + (t115 - t113) + "; Invoice: " + (t116 - t115) + "; Approvals"
+            + (t11 - t116) + "; stock" + (t4 - t3));
+
+        // do the docnumbers at the end
+        OBContext.setAdminMode();
+        try {
+          for (DocumentNoHandler documentNoHandler : documentNoHandlers.get()) {
+            documentNoHandler.setDocumentNoAndSave();
+          }
+          OBDal.getInstance().flush();
+        } finally {
+          // set to null, should not be used anymore after this.
+          documentNoHandlers.set(null);
+          OBContext.restorePreviousMode();
+        }
+
+      } finally {
+        // flush and enable triggers, the rest of this method needs enabled
+        // triggers
+        OBDal.getInstance().flush();
+        TriggerHandler.getInstance().enable();
       }
 
       long t4 = System.currentTimeMillis();
 
-      log.debug("Creation of bobs. Order: " + (t112 - t111) + "; Orderlines: " + (t113 - t112)
-          + "; Shipment: " + (t115 - t113) + "; Invoice: " + (t116 - t115) + "; Approvals"
-          + (t11 - t116) + "; stock" + (t4 - t3));
+      if (!isQuotation) {
+        // Payment
+        JSONObject paymentResponse = handlePayments(jsonorder, order, invoice, wasPaidOnCredit);
+        if (paymentResponse != null) {
+          return paymentResponse;
+        }
+        if (sendEmail) {
+          EmailSender emailSender = new EmailSender(order.getId(), jsonorder);
+        }
 
-    } finally {
-      // flush and enable triggers, the rest of this method needs enabled
-      // triggers
+        if (createInvoice && isMultipleShipmentLine(invoice)) {
+          finishInvoice(invoice);
+        }
+
+        // Call all OrderProcess injected.
+        executeHooks(orderProcesses, jsonorder, order, shipment, invoice);
+      }
+      long t5 = System.currentTimeMillis();
       OBDal.getInstance().flush();
-      TriggerHandler.getInstance().enable();
+
+      log.info("Order with docno: " + order.getDocumentNo() + " (uuid: " + order.getId()
+          + ") saved correctly. Initial flush: " + (t1 - t0) + "; Generate bobs:" + (t11 - t1)
+          + "; Save bobs:" + (t2 - t11) + "; First flush:" + (t3 - t2) + "; Second flush: "
+          + (t4 - t3) + "; Process Payments:" + (t5 - t4) + " Final flush: "
+          + (System.currentTimeMillis() - t5));
+
+      return successMessage(jsonorder);
+    } finally {
+      documentNoHandlers.set(null);
     }
-
-    long t4 = System.currentTimeMillis();
-
-    if (!isQuotation) {
-      // Payment
-      JSONObject paymentResponse = handlePayments(jsonorder, order, invoice, wasPaidOnCredit);
-      if (paymentResponse != null) {
-        return paymentResponse;
-      }
-      if (sendEmail) {
-        EmailSender emailSender = new EmailSender(order.getId(), jsonorder);
-      }
-
-      if (createInvoice && isMultipleShipmentLine(invoice)) {
-        finishInvoice(invoice);
-      }
-
-      // Call all OrderProcess injected.
-      executeHooks(orderProcesses, jsonorder, order, shipment, invoice);
-
-    }
-    long t5 = System.currentTimeMillis();
-    OBDal.getInstance().flush();
-    log.info("Order with docno: " + order.getDocumentNo() + " (uuid: " + order.getId()
-        + ") saved correctly. Initial flush: " + (t1 - t0) + "; Generate bobs:" + (t11 - t1)
-        + "; Save bobs:" + (t2 - t11) + "; First flush:" + (t3 - t2) + "; Second flush: "
-        + (t4 - t3) + "; Process Payments:" + (t5 - t4) + " Final flush: "
-        + (System.currentTimeMillis() - t5));
-
-    return successMessage(jsonorder);
   }
 
   @Override
@@ -616,8 +646,11 @@ public class OrderLoader extends POSDataSynchronizationProcess {
         .setDocumentType(getInvoiceDocumentType((String) DalUtil.getId(order.getDocumentType())));
     invoice.setTransactionDocument(getInvoiceDocumentType((String) DalUtil.getId(order
         .getDocumentType())));
-    invoice.setDocumentNo(getDocumentNo(invoiceEntity, invoice.getTransactionDocument(),
-        invoice.getDocumentType()));
+
+    invoice.setDocumentNo(getDummyDocumentNo());
+    addDocumentNoHandler(invoice, invoiceEntity, invoice.getTransactionDocument(),
+        invoice.getDocumentType());
+
     invoice.setAccountingDate(order.getOrderDate());
     invoice.setInvoiceDate(order.getOrderDate());
     invoice.setSalesTransaction(true);
@@ -956,10 +989,12 @@ public class OrderLoader extends POSDataSynchronizationProcess {
     Entity shpEntity = ModelProvider.getInstance().getEntity(ShipmentInOut.class);
     JSONPropertyToEntity.fillBobFromJSON(shpEntity, shipment, jsonorder,
         jsonorder.getLong("timezoneOffset"));
-    shipment.setDocumentNo(null);
     shipment
         .setDocumentType(getShipmentDocumentType((String) DalUtil.getId(order.getDocumentType())));
-    shipment.setDocumentNo(getDocumentNo(shpEntity, null, shipment.getDocumentType()));
+
+    shipment.setDocumentNo(getDummyDocumentNo());
+    addDocumentNoHandler(shipment, shpEntity, null, shipment.getDocumentType());
+
     shipment.setAccountingDate(order.getOrderDate());
     shipment.setMovementDate(order.getOrderDate());
     shipment.setPartnerAddress(OBDal.getInstance().get(Location.class,
@@ -1320,7 +1355,7 @@ public class OrderLoader extends POSDataSynchronizationProcess {
           continue;
         }
         BigDecimal paid = BigDecimal.valueOf(payment.getDouble("paid"));
-        if (paid.compareTo(BigDecimal.ZERO) == 0){
+        if (paid.compareTo(BigDecimal.ZERO) == 0) {
           continue;
         }
         String paymentTypeName = payment.getString("kind");
@@ -1497,6 +1532,7 @@ public class OrderLoader extends POSDataSynchronizationProcess {
           order.getBusinessPartner(), paymentType.getPaymentMethod().getPaymentMethod(), account,
           amount.toString(), calculatedDate, order.getOrganization(), null, detail, paymentAmount,
           false, false, order.getCurrency(), mulrate, origAmount);
+
       if (writeoffAmt.signum() == 1) {
         if (totalIsNegative) {
           FIN_AddPayment.saveGLItem(finPayment, writeoffAmt.negate(), paymentType
@@ -1646,9 +1682,44 @@ public class OrderLoader extends POSDataSynchronizationProcess {
         doctype == null ? "" : doctype.getId(), false, true);
   }
 
+  protected String getDummyDocumentNo() {
+    return "DOCNO" + System.currentTimeMillis();
+  }
+
   @Override
   protected boolean bypassPreferenceCheck() {
     return true;
+  }
+
+  private static class DocumentNoHandler {
+
+    private Entity entity;
+    private DocumentType doctypeTarget;
+    private DocumentType doctype;
+    private BaseOBObject bob;
+    private String propertyName = "documentNo";
+
+    DocumentNoHandler(BaseOBObject bob, Entity entity, DocumentType doctypeTarget,
+        DocumentType doctype) {
+      this.entity = entity;
+      this.doctypeTarget = doctypeTarget;
+      this.doctype = doctype;
+      this.bob = bob;
+    }
+
+    public void setDocumentNoAndSave() {
+      final String docNo = getDocumentNumber(entity, doctypeTarget, doctype);
+      bob.setValue(propertyName, docNo);
+      OBDal.getInstance().save(bob);
+    }
+
+    private String getDocumentNumber(Entity entity, DocumentType doctypeTarget, DocumentType doctype) {
+      return Utility.getDocumentNo(OBDal.getInstance().getConnection(false),
+          new DalConnectionProvider(false), RequestContext.get().getVariablesSecureApp(), "",
+          entity.getTableName(), doctypeTarget == null ? "" : doctypeTarget.getId(),
+          doctype == null ? "" : doctype.getId(), false, true);
+    }
+
   }
 
 }
