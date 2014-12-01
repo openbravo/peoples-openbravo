@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2012-2014 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -75,6 +75,7 @@
           // or if toCountryId and toRegionId are nulls then will be ordered by validfromdate)           
           OB.MobileApp.model.hookManager.executeHooks('OBPOS_FindTaxRate', {
             context: me,
+            line: element,
             sql: sql
           }, function (args) {
             OB.Dal.query(OB.Model.TaxRate, args.sql, [], function (coll, args) { // success
@@ -183,7 +184,7 @@
                   linegross = element.get('lineGrossAmount') || element.get('gross');
                 }
 
-                element.set('linerate', linerate);
+                element.set('linerate', OB.DEC.toNumber(linerate));
                 element.set('tax', linetaxid);
                 element.set('taxAmount', OB.DEC.sub(linegross, linenet));
                 element.set('net', calculatedLineNet);
@@ -376,7 +377,7 @@
           var product = element.get('product');
           if (element.get('ignoreTaxes') === true || product.get('ignoreTaxes') === true) {
             var taxLine = {};
-            element.set('linerate', BigDecimal.prototype.ONE);
+            element.set('linerate', OB.DEC.toNumber(BigDecimal.prototype.ONE));
             element.set('tax', OB.MobileApp.model.get('terminal').taxexempid);
             element.set('taxAmount', OB.DEC.Zero);
             element.set('net', element.get('net'));
@@ -418,6 +419,7 @@
             // or if toCountryId and toRegionId are nulls then will be ordered by validfromdate)    
             OB.MobileApp.model.hookManager.executeHooks('OBPOS_FindTaxRate', {
               context: me,
+              line: element,
               sql: sql
             }, function (args) {
               OB.Dal.query(OB.Model.TaxRate, args.sql, [], function (coll, args) { // success
@@ -550,7 +552,7 @@
                   }
 
                   var linepricegross = OB.DEC.div(linegross, element.get('qty'));
-                  element.set('linerate', String(linerate));
+                  element.set('linerate', OB.DEC.toNumber(linerate));
                   element.set('tax', linetaxid);
                   element.set('taxAmount', OB.DEC.mul(OB.DEC.mul(discountedprice, element.get('qty')), linerate));
                   element.set('net', linenet);
