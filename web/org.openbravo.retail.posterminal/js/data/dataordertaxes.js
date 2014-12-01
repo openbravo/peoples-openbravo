@@ -1195,30 +1195,34 @@
     }
   };
 
+  // Taxes logic calculation: 'DEBUG', 'OLDLOGIC', 'NEWLOGIC' (default)
+  window.TAXESLOGIC = 'DEBUG';
+  
   OB = window.OB || {};
   OB.DATA = window.OB.DATA || {};
   OB.DATA.OrderTaxes = function (modelOrder) {
     this._id = 'logicOrderTaxes';
     this.receipt = modelOrder;
+    
     this.receipt.calculateTaxes = function (callback) {
-      if (true) { // DEBUGGING
+      if (window.TAXESLOGIC === 'DEBUG') {
         var me = this;
         var mytaxes, mytaxesold;
         calcTaxes(me).then(function () {
           mytaxes = JSON.stringify(me.get('taxes'));
-          console.log(mytaxes);
+          window.console.log(mytaxes);
           legacyCalculateTaxes.call(me, function () {
             mytaxesold = JSON.stringify(me.get('taxes'));
-            console.log(mytaxesold);
+            window.console.log(mytaxesold);
             if (mytaxes !== mytaxesold) {
-              console.error('Wrong taxes calculation');
+              window.console.error('Wrong taxes calculation');
             }
             callback();
           });
         });
-      } else if (OLDTAXES) { 
+      } else if (window.TAXESLOGIC === 'OLDLOGIC') { 
         legacyCalculateTaxes(callback);
-      } else {
+      } else { // 'NEWLOGIC' (default)
         calcTaxes(this).then(callback);
       }
     };
