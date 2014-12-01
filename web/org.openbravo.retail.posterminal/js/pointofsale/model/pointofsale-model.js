@@ -431,25 +431,27 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                   silent: true
                 });
               });
-              receipt.trigger('print', null, {
-                offline: true,
-                callback: function () {
-                  orderList.deleteCurrent(true);
-                  OB.UTIL.showLoading(false);
-                }
+              // receipt is cloned because the receipt is deleted in the next sentence (orderList.deleteCurrent(true);)
+              // so, if exists a method no synchronous (for example, hook OBPOS_PrePrint) the "receipt" has changed
+              var orderToPrint = OB.UTIL.clone(receipt);
+              receipt.trigger('print', orderToPrint, {
+                offline: true
               });
+              orderList.deleteCurrent(true);
+              OB.UTIL.showLoading(false);
             }
           });
         } else {
           receipt.trigger('closed', {
             callback: function () {
-              receipt.trigger('print', null, {
-                offline: true,
-                callback: function () {
-                  orderList.deleteCurrent(true);
-                  OB.UTIL.showLoading(false);
-                }
+              // receipt is cloned because the receipt is deleted when event "closed" is triggered
+              // so, if exists a method no synchronous, the "receipt" has changed
+              var orderToPrint = OB.UTIL.clone(receipt);
+              receipt.trigger('print', orderToPrint, {
+                offline: true
               });
+              orderList.deleteCurrent(true);
+              OB.UTIL.showLoading(false);
             }
           });
         }
