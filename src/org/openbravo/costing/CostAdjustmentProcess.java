@@ -249,8 +249,9 @@ public class CostAdjustmentProcess {
     critLines.createAlias(CostAdjustmentLine.PROPERTY_COSTADJUSTMENT, "ca");
     critLines.add(Restrictions.eq("ca.id", strCostAdjustmentId));
     critLines.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_ISRELATEDTRANSACTIONADJUSTED, false));
-    critLines.addOrder(Order.asc("trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE));
     critLines.addOrder(Order.asc("trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE));
+    critLines.addOrder(Order.asc(CostAdjustmentLine.PROPERTY_ADJUSTMENTAMOUNT));
+    critLines.addOrder(Order.asc("trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE));
     critLines.setMaxResults(1);
     return (CostAdjustmentLine) critLines.uniqueResult();
   }
