@@ -40,7 +40,7 @@
         this.print(order, args);
       }, this);
       this.receipt.on('print', function (order, args) {
-        this.print(null, args);
+        this.print(order, args);
       }, this);
 
       this.receipt.on('displayTotal', this.displayTotal, this);
