@@ -25,7 +25,7 @@ isc.OBViewGrid.addClassProperties({
   // ListGrid._$ArrowUp and ListGrid._$ArrowDown
   ARROW_UP_KEY_NAME: 'Arrow_Up',
   ARROW_DOWN_KEY_NAME: 'Arrow_Down',
-  ERROR_MESSAGE_PROP: isc.OBViewGrid.ERROR_MESSAGE_PROP,
+  ERROR_MESSAGE_PROP: '_hasErrors',
   ICONS: {
     PROGRESS: 0,
     OPEN_IN_FORM: 1,
@@ -3690,9 +3690,6 @@ isc.OBViewGrid.addProperties({
   rowHasErrors: function (rowNum, colNum) {
     if (this.Super('rowHasErrors', arguments)) {
       return true;
-    }
-    if (!this.getEditForm()) {
-      return false;
     }
     if (this.getEditRow() === rowNum && this.getEditForm().hasErrors()) {
       return true;
