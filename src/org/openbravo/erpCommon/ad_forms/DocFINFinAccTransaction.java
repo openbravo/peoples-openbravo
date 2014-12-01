@@ -362,10 +362,12 @@ public class DocFINFinAccTransaction extends AcctServer {
 
   private DocLine[] loadLines() {
     ArrayList<Object> list = new ArrayList<Object>();
+    ArrayList<String> usedPaymentDetailList = new ArrayList<String>();
     FieldProviderFactory[] data = loadLinesFieldProvider(Record_ID);
     if (data == null || data.length == 0)
       return null;
     for (int i = 0; i < data.length; i++) {
+      ArrayList<String> paymentDetailList = new ArrayList<String>();
       if (data[i] == null)
         continue;
       String Line_ID = data[i].getField("FIN_Finacc_Transaction_ID");
@@ -387,7 +389,16 @@ public class DocFINFinAccTransaction extends AcctServer {
                   .getInvoice()
                   : null);
           docLine.setDoubtFulDebtAmount(new BigDecimal(data[i].getField("DoubtFulDebtAmount")));
-          docLine.setInvoiceTaxCashVAT_V(paymentDetail_ID);
+          // Check whether payment detail is merged
+          paymentDetailList.add(paymentDetail_ID);
+          for (FIN_PaymentDetail pdl : detail.getFinPayment().getFINPaymentDetailList()) {
+            if (pdl.getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule() == null
+                && !usedPaymentDetailList.contains(pdl.getId())) {
+              paymentDetailList.add(pdl.getId());
+              usedPaymentDetailList.add(pdl.getId());
+            }
+          }
+          docLine.setInvoiceTaxCashVAT_V(paymentDetailList);
         }
         docLine.setIsPrepayment(data[i].getField("isprepayment"));
         docLine.setCGlItemId(data[i].getField("cGlItemId"));

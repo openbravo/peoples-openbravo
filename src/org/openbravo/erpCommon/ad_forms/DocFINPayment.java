@@ -276,10 +276,12 @@ public class DocFINPayment extends AcctServer {
 
   private DocLine[] loadLines() {
     ArrayList<Object> list = new ArrayList<Object>();
+    ArrayList<String> usedPaymentDetailList = new ArrayList<String>();
     FieldProviderFactory[] data = loadLinesFieldProvider(Record_ID);
     if (data == null || data.length == 0)
       return null;
     for (int i = 0; i < data.length; i++) {
+      ArrayList<String> paymentDetailList = new ArrayList<String>();
       if (data[i] == null)
         continue;
       String Line_ID = data[i].getField("FIN_Payment_Detail_ID");
@@ -301,7 +303,16 @@ public class DocFINPayment extends AcctServer {
                 .getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule().getInvoice()
                 : null);
         docLine.m_Record_Id2 = data[i].getField("recordId2");
-        docLine.setInvoiceTaxCashVAT_V(Line_ID);
+        // Check whether payment detail is merged
+        paymentDetailList.add(Line_ID);
+        for (FIN_PaymentDetail pdl : detail.getFinPayment().getFINPaymentDetailList()) {
+          if (pdl.getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule() == null
+              && !usedPaymentDetailList.contains(pdl.getId())) {
+            paymentDetailList.add(pdl.getId());
+            usedPaymentDetailList.add(pdl.getId());
+          }
+        }
+        docLine.setInvoiceTaxCashVAT_V(paymentDetailList);
         list.add(docLine);
       } finally {
         OBContext.restorePreviousMode();
