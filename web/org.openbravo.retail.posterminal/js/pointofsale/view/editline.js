@@ -146,116 +146,116 @@ enyo.kind({
     }
   }],
   actionButtons: [{
-          kind: 'OB.UI.SmallButton',
-          i18nContent: 'OBPOS_ButtonDelete',
-          classes: 'btnlink-orange',
-          tap: function () {
-            var me = this;
-            if (me.owner && me.owner.receipt && me.owner.receipt.get('isQuotation') && me.owner.receipt.get('hasbeenpaid') === 'Y') {
-              me.owner.doShowPopup({
-                popup: 'modalNotEditableOrder'
-              });
-              return;
-            }
-            OB.UTIL.Approval.requestApproval(
-            me.model, 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
-              if (approved) {
-                me.owner.doDeleteLine({
-                  line: me.owner.line
-                });
-              }
-            });
-          },
-          init: function (model) {
-            this.model = model;
-            this.model.get('order').on('change:isPaid change:isLayaway', function (newValue) {
-              if (newValue) {
-                if (newValue.get('isPaid') === true || newValue.get('isLayaway') === true) {
-                  this.setShowing(false);
-                  return;
-                }
-              }
-              this.setShowing(true);
-            }, this);
+    kind: 'OB.UI.SmallButton',
+    i18nContent: 'OBPOS_ButtonDelete',
+    classes: 'btnlink-orange',
+    tap: function () {
+      var me = this;
+      if (me.owner.owner && me.owner.ownerreceipt && me.owner.owner.receipt.get('isQuotation') && me.owner.owner.receipt.get('hasbeenpaid') === 'Y') {
+        me.owner.owner.doShowPopup({
+          popup: 'modalNotEditableOrder'
+        });
+        return;
+      }
+      OB.UTIL.Approval.requestApproval(
+      me.model, 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
+        if (approved) {
+          me.owner.owner.doDeleteLine({
+            line: me.owner.owner.line
+          });
+        }
+      });
+    },
+    init: function (model) {
+      this.model = model;
+      this.model.get('order').on('change:isPaid change:isLayaway', function (newValue) {
+        if (newValue) {
+          if (newValue.get('isPaid') === true || newValue.get('isLayaway') === true) {
+            this.setShowing(false);
+            return;
           }
-        }, {
-          kind: 'OB.UI.SmallButton',
-          i18nContent: 'OBPOS_LblDescription',
-          classes: 'btnlink-orange',
-          tap: function () {
-            if (this.owner.receipt.get('isQuotation') && this.owner.receipt.get('hasbeenpaid') === 'Y') {
-              this.owner.doShowPopup({
-                popup: 'modalNotEditableOrder'
-              });
-              return;
-            }
-            this.owner.doEditLine({
-              line: this.owner.line
-            });
-          },
-          init: function (model) {
-            this.model = model;
-            this.model.get('order').on('change:isPaid change:isLayaway', function (newValue) {
-              if (newValue) {
-                if (newValue.get('isPaid') === true || newValue.get('isLayaway') === true) {
-                  this.setShowing(false);
-                  return;
-                }
-              }
-              this.setShowing(true);
-            }, this);
+        }
+        this.setShowing(true);
+      }, this);
+    }
+  }, {
+    kind: 'OB.UI.SmallButton',
+    i18nContent: 'OBPOS_LblDescription',
+    classes: 'btnlink-orange',
+    tap: function () {
+      if (this.owner.owner.receipt.get('isQuotation') && this.owner.owner.receipt.get('hasbeenpaid') === 'Y') {
+        this.owner.owner.doShowPopup({
+          popup: 'modalNotEditableOrder'
+        });
+        return;
+      }
+      this.owner.owner.doEditLine({
+        line: this.owner.owner.line
+      });
+    },
+    init: function (model) {
+      this.model = model;
+      this.model.get('order').on('change:isPaid change:isLayaway', function (newValue) {
+        if (newValue) {
+          if (newValue.get('isPaid') === true || newValue.get('isLayaway') === true) {
+            this.setShowing(false);
+            return;
           }
-        }, {
-          kind: 'OB.UI.SmallButton',
-          name: 'returnLine',
-          i18nContent: 'OBPOS_LblReturnLine',
-          permission: 'OBPOS_ReturnLine',
-          classes: 'btnlink-orange',
-          showing: false,
-          tap: function () {
-            this.owner.doReturnLine({
-              line: this.owner.line
-            });
-          },
-          init: function (model) {
-            this.model = model;
-            if (OB.MobileApp.model.get('permissions')[this.permission]) {
-              this.setShowing(true);
-            }
-            this.model.get('order').on('change:isPaid change:isLayaway change:isQuotation', function (newValue) {
-              if (newValue) {
-                if (newValue.get('isPaid') === true || newValue.get('isLayaway') === true || newValue.get('isQuotation') === true) {
-                  this.setShowing(false);
-                  return;
-                }
-              }
-              if (OB.MobileApp.model.get('permissions')[this.permission]) {
-                this.setShowing(true);
-              }
-            }, this);
+        }
+        this.setShowing(true);
+      }, this);
+    }
+  }, {
+    kind: 'OB.UI.SmallButton',
+    name: 'returnLine',
+    i18nContent: 'OBPOS_LblReturnLine',
+    permission: 'OBPOS_ReturnLine',
+    classes: 'btnlink-orange',
+    showing: false,
+    tap: function () {
+      this.owner.owner.doReturnLine({
+        line: this.owner.owner.line
+      });
+    },
+    init: function (model) {
+      this.model = model;
+      if (OB.MobileApp.model.get('permissions')[this.permission]) {
+        this.setShowing(true);
+      }
+      this.model.get('order').on('change:isPaid change:isLayaway change:isQuotation', function (newValue) {
+        if (newValue) {
+          if (newValue.get('isPaid') === true || newValue.get('isLayaway') === true || newValue.get('isQuotation') === true) {
+            this.setShowing(false);
+            return;
           }
-        }, {
-          kind: 'OB.UI.SmallButton',
-          name: 'removeDiscountButton',
-          i18nContent: 'OBPOS_LblRemoveDiscount',
-          showing: false,
-          classes: 'btnlink-orange',
-          tap: function () {
-            if (this.owner && this.owner.line && this.owner.line.get('promotions')) {
-              this.owner.line.unset('promotions');
-              OB.Model.Discounts.applyPromotions(this.model.get('order'));
-              this.model.get('order').calculateGross();
-              this.hide();
-            }
-          },
-          init: function (model) {
-            this.model = model;
-          }
-        }, {
-          kind: 'OB.OBPOSPointOfSale.UI.EditLine.OpenStockButton',
-          name: 'checkStockButton',
-          showing: false
-        }],
+        }
+        if (OB.MobileApp.model.get('permissions')[this.permission]) {
+          this.setShowing(true);
+        }
+      }, this);
+    }
+  }, {
+    kind: 'OB.UI.SmallButton',
+    name: 'removeDiscountButton',
+    i18nContent: 'OBPOS_LblRemoveDiscount',
+    showing: false,
+    classes: 'btnlink-orange',
+    tap: function () {
+      if (this.owner.owner && this.owner.owner.line && this.owner.owner.line.get('promotions')) {
+        this.owner.owner.line.unset('promotions');
+        OB.Model.Discounts.applyPromotions(this.model.get('order'));
+        this.model.get('order').calculateGross();
+        this.hide();
+      }
+    },
+    init: function (model) {
+      this.model = model;
+    }
+  }, {
+    kind: 'OB.OBPOSPointOfSale.UI.EditLine.OpenStockButton',
+    name: 'checkStockButton',
+    showing: false
+  }],
   published: {
     receipt: null
   },
@@ -522,15 +522,15 @@ enyo.kind({
   content: '',
   classes: 'btnlink-orange',
   tap: function () {
-    var line = this.owner.line;
-    var product = this.owner.line.get('product');
+    var line = this.owner.owner.line;
+    var product = this.owner.owner.line.get('product');
     var params = {};
     //show always or just when the product has been set to show stock screen?
     if ((product.get('showstock') || product.get('_showstock')) && !product.get('ispack') && OB.MobileApp.model.get('connectedToERP')) {
       params.leftSubWindow = OB.OBPOSPointOfSale.UICustomization.stockLeftSubWindow;
       params.product = product;
       params.line = line;
-      params.warehouse = this.owner.line.get('warehouse');
+      params.warehouse = this.owner.owner.line.get('warehouse');
       this.doShowLeftSubWindow(params);
     }
   },
