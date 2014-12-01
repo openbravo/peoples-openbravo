@@ -152,10 +152,15 @@ public class LCMatchingProcess {
     StringBuffer hql = new StringBuffer();
     hql.append(" select sum(rla." + LCReceiptLineAmt.PROPERTY_AMOUNT + ") as amt");
     hql.append("   , rla." + LCReceipt.PROPERTY_GOODSSHIPMENTLINE + ".id as receipt");
+    hql.append("   , (select " + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " from "
+        + MaterialTransaction.ENTITY_NAME + " as transaction where "
+        + MaterialTransaction.PROPERTY_GOODSSHIPMENTLINE + ".id = rla."
+        + LCReceipt.PROPERTY_GOODSSHIPMENTLINE + ".id) as trxprocessdate");
     hql.append(" from " + LCReceiptLineAmt.ENTITY_NAME + " as rla");
     hql.append(" where rla." + LCReceiptLineAmt.PROPERTY_LANDEDCOSTCOST + " = :lcc");
     hql.append("   and rla." + LCReceiptLineAmt.PROPERTY_ISMATCHINGADJUSTMENT + " = true ");
     hql.append(" group by rla." + LCReceipt.PROPERTY_GOODSSHIPMENTLINE + ".id");
+    hql.append(" order by trxprocessdate, amt");
 
     Query qryLCRLA = OBDal.getInstance().getSession().createQuery(hql.toString());
     qryLCRLA.setParameter("lcc", lcCost);
