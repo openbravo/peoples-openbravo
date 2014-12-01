@@ -165,7 +165,10 @@ public class LandedCostProcess {
   }
 
   private void distributeAmounts(LandedCost landedCost) {
-    for (LandedCostCost lcCost : landedCost.getLandedCostCostList()) {
+    OBCriteria<LandedCostCost> criteria = OBDal.getInstance().createCriteria(LandedCostCost.class);
+    criteria.add(Restrictions.eq(LandedCostCost.PROPERTY_LANDEDCOST, landedCost));
+    criteria.addOrderBy(LandedCostCost.PROPERTY_LINENO, true);
+    for (LandedCostCost lcCost : criteria.list()) {
       log.debug("Start Distributing lcCost {}", lcCost.getIdentifier());
       // Load distribution algorithm
       LandedCostDistributionAlgorithm lcDistAlg = getDistributionAlgorithm(lcCost
