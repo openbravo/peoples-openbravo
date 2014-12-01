@@ -476,12 +476,20 @@ OB.ViewFormProperties = {
   // sets the focus in the current focusitem 
   // if it is not focusable then a next item is 
   // searched for
-  setFocusInForm: function () {
+  setFocusInForm: function (initializingForm) {
     if (!this.view || !this.view.isActiveView()) {
       return;
     }
 
     var focusItem = this.getFocusItem();
+
+    if (initializingForm && focusItem.type === 'OBAuditSectionItem') {
+      // if the does not have any editable fields, the first OBAuditSectionItem will be focused
+      // in that case dont move the scroll to the focused item and show the first batch of fields
+      this.view.formContainerLayout.scrollToTop();
+      return;
+    }
+
     // an edit form in a grid is not
     // drawn it seems...
     if ((!this.grid && !this.isDrawn()) && !this.isVisible()) {
@@ -596,7 +604,7 @@ OB.ViewFormProperties = {
         requestParams, allProperties, parentColumn, me = this,
         mode, length = this.getFields().length,
         gridVisibleProperties = [],
-        len;
+        len, initializingForm;
 
     this.setParentDisplayInfo();
 
@@ -693,7 +701,8 @@ OB.ViewFormProperties = {
       // returns
       // at this point select the focused value      
       if (me.getFocusItem()) {
-        me.setFocusInForm();
+        initializingForm = true;
+        me.setFocusInForm(initializingForm);
       }
     });
   },
