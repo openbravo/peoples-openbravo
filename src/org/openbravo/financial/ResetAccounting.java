@@ -283,13 +283,13 @@ public class ResetAccounting {
     OBContext.setAdminMode(false);
     try {
       Table table = OBDal.getInstance().get(Table.class, tableId);
-      tableName = table.getName();
+      tableName = table.getDBTableName();
       tableDate = ModelProvider.getInstance().getEntityByTableName(table.getDBTableName())
-          .getPropertyByColumnName(table.getAcctdateColumn().getDBColumnName()).getName();
+          .getPropertyByColumnName(table.getAcctdateColumn().getDBColumnName()).getColumnName();
 
       String strUpdate = "update "
           + tableName
-          + " set posted='N', processNow=false where posted not in ('Y') and processed = 'Y' and organization.id in (:orgIds)  ";
+          + " set posted='N', processing='N' where posted not in ('Y') and processed = 'Y' and AD_Org_ID in (:orgIds)  ";
       if (!("".equals(datefrom))) {
         strUpdate = strUpdate + " and " + tableDate + " >= :dateFrom ";
       }
@@ -297,7 +297,7 @@ public class ResetAccounting {
         strUpdate = strUpdate + " and " + tableDate + " <= :dateTo ";
       }
 
-      Query update = OBDal.getInstance().getSession().createQuery(strUpdate);
+      Query update = OBDal.getInstance().getSession().createSQLQuery(strUpdate);
       update
           .setParameterList("orgIds", new OrganizationStructureProvider().getNaturalTree(adOrgId));
       try {
