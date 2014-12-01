@@ -50,6 +50,7 @@
        SELECT COUNT(*) AS EXISTING
        FROM AD_ALERTRULE
        WHERE NAME = ?
+         AND ISACTIVE = 'Y'
          AND AD_CLIENT_ID = ?
       ]]>
     </Sql>
