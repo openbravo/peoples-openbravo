@@ -283,7 +283,7 @@ enyo.kind({
             if (args && args.cancelOperation && args.cancelOperation === true) {
               return;
             }
-            receipt.trigger('print', null, {
+            receipt.trigger('print', receipt, {
               force: true
             });
           });
@@ -291,7 +291,7 @@ enyo.kind({
           return;
         }
         receipt.calculateTaxes(function () {
-          receipt.trigger('print', null, {
+          receipt.trigger('print', receipt, {
             force: true
           });
         });
