@@ -2910,6 +2910,10 @@ isc.OBViewGrid.addProperties({
       isc.warn(OB.I18N.getLabel('OBUIAPP_AutoSaveError', [this.view.tabTitle]));
     }
 
+    // show an error message in the toolbar if the event that triggered the action was an autosave, to mimic the way client side validation errors are handled
+    if (view.standardWindow.isAutoSaving) {
+      view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_ErrorInFieldsGrid', [view.ID]));
+    }
     view.standardWindow.cleanUpAutoSaveProperties();
     view.updateTabTitle();
     view.toolBar.updateButtonState(true);
