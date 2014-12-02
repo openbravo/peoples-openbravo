@@ -136,6 +136,7 @@ public class CashUpReport extends HttpSecureAppServlet {
       String hqlRecons = " rec where cashUp.id=:cashUpId order by rec.paymentType.commercialName ";
       OBQuery<OBPOSAppCashReconcil> reconsQuery = OBDal.getInstance().createQuery(
           OBPOSAppCashReconcil.class, hqlRecons);
+      reconsQuery.setNamedParameter("cashUpId", cashup.getId());
       List<OBPOSAppCashReconcil> recons = reconsQuery.list();
       Date cashUpDate = cashup.getCashUpDate();
       for (int i = 0; i < recons.size(); i++) {
