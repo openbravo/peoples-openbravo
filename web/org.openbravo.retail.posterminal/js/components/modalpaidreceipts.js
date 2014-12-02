@@ -277,10 +277,6 @@ enyo.kind({
     return true;
   },
   searchAction: function (inSender, inEvent) {
-    if (!OB.MobileApp.model.get('connectedToERP')) {
-      OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
-      return false;
-    }
     var me = this,
         process = new OB.DS.Process('org.openbravo.retail.posterminal.PaidReceiptsHeader');
     me.filters = inEvent.filters;
