@@ -1434,9 +1434,22 @@ isc.OBViewGrid.addProperties({
     OB.KeyboardManager.Shortcuts.set('ViewGrid_EditInGrid', 'OBViewGrid.body', ksAction_EditInGrid);
 
     ksAction_EditInForm = function () {
+      var wasEditingGrid = false,
+          autoSaveEditsBackup = me.autoSaveEdits,
+          recordToEdit;
       if (me.getSelectedRecords().length === 1) {
+        if (me.view.isEditingGrid) {
+          wasEditingGrid = true;
+          me.autoSaveEdits = false;
+          recordToEdit = me.getEditedRecord(me.getEditRow());
+        } else {
+          recordToEdit = me.getSelectedRecords()[0];
+        }
+        me.storeValueMaps();
         me.endEditing();
-        me.view.editRecord(me.getSelectedRecords()[0]);
+        me.autoSaveEdits = autoSaveEditsBackup;
+        me.view.editRecord(recordToEdit, null, null, wasEditingGrid);
+        delete me.storedValueMaps;
         return false; // To avoid keyboard shortcut propagation
       } else {
         return true;
@@ -1445,6 +1458,21 @@ isc.OBViewGrid.addProperties({
     OB.KeyboardManager.Shortcuts.set('ViewGrid_EditInForm', ['OBViewGrid.body', 'OBViewGrid.editForm'], ksAction_EditInForm);
 
     this.Super('enableShortcuts', arguments);
+  },
+
+  storeValueMaps: function () {
+    var i, items, editForm = this.getEditForm(),
+        item;
+    if (!editForm) {
+      return;
+    }
+    this.storedValueMaps = {};
+    items = editForm.getItems();
+    for (i = 0; i < items.length; i++) {
+      if (items[i].valueMap) {
+        this.storedValueMaps[items[i].name] = items[i].valueMap;
+      }
+    }
   },
 
   deselectAllRecords: function (preventUpdateSelectInfo, autoSaveDone) {

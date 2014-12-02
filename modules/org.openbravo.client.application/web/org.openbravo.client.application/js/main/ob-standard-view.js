@@ -1439,8 +1439,8 @@ isc.OBStandardView.addProperties({
   // ** {{{ editRecord }}} **
   // Opens the edit form and selects the record in the grid, will refresh
   // child views also
-  editRecord: function (record, preventFocus, focusFieldName) {
-    var rowNum,
+  editRecord: function (record, preventFocus, focusFieldName, wasEditingGrid) {
+    var rowNum, recordToEdit,
     // at this point the time fields of the record are formatted in local time
     localTime = true;
     this.messageBar.hide();
@@ -1456,10 +1456,17 @@ isc.OBStandardView.addProperties({
     } else {
       this.viewGrid.doSelectSingleRecord(record);
 
-      // also handle the case that there are unsaved values in the grid
+      // also handle the case that there are unsaved values in the grid 
       // show them in the form
       rowNum = this.viewGrid.getRecordIndex(record);
-      this.viewForm.editRecord(this.viewGrid.getEditedRecord(rowNum), preventFocus, this.viewGrid.recordHasChanges(rowNum), focusFieldName, localTime);
+      // If the record to be edited is new and was being edited in the grid, use it,
+      // because this.viewGrid.getEditedRecord would return an empty record in this case
+      if (record._new && wasEditingGrid) {
+        recordToEdit = record;
+      } else {
+        recordToEdit = this.viewGrid.getEditedRecord(rowNum);
+      }
+      this.viewForm.editRecord(recordToEdit, preventFocus, this.viewGrid.recordHasChanges(rowNum), focusFieldName, localTime, wasEditingGrid);
     }
   },
 
