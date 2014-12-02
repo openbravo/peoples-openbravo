@@ -108,6 +108,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "model/taxcashup",
         "model/returnreasons",
         "model/offlineprinter",
+        "model/productbom",
+        "model/taxcategorybom",
         "components/modalcancel",
         "components/subwindow",
         "components/leftsubwindow",
