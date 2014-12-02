@@ -124,6 +124,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/keypadcoins",
         "data/dataordersave",
         "data/dataordertaxes",
+        "data/dataordertaxeslegacy",
         "data/datacustomersave",
         "data/datacustomeraddrsave",
         "data/dataorderdiscount",
