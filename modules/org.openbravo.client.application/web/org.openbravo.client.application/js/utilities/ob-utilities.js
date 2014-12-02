@@ -427,10 +427,12 @@ OB.Utilities.openView = function (windowId, tabId, tabTitle, recordId, command, 
     if (direct !== false) {
       isDirect = true;
     }
-    if (singleRecord !== false) {
-      isSingleRecord = true;
-    }
+
   }
+  if (singleRecord !== false) {
+    isSingleRecord = true;
+  }
+
   if (isClassicEnvironment) {
     if (recordId) {
       OB.Layout.ClassicOBCompatibility.openLinkedItem(tabId, recordId);
