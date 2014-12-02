@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+  <database name="MODIFIED TABLE C_TAXCATEGORY">
+    <table name="C_TAXCATEGORY" primaryKey="C_TAXCATEGORY_KEY">
+      <column name="EM_OBPOS_ASBOM" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <check name="EM_OBPOS_ASBOM_CHK"><![CDATA[EM_OBPOS_ASBOM IN ('Y', 'N')]]></check>
+    </table>
+  </database>
