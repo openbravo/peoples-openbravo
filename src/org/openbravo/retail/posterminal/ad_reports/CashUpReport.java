@@ -135,7 +135,6 @@ public class CashUpReport extends HttpSecureAppServlet {
       String hqlRecons = " rec where cashUp.id=:cashUpId order by rec.paymentType.commercialName ";
       OBQuery<OBPOSAppCashReconcil> reconsQuery = OBDal.getInstance().createQuery(
           OBPOSAppCashReconcil.class, hqlRecons);
-      reconsQuery.setNamedParameter("cashUpId", cashup.getId());
       List<OBPOSAppCashReconcil> recons = reconsQuery.list();
       for (int i = 0; i < recons.size(); i++) {
 
@@ -173,7 +172,8 @@ public class CashUpReport extends HttpSecureAppServlet {
         psData.put("LABEL", OBMessageUtils.getI18NMessage("OBPOS_LblStarting", new String[] {})
             + " " + recons.get(i).getPaymentType().getCommercialName());
         psData.put("VALUE",
-            startingbalance.multiply(conversionRate).setScale(2, BigDecimal.ROUND_UP).toString());
+            startingbalance.multiply(conversionRate).setScale(2, BigDecimal.ROUND_HALF_UP)
+                .toString());
         if (conversionRate.compareTo(BigDecimal.ONE) != 0) {
           psData.put("FOREIGN_VALUE", startingbalance.toString());
           psData.put("ISOCODE", isoCode);
@@ -206,7 +206,7 @@ public class CashUpReport extends HttpSecureAppServlet {
             psData.put("GROUPFIELD", "WITHDRAWAL");
             psData.put("SEARCHKEY", "WITHDRAWAL_" + recons.get(i).getPaymentType().getSearchKey());
             psData.put("LABEL", objdropdeposit[0].toString());
-            psData.put("VALUE", drop.multiply(conversionRate).setScale(2, BigDecimal.ROUND_UP)
+            psData.put("VALUE", drop.multiply(conversionRate).setScale(2, BigDecimal.ROUND_HALF_UP)
                 .toString());
             if (conversionRate.compareTo(BigDecimal.ONE) != 0) {
               psData.put("FOREIGN_VALUE", drop.toString());
@@ -220,14 +220,14 @@ public class CashUpReport extends HttpSecureAppServlet {
             hashMapWithdrawalsList.add(psData);
             expected = expected.subtract(drop);
             totalDrops = totalDrops.add(drop.multiply(conversionRate).setScale(2,
-                BigDecimal.ROUND_UP));
+                BigDecimal.ROUND_HALF_UP));
           } else {
             psData = new HashMap<String, String>();
             psData.put("GROUPFIELD", "SALE");
             psData.put("SEARCHKEY", "SALE_" + recons.get(i).getPaymentType().getSearchKey());
             psData.put("LABEL", objdropdeposit[0].toString());
-            psData.put("VALUE", deposit.multiply(conversionRate).setScale(2, BigDecimal.ROUND_UP)
-                .toString());
+            psData.put("VALUE",
+                deposit.multiply(conversionRate).setScale(2, BigDecimal.ROUND_HALF_UP).toString());
             if (conversionRate.compareTo(BigDecimal.ONE) != 0) {
               psData.put("FOREIGN_VALUE", deposit.toString());
               psData.put("ISOCODE", isoCode);
@@ -240,7 +240,7 @@ public class CashUpReport extends HttpSecureAppServlet {
             hashMapSalesList.add(psData);
             expected = expected.add(deposit);
             totalDeposits = totalDeposits.add(deposit.multiply(conversionRate).setScale(2,
-                BigDecimal.ROUND_UP));
+                BigDecimal.ROUND_HALF_UP));
           }
         }
 
@@ -266,14 +266,14 @@ public class CashUpReport extends HttpSecureAppServlet {
             if (drop.compareTo(BigDecimal.ZERO) != 0) {
               expected = expected.subtract(drop);
               totalDrops = totalDrops.add(drop.multiply(conversionRate).setScale(2,
-                  BigDecimal.ROUND_UP));
+                  BigDecimal.ROUND_HALF_UP));
               psData = new HashMap<String, String>();
               psData.put("GROUPFIELD", "WITHDRAWAL");
               psData
                   .put("SEARCHKEY", "WITHDRAWAL_" + recons.get(i).getPaymentType().getSearchKey());
               psData.put("LABEL", obja[0].toString());
-              psData.put("VALUE", drop.multiply(conversionRate).setScale(2, BigDecimal.ROUND_UP)
-                  .toString());
+              psData.put("VALUE",
+                  drop.multiply(conversionRate).setScale(2, BigDecimal.ROUND_HALF_UP).toString());
               if (conversionRate.compareTo(BigDecimal.ONE) != 0) {
                 psData.put("FOREIGN_VALUE", drop.toString());
                 psData.put("ISOCODE", isoCode);
@@ -305,14 +305,16 @@ public class CashUpReport extends HttpSecureAppServlet {
 
             if (deposit.compareTo(BigDecimal.ZERO) != 0) {
               totalDeposits = totalDeposits.add(deposit.multiply(new BigDecimal((String) obja[3]))
-                  .setScale(2, BigDecimal.ROUND_UP));
+                  .setScale(2, BigDecimal.ROUND_HALF_UP));
               expected = expected.add(deposit);
               psData = new HashMap<String, String>();
               psData.put("GROUPFIELD", "SALE");
               psData.put("SEARCHKEY", "SALE_" + recons.get(i).getPaymentType().getSearchKey());
               psData.put("LABEL", obja[0].toString());
-              psData.put("VALUE", deposit.multiply(conversionRate).setScale(2, BigDecimal.ROUND_UP)
-                  .toString());
+              psData
+                  .put("VALUE",
+                      deposit.multiply(conversionRate).setScale(2, BigDecimal.ROUND_HALF_UP)
+                          .toString());
               if (conversionRate.compareTo(BigDecimal.ONE) != 0) {
                 psData.put("FOREIGN_VALUE", deposit.toString());
                 psData.put("ISOCODE", isoCode);
@@ -406,7 +408,7 @@ public class CashUpReport extends HttpSecureAppServlet {
         psData.put(
             "VALUE",
             (expected.add(differenceDeposit)).multiply(conversionRate)
-                .setScale(2, BigDecimal.ROUND_UP).toString());
+                .setScale(2, BigDecimal.ROUND_HALF_UP).toString());
         if (conversionRate.compareTo(BigDecimal.ONE) != 0) {
           psData.put("FOREIGN_VALUE", expected.add(differenceDeposit).toString());
           psData.put("ISOCODE", isoCode);
@@ -424,7 +426,8 @@ public class CashUpReport extends HttpSecureAppServlet {
         psData.put("LABEL", OBMessageUtils.getI18NMessage("OBPOS_LblDifference", new String[] {})
             + " " + recons.get(i).getPaymentType().getCommercialName());
         psData.put("VALUE",
-            differenceDeposit.multiply(conversionRate).setScale(2, BigDecimal.ROUND_UP).toString());
+            differenceDeposit.multiply(conversionRate).setScale(2, BigDecimal.ROUND_HALF_UP)
+                .toString());
         if (conversionRate.compareTo(BigDecimal.ONE) != 0) {
           psData.put("FOREIGN_VALUE", differenceDeposit.toString());
           psData.put("ISOCODE", isoCode);
@@ -441,7 +444,7 @@ public class CashUpReport extends HttpSecureAppServlet {
         psData.put("SEARCHKEY", "EXPECTED_" + recons.get(i).getPaymentType().getSearchKey());
         psData.put("LABEL", OBMessageUtils.getI18NMessage("OBPOS_LblExpected", new String[] {})
             + " " + recons.get(i).getPaymentType().getCommercialName());
-        psData.put("VALUE", expected.multiply(conversionRate).setScale(2, BigDecimal.ROUND_UP)
+        psData.put("VALUE", expected.multiply(conversionRate).setScale(2, BigDecimal.ROUND_HALF_UP)
             .toString());
         if (conversionRate.compareTo(BigDecimal.ONE) != 0) {
           psData.put("FOREIGN_VALUE", expected.toString());
@@ -485,7 +488,7 @@ public class CashUpReport extends HttpSecureAppServlet {
         psData.put("LABEL", recons.get(i).getPaymentType().getCommercialName());
         psData.put("VALUE",
             (expected.add(differenceDeposit).subtract(cashToDeposit)).multiply(conversionRate)
-                .setScale(2, BigDecimal.ROUND_UP).toString());
+                .setScale(2, BigDecimal.ROUND_HALF_UP).toString());
         if (conversionRate.compareTo(BigDecimal.ONE) != 0) {
           psData.put("FOREIGN_VALUE", expected.add(differenceDeposit).subtract(cashToDeposit)
               .toString());
@@ -502,8 +505,10 @@ public class CashUpReport extends HttpSecureAppServlet {
         psData.put("SEARCHKEY", "TODEPOSIT_" + recons.get(i).getPaymentType().getSearchKey());
         psData.put("GROUPFIELD", "TODEPOSIT");
         psData.put("LABEL", recons.get(i).getPaymentType().getCommercialName());
-        psData.put("VALUE", cashToDeposit.multiply(conversionRate).setScale(2, BigDecimal.ROUND_UP)
-            .toString());
+        psData
+            .put("VALUE",
+                cashToDeposit.multiply(conversionRate).setScale(2, BigDecimal.ROUND_HALF_UP)
+                    .toString());
         if (conversionRate.compareTo(BigDecimal.ONE) != 0) {
           psData.put("FOREIGN_VALUE", cashToDeposit.toString());
           psData.put("ISOCODE", isoCode);
