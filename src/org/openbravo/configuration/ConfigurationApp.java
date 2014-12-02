@@ -43,10 +43,9 @@ import org.apache.tools.ant.Project;
  * 
  */
 public class ConfigurationApp extends org.apache.tools.ant.Task {
-  private static List<ConfigureOption> optionLast = new ArrayList<ConfigureOption>();
   private static List<ConfigureOption> optionOracle = new ArrayList<ConfigureOption>();
   private static List<ConfigureOption> optionPostgreSQL = new ArrayList<ConfigureOption>();
-  private static List<ConfigureOption> optionFirst = new ArrayList<ConfigureOption>();
+  private static List<ConfigureOption> optionForOpenbravo = new ArrayList<ConfigureOption>();
   private static Map<String, String> replaceProperties = new HashMap<String, String>();
 
   private final static String BASEDIR = System.getProperty("user.dir");
@@ -107,17 +106,11 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       case 8:
         changeAllOptionsDatabase(p, optionPostgreSQL);
         break;
-      case 9:
-        changeAllOptionsLast(p);
-        break;
       case 10:
         showFinalMenu(p);
         break;
       case 11:
         changeAnOptionDatabase(p);
-        break;
-      case 12:
-        changeAnOptionLast(p);
         break;
       case 20:
         // All options have been selected... configure Openbravo.properties file.
@@ -188,11 +181,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       p.log("\n-------------------------\nYour choice " + optionToCange.getOptionChoose()
           + "\n-------------------------\n\n");
     }
-    // All information are introduced. Configure now last options
-    if (optionLast.isEmpty()) {
-      optionLast = createLastOpenbravoProperties(p);
-    }
-    mainFlowOption = 9;
+    mainFlowOption = 10;
   }
 
   /**
@@ -222,7 +211,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       p.log("---------------------------------------------------------------------------- \n You have not successfully completed the configuration process.");
       mainFlowOption = -1;
     } else if ("N".equalsIgnoreCase(input)) {
-      if (optionFirst.isEmpty()) {
+      if (optionForOpenbravo.isEmpty()) {
         mainFlowOption = 1;
       } else {
         mainFlowOption = 10;
@@ -246,52 +235,6 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
   }
 
   /**
-   * This method changes an option in "optionLast" like authentication class, Tomcat manager URL,
-   * ...
-   * 
-   * @param p
-   */
-  private void changeAnOptionLast(Project p) {
-    optionForModify = optionForModify - optionFirst.size() - numberOptionsDDBB;
-    ConfigureOption optionChange = optionLast.get(optionForModify - 1);
-    if (optionChange.getType() == ConfigureOption.TYPE_OPT_CHOOSE) {
-      p.log("Please select " + optionChange.getAskInfo());
-      optionChange.getOptions(p);
-      boolean numberOk = false;
-      do {
-        String optionS = infoCollected.nextLine();
-        try {
-          int option = Integer.parseInt(optionS);
-          if (option >= 0 && option < optionChange.getMax()) {
-            optionChange.setChoose(option);
-            optionChange.setChooseString(optionChange.getOptionChoose());
-            numberOk = true;
-          } else {
-            p.log("Please, introduce a correct option: ");
-          }
-        } catch (NumberFormatException e) {
-          if (optionS.equals("")) {
-            numberOk = true;
-          } else {
-            p.log("Please, introduce a correct option: ");
-          }
-        }
-      } while (!numberOk);
-    } else if (optionChange.getType() == ConfigureOption.TYPE_OPT_STRING) {
-      p.log("\nPlease introduce " + optionChange.getAskInfo());
-      optionChange.getOptions(p);
-      String optionString = infoCollected.nextLine();
-      if (!optionString.equals("")) {
-        optionChange.setChooseString(optionString);
-      }
-    }
-    optionLast.set(optionForModify - 1, optionChange);
-    p.log("\n-------------------------\nYour choice " + optionChange.getOptionChoose()
-        + "\n-------------------------\n\n");
-    mainFlowOption = 4;
-  }
-
-  /**
    * This method changes an option in database [optionOracle or optionPostgreSQL] like SID, DB port,
    * ...
    * 
@@ -300,7 +243,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
   private void changeAnOptionDatabase(Project p) {
     String optionS, optionString;
     int option;
-    optionForModify = optionForModify - optionFirst.size();
+    optionForModify = optionForModify - optionForOpenbravo.size();
     if (!optionOracle.isEmpty()) {
       ConfigureOption optionToChange = optionOracle.get(optionForModify - 1);
       if (optionToChange.getType() == ConfigureOption.TYPE_OPT_CHOOSE) {
@@ -418,57 +361,12 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
   }
 
   /**
-   * This method changes all options in "optionLast".
-   * 
-   * @param p
-   */
-  private void changeAllOptionsLast(Project p) {
-    for (ConfigureOption optionToChange : optionLast) {
-      if (optionToChange.getType() == ConfigureOption.TYPE_OPT_CHOOSE) {
-        p.log("Please select " + optionToChange.getAskInfo());
-        optionToChange.getOptions(p);
-        boolean numberOk = false;
-        do {
-          String optionS = infoCollected.nextLine();
-          try {
-            int option = Integer.parseInt(optionS);
-            if (option >= 0 && option < optionToChange.getMax()) {
-              optionToChange.setChoose(option);
-              optionToChange.setChooseString(optionToChange.getOptionChoose());
-              numberOk = true;
-            } else {
-              p.log("Please, introduce a correct option: ");
-            }
-          } catch (NumberFormatException e) {
-            if (optionS.equals("")) {
-              numberOk = true;
-            } else {
-              p.log("Please, introduce a correct option: ");
-            }
-          }
-        } while (!numberOk);
-      } else if (optionToChange.getType() == ConfigureOption.TYPE_OPT_STRING) {
-        p.log("\nPlease introduce " + optionToChange.getAskInfo());
-        optionToChange.getOptions(p);
-        String optionString = infoCollected.nextLine();
-        if (!optionString.equals("")) {
-          optionToChange.setChooseString(optionString);
-        }
-      }
-      optionLast.set(optionLast.indexOf(optionToChange), optionToChange);
-      p.log("\n-------------------------\nYour choice " + optionToChange.getOptionChoose()
-          + "\n-------------------------\n\n");
-    }
-    mainFlowOption = 10;
-  }
-
-  /**
    * This method changes an option in "optionFirst" like date format, time format, ...
    * 
    * @param p
    */
   private void changeAnOptionFirst(Project p) {
-    ConfigureOption optionToChange = optionFirst.get(optionForModify - 1);
+    ConfigureOption optionToChange = optionForOpenbravo.get(optionForModify - 1);
     if (optionToChange.getType() == ConfigureOption.TYPE_OPT_CHOOSE) {
       p.log("Please select " + optionToChange.getAskInfo());
       optionToChange.getOptions(p);
@@ -500,7 +398,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         optionToChange.setChooseString(optionString);
       }
     }
-    optionFirst.set(optionForModify - 1, optionToChange);
+    optionForOpenbravo.set(optionForModify - 1, optionToChange);
     p.log("\n-------------------------\nYour choice " + optionToChange.getOptionChoose()
         + "\n-------------------------\n\n");
     // Check a change in type of database
@@ -544,7 +442,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       try {
         optionForModify = Integer.parseInt(menuOptionS);
         if (optionForModify >= 0
-            && optionForModify <= optionFirst.size() + optionLast.size() + numberOptionsDDBB) {
+            && optionForModify <= optionForOpenbravo.size() + numberOptionsDDBB) {
           menuOptionOk = true;
         } else {
           p.log("Choose a real option: ");
@@ -557,14 +455,11 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     if (optionForModify == 0) {
       mainFlowOption = 10;
       // Options 0 to numberLastOptions + NUM_OPTIONS_LAST, change a particular option
-    } else if (optionForModify > 0 && optionForModify <= optionFirst.size()) {
+    } else if (optionForModify > 0 && optionForModify <= optionForOpenbravo.size()) {
       mainFlowOption = 6;
-    } else if (optionForModify > optionFirst.size()
-        && optionForModify <= optionFirst.size() + numberOptionsDDBB) {
+    } else if (optionForModify > optionForOpenbravo.size()
+        && optionForModify <= optionForOpenbravo.size() + numberOptionsDDBB) {
       mainFlowOption = 11;
-    } else if (optionForModify > optionFirst.size() + numberOptionsDDBB
-        && optionForModify <= optionFirst.size() + optionLast.size() + numberOptionsDDBB) {
-      mainFlowOption = 12;
     }
   }
 
@@ -578,7 +473,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     // Show questions in order for get user parameters.
     int numberOption = 1;
     // Show all options by order asc
-    for (ConfigureOption previewOptionsLast : optionFirst) {
+    for (ConfigureOption previewOptionsLast : optionForOpenbravo) {
       printOptionWithStyle(numberOption,
           previewOptionsLast.getAskInfo() + " " + previewOptionsLast.getOptionChoose(), p);
       numberOption = numberOption + 1;
@@ -596,11 +491,6 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         numberOption = numberOption + 1;
       }
     }
-    for (ConfigureOption previewOptionsLast : optionLast) {
-      printOptionWithStyle(numberOption,
-          previewOptionsLast.getAskInfo() + " " + previewOptionsLast.getOptionChoose(), p);
-      numberOption = numberOption + 1;
-    }
     mainFlowOption = 5;
   }
 
@@ -611,7 +501,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
    */
   private void configureStepByStep(Project p) {
     String typeDDBB = "";
-    for (ConfigureOption optionOneByOne : optionFirst) {
+    for (ConfigureOption optionOneByOne : optionForOpenbravo) {
       if (optionOneByOne.getType() == ConfigureOption.TYPE_OPT_CHOOSE) {
         p.log("Please select " + optionOneByOne.getAskInfo());
         optionOneByOne.getOptions(p);
@@ -643,7 +533,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         }
       }
       // review
-      optionFirst.set(optionFirst.indexOf(optionOneByOne), optionOneByOne);
+      optionForOpenbravo.set(optionForOpenbravo.indexOf(optionOneByOne), optionOneByOne);
       typeDDBB = optionOneByOne.getOptionChoose();
       p.log("\n-------------------------\nYour choice " + typeDDBB
           + "\n-------------------------\n\n");
@@ -691,13 +581,13 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     fileCopyTemplate(OPENBRAVO_PROPERTIES + ".template", OPENBRAVO_PROPERTIES, p);
     // Create options one-by-one
     if (menuOption == 1) {
-      if (optionFirst.isEmpty()) {
-        optionFirst = createOpenbravoProperties(p);
+      if (optionForOpenbravo.isEmpty()) {
+        optionForOpenbravo = createOpenbravoProperties(p);
       }
       // Create optionsDDBB
       // Oracle or Postgresql options.
       String optionDatabaseToCreate = "";
-      for (ConfigureOption option : optionFirst) {
+      for (ConfigureOption option : optionForOpenbravo) {
         if (option.getChooseString().equals("Oracle")) {
           optionDatabaseToCreate = "Oracle";
         } else if (option.getChooseString().equals("PostgreSQL")) {
@@ -714,12 +604,12 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       mainFlowOption = 3;
       // Create all options by default.
     } else if (menuOption == 2) {
-      if (optionFirst.isEmpty()) {
-        optionFirst = createOpenbravoProperties(p);
+      if (optionForOpenbravo.isEmpty()) {
+        optionForOpenbravo = createOpenbravoProperties(p);
       }
       // Oracle or Postgresql options
       String optionDatabaseToCreate = "";
-      for (ConfigureOption option : optionFirst) {
+      for (ConfigureOption option : optionForOpenbravo) {
         if (option.getChooseString().equals("Oracle")) {
           optionDatabaseToCreate = "Oracle";
         } else if (option.getChooseString().equals("PostgreSQL")) {
@@ -732,9 +622,6 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       } else if (optionDatabaseToCreate.equals("PostgreSQL")) {
         optionPostgreSQL = createOPPostgreSQL(p);
         numberOptionsDDBB = optionPostgreSQL.size();
-      }
-      if (optionLast.isEmpty()) {
-        optionLast = createLastOpenbravoProperties(p);
       }
       // Go to preview options configurate by default
       mainFlowOption = 4;
@@ -822,7 +709,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
    */
   private static void setValuesProperties() {
     String timeSeparator = "", dateSeparator = "", timeFormat = "", dateFormat = "", database = "";
-    for (ConfigureOption optionFirstForReplace : optionFirst) {
+    for (ConfigureOption optionFirstForReplace : optionForOpenbravo) {
       if (optionFirstForReplace.getAskInfo().equals("date separator: ")) {
         dateSeparator = optionFirstForReplace.getOptionChoose();
       } else if (optionFirstForReplace.getAskInfo().equals("time separator: ")) {
@@ -839,8 +726,8 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         replaceProperties.put("context.name", optionFirstForReplace.getOptionChoose());
       } else if (optionFirstForReplace.getAskInfo().equals("Web URL: ")) {
         replaceProperties.put("web.url", optionFirstForReplace.getOptionChoose());
-      } else if (optionFirstForReplace.getAskInfo().equals("Output script location: ")) {
-        replaceProperties.put("bbdd.outputscript", optionFirstForReplace.getOptionChoose());
+      } else if (optionFirstForReplace.getAskInfo().equals("Authentication class: ")) {
+        replaceProperties.put("authentication.class", optionFirstForReplace.getOptionChoose());
       } else if (optionFirstForReplace.getAskInfo().equals("Context URL :")) {
         replaceProperties.put("context.url", optionFirstForReplace.getOptionChoose());
       }
@@ -969,18 +856,6 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       replaceProperties.put("bbdd.driver", "org.postgresql.Driver");
       replaceProperties.put("bbdd.url", "jdbc:postgresql://" + serverBBDD + ":" + portBBDD);
     }
-    for (ConfigureOption optionLastForReplace : optionLast) {
-      if (optionLastForReplace.getAskInfo().equals("Tomcat Manager URL: ")) {
-        replaceProperties.put("tomcat.manager.url", optionLastForReplace.getOptionChoose());
-      } else if (optionLastForReplace.getAskInfo().equals("Tomcat manager username: ")) {
-        replaceProperties.put("tomcat.manager.username", optionLastForReplace.getOptionChoose());
-      } else if (optionLastForReplace.getAskInfo().equals("Tomcat manager password: ")) {
-        replaceProperties.put("tomcat.manager.password", optionLastForReplace.getOptionChoose());
-      } else if (optionLastForReplace.getAskInfo().equals("Authentication class: ")) {
-        replaceProperties.put("authentication.class", optionLastForReplace.getOptionChoose());
-      }
-    }
-
   }
 
   /**
@@ -1178,12 +1053,12 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     }
     options.add(o7);
 
-    askInfo = "Output script location: ";
+    askInfo = "Authentication class: ";
     ConfigureOption o8 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
         new ArrayList<String>());
-    optionValueString = searchOptionsProperties(fileO, "bbdd.outputscript", p);
+    optionValueString = searchOptionsProperties(fileO, "authentication.class", p);
     if (optionValueString.equals("")) {
-      o8.setChooseString("databasescript.sql");
+      o8.setChooseString("");
     } else {
       o8.setChooseString(optionValueString);
     }
@@ -1202,64 +1077,6 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       o9.setChooseString("PostgreSQL");
     }
     options.add(o9);
-
-    return options;
-  }
-
-  /**
-   * 
-   * This function creates last options for configuration.Information is collected from
-   * Openbravo.properties file.
-   * 
-   * @return List<ConfigureOption>
-   */
-  private static List<ConfigureOption> createLastOpenbravoProperties(Project p) {
-    List<ConfigureOption> options = new ArrayList<ConfigureOption>();
-    File fileO = new File(OPENBRAVO_PROPERTIES);
-
-    String askInfo = "Tomcat Manager URL: ";
-    ConfigureOption o0 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
-        new ArrayList<String>());
-    String optionValueString = searchOptionsProperties(fileO, "tomcat.manager.url", p);
-    if (optionValueString.equals("")) {
-      o0.setChooseString("http://localhost:8080/manager");
-    } else {
-      o0.setChooseString(optionValueString);
-    }
-    options.add(o0);
-
-    askInfo = "Tomcat manager username: ";
-    ConfigureOption o1 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
-        new ArrayList<String>());
-    optionValueString = searchOptionsProperties(fileO, "tomcat.manager.username", p);
-    if (optionValueString.equals("")) {
-      o1.setChooseString("admin");
-    } else {
-      o1.setChooseString(optionValueString);
-    }
-    options.add(o1);
-
-    askInfo = "Tomcat manager password: ";
-    ConfigureOption o2 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
-        new ArrayList<String>());
-    optionValueString = searchOptionsProperties(fileO, "tomcat.manager.password", p);
-    if (optionValueString.equals("")) {
-      o2.setChooseString("admin");
-    } else {
-      o2.setChooseString(optionValueString);
-    }
-    options.add(o2);
-
-    askInfo = "Authentication class: ";
-    ConfigureOption o3 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
-        new ArrayList<String>());
-    optionValueString = searchOptionsProperties(fileO, "authentication.class", p);
-    if (optionValueString.equals("")) {
-      o3.setChooseString("");
-    } else {
-      o3.setChooseString(optionValueString);
-    }
-    options.add(o3);
 
     return options;
   }
