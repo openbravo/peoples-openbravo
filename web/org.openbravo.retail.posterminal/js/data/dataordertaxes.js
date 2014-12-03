@@ -11,11 +11,24 @@
 
 (function () {
 
-  var findTaxesCollection = function (receipt, line) {
-    return new Promise(function (fullfill, reject) {
+  var isTaxCategoryBOM = function (taxcategory) {
+    return new Promise(function (fulfill) {
+      OB.Dal.find(OB.Model.TaxCategoryBOM, {'id': taxcategory}, function(data) {
+        fulfill(data.length > 0);
+      });
+    });
+  };
+  
+  var getProductBOM = function (product) {
+    return new Promise(function (fulfill) {
+      OB.Dal.find(OB.Model.ProductBOM, {'product': product}, fulfill);
+    });
+  };
+
+  var findTaxesCollection = function (receipt, line, product) {
+    return new Promise(function (fulfill, reject) {
       // sql parameters 
-      var product = line.get('product'),
-          fromRegionOrg = OB.MobileApp.model.get('terminal').organizationRegionId,
+      var fromRegionOrg = OB.MobileApp.model.get('terminal').organizationRegionId,
           fromCountryOrg = OB.MobileApp.model.get('terminal').organizationCountryId,
           bpTaxCategory = receipt.get('bp').get('taxCategory'),
           bpIsExempt = receipt.get('bp').get('taxExempt'),
@@ -49,7 +62,7 @@
       }, function (args) {
         OB.Dal.query(OB.Model.TaxRate, args.sql, [], function (coll, args) { // success
           if (coll && coll.length > 0) {  
-            fullfill(coll);
+            fulfill(coll);
           } else {
             reject(OB.I18N.getLabel('OBPOS_TaxNotFound_Message', [args.get('_identifier')]));
           }
@@ -59,10 +72,45 @@
       });    
     });
   };
+  
+/*  
+  var calcLineTaxesIncPrice = function (receipt, line) {
+  
+    var product = line.get('product');
+    isTaxCategoryBOM(product.get('taxCategory')).then(function (isbom) {
+    
+      if (isbom) {
+        getProductBOM(product.get('id')).then(function (data) {
+        
+          // Calculate the total BOM
+          var totalbom = data.reduce(function(s, productbom){
+            return OB.DEC.add(s, OB.DEC.mul(productbom.get('bomprice'), productbom.get('bomquantity')));   
+          }, OB.DEC.Zero);
+          
+          data.forEach
+          
+          return Promise.all(data.map( function (productbom) {
+            var base = gross de la linea;
 
-  var calcLineTaxesIncPrice = function (receipt, line) { 
-   
-    return findTaxesCollection(receipt, line).then(function (coll) {
+            
+            return calcLineTaxesIncPrice(receipt, line);
+          }));
+        
+        
+        });
+     
+      
+      } else {
+        var base = gross de la linea;
+        return calcProductTaxesIncPrice(receipt, line, product, base);
+      }
+    
+    });  
+*/
+
+  var calcProductTaxesIncPrice = function (receipt, line, product, base) { 
+
+    return findTaxesCollection(receipt, line, product).then(function (coll) {
 
       var discountedGross = null;
       if (line.get('promotions')) {
@@ -318,7 +366,12 @@
       });        
     });      
   };
-
+  
+  var calcLineTaxesIncPrice = function (receipt, line) {
+    var product = line.get('product');
+    return calcProductTaxesIncPrice(receipt, line, product, null);
+  }; 
+  
   var calcTaxesIncPrice = function (receipt) {
 
       // Initialize receipt
