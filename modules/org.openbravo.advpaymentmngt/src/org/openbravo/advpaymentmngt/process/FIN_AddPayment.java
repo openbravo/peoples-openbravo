@@ -1160,15 +1160,18 @@ public class FIN_AddPayment {
    */
   public static void updatePaymentScheduleAmounts(FIN_PaymentDetail paymentDetail,
       FIN_PaymentSchedule paymentSchedule, BigDecimal amount, BigDecimal writeOffAmount) {
-    paymentSchedule.setPaidAmount(paymentSchedule.getPaidAmount().add(amount));
-    paymentSchedule.setOutstandingAmount(paymentSchedule.getOutstandingAmount().subtract(amount));
-    if (writeOffAmount != null && writeOffAmount.compareTo(BigDecimal.ZERO) != 0) {
-      paymentSchedule.setPaidAmount(paymentSchedule.getPaidAmount().add(writeOffAmount));
-      paymentSchedule.setOutstandingAmount(paymentSchedule.getOutstandingAmount().subtract(
-          writeOffAmount));
+    if (paymentSchedule.getOutstandingAmount().compareTo(BigDecimal.ZERO) != 0) {
+      paymentSchedule.setPaidAmount(paymentSchedule.getPaidAmount().add(amount));
+      paymentSchedule.setOutstandingAmount(paymentSchedule.getOutstandingAmount().subtract(amount));
+      if (writeOffAmount != null && writeOffAmount.compareTo(BigDecimal.ZERO) != 0) {
+        paymentSchedule.setPaidAmount(paymentSchedule.getPaidAmount().add(writeOffAmount));
+        paymentSchedule.setOutstandingAmount(paymentSchedule.getOutstandingAmount().subtract(
+            writeOffAmount));
+      }
+      OBDal.getInstance().save(paymentSchedule);
+      CashVATUtil.createInvoiceTaxCashVAT(paymentDetail, paymentSchedule,
+          amount.add(writeOffAmount));
     }
-    OBDal.getInstance().save(paymentSchedule);
-    CashVATUtil.createInvoiceTaxCashVAT(paymentDetail, paymentSchedule, amount.add(writeOffAmount));
     if (paymentSchedule.getInvoice() != null) {
       updateInvoicePaymentMonitor(paymentSchedule, amount, writeOffAmount);
     }
