@@ -31,6 +31,10 @@
     column: 'bomproduct',
     type: 'TEXT'
   }, {
+    name: 'bomtaxcategory',
+    column: 'bomtaxcategory',
+    type: 'TEXT'
+  }, {
     name: 'bomquantity',
     column: 'bomquantity',
     type: 'NUMERIC'

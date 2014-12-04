@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global window,Promise,_ */
+/*global window,Promise,Backbone,_ */
 
 (function () {
 
@@ -68,46 +68,11 @@
           }
         }, function (tx, error) { // error
           reject(OB.I18N.getLabel('OBPOS_TaxCalculationError_Message'));
-        }, product);
+        },product);
       });    
     });
   };
   
-/*  
-  var calcLineTaxesIncPrice = function (receipt, line) {
-  
-    var product = line.get('product');
-    isTaxCategoryBOM(product.get('taxCategory')).then(function (isbom) {
-    
-      if (isbom) {
-        getProductBOM(product.get('id')).then(function (data) {
-        
-          // Calculate the total BOM
-          var totalbom = data.reduce(function(s, productbom){
-            return OB.DEC.add(s, OB.DEC.mul(productbom.get('bomprice'), productbom.get('bomquantity')));   
-          }, OB.DEC.Zero);
-          
-          data.forEach
-          
-          return Promise.all(data.map( function (productbom) {
-            var base = gross de la linea;
-
-            
-            return calcLineTaxesIncPrice(receipt, line);
-          }));
-        
-        
-        });
-     
-      
-      } else {
-        var base = gross de la linea;
-        return calcProductTaxesIncPrice(receipt, line, product, base);
-      }
-    
-    });  
-*/
-
   var calcProductTaxesIncPrice = function (receipt, line, product, orggross, discountedGross) { 
 
     return findTaxesCollection(receipt, line, product).then(function (coll) {
@@ -368,17 +333,6 @@
   };
   
   var calcLineTaxesIncPrice = function (receipt, line) {
-  
-    // Calculate product, orggross, and discountedGross.
-    var product = line.get('product');
-    var orggross = line.get('gross');    
-    var discountedGross = null;
-    if (line.get('promotions')) {
-      discountedGross = line.get('gross');
-      discountedGross = line.get('promotions').reduce(function (memo, element) {
-        return OB.DEC.sub(memo, element.actualAmt || element.amt || 0);
-      }, discountedGross);
-    }
          
     // Initialize line properties
     line.set('taxLines', {});
@@ -389,8 +343,68 @@
     line.set('pricenet', OB.DEC.Zero);    
     line.set('discountedNet', OB.DEC.Zero);    
  // line.set('linerate',  BigDecimal.prototype.ZERO);    
-    
-    return calcProductTaxesIncPrice(receipt, line, product, orggross, discountedGross);
+
+   
+    // Calculate product, orggross, and discountedGross.
+    var product = line.get('product');
+    var orggross = line.get('gross');    
+    var discountedGross = null;
+    if (line.get('promotions')) {
+      discountedGross = line.get('gross');
+      discountedGross = line.get('promotions').reduce(function (memo, element) {
+        return OB.DEC.sub(memo, element.actualAmt || element.amt || 0);
+      }, discountedGross);
+    }    
+
+    return isTaxCategoryBOM(product.get('taxCategory')).then(function (isbom) {
+      if (isbom) {
+        // BOM, calculate taxes based on the products list
+        return getProductBOM(product.get('id')).then(function (data) {
+        
+          // Calculate the total BOM
+          var totalbom = data.reduce(function(s, productbom){
+            return OB.DEC.add(s, OB.DEC.mul(productbom.get('bomprice'), productbom.get('bomquantity')));   
+          }, OB.DEC.Zero);
+          
+          // Calculate the corresponding gross and discounted gross for each product in BOM
+          var accorggross = orggross;
+          var accdiscountedgross = discountedGross;
+          data.forEach(function(productbom) {
+            var ratebom = OB.DEC.mul(productbom.get('bomprice'), productbom.get('bomquantity'));
+            
+            var orggrossbom = OB.DEC.div(OB.DEC.mul(ratebom, orggross), totalbom);
+            accorggross = OB.DEC.sub(accorggross, orggrossbom);
+            productbom.set('bomgross', orggrossbom);
+            if (!_.isNull(discountedGross)) {
+              var discountedgrossbom = OB.DEC.div(OB.DEC.mul(ratebom, discountedGross), totalbom);
+              accdiscountedgross = OB.DEC.sub(accdiscountedgross, discountedgrossbom);
+              productbom.set('bomdiscountedgross', discountedgrossbom);
+            }
+          });
+          // Adjust rounding in the first item of the bom
+          var lastproductbom = data.at(0);
+          lastproductbom.set('bomgross', OB.DEC.add(lastproductbom.get('bomgross'), accorggross));
+          if (!_.isNull(discountedGross)) {
+            lastproductbom.set('bomdiscountedgross', OB.DEC.add(lastproductbom.get('bomdiscountedgross'), accdiscountedgross));
+          }          
+
+
+          data.forEach(function (productbom) {          
+            window.console.log(JSON.stringify(productbom.toJSON()));
+          });   
+                 
+          // return calcProductTaxesIncPrice(receipt, line, product, orggross, discountedGross);      
+          return Promise.all(data.map(function (productbom) {          
+            return calcProductTaxesIncPrice(receipt, line, new Backbone.Model({id: productbom.get('bomproduct'), taxCategory: productbom.get('bomtaxcategory')}), productbom.get('bomgross'), productbom.get('bomdiscountedgross'));
+          }));
+        });
+      
+      
+      } else {
+        // Not BOM, calculate taxes based on the line product
+        return calcProductTaxesIncPrice(receipt, line, product, orggross, discountedGross);      
+      }
+    });
   }; 
   
   var calcTaxesIncPrice = function (receipt) {
@@ -637,12 +651,15 @@
       if (window.TAXESLOGIC === 'DEBUG') {
         var me = this;
         var mytaxes, mytaxesold;
-        calcTaxes(me).then(function () {
-          mytaxes = JSON.stringify(getTaxesInfo(me));
-          window.console.log(mytaxes);
-          OB.DATA.legacyCalculateTaxes.call(me, function () {
-            mytaxesold = JSON.stringify(getTaxesInfo(me));
-            window.console.log(mytaxesold);
+        
+        OB.DATA.legacyCalculateTaxes.call(me, function () {
+          mytaxesold = JSON.stringify(getTaxesInfo(me));
+          window.console.log(mytaxesold);   
+                       
+          calcTaxes(me).then(function () {
+            mytaxes = JSON.stringify(getTaxesInfo(me));
+            window.console.log(mytaxes);
+            
             if (mytaxes !== mytaxesold) {
               window.console.error('Wrong taxes calculation');
             }
