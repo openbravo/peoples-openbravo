@@ -281,7 +281,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
           log.debug("New average cost: {}", cost.toPlainString());
           Costing curCosting = trx.getMaterialMgmtCostingList().get(0);
           BigDecimal trxPrice = curCosting.getPrice().multiply(trx.getMovementQuantity().abs())
-              .add(trxAdjAmt)
+              .add(trxAdjAmt.multiply(trxSignMultiplier))
               .divide(trx.getMovementQuantity().abs(), costCurPrecission, RoundingMode.HALF_UP);
 
           if (checkNegativeStockCorrection && currentStock.compareTo(trx.getMovementQuantity()) < 0
@@ -355,7 +355,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
                   RoundingMode.HALF_UP);
             }
             BigDecimal trxPrice = curCosting.getPrice().multiply(trx.getMovementQuantity().abs())
-                .add(trxAdjAmt)
+                .add(trxAdjAmt.multiply(trxSignMultiplier))
                 .divide(trx.getMovementQuantity().abs(), costCurPrecission, RoundingMode.HALF_UP);
             if (curCosting.getCost().compareTo(cost) != 0) {
               curCosting.setPermanent(Boolean.FALSE);
