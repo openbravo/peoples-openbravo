@@ -191,9 +191,12 @@
         //net unit price (rounded)
         pricenet = roundedLinePriceNet; // 2 decimals properly rounded.
       }
-      line.set('discountedNet', OB.DEC.add(line.get('discountedNet'), OB.DEC.mul(pricenet, new BigDecimal(String(line.get('qty'))))));
-      discountedNet = line.get('discountedNet');
-      pricenetcascade = pricenet;
+      discountedNet = OB.DEC.mul(pricenet, new BigDecimal(String(line.get('qty'))));
+      pricenetcascade = pricenet;      
+      line.set('discountedNet', OB.DEC.add(line.get('discountedNet'), discountedNet));
+      
+      console.log('discountednet 1-->');
+      console.log(discountedNet);      
 
       // second calculate tax lines.          
       var taxesline = {};
@@ -233,7 +236,10 @@
           taxList.splice(taxList.indexOf(taxRate), 1);
         });
       }
-
+      
+      console.log('taxesline 1-->');
+      console.log(JSON.stringify(taxesline));
+      
       // We need to make a final adjustment: we will sum all the tax lines,
       // and if the net amount of the line plus this sum is not equal to the gross,
       // we will adjust the tax line with the greatest amount
@@ -269,7 +275,9 @@
         //An adjustment is needed
         taxesline[greaterTax].amount = OB.DEC.add(taxesline[greaterTax].amount, OB.DEC.sub(expectedGross, netandtax));
       }
-      
+      console.log('taxesline 2-->');
+      console.log(JSON.stringify(taxesline));  
+          
       // Accumulate to taxes line
       var accumtaxesline = line.get('taxLines');
       _.each(taxesline, function(taxline, taxid) {     
@@ -284,9 +292,8 @@
           accumtaxesline[taxid].amount = taxline.amount;
         }
       });
-      
-      console.log(JSON.stringify(taxesline));
-      console.log(JSON.stringify(accumtaxesline));
+
+
 
       // Calculate receipt taxes
       var taxes = receipt.get('taxes');
