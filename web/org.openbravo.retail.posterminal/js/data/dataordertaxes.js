@@ -284,6 +284,9 @@
           accumtaxesline[taxid].amount = taxline.amount;
         }
       });
+      
+      console.log(JSON.stringify(taxesline));
+      console.log(JSON.stringify(accumtaxesline));
 
       // Calculate receipt taxes
       var taxes = receipt.get('taxes');
