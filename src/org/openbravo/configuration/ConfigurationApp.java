@@ -127,9 +127,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
   }
 
   /**
-   * This method shows message "Configuration complete".
-   * 
-   * @param p
+   * This method shows message "Configuration complete" and copy some templates.
    */
   private void finishConfigurationProcess(Project p) {
     p.log("---------------------------------------------------------------------------- \n Configuration complete. \n----------------------------------------------------------------------------");
@@ -143,6 +141,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
    * 
    * @param p
    * @param optionsDatabase
+   *          List of database properties
    */
   private void changeAllOptionsDatabase(Project p, List<ConfigureOption> optionsDatabase) {
     for (ConfigureOption optionToCange : optionsDatabase) {
@@ -186,8 +185,6 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
 
   /**
    * This method closes scanners and say goodbye.
-   * 
-   * @param p
    */
   private void closeExitProgram(Project p) {
     infoCollected.close();
@@ -197,8 +194,6 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
 
   /**
    * This method checks that user wants to leave the program.
-   * 
-   * @param p
    */
   private void reConfirmExit(Project p) {
     p.log("Do you want to exit this program? [y/n]: ");
@@ -221,8 +216,6 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
 
   /**
    * This method replaces old values in Openbravo.properties by the new requested values.
-   * 
-   * @param p
    */
   private void setValuesInOpenbravoProperties(Project p) {
     setValuesProperties();
@@ -237,8 +230,6 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
   /**
    * This method changes an option in database [optionOracle or optionPostgreSQL] like SID, DB port,
    * ...
-   * 
-   * @param p
    */
   private void changeAnOptionDatabase(Project p) {
     String optionS, optionString;
@@ -322,14 +313,12 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
 
   /**
    * This method shows the final menu in where user can select accept o return to configure.
-   * 
-   * @param p
    */
   private void showFinalMenu(Project p) {
     p.log("---------------------------------------------------------------------------- \n Are you agree with all options that you configure? \n----------------------------------------------------------------------------");
-    p.log("[1]. Accept.");
-    p.log("[2]. Back to preview configuration.");
-    p.log("[3]. Exit without saving.");
+    printOptionWithStyle(1, "Accept.", p);
+    printOptionWithStyle(2, "Back to preview configuration.", p);
+    printOptionWithStyle(3, "Exit without saving.", p);
     p.log("Choose an option: ");
     boolean menuOptionOk = false;
     int optionConfigure = 0;
@@ -362,8 +351,6 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
 
   /**
    * This method changes an option in "optionFirst" like date format, time format, ...
-   * 
-   * @param p
    */
   private void changeAnOptionFirst(Project p) {
     ConfigureOption optionToChange = optionForOpenbravo.get(optionForModify - 1);
@@ -401,27 +388,21 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     optionForOpenbravo.set(optionForModify - 1, optionToChange);
     p.log("\n-------------------------\nYour choice " + optionToChange.getOptionChoose()
         + "\n-------------------------\n\n");
-    // Check a change in type of database
-    File fileO = new File(OPENBRAVO_PROPERTIES);
     if (optionToChange.getOptionChoose().equals("Oracle")) {
-      if (searchOptionsProperties(fileO, "bbdd.rdbms", p).equals("POSTGRE")) {
-        if (optionOracle.isEmpty()) {
-          optionOracle = createOPOracle(p);
-          numberOptionsDDBB = optionOracle.size();
-        }
-        if (!optionPostgreSQL.isEmpty()) {
-          optionPostgreSQL.clear();
-        }
+      if (optionOracle.isEmpty()) {
+        optionOracle = createOPOracle(p);
+        numberOptionsDDBB = optionOracle.size();
+      }
+      if (!optionPostgreSQL.isEmpty()) {
+        optionPostgreSQL.clear();
       }
     } else if (optionToChange.getOptionChoose().equals("PostgreSQL")) {
-      if (searchOptionsProperties(fileO, "bbdd.rdbms", p).equals("ORACLE")) {
-        if (optionPostgreSQL.isEmpty()) {
-          optionPostgreSQL = createOPPostgreSQL(p);
-          numberOptionsDDBB = optionPostgreSQL.size();
-        }
-        if (!optionOracle.isEmpty()) {
-          optionOracle.clear();
-        }
+      if (optionPostgreSQL.isEmpty()) {
+        optionPostgreSQL = createOPPostgreSQL(p);
+        numberOptionsDDBB = optionPostgreSQL.size();
+      }
+      if (!optionOracle.isEmpty()) {
+        optionOracle.clear();
       }
     }
     mainFlowOption = 4;
@@ -430,8 +411,6 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
   /**
    * This method asks for an option for changing. It can be optionFirst, option database or
    * optionLast.
-   * 
-   * @param p
    */
   private void askForChangeAnOption(Project p) {
     p.log("---------------------------------------------------------------------------- \n Do you change any option? \n----------------------------------------------------------------------------");
@@ -465,8 +444,6 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
 
   /**
    * This method shows all options with their values.
-   * 
-   * @param p
    */
   private void previewConfigurationOptions(Project p) {
     p.log("---------------------------------------------------------------------------- \n Preview Openbravo ERP configuration \n----------------------------------------------------------------------------");
@@ -496,8 +473,6 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
 
   /**
    * This method invokes all the options for configuration one by one.
-   * 
-   * @param p
    */
   private void configureStepByStep(Project p) {
     String typeDDBB = "";
@@ -562,8 +537,6 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
 
   /**
    * This method asks selected option in main menu.
-   * 
-   * @param p
    */
   private void selectOptionMainMenu(Project p) {
     boolean menuOptionOk = false;
@@ -577,8 +550,6 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         p.log("Please, introduce a correct option: ");
       }
     } while (!menuOptionOk);
-    // Copy if not exists Openbravo.properties
-    fileCopyTemplate(OPENBRAVO_PROPERTIES + ".template", OPENBRAVO_PROPERTIES, p);
     // Create options one-by-one
     if (menuOption == 1) {
       if (optionForOpenbravo.isEmpty()) {
@@ -634,8 +605,6 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
 
   /**
    * This method shows main menu of application.
-   * 
-   * @param p
    */
   private void showMainMenu(Project p) {
     p.log("---------------------------------------------------------------------------- \n Please choose one option. \n----------------------------------------------------------------------------");
@@ -648,19 +617,13 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
 
   /**
    * This method prints options with the same style.
-   * 
-   * @param numberOption
-   * @param textOption
-   * @param p
    */
   static void printOptionWithStyle(int numberOption, String textOption, Project p) {
-    p.log("[" + numberOption + "]. " + textOption);
+    p.log("[" + numberOption + "] " + textOption);
   }
 
   /**
    * This method asks for users that accept the license of Openbravo installation.
-   * 
-   * @param p
    */
   private void acceptLicense(Project p) {
     p.log("Do you accept this license? [y/n]: ");
@@ -679,8 +642,6 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
 
   /**
    * This method copies some important files.
-   * 
-   * @param p
    */
   private static void fileCopySomeTemplates(Project p) {
     fileCopyTemplate(FORMAT_XML + ".template", FORMAT_XML, p);
@@ -692,9 +653,6 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
 
   /**
    * This function shows a welcome to install application.
-   * 
-   * @param p1
-   *          : Project
    */
   private static void showWelcome(Project p1) {
     Scanner inp = new Scanner(System.in);
@@ -863,14 +821,25 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
    * changeOption. Concatenated searchOption+changeOption. For example: "bbdd.user=" + "admin".
    * 
    * @param searchOption
-   *          : prefix to search
+   *          Prefix to search
    * @param changeOption
-   *          : value to write in Openbravo.properties
+   *          Value to write in Openbravo.properties
    */
   private static void replaceOptionsProperties(String searchOption, String changeOption, Project p) {
     try {
       boolean isFound = false;
       File fileR = new File(OPENBRAVO_PROPERTIES);
+      if (!fileR.exists()) {
+        // Copy if not exists Openbravo.properties
+        // FileUtils.copyFile(new File(OPENBRAVO_PROPERTIES + ".template"), fileR);
+        fileCopyTemplate(OPENBRAVO_PROPERTIES + ".template", OPENBRAVO_PROPERTIES, p);
+      }
+      // Modify Openbravo.properties file if PostgreSQL's options have been disabled.
+      if (!searchOptionsProperties(fileR, "bbdd.rdbms", p).equals(
+          replaceProperties.get("bbdd.rdbms"))) {
+        changeOraclePostgresql(p);
+      }
+
       FileReader fr = new FileReader(fileR);
       BufferedReader br = new BufferedReader(fr);
       // auxiliary file to rewrite
@@ -911,8 +880,10 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
    * This function searches an option in fileO file and returns the value of searchOption.
    * 
    * @param fileO
+   *          File to search
    * @param searchOption
-   * @return String
+   *          Option that is searched
+   * @return String Value found
    */
   private static String searchOptionsProperties(File fileO, String searchOption, Project p) {
     String valueSearched = "";
@@ -938,11 +909,15 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
    * This function creates first options for configuration. Information is collected from
    * Openbravo.properties file.
    * 
-   * @return List<ConfigureOption>
+   * @return List<ConfigureOption> of default properties
    */
   private static List<ConfigureOption> createOpenbravoProperties(Project p) {
     List<ConfigureOption> options = new ArrayList<ConfigureOption>();
     File fileO = new File(OPENBRAVO_PROPERTIES);
+    if (!fileO.exists()) {
+      fileCopyTemplate(OPENBRAVO_PROPERTIES + ".template", OPENBRAVO_PROPERTIES_AUX, p);
+      fileO = new File(OPENBRAVO_PROPERTIES_AUX);
+    }
 
     String askInfo = "date format: ";
     ArrayList<String> optChoosen = new ArrayList<String>();
@@ -1078,6 +1053,10 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     }
     options.add(o9);
 
+    // Delete auxiliar file
+    if (fileO.getPath().equals(OPENBRAVO_PROPERTIES_AUX)) {
+      fileO.delete();
+    }
     return options;
   }
 
@@ -1085,14 +1064,28 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
    * This function creates options of Oracle configuration. Information is collected from
    * Openbravo.properties file.
    * 
-   * @return List<ConfigureOption>
+   * @return List<ConfigureOption> of Oracle default properties
    */
   private static List<ConfigureOption> createOPOracle(Project p) {
     List<ConfigureOption> option = new ArrayList<ConfigureOption>();
+
     File fileO = new File(OPENBRAVO_PROPERTIES);
+    if (!fileO.exists()) {
+      fileO = new File(OPENBRAVO_PROPERTIES + ".template");
+    }
     // Modify Openbravo.properties file if Oracle's options have been disabled.
     if (searchOptionsProperties(fileO, "bbdd.rdbms", p).equals("POSTGRE")) {
       changeOraclePostgresql(p);
+    } else {
+      fileO = new File(OPENBRAVO_PROPERTIES);
+      if (!fileO.exists()) {
+        fileCopyTemplate(OPENBRAVO_PROPERTIES + ".template", OPENBRAVO_PROPERTIES_AUX, p);
+      }
+    }
+    // If not exists OPENBRAVO_PROPERTIES_AUX file, use OPENBRAVO_PROPERTIES
+    fileO = new File(OPENBRAVO_PROPERTIES_AUX);
+    if (!fileO.exists()) {
+      fileO = new File(OPENBRAVO_PROPERTIES);
     }
 
     String askInfo = "SID: ";
@@ -1168,6 +1161,11 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     o6.setChooseString(separateUrl[4]);
     option.add(o6);
 
+    // Delete auxiliar file
+    if (fileO.getPath().equals(OPENBRAVO_PROPERTIES_AUX)) {
+      fileO.delete();
+    }
+
     return option;
   }
 
@@ -1175,15 +1173,29 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
    * This function creates options of PostgreSQL configuration.Information is collected from
    * Openbravo.properties file.
    * 
-   * @return List<ConfigureOption>
+   * @return List<ConfigureOption> of PostgreSQL default properties
    */
   private static List<ConfigureOption> createOPPostgreSQL(Project p) {
     List<ConfigureOption> option = new ArrayList<ConfigureOption>();
     String askInfo;
+
     File fileO = new File(OPENBRAVO_PROPERTIES);
+    if (!fileO.exists()) {
+      fileO = new File(OPENBRAVO_PROPERTIES + ".template");
+    }
     // Modify Openbravo.properties file if PostgreSQL's options have been disabled.
     if (searchOptionsProperties(fileO, "bbdd.rdbms", p).equals("ORACLE")) {
       changeOraclePostgresql(p);
+    } else {
+      fileO = new File(OPENBRAVO_PROPERTIES);
+      if (!fileO.exists()) {
+        fileCopyTemplate(OPENBRAVO_PROPERTIES + ".template", OPENBRAVO_PROPERTIES_AUX, p);
+      }
+    }
+    // If not exists OPENBRAVO_PROPERTIES_AUX file, use OPENBRAVO_PROPERTIES
+    fileO = new File(OPENBRAVO_PROPERTIES_AUX);
+    if (!fileO.exists()) {
+      fileO = new File(OPENBRAVO_PROPERTIES);
     }
 
     askInfo = "SID: ";
@@ -1231,18 +1243,24 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     o6.setChooseString(separateUrl[3]);
     option.add(o6);
 
+    // Delete auxiliar file
+    if (fileO.getPath().equals(OPENBRAVO_PROPERTIES_AUX)) {
+      fileO.delete();
+    }
+
     return option;
   }
 
   /**
    * This function disables options Oracle or PostgreSQL, using the [#] at the beginning of the
    * options to disable them.
-   * 
-   * @param p
    */
   private static void changeOraclePostgresql(Project p) {
     try {
       File fileR = new File(OPENBRAVO_PROPERTIES);
+      if (!fileR.exists()) {
+        fileR = new File(OPENBRAVO_PROPERTIES + ".template");
+      }
       FileReader fr = new FileReader(fileR);
       BufferedReader br = new BufferedReader(fr);
       // Auxiliary file to rewrite
@@ -1272,9 +1290,11 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     // Openbravo.properties
     try {
       File fileR = new File(OPENBRAVO_PROPERTIES);
-      fileR.delete();
-      File fileW = new File(OPENBRAVO_PROPERTIES_AUX);
-      fileW.renameTo(new File(OPENBRAVO_PROPERTIES));
+      if (fileR.exists()) {
+        fileR.delete();
+        File fileW = new File(OPENBRAVO_PROPERTIES_AUX);
+        fileW.renameTo(new File(OPENBRAVO_PROPERTIES));
+      }
     } catch (Exception e2) {
       p.log("Excetion deleting/rename file: " + e2);
     }
@@ -1284,7 +1304,9 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
    * This function copies a file if it is not exists.
    * 
    * @param sourceFile
+   *          input file
    * @param destinationFile
+   *          output file
    * @param p
    */
   private static void fileCopyTemplate(String sourceFile, String destinationFile, Project p) {
@@ -1302,9 +1324,6 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
   /**
    * This function shows license terms for installing OpenBravo. License is located in
    * OPENBRAVO_LICENSE.
-   * 
-   * @param p
-   * @throws IOException
    */
   private static void readLicense(Project p) throws IOException {
     File license = null;
