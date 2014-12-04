@@ -173,7 +173,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
         }
         newCosting.setQuantity(basetrx.getMovementQuantity());
         newCosting.setTotalMovementQuantity(currentStock);
-        newCosting.setPrice(trxPrice);
+        newCosting.setPrice(cost);
         newCosting.setCostType("AVA");
         newCosting.setManual(Boolean.FALSE);
         newCosting.setPermanent(Boolean.TRUE);
@@ -192,7 +192,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
             curCosting.setOriginalCost(curCosting.getCost());
           }
           curCosting.setCost(cost);
-          curCosting.setPrice(trxPrice);
+          curCosting.setPrice(cost);
           curCosting.setPermanent(Boolean.TRUE);
           OBDal.getInstance().flush();
           OBDal.getInstance().save(curCosting);
