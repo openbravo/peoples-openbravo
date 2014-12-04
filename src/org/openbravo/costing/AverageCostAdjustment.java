@@ -761,8 +761,8 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
 
     Costing curCosting = getTrxCurrentCosting(trx);
     if (curCosting != null) {
-      bdCosting.setEndingDate(curCosting.getEndingDate());
-      curCosting.setEndingDate(trx.getTransactionProcessDate());
+      curCosting.setEndingDate(bdCosting.getEndingDate());
+      bdCosting.setEndingDate(trx.getTransactionProcessDate());
       OBDal.getInstance().save(curCosting);
     } else {
       // There isn't any previous costing.
