@@ -379,7 +379,9 @@
             lastproductbom.set('bomgross', OB.DEC.add(lastproductbom.get('bomgross'), accorggross));
             if (!_.isNull(discountedGross)) {
               lastproductbom.set('bomdiscountedgross', OB.DEC.add(lastproductbom.get('bomdiscountedgross'), accdiscountedgross));
-            }          
+            }        
+            
+            console.log(JSON.stringify(data.toJSON()));
 
             // return calcProductTaxesIncPrice(receipt, line, product, orggross, discountedGross);      
             return Promise.all(data.map(function (productbom) {          
@@ -393,7 +395,7 @@
       }
     }).then(function() {
       // Calculate linerate
-      line.set('linerate', OB.DEC.sub(OB.DEC.div(orggross, line.get('net')), OB.DEC.One));   
+      line.set('linerate', OB.DEC.div(orggross, line.get('net')));   
     })['catch'](function (reason) {
       receipt.deleteLine(line);
       OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
@@ -624,6 +626,7 @@
     return {
       taxlines: receipt.get('lines').map(function (line) {
         return {
+          linerate: line.get('linerate'),
           tax: line.get('tax'), 
           taxAmount: line.get('taxAmount'),
           net: line.get('net'),
@@ -647,10 +650,9 @@
     this.receipt = modelOrder;
 
     this.receipt.calculateTaxes = function (callback) {
+      var me = this;
+      var mytaxes, mytaxesold;
       if (window.TAXESLOGIC === 'DEBUG') {
-        var me = this;
-        var mytaxes, mytaxesold;
-        
         OB.DATA.legacyCalculateTaxes.call(me, function () {
           mytaxesold = JSON.stringify(getTaxesInfo(me));
           window.console.log(mytaxesold);   
@@ -666,9 +668,13 @@
           });
         });
       } else if (window.TAXESLOGIC === 'OLDLOGIC') {
-        OB.DATA.legacyCalculateTaxes(callback);
+        OB.DATA.legacyCalculateTaxes.call(me, callback);
       } else { // 'NEWLOGIC' (default)
-        calcTaxes(this).then(callback);
+        calcTaxes(me).then(function() {
+          mytaxes = JSON.stringify(getTaxesInfo(me));
+          window.console.log(mytaxes);        
+          callback();
+        });
       }
     };
   };
