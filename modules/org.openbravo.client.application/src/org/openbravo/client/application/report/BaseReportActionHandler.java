@@ -197,8 +197,7 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
       throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoJRTemplateFound"));
     }
 
-    final String jrTemplatePath = DalContextListener.getServletContext().getRealPath(
-        report.getPDFTemplate());
+    final String jrTemplatePath = DalContextListener.getServletContext().getRealPath(strJRPath);
     HashMap<String, Object> jrParams = new HashMap<String, Object>();
     loadFilterParams(jrParams, report, params);
     loadReportParams(jrParams, report, jrTemplatePath, jsonContent);
