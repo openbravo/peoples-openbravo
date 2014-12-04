@@ -211,6 +211,9 @@ OB.ViewFormProperties = {
     }
 
     this.view.setTargetRecordInWindow(record.id);
+    // the originalValuesOfEditedRow attribute of the form if set after invoking editRecord
+    // delete it here to ensure that it is not shared among records
+    delete this.originalValuesOfEditedRow;
 
     return ret;
   },
@@ -1508,6 +1511,7 @@ OB.ViewFormProperties = {
         length = flds.length,
         doClose = !this.hasChanged;
     this.removeRecordFromGridIfNew();
+    this.discardEditsOfSelectedRecord();
     if (doClose) {
       this.doClose();
       return;
@@ -1532,6 +1536,22 @@ OB.ViewFormProperties = {
     this.view.toolBar.updateButtonState(true);
   },
 
+  discardEditsOfSelectedRecord: function () {
+    var selectedRecords = this.view.viewGrid.getSelectedRecords();
+    if (selectedRecords.length === 1) {
+      this.view.viewGrid.discardEdits(selectedRecords[0]);
+    }
+  },
+
+  resetValues: function () {
+    this.Super('resetValues', arguments);
+    // if the form view was opened from a grid view that was currently being edited, restore the original values of the
+    // edited row instead of the edited row itself
+    if (this.originalValuesOfEditedRow) {
+      this.setValues(this.originalValuesOfEditedRow);
+    }
+  },
+
   // if a record has been created in the grid and then edited in the form without having been saved first, 
   // it should be removed from the grid if the edition is canceled in the form
   removeRecordFromGridIfNew: function () {
@@ -1552,7 +1572,7 @@ OB.ViewFormProperties = {
     if (this.view.isShowingTree) {
       this.view.treeGrid.refreshRecord(this.getValues());
     }
-
+    this.removeRecordFromGridIfNew();
     this.view.switchFormGridVisibility();
     this.view.messageBar.hide();
     if (this.isNew) {

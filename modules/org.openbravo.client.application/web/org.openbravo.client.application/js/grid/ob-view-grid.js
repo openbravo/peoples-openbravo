@@ -1436,19 +1436,32 @@ isc.OBViewGrid.addProperties({
     ksAction_EditInForm = function () {
       var wasEditingGrid = false,
           autoSaveEditsBackup = me.autoSaveEdits,
-          recordToEdit;
+          recordToEdit, originalValuesOfEditedRow;
       if (me.getSelectedRecords().length === 1) {
         if (me.view.isEditingGrid) {
-          wasEditingGrid = true;
+          // do not save the provisional changes
           me.autoSaveEdits = false;
-          recordToEdit = me.getEditedRecord(me.getEditRow());
+          if (me.getSelectedRecords()[0]._new) {
+            // if the record is new set the wasEditingGrid flag to true to prevent 
+            // doing a FIC request in mode NEW
+            wasEditingGrid = true;
+            // open the form view with the current values of the edited row
+            recordToEdit = me.getEditedRecord(me.getEditRow());
+            me.storeValueMaps();
+          } else {
+            recordToEdit = me.getSelectedRecords()[0];
+            // store the original values of the row (previous ot the edition in grid)
+            originalValuesOfEditedRow = recordToEdit;
+          }
         } else {
           recordToEdit = me.getSelectedRecords()[0];
         }
-        me.storeValueMaps();
         me.endEditing();
         me.autoSaveEdits = autoSaveEditsBackup;
         me.view.editRecord(recordToEdit, null, null, wasEditingGrid);
+        if (originalValuesOfEditedRow) {
+          me.view.viewForm.originalValuesOfEditedRow = originalValuesOfEditedRow;
+        }
         delete me.storedValueMaps;
         return false; // To avoid keyboard shortcut propagation
       } else {
