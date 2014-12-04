@@ -165,7 +165,6 @@
       if (!line.get('tax')) {
         line.set('tax', linetaxid);
       }
-      // line.set('linerate', OB.DEC.toNumber(linerate));
       line.set('taxAmount', OB.DEC.add(line.get('taxAmount'), OB.DEC.sub(orggross, linenet)));
       line.set('net', OB.DEC.add(line.get('net'), calculatedLineNet));
       line.set('pricenet', OB.DEC.add(line.get('pricenet'), roundedLinePriceNet));
@@ -318,17 +317,6 @@
           taxes[taxId].amount = OB.DEC.toNumber(taxes[taxId].amount);
         }
       });    
-      
-      
-    }, function (reason) {
-      receipt.deleteLine(line);
-      OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
-        popup: 'OB_UI_MessageDialog',
-        args: {
-          header: OB.I18N.getLabel('OBPOS_TaxNotFound_Header'),
-          message: reason
-        }
-      });        
     });      
   };
   
@@ -342,7 +330,7 @@
     line.set('net',OB.DEC.Zero);
     line.set('pricenet', OB.DEC.Zero);    
     line.set('discountedNet', OB.DEC.Zero);    
- // line.set('linerate',  BigDecimal.prototype.ZERO);    
+    line.set('linerate',  BigDecimal.prototype.ZERO);    
 
    
     // Calculate product, orggross, and discountedGross.
@@ -358,52 +346,63 @@
 
     return isTaxCategoryBOM(product.get('taxCategory')).then(function (isbom) {
       if (isbom) {
-        // BOM, calculate taxes based on the products list
-        return getProductBOM(product.get('id')).then(function (data) {
+        // Find the taxid
+        return findTaxesCollection(receipt, line, product).then(function (coll) {
+          // complete the taxid
+          line.set('tax', coll.at(0).get('id'));
         
-          // Calculate the total BOM
-          var totalbom = data.reduce(function(s, productbom){
-            return OB.DEC.add(s, OB.DEC.mul(productbom.get('bomprice'), productbom.get('bomquantity')));   
-          }, OB.DEC.Zero);
+          // BOM, calculate taxes based on the products list
+          return getProductBOM(product.get('id')).then(function (data) {
           
-          // Calculate the corresponding gross and discounted gross for each product in BOM
-          var accorggross = orggross;
-          var accdiscountedgross = discountedGross;
-          data.forEach(function(productbom) {
-            var ratebom = OB.DEC.mul(productbom.get('bomprice'), productbom.get('bomquantity'));
+            // Calculate the total BOM
+            var totalbom = data.reduce(function(s, productbom){
+              return OB.DEC.add(s, OB.DEC.mul(productbom.get('bomprice'), productbom.get('bomquantity')));   
+            }, OB.DEC.Zero);
             
-            var orggrossbom = OB.DEC.div(OB.DEC.mul(ratebom, orggross), totalbom);
-            accorggross = OB.DEC.sub(accorggross, orggrossbom);
-            productbom.set('bomgross', orggrossbom);
+            // Calculate the corresponding gross and discounted gross for each product in BOM
+            var accorggross = orggross;
+            var accdiscountedgross = discountedGross;
+            data.forEach(function(productbom) {
+              var ratebom = OB.DEC.mul(productbom.get('bomprice'), productbom.get('bomquantity'));
+              
+              var orggrossbom = OB.DEC.div(OB.DEC.mul(ratebom, orggross), totalbom);
+              accorggross = OB.DEC.sub(accorggross, orggrossbom);
+              productbom.set('bomgross', orggrossbom);
+              if (!_.isNull(discountedGross)) {
+                var discountedgrossbom = OB.DEC.div(OB.DEC.mul(ratebom, discountedGross), totalbom);
+                accdiscountedgross = OB.DEC.sub(accdiscountedgross, discountedgrossbom);
+                productbom.set('bomdiscountedgross', discountedgrossbom);
+              }
+            });
+            // Adjust rounding in the first item of the bom
+            var lastproductbom = data.at(0);
+            lastproductbom.set('bomgross', OB.DEC.add(lastproductbom.get('bomgross'), accorggross));
             if (!_.isNull(discountedGross)) {
-              var discountedgrossbom = OB.DEC.div(OB.DEC.mul(ratebom, discountedGross), totalbom);
-              accdiscountedgross = OB.DEC.sub(accdiscountedgross, discountedgrossbom);
-              productbom.set('bomdiscountedgross', discountedgrossbom);
-            }
-          });
-          // Adjust rounding in the first item of the bom
-          var lastproductbom = data.at(0);
-          lastproductbom.set('bomgross', OB.DEC.add(lastproductbom.get('bomgross'), accorggross));
-          if (!_.isNull(discountedGross)) {
-            lastproductbom.set('bomdiscountedgross', OB.DEC.add(lastproductbom.get('bomdiscountedgross'), accdiscountedgross));
-          }          
+              lastproductbom.set('bomdiscountedgross', OB.DEC.add(lastproductbom.get('bomdiscountedgross'), accdiscountedgross));
+            }          
 
-
-          data.forEach(function (productbom) {          
-            window.console.log(JSON.stringify(productbom.toJSON()));
-          });   
-                 
-          // return calcProductTaxesIncPrice(receipt, line, product, orggross, discountedGross);      
-          return Promise.all(data.map(function (productbom) {          
-            return calcProductTaxesIncPrice(receipt, line, new Backbone.Model({id: productbom.get('bomproduct'), taxCategory: productbom.get('bomtaxcategory')}), productbom.get('bomgross'), productbom.get('bomdiscountedgross'));
-          }));
+            // return calcProductTaxesIncPrice(receipt, line, product, orggross, discountedGross);      
+            return Promise.all(data.map(function (productbom) {          
+              return calcProductTaxesIncPrice(receipt, line, new Backbone.Model({id: productbom.get('bomproduct'), taxCategory: productbom.get('bomtaxcategory')}), productbom.get('bomgross'), productbom.get('bomdiscountedgross'));
+            }));
+          });        
         });
-      
-      
       } else {
         // Not BOM, calculate taxes based on the line product
         return calcProductTaxesIncPrice(receipt, line, product, orggross, discountedGross);      
       }
+    }).then(function() {
+      // Calculate linerate
+      line.set('linerate', OB.DEC.sub(OB.DEC.div(orggross, line.get('net')), OB.DEC.One));   
+    })['catch'](function (reason) {
+      receipt.deleteLine(line);
+      OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
+        popup: 'OB_UI_MessageDialog',
+        args: {
+          header: OB.I18N.getLabel('OBPOS_TaxNotFound_Header'),
+          message: reason
+        }
+      });        
     });
   }; 
   
