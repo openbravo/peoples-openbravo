@@ -77,7 +77,9 @@ public class CostingRuleProcess implements Process {
       OBContext.setAdminMode(false);
       final String ruleId = (String) bundle.getParams().get("M_Costing_Rule_ID");
       CostingRule rule = OBDal.getInstance().get(CostingRule.class, ruleId);
-
+      if (rule.getOrganization().getCurrency() == null) {
+        throw new OBException("@NoCurrencyInCostingRuleOrg@");
+      }
       OrganizationStructureProvider osp = OBContext.getOBContext()
           .getOrganizationStructureProvider(rule.getClient().getId());
       final Set<String> childOrgs = osp.getChildTree(rule.getOrganization().getId(), true);
