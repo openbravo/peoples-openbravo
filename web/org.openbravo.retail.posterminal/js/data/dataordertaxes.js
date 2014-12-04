@@ -270,27 +270,11 @@
         });
       }
 
-
-
-
-
-// This must be done when all has been calculated previously
-
-
-
-
-
       // We need to make a final adjustment: we will sum all the tax lines,
       // and if the net amount of the line plus this sum is not equal to the gross,
       // we will adjust the tax line with the greatest amount
       var summedTaxAmt = 0;
-      var expectedGross;
-      if (!(_.isNull(discountedGross) || _.isUndefined(discountedGross))) {
-        expectedGross = discountedGross;
-      } else {
-        expectedGross = line.get('gross');
-      }
-
+      var expectedGross = (_.isNull(discountedGross) || _.isUndefined(discountedGross)) ? orggross : discountedGross;
       var greaterTax = null;
       _.each(coll, function (taxRate, taxIndex, taxList) {
         if (!taxRate.get('summaryLevel')) {
