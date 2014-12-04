@@ -638,7 +638,7 @@
   };
 
   // Taxes logic calculation: 'DEBUG', 'OLDLOGIC', 'NEWLOGIC' (default)
-  window.TAXESLOGIC = 'DEBUG';
+  window.TAXESLOGIC = 'NEWLOGIC';
 
   OB = window.OB || {};
   OB.DATA = window.OB.DATA || {};
