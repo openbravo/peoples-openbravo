@@ -47,7 +47,7 @@ BEGIN
    WHERE M.AD_MODULE_ID = T.AD_MODULE_ID
      AND T.OBUIAPP_Process_ID = cuerrentID;
      
-  IF (UPDATING AND devTemplate='0' AND devModule='N') THEN
+  IF (UPDATING AND devTemplate=0 AND devModule='N') THEN
     IF (
         COALESCE(:NEW.AD_Client_ID , '.') != COALESCE(:OLD.AD_Client_ID , '.') OR
         COALESCE(:NEW.AD_Org_ID , '.') != COALESCE(:OLD.AD_Org_ID , '.') OR
@@ -55,7 +55,7 @@ BEGIN
         COALESCE(:NEW.OBUIAPP_Process_ID , '.') != COALESCE(:OLD.OBUIAPP_Process_ID , '.') OR
         COALESCE(:NEW.PDF_Template , '.') != COALESCE(:OLD.PDF_Template , '.') OR
         COALESCE(:NEW.XLS_Template , '.') != COALESCE(:OLD.XLS_Template , '.') OR
-        COALESCE(:NEW.USE_PDF_AS_XLS_TEMPLATE , 0) != COALESCE(:OLD.USE_PDF_AS_XLS_TEMPLATE , 0) OR
+        COALESCE(:NEW.USE_PDF_AS_XLS_TEMPLATE , '.') != COALESCE(:OLD.USE_PDF_AS_XLS_TEMPLATE , '.') OR
         1=2) THEN
       RAISE_APPLICATION_ERROR(-20000, '@20532@');
     END IF;
