@@ -36,16 +36,23 @@ class ConfigureOption {
   static int TYPE_OPT_CHOOSE = 0;
   static int TYPE_OPT_STRING = 1;
 
-  private String askInfo, chooseString;
+  // Information for asking users
+  private String askInfo;
+  // Options that can be represent by text. Example: url, context name,
+  private String choosenString;
+  // Options allowed
   private ArrayList<String> opt;
-  private int choose, type;
+  // Number of selected option
+  private int choosen;
+  // Option type: option text or an option selected for a list
+  private int type;
 
   ConfigureOption(int typ, String info, ArrayList<String> options) {
     type = typ;
     askInfo = info;
     opt = options;
-    choose = 0;
-    chooseString = "";
+    choosen = 0;
+    choosenString = "";
   }
 
   /**
@@ -56,7 +63,7 @@ class ConfigureOption {
    */
   boolean setChoose(int num) {
     if (num >= 0 && num < opt.size()) {
-      choose = num;
+      choosen = num;
       return true;
     } else {
       return false;
@@ -78,7 +85,7 @@ class ConfigureOption {
    * @return int
    */
   int getChoose() {
-    return choose;
+    return choosen;
   }
 
   /**
@@ -87,12 +94,12 @@ class ConfigureOption {
    * @param String
    */
   void setChooseString(String line) {
-    chooseString = line;
+    choosenString = line;
     if (type == TYPE_OPT_CHOOSE) {
       int i = 0;
       for (final String opts : opt) {
-        if (opts.equals(chooseString)) {
-          choose = i;
+        if (opts.equals(choosenString)) {
+          choosen = i;
         }
         i++;
       }
@@ -100,7 +107,7 @@ class ConfigureOption {
   }
 
   String getChooseString() {
-    return chooseString;
+    return choosenString;
   }
 
   int getType() {
@@ -137,13 +144,13 @@ class ConfigureOption {
     if (type == TYPE_OPT_CHOOSE) {
       int i = 0;
       for (final String opts : opt) {
-        if (choose == i) {
+        if (choosen == i) {
           res = opts;
         }
         i++;
       }
     } else if (type == TYPE_OPT_STRING) {
-      res = chooseString;
+      res = choosenString;
     }
     return res;
   }

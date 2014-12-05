@@ -120,7 +120,12 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
   private static final String PREFIX_DB_DRIVER = "bbdd.driver";
   private static final String PREFIX_DB_URL = "bbdd.url";
 
-  private int optionForModify = 0, numberOptionsDDBB = 0, mainFlowOption = WELCOME;
+  // Number of the option that the user wants to change.
+  private int optionForModify = 0;
+  // Number of options in selected database.
+  private int numberOptionsDDBB = 0;
+  // Main flow of the application.
+  private int mainFlowOption = WELCOME;
   private Scanner agreementLicense = new Scanner(System.in);
   private Scanner infoCollected = new Scanner(System.in);
 
@@ -566,7 +571,6 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
           optionOneByOne.setChooseString(optionString);
         }
       }
-      // review
       optionForOpenbravo.set(optionForOpenbravo.indexOf(optionOneByOne), optionOneByOne);
       typeDDBB = optionOneByOne.getOptionChoose();
       p.log("\n-------------------------\nYour choice " + typeDDBB
