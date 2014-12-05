@@ -126,6 +126,8 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
   private int numberOptionsDDBB = 0;
   // Main flow of the application.
   private int mainFlowOption = WELCOME;
+  // Selected database by user
+  private static String chosenDatabase;
   private Scanner agreementLicense = new Scanner(System.in);
   private Scanner infoCollected = new Scanner(System.in);
 
@@ -452,7 +454,9 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     optionForOpenbravo.set(optionForModify - 1, optionToChange);
     p.log("\n-------------------------\nYour choice " + optionToChange.getChosenOption()
         + "\n-------------------------\n\n");
-    if (optionToChange.getChosenOption().equals(ORACLE)) {
+    if (optionToChange.getAskInfo().equals(OPT_DATABASE)
+        && optionToChange.getChosenOption().equals(ORACLE)) {
+      chosenDatabase = ORACLE;
       if (optionOracle.isEmpty()) {
         optionOracle = createOPOracle(p);
         numberOptionsDDBB = optionOracle.size();
@@ -460,7 +464,9 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       if (!optionPostgreSQL.isEmpty()) {
         optionPostgreSQL.clear();
       }
-    } else if (optionToChange.getChosenOption().equals(POSTGRE_SQL)) {
+    } else if (optionToChange.getAskInfo().equals(OPT_DATABASE)
+        && optionToChange.getChosenOption().equals(POSTGRE_SQL)) {
+      chosenDatabase = POSTGRE_SQL;
       if (optionPostgreSQL.isEmpty()) {
         optionPostgreSQL = createOPPostgreSQL(p);
         numberOptionsDDBB = optionPostgreSQL.size();
@@ -519,13 +525,13 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
           previewOptionsLast.getAskInfo() + " " + previewOptionsLast.getChosenOption(), p);
       numberOption = numberOption + 1;
     }
-    if (optionPostgreSQL.isEmpty()) {
+    if (chosenDatabase.equals(ORACLE)) {
       for (ConfigureOption previewOptionsLast : optionOracle) {
         printOptionWithStyle(numberOption, previewOptionsLast.getAskInfo() + " "
             + previewOptionsLast.getChosenOption(), p);
         numberOption = numberOption + 1;
       }
-    } else if (optionOracle.isEmpty()) {
+    } else if (chosenDatabase.equals(POSTGRE_SQL)) {
       for (ConfigureOption previewOptionsLast : optionPostgreSQL) {
         printOptionWithStyle(numberOption, previewOptionsLast.getAskInfo() + " "
             + previewOptionsLast.getChosenOption(), p);
@@ -578,6 +584,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     }
     // Select Oracle or PostgreSQL
     if (typeDDBB.equals(ORACLE)) {
+      chosenDatabase = ORACLE;
       if (optionOracle.isEmpty()) {
         optionOracle = createOPOracle(p);
         numberOptionsDDBB = optionOracle.size();
@@ -587,6 +594,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       }
       mainFlowOption = CHANGE_OPTIONS_ORACLE;
     } else if (typeDDBB.equals(POSTGRE_SQL)) {
+      chosenDatabase = POSTGRE_SQL;
       if (optionPostgreSQL.isEmpty()) {
         optionPostgreSQL = createOPPostgreSQL(p);
         numberOptionsDDBB = optionPostgreSQL.size();
@@ -619,19 +627,10 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         optionForOpenbravo = createOpenbravoProperties(p);
       }
       // Create optionsDDBB
-      // Oracle or Postgresql options.
-      String optionDatabaseToCreate = "";
-      for (ConfigureOption option : optionForOpenbravo) {
-        if (option.getChosenString().equals(ORACLE)) {
-          optionDatabaseToCreate = ORACLE;
-        } else if (option.getChosenString().equals(POSTGRE_SQL)) {
-          optionDatabaseToCreate = POSTGRE_SQL;
-        }
-      }
-      if (optionDatabaseToCreate.equals(ORACLE)) {
+      if (chosenDatabase.equals(ORACLE)) {
         optionOracle = createOPOracle(p);
         numberOptionsDDBB = optionOracle.size();
-      } else if (optionDatabaseToCreate.equals(POSTGRE_SQL)) {
+      } else if (chosenDatabase.equals(POSTGRE_SQL)) {
         optionPostgreSQL = createOPPostgreSQL(p);
         numberOptionsDDBB = optionPostgreSQL.size();
       }
@@ -642,18 +641,10 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         optionForOpenbravo = createOpenbravoProperties(p);
       }
       // Oracle or Postgresql options
-      String optionDatabaseToCreate = "";
-      for (ConfigureOption option : optionForOpenbravo) {
-        if (option.getChosenString().equals(ORACLE)) {
-          optionDatabaseToCreate = ORACLE;
-        } else if (option.getChosenString().equals(POSTGRE_SQL)) {
-          optionDatabaseToCreate = POSTGRE_SQL;
-        }
-      }
-      if (optionDatabaseToCreate.equals(ORACLE)) {
+      if (chosenDatabase.equals(ORACLE)) {
         optionOracle = createOPOracle(p);
         numberOptionsDDBB = optionOracle.size();
-      } else if (optionDatabaseToCreate.equals(POSTGRE_SQL)) {
+      } else if (chosenDatabase.equals(POSTGRE_SQL)) {
         optionPostgreSQL = createOPPostgreSQL(p);
         numberOptionsDDBB = optionPostgreSQL.size();
       }
@@ -852,7 +843,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
           portBBDD = optionLastForReplace.getChosenOption();
         }
       }
-      replaceProperties.put(PREFIX_DB_RDBMS, ORACLE);
+      replaceProperties.put(PREFIX_DB_RDBMS, "ORACLE");
       replaceProperties.put(PREFIX_DB_DRIVER, "oracle.jdbc.driver.OracleDriver");
       replaceProperties.put(PREFIX_DB_URL, "jdbc:oracle:thin:@" + serverBBDD + ":" + portBBDD + ":"
           + nameBBDD);
@@ -1122,12 +1113,15 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     optChoosen.add(ORACLE);
     optChoosen.add(POSTGRE_SQL);
     ConfigureOption o9 = new ConfigureOption(ConfigureOption.TYPE_OPT_CHOOSE, askInfo, optChoosen);
-    if (searchOptionsProperties(fileO, PREFIX_DB_RDBMS, p).equals(ORACLE)) {
+    if (searchOptionsProperties(fileO, PREFIX_DB_RDBMS, p).equals("ORACLE")) {
       o9.setChosenString(ORACLE);
+      chosenDatabase = ORACLE;
     } else if (searchOptionsProperties(fileO, PREFIX_DB_RDBMS, p).equals("POSTGRE")) {
       o9.setChosenString(POSTGRE_SQL);
+      chosenDatabase = POSTGRE_SQL;
     } else {
       o9.setChosenString(POSTGRE_SQL);
+      chosenDatabase = POSTGRE_SQL;
     }
     options.add(o9);
 
