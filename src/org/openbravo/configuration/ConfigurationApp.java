@@ -218,8 +218,8 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
           try {
             int option = Integer.parseInt(optionS);
             if (option >= 0 && option < optionToCange.getMax()) {
-              optionToCange.setChoose(option);
-              optionToCange.setChooseString(optionToCange.getOptionChoose());
+              optionToCange.setChosen(option);
+              optionToCange.setChosenString(optionToCange.getChosenOption());
               numberOk = true;
             } else {
               p.log("Please, introduce a correct option: ");
@@ -237,11 +237,11 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         optionToCange.getOptions(p);
         String optionString = infoCollected.nextLine();
         if (!optionString.equals("")) {
-          optionToCange.setChooseString(optionString);
+          optionToCange.setChosenString(optionString);
         }
       }
       optionsDatabase.set(optionsDatabase.indexOf(optionToCange), optionToCange);
-      p.log("\n-------------------------\nYour choice " + optionToCange.getOptionChoose()
+      p.log("\n-------------------------\nYour choice " + optionToCange.getChosenOption()
           + "\n-------------------------\n\n");
     }
     mainFlowOption = FINAL_MENU;
@@ -310,8 +310,8 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
           try {
             option = Integer.parseInt(optionS);
             if (option >= 0 && option < optionToChange.getMax()) {
-              optionToChange.setChoose(option);
-              optionToChange.setChooseString(optionToChange.getOptionChoose());
+              optionToChange.setChosen(option);
+              optionToChange.setChosenString(optionToChange.getChosenOption());
               numberOk = true;
             } else {
               p.log("Please, introduce a correct option: ");
@@ -329,11 +329,11 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         optionToChange.getOptions(p);
         optionString = infoCollected.nextLine();
         if (!optionString.equals("")) {
-          optionToChange.setChooseString(optionString);
+          optionToChange.setChosenString(optionString);
         }
       }
       optionOracle.set(optionForModify - 1, optionToChange);
-      p.log("\n-------------------------\nYour choice " + optionToChange.getOptionChoose()
+      p.log("\n-------------------------\nYour choice " + optionToChange.getChosenOption()
           + "\n-------------------------\n\n");
     } else if (!optionPostgreSQL.isEmpty()) {
       ConfigureOption optionToChange = optionPostgreSQL.get(optionForModify - 1);
@@ -346,8 +346,8 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
           try {
             option = Integer.parseInt(optionS);
             if (option >= 0 && option < optionToChange.getMax()) {
-              optionToChange.setChoose(option);
-              optionToChange.setChooseString(optionToChange.getOptionChoose());
+              optionToChange.setChosen(option);
+              optionToChange.setChosenString(optionToChange.getChosenOption());
               numberOk = true;
             } else {
               p.log("Please, introduce a correct option: ");
@@ -365,11 +365,11 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         optionToChange.getOptions(p);
         optionString = infoCollected.nextLine();
         if (!optionString.equals("")) {
-          optionToChange.setChooseString(optionString);
+          optionToChange.setChosenString(optionString);
         }
       }
       optionPostgreSQL.set(optionForModify - 1, optionToChange);
-      p.log("\n-------------------------\nYour choice " + optionToChange.getOptionChoose()
+      p.log("\n-------------------------\nYour choice " + optionToChange.getChosenOption()
           + "\n-------------------------\n\n");
     }
     mainFlowOption = PREVIEW_CONFIGURATION_PROPERTIES;
@@ -427,8 +427,8 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         try {
           int option = Integer.parseInt(optionS);
           if (option >= 0 && option < optionToChange.getMax()) {
-            optionToChange.setChoose(option);
-            optionToChange.setChooseString(optionToChange.getOptionChoose());
+            optionToChange.setChosen(option);
+            optionToChange.setChosenString(optionToChange.getChosenOption());
             numberOk = true;
           } else {
             p.log("Please, introduce a correct option: ");
@@ -446,13 +446,13 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       optionToChange.getOptions(p);
       String optionString = infoCollected.nextLine();
       if (!optionString.equals("")) {
-        optionToChange.setChooseString(optionString);
+        optionToChange.setChosenString(optionString);
       }
     }
     optionForOpenbravo.set(optionForModify - 1, optionToChange);
-    p.log("\n-------------------------\nYour choice " + optionToChange.getOptionChoose()
+    p.log("\n-------------------------\nYour choice " + optionToChange.getChosenOption()
         + "\n-------------------------\n\n");
-    if (optionToChange.getOptionChoose().equals(ORACLE)) {
+    if (optionToChange.getChosenOption().equals(ORACLE)) {
       if (optionOracle.isEmpty()) {
         optionOracle = createOPOracle(p);
         numberOptionsDDBB = optionOracle.size();
@@ -460,7 +460,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       if (!optionPostgreSQL.isEmpty()) {
         optionPostgreSQL.clear();
       }
-    } else if (optionToChange.getOptionChoose().equals(POSTGRE_SQL)) {
+    } else if (optionToChange.getChosenOption().equals(POSTGRE_SQL)) {
       if (optionPostgreSQL.isEmpty()) {
         optionPostgreSQL = createOPPostgreSQL(p);
         numberOptionsDDBB = optionPostgreSQL.size();
@@ -516,19 +516,19 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     // Show all options by order asc
     for (ConfigureOption previewOptionsLast : optionForOpenbravo) {
       printOptionWithStyle(numberOption,
-          previewOptionsLast.getAskInfo() + " " + previewOptionsLast.getOptionChoose(), p);
+          previewOptionsLast.getAskInfo() + " " + previewOptionsLast.getChosenOption(), p);
       numberOption = numberOption + 1;
     }
     if (optionPostgreSQL.isEmpty()) {
       for (ConfigureOption previewOptionsLast : optionOracle) {
         printOptionWithStyle(numberOption, previewOptionsLast.getAskInfo() + " "
-            + previewOptionsLast.getOptionChoose(), p);
+            + previewOptionsLast.getChosenOption(), p);
         numberOption = numberOption + 1;
       }
     } else if (optionOracle.isEmpty()) {
       for (ConfigureOption previewOptionsLast : optionPostgreSQL) {
         printOptionWithStyle(numberOption, previewOptionsLast.getAskInfo() + " "
-            + previewOptionsLast.getOptionChoose(), p);
+            + previewOptionsLast.getChosenOption(), p);
         numberOption = numberOption + 1;
       }
     }
@@ -550,7 +550,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
           try {
             int option = Integer.parseInt(optionS);
             if (option >= 0 && option < optionOneByOne.getMax()) {
-              optionOneByOne.setChoose(option);
+              optionOneByOne.setChosen(option);
               numberOk = true;
             } else {
               p.log("Please, introduce a correct option: ");
@@ -568,11 +568,11 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         optionOneByOne.getOptions(p);
         String optionString = infoCollected.nextLine();
         if (!optionString.equals("")) {
-          optionOneByOne.setChooseString(optionString);
+          optionOneByOne.setChosenString(optionString);
         }
       }
       optionForOpenbravo.set(optionForOpenbravo.indexOf(optionOneByOne), optionOneByOne);
-      typeDDBB = optionOneByOne.getOptionChoose();
+      typeDDBB = optionOneByOne.getChosenOption();
       p.log("\n-------------------------\nYour choice " + typeDDBB
           + "\n-------------------------\n\n");
     }
@@ -622,9 +622,9 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       // Oracle or Postgresql options.
       String optionDatabaseToCreate = "";
       for (ConfigureOption option : optionForOpenbravo) {
-        if (option.getChooseString().equals(ORACLE)) {
+        if (option.getChosenString().equals(ORACLE)) {
           optionDatabaseToCreate = ORACLE;
-        } else if (option.getChooseString().equals(POSTGRE_SQL)) {
+        } else if (option.getChosenString().equals(POSTGRE_SQL)) {
           optionDatabaseToCreate = POSTGRE_SQL;
         }
       }
@@ -644,9 +644,9 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       // Oracle or Postgresql options
       String optionDatabaseToCreate = "";
       for (ConfigureOption option : optionForOpenbravo) {
-        if (option.getChooseString().equals(ORACLE)) {
+        if (option.getChosenString().equals(ORACLE)) {
           optionDatabaseToCreate = ORACLE;
-        } else if (option.getChooseString().equals(POSTGRE_SQL)) {
+        } else if (option.getChosenString().equals(POSTGRE_SQL)) {
           optionDatabaseToCreate = POSTGRE_SQL;
         }
       }
@@ -732,25 +732,25 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     String timeSeparator = "", dateSeparator = "", timeFormat = "", dateFormat = "", database = "";
     for (ConfigureOption optionFirstForReplace : optionForOpenbravo) {
       if (optionFirstForReplace.getAskInfo().equals(OPT_DATE_SEPARATOR)) {
-        dateSeparator = optionFirstForReplace.getOptionChoose();
+        dateSeparator = optionFirstForReplace.getChosenOption();
       } else if (optionFirstForReplace.getAskInfo().equals(OPT_TIME_SEPARATOR)) {
-        timeSeparator = optionFirstForReplace.getOptionChoose();
+        timeSeparator = optionFirstForReplace.getChosenOption();
       } else if (optionFirstForReplace.getAskInfo().equals(OPT_DATE_FORMAT)) {
-        dateFormat = optionFirstForReplace.getOptionChoose();
+        dateFormat = optionFirstForReplace.getChosenOption();
       } else if (optionFirstForReplace.getAskInfo().equals(OPT_TIME_FORMAT)) {
-        timeFormat = optionFirstForReplace.getOptionChoose();
+        timeFormat = optionFirstForReplace.getChosenOption();
       } else if (optionFirstForReplace.getAskInfo().equals(OPT_DATABASE)) {
-        database = optionFirstForReplace.getOptionChoose();
+        database = optionFirstForReplace.getChosenOption();
       } else if (optionFirstForReplace.getAskInfo().equals(OPT_ATTACHMENTS)) {
-        replaceProperties.put(PREFIX_ATTACH_PATH, optionFirstForReplace.getOptionChoose());
+        replaceProperties.put(PREFIX_ATTACH_PATH, optionFirstForReplace.getChosenOption());
       } else if (optionFirstForReplace.getAskInfo().equals(OPT_CONTEXT_NAME)) {
-        replaceProperties.put(PREFIX_CONTEXT_NAME, optionFirstForReplace.getOptionChoose());
+        replaceProperties.put(PREFIX_CONTEXT_NAME, optionFirstForReplace.getChosenOption());
       } else if (optionFirstForReplace.getAskInfo().equals(OPT_WEB_URL)) {
-        replaceProperties.put(PREFIX_WEB_URL, optionFirstForReplace.getOptionChoose());
+        replaceProperties.put(PREFIX_WEB_URL, optionFirstForReplace.getChosenOption());
       } else if (optionFirstForReplace.getAskInfo().equals(OPT_AUTH_CLASS)) {
-        replaceProperties.put(PREFIX_AUTH_CLASS, optionFirstForReplace.getOptionChoose());
+        replaceProperties.put(PREFIX_AUTH_CLASS, optionFirstForReplace.getChosenOption());
       } else if (optionFirstForReplace.getAskInfo().equals(OPT_CONTEXT_URL)) {
-        replaceProperties.put(PREFIX_CONTEXT_URL, optionFirstForReplace.getOptionChoose());
+        replaceProperties.put(PREFIX_CONTEXT_URL, optionFirstForReplace.getChosenOption());
       }
     }
     replaceProperties.put(PREFIX_SOURCE_PATH, System.getProperty("user.dir"));
@@ -826,20 +826,20 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       String nameBBDD = "", serverBBDD = "", portBBDD = "";
       for (ConfigureOption optionLastForReplace : optionOracle) {
         if (optionLastForReplace.getAskInfo().equals(DB_SID)) {
-          nameBBDD = optionLastForReplace.getOptionChoose();
+          nameBBDD = optionLastForReplace.getChosenOption();
           replaceProperties.put(PREFIX_DB_SID, nameBBDD);
         } else if (optionLastForReplace.getAskInfo().equals(DB_SYSTEM_USER)) {
-          replaceProperties.put(PREFIX_DB_SYSTEM_USER, optionLastForReplace.getOptionChoose());
+          replaceProperties.put(PREFIX_DB_SYSTEM_USER, optionLastForReplace.getChosenOption());
         } else if (optionLastForReplace.getAskInfo().equals(DB_SYSTEM_PASS)) {
-          replaceProperties.put(PREFIX_DB_SYSTEM_PASS, optionLastForReplace.getOptionChoose());
+          replaceProperties.put(PREFIX_DB_SYSTEM_PASS, optionLastForReplace.getChosenOption());
         } else if (optionLastForReplace.getAskInfo().equals(DB_USER)) {
-          replaceProperties.put(PREFIX_DB_USER, optionLastForReplace.getOptionChoose());
+          replaceProperties.put(PREFIX_DB_USER, optionLastForReplace.getChosenOption());
         } else if (optionLastForReplace.getAskInfo().equals(DB_USER_PASS)) {
-          replaceProperties.put(PREFIX_DB_PASS, optionLastForReplace.getOptionChoose());
+          replaceProperties.put(PREFIX_DB_PASS, optionLastForReplace.getChosenOption());
         } else if (optionLastForReplace.getAskInfo().equals(DB_SERVER)) {
-          serverBBDD = optionLastForReplace.getOptionChoose();
+          serverBBDD = optionLastForReplace.getChosenOption();
         } else if (optionLastForReplace.getAskInfo().equals(DB_SERVER_PORT)) {
-          portBBDD = optionLastForReplace.getOptionChoose();
+          portBBDD = optionLastForReplace.getChosenOption();
         }
       }
       replaceProperties.put(PREFIX_DB_RDBMS, ORACLE);
@@ -860,19 +860,19 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       String serverBBDD = "", portBBDD = "";
       for (ConfigureOption optionLastForReplace : optionPostgreSQL) {
         if (optionLastForReplace.getAskInfo().equals(DB_SID)) {
-          replaceProperties.put(PREFIX_DB_SID, optionLastForReplace.getOptionChoose());
+          replaceProperties.put(PREFIX_DB_SID, optionLastForReplace.getChosenOption());
         } else if (optionLastForReplace.getAskInfo().equals(DB_SYSTEM_USER)) {
-          replaceProperties.put(PREFIX_DB_SYSTEM_USER, optionLastForReplace.getOptionChoose());
+          replaceProperties.put(PREFIX_DB_SYSTEM_USER, optionLastForReplace.getChosenOption());
         } else if (optionLastForReplace.getAskInfo().equals(DB_SYSTEM_PASS)) {
-          replaceProperties.put(PREFIX_DB_SYSTEM_PASS, optionLastForReplace.getOptionChoose());
+          replaceProperties.put(PREFIX_DB_SYSTEM_PASS, optionLastForReplace.getChosenOption());
         } else if (optionLastForReplace.getAskInfo().equals(DB_USER)) {
-          replaceProperties.put(PREFIX_DB_USER, optionLastForReplace.getOptionChoose());
+          replaceProperties.put(PREFIX_DB_USER, optionLastForReplace.getChosenOption());
         } else if (optionLastForReplace.getAskInfo().equals(DB_USER_PASS)) {
-          replaceProperties.put(PREFIX_DB_PASS, optionLastForReplace.getOptionChoose());
+          replaceProperties.put(PREFIX_DB_PASS, optionLastForReplace.getChosenOption());
         } else if (optionLastForReplace.getAskInfo().equals(DB_SERVER)) {
-          serverBBDD = optionLastForReplace.getOptionChoose();
+          serverBBDD = optionLastForReplace.getChosenOption();
         } else if (optionLastForReplace.getAskInfo().equals(DB_SERVER_PORT)) {
-          portBBDD = optionLastForReplace.getOptionChoose();
+          portBBDD = optionLastForReplace.getChosenOption();
         }
       }
       replaceProperties.put(PREFIX_DB_RDBMS, "POSTGRE");
@@ -993,11 +993,11 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     String compareDateformat = searchOptionsProperties(fileO, PREFIX_DATE_FORMAT_SQL, p).substring(
         0, 1);
     if (compareDateformat.equalsIgnoreCase("d")) {
-      o0.setChooseString("DDMMYYYY");
+      o0.setChosenString("DDMMYYYY");
     } else if (compareDateformat.equalsIgnoreCase("m")) {
-      o0.setChooseString("MMDDYYYY");
+      o0.setChosenString("MMDDYYYY");
     } else if (compareDateformat.equalsIgnoreCase("y")) {
-      o0.setChooseString("YYYYMMDD");
+      o0.setChosenString("YYYYMMDD");
     }
     options.add(o0);
 
@@ -1011,15 +1011,15 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     compareDateformat = searchOptionsProperties(fileO, PREFIX_DATE_TIME_FORMAT_SQL, p).substring(0,
         9);
     if (compareDateformat.contains("-")) {
-      o1.setChooseString("-");
+      o1.setChosenString("-");
     } else if (compareDateformat.contains("/")) {
-      o1.setChooseString("/");
+      o1.setChosenString("/");
     } else if (compareDateformat.contains(".")) {
-      o1.setChooseString(".");
+      o1.setChosenString(".");
     } else if (compareDateformat.contains(":")) {
-      o1.setChooseString(":");
+      o1.setChosenString(":");
     } else {
-      o1.setChooseString("-");
+      o1.setChosenString("-");
     }
     options.add(o1);
 
@@ -1030,9 +1030,9 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     ConfigureOption o2 = new ConfigureOption(ConfigureOption.TYPE_OPT_CHOOSE, askInfo, optChoosen);
 
     if (searchOptionsProperties(fileO, PREFIX_DATE_TIME_FORMAT_JAVA, p).contains("a")) {
-      o2.setChooseString("12h");
+      o2.setChosenString("12h");
     } else {
-      o2.setChooseString("24h");
+      o2.setChosenString("24h");
     }
     options.add(o2);
 
@@ -1044,11 +1044,11 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     compareDateformat = searchOptionsProperties(fileO, PREFIX_DATE_TIME_FORMAT_SQL, p)
         .substring(10);
     if (compareDateformat.contains(":")) {
-      o3.setChooseString(":");
+      o3.setChosenString(":");
     } else if (compareDateformat.contains(".")) {
-      o3.setChooseString(".");
+      o3.setChosenString(".");
     } else {
-      o3.setChooseString(":");
+      o3.setChosenString(":");
     }
     options.add(o3);
 
@@ -1057,9 +1057,9 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         new ArrayList<String>());
     String optionValueString = searchOptionsProperties(fileO, PREFIX_ATTACH_PATH, p);
     if (optionValueString.equals("")) {
-      o4.setChooseString("/opt/openbravo/attachments");
+      o4.setChosenString("/opt/openbravo/attachments");
     } else {
-      o4.setChooseString(optionValueString);
+      o4.setChosenString(optionValueString);
     }
     options.add(o4);
 
@@ -1068,9 +1068,9 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         new ArrayList<String>());
     optionValueString = searchOptionsProperties(fileO, PREFIX_CONTEXT_NAME, p);
     if (optionValueString.equals("")) {
-      o5.setChooseString("openbravo");
+      o5.setChosenString("openbravo");
     } else {
-      o5.setChooseString(optionValueString);
+      o5.setChosenString(optionValueString);
     }
     options.add(o5);
 
@@ -1079,9 +1079,9 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         new ArrayList<String>());
     optionValueString = searchOptionsProperties(fileO, PREFIX_WEB_URL, p);
     if (optionValueString.equals("")) {
-      o6.setChooseString("@actual_url_context@/web");
+      o6.setChosenString("@actual_url_context@/web");
     } else {
-      o6.setChooseString(optionValueString);
+      o6.setChosenString(optionValueString);
     }
     options.add(o6);
 
@@ -1090,9 +1090,9 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         new ArrayList<String>());
     optionValueString = searchOptionsProperties(fileO, PREFIX_CONTEXT_URL, p);
     if (optionValueString.equals("")) {
-      o7.setChooseString("http://localhost:8080/openbravo");
+      o7.setChosenString("http://localhost:8080/openbravo");
     } else {
-      o7.setChooseString(optionValueString);
+      o7.setChosenString(optionValueString);
     }
     options.add(o7);
 
@@ -1101,9 +1101,9 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         new ArrayList<String>());
     optionValueString = searchOptionsProperties(fileO, PREFIX_AUTH_CLASS, p);
     if (optionValueString.equals("")) {
-      o8.setChooseString("");
+      o8.setChosenString("");
     } else {
-      o8.setChooseString(optionValueString);
+      o8.setChosenString(optionValueString);
     }
     options.add(o8);
 
@@ -1113,11 +1113,11 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     optChoosen.add(POSTGRE_SQL);
     ConfigureOption o9 = new ConfigureOption(ConfigureOption.TYPE_OPT_CHOOSE, askInfo, optChoosen);
     if (searchOptionsProperties(fileO, PREFIX_DB_RDBMS, p).equals(ORACLE)) {
-      o9.setChooseString(ORACLE);
+      o9.setChosenString(ORACLE);
     } else if (searchOptionsProperties(fileO, PREFIX_DB_RDBMS, p).equals("POSTGRE")) {
-      o9.setChooseString(POSTGRE_SQL);
+      o9.setChosenString(POSTGRE_SQL);
     } else {
-      o9.setChooseString(POSTGRE_SQL);
+      o9.setChosenString(POSTGRE_SQL);
     }
     options.add(o9);
 
@@ -1161,9 +1161,9 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         new ArrayList<String>());
     String optionValueString = searchOptionsProperties(fileO, PREFIX_DB_SID, p);
     if (optionValueString.equals("")) {
-      o0.setChooseString("xe");
+      o0.setChosenString("xe");
     } else {
-      o0.setChooseString(optionValueString);
+      o0.setChosenString(optionValueString);
     }
     option.add(o0);
 
@@ -1172,9 +1172,9 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         new ArrayList<String>());
     optionValueString = searchOptionsProperties(fileO, PREFIX_DB_SYSTEM_USER, p);
     if (optionValueString.equals("")) {
-      o1.setChooseString("SYSTEM");
+      o1.setChosenString("SYSTEM");
     } else {
-      o1.setChooseString(optionValueString);
+      o1.setChosenString(optionValueString);
     }
     option.add(o1);
 
@@ -1183,9 +1183,9 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         new ArrayList<String>());
     optionValueString = searchOptionsProperties(fileO, PREFIX_DB_SYSTEM_PASS, p);
     if (optionValueString.equals("")) {
-      o2.setChooseString("SYSTEM");
+      o2.setChosenString("SYSTEM");
     } else {
-      o2.setChooseString(optionValueString);
+      o2.setChosenString(optionValueString);
     }
     option.add(o2);
 
@@ -1194,9 +1194,9 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         new ArrayList<String>());
     optionValueString = searchOptionsProperties(fileO, PREFIX_DB_USER, p);
     if (optionValueString.equals("")) {
-      o3.setChooseString("TAD");
+      o3.setChosenString("TAD");
     } else {
-      o3.setChooseString(optionValueString);
+      o3.setChosenString(optionValueString);
     }
     option.add(o3);
 
@@ -1205,9 +1205,9 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         new ArrayList<String>());
     optionValueString = searchOptionsProperties(fileO, PREFIX_DB_PASS, p);
     if (optionValueString.equals("")) {
-      o4.setChooseString("TAD");
+      o4.setChosenString("TAD");
     } else {
-      o4.setChooseString(optionValueString);
+      o4.setChosenString(optionValueString);
     }
     option.add(o4);
 
@@ -1220,13 +1220,13 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     askInfo = DB_SERVER;
     ConfigureOption o5 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
         new ArrayList<String>());
-    o5.setChooseString(separateUrl[3].substring(1));
+    o5.setChosenString(separateUrl[3].substring(1));
     option.add(o5);
 
     askInfo = DB_SERVER_PORT;
     ConfigureOption o6 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
         new ArrayList<String>());
-    o6.setChooseString(separateUrl[4]);
+    o6.setChosenString(separateUrl[4]);
     option.add(o6);
 
     // Delete auxiliar file
@@ -1269,31 +1269,31 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     askInfo = DB_SID;
     ConfigureOption o0 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
         new ArrayList<String>());
-    o0.setChooseString(searchOptionsProperties(fileO, PREFIX_DB_SID, p));
+    o0.setChosenString(searchOptionsProperties(fileO, PREFIX_DB_SID, p));
     option.add(o0);
 
     askInfo = DB_SYSTEM_USER;
     ConfigureOption o1 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
         new ArrayList<String>());
-    o1.setChooseString(searchOptionsProperties(fileO, PREFIX_DB_SYSTEM_USER, p));
+    o1.setChosenString(searchOptionsProperties(fileO, PREFIX_DB_SYSTEM_USER, p));
     option.add(o1);
 
     askInfo = DB_SYSTEM_PASS;
     ConfigureOption o2 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
         new ArrayList<String>());
-    o2.setChooseString(searchOptionsProperties(fileO, PREFIX_DB_SYSTEM_PASS, p));
+    o2.setChosenString(searchOptionsProperties(fileO, PREFIX_DB_SYSTEM_PASS, p));
     option.add(o2);
 
     askInfo = DB_USER;
     ConfigureOption o3 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
         new ArrayList<String>());
-    o3.setChooseString(searchOptionsProperties(fileO, PREFIX_DB_USER, p));
+    o3.setChosenString(searchOptionsProperties(fileO, PREFIX_DB_USER, p));
     option.add(o3);
 
     askInfo = DB_USER_PASS;
     ConfigureOption o4 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
         new ArrayList<String>());
-    o4.setChooseString(searchOptionsProperties(fileO, PREFIX_DB_PASS, p));
+    o4.setChosenString(searchOptionsProperties(fileO, PREFIX_DB_PASS, p));
     option.add(o4);
 
     String separateString = searchOptionsProperties(fileO, PREFIX_DB_URL, p);
@@ -1302,13 +1302,13 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     askInfo = DB_SERVER;
     ConfigureOption o5 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
         new ArrayList<String>());
-    o5.setChooseString(separateUrl[2].substring(2));
+    o5.setChosenString(separateUrl[2].substring(2));
     option.add(o5);
 
     askInfo = DB_SERVER_PORT;
     ConfigureOption o6 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
         new ArrayList<String>());
-    o6.setChooseString(separateUrl[3]);
+    o6.setChosenString(separateUrl[3]);
     option.add(o6);
 
     // Delete auxiliar file

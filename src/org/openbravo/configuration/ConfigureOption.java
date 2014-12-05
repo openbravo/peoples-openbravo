@@ -39,11 +39,11 @@ class ConfigureOption {
   // Information for asking users
   private String askInfo;
   // Options that can be represent by text. Example: url, context name,
-  private String choosenString;
+  private String chosenString;
   // Options allowed
   private ArrayList<String> opt;
   // Number of selected option
-  private int choosen;
+  private int chosen;
   // Option type: option text or an option selected for a list
   private int type;
 
@@ -51,19 +51,19 @@ class ConfigureOption {
     type = typ;
     askInfo = info;
     opt = options;
-    choosen = 0;
-    choosenString = "";
+    chosen = 0;
+    chosenString = "";
   }
 
   /**
-   * This function setChoose() set a choose numeric option.
+   * This function setChosen() set a chosen numeric option.
    * 
    * @param num
    * @return boolean
    */
-  boolean setChoose(int num) {
+  boolean setChosen(int num) {
     if (num >= 0 && num < opt.size()) {
-      choosen = num;
+      chosen = num;
       return true;
     } else {
       return false;
@@ -80,34 +80,34 @@ class ConfigureOption {
   }
 
   /**
-   * This function getChoose() return numeric option.
+   * This function getChosen() return numeric option.
    * 
    * @return int
    */
-  int getChoose() {
-    return choosen;
+  int getChosen() {
+    return chosen;
   }
 
   /**
-   * This function setChooseString() set a choose string option.
+   * This function setChosenString() set a choose string option.
    * 
    * @param String
    */
-  void setChooseString(String line) {
-    choosenString = line;
+  void setChosenString(String line) {
+    chosenString = line;
     if (type == TYPE_OPT_CHOOSE) {
       int i = 0;
       for (final String opts : opt) {
-        if (opts.equals(choosenString)) {
-          choosen = i;
+        if (opts.equals(chosenString)) {
+          chosen = i;
         }
         i++;
       }
     }
   }
 
-  String getChooseString() {
-    return choosenString;
+  String getChosenString() {
+    return chosenString;
   }
 
   int getType() {
@@ -128,29 +128,29 @@ class ConfigureOption {
       for (final String opts : opt) {
         ConfigurationApp.printOptionWithStyle(i++, opts, p);
       }
-      p.log("\nPlease, choose an option [" + getChoose() + "]: ");
+      p.log("\nPlease, choose an option [" + getChosen() + "]: ");
     } else if (type == TYPE_OPT_STRING) {
-      p.log("\nPlease, introduce here: [" + getChooseString() + "]: ");
+      p.log("\nPlease, introduce here: [" + getChosenString() + "]: ");
     }
   }
 
   /**
-   * Function getOptionChoose() returns choose option.
+   * Function getChosenOption() returns chosen option.
    * 
    * @return option in String
    */
-  String getOptionChoose() {
+  String getChosenOption() {
     String res = "";
     if (type == TYPE_OPT_CHOOSE) {
       int i = 0;
       for (final String opts : opt) {
-        if (choosen == i) {
+        if (chosen == i) {
           res = opts;
         }
         i++;
       }
     } else if (type == TYPE_OPT_STRING) {
-      res = choosenString;
+      res = chosenString;
     }
     return res;
   }
