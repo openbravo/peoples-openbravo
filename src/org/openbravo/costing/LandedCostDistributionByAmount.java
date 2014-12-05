@@ -143,7 +143,8 @@ public class LandedCostDistributionByAmount extends LandedCostDistributionAlgori
     qry.append("        and lcr." + LCReceipt.PROPERTY_GOODSSHIPMENT + " = iol."
         + ShipmentInOutLine.PROPERTY_SHIPMENTRECEIPT + "))");
     qry.append("   and lcr." + LCReceipt.PROPERTY_LANDEDCOST + ".id = :landedCost");
-    qry.append(" group by lcr.id, iol.id, trx." + MaterialTransaction.PROPERTY_CURRENCY + ".id");
+    qry.append(" group by lcr.id, iol.id, trx." + MaterialTransaction.PROPERTY_CURRENCY
+        + ".id, iol." + ShipmentInOutLine.PROPERTY_LINENO);
     if (doOrderBy) {
       qry.append(" order by iol." + ShipmentInOutLine.PROPERTY_LINENO);
       qry.append(" , sum(tc." + TransactionCost.PROPERTY_COST + ")");
