@@ -194,7 +194,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
    * This method shows message "Configuration complete" and copy some templates.
    */
   private void finishConfigurationProcess(Project p) {
-    p.log("---------------------------------------------------------------------------- \n Configuration complete. \n----------------------------------------------------------------------------");
+    printMessage("Configuration complete.", p);
     // Copy templates and rename files
     fileCopySomeTemplates(p);
     mainFlowOption = EXIT_APP;
@@ -253,7 +253,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
   private void closeExitProgram(Project p) {
     infoCollected.close();
     agreementLicense.close();
-    p.log("---------------------------------------------------------------------------- \n Thanks for use Openbravo ERP Setup. \n----------------------------------------------------------------------------");
+    printMessage("Thanks for use Openbravo ERP Setup.", p);
   }
 
   /**
@@ -267,7 +267,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       input = agreementLicense.nextLine();
     }
     if ("Y".equalsIgnoreCase(input)) {
-      p.log("---------------------------------------------------------------------------- \n You have not successfully completed the configuration process.");
+      printMessage("You have not successfully completed the configuration process.", p);
       mainFlowOption = EXIT_APP;
     } else if ("N".equalsIgnoreCase(input)) {
       if (optionForOpenbravo.isEmpty()) {
@@ -379,7 +379,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
    * This method shows the final menu in where user can select accept o return to configure.
    */
   private void showFinalMenu(Project p) {
-    p.log("---------------------------------------------------------------------------- \n Are you agree with all options that you configure? \n----------------------------------------------------------------------------");
+    printMessage("Are you agree with all options that you configure?", p);
     printOptionWithStyle(1, "Accept.", p);
     printOptionWithStyle(2, "Back to preview configuration.", p);
     printOptionWithStyle(3, "Exit without saving.", p);
@@ -477,7 +477,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
    * optionLast.
    */
   private void askForChangeAnOption(Project p) {
-    p.log("---------------------------------------------------------------------------- \n Do you change any option? \n----------------------------------------------------------------------------");
+    printMessage("Do you change any option?", p);
     p.log("Choose [0] for continue with configuration or a number option for modify: ");
     boolean menuOptionOk = false;
     do {
@@ -510,7 +510,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
    * This method shows all options with their values.
    */
   private void previewConfigurationOptions(Project p) {
-    p.log("---------------------------------------------------------------------------- \n Preview Openbravo ERP configuration \n----------------------------------------------------------------------------");
+    printMessage("Preview Openbravo ERP configuration", p);
     // Show questions in order for get user parameters.
     int numberOption = 1;
     // Show all options by order asc
@@ -670,7 +670,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
    * This method shows main menu of application.
    */
   private void showMainMenu(Project p) {
-    p.log("---------------------------------------------------------------------------- \n Please choose one option. \n----------------------------------------------------------------------------");
+    printMessage("Please choose one option.", p);
     printOptionWithStyle(1, "Step-by-step configuration.", p);
     printOptionWithStyle(2, "Default configuration.", p);
     printOptionWithStyle(3, "Exit without saving.", p);
@@ -686,6 +686,15 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
   }
 
   /**
+   * This method prints a message.
+   */
+  static void printMessage(String message, Project p) {
+    p.log("---------------------------------------------------------------------------- \n"
+        + message
+        + "\n----------------------------------------------------------------------------");
+  }
+
+  /**
    * This method asks for users that accept the license of Openbravo installation.
    */
   private void acceptLicense(Project p) {
@@ -698,7 +707,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     if ("Y".equalsIgnoreCase(input)) {
       mainFlowOption = MAIN_MENU;
     } else if ("N".equalsIgnoreCase(input)) {
-      p.log("---------------------------------------------------------------------------- \n You have not successfully completed the configuration process.");
+      printMessage("You have not successfully completed the configuration process", p);
       mainFlowOption = EXIT_APP;
     }
   }
@@ -719,10 +728,11 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
    */
   private static void showWelcome(Project p1) {
     Scanner inp = new Scanner(System.in);
-    p1.log("---------------------------------------------------------------------------- \n Welcome to the Openbravo ERP Setup Wizard. \n----------------------------------------------------------------------------");
+    printMessage("Welcome to the Openbravo ERP Setup Wizard.", p1);
     p1.log("Please read the following License Agreement. You must accept the terms of this\n agreement before continuing with the installation.");
     p1.log("Press [Enter] to continue:");
     inp.nextLine();
+    inp.close();
   }
 
   /**
@@ -1416,6 +1426,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     } catch (Exception e) {
       e.printStackTrace();
     } finally {
+      in.close();
       try {
         fr.close();
         br.close();
