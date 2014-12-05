@@ -61,7 +61,66 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
   private final static String OPENBRAVO_LICENSE = BASEDIR + "/legal/Licensing.txt";
   private final static int LINES_SHOWING_LICENSE = 50;
 
-  private int optionForModify = 0, numberOptionsDDBB = 0, mainFlowOption = 0;
+  private final static int WELCOME = 0;
+  private final static int MAIN_MENU = 1;
+  private final static int SELECT_OPTION_MAIN_MENU = 2;
+  private final static int STEP_BY_STEP = 3;
+  private final static int PREVIEW_CONFIGURATION_PROPERTIES = 4;
+  private final static int ASKING_CHANGE_OPTION = 5;
+  private final static int CHANGE_AN_OPTION = 6;
+  private final static int CHANGE_OPTIONS_ORACLE = 7;
+  private final static int CHANGE_OPTIONS_POSTGRESQL = 8;
+  private final static int FINAL_MENU = 10;
+  private final static int CHANGE_AN_OPTION_DB = 11;
+  private final static int WRITE_PROPERTIES = 20;
+  private final static int FINISH_CONFIGURATION = 21;
+  private final static int CONFIRM_EXIT = 22;
+  private final static int EXIT_APP = -1;
+
+  private final static String ORACLE = "Oracle";
+  private final static String POSTGRE_SQL = "PostgreSQL";
+
+  private static final String OPT_DATE_FORMAT = "date format: ";
+  private static final String OPT_DATE_SEPARATOR = "date separator: ";
+  private static final String OPT_TIME_FORMAT = "time format: ";
+  private static final String OPT_TIME_SEPARATOR = "time separator: ";
+  private static final String OPT_ATTACHMENTS = "Attachments directory: ";
+  private static final String OPT_CONTEXT_NAME = "Context name: ";
+  private static final String OPT_WEB_URL = "Web URL: ";
+  private static final String OPT_CONTEXT_URL = "Context URL :";
+  private static final String OPT_AUTH_CLASS = "Authentication class: ";
+  private static final String OPT_DATABASE = "Database:";
+
+  private static final String DB_SID = "SID: ";
+  private static final String DB_SYSTEM_USER = "System User: ";
+  private static final String DB_SYSTEM_PASS = "System Password: ";
+  private static final String DB_USER = "DB User: ";
+  private static final String DB_USER_PASS = "DB User Password: ";
+  private static final String DB_SERVER = "DB Server Address: ";
+  private static final String DB_SERVER_PORT = "DB Server Port: ";
+
+  private static final String PREFIX_DATE_FORMAT_SQL = "dateFormat.sql";
+  private static final String PREFIX_ATTACH_PATH = "attach.path";
+  private static final String PREFIX_CONTEXT_NAME = "context.name";
+  private static final String PREFIX_WEB_URL = "web.url";
+  private static final String PREFIX_AUTH_CLASS = "authentication.class";
+  private static final String PREFIX_CONTEXT_URL = "context.url";
+  private static final String PREFIX_SOURCE_PATH = "source.path";
+  private static final String PREFIX_DATE_FORMAT_JAVA = "dateFormat.java";
+  private static final String PREFIX_DATE_TIME_FORMAT_JAVA = "dateTimeFormat.java";
+  private static final String PREFIX_DATE_FORMAT_JS = "dateFormat.js";
+  private static final String PREFIX_DB_SESSION = "bbdd.sessionConfig";
+  private static final String PREFIX_DATE_TIME_FORMAT_SQL = "dateTimeFormat.sql";
+  private static final String PREFIX_DB_SID = "bbdd.sid";
+  private static final String PREFIX_DB_SYSTEM_USER = "bbdd.systemUser";
+  private static final String PREFIX_DB_SYSTEM_PASS = "bbdd.systemPassword";
+  private static final String PREFIX_DB_USER = "bbdd.user";
+  private static final String PREFIX_DB_PASS = "bbdd.password";
+  private static final String PREFIX_DB_RDBMS = "bbdd.rdbms";
+  private static final String PREFIX_DB_DRIVER = "bbdd.driver";
+  private static final String PREFIX_DB_URL = "bbdd.url";
+
+  private int optionForModify = 0, numberOptionsDDBB = 0, mainFlowOption = WELCOME;
   private Scanner agreementLicense = new Scanner(System.in);
   private Scanner infoCollected = new Scanner(System.in);
 
@@ -71,9 +130,9 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
    */
   public void execute() {
     Project p = getProject();
-    while (mainFlowOption != -1) {
+    while (mainFlowOption != EXIT_APP) {
       switch (mainFlowOption) {
-      case 0:
+      case WELCOME:
         showWelcome(p);
         try {
           readLicense(p);
@@ -82,44 +141,44 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         }
         acceptLicense(p);
         break;
-      case 1:
+      case MAIN_MENU:
         showMainMenu(p);
         break;
-      case 2:
+      case SELECT_OPTION_MAIN_MENU:
         selectOptionMainMenu(p);
         break;
-      case 3:
+      case STEP_BY_STEP:
         configureStepByStep(p);
         break;
-      case 4:
+      case PREVIEW_CONFIGURATION_PROPERTIES:
         previewConfigurationOptions(p);
         break;
-      case 5:
+      case ASKING_CHANGE_OPTION:
         askForChangeAnOption(p);
         break;
-      case 6:
+      case CHANGE_AN_OPTION:
         changeAnOptionFirst(p);
         break;
-      case 7:
+      case CHANGE_OPTIONS_ORACLE:
         changeAllOptionsDatabase(p, optionOracle);
         break;
-      case 8:
+      case CHANGE_OPTIONS_POSTGRESQL:
         changeAllOptionsDatabase(p, optionPostgreSQL);
         break;
-      case 10:
+      case FINAL_MENU:
         showFinalMenu(p);
         break;
-      case 11:
+      case CHANGE_AN_OPTION_DB:
         changeAnOptionDatabase(p);
         break;
-      case 20:
+      case WRITE_PROPERTIES:
         // All options have been selected... configure Openbravo.properties file.
         setValuesInOpenbravoProperties(p);
         break;
-      case 21:
+      case FINISH_CONFIGURATION:
         finishConfigurationProcess(p);
         break;
-      case 22:
+      case CONFIRM_EXIT:
         reConfirmExit(p);
       }
     }
@@ -133,7 +192,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     p.log("---------------------------------------------------------------------------- \n Configuration complete. \n----------------------------------------------------------------------------");
     // Copy templates and rename files
     fileCopySomeTemplates(p);
-    mainFlowOption = -1;
+    mainFlowOption = EXIT_APP;
   }
 
   /**
@@ -180,7 +239,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       p.log("\n-------------------------\nYour choice " + optionToCange.getOptionChoose()
           + "\n-------------------------\n\n");
     }
-    mainFlowOption = 10;
+    mainFlowOption = FINAL_MENU;
   }
 
   /**
@@ -204,12 +263,12 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     }
     if ("Y".equalsIgnoreCase(input)) {
       p.log("---------------------------------------------------------------------------- \n You have not successfully completed the configuration process.");
-      mainFlowOption = -1;
+      mainFlowOption = EXIT_APP;
     } else if ("N".equalsIgnoreCase(input)) {
       if (optionForOpenbravo.isEmpty()) {
-        mainFlowOption = 1;
+        mainFlowOption = MAIN_MENU;
       } else {
-        mainFlowOption = 10;
+        mainFlowOption = FINAL_MENU;
       }
     }
   }
@@ -224,7 +283,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       String keyForFile = keySetIterator.next();
       replaceOptionsProperties(keyForFile + "=", replaceProperties.get(keyForFile), p);
     }
-    mainFlowOption = 21;
+    mainFlowOption = FINISH_CONFIGURATION;
   }
 
   /**
@@ -308,7 +367,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       p.log("\n-------------------------\nYour choice " + optionToChange.getOptionChoose()
           + "\n-------------------------\n\n");
     }
-    mainFlowOption = 4;
+    mainFlowOption = PREVIEW_CONFIGURATION_PROPERTIES;
   }
 
   /**
@@ -334,15 +393,15 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     switch (optionConfigure) {
     case 1:
       // Accept
-      mainFlowOption = 20;
+      mainFlowOption = WRITE_PROPERTIES;
       break;
     case 2:
       // Preview configuration
-      mainFlowOption = 4;
+      mainFlowOption = PREVIEW_CONFIGURATION_PROPERTIES;
       break;
     case 3:
       // Reconfirm exit
-      mainFlowOption = 22;
+      mainFlowOption = CONFIRM_EXIT;
       break;
     default:
       p.log("Choose a real option: ");
@@ -388,7 +447,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     optionForOpenbravo.set(optionForModify - 1, optionToChange);
     p.log("\n-------------------------\nYour choice " + optionToChange.getOptionChoose()
         + "\n-------------------------\n\n");
-    if (optionToChange.getOptionChoose().equals("Oracle")) {
+    if (optionToChange.getOptionChoose().equals(ORACLE)) {
       if (optionOracle.isEmpty()) {
         optionOracle = createOPOracle(p);
         numberOptionsDDBB = optionOracle.size();
@@ -396,7 +455,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       if (!optionPostgreSQL.isEmpty()) {
         optionPostgreSQL.clear();
       }
-    } else if (optionToChange.getOptionChoose().equals("PostgreSQL")) {
+    } else if (optionToChange.getOptionChoose().equals(POSTGRE_SQL)) {
       if (optionPostgreSQL.isEmpty()) {
         optionPostgreSQL = createOPPostgreSQL(p);
         numberOptionsDDBB = optionPostgreSQL.size();
@@ -405,7 +464,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         optionOracle.clear();
       }
     }
-    mainFlowOption = 4;
+    mainFlowOption = PREVIEW_CONFIGURATION_PROPERTIES;
   }
 
   /**
@@ -432,13 +491,13 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     } while (!menuOptionOk);
     // Accept all configuration
     if (optionForModify == 0) {
-      mainFlowOption = 10;
+      mainFlowOption = FINAL_MENU;
       // Options 0 to numberLastOptions + NUM_OPTIONS_LAST, change a particular option
     } else if (optionForModify > 0 && optionForModify <= optionForOpenbravo.size()) {
-      mainFlowOption = 6;
+      mainFlowOption = CHANGE_AN_OPTION;
     } else if (optionForModify > optionForOpenbravo.size()
         && optionForModify <= optionForOpenbravo.size() + numberOptionsDDBB) {
-      mainFlowOption = 11;
+      mainFlowOption = CHANGE_AN_OPTION_DB;
     }
   }
 
@@ -468,7 +527,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         numberOption = numberOption + 1;
       }
     }
-    mainFlowOption = 5;
+    mainFlowOption = ASKING_CHANGE_OPTION;
   }
 
   /**
@@ -514,7 +573,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
           + "\n-------------------------\n\n");
     }
     // Select Oracle or PostgreSQL
-    if (typeDDBB.equals("Oracle")) {
+    if (typeDDBB.equals(ORACLE)) {
       if (optionOracle.isEmpty()) {
         optionOracle = createOPOracle(p);
         numberOptionsDDBB = optionOracle.size();
@@ -522,8 +581,8 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       if (!optionPostgreSQL.isEmpty()) {
         optionPostgreSQL.clear();
       }
-      mainFlowOption = 7;
-    } else if (typeDDBB.equals("PostgreSQL")) {
+      mainFlowOption = CHANGE_OPTIONS_ORACLE;
+    } else if (typeDDBB.equals(POSTGRE_SQL)) {
       if (optionPostgreSQL.isEmpty()) {
         optionPostgreSQL = createOPPostgreSQL(p);
         numberOptionsDDBB = optionPostgreSQL.size();
@@ -531,7 +590,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       if (!optionOracle.isEmpty()) {
         optionOracle.clear();
       }
-      mainFlowOption = 8;
+      mainFlowOption = CHANGE_OPTIONS_POSTGRESQL;
     }
   }
 
@@ -559,20 +618,20 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       // Oracle or Postgresql options.
       String optionDatabaseToCreate = "";
       for (ConfigureOption option : optionForOpenbravo) {
-        if (option.getChooseString().equals("Oracle")) {
-          optionDatabaseToCreate = "Oracle";
-        } else if (option.getChooseString().equals("PostgreSQL")) {
-          optionDatabaseToCreate = "PostgreSQL";
+        if (option.getChooseString().equals(ORACLE)) {
+          optionDatabaseToCreate = ORACLE;
+        } else if (option.getChooseString().equals(POSTGRE_SQL)) {
+          optionDatabaseToCreate = POSTGRE_SQL;
         }
       }
-      if (optionDatabaseToCreate.equals("Oracle")) {
+      if (optionDatabaseToCreate.equals(ORACLE)) {
         optionOracle = createOPOracle(p);
         numberOptionsDDBB = optionOracle.size();
-      } else if (optionDatabaseToCreate.equals("PostgreSQL")) {
+      } else if (optionDatabaseToCreate.equals(POSTGRE_SQL)) {
         optionPostgreSQL = createOPPostgreSQL(p);
         numberOptionsDDBB = optionPostgreSQL.size();
       }
-      mainFlowOption = 3;
+      mainFlowOption = STEP_BY_STEP;
       // Create all options by default.
     } else if (menuOption == 2) {
       if (optionForOpenbravo.isEmpty()) {
@@ -581,23 +640,23 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       // Oracle or Postgresql options
       String optionDatabaseToCreate = "";
       for (ConfigureOption option : optionForOpenbravo) {
-        if (option.getChooseString().equals("Oracle")) {
-          optionDatabaseToCreate = "Oracle";
-        } else if (option.getChooseString().equals("PostgreSQL")) {
-          optionDatabaseToCreate = "PostgreSQL";
+        if (option.getChooseString().equals(ORACLE)) {
+          optionDatabaseToCreate = ORACLE;
+        } else if (option.getChooseString().equals(POSTGRE_SQL)) {
+          optionDatabaseToCreate = POSTGRE_SQL;
         }
       }
-      if (optionDatabaseToCreate.equals("Oracle")) {
+      if (optionDatabaseToCreate.equals(ORACLE)) {
         optionOracle = createOPOracle(p);
         numberOptionsDDBB = optionOracle.size();
-      } else if (optionDatabaseToCreate.equals("PostgreSQL")) {
+      } else if (optionDatabaseToCreate.equals(POSTGRE_SQL)) {
         optionPostgreSQL = createOPPostgreSQL(p);
         numberOptionsDDBB = optionPostgreSQL.size();
       }
       // Go to preview options configurate by default
-      mainFlowOption = 4;
+      mainFlowOption = PREVIEW_CONFIGURATION_PROPERTIES;
     } else if (menuOption == 3) {
-      mainFlowOption = 22;
+      mainFlowOption = CONFIRM_EXIT;
     } else {
       p.log("Please, introduce a correct option: ");
     }
@@ -612,7 +671,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     printOptionWithStyle(2, "Default configuration.", p);
     printOptionWithStyle(3, "Exit without saving.", p);
     p.log("Choose an option: ");
-    mainFlowOption++;
+    mainFlowOption = SELECT_OPTION_MAIN_MENU;
   }
 
   /**
@@ -633,10 +692,10 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       input = agreementLicense.nextLine();
     }
     if ("Y".equalsIgnoreCase(input)) {
-      mainFlowOption++;
+      mainFlowOption = MAIN_MENU;
     } else if ("N".equalsIgnoreCase(input)) {
       p.log("---------------------------------------------------------------------------- \n You have not successfully completed the configuration process.");
-      mainFlowOption = -1;
+      mainFlowOption = EXIT_APP;
     }
   }
 
@@ -668,151 +727,153 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
   private static void setValuesProperties() {
     String timeSeparator = "", dateSeparator = "", timeFormat = "", dateFormat = "", database = "";
     for (ConfigureOption optionFirstForReplace : optionForOpenbravo) {
-      if (optionFirstForReplace.getAskInfo().equals("date separator: ")) {
+      if (optionFirstForReplace.getAskInfo().equals(OPT_DATE_SEPARATOR)) {
         dateSeparator = optionFirstForReplace.getOptionChoose();
-      } else if (optionFirstForReplace.getAskInfo().equals("time separator: ")) {
+      } else if (optionFirstForReplace.getAskInfo().equals(OPT_TIME_SEPARATOR)) {
         timeSeparator = optionFirstForReplace.getOptionChoose();
-      } else if (optionFirstForReplace.getAskInfo().equals("date format: ")) {
+      } else if (optionFirstForReplace.getAskInfo().equals(OPT_DATE_FORMAT)) {
         dateFormat = optionFirstForReplace.getOptionChoose();
-      } else if (optionFirstForReplace.getAskInfo().equals("time format: ")) {
+      } else if (optionFirstForReplace.getAskInfo().equals(OPT_TIME_FORMAT)) {
         timeFormat = optionFirstForReplace.getOptionChoose();
-      } else if (optionFirstForReplace.getAskInfo().equals("Database:")) {
+      } else if (optionFirstForReplace.getAskInfo().equals(OPT_DATABASE)) {
         database = optionFirstForReplace.getOptionChoose();
-      } else if (optionFirstForReplace.getAskInfo().equals("Attachments directory: ")) {
-        replaceProperties.put("attach.path", optionFirstForReplace.getOptionChoose());
-      } else if (optionFirstForReplace.getAskInfo().equals("Context name: ")) {
-        replaceProperties.put("context.name", optionFirstForReplace.getOptionChoose());
-      } else if (optionFirstForReplace.getAskInfo().equals("Web URL: ")) {
-        replaceProperties.put("web.url", optionFirstForReplace.getOptionChoose());
-      } else if (optionFirstForReplace.getAskInfo().equals("Authentication class: ")) {
-        replaceProperties.put("authentication.class", optionFirstForReplace.getOptionChoose());
-      } else if (optionFirstForReplace.getAskInfo().equals("Context URL :")) {
-        replaceProperties.put("context.url", optionFirstForReplace.getOptionChoose());
+      } else if (optionFirstForReplace.getAskInfo().equals(OPT_ATTACHMENTS)) {
+        replaceProperties.put(PREFIX_ATTACH_PATH, optionFirstForReplace.getOptionChoose());
+      } else if (optionFirstForReplace.getAskInfo().equals(OPT_CONTEXT_NAME)) {
+        replaceProperties.put(PREFIX_CONTEXT_NAME, optionFirstForReplace.getOptionChoose());
+      } else if (optionFirstForReplace.getAskInfo().equals(OPT_WEB_URL)) {
+        replaceProperties.put(PREFIX_WEB_URL, optionFirstForReplace.getOptionChoose());
+      } else if (optionFirstForReplace.getAskInfo().equals(OPT_AUTH_CLASS)) {
+        replaceProperties.put(PREFIX_AUTH_CLASS, optionFirstForReplace.getOptionChoose());
+      } else if (optionFirstForReplace.getAskInfo().equals(OPT_CONTEXT_URL)) {
+        replaceProperties.put(PREFIX_CONTEXT_URL, optionFirstForReplace.getOptionChoose());
       }
     }
-    replaceProperties.put("source.path", System.getProperty("user.dir"));
+    replaceProperties.put(PREFIX_SOURCE_PATH, System.getProperty("user.dir"));
 
-    // dateFormat.java
     if (dateFormat.substring(0, 1).equals("D")) {
-      replaceProperties
-          .put("dateFormat.java", "dd" + dateSeparator + "MM" + dateSeparator + "yyyy");
+      replaceProperties.put(PREFIX_DATE_FORMAT_JAVA, "dd" + dateSeparator + "MM" + dateSeparator
+          + "yyyy");
     } else if (dateFormat.substring(0, 1).equals("M")) {
-      replaceProperties
-          .put("dateFormat.java", "MM" + dateSeparator + "dd" + dateSeparator + "yyyy");
+      replaceProperties.put(PREFIX_DATE_FORMAT_JAVA, "MM" + dateSeparator + "dd" + dateSeparator
+          + "yyyy");
     } else if (dateFormat.substring(0, 1).equals("Y")) {
-      replaceProperties
-          .put("dateFormat.java", "yyyy" + dateSeparator + "MM" + dateSeparator + "dd");
+      replaceProperties.put(PREFIX_DATE_FORMAT_JAVA, "yyyy" + dateSeparator + "MM" + dateSeparator
+          + "dd");
     }
-    // dateTimeFormat.java
+
     if (timeFormat.equals("12h")) {
       if (dateFormat.substring(0, 1).equals("D")) {
-        replaceProperties.put("dateTimeFormat.java", "dd" + dateSeparator + "MM" + dateSeparator
-            + "yyyy hh" + timeSeparator + "mm" + timeSeparator + "ss a");
+        replaceProperties.put(PREFIX_DATE_TIME_FORMAT_JAVA, "dd" + dateSeparator + "MM"
+            + dateSeparator + "yyyy hh" + timeSeparator + "mm" + timeSeparator + "ss a");
       } else if (dateFormat.substring(0, 1).equals("M")) {
-        replaceProperties.put("dateTimeFormat.java", "MM" + dateSeparator + "dd" + dateSeparator
-            + "yyyy hh" + timeSeparator + "mm" + timeSeparator + "ss a");
+        replaceProperties.put(PREFIX_DATE_TIME_FORMAT_JAVA, "MM" + dateSeparator + "dd"
+            + dateSeparator + "yyyy hh" + timeSeparator + "mm" + timeSeparator + "ss a");
       } else if (dateFormat.substring(0, 1).equals("Y")) {
-        replaceProperties.put("dateTimeFormat.java", "yyyy" + dateSeparator + "MM" + dateSeparator
-            + "dd hh" + timeSeparator + "mm" + timeSeparator + "ss a");
+        replaceProperties.put(PREFIX_DATE_TIME_FORMAT_JAVA, "yyyy" + dateSeparator + "MM"
+            + dateSeparator + "dd hh" + timeSeparator + "mm" + timeSeparator + "ss a");
       }
     } else if (timeFormat.equals("24h")) {
       if (dateFormat.substring(0, 1).equals("D")) {
-        replaceProperties.put("dateTimeFormat.java", "dd" + dateSeparator + "MM" + dateSeparator
-            + "yyyy HH" + timeSeparator + "mm" + timeSeparator + "ss");
+        replaceProperties.put(PREFIX_DATE_TIME_FORMAT_JAVA, "dd" + dateSeparator + "MM"
+            + dateSeparator + "yyyy HH" + timeSeparator + "mm" + timeSeparator + "ss");
       } else if (dateFormat.substring(0, 1).equals("M")) {
-        replaceProperties.put("dateTimeFormat.java", "MM" + dateSeparator + "dd" + dateSeparator
-            + "yyyy HH" + timeSeparator + "mm" + timeSeparator + "ss");
+        replaceProperties.put(PREFIX_DATE_TIME_FORMAT_JAVA, "MM" + dateSeparator + "dd"
+            + dateSeparator + "yyyy HH" + timeSeparator + "mm" + timeSeparator + "ss");
       } else if (dateFormat.substring(0, 1).equals("Y")) {
-        replaceProperties.put("dateTimeFormat.java", "yyyy" + dateSeparator + "MM" + dateSeparator
-            + "dd HH" + timeSeparator + "mm" + timeSeparator + "ss");
+        replaceProperties.put(PREFIX_DATE_TIME_FORMAT_JAVA, "yyyy" + dateSeparator + "MM"
+            + dateSeparator + "dd HH" + timeSeparator + "mm" + timeSeparator + "ss");
       }
     }
-    // dateFormat.sql
+
     if (dateFormat.substring(0, 1).equals("D")) {
-      replaceProperties.put("dateFormat.sql", "DD" + dateSeparator + "MM" + dateSeparator + "YYYY");
+      replaceProperties.put(PREFIX_DATE_FORMAT_SQL, "DD" + dateSeparator + "MM" + dateSeparator
+          + "YYYY");
     } else if (dateFormat.substring(0, 1).equals("M")) {
-      replaceProperties.put("dateFormat.sql", "MM" + dateSeparator + "DD" + dateSeparator + "YYYY");
+      replaceProperties.put(PREFIX_DATE_FORMAT_SQL, "MM" + dateSeparator + "DD" + dateSeparator
+          + "YYYY");
     } else if (dateFormat.substring(0, 1).equals("Y")) {
-      replaceProperties.put("dateFormat.sql", "YYYY" + dateSeparator + "MM" + dateSeparator + "DD");
+      replaceProperties.put(PREFIX_DATE_FORMAT_SQL, "YYYY" + dateSeparator + "MM" + dateSeparator
+          + "DD");
     }
-    // "dateFormat.js"
     if (dateFormat.substring(0, 1).equals("D")) {
-      replaceProperties.put("dateFormat.js", "%d" + dateSeparator + "%m" + dateSeparator + "%Y");
+      replaceProperties.put(PREFIX_DATE_FORMAT_JS, "%d" + dateSeparator + "%m" + dateSeparator
+          + "%Y");
     } else if (dateFormat.substring(0, 1).equals("M")) {
-      replaceProperties.put("dateFormat.js", "%m" + dateSeparator + "%d" + dateSeparator + "%Y");
+      replaceProperties.put(PREFIX_DATE_FORMAT_JS, "%m" + dateSeparator + "%d" + dateSeparator
+          + "%Y");
     } else if (dateFormat.substring(0, 1).equals("Y")) {
-      replaceProperties.put("dateFormat.js", "%Y" + dateSeparator + "%m" + dateSeparator + "%d");
+      replaceProperties.put(PREFIX_DATE_FORMAT_JS, "%Y" + dateSeparator + "%m" + dateSeparator
+          + "%d");
     }
-    // dateTimeFormat.sql
-    replaceProperties.put("dateTimeFormat.sql", "DD-MM-YYYY HH24:MI:SS");
-    // bbdd.sessionConfig and BBDD Oracle
-    if (database.equals("Oracle")) {
+    replaceProperties.put(PREFIX_DATE_TIME_FORMAT_SQL, "DD-MM-YYYY HH24:MI:SS");
+
+    if (database.equals(ORACLE)) {
       if (dateFormat.substring(0, 1).equals("D")) {
-        replaceProperties.put("bbdd.sessionConfig", "ALTER SESSION SET NLS_DATE_FORMAT='DD"
+        replaceProperties.put(PREFIX_DB_SESSION, "ALTER SESSION SET NLS_DATE_FORMAT='DD"
             + dateSeparator + "MM" + dateSeparator + "YYYY' NLS_NUMERIC_CHARACTERS='.,'");
       } else if (dateFormat.substring(0, 1).equals("M")) {
-        replaceProperties.put("bbdd.sessionConfig", "ALTER SESSION SET NLS_DATE_FORMAT='MM"
+        replaceProperties.put(PREFIX_DB_SESSION, "ALTER SESSION SET NLS_DATE_FORMAT='MM"
             + dateSeparator + "DD" + dateSeparator + "YYYY' NLS_NUMERIC_CHARACTERS='.,'");
       } else if (dateFormat.substring(0, 1).equals("Y")) {
-        replaceProperties.put("bbdd.sessionConfig", "ALTER SESSION SET NLS_DATE_FORMAT='YYYY"
+        replaceProperties.put(PREFIX_DB_SESSION, "ALTER SESSION SET NLS_DATE_FORMAT='YYYY"
             + dateSeparator + "MM" + dateSeparator + "DD' NLS_NUMERIC_CHARACTERS='.,'");
       }
       String nameBBDD = "", serverBBDD = "", portBBDD = "";
       for (ConfigureOption optionLastForReplace : optionOracle) {
-        if (optionLastForReplace.getAskInfo().equals("SID: ")) {
+        if (optionLastForReplace.getAskInfo().equals(DB_SID)) {
           nameBBDD = optionLastForReplace.getOptionChoose();
-          replaceProperties.put("bbdd.sid", nameBBDD);
-        } else if (optionLastForReplace.getAskInfo().equals("System User: ")) {
-          replaceProperties.put("bbdd.systemUser", optionLastForReplace.getOptionChoose());
-        } else if (optionLastForReplace.getAskInfo().equals("System Password: ")) {
-          replaceProperties.put("bbdd.systemPassword", optionLastForReplace.getOptionChoose());
-        } else if (optionLastForReplace.getAskInfo().equals("DB User: ")) {
-          replaceProperties.put("bbdd.user", optionLastForReplace.getOptionChoose());
-        } else if (optionLastForReplace.getAskInfo().equals("DB User Password: ")) {
-          replaceProperties.put("bbdd.password", optionLastForReplace.getOptionChoose());
-        } else if (optionLastForReplace.getAskInfo().equals("DB Server Address: ")) {
+          replaceProperties.put(PREFIX_DB_SID, nameBBDD);
+        } else if (optionLastForReplace.getAskInfo().equals(DB_SYSTEM_USER)) {
+          replaceProperties.put(PREFIX_DB_SYSTEM_USER, optionLastForReplace.getOptionChoose());
+        } else if (optionLastForReplace.getAskInfo().equals(DB_SYSTEM_PASS)) {
+          replaceProperties.put(PREFIX_DB_SYSTEM_PASS, optionLastForReplace.getOptionChoose());
+        } else if (optionLastForReplace.getAskInfo().equals(DB_USER)) {
+          replaceProperties.put(PREFIX_DB_USER, optionLastForReplace.getOptionChoose());
+        } else if (optionLastForReplace.getAskInfo().equals(DB_USER_PASS)) {
+          replaceProperties.put(PREFIX_DB_PASS, optionLastForReplace.getOptionChoose());
+        } else if (optionLastForReplace.getAskInfo().equals(DB_SERVER)) {
           serverBBDD = optionLastForReplace.getOptionChoose();
-        } else if (optionLastForReplace.getAskInfo().equals("DB Server Port: ")) {
+        } else if (optionLastForReplace.getAskInfo().equals(DB_SERVER_PORT)) {
           portBBDD = optionLastForReplace.getOptionChoose();
         }
       }
-      replaceProperties.put("bbdd.rdbms", "ORACLE");
-      replaceProperties.put("bbdd.driver", "oracle.jdbc.driver.OracleDriver");
-      replaceProperties.put("bbdd.url", "jdbc:oracle:thin:@" + serverBBDD + ":" + portBBDD + ":"
+      replaceProperties.put(PREFIX_DB_RDBMS, ORACLE);
+      replaceProperties.put(PREFIX_DB_DRIVER, "oracle.jdbc.driver.OracleDriver");
+      replaceProperties.put(PREFIX_DB_URL, "jdbc:oracle:thin:@" + serverBBDD + ":" + portBBDD + ":"
           + nameBBDD);
-      // bbdd.sessionConfig and BBDD PostgreSQL
-    } else if (database.equals("PostgreSQL")) {
+    } else if (database.equals(POSTGRE_SQL)) {
       if (dateFormat.substring(0, 1).equals("D")) {
-        replaceProperties.put("bbdd.sessionConfig", "select update_dateFormat('DD" + dateSeparator
+        replaceProperties.put(PREFIX_DB_SESSION, "select update_dateFormat('DD" + dateSeparator
             + "MM" + dateSeparator + "YYYY')");
       } else if (dateFormat.substring(0, 1).equals("M")) {
-        replaceProperties.put("bbdd.sessionConfig", "select update_dateFormat('MM" + dateSeparator
+        replaceProperties.put(PREFIX_DB_SESSION, "select update_dateFormat('MM" + dateSeparator
             + "DD" + dateSeparator + "YYYY')");
       } else if (dateFormat.substring(0, 1).equals("Y")) {
-        replaceProperties.put("bbdd.sessionConfig", "select update_dateFormat('YYYY"
-            + dateSeparator + "MM" + dateSeparator + "DD')");
+        replaceProperties.put(PREFIX_DB_SESSION, "select update_dateFormat('YYYY" + dateSeparator
+            + "MM" + dateSeparator + "DD')");
       }
       String serverBBDD = "", portBBDD = "";
       for (ConfigureOption optionLastForReplace : optionPostgreSQL) {
-        if (optionLastForReplace.getAskInfo().equals("SID: ")) {
-          replaceProperties.put("bbdd.sid", optionLastForReplace.getOptionChoose());
-        } else if (optionLastForReplace.getAskInfo().equals("System User: ")) {
-          replaceProperties.put("bbdd.systemUser", optionLastForReplace.getOptionChoose());
-        } else if (optionLastForReplace.getAskInfo().equals("System Password: ")) {
-          replaceProperties.put("bbdd.systemPassword", optionLastForReplace.getOptionChoose());
-        } else if (optionLastForReplace.getAskInfo().equals("DB User: ")) {
-          replaceProperties.put("bbdd.user", optionLastForReplace.getOptionChoose());
-        } else if (optionLastForReplace.getAskInfo().equals("DB User Password: ")) {
-          replaceProperties.put("bbdd.password", optionLastForReplace.getOptionChoose());
-        } else if (optionLastForReplace.getAskInfo().equals("DB Server Address: ")) {
+        if (optionLastForReplace.getAskInfo().equals(DB_SID)) {
+          replaceProperties.put(PREFIX_DB_SID, optionLastForReplace.getOptionChoose());
+        } else if (optionLastForReplace.getAskInfo().equals(DB_SYSTEM_USER)) {
+          replaceProperties.put(PREFIX_DB_SYSTEM_USER, optionLastForReplace.getOptionChoose());
+        } else if (optionLastForReplace.getAskInfo().equals(DB_SYSTEM_PASS)) {
+          replaceProperties.put(PREFIX_DB_SYSTEM_PASS, optionLastForReplace.getOptionChoose());
+        } else if (optionLastForReplace.getAskInfo().equals(DB_USER)) {
+          replaceProperties.put(PREFIX_DB_USER, optionLastForReplace.getOptionChoose());
+        } else if (optionLastForReplace.getAskInfo().equals(DB_USER_PASS)) {
+          replaceProperties.put(PREFIX_DB_PASS, optionLastForReplace.getOptionChoose());
+        } else if (optionLastForReplace.getAskInfo().equals(DB_SERVER)) {
           serverBBDD = optionLastForReplace.getOptionChoose();
-        } else if (optionLastForReplace.getAskInfo().equals("DB Server Port: ")) {
+        } else if (optionLastForReplace.getAskInfo().equals(DB_SERVER_PORT)) {
           portBBDD = optionLastForReplace.getOptionChoose();
         }
       }
-      replaceProperties.put("bbdd.rdbms", "POSTGRE");
-      replaceProperties.put("bbdd.driver", "org.postgresql.Driver");
-      replaceProperties.put("bbdd.url", "jdbc:postgresql://" + serverBBDD + ":" + portBBDD);
+      replaceProperties.put(PREFIX_DB_RDBMS, "POSTGRE");
+      replaceProperties.put(PREFIX_DB_DRIVER, "org.postgresql.Driver");
+      replaceProperties.put(PREFIX_DB_URL, "jdbc:postgresql://" + serverBBDD + ":" + portBBDD);
     }
   }
 
@@ -835,8 +896,8 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         fileCopyTemplate(OPENBRAVO_PROPERTIES + ".template", OPENBRAVO_PROPERTIES, p);
       }
       // Modify Openbravo.properties file if PostgreSQL's options have been disabled.
-      if (!searchOptionsProperties(fileR, "bbdd.rdbms", p).equals(
-          replaceProperties.get("bbdd.rdbms"))) {
+      if (!searchOptionsProperties(fileR, PREFIX_DB_RDBMS, p).equals(
+          replaceProperties.get(PREFIX_DB_RDBMS))) {
         changeOraclePostgresql(p);
       }
 
@@ -919,13 +980,14 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       fileO = new File(OPENBRAVO_PROPERTIES_AUX);
     }
 
-    String askInfo = "date format: ";
+    String askInfo = OPT_DATE_FORMAT;
     ArrayList<String> optChoosen = new ArrayList<String>();
     optChoosen.add("DDMMYYYY");
     optChoosen.add("MMDDYYYY");
     optChoosen.add("YYYYMMDD");
     ConfigureOption o0 = new ConfigureOption(ConfigureOption.TYPE_OPT_CHOOSE, askInfo, optChoosen);
-    String compareDateformat = searchOptionsProperties(fileO, "dateFormat.sql", p).substring(0, 1);
+    String compareDateformat = searchOptionsProperties(fileO, PREFIX_DATE_FORMAT_SQL, p).substring(
+        0, 1);
     if (compareDateformat.equalsIgnoreCase("d")) {
       o0.setChooseString("DDMMYYYY");
     } else if (compareDateformat.equalsIgnoreCase("m")) {
@@ -935,14 +997,15 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     }
     options.add(o0);
 
-    askInfo = "date separator: ";
+    askInfo = OPT_DATE_SEPARATOR;
     optChoosen = new ArrayList<String>();
     optChoosen.add("-");
     optChoosen.add("/");
     optChoosen.add(".");
     optChoosen.add(":");
     ConfigureOption o1 = new ConfigureOption(ConfigureOption.TYPE_OPT_CHOOSE, askInfo, optChoosen);
-    compareDateformat = searchOptionsProperties(fileO, "dateTimeFormat.sql", p).substring(0, 9);
+    compareDateformat = searchOptionsProperties(fileO, PREFIX_DATE_TIME_FORMAT_SQL, p).substring(0,
+        9);
     if (compareDateformat.contains("-")) {
       o1.setChooseString("-");
     } else if (compareDateformat.contains("/")) {
@@ -956,25 +1019,26 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     }
     options.add(o1);
 
-    askInfo = "time format: ";
+    askInfo = OPT_TIME_FORMAT;
     optChoosen = new ArrayList<String>();
     optChoosen.add("12h");
     optChoosen.add("24h");
     ConfigureOption o2 = new ConfigureOption(ConfigureOption.TYPE_OPT_CHOOSE, askInfo, optChoosen);
 
-    if (searchOptionsProperties(fileO, "dateTimeFormat.java", p).contains("a")) {
+    if (searchOptionsProperties(fileO, PREFIX_DATE_TIME_FORMAT_JAVA, p).contains("a")) {
       o2.setChooseString("12h");
     } else {
       o2.setChooseString("24h");
     }
     options.add(o2);
 
-    askInfo = "time separator: ";
+    askInfo = OPT_TIME_SEPARATOR;
     optChoosen = new ArrayList<String>();
     optChoosen.add(":");
     optChoosen.add(".");
     ConfigureOption o3 = new ConfigureOption(ConfigureOption.TYPE_OPT_CHOOSE, askInfo, optChoosen);
-    compareDateformat = searchOptionsProperties(fileO, "dateTimeFormat.sql", p).substring(10);
+    compareDateformat = searchOptionsProperties(fileO, PREFIX_DATE_TIME_FORMAT_SQL, p)
+        .substring(10);
     if (compareDateformat.contains(":")) {
       o3.setChooseString(":");
     } else if (compareDateformat.contains(".")) {
@@ -984,10 +1048,10 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     }
     options.add(o3);
 
-    askInfo = "Attachments directory: ";
+    askInfo = OPT_ATTACHMENTS;
     ConfigureOption o4 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
         new ArrayList<String>());
-    String optionValueString = searchOptionsProperties(fileO, "attach.path", p);
+    String optionValueString = searchOptionsProperties(fileO, PREFIX_ATTACH_PATH, p);
     if (optionValueString.equals("")) {
       o4.setChooseString("/opt/openbravo/attachments");
     } else {
@@ -995,10 +1059,10 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     }
     options.add(o4);
 
-    askInfo = "Context name: ";
+    askInfo = OPT_CONTEXT_NAME;
     ConfigureOption o5 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
         new ArrayList<String>());
-    optionValueString = searchOptionsProperties(fileO, "context.name", p);
+    optionValueString = searchOptionsProperties(fileO, PREFIX_CONTEXT_NAME, p);
     if (optionValueString.equals("")) {
       o5.setChooseString("openbravo");
     } else {
@@ -1006,10 +1070,10 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     }
     options.add(o5);
 
-    askInfo = "Web URL: ";
+    askInfo = OPT_WEB_URL;
     ConfigureOption o6 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
         new ArrayList<String>());
-    optionValueString = searchOptionsProperties(fileO, "web.url", p);
+    optionValueString = searchOptionsProperties(fileO, PREFIX_WEB_URL, p);
     if (optionValueString.equals("")) {
       o6.setChooseString("@actual_url_context@/web");
     } else {
@@ -1017,10 +1081,10 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     }
     options.add(o6);
 
-    askInfo = "Context URL :";
+    askInfo = OPT_CONTEXT_URL;
     ConfigureOption o7 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
         new ArrayList<String>());
-    optionValueString = searchOptionsProperties(fileO, "context.url", p);
+    optionValueString = searchOptionsProperties(fileO, PREFIX_CONTEXT_URL, p);
     if (optionValueString.equals("")) {
       o7.setChooseString("http://localhost:8080/openbravo");
     } else {
@@ -1028,10 +1092,10 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     }
     options.add(o7);
 
-    askInfo = "Authentication class: ";
+    askInfo = OPT_AUTH_CLASS;
     ConfigureOption o8 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
         new ArrayList<String>());
-    optionValueString = searchOptionsProperties(fileO, "authentication.class", p);
+    optionValueString = searchOptionsProperties(fileO, PREFIX_AUTH_CLASS, p);
     if (optionValueString.equals("")) {
       o8.setChooseString("");
     } else {
@@ -1039,17 +1103,17 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     }
     options.add(o8);
 
-    askInfo = "Database:";
+    askInfo = OPT_DATABASE;
     optChoosen = new ArrayList<String>();
-    optChoosen.add("Oracle");
-    optChoosen.add("PostgreSQL");
+    optChoosen.add(ORACLE);
+    optChoosen.add(POSTGRE_SQL);
     ConfigureOption o9 = new ConfigureOption(ConfigureOption.TYPE_OPT_CHOOSE, askInfo, optChoosen);
-    if (searchOptionsProperties(fileO, "bbdd.rdbms", p).equals("ORACLE")) {
-      o9.setChooseString("Oracle");
-    } else if (searchOptionsProperties(fileO, "bbdd.rdbms", p).equals("POSTGRE")) {
-      o9.setChooseString("PostgreSQL");
+    if (searchOptionsProperties(fileO, PREFIX_DB_RDBMS, p).equals(ORACLE)) {
+      o9.setChooseString(ORACLE);
+    } else if (searchOptionsProperties(fileO, PREFIX_DB_RDBMS, p).equals("POSTGRE")) {
+      o9.setChooseString(POSTGRE_SQL);
     } else {
-      o9.setChooseString("PostgreSQL");
+      o9.setChooseString(POSTGRE_SQL);
     }
     options.add(o9);
 
@@ -1074,7 +1138,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       fileO = new File(OPENBRAVO_PROPERTIES + ".template");
     }
     // Modify Openbravo.properties file if Oracle's options have been disabled.
-    if (searchOptionsProperties(fileO, "bbdd.rdbms", p).equals("POSTGRE")) {
+    if (searchOptionsProperties(fileO, PREFIX_DB_RDBMS, p).equals("POSTGRE")) {
       changeOraclePostgresql(p);
     } else {
       fileO = new File(OPENBRAVO_PROPERTIES);
@@ -1088,10 +1152,10 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       fileO = new File(OPENBRAVO_PROPERTIES);
     }
 
-    String askInfo = "SID: ";
+    String askInfo = DB_SID;
     ConfigureOption o0 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
         new ArrayList<String>());
-    String optionValueString = searchOptionsProperties(fileO, "bbdd.sid", p);
+    String optionValueString = searchOptionsProperties(fileO, PREFIX_DB_SID, p);
     if (optionValueString.equals("")) {
       o0.setChooseString("xe");
     } else {
@@ -1099,10 +1163,10 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     }
     option.add(o0);
 
-    askInfo = "System User: ";
+    askInfo = DB_SYSTEM_USER;
     ConfigureOption o1 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
         new ArrayList<String>());
-    optionValueString = searchOptionsProperties(fileO, "bbdd.systemUser", p);
+    optionValueString = searchOptionsProperties(fileO, PREFIX_DB_SYSTEM_USER, p);
     if (optionValueString.equals("")) {
       o1.setChooseString("SYSTEM");
     } else {
@@ -1110,10 +1174,10 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     }
     option.add(o1);
 
-    askInfo = "System Password: ";
+    askInfo = DB_SYSTEM_PASS;
     ConfigureOption o2 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
         new ArrayList<String>());
-    optionValueString = searchOptionsProperties(fileO, "bbdd.systemPassword", p);
+    optionValueString = searchOptionsProperties(fileO, PREFIX_DB_SYSTEM_PASS, p);
     if (optionValueString.equals("")) {
       o2.setChooseString("SYSTEM");
     } else {
@@ -1121,10 +1185,10 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     }
     option.add(o2);
 
-    askInfo = "DB User: ";
+    askInfo = DB_USER;
     ConfigureOption o3 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
         new ArrayList<String>());
-    optionValueString = searchOptionsProperties(fileO, "bbdd.user", p);
+    optionValueString = searchOptionsProperties(fileO, PREFIX_DB_USER, p);
     if (optionValueString.equals("")) {
       o3.setChooseString("TAD");
     } else {
@@ -1132,10 +1196,10 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     }
     option.add(o3);
 
-    askInfo = "DB User Password: ";
+    askInfo = DB_USER_PASS;
     ConfigureOption o4 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
         new ArrayList<String>());
-    optionValueString = searchOptionsProperties(fileO, "bbdd.password", p);
+    optionValueString = searchOptionsProperties(fileO, PREFIX_DB_PASS, p);
     if (optionValueString.equals("")) {
       o4.setChooseString("TAD");
     } else {
@@ -1143,19 +1207,19 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     }
     option.add(o4);
 
-    String separateString = searchOptionsProperties(fileO, "bbdd.url", p);
+    String separateString = searchOptionsProperties(fileO, PREFIX_DB_URL, p);
     if (separateString.equals("")) {
       separateString = "jdbc:oracle:thin:@localhost:1521:xe";
     }
     String[] separateUrl = separateString.split(":");
 
-    askInfo = "DB Server Address: ";
+    askInfo = DB_SERVER;
     ConfigureOption o5 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
         new ArrayList<String>());
     o5.setChooseString(separateUrl[3].substring(1));
     option.add(o5);
 
-    askInfo = "DB Server Port: ";
+    askInfo = DB_SERVER_PORT;
     ConfigureOption o6 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
         new ArrayList<String>());
     o6.setChooseString(separateUrl[4]);
@@ -1184,7 +1248,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       fileO = new File(OPENBRAVO_PROPERTIES + ".template");
     }
     // Modify Openbravo.properties file if PostgreSQL's options have been disabled.
-    if (searchOptionsProperties(fileO, "bbdd.rdbms", p).equals("ORACLE")) {
+    if (searchOptionsProperties(fileO, PREFIX_DB_RDBMS, p).equals("ORACLE")) {
       changeOraclePostgresql(p);
     } else {
       fileO = new File(OPENBRAVO_PROPERTIES);
@@ -1198,46 +1262,46 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       fileO = new File(OPENBRAVO_PROPERTIES);
     }
 
-    askInfo = "SID: ";
+    askInfo = DB_SID;
     ConfigureOption o0 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
         new ArrayList<String>());
-    o0.setChooseString(searchOptionsProperties(fileO, "bbdd.sid", p));
+    o0.setChooseString(searchOptionsProperties(fileO, PREFIX_DB_SID, p));
     option.add(o0);
 
-    askInfo = "System User: ";
+    askInfo = DB_SYSTEM_USER;
     ConfigureOption o1 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
         new ArrayList<String>());
-    o1.setChooseString(searchOptionsProperties(fileO, "bbdd.systemUser", p));
+    o1.setChooseString(searchOptionsProperties(fileO, PREFIX_DB_SYSTEM_USER, p));
     option.add(o1);
 
-    askInfo = "System Password: ";
+    askInfo = DB_SYSTEM_PASS;
     ConfigureOption o2 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
         new ArrayList<String>());
-    o2.setChooseString(searchOptionsProperties(fileO, "bbdd.systemPassword", p));
+    o2.setChooseString(searchOptionsProperties(fileO, PREFIX_DB_SYSTEM_PASS, p));
     option.add(o2);
 
-    askInfo = "DB User: ";
+    askInfo = DB_USER;
     ConfigureOption o3 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
         new ArrayList<String>());
-    o3.setChooseString(searchOptionsProperties(fileO, "bbdd.user", p));
+    o3.setChooseString(searchOptionsProperties(fileO, PREFIX_DB_USER, p));
     option.add(o3);
 
-    askInfo = "DB User Password: ";
+    askInfo = DB_USER_PASS;
     ConfigureOption o4 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
         new ArrayList<String>());
-    o4.setChooseString(searchOptionsProperties(fileO, "bbdd.password", p));
+    o4.setChooseString(searchOptionsProperties(fileO, PREFIX_DB_PASS, p));
     option.add(o4);
 
-    String separateString = searchOptionsProperties(fileO, "bbdd.url", p);
+    String separateString = searchOptionsProperties(fileO, PREFIX_DB_URL, p);
     String[] separateUrl = separateString.split(":");
 
-    askInfo = "DB Server Address: ";
+    askInfo = DB_SERVER;
     ConfigureOption o5 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
         new ArrayList<String>());
     o5.setChooseString(separateUrl[2].substring(2));
     option.add(o5);
 
-    askInfo = "DB Server Port: ";
+    askInfo = DB_SERVER_PORT;
     ConfigureOption o6 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
         new ArrayList<String>());
     o6.setChooseString(separateUrl[3]);
