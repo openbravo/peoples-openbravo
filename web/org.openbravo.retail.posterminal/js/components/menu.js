@@ -568,42 +568,6 @@ enyo.kind({
 });
 
 enyo.kind({
-  name: 'OB.UI.MenuRejectQuotation',
-  kind: 'OB.UI.MenuAction',
-  permission: 'OBPOS_receipt.rejectquotation',
-  events: {
-    onRejectQuotation: ''
-  },
-  i18nLabel: 'OBPOS_RejectQuotation',
-  tap: function () {
-    if (this.disabled) {
-      return true;
-    }
-    this.inherited(arguments); // Manual dropdown menu closure
-    if (OB.MobileApp.model.hasPermission(this.permission)) {
-      this.doRejectQuotation();
-    }
-  },
-  updateVisibility: function (model) {
-    if (model.get('isQuotation') && model.get('hasbeenpaid') === 'Y') {
-      this.hide();
-    } else {
-      this.hide();
-    }
-  },
-  init: function (model) {
-    var receipt = model.get('order'),
-        me = this;
-    me.hide();
-    receipt.on('change:isQuotation', function (model) {
-      this.updateVisibility(model);
-    }, this);
-    receipt.on('change:hasbeenpaid', function (model) {
-      this.updateVisibility(model);
-    }, this);
-  }
-});
-enyo.kind({
   name: 'OB.UI.MenuReactivateQuotation',
   kind: 'OB.UI.MenuAction',
   permission: 'OBPOS_receipt.reactivatequotation',
