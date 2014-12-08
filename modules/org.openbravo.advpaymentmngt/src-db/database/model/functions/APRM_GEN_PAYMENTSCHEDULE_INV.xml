@@ -607,7 +607,8 @@ BEGIN
           DUEAMT =  V_DueAmount,
           DAYSTILLDUE = V_DayStillDue,
           LASTCALCULATEDONDATE = now(),
-          ISPAID = CASE v_OutstandingAmount WHEN 0 THEN 'Y' ELSE 'N' END
+          ISPAID = CASE v_OutstandingAmount WHEN 0 THEN 'Y' ELSE 'N' END,
+          FINALSETTLEMENT = CASE v_OutstandingAmount WHEN 0 THEN now() ELSE NULL END
       WHERE C_INVOICE_ID = P_RECORD_ID;
 
       -- Updating SO_CREDITUSED when Invoices are being processed
