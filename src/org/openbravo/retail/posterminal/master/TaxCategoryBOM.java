@@ -26,7 +26,7 @@ public class TaxCategoryBOM extends ProcessHQLQuery {
         .add("select taxcategory.id as id "
             + "from FinancialMgmtTaxCategory taxcategory "
             + "where (taxcategory.$incrementalUpdateCriteria) AND ($naturalOrgCriteria) and $readableClientCriteria "
-            + "AND taxcategory.obposAsbom=true AND taxcategory.active=true");
+            + "AND taxcategory.asbom=true AND taxcategory.active=true");
 
     return hqlQueries;
   }

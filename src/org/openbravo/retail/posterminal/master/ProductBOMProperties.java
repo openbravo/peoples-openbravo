@@ -28,7 +28,7 @@ public class ProductBOMProperties extends ModelExtension {
         add(new HQLProperty("bom.bOMProduct.id", "bomproduct"));
         add(new HQLProperty("bom.bOMProduct.taxCategory.id", "bomtaxcategory"));
         add(new HQLProperty("bom.bOMQuantity", "bomquantity"));
-        add(new HQLProperty("bom.obposBomprice", "bomprice"));
+        add(new HQLProperty("bom.bomprice", "bomprice"));
       }
     };
     return list;
