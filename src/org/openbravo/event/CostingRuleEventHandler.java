@@ -32,6 +32,7 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.client.kernel.event.EntityNewEvent;
+import org.openbravo.client.kernel.event.EntityPersistenceEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.dal.service.OBDal;
@@ -49,7 +50,8 @@ public class CostingRuleEventHandler extends EntityPersistenceEventObserver {
     return entities;
   }
 
-  public void onSave(@Observes EntityUpdateEvent event) {
+  public void onSave(@Observes
+  EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -58,10 +60,11 @@ public class CostingRuleEventHandler extends EntityPersistenceEventObserver {
         .getProperty(CostingRule.PROPERTY_BACKDATEDTRANSACTIONSFIXED);
     Boolean isbackdatedtransaction = (Boolean) event.getCurrentState(genericProperty);
     CostingRule rule = (CostingRule) event.getTargetInstance();
-    checkFixBackdatedFrom(isbackdatedtransaction, rule);
+    checkFixBackdatedFrom(isbackdatedtransaction, rule, event, costingRule);
   }
 
-  public void onUpdate(@Observes EntityUpdateEvent event) {
+  public void onUpdate(@Observes
+  EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -70,10 +73,11 @@ public class CostingRuleEventHandler extends EntityPersistenceEventObserver {
         .getProperty(CostingRule.PROPERTY_BACKDATEDTRANSACTIONSFIXED);
     Boolean isbackdatedtransaction = (Boolean) event.getCurrentState(genericProperty);
     CostingRule rule = (CostingRule) event.getTargetInstance();
-    checkFixBackdatedFrom(isbackdatedtransaction, rule);
+    checkFixBackdatedFrom(isbackdatedtransaction, rule, event, costingRule);
   }
 
-  public void onNew(@Observes EntityNewEvent event) {
+  public void onNew(@Observes
+  EntityNewEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -82,10 +86,11 @@ public class CostingRuleEventHandler extends EntityPersistenceEventObserver {
         .getProperty(CostingRule.PROPERTY_BACKDATEDTRANSACTIONSFIXED);
     Boolean isbackdatedtransaction = (Boolean) event.getCurrentState(genericProperty);
     CostingRule rule = (CostingRule) event.getTargetInstance();
-    checkFixBackdatedFrom(isbackdatedtransaction, rule);
+    checkFixBackdatedFrom(isbackdatedtransaction, rule, event, costingRule);
   }
 
-  private void checkFixBackdatedFrom(Boolean isbackdatedtransaction, CostingRule rule) {
+  private void checkFixBackdatedFrom(Boolean isbackdatedtransaction, CostingRule rule,
+      EntityPersistenceEvent event, Entity costingRule) {
     StringBuilder hql = new StringBuilder();
     final Session session = OBDal.getInstance().getSession();
     hql.append("select min(p.startingDate)  from FinancialMgmtPeriodControl pc"
@@ -95,17 +100,27 @@ public class CostingRuleEventHandler extends EntityPersistenceEventObserver {
     final Query query = session.createQuery(hql.toString());
     query.setParameter("client", rule.getClient());
     query.setParameter("org", rule.getOrganization());
-    query.uniqueResult();
 
     try {
+      Date lastPeriodStartingDate = OBDateUtils.getDate(OBDateUtils.formatDate((Date) query
+          .uniqueResult()));
+      final Property ruleStartingDateProperty = costingRule
+          .getProperty(CostingRule.PROPERTY_STARTINGDATE);
+      final Property ruleFixBackDatedFromProperty = costingRule
+          .getProperty(CostingRule.PROPERTY_FIXBACKDATEDFROM);
+      if (rule.getStartingDate() == null) {
+        rule.setStartingDate(lastPeriodStartingDate);
+        event.setCurrentState(ruleStartingDateProperty, lastPeriodStartingDate);
+        OBDal.getInstance().save(rule);
+      }
       if (isbackdatedtransaction) {
         if (rule.getFixbackdatedfrom() == null && !(rule.getStartingDate() == null)) {
           rule.setFixbackdatedfrom(rule.getStartingDate());
+          event.setCurrentState(ruleFixBackDatedFromProperty, rule.getStartingDate());
         }
       }
       if (rule.getFixbackdatedfrom() != null) {
-        if (rule.getFixbackdatedfrom().before(
-            OBDateUtils.getDate(OBDateUtils.formatDate((Date) query.uniqueResult())))) {
+        if (rule.getFixbackdatedfrom().before(lastPeriodStartingDate)) {
           throw new OBException(OBMessageUtils.messageBD("WrongFixBackdatedFrom"));
         }
       }
