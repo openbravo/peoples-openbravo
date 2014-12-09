@@ -1,9 +1,0 @@
-<?xml version="1.0"?>
-  <database name="MODIFIED TABLE M_PRODUCT_BOM">
-    <table name="M_PRODUCT_BOM" primaryKey="M_PRODUCT_BOM_KEY">
-      <column name="EM_OBPOS_BOMPRICE" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-    </table>
-  </database>
