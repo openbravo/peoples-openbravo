@@ -33,9 +33,8 @@ public class BusinessPartner extends ProcessHQLQuery {
 
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
-    Long lastUpdated = jsonsent.has("lastUpdated") && jsonsent.get("lastUpdated") != null
-        && !jsonsent.get("lastUpdated").equals("undefined") ? jsonsent.getLong("lastUpdated")
-        : null;
+    Long lastUpdated = (jsonsent.has("lastUpdated") && jsonsent.get("lastUpdated") != null && !jsonsent
+        .get("lastUpdated").equals("undefined")) ? jsonsent.getLong("lastUpdated") : null;
     // if it is a total refresh we need to ensure that all(AND) entities are active. In a
     // incremental refresh, we need to retrieve it if some (OR) ot the entities have changed
     String operator = lastUpdated == null ? " AND " : " OR ";
