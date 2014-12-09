@@ -1202,6 +1202,7 @@
         line: newline,
         undo: function () {
           me.get('lines').remove(newline);
+          me.calculateGross();
           me.set('undo', null);
         }
       });
