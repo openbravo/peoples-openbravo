@@ -173,7 +173,8 @@
 
   v_iscashvat C_Invoice.IsCashVat%TYPE;
   v_invoiceline_qtysum NUMBER;
-    
+  v_PriceList_ID varchar2(32);
+   
 BEGIN
   IF (p_PInstance_ID IS NOT NULL) THEN
     --  Update AD_PInstance
@@ -249,26 +250,33 @@ BEGIN --BODY
    * Read Invoice
    */
   v_ResultStr:='ReadingInvoice';
-  SELECT i.Processing, i.Processed, i.DocAction, i.DocStatus,
+   SELECT i.Processing, i.Processed, i.DocAction, i.DocStatus,
       i.C_DocType_ID, i.C_DocTypeTarget_ID,
       i.PaymentRule, i.C_PaymentTerm_ID, i.DateAcct, i.DateInvoiced,
       i.AD_Client_ID, i.AD_Org_ID, i.UpdatedBy, i.DocumentNo,
       i.C_Order_ID, i.IsSOTrx, i.C_BPartner_ID, i.AD_User_ID,
       i.C_Currency_ID, i.POReference, i.Posted,
-      i.c_Project_Id, i.C_WithHolding_ID, dt.isreturn,
-      pl.istaxincluded, i.IsCashVat
+      i.c_Project_Id, i.C_WithHolding_ID, i.IsCashVat, i.M_PriceList_ID
   INTO v_Processing, v_Processed, v_DocAction, v_DocStatus,
       v_DocType_ID, v_DocTypeTarget_ID,
       v_PaymentRule, v_PaymentTerm, v_DateAcct, v_DateInvoiced,
       v_Client_ID, v_Org_ID, v_UpdatedBy, v_DocumentNo,
       v_Order_ID, v_IsSOTrx, v_BPartner_ID, v_BPartner_User_ID,
       v_Currency_ID, v_POReference, v_Posted,
-      v_C_Project_Id, cWithHoldID, v_isreturndoctype,
-      v_istaxincluded, v_iscashvat
+      v_C_Project_Id, cWithHoldID, v_iscashvat, v_PriceList_ID
   FROM C_INVOICE i
-        JOIN c_doctype dt ON i.c_doctypetarget_id = dt.c_doctype_id
-        JOIN m_pricelist pl ON i.m_pricelist_id = pl.m_pricelist_id
   WHERE i.C_Invoice_ID=v_Record_ID FOR UPDATE;
+
+  SELECT dt.isreturn  
+  INTO  v_isreturndoctype    
+  FROM  c_doctype dt  
+  WHERE dt.c_doctype_id= v_DocTypeTarget_ID;
+
+  SELECT pl.istaxincluded
+  INTO   v_istaxincluded
+  FROM   m_pricelist pl 
+  WHERE pl.m_pricelist_id= v_PriceList_ID;
+  
   DBMS_OUTPUT.PUT_LINE('Invoice_ID=' || v_Record_ID ||', DocAction=' || v_DocAction || ', DocStatus=' || v_DocStatus || ', DocType_ID=' || v_DocType_ID || ', DocTypeTarget_ID=' || v_DocTypeTarget_ID) ;
   /**
    * Invoice Voided, Closed, or Reversed - No Action
