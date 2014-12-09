@@ -248,7 +248,7 @@ public class CopyFromOrder extends HttpSecureAppServlet {
     for (int i = 0; i < data.length; i++) {
       Product product = OBDal.getInstance().get(Product.class, data[i].mProductId);
       data[i].lastpriceso = (PriceAdjustment.calculatePriceActual(order, product, new BigDecimal(
-          data[i].qty), new BigDecimal(data[i].pricestd))).toString();
+          data[i].qty), new BigDecimal(data[i].lastpriceso))).toString();
     }
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
