@@ -1422,8 +1422,12 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     } finally {
       in.close();
       try {
-        fr.close();
-        br.close();
+        if (fr != null) {
+          fr.close();
+        }
+        if (br != null) {
+          br.close();
+        }
       } catch (Exception e2) {
         e2.printStackTrace();
       }
