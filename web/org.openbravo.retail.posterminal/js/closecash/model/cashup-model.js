@@ -496,21 +496,22 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
           cashUp.at(0).set('isprocessed', 'Y');
 
           OB.Dal.save(cashUp.at(0), function () {
+            var callbackFunc = function () {
+                OB.UTIL.initCashUp(function () {
+                  OB.UTIL.SynchronizationHelper.finished(synchId, 'processAndFinishCashUp');
+                  OB.UTIL.calculateCurrentCash();
+                  OB.UTIL.showLoading(false);
+                  me.set("finished", true);
+                }, function () {
+                  OB.UTIL.showLoading(false);
+                  me.set("finishedWrongly", true);
+                  OB.UTIL.SynchronizationHelper.finished(synchId, 'processAndFinishCashUp');
+                });
+                };
             if (OB.MobileApp.model.hasPermission('OBPOS_print.cashup')) {
               me.printCashUp.print(me.get('cashUpReport').at(0), me.getCountCashSummary());
             }
-            OB.MobileApp.model.runSyncProcess(function () {
-              OB.UTIL.initCashUp(function () {
-                OB.UTIL.SynchronizationHelper.finished(synchId, 'processAndFinishCashUp');
-                OB.UTIL.calculateCurrentCash();
-                OB.UTIL.showLoading(false);
-                me.set("finished", true);
-              }, function () {
-                OB.UTIL.showLoading(false);
-                me.set("finishedWrongly", true);
-                OB.UTIL.SynchronizationHelper.finished(synchId, 'processAndFinishCashUp');
-              });
-            }, null, null);
+            OB.MobileApp.model.runSyncProcess(callbackFunc, callbackFunc);
           }, null);
         }, null, this);
       });
