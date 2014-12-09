@@ -17,6 +17,10 @@ public class InitialValidations {
 
   public static void validateTerminal(OBPOSApplications posTerminal) throws JSONException {
 
+    if (posTerminal == null || null == POSUtils.getTerminal(posTerminal.getSearchKey())) {
+      throw new JSONException("OBPOS_TerminalNotFound");
+    }
+
     // Make sure the store is associated with a PriceList.
     if (POSUtils.getPriceListByTerminal(posTerminal.getSearchKey()) == null) {
       throw new JSONException("OBPOS_errorLoadingPriceList");

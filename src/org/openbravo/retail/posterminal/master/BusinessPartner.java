@@ -33,7 +33,7 @@ public class BusinessPartner extends ProcessHQLQuery {
 
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
-    Long lastUpdated = jsonsent.has("lastUpdated")
+    Long lastUpdated = jsonsent.has("lastUpdated") && jsonsent.get("lastUpdated") != null
         && !jsonsent.get("lastUpdated").equals("undefined") ? jsonsent.getLong("lastUpdated")
         : null;
     // if it is a total refresh we need to ensure that all(AND) entities are active. In a
