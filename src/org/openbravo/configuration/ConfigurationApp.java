@@ -224,13 +224,13 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
               optionToCange.setChosenString(optionToCange.getChosenOption());
               numberOk = true;
             } else {
-              p.log("Please, introduce a correct option: ");
+              p.log("Please introduce a correct option: ");
             }
           } catch (NumberFormatException e) {
             if (optionS.equals("")) {
               numberOk = true;
             } else {
-              p.log("Please, introduce a correct option: ");
+              p.log("Please introduce a correct option: ");
             }
           }
         } while (!numberOk);
@@ -255,7 +255,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
   private void closeExitProgram(Project p) {
     infoCollected.close();
     agreementLicense.close();
-    printMessage("Thanks for use Openbravo ERP Setup.", p);
+    printMessage("Thanks for using the Openbravo ERP Setup.", p);
   }
 
   /**
@@ -265,7 +265,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     p.log("Do you want to exit this program? [y/n]: ");
     String input = agreementLicense.nextLine();
     while (!("Y".equalsIgnoreCase(input) || "N".equalsIgnoreCase(input))) {
-      p.log("Please, introduce a correct option. Do you want to exit this program? [y/n]: ");
+      p.log("Please introduce a correct option. Do you want to exit this program? [y/n]: ");
       input = agreementLicense.nextLine();
     }
     if ("Y".equalsIgnoreCase(input)) {
@@ -316,13 +316,13 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
               optionToChange.setChosenString(optionToChange.getChosenOption());
               numberOk = true;
             } else {
-              p.log("Please, introduce a correct option: ");
+              p.log("Please introduce a correct option: ");
             }
           } catch (NumberFormatException e) {
             if (optionS.equals("")) {
               numberOk = true;
             } else {
-              p.log("Please, introduce a correct option: ");
+              p.log("Please introduce a correct option: ");
             }
           }
         } while (!numberOk);
@@ -352,13 +352,13 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
               optionToChange.setChosenString(optionToChange.getChosenOption());
               numberOk = true;
             } else {
-              p.log("Please, introduce a correct option: ");
+              p.log("Please introduce a correct option: ");
             }
           } catch (NumberFormatException e) {
             if (optionS.equals("")) {
               numberOk = true;
             } else {
-              p.log("Please, introduce a correct option: ");
+              p.log("Please introduce a correct option: ");
             }
           }
         } while (!numberOk);
@@ -381,7 +381,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
    * This method shows the final menu in where user can select accept o return to configure.
    */
   private void showFinalMenu(Project p) {
-    printMessage("Are you agree with all options that you configure?", p);
+    printMessage("Do you agree with all options that you have configured?", p);
     printOptionWithStyle(1, "Accept.", p);
     printOptionWithStyle(2, "Back to preview configuration.", p);
     printOptionWithStyle(3, "Exit without saving.", p);
@@ -394,7 +394,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         optionConfigure = Integer.parseInt(menuOptionS);
         menuOptionOk = true;
       } catch (NumberFormatException e) {
-        p.log("Choose a real option: ");
+        p.log("Choose a valid option: ");
       }
     } while (!menuOptionOk);
     switch (optionConfigure) {
@@ -433,13 +433,13 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
             optionToChange.setChosenString(optionToChange.getChosenOption());
             numberOk = true;
           } else {
-            p.log("Please, introduce a correct option: ");
+            p.log("Please introduce a correct option: ");
           }
         } catch (NumberFormatException e) {
           if (optionS.equals("")) {
             numberOk = true;
           } else {
-            p.log("Please, introduce a correct option: ");
+            p.log("Please introduce a correct option: ");
           }
         }
       } while (!numberOk);
@@ -494,10 +494,10 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
             && optionForModify <= optionForOpenbravo.size() + numberOptionsDDBB) {
           menuOptionOk = true;
         } else {
-          p.log("Choose a real option: ");
+          p.log("Choose a valid option: ");
         }
       } catch (NumberFormatException e) {
-        p.log("Choose a real option: ");
+        p.log("Choose a valid option: ");
       }
     } while (!menuOptionOk);
     // Accept all configuration
@@ -559,13 +559,13 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
               optionOneByOne.setChosen(option);
               numberOk = true;
             } else {
-              p.log("Please, introduce a correct option: ");
+              p.log("Please introduce a correct option: ");
             }
           } catch (NumberFormatException e) {
             if (optionS.equals("")) {
               numberOk = true;
             } else {
-              p.log("Please, introduce a correct option: ");
+              p.log("Please introduce a correct option: ");
             }
           }
         } while (!numberOk);
@@ -618,7 +618,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         menuOption = Integer.parseInt(menuOptionS);
         menuOptionOk = true;
       } catch (NumberFormatException e) {
-        p.log("Please, introduce a correct option: ");
+        p.log("Please introduce a correct option: ");
       }
     } while (!menuOptionOk);
     // Create options one-by-one
@@ -692,7 +692,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     p.log("Do you accept this license? [y/n]: ");
     String input = agreementLicense.nextLine();
     while (!("Y".equalsIgnoreCase(input) || "N".equalsIgnoreCase(input))) {
-      p.log("Please, introduce a correct option. Do you accept this license? [y/n]: ");
+      p.log("Please introduce a valid option. Do you accept this license? [y/n]: ");
       input = agreementLicense.nextLine();
     }
     if ("Y".equalsIgnoreCase(input)) {
@@ -928,7 +928,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       fw.close();
       br.close();
     } catch (Exception e1) {
-      p.log("Excetion reading/writing file: " + e1);
+      p.log("Exception reading/writing file: " + e1);
     }
     // Second part: Delete Openbravo.properties and rename Openbravo.properties.aux to
     // Openbravo.properties
@@ -938,7 +938,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       File fileW = new File(OPENBRAVO_PROPERTIES_AUX);
       fileW.renameTo(new File(OPENBRAVO_PROPERTIES));
     } catch (Exception e2) {
-      p.log("Excetion deleting/rename file: " + e2);
+      p.log("Exception deleting/renaming file: " + e2);
     }
   }
 
@@ -966,7 +966,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       fr.close();
       br.close();
     } catch (Exception e1) {
-      p.log("Excetion reading/writing file: " + e1);
+      p.log("Exception reading/writing file: " + e1);
     }
     return valueSearched;
   }
