@@ -187,16 +187,20 @@
       C_DocType_ID, C_DocTypeTarget_ID, c_order.AD_Client_ID,
       c_order.AD_Org_ID, c_order.UpdatedBy, M_Warehouse_ID, TRUNC(DateOrdered),
       Issotrx, c_Bpartner_Id, c_order.c_currency_id, C_PROJECT_ID,
-      C_BPartner_ID, c_order.M_PriceList_ID, invoicerule, m_pricelist.istaxincluded,
-      c_order.IsCashVat
+      C_BPartner_ID, M_PriceList_ID, invoicerule, c_order.IsCashVat
     INTO v_IsProcessing, v_IsProcessed, v_DocAction, v_DocStatus,
       v_DocType_ID, v_DocTypeTarget_ID, v_Client_ID,
       v_Org_ID, v_UpdatedBy, v_M_Warehouse_ID, v_Date,
       v_isSoTrx, v_c_Bpartner_Id, v_c_currency_id, v_C_PROJECT_ID,
-      v_CBPartner_ID, v_PriceList_ID, v_invoicerule, v_istaxincluded,
-      v_iscashvat
-    FROM C_ORDER JOIN m_pricelist ON c_order.m_pricelist_id = m_pricelist.m_pricelist_id
-    WHERE C_Order_ID=v_Record_ID  FOR UPDATE;
+      v_CBPartner_ID, v_PriceList_ID, v_invoicerule, v_iscashvat
+    FROM C_ORDER
+    WHERE C_Order_ID=v_Record_ID  FOR UPDATE  ;
+
+    SELECT m_pricelist.istaxincluded
+    INTO v_istaxincluded
+    FROM m_pricelist 
+    WHERE m_pricelist_id= v_PriceList_ID;
+    
     -- Get current DocSubTypeSO
     SELECT DocSubTypeSO
       INTO v_DocSubTypeSO
@@ -472,7 +476,7 @@
              WHERE l.C_Order_ID=v_Record_ID  -- Reserve Products (not: services, null products)
                AND l.M_Product_ID=p.M_Product_ID
                AND p.IsStocked='Y'
-               AND p.ProductType='I'  FOR UPDATE
+               AND p.ProductType='I' 
              )
             LOOP
             -- Qty corrected for SO/PO
@@ -1072,8 +1076,7 @@
                 AND p.IsStocked='Y' AND p.ProductType='I'
                 -- Target Level = 0 if DirectShip='Y' or Binding='N'
                 AND (CASE l.DirectShip WHEN 'Y' THEN 0 ELSE (CASE v_IsBinding WHEN 'N' THEN 0 ELSE l.QtyOrdered END)END)
-                -l.QtyReserved-l.QtyDelivered <> 0
-              FOR UPDATE)
+                -l.QtyReserved-l.QtyDelivered <> 0)
           LOOP
           
             -- Qty corrected for SO/PO
