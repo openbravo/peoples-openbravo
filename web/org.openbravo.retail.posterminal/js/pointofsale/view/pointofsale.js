@@ -333,7 +333,7 @@ enyo.kind({
   },
   deleteCurrentOrder: function (inSender, inEvent) {
     function removeOrder(context) {
-      if (context.model.get('order').get('id')) {
+      if (context.model.get('order').get('id') && !(context.model.get('order').has('isQuotation') && context.model.get('order').get('isQuotation') && context.model.get('order').has('hasbeenpaid') && context.model.get('order').get('hasbeenpaid') === 'Y')) {
         context.model.get('orderList').saveCurrent();
         OB.Dal.remove(context.model.get('orderList').current, null, null);
       }
