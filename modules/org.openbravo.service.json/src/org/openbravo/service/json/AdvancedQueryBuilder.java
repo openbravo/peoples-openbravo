@@ -1207,6 +1207,7 @@ public class AdvancedQueryBuilder {
           tab = OBDal.getInstance().get(Tab.class, tabId);
         }
         Tab ancestorTab = KernelUtils.getInstance().getParentTab(tab);
+        boolean checkIsNotNull = false;
 
         while (ancestorTab != null && paramValue.equals("")) {
 
@@ -1217,8 +1218,12 @@ public class AdvancedQueryBuilder {
             paramValue = vars.getStringParameter("@" + paramEntity.getName() + ".id@");
           } else {
             try {
-              Property prop = tabEntity.getPropertyByColumnName(param);
-              paramValue = vars.getStringParameter("@" + tabEntity + "." + prop.getName() + "@");
+              Property prop = tabEntity.getPropertyByColumnName(param, checkIsNotNull);
+              if (prop == null) {
+                paramValue = "";
+              } else {
+                paramValue = vars.getStringParameter("@" + tabEntity + "." + prop.getName() + "@");
+              }
             } catch (Exception ignore) {
               // ignoring exception as the property might be found from context.
               // for eg., refer issue https://issues.openbravo.com/view.php?id=26871
