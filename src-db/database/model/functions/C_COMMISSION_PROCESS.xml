@@ -16,7 +16,7 @@
   * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
   * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2013 Openbravo S.L.U.
+  * Contributions are Copyright (C) 2001-2014 Openbravo S.L.U.
   ******************************************************************************/
   -- Logistice
   v_ResultStr VARCHAR2(2000):='';
@@ -248,14 +248,14 @@
         ELSIF(v_DocBasisType='I') THEN
           IF(v_ListDetails='Y' OR v_IsCascade='Y') THEN
             IF(v_BasisAmt='N') THEN
-              v_Cmd:='SELECT h.C_Currency_ID, CASE WHEN dt.docbasetype IN (''ARC'',''APC'') THEN -1 ELSE 1 END * l.LineNetAmt,'
+              v_Cmd:='SELECT DISTINCT h.C_Currency_ID, CASE WHEN dt.docbasetype IN (''ARC'',''APC'') THEN -1 ELSE 1 END * l.LineNetAmt,'
               || 'CASE WHEN dt.docbasetype IN (''ARC'',''APC'') THEN -1 ELSE 1 END * l.QtyInvoiced, '
               || 'NULL, l.C_InvoiceLine_ID, h.DocumentNo, substr(COALESCE(prd.Name,l.Description),1,60), ''Y'' '
               || 'FROM C_Invoice h JOIN C_InvoiceLine l ON h.C_Invoice_ID = l.C_Invoice_ID'
               || '    JOIN c_doctype dt ON h.c_doctype_id = dt.c_doctype_id'
               || '    LEFT JOIN M_Product prd ON l.M_Product_ID = prd.M_Product_ID ';
             ELSE
-              v_Cmd:='SELECT CASE WHEN cost.c_currency_id is null THEN h.C_Currency_ID ELSE cost.c_currency_id END currency, '
+              v_Cmd:='SELECT DISTINCT CASE WHEN cost.c_currency_id is null THEN h.C_Currency_ID ELSE cost.c_currency_id END currency, '
               || 'CASE WHEN (COST.cost is null AND prd.ISSTOCKED=''Y'' AND prd.PRODUCTTYPE=''I'') THEN 0 '
               || 'WHEN (M_GET_NO_TRX_PRODUCT_COST(prd.M_PRODUCT_ID, h.DATEINVOICED, ''STA'', h.ad_org_id, null, h.C_CURRENCY_ID) is null AND (prd.ISSTOCKED=''N'' OR prd.PRODUCTTYPE<>''I'')) THEN 0 '
               || 'ELSE CASE WHEN dt.docbasetype IN (''ARC'',''APC'') THEN -1 ELSE 1 END '
