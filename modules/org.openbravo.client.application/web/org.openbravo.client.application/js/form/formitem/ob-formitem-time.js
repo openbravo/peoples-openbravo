@@ -58,17 +58,6 @@ isc.OBTimeItem.addProperties({
     return newValue;
   },
 
-  setDisabled: function (disabled) {
-    if (disabled) {
-      this.previousStyleName = this.textBoxStyle;
-      this.textBoxStyle = this.textBoxStyle + 'Disabled';
-    } else if (this.textBoxStyle.endsWith('Disabled')) {
-      this.textBoxStyle = (this.previousStyleName || this.textBoxStyle.substring(0, this.textBoxStyle.length - 8));
-      delete this.previousStyleName;
-    }
-    this.Super('setDisabled', arguments);
-  },
-
   // make sure that the undo/save buttons get enabled, needs to be done like
   // this because changeOnKeypress is false. Activating changeOnKeypress makes the
   // item not editable as it is reformatted on keyStroke, the same happens calling
@@ -162,12 +151,6 @@ isc.OBTimeItem.addProperties({
       if (this.isAbsoluteTime) {
         this.items[0].isAbsoluteTime = true;
       }
-    }
-
-    if (this.isDisabled()) {
-      this.setDisabled(true);
-    } else {
-      this.setDisabled(false);
     }
 
     if (this.showTimeGrid && this.form && !this.timeGrid) {
