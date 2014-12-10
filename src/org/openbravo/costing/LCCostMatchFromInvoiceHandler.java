@@ -19,6 +19,7 @@
 package org.openbravo.costing;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -26,12 +27,17 @@ import java.util.Map;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.financial.FinancialUtils;
+import org.openbravo.model.common.currency.ConversionRate;
+import org.openbravo.model.common.currency.ConversionRateDoc;
+import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.invoice.InvoiceLine;
 import org.openbravo.model.materialmgmt.cost.LCMatched;
 import org.openbravo.model.materialmgmt.cost.LandedCostCost;
@@ -55,7 +61,9 @@ public class LCCostMatchFromInvoiceHandler extends BaseProcessActionHandler {
       final InvoiceLine il = OBDal.getInstance().get(InvoiceLine.class, strInvoiceLineId);
       List<String> existingMatchings = new ArrayList<String>();
       for (LCMatched invmatch : il.getLandedCostMatchedList()) {
-        existingMatchings.add(invmatch.getId());
+        if (invmatch.isConversionmatching()) {
+          existingMatchings.add(invmatch.getId());
+        }
       }
 
       JSONArray selectedLines = jsonparams.getJSONObject("LCCosts").getJSONArray("_selection");
@@ -117,6 +125,7 @@ public class LCCostMatchFromInvoiceHandler extends BaseProcessActionHandler {
         match = OBDal.getInstance().get(LCMatched.class, strLCMatchedId);
         existingMatchings.remove(strLCMatchedId);
       }
+
       if (isMatched) {
         continue;
       }
@@ -138,6 +147,37 @@ public class LCCostMatchFromInvoiceHandler extends BaseProcessActionHandler {
       if (lcCost.isMatchingAdjusted() != isMatchingAdjusted) {
         lcCost.setMatchingAdjusted(isMatchingAdjusted);
         OBDal.getInstance().save(lcCost);
+      }
+
+      final OBCriteria<ConversionRateDoc> conversionRateDoc = OBDal.getInstance().createCriteria(
+          ConversionRateDoc.class);
+      conversionRateDoc.add(Restrictions.eq(ConversionRateDoc.PROPERTY_INVOICE, il.getInvoice()));
+      ConversionRateDoc invoiceconversionrate = (ConversionRateDoc) conversionRateDoc
+          .uniqueResult();
+
+      Currency currency = lcc.getOrganization().getCurrency() != null ? lcc.getOrganization()
+          .getCurrency() : lcc.getOrganization().getClient().getCurrency();
+      ConversionRate landedCostrate = FinancialUtils.getConversionRate(lcc.getLandedCost()
+          .getReferenceDate(), lcc.getCurrency(), currency, lcc.getOrganization(), lcc.getClient());
+
+      if (invoiceconversionrate != null
+          && invoiceconversionrate.getRate() != landedCostrate.getMultipleRateBy()) {
+        amount = amount
+            .multiply(invoiceconversionrate.getRate())
+            .subtract(amount.multiply(landedCostrate.getMultipleRateBy()))
+            .divide(landedCostrate.getMultipleRateBy(), currency.getStandardPrecision().intValue(),
+                RoundingMode.HALF_UP);
+        LCMatched lcmCm = OBProvider.getInstance().get(LCMatched.class);
+        lcmCm.setOrganization(lcc.getOrganization());
+        lcmCm.setLandedCostCost(lcc);
+        lcmCm.setAmount(amount);
+        lcmCm.setInvoiceLine(il);
+        lcmCm.setConversionmatching(true);
+        OBDal.getInstance().save(lcmCm);
+
+        lcc.setMatched(Boolean.FALSE);
+        lcc.setProcessed(Boolean.FALSE);
+        lcc.setMatchingAdjusted(true);
       }
       OBDal.getInstance().flush();
       if (processMatching) {
