@@ -1766,12 +1766,12 @@ If the payment does not have a generated credit amount is the amount of credit u
 <!--E2FB4840B65A44D4B3090A7E3C95FD95-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--E2FB4840B65A44D4B3090A7E3C95FD95-->  <AD_MODULE_ID><![CDATA[A918E3331C404B889D69AA9BFAFB23AC]]></AD_MODULE_ID>
 <!--E2FB4840B65A44D4B3090A7E3C95FD95-->  <NAME><![CDATA[Payment Date]]></NAME>
-<!--E2FB4840B65A44D4B3090A7E3C95FD95-->  <DESCRIPTION><![CDATA[Date of the payment event. It is used in the posting record of the Payment to the general ledger. Defaulted to the Invoice Date field.]]></DESCRIPTION>
-<!--E2FB4840B65A44D4B3090A7E3C95FD95-->  <HELP><![CDATA[Date of the payment event. It is used in the posting record of the Payment to the general ledger. Defaulted to the Invoice Date field.]]></HELP>
+<!--E2FB4840B65A44D4B3090A7E3C95FD95-->  <DESCRIPTION><![CDATA[Date of the payment event. It is used in the posting record of the Payment to the general ledger as accounting date. Defaulted to the current date, it can always be changed.]]></DESCRIPTION>
+<!--E2FB4840B65A44D4B3090A7E3C95FD95-->  <HELP><![CDATA[Date of the payment event. It is used in the posting record of the Payment to the general ledger as accounting date. Defaulted to the current date, it can always be changed.]]></HELP>
 <!--E2FB4840B65A44D4B3090A7E3C95FD95-->  <SEQNO><![CDATA[90]]></SEQNO>
 <!--E2FB4840B65A44D4B3090A7E3C95FD95-->  <AD_REFERENCE_ID><![CDATA[15]]></AD_REFERENCE_ID>
 <!--E2FB4840B65A44D4B3090A7E3C95FD95-->  <COLUMNNAME><![CDATA[payment_date]]></COLUMNNAME>
-<!--E2FB4840B65A44D4B3090A7E3C95FD95-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
+<!--E2FB4840B65A44D4B3090A7E3C95FD95-->  <ISCENTRALLYMAINTAINED><![CDATA[N]]></ISCENTRALLYMAINTAINED>
 <!--E2FB4840B65A44D4B3090A7E3C95FD95-->  <FIELDLENGTH><![CDATA[0]]></FIELDLENGTH>
 <!--E2FB4840B65A44D4B3090A7E3C95FD95-->  <ISMANDATORY><![CDATA[Y]]></ISMANDATORY>
 <!--E2FB4840B65A44D4B3090A7E3C95FD95-->  <DEFAULTVALUE><![CDATA[OB.getFilterExpression("org.openbravo.advpaymentmngt.filterexpression.AddPaymentDefaultValuesExpression")]]></DEFAULTVALUE>
