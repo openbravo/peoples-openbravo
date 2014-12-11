@@ -309,6 +309,10 @@ enyo.kind({
       showing: false,
       components: [{
         name: 'actionButtonsContainer',
+        kind: 'Scroller',
+        maxHeight: '50px',
+        thumb: true,
+        horizontal: 'hidden',
         classes: 'span12'
       }, {
         kind: 'OB.UI.List',
