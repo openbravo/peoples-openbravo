@@ -23,6 +23,8 @@ import org.openbravo.database.ConnectionProvider;
 public class DeleteDuplicateCommissionDetail extends ModuleScript {
 
   @Override
+  // Correcting commission inconsistent data. Deleting duplicated tuples and updating amounts and quantities. Related to the issue
+  // https://issues.openbravo.com/view.php?id=27280
   public void execute() {
     try {
       ConnectionProvider cp = getConnectionProvider();
@@ -32,7 +34,7 @@ public class DeleteDuplicateCommissionDetail extends ModuleScript {
         DeleteDuplicateCommissionDetailData.deleteDuplicateCommissionDetail(cp);
         DeleteDuplicateCommissionDetailData.updateCommissionQty(cp);
         
-        DeleteDuplicateCommissionDetailData[] data = DeleteDuplicateCommissionDetailData.getCommissionPyments(cp);
+        DeleteDuplicateCommissionDetailData[] data = DeleteDuplicateCommissionDetailData.select(cp);
         for (DeleteDuplicateCommissionDetailData commissionPayment : data){
           DeleteDuplicateCommissionDetailData.updateCommissionAmount(cp, commissionPayment.amtresult, commissionPayment.cCommissionamtId);
           DeleteDuplicateCommissionDetailData.updateCommissionPayment(cp, commissionPayment.amtresult, commissionPayment.cCommissionrunId);

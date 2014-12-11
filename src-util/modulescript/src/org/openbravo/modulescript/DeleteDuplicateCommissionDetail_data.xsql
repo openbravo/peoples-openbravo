@@ -22,14 +22,13 @@
   <SqlMethod name="select" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[
-      SELECT '' AS C_COMMISSIONAMT_ID, 
-             '' AS C_COMMISSIONRUN_ID,
-             0 AS QTYRESULT,
-             0 AS AMTRESULT, 
-             '' AS ISPOSITIVEONLY 
-      FROM DUAL
-      ]]>
-    </Sql>
+       SELECT CAMT.C_COMMISSIONAMT_ID, 
+              CAMT.C_COMMISSIONRUN_ID, 
+              CASE WHEN (((CAMT.ACTUALQTY - CLINE.QTYSUBTRACT) * CLINE.QTYMULTIPLIER) < 0 AND CLINE.ISPOSITIVEONLY = 'Y') THEN 0 ELSE ((CAMT.ACTUALQTY - CLINE.QTYSUBTRACT) * CLINE.QTYMULTIPLIER) END 
+              + CASE WHEN (((CAMT.CONVERTEDAMT - CLINE.AMTSUBTRACT) * CLINE.AMTMULTIPLIER) < 0 AND CLINE.ISPOSITIVEONLY = 'Y') THEN 0 ELSE ((CAMT.CONVERTEDAMT - CLINE.AMTSUBTRACT) * CLINE.AMTMULTIPLIER) END AS AMTRESULT 
+       FROM C_COMMISSIONAMT CAMT 
+       JOIN C_COMMISSIONLINE CLINE ON CAMT.C_COMMISSIONLINE_ID = CLINE.C_COMMISSIONLINE_ID
+      ]]></Sql>
   </SqlMethod>
   <SqlMethod name="deleteDuplicateCommissionDetail" type="preparedStatement" return="rowcount">
     <SqlMethodComment></SqlMethodComment>
@@ -62,17 +61,6 @@
                          WHERE C_COMMISSIONAMT_ID = CAMT.C_COMMISSIONAMT_ID)) END
       ]]>
     </Sql>
-  </SqlMethod>
-  <SqlMethod name="getCommissionPyments" type="preparedStatement" return="multiple">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql><![CDATA[
-       SELECT CAMT.C_COMMISSIONAMT_ID, 
-              CAMT.C_COMMISSIONRUN_ID, 
-              CASE WHEN (((CAMT.ACTUALQTY - CLINE.QTYSUBTRACT) * CLINE.QTYMULTIPLIER) < 0 AND CLINE.ISPOSITIVEONLY = 'Y') THEN 0 ELSE ((CAMT.ACTUALQTY - CLINE.QTYSUBTRACT) * CLINE.QTYMULTIPLIER) END 
-              + CASE WHEN (((CAMT.CONVERTEDAMT - CLINE.AMTSUBTRACT) * CLINE.AMTMULTIPLIER) < 0 AND CLINE.ISPOSITIVEONLY = 'Y') THEN 0 ELSE ((CAMT.CONVERTEDAMT - CLINE.AMTSUBTRACT) * CLINE.AMTMULTIPLIER) END AS AMTRESULT 
-       FROM C_COMMISSIONAMT CAMT 
-       JOIN C_COMMISSIONLINE CLINE ON CAMT.C_COMMISSIONLINE_ID = CLINE.C_COMMISSIONLINE_ID
-      ]]></Sql>
   </SqlMethod>
   <SqlMethod name="updateCommissionAmount" type="preparedStatement" return="rowcount">
     <SqlMethodComment></SqlMethodComment>
