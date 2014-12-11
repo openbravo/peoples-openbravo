@@ -48,15 +48,17 @@ enyo.kind({
     this.order.on('change:bp', function (model) {
       if (model.get('bp')) {
         if (OB.MobileApp.model.hasPermission('OBPOS_receipt.invoice')) {
-          if (OB.MobileApp.model.hasPermission('OBPOS_retail.restricttaxidinvoice', true) && !model.get('bp').get('taxID')) {
-            if (OB.MobileApp.model.get('terminal').terminalType.generateInvoice) {
-              OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BP_No_Taxid'));
+          if (OB.MobileApp.model.hasPermission('OBPOS_retail.restricttaxidinvoice', true)) {
+            if (!model.get('bp').get('taxID')) {
+              if (OB.MobileApp.model.get('terminal').terminalType.generateInvoice) {
+                OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BP_No_Taxid'));
+              } else {
+                OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_BP_No_Taxid'));
+              }
+              model.set('generateInvoice', false);
             } else {
-              OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_BP_No_Taxid'));
+              model.set('generateInvoice', OB.MobileApp.model.get('terminal').terminalType.generateInvoice);
             }
-            model.set('generateInvoice', false);
-          } else {
-            model.set('generateInvoice', OB.MobileApp.model.get('terminal').terminalType.generateInvoice);
           }
         } else {
           model.set('generateInvoice', false);
