@@ -35,6 +35,7 @@
          AND PL.MOVEMENTQTY <> 0
          AND L.M_WAREHOUSE_ID= W.M_WAREHOUSE_ID
          AND PP.M_PRODUCTION_ID = ?
+         ORDER BY PL.LINE, PL.M_PRODUCTIONLINE_ID
      ]]>
      </Sql>
      <Parameter name="mProductionId"/>
