@@ -214,8 +214,13 @@ public class OrderLoader extends POSDataSynchronizationProcess {
 
         if (jsonorder.has("oldId") && !jsonorder.getString("oldId").equals("null")
             && (!jsonorder.has("isQuotation") || !jsonorder.getBoolean("isQuotation"))) {
-          // This order comes from a quotation, we need to associate both
-          associateOrderToQuotation(jsonorder, order);
+          try {
+            // This order comes from a quotation, we need to associate both
+            associateOrderToQuotation(jsonorder, order);
+          } catch (Exception e) {
+            log.warn("Error to associate order to quotation with id: "
+                + jsonorder.getString("oldId"));
+          }
         }
 
         long t113 = System.currentTimeMillis();
