@@ -65,7 +65,9 @@ public class RescheduleProcess extends HttpSecureAppServlet {
     final VariablesSecureApp vars = new VariablesSecureApp(request);
 
     final String windowId = vars.getStringParameter("inpwindowId");
-    final String requestId = vars.getSessionValue(windowId + "|" + PROCESS_REQUEST_ID);
+    String requestId = vars.getSessionValue(windowId + "|" + PROCESS_REQUEST_ID);
+    if (requestId.isEmpty())
+      requestId = vars.getStringParameter("AD_Process_Request_ID");
     final String group = vars.getStringParameter("inpisgroup");
 
     String message;
