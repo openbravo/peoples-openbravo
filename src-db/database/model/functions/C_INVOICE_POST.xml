@@ -175,6 +175,7 @@
   v_iscashvat C_Invoice.IsCashVat%TYPE;
   v_invoiceline_qtysum NUMBER;
   v_PriceList_ID varchar2(32);
+  v_prepaymentamt NUMBER;
    
 BEGIN
   IF (p_PInstance_ID IS NOT NULL) THEN
@@ -257,14 +258,14 @@ BEGIN --BODY
       i.AD_Client_ID, i.AD_Org_ID, i.UpdatedBy, i.DocumentNo,
       i.C_Order_ID, i.IsSOTrx, i.C_BPartner_ID, i.AD_User_ID,
       i.C_Currency_ID, i.POReference, i.Posted,
-      i.c_Project_Id, i.C_WithHolding_ID, i.IsCashVat, i.M_PriceList_ID
+      i.c_Project_Id, i.C_WithHolding_ID, i.IsCashVat, i.M_PriceList_ID, i.prepaymentamt
   INTO v_Processing, v_Processed, v_DocAction, v_DocStatus,
       v_DocType_ID, v_DocTypeTarget_ID,
       v_PaymentRule, v_PaymentTerm, v_DateAcct, v_DateInvoiced,
       v_Client_ID, v_Org_ID, v_UpdatedBy, v_DocumentNo,
       v_Order_ID, v_IsSOTrx, v_BPartner_ID, v_BPartner_User_ID,
       v_Currency_ID, v_POReference, v_Posted,
-      v_C_Project_Id, cWithHoldID, v_iscashvat, v_PriceList_ID
+      v_C_Project_Id, cWithHoldID, v_iscashvat, v_PriceList_ID, v_prepaymentamt
   FROM C_INVOICE i
   WHERE i.C_Invoice_ID=v_Record_ID FOR UPDATE;
 
@@ -806,6 +807,9 @@ IF (NOT FINISH_PROCESS) THEN
         END IF;
         IF (v_voiddate_acct IS NOT NULL) THEN
           UPDATE C_INVOICE SET DateAcct = v_voiddate_acct WHERE C_Invoice_ID=v_RInvoice_ID;
+        END IF;
+        IF (v_prepaymentamt !=0) THEN
+          UPDATE C_INVOICE SET prepaymentamt = v_prepaymentamt WHERE C_Invoice_ID=v_RInvoice_ID;
         END IF;
         -- Post Reversal
         C_INVOICE_POST(NULL, v_RInvoice_ID) ;

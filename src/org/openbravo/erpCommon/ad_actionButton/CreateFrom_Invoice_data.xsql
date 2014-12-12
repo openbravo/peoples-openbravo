@@ -903,4 +903,21 @@
     </Sql>
     <Parameter name="cTaxId"/>
   </SqlMethod>
+    <SqlMethod name="selectPrepaymentAmt" type="preparedStatement" return="String" default="">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+     select paidamt from FIN_Payment_Schedule  ps
+     where ps.C_Order_ID=?
+    </Sql>
+    <Parameter name="cOrderId"/>
+  </SqlMethod>
+  <SqlMethod name="updatePrepaymentAmt" type="preparedStatement" connection="true" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql><![CDATA[
+      UPDATE C_Invoice SET prepaymentamt = TO_NUMBER(?)
+      WHERE C_Invoice_ID = ?
+    ]]></Sql>
+    <Parameter name="prepaymentamt"/>
+    <Parameter name="cInvoiceId"/>
+  </SqlMethod>
 </SqlClass>

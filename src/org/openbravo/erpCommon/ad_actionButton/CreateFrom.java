@@ -1581,7 +1581,10 @@ public class CreateFrom extends HttpSecureAppServlet {
               grossAmt = new BigDecimal(priceGross).multiply(qty);
               grossAmt = grossAmt.setScale(curPrecision, BigDecimal.ROUND_HALF_UP);
             }
-
+            if (!strPO.equals("")) {
+              String prepaymentamt = CreateFromInvoiceData.selectPrepaymentAmt(this, strPO);
+              CreateFromInvoiceData.updatePrepaymentAmt(conn, this, prepaymentamt, strKey);
+            }
             String strTaxRate = CreateFromInvoiceData.selectTaxRate(this, C_Tax_ID);
             BigDecimal taxRate = (strTaxRate.equals("") ? new BigDecimal(1) : new BigDecimal(
                 strTaxRate));
@@ -1885,7 +1888,8 @@ public class CreateFrom extends HttpSecureAppServlet {
           try {
             final int total = CreateFromShipmentData.deleteC_Order_ID(conn, this, strKey, strPO);
             if (total == 0) {
-              int noOfOrders = Integer.valueOf(CreateFromShipmentData.countOrders(conn, this, strKey));
+              int noOfOrders = Integer.valueOf(CreateFromShipmentData.countOrders(conn, this,
+                  strKey));
               if (noOfOrders == 1) {
                 CreateFromShipmentData.updateC_Order_ID(conn, this, strPO, strKey);
               }
