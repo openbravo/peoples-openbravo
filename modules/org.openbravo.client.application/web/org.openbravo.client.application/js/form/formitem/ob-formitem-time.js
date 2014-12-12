@@ -139,9 +139,19 @@ isc.OBTimeItem.addProperties({
   },
 
   init: function () {
-    var oldShowHint, hint, formatDefinition = OB.Utilities.getTimeFormatDefinition();
+    var oldShowHint, hint, formatDefinition = OB.Utilities.getTimeFormatDefinition(),
+        me = this;
 
     this.timeFormat = formatDefinition.timeFormat;
+
+    // The TextItem within TimeItem that renders the value defines its properties in textFieldDefaults
+    // this cannot be customized till instance is created. In order to apply proper format, it requires
+    // to set the style and change the getTextBoxStyle which by default does not manage properly disabled
+    //   see issue #27670
+    isc.addProperties(this.textFieldDefaults, OB.Styles.OBFormField.OBTimeItem);
+    this.textFieldDefaults.getTextBoxStyle = function () {
+      return isc.OBTimeItem.getInstanceProperty('textBoxStyle') + (me.isDisabled() ? 'Disabled' : (me.required ? 'Required' : ''));
+    };
 
     this.Super('init', arguments);
 
