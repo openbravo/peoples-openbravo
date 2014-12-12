@@ -159,7 +159,11 @@ public class OrderLoader extends POSDataSynchronizationProcess {
       try {
         if (jsonorder.has("oldId") && !jsonorder.getString("oldId").equals("null")
             && jsonorder.has("isQuotation") && jsonorder.getBoolean("isQuotation")) {
-          deleteOldDocument(jsonorder);
+          try {
+            deleteOldDocument(jsonorder);
+          } catch (Exception e) {
+            log.warn("Error to delete old quotation with id: " + jsonorder.getString("oldId"));
+          }
         }
 
         t1 = System.currentTimeMillis();
