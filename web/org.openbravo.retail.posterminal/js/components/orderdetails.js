@@ -21,7 +21,7 @@ enyo.kind({
   renderData: function (docNo) {
     var content, me = this,
         orderDate = this.order.get('orderDate');
-    if (this.order.get('hasbeenpaid') === 'Y') {
+    if (this.order.get('hasbeenpaid') === 'Y' || this.order.get('isLayaway')) {
       orderDate = this.order.get('creationDate');
     }
     if (orderDate instanceof Date) {
@@ -41,7 +41,7 @@ enyo.kind({
     var content, me = this,
         orderDate = order.get('orderDate'),
         docNo = order.get('documentNo');
-    if (order.get('hasbeenpaid') === 'Y') {
+    if (order.get('hasbeenpaid') === 'Y' || order.get('isLayaway')) {
       orderDate = order.get('creationDate');
     }
     if (orderDate instanceof Date) {
