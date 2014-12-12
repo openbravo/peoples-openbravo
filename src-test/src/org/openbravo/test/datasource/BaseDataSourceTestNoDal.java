@@ -42,23 +42,34 @@ public class BaseDataSourceTestNoDal {
    * Performs a request to Openbravo returning its response and asserting the response code matches
    * expectedResponse.
    */
-  protected String doRequest(String wsPart, Map<String, String> params, int expectedResponse,
-      String method) throws Exception {
-    return doRequest(wsPart, DatasourceTestUtil.getParamsContent(params), expectedResponse, method);
+  protected String doRequest(String wsPart, String content, int expectedResponse, String method)
+      throws Exception {
+    return doRequest(wsPart, content, 200, method, null);
   }
 
   /**
    * Performs a request to Openbravo returning its response and asserting the response code matches
    * expectedResponse.
    */
-  protected String doRequest(String wsPart, String content, int expectedResponse, String method)
-      throws Exception {
+  protected String doRequest(String wsPart, Map<String, String> params, int expectedResponse,
+      String method) throws Exception {
+    return doRequest(wsPart, DatasourceTestUtil.getParamsContent(params), expectedResponse, method,
+        null);
+  }
+
+  /**
+   * Performs a request to Openbravo returning its response and asserting the response code matches
+   * expectedResponse.
+   */
+  protected String doRequest(String wsPart, String content, int expectedResponse, String method,
+      String contentType) throws Exception {
     if (!authenticated) {
       cookie = DatasourceTestUtil.authenticate(getOpenbravoURL(), getLogin(), getPassword());
       authenticated = true;
     }
 
-    return DatasourceTestUtil.request(getOpenbravoURL(), wsPart, method, content, cookie, 200);
+    return DatasourceTestUtil.request(getOpenbravoURL(), wsPart, method, content, cookie, 200,
+        contentType);
   }
 
   /**
