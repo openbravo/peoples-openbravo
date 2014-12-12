@@ -43,8 +43,10 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.access.CharacteristicSubsetValue;
 import org.openbravo.model.common.plm.CharacteristicValue;
+import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.plm.ProductCharacteristic;
 import org.openbravo.model.common.plm.ProductCharacteristicConf;
+import org.openbravo.model.common.plm.ProductCharacteristicValue;
 
 public class ProductCharacteristicEventHandler extends EntityPersistenceEventObserver {
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(
@@ -62,6 +64,11 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
       return;
     }
     final ProductCharacteristic prCh = (ProductCharacteristic) event.getTargetInstance();
+    for (ProductCharacteristicValue pChV : prCh.getProduct().getProductCharacteristicValueList()) {
+    	if (pChV.getCharacteristic().equals(prCh.getCharacteristic())) {
+    		throw new OBException(OBMessageUtils.messageBD("DeleteProductChWithValue"));
+    	}
+    }
     if (prCh.isVariant() && prCh.getProduct().isGeneric()
         && !prCh.getProduct().getProductGenericProductList().isEmpty()) {
       throw new OBException(OBMessageUtils.messageBD("DeleteVariantChWithVariantsError"));
@@ -116,13 +123,28 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
       return;
     }
     final ProductCharacteristic prCh = (ProductCharacteristic) event.getTargetInstance();
+    final Entity prodCharEntity = ModelProvider.getInstance().getEntity(
+            ProductCharacteristic.ENTITY_NAME);
+    
+    final Property chProp = 
+			prodCharEntity.getProperty(ProductCharacteristic.PROPERTY_CHARACTERISTIC);
+    final Property prdProp = 
+			prodCharEntity.getProperty(ProductCharacteristic.PROPERTY_PRODUCT);
+    
+    if (!event.getPreviousState(chProp).equals(event.getCurrentState(chProp))) {
+    	final Product prd = (Product) event.getCurrentState(prdProp);
+	    for (ProductCharacteristicValue pChV : prd.getProductCharacteristicValueList()) {
+	    	if (pChV.getCharacteristic().equals(event.getPreviousState(chProp))) {
+	    		throw new OBException(OBMessageUtils.messageBD("UpdateProductChWithValue"));
+	    	}
+	    }
+    }
+    
     if (!prCh.isVariant() && prCh.getProduct().isGeneric()
         && !prCh.getProduct().getProductGenericProductList().isEmpty()) {
       throw new OBException(OBMessageUtils.messageBD("NewVariantChWithVariantsError"));
     }
     if (prCh.isVariant() && prCh.getProduct().isGeneric()) {
-      final Entity prodCharEntity = ModelProvider.getInstance().getEntity(
-          ProductCharacteristic.ENTITY_NAME);
       final Property variantProperty = prodCharEntity
           .getProperty(ProductCharacteristic.PROPERTY_VARIANT);
       boolean oldIsVariant = (Boolean) event.getPreviousState(variantProperty);
