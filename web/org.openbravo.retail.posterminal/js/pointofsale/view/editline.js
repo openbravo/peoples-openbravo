@@ -507,6 +507,9 @@ enyo.kind({
     }
 
     function successCallbackReasons(dataReasons, me) {
+      if (me.destroyed) {
+        return;
+      }
       if (dataReasons && dataReasons.length > 0) {
         me.reasons.reset(dataReasons.models);
       } else {
