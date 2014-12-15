@@ -1441,6 +1441,17 @@
     },
 
     reactivateQuotation: function () {
+      this.get('lines').each(function (line) {
+        if (!this.get('priceIncludesTax')) {
+          line.set('net', line.get('nondiscountednet'));
+        }
+        line.unset('nondiscountedprice');
+        line.unset('nondiscountednet');
+        line.unset('netFull');
+        line.unset('grossListPrice');
+        line.unset('grossUnitPrice');
+        line.unset('lineGrossAmount');
+      }, this);
       this.set('hasbeenpaid', 'N');
       this.set('isEditable', true);
       this.set('createdBy', OB.MobileApp.model.get('orgUserId'));
