@@ -365,9 +365,15 @@ public class DocInvoice extends AcctServer {
       if ((m_payments == null || m_payments.length == 0)
           && (m_debt_payments == null || m_debt_payments.length == 0)) {
         if (!prepaymentamt.equals("0")) {
-          fact.createLine(null, getAccountBPartner(C_BPartner_ID, as, true, true, conn),
-              this.C_Currency_ID, prepaymentamt, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-              DocumentType, conn);
+          if (IsReturn.equals("Y")) {
+            fact.createLine(null, getAccountBPartner(C_BPartner_ID, as, true, true, conn),
+                this.C_Currency_ID, "", prepaymentamt, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+                DocumentType, conn);
+          } else {
+            fact.createLine(null, getAccountBPartner(C_BPartner_ID, as, true, true, conn),
+                this.C_Currency_ID, prepaymentamt, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+                DocumentType, conn);
+          }
         } else {
           fact.createLine(null, getAccountBPartner(C_BPartner_ID, as, true, false, conn),
               this.C_Currency_ID, Amounts[AMTTYPE_Gross], "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
@@ -672,9 +678,22 @@ public class DocInvoice extends AcctServer {
         }
       if ((m_payments == null || m_payments.length == 0)
           && (m_debt_payments == null || m_debt_payments.length == 0)) {
-        fact.createLine(null, getAccountBPartner(C_BPartner_ID, as, false, false, conn),
-            this.C_Currency_ID, "", Amounts[AMTTYPE_Gross], Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-            DocumentType, conn);
+        if (!prepaymentamt.equals("0")) {
+          if (IsReturn.equals("Y")) {
+            fact.createLine(null, getAccountBPartner(C_BPartner_ID, as, false, true, conn),
+                this.C_Currency_ID, prepaymentamt, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+                DocumentType, conn);
+          } else {
+            fact.createLine(null, getAccountBPartner(C_BPartner_ID, as, false, true, conn),
+                this.C_Currency_ID, "", prepaymentamt, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+                DocumentType, conn);
+          }
+        } else {
+          fact.createLine(null, getAccountBPartner(C_BPartner_ID, as, false, false, conn),
+              this.C_Currency_ID, "", Amounts[AMTTYPE_Gross], Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+              DocumentType, conn);
+        }
+
       }
       // Charge DR
       fact.createLine(null, getAccount(AcctServer.ACCTTYPE_Charge, as, conn), this.C_Currency_ID,
