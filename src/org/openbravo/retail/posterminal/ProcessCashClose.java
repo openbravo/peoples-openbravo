@@ -13,6 +13,9 @@ import java.util.Date;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.Query;
+import org.hibernate.ScrollMode;
+import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.weld.WeldUtils;
@@ -20,8 +23,10 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchronization;
 import org.openbravo.mobile.core.process.PropertyByType;
+import org.openbravo.model.common.order.Order;
 import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonToDataConverter;
@@ -56,6 +61,8 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
         .getOrganization().getId());
     OBPOSAppCashup cashUp = OBDal.getInstance().get(OBPOSAppCashup.class, cashUpId);
 
+    reassignTicketsFromLostCashups(cashUpId, posTerminal);
+
     // check if there is a reconciliation in draft status
     for (OBPOSAppPayment payment : posTerminal.getOBPOSAppPaymentList()) {
       final OBCriteria<FIN_Reconciliation> recconciliations = OBDal.getInstance().createCriteria(
@@ -86,6 +93,8 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
     if (cashUp == null) {
       TriggerHandler.getInstance().disable();
       try {
+        TriggerHandler.getInstance().disable();
+
         new OrderGroupingProcessor().groupOrders(posTerminal, cashUpId, cashUpDate);
         posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
             jsonCashup.getString("posTerminal"));
@@ -114,5 +123,50 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
   @Override
   protected String getProperty() {
     return "OBPOS_retail.cashup";
+  }
+
+  /**
+   * Looks for tickets created before the first ticket in this cashup, and which have a non-existant
+   * cash up id, and reallocates them to this cashup
+   * 
+   * @param cashUpId
+   * @param posTerminal
+   */
+  private void reassignTicketsFromLostCashups(String cashUpId, OBPOSApplications posTerminal) {
+    String hqllastDate = "select min(creationDate) from Order as o where o.obposApplications.id=? and o.obposAppCashup=?";
+    Query lastDateQuery = OBDal.getInstance().getSession().createQuery(hqllastDate);
+    lastDateQuery.setString(0, posTerminal.getId());
+    lastDateQuery.setString(1, cashUpId);
+    Date lastDate = (Date) lastDateQuery.uniqueResult();
+    if (lastDate == null) {
+      return;
+    }
+    String hqlFirstDate = "select max(creationDate) from OBPOS_App_Cashup as cashup where cashup.pOSTerminal.id=?";
+    Query firstDateQuery = OBDal.getInstance().getSession().createQuery(hqlFirstDate);
+    firstDateQuery.setString(0, posTerminal.getId());
+    Date firstDate = (Date) firstDateQuery.uniqueResult();
+    if (firstDate == null) {
+      return;
+    }
+
+    String hqlReassignableOrderScroll = " as o where o.obposApplications=:pos and o.creationDate>=:firstDate and o.creationDate<=:lastDate"
+        + " and not exists (select 1 from OBPOS_App_Cashup as c where c.id=o.obposAppCashup) and o.obposAppCashup<>:currentcashup";
+    OBQuery<Order> reassignableTicketsQuery = OBDal.getInstance().createQuery(Order.class,
+        hqlReassignableOrderScroll);
+    reassignableTicketsQuery.setNamedParameter("pos", posTerminal);
+    reassignableTicketsQuery.setNamedParameter("firstDate", firstDate);
+    reassignableTicketsQuery.setNamedParameter("lastDate", lastDate);
+    reassignableTicketsQuery.setNamedParameter("currentcashup", cashUpId);
+
+    ScrollableResults reassignableOrderScroll = reassignableTicketsQuery
+        .scroll(ScrollMode.FORWARD_ONLY);
+    while (reassignableOrderScroll.next()) {
+      Order order = (Order) reassignableOrderScroll.get()[0];
+      log.info("Reassigned ticket " + order.getDocumentNo() + " (id: " + order.getId()
+          + ") to cash up id: " + cashUpId);
+      order.setObposAppCashup(cashUpId);
+    }
+    reassignableOrderScroll.close();
+    OBDal.getInstance().flush();
   }
 }
