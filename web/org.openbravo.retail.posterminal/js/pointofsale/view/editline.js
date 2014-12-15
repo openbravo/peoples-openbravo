@@ -460,8 +460,10 @@ enyo.kind({
           this.$.returnreason.setSelected(selectedReason.getNodeProperty('index'));
         }
         this.$.returnreason.show();
+        this.$.linePropertiesContainer.setMaxHeight("110px");
       } else {
         this.$.returnreason.hide();
+        this.$.linePropertiesContainer.setMaxHeight("134px");
       }
     } else {
       this.$.txtaction.setContent(OB.I18N.getLabel('OBPOS_NoLineSelected'));
