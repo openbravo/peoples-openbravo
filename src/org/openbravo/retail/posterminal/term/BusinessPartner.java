@@ -37,6 +37,11 @@ public class BusinessPartner extends ProcessHQLQuery {
     if (terminal == null) {
       throw new JSONException("OBPOS_TerminalNotFound");
     }
+    // wrong org
+    if (org.getObretcoCBpartner() == null) {
+      throw new JSONException("Retail Business Partner not defined for organization "
+          + org.getIdentifier());
+    }
     String strBPId = terminal.getDefaultCustomer() != null ? terminal.getDefaultCustomer().getId()
         : org.getObretcoCBpartner().getId();
     return Arrays.asList(new String[] { "SELECT id as id " + "FROM BusinessPartner as bp "
