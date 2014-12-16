@@ -34,6 +34,9 @@ public class BusinessPartner extends ProcessHQLQuery {
         OBContext.getOBContext().getCurrentOrganization().getId());
     OBPOSApplications terminal = POSUtils.getTerminalById(RequestContext.get()
         .getSessionAttribute("POSTerminal").toString());
+    if (terminal == null) {
+      throw new JSONException("OBPOS_TerminalNotFound");
+    }
     String strBPId = terminal.getDefaultCustomer() != null ? terminal.getDefaultCustomer().getId()
         : org.getObretcoCBpartner().getId();
     return Arrays.asList(new String[] { "SELECT id as id " + "FROM BusinessPartner as bp "
