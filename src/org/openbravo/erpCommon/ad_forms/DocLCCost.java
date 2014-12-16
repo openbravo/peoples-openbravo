@@ -185,7 +185,9 @@ public class DocLCCost extends AcctServer {
     String amtCredit = "0";
     DocLine_LCCost line = null;
     Account acctLC = null;
+    BigDecimal totalAmount = BigDecimal.ZERO;
     // Lines
+    // Added lines: amt to credit, account: landed cost account (with dimensions)
     for (int i = 0; p_lines != null && i < p_lines.length; i++) {
       line = (DocLine_LCCost) p_lines[i];
 
@@ -201,6 +203,12 @@ public class DocLCCost extends AcctServer {
       fact.createLine(line, acctLC, line.m_C_Currency_ID, amtDebit, amtCredit, Fact_Acct_Group_ID,
           nextSeqNo(SeqNo), DocumentType, line.m_DateAcct, null, conn);
 
+      totalAmount = totalAmount.add(amount);
+
+    }
+
+    // added one line: amt to debit, account: landed cost account (without dimensions)
+    if (totalAmount.compareTo(BigDecimal.ZERO) != 0) {
       DocLine line2 = new DocLine(DocumentType, Record_ID, line.m_TrxLine_ID);
       line2.copyInfo(line);
 
@@ -214,14 +222,10 @@ public class DocLCCost extends AcctServer {
       line2.m_C_Campaign_ID = "";
       line2.m_A_Asset_ID = "";
 
-      fact.createLine(
-          line2,
-          acctLC,
-          line2.m_C_Currency_ID,
-          "Y".equals(line.getIsMatchingAdjusted()) ? amount.add(differenceAmt).toString() : amount
-              .toString(), amtDebit, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
-          line2.m_DateAcct, null, conn);
-
+      fact.createLine(line2, acctLC, line2.m_C_Currency_ID,
+          "Y".equals(line.getIsMatchingAdjusted()) ? totalAmount.add(differenceAmt).toString()
+              : totalAmount.toString(), amtDebit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+          DocumentType, line2.m_DateAcct, null, conn);
     }
 
     // if there is difference between matched amt and cost amt, then accounting is generated
