@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, enyo */
+/*global OB, moment, enyo */
 
 enyo.kind({
   kind: 'OB.UI.listItemButton',
@@ -228,7 +228,7 @@ enyo.kind({
       paymentDate = new Date();
     } else {
       // Convert to UTC to properly manage browser timezone
-      paymentDate = this.model.get('paymentDate');
+      paymentDate = moment(this.model.get('paymentDate').toString(), "YYYY-MM-DD hh:m:ss.s").toDate();
       paymentDate = new Date(paymentDate.getTime() + (60000 * paymentDate.getTimezoneOffset()));
     }
     this.$.date.setContent(OB.I18N.formatDate(paymentDate));
