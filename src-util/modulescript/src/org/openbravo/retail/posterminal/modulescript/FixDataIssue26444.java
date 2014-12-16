@@ -19,7 +19,7 @@ public class FixDataIssue26444 extends ModuleScript {
       ConnectionProvider cp = getConnectionProvider();
 
       String isFixed = FixDataIssue26444Data.selectExistsPreference(cp);
-      if (isFixed.equals("0")) {
+      if (isFixed.equals("1")) {
         return;
       }
       FixDataIssue26444Data.fixInvoice(cp);
