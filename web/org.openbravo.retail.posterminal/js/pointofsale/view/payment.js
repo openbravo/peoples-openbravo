@@ -41,7 +41,7 @@ enyo.kind({
     isMultiOrders = this.model.isValidMultiOrderState();
     change = this.model.getChange();
     pending = this.model.getPending();
-    if (!isMultiOrders) {
+    if (!isMultiOrders && !_.isNull(this.receipt)) {
       this.receipt.selectedPayment = payment.payment.searchKey;
       paymentstatus = this.receipt.getPaymentStatus();
     } else {
@@ -56,7 +56,7 @@ enyo.kind({
       this.$.totalpending.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(pending, payment.mulrate), payment.symbol, payment.currencySymbolAtTheRight));
     }
     this.checkEnoughCashAvailable(paymentstatus, payment);
-    if (this.receipt.get('isLayaway')) {
+    if (!_.isNull(this.receipt) && this.receipt.get('isLayaway')) {
       this.$.layawayaction.updateVisibility(true);
     }
   },
