@@ -41,9 +41,11 @@ enyo.kind({
     isMultiOrders = this.model.isValidMultiOrderState();
     change = this.model.getChange();
     pending = this.model.getPending();
-    if (!isMultiOrders && !_.isNull(this.receipt)) {
-      this.receipt.selectedPayment = payment.payment.searchKey;
-      paymentstatus = this.receipt.getPaymentStatus();
+    if (!isMultiOrders) {
+      if(!_.isNull(this.receipt)){
+        this.receipt.selectedPayment = payment.payment.searchKey;
+        paymentstatus = this.receipt.getPaymentStatus();
+      }      
     } else {
       this.model.get('multiOrders').set('selectedPayment', payment.payment.searchKey);
       paymentstatus = this.model.get('multiOrders').getPaymentStatus();
@@ -434,7 +436,7 @@ enyo.kind({
 
     if (OB.UTIL.isNullOrUndefined(selectedPayment) || !selectedPayment.paymentMethod.iscash) {
       requiredCash = OB.DEC.Zero;
-    } else if (paymentstatus.isNegative) {
+    } else if (!_.isUndefined(paymentstatus) && paymentstatus.isNegative) {
       requiredCash = paymentstatus.pendingAmt;
       paymentstatus.payments.each(function (payment) {
         var paymentmethod;
@@ -447,13 +449,13 @@ enyo.kind({
           }
         }
       });
-    } else {
+    } else if(!_.isUndefined(paymentstatus)) {
       requiredCash = paymentstatus.changeAmt;
     }
 
-    if (requiredCash === 0) {
+    if (!_.isUndefined(requiredCash) && requiredCash === 0) {
       hasEnoughCash = true;
-    } else {
+    } else if(!_.isUndefined(requiredCash)) {
       hasEnoughCash = OB.DEC.compare(OB.DEC.sub(currentCash, requiredCash)) >= 0;
     }
 
