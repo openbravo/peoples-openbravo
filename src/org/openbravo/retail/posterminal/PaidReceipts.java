@@ -32,12 +32,12 @@ import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
 import org.openbravo.model.common.order.OrderLineOffer;
-import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.service.json.JsonConstants;
 
 public class PaidReceipts extends JSONProcessSimple {
   public static final String paidReceiptsPropertyExtension = "PRExtension";
   public static final String paidReceiptsLinesPropertyExtension = "PRExtensionLines";
+  public static final String paidReceiptsShipLinesPropertyExtension = "PRExtensionShipLines";
 
   @Inject
   @Any
@@ -47,6 +47,10 @@ public class PaidReceipts extends JSONProcessSimple {
   @Any
   @Qualifier(paidReceiptsLinesPropertyExtension)
   private Instance<ModelExtension> extensionsLines;
+  @Inject
+  @Any
+  @Qualifier(paidReceiptsShipLinesPropertyExtension)
+  private Instance<ModelExtension> extensionsShipLines;
 
   @Override
   public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
@@ -87,8 +91,14 @@ public class PaidReceipts extends JSONProcessSimple {
             .getPropertyExtensions(extensionsLines);
         String hqlPaidReceiptsLines = "select " + hqlPropertiesLines.getHqlSelect() + //
             "  from OrderLine as ordLine " + //
-            " where ordLine.salesOrder.id=? " + //
-            " order by ordLine.lineNo";
+            " where ordLine.salesOrder.id=? "; //
+
+        // get returns
+        if (jsonsent.has("forReturn") && jsonsent.getBoolean("forReturn")) {
+          hqlPaidReceiptsLines += "and ordLine.deliveredQuantity > (select coalesce(abs(sum(deliveredQuantity)),0) from OrderLine where goodsShipmentLine.salesOrderLine.id =ordLine.id)";
+        }
+
+        hqlPaidReceiptsLines += " order by ordLine.lineNo";
         Query paidReceiptsLinesQuery = OBDal.getInstance().getSession()
             .createQuery(hqlPaidReceiptsLines);
         paidReceiptsLinesQuery.setString(0, orderid);
@@ -107,18 +117,26 @@ public class PaidReceipts extends JSONProcessSimple {
 
           // get shipmentLines for returns
           if (jsonsent.has("forReturn") && jsonsent.getBoolean("forReturn")) {
-            OBCriteria<ShipmentInOutLine> shipLinesCri = OBDal.getInstance().createCriteria(
-                ShipmentInOutLine.class);
-            shipLinesCri.add(Restrictions.eq(ShipmentInOutLine.PROPERTY_SALESORDERLINE + ".id",
-                (String) objpaidReceiptsLines[6]));
-            shipLinesCri.addOrder(Order.asc(ShipmentInOutLine.PROPERTY_LINENO));
-            JSONArray shipmentlines = new JSONArray();
-            for (ShipmentInOutLine shipline : shipLinesCri.list()) {
+            HQLPropertyList hqlPropertiesShipLines = ModelExtensionUtils
+                .getPropertyExtensions(extensionsShipLines);
+            String hqlPaidReceiptsShipLines = "select "
+                + hqlPropertiesShipLines.getHqlSelect() //
+                + " from MaterialMgmtShipmentInOutLine as m where salesOrderLine.id= ?  and movementQuantity > (select coalesce(sum(abs(deliveredQuantity)),0) from OrderLine where goodsShipmentLine.id = m.id)";
+            OBDal.getInstance().getSession().createQuery(hqlPaidReceiptsShipLines);
+            Query paidReceiptsShipLinesQuery = OBDal.getInstance().getSession()
+                .createQuery(hqlPaidReceiptsShipLines);
+            paidReceiptsShipLinesQuery.setString(0, (String) objpaidReceiptsLines[6]);
+
+            // cycle through the lines of the selected order
+            for (Object objShipLines : paidReceiptsShipLinesQuery.list()) {
+
+              JSONArray shipmentlines = new JSONArray();
               JSONObject jsonShipline = new JSONObject();
-              jsonShipline.put("shipLineId", shipline.getId());
-              jsonShipline.put("shipment", shipline.getShipmentReceipt().getDocumentNo());
-              jsonShipline.put("shipmentlineNo", shipline.getLineNo());
-              jsonShipline.put("qty", shipline.getMovementQuantity());
+              Object[] objpaidReceiptsShipLines = (Object[]) objShipLines;
+              jsonShipline.put("shipLineId", objpaidReceiptsShipLines[0]);
+              jsonShipline.put("shipment", objpaidReceiptsShipLines[0]);
+              jsonShipline.put("shipmentlineNo", objpaidReceiptsShipLines[0]);
+              jsonShipline.put("qty", objpaidReceiptsShipLines[0]);
               shipmentlines.put(jsonShipline);
               paidReceiptLine.put("shipmentlines", shipmentlines);
             }

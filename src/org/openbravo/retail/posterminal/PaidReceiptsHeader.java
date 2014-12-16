@@ -75,7 +75,7 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
       hqlPaidReceipts += " and (select sum(deliveredQuantity) from ord.orderLineList where orderedQuantity > 0)=0 and ord.documentStatus = 'CO' ";
     } else if (json.getBoolean("isReturn")) {
       // (It is not Layaway and It is not a Return)
-      hqlPaidReceipts += " and ((select count(deliveredQuantity) from ord.orderLineList where deliveredQuantity != 0) > 0 and (select count(orderedQuantity) from ord.orderLineList where orderedQuantity > 0) > 0) ";
+      hqlPaidReceipts += " and ((select count(deliveredQuantity) from ord.orderLineList where deliveredQuantity != 0) > 0 and (select count(id) from OrderLine as line  where line.salesOrder=ord and line.deliveredQuantity > (select coalesce(abs(sum(deliveredQuantity)),0) from OrderLine where goodsShipmentLine.salesOrderLine.id =line.id)) > 0)";
     } else {
       // (It is not Layaway or it is a Return)
       hqlPaidReceipts += " and exists(select 1 from ord.orderLineList where deliveredQuantity != 0) ";
