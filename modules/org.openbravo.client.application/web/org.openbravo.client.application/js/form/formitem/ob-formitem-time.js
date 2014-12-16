@@ -139,19 +139,9 @@ isc.OBTimeItem.addProperties({
   },
 
   init: function () {
-    var oldShowHint, hint, formatDefinition = OB.Utilities.getTimeFormatDefinition(),
-        me = this;
+    var oldShowHint, hint, formatDefinition = OB.Utilities.getTimeFormatDefinition();
 
     this.timeFormat = formatDefinition.timeFormat;
-
-    // The TextItem within TimeItem that renders the value defines its properties in textFieldDefaults
-    // this cannot be customized till instance is created. In order to apply proper format, it requires
-    // to set the style and change the getTextBoxStyle which by default does not manage properly disabled
-    //   see issue #27670
-    isc.addProperties(this.textFieldDefaults, OB.Styles.OBFormField.OBTimeItem);
-    this.textFieldDefaults.getTextBoxStyle = function () {
-      return isc.OBTimeItem.getInstanceProperty('textBoxStyle') + (me.isDisabled() ? 'Disabled' : (me.required ? 'Required' : ''));
-    };
 
     this.Super('init', arguments);
 
@@ -226,9 +216,25 @@ isc.OBTimeItem.addProperties({
       }
       this.setValue(data[this.name]);
     }
+  },
+
+  setDisabled: function (disabled) {
+    // SC doesn't handle properly dynamically disabling timeItem, this temporary hack
+    // solves the problem by disabling/enabling inner textItem
+    //    see issue #27670
+    this.textField.setDisabled(disabled);
+    this.Super('setDisabled', arguments);
   }
 });
 
+isc.OBTimeItem.changeDefaults('textFieldDefaults', {
+  getTextBoxStyle: function () {
+    // SC does not handle properly styles for inner textItem representing the time,
+    // this is a temporary hack till it is fixed in SC code
+    //   see issue #27670
+    return this.parentItem.textBoxStyle + (this.isDisabled() ? 'Disabled' : (this.required ? 'Required' : ''));
+  }
+});
 
 isc.ClassFactory.defineClass("OBTimeItemGrid", isc.ListGrid);
 
