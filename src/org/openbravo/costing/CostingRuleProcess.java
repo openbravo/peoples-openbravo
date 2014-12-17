@@ -77,6 +77,11 @@ public class CostingRuleProcess implements Process {
       OBContext.setAdminMode(false);
       final String ruleId = (String) bundle.getParams().get("M_Costing_Rule_ID");
       CostingRule rule = OBDal.getInstance().get(CostingRule.class, ruleId);
+      if (rule.getStartingDate() != null && rule.getFixbackdatedfrom() != null
+          && rule.isBackdatedTransactionsFixed()
+          && rule.getFixbackdatedfrom().before(rule.getStartingDate())) {
+        throw new OBException("@FixBackdateFromBeforeStartingDate@");
+      }
       if (rule.getOrganization().getCurrency() == null) {
         throw new OBException("@NoCurrencyInCostingRuleOrg@");
       }

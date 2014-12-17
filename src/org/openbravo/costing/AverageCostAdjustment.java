@@ -570,7 +570,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     trxQry.setNamedParameter("product", trx.getProduct());
     if (costingRule.isBackdatedTransactionsFixed()) {
       trxQry.setNamedParameter("mvtdate", trx.getMovementDate());
-      trxQry.setNamedParameter("fixbdt", costingRule.getFixbackdatedfrom());
+      trxQry.setNamedParameter("fixbdt", CostingUtils.getCostingRuleFixBackdatedFrom(costingRule));
     }
     trxQry.setNamedParameter("trxtypeprio",
         CostAdjustmentUtils.getTrxTypePrio(trx.getMovementType()));
@@ -584,7 +584,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     if (costingRule.getEndingDate() != null) {
       trxQry.setNamedParameter("enddate", costingRule.getEndingDate());
     }
-    trxQry.setNamedParameter("startdate", costingRule.getStartingDate());
+    trxQry.setNamedParameter("startdate", CostingUtils.getCostingRuleStartingDate(costingRule));
 
     return trxQry.scroll(ScrollMode.FORWARD_ONLY);
   }
@@ -603,7 +603,8 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
   protected void calculateNegativeStockCorrectionAdjustmentAmount(CostAdjustmentLine costAdjLine) {
     MaterialTransaction basetrx = costAdjLine.getInventoryTransaction();
     boolean areBaseTrxBackdatedFixed = getCostingRule().isBackdatedTransactionsFixed()
-        && !getCostingRule().getFixbackdatedfrom().before(basetrx.getTransactionProcessDate());
+        && !CostingUtils.getCostingRuleFixBackdatedFrom(getCostingRule()).before(
+            basetrx.getTransactionProcessDate());
     BigDecimal currentStock = CostAdjustmentUtils.getStockOnTransactionDate(getCostOrg(), basetrx,
         getCostDimensions(), isManufacturingProduct, areBaseTrxBackdatedFixed);
     BigDecimal currentValueAmt = CostAdjustmentUtils.getValuedStockOnTransactionDate(getCostOrg(),

@@ -147,7 +147,7 @@ public class StandardCostAdjustment extends CostingAlgorithmAdjustmentImp {
     if (warehouse != null) {
       trxQry.setNamedParameter("warehouse", warehouse);
     }
-    trxQry.setNamedParameter("startdate", costingRule.getStartingDate());
+    trxQry.setNamedParameter("startdate", CostingUtils.getCostingRuleStartingDate(costingRule));
 
     return trxQry.scroll(ScrollMode.FORWARD_ONLY);
 

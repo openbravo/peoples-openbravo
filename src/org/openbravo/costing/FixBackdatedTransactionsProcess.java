@@ -76,7 +76,7 @@ public class FixBackdatedTransactionsProcess extends BaseProcessActionHandler {
         } catch (ParseException ignore) {
         }
       } else {
-        fixbackdatedfrom = rule.getStartingDate();
+        fixbackdatedfrom = CostingUtils.getCostingRuleStartingDate(rule);
       }
       rule.setFixbackdatedfrom(fixbackdatedfrom);
       try {
@@ -92,7 +92,7 @@ public class FixBackdatedTransactionsProcess extends BaseProcessActionHandler {
           while (transactions.next()) {
             MaterialTransaction trx = (MaterialTransaction) transactions.get()[0];
             if (CostAdjustmentUtils.isNeededBackdatedCostAdjustment(trx,
-                rule.isWarehouseDimension(), rule.getStartingDate())) {
+                rule.isWarehouseDimension(), CostingUtils.getCostingRuleStartingDate(rule))) {
               createCostAdjustmenHeader(rule.getOrganization());
               CostAdjustmentLine cal = CostAdjustmentUtils.insertCostAdjustmentLine(trx,
                   costAdjHeader, null, Boolean.TRUE, trx.getMovementDate());
