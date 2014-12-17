@@ -19,6 +19,7 @@
 package org.openbravo.costing;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -547,5 +548,41 @@ public class CostingUtils {
       return OBDal.getInstance().get(Period.class, per[0].period);
     }
     return null;
+  }
+
+  /**
+   * Returns the Starting Date of a Costing Rule, if is null returns 01/01/1900
+   */
+  public static Date getCostingRuleStartingDate(CostingRule rule) {
+    if (rule.getStartingDate() == null) {
+      SimpleDateFormat outputFormat = new SimpleDateFormat("dd-MM-yyyy");
+      try {
+        return outputFormat.parse("01-01-1900");
+      } catch (ParseException e) {
+        // Error parsing the date.
+        log4j.error("Error parsing the date.", e);
+        return null;
+      }
+    } else {
+      return rule.getStartingDate();
+    }
+  }
+
+  /**
+   * Returns the Fix Backdated From of a Costing Rule, if is null returns 01/01/1900
+   */
+  public static Date getCostingRuleFixBackdatedFrom(CostingRule rule) {
+    if (rule.getStartingDate() == null) {
+      SimpleDateFormat outputFormat = new SimpleDateFormat("dd-MM-yyyy");
+      try {
+        return outputFormat.parse("01-01-1900");
+      } catch (ParseException e) {
+        // Error parsing the date.
+        log4j.error("Error parsing the date.", e);
+        return null;
+      }
+    } else {
+      return rule.getStartingDate();
+    }
   }
 }

@@ -96,10 +96,11 @@ public abstract class CostingAlgorithmAdjustmentImp {
     trxType = CostingServer.TrxType.getTrxType(transaction);
     CostingRule costingRule = costingServer.getCostingRule();
     strCostingRuleId = costingRule.getId();
-    startingDate = costingRule.getStartingDate();
+    startingDate = CostingUtils.getCostingRuleStartingDate(costingRule);
     strClientId = costingRule.getClient().getId();
     areBackdatedTrxFixed = costingRule.isBackdatedTransactionsFixed()
-        && !transaction.getTransactionProcessDate().before(costingRule.getFixbackdatedfrom());
+        && !transaction.getTransactionProcessDate().before(
+            CostingUtils.getCostingRuleFixBackdatedFrom(costingRule));
 
     HashMap<CostDimension, BaseOBObject> costDimensions = CostingUtils.getEmptyDimensions();
     // Production products cannot be calculated by warehouse dimension.

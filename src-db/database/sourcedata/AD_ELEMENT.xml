@@ -30791,9 +30791,9 @@ By disabling this option standard beats will be sent to HeartBeat server, but no
 <!--BA3FDC0C32A990E0E040007F01005DCC-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--BA3FDC0C32A990E0E040007F01005DCC-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--BA3FDC0C32A990E0E040007F01005DCC-->  <COLUMNNAME><![CDATA[Process_Rule]]></COLUMNNAME>
-<!--BA3FDC0C32A990E0E040007F01005DCC-->  <NAME><![CDATA[Process_Rule]]></NAME>
-<!--BA3FDC0C32A990E0E040007F01005DCC-->  <PRINTNAME><![CDATA[Process_Rule]]></PRINTNAME>
-<!--BA3FDC0C32A990E0E040007F01005DCC-->  <HELP><![CDATA[Validate and initialize the Costing Rule]]></HELP>
+<!--BA3FDC0C32A990E0E040007F01005DCC-->  <NAME><![CDATA[Validate Costing Rule]]></NAME>
+<!--BA3FDC0C32A990E0E040007F01005DCC-->  <PRINTNAME><![CDATA[Validate Costing Rule]]></PRINTNAME>
+<!--BA3FDC0C32A990E0E040007F01005DCC-->  <HELP><![CDATA[Validate and initialize the Costing Rule. It automatically creates and process the Close and Opening Physical inventories to overwrite an existing Costing Rule. If the instance is using the legacy engine costs it is mandatory to run the Cost Migration Process in advance with System Administrator role.]]></HELP>
 <!--BA3FDC0C32A990E0E040007F01005DCC-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--BA3FDC0C32A990E0E040007F01005DCC-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--BA3FDC0C32A990E0E040007F01005DCC--></AD_ELEMENT>
