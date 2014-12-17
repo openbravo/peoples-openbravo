@@ -245,22 +245,15 @@ isc.OBToolbarActionButton.addProperties({
   },
 
   updateState: function (record, hide, context, keepNonAutosave) {
-    var hideButton, currentValues = isc.shallowClone(record || this.contextView.getCurrentValues() || {});
+    var currentValues = isc.shallowClone(record || this.contextView.getCurrentValues() || {});
     // do not hide non autosave buttons when hidding the rest if keepNonAutosave === true
-    if (this.contextView.isShowingTree) {
-      hideButton = hide && (!keepNonAutosave || this.autosave) && this.contextView.treeGrid.getSelectedRecords().length > 1;
-    } else {
-      hideButton = hide && (!keepNonAutosave || this.autosave) && this.contextView.viewGrid.getSelectedRecords().length > 1;
-    }
+    var hideButton = hide && (!keepNonAutosave || this.autosave);
+
     var multiSelect = false,
         readonly, i, selection;
 
     if (hideButton || !record) {
-      if (this.contextView.isShowingTree) {
-        multiSelect = this.multiRecord || this.contextView.treeGrid.getSelectedRecords().length > 1;
-      } else {
-        multiSelect = this.multiRecord || this.contextView.viewGrid.getSelectedRecords().length > 1;
-      }
+      multiSelect = this.multiRecord && this.contextView.viewGrid.getSelectedRecords().length > 1;
       if (!multiSelect) {
         this.hide();
         return;
@@ -268,6 +261,7 @@ isc.OBToolbarActionButton.addProperties({
     }
 
     context = context || this.contextView.getContextInfo(false, true, true);
+
 
     if (!multiSelect) {
       OB.Utilities.fixNull250(currentValues);
@@ -297,11 +291,7 @@ isc.OBToolbarActionButton.addProperties({
       // For multi selection processes:
       //   -Button is displayed in case it should be displayed in ALL selected records
       //   -Button is readonly in case it should be readonly in ALL sected records
-      if (this.contextView.isShowingTree) {
-        selection = this.contextView.treeGrid.getSelectedRecords();
-      } else {
-        selection = this.contextView.viewGrid.getSelectedRecords();
-      }
+      selection = this.contextView.viewGrid.getSelectedRecords();
       readonly = false;
       this.visible = true;
       for (i = 0; i < selection.length; i++) {
