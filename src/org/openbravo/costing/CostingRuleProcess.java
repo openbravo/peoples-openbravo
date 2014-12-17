@@ -242,7 +242,7 @@ public class CostingRuleProcess implements Process {
   private void initializeOldTrx(Set<String> childOrgs, Date date) {
     StringBuffer where = new StringBuffer();
     where.append(" where " + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
-    where.append("   and " + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " < :date");
+    where.append("   and " + MaterialTransaction.PROPERTY_MOVEMENTDATE + " < :date");
     OBQuery<MaterialTransaction> trxQry = OBDal.getInstance().createQuery(
         MaterialTransaction.class, where.toString());
     trxQry.setFilterOnReadableOrganization(false);
