@@ -1147,6 +1147,9 @@ public class OrderLoader extends POSDataSynchronizationProcess {
     order.setProcessNow(false);
     order.setObposSendemail((jsonorder.has("sendEmail") && jsonorder.getBoolean("sendEmail")));
 
+    if (!bp.getADUserList().isEmpty())
+      order.setUserContact(bp.getADUserList().get(0));
+
     JSONObject taxes = jsonorder.getJSONObject("taxes");
     @SuppressWarnings("unchecked")
     Iterator<String> itKeys = taxes.keys();

@@ -428,6 +428,8 @@ public class OrderGroupingProcessor {
     invoice.setAccountingDate(cashUpDate);
     invoice.setInvoiceDate(cashUpDate);
     invoice.setPriceList(firstLine.getSalesOrder().getPriceList());
+    invoice.setSalesRepresentative(firstLine.getSalesOrder().getSalesRepresentative());
+    invoice.setUserContact(firstLine.getSalesOrder().getUserContact());
     return invoice;
   }
 
@@ -459,6 +461,8 @@ public class OrderGroupingProcessor {
     invoice.setInvoiceDate(cashUpDate);
     invoice.setPriceList(firstLine.getSalesOrder().getPriceList());
     invoice.setSalesOrder(order);
+    invoice.setSalesRepresentative(firstLine.getSalesOrder().getSalesRepresentative());
+    invoice.setUserContact(firstLine.getSalesOrder().getUserContact());
     return invoice;
   }
 
