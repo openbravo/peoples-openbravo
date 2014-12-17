@@ -245,15 +245,18 @@ isc.OBToolbarActionButton.addProperties({
   },
 
   updateState: function (record, hide, context, keepNonAutosave) {
-    var currentValues = isc.shallowClone(record || this.contextView.getCurrentValues() || {});
+    var currentValues = isc.shallowClone(record || this.contextView.getCurrentValues() || {}),
+        grid;
     // do not hide non autosave buttons when hidding the rest if keepNonAutosave === true
     var hideButton = hide && (!keepNonAutosave || this.autosave);
 
     var multiSelect = false,
         readonly, i, selection;
 
+    grid = this.contextView.isShowingTree ? this.contextView.treeGrid : this.contextView.viewGrid;
+
     if (hideButton || !record) {
-      multiSelect = this.multiRecord && this.contextView.viewGrid.getSelectedRecords().length > 1;
+      multiSelect = this.multiRecord && grid.getSelectedRecords().length > 1;
       if (!multiSelect) {
         this.hide();
         return;
@@ -291,7 +294,7 @@ isc.OBToolbarActionButton.addProperties({
       // For multi selection processes:
       //   -Button is displayed in case it should be displayed in ALL selected records
       //   -Button is readonly in case it should be readonly in ALL sected records
-      selection = this.contextView.viewGrid.getSelectedRecords();
+      selection = grid.getSelectedRecords();
       readonly = false;
       this.visible = true;
       for (i = 0; i < selection.length; i++) {

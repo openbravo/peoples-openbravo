@@ -1253,7 +1253,8 @@ isc.OBToolbar.addProperties({
       // This is needed to prevent JSLint complaining about "Don't make functions within a loop.
       callbackHandler = function (currentContext, me) {
         return function (response, data, request) {
-          var noneOrMultipleRecordsSelected = currentContext.viewGrid.getSelectedRecords().length !== 1;
+          var grid = currentContext.isShowingTree ? currentContext.treeGrid : currentContext.viewGrid,
+              noneOrMultipleRecordsSelected = grid.getSelectedRecords().length !== 1;
           var sessionAttributes = data.sessionAttributes,
               auxInputs = data.auxiliaryInputValues,
               attachmentExists = data.attachmentExists,
