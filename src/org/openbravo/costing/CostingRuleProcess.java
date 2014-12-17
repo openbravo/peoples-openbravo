@@ -262,6 +262,9 @@ public class CostingRuleProcess implements Process {
         transactionCost.setOrganization(trx.getOrganization());
         transactionCost.setCost(BigDecimal.ZERO);
         transactionCost.setCurrency(trx.getClient().getCurrency());
+        transactionCost.setAccountingDate(trx.getGoodsShipmentLine() != null ? trx
+            .getGoodsShipmentLine().getShipmentReceipt().getAccountingDate() : trx
+            .getMovementDate());
         List<TransactionCost> trxCosts = trx.getTransactionCostList();
         trxCosts.add(transactionCost);
         trx.setTransactionCostList(trxCosts);
@@ -510,6 +513,9 @@ public class CostingRuleProcess implements Process {
           transactionCost.setOrganization(trx.getOrganization());
           transactionCost.setCost(BigDecimal.ZERO);
           transactionCost.setCurrency(trx.getClient().getCurrency());
+          transactionCost.setAccountingDate(trx.getGoodsShipmentLine() != null ? trx
+              .getGoodsShipmentLine().getShipmentReceipt().getAccountingDate() : trx
+              .getMovementDate());
           List<TransactionCost> trxCosts = trx.getTransactionCostList();
           trxCosts.add(transactionCost);
           trx.setTransactionCostList(trxCosts);
