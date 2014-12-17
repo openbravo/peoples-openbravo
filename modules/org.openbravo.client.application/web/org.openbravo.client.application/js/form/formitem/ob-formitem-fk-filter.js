@@ -128,15 +128,27 @@ isc.OBFKFilterTextItem.addProperties({
       // place after the first item was selected.
       // This first selection happens in ScrollingMenu.dataChanged
       dataArrived: function (startRow, endRow) {
-        var record, rowNum, i, values = this.formItem.getValue();
+        var record, rowNum, i, values = this.formItem.getValue(),
+            fixedValues = [],
+            value;
         this.Super('dataArrived', arguments);
         if (values) {
           if (!isc.isA.Array(values)) {
             values = [values];
           }
+
+          // fix selected values before checking them in the data to re-select them
+          for (i = 0; i < values.length; i++) {
+            value = values[i];
+            if (isc.isAn.Array(value)) {
+              value = value[0];
+            }
+            fixedValues.push(value.startsWith('==') ? value.substring(2) : value);
+          }
+
           for (rowNum = startRow; rowNum < (endRow + 1); rowNum++) {
             record = this.getRecord(rowNum);
-            if (record && values.contains(record[me.displayField])) {
+            if (record && fixedValues.contains(record[me.displayField])) {
               // selectRecord asynchronously invokes handleChanged, this should be
               // managed as when the value is picked from the list by pickValue
               this.formItem._pickingArrivedValue = true;
