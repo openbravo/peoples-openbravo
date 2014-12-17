@@ -563,9 +563,8 @@ public class CostingUtils {
         log4j.error("Error parsing the date.", e);
         return null;
       }
-    } else {
-      return rule.getStartingDate();
     }
+    return rule.getStartingDate();
   }
 
   /**
@@ -581,8 +580,7 @@ public class CostingUtils {
         log4j.error("Error parsing the date.", e);
         return null;
       }
-    } else {
-      return rule.getStartingDate();
     }
+    return rule.getStartingDate();
   }
 }
