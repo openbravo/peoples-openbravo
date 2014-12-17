@@ -364,21 +364,43 @@ public class DocInvoice extends AcctServer {
         }
       if ((m_payments == null || m_payments.length == 0)
           && (m_debt_payments == null || m_debt_payments.length == 0)) {
+        BigDecimal grossamt = new BigDecimal(Amounts[AMTTYPE_Gross]);
+        BigDecimal prepayment = new BigDecimal(prepaymentamt);
+        BigDecimal difference = grossamt.abs().subtract(prepayment.abs());
         if (!prepaymentamt.equals("0")) {
-          if (IsReturn.equals("Y")) {
-            fact.createLine(null, getAccountBPartner(C_BPartner_ID, as, true, true, conn),
-                this.C_Currency_ID, "", prepaymentamt, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-                DocumentType, conn);
+          if (grossamt.abs().compareTo(prepayment.abs()) > 0) {
+            if (IsReturn.equals("Y")) {
+              fact.createLine(null, getAccountBPartner(C_BPartner_ID, as, true, true, conn),
+                  this.C_Currency_ID, "", prepaymentamt, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+                  DocumentType, conn);
+              fact.createLine(null, getAccountBPartner(C_BPartner_ID, as, true, false, conn),
+                  this.C_Currency_ID, "", difference.toString(), Fact_Acct_Group_ID,
+                  nextSeqNo(SeqNo), DocumentType, conn);
+            } else {
+              fact.createLine(null, getAccountBPartner(C_BPartner_ID, as, true, true, conn),
+                  this.C_Currency_ID, prepaymentamt, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+                  DocumentType, conn);
+              fact.createLine(null, getAccountBPartner(C_BPartner_ID, as, true, false, conn),
+                  this.C_Currency_ID, difference.toString(), "", Fact_Acct_Group_ID,
+                  nextSeqNo(SeqNo), DocumentType, conn);
+            }
           } else {
-            fact.createLine(null, getAccountBPartner(C_BPartner_ID, as, true, true, conn),
-                this.C_Currency_ID, prepaymentamt, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-                DocumentType, conn);
+            if (IsReturn.equals("Y")) {
+              fact.createLine(null, getAccountBPartner(C_BPartner_ID, as, true, true, conn),
+                  this.C_Currency_ID, "", prepaymentamt, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+                  DocumentType, conn);
+            } else {
+              fact.createLine(null, getAccountBPartner(C_BPartner_ID, as, true, true, conn),
+                  this.C_Currency_ID, prepaymentamt, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+                  DocumentType, conn);
+            }
           }
         } else {
           fact.createLine(null, getAccountBPartner(C_BPartner_ID, as, true, false, conn),
               this.C_Currency_ID, Amounts[AMTTYPE_Gross], "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
               DocumentType, conn);
         }
+
       }
       // Charge CR
       log4jDocInvoice.debug("The first create line");
@@ -678,15 +700,36 @@ public class DocInvoice extends AcctServer {
         }
       if ((m_payments == null || m_payments.length == 0)
           && (m_debt_payments == null || m_debt_payments.length == 0)) {
+        BigDecimal grossamt = new BigDecimal(Amounts[AMTTYPE_Gross]);
+        BigDecimal prepayment = new BigDecimal(prepaymentamt);
+        BigDecimal difference = grossamt.abs().subtract(prepayment.abs());
         if (!prepaymentamt.equals("0")) {
-          if (IsReturn.equals("Y")) {
-            fact.createLine(null, getAccountBPartner(C_BPartner_ID, as, false, true, conn),
-                this.C_Currency_ID, prepaymentamt, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-                DocumentType, conn);
+          if (grossamt.abs().compareTo(prepayment.abs()) > 0) {
+            if (IsReturn.equals("Y")) {
+              fact.createLine(null, getAccountBPartner(C_BPartner_ID, as, false, true, conn),
+                  this.C_Currency_ID, prepaymentamt, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+                  DocumentType, conn);
+              fact.createLine(null, getAccountBPartner(C_BPartner_ID, as, false, false, conn),
+                  this.C_Currency_ID, difference.toString(), "", Fact_Acct_Group_ID,
+                  nextSeqNo(SeqNo), DocumentType, conn);
+            } else {
+              fact.createLine(null, getAccountBPartner(C_BPartner_ID, as, false, true, conn),
+                  this.C_Currency_ID, "", prepaymentamt, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+                  DocumentType, conn);
+              fact.createLine(null, getAccountBPartner(C_BPartner_ID, as, false, false, conn),
+                  this.C_Currency_ID, "", difference.toString(), Fact_Acct_Group_ID,
+                  nextSeqNo(SeqNo), DocumentType, conn);
+            }
           } else {
-            fact.createLine(null, getAccountBPartner(C_BPartner_ID, as, false, true, conn),
-                this.C_Currency_ID, "", prepaymentamt, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-                DocumentType, conn);
+            if (IsReturn.equals("Y")) {
+              fact.createLine(null, getAccountBPartner(C_BPartner_ID, as, false, true, conn),
+                  this.C_Currency_ID, prepaymentamt, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+                  DocumentType, conn);
+            } else {
+              fact.createLine(null, getAccountBPartner(C_BPartner_ID, as, false, true, conn),
+                  this.C_Currency_ID, "", prepaymentamt, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+                  DocumentType, conn);
+            }
           }
         } else {
           fact.createLine(null, getAccountBPartner(C_BPartner_ID, as, false, false, conn),

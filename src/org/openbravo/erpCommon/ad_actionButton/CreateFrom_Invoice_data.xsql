@@ -914,7 +914,7 @@
   <SqlMethod name="updatePrepaymentAmt" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[
-      UPDATE C_Invoice SET prepaymentamt = TO_NUMBER(?)
+      UPDATE C_Invoice SET prepaymentamt = prepaymentamt + TO_NUMBER(?)
       WHERE C_Invoice_ID = ?
     ]]></Sql>
     <Parameter name="prepaymentamt"/>
