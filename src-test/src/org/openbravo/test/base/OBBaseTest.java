@@ -161,10 +161,10 @@ public class OBBaseTest {
    */
   @BeforeClass
   public static void setDalUp() throws Exception {
-    if (new OBBaseTest().getClass().getResource("/log4j.lcf") != null) {
-      PropertyConfigurator.configure(new OBBaseTest().getClass().getResource("/log4j.lcf"));
+    if (OBBaseTest.class.getResource("/log4j.lcf") != null) {
+      PropertyConfigurator.configure(OBBaseTest.class.getResource("/log4j.lcf"));
     }
-    new OBBaseTest().initializeDalLayer();
+    staticInitializeDalLayer();
   }
 
   /**
@@ -184,6 +184,10 @@ public class OBBaseTest {
    * @throws Exception
    */
   protected void initializeDalLayer() throws Exception {
+    staticInitializeDalLayer();
+  }
+
+  private static void staticInitializeDalLayer() throws Exception {
     if (!DalLayerInitializer.getInstance().isInitialized()) {
       DalLayerInitializer.getInstance().initialize(true);
     }
