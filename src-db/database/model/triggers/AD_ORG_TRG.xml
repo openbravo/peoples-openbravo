@@ -27,8 +27,7 @@
   TYPE RECORD IS REF CURSOR;
     CUR_PeriodControl RECORD;
     v_count NUMBER;
-  
-    
+
 BEGIN
     
     IF AD_isTriggerEnabled()='N' THEN RETURN;
@@ -135,6 +134,25 @@ BEGIN
     WHERE AD_CLIENT_ID=:old.AD_Client_ID
       AND AD_Tree_ID=v_xTree_ID
       AND Node_ID=:old.AD_Org_ID;     
+  END IF;
+  IF (UPDATING) THEN
+    IF (COALESCE(:old.c_currency_id, '-1') <> COALESCE(:new.c_currency_id, '-1')) THEN
+      SELECT COUNT(*) INTO v_count
+      FROM DUAL
+      WHERE EXISTS (SELECT 1 FROM ad_preference
+                    WHERE property = 'UnitaryCost'
+                      AND ad_client_id IN (:NEW.ad_client_id, '0')
+                      AND TO_CHAR(value) = 'Y')
+        AND EXISTS (SELECT 1 FROM m_costing_rule
+                    WHERE isvalidated = 'Y'
+                      AND (datefrom IS NULL OR  datefrom <= now())
+                      AND (dateto IS NULL OR dateto >= now())
+                      AND ad_org_id = :new.ad_org_id);
+      IF (v_count > 0) THEN
+        DELETE FROM m_stock_valuation
+        WHERE ad_org_id = :new.ad_org_id;
+      END IF;
+    END IF;
   END IF;
   -- Deleting
 EXCEPTION

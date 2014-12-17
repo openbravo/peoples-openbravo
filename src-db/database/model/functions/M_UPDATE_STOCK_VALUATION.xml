@@ -46,32 +46,38 @@
   v_count               NUMBER;
   v_wh_dimension        VARCHAR(1);
   v_warehouse           VARCHAR(32);
+  v_costprecission      NUMBER;
   
 BEGIN
-
-  v_warehouse := p_warehouse;
 
   SELECT warehouse_dimension
   INTO v_wh_dimension
   FROM m_costing_rule cr
   WHERE isvalidated = 'Y'
-    AND COALESCE(datefrom, TO_DATE('01-01-1900', 'DD-MM-YYYY')) <= now()
-    AND COALESCE(dateto, TO_DATE('01-01-9999', 'DD-MM-YYYY')) >= now()
+    AND (datefrom IS NULL OR datefrom <= now())
+    AND (dateto IS NULL OR dateto >= now())
     AND ad_client_id = p_client
-    AND p_org = ad_org_id; 
-    
+    AND ad_org_id = p_org;
+
   IF (v_wh_dimension = 'N') THEN
     v_warehouse := NULL;
+  ELSE
+    v_warehouse := p_warehouse;
   END IF;
+  
+  SELECT c_get_currency_precision(COALESCE(o.c_currency_id, c.c_currency_id), 'C')
+    INTO v_costprecission
+  FROM ad_org o
+    JOIN ad_client c ON o.ad_client_id = c.ad_client_id
+  WHERE o.ad_org_id = p_org;
 
   SELECT COUNT(*), COALESCE(SUM(stock), 0), COALESCE(SUM(stock_valuation),0)
-  INTO v_count, v_stock, v_valuation
+    INTO v_count, v_stock, v_valuation
   FROM m_stock_valuation
   WHERE ad_client_id = p_client
     AND ad_org_id = p_org
     AND m_product_id = p_product
-    AND (v_warehouse IS NULL
-      OR m_warehouse_id = v_warehouse);
+    AND (v_warehouse IS NULL OR m_warehouse_id = v_warehouse);
 
   v_stock := v_stock + p_stock;
   v_valuation := v_valuation + p_valuation;
@@ -80,9 +86,9 @@ BEGIN
     v_unit_price := 0;
     v_valuation := 0;
   ELSE
-    v_unit_price := v_valuation/v_stock;
+    v_unit_price := ROUND(v_valuation/v_stock, v_costprecission);
   END IF;
-      
+
   IF (v_count > 0) THEN
     UPDATE m_stock_valuation
     SET stock = v_stock,
@@ -90,24 +96,19 @@ BEGIN
         unit_price = v_unit_price
      WHERE ad_client_id = p_client
        AND ad_org_id = p_org
-       AND (v_warehouse IS NULL
-         OR m_warehouse_id = v_warehouse);
+       AND m_product_id = p_product
+       AND (v_warehouse IS NULL OR m_warehouse_id = v_warehouse);
   ELSE
-    INSERT INTO m_stock_valuation
-  (
-    m_stock_valuation_id, ad_client_id, ad_org_id,
-    created, createdby, updated, updatedby,
-    isactive, stock, stock_valuation, m_product_id, m_warehouse_id, unit_price
-  )
-  VALUES
-  (
-    GET_UUID(), p_client, p_org,
-    now(), COALESCE(p_user,'0'), now(), COALESCE(p_user,'0'),
-    'Y', v_stock, v_valuation, p_product, v_warehouse, v_unit_price
-  );
+    INSERT INTO m_stock_valuation (
+        m_stock_valuation_id, ad_client_id, ad_org_id,
+        created, createdby, updated, updatedby,
+        isactive, stock, stock_valuation, m_product_id, m_warehouse_id, unit_price
+    ) VALUES (
+        GET_UUID(), p_client, p_org,
+        now(), COALESCE(p_user,'0'), now(), COALESCE(p_user,'0'),
+        'Y', v_stock, v_valuation, p_product, v_warehouse, v_unit_price
+    );
   END IF;
-
-RETURN;
 
 EXCEPTION
 WHEN OTHERS THEN

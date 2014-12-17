@@ -32,11 +32,12 @@
   v_LINE NUMBER;
   v_DateNull DATE := TO_DATE('01-01-1900', 'DD-MM-YYYY');
   v_DocumentLineNo M_InventoryLine.line%TYPE;
-  v_Change_valuation BOOLEAN;
   v_sv_count NUMBER;
   v_warehouse VARCHAR(32);
   v_count NUMBER;
-    
+  v_doIncrease BOOLEAN:= FALSE;
+  v_doDecrease BOOLEAN:= FALSE;
+  v_stockdiff NUMBER:= 0;
 BEGIN
     
     IF AD_isTriggerEnabled()='N' THEN RETURN;
@@ -161,27 +162,51 @@ BEGIN
   END IF;
 
   --Update m_stock_valuation
-  
-  SELECT COUNT(*) 
-    INTO v_count
-  FROM ad_preference
-  WHERE property = 'UnitaryCost'
-    AND ad_client_id IN (:NEW.ad_client_id, '0')
-    AND TO_CHAR(value) = 'Y';
-    
+  SELECT COUNT(*) INTO v_count
+  FROM DUAL
+  WHERE EXISTS (SELECT 1 FROM ad_preference
+                WHERE property = 'UnitaryCost'
+                  AND ad_client_id IN (:NEW.ad_client_id, '0')
+                  AND TO_CHAR(value) = 'Y');
+
   IF (v_count > 0) THEN
-    SELECT m_warehouse_id
-    INTO v_warehouse
-    FROM m_locator
-    WHERE m_locator_id = :NEW.m_locator_id;
-    
-    IF INSERTING THEN
-      M_UPDATE_STOCK_VALUATION(:NEW.ad_client_id, ad_get_org_le_bu(:NEW.ad_org_id,'LE'), :NEW.createdby, v_warehouse, :NEW.m_product_id, COALESCE(:NEW.movementqty, 0), 0);
-    ELSIF DELETING THEN
-      M_UPDATE_STOCK_VALUATION(:OLD.ad_client_id, ad_get_org_le_bu(:OLD.ad_org_id,'LE'), :OLD.createdby, v_warehouse, :OLD.m_product_id, - COALESCE(:OLD.movementqty, 0), 0);
-    ELSIF UPDATING AND :OLD.iscostcalculated = 'N' AND :NEW.iscostcalculated = 'Y' AND :OLD.movementqty <> :NEW.movementqty THEN
-      M_UPDATE_STOCK_VALUATION(:OLD.ad_client_id, ad_get_org_le_bu(:OLD.ad_org_id,'LE'), :OLD.createdby, v_warehouse, :OLD.m_product_id, - COALESCE(:OLD.movementqty, 0), 0);
-      M_UPDATE_STOCK_VALUATION(:NEW.ad_client_id, ad_get_org_le_bu(:NEW.ad_org_id,'LE'), :NEW.createdby, v_warehouse, :NEW.m_product_id, COALESCE(:NEW.movementqty, 0), 0);
+    IF (INSERTING) THEN
+      IF (:NEW.iscostcalculated = 'Y') THEN
+        v_doIncrease := TRUE;
+      END IF;
+    ELSIF (DELETING) THEN
+      IF (:OLD.iscostcalculated = 'Y') THEN
+        v_doDecrease := TRUE;
+      END IF;
+    ELSIF (UPDATING) THEN
+      IF (:NEW.iscostcalculated = 'Y' AND :OLD.iscostcalculated = 'N') THEN
+        v_doIncrease := TRUE;
+      END IF;
+      IF (:NEW.iscostcalculated = 'N' AND :OLD.iscostcalculated = 'Y') THEN
+        v_doDecrease := TRUE;
+      END IF;
+    END IF;
+    IF (v_doIncrease) THEN
+      v_stockdiff := :NEW.movementqty;
+      IF (v_stockdiff <> 0) THEN
+        SELECT m_warehouse_id
+          INTO v_warehouse
+        FROM m_locator
+        WHERE m_locator_id = :NEW.m_locator_id;
+  
+        M_UPDATE_STOCK_VALUATION(:NEW.ad_client_id, ad_get_org_le_bu(:NEW.ad_org_id,'LE'), :NEW.createdby, v_warehouse, :NEW.m_product_id, v_stockdiff, 0);
+      END IF;
+    END IF;
+    IF (v_doDecrease) THEN
+      v_stockdiff := - :OLD.movementqty;
+      IF (v_stockdiff <> 0) THEN
+        SELECT m_warehouse_id
+          INTO v_warehouse
+        FROM m_locator
+        WHERE m_locator_id = :OLD.m_locator_id;
+  
+        M_UPDATE_STOCK_VALUATION(:OLD.ad_client_id, ad_get_org_le_bu(:OLD.ad_org_id,'LE'), :OLD.createdby, v_warehouse, :OLD.m_product_id, v_stockdiff, 0);
+      END IF;
     END IF;
   END IF;
 

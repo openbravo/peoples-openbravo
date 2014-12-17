@@ -134,39 +134,29 @@ BEGIN
 
  ELSIF (INSERTING) THEN
  
-   -- Insert into M_Stock_Valuation
- 
-  SELECT COUNT(*) 
-    INTO v_count
-  FROM ad_preference
-  WHERE property = 'UnitaryCost'
-    AND ad_client_id IN (:NEW.ad_client_id, '0')
-    AND TO_CHAR(value) = 'Y';
-    
+  -- Insert into M_Stock_Valuation
+  SELECT COUNT(*) INTO v_count
+  FROM DUAL
+  WHERE EXISTS (SELECT 1 FROM ad_preference
+                WHERE property = 'UnitaryCost'
+                  AND ad_client_id IN (:NEW.ad_client_id, '0')
+                  AND TO_CHAR(value) = 'Y');
+
   IF (v_count > 0) THEN
-  
     FOR Cur_Legal IN (
       SELECT ad_org_id, warehouse_dimension
       FROM m_costing_rule cr
       WHERE isvalidated = 'Y'
-        AND COALESCE(datefrom, TO_DATE('01-01-1900', 'DD-MM-YYYY')) <= now()
-        AND COALESCE(dateto, TO_DATE('01-01-9999', 'DD-MM-YYYY')) >= now()
-        AND (:NEW.ad_org_id IS NULL OR ad_org_id IN (SELECT ad_org_id
-                                                    FROM ad_org
-                                                    WHERE (ad_isorgincluded(ad_org_id, :NEW.ad_org_id, :NEW.ad_client_id) <> -1
-                                                      OR ad_isorgincluded(:NEW.ad_org_id, ad_org_id, :NEW.ad_client_id) <> -1
-                                                      OR ad_org_id = '0')
-        AND ad_client_id = :NEW.ad_client_id))
+        AND (datefrom IS NULL OR  datefrom <= now())
+        AND (dateto IS NULL OR dateto >= now())
+        AND AD_ORG_ISINNATURALTREE(ad_org_id, :NEW.ad_org_id, :NEW.ad_client_id) ='Y'
+        AND ad_client_id = :NEW.ad_client_id
     ) LOOP 
-      IF cur_legal.warehouse_dimension = 'Y' THEN
+      IF (cur_legal.warehouse_dimension = 'Y') THEN
         FOR Cur_Warehouses IN(
           SELECT m_warehouse_id
           FROM m_warehouse
-          WHERE ad_org_id IN (SELECT ad_org_id
-                              FROM ad_org
-                              WHERE (ad_isorgincluded(ad_org_id, cur_legal.ad_org_id, :NEW.ad_client_id) <> -1
-                                OR ad_isorgincluded(cur_legal.ad_org_id, ad_org_id, :NEW.ad_client_id) <> -1
-                                OR ad_org_id = '0'))
+          WHERE AD_ORG_ISINNATURALTREE(ad_org_id, cur_legal.ad_org_id, :NEW.ad_client_id) ='Y'
             AND ad_client_id = :NEW.ad_client_id
         ) LOOP
           M_UPDATE_STOCK_VALUATION(:NEW.ad_client_id, cur_legal.ad_org_id, '0', cur_warehouses.m_warehouse_id, :NEW.m_product_id, 0, 0); 

@@ -246,6 +246,8 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
         "web/org.openbravo.client.application/js/utilities/ob-section-stack.js", false));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/toolbar/ob-clone-order.js", false));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/utilities/ob-onchange-functions.js", false));
 
     // Alert Management
     globalResources.add(createStaticResource(

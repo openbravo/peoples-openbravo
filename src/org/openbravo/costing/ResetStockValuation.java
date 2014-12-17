@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
@@ -24,8 +23,6 @@ public class ResetStockValuation extends BaseProcessActionHandler {
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
     try {
       JSONObject result = new JSONObject();
-      JSONObject msg = new JSONObject();
-      boolean errorMessage = false;
 
       JSONObject request = new JSONObject(content);
       JSONObject params = request.getJSONObject("_params");
@@ -36,6 +33,22 @@ public class ResetStockValuation extends BaseProcessActionHandler {
         strOrgID = (String) params.get("AD_Org_ID");
       }
 
+      JSONObject msg = doResetStockValuation(strOrgID);
+
+      result.put("message", msg);
+      result.put("retryExecution", true);
+      return result;
+
+    } catch (JSONException e) {
+      log.error("Error in process", e);
+      return new JSONObject();
+    }
+  }
+
+  public static JSONObject doResetStockValuation(String strOrgID) {
+    try {
+      JSONObject msg = new JSONObject();
+      boolean errorMessage = false;
       // delete existing records
       StringBuffer sql = new StringBuffer();
       sql.append("delete from");
@@ -58,30 +71,26 @@ public class ResetStockValuation extends BaseProcessActionHandler {
       storedProcedureParams.add(null);
       try {
         CallStoredProcedure.getInstance().call("M_INITIALIZE_STOCK_VALUATION",
-            storedProcedureParams, null, true, false);
+            storedProcedureParams, null, false, false);
       } catch (Exception e) {
         errorMessage = true;
-        msg.put("msgType", "error");
-        msg.put("msgTitle", OBMessageUtils.messageBD("Error"));
-        msg.put("msgText", OBMessageUtils.messageBD("ConversionRateCommandError"));
+        msg.put("severity", "error");
+        msg.put("title", OBMessageUtils.messageBD("Error"));
+        msg.put("message", OBMessageUtils.translateError(e.getMessage()));
       }
 
       if (!errorMessage) {
-        msg.put("msgType", "success");
-        msg.put("msgTitle", OBMessageUtils.messageBD("Success"));
+        msg.put("severity", "success");
+        msg.put("message", OBMessageUtils.messageBD("Success"));
       }
 
-      JSONArray actions = new JSONArray();
-      JSONObject msgAction = new JSONObject();
-      msgAction.put("showMsgInProcessView", msg);
-      actions.put(msgAction);
-      result.put("responseActions", actions);
-      result.put("retryExecution", true);
-      return result;
+      return msg;
 
     } catch (JSONException e) {
       log.error("Error in process", e);
       return new JSONObject();
     }
+
   }
+
 }
