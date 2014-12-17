@@ -290,7 +290,7 @@ enyo.kind({
         this.$.doneButton.drawerOpened = false;
       }
       if (OB.MobileApp.model.get('terminal').allowpayoncredit && this.receipt.get('bp')) {
-        if ((this.receipt.get('bp').get('creditLimit') > 0 || this.receipt.get('bp').get('creditUsed') < 0 || this.receipt.getGross() < 0)) {
+        if ((this.receipt.get('bp').get('creditLimit') > 0 || this.receipt.get('bp').get('creditUsed') < 0 || this.receipt.getGross() < 0) && !paymentstatus.isReturn) {
           this.$.creditsalesaction.show();
         } else {
           this.$.creditsalesaction.hide();
@@ -315,7 +315,7 @@ enyo.kind({
         this.$.layawayaction.hide();
       }
       if (OB.MobileApp.model.get('terminal').allowpayoncredit && this.receipt.get('bp')) {
-        if ((this.receipt.get('bp').get('creditLimit') > 0 || this.receipt.get('bp').get('creditUsed') < 0 || this.receipt.getGross() < 0)) {
+        if ((this.receipt.get('bp').get('creditLimit') > 0 || this.receipt.get('bp').get('creditUsed') < 0 || this.receipt.getGross() < 0) && !paymentstatus.isReturn) {
           this.$.creditsalesaction.show();
         } else {
           this.$.creditsalesaction.hide();
@@ -720,7 +720,7 @@ enyo.kind({
   kind: 'OB.UI.SmallButton',
   i18nLabel: 'OBPOS_LblCreditSales',
   classes: 'btn-icon-small btnlink-green',
-  style: 'width: 120px; float: right; margin: -5px 5px 0px 0px; height: 1.8em; display:block',
+  style: 'width: 120px; float: right; margin: 0px 5px 5px 0px; height: 1.8em; display:block; clear: right',
   permission: 'OBPOS_receipt.creditsales',
   events: {
     onShowPopup: ''
@@ -813,7 +813,7 @@ enyo.kind({
   kind: 'OB.UI.SmallButton',
   content: '',
   classes: 'btn-icon-small btnlink-green',
-  style: 'width: 120px;float: right; margin: 10px 5px 0px 200px; height: 1.8em; display:block;',
+  style: 'width: 120px;float: right; margin: 0px 5px 0px 0px; height: 1.8em; display:block; clear: right;',
   permission: 'OBPOS_receipt.layaway',
   init: function (model) {
     this.model = model;
