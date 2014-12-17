@@ -792,9 +792,9 @@
       if (p.get('obposScale')) {
         OB.POS.hwserver.getWeight(function (data) {
           if (data.exception) {
-            OB.UTIL.showWarning(data.exception.message);
+            alert(data.exception.message);
           } else if (data.result === 0) {
-            OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_WeightZero'));
+            alert(OB.I18N.getLabel('OBPOS_WeightZero'));
           } else {
             line = me.createLine(p, data.result, options, attrs);
           }
@@ -1461,7 +1461,7 @@
     },
 
     rejectQuotation: function () {
-      OB.UTIL.showWarning('reject!!');
+      alert('reject!!');
     },
 
     resetOrderInvoice: function () {
@@ -1562,7 +1562,7 @@
       var i, max, p, order;
 
       if (!OB.DEC.isNumber(payment.get('amount'))) {
-        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_MsgPaymentAmountError'));
+        alert(OB.I18N.getLabel('OBPOS_MsgPaymentAmountError'));
         return;
       }
 
@@ -2552,7 +2552,7 @@
       var i, max, p, order;
 
       if (!OB.DEC.isNumber(payment.get('amount'))) {
-        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_MsgPaymentAmountError'));
+        alert(OB.I18N.getLabel('OBPOS_MsgPaymentAmountError'));
         return;
       }
 
