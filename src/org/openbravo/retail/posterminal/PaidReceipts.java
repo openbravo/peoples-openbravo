@@ -121,25 +121,27 @@ public class PaidReceipts extends JSONProcessSimple {
                 .getPropertyExtensions(extensionsShipLines);
             String hqlPaidReceiptsShipLines = "select "
                 + hqlPropertiesShipLines.getHqlSelect() //
-                + " from MaterialMgmtShipmentInOutLine as m where salesOrderLine.id= ?  and movementQuantity > (select coalesce(sum(abs(deliveredQuantity)),0) from OrderLine where goodsShipmentLine.id = m.id)";
+                + " from MaterialMgmtShipmentInOutLine as m where salesOrderLine.id= ? "
+                + " and movementQuantity > (select coalesce(sum(abs(deliveredQuantity)),0) from OrderLine where goodsShipmentLine.id = m.id)";
             OBDal.getInstance().getSession().createQuery(hqlPaidReceiptsShipLines);
             Query paidReceiptsShipLinesQuery = OBDal.getInstance().getSession()
                 .createQuery(hqlPaidReceiptsShipLines);
             paidReceiptsShipLinesQuery.setString(0, (String) objpaidReceiptsLines[6]);
 
             // cycle through the lines of the selected order
+            JSONArray shipmentlines = new JSONArray();
             for (Object objShipLines : paidReceiptsShipLinesQuery.list()) {
 
-              JSONArray shipmentlines = new JSONArray();
               JSONObject jsonShipline = new JSONObject();
               Object[] objpaidReceiptsShipLines = (Object[]) objShipLines;
               jsonShipline.put("shipLineId", objpaidReceiptsShipLines[0]);
-              jsonShipline.put("shipment", objpaidReceiptsShipLines[0]);
-              jsonShipline.put("shipmentlineNo", objpaidReceiptsShipLines[0]);
-              jsonShipline.put("qty", objpaidReceiptsShipLines[0]);
+              jsonShipline.put("shipment", objpaidReceiptsShipLines[1]);
+              jsonShipline.put("shipmentlineNo", objpaidReceiptsShipLines[2]);
+              jsonShipline.put("qty", objpaidReceiptsShipLines[3]);
+              jsonShipline.put("remainingQty", objpaidReceiptsShipLines[4]);
               shipmentlines.put(jsonShipline);
-              paidReceiptLine.put("shipmentlines", shipmentlines);
             }
+            paidReceiptLine.put("shipmentlines", shipmentlines);
           }
 
           // promotions per line
