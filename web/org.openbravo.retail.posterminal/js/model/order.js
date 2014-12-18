@@ -1597,6 +1597,7 @@
         payments.add(payment);
         order.adjustPayment();
         order.trigger('displayTotal');
+        order.save();
       }); // call with callback, no args
     },
 
