@@ -158,6 +158,7 @@ enyo.kind({
   show: function () {
     var me = this;
     OB.MobileApp.view.scanningFocus(false);
+    me.$.btnApply.setDisabled(true);
     me.discounts.reset();
     //uncheck lines
     this.doCheckAllTicketLines({
@@ -183,6 +184,9 @@ enyo.kind({
       + " )))" //
     }, function (promos) {
       me.discounts.reset(promos.models);
+      me.ticketLineChecked({}, {
+        checkedLines: me.checkedLines
+      });
       //set the keyboard for selected discount
       me.discountChanged({}, {
         originator: me.$.discountsList
@@ -201,6 +205,9 @@ enyo.kind({
         }
       });
       tr.render();
+      me.ticketLineChecked({}, {
+        checkedLines: me.checkedLines
+      });
     });
     this.inherited(arguments);
   },
@@ -256,7 +263,7 @@ enyo.kind({
       this.$.checkSelectAll.unCheck();
     }
     this.checkedLines = inEvent.checkedLines;
-    if (this.checkedLines.length > 0) {
+    if (this.checkedLines.length > 0 && this.discounts.length !== 0) {
       this.$.btnApply.setDisabled(false);
     } else {
       this.$.btnApply.setDisabled(true);
