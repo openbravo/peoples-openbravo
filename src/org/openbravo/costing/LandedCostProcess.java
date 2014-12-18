@@ -33,6 +33,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
@@ -321,7 +322,11 @@ public class LandedCostProcess {
 
     lcc.setMatched(Boolean.TRUE);
     lcc.setProcessed(Boolean.TRUE);
-    lcc.setMatchingAmount(lcc.getAmount());
+    OBCriteria<LCMatched> critMatched = OBDal.getInstance().createCriteria(LCMatched.class);
+    critMatched.add(Restrictions.eq(LCMatched.PROPERTY_LANDEDCOSTCOST, lcc));
+    critMatched.setProjection(Projections.sum(LCMatched.PROPERTY_AMOUNT));
+    BigDecimal matchedAmt = (BigDecimal) critMatched.uniqueResult();
+    lcc.setMatchingAmount(matchedAmt);
     OBDal.getInstance().save(lcc);
   }
 }
