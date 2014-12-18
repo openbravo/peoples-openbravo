@@ -34,10 +34,10 @@ public class PaidReceiptShipLinesProperties extends ModelExtension {
         add(new HQLProperty("id", "shipLineId"));
         add(new HQLProperty("shipmentReceipt.documentNo", "shipment"));
         add(new HQLProperty("lineNo", "shipmentlineNo"));
-        add(new HQLProperty("movementQuantity", "qty"));
         add(new HQLProperty(
             "movementQuantity - (select coalesce(sum(abs(deliveredQuantity)),0) from OrderLine where goodsShipmentLine.id = m.id)",
-            "remainingQty"));
+            "qty"));
+        add(new HQLProperty("movementQuantity", "totalQty"));
       }
     };
 
