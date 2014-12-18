@@ -34,9 +34,7 @@ public class PaidReceiptLinesProperties extends ModelExtension {
         add(new HQLProperty("ordLine.product.id", "id"));
         add(new HQLProperty("ordLine.product.name", "name"));
         add(new HQLProperty("ordLine.product.uOM.id", "uOM"));
-        add(new HQLProperty(
-            "(ordLine.deliveredQuantity - (select coalesce(abs(sum(deliveredQuantity)),0) from OrderLine where goodsShipmentLine.salesOrderLine.id =ordLine.id))",
-            "quantity"));
+        add(new HQLProperty("ordLine.orderedQuantity", "quantity"));
         add(new HQLProperty("ordLine.baseGrossUnitPrice", "unitPrice"));
         add(new HQLProperty("ordLine.lineGrossAmount", "linegrossamount"));
         add(new HQLProperty("ordLine.id", "lineId"));
@@ -44,7 +42,6 @@ public class PaidReceiptLinesProperties extends ModelExtension {
         add(new HQLProperty("ordLine.salesOrder.currency.pricePrecision", "pricePrecision"));
         add(new HQLProperty("ordLine.warehouse.id", "warehouse"));
         add(new HQLProperty("ordLine.warehouse.name", "warehousename"));
-        add(new HQLProperty("ordLine.orderedQuantity", "totalQuantity"));
       }
     };
 
