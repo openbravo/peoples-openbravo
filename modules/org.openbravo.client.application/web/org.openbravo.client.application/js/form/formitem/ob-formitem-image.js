@@ -285,7 +285,6 @@ isc.OBImageItem.addProperties({
   //This function has been overwritten because this class needs to do specific things if the object is
   //disabled. It is necessary to hide the delete and selector buttons when the status is disabled 
   //and to show them when enabled.
-  
   setDisabled: function (disabled) {
     if (disabled) {
       this.canvas.deleteButton.hide();
@@ -437,7 +436,7 @@ isc.OBImageSelector.addProperties({
     })]);
     this.Super('initWidget', arguments);
   },
-  getMessageText: function (type, imageSizeAction, XXX, YYY, AAA, BBB) {
+  getMessageText: function (type, imageSizeAction, XXX, YYY, AAA, BBB, msgInfo) {
     var message = '';
     if (imageSizeAction === 'N') {
       return message;
@@ -457,7 +456,7 @@ isc.OBImageSelector.addProperties({
     if (!BBB) {
       BBB = 'ANY';
     }
-    message = OB.I18N.getLabel('OBUIAPP_Image_' + type + '_' + imageSizeAction);
+    message = OB.I18N.getLabel('OBUIAPP_Image_' + type + '_' + imageSizeAction, [msgInfo]);
     message = message.replace('XXX', XXX).replace('YYY', YYY).replace('AAA', AAA).replace('BBB', BBB);
     message = message.replace(/\n/g, '<br />');
     return message;
@@ -468,14 +467,14 @@ isc.OBImageSelector.addProperties({
       this.formDeleteImage.submitForm();
     }
   },
-  callback: function (imageId, imageSizeAction, oldWidth, oldHeight, newWidth, newHeight) {
+  callback: function (imageId, imageSizeAction, oldWidth, oldHeight, newWidth, newHeight, msgInfo) {
     oldWidth = parseInt(oldWidth, 10);
     oldHeight = parseInt(oldHeight, 10);
     newWidth = parseInt(newWidth, 10);
     newHeight = parseInt(newHeight, 10);
     var selector = this;
-    if (imageSizeAction === 'WRONGFORMAT') {
-      isc.warn(this.getMessageText('Error', imageSizeAction), function () {
+    if (imageSizeAction === 'WRONGFORMAT' || imageSizeAction === 'ERROR_UPLOADING') {
+      isc.warn(this.getMessageText('Error', imageSizeAction, null, null, null, null, msgInfo), function () {
         return true;
       }, {
         icon: '[SKINIMG]Dialog/error.png',
