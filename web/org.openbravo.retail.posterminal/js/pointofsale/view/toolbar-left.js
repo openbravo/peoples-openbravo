@@ -233,6 +233,7 @@ enyo.kind({
         receipt.prepareToSend(function () {
           receipt.trigger('closed', {
             callback: function () {
+              receipt.trigger('print');
               receipt.trigger('scan');
             }
           });
