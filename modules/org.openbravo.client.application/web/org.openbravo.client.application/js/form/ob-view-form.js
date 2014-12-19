@@ -553,7 +553,13 @@ OB.ViewFormProperties = {
     var i, length, localResult, fields;
     if (!this.fieldsByFieldName) {
       localResult = {};
-      fields = this.getFields();
+      if (this.view && this.view.formFields) {
+        // standard windows don't load the fields till view form is opened, so let's
+        // use formFields in view which is always loaded
+        fields = this.view.formFields;
+      } else {
+        fields = this.getFields();
+      }
       length = fields.length;
       for (i = 0; i < fields.length; i++) {
         if (fields[i].name) {
