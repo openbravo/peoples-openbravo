@@ -323,6 +323,9 @@ public class LandedCostProcess {
     critMatched.add(Restrictions.eq(LCMatched.PROPERTY_LANDEDCOSTCOST, lcc));
     critMatched.setProjection(Projections.sum(LCMatched.PROPERTY_AMOUNT));
     BigDecimal matchedAmt = (BigDecimal) critMatched.uniqueResult();
+    if (matchedAmt == null) {
+      matchedAmt = lcc.getAmount();
+    }
     lcc.setMatchingAmount(matchedAmt);
     OBDal.getInstance().save(lcc);
   }
