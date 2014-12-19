@@ -24996,7 +24996,7 @@ You can revert your changes by reloading the current record from the database cl
 <!--DD89935E99164E87897CEE1CC67F5BB0-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--DD89935E99164E87897CEE1CC67F5BB0-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--DD89935E99164E87897CEE1CC67F5BB0-->  <VALUE><![CDATA[FixBackdateFromBeforeStartingDate]]></VALUE>
-<!--DD89935E99164E87897CEE1CC67F5BB0-->  <MSGTEXT><![CDATA[Fix Backdated From Date is before Starting Date, and this is wrong. It should be equal or later.]]></MSGTEXT>
+<!--DD89935E99164E87897CEE1CC67F5BB0-->  <MSGTEXT><![CDATA[Fix Backdated From should be equal or later than the Starting Date of the Costing Rule]]></MSGTEXT>
 <!--DD89935E99164E87897CEE1CC67F5BB0-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--DD89935E99164E87897CEE1CC67F5BB0-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--DD89935E99164E87897CEE1CC67F5BB0-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
