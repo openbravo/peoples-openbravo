@@ -86,13 +86,7 @@ IF (UPDATING) THEN
     FROM m_reservation 
     WHERE c_orderline_id = :OLD.c_orderline_id;
     IF (v_count > 0) THEN
-      SELECT m_reservation_id INTO v_reservation_id
-      FROM m_reservation
-      WHERE c_orderline_id = :OLD.c_orderline_id;
-      DELETE FROM m_reservation_stock
-      WHERE m_reservation_id = v_reservation_id;
-      DELETE FROM m_reservation
-      WHERE m_reservation_id = v_reservation_id;
+      RAISE_APPLICATION_ERROR(-20000, '@DeleteRelatedReservation@');
     END IF;
   ELSE
     DELETE FROM m_reservation_stock
