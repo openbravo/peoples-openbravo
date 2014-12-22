@@ -79,15 +79,9 @@ enyo.kind({
     this.model = model;
     var receipt = this.model.get('order');
     receipt.on('orderCreatedFromQuotation', function () {
-      var localSkipApplyPromotions;
-
-      localSkipApplyPromotions = this.theQuotation.get('skipApplyPromotions');
-      this.theQuotation.set('skipApplyPromotions', true);
       this.theQuotation.set('cloningReceipt', true);
       salesOrder = OB.UTIL.clone(this.theQuotation);
-      this.theQuotation.set('skipApplyPromotions', localSkipApplyPromotions);
       this.theQuotation.set('cloningReceipt', false);
-      salesOrder.set('skipApplyPromotions', localSkipApplyPromotions);
       salesOrder.set('cloningReceipt', false);
 
       salesOrder.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentType);
