@@ -614,7 +614,7 @@
 
     clearWith: function (_order) {
       var me = this,
-          undf, localSkipApplyPromotions;
+          undf, localSkipApplyPromotions, idExecution;
 
       // we set first this property to avoid that the apply promotions is triggered
       this.set('isNewReceipt', _order.get('isNewReceipt'));
@@ -629,11 +629,25 @@
         // modifications to trigger editable events incorrectly
         this.set('isEditable', _order.get('isEditable'));
       }
-      _order.set('cloningReceipt', true);
-      this.set('cloningReceipt', true);
+
+      // the idExecution is saved so only this execution of clearWith will check cloningReceipt to false
+      if (OB.UTIL.isNullOrUndefined(this.get('idExecution')) && OB.UTIL.isNullOrUndefined(_order.get('idExecution'))) {
+        idExecution = new Date().getTime();
+        _order.set('idExecution', idExecution);
+        _order.set('cloningReceipt', true);
+        this.set('cloningReceipt', true);
+        this.set('idExecution', idExecution);
+      }
+
       OB.UTIL.clone(_order, this);
-      _order.set('cloningReceipt', false);
-      this.set('cloningReceipt', false);
+
+      if (!OB.UTIL.isNullOrUndefined(this.get('idExecution')) && this.get('idExecution') === idExecution) {
+        _order.set('cloningReceipt', false);
+        this.set('cloningReceipt', false);
+        _order.unset('idExecution');
+        this.unset('idExecution');
+      }
+
       this.set('isEditable', _order.get('isEditable'));
       this.trigger('calculategross');
       this.trigger('change');
