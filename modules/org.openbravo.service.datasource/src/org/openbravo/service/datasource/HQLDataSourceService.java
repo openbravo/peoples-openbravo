@@ -37,6 +37,8 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.model.domaintype.PrimitiveDomainType;
+import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.base.structure.IdentifierProvider;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.client.kernel.reference.EnumUIDefinition;
 import org.openbravo.client.kernel.reference.ForeignKeyUIDefinition;
@@ -175,12 +177,13 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     String[] returnAliases = query.getReturnAliases();
     boolean checkIsNotNull = false;
     for (Object row : query.list()) {
-
       Map<String, Object> record = new HashMap<String, Object>();
       if (distinct != null) {
         Object[] result = (Object[]) row;
-        record.put(JsonConstants.ID, result[0]);
-        record.put(JsonConstants.IDENTIFIER, result[1]);
+        // the whole referenced BaseOBObject is stored in the first position of the result
+        BaseOBObject bob = (BaseOBObject) result[0];
+        record.put(JsonConstants.ID, bob.getId());
+        record.put(JsonConstants.IDENTIFIER, IdentifierProvider.getInstance().getIdentifier(bob));
       } else {
         Object[] properties = (Object[]) row;
         for (int i = 0; i < returnAliases.length; i++) {
@@ -239,6 +242,9 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     AdvancedQueryBuilder queryBuilder = new AdvancedQueryBuilder();
     queryBuilder.setEntity(ModelProvider.getInstance().getEntityByTableId(table.getId()));
     queryBuilder.setCriteria(criteria);
+    if (table.getEntityAlias() != null) {
+      queryBuilder.setMainAlias(table.getEntityAlias());
+    }
     String whereClause = queryBuilder.getWhereClause();
     // replace the property names with the column alias
     whereClause = replaceParametersWithAlias(table, whereClause);
@@ -259,7 +265,12 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
         hqlQuery = "select count(distinct " + distinctColumn.getEntityAlias() + "."
             + getNameOfFirstIdentifierProperty(property.getTargetEntity()) + ") " + formClause;
       } else {
-        hqlQuery = "select distinct " + distinctColumn.getEntityAlias() + ".id,"
+        // Retrieve:
+        // - the whole referenced object, so that later it is easier to obtain its id and
+        // its identifier (which can be a translation)
+        // - the first property of the entity's identifier. This is needed because it is the column
+        // that will be used to order the rows
+        hqlQuery = "select distinct " + distinctColumn.getEntityAlias() + ","
             + distinctColumn.getEntityAlias() + "."
             + getNameOfFirstIdentifierProperty(property.getTargetEntity()) + " " + formClause;
       }
@@ -550,11 +561,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
       additionalFilter.append(entityAlias + ".organization in (" + orgs + ")");
     }
 
-    if (!filterWhereClause.trim().isEmpty()) {
-      // if the filter where clause contains the string 'where', get rid of it
-      String whereClause = filterWhereClause.replaceAll("(?i)" + WHERE, " ");
-      additionalFilter.append(AND + whereClause);
-    }
+    addFilterWhereClause(additionalFilter, filterWhereClause);
 
     // the _where parameter contains the filter clause and the where clause defined at tab level
     String whereClauseParameter = parameters.get(JsonConstants.WHERE_PARAMETER);
@@ -581,6 +588,16 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     }
     OBContext.restorePreviousMode();
     return hqlQueryWithFilters;
+  }
+
+  private void addFilterWhereClause(StringBuffer additionalFilter, String filterWhereClause) {
+    if (!filterWhereClause.trim().isEmpty()) {
+      additionalFilter.append(AND + removeLeadingWhere(filterWhereClause));
+    }
+  }
+
+  private String removeLeadingWhere(String whereClause) {
+    return whereClause.replaceAll("^(?i)" + WHERE, " ");
   }
 
   /**
