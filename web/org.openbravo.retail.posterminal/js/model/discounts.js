@@ -33,12 +33,6 @@
         return;
       }
 
-      // if the receipt is cloning, then the promotions should not be calculated again
-      if (receipt.get('cloningReceipt')) {
-        receipt.calculateGross();
-        return;
-      }
-
       if (OB.MobileApp.model.hasPermission('OBPOS_discount.newFlow', true)) {
         var auxReceipt = new OB.Model.Order(),
             auxLine, hasPromotions, oldLines, oldLines2, actualLines, auxReceipt2, isFirstExecution = true;
