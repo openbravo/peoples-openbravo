@@ -629,15 +629,10 @@
         // modifications to trigger editable events incorrectly
         this.set('isEditable', _order.get('isEditable'));
       }
-      localSkipApplyPromotions = _order.get('skipApplyPromotions');
-      _order.set('skipApplyPromotions', true);
       _order.set('cloningReceipt', true);
-      this.set('skipApplyPromotions', true);
       this.set('cloningReceipt', true);
       OB.UTIL.clone(_order, this);
-      _order.set('skipApplyPromotions', localSkipApplyPromotions);
       _order.set('cloningReceipt', false);
-      this.set('skipApplyPromotions', localSkipApplyPromotions);
       this.set('cloningReceipt', false);
       this.set('isEditable', _order.get('isEditable'));
       this.trigger('calculategross');

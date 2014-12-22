@@ -433,13 +433,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               });
               // receipt is cloned because the receipt is deleted in the next sentence (orderList.deleteCurrent(true);)
               // so, if exists a method no synchronous (for example, hook OBPOS_PrePrint) the "receipt" has changed
-              var localSkipApplyPromotions = receipt.get('skipApplyPromotions');
-              receipt.set('skipApplyPromotions', true);
               receipt.set('cloningReceipt', true);
               var orderToPrint = OB.UTIL.clone(receipt);
-              receipt.set('skipApplyPromotions', localSkipApplyPromotions);
               receipt.set('cloningReceipt', false);
-              orderToPrint.set('skipApplyPromotions', localSkipApplyPromotions);
               orderToPrint.set('cloningReceipt', false);
               receipt.trigger('print', orderToPrint, {
                 offline: true
@@ -453,13 +449,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             callback: function () {
               // receipt is cloned because the receipt is deleted when event "closed" is triggered
               // so, if exists a method no synchronous, the "receipt" has changed
-              var localSkipApplyPromotions = receipt.get('skipApplyPromotions');
-              receipt.set('skipApplyPromotions', true);
               receipt.set('cloningReceipt', true);
               var orderToPrint = OB.UTIL.clone(receipt);
-              receipt.set('skipApplyPromotions', localSkipApplyPromotions);
               receipt.set('cloningReceipt', false);
-              orderToPrint.set('skipApplyPromotions', localSkipApplyPromotions);
               orderToPrint.set('cloningReceipt', false);
               receipt.trigger('print', orderToPrint, {
                 offline: true
