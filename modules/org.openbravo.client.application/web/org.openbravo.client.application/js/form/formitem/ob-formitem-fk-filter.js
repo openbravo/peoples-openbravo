@@ -97,6 +97,10 @@ isc.OBFKFilterTextItem.addProperties({
         delete me.forceReload;
       },
 
+      // drawAllMaxCells is set to 0 to prevent extra reads of data
+      // Smartclient will try to read until drawAllMaxCells has been reached
+      drawAllMaxCells: 0,
+
       fetchDelay: 400,
       // prevent aggressive local filtering by smartclient
       filterLocally: false,
