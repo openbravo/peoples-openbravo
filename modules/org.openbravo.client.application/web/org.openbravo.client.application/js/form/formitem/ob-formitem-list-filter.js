@@ -55,7 +55,7 @@ isc.OBListFilterItem.addProperties({
     value = this.getValue();
     if (value && value.length > 0) {
       for (i = 0; i < value.length; i++) {
-        if (value[i].indexOf("==") === 0) {
+        if (value[i].indexOf('==') === 0) {
           value[i] = value[i].substring(2, value[i].length);
         }
       }

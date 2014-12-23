@@ -140,6 +140,6 @@ OB.Utilities.Action.set('setSelectorValueFromRecord', function (paramObj) {
 OB.Utilities.Action.set('refreshGrid', function (paramObj) {
   var processView = paramObj._processView;
   if (processView && processView.buttonOwnerView && processView.buttonOwnerView.viewGrid) {
-	  processView.buttonOwnerView.viewGrid.refreshGrid();
+    processView.buttonOwnerView.viewGrid.refreshGrid();
   }
 });

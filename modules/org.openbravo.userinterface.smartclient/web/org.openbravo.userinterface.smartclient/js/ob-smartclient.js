@@ -35,7 +35,7 @@ isc.DataSource.addProperties({
   compareDates: function (date1, date2, fieldName, otherFieldName) {
     var field = this.getField(fieldName),
         otherField = otherFieldName ? this.getField(otherFieldName) : null;
-    if ((field && (field.type === "datetime" || field.type === "_id_24")) || (otherField && (otherField.type === "datetime" || otherField.type === "_id_24"))) {
+    if ((field && (field.type === 'datetime' || field.type === '_id_24')) || (otherField && (otherField.type === 'datetime' || otherField.type === '_id_24'))) {
       return Date.compareDates(date1, date2);
     } else {
       return Date.compareLogicalDates(date1, date2);
@@ -262,7 +262,7 @@ isc.TextItem.addProperties({
         opIndex = isc.DynamicForm.getOperatorIndex(),
         validOps = isc.getKeys(opIndex),
         result = {
-        operator: "and",
+        operator: 'and',
         criteria: []
         },
         crit = result.criteria,
@@ -278,7 +278,7 @@ isc.TextItem.addProperties({
     }
 
     if (!isc.isA.String(value)) {
-      value += "";
+      value += '';
     }
 
     var tempOps, tempOp;
@@ -295,28 +295,28 @@ isc.TextItem.addProperties({
     var field, insensitive = defOp.caseInsensitive;
     var partIndex, parts, partCrit, part;
 
-    if (isValidLogicType && value.contains(" and ")) {
-      valueParts = value.split(" and ");
-    } else if (isValidLogicType && value.contains(" or ")) {
-      valueParts = value.split(" or ");
-      result.operator = "or";
-    } else if (value.contains("...")) {
-      valueParts = value.split("...");
+    if (isValidLogicType && value.contains(' and ')) {
+      valueParts = value.split(' and ');
+    } else if (isValidLogicType && value.contains(' or ')) {
+      valueParts = value.split(' or ');
+      result.operator = 'or';
+    } else if (value.contains('...')) {
+      valueParts = value.split('...');
       if (valueParts.length === 2) {
-        tempOps = opIndex["..."];
+        tempOps = opIndex['...'];
 
         if (tempOps) {
-          tempOp = (insensitive ? tempOps.find("caseInsensitive", true) : tempOps[0]);
+          tempOp = (insensitive ? tempOps.find('caseInsensitive', true) : tempOps[0]);
         }
 
         field = ds ? ds.getField(fieldName) : null;
 
-        if (field && isc.SimpleType.inheritsFrom(field.type, "date")) {
+        if (field && isc.SimpleType.inheritsFrom(field.type, 'date')) {
           valueParts[0] = new Date(Date.parse(valueParts[0]));
           valueParts[0].logicalDate = true;
           valueParts[1] = new Date(Date.parse(valueParts[1]));
           valueParts[1].logicalDate = true;
-        } else if (field && field.type === "text") {
+        } else if (field && field.type === 'text') {
 
           if (!valueParts[1].endsWith(this._betweenInclusiveEndCrit)) {
             valueParts[1] += this._betweenInclusiveEndCrit;
@@ -334,7 +334,7 @@ isc.TextItem.addProperties({
       valueParts = [value];
     }
 
-    var skipTheseOps = [" and ", " or "];
+    var skipTheseOps = [' and ', ' or '];
 
     for (i = 0; i < valueParts.length; i++) {
       var key, valuePart = valueParts[i],
@@ -343,7 +343,7 @@ isc.TextItem.addProperties({
           };
 
       field = ds ? ds.getField(fieldName) : null;
-      var isDateField = (field ? field && isc.SimpleType.inheritsFrom(field.type, "date") : false),
+      var isDateField = (field ? field && isc.SimpleType.inheritsFrom(field.type, 'date') : false),
           valueHasExpression = false;
 
       for (key in opIndex) {
@@ -356,12 +356,12 @@ isc.TextItem.addProperties({
               wildCard = false,
               op;
 
-          if (key === "==" && isc.isA.String(valuePart) && valuePart.startsWith("=") && !valuePart.startsWith("==") && !valuePart.startsWith("=(")) {
+          if (key === '==' && isc.isA.String(valuePart) && valuePart.startsWith('=') && !valuePart.startsWith('==') && !valuePart.startsWith('=(')) {
             wildCard = true;
           }
 
           if (ops && ops.length) {
-            op = ops.find("caseInsensitive", insensitive) || ops[0];
+            op = ops.find('caseInsensitive', insensitive) || ops[0];
           }
 
           if (!op || !op.symbol || skipTheseOps.contains(op.symbol)) {
@@ -370,7 +370,7 @@ isc.TextItem.addProperties({
 
           if (validOps.contains(op.symbol) && ((isc.isA.String(valuePart) && (valuePart.startsWith(op.symbol) ||
 
-          (op.symbol === "..." && valuePart.contains(op.symbol)))) || wildCard)) {
+          (op.symbol === '...' && valuePart.contains(op.symbol)))) || wildCard)) {
             valueHasExpression = true;
 
             if (valuePart.startsWith(op.symbol)) {
@@ -387,24 +387,24 @@ isc.TextItem.addProperties({
               }
             }
 
-            if (valuePart.contains("...")) {
+            if (valuePart.contains('...')) {
               // allow range operators as well as conjunctives
-              var rangeValueParts = valuePart.split("...");
+              var rangeValueParts = valuePart.split('...');
               if (rangeValueParts.length === 2) {
-                tempOps = opIndex["..."];
+                tempOps = opIndex['...'];
 
                 if (tempOps) {
-                  tempOp = (insensitive ? tempOps.find("caseInsensitive", true) : tempOps[0]);
+                  tempOp = (insensitive ? tempOps.find('caseInsensitive', true) : tempOps[0]);
                 }
 
                 field = ds ? ds.getField(fieldName) : null;
 
-                if (field && isc.SimpleType.inheritsFrom(field.type, "date")) {
+                if (field && isc.SimpleType.inheritsFrom(field.type, 'date')) {
                   rangeValueParts[0] = new Date(Date.parse(rangeValueParts[0]));
                   rangeValueParts[0].logicalDate = true;
                   rangeValueParts[1] = new Date(Date.parse(rangeValueParts[1]));
                   rangeValueParts[1].logicalDate = true;
-                } else if (field && field.type === "text") {
+                } else if (field && field.type === 'text') {
 
                   if (!rangeValueParts[1].endsWith(this._betweenInclusiveEndCrit)) {
                     rangeValueParts[1] += this._betweenInclusiveEndCrit;
@@ -455,13 +455,13 @@ isc.TextItem.addProperties({
 
                   if (hasPrefix && hasSuffix) {
                     // this is a contains criteria
-                    partCrit.operator = insensitive ? "iContains" : "contains";
+                    partCrit.operator = insensitive ? 'iContains' : 'contains';
                   } else if (hasPrefix) {
                     // this is an endsWith criteria
-                    partCrit.operator = insensitive ? "iEndsWith" : "endsWith";
+                    partCrit.operator = insensitive ? 'iEndsWith' : 'endsWith';
                   } else if (hasSuffix) {
                     // this is a startsWith criteria
-                    partCrit.operator = insensitive ? "iStartsWith" : "startsWith";
+                    partCrit.operator = insensitive ? 'iStartsWith' : 'startsWith';
                   }
 
                   result.criteria.add(partCrit);
@@ -478,7 +478,7 @@ isc.TextItem.addProperties({
               }
             } else {
               // set the value if one is required for the op
-              if (op.valueType !== "none") {
+              if (op.valueType !== 'none') {
                 subCrit.value = valuePart;
               }
             }
@@ -894,7 +894,7 @@ isc.RecordEditor.addProperties({
 }());
 
 isc.builtinTypes.textArea = {
-  inheritsFrom: "text"
+  inheritsFrom: 'text'
 };
 
 //delete the wildCard to avoid strange behaviour when filtering '*'
