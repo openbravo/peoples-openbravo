@@ -323,10 +323,17 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
       strHtml.append(strName.equals("") ? "Lot" : strName);
       strHtml.append("</span></td>\n");
       strHtml.append("<td ");
-      strHtml.append("class=\"TextBox_ContentCell\"><input type=\"text\" ");
+      strHtml.append("class=\"");
+      if (fields[0].isoneattrsetvalrequired.equals("Y")) {
+        strHtml.append("Key");
+      }
+      strHtml.append("TextBox_ContentCell\"><input type=\"text\" ");
       strHtml.append("name=\"inplot\" ");
       strHtml.append("maxlength=\"20\" ");
       strHtml.append("class=\"dojoValidateValid TextBox_OneCell_width");
+      if (fields[0].isoneattrsetvalrequired.equals("Y")) {
+        strHtml.append(" required");
+      }
       // strHtml.append("onkeydown=\"autoCompleteNumber(this, true, true, event);return true;\" ");
       if (!fields[0].mLotctlId.equals("") && (strIsSOTrx.equals("N") || strWindowId.equals("191"))) {
         strHtml.append(" readonly\" readonly=true ");
@@ -349,10 +356,17 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
       String strName = Utility.messageBD(this, "SerNo", vars.getLanguage());
       strHtml.append(strName.equals("") ? "SerNo" : strName);
       strHtml.append("</span></td>\n");
-      strHtml.append("<td class=\"TextBox_ContentCell\"><input type=\"text\" ");
+      strHtml.append("<td class=\"");
+      if (fields[0].isoneattrsetvalrequired.equals("Y")) {
+        strHtml.append("Key");
+      }
+      strHtml.append("TextBox_ContentCell\"><input type=\"text\" ");
       strHtml.append("name=\"inpserno\" ");
       strHtml.append("maxlength=\"20\" ");
       strHtml.append("class=\"dojoValidateValid TextBox_OneCell_width");
+      if (fields[0].isoneattrsetvalrequired.equals("Y")) {
+        strHtml.append(" required\"  required=\"true\"");
+      }
       // strHtml.append("onkeydown=\"autoCompleteNumber(this, true, true, event);return true;\" ");
       if (!fields[0].mSernoctlId.equals("")
           && (strIsSOTrx.equals("N") || strWindowId.equals("191"))) {
@@ -387,17 +401,22 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
       String strName = Utility.messageBD(this, "GuaranteeDate", vars.getLanguage());
       strHtml.append(strName.equals("") ? "GuaranteeDate" : strName);
       strHtml.append("</span></td>\n");
-      strHtml.append("<td class=\"TextBox_btn_ContentCell\">");
+      strHtml.append("<td class=\"");
+
+      strHtml.append("TextBox_btn_ContentCell\">");
       strHtml
           .append("<table border=\"0\" cellspacing=\"0\" cellpadding=\"0\" summary=\"\" style=\"padding-top: 0px;\">");
       strHtml.append("<tr>");
       strHtml.append("<td class=\"TextBox_ContentCell\">");
+
+      strHtml.append("<input dojoType=\"openbravo:DateTextbox\" displayFormat=\""
+          + vars.getSessionValue("#AD_SqlDateFormat") + "\" saveFormat=\""
+          + vars.getSessionValue("#AD_SqlDateFormat") + "\" class=\"TextBox_btn_OneCell_width");
+      if (fields[0].isoneattrsetvalrequired.equals("Y")) {
+        strHtml.append(" required\"  required=\"true\"");
+      }
       strHtml
-          .append("<input dojoType=\"openbravo:DateTextbox\" displayFormat=\""
-              + vars.getSessionValue("#AD_SqlDateFormat")
-              + "\" saveFormat=\""
-              + vars.getSessionValue("#AD_SqlDateFormat")
-              + "\" class=\"TextBox_btn_OneCell_width\"  type=\"text\" name=\"inpDateFrom\" id=\"paramDateFrom\" size=\"10\" maxlength=\"10\" value=\""
+          .append(" type=\"text\" name=\"inpDateFrom\" id=\"paramDateFrom\" size=\"10\" maxlength=\"10\" value=\""
               + strGuaranteeDate
               + "\" onkeyup=\"autoCompleteDate(this.textbox, this.displayFormat);return true;\"></input><script>djConfig.searchIds.push(\"paramDateFrom\");</script>");
       strHtml.append("</td>");
