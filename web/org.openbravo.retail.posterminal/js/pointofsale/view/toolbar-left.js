@@ -233,7 +233,9 @@ enyo.kind({
         receipt.prepareToSend(function () {
           receipt.trigger('closed', {
             callback: function () {
-              receipt.trigger('print');
+              if (OB.MobileApp.model.get('permissions')['OBPOS_print.quotation']) {
+                receipt.trigger('print');
+              }
               receipt.trigger('scan');
             }
           });
