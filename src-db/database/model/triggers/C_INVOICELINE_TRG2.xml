@@ -149,7 +149,7 @@ END IF;
      GrandTotal = CASE v_istaxincluded
                        WHEN 'Y' THEN grandtotal - v_oldgrossamt
                        ELSE TotalLines - v_oldLine + v_newLineNetAmt + COALESCE(v_taxAmt, 0)
-                  END,  prepaymentamt=prepaymentamt - v_oldLine + v_newLineNetAmt
+                  END
    --  Updated = SysDate -- Don't update as otherwise it does not save changes
    WHERE C_Invoice_ID=:old.C_Invoice_ID;
   END IF;
