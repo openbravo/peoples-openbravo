@@ -148,7 +148,7 @@
           INNER JOIN AD_Org o
             ON(t.AD_Client_ID = o.AD_Client_ID)
           WHERE t.ISTAXEXEMPT = 'Y'
-            AND o.AD_Org_ID = p_Org_ID
+            AND AD_ISORGINCLUDED(p_Org_ID, t.AD_Org_ID, t.AD_Client_ID) <> '-1'
             AND t.ValidFrom <= p_shipDate
             AND t.isActive = 'Y'
             AND (t.sopotype = CASE WHEN (p_issotrx = 'Y') 
