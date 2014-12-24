@@ -1700,7 +1700,7 @@ isc.OBStandardView.addProperties({
         } else {
           if (this.childTabSet.visibility === 'hidden') {
             this.childTabSet.show();
-            if (tabViewPane.showTabIf && !tabViewPane.data && !tabViewPane.refreshingData && tabViewPane.isVisible()) {
+            if (tabViewPane.showTabIf && !tabViewPane.data && !tabViewPane.refreshingData && tabViewPane.isVisible() && !this.isEditingNewRecord()) {
               // If the child tab does not have data yet, refresh it
               tabViewPane.refreshingData = true;
               tabViewPane.refresh();
@@ -1734,6 +1734,12 @@ isc.OBStandardView.addProperties({
         }
       }
     }
+  },
+
+  //This function returns true if it is a new record and it is being edited
+  isEditingNewRecord: function () {
+    var form = this.isShowingForm ? this.viewForm : this.viewGrid.getEditForm();
+    return form === null ? false : form.isNew;
   },
 
   // Adds to contextInfo the session attributes of the childView, 
