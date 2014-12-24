@@ -3952,11 +3952,18 @@ isc.OBViewGrid.addProperties({
         field = this.getFieldFromColumnName(prop);
         // This call to the FIC was done to retrieve the missing values
         // Do not try to overwrite the existing values
-        if (field && !this.getRecord(rowNum)[field.property]) {
+        if (field && !this.fieldIsVisible(field.property) && !this.getRecord(rowNum)[field.property]) {
           grid.processColumnValue(rowNum, prop, columnValues[prop]);
         }
       }
     }
+  },
+
+  fieldIsVisible: function (fieldName) {
+    // this.getFields returns the list of fields that are currently visible in the grid, 
+    // as opposed to this.completeFields that contains the whole list of fields that can be shown in the grid  
+    var visibleFields = this.getFields();
+    return visibleFields.containsProperty('name', fieldName);
   },
 
   updateRecord: function (recordIndex, data, req) {
