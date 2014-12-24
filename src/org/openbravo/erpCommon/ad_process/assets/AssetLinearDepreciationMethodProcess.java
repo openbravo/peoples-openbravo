@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013 Openbravo SLU 
+ * All portions are Copyright (C) 2013-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -534,9 +534,9 @@ public class AssetLinearDepreciationMethodProcess extends DalBaseProcess {
     if (amortizationList.size() == 0) {
       return null;
     } else if (amortizationList.size() > 1) {
-      throw new OBException("More than one amortization exist from " + startDate == null ? " null "
-          : startDate.toString() + " to " + endDate.toString() + " for " + org.getName()
-              + " organization");
+      throw new OBException("More than one amortization exist from "
+          + (startDate == null ? " null " : OBDateUtils.formatDate(startDate)) + " to "
+          + OBDateUtils.formatDate(endDate) + " for " + org.getName() + " organization");
     }
     return amortizationList.get(0);
   }
