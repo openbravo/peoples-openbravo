@@ -67,7 +67,7 @@ public class PaymentMethodMulticurrencyActionHandler extends BaseActionHandler {
       }
       if (finAccPaymentMethod != null) {
         if (finAccPaymentMethod.getAccount().getCurrency().getId().equals(currencyId)) {
-          result.put("conversionrate", "1");
+          result.put("conversionrate", 1);
         } else {
           ConversionRate convRate = FinancialUtils.getConversionRate(paymentDate, OBDal
               .getInstance().get(Currency.class, currencyId), finAccPaymentMethod.getAccount()
@@ -76,14 +76,14 @@ public class PaymentMethodMulticurrencyActionHandler extends BaseActionHandler {
           if (convRate != null) {
             result.put("conversionrate", convRate.getMultipleRateBy());
           } else {
-            result.put("conversionrate", "1");
+            result.put("conversionrate", 1);
           }
         }
         result.put("currencyToId", finAccPaymentMethod.getAccount().getCurrency().getId());
         result.put("currencyToIdentifier", finAccPaymentMethod.getAccount().getCurrency()
             .getIdentifier());
       } else {
-        result.put("conversionrate", "1");
+        result.put("conversionrate", 1);
         result.put("currencyToId", currencyId);
       }
       return result;
