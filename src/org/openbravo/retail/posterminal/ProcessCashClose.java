@@ -88,7 +88,6 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
     }
     if (cashUp == null) {
       // This cashup is a closed box
-      TriggerHandler.getInstance().disable();
       try {
         TriggerHandler.getInstance().disable();
 
