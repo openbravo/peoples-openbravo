@@ -91,7 +91,6 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
           "There are errors related to non-created customers, orders, or cash management movements pending to be processed. Process them before processing the cash ups");
     }
     if (cashUp == null) {
-      TriggerHandler.getInstance().disable();
       try {
         TriggerHandler.getInstance().disable();
 
