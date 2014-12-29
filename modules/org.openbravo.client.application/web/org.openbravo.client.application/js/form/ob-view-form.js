@@ -486,8 +486,8 @@ OB.ViewFormProperties = {
 
     var focusItem = this.getFocusItem();
 
-    if (initializingForm && focusItem.type === 'OBAuditSectionItem') {
-      // if the does not have any editable fields, the first OBAuditSectionItem will be focused
+    if (initializingForm && isc.isA.SectionItem(focusItem)) {
+      // if the form does not have any editable fields, the first section item will be focused
       // in that case dont move the scroll to the focused item and show the first batch of fields
       this.view.formContainerLayout.scrollToTop();
       return;
