@@ -469,6 +469,13 @@ isc.OBViewGrid.addProperties({
       };
     }
 
+    if (this.view.isRootView && this.view.standardWindow.emptyFilterClause) {
+      // this.view.standardWindow.emptyFilterClause will be true if the grid is being built based on
+      // an URL that was obtained from a grid that either did not have originally a filterClause or
+      // whose filters had been cleared
+      delete this.filterClause;
+    }
+
     var ret = this.Super('initWidget', arguments);
 
     // only show summary rows if there are summary functions

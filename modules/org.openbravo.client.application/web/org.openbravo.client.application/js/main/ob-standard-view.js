@@ -747,6 +747,11 @@ isc.OBStandardView.addProperties({
           })) + '&';
         }
       }
+      if (!this.viewGrid.filterClause) {
+        // if the grid does not currently have a filterClause (i.e. because the filters have been cleared), make it explicit in the URL
+        // this way the filter clause can be removed when building a grid based on this URL (see issue https://issues.openbravo.com/view.php?id=24577)
+        url = url + '&emptyFilterClause=true';
+      }
     }
 
     return url;

@@ -384,6 +384,10 @@ OB.Utilities.openDirectTab = function (tabId, recordId, command, position, crite
       }
     }
 
+    if (urlParams.emptyFilterClause) {
+      view.emptyFilterClause = urlParams.emptyFilterClause;
+    }
+
     if (urlParams.replaceDefaultFilter) {
       view.replaceDefaultFilter = urlParams.replaceDefaultFilter;
     }
