@@ -338,14 +338,13 @@ OB.Utilities.useClassicMode = function (windowId) {
 // Open a view using a tab id and record id. The tab can be a child tab. If the record id
 // is not set then the tab is opened in grid mode. If command is not set then default is
 // used.
-OB.Utilities.openDirectTab = function (tabId, recordId, command, position, criteria, direct) {
-
+OB.Utilities.openDirectTab = function (tabId, recordId, command, position, criteria, direct, urlParams) {
+  var callback, isDirect = direct;
+  // if the url params are not passed to the function, obtain then from the url
+  urlParams = urlParams || OB.Utilities.getUrlParameters();
   tabId = OB.Utilities.removeFragment(tabId);
   recordId = OB.Utilities.removeFragment(recordId);
   command = OB.Utilities.removeFragment(command);
-
-  var urlParams = OB.Utilities.getUrlParameters(),
-      callback, isDirect = direct;
 
   //added to have the additional filter clause and tabid. Mallikarjun M
   callback = function (response, data, request) {
