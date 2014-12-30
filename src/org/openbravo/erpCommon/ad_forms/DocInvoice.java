@@ -430,8 +430,9 @@ public class DocInvoice extends AcctServer {
                 && (!prepaymentamt.equals("0"))) {
               percentageFinalAccount = ((prepayment.multiply(new BigDecimal(100))).divide(
                   grossamt.abs(), precission, RoundingMode.HALF_UP));
-              taxToTransAccount = percentageFinalAccount.multiply(taxesAmountTotal).divide(
-                  new BigDecimal(100), precission, RoundingMode.HALF_UP);
+              taxToTransAccount = CashVATUtil.calculatePercentageAmount(
+                  CashVATUtil._100.subtract(percentageFinalAccount), taxesAmountTotal,
+                  C_Currency_ID);
             } else {
               percentageFinalAccount = CashVATUtil.calculatePrepaidPercentageForCashVATTax(
                   m_taxes[i].m_C_Tax_ID, Record_ID);
@@ -454,8 +455,9 @@ public class DocInvoice extends AcctServer {
                 && (!prepaymentamt.equals("0"))) {
               percentageFinalAccount = ((prepayment.multiply(new BigDecimal(100))).divide(
                   grossamt.abs(), precission, RoundingMode.HALF_UP));
-              taxToTransAccount = percentageFinalAccount.multiply(taxesAmountTotal).divide(
-                  new BigDecimal(100), precission, RoundingMode.HALF_UP);
+              taxToTransAccount = CashVATUtil.calculatePercentageAmount(
+                  CashVATUtil._100.subtract(percentageFinalAccount), taxesAmountTotal,
+                  C_Currency_ID);
             } else {
               percentageFinalAccount = CashVATUtil.calculatePrepaidPercentageForCashVATTax(
                   m_taxes[i].m_C_Tax_ID, Record_ID);
