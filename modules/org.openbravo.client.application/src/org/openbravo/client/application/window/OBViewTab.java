@@ -903,6 +903,12 @@ public class OBViewTab extends BaseTemplateComponent {
     }
 
     public String getUrl() {
+      if (url == null) {
+        url = "/";
+        log.error("The button " + column.getName() + " of the table "
+            + column.getTable().getDBTableName()
+            + " has not process or a process definition assigned to it");
+      }
       return url;
     }
 
@@ -911,6 +917,12 @@ public class OBViewTab extends BaseTemplateComponent {
     }
 
     public String getCommand() {
+      if (command == null) {
+        command = "/";
+        log.error("The button " + column.getName() + " of the table "
+            + column.getTable().getDBTableName()
+            + " has not process or a process definition assigned to it");
+      }
       return command;
     }
 
