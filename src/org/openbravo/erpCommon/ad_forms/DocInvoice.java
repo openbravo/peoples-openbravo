@@ -769,12 +769,15 @@ public class DocInvoice extends AcctServer {
       fact.createLine(null, getAccount(AcctServer.ACCTTYPE_Charge, as, conn), this.C_Currency_ID,
           getAmount(AcctServer.AMTTYPE_Charge), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
           DocumentType, conn);
+      BigDecimal grossamt = new BigDecimal(Amounts[AMTTYPE_Gross]);
+      BigDecimal prepayment = new BigDecimal(prepaymentamt);
       // TaxCredit DR
       for (int i = 0; m_taxes != null && i < m_taxes.length; i++) {
         // New docLine created to assign C_Tax_ID value to the entry
         DocLine docLine = new DocLine(DocumentType, Record_ID, "");
         docLine.m_C_Tax_ID = m_taxes[i].m_C_Tax_ID;
-
+        final Currency currency = OBDal.getInstance().get(Currency.class, C_Currency_ID);
+        int precission = currency.getStandardPrecision().intValue();
         if (!m_taxes[i].m_isTaxUndeductable) {
           BigDecimal percentageFinalAccount = CashVATUtil._100;
           final BigDecimal taxesAmountTotal = new BigDecimal(StringUtils.isBlank(m_taxes[i]
@@ -782,11 +785,21 @@ public class DocInvoice extends AcctServer {
           BigDecimal taxToTransAccount = BigDecimal.ZERO;
           if (IsReversal.equals("Y")) {
             if (isCashVAT && m_taxes[i].m_isCashVAT) {
-              percentageFinalAccount = CashVATUtil.calculatePrepaidPercentageForCashVATTax(
-                  m_taxes[i].m_C_Tax_ID, Record_ID);
-              taxToTransAccount = CashVATUtil.calculatePercentageAmount(
-                  CashVATUtil._100.subtract(percentageFinalAccount), taxesAmountTotal,
-                  C_Currency_ID);
+              if ((m_payments == null || m_payments.length == 0)
+                  && (m_debt_payments == null || m_debt_payments.length == 0)
+                  && (!prepaymentamt.equals("0"))) {
+                percentageFinalAccount = ((prepayment.multiply(new BigDecimal(100))).divide(
+                    grossamt.abs(), precission, RoundingMode.HALF_UP));
+                taxToTransAccount = CashVATUtil.calculatePercentageAmount(
+                    CashVATUtil._100.subtract(percentageFinalAccount), taxesAmountTotal,
+                    C_Currency_ID);
+              } else {
+                percentageFinalAccount = CashVATUtil.calculatePrepaidPercentageForCashVATTax(
+                    m_taxes[i].m_C_Tax_ID, Record_ID);
+                taxToTransAccount = CashVATUtil.calculatePercentageAmount(
+                    CashVATUtil._100.subtract(percentageFinalAccount), taxesAmountTotal,
+                    C_Currency_ID);
+              }
               fact.createLine(docLine,
                   m_taxes[i].getAccount(DocTax.ACCTTYPE_TaxCredit_Trans, as, conn),
                   this.C_Currency_ID, "", taxToTransAccount.toString(), Fact_Acct_Group_ID,
@@ -798,11 +811,21 @@ public class DocInvoice extends AcctServer {
                 nextSeqNo(SeqNo), DocumentType, conn);
           } else {
             if (isCashVAT && m_taxes[i].m_isCashVAT) {
-              percentageFinalAccount = CashVATUtil.calculatePrepaidPercentageForCashVATTax(
-                  m_taxes[i].m_C_Tax_ID, Record_ID);
-              taxToTransAccount = CashVATUtil.calculatePercentageAmount(
-                  CashVATUtil._100.subtract(percentageFinalAccount), taxesAmountTotal,
-                  C_Currency_ID);
+              if ((m_payments == null || m_payments.length == 0)
+                  && (m_debt_payments == null || m_debt_payments.length == 0)
+                  && (!prepaymentamt.equals("0"))) {
+                percentageFinalAccount = ((prepayment.multiply(new BigDecimal(100))).divide(
+                    grossamt.abs(), precission, RoundingMode.HALF_UP));
+                taxToTransAccount = CashVATUtil.calculatePercentageAmount(
+                    CashVATUtil._100.subtract(percentageFinalAccount), taxesAmountTotal,
+                    C_Currency_ID);
+              } else {
+                percentageFinalAccount = CashVATUtil.calculatePrepaidPercentageForCashVATTax(
+                    m_taxes[i].m_C_Tax_ID, Record_ID);
+                taxToTransAccount = CashVATUtil.calculatePercentageAmount(
+                    CashVATUtil._100.subtract(percentageFinalAccount), taxesAmountTotal,
+                    C_Currency_ID);
+              }
               fact.createLine(docLine,
                   m_taxes[i].getAccount(DocTax.ACCTTYPE_TaxCredit_Trans, as, conn),
                   this.C_Currency_ID, taxToTransAccount.toString(), "", Fact_Acct_Group_ID,
