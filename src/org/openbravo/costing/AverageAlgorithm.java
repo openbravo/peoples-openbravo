@@ -104,6 +104,9 @@ public class AverageAlgorithm extends CostingAlgorithm {
         transaction.getProduct(), costOrg, transaction.getMovementDate(), costDimensions,
         transaction.getStorageBin(), transaction.getAttributeSetValue(), costCurrency,
         costingRule.isBackdatedTransactionsFixed());
+    if (transaction.getMovementQuantity().signum() == 1) {
+      cost = cost.negate();
+    }
     return cost;
   }
 
