@@ -92,7 +92,7 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
           OrganizationStructureProvider osp = OBContext.getOBContext()
               .getOrganizationStructureProvider(rule.getClient().getId());
           final Set<String> childOrgs = osp.getChildTree(rule.getOrganization().getId(), true);
-          if (line.getWarehouse() == null) {
+          if (!rule.isWarehouseDimension()) {
             createInventories(lineId, null, ruleId, childOrgs, line.getReferenceDate());
           } else {
             createInventories(lineId, line.getWarehouse(), ruleId, childOrgs,
