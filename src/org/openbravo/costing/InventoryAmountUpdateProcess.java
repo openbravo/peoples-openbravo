@@ -220,10 +220,10 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
         } else {
           openInventoryLine = insertInventoryLine(inv.getInitInventory(),
               line.getProduct().getId(), attrSetInsId, uomId, orderUOMId, locatorId,
-              BigDecimal.ZERO, qty, BigDecimal.ZERO, orderQty == null ? null : orderQty, lineNo,
-              closingInventoryLine, line.getUnitCost());
+              BigDecimal.ZERO, qty.negate(), BigDecimal.ZERO, orderQty == null ? null : orderQty,
+              lineNo, closingInventoryLine, line.getUnitCost());
           insertInventoryLine(inv.getCloseInventory(), line.getProduct().getId(), attrSetInsId,
-              uomId, orderUOMId, locatorId, qty == null ? null : qty, BigDecimal.ZERO,
+              uomId, orderUOMId, locatorId, qty == null ? null : qty.negate(), BigDecimal.ZERO,
               orderQty == null ? null : orderQty, BigDecimal.ZERO, lineNo, openInventoryLine, null);
 
         }
