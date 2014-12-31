@@ -212,7 +212,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
         log.debug("Process related transaction {}", trx.getIdentifier());
         BigDecimal trxSignMultiplier = new BigDecimal(trx.getMovementQuantity().signum());
         BigDecimal trxAdjAmt = BigDecimal.ZERO;
-        if (StringUtils.isNotEmpty(bdCostingId)) {
+        if (StringUtils.isNotEmpty(bdCostingId) && !isBackdatedTransaction(trx)) {
           // If there is a backdated source adjustment pending modify the dates of its m_costing.
           updateBDCostingTimeRange(trx);
           // This update is done only on the first related transaction.
@@ -762,18 +762,13 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
 
     Costing curCosting = getTrxCurrentCosting(trx);
     if (curCosting != null) {
-      if (curCosting.getInventoryTransaction().getMovementDate()
-          .before(bdCosting.getInventoryTransaction().getMovementDate())) {
-        bdCosting.setEndingDate(curCosting.getEndingDate());
-        curCosting.setEndingDate(trx.getTransactionProcessDate());
-      } else {
-        curCosting.setEndingDate(bdCosting.getEndingDate());
-        bdCosting.setEndingDate(trx.getTransactionProcessDate());
-      }
+      bdCosting.setEndingDate(curCosting.getEndingDate());
+      curCosting.setEndingDate(trx.getTransactionProcessDate());
       OBDal.getInstance().save(curCosting);
     } else {
       // There isn't any previous costing.
       bdCosting.setEndingDate(trx.getTransactionProcessDate());
+
     }
     bdCosting.setStartingDate(trx.getTransactionProcessDate());
     bdCosting.setPermanent(Boolean.TRUE);
@@ -845,6 +840,26 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
       break;
     default:
       break;
+    }
+    return false;
+  }
+
+  /**
+   * Returns true if a transaction is a backdated transaction (has related backdated transaction
+   * adjustments).
+   * 
+   * @param trx
+   *          MaterialTransaction to check if is backdated or not.
+   * @return boolean
+   */
+  private boolean isBackdatedTransaction(MaterialTransaction trx) {
+    OBCriteria<CostAdjustmentLine> critLines = OBDal.getInstance().createCriteria(
+        CostAdjustmentLine.class);
+    critLines.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_INVENTORYTRANSACTION, trx));
+    critLines.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_ISBACKDATEDTRX, true));
+    final List<CostAdjustmentLine> critLinesList = critLines.list();
+    if (critLinesList.size() > 0) {
+      return true;
     }
     return false;
   }
