@@ -82,7 +82,7 @@ BEGIN
   v_stock := v_stock + p_stock;
   v_valuation := v_valuation + p_valuation;
 
-  IF (v_stock= 0) THEN
+  IF (v_stock = 0) THEN
     v_unit_price := 0;
     v_valuation := 0;
   ELSE
@@ -91,13 +91,13 @@ BEGIN
 
   IF (v_count > 0) THEN
     UPDATE m_stock_valuation
-    SET stock = v_stock,
-        stock_valuation = v_valuation,
+    SET stock = stock + p_stock,
+        stock_valuation = stock_valuation + p_valuation,
         unit_price = v_unit_price
-     WHERE ad_client_id = p_client
-       AND ad_org_id = p_org
-       AND m_product_id = p_product
-       AND (v_warehouse IS NULL OR m_warehouse_id = v_warehouse);
+    WHERE ad_client_id = p_client
+      AND ad_org_id = p_org
+      AND m_product_id = p_product
+      AND (v_warehouse IS NULL OR m_warehouse_id = v_warehouse);
   ELSE
     INSERT INTO m_stock_valuation (
         m_stock_valuation_id, ad_client_id, ad_org_id,

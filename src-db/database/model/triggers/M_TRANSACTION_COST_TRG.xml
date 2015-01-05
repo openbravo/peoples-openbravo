@@ -61,7 +61,7 @@ BEGIN
   FROM DUAL
   WHERE EXISTS (SELECT 1 FROM ad_preference
                 WHERE property = 'UnitaryCost'
-                  AND ad_client_id IN (:NEW.ad_client_id, '0')
+                  AND ad_client_id IN (v_client_id, '0')
                   AND TO_CHAR(value) = 'Y');
 
   IF (v_updatestockvaluation > 0) THEN
@@ -77,7 +77,7 @@ BEGIN
         JOIN m_locator l ON t.m_locator_id = l.m_locator_id
       WHERE m_transaction_id = v_transaction_id;
 
-      v_valuation := c_currency_convert_precision(:NEW.cost, v_currency_id, v_currency_to_id, :NEW.costdate, NULL, v_client_id, v_legal_org_id, 'C');
+      v_valuation := c_currency_convert_precision(COALESCE(:NEW.cost, 0), v_currency_id, v_currency_to_id, :NEW.costdate, NULL, v_client_id, v_legal_org_id, 'C');
       v_valuation := v_valuation * v_sign;
       M_UPDATE_STOCK_VALUATION(v_client_id, v_legal_org_id, :NEW.createdby, v_warehouse_id, v_product_id, 0, v_valuation);
     END IF;
