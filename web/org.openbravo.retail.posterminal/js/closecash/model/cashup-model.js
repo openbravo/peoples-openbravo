@@ -73,6 +73,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
           })[0];
           var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('cashup-model.init II');
           if (!auxPay) { //We cannot find this payment in local database, it must be a new payment method, we skip it.
+            OB.UTIL.SynchronizationHelper.finished(synchId, 'cashup-model.init II');
             return;
           }
           auxPay.set('_id', payment.payment.searchKey);
