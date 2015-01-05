@@ -190,9 +190,18 @@ isc.OBParameterWindowView.addProperties({
       } catch (_exception) {
         isc.warn(_exception + ' ' + _exception.message + ' ' + _exception.stack);
       }
-      if (originalShowIfValue && item.defaultFilter !== null && !isc.isA.emptyObject(item.defaultFilter) && item.getType() === 'OBPickEditGridItem') {
-        item.canvas.viewGrid.setFilterEditorCriteria(item.defaultFilter);
-        item.canvas.viewGrid.filterByEditor();
+      if (originalShowIfValue && item.getType() === 'OBPickEditGridItem') {
+        // load the grid if it is being shown for the first time
+        if (item.canvas && item.canvas.viewGrid && !isc.isA.ResultSet(item.canvas.viewGrid.data)) {
+          if (item.defaultFilter !== null && !isc.isA.emptyObject(item.defaultFilter)) {
+            // if it has a default filter, apply it and use it when filtering
+            item.canvas.viewGrid.setFilterEditorCriteria(item.defaultFilter);
+            item.canvas.viewGrid.filterByEditor();
+          } else {
+            // if it does not have a default filter, just refresh the grid
+            item.canvas.viewGrid.refreshGrid();
+          }
+        }
       }
       if (this.view && this.view.theForm) {
         this.view.theForm.markForRedraw();
@@ -319,7 +328,7 @@ isc.OBParameterWindowView.addProperties({
   handleResponse: function (refreshParent, message, responseActions, retryExecution, data) {
     var window = this.parentWindow,
         tab = OB.MainView.TabSet.getTab(this.viewTabId),
-        i;
+        i, afterRefreshCallback, me = this;
 
     // change title to done
     if (tab) {
@@ -385,13 +394,18 @@ isc.OBParameterWindowView.addProperties({
 
     if (this.popup && !retryExecution) {
       this.buttonOwnerView.setAsActiveView();
-
+      afterRefreshCallback = function () {
+        if (me.buttonOwnerView && isc.isA.Function(me.buttonOwnerView.refreshParentRecord) && isc.isA.Function(me.buttonOwnerView.refreshChildViews)) {
+          me.buttonOwnerView.refreshParentRecord();
+          me.buttonOwnerView.refreshChildViews();
+        }
+      };
       if (refreshParent) {
         if (this.callerField && this.callerField.view && typeof this.callerField.view.onRefreshFunction === 'function') {
           // In this case we are inside a process called from another process, so we want to refresh the caller process instead of the main window.
           this.callerField.view.onRefreshFunction(this.callerField.view);
         } else {
-          window.refresh();
+          this.buttonOwnerView.refreshCurrentRecord(afterRefreshCallback);
         }
       }
 

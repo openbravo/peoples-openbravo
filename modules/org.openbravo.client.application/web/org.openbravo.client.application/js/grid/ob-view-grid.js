@@ -25,7 +25,7 @@ isc.OBViewGrid.addClassProperties({
   // ListGrid._$ArrowUp and ListGrid._$ArrowDown
   ARROW_UP_KEY_NAME: 'Arrow_Up',
   ARROW_DOWN_KEY_NAME: 'Arrow_Down',
-  ERROR_MESSAGE_PROP: isc.OBViewGrid.ERROR_MESSAGE_PROP,
+  ERROR_MESSAGE_PROP: '_hasErrors',
   ICONS: {
     PROGRESS: 0,
     OPEN_IN_FORM: 1,
@@ -206,7 +206,12 @@ isc.OBViewGrid.addProperties({
       // clone to prevent side effects
       var requestProperties = isc.clone(this.context);
       this.context.params = this.grid.getFetchRequestParams(requestProperties.params);
-
+      if (this.grid.refreshingWithSelectedRecord) {
+        // if the grid was refreshed with a record selected, use the range that contained that record 
+        //  instead of using targetRecordId to improve the performance
+        startRow = this.grid.selectedRecordInitInterval;
+        endRow = this.grid.selectedRecordEndInterval;
+      }
       return this.Super('fetchRemoteData', arguments);
     },
 
@@ -270,6 +275,13 @@ isc.OBViewGrid.addProperties({
         if (newTotalRows > dsResponse.totalRows) {
           dsResponse.totalRows = newTotalRows + 1;
           // increase one to request additional page to backend
+        }
+
+        // detects if the request was issued due to having scrolled up
+        if (this.grid.body.lastScrollTop !== undefined && this.grid.body.lastScrollTop > this.grid.body.getScrollTop()) {
+          // in that case, set the totalRows of the response to the length of the localData, to avoid
+          // setting the totalRows of the grid to an invalid value
+          dsResponse.totalRows = this.localData.length;
         }
 
         // get rid of old loading markers, this has to be done explicitly
@@ -455,6 +467,13 @@ isc.OBViewGrid.addProperties({
           me.Super('show', arguments);
         }
       };
+    }
+
+    if (this.view.isRootView && this.view.standardWindow.emptyFilterClause) {
+      // this.view.standardWindow.emptyFilterClause will be true if the grid is being built based on
+      // an URL that was obtained from a grid that either did not have originally a filterClause or
+      // whose filters had been cleared
+      delete this.filterClause;
     }
 
     var ret = this.Super('initWidget', arguments);
@@ -748,6 +767,10 @@ isc.OBViewGrid.addProperties({
 
   // overridden to load all data in one request
   requestVisibleRows: function () {
+    if (this.refreshingWithRecordSelected || this.refreshingWithScrolledGrid) {
+      // don't make a request for the visible rows if the grid is already being refreshed
+      return;
+    }
     // fake smartclient to think that there groupByMaxRecords + 1 records
     if (this.data && this.isGrouped && !this.data.allRows) {
       this.data.totalRows = this.groupByMaxRecords + 1;
@@ -1418,9 +1441,35 @@ isc.OBViewGrid.addProperties({
     OB.KeyboardManager.Shortcuts.set('ViewGrid_EditInGrid', 'OBViewGrid.body', ksAction_EditInGrid);
 
     ksAction_EditInForm = function () {
+      var wasEditingGrid = false,
+          autoSaveEditsBackup = me.autoSaveEdits,
+          recordToEdit, originalValuesOfEditedRow;
       if (me.getSelectedRecords().length === 1) {
+        if (me.view.isEditingGrid) {
+          // do not save the provisional changes
+          me.autoSaveEdits = false;
+          if (me.getSelectedRecords()[0]._new) {
+            // if the record is new set the wasEditingGrid flag to true to prevent 
+            // doing a FIC request in mode NEW
+            wasEditingGrid = true;
+            // open the form view with the current values of the edited row
+            recordToEdit = me.getEditedRecord(me.getEditRow());
+            me.storeValueMaps();
+          } else {
+            recordToEdit = me.getSelectedRecords()[0];
+            // store the original values of the row (previous ot the edition in grid)
+            originalValuesOfEditedRow = recordToEdit;
+          }
+        } else {
+          recordToEdit = me.getSelectedRecords()[0];
+        }
         me.endEditing();
-        me.view.editRecord(me.getSelectedRecords()[0]);
+        me.autoSaveEdits = autoSaveEditsBackup;
+        me.view.editRecord(recordToEdit, null, null, wasEditingGrid);
+        if (originalValuesOfEditedRow) {
+          me.view.viewForm.originalValuesOfEditedRow = originalValuesOfEditedRow;
+        }
+        delete me.storedValueMaps;
         return false; // To avoid keyboard shortcut propagation
       } else {
         return true;
@@ -1429,6 +1478,21 @@ isc.OBViewGrid.addProperties({
     OB.KeyboardManager.Shortcuts.set('ViewGrid_EditInForm', ['OBViewGrid.body', 'OBViewGrid.editForm'], ksAction_EditInForm);
 
     this.Super('enableShortcuts', arguments);
+  },
+
+  storeValueMaps: function () {
+    var i, items, editForm = this.getEditForm(),
+        item;
+    if (!editForm) {
+      return;
+    }
+    this.storedValueMaps = {};
+    items = editForm.getItems();
+    for (i = 0; i < items.length; i++) {
+      if (items[i].valueMap) {
+        this.storedValueMaps[items[i].name] = items[i].valueMap;
+      }
+    }
   },
 
   deselectAllRecords: function (preventUpdateSelectInfo, autoSaveDone) {
@@ -1618,7 +1682,7 @@ isc.OBViewGrid.addProperties({
       // so just show grid mode
       // don't need to do anything here
       delete this.targetOpenGrid;
-    } else if (this.targetRecordId) {
+    } else if (this.targetRecordId || this.selectedRecordId) {
       // direct link from other tab to a specific record
       this.delayedHandleTargetRecord(startRow, endRow);
     } else if (this.view.shouldOpenDefaultEditMode()) {
@@ -1678,7 +1742,7 @@ isc.OBViewGrid.addProperties({
 
   refreshGrid: function (callback, newRecordsToBeIncluded) {
     var originalCriteria, criteria = {},
-        newRecordsCriteria, newRecordsLength, i, index;
+        newRecordsCriteria, newRecordsLength, i, index, selectedRecordIndex, visibleRows, filterDataCallback, me = this;
 
     //check whether newRecordsToBeIncluded contains records not part of the current grid and remove them.
     if (newRecordsToBeIncluded && newRecordsToBeIncluded.length > 0 && this.data) {
@@ -1693,9 +1757,27 @@ isc.OBViewGrid.addProperties({
     }
 
     if (this.getSelectedRecord()) {
-      this.targetRecordId = this.getSelectedRecord()[OB.Constants.ID];
-      // as the record is already selected it is already in the filter
+      // this property is used to prevent an unneeded request in OBViewGridBody.redraw
+      this.refreshingWithSelectedRecord = true;
+      // obtain a range that contains the selected record
+      selectedRecordIndex = this.getRecordIndex(this.getSelectedRecord());
+      if (selectedRecordIndex !== -1) {
+        this.selectedRecordId = this.getSelectedRecord()[OB.Constants.ID];
+        this.selectedRecordInitInterval = selectedRecordIndex - Math.round(this.data.resultSize / 2);
+        if (this.selectedRecordInitInterval < 0) {
+          this.selectedRecordInitInterval = 0;
+        }
+        this.selectedRecordEndInterval = this.selectedRecordInitInterval + this.data.resultSize;
+      }
       this.notRemoveFilter = true;
+    } else {
+      visibleRows = this.getVisibleRows();
+      if (visibleRows && visibleRows[0] > 0) {
+        // save the index of the record placed in the middle of the viewport to 
+        // move the scroll to it after receiving the response
+        this.recordIndexToScroll = Math.round((visibleRows[0] + visibleRows[1]) / 2);
+      }
+
     }
     this.actionAfterDataArrived = callback;
     this.invalidateCache();
@@ -1735,7 +1817,29 @@ isc.OBViewGrid.addProperties({
     } else {
       criteria = originalCriteria;
     }
-    this.filterData(criteria, null, context);
+    filterDataCallback = function () {
+      if (me.refreshingWithScrolledGrid) {
+        // move the scroll to part of the grid that contains the data that was just received to
+        // prevent unneded requests (see https://issues.openbravo.com/view.php?id=25811)
+        // the adjustment is needed to show the records in the same exact position where they were
+        // placed before refreshing the grid, if no records were added/removed
+        me.scrollCellIntoView(me.recordIndexToScroll + 1, null, true, true);
+      }
+      delete me.recordIndexToScroll;
+      delete me.refreshingWithScrolledGrid;
+      delete me.refreshingWithRecordSelected;
+      delete me.selectedRecordInitInterval;
+      delete me.selectedRecordEndInterval;
+      delete me.selectedRecordId;
+    };
+    this.filterData(criteria, filterDataCallback, context);
+    // Set the refreshingWithRecordSelected and refreshingWithScrolledGrid flags to true when needed after
+    // actually start filtering the data. These flags will prevent unneeded multiple datasource requests
+    if (this.selectedRecordInitInterval !== undefined) {
+      this.refreshingWithRecordSelected = true;
+    } else if (this.recordIndexToScroll) {
+      this.refreshingWithScrolledGrid = true;
+    }
     // At this point the original criteria should be restored, to prevent
     // the 'or' clause that was just added to be used in subsequent refreshes.
     // It is not possible to do it here, though, because a this.setCriteria(originalCriteria)
@@ -1746,8 +1850,8 @@ isc.OBViewGrid.addProperties({
   // with a delay to handle the target record when the body has been drawn
   delayedHandleTargetRecord: function (startRow, endRow) {
     var rowTop, recordIndex, i, data = this.data,
-        tmpTargetRecordId = this.targetRecordId;
-    if (!this.targetRecordId) {
+        tmpTargetRecordId = this.targetRecordId || this.selectedRecordId;
+    if (!tmpTargetRecordId) {
       delete this.isOpenDirectModeLeaf;
       return;
     }
@@ -1807,7 +1911,7 @@ isc.OBViewGrid.addProperties({
 
   filterData: function (criteria, callback, requestProperties) {
     var theView = this.view,
-        newCallBack;
+        newCallBack, me = this;
 
     if (!requestProperties) {
       requestProperties = {};
@@ -1817,6 +1921,8 @@ isc.OBViewGrid.addProperties({
 
     newCallBack = function () {
       theView.recordSelected();
+      delete me.refreshingWithSelectedRecord;
+      me.markForRedraw();
       if (typeof callback === 'function') {
         callback();
       }
@@ -2836,7 +2942,7 @@ isc.OBViewGrid.addProperties({
     // set the default error message,
     // is possibly overridden in the next call
     if (record) {
-      record._hasValidationErrors = true;
+      this.addRecordToValidationErrorList(record);
       if (!record[isc.OBViewGrid.ERROR_MESSAGE_PROP]) {
         this.setRecordErrorMessage(rowNum, OB.I18N.getLabel('OBUIAPP_ErrorInFields'));
         // do not automatically remove this message
@@ -2852,6 +2958,10 @@ isc.OBViewGrid.addProperties({
       isc.warn(OB.I18N.getLabel('OBUIAPP_AutoSaveError', [this.view.tabTitle]));
     }
 
+    // show an error message in the toolbar if the event that triggered the action was an autosave, to mimic the way client side validation errors are handled
+    if (view.standardWindow.isAutoSaving) {
+      view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_ErrorInFieldsGrid', [view.ID]));
+    }
     view.standardWindow.cleanUpAutoSaveProperties();
     view.updateTabTitle();
     view.toolBar.updateButtonState(true);
@@ -2865,6 +2975,45 @@ isc.OBViewGrid.addProperties({
     isNewRecord = (form === null) ? false : form.isNew;
     if (isNewRecord) {
       delete this.view._savingNewRecord;
+    }
+  },
+
+  addRecordToValidationErrorList: function (record) {
+    if (!record) {
+      return;
+    }
+    record._hasValidationErrors = true;
+    this.recordIdsWithValidationError = this.recordIdsWithValidationError || [];
+    if (!this.recordIdsWithValidationError.contains(record[OB.Constants.ID])) {
+      this.recordIdsWithValidationError.push(record[OB.Constants.ID]);
+    }
+  },
+
+  removeRecordFromValidationErrorList: function (record) {
+    if (!record) {
+      return;
+    }
+    delete record._hasValidationErrors;
+    this.recordIdsWithValidationError = this.recordIdsWithValidationError || [];
+    this.recordIdsWithValidationError.remove(record[OB.Constants.ID]);
+  },
+
+  selectedRecordHasValidationErrors: function () {
+    var record;
+    // if the number of selected records is not 1, return false
+    if (this.getSelectedRecords().length !== 1 || !isc.isA.Array(this.recordIdsWithValidationError)) {
+      return false;
+    }
+    record = this.getSelectedRecord();
+    return this.recordIdsWithValidationError.contains(record[OB.Constants.ID]);
+  },
+
+  gridHasValidationErrors: function () {
+    if (!isc.isA.Array(this.recordIdsWithValidationError)) {
+      return false;
+    } else {
+      // return true if the list of record ids with validation errors is not empty
+      return !this.recordIdsWithValidationError.isEmpty();
     }
   },
 
@@ -2924,6 +3073,9 @@ isc.OBViewGrid.addProperties({
     if (!record) {
       return;
     }
+
+    // the record has been sucessfully saved so it does not have validation errors
+    this.removeRecordFromValidationErrorList(record);
 
     // a new id has been computed use that now
     if (record && record._newId) {
@@ -3002,6 +3154,7 @@ isc.OBViewGrid.addProperties({
     for (i = 0; i < length; i++) {
       var rowNum = this.getRecordIndex(selectedRecords[i]);
       var record = selectedRecords[i];
+      this.removeRecordFromValidationErrorList(record);
       this.Super('discardEdits', [rowNum, false, false, isc.ListGrid.PROGRAMMATIC]);
       // remove the record if new
       if (record._new) {
@@ -3043,6 +3196,10 @@ isc.OBViewGrid.addProperties({
         editForm = this.getEditForm(),
         totalRows, me = this,
         record = this.getRecord(rowNum);
+
+    if (record) {
+      this.removeRecordFromValidationErrorList(record);
+    }
 
     if (!preventConfirm && ((editForm && editForm.hasChanged) || this.rowHasErrors(rowNum))) {
       me.Super('discardEdits', localArguments);
@@ -3586,9 +3743,6 @@ isc.OBViewGrid.addProperties({
     if (this.Super('rowHasErrors', arguments)) {
       return true;
     }
-    if (!this.getEditForm()) {
-      return false;
-    }
     if (this.getEditRow() === rowNum && this.getEditForm().hasErrors()) {
       return true;
     }
@@ -3671,6 +3825,10 @@ isc.OBViewGrid.addProperties({
       // an edit id
       rowNum = this.getEditSessionRowNum(rowNum);
       return this.Super('getRecord', [rowNum]);
+    }
+    if (this.refreshingWithRecordSelected || this.refreshingWithScrolledGrid) {
+      // if the grid if being refreshed do not try to return a record, just notify that is being loaded
+      return Array.LOADING;
     }
     return this.Super('getRecord', arguments);
   },
@@ -3801,10 +3959,63 @@ isc.OBViewGrid.addProperties({
         field = this.getFieldFromColumnName(prop);
         // This call to the FIC was done to retrieve the missing values
         // Do not try to overwrite the existing values
-        if (field && !this.getRecord(rowNum)[field.property]) {
+        if (field && !this.fieldIsVisible(field.property) && !this.getRecord(rowNum)[field.property]) {
           grid.processColumnValue(rowNum, prop, columnValues[prop]);
         }
       }
+    }
+  },
+
+  fieldIsVisible: function (fieldName) {
+    // this.getFields returns the list of fields that are currently visible in the grid, 
+    // as opposed to this.completeFields that contains the whole list of fields that can be shown in the grid  
+    var visibleFields = this.getFields();
+    return visibleFields.containsProperty('name', fieldName);
+  },
+
+  updateRecord: function (recordIndex, data, req) {
+    var sessionProperties = this.view.getContextInfo(true, true, false, true),
+        me = this;
+    data = OB.Utilities.Date.convertUTCTimeToLocalTime(data, this.completeFields);
+    if (this.data.updateCacheData) {
+      this.data.updateCacheData(data, req);
+    }
+    if (this.isGrouped) {
+      // if the grid is group update its values to show the updated data
+      this.setEditValues(recordIndex, data[0]);
+    }
+    this.selectRecord(this.getRecord(recordIndex));
+    this.refreshRow(recordIndex);
+    this.redraw();
+    if (!this.view.isShowingForm) {
+      OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', sessionProperties, {
+        MODE: 'SETSESSION',
+        TAB_ID: this.view.tabId,
+        PARENT_ID: this.view.getParentId(),
+        ROW_ID: this.getSelectedRecord() ? this.getSelectedRecord().id : this.view.getCurrentValues().id
+      }, function (response, data, request) {
+        var sessionAttributes = data.sessionAttributes,
+            auxInputs = data.auxiliaryInputValues,
+            attachmentExists = data.attachmentExists,
+            prop;
+        if (sessionAttributes) {
+          me.view.viewForm.sessionAttributes = sessionAttributes;
+        }
+
+        if (auxInputs) {
+          this.auxInputs = {};
+          for (prop in auxInputs) {
+            if (auxInputs.hasOwnProperty(prop)) {
+              me.view.viewForm.setValue(prop, auxInputs[prop].value);
+              me.view.viewForm.auxInputs[prop] = auxInputs[prop].value;
+            }
+          }
+        }
+        me.view.viewForm.view.attachmentExists = attachmentExists;
+        //compute and apply tab display logic again after fetching auxilary inputs.
+        me.view.handleDefaultTreeView();
+        me.view.updateSubtabVisibility();
+      });
     }
   }
 });

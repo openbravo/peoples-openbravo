@@ -789,34 +789,34 @@
 		<variableExpression><![CDATA[($V{QTYREF_SUM10}.compareTo( new BigDecimal(0.0) )==0)? new BigDecimal(0.0):$V{QTY_SUM10}.subtract($V{QTYREF_SUM10}).divide( $V{QTYREF_SUM10}, 2, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100.0))]]></variableExpression>
 	</variable>
 	<variable name="MARGINDIFF_1" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL1">
-		<variableExpression><![CDATA[($V{MARGIN_1}!=null && $V{MARGINREF_1}!=null )?new BigDecimal(0.0):$V{MARGIN_1}.subtract( $V{MARGINREF_1})]]></variableExpression>
+		<variableExpression><![CDATA[($V{MARGIN_1}!=null && $V{MARGINREF_1}!=null )?$V{MARGIN_1}.subtract( $V{MARGINREF_1}):BigDecimal.ZERO]]></variableExpression>
 	</variable>
 	<variable name="MARGINDIFF_2" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL2">
-		<variableExpression><![CDATA[($V{MARGIN_2}!=null && $V{MARGINREF_2}!=null )?new BigDecimal(0.0):$V{MARGIN_2}.subtract( $V{MARGINREF_2})]]></variableExpression>
+		<variableExpression><![CDATA[($V{MARGIN_2}!=null && $V{MARGINREF_2}!=null )?$V{MARGIN_2}.subtract( $V{MARGINREF_2}):BigDecimal.ZERO]]></variableExpression>
 	</variable>
 	<variable name="MARGINDIFF_3" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL3">
-		<variableExpression><![CDATA[($V{MARGIN_3}!=null && $V{MARGINREF_3}!=null )?new BigDecimal(0.0):$V{MARGIN_3}.subtract( $V{MARGINREF_3})]]></variableExpression>
+		<variableExpression><![CDATA[($V{MARGIN_3}!=null && $V{MARGINREF_3}!=null )?$V{MARGIN_3}.subtract( $V{MARGINREF_3}):BigDecimal.ZERO]]></variableExpression>
 	</variable>
 	<variable name="MARGINDIFF_4" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL4">
-		<variableExpression><![CDATA[($V{MARGIN_4}!=null && $V{MARGINREF_4}!=null )?new BigDecimal(0.0):$V{MARGIN_4}.subtract( $V{MARGINREF_4})]]></variableExpression>
+		<variableExpression><![CDATA[($V{MARGIN_4}!=null && $V{MARGINREF_4}!=null )?$V{MARGIN_4}.subtract( $V{MARGINREF_4}):BigDecimal.ZERO]]></variableExpression>
 	</variable>
 	<variable name="MARGINDIFF_5" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL5">
-		<variableExpression><![CDATA[($V{MARGIN_5}!=null && $V{MARGINREF_5}!=null )?new BigDecimal(0.0):$V{MARGIN_5}.subtract( $V{MARGINREF_5})]]></variableExpression>
+		<variableExpression><![CDATA[($V{MARGIN_5}!=null && $V{MARGINREF_5}!=null )?$V{MARGIN_5}.subtract( $V{MARGINREF_5}):BigDecimal.ZERO]]></variableExpression>
 	</variable>
 	<variable name="MARGINDIFF_6" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL6">
-		<variableExpression><![CDATA[($V{MARGIN_6}!=null && $V{MARGINREF_6}!=null )?new BigDecimal(0.0):$V{MARGIN_6}.subtract( $V{MARGINREF_6})]]></variableExpression>
+		<variableExpression><![CDATA[($V{MARGIN_6}!=null && $V{MARGINREF_6}!=null )?$V{MARGIN_6}.subtract( $V{MARGINREF_6}):BigDecimal.ZERO]]></variableExpression>
 	</variable>
 	<variable name="MARGINDIFF_7" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL7">
-		<variableExpression><![CDATA[($V{MARGIN_7}!=null && $V{MARGINREF_7}!=null )?new BigDecimal(0.0):$V{MARGIN_7}.subtract( $V{MARGINREF_7})]]></variableExpression>
+		<variableExpression><![CDATA[($V{MARGIN_7}!=null && $V{MARGINREF_7}!=null )?$V{MARGIN_7}.subtract( $V{MARGINREF_7}):BigDecimal.ZERO]]></variableExpression>
 	</variable>
 	<variable name="MARGINDIFF_8" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL8">
-		<variableExpression><![CDATA[($V{MARGIN_8}!=null && $V{MARGINREF_8}!=null )?new BigDecimal(0.0):$V{MARGIN_8}.subtract( $V{MARGINREF_8})]]></variableExpression>
+		<variableExpression><![CDATA[($V{MARGIN_8}!=null && $V{MARGINREF_8}!=null )?$V{MARGIN_8}.subtract( $V{MARGINREF_8}):BigDecimal.ZERO]]></variableExpression>
 	</variable>
 	<variable name="MARGINDIFF_9" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL9">
-		<variableExpression><![CDATA[($V{MARGIN_9}!=null && $V{MARGINREF_9}!=null )?new BigDecimal(0.0):$V{MARGIN_9}.subtract( $V{MARGINREF_9})]]></variableExpression>
+		<variableExpression><![CDATA[($V{MARGIN_9}!=null && $V{MARGINREF_9}!=null )?$V{MARGIN_9}.subtract( $V{MARGINREF_9}):BigDecimal.ZERO]]></variableExpression>
 	</variable>
 	<variable name="MARGINDIFF_10" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL10">
-		<variableExpression><![CDATA[($V{MARGIN_10}!=null && $V{MARGINREF_10}!=null )?new BigDecimal(0.0):$V{MARGIN_10}.subtract( $V{MARGINREF_10})]]></variableExpression>
+		<variableExpression><![CDATA[($V{MARGIN_10}!=null && $V{MARGINREF_10}!=null )?$V{MARGIN_10}.subtract( $V{MARGINREF_10}):BigDecimal.ZERO]]></variableExpression>
 	</variable>
 	<group name="TOTALIZE">
 		<groupExpression><![CDATA[]]></groupExpression>

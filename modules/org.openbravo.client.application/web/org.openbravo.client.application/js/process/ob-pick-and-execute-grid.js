@@ -176,6 +176,14 @@ isc.OBPickAndExecuteGrid.addProperties({
         isc.addProperties(dsRequest.params, me.view.theForm.getValues());
       }
       dsRequest.params[OB.Constants.ORG_PARAMETER] = me.getOrgParameter();
+      // Add to the params the tabId of the P&E window
+      if (me.viewProperties && me.viewProperties.tabId) {
+        dsRequest.params.tabId = me.viewProperties.tabId;
+      }
+      // Add to the params the tabId owner of the button that opens the P&E window
+      if (me.view && me.view.buttonOwnerView && me.view.buttonOwnerView.tabId) {
+        dsRequest.params.buttonOwnerViewTabId = me.view.buttonOwnerView.tabId;
+      }
       return this.Super('transformRequest', arguments);
     };
     filterableProperties = this.getFields().findAll('canFilter', true);
@@ -572,6 +580,10 @@ isc.OBPickAndExecuteGrid.addProperties({
   },
 
   clearFilter: function () {
+    if (this.lazyFiltering && this.filterClause) {
+      // store that the filter has been removed to enable showing potential new records
+      this.filterClauseJustRemoved = true;
+    }
     this.filterClause = null;
     this._cleaningFilter = true;
     this.contentView.messageBar.hide();
@@ -876,6 +888,11 @@ isc.OBPickAndExecuteGrid.addProperties({
     } else {
       this.Super('getMinFieldWidth', arguments);
     }
+  },
+
+  refreshGrid: function () {
+    // fetch the data with the current criteria and context info
+    this.filterData(this.getCriteria(), null, this.getContextInfo());
   }
 
 });

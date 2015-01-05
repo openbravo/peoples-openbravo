@@ -19,6 +19,7 @@
 package org.openbravo.costing;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,6 +33,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
@@ -42,6 +44,9 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.financial.FinancialUtils;
+import org.openbravo.model.common.currency.ConversionRate;
+import org.openbravo.model.common.currency.ConversionRateDoc;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.materialmgmt.cost.CostAdjustment;
 import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
@@ -165,7 +170,10 @@ public class LandedCostProcess {
   }
 
   private void distributeAmounts(LandedCost landedCost) {
-    for (LandedCostCost lcCost : landedCost.getLandedCostCostList()) {
+    OBCriteria<LandedCostCost> criteria = OBDal.getInstance().createCriteria(LandedCostCost.class);
+    criteria.add(Restrictions.eq(LandedCostCost.PROPERTY_LANDEDCOST, landedCost));
+    criteria.addOrderBy(LandedCostCost.PROPERTY_LINENO, true);
+    for (LandedCostCost lcCost : criteria.list()) {
       log.debug("Start Distributing lcCost {}", lcCost.getIdentifier());
       // Load distribution algorithm
       LandedCostDistributionAlgorithm lcDistAlg = getDistributionAlgorithm(lcCost
@@ -208,6 +216,7 @@ public class LandedCostProcess {
     hql.append(" from " + LCReceiptLineAmt.ENTITY_NAME + " as rla");
     hql.append("   join rla." + LCReceiptLineAmt.PROPERTY_LANDEDCOSTRECEIPT + " as rl");
     hql.append(" where rl." + LCReceipt.PROPERTY_LANDEDCOST + " = :lc");
+    hql.append("   and rla." + LCReceiptLineAmt.PROPERTY_ISMATCHINGADJUSTMENT + " = false ");
     hql.append(" group by rla." + LCReceiptLineAmt.PROPERTY_LANDEDCOSTCOST + ".currency.id");
     hql.append(" , rla." + LCReceipt.PROPERTY_GOODSSHIPMENTLINE + ".id");
     hql.append(" order by trxprocessdate, amt");
@@ -278,9 +287,49 @@ public class LandedCostProcess {
     lcm.setInvoiceLine(lcc.getInvoiceLine());
     OBDal.getInstance().save(lcm);
 
+    final OBCriteria<ConversionRateDoc> conversionRateDoc = OBDal.getInstance().createCriteria(
+        ConversionRateDoc.class);
+    conversionRateDoc.add(Restrictions.eq(ConversionRateDoc.PROPERTY_INVOICE, lcm.getInvoiceLine()
+        .getInvoice()));
+    ConversionRateDoc invoiceconversionrate = (ConversionRateDoc) conversionRateDoc.uniqueResult();
+    Currency currency = lcc.getOrganization().getCurrency() != null ? lcc.getOrganization()
+        .getCurrency() : lcc.getOrganization().getClient().getCurrency();
+    ConversionRate landedCostrate = FinancialUtils.getConversionRate(lcc.getLandedCost()
+        .getReferenceDate(), lcc.getCurrency(), currency, lcc.getOrganization(), lcc.getClient());
+
+    if (invoiceconversionrate != null
+        && invoiceconversionrate.getRate() != landedCostrate.getMultipleRateBy()) {
+      BigDecimal amount = lcc
+          .getAmount()
+          .multiply(invoiceconversionrate.getRate())
+          .subtract(lcc.getAmount().multiply(landedCostrate.getMultipleRateBy()))
+          .divide(landedCostrate.getMultipleRateBy(), currency.getStandardPrecision().intValue(),
+              RoundingMode.HALF_UP);
+      LCMatched lcmCm = OBProvider.getInstance().get(LCMatched.class);
+      lcmCm.setOrganization(lcc.getOrganization());
+      lcmCm.setLandedCostCost(lcc);
+      lcmCm.setAmount(amount);
+      lcmCm.setInvoiceLine(lcc.getInvoiceLine());
+      lcmCm.setConversionmatching(true);
+      OBDal.getInstance().save(lcmCm);
+
+      lcc.setMatched(Boolean.FALSE);
+      lcc.setProcessed(Boolean.FALSE);
+      lcc.setMatchingAdjusted(true);
+      OBDal.getInstance().flush();
+      LCMatchingProcess.doProcessLCMatching(lcc);
+    }
+
     lcc.setMatched(Boolean.TRUE);
     lcc.setProcessed(Boolean.TRUE);
-    lcc.setMatchingAmount(lcc.getAmount());
+    OBCriteria<LCMatched> critMatched = OBDal.getInstance().createCriteria(LCMatched.class);
+    critMatched.add(Restrictions.eq(LCMatched.PROPERTY_LANDEDCOSTCOST, lcc));
+    critMatched.setProjection(Projections.sum(LCMatched.PROPERTY_AMOUNT));
+    BigDecimal matchedAmt = (BigDecimal) critMatched.uniqueResult();
+    if (matchedAmt == null) {
+      matchedAmt = lcc.getAmount();
+    }
+    lcc.setMatchingAmount(matchedAmt);
     OBDal.getInstance().save(lcc);
   }
 }

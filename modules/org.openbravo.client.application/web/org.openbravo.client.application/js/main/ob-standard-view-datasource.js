@@ -157,6 +157,8 @@ isc.OBViewDataSource.addProperties({
     }
   },
 
+  // delete null values of columns that do not have a field
+  // this prevents setting to null the value of a column just because it was not returned by the datasource due to not having an active field
   deleteNulls: function (data) {
     var column;
     for (column in data) {

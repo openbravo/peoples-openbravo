@@ -24,6 +24,7 @@ import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.util.Check;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.invoice.InvoiceLine;
+import org.openbravo.model.materialmgmt.cost.LCMatched;
 import org.openbravo.model.materialmgmt.cost.LandedCostType;
 import org.openbravo.service.datasource.hql.HQLInserterQualifier;
 import org.openbravo.service.datasource.hql.HqlInserter;
@@ -50,7 +51,8 @@ public class LCMatchFromInvoiceInserter extends HqlInserter {
       strWhereClause += " and lct." + LandedCostType.PROPERTY_ACCOUNT + ".id = :glitem ";
       queryNamedParameters.put("glitem", invLine.getAccount().getId());
     }
+    strWhereClause += " and ( lcm is null or lcm." + LCMatched.PROPERTY_ISCONVERSIONMATCHING
+        + "=false) ";
     return strWhereClause;
   }
-
 }

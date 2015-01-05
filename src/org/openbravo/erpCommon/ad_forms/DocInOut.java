@@ -557,9 +557,11 @@ public class DocInOut extends AcctServer {
                   setMessageResult(conn, STATUS_InvalidCost, "error", parameters);
                   throw new IllegalStateException();
                 } else {
+                  Currency currency = legalEntity.getCurrency() != null ? legalEntity.getCurrency()
+                      : legalEntity.getClient().getCurrency();
                   trxCost = CostingUtils.getStandardCost(inOutLine.getProduct(), legalEntity,
-                      inOut.getAccountingDate(), costDimensions, legalEntity.getCurrency())
-                      .multiply(new BigDecimal(data[i].breakdownqty));
+                      inOut.getAccountingDate(), costDimensions, currency).multiply(
+                      new BigDecimal(data[i].breakdownqty));
                 }
               }
             }

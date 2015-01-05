@@ -213,7 +213,8 @@ OB.Utilities.createLoadingLayout = function (label) {
   loadingLayout.addMember(isc.Label.create({
     contents: label,
     styleName: OB.Styles.LoadingPrompt.loadingTextStyleName,
-    width: 1,
+    width: 100,
+    align: 'right',
     overflow: 'visible'
   }));
   loadingLayout.addMember(isc.Img.create(OB.Styles.LoadingPrompt.loadingImage));
@@ -337,14 +338,13 @@ OB.Utilities.useClassicMode = function (windowId) {
 // Open a view using a tab id and record id. The tab can be a child tab. If the record id
 // is not set then the tab is opened in grid mode. If command is not set then default is
 // used.
-OB.Utilities.openDirectTab = function (tabId, recordId, command, position, criteria, direct) {
-
+OB.Utilities.openDirectTab = function (tabId, recordId, command, position, criteria, direct, urlParams) {
+  var callback, isDirect = direct;
+  // if the url params are not passed to the function, obtain then from the url
+  urlParams = urlParams || OB.Utilities.getUrlParameters();
   tabId = OB.Utilities.removeFragment(tabId);
   recordId = OB.Utilities.removeFragment(recordId);
   command = OB.Utilities.removeFragment(command);
-
-  var urlParams = OB.Utilities.getUrlParameters(),
-      callback, isDirect = direct;
 
   //added to have the additional filter clause and tabid. Mallikarjun M
   callback = function (response, data, request) {
@@ -382,6 +382,10 @@ OB.Utilities.openDirectTab = function (tabId, recordId, command, position, crite
       if (urlParams.fkCache) {
         view.fkCache = urlParams.fkCache;
       }
+    }
+
+    if (urlParams.emptyFilterClause) {
+      view.emptyFilterClause = urlParams.emptyFilterClause;
     }
 
     if (urlParams.replaceDefaultFilter) {
@@ -426,10 +430,12 @@ OB.Utilities.openView = function (windowId, tabId, tabTitle, recordId, command, 
     if (direct !== false) {
       isDirect = true;
     }
-    if (singleRecord !== false) {
-      isSingleRecord = true;
-    }
+
   }
+  if (singleRecord !== false) {
+    isSingleRecord = true;
+  }
+
   if (isClassicEnvironment) {
     if (recordId) {
       OB.Layout.ClassicOBCompatibility.openLinkedItem(tabId, recordId);

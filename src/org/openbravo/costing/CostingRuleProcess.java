@@ -77,7 +77,9 @@ public class CostingRuleProcess implements Process {
       OBContext.setAdminMode(false);
       final String ruleId = (String) bundle.getParams().get("M_Costing_Rule_ID");
       CostingRule rule = OBDal.getInstance().get(CostingRule.class, ruleId);
-
+      if (rule.getOrganization().getCurrency() == null) {
+        throw new OBException("@NoCurrencyInCostingRuleOrg@");
+      }
       OrganizationStructureProvider osp = OBContext.getOBContext()
           .getOrganizationStructureProvider(rule.getClient().getId());
       final Set<String> childOrgs = osp.getChildTree(rule.getOrganization().getId(), true);
@@ -124,6 +126,12 @@ public class CostingRuleProcess implements Process {
 
         // Update cost of inventories and process starting physical inventories.
         updateInventoriesCostAndProcessInitInventories(ruleId, startingDate, existsPreviousRule);
+      }
+
+      if (rule.getStartingDate() != null && rule.getFixbackdatedfrom() != null
+          && rule.isBackdatedTransactionsFixed()
+          && rule.getFixbackdatedfrom().before(rule.getStartingDate())) {
+        throw new OBException("@FixBackdateFromBeforeStartingDate@");
       }
 
       // Reload rule after possible session clear.
@@ -240,7 +248,7 @@ public class CostingRuleProcess implements Process {
   private void initializeOldTrx(Set<String> childOrgs, Date date) {
     StringBuffer where = new StringBuffer();
     where.append(" where " + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
-    where.append("   and " + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " < :date");
+    where.append("   and " + MaterialTransaction.PROPERTY_MOVEMENTDATE + " < :date");
     OBQuery<MaterialTransaction> trxQry = OBDal.getInstance().createQuery(
         MaterialTransaction.class, where.toString());
     trxQry.setFilterOnReadableOrganization(false);
@@ -260,6 +268,9 @@ public class CostingRuleProcess implements Process {
         transactionCost.setOrganization(trx.getOrganization());
         transactionCost.setCost(BigDecimal.ZERO);
         transactionCost.setCurrency(trx.getClient().getCurrency());
+        transactionCost.setAccountingDate(trx.getGoodsShipmentLine() != null ? trx
+            .getGoodsShipmentLine().getShipmentReceipt().getAccountingDate() : trx
+            .getMovementDate());
         List<TransactionCost> trxCosts = trx.getTransactionCostList();
         trxCosts.add(transactionCost);
         trx.setTransactionCostList(trxCosts);
@@ -508,6 +519,9 @@ public class CostingRuleProcess implements Process {
           transactionCost.setOrganization(trx.getOrganization());
           transactionCost.setCost(BigDecimal.ZERO);
           transactionCost.setCurrency(trx.getClient().getCurrency());
+          transactionCost.setAccountingDate(trx.getGoodsShipmentLine() != null ? trx
+              .getGoodsShipmentLine().getShipmentReceipt().getAccountingDate() : trx
+              .getMovementDate());
           List<TransactionCost> trxCosts = trx.getTransactionCostList();
           trxCosts.add(transactionCost);
           trx.setTransactionCostList(trxCosts);

@@ -280,7 +280,7 @@ public class CostAdjustmentUtils {
     Date backdatedTrxFrom = null;
     if (backdatedTransactionsFixed) {
       CostingRule costRule = CostingUtils.getCostDimensionRule(org, date);
-      backdatedTrxFrom = costRule.getFixbackdatedfrom();
+      backdatedTrxFrom = CostingUtils.getCostingRuleFixBackdatedFrom(costRule);
     }
 
     Object trxprocessDate = trxsubQry.uniqueResult();
@@ -413,7 +413,7 @@ public class CostAdjustmentUtils {
 
     if (costingRule.isBackdatedTransactionsFixed()) {
       trxQry.setParameter("mvtdate", trx.getMovementDate());
-      trxQry.setParameter("fixbdt", costingRule.getFixbackdatedfrom());
+      trxQry.setParameter("fixbdt", CostingUtils.getCostingRuleFixBackdatedFrom(costingRule));
     }
 
     if (costDimensions.get(CostDimension.Warehouse) != null) {
@@ -502,7 +502,7 @@ public class CostAdjustmentUtils {
     Date backdatedTrxFrom = null;
     if (backdatedTransactionsFixed) {
       CostingRule costRule = CostingUtils.getCostDimensionRule(org, date);
-      backdatedTrxFrom = costRule.getFixbackdatedfrom();
+      backdatedTrxFrom = CostingUtils.getCostingRuleFixBackdatedFrom(costRule);
     }
 
     Object trxprocessDate = trxsubQry.uniqueResult();
@@ -673,7 +673,7 @@ public class CostAdjustmentUtils {
     trxQry.setParameter("trxid", trx.getId());
     if (costingRule.isBackdatedTransactionsFixed()) {
       trxQry.setParameter("mvtdate", trx.getMovementDate());
-      trxQry.setParameter("fixbdt", costingRule.getFixbackdatedfrom());
+      trxQry.setParameter("fixbdt", CostingUtils.getCostingRuleFixBackdatedFrom(costingRule));
     }
 
     trxQry.setParameterList("orgs", orgs);

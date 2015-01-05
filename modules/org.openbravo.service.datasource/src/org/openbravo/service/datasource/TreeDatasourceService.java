@@ -42,6 +42,7 @@ import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.ComponentProvider;
+import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -745,7 +746,16 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
     }
     String hqlCopy = new String(hqlTreeWhereClause);
     for (String key : replacements.keySet()) {
-      hqlCopy = hqlCopy.replaceAll(key, replacements.get(key));
+      // if the key is not found in the request parameters, its value in the replacement list will
+      // be 'null'
+      if (replacements.get(key).equals("'null'")) {
+        // Strip the "@" from the key
+        String keyWithoutAt = key.substring(1, key.length() - 1);
+        hqlCopy = hqlCopy.replaceAll(key,
+            "'" + (String) RequestContext.get().getSessionAttribute(keyWithoutAt) + "'");
+      } else {
+        hqlCopy = hqlCopy.replaceAll(key, replacements.get(key));
+      }
     }
     return hqlCopy;
   }

@@ -115,6 +115,7 @@
     
     v_bp_isactive c_bpartner.isactive%Type;
     v_IsQtyVariable M_Product.IsQuantityVariable%TYPE;
+    v_IsReversedDoc CHAR(1);
 
   BEGIN
   
@@ -225,7 +226,12 @@
              RAISE_APPLICATION_ERROR(-20000, '@Inline@ '||v_Message_Qty||' '||'@ProductNotNullAndMovementQtyZero@') ;
           END IF;
 	     End ;
-      if(v_isreturndoctype = 'N' AND v_isSoTrx = 'Y' and v_DocAction<>'RC') then
+      SELECT CASE WHEN COALESCE(instr(M_INOUT.Description,'*R*:'),0) = 0 THEN 'N' ELSE 'Y' END
+            INTO v_IsReversedDoc
+            FROM M_INOUT
+            WHERE M_INOUT.M_INOUT_id = v_Record_ID;
+      -- Skip MovementQtyCheck when it is reversed document
+      if(v_isreturndoctype = 'N' AND v_isSoTrx = 'Y' and v_DocAction<>'RC' AND v_IsReversedDoc='N') then
         v_message := null;
         for Cur_OrderLine in (
           select c_orderline_id, line, m_product_id
@@ -234,13 +240,13 @@
           and c_orderline_id is not null
           order by line
         ) loop
-          select COALESCE(sum(movementqty), 0)
+          select COALESCE(sum(ABS(movementqty)), 0)
           into v_qty
           from m_inoutline
           where m_inout_id = v_Record_ID
           and c_orderline_id = Cur_OrderLine.c_orderline_id;
 
-          select qtyordered, (coalesce(qtydelivered, 0) + v_qty)
+          select ABS(qtyordered), (coalesce(ABS(qtydelivered), 0) + v_qty)
           into v_QuantityOrder, v_qty
           from c_orderline
           where c_orderline_id = Cur_OrderLine.c_orderline_id;

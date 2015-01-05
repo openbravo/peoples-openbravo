@@ -66,8 +66,8 @@ public class DocMatchInv extends AcctServer {
     super(AD_Client_ID, AD_Org_ID, connectionProvider);
   }
 
-  public void loadObjectFieldProvider(ConnectionProvider conn,
-      @SuppressWarnings("hiding") String AD_Client_ID, String Id) throws ServletException {
+  public void loadObjectFieldProvider(ConnectionProvider conn, @SuppressWarnings("hiding")
+  String AD_Client_ID, String Id) throws ServletException {
     setObjectFieldProvider(DocMatchInvData.selectRegistro(conn, AD_Client_ID, Id));
   }
 
@@ -271,9 +271,11 @@ public class DocMatchInv extends AcctServer {
           throw new IllegalStateException();
 
         } else {
+          Currency currency = legalEntity.getCurrency() != null ? legalEntity.getCurrency()
+              : legalEntity.getClient().getCurrency();
           trxCost = CostingUtils.getStandardCost(inOutLine.getProduct(), legalEntity,
-              inOutLine.getShipmentReceipt().getAccountingDate(), costDimensions,
-              legalEntity.getCurrency()).multiply(new BigDecimal(data[0].getField("Qty")));
+              inOutLine.getShipmentReceipt().getAccountingDate(), costDimensions, currency)
+              .multiply(new BigDecimal(data[0].getField("Qty")));
         }
       } else {
         trxCost = transaction.getTransactionCost();
@@ -312,9 +314,11 @@ public class DocMatchInv extends AcctServer {
     String strIsSOTrx = invoiceData[0].issotrx;
     String strRecordId = invoiceData[0].cInvoiceId;
     String strReceiptDate = data[0].getField("ORDERDATEACCT");
-    BigDecimal bdExpenses = new BigDecimal(strExpenses).multiply(new BigDecimal(data[0].getField("QTY"))).divide(new BigDecimal(data[0].getField("QTYINVOICED")));
-    if ((new BigDecimal(data[0].getField("QTYINVOICED")).signum() != (new BigDecimal(data[0]
-        .getField("MOVEMENTQTY"))).signum())
+    BigDecimal bdExpenses = new BigDecimal(strExpenses).multiply(
+        new BigDecimal(data[0].getField("QTY"))).divide(
+        new BigDecimal(data[0].getField("QTYINVOICED")));
+    if ((new BigDecimal(data[0].getField("QTYINVOICED")).signum() != (new BigDecimal(
+        data[0].getField("MOVEMENTQTY"))).signum())
         && data[0].getField("InOutStatus").equals("VO")) {
       bdExpenses = bdExpenses.multiply(new BigDecimal(-1));
     }

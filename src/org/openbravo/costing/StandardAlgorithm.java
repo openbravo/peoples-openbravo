@@ -84,7 +84,7 @@ public class StandardAlgorithm extends CostingAlgorithm {
       return true;
     }
     return !CostAdjustmentUtils.isNeededBackdatedCostAdjustment(transaction,
-        costingRule.isWarehouseDimension(), costingRule.getStartingDate());
+        costingRule.isWarehouseDimension(), CostingUtils.getCostingRuleStartingDate(costingRule));
   }
 
   private void insertCost(Costing currentCosting, BigDecimal newCost) {

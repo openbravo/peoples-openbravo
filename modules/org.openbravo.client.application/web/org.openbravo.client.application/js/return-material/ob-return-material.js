@@ -90,11 +90,11 @@ OB.RM.RMShipmentQtyValidate = function (item, validator, value, record) {
       selectedRecordsLength = selectedRecords.length,
       editedRecord = null,
       storageBin = record.storageBin,
-      i; 
+      i;
   //Cheking available stock
-  if (storageBin === null){
-	item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_RM_NotAvailableStock', [record.rMOrderNo]));
-	return false;
+  if (storageBin === null) {
+    item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_RM_NotAvailableStock', [record.rMOrderNo]));
+    return false;
   }
   // check value is positive and below available qty and pending qty
   if (value === null || value < 0 || value > record.pending || value > record.availableQty) {
@@ -116,7 +116,7 @@ OB.RM.RMShipmentQtyValidate = function (item, validator, value, record) {
       }
     }
   }
-  
+
   return true;
 };
 
@@ -134,11 +134,11 @@ OB.RM.RMShipmentSelectionChange = function (grid, record, state) {
       editedRecord = null,
       i;
   if (state) {
-	//Cheking available stock
-	if (storageBin === null){
-	  grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_RM_NotAvailableStock', [record.rMOrderNo]));
-	  return false;
-	}
+    //Cheking available stock
+    if (storageBin === null) {
+      grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_RM_NotAvailableStock', [record.rMOrderNo]));
+      return false;
+    }
     // calculate already shipped qty on grid
     for (i = 0; i < selectedRecords.length; i++) {
       editedRecord = isc.addProperties({}, selectedRecords[i], grid.getEditedRecord(selectedRecords[i]));

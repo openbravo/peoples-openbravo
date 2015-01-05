@@ -134,3 +134,12 @@ OB.Utilities.Action.set('setSelectorValueFromRecord', function (paramObj) {
   }
   callerField.setValueFromRecord(paramObj.record, true, true);
 });
+
+//** {{{ refreshGrid }}} **
+//It refreshes the grid where the process button is defined. Only needed if the process adds or deletes records from this tab
+OB.Utilities.Action.set('refreshGrid', function (paramObj) {
+  var processView = paramObj._processView;
+  if (processView && processView.buttonOwnerView && processView.buttonOwnerView.viewGrid) {
+    processView.buttonOwnerView.viewGrid.refreshGrid();
+  }
+});

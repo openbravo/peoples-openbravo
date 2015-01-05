@@ -11,14 +11,16 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.client.kernel.reference;
 
+import java.text.FieldPosition;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import org.openbravo.base.exception.OBException;
@@ -33,6 +35,7 @@ import org.openbravo.client.kernel.RequestContext;
 public class DateTimeUIDefinition extends DateUIDefinition {
   private String lastUsedPattern = null;
   private SimpleDateFormat dateFormat = null;
+  private static final SimpleDateFormat ficDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
   @Override
   public String getParentType() {
@@ -46,6 +49,38 @@ public class DateTimeUIDefinition extends DateUIDefinition {
 
   protected String getClientFormatObject() {
     return "OB.Format.dateTime";
+  }
+
+  @Override
+  public String convertToClassicString(Object value) {
+    if (value == null || value == "") {
+      return "";
+    }
+
+    if (value instanceof String) {
+      return (String) value;
+    }
+
+    StringBuffer convertedValue = convertLocalDateTimeToUTC((Date) value);
+    return convertedValue.toString();
+  }
+
+  private StringBuffer convertLocalDateTimeToUTC(Date UTCDate) {
+    StringBuffer localTimeColumnValue = null;
+    Calendar now = Calendar.getInstance();
+
+    Calendar calendar = Calendar.getInstance();
+    calendar.setTime(UTCDate);
+    calendar.set(Calendar.DATE, now.get(Calendar.DATE));
+    calendar.set(Calendar.MONTH, now.get(Calendar.MONTH));
+    calendar.set(Calendar.YEAR, now.get(Calendar.YEAR));
+
+    int gmtMillisecondOffset = (now.get(Calendar.ZONE_OFFSET) + now.get(Calendar.DST_OFFSET));
+    calendar.add(Calendar.MILLISECOND, -gmtMillisecondOffset);
+    localTimeColumnValue = getClassicFormat().format(calendar.getTime(), new StringBuffer(),
+        new FieldPosition(0));
+
+    return localTimeColumnValue;
   }
 
   @Override
@@ -68,7 +103,13 @@ public class DateTimeUIDefinition extends DateUIDefinition {
       if (value.contains("T")) {
         return value;
       }
+      Calendar now = Calendar.getInstance();
       final Date date = getClassicFormat().parse(value);
+      Calendar calendar = Calendar.getInstance();
+      calendar.setTime(date);
+      // Applies the zone offset and the dst offset to convert the time from local to UTC
+      int gmtMillisecondOffset = (now.get(Calendar.ZONE_OFFSET) + now.get(Calendar.DST_OFFSET));
+      calendar.add(Calendar.MILLISECOND, -gmtMillisecondOffset);
       return ((PrimitiveDomainType) getDomainType()).convertToString(date);
     } catch (Exception e) {
       throw new OBException(e);

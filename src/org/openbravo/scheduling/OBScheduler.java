@@ -334,7 +334,7 @@ public class OBScheduler {
 
     private static final String FINISHES = "Y";
 
-    private static final String WEEKDAYS = "W";
+    private static final String WEEKDAYS = "D";
 
     private static final String WEEKENDS = "E";
 

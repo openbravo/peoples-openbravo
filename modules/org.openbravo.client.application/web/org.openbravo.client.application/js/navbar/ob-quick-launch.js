@@ -142,7 +142,7 @@ isc.OBQuickLaunch.addProperties({
     if (this.members[2].getField('value').getValue() && this.members[2].getField('value').getValue().contains('?')) {
       var params = OB.Utilities.getUrlParameters(this.members[2].getField('value').getValue());
       if (params && params.tabId) {
-        OB.Utilities.openDirectTab(params.tabId, params.recordId, params.command);
+        OB.Utilities.openDirectTab(params.tabId, params.recordId, params.command, null, null, null, params);
       }
     }
     if (this.members[1].getMembers()) {

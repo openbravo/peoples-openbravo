@@ -156,6 +156,10 @@ BEGIN
     p_message := '@MoreQuantityToReleaseThanPending@'||' @of@'||' @Product@: '||v_product_value||', @AttributeSetInstance@: '||COALESCE(v_attr_description, '-')|| ', @UOM@: '||v_uom_value||' @And@'||' @StorageBin@: '||COALESCE(v_locator_value, '-');
   END IF;
 
+  IF (v_pendingtoreallocate > v_stock_onhand) THEN
+    RAISE_APPLICATION_ERROR(-20000, '@NotEnoughAvailableStock@'||' @of@'||' @Product@: '||v_product_value||', @AttributeSetInstance@: '||COALESCE(v_attr_description, '-')|| ', @UOM@: '||v_uom_value||' @And@'||' @StorageBin@: '||COALESCE(v_locator_value, '-'));
+  END IF;
+
   -- Check that quantity to release is lower than available quantity considering other reservations allocated stock.
   IF (v_pendingtoreallocate > v_stock_onhand - (v_stock_alloc - v_this_sd_alloc)) THEN
     RAISE_APPLICATION_ERROR(-20000, '@CannotReallocateAllQuantity@'||' @of@'||' @Product@: '||v_product_value||', @AttributeSetInstance@: '||COALESCE(v_attr_description, '-')|| ', @UOM@: '||v_uom_value||' @And@'||' @StorageBin@: '||COALESCE(v_locator_value, '-'));

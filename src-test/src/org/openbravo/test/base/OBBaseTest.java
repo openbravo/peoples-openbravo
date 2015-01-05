@@ -31,6 +31,7 @@ import org.apache.log4j.PropertyConfigurator;
 import org.hibernate.criterion.Restrictions;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -155,17 +156,22 @@ public class OBBaseTest {
   protected static final String TEST_LOCATION_ID = "A21EF1AB822149BEB65D055CD91F261B";
 
   /**
-   * Overridden to initialize the Dal layer, sets the current user to the the User:
-   * {@link #TEST_USER_ID}
+   * Overridden to initialize the Dal layer
    * 
+   */
+  @BeforeClass
+  public static void setDalUp() throws Exception {
+    if (OBBaseTest.class.getResource("/log4j.lcf") != null) {
+      PropertyConfigurator.configure(OBBaseTest.class.getResource("/log4j.lcf"));
+    }
+    staticInitializeDalLayer();
+  }
+
+  /**
+   * Sets the current user to the {@link #TEST_USER_ID} user.
    */
   @Before
   public void setUp() throws Exception {
-    if (this.getClass().getResource("/log4j.lcf") != null) {
-      PropertyConfigurator.configure(this.getClass().getResource("/log4j.lcf"));
-    }
-
-    initializeDalLayer();
     // clear the session otherwise it keeps the old model
     setTestUserContext();
     // be negative is set back to false at the end of a successfull test.
@@ -178,6 +184,10 @@ public class OBBaseTest {
    * @throws Exception
    */
   protected void initializeDalLayer() throws Exception {
+    staticInitializeDalLayer();
+  }
+
+  private static void staticInitializeDalLayer() throws Exception {
     if (!DalLayerInitializer.getInstance().isInitialized()) {
       DalLayerInitializer.getInstance().initialize(true);
     }

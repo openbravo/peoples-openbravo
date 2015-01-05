@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013 Openbravo SLU 
+ * All portions are Copyright (C) 2013-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -38,6 +38,7 @@ import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.order.ReturnReason;
+import org.openbravo.model.common.plm.AttributeSetInstance;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.financialmgmt.tax.TaxRate;
 import org.openbravo.model.pricing.pricelist.PriceList;
@@ -58,6 +59,8 @@ public class RMInsertOrphanLine implements org.openbravo.scheduling.Process {
 
     final String strOrderId = (String) bundle.getParams().get("C_Order_ID");
     final String strProductId = (String) bundle.getParams().get("mProductId");
+    final String strAttributeSetInstanceId = (String) bundle.getParams().get(
+        "mAttributesetinstanceId");
     final String strReturnedQty = (String) bundle.getParams().get("returned");
     final BigDecimal returnedQty = new BigDecimal(strReturnedQty);
     final String strUnitPrice = (String) bundle.getParams().get("pricestd");
@@ -66,6 +69,16 @@ public class RMInsertOrphanLine implements org.openbravo.scheduling.Process {
 
     Order order = OBDal.getInstance().get(Order.class, strOrderId);
     Product product = OBDal.getInstance().get(Product.class, strProductId);
+    AttributeSetInstance attrSetInstance = null;
+    if (strAttributeSetInstanceId != null) {
+      attrSetInstance = OBDal.getInstance().get(AttributeSetInstance.class,
+          strAttributeSetInstanceId);
+    }
+    if (product.getAttributeSet() != null
+        && (strAttributeSetInstanceId == null || strAttributeSetInstanceId.equals(""))
+        && (product.getUseAttributeSetValueAs() == null || product.getUseAttributeSetValueAs() != "F")) {
+      throw new OBException("@productWithoutAttributeSet@");
+    }
 
     OBContext.setAdminMode(true);
     try {
@@ -77,7 +90,7 @@ public class RMInsertOrphanLine implements org.openbravo.scheduling.Process {
       newOrderLine.setWarehouse(order.getWarehouse());
       newOrderLine.setCurrency(order.getCurrency());
       newOrderLine.setProduct(product);
-      newOrderLine.setAttributeSetValue(null);
+      newOrderLine.setAttributeSetValue(attrSetInstance);
       newOrderLine.setUOM(product.getUOM());
       newOrderLine.setOrderedQuantity(returnedQty.negate());
 

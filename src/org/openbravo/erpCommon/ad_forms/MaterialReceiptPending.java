@@ -376,6 +376,15 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
             conversion.add(Restrictions.eq(UOMConversion.PROPERTY_TOUOM,
                 OBDal.getInstance().get(ProductUOM.class, dataLine[0].mProductUomId).getUOM()));
 
+            // Inverting search of UOM conversion if conversion list is empty
+            if (conversion.list().size() == 0) {
+              conversion = OBDal.getInstance().createCriteria(UOMConversion.class);
+              conversion.add(Restrictions.eq(UOMConversion.PROPERTY_UOM,
+                  OBDal.getInstance().get(ProductUOM.class, dataLine[0].mProductUomId).getUOM()));
+              conversion.add(Restrictions.eq(UOMConversion.PROPERTY_TOUOM,
+                  OBDal.getInstance().get(UOM.class, dataLine[0].cUomId)));
+            }
+
             for (UOMConversion conv : conversion.list()) {
               qtyorder = new BigDecimal(strQtyordered).multiply(conv.getMultipleRateBy())
                   .toString();

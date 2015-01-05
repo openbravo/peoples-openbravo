@@ -185,7 +185,7 @@ OB.ViewFormProperties = {
     }
   },
 
-  editRecord: function (record, preventFocus, hasChanges, focusFieldName, isLocalTime) {
+  editRecord: function (record, preventFocus, hasChanges, focusFieldName, isLocalTime, wasEditingGrid) {
     var timeFields, ret;
     this.clearValues();
     // if editRecord is called from OBStandardView.editRecord, then the time fields have already
@@ -204,18 +204,21 @@ OB.ViewFormProperties = {
       this.forceFocusedField = focusFieldName;
     }
 
-    this.doEditRecordActions(preventFocus, record._new);
+    this.doEditRecordActions(preventFocus, record._new, wasEditingGrid);
 
     if (hasChanges) {
       this.setHasChanged(true);
     }
 
     this.view.setTargetRecordInWindow(record.id);
+    // the originalValuesOfEditedRow attribute of the form if set after invoking editRecord
+    // delete it here to ensure that it is not shared among records
+    delete this.originalValuesOfEditedRow;
 
     return ret;
   },
 
-  doEditRecordActions: function (preventFocus, isNew) {
+  doEditRecordActions: function (preventFocus, isNew, wasEditingGrid) {
     delete this.contextInfo;
 
     this.initializing = true;
@@ -253,7 +256,7 @@ OB.ViewFormProperties = {
     this.ignoreFirstFocusEvent = preventFocus;
 
     // retrieveinitialvalues does focus and clear of errors
-    this.retrieveInitialValues(isNew);
+    this.retrieveInitialValues(isNew, wasEditingGrid);
 
     if (isNew) {
       this.view.statusBar.mode = 'NEW';
@@ -476,12 +479,20 @@ OB.ViewFormProperties = {
   // sets the focus in the current focusitem 
   // if it is not focusable then a next item is 
   // searched for
-  setFocusInForm: function () {
+  setFocusInForm: function (initializingForm) {
     if (!this.view || !this.view.isActiveView()) {
       return;
     }
 
     var focusItem = this.getFocusItem();
+
+    if (initializingForm && isc.isA.SectionItem(focusItem)) {
+      // if the form does not have any editable fields, the first section item will be focused
+      // in that case dont move the scroll to the focused item and show the first batch of fields
+      this.view.formContainerLayout.scrollToTop();
+      return;
+    }
+
     // an edit form in a grid is not
     // drawn it seems...
     if ((!this.grid && !this.isDrawn()) && !this.isVisible()) {
@@ -557,7 +568,13 @@ OB.ViewFormProperties = {
     var i, length, localResult, fields;
     if (!this.fieldsByFieldName) {
       localResult = {};
-      fields = this.getFields();
+      if (this.view && this.view.formFields) {
+        // standard windows don't load the fields till view form is opened, so let's
+        // use formFields in view which is always loaded
+        fields = this.view.formFields;
+      } else {
+        fields = this.getFields();
+      }
       length = fields.length;
       for (i = 0; i < fields.length; i++) {
         if (fields[i].name) {
@@ -590,13 +607,13 @@ OB.ViewFormProperties = {
 
   },
 
-  retrieveInitialValues: function (isNew) {
+  retrieveInitialValues: function (isNew, wasEditingGrid) {
     var parentId = this.view.getParentId(),
         i, fldNames = [],
         requestParams, allProperties, parentColumn, me = this,
         mode, length = this.getFields().length,
         gridVisibleProperties = [],
-        len;
+        len, initializingForm;
 
     this.setParentDisplayInfo();
 
@@ -656,46 +673,72 @@ OB.ViewFormProperties = {
       editRow: this.view.viewGrid.getEditRow()
     } : null;
 
-    this.inFicCall = true;
+    // do not make a request to the FIC in NEW mode if:
+    // - the record is new and
+    // - the record was being edited in the grid
+    if (!isNew || !wasEditingGrid) {
+      this.inFicCall = true;
+      OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', allProperties, requestParams, function (response, data, request) {
+        // no focus item found, focus on the body of the grid
+        // this makes sure that keypresses end up in the 
+        // bodyKeyPress method
+        if (!me.getFocusItem() || !me.getFocusItem().isFocusable()) {
+          me.view.viewGrid.body.focus();
+        }
 
-    OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', allProperties, requestParams, function (response, data, request) {
+        me.processFICReturn(response, data, request, gridEditInformation);
 
-      // no focus item found, focus on the body of the grid
-      // this makes sure that keypresses end up in the 
-      // bodyKeyPress method
-      if (!me.getFocusItem() || !me.getFocusItem().isFocusable()) {
-        me.view.viewGrid.body.focus();
+        if (!this.grid || !gridEditInformation || this.grid.getEditRow() !== gridEditInformation.editRow) {
+          // remember the initial values, if we are still editing the same row
+          me.rememberValues();
+        }
+        me.initializing = false;
+
+        // do here because during initial form drawing
+        // fields get blurred and will show an error
+        me.clearErrors(true);
+
+        // only compute a new focus item if the form is active
+        if (me.view.isActiveView()) {
+          me.computeFocusItem();
+        }
+
+        // if the focus item is not really enabled
+        // then find a new one, even if the form is not active
+        if (me.getFocusItem() && !me.getFocusItem().isFocusable(true)) {
+          me.computeFocusItem(me.getFocusItem());
+        }
+        // note the focus is set in the field when the FIC call
+        // returns
+        // at this point select the focused value      
+        if (me.getFocusItem()) {
+          initializingForm = true;
+          me.setFocusInForm(initializingForm);
+        }
+      });
+    } else {
+      // enable the grid (this would have been done in the processFICReturn function)
+      this.disableForm(false);
+      // copy the value maps from the grid edit form
+      this.copyValueMaps();
+      this.markForRedraw();
+    }
+  },
+
+  // use the grid valueMaps to populate the valueMaps of the form
+  copyValueMaps: function () {
+    var itemName, item, storedValueMaps = this.view.viewGrid.storedValueMaps;
+    if (!storedValueMaps) {
+      return;
+    }
+    for (itemName in storedValueMaps) {
+      if (storedValueMaps.hasOwnProperty(itemName)) {
+        item = this.getItem(itemName);
+        if (item) {
+          item.setValueMap(storedValueMaps[itemName]);
+        }
       }
-
-      me.processFICReturn(response, data, request, gridEditInformation);
-
-      if (!this.grid || !gridEditInformation || this.grid.getEditRow() !== gridEditInformation.editRow) {
-        // remember the initial values, if we are still editing the same row
-        me.rememberValues();
-      }
-      me.initializing = false;
-
-      // do here because during initial form drawing
-      // fields get blurred and will show an error
-      me.clearErrors(true);
-
-      // only compute a new focus item if the form is active
-      if (me.view.isActiveView()) {
-        me.computeFocusItem();
-      }
-
-      // if the focus item is not really enabled
-      // then find a new one, even if the form is not active
-      if (me.getFocusItem() && !me.getFocusItem().isFocusable(true)) {
-        me.computeFocusItem(me.getFocusItem());
-      }
-      // note the focus is set in the field when the FIC call
-      // returns
-      // at this point select the focused value      
-      if (me.getFocusItem()) {
-        me.setFocusInForm();
-      }
-    });
+    }
   },
 
   rememberValues: function () {
@@ -955,11 +998,31 @@ OB.ViewFormProperties = {
     }
   },
 
-  refresh: function () {
+  refresh: function (callback, refreshChildren) {
     var criteria = {
       id: this.getValue(OB.Constants.ID)
+    },
+        me = this,
+        innerCallback;
+    innerCallback = function (dsResponse, data, dsRequest) {
+      var index;
+      if (data[0]) {
+        index = me.view.viewGrid.getRecordIndex(me.view.viewGrid.getSelectedRecord());
+        if (index !== -1) {
+          me.view.viewGrid.updateRecord(index, data, dsRequest);
+          if (refreshChildren) {
+            // only refresh the children when needed.
+            // i.e. when a sub tab is saved the form view of its parent tab is refreshed,
+            // but then there is no need to refresh the sub tab
+            me.view.refreshChildViews();
+          }
+        }
+      }
+      if (callback && isc.isA.Function(callback)) {
+        callback();
+      }
     };
-    this.fetchData(criteria);
+    this.fetchData(criteria, innerCallback);
   },
 
   processColumnValue: function (columnName, columnValue, gridEditInformation, mode) {
@@ -1046,7 +1109,8 @@ OB.ViewFormProperties = {
           delete field.textField._textChanged;
         }
       } else if (isDateTime) {
-        jsDateTime = isc.Date.parseStandardDate(columnValue.value);
+        // FIC returns date-time in UTC
+        jsDateTime = isc.Date.parseSchemaDate(columnValue.value);
         this.setItemValue(field.name, jsDateTime);
         if (field.textField) {
           delete field.textField._textChanged;
@@ -1452,7 +1516,8 @@ OB.ViewFormProperties = {
     var i, flds = this.getFields(),
         length = flds.length,
         doClose = !this.hasChanged;
-
+    this.removeRecordFromGridIfNew();
+    this.discardEditsOfSelectedRecord();
     if (doClose) {
       this.doClose();
       return;
@@ -1477,11 +1542,43 @@ OB.ViewFormProperties = {
     this.view.toolBar.updateButtonState(true);
   },
 
+  discardEditsOfSelectedRecord: function () {
+    var selectedRecords = this.view.viewGrid.getSelectedRecords();
+    if (selectedRecords.length === 1) {
+      this.view.viewGrid.discardEdits(selectedRecords[0]);
+    }
+  },
+
+  resetValues: function () {
+    this.Super('resetValues', arguments);
+    // if the form view was opened from a grid view that was currently being edited, restore the original values of the
+    // edited row instead of the edited row itself
+    if (this.originalValuesOfEditedRow) {
+      this.setValues(this.originalValuesOfEditedRow);
+    }
+  },
+
+  // if a record has been created in the grid and then edited in the form without having been saved first, 
+  // it should be removed from the grid if the edition is canceled in the form
+  removeRecordFromGridIfNew: function () {
+    var values = this.getValues(),
+        grid;
+    // the property _new will only be true if the record has been created in the grid and is being edited
+    // in the form without having been saved 
+    if (values._new) {
+      grid = this.view.viewGrid;
+      // the record addition is being cancelled, remove the record from the grid if possible
+      if (isc.isA.ResultSet(grid.data) && grid.data.find('id', values[OB.Constants.ID])) {
+        grid.data.localData.remove(grid.data.find('id', values[OB.Constants.ID]));
+      }
+    }
+  },
+
   doClose: function () {
     if (this.view.isShowingTree) {
       this.view.treeGrid.refreshRecord(this.getValues());
     }
-
+    this.removeRecordFromGridIfNew();
     this.view.switchFormGridVisibility();
     this.view.messageBar.hide();
     if (this.isNew) {
@@ -1508,9 +1605,8 @@ OB.ViewFormProperties = {
 
   // always let the saveRow callback handle the error
   saveEditorReply: function (response, data, request) {
-    var form, isNewRecord;
-    form = request.editor.view.isShowingForm ? request.editor.view.viewForm : request.editor.view.viewGrid.getEditForm();
-    isNewRecord = form === null ? false : form.isNew;
+    var isNewRecord;
+    isNewRecord = request.editor.view.isEditingNewRecord();
     if (request.editor && request.editor.view && isNewRecord) {
       delete request.editor.view._savingNewRecord;
     }

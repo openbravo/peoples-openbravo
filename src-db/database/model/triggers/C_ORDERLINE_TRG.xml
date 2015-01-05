@@ -86,13 +86,7 @@ IF (UPDATING) THEN
     FROM m_reservation 
     WHERE c_orderline_id = :OLD.c_orderline_id;
     IF (v_count > 0) THEN
-      SELECT m_reservation_id INTO v_reservation_id
-      FROM m_reservation
-      WHERE c_orderline_id = :OLD.c_orderline_id;
-      DELETE FROM m_reservation_stock
-      WHERE m_reservation_id = v_reservation_id;
-      DELETE FROM m_reservation
-      WHERE m_reservation_id = v_reservation_id;
+      RAISE_APPLICATION_ERROR(-20000, '@DeleteRelatedReservation@');
     END IF;
   ELSE
     DELETE FROM m_reservation_stock
@@ -176,6 +170,18 @@ IF (UPDATING) THEN
   :new.LineNetAmt := ROUND(:new.QtyOrdered*:new.PriceActual, v_Prec);-- Modified by I.Ciordia
   :new.FreightAmt := ROUND(:new.FreightAmt, v_Prec);
   :new.ChargeAmt := ROUND(:new.ChargeAmt, v_Prec);
+  
+  SELECT BASEAMOUNT
+  INTO v_BaseAmount
+  FROM C_TAX
+  WHERE C_TAX_ID = :new.C_Tax_ID;
+        
+  IF (v_BaseAmount='TBA' OR v_BaseAmount='TBATAX') THEN
+    :new.Taxbaseamt := :new.LineNetAmt;
+  ELSE
+    :new.Taxbaseamt := 0;
+  END IF;
+        
   IF (round(to_number(:NEW.QTYORDERED) * to_number(:NEW.PRICEACTUAL),v_Prec) != to_number(:NEW.LINENETAMT)) THEN
       RAISE_APPLICATION_ERROR(-20000, '@LineAmountNotCorrect@') ;
     END IF;

@@ -39,6 +39,7 @@ isc.OBTextItem.addProperties({
   },
 
   resetMaskValidator: function (createNew) {
+    var gridField;
     if (this.maskValidator && this.validators) {
       this.validators.remove(this.maskValidator);
       delete this.maskValidator;
@@ -48,6 +49,13 @@ isc.OBTextItem.addProperties({
       this.maskValidator.mask = this.createRegExpFromMask(this.mask);
       this.validators = this.validators || [];
       this.validators.push(this.maskValidator);
+    }
+    if (this.grid) {
+      gridField = this.grid.getField(this.name);
+      if (gridField) {
+        // update the validators of the grid field, so that it is taken into account in the ListGrid.validateRowValues function
+        gridField.validators = this.validators;
+      }
     }
   },
 
