@@ -550,14 +550,9 @@ isc.FormItem.addProperties({
 
   _original_validate: isc.FormItem.getPrototype().validate,
   validate: function () {
-
-    // prevent validation when we are showing the editor and moving
-    // the focus around
-
     if (this.preventValidation) {
       return;
     }
-
     return this._original_validate();
   },
 
