@@ -553,9 +553,6 @@ isc.FormItem.addProperties({
 
     // prevent validation when we are showing the editor and moving
     // the focus around
-    if (this.form && this.form.grid && this.form.grid._showingEditor) {
-      return;
-    }
 
     if (this.preventValidation) {
       return;

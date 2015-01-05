@@ -52,7 +52,7 @@ isc.OBToolbar.addClassProperties({
         form = view.viewGrid.getEditForm();
         editRow = view.viewGrid.getEditRow();
         hasErrors = view.viewGrid.rowHasErrors(editRow);
-        this.setDisabled(!(form.isNew && form.allRequiredFieldsSet()) && !hasErrors && (form.isSaving || form.readOnly || !view.hasValidState() || form.hasErrors() || !form.hasChanged || !form.allRequiredFieldsSet()));
+        this.setDisabled(!(form.isNew && form.allRequiredFieldsSet()) && (form.isSaving || form.readOnly || !view.hasValidState() || hasErrors || form.hasErrors() || !form.hasChanged || !form.allRequiredFieldsSet()));
       } else {
         this.setDisabled(true);
       }
