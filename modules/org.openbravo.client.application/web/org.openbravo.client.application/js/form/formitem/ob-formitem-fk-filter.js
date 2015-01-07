@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2014 Openbravo SLU
+ * All portions are Copyright (C) 2011-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -77,6 +77,11 @@ isc.OBFKFilterTextItem.addProperties({
     }
 
     this.pickListProperties = {
+      // 'showOverAsSelected' and 'bodyKeyPress' defined here until issue 28475 be fixed.
+      // After the fix the following two lines must be removed, since it will be inherited from
+      // OBListFilterItem  as usual
+      showOverAsSelected: this.pickListProperties.showOverAsSelected,
+      bodyKeyPress: this.pickListProperties.bodyKeyPress,
 
       // make sure that we send the same parameters as the grid
       onFetchData: function (criteria, requestProperties) {

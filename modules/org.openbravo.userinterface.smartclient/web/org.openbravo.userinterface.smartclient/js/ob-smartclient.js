@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2014 Openbravo SLU
+ * All portions are Copyright (C) 2011-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -550,14 +550,9 @@ isc.FormItem.addProperties({
 
   _original_validate: isc.FormItem.getPrototype().validate,
   validate: function () {
-
-    // prevent validation when we are showing the editor and moving
-    // the focus around
-
     if (this.preventValidation) {
       return;
     }
-
     return this._original_validate();
   },
 

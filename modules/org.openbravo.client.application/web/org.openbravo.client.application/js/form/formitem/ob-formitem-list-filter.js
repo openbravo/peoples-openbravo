@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2014 Openbravo SLU
+ * All portions are Copyright (C) 2011-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -74,5 +74,55 @@ isc.OBListFilterItem.addProperties({
       isc.Page.setEvent(isc.EH.IDLE, this.form.grid, isc.Page.FIRE_ONCE, 'performAction');
     }
     this.Super('change', arguments);
+  },
+
+  handleKeyPress: function () {
+    if (isc.EH.getKey() === 'Space') {
+      if (this.isPickListShown() && !this.pickList.bodyKeyPress('Space')) {
+        return false;
+      }
+    }
+    return this.Super('handleKeyPress', arguments);
+  }
+});
+
+isc.OBListFilterItem.changeDefaults('pickListProperties', {
+  showOverAsSelected: false,
+
+  bodyKeyPress: function (event, eventInfo) {
+    var focusedRecord = this.getRecord(this.getFocusRow()),
+        selectedRecords = this.getSelectedRecords(),
+        isSelectedRecord = false,
+        recordIdentifier = (this.fields && this.fields[1] && this.fields[1].name ? this.fields[1].name : ''),
+        i;
+    for (i = 0; i < selectedRecords.length; i++) {
+      if (focusedRecord[recordIdentifier] === selectedRecords[i][recordIdentifier]) {
+        isSelectedRecord = true;
+        break;
+      }
+    }
+    if (event === 'Space') {
+      // bodyKeyPress doesn't capture 'Space' key press, so used this workaround
+      // to obtain it from the 'handleKeyPress' of the parent item
+      if (focusedRecord) {
+        if (isSelectedRecord) {
+          this.deselectRecord(focusedRecord);
+        } else {
+          this.selectRecord(focusedRecord);
+        }
+        this.multiSelectChanged();
+        // Return false to avoid propagation in the parent item
+        return false;
+      } else {
+        // Return true to ensure propagation in the parent item
+        return true;
+      }
+    }
+    if (isc.EH.getKey() === 'Enter') {
+      if (!isSelectedRecord) {
+        this.selectRecord(focusedRecord);
+      }
+    }
+    return this.Super('bodyKeyPress', arguments);
   }
 });
