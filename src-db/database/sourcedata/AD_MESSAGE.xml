@@ -22832,6 +22832,18 @@ Reload the context to make the changes available.]]></MSGTEXT>
 <!--AA196DCD58DA494FA1ADCF695FFAA80C-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
 <!--AA196DCD58DA494FA1ADCF695FFAA80C--></AD_MESSAGE>
 
+<!--AA54BEA2EB344463AE8E8B3F4D853500--><AD_MESSAGE>
+<!--AA54BEA2EB344463AE8E8B3F4D853500-->  <AD_MESSAGE_ID><![CDATA[AA54BEA2EB344463AE8E8B3F4D853500]]></AD_MESSAGE_ID>
+<!--AA54BEA2EB344463AE8E8B3F4D853500-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--AA54BEA2EB344463AE8E8B3F4D853500-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--AA54BEA2EB344463AE8E8B3F4D853500-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--AA54BEA2EB344463AE8E8B3F4D853500-->  <VALUE><![CDATA[FixBackdateFromBeforeStartingDate2]]></VALUE>
+<!--AA54BEA2EB344463AE8E8B3F4D853500-->  <MSGTEXT><![CDATA[Fix backdated from date should be equal or later than the starting date of the costing rule. If no date is entered in the fix backdated from date, starting date of the costing rule will be taken as fix backdated from date.]]></MSGTEXT>
+<!--AA54BEA2EB344463AE8E8B3F4D853500-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
+<!--AA54BEA2EB344463AE8E8B3F4D853500-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--AA54BEA2EB344463AE8E8B3F4D853500-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
+<!--AA54BEA2EB344463AE8E8B3F4D853500--></AD_MESSAGE>
+
 <!--AA8371C7B5984858B3020B9C578008FB--><AD_MESSAGE>
 <!--AA8371C7B5984858B3020B9C578008FB-->  <AD_MESSAGE_ID><![CDATA[AA8371C7B5984858B3020B9C578008FB]]></AD_MESSAGE_ID>
 <!--AA8371C7B5984858B3020B9C578008FB-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -25008,8 +25020,7 @@ You can revert your changes by reloading the current record from the database cl
 <!--DD89935E99164E87897CEE1CC67F5BB0-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--DD89935E99164E87897CEE1CC67F5BB0-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--DD89935E99164E87897CEE1CC67F5BB0-->  <VALUE><![CDATA[FixBackdateFromBeforeStartingDate]]></VALUE>
-<!--DD89935E99164E87897CEE1CC67F5BB0-->  <MSGTEXT><![CDATA[Fix backdated from date should be equal or later than the starting date of the costing rule. 
-If this is not the first costing rule, current date will be taken as starting date. Same way if no date is entered in the fix backdated from date, current date will be taken.]]></MSGTEXT>
+<!--DD89935E99164E87897CEE1CC67F5BB0-->  <MSGTEXT><![CDATA[Fix backdated from date should be equal or later than the starting date of the costing rule. If this is not the first costing rule, current date will be taken as starting date. Same way if no date is entered in the fix backdated from date, current date will be taken.]]></MSGTEXT>
 <!--DD89935E99164E87897CEE1CC67F5BB0-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--DD89935E99164E87897CEE1CC67F5BB0-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--DD89935E99164E87897CEE1CC67F5BB0-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
