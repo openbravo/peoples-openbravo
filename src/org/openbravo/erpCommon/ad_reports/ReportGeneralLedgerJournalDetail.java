@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2015 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -51,8 +51,8 @@ public class ReportGeneralLedgerJournalDetail extends HttpSecureAppServlet {
     } else if (vars.commandIn("DIRECT")) {
       String strFactAcctGroupId = vars.getGlobalVariable("inpFactAcctGroupId",
           "ReportGeneralLedgerJournalDetail|FactAcctGroupId");
-      String strDateAcct = getValue(strFactAcctGroupId, 0);
-      strFactAcctGroupId = getValue(strFactAcctGroupId, 1);
+      String strDateAcct = strFactAcctGroupId.substring(0, strFactAcctGroupId.lastIndexOf("/"));
+      strFactAcctGroupId = strFactAcctGroupId.substring(strFactAcctGroupId.lastIndexOf("/") + 1);
       printPageDataSheet(response, vars, strFactAcctGroupId, strDateAcct, null, "");
     } else if (vars.commandIn("DP")) {
       String strDPId = vars.getStringParameter("inpDPid");
