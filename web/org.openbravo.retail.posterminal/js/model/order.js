@@ -1065,10 +1065,6 @@
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationClosed'));
         return;
       }
-      if (this.get('isEditable') === false) {
-        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_modalNoEditableBody'));
-        return;
-      }
       var promotions = line.get('promotions') || [],
           disc = {},
           i, replaced = false;

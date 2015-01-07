@@ -236,6 +236,12 @@ enyo.kind({
       stateless: true,
       permission: 'OBPOS_order.discount',
       action: function (keyboard, txt) {
+        if (keyboard.receipt.get('isEditable') === false) {
+          me.doShowPopup({
+            popup: 'modalNotEditableOrder'
+          });
+          return true;
+        }
         me.doDiscountsMode({
           tabPanel: 'edit',
           keyboard: 'toolbardiscounts',
