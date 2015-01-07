@@ -238,7 +238,8 @@ isc.OBViewGrid.addProperties({
     },
 
     transformData: function (newData, dsResponse) {
-      var i, length, timeFields, responseToFilter, newTotalRows;
+      var i, length, timeFields, responseToFilter, responseToSort = false,
+          newTotalRows;
 
       // when the data is received from the datasource, time fields are formatted in UTC time. They have to be converted to local time
       if (dsResponse && dsResponse.context && (dsResponse.context.operationType === 'fetch' || dsResponse.context.operationType === 'update' || dsResponse.context.operationType === 'add')) {
@@ -257,6 +258,10 @@ isc.OBViewGrid.addProperties({
       responseToFilter = false;
       if (dsResponse.context && dsResponse.context._dsRequest && dsResponse.context._dsRequest.filtering) {
         responseToFilter = true;
+      }
+
+      if (dsResponse.context && dsResponse.context._dsRequest && dsResponse.context._dsRequest.params && dsResponse.context._dsRequest.params.isSorting) {
+        responseToSort = true;
       }
 
       if (this.localData && !responseToFilter) {
@@ -278,7 +283,8 @@ isc.OBViewGrid.addProperties({
         }
 
         // detects if the request was issued due to having scrolled up
-        if (this.grid.body.lastScrollTop !== undefined && this.grid.body.lastScrollTop > this.grid.body.getScrollTop()) {
+        // this does not apply when the grid has just been sorted, as the previous local data is discarded
+        if (!responseToSort && this.grid.body.lastScrollTop !== undefined && this.grid.body.lastScrollTop > this.grid.body.getScrollTop()) {
           // in that case, set the totalRows of the response to the length of the localData, to avoid
           // setting the totalRows of the grid to an invalid value
           dsResponse.totalRows = this.localData.length;
@@ -2232,6 +2238,11 @@ isc.OBViewGrid.addProperties({
       params[OB.Constants.WHERE_PARAMETER] = null;
     }
 
+    if (this.isSorting) {
+      params.isSorting = true;
+      delete this.isSorting;
+    }
+
     if (!isExporting) {
       first = true;
       selectedProperties = '';
@@ -4017,6 +4028,11 @@ isc.OBViewGrid.addProperties({
         me.view.updateSubtabVisibility();
       });
     }
+  },
+
+  setSort: function (sortSpecifiers, forceSort) {
+    this.isSorting = true;
+    this.Super('setSort', arguments);
   }
 });
 
