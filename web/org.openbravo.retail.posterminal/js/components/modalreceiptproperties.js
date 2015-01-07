@@ -48,6 +48,9 @@ enyo.kind({
       var me = this,
           actualUser;
       OB.Dal.find(OB.Model.SalesRepresentative, null, function (data, args) {
+        if (me.destroyed) {
+          return;
+        }
         if (data.length > 0) {
           me.dataReadyFunction(data, args);
         } else {
