@@ -40,14 +40,12 @@ import org.openbravo.model.materialmgmt.cost.CostAdjustment;
 import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
 import org.openbravo.model.materialmgmt.cost.CostingRule;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
-import org.openbravo.scheduling.ProcessLogger;
 import org.openbravo.service.db.DbUtility;
 import org.openbravo.service.json.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class FixBackdatedTransactionsProcess extends BaseProcessActionHandler {
-  private ProcessLogger logger;
   private static final Logger log4j = LoggerFactory
       .getLogger(FixBackdatedTransactionsProcess.class);
   private static CostAdjustment costAdjHeader = null;
@@ -71,8 +69,9 @@ public class FixBackdatedTransactionsProcess extends BaseProcessActionHandler {
       if (jsonparams.has("fixbackdatedfrom")
           && !jsonparams.getString("fixbackdatedfrom").equals("null")) {
         try {
-          fixbackdatedfrom = JsonUtils.createDateFormat().parse(
-              jsonparams.getString("fixbackdatedfrom"));
+          final String repairedfixbackdatedfrom = JsonUtils.convertFromXSDToJavaFormat(jsonparams
+              .getString("fixbackdatedfrom"));
+          fixbackdatedfrom = JsonUtils.createDateTimeFormat().parse(repairedfixbackdatedfrom);
         } catch (ParseException ignore) {
         }
       } else {
@@ -81,6 +80,12 @@ public class FixBackdatedTransactionsProcess extends BaseProcessActionHandler {
       rule.setFixbackdatedfrom(fixbackdatedfrom);
       try {
         OBContext.setAdminMode(false);
+        if (rule.getStartingDate() != null && rule.getFixbackdatedfrom() != null
+            && rule.isBackdatedTransactionsFixed()
+            && rule.getFixbackdatedfrom().before(rule.getStartingDate())) {
+          throw new OBException(
+              OBMessageUtils.parseTranslation("@FixBackdateFromBeforeStartingDate2@"));
+        }
         OrganizationStructureProvider osp = OBContext.getOBContext()
             .getOrganizationStructureProvider(rule.getClient().getId());
         final Set<String> childOrgs = osp.getChildTree(rule.getOrganization().getId(), true);
@@ -114,13 +119,13 @@ public class FixBackdatedTransactionsProcess extends BaseProcessActionHandler {
       } catch (final Exception e) {
         OBDal.getInstance().rollbackAndClose();
         String message = DbUtility.getUnderlyingSQLException(e).getMessage();
-        logger.log(message);
         log4j.error(message, e);
 
         JSONObject errorMessage = new JSONObject();
         errorMessage.put("severity", "error");
-        errorMessage.put("text", e.getMessage());
-        jsonResponse.put("message", message);
+        errorMessage.put("title", OBMessageUtils.messageBD("Error"));
+        errorMessage.put("text", message);
+        jsonResponse.put("message", errorMessage);
         return jsonResponse;
 
       } finally {
@@ -144,13 +149,13 @@ public class FixBackdatedTransactionsProcess extends BaseProcessActionHandler {
         } catch (Exception e) {
           OBDal.getInstance().rollbackAndClose();
           String message = DbUtility.getUnderlyingSQLException(e).getMessage();
-          logger.log(message);
           log4j.error(message, e);
           JSONObject errorMessage = new JSONObject();
 
           errorMessage.put("severity", "error");
-          errorMessage.put("text", e.getMessage());
-          jsonResponse.put("message", message);
+          errorMessage.put("title", OBMessageUtils.messageBD("Error"));
+          errorMessage.put("text", message);
+          jsonResponse.put("message", errorMessage);
           return jsonResponse;
 
         }
