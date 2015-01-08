@@ -71,9 +71,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
           var auxPay = payMthds.filter(function (payMthd) {
             return payMthd.get('paymentmethod_id') === payment.payment.id;
           })[0];
-          var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('cashup-model.init II');
           if (!auxPay) { //We cannot find this payment in local database, it must be a new payment method, we skip it.
-            OB.UTIL.SynchronizationHelper.finished(synchId, 'cashup-model.init II');
             return;
           }
           auxPay.set('_id', payment.payment.searchKey);
@@ -104,7 +102,6 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
             me.set('totalDifference', OB.DEC.sub(me.get('totalDifference'), me.get('totalExpected')));
             me.setIgnoreStep3();
           }
-          OB.UTIL.SynchronizationHelper.finished(synchId, 'cashup-model.init II');
         }, this);
       }, function () {
         OB.UTIL.SynchronizationHelper.finished(synchId, 'cashup-model.init');
