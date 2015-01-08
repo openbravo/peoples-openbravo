@@ -58,7 +58,7 @@ BEGIN
     FOR Cur_products IN (
         SELECT m_product_id
         FROM m_product
-        WHERE AD_ORG_ISINNATURALTREE(ad_org_id, p_org, p_client) ='Y'
+        WHERE (AD_ORG_ISINNATURALTREE(ad_org_id, p_org, p_client) ='Y' OR p_org IS NULL)
           AND ad_client_id = p_client
           AND isstocked = 'Y'
           AND producttype = 'I'
