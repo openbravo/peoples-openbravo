@@ -12,7 +12,7 @@
 (function () {
 
   function navigateTaxesTree(taxrates, taxid, iteratee) {
-    taxrates.each(function (tax) {
+    _.each(taxrates, function (tax) {
       if (tax.get('taxBase') === taxid) {
         iteratee(tax);
         navigateTaxesTree(taxrates, tax.get('id'), iteratee);
@@ -257,7 +257,7 @@
           if (!taxRate.get('summaryLevel')) {
             var taxId = taxRate.get('id');
             summedTaxAmt = OB.DEC.add(summedTaxAmt, taxesline[taxId].amount);
-            if ((greaterTax === null || Math.abs(taxesline[greaterTax].amount) > Math.abs(taxesline[taxId].amount))) {
+            if ((greaterTax === null || Math.abs(taxesline[greaterTax].amount) < Math.abs(taxesline[taxId].amount))) {
               greaterTax = taxId;
             }
           }
