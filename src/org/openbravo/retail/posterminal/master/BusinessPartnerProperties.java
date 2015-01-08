@@ -1,3 +1,11 @@
+/*
+ ************************************************************************************
+ * Copyright (C) 2015 Openbravo S.L.U.
+ * Licensed under the Openbravo Commercial License version 1.0
+ * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
+ * or in the legal folder of this module distribution.
+ ************************************************************************************
+ */
 package org.openbravo.retail.posterminal.master;
 
 import java.util.ArrayList;
@@ -44,6 +52,8 @@ public class BusinessPartnerProperties extends ModelExtension {
         add(new HQLProperty("bpl.businessPartner.creditLimit", "creditLimit"));
         add(new HQLProperty("bpl.businessPartner.creditUsed", "creditUsed"));
         add(new HQLProperty("bpl.businessPartner.taxExempt", "taxExempt"));
+        add(new HQLProperty("bpl.businessPartner.customerBlocking", "customerBlocking"));
+        add(new HQLProperty("bpl.businessPartner.salesOrder", "salesOrderBlocking"));
         add(new HQLProperty(
             "(case when bpl.active = 'Y' and bpl.businessPartner.active = 'Y' then true else false end)",
             "active"));

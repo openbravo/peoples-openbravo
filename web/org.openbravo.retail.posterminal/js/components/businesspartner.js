@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2014 Openbravo S.L.U.
+ * Copyright (C) 2012-2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -253,9 +253,13 @@ enyo.kind({
     name: 'line',
     style: 'line-height: 23px;',
     components: [{
+      style: 'display: inline-block;',
       name: 'identifier'
     }, {
-      style: 'color: #888888',
+      style: 'display: inline-block; font-weight: bold; color: red; padding-left:5px;',
+      name: 'onHold'
+    }, {
+      style: 'clear: left; color: #888888',
       name: 'address'
     }, {
       style: 'clear: both;'
@@ -271,6 +275,9 @@ enyo.kind({
   create: function () {
     this.inherited(arguments);
     this.$.identifier.setContent(this.model.get('_identifier'));
+    if (this.model.get('customerBlocking') && this.model.get('salesOrderBlocking')) {
+      this.$.onHold.setContent('(' + OB.I18N.getLabel('OBPOS_OnHold') + ')');
+    }
     this.$.address.setContent(this.model.get('locName'));
   }
 });
@@ -340,9 +347,13 @@ enyo.kind({
     this.bpsList = new Backbone.Collection();
     this.$.stBPAssignToReceipt.setCollection(this.bpsList);
     this.bpsList.on('click', function (model) {
-      this.doChangeBusinessPartner({
-        businessPartner: model
-      });
+      if (model.get('customerBlocking') && model.get('salesOrderBlocking')) {
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BPartnerOnHold', [model.get('_identifier')]));
+      } else {
+        this.doChangeBusinessPartner({
+          businessPartner: model
+        });
+      }
     }, this);
   }
 });

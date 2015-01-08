@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2012-2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -107,6 +107,8 @@
         this.set('phone', null);
         this.set('email', null);
         this.set('taxExempt', null);
+        this.set('customerBlocking', null);
+        this.set('salesOrderBlocking', null);
       } else {
         _.each(_.keys(cusToLoad.attributes), function (key) {
           if (cusToLoad.get(key) !== undf) {
@@ -249,6 +251,14 @@
   }, {
     name: 'taxExempt',
     column: 'taxExempt',
+    type: 'TEXT'
+  }, {
+    name: 'customerBlocking',
+    column: 'customerBlocking',
+    type: 'TEXT'
+  }, {
+    name: 'salesOrderBlocking',
+    column: 'salesOrderBlocking',
     type: 'TEXT'
   }]);
 
