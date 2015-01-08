@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2014 Openbravo S.L.U.
+ * Copyright (C) 2013-2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -23,6 +23,9 @@ enyo.kind({
       return this.receipt.selectedPayment;
     }
     return null;
+  },
+  setTotalPending: function (pending, mulrate, symbol, currencySymbolAtTheRight, inSender, inEvent) {
+    this.$.totalpending.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(pending, mulrate), symbol, currencySymbolAtTheRight));
   },
   buttonStatusChanged: function (inSender, inEvent) {
     var payment, amt, change, pending, isMultiOrders, paymentstatus;
@@ -55,7 +58,7 @@ enyo.kind({
       this.$.change.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(change, payment.mulrate), payment.symbol, payment.currencySymbolAtTheRight));
       OB.MobileApp.model.set('changeReceipt', OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(change, payment.mulrate), payment.symbol, payment.currencySymbolAtTheRight));
     } else if (!_.isNull(pending) && pending) {
-      this.$.totalpending.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(pending, payment.mulrate), payment.symbol, payment.currencySymbolAtTheRight));
+      this.setTotalPending(pending, payment.mulrate, payment.symbol, payment.currencySymbolAtTheRight, inSender, inEvent);
     }
     this.checkEnoughCashAvailable(paymentstatus, payment);
     if (!_.isNull(this.receipt) && this.receipt.get('isLayaway')) {
@@ -275,7 +278,7 @@ enyo.kind({
       this.$.creditsalesaction.hide();
       this.$.layawayaction.hide();
     } else {
-      this.$.totalpending.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(this.receipt.getPending(), rate), symbol, symbolAtRight));
+      this.setTotalPending(this.receipt.getPending(), rate, symbol, symbolAtRight);
       this.$.totalpending.show();
       //      if (this.receipt.get('orderType') === 1 || this.receipt.get('orderType') === 3) {
       if (paymentstatus.isNegative || this.receipt.get('orderType') === 3) {
@@ -393,7 +396,7 @@ enyo.kind({
       this.$.creditsalesaction.hide();
       //            this.$.layawayaction.hide();
     } else {
-      this.$.totalpending.setContent(OB.I18N.formatCurrency(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(OB.DEC.sub(paymentstatus.get('total'), paymentstatus.get('payment')), rate), symbol, symbolAtRight)));
+      this.setTotalPending(OB.DEC.sub(paymentstatus.get('total'), paymentstatus.get('payment')), rate, symbol, symbolAtRight);
       this.$.totalpending.show();
       this.$.totalpendinglbl.show();
       this.$.doneaction.hide();
