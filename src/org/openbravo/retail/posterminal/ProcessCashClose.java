@@ -287,9 +287,9 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
     newTax.setClient(cashup.getClient());
     OBDal.getInstance().save(newTax);
   }
-
-  @Override
-  protected String getProperty() {
-    return "OBPOS_retail.cashup";
-  }
+  // We do not have to check if the role has access because now, we update cashup with every order.
+  // @Override
+  // protected String getProperty() {
+  // return "OBPOS_retail.cashup";
+  // }
 }
