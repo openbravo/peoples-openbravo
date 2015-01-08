@@ -166,7 +166,7 @@ enyo.kind({
     });
     //load discounts
     OB.Dal.find(OB.Model.Discount, {
-      _whereClause: "where m_offer_type_id in (" + OB.Model.Discounts.getManualPromotions() + ") "
+      _whereClause: "where m_offer_type_id in (" + OB.Model.Discounts.getManualPromotions() + ") AND date('now') BETWEEN DATEFROM AND COALESCE(date(DATETO), date('9999-12-31'))"
       // filter discretionary discounts by current role
       + " AND ((EM_OBDISC_ROLE_SELECTION = 'Y'" //
       + " AND NOT EXISTS" //
