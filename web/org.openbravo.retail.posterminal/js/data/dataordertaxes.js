@@ -11,6 +11,15 @@
 
 (function () {
 
+  function navigateTaxesTree(taxrates, taxid, iteratee) {
+    taxrates.each(function (tax) {
+      if (tax.get('taxBase') === taxid) {
+        iteratee(tax);
+        navigateTaxesTree(taxrates, tax.get('id'), iteratee);
+      }
+    });
+  }
+
   var isTaxCategoryBOM = function (taxcategory) {
       return new Promise(function (fulfill) {
         OB.Dal.find(OB.Model.TaxCategoryBOM, {
@@ -248,22 +257,12 @@
           if (!taxRate.get('summaryLevel')) {
             var taxId = taxRate.get('id');
             summedTaxAmt = OB.DEC.add(summedTaxAmt, taxesline[taxId].amount);
-            if (receipt.get('orderType') === 1) { //A baseTax cannot be the greatest tax because if we change it's value we should change the dependent tax value too
-              if ((greaterTax === null || taxesline[greaterTax].amount > taxesline[taxId].amount) && (_.filter(taxList, function (tax) {
-                return tax.get('taxBase') && tax.get('taxBase') === taxId;
-              }).length === 0)) {
-                greaterTax = taxId;
-              }
-            } else { //A baseTax cannot be the greatest tax because if we change it's value we should change the dependent tax value too
-              if ((greaterTax === null || taxesline[greaterTax].amount < taxesline[taxId].amount) && (_.filter(taxList, function (tax) {
-                return tax.get('taxBase') && tax.get('taxBase') === taxId;
-              }).length === 0)) {
-                greaterTax = taxId;
-              }
+            if ((greaterTax === null || Math.abs(taxesline[greaterTax].amount) > Math.abs(taxesline[taxId].amount))) {
+              greaterTax = taxId;
             }
           }
         });
-        var netandtax;
+        var netandtax, adjustment;
         if (!(_.isNull(discountedGross) || _.isUndefined(discountedGross))) {
           netandtax = OB.DEC.add(discountedNet, summedTaxAmt);
         } else {
@@ -271,7 +270,11 @@
         }
         if (expectedGross !== netandtax) {
           //An adjustment is needed
-          taxesline[greaterTax].amount = OB.DEC.add(taxesline[greaterTax].amount, OB.DEC.sub(expectedGross, netandtax));
+          adjustment = OB.DEC.sub(expectedGross, netandtax);
+          taxesline[greaterTax].amount = OB.DEC.add(taxesline[greaterTax].amount, adjustment); // adjust the amout of taxline with greater amount
+          navigateTaxesTree(coll, greaterTax, function (tax) {
+            taxesline[tax.get('id')].net = OB.DEC.add(taxesline[tax.get('id')].net, adjustment); // adjust the net of taxlines that are son of the taxline with greater amount
+          });
         }
 
         // Accumulate to taxes line
