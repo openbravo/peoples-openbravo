@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013 Openbravo SLU 
+ * All portions are Copyright (C) 2013-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -140,7 +140,10 @@ public class CashUpReport extends HttpSecureAppServlet {
       List<OBPOSAppCashReconcil> recons = reconsQuery.list();
       Date cashUpDate = cashup.getCashUpDate();
       for (int i = 0; i < recons.size(); i++) {
-
+        if (recons.get(i).getReconciliation().getAccount().getOBPOSAppPaymentList().get(0)
+            .getFinancialAccount() == null) {
+          continue;
+        }
         expected = BigDecimal.ZERO;
 
         if (i != 0)

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2012-2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -48,8 +48,8 @@ public class InitialValidations {
       throw new JSONException("OBPOS_OrgDesynchronization");
     }
 
-    String whereclausePM = " as e where e.obposApplications=:terminal and not exists "
-        + "(select 1 from FinancialMgmtFinAccPaymentMethod as pmacc where "
+    String whereclausePM = " as e where e.obposApplications=:terminal and e.financialAccount is not null "
+        + "and not exists (select 1 from FinancialMgmtFinAccPaymentMethod as pmacc where "
         + "pmacc.paymentMethod = e.paymentMethod.paymentMethod and pmacc.account = e.financialAccount"
         + ")";
     OBQuery<OBPOSAppPayment> queryFinAccounts = OBDal.getInstance().createQuery(
@@ -59,7 +59,7 @@ public class InitialValidations {
       throw new JSONException("OBPOS_PayMethodNotConfiguredInAccount");
     }
 
-    String whereclauseCMEV = " as e where e.obposApplications=:terminal and exists "
+    String whereclauseCMEV = " as e where e.obposApplications=:terminal and e.financialAccount is not null and exists "
         + "(select 1 from OBRETCO_CashManagementEvents as cmev where "
         + "cmev.financialAccount = e.financialAccount)";
     OBQuery<OBPOSAppPayment> queryEventAccounts = OBDal.getInstance().createQuery(
@@ -67,6 +67,15 @@ public class InitialValidations {
     queryEventAccounts.setNamedParameter("terminal", posTerminal);
     if (queryEventAccounts.list().size() > 0) {
       throw new JSONException("OBPOS_CMEVAccountIsUsedInPayMethod");
+    }
+
+    String whereclauseLAC = " as e where e.obposApplications=:terminal and ((e.financialAccount is null "
+        + "and e.paymentMethod.leaveascredit = false) or (e.financialAccount is not null and e.paymentMethod.leaveascredit = true))";
+    OBQuery<OBPOSAppPayment> queryLeaveAsCredit = OBDal.getInstance().createQuery(
+        OBPOSAppPayment.class, whereclauseLAC);
+    queryLeaveAsCredit.setNamedParameter("terminal", posTerminal);
+    if (queryLeaveAsCredit.list().size() > 0) {
+      throw new JSONException("OBPOS_LeaveAsCreditNotConfigured");
     }
   }
 }

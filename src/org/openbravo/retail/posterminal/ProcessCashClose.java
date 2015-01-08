@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2012-2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -64,6 +64,9 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
     if (cashUp.isProcessed() && !cashUp.isProcessedbo()) {
       // check if there is a reconciliation in draft status
       for (OBPOSAppPayment payment : posTerminal.getOBPOSAppPaymentList()) {
+        if (payment.getFinancialAccount() == null) {
+          continue;
+        }
         final OBCriteria<FIN_Reconciliation> recconciliations = OBDal.getInstance().createCriteria(
             FIN_Reconciliation.class);
         recconciliations.add(Restrictions.eq(FIN_Reconciliation.PROPERTY_DOCUMENTSTATUS, "DR"));

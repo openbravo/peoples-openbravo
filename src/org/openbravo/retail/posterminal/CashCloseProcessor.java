@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2012-2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -73,7 +73,9 @@ public class CashCloseProcessor {
       }
       String paymentTypeId = cashCloseObj.getString("paymentTypeId");
       OBPOSAppPayment paymentType = OBDal.getInstance().get(OBPOSAppPayment.class, paymentTypeId);
-
+      if (paymentType.getFinancialAccount() == null) {
+        continue;
+      }
       FIN_Reconciliation reconciliation = createReconciliation(cashCloseObj, posTerminal,
           paymentType.getFinancialAccount(), cashUpDate);
 

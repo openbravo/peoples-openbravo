@@ -448,6 +448,13 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             }));
           }
           receipt.set('change', oldChange);
+          for (var i = 0; i < receipt.get('payments').length; i++) {
+            var payment = OB.MobileApp.model.paymentnames[receipt.get('payments').models[i].get('kind')];
+            if (payment && payment.paymentMethod && payment.paymentMethod.leaveascredit) {
+              receipt.set('payment', OB.DEC.sub(receipt.get('payment'), receipt.get('payments').models[i].get('amount')));
+              receipt.set('paidOnCredit', true);
+            }
+          }
           receipt.trigger('closed', {
             callback: function () {
               receipt.get('payments').reset();
@@ -470,6 +477,13 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             }
           });
         } else {
+          for (var i = 0; i < receipt.get('payments').length; i++) {
+            var payment = OB.MobileApp.model.paymentnames[receipt.get('payments').models[i].get('kind')];
+            if (payment && payment.paymentMethod && payment.paymentMethod.leaveascredit) {
+              receipt.set('payment', OB.DEC.sub(receipt.get('payment'), receipt.get('payments').models[i].get('amount')));
+              receipt.set('paidOnCredit', true);
+            }
+          }
           receipt.trigger('closed', {
             callback: function () {
               // receipt is cloned because the receipt is deleted when event "closed" is triggered
