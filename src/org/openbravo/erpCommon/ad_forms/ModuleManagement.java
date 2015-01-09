@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -1485,7 +1485,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
     org.openbravo.model.ad.module.Module mod = OBDal.getInstance().get(
         org.openbravo.model.ad.module.Module.class, moduleId);
     if (mod != null) {
-      currentVersion = currentVersion.concat(" (" + mod.getVersionLabel() + ")");
+      currentVersion = currentVersion.concat(" ("
+          + (mod.getVersionLabel() != null ? mod.getVersionLabel() : mod.getVersion()) + ")");
     }
     return currentVersion;
   }
