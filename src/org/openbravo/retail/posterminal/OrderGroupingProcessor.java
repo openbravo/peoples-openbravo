@@ -14,10 +14,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+
 import org.apache.log4j.Logger;
-import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
@@ -54,6 +58,10 @@ import org.openbravo.service.json.JsonConstants;
 
 public class OrderGroupingProcessor {
 
+  @Inject
+  @Any
+  private Instance<FinishInvoiceHook> invoiceProcesses;
+
   private static final Logger log = Logger.getLogger(OrderGroupingProcessor.class);
 
   /**
@@ -61,9 +69,11 @@ public class OrderGroupingProcessor {
    * bp in one invoice, depending on the create invoices for order setting in the (
    * {@link TerminalType#isGroupingOrders}).
    * 
+   * @throws Exception
+   * 
    */
   public JSONObject groupOrders(OBPOSApplications posTerminal, String cashUpId, Date cashUpDate)
-      throws JSONException, SQLException {
+      throws Exception {
     // Obtaining order lines that have been created in current terminal and have not already been
     // reconciled. This query must be kept in sync with the one in CashCloseReport
 
@@ -239,12 +249,21 @@ public class OrderGroupingProcessor {
       invoice = OBDal.getInstance().get(Invoice.class, invoiceId);
       invoice.setDocumentNo(getInvoiceDocumentNo(invoice.getTransactionDocument(),
           invoice.getDocumentType()));
+      executeHooks(invoice, cashUpId);
     }
     OBDal.getInstance().flush();
 
     JSONObject jsonResponse = new JSONObject();
     jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
     return jsonResponse;
+  }
+
+  protected void executeHooks(Invoice invoice, String cashUpId) throws Exception {
+    for (Iterator<FinishInvoiceHook> processIterator = invoiceProcesses.iterator(); processIterator
+        .hasNext();) {
+      FinishInvoiceHook process = processIterator.next();
+      process.exec(invoice, cashUpId);
+    }
   }
 
   protected FIN_PaymentSchedule createNewPaymentSchedule(Invoice invoice, Date cashUpDate) {

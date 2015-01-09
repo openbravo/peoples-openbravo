@@ -93,7 +93,7 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
       // This cashup is a closed box
       TriggerHandler.getInstance().disable();
       try {
-        new OrderGroupingProcessor().groupOrders(posTerminal, cashUpId, cashUpDate);
+        getOrderGroupingProcessor().groupOrders(posTerminal, cashUpId, cashUpDate);
 
         posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
             jsonCashup.getString("posterminal"));
@@ -120,6 +120,10 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
 
   protected CashCloseProcessor getCashCloseProcessor() {
     return WeldUtils.getInstanceFromStaticBeanManager(CashCloseProcessor.class);
+  }
+
+  protected OrderGroupingProcessor getOrderGroupingProcessor() {
+    return WeldUtils.getInstanceFromStaticBeanManager(OrderGroupingProcessor.class);
   }
 
   /**
