@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,6 +21,7 @@ package org.openbravo.test;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
+import org.openbravo.test.datasource.FICTest;
 import org.openbravo.test.datasource.FKDropDownDatasource;
 import org.openbravo.test.datasource.ProductSelectorDataSourceTest;
 import org.openbravo.test.datasource.SelectorFieldPropertySelectorDSTest;
@@ -33,7 +34,7 @@ import org.openbravo.test.webservice.WSReadTest;
 import org.openbravo.test.webservice.WSUpdateTest;
 
 /**
- * This test suite should only contain test cases which are to run the weservices included in core.
+ * This test suite should only contain test cases which are to run the webservices included in core.
  * 
  * 
  */
@@ -50,6 +51,7 @@ WSReadTest.class, //
     ProductSelectorDataSourceTest.class, //
     TestComboDatasource.class, //
     FKDropDownDatasource.class, //
-    JSONWebServices.class })
+    JSONWebServices.class, //
+    FICTest.class })
 public class AllWebserviceTests {
 }
