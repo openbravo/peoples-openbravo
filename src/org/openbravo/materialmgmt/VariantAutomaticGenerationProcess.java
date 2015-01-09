@@ -38,17 +38,20 @@ import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.DalUtil;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.utility.Image;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.plm.ProductAccounts;
 import org.openbravo.model.common.plm.ProductCharacteristic;
 import org.openbravo.model.common.plm.ProductCharacteristicConf;
 import org.openbravo.model.common.plm.ProductCharacteristicValue;
+import org.openbravo.model.common.plm.ProductTrl;
 import org.openbravo.model.pricing.pricelist.ProductPrice;
 import org.openbravo.scheduling.Process;
 import org.openbravo.scheduling.ProcessBundle;
@@ -131,11 +134,17 @@ public class VariantAutomaticGenerationProcess implements Process {
       int productNo = 0;
       int k = 0;
       Long start = System.currentTimeMillis();
+      boolean multilingualDocs = ((Client) OBDal.getInstance().get(Client.class,
+          bundle.getContext().getClient())).isMultilingualDocuments();
       do {
         k = k + 1;
         // Create variant product
         product = OBDal.getInstance().get(Product.class, recordID);
         Product variant = (Product) DalUtil.copy(product);
+        
+        if (multilingualDocs) {
+          variant.set(Product.PROPERTY_PRODUCTTRLLIST, null);
+        }
 
         if (product.getImage() != null) {
           Image newPrImage = (Image) DalUtil.copy(product.getImage(), false);
