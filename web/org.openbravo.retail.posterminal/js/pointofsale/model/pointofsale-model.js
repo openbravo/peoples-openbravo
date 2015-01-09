@@ -407,8 +407,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       OB.UTIL.showLoading(true);
       receipt.prepareToSend(function () {
         //Create the negative payment for change
-        var oldChange = receipt.get('change');
-        var clonedCollection = new Backbone.Collection();
+        var oldChange = receipt.get('change'),
+            clonedCollection = new Backbone.Collection(),
+            paymentKind, i;
         if (receipt.get('orderType') !== 2 && receipt.get('orderType') !== 3) {
           var negativeLines = _.filter(receipt.get('lines').models, function (line) {
             return line.get('qty') < 0;
@@ -448,9 +449,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             }));
           }
           receipt.set('change', oldChange);
-          for (var i = 0; i < receipt.get('payments').length; i++) {
-            var payment = OB.MobileApp.model.paymentnames[receipt.get('payments').models[i].get('kind')];
-            if (payment && payment.paymentMethod && payment.paymentMethod.leaveascredit) {
+          for (i = 0; i < receipt.get('payments').length; i++) {
+            paymentKind = OB.MobileApp.model.paymentnames[receipt.get('payments').models[i].get('kind')];
+            if (paymentKind && paymentKind.paymentMethod && paymentKind.paymentMethod.leaveascredit) {
               receipt.set('payment', OB.DEC.sub(receipt.get('payment'), receipt.get('payments').models[i].get('amount')));
               receipt.set('paidOnCredit', true);
             }
@@ -477,9 +478,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             }
           });
         } else {
-          for (var i = 0; i < receipt.get('payments').length; i++) {
-            var payment = OB.MobileApp.model.paymentnames[receipt.get('payments').models[i].get('kind')];
-            if (payment && payment.paymentMethod && payment.paymentMethod.leaveascredit) {
+          for (i = 0; i < receipt.get('payments').length; i++) {
+            paymentKind = OB.MobileApp.model.paymentnames[receipt.get('payments').models[i].get('kind')];
+            if (paymentKind && paymentKind.paymentMethod && paymentKind.paymentMethod.leaveascredit) {
               receipt.set('payment', OB.DEC.sub(receipt.get('payment'), receipt.get('payments').models[i].get('amount')));
               receipt.set('paidOnCredit', true);
             }
