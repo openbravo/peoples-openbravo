@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -318,7 +318,11 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     if (hqlQuery.indexOf(MAIN_FROM) != -1) {
       hqlQuery = hqlQuery.replace(MAIN_FROM, FROM);
     }
+
+    log.debug("HQL query: {}", hqlQuery);
     Query query = OBDal.getInstance().getSession().createQuery(hqlQuery);
+
+    StringBuffer paramsLog = new StringBuffer();
 
     // sets the parameters of the query
     for (String key : queryNamedParameters.keySet()) {
@@ -331,8 +335,13 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
         } else {
           query.setParameter(key, parameter);
         }
+        if (log.isDebugEnabled()) {
+          paramsLog.append("\n").append(key).append(": ").append(parameter);
+        }
       }
     }
+
+    log.debug("  parameters:{}", paramsLog);
 
     OBContext.restorePreviousMode();
     return query;
@@ -494,18 +503,21 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
         // if the property is a primitive, just replace the property name with the column alias
         propertyNameBefore = property.getName();
         propertyNameAfter = column.getEntityAlias();
-        addEntryToReplacementMap(replacementMap, propertyNameBefore, propertyNameAfter);
+        addEntryToReplacementMap(replacementMap, propertyNameBefore, propertyNameAfter,
+            table.getEntityAlias());
       } else {
         // the criteria can refer to the foreign key via its ID...
         propertyNameBefore = property.getName() + "." + JsonConstants.ID;
         propertyNameAfter = column.getEntityAlias() + "." + JsonConstants.ID;
-        addEntryToReplacementMap(replacementMap, propertyNameBefore, propertyNameAfter);
+        addEntryToReplacementMap(replacementMap, propertyNameBefore, propertyNameAfter,
+            table.getEntityAlias());
         // ... or through its identifier
         Entity refEntity = property.getReferencedProperty().getEntity();
         String identifierPropertyName = refEntity.getIdentifierProperties().get(0).getName();
         propertyNameBefore = property.getName() + "." + identifierPropertyName;
         propertyNameAfter = column.getEntityAlias() + "." + identifierPropertyName;
-        addEntryToReplacementMap(replacementMap, propertyNameBefore, propertyNameAfter);
+        addEntryToReplacementMap(replacementMap, propertyNameBefore, propertyNameAfter,
+            table.getEntityAlias());
       }
       for (String toBeReplaced : replacementMap.keySet()) {
         updatedWhereClause = updatedWhereClause.replaceAll(toBeReplaced,
@@ -520,11 +532,16 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
    * added to the replacement map
    */
   private void addEntryToReplacementMap(Map<String, String> replacementMap, String oldName,
-      String newName) {
+      String newName, String mainAlias) {
     replacementMap.put(" " + oldName + " ", " " + newName + " ");
     replacementMap.put("[(]" + oldName + "[)]", "(" + newName + ")");
     replacementMap.put("[(]" + oldName + " ", "(" + newName + " ");
     replacementMap.put(" " + oldName + "[)]", " " + newName + ")");
+
+    if (StringUtils.isNotEmpty(mainAlias)) {
+      // if table has alias, add also replacements taking it into account
+      addEntryToReplacementMap(replacementMap, mainAlias + "." + oldName, newName, null);
+    }
   }
 
   /**
