@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -35,7 +35,6 @@ import org.openbravo.client.kernel.RequestContext;
 public class DateTimeUIDefinition extends DateUIDefinition {
   private String lastUsedPattern = null;
   private SimpleDateFormat dateFormat = null;
-  private static final SimpleDateFormat ficDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
   @Override
   public String getParentType() {
@@ -65,17 +64,14 @@ public class DateTimeUIDefinition extends DateUIDefinition {
     return convertedValue.toString();
   }
 
-  private StringBuffer convertLocalDateTimeToUTC(Date UTCDate) {
+  private StringBuffer convertLocalDateTimeToUTC(Date date) {
     StringBuffer localTimeColumnValue = null;
-    Calendar now = Calendar.getInstance();
 
     Calendar calendar = Calendar.getInstance();
-    calendar.setTime(UTCDate);
-    calendar.set(Calendar.DATE, now.get(Calendar.DATE));
-    calendar.set(Calendar.MONTH, now.get(Calendar.MONTH));
-    calendar.set(Calendar.YEAR, now.get(Calendar.YEAR));
+    calendar.setTime(date);
 
-    int gmtMillisecondOffset = (now.get(Calendar.ZONE_OFFSET) + now.get(Calendar.DST_OFFSET));
+    int gmtMillisecondOffset = (calendar.get(Calendar.ZONE_OFFSET) + calendar
+        .get(Calendar.DST_OFFSET));
     calendar.add(Calendar.MILLISECOND, -gmtMillisecondOffset);
     localTimeColumnValue = getClassicFormat().format(calendar.getTime(), new StringBuffer(),
         new FieldPosition(0));
