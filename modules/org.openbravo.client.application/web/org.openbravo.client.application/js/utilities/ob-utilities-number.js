@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2014 Openbravo SLU
+ * All portions are Copyright (C) 2011-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -450,8 +450,8 @@ OB.Utilities.Number.ScientificToDecimal = function (number, decSeparator) {
     }
     //Create the final number
     number = '0.' + zeros + coeficient;
-  } else if (exponent.indexOf('+') !== -1) { // Case the number is bigger than 1
-    numberOfZeros = exponent.substring(1, exponent.length);
+  } else { // Case the number is bigger than 1
+    numberOfZeros = exponent.indexOf('+') !== -1 ? exponent.substring(1, exponent.length) : exponent;
     if (split) {
       numberOfZeros = numberOfZeros - split[1].length;
     }
