@@ -256,9 +256,15 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         return false;
       }
     });
-    this.set('order', receipt);
+
+    // expose the receipt
+    OB.MobileApp.model.receipt = receipt;
+
+    // create the orderList and expose it
     orderList = new OB.Collection.OrderList(receipt);
     OB.MobileApp.model.orderList = orderList;
+
+    this.set('order', receipt);
     this.set('orderList', orderList);
     this.set('customer', new OB.Model.BusinessPartner());
     this.set('customerAddr', new OB.Model.BPLocation());
