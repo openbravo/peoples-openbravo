@@ -18,7 +18,7 @@
     * under the License.
     * The Original Code is Openbravo ERP.
     * The Initial Developer of the Original Code is Openbravo SLU
-    * All portions are Copyright (C) 2001-2014 Openbravo SLU
+    * All portions are Copyright (C) 2001-2015 Openbravo SLU
     * All Rights Reserved.
     * Contributor(s):  ______________________________________.
     ************************************************************************/
@@ -30,7 +30,6 @@
   v_productname m_product.name%TYPE;
   v_isgeneric   CHAR(1);
   v_Issotrx     CHAR(1);
-  v_BaseAmount C_TAX.BASEAMOUNT%TYPE;
     
 BEGIN
     
@@ -108,17 +107,6 @@ BEGIN
     WHERE C_CURRENCY_ID=v_Currency;
     :NEW.LineNetAmt:=ROUND(:NEW.LineNetAmt, v_Prec) ;
     :NEW.ChargeAmt:=ROUND(:NEW.ChargeAmt, v_Prec) ;
-    
-    SELECT BASEAMOUNT
-    INTO v_BaseAmount
-    FROM C_TAX
-    WHERE C_TAX_ID = :new.C_Tax_ID;
-        
-    IF (v_BaseAmount='TBA' OR v_BaseAmount='TBATAX') THEN
-      :new.Taxbaseamt := :new.LineNetAmt;
-    ELSE
-      :new.Taxbaseamt := 0;
-    END IF;
 
     IF (:NEW.ISEDITLINENETAMT='Y' AND ROUND(TO_NUMBER(:NEW.QTYINVOICED) * TO_NUMBER(:NEW.PRICEACTUAL),v_Prec)!=TO_NUMBER(:NEW.LINENETAMT)) THEN
       RAISE_APPLICATION_ERROR(-20000, '@LineAmountNotCorrect@') ;

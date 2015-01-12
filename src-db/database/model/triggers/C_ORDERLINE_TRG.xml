@@ -17,7 +17,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2014 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2015 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -170,18 +170,6 @@ IF (UPDATING) THEN
   :new.LineNetAmt := ROUND(:new.QtyOrdered*:new.PriceActual, v_Prec);-- Modified by I.Ciordia
   :new.FreightAmt := ROUND(:new.FreightAmt, v_Prec);
   :new.ChargeAmt := ROUND(:new.ChargeAmt, v_Prec);
-  
-  SELECT BASEAMOUNT
-  INTO v_BaseAmount
-  FROM C_TAX
-  WHERE C_TAX_ID = :new.C_Tax_ID;
-        
-  IF (v_BaseAmount='TBA' OR v_BaseAmount='TBATAX') THEN
-    :new.Taxbaseamt := :new.LineNetAmt;
-  ELSE
-    :new.Taxbaseamt := 0;
-  END IF;
-        
   IF (round(to_number(:NEW.QTYORDERED) * to_number(:NEW.PRICEACTUAL),v_Prec) != to_number(:NEW.LINENETAMT)) THEN
       RAISE_APPLICATION_ERROR(-20000, '@LineAmountNotCorrect@') ;
     END IF;
