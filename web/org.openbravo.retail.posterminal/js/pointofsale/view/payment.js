@@ -76,7 +76,6 @@ enyo.kind({
     if (component.$.tempty.getShowing()) {
       maxHeight -= component.$.tempty.getBounds().height;
     }
-    component.$.scrollArea.setStyle("height: " + maxHeight + "px");
     // Scroll to bottom
     var height = 0;
     component.$.tbody.children.forEach(function (line) {
