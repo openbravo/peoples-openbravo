@@ -83,7 +83,12 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
       // retrieve standard params
       final String recordID = (String) bundle.getParams().get("Fin_Payment_ID");
       final FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, recordID);
-      final Boolean isPosOrder = bundle.getParams().get("isPOSOrder").equals("Y");
+      final Boolean isPosOrder;
+      if (bundle.getParams().get("isPOSOrder") == null) {
+        isPosOrder = false;
+      } else {
+        isPosOrder = bundle.getParams().get("isPOSOrder").equals("Y");
+      }
       final String paymentDate = (String) bundle.getParams().get("paymentdate");
       processPayment(payment, strAction, isPosOrder, paymentDate, comingFrom);
       bundle.setResult(msg);
