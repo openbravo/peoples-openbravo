@@ -227,7 +227,7 @@ OB.DS.HWServer.prototype._print = function (templatedata, params, callback) {
       exception: {
         message: OB.I18N.getLabel('OBPOS_MsgPrintError')
       }
-    })
+    });
   }
 };
 
