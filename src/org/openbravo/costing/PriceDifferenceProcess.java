@@ -179,15 +179,11 @@ public class PriceDifferenceProcess {
   }
 
   /**
-   * Method to process a cost adjustment.
-   * 
-   * @param costAdj
-   *          the cost adjustment to be processed.
    * @return the message to be shown to the user properly formatted and translated to the user
    *         language.
    * @throws OBException
    *           when there is an error that prevents the cost adjustment to be processed.
-   * @throws JSONException
+   * @throws OBException
    */
   public static JSONObject processPriceDifference(Date date, Product product) throws OBException {
 

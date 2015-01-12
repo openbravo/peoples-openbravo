@@ -224,8 +224,6 @@ public class OBDateUtils {
   /**
    * Returns the last second of the day passed as argument
    * 
-   * @param date
-   * 
    */
   public static Date getEndOfDay(Date day) {
     Calendar cal = Calendar.getInstance();

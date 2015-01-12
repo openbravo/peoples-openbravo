@@ -77,8 +77,6 @@ public class BaseDataSourceTestDal extends OBBaseTest {
   /**
    * Obtains URL of Openbravo instance, by default taken from Openbravo.poperties context.url
    * property
-   * 
-   * @return
    */
   protected String getOpenbravoURL() {
     if (OB_URL != null) {

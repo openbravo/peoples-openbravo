@@ -66,7 +66,6 @@ public class LCMatchingProcess {
    *          the landed cost to be processed.
    * @return the message to be shown to the user properly formatted and translated to the user
    *         language.
-   * @throws Exception
    */
   public JSONObject processLCMatching(LandedCostCost _lcCost) {
     LandedCostCost lcCost = _lcCost;

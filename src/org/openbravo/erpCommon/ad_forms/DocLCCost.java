@@ -319,8 +319,6 @@ public class DocLCCost extends AcctServer {
   /**
    * Get the account for Accounting Schema
    * 
-   * @param AcctType
-   *          see ACCTTYPE_*
    * @param as
    *          accounting schema
    * @return Account

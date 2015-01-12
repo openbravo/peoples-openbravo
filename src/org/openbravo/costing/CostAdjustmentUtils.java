@@ -69,7 +69,7 @@ public class CostAdjustmentUtils {
   /**
    * Returns a new header for a Cost Adjustment
    * 
-   * @param organization
+   * @param org
    *          organization set in record
    * 
    * @param sourceProcess
@@ -105,9 +105,6 @@ public class CostAdjustmentUtils {
    * 
    * @param costAdjusted
    *          amount to adjust in the cost
-   * 
-   * @param transactionDate
-   *          date to do the transaction
    * 
    * @param isSource
    */

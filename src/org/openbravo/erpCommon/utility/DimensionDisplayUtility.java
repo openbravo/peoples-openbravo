@@ -575,7 +575,6 @@ public class DimensionDisplayUtility {
    *          Process Definition
    * @param parameter
    *          Parameter of Process Definition
-   * @return
    */
   @SuppressWarnings("unchecked")
   public static List<String> getRequiredSessionVariablesForTab(Process process, Parameter parameter) {
@@ -652,7 +651,6 @@ public class DimensionDisplayUtility {
    *          Process Definition
    * @param parameter
    *          Parameter of Process Definition
-   * @return
    */
   public static String computeAccountingDimensionDisplayLogic(Process process, Parameter parameter) {
     // Example

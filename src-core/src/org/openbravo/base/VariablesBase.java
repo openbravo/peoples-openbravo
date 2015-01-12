@@ -132,7 +132,6 @@ public class VariablesBase {
   /**
    * Returns the MD5 string hash based on the post data
    * 
-   * @return
    */
   private String computeHash() {
     long t = System.currentTimeMillis();

@@ -118,8 +118,8 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
   }
 
   /**
-   * Execute the same test as in {@link #bPaymentTerm()}, as it is repeated and no data has changed
-   * no updates should take place.
+   * Execute the same test as in {@link #testBPaymentTerm()}, as it is repeated and no data has
+   * changed no updates should take place.
    */
   @Test
   public void testCPaymentTerm() {
@@ -149,8 +149,8 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
   }
 
   /**
-   * Now do the same as in {@link #cPaymentTerm()} only now with some small changes in the xml, so
-   * that some objects are updated.
+   * Now do the same as in {@link #testCPaymentTerm()} only now with some small changes in the xml,
+   * so that some objects are updated.
    */
   @Test
   public void testDPaymentTerm() {
@@ -244,7 +244,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
   }
 
   /**
-   * Tests that the previous test {@link #ePaymentTerm()} did not really remove a line. See this
+   * Tests that the previous test {@link #testEPaymentTerm()} did not really remove a line. See this
    * issue: https://issues.openbravo.com/view.php?id=15690
    */
   @Test
@@ -313,7 +313,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
   }
 
   /**
-   * Tests that {@link #gPaymentTerm()} was successfull.
+   * Tests that {@link #testGPaymentTerm()} was successful.
    */
   @Test
   public void testHPaymentTerm() {

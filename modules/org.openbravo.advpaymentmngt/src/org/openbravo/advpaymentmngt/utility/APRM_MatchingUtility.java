@@ -115,8 +115,8 @@ public class APRM_MatchingUtility {
    * Fix wrong financial transactions of a reconciliation. If the fix is not possible, it launches
    * an OBException
    * 
-   * @param mixedLine
-   *          The financial transaction to be fixed
+   * @param reconciliation
+   *          The reconciliation whose lines are to be fixed
    */
   public static void fixMixedLines(FIN_Reconciliation reconciliation) {
     List<FIN_FinaccTransaction> mixedLines = APRM_MatchingUtility
@@ -296,7 +296,7 @@ public class APRM_MatchingUtility {
   /**
    * Remove the match of a bank statement line with a transaction
    * 
-   * @param bsline
+   * @param _bsline
    *          Bank Statement Line to be unmatched from a transaction
    */
   public static void unmatch(final FIN_BankStatementLine _bsline) {
