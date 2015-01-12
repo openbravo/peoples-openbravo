@@ -22,10 +22,10 @@ import java.util.List;
 
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.APRM_FinaccTransactionV;
-import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
-import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -34,7 +34,6 @@ import org.openbravo.erpCommon.ad_forms.AcctServer;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
-import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.currency.ConversionRateDoc;
 import org.openbravo.model.financialmgmt.accounting.FIN_FinancialAccountAccounting;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
@@ -44,20 +43,20 @@ import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
 import org.openbravo.scheduling.ProcessBundle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FIN_TransactionProcess implements org.openbravo.scheduling.Process {
-  private static AdvPaymentMngtDao dao;
   /** Transaction type - Financial Account */
   public static final String TRXTYPE_BPDeposit = "BPD";
   public static final String TRXTYPE_BPWithdrawal = "BPW";
   public static final String TRXTYPE_BankFee = "BF";
+  static Logger log4j = LoggerFactory.getLogger(FIN_TransactionProcess.class);
 
   public void execute(ProcessBundle bundle) throws Exception {
-    dao = new AdvPaymentMngtDao();
     OBError msg = new OBError();
     msg.setType("Success");
-    msg.setTitle(Utility.messageBD(bundle.getConnection(), "Success", bundle.getContext()
-        .getLanguage()));
+    msg.setTitle(OBMessageUtils.messageBD("Success"));
 
     try {
       // retrieve custom params
@@ -68,175 +67,163 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
       if (recordID == null) {
         recordID = (String) bundle.getParams().get("Fin_Finacc_Transaction_ID");
       }
-      final FIN_FinaccTransaction transaction = dao
-          .getObject(FIN_FinaccTransaction.class, recordID);
-      final VariablesSecureApp vars = bundle.getContext().toVars();
-      final ConnectionProvider conProvider = bundle.getConnection();
-      final String language = bundle.getContext().getLanguage();
-
-      OBContext.setAdminMode(false);
-      try {
-        if (strAction.equals("P")) {
-          // ***********************
-          // Process Transaction
-          // ***********************
-          boolean orgLegalWithAccounting = FIN_Utility.periodControlOpened(transaction.TABLE_NAME,
-              transaction.getId(), transaction.TABLE_NAME + "_ID", "LE");
-          boolean documentEnabled = getDocumentConfirmation(conProvider, transaction.getId());
-          if (documentEnabled
-              && !FIN_Utility.isPeriodOpen(transaction.getClient().getId(),
-                  AcctServer.DOCTYPE_FinAccTransaction, transaction.getOrganization().getId(),
-                  OBDateUtils.formatDate(transaction.getDateAcct())) && orgLegalWithAccounting) {
-            msg.setType("Error");
-            msg.setTitle(Utility.messageBD(conProvider, "Error", language));
-            msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
-                "@PeriodNotAvailable@"));
-            bundle.setResult(msg);
-            OBDal.getInstance().rollbackAndClose();
-            return;
-          }
-          final FIN_FinancialAccount financialAccount = transaction.getAccount();
-          financialAccount.setCurrentBalance(financialAccount.getCurrentBalance().add(
-              transaction.getDepositAmount().subtract(transaction.getPaymentAmount())));
-          transaction.setProcessed(true);
-          FIN_Payment payment = transaction.getFinPayment();
-          if (payment != null) {
-            if (transaction.getBusinessPartner() == null) {
-              transaction.setBusinessPartner(payment.getBusinessPartner());
-            }
-            payment.setStatus(payment.isReceipt() ? "RDNC" : "PWNC");
-            transaction.setStatus(payment.isReceipt() ? "RDNC" : "PWNC");
-            OBDal.getInstance().save(payment);
-            if (transaction.getDescription() == null || "".equals(transaction.getDescription())) {
-              transaction.setDescription(payment.getDescription());
-            }
-            Boolean invoicePaidold = false;
-            for (FIN_PaymentDetail pd : payment.getFINPaymentDetailList()) {
-              for (FIN_PaymentScheduleDetail psd : pd.getFINPaymentScheduleDetailList()) {
-                invoicePaidold = psd.isInvoicePaid();
-                if (!invoicePaidold) {
-                  if ((FIN_Utility.invoicePaymentStatus(payment).equals(payment.getStatus()))) {
-                    psd.setInvoicePaid(true);
-                  }
-                  if (psd.isInvoicePaid()) {
-                    FIN_Utility.updatePaymentAmounts(psd);
-                    FIN_Utility.updateBusinessPartnerCredit(payment);
-                  }
-                  OBDal.getInstance().save(psd);
-                }
-              }
-            }
-
-          } else {
-            transaction.setStatus(transaction.getDepositAmount().compareTo(
-                transaction.getPaymentAmount()) > 0 ? "RDNC" : "PWNC");
-          }
-          if (transaction.getForeignCurrency() != null
-              && !transaction.getCurrency().equals(transaction.getForeignCurrency())
-              && getConversionRateDocument(transaction).size() == 0) {
-            insertConversionRateDocument(transaction);
-          }
-          transaction.setAprmProcessed("R");
-          OBDal.getInstance().save(financialAccount);
-          OBDal.getInstance().save(transaction);
-          OBDal.getInstance().flush();
-          bundle.setResult(msg);
-
-        } else if (strAction.equals("R")) {
-          // ***********************
-          // Reactivate Transaction
-          // ***********************
-          // Already Posted Document
-          if ("Y".equals(transaction.getPosted())) {
-            msg.setType("Error");
-            msg.setTitle(Utility.messageBD(conProvider, "Error", language));
-            msg.setMessage(Utility.parseTranslation(conProvider, vars, language, "@PostedDocument@"
-                + ": " + transaction.getIdentifier()));
-            bundle.setResult(msg);
-            return;
-          }
-          // Already Reconciled
-          if (transaction.getReconciliation() != null || "RPPC".equals(transaction.getStatus())) {
-            msg.setType("Error");
-            msg.setTitle(Utility.messageBD(conProvider, "Error", language));
-            msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
-                "@APRM_ReconciledDocument@" + ": " + transaction.getIdentifier()));
-            bundle.setResult(msg);
-            return;
-          }
-
-          // Payment Method associated to payment not longer in financial account
-          final FIN_Payment payment = transaction.getFinPayment();
-          if (payment != null && FIN_Utility.invoicePaymentStatus(payment) == null) {
-            msg.setType("Error");
-            msg.setTitle(Utility.messageBD(conProvider, "Error", language));
-            msg.setMessage(String.format(OBMessageUtils.messageBD("APRM_NoPaymentMethod"), payment
-                .getPaymentMethod().getIdentifier(), payment.getDocumentNo(), payment.getAccount()
-                .getName()));
-            bundle.setResult(msg);
-            return;
-          }
-
-          // Remove conversion rate at document level for the given transaction
-          OBContext.setAdminMode();
-          try {
-            OBCriteria<ConversionRateDoc> obc = OBDal.getInstance().createCriteria(
-                ConversionRateDoc.class);
-            obc.add(Restrictions.eq(ConversionRateDoc.PROPERTY_FINANCIALACCOUNTTRANSACTION,
-                transaction));
-            for (ConversionRateDoc conversionRateDoc : obc.list()) {
-              OBDal.getInstance().remove(conversionRateDoc);
-            }
-            OBDal.getInstance().flush();
-          } finally {
-            OBContext.restorePreviousMode();
-          }
-          transaction.setProcessed(false);
-          final FIN_FinancialAccount financialAccount = transaction.getAccount();
-          financialAccount.setCurrentBalance(financialAccount.getCurrentBalance()
-              .subtract(transaction.getDepositAmount()).add(transaction.getPaymentAmount()));
-          OBDal.getInstance().save(financialAccount);
-          OBDal.getInstance().save(transaction);
-          OBDal.getInstance().flush();
-          if (payment != null) {
-            Boolean invoicePaidold = false;
-            for (FIN_PaymentDetail pd : payment.getFINPaymentDetailList()) {
-              for (FIN_PaymentScheduleDetail psd : pd.getFINPaymentScheduleDetailList()) {
-                invoicePaidold = psd.isInvoicePaid();
-                if (invoicePaidold) {
-                  boolean restore = (FIN_Utility.seqnumberpaymentstatus(payment.getStatus())) == (FIN_Utility
-                      .seqnumberpaymentstatus(FIN_Utility.invoicePaymentStatus(payment)));
-                  if (restore) {
-                    FIN_Utility.restorePaidAmounts(psd);
-                  }
-                }
-              }
-            }
-            payment.setStatus(payment.isReceipt() ? "RPR" : "PPM");
-            transaction.setStatus(payment.isReceipt() ? "RPR" : "PPM");
-            OBDal.getInstance().save(payment);
-          } else {
-            transaction.setStatus(transaction.getDepositAmount().compareTo(
-                transaction.getPaymentAmount()) > 0 ? "RPR" : "PPM");
-          }
-          transaction.setAprmProcessed("P");
-          OBDal.getInstance().save(transaction);
-          OBDal.getInstance().flush();
-          bundle.setResult(msg);
-
-        }
-        bundle.setResult(msg);
-      } finally {
-        OBContext.restorePreviousMode();
-      }
-    } catch (final Exception e) {
-      OBDal.getInstance().rollbackAndClose();
-      e.printStackTrace(System.err);
+      final FIN_FinaccTransaction transaction = OBDal.getInstance().get(
+          FIN_FinaccTransaction.class, recordID);
+      transactionProcess(strAction, transaction);
+      bundle.setResult(msg);
+    } catch (Exception e) {
+      log4j.error(e.getMessage());
       msg.setType("Error");
-      msg.setTitle(Utility.messageBD(bundle.getConnection(), "Error", bundle.getContext()
-          .getLanguage()));
+      msg.setTitle(OBMessageUtils.messageBD("Error"));
       msg.setMessage(FIN_Utility.getExceptionMessage(e));
       bundle.setResult(msg);
+      OBDal.getInstance().getConnection().rollback();
+    }
+  }
+
+  public static void doTransactionProcess(String strAction, FIN_FinaccTransaction transaction)
+      throws OBException {
+    FIN_TransactionProcess ftp = WeldUtils
+        .getInstanceFromStaticBeanManager(FIN_TransactionProcess.class);
+    ftp.transactionProcess(strAction, transaction);
+  }
+
+  private void transactionProcess(String strAction, FIN_FinaccTransaction transaction)
+      throws OBException {
+    String msg = "";
+    try {
+      OBContext.setAdminMode(false);
+      if (strAction.equals("P")) {
+        // ***********************
+        // Process Transaction
+        // ***********************
+        boolean orgLegalWithAccounting = FIN_Utility.periodControlOpened(
+            FIN_FinaccTransaction.TABLE_NAME, transaction.getId(), FIN_FinaccTransaction.TABLE_NAME
+                + "_ID", "LE");
+        boolean documentEnabled = getDocumentConfirmation(transaction.getId());
+        if (documentEnabled
+            && !FIN_Utility.isPeriodOpen(transaction.getClient().getId(),
+                AcctServer.DOCTYPE_FinAccTransaction, transaction.getOrganization().getId(),
+                OBDateUtils.formatDate(transaction.getDateAcct())) && orgLegalWithAccounting) {
+          msg = OBMessageUtils.messageBD("PeriodNotAvailable");
+          throw new OBException(msg);
+        }
+        final FIN_FinancialAccount financialAccount = transaction.getAccount();
+        financialAccount.setCurrentBalance(financialAccount.getCurrentBalance().add(
+            transaction.getDepositAmount().subtract(transaction.getPaymentAmount())));
+        transaction.setProcessed(true);
+        FIN_Payment payment = transaction.getFinPayment();
+        if (payment != null) {
+          if (transaction.getBusinessPartner() == null) {
+            transaction.setBusinessPartner(payment.getBusinessPartner());
+          }
+          payment.setStatus(payment.isReceipt() ? "RDNC" : "PWNC");
+          transaction.setStatus(payment.isReceipt() ? "RDNC" : "PWNC");
+          OBDal.getInstance().save(payment);
+          if (transaction.getDescription() == null || "".equals(transaction.getDescription())) {
+            transaction.setDescription(payment.getDescription());
+          }
+          Boolean invoicePaidold = false;
+          for (FIN_PaymentDetail pd : payment.getFINPaymentDetailList()) {
+            for (FIN_PaymentScheduleDetail psd : pd.getFINPaymentScheduleDetailList()) {
+              invoicePaidold = psd.isInvoicePaid();
+              if (!invoicePaidold) {
+                if ((FIN_Utility.invoicePaymentStatus(payment).equals(payment.getStatus()))) {
+                  psd.setInvoicePaid(true);
+                }
+                if (psd.isInvoicePaid()) {
+                  FIN_Utility.updatePaymentAmounts(psd);
+                  FIN_Utility.updateBusinessPartnerCredit(payment);
+                }
+                OBDal.getInstance().save(psd);
+              }
+            }
+          }
+
+        } else {
+          transaction.setStatus(transaction.getDepositAmount().compareTo(
+              transaction.getPaymentAmount()) > 0 ? "RDNC" : "PWNC");
+        }
+        if (transaction.getForeignCurrency() != null
+            && !transaction.getCurrency().equals(transaction.getForeignCurrency())
+            && getConversionRateDocument(transaction).size() == 0) {
+          insertConversionRateDocument(transaction);
+        }
+        transaction.setAprmProcessed("R");
+        OBDal.getInstance().save(financialAccount);
+        OBDal.getInstance().save(transaction);
+        OBDal.getInstance().flush();
+
+      } else if (strAction.equals("R")) {
+        // ***********************
+        // Reactivate Transaction
+        // ***********************
+        // Already Posted Document
+        if ("Y".equals(transaction.getPosted())) {
+          msg = OBMessageUtils.messageBD("PostedDocument: " + transaction.getIdentifier());
+          throw new OBException(msg);
+        }
+        // Already Reconciled
+        if (transaction.getReconciliation() != null || "RPPC".equals(transaction.getStatus())) {
+          msg = OBMessageUtils.messageBD("APRM_ReconciledDocument: " + transaction.getIdentifier());
+          throw new OBException(msg);
+        }
+        // Payment Method associated to payment not longer in financial account
+        final FIN_Payment payment = transaction.getFinPayment();
+        if (payment != null && FIN_Utility.invoicePaymentStatus(payment) == null) {
+          msg = String.format(OBMessageUtils.messageBD("APRM_NoPaymentMethod"), payment
+              .getPaymentMethod().getIdentifier(), payment.getDocumentNo(), payment.getAccount()
+              .getName());
+          throw new OBException(msg);
+        }
+        // Remove conversion rate at document level for the given transaction
+        OBContext.setAdminMode();
+        try {
+          OBCriteria<ConversionRateDoc> obc = OBDal.getInstance().createCriteria(
+              ConversionRateDoc.class);
+          obc.add(Restrictions.eq(ConversionRateDoc.PROPERTY_FINANCIALACCOUNTTRANSACTION,
+              transaction));
+          for (ConversionRateDoc conversionRateDoc : obc.list()) {
+            OBDal.getInstance().remove(conversionRateDoc);
+          }
+          OBDal.getInstance().flush();
+        } finally {
+          OBContext.restorePreviousMode();
+        }
+        transaction.setProcessed(false);
+        final FIN_FinancialAccount financialAccount = transaction.getAccount();
+        financialAccount.setCurrentBalance(financialAccount.getCurrentBalance()
+            .subtract(transaction.getDepositAmount()).add(transaction.getPaymentAmount()));
+        OBDal.getInstance().save(financialAccount);
+        OBDal.getInstance().save(transaction);
+        OBDal.getInstance().flush();
+        if (payment != null) {
+          Boolean invoicePaidold = false;
+          for (FIN_PaymentDetail pd : payment.getFINPaymentDetailList()) {
+            for (FIN_PaymentScheduleDetail psd : pd.getFINPaymentScheduleDetailList()) {
+              invoicePaidold = psd.isInvoicePaid();
+              if (invoicePaidold) {
+                boolean restore = (FIN_Utility.seqnumberpaymentstatus(payment.getStatus())) == (FIN_Utility
+                    .seqnumberpaymentstatus(FIN_Utility.invoicePaymentStatus(payment)));
+                if (restore) {
+                  FIN_Utility.restorePaidAmounts(psd);
+                }
+              }
+            }
+          }
+          payment.setStatus(payment.isReceipt() ? "RPR" : "PPM");
+          transaction.setStatus(payment.isReceipt() ? "RPR" : "PPM");
+          OBDal.getInstance().save(payment);
+        } else {
+          transaction.setStatus(transaction.getDepositAmount().compareTo(
+              transaction.getPaymentAmount()) > 0 ? "RPR" : "PPM");
+        }
+        transaction.setAprmProcessed("P");
+        OBDal.getInstance().save(transaction);
+        OBDal.getInstance().flush();
+      }
+    } finally {
+      OBContext.restorePreviousMode();
     }
   }
 
@@ -278,6 +265,10 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
    * Checks if this step is configured to generate accounting for the selected financial account
    */
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
+    return getDocumentConfirmation(strRecordId);
+  }
+
+  private boolean getDocumentConfirmation(String strRecordId) {
     boolean confirmation = false;
     OBContext.setAdminMode();
     try {
