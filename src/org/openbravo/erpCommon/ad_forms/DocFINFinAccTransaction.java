@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -816,7 +816,7 @@ public class DocFINFinAccTransaction extends AcctServer {
               ((DocLine_FINFinAccTransaction) p_lines[i]).DepositAmount);
           lineBalance = lineBalance.subtract(new BigDecimal(
               ((DocLine_FINFinAccTransaction) p_lines[i]).PaymentAmount));
-          retValue = retValue.subtract(lineBalance);
+          retValue = retValue.add(lineBalance);
         } else {
           BigDecimal lineBalance = payment.isReceipt() ? new BigDecimal(
               ((DocLine_FINFinAccTransaction) p_lines[i]).getAmount()) : new BigDecimal(
@@ -824,7 +824,7 @@ public class DocFINFinAccTransaction extends AcctServer {
           BigDecimal lineWriteoff = payment.isReceipt() ? new BigDecimal(
               ((DocLine_FINFinAccTransaction) p_lines[i]).getWriteOffAmt()) : new BigDecimal(
               ((DocLine_FINFinAccTransaction) p_lines[i]).getWriteOffAmt()).negate();
-          retValue = retValue.subtract(lineBalance).subtract(lineWriteoff);
+          retValue = retValue.add(lineBalance).add(lineWriteoff);
         }
       }
     } finally {
