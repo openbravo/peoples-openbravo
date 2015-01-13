@@ -85,6 +85,7 @@
       }, function (args) {
         if (args && args.cancellation && args.cancellation === true) {
           args.context.receipt.set('isbeingprocessed', 'N');
+          args.context.receipt.set('hasbeenpaid', 'N');
           args.context.receipt.trigger('paymentCancel');
           return true;
         }
