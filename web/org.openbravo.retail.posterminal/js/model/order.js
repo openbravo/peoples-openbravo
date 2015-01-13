@@ -2399,19 +2399,16 @@
       });
     },
     deleteCurrent: function (forceCreateNew) {
-      var isNew = false;
-
-      if (this.current) {
-        this.remove(this.current);
-        if (this.length > 0 && !forceCreateNew) {
-          this.current = this.at(this.length - 1);
-        } else {
-          this.current = this.newOrder();
-          this.add(this.current);
-          isNew = true;
-        }
-        this.loadCurrent(isNew);
+      if (!this.current) {
+        return;
       }
+      this.remove(this.current);
+      var createNew = forceCreateNew || this.length === 0;
+      if (createNew) {
+        this.add(this.newOrder());
+      }
+      this.current = this.at(this.length - 1);
+      this.loadCurrent(createNew);
     },
 
     load: function (model) {

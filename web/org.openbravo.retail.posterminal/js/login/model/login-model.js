@@ -696,10 +696,10 @@
        */
       var synchronizeCurrentOrder = function () {
           var orderlist = OB.MobileApp.model.orderList;
-          if (orderlist && orderlist.models.length > 0 && orderlist.current) {
+          if (orderlist && orderlist.models.length === 1 && orderlist.current) {
             if (orderlist.current.get('lines') && orderlist.current.get('lines').length === 0) {
               if (orderlist.current.get('documentnoSuffix') <= me.documentnoThreshold || me.documentnoThreshold === 0) {
-                orderlist.deleteCurrent();
+                orderlist.deleteCurrent(true);
               }
             }
           }
