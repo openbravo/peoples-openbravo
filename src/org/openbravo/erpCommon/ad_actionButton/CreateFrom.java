@@ -585,7 +585,8 @@ public class CreateFrom extends HttpSecureAppServlet {
         xmlDocument.setParameter("messageMessage", myMessage.getMessage());
       } else {
         xmlDocument.setParameter("messageType", "Info");
-        xmlDocument.setParameter("messageTitle", "Information");
+        xmlDocument.setParameter("messageTitle",
+            Utility.messageBD(this, "Information", vars.getLanguage()));
         xmlDocument.setParameter("messageMessage",
             Utility.messageBD(this, "CreateFromMatchPOQtys", vars.getLanguage()));
       }
