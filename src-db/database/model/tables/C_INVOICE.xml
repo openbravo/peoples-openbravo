@@ -364,6 +364,9 @@
       <index name="C_INVOICE_ORDER" unique="false">
         <index-column name="C_ORDER_ID"/>
       </index>
+      <index name="C_INVOICE_PAID" unique="false">
+        <index-column name="ISPAID"/>
+      </index>
       <index name="C_INVOICE_UPDATED" unique="false">
         <index-column name="UPDATED"/>
       </index>
