@@ -22,7 +22,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2012-2014 Openbravo SLU
+* All portions are Copyright (C) 2012-2015 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -43,6 +43,7 @@
   v_reserveqty                  NUMBER;
   v_dummy                       VARCHAR2(2000) := '';
   v_pinstance_id                VARCHAR2(32) := get_uuid();
+  v_prioritywarehouse_id        VARCHAR2(32);
   
 
   TYPE RECORD IS REF CURSOR;
@@ -94,10 +95,12 @@ BEGIN
     AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '100', 'ProcessID', '---', null, null, null, null, null);
 
     IF (v_soline_id IS NOT NULL) THEN
-      SELECT m_warehouse_rule_id INTO v_warehouse_rule_id
+      SELECT m_warehouse_rule_id , m_warehouse_id
+      INTO v_warehouse_rule_id , v_prioritywarehouse_id
       FROM c_orderline
       WHERE c_orderline_id = v_soline_id;
       AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '110', 'M_Warehouse_Rule_ID', v_warehouse_rule_id, null, null, null, null, null);
+      AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '120', 'Priority_Warehouse_ID', v_prioritywarehouse_id, null, null, null, null, null);
     END IF;
 
     M_GET_STOCK(v_pinstance_ID, 'N');
