@@ -1,0 +1,42 @@
+A) Openbravo Commercial License
+
+This license file applies to the Openbravo module this file is contained in, except as described below.
+
+This product is Copyright 2001-2015 Openbravo S.L.U.
+
+This product is not free software; it is subject to the Openbravo Commercial License (available at http://www.openbravo.com/content/openbravo-commercial-license)
+
+This product is distributed in the hope that it will be useful, but WITHOUT ANY  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A  PARTICULAR PURPOSE. See the Openbravo commercial License
+(http://www.openbravo.com/content/openbravo-commercial-license) for more details.
+
+You should have received a copy of the Openbravo Commercial License along with this product; if not, write to legal@openbravo.com.  You can also find the terms of
+the Openbravo Commercial License here: http://www.openbravo.com/content/openbravo-commercial-license
+
+
+B) Third party code
+
+Some portions of the Openbravo Software are provided by third parties and thus are not available under the Openbravo Commercial License, but are available under other licensing terms. In this distribution, they are:
+
+libs/backbone.localStorage-min.js
+Under the MIT License, available at
+https://github.com/jashkenas/backbone/blob/master/LICENSE
+
+web/org.openbravo.mobile.core/lib/vendor/moment-1.7.2-min.js
+Under the MIT License available at:
+http://opensource.org/licenses/MIT
+
+web/org.openbravo.mobile.core/lib/vendor/core.js
+web/org.openbravo.mobile.core/lib/vendor/core.min.js
+web/org.openbravo.mobile.core/lib/vendor/sha1.js
+web/org.openbravo.mobile.core/lib/vendor/sha1.min.js
+License available at:
+https://code.google.com/p/crypto-js/wiki/License
+
+web/org.openbravo.retail.posterminal/js/libs/jquery-1.7.2.js
+web/org.openbravo.retail.posterminal/js/libs/jquery-1.7.2-min.js
+Under the MIT license available at:
+https://jquery.org/license/
+
+js/libs/text-1.0.8.min.js
+Under the MIT or BSD license available at:
+https://github.com/requirejs/text/blob/master/LICENSE
