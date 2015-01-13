@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -34,7 +34,9 @@ OB.Costing.MatchFromInvoiceAmtValidation = function (item, validator, value, rec
   // Check that matched amount is not higher than invoice line net amount
   for (i = 0; i < selectedRecordsLength; i++) {
     editedRecord = isc.addProperties({}, selectedRecords[i], item.grid.getEditedRecord(selectedRecords[i]));
-    matchedamt = matchedamt.add(new BigDecimal(String(editedRecord.matchedAmt)));
+    if (editedRecord.matchedAmt) {
+      matchedamt = matchedamt.add(new BigDecimal(String(editedRecord.matchedAmt)));
+    }
   }
   if (matchedamt.compareTo(invoiceamt) > 0) {
     item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_Costing_MachedMoreThanInvoice', [invoiceamt.toString()]));
