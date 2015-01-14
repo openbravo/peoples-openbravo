@@ -490,6 +490,11 @@ enyo.kind({
       return;
     }
 
+    if (this.receipt.get('isEditable') === false) {
+      me.setDisabled(true);
+      return;
+    }
+    
     me.setDisabled(OB.UTIL.isDisableDiscount(this.receipt));
 
     me.adjustVisibilityBasedOnPermissions();
