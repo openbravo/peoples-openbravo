@@ -14,13 +14,14 @@
     * under the License.
     * The Original Code is Openbravo ERP.
     * The Initial Developer of the Original Code is Openbravo SLU
-    * All portions are Copyright (C) 2014 Openbravo SLU
+    * All portions are Copyright (C) 2014-2015 Openbravo SLU
     * All Rights Reserved.
     * Contributor(s):  ______________________________________.
     ************************************************************************/
     v_DateNull DATE := TO_DATE('01-01-1900', 'DD-MM-YYYY');
 	  v_Processed CHAR(1) ; --OBTG:VARCHAR2--
 	  v_m_LandedCost_ID VARCHAR2(32) ;
+	  v_m_Inout_ID VARCHAR2(32) ;
         
 BEGIN
     
@@ -29,10 +30,18 @@ BEGIN
 
 	  IF INSERTING THEN
 	    v_m_LandedCost_ID:=:new.M_landedcost_ID;
+	    v_m_Inout_ID:=:new.M_inout_ID;
 	  ELSE
 	    v_m_LandedCost_ID:=:old.M_landedcost_ID;
+	    v_m_Inout_ID:=:old.M_inout_ID;
 	  END IF;
-    SELECT PROCESSED INTO v_Processed FROM M_LandedCost WHERE M_landedcost_ID=v_M_LandedCost_ID;
+	  
+    IF (v_m_LandedCost_ID is not null) THEN
+      SELECT PROCESSED INTO v_Processed FROM M_LandedCost WHERE M_landedcost_ID=v_M_LandedCost_ID;
+    ELSIF (v_m_Inout_ID is not null) THEN
+      SELECT PROCESSED INTO v_Processed FROM M_Inout WHERE M_inout_ID=v_m_Inout_ID;
+    END IF;
+    
     IF UPDATING THEN  
       IF(:old.Processed='Y'
         AND ((COALESCE(:old.dateacct, v_DateNull) <> COALESCE(:new.dateacct, v_DateNull))
@@ -44,7 +53,6 @@ BEGIN
         OR(COALESCE(:old.ismatched, '.') <> COALESCE(:new.ismatched, '.'))
         OR(COALESCE(:old.line, 0) <> COALESCE(:new.line, 0))
         OR(COALESCE(:old.m_inout_id, '0') <> COALESCE(:new.m_inout_id, '0'))
-        OR(COALESCE(:old.m_landedcost_id, '0') <> COALESCE(:new.m_landedcost_id, '0'))
         OR(COALESCE(:old.m_lc_distribution_alg_id, '0') <> COALESCE(:new.m_lc_distribution_alg_id, '0'))
         OR(COALESCE(:old.m_lc_type_id, '0') <> COALESCE(:new.m_lc_type_id, '0'))
         OR(COALESCE(:old.matching_amt, 0) <> COALESCE(:new.matching_amt, 0))
@@ -63,7 +71,6 @@ BEGIN
         OR(COALESCE(:old.cancel_matching, '.') <> COALESCE(:new.cancel_matching, '.'))
         OR(COALESCE(:old.line, 0) <> COALESCE(:new.line, 0))
         OR(COALESCE(:old.m_inout_id, '0') <> COALESCE(:new.m_inout_id, '0'))
-        OR(COALESCE(:old.m_landedcost_id, '0') <> COALESCE(:new.m_landedcost_id, '0'))
         OR(COALESCE(:old.m_lc_distribution_alg_id, '0') <> COALESCE(:new.m_lc_distribution_alg_id, '0'))
         OR(COALESCE(:old.m_lc_type_id, '0') <> COALESCE(:new.m_lc_type_id, '0'))
         OR(COALESCE(:old.AD_ORG_ID, '0') <> COALESCE(:new.AD_ORG_ID, '0'))
