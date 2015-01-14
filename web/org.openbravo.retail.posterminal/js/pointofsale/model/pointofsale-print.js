@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013 Openbravo S.L.U.
+ * Copyright (C) 2013-2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -40,7 +40,12 @@
         this.print(order, args);
       }, this);
       this.receipt.on('print', function (order, args) {
-        this.print(order, args);
+        try {
+          this.print(order, args);
+        } catch (e) {
+          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_ErrorPrintingReceipt'));
+          OB.error('Error printing the receipt:' + e);
+        }
       }, this);
 
       this.receipt.on('displayTotal', this.displayTotal, this);
