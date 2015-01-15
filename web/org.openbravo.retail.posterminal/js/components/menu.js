@@ -518,6 +518,10 @@ enyo.kind({
       me.setDisabled(true);
     }, this);
 
+    this.receipt.on('change', function () {
+      this.updateVisibility();
+    }, this);
+    
     this.receipt.get('lines').on('all', function () {
       this.updateVisibility();
     }, this);
