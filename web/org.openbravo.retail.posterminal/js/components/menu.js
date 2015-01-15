@@ -490,7 +490,7 @@ enyo.kind({
       return;
     }
 
-    me.setDisabled(OB.UTIL.isDisableDiscount(this.receipt));
+    me.setDisabled(OB.UTIL.isDisableDiscount(this.receipt) || false);
 
     me.adjustVisibilityBasedOnPermissions();
   },
