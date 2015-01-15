@@ -465,9 +465,6 @@ enyo.kind({
   name: 'OB.UI.MenuDiscounts',
   kind: 'OB.UI.MenuAction',
   permission: 'OBPOS_retail.advDiscounts',
-  published: {
-    disabled: false
-  },
   events: {
     onDiscountsMode: ''
   },
