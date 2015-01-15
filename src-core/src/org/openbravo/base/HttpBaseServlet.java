@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2011 Openbravo S.L.U.
+ * Copyright (C) 2001-2015 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -66,7 +66,6 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
   private String strBaseConfigPath;
   private static String strContext = null;
   private static String prefix = null;
-  private static String stcFileProperties = null;
   private boolean isJNDIModeOn;
   protected Logger log4j = Logger.getLogger(this.getClass());
   private String PoolFileName;
@@ -134,8 +133,6 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
           PropertyConfigurator.configure(prefix + "/" + strBaseConfigPath + "/" + file);
         }
       }
-      stcFileProperties = prefix + "/" + strBaseConfigPath + "/" + "Openbravo.properties";
-      // OBProperties.getInstance(stcFileProperties);
 
       globalParameters = ConfigParameters.retrieveFrom(config.getServletContext());
       strDefaultServlet = globalParameters.strDefaultServlet;
