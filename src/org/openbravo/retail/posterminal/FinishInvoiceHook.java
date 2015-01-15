@@ -18,6 +18,6 @@ import org.openbravo.model.common.invoice.Invoice;
  */
 public abstract class FinishInvoiceHook {
 
-  public abstract void exec(Invoice invoice, String cashupId) throws Exception;
+  public abstract void exec(Invoice invoice, String cashupId);
 
 }

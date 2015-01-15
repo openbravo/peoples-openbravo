@@ -22,6 +22,7 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
@@ -69,11 +70,9 @@ public class OrderGroupingProcessor {
    * bp in one invoice, depending on the create invoices for order setting in the (
    * {@link TerminalType#isGroupingOrders}).
    * 
-   * @throws Exception
-   * 
    */
   public JSONObject groupOrders(OBPOSApplications posTerminal, String cashUpId, Date cashUpDate)
-      throws Exception {
+      throws JSONException, SQLException {
     // Obtaining order lines that have been created in current terminal and have not already been
     // reconciled. This query must be kept in sync with the one in CashCloseReport
 
@@ -258,7 +257,7 @@ public class OrderGroupingProcessor {
     return jsonResponse;
   }
 
-  protected void executeHooks(Invoice invoice, String cashUpId) throws Exception {
+  protected void executeHooks(Invoice invoice, String cashUpId) {
     for (Iterator<FinishInvoiceHook> processIterator = invoiceProcesses.iterator(); processIterator
         .hasNext();) {
       FinishInvoiceHook process = processIterator.next();
