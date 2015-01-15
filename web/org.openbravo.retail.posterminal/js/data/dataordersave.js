@@ -43,39 +43,6 @@
       }
       this.receipt.set('hasbeenpaid', 'Y');
 
-      // check receipt integrity
-      // sum the amounts of the lines
-      var oldGross = this.receipt.getGross();
-      var realGross = 0;
-      this.receipt.get('lines').forEach(function (line) {
-        line.calculateGross();
-        var amountToAdd;
-        if (line.get('priceIncludesTax')) {
-          amountToAdd = line.get('lineGrossAmount');
-        } else {
-          amountToAdd = line.get('discountedGross');
-        }
-        realGross = OB.DEC.add(realGross, amountToAdd);
-      });
-
-      // check if the amount of the lines is different from the gross
-      if (oldGross !== realGross) {
-        OB.error("Receipt integrity: FAILED");
-        if (OB.MobileApp.model.hasPermission('OBPOS_TicketIntegrityCheck', true)) {
-          if (this.receipt.get('id')) {
-            OB.Dal.remove(model.get('orderList').current, null, null);
-          }
-          model.get('orderList').deleteCurrent();
-          OB.UTIL.showConfirmation.display('Error', OB.I18N.getLabel('OBPOS_ErrorOrderIntegrity'), [{
-            label: OB.I18N.getLabel('OBMOBC_LblOk'),
-            isConfirmButton: true,
-            action: function () {}
-          }]);
-          return;
-        }
-      }
-      OB.trace('Receipt integrity: OK');
-      this.receipt.trigger('integrityOk');
       OB.trace('Executing pre order save hook.');
 
       OB.UTIL.HookManager.executeHooks('OBPOS_PreOrderSave', {
