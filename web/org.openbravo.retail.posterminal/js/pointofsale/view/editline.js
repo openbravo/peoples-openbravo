@@ -147,6 +147,7 @@ enyo.kind({
   }],
   actionButtons: [{
     kind: 'OB.UI.SmallButton',
+    name: 'deleteLine',
     i18nContent: 'OBPOS_ButtonDelete',
     classes: 'btnlink-orange',
     tap: function () {
