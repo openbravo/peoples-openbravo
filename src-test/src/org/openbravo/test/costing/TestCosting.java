@@ -11361,6 +11361,7 @@ public class TestCosting extends BaseDataSourceTestDal {
   }
 
   // Run Costing Background process
+  // FIXME https://issues.openbravo.com/view.php?id=28625
   // Costing Background process is called by a request instead of directly because WeldUtils class
   // is not yet supported without tomcat running
   private void runCostingBackground() {
@@ -11384,6 +11385,7 @@ public class TestCosting extends BaseDataSourceTestDal {
   }
 
   // Run Price Correction Background
+  // FIXME https://issues.openbravo.com/view.php?id=28625
   // Price Background process is called by a request instead of directly because WeldUtils class
   // is not yet supported without tomcat running
   private void runPriceBackground() {
