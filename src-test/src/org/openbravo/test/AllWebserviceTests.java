@@ -22,7 +22,6 @@ package org.openbravo.test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.openbravo.test.costing.TestCosting;
-import org.openbravo.test.costing.TestUnitCost;
 import org.openbravo.test.datasource.FICTest;
 import org.openbravo.test.datasource.FKDropDownDatasource;
 import org.openbravo.test.datasource.HQLDataSourceTest;
@@ -57,7 +56,6 @@ WSReadTest.class, //
     JSONWebServices.class, //
     FICTest.class, //
     HQLDataSourceTest.class, //
-    TestCosting.class, //
-    TestUnitCost.class })
+    TestCosting.class })
 public class AllWebserviceTests {
 }
