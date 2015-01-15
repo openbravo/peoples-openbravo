@@ -230,6 +230,7 @@ enyo.kind({
         me = this;
     if (receipt.get('isQuotation')) {
       if (receipt.get('hasbeenpaid') !== 'Y') {
+        receipt.set('isEditable', false);
         receipt.prepareToSend(function () {
           receipt.trigger('closed', {
             callback: function () {
