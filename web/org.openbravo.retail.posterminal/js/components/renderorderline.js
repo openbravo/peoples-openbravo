@@ -228,7 +228,10 @@ enyo.kind({
       paymentDate = new Date();
     } else {
       // Convert to UTC to properly manage browser timezone
-      paymentDate = moment(this.model.get('paymentDate').toString(), "YYYY-MM-DD hh:m:ss.s").toDate();
+      paymentDate = this.model.get('paymentDate');
+      if (typeof (this.model.get('paymentDate')) === 'string') {
+        paymentDate = new Date(paymentDate);
+      }
       paymentDate = new Date(paymentDate.getTime() + (60000 * paymentDate.getTimezoneOffset()));
     }
     this.$.date.setContent(OB.I18N.formatDate(paymentDate));
