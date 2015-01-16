@@ -44,12 +44,7 @@ OB.APRM.MatchStatement.onLoad = function (view) {
       grid.parentElement.messageBar.text.setContents(grid.parentElement.messageBar.text.contents.replace(OB.I18N.getLabel('OBUIAPP_ClearFilters'), OB.I18N.getLabel('OBUIAPP_ClearFilters') + '<br/>' + OB.I18N.getLabel('APRM_GRID_PERSIST_MESSAGE')));
     }
   };
-  // FIXME: How to manage if sometimes in test the boolean parameter is true and other times is false??
-  if (isc.isA.emptyObject(OB.TestRegistry.registry)) {
-    isc.confirm(OB.I18N.getLabel('APRM_AlgorithmConfirm'), execute);
-  } else {
-    execute(false);
-  }
+  isc.confirm(OB.I18N.getLabel('APRM_AlgorithmConfirm'), execute);
 };
 
 OB.APRM.MatchStatement.onRefresh = function (view) {
@@ -70,11 +65,7 @@ OB.APRM.MatchStatement.onProcess = function (view, actionHandlerCall) {
       view.parentElement.parentElement.closeClick();
     }
   };
-  if (isc.isA.emptyObject(OB.TestRegistry.registry)) {
-    isc.confirm(OB.I18N.getLabel('APRM_ProcessReconciliation'), execute);
-  } else {
-    execute(true);
-  }
+  isc.confirm(OB.I18N.getLabel('APRM_ProcessReconciliation'), execute);
 
 };
 

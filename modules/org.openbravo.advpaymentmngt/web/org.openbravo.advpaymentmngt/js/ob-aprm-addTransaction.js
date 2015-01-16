@@ -58,11 +58,7 @@ OB.APRM.AddTransaction.onProcess = function (view, actionHandlerCall) {
         // Continue with the match
         actionHandlerCall(view);
       } else {
-        if (isc.isA.emptyObject(OB.TestRegistry.registry)) {
-          isc.confirm(OB.I18N.getLabel('APRM_SplitBankStatementLineConfirm'), execute);
-        } else {
-          execute(true);
-        }
+        isc.confirm(OB.I18N.getLabel('APRM_SplitBankStatementLineConfirm'), execute);
       }
     } else {
       // Continue with the match
