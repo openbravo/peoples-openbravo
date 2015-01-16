@@ -35,6 +35,10 @@
         if (this.receipt.get('creationDate')) {
           creationDate = this.receipt.get('creationDate');
           creationDateTransformed = new Date(creationDate.getUTCFullYear(), creationDate.getUTCMonth(), creationDate.getUTCDate(), creationDate.getUTCHours(), creationDate.getUTCMinutes(), creationDate.getUTCSeconds());
+        } else {
+          //Issue 28588: If the quotation is missing the creationDate attribute,
+          //the ticket header will show 'undefined' for the time/date of the quotation
+          this.receipt.set('creationDate', creationDate);
         }
       }
       if (this.receipt.get('isbeingprocessed') === 'Y') {
