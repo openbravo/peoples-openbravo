@@ -125,8 +125,13 @@ enyo.kind({
       }, 5000);
     }
   },
+  disableFilterText: function (value) {
+    this.$.filterText.setDisabled(value);
+  },
   clearAction: function () {
-    this.$.filterText.setValue('');
+    if (!this.$.filterText.disabled) {
+      this.$.filterText.setValue('');
+    }
     this.$.startDate.setValue('');
     this.$.endDate.setValue('');
     this.doClearAction();
@@ -374,6 +379,7 @@ enyo.kind({
     return true;
   },
   executeOnShow: function () {
+    this.$.body.$.listPRs.$.prslistitemprinter.$.theader.$.modalPRScrollableHeader.disableFilterText(false);
     this.$.body.$.listPRs.$.prslistitemprinter.$.theader.$.modalPRScrollableHeader.clearAction();
     if (this.params.isQuotation) {
       this.$.header.setContent(OB.I18N.getLabel('OBPOS_Quotations'));
@@ -382,8 +388,15 @@ enyo.kind({
     } else {
       this.$.header.setContent(OB.I18N.getLabel('OBPOS_LblPaidReceipts'));
       if (this.params.isReturn && this.params.bpartner) {
-        this.$.body.$.listPRs.$.prslistitemprinter.$.theader.$.modalPRScrollableHeader.$.filterText.setValue(this.params.bpartner.get('name'));
-        this.$.body.$.listPRs.$.prslistitemprinter.$.theader.$.modalPRScrollableHeader.searchAction();
+        var me = this;
+        me.$.body.$.listPRs.$.prslistitemprinter.$.theader.$.modalPRScrollableHeader.$.filterText.setValue(this.params.bpartner.get('name'));
+        me.$.body.$.listPRs.$.prslistitemprinter.$.theader.$.modalPRScrollableHeader.searchAction();
+        enyo.forEach(this.model.get('orderList').current.get('lines').models, function (l) {
+          if (l.get('originalOrderLineId')) {
+            me.$.body.$.listPRs.$.prslistitemprinter.$.theader.$.modalPRScrollableHeader.disableFilterText(true);
+            return;
+          }
+        });
       }
     }
   },
