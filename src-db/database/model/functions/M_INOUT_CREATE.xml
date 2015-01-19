@@ -144,7 +144,7 @@
   Cur_Storage_ISOPEN BOOLEAN:=false;
   Cur_OrderLine_ISOPEN BOOLEAN:=false;
 
-  v_dummy VARCHAR2(2000);
+  v_AllowPartialShipment VARCHAR2(2000);
   v_ForceDelivery CHAR(1);
   v_DeliveryRule CHAR(1);
 BEGIN
@@ -213,6 +213,16 @@ BEGIN --BODY
     END IF;
     IF(v_Selection IS NULL) THEN
       v_Selection:='N';
+    END IF;
+    IF (p_ForceDelivery = 'Y') THEN
+      SELECT COUNT(*) INTO v_count
+      FROM DUAL
+      WHERE EXISTS (SELECT 1 FROM ad_preference WHERE property = 'AllowPartialShipment');
+      IF (v_count = 1) THEN
+        v_AllowPartialShipment := AD_GET_PREFERENCE_VALUE('AllowPartialShipment', 'Y', v_AD_Client_ID, v_AD_Org_ID, NULL, NULL, NULL);
+      ELSE
+        v_AllowPartialShipment := 'N';
+      END IF;
     END IF;
     /**************************************************************************
     * Order Loop goes though all open orders, where we would need to ship something
@@ -303,17 +313,7 @@ BEGIN --BODY
              o.DELIVERY_LOCATION_ID -- Added by Rafa Roda to include delivery location
         ORDER BY o.PriorityRule,o.DocumentNo
     ) LOOP
-      if (p_ForceDelivery = 'Y') THEN
-        SELECT COUNT(1) INTO v_count
-        FROM ad_preference
-        WHERE property = 'AllowPartialShipment';
-        IF (v_count > 0) THEN
-          v_dummy := AD_GET_PREFERENCE_VALUE('AllowPartialShipment', 'Y', v_AD_Client_ID, v_AD_Org_ID, NULL, NULL, NULL);
-        ELSE
-          v_dummy := 'N';
-        END IF;
-      END IF;
-      IF (v_dummy = 'Y') THEN
+      IF (v_AllowPartialShipment = 'Y') THEN
         v_ForceDelivery := 'N';
         v_DeliveryRule := 'A';
       ELSE
