@@ -388,8 +388,6 @@ public class FIN_Utility {
    * @param tableName
    *          the name of the table from which the sequence will be taken if the Document Type does
    *          not have any sequence associated.
-   * @param updateNext
-   *          Flag to update the current number of the sequence
    * @return the next sequence number of the Document Type defined for the Organization and document
    *         category. Null if no sequence is found.
    */
@@ -1093,7 +1091,7 @@ public class FIN_Utility {
     parameters.add(status);
     parameters.add((psd != null) ? psd.getId() : "");
     String result = (String) CallStoredProcedure.getInstance().call("APRM_ISPAYMENTCONFIRMED",
-        parameters, null);
+        parameters, null, false);
 
     return "Y".equals(result);
   }

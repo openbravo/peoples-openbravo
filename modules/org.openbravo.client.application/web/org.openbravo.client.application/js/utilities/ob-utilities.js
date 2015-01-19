@@ -213,7 +213,8 @@ OB.Utilities.createLoadingLayout = function (label) {
   loadingLayout.addMember(isc.Label.create({
     contents: label,
     styleName: OB.Styles.LoadingPrompt.loadingTextStyleName,
-    width: 1,
+    width: 100,
+    align: 'right',
     overflow: 'visible'
   }));
   loadingLayout.addMember(isc.Img.create(OB.Styles.LoadingPrompt.loadingImage));
@@ -337,14 +338,13 @@ OB.Utilities.useClassicMode = function (windowId) {
 // Open a view using a tab id and record id. The tab can be a child tab. If the record id
 // is not set then the tab is opened in grid mode. If command is not set then default is
 // used.
-OB.Utilities.openDirectTab = function (tabId, recordId, command, position, criteria, direct) {
-
+OB.Utilities.openDirectTab = function (tabId, recordId, command, position, criteria, direct, urlParams) {
+  var callback, isDirect = direct;
+  // if the url params are not passed to the function, obtain then from the url
+  urlParams = urlParams || OB.Utilities.getUrlParameters();
   tabId = OB.Utilities.removeFragment(tabId);
   recordId = OB.Utilities.removeFragment(recordId);
   command = OB.Utilities.removeFragment(command);
-
-  var urlParams = OB.Utilities.getUrlParameters(),
-      callback, isDirect = direct;
 
   //added to have the additional filter clause and tabid. Mallikarjun M
   callback = function (response, data, request) {
@@ -379,6 +379,13 @@ OB.Utilities.openDirectTab = function (tabId, recordId, command, position, crite
     if (urlParams.criteria) {
       view.additionalCriteriaTabId = data.tabId;
       view.additionalCriteria = urlParams.criteria;
+      if (urlParams.fkCache) {
+        view.fkCache = urlParams.fkCache;
+      }
+    }
+
+    if (urlParams.emptyFilterClause) {
+      view.emptyFilterClause = urlParams.emptyFilterClause;
     }
 
     if (urlParams.replaceDefaultFilter) {
@@ -423,10 +430,12 @@ OB.Utilities.openView = function (windowId, tabId, tabTitle, recordId, command, 
     if (direct !== false) {
       isDirect = true;
     }
-    if (singleRecord !== false) {
-      isSingleRecord = true;
-    }
+
   }
+  if (singleRecord !== false) {
+    isSingleRecord = true;
+  }
+
   if (isClassicEnvironment) {
     if (recordId) {
       OB.Layout.ClassicOBCompatibility.openLinkedItem(tabId, recordId);
@@ -1079,6 +1088,25 @@ OB.Utilities.clientClassSplitProps = function (clientClass) {
   return ret;
 };
 
+//** {{{ OB.Utilities.getCanvasProp }}} **
+//
+// Returns the value of the property of the canvas item
+// Parameters:
+//  * {{{canvas}}} String the canvas item
+//  * {{{prop}}} String the property to get the value
+OB.Utilities.getCanvasProp = function (canvas, prop) {
+  if (canvas.indexOf('{') !== -1) {
+    canvas = OB.Utilities.clientClassSplitProps(canvas)[0];
+  }
+  if (new Function('if (window.' + canvas + ') { return true; }')()) {
+    if (new Function('if (typeof ' + canvas + '.getInstanceProperty === "function") { return true; }')()) {
+      // 'getInstanceProperty' is a Smartclient function to determine the property value of a canvas
+      return new Function('return ' + canvas + '.getInstanceProperty("' + prop + '")')();
+    }
+  }
+  return;
+};
+
 
 //** {{{ OB.Utilities.getRGBAStringFromOBColor }}} **
 //
@@ -1247,4 +1275,38 @@ OB.Utilities.getTabNumberById = function (tabId) {
     }
   }
   return -1;
+};
+
+//** {{{ OB.Utilities.getObjectSize }}} **
+//
+// Returns the size of an object (only the first level)
+// Parameters:
+//  * {{{object}}} The object to get the size
+OB.Utilities.getObjectSize = function (object) {
+  var size = 0,
+      key;
+  if (Object.prototype.toString.call(object) !== '[object Object]') {
+    return false;
+  }
+  for (key in object) {
+    if (object.hasOwnProperty(key)) {
+      size++;
+    }
+  }
+  return size;
+};
+
+//** {{{ OB.Utilities.createResultSetManually }}} **
+//
+// Creates a ResultSet manually for a grid
+// Parameters:
+//  * {{{grid}}} The grid whose ResultSet will be created manually
+OB.Utilities.createResultSetManually = function (grid) {
+  grid.dataProperties.dataSource = grid.dataSource;
+  grid.dataProperties.initialData = [];
+  grid.dataProperties.resultSize = 100;
+  grid.dataProperties.useClientFiltering = false;
+  grid.dataProperties.manualResultSet = true;
+  grid.setData(grid.createDataModel());
+  grid.serverDataNotLoaded = true;
 };

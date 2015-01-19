@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -401,7 +401,7 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print html");
     String strOrderby = "";
-    String[] discard = { "", "", "", "", "", "", "", "", "" };
+    String[] discard = { "", "", "", "", "", "", "", "", "", "", "" };
     String[] discard1 = { "selEliminarBody1", "discard", "discard", "discard", "discard",
         "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard",
         "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard",
@@ -438,7 +438,7 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
           + ReportSalesDimensionalAnalyzeJRData.selectMwarehouse(this, strmWarehouseId);
 
     ReportSalesDimensionalAnalyzeJRData[] data = null;
-    String[] strShownArray = { "", "", "", "", "", "", "", "", "" };
+    String[] strShownArray = { "", "", "", "", "", "", "", "", "", "", "" };
     if (strShown.startsWith("("))
       strShown = strShown.substring(1, strShown.length() - 1);
     if (!strShown.equals("")) {
@@ -463,12 +463,12 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
     // Checking report limit first
     StringBuffer levelsconcat = new StringBuffer();
     levelsconcat.append("''");
-    String[] strLevelLabel = { "", "", "", "", "", "", "", "", "" };
-    String[] strTextShow = { "", "", "", "", "", "", "", "", "" };
+    String[] strLevelLabel = { "", "", "", "", "", "", "", "", "", "", "" };
+    String[] strTextShow = { "", "", "", "", "", "", "", "", "", "", "" };
     int intDiscard = 0;
-    int intProductLevel = 10;
+    int intProductLevel = 12;
     int intAuxDiscard = -1;
-    for (int i = 0; i < 9; i++) {
+    for (int i = 0; i < 11; i++) {
       if (strShownArray[i].equals("1")) {
         strTextShow[i] = "C_BP_GROUP.NAME";
         intDiscard++;
@@ -528,6 +528,20 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
         strLevelLabel[i] = dimensionLabel[8].name;
         levelsconcat.append(" || ");
         levelsconcat.append("AD_USER.AD_USER_ID");
+      } else if (strShownArray[i].equals("10")) {
+        strTextShow[i] = "AD_COLUMN_IDENTIFIER(to_char('C_PROJECT'), to_char(C_ORDER.C_PROJECT_ID), to_char( '"
+            + vars.getLanguage() + "'))";
+        intDiscard++;
+        strLevelLabel[i] = dimensionLabel[9].name;
+        levelsconcat.append(" || ");
+        levelsconcat.append("C_ORDER.C_PROJECT_ID");
+      } else if (strShownArray[i].equals("11")) {
+        strTextShow[i] = "AD_COLUMN_IDENTIFIER(to_char('C_Bpartner_Location'), to_char( C_ORDER.C_BPARTNER_LOCATION_ID), to_char( '"
+            + vars.getLanguage() + "'))";
+        intDiscard++;
+        strLevelLabel[i] = dimensionLabel[10].name;
+        levelsconcat.append(" || ");
+        levelsconcat.append("C_ORDER.C_BPARTNER_LOCATION_ID");
       } else {
         strTextShow[i] = "''";
         discard[i] = "display:none;";
@@ -623,7 +637,7 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
         try {
           data = ReportSalesDimensionalAnalyzeJRData.select(this, strCurrencyId, strTextShow[0],
               strTextShow[1], strTextShow[2], strTextShow[3], strTextShow[4], strTextShow[5],
-              strTextShow[6], strTextShow[7], strTextShow[8],
+              strTextShow[6], strTextShow[7], strTextShow[8], strTextShow[9], strTextShow[10],
               Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), strOrg),
               Utility.getContext(this, vars, "#User_Client", "ReportSalesDimensionalAnalyzeJR"),
               strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strPartnerGroup,
@@ -637,7 +651,8 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
         try {
           data = ReportSalesDimensionalAnalyzeJRData.selectNoComparative(this, strCurrencyId,
               strTextShow[0], strTextShow[1], strTextShow[2], strTextShow[3], strTextShow[4],
-              strTextShow[5], strTextShow[6], strTextShow[7], strTextShow[8],
+              strTextShow[5], strTextShow[6], strTextShow[7], strTextShow[8], strTextShow[9],
+              strTextShow[10],
               Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), strOrg),
               Utility.getContext(this, vars, "#User_Client", "ReportSalesDimensionalAnalyzeJR"),
               strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strPartnerGroup,
@@ -677,6 +692,8 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
           parameters.put("LEVEL7_LABEL", strLevelLabel[6]);
           parameters.put("LEVEL8_LABEL", strLevelLabel[7]);
           parameters.put("LEVEL9_LABEL", strLevelLabel[8]);
+          parameters.put("LEVEL10_LABEL", strLevelLabel[9]);
+          parameters.put("LEVEL11_LABEL", strLevelLabel[10]);
           parameters.put("DIMENSIONS", new Integer(intDiscard));
           parameters.put("REPORT_SUBTITLE", strTitle);
           parameters.put("PRODUCT_LEVEL", new Integer(intProductLevel));

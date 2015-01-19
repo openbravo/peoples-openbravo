@@ -107,7 +107,7 @@ isc.OBTreeGrid.addProperties({
       clientClass = clientClassArray[0];
       clientClassProps = clientClassArray[1];
 
-      clientClassIsShownInGridEdit = new Function('return ' + clientClass + '.getInstanceProperty("isShownInGridEdit")')();
+      clientClassIsShownInGridEdit = OB.Utilities.getCanvasProp(clientClass, 'isShownInGridEdit');
 
       if (!isEditRecord || clientClassIsShownInGridEdit) {
         canvas = isc.ClassFactory.newInstance(clientClass, {

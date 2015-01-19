@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2012-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -121,6 +121,10 @@ public abstract class CostingAlgorithm {
       return getInventoryDecreaseCost();
     case InventoryIncrease:
       return getInventoryIncreaseCost();
+    case InventoryOpening:
+      return getInventoryOpeningCost();
+    case InventoryClosing:
+      return getInventoryClosingCost();
     case IntMovementFrom:
       return getIntMovementFromCost();
     case IntMovementTo:
@@ -375,6 +379,26 @@ public abstract class CostingAlgorithm {
   }
 
   /**
+   * Calculates the total cost amount of the physical inventory as if it were an Inventory Increase
+   * transaction.
+   * 
+   * @return BigDecimal object representing the total cost amount of the transaction.
+   */
+  protected BigDecimal getInventoryOpeningCost() {
+    return getInventoryIncreaseCost();
+  }
+
+  /**
+   * Calculates the total cost amount of the physical inventory as if it were an Inventory Decrease
+   * transaction.
+   * 
+   * @return BigDecimal object representing the total cost amount of the transaction.
+   */
+  protected BigDecimal getInventoryClosingCost() {
+    return getInventoryDecreaseCost();
+  }
+
+  /**
    * Calculates the cost of the From transaction of an Internal Movement line using by default the
    * {@link #getOutgoingTransactionCost()} method as a regular outgoing transaction.
    * 
@@ -465,6 +489,8 @@ public abstract class CostingAlgorithm {
     for (ProductionLine prodLine : parts) {
       MaterialTransaction partTransaction = prodLine.getMaterialMgmtMaterialTransactionList()
           .get(0);
+      // Reload from database in case previous partTrx cost calculation has cleared the session.
+      partTransaction = OBDal.getInstance().get(MaterialTransaction.class, partTransaction.getId());
       // Calculate transaction cost if it is not calculated yet.
       BigDecimal trxCost = CostingUtils.getTransactionCost(partTransaction,
           transaction.getTransactionProcessDate(), true, costCurrency);
@@ -531,29 +557,10 @@ public abstract class CostingAlgorithm {
   }
 
   protected BigDecimal getDefaultCost() {
-    Costing stdCost = CostingUtils.getStandardCostDefinition(transaction.getProduct(), costOrg,
-        transaction.getTransactionProcessDate(), costDimensions);
     BusinessPartner bp = CostingUtils.getTrxBusinessPartner(transaction, trxType);
-    PriceList pricelist = null;
-    if (bp != null) {
-      pricelist = bp.getPurchasePricelist();
-    }
-    ProductPrice pp = FinancialUtils.getProductPrice(transaction.getProduct(),
-        transaction.getMovementDate(), false, pricelist, false);
-    if (stdCost == null && pp == null) {
-      throw new OBException("@NoPriceListOrStandardCostForProduct@ @Organization@: "
-          + costOrg.getName() + ", @Product@: " + transaction.getProduct().getName() + ", @Date@: "
-          + OBDateUtils.formatDate(transaction.getTransactionProcessDate()));
-    } else if (stdCost != null && pp == null) {
-      return getTransactionStandardCost();
-    } else if (stdCost == null && pp != null) {
-      return getPriceListCost();
-    } else if (stdCost != null && pp != null
-        && stdCost.getStartingDate().before(pp.getPriceListVersion().getValidFromDate())) {
-      return getPriceListCost();
-    } else {
-      return getTransactionStandardCost();
-    }
+    return CostingUtils.getDefaultCost(transaction.getProduct(), transaction.getMovementQuantity(),
+        costOrg, transaction.getTransactionProcessDate(), transaction.getMovementDate(), bp,
+        costCurrency, costDimensions);
   }
 
   /**

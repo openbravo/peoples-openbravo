@@ -11,20 +11,22 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.client.application.test;
 
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 import org.openbravo.client.application.DynamicExpressionParser;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.ui.Tab;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
-public class DynamicExpressionParserTest extends BaseTest {
+public class DynamicExpressionParserTest extends OBBaseTest {
 
   @Test
   public void testRegularExpression() {

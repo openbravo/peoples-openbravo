@@ -246,6 +246,8 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
         "web/org.openbravo.client.application/js/utilities/ob-section-stack.js", false));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/toolbar/ob-clone-order.js", false));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/utilities/ob-onchange-functions.js", false));
 
     // Alert Management
     globalResources.add(createStaticResource(
@@ -300,6 +302,9 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
     // Return Material
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/return-material/ob-return-material.js", false));
+    // Costing - Landed Cost Match from Invoice
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/costing/ob-lc-matchfrominvoice.js", false));
     // Reservations
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/materialmgmt/ob-reservation.js", false));
@@ -464,6 +469,7 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
     }
     globalResources.add(createStaticResource("web/js/periodControlStatus.js", true));
     globalResources.add(createStaticResource("web/js/productCharacteristicsProcess.js", true));
+    globalResources.add(createStaticResource("web/js/validateCostingRuleProcess.js", true));
 
     return globalResources;
   }

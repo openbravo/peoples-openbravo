@@ -264,17 +264,19 @@ isc.OBStandardView.addProperties({
 
     this.toolBar.updateButtonState(true, false, true);
 
-    // It will only enter if this is a lazy initialized tab
+    // Update the subtab visibility before the tabs are shown to the client
+    this.handleDefaultTreeView();
+    this.updateSubtabVisibility();
+  },
+
+  // updates some view properties based on its uiPattern
+  updateViewBasedOnUiPattern: function () {
     // this.standardWindow.getClass().uiPattern will only exists after setWindowSettings is executed
     if (this.standardWindow.getClass().uiPattern) {
       this.setReadOnly(this.standardWindow.getClass().uiPattern[this.tabId] === isc.OBStandardView.UI_PATTERN_READONLY);
       this.setSingleRecord(this.standardWindow.getClass().uiPattern[this.tabId] === isc.OBStandardView.UI_PATTERN_SINGLERECORD);
       this.setEditOrDeleteOnly(this.standardWindow.getClass().uiPattern[this.tabId] === isc.OBStandardView.UI_PATTERN_EDITORDELETEONLY);
     }
-
-    // Update the subtab visibility before the tabs are shown to the client
-    this.handleDefaultTreeView();
-    this.updateSubtabVisibility();
   },
 
   show: function () {
@@ -369,6 +371,8 @@ isc.OBStandardView.addProperties({
       if (!lazyFiltering) {
         if (!this.standardWindow.checkIfDefaultSavedView()) {
           this.viewGrid.fetchData(this.viewGrid.getCriteria());
+        } else {
+          this.dataLoadDelayedForDefaultSavedView = true;
         }
       }
       this.refreshContents = false;
@@ -702,7 +706,7 @@ isc.OBStandardView.addProperties({
 
   getDirectLinkUrl: function () {
     var url = window.location.href,
-        crit;
+        crit, fkCache;
     var qIndex = url.indexOf('?');
     var dIndex = url.indexOf('#');
     var index = -1;
@@ -735,6 +739,18 @@ isc.OBStandardView.addProperties({
           prettyPrint: false,
           dateFormat: 'dateConstructor'
         }));
+        fkCache = this.viewGrid.getFKFilterAuxiliaryCache(crit);
+        if (isc.isA.Array(fkCache) && fkCache.length > 0) {
+          url = url + '&fkCache=' + escape(isc.JSON.encode(fkCache, {
+            prettyPrint: false,
+            dateFormat: 'dateConstructor'
+          })) + '&';
+        }
+      }
+      if (!this.viewGrid.filterClause) {
+        // if the grid does not currently have a filterClause (i.e. because the filters have been cleared), make it explicit in the URL
+        // this way the filter clause can be removed when building a grid based on this URL (see issue https://issues.openbravo.com/view.php?id=24577)
+        url = url + '&emptyFilterClause=true';
       }
     }
 
@@ -892,6 +908,8 @@ isc.OBStandardView.addProperties({
 
     // build the structure of the children
     childView.buildStructure();
+
+    childView.updateViewBasedOnUiPattern();
 
     var childTabDef = {
       title: childView.tabTitle,
@@ -1430,8 +1448,8 @@ isc.OBStandardView.addProperties({
   // ** {{{ editRecord }}} **
   // Opens the edit form and selects the record in the grid, will refresh
   // child views also
-  editRecord: function (record, preventFocus, focusFieldName) {
-    var rowNum,
+  editRecord: function (record, preventFocus, focusFieldName, wasEditingGrid) {
+    var rowNum, recordToEdit,
     // at this point the time fields of the record are formatted in local time
     localTime = true;
     this.messageBar.hide();
@@ -1447,10 +1465,17 @@ isc.OBStandardView.addProperties({
     } else {
       this.viewGrid.doSelectSingleRecord(record);
 
-      // also handle the case that there are unsaved values in the grid
+      // also handle the case that there are unsaved values in the grid 
       // show them in the form
       rowNum = this.viewGrid.getRecordIndex(record);
-      this.viewForm.editRecord(this.viewGrid.getEditedRecord(rowNum), preventFocus, this.viewGrid.recordHasChanges(rowNum), focusFieldName, localTime);
+      // If the record to be edited is new and was being edited in the grid, use it,
+      // because this.viewGrid.getEditedRecord would return an empty record in this case
+      if (record._new && wasEditingGrid) {
+        recordToEdit = record;
+      } else {
+        recordToEdit = this.viewGrid.getEditedRecord(rowNum);
+      }
+      this.viewForm.editRecord(recordToEdit, preventFocus, this.viewGrid.recordHasChanges(rowNum), focusFieldName, localTime, wasEditingGrid);
     }
   },
 
@@ -1680,7 +1705,7 @@ isc.OBStandardView.addProperties({
         } else {
           if (this.childTabSet.visibility === 'hidden') {
             this.childTabSet.show();
-            if (tabViewPane.showTabIf && !tabViewPane.data && !tabViewPane.refreshingData && tabViewPane.isVisible()) {
+            if (tabViewPane.showTabIf && !tabViewPane.data && !tabViewPane.refreshingData && tabViewPane.isVisible() && !this.isEditingNewRecord()) {
               // If the child tab does not have data yet, refresh it
               tabViewPane.refreshingData = true;
               tabViewPane.refresh();
@@ -1714,6 +1739,12 @@ isc.OBStandardView.addProperties({
         }
       }
     }
+  },
+
+  //This function returns true if it is a new record and it is being edited
+  isEditingNewRecord: function () {
+    var form = this.isShowingForm ? this.viewForm : this.viewGrid.getEditForm();
+    return form === null ? false : form.isNew;
   },
 
   // Adds to contextInfo the session attributes of the childView, 
@@ -1763,18 +1794,23 @@ isc.OBStandardView.addProperties({
 
   getParentRecord: function () {
     var grid = null;
-    if (!this.parentView || !this.parentView.viewGrid.getSelectedRecords() || this.parentView.viewGrid.getSelectedRecords().length !== 1) {
+    // if there is no parent view, there is no parent record
+    if (!this.parentView) {
       return null;
     }
-
-    // a new parent is not a real parent
-    if (this.parentView.viewGrid.getSelectedRecord()._new) {
-      return null;
-    }
+    // use the standard tree of the tree grid depending on the view being shown
     if (this.parentView.isShowingTree) {
       grid = this.parentView.treeGrid;
     } else {
       grid = this.parentView.viewGrid;
+    }
+    // if the parent grid does not have exactly one selected record, return null
+    if (!grid.getSelectedRecords() || grid.getSelectedRecords().length !== 1) {
+      return null;
+    }
+    // a new parent is not a real parent
+    if (!this.parentView.isShowingTree && this.parentView.viewGrid.getSelectedRecord()._new) {
+      return null;
     }
     return grid.getSelectedRecord();
   },
@@ -1965,7 +2001,7 @@ isc.OBStandardView.addProperties({
 
   refreshCurrentRecord: function (callBackFunction) {
     var me = this,
-        record, criteria, callback;
+        criteria, callback;
 
     if (!this.viewGrid.getSelectedRecord()) {
       return;
@@ -1976,77 +2012,14 @@ isc.OBStandardView.addProperties({
       this.viewGrid.getSummaryRow();
     }
 
-    record = this.viewGrid.getSelectedRecord();
-
-    criteria = {
-      operator: 'and',
-      _constructor: "AdvancedCriteria",
-      criteria: []
-    };
-
-    // add a dummy criteria to force a fetch
-    criteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
-
-    // and add a criteria for the record itself
-    criteria.criteria.push({
-      fieldName: OB.Constants.ID,
-      operator: 'equals',
-      value: record.id
-    });
-
     callback = function (resp, data, req) {
-      var sessionProperties = me.getContextInfo(true, true, false, true);
       // this line does not work, but it should:
       //      me.getDataSource().updateCaches(resp, req);
       // therefore do an explicit update of the visual components
-      if (me.isShowingForm) {
-        me.viewForm.refresh();
-      }
       if (me.viewGrid.data) {
         var recordIndex = me.viewGrid.getRecordIndex(me.viewGrid.getSelectedRecord());
-        data = OB.Utilities.Date.convertUTCTimeToLocalTime(data, me.viewGrid.completeFields);
-        if (me.viewGrid.data.updateCacheData) {
-          me.viewGrid.data.updateCacheData(data, req);
-        }
-        if (me.viewGrid.isGrouped) {
-          // if the grid is group update its values to show the updated data
-          me.viewGrid.setEditValues(recordIndex, data[0]);
-        }
-        me.viewGrid.selectRecord(me.viewGrid.getRecord(recordIndex));
-        me.viewGrid.refreshRow(recordIndex);
-        me.viewGrid.redraw();
-        if (!me.isShowingForm) {
-          OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', sessionProperties, {
-            MODE: 'SETSESSION',
-            TAB_ID: me.tabId,
-            PARENT_ID: me.getParentId(),
-            ROW_ID: me.viewGrid.getSelectedRecord() ? me.viewGrid.getSelectedRecord().id : me.getCurrentValues().id
-          }, function (response, data, request) {
-            var sessionAttributes = data.sessionAttributes,
-                auxInputs = data.auxiliaryInputValues,
-                attachmentExists = data.attachmentExists,
-                prop;
-            if (sessionAttributes) {
-              me.viewForm.sessionAttributes = sessionAttributes;
-            }
-
-            if (auxInputs) {
-              this.auxInputs = {};
-              for (prop in auxInputs) {
-                if (auxInputs.hasOwnProperty(prop)) {
-                  me.viewForm.setValue(prop, auxInputs[prop].value);
-                  me.viewForm.auxInputs[prop] = auxInputs[prop].value;
-                }
-              }
-            }
-            me.viewForm.view.attachmentExists = attachmentExists;
-            //compute and apply tab display logic again after fetching auxilary inputs.
-            me.handleDefaultTreeView();
-            me.updateSubtabVisibility();
-          });
-        }
+        me.viewGrid.updateRecord(recordIndex, data, req);
       }
-
 
       if (callBackFunction) {
         callBackFunction();
@@ -2057,8 +2030,35 @@ isc.OBStandardView.addProperties({
       this.viewForm.contextInfo = null;
     }
 
-    this.getDataSource().fetchData(criteria, callback);
+    if (this.isShowingForm) {
+      // Refresh the form. This function will also update the info of the selected record with
+      // the data returned by the datasource request done to update the form
+      this.viewForm.refresh(callBackFunction);
+    } else {
+      // Make a request to refresh the grid
+      criteria = this.buildCriteriaToRefreshSelectedRecord();
+      this.getDataSource().fetchData(criteria, callback);
+    }
     this.refreshParentRecord(callBackFunction);
+  },
+
+  buildCriteriaToRefreshSelectedRecord: function () {
+    var record, criteria = {
+      operator: 'and',
+      _constructor: 'AdvancedCriteria',
+      criteria: []
+    };
+    // add a dummy criteria to force a fetch
+    criteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
+
+    record = this.viewGrid.getSelectedRecord();
+    // and add a criteria for the record itself
+    criteria.criteria.push({
+      fieldName: OB.Constants.ID,
+      operator: 'equals',
+      value: record.id
+    });
+    return criteria;
   },
 
   hasNotChanged: function () {
@@ -2099,7 +2099,7 @@ isc.OBStandardView.addProperties({
 
   deleteSelectedRows: function (autoSaveDone) {
     var msg, dialogTitle, view = this,
-        deleteCount, callback;
+        deleteCount, callback, currentGrid;
 
     if (!this.readOnly && this.isDeleteableTable) {
       // first save what we have edited
@@ -2112,14 +2112,18 @@ isc.OBStandardView.addProperties({
         this.standardWindow.doActionAfterAutoSave(actionObject, false);
         return;
       }
-
-      deleteCount = this.viewGrid.getSelection().length;
+      if (this.isShowingTree) {
+        currentGrid = this.treeGrid;
+      } else {
+        currentGrid = this.viewGrid;
+      }
+      deleteCount = currentGrid.getSelection().length;
 
       if (deleteCount === 1) {
         msg = OB.I18N.getLabel('OBUIAPP_DeleteConfirmationSingle');
         dialogTitle = OB.I18N.getLabel('OBUIAPP_DialogTitle_DeleteRecord');
       } else {
-        msg = OB.I18N.getLabel('OBUIAPP_DeleteConfirmationMultiple', [this.viewGrid.getSelection().length]);
+        msg = OB.I18N.getLabel('OBUIAPP_DeleteConfirmationMultiple', [deleteCount]);
         dialogTitle = OB.I18N.getLabel('OBUIAPP_DialogTitle_DeleteRecords');
       }
 
@@ -2137,7 +2141,7 @@ isc.OBStandardView.addProperties({
 
         removeCallBack = function (resp, data, req) {
           var length, localData = resp.dataObject || resp.data || data,
-              i, updateTotalRows;
+              i, updateTotalRows, currentGrid;
 
           if (!localData) {
             // bail out, an error occured which should be displayed to the user now
@@ -2153,6 +2157,11 @@ isc.OBStandardView.addProperties({
             status = localData.response.status;
           }
           if (status === isc.RPCResponse.STATUS_SUCCESS) {
+            if (view.isShowingTree) {
+              currentGrid = view.treeGrid;
+            } else {
+              currentGrid = view.viewGrid;
+            }
             if (view.isShowingForm) {
               view.switchFormGridVisibility();
             }
@@ -2160,7 +2169,7 @@ isc.OBStandardView.addProperties({
             if (deleteData) {
               // note totalrows is used when inserting a new row, to determine after which
               // record to add a new row
-              updateTotalRows = (view.viewGrid.data.getLength() === view.viewGrid.data.totalRows);
+              updateTotalRows = (currentGrid.data.getLength() === currentGrid.data.totalRows);
               // deleteData is computed below
               length = deleteData.ids.length;
               for (i = 0; i < length; i++) {
@@ -2169,21 +2178,22 @@ isc.OBStandardView.addProperties({
                 });
               }
               view.viewGrid.data.handleUpdate('remove', recordInfos, false, req);
+              if (view.treeGrid) {
+                view.treeGrid.data.handleUpdate('remove', recordInfos, false, req);
+              }
               if (updateTotalRows) {
-                view.viewGrid.data.totalRows = view.viewGrid.data.getLength();
+                currentGrid.data.totalRows = currentGrid.data.getLength();
               }
             } else if (doUpdateTotalRows) {
-              view.viewGrid.data.totalRows = view.viewGrid.data.getLength();
+              currentGrid.data.totalRows = currentGrid.data.getLength();
             }
             view.viewGrid.updateRowCountDisplay();
-
             // Refresh the grid based on Refresh After Deletion preference
             if (OB.PropertyStore.get("OBUIAPP_RefreshAfterDeletion", view.standardWindow.windowId) === 'Y') {
               view.viewGrid.refreshGrid();
             } else {
               view.refreshChildViews();
             }
-
             view.refreshParentRecord();
           } else {
             // get the error message from the dataObject 
@@ -2203,9 +2213,16 @@ isc.OBStandardView.addProperties({
           isc.clearPrompt();
         };
         if (ok) {
-          selection = view.viewGrid.getSelection().duplicate();
+
+          if (view.isShowingTree) {
+            currentGrid = view.treeGrid;
+          } else {
+            currentGrid = view.viewGrid;
+          }
+
+          selection = currentGrid.getSelection().duplicate();
           // deselect the current records
-          view.viewGrid.deselectAllRecords();
+          currentGrid.deselectAllRecords();
 
           if (selection.length > 1) {
             deleteData = {};
@@ -2219,9 +2236,16 @@ isc.OBStandardView.addProperties({
               refreshGrid: true
             });
           } else {
+            if (view.isShowingTree) {
+              deleteData = {};
+              deleteData.entity = view.entity;
+              deleteData.ids = [];
+              length = selection.length;
+              deleteData.ids.push(selection[0][OB.Constants.ID]);
+            }
             // note totalrows is used when inserting a new row, to determine after which
             // record to add a new row
-            doUpdateTotalRows = (view.viewGrid.data.getLength() === view.viewGrid.data.totalRows);
+            doUpdateTotalRows = (currentGrid.data.getLength() === currentGrid.data.totalRows);
             // note remove data expects only the id, the record key as the first param
             view.viewGrid.removeData({
               id: selection[0].id
@@ -2320,7 +2344,6 @@ isc.OBStandardView.addProperties({
   },
 
   setHalfSplit: function () {
-    this.setHeight('100%');
     var i, tab, pane;
     if (this.members[1]) {
       // divide the space between the first and second level
@@ -2332,7 +2355,6 @@ isc.OBStandardView.addProperties({
         // makes a difference what the order of resizing is, first resize the 
         // one which will be larger, then the one which will be smaller.
         this.members[1].setHeight('50%');
-        this.members[0].setHeight('50%');
       }
       this.members[1].setState(isc.OBStandardView.STATE_IN_MID);
     } else {
@@ -2489,7 +2511,7 @@ isc.OBStandardView.addProperties({
         field = component.getField(propertyObj.property);
         if (field && field.editorType //
         && Object.prototype.toString.call(value) === '[object Date]' //
-        && new Function('return isc.' + field.editorType + '.getPrototype().isAbsoluteDateTime')()) { //
+        && OB.Utilities.getCanvasProp(field.editorType, 'isAbsoluteDateTime')) {
           // In the case of an absolute datetime, it needs to be converted in order to avoid the UTC conversion
           // http://forums.smartclient.com/showthread.php?p=116135
           value = OB.Utilities.Date.addTimezoneOffset(value);
@@ -2500,6 +2522,10 @@ isc.OBStandardView.addProperties({
             if (propertyObj.type && convertToClassicFormat) {
               type = isc.SimpleType.getType(propertyObj.type);
               if (type.createClassicString) {
+                if (type.editorType === 'OBDateTimeItem') {
+                  // converting time to UTC before it is sent to FIC
+                  value = OB.Utilities.Date.addTimezoneOffset(value);
+                }
                 contextInfo[properties[i].inpColumn] = type.createClassicString(value);
               } else {
                 contextInfo[properties[i].inpColumn] = this.convertContextValue(value, propertyObj.type);
@@ -2588,7 +2614,8 @@ isc.OBStandardView.addProperties({
     return null;
   },
 
-  setContextInfo: function (sessionProperties, callbackFunction, forced) {
+  // if defined, the errorCallbackFunction will be executed if the FIC call returns with an error status (i.e. connectivity error)
+  setContextInfo: function (sessionProperties, callbackFunction, forced, errorCallbackFunction) {
     var newCallback, me = this,
         gridVisibleProperties = [],
         len, i, originalID;
@@ -2645,7 +2672,7 @@ isc.OBStandardView.addProperties({
       TAB_ID: this.tabId,
       PARENT_ID: this.getParentId(),
       ROW_ID: this.viewGrid.getSelectedRecord() ? this.viewGrid.getSelectedRecord().id : this.getCurrentValues().id
-    }, newCallback);
+    }, newCallback, null, errorCallbackFunction);
 
   },
 

@@ -61,8 +61,9 @@
   v_IsBinding CHAR(1):='Y';
   v_istaxincluded CHAR(1);
   --
-  ToDeliver NUMBER;
-  ToInvoice NUMBER;
+  ToDeliver NUMBER:=0;
+  ToInvoice NUMBER:=0;
+  ToDeliverOrToInvoice NUMBER:=0;
   --
   InOut_ID VARCHAR2(32);
   Invoice_ID VARCHAR2(32);
@@ -125,6 +126,7 @@
 
   v_iscashvat C_Order.IsCashVat%TYPE;
   v_recalculateDiscounts VARCHAR(1):='Y';
+  v_isactive VARCHAR2(1):='N';
 
   BEGIN
     IF (p_PInstance_ID IS NOT NULL) THEN
@@ -178,6 +180,15 @@
       END IF;
     END LOOP;
   END IF;
+
+  /* Check active business partner*/
+  SELECT isactive INTO v_isactive
+  FROM C_Bpartner
+  WHERE C_Bpartner_ID = v_C_Bpartner_ID;
+
+  IF(v_isactive = 'N') THEN
+    RAISE_APPLICATION_ERROR(-20000, '@InActiveBusinessPartner@');
+  END IF;
   
     /**
     * Read Order
@@ -187,16 +198,20 @@
       C_DocType_ID, C_DocTypeTarget_ID, c_order.AD_Client_ID,
       c_order.AD_Org_ID, c_order.UpdatedBy, M_Warehouse_ID, TRUNC(DateOrdered),
       Issotrx, c_Bpartner_Id, c_order.c_currency_id, C_PROJECT_ID,
-      C_BPartner_ID, c_order.M_PriceList_ID, invoicerule, m_pricelist.istaxincluded,
-      c_order.IsCashVat
+      C_BPartner_ID, M_PriceList_ID, invoicerule, c_order.IsCashVat
     INTO v_IsProcessing, v_IsProcessed, v_DocAction, v_DocStatus,
       v_DocType_ID, v_DocTypeTarget_ID, v_Client_ID,
       v_Org_ID, v_UpdatedBy, v_M_Warehouse_ID, v_Date,
       v_isSoTrx, v_c_Bpartner_Id, v_c_currency_id, v_C_PROJECT_ID,
-      v_CBPartner_ID, v_PriceList_ID, v_invoicerule, v_istaxincluded,
-      v_iscashvat
-    FROM C_ORDER JOIN m_pricelist ON c_order.m_pricelist_id = m_pricelist.m_pricelist_id
-    WHERE C_Order_ID=v_Record_ID  FOR UPDATE;
+      v_CBPartner_ID, v_PriceList_ID, v_invoicerule, v_iscashvat
+    FROM C_ORDER
+    WHERE C_Order_ID=v_Record_ID  FOR UPDATE  ;
+
+    SELECT m_pricelist.istaxincluded
+    INTO v_istaxincluded
+    FROM m_pricelist 
+    WHERE m_pricelist_id= v_PriceList_ID;
+    
     -- Get current DocSubTypeSO
     SELECT DocSubTypeSO
       INTO v_DocSubTypeSO
@@ -206,6 +221,41 @@
       INTO v_DocSubTypeSOTarget, v_isreturndoctype
     FROM C_DOCTYPE
     WHERE C_DocType_ID=v_DocTypetarget_ID;
+
+  IF(v_isreturndoctype='Y' AND v_DocAction='CO') THEN
+    DECLARE
+    v_RefReturnQty NUMBER:=0;
+    v_RefMovementQty NUMBER:=0;
+    BEGIN
+      v_Message:=NULL;
+      FOR Cur_line IN
+        (SELECT OL.M_INOUTLINE_ID, OL.LINE, OL.QTYORDERED
+        FROM C_ORDERLINE OL
+        WHERE OL.C_Order_ID = v_Record_ID
+        AND OL.M_INOUTLINE_ID IS NOT NULL
+        )
+      LOOP
+        SELECT COALESCE(SUM(OL.QtyOrdered),0) INTO v_RefReturnQty
+        FROM C_ORDERLINE OL, C_ORDER O
+        WHERE OL.M_INOUTLINE_ID = Cur_line.M_INOUTLINE_ID
+        AND OL.C_ORDER_ID = O.C_ORDER_ID
+        AND O.PROCESSED='Y';
+        SELECT MovementQty INTO v_RefMovementQty
+        FROM M_INOUTLINE WHERE M_INOUTLINE_ID = Cur_line.M_INOUTLINE_ID;
+        v_RefReturnQty:=ABS(v_RefReturnQty) + ABS(Cur_Line.QtyOrdered);
+        IF(v_RefReturnQty > v_RefMovementQty) THEN
+          IF(v_Message IS NULL) THEN
+            v_Message:=Cur_line.LINE;
+          ELSE
+            v_Message:=v_Message||', '||Cur_line.LINE;
+          END IF;
+        END IF;
+      END LOOP;
+      IF(v_Message IS NOT NULL) THEN
+        RAISE_APPLICATION_ERROR(-20000,'@ReturnQtyMismatch@'||v_Message);
+      END IF;
+    END;
+  END IF;
 
     --Check whether warehouse belongs to the organization.
     SELECT count(AD_ORG_ID)
@@ -472,7 +522,7 @@
              WHERE l.C_Order_ID=v_Record_ID  -- Reserve Products (not: services, null products)
                AND l.M_Product_ID=p.M_Product_ID
                AND p.IsStocked='Y'
-               AND p.ProductType='I'  FOR UPDATE
+               AND p.ProductType='I' 
              )
             LOOP
             -- Qty corrected for SO/PO
@@ -1072,8 +1122,7 @@
                 AND p.IsStocked='Y' AND p.ProductType='I'
                 -- Target Level = 0 if DirectShip='Y' or Binding='N'
                 AND (CASE l.DirectShip WHEN 'Y' THEN 0 ELSE (CASE v_IsBinding WHEN 'N' THEN 0 ELSE l.QtyOrdered END)END)
-                -l.QtyReserved-l.QtyDelivered <> 0
-              FOR UPDATE)
+                -l.QtyReserved-l.QtyDelivered <> 0)
           LOOP
           
             -- Qty corrected for SO/PO
@@ -1243,7 +1292,8 @@
                   -- Update so_res_status
                   UPDATE c_orderline
                   SET so_res_status = CASE WHEN cur_orderline.qtyordered = v_reservedqty THEN 'CR'
-                                           ELSE 'PR'
+					   WHEN cur_orderline.qtyordered > v_reservedqty AND v_reservedqty > 0 THEN 'PR'
+                                           ELSE 'NR'
                                       END
                   WHERE c_orderline_id = cur_orderline.c_orderline_id;
                 END IF;
@@ -1343,19 +1393,27 @@
       WHERE C_Order_ID=v_Record_ID
         AND (AD_Client_ID<>v_Client_ID) ;
 
+      IF (v_docaction = 'CO' AND v_issotrx = 'N') THEN
+          UPDATE m_transaction
+          SET checkpricedifference = 'Y'
+          WHERE m_transaction_id IN (
+            SELECT trx.m_transaction_id 
+            FROM c_orderline  ol
+                 JOIN m_matchpo mpo ON mpo.c_orderline_id = ol.c_orderline_id
+                 JOIN m_transaction trx ON mpo.m_inoutline_id = trx.m_inoutline_id
+            WHERE trx.iscostcalculated = 'Y' AND  ol.c_order_id = v_record_id);
+      END IF;
+
     /**************************************************************************
      * Order Complete:5 - Something to do:6
      */
       BEGIN
         v_ResultStr:='OrderCompleteCheck';
-        SELECT SUM(QtyOrdered*hex_to_int(C_OrderLine_ID)) -SUM(QtyDelivered*hex_to_int(C_OrderLine_ID)),
-            SUM(QtyOrdered*hex_to_int(C_OrderLine_ID)) -SUM(QtyInvoiced*hex_to_int(C_OrderLine_ID))
-          INTO ToDeliver,
-            ToInvoice
-        FROM C_ORDERLINE
-        WHERE C_Order_ID=v_Record_ID;
-        -- If no lines, ToDeliver is NULL
-        IF ((ToDeliver=0 AND ToInvoice=0) OR(ToDeliver IS NULL AND ToInvoice IS NULL)) THEN
+        SELECT COUNT(*) INTO ToDeliverOrToInvoice FROM DUAL
+        WHERE 0 <> ANY (select QtyOrdered - QtyDelivered from c_orderline where c_order_id = v_Record_ID)
+        OR    0 <> ANY (select QtyOrdered - QtyInvoiced  from c_orderline where c_order_id = v_Record_ID);
+        -- If something to deliver or to invoice, then ToDeliverOrToInvoice = 1
+        IF (ToDeliverOrToInvoice = 0) THEN
           DBMS_OUTPUT.PUT_LINE('OrderComplete') ;
           IF (v_DocAction='CL') THEN
             END_PROCESSING:=TRUE;
@@ -1498,12 +1556,10 @@
      /**
       * Final Completeness check
       */
-      SELECT SUM(QtyOrdered*hex_to_int(C_OrderLine_ID)) -SUM(QtyDelivered*hex_to_int(C_OrderLine_ID)),
-          SUM(QtyOrdered*hex_to_int(C_OrderLine_ID)) -SUM(QtyInvoiced*hex_to_int(C_OrderLine_ID))
-        INTO ToDeliver,
-          ToInvoice
-      FROM C_ORDERLINE
-      WHERE C_Order_ID=v_Record_ID;
+      SELECT COUNT(*) INTO ToDeliver FROM DUAL
+      WHERE 0 <> ANY (select QtyOrdered - QtyDelivered from c_orderline where c_order_id = v_Record_ID);
+      SELECT COUNT(*) INTO ToInvoice FROM DUAL
+      WHERE 0 <> ANY (select QtyOrdered - QtyInvoiced from c_orderline where c_order_id = v_Record_ID);
       DBMS_OUTPUT.PUT_LINE('To deliver - ' || ToDeliver) ;
       DBMS_OUTPUT.PUT_LINE('ToInvoice - ' || ToInvoice) ;
       DBMS_OUTPUT.PUT_LINE('v_DocSubTypeSO - ' || v_DocSubTypeSO) ;

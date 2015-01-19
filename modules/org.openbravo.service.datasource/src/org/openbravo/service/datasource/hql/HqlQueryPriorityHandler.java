@@ -24,7 +24,7 @@ import org.openbravo.service.datasource.HQLDataSourceService;
 /**
  * Defines the priority of the injectors, so in case there are more than one with the same
  * qualifier, the one with lowest priority is selected.
- * {@link HQLDataSourceService#getData(Map, int, int)
+ * {@link HQLDataSourceService#getData(Map, int, int)}
  * 
  */
 

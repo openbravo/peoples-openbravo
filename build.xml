@@ -12,7 +12,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2013 Openbravo SLU
+* All portions are Copyright (C) 2001-2014 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************
@@ -250,12 +250,14 @@ export.database: exports database structure and data to xml files.
     </fileset>
     <fileset dir="${base.lib}">
       <include name="**/*.jar" />
+      <exclude name="**/test/*.jar" />
     </fileset>
     <fileset dir="${base.db}/lib/">
       <include name="**/*.jar" />
     </fileset>
     <fileset dir="${base.modules}">
       <include name="*/lib/**" />
+       <exclude name="**/test/*.jar" />
     </fileset>
   </path>
 
@@ -575,24 +577,28 @@ export.database: exports database structure and data to xml files.
     <ant dir="${base.src}" target="generate.entities.quick.forked" inheritAll="true" inheritRefs="true" />
   </target>
 
+  <target name="compile.test" depends="init">
+    <ant dir="${base.src.test}" target="compile.test" inheritAll="true" inheritRefs="true" />
+  </target>
+  
   <target name="run.tests" depends="init">
-    <ant dir="${base.src}" target="run.tests" inheritAll="true" inheritRefs="true" />
+    <ant dir="${base.src.test}" target="run.tests" inheritAll="true" inheritRefs="true" />
   </target>
 
   <target name="run.all.tests" depends="init">
-    <ant dir="${base.src}" target="run.all.tests" inheritAll="true" inheritRefs="true" />
+    <ant dir="${base.src.test}" target="run.all.tests" inheritAll="true" inheritRefs="true" />
   </target>
 
   <target name="run.webservice.tests" depends="init">
-      <ant dir="${base.src}" target="run.webservice.tests" inheritAll="true" inheritRefs="true" />
+      <ant dir="${base.src.test}" target="run.webservice.tests" inheritAll="true" inheritRefs="true" />
   </target>
 
   <target name="run.quick.tests" depends="init">
-    <ant dir="${base.src}" target="run.quick.tests" inheritAll="true" inheritRefs="true" />
+    <ant dir="${base.src.test}" target="run.quick.tests" inheritAll="true" inheritRefs="true" />
   </target>
 
   <target name="run.api.test.javascript">
-    <ant dir="${base.src}" target="run.api.test.javascript" inheritAll="true" inheritRefs="true" />
+    <ant dir="${base.src.test}" target="run.api.test.javascript" inheritAll="true" inheritRefs="true" />
   </target>
   
   <target name="run.api.test.model" 
@@ -871,7 +877,7 @@ export.database: exports database structure and data to xml files.
   <target name="tomcat.restart.do" description="Restart the tomcat server process">
     <echo message="Restarting Tomcat at ${env.CATALINA_HOME}" />
     <java classname="org.apache.catalina.startup.Bootstrap" fork="true">
-      <classpath path=":${env.CATALINA_HOME}/bin/bootstrap.jar:${env.CATALINA_HOME}/bin/commons-logging-api.jar" />
+      <classpath path=":${env.CATALINA_HOME}/bin/bootstrap.jar:${env.CATALINA_HOME}/bin/commons-logging-api.jar:${env.CATALINA_HOME}/bin/tomcat-juli.jar" />
       <jvmarg value="-Dcatalina.home=${env.CATALINA_HOME}" />
       <jvmarg value="-Dcatalina.base=${env.CATALINA_BASE}" />
       <arg line="stop" />
@@ -882,7 +888,7 @@ export.database: exports database structure and data to xml files.
     <antcall target="copy.files.jarsync"/>
 
     <java classname="org.apache.catalina.startup.Bootstrap" fork="true" spawn="true">
-      <classpath path=":${env.CATALINA_HOME}/bin/bootstrap.jar:${env.CATALINA_HOME}/bin/commons-logging-api.jar" />
+      <classpath path=":${env.CATALINA_HOME}/bin/bootstrap.jar:${env.CATALINA_HOME}/bin/commons-logging-api.jar:${env.CATALINA_HOME}/bin/tomcat-juli.jar" />
       <!-- note because CATALINA_OPTS can be multi argument the line attribute has to be used! -->
       <jvmarg line="${env.CATALINA_OPTS}" />
       <jvmarg value="-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager" />
@@ -988,93 +994,22 @@ export.database: exports database structure and data to xml files.
     <ant dir="src-util/diagnostic" antfile="build-create.xml" target="build" />
     <ant dir="src-util/diagnostic" target="check.all" />
   </target>
-
-  <target name="setup.check.os">
-    <condition property="osname" value="linux">
-      <equals arg1="${os.name}" arg2="Linux" />
-    </condition>
-    <condition property="osname" value="freebsd6">
-      <equals arg1="${os.name}" arg2="FreeBSD" />
-    </condition>
-    <condition property="osname" value="windows">
-      <contains string="${os.name}" substring="Windows" />
-    </condition>
-    <condition property="osname" value="osx">
-      <contains string="${os.name}" substring="OS X" />
-    </condition>
-    <condition property="osname" value="solaris">
-      <or>
-        <contains string="${os.name}" substring="Solaris" />
-        <contains string="${os.name}" substring="SunOS" />
-      </or>
-    </condition>
-    <condition property="osname" value="openbsd">
-      <equals arg1="${os.name}" arg2="OpenBSD" />
-    </condition>
-    <condition property="osname" value="aix">
-      <equals arg1="${os.name}" arg2="AIX" />
-    </condition>
-    <condition property="osname" value="hpux">
-      <equals arg1="${os.name}" arg2="HPUX" />
-    </condition>
+  
+  <target name="setup.compile">
+	<mkdir dir="build/classes" />
+    <javac srcdir="src/org/openbravo/configuration" destdir="build/classes" fork="true" deprecation="off" encoding="UTF-8" debug="true" debuglevel="lines,vars,source" includeantruntime="false">
+      <classpath refid="project.class.path"/>  
+    </javac>
   </target>
 
-  <target name="setup.check.arch">
-    <condition property="osarch" value="">
-      <or>
-        <equals arg1="${os.arch}" arg2="x86" />
-        <equals arg1="${os.arch}" arg2="i386" />
-        <contains string="${os.name}" substring="Windows" />
-        <contains string="${os.name}" substring="OS X" />
-      </or>
-    </condition>
-    <condition property="osarch" value="-x64">
-      <or>
-        <equals arg1="${os.arch}" arg2="amd64" />
-        <equals arg1="${os.arch}" arg2="x86_64" />
-        <not>
-          <contains string="${os.name}" substring="Windows" />
-        </not>
-        <not>
-          <contains string="${os.name}" substring="OS X" />
-        </not>
-      </or>
-    </condition>
-    <condition property="osarch" value="-ia64">
-      <equals arg1="${os.arch}" arg2="ia64" />
-    </condition>
-    <condition property="osarch" value="-sparc">
-      <equals arg1="${os.arch}" arg2="sparc" />
-    </condition>
-    <condition property="osarch" value="-ppc">
-      <equals arg1="${os.arch}" arg2="ppc" />
-    </condition>
-  </target>
-
-  <target name="setup.exists.test">
-    <condition property="bin.ext" value="exe">
-      <os family="windows" />
-    </condition>
-
-    <condition property="bin.ext" value="app.tar.gz">
-      <os family="mac" />
-    </condition>
-
-    <condition property="bin.ext" value="bin">
-      <not>
-        <isset property="${bin.ext}" />
-      </not>
-    </condition>
-
-    <available file="config/setup-properties-${osname}${osarch}.${bin.ext}" property="setup.exists" value="true" />
-  </target>
-
-  <target name="setup" depends="setup.check.os, setup.check.arch, setup.exists.test" unless="setup.exists">
-    <get src="https://code.openbravo.com/tools/rm/erp-setup-tool/raw-file/tip/setup/output/setup-properties-${osname}${osarch}.${bin.ext}" dest="config/setup-properties-${osname}${osarch}.${bin.ext}" verbose="true" />
-
-    <chmod file="config/setup-properties-${osname}${osarch}.${bin.ext}" perm="+x" />
-  </target>
-
+  <target name="setup" depends="init, setup.compile">
+    <echo message="Launching configuration application..."/>
+    <taskdef name="configurationApp" classname="org.openbravo.configuration.ConfigurationApp">
+      <classpath refid="project.class.path" />
+    </taskdef>
+    <configurationApp/>
+    </target>
+  
   <target name="package.core" depends="init, set.version.number">
 	<property name="tmpdir" value="${java.io.tmpdir}/ob.core${core.rev}" />
    
@@ -1152,9 +1087,9 @@ export.database: exports database structure and data to xml files.
         <pathelement path="${base.lib}/runtime/postgresql-9.0-801.jdbc4.jar" />
         <pathelement path="${base.lib}/runtime/ojdbc6.jar" />
         <pathelement path="${base.lib}/runtime/commons-collectionsi-3.2.1.jar" />
-        <pathelement path="${base.lib}/runtime/ant-1.7.1.jar" />
-        <pathelement path="${base.lib}/runtime/ant-launcher.jar" />
-        <pathelement path="${base.lib}/runtime/ant-apache-log4j.jar" />
+        <pathelement path="${base.lib}/runtime/ant-1.9.2.jar" />
+        <pathelement path="${base.lib}/runtime/ant-launcher-1.9.2.jar" />
+        <pathelement path="${base.lib}/runtime/ant-apache-log4j-1.9.2.jar" />
         <pathelement path="${base.lib}/runtime/ant-nodeps.jar" />
       </classpath>
     </java>

@@ -301,7 +301,7 @@ public class DocFINPayment extends AcctServer {
                 .getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule().getInvoice()
                 : null);
         docLine.m_Record_Id2 = data[i].getField("recordId2");
-        docLine.setInvoiceTaxCashVAT_V(detail.getFinPayment().getId());
+        docLine.setInvoiceTaxCashVAT_V(Line_ID);
         list.add(docLine);
       } finally {
         OBContext.restorePreviousMode();
@@ -336,8 +336,10 @@ public class DocFINPayment extends AcctServer {
           AcctSchemaTableDocType.class, whereClause.toString());
       final List<AcctSchemaTableDocType> acctSchemaTableDocTypes = obqParameters.list();
 
-      if (acctSchemaTableDocTypes != null && acctSchemaTableDocTypes.size() > 0)
+      if (acctSchemaTableDocTypes != null && acctSchemaTableDocTypes.size() > 0
+          && acctSchemaTableDocTypes.get(0).getCreatefactTemplate() != null) {
         strClassname = acctSchemaTableDocTypes.get(0).getCreatefactTemplate().getClassname();
+      }
 
       if (strClassname.equals("")) {
         final StringBuilder whereClause2 = new StringBuilder();

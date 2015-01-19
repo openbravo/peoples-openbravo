@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -65,6 +66,7 @@ import org.openbravo.service.datasource.DataSourceComponent;
 import org.openbravo.service.datasource.DataSourceConstants;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
+import org.openbravo.userinterface.selector.Selector;
 import org.openbravo.utils.FormatUtilities;
 
 /**
@@ -560,16 +562,43 @@ public class OBViewTab extends BaseTemplateComponent {
 
   public String getProcessViews() {
     StringBuilder views = new StringBuilder();
+    // Use HashSet to avoid processId duplicities
+    HashSet<String> processIds = new HashSet<String>();
     for (ButtonField f : getButtonFields()) {
+      // Get processes coming from action buttons
       if (f.column.getOBUIAPPProcess() == null
           || !"OBUIAPP_PickAndExecute".equals(f.column.getOBUIAPPProcess().getUIPattern())) {
         continue;
       }
+      processIds.add(f.column.getOBUIAPPProcess().getId());
+    }
+    final List<Field> adFields = new ArrayList<Field>(tab.getADFieldList());
+    Collections.sort(adFields, new FormFieldComparator());
+    for (Field fld : adFields) {
+      // Get processes coming from selectors
+      if (fld.isActive() && fld.isDisplayed()) {
+        if (fld.getColumn() == null || fld.getColumn().getReferenceSearchKey() == null) {
+          continue;
+        }
+        List<Selector> selectors = fld.getColumn().getReferenceSearchKey().getOBUISELSelectorList();
+        if (selectors.size() == 0) {
+          continue;
+        }
+        Selector selector = selectors.get(0);
 
+        if (selector.getProcessDefintion() == null) {
+          continue;
+        }
+        processIds.add(selector.getProcessDefintion().getId());
+      }
+    }
+    for (String processId : processIds) {
+      org.openbravo.client.application.Process process = OBDal.getInstance().get(
+          org.openbravo.client.application.Process.class, processId);
       final ParameterWindowComponent processWindow = createComponent(ParameterWindowComponent.class);
       processWindow.setParameters(getParameters());
       processWindow.setUniqueString(uniqueString);
-      processWindow.setProcess(f.column.getOBUIAPPProcess());
+      processWindow.setProcess(process);
       processWindow.setParentWindow(getTab().getWindow());
       processWindow.setPoup(true);
       // processWindow.setWindow(OBDal.getInstance().get(Window.class, f.getWindowId()));
@@ -597,6 +626,14 @@ public class OBViewTab extends BaseTemplateComponent {
       return tab.isObuiappShowSelect();
     }
     return true;
+  }
+
+  public String getSelectionType() {
+    if (tab.getObuiappSelectionType() != null) {
+      return tab.getObuiappSelectionType();
+    }
+    // "M" or "Multiple" is the default value
+    return "M";
   }
 
   public String getNewFunction() {
@@ -866,6 +903,12 @@ public class OBViewTab extends BaseTemplateComponent {
     }
 
     public String getUrl() {
+      if (url == null) {
+        url = "/";
+        log.error("The button " + column.getName() + " of the table "
+            + column.getTable().getDBTableName()
+            + " has not process or a process definition assigned to it");
+      }
       return url;
     }
 
@@ -874,6 +917,12 @@ public class OBViewTab extends BaseTemplateComponent {
     }
 
     public String getCommand() {
+      if (command == null) {
+        command = "/";
+        log.error("The button " + column.getName() + " of the table "
+            + column.getTable().getDBTableName()
+            + " has not process or a process definition assigned to it");
+      }
       return command;
     }
 

@@ -31,6 +31,7 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.client.kernel.ComponentProvider;
+import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.datamodel.Table;
@@ -103,10 +104,12 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
         "true".equals(requestParameters.get("issotrx")) ? true : false);
     queryNamedParameters.put("businessPartnerId", requestParameters.get("received_from"));
     queryNamedParameters.put("paymentId", requestParameters.get("fin_payment_id"));
+    queryNamedParameters.put("orgIds",
+        new OrganizationStructureProvider().getChildTree(requestParameters.get("ad_org_id"), true));
     return transformedHql;
   }
 
-  private StringBuffer getSelectClause(String transactionType, boolean hasSelectedIds) {
+  protected StringBuffer getSelectClause(String transactionType, boolean hasSelectedIds) {
     StringBuffer selectClause = new StringBuffer();
     // Create Select Clause
     selectClause.append(getAggregatorFunction("psd.id") + " as paymentScheduleDetail, ");
@@ -158,10 +161,11 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
     return selectClause;
   }
 
-  private StringBuffer getWhereClause(String transactionType,
+  protected StringBuffer getWhereClause(String transactionType,
       Map<String, String> requestParameters, List<String> selectedPSDs) {
     String strBusinessPartnerId = requestParameters.get("received_from");
     String strFinPaymentId = requestParameters.get("fin_payment_id");
+    String strOrganizationId = requestParameters.get("ad_org_id");
 
     StringBuffer whereClause = new StringBuffer();
     // Create WhereClause
@@ -171,6 +175,9 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
       whereClause.append(" or (fp.id = :paymentId and (ips is not null or ops is not null)) ");
     }
     whereClause.append(") ");
+    if (strOrganizationId != null) {
+      whereClause.append(" and psd.organization.id in :orgIds ");
+    }
 
     whereClause.append(" and (oinfo is null or oinfo.active = true) ");
     whereClause.append("  and ( ");
@@ -237,7 +244,7 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
 
   }
 
-  private StringBuffer getGroupByClause(String transactionType) {
+  protected StringBuffer getGroupByClause(String transactionType) {
     StringBuffer groupByClause = new StringBuffer();
     // Create GroupBy Clause
     if ("I".equals(transactionType)) {
@@ -272,7 +279,7 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
    * @param transactionType
    * @return
    */
-  private StringBuffer getOrderByClause(String transactionType, List<String> selectedPSDs,
+  protected StringBuffer getOrderByClause(String transactionType, List<String> selectedPSDs,
       Map<String, String> requestParameters) {
     StringBuffer orderByClause = new StringBuffer();
     if (selectedPSDs.size() == 0) {
@@ -314,7 +321,7 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
     return orderByClause;
   }
 
-  private String removeGridFilters(String _hqlQuery) {
+  protected String removeGridFilters(String _hqlQuery) {
     String hqlQuery = _hqlQuery;
     // Get the substring of grid filter inside where clause, if transaction type is "Orders" or
     // "Invoices", put in the having clause
@@ -322,9 +329,10 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
     int orgFilterIndex = hqlQuery.indexOf(" psd.organization in ", whereIndex);
     int beginIndex = hqlQuery.indexOf(" AND ", orgFilterIndex);
     int endIndex = hqlQuery.indexOf("and @whereClause@");
-    String gridFilters = hqlQuery.substring(beginIndex, endIndex);
-
-    hqlQuery = hqlQuery.replace(gridFilters, " ");
+    if (beginIndex != -1) {
+      String gridFilters = hqlQuery.substring(beginIndex, endIndex);
+      hqlQuery = hqlQuery.replace(gridFilters, " ");
+    }
     return hqlQuery;
   }
 
@@ -335,7 +343,7 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
    * @param queryNamedParameters
    * @return
    */
-  private String calculateHavingClause(String _hqlQuery, String transactionType,
+  protected String calculateHavingClause(String _hqlQuery, String transactionType,
       JSONObject criteria, Map<String, Object> queryNamedParameters) {
     String hqlQuery = _hqlQuery;
     StringBuffer havingClause = new StringBuffer();
@@ -448,10 +456,10 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
     if (havingGridFilters.contains("@amount@")) {
       havingGridFilters = havingGridFilters.replaceAll("@amount@", "COALESCE(sum(fp.amount), 0)");
     }
-
-    havingClause.append(" having ( " + havingGridFilters + " )");
+    if (havingGridFilters != null && !"".equals(havingGridFilters.trim())) {
+      havingClause.append(" having ( " + havingGridFilters + " )");
+    }
     hqlQuery = hqlQuery.replace("@havingClause@", havingClause.toString());
-
     return hqlQuery;
   }
 
@@ -462,7 +470,8 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
    * @param orderByClause
    * @return
    */
-  private String appendOrderByClause(String _hqlQuery, StringBuffer orderByClause, boolean justCount) {
+  protected String appendOrderByClause(String _hqlQuery, StringBuffer orderByClause,
+      boolean justCount) {
     String hqlQuery = _hqlQuery;
     if (!justCount) {
       if (hqlQuery.contains(" ORDER BY ")) {
@@ -475,7 +484,7 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
     return hqlQuery;
   }
 
-  private void transformCriteria(JSONObject buildCriteria, List<String> selectedPSDs)
+  protected void transformCriteria(JSONObject buildCriteria, List<String> selectedPSDs)
       throws JSONException {
     JSONArray criteriaArray = buildCriteria.getJSONArray("criteria");
     JSONArray newCriteriaArray = new JSONArray();
@@ -501,14 +510,14 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
    * @param expression
    * @return
    */
-  private String getAggregatorFunction(String expression) {
+  protected String getAggregatorFunction(String expression) {
     return " hqlagg(" + expression + ")";
   }
 
   /**
    * @see HQLDataSourceService#replaceParametersWithAlias(Table, String)
    */
-  private String replaceParametersWithAlias(Table table, String whereClause) {
+  protected String replaceParametersWithAlias(Table table, String whereClause) {
     if (whereClause.trim().isEmpty()) {
       return whereClause;
     }

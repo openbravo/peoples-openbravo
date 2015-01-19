@@ -65,6 +65,10 @@ isc.OBPickAndExecuteGrid.addProperties({
     return true;
   },
 
+  //** {{{ dataPageSize }}} **
+  // The data page size used for loading paged data from the server.
+  dataPageSize: 100,
+
   initWidget: function () {
     var i, len = this.fields.length,
         theGrid, me = this,
@@ -138,6 +142,7 @@ isc.OBPickAndExecuteGrid.addProperties({
 
     this.orderByClause = this.gridProperties.orderByClause;
     this.sqlOrderByClause = this.gridProperties.sqlOrderByClause;
+    this.alwaysFilterFksByIdentifier = this.gridProperties.alwaysFilterFksByIdentifier;
 
     this.checkboxFieldProperties = isc.addProperties({}, this.checkboxFieldProperties | {}, {
       canFilter: true,
@@ -162,9 +167,22 @@ isc.OBPickAndExecuteGrid.addProperties({
 
     this.dataSource.transformRequest = function (dsRequest) {
       dsRequest.params = dsRequest.params || {};
+      if (me.view && me.view.externalParams) {
+        // include in the request the external params of the view, if any
+        isc.addProperties(dsRequest.params, me.view.externalParams);
+      }
       if (me.view && me.view.theForm) {
         // include in the request the values of the parameters of the parameter window
         isc.addProperties(dsRequest.params, me.view.theForm.getValues());
+      }
+      dsRequest.params[OB.Constants.ORG_PARAMETER] = me.getOrgParameter();
+      // Add to the params the tabId of the P&E window
+      if (me.viewProperties && me.viewProperties.tabId) {
+        dsRequest.params.tabId = me.viewProperties.tabId;
+      }
+      // Add to the params the tabId owner of the button that opens the P&E window
+      if (me.view && me.view.buttonOwnerView && me.view.buttonOwnerView.tabId) {
+        dsRequest.params.buttonOwnerViewTabId = me.view.buttonOwnerView.tabId;
       }
       return this.Super('transformRequest', arguments);
     };
@@ -189,9 +207,26 @@ isc.OBPickAndExecuteGrid.addProperties({
     if (!canFilter) {
       this.filterEditorProperties.visibility = 'hidden';
     }
+
+    this.isExpandedRecordAutoFitRedrawAlreadyAplied = false;
+
     this.Super('initWidget', arguments);
 
     OB.TestRegistry.register('org.openbravo.client.application.ParameterWindow_Grid_' + this.parameterName + '_' + this.contentView.view.processId, this);
+  },
+
+  redraw: function () {
+    var ret = this.Super('redraw', arguments);
+    if (this.autoFitFieldWidths && this.view && this.view.isExpandedRecord && !this.isExpandedRecordAutoFitRedrawAlreadyAplied) {
+      // There is a problem with the grid calculating the auto fit field width if it is opened inside an expanded record.
+      // Also, the "_updateFieldWidths" ListGrid function cannot be overwritten.
+      // With this the re-calculation is forced once the grid has been already drawn in its place, so the auto fit field width can be properly calculated.
+      this.setAutoFitFieldWidths(false);
+      this.setAutoFitFieldWidths(true);
+      // Flag to ensure that this logic only is executed once and not each time the grid be resized.
+      this.isExpandedRecordAutoFitRedrawAlreadyAplied = true;
+    }
+    return ret;
   },
 
   evaluateDisplayLogicForGridColumns: function () {
@@ -510,27 +545,48 @@ isc.OBPickAndExecuteGrid.addProperties({
   },
 
   getOrgParameter: function () {
-    var view = this.view && this.view.buttonOwnerView,
-        context, i;
-
-    if (view) {
-      context = view.getContextInfo(true, false);
-
+    var context, i;
+    // try to get the org from the parameters
+    if (this.view && this.view.getContextInfo) {
+      context = this.view.getContextInfo();
       for (i in context) {
-        if (context.hasOwnProperty(i) && i.indexOf('organization') !== -1) {
+        if (context.hasOwnProperty(i) && (i.indexOf('organization') !== -1 || i === ('ad_org_id'))) {
           return context[i];
         }
       }
     }
+    // if not in the parameter window, look in the view where the process is defined
+    if (this.view.buttonOwnerView) {
+      context = this.view.buttonOwnerView.getContextInfo(true, false);
+      for (i in context) {
+        if (context.hasOwnProperty(i) && (i.indexOf('organization') !== -1 || i === ('ad_org_id'))) {
+          return context[i];
+        }
+      }
+    }
+    // if not there, use the organization of the user
     return OB.User.organizationId;
   },
 
   onFetchData: function (criteria, requestProperties) {
     requestProperties = requestProperties || {};
     requestProperties.params = this.getFetchRequestParams(requestProperties.params);
+    this.setFechingData();
+  },
+
+  setFechingData: function () {
+    this.fetchingData = true;
+  },
+
+  isFetchingData: function () {
+    return this.fetchingData;
   },
 
   clearFilter: function () {
+    if (this.lazyFiltering && this.filterClause) {
+      // store that the filter has been removed to enable showing potential new records
+      this.filterClauseJustRemoved = true;
+    }
     this.filterClause = null;
     this._cleaningFilter = true;
     this.contentView.messageBar.hide();
@@ -556,6 +612,9 @@ isc.OBPickAndExecuteGrid.addProperties({
     if (this.sqlOrderByClause) {
       params[OB.Constants.SQL_ORDERBY_PARAMETER] = this.sqlOrderByClause;
     }
+
+    // prevent the count operation
+    params[isc.OBViewGrid.NO_COUNT_PARAMETER] = 'true';
 
     if (this.filterClause) {
       if (props.whereClause) {
@@ -832,6 +891,11 @@ isc.OBPickAndExecuteGrid.addProperties({
     } else {
       this.Super('getMinFieldWidth', arguments);
     }
+  },
+
+  refreshGrid: function () {
+    // fetch the data with the current criteria and context info
+    this.filterData(this.getCriteria(), null, this.getContextInfo());
   }
 
 });

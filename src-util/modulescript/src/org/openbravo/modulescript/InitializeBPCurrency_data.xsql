@@ -44,6 +44,23 @@
       ]]>
     </Sql>
   </SqlMethod>
+  <SqlMethod name="UpdateBpCurrency" type="preparedStatement" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+     <![CDATA[
+        UPDATE C_Bpartner bp
+ 		SET BP_Currency_ID = (
+ 		                     SELECT DISTINCT i.C_Currency_ID
+ 		                     FROM C_INVOICE i
+ 		                     WHERE i.C_Bpartner_ID = bp.C_Bpartner_ID 
+ 		                     AND i.docstatus = 'CO'
+ 		                     AND ((SELECT COUNT(DISTINCT i.C_CURRENCY_ID) FROM C_INVOICE i 
+ 		                     WHERE i.docstatus='CO' AND i.C_Bpartner_ID = bp.C_Bpartner_ID) = 1) 
+ 		                     )
+ 		WHERE bp.BP_Currency_ID IS NULL
+      ]]>
+    </Sql>
+  </SqlMethod>
   <SqlMethod name="isExecuted" type="preparedStatement" return="boolean">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
@@ -87,6 +104,29 @@
            createdby, created, updatedby, updated,attribute
            ) VALUES (
            get_uuid(), '0', '0', 'Y', '0', NOW(), '0', NOW(),'UpdateBPCurrency')
+         ]]>
+        </Sql>
+   </SqlMethod>
+   <SqlMethod name="isUpdatedFromInvoice" type="preparedStatement" return="boolean">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT count(*) as exist
+        FROM DUAL
+        WHERE EXISTS (SELECT 1 FROM ad_preference
+                      WHERE attribute = 'isUpdatedFromInvoice')
+      ]]>
+    </Sql>
+  </SqlMethod>
+   <SqlMethod name="createUpdateFromInvoicePref" type="preparedStatement" return="rowcount">
+      <SqlMethodComment></SqlMethodComment>
+       <Sql>
+       <![CDATA[
+           INSERT INTO ad_preference (
+           ad_preference_id, ad_client_id, ad_org_id, isactive,
+           createdby, created, updatedby, updated,attribute
+           ) VALUES (
+           get_uuid(), '0', '0', 'Y', '0', NOW(), '0', NOW(),'isUpdatedFromInvoice')
          ]]>
         </Sql>
    </SqlMethod>

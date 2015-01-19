@@ -500,6 +500,31 @@
     <return>false</return>
     <documentTypeForOrder xsi:nil="true"/>
   </DocumentType>
+  <DocumentType id="27825A3873BC4205930F5D29BBCD5C58" identifier="Landed Cost">
+    <id>27825A3873BC4205930F5D29BBCD5C58</id>
+    <active>true</active>
+    <name>Landed Cost</name>
+    <printText>Landed Cost</printText>
+    <description xsi:nil="true"/>
+    <documentCategory>LDC</documentCategory>
+    <salesTransaction>false</salesTransaction>
+    <sOSubType xsi:nil="true"/>
+    <documentTypeForShipment xsi:nil="true"/>
+    <documentTypeForInvoice xsi:nil="true"/>
+    <sequencedDocument>true</sequencedDocument>
+    <documentSequence id="27143293130E4A04B9F8E0267C09B7CA" entity-name="ADSequence" identifier="Landed Cost"/>
+    <gLCategory id="745A2B441A2644DF934D1B1E462292E9" entity-name="FinancialMgmtGLCategory" identifier="None"/>
+    <comments xsi:nil="true"/>
+    <default>true</default>
+    <numberOfCopies>1</numberOfCopies>
+    <table id="082F967CDF7245EB9A150941F326C45C" entity-name="ADTable" identifier="M_LandedCost"/>
+    <filterByOrganization>false</filterByOrganization>
+    <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
+    <reversal>false</reversal>
+    <return>false</return>
+    <documentTypeForOrder xsi:nil="true"/>
+  </DocumentType>
   <DocumentType id="2D7C15F0F44E4F289A729415EFD700C1" identifier="Return Material">
     <id>2D7C15F0F44E4F289A729415EFD700C1</id>
     <active>false</active>
@@ -1200,6 +1225,31 @@
     <return>false</return>
     <documentTypeForOrder xsi:nil="true"/>
   </DocumentType>
+  <DocumentType id="CFF8D67F1C51438A9199AF5E52896628" identifier="Cost Adjustment">
+    <id>CFF8D67F1C51438A9199AF5E52896628</id>
+    <active>true</active>
+    <name>Cost Adjustment</name>
+    <printText>Cost Adjustment</printText>
+    <description xsi:nil="true"/>
+    <documentCategory>CAD</documentCategory>
+    <salesTransaction>false</salesTransaction>
+    <sOSubType xsi:nil="true"/>
+    <documentTypeForShipment xsi:nil="true"/>
+    <documentTypeForInvoice xsi:nil="true"/>
+    <sequencedDocument>true</sequencedDocument>
+    <documentSequence id="447F87AD22024A97909F97B24E4F12C9" entity-name="ADSequence" identifier="Cost Adjustment"/>
+    <gLCategory id="745A2B441A2644DF934D1B1E462292E9" entity-name="FinancialMgmtGLCategory" identifier="None"/>
+    <comments xsi:nil="true"/>
+    <default>false</default>
+    <numberOfCopies>1</numberOfCopies>
+    <table id="D022B92163074E5E82449C8E0B5AFDF6" entity-name="ADTable" identifier="M_CostAdjustment"/>
+    <filterByOrganization>false</filterByOrganization>
+    <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
+    <reversal>false</reversal>
+    <return>false</return>
+    <documentTypeForOrder xsi:nil="true"/>
+  </DocumentType>
   <DocumentType id="D132517AE775435B8EB2832CC61FCAB1" identifier="AR Receipt">
     <id>D132517AE775435B8EB2832CC61FCAB1</id>
     <active>true</active>
@@ -1250,6 +1300,56 @@
     <return>true</return>
     <documentTypeForOrder xsi:nil="true"/>
   </DocumentType>
+  <DocumentType id="DB5E0CFE9D8642ABB6AB63F794C8E054" identifier="Landed Cost Cost">
+    <id>DB5E0CFE9D8642ABB6AB63F794C8E054</id>
+    <active>true</active>
+    <name>Landed Cost Cost</name>
+    <printText>Landed Cost Cost</printText>
+    <description xsi:nil="true"/>
+    <documentCategory>LCC</documentCategory>
+    <salesTransaction>false</salesTransaction>
+    <sOSubType xsi:nil="true"/>
+    <documentTypeForShipment xsi:nil="true"/>
+    <documentTypeForInvoice xsi:nil="true"/>
+    <sequencedDocument>false</sequencedDocument>
+    <documentSequence xsi:nil="true"/>
+    <gLCategory id="745A2B441A2644DF934D1B1E462292E9" entity-name="FinancialMgmtGLCategory" identifier="None"/>
+    <comments xsi:nil="true"/>
+    <default>false</default>
+    <numberOfCopies>1</numberOfCopies>
+    <table id="55A984C314FD4C4FB5E7C32DE36BB07B" entity-name="ADTable" identifier="M_LC_Cost"/>
+    <filterByOrganization>false</filterByOrganization>
+    <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
+    <reversal>false</reversal>
+    <return>false</return>
+    <documentTypeForOrder xsi:nil="true"/>
+  </DocumentType>
+  <DocumentType id="E664C8BE572A41558E12063E99081B15" identifier="Material Internal Consumption">
+    <id>E664C8BE572A41558E12063E99081B15</id>
+    <active>true</active>
+    <name>Material Internal Consumption</name>
+    <printText>Material Internal Consumption</printText>
+    <description xsi:nil="true"/>
+    <documentCategory>MIC</documentCategory>
+    <salesTransaction>false</salesTransaction>
+    <sOSubType xsi:nil="true"/>
+    <documentTypeForShipment xsi:nil="true"/>
+    <documentTypeForInvoice xsi:nil="true"/>
+    <sequencedDocument>true</sequencedDocument>
+    <documentSequence id="733AF9614B5F45BA91AF10D624089C0C" entity-name="ADSequence" identifier="Material Internal Consumption"/>
+    <gLCategory id="745A2B441A2644DF934D1B1E462292E9" entity-name="FinancialMgmtGLCategory" identifier="None"/>
+    <comments xsi:nil="true"/>
+    <default>false</default>
+    <numberOfCopies>1</numberOfCopies>
+    <table id="800168" entity-name="ADTable" identifier="M_Internal_Consumption"/>
+    <filterByOrganization>false</filterByOrganization>
+    <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
+    <reversal>false</reversal>
+    <return>false</return>
+    <documentTypeForOrder xsi:nil="true"/>
+  </DocumentType>
   <DocumentType id="E7F4802D902A42A59143DCCBEDE4DE85" identifier="Credit Order">
     <id>E7F4802D902A42A59143DCCBEDE4DE85</id>
     <active>false</active>
@@ -1268,6 +1368,31 @@
     <default>false</default>
     <numberOfCopies>0</numberOfCopies>
     <table id="259" entity-name="ADTable" identifier="C_Order"/>
+    <filterByOrganization>false</filterByOrganization>
+    <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
+    <reversal>false</reversal>
+    <return>false</return>
+    <documentTypeForOrder xsi:nil="true"/>
+  </DocumentType>
+  <DocumentType id="E9C5436B5AAA49B09724CDC40E80F4FD" identifier="Inventory Amount Update">
+    <id>E9C5436B5AAA49B09724CDC40E80F4FD</id>
+    <active>true</active>
+    <name>Inventory Amount Update</name>
+    <printText>Inventory Amount Update</printText>
+    <description xsi:nil="true"/>
+    <documentCategory>IAU</documentCategory>
+    <salesTransaction>false</salesTransaction>
+    <sOSubType xsi:nil="true"/>
+    <documentTypeForShipment xsi:nil="true"/>
+    <documentTypeForInvoice xsi:nil="true"/>
+    <sequencedDocument>true</sequencedDocument>
+    <documentSequence id="D2EE396D507A4956A971BA93D785C310" entity-name="ADSequence" identifier="Inventory Amount Update"/>
+    <gLCategory id="745A2B441A2644DF934D1B1E462292E9" entity-name="FinancialMgmtGLCategory" identifier="None"/>
+    <comments xsi:nil="true"/>
+    <default>false</default>
+    <numberOfCopies>1</numberOfCopies>
+    <table id="F6B6AD5679FF4A798D2A3D44B232C52C" entity-name="ADTable" identifier="M_CA_InventoryAmt"/>
     <filterByOrganization>false</filterByOrganization>
     <documentCancelled xsi:nil="true"/>
     <expense>false</expense>
@@ -1398,6 +1523,18 @@
     <usedForRecordID>false</usedForRecordID>
     <restartSequenceEveryYear>false</restartSequenceEveryYear>
   </ADSequence>
+  <ADSequence id="27143293130E4A04B9F8E0267C09B7CA" identifier="Landed Cost">
+    <id>27143293130E4A04B9F8E0267C09B7CA</id>
+    <active>true</active>
+    <name>Landed Cost</name>
+    <description xsi:nil="true"/>
+    <valueFormat xsi:nil="true"/>
+    <autoNumbering>true</autoNumbering>
+    <incrementBy>1</incrementBy>
+    <startingNo>1000000</startingNo>
+    <usedForRecordID>false</usedForRecordID>
+    <restartSequenceEveryYear>false</restartSequenceEveryYear>
+  </ADSequence>
   <ADSequence id="2D47C580583242259DF1FFEA4D914A94" identifier="MM Shipment">
     <id>2D47C580583242259DF1FFEA4D914A94</id>
     <active>true</active>
@@ -1415,6 +1552,18 @@
     <active>true</active>
     <name>Reversed Sales Invoice</name>
     <description>Reversed Sales Invoice</description>
+    <valueFormat xsi:nil="true"/>
+    <autoNumbering>true</autoNumbering>
+    <incrementBy>1</incrementBy>
+    <startingNo>1000000</startingNo>
+    <usedForRecordID>false</usedForRecordID>
+    <restartSequenceEveryYear>false</restartSequenceEveryYear>
+  </ADSequence>
+  <ADSequence id="447F87AD22024A97909F97B24E4F12C9" identifier="Cost Adjustment">
+    <id>447F87AD22024A97909F97B24E4F12C9</id>
+    <active>true</active>
+    <name>Cost Adjustment</name>
+    <description>Cost Adjustment</description>
     <valueFormat xsi:nil="true"/>
     <autoNumbering>true</autoNumbering>
     <incrementBy>1</incrementBy>
@@ -1455,6 +1604,18 @@
     <autoNumbering>true</autoNumbering>
     <incrementBy>1</incrementBy>
     <startingNo>30000</startingNo>
+    <usedForRecordID>false</usedForRecordID>
+    <restartSequenceEveryYear>false</restartSequenceEveryYear>
+  </ADSequence>
+  <ADSequence id="733AF9614B5F45BA91AF10D624089C0C" identifier="Material Internal Consumption">
+    <id>733AF9614B5F45BA91AF10D624089C0C</id>
+    <active>true</active>
+    <name>Material Internal Consumption</name>
+    <description>Material Internal Consumption</description>
+    <valueFormat xsi:nil="true"/>
+    <autoNumbering>true</autoNumbering>
+    <incrementBy>1</incrementBy>
+    <startingNo>1000000</startingNo>
     <usedForRecordID>false</usedForRecordID>
     <restartSequenceEveryYear>false</restartSequenceEveryYear>
   </ADSequence>
@@ -1707,6 +1868,18 @@
     <autoNumbering>true</autoNumbering>
     <incrementBy>1</incrementBy>
     <startingNo>10000</startingNo>
+    <usedForRecordID>false</usedForRecordID>
+    <restartSequenceEveryYear>false</restartSequenceEveryYear>
+  </ADSequence>
+  <ADSequence id="D2EE396D507A4956A971BA93D785C310" identifier="Inventory Amount Update">
+    <id>D2EE396D507A4956A971BA93D785C310</id>
+    <active>true</active>
+    <name>Inventory Amount Update</name>
+    <description>Inventory Amount Update</description>
+    <valueFormat xsi:nil="true"/>
+    <autoNumbering>true</autoNumbering>
+    <incrementBy>1</incrementBy>
+    <startingNo>1000000</startingNo>
     <usedForRecordID>false</usedForRecordID>
     <restartSequenceEveryYear>false</restartSequenceEveryYear>
   </ADSequence>

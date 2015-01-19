@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -97,8 +97,10 @@ public class DocFINBankStatement extends AcctServer {
           AcctSchemaTableDocType.class, whereClause.toString());
       final List<AcctSchemaTableDocType> acctSchemaTableDocTypes = obqParameters.list();
 
-      if (acctSchemaTableDocTypes != null && acctSchemaTableDocTypes.size() > 0)
+      if (acctSchemaTableDocTypes != null && acctSchemaTableDocTypes.size() > 0
+          && acctSchemaTableDocTypes.get(0).getCreatefactTemplate() != null) {
         strClassname = acctSchemaTableDocTypes.get(0).getCreatefactTemplate().getClassname();
+      }
 
       if (strClassname.equals("")) {
         final StringBuilder whereClause2 = new StringBuilder();

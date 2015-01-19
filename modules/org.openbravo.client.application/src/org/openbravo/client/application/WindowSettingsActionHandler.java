@@ -100,30 +100,35 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
       final JSONArray tabs = new JSONArray();
       json.put("tabs", tabs);
       for (WindowAccess winAccess : window.getADWindowAccessList()) {
-        if (winAccess.getRole().getId().equals(roleId)) {
+        if (winAccess.isActive() && winAccess.getRole().getId().equals(roleId)) {
           for (TabAccess tabAccess : winAccess.getADTabAccessList()) {
-            boolean tabEditable = tabAccess.isEditableField();
-            final Entity entity = ModelProvider.getInstance().getEntityByTableId(
-                tabAccess.getTab().getTable().getId());
-            final JSONObject jTab = new JSONObject();
-            tabs.put(jTab);
-            jTab.put("tabId", tabAccess.getTab().getId());
-            jTab.put("updatable", tabEditable);
-            final JSONObject jFields = new JSONObject();
-            jTab.put("fields", jFields);
-            final Set<String> fields = new TreeSet<String>();
-            for (Field field : tabAccess.getTab().getADFieldList()) {
-              if (!field.isReadOnly() && !field.isShownInStatusBar()) {
-                fields.add(KernelUtils.getProperty(entity, field).getName());
+            if (tabAccess.isActive()) {
+              boolean tabEditable = tabAccess.isEditableField();
+              final Entity entity = ModelProvider.getInstance().getEntityByTableId(
+                  tabAccess.getTab().getTable().getId());
+              final JSONObject jTab = new JSONObject();
+              tabs.put(jTab);
+              jTab.put("tabId", tabAccess.getTab().getId());
+              jTab.put("updatable", tabEditable);
+              final JSONObject jFields = new JSONObject();
+              jTab.put("fields", jFields);
+              final Set<String> fields = new TreeSet<String>();
+              for (Field field : tabAccess.getTab().getADFieldList()) {
+                if (!field.isReadOnly() && !field.isShownInStatusBar()) {
+                  fields.add(KernelUtils.getProperty(entity, field).getName());
+                }
               }
-            }
-            for (FieldAccess fieldAccess : tabAccess.getADFieldAccessList()) {
-              final String name = KernelUtils.getProperty(entity, fieldAccess.getField()).getName();
-              jFields.put(name, fieldAccess.isEditableField());
-              fields.remove(name);
-            }
-            for (String name : fields) {
-              jFields.put(name, tabEditable);
+              for (FieldAccess fieldAccess : tabAccess.getADFieldAccessList()) {
+                if (fieldAccess.isActive()) {
+                  final String name = KernelUtils.getProperty(entity, fieldAccess.getField())
+                      .getName();
+                  jFields.put(name, fieldAccess.isEditableField());
+                  fields.remove(name);
+                }
+              }
+              for (String name : fields) {
+                jFields.put(name, tabEditable);
+              }
             }
           }
         }

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,6 +19,7 @@
 package org.openbravo.service.datasource;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +37,8 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.model.domaintype.PrimitiveDomainType;
+import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.base.structure.IdentifierProvider;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.client.kernel.reference.EnumUIDefinition;
 import org.openbravo.client.kernel.reference.ForeignKeyUIDefinition;
@@ -45,7 +48,6 @@ import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.client.kernel.reference.YesNoUIDefinition;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.datamodel.Table;
@@ -66,6 +68,8 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
   private static final String WHERE = " WHERE ";
   private static final String ORDERBY = " ORDER BY ";
   private static final String GROUPBY = "GROUP BY";
+  private static final String MAIN_FROM = "MAINFROM";
+  private static final String FROM = "FROM ";
   private static final String ADDITIONAL_FILTERS = "@additional_filters@";
   private static final String INSERTION_POINT_GENERIC_ID = "@insertion_point_#@";
   private static final String INSERTION_POINT_INDEX_PLACEHOLDER = "#";
@@ -175,15 +179,19 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     for (Object row : query.list()) {
       Map<String, Object> record = new HashMap<String, Object>();
       if (distinct != null) {
-        // TODO: Find a better way to do this, use the proper id
-        record.put(JsonConstants.ID, row);
-        record.put(JsonConstants.IDENTIFIER, row);
+        Object[] result = (Object[]) row;
+        // the whole referenced BaseOBObject is stored in the first position of the result
+        BaseOBObject bob = (BaseOBObject) result[0];
+        record.put(JsonConstants.ID, bob.getId());
+        record.put(JsonConstants.IDENTIFIER, IdentifierProvider.getInstance().getIdentifier(bob));
       } else {
         Object[] properties = (Object[]) row;
         for (int i = 0; i < returnAliases.length; i++) {
-          Property property = entity.getPropertyByColumnName(returnAliases[i], checkIsNotNull);
+          Property property = entity.getPropertyByColumnName(returnAliases[i].toLowerCase(),
+              checkIsNotNull);
           if (property == null) {
-            property = entity.getPropertyByColumnName(columns.get(i).getDBColumnName());
+            property = entity.getPropertyByColumnName(columns.get(i).getDBColumnName()
+                .toLowerCase());
           }
           record.put(property.getName(), properties[i]);
         }
@@ -234,22 +242,36 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     AdvancedQueryBuilder queryBuilder = new AdvancedQueryBuilder();
     queryBuilder.setEntity(ModelProvider.getInstance().getEntityByTableId(table.getId()));
     queryBuilder.setCriteria(criteria);
+    if (table.getEntityAlias() != null) {
+      queryBuilder.setMainAlias(table.getEntityAlias());
+    }
     String whereClause = queryBuilder.getWhereClause();
     // replace the property names with the column alias
     whereClause = replaceParametersWithAlias(table, whereClause);
 
     String distinct = parameters.get(JsonConstants.DISTINCT_PARAMETER);
     if (distinct != null) {
-      final String from = "from ";
-      String formClause = hqlQuery.substring(hqlQuery.toLowerCase().indexOf(from));
+      String formClause = null;
+      if (hqlQuery.indexOf(MAIN_FROM) != -1) {
+        formClause = hqlQuery.substring(hqlQuery.indexOf(MAIN_FROM));
+      } else {
+        formClause = hqlQuery.substring(hqlQuery.toUpperCase().lastIndexOf(FROM));
+      }
       Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
       Property property = entity.getProperty(distinct);
+      Column distinctColumn = OBDal.getInstance().get(Column.class, property.getColumnId());
       // TODO: Improve distinct query like this: https://issues.openbravo.com/view.php?id=25182
       if (justCount) {
-        hqlQuery = "select count(distinct " + table.getEntityAlias() + "." + distinct + "."
+        hqlQuery = "select count(distinct " + distinctColumn.getEntityAlias() + "."
             + getNameOfFirstIdentifierProperty(property.getTargetEntity()) + ") " + formClause;
       } else {
-        hqlQuery = "select distinct " + table.getEntityAlias() + "." + distinct + "."
+        // Retrieve:
+        // - the whole referenced object, so that later it is easier to obtain its id and
+        // its identifier (which can be a translation)
+        // - the first property of the entity's identifier. This is needed because it is the column
+        // that will be used to order the rows
+        hqlQuery = "select distinct " + distinctColumn.getEntityAlias() + ","
+            + distinctColumn.getEntityAlias() + "."
             + getNameOfFirstIdentifierProperty(property.getTargetEntity()) + " " + formClause;
       }
     }
@@ -284,21 +306,42 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     hqlQuery = fillInInsertionPoints(hqlQuery, queryNamedParameters, parameters);
 
     if (distinct == null && justCount) {
-      final String from = "from ";
-      String formClause = hqlQuery.substring(hqlQuery.toLowerCase().indexOf(from));
+      String formClause = null;
+      if (hqlQuery.indexOf(MAIN_FROM) != -1) {
+        formClause = hqlQuery.substring(hqlQuery.indexOf(MAIN_FROM));
+      } else {
+        formClause = hqlQuery.substring(hqlQuery.toUpperCase().lastIndexOf(FROM));
+      }
       hqlQuery = "select count(*) " + formClause;
     }
 
+    if (hqlQuery.indexOf(MAIN_FROM) != -1) {
+      hqlQuery = hqlQuery.replace(MAIN_FROM, FROM);
+    }
+
+    log.debug("HQL query: {}", hqlQuery);
     Query query = OBDal.getInstance().getSession().createQuery(hqlQuery);
+
+    StringBuffer paramsLog = new StringBuffer();
 
     // sets the parameters of the query
     for (String key : queryNamedParameters.keySet()) {
       // Injection and transforms might have modified the query removing named parameters. Check
       // that key is still in the query.
       if (hqlQuery.contains(key)) {
-        query.setParameter(key, queryNamedParameters.get(key));
+        Object parameter = queryNamedParameters.get(key);
+        if (parameter instanceof Collection<?>) {
+          query.setParameterList(key, (Collection<?>) parameter);
+        } else {
+          query.setParameter(key, parameter);
+        }
+        if (log.isDebugEnabled()) {
+          paramsLog.append("\n").append(key).append(": ").append(parameter);
+        }
       }
     }
+
+    log.debug("  parameters:{}", paramsLog);
 
     OBContext.restorePreviousMode();
     return query;
@@ -452,6 +495,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     for (Column column : table.getADColumnList()) {
       // look for the property name, replace it with the column alias
       Property property = entity.getPropertyByColumnName(column.getDBColumnName());
+      // Map used to replace the property name used in the criteria with its alias
       Map<String, String> replacementMap = new HashMap<String, String>();
       String propertyNameBefore = null;
       String propertyNameAfter = null;
@@ -459,31 +503,45 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
         // if the property is a primitive, just replace the property name with the column alias
         propertyNameBefore = property.getName();
         propertyNameAfter = column.getEntityAlias();
+        addEntryToReplacementMap(replacementMap, propertyNameBefore, propertyNameAfter,
+            table.getEntityAlias());
       } else {
-        // if the property is a FK, then the name of the identifier property of the referenced
-        // entity has to be appended
-
-        if (column.isLinkToParentColumn()) {
-          propertyNameBefore = property.getName() + "." + JsonConstants.ID;
-          propertyNameAfter = column.getEntityAlias() + "." + JsonConstants.ID;
-        } else {
-          Entity refEntity = property.getReferencedProperty().getEntity();
-          String identifierPropertyName = refEntity.getIdentifierProperties().get(0).getName();
-          propertyNameBefore = property.getName() + "." + identifierPropertyName;
-          propertyNameAfter = column.getEntityAlias() + "." + identifierPropertyName;
-        }
-
+        // the criteria can refer to the foreign key via its ID...
+        propertyNameBefore = property.getName() + "." + JsonConstants.ID;
+        propertyNameAfter = column.getEntityAlias() + "." + JsonConstants.ID;
+        addEntryToReplacementMap(replacementMap, propertyNameBefore, propertyNameAfter,
+            table.getEntityAlias());
+        // ... or through its identifier
+        Entity refEntity = property.getReferencedProperty().getEntity();
+        String identifierPropertyName = refEntity.getIdentifierProperties().get(0).getName();
+        propertyNameBefore = property.getName() + "." + identifierPropertyName;
+        propertyNameAfter = column.getEntityAlias() + "." + identifierPropertyName;
+        addEntryToReplacementMap(replacementMap, propertyNameBefore, propertyNameAfter,
+            table.getEntityAlias());
       }
-      replacementMap.put(" " + propertyNameBefore + " ", " " + propertyNameAfter + " ");
-      replacementMap.put("(" + propertyNameBefore + ")", "(" + propertyNameAfter + ")");
       for (String toBeReplaced : replacementMap.keySet()) {
-        if (updatedWhereClause.contains(toBeReplaced)) {
-          updatedWhereClause = updatedWhereClause.replace(toBeReplaced,
-              replacementMap.get(toBeReplaced));
-        }
+        updatedWhereClause = updatedWhereClause.replaceAll(toBeReplaced,
+            replacementMap.get(toBeReplaced));
       }
     }
     return updatedWhereClause;
+  }
+
+  /**
+   * Adds a pair oldName-newName to the replacement map All possible parenthesis combinations are
+   * added to the replacement map
+   */
+  private void addEntryToReplacementMap(Map<String, String> replacementMap, String oldName,
+      String newName, String mainAlias) {
+    replacementMap.put(" " + oldName + " ", " " + newName + " ");
+    replacementMap.put("[(]" + oldName + "[)]", "(" + newName + ")");
+    replacementMap.put("[(]" + oldName + " ", "(" + newName + " ");
+    replacementMap.put(" " + oldName + "[)]", " " + newName + ")");
+
+    if (StringUtils.isNotEmpty(mainAlias)) {
+      // if table has alias, add also replacements taking it into account
+      addEntryToReplacementMap(replacementMap, mainAlias + "." + oldName, newName, null);
+    }
   }
 
   /**
@@ -520,11 +578,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
       additionalFilter.append(entityAlias + ".organization in (" + orgs + ")");
     }
 
-    if (!filterWhereClause.trim().isEmpty()) {
-      // if the filter where clause contains the string 'where', get rid of it
-      String whereClause = filterWhereClause.replaceAll("(?i)" + WHERE, " ");
-      additionalFilter.append(AND + whereClause);
-    }
+    addFilterWhereClause(additionalFilter, filterWhereClause);
 
     // the _where parameter contains the filter clause and the where clause defined at tab level
     String whereClauseParameter = parameters.get(JsonConstants.WHERE_PARAMETER);
@@ -553,6 +607,16 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     return hqlQueryWithFilters;
   }
 
+  private void addFilterWhereClause(StringBuffer additionalFilter, String filterWhereClause) {
+    if (!filterWhereClause.trim().isEmpty()) {
+      additionalFilter.append(AND + removeLeadingWhere(filterWhereClause));
+    }
+  }
+
+  private String removeLeadingWhere(String whereClause) {
+    return whereClause.replaceAll("^(?i)" + WHERE, " ");
+  }
+
   /**
    * Returns a HQL sort by clause based on the parameters sent to the datasource
    * 
@@ -571,13 +635,13 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
 
     boolean isDistinctQuery = false;
     final String sortBy = parameters.get(JsonConstants.SORTBY_PARAMETER);
-    if (sortBy != null) {
+    if (parameters.get(JsonConstants.DISTINCT_PARAMETER) != null) {
+      orderByClause = parameters.get(JsonConstants.DISTINCT_PARAMETER);
+      isDistinctQuery = true;
+    } else if (sortBy != null) {
       orderByClause = sortBy;
     } else if (parameters.get(JsonConstants.ORDERBY_PARAMETER) != null) {
       orderByClause = parameters.get(JsonConstants.ORDERBY_PARAMETER);
-    } else if (parameters.get(JsonConstants.DISTINCT_PARAMETER) != null) {
-      orderByClause = parameters.get(JsonConstants.DISTINCT_PARAMETER);
-      isDistinctQuery = true;
     } else {
       return "";
     }
@@ -597,18 +661,22 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     }
 
     Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
-    Property property = entity.getProperty(propertyName);
-    OBCriteria<Column> columnCriteria = OBDal.getInstance().createCriteria(Column.class);
-    Column column = OBDal.getInstance().get(Column.class, property.getColumnId());
-    if (!orderByClause.isEmpty()) {
-      orderByClause = ORDERBY + column.getEntityAlias();
-      if (property.getTargetEntity() != null) {
-        orderByClause = orderByClause + "."
-            + getNameOfFirstIdentifierProperty(property.getTargetEntity());
-      }
-      orderByClause = orderByClause + direction;
-      if (includeMainEntityID && !isDistinctQuery) {
-        orderByClause = orderByClause + ", " + table.getEntityAlias() + ".id";
+    boolean checkIsNotNull = false;
+    Property property = entity.getProperty(propertyName, checkIsNotNull);
+    if (property == null) {
+      orderByClause = ORDERBY + propertyName;
+    } else {
+      Column column = OBDal.getInstance().get(Column.class, property.getColumnId());
+      if (!orderByClause.isEmpty()) {
+        orderByClause = ORDERBY + column.getEntityAlias();
+        if (property.getTargetEntity() != null) {
+          orderByClause = orderByClause + "."
+              + getNameOfFirstIdentifierProperty(property.getTargetEntity());
+        }
+        orderByClause = orderByClause + direction;
+        if (includeMainEntityID && !isDistinctQuery) {
+          orderByClause = orderByClause + ", " + table.getEntityAlias() + ".id";
+        }
       }
     }
     return orderByClause;

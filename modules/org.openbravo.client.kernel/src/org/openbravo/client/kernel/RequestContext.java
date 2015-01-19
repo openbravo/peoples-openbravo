@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,29 +21,15 @@ package org.openbravo.client.kernel;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -61,18 +47,18 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
  * <li>Makes it possible to set request parameters to simulate a request from a client to a server.</li>
  * </ul>
  * 
- * Note: compiling through ant gives a deprecated api usage warning, this seems to be a javac bug:
- * http://bugs.sun.com/view_bug.do?bug_id=6460147
- * 
  * @author mtaal
  */
 @SuppressWarnings("deprecation")
 public class RequestContext {
-  private static ServletContext servletContext = new LocalServletContext();
+  private static ServletContext servletContext = null;
 
   private static ThreadLocal<RequestContext> instance = new ThreadLocal<RequestContext>();
 
   public static ServletContext getServletContext() {
+    if (servletContext == null) {
+      throw new OBException("Servlet Context is null");
+    }
     return servletContext;
   }
 
@@ -154,16 +140,18 @@ public class RequestContext {
   }
 
   public HttpServletRequest getRequest() {
-    if (!(request instanceof HttpServletRequestWrapper)) {
-      final HttpServletRequestWrapper wrapper = new HttpServletRequestWrapper();
-      wrapper.setDelegate(request);
+    if (request != null && !(request instanceof HttpServletRequestWrapper)) {
+      final HttpServletRequestWrapper wrapper = new HttpServletRequestWrapper(request);
       request = wrapper;
     }
     return request;
   }
 
   public void setRequestContent(String requestContent) {
-    ((HttpServletRequestWrapper) getRequest()).setRequestContent(requestContent);
+    HttpServletRequestWrapper req = (HttpServletRequestWrapper) getRequest();
+    if (req != null) {
+      req.setRequestContent(requestContent);
+    }
   }
 
   public VariablesSecureApp getVariablesSecureApp() {
@@ -186,10 +174,12 @@ public class RequestContext {
     this.request = request;
   }
 
+  /**
+   * This method makes only sense to be invoked from a Request in a servlet container, other cases
+   * response will be null
+   * 
+   */
   public HttpServletResponse getResponse() {
-    if (response == null) {
-      response = new HttpServletResponseWrapper();
-    }
     return response;
   }
 
@@ -197,16 +187,23 @@ public class RequestContext {
     this.response = response;
   }
 
-  public static class HttpServletRequestWrapper implements HttpServletRequest {
+  public static class HttpServletRequestWrapper extends
+      javax.servlet.http.HttpServletRequestWrapper {
+
     private HttpServletRequest delegate;
     private Map<String, Object> attributes = new HashMap<String, Object>();
-    private Map<String, String> parameters = new HashMap<String, String>();
+    private Map<String, String[]> parameters = new HashMap<String, String[]>();
     private HttpSession localSession = null;
     private String requestContent;
     private ServletInputStream inputStream;
 
+    public HttpServletRequestWrapper(HttpServletRequest request) {
+      super(request);
+      delegate = request;
+    }
+
     public void setParameter(String arg0, String arg1) {
-      parameters.put(arg0, arg1);
+      parameters.put(arg0, new String[] { arg1 });
     }
 
     public Object getAttribute(String arg0) {
@@ -216,25 +213,14 @@ public class RequestContext {
       return delegate.getAttribute(arg0);
     }
 
-    public Enumeration<?> getAttributeNames() {
+    @SuppressWarnings("unchecked")
+    public Enumeration<String> getAttributeNames() {
       if (delegate == null) {
         final List<String> names = new ArrayList<String>();
         names.addAll(attributes.keySet());
         return Collections.enumeration(names);
       }
       return delegate.getAttributeNames();
-    }
-
-    public String getAuthType() {
-      return delegate.getAuthType();
-    }
-
-    public String getCharacterEncoding() {
-      return delegate.getCharacterEncoding();
-    }
-
-    public int getContentLength() {
-      return delegate.getContentLength();
     }
 
     public String getContentType() {
@@ -244,30 +230,6 @@ public class RequestContext {
       return delegate.getContentType();
     }
 
-    public String getContextPath() {
-      return delegate.getContextPath();
-    }
-
-    public Cookie[] getCookies() {
-      return delegate.getCookies();
-    }
-
-    public long getDateHeader(String arg0) {
-      return delegate.getDateHeader(arg0);
-    }
-
-    public String getHeader(String arg0) {
-      return delegate.getHeader(arg0);
-    }
-
-    public Enumeration<?> getHeaderNames() {
-      return delegate.getHeaderNames();
-    }
-
-    public Enumeration<?> getHeaders(String arg0) {
-      return delegate.getHeaders(arg0);
-    }
-
     public ServletInputStream getInputStream() throws IOException {
       if (delegate == null) {
         if (inputStream == null) {
@@ -275,7 +237,6 @@ public class RequestContext {
             inputStream = new ServletInputStream() {
               @Override
               public int read() throws IOException {
-                // TODO Auto-generated method stub
                 return 0;
               }
             };
@@ -290,47 +251,19 @@ public class RequestContext {
       return delegate.getInputStream();
     }
 
-    public int getIntHeader(String arg0) {
-      return delegate.getIntHeader(arg0);
-    }
-
-    public String getLocalAddr() {
-      return delegate.getLocalAddr();
-    }
-
-    public Locale getLocale() {
-      return delegate.getLocale();
-    }
-
-    public Enumeration<?> getLocales() {
-      return delegate.getLocales();
-    }
-
-    public String getLocalName() {
-      return delegate.getLocalName();
-    }
-
-    public int getLocalPort() {
-      return delegate.getLocalPort();
-    }
-
-    public String getMethod() {
-      return delegate.getMethod();
-    }
-
     public String getParameter(String arg0) {
       if (delegate == null || parameters.containsKey(arg0)) {
-        return parameters.get(arg0);
+        final String[] param = parameters.get(arg0);
+        if (param == null || param.length == 0) {
+          return null;
+        }
+        return param[0];
       }
       return delegate.getParameter(arg0);
     }
 
-    public Map<?, ?> getParameterMap() {
-      return parameters;
-    }
-
     @SuppressWarnings("unchecked")
-    public Enumeration<?> getParameterNames() {
+    public Enumeration<String> getParameterNames() {
       final List<String> names = new ArrayList<String>();
       names.addAll(parameters.keySet());
       if (delegate != null) {
@@ -341,62 +274,9 @@ public class RequestContext {
 
     public String[] getParameterValues(String arg0) {
       if (delegate == null || parameters.containsKey(arg0)) {
-        final String value = parameters.get(arg0);
-        if (value == null) {
-          return null;
-        }
-        final String[] strArray = { value };
-        return strArray;
+        return parameters.get(arg0);
       }
       return delegate.getParameterValues(arg0);
-    }
-
-    public String getPathInfo() {
-      return delegate.getPathInfo();
-    }
-
-    public String getPathTranslated() {
-      return delegate.getPathTranslated();
-    }
-
-    public String getProtocol() {
-      return delegate.getProtocol();
-    }
-
-    public String getQueryString() {
-      return delegate.getQueryString();
-    }
-
-    public BufferedReader getReader() throws IOException {
-      return delegate.getReader();
-    }
-
-    public String getRealPath(String arg0) {
-      return delegate.getRealPath(arg0);
-    }
-
-    public String getRemoteAddr() {
-      return delegate.getRemoteAddr();
-    }
-
-    public String getRemoteHost() {
-      return delegate.getRemoteHost();
-    }
-
-    public int getRemotePort() {
-      return delegate.getRemotePort();
-    }
-
-    public String getRemoteUser() {
-      return delegate.getRemoteUser();
-    }
-
-    public RequestDispatcher getRequestDispatcher(String arg0) {
-      return delegate.getRequestDispatcher(arg0);
-    }
-
-    public String getRequestedSessionId() {
-      return delegate.getRequestedSessionId();
     }
 
     public String getRequestURI() {
@@ -404,26 +284,6 @@ public class RequestContext {
         return "";
       }
       return delegate.getRequestURI();
-    }
-
-    public StringBuffer getRequestURL() {
-      return delegate.getRequestURL();
-    }
-
-    public String getScheme() {
-      return delegate.getScheme();
-    }
-
-    public String getServerName() {
-      return delegate.getServerName();
-    }
-
-    public int getServerPort() {
-      return delegate.getServerPort();
-    }
-
-    public String getServletPath() {
-      return delegate.getServletPath();
     }
 
     public HttpSession getSession() {
@@ -446,34 +306,6 @@ public class RequestContext {
       return delegate.getSession(arg0);
     }
 
-    public Principal getUserPrincipal() {
-      return delegate.getUserPrincipal();
-    }
-
-    public boolean isRequestedSessionIdFromCookie() {
-      return delegate.isRequestedSessionIdFromCookie();
-    }
-
-    public boolean isRequestedSessionIdFromUrl() {
-      return delegate.isRequestedSessionIdFromUrl();
-    }
-
-    public boolean isRequestedSessionIdFromURL() {
-      return delegate.isRequestedSessionIdFromURL();
-    }
-
-    public boolean isRequestedSessionIdValid() {
-      return delegate.isRequestedSessionIdValid();
-    }
-
-    public boolean isSecure() {
-      return delegate.isSecure();
-    }
-
-    public boolean isUserInRole(String arg0) {
-      return delegate.isUserInRole(arg0);
-    }
-
     public void removeAttribute(String arg0) {
       if (delegate == null) {
         attributes.remove(arg0);
@@ -490,16 +322,8 @@ public class RequestContext {
       delegate.setAttribute(arg0, arg1);
     }
 
-    public void setCharacterEncoding(String arg0) throws UnsupportedEncodingException {
-      delegate.setCharacterEncoding(arg0);
-    }
-
     public HttpServletRequest getDelegate() {
       return delegate;
-    }
-
-    public void setDelegate(HttpServletRequest delegate) {
-      this.delegate = delegate;
     }
 
     public String getRequestContent() {
@@ -511,306 +335,10 @@ public class RequestContext {
     }
   }
 
-  public static class HttpSessionWrapper implements HttpSession {
-
-    private Map<String, Object> attributes = new HashMap<String, Object>();
-
-    @Override
-    public Object getAttribute(String arg0) {
-      return attributes.get(arg0);
-    }
-
-    @Override
-    public Enumeration<?> getAttributeNames() {
-      return Collections.enumeration(attributes.keySet());
-    }
-
-    @Override
-    public long getCreationTime() {
-      // TODO Auto-generated method stub
-      return 0;
-    }
-
-    @Override
-    public String getId() {
-      // TODO Auto-generated method stub
-      return null;
-    }
-
-    @Override
-    public long getLastAccessedTime() {
-      // TODO Auto-generated method stub
-      return 0;
-    }
-
-    @Override
-    public int getMaxInactiveInterval() {
-      // TODO Auto-generated method stub
-      return 0;
-    }
-
+  public static class HttpSessionWrapper extends org.openbravo.base.HttpSessionWrapper {
     @Override
     public ServletContext getServletContext() {
       return servletContext;
-    }
-
-    /**
-     * @deprecated
-     */
-    @Override
-    public javax.servlet.http.HttpSessionContext getSessionContext() {
-      // TODO Auto-generated method stub
-      return null;
-    }
-
-    @Override
-    public Object getValue(String arg0) {
-      return null;
-    }
-
-    @Override
-    public String[] getValueNames() {
-      return null;
-    }
-
-    @Override
-    public void invalidate() {
-      // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public boolean isNew() {
-      // TODO Auto-generated method stub
-      return false;
-    }
-
-    @Override
-    public void putValue(String arg0, Object arg1) {
-      // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void removeAttribute(String arg0) {
-      setAttribute(arg0, null);
-    }
-
-    @Override
-    public void removeValue(String arg0) {
-      // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void setAttribute(String arg0, Object arg1) {
-      attributes.put(arg0, arg1);
-    }
-
-    @Override
-    public void setMaxInactiveInterval(int arg0) {
-      // TODO Auto-generated method stub
-    }
-  }
-
-  public static class HttpServletResponseWrapper implements HttpServletResponse {
-    private StringWriter sWriter = new StringWriter();
-    private PrintWriter writer = new PrintWriter(sWriter);
-
-    public String getResponseContent() {
-      writer.flush();
-      sWriter.flush();
-      return sWriter.toString();
-    }
-
-    @Override
-    public void addCookie(Cookie arg0) {
-      // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void addDateHeader(String arg0, long arg1) {
-      // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void addHeader(String arg0, String arg1) {
-      // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void addIntHeader(String arg0, int arg1) {
-      // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public boolean containsHeader(String arg0) {
-      // TODO Auto-generated method stub
-      return false;
-    }
-
-    @Override
-    public String encodeRedirectUrl(String arg0) {
-      // TODO Auto-generated method stub
-      return null;
-    }
-
-    @Override
-    public String encodeRedirectURL(String arg0) {
-      // TODO Auto-generated method stub
-      return null;
-    }
-
-    @Override
-    public String encodeUrl(String arg0) {
-      // TODO Auto-generated method stub
-      return null;
-    }
-
-    @Override
-    public String encodeURL(String arg0) {
-      // TODO Auto-generated method stub
-      return null;
-    }
-
-    @Override
-    public void sendError(int arg0, String arg1) throws IOException {
-      // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void sendError(int arg0) throws IOException {
-      // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void sendRedirect(String arg0) throws IOException {
-      // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void setDateHeader(String arg0, long arg1) {
-      // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void setHeader(String arg0, String arg1) {
-      // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void setIntHeader(String arg0, int arg1) {
-      // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void setStatus(int arg0, String arg1) {
-      // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void setStatus(int arg0) {
-      // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void flushBuffer() throws IOException {
-      // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public int getBufferSize() {
-      // TODO Auto-generated method stub
-      return 0;
-    }
-
-    @Override
-    public String getCharacterEncoding() {
-      // TODO Auto-generated method stub
-      return null;
-    }
-
-    @Override
-    public String getContentType() {
-      // TODO Auto-generated method stub
-      return null;
-    }
-
-    @Override
-    public Locale getLocale() {
-      // TODO Auto-generated method stub
-      return null;
-    }
-
-    @Override
-    public ServletOutputStream getOutputStream() throws IOException {
-      // TODO Auto-generated method stub
-      return null;
-    }
-
-    @Override
-    public PrintWriter getWriter() throws IOException {
-      return writer;
-    }
-
-    @Override
-    public boolean isCommitted() {
-      // TODO Auto-generated method stub
-      return false;
-    }
-
-    @Override
-    public void reset() {
-      // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void resetBuffer() {
-      // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void setBufferSize(int arg0) {
-      // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void setCharacterEncoding(String arg0) {
-      // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void setContentLength(int arg0) {
-      // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void setContentType(String arg0) {
-      // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void setLocale(Locale arg0) {
-      // TODO Auto-generated method stub
-
     }
   }
 
@@ -871,162 +399,6 @@ public class RequestContext {
 
     public String toString() {
       return localInputStream.toString();
-    }
-  }
-
-  public static class LocalServletContext implements ServletContext {
-
-    private Map<String, Object> attributes = new HashMap<String, Object>();
-
-    @Override
-    public Object getAttribute(String arg0) {
-      return attributes.get(arg0);
-    }
-
-    @SuppressWarnings({ "rawtypes" })
-    @Override
-    public Enumeration getAttributeNames() {
-      // TODO Auto-generated method stub
-      return null;
-    }
-
-    @Override
-    public ServletContext getContext(String arg0) {
-      // TODO Auto-generated method stub
-      return null;
-    }
-
-    public String getContextPath() {
-      // TODO Auto-generated method stub
-      return null;
-    }
-
-    @Override
-    public String getInitParameter(String arg0) {
-      // TODO Auto-generated method stub
-      return null;
-    }
-
-    @SuppressWarnings({ "rawtypes" })
-    @Override
-    public Enumeration getInitParameterNames() {
-      // TODO Auto-generated method stub
-      return null;
-    }
-
-    @Override
-    public int getMajorVersion() {
-      // TODO Auto-generated method stub
-      return 0;
-    }
-
-    @Override
-    public String getMimeType(String arg0) {
-      // TODO Auto-generated method stub
-      return null;
-    }
-
-    @Override
-    public int getMinorVersion() {
-      // TODO Auto-generated method stub
-      return 0;
-    }
-
-    @Override
-    public RequestDispatcher getNamedDispatcher(String arg0) {
-      // TODO Auto-generated method stub
-      return null;
-    }
-
-    @Override
-    public String getRealPath(String arg0) {
-      // TODO Auto-generated method stub
-      return null;
-    }
-
-    @Override
-    public RequestDispatcher getRequestDispatcher(String arg0) {
-      // TODO Auto-generated method stub
-      return null;
-    }
-
-    @Override
-    public URL getResource(String arg0) throws MalformedURLException {
-      // TODO Auto-generated method stub
-      return null;
-    }
-
-    @Override
-    public InputStream getResourceAsStream(String arg0) {
-      // TODO Auto-generated method stub
-      return null;
-    }
-
-    @SuppressWarnings({ "rawtypes" })
-    @Override
-    public Set getResourcePaths(String arg0) {
-      // TODO Auto-generated method stub
-      return null;
-    }
-
-    @Override
-    public String getServerInfo() {
-      // TODO Auto-generated method stub
-      return null;
-    }
-
-    @Override
-    public Servlet getServlet(String arg0) throws ServletException {
-      // TODO Auto-generated method stub
-      return null;
-    }
-
-    @Override
-    public String getServletContextName() {
-      // TODO Auto-generated method stub
-      return null;
-    }
-
-    @SuppressWarnings({ "rawtypes" })
-    @Override
-    public Enumeration getServletNames() {
-      // TODO Auto-generated method stub
-      return null;
-    }
-
-    @SuppressWarnings({ "rawtypes" })
-    @Override
-    public Enumeration getServlets() {
-      // TODO Auto-generated method stub
-      return null;
-    }
-
-    @Override
-    public void log(Exception arg0, String arg1) {
-      // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void log(String arg0, Throwable arg1) {
-      // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void log(String arg0) {
-      // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void removeAttribute(String arg0) {
-      attributes.remove(arg0);
-    }
-
-    @Override
-    public void setAttribute(String arg0, Object arg1) {
-      attributes.put(arg0, arg1);
     }
   }
 

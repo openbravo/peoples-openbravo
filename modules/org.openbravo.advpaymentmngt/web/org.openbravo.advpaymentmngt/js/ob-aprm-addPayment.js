@@ -98,8 +98,26 @@ OB.APRM.AddPayment.onLoad = function (view) {
       creditUseGrid = form.getItem('credit_to_use').canvas.viewGrid,
       overpaymentAction = form.getItem('overpayment_action'),
       payment = form.getItem('fin_payment_id').getValue(),
-      issotrx = form.getItem('issotrx').getValue();
+      issotrx = form.getItem('issotrx').getValue(),
+      trxtype = (form.getItem('trxtype')) ? form.getItem('trxtype').getValue() : "",
+      trxtypeParam = null,
+      orgParam = null,
+      bankStatementLineAmount = null,
+      bankStatementLineId;
+  if (view && view.callerField && view.callerField.view && view.callerField.view.callerField && view.callerField.view.callerField.record && //
+  typeof view.callerField.view.callerField.record.affinity !== 'undefined' && //
+  typeof view.callerField.view.callerField.record.matchingType !== 'undefined') {
+    // If all this conditions are true it means that we are inside the 'Add Payment' process, inside the 'Add Transaction' process, inside the 'Match Statement' process
+    // and in this case we need the 'bankStatementLineId'
+    bankStatementLineId = view.callerField.view.callerField.record.id;
+    view.theForm.addField(isc.OBTextItem.create({
+      name: 'bankStatementLineId',
+      value: bankStatementLineId
+    }));
+    view.theForm.hideItem('bankStatementLineId');
+  }
   OB.APRM.AddPayment.paymentMethodMulticurrency(view, view.theForm, !payment);
+  OB.APRM.AddPayment.reloadLabels(form);
   glitemGrid.fetchData();
   creditUseGrid.fetchData();
   orderInvoiceGrid.selectionChanged = OB.APRM.AddPayment.selectionChanged;
@@ -108,11 +126,22 @@ OB.APRM.AddPayment.onLoad = function (view) {
   creditUseGrid.selectionChanged = OB.APRM.AddPayment.selectionChangedCredit;
   orderInvoiceGrid.dataArrived = OB.APRM.AddPayment.ordInvDataArrived;
 
-  form.isCreditAllowed = form.getItem('received_from').getValue() !== undefined;
+  form.isCreditAllowed = form.getItem('received_from').getValue() !== undefined && form.getItem('received_from').getValue() !== null;
   OB.APRM.AddPayment.checkSingleActionAvailable(form);
   overpaymentAction.originalValueMap = isc.addProperties({}, overpaymentAction.getValueMap());
   if (issotrx) {
     form.focusInItem(form.getItem('actual_payment'));
+  }
+  if (trxtype === "") {
+    trxtypeParam = form.getField(0);
+    form.removeField(0);
+    orgParam = form.getField(0);
+    form.removeField(0);
+    bankStatementLineAmount = form.getField(0);
+    form.removeField(0);
+    form.addField(trxtypeParam);
+    form.addField(orgParam);
+    form.addField(bankStatementLineAmount);
   }
 };
 
@@ -130,10 +159,21 @@ OB.APRM.AddPayment.paymentMethodMulticurrency = function (view, form, recalcConv
       orgId = form.getItem('ad_org_id').getValue();
 
   callback = function (response, data, request) {
-    var isShown = data.isPayIsMulticurrency && currencyId !== data.currencyToId;
+    var isShown = false;
+    if (data.currencyId) {
+      if (!form.getItem('c_currency_id').valueMap) {
+        form.getItem('c_currency_id').valueMap = {};
+      }
+      form.getItem('c_currency_id').setValue(data.currencyId);
+      form.getItem('c_currency_id').valueMap[data.currencyId] = data.currencyIdIdentifier;
+    }
+    isShown = data.isPayIsMulticurrency && currencyId !== data.currencyToId && currencyId !== undefined;
     if (data.isWrongFinancialAccount) {
       form.getItem('fin_financial_account_id').setValue('');
     } else {
+      if (!form.getItem('c_currency_to_id').valueMap) {
+        form.getItem('c_currency_to_id').valueMap = {};
+      }
       form.getItem('c_currency_to_id').setValue(data.currencyToId);
       form.getItem('c_currency_to_id').valueMap[data.currencyToId] = data.currencyToIdentifier;
       if (recalcConvRate && isc.isA.Number(data.conversionrate)) {
@@ -169,13 +209,48 @@ OB.APRM.AddPayment.checkSingleActionAvailable = function (form) {
 };
 
 OB.APRM.AddPayment.financialAccountOnChange = function (item, view, form, grid) {
+  var affectedParams = [];
   OB.APRM.AddPayment.paymentMethodMulticurrency(view, form, true);
   OB.APRM.AddPayment.checkSingleActionAvailable(form);
+  affectedParams.push(form.getField('c_currency_id_readonly_logic').paramId);
+  OB.APRM.AddPayment.recalcDisplayLogicOrReadOnlyLogic(form, view, affectedParams);
 };
 
 OB.APRM.AddPayment.paymentMethodOnChange = function (item, view, form, grid) {
+  var ordinvgrid = form.getItem('order_invoice').canvas.viewGrid,
+      defaultFilter = ordinvgrid.filterEditor.getEditForm().getValues(),
+      trxtype = (form.getItem('trxtype')) ? form.getItem('trxtype').getValue() : "",
+      affectedParams = [];
+  isc.addProperties(defaultFilter, {
+    paymentMethodName: item.getElementValue()
+  });
   OB.APRM.AddPayment.paymentMethodMulticurrency(view, form, true);
   OB.APRM.AddPayment.checkSingleActionAvailable(form);
+  if (trxtype !== "") {
+    ordinvgrid.setFilterEditorCriteria(defaultFilter);
+    ordinvgrid.filterByEditor();
+  }
+  affectedParams.push(form.getField('c_currency_id_readonly_logic').paramId);
+  OB.APRM.AddPayment.recalcDisplayLogicOrReadOnlyLogic(form, view, affectedParams);
+};
+
+OB.APRM.AddPayment.currencyOnChange = function (item, view, form, grid) {
+  var trxtype = (form.getItem('trxtype')) ? form.getItem('trxtype').getValue() : "",
+      ordinvgrid = form.getItem('order_invoice').canvas.viewGrid,
+      newCriteria;
+  if (trxtype !== "") {
+    OB.APRM.AddPayment.paymentMethodMulticurrency(view, form, true);
+
+    // fetch data after change trx type, filters should be preserved and ids of
+    // the selected records should be sent
+    newCriteria = ordinvgrid.addSelectedIDsToCriteria(ordinvgrid.getCriteria(), true);
+    newCriteria.criteria = newCriteria.criteria || [];
+    // add dummy criterion to force fetch
+    newCriteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
+    ordinvgrid.invalidateCache();
+
+    form.redraw();
+  }
 };
 
 OB.APRM.AddPayment.transactionTypeOnChangeFunction = function (item, view, form, grid) {
@@ -204,7 +279,7 @@ OB.APRM.AddPayment.transactionTypeOnChangeFunction = function (item, view, form,
   newCriteria.criteria = newCriteria.criteria || [];
   // add dummy criterion to force fetch
   newCriteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
-  ordinvgrid.fetchData(newCriteria);
+  ordinvgrid.invalidateCache();
 
   form.redraw();
 };
@@ -294,7 +369,7 @@ OB.APRM.AddPayment.distributeAmount = function (view, form, onActualPaymentChang
     }
     return;
   } else {
-	// hide the message bar if it is still showing the APRM_NoDistributeMsg message and the distribution is about to be done
+    // hide the message bar if it is still showing the APRM_NoDistributeMsg message and the distribution is about to be done
     message = orderInvoice.contentView.messageBar.text.contents;
     if (message.contains(OB.I18N.getLabel('APRM_NoDistributeMsg'))) {
       orderInvoice.contentView.messageBar.hide();
@@ -399,7 +474,9 @@ OB.APRM.AddPayment.updateDifference = function (form) {
       receivedFrom = form.getItem('received_from').getValue() || '',
       totalGLItems = new BigDecimal(String(form.getItem('amount_gl_items').getValue() || 0)),
       diffAmt = actualPayment.add(credit).subtract(total),
-      expectedDiffAmt = expectedPayment.add(credit).subtract(total).add(totalGLItems);
+      expectedDiffAmt = expectedPayment.add(credit).subtract(total).add(totalGLItems),
+      affectedParams = [],
+      displayLogicValues = {};
   differenceItem.setValue(Number(diffAmt.toString()));
   if (expectedDiffAmt.signum() === 0) {
     expectedDifferenceItem.setValue(Number(diffAmt.toString()));
@@ -409,6 +486,8 @@ OB.APRM.AddPayment.updateDifference = function (form) {
   if (diffAmt.signum() !== 0) {
     OB.APRM.AddPayment.updateDifferenceActions(form);
   }
+  affectedParams.push(form.getField('overpayment_action_display_logic').paramId);
+  OB.APRM.AddPayment.recalcDisplayLogicOrReadOnlyLogic(form, null, affectedParams);
 };
 
 OB.APRM.AddPayment.updateDifferenceActions = function (form) {
@@ -416,7 +495,11 @@ OB.APRM.AddPayment.updateDifferenceActions = function (form) {
       overpaymentAction = form.getItem('overpayment_action'),
       actualPayment = new BigDecimal(String(form.getItem('actual_payment').getValue() || 0)),
       newValueMap = {},
-      defaultValue = '';
+      defaultValue = '',
+      trxtype = (form.getItem('trxtype')) ? form.getItem('trxtype').getValue() : "";
+  if (trxtype !== "") {
+    form.isCreditAllowed = form.getItem('received_from').getValue() !== undefined && form.getItem('received_from').getValue() !== null;
+  }
   // Update difference action available values.
   if (form.isCreditAllowed) {
     newValueMap.CR = overpaymentAction.originalValueMap.CR;
@@ -744,6 +827,177 @@ OB.APRM.AddPayment.orderAndRemoveDuplicates = function (val) {
   return retVal;
 };
 
+OB.APRM.AddPayment.documentOnChange = function (item, view, form, grid) {
+  var document = (form.getItem('trxtype')) ? form.getItem('trxtype').getValue() : "",
+      issotrx = form.getItem('issotrx'),
+      affectedParams = [],
+      ordinvgrid = form.getItem('order_invoice').canvas.viewGrid,
+      organization = form.getItem('ad_org_id'),
+      newCriteria, callback;
+  if (document === 'RCIN') {
+    issotrx.setValue(true);
+  } else {
+    issotrx.setValue(false);
+  }
+
+  form.getItem('fin_paymentmethod_id').setValue(null);
+  form.getItem('received_from').setValue(null);
+  if (!form.paramWindow.parentWindow) {
+    form.getItem('fin_financial_account_id').setValue(null);
+  }
+  OB.APRM.AddPayment.reloadLabels(form);
+  affectedParams.push(form.getField('credit_to_use_display_logic').paramId);
+  affectedParams.push(form.getField('actual_payment_readonly_logic').paramId);
+  OB.APRM.AddPayment.recalcDisplayLogicOrReadOnlyLogic(form, view, affectedParams);
+
+  if (document !== "") {
+    // fetch data after change trx type, filters should be preserved and ids of
+    // the selected records should be sent
+    newCriteria = ordinvgrid.addSelectedIDsToCriteria(ordinvgrid.getCriteria(), true);
+    newCriteria.criteria = newCriteria.criteria || [];
+    // add dummy criterion to force fetch
+    newCriteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
+    ordinvgrid.invalidateCache();
+    form.redraw();
+  }
+
+  callback = function (response, data, request) {
+    form.getItem('payment_documentno').setValue(data.payment_documentno);
+  };
+
+  if (document !== "") {
+    OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.AddPaymentDocumentNoActionHandler', {
+      organization: organization.getValue(),
+      issotrx: issotrx.getValue()
+    }, {}, callback);
+  }
+};
+
+OB.APRM.AddPayment.organizationOnChange = function (item, view, form, grid) {
+  var ordinvgrid = form.getItem('order_invoice').canvas.viewGrid,
+      organization = (form.getItem('ad_org_id')) ? form.getItem('ad_org_id').getValue() : "",
+      newCriteria, callback;
+  form.getItem('fin_paymentmethod_id').setValue(null);
+  form.getItem('received_from').setValue(null);
+  form.getItem('fin_financial_account_id').setValue(null);
+  callback = function (response, data, request) {
+    form.getItem('c_currency_id').setValue(data.currency);
+    form.getItem('c_currency_id').valueMap[data.currency] = data.currencyIdIdentifier;
+    // fetch data after change organization, filters should be preserved and ids of
+    // the selected records should be sent
+    newCriteria = ordinvgrid.addSelectedIDsToCriteria(ordinvgrid.getCriteria(), true);
+    newCriteria.criteria = newCriteria.criteria || [];
+    // add dummy criterion to force fetch
+    newCriteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
+    ordinvgrid.invalidateCache();
+    form.redraw();
+  };
+
+  if (organization !== "") {
+    OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.AddPaymentOrganizationActionHandler', {
+      organization: organization
+    }, {}, callback);
+  }
+};
+
+OB.APRM.AddPayment.receivedFromOnChange = function (item, view, form, grid) {
+  var affectedParams = [],
+      trxtype = (form.getItem('trxtype')) ? form.getItem('trxtype').getValue() : "",
+      callback, receivedFrom = form.getItem('received_from').getValue(),
+      isSOTrx = form.getItem('issotrx').getValue(),
+      financialAccount = form.getItem('fin_financial_account_id').getValue(),
+      ordinvgrid = form.getItem('order_invoice').canvas.viewGrid,
+      newCriteria = {};
+  affectedParams.push(form.getField('credit_to_use_display_logic').paramId);
+  OB.APRM.AddPayment.recalcDisplayLogicOrReadOnlyLogic(form, view, affectedParams);
+
+  callback = function (response, data, request) {
+    if (data.paymentMethodId !== '') {
+      form.getItem('fin_paymentmethod_id').setValue(data.paymentMethodId);
+    }
+  };
+
+  if (trxtype !== "") {
+    OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.ReceivedFromPaymentMethodActionHandler', {
+      receivedFrom: receivedFrom,
+      isSOTrx: isSOTrx,
+      financialAccount: financialAccount
+    }, {}, callback);
+    newCriteria = ordinvgrid.addSelectedIDsToCriteria(ordinvgrid.getCriteria(), true);
+    newCriteria.criteria = newCriteria.criteria || [];
+    // add dummy criterion to force fetch
+    newCriteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
+    ordinvgrid.invalidateCache();
+
+    form.redraw();
+  }
+};
+
+OB.APRM.AddPayment.recalcDisplayLogicOrReadOnlyLogic = function (form, view, affectedParams) {
+  var callbackDisplayLogicActionHandler, params = {},
+      thisform, thisview, creditUseGrid = form.getItem('credit_to_use').canvas.viewGrid;
+  thisform = form;
+  thisview = view;
+  params.context = form.paramWindow.getContextInfo();
+  if (form.paramWindow.parentWindow && form.paramWindow.parentWindow.windowId) {
+    params.context.inpwindowId = form.paramWindow.parentWindow.windowId;
+  }
+
+  callbackDisplayLogicActionHandler = function (response, data, request) {
+    var i, field, def, values = data.values,
+        newCriteria = {};
+
+    for (i in values) {
+      if (values.hasOwnProperty(i)) {
+        def = values[i];
+        field = thisform.getItem(i);
+        if (field) {
+          if (isc.isA.Object(def)) {
+            if (def.identifier && def.value) {
+              field.valueMap = field.valueMap || {};
+              field.valueMap[def.value] = def.identifier;
+              field.setValue(def.value);
+            }
+          } else {
+            field.setValue(thisform.paramWindow.getTypeSafeValue(field.typeInstance, def));
+          }
+        }
+      }
+    }
+    if (thisview) {
+      thisview.handleReadOnlyLogic();
+    }
+    // If credit grid is now displayed fetch data
+    if (values.credit_to_use_display_logic && values.credit_to_use_display_logic === 'Y') {
+      newCriteria.criteria = [];
+      // add dummy criterion to force fetch
+      newCriteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
+      creditUseGrid.fetchData(newCriteria);
+    }
+    thisform.markForRedraw();
+  };
+
+  OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.AddPaymentDisplayLogicActionHandler', {
+    affectedParams: affectedParams,
+    params: params
+  }, {}, callbackDisplayLogicActionHandler);
+};
+
+OB.APRM.AddPayment.reloadLabels = function (form) {
+  var callbackReloadLabelsActionHandler, params = {};
+  params.businessPartner = form.getItem('received_from').paramId;
+  params.financialAccount = form.getItem('fin_financial_account_id').paramId;
+  params.issotrx = form.getItem('issotrx').getValue();
+
+  callbackReloadLabelsActionHandler = function (response, data, request) {
+    form.getItem('received_from').title = data.values.businessPartner;
+    form.getItem('fin_financial_account_id').title = data.values.financialAccount;
+    form.markForRedraw();
+  };
+
+  OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.AddPaymentReloadLabelsActionHandler', {}, params, callbackReloadLabelsActionHandler);
+};
+
 OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall) {
   var orderInvoiceGrid = view.theForm.getItem('order_invoice').canvas.viewGrid,
       receivedFrom = view.theForm.getItem('received_from').getValue(),
@@ -754,6 +1008,7 @@ OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall) {
       actualPayment = new BigDecimal(String(view.theForm.getItem('actual_payment').getValue() || 0)),
       overpaymentAction = view.theForm.getItem('overpayment_action').getValue(),
       creditTotalItem = new BigDecimal(String(view.theForm.getItem('used_credit').getValue() || 0)),
+      document = (view.theForm.getItem('trxtype')) ? view.theForm.getItem('trxtype').getValue() : "",
       amountField = orderInvoiceGrid.getFieldByColumnName('amount'),
       selectedRecords = orderInvoiceGrid.getSelectedRecords(),
       writeOffLimitPreference = OB.PropertyStore.get('WriteOffLimitPreference', view.windowId),
@@ -783,6 +1038,11 @@ OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall) {
     view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_CreditWithoutBPartner'));
     return false;
   }
+  //If Actual Payment amount is negative, it is not necessary to use credit.
+  if ((total.compareTo(BigDecimal.prototype.ZERO) < 0) && (creditTotalItem.signum() !== 0)) {
+    view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_CreditWithNegativeAmt'));
+    return false;
+  }
 
   if (actualPayment.compareTo(total) > 0 && totalOustandingAmount.compareTo(amountInvOrds.add(totalWriteOffAmount)) > 0) {
     // Not all the payment amount has been allocated
@@ -791,6 +1051,11 @@ OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall) {
   } else if (total.compareTo(actualPayment.add(creditTotalItem)) > 0) {
     // More than available amount has been distributed
     view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_JSMOREAMOUTALLOCATED'));
+    return false;
+  }
+
+  if (document !== null && document !== '' && actualPayment.compareTo(BigDecimal.prototype.ZERO) === 0 && view.parentWindow && view.parentWindow.windowId) {
+    view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_ZEROAMOUNTPAYMENTTRANSACTION'));
     return false;
   }
 

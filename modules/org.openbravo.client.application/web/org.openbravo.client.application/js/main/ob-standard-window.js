@@ -172,6 +172,23 @@ isc.OBStandardWindow.addProperties({
       itemCloseClick: function () {
         return true;
       },
+      setSize: function (width, height) {
+        var me = this;
+        this.hide();
+        // The timeouts are to avoid, as far as possible, ugly resizing effects.
+        setTimeout(function () {
+          me.setWidth(width);
+          me.setHeight(height);
+          if (isc.Browser.isWebKit) { // To avoid strange effect in Chrome when restoring the maximized window (it only happens odd times)
+            me.parentElement.parentElement.parentElement.setWidth('99%');
+            me.parentElement.parentElement.parentElement.setWidth('100%');
+          }
+
+          setTimeout(function () {
+            me.show();
+          }, 1);
+        }, 1);
+      },
       restore: function () {
         this.Super('restore', arguments);
         if (isc.Browser.isWebKit) { // To avoid strange effect in Chrome when restoring the maximized window (it only happens odd times)
@@ -249,13 +266,50 @@ isc.OBStandardWindow.addProperties({
     }
   },
 
-  openProcess: function (params) {
+  buildProcess: function (params) {
     var parts = this.getPrototype().Class.split('_'),
         len = parts.length,
         className = '_',
         tabSet = OB.MainView.TabSet,
-        vStack, manualJS, originalClassName, processClass, processOwnerView;
+        vStack, manualJS, originalClassName, processClass, processOwnerView, runningProcess;
 
+    if (params.paramWindow) {
+      className = className + params.processId;
+      if (len === 3) {
+        // keep original classname in case one with timestamp is not present
+        originalClassName = className;
+
+        // debug mode, we have added _timestamp
+        className = className + '_' + parts[2];
+      }
+
+      processClass = isc[className] || isc[originalClassName];
+
+      if (processClass) {
+        if (params.processOwnerView) {
+          processOwnerView = params.processOwnerView;
+        } else {
+          processOwnerView = this.getProcessOwnerView(params.processId);
+        }
+        runningProcess = processClass.create(isc.addProperties({}, params, {
+          parentWindow: this,
+          sourceView: this.activeView,
+          buttonOwnerView: processOwnerView
+        }));
+        return runningProcess;
+      } else {
+        isc.warn(OB.I18N.getLabel('OBUIAPP_ProcessClassNotFound', [params.processId]), function () {
+          return true;
+        }, {
+          icon: '[SKINIMG]Dialog/error.png',
+          title: OB.I18N.getLabel('OBUIAPP_Error')
+        });
+      }
+    }
+  },
+
+  openProcess: function (params) {
+    var processOwnerView, selectedState, processToBeOpened;
     if (params.uiPattern === 'M') { // Manual UI Pattern
       try {
         if (isc.isA.Function(params.actionHandler)) {
@@ -266,37 +320,12 @@ isc.OBStandardWindow.addProperties({
         isc.warn(e.message);
       }
     } else {
-      if (params.paramWindow) {
-        className = className + params.processId;
-        if (len === 3) {
-          // keep original classname in case one with timestamp is not present
-          originalClassName = className;
-
-          // debug mode, we have added _timestamp
-          className = className + '_' + parts[2];
-        }
-
-        processClass = isc[className] || isc[originalClassName];
-
-        if (processClass) {
-          processOwnerView = this.getProcessOwnerView(params.processId);
-          this.selectedState = processOwnerView.viewGrid && processOwnerView.viewGrid.getSelectedState();
-          this.runningProcess = processClass.create(isc.addProperties({}, params, {
-            parentWindow: this,
-            sourceView: this.activeView,
-            buttonOwnerView: processOwnerView
-          }));
-
-          this.openPopupInTab(this.runningProcess, params.windowTitle, (this.runningProcess.popupWidth ? this.runningProcess.popupWidth : '90%'), (this.runningProcess.popupHeight ? this.runningProcess.popupHeight : '90%'), (this.runningProcess.showMinimizeButton ? this.runningProcess.showMinimizeButton : false), (this.runningProcess.showMaximizeButton ? this.runningProcess.showMaximizeButton : false), true, true);
-
-        } else {
-          isc.warn(OB.I18N.getLabel('OBUIAPP_ProcessClassNotFound', [params.processId]), function () {
-            return true;
-          }, {
-            icon: '[SKINIMG]Dialog/error.png',
-            title: OB.I18N.getLabel('OBUIAPP_Error')
-          });
-        }
+      processToBeOpened = this.buildProcess(params);
+      if (processToBeOpened) {
+        processOwnerView = this.getProcessOwnerView(params.processId);
+        this.runningProcess = processToBeOpened;
+        this.selectedState = processOwnerView.viewGrid && processOwnerView.viewGrid.getSelectedState();
+        this.openPopupInTab(this.runningProcess, params.windowTitle, (this.runningProcess.popupWidth ? this.runningProcess.popupWidth : '90%'), (this.runningProcess.popupHeight ? this.runningProcess.popupHeight : '90%'), (this.runningProcess.showMinimizeButton ? this.runningProcess.showMinimizeButton : false), (this.runningProcess.showMaximizeButton ? this.runningProcess.showMaximizeButton : false), true, true);
       }
     }
   },
@@ -469,7 +498,7 @@ isc.OBStandardWindow.addProperties({
                 }
                 for (stBtns = 0; stBtns < stView.toolBar.rightMembers.length; stBtns++) {
                   stBtn = stView.toolBar.rightMembers[stBtns];
-                  if (stBtn.contextView === button.contextView && stBtn.property && !tab.fields[stBtn.property]) {
+                  if (stBtn.contextView === button.contextView && button.property === stBtn.property && !tab.fields[stBtn.property]) {
                     stBtn.readOnlyIf = alwaysReadOnly;
                     break;
                   }
@@ -519,8 +548,8 @@ isc.OBStandardWindow.addProperties({
 
     // find the default view, the personalizations are
     // returned in order of prio, then do sort by name
-    if (this.getClass().personalization.views) {
-      views = this.getClass().personalization.views;
+    views = this.getClass().personalization.views;
+    if (views && isc.isA.Array(views) && views.length > 0) {
       length = views.length;
 
       this.getClass().personalization.views.sort(function (v1, v2) {
@@ -568,6 +597,13 @@ isc.OBStandardWindow.addProperties({
             }
           }
         }
+      }
+    } else {
+      if (this.view.dataLoadDelayedForDefaultSavedView) {
+        // it might happen that the load of the initial grid data was delayed because it had a 
+        // default saved view, but then the default saved view is not returned by the WindowSettingsActionHandler.
+        // in that case, detect it and load the grid now
+        this.view.viewGrid.fetchData(this.view.viewGrid.getCriteria());
       }
     }
 

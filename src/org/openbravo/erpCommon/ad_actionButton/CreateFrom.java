@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2014 Openbravo SLU
+ * All portions are Copyright (C) 2001-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  Cheli Pineda__________________________.
  ************************************************************************
@@ -585,7 +585,8 @@ public class CreateFrom extends HttpSecureAppServlet {
         xmlDocument.setParameter("messageMessage", myMessage.getMessage());
       } else {
         xmlDocument.setParameter("messageType", "Info");
-        xmlDocument.setParameter("messageTitle", "Information");
+        xmlDocument.setParameter("messageTitle",
+            Utility.messageBD(this, "Information", vars.getLanguage()));
         xmlDocument.setParameter("messageMessage",
             Utility.messageBD(this, "CreateFromMatchPOQtys", vars.getLanguage()));
       }
@@ -1581,7 +1582,15 @@ public class CreateFrom extends HttpSecureAppServlet {
               grossAmt = new BigDecimal(priceGross).multiply(qty);
               grossAmt = grossAmt.setScale(curPrecision, BigDecimal.ROUND_HALF_UP);
             }
-
+            if (!strPO.equals("")) {
+              String invoiceprepaymentamt = CreateFromInvoiceData.selectInvoicePrepaymentAmt(this,
+                  strKey);
+              String prepaymentamt = CreateFromInvoiceData.selectPrepaymentAmt(this, strPO);
+              BigDecimal totalprepayment = new BigDecimal(invoiceprepaymentamt).add(new BigDecimal(
+                  prepaymentamt));
+              CreateFromInvoiceData.updatePrepaymentAmt(conn, this, totalprepayment.toString(),
+                  strKey);
+            }
             String strTaxRate = CreateFromInvoiceData.selectTaxRate(this, C_Tax_ID);
             BigDecimal taxRate = (strTaxRate.equals("") ? new BigDecimal(1) : new BigDecimal(
                 strTaxRate));
@@ -1884,8 +1893,13 @@ public class CreateFrom extends HttpSecureAppServlet {
         if (!strPO.equals("")) {
           try {
             final int total = CreateFromShipmentData.deleteC_Order_ID(conn, this, strKey, strPO);
-            if (total == 0)
-              CreateFromShipmentData.updateC_Order_ID(conn, this, strPO, strKey);
+            if (total == 0) {
+              int noOfOrders = Integer.valueOf(CreateFromShipmentData.countOrders(conn, this,
+                  strKey));
+              if (noOfOrders == 1) {
+                CreateFromShipmentData.updateC_Order_ID(conn, this, strPO, strKey);
+              }
+            }
           } catch (final ServletException ex) {
             myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
             releaseRollbackConnection(conn);

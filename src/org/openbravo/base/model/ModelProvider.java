@@ -900,10 +900,26 @@ public class ModelProvider implements OBSingleton {
    * @throws CheckException
    */
   public Entity getEntity(String entityName) throws CheckException {
+    boolean checkIfNotExists = true;
+    return getEntity(entityName, checkIfNotExists);
+  }
+
+  /**
+   * Retrieves an Entity using the entityName. If not found then a CheckException is thrown if the
+   * checkIfNotExists parameter is true.
+   * 
+   * @param entityName
+   *          the name used for searching the Entity.
+   * @param checkIfNotExists
+   *          a boolean that is true calls to Check.fail if the entity does not exist
+   * @return the Entity object
+   * @throws CheckException
+   */
+  public Entity getEntity(String entityName, boolean checkIfNotExists) throws CheckException {
     if (model == null)
       getModel();
     final Entity entity = entitiesByName.get(entityName);
-    if (entity == null) {
+    if (entity == null && checkIfNotExists) {
       Check.fail("Mapping name: " + entityName + " not found in runtime model");
     }
     return entity;
@@ -1084,16 +1100,8 @@ public class ModelProvider implements OBSingleton {
         return entity;
       }
     }
-    // prevent the warning in this case
-    // note from email:
-    // Martin, tree type II was used for a project we did 3 years ago to automate
-    // functional testing, but it was not finished and deprecated. So you can just
-    // ignore that entry. Stefan will remove it in the clean up project.
-    //
-    // Ismael
-    if (treeType != null && !treeType.equals("II")) {
-      log.warn("No entity for tree type " + treeType);
-    }
+    // note that treeType does not determine entity for new trees, in this case entity is obtained
+    // from tree.getTable()
     return null;
   }
 

@@ -305,8 +305,14 @@ isc.OBTreeViewGrid.addProperties({
   movedToSameParent: function (nodes, newParent) {
     var i, len = nodes.length;
     for (i = 0; i < len; i++) {
-      if (nodes[i].parentId !== newParent.id) {
-        return false;
+      if (nodes[i].parentId === this.dataProperties.rootValue) {
+        if (nodes[i].parentId !== newParent.nodeId) {
+          return false;
+        }
+      } else {
+        if (nodes[i].parentId !== newParent.id) {
+          return false;
+        }
       }
     }
     return true;
@@ -436,6 +442,8 @@ isc.OBTreeViewGrid.addProperties({
   },
 
   dataArrived: function (startRow, endRow) {
+    // reset noDataEmptyMessage to prevent showing "loading..." indefinitely if the datasource does not return any data
+    this.noDataEmptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUIAPP_NoDataInGrid') + '</span>';
     this.resetEmptyMessage();
     if (this.actionAfterDataArrived) {
       this.actionAfterDataArrived();
@@ -459,5 +467,9 @@ isc.OBTreeViewGrid.addProperties({
       this.setData([]);
       this.fetchData(this.getCriteria());
     }
+  },
+
+  isWritable: function (record) {
+    return !record._readOnly;
   }
 });

@@ -89,6 +89,26 @@ public class DefaultJsonDataService implements JsonDataService {
       Check.isNotNull(parameters, "The parameters should not be null");
 
       String selectedProperties = parameters.get(JsonConstants.SELECTEDPROPERTIES_PARAMETER);
+      // The display property is present only for displaying table references in filter.
+      // This parameter is used to set the identifier with the display column value.
+      // Refer https://issues.openbravo.com/view.php?id=26696
+      String displayField = parameters.get(JsonConstants.DISPLAYFIELD_PARAMETER);
+      if (StringUtils.isNotEmpty(displayField) && StringUtils.isNotEmpty(selectedProperties)) {
+        boolean propertyPresent = false;
+        for (String selectedProp : selectedProperties.split(",")) {
+          if (selectedProp.equals(displayField)) {
+            propertyPresent = true;
+            break;
+          }
+        }
+        if (!propertyPresent) {
+          if (StringUtils.isNotEmpty(selectedProperties)) {
+            selectedProperties = selectedProperties.concat("," + displayField);
+          } else {
+            selectedProperties = displayField;
+          }
+        }
+      }
 
       final JSONObject jsonResult = new JSONObject();
       final JSONObject jsonResponse = new JSONObject();
@@ -217,6 +237,9 @@ public class DefaultJsonDataService implements JsonDataService {
           DataToJsonConverter.class);
       toJsonConverter.setAdditionalProperties(JsonUtils.getAdditionalProperties(parameters));
       toJsonConverter.setSelectedProperties(selectedProperties);
+      if (StringUtils.isNotEmpty(displayField) && (!displayField.equals(JsonConstants.IDENTIFIER))) {
+        toJsonConverter.setDisplayProperty(displayField);
+      }
       final List<JSONObject> jsonObjects = toJsonConverter.toJsonObjects(bobs);
 
       addWritableAttribute(jsonObjects);
@@ -238,9 +261,14 @@ public class DefaultJsonDataService implements JsonDataService {
     final DataEntityQueryService queryService = createSetQueryService(parameters, false);
     queryService.setEntityName(entityName);
 
+    String selectedProperties = parameters.get(JsonConstants.SELECTEDPROPERTIES_PARAMETER);
+
     final DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(
         DataToJsonConverter.class);
     toJsonConverter.setAdditionalProperties(JsonUtils.getAdditionalProperties(parameters));
+    // Convert to Json only the properties specified in the request. If no properties are specified,
+    // all of them will be converted to Json
+    toJsonConverter.setSelectedProperties(selectedProperties);
 
     final ScrollableResults scrollableResults = queryService.scroll();
     try {
@@ -365,12 +393,8 @@ public class DefaultJsonDataService implements JsonDataService {
     if ((StringUtils.isEmpty(startRowStr) || StringUtils.isEmpty(endRowStr))
         && !isIDCriteria(criteria) && !parameters.containsKey("exportAs")) {
       // pagination is not set, this is most likely a bug
-      String paramMsg = "";
-      for (String paramKey : parameters.keySet()) {
-        paramMsg += paramKey + ":" + parameters.get(paramKey) + "\n";
-      }
       log.warn("Fetching data without pagination, this can cause perfomance issues. Parameters: "
-          + paramMsg);
+          + convertParameterToString(parameters));
 
       if (parameters.containsKey(JsonConstants.TAB_PARAMETER)
           || parameters.containsKey(SelectorConstants.DS_REQUEST_SELECTOR_ID_PARAMETER)) {
@@ -383,6 +407,14 @@ public class DefaultJsonDataService implements JsonDataService {
     boolean directNavigation = parameters.containsKey("_directNavigation")
         && "true".equals(parameters.get("_directNavigation"))
         && parameters.containsKey(JsonConstants.TARGETRECORDID_PARAMETER);
+
+    if (parameters.containsKey(JsonConstants.TARGETRECORDID_PARAMETER)
+        && parameters.get(JsonConstants.TARGETRECORDID_PARAMETER) != null
+        && !"null".equals(parameters.get(JsonConstants.TARGETRECORDID_PARAMETER))
+        && !"true".equals(parameters.get("_directNavigation"))) {
+      log.warn("Datasource request with targetRecordId but without directNavigation detected. This type of requests should be avoided because they result in a query that performs poorly. Parameters: "
+          + convertParameterToString(parameters));
+    }
 
     if (!directNavigation) {
       // set the where/org filter parameters and the @ parameters
@@ -474,6 +506,15 @@ public class DefaultJsonDataService implements JsonDataService {
       // queryService.setJoinAssociatedEntities(true);
     }
     return queryService;
+  }
+
+  // Given a map of parameters, returns a string with the pairs key:value
+  private String convertParameterToString(Map<String, String> parameters) {
+    String paramMsg = "";
+    for (String paramKey : parameters.keySet()) {
+      paramMsg += paramKey + ":" + parameters.get(paramKey) + "\n";
+    }
+    return paramMsg;
   }
 
   private void addWritableAttribute(List<JSONObject> jsonObjects) throws JSONException {

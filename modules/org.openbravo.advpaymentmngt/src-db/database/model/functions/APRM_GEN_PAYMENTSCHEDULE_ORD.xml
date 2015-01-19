@@ -167,7 +167,8 @@ BEGIN
           created, createdby, updated, updatedby,
           fin_payment_schedule_order,
           fin_payment_schedule_invoice, fin_payment_detail_id,
-          amount
+          amount,
+          c_bpartner_id
          )
         VALUES
         (
@@ -175,7 +176,8 @@ BEGIN
           now(), p_user, now(), p_user,
           v_payment_schedule_order,
           null, null,
-          v_pendingamount
+          v_pendingamount,
+          v_BPartner_ID
         );
       END IF;
     END;
@@ -285,12 +287,12 @@ BEGIN
               fin_payment_scheduledetail_id, ad_client_id, ad_org_id, isactive,
               created, createdby, updated, updatedby,
               fin_payment_detail_id, fin_payment_schedule_order, fin_payment_schedule_invoice,
-              amount, writeoffamt, iscanceled
+              amount, writeoffamt, iscanceled, c_bpartner_id
           ) VALUES (
               get_uuid(), v_Client_ID, v_Org_ID,'Y',
               now(), p_user, now(), p_user,
               null, v_FinPaymentScheduleId, null,
-              v_difference, 0 ,'N'
+              v_difference, 0 ,'N', v_BPartner_ID
           );
         END IF;
         UPDATE fin_payment_schedule 

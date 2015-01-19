@@ -82,6 +82,7 @@
   v_DateInvoiced DATE;
   v_DocumentNo C_INVOICE.DocumentNo%TYPE;
   v_BPartner_ID VARCHAR2(32);
+  v_bp_isactive c_bpartner.isactive%TYPE;
   v_BPartner_User_ID VARCHAR2(32);
   v_IsSOTrx C_INVOICE.IsSOTrx%TYPE;
   v_Posted C_INVOICE.Posted%TYPE;
@@ -173,7 +174,9 @@
 
   v_iscashvat C_Invoice.IsCashVat%TYPE;
   v_invoiceline_qtysum NUMBER;
-    
+  v_PriceList_ID varchar2(32);
+  v_prepaymentamt NUMBER;
+   
 BEGIN
   IF (p_PInstance_ID IS NOT NULL) THEN
     --  Update AD_PInstance
@@ -249,26 +252,33 @@ BEGIN --BODY
    * Read Invoice
    */
   v_ResultStr:='ReadingInvoice';
-  SELECT i.Processing, i.Processed, i.DocAction, i.DocStatus,
+   SELECT i.Processing, i.Processed, i.DocAction, i.DocStatus,
       i.C_DocType_ID, i.C_DocTypeTarget_ID,
       i.PaymentRule, i.C_PaymentTerm_ID, i.DateAcct, i.DateInvoiced,
       i.AD_Client_ID, i.AD_Org_ID, i.UpdatedBy, i.DocumentNo,
       i.C_Order_ID, i.IsSOTrx, i.C_BPartner_ID, i.AD_User_ID,
       i.C_Currency_ID, i.POReference, i.Posted,
-      i.c_Project_Id, i.C_WithHolding_ID, dt.isreturn,
-      pl.istaxincluded, i.IsCashVat
+      i.c_Project_Id, i.C_WithHolding_ID, i.IsCashVat, i.M_PriceList_ID, i.prepaymentamt
   INTO v_Processing, v_Processed, v_DocAction, v_DocStatus,
       v_DocType_ID, v_DocTypeTarget_ID,
       v_PaymentRule, v_PaymentTerm, v_DateAcct, v_DateInvoiced,
       v_Client_ID, v_Org_ID, v_UpdatedBy, v_DocumentNo,
       v_Order_ID, v_IsSOTrx, v_BPartner_ID, v_BPartner_User_ID,
       v_Currency_ID, v_POReference, v_Posted,
-      v_C_Project_Id, cWithHoldID, v_isreturndoctype,
-      v_istaxincluded, v_iscashvat
+      v_C_Project_Id, cWithHoldID, v_iscashvat, v_PriceList_ID, v_prepaymentamt
   FROM C_INVOICE i
-        JOIN c_doctype dt ON i.c_doctypetarget_id = dt.c_doctype_id
-        JOIN m_pricelist pl ON i.m_pricelist_id = pl.m_pricelist_id
   WHERE i.C_Invoice_ID=v_Record_ID FOR UPDATE;
+
+  SELECT dt.isreturn  
+  INTO  v_isreturndoctype    
+  FROM  c_doctype dt  
+  WHERE dt.c_doctype_id= v_DocTypeTarget_ID;
+
+  SELECT pl.istaxincluded
+  INTO   v_istaxincluded
+  FROM   m_pricelist pl 
+  WHERE pl.m_pricelist_id= v_PriceList_ID;
+  
   DBMS_OUTPUT.PUT_LINE('Invoice_ID=' || v_Record_ID ||', DocAction=' || v_DocAction || ', DocStatus=' || v_DocStatus || ', DocType_ID=' || v_DocType_ID || ', DocTypeTarget_ID=' || v_DocTypeTarget_ID) ;
   /**
    * Invoice Voided, Closed, or Reversed - No Action
@@ -323,6 +333,15 @@ BEGIN --BODY
 
     IF (v_count > 0) THEN
       RAISE_APPLICATION_ERROR(-20000, '@CashVATNotMatch@');
+    END IF;
+  
+    /* Check active business partner*/
+    SELECT isactive INTO v_bp_isactive
+    FROM C_Bpartner
+    WHERE C_Bpartner_ID = v_BPartner_ID;
+
+    IF(v_bp_isactive = 'N') THEN
+      RAISE_APPLICATION_ERROR(-20000, '@InActiveBusinessPartner@');
     END IF;
 
     /*
@@ -788,6 +807,9 @@ IF (NOT FINISH_PROCESS) THEN
         END IF;
         IF (v_voiddate_acct IS NOT NULL) THEN
           UPDATE C_INVOICE SET DateAcct = v_voiddate_acct WHERE C_Invoice_ID=v_RInvoice_ID;
+        END IF;
+        IF (v_prepaymentamt !=0) THEN
+          UPDATE C_INVOICE SET prepaymentamt = v_prepaymentamt WHERE C_Invoice_ID=v_RInvoice_ID;
         END IF;
         -- Post Reversal
         C_INVOICE_POST(NULL, v_RInvoice_ID) ;
@@ -1439,8 +1461,10 @@ IF (NOT FINISH_PROCESS) THEN
                ml.M_Product_ID, ml.MovementQty, il.QtyInvoiced, i.DateAcct
            FROM C_INVOICELINE il
                 INNER JOIN M_INOUTLINE ml ON (il.M_InOutLine_ID=ml.M_InOutLine_ID)
+                INNER JOIN M_INOUT m ON (ml.M_InOut_ID=m.M_InOut_ID)
                 INNER JOIN C_INVOICE i ON(il.C_Invoice_ID=i.C_Invoice_ID)
            WHERE il.M_Product_ID=ml.M_Product_ID
+             AND M.Processed = 'Y'
              AND il.C_Invoice_ID=v_Record_ID
            )
         LOOP
@@ -1471,6 +1495,17 @@ IF (NOT FINISH_PROCESS) THEN
             END IF;
           END IF;
         END LOOP;
+
+        UPDATE m_transaction
+        SET checkpricedifference = 'Y'
+        WHERE m_transaction_id in (
+        SELECT TRX.M_TRANSACTION_ID 
+        FROM C_INVOICELINE IL 
+          JOIN M_MATCHINV MI ON IL.C_INVOICELINE_ID = MI.C_INVOICELINE_ID
+          JOIN M_TRANSACTION TRX ON MI.M_INOUTLINE_ID = TRX.M_INOUTLINE_ID
+        WHERE TRX.ISCOSTCALCULATED = 'Y' 
+        AND IL.C_INVOICE_ID = v_record_id);
+
         v_ResultStr:='MatchInv-PO';
         FOR Cur_ILines_PO IN
           (SELECT il.AD_Client_ID, il.AD_Org_ID, il.C_InvoiceLine_ID, ol.C_OrderLine_ID,
@@ -1516,6 +1551,8 @@ IF (NOT FINISH_PROCESS) THEN
         p_DateInvoiced DATE;
         v_totalQtyInvoiced NUMBER;
         v_ODocumentNo C_ORDER.DocumentNo%TYPE;
+        v_invoiceRule C_ORDER.InvoiceRule%TYPE;
+        v_NewPendingToDeliver C_ORDERLINE.QtyDelivered%TYPE;
         v_NewPendingToInvoice NUMBER;
         v_deliveredQty NUMBER;
         v_inOutStatus varchar2(60) ;
@@ -1529,12 +1566,19 @@ IF (NOT FINISH_PROCESS) THEN
         LOOP
           IF (CurLines.C_OrderLine_ID IS NOT NULL) THEN
             --Check that qty pending to invoice is higher or equal to the qty being invoiced
-            SELECT o.documentno, ABS(ol.qtyordered) - ABS(ol.qtyinvoiced + CurLines.QtyInvoiced), p.isquantityvariable
-              INTO v_ODocumentNo, v_NewPendingToInvoice, v_Isquantityvariable
+            SELECT o.documentno, o.invoicerule, ABS(ol.qtydelivered) - ABS(ol.qtyinvoiced + CurLines.QtyInvoiced) , ABS(ol.qtyordered) - ABS(ol.qtyinvoiced + CurLines.QtyInvoiced), p.isquantityvariable
+              INTO v_ODocumentNo, v_invoiceRule, v_NewPendingToDeliver, v_NewPendingToInvoice, v_Isquantityvariable
             FROM c_order o, c_orderline ol
             LEFT JOIN m_product p ON p.m_product_id = ol.m_product_id
             WHERE o.c_order_id = ol.c_order_id
               AND ol.c_orderline_id = CurLines.c_orderline_id;
+            IF (v_Isquantityvariable <> 'Y' AND v_invoiceRule = 'D' AND v_NewPendingToDeliver < 0) THEN
+              v_Message := '@NotPossibleCompleteInvoice@' || ' ' || v_DocumentNo;
+              v_Message := v_Message || ' ' || '@line@' || ' ' || CurLines.line || '. ';
+              v_Message := v_Message || '@OrderDocumentno@' || ' ' || v_ODocumentNo;
+              v_Message := v_Message || ': ' || '@QtyInvoicedHigherDelivered@' || '.';
+              RAISE_APPLICATION_ERROR(-20000, v_Message);
+            END IF;
             IF (v_Isquantityvariable <> 'Y' AND v_NewPendingToInvoice <0) THEN
               v_Message := '@NotPossibleCompleteInvoice@' || ' ' || v_DocumentNo;
               v_Message := v_Message || ' ' || '@line@' || ' ' || CurLines.line || '. ';

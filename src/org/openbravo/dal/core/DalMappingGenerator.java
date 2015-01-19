@@ -416,7 +416,7 @@ public class DalMappingGenerator implements OBSingleton {
   // assumes one primary key column
   private String generateStandardID(Entity entity) {
     Check.isTrue(entity.getIdProperties().size() == 1,
-        "Method can only handle primary keys with one column");
+        "Method can only handle primary keys with one column in entity " + entity.getName() + ". It has " + entity.getIdProperties().size());
     final Property p = entity.getIdProperties().get(0);
     final StringBuffer sb = new StringBuffer();
     sb.append(TAB2 + "<id name=\"" + p.getName() + "\" type=\"string\" " + getAccessorAttribute()

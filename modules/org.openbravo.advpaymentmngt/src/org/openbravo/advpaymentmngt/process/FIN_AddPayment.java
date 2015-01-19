@@ -1138,7 +1138,11 @@ public class FIN_AddPayment {
    *          Amount of the Payment Schedule Detail or Payment Detail
    * @param writeOffAmount
    *          Write off amount, null or 0 if not applicable.
+   * 
+   * @Deprecated This method doesn't support Cash VAT flow, so it's better to use
+   *             {@link #updatePaymentDetail(FIN_PaymentScheduleDetail, FIN_Payment, BigDecimal, boolean)}
    */
+  @Deprecated
   public static void updatePaymentScheduleAmounts(FIN_PaymentSchedule paymentSchedule,
       BigDecimal amount, BigDecimal writeOffAmount) {
     updatePaymentScheduleAmounts(null, paymentSchedule, amount, writeOffAmount);
@@ -1209,8 +1213,10 @@ public class FIN_AddPayment {
             finalSettlementDate));
       }
       invoice.setPaymentComplete(true);
-    } else
+    } else {
       invoice.setPaymentComplete(false);
+      invoice.setFinalSettlementDate(null);
+    }
     List<FIN_PaymentSchedule> paymentSchedList = invoice.getFINPaymentScheduleList();
     Date firstDueDate = null;
     for (FIN_PaymentSchedule paymentSchedule : paymentSchedList) {
@@ -1358,10 +1364,33 @@ public class FIN_AddPayment {
    */
   public static OBError processPayment(VariablesSecureApp vars, ConnectionProvider conn,
       String strAction, FIN_Payment payment) throws Exception {
+    OBError myMessage = processPayment(vars, conn, strAction, payment, null);
+    return myMessage;
+  }
+
+  /**
+   * It calls the PAyment Process for the given payment, action and origin.
+   * 
+   * @param vars
+   *          VariablesSecureApp with the session data.
+   * @param conn
+   *          ConnectionProvider with the connection being used.
+   * @param strAction
+   *          String with the action of the process. {P, D, R}
+   * @param payment
+   *          FIN_Payment that needs to be processed.
+   * @param comingFrom
+   *          Origin where the process is invoked
+   * @return a OBError with the result message of the process.
+   * @throws Exception
+   */
+  public static OBError processPayment(VariablesSecureApp vars, ConnectionProvider conn,
+      String strAction, FIN_Payment payment, String comingFrom) throws Exception {
     ProcessBundle pb = new ProcessBundle("6255BE488882480599C81284B70CD9B3", vars).init(conn);
     HashMap<String, Object> parameters = new HashMap<String, Object>();
     parameters.put("action", strAction);
     parameters.put("Fin_Payment_ID", payment.getId());
+    parameters.put("comingFrom", comingFrom);
     pb.setParams(parameters);
     OBError myMessage = null;
     new FIN_PaymentProcess().execute(pb);

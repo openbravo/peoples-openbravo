@@ -58,7 +58,7 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
     if (this.fields) {
       for (i = 0; i < this.fields.length; i++) {
         field = this.fields[i];
-        if (field.isLink && !field.clientClass) {
+        if (!OB.User.isPortal && field.isLink && !field.clientClass) {
           field.clientClass = 'OBQLCanvasItem_Link';
         }
       }
@@ -354,5 +354,36 @@ isc.OBQueryListGrid.addProperties({
     } else {
       this.widget.setTotalRows(dsResponse.totalRows);
     }
+  },
+
+  // the next three functions allow to support obtaining the values of the summary fields from the server
+  getSummaryRowDataSource: function () {
+    if (this.getSummarySettings()) {
+      return this.getDataSource();
+    }
+  },
+
+  getSummaryRowFetchRequestConfig: function () {
+    var fld, i, summary = this.getSummarySettings(),
+        config = this.Super('getSummaryRowFetchRequestConfig', arguments);
+    if (summary) {
+      config.params = config.params || {};
+      config.params._summary = summary;
+      config.params = this.getFetchRequestParams(config.params);
+    }
+    return config;
+  },
+
+  getSummarySettings: function () {
+    var fld, i, summary;
+
+    for (i = 0; i < this.getFields().length; i++) {
+      fld = this.getFields()[i];
+      if (fld.summaryFunction && isc.OBViewGrid.SUPPORTED_SUMMARY_FUNCTIONS.contains(fld.summaryFunction)) {
+        summary = summary || {};
+        summary[fld.displayField || fld.name] = fld.summaryFunction;
+      }
+    }
+    return summary;
   }
 });

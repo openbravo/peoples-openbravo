@@ -67,8 +67,13 @@ public class CopyFromOrder extends HttpSecureAppServlet {
       String strTabId = vars.getStringParameter("inpTabId");
       String strBpartner = vars.getStringParameter("inpcBpartnerId");
       String strmPricelistId = vars.getStringParameter("inpmPricelistId");
-      printPageDataSheet(response, vars, strKey, strWindowId, strTabId, strSOTrx, strBpartner,
-          strmPricelistId);
+      OBContext.setAdminMode();
+      try {
+        printPageDataSheet(response, vars, strKey, strWindowId, strTabId, strSOTrx, strBpartner,
+            strmPricelistId);
+      } finally {
+        OBContext.restorePreviousMode();
+      }
     } else if (vars.commandIn("SAVE")) {
       String strRownum = null;
       try {
@@ -83,7 +88,13 @@ public class CopyFromOrder extends HttpSecureAppServlet {
         strRownum = strRownum.substring(1, strRownum.length() - 1);
       }
       strRownum = Replace.replace(strRownum, "'", "");
-      OBError myError = copyLines(vars, strRownum, strKey);
+      OBError myError = new OBError();
+      OBContext.setAdminMode();
+      try {
+        myError = copyLines(vars, strRownum, strKey);
+      } finally {
+        OBContext.restorePreviousMode();
+      }
 
       String strWindowPath = Utility.getTabURL(strTabId, "R", true);
       if (strWindowPath.equals(""))
@@ -237,7 +248,7 @@ public class CopyFromOrder extends HttpSecureAppServlet {
     for (int i = 0; i < data.length; i++) {
       Product product = OBDal.getInstance().get(Product.class, data[i].mProductId);
       data[i].lastpriceso = (PriceAdjustment.calculatePriceActual(order, product, new BigDecimal(
-          data[i].qty), new BigDecimal(data[i].pricestd))).toString();
+          data[i].qty), new BigDecimal(data[i].lastpriceso))).toString();
     }
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");

@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2014 Openbravo SLU
+ * All portions are Copyright (C) 2012-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -33,6 +33,9 @@
   <#if param.type != "OBSectionItem">
     paramId: '${param.id}',
     width: '${param.width?js_string}',
+    <#if param.targetEntity != ''>
+      targetEntity: '${param.targetEntity?string}',
+    </#if>
     <#if param.valueMapPresent>
     valueMap: {
     <#list param.valueMap as valueMapValue>

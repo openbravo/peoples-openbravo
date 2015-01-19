@@ -549,6 +549,11 @@ public class FormInitializationComponent extends BaseActionHandler {
     String attribute = null, attrValue = null;
     for (String attrName : parser.getSessionAttributes()) {
       if (!sessionAttributesMap.containsKey(attrName)) {
+        if (attrName.startsWith("inp_propertyField")) {
+          // do not add the property fields to the session attributes to avoid overwriting its value
+          // with an empty string
+          continue;
+        }
         if (attrName.startsWith("#")) {
           attribute = attrName.substring(1, attrName.length());
           attrValue = Utility.getContext(new DalConnectionProvider(false), RequestContext.get()

@@ -186,10 +186,13 @@ public class ResetAccounting {
           obc.add(Restrictions.eq(AccountingFact.PROPERTY_RECORDID, recordId));
           obc.add(Restrictions.eq(AccountingFact.PROPERTY_TABLE, table));
           if (obc.list().size() == 0) {
+            String tableName = table.getDBTableName();
+            String tableIdName = table.getDBTableName() + "_Id";
             String strUpdate = "update "
-                + table.getName()
-                + " set posted='N', processNow=false where (posted<>'N' or posted is null or processNow = false) and id = :recordID ";
-            final Query update = OBDal.getInstance().getSession().createQuery(strUpdate);
+                + tableName
+                + " set posted='N', processing='N' where (posted<>'N' or posted is null or processing='N') and "
+                + tableIdName + " = :recordID ";
+            final Query update = OBDal.getInstance().getSession().createSQLQuery(strUpdate);
             update.setParameter("recordID", recordId);
             updated = update.executeUpdate();
             return results;
@@ -212,6 +215,7 @@ public class ResetAccounting {
       return result;
     }
     String tableName = "";
+    String tableIdName = "";
     OBContext.setAdminMode(false);
     try {
       // First undo date balancing for those balanced entries
@@ -226,12 +230,14 @@ public class ResetAccounting {
       updateBalanced.setString("clientId", client);
       int balancedUpdated = updateBalanced.executeUpdate();
       Table table = OBDal.getInstance().get(Table.class, tableId);
-      tableName = table.getName();
+      tableName = table.getDBTableName();
+      tableIdName = table.getDBTableName() + "_Id";
       String strUpdate = "update "
           + tableName
-          + " set posted='N', processNow=false where (posted<>'N' or posted is null or processNow = false) and id in (:transactions) ";
+          + " set posted='N', processing='N' where (posted<>'N' or posted is null or processing='N') and "
+          + tableIdName + " in (:transactions) ";
       String strDelete = "delete from FinancialMgmtAccountingFact where table.id = :tableId and recordID in (:transactions) and client.id=:clientId";
-      final Query update = OBDal.getInstance().getSession().createQuery(strUpdate);
+      final Query update = OBDal.getInstance().getSession().createSQLQuery(strUpdate);
       update.setParameterList("transactions", transactions);
       int updated = update.executeUpdate();
       final Query delete = OBDal.getInstance().getSession().createQuery(strDelete);
@@ -277,13 +283,13 @@ public class ResetAccounting {
     OBContext.setAdminMode(false);
     try {
       Table table = OBDal.getInstance().get(Table.class, tableId);
-      tableName = table.getName();
+      tableName = table.getDBTableName();
       tableDate = ModelProvider.getInstance().getEntityByTableName(table.getDBTableName())
-          .getPropertyByColumnName(table.getAcctdateColumn().getDBColumnName()).getName();
+          .getPropertyByColumnName(table.getAcctdateColumn().getDBColumnName()).getColumnName();
 
       String strUpdate = "update "
           + tableName
-          + " set posted='N', processNow=false where posted not in ('N','Y') and processed = 'Y' and organization.id in (:orgIds)  ";
+          + " set posted='N', processing='N' where posted not in ('Y') and processed = 'Y' and AD_Org_ID in (:orgIds)  ";
       if (!("".equals(datefrom))) {
         strUpdate = strUpdate + " and " + tableDate + " >= :dateFrom ";
       }
@@ -291,7 +297,7 @@ public class ResetAccounting {
         strUpdate = strUpdate + " and " + tableDate + " <= :dateTo ";
       }
 
-      Query update = OBDal.getInstance().getSession().createQuery(strUpdate);
+      Query update = OBDal.getInstance().getSession().createSQLQuery(strUpdate);
       update
           .setParameterList("orgIds", new OrganizationStructureProvider().getNaturalTree(adOrgId));
       try {
@@ -372,7 +378,8 @@ public class ResetAccounting {
       String dateto, String orgPeriodControl) {
     if (!"".equals(recordId)) {
       List<Period> periods = new ArrayList<Period>();
-      periods.add(getDocumentPeriod(clientId, tableId, recordId, docBaseType, orgPeriodControl));
+      periods.add(getDocumentPeriod(clientId, tableId, recordId, docBaseType, orgPeriodControl,
+          orgIds));
       return periods;
 
     }
@@ -408,14 +415,15 @@ public class ResetAccounting {
   }
 
   private static Period getDocumentPeriod(String clientId, String tableId, String recordId,
-      String docBaseType, String orgPeriodControl) {
-    String myQuery = "select distinct e.period from FinancialMgmtAccountingFact e , FinancialMgmtPeriodControl p where p.period=e.period and p.periodStatus = 'O' and e.client.id = :clientId and e.table.id = :tableId and e.recordID=:recordId and p.documentCategory = :docbasetype and p.organization.id  = :orgPeriodControl";
+      String docBaseType, String orgPeriodControl, Set<String> orgIds) {
+    String myQuery = "select distinct e.period from FinancialMgmtAccountingFact e , FinancialMgmtPeriodControl p where p.period=e.period and p.periodStatus = 'O' and e.client.id = :clientId and e.table.id = :tableId and e.recordID=:recordId and p.documentCategory = :docbasetype and p.organization.id  = :orgPeriodControl and e.organization.id in (:orgIds)";
     Query query = OBDal.getInstance().getSession().createQuery(myQuery);
     query.setString("clientId", clientId);
     query.setString("tableId", tableId);
     query.setString("recordId", recordId);
     query.setString("docbasetype", docBaseType);
     query.setString("orgPeriodControl", orgPeriodControl);
+    query.setParameterList("orgIds", orgIds);
     query.setMaxResults(1);
     Period period = (Period) query.uniqueResult();
     if (period == null) {

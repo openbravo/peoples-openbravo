@@ -87,6 +87,7 @@
         AND o.AD_Org_ID IN ('1')
         AND o.C_BPartner_ID = ?
         AND pl.istaxincluded = ?
+        AND o.InvoiceRule <> 'N'
         AND EXISTS (SELECT 1 
                      FROM C_ORDERLINE l left join M_MATCHPO m on  l.C_OrderLine_ID=m.C_OrderLine_ID
                                                               and m.C_InvoiceLine_ID IS NOT NULL  
@@ -388,6 +389,7 @@
                            left join m_pricelist pl on pl.m_pricelist_id = o.m_pricelist_id
                       WHERE l.M_INOUT_ID = s.M_INOUT_ID 
                         AND (l.c_orderline_id is null OR pl.istaxincluded = ?)
+                        AND o.InvoiceRule <> 'N'
                       GROUP BY l.MovementQty, l.M_InOutLine_ID 
                       HAVING  (l.MovementQty-SUM(COALESCE(mi.Qty,0))) <> 0)
         ORDER BY NAME
@@ -900,5 +902,30 @@
       WHERE C_Tax_ID = ?
     </Sql>
     <Parameter name="cTaxId"/>
+  </SqlMethod>
+    <SqlMethod name="selectPrepaymentAmt" type="preparedStatement" return="String" default="">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+     select paidamt from FIN_Payment_Schedule  ps
+     where ps.C_Order_ID=?
+    </Sql>
+    <Parameter name="cOrderId"/>
+  </SqlMethod>
+    <SqlMethod name="selectInvoicePrepaymentAmt" type="preparedStatement" return="String" default="">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+     select prepaymentamt from c_invoice 
+     where c_invoice_id=?
+    </Sql>
+    <Parameter name="cOrderId"/>
+  </SqlMethod>
+  <SqlMethod name="updatePrepaymentAmt" type="preparedStatement" connection="true" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql><![CDATA[
+      UPDATE C_Invoice SET prepaymentamt =  TO_NUMBER(?)
+      WHERE C_Invoice_ID = ?
+    ]]></Sql>
+    <Parameter name="prepaymentamt"/>
+    <Parameter name="cInvoiceId"/>
   </SqlMethod>
 </SqlClass>

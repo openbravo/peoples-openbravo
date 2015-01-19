@@ -14,17 +14,33 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2013 Openbravo SLU
+* All portions are Copyright (C) 2013-2014 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
-  v_characteristic_id NVARCHAR2(32);
+  v_characteristic_id 	NVARCHAR2(32);
+  v_active 		VARCHAR2(32):='N';
+  v_exist NUMBER:=0;
 BEGIN
   IF (AD_isTriggerEnabled()='N') THEN
     RETURN;
   END IF;
   -- Insert values in generic products using the subset
   IF (INSERTING) THEN
+
+    select count(*) into v_exist
+    from ad_preference
+    where ad_client_id=:new.ad_client_id
+    and property='IsActiveNewChValueProd';
+
+    IF (v_exist > 0) THEN
+      select value into v_active
+      from ad_preference
+      where ad_client_id=:new.ad_client_id
+	    and property='IsActiveNewChValueProd';
+    END IF;  
+
+
     SELECT m_characteristic_id INTO v_characteristic_id
     FROM m_ch_subset
     WHERE :new.m_ch_subset_id = m_ch_subset_id;
@@ -33,7 +49,7 @@ BEGIN
       created, createdby, updated, updatedby,
       m_product_ch_id, m_ch_value_id, skcode
     ) SELECT
-      get_uuid(), :new.ad_client_id, :new.ad_org_id, 'N',
+      get_uuid(), :new.ad_client_id, :new.ad_org_id, v_active,
       now(), :new.createdby, now(), :new.updatedby,
       pch.m_product_ch_id, :new.m_ch_value_id, :new.skcode
       FROM m_product_ch pch

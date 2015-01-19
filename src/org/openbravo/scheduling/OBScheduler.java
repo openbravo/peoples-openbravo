@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2013 Openbravo SLU
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -146,6 +146,11 @@ public class OBScheduler {
         context.getUser(), context.getUser(), requestId, processId, context.getUser(), SCHEDULED,
         channel.toString(), context.toString(), bundle.getParamsDeflated(), null, null, null, null);
 
+    if (bundle.getGroupInfo() != null) {
+      // Is Part of a Group, update the info
+      ProcessRequestData.updateGroup(getConnection(), bundle.getGroupInfo().getRequest().getId(),
+          requestId);
+    }
     schedule(requestId, bundle, jobClass);
   }
 
@@ -329,7 +334,7 @@ public class OBScheduler {
 
     private static final String FINISHES = "Y";
 
-    private static final String WEEKDAYS = "W";
+    private static final String WEEKDAYS = "D";
 
     private static final String WEEKENDS = "E";
 
@@ -357,7 +362,14 @@ public class OBScheduler {
      */
     private static Trigger newInstance(String name, ProcessBundle bundle, ConnectionProvider conn)
         throws ServletException {
-      final TriggerData data = TriggerData.select(conn, name);
+
+      TriggerData data = new TriggerData();
+
+      if (bundle.isGroup()) {
+        data = TriggerData.selectGroup(conn, name, GroupInfo.processGroupId);
+      } else {
+        data = TriggerData.select(conn, name);
+      }
 
       Trigger trigger = null;
 
@@ -399,7 +411,8 @@ public class OBScheduler {
 
           } else if (data.frequency.equals(FREQUENCY_DAILY)) {
             if ("".equals(data.dailyOption)) {
-              trigger = TriggerUtils.makeDailyTrigger(hour, minute);
+              final String cronExpression = second + " " + minute + " " + hour + " ? * *";
+              trigger = new CronTrigger(name, OB_GROUP, cronExpression);
 
             } else if (data.dailyOption.equals(EVERY_N_DAYS)) {
               try {
@@ -490,7 +503,7 @@ public class OBScheduler {
       } catch (final ParseException e) {
         final String msg = Utility.messageBD(conn, "TRIG_INVALID_DATA", bundle.getContext()
             .getLanguage());
-        log.error("Error scheduling process {}", data.processName, e);
+        log.error("Error scheduling process {}", data.processName + " " + data.processGroupName, e);
         throw new ServletException(msg + " " + e.getMessage());
       }
 
@@ -502,7 +515,8 @@ public class OBScheduler {
       trigger.getJobDataMap().put(ProcessBundle.KEY, bundle);
       trigger.getJobDataMap().put(Process.PREVENT_CONCURRENT_EXECUTIONS,
           "Y".equals(data.preventconcurrent));
-      trigger.getJobDataMap().put(Process.PROCESS_NAME, data.processName);
+      trigger.getJobDataMap().put(Process.PROCESS_NAME,
+          data.processName + " " + data.processGroupName);
 
       trigger.getJobDataMap().put(Process.PROCESS_ID, data.adProcessId);
 
@@ -513,7 +527,8 @@ public class OBScheduler {
         trigger.setMisfireInstruction(CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING);
       }
 
-      log.debug("Scheduled process {}. Start time:{}.", data.processName, trigger.getStartTime());
+      log.debug("Scheduled process {}. Start time:{}.", data.processName + " "
+          + data.processGroupName, trigger.getStartTime());
 
       return trigger;
     }

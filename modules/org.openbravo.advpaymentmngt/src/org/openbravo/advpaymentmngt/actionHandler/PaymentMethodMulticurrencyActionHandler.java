@@ -46,14 +46,24 @@ public class PaymentMethodMulticurrencyActionHandler extends BaseActionHandler {
       final String paymentMethodId = jsonData.getString("paymentMethodId");
       final String financialAccountId = jsonData.getString("financialAccountId");
       final boolean isSOTrx = jsonData.getBoolean("isSOTrx");
-      final String currencyId = jsonData.getString("currencyId");
+      String currencyId = jsonData.getString("currencyId");
       final String strPaymentDate = jsonData.getString("paymentDate");
       Date paymentDate = JsonUtils.createDateFormat().parse(strPaymentDate);
       final String strOrgId = jsonData.getString("orgId");
 
+      JSONObject result = new JSONObject();
+
+      if ("null".equals(currencyId) && !"null".equals(financialAccountId)
+          && !"".equals(financialAccountId)) {
+        FIN_FinancialAccount financialAccount = OBDal.getInstance().get(FIN_FinancialAccount.class,
+            financialAccountId);
+        currencyId = financialAccount.getCurrency().getId();
+        result.put("currencyIdIdentifier", financialAccount.getCurrency().getIdentifier());
+        result.put("currencyId", currencyId);
+      }
+
       final FinAccPaymentMethod finAccPaymentMethod = getFinancialAccountPaymentMethod(
           paymentMethodId, financialAccountId);
-      JSONObject result = new JSONObject();
       if (finAccPaymentMethod != null) {
         result.put("isPayIsMulticurrency", isSOTrx ? finAccPaymentMethod.isPayinIsMulticurrency()
             : finAccPaymentMethod.isPayoutIsMulticurrency());
@@ -67,7 +77,7 @@ public class PaymentMethodMulticurrencyActionHandler extends BaseActionHandler {
       }
       if (finAccPaymentMethod != null) {
         if (finAccPaymentMethod.getAccount().getCurrency().getId().equals(currencyId)) {
-          result.put("conversionrate", "1");
+          result.put("conversionrate", 1);
         } else {
           ConversionRate convRate = FinancialUtils.getConversionRate(paymentDate, OBDal
               .getInstance().get(Currency.class, currencyId), finAccPaymentMethod.getAccount()
@@ -76,14 +86,14 @@ public class PaymentMethodMulticurrencyActionHandler extends BaseActionHandler {
           if (convRate != null) {
             result.put("conversionrate", convRate.getMultipleRateBy());
           } else {
-            result.put("conversionrate", "1");
+            result.put("conversionrate", 1);
           }
         }
         result.put("currencyToId", finAccPaymentMethod.getAccount().getCurrency().getId());
         result.put("currencyToIdentifier", finAccPaymentMethod.getAccount().getCurrency()
             .getIdentifier());
       } else {
-        result.put("conversionrate", "1");
+        result.put("conversionrate", 1);
         result.put("currencyToId", currencyId);
       }
       return result;

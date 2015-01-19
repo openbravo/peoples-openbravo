@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013 Openbravo SLU
+ * All portions are Copyright (C) 2013-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -19,6 +19,7 @@
 package org.openbravo.materialmgmt;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -42,6 +43,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.utility.Image;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.plm.ProductAccounts;
@@ -67,22 +69,25 @@ public class VariantAutomaticGenerationProcess implements Process {
     try {
       // retrieve standard params
       final String recordID = (String) bundle.getParams().get("M_Product_ID");
-      final Product product = OBDal.getInstance().get(Product.class, recordID);
+      Product product = OBDal.getInstance().get(Product.class, recordID);
 
       runChecks(product);
 
       int totalMaxLength = product.getSearchKey().length();
       long variantNumber = 1;
-      Map<ProductCharacteristic, ProductCharacteristicAux> prChUseCode = new HashMap<ProductCharacteristic, ProductCharacteristicAux>();
+      Map<String, ProductCharacteristicAux> prChUseCode = new HashMap<String, ProductCharacteristicAux>();
 
       OBCriteria<ProductCharacteristic> prChCrit = OBDal.getInstance().createCriteria(
           ProductCharacteristic.class);
       prChCrit.add(Restrictions.eq(ProductCharacteristic.PROPERTY_PRODUCT, product));
       prChCrit.add(Restrictions.eq(ProductCharacteristic.PROPERTY_VARIANT, true));
       prChCrit.addOrderBy(ProductCharacteristic.PROPERTY_SEQUENCENUMBER, true);
-      List<ProductCharacteristic> prChs = prChCrit.list();
+      List<String> prChs = new ArrayList<String>();
+      for (ProductCharacteristic pc : prChCrit.list()) {
+        prChs.add(pc.getId());
+      }
       int chNumber = prChs.size();
-      ProductCharacteristicConf[] currentValues = new ProductCharacteristicConf[chNumber];
+      String[] currentValues = new String[chNumber];
 
       int i = 0;
       for (ProductCharacteristic prCh : prChCrit.list()) {
@@ -90,12 +95,18 @@ public class VariantAutomaticGenerationProcess implements Process {
             ProductCharacteristicConf.class);
         prChConfCrit.add(Restrictions.eq(
             ProductCharacteristicConf.PROPERTY_CHARACTERISTICOFPRODUCT, prCh));
-        List<ProductCharacteristicConf> prChConfs = prChConfCrit.list();
+
+        List<String> prChConfs = new ArrayList<String>();
+        for (ProductCharacteristicConf pcc : prChConfCrit.list()) {
+          prChConfs.add(pcc.getId());
+        }
         long valuesCount = prChConfs.size();
 
         boolean useCode = true;
         int maxLength = 0;
-        for (ProductCharacteristicConf prChConf : prChConfs) {
+        for (String id : prChConfs) {
+          ProductCharacteristicConf prChConf = OBDal.getInstance().get(
+              ProductCharacteristicConf.class, id);
           if (StringUtils.isBlank(prChConf.getCode())) {
             useCode = false;
             break;
@@ -111,7 +122,7 @@ public class VariantAutomaticGenerationProcess implements Process {
         }
         ProductCharacteristicAux prChAux = new ProductCharacteristicAux(useCode, prChConfs);
         currentValues[i] = prChAux.getNextValue();
-        prChUseCode.put(prCh, prChAux);
+        prChUseCode.put(prCh.getId(), prChAux);
         i++;
       }
       totalMaxLength += Long.toString(variantNumber).length();
@@ -119,9 +130,25 @@ public class VariantAutomaticGenerationProcess implements Process {
 
       boolean hasNext = true;
       int productNo = 0;
+      int k = 0;
+      Long start = System.currentTimeMillis();
+      boolean multilingualDocs = ((Client) OBDal.getInstance().get(Client.class,
+          bundle.getContext().getClient())).isMultilingualDocuments();
       do {
+        k = k + 1;
         // Create variant product
+        product = OBDal.getInstance().get(Product.class, recordID);
         Product variant = (Product) DalUtil.copy(product);
+
+        if (multilingualDocs) {
+          variant.set(Product.PROPERTY_PRODUCTTRLLIST, null);
+        }
+
+        if (product.getImage() != null) {
+          Image newPrImage = (Image) DalUtil.copy(product.getImage(), false);
+          OBDal.getInstance().save(newPrImage);
+          variant.setImage(newPrImage);
+        }
 
         variant.setGenericProduct(product);
         variant.setProductAccountsList(Collections.<ProductAccounts> emptyList());
@@ -132,7 +159,8 @@ public class VariantAutomaticGenerationProcess implements Process {
 
         String searchKey = product.getSearchKey();
         for (i = 0; i < chNumber; i++) {
-          ProductCharacteristicConf prChConf = currentValues[i];
+          ProductCharacteristicConf prChConf = OBDal.getInstance().get(
+              ProductCharacteristicConf.class, currentValues[i]);
           ProductCharacteristicAux prChConfAux = prChUseCode.get(prChs.get(i));
 
           if (useCodes && prChConfAux.isUseCode()) {
@@ -146,15 +174,21 @@ public class VariantAutomaticGenerationProcess implements Process {
         searchKey += productNo;
         variant.setSearchKey(searchKey);
         OBDal.getInstance().save(variant);
-        OBDal.getInstance().flush();
-
+        String strChDesc = "";
         for (i = 0; i < chNumber; i++) {
-          ProductCharacteristicConf prChConf = currentValues[i];
+          ProductCharacteristicConf prChConf = OBDal.getInstance().get(
+              ProductCharacteristicConf.class, currentValues[i]);
           ProductCharacteristicValue newPrChValue = OBProvider.getInstance().get(
               ProductCharacteristicValue.class);
           newPrChValue.setCharacteristic(prChConf.getCharacteristicOfProduct().getCharacteristic());
           newPrChValue.setCharacteristicValue(prChConf.getCharacteristicValue());
           newPrChValue.setProduct(variant);
+          newPrChValue.setOrganization(product.getOrganization());
+          if (StringUtils.isNotBlank(strChDesc)) {
+            strChDesc += ", ";
+          }
+          strChDesc += prChConf.getCharacteristicOfProduct().getCharacteristic().getName() + ":";
+          strChDesc += " " + prChConf.getCharacteristicValue().getName();
           OBDal.getInstance().save(newPrChValue);
           if (prChConf.getCharacteristicOfProduct().isDefinesPrice()
               && prChConf.getNetUnitPrice() != null) {
@@ -167,9 +201,8 @@ public class VariantAutomaticGenerationProcess implements Process {
             variant.setImage(newImage);
           }
         }
+        variant.setCharacteristicDescription(strChDesc);
         OBDal.getInstance().save(variant);
-        OBDal.getInstance().flush();
-        new VariantChDescUpdateProcess().update(variant.getId(), null);
 
         for (i = 0; i < chNumber; i++) {
           ProductCharacteristicAux prChConfAux = prChUseCode.get(prChs.get(i));
@@ -181,7 +214,21 @@ public class VariantAutomaticGenerationProcess implements Process {
           }
         }
         productNo++;
+
+        // Creates variants from 1 to 1000 and shows time spent on it.
+        if (k == 1000) {
+          OBDal.getInstance().flush();
+          OBDal.getInstance().getSession().clear();
+          log4j.debug("Variants loop: " + productNo + " : "
+              + ((System.currentTimeMillis()) - (start)));
+          k = 0;
+          start = System.currentTimeMillis();
+        }
+
       } while (hasNext);
+
+      OBDal.getInstance().flush();
+      OBDal.getInstance().getSession().clear();
 
       String message = OBMessageUtils.messageBD("variantsCreated");
       Map<String, String> map = new HashMap<String, String>();
@@ -268,10 +315,10 @@ public class VariantAutomaticGenerationProcess implements Process {
   private static class ProductCharacteristicAux {
     private boolean useCode;
     private boolean isIteratorReset;
-    private List<ProductCharacteristicConf> values;
-    private Iterator<ProductCharacteristicConf> iterator;
+    private List<String> values;
+    private Iterator<String> iterator;
 
-    ProductCharacteristicAux(boolean _useCode, List<ProductCharacteristicConf> _values) {
+    ProductCharacteristicAux(boolean _useCode, List<String> _values) {
       useCode = _useCode;
       values = _values;
     }
@@ -284,8 +331,8 @@ public class VariantAutomaticGenerationProcess implements Process {
       return isIteratorReset;
     }
 
-    public ProductCharacteristicConf getNextValue() {
-      ProductCharacteristicConf prChConf;
+    public String getNextValue() {
+      String prChConf;
       if (iterator == null || !iterator.hasNext()) {
         iterator = values.iterator();
         isIteratorReset = true;

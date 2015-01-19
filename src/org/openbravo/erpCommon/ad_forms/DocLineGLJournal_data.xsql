@@ -26,29 +26,61 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT jl.GL_JournalLine_ID,jl.AD_Client_ID,jl.AD_Org_ID,jl.Line,jl.Description,
-        jl.C_Currency_ID,jl.AmtSourceDr,jl.AmtSourceCr,jl.CurrencyRateType,jl.CurrencyRate,
-        j.DateAcct,jl.AmtAcctDr,jl.AmtAcctCr,jl.C_UOM_ID,jl.Qty,vc.C_AcctSchema_ID,vc.C_ValidCombination_ID,
-        vc.Account_ID,vc.AD_OrgTrx_ID,vc.C_LocFrom_ID,vc.C_LocTo_ID,
-        COALESCE(jl.M_Product_ID, vc.M_Product_ID) as M_Product_ID,
-        COALESCE(jl.C_BPartner_ID, vc.C_BPartner_ID) as C_BPartner_ID,
-        COALESCE(jl.C_SalesRegion_ID,vc.C_SalesRegion_ID) as C_SalesRegion_ID,
-        COALESCE(jl.C_Project_ID,vc.C_Project_ID) as C_Project_ID,
-        COALESCE(jl.C_Campaign_ID,vc.C_Campaign_ID) as C_Campaign_ID,
-        COALESCE(jl.C_Activity_ID,vc.C_Activity_ID) as C_Activity_ID,
-        COALESCE(jl.User1_ID,vc.User1_ID) as User1_ID,
-        COALESCE(jl.User2_ID,vc.User2_ID) as User2_ID,
-        jl.C_COSTCENTER_ID, jl.A_ASSET_ID,
-        jl.C_DEBT_PAYMENT_ID, jl.C_WithHolding_ID, jl.C_Tax_ID
-        FROM C_ValidCombination vc, GL_JournalLine jl , GL_Journal j
-        WHERE j.GL_JOURNAL_ID = jl.GL_JOURNAL_ID
-        and vc.C_ValidCombination_ID=jl.C_ValidCombination_ID
-        AND jl.GL_Journal_ID = ?
-        AND jl.IsActive='Y'
-        AND vc.IsFullyQualified='Y'
-        ORDER BY jl.Line
-     ]]>
+        SELECT 
+            JL.GL_JOURNALLINE_ID,
+            JL.AD_CLIENT_ID,
+            JL.AD_ORG_ID,
+            JL.LINE,
+            JL.DESCRIPTION,
+            JL.C_CURRENCY_ID,
+            JL.AMTSOURCEDR,
+            JL.AMTSOURCECR,
+            JL.CURRENCYRATETYPE,
+            JL.CURRENCYRATE,
+            J.DATEACCT,JL.AMTACCTDR,
+            JL.AMTACCTCR,
+            JL.C_UOM_ID,
+            JL.Qty,
+            VC.C_ACCTSCHEMA_ID,
+            VC.C_VALIDCOMBINATION_ID,
+            JL.ACCOUNT_ID  AS M_C_GLITEM_ID,
+            VC.AD_ORGTRX_ID,
+            VC.C_LOCFROM_ID,
+            VC.C_LOCTO_ID,
+            COALESCE(JL.M_PRODUCT_ID, VC.M_PRODUCT_ID) AS M_PRODUCT_ID,
+            COALESCE(JL.C_BPARTNER_ID, VC.C_BPARTNER_ID) AS C_BPARTNERr_ID,  
+            COALESCE(JL.C_SALESREGION_ID,VC.C_SALESREGION_ID) AS C_SALESREGION_ID,
+            COALESCE(JL.C_PROJECT_ID,VC.C_PROJECT_ID) AS C_PROJECT_ID,
+            COALESCE(JL.C_CAMPAIGN_ID,VC.C_CAMPAIGN_ID) AS C_CAMPAIGN_ID,
+            COALESCE(JL.C_ACTIVITY_ID,VC.C_ACTIVITY_ID) AS C_ACTIVITY_ID,
+            COALESCE(JL.USER1_ID,VC.USER1_ID) AS USER1_ID,
+            COALESCE(JL.USER2_ID,VC.USER2_ID) AS USER2_ID,
+            JL.C_COSTCENTER_ID,JL.A_ASSET_ID,
+            JL.C_DEBT_PAYMENT_ID,JL.C_WITHHOLDING_ID,
+            JL.C_TAX_ID,
+            '' AS GLITEM_DEBIT_ACCT,
+            '' as GLITEM_CREDIT_ACCT 
+        FROM  
+            GL_JOURNALLINE JL INNER JOIN GL_JOURNAL J ON J.GL_JOURNAL_ID = JL.GL_JOURNAL_ID 
+            LEFT JOIN C_VALIDCOMBINATION VC ON VC.C_VALIDCOMBINATION_ID=JL.C_VALIDCOMBINATION_ID
+        WHERE  JL.GL_JOURNAL_ID = ? AND JL.ISACTIVE='Y' AND ((VC.ISFULLYQUALIFIED='Y' AND 
+        JL.C_VALIDCOMBINATION_ID IS NOT NULL) OR (JL.C_VALIDCOMBINATION_ID IS NULL) ) ORDER BY JL.LINE]]>
      </Sql>
      <Parameter name="GL_Journal_ID"/>
    </SqlMethod>
+   
+   <SqlMethod name="selectGlitem" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+    SELECT GLITEM_DEBIT_ACCT, GLITEM_CREDIT_ACCT
+    FROM C_GLITEM_ACCT 
+    WHERE C_GLITEM_id = ?
+    AND C_ACCTSCHEMA_id = ?
+     ]]>
+     </Sql>
+     <Parameter name="C_Glitem_ID"/>
+     <Parameter name="C_AcctSchema_ID"/>
+   </SqlMethod>
+
    </SqlClass>

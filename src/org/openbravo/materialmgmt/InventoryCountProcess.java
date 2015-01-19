@@ -3,8 +3,13 @@ package org.openbravo.materialmgmt;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
@@ -30,6 +35,8 @@ import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.materialmgmt.hook.InventoryCountCheckHook;
+import org.openbravo.materialmgmt.hook.InventoryCountProcessHook;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.AttributeSet;
@@ -47,6 +54,14 @@ import org.openbravo.service.db.DalConnectionProvider;
 
 public class InventoryCountProcess implements Process {
   private static final Logger log4j = Logger.getLogger(InventoryCountProcess.class);
+
+  @Inject
+  @Any
+  private Instance<InventoryCountCheckHook> inventoryCountChecks;
+
+  @Inject
+  @Any
+  private Instance<InventoryCountCheckHook> inventoryCountProcesses;
 
   @Override
   public void execute(ProcessBundle bundle) throws Exception {
@@ -131,6 +146,11 @@ public class InventoryCountProcess implements Process {
 
   public OBError processInventory(InventoryCount inventory, boolean checkReservationQty)
       throws OBException {
+    return processInventory(inventory, true, false);
+  }
+
+  public OBError processInventory(InventoryCount inventory, boolean checkReservationQty,
+      boolean checkPermanentCost) throws OBException {
     OBError msg = new OBError();
     msg.setType("Success");
     msg.setTitle(OBMessageUtils.messageBD("Success"));
@@ -165,6 +185,7 @@ public class InventoryCountProcess implements Process {
     insert.append(", " + MaterialTransaction.PROPERTY_UPDATEDBY);
     insert.append(", " + MaterialTransaction.PROPERTY_MOVEMENTTYPE);
     insert.append(", " + MaterialTransaction.PROPERTY_CHECKRESERVEDQUANTITY);
+    insert.append(", " + MaterialTransaction.PROPERTY_ISCOSTPERMANENT);
     insert.append(", " + MaterialTransaction.PROPERTY_MOVEMENTDATE);
     insert.append(", " + MaterialTransaction.PROPERTY_STORAGEBIN);
     insert.append(", " + MaterialTransaction.PROPERTY_PRODUCT);
@@ -186,7 +207,18 @@ public class InventoryCountProcess implements Process {
     insert.append(", u");
     insert.append(", 'I+'");
     // We have to set check reservation quantity flag equal to checkReservationQty
+    // InventoryCountLine.PROPERTY_ACTIVE-->> Y
+    // InventoryCountLine.PROPERTY_PHYSINVENTORY + "." + InventoryCount.PROPERTY_PROCESSED -->> N
     if (checkReservationQty) {
+      insert.append(", e." + InventoryCountLine.PROPERTY_ACTIVE);
+    } else {
+      insert.append(", e." + InventoryCountLine.PROPERTY_PHYSINVENTORY + "."
+          + InventoryCount.PROPERTY_PROCESSED);
+    }
+    // We have to set check permanent cost flag
+    // InventoryCountLine.PROPERTY_ACTIVE-->> Y
+    // InventoryCountLine.PROPERTY_PHYSINVENTORY + "." + InventoryCount.PROPERTY_PROCESSED -->> N
+    if (checkPermanentCost) {
       insert.append(", e." + InventoryCountLine.PROPERTY_ACTIVE);
     } else {
       insert.append(", e." + InventoryCountLine.PROPERTY_PHYSINVENTORY + "."
@@ -229,8 +261,16 @@ public class InventoryCountProcess implements Process {
     // queryInsert.setBoolean("checkReservation", checkReservationQty);
     queryInsert.executeUpdate();
 
-    if (!inventory.getClient().getClientInformationList().get(0).isAllowNegativeStock()) {
+    if (!inventory.getClient().getClientInformationList().get(0).isAllowNegativeStock()
+        && !"C".equals(inventory.getInventoryType())) {
       checkStock(inventory);
+    }
+
+    try {
+      executeHooks(inventoryCountProcesses, inventory);
+    } catch (Exception e) {
+      OBException obException = new OBException(e.getMessage(), e.getCause());
+      throw obException;
     }
 
     inventory.setProcessed(true);
@@ -238,6 +278,14 @@ public class InventoryCountProcess implements Process {
   }
 
   private void runChecks(InventoryCount inventory) throws OBException {
+
+    try {
+      executeHooks(inventoryCountChecks, inventory);
+    } catch (Exception e) {
+      OBException obException = new OBException(e.getMessage(), e.getCause());
+      throw obException;
+    }
+
     if (inventory.isProcessed()) {
       throw new OBException(OBMessageUtils.parseTranslation("@AlreadyPosted@"));
     }
@@ -380,6 +428,20 @@ public class InventoryCountProcess implements Process {
           .replaceAll("%1", storageDetail.getProduct().getIdentifier()).replaceAll("%2", attribute)
           .replaceAll("%3", storageDetail.getUOM().getIdentifier())
           .replaceAll("%4", storageDetail.getStorageBin().getIdentifier())));
+    }
+  }
+
+  private void executeHooks(Instance<? extends Object> hooks, InventoryCount inventory)
+      throws Exception {
+    if (hooks != null) {
+      for (Iterator<? extends Object> procIter = hooks.iterator(); procIter.hasNext();) {
+        Object proc = procIter.next();
+        if (proc instanceof InventoryCountProcessHook) {
+          ((InventoryCountProcessHook) proc).exec(inventory);
+        } else {
+          ((InventoryCountCheckHook) proc).exec(inventory);
+        }
+      }
     }
   }
 }

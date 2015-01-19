@@ -56,8 +56,10 @@ isc.OBParameterWindowView.addProperties({
     var i, field, items = [],
         buttonLayout = [],
         newButton, cancelButton, view = this,
-        newShowIf, params, updatedExpandSection;
+        newShowIf, context, updatedExpandSection;
 
+    // this flag can be used by Selenium to determine when defaults are set
+    this.defaultsAreSet = false;
 
     // Buttons
 
@@ -149,10 +151,15 @@ isc.OBParameterWindowView.addProperties({
 
     if (this.popup) {
       cancelButton = isc.OBFormButton.create({
+        process: this,
         title: OB.I18N.getLabel('OBUISC_Dialog.CANCEL_BUTTON_TITLE'),
         realTitle: '',
         click: function () {
-          view.closeClick();
+          if (this.process.isExpandedRecord) {
+            this.process.callerField.grid.collapseRecord(this.process.callerField.record);
+          } else {
+            view.closeClick();
+          }
         }
       });
       buttonLayout.push(cancelButton);
@@ -200,7 +207,7 @@ isc.OBParameterWindowView.addProperties({
         currentValues = isc.shallowClone(form.getValues());
       }
       OB.Utilities.fixNull250(currentValues);
-      parentContext = (this.view.sourceView && this.view.sourceView.getContextInfo(false, true, true, true)) || {};
+      parentContext = this.view.getUnderLyingRecordContext(false, true, true, true);
 
       try {
         if (isc.isA.Function(this.originalShowIf)) {
@@ -211,9 +218,18 @@ isc.OBParameterWindowView.addProperties({
       } catch (_exception) {
         isc.warn(_exception + ' ' + _exception.message + ' ' + _exception.stack);
       }
-      if (originalShowIfValue && item.defaultFilter !== null && !isc.isA.emptyObject(item.defaultFilter) && item.getType() === 'OBPickEditGridItem') {
-        item.canvas.viewGrid.setFilterEditorCriteria(item.defaultFilter);
-        item.canvas.viewGrid.filterByEditor();
+      if (originalShowIfValue && item.getType() === 'OBPickEditGridItem') {
+        // load the grid if it is being shown for the first time
+        if (item.canvas && item.canvas.viewGrid && !isc.isA.ResultSet(item.canvas.viewGrid.data)) {
+          if (item.defaultFilter !== null && !isc.isA.emptyObject(item.defaultFilter)) {
+            // if it has a default filter, apply it and use it when filtering
+            item.canvas.viewGrid.setFilterEditorCriteria(item.defaultFilter);
+            item.canvas.viewGrid.filterByEditor();
+          } else {
+            // if it does not have a default filter, just refresh the grid
+            item.canvas.viewGrid.refreshGrid();
+          }
+        }
       }
       if (this.view && this.view.theForm) {
         this.view.theForm.markForRedraw();
@@ -273,6 +289,7 @@ isc.OBParameterWindowView.addProperties({
           this.isPickAndExecuteWindow = true;
         }
         this.theForm.setItems(items);
+        this.theForm.setFieldSections();
         this.formContainerLayout = isc.OBFormContainerLayout.create({});
         this.formContainerLayout.addMember(this.theForm);
         this.members.push(this.formContainerLayout);
@@ -290,7 +307,8 @@ isc.OBParameterWindowView.addProperties({
       } else {
         this.firstFocusedItem = this.okButton;
       }
-      this.popupButtons = isc.HLayout.create({
+      this.popupButtons = isc.OBFormContainerLayout.create({
+        defaultLayoutAlign: 'center',
         align: 'center',
         width: '100%',
         height: OB.Styles.Process.PickAndExecute.buttonLayoutHeight,
@@ -308,7 +326,11 @@ isc.OBParameterWindowView.addProperties({
         this.closeClick = function () {
           return true;
         }; // To avoid loop when "Super call"
-        this.parentElement.parentElement.closeClick(); // Super call
+        if (this.isExpandedRecord) {
+          this.callerField.grid.collapseRecord(this.callerField.record);
+        } else {
+          this.parentElement.parentElement.closeClick(); // Super call
+        }
       };
     }
     this.loading = OB.Utilities.createLoadingLayout(OB.I18N.getLabel('OBUIAPP_PROCESSING'));
@@ -316,16 +338,19 @@ isc.OBParameterWindowView.addProperties({
     this.members.push(this.loading);
     this.Super('initWidget', arguments);
 
-    params = {
-      processId: this.processId,
-      windowId: this.windowId
-    };
+    context = this.getUnderLyingRecordContext(false, true, true, true);
 
-    if (this.sourceView) {
-      params.context = this.sourceView.getContextInfo(false, true, true, true);
+    // allow to add external parameters
+    isc.addProperties(context, this.externalParams);
+
+    if (this.callerField && this.callerField.view && this.callerField.view.getContextInfo) {
+      isc.addProperties(context || {}, this.callerField.view.getContextInfo(true /*excludeGrids*/ ));
     }
 
-    OB.RemoteCallManager.call('org.openbravo.client.application.process.DefaultsProcessActionHandler', {}, params, function (rpcResponse, data, rpcRequest) {
+    OB.RemoteCallManager.call('org.openbravo.client.application.process.DefaultsProcessActionHandler', context, {
+      processId: this.processId,
+      windowId: this.windowId
+    }, function (rpcResponse, data, rpcRequest) {
       view.handleDefaults(data);
     });
 
@@ -336,10 +361,10 @@ isc.OBParameterWindowView.addProperties({
     OB.TestRegistry.register('org.openbravo.client.application.ParameterWindow_FormContainerLayout_' + this.processId, this.formContainerLayout);
   },
 
-  handleResponse: function (refresh, message, responseActions, retryExecution, data) {
+  handleResponse: function (refreshParent, message, responseActions, retryExecution, data) {
     var window = this.parentWindow,
         tab = OB.MainView.TabSet.getTab(this.viewTabId),
-        i;
+        i, afterRefreshCallback, me = this;
 
     // change title to done
     if (tab) {
@@ -405,15 +430,29 @@ isc.OBParameterWindowView.addProperties({
 
     if (this.popup && !retryExecution) {
       this.buttonOwnerView.setAsActiveView();
-
-      if (refresh) {
-        window.refresh();
+      afterRefreshCallback = function () {
+        if (me.buttonOwnerView && isc.isA.Function(me.buttonOwnerView.refreshParentRecord) && isc.isA.Function(me.buttonOwnerView.refreshChildViews)) {
+          me.buttonOwnerView.refreshParentRecord();
+          me.buttonOwnerView.refreshChildViews();
+        }
+      };
+      if (refreshParent) {
+        if (this.callerField && this.callerField.view && typeof this.callerField.view.onRefreshFunction === 'function') {
+          // In this case we are inside a process called from another process, so we want to refresh the caller process instead of the main window.
+          this.callerField.view.onRefreshFunction(this.callerField.view);
+        } else {
+          this.buttonOwnerView.refreshCurrentRecord(afterRefreshCallback);
+        }
       }
 
       this.closeClick = function () {
         return true;
       }; // To avoid loop when "Super call"
-      this.parentElement.parentElement.closeClick(); // Super call
+      if (this.isExpandedRecord) {
+        this.callerField.grid.collapseRecord(this.callerField.record);
+      } else {
+        this.parentElement.parentElement.closeClick(); // Super call
+      }
     }
   },
 
@@ -473,7 +512,7 @@ isc.OBParameterWindowView.addProperties({
 
   doProcess: function (btnValue) {
     var i, tmp, view = this,
-        grid, allProperties = (this.sourceView && this.sourceView.getContextInfo(false, true, false, true)) || {},
+        grid, allProperties = this.getUnderLyingRecordContext(false, true, false, true),
         selection, len, allRows, params, tab, actionHandlerCall;
     // activeView = view.parentWindow && view.parentWindow.activeView,  ???.
     if (this.resultLayout && this.resultLayout.destroy) {
@@ -490,6 +529,9 @@ isc.OBParameterWindowView.addProperties({
 
     allProperties._params = this.getContextInfo();
 
+    // allow to add external parameters
+    isc.addProperties(allProperties._params, this.externalParams);
+
     actionHandlerCall = function (me) {
       me.showProcessing(true);
       OB.RemoteCallManager.call(me.actionHandler, allProperties, {
@@ -497,7 +539,7 @@ isc.OBParameterWindowView.addProperties({
         reportId: me.reportId,
         windowId: me.windowId
       }, function (rpcResponse, data, rpcRequest) {
-        view.handleResponse(true, (data && data.message), (data && data.responseActions), (data && data.retryExecution), data);
+        view.handleResponse(!(data && data.refreshParent === false), (data && data.message), (data && data.responseActions), (data && data.retryExecution), data);
       });
     };
 
@@ -573,6 +615,9 @@ isc.OBParameterWindowView.addProperties({
     this.xlsButton.setEnabled(allRequiredSet);
 
     this.handleDisplayLogicForGridColumns();
+
+    // this flag can be used by Selenium to determine when defaults are set
+    this.defaultsAreSet = true;
   },
 
   /**
@@ -603,7 +648,7 @@ isc.OBParameterWindowView.addProperties({
     if (!form) {
       return;
     }
-    parentContext = (this.sourceView && this.sourceView.getContextInfo(false, true, true, true)) || {};
+    parentContext = this.getUnderLyingRecordContext(false, true, true, true);
 
     fields = form.getFields();
     for (i = 0; i < fields.length; i++) {
@@ -633,7 +678,7 @@ isc.OBParameterWindowView.addProperties({
     }
   },
 
-  getContextInfo: function () {
+  getContextInfo: function (excludeGrids) {
     var result = {},
         params, i;
     if (!this.theForm) {
@@ -643,11 +688,18 @@ isc.OBParameterWindowView.addProperties({
     if (this.theForm && this.theForm.getItems) {
       params = this.theForm.getItems();
       for (i = 0; i < params.length; i++) {
+        if (excludeGrids && params[i].type === 'OBPickEditGridItem') {
+          continue;
+        }
         result[params[i].name] = params[i].getValue();
       }
     }
 
     return result;
+  },
+
+  getUnderLyingRecordContext: function (onlySessionProperties, classicMode, forceSettingContextVars, convertToClassicFormat) {
+    return (this.buttonOwnerView && this.buttonOwnerView.getContextInfo(onlySessionProperties, classicMode, forceSettingContextVars, convertToClassicFormat)) || {};
   },
 
   // returns true if any non-grid required parameter does not have a value

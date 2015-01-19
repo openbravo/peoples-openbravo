@@ -67,7 +67,7 @@ public class OrganizationStructureProvider implements OBNotSingleton {
     initialize();
   }
 
-  private void initialize() {
+  private synchronized void initialize() {
     if (isInitialized) {
       return;
     }

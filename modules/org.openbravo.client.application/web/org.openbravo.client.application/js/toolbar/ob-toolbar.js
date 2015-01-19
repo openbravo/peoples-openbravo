@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):   Sreedhar Sirigiri (TDS), Mallikarjun M (TDS)
  ************************************************************************
@@ -52,7 +52,7 @@ isc.OBToolbar.addClassProperties({
         form = view.viewGrid.getEditForm();
         editRow = view.viewGrid.getEditRow();
         hasErrors = view.viewGrid.rowHasErrors(editRow);
-        this.setDisabled(!(form.isNew && form.allRequiredFieldsSet()) && !hasErrors && (form.isSaving || form.readOnly || !view.hasValidState() || form.hasErrors() || !form.hasChanged || !form.allRequiredFieldsSet()));
+        this.setDisabled(!(form.isNew && form.allRequiredFieldsSet()) && (form.isSaving || form.readOnly || !view.hasValidState() || hasErrors || form.hasErrors() || !form.hasChanged || !form.allRequiredFieldsSet()));
       } else {
         this.setDisabled(true);
       }
@@ -108,7 +108,6 @@ isc.OBToolbar.addClassProperties({
     action: function () {
       var view = this.view,
           grid = view.viewGrid;
-
       // In case of no record selected getRecordIndex(undefined) returns -1,
       // which is the top position, other case it adds bellow current selected row.
       if (grid.getSelectedRecord()) {
@@ -131,7 +130,8 @@ isc.OBToolbar.addClassProperties({
 
   NEW_DOC_BUTTON_PROPERTIES: {
     action: function () {
-      this.view.newDocument();
+      var view = this.view;
+      view.newDocument();
     },
     buttonType: 'newDoc',
     sortPosition: 10,
@@ -159,16 +159,20 @@ isc.OBToolbar.addClassProperties({
     updateState: function () {
       var view = this.view,
           form = view.viewForm,
-          grid = view.viewGrid,
-          selectedRecords = grid.getSelectedRecords(),
-          length = selectedRecords.length,
-          i;
+          currentGrid, length, selectedRecords, i;
+      if (view.isShowingTree) {
+        currentGrid = view.treeGrid;
+      } else {
+        currentGrid = view.viewGrid;
+      }
+      selectedRecords = currentGrid.getSelectedRecords();
+      length = selectedRecords.length;
       if (!this.view.isDeleteableTable) {
         this.setDisabled(true);
         return;
       }
       for (i = 0; i < length; i++) {
-        if (!grid.isWritable(selectedRecords[i])) {
+        if (!currentGrid.isWritable(selectedRecords[i])) {
           this.setDisabled(true);
           return;
         }
@@ -180,7 +184,7 @@ isc.OBToolbar.addClassProperties({
       if (view.isShowingForm) {
         this.setDisabled(form.isSaving || form.readOnly || view.singleRecord || !view.hasValidState() || form.isNew || (view.standardWindow.allowDelete === 'N'));
       } else {
-        this.setDisabled(view.readOnly || view.singleRecord || !view.hasValidState() || !grid.getSelectedRecords() || grid.getSelectedRecords().length === 0 || (view.standardWindow.allowDelete === 'N'));
+        this.setDisabled(view.readOnly || view.singleRecord || !view.hasValidState() || !currentGrid.getSelectedRecords() || currentGrid.getSelectedRecords().length === 0 || (view.standardWindow.allowDelete === 'N'));
       }
     },
     keyboardShortcutId: 'ToolBar_Eliminate'
@@ -188,14 +192,38 @@ isc.OBToolbar.addClassProperties({
 
   REFRESH_BUTTON_PROPERTIES: {
     action: function () {
-      this.view.refresh();
+      var refreshChildren = true,
+          callbackEnableButton, me = this;
+      this.view.isRefreshing = true;
+      // Disable the refresh button until the refresh is finished
+      this.setDisabled(true);
+      callbackEnableButton = function () {
+        // Enable the refresh button in the callback
+        delete me.view.isRefreshing;
+        me.setDisabled(false);
+      };
+      try {
+        if (this.view.isShowingForm) {
+          // Refresh the form and its children records
+          this.view.viewForm.refresh(callbackEnableButton, refreshChildren);
+        } else {
+          this.view.refresh(callbackEnableButton);
+        }
+      } catch (e) {
+        callbackEnableButton();
+      }
     },
     disabled: false,
     buttonType: 'refresh',
     sortPosition: 70,
     prompt: OB.I18N.getLabel('OBUIAPP_RefreshData'),
     updateState: function () {
-      this.setDisabled(!this.view.hasNotChanged());
+      var gridVisibleAndWithValidationErrors = false;
+      if (!this.view.isShowingForm && this.view.viewGrid.gridHasValidationErrors()) {
+        // do not allow refreshing the grid if it has validation errors
+        gridVisibleAndWithValidationErrors = true;
+      }
+      this.setDisabled(gridVisibleAndWithValidationErrors || this.view.isRefreshing || !this.view.hasNotChanged());
     },
     keyboardShortcutId: 'ToolBar_Refresh'
   },
@@ -212,12 +240,13 @@ isc.OBToolbar.addClassProperties({
     sortPosition: 50,
     prompt: OB.I18N.getLabel('OBUIAPP_CancelEdit'),
     updateState: function () {
+      var recordWithValidationErrorsSelected = false;
       if (this.view.isShowingForm) {
         this.setDisabled(false);
       } else {
         // Only enabled when the grid is being edited or when
         // the selected records have errors
-        this.setDisabled(!this.view.isEditingGrid && this.view.hasNotChanged());
+        this.setDisabled(!this.view.isEditingGrid && this.view.hasNotChanged() && !this.view.viewGrid.selectedRecordHasValidationErrors());
       }
     },
     keyboardShortcutId: 'ToolBar_Undo'
@@ -242,7 +271,7 @@ isc.OBToolbar.addClassProperties({
     sortPosition: 80,
     prompt: OB.I18N.getLabel('OBUIAPP_ExportGrid'),
     updateState: function () {
-      this.setDisabled(this.view.isShowingForm || this.view.viewGrid.getTotalRows() === 0 || OB.PropertyStore.get("ExportToCsv", this.view.standardWindow.windowId) === 'N');
+      this.setDisabled(this.view.isShowingForm || this.view.viewGrid.getTotalRows() === 0 || OB.PropertyStore.get("ExportToCsv", this.view.standardWindow.windowId) === 'N' || this.view.isShowingTree);
     },
     keyboardShortcutId: 'ToolBar_Export'
   },
@@ -1224,7 +1253,8 @@ isc.OBToolbar.addProperties({
       // This is needed to prevent JSLint complaining about "Don't make functions within a loop.
       callbackHandler = function (currentContext, me) {
         return function (response, data, request) {
-          var noneOrMultipleRecordsSelected = currentContext.viewGrid.getSelectedRecords().length !== 1;
+          var grid = currentContext.isShowingTree ? currentContext.treeGrid : currentContext.viewGrid,
+              noneOrMultipleRecordsSelected = grid.getSelectedRecords().length !== 1;
           var sessionAttributes = data.sessionAttributes,
               auxInputs = data.auxiliaryInputValues,
               attachmentExists = data.attachmentExists,
@@ -1513,6 +1543,8 @@ isc.OBToolbar.addProperties({
       }
     }
   },
+
+
 
   addMembers: 'null',
 

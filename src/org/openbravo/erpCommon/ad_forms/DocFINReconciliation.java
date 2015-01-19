@@ -556,8 +556,10 @@ public class DocFINReconciliation extends AcctServer {
           AcctSchemaTableDocType.class, whereClause.toString());
       final List<AcctSchemaTableDocType> acctSchemaTableDocTypes = obqParameters.list();
 
-      if (acctSchemaTableDocTypes != null && acctSchemaTableDocTypes.size() > 0)
+      if (acctSchemaTableDocTypes != null && acctSchemaTableDocTypes.size() > 0
+          && acctSchemaTableDocTypes.get(0).getCreatefactTemplate() != null) {
         strClassname = acctSchemaTableDocTypes.get(0).getCreatefactTemplate().getClassname();
+      }
 
       if (strClassname.equals("")) {
         final StringBuilder whereClause2 = new StringBuilder();
@@ -697,7 +699,7 @@ public class DocFINReconciliation extends AcctServer {
         // Cambiar line to reflect BPs
         FIN_PaymentDetail paymentDetail = OBDal.getInstance().get(FIN_PaymentDetail.class,
             finPaymentDetailID);
-        detail.setInvoiceTaxCashVAT_V(paymentDetail.getFinPayment().getId());
+        detail.setInvoiceTaxCashVAT_V(finPaymentDetailID);
         fact = createFactPaymentDetails(detail, paymentDetail, as, conn, fact, Fact_Acct_Group_ID,
             Fact_Acct_Group_ID2);
       }

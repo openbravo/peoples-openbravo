@@ -273,6 +273,10 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
+      <column name="PREPAYMENTAMT" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false">
+        <default><![CDATA[0]]></default>
+        <onCreateDefault><![CDATA[0]]></onCreateDefault>
+      </column>
       <foreign-key foreignTable="C_BPARTNER_LOCATION" name="C_BPLOCATION_CINVOICE">
         <reference local="C_BPARTNER_LOCATION_ID" foreign="C_BPARTNER_LOCATION_ID"/>
       </foreign-key>

@@ -387,7 +387,7 @@ public class DocFINFinAccTransaction extends AcctServer {
                   .getInvoice()
                   : null);
           docLine.setDoubtFulDebtAmount(new BigDecimal(data[i].getField("DoubtFulDebtAmount")));
-          docLine.setInvoiceTaxCashVAT_V(strPaymentId);
+          docLine.setInvoiceTaxCashVAT_V(paymentDetail_ID);
         }
         docLine.setIsPrepayment(data[i].getField("isprepayment"));
         docLine.setCGlItemId(data[i].getField("cGlItemId"));
@@ -430,8 +430,10 @@ public class DocFINFinAccTransaction extends AcctServer {
           AcctSchemaTableDocType.class, whereClause.toString());
       final List<AcctSchemaTableDocType> acctSchemaTableDocTypes = obqParameters.list();
 
-      if (acctSchemaTableDocTypes != null && acctSchemaTableDocTypes.size() > 0)
+      if (acctSchemaTableDocTypes != null && acctSchemaTableDocTypes.size() > 0
+          && acctSchemaTableDocTypes.get(0).getCreatefactTemplate() != null) {
         strClassname = acctSchemaTableDocTypes.get(0).getCreatefactTemplate().getClassname();
+      }
 
       if (strClassname.equals("")) {
         final StringBuilder whereClause2 = new StringBuilder();

@@ -17,7 +17,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2014 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2015 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -43,7 +43,10 @@
   xTaxAmt NUMBER:=0;
   v_reservation_id    VARCHAR2(32);
   v_prereservedqty    NUMBER;
-    
+  v_IsWithholding_Tax C_Tax.IsWithholdingTax%TYPE;
+  v_IsCashVAT_Tax C_Tax.IsCashVAT%TYPE;
+  v_IsCashVAT_Order C_Order.IsCashVAT%TYPE;
+  v_Rate_Tax C_Tax.Rate%TYPE;
 BEGIN
     
     IF AD_isTriggerEnabled()='N' THEN RETURN;
@@ -83,13 +86,7 @@ IF (UPDATING) THEN
     FROM m_reservation 
     WHERE c_orderline_id = :OLD.c_orderline_id;
     IF (v_count > 0) THEN
-      SELECT m_reservation_id INTO v_reservation_id
-      FROM m_reservation
-      WHERE c_orderline_id = :OLD.c_orderline_id;
-      DELETE FROM m_reservation_stock
-      WHERE m_reservation_id = v_reservation_id;
-      DELETE FROM m_reservation
-      WHERE m_reservation_id = v_reservation_id;
+      RAISE_APPLICATION_ERROR(-20000, '@DeleteRelatedReservation@');
     END IF;
   ELSE
     DELETE FROM m_reservation_stock
@@ -178,6 +175,31 @@ IF (UPDATING) THEN
     END IF;
  END IF;
 
+ -- Update C_Order.IsCashVAT flag from the line tax rate.
+ -- We do it this way to force any process that creates Orders to properly set the C_Order.IsCashVAT
+ -- If a user manually changes the tax rate when entering a line, the order's header IsCash VAT may change
+ -- This will just work for not withholding tax rates
+ IF (INSERTING OR UPDATING) THEN
+  IF (:NEW.C_TAX_ID IS NOT NULL) THEN
+   SELECT COALESCE(iswithholdingtax, 'N'), COALESCE(IsCashVAT, 'N'), COALESCE(rate, 0)
+   INTO v_IsWithholding_Tax, v_IsCashVAT_Tax, v_Rate_Tax
+   FROM C_Tax
+   WHERE C_Tax_ID=:NEW.C_Tax_ID;
+
+   IF (v_IsWithholding_Tax='N' AND v_Rate_Tax<>0) THEN
+    SELECT COALESCE(IsCashVAT, 'N')
+    INTO v_IsCashVAT_Order
+    FROM C_Order
+    WHERE C_Order_ID=:NEW.C_Order_ID;
+
+    IF (v_IsCashVAT_Tax <> v_IsCashVAT_Order) THEN
+      UPDATE C_Order
+      SET IsCashVAT = v_IsCashVAT_Tax
+      WHERE C_Order_ID=:NEW.C_Order_ID;
+    END IF;
+   END IF;
+  END IF;
+ END IF;
 
 END C_ORDERLINE_TRG
 ]]></body>

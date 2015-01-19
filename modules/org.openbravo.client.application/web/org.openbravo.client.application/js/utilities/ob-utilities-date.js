@@ -395,12 +395,18 @@ OB.Utilities.Date.convertUTCTimeToLocalTime = function (newData, allFields) {
 // Parameters:
 // * {{{date}}}: date in which it be added its timezone offset
 OB.Utilities.Date.addTimezoneOffset = function (date) {
-  var newDate;
+  var newDate, originalTimezoneOffset, newTimezoneOffset;
 
   if (Object.prototype.toString.call(date) !== '[object Date]') {
     return date;
   }
-  newDate = new Date(date.getTime() + (date.getTimezoneOffset() * 60000));
+  originalTimezoneOffset = date.getTimezoneOffset();
+  newDate = new Date(date.getTime() + (originalTimezoneOffset * 60000));
+  newTimezoneOffset = newDate.getTimezoneOffset();
+  // Apply a correction if the timezone offset has changed
+  if (originalTimezoneOffset !== newTimezoneOffset) {
+    newDate = new Date(newDate.getTime() + (newTimezoneOffset - originalTimezoneOffset) * 60000);
+  }
   return newDate;
 };
 
