@@ -10929,7 +10929,7 @@ public class TestCosting extends BaseDataSourceTestDal {
         landedCostCost.setLandedCostDistributionAlgorithm(OBDal.getInstance().get(
             LCDistributionAlgorithm.class, LANDEDCOSTCOST_ALGORITHM_ID));
         landedCostCost.setAccountingDate(DateUtils.addDays(today, day));
-        landedCostCost.setLineNo(new BigDecimal((i + 1) * 10));
+        landedCostCost.setLineNo(new Long((i + 1) * 10));
         landedCostCost.setDocumentType(OBDal.getInstance().get(DocumentType.class,
             LANDEDCOSTCOST_DOCUMENTTYPE_ID));
 
@@ -10991,7 +10991,7 @@ public class TestCosting extends BaseDataSourceTestDal {
             LCDistributionAlgorithm.class, LANDEDCOSTCOST_ALGORITHM_ID));
         landedCostCost.setCurrency(invoiceLine.getInvoice().getCurrency());
         landedCostCost.setAccountingDate(today);
-        landedCostCost.setLineNo(new BigDecimal((i + 1) * 10));
+        landedCostCost.setLineNo(new Long((i + 1) * 10));
 
         landedCostCostList.add(landedCostCost);
         OBDal.getInstance().save(landedCostCost);
