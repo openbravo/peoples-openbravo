@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -24,10 +24,10 @@ import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
+import org.hibernate.ScrollMode;
+import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
@@ -81,6 +81,7 @@ public class FIN_PaymentMonitorProcess extends DalBaseProcess {
       return;
     }
 
+    ScrollableResults invoiceScroller = null;
     try {
       int counter = 0;
       final Module migration = OBDal.getInstance().get(Module.class,
@@ -109,27 +110,28 @@ public class FIN_PaymentMonitorProcess extends DalBaseProcess {
         obc.setFilterOnReadableClients(false);
         obc.setFilterOnReadableOrganization(false);
       }
-      final Set<String> invoiceIds = new HashSet<String>();
-      for (Invoice invoice : obc.list()) {
-        invoiceIds.add(invoice.getId());
-      }
 
-      for (String invoiceId : invoiceIds) {
-        Invoice invoice = OBDal.getInstance().get(Invoice.class, invoiceId);
+      invoiceScroller = obc.scroll(ScrollMode.FORWARD_ONLY);
+      while (invoiceScroller.next()) {
+        final Invoice invoice = (Invoice) invoiceScroller.get()[0];
         updateInvoice(invoice);
         counter++;
-        OBDal.getInstance().getSession().flush();
-        OBDal.getInstance().getSession().clear();
-        if (counter % 50 == 0) {
+        if (counter % 100 == 0) {
+          OBDal.getInstance().getSession().flush();
+          OBDal.getInstance().getSession().clear();
           logger.log("Invoices updated: " + counter + "\n");
         }
       }
-      if (counter % 50 != 0)
+      if (counter % 100 != 0)
         logger.log("Invoices updated: " + counter + "\n");
     } catch (Exception e) {
       // catch any possible exception and throw it as a Quartz
       // JobExecutionException
       throw new JobExecutionException(e.getMessage(), e);
+    } finally {
+      if (invoiceScroller != null) {
+        invoiceScroller.close();
+      }
     }
   }
 
