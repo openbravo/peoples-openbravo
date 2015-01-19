@@ -222,6 +222,7 @@ OB.DS.HWServer.prototype._print = function (templatedata, params, callback) {
     computeddata = this._template(templatedata, params);
     this._send(computeddata, callback);
   } catch (ex) {
+    OB.error('Error computing the template to print.', ex);
     callback({
       data: templatedata,
       exception: {
