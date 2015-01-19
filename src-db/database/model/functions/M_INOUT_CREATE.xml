@@ -317,7 +317,7 @@ BEGIN --BODY
         v_ForceDelivery := 'N';
         v_DeliveryRule := 'A';
       ELSE
-        v_ForceDelivery := 'Y';
+        v_ForceDelivery := p_ForceDelivery;
         v_DeliveryRule := Cur_Order.DeliveryRule;
       END IF;
       v_DocumentNo:='';
