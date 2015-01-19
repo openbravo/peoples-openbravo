@@ -34,7 +34,11 @@ public class POSDataSynchronizationErrorHandler extends DataSynchronizationError
     try {
       posTerminalId = jsonRecord.getString("posTerminal");
     } catch (JSONException e1) {
-      // won't happen
+      try {
+        posTerminalId = jsonRecord.getString("posterminal");
+      } catch (JSONException e2) {
+        // won't happen
+      }
     }
     log.error("An error happened when processing a record: ", t);
     OBPOSErrors errorEntry = null;

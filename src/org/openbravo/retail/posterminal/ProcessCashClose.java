@@ -36,8 +36,29 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
 
   private static final Logger log = Logger.getLogger(ProcessCashClose.class);
   JSONObject jsonResponse = new JSONObject();
+  boolean isCashupProcessed = false;
 
   public JSONObject saveRecord(JSONObject jsonCashup) throws Exception {
+    try {
+      return saveRecordCashUp(jsonCashup);
+    } catch (Exception e) {
+      // if the json cashup has processed=Y and the cashup in the backoffice has processed=N then we
+      // throw the exception, in other case, we ignore the error
+      if (jsonCashup.has("isprocessed") && jsonCashup.getString("isprocessed").equals("Y")) {
+        String cashUpId = jsonCashup.getString("id");
+        OBPOSAppCashup cashUp = OBDal.getInstance().get(OBPOSAppCashup.class, cashUpId);
+        if (cashUp == null || !isCashupProcessed) {
+          throw e;
+        }
+      }
+
+      JSONObject jsonData = new JSONObject();
+      jsonData.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
+      return jsonData;
+    }
+  }
+
+  public JSONObject saveRecordCashUp(JSONObject jsonCashup) throws Exception {
     String cashUpId = jsonCashup.getString("id");
     JSONObject jsonData = new JSONObject();
     Date cashUpDate = new Date();
@@ -52,6 +73,13 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
       }
     } catch (Exception e) {
       log.debug("Error processing cash close: error retrieving cashUp date. Using current date");
+    }
+
+    if (cashUpId != null) {
+      OBPOSAppCashup cashUpInitial = OBDal.getInstance().get(OBPOSAppCashup.class, cashUpId);
+      if (cashUpInitial != null && cashUpInitial.isProcessed()) {
+        isCashupProcessed = true;
+      }
     }
 
     OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
@@ -299,5 +327,25 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
   @Override
   protected boolean bypassPreferenceCheck() {
     return true;
+  }
+
+  // The check of duplicates ids is done in this class
+  @Override
+  protected boolean additionalCheckForDuplicates(JSONObject record) {
+    return false;
+  }
+
+  @Override
+  protected void additionalProcessForRecordsSavedInErrorsWindow(JSONObject record) {
+    try {
+      String cashUpId = record.getString("id");
+      OBPOSAppCashup cashUp = OBDal.getInstance().get(OBPOSAppCashup.class, cashUpId);
+      if (cashUp != null
+          && (record.has("isprocessed") && record.getString("isprocessed").equals("Y"))) {
+        cashUp.setProcessed(Boolean.TRUE);
+        OBDal.getInstance().save(cashUp);
+      }
+    } catch (Exception e) {
+    }
   }
 }
