@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2014 Openbravo SLU
+ * All portions are Copyright (C) 2011-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -421,18 +421,13 @@ OB.Utilities.removeFragment = function (str) {
 // Returns the object used to open the window.
 OB.Utilities.openView = function (windowId, tabId, tabTitle, recordId, command, icon, readOnly, singleRecord, direct, editOrDeleteOnly) {
   var isClassicEnvironment = OB.Utilities.useClassicMode(windowId),
-      openObject, isDirect = direct,
-      isSingleRecord;
+      openObject, isDirect = direct;
   if (recordId) {
     if (direct !== false) {
       isDirect = true;
     }
 
   }
-  if (singleRecord !== false) {
-    isSingleRecord = true;
-  }
-
   if (isClassicEnvironment) {
     if (recordId) {
       OB.Layout.ClassicOBCompatibility.openLinkedItem(tabId, recordId);
@@ -456,7 +451,7 @@ OB.Utilities.openView = function (windowId, tabId, tabTitle, recordId, command, 
       tabTitle: tabTitle,
       windowId: windowId,
       readOnly: readOnly,
-      singleRecord: isSingleRecord,
+      singleRecord: singleRecord,
       editOrDeleteOnly: editOrDeleteOnly
     };
   } else {
@@ -468,7 +463,7 @@ OB.Utilities.openView = function (windowId, tabId, tabTitle, recordId, command, 
       windowId: windowId,
       icon: icon,
       readOnly: readOnly,
-      singleRecord: isSingleRecord,
+      singleRecord: singleRecord,
       editOrDeleteOnly: editOrDeleteOnly
     };
   }
