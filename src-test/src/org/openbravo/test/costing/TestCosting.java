@@ -11654,7 +11654,6 @@ public class TestCosting extends BaseDataSourceTestDal {
       assertEquals(receiptInvoiceMatch.getQuantity(), matchedInvoicesAssert.getMovementLine()
           .getMovementQuantity());
 
-      assertFalse(receiptInvoiceMatch.isProcessNow());
       assertTrue(receiptInvoiceMatch.isProcessed());
     } catch (Exception e) {
       throw new OBException(e);
@@ -11705,7 +11704,6 @@ public class TestCosting extends BaseDataSourceTestDal {
         assertEquals(formatDate(physicalInventory.getMovementDate()),
             formatDate(DateUtils.addDays(today, physicalInventoryAssert.getDay())));
         assertTrue(physicalInventory.isProcessed());
-        assertFalse(physicalInventory.isProcessNow());
         assertFalse(physicalInventory.isUpdateQuantities());
         assertFalse(physicalInventory.isGenerateList());
         assertEquals(physicalInventory.getTrxOrganization(), null);
@@ -12424,7 +12422,6 @@ public class TestCosting extends BaseDataSourceTestDal {
         assertEquals(costAdjustment.getDocumentStatus(), costAdjustmentAssertLineList.get(0)
             .getStatus());
         assertFalse(costAdjustment.isCancelProcess());
-        assertFalse(costAdjustment.isProcessNow());
         assertEquals(costAdjustment.getCostAdjustmentLineList().size(),
             costAdjustmentAssertLineList.size());
 
