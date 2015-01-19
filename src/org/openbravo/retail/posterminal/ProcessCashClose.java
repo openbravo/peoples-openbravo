@@ -36,10 +36,18 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
 
   private static final Logger log = Logger.getLogger(ProcessCashClose.class);
   JSONObject jsonResponse = new JSONObject();
-  boolean isCashupProcessed = false;
 
   public JSONObject saveRecord(JSONObject jsonCashup) throws Exception {
+    boolean isCashupProcessed = false;
     try {
+      String cashUpId = jsonCashup.getString("id");
+      if (cashUpId != null) {
+        OBPOSAppCashup cashUpInitial = OBDal.getInstance().get(OBPOSAppCashup.class, cashUpId);
+        if (cashUpInitial != null && cashUpInitial.isProcessed()) {
+          isCashupProcessed = true;
+        }
+      }
+
       return saveRecordCashUp(jsonCashup);
     } catch (Exception e) {
       // if the json cashup has processed=Y and the cashup in the backoffice has processed=N then we
@@ -73,13 +81,6 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
       }
     } catch (Exception e) {
       log.debug("Error processing cash close: error retrieving cashUp date. Using current date");
-    }
-
-    if (cashUpId != null) {
-      OBPOSAppCashup cashUpInitial = OBDal.getInstance().get(OBPOSAppCashup.class, cashUpId);
-      if (cashUpInitial != null && cashUpInitial.isProcessed()) {
-        isCashupProcessed = true;
-      }
     }
 
     OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
