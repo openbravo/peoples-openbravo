@@ -27,25 +27,13 @@
           isLayaway = (this.receipt.get('orderType') === 2 || this.receipt.get('isLayaway')),
           json = this.receipt.serializeToJSON(),
           receiptId = this.receipt.get('id'),
-          creationDate = new Date(),
-          creationDateTransformed = new Date(creationDate.getUTCFullYear(), creationDate.getUTCMonth(), creationDate.getUTCDate(), creationDate.getUTCHours(), creationDate.getUTCMinutes(), creationDate.getUTCSeconds());
-
+          creationDate = this.receipt.get('creationDate') || new Date();
+          
       if (this.receipt.get('isbeingprocessed') === 'Y') {
         //The receipt has already been sent, it should not be sent again
         return;
       }
       
-      if (this.receipt.get('isQuotation')) {
-        // The receipt is a quotation, verify the creationDate exist
-        if (this.receipt.get('creationDate')) {
-          creationDate = this.receipt.get('creationDate');
-          creationDateTransformed = new Date(creationDate.getUTCFullYear(), creationDate.getUTCMonth(), creationDate.getUTCDate(), creationDate.getUTCHours(), creationDate.getUTCMinutes(), creationDate.getUTCSeconds());
-        } else {
-          //Issue 28588: If the quotation is missing the creationDate attribute,
-          //the ticket header will show 'undefined' for the time/date of the quotation
-          this.receipt.set('creationDate', creationDate);
-        }
-      }
       this.receipt.set('hasbeenpaid', 'Y');
 
       OB.trace('Executing pre order save hook.');
@@ -70,6 +58,7 @@
         OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(receipt.get('documentnoSuffix'), receipt.get('quotationnoSuffix'));
 
         delete receipt.attributes.json;
+        receipt.set('creationDate', creationDate);
         receipt.set('timezoneOffset', creationDate.getTimezoneOffset());
         receipt.set('created', creationDate.getTime());
         receipt.set('obposCreatedabsolute', OB.I18N.formatDateISO(creationDate));
@@ -179,9 +168,9 @@
           isLayaway = (this.receipt.get('orderType') === 2 || this.receipt.get('isLayaway')),
           json = this.receipt.serializeToJSON(),
           receiptId = this.receipt.get('id'),
-          creationDate = new Date(),
-          creationDateTransformed = new Date(creationDate.getUTCFullYear(), creationDate.getUTCMonth(), creationDate.getUTCDate(), creationDate.getUTCHours(), creationDate.getUTCMinutes(), creationDate.getUTCSeconds());
+          creationDate = this.receipt.get('creationDate') || new Date();
 
+      this.receipt.set('creationDate', creationDate);
       this.receipt.set('hasbeenpaid', 'Y');
       this.context.get('multiOrders').trigger('integrityOk', this.receipt);
       OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(this.receipt.get('documentnoSuffix'), this.receipt.get('quotationnoSuffix'));

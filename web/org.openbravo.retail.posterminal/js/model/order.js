@@ -582,6 +582,7 @@
       this.set('posTerminal', null);
       this.set('posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, null);
       this.set('orderDate', new Date());
+      this.set('creationDate', null);
       this.set('documentnoPrefix', -1);
       this.set('quotationnoPrefix', -1);
       this.set('documentnoSuffix', -1);
@@ -1436,6 +1437,7 @@
       this.set('isPaid', false);
       this.set('isEditable', true);
       this.set('orderDate', new Date());
+      this.set('creationDate', null);
       var nextDocumentno = OB.MobileApp.model.getNextDocumentno();
       this.set('documentnoPrefix', OB.MobileApp.model.get('terminal').docNoPrefix);
       this.set('documentnoSuffix', nextDocumentno.documentnoSuffix);
@@ -2164,6 +2166,7 @@
       order.set('posTerminal', OB.MobileApp.model.get('terminal').id);
       order.set('posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.MobileApp.model.get('terminal')._identifier);
       order.set('orderDate', new Date());
+      order.set('creationDate', null);
       order.set('isPaid', false);
       order.set('paidOnCredit', false);
       order.set('isLayaway', false);
@@ -2205,12 +2208,18 @@
       order.set('hasbeenpaid', 'Y');
       order.set('isEditable', false);
       order.set('checked', model.checked); //TODO: what is this for, where it comes from?
+      order.set('orderDate', moment(model.orderDate.toString(), "YYYY-MM-DD").toDate());
+      order.set('creationDate', moment(model.creationDate.toString(), "YYYY-MM-DD hh:m:ss.s").toDate());
       order.set('paidOnCredit', false);
       if (model.isQuotation) {
         order.set('isQuotation', true);
         order.set('oldId', model.orderid);
         order.set('id', null);
         order.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentTypeForQuotations);
+        // TODO: this commented lines are kept just in case this issue happens again
+        // Set creationDate milliseconds to 0, if the date is with milisecond, the date with miliseconds is rounded to seconds:
+        // so, the second can change, and the creationDate in quotation should not be changed when quotation is reactivated
+        // order.set('creationDate', moment(model.creationDate.toString(), "YYYY-MM-DD hh:m:ss").toDate());
       }
       if (model.isLayaway) {
         order.set('isLayaway', true);
@@ -2229,7 +2238,6 @@
           order.set('orderType', 1);
         }
       }
-
       bpLocId = model.bpLocId;
       bpId = model.bp;
       OB.Dal.get(OB.Model.BusinessPartner, bpId, function (bp) {
@@ -2279,13 +2287,6 @@
               }
             });
           });
-          order.set('orderDate', moment(model.orderDate.toString(), "YYYY-MM-DD").toDate());
-          order.set('creationDate', moment(model.creationDate.toString(), "YYYY-MM-DD hh:m:ss.s").toDate());
-          if (model.isQuotation) {
-            // isQuotation Set milliseconds to 0, if the date is with milisecond, the date with miliseconds is rounded to seconds:
-            // so, the second can change, and the creationDate in quotation should not be changed when quotation is reactivated
-            order.set('creationDate', moment(model.creationDate.toString(), "YYYY-MM-DD hh:m:ss").toDate());
-          }
           //order.set('payments', model.receiptPayments);
           payments = new PaymentLineList();
           _.each(model.receiptPayments, function (iter) {
