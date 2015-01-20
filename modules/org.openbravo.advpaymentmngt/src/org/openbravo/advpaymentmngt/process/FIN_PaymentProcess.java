@@ -632,7 +632,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
         String newStrAction = "P";
         FIN_PaymentProcess fpp = WeldUtils
             .getInstanceFromStaticBeanManager(FIN_PaymentProcess.class);
-        fpp.processPayment(payment, newStrAction, isPosOrder, paymentDate, comingFrom);
+        fpp.processPayment(reversedPayment, newStrAction, isPosOrder, paymentDate, comingFrom);
 
         return;
 
