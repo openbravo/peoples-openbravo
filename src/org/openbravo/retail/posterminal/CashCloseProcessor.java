@@ -257,7 +257,13 @@ public class CashCloseProcessor {
       FIN_Reconciliation reconciliation, OBPOSAppPayment payment, BigDecimal difference,
       Date cashUpDate) {
     FIN_FinancialAccount account = payment.getFinancialAccount();
-    GLItem glItem = payment.getPaymentMethod().getCashDifferences();
+    GLItem glItem = null;
+    if (payment.isOverrideconfiguration()) {
+      glItem = payment.getCashDifferences();
+    } else {
+      glItem = payment.getPaymentMethod().getCashDifferences();
+    }
+
     FIN_FinaccTransaction transaction = OBProvider.getInstance().get(FIN_FinaccTransaction.class);
     transaction.setCurrency(account.getCurrency());
     transaction.setAccount(account);
@@ -286,7 +292,13 @@ public class CashCloseProcessor {
       BigDecimal reconciliationTotal, Date cashUpDate) {
     TerminalTypePaymentMethod paymentMethod = paymentType.getPaymentMethod();
     FIN_FinancialAccount account = paymentType.getFinancialAccount();
-    GLItem glItem = paymentMethod.getGlitemDropdep();
+    GLItem glItem = null;
+    if (paymentType.isOverrideconfiguration()) {
+      glItem = paymentType.getGLItemForCashDropDeposit();
+    } else {
+      glItem = paymentMethod.getGlitemDropdep();
+    }
+
     FIN_FinaccTransaction transaction = OBProvider.getInstance().get(FIN_FinaccTransaction.class);
     transaction.setCurrency(account.getCurrency());
     transaction.setAccount(account);
@@ -310,7 +322,12 @@ public class CashCloseProcessor {
   protected FIN_FinaccTransaction createTotalTransferTransactionDeposit(OBPOSApplications terminal,
       FIN_Reconciliation reconciliation, OBPOSAppPayment paymentType,
       BigDecimal reconciliationTotal, Date cashUpDate) {
-    GLItem glItem = paymentType.getPaymentMethod().getGlitemDropdep();
+    GLItem glItem = null;
+    if (paymentType.isOverrideconfiguration()) {
+      glItem = paymentType.getGLItemForCashDropDeposit();
+    } else {
+      glItem = paymentType.getPaymentMethod().getGlitemDropdep();
+    }
     if (paymentType.getObretcoCmevents() == null) {
       throw new OBException("There is no close event defined for the payment method");
     }

@@ -60,10 +60,25 @@ public class Payments extends JSONProcessSimple {
       for (Object objLine : paymentsquery.list()) {
         Object[] objPayment = (Object[]) objLine;
         JSONObject payment = new JSONObject();
-        payment.put("payment",
-            converter.toJsonObject((BaseOBObject) objPayment[0], DataResolvingMode.FULL));
-        payment.put("paymentMethod",
-            converter.toJsonObject((BaseOBObject) objPayment[1], DataResolvingMode.FULL));
+        JSONObject pay = converter.toJsonObject((BaseOBObject) objPayment[0],
+            DataResolvingMode.FULL);
+        JSONObject pMethod = converter.toJsonObject((BaseOBObject) objPayment[1],
+            DataResolvingMode.FULL);
+        if ("true".equals(pay.get("overrideconfiguration").toString())) {
+          pMethod.put("cashDifferences", pay.get("cashDifferences"));
+          pMethod.put("cashDifferences$_identifier", pay.get("cashDifferences$_identifier"));
+          pMethod.put("glitemDropdep", pay.get("gLItemForCashDropDeposit"));
+          pMethod.put("glitemDropdep$_identifier", pay.get("gLItemForCashDropDeposit$_identifier"));
+          pMethod.put("automatemovementtoother", pay.get("automateMovementToOtherAccount"));
+          pMethod.put("keepfixedamount", pay.get("keepFixedAmount"));
+          pMethod.put("amount", pay.get("amount"));
+          pMethod.put("allowvariableamount", pay.get("allowVariableAmount"));
+          pMethod.put("allowdontmove", pay.get("allowNotToMove"));
+          pMethod.put("allowmoveeverything", pay.get("allowMoveEverything"));
+          pMethod.put("countcash", pay.get("countCash"));
+        }
+        payment.put("payment", pay);
+        payment.put("paymentMethod", pMethod);
 
         payment.put("rate", objPayment[2]);
         BigDecimal mulrate = BigDecimal.ZERO;
@@ -91,5 +106,4 @@ public class Payments extends JSONProcessSimple {
       OBContext.restorePreviousMode();
     }
   }
-
 }
