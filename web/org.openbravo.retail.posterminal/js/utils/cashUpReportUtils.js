@@ -232,7 +232,7 @@
       netReturns: OB.DEC.Zero,
       grossReturns: OB.DEC.Zero,
       totalRetailTransactions: OB.DEC.Zero,
-      createdDate: new Date(),
+      createdDate: (new Date()).toISOString(),
       userId: OB.MobileApp.model.get('context').user.id,
       objToSend: null,
       cashTaxInfo: [],
@@ -590,7 +590,8 @@
       cashPaymentMethodInfo: [],
       cashTaxInfo: [],
       cashCloseInfo: [],
-      cashUpDate: ""
+      cashUpDate: "",
+      createdDate: (new Date(cashUp.at(0).get('createdDate'))).toISOString()
     });
 
     //process the payment method cash ups
