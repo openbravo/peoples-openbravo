@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -549,7 +549,9 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
     }
 
     String strOrgList = "";
-    String[] orgList = OBContext.getOBContext().getReadableOrganizations();
+    OBContext.setAdminMode();
+    String[] orgList = OBContext.getOBContext().getRole().getOrganizationList().split(",");
+    OBContext.restorePreviousMode();
     int i = 0;
     for (String org : orgList) {
       if (i == 0) {

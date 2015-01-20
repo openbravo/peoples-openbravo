@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2009-2014 Openbravo SL 
+ * All portions are Copyright (C) 2009-2015 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -477,8 +477,8 @@ public class PaymentReport extends HttpSecureAppServlet {
     xmlDocument.setParameter("org", strOrg);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-          "", Utility.getContext(this, vars, "#AccessibleOrgTree", "PaymentReport"),
-          Utility.getContext(this, vars, "#User_Client", "PaymentReport"), 0);
+          "", Utility.getContext(this, vars, "#User_Org", "PaymentReport"), Utility.getContext(
+              this, vars, "#User_Client", "PaymentReport"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "PaymentReport", strOrg);
       xmlDocument.setData("reportAD_Org_ID", "liststructure", comboTableData.select(false));
       comboTableData = null;

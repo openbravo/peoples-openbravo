@@ -396,7 +396,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_ORG_ID", "",
-          "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportTrialBalance"),
+          "", Utility.getContext(this, vars, "#User_Org", "ReportTrialBalance"),
           Utility.getContext(this, vars, "#User_Client", "ReportTrialBalance"), '*');
       comboTableData.fillParameters(null, "ReportTrialBalance", "");
       xmlDocument.setData("reportAD_ORGID", "liststructure", comboTableData.select(false));

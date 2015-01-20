@@ -317,7 +317,7 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
     }
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-          "", Utility.getContext(this, vars, "#AccessibleOrgTree",
+          "", Utility.getContext(this, vars, "#User_Org",
               "ReportSalesDimensionalAnalyzeJR"), Utility.getContext(this, vars, "#User_Client",
               "ReportSalesDimensionalAnalyzeJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData,
