@@ -32,7 +32,6 @@ import org.dom4j.io.SAXReader;
 import org.openbravo.base.ConfigParameters;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBConfigFileProvider;
-import org.openbravo.base.util.Check;
 
 /**
  * This class implements a central location where the Openbravo.properties are read and made
@@ -99,7 +98,7 @@ public class OBPropertiesProvider {
 
   public void setProperties(InputStream is) {
     if (obProperties != null) {
-      log.warn("Openbravo properties have already been set, setting them again");
+      log.info("Openbravo properties have already been set, setting them again");
     }
     log.debug("Setting Openbravo.properties through input stream");
     obProperties = new Properties();
@@ -121,7 +120,9 @@ public class OBPropertiesProvider {
   }
 
   public void setProperties(Properties props) {
-    Check.isNull(obProperties, "Openbravo properties have already been set");
+    if (obProperties != null) {
+      log.info("Openbravo properties have already been set, setting them again");
+    }
     log.debug("Setting openbravo.properties through properties");
     obProperties = new Properties();
     obProperties.putAll(props);
