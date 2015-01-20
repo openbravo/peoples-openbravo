@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,6 +26,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import org.openbravo.base.ConfigParameters;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBConfigFileProvider;
 import org.openbravo.base.session.OBPropertiesProvider;
@@ -67,9 +68,16 @@ public class DalContextListener implements ServletContextListener {
 
     final ServletContext context = event.getServletContext();
     setServletContext(context);
-    final InputStream is = context.getResourceAsStream("/WEB-INF/Openbravo.properties");
-    if (is != null) {
-      OBPropertiesProvider.getInstance().setProperties(is);
+    ConfigParameters params = (ConfigParameters) context
+        .getAttribute(ConfigParameters.CONFIG_ATTRIBUTE);
+    if (params != null) {
+      // Openbravo.properties is already initialized, no need to read it again
+      OBPropertiesProvider.getInstance().setProperties(params.getOBProperties());
+    } else {
+      final InputStream is = context.getResourceAsStream("/WEB-INF/Openbravo.properties");
+      if (is != null) {
+        OBPropertiesProvider.getInstance().setProperties(is);
+      }
     }
     final InputStream formatInputStream = context.getResourceAsStream("/WEB-INF/Format.xml");
     if (formatInputStream != null) {

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2010 Openbravo S.L.U.
+ * Copyright (C) 2001-2015 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -16,7 +16,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.InetAddress;
 import java.net.MalformedURLException;
+import java.net.UnknownHostException;
+import java.util.Enumeration;
 import java.util.Properties;
 
 import javax.servlet.ServletContext;
@@ -54,7 +57,7 @@ public class ConfigParameters {
   private final String poolFileName;
   public final String strTextDividedByZero;
 
-  private Logger log4j = Logger.getLogger(this.getClass());
+  private static final Logger log4j = Logger.getLogger(ConfigParameters.class);
 
   private Log4JLogger fopLogger;
   public final String strServletSinIdentificar;
@@ -304,15 +307,99 @@ public class ConfigParameters {
   }
 
   public Properties loadOBProperties() {
-
     Properties obProperties = new Properties();
     try {
       obProperties.load(new FileInputStream(stcFileProperties));
-      log4j.debug("Properties file: " + stcFileProperties);
+      log4j.info("Properties file: " + stcFileProperties);
+
+      overrideProperties(obProperties, stcFileProperties);
     } catch (IOException e) {
       log4j.error("IO error reading properties", e);
     }
     return obProperties;
+  }
+
+  /**
+   * <p>
+   * Looks for file to override some of the properties in the Openbravo.properties. This is intended
+   * to be used in Tomcat cluster environments sharing same context directory to allow having some
+   * properties different in different machines.
+   * </p>
+   * <p>
+   * The overriding file should be named like <code>hostName.Openbravo.properties</code> where
+   * <code>hostName</code> can be determined by <code>machine.name</code> system property or by
+   * <code>InetAddress.getLocalHost().getHostName()</code> if <code>machine.name</code> property is
+   * not present.
+   * </p>
+   * 
+   * @param obProperties
+   * @param path
+   */
+  public static void overrideProperties(Properties obProperties, String path) {
+    if (obProperties == null) {
+      log4j.warn("Openbravo.properties was not set, not trying to override it");
+      return;
+    }
+
+    String propFilePath = path.replace("Openbravo.properties", "");
+
+    if (propFilePath == null || propFilePath.isEmpty()) {
+      log4j.debug("Could not determine context path");
+      return;
+    }
+
+    String fileName = System.getProperty("machine.name");
+    if (fileName == null || fileName.isEmpty()) {
+      try {
+        fileName = InetAddress.getLocalHost().getHostName();
+        log4j.info("Checking override properties for " + fileName);
+      } catch (UnknownHostException e) {
+        log4j.error("Error when getting host name", e);
+      }
+    }
+
+    if (fileName == null || fileName.isEmpty()) {
+      log4j.debug("Override fileName env variable is not defined.");
+      return;
+    }
+
+    fileName += ".Openbravo.properties";
+    File propertiesFile = null;
+    propertiesFile = new File(propFilePath, fileName);
+    if (!propertiesFile.exists()) {
+      log4j.debug("No override file can be found at " + propertiesFile.getAbsolutePath());
+      return;
+    }
+
+    // load override property file
+    log4j.info("Loading override properties file from " + propertiesFile.getAbsolutePath());
+    Properties overrideProperties = new Properties();
+    FileInputStream fis = null;
+    try {
+      fis = new FileInputStream(propertiesFile.getAbsolutePath());
+      overrideProperties.load(fis);
+
+      // read system variable value for each key found
+      Enumeration<Object> em = overrideProperties.keys();
+      while (em.hasMoreElements()) {
+        String obProperty = (String) em.nextElement();
+        String overrideValue = overrideProperties.getProperty(obProperty);
+        Object object = obProperties.setProperty(obProperty, overrideValue); // replace original
+
+        log4j.info("Overriding property " + obProperty + ": " + object + "->"
+            + obProperties.getProperty(obProperty));
+      }
+    } catch (final Exception e) {
+      log4j.error("Error loading override Openbravo.properties from " + propertiesFile, e);
+    } finally {
+      if (fis != null) {
+        try {
+          fis.close();
+        } catch (IOException e) {
+          log4j.error("Error closing input stream for " + propertiesFile);
+        }
+      }
+    }
   }
 
   public String getJavaDateTimeFormat() {
