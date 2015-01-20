@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SLU
+ * All portions are Copyright (C) 2015 Openbravo SLU
+ * All Rights Reserved.
+ * Contributor(s):  ______________________________________.
+ *************************************************************************
+-->
+<SqlClass name="Issue28591UpdatePSDData" package="org.openbravo.advpaymentmngt.modulescript">
+   <SqlClassComment></SqlClassComment>
+   <SqlMethod name="select" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT '' as fin_payment_scheduledetail_id, '' as outstandingamt, '' as wrongamt, 
+        '' as fin_payment_schedule_id, '' as c_invoice_id, '' as c_currency_id, '' as bp_currency_id,
+        '' as fin_payment_id, '' as fin_payment_detail_id, '' as isreceipt, '' as c_bpartner_id
+        FROM DUAL
+      ]]>
+    </Sql>
+   </SqlMethod>
+   <SqlMethod name="selectPSD" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      select ps.outstandingamt as outstandingamt, max(psd.fin_payment_scheduledetail_id) as fin_payment_scheduledetail_id
+      from fin_payment_scheduledetail psd
+      LEFT JOIN fin_payment_schedule ps ON ps.fin_payment_schedule_id = COALESCE(psd.fin_payment_schedule_invoice,psd.fin_payment_schedule_order)
+      where psd.fin_payment_detail_id is null and ps.outstandingamt > 0
+      group by ps.outstandingamt, ps.fin_payment_schedule_id
+      having sum(psd.amount) <> ps.outstandingamt
+      ]]>
+    </Sql>
+   </SqlMethod>
+   <SqlMethod name="selectWrongPSD" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      select i.c_invoice_id, fp.c_currency_id, bp.c_bpartner_id, bp.bp_currency_id, fp.fin_payment_id, ps.fin_payment_schedule_id,
+      psd.fin_payment_scheduledetail_id, pd.fin_payment_detail_id, ps.outstandingamt as wrongamt, to_char(fp.isreceipt) as isreceipt
+      from c_invoice i
+      left join c_bpartner bp on bp.c_bpartner_id = i.c_bpartner_id
+      left join fin_payment_schedule ps on ps.c_invoice_id = i.c_invoice_id
+      left join fin_payment_scheduledetail psd on psd.fin_payment_schedule_invoice = ps.fin_payment_schedule_id
+      left join fin_payment_detail pd on psd.fin_payment_detail_id = pd.fin_payment_detail_id
+      left join fin_payment fp on fp.fin_payment_id = pd.fin_payment_id
+      where i.outstandingamt < 0
+      and i.outstandingamt = ps.outstandingamt
+      and ps.paidamt = psd.amount
+      ]]>
+   </Sql>
+  </SqlMethod>
+  <SqlMethod name="updateWrongInvoiceAmt" type="preparedStatement" return="rowcount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        update c_invoice set ispaid= case when grandtotal=totalpaid+to_number(?) then 'Y' else 'N' end,  totalpaid=totalpaid+to_number(?),
+         LastCalculatedOnDate=LastCalculatedOnDate+to_number(?), outstandingamt=outstandingamt-to_number(?) ,
+         DaysTillDue=substract_days(to_timestamp(now()),(select min (duedate) from FIN_Payment_Schedule where  c_invoice_id=?)),
+         Percentageoverdue=(select round((sum(case when fp.Paymentdate > ps.duedate then psd.amount else 0 end )*100)/GrandTotal,2)
+         from  c_invoice ci, fin_payment_scheduledetail psd , fin_payment_schedule ps,  fin_payment fp,  FIN_Payment_Detail pd
+         where ps.c_invoice_id = ci.c_invoice_id
+         AND psd.fin_payment_schedule_invoice = ps.fin_payment_schedule_id
+         and  pd.fin_payment_detail_id=psd.fin_payment_detail_id
+         and fp.fin_payment_id=pd.fin_payment_id
+         and ci.c_invoice_id=?
+         group by  ci.c_invoice_id, ci.grandtotal, ci.totalpaid, ci.LastCalculatedOnDate, ci.DaysTillDue, ci.Percentageoverdue),
+         updatedby='0', updated=now()
+         where c_invoice_id=?
+      ]]>
+    </Sql>
+    <Parameter name="Amount"/>
+    <Parameter name="Amount"/>
+    <Parameter name="Amount"/>
+    <Parameter name="Amount"/>
+    <Parameter name="cInvoiceId"/>
+    <Parameter name="cInvoiceId"/>
+    <Parameter name="cInvoiceId"/>    
+  </SqlMethod>  
+  <SqlMethod name="updateWrongPSAmt" type="preparedStatement" return="rowcount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        UPDATE FIN_PAYMENT_SCHEDULE SET PAIDAMT = PAIDAMT + TO_NUMBER(?), 
+        OUTSTANDINGAMT= OUTSTANDINGAMT - TO_NUMBER(?),
+        updatedby='0', updated=now()
+        WHERE FIN_PAYMENT_SCHEDULE_ID = ?
+      ]]>
+    </Sql>
+    <Parameter name="outStandingAmount"/>
+    <Parameter name="outStandingAmount"/>
+    <Parameter name="finPaymentScheduleId"/>
+  </SqlMethod>
+  <SqlMethod name="updateWrongPSDAmt" type="preparedStatement" return="rowcount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        UPDATE FIN_PAYMENT_SCHEDULEDETAIL SET AMOUNT=AMOUNT + TO_NUMBER(?),
+        updatedby='0', updated=now()
+        WHERE FIN_PAYMENT_SCHEDULEDETAIL_ID = ?
+      ]]>
+    </Sql>
+    <Parameter name="Amount"/>
+    <Parameter name="finPaymentScheduledetailId"/>
+  </SqlMethod>
+  <SqlMethod name="selectFinPaymentDetailId" type="preparedStatement" return="String">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT get_uuid() as fin_payment_detail_id
+        FROM DUAL        
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="createCredit" type="preparedStatement" return="rowcount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        INSERT INTO fin_payment_detail (
+          fin_payment_detail_id, ad_client_id, ad_org_id, isactive,
+          createdby, created, updatedby, updated, fin_payment_id, 
+          amount, refund, isprepayment
+        ) VALUES (
+          ?, '0', '0', 'Y',
+          '0', NOW(), '0', NOW(), ?,
+          TO_NUMBER(?)*(-1), 'N', 'Y'      
+        )
+      ]]>
+    </Sql>
+    <Parameter name="finPaymentDetailId"/>
+    <Parameter name="finPaymentId"/>
+    <Parameter name="Amount"/>
+  </SqlMethod>
+  <SqlMethod name="createCreditScheduledetail" type="preparedStatement" return="rowcount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        INSERT INTO fin_payment_scheduledetail (
+          fin_payment_scheduledetail_id, ad_client_id, ad_org_id, isactive,
+          createdby, created, updatedby, updated, fin_payment_detail_id, 
+          amount
+        ) VALUES (
+          get_uuid(), '0', '0', 'Y',
+          '0', NOW(), '0', NOW(), ?,
+          TO_NUMBER(?)*(-1)      
+        )
+      ]]>
+    </Sql>
+    <Parameter name="finPaymentDetailId"/>
+    <Parameter name="Amount"/>
+  </SqlMethod>
+  <SqlMethod name="updateCreditGenerated" type="preparedStatement" return="rowcount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        UPDATE FIN_PAYMENT SET generated_credit=generated_credit+(TO_NUMBER(?)*-1),
+        updatedby='0', updated=now()
+        WHERE FIN_PAYMENT_ID = ?
+      ]]>
+    </Sql>
+    <Parameter name="Amount"/>
+    <Parameter name="finPaymentId"/>
+  </SqlMethod>
+  <SqlMethod name="updateWrongPDAmt" type="preparedStatement" return="rowcount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        UPDATE FIN_PAYMENT_DETAIL SET AMOUNT=AMOUNT+TO_NUMBER(?),
+        updatedby='0', updated=now()
+        WHERE FIN_PAYMENT_DETAIL_ID = ?
+      ]]>
+    </Sql>
+    <Parameter name="Amount"/>
+    <Parameter name="finPaymentDetailId"/>
+  </SqlMethod>
+  <SqlMethod name="updatePSDAmount" type="preparedStatement" return="rowcount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        UPDATE FIN_PAYMENT_SCHEDULEDETAIL SET AMOUNT=TO_NUMBER(?),
+        updatedby='0', updated=now()
+        WHERE FIN_PAYMENT_SCHEDULEDETAIL_ID = ?
+      ]]>
+    </Sql>
+    <Parameter name="outStandingAmount"/>
+    <Parameter name="finPaymentScheduledetailId"/>
+  </SqlMethod>
+  <SqlMethod name="updateWrongPSD" type="preparedStatement" return="boolean">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT count(*) as exist
+        FROM DUAL
+        WHERE EXISTS (SELECT 1 FROM ad_preference
+                      WHERE attribute = 'Issue28591updateWrongPSD')
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="createPreference" type="preparedStatement" return="rowcount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        INSERT INTO ad_preference (
+          ad_preference_id, ad_client_id, ad_org_id, isactive,
+          createdby, created, updatedby, updated,
+          attribute
+        ) VALUES (
+          get_uuid(), '0', '0', 'Y',
+          '0', NOW(), '0', NOW(),
+          'Issue28591updateWrongPSD'
+        )
+      ]]>
+    </Sql>
+  </SqlMethod>
+ </SqlClass>
