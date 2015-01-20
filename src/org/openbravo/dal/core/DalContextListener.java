@@ -68,6 +68,11 @@ public class DalContextListener implements ServletContextListener {
 
     final ServletContext context = event.getServletContext();
     setServletContext(context);
+
+    // set our own config file provider which uses the servletcontext
+    OBConfigFileProvider.getInstance().setServletContext(context);
+    OBConfigFileProvider.getInstance().setClassPathLocation("/WEB-INF");
+
     ConfigParameters params = (ConfigParameters) context
         .getAttribute(ConfigParameters.CONFIG_ATTRIBUTE);
     if (params != null) {
@@ -83,10 +88,6 @@ public class DalContextListener implements ServletContextListener {
     if (formatInputStream != null) {
       OBPropertiesProvider.getInstance().setFormatXML(formatInputStream);
     }
-
-    // set our own config file provider which uses the servletcontext
-    OBConfigFileProvider.getInstance().setServletContext(context);
-    OBConfigFileProvider.getInstance().setClassPathLocation("/WEB-INF");
 
     // initialize the dal layer
     DalLayerInitializer.getInstance().initialize(true);

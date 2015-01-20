@@ -33,7 +33,6 @@ import org.openbravo.base.ConfigParameters;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBConfigFileProvider;
 import org.openbravo.base.util.Check;
-import org.openbravo.dal.core.DalContextListener;
 
 /**
  * This class implements a central location where the Openbravo.properties are read and made
@@ -108,13 +107,14 @@ public class OBPropertiesProvider {
       obProperties.load(is);
       is.close();
 
-      if (DalContextListener.getServletContext() == null) {
+      if (OBConfigFileProvider.getInstance() == null
+          || OBConfigFileProvider.getInstance().getServletContext() == null) {
         log.debug("ServletContext is not set, not trying to override Openbravo.properties");
         return;
       }
 
-      ConfigParameters.overrideProperties(obProperties, DalContextListener.getServletContext()
-          .getRealPath("/WEB-INF"));
+      ConfigParameters.overrideProperties(obProperties, OBConfigFileProvider.getInstance()
+          .getServletContext().getRealPath("/WEB-INF"));
     } catch (final Exception e) {
       throw new OBException(e);
     }
