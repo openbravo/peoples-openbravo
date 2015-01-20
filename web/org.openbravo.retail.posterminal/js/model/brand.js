@@ -15,7 +15,8 @@
     modelName: 'Brand',
     tableName: 'm_brand',
     entityName: 'Brand',
-    source: 'org.openbravo.retail.posterminal.master.Brand'    
+    source: 'org.openbravo.retail.posterminal.master.Brand',
+    dataLimit: 300
   });
 
   Brand.addProperties([{
