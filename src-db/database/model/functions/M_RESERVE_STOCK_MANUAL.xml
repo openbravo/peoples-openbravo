@@ -110,7 +110,7 @@ BEGIN
     FROM m_reservation_stock
     WHERE m_reservation_id = p_reservation_id
       AND m_locator_id = v_locator_id
-      AND COALESCE(m_attributesetinstance_id, '0') = COALESCE(v_asi_id, '0')
+      AND m_attributesetinstance_id = COALESCE(v_asi_id, '0')
       AND isallocated = p_allocated;
   ELSIF (p_type_id = 'PO') THEN
     v_poline_id := p_stock_id;

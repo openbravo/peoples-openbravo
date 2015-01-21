@@ -146,7 +146,7 @@ BEGIN
           WHERE rs.c_orderline_id = cur_prereserve.c_orderline_id
             AND r.res_status NOT IN ('DR', 'CL')
             AND rs.m_locator_id = cur_receipt.m_locator_id
-            AND COALESCE(rs.m_attributesetinstance_id, '0') = cur_receipt.m_attributesetinstance_id;
+            AND rs.m_attributesetinstance_id = cur_receipt.m_attributesetinstance_id;
           IF (cur_receipt.receiptqty > v_reservedqty) THEN
             v_aux := LEAST(v_qtytoreserve, cur_receipt.receiptqty - v_reservedqty);
             -- Check if exists a reserved stock for the same orderline, attributes and locator in the reservation
@@ -156,7 +156,7 @@ BEGIN
               AND m_locator_id = cur_receipt.m_locator_id
               AND m_reservation_id = v_reservation_id
               AND isallocated = 'Y'
-              AND COALESCE(m_attributesetinstance_id, '0') = cur_receipt.m_attributesetinstance_id;
+              AND m_attributesetinstance_id = cur_receipt.m_attributesetinstance_id;
             -- Update existing prereserved stock to decrease reserved qty
             UPDATE m_reservation_stock
             SET quantity = quantity - v_aux
@@ -195,23 +195,13 @@ BEGIN
         SELECT AD_COLUMN_IDENTIFIER('M_Locator', rs.m_locator_id, 'en_US') as locatorName,
                asi.description AS attributeName
         FROM m_reservation_stock rs
-            JOIN m_attributesetinstance asi ON COALESCE(rs.m_attributesetinstance_id, '0') = asi.m_attributesetinstance_id
+            JOIN m_attributesetinstance asi ON rs.m_attributesetinstance_id = asi.m_attributesetinstance_id
             LEFT JOIN m_storage_detail sd ON sd.m_product_id = v_product_id
                                              AND sd.c_uom_id = v_uom_id
                                              AND sd.m_product_uom_id IS NULL
-                                             AND COALESCE(sd.m_attributesetinstance_id, '0') = COALESCE(rs.m_attributesetinstance_id, '0')
+                                             AND sd.m_attributesetinstance_id = rs.m_attributesetinstance_id
                                              AND sd.m_locator_id = rs.m_locator_id
-            LEFT JOIN (
-                    SELECT SUM(rs2.quantity - COALESCE(rs2.releasedqty,0)) AS reservedstock, rs2.m_locator_id, COALESCE(rs2.m_attributesetinstance_id,'0') AS m_attributesetinstance_id
-                    FROM m_reservation_stock rs2
-                      JOIN m_reservation r ON rs2.m_reservation_id = r.m_reservation_id
-                    WHERE r.m_product_id = v_product_id
-                      AND r.res_status NOT IN ('CL', 'DR')
-                      AND r.c_uom_id = v_uom_id
-                    GROUP BY rs2.m_locator_id, COALESCE(rs2.m_attributesetinstance_id,'0')
-                  ) other ON rs.m_locator_id = other.m_locator_id
-                             AND COALESCE(rs.m_attributesetinstance_id, '0') = COALESCE(other.m_attributesetinstance_id, '0')
-        WHERE rs.quantity - COALESCE(rs.releasedqty, 0) > COALESCE(sd.qtyonhand, 0) - COALESCE(other.reservedstock, 0)
+        WHERE rs.quantity - COALESCE(rs.releasedqty, 0) > sd.qtyonhand - sd.reservedqty
           AND rs.m_reservation_id = v_reservation_id
           AND rs.m_locator_id IS NOT NULL
       ) LOOP

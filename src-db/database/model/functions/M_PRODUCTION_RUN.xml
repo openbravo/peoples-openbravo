@@ -249,34 +249,9 @@ BEGIN --BODY
               v_pinstance_msg AD_PInstance.errormsg%TYPE;
             BEGIN
               v_pinstance_id := get_uuid();
-              INSERT INTO ad_pinstance (
-                  ad_pinstance_id, ad_process_id, record_id, isactive, 
-                  ad_user_id, ad_client_id, ad_org_id, created, createdby,
-                  updated, updatedby
-              ) VALUES (
-                  v_pinstance_id, 'FF80818132C964E30132C9747257002E', v_record_id, 'Y',
-                  p_user, v_client_id, v_org_id, now(), p_user,
-                  now(), p_user
-              );
-
-              AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '10', 'AD_Client_ID', v_client_id, null, null, null, null, null);
-              AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '20', 'AD_Org_ID', cur_bom.org_id, null, null, null, null, null);
-              AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '30', 'M_Product_ID', v_Product_old, null, null, null, null, null);
-              AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '40', 'C_Uom_ID', v_UOM_old, null, null, null, null, null);
-              AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '50', 'M_Product_Uom_ID', null, null, null, null, null, null);
-              -- Records in m_aux_stock are not considered in BOM production.
-              --AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '60', 'AuxID', v_record_id, null, null, null, null, null);
-              --AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '70', 'TableId', '325', null, null, null, null, null);
-              AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '60', 'Priority_Warehouse_ID', v_Warehouse_old, null, null, null, null, null);
-              AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '80', 'LineNo', null, null, 10, null, null, null);
-              AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '90', 'ProcessID', '137', null, null, null, null, null);
-
-              M_GET_STOCK(v_pinstance_ID, 'N');
+              SELECT * INTO v_pinstance_result, v_pinstance_msg FROM M_GET_STOCK_PARAM(v_pinstance_id, v_record_id, null, v_Product_old, null, null, v_Warehouse_old, cur_bom.org_id, null, p_user,
+              v_client_id, null, v_UOM_old, null, null, null, 10, '137', null, 'N');
               -- Check result
-              SELECT result, errormsg
-                INTO v_pinstance_result, v_pinstance_msg
-              FROM ad_pinstance
-              WHERE ad_pinstance_id = v_pinstance_id;
               IF (v_pinstance_result = 0) THEN
                 -- Error on m_get_stock
                 RAISE_APPLICATION_ERROR(-20000, v_pinstance_msg);

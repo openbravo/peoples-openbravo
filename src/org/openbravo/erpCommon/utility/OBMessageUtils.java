@@ -51,23 +51,34 @@ public class OBMessageUtils {
    *          String with the search key to search.
    * @return String with the translated message.
    */
+
   public static String messageBD(String strCode) {
+    return messageBD(strCode, true);
+  }
+
+  public static String messageBD(String strCode, boolean ignoreCase) {
     String strMessage = "";
     final String strLanguageId = OBContext.getOBContext().getLanguage().getId();
-
     // Search strCode in AD_Message table.
     try {
       OBContext.setAdminMode(false);
       log4j.debug("messageBD - Message Code: " + strCode);
       OBCriteria<Message> obcMessage = OBDal.getInstance().createCriteria(Message.class);
-      obcMessage.add(Restrictions.eq(Message.PROPERTY_SEARCHKEY, strCode).ignoreCase());
-      if (obcMessage.count() > 0) {
-        Message msg = obcMessage.list().get(0);
+      if (ignoreCase) {
+        obcMessage.add(Restrictions.eq(Message.PROPERTY_SEARCHKEY, strCode).ignoreCase());
+      } else {
+        obcMessage.add(Restrictions.eq(Message.PROPERTY_SEARCHKEY, strCode));
+      }
+      obcMessage.setMaxResults(1);
+      Message msg = (Message) obcMessage.uniqueResult();
+      if (msg != null) {
         strMessage = msg.getMessageText();
-        for (MessageTrl msgTrl : msg.getADMessageTrlList()) {
-          if (DalUtil.getId(msgTrl.getLanguage()).equals(strLanguageId)) {
-            strMessage = msgTrl.getMessageText();
-            break;
+        if (OBContext.getOBContext().isTranslationInstalled()) {
+          for (MessageTrl msgTrl : msg.getADMessageTrlList()) {
+            if (DalUtil.getId(msgTrl.getLanguage()).equals(strLanguageId)) {
+              strMessage = msgTrl.getMessageText();
+              break;
+            }
           }
         }
       }

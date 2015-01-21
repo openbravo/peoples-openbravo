@@ -478,30 +478,9 @@ BEGIN --BODY
                   v_reservation_id VARCHAR2(32);
                 BEGIN
                   v_pinstance_id := get_uuid();
-                  INSERT INTO ad_pinstance (
-                      ad_pinstance_id, ad_process_id, record_id, isactive, 
-                      ad_user_id, ad_client_id, ad_org_id, created, createdby,
-                      updated, updatedby
-                  ) VALUES (
-                      v_pinstance_id, 'FF80818132C964E30132C9747257002E', v_record_id, 'Y',
-                      v_User_ID, v_ad_client_id, ol.AD_Org_ID, now(), v_User_ID,
-                      now(), v_User_ID
-                  );
-    
-                  AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '10', 'AD_Client_ID', v_ad_client_id, null, null, null, null, null);
-                  AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '20', 'AD_Org_ID', Cur_Order.AD_Org_ID, null, null, null, null, null);
-                  AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '30', 'M_Product_ID', v_Product_old, null, null, null, null, null);
-                  AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '40', 'C_Uom_ID', v_UOM_old, null, null, null, null, null);
-                  AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '50', 'M_Product_Uom_ID', v_Product_UOM_old, null, null, null, null, null);
-                  AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '60', 'Priority_Warehouse_ID', v_Warehouse_old, null, null, null, null, null);
-                  AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '70', 'M_AttributesetInstance_ID', v_Attribute_old, null, null, null, null, null);
-                  AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '80', 'Quantity', null, null, v_Qty, null, null, null);
-                  AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '90', 'ProcessID', '118', null, null, null, null, null);
-
                   SELECT m_warehouse_rule_id INTO v_warehouse_rule_id
                   FROM c_orderline
                   WHERE c_orderline_id = ol.c_orderline_id;
-                  AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '100', 'M_Warehouse_Rule_ID', v_warehouse_rule_id, null, null, null, null, null);
 
                   SELECT count(*) INTO v_count
                   FROM m_reservation
@@ -515,15 +494,11 @@ BEGIN --BODY
                     FROM m_reservation
                     WHERE res_status != 'CL'
                       AND c_orderline_id = ol.c_orderline_id;
-                    AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '110', 'M_Reservation_ID', v_reservation_id, null, null, null, null, null);
                   END IF;
 
-                  M_GET_STOCK(v_pinstance_ID, 'N');
+                  SELECT * INTO v_pinstance_result, v_pinstance_msg FROM M_GET_STOCK_PARAM(v_pinstance_ID, v_record_id, v_Qty, v_Product_old, null, null, v_Warehouse_old, Cur_Order.AD_Org_ID, v_Attribute_old, v_User_ID,
+                  v_ad_client_id, v_warehouse_rule_id, v_UOM_old, v_Product_UOM_old, null, null, null, 'FF80818132C964E30132C9747257002E', v_reservation_id, 'N');
                   -- Check result
-                  SELECT result, errormsg
-                    INTO v_pinstance_result, v_pinstance_msg
-                  FROM ad_pinstance
-                  WHERE ad_pinstance_id = v_pinstance_id;
                   IF (v_pinstance_result = 0) THEN
                     -- Error on m_get_stock
                     RAISE_APPLICATION_ERROR(-20000, v_pinstance_msg);

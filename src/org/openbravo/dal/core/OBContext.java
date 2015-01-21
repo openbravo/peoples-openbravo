@@ -1145,7 +1145,7 @@ public class OBContext implements OBNotSingleton {
     this.isRTL = isRTL;
   }
 
-  private boolean isTranslationInstalled() {
+  public boolean isTranslationInstalled() {
     return translationInstalled;
   }
 

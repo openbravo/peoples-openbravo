@@ -70,45 +70,16 @@ BEGIN
     v_pinstance_msg AD_PInstance.errormsg%TYPE;
     v_warehouse_rule_id VARCHAR2(32);
   BEGIN
-    INSERT INTO ad_pinstance (
-        ad_pinstance_id, ad_process_id, record_id, isactive, 
-        ad_user_id, ad_client_id, ad_org_id, created, createdby,
-        updated, updatedby
-    ) VALUES (
-        v_pinstance_id, 'FF80818132C964E30132C9747257002E', p_reservation_id, 'Y',
-        p_User_ID, v_client_id, v_Org_ID, now(), p_user_ID,
-        now(), p_user_ID
-    );
-
-    AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '10', 'AD_Client_ID', v_client_id, null, null, null, null, null);
-    AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '20', 'AD_Org_ID', v_org_id, null, null, null, null, null);
-    AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '30', 'M_Product_ID', v_product_id, null, null, null, null, null);
-    AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '40', 'C_Uom_ID', v_uom_id, null, null, null, null, null);
-    --AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '50', 'M_Product_Uom_ID', v_Product_UOM_old, null, null, null, null, null);
-    AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '60', 'M_Warehouse_ID', v_warehouse_id, null, null, null, null, null);
-    AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '70', 'M_Locator_ID', v_locator_id, null, null, null, null, null);
-    AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '80', 'M_AttributesetInstance_ID', v_asi_id, null, null, null, null, null);
-    AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '90', 'Quantity', null, null, v_pendingtoreserveqty, null, null, null);
-    /*
-    * ADD PROPER PROCESS ID!
-    */
-    AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '100', 'ProcessID', '---', null, null, null, null, null);
-
     IF (v_soline_id IS NOT NULL) THEN
       SELECT m_warehouse_rule_id , m_warehouse_id
       INTO v_warehouse_rule_id , v_prioritywarehouse_id
       FROM c_orderline
       WHERE c_orderline_id = v_soline_id;
-      AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '110', 'M_Warehouse_Rule_ID', v_warehouse_rule_id, null, null, null, null, null);
-      AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '120', 'Priority_Warehouse_ID', v_prioritywarehouse_id, null, null, null, null, null);
     END IF;
 
-    M_GET_STOCK(v_pinstance_ID, 'N');
+    SELECT * INTO v_pinstance_result, v_pinstance_msg FROM M_GET_STOCK_PARAM(v_pinstance_id, p_reservation_id, v_pendingtoreserveqty, v_product_id, v_locator_id, v_warehouse_id,    v_prioritywarehouse_id, v_org_id, v_asi_id, p_User_ID,
+    v_client_id, v_warehouse_rule_id, v_uom_id, null, null, null, null, '---', null, 'N');
     -- Check result
-    SELECT result, errormsg
-      INTO v_pinstance_result, v_pinstance_msg
-    FROM ad_pinstance
-    WHERE ad_pinstance_id = v_pinstance_id;
     IF (v_pinstance_result = 0) THEN
       -- Error on m_get_stock
       RAISE_APPLICATION_ERROR(-20000, v_pinstance_msg);

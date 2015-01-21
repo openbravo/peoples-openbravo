@@ -33,7 +33,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="DESCRIPTION" primaryKey="false" required="true" type="NVARCHAR" size="255" autoIncrement="false">
+      <column name="DESCRIPTION" primaryKey="false" required="true" type="NVARCHAR" size="2000" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>

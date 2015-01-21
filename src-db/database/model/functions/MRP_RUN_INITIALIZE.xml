@@ -182,33 +182,10 @@ BEGIN --BODY
       v_pinstance_msg AD_PInstance.errormsg%TYPE;
     BEGIN
       v_ad_pinstance_id := GET_UUID();
-      INSERT INTO ad_pinstance (
-        ad_pinstance_id, ad_process_id, record_id, isactive, 
-        ad_user_id, ad_client_id, ad_org_id, created, createdby,
-        updated, updatedby
-      ) VALUES (
-        v_ad_pinstance_id,'FF80818132C964E30132C9747257002E',p_run,'Y',
-        p_user_id, p_client_id, p_org_id, now(), p_user_id,
-        now(), p_user_id
-      );
 
-      AD_PINSTANCE_PARA_INSERT(v_ad_pinstance_id, '10', 'AD_Client_ID', p_client_id, null, null, null, null, null);
-      AD_PINSTANCE_PARA_INSERT(v_ad_pinstance_id, '20', 'AD_Org_ID', p_org_id, null, null, null, null, null);
-      AD_PINSTANCE_PARA_INSERT(v_ad_pinstance_id, '30', 'M_Product_ID', Cur_Product.M_Product_ID, null, null, null, null, null);
-      AD_PINSTANCE_PARA_INSERT(v_ad_pinstance_id, '60', 'AuxID', p_Run, null, null, null, null, null);
-      AD_PINSTANCE_PARA_INSERT(v_ad_pinstance_id, '70', 'TableId', '800219', null, null, null, null, null);
-      IF (p_production = 'Y') THEN
-        AD_PINSTANCE_PARA_INSERT(v_ad_pinstance_id, '80', 'ProcessID', '800162', null, null, null, null, null); 	 
-      ELSE
-        AD_PINSTANCE_PARA_INSERT(v_ad_pinstance_id, '90', 'ProcessID', '800164', null, null, null, null, null); 	
-      END IF;
-
-      M_GET_STOCK(v_ad_pinstance_id, 'N');
+      SELECT * INTO v_pinstance_result, v_pinstance_msg FROM M_GET_STOCK_PARAM(v_ad_pinstance_id, p_run, null, Cur_Product.M_Product_ID, null, null, null, p_org_id, null, p_user_id,
+      p_client_id, null, null, null, '800219', p_Run, null, case when p_production = 'Y' then '800162' else '800164' end , null, 'N');
       -- Check result
-      SELECT result, errormsg
-        INTO v_pinstance_result, v_pinstance_msg
-      FROM ad_pinstance
-      WHERE ad_pinstance_id = v_ad_pinstance_id;
       IF (v_pinstance_result = 0) THEN
         -- Error on m_get_stock
         RAISE_APPLICATION_ERROR(-20000, v_pinstance_msg);

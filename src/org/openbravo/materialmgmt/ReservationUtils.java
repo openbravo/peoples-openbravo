@@ -50,11 +50,11 @@ public class ReservationUtils {
   public static Reservation createReserveFromSalesOrderLine(OrderLine soLine, boolean doProcess)
       throws OBException {
     if (!soLine.getSalesOrder().isSalesTransaction()) {
-      throw new OBException(OBMessageUtils.messageBD("cannotReservePurchaseOrder"));
+      throw new OBException(OBMessageUtils.messageBD("cannotReservePurchaseOrder", false));
     }
     if (soLine.getOrderedQuantity().subtract(soLine.getDeliveredQuantity())
         .compareTo(BigDecimal.ZERO) == 0) {
-      throw new OBException(OBMessageUtils.messageBD("cannotReserveDeliveredSalesOrderLine"));
+      throw new OBException(OBMessageUtils.messageBD("cannotReserveDeliveredSalesOrderLine", false));
     }
 
     OBDal.getInstance().flush();
@@ -202,10 +202,10 @@ public class ReservationUtils {
 
     OBError result = new OBError();
     if (cs == null || StringUtils.isEmpty(cs.returnValue)) {
-      throw new OBException(OBMessageUtils.messageBD("Error"));
+      throw new OBException(OBMessageUtils.messageBD("Error", false));
     }
     result.setType("Success");
-    result.setMessage(OBMessageUtils.messageBD("Success"));
+    result.setMessage(OBMessageUtils.messageBD("Success", false));
     if (cs.returnValue == "0") {
       result.setType("Error");
     } else if (cs.returnValue == "2") {

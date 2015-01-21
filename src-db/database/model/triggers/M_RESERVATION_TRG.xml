@@ -28,6 +28,9 @@
   v_dummy               VARCHAR2(2000);
   v_productname         m_product.name%TYPE;
   v_isgeneric           CHAR(1);
+  -- Parameter
+  TYPE RECORD IS REF CURSOR;
+  cur_reservationstock 				RECORD;
 BEGIN
   IF (AD_isTriggerEnabled()='N') THEN
     RETURN;
@@ -45,7 +48,7 @@ BEGIN
 
   END IF;
 
-  IF (INSERTING OR UPDATING) THEN
+  IF (INSERTING OR (UPDATING AND (:NEW.quantity <> :old.quantity OR :NEW.reservedqty <> :OLD.reservedqty))) THEN
     IF (:NEW.res_status NOT IN ('DR', 'CL') AND :NEW.c_orderline_id IS NOT NULL) THEN
       UPDATE c_orderline
       SET so_res_status = CASE WHEN :NEW.quantity = :NEW.reservedqty THEN 'CR'
@@ -75,8 +78,51 @@ BEGIN
     END IF;
   END IF;
 
+  IF (UPDATING) THEN
+    IF (:OLD.res_status = 'DR' AND :NEW.res_status <> 'DR') THEN
+      FOR cur_reservationstock IN (
+	      select r.m_product_id, rs.m_locator_id, rs.m_attributesetinstance_id, r.c_uom_id, SUM(rs.quantity - coalesce(rs.releasedqty,0)) as reservedqty, 
+				SUM(CASE WHEN rs.isallocated = 'Y' THEN (rs.quantity - coalesce(rs.releasedqty,0)) ELSE 0 END) as allocatedqty
+				from m_reservation r, m_reservation_stock rs
+				where r.m_reservation_id = :NEW.m_reservation_id
+				and r.m_reservation_id = rs.m_reservation_id
+				group by r.m_product_id, rs.m_locator_id, rs.m_attributesetinstance_id, r.c_uom_id
+      )
+      LOOP
+			  UPDATE m_storage_detail
+			  SET reservedqty = reservedqty + cur_reservationstock.reservedqty,
+			      allocatedqty = allocatedqty + cur_reservationstock.allocatedqty
+			  WHERE m_product_id = cur_reservationstock.m_product_id
+				AND m_product_uom_id IS NULL
+				AND c_uom_id = cur_reservationstock.c_uom_id
+				AND m_locator_id = cur_reservationstock.m_locator_id
+				AND m_attributesetinstance_id = cur_reservationstock.m_attributesetinstance_id;
+      END LOOP;
+    END IF;
+    IF (:OLD.res_status <> 'DR' AND :NEW.res_status = 'DR') THEN
+      FOR cur_reservationstock IN (
+	      select r.m_product_id, rs.m_locator_id, rs.m_attributesetinstance_id, r.c_uom_id, SUM(rs.quantity - coalesce(rs.releasedqty,0)) as reservedqty, 
+				SUM(CASE WHEN rs.isallocated = 'Y' THEN (rs.quantity - coalesce(rs.releasedqty,0)) ELSE 0 END) as allocatedqty
+				from m_reservation r, m_reservation_stock rs
+				where r.m_reservation_id = :NEW.m_reservation_id
+				and r.m_reservation_id = rs.m_reservation_id
+				group by r.m_product_id, rs.m_locator_id, rs.m_attributesetinstance_id, r.c_uom_id
+      )
+      LOOP
+			  UPDATE m_storage_detail
+			  SET reservedqty = reservedqty - cur_reservationstock.reservedqty,
+			      allocatedqty = allocatedqty - cur_reservationstock.allocatedqty
+			  WHERE m_product_id = cur_reservationstock.m_product_id
+				AND m_product_uom_id IS NULL
+				AND c_uom_id = cur_reservationstock.c_uom_id
+				AND m_locator_id = cur_reservationstock.m_locator_id
+				AND m_attributesetinstance_id = cur_reservationstock.m_attributesetinstance_id;
+      END LOOP;
+    END IF;
+  END IF;
+
   IF (DELETING) THEN
-    IF (:OLD.res_status != 'DR') THEN
+    IF (:OLD.res_status <> 'DR') THEN
       RAISE_APPLICATION_ERROR(-20000, '@DocumentProcessed@');
     ELSIF (:OLD.releasedqty <> 0) THEN
       RAISE_APPLICATION_ERROR(-20000, '@CannotDeleteReleasedReservation@');
