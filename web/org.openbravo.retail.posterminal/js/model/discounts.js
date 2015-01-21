@@ -28,7 +28,8 @@
       this.applyPromotionsLat(receipt, line);
     },
     applyPromotionsLat: function (receipt, line) {
-      var me = this;
+      var me = this,
+          grossCalculated = false;
       if (receipt.get('skipApplyPromotions') || this.preventApplyPromotions) {
         return;
       }
@@ -80,6 +81,7 @@
             receipt.fillPromotionsWith(auxReceipt, isFirstExecution);
             if (auxReceipt.hasPromotions()) {
               auxReceipt.removeQtyOffer();
+              auxReceipt.removeLinesWithoutPromotions();
               if (auxReceipt.get('lines').length > 0) {
                 oldLines = new Backbone.Collection();
                 auxReceipt.get('lines').forEach(function (l) {
@@ -88,13 +90,25 @@
                 me.applyPromotionsImp(auxReceipt, undefined, true);
               } else {
                 receipt.trigger('applyPromotionsFinished');
+                if (!grossCalculated) {
+                  receipt.calculateGross();
+                  grossCalculated = true;
+                }
               }
             } else {
               receipt.trigger('applyPromotionsFinished');
+              if (!grossCalculated) {
+                receipt.calculateGross();
+                grossCalculated = true;
+              }
             }
 
           } else {
             receipt.trigger('applyPromotionsFinished');
+            if (!grossCalculated) {
+              receipt.calculateGross();
+              grossCalculated = true;
+            }
           }
         });
 
