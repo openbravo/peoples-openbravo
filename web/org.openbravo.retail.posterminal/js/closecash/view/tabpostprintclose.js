@@ -144,6 +144,10 @@ enyo.kind({
     }
   },
   create: function () {
+    if (this.model && this.model.get('searchKey')) {
+      // automated test
+      this.name = this.model.get('searchKey');
+    }
     this.inherited(arguments);
     if (this.model) {
       this.label = this.model.get(this.lblProperty);
