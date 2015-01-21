@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global Backbone, _ */
+/*global OB */
 
 (function () {
 
@@ -45,8 +45,8 @@
     column: 'totalRetailTransactions',
     type: 'NUMERIC'
   }, {
-    name: 'createdDate',
-    column: 'createdDate',
+    name: 'creationDate',
+    column: 'creationDate',
     type: 'TEXT'
   }, {
     name: 'userId',

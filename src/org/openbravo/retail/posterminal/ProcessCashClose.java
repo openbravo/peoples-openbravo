@@ -183,8 +183,8 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
         cashUp.setBeingprocessed(jsonCashup.getString("isbeingprocessed").equalsIgnoreCase("Y"));
         cashUp.setNewOBObject(true);
         OBDal.getInstance().save(cashUp);
-        if (jsonCashup.has("createdDate")) {
-          String cashUpCreationDate = jsonCashup.getString("createdDate");
+        if (jsonCashup.has("creationDate")) {
+          String cashUpCreationDate = jsonCashup.getString("creationDate");
           cashUp.set("creationDate", (Date) JsonToDataConverter.convertJsonToPropertyValue(
               PropertyByType.DATETIME,
               (cashUpCreationDate).subSequence(0, (cashUpCreationDate).lastIndexOf("."))));

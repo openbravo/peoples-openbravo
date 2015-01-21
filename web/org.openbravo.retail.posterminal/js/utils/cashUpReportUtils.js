@@ -232,7 +232,7 @@
       netReturns: OB.DEC.Zero,
       grossReturns: OB.DEC.Zero,
       totalRetailTransactions: OB.DEC.Zero,
-      createdDate: (new Date()).toISOString(),
+      creationDate: (new Date()).toISOString(),
       userId: OB.MobileApp.model.get('context').user.id,
       objToSend: null,
       cashTaxInfo: [],
@@ -246,7 +246,7 @@
       //1. Search in local
       var criteria = {
         'isprocessed': 'Y',
-        '_orderByClause': 'createdDate desc'
+        '_orderByClause': 'creationDate desc'
       };
       OB.Dal.find(OB.Model.CashUp, criteria, function (lastCashUp) {
         var lastCashUpPayments;
@@ -345,7 +345,7 @@
     //3.1 Using processed cashup info in local or using processed cashup info in Back office
     var criteria = {
       'isprocessed': 'N',
-      '_orderByClause': 'createdDate desc'
+      '_orderByClause': 'creationDate desc'
     };
     OB.Dal.find(OB.Model.CashUp, criteria, function (cashUp) { //OB.Dal.find success
       if (cashUp.length === 0) {
@@ -591,7 +591,7 @@
       cashTaxInfo: [],
       cashCloseInfo: [],
       cashUpDate: "",
-      createdDate: (new Date(cashUp.at(0).get('createdDate'))).toISOString()
+      creationDate: (new Date(cashUp.at(0).get('creationDate'))).toISOString()
     });
 
     //process the payment method cash ups
