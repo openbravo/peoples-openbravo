@@ -178,8 +178,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
           }
 
           var fromCurrencyId = auxPay.paymentMethod.currency;
-
           cashUpReport.get('deposits').push(new Backbone.Model({
+            searchKey: p.get('searchKey'),
             origAmount: OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, OB.DEC.add(p.get('totalDeposits'), p.get('totalSales'))),
             amount: OB.DEC.add(0, OB.DEC.add(p.get('totalDeposits'), p.get('totalSales'))),
             description: p.get('name'),
@@ -188,6 +188,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
           }));
 
           cashUpReport.get('drops').push(new Backbone.Model({
+            searchKey: p.get('searchKey'),
             origAmount: OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, OB.DEC.add(p.get('totalDrops'), p.get('totalReturns'))),
             amount: OB.DEC.add(0, OB.DEC.add(p.get('totalDrops'), p.get('totalReturns'))),
             description: p.get('name'),
@@ -195,6 +196,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
             rate: p.get('rate')
           }));
           startings.push(new Backbone.Model({
+            searchKey: p.get('searchKey'),
             origAmount: OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, p.get('startingCash')),
             amount: OB.DEC.add(0, p.get('startingCash')),
             description: 'Starting ' + p.get('name'),
@@ -400,6 +402,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
         model = sortedPays[i];
         if (!model.get(enumConcepts[counter])) {
           countCashSummary[enumSummarys[counter]].push(new Backbone.Model({
+            searchKey: model.get('searchKey'),
             name: model.get('name'),
             value: 0,
             second: 0,
@@ -433,6 +436,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
             second = model.get(enumSecondConcepts[counter]);
           }
           countCashSummary[enumSummarys[counter]].push(new Backbone.Model({
+            searchKey: model.get('searchKey'),
             name: model.get('name'),
             value: value,
             second: second,
