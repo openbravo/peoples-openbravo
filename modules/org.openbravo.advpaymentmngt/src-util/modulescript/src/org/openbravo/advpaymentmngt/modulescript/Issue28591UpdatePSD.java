@@ -32,17 +32,6 @@ public class Issue28591UpdatePSD extends ModuleScript {
         for (Issue28591UpdatePSDData upsd : data) {
           Issue28591UpdatePSDData.updatePSDAmount(cp, upsd.outstandingamt, upsd.finPaymentScheduledetailId);
         }
-        Issue28591UpdatePSDData[] wrongdata = Issue28591UpdatePSDData.selectWrongPSD(cp);
-        for (Issue28591UpdatePSDData wpsd : wrongdata) {
-          Issue28591UpdatePSDData.updateWrongInvoiceAmt(cp, wpsd.wrongamt, wpsd.cInvoiceId);
-          Issue28591UpdatePSDData.updateWrongPSAmt(cp, wpsd.wrongamt, wpsd.finPaymentScheduleId);
-          Issue28591UpdatePSDData.updateWrongPSDAmt(cp, wpsd.wrongamt, wpsd.finPaymentScheduledetailId);
-          String finPaymentDetailId = Issue28591UpdatePSDData.selectFinPaymentDetailId(cp);
-          Issue28591UpdatePSDData.createCredit(cp, finPaymentDetailId, wpsd.finPaymentId, wpsd.wrongamt);
-          Issue28591UpdatePSDData.createCreditScheduledetail(cp, finPaymentDetailId, wpsd.wrongamt);
-          Issue28591UpdatePSDData.updateCreditGenerated(cp, wpsd.wrongamt, wpsd.finPaymentId);
-          Issue28591UpdatePSDData.updateWrongPDAmt(cp, wpsd.wrongamt, wpsd.finPaymentDetailId);          
-        }
         Issue28591UpdatePSDData.createPreference(cp);
      }
     } catch (Exception e) {
