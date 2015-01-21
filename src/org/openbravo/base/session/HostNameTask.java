@@ -24,8 +24,6 @@ import java.net.UnknownHostException;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * <p>
@@ -44,14 +42,16 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class HostNameTask extends Task {
-  private static final Logger log = LoggerFactory.getLogger(HostNameTask.class);
 
   @Override
   public void execute() throws BuildException {
     try {
-      log.info("Machine name: {}", InetAddress.getLocalHost().getHostName());
+      // using System.out instead of log4j to be able to run this tasks without
+      // having compiled defined appenders
+      System.out.println("Machine name: " + InetAddress.getLocalHost().getHostName());
     } catch (UnknownHostException e) {
-      log.error("Could not determine machine name", e);
+      System.err.println("Could not determine machine name");
+      e.printStackTrace();
     }
   }
 }
