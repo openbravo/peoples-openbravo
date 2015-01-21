@@ -331,6 +331,9 @@ public class ConfigParameters {
    * <code>InetAddress.getLocalHost().getHostName()</code> if <code>machine.name</code> property is
    * not present.
    * </p>
+   * <p>
+   * Actual name for <code>hostName</code> can be determined by <code>ant host.name</code>
+   * </p>
    * 
    * @param obProperties
    * @param path
