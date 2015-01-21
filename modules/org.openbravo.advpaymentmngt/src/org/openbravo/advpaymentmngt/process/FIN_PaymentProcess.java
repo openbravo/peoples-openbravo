@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2015 Openbravo SLU
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -546,7 +546,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                 if (openPSDs.size() > 0) {
                   FIN_PaymentScheduleDetail openPSD = openPSDs.get(0);
                   BigDecimal openAmount = openPSD.getAmount().add(
-                      psd.getAmount().add(psd.getWriteoffAmount()));
+                      payment.getAmount().add(payment.getWriteoffAmount()));
                   if (openAmount.compareTo(BigDecimal.ZERO) == 0) {
                     OBDal.getInstance().remove(openPSD);
                   } else {
@@ -559,7 +559,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                   openPSD.setPaymentDetails(null);
                   // Amounts
                   openPSD.setWriteoffAmount(BigDecimal.ZERO);
-                  openPSD.setAmount(psd.getAmount().add(psd.getWriteoffAmount()));
+                  openPSD.setAmount(payment.getAmount().add(payment.getWriteoffAmount()));
 
                   openPSD.setCanceled(false);
                   OBDal.getInstance().save(openPSD);
