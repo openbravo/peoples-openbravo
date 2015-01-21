@@ -11,20 +11,20 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.client.application.report;
 
-import java.io.File;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JasperExportManager;
@@ -38,8 +38,6 @@ import net.sf.jasperreports.engine.util.JRSwapFile;
 
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
-import org.openbravo.client.application.Process;
-import org.openbravo.client.application.ReportDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.client.kernel.reference.UIDefinitionController.FormatDefinition;
 import org.openbravo.dal.core.DalContextListener;
@@ -56,17 +54,29 @@ import org.slf4j.LoggerFactory;
 public class ReportingUtils {
   public static final String JASPER_PARAM_OBCONTEXT = "jasper_obContext";
   public static final String JASPER_PARAM_HBSESSION = "jasper_hbSession";
-  public static final String JASPER_PARAM_PROCESS = "jasper_process";
   private static final Logger log = LoggerFactory.getLogger(ReportingUtils.class);
 
-  public static String exportJR(ReportDefinition report, Map<String, Object> parameters,
-      String strFileName, String jasperFilePath, ExportType expType) {
-    Process process = report.getProcessDefintion();
+  /**
+   * Exports the report to a file in a temporary folder.
+   * 
+   * @param jasperFilePath
+   *          The path to the JR template of the report.
+   * @param expType
+   *          The desired output type of the report.
+   * @param parameters
+   *          The parameters to be sent to Jasper Report.
+   * @param strFileName
+   *          The name to be used on the generated file.
+   * @return a String with the complete path of the generated file.
+   * @throws OBException
+   *           In case there is any error generating the file an exception is thrown with the error
+   *           message.
+   */
+  public static String exportJR(String jasperFilePath, ExportType expType,
+      Map<String, Object> parameters, String strFileName) throws OBException {
     try {
       parameters.put(JASPER_PARAM_HBSESSION, OBDal.getInstance().getSession());
       parameters.put(JASPER_PARAM_OBCONTEXT, OBContext.getOBContext());
-      parameters.put(JASPER_PARAM_PROCESS, process);
-
       parameters.putAll(expType.getExportParameters());
 
       {
@@ -101,6 +111,19 @@ public class ReportingUtils {
       jrFormatFactory.setDatePattern((OBPropertiesProvider.getInstance().getOpenbravoProperties()
           .getProperty("dateFormat.java")));
       parameters.put(JRParameter.REPORT_FORMAT_FACTORY, jrFormatFactory);
+
+      String strClientId = OBContext.getOBContext().getCurrentClient().getId();
+      parameters.put("Current_Client_ID", strClientId);
+      String strOrgs = "";
+      boolean isNotFirst = false;
+      for (String strOrgId : OBContext.getOBContext().getReadableOrganizations()) {
+        if (isNotFirst) {
+          strOrgs += ",";
+        }
+        strOrgs += "'" + strOrgId + "'";
+        isNotFirst = true;
+      }
+      parameters.put("Readable_Organizations", strOrgs);
 
       JRSwapFileVirtualizer virtualizer = null;
       // if no custom virtualizer is requested use a default one
@@ -160,19 +183,35 @@ public class ReportingUtils {
       }
 
       return target;
-    } catch (Exception e) {
-      log.error("Error generating Jasper Report", e);
-      throw new OBException("Error exporting for process: " + process.getName() + " to pdf", e);
+    } catch (JRException e) {
+      log.error("Error generating Jasper Report: " + jasperFilePath, e);
+      throw new OBException(e.getMessage(), e);
     }
   }
 
+  /**
+   * Changes the mask to use "." as Decimal Symbol and "," as grouping symbol.
+   * 
+   * @param mask
+   *          the current mask
+   * @param decimalSymbol
+   *          the current decimal symbol
+   * @param groupingSymbol
+   *          the current grouping symbol
+   * @return the mask with the updated decimal and grouping symbols.
+   */
   private static String correctMaskForGrouping(String mask, String decimalSymbol,
       String groupingSymbol) {
-    String localMask = mask.replace(decimalSymbol, "_");
+    final String strTmpDecSymbol = "xxTmpDecSymbolxx";
+    String localMask = mask.replace(decimalSymbol, strTmpDecSymbol);
     localMask = localMask.replace(groupingSymbol, ",");
-    return localMask.replaceAll("_", ".");
+    return localMask.replace(strTmpDecSymbol, ".");
   }
 
+  /**
+   * enum with the supported Export Outputs. Includes custom properties to be used when the report
+   * is generated.
+   */
   public enum ExportType {
     PDF("pdf", "103", new HashMap<String, Object>() {
       {
@@ -206,7 +245,10 @@ public class ReportingUtils {
       return params;
     }
 
-    public static ExportType getExportType(String action) {
+    /**
+     * Returns the corresponding ExportType item based on the action.
+     */
+    public static ExportType getExportType(String action) throws OBException {
       if ("PDF".equals(action)) {
         return ExportType.PDF;
       } else if ("XLS".equals(action)) {
@@ -218,16 +260,7 @@ public class ReportingUtils {
   }
 
   private static String getTempFolder() {
-    String tmpFolder = OBPropertiesProvider.getInstance().getOpenbravoProperties()
-        .getProperty("source.path").trim();
-    if (!tmpFolder.endsWith("/")) {
-      tmpFolder += "/";
-    }
-    tmpFolder += "tmp/";
-    final File dir = new File(tmpFolder);
-    if (!dir.exists()) {
-      dir.mkdirs();
-    }
+    final String tmpFolder = System.getProperty("java.io.tmpdir");
 
     return tmpFolder;
   }

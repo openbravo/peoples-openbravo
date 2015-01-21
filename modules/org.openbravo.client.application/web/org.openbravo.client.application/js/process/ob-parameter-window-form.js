@@ -32,17 +32,14 @@ isc.OBParameterWindowForm.addProperties({
   showErrorIcons: false,
   colWidths: ['*', '*', '*', '*'],
   itemChanged: function (item, newValue) {
-    var allRequiredSet = this.paramWindow.allRequiredParametersSet();
     this.paramWindow.handleReadOnlyLogic();
-    this.paramWindow.okButton.setEnabled(allRequiredSet);
-    this.paramWindow.pdfButton.setEnabled(allRequiredSet);
-    this.paramWindow.xlsButton.setEnabled(allRequiredSet);
+    this.paramWindow.handleButtonsStatus();
   },
 
   // this function is invoked on the blur action of the formitems
   // this is the proper place to execute the client-side callouts
   handleItemChange: function (item) {
-    var affectedParams, i, field, me = this, allRequiredSet;
+    var affectedParams, i, field, me = this;
     // Execute onChangeFunctions if they exist
     if (this && OB.OnChangeRegistry.hasOnChange(this.paramWindow.viewId, item)) {
       OB.OnChangeRegistry.call(this.paramWindow.viewId, item, this.paramWindow, this, this.paramWindow.viewGrid);
@@ -62,15 +59,12 @@ isc.OBParameterWindowForm.addProperties({
     // evaluate explicitly the display logic for the grid fields
     this.paramWindow.handleDisplayLogicForGridColumns();
     this.markForRedraw();
-    // this timeout is needed to ensure that the availability of the ok button is updated after the redrawal of the form because:
-    // - the availability of the ok button must be updated after the form redrawal
+    // this timeout is needed to ensure that the availability of the process definition buttons is updated after the redrawal of the form because:
+    // - the availability of the process definition buttons must be updated after the form redrawal
     // - at this point the form cannot be directly redrawn because otherwise the focus does not behave properly, that's why markForRedraw is used
     // - there is no way to assign a callback to the markForRedraw function
     setTimeout(function () {
-      allRequiredSet = this.paramWindow.allRequiredParametersSet();
-      me.paramWindow.okButton.setEnabled(allRequiredSet);
-      me.paramWindow.pdfButton.setEnabled(allRequiredSet);
-      me.paramWindow.xlsButton.setEnabled(allRequiredSet);
+      me.paramWindow.handleButtonsStatus();
     }, 200);
     item._hasChanged = false;
   },

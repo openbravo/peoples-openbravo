@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.mail.internet.MimeUtility;
 import javax.servlet.http.HttpServletRequest;
@@ -69,7 +70,12 @@ import org.slf4j.LoggerFactory;
 
 public class BaseReportActionHandler extends BaseProcessActionHandler {
   private static final Logger log = LoggerFactory.getLogger(BaseReportActionHandler.class);
+  private static final String JASPER_PARAM_PROCESS = "jasper_process";
 
+  /**
+   * execute() method overridden to add the logic to download the report file stored in the temporal
+   * folder.
+   */
   @Override
   public void execute() {
     final HttpServletRequest request = RequestContext.get().getRequest();
@@ -115,7 +121,7 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
 
       return result;
     } catch (OBException e) {
-      log.error("Error in process", e);
+      log.error("Error generating report id: {}", parameters.get("reportId"), e);
       JSONObject msg = new JSONObject();
       try {
         msg.put("severity", "error");
@@ -125,7 +131,7 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
       }
       return result;
     } catch (Exception e) {
-      log.error("Error in process", e);
+      log.error("Error generating report id: {}", parameters.get("reportId"), e);
       JSONObject msg = new JSONObject();
       try {
         msg.put("severity", "error");
@@ -137,6 +143,16 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
     }
   }
 
+  /**
+   * Downloads the file with the report result. The file is stored in a temporal folder with a
+   * generated name. It is renamed and download as an attachment of the response. Once it is
+   * finished the file is removed from the server.
+   * 
+   * @param request
+   * @param parameters
+   *          Map with the needed parameters to download the report.
+   * @throws IOException
+   */
   private void doDownload(HttpServletRequest request, Map<String, Object> parameters)
       throws IOException {
     final String strFileName = (String) parameters.get("fileName");
@@ -150,13 +166,14 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
 
     FileUtility fileUtil = new FileUtility();
     final File file = new File(strFilePath);
-    fileUtil = new FileUtility(file.getParent(), strFileName, false, true);
+    fileUtil = new FileUtility(file.getParent(), file.getName(), false, true);
 
     final HttpServletResponse response = RequestContext.get().getResponse();
 
     response.setHeader("Content-Type", expType.getContentType());
     response.setContentType(expType.getContentType());
     response.setCharacterEncoding("UTF-8");
+    // TODO: Compatibility code with IE8. To be reviewed when its support is stopped.
     String userAgent = request.getHeader("user-agent");
     if (userAgent.contains("MSIE")) {
       response.setHeader("Content-Disposition",
@@ -169,20 +186,36 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
     fileUtil.dumpFile(response.getOutputStream());
     response.getOutputStream().flush();
     response.getOutputStream().close();
-    file.delete();
-
+    // file.delete();
   }
 
+  /**
+   * Manages the report generation. It sets the proper response actions to download the generated
+   * file.
+   * 
+   * @param result
+   *          JSONObject with the response that is returned to the client.
+   * @param parameters
+   *          Map including the parameters of the call.
+   * @param jsonContent
+   *          JSONObject with the values set in the filter parameters.
+   * @param action
+   *          String with the output type of the report.
+   * @throws JSONException
+   * @throws OBException
+   *           Exception thrown when a validation fails.
+   */
   private void doGenerateReport(JSONObject result, Map<String, Object> parameters,
-      JSONObject jsonContent, String action) throws JSONException {
+      JSONObject jsonContent, String action) throws JSONException, OBException {
     JSONObject params = jsonContent.getJSONObject("_params");
-
-    doValidations(parameters, jsonContent);
-    final ExportType expType = ExportType.getExportType(action);
-
     final ReportDefinition report = OBDal.getInstance().get(ReportDefinition.class,
         parameters.get("reportId"));
+
+    doValidations(report, parameters, jsonContent);
+    final ExportType expType = ExportType.getExportType(action);
+
     String strFileName = getPDFFileName(report, parameters, expType);
+    String strTmpFileName = UUID.randomUUID().toString() + "." + expType.getExtension();
     String strJRPath = "";
     switch (expType) {
     case XLS:
@@ -201,8 +234,11 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
     HashMap<String, Object> jrParams = new HashMap<String, Object>();
     loadFilterParams(jrParams, report, params);
     loadReportParams(jrParams, report, jrTemplatePath, jsonContent);
-    String strFilePath = doSynchronizedJRExport(report, jrParams, strFileName, jrTemplatePath,
-        expType);
+    log.debug("Report: {}. Start export JR process.", report.getId());
+    long t1 = System.currentTimeMillis();
+    String strFilePath = doJRExport(jrTemplatePath, expType, jrParams, strTmpFileName);
+    log.debug("Report: {}. Finish export JR process. Elapsed time: {}", report.getId(),
+        System.currentTimeMillis() - t1);
 
     final JSONObject recordInfo = new JSONObject();
     params.put("processId", parameters.get("processId"));
@@ -220,10 +256,32 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
     result.put("responseActions", actions);
   }
 
-  protected void doValidations(Map<String, Object> parameters, JSONObject jsonContent) {
-
+  /**
+   * Override this method to add validations to the report before it is generated.
+   * 
+   * @param report
+   *          the Report Definition
+   * @param parameters
+   *          Map including the parameters of the call.
+   * @param jsonContent
+   *          JSONObject with the values set in the filter parameters.
+   */
+  protected void doValidations(ReportDefinition report, Map<String, Object> parameters,
+      JSONObject jsonContent) throws OBException {
   }
 
+  /**
+   * Method that loads the values used in the filter to include them in the parameters that are sent
+   * to JasperReports
+   * 
+   * @param jrParams
+   *          the Map instance with all the parameters to be sent to Jasper Reports.
+   * @param report
+   *          the Report Definition.
+   * @param params
+   *          JSONObject with the values set in the filter parameters.
+   * @throws JSONException
+   */
   private void loadFilterParams(HashMap<String, Object> jrParams, ReportDefinition report,
       JSONObject params) throws JSONException {
     for (Parameter param : report.getProcessDefintion().getOBUIAPPParameterList()) {
@@ -317,6 +375,18 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
     }
   }
 
+  /**
+   * Method to load the generic parameters that are sent to Jasper Reports.
+   * 
+   * @param jrParams
+   *          the Map instance with all the parameters to be sent to Jasper Reports.
+   * @param report
+   *          the Report Definition.
+   * @param jrTemplatePath
+   *          String with the path where the jr template is stored in the server.
+   * @param jsonContent
+   *          JSONObject with the values set in the filter parameters.
+   */
   private void loadReportParams(HashMap<String, Object> jrParams, ReportDefinition report,
       String jrTemplatePath, JSONObject jsonContent) {
 
@@ -328,6 +398,7 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
       fileDir = "";
     }
     jrParams.put("SUBREPORT_DIR", fileDir);
+    jrParams.put(JASPER_PARAM_PROCESS, report.getProcessDefintion());
 
     addAdditionalParameters(report, jsonContent, jrParams);
   }
@@ -365,8 +436,13 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
       Map<String, Object> parameters) {
   }
 
-  private static synchronized String doSynchronizedJRExport(ReportDefinition report,
-      Map<String, Object> parameters, String strFileName, String jrTemplatePath, ExportType expType) {
-    return ReportingUtils.exportJR(report, parameters, strFileName, jrTemplatePath, expType);
+  private static String doJRExport(String jrTemplatePath, ExportType expType,
+      Map<String, Object> parameters, String strFileName) {
+    ReportSemaphoreHandling.acquire();
+    try {
+      return ReportingUtils.exportJR(jrTemplatePath, expType, parameters, strFileName);
+    } finally {
+      ReportSemaphoreHandling.release();
+    }
   }
 }
