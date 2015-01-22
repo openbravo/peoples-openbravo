@@ -1387,14 +1387,22 @@ public class OrderLoader extends POSDataSynchronizationProcess {
           Class<PaymentProcessor> paymentclazz = (Class<PaymentProcessor>) Class
               .forName(paymentTypeName);
           PaymentProcessor paymentinst = paymentclazz.newInstance();
-          paymentinst.process(payment, order, invoice, i == (payments.length() - 1) ? writeoffAmt
-              : BigDecimal.ZERO);
+          paymentinst.process(payment, order, invoice, writeoffAmt);
         } else {
           if (paymentType.getFinancialAccount() == null) {
             continue;
           }
+          BigDecimal amount = BigDecimal.valueOf(payment.getDouble("origAmount")).setScale(
+              stdPrecision, RoundingMode.HALF_UP);
+          BigDecimal tempWriteoffAmt = new BigDecimal(writeoffAmt.toString());
+          if (writeoffAmt.compareTo(amount) == 1) {
+            // In case writeoff is higher than amount, we put 1 as payment and rest as overpayment
+            // because the payment cannot be 0 (It wouldn't be created)
+            tempWriteoffAmt = amount.subtract(BigDecimal.ONE);
+          }
           processPayments(paymentSchedule, paymentScheduleInvoice, order, invoice, paymentType,
-              payment, i == (payments.length() - 1) ? writeoffAmt : BigDecimal.ZERO, jsonorder);
+              payment, tempWriteoffAmt, jsonorder);
+          writeoffAmt = writeoffAmt.subtract(tempWriteoffAmt);
         }
       }
       if (invoice != null && fullpayLayaway) {
