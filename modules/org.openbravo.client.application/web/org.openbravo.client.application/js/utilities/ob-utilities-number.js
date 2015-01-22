@@ -456,12 +456,17 @@ OB.Utilities.Number.ScientificToDecimal = function (number, decSeparator) {
       numberOfZeros = numberOfZeros - split[1].length;
     }
 
-    //Create the string of zeros
-    for (i = 0; i < numberOfZeros; i++) {
-      zeros = zeros + '0';
+    if (numberOfZeros >= 0) {
+      //Need to concatenate zeros to the coefficient
+      for (i = 0; i < numberOfZeros; i++) {
+        zeros = zeros + '0';
+      }
+      //Create the final number
+      number = coeficient + zeros;
+    } else {
+      // final decimal number is not integer: add dot decimal separator in the correct position
+      number = coeficient.substr(0, coeficient.length + numberOfZeros) + '.' + coeficient.substr(coeficient.length + numberOfZeros);
     }
-    //Create the final number
-    number = coeficient + zeros;
   }
 
   return number;
