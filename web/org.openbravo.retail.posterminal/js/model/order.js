@@ -440,10 +440,13 @@
     },
 
     calculateGross: function () {
+      OB.POS.EventBus.startProcess();
       var me = this;
-      if (this.get('priceIncludesTax')) {
-        this.calculateTaxes(function () {
-          var gross = me.get('lines').reduce(function (memo, e) {
+
+      this.calculateTaxes(function () {
+        var gross;
+        if (me.get('priceIncludesTax')) {
+          gross = me.get('lines').reduce(function (memo, e) {
             var grossLine = e.getGross();
             if (e.get('promotions')) {
               grossLine = e.get('promotions').reduce(function (memo, e) {
@@ -453,14 +456,9 @@
             return OB.DEC.add(memo, grossLine);
           }, OB.DEC.Zero);
           me.set('gross', gross);
-          me.adjustPayment();
-          me.trigger('calculategross');
-          me.trigger('saveCurrent');
-        });
-      } else {
-        this.calculateTaxes(function () {
+        } else {
           //If the price doesn't include tax, the discounted gross has already been calculated
-          var gross = me.get('lines').reduce(function (memo, e) {
+          gross = me.get('lines').reduce(function (memo, e) {
             if (_.isUndefined(e.get('discountedGross'))) {
               return memo;
             }
@@ -481,11 +479,13 @@
             }
           }, OB.DEC.Zero);
           me.set('net', net);
-          me.adjustPayment();
-          me.trigger('calculategross');
-          me.trigger('saveCurrent');
-        });
-      }
+        }
+        me.adjustPayment();
+        me.trigger('calculategross');
+        me.trigger('saveCurrent');
+        OB.POS.EventBus.endProcess();
+      });
+
       //total qty
       var qty = this.get('lines').reduce(function (memo, e) {
         var qtyLine = e.getQty();

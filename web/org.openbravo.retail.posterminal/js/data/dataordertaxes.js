@@ -678,7 +678,10 @@
       } else if (window.TAXESLOGIC === 'OLDLOGIC') {
         OB.DATA.legacyCalculateTaxes.call(me, callback);
       } else { // 'NEWLOGIC' (default)
-        calcTaxes(me).then(callback);
+        OB.POS.EventBus.startProcess();
+        calcTaxes(me).then(callback).then(function () {
+          OB.POS.EventBus.endProcess();
+        });
       }
     };
   };
