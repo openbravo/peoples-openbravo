@@ -130,7 +130,7 @@
             if (order.getGross() > 0 && (orderType === 0 || orderType === 2)) {
               auxPay.set('totalSales', OB.DEC.add(auxPay.get('totalSales'), payment.get('amount')));
             } else if (order.getGross() < 0 || orderType === 1) {
-              auxPay.set('totalReturns', OB.DEC.add(auxPay.get('totalReturns'), -payment.get('amount')));
+              auxPay.set('totalReturns', OB.DEC.sub(auxPay.get('totalReturns'), payment.get('amount')));
             } else if (orderType === 3) {
               auxPay.set('totalSales', OB.DEC.sub(auxPay.get('totalSales'), payment.get('amount')));
             }
