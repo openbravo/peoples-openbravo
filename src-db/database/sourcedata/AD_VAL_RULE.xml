@@ -130,7 +130,7 @@
 <!--BFBE4A2830BB4B53A9006A76652D40E0-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--BFBE4A2830BB4B53A9006A76652D40E0-->  <NAME><![CDATA[Web POS Role]]></NAME>
 <!--BFBE4A2830BB4B53A9006A76652D40E0-->  <TYPE><![CDATA[S]]></TYPE>
-<!--BFBE4A2830BB4B53A9006A76652D40E0-->  <CODE><![CDATA[exists (select 1 from ad_form_access a where a.ad_role_id = ad_role.ad_role_id and a.ad_form_id = 'B7B7675269CD4D44B628A2C6CF01244F')]]></CODE>
+<!--BFBE4A2830BB4B53A9006A76652D40E0-->  <CODE><![CDATA[exists (select 1 from ad_form_access a, ad_user_roles u where a.ad_role_id = ad_role.ad_role_id and u.ad_role_id = ad_role.ad_role_id and u.ad_user_id = @AD_User_ID@ and a.ad_form_id = 'B7B7675269CD4D44B628A2C6CF01244F')]]></CODE>
 <!--BFBE4A2830BB4B53A9006A76652D40E0-->  <AD_MODULE_ID><![CDATA[FF808181326CC34901326D53DBCF0018]]></AD_MODULE_ID>
 <!--BFBE4A2830BB4B53A9006A76652D40E0--></AD_VAL_RULE>
 
