@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -67,6 +67,8 @@
     <FIELD id="paramLinkDateReceipt" attribute="onclick" replace="yy">cBpartnerId</FIELD>
     <FIELD id="idfieldCOrderId" attribute="onclick" replace="xx">cOrderId</FIELD>
     <FIELD id="fieldDocumentno" replaceCharacters="html">documentno</FIELD>
+    <FIELD id="fieldOrgId" attribute="value">adOrgId</FIELD>
+    <FIELD id="fieldOrgId" attribute="name" replace="xx">id</FIELD>
     <FIELD id="fieldDateordered">dateordered</FIELD>
     <FIELD id="fieldPartnerName" replaceCharacters="html">partnerName</FIELD>
     <FIELD id="fieldProductName" replaceCharacters="html">productName</FIELD>
@@ -81,6 +83,7 @@
     <FIELD id="fieldLocatorId" attribute="onclick" replace="yy">id</FIELD>
     <FIELD id="fieldLocatorId" attribute="onclick" replace="zz">id</FIELD>
     <FIELD id="fieldLocatorId" attribute="onclick" replace="ss">id</FIELD>
+    <FIELD id="fieldLocatorId" attribute="onclick" replace="xx">id</FIELD>
     <FUNCTION id="fieldCount" name="COUNT">documentno</FUNCTION>
     <SECTION id="sectionPartner" field="partnerName"/>
     <SECTION id="sectionDocumentno" field="documentno"/>
