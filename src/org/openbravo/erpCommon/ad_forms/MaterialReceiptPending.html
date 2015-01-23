@@ -13,7 +13,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -527,10 +527,11 @@ function onloadFunctions() {
                       <tr>
                         <td class="TextBox_ContentCell">
                           <input type="hidden" name="inpmLocatorIdss"  id="M_Locator_ID" value=""></input> 
+                          <input type="hidden" name="inpadOrgIdxx" value="" id="fieldOrgId"></input>
                           <input class="dojoValidateValid TextBox_btn_TwoCells_width readonly required" required="true" type="text"  name="inpmLocatorId_Dxx" maxlength="20" value="" id="M_Locator_ID_D"></input>
                         </td>
                         <td class="FieldButton_ContentCell">
-                          <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Locator'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="openSearch(null, null, '../info/Locator.html', null, false, 'frmMain', 'inpmLocatorIdss', 'inpmLocatorId_Dyy', document.frmMain.inpmLocatorId_Dzz.value, 'WindowID', '168');return false;" id="fieldLocatorId">
+                          <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Locator'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="openSearch(null, null, '../info/Locator.html', null, false, 'frmMain', 'inpmLocatorIdss', 'inpmLocatorId_Dyy', document.frmMain.inpmLocatorId_Dzz.value, 'WindowID', '168', 'inpadOrgId', document.frmMain.inpadOrgIdxx.value);return false;" id="fieldLocatorId">
                           <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Locator';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
                             <tr>
                               <td class="FieldButton_bg">
