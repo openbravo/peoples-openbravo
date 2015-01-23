@@ -89,7 +89,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
           var cTotalReturns = auxPay.get('totalReturns');
           var cTotalSales = auxPay.get('totalSales');
           var cTotalDeposits = OB.DEC.sub(auxPay.get('totalDeposits'), OB.DEC.abs(auxPay.get('totalDrops')));
-          expected = OB.DEC.add(OB.DEC.add(cStartingCash, OB.DEC.sub(cTotalSales, OB.DEC.abs(cTotalReturns))), cTotalDeposits);
+          expected = OB.DEC.add(OB.DEC.add(cStartingCash, OB.DEC.sub(cTotalSales, cTotalReturns)), cTotalDeposits);
           var fromCurrencyId = auxPay.get('paymentMethod').currency;
           auxPay.set('expected', OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, expected));
           auxPay.set('foreignExpected', expected);
@@ -188,7 +188,6 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
             isocode: auxPay.isocode,
             rate: p.get('rate')
           }));
-
           cashUpReport.get('drops').push(new Backbone.Model({
             origAmount: OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, OB.DEC.add(p.get('totalDrops'), p.get('totalReturns'))),
             amount: OB.DEC.add(0, OB.DEC.add(p.get('totalDrops'), p.get('totalReturns'))),
