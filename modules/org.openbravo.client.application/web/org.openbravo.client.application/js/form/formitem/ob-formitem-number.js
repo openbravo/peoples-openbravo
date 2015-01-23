@@ -443,6 +443,9 @@ isc.OBNumberItem.addProperties({
       if (this.form.setTextualValue) {
         this.form.setTextualValue(this.name, value, this.typeInstance);
       }
+    } else {
+      value = OB.Utilities.Number.JSToOBMasked(this.getValue(), this.typeInstance.maskNumeric, this.typeInstance.decSeparator, this.typeInstance.groupSeparator);
+      this.setValue(OB.Utilities.Number.OBMaskedToJS(value,  this.typeInstance.decSeparator, this.typeInstance.groupSeparator));
     }
 
     if (this.grid && this.grid.isEditing && this.grid.isEditing()) {
