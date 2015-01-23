@@ -36,7 +36,6 @@
       WHERE ic.AD_Org_ID=o.AD_Org_ID
       AND ic.C_BPartner_ID=bp.C_BPartner_ID
       AND ic.C_DocType_ID=dt.C_DocType_ID
-      AND dt.isreturn='N'
       AND l.value = ic.term
       AND ord.C_ORDER_ID=ic.C_ORDER_ID
       AND ((ic.term ='D' AND ic.qtydelivered <>0) OR (ic.term = 'I' AND exists (SELECT 1 FROM C_ORDERLINE ol WHERE ol.C_ORDER_ID = ord.C_ORDER_ID AND ol.QTYORDERED-ol.QTYINVOICED <> 0)) OR (ic.term <> 'N' AND (ic.term IN ('O') AND (ic.qtyordered = ic.qtydelivered) )) OR (ic.term = 'S' AND exists (SELECT 1 FROM C_ORDERLINE ol WHERE ol.C_ORDER_ID = ord.C_ORDER_ID AND ol.QTYDELIVERED <> 0 AND ol.QTYDELIVERED <> ol.QTYINVOICED)))
@@ -69,7 +68,6 @@
       WHERE ic.AD_Org_ID=o.AD_Org_ID
       AND ic.C_BPartner_ID=bp.C_BPartner_ID
       AND ic.C_DocType_ID=dt.C_DocType_ID
-      AND dt.isReturn='N'
       AND l.value = ic.term
       AND ord.C_ORDER_ID=ic.C_ORDER_ID
       AND ((ic.term ='D' AND ic.qtydelivered <>0) OR (ic.term = 'I' AND exists (SELECT 1 FROM C_ORDERLINE ol WHERE ol.C_ORDER_ID = ord.C_ORDER_ID AND ol.QTYORDERED-ol.QTYINVOICED <> 0)) OR (ic.term <> 'N' AND (ic.term IN ('O') AND (ic.qtyordered = ic.qtydelivered) )) OR (ic.term = 'S' AND exists (SELECT 1 FROM C_ORDERLINE ol WHERE ol.C_ORDER_ID = ord.C_ORDER_ID AND ol.QTYDELIVERED <> 0 AND ol.QTYDELIVERED <> ol.QTYINVOICED)))
