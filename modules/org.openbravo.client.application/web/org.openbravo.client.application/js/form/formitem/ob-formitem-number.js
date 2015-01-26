@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2013 Openbravo SLU
+ * All portions are Copyright (C) 2011-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -429,7 +429,7 @@ isc.OBNumberItem.addProperties({
   },
 
   blur: function () {
-    var value, roundedValue, textRoundedValue;
+    var value, roundedValue, textRoundedValue, isFormula = false;
 
     // Make sure the number is rounded using the number of decimal digits specified in the number typeInstance
     if (isc.isA.String(this.getValue())) {
@@ -438,14 +438,15 @@ isc.OBNumberItem.addProperties({
         value = OB.Utilities.Number.OBPlainToOBMasked(this.getValue(), this.typeInstance.maskNumeric, this.typeInstance.decSeparator, this.typeInstance.groupSeparator, OB.Format.defaultGroupingSize);
       } else {
         value = this.getValue();
+        isFormula = true;
       }
       this.setValue(OB.Utilities.Number.OBMaskedToJS(value, this.typeInstance.decSeparator, this.typeInstance.groupSeparator));
       if (this.form.setTextualValue) {
         this.form.setTextualValue(this.name, value, this.typeInstance);
       }
     } else {
-      value = OB.Utilities.Number.JSToOBMasked(this.getValue(), this.typeInstance.maskNumeric, this.typeInstance.decSeparator, this.typeInstance.groupSeparator);
-      this.setValue(OB.Utilities.Number.OBMaskedToJS(value,  this.typeInstance.decSeparator, this.typeInstance.groupSeparator));
+      value = this.roundJsNumberUsingTypeInstance(this.getValue(), this.typeInstance);
+      this.setValue(value);
     }
 
     if (this.grid && this.grid.isEditing && this.grid.isEditing()) {
@@ -466,7 +467,11 @@ isc.OBNumberItem.addProperties({
       this.validate();
 
       value = this.getValue();
-
+      if (isFormula) {
+        // the formula is evaluated in the validate function, so until then it is not possible to round it, do it now
+        value = this.roundJsNumberUsingTypeInstance(value, this.typeInstance);
+        this.setValue(value);
+      }
       // first check if the number is valid
       if (!isc.isA.String(value)) {
         // format the value to be displayed.
@@ -475,6 +480,11 @@ isc.OBNumberItem.addProperties({
       }
     }
     return this.Super('blur', arguments);
+  },
+
+  roundJsNumberUsingTypeInstance: function (jsNumber, typeInstance) {
+    var roundedStringNumber = OB.Utilities.Number.JSToOBMasked(jsNumber, typeInstance.maskNumeric, typeInstance.decSeparator, typeInstance.groupSeparator);
+    return OB.Utilities.Number.OBMaskedToJS(roundedStringNumber, typeInstance.decSeparator, typeInstance.groupSeparator);
   }
 });
 
