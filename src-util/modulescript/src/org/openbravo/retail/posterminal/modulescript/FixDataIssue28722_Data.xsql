@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+/*
+ ************************************************************************************
+ * Copyright (C) 2015 Openbravo S.L.U.
+ * Licensed under the Openbravo Commercial License version 1.0
+ * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
+ * or in the legal folder of this module distribution.
+ ************************************************************************************
+ */
+-->
+<SqlClass name="FixDataIssue28722Data" package="org.openbravo.retail.posterminal.modulescript">
+ <SqlMethod name="select" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql><![CDATA[
+      SELECT '' AS BP_Currency_ID
+      FROM DUAL
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="initializeCurrency" type="preparedStatement" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+     <![CDATA[ 
+        UPDATE C_Bpartner bp
+        SET BP_Currency_ID = (
+                             SELECT C_Currency_ID
+                             FROM M_Pricelist
+                             WHERE M_Pricelist_ID=bp.M_Pricelist_ID and bp.iscustomer='Y'
+                             )
+        WHERE bp.BP_Currency_ID IS NULL
+        AND bp.IsCustomer = 'Y' 
+        AND bp.m_pricelist_id is not null             
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="isExecuted" type="preparedStatement" return="boolean">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT count(*) as exist
+        FROM DUAL
+        WHERE EXISTS (SELECT 1 FROM ad_preference
+                      WHERE attribute = 'Fix 28722 executed')
+      ]]>
+    </Sql>
+  </SqlMethod>
+   <SqlMethod name="createPreference" type="preparedStatement" return="rowcount">
+      <SqlMethodComment></SqlMethodComment>
+       <Sql> 
+       <![CDATA[ 
+           INSERT INTO ad_preference (
+           ad_preference_id, ad_client_id, ad_org_id, isactive,
+           createdby, created, updatedby, updated,attribute
+           ) VALUES (
+           get_uuid(), '0', '0', 'Y', '0', NOW(), '0', NOW(),'Fix 28722 executed')
+         ]]>
+        </Sql>
+   </SqlMethod>
+</SqlClass>
