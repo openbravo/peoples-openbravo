@@ -257,7 +257,10 @@ enyo.kind({
       renderEmpty: 'OB.UI.RenderTaxLineEmpty',
       //defined on redenderorderline.js
       listStyle: 'nonselectablelist',
-      columns: ['tax', 'base', 'totaltax']
+      columns: ['tax', 'base', 'totaltax'],
+      executeAfterRender: function () {
+        this.owner.$.listOrderLines.getScrollArea().scrollToBottom();
+      }
     }, {
       tag: 'li',
       components: [{
