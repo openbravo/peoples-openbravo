@@ -76,11 +76,16 @@ public class SaveDataActionHandler extends BaseActionHandler {
           // transaction
           OBDal.getInstance().commitAndClose();
         } else {
-          error = OBDal.getInstance().get(OBPOSErrors.class, errorId);
-          error.setOrderstatus("Y");
-          OBDal.getInstance().save(error);
-          OBDal.getInstance().flush();
-          OBDal.getInstance().commitAndClose();
+          OBContext.setAdminMode(true);
+          try {
+            error = OBDal.getInstance().get(OBPOSErrors.class, errorId);
+            error.setOrderstatus("Y");
+            OBDal.getInstance().save(error);
+            OBDal.getInstance().flush();
+            OBDal.getInstance().commitAndClose();
+          } finally {
+            OBContext.restorePreviousMode();
+          }
         }
       }
 
