@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,9 +29,9 @@ import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.io.SAXReader;
+import org.openbravo.base.ConfigParameters;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBConfigFileProvider;
-import org.openbravo.base.util.Check;
 
 /**
  * This class implements a central location where the Openbravo.properties are read and made
@@ -98,29 +98,38 @@ public class OBPropertiesProvider {
 
   public void setProperties(InputStream is) {
     if (obProperties != null) {
-      log.warn("Openbravo properties have already been set, setting them again");
+      log.info("Openbravo properties have already been set, setting them again");
     }
-    log.debug("Setting openbravo.properties through input stream");
+    log.debug("Setting Openbravo.properties through input stream");
     obProperties = new Properties();
     try {
       obProperties.load(is);
       is.close();
+
+      if (OBConfigFileProvider.getInstance() == null
+          || OBConfigFileProvider.getInstance().getServletContext() == null) {
+        log.debug("ServletContext is not set, not trying to override Openbravo.properties");
+        return;
+      }
+
+      ConfigParameters.overrideProperties(obProperties, OBConfigFileProvider.getInstance()
+          .getServletContext().getRealPath("/WEB-INF"));
     } catch (final Exception e) {
       throw new OBException(e);
     }
   }
 
   public void setProperties(Properties props) {
-    Check.isNull(obProperties, "Openbravo properties have already been set");
+    if (obProperties != null) {
+      log.info("Openbravo properties have already been set, setting them again");
+    }
     log.debug("Setting openbravo.properties through properties");
     obProperties = new Properties();
     obProperties.putAll(props);
   }
 
   public void setProperties(String fileLocation) {
-    // Check.isNull(obProperties,
-    // "Openbravo properties have already been set");
-    log.debug("Setting openbravo.properties through a file");
+    log.info("Setting Openbravo.properties through file: " + fileLocation);
     obProperties = new Properties();
     try {
       final FileInputStream fis = new FileInputStream(fileLocation);
