@@ -45,7 +45,6 @@ public class SaveDataActionHandler extends BaseActionHandler {
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) {
     JSONArray errorIds = null;
-    String posTerminalId = null;
     List<OBPOSErrors> errors = new ArrayList<OBPOSErrors>();
     boolean errorb = false;
     try {
