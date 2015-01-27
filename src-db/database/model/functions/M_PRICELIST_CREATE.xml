@@ -19,7 +19,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2012 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2015 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -60,6 +60,8 @@
     v_ep_count NUMBER;
     v_result NUMBER:=1;
     v_user AD_USER.AD_USER_ID%TYPE;
+    
+    v_shline_count rowcount%TYPE;
     
   BEGIN
     --  Update AD_PInstance
@@ -225,6 +227,7 @@
       /**
       * For All Discount Lines in Sequence
       */
+      v_shline_count := 0;
       FOR Cur_DiscountLine IN
         (SELECT *
         FROM M_DiscountSchemaLine
@@ -551,7 +554,11 @@
           ;   
         END IF;
         v_Message:='';
+        v_shline_count := v_shline_count + 1;
       END LOOP; -- For all DiscountLines
+      IF (v_shline_count = 0) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@PLSchemaLinesRequired@');
+      END IF;
       -- Delete Temporary Selection
       DELETE FROM C_TEMP_Selection;
       
