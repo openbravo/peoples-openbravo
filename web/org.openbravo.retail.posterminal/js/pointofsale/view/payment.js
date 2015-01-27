@@ -440,11 +440,11 @@ enyo.kind({
       requiredCash = paymentstatus.pendingAmt;
       paymentstatus.payments.each(function (payment) {
         var paymentmethod;
-        if (payment.get('kind') === selectedPayment.payment.searchKey) {
+        if (payment.get('kind') === selectedPayment.payment.searchKey && payment.get('isCash')) {
           requiredCash = OB.DEC.add(requiredCash, payment.get('amount'));
         } else {
           paymentmethod = OB.POS.terminal.terminal.paymentnames[payment.get('kind')];
-          if (paymentmethod && payment.get('amount') > paymentmethod.currentCash) {
+          if (paymentmethod && payment.get('amount') > paymentmethod.currentCash && payment.get('isCash')) {
             hasAllEnoughCash = false;
           }
         }
