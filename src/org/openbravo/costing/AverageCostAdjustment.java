@@ -119,6 +119,11 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     // Initialize current unit cost including the cost adjustments.
     Costing costing = AverageAlgorithm.getProductCost(trxDate, basetrx.getProduct(),
         getCostDimensions(), getCostOrg());
+    if (costing == null) {
+      throw new OBException("@NoAvgCostDefined@ @Organization@: " + getCostOrg().getName()
+          + ", @Product@: " + basetrx.getProduct().getName() + ", @Date@: "
+          + OBDateUtils.formatDate(trxDate));
+    }
     BigDecimal cost = null;
     // If current stock is zero the cost is not modified until a related transaction that modifies
     // the stock is found.
@@ -383,6 +388,11 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
       // This is the current costing rule. Check if current average cost needs to be updated.
       Costing currentCosting = AverageAlgorithm.getProductCost(new Date(), basetrx.getProduct(),
           getCostDimensions(), getCostOrg());
+      // if (currentCosting == null) {
+      // throw new OBException("@NoAvgCostDefined@ @Organization@: " + getCostOrg().getName()
+      // + ", @Product@: " + basetrx.getProduct().getName() + ", @Date@: "
+      // + OBDateUtils.formatDate(new Date()));
+      // }
       if (currentCosting.getCost().compareTo(cost) != 0) {
         basetrx = getTransaction();
         Date newDate = new Date();
