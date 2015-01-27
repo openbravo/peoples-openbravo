@@ -116,6 +116,7 @@ OB.APRM.AddPayment.onLoad = function (view) {
     }));
     view.theForm.hideItem('bankStatementLineId');
   }
+
   OB.APRM.AddPayment.paymentMethodMulticurrency(view, view.theForm, !payment);
   OB.APRM.AddPayment.reloadLabels(form);
   glitemGrid.fetchData();
@@ -296,7 +297,6 @@ OB.APRM.AddPayment.orderInvoiceOnLoadGrid = function (grid) {
   var issotrx = this.view.theForm.getItem('issotrx').getValue(),
       payment = this.view.theForm.getItem('fin_payment_id').getValue();
   grid.isReady = true;
-
   if ((issotrx || !payment) && (grid.selectedIds.length === 0)) {
     OB.APRM.AddPayment.distributeAmount(this.view, this.view.theForm, false);
   } else {
@@ -597,6 +597,7 @@ OB.APRM.AddPayment.updateActualExpected = function (form) {
       generateCredit = new BigDecimal(String(form.getItem('generateCredit').getValue() || 0)),
       glitemtotal = new BigDecimal(String(form.getItem('amount_gl_items').getValue() || 0)),
       credit = new BigDecimal(String(form.getItem('used_credit').getValue() || 0)),
+      bslamount = new BigDecimal(String(form.getItem('bslamount').getValue() || 0)),
       selectedRecords = orderInvoice.selectedIds,
       actpayment, i;
   for (i = 0; i < selectedRecords.length; i++) {
@@ -609,7 +610,11 @@ OB.APRM.AddPayment.updateActualExpected = function (form) {
     expectedPayment.setValue(Number('0'));
   }
   if (!issotrx) {
-    actpayment = totalAmount.add(glitemtotal).add(generateCredit);
+    if ((bslamount.compareTo(BigDecimal.prototype.ZERO) !== 0) && (totalAmount.compareTo(BigDecimal.prototype.ZERO) === 0)) {
+      actpayment = totalAmount.add(glitemtotal).add(generateCredit).add(bslamount.abs());
+    } else {
+      actpayment = totalAmount.add(glitemtotal).add(generateCredit);
+    }
     actualPayment.setValue(Number(actpayment));
     if (credit.compareTo(BigDecimal.prototype.ZERO) > 0) {
       if (credit.compareTo(actpayment) > 0) {

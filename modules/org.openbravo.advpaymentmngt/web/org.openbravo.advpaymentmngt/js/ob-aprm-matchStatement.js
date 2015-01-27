@@ -96,6 +96,7 @@ isc.APRMMatchStatGridButtonsComponent.addProperties({
 
     searchButton = isc.OBGridToolStripIcon.create({
       buttonType: 'search',
+      showDisabled: true,
       originalPrompt: OB.I18N.getLabel('APRM_MATCHTRANSACTION_SEARCH_BUTTON'),
       prompt: OB.I18N.getLabel('APRM_MATCHTRANSACTION_SEARCH_BUTTON'),
       action: function () {
@@ -131,9 +132,12 @@ isc.APRMMatchStatGridButtonsComponent.addProperties({
         }, {}, callback);
       }
     });
+    // Disable searchButton button if record is linked to a transaction
+    searchButton.setDisabled(me.record.cleared);
 
     addButton = isc.OBGridToolStripIcon.create({
       buttonType: 'add',
+      showDisabled: true,
       originalPrompt: OB.I18N.getLabel('APRM_MATCHTRANSACTION_ADD_BUTTON'),
       prompt: OB.I18N.getLabel('APRM_MATCHTRANSACTION_ADD_BUTTON'),
       action: function () {
@@ -168,6 +172,8 @@ isc.APRMMatchStatGridButtonsComponent.addProperties({
         }, {}, callback);
       }
     });
+    // Disable addButton button if record is linked to a transaction
+    addButton.setDisabled(me.record.cleared);
 
     clearButton = isc.OBGridToolStripIcon.create({
       buttonType: 'clearRight',
