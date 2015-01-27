@@ -292,7 +292,7 @@ enyo.kind({
         this.$.doneButton.drawerOpened = false;
       }
       if (OB.MobileApp.model.get('terminal').allowpayoncredit && this.receipt.get('bp')) {
-        if ((this.receipt.get('bp').get('creditLimit') > 0 || this.receipt.get('bp').get('creditUsed') < 0 || this.receipt.getGross() < 0) && !paymentstatus.isReturn) {
+        if (this.receipt.get('bp').get('creditLimit') > 0 || this.receipt.get('bp').get('creditUsed') < 0 || this.receipt.getGross() < 0) {
           this.$.creditsalesaction.show();
         } else {
           this.$.creditsalesaction.hide();
@@ -317,7 +317,7 @@ enyo.kind({
         this.$.layawayaction.hide();
       }
       if (OB.MobileApp.model.get('terminal').allowpayoncredit && this.receipt.get('bp')) {
-        if ((this.receipt.get('bp').get('creditLimit') > 0 || this.receipt.get('bp').get('creditUsed') < 0 || this.receipt.getGross() < 0) && !paymentstatus.isReturn) {
+        if (this.receipt.get('bp').get('creditLimit') > 0 || this.receipt.get('bp').get('creditUsed') < 0 || this.receipt.getGross() < 0) {
           this.$.creditsalesaction.show();
         } else {
           this.$.creditsalesaction.hide();
