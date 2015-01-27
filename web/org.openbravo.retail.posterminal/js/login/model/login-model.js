@@ -542,12 +542,16 @@
 
       // add the currency converters
       _.each(OB.MobileApp.model.get('payments'), function (paymentMethod) {
-        var fromCurrencyId = parseInt(OB.MobileApp.model.get('currency').id, 10);
-        var toCurrencyId = parseInt(paymentMethod.paymentMethod.currency, 10);
-        if (fromCurrencyId !== toCurrencyId) {
-          OB.UTIL.currency.addConversion(toCurrencyId, fromCurrencyId, paymentMethod.rate);
-          OB.UTIL.currency.addConversion(fromCurrencyId, toCurrencyId, paymentMethod.mulrate);
-        }
+        if(!OB.UTIL.isNullOrUndefined(paymentMethod.paymentMethod)){
+          var fromCurrencyId = parseInt(OB.MobileApp.model.get('currency').id, 10);
+          var toCurrencyId = parseInt(paymentMethod.paymentMethod.currency, 10);
+          if (fromCurrencyId !== toCurrencyId) {
+            OB.UTIL.currency.addConversion(toCurrencyId, fromCurrencyId, paymentMethod.rate);
+            OB.UTIL.currency.addConversion(fromCurrencyId, toCurrencyId, paymentMethod.mulrate);
+          }
+        } else {
+          OB.MobileApp.model.databaseCannotBeResetAction();
+        }       
       }, this);
 
       OB.MobileApp.model.on('window:ready', function () {
@@ -972,7 +976,6 @@
         callback();
       }).go(params);
     }
-
   });
 
   // from this point, OB.MobileApp.model will be available
