@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -388,11 +388,11 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
       // This is the current costing rule. Check if current average cost needs to be updated.
       Costing currentCosting = AverageAlgorithm.getProductCost(new Date(), basetrx.getProduct(),
           getCostDimensions(), getCostOrg());
-      // if (currentCosting == null) {
-      // throw new OBException("@NoAvgCostDefined@ @Organization@: " + getCostOrg().getName()
-      // + ", @Product@: " + basetrx.getProduct().getName() + ", @Date@: "
-      // + OBDateUtils.formatDate(new Date()));
-      // }
+      if (currentCosting == null) {
+        throw new OBException("@NoAvgCostDefined@ @Organization@: " + getCostOrg().getName()
+            + ", @Product@: " + basetrx.getProduct().getName() + ", @Date@: "
+            + OBDateUtils.formatDate(new Date()));
+      }
       if (currentCosting.getCost().compareTo(cost) != 0) {
         basetrx = getTransaction();
         Date newDate = new Date();
