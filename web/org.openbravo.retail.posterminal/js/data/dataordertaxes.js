@@ -679,7 +679,9 @@
         OB.DATA.legacyCalculateTaxes.call(me, callback);
       } else { // 'NEWLOGIC' (default)
         OB.POS.EventBus.startProcess();
-        calcTaxes(me).then(callback).then(function () {
+        calcTaxes(me).then(function() {
+          me.trigger('paintTaxes');
+          callback();
           OB.POS.EventBus.endProcess();
         });
       }
