@@ -172,7 +172,9 @@
           lines.forEach(function (l) {
             // with new flow discounts -> skipSave =true
             // in other case -> false
-            this.applyPromotionsImp(receipt, l, OB.MobileApp.model.hasPermission('OBPOS_discount.newFlow', true));
+            if (l.get('noDiscountCandidates') !== true) {
+              this.applyPromotionsImp(receipt, l, OB.MobileApp.model.hasPermission('OBPOS_discount.newFlow', true));
+            }
           }, this);
         }
       }
@@ -191,6 +193,7 @@
             promotion.lastApplied = undefined;
           });
         }
+        line.unset('noDiscountCandidates');
         rule.addManual(receipt, line, promotion);
       });
 

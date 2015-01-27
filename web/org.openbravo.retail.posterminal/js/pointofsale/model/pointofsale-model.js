@@ -601,6 +601,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       if (!receipt.get('isEditable') || receipt.get('lines').length === 0) {
         return;
       }
+      receipt.get('lines').forEach(function (l) {
+        l.unset('noDiscountCandidates');
+      });
       OB.Model.Discounts.applyPromotions(receipt);
     }, this);
     receipt.on('voidLayaway', function () {
