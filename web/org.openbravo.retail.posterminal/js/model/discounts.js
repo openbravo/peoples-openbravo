@@ -87,7 +87,7 @@
                 auxReceipt.get('lines').forEach(function (l) {
                   oldLines.push(l.clone());
                 });
-                me.applyPromotionsImp(auxReceipt, undefined, true);
+                me.applyPromotionsImp(auxReceipt, undefined, true, false);
               } else {
                 receipt.trigger('applyPromotionsFinished');
                 if (!grossCalculated) {
@@ -151,13 +151,14 @@
             line.set('promotionCandidates', []);
           });
         }
-        this.applyPromotionsImp(auxReceipt, null, true);
+        this.applyPromotionsImp(auxReceipt, null, true, false);
       } else {
-        this.applyPromotionsImp(receipt, line, false);
+        this.applyPromotionsImp(receipt, line, false, true);
       }
     },
 
-    applyPromotionsImp: function (receipt, line, skipSave) {
+    applyPromotionsImp: function (receipt, line, skipSave, startExecutionAutomatically) {
+      var startExecution = startExecutionAutomatically || OB.UTIL.isNullOrUndefined(startExecutionAutomatically);
       var lines;
       if (this.preventApplyPromotions) {
         return;
@@ -174,7 +175,7 @@
           receipt: receipt,
           line: line,
           skipSave: skipSave
-        }), true);
+        }), true, startExecution);
       } else {
         lines = _.sortBy(receipt.get('lines').models, function (lo) {
           return -lo.getQty();
@@ -187,9 +188,12 @@
             // with new flow discounts -> skipSave =true
             // in other case -> false
             if (l.get('noDiscountCandidates') !== true) {
-              this.applyPromotionsImp(receipt, l, OB.MobileApp.model.hasPermission('OBPOS_discount.newFlow', true));
+              this.applyPromotionsImp(receipt, l, OB.MobileApp.model.hasPermission('OBPOS_discount.newFlow', true), startExecution);
             }
           }, this);
+          if (!startExecution) {
+            this.executor.nextEvent();
+          }
         }
       }
     },
