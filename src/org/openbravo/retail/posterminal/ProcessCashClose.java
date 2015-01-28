@@ -182,15 +182,15 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
         e.printStackTrace();
       }
     }
-    updateOrCreateCashupInfo(cashUpId, jsonCashup);
+    updateOrCreateCashupInfo(cashUpId, jsonCashup, cashUpDate);
     return cashUp;
   }
 
-  private void updateOrCreateCashupInfo(String cashUpId, JSONObject jsonCashup)
+  private void updateOrCreateCashupInfo(String cashUpId, JSONObject jsonCashup, Date cashUpDate)
       throws JSONException {
     OBPOSAppCashup cashup = OBDal.getInstance().get(OBPOSAppCashup.class, cashUpId);
     // Update cashup info
-    updateCashUpInfo(cashup, jsonCashup);
+    updateCashUpInfo(cashup, jsonCashup, cashUpDate);
 
     // Update taxes
     if (jsonCashup.has("cashTaxInfo")) {
@@ -231,7 +231,8 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
    * @param jsonCashup
    * @throws JSONException
    */
-  private void updateCashUpInfo(OBPOSAppCashup cashup, JSONObject jsonCashup) throws JSONException {
+  private void updateCashUpInfo(OBPOSAppCashup cashup, JSONObject jsonCashup, Date cashUpDate)
+      throws JSONException {
 
     cashup.setNetsales(new BigDecimal(jsonCashup.getString("netSales")));
     cashup.setGrosssales(new BigDecimal(jsonCashup.getString("grossSales")));
@@ -240,6 +241,7 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
     cashup.setTotalretailtransactions(new BigDecimal(jsonCashup
         .getString("totalRetailTransactions")));
     cashup.setProcessed(jsonCashup.getString("isprocessed").equalsIgnoreCase("Y"));
+    cashup.setCashUpDate(cashUpDate);
     OBDal.getInstance().save(cashup);
   }
 
