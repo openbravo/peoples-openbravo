@@ -11374,11 +11374,11 @@ public class TestCosting extends BaseDataSourceTestDal {
       String response = doRequest(url, params, 200, "POST");
       assertTrue(response.contains("success"));
       assertFalse(response.contains("error"));
-      for (int i = 0; i < 20; i++)
-        if (getProcessExecutionsNumber(COSTING_PROCESSREQUEST_ID) == numCosting + 1)
-          return;
-        else
-          Thread.sleep(1000);
+      Thread.sleep(5000);
+      for (int i = 0; i < 30
+          && getProcessExecutionsNumber(COSTING_PROCESSREQUEST_ID) < numCosting + 1; i++) {
+        Thread.sleep(1000);
+      }
     } catch (Exception e) {
       throw new OBException(e);
     }
@@ -11398,11 +11398,11 @@ public class TestCosting extends BaseDataSourceTestDal {
       String response = doRequest(url, params, 200, "POST");
       assertTrue(response.contains("success"));
       assertFalse(response.contains("error"));
-      for (int i = 0; i < 10; i++)
-        if (getProcessExecutionsNumber(PRICECORRECTION_PROCESSREQUEST_ID) == numCosting + 1)
-          return;
-        else
-          Thread.sleep(1000);
+      Thread.sleep(5000);
+      for (int i = 0; i < 30
+          && getProcessExecutionsNumber(PRICECORRECTION_PROCESSREQUEST_ID) < numCosting + 1; i++) {
+        Thread.sleep(1000);
+      }
     } catch (Exception e) {
       throw new OBException(e);
     }
@@ -12587,27 +12587,27 @@ public class TestCosting extends BaseDataSourceTestDal {
       List<DocumentPostAssert> documentPostAssertList) {
     try {
 
-      if (!document.get("posted").equals("Y")) {
-        for (int i = 0; i < 5; i++) {
-          if (document.get("posted").equals("Y")) {
-            return;
-          } else {
-            postDocument(OBDal.getInstance().get(document.getClass(), document.getId()));
-            Thread.sleep(1000);
-            OBDal.getInstance().refresh(document);
-          }
+      BaseOBObject doc = OBDal.getInstance().get(document.getClass(), document.getId());
+      if (!doc.get("posted").equals("Y")) {
+        OBDal.getInstance().refresh(doc);
+        Thread.sleep(5000);
+        for (int i = 0; i < 10 && !doc.get("posted").equals("Y"); i++) {
+          postDocument(doc);
+          doc = OBDal.getInstance().get(doc.getClass(), doc.getId());
+          OBDal.getInstance().refresh(doc);
+          Thread.sleep(1000);
         }
       }
 
-      assertEquals(document.get("posted"), "Y");
+      assertEquals(doc.get("posted"), "Y");
 
       final OBCriteria<Table> criteria1 = OBDal.getInstance().createCriteria(Table.class);
-      criteria1.add(Restrictions.eq(Table.PROPERTY_NAME, document.getEntityName()));
+      criteria1.add(Restrictions.eq(Table.PROPERTY_NAME, doc.getEntityName()));
       Table table = criteria1.list().get(0);
 
       final OBCriteria<AccountingFact> criteria2 = OBDal.getInstance().createCriteria(
           AccountingFact.class);
-      criteria2.add(Restrictions.eq(AccountingFact.PROPERTY_RECORDID, document.getId()));
+      criteria2.add(Restrictions.eq(AccountingFact.PROPERTY_RECORDID, doc.getId()));
       criteria2.add(Restrictions.eq(AccountingFact.PROPERTY_TABLE, table));
       criteria2.addOrderBy(AccountingFact.PROPERTY_SEQUENCENUMBER, true);
       String groupId = criteria2.list().get(0).getGroupID();
@@ -12617,17 +12617,17 @@ public class TestCosting extends BaseDataSourceTestDal {
       int i = 0;
       for (AccountingFact accountingFact : criteria2.list()) {
 
-        String lineListProperty = Character.toLowerCase(document.getEntityName().charAt(0))
-            + document.getEntityName().substring(1) + "LineList";
+        String lineListProperty = Character.toLowerCase(doc.getEntityName().charAt(0))
+            + doc.getEntityName().substring(1) + "LineList";
 
         BaseOBObject line = null;
-        if (document.getEntityName().equals(ReceiptInvoiceMatch.ENTITY_NAME)) {
+        if (doc.getEntityName().equals(ReceiptInvoiceMatch.ENTITY_NAME)) {
           if (i % 2 == 0) {
-            line = ((ReceiptInvoiceMatch) document).getGoodsShipmentLine();
+            line = ((ReceiptInvoiceMatch) doc).getGoodsShipmentLine();
           } else {
-            line = ((ReceiptInvoiceMatch) document).getInvoiceLine();
+            line = ((ReceiptInvoiceMatch) doc).getInvoiceLine();
           }
-        } else if (document.getEntityName().equals(ProductionTransaction.ENTITY_NAME)) {
+        } else if (doc.getEntityName().equals(ProductionTransaction.ENTITY_NAME)) {
           StringBuffer where = new StringBuffer();
           where.append(" as t1 ");
           where.append("\n left join t1." + ProductionLine.PROPERTY_PRODUCTIONPLAN + " t2");
@@ -12637,21 +12637,21 @@ public class TestCosting extends BaseDataSourceTestDal {
           OBQuery<ProductionLine> hql = OBDal.getInstance().createQuery(ProductionLine.class,
               where.toString());
           hql.setNamedParameter("productionTransaction",
-              OBDal.getInstance().get(ProductionTransaction.class, document.getId()));
+              OBDal.getInstance().get(ProductionTransaction.class, doc.getId()));
           line = hql.list().get(i / 2);
-        } else if (document.getEntityName().equals(CostAdjustment.ENTITY_NAME)) {
+        } else if (doc.getEntityName().equals(CostAdjustment.ENTITY_NAME)) {
           final OBCriteria<CostAdjustmentLine> criteria3 = OBDal.getInstance().createCriteria(
               CostAdjustmentLine.class);
-          criteria3.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_COSTADJUSTMENT, document));
+          criteria3.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_COSTADJUSTMENT, doc));
           criteria3.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_NEEDSPOSTING, true));
           criteria3.addOrderBy(CostAdjustmentLine.PROPERTY_LINENO, true);
           line = criteria3.list().get(i / 2);
         } else if (productId != null
             && (productId.equals(LANDEDCOSTTYPE1_ID) || productId.equals(LANDEDCOSTTYPE2_ID) || productId
                 .equals(LANDEDCOSTTYPE3_ID))) {
-          line = ((List<BaseOBObject>) OBDal.getInstance()
-              .get(document.getClass(), document.getId()).get(lineListProperty)).get(0);
-        } else if (document.getEntityName().equals(LandedCost.ENTITY_NAME)) {
+          line = ((List<BaseOBObject>) OBDal.getInstance().get(doc.getClass(), doc.getId())
+              .get(lineListProperty)).get(0);
+        } else if (doc.getEntityName().equals(LandedCost.ENTITY_NAME)) {
           StringBuffer where = new StringBuffer();
           where.append(" as t1 ");
           where.append("\n join t1." + LCReceiptLineAmt.PROPERTY_LANDEDCOSTRECEIPT + " t2");
@@ -12664,33 +12664,32 @@ public class TestCosting extends BaseDataSourceTestDal {
           where.append("\n , t4." + ShipmentInOutLine.PROPERTY_LINENO);
           OBQuery<LCReceiptLineAmt> hql = OBDal.getInstance().createQuery(LCReceiptLineAmt.class,
               where.toString());
-          LandedCost landedCost = OBDal.getInstance().get(LandedCost.class, document.getId());
+          LandedCost landedCost = OBDal.getInstance().get(LandedCost.class, doc.getId());
           hql.setNamedParameter("landedCost", landedCost);
           line = hql.list().get(i / 2);
-        } else if (document.getEntityName().equals(LandedCostCost.ENTITY_NAME)) {
-          if (((LandedCostCost) document).getLandedCostMatchedList().size() == 1) {
-            line = ((LandedCostCost) document).getLandedCostMatchedList().get(0);
-          } else if (!((LandedCostCost) document)
+        } else if (doc.getEntityName().equals(LandedCostCost.ENTITY_NAME)) {
+          if (((LandedCostCost) doc).getLandedCostMatchedList().size() == 1) {
+            line = ((LandedCostCost) doc).getLandedCostMatchedList().get(0);
+          } else if (!((LandedCostCost) doc)
               .getAmount()
               .setScale(2, BigDecimal.ROUND_HALF_UP)
               .equals(
-                  ((LandedCostCost) document).getMatchingAmount().setScale(2,
-                      BigDecimal.ROUND_HALF_UP))
-              && ((LandedCostCost) document).isMatchingAdjusted()) {
+                  ((LandedCostCost) doc).getMatchingAmount().setScale(2, BigDecimal.ROUND_HALF_UP))
+              && ((LandedCostCost) doc).isMatchingAdjusted()) {
             if (i == 0) {
-              line = ((LandedCostCost) document).getLandedCostMatchedList().get(0);
+              line = ((LandedCostCost) doc).getLandedCostMatchedList().get(0);
             } else {
-              line = ((LandedCostCost) document).getLandedCostMatchedList().get(1);
+              line = ((LandedCostCost) doc).getLandedCostMatchedList().get(1);
             }
           } else {
-            line = ((LandedCostCost) document).getLandedCostMatchedList().get(i / 2);
+            line = ((LandedCostCost) doc).getLandedCostMatchedList().get(i / 2);
           }
-        } else if (document.getEntityName().equals(Invoice.ENTITY_NAME) && i > 0) {
-          line = ((List<BaseOBObject>) OBDal.getInstance()
-              .get(document.getClass(), document.getId()).get(lineListProperty)).get(i - 1);
+        } else if (doc.getEntityName().equals(Invoice.ENTITY_NAME) && i > 0) {
+          line = ((List<BaseOBObject>) OBDal.getInstance().get(doc.getClass(), doc.getId())
+              .get(lineListProperty)).get(i - 1);
         } else {
-          line = ((List<BaseOBObject>) OBDal.getInstance()
-              .get(document.getClass(), document.getId()).get(lineListProperty)).get(i / 2);
+          line = ((List<BaseOBObject>) OBDal.getInstance().get(doc.getClass(), doc.getId())
+              .get(lineListProperty)).get(i / 2);
         }
         DocumentPostAssert documentPostAssert = documentPostAssertList.get(i);
         assertGeneralData(accountingFact);
@@ -12698,7 +12697,7 @@ public class TestCosting extends BaseDataSourceTestDal {
         /* Accounting window fields assert */
 
         assertEquals(accountingFact.getTable(), table);
-        assertEquals(accountingFact.getRecordID(), document.getId());
+        assertEquals(accountingFact.getRecordID(), doc.getId());
         assertEquals(accountingFact.getAccountingSchema().getName(), "Main US/A/Euro");
 
         assertEquals(accountingFact.getAccount().getSearchKey(), documentPostAssert.getAccount());
@@ -12706,19 +12705,19 @@ public class TestCosting extends BaseDataSourceTestDal {
 
         BigDecimal rate;
         if ((productId != null && productId.equals(LANDEDCOSTTYPE3_ID))
-            || (document.getEntityName().equals(Invoice.ENTITY_NAME) && ((Invoice) document)
-                .getCurrency().getId().equals(CURRENCY2_ID))
-            || (document.getEntityName().equals(LandedCost.ENTITY_NAME) && ((LCReceiptLineAmt) line)
+            || (doc.getEntityName().equals(Invoice.ENTITY_NAME) && ((Invoice) doc).getCurrency()
+                .getId().equals(CURRENCY2_ID))
+            || (doc.getEntityName().equals(LandedCost.ENTITY_NAME) && ((LCReceiptLineAmt) line)
                 .getLandedCostCost()
                 .getLandedCostType()
                 .equals(
                     OBDal.getInstance().get(Product.class, LANDEDCOSTTYPE3_ID)
                         .getLandedCostTypeList().get(0)))
-            || (document.getEntityName().equals(LandedCostCost.ENTITY_NAME)
+            || (doc.getEntityName().equals(LandedCostCost.ENTITY_NAME)
                 && ((LCMatched) line).getInvoiceLine().getProduct() != null && ((LCMatched) line)
                 .getInvoiceLine().getProduct().getId().equals(LANDEDCOSTTYPE3_ID))
-            || (!document.getEntityName().equals(LandedCostCost.ENTITY_NAME)
-                && !document.getEntityName().equals(LandedCost.ENTITY_NAME)
+            || (!doc.getEntityName().equals(LandedCostCost.ENTITY_NAME)
+                && !doc.getEntityName().equals(LandedCost.ENTITY_NAME)
                 && documentPostAssert.getProductId() != null
                 && !OBDal.getInstance().get(Product.class, documentPostAssert.getProductId())
                     .getPricingProductPriceList().isEmpty() && OBDal
@@ -12731,9 +12730,9 @@ public class TestCosting extends BaseDataSourceTestDal {
                     OBDal.getInstance().get(Product.class, LANDEDCOSTTYPE3_ID)
                         .getPricingProductPriceList().get(0).getPriceListVersion()))) {
 
-          if (document.getEntityName().equals(Invoice.ENTITY_NAME)
-              && ((Invoice) document).getCurrencyConversionRateDocList().size() != 0) {
-            rate = ((Invoice) document).getCurrencyConversionRateDocList().get(0).getRate();
+          if (doc.getEntityName().equals(Invoice.ENTITY_NAME)
+              && ((Invoice) doc).getCurrencyConversionRateDocList().size() != 0) {
+            rate = ((Invoice) doc).getCurrencyConversionRateDocList().get(0).getRate();
           } else {
             Calendar calendar = Calendar.getInstance();
             calendar.set(9999, 0, 1);
@@ -12761,7 +12760,7 @@ public class TestCosting extends BaseDataSourceTestDal {
                 .multiply(rate)
                 .setScale(
                     2,
-                    document.getEntityName().equals(LandedCost.ENTITY_NAME) ? BigDecimal.ROUND_HALF_EVEN
+                    doc.getEntityName().equals(LandedCost.ENTITY_NAME) ? BigDecimal.ROUND_HALF_EVEN
                         : BigDecimal.ROUND_HALF_UP));
         assertEquals(
             accountingFact.getCredit().setScale(2, BigDecimal.ROUND_HALF_UP),
@@ -12770,26 +12769,26 @@ public class TestCosting extends BaseDataSourceTestDal {
                 .multiply(rate)
                 .setScale(
                     2,
-                    document.getEntityName().equals(LandedCost.ENTITY_NAME) ? BigDecimal.ROUND_HALF_EVEN
+                    doc.getEntityName().equals(LandedCost.ENTITY_NAME) ? BigDecimal.ROUND_HALF_EVEN
                         : BigDecimal.ROUND_HALF_UP));
 
         if ((productId != null && productId.equals(LANDEDCOSTTYPE3_ID))
-            || (document.getEntityName().equals(Invoice.ENTITY_NAME) && ((Invoice) document)
-                .getCurrency().getId().equals(CURRENCY2_ID))
-            || (document.getEntityName().equals(LandedCost.ENTITY_NAME) && ((LCReceiptLineAmt) line)
+            || (doc.getEntityName().equals(Invoice.ENTITY_NAME) && ((Invoice) doc).getCurrency()
+                .getId().equals(CURRENCY2_ID))
+            || (doc.getEntityName().equals(LandedCost.ENTITY_NAME) && ((LCReceiptLineAmt) line)
                 .getLandedCostCost()
                 .getLandedCostType()
                 .equals(
                     OBDal.getInstance().get(Product.class, LANDEDCOSTTYPE3_ID)
                         .getLandedCostTypeList().get(0)))
-            || (document.getEntityName().equals(LandedCostCost.ENTITY_NAME)
+            || (doc.getEntityName().equals(LandedCostCost.ENTITY_NAME)
                 && ((LCMatched) line).getInvoiceLine().getProduct() != null && ((LCMatched) line)
                 .getInvoiceLine().getProduct().getId().equals(LANDEDCOSTTYPE3_ID))) {
           rate = BigDecimal.ONE;
         }
 
-        else if ((document.getEntityName().equals(ShipmentInOut.ENTITY_NAME) || document
-            .getEntityName().equals(CostAdjustment.ENTITY_NAME))
+        else if ((doc.getEntityName().equals(ShipmentInOut.ENTITY_NAME) || doc.getEntityName()
+            .equals(CostAdjustment.ENTITY_NAME))
             && OBDal.getInstance().get(Organization.class, ORGANIZATION_ID).getCurrency() != null
             && OBDal.getInstance().get(Organization.class, ORGANIZATION_ID).getCurrency().getId()
                 .equals(CURRENCY2_ID)) {
@@ -12814,7 +12813,7 @@ public class TestCosting extends BaseDataSourceTestDal {
                 .multiply(rate)
                 .setScale(
                     2,
-                    document.getEntityName().equals(LandedCost.ENTITY_NAME) ? BigDecimal.ROUND_HALF_EVEN
+                    doc.getEntityName().equals(LandedCost.ENTITY_NAME) ? BigDecimal.ROUND_HALF_EVEN
                         : BigDecimal.ROUND_HALF_UP));
         assertEquals(
             accountingFact.getForeignCurrencyCredit().setScale(2, BigDecimal.ROUND_HALF_UP),
@@ -12823,7 +12822,7 @@ public class TestCosting extends BaseDataSourceTestDal {
                 .multiply(rate)
                 .setScale(
                     2,
-                    document.getEntityName().equals(LandedCost.ENTITY_NAME) ? BigDecimal.ROUND_HALF_EVEN
+                    doc.getEntityName().equals(LandedCost.ENTITY_NAME) ? BigDecimal.ROUND_HALF_EVEN
                         : BigDecimal.ROUND_HALF_UP));
 
         Calendar calendar1 = Calendar.getInstance();
@@ -12837,7 +12836,7 @@ public class TestCosting extends BaseDataSourceTestDal {
         criteria3.add(Restrictions.eq(Period.PROPERTY_ENDINGDATE, calendar2.getTime()));
         assertEquals(accountingFact.getPeriod(), criteria3.list().get(0));
 
-        if (document.getEntityName().equals(CostAdjustment.ENTITY_NAME)) {
+        if (doc.getEntityName().equals(CostAdjustment.ENTITY_NAME)) {
           assertEquals(formatDate(accountingFact.getTransactionDate()), formatDate(today));
           assertEquals(formatDate(accountingFact.getAccountingDate()),
               formatDate(((CostAdjustmentLine) line).getAccountingDate()));
@@ -12848,42 +12847,42 @@ public class TestCosting extends BaseDataSourceTestDal {
           } else {
             assertEquals(accountingFact.getBusinessPartner(), null);
           }
-        } else if (document.getEntityName().equals(InventoryCount.ENTITY_NAME)) {
+        } else if (doc.getEntityName().equals(InventoryCount.ENTITY_NAME)) {
           assertEquals(formatDate(accountingFact.getTransactionDate()),
-              formatDate(((InventoryCount) document).getMovementDate()));
+              formatDate(((InventoryCount) doc).getMovementDate()));
           assertEquals(formatDate(accountingFact.getAccountingDate()),
-              formatDate(((InventoryCount) document).getMovementDate()));
+              formatDate(((InventoryCount) doc).getMovementDate()));
           assertEquals(accountingFact.getBusinessPartner(), null);
-        } else if (document.getEntityName().equals(ReceiptInvoiceMatch.ENTITY_NAME)) {
+        } else if (doc.getEntityName().equals(ReceiptInvoiceMatch.ENTITY_NAME)) {
           assertEquals(formatDate(accountingFact.getTransactionDate()),
-              formatDate(((ReceiptInvoiceMatch) document).getTransactionDate()));
+              formatDate(((ReceiptInvoiceMatch) doc).getTransactionDate()));
           assertEquals(formatDate(accountingFact.getAccountingDate()),
-              formatDate(((ReceiptInvoiceMatch) document).getTransactionDate()));
-          assertEquals(accountingFact.getBusinessPartner(), ((ReceiptInvoiceMatch) document)
+              formatDate(((ReceiptInvoiceMatch) doc).getTransactionDate()));
+          assertEquals(accountingFact.getBusinessPartner(), ((ReceiptInvoiceMatch) doc)
               .getInvoiceLine().getBusinessPartner());
-        } else if (document.getEntityName().equals(InternalMovement.ENTITY_NAME)) {
+        } else if (doc.getEntityName().equals(InternalMovement.ENTITY_NAME)) {
           assertEquals(formatDate(accountingFact.getTransactionDate()),
-              formatDate(((InternalMovement) document).getMovementDate()));
+              formatDate(((InternalMovement) doc).getMovementDate()));
           assertEquals(formatDate(accountingFact.getAccountingDate()),
-              formatDate(((InternalMovement) document).getMovementDate()));
+              formatDate(((InternalMovement) doc).getMovementDate()));
           assertEquals(accountingFact.getBusinessPartner(), null);
-        } else if (document.getEntityName().equals(InternalConsumption.ENTITY_NAME)) {
+        } else if (doc.getEntityName().equals(InternalConsumption.ENTITY_NAME)) {
           assertEquals(formatDate(accountingFact.getTransactionDate()),
-              formatDate(((InternalConsumption) document).getMovementDate()));
+              formatDate(((InternalConsumption) doc).getMovementDate()));
           assertEquals(formatDate(accountingFact.getAccountingDate()),
-              formatDate(((InternalConsumption) document).getMovementDate()));
+              formatDate(((InternalConsumption) doc).getMovementDate()));
           assertEquals(accountingFact.getBusinessPartner(), null);
-        } else if (document.getEntityName().equals(ProductionTransaction.ENTITY_NAME)) {
+        } else if (doc.getEntityName().equals(ProductionTransaction.ENTITY_NAME)) {
           assertEquals(formatDate(accountingFact.getTransactionDate()),
-              formatDate(((ProductionTransaction) document).getMovementDate()));
+              formatDate(((ProductionTransaction) doc).getMovementDate()));
           assertEquals(formatDate(accountingFact.getAccountingDate()),
-              formatDate(((ProductionTransaction) document).getMovementDate()));
+              formatDate(((ProductionTransaction) doc).getMovementDate()));
           assertEquals(accountingFact.getBusinessPartner(), null);
-        } else if (document.getEntityName().equals(LandedCost.ENTITY_NAME)) {
+        } else if (doc.getEntityName().equals(LandedCost.ENTITY_NAME)) {
           assertEquals(formatDate(accountingFact.getTransactionDate()),
-              formatDate(((LandedCost) document).getReferenceDate()));
+              formatDate(((LandedCost) doc).getReferenceDate()));
           assertEquals(formatDate(accountingFact.getAccountingDate()),
-              formatDate(((LandedCost) document).getReferenceDate()));
+              formatDate(((LandedCost) doc).getReferenceDate()));
           if (i % 2 == 0) {
             assertEquals(
                 accountingFact.getBusinessPartner(),
@@ -12895,25 +12894,25 @@ public class TestCosting extends BaseDataSourceTestDal {
           } else {
             assertEquals(accountingFact.getBusinessPartner(), null);
           }
-        } else if (document.getEntityName().equals(LandedCostCost.ENTITY_NAME)) {
+        } else if (doc.getEntityName().equals(LandedCostCost.ENTITY_NAME)) {
           assertEquals(formatDate(accountingFact.getTransactionDate()),
-              formatDate(((LandedCostCost) document).getAccountingDate()));
+              formatDate(((LandedCostCost) doc).getAccountingDate()));
           assertEquals(formatDate(accountingFact.getAccountingDate()),
-              formatDate(((LandedCostCost) document).getAccountingDate()));
+              formatDate(((LandedCostCost) doc).getAccountingDate()));
           if (i == 0
               || (documentPostAssert.getProductId() != null
                   && OBDal
                       .getInstance()
                       .get(
                           InvoiceLine.class,
-                          ((LandedCostCost) document).getLandedCostMatchedList().get(0)
-                              .getInvoiceLine().getId()).getProduct() != null && documentPostAssert
-                  .getProductId().equals(
+                          ((LandedCostCost) doc).getLandedCostMatchedList().get(0).getInvoiceLine()
+                              .getId()).getProduct() != null && documentPostAssert.getProductId()
+                  .equals(
                       OBDal
                           .getInstance()
                           .get(
                               InvoiceLine.class,
-                              ((LandedCostCost) document).getLandedCostMatchedList().get(0)
+                              ((LandedCostCost) doc).getLandedCostMatchedList().get(0)
                                   .getInvoiceLine().getId()).getProduct().getId()))) {
             assertEquals(
                 accountingFact.getBusinessPartner(),
@@ -12921,33 +12920,33 @@ public class TestCosting extends BaseDataSourceTestDal {
                     .getInstance()
                     .get(
                         InvoiceLine.class,
-                        ((LandedCostCost) document).getLandedCostMatchedList().get(0)
-                            .getInvoiceLine().getId()).getBusinessPartner());
+                        ((LandedCostCost) doc).getLandedCostMatchedList().get(0).getInvoiceLine()
+                            .getId()).getBusinessPartner());
           } else {
             assertEquals(accountingFact.getBusinessPartner(), null);
           }
         } else {
           assertEquals(formatDate(accountingFact.getTransactionDate()),
-              formatDate((Date) document.get("accountingDate")));
+              formatDate((Date) doc.get("accountingDate")));
           assertEquals(formatDate(accountingFact.getAccountingDate()),
-              formatDate((Date) document.get("accountingDate")));
-          assertEquals(accountingFact.getBusinessPartner(), document.get("businessPartner"));
+              formatDate((Date) doc.get("accountingDate")));
+          assertEquals(accountingFact.getBusinessPartner(), doc.get("businessPartner"));
         }
 
         if ((productId != null && productId.equals(LANDEDCOSTTYPE3_ID))
-            || (document.getEntityName().equals(Invoice.ENTITY_NAME) && ((Invoice) document)
-                .getCurrency().getId().equals(CURRENCY2_ID))
-            || (document.getEntityName().equals(LandedCost.ENTITY_NAME) && ((LCReceiptLineAmt) line)
+            || (doc.getEntityName().equals(Invoice.ENTITY_NAME) && ((Invoice) doc).getCurrency()
+                .getId().equals(CURRENCY2_ID))
+            || (doc.getEntityName().equals(LandedCost.ENTITY_NAME) && ((LCReceiptLineAmt) line)
                 .getLandedCostCost()
                 .getLandedCostType()
                 .equals(
                     OBDal.getInstance().get(Product.class, LANDEDCOSTTYPE3_ID)
                         .getLandedCostTypeList().get(0)))
-            || (document.getEntityName().equals(LandedCostCost.ENTITY_NAME)
+            || (doc.getEntityName().equals(LandedCostCost.ENTITY_NAME)
                 && ((LCMatched) line).getInvoiceLine().getProduct() != null && ((LCMatched) line)
                 .getInvoiceLine().getProduct().getId().equals(LANDEDCOSTTYPE3_ID))
-            || (!document.getEntityName().equals(Invoice.ENTITY_NAME)
-                && !document.getEntityName().equals(ReceiptInvoiceMatch.ENTITY_NAME)
+            || (!doc.getEntityName().equals(Invoice.ENTITY_NAME)
+                && !doc.getEntityName().equals(ReceiptInvoiceMatch.ENTITY_NAME)
                 && OBDal.getInstance().get(Organization.class, ORGANIZATION_ID).getCurrency() != null && OBDal
                 .getInstance().get(Organization.class, ORGANIZATION_ID).getCurrency().getId()
                 .equals(CURRENCY2_ID))) {
@@ -12985,7 +12984,7 @@ public class TestCosting extends BaseDataSourceTestDal {
         }
 
         else {
-          if (document.getEntityName().equals(Invoice.ENTITY_NAME) && i == 0) {
+          if (doc.getEntityName().equals(Invoice.ENTITY_NAME) && i == 0) {
             assertEquals(accountingFact.getProduct(), null);
             assertEquals(accountingFact.getUOM(), null);
             assertEquals(accountingFact.getTax(), null);
@@ -12999,12 +12998,12 @@ public class TestCosting extends BaseDataSourceTestDal {
               assertEquals(accountingFact.getProduct().getId(), productId);
             }
             if (line.getEntity().getProperty("uOM", false) == null
-                || document.getEntityName().equals(ProductionTransaction.ENTITY_NAME)) {
+                || doc.getEntityName().equals(ProductionTransaction.ENTITY_NAME)) {
               assertEquals(accountingFact.getUOM(), null);
             } else {
               assertEquals(accountingFact.getUOM(), line.get("uOM"));
             }
-            if (!document.getEntityName().equals(LandedCost.ENTITY_NAME)) {
+            if (!doc.getEntityName().equals(LandedCost.ENTITY_NAME)) {
               assertEquals(accountingFact.getLineID(), line.getId());
             }
             assertEquals(accountingFact.getRecordID2(), null);
@@ -13020,11 +13019,11 @@ public class TestCosting extends BaseDataSourceTestDal {
 
         /* Rest of fields assert */
 
-        if (document.getEntityName().equals(ShipmentInOut.ENTITY_NAME)) {
+        if (doc.getEntityName().equals(ShipmentInOut.ENTITY_NAME)) {
           assertEquals(accountingFact.getGLCategory().getName(), "Material Management");
-        } else if (document.getEntityName().equals(Invoice.ENTITY_NAME)) {
+        } else if (doc.getEntityName().equals(Invoice.ENTITY_NAME)) {
           assertEquals(accountingFact.getGLCategory().getName(), "AP Invoice");
-        } else if (document.getEntityName().equals(CostAdjustment.ENTITY_NAME)) {
+        } else if (doc.getEntityName().equals(CostAdjustment.ENTITY_NAME)) {
           assertEquals(accountingFact.getGLCategory().getName(), "None");
         } else {
           assertEquals(accountingFact.getGLCategory().getName(), "Standard");
@@ -13032,10 +13031,10 @@ public class TestCosting extends BaseDataSourceTestDal {
 
         assertEquals(accountingFact.getPostingType(), "A");
 
-        if (document.getEntityName().equals(ReceiptInvoiceMatch.ENTITY_NAME)
-            || document.getEntityName().equals(ProductionTransaction.ENTITY_NAME)) {
+        if (doc.getEntityName().equals(ReceiptInvoiceMatch.ENTITY_NAME)
+            || doc.getEntityName().equals(ProductionTransaction.ENTITY_NAME)) {
           assertEquals(accountingFact.getStorageBin(), null);
-        } else if (document.getEntityName().equals(InternalMovement.ENTITY_NAME)) {
+        } else if (doc.getEntityName().equals(InternalMovement.ENTITY_NAME)) {
           if (i % 2 == 0) {
             assertEquals(accountingFact.getStorageBin(),
                 line.get(InternalMovementLine.PROPERTY_STORAGEBIN));
@@ -13049,31 +13048,31 @@ public class TestCosting extends BaseDataSourceTestDal {
           assertEquals(accountingFact.getStorageBin(), line.get("storageBin"));
         }
 
-        if (document.getEntityName().equals(InventoryCount.ENTITY_NAME)) {
+        if (doc.getEntityName().equals(InventoryCount.ENTITY_NAME)) {
           assertEquals(accountingFact.getDocumentType(), null);
           assertEquals(accountingFact.getDocumentCategory(), "MMI");
-        } else if (document.getEntityName().equals(ReceiptInvoiceMatch.ENTITY_NAME)) {
+        } else if (doc.getEntityName().equals(ReceiptInvoiceMatch.ENTITY_NAME)) {
           assertEquals(accountingFact.getDocumentType(), null);
           assertEquals(accountingFact.getDocumentCategory(), "MXI");
-        } else if (document.getEntityName().equals(InternalMovement.ENTITY_NAME)) {
+        } else if (doc.getEntityName().equals(InternalMovement.ENTITY_NAME)) {
           assertEquals(accountingFact.getDocumentType(), null);
           assertEquals(accountingFact.getDocumentCategory(), "MMM");
-        } else if (document.getEntityName().equals(InternalConsumption.ENTITY_NAME)) {
+        } else if (doc.getEntityName().equals(InternalConsumption.ENTITY_NAME)) {
           assertEquals(accountingFact.getDocumentType(), null);
           assertEquals(accountingFact.getDocumentCategory(), "MIC");
-        } else if (document.getEntityName().equals(ProductionTransaction.ENTITY_NAME)) {
+        } else if (doc.getEntityName().equals(ProductionTransaction.ENTITY_NAME)) {
           assertEquals(accountingFact.getDocumentType(), null);
           assertEquals(accountingFact.getDocumentCategory(), "MMP");
-        } else if (document.getEntityName().equals(LandedCost.ENTITY_NAME)) {
+        } else if (doc.getEntityName().equals(LandedCost.ENTITY_NAME)) {
           assertEquals(accountingFact.getDocumentType(), null);
           assertEquals(accountingFact.getDocumentCategory(), "LDC");
-        } else if (document.getEntityName().equals(LandedCostCost.ENTITY_NAME)) {
+        } else if (doc.getEntityName().equals(LandedCostCost.ENTITY_NAME)) {
           assertEquals(accountingFact.getDocumentType(), null);
           assertEquals(accountingFact.getDocumentCategory(), "LCC");
         } else {
-          assertEquals(accountingFact.getDocumentType(), document.get("documentType"));
+          assertEquals(accountingFact.getDocumentType(), doc.get("documentType"));
           assertEquals(accountingFact.getDocumentCategory(),
-              ((DocumentType) document.get("documentType")).getDocumentCategory());
+              ((DocumentType) doc.get("documentType")).getDocumentCategory());
         }
 
         assertEquals(accountingFact.getSalesRegion(), null);
