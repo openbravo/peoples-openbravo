@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2012 Openbravo SLU
+ * All portions are Copyright (C) 2001-2015 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -461,6 +461,10 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
         myMessage.setMessage(Utility.messageBD(this, "TheEmployee", vars.getLanguage()) + ' '
             + strEmpl + ' '
             + Utility.messageBD(this, "FormofPaymentNotdefined", vars.getLanguage()));
+      } else if (e.getMessage().equals("PayementMethodNotdefined")) {
+        myMessage.setMessage(Utility.messageBD(this, "TheEmployee", vars.getLanguage()) + ' '
+            + strEmpl + ' '
+            + Utility.messageBD(this, "PayementMethodNotdefined", vars.getLanguage()));
       } else if (e.getMessage().equals("PaymenttermNotdefined")) {
         myMessage.setMessage(Utility.messageBD(this, "TheEmployee", vars.getLanguage()) + ' '
             + strEmpl + ' ' + Utility.messageBD(this, "PaymenttermNotdefined", vars.getLanguage()));
