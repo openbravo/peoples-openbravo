@@ -159,7 +159,7 @@
 
     applyPromotionsImp: function (receipt, line, skipSave, startExecutionAutomatically) {
       var startExecution = startExecutionAutomatically || OB.UTIL.isNullOrUndefined(startExecutionAutomatically);
-      var lines;
+      var lines, linesWithoutNoDiscCandidated;
       if (this.preventApplyPromotions) {
         return;
       }
@@ -184,15 +184,22 @@
           // Removing last line, recalculate total
           receipt.calculateGross();
         } else {
-          lines.forEach(function (l) {
-            // with new flow discounts -> skipSave =true
-            // in other case -> false
-            if (l.get('noDiscountCandidates') !== true) {
-              this.applyPromotionsImp(receipt, l, OB.MobileApp.model.hasPermission('OBPOS_discount.newFlow', true), startExecution);
+          linesWithoutNoDiscCandidated = lines.filter(function (l) {
+            return l.get('noDiscountCandidates') !== true;
+          });
+          if (linesWithoutNoDiscCandidated.length === 0) {
+            receipt.trigger('discountsApplied');
+          } else {
+            lines.forEach(function (l) {
+              // with new flow discounts -> skipSave =true
+              // in other case -> false
+              if (l.get('noDiscountCandidates') !== true) {
+                this.applyPromotionsImp(receipt, l, OB.MobileApp.model.hasPermission('OBPOS_discount.newFlow', true), startExecution);
+              }
+            }, this);
+            if (!startExecution) {
+              this.executor.nextEvent();
             }
-          }, this);
-          if (!startExecution) {
-            this.executor.nextEvent();
           }
         }
       }
