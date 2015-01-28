@@ -40,7 +40,9 @@
           discountedNet, gross = OB.DEC.Zero,
           discountedLinePriceNet, roundedDiscountedLinePriceNet, calculatedDiscountedNet;
       if (len === 0) {
-        me.set('taxes', {});
+        me.set('taxes', {}, {
+          silent: true
+        });
         if (callback) {
           callback();
         }
@@ -78,7 +80,7 @@
             line: element,
             sql: sql
           }, function (args) {
-            OB.Dal.query(OB.Model.TaxRate, args.sql, [], function (coll, args) { // success
+            OB.Dal.queryUsingCache(OB.Model.TaxRate, args.sql, [], function (coll, args) { // success
               var rate, taxAmt, net, gross, pricenet, pricenetcascade, amount, taxId, collClone, baseTax, baseTaxAmt, baseTaxdcAmt;
               if (coll && coll.length > 0) {
 
@@ -184,11 +186,13 @@
                   linegross = element.get('lineGrossAmount') || element.get('gross');
                 }
 
-                element.set('linerate', OB.DEC.toNumber(linerate));
-                element.set('tax', linetaxid);
-                element.set('taxAmount', OB.DEC.sub(linegross, linenet));
-                element.set('net', calculatedLineNet);
-                element.set('pricenet', roundedLinePriceNet);
+                element.set({
+                  'linerate': OB.DEC.toNumber(linerate),
+                  'tax': linetaxid,
+                  'taxAmount': OB.DEC.sub(linegross, linenet),
+                  'net': calculatedLineNet,
+                  'pricenet': roundedLinePriceNet
+                });
 
                 totalnet = OB.DEC.add(totalnet, calculatedLineNet);
 
@@ -213,7 +217,9 @@
                   pricenet = roundedLinePriceNet; // 2 decimals properly rounded.
                 }
                 //pricenet = OB.DEC.toNumber(pricenet);
-                element.set('discountedNet', OB.DEC.mul(pricenet, new BigDecimal(String(element.get('qty')))));
+                element.set('discountedNet', OB.DEC.mul(pricenet, new BigDecimal(String(element.get('qty')))), {
+                  silent: true
+                });
                 discountedNet = element.get('discountedNet');
                 pricenetcascade = pricenet;
 
@@ -298,7 +304,9 @@
                   //An adjustment is needed
                   taxesline[greaterTax].amount = OB.DEC.add(taxesline[greaterTax].amount, OB.DEC.sub(expectedGross, netandtax));
                 }
-                element.set('taxLines', taxesline);
+                element.set('taxLines', taxesline, {
+                  silent: true
+                });
 
                 // processed = yes
                 queue[element.cid] = true;
@@ -340,8 +348,12 @@
 
                 // triggering next steps
                 if (triggerNext) {
-                  me.set('taxes', taxes);
-                  me.set('net', totalnet);
+                  me.set('taxes', taxes, {
+                    silent: true
+                  });
+                  me.set('net', totalnet, {
+                    silent: true
+                  });
                   if (callback) {
                     callback();
                   }
@@ -377,22 +389,23 @@
           var product = element.get('product');
           if (element.get('ignoreTaxes') === true || product.get('ignoreTaxes') === true) {
             var taxLine = {};
-            element.set('linerate', OB.DEC.toNumber(BigDecimal.prototype.ONE));
-            element.set('tax', OB.MobileApp.model.get('terminal').taxexempid);
-            element.set('taxAmount', OB.DEC.Zero);
-            element.set('net', element.get('net'));
-            element.set('pricenet', element.get('net'));
-            element.set('gross', element.get('net'));
-            element.set('discountedGross', element.get('net'));
-            element.set('discountedNet', new BigDecimal(String(element.get('net'))));
-            element.set('taxAmount', OB.DEC.Zero);
-            element.set('discountedNetPrice', new BigDecimal(String(element.get('net'))));
             taxLine[OB.MobileApp.model.get('terminal').taxexempid] = {
               amount: 0,
               rate: 0,
               net: element.get('net')
             };
-            element.set('taxLines', taxLine);
+            element.set({
+              'linerate': OB.DEC.toNumber(BigDecimal.prototype.ONE),
+              'tax': OB.MobileApp.model.get('terminal').taxexempid,
+              'taxAmount': OB.DEC.Zero,
+              'net': element.get('net'),
+              'pricenet': element.get('net'),
+              'gross': element.get('net'),
+              'discountedGross': element.get('net'),
+              'discountedNet': new BigDecimal(String(element.get('net'))),
+              'discountedNetPrice': new BigDecimal(String(element.get('net'))),
+              'taxLines': taxLine
+            });
           } else {
             var sql = "select c_tax.c_tax_id, c_tax.name,  c_tax.description, c_tax.taxindicator, c_tax.validfrom, c_tax.issummary, c_tax.rate, c_tax.parent_tax_id, (case when c_tax.c_country_id = '" + fromCountryOrg + "' then c_tax.c_country_id else tz.from_country_id end) as c_country_id, (case when c_tax.c_region_id = '" + fromRegionOrg + "' then c_tax.c_region_id else tz.from_region_id end) as c_region_id, (case when c_tax.to_country_id = bpl.countryId then c_tax.to_country_id else tz.to_country_id end) as to_country_id, (case when c_tax.to_region_id = bpl.regionId then c_tax.to_region_id else tz.to_region_id end)  as to_region_id, c_tax.c_taxcategory_id, c_tax.isdefault, c_tax.istaxexempt, c_tax.sopotype, c_tax.cascade, c_tax.c_bp_taxcategory_id,  c_tax.line, c_tax.iswithholdingtax, c_tax.isnotaxable, c_tax.deducpercent, c_tax.originalrate, c_tax.istaxundeductable,  c_tax.istaxdeductable, c_tax.isnovat, c_tax.baseamount, c_tax.c_taxbase_id, c_tax.doctaxamount, c_tax.iscashvat,  c_tax._identifier,  c_tax._idx,  (case when (c_tax.to_country_id = bpl.countryId or tz.to_country_id= bpl.countryId) then 0 else 1 end) as orderCountryTo,  (case when (c_tax.to_region_id = bpl.regionId or tz.to_region_id = bpl.regionId) then 0 else 1 end) as orderRegionTo,  (case when coalesce(c_tax.c_country_id, tz.from_country_id) is null then 1 else 0 end) as orderCountryFrom,  (case when coalesce(c_tax.c_region_id, tz.from_region_id) is null then 1 else 0 end) as orderRegionFrom  from c_tax left join c_tax_zone tz on tz.c_tax_id = c_tax.c_tax_id  join c_bpartner_location bpl on bpl.c_bpartner_location_id = '" + me.get('bp').get('locId') + "'   where c_tax.sopotype in ('B', 'S') ";
 
@@ -422,7 +435,7 @@
               line: element,
               sql: sql
             }, function (args) {
-              OB.Dal.query(OB.Model.TaxRate, args.sql, [], function (coll, args) { // success
+              OB.Dal.queryUsingCache(OB.Model.TaxRate, args.sql, [], function (coll, args) { // success
                 var rate, taxAmt, net, pricenet, pricenetcascade, amount, taxId, roundingLoses, pricenetAux, baseTax, collClone, baseAmount, discBaseAmount;
                 if (coll && coll.length > 0) {
 
@@ -552,21 +565,22 @@
                   }
 
                   var linepricegross = OB.DEC.div(linegross, element.get('qty'));
-                  element.set('linerate', OB.DEC.toNumber(linerate));
-                  element.set('tax', linetaxid);
-                  element.set('taxAmount', OB.DEC.mul(OB.DEC.mul(discountedprice, element.get('qty')), linerate));
-                  element.set('net', linenet);
-                  element.set('pricenet', linepricenet);
-                  element.set('gross', OB.DEC.toNumber(linegross));
-                  element.set('fullgross', linegross);
-                  element.set('discountedGross', OB.DEC.toNumber(discountedGross));
-                  element.set('discountedNet', discountedNet);
-                  element.set('taxAmount', OB.DEC.sub(element.get('discountedGross'), element.get('discountedNet')));
-                  element.set('discountedNetPrice', discountedprice);
+                  element.set({
+                    'linerate': OB.DEC.toNumber(linerate),
+                    'tax': linetaxid,
+                    'net': linenet,
+                    'pricenet': linepricenet,
+                    'gross': OB.DEC.toNumber(linegross),
+                    'fullgross': linegross,
+                    'discountedGross': OB.DEC.toNumber(discountedGross),
+                    'discountedNet': discountedNet,
+                    'taxAmount': OB.DEC.sub(OB.DEC.toNumber(discountedGross), discountedNet),
+                    'discountedNetPrice': discountedprice,
+                    'taxLines': taxesline
+                  });
 
                   totalnet = OB.DEC.add(totalnet, linenet);
 
-                  element.set('taxLines', taxesline);
 
                   // processed = yes
                   queue[element.cid] = true;
@@ -583,7 +597,9 @@
                   });
                   // triggering next steps
                   if (triggerNext) {
-                    me.set('taxes', taxes);
+                    me.set('taxes', taxes, {
+                      silent: true
+                    });
                     if (callback) {
                       callback();
                     }
