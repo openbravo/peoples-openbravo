@@ -25,7 +25,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2014 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2015 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -282,7 +282,7 @@
               WHERE (bp.customer_blocking='N' OR bp.so_invoice_blocking='N')
               AND ((o.C_Order_ID=v_C_Order_ID 
               AND v_Selection = 'N'
-              AND o.DocStatus IN('IP', 'CO')) -- OR all completed and closed orders
+              AND o.DocStatus IN('IP', 'CO', 'CL')) -- OR all completed and closed orders
               OR(v_C_Order_ID IS NULL AND v_Selection = 'N'
               AND o.DocStatus IN('CO', 'CL')
               AND o.IsSOTrx='Y'  -- not for InvoiceSchedule
