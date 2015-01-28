@@ -81,7 +81,7 @@ enyo.kind({
   }],
   renderTotal: function (newTotal) {
     this.$.totalgross.setContent(OB.I18N.formatCurrency(newTotal));
-    OB.MobileApp.model.hookManager.executeHooks('OBPOS_UpdateTotalReceiptLine', {
+    OB.UTIL.HookManager.executeHooks('OBPOS_UpdateTotalReceiptLine', {
       totalline: this
     }, function (args) {
       //All should be done in module side
@@ -104,7 +104,7 @@ enyo.kind({
   initComponents: function () {
     this.inherited(arguments);
     this.$.lblTotal.setContent(OB.I18N.getLabel('OBPOS_LblTotal'));
-    OB.MobileApp.model.hookManager.executeHooks('OBPOS_RenderTotalReceiptLine', {
+    OB.UTIL.HookManager.executeHooks('OBPOS_RenderTotalReceiptLine', {
       totalline: this
     }, function (args) {
       //All should be done in module side
