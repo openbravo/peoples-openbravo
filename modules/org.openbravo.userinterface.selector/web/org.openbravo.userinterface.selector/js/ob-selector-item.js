@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2014 Openbravo SLU
+ * All portions are Copyright (C) 2011-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -498,6 +498,67 @@ isc.OBSelectorItem.addProperties({
     }
 
     this.Super('hidePickListOnBlur', arguments);
+  },
+
+  // adds a single entry to valueMap if it is not already present
+  addValueMapEntry: function (id, identifier) {
+    var i, entries = this.entries || [],
+        entry = {},
+        valueField = this.getValueFieldName(),
+        length = entries.length;
+    for (i = 0; i < length; i++) {
+      if (entries[i][valueField] === id) {
+        return;
+      }
+    }
+
+    // not found add/create a new one
+    entry[valueField] = id;
+
+    if (id && identifier) {
+      entry[OB.Constants.ID] = id;
+      entry[OB.Constants.IDENTIFIER] = identifier;
+    }
+
+    entries.push(entry);
+    this.setEntries(entries);
+  },
+
+  // all entries are set at once in client, this happens when a callout
+  // computes all possible values, from this point subsequent filtering
+  // requires to be done in local
+  setEntries: function (entries) {
+    var length = entries.length,
+        i, id, identifier, valueMap = {},
+        valueMapData = [];
+
+    if (!this.setValueMap) {
+      return;
+    }
+
+    for (i = 0; i < length; i++) {
+      id = entries[i][OB.Constants.ID] || '';
+      identifier = entries[i][OB.Constants.IDENTIFIER] || '';
+      valueMap[id] = identifier;
+
+      valueMapData.push({
+        _identifier: identifier,
+        id: id
+      });
+    }
+
+    this.wholeMapSet = true; // flag to use local filtering from now on
+    this.preventPickListRequest = true; // preventing 1st request triggered by setValueMap
+    this.setValueMap(valueMap);
+
+    if (this.pickList) {
+      // there is no a proper way of initializing local data, let's do it editing
+      // picklist.data properties
+      this.pickList.data.localData = valueMapData;
+      this.pickList.data.allRows = valueMapData;
+      this.pickList.data.allRowsCriteria = this.pickList.data.criteria;
+      this.pickList.data.cachedRows = valueMapData.length;
+    }
   },
 
   setUpPickList: function (show, queueFetches, request) {

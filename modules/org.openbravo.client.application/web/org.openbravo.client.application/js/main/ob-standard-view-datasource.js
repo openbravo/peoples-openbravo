@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2013 Openbravo SLU
+ * All portions are Copyright (C) 2011-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -204,6 +204,7 @@ isc.OBViewDataSource.addProperties({
   },
 
   transformResponse: function (dsResponse, dsRequest, jsonData) {
+    var fields, i, field, record;
 
     if (dsRequest.clientContext) {
       this.hideProgress(dsRequest.clientContext.progressIndicatorSelectedRecord);
@@ -218,9 +219,27 @@ isc.OBViewDataSource.addProperties({
         }
       } else {
         // there are some cases where the jsonData is not passed, in case of
-        // errors
-        // make it available through the response object
+        // errors make it available through the response object
         dsResponse.dataObject = jsonData;
+
+        if ((dsRequest.operationType === 'update' || dsRequest.operationType === 'add') && this.view.viewForm && jsonData.response && jsonData.response.data && jsonData.response.data.length === 1) {
+          // adding or updating a single record: at this point it is possible valueMap for
+          // some fields not to contain current entry, let's add it now so it is properly
+          // displayed
+          fields = this.view.viewForm.getFields();
+          for (i = 0; i < fields.length; i++) {
+            field = fields[i];
+            record = jsonData.response.data[0];
+            if (field.addValueMapEntry && record[field.name] && record[field.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER]) {
+              field.addValueMapEntry(record[field.name], record[field.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER]);
+              if (field.invalidateLocalValueMapCache) {
+                // invalidate local cache to force request when the drop down is opened as
+                // current map might have now only actual value
+                field.invalidateLocalValueMapCache();
+              }
+            }
+          }
+        }
       }
     }
     return this.Super('transformResponse', arguments);
