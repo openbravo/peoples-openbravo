@@ -32,6 +32,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
     //cancel -> back to point of sale
     //Ok -> Continue closing without these orders
     var undf, me = this,
+        terminalSlave = !OB.POS.modelterminal.get("terminal").ismaster && OB.POS.modelterminal.get("terminal").isslave,
         newstep, expected = 0,
         totalStartings = 0,
         startings = [],
@@ -75,25 +76,29 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
           if (!auxPay) { //We cannot find this payment in local database, it must be a new payment method, we skip it.
             return;
           }
-          auxPay.set('_id', payment.payment.searchKey);
-          auxPay.set('isocode', payment.isocode);
-          auxPay.set('paymentMethod', payment.paymentMethod);
-          auxPay.set('id', payment.payment.id);
-          if (auxPay.get('totalDeposits') === null) {
-            auxPay.set('totalDeposits', 0);
+
+          // Not add shared payment to slave terminal
+          if (!terminalSlave || !OB.MobileApp.model.paymentnames[payment.payment.searchKey].paymentMethod.isshared) {
+            auxPay.set('_id', payment.payment.searchKey);
+            auxPay.set('isocode', payment.isocode);
+            auxPay.set('paymentMethod', payment.paymentMethod);
+            auxPay.set('id', payment.payment.id);
+            if (auxPay.get('totalDeposits') === null) {
+              auxPay.set('totalDeposits', 0);
+            }
+            if (auxPay.get('totalDrops') === null) {
+              auxPay.set('totalDrops', 0);
+            }
+            var cStartingCash = auxPay.get('startingCash');
+            var cTotalReturns = auxPay.get('totalReturns');
+            var cTotalSales = auxPay.get('totalSales');
+            var cTotalDeposits = OB.DEC.sub(auxPay.get('totalDeposits'), OB.DEC.abs(auxPay.get('totalDrops')));
+            expected = OB.DEC.add(OB.DEC.add(cStartingCash, OB.DEC.sub(cTotalSales, OB.DEC.abs(cTotalReturns))), cTotalDeposits);
+            var fromCurrencyId = auxPay.get('paymentMethod').currency;
+            auxPay.set('expected', OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, expected));
+            auxPay.set('foreignExpected', expected);
+            tempList.add(auxPay);
           }
-          if (auxPay.get('totalDrops') === null) {
-            auxPay.set('totalDrops', 0);
-          }
-          var cStartingCash = auxPay.get('startingCash');
-          var cTotalReturns = auxPay.get('totalReturns');
-          var cTotalSales = auxPay.get('totalSales');
-          var cTotalDeposits = OB.DEC.sub(auxPay.get('totalDeposits'), OB.DEC.abs(auxPay.get('totalDrops')));
-          expected = OB.DEC.add(OB.DEC.add(cStartingCash, OB.DEC.sub(cTotalSales, OB.DEC.abs(cTotalReturns))), cTotalDeposits);
-          var fromCurrencyId = auxPay.get('paymentMethod').currency;
-          auxPay.set('expected', OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, expected));
-          auxPay.set('foreignExpected', expected);
-          tempList.add(auxPay);
 
           if (index === activePaymentsList.length - 1) {
             me.get('paymentList').reset(tempList.models);
@@ -143,6 +148,10 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
       }, function (payMthds) { //OB.Dal.find success
         cashUpReport.set('totalStartings', _.reduce(payMthds.models, function (accum, trx) {
           if (OB.MobileApp.model.paymentnames[trx.get('searchKey')]) {
+            // Not accumulate shared payments on slave terminal
+            if (terminalSlave && OB.MobileApp.model.paymentnames[trx.get('searchKey')].paymentMethod.isshared) {
+              return accum;
+            }
             var fromCurrencyId = OB.MobileApp.model.paymentnames[trx.get('searchKey')].paymentMethod.currency;
             var cStartingCash = OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, trx.get('startingCash'));
             return OB.DEC.add(accum, cStartingCash);
@@ -153,6 +162,10 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
 
         cashUpReport.set('totalDeposits', _.reduce(payMthds.models, function (accum, trx) {
           if (OB.MobileApp.model.paymentnames[trx.get('searchKey')]) {
+            // Not accumulate shared payments on slave terminal
+            if (terminalSlave && OB.MobileApp.model.paymentnames[trx.get('searchKey')].paymentMethod.isshared) {
+              return accum;
+            }
             var fromCurrencyId = OB.MobileApp.model.paymentnames[trx.get('searchKey')].paymentMethod.currency;
             var cTotalDeposits = OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, OB.DEC.add(trx.get('totalDeposits'), trx.get('totalSales')));
             return OB.DEC.add(accum, cTotalDeposits);
@@ -163,6 +176,10 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
 
         cashUpReport.set('totalDrops', _.reduce(payMthds.models, function (accum, trx) {
           if (OB.MobileApp.model.paymentnames[trx.get('searchKey')]) {
+            // Not accumulate shared payments on slave terminal
+            if (terminalSlave && OB.MobileApp.model.paymentnames[trx.get('searchKey')].paymentMethod.isshared) {
+              return accum;
+            }
             var fromCurrencyId = OB.MobileApp.model.paymentnames[trx.get('searchKey')].paymentMethod.currency;
             var cTotalDrops = OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, OB.DEC.add(trx.get('totalDrops'), trx.get('totalReturns')));
             return OB.DEC.add(accum, cTotalDrops);
@@ -176,6 +193,10 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
             return pay.payment.id === p.get('paymentmethod_id');
           })[0];
           if (!auxPay) { //We cannot find this payment in local database, it must be a new payment method, we skip it.
+            return;
+          }
+          // Not add shared payment to slave terminal
+          if (terminalSlave && OB.MobileApp.model.paymentnames[auxPay.payment.searchKey].paymentMethod.isshared) {
             return;
           }
 
