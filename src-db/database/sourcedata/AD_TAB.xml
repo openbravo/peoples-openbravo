@@ -16857,7 +16857,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--9195CC43B5A4419195030A4DB17D8737-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--9195CC43B5A4419195030A4DB17D8737-->  <HQLWHERECLAUSE><![CDATA[COALESCE(e.goodsShipment.id, @MaterialMgmtShipmentInOut.id@) = @MaterialMgmtShipmentInOut.id@
 AND @MaterialMgmtShipmentInOut.businessPartner@ = e.orderLine.salesOrder.businessPartner.id
-AND e.pending <> 0]]></HQLWHERECLAUSE>
+AND e.pending <> 0 AND ad_org_isinnaturaltree(@MaterialMgmtShipmentInOut.organization@, e.storageBin.organization.id, @MaterialMgmtShipmentInOut.client@) = 'Y']]></HQLWHERECLAUSE>
 <!--9195CC43B5A4419195030A4DB17D8737-->  <HQLORDERBYCLAUSE><![CDATA[obSelected DESC, rMOrderNo, product]]></HQLORDERBYCLAUSE>
 <!--9195CC43B5A4419195030A4DB17D8737-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--9195CC43B5A4419195030A4DB17D8737-->  <DISABLE_PARENT_KEY_PROPERTY><![CDATA[N]]></DISABLE_PARENT_KEY_PROPERTY>
