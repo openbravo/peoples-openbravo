@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -35,7 +35,6 @@
 				                     where ps.fin_payment_schedule_id = fin_payment_schedule_invoice 
 				                     and ps.c_invoice_id = i.c_invoice_id)
 				where c_bpartner_id is null and fin_payment_schedule_invoice is not null 
-					and fin_payment_schedule_order is null
       ]]>
     </Sql>
   </SqlMethod>
@@ -58,7 +57,7 @@
       <![CDATA[
     SELECT count(*) as exist
     FROM ad_preference
-    WHERE attribute = 'UpdateBpPaymentLine' and isactive = 'Y'
+    WHERE attribute = 'UpdateBpPaymentLine2' and isactive = 'Y'
       ]]>
     </Sql>
   </SqlMethod>
@@ -71,7 +70,7 @@
     createdby, created, updatedby, updated, attribute
     ) VALUES (
     get_uuid(), '0', '0', 'Y', 
-    '0', NOW(), '0', NOW(), 'UpdateBpPaymentLine')
+    '0', NOW(), '0', NOW(), 'UpdateBpPaymentLine2')
       ]]>
     </Sql>
   </SqlMethod>
