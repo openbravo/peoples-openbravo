@@ -50,6 +50,12 @@
       }
       if (this.get('priceIncludesTax')) {
 
+
+
+        _.each(lines.models, function (element, index, list) {
+          // add line to queue of pending to be processed
+          queue[element.cid] = false;
+        });
         _.each(lines.models, function (element, index, list) {
           var product = element.get('product');
 
@@ -379,11 +385,15 @@
               });
             }, product);
 
-            // add line to queue of pending to be processed
-            queue[element.cid] = false;
           });
         });
       } else {
+
+
+        _.each(lines.models, function (element, index, list) {
+          // add line to queue of pending to be processed
+          queue[element.cid] = false;
+        });
         //In case the pricelist doesn't include taxes, the way to calculate taxes is different
         _.each(lines.models, function (element, index, list) {
           var product = element.get('product');
@@ -625,8 +635,6 @@
                 });
               }, product);
 
-              // add line to queue of pending to be processed
-              queue[element.cid] = false;
             });
           }
         });
