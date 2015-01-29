@@ -1954,7 +1954,7 @@
       this.get('lines').forEach(function (l) {
         l.calculateGross();
       });
-
+      this.calculateGross();
       this.trigger('promotionsUpdated');
       this.set('skipApplyPromotions', localSkipApplyPromotions);
     },
@@ -2000,7 +2000,7 @@
     removeLinesWithoutPromotions: function () {
       var linesPending = new Backbone.Collection();
       _.each(this.get('lines').models, function (l) {
-        if ((l.get('promotions') && l.get('promotions').length > 0) || (l.get('promotionCandidates') && l.get('promotionCandidates').length > 0)) {
+        if (l.get('promotions') && l.get('promotions').length > 0) {
           linesPending.push(l);
         }
       });
@@ -2010,7 +2010,7 @@
     hasPromotions: function () {
       var hasPromotions = false;
       this.get('lines').forEach(function (l) {
-        if (l.get('promotions') && l.get('promotions').length > 0 && l.get('qty') > l.get('qtyToApplyDisc')) {
+        if (l.get('promotions') && l.get('promotions').length > 0) {
           hasPromotions = true;
         }
       });
@@ -2031,7 +2031,7 @@
           }
           return isEqual;
           };
-      if (line1.get('product').get('id') === line2.get('product').get('id') && line1.get('price') === line2.get('price') && ((!OB.UTIL.isNullOrUndefined(line1.get('discountedLinePrice')) && !OB.UTIL.isNullOrUndefined(line2.get('discountedLinePrice')) && line1.get('discountedLinePrice') === line2.get('discountedLinePrice')) || (OB.UTIL.isNullOrUndefined(line1.get('discountedLinePrice')) && OB.UTIL.isNullOrUndefined(line2.get('discountedLinePrice')))) && line1.get('qty') === line2.get('qty')) {
+      if (line1.get('product').get('id') === line2.get('product').get('id') && line1.get('price') === line2.get('price') && line1.get('discountedLinePrice') === line2.get('discountedLinePrice') && line1.get('qty') === line2.get('qty')) {
         return equalPromotions(line1.get('promotions') || [], line2.get('promotions') || []);
       } else {
         return false;
