@@ -206,7 +206,7 @@ enyo.kind({
 /*items of collection*/
 enyo.kind({
   name: 'OB.UI.ListPRsLine',
-  kind: 'OB.UI.SelectButton',
+  kind: 'OB.UI.listItemButton',
   allowHtml: true,
   events: {
     onHideThisPopup: ''
