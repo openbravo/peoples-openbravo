@@ -467,10 +467,9 @@
           'gross': line.get('net'),
           'discountedGross': line.get('net'),
           'discountedNet': new BigDecimal(String(line.get('net'))),
-          'taxAmount': OB.DEC.Zero,
           'discountedNetPrice': new BigDecimal(String(line.get('net'))),
           'taxLines': taxLine
-        })
+        });
         return Promise.resolve();
       } else {
         return findTaxesCollection(receipt, line, product).then(function (coll) {
@@ -600,7 +599,6 @@
           line.set({
             'linerate': OB.DEC.toNumber(linerate),
             'tax': linetaxid,
-            'taxAmount': OB.DEC.mul(OB.DEC.mul(discountedprice, line.get('qty')), linerate),
             'net': linenet,
             'pricenet': linepricenet,
             'gross': OB.DEC.toNumber(linegross),
