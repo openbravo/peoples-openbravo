@@ -95,9 +95,10 @@ enyo.kind({
           components: [{
             classes: 'span12',
             components: [{
+              name: 'stepsheader',
               style: 'padding: 10px; border-bottom: 1px solid #cccccc; text-align:center;',
-              initComponents: function () {
-                this.setContent(OB.I18N.getLabel('OBPOS_LblStep1of4') + OB.OBPOSCashUp.UI.CashUp.getTitleExtensions());
+              renderHeader: function (step, count) {
+                this.setContent(OB.I18N.getLabel('OBPOS_LblStepNumber', [step, count]) + " " + OB.I18N.getLabel('OBPOS_LblStepPendingOrders') + OB.OBPOSCashUp.UI.CashUp.getTitleExtensions());
               }
             }]
           }]
@@ -203,6 +204,8 @@ enyo.kind({
     });
   },
   displayStep: function (model) {
-    // this function is invoked when displayed.          
+    // this function is invoked when displayed.   
+    this.$.stepsheader.renderHeader(model.stepNumber('OB.CashUp.StepPendingOrders'), model.stepCount());
+
   }
 });

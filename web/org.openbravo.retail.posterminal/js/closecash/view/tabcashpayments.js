@@ -162,7 +162,10 @@ enyo.kind({
             classes: 'span12',
             components: [{
               style: 'padding: 10px; border-bottom: 1px solid #cccccc; text-align:center;',
-              name: 'title'
+              name: 'title',
+              renderHeader: function (value, step, count) {
+                this.setContent(OB.I18N.getLabel('OBPOS_LblStepNumber', [step, count]) + " " + OB.I18N.getLabel('OBPOS_LblStepCashPayments', [value]) + OB.OBPOSCashUp.UI.CashUp.getTitleExtensions());
+              }
             }]
           }]
         }, {
@@ -374,7 +377,7 @@ enyo.kind({
   initPaymentToCount: function (payment) {
     this.payment = payment;
 
-    this.$.title.setContent(OB.I18N.getLabel('OBPOS_CashPaymentsTitle', [payment.get('name')]) + OB.OBPOSCashUp.UI.CashUp.getTitleExtensions());
+    this.$.title.renderHeader(payment.get('name'), this.model.stepNumber('OB.CashUp.CashPayments'), this.model.stepCount());
 
     this.$.total.printAmount(this.payment.get('foreignExpected'));
 
@@ -435,6 +438,7 @@ enyo.kind({
 
   },
   displayStep: function (model) {
+    this.model = model;
     var payment = model.get('paymentList').at(model.get('substep'));
 
     // this function is invoked when displayed.      

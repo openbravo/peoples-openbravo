@@ -157,9 +157,9 @@ enyo.kind({
       // DEVELOPER: This two rules must be followed if you want this kind to keep data meaningfulness
       //            Each type is related to either convertedValues or valuestoConvert
       if (this.convertedValue && this.convertedValues.indexOf(this.type) === -1) {
-       OB.warn("DEVELOPER: the type '" + this.type + "' is being incorrectly implemented.");
+        OB.warn("DEVELOPER: the type '" + this.type + "' is being incorrectly implemented.");
       }
-      if (this.valueToConvert && this.valuestoConvert.indexOf(this.type) === -1){
+      if (this.valueToConvert && this.valuestoConvert.indexOf(this.type) === -1) {
         OB.warn("DEVELOPER: the type '" + this.type + "' is being incorrectly implemented.");
       }
     }
@@ -435,9 +435,10 @@ enyo.kind({
         components: [{
           classes: 'span12',
           components: [{
+            name: 'stepsheader',
             style: 'padding: 10px; border-bottom: 1px solid #cccccc; text-align:center;',
-            initComponents: function () {
-              this.setContent(OB.I18N.getLabel('OBPOS_LblStep4of4') + OB.OBPOSCashUp.UI.CashUp.getTitleExtensions());
+            renderHeader: function (step, count) {
+              this.setContent(OB.I18N.getLabel('OBPOS_LblStepNumber', [step, count]) + " " + OB.I18N.getLabel('OBPOS_LblStepPostPrintAndClose') + OB.OBPOSCashUp.UI.CashUp.getTitleExtensions());
             }
           }]
         }]
@@ -452,7 +453,7 @@ enyo.kind({
               style: 'padding: 20px;',
               initComponents: function () {
                 if (OB.MobileApp.model.get('terminal').organizationImage) {
-                  this.setAttribute('src', 'data:'+OB.MobileApp.model.get('terminal').organizationImageMime+';base64,'+OB.MobileApp.model.get('terminal').organizationImage);
+                  this.setAttribute('src', 'data:' + OB.MobileApp.model.get('terminal').organizationImageMime + ';base64,' + OB.MobileApp.model.get('terminal').organizationImage);
                 }
               }
             }, {
@@ -624,6 +625,7 @@ enyo.kind({
   },
   displayStep: function (model) {
     // this function is invoked when displayed.
+    this.$.stepsheader.renderHeader(model.stepNumber('OB.CashUp.PostPrintAndClose'), model.stepCount());
     this.setSummary(model.getCountCashSummary());
   }
 });

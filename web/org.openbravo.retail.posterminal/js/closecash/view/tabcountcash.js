@@ -115,9 +115,11 @@ enyo.kind({
             classes: 'span12',
             components: [{
               style: 'padding: 10px; border-bottom: 1px solid #cccccc; text-align:center;',
-              initComponents: function () {
-                this.setContent(OB.I18N.getLabel('OBPOS_LblStep2of4') + OB.OBPOSCashUp.UI.CashUp.getTitleExtensions());
+              name: 'stepsheader',
+              renderHeader: function (step, count) {
+                this.setContent(OB.I18N.getLabel('OBPOS_LblStepNumber', [step, count]) + " " + OB.I18N.getLabel('OBPOS_LblStepPaymentMethods') + OB.OBPOSCashUp.UI.CashUp.getTitleExtensions());
               }
+
             }]
           }]
         }, {
@@ -233,6 +235,7 @@ enyo.kind({
     this.$.buttonAllOk.applyStyle('visibility', 'hidden'); //hiding in this way to keep the space
   },
   displayStep: function (model) {
+    this.$.stepsheader.renderHeader(model.stepNumber('OB.CashUp.PaymentMethods'), model.stepCount());
     // this function is invoked when displayed.  
     var opendrawer = model.get('paymentList').any(function (payment) {
       var paymentmethod = payment.get('paymentMethod');

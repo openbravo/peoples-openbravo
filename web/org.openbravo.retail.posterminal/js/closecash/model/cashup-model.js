@@ -25,7 +25,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
     pendingOrdersToProcess: false,
     otherInput: OB.DEC.Zero
   },
-  cashupstepsdefinition: ['OB.CashUp.StepPendingOrders', 'OB.CashUp.CashPayments', 'OB.CashUp.PaymentMethods', 'OB.CashUp.CashToKeep', 'OB.CashUp.PostPrintAndClose'],
+  cashupstepsdefinition: ['OB.CashUp.StepPendingOrders', 'OB.CashUp.Master', 'OB.CashUp.CashPayments', 'OB.CashUp.PaymentMethods', 'OB.CashUp.CashToKeep', 'OB.CashUp.PostPrintAndClose', 'OB.CashUp.Slave'],
   init: function () {
     var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('cashup-model.init');
     //Check for orders which are being processed in this moment.
@@ -38,6 +38,10 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
         startings = [],
         cashUpReport, tempList = new Backbone.Collection(),
         activePaymentsList = [];
+
+    this.realSteps = [true, OB.POS.modelterminal.get("terminal").ismaster, true, true, true, true, false];
+    this.loadedSteps = [false, true, false, false, true, true, true];
+    this.set("loadFinished", false);
 
     //steps
     this.set('step', 1);
@@ -101,6 +105,13 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
           }
 
           if (index === activePaymentsList.length - 1) {
+            if (terminalSlave && tempList.length === 0) {
+              me.realSteps[me.stepIndex('OB.CashUp.CashPayments')] = false;
+              me.realSteps[me.stepIndex('OB.CashUp.PaymentMethods')] = false;
+              me.realSteps[me.stepIndex('OB.CashUp.CashToKeep')] = false;
+              me.realSteps[me.stepIndex('OB.CashUp.PostPrintAndClose')] = false;
+              me.realSteps[me.stepIndex('OB.CashUp.Slave')] = true;
+            }
             me.get('paymentList').reset(tempList.models);
             me.set('totalExpected', _.reduce(me.get('paymentList').models, function (total, model) {
               return OB.DEC.add(total, model.get('expected'));
@@ -110,6 +121,9 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
           }
           OB.UTIL.SynchronizationHelper.finished(synchId, 'cashup-model.init II');
         }, this);
+        me.loadedSteps[me.stepIndex('OB.CashUp.CashPayments')] = true;
+        me.loadedSteps[me.stepIndex('OB.CashUp.PaymentMethods')] = true;
+        me.finishLoad();
       }, function () {
         OB.UTIL.SynchronizationHelper.finished(synchId, 'cashup-model.init');
       });
@@ -271,18 +285,98 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
       });
 
       me.get('orderlist').reset(pendingOrderList.models);
+      me.realSteps[0] = pendingOrderList.length > 0;
+
+      me.loadedSteps[me.stepIndex('OB.CashUp.StepPendingOrders')] = true;
+      me.finishLoad();
     }, function (tx, error) {
       OB.UTIL.showError("OBDAL error: " + error);
     }, this);
 
     this.printCashUp = new OB.OBPOSCashUp.Print.CashUp();
+
+    this.finishLoad();
+  },
+  finishLoad: function () {
+    var finish = true;
+    _.each(this.loadedSteps, function (loaded) {
+      if (!loaded) {
+        finish = false;
+      }
+    });
+    if (finish) {
+      this.set("step", this.getFirstStep());
+      this.set('substep', 0);
+      this.set("loadFinished", true);
+    }
+  },
+  // Count real step
+  stepCount: function () {
+    var count = 0;
+    _.each(this.realSteps, function (step) {
+      if (step) {
+        count++;
+      }
+    });
+    return count;
+  },
+  // Get step index
+  stepIndex: function (defName) {
+    var index = -1;
+    _.each(this.cashupstepsdefinition, function (step, indx) {
+      if (step === defName) {
+        index = indx;
+      }
+    });
+    return index;
+  },
+  // Real step number
+  stepNumber: function (defName) {
+    var index = this.stepIndex(defName);
+    var i, count = 0;
+    for (i = 0; i <= index; i++) {
+      if (this.realSteps[i]) {
+        count++;
+      }
+    };
+    return count;
+  },
+  // Get first step available
+  getFirstStep: function () {
+    var i;
+    for (i = 0; i < this.realSteps.length; i++) {
+      if (this.realSteps[i]) {
+        return i + 1;
+      }
+    };
+    return null;
+  },
+  // Next step
+  getNextStep: function () {
+    var i;
+    for (i = this.get("step"); i < this.realSteps.length; i++) {
+      if (this.realSteps[i]) {
+        return i + 1;
+      }
+    };
+    return null;
+  },
+  // Previous
+  getPreviousStep: function () {
+    var i;
+    for (i = this.get("step") - 2; i >= 0; i--) {
+      if (this.realSteps[i]) {
+        return i + 1;
+      }
+    };
+    return 0;
   },
   //Previous next
   allowNext: function () {
-    return this.cashupsteps[this.get('step') - 1].allowNext();
+    return this.get('step') > 0 ? this.cashupsteps[this.get('step') - 1].allowNext() : false;
   },
   allowPrevious: function () {
-    return this.get('step') > 1;
+    return this.get('step') > this.getFirstStep();
   },
   setIgnoreStep3: function () {
     var result = null;

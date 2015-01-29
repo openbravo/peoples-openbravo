@@ -205,7 +205,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "pointofsale/view/modals/modalmessage",
 
         // Cash Management window
-        "cashmgmt/model/cashmgmt-print", "cashmgmt/model/cashmgmt-model",
+        "cashmgmt/model/cashmgmt-print",
+        "cashmgmt/model/cashmgmt-model",
 
         "cashmgmt/view/cashmgmtkeyboard",
         "cashmgmt/view/listevents",
@@ -219,8 +220,9 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "closecash/model/cashup-steps", "closecash/model/cashup-print",
         "closecash/model/cashup-model", "closecash/view/closecash", "closecash/view/closekeyboard",
         "closecash/view/closeinfo", "closecash/view/tabpendingreceipts",
-        "closecash/view/tabcashpayments", "closecash/view/tabcountcash",
-        "closecash/view/tabcashtokeep", "closecash/view/tabpostprintclose",
+        "closecash/view/tabcashmaster", "closecash/view/tabcashpayments",
+        "closecash/view/tabcountcash", "closecash/view/tabcashtokeep",
+        "closecash/view/tabpostprintclose", "closecash/view/tabcashslave",
         "closecash/components/cashup-modals",
 
         "closecash/model/daycash",

@@ -187,7 +187,13 @@ enyo.kind({
       components: [{
         classes: 'span12',
         kind: 'OB.OBPOSCashUp.UI.ListPendingReceipts',
-        name: 'listPendingReceipts'
+        name: 'listPendingReceipts',
+        showing: false
+      }, {
+        classes: 'span12',
+        kind: 'OB.OBPOSCashUp.UI.CashMaster',
+        name: 'cashMaster',
+        showing: false
       }, {
         classes: 'span12',
         kind: 'OB.OBPOSCashUp.UI.CashPayments',
@@ -207,6 +213,11 @@ enyo.kind({
         classes: 'span12',
         kind: 'OB.OBPOSCashUp.UI.PostPrintClose',
         name: 'postPrintClose',
+        showing: false
+      }, {
+        classes: 'span12',
+        kind: 'OB.OBPOSCashUp.UI.CashSlave',
+        name: 'cashSlave',
         showing: false
       }]
     },
@@ -276,9 +287,12 @@ enyo.kind({
     }, this);
     //FIXME:It is triggered only once, but it is not the best way to do it
     this.model.get('paymentList').on('reset', function () {
-      this.model.get('paymentList').at(this.model.get('substep')).on('change:foreignCounted', function () {
-        this.$.cashupMultiColumn.$.leftPanel.$.cashToKeep.$.formkeep.renderBody(this.model.get('paymentList').at(this.model.get('substep')));
-      }, this);
+      var paymentList = this.model.get('paymentList').at(this.model.get('substep'));
+      if (paymentList) {
+        paymentList.on('change:foreignCounted', function () {
+          this.$.cashupMultiColumn.$.leftPanel.$.cashToKeep.$.formkeep.renderBody(this.model.get('paymentList').at(this.model.get('substep')));
+        }, this);
+      }
     }, this);
 
     // Cash Up Report - Step 4
@@ -332,7 +346,8 @@ enyo.kind({
           autoDismiss: false,
           onHideFunction: function () {
             me.finalAction();
-        }});
+          }
+        });
       });
 
     }, this);
@@ -360,7 +375,8 @@ enyo.kind({
           autoDismiss: false,
           onHideFunction: function () {
             me.waterfall('onEnableNextButton');
-        }});
+          }
+        });
       } else {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_CashUpWronglyHeader'), message, [{
           label: OB.I18N.getLabel('OBMOBC_LblOk'),
@@ -373,11 +389,17 @@ enyo.kind({
           autoDismiss: false,
           onHideFunction: function () {
             OB.POS.navigate('retail.pointofsale');
-        }});
+          }
+        });
       }
     }, this);
 
-    this.refreshButtons();
+    this.model.on('change:loadFinished', function (model) {
+      if (model.get("loadFinished")) {
+        me.moveStep(0);
+      }
+    });
+
   },
 
   rendered: function () {
@@ -424,16 +446,17 @@ enyo.kind({
   cancelCashup: function (inSender, inEvent) {
     OB.POS.navigate('retail.pointofsale');
   },
-  moveStep: function (direction) { // direction can be -1 or +1
+  moveStep: function (direction) { // direction can be -1, 0 or +1
     // allways moving substep by substep
     var nextstep = this.model.get('step');
     var nextsubstep = this.model.get('substep') + direction;
 
     if (nextstep <= 0) {
       // error. go to the begining
-      this.model.set('step', 1);
+      var step = this.model.getFirstStep();
+      this.model.set('step', step);
       this.model.set('substep', -1);
-      this.moveStep(1);
+      this.moveStep(step);
     } else if (this.model.isFinishedWizard(nextstep)) {
       //send cash up to the server if it has not been sent yet
       if (this.model.get('cashUpSent')) {
@@ -444,12 +467,13 @@ enyo.kind({
       this.model.processAndFinishCashUp();
     } else if (nextsubstep < 0) {
       // jump to previous step
-      this.model.set('step', nextstep - 1);
-      this.model.set('substep', this.model.getSubstepsLength(nextstep - 1));
+      var previous = this.model.getPreviousStep();
+      this.model.set('step', previous);
+      this.model.set('substep', this.model.getSubstepsLength(previous));
       this.moveStep(-1);
     } else if (nextsubstep >= this.model.getSubstepsLength(nextstep)) {
       // jump to next step
-      this.model.set('step', nextstep + 1);
+      this.model.set('step', this.model.getNextStep());
       this.model.set('substep', -1);
       this.moveStep(1);
     } else if (this.model.isSubstepAvailable(nextstep, nextsubstep)) {
@@ -461,7 +485,7 @@ enyo.kind({
       // move again
       this.model.set('step', nextstep);
       this.model.set('substep', nextsubstep);
-      this.moveStep(direction);
+      this.moveStep(direction == 0 ? 1 : direction);
     }
   },
   countAllOK: function (inSender, inEvent) {
