@@ -34,6 +34,8 @@ public class CheckApproval extends JSONProcessSimple {
       JSONArray approvalType = new JSONArray();
       String username = jsonsent.getString("u");
       String password = jsonsent.getString("p");
+      final String organization = jsonsent.getString("organization");
+      final String client = jsonsent.getString("client");
       if (jsonsent.getString("approvalType") != null) {
         approvalType = new JSONArray(jsonsent.getString("approvalType"));
       }
@@ -54,23 +56,42 @@ public class CheckApproval extends JSONProcessSimple {
           approvals = approvals + ",'" + approvalType.getString(i) + "'";
         }
 
-        String whereClause = "as p" + //
-            " where property in (" + approvals + ")" + //
-            "   and active = true" + //
-            "   and to_char(searchKey) = 'Y'" + //
-            "   and (userContact = :user" + //
-            "        or exists (from ADUserRoles r" + //
-            "                  where r.role = p.visibleAtRole" + //
-            "                    and r.userContact = :user))";
+        String whereClause = "as p"
+            + " where property in ("
+            + approvals
+            + ")"
+            + "   and active = true" //
+            + "   and to_char(searchKey) = 'Y'" //
+            + "   and (userContact = :user" //
+            + "        or exists (from ADUserRoles r"
+            + "                  where r.role = p.visibleAtRole"
+            + "                    and r.userContact = :user))"
+            + "   and (p.organization.id = :org " //
+            + "   or ad_isorgincluded(p.organization, :org, :client) <> -1 "
+            + "   or ad_isorgincluded(:org, p.organization, :client) <> -1) "
+            + "   and (p.visibleAtOrganization.id = :org " //
+            + "   or ad_isorgincluded(p.visibleAtOrganization, :org, :client) <> -1 "
+            + "   or ad_isorgincluded(:org, p.visibleAtOrganization, :client) <> -1 "
+            + "   or p.visibleAtOrganization is null) ";
         OBQuery<Preference> qPreference = OBDal.getInstance().createQuery(Preference.class,
             whereClause);
-        qPreference.setNamedParameter("user", qUser.list().get(0));
 
-        result.put("status", 0);
-        JSONObject jsonData = new JSONObject();
-        jsonData.put("userId", qUser.list().get(0).getId());
-        jsonData.put("canApprove", qPreference.count() == approvalType.length());
-        result.put("data", jsonData);
+        qPreference.setNamedParameter("user", qUser.list().get(0));
+        qPreference.setNamedParameter("org", organization);
+        qPreference.setNamedParameter("client", client);
+
+        if (qPreference.list().size() == 0) {
+          result.put("status", 1);
+          JSONObject jsonError = new JSONObject();
+          jsonError.put("message", OBMessageUtils.getI18NMessage("OBPOS_UserCannotApprove", null));
+          result.put("error", jsonError);
+        } else {
+          result.put("status", 0);
+          JSONObject jsonData = new JSONObject();
+          jsonData.put("userId", qUser.list().get(0).getId());
+          jsonData.put("canApprove", qPreference.count() == approvalType.length());
+          result.put("data", jsonData);
+        }
       }
       return result;
     } finally {
