@@ -9,6 +9,7 @@
 package org.openbravo.retail.posterminal;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
@@ -38,35 +39,6 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
   JSONObject jsonResponse = new JSONObject();
 
   public JSONObject saveRecord(JSONObject jsonCashup) throws Exception {
-    boolean isCashupProcessed = false;
-    try {
-      String cashUpId = jsonCashup.getString("id");
-      if (cashUpId != null) {
-        OBPOSAppCashup cashUpInitial = OBDal.getInstance().get(OBPOSAppCashup.class, cashUpId);
-        if (cashUpInitial != null && cashUpInitial.isProcessed()) {
-          isCashupProcessed = true;
-        }
-      }
-
-      return saveRecordCashUp(jsonCashup);
-    } catch (Exception e) {
-      // if the json cashup has processed=Y and the cashup in the backoffice has processed=N then we
-      // throw the exception, in other case, we ignore the error
-      if (jsonCashup.has("isprocessed") && jsonCashup.getString("isprocessed").equals("Y")) {
-        String cashUpId = jsonCashup.getString("id");
-        OBPOSAppCashup cashUp = OBDal.getInstance().get(OBPOSAppCashup.class, cashUpId);
-        if (cashUp == null || !isCashupProcessed) {
-          throw e;
-        }
-      }
-
-      JSONObject jsonData = new JSONObject();
-      jsonData.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
-      return jsonData;
-    }
-  }
-
-  public JSONObject saveRecordCashUp(JSONObject jsonCashup) throws Exception {
     String cashUpId = jsonCashup.getString("id");
     JSONObject jsonData = new JSONObject();
     Date cashUpDate = new Date();
@@ -167,7 +139,7 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
    * @throws JSONException
    */
   private OBPOSAppCashup getCashUp(String cashUpId, JSONObject jsonCashup, Date cashUpDate)
-      throws JSONException {
+      throws JSONException, SQLException {
     OBPOSAppCashup cashUp = OBDal.getInstance().get(OBPOSAppCashup.class, cashUpId);
     if (cashUp == null) {
       // create the cashup if no exists
@@ -196,6 +168,8 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
       }
     }
     updateOrCreateCashupInfo(cashUpId, jsonCashup, cashUpDate);
+    OBDal.getInstance().flush();
+    OBDal.getInstance().getConnection().commit();
     return cashUp;
   }
 
