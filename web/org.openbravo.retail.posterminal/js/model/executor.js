@@ -196,7 +196,7 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
       params: this.convertParams(evt, line, receipt, this.paramsTranslation)
     };
 
-    OB.Dal.findUsingCache('discountsQuery', OB.Model.Discount, criteria, function (d) {
+    OB.Dal.find(OB.Model.Discount, criteria, function (d) {
       if (d.size() === 0) {
         line.set('noDiscountCandidates', true);
       }
