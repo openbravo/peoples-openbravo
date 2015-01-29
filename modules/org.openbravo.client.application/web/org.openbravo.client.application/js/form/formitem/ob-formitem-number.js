@@ -470,6 +470,10 @@ isc.OBNumberItem.addProperties({
       if (isFormula) {
         // the formula is evaluated in the validate function, so until then it is not possible to round it, do it now
         value = this.roundJsNumberUsingTypeInstance(value, this.typeInstance);
+        if (this.form.setTextualValue) {
+          textRoundedValue = OB.Utilities.Number.JSToOBMasked(value, this.typeInstance.maskNumeric, this.typeInstance.decSeparator, this.typeInstance.groupSeparator, OB.Format.defaultGroupingSize);
+          this.form.setTextualValue(this.name, textRoundedValue, this.typeInstance);
+        }
         this.setValue(value);
       }
       // first check if the number is valid
