@@ -43,8 +43,7 @@ OB.Model.Executor = Backbone.Model.extend({
     }, this);
     this.set('eventQueue', evtQueue);
   },
-  addEvent: function (event, replaceExistent, startExecutionAutomatically) {
-    var startExecution = startExecutionAutomatically || OB.UTIL.isNullOrUndefined(startExecutionAutomatically);
+  addEvent: function (event, replaceExistent) {
     var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('executor');
     var evtQueue = this.get('eventQueue'),
         currentEvt, actionQueue, currentExecutionQueue;
@@ -77,9 +76,7 @@ OB.Model.Executor = Backbone.Model.extend({
       }
     }, this);
 
-    evtQueue.add(event, {
-      silent: !startExecution
-    });
+    evtQueue.add(event);
   },
   preEvent: function () {
     // Logic to implement before the event is created

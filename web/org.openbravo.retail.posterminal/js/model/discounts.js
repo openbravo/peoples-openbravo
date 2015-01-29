@@ -87,7 +87,7 @@
                 auxReceipt.get('lines').forEach(function (l) {
                   oldLines.push(l.clone());
                 });
-                me.applyPromotionsImp(auxReceipt, undefined, true, false);
+                me.applyPromotionsImp(auxReceipt, undefined, true);
               } else {
                 receipt.trigger('applyPromotionsFinished');
                 if (!grossCalculated) {
@@ -151,14 +151,13 @@
             line.set('promotionCandidates', []);
           });
         }
-        this.applyPromotionsImp(auxReceipt, null, true, false);
+        this.applyPromotionsImp(auxReceipt, null, true);
       } else {
-        this.applyPromotionsImp(receipt, line, false, true);
+        this.applyPromotionsImp(receipt, line, false);
       }
     },
 
-    applyPromotionsImp: function (receipt, line, skipSave, startExecutionAutomatically) {
-      var startExecution = startExecutionAutomatically || OB.UTIL.isNullOrUndefined(startExecutionAutomatically);
+    applyPromotionsImp: function (receipt, line, skipSave) {
       var lines, linesWithoutNoDiscCandidated;
       if (this.preventApplyPromotions) {
         return;
@@ -175,7 +174,7 @@
           receipt: receipt,
           line: line,
           skipSave: skipSave
-        }), true, startExecution);
+        }), true);
       } else {
         lines = _.sortBy(receipt.get('lines').models, function (lo) {
           return -lo.getQty();
@@ -194,12 +193,9 @@
               // with new flow discounts -> skipSave =true
               // in other case -> false
               if (l.get('noDiscountCandidates') !== true) {
-                this.applyPromotionsImp(receipt, l, OB.MobileApp.model.hasPermission('OBPOS_discount.newFlow', true), startExecution);
+                this.applyPromotionsImp(receipt, l, OB.MobileApp.model.hasPermission('OBPOS_discount.newFlow', true));
               }
             }, this);
-            if (!startExecution) {
-              this.executor.nextEvent();
-            }
           }
         }
       }
