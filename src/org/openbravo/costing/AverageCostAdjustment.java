@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015 Openbravo SLU
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -723,7 +723,12 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     where.append(" as c");
     where.append("  left join c." + Costing.PROPERTY_INVENTORYTRANSACTION + " as trx");
     where.append(" where c." + Costing.PROPERTY_PRODUCT + " = :product");
-    where.append("   and c." + Costing.PROPERTY_ORGANIZATION + " = :org");
+    // FIXME: remove when manufacturing costs are fully migrated
+    if (bdCosting.getProduct().isProduction()) {
+      where.append("  and c." + Costing.PROPERTY_CLIENT + " = :client");
+    } else {
+      where.append("  and c." + Costing.PROPERTY_ORGANIZATION + " = :org");
+    }
     where.append("   and c." + Costing.PROPERTY_COSTTYPE + " = 'AVA'");
     if (bdCosting.getWarehouse() == null) {
       where.append(" and c." + Costing.PROPERTY_WAREHOUSE + " is null");
@@ -738,7 +743,12 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
 
     OBQuery<Costing> qryCosting = OBDal.getInstance().createQuery(Costing.class, where.toString());
     qryCosting.setNamedParameter("product", bdCosting.getProduct());
-    qryCosting.setNamedParameter("org", bdCosting.getOrganization());
+    // FIXME: remove when manufacturing costs are fully migrated
+    if (bdCosting.getProduct().isProduction()) {
+      qryCosting.setNamedParameter("client", bdCosting.getClient());
+    } else {
+      qryCosting.setNamedParameter("org", bdCosting.getOrganization());
+    }
     if (bdCosting.getWarehouse() != null) {
       qryCosting.setNamedParameter("warehouse", bdCosting.getWarehouse());
     }
