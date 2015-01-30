@@ -10,6 +10,7 @@ package org.openbravo.retail.posterminal;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -24,6 +25,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchronization;
 import org.openbravo.mobile.core.process.JSONPropertyToEntity;
 import org.openbravo.mobile.core.process.PropertyByType;
@@ -140,6 +142,43 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
       // This cashup is a cash order. Nothing needs to be done
       jsonData.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
 
+    }
+    // Associate master/slave cashup
+    if (posTerminal.isMaster()) {
+      String query = OBPOSAppCashup.PROPERTY_POSTERMINAL + "."
+          + OBPOSApplications.PROPERTY_MASTERTERMINAL + ".id = :terminalId and "
+          + OBPOSAppCashup.PROPERTY_ISPROCESSEDBO + " = 'N' and "
+          + OBPOSAppCashup.PROPERTY_ISPROCESSED + " = 'N' " + "order by "
+          + OBPOSAppCashup.PROPERTY_POSTERMINAL + ", " + OBPOSAppCashup.PROPERTY_OBPOSPARENTCASHUP
+          + " desc";
+      OBQuery<OBPOSAppCashup> appCashupQuery = OBDal.getInstance().createQuery(
+          OBPOSAppCashup.class, query);
+      appCashupQuery.setNamedParameter("terminalId", posTerminal.getId());
+      List<OBPOSAppCashup> appCashupList = appCashupQuery.list();
+      String posterminal = "";
+      boolean linked = false;
+      for (OBPOSAppCashup appCashup : appCashupList) {
+        if (!posterminal.equals(appCashup.getPOSTerminal().getId())) {
+          posterminal = appCashup.getPOSTerminal().getId();
+          linked = appCashup.getObposParentCashup() != null;
+        }
+        if (!linked) {
+          appCashup.setObposParentCashup(cashUp);
+          OBDal.getInstance().save(appCashup);
+        }
+      }
+    } else if (posTerminal.getMasterterminal() != null && cashUp.getObposParentCashup() == null) {
+      String query = OBPOSAppCashup.PROPERTY_POSTERMINAL + ".id = :terminalId and "
+          + OBPOSAppCashup.PROPERTY_ISPROCESSEDBO + " = 'N' and "
+          + OBPOSAppCashup.PROPERTY_ISPROCESSED + " = 'N' ";
+      OBQuery<OBPOSAppCashup> appCashupQuery = OBDal.getInstance().createQuery(
+          OBPOSAppCashup.class, query);
+      appCashupQuery.setNamedParameter("terminalId", posTerminal.getMasterterminal().getId());
+      List<OBPOSAppCashup> appCashupList = appCashupQuery.list();
+      if (appCashupList.size() > 0 && cashUp.getObposParentCashup() == null) {
+        cashUp.setObposParentCashup(appCashupList.get(0));
+        OBDal.getInstance().save(cashUp);
+      }
     }
     return jsonData;
   }

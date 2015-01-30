@@ -33,11 +33,15 @@ enyo.kind({
             }]
           }]
         }, {
-          content: 'Slave close'
+          style: 'background-color: #ffffff; color: black; padding: 10px; height: 50px;',
+          name: 'panelInfo'
         }]
       }]
     }]
   }],
+  init: function () {
+    this.$.panelInfo.setContent(OB.I18N.getLabel('OBPOS_LblStepSlaveInfo'));
+  },
   displayStep: function (model) {
     this.$.stepsheader.renderHeader(model.stepNumber('OB.CashUp.Slave'), model.stepCount());
 

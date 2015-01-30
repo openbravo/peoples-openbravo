@@ -119,7 +119,6 @@ enyo.kind({
               renderHeader: function (step, count) {
                 this.setContent(OB.I18N.getLabel('OBPOS_LblStepNumber', [step, count]) + " " + OB.I18N.getLabel('OBPOS_LblStepPaymentMethods') + OB.OBPOSCashUp.UI.CashUp.getTitleExtensions());
               }
-
             }]
           }]
         }, {

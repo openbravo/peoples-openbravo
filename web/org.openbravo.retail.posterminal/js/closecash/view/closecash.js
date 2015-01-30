@@ -473,7 +473,8 @@ enyo.kind({
       this.moveStep(-1);
     } else if (nextsubstep >= this.model.getSubstepsLength(nextstep)) {
       // jump to next step
-      this.model.set('step', this.model.getNextStep());
+      var next = this.model.getNextStep();
+      this.model.set('step', next ? next : nextstep + 1);
       this.model.set('substep', -1);
       this.moveStep(1);
     } else if (this.model.isSubstepAvailable(nextstep, nextsubstep)) {
