@@ -34,7 +34,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2013-2014 Openbravo SLU
+* All portions are Copyright (C) 2013-2015 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -294,10 +294,7 @@ BEGIN
       WHERE c_orderline_id = cur_not_allocated_stock.c_orderline_id;
     END IF;
 
-    SELECT * INTO  v_Result, v_Message from m_get_stock_param(v_pinstance_ID, p_reservation_id, cur_not_allocated_stock.quantitytoreserve, 
-    cur_not_allocated_stock.m_product_id, cur_not_allocated_stock.m_locator_id, cur_not_allocated_stock.m_warehouse_id, 
-    null, cur_not_allocated_stock.ad_org_id, cur_not_allocated_stock.m_attributesetinstance_id,p_User_ID,cur_not_allocated_stock.ad_client_id, 
-    v_warehouse_rule_id, cur_not_allocated_stock.c_uom_id, null, null, null, null, '---',  null, 'N');
+    m_get_stock_param(v_pinstance_ID, p_reservation_id, cur_not_allocated_stock.quantitytoreserve, cur_not_allocated_stock.m_product_id, cur_not_allocated_stock.m_locator_id, cur_not_allocated_stock.m_warehouse_id, null, cur_not_allocated_stock.ad_org_id, cur_not_allocated_stock.m_attributesetinstance_id, p_User_ID, cur_not_allocated_stock.ad_client_id, v_warehouse_rule_id, cur_not_allocated_stock.c_uom_id, null, null, null, null, '---', null, 'N', v_Result, v_Message);
     IF (v_Result = 0) THEN
       -- Error on m_get_stock
       RAISE_APPLICATION_ERROR(-20000, v_Message);

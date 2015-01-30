@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2014 Openbravo SLU
+* All portions are Copyright (C) 2001-2015 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -315,8 +315,7 @@
                   JOIN ma_sequenceproduct sp ON wrpp.ma_sequenceproduct_id = sp.ma_sequenceproduct_id
               WHERE wrpp.ma_wrphaseproduct_id = cur_wrpused.ma_wrphaseproduct_id;
               --Review no warehouse as parameter
-              SELECT * INTO v_pinstance_result, v_pinstance_msg FROM M_GET_STOCK_PARAM(v_AD_Pinstance_ID, v_Record_ID, v_DoneQuantity*Cur_WRPUsed.MovementQty, v_Product_old, null, null, null, v_PlanOrg_ID, null, v_User_ID,
-              v_Client_ID, v_warehouse_rule_id, v_UOM_old, v_Product_UOM_old, '325', v_Production_ID, v_PlanLine, '800105', null, 'N');              
+              M_GET_STOCK_PARAM(v_AD_Pinstance_ID, v_Record_ID, v_DoneQuantity*Cur_WRPUsed.MovementQty, v_Product_old, null, null, null, v_PlanOrg_ID, null, v_User_ID, v_Client_ID, v_warehouse_rule_id, v_UOM_old, v_Product_UOM_old, '325', v_Production_ID, v_PlanLine, '800105', null, 'N', v_pinstance_result, v_pinstance_msg);              
               -- Check result
               SELECT result, errormsg
                 INTO v_pinstance_result, v_pinstance_msg

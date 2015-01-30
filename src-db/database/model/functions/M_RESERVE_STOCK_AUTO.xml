@@ -77,8 +77,7 @@ BEGIN
       WHERE c_orderline_id = v_soline_id;
     END IF;
 
-    SELECT * INTO v_pinstance_result, v_pinstance_msg FROM M_GET_STOCK_PARAM(v_pinstance_id, p_reservation_id, v_pendingtoreserveqty, v_product_id, v_locator_id, v_warehouse_id,    v_prioritywarehouse_id, v_org_id, v_asi_id, p_User_ID,
-    v_client_id, v_warehouse_rule_id, v_uom_id, null, null, null, null, '---', null, 'N');
+    M_GET_STOCK_PARAM(v_pinstance_id, p_reservation_id, v_pendingtoreserveqty, v_product_id, v_locator_id, v_warehouse_id, v_prioritywarehouse_id, v_org_id, v_asi_id, p_User_ID, v_client_id, v_warehouse_rule_id, v_uom_id, null, null, null, null, '---', null, 'N', v_pinstance_result, v_pinstance_msg);
     -- Check result
     IF (v_pinstance_result = 0) THEN
       -- Error on m_get_stock

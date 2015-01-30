@@ -34,7 +34,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2014 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2015 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -496,8 +496,7 @@ BEGIN --BODY
                       AND c_orderline_id = ol.c_orderline_id;
                   END IF;
 
-                  SELECT * INTO v_pinstance_result, v_pinstance_msg FROM M_GET_STOCK_PARAM(v_pinstance_ID, v_record_id, v_Qty, v_Product_old, null, null, v_Warehouse_old, Cur_Order.AD_Org_ID, v_Attribute_old, v_User_ID,
-                  v_ad_client_id, v_warehouse_rule_id, v_UOM_old, v_Product_UOM_old, null, null, null, 'FF80818132C964E30132C9747257002E', v_reservation_id, 'N');
+                  M_GET_STOCK_PARAM(v_pinstance_ID, v_record_id, v_Qty, v_Product_old, null, null, v_Warehouse_old, Cur_Order.AD_Org_ID, v_Attribute_old, v_User_ID, v_ad_client_id, v_warehouse_rule_id, v_UOM_old, v_Product_UOM_old, null, null, null, 'FF80818132C964E30132C9747257002E', v_reservation_id, 'N', v_pinstance_result, v_pinstance_msg);
                   -- Check result
                   IF (v_pinstance_result = 0) THEN
                     -- Error on m_get_stock

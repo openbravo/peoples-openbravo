@@ -52,7 +52,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2014 Openbravo SLU
+* All portions are Copyright (C) 2001-2015 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -183,8 +183,7 @@ BEGIN --BODY
     BEGIN
       v_ad_pinstance_id := GET_UUID();
 
-      SELECT * INTO v_pinstance_result, v_pinstance_msg FROM M_GET_STOCK_PARAM(v_ad_pinstance_id, p_run, null, Cur_Product.M_Product_ID, null, null, null, p_org_id, null, p_user_id,
-      p_client_id, null, null, null, '800219', p_Run, null, case when p_production = 'Y' then '800162' else '800164' end , null, 'N');
+      M_GET_STOCK_PARAM(v_ad_pinstance_id, p_run, null, Cur_Product.M_Product_ID, null, null, null, p_org_id, null, p_user_id, p_client_id, null, null, null, '800219', p_Run, null, case when p_production = 'Y' then '800162' else '800164' end, null, 'N', v_pinstance_result, v_pinstance_msg);
       -- Check result
       IF (v_pinstance_result = 0) THEN
         -- Error on m_get_stock

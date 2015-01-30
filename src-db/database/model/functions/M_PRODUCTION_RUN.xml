@@ -19,7 +19,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2013 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2015 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -249,8 +249,7 @@ BEGIN --BODY
               v_pinstance_msg AD_PInstance.errormsg%TYPE;
             BEGIN
               v_pinstance_id := get_uuid();
-              SELECT * INTO v_pinstance_result, v_pinstance_msg FROM M_GET_STOCK_PARAM(v_pinstance_id, v_record_id, null, v_Product_old, null, null, v_Warehouse_old, cur_bom.org_id, null, p_user,
-              v_client_id, null, v_UOM_old, null, null, null, 10, '137', null, 'N');
+             M_GET_STOCK_PARAM(v_pinstance_id, v_record_id, null, v_Product_old, null, null, v_Warehouse_old, cur_bom.org_id, null, p_user, v_client_id, null, v_UOM_old, null, null, null, 10, '137', null, 'N', v_pinstance_result, v_pinstance_msg);
               -- Check result
               IF (v_pinstance_result = 0) THEN
                 -- Error on m_get_stock

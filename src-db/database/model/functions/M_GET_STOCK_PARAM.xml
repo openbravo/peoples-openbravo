@@ -79,7 +79,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2014 Openbravo SLU
+* All portions are Copyright (C) 2014-2015 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -87,7 +87,7 @@
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
   v_Record_ID VARCHAR2(32);
-  p_result NUMBER:=1;
+
   
   -- Parameter
   TYPE RECORD IS REF CURSOR;
@@ -121,6 +121,7 @@ BEGIN
 
   -- Get Parameters
   p_message:='ReadingParameters';
+  p_result :=1;
   v_Record_ID:=p_recordId;
   DBMS_OUTPUT.PUT_LINE('  v_Record_ID=' || coalesce(v_Record_ID, '')) ;
   v_AD_User_ID:=p_AD_User_ID;
@@ -364,7 +365,7 @@ BEGIN
       AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'M_Warehouse_ID',
         p_WarehouseID, NULL, NULL, NULL, NULL, NULL, NULL);
       AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'M_Locator_ID',
-        M_Locator_ID, NULL, NULL, NULL, NULL, NULL, NULL);
+        p_LocatorID, NULL, NULL, NULL, NULL, NULL, NULL);
       AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'M_AttributesetInstance_ID',
         p_AttributesetinstanceID, NULL, NULL, NULL, NULL, NULL, NULL);
       AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'Quantity',
