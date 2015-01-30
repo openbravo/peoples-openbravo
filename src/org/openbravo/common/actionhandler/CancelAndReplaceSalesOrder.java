@@ -1,5 +1,6 @@
 package org.openbravo.common.actionhandler;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -25,7 +26,6 @@ public class CancelAndReplaceSalesOrder extends BaseProcessActionHandler {
       JSONObject request = new JSONObject(content);
       String oldOrderId = request.getString("inpcOrderId");
       String tabId = request.getString("inpTabId");
-      // FIN_Utility.getDocumentNo();
 
       // Get new Order
       Order oldOrder = OBDal.getInstance().get(Order.class, oldOrderId);
@@ -36,14 +36,17 @@ public class CancelAndReplaceSalesOrder extends BaseProcessActionHandler {
       newOrder.setProcessed(false);
       newOrder.setPosted("N");
       newOrder.setDocumentStatus("TMP");
-      String newDocumentNo = FIN_Utility.getDocumentNo(newOrder.getDocumentType(), "C_Order");
+      String newDocumentNo = FIN_Utility.getDocumentNo(oldOrder.getDocumentType(), "C_Order");
       newOrder.setDocumentNo(newDocumentNo);
+      newOrder.setReplacedorder(oldOrder);
       OBDal.getInstance().save(newOrder);
 
       // Create new Order lines
       List<OrderLine> orderLineList = oldOrder.getOrderLineList();
       for (OrderLine oldOrderLine : orderLineList) {
         OrderLine newOrderLine = (OrderLine) DalUtil.copy(oldOrderLine, false, true);
+        newOrderLine.setDeliveredQuantity(BigDecimal.ZERO);
+        newOrderLine.setInvoicedQuantity(BigDecimal.ZERO);
         newOrderLine.setSalesOrder(newOrder);
         OBDal.getInstance().save(newOrderLine);
       }
@@ -53,17 +56,9 @@ public class CancelAndReplaceSalesOrder extends BaseProcessActionHandler {
 
       // Return result
       JSONObject result = new JSONObject();
+
       // Execute process and prepare an array with actions to be executed after execution
       JSONArray actions = new JSONArray();
-
-      // Old record message
-      // JSONObject oldWindowMessage = new JSONObject();
-      // oldWindowMessage.put("msgType", "info");
-      // oldWindowMessage.put("msgTitle", "Old record");
-      // oldWindowMessage.put("msgText", "Old record message");
-      // JSONObject oldWindowMessageAction = new JSONObject();
-      // oldWindowMessageAction.put("showMsgInProcessView", oldWindowMessage);
-      // actions.put(oldWindowMessageAction);
 
       // New record info
       JSONObject recordInfo = new JSONObject();
@@ -73,15 +68,6 @@ public class CancelAndReplaceSalesOrder extends BaseProcessActionHandler {
       JSONObject recordInfoAction = new JSONObject();
       recordInfoAction.put("openDirectTab", recordInfo);
       actions.put(recordInfoAction);
-
-      // New record message
-      // JSONObject newWindowMessage = new JSONObject();
-      // newWindowMessage.put("msgType", "success");
-      // newWindowMessage.put("msgTitle", "Update Sales Order");
-      // newWindowMessage.put("msgText", "This record was opened from process execution");
-      // JSONObject newWindowMessageAction = new JSONObject();
-      // newWindowMessageAction.put("showMsgInProcessView", newWindowMessage);
-      // actions.put(newWindowMessageAction);
 
       result.put("responseActions", actions);
 
