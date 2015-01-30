@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -224,6 +224,12 @@
   });
   isc.ListGrid.addProperties({
     clearSortFieldText: getLabel('OBUISC_ListGrid.clearSortFieldText')
+  });
+  isc.ListGrid.addProperties({
+	  autoFitAllText: getLabel('OBUISC_ListGrid.autoFitAllText')
+  });
+  isc.ListGrid.addProperties({
+	  autoFitFieldText: getLabel('OBUISC_ListGrid.autoFitFieldText')
   });
 
   isc.TreeGrid.parentAlreadyContainsChildMessage = getLabel('OBUISC_TreeGrid.parentAlreadyContainsChildMessage');
