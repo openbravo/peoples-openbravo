@@ -1395,10 +1395,11 @@ public class OrderLoader extends POSDataSynchronizationProcess {
           BigDecimal amount = BigDecimal.valueOf(payment.getDouble("origAmount")).setScale(
               stdPrecision, RoundingMode.HALF_UP);
           BigDecimal tempWriteoffAmt = new BigDecimal(writeoffAmt.toString());
-          if (writeoffAmt.compareTo(BigDecimal.ZERO) != 0 && writeoffAmt.compareTo(amount) == 1) {
+          if (writeoffAmt.compareTo(BigDecimal.ZERO) != 0
+              && writeoffAmt.compareTo(amount.abs()) == 1) {
             // In case writeoff is higher than amount, we put 1 as payment and rest as overpayment
             // because the payment cannot be 0 (It wouldn't be created)
-            tempWriteoffAmt = amount.subtract(BigDecimal.ONE);
+            tempWriteoffAmt = amount.abs().subtract(BigDecimal.ONE);
           }
           processPayments(paymentSchedule, paymentScheduleInvoice, order, invoice, paymentType,
               payment, tempWriteoffAmt, jsonorder);
