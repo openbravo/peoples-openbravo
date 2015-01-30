@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -35,6 +35,7 @@ isc.OBGrid.addProperties({
   poolComponentsPerColumn: true,
   showRecordComponents: true,
   escapeHTML: true,
+  canMultiSort: false,
   bodyProperties: {
     canSelectText: true,
 
