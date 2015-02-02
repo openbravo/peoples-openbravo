@@ -123,11 +123,7 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
             + "        or exists (from ADUserRoles r"
             + "                  where r.role = p.visibleAtRole"
             + "                    and r.userContact = user)) "
-            + "   and (p.organization = terminal.organization "
-            + "   or ad_isorgincluded(p.organization, terminal.organization, terminal.client.id) <> -1 "
-            + "   or ad_isorgincluded(terminal.organization, p.organization, terminal.client.id) <> -1) "
             + "   and (p.visibleAtOrganization = terminal.organization "
-            + "   or ad_isorgincluded(p.visibleAtOrganization, terminal.organization, terminal.client.id) <> -1 "
             + "   or ad_isorgincluded(terminal.organization, p.visibleAtOrganization, terminal.client.id) <> -1 "
             + "   or p.visibleAtOrganization is null)) ";
       }

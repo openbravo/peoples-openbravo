@@ -66,11 +66,7 @@ public class CheckApproval extends JSONProcessSimple {
             + "        or exists (from ADUserRoles r"
             + "                  where r.role = p.visibleAtRole"
             + "                    and r.userContact = :user))"
-            + "   and (p.organization.id = :org " //
-            + "   or ad_isorgincluded(p.organization, :org, :client) <> -1 "
-            + "   or ad_isorgincluded(:org, p.organization, :client) <> -1) "
             + "   and (p.visibleAtOrganization.id = :org " //
-            + "   or ad_isorgincluded(p.visibleAtOrganization, :org, :client) <> -1 "
             + "   or ad_isorgincluded(:org, p.visibleAtOrganization, :client) <> -1 "
             + "   or p.visibleAtOrganization is null) ";
         OBQuery<Preference> qPreference = OBDal.getInstance().createQuery(Preference.class,
