@@ -17,6 +17,8 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
@@ -141,50 +143,78 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
     } else {
       // This cashup is a cash order. Nothing needs to be done
       jsonData.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
-
-    }
-    // Associate master/slave cashup
-    if (posTerminal.isMaster()) {
-      String query = OBPOSAppCashup.PROPERTY_POSTERMINAL + "."
-          + OBPOSApplications.PROPERTY_MASTERTERMINAL + ".id = :terminalId and "
-          + OBPOSAppCashup.PROPERTY_ISPROCESSEDBO + " = 'N' and "
-          + OBPOSAppCashup.PROPERTY_ISPROCESSED + " = 'N' " + "order by "
-          + OBPOSAppCashup.PROPERTY_POSTERMINAL + ", " + OBPOSAppCashup.PROPERTY_OBPOSPARENTCASHUP
-          + " desc";
-      OBQuery<OBPOSAppCashup> appCashupQuery = OBDal.getInstance().createQuery(
-          OBPOSAppCashup.class, query);
-      appCashupQuery.setNamedParameter("terminalId", posTerminal.getId());
-      List<OBPOSAppCashup> appCashupList = appCashupQuery.list();
-      String posterminal = "";
-      boolean linked = false;
-      for (OBPOSAppCashup appCashup : appCashupList) {
-        if (!posterminal.equals(appCashup.getPOSTerminal().getId())) {
-          posterminal = appCashup.getPOSTerminal().getId();
-          linked = appCashup.getObposParentCashup() != null;
-        }
-        if (!linked) {
-          appCashup.setObposParentCashup(cashUp);
-          OBDal.getInstance().save(appCashup);
-        }
-      }
-    } else if (posTerminal.getMasterterminal() != null && cashUp.getObposParentCashup() == null) {
-      String query = OBPOSAppCashup.PROPERTY_POSTERMINAL + ".id = :terminalId and "
-          + OBPOSAppCashup.PROPERTY_ISPROCESSEDBO + " = 'N' and "
-          + OBPOSAppCashup.PROPERTY_ISPROCESSED + " = 'N' ";
-      OBQuery<OBPOSAppCashup> appCashupQuery = OBDal.getInstance().createQuery(
-          OBPOSAppCashup.class, query);
-      appCashupQuery.setNamedParameter("terminalId", posTerminal.getMasterterminal().getId());
-      List<OBPOSAppCashup> appCashupList = appCashupQuery.list();
-      if (appCashupList.size() > 0 && cashUp.getObposParentCashup() == null) {
-        cashUp.setObposParentCashup(appCashupList.get(0));
-        OBDal.getInstance().save(cashUp);
-      }
+      // Associate master/slave cashup
+      associateMasterSlave(cashUp, posTerminal);
     }
     return jsonData;
   }
 
   protected CashCloseProcessor getCashCloseProcessor() {
     return WeldUtils.getInstanceFromStaticBeanManager(CashCloseProcessor.class);
+  }
+
+  private synchronized void associateMasterSlave(OBPOSAppCashup cashUp,
+      OBPOSApplications posTerminal) {
+    if (posTerminal.isMaster()) {
+      // Find slaves cashup
+      String query = OBPOSAppCashup.PROPERTY_POSTERMINAL + "."
+          + OBPOSApplications.PROPERTY_MASTERTERMINAL + ".id = :terminalId and "
+          + OBPOSAppCashup.PROPERTY_ISPROCESSEDBO + " = 'N' and "
+          + OBPOSAppCashup.PROPERTY_ISPROCESSED + " = 'N' and "
+          + OBPOSAppCashup.PROPERTY_OBPOSPARENTCASHUP + " is null";
+      OBQuery<OBPOSAppCashup> appCashupQuery = OBDal.getInstance().createQuery(
+          OBPOSAppCashup.class, query);
+      appCashupQuery.setNamedParameter("terminalId", posTerminal.getId());
+      List<OBPOSAppCashup> appCashupList = appCashupQuery.list();
+      for (OBPOSAppCashup appCashup : appCashupList) {
+        // Determine if exist close slave cashup for slave terminal and this master cashup
+        query = "select count(*) from " + OBPOSAppCashup.ENTITY_NAME + " where "
+            + OBPOSAppCashup.PROPERTY_POSTERMINAL + ".id = ? and "
+            + OBPOSAppCashup.PROPERTY_ISPROCESSEDBO + " = 'Y' and "
+            + OBPOSAppCashup.PROPERTY_ISPROCESSED + " = 'Y' and "
+            + OBPOSAppCashup.PROPERTY_OBPOSPARENTCASHUP + " is not null and "
+            + OBPOSAppCashup.PROPERTY_OBPOSPARENTCASHUP + ".id = ?";
+        if (countAppCashup(query, appCashup.getPOSTerminal().getId(), cashUp.getId()) == 0) {
+          appCashup.setObposParentCashup(cashUp);
+          OBDal.getInstance().save(appCashup);
+        }
+      }
+    } else if (posTerminal.getMasterterminal() != null && cashUp.getObposParentCashup() == null) {
+      // Determine if exist open master cashup
+      String query = "select count(*) from " + OBPOSAppCashup.ENTITY_NAME + " where "
+          + OBPOSAppCashup.PROPERTY_POSTERMINAL + ".id = ? and "
+          + OBPOSAppCashup.PROPERTY_ISPROCESSED + " = 'Y' and "
+          + OBPOSAppCashup.PROPERTY_ISPROCESSEDBO + " = 'Y' and "
+          + OBPOSAppCashup.PROPERTY_OBPOSPARENTCASHUP + " is not null and "
+          + OBPOSAppCashup.PROPERTY_OBPOSPARENTCASHUP + "." + OBPOSAppCashup.PROPERTY_ISPROCESSED
+          + " = 'N' and " + OBPOSAppCashup.PROPERTY_OBPOSPARENTCASHUP + "."
+          + OBPOSAppCashup.PROPERTY_ISPROCESSEDBO + " = 'N'";
+      if (countAppCashup(query, cashUp.getPOSTerminal().getId(), null) == 0) {
+        // Find master cashup
+        query = OBPOSAppCashup.PROPERTY_POSTERMINAL + ".id = :terminalId and "
+            + OBPOSAppCashup.PROPERTY_ISPROCESSEDBO + " = 'N' and "
+            + OBPOSAppCashup.PROPERTY_ISPROCESSED + " = 'N' ";
+        OBQuery<OBPOSAppCashup> appCashupQuery = OBDal.getInstance().createQuery(
+            OBPOSAppCashup.class, query);
+        appCashupQuery.setNamedParameter("terminalId", posTerminal.getMasterterminal().getId());
+        List<OBPOSAppCashup> appCashupList = appCashupQuery.list();
+        if (appCashupList.size() > 0 && cashUp.getObposParentCashup() == null) {
+          cashUp.setObposParentCashup(appCashupList.get(0));
+          OBDal.getInstance().save(cashUp);
+        }
+      }
+    }
+  }
+
+  private Long countAppCashup(String query, String posterminal, String parentCashUp) {
+    final Session session = OBDal.getInstance().getSession();
+    final Query count = session.createQuery(query);
+    count.setParameter(0, posterminal);
+    if (parentCashUp != null) {
+      count.setParameter(1, parentCashUp);
+    }
+    Long value = (Long) count.uniqueResult();
+    return value != null ? value.longValue() : 0;
   }
 
   /**
