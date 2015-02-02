@@ -35,6 +35,11 @@ public class InitialValidations {
       throw new JSONException("OBPOS_WarehouseNotConfigured");
     }
 
+    // Make sure the currency has conversion rate.
+    if (!POSUtils.hasCurrencyRate(posTerminal.getId())) {
+      throw new JSONException("OBPOS_ConversionRateNotConfigured");
+    }
+
     if (posTerminal.getOrganization().getCurrency() == null) {
       throw new JSONException("OBPOS_OrgCurrencyConfigured");
     }
