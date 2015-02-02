@@ -319,26 +319,6 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     return responseData;
   }
 
-  private String getParentRecordIdFromCriteria(JSONArray criteria, String parentPropertyName) {
-    String parentRecordId = null;
-    for (int i = 0; i < criteria.length(); i++) {
-      try {
-        JSONObject criterion = (JSONObject) criteria.get(i);
-        if (criterion.has("criteria")) {
-          return getParentRecordIdFromCriteria(criterion.getJSONArray("criteria"),
-              parentPropertyName);
-        }
-        if (parentPropertyName.equals(criterion.getString("fieldName"))) {
-          parentRecordId = criterion.getString("value");
-          break;
-        }
-      } catch (JSONException e) {
-        logger.error("Error while obtaining a property from a JSONObject", e);
-      }
-    }
-    return parentRecordId;
-  }
-
   @Override
   /**
    * Check if a node has children
