@@ -396,7 +396,26 @@ enyo.kind({
 
     this.model.on('change:loadFinished', function (model) {
       if (model.get("loadFinished")) {
-        me.moveStep(0);
+        if (terminalSlave = !OB.POS.modelterminal.get('terminal').ismaster && OB.POS.modelterminal.get('terminal').isslave) {
+          new OB.DS.Process('org.openbravo.retail.posterminal.ProcessCashCloseSlave').exec({
+            cashUpId: OB.POS.modelterminal.get('terminal').cashUpId
+          }, function (data) {
+            if (data && data.exception) {
+              // Error handler 
+              OB.log('error', data.exception.message);
+              OB.UTIL.showAlert.display(data.exception.message, OB.I18N.getLabel('OBMOBC_LblError'), 'alert-error', false);
+            } else {
+              if (data.hasMaster) {
+                me.moveStep(0);
+              } else {
+                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_LblError'), OB.I18N.getLabel('OBPOS_ErrCashupMasterNotOpen'));
+                OB.POS.navigate('retail.pointofsale');
+              }
+            }
+          });
+        } else {
+          me.moveStep(0);
+        }
       }
     });
 
