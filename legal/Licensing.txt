@@ -15,7 +15,7 @@ the Openbravo Commercial License here: http://www.openbravo.com/content/openbrav
 
 B) Third party code
 
-Some portions of the Openbravo Software are provided by third parties and thus are not available under the Openbravo Commercial License, but are available under other licensing terms. In this distribution, they are:
+Some portions of the Openbravo Software are provided by third parties and thus are not available under the Openbravo Commercial License, but are available under other licensing terms a copy of which are in the "legal" folder of this module. In this distribution, they are:
 
 libs/backbone.localStorage-min.js
 Under the MIT License, available at
