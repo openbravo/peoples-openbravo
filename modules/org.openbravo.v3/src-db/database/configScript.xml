@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <vector>
-    <versionInfo version="3.0.23392"/>
+    <versionInfo version="3.0.25650"/>
     <columnDataChange tablename="AD_PROCESS" columnname="ISACTIVE" pkRow="800026">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
@@ -1224,10 +1224,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="800160">
       <oldValue><![CDATA[50]]></oldValue>
       <newValue><![CDATA[120]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="800174">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="ISSAMELINE" pkRow="800184">
       <oldValue><![CDATA[Y]]></oldValue>
