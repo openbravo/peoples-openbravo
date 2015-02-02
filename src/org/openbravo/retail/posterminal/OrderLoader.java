@@ -292,6 +292,8 @@ public class OrderLoader extends POSDataSynchronizationProcess {
           OBContext.restorePreviousMode();
         }
 
+      } catch (Exception ex) {
+        throw new OBException("Error in OrderLoader: ", ex);
       } finally {
         // flush and enable triggers, the rest of this method needs enabled
         // triggers
