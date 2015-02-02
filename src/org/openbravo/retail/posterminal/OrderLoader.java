@@ -888,7 +888,8 @@ public class OrderLoader extends POSDataSynchronizationProcess {
 
           OBCriteria<StockProposed> stockProposed = OBDal.getInstance().createCriteria(
               StockProposed.class);
-          stockProposed.add(Restrictions.eq(StockProposed.PROPERTY_PROCESSINSTANCE, pInstance));
+          stockProposed.add(Restrictions.eq(StockProposed.PROPERTY_PROCESSINSTANCE,
+              pInstance.getId()));
           stockProposed.addOrderBy(StockProposed.PROPERTY_PRIORITY, true);
 
           ScrollableResults bins = stockProposed.scroll(ScrollMode.FORWARD_ONLY);
