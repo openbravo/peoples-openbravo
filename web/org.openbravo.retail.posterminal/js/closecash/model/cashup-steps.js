@@ -45,7 +45,7 @@ enyo.kind({
     return 'OBPOS_LblNextStep';
   },
   allowNext: function () {
-    return true;
+    return this.model.get('slavesCashupCompleted');
   },
   getSubstepsLength: function (model) {
     return 1;

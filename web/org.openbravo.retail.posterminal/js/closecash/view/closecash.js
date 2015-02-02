@@ -400,6 +400,10 @@ enyo.kind({
       }
     });
 
+    this.model.on('change:slavesCashupCompleted', function (model) {
+      me.refreshButtons();
+    });
+
   },
 
   rendered: function () {
