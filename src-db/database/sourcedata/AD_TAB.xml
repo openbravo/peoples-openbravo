@@ -1791,13 +1791,13 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--186-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
 <!--186-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
 <!--186-->  <HASTREE><![CDATA[N]]></HASTREE>
-<!--186-->  <WHERECLAUSE><![CDATA[C_Order.IsSOTrx='Y' AND C_Order.docstatus != 'TMP']]></WHERECLAUSE>
+<!--186-->  <WHERECLAUSE><![CDATA[C_Order.IsSOTrx='Y' AND C_Order.docstatus <> 'TMP']]></WHERECLAUSE>
 <!--186-->  <AD_PROCESS_ID><![CDATA[1000500002]]></AD_PROCESS_ID>
 <!--186-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--186-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--186-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--186-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
-<!--186-->  <HQLWHERECLAUSE><![CDATA[e.salesTransaction=true AND e.transactionDocument.return= false AND e.transactionDocument.sOSubType NOT LIKE 'OB' and e.docStatus]]></HQLWHERECLAUSE>
+<!--186-->  <HQLWHERECLAUSE><![CDATA[e.salesTransaction=true AND e.transactionDocument.return= false AND e.transactionDocument.sOSubType NOT LIKE 'OB' and e.documentStatus <> 'TMP']]></HQLWHERECLAUSE>
 <!--186-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--186-->  <DISABLE_PARENT_KEY_PROPERTY><![CDATA[N]]></DISABLE_PARENT_KEY_PROPERTY>
 <!--186-->  <ISREADONLYTREE><![CDATA[N]]></ISREADONLYTREE>

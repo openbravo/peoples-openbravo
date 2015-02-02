@@ -1,6 +1,7 @@
 package org.openbravo.common.actionhandler;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -32,18 +33,24 @@ public class CancelAndReplaceSalesOrder extends BaseProcessActionHandler {
 
       // Create new Order header
       Order newOrder = (Order) DalUtil.copy(oldOrder, false, true);
-      // TODO Change order values
+      // Change order values
       newOrder.setProcessed(false);
       newOrder.setPosted("N");
       newOrder.setDocumentStatus("TMP");
+      newOrder.setDocumentAction("CO");
+      newOrder.setGrandTotalAmount(BigDecimal.ZERO);
+      newOrder.setSummedLineAmount(BigDecimal.ZERO);
+      Date today = new Date();
+      newOrder.setOrderDate(today);
+      newOrder.setScheduledDeliveryDate(today);
       String newDocumentNo = FIN_Utility.getDocumentNo(oldOrder.getDocumentType(), "C_Order");
       newOrder.setDocumentNo(newDocumentNo);
       newOrder.setReplacedorder(oldOrder);
       OBDal.getInstance().save(newOrder);
 
       // Create new Order lines
-      List<OrderLine> orderLineList = oldOrder.getOrderLineList();
-      for (OrderLine oldOrderLine : orderLineList) {
+      List<OrderLine> oldOrderLineList = oldOrder.getOrderLineList();
+      for (OrderLine oldOrderLine : oldOrderLineList) {
         OrderLine newOrderLine = (OrderLine) DalUtil.copy(oldOrderLine, false, true);
         newOrderLine.setDeliveredQuantity(BigDecimal.ZERO);
         newOrderLine.setInvoicedQuantity(BigDecimal.ZERO);
