@@ -8,6 +8,8 @@
  */
 package org.openbravo.retail.posterminal;
 
+import java.util.List;
+
 import org.codehaus.jettison.json.JSONException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -71,6 +73,32 @@ public class InitialValidations {
     queryEventAccounts.setNamedParameter("terminal", posTerminal);
     if (queryEventAccounts.list().size() > 0) {
       throw new JSONException("OBPOS_CMEVAccountIsUsedInPayMethod");
+    }
+
+    if (posTerminal.getMasterterminal() != null) {
+      String whereclauseAppPayment = " as e where e.obposApplications=:terminal and "
+          + " e.paymentMethod.isshared = 'Y' ";
+      OBQuery<OBPOSAppPayment> queryAppPayment = OBDal.getInstance().createQuery(
+          OBPOSAppPayment.class, whereclauseAppPayment);
+      queryAppPayment.setNamedParameter("terminal", posTerminal.getMasterterminal());
+      List<OBPOSAppPayment> sharedPayments = queryAppPayment.list();
+      for (int i = 0; i < posTerminal.getOBPOSAppPaymentList().size(); i++) {
+        OBPOSAppPayment appPayment = posTerminal.getOBPOSAppPaymentList().get(i);
+        if (appPayment.getPaymentMethod().isShared()) {
+          boolean validation = false;
+          for (int j = 0; j < sharedPayments.size(); j++) {
+            OBPOSAppPayment sharedPayment = sharedPayments.get(j);
+            if (sharedPayment.getPaymentMethod() == appPayment.getPaymentMethod()
+                && appPayment.getFinancialAccount() == sharedPayment.getFinancialAccount()) {
+              validation = true;
+              break;
+            }
+          }
+          if (!validation) {
+            throw new JSONException("OBPOS_FinAccSharedPayment");
+          }
+        }
+      }
     }
   }
 }
