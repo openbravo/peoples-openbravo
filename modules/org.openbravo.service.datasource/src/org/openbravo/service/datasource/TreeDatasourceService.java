@@ -1026,7 +1026,16 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
     return canAcceptDrop;
   }
 
-  protected String getParentRecordIdFromCriteria(JSONArray criteria, String parentPropertyName) {
+  /**
+   * Given a criteria and the name of a property, returns the value of that property in the criteria
+   * 
+   * @param criteria
+   *          the criteria that might contain a value for the provided property
+   * @param parentPropertyName
+   *          the property whose value might be contained in the criteria
+   * @return the value of the property in the criteria, or null if it is not found
+   */
+  protected final String getParentRecordIdFromCriteria(JSONArray criteria, String parentPropertyName) {
     String parentRecordId = null;
     for (int i = 0; i < criteria.length(); i++) {
       try {
