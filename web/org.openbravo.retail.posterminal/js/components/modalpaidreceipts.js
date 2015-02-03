@@ -294,9 +294,6 @@ enyo.kind({
       if (data) {
         _.each(data, function (iter) {
           me.model.get('orderList').newDynamicOrder(iter, function (order) {
-            if (me.filters.isReturn) {
-              order.set('forReturn', true);
-            }
             me.prsList.add(order);
 
           });
@@ -322,8 +319,7 @@ enyo.kind({
     this.prsList.on('click', function (model) {
       OB.UTIL.showLoading(true);
       process.exec({
-        orderid: model.get('id'),
-        forReturn: model.get('forReturn')
+        orderid: model.get('id')
       }, function (data) {
         OB.UTIL.showLoading(false);
         if (data) {
