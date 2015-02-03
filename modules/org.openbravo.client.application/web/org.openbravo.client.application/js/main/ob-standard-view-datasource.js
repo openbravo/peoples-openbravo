@@ -226,10 +226,10 @@ isc.OBViewDataSource.addProperties({
           // adding or updating a single record: at this point it is possible valueMap for
           // some fields not to contain current entry, let's add it now so it is properly
           // displayed
+          record = jsonData.response.data[0];
           fields = this.view.viewForm.getFields();
           for (i = 0; i < fields.length; i++) {
             field = fields[i];
-            record = jsonData.response.data[0];
             if (field.addValueMapEntry && record[field.name] && record[field.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER]) {
               field.addValueMapEntry(record[field.name], record[field.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER]);
               if (field.invalidateLocalValueMapCache) {
