@@ -61,40 +61,38 @@ public class AppPaymentEventHandler extends EntityPersistenceEventObserver {
 
   private void checkFinancialAccount(EntityPersistenceEvent event) {
     OBPOSAppPayment appPayment = (OBPOSAppPayment) event.getTargetInstance();
+    OBCriteria<OBPOSAppPayment> queryAppPayments = OBDal.getInstance().createCriteria(
+        OBPOSAppPayment.class);
+    queryAppPayments.add(Restrictions.eq(OBPOSAppPayment.PROPERTY_FINANCIALACCOUNT,
+        appPayment.getFinancialAccount()));
     if (!appPayment.getPaymentMethod().isShared()) {
-      OBCriteria<OBPOSAppPayment> queryAppPayments = OBDal.getInstance().createCriteria(
-          OBPOSAppPayment.class);
-      queryAppPayments.add(Restrictions.eq(OBPOSAppPayment.PROPERTY_FINANCIALACCOUNT,
-          appPayment.getFinancialAccount()));
-      if (!appPayment.getPaymentMethod().isShared()) {
-        queryAppPayments.setMaxResults(1);
-        if (queryAppPayments.list().size() > 0) {
+      queryAppPayments.setMaxResults(1);
+      if (queryAppPayments.list().size() > 0) {
+        throw new OBException(OBMessageUtils.getI18NMessage("OBPOS_PaymentMethodNotAllowed",
+            new String[] {}));
+      }
+    } else {
+      OBCriteria<OBPOSApplications> queryApplications = OBDal.getInstance().createCriteria(
+          OBPOSApplications.class);
+      String masterterminal = "";
+      if (appPayment.getObposApplications().getMasterterminal() != null) {
+        masterterminal = appPayment.getObposApplications().getMasterterminal().getId();
+      }
+      queryApplications.add(Restrictions.or(Restrictions.eq(OBPOSApplications.PROPERTY_ID,
+          masterterminal), Restrictions.or(Restrictions.eq(
+          OBPOSApplications.PROPERTY_MASTERTERMINAL, appPayment.getObposApplications()),
+          Restrictions.eq(OBPOSApplications.PROPERTY_MASTERTERMINAL, appPayment
+              .getObposApplications().getMasterterminal()))));
+      List<OBPOSApplications> terminalList = queryApplications.list();
+
+      ScrollableResults scrollableResults = queryAppPayments.scroll(ScrollMode.FORWARD_ONLY);
+
+      if (scrollableResults.next()) {
+        OBPOSAppPayment appPaymentResult = (OBPOSAppPayment) scrollableResults.get(0);
+        if (appPaymentResult.getPaymentMethod() != appPayment.getPaymentMethod()
+            || !terminalList.contains(appPaymentResult.getObposApplications())) {
           throw new OBException(OBMessageUtils.getI18NMessage("OBPOS_PaymentMethodNotAllowed",
               new String[] {}));
-        }
-      } else {
-        OBCriteria<OBPOSApplications> queryApplications = OBDal.getInstance().createCriteria(
-            OBPOSApplications.class);
-        String masterterminal = "";
-        if (appPayment.getObposApplications().getMasterterminal() != null) {
-          masterterminal = appPayment.getObposApplications().getMasterterminal().getId();
-        }
-        queryApplications.add(Restrictions.or(Restrictions.eq(OBPOSApplications.PROPERTY_ID,
-            masterterminal), Restrictions.or(Restrictions.eq(
-            OBPOSApplications.PROPERTY_MASTERTERMINAL, appPayment.getObposApplications()),
-            Restrictions.eq(OBPOSApplications.PROPERTY_MASTERTERMINAL, appPayment
-                .getObposApplications().getMasterterminal()))));
-        List<OBPOSApplications> terminalList = queryApplications.list();
-
-        ScrollableResults scrollableResults = queryAppPayments.scroll(ScrollMode.FORWARD_ONLY);
-
-        if (scrollableResults.next()) {
-          OBPOSAppPayment appPaymentResult = (OBPOSAppPayment) scrollableResults.get(0);
-          if (appPaymentResult.getPaymentMethod() != appPayment.getPaymentMethod()
-              || !terminalList.contains(appPaymentResult.getObposApplications())) {
-            throw new OBException(OBMessageUtils.getI18NMessage("OBPOS_PaymentMethodNotAllowed",
-                new String[] {}));
-          }
         }
       }
     }
