@@ -44,6 +44,7 @@ import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.financial.FinancialUtils;
+import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Organization;
@@ -807,7 +808,12 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     StringBuffer where = new StringBuffer();
     where.append(" as c");
     where.append(" where c." + Costing.PROPERTY_PRODUCT + " = :product");
-    where.append("   and c." + Costing.PROPERTY_ORGANIZATION + " = :org");
+    // FIXME: remove when manufacturing costs are fully migrated
+    if (isManufacturingProduct) {
+      where.append("  and c." + Costing.PROPERTY_CLIENT + " = :client");
+    } else {
+      where.append("  and c." + Costing.PROPERTY_ORGANIZATION + " = :org");
+    }
     if (costDimensions.get(CostDimension.Warehouse) == null) {
       where.append(" and c." + Costing.PROPERTY_WAREHOUSE + " is null");
     } else {
@@ -822,8 +828,12 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
 
     OBQuery<Costing> qryCosting = OBDal.getInstance().createQuery(Costing.class, where.toString());
     qryCosting.setNamedParameter("product", trx.getProduct());
-    qryCosting.setNamedParameter("org",
-        isManufacturingProduct ? OBDal.getInstance().get(Organization.class, "0") : getCostOrg());
+    // FIXME: remove when manufacturing costs are fully migrated
+    if (isManufacturingProduct) {
+      qryCosting.setNamedParameter("client", OBDal.getInstance().get(Client.class, strClientId));
+    } else {
+      qryCosting.setNamedParameter("org", getCostOrg());
+    }
     if (costDimensions.get(CostDimension.Warehouse) != null) {
       qryCosting.setNamedParameter("warehouse", costDimensions.get(CostDimension.Warehouse));
     }
