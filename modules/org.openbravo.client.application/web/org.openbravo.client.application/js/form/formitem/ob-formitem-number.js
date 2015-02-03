@@ -438,7 +438,7 @@ isc.OBNumberItem.addProperties({
         value = OB.Utilities.Number.OBPlainToOBMasked(this.getValue(), this.typeInstance.maskNumeric, this.typeInstance.decSeparator, this.typeInstance.groupSeparator, OB.Format.defaultGroupingSize);
       } else {
         value = this.getValue();
-	isFormula = true;
+        isFormula = true;
       }
       this.setValue(OB.Utilities.Number.OBMaskedToJS(value, this.typeInstance.decSeparator, this.typeInstance.groupSeparator));
       if (this.form.setTextualValue) {
@@ -447,6 +447,7 @@ isc.OBNumberItem.addProperties({
     } else {
       value = this.roundJsNumberUsingTypeInstance(this.getValue(), this.typeInstance);
       this.setValue(value);
+    }
 
     if (this.grid && this.grid.isEditing && this.grid.isEditing()) {
       this.grid.setEditValue(this.grid.getEditRow(), this.name, this.getValue(), true, true);
