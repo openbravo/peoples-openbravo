@@ -103,6 +103,11 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
       boolean originalAutomaticReceipt = accountPaymentMethod.isAutomaticReceipt();
       accountPaymentMethod.setAutomaticReceipt(false);
 
+      // Create goods shipment without real warehouse movement
+      // OldOrder Lines -> New goods shipment
+      // InverseOrder Lines -> New goods shipment
+      // Total movement 0
+
       // Complete inverse order and generate good shipment and sales invoice
       callCOrderPost(inverseOrder);
 
