@@ -19,7 +19,6 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -52,6 +51,7 @@ import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.ad_forms.AcctServer;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchronization;
 import org.openbravo.mobile.core.process.JSONPropertyToEntity;
@@ -59,7 +59,6 @@ import org.openbravo.mobile.core.process.PropertyByType;
 import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.ad.access.InvoiceLineTax;
 import org.openbravo.model.ad.access.OrderLineTax;
-import org.openbravo.model.ad.process.ProcessInstance;
 import org.openbravo.model.ad.ui.Process;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.businesspartner.Location;
@@ -89,7 +88,6 @@ import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.scheduling.ProcessBundle;
-import org.openbravo.service.db.CallProcess;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
@@ -858,40 +856,24 @@ public class OrderLoader extends POSDataSynchronizationProcess {
           // The M_GetStock function is used
           Process process = OBDal.getInstance().get(Process.class,
               "FF80818132C964E30132C9747257002E");
-          Map<String, Object> parameters = new HashMap<String, Object>();
-          parameters.put("AD_Client_ID", OBContext.getOBContext().getCurrentClient().getId());
-          parameters.put("AD_Org_ID", OBContext.getOBContext().getCurrentOrganization().getId());
-          parameters.put(
-              "M_Product_ID",
-              orderLine.getProduct() == null ? null
-                  : (String) DalUtil.getId(orderLine.getProduct()));
-          parameters.put("C_Uom_ID",
-              orderLine.getUOM() == null ? null : (String) DalUtil.getId(orderLine.getUOM()));
-          parameters.put("M_Product_Uom_ID", orderLine.getOrderUOM() == null ? null
-              : (String) DalUtil.getId(orderLine.getOrderUOM()));
-          parameters.put(
-              "M_AttributesetInstance_ID",
-              orderLine.getAttributeSetValue() == null ? null : (String) DalUtil.getId(orderLine
-                  .getAttributeSetValue()));
-          parameters.put("Quantity", pendingQty);
-          parameters.put("ProcessID", "118");
-          if (orderLine.getEntity().hasProperty("warehouseRule")
-              && orderLine.get("warehouseRule") != null) {
-            parameters.put("M_Warehouse_Rule_ID",
-                (String) DalUtil.getId(orderLine.get("warehouseRule")));
-          }
-          if (orderLine.getEntity().hasProperty("warehouse") && orderLine.get("warehouse") != null) {
-            parameters.put("Priority_Warehouse_ID",
-                (String) DalUtil.getId(orderLine.get("warehouse")));
-          }
 
-          ProcessInstance pInstance = CallProcess.getInstance().callProcess(process, null,
-              parameters, false);
+          String id = callProcessGetStock(
+              process,
+              orderLine.getId(),
+              (String) DalUtil.getId(orderLine.getClient()),
+              (String) DalUtil.getId(orderLine.getOrganization()),
+              (String) DalUtil.getId(orderLine.getProduct()),
+              (String) DalUtil.getId(orderLine.getUOM()),
+              (String) DalUtil.getId(orderLine.getWarehouse()),
+              orderLine.getAttributeSetValue() != null ? (String) DalUtil.getId(orderLine
+                  .getAttributeSetValue()) : null,
+              pendingQty,
+              orderLine.getWarehouseRule() != null ? (String) DalUtil.getId(orderLine
+                  .getWarehouseRule()) : null, null);
 
           OBCriteria<StockProposed> stockProposed = OBDal.getInstance().createCriteria(
               StockProposed.class);
-          stockProposed.add(Restrictions.eq(StockProposed.PROPERTY_PROCESSINSTANCE,
-              pInstance.getId()));
+          stockProposed.add(Restrictions.eq(StockProposed.PROPERTY_PROCESSINSTANCE, id));
           stockProposed.addOrderBy(StockProposed.PROPERTY_PRIORITY, true);
 
           ScrollableResults bins = stockProposed.scroll(ScrollMode.FORWARD_ONLY);
@@ -1753,6 +1735,71 @@ public class OrderLoader extends POSDataSynchronizationProcess {
           doctype == null ? "" : doctype.getId(), false, true);
     }
 
+  }
+
+  private static String callProcessGetStock(org.openbravo.model.ad.ui.Process process,
+      String recordID, String clientId, String orgId, String productId, String uomId,
+      String warehouseId, String attributesetinstanceId, BigDecimal quantity,
+      String warehouseRuleId, String reservationId) {
+    String processId = SequenceIdData.getUUID();
+    OBContext.setAdminMode();
+    List<Object> params = new ArrayList<Object>();
+    // p_uuid
+    params.add(processId);
+    // p_RecordId
+    params.add(recordID);
+    // p_quantity
+    params.add(quantity);
+    // p_ProductId
+    params.add(productId);
+    // p_LocatorId
+    params.add(null);
+    // p_warehouseId
+    params.add(warehouseId);
+    // p_PriorityWarehouseId
+    params.add(null);
+    // p_OrgId
+    params.add(orgId);
+    // p_Attributesetinstanceid
+    params.add(attributesetinstanceId);
+    // p_userId
+    params.add(OBContext.getOBContext().getUser().getId());
+    // p_client
+    params.add(clientId);
+    // p_WarehouseruleId
+    log.debug("warehouseRuleId: " + warehouseRuleId);
+    params.add(warehouseRuleId);
+    // p_uomId
+    params.add(uomId);
+    // p_ProductUomId
+    params.add(null);
+    // p_tableId
+    params.add(null);
+    // p_AuxId
+    params.add(null);
+    // p_lineNo
+    params.add(null);
+    // p_ProcessId
+    params.add(null);
+    // p_reservationId
+    params.add(reservationId);
+    // p_calledFromApp
+    params.add("N");
+    try {
+      log.debug("Parameters : '" + processId + "', '" + recordID + "', " + quantity + ", '"
+          + productId + "', null, '" + warehouseId + "', null, '" + orgId + "', '"
+          + attributesetinstanceId + "', '" + OBContext.getOBContext().getUser().getId() + "', '"
+          + clientId + "', '" + warehouseRuleId + "', '" + uomId
+          + "', null, null, null, null, null, '" + reservationId + "', 'N'");
+      long initGetStockProcedureCall = System.currentTimeMillis();
+      CallStoredProcedure.getInstance().call("M_GET_STOCK_PARAM", params, null, true, true);
+      long elapsedGetStockProcedureCall = (System.currentTimeMillis() - initGetStockProcedureCall);
+      log.debug("Partial time to execute callGetStock Procedure Call() : "
+          + elapsedGetStockProcedureCall);
+      return processId;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
 }
