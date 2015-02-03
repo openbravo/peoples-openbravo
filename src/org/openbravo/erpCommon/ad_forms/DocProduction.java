@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2008-2014 Openbravo SLU
+ * All portions are Copyright (C) 2008-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -169,7 +169,7 @@ public class DocProduction extends AcctServer {
     int countProductionlinesWithTrnCostZero = 0;
     for (int i = 0; i < p_lines.length; i++) {
       DocLine_Material line = (DocLine_Material) p_lines[i];
-      if (line.transaction.getTransactionCost() != null
+      if (line.transaction != null && line.transaction.getTransactionCost() != null
           && line.transaction.getTransactionCost().compareTo(ZERO) == 0) {
         countProductionlinesWithTrnCostZero++;
       }
