@@ -8,28 +8,21 @@
  */
 package org.openbravo.retail.posterminal;
 
-import java.util.List;
-
 import javax.servlet.ServletException;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.criterion.Restrictions;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 
 public class ProcessCashCloseSlave extends JSONProcessSimple {
 
   @Override
   public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
+    OBPOSAppCashup appCashup = OBDal.getInstance().get(OBPOSAppCashup.class,
+        jsonsent.getString("cashUpId"));
     JSONObject result = new JSONObject();
-    String cashUpId = jsonsent.getString("cashUpId");
-    OBCriteria<OBPOSAppCashup> obCriteria = OBDal.getInstance()
-        .createCriteria(OBPOSAppCashup.class);
-    obCriteria.add(Restrictions.eq(OBPOSAppCashup.PROPERTY_ID, cashUpId));
-    List<OBPOSAppCashup> cashUpList = obCriteria.list();
     JSONObject data = new JSONObject();
-    boolean hasMaster = cashUpList.size() > 0 && cashUpList.get(0).getObposParentCashup() != null;
+    boolean hasMaster = appCashup != null && appCashup.getObposParentCashup() != null;
     data.put("hasMaster", hasMaster);
     result.put("data", data);
     result.put("status", 0);
