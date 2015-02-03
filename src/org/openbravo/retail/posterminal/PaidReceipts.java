@@ -115,8 +115,9 @@ public class PaidReceipts extends JSONProcessSimple {
           // get shipmentLines for returns
           String value = new String();
           try {
-            value = Preferences.getPreferenceValue("OBPOS_SplitLinesInShipments", true, null, null,
-                null, null, (String) null);
+            value = Preferences.getPreferenceValue("OBPOS_SplitLinesInShipments", true, OBContext
+                .getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
+                .getCurrentOrganization().getId(), null, null, (String) null);
           } catch (PropertyException e) {
             value = "N";
           }
