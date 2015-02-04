@@ -439,6 +439,9 @@ OB.APRM.AddPayment.distributeAmount = function (view, form, onActualPaymentChang
         if (outstandingAmount.signum() < 0) {
           orderInvoice.setEditValue((i), 'amount', Number(outstandingAmount.toString()));
           orderInvoice.selectRecord(i);
+          if (outstandingAmount.signum() <= 0 || amount.signum() <= 0) {
+          amount = amount.subtract(outstandingAmount);
+          }
         } else {
           orderInvoice.setEditValue((i), 'amount', Number('0'));
           orderInvoice.deselectRecord(i);
