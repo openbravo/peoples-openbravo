@@ -93,31 +93,50 @@ enyo.kind({
       }]
     }]
   }],
+
   displayStep: function (model) {
     // this function is invoked when displayed.   
     var me = this;
     this.$.stepsheader.renderHeader(model.stepNumber('OB.CashUp.Master'), model.stepCount());
-    new OB.DS.Process('org.openbravo.retail.posterminal.ProcessCashCloseMaster').exec({
-      masterterminal: OB.POS.modelterminal.get('terminal').id,
-      cashUpId: OB.POS.modelterminal.get('terminal').cashUpId
-    }, function (data) {
-      if (data && data.exception) {
-        // Error handler 
-        OB.log('error', data.exception.message);
-        OB.UTIL.showAlert.display(data.exception.message, OB.I18N.getLabel('OBMOBC_LblError'), 'alert-error', false);
-      } else {
-        var allClosed = true,
-            col = new Backbone.Collection();
-        col.add(data);
-        _.forEach(data, function (item) {
-          if (!item.finish) {
-            allClosed = false;
-            return false;
+    if (!model.get('slavesCashupCompleted')) {
+      new OB.DS.Process('org.openbravo.retail.posterminal.ProcessCashCloseMaster').exec({
+        masterterminal: OB.POS.modelterminal.get('terminal').id,
+        cashUpId: OB.POS.modelterminal.get('terminal').cashUpId
+      }, function (data) {
+        if (data && data.exception) {
+          // Error handler 
+          OB.log('error', data.exception.message);
+          OB.UTIL.showAlert.display(data.exception.message, OB.I18N.getLabel('OBMOBC_LblError'), 'alert-error', false);
+        } else {
+          var col = new Backbone.Collection();
+          col.add(data.terminals);
+          me.$.slaveList.setCollection(col);
+          if (data.finishAll) {
+            me.updateCashReport(model, data.payments);
           }
-        });
-        me.$.slaveList.setCollection(col);
-        model.set('slavesCashupCompleted', allClosed);
-      }
+          model.set('slavesCashupCompleted', data.finishAll);
+        }
+      });
+    }
+  },
+
+  updateCashReport: function (model, payments) {
+    _.each(model.get('paymentList').models, function (item) {
+      _.each(payments, function (payment) {
+        if (item.get('searchKey') === payment.searchKey) {
+          //item.set('startingCash', OB.DEC.add(item.get('startingCash'), payment.startingCash));
+          item.set('totalDeposits', OB.DEC.add(item.get('totalDeposits'), payment.totalDeposits));
+          item.set('totalDrops', OB.DEC.add(item.get('totalDrops'), payment.totalDrops));
+          item.set('totalReturns', OB.DEC.add(item.get('totalReturns'), payment.totalReturns));
+          item.set('totalSales', OB.DEC.add(item.get('totalSales'), payment.totalSales));
+          var cTotalDeposits = OB.DEC.sub(item.get('totalDeposits'), OB.DEC.abs(item.get('totalDrops')));
+          expected = OB.DEC.add(OB.DEC.add(item.get('startingCash'), OB.DEC.sub(item.get('totalSales'), OB.DEC.abs(item.get('totalReturns')))), cTotalDeposits);
+          var fromCurrencyId = item.get('paymentMethod').currency;
+          item.set('expected', OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, expected));
+          item.set('foreignExpected', expected);
+        }
+      });
     });
   }
+
 });

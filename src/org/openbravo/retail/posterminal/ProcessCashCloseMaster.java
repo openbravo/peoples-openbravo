@@ -15,6 +15,8 @@ import javax.servlet.ServletException;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -31,28 +33,110 @@ public class ProcessCashCloseMaster extends JSONProcessSimple {
     obCriteria.add(Restrictions.eq(OBPOSApplications.PROPERTY_MASTERTERMINAL + ".id",
         masterterminal));
     List<OBPOSApplications> applications = obCriteria.list();
-    JSONArray data = new JSONArray();
+    JSONArray terminals = new JSONArray();
+    boolean finishAll = true;
     for (OBPOSApplications application : applications) {
-      JSONObject item = new JSONObject();
-      item.put("id", application.getId());
-      item.put("searchKey", application.getSearchKey());
-      item.put("name", application.getName());
-      item.put("finish", isCashUpFinish(application.getId(), cashUpId));
-      data.put(item);
+      JSONObject terminal = new JSONObject();
+      terminal.put("id", application.getId());
+      terminal.put("searchKey", application.getSearchKey());
+      terminal.put("name", application.getName());
+      OBPOSAppCashup terminalCashUp = getTerminalCashUp(application.getId(), cashUpId);
+      boolean finish = terminalCashUp.isProcessed() && terminalCashUp.isProcessedbo();
+      terminal.put("finish", finish);
+      terminal.put("cashUpId", terminalCashUp.getId());
+      if (!finish) {
+        finishAll = false;
+      }
+      terminals.put(terminal);
+    }
+    JSONObject data = new JSONObject();
+    data.put("terminals", terminals);
+    data.put("finishAll", finishAll);
+    if (finishAll) {
+      JSONArray payments = new JSONArray();
+      data.put("payments", payments);
+      String cashUpIds = "";
+      for (int i = 0; i < terminals.length(); i++) {
+        JSONObject terminal = terminals.getJSONObject(i);
+        if (i != 0) {
+          cashUpIds += ", ";
+        }
+        cashUpIds += "'" + terminal.getString("cashUpId") + "'";
+      }
+      addPaymentmethodCashup(payments, cashUpIds);
     }
     result.put("data", data);
     result.put("status", 0);
     return result;
   }
 
-  private boolean isCashUpFinish(String posterminal, String parentCashUp) {
+  /**
+   * Get cash up for terminal and parent cash up
+   * 
+   * @param posterminal
+   *          Terminal id.
+   * @param parentCashUp
+   *          Parent cash up id.
+   * @return
+   */
+  private OBPOSAppCashup getTerminalCashUp(String posterminal, String parentCashUp) {
     OBCriteria<OBPOSAppCashup> obCriteria = OBDal.getInstance()
         .createCriteria(OBPOSAppCashup.class);
     obCriteria.add(Restrictions.eq(OBPOSAppCashup.PROPERTY_POSTERMINAL + ".id", posterminal));
     obCriteria
         .add(Restrictions.eq(OBPOSAppCashup.PROPERTY_OBPOSPARENTCASHUP + ".id", parentCashUp));
     List<OBPOSAppCashup> cashUp = obCriteria.list();
-    return cashUp.size() > 0 ? cashUp.get(0).isProcessed() && cashUp.get(0).isProcessedbo() : false;
+    return cashUp.size() > 0 ? cashUp.get(0) : null;
   }
+
+  /**
+   * Accumulate share payment methods
+   * 
+   * @param payments
+   *          Payments list
+   * @param cashUpIds
+   *          Cash up ids. with IN format
+   * @throws JSONException
+   */
+  private void addPaymentmethodCashup(JSONArray payments, String cashUpIds) throws JSONException {
+    String query = "select " + OBPOSPaymentMethodCashup.PROPERTY_SEARCHKEY + ", sum("
+        + OBPOSPaymentMethodCashup.PROPERTY_STARTINGCASH + "), sum("
+        + OBPOSPaymentMethodCashup.PROPERTY_TOTALDEPOSITS + "), sum("
+        + OBPOSPaymentMethodCashup.PROPERTY_TOTALDROPS + "), sum("
+        + OBPOSPaymentMethodCashup.PROPERTY_TOTALRETURNS + "), sum("
+        + OBPOSPaymentMethodCashup.PROPERTY_TOTALSALES + ") " + "from OBPOS_Paymentmethodcashup "
+        + "where cashUp.id in (" + cashUpIds + ") and paymentType.paymentMethod.isshared = 'Y'"
+        + "group by 1";
+    final Session session = OBDal.getInstance().getSession();
+    final Query paymentQuery = session.createQuery(query);
+    List<?> paymentList = paymentQuery.list();
+    for (int i = 0; i < paymentList.size(); i++) {
+      Object[] item = (Object[]) paymentList.get(i);
+      JSONObject paymentCashup = new JSONObject();
+      paymentCashup.put("searchKey", item[0]);
+      paymentCashup.put("startingCash", item[1]);
+      paymentCashup.put("totalDeposits", item[2]);
+      paymentCashup.put("totalDrops", item[3]);
+      paymentCashup.put("totalReturns", item[4]);
+      paymentCashup.put("totalSales", item[5]);
+      payments.put(paymentCashup);
+    }
+  }
+
+  /*
+   * private void addProperty(JSONObject paymentCashup, String propName, BigDecimal value) throws
+   * JSONException { BigDecimal current = (BigDecimal) paymentCashup.get(propName);
+   * paymentCashup.put(propName, current.add(value)); }
+   * 
+   * private JSONObject getPaymentCashup(JSONArray payments, String searchKey) throws JSONException
+   * { for (int i = 0; i < payments.length(); i++) { JSONObject paymentCashup =
+   * payments.getJSONObject(i); if (paymentCashup.getString("searchKey").equals(searchKey)) { return
+   * paymentCashup; } } JSONObject paymentCashup = new JSONObject(); paymentCashup.put("searchKey",
+   * searchKey); paymentCashup.put("startingCash", new BigDecimal(0));
+   * paymentCashup.put("totalSales", new BigDecimal(0)); paymentCashup.put("totalDeposits", new
+   * BigDecimal(0)); paymentCashup.put("totalDrops", new BigDecimal(0));
+   * paymentCashup.put("totalReturns", new BigDecimal(0)); payments.put(paymentCashup); return
+   * paymentCashup; }
+   */
 
 }

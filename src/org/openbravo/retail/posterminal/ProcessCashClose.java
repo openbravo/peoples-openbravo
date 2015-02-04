@@ -95,50 +95,29 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
     OBPOSAppCashup cashUp = getCashUp(cashUpId, jsonCashup, cashUpDate);
 
     if (cashUp.isProcessed() && !cashUp.isProcessedbo()) {
-      // check if there is a reconciliation in draft status
-      for (OBPOSAppPayment payment : posTerminal.getOBPOSAppPaymentList()) {
-        final OBCriteria<FIN_Reconciliation> recconciliations = OBDal.getInstance().createCriteria(
-            FIN_Reconciliation.class);
-        recconciliations.add(Restrictions.eq(FIN_Reconciliation.PROPERTY_DOCUMENTSTATUS, "DR"));
-        recconciliations.add(Restrictions.eq(FIN_Reconciliation.PROPERTY_ACCOUNT,
-            payment.getFinancialAccount()));
-        for (final FIN_Reconciliation r : recconciliations.list()) {
-          // will end up in the pos error window
-          throw new OBException(
-              "Cash up can not proceed, there is a reconcilliation in draft status, payment method: "
-                  + payment.getIdentifier() + ", reconcilliation: " + r.getDocumentNo() + " ("
-                  + r.getAccount().getName() + ")");
-        }
-      }
-
-      OBCriteria<OBPOSErrors> errorsQuery = OBDal.getInstance().createCriteria(OBPOSErrors.class);
-      errorsQuery.add(Restrictions.ne(OBPOSErrors.PROPERTY_TYPEOFDATA, "OBPOS_App_Cashup"));
-      errorsQuery.add(Restrictions.eq(OBPOSErrors.PROPERTY_ORDERSTATUS, "N"));
-      errorsQuery.add(Restrictions.eq(OBPOSErrors.PROPERTY_OBPOSAPPLICATIONS, posTerminal));
-      if (errorsQuery.count() > 0) {
-        throw new OBException(
-            "There are errors related to non-created customers, orders, or cash management movements pending to be processed. Process them before processing the cash ups");
-      }
-
-      // This cashup is a closed box
-      TriggerHandler.getInstance().disable();
-      try {
-        new OrderGroupingProcessor().groupOrders(posTerminal, cashUpId, cashUpDate);
-
-        posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
-            jsonCashup.getString("posterminal"));
-
-        CashCloseProcessor processor = getCashCloseProcessor();
-        JSONArray cashMgmtIds = jsonCashup.getJSONArray("cashMgmtIds");
-        JSONObject result = processor.processCashClose(posTerminal, jsonCashup, cashMgmtIds,
-            cashUpDate);
-        // add the messages returned by processCashClose...
-        jsonData.put("messages", result.opt("messages"));
-        jsonData.put("next", result.opt("next"));
+      cashUp.setJsoncashup(jsonCashup.toString());
+      if (posTerminal.getMasterterminal() != null) {
+        // On slave only mark as processed BO
+        cashUp.setProcessedbo(Boolean.TRUE);
+        OBDal.getInstance().save(cashUp);
         jsonData.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
-      } finally {
-        OBDal.getInstance().flush();
-        TriggerHandler.getInstance().enable();
+      } else if (posTerminal.isMaster()) {
+        // Reconciliation and invoices of slaves
+        String query = OBPOSAppCashup.PROPERTY_OBPOSPARENTCASHUP + ".id = :parantCashupId";
+        OBQuery<OBPOSAppCashup> appCashupQuery = OBDal.getInstance().createQuery(
+            OBPOSAppCashup.class, query);
+        appCashupQuery.setNamedParameter("parantCashupId", cashUpId);
+        List<OBPOSAppCashup> slaveCashupList = appCashupQuery.list();
+        for (OBPOSAppCashup slaveCashup : slaveCashupList) {
+          String dbJsoncashup = slaveCashup.getJsoncashup();
+          JSONObject slaveJsonCashup = new JSONObject(dbJsoncashup);
+          doReconciliationAndInvoices(slaveCashup.getPOSTerminal(), slaveCashup.getId(),
+              slaveCashup.getCashUpDate(), slaveJsonCashup, jsonData);
+        }
+        // Reconciliation and invoices of master
+        doReconciliationAndInvoices(posTerminal, cashUpId, cashUpDate, jsonCashup, jsonData);
+      } else {
+        doReconciliationAndInvoices(posTerminal, cashUpId, cashUpDate, jsonCashup, jsonData);
       }
     } else {
       // This cashup is a cash order. Nothing needs to be done
@@ -147,6 +126,55 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
       associateMasterSlave(cashUp, posTerminal);
     }
     return jsonData;
+  }
+
+  private void doReconciliationAndInvoices(OBPOSApplications posTerminal, String cashUpId,
+      Date cashUpDate, JSONObject jsonCashup, JSONObject jsonData) throws Exception {
+    // check if there is a reconciliation in draft status
+    for (OBPOSAppPayment payment : posTerminal.getOBPOSAppPaymentList()) {
+      final OBCriteria<FIN_Reconciliation> recconciliations = OBDal.getInstance().createCriteria(
+          FIN_Reconciliation.class);
+      recconciliations.add(Restrictions.eq(FIN_Reconciliation.PROPERTY_DOCUMENTSTATUS, "DR"));
+      recconciliations.add(Restrictions.eq(FIN_Reconciliation.PROPERTY_ACCOUNT,
+          payment.getFinancialAccount()));
+      for (final FIN_Reconciliation r : recconciliations.list()) {
+        // will end up in the pos error window
+        throw new OBException(
+            "Cash up can not proceed, there is a reconcilliation in draft status, payment method: "
+                + payment.getIdentifier() + ", reconcilliation: " + r.getDocumentNo() + " ("
+                + r.getAccount().getName() + ")");
+      }
+    }
+
+    OBCriteria<OBPOSErrors> errorsQuery = OBDal.getInstance().createCriteria(OBPOSErrors.class);
+    errorsQuery.add(Restrictions.ne(OBPOSErrors.PROPERTY_TYPEOFDATA, "OBPOS_App_Cashup"));
+    errorsQuery.add(Restrictions.eq(OBPOSErrors.PROPERTY_ORDERSTATUS, "N"));
+    errorsQuery.add(Restrictions.eq(OBPOSErrors.PROPERTY_OBPOSAPPLICATIONS, posTerminal));
+    if (errorsQuery.count() > 0) {
+      throw new OBException(
+          "There are errors related to non-created customers, orders, or cash management movements pending to be processed. Process them before processing the cash ups");
+    }
+
+    // This cashup is a closed box
+    TriggerHandler.getInstance().disable();
+    try {
+      new OrderGroupingProcessor().groupOrders(posTerminal, cashUpId, cashUpDate);
+
+      posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
+          jsonCashup.getString("posterminal"));
+
+      CashCloseProcessor processor = getCashCloseProcessor();
+      JSONArray cashMgmtIds = jsonCashup.getJSONArray("cashMgmtIds");
+      JSONObject result = processor.processCashClose(posTerminal, jsonCashup, cashMgmtIds,
+          cashUpDate);
+      // add the messages returned by processCashClose...
+      jsonData.put("messages", result.opt("messages"));
+      jsonData.put("next", result.opt("next"));
+      jsonData.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
+    } finally {
+      OBDal.getInstance().flush();
+      TriggerHandler.getInstance().enable();
+    }
   }
 
   protected CashCloseProcessor getCashCloseProcessor() {
