@@ -155,7 +155,8 @@ enyo.kind({
     onLineEditCount: 'lineEditCount',
     onPaymentMethodKept: 'paymentMethodKept',
     onResetQtyToKeep: 'resetQtyToKeep',
-    onHoldActiveCmd: 'holdActiveCmd'
+    onHoldActiveCmd: 'holdActiveCmd',
+    onChangeCashupReport: 'changeCashupReport',
   },
   published: {
     model: null
@@ -540,6 +541,9 @@ enyo.kind({
     this.waterfall('onChangeOption', {
       cmd: inEvent.cmd
     });
+  },
+  changeCashupReport: function () {
+    this.$.cashupMultiColumn.$.leftPanel.$.postPrintClose.setModel(this.model.get('cashUpReport').at(0));
   }
 });
 
