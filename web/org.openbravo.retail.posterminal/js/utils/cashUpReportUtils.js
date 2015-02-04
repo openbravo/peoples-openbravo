@@ -307,9 +307,8 @@
         if (!OB.UTIL.isNullOrUndefined(pAux)) {
           startingCash = pAux.paymentMethod.amountToKeep;
         }
-      } else {
-        startingCash = OB.DEC.Zero;
       }
+      
       if (!deposits) {
         deposits = OB.DEC.Zero;
       }
