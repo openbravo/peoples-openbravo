@@ -102,7 +102,6 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
       // Added as root node
       adTreeNode.setReportSet(ROOT_NODE_DB);
       OBDal.getInstance().save(adTreeNode);
-      OBDal.getInstance().flush(); // force flush in admin mode
     } catch (Exception e) {
       logger.error("Error while adding the tree node", e);
     }
@@ -132,7 +131,6 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
           treeNode.getNode());
       logger.info(nChildrenMoved + " children have been moved to another parent");
       OBDal.getInstance().remove(treeNode);
-      OBDal.getInstance().flush(); // force flush in admin mode
     } catch (Exception e) {
       logger.error("Error while deleting tree node: ", e);
       throw new OBException("The treenode could not be created");
