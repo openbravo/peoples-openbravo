@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,9 +29,11 @@ import java.util.Random;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.hibernate.criterion.Restrictions;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.rules.TestWatcher;
+import org.junit.runner.Description;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -56,6 +58,54 @@ import org.openbravo.model.ad.access.User;
  */
 
 public class OBBaseTest {
+
+  /**
+   * Add a TestWatcher rule to be able to catch test failures allowing them to fail.
+   * 
+   * This will be used to commit or rollback DAL session after on test finalization. Note failed
+   * method is invoked after invoking any method annotated with @After, that's why commit/rollback
+   * is performed on this rule's finished method which is invoked after failed.
+   */
+  @Rule
+  public TestWatcher watchFailures = new TestWatcher() {
+    @Override
+    protected void failed(Throwable e, Description description) {
+      errorOccured = true;
+    }
+
+    @Override
+    protected void finished(Description description) {
+      // if not an administrator but still admin mode set throw an exception
+      if (!OBContext.getOBContext().getUser().getId().equals("0")
+          && !OBContext.getOBContext().getRole().getId().equals("0")
+          && OBContext.getOBContext().isInAdministratorMode()) {
+        throw new IllegalStateException(
+            "Test case should take care of reseting admin mode correctly in a finally block, use OBContext.restorePreviousMode");
+      }
+      try {
+        if (SessionHandler.isSessionHandlerPresent()) {
+          if (SessionHandler.getInstance().getDoRollback()) {
+            SessionHandler.getInstance().rollback();
+          } else if (isErrorOccured()) {
+            SessionHandler.getInstance().rollback();
+          } else if (SessionHandler.getInstance().getSession().getTransaction().isActive()) {
+            SessionHandler.getInstance().commitAndClose();
+          } else {
+            SessionHandler.getInstance().getSession().close();
+          }
+        }
+      } catch (final Exception e) {
+        SessionHandler.getInstance().rollback();
+        reportException(e);
+        throw new OBException(e);
+      } finally {
+        SessionHandler.deleteSessionHandler();
+        OBContext.setOBContext((OBContext) null);
+      }
+
+      super.finished(description);
+    }
+  };
 
   private static final Logger log = Logger.getLogger(OBBaseTest.class);
 
@@ -174,8 +224,7 @@ public class OBBaseTest {
   public void setUp() throws Exception {
     // clear the session otherwise it keeps the old model
     setTestUserContext();
-    // be negative is set back to false at the end of a successfull test.
-    errorOccured = true;
+    errorOccured = false;
   }
 
   /**
@@ -277,48 +326,6 @@ public class OBBaseTest {
 
     Random r = new Random();
     return userIds.get(r.nextInt(userIds.size()));
-  }
-
-  /*
-   * public TestResult run() { // TODO Auto-generated method stub return super.run(); }
-   * 
-   * /** Overridden to keep track if an exception was thrown, if not then errorOccurred is set to
-   * false, signaling to tearDown to commit the transaction.
-   *//*
-      * public void runTest() throws Throwable { super.runTest(); errorOccured = false; }
-      * 
-      * /** Performs rolling back of a transaction (in case setTestCompleted was not called by the
-      * subclass), or commits the transaction if the testcase passed without exception.
-      */
-  @After
-  public void tearDown() throws Exception {
-    // if not an administrator but still admin mode set throw an exception
-    if (!OBContext.getOBContext().getUser().getId().equals("0")
-        && !OBContext.getOBContext().getRole().getId().equals("0")
-        && OBContext.getOBContext().isInAdministratorMode()) {
-      throw new IllegalStateException(
-          "Test case should take care of reseting admin mode correctly in a finally block, use OBContext.restorePreviousMode");
-    }
-    try {
-      if (SessionHandler.isSessionHandlerPresent()) {
-        if (SessionHandler.getInstance().getDoRollback()) {
-          SessionHandler.getInstance().rollback();
-        } else if (isErrorOccured()) {
-          SessionHandler.getInstance().rollback();
-        } else if (SessionHandler.getInstance().getSession().getTransaction().isActive()) {
-          SessionHandler.getInstance().commitAndClose();
-        } else {
-          SessionHandler.getInstance().getSession().close();
-        }
-      }
-    } catch (final Exception e) {
-      SessionHandler.getInstance().rollback();
-      reportException(e);
-      throw e;
-    } finally {
-      SessionHandler.deleteSessionHandler();
-      OBContext.setOBContext((OBContext) null);
-    }
   }
 
   /**
