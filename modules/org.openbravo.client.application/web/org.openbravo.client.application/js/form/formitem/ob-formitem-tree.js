@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2014 Openbravo SLU
+ * All portions are Copyright (C) 2013-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -130,7 +130,9 @@ isc.OBTreeItem.addProperties({
     if (this.tree.isVisible()) {
       this.tree.hide();
     } else {
-      this.tree.show();
+      // when the tree picker is opened manually, use an empty criterion not to
+      // filter the selected record (see issue https://issues.openbravo.com/view.php?id=28843)
+      this.tree.show(isc.OBRestDataSource.getDummyCriterion());
     }
   },
 
@@ -241,9 +243,9 @@ isc.OBTreeItemTree.addProperties({
     }
   },
 
-  show: function () {
+  show: function (explicitCriteria) {
     this.updatePosition();
-    this.fetchData();
+    this.fetchData(explicitCriteria);
     this._pageClickID = this.ns.Page.setEvent('mouseDown', this, null, 'clickOutsideTree');
     return this.Super('show', arguments);
   },
@@ -345,23 +347,29 @@ isc.OBTreeItemTree.addProperties({
   },
 
   fetchData: function (criteria, callback, requestProperties) {
-    return this.Super('fetchData', [this.getCriteriaFromTreeItem(), callback, requestProperties]);
+    if (!criteria) {
+      // if no explicit criteria is provided, use the value entered in the tree item
+      criteria = this.getCriteriaFromTreeItem();
+    }
+    return this.Super('fetchData', [criteria, callback, requestProperties]);
   },
 
   getCriteriaFromTreeItem: function () {
-    var value = this.treeItem.getValue(),
+    var value = this.treeItem.getEnteredValue(),
         criteria = {};
     if (!value) {
       return null;
     }
-    if (OB.Utilities.isUUID(value)) {
+    if (OB.Utilities.isUUID(value) && this.treeItem.valueMap) {
       value = this.treeItem.valueMap[value] ? this.treeItem.valueMap[value] : value;
     }
     criteria.fieldName = this.getFields()[0].name;
     criteria.operator = 'iContains';
     criteria.value = value;
     return {
-      criteria: criteria
+      _constructor: "AdvancedCriteria",
+      operator: "and",
+      criteria: [criteria]
     };
   }
 });
