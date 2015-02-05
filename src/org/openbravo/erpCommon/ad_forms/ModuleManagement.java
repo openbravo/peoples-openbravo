@@ -2716,6 +2716,12 @@ public class ModuleManagement extends HttpSecureAppServlet {
       if (mmodel.exists()) {
         modelFiles.add(mmodel);
       }
+
+      // add columns defined in external modules
+      File modifiedTablesModel = new File(moduleFile, "src-db/database/model/modifiedTables");
+      if (modifiedTablesModel.exists()) {
+        modelFiles.add(modifiedTablesModel);
+      }
     }
     Database db = DatabaseUtils.readDatabase(modelFiles.toArray(new File[1]));
 
