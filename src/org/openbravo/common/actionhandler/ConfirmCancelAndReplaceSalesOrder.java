@@ -1,3 +1,21 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SLU
+ * All portions are Copyright (C) 2015 Openbravo SLU
+ * All Rights Reserved.
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+ */
 package org.openbravo.common.actionhandler;
 
 import java.math.BigDecimal;
@@ -22,6 +40,8 @@ import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
 import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
+import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
+import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DbUtility;
 
@@ -45,8 +65,8 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
       // Create inverse Order header
       Order inverseOrder = (Order) DalUtil.copy(oldOrder, false, true);
       // Change order values
-      inverseOrder.setProcessed(false);
       inverseOrder.setPosted("N");
+      inverseOrder.setProcessed(false);
       inverseOrder.setDocumentStatus("DR");
       inverseOrder.setDocumentAction("CO");
       inverseOrder.setGrandTotalAmount(BigDecimal.ZERO);
@@ -59,18 +79,122 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
       inverseOrder.setCancelledorder(oldOrder);
       OBDal.getInstance().save(inverseOrder);
 
-      // Create inverse Order lines
+      // Define netting goods shipment
+      ShipmentInOut nettingGoodsShipment = null;
+
+      // Assign the original goods shipment lines to the new order lines
+      List<OrderLine> newOrderLineList = newOrder.getOrderLineList();
+      for (OrderLine newOrderLine : newOrderLineList) {
+        OrderLine replacedOrderLine = newOrderLine.getReplacedorderline();
+        if (replacedOrderLine != null) {
+          OBCriteria<ShipmentInOutLine> goodsShipmentLineCriteria = OBDal.getInstance()
+              .createCriteria(ShipmentInOutLine.class);
+          goodsShipmentLineCriteria.add(Restrictions.eq(ShipmentInOutLine.PROPERTY_SALESORDERLINE,
+              replacedOrderLine));
+          List<ShipmentInOutLine> goodsShipmentLineList = goodsShipmentLineCriteria.list();
+          if (goodsShipmentLineList.size() == 0) {
+            // Line without shipment
+          } else if (goodsShipmentLineList.size() != 1) {
+            throw new OBException("More than one goods shipment lines associated to a order line");
+          } else {
+            ShipmentInOutLine goodsShipmentLine = goodsShipmentLineList.get(0);
+            // TODO
+            ShipmentInOut goodsShipment = goodsShipmentLine.getShipmentReceipt();
+            goodsShipment.setPosted("N");
+            goodsShipment.setProcessed(false);
+            OBDal.getInstance().save(goodsShipment);
+            OBDal.getInstance().flush();
+            // Assign old shipment line to the new order line
+            goodsShipmentLine.setSalesOrderLine(newOrderLine);
+            OBDal.getInstance().save(goodsShipmentLine);
+            OBDal.getInstance().flush();
+            // Restore flags
+            goodsShipment.setProcessed(true);
+            goodsShipment.setPosted("Y");
+            OBDal.getInstance().save(goodsShipment);
+            OBDal.getInstance().flush();
+
+            // If nettingGoodsShipment has not been initialized
+            if (nettingGoodsShipment == null) {
+              nettingGoodsShipment = (ShipmentInOut) DalUtil.copy(
+                  goodsShipmentLine.getShipmentReceipt(), false, true);
+              nettingGoodsShipment.setMovementDate(today);
+              nettingGoodsShipment.setAccountingDate(today);
+              nettingGoodsShipment.setSalesOrder(null);
+              nettingGoodsShipment.setPosted("N");
+              nettingGoodsShipment.setProcessed(false);
+              String nettingGoodsShipmentDocumentNo = FIN_Utility.getDocumentNo(
+                  nettingGoodsShipment.getDocumentType(), "M_InOut");
+              nettingGoodsShipment.setDocumentNo(nettingGoodsShipmentDocumentNo);
+              OBDal.getInstance().save(nettingGoodsShipment);
+            }
+          }
+        }
+      }
+
+      if (nettingGoodsShipment == null) {
+        throw new OBException("The original sales order did not have any goods shipment");
+      }
+
       List<OrderLine> oldOrderLineList = oldOrder.getOrderLineList();
       for (OrderLine oldOrderLine : oldOrderLineList) {
+        // Set old order delivered quantity zero
+        BigDecimal orderedQuantity = oldOrderLine.getOrderedQuantity();
+        oldOrderLine.setDeliveredQuantity(BigDecimal.ZERO);
+        OBDal.getInstance().save(oldOrderLine);
+
+        // Create inverse Order lines
         OrderLine inverseOrderLine = (OrderLine) DalUtil.copy(oldOrderLine, false, true);
-        inverseOrderLine.setDeliveredQuantity(BigDecimal.ZERO);
-        inverseOrderLine.setInvoicedQuantity(BigDecimal.ZERO);
         inverseOrderLine.setSalesOrder(inverseOrder);
-        BigDecimal orderedQuantity = inverseOrderLine.getOrderedQuantity();
         BigDecimal inverseOrderedQuantity = orderedQuantity.multiply(new BigDecimal(-1));
         inverseOrderLine.setOrderedQuantity(inverseOrderedQuantity);
+        inverseOrderLine.setInvoicedQuantity(BigDecimal.ZERO);
+
+        // Set inverse order delivered quantity zero
+        inverseOrderLine.setDeliveredQuantity(BigDecimal.ZERO);
         OBDal.getInstance().save(inverseOrderLine);
+
+        // Create new lines on the nettingGoodsShipment
+        OBCriteria<ShipmentInOutLine> goodsShipmentLineCriteria = OBDal.getInstance()
+            .createCriteria(ShipmentInOutLine.class);
+        goodsShipmentLineCriteria.add(Restrictions.eq(ShipmentInOutLine.PROPERTY_SALESORDERLINE,
+            oldOrderLine));
+        List<ShipmentInOutLine> goodsShipmentLineList = goodsShipmentLineCriteria.list();
+        if (goodsShipmentLineList.size() == 0) {
+          // Line without shipment
+        } else if (goodsShipmentLineList.size() != 1) {
+          throw new OBException("More than one goods shipment lines associated to a order line");
+        } else {
+          // For the oldOrderLine
+          ShipmentInOutLine goodsShipmentLine = goodsShipmentLineList.get(0);
+          ShipmentInOutLine newGoodsShipmentLine1 = (ShipmentInOutLine) DalUtil.copy(
+              goodsShipmentLine, false, true);
+          newGoodsShipmentLine1.setSalesOrderLine(oldOrderLine);
+          OBDal.getInstance().save(newGoodsShipmentLine1);
+          newGoodsShipmentLine1.setShipmentReceipt(nettingGoodsShipment);
+          newGoodsShipmentLine1.setMovementQuantity(orderedQuantity);
+          OBDal.getInstance().save(newGoodsShipmentLine1);
+
+          // Set old order delivered quantity to the ordered quantity
+          oldOrderLine.setDeliveredQuantity(orderedQuantity);
+          OBDal.getInstance().save(oldOrderLine);
+
+          // For the inverseOrderLine
+          ShipmentInOutLine newGoodsShipmentLine2 = (ShipmentInOutLine) DalUtil.copy(
+              goodsShipmentLine, false, true);
+          newGoodsShipmentLine2.setSalesOrderLine(inverseOrderLine);
+          OBDal.getInstance().save(newGoodsShipmentLine2);
+          newGoodsShipmentLine2.setShipmentReceipt(nettingGoodsShipment);
+          newGoodsShipmentLine2.setMovementQuantity(inverseOrderedQuantity);
+          OBDal.getInstance().save(newGoodsShipmentLine2);
+
+          // Set inverser order delivered quantity to the ordered quantity
+          inverseOrderLine.setDeliveredQuantity(inverseOrderedQuantity);
+          OBDal.getInstance().save(inverseOrderLine);
+        }
       }
+
+      // Create if needed a new goods shipment
 
       // Get accountPaymentMethod in order to avoid automatic payment creation during c_order_post
       FIN_PaymentMethod paymentMethod = inverseOrder.getPaymentMethod();
@@ -103,77 +227,21 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
       boolean originalAutomaticReceipt = accountPaymentMethod.isAutomaticReceipt();
       accountPaymentMethod.setAutomaticReceipt(false);
 
-      // Create goods shipment without real warehouse movement
-      // OldOrder Lines -> New goods shipment
-      // InverseOrder Lines -> New goods shipment
-      // Total movement 0
+      // Complete nettingGoodsShipment
 
-      // Complete inverse order and generate good shipment and sales invoice
-      callCOrderPost(inverseOrder);
+      // Complete inverse order
+      // callCOrderPost(inverseOrder);
+
+      // TODO
 
       // Complete new order and generate good shipment and sales invoice
       newOrder.setDocumentStatus("DR");
-      callCOrderPost(newOrder);
+      // callCOrderPost(newOrder);
 
       // Restore Automatic Receipt check
       accountPaymentMethod.setAutomaticReceipt(originalAutomaticReceipt);
 
-      // Add inverse order payments
-      // List<FIN_PaymentSchedule> paymentScheduleList = oldOrder.getFINPaymentScheduleList();
-      // if (paymentScheduleList.size() != 0) {
-      // FIN_PaymentSchedule paymentSchedule = paymentScheduleList.get(0);
-      //
-      // // Get the payment schedule detail of the order
-      // OBCriteria<FIN_PaymentScheduleDetail> paymentScheduleDetailCriteria = OBDal.getInstance()
-      // .createCriteria(FIN_PaymentScheduleDetail.class);
-      // paymentScheduleDetailCriteria.add(Restrictions.eq(
-      // FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE, paymentSchedule));
-      // // There sould be only one with null paymentdetails
-      // paymentScheduleDetailCriteria.add(Restrictions
-      // .isNull(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS));
-      // List<FIN_PaymentScheduleDetail> paymentScheduleDetailList = paymentScheduleDetailCriteria
-      // .list();
-      // if (paymentScheduleDetailList.size() != 0) {
-      // HashMap<String, BigDecimal> paymentScheduleDetailAmount = new HashMap<String,
-      // BigDecimal>();
-      // String paymentScheduleDetailId = paymentScheduleDetailList.get(0).getId();
-      // BigDecimal paymentAmount = (BigDecimal) jsonPayment.get("amount");
-      // paymentScheduleDetailAmount.put(paymentScheduleDetailId, paymentAmount);
-      //
-      // BigDecimal zeroBigDecimal = new BigDecimal(0);
-      //
-      // // Call to savePayment in order to create a new payment in
-      // FIN_Payment payment = FIN_AddPayment.savePayment(null, true, documentType,
-      // paymentDocumentNo, order.getBusinessPartner(), paymentMethod, financialAccount,
-      // paymentAmount.toPlainString(), order.getOrderDate(), order.getOrganization(), null,
-      // paymentScheduleDetailList, paymentScheduleDetailAmount, false, false,
-      // order.getCurrency(), zeroBigDecimal, zeroBigDecimal);
-      //
-      // // Call to processPayment in order to process it
-      // ConnectionProvider conn = new DalConnectionProvider();
-      // VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
-      // OBError error = FIN_AddPayment.processPayment(vars, conn, "P", payment);
-      // if (error.getType().equals("Error")) {
-      // errorMessage = errorMessage + "\nError durante el procesado del pago: "
-      // + error.getMessage();
-      // }
-      // } else {
-      // BusinessPartner businessPatner = (BusinessPartner) matchedJsonOrder
-      // .get("businessPartner");
-      // FIN_FinancialAccount businessPartnerFinancialAccount = businessPatner.getAccount();
-      // if (businessPartnerFinancialAccount != null) {
-      // errorMessage = errorMessage + "\nEl check \"Cobro automático\" del método de pago \""
-      // + paymentMethod.getName() + "\" de la cuenta financiera \""
-      // + businessPatner.getAccount().getName() + "\" debe estar desactivado";
-      // } else {
-      // errorMessage = errorMessage + "\nEl tercero " + businessPatner.getName()
-      // + " no tiene una cuenta financiera asociada";
-      // }
-      // }
-      // } else {
-      // errorMessage = errorMessage + "\nNo existe ningún plan de cobro para el pedido: "
-      // + order.getId();
-      // }
+      // TODO Payments
 
       // Return result
       JSONObject result = new JSONObject();

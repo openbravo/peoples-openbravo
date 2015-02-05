@@ -281,6 +281,10 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
+      <column name="REPLACEDORDERLINE" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="A_ASSET" name="C_ORDERLINE_A_ASSET">
         <reference local="A_ASSET_ID" foreign="A_ASSET_ID"/>
       </foreign-key>
@@ -349,6 +353,9 @@
       </foreign-key>
       <foreign-key foreignTable="C_ORDERLINE" name="C_ORDERLINE_QUOTATION">
         <reference local="QUOTATIONLINE_ID" foreign="C_ORDERLINE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_ORDERLINE" name="C_ORDERLINE_REPLACEDORDERLINE">
+        <reference local="REPLACEDORDERLINE" foreign="C_ORDERLINE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="S_RESOURCEASSIGNMENT" name="C_ORDERLINE_S_RESOURCEASSIGNME">
         <reference local="S_RESOURCEASSIGNMENT_ID" foreign="S_RESOURCEASSIGNMENT_ID"/>
