@@ -132,6 +132,10 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
       Date cashUpDate, JSONObject jsonCashup, JSONObject jsonData) throws Exception {
     // check if there is a reconciliation in draft status
     for (OBPOSAppPayment payment : posTerminal.getOBPOSAppPaymentList()) {
+      if (posTerminal.getMasterterminal() != null && payment.getPaymentMethod().isShared()) {
+        // Skip share payment method on slave terminals
+        continue;
+      }
       final OBCriteria<FIN_Reconciliation> recconciliations = OBDal.getInstance().createCriteria(
           FIN_Reconciliation.class);
       recconciliations.add(Restrictions.eq(FIN_Reconciliation.PROPERTY_DOCUMENTSTATUS, "DR"));

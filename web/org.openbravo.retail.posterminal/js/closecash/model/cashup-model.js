@@ -132,6 +132,10 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
             var fromCurrencyId = auxPay.get('paymentMethod').currency;
             auxPay.set('expected', OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, expected));
             auxPay.set('foreignExpected', expected);
+            var paymentShared = (OB.POS.modelterminal.get('terminal').ismaster || OB.POS.modelterminal.get('terminal').isslave) && OB.MobileApp.model.paymentnames[payment.payment.searchKey].paymentMethod.isshared;
+            if (paymentShared) {
+              auxPay.set('name', auxPay.get('name') + " (Shared)");
+            }
             tempList.add(auxPay);
           }
 
@@ -261,12 +265,15 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
             return;
           }
 
-          var fromCurrencyId = auxPay.paymentMethod.currency;
+          var fromCurrencyId = auxPay.paymentMethod.currency,
+              paymentShared = (OB.POS.modelterminal.get('terminal').ismaster || OB.POS.modelterminal.get('terminal').isslave) && OB.MobileApp.model.paymentnames[auxPay.payment.searchKey].paymentMethod.isshared;
 
           cashUpReport.get('deposits').push(new Backbone.Model({
             origAmount: OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, OB.DEC.add(p.get('totalDeposits'), p.get('totalSales'))),
             amount: OB.DEC.add(0, OB.DEC.add(p.get('totalDeposits'), p.get('totalSales'))),
-            description: p.get('name'),
+            searchKey: p.get('searchKey'),
+            description: p.get('name') + (paymentShared ? " (Shared)" : ""),
+            currency: fromCurrencyId,
             isocode: auxPay.isocode,
             rate: p.get('rate')
           }));
@@ -274,14 +281,18 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
           cashUpReport.get('drops').push(new Backbone.Model({
             origAmount: OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, OB.DEC.add(p.get('totalDrops'), p.get('totalReturns'))),
             amount: OB.DEC.add(0, OB.DEC.add(p.get('totalDrops'), p.get('totalReturns'))),
-            description: p.get('name'),
+            searchKey: p.get('searchKey'),
+            description: p.get('name') + (paymentShared ? " <span style='color: orange; font-weight: bold;'>•</span>" : ""),
+            currency: fromCurrencyId,
             isocode: auxPay.isocode,
             rate: p.get('rate')
           }));
           startings.push(new Backbone.Model({
             origAmount: OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, p.get('startingCash')),
             amount: OB.DEC.add(0, p.get('startingCash')),
-            description: 'Starting ' + p.get('name'),
+            searchKey: p.get('searchKey'),
+            description: 'Starting ' + p.get('name') + (paymentShared ? " (Shared payment)" : ""),
+            currency: fromCurrencyId,
             isocode: auxPay.isocode,
             rate: p.get('rate'),
             paymentId: p.get('paymentmethod_id')
