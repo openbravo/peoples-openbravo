@@ -114,7 +114,8 @@ isc.OBTreeItem.addProperties({
         criteria, innerCriteria;
     if (this.treeWindow.treeGrid) {
       //If there is a record selected in the item, use it to filter the tree
-      if (OB.Utilities.isUUID(selectedValue)) {
+      // check if the value is present in the value map to ensure it is the id of the selected item
+      if (OB.Utilities.isUUID(selectedValue) && this.valueMap && this.valueMap[selectedValue]) {
         this.targetRecordId = selectedValue;
         this.targetRecordIdentifier = this.getDisplayValue();
       }
