@@ -146,7 +146,7 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
         // Create inverse Order lines
         OrderLine inverseOrderLine = (OrderLine) DalUtil.copy(oldOrderLine, false, true);
         inverseOrderLine.setSalesOrder(inverseOrder);
-        BigDecimal inverseOrderedQuantity = orderedQuantity.multiply(new BigDecimal(-1));
+        BigDecimal inverseOrderedQuantity = orderedQuantity.negate();
         inverseOrderLine.setOrderedQuantity(inverseOrderedQuantity);
         inverseOrderLine.setInvoicedQuantity(BigDecimal.ZERO);
 
@@ -216,7 +216,7 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
       if (accountPaymentMethodList.size() == 0) {
         throw new OBException("The payment method " + paymentMethod.getName()
             + " is not in the financial account " + businessPartnerAccount.getName());
-      } else if (accountPaymentMethodCriteria.list().size() > 1) {
+      } else if (accountPaymentMethodList.size() > 1) {
         throw new OBException("The payment method " + paymentMethod.getName()
             + " appears more than once in the financial account "
             + businessPartnerAccount.getName());

@@ -78,7 +78,7 @@ public class CancelAndReplaceSalesOrder extends BaseProcessActionHandler {
       }
 
       // Get new Order id
-      String newOrderId = newOrder.get(Order.PROPERTY_ID).toString();
+      String newOrderId = newOrder.getId();
 
       // Return result
       JSONObject result = new JSONObject();
