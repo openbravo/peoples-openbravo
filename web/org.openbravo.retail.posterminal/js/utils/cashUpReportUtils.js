@@ -318,6 +318,10 @@
       }
       // If payment is active
       if (payment.payment.active === true || (payment.payment.active === false && deposits !== 0 && drops !== 0)) {
+        // Set startingCash to zero on slave terminal and payment method is share
+        if (OB.POS.modelterminal.get('terminal').isslave && payment.paymentMethod.isshared) {
+          startingCash = OB.DEC.Zero;
+        }
         OB.Dal.save(new OB.Model.PaymentMethodCashUp({
           id: OB.Dal.get_uuid(),
           paymentmethod_id: payment.payment.id,

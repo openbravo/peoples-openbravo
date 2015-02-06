@@ -123,20 +123,4 @@ public class ProcessCashCloseMaster extends JSONProcessSimple {
     }
   }
 
-  /*
-   * private void addProperty(JSONObject paymentCashup, String propName, BigDecimal value) throws
-   * JSONException { BigDecimal current = (BigDecimal) paymentCashup.get(propName);
-   * paymentCashup.put(propName, current.add(value)); }
-   * 
-   * private JSONObject getPaymentCashup(JSONArray payments, String searchKey) throws JSONException
-   * { for (int i = 0; i < payments.length(); i++) { JSONObject paymentCashup =
-   * payments.getJSONObject(i); if (paymentCashup.getString("searchKey").equals(searchKey)) { return
-   * paymentCashup; } } JSONObject paymentCashup = new JSONObject(); paymentCashup.put("searchKey",
-   * searchKey); paymentCashup.put("startingCash", new BigDecimal(0));
-   * paymentCashup.put("totalSales", new BigDecimal(0)); paymentCashup.put("totalDeposits", new
-   * BigDecimal(0)); paymentCashup.put("totalDrops", new BigDecimal(0));
-   * paymentCashup.put("totalReturns", new BigDecimal(0)); payments.put(paymentCashup); return
-   * paymentCashup; }
-   */
-
 }

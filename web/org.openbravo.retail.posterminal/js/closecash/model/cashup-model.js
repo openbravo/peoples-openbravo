@@ -134,7 +134,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
             auxPay.set('foreignExpected', expected);
             var paymentShared = (OB.POS.modelterminal.get('terminal').ismaster || OB.POS.modelterminal.get('terminal').isslave) && OB.MobileApp.model.paymentnames[payment.payment.searchKey].paymentMethod.isshared;
             if (paymentShared) {
-              auxPay.set('name', auxPay.get('name') + " (Shared)");
+              auxPay.set('name', auxPay.get('name') + (paymentShared ? OB.I18N.getLabel('OBPOS_LblPaymentMethodShared') : ""));
             }
             tempList.add(auxPay);
           }
@@ -266,13 +266,14 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
           }
 
           var fromCurrencyId = auxPay.paymentMethod.currency,
-              paymentShared = (OB.POS.modelterminal.get('terminal').ismaster || OB.POS.modelterminal.get('terminal').isslave) && OB.MobileApp.model.paymentnames[auxPay.payment.searchKey].paymentMethod.isshared;
+              paymentShared = (OB.POS.modelterminal.get('terminal').ismaster || OB.POS.modelterminal.get('terminal').isslave) && OB.MobileApp.model.paymentnames[auxPay.payment.searchKey].paymentMethod.isshared,
+              paymentSharedStr = paymentShared ? OB.I18N.getLabel('OBPOS_LblPaymentMethodShared') : "";
 
           cashUpReport.get('deposits').push(new Backbone.Model({
             origAmount: OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, OB.DEC.add(p.get('totalDeposits'), p.get('totalSales'))),
             amount: OB.DEC.add(0, OB.DEC.add(p.get('totalDeposits'), p.get('totalSales'))),
             searchKey: p.get('searchKey'),
-            description: p.get('name') + (paymentShared ? " (Shared)" : ""),
+            description: p.get('name') + paymentSharedStr,
             currency: fromCurrencyId,
             isocode: auxPay.isocode,
             rate: p.get('rate')
@@ -282,7 +283,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
             origAmount: OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, OB.DEC.add(p.get('totalDrops'), p.get('totalReturns'))),
             amount: OB.DEC.add(0, OB.DEC.add(p.get('totalDrops'), p.get('totalReturns'))),
             searchKey: p.get('searchKey'),
-            description: p.get('name') + (paymentShared ? " <span style='color: orange; font-weight: bold;'>•</span>" : ""),
+            description: p.get('name') + paymentSharedStr,
             currency: fromCurrencyId,
             isocode: auxPay.isocode,
             rate: p.get('rate')
@@ -291,7 +292,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
             origAmount: OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, p.get('startingCash')),
             amount: OB.DEC.add(0, p.get('startingCash')),
             searchKey: p.get('searchKey'),
-            description: 'Starting ' + p.get('name') + (paymentShared ? " (Shared payment)" : ""),
+            description: 'Starting ' + p.get('name') + paymentSharedStr,
             currency: fromCurrencyId,
             isocode: auxPay.isocode,
             rate: p.get('rate'),
