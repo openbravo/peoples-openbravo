@@ -178,8 +178,8 @@ isc.UpdateInvariantCharacteristicsPopup.addProperties({
           parentCharId: this.parentCharId
         }
       };
-      this.tree.show = function () {
-        this.originalShow();
+      this.tree.show = function (explicitCriteria) {
+        this.originalShow(explicitCriteria);
         this.bringToFront();
       };
     };
@@ -242,6 +242,9 @@ isc.UpdateInvariantCharacteristicsPopup.addProperties({
           type: '_id_D3D9A7BAF4594950922A22B2D7ABFA74'
         }]
       });
+      // TODO: Remove popup icon because currently the popup does not
+      // load any data (see issue 28887)
+      this.characteristicCombos[i].getField(0).setIcons([]);
     }
 
     this.okButton = isc.OBFormButton.create({
