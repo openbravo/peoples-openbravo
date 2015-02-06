@@ -82,60 +82,7 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
       // Define netting goods shipment
       ShipmentInOut nettingGoodsShipment = null;
 
-      // Assign the original goods shipment lines to the new order lines
-      List<OrderLine> newOrderLineList = newOrder.getOrderLineList();
-      for (OrderLine newOrderLine : newOrderLineList) {
-        OrderLine replacedOrderLine = newOrderLine.getReplacedorderline();
-        if (replacedOrderLine != null) {
-          OBCriteria<ShipmentInOutLine> goodsShipmentLineCriteria = OBDal.getInstance()
-              .createCriteria(ShipmentInOutLine.class);
-          goodsShipmentLineCriteria.add(Restrictions.eq(ShipmentInOutLine.PROPERTY_SALESORDERLINE,
-              replacedOrderLine));
-          List<ShipmentInOutLine> goodsShipmentLineList = goodsShipmentLineCriteria.list();
-          if (goodsShipmentLineList.size() == 0) {
-            // Line without shipment
-          } else if (goodsShipmentLineList.size() != 1) {
-            throw new OBException("More than one goods shipment lines associated to a order line");
-          } else {
-            ShipmentInOutLine goodsShipmentLine = goodsShipmentLineList.get(0);
-            // TODO
-            ShipmentInOut goodsShipment = goodsShipmentLine.getShipmentReceipt();
-            goodsShipment.setPosted("N");
-            goodsShipment.setProcessed(false);
-            OBDal.getInstance().save(goodsShipment);
-            OBDal.getInstance().flush();
-            // Assign old shipment line to the new order line
-            goodsShipmentLine.setSalesOrderLine(newOrderLine);
-            OBDal.getInstance().save(goodsShipmentLine);
-            OBDal.getInstance().flush();
-            // Restore flags
-            goodsShipment.setProcessed(true);
-            goodsShipment.setPosted("Y");
-            OBDal.getInstance().save(goodsShipment);
-            OBDal.getInstance().flush();
-
-            // If nettingGoodsShipment has not been initialized
-            if (nettingGoodsShipment == null) {
-              nettingGoodsShipment = (ShipmentInOut) DalUtil.copy(
-                  goodsShipmentLine.getShipmentReceipt(), false, true);
-              nettingGoodsShipment.setMovementDate(today);
-              nettingGoodsShipment.setAccountingDate(today);
-              nettingGoodsShipment.setSalesOrder(null);
-              nettingGoodsShipment.setPosted("N");
-              nettingGoodsShipment.setProcessed(false);
-              String nettingGoodsShipmentDocumentNo = FIN_Utility.getDocumentNo(
-                  nettingGoodsShipment.getDocumentType(), "M_InOut");
-              nettingGoodsShipment.setDocumentNo(nettingGoodsShipmentDocumentNo);
-              OBDal.getInstance().save(nettingGoodsShipment);
-            }
-          }
-        }
-      }
-
-      if (nettingGoodsShipment == null) {
-        throw new OBException("The original sales order did not have any goods shipment");
-      }
-
+      // Iterate old order lines
       List<OrderLine> oldOrderLineList = oldOrder.getOrderLineList();
       for (OrderLine oldOrderLine : oldOrderLineList) {
         // Set old order delivered quantity zero
@@ -153,27 +100,49 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
         // Set inverse order delivered quantity zero
         inverseOrderLine.setDeliveredQuantity(BigDecimal.ZERO);
         OBDal.getInstance().save(inverseOrderLine);
+        OBDal.getInstance().flush();
 
         // Create new lines on the nettingGoodsShipment
         OBCriteria<ShipmentInOutLine> goodsShipmentLineCriteria = OBDal.getInstance()
             .createCriteria(ShipmentInOutLine.class);
         goodsShipmentLineCriteria.add(Restrictions.eq(ShipmentInOutLine.PROPERTY_SALESORDERLINE,
             oldOrderLine));
+        goodsShipmentLineCriteria.add(Restrictions.eq(ShipmentInOutLine.PROPERTY_LINENO,
+            oldOrderLine.getLineNo()));
         List<ShipmentInOutLine> goodsShipmentLineList = goodsShipmentLineCriteria.list();
         if (goodsShipmentLineList.size() == 0) {
           // Line without shipment
         } else if (goodsShipmentLineList.size() != 1) {
           throw new OBException("More than one goods shipment lines associated to a order line");
         } else {
-          // For the oldOrderLine
           ShipmentInOutLine goodsShipmentLine = goodsShipmentLineList.get(0);
+
+          // If nettingGoodsShipment has not been initialized, initialize it
+          if (nettingGoodsShipment == null) {
+            nettingGoodsShipment = (ShipmentInOut) DalUtil.copy(
+                goodsShipmentLine.getShipmentReceipt(), false, true);
+            nettingGoodsShipment.setMovementDate(today);
+            nettingGoodsShipment.setAccountingDate(today);
+            nettingGoodsShipment.setSalesOrder(null);
+            nettingGoodsShipment.setPosted("N");
+            nettingGoodsShipment.setProcessed(false);
+            OBDal.getInstance().flush();
+            String nettingGoodsShipmentDocumentNo = FIN_Utility.getDocumentNo(
+                nettingGoodsShipment.getDocumentType(), "M_InOut");
+            nettingGoodsShipment.setDocumentNo(nettingGoodsShipmentDocumentNo);
+            OBDal.getInstance().save(nettingGoodsShipment);
+          }
+
+          // For the oldOrderLine
           ShipmentInOutLine newGoodsShipmentLine1 = (ShipmentInOutLine) DalUtil.copy(
               goodsShipmentLine, false, true);
           newGoodsShipmentLine1.setSalesOrderLine(oldOrderLine);
-          OBDal.getInstance().save(newGoodsShipmentLine1);
           newGoodsShipmentLine1.setShipmentReceipt(nettingGoodsShipment);
+          OBDal.getInstance().save(newGoodsShipmentLine1);
+          OBDal.getInstance().flush();
           newGoodsShipmentLine1.setMovementQuantity(orderedQuantity);
           OBDal.getInstance().save(newGoodsShipmentLine1);
+          OBDal.getInstance().flush();
 
           // Set old order delivered quantity to the ordered quantity
           oldOrderLine.setDeliveredQuantity(orderedQuantity);
@@ -183,14 +152,54 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
           ShipmentInOutLine newGoodsShipmentLine2 = (ShipmentInOutLine) DalUtil.copy(
               goodsShipmentLine, false, true);
           newGoodsShipmentLine2.setSalesOrderLine(inverseOrderLine);
-          OBDal.getInstance().save(newGoodsShipmentLine2);
           newGoodsShipmentLine2.setShipmentReceipt(nettingGoodsShipment);
+          OBDal.getInstance().save(newGoodsShipmentLine2);
+          OBDal.getInstance().flush();
           newGoodsShipmentLine2.setMovementQuantity(inverseOrderedQuantity);
           OBDal.getInstance().save(newGoodsShipmentLine2);
+          OBDal.getInstance().flush();
 
-          // Set inverser order delivered quantity to the ordered quantity
+          // Set inverse order delivered quantity to the ordered quantity
           inverseOrderLine.setDeliveredQuantity(inverseOrderedQuantity);
           OBDal.getInstance().save(inverseOrderLine);
+        }
+      }
+
+      // Assign the original goods shipment lines to the new order lines
+      List<OrderLine> newOrderLineList = newOrder.getOrderLineList();
+      for (OrderLine newOrderLine : newOrderLineList) {
+        OrderLine replacedOrderLine = newOrderLine.getReplacedorderline();
+        if (replacedOrderLine != null) {
+          OBCriteria<ShipmentInOutLine> goodsShipmentLineCriteria = OBDal.getInstance()
+              .createCriteria(ShipmentInOutLine.class);
+          goodsShipmentLineCriteria.add(Restrictions.eq(ShipmentInOutLine.PROPERTY_SALESORDERLINE,
+              replacedOrderLine));
+          goodsShipmentLineCriteria.add(Restrictions.eq(ShipmentInOutLine.PROPERTY_LINENO,
+              replacedOrderLine.getLineNo()));
+          goodsShipmentLineCriteria.addOrderBy(ShipmentInOutLine.PROPERTY_UPDATED, true);
+          List<ShipmentInOutLine> goodsShipmentLineList = goodsShipmentLineCriteria.list();
+          if (goodsShipmentLineList.size() == 0) {
+            // Line without shipment
+          } else if (goodsShipmentLineList.size() != 2) {
+            throw new OBException("More than two goods shipment lines associated to a order line");
+          } else {
+            ShipmentInOutLine goodsShipmentLine = goodsShipmentLineList.get(0);
+            // TODO
+            ShipmentInOut goodsShipment = goodsShipmentLine.getShipmentReceipt();
+            goodsShipment.setPosted("N");
+            goodsShipment.setProcessed(false);
+            OBDal.getInstance().save(goodsShipment);
+            OBDal.getInstance().flush();
+            // Assign old shipment line to the new order line
+            goodsShipmentLine.setSalesOrderLine(newOrderLine);
+            OBDal.getInstance().save(goodsShipmentLine);
+            OBDal.getInstance().flush();
+            // Restore flags
+            goodsShipment.setProcessed(true);
+            goodsShipment.setPosted("Y");
+            OBDal.getInstance().save(goodsShipment);
+            OBDal.getInstance().flush();
+          }
         }
       }
 
@@ -236,6 +245,7 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
 
       // Complete new order and generate good shipment and sales invoice
       newOrder.setDocumentStatus("DR");
+      OBDal.getInstance().save(newOrder);
       // callCOrderPost(newOrder);
 
       // Restore Automatic Receipt check
