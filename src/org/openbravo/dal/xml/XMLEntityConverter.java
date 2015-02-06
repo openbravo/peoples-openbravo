@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -71,6 +71,8 @@ public class XMLEntityConverter extends BaseXMLEntityConverter {
     return OBProvider.getInstance().get(XMLEntityConverter.class);
   }
 
+  private boolean isForDefaultValues;
+
   /**
    * The main entry point. This method creates a Dom4j Document and then calls
    * {@link #process(Document)}.
@@ -115,6 +117,9 @@ public class XMLEntityConverter extends BaseXMLEntityConverter {
       throw new OBException("Root tag of the xml document should be: "
           + XMLConstants.OB_ROOT_ELEMENT + ", but it is " + rootElement.getName());
     }
+
+    String isForDefaultsStr = rootElement.attributeValue(XMLConstants.DEFAULT_VALUES_DATA);
+    isForDefaultValues = isForDefaultsStr != null ? Boolean.parseBoolean(isForDefaultsStr) : false;
 
     // walk through the elements
     final Set<BaseOBObject> checkDuplicates = new HashSet<BaseOBObject>();
@@ -173,6 +178,11 @@ public class XMLEntityConverter extends BaseXMLEntityConverter {
 
       // referenced and not new, so already there, don't update
       if (hasReferenceAttribute && !bob.isNewOBObject()) {
+        return bob;
+      }
+
+      // importing only new rows and not updating existent ones
+      if (isForDefaultValues && !bob.isNewOBObject()) {
         return bob;
       }
 
