@@ -43,6 +43,7 @@ import org.openbravo.test.system.ErrorTextParserTest;
 import org.openbravo.test.system.SystemServiceTest;
 import org.openbravo.test.system.SystemValidatorTest;
 import org.openbravo.test.system.TestInfrastructure;
+import org.openbravo.test.xml.DefaultsDataset;
 import org.openbravo.test.xml.EntityXMLImportTestBusinessObject;
 import org.openbravo.test.xml.EntityXMLImportTestReference;
 import org.openbravo.test.xml.EntityXMLImportTestSingle;
@@ -92,10 +93,13 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     TestInfrastructure.class, //
 
     // xml
-    EntityXMLImportTestBusinessObject.class, EntityXMLImportTestReference.class, //
-    EntityXMLImportTestSingle.class, EntityXMLImportTestWarning.class, //
+    EntityXMLImportTestBusinessObject.class, //
+    EntityXMLImportTestReference.class, //
+    EntityXMLImportTestSingle.class, //
+    EntityXMLImportTestWarning.class, //
     EntityXMLIssues.class, //
-    UniqueConstraintImportTest.class,
+    UniqueConstraintImportTest.class, //
+    DefaultsDataset.class, //
 
     // preferences
     PreferenceTest.class, //
