@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -96,4 +96,7 @@ public class XMLConstants {
    * XSI namespace
    */
   public static final String XSI_NAMESPACE = "http://www.w3.org/2001/XMLSchema-instance";
+
+  /** is dataset used for default values import */
+  public static final String DEFAULT_VALUES_DATA = "defaultValues";
 }

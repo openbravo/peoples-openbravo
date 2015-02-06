@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -141,6 +141,8 @@ public class EntityXMLConverter implements OBNotSingleton {
   // properties that are to be exported
   private List<String> includedProperties = new ArrayList<String>();
 
+  private boolean defaultValuesData = false;
+
   /**
    * Clear internal data structures, after this call this converter can be used for a new set of
    * objects which need to be exported to a xml representation.
@@ -241,6 +243,8 @@ public class EntityXMLConverter implements OBNotSingleton {
 
       final AttributesImpl rootAttrs = new AttributesImpl();
       rootAttrs.addAttribute("", "", "xmlns:xsi", "CDATA", XMLConstants.XSI_NAMESPACE);
+      rootAttrs.addAttribute("", "", XMLConstants.DEFAULT_VALUES_DATA, "boolean",
+          Boolean.toString(defaultValuesData));
 
       xmlHandler.startElement(XMLConstants.OPENBRAVO_NAMESPACE, XMLConstants.OB_ROOT_ELEMENT, "ob:"
           + XMLConstants.OB_ROOT_ELEMENT, rootAttrs);
@@ -821,6 +825,10 @@ public class EntityXMLConverter implements OBNotSingleton {
 
   public void setDataScroller(ScrollableResults dataScroller) {
     this.dataScroller = dataScroller;
+  }
+
+  public void setDefaultValuesData(boolean defaultValuesData) {
+    this.defaultValuesData = defaultValuesData;
   }
 
 }
