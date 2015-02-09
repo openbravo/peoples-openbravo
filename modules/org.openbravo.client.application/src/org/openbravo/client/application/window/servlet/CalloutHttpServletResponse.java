@@ -41,4 +41,10 @@ public class CalloutHttpServletResponse extends HttpServletResponseWrapper {
   public PrintWriter getWriter() throws IOException {
     return writer;
   }
+
+  @Override
+  public void sendRedirect(String location) throws IOException {
+
+  }
+
 }
