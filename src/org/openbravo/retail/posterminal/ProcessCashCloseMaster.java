@@ -98,7 +98,8 @@ public class ProcessCashCloseMaster extends JSONProcessSimple {
    *          Cash up ids. with IN format
    * @throws JSONException
    */
-  private void addPaymentmethodCashup(JSONArray payments, String cashUpIds) throws JSONException {
+  public static void addPaymentmethodCashup(JSONArray payments, String cashUpIds)
+      throws JSONException {
     String query = "select " + OBPOSPaymentMethodCashup.PROPERTY_SEARCHKEY + ", sum("
         + OBPOSPaymentMethodCashup.PROPERTY_STARTINGCASH + "), sum("
         + OBPOSPaymentMethodCashup.PROPERTY_TOTALDEPOSITS + "), sum("

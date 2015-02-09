@@ -19,39 +19,79 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
   init: function () {
     var payments = new Backbone.Collection(),
         me = this,
+        slavePayments = null,
         paymentMth, criteria, runSyncProcessCM, error, addedCashMgmt, selectedPayment;
     this.set('payments', new Backbone.Collection());
     this.set('cashMgmtDropEvents', new Backbone.Collection(OB.MobileApp.model.get('cashMgmtDropEvents')));
     this.set('cashMgmtDepositEvents', new Backbone.Collection(OB.MobileApp.model.get('cashMgmtDepositEvents')));
 
-    OB.Dal.find(OB.Model.CashUp, {
-      'isprocessed': 'N'
-    }, function (cashUp) {
-      OB.Dal.find(OB.Model.PaymentMethodCashUp, {
-        'cashup_id': cashUp.at(0).get('id'),
-        _orderByClause: 'searchKey desc'
-      }, function (pays) {
-        payments = pays;
-        payments.each(function (pay) {
-          criteria = {
-            'paymentMethodId': pay.get('paymentmethod_id'),
-            'cashup_id': cashUp.at(0).get('id')
-          };
-          paymentMth = OB.MobileApp.model.get('payments').filter(function (payment) {
-            return payment.payment.id === pay.get('paymentmethod_id');
-          })[0].paymentMethod;
+    function loadCashup() {
+      //        this.slavePayments = slavePayments;
+      OB.Dal.find(OB.Model.CashUp, {
+        'isprocessed': 'N'
+      }, function (cashUp) {
+        OB.Dal.find(OB.Model.PaymentMethodCashUp, {
+          'cashup_id': cashUp.at(0).get('id'),
+          _orderByClause: 'searchKey desc'
+        }, function (pays) {
+          payments = pays;
+          payments.each(function (pay) {
+            criteria = {
+              'paymentMethodId': pay.get('paymentmethod_id'),
+              'cashup_id': cashUp.at(0).get('id')
+            };
+            paymentMth = OB.MobileApp.model.get('payments').filter(function (payment) {
+              return payment.payment.id === pay.get('paymentmethod_id');
+            })[0].paymentMethod;
 
-          if (paymentMth.allowdeposits || paymentMth.allowdrops) {
-            OB.Dal.find(OB.Model.CashManagement, criteria, function (cashmgmt, pay) {
-              if (cashmgmt.length > 0) {
-                pay.set('listdepositsdrops', cashmgmt.models);
-              }
-              me.get('payments').add(pay);
-            }, null, pay);
-          }
+            if (OB.POS.modelterminal.get('terminal').isslave && paymentMth.isshared) {
+              return true;
+            }
+
+            if (paymentMth.allowdeposits || paymentMth.allowdrops) {
+              OB.Dal.find(OB.Model.CashManagement, criteria, function (cashmgmt, pay) {
+                if (cashmgmt.length > 0) {
+                  pay.set('listdepositsdrops', cashmgmt.models);
+                }
+                if (slavePayments) {
+                  // Accumulate slave payments
+                  _.each(slavePayments, function (slavePay) {
+                    if (slavePay.searchKey === pay.get('searchKey')) {
+                      pay.set('startingCash', OB.DEC.add(pay.get('startingCash'), slavePay.startingCash));
+                      pay.set('totalDeposits', OB.DEC.add(pay.get('totalDeposits'), slavePay.totalDeposits));
+                      pay.set('totalDrops', OB.DEC.add(pay.get('totalDrops'), slavePay.totalDrops));
+                      pay.set('totalReturns', OB.DEC.add(pay.get('totalReturns'), slavePay.totalReturns));
+                      pay.set('totalSales', OB.DEC.add(pay.get('totalSales'), slavePay.totalSales));
+                    }
+                  });
+                }
+                me.get('payments').add(pay);
+              }, null, pay);
+            }
+          });
         });
+      }, null, this);
+    };
+
+
+    if (OB.POS.modelterminal.get('terminal').ismaster) {
+      // Load current cashup info from slaves
+      new OB.DS.Process('org.openbravo.retail.posterminal.ProcessCashMgmtMaster').exec({
+        cashUpId: OB.POS.modelterminal.get('terminal').cashUpId
+      }, function (data) {
+        if (data && data.exception) {
+          // Error handler 
+          OB.log('error', data.exception.message);
+          OB.UTIL.showAlert.display(data.exception.message, OB.I18N.getLabel('OBMOBC_LblError'), 'alert-error', false);
+        } else {
+          slavePayments = data;
+          loadCashup();
+        }
       });
-    }, null, this);
+    } else {
+      // Load terminal cashup info (without slaves info)
+      loadCashup();
+    }
 
     this.depsdropstosave = new Backbone.Collection();
     this.depsdropstosave.on('paymentDone', function (model, p) {

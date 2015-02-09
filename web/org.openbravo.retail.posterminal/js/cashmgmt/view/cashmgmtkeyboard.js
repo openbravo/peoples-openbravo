@@ -68,6 +68,9 @@ enyo.kind({
     });
     _.bind(this.getPayment, this);
     _.each(OB.MobileApp.model.get('payments'), function (paymentMethod) {
+      if (OB.POS.modelterminal.get('terminal').isslave && paymentMethod.paymentMethod.isshared) {
+        return true;
+      }
       var payment = paymentMethod.payment;
       if (paymentMethod.paymentMethod.allowdeposits) {
         buttons.push({
