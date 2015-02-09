@@ -365,7 +365,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
         finish = false;
       }
     });
-    if (finish) {
+    if (finish && !this.get('loadFinished')) {
       this.set('step', this.getFirstStep());
       this.set('substep', 0);
       this.set('loadFinished', true);

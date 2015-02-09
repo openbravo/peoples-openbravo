@@ -72,7 +72,7 @@
     <line>
     </line>
      <line>
-      <text align ="left" length="25" bold="true"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblTotalRetailTrans')) %></text>
+      <text align ="left" length="25" bold="true"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel(OB.POS.modelterminal.get('terminal').ismaster || OB.POS.modelterminal.get('terminal').isslave ? 'OBPOS_LblTotalRetailTransLocalPrint' : 'OBPOS_LblTotalRetailTrans')) %></text>
       <text align ="right" length="14" bold="true"><%= OB.I18N.formatCurrency(cashup.report.get('totalRetailTransactions')) %></text>
     </line>
     <line>
