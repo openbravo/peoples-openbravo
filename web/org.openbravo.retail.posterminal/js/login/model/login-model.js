@@ -158,15 +158,26 @@
         loadFunction: function (terminalModel) {
           OB.info('[terminal] Loading... ' + this.properties);
           var me = this;
-          new OB.DS.Request('org.openbravo.mobile.core.login.Context').exec({
-            terminal: OB.MobileApp.model.get('terminalName'),
-            ignoreForConnectionStatus: true
-          }, function (data) {
-            if (data[0]) {
-              terminalModel.set(me.properties[0], data[0]);
-              terminalModel.propertiesReady(me.properties);
-            }
+
+          var ajaxRequest2 = new enyo.Ajax({
+            url: '../../org.openbravo.mobile.core.context',
+            cacheBust: false,
+            method: 'GET',
+            handleAs: 'json',
+            timeout: 20000,
+            data: {
+              ignoreForConnectionStatus: true
+            },
+            contentType: 'application/json;charset=utf-8',
+            success: function (inSender, inResponse) {
+              if (inResponse && !inResponse.exception) {
+                terminalModel.set(me.properties[0], inResponse.data[0]);
+                terminalModel.propertiesReady(me.properties);
+              }
+            },
+            fail: function (inSender, inResponse) {}
           });
+          ajaxRequest2.go(ajaxRequest2.data).response('success').error('fail');
         }
       });
 
@@ -541,13 +552,13 @@
       this.set('paymentcash', defaultpaymentcashcurrency || defaultpaymentcash || paymentcashcurrency || paymentcash || paymentlegacy);
 
       // add the currency converters
-      _.each(OB.MobileApp.model.get('payments'), function (paymentMethod) {        
-          var fromCurrencyId = parseInt(OB.MobileApp.model.get('currency').id, 10);
-          var toCurrencyId = parseInt(paymentMethod.paymentMethod.currency, 10);
-          if (fromCurrencyId !== toCurrencyId) {
-            OB.UTIL.currency.addConversion(toCurrencyId, fromCurrencyId, paymentMethod.rate);
-            OB.UTIL.currency.addConversion(fromCurrencyId, toCurrencyId, paymentMethod.mulrate);
-          }              
+      _.each(OB.MobileApp.model.get('payments'), function (paymentMethod) {
+        var fromCurrencyId = parseInt(OB.MobileApp.model.get('currency').id, 10);
+        var toCurrencyId = parseInt(paymentMethod.paymentMethod.currency, 10);
+        if (fromCurrencyId !== toCurrencyId) {
+          OB.UTIL.currency.addConversion(toCurrencyId, fromCurrencyId, paymentMethod.rate);
+          OB.UTIL.currency.addConversion(fromCurrencyId, toCurrencyId, paymentMethod.mulrate);
+        }
       }, this);
 
       OB.MobileApp.model.on('window:ready', function () {
