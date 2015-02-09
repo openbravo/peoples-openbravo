@@ -95,7 +95,6 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
         inverseOrderLine.setSalesOrder(inverseOrder);
         BigDecimal inverseOrderedQuantity = orderedQuantity.negate();
         inverseOrderLine.setOrderedQuantity(inverseOrderedQuantity);
-        inverseOrderLine.setInvoicedQuantity(BigDecimal.ZERO);
 
         // Set inverse order delivered quantity zero
         inverseOrderLine.setDeliveredQuantity(BigDecimal.ZERO);
@@ -170,6 +169,8 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
       for (OrderLine newOrderLine : newOrderLineList) {
         OrderLine replacedOrderLine = newOrderLine.getReplacedorderline();
         if (replacedOrderLine != null) {
+          newOrderLine.setDeliveredQuantity(replacedOrderLine.getDeliveredQuantity());
+          newOrderLine.setInvoicedQuantity(replacedOrderLine.getInvoicedQuantity());
           OBCriteria<ShipmentInOutLine> goodsShipmentLineCriteria = OBDal.getInstance()
               .createCriteria(ShipmentInOutLine.class);
           goodsShipmentLineCriteria.add(Restrictions.eq(ShipmentInOutLine.PROPERTY_SALESORDERLINE,
@@ -184,7 +185,6 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
             throw new OBException("More than two goods shipment lines associated to a order line");
           } else {
             ShipmentInOutLine goodsShipmentLine = goodsShipmentLineList.get(0);
-            // TODO
             ShipmentInOut goodsShipment = goodsShipmentLine.getShipmentReceipt();
             goodsShipment.setPosted("N");
             goodsShipment.setProcessed(false);
@@ -204,6 +204,7 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
       }
 
       // Create if needed a new goods shipment
+      // TODO?
 
       // Get accountPaymentMethod in order to avoid automatic payment creation during c_order_post
       FIN_PaymentMethod paymentMethod = inverseOrder.getPaymentMethod();
@@ -239,14 +240,18 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
       // Complete nettingGoodsShipment
 
       // Complete inverse order
-      // callCOrderPost(inverseOrder);
+      callCOrderPost(inverseOrder);
+      // Close inverse order
+      inverseOrder.setDocumentAction("CL");
+      OBDal.getInstance().save(inverseOrder);
+      callCOrderPost(inverseOrder);
 
       // TODO
 
       // Complete new order and generate good shipment and sales invoice
       newOrder.setDocumentStatus("DR");
       OBDal.getInstance().save(newOrder);
-      // callCOrderPost(newOrder);
+      callCOrderPost(newOrder);
 
       // Restore Automatic Receipt check
       accountPaymentMethod.setAutomaticReceipt(originalAutomaticReceipt);
