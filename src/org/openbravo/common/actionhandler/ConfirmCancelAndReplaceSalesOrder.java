@@ -21,6 +21,7 @@ package org.openbravo.common.actionhandler;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,21 +29,32 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
+import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
+import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
+import org.openbravo.model.financialmgmt.payment.FIN_Payment;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.service.db.CallStoredProcedure;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.db.DbUtility;
 
 public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler {
@@ -238,6 +250,7 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
       accountPaymentMethod.setAutomaticReceipt(false);
 
       // Complete nettingGoodsShipment
+      // TODO?
 
       // Complete inverse order
       callCOrderPost(inverseOrder);
@@ -245,8 +258,6 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
       inverseOrder.setDocumentAction("CL");
       OBDal.getInstance().save(inverseOrder);
       callCOrderPost(inverseOrder);
-
-      // TODO
 
       // Complete new order and generate good shipment and sales invoice
       newOrder.setDocumentStatus("DR");
@@ -256,7 +267,70 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
       // Restore Automatic Receipt check
       accountPaymentMethod.setAutomaticReceipt(originalAutomaticReceipt);
 
-      // TODO Payments
+      // TODO Payment Creation
+      // Get the payment schedule detail of the oldOrder
+      FIN_PaymentSchedule paymentSchedule;
+      OBCriteria<FIN_PaymentSchedule> paymentScheduleCriteria = OBDal.getInstance().createCriteria(
+          FIN_PaymentSchedule.class);
+      paymentScheduleCriteria.add(Restrictions.eq(FIN_PaymentSchedule.PROPERTY_ORDER, oldOrder));
+      List<FIN_PaymentSchedule> paymentScheduleList = paymentScheduleCriteria.list();
+      if (paymentScheduleList.size() != 0) {
+        paymentSchedule = paymentScheduleList.get(0);
+        // Get the payment schedule detail of the order
+        OBCriteria<FIN_PaymentScheduleDetail> paymentScheduleDetailCriteria = OBDal.getInstance()
+            .createCriteria(FIN_PaymentScheduleDetail.class);
+        paymentScheduleDetailCriteria.add(Restrictions.eq(
+            FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE, paymentSchedule));
+        // There should be only one with null paymentDetails
+        paymentScheduleDetailCriteria.add(Restrictions
+            .isNotNull(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS));
+        List<FIN_PaymentScheduleDetail> paymentScheduleDetailList = paymentScheduleDetailCriteria
+            .list();
+        // New payment definition
+        FIN_Payment newPayment = null;
+        for (FIN_PaymentScheduleDetail paymentScheduleDetail : paymentScheduleDetailList) {
+          FIN_PaymentDetail paymentDetail = paymentScheduleDetail.getPaymentDetails();
+          FIN_Payment payment = paymentDetail.getFinPayment();
+          FIN_PaymentMethod paymentPaymentMethod = payment.getPaymentMethod();
+          BigDecimal amount = payment.getAmount();
+          BigDecimal negativeAmount = amount.negate();
+          DocumentType paymentDocumentType = payment.getDocumentType();
+          FIN_FinancialAccount financialAccount = payment.getAccount();
+          // Duplicate payment with positive amount
+          newPayment = createPayment(newPayment, newOrder, paymentPaymentMethod, amount,
+              paymentDocumentType, financialAccount);
+          // Duplicate payment with negative amount
+          newPayment = createPayment(newPayment, inverseOrder, paymentPaymentMethod,
+              negativeAmount, paymentDocumentType, financialAccount);
+        }
+        // Call to processPayment in order to process it
+        ConnectionProvider conn = new DalConnectionProvider();
+        VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
+        OBError error = FIN_AddPayment.processPayment(vars, conn, "P", newPayment);
+        if (error.getType().equals("Error")) {
+          throw new OBException(error.getMessage());
+        }
+
+        // Create if needed a second payment for the partially paid
+        // TODO
+        // Si ya hay un pago pillar el del pago, de lo contrario pillar el del tercero
+        BigDecimal outstandingAmount = paymentSchedule.getOutstandingAmount();
+        if (outstandingAmount.compareTo(BigDecimal.ZERO) != 0) {
+          OBCriteria<FIN_PaymentScheduleDetail> paymentScheduleDetailCriteria2 = OBDal
+              .getInstance().createCriteria(FIN_PaymentScheduleDetail.class);
+          paymentScheduleDetailCriteria2.add(Restrictions.eq(
+              FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE, paymentSchedule));
+          // There should be only one with null paymentDetails
+          paymentScheduleDetailCriteria.add(Restrictions
+              .isNotNull(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS));
+          List<FIN_PaymentScheduleDetail> paymentScheduleDetailList2 = paymentScheduleDetailCriteria2
+              .list();
+          FIN_Payment newPayment2 = null;
+        }
+
+      } else {
+        throw new OBException("There is no payment plan for the order: " + oldOrder.getId());
+      }
 
       // Return result
       JSONObject result = new JSONObject();
@@ -283,5 +357,58 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
     parameters.add(order.getId());
     final String procedureName = "c_order_post1";
     CallStoredProcedure.getInstance().call(procedureName, parameters, null, true, false);
+  }
+
+  private static FIN_Payment createPayment(FIN_Payment payment, Order order,
+      FIN_PaymentMethod paymentPaymentMethod, BigDecimal amount, DocumentType paymentDocumentType,
+      FIN_FinancialAccount financialAccount) throws Exception {
+    String paymentDocumentNo = null;
+
+    // Get the payment schedule of the order
+    FIN_PaymentSchedule paymentSchedule;
+    OBCriteria<FIN_PaymentSchedule> paymentScheduleCriteria = OBDal.getInstance().createCriteria(
+        FIN_PaymentSchedule.class);
+    paymentScheduleCriteria.add(Restrictions.eq(FIN_PaymentSchedule.PROPERTY_ORDER, order));
+    List<FIN_PaymentSchedule> paymentScheduleList = paymentScheduleCriteria.list();
+    if (paymentScheduleList.size() != 0) {
+      paymentSchedule = paymentScheduleList.get(0);
+
+      // Get the payment schedule detail of the order
+      OBCriteria<FIN_PaymentScheduleDetail> paymentScheduleDetailCriteria = OBDal.getInstance()
+          .createCriteria(FIN_PaymentScheduleDetail.class);
+      paymentScheduleDetailCriteria.add(Restrictions.eq(
+          FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE, paymentSchedule));
+      // There should be only one with null paymentDetails
+      paymentScheduleDetailCriteria.add(Restrictions
+          .isNull(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS));
+      List<FIN_PaymentScheduleDetail> paymentScheduleDetailList = paymentScheduleDetailCriteria
+          .list();
+      if (paymentScheduleDetailList.size() != 0) {
+        HashMap<String, BigDecimal> paymentScheduleDetailAmount = new HashMap<String, BigDecimal>();
+        String paymentScheduleDetailId = paymentScheduleDetailList.get(0).getId();
+        BigDecimal paymentAmount = amount;
+        paymentScheduleDetailAmount.put(paymentScheduleDetailId, paymentAmount);
+
+        // Call to savePayment in order to create a new payment in
+        FIN_Payment returnPayment = FIN_AddPayment.savePayment(payment, true, paymentDocumentType,
+            paymentDocumentNo, order.getBusinessPartner(), paymentPaymentMethod, financialAccount,
+            paymentAmount.toPlainString(), order.getOrderDate(), order.getOrganization(), null,
+            paymentScheduleDetailList, paymentScheduleDetailAmount, false, false,
+            order.getCurrency(), BigDecimal.ZERO, BigDecimal.ZERO);
+
+        return returnPayment;
+
+      } else {
+        BusinessPartner businessPatner = order.getBusinessPartner();
+        FIN_FinancialAccount businessPartnerFinancialAccount = businessPatner.getAccount();
+        if (businessPartnerFinancialAccount != null) {
+          throw new OBException("The payments have been already created");
+        } else {
+          throw new OBException("The business partner has not a financial account asociated");
+        }
+      }
+    } else {
+      throw new OBException("There is no payment plan for the order: " + order.getId());
+    }
   }
 }
