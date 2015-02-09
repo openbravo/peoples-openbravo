@@ -311,6 +311,13 @@ OB.APRM.AddPayment.glitemsOnLoadGrid = function (grid) {
     if (grid.getSelectedRecords() && grid.getSelectedRecords().size() > 0) {
       grid.view.theForm.getItem('7B6B5F5475634E35A85CF7023165E50B').expandSection();
     }
+    if (grid.autoFitFieldWidths) {
+      // There is a problem with the grid calculating the auto fit field width if it is drawn inside an collapsed section.
+      // Also, the "_updateFieldWidths" ListGrid function cannot be overwritten.
+      // With this the re-calculation is forced once the grid has been already drawn in its place, so the auto fit field width can be properly calculated.
+      grid.setAutoFitFieldWidths(false);
+      grid.setAutoFitFieldWidths(true);
+    }
   }
   grid.isReady = true;
   OB.APRM.AddPayment.updateGLItemsTotal(this.view.theForm, 0, false);
