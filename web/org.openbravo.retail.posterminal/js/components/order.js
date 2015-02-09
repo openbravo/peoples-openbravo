@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013 Openbravo S.L.U.
+ * Copyright (C) 2013-2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -15,23 +15,66 @@ enyo.kind({
   published: {
     order: null
   },
-  style: 'border-bottom: 1px solid #cccccc;',
-  components: [{
+  newLabelComponents: [{
     kind: 'OB.UI.OrderDetails',
     name: 'orderdetails'
+  }],
+  newButtonComponents: [{
+    kind: 'OB.UI.BusinessPartner',
+    name: 'bpbutton'
   }, {
-    components: [{
-      kind: 'OB.UI.BusinessPartner',
-      name: 'bpbutton'
-    }, {
-      kind: 'OB.UI.BPLocation',
-      name: 'bplocbutton'
-    }]
+    kind: 'OB.UI.BPLocation',
+    name: 'bplocbutton'
+  }],
+  style: 'border-bottom: 1px solid #cccccc;',
+  components: [{
+    name: 'labelsRow'
+  }, {
+    name: 'buttonsRow'
   }],
   orderChanged: function (oldValue) {
-    this.$.bpbutton.setOrder(this.order);
-    this.$.bplocbutton.setOrder(this.order);
-    this.$.orderdetails.setOrder(this.order);
+    _.each(this.$.labelsRow.$, function (comp) {
+      if (comp.setOrder) {
+        comp.setOrder(this.order);
+      }
+    }, this);
+    _.each(this.$.buttonsRow.$, function (comp) {
+      if (comp.setOrder) {
+        comp.setOrder(this.order);
+      }
+    }, this);
+  },
+  initComponents: function () {
+    this.inherited(arguments);
+    enyo.forEach(this.newLabelComponents, function (comp) {
+      this.$.labelsRow.createComponent(comp);
+    }, this);
+    enyo.forEach(this.newButtonComponents, function (comp) {
+      this.$.buttonsRow.createComponent(comp);
+    }, this);
+  }
+});
+
+enyo.kind({
+  name: 'OB.UI.OrderFooter',
+  classes: 'row-fluid span12',
+  published: {
+    order: null
+  },
+  style: 'border-bottom: 1px solid #cccccc;',
+  newComponents: [],
+  orderChanged: function () {
+    _.each(this.$, function (comp) {
+      if (comp.setOrder) {
+        comp.setOrder(this.order);
+      }
+    }, this);
+  },
+  initComponents: function () {
+    this.inherited(arguments);
+    enyo.forEach(this.newComponents, function (comp) {
+      this.createComponent(comp);
+    }, this);
   }
 });
 
