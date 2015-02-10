@@ -37,12 +37,15 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.DalUtil;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.enterprise.DocumentType;
+import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
@@ -60,8 +63,6 @@ import org.openbravo.service.db.DbUtility;
 
 public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler {
   private static final Logger log4j = Logger.getLogger(ConfirmCancelAndReplaceSalesOrder.class);
-
-  private static final String STANDARD_ORDER_DOCUMENT_TYPE_ID = "466AF4B0136A4A3F9F84129711DA8BD3";
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) throws OBException {
@@ -94,11 +95,14 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
       inverseOrder.setCancelledorder(oldOrder);
       OBDal.getInstance().save(inverseOrder);
 
-      // Define netting goods shipment
+      // Define netting goods shipment and its lines
       ShipmentInOut nettingGoodsShipment = null;
+      ShipmentInOutLine newGoodsShipmentLine1 = null;
+      ShipmentInOutLine newGoodsShipmentLine2 = null;
 
       // Iterate old order lines
       List<OrderLine> oldOrderLineList = oldOrder.getOrderLineList();
+      int lineNoCounter = 1;
       for (OrderLine oldOrderLine : oldOrderLineList) {
         // Set old order delivered quantity zero
         BigDecimal orderedQuantity = oldOrderLine.getOrderedQuantity();
@@ -128,14 +132,14 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
           // Line without shipment
           // If nettingGoodsShipment has not been initialized, initialize it
           if (nettingGoodsShipment == null) {
+            // Create new Shipment
             nettingGoodsShipment = OBProvider.getInstance().get(ShipmentInOut.class);
             nettingGoodsShipment.setOrganization(oldOrderLine.getOrganization());
             // ¿Set Document Type?
-
+            // TODO
             nettingGoodsShipment.setWarehouse(oldOrderLine.getWarehouse());
             nettingGoodsShipment.setBusinessPartner(oldOrderLine.getBusinessPartner());
             nettingGoodsShipment.setPartnerAddress(oldOrderLine.getPartnerAddress());
-
             nettingGoodsShipment.setMovementDate(today);
             nettingGoodsShipment.setAccountingDate(today);
             nettingGoodsShipment.setSalesOrder(null);
@@ -147,6 +151,19 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
             nettingGoodsShipment.setDocumentNo(nettingGoodsShipmentDocumentNo);
             OBDal.getInstance().save(nettingGoodsShipment);
           }
+
+          // For the oldOrderLine
+          newGoodsShipmentLine1 = OBProvider.getInstance().get(ShipmentInOutLine.class);
+          // TODO
+          newGoodsShipmentLine1.setProduct(oldOrderLine.getProduct());
+          newGoodsShipmentLine1.setUOM(oldOrderLine.getUOM());
+          // Get first storage bin
+          Locator locator1 = nettingGoodsShipment.getWarehouse().getLocatorList().get(0);
+          newGoodsShipmentLine1.setStorageBin(locator1);
+
+          // For the inverseOrderLine
+          newGoodsShipmentLine2 = (ShipmentInOutLine) DalUtil.copy(newGoodsShipmentLine1, false,
+              true);
         } else if (goodsShipmentLineList.size() != 1) {
           throw new OBException("More than one goods shipment lines associated to a order line");
         } else {
@@ -154,6 +171,7 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
 
           // If nettingGoodsShipment has not been initialized, initialize it
           if (nettingGoodsShipment == null) {
+            // Copy existing shipment
             nettingGoodsShipment = (ShipmentInOut) DalUtil.copy(
                 goodsShipmentLine.getShipmentReceipt(), false, true);
             nettingGoodsShipment.setMovementDate(today);
@@ -169,35 +187,42 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
           }
 
           // For the oldOrderLine
-          ShipmentInOutLine newGoodsShipmentLine1 = (ShipmentInOutLine) DalUtil.copy(
-              goodsShipmentLine, false, true);
-          newGoodsShipmentLine1.setSalesOrderLine(oldOrderLine);
-          newGoodsShipmentLine1.setShipmentReceipt(nettingGoodsShipment);
-          OBDal.getInstance().save(newGoodsShipmentLine1);
-          OBDal.getInstance().flush();
-          newGoodsShipmentLine1.setMovementQuantity(orderedQuantity);
-          OBDal.getInstance().save(newGoodsShipmentLine1);
-          OBDal.getInstance().flush();
-
-          // Set old order delivered quantity to the ordered quantity
-          oldOrderLine.setDeliveredQuantity(orderedQuantity);
-          OBDal.getInstance().save(oldOrderLine);
+          newGoodsShipmentLine1 = (ShipmentInOutLine) DalUtil.copy(goodsShipmentLine, false, true);
 
           // For the inverseOrderLine
-          ShipmentInOutLine newGoodsShipmentLine2 = (ShipmentInOutLine) DalUtil.copy(
-              goodsShipmentLine, false, true);
-          newGoodsShipmentLine2.setSalesOrderLine(inverseOrderLine);
-          newGoodsShipmentLine2.setShipmentReceipt(nettingGoodsShipment);
-          OBDal.getInstance().save(newGoodsShipmentLine2);
-          OBDal.getInstance().flush();
-          newGoodsShipmentLine2.setMovementQuantity(inverseOrderedQuantity);
-          OBDal.getInstance().save(newGoodsShipmentLine2);
-          OBDal.getInstance().flush();
+          newGoodsShipmentLine2 = (ShipmentInOutLine) DalUtil.copy(goodsShipmentLine, false, true);
 
-          // Set inverse order delivered quantity to the ordered quantity
-          inverseOrderLine.setDeliveredQuantity(inverseOrderedQuantity);
-          OBDal.getInstance().save(inverseOrderLine);
         }
+        // For the oldOrderLine
+        newGoodsShipmentLine1.setLineNo(new Long(10 * lineNoCounter));
+        newGoodsShipmentLine1.setSalesOrderLine(oldOrderLine);
+        newGoodsShipmentLine1.setShipmentReceipt(nettingGoodsShipment);
+        OBDal.getInstance().save(newGoodsShipmentLine1);
+        OBDal.getInstance().flush();
+        newGoodsShipmentLine1.setMovementQuantity(orderedQuantity);
+        OBDal.getInstance().save(newGoodsShipmentLine1);
+        OBDal.getInstance().flush();
+
+        // Set old order delivered quantity to the ordered quantity
+        oldOrderLine.setDeliveredQuantity(orderedQuantity);
+        OBDal.getInstance().save(oldOrderLine);
+
+        // For the inverseOrderLine
+        newGoodsShipmentLine2.setLineNo(new Long(10 * lineNoCounter));
+        newGoodsShipmentLine2.setSalesOrderLine(inverseOrderLine);
+        newGoodsShipmentLine2.setShipmentReceipt(nettingGoodsShipment);
+        OBDal.getInstance().save(newGoodsShipmentLine2);
+        OBDal.getInstance().flush();
+        newGoodsShipmentLine2.setMovementQuantity(inverseOrderedQuantity);
+        OBDal.getInstance().save(newGoodsShipmentLine2);
+        OBDal.getInstance().flush();
+
+        // Set inverse order delivered quantity to the ordered quantity
+        inverseOrderLine.setDeliveredQuantity(inverseOrderedQuantity);
+        OBDal.getInstance().save(inverseOrderLine);
+
+        // Increase counter
+        lineNoCounter++;
       }
 
       // Assign the original goods shipment lines to the new order lines
@@ -215,9 +240,9 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
               replacedOrderLine.getLineNo()));
           goodsShipmentLineCriteria.addOrderBy(ShipmentInOutLine.PROPERTY_UPDATED, true);
           List<ShipmentInOutLine> goodsShipmentLineList = goodsShipmentLineCriteria.list();
-          if (goodsShipmentLineList.size() == 0) {
+          if (goodsShipmentLineList.size() < 2) {
             // Line without shipment
-          } else if (goodsShipmentLineList.size() != 2) {
+          } else if (goodsShipmentLineList.size() > 2) {
             throw new OBException("More than two goods shipment lines associated to a order line");
           } else {
             ShipmentInOutLine goodsShipmentLine = goodsShipmentLineList.get(0);
@@ -275,9 +300,26 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
 
       // Change inverse order document type to Standard Order in order to avoid shipment and
       // invoice creation during c_order_post call
-      DocumentType standardOrderDocumentType = OBDal.getInstance().get(DocumentType.class,
-          STANDARD_ORDER_DOCUMENT_TYPE_ID);
-      inverseOrder.setDocumentType(standardOrderDocumentType);
+      OBCriteria<DocumentType> standardOrderDocumentTypeCriteria = OBDal.getInstance()
+          .createCriteria(DocumentType.class);
+      standardOrderDocumentTypeCriteria.add(Restrictions.eq(DocumentType.PROPERTY_NAME,
+          "Standard Order"));
+      OrganizationStructureProvider osp = OBContext.getOBContext()
+          .getOrganizationStructureProvider(inverseOrder.getOrganization().getClient().getId());
+      ;
+      List<String> parentOrganizationIdList = osp.getParentList(inverseOrder.getOrganization()
+          .getId(), true);
+      // TODO Ya tenemos el listado de ids organizaciones
+
+      standardOrderDocumentTypeCriteria.add(Restrictions.in(DocumentType.PROPERTY_ORGANIZATION
+          + ".id", parentOrganizationIdList));
+      List<DocumentType> standardOrderDocumentTypeList = standardOrderDocumentTypeCriteria.list();
+      if (standardOrderDocumentTypeList.size() != 1) {
+        throw new OBException(
+            "Only one Standar Order named document can exist for the organization "
+                + inverseOrder.getOrganization().getName());
+      }
+      inverseOrder.setDocumentType(standardOrderDocumentTypeList.get(0));
 
       // Complete inverse order
       callCOrderPost(inverseOrder);
