@@ -309,16 +309,17 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
       ;
       List<String> parentOrganizationIdList = osp.getParentList(inverseOrder.getOrganization()
           .getId(), true);
-      // TODO Ya tenemos el listado de ids organizaciones
 
       standardOrderDocumentTypeCriteria.add(Restrictions.in(DocumentType.PROPERTY_ORGANIZATION
           + ".id", parentOrganizationIdList));
       List<DocumentType> standardOrderDocumentTypeList = standardOrderDocumentTypeCriteria.list();
       if (standardOrderDocumentTypeList.size() != 1) {
         throw new OBException(
-            "Only one Standar Order named document can exist for the organization "
+            "Only one Standard Order named document can exist for the organization "
                 + inverseOrder.getOrganization().getName());
       }
+
+      // Set Standard Order to inverse order document type
       inverseOrder.setDocumentType(standardOrderDocumentTypeList.get(0));
 
       // Complete inverse order
@@ -331,10 +332,15 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
       // Restore document type of the inverse order
       inverseOrder.setDocumentType(oldOrder.getDocumentType());
 
+      // Set Stardard Order to new order document type
+
       // Complete new order and generate good shipment and sales invoice
       newOrder.setDocumentStatus("DR");
       OBDal.getInstance().save(newOrder);
       callCOrderPost(newOrder);
+
+      // Restore document type of the new order
+      newOrder.setDocumentType(oldOrder.getDocumentType());
 
       // Restore Automatic Receipt check
       accountPaymentMethod.setAutomaticReceipt(originalAutomaticReceipt);
