@@ -37,8 +37,6 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.DalUtil;
-import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
@@ -300,27 +298,28 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
 
       // Change inverse order document type to Standard Order in order to avoid shipment and
       // invoice creation during c_order_post call
-      OBCriteria<DocumentType> standardOrderDocumentTypeCriteria = OBDal.getInstance()
-          .createCriteria(DocumentType.class);
-      standardOrderDocumentTypeCriteria.add(Restrictions.eq(DocumentType.PROPERTY_NAME,
-          "Standard Order"));
-      OrganizationStructureProvider osp = OBContext.getOBContext()
-          .getOrganizationStructureProvider(inverseOrder.getOrganization().getClient().getId());
-      ;
-      List<String> parentOrganizationIdList = osp.getParentList(inverseOrder.getOrganization()
-          .getId(), true);
-
-      standardOrderDocumentTypeCriteria.add(Restrictions.in(DocumentType.PROPERTY_ORGANIZATION
-          + ".id", parentOrganizationIdList));
-      List<DocumentType> standardOrderDocumentTypeList = standardOrderDocumentTypeCriteria.list();
-      if (standardOrderDocumentTypeList.size() != 1) {
-        throw new OBException(
-            "Only one Standard Order named document can exist for the organization "
-                + inverseOrder.getOrganization().getName());
-      }
+      // OBCriteria<DocumentType> standardOrderDocumentTypeCriteria = OBDal.getInstance()
+      // .createCriteria(DocumentType.class);
+      // standardOrderDocumentTypeCriteria.add(Restrictions.eq(DocumentType.PROPERTY_NAME,
+      // "Standard Order"));
+      // OrganizationStructureProvider osp = OBContext.getOBContext()
+      // .getOrganizationStructureProvider(inverseOrder.getOrganization().getClient().getId());
+      // ;
+      // List<String> parentOrganizationIdList = osp.getParentList(inverseOrder.getOrganization()
+      // .getId(), true);
+      //
+      // standardOrderDocumentTypeCriteria.add(Restrictions.in(DocumentType.PROPERTY_ORGANIZATION
+      // + ".id", parentOrganizationIdList));
+      // List<DocumentType> standardOrderDocumentTypeList =
+      // standardOrderDocumentTypeCriteria.list();
+      // if (standardOrderDocumentTypeList.size() != 1) {
+      // throw new OBException(
+      // "Only one Standard Order named document can exist for the organization "
+      // + inverseOrder.getOrganization().getName());
+      // }
 
       // Set Standard Order to inverse order document type
-      inverseOrder.setDocumentType(standardOrderDocumentTypeList.get(0));
+      // inverseOrder.setDocumentType(standardOrderDocumentTypeList.get(0));
 
       // Complete inverse order
       callCOrderPost(inverseOrder);
@@ -330,7 +329,7 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
       callCOrderPost(inverseOrder);
 
       // Restore document type of the inverse order
-      inverseOrder.setDocumentType(oldOrder.getDocumentType());
+      // inverseOrder.setDocumentType(oldOrder.getDocumentType());
 
       // Set Stardard Order to new order document type
 
@@ -340,7 +339,7 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
       callCOrderPost(newOrder);
 
       // Restore document type of the new order
-      newOrder.setDocumentType(oldOrder.getDocumentType());
+      // newOrder.setDocumentType(oldOrder.getDocumentType());
 
       // Restore Automatic Receipt check
       accountPaymentMethod.setAutomaticReceipt(originalAutomaticReceipt);
