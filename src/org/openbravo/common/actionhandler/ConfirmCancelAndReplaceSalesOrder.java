@@ -37,6 +37,8 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.DalUtil;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
@@ -152,7 +154,6 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
 
           // For the oldOrderLine
           newGoodsShipmentLine1 = OBProvider.getInstance().get(ShipmentInOutLine.class);
-          // TODO
           newGoodsShipmentLine1.setProduct(oldOrderLine.getProduct());
           newGoodsShipmentLine1.setUOM(oldOrderLine.getUOM());
           // Get first storage bin
@@ -358,7 +359,7 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
             .createCriteria(FIN_PaymentScheduleDetail.class);
         paymentScheduleDetailCriteria.add(Restrictions.eq(
             FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE, paymentSchedule));
-        // There should be only one with null paymentDetails
+        // We are looking for the ones with a payment detail
         paymentScheduleDetailCriteria.add(Restrictions
             .isNotNull(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS));
         List<FIN_PaymentScheduleDetail> paymentScheduleDetailList = paymentScheduleDetailCriteria
@@ -395,16 +396,44 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
         // Si ya hay un pago pillar el del pago, de lo contrario pillar el del tercero
         BigDecimal outstandingAmount = paymentSchedule.getOutstandingAmount();
         if (outstandingAmount.compareTo(BigDecimal.ZERO) != 0) {
-          OBCriteria<FIN_PaymentScheduleDetail> paymentScheduleDetailCriteria2 = OBDal
-              .getInstance().createCriteria(FIN_PaymentScheduleDetail.class);
-          paymentScheduleDetailCriteria2.add(Restrictions.eq(
-              FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE, paymentSchedule));
-          // There should be only one with null paymentDetails
-          paymentScheduleDetailCriteria.add(Restrictions
-              .isNotNull(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS));
-          List<FIN_PaymentScheduleDetail> paymentScheduleDetailList2 = paymentScheduleDetailCriteria2
-              .list();
+          BigDecimal negativeOutstandingAmount = outstandingAmount.negate();
+          FIN_PaymentMethod paymentPaymentMethod = oldOrder.getBusinessPartner().getPaymentMethod();
+          // TODO
+          // Get document type
+          OBCriteria<DocumentType> arReceiptDocumentTypeCriteria = OBDal.getInstance()
+              .createCriteria(DocumentType.class);
+          arReceiptDocumentTypeCriteria.add(Restrictions.eq(DocumentType.PROPERTY_NAME,
+              "AR Receipt"));
+          OrganizationStructureProvider osp = OBContext.getOBContext()
+              .getOrganizationStructureProvider(oldOrder.getOrganization().getClient().getId());
+          ;
+          List<String> parentOrganizationIdList = osp.getParentList(oldOrder.getOrganization()
+              .getId(), true);
+
+          arReceiptDocumentTypeCriteria.add(Restrictions.in(DocumentType.PROPERTY_ORGANIZATION
+              + ".id", parentOrganizationIdList));
+          List<DocumentType> arReceiptDocumentTypeList = arReceiptDocumentTypeCriteria.list();
+          if (arReceiptDocumentTypeList.size() != 1) {
+            throw new OBException(
+                "Only one AR Receipt named document can exist for the organization "
+                    + inverseOrder.getOrganization().getName());
+          }
+          DocumentType paymentDocumentType = arReceiptDocumentTypeList.get(0);
+          FIN_FinancialAccount financialAccount = oldOrder.getBusinessPartner().getAccount();
           FIN_Payment newPayment2 = null;
+          // Duplicate payment with positive amount
+          newPayment2 = createPayment(newPayment2, oldOrder, paymentPaymentMethod,
+              outstandingAmount, paymentDocumentType, financialAccount);
+
+          // Duplicate payment with negative amount
+          newPayment2 = createPayment(newPayment2, inverseOrder, paymentPaymentMethod,
+              negativeOutstandingAmount, paymentDocumentType, financialAccount);
+
+          // Call to processPayment in order to process it
+          OBError error2 = FIN_AddPayment.processPayment(vars, conn, "P", newPayment2);
+          if (error2.getType().equals("Error")) {
+            throw new OBException(error2.getMessage());
+          }
         }
 
       } else {
