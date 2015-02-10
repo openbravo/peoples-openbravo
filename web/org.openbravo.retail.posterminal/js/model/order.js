@@ -2192,7 +2192,8 @@
       var order = new Order(),
           lines, me = this,
           documentseq, documentseqstr, bp, newline, prod, payments, curPayment, taxes, bpId, bpLocId, numberOfLines = model.receiptLines.length,
-          orderQty = 0;
+          orderQty = 0,
+          NoFoundProduct = true;
 
       // Call orderLoader plugings to adjust remote model to local model first
       // ej: sales on credit: Add a new payment if total payment < total receipt
@@ -2288,6 +2289,14 @@
                 }
                 order.set('json', JSON.stringify(order.toJSON()));
                 callback(order);
+              }
+            }, null, function () {
+              if (NoFoundProduct) {
+                NoFoundProduct = false;
+                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_InformationTitle'), OB.I18N.getLabel('OBPOS_NoReceiptLoadedText'), [{
+                  label: OB.I18N.getLabel('OBPOS_LblOk'),
+                  isConfirmButton: true
+                }]);
               }
             });
           });
