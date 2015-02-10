@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -568,7 +568,7 @@ OB.ViewFormProperties = {
     var i, length, localResult, fields;
     if (!this.fieldsByFieldName) {
       localResult = {};
-      if (this.view && this.view.formFields) {
+      if (this.view && this.view.formFields && isc.isAn.Array(this.view.formFields) && this.view.formFields.length !== 0) {
         // standard windows don't load the fields till view form is opened, so let's
         // use formFields in view which is always loaded
         fields = this.view.formFields;
