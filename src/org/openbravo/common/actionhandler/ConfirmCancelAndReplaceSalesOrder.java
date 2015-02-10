@@ -32,6 +32,7 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.client.kernel.RequestContext;
@@ -59,6 +60,8 @@ import org.openbravo.service.db.DbUtility;
 
 public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler {
   private static final Logger log4j = Logger.getLogger(ConfirmCancelAndReplaceSalesOrder.class);
+
+  private static final String STANDARD_ORDER_DOCUMENT_TYPE_ID = "466AF4B0136A4A3F9F84129711DA8BD3";
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) throws OBException {
@@ -123,6 +126,27 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
         List<ShipmentInOutLine> goodsShipmentLineList = goodsShipmentLineCriteria.list();
         if (goodsShipmentLineList.size() == 0) {
           // Line without shipment
+          // If nettingGoodsShipment has not been initialized, initialize it
+          if (nettingGoodsShipment == null) {
+            nettingGoodsShipment = OBProvider.getInstance().get(ShipmentInOut.class);
+            nettingGoodsShipment.setOrganization(oldOrderLine.getOrganization());
+            // ¿Set Document Type?
+
+            nettingGoodsShipment.setWarehouse(oldOrderLine.getWarehouse());
+            nettingGoodsShipment.setBusinessPartner(oldOrderLine.getBusinessPartner());
+            nettingGoodsShipment.setPartnerAddress(oldOrderLine.getPartnerAddress());
+
+            nettingGoodsShipment.setMovementDate(today);
+            nettingGoodsShipment.setAccountingDate(today);
+            nettingGoodsShipment.setSalesOrder(null);
+            nettingGoodsShipment.setPosted("N");
+            nettingGoodsShipment.setProcessed(false);
+            OBDal.getInstance().flush();
+            String nettingGoodsShipmentDocumentNo = FIN_Utility.getDocumentNo(
+                nettingGoodsShipment.getDocumentType(), "M_InOut");
+            nettingGoodsShipment.setDocumentNo(nettingGoodsShipmentDocumentNo);
+            OBDal.getInstance().save(nettingGoodsShipment);
+          }
         } else if (goodsShipmentLineList.size() != 1) {
           throw new OBException("More than one goods shipment lines associated to a order line");
         } else {
@@ -249,8 +273,11 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
       boolean originalAutomaticReceipt = accountPaymentMethod.isAutomaticReceipt();
       accountPaymentMethod.setAutomaticReceipt(false);
 
-      // Complete nettingGoodsShipment
-      // TODO?
+      // Change inverse order document type to Standard Order in order to avoid shipment and
+      // invoice creation during c_order_post call
+      DocumentType standardOrderDocumentType = OBDal.getInstance().get(DocumentType.class,
+          STANDARD_ORDER_DOCUMENT_TYPE_ID);
+      inverseOrder.setDocumentType(standardOrderDocumentType);
 
       // Complete inverse order
       callCOrderPost(inverseOrder);
@@ -258,6 +285,9 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
       inverseOrder.setDocumentAction("CL");
       OBDal.getInstance().save(inverseOrder);
       callCOrderPost(inverseOrder);
+
+      // Restore document type of the inverse order
+      inverseOrder.setDocumentType(oldOrder.getDocumentType());
 
       // Complete new order and generate good shipment and sales invoice
       newOrder.setDocumentStatus("DR");
@@ -296,9 +326,11 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
           BigDecimal negativeAmount = amount.negate();
           DocumentType paymentDocumentType = payment.getDocumentType();
           FIN_FinancialAccount financialAccount = payment.getAccount();
+
           // Duplicate payment with positive amount
           newPayment = createPayment(newPayment, newOrder, paymentPaymentMethod, amount,
               paymentDocumentType, financialAccount);
+
           // Duplicate payment with negative amount
           newPayment = createPayment(newPayment, inverseOrder, paymentPaymentMethod,
               negativeAmount, paymentDocumentType, financialAccount);
@@ -389,14 +421,22 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
         BigDecimal paymentAmount = amount;
         paymentScheduleDetailAmount.put(paymentScheduleDetailId, paymentAmount);
 
-        // Call to savePayment in order to create a new payment in
-        FIN_Payment returnPayment = FIN_AddPayment.savePayment(payment, true, paymentDocumentType,
-            paymentDocumentNo, order.getBusinessPartner(), paymentPaymentMethod, financialAccount,
-            paymentAmount.toPlainString(), order.getOrderDate(), order.getOrganization(), null,
-            paymentScheduleDetailList, paymentScheduleDetailAmount, false, false,
-            order.getCurrency(), BigDecimal.ZERO, BigDecimal.ZERO);
-
-        return returnPayment;
+        if (payment == null) {
+          // Call to savePayment in order to create a new payment in
+          FIN_Payment returnPayment = FIN_AddPayment.savePayment(payment, true,
+              paymentDocumentType, paymentDocumentNo, order.getBusinessPartner(),
+              paymentPaymentMethod, financialAccount, paymentAmount.toPlainString(),
+              order.getOrderDate(), order.getOrganization(), null, paymentScheduleDetailList,
+              paymentScheduleDetailAmount, false, false, order.getCurrency(), BigDecimal.ZERO,
+              BigDecimal.ZERO);
+          return returnPayment;
+        }
+        // Create a new line
+        else {
+          FIN_AddPayment.updatePaymentDetail(paymentScheduleDetailList.get(0), payment,
+              paymentAmount, false);
+          return payment;
+        }
 
       } else {
         BusinessPartner businessPatner = order.getBusinessPartner();
