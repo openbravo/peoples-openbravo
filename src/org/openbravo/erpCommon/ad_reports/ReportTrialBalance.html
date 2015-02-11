@@ -166,7 +166,7 @@ function showHideLayer(id, imageId) {
 
 function addRows(htmlText, id) {
   var jsonTable = eval(htmlText);
-  if (typeof jsonTable != undefined) {
+  if (typeof jsonTable != undefined && jsonTable.hasOwnProperty("rows")) {
   for (i=0; i<jsonTable.rows.length; i++) {
     var node=document.getElementById('funcEvenOddRow1'+id);
     var elem=document.createElement('TR');
@@ -589,8 +589,14 @@ function openTabToReportTrialBalanceDetails(procId, recordId){
               <td class="TitleCell"/></td>
             </tr>
             <tr id=advancedFiltersrow2>
-              <td width="30%" class="TitleCell"><span class="LabelText">Opening Entry Amount to Initial Balance</span></td>
-              <td width="70%" class="Radio_Check_ContentCell"><input name="inpNotInitialBalance" type="checkbox" id="fieldNotInitialBalance" value="Y" checked></input></td>
+              <td width="25%" class="TitleCell"><span class="LabelText">Opening Entry Amount to Initial Balance</span></td>
+              <td width="20%" class="Radio_Check_ContentCell"><input name="inpNotInitialBalance" type="checkbox" id="fieldNotInitialBalance" value="Y" checked></input></td>
+              <td width="35%" class="TitleCell" colspan="2"><span class="LabelText">Include Zero Figures</span></td>                           
+              <td width="20%" class="Radio_Check_ContentCell">
+                <span class="Checkbox_container_NOT_Focused">
+                  <input type="checkbox" name="inpIncludeZeroFigures" id="paramIncludeZeroFigures" value="Y"></input>
+                </span>
+              </td>
             </tr>
             <tr id="AcctFromTo"> 
               <td class="TitleCell"><span class="LabelText">From Account</span></td>
