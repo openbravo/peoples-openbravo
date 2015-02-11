@@ -85,9 +85,17 @@
     },
 
     calculateGross: function () {
+      // calculate the total amount depending on the tax plan
+      // setting the oposite variable to null, ensures that other logic is not using them in a wrong way
       if (this.get('priceIncludesTax')) {
+        this.set('net', null, {
+          silent: true
+        });
         this.set('gross', OB.DEC.mul(this.get('qty'), this.get('price')));
       } else {
+        this.set('gross', null, {
+          silent: true
+        });
         this.set('net', OB.DEC.mul(this.get('qty'), this.get('price')));
       }
     },
@@ -441,6 +449,62 @@
 
     calculateGross: function () {
       var me = this;
+
+      // reset some vital receipt values because, at this point, they are obsolete
+      this.set('net', OB.DEC.Zero, {
+        silent: true
+      });
+      this.set('gross', OB.DEC.Zero, {
+        silent: true
+      });
+      this.set('taxes', null, {
+        silent: true
+      });
+
+      var saveAndTriggerEvents = function (gross) {
+          var net = me.get('lines').reduce(function (memo, e) {
+            var netLine = e.get('discountedNet');
+            if (netLine) {
+              return OB.DEC.add(memo, netLine);
+            } else {
+              return memo;
+            }
+          }, OB.DEC.Zero);
+          //total qty
+          var qty = me.get('lines').reduce(function (memo, e) {
+            var net = me.get('lines').reduce(function (memo, e) {
+              var netLine = e.get('discountedNet');
+              if (netLine) {
+                return OB.DEC.add(memo, netLine);
+              } else {
+                return memo;
+              }
+            }, OB.DEC.Zero);
+            var qtyLine = e.getQty();
+            if (qtyLine > 0) {
+              return OB.DEC.add(memo, qtyLine, OB.I18N.qtyScale());
+            } else {
+              return memo;
+            }
+          }, OB.DEC.Zero);
+          // be sure all the values are set before the change events are fired
+          me.set('gross', gross, {
+            silent: true
+          });
+          me.set('net', net, {
+            silent: true
+          });
+          me.set('qty', qty, {
+            silent: true
+          });
+          me.set('gross', gross);
+          me.set('net', net);
+          me.set('qty', qty);
+          me.adjustPayment();
+          me.trigger('calculategross');
+          me.trigger('saveCurrent');
+          };
+
       if (this.get('priceIncludesTax')) {
         this.calculateTaxes(function () {
           var gross = me.get('lines').reduce(function (memo, e) {
@@ -452,10 +516,7 @@
             }
             return OB.DEC.add(memo, grossLine);
           }, OB.DEC.Zero);
-          me.set('gross', gross);
-          me.adjustPayment();
-          me.trigger('calculategross');
-          me.trigger('saveCurrent');
+          saveAndTriggerEvents(gross);
         });
       } else {
         this.calculateTaxes(function () {
@@ -470,32 +531,10 @@
             } else {
               return memo;
             }
-          }, 0);
-          me.set('gross', gross);
-          var net = me.get('lines').reduce(function (memo, e) {
-            var netLine = e.get('discountedNet');
-            if (netLine) {
-              return OB.DEC.add(memo, netLine);
-            } else {
-              return memo;
-            }
           }, OB.DEC.Zero);
-          me.set('net', net);
-          me.adjustPayment();
-          me.trigger('calculategross');
-          me.trigger('saveCurrent');
+          saveAndTriggerEvents(gross);
         });
       }
-      //total qty
-      var qty = this.get('lines').reduce(function (memo, e) {
-        var qtyLine = e.getQty();
-        if (qtyLine > 0) {
-          return OB.DEC.add(memo, qtyLine, OB.I18N.qtyScale());
-        } else {
-          return memo;
-        }
-      }, OB.DEC.Zero);
-      this.set('qty', qty);
     },
 
     getQty: function () {

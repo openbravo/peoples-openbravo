@@ -7,11 +7,10 @@
  ************************************************************************************
  */
 
-/*global B,_ */
+/*global OB, _, BigDecimal */
 
 (function () {
 
-  OB = window.OB || {};
   OB.DATA = window.OB.DATA || {};
 
   // Order taxes in descent order by lineNo
@@ -355,9 +354,6 @@
                 // triggering next steps
                 if (triggerNext) {
                   me.set('taxes', taxes, {
-                    silent: true
-                  });
-                  me.set('net', totalnet, {
                     silent: true
                   });
                   if (callback) {
