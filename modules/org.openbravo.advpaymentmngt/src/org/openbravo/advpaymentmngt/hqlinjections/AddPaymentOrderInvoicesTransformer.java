@@ -35,6 +35,8 @@ import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.datamodel.Table;
+import org.openbravo.model.common.enterprise.OrganizationInformation;
+import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.service.datasource.HQLDataSourceService;
 import org.openbravo.service.datasource.hql.HqlQueryTransformer;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -115,7 +117,11 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
     selectClause.append(getAggregatorFunction("psd.id") + " as paymentScheduleDetail, ");
     if ("I".equals(transactionType)) {
       selectClause.append(getAggregatorFunction("ord.documentNo") + " as salesOrderNo, ");
-      selectClause.append(" inv.documentNo as invoiceNo, ");
+      selectClause.append(" case when (inv." + Invoice.PROPERTY_SALESTRANSACTION
+          + " = false and oinfo is not null and oinfo."
+          + OrganizationInformation.PROPERTY_APRMPAYMENTDESCRIPTION
+          + " like 'Supplier Reference') then inv." + Invoice.PROPERTY_ORDERREFERENCE
+          + " else inv." + Invoice.PROPERTY_DOCUMENTNO + " end as invoiceNo, ");
       selectClause
           .append(" COALESCE(ips.finPaymentmethod.id, ops.finPaymentmethod.id) as paymentMethod, ");
       selectClause.append(" COALESCE(ipsfp.name, opsfp.name) as paymentMethodName, ");
@@ -126,7 +132,12 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
       selectClause.append(" max(COALESCE(inv.grandTotalAmount, 0)) as invoicedAmount, ");
     } else if ("O".equals(transactionType)) {
       selectClause.append(" ord.documentNo as salesOrderNo, ");
-      selectClause.append(getAggregatorFunction("inv.documentNo") + " as invoiceNo, ");
+      selectClause.append(getAggregatorFunction(" case when (inv."
+          + Invoice.PROPERTY_SALESTRANSACTION + " = false and oinfo is not null and oinfo."
+          + OrganizationInformation.PROPERTY_APRMPAYMENTDESCRIPTION
+          + " like 'Supplier Reference') then inv." + Invoice.PROPERTY_ORDERREFERENCE
+          + " else inv." + Invoice.PROPERTY_DOCUMENTNO + " end")
+          + " as invoiceNo, ");
       selectClause
           .append(" COALESCE(ops.finPaymentmethod.id, ips.finPaymentmethod.id) as paymentMethod, ");
       selectClause.append(" COALESCE(opsfp.name, ipsfp.name) as paymentMethodName, ");
@@ -137,7 +148,11 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
       selectClause.append(" sum(COALESCE(inv.grandTotalAmount, 0)) as invoicedAmount, ");
     } else {
       selectClause.append(" ord.documentNo as salesOrderNo, ");
-      selectClause.append(" inv.documentNo as invoiceNo, ");
+      selectClause.append(" case when (inv." + Invoice.PROPERTY_SALESTRANSACTION
+          + " = false and oinfo is not null and oinfo."
+          + OrganizationInformation.PROPERTY_APRMPAYMENTDESCRIPTION
+          + " like 'Supplier Reference') then inv." + Invoice.PROPERTY_ORDERREFERENCE
+          + " else inv." + Invoice.PROPERTY_DOCUMENTNO + " end as invoiceNo, ");
       selectClause
           .append(" COALESCE(ips.finPaymentmethod.id, ops.finPaymentmethod.id) as paymentMethod, ");
       selectClause.append(" COALESCE(ipsfp.name, opsfp.name) as paymentMethodName, ");
@@ -253,6 +268,9 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
       groupByClause.append(" COALESCE(ipsfp.name, opsfp.name), ");
       groupByClause.append(" COALESCE(ips.expectedDate, ops.expectedDate), ");
       groupByClause.append(" COALESCE(ipriority.priority, opriority.priority), ");
+      groupByClause.append(" inv.salesTransaction, ");
+      groupByClause.append(" oinfo.organization, ");
+      groupByClause.append(" inv.orderReference, ");
     } else if ("O".equals(transactionType)) {
       groupByClause.append(" ord.documentNo, ");
       groupByClause.append(" COALESCE(ops.finPaymentmethod.id, ips.finPaymentmethod.id), ");
@@ -266,6 +284,9 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
       groupByClause.append(" COALESCE(ipsfp.name, opsfp.name), ");
       groupByClause.append(" COALESCE(ips.expectedDate, ops.expectedDate), ");
       groupByClause.append(" COALESCE(ipriority.priority, opriority.priority), ");
+      groupByClause.append(" inv.salesTransaction, ");
+      groupByClause.append(" oinfo.organization, ");
+      groupByClause.append(" inv.orderReference, ");
     }
     groupByClause.append(" COALESCE(invbp.id, ordbp.id), ");
     groupByClause.append(" COALESCE(invbp.name, ordbp.name) ");
