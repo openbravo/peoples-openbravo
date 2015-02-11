@@ -68,6 +68,8 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
     boolean justCount = strJustCount.equalsIgnoreCase("true");
 
     StringBuffer selectClause = getSelectClause(transactionType, hasSelectedIds);
+    StringBuffer joinClauseOrder = getJoinClauseOrder();
+    StringBuffer joinClauseInvoice = getJoinClauseInvoice();
     StringBuffer whereClause = getWhereClause(transactionType, requestParameters, selectedPSDs);
     StringBuffer groupByClause = getGroupByClause(transactionType);
     StringBuffer orderByClause = new StringBuffer();
@@ -95,6 +97,8 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
 
     String transformedHql = hqlQuery.replace("@selectClause@", selectClause.toString());
     transformedHql = transformedHql.replace("@joinClause@", " ");
+    transformedHql = transformedHql.replace("@joinClauseOrder@", joinClauseOrder.toString());
+    transformedHql = transformedHql.replace("@joinClauseInvoice@", joinClauseInvoice.toString());
     transformedHql = transformedHql.replace("@whereClause@", whereClause.toString());
     transformedHql = transformedHql.replace("@groupByClause@", groupByClause.toString());
     transformedHql = appendOrderByClause(transformedHql, orderByClause, justCount);
@@ -161,6 +165,20 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
     return selectClause;
   }
 
+  protected StringBuffer getJoinClauseOrder() {
+    StringBuffer joinClauseOrder = new StringBuffer();
+    joinClauseOrder
+        .append(" with ord.businessPartner.id = :businessPartnerId and ord.salesTransaction = :isSalesTransaction and ord.currency.id = :currencyId");
+    return joinClauseOrder;
+  }
+
+  protected StringBuffer getJoinClauseInvoice() {
+    StringBuffer joinClauseInvoice = new StringBuffer();
+    joinClauseInvoice
+        .append(" with inv.businessPartner.id = :businessPartnerId and inv.salesTransaction = :isSalesTransaction and inv.currency.id = :currencyId");
+    return joinClauseInvoice;
+  }
+
   protected StringBuffer getWhereClause(String transactionType,
       Map<String, String> requestParameters, List<String> selectedPSDs) {
     String strBusinessPartnerId = requestParameters.get("received_from");
@@ -169,12 +187,13 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
 
     StringBuffer whereClause = new StringBuffer();
     // Create WhereClause
-    whereClause.append(" (psd.paymentDetails is null");
-    // If opened from Payment Window, add payment details lines
     if (strFinPaymentId != null) {
-      whereClause.append(" or (fp.id = :paymentId and (ips is not null or ops is not null)) ");
+      whereClause.append(" (psd.paymentDetails is null or fp.id = :paymentId)");
+    } else {
+      whereClause.append(" psd.paymentDetails is null");
     }
-    whereClause.append(") ");
+    whereClause.append(" and coalesce(ips,ops) is not null ");
+
     if (strOrganizationId != null) {
       whereClause.append(" and psd.organization.id in :orgIds ");
     }
@@ -201,40 +220,37 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
         }
       }
       whereClause.append(")");
-    } else {
-      whereClause.append(" fp.id = :paymentId ");
     }
-    whereClause.append("  or ");
     if ("I".equals(transactionType)) {
 
-      whereClause.append(" (inv is not null ");
+      whereClause.append(" ( ");
+      whereClause.append(" inv.salesTransaction = :isSalesTransaction");
       if (strBusinessPartnerId != null && !"null".equals(strBusinessPartnerId)) {
         whereClause.append(" and invbp.id = :businessPartnerId ");
       }
-      whereClause.append(" and inv.salesTransaction = :isSalesTransaction");
       whereClause.append(" and inv.currency.id = :currencyId ) ");
 
     } else if ("O".equals(transactionType)) {
-      whereClause.append(" (ord is not null ");
+      whereClause.append(" ( ");
+      whereClause.append(" ord.salesTransaction = :isSalesTransaction");
       if (strBusinessPartnerId != null && !"null".equals(strBusinessPartnerId)) {
         whereClause.append(" and ordbp.id = :businessPartnerId ");
       }
-      whereClause.append(" and ord.salesTransaction = :isSalesTransaction");
       whereClause.append(" and ord.currency.id = :currencyId ) ");
 
     } else {
 
-      whereClause.append(" (inv is not null ");
+      whereClause.append(" ( ");
+      whereClause.append(" inv.salesTransaction = :isSalesTransaction");
       if (strBusinessPartnerId != null && !"null".equals(strBusinessPartnerId)) {
         whereClause.append(" and invbp.id = :businessPartnerId ");
       }
-      whereClause.append(" and inv.salesTransaction = :isSalesTransaction");
       whereClause.append(" and inv.currency.id = :currencyId ) ");
-      whereClause.append(" or (ord is not null ");
+      whereClause.append(" or ( ");
+      whereClause.append(" ord.salesTransaction = :isSalesTransaction");
       if (strBusinessPartnerId != null && !"null".equals(strBusinessPartnerId)) {
         whereClause.append(" and ordbp.id = :businessPartnerId");
       }
-      whereClause.append(" and ord.salesTransaction = :isSalesTransaction");
       whereClause.append(" and ord.currency.id = :currencyId ) ");
 
     }
