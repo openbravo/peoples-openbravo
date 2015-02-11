@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013 Openbravo SLU 
+ * All portions are Copyright (C) 2013-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,6 +19,10 @@
 
 package org.openbravo.utility.cleanup.log;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.enterprise.inject.spi.Bean;
@@ -28,6 +32,7 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.dal.core.DalUtil;
@@ -80,6 +85,7 @@ public class LogCleanUpProcess extends DalBaseProcess {
       qConfig.add(Restrictions.eq(LogCleanUpConfig.PROPERTY_ACTIVE, true));
 
       long totalDeletedRows = 0L;
+      Set<String> tablesWithDeletions = new LinkedHashSet<String>();
       for (LogCleanUpConfig config : qConfig.list()) {
         long t = System.currentTimeMillis();
         Entity entity = ModelProvider.getInstance().getEntityByTableId(
@@ -105,6 +111,10 @@ public class LogCleanUpProcess extends DalBaseProcess {
           log.debug("Using default cleaner for entity", entity);
           deletedRowsInEntity += defaultCleaner.clean(config, client, org, bgLogger);
         }
+
+        if (deletedRowsInEntity > 0) {
+          tablesWithDeletions.add(entity.getTableName());
+        }
         logMsg = "Entity " + entity.getName() + " cleaned up in "
             + (System.currentTimeMillis() - t) + "ms";
         bgLogger.log(logMsg + "\n\n");
@@ -113,11 +123,61 @@ public class LogCleanUpProcess extends DalBaseProcess {
 
         OBDal.getInstance().commitAndClose();
       }
+
       logMsg = "Deleted " + totalDeletedRows + " rows";
-      bgLogger.log(logMsg);
+      bgLogger.log(logMsg + "\n\n");
       log.debug(logMsg);
+
+      vacuumTables(tablesWithDeletions, bgLogger);
+
     } finally {
       OBContext.restorePreviousMode();
+    }
+  }
+
+  private void vacuumTables(Set<String> tablesWithDeletions, ProcessLogger bgLogger) {
+    if (!"POSTGRE".equals(OBPropertiesProvider.getInstance().getOpenbravoProperties()
+        .get("bbdd.rdbms"))) {
+
+      // Executing vacuum only in PG
+      return;
+    }
+    String logMsg;
+    Connection con = OBDal.getInstance().getConnection();
+    try {
+      // auto commit is required in order to be able to execute vacuum
+      con.setAutoCommit(true);
+
+      for (String tableName : tablesWithDeletions) {
+        PreparedStatement ps = null;
+        try {
+          logMsg = "About to execute vacuum full for " + tableName;
+          log.debug(logMsg);
+          bgLogger.log(logMsg + "\n");
+          long vacuumTime = System.currentTimeMillis();
+          ps = con.prepareStatement("vacuum full analyze " + tableName);
+          ps.execute();
+          logMsg = "Vacuum for " + tableName + " executed in "
+              + (System.currentTimeMillis() - vacuumTime) + " ms";
+          log.debug(logMsg);
+          bgLogger.log(logMsg + "\n\n");
+        } catch (SQLException e) {
+          log.error("Error executing vacuum for table {}", tableName, e);
+          bgLogger.log("Error executing vacuum " + e.getMessage() + "\n\n");
+        } finally {
+          try {
+            ps.close();
+          } catch (SQLException e) {
+            log.error("Error closing call statement for vacuum in table {}", tableName, e);
+          }
+        }
+      }
+
+      // resetting auto commit to properly release DAL trx
+      con.setAutoCommit(false);
+    } catch (SQLException e1) {
+      log.error("Errer executing vacuum", e1);
+      bgLogger.equals("Error executing vacuum: " + e1.getMessage());
     }
   }
 }
