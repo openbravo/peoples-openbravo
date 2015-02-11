@@ -53,7 +53,7 @@ public class CleanEntity {
 
   private static final Logger log = LoggerFactory.getLogger(CleanEntity.class);
 
-  public void clean(LogCleanUpConfig config, Client client, Organization org, ProcessLogger bgLogger) {
+  public int clean(LogCleanUpConfig config, Client client, Organization org, ProcessLogger bgLogger) {
     Entity entity = ModelProvider.getInstance().getEntityByTableId(
         (String) DalUtil.getId(config.getTable()));
 
@@ -94,6 +94,7 @@ public class CleanEntity {
 
     log.debug(logMsg);
     bgLogger.log(logMsg + "\n");
+    return affectedRows;
   }
 
   protected String getClientOrgFilter(Client client, Organization org) {
