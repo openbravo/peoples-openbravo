@@ -43,6 +43,7 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Locator;
@@ -67,7 +68,6 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) throws OBException {
     try {
-
       // Get request parameters
       JSONObject request = new JSONObject(content);
       String newOrderId = request.getString("inpcOrderId");
@@ -135,12 +135,41 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
           if (nettingGoodsShipment == null) {
             // Create new Shipment
             nettingGoodsShipment = OBProvider.getInstance().get(ShipmentInOut.class);
-            nettingGoodsShipment.setOrganization(oldOrderLine.getOrganization());
-            // ¿Set Document Type?
-            // TODO
-            nettingGoodsShipment.setWarehouse(oldOrderLine.getWarehouse());
-            nettingGoodsShipment.setBusinessPartner(oldOrderLine.getBusinessPartner());
-            nettingGoodsShipment.setPartnerAddress(oldOrderLine.getPartnerAddress());
+            nettingGoodsShipment.setOrganization(oldOrder.getOrganization());
+            // Set Document Type
+            OBCriteria<DocumentType> goodsShipmentDocumentTypeCriteria = OBDal.getInstance()
+                .createCriteria(DocumentType.class);
+            OBCriteria<Table> goodsShipmentTableCriteria = OBDal.getInstance().createCriteria(
+                Table.class);
+            goodsShipmentTableCriteria.add(Restrictions.eq(Table.PROPERTY_DBTABLENAME,
+                ShipmentInOut.TABLE_NAME));
+            List<Table> goodsShipmentTableList = goodsShipmentTableCriteria.list();
+            if (goodsShipmentTableList.size() != 1) {
+              throw new OBException("Only one table named M_InOut can exists");
+            }
+            Table goodsShipmentTable = goodsShipmentTableList.get(0);
+            goodsShipmentDocumentTypeCriteria.add(Restrictions.eq(DocumentType.PROPERTY_TABLE,
+                goodsShipmentTable));
+            goodsShipmentDocumentTypeCriteria.add(Restrictions.eq(
+                DocumentType.PROPERTY_SALESTRANSACTION, true));
+            goodsShipmentDocumentTypeCriteria.add(Restrictions.eq(
+                DocumentType.PROPERTY_ORGANIZATION, oldOrder.getOrganization()));
+            goodsShipmentDocumentTypeCriteria.add(Restrictions.eq(DocumentType.PROPERTY_ACTIVE,
+                true));
+            goodsShipmentDocumentTypeCriteria.addOrderBy(DocumentType.PROPERTY_DEFAULT, false);
+            List<DocumentType> goodsShipmentDocumentTypeList = goodsShipmentDocumentTypeCriteria
+                .list();
+            if (goodsShipmentDocumentTypeList.size() == 0) {
+              throw new OBException("No document type found for the new shipment");
+            }
+            DocumentType goodsShipmentDocumentType = goodsShipmentDocumentTypeList.get(0);
+            nettingGoodsShipment.setDocumentType(goodsShipmentDocumentType);
+            nettingGoodsShipment.setWarehouse(oldOrder.getWarehouse());
+            nettingGoodsShipment.setBusinessPartner(oldOrder.getBusinessPartner());
+            if (oldOrder.getPartnerAddress() == null) {
+              throw new OBException("The business partner location can not be null");
+            }
+            nettingGoodsShipment.setPartnerAddress(oldOrder.getPartnerAddress());
             nettingGoodsShipment.setMovementDate(today);
             nettingGoodsShipment.setAccountingDate(today);
             nettingGoodsShipment.setSalesOrder(null);
@@ -155,6 +184,7 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
 
           // For the oldOrderLine
           newGoodsShipmentLine1 = OBProvider.getInstance().get(ShipmentInOutLine.class);
+          newGoodsShipmentLine1.setOrganization(oldOrderLine.getOrganization());
           newGoodsShipmentLine1.setProduct(oldOrderLine.getProduct());
           newGoodsShipmentLine1.setUOM(oldOrderLine.getUOM());
           // Get first storage bin
@@ -293,7 +323,6 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
             + businessPartnerAccount.getName());
       }
       FinAccPaymentMethod accountPaymentMethod = accountPaymentMethodList.get(0);
-
       // Disable Automatic Receipt check
       boolean originalAutomaticReceipt = accountPaymentMethod.isAutomaticReceipt();
       accountPaymentMethod.setAutomaticReceipt(false);
@@ -346,7 +375,7 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
       // Restore Automatic Receipt check
       accountPaymentMethod.setAutomaticReceipt(originalAutomaticReceipt);
 
-      // TODO Payment Creation
+      // Payment Creation
       // Get the payment schedule detail of the oldOrder
       FIN_PaymentSchedule paymentSchedule;
       OBCriteria<FIN_PaymentSchedule> paymentScheduleCriteria = OBDal.getInstance().createCriteria(
@@ -398,10 +427,22 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
         if (outstandingAmount.compareTo(BigDecimal.ZERO) != 0) {
           BigDecimal negativeOutstandingAmount = outstandingAmount.negate();
           FIN_PaymentMethod paymentPaymentMethod = oldOrder.getBusinessPartner().getPaymentMethod();
+
           OBCriteria<DocumentType> arReceiptDocumentTypeCriteria = OBDal.getInstance()
               .createCriteria(DocumentType.class);
-          arReceiptDocumentTypeCriteria.add(Restrictions.eq(DocumentType.PROPERTY_NAME,
-              "AR Receipt"));
+          OBCriteria<Table> paymentTableCriteria = OBDal.getInstance().createCriteria(Table.class);
+          paymentTableCriteria.add(Restrictions.eq(Table.PROPERTY_DBTABLENAME,
+              FIN_Payment.TABLE_NAME));
+          List<Table> paymentTableList = paymentTableCriteria.list();
+          if (paymentTableList.size() != 1) {
+            throw new OBException("Only one table named FIN_Payment can exists");
+          }
+          Table paymentTable = paymentTableList.get(0);
+          arReceiptDocumentTypeCriteria.add(Restrictions.eq(DocumentType.PROPERTY_TABLE,
+              paymentTable));
+          arReceiptDocumentTypeCriteria.add(Restrictions.eq(DocumentType.PROPERTY_SALESTRANSACTION,
+              true));
+          // Parent organization list
           OrganizationStructureProvider osp = OBContext.getOBContext()
               .getOrganizationStructureProvider(oldOrder.getOrganization().getClient().getId());
           ;
@@ -410,22 +451,23 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
 
           arReceiptDocumentTypeCriteria.add(Restrictions.in(DocumentType.PROPERTY_ORGANIZATION
               + ".id", parentOrganizationIdList));
+          arReceiptDocumentTypeCriteria.add(Restrictions.eq(DocumentType.PROPERTY_ACTIVE, true));
+          arReceiptDocumentTypeCriteria.addOrderBy(DocumentType.PROPERTY_DEFAULT, false);
           List<DocumentType> arReceiptDocumentTypeList = arReceiptDocumentTypeCriteria.list();
-          if (arReceiptDocumentTypeList.size() != 1) {
-            throw new OBException(
-                "Only one AR Receipt named document can exist for the organization "
-                    + inverseOrder.getOrganization().getName());
+          if (arReceiptDocumentTypeList.size() == 0) {
+            throw new OBException("No document type found for the new payment");
           }
           DocumentType paymentDocumentType = arReceiptDocumentTypeList.get(0);
           FIN_FinancialAccount financialAccount = oldOrder.getBusinessPartner().getAccount();
           FIN_Payment newPayment2 = null;
-          // Duplicate payment with positive amount
-          newPayment2 = createPayment(newPayment2, oldOrder, paymentPaymentMethod,
-              outstandingAmount, paymentDocumentType, financialAccount);
 
           // Duplicate payment with negative amount
           newPayment2 = createPayment(newPayment2, inverseOrder, paymentPaymentMethod,
               negativeOutstandingAmount, paymentDocumentType, financialAccount);
+
+          // Duplicate payment with positive amount
+          newPayment2 = createPayment(newPayment2, oldOrder, paymentPaymentMethod,
+              outstandingAmount, paymentDocumentType, financialAccount);
 
           // Call to processPayment in order to process it
           OBError error2 = FIN_AddPayment.processPayment(vars, conn, "P", newPayment2);
@@ -492,33 +534,56 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
       if (paymentScheduleDetailList.size() != 0) {
         HashMap<String, BigDecimal> paymentScheduleDetailAmount = new HashMap<String, BigDecimal>();
         String paymentScheduleDetailId = paymentScheduleDetailList.get(0).getId();
-        BigDecimal paymentAmount = amount;
-        paymentScheduleDetailAmount.put(paymentScheduleDetailId, paymentAmount);
+        paymentScheduleDetailAmount.put(paymentScheduleDetailId, amount);
 
         if (payment == null) {
           // Call to savePayment in order to create a new payment in
           FIN_Payment returnPayment = FIN_AddPayment.savePayment(payment, true,
               paymentDocumentType, paymentDocumentNo, order.getBusinessPartner(),
-              paymentPaymentMethod, financialAccount, paymentAmount.toPlainString(),
-              order.getOrderDate(), order.getOrganization(), null, paymentScheduleDetailList,
+              paymentPaymentMethod, financialAccount, amount.toPlainString(), order.getOrderDate(),
+              order.getOrganization(), null, paymentScheduleDetailList,
               paymentScheduleDetailAmount, false, false, order.getCurrency(), BigDecimal.ZERO,
               BigDecimal.ZERO);
           return returnPayment;
         }
         // Create a new line
         else {
-          FIN_AddPayment.updatePaymentDetail(paymentScheduleDetailList.get(0), payment,
-              paymentAmount, false);
+          FIN_AddPayment.updatePaymentDetail(paymentScheduleDetailList.get(0), payment, amount,
+              false);
           return payment;
         }
 
       } else {
-        BusinessPartner businessPatner = order.getBusinessPartner();
-        FIN_FinancialAccount businessPartnerFinancialAccount = businessPatner.getAccount();
-        if (businessPartnerFinancialAccount != null) {
-          throw new OBException("The payments have been already created");
-        } else {
-          throw new OBException("The business partner has not a financial account asociated");
+        // Two possibilities
+        // 1.- All the payments have been created
+        // 2.- The payment was created trough Web POS and therefore a payment schedule detail with
+        // null payment detail is missing
+        // Lets assume that in this point the payment was created trough Web POS
+        // Create missing payment schedule detail
+        FIN_PaymentScheduleDetail paymentScheduleDetail = OBProvider.getInstance().get(
+            FIN_PaymentScheduleDetail.class);
+        paymentScheduleDetail.setOrganization(order.getOrganization());
+        paymentScheduleDetail.setOrderPaymentSchedule(paymentSchedule);
+        OBDal.getInstance().save(paymentScheduleDetail);
+
+        // Continue with the payment
+        HashMap<String, BigDecimal> paymentScheduleDetailAmount = new HashMap<String, BigDecimal>();
+        String paymentScheduleDetailId = paymentScheduleDetail.getId();
+        paymentScheduleDetailAmount.put(paymentScheduleDetailId, amount);
+        if (payment == null) {
+          // Call to savePayment in order to create a new payment in
+          FIN_Payment returnPayment = FIN_AddPayment.savePayment(payment, true,
+              paymentDocumentType, paymentDocumentNo, order.getBusinessPartner(),
+              paymentPaymentMethod, financialAccount, amount.toPlainString(), order.getOrderDate(),
+              order.getOrganization(), null, paymentScheduleDetailList,
+              paymentScheduleDetailAmount, false, false, order.getCurrency(), BigDecimal.ZERO,
+              BigDecimal.ZERO);
+          return returnPayment;
+        }
+        // Create a new line
+        else {
+          FIN_AddPayment.updatePaymentDetail(paymentScheduleDetail, payment, amount, false);
+          return payment;
         }
       }
     } else {
