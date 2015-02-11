@@ -28,17 +28,17 @@ enyo.kind({
   }],
   style: 'border-bottom: 1px solid #cccccc;',
   components: [{
-    name: 'labelsRow'
+    name: 'receiptLabels'
   }, {
-    name: 'buttonsRow'
+    name: 'receiptButtons'
   }],
   orderChanged: function (oldValue) {
-    _.each(this.$.labelsRow.$, function (comp) {
+    _.each(this.$.receiptLabels.$, function (comp) {
       if (comp.setOrder) {
         comp.setOrder(this.order);
       }
     }, this);
-    _.each(this.$.buttonsRow.$, function (comp) {
+    _.each(this.$.receiptButtons.$, function (comp) {
       if (comp.setOrder) {
         comp.setOrder(this.order);
       }
@@ -47,10 +47,10 @@ enyo.kind({
   initComponents: function () {
     this.inherited(arguments);
     enyo.forEach(this.newLabelComponents, function (comp) {
-      this.$.labelsRow.createComponent(comp);
+      this.$.receiptLabels.createComponent(comp);
     }, this);
     enyo.forEach(this.newButtonComponents, function (comp) {
-      this.$.buttonsRow.createComponent(comp);
+      this.$.receiptButtons.createComponent(comp);
     }, this);
   }
 });
