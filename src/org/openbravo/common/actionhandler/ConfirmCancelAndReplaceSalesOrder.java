@@ -90,7 +90,8 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
       Date today = new Date();
       inverseOrder.setOrderDate(today);
       inverseOrder.setScheduledDeliveryDate(today);
-      String newDocumentNo = FIN_Utility.getDocumentNo(oldOrder.getDocumentType(), "C_Order");
+      String newDocumentNo = FIN_Utility
+          .getDocumentNo(oldOrder.getDocumentType(), Order.TABLE_NAME);
       inverseOrder.setDocumentNo(newDocumentNo);
       inverseOrder.setCancelledorder(oldOrder);
       OBDal.getInstance().save(inverseOrder);
@@ -102,7 +103,7 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
 
       // Iterate old order lines
       List<OrderLine> oldOrderLineList = oldOrder.getOrderLineList();
-      int lineNoCounter = 1;
+      long lineNoCounter = 1;
       for (OrderLine oldOrderLine : oldOrderLineList) {
         // Set old order delivered quantity zero
         BigDecimal orderedQuantity = oldOrderLine.getOrderedQuantity();
@@ -147,7 +148,7 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
             nettingGoodsShipment.setProcessed(false);
             OBDal.getInstance().flush();
             String nettingGoodsShipmentDocumentNo = FIN_Utility.getDocumentNo(
-                nettingGoodsShipment.getDocumentType(), "M_InOut");
+                nettingGoodsShipment.getDocumentType(), ShipmentInOut.TABLE_NAME);
             nettingGoodsShipment.setDocumentNo(nettingGoodsShipmentDocumentNo);
             OBDal.getInstance().save(nettingGoodsShipment);
           }
@@ -180,7 +181,7 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
             nettingGoodsShipment.setProcessed(false);
             OBDal.getInstance().flush();
             String nettingGoodsShipmentDocumentNo = FIN_Utility.getDocumentNo(
-                nettingGoodsShipment.getDocumentType(), "M_InOut");
+                nettingGoodsShipment.getDocumentType(), ShipmentInOut.TABLE_NAME);
             nettingGoodsShipment.setDocumentNo(nettingGoodsShipmentDocumentNo);
             OBDal.getInstance().save(nettingGoodsShipment);
           }
@@ -193,7 +194,7 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
 
         }
         // For the oldOrderLine
-        newGoodsShipmentLine1.setLineNo(new Long(10 * lineNoCounter));
+        newGoodsShipmentLine1.setLineNo(10 * lineNoCounter);
         newGoodsShipmentLine1.setSalesOrderLine(oldOrderLine);
         newGoodsShipmentLine1.setShipmentReceipt(nettingGoodsShipment);
         OBDal.getInstance().save(newGoodsShipmentLine1);
@@ -207,7 +208,7 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
         OBDal.getInstance().save(oldOrderLine);
 
         // For the inverseOrderLine
-        newGoodsShipmentLine2.setLineNo(new Long(10 * lineNoCounter));
+        newGoodsShipmentLine2.setLineNo(10 * lineNoCounter);
         newGoodsShipmentLine2.setSalesOrderLine(inverseOrderLine);
         newGoodsShipmentLine2.setShipmentReceipt(nettingGoodsShipment);
         OBDal.getInstance().save(newGoodsShipmentLine2);
@@ -393,13 +394,10 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
 
         // Create if needed a second payment for the partially paid
         // TODO
-        // Si ya hay un pago pillar el del pago, de lo contrario pillar el del tercero
         BigDecimal outstandingAmount = paymentSchedule.getOutstandingAmount();
         if (outstandingAmount.compareTo(BigDecimal.ZERO) != 0) {
           BigDecimal negativeOutstandingAmount = outstandingAmount.negate();
           FIN_PaymentMethod paymentPaymentMethod = oldOrder.getBusinessPartner().getPaymentMethod();
-          // TODO
-          // Get document type
           OBCriteria<DocumentType> arReceiptDocumentTypeCriteria = OBDal.getInstance()
               .createCriteria(DocumentType.class);
           arReceiptDocumentTypeCriteria.add(Restrictions.eq(DocumentType.PROPERTY_NAME,

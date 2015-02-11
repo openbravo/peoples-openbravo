@@ -349,11 +349,11 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="CANCELLEDORDER" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+      <column name="CANCELLEDORDER_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="REPLACEDORDER" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+      <column name="REPLACEDORDER_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -418,7 +418,7 @@
         <reference local="C_RETURN_REASON_ID" foreign="C_RETURN_REASON_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_ORDER" name="C_ORDER_CANCELLEDORDER">
-        <reference local="CANCELLEDORDER" foreign="C_ORDER_ID"/>
+        <reference local="CANCELLEDORDER_ID" foreign="C_ORDER_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_BPARTNER" name="C_ORDER_DROPSHIP_BPARTNER">
         <reference local="DROPSHIP_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
@@ -448,7 +448,7 @@
         <reference local="C_REJECT_REASON_ID" foreign="C_REJECT_REASON_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_ORDER" name="C_ORDER_REPLACEDORDER">
-        <reference local="REPLACEDORDER" foreign="C_ORDER_ID"/>
+        <reference local="REPLACEDORDER_ID" foreign="C_ORDER_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_USER" name="C_ORDER_SALESREP">
         <reference local="SALESREP_ID" foreign="AD_USER_ID"/>

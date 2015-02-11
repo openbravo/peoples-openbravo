@@ -61,7 +61,8 @@ public class CancelAndReplaceSalesOrder extends BaseProcessActionHandler {
       Date today = new Date();
       newOrder.setOrderDate(today);
       newOrder.setScheduledDeliveryDate(today);
-      String newDocumentNo = FIN_Utility.getDocumentNo(oldOrder.getDocumentType(), "C_Order");
+      String newDocumentNo = FIN_Utility
+          .getDocumentNo(oldOrder.getDocumentType(), Order.TABLE_NAME);
       newOrder.setDocumentNo(newDocumentNo);
       newOrder.setReplacedorder(oldOrder);
       OBDal.getInstance().save(newOrder);
