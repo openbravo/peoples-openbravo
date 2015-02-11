@@ -68,8 +68,8 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
     boolean justCount = strJustCount.equalsIgnoreCase("true");
 
     StringBuffer selectClause = getSelectClause(transactionType, hasSelectedIds);
-    StringBuffer joinClauseOrder = getJoinClauseOrder();
-    StringBuffer joinClauseInvoice = getJoinClauseInvoice();
+    StringBuffer joinClauseOrder = getJoinClauseOrder(requestParameters);
+    StringBuffer joinClauseInvoice = getJoinClauseInvoice(requestParameters);
     StringBuffer whereClause = getWhereClause(transactionType, requestParameters, selectedPSDs);
     StringBuffer groupByClause = getGroupByClause(transactionType);
     StringBuffer orderByClause = new StringBuffer();
@@ -165,17 +165,25 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
     return selectClause;
   }
 
-  protected StringBuffer getJoinClauseOrder() {
+  protected StringBuffer getJoinClauseOrder(Map<String, String> requestParameters) {
+    String strBusinessPartnerId = requestParameters.get("received_from");
     StringBuffer joinClauseOrder = new StringBuffer();
     joinClauseOrder
-        .append(" with ord.businessPartner.id = :businessPartnerId and ord.salesTransaction = :isSalesTransaction and ord.currency.id = :currencyId");
+        .append(" with ord.salesTransaction = :isSalesTransaction and ord.currency.id = :currencyId");
+    if (strBusinessPartnerId != null && !"null".equals(strBusinessPartnerId)) {
+      joinClauseOrder.append(" and ord.businessPartner.id = :businessPartnerId");
+    }
     return joinClauseOrder;
   }
 
-  protected StringBuffer getJoinClauseInvoice() {
+  protected StringBuffer getJoinClauseInvoice(Map<String, String> requestParameters) {
+    String strBusinessPartnerId = requestParameters.get("received_from");
     StringBuffer joinClauseInvoice = new StringBuffer();
     joinClauseInvoice
-        .append(" with inv.businessPartner.id = :businessPartnerId and inv.salesTransaction = :isSalesTransaction and inv.currency.id = :currencyId");
+        .append(" with inv.salesTransaction = :isSalesTransaction and inv.currency.id = :currencyId");
+    if (strBusinessPartnerId != null && !"null".equals(strBusinessPartnerId)) {
+      joinClauseInvoice.append(" and inv.businessPartner.id = :businessPartnerId");
+    }
     return joinClauseInvoice;
   }
 
