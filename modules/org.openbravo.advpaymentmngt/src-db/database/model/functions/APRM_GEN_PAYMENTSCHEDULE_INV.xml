@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2010-2014 Openbravo SLU
+* All portions are Copyright (C) 2010-2015 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -1007,13 +1007,13 @@ BEGIN
                     line, fin_payment_id, dateacct, c_glitem_id, status, paymentamt,
                     depositamt, processed, processing, posted, c_project_id, c_campaign_id, c_costcenter_id,
                     c_activity_id, user1_id, user2_id, trxtype, statementdate, description,
-                    fin_reconciliation_id, foreign_currency_id, foreign_convert_rate, foreign_amount)
+                    fin_reconciliation_id, foreign_currency_id, foreign_convert_rate, foreign_amount, c_bpartner_id)
                   VALUES (v_FIN_FINACC_TRANSACTION_ID, v_client_id, cur_paymentschedule.AD_ORG_ID, now(), p_user,
                     now(), p_user, 'Y', v_finacct_currency, v_Financial_Account_ID,
                     v_Line, v_FIN_PAYMENT_ID, cur_paymentschedule.DUEDATE, NULL, CASE WHEN v_IsSOTrx='Y' THEN 'RDNC' ELSE 'PWNC' END, CASE WHEN v_IsSOTrx='N' THEN ROUND(cur_paymentschedule.OUTSTANDINGAMT*v_rate, v_PricePr) ELSE 0 END,
                     CASE WHEN v_IsSOTrx='Y' THEN ROUND(cur_paymentschedule.OUTSTANDINGAMT*v_rate, v_PricePr) ELSE 0 END, 'Y', 'N', 'N', v_project_id, v_campaign_id, v_costcenter,
                     v_activity_id, v_user1, v_user2, CASE WHEN v_IsSOTrx='N' THEN 'BPW' ELSE 'BPD' END, cur_paymentschedule.DUEDATE, 'Invoice No.: ' || v_documentno,
-                    NULL, cur_paymentschedule.C_CURRENCY_ID, v_rate , CASE WHEN v_IsSOTrx='N' THEN cur_paymentschedule.OUTSTANDINGAMT ELSE cur_paymentschedule.OUTSTANDINGAMT END);
+                    NULL, cur_paymentschedule.C_CURRENCY_ID, v_rate , CASE WHEN v_IsSOTrx='N' THEN cur_paymentschedule.OUTSTANDINGAMT ELSE cur_paymentschedule.OUTSTANDINGAMT END, v_BPartner_ID);
                 ELSE
                   INSERT INTO fin_finacc_transaction(
                     fin_finacc_transaction_id, ad_client_id, ad_org_id, created,
@@ -1021,13 +1021,13 @@ BEGIN
                     line, fin_payment_id, dateacct, c_glitem_id, status, paymentamt,
                     depositamt, processed, processing, posted, c_project_id, c_campaign_id, c_costcenter_id,
                     c_activity_id, user1_id, user2_id, trxtype, statementdate, description,
-                    fin_reconciliation_id)
+                    fin_reconciliation_id, c_bpartner_id)
                   VALUES (v_FIN_FINACC_TRANSACTION_ID, v_client_id, cur_paymentschedule.AD_ORG_ID, now(), p_user,
                     now(), p_user, 'Y', cur_paymentschedule.C_CURRENCY_ID, v_Financial_Account_ID,
                     v_Line, v_FIN_PAYMENT_ID, cur_paymentschedule.DUEDATE, NULL, CASE WHEN v_IsSOTrx='Y' THEN 'RDNC' ELSE 'PWNC' END, CASE WHEN v_IsSOTrx='N' THEN cur_paymentschedule.OUTSTANDINGAMT ELSE 0 END,
                     CASE WHEN v_IsSOTrx='Y' THEN cur_paymentschedule.OUTSTANDINGAMT ELSE 0 END, 'Y', 'N', 'N', v_project_id, v_campaign_id, v_costcenter,
                     v_activity_id, v_user1, v_user2, CASE WHEN v_IsSOTrx='N' THEN 'BPW' ELSE 'BPD' END, cur_paymentschedule.DUEDATE, 'Invoice No.: ' || v_documentno,
-                    NULL);
+                    NULL, v_BPartner_ID);
                 END IF;
                 
                 
