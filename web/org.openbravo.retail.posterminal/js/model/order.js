@@ -1718,24 +1718,6 @@
       this.save();
     },
 
-    hasIntegrity: function () {
-      // checks if the sum of the amount of every line is the same as the total gross
-      var gross = this.attributes.gross;
-      var grossOfSummedLines = 0;
-      var countOfLines = 1;
-      _.each(this.get('lines').models, function (line) {
-        var lineGross = line.attributes.gross;
-        grossOfSummedLines = OB.DEC.add(grossOfSummedLines, lineGross);
-        countOfLines += 1;
-      }, this);
-      // allow up to 2 cents of deviation per line
-      if (OB.DEC.abs(gross - grossOfSummedLines) <= (0.01 * countOfLines)) {
-        return true;
-      }
-      OB.error("Receipt " + this.attributes.documentNo + " failed in the integrity test; gross: " + gross + " <> lineGross: " + grossOfSummedLines);
-      return false;
-    },
-
     groupLinesByProduct: function () {
       var me = this,
           lineToMerge, lines = this.get('lines'),
