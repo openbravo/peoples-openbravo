@@ -43,16 +43,16 @@ enyo.kind({
     if (this.model.get('type') === 'drop') {
       lbl = OB.I18N.getLabel('OBPOS_LblWithdrawal') + ': ';
       if (this.model.get('origAmount') !== this.model.get('amount')) {
-        foreignAmt = OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('amount')));
-        amnt = OB.I18N.formatCurrency(this.model.get('origAmount'));
+        foreignAmt = OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('origAmount')));
+        amnt = OB.I18N.formatCurrency(this.model.get('amount'));
       } else {
         amnt = OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('amount')));
       }
     } else {
       lbl = OB.I18N.getLabel('OBPOS_LblDeposit') + ': ';
       if (this.model.get('origAmount') !== this.model.get('amount')) {
-        foreignAmt = OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('amount')));
-        amnt = OB.I18N.formatCurrency(this.model.get('origAmount'));
+        foreignAmt = OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('origAmount')));
+        amnt = OB.I18N.formatCurrency(this.model.get('amount'));
       } else {
         amnt = OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('amount')));
       }
