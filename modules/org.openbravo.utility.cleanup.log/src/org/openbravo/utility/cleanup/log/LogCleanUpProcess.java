@@ -97,7 +97,6 @@ public class LogCleanUpProcess extends DalBaseProcess {
         boolean useDefault = true;
         int deletedRowsInEntity = 0;
 
-        bm.getBeans(CleanEntity.class, new ComponentProvider.Selector(entity.getName()));
         for (Bean<?> beanCleaner : bm.getBeans(CleanEntity.class, new ComponentProvider.Selector(
             entity.getName()))) {
           useDefault = false;
