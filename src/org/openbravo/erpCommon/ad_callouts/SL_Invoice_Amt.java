@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -69,11 +69,12 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
       String strGrossUnitPrice = vars.getNumericParameter("inpgrossUnitPrice");
       String strBaseGrossUnitPrice = vars.getNumericParameter("inpgrosspricestd");
       String strtaxbaseamt = vars.getNumericParameter("inptaxbaseamt");
+      String strInvoicelineId = vars.getStringParameter("inpcInvoicelineId");
 
       try {
         printPage(response, vars, strChanged, strQtyInvoice, strPriceActual, strInvoiceId,
             strProduct, strPriceLimit, strTabId, strPriceList, strPriceStd, strLineNetAmt,
-            strTaxId, strGrossUnitPrice, strBaseGrossUnitPrice, strtaxbaseamt);
+            strTaxId, strGrossUnitPrice, strBaseGrossUnitPrice, strtaxbaseamt, strInvoicelineId);
       } catch (ServletException ex) {
         pageErrorCallOut(response);
       }
@@ -85,7 +86,8 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
       String strQtyInvoice, String strPriceActual, String strInvoiceId, String strProduct,
       String strPriceLimit, String strTabId, String strPriceList, String strPriceStd,
       String strLineNetAmt, String strTaxId, String strGrossUnitPrice,
-      String strBaseGrossUnitPrice, String strTaxBaseAmt) throws IOException, ServletException {
+      String strBaseGrossUnitPrice, String strTaxBaseAmt, String strInvoicelineId)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -93,6 +95,7 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
     SLInvoiceAmtData[] data = SLInvoiceAmtData.select(this, strInvoiceId);
     String strPrecision = "0", strPricePrecision = "0";
     boolean enforcedLimit = false;
+
     if (data != null && data.length > 0) {
       strPrecision = data[0].stdprecision.equals("") ? "0" : data[0].stdprecision;
       strPricePrecision = data[0].priceprecision.equals("") ? "0" : data[0].priceprecision;
@@ -137,6 +140,17 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
 
     resultado.append("var calloutName='SL_Invoice_Amt';\n\n");
     resultado.append("var respuesta = new Array(");
+
+    SLInvoiceAmtData[] qtydata = SLInvoiceAmtData.selectDeliverQty(this, strInvoicelineId);
+
+    if (qtydata != null && qtydata.length > 0) {
+      if ((new BigDecimal(strQtyInvoice).compareTo(new BigDecimal(qtydata[0].deliverqty)) > 0)
+          && qtydata[0].invoicerule.equals("D")) {
+        StringBuffer strMessage = new StringBuffer(Utility.messageBD(this,
+            "QtyInvoicedHigherDelivered", vars.getLanguage()));
+        resultado.append("new Array('WARNING', \"" + strMessage.toString() + "\"),");
+      }
+    }
 
     if (strChanged.equals("inplinenetamt")) {
       if (qtyInvoice.compareTo(BigDecimal.ZERO) == 0) {

@@ -368,8 +368,8 @@ isc.OBTreeItemTree.addProperties({
     criteria.operator = 'iContains';
     criteria.value = value;
     return {
-      _constructor: "AdvancedCriteria",
-      operator: "and",
+      _constructor: 'AdvancedCriteria',
+      operator: 'and',
       criteria: [criteria]
     };
   }
