@@ -6,14 +6,7 @@
     <olderThan>15</olderThan>
     <column xsi:nil="true"/>
     <hQLWhereClause xsi:nil="true"/>
-  </OBULOG_Config>
-  <OBULOG_Config id="6B23B39F20CB466A84C935D34781F0EC" identifier="AD_Session_Usage_Audit">
-    <id>6B23B39F20CB466A84C935D34781F0EC</id>
-    <active>true</active>
-    <table id="49F3C31FA3F340A080D0C7F45ADB0216" entity-name="ADTable" identifier="AD_Session_Usage_Audit"/>
-    <olderThan>40</olderThan>
-    <column xsi:nil="true"/>
-    <hQLWhereClause xsi:nil="true"/>
+    <truncateTable>false</truncateTable>
   </OBULOG_Config>
   <OBULOG_Config id="6E8DE0FE6C3241679F30F71D0EB9A783" identifier="AD_Process_Run">
     <id>6E8DE0FE6C3241679F30F71D0EB9A783</id>
@@ -22,6 +15,16 @@
     <olderThan>30</olderThan>
     <column xsi:nil="true"/>
     <hQLWhereClause>status != 'SUC'</hQLWhereClause>
+    <truncateTable>false</truncateTable>
+  </OBULOG_Config>
+  <OBULOG_Config id="CB60EDA17F3F46DE9C5EFE5F1EC46D2E" identifier="AD_Process_Request">
+    <id>CB60EDA17F3F46DE9C5EFE5F1EC46D2E</id>
+    <active>true</active>
+    <table id="82D4EDCF39AE44FB9B24E95A1B18B21C" entity-name="ADTable" identifier="AD_Process_Request"/>
+    <olderThan>30</olderThan>
+    <column xsi:nil="true"/>
+    <hQLWhereClause xsi:nil="true"/>
+    <truncateTable>false</truncateTable>
   </OBULOG_Config>
   <OBULOG_Config id="D4ABF737F2DC4B4193EE72F53218C8EC" identifier="AD_Session">
     <id>D4ABF737F2DC4B4193EE72F53218C8EC</id>
@@ -30,6 +33,7 @@
     <olderThan>40</olderThan>
     <column xsi:nil="true"/>
     <hQLWhereClause xsi:nil="true"/>
+    <truncateTable>false</truncateTable>
   </OBULOG_Config>
   <OBULOG_Config id="E0BDF5E5F6E2475D8F8CE77B65EFAFC6" identifier="AD_Process_Run">
     <id>E0BDF5E5F6E2475D8F8CE77B65EFAFC6</id>
@@ -38,6 +42,7 @@
     <olderThan>15</olderThan>
     <column xsi:nil="true"/>
     <hQLWhereClause>status = 'SUC'</hQLWhereClause>
+    <truncateTable>false</truncateTable>
   </OBULOG_Config>
   <ProcessRequest id="8E020D1888EA44B9941D7A8639E822D5" identifier="Log Clean Up Process - ">
     <id>8E020D1888EA44B9941D7A8639E822D5</id>
