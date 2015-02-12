@@ -151,29 +151,25 @@ public class LogCleanUpProcess extends DalBaseProcess {
     Connection con = OBDal.getInstance().getConnection(false);
     PreparedStatement ps = null;
     String logMsg;
-    String truncateStatement = "";
     for (String tableName : tablesToTruncate) {
-      truncateStatement += truncateStatement.isEmpty() ? "" : ", ";
-      truncateStatement += tableName;
-    }
-
-    try {
-      long truncateTime = System.currentTimeMillis();
-      ps = con.prepareStatement("truncate table " + truncateStatement);
-      ps.execute();
-      logMsg = "Truncated tables " + truncateStatement + " in "
-          + (System.currentTimeMillis() - truncateTime) + " ms.";
-      bgLogger.log(logMsg + "\n");
-      log.debug(logMsg);
-    } catch (SQLException e) {
-      log.error("Error truncating tables {} ", truncateStatement, e);
-      bgLogger.log("Error truncating tables " + truncateStatement + " " + e.getMessage() + "\n");
-    } finally {
-      if (ps != null) {
-        try {
-          ps.close();
-        } catch (SQLException e) {
-          log.error("Coulnd't close prepared statement to truncate tables {}" + truncateStatement);
+      try {
+        long truncateTime = System.currentTimeMillis();
+        ps = con.prepareStatement("truncate table " + tableName);
+        ps.execute();
+        logMsg = "Truncated table " + tableName + " in "
+            + (System.currentTimeMillis() - truncateTime) + " ms.";
+        bgLogger.log(logMsg + "\n");
+        log.debug(logMsg);
+      } catch (SQLException e) {
+        log.error("Error truncating table {} ", tableName, e);
+        bgLogger.log("Error truncating table " + tableName + " " + e.getMessage() + "\n");
+      } finally {
+        if (ps != null) {
+          try {
+            ps.close();
+          } catch (SQLException e) {
+            log.error("Coulnd't close prepared statement to truncate table {}" + tableName);
+          }
         }
       }
     }
