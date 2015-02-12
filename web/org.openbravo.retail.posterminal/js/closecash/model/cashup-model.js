@@ -49,10 +49,6 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
     name: 'OB.CashUp.PostPrintAndClose',
     loaded: true,
     active: true
-  }, {
-    name: 'OB.CashUp.Slave',
-    loaded: false,
-    active: false
   }],
   init: function () {
     var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('cashup-model.init');
@@ -71,7 +67,6 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
     this.cashupStepsDefinition[this.stepIndex('OB.CashUp.StepPendingOrders')].loaded = false;
     this.cashupStepsDefinition[this.stepIndex('OB.CashUp.CashPayments')].loaded = false;
     this.cashupStepsDefinition[this.stepIndex('OB.CashUp.PaymentMethods')].loaded = false;
-    this.cashupStepsDefinition[this.stepIndex('OB.CashUp.Slave')].loaded = false;
     this.set('loadFinished', false);
 
     //steps
@@ -143,10 +138,6 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
             if (terminalSlave && tempList.length === 0) {
               // Desactivate all steps 
               me.cashupStepsDefinition[me.stepIndex('OB.CashUp.PaymentMethods')].active = false;
-              me.cashupStepsDefinition[me.stepIndex('OB.CashUp.PostPrintAndClose')].active = false;
-              me.cashupStepsDefinition[me.stepIndex('OB.CashUp.Slave')].active = true;
-            } else {
-              me.cashupStepsDefinition[me.stepIndex('OB.CashUp.Slave')].loaded = true;
             }
             me.get('paymentList').reset(tempList.models);
             // Active/Desactive CashPayments and CashToKeep tabs
@@ -305,7 +296,6 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
           cashUpReport: cashUpReport
         }, function (args) {
           me.get('cashUpReport').add(args.cashUpReport);
-          me.cashupStepsDefinition[me.stepIndex('OB.CashUp.Slave')].loaded = true;
           me.finishLoad();
         });
       }, this);
@@ -481,11 +471,6 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
     var postPrintAndClose = this.stepIndex('OB.CashUp.PostPrintAndClose');
     if (this.cashupStepsDefinition[postPrintAndClose].active) {
       return step === (postPrintAndClose + 2);
-    } else {
-      var slave = this.stepIndex('OB.CashUp.Slave');
-      if (this.cashupStepsDefinition[slave].active) {
-        return step === (slave + 2);
-      }
     }
     return false;
   },

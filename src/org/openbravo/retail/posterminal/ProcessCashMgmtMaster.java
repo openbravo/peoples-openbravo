@@ -37,7 +37,9 @@ public class ProcessCashMgmtMaster extends JSONProcessSimple {
       cashUpIds += "'" + cashUp.getId() + "'";
     }
     JSONArray payments = new JSONArray();
-    ProcessCashCloseMaster.addPaymentmethodCashup(payments, cashUpIds);
+    if (!"".equals(cashUpIds)) {
+      ProcessCashCloseMaster.addPaymentmethodCashup(payments, cashUpIds);
+    }
     result.put("data", payments);
     result.put("status", 0);
     return result;

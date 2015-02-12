@@ -189,27 +189,3 @@ enyo.kind({
     return true;
   }
 });
-
-enyo.kind({
-  name: 'OB.CashUp.Slave',
-  kind: enyo.Object,
-  getStepComponent: function (leftpanel$) {
-    return leftpanel$.cashSlave;
-  },
-  getToolbarName: function () {
-    return 'toolbarempty';
-  },
-  nextButtonI18NLabel: function () {
-    return 'OBPOS_LblSlaveClose';
-  },
-  allowNext: function () {
-    this.model.get('cashUpReport').at(0).set('time', new Date());
-    return true;
-  },
-  getSubstepsLength: function (model) {
-    return 1;
-  },
-  isSubstepAvailable: function (model, substep) {
-    return true;
-  }
-});

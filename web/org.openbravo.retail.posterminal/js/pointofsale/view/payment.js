@@ -428,45 +428,71 @@ enyo.kind({
   },
 
   checkEnoughCashAvailable: function (paymentstatus, selectedPayment) {
-    var currentCash = OB.DEC.Zero,
-        requiredCash, hasEnoughCash, hasAllEnoughCash = true;
+    var requiredCash, hasEnoughCash, hasAllEnoughCash = true;
+    // Check slave cash 
+    this.checkSlaveCashAvailable(selectedPayment, this, function (currentCash) {
+      if (OB.UTIL.isNullOrUndefined(selectedPayment) || !selectedPayment.paymentMethod.iscash) {
+        requiredCash = OB.DEC.Zero;
+      } else if (!_.isUndefined(paymentstatus) && paymentstatus.isNegative) {
+        requiredCash = paymentstatus.pendingAmt;
+        paymentstatus.payments.each(function (payment) {
+          var paymentmethod;
+          if (payment.get('kind') === selectedPayment.payment.searchKey) {
+            requiredCash = OB.DEC.add(requiredCash, payment.get('amount'));
+          } else {
+            paymentmethod = OB.POS.terminal.terminal.paymentnames[payment.get('kind')];
+            if (paymentmethod && payment.get('amount') > paymentmethod.currentCash) {
+              hasAllEnoughCash = false;
+            }
+          }
+        });
+      } else if (!_.isUndefined(paymentstatus)) {
+        requiredCash = paymentstatus.changeAmt;
+      }
+
+      if (!_.isUndefined(requiredCash) && requiredCash === 0) {
+        hasEnoughCash = true;
+      } else if (!_.isUndefined(requiredCash)) {
+        hasEnoughCash = OB.DEC.compare(OB.DEC.sub(currentCash, requiredCash)) >= 0;
+      }
+
+      if (hasEnoughCash && hasAllEnoughCash) {
+        this.$.noenoughchangelbl.hide();
+        this.$.payments.scrollAreaMaxHeight = '150px';
+        this.$.doneButton.setDisabled(false);
+      } else {
+        this.$.noenoughchangelbl.show();
+        this.$.payments.scrollAreaMaxHeight = '130px';
+        this.$.doneButton.setDisabled(true);
+      }
+    });
+  },
+
+  checkSlaveCashAvailable: function (selectedPayment, scope, callback) {
+    var currentCash = OB.DEC.Zero;
     if (selectedPayment && selectedPayment.paymentMethod.iscash) {
       currentCash = selectedPayment.currentCash || OB.DEC.Zero;
     }
-
-    if (OB.UTIL.isNullOrUndefined(selectedPayment) || !selectedPayment.paymentMethod.iscash) {
-      requiredCash = OB.DEC.Zero;
-    } else if (!_.isUndefined(paymentstatus) && paymentstatus.isNegative) {
-      requiredCash = paymentstatus.pendingAmt;
-      paymentstatus.payments.each(function (payment) {
-        var paymentmethod;
-        if (payment.get('kind') === selectedPayment.payment.searchKey) {
-          requiredCash = OB.DEC.add(requiredCash, payment.get('amount'));
+    if (OB.POS.modelterminal.get('terminal').ismaster && selectedPayment.paymentMethod.iscash && selectedPayment.paymentMethod.isshared) {
+      // Load current cashup info from slaves
+      new OB.DS.Process('org.openbravo.retail.posterminal.ProcessCashMgmtMaster').exec({
+        cashUpId: OB.POS.modelterminal.get('terminal').cashUpId
+      }, function (data) {
+        if (data && data.exception) {
+          // Error handler 
+          OB.log('error', data.exception.message);
+          OB.UTIL.showAlert.display(data.exception.message, OB.I18N.getLabel('OBMOBC_LblError'), 'alert-error', false);
         } else {
-          paymentmethod = OB.POS.terminal.terminal.paymentnames[payment.get('kind')];
-          if (paymentmethod && payment.get('amount') > paymentmethod.currentCash) {
-            hasAllEnoughCash = false;
-          }
+          _.each(data, function (pay) {
+            if (pay.searchKey === selectedPayment.payment.searchKey) {
+              currentCash = OB.DEC.add(currentCash, pay.totalSales);
+            }
+          });
         }
+        callback.call(scope, currentCash);
       });
-    } else if (!_.isUndefined(paymentstatus)) {
-      requiredCash = paymentstatus.changeAmt;
-    }
-
-    if (!_.isUndefined(requiredCash) && requiredCash === 0) {
-      hasEnoughCash = true;
-    } else if (!_.isUndefined(requiredCash)) {
-      hasEnoughCash = OB.DEC.compare(OB.DEC.sub(currentCash, requiredCash)) >= 0;
-    }
-
-    if (hasEnoughCash && hasAllEnoughCash) {
-      this.$.noenoughchangelbl.hide();
-      this.$.payments.scrollAreaMaxHeight = '150px';
-      this.$.doneButton.setDisabled(false);
     } else {
-      this.$.noenoughchangelbl.show();
-      this.$.payments.scrollAreaMaxHeight = '130px';
-      this.$.doneButton.setDisabled(true);
+      callback.call(scope, currentCash);
     }
   },
 
