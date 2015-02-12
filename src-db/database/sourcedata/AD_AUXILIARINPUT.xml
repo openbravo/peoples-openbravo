@@ -3911,7 +3911,7 @@ and c.bpartner_acctdim_isenable = 'Y']]></CODE>
 <!--DA1AD5FE2A0043719E13849EB168173C-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--DA1AD5FE2A0043719E13849EB168173C-->  <AD_TAB_ID><![CDATA[186]]></AD_TAB_ID>
 <!--DA1AD5FE2A0043719E13849EB168173C-->  <NAME><![CDATA[HasBeenReplaced]]></NAME>
-<!--DA1AD5FE2A0043719E13849EB168173C-->  <CODE><![CDATA[@SQL=select case when (select count(*) from c_order where replacedorder_id = @c_order_id@) >= 1 then 'Y' else 'N' end]]></CODE>
+<!--DA1AD5FE2A0043719E13849EB168173C-->  <CODE><![CDATA[@SQL=select case when (select count(*) from c_order where cancelledorder_id = @c_order_id@) >= 1 then 'Y' else 'N' end]]></CODE>
 <!--DA1AD5FE2A0043719E13849EB168173C-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--DA1AD5FE2A0043719E13849EB168173C--></AD_AUXILIARINPUT>
 

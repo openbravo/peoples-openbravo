@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
@@ -412,6 +411,11 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
           // Duplicate payment with negative amount
           newPayment = createPayment(newPayment, inverseOrder, paymentPaymentMethod,
               negativeAmount, paymentDocumentType, financialAccount);
+
+          // Set amount and used credit to zero
+          newPayment.setAmount(BigDecimal.ZERO);
+          newPayment.setUsedCredit(BigDecimal.ZERO);
+          OBDal.getInstance().save(newPayment);
         }
         // Call to processPayment in order to process it
         ConnectionProvider conn = new DalConnectionProvider();
@@ -422,7 +426,6 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
         }
 
         // Create if needed a second payment for the partially paid
-        // TODO
         BigDecimal outstandingAmount = paymentSchedule.getOutstandingAmount();
         if (outstandingAmount.compareTo(BigDecimal.ZERO) != 0) {
           BigDecimal negativeOutstandingAmount = outstandingAmount.negate();
@@ -469,6 +472,11 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
           newPayment2 = createPayment(newPayment2, oldOrder, paymentPaymentMethod,
               outstandingAmount, paymentDocumentType, financialAccount);
 
+          // Set amount and used credit to zero
+          newPayment.setAmount(BigDecimal.ZERO);
+          newPayment.setUsedCredit(BigDecimal.ZERO);
+          OBDal.getInstance().save(newPayment2);
+
           // Call to processPayment in order to process it
           OBError error2 = FIN_AddPayment.processPayment(vars, conn, "P", newPayment2);
           if (error2.getType().equals("Error")) {
@@ -484,9 +492,6 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
       JSONObject result = new JSONObject();
 
       return result;
-    } catch (JSONException e) {
-      log4j.error("Error in process", e);
-      return new JSONObject();
     } catch (Exception e1) {
       try {
         OBDal.getInstance().getConnection().rollback();
@@ -494,8 +499,7 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
         throw new OBException(e2);
       }
       Throwable e3 = DbUtility.getUnderlyingSQLException(e1);
-      log4j.error(e3);
-      return new JSONObject();
+      throw new OBException(e3);
     }
   }
 
