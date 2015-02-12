@@ -263,6 +263,7 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
       groupByClause.append(" COALESCE(ipriority.priority, opriority.priority), ");
       groupByClause.append(" inv.salesTransaction, ");
       groupByClause.append(" oinfo.organization, ");
+      groupByClause.append(" oinfo.aPRMPaymentDescription, ");
       groupByClause.append(" inv.orderReference, ");
     } else if ("O".equals(transactionType)) {
       groupByClause.append(" ord.documentNo, ");
@@ -279,6 +280,7 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
       groupByClause.append(" COALESCE(ipriority.priority, opriority.priority), ");
       groupByClause.append(" inv.salesTransaction, ");
       groupByClause.append(" oinfo.organization, ");
+      groupByClause.append(" oinfo.aPRMPaymentDescription, ");
       groupByClause.append(" inv.orderReference, ");
     }
     groupByClause.append(" COALESCE(invbp.id, ordbp.id), ");
