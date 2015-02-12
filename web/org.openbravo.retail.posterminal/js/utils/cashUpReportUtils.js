@@ -448,10 +448,10 @@
           totalDrops = paymentMethod.get('totalDrops');
 
       if (cashMgmt.get('type') === 'deposit') {
-        totalDeposits = OB.DEC.add(totalDeposits, cashMgmt.get('origAmount'));
+        totalDeposits = OB.DEC.add(totalDeposits, cashMgmt.get('amount'));
         paymentMethod.set('totalDeposits', totalDeposits);
       } else {
-        totalDrops = OB.DEC.add(totalDrops, cashMgmt.get('origAmount'));
+        totalDrops = OB.DEC.add(totalDrops, cashMgmt.get('amount'));
         paymentMethod.set('totalDrops', totalDrops);
       }
       OB.Dal.save(paymentMethod, function (success) {

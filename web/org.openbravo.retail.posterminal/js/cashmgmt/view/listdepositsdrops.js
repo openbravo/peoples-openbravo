@@ -43,16 +43,16 @@ enyo.kind({
     if (this.model.get('type') === 'drop') {
       lbl = OB.I18N.getLabel('OBPOS_LblWithdrawal') + ': ';
       if (this.model.get('origAmount') !== this.model.get('amount')) {
-        foreignAmt = OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('origAmount')));
-        amnt = OB.I18N.formatCurrency(this.model.get('amount'));
+        foreignAmt = OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('amount')));
+        amnt = OB.I18N.formatCurrency(this.model.get('origAmount'));
       } else {
         amnt = OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('amount')));
       }
     } else {
       lbl = OB.I18N.getLabel('OBPOS_LblDeposit') + ': ';
       if (this.model.get('origAmount') !== this.model.get('amount')) {
-        foreignAmt = OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('origAmount')));
-        amnt = OB.I18N.formatCurrency(this.model.get('amount'));
+        foreignAmt = OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('amount')));
+        amnt = OB.I18N.formatCurrency(this.model.get('origAmount'));
       } else {
         amnt = OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('amount')));
       }
@@ -221,9 +221,9 @@ enyo.kind({
     total = OB.DEC.sub(total, OB.DEC.abs(this.model.get('totalReturns')));
     var totalDeposits = _.reduce(transactionsArray, function (accum, trx) {
       if (trx.get('type') === 'deposit') {
-        return OB.DEC.add(accum, trx.get('origAmount'));
+        return OB.DEC.add(accum, trx.get('amount'));
       } else {
-        return OB.DEC.sub(accum, OB.DEC.abs(trx.get('origAmount')));
+        return OB.DEC.sub(accum, OB.DEC.abs(trx.get('amount')));
       }
     }, 0);
     total = OB.DEC.add(total, totalDeposits);
