@@ -130,7 +130,7 @@ public class LogCleanUpProcess extends DalBaseProcess {
         OBDal.getInstance().commitAndClose();
       }
 
-      logMsg = "Deleted " + totalDeletedRows + " rows";
+      logMsg = "Total rows deleted: " + totalDeletedRows;
       bgLogger.log(logMsg + "\n\n");
       log.debug(logMsg);
 
