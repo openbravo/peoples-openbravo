@@ -113,8 +113,8 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
         addedCashMgmt = new OB.Model.CashManagement({
           id: OB.Dal.get_uuid(),
           description: p.identifier + ' - ' + model.get('name'),
-          amount: OB.DEC.mul(p.amount, p.rate),
-          origAmount: p.amount,
+          amount: p.amount,
+          origAmount: OB.DEC.mul(p.amount, p.rate),
           type: p.type,
           reasonId: model.get('id'),
           paymentMethodId: p.id,
