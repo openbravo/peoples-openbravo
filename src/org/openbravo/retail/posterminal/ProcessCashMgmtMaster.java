@@ -27,18 +27,20 @@ public class ProcessCashMgmtMaster extends JSONProcessSimple {
   @Override
   public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
     JSONObject result = new JSONObject();
-    String cashUpId = jsonsent.getString("cashUpId");
-    List<OBPOSAppCashup> cashUpList = getCashUpList(cashUpId);
-    String cashUpIds = "";
-    for (OBPOSAppCashup cashUp : cashUpList) {
-      if (!"".equals(cashUpIds)) {
-        cashUpIds += ", ";
-      }
-      cashUpIds += "'" + cashUp.getId() + "'";
-    }
     JSONArray payments = new JSONArray();
-    if (!"".equals(cashUpIds)) {
-      ProcessCashCloseMaster.addPaymentmethodCashup(payments, cashUpIds);
+    if (jsonsent.has("cashUpId")) {
+      String cashUpId = jsonsent.getString("cashUpId");
+      List<OBPOSAppCashup> cashUpList = getCashUpList(cashUpId);
+      String cashUpIds = "";
+      for (OBPOSAppCashup cashUp : cashUpList) {
+        if (!"".equals(cashUpIds)) {
+          cashUpIds += ", ";
+        }
+        cashUpIds += "'" + cashUp.getId() + "'";
+      }
+      if (!"".equals(cashUpIds)) {
+        ProcessCashCloseMaster.addPaymentmethodCashup(payments, cashUpIds);
+      }
     }
     result.put("data", payments);
     result.put("status", 0);
