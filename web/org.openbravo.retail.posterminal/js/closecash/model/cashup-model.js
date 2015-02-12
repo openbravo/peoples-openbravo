@@ -503,20 +503,22 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
           OB.Dal.save(cashUp.at(0), function () {
             var callbackFunc = function () {
                 OB.UTIL.initCashUp(function () {
+                  OB.MobileApp.model.runSyncProcess();
                   OB.UTIL.SynchronizationHelper.finished(synchId, 'processAndFinishCashUp');
                   OB.UTIL.calculateCurrentCash();
                   OB.UTIL.showLoading(false);
                   me.set("finished", true);
                 }, function () {
+                  OB.MobileApp.model.runSyncProcess();
                   OB.UTIL.showLoading(false);
                   me.set("finishedWrongly", true);
                   OB.UTIL.SynchronizationHelper.finished(synchId, 'processAndFinishCashUp');
-                });
+                }, true);
                 };
             if (OB.MobileApp.model.hasPermission('OBPOS_print.cashup')) {
               me.printCashUp.print(me.get('cashUpReport').at(0), me.getCountCashSummary());
             }
-            OB.MobileApp.model.runSyncProcess(callbackFunc, callbackFunc);
+            callbackFunc();
           }, null);
         }, null, this);
       });

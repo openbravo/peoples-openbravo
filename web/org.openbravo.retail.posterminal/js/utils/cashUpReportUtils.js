@@ -308,7 +308,7 @@
           startingCash = pAux.paymentMethod.amountToKeep;
         }
       }
-      
+
       if (!deposits) {
         deposits = OB.DEC.Zero;
       }
@@ -335,7 +335,7 @@
     }, this);
   };
 
-  OB.UTIL.initCashUp = function (callback) {
+  OB.UTIL.initCashUp = function (callback, errorCallback, skipSearchBackend) {
 
     //1. Search non processed cashup in local DB
     //2. Search non processed cashup in backoffice DB
@@ -348,24 +348,29 @@
     };
     OB.Dal.find(OB.Model.CashUp, criteria, function (cashUp) { //OB.Dal.find success
       if (cashUp.length === 0) {
-        // Search in the backoffice
-        new OB.DS.Process('org.openbravo.retail.posterminal.master.Cashup').exec({
-          isprocessed: 'N'
-        }, function (data) {
-          // Found non processed cashups
-          if (data[0]) {
-            cashUp = new OB.Model.CashUp();
-            cashUp.set(data[0]);
-            var cashUpCollection = new Backbone.Collection();
-            cashUpCollection.push(cashUp);
-            OB.UTIL.createNewCashupFromServer(cashUp, function (callback) {
-              OB.UTIL.composeCashupInfo(cashUpCollection, null, null);
-              OB.UTIL.calculateCurrentCash(callback);
-            });
-          } else {
-            OB.UTIL.createNewCashup(callback);
-          }
-        });
+        if (!skipSearchBackend) {
+          // Search in the backoffice
+          new OB.DS.Process('org.openbravo.retail.posterminal.master.Cashup').exec({
+            isprocessed: 'N'
+          }, function (data) {
+            // Found non processed cashups
+            if (data[0]) {
+              cashUp = new OB.Model.CashUp();
+              cashUp.set(data[0]);
+              var cashUpCollection = new Backbone.Collection();
+              cashUpCollection.push(cashUp);
+              OB.UTIL.createNewCashupFromServer(cashUp, function (callback) {
+                OB.UTIL.composeCashupInfo(cashUpCollection, null, null);
+                OB.UTIL.calculateCurrentCash(callback);
+              });
+            } else {
+              OB.UTIL.createNewCashup(callback);
+            }
+          });
+        } else {
+          OB.UTIL.createNewCashup(callback);
+        }
+
       } else {
         if (!OB.UTIL.isNullOrUndefined(OB.MobileApp.model.get('terminal'))) {
           OB.MobileApp.model.get('terminal').cashUpId = cashUp.at(0).get('id');
