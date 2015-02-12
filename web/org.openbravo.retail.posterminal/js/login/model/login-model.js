@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, _, enyo, Backbone, console, BigDecimal */
+/*global OB, _, enyo, Backbone, console, BigDecimal, localStorage */
 
 (function () {
   // initialize the WebPOS terminal model that extends the core terminal model. after this, OB.MobileApp.model will be available
@@ -676,6 +676,11 @@
         OB.error("postCloseSession", arguments);
         OB.MobileApp.model.triggerLogout();
       });
+      this.set('currentView', {
+          name: 'order',
+          params: null
+        });
+      localStorage.setItem('leftColumnCurrentView', JSON.stringify(this.get('currentView')));
     },
 
     // these variables will keep the minimum value that the document order could have
