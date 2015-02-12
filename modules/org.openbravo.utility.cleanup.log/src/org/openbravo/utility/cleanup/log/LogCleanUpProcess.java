@@ -86,10 +86,17 @@ public class LogCleanUpProcess extends DalBaseProcess {
 
       long totalDeletedRows = 0L;
       Set<String> tablesWithDeletions = new LinkedHashSet<String>();
+      Set<String> tablesToTruncate = new LinkedHashSet<String>();
       for (LogCleanUpConfig config : qConfig.list()) {
         long t = System.currentTimeMillis();
         Entity entity = ModelProvider.getInstance().getEntityByTableId(
             (String) DalUtil.getId(config.getTable()));
+
+        if (config.isTruncateTable()) {
+          tablesToTruncate.add(entity.getTableName());
+          continue;
+        }
+
         logMsg = "Cleaning up entity " + entity.getName();
         bgLogger.log(logMsg + "\n");
         log.debug(logMsg);
@@ -127,10 +134,43 @@ public class LogCleanUpProcess extends DalBaseProcess {
       bgLogger.log(logMsg + "\n\n");
       log.debug(logMsg);
 
+      truncateTables(tablesToTruncate, bgLogger);
       vacuumTables(tablesWithDeletions, bgLogger);
 
     } finally {
       OBContext.restorePreviousMode();
+    }
+  }
+
+  private void truncateTables(Set<String> tablesToTruncate, ProcessLogger bgLogger) {
+    Connection con = OBDal.getInstance().getConnection(false);
+    PreparedStatement ps = null;
+    String logMsg;
+    String truncateStatement = "";
+    for (String tableName : tablesToTruncate) {
+      truncateStatement += truncateStatement.isEmpty() ? "" : ", ";
+      truncateStatement += tableName;
+    }
+
+    try {
+      long truncateTime = System.currentTimeMillis();
+      ps = con.prepareStatement("truncate table " + truncateStatement);
+      ps.execute();
+      logMsg = "Truncated tables " + truncateStatement + " in "
+          + (System.currentTimeMillis() - truncateTime) + " ms.";
+      bgLogger.log(logMsg + "\n");
+      log.debug(logMsg);
+    } catch (SQLException e) {
+      log.error("Error truncating tables {} ", truncateStatement, e);
+      bgLogger.log("Error truncating tables " + truncateStatement + " " + e.getMessage() + "\n");
+    } finally {
+      if (ps != null) {
+        try {
+          ps.close();
+        } catch (SQLException e) {
+          log.error("Coulnd't close prepared statement to truncate tables {}" + truncateStatement);
+        }
+      }
     }
   }
 
@@ -142,7 +182,7 @@ public class LogCleanUpProcess extends DalBaseProcess {
       return;
     }
     String logMsg;
-    Connection con = OBDal.getInstance().getConnection();
+    Connection con = OBDal.getInstance().getConnection(false);
     try {
       // auto commit is required in order to be able to execute vacuum
       con.setAutoCommit(true);
@@ -150,11 +190,11 @@ public class LogCleanUpProcess extends DalBaseProcess {
       for (String tableName : tablesWithDeletions) {
         PreparedStatement ps = null;
         try {
-          logMsg = "About to execute vacuum full for " + tableName;
+          logMsg = "About to execute vacuum for " + tableName;
           log.debug(logMsg);
           bgLogger.log(logMsg + "\n");
           long vacuumTime = System.currentTimeMillis();
-          ps = con.prepareStatement("vacuum full analyze " + tableName);
+          ps = con.prepareStatement("vacuum analyze " + tableName);
           ps.execute();
           logMsg = "Vacuum for " + tableName + " executed in "
               + (System.currentTimeMillis() - vacuumTime) + " ms";
@@ -171,12 +211,16 @@ public class LogCleanUpProcess extends DalBaseProcess {
           }
         }
       }
-
-      // resetting auto commit to properly release DAL trx
-      con.setAutoCommit(false);
     } catch (SQLException e1) {
       log.error("Errer executing vacuum", e1);
       bgLogger.equals("Error executing vacuum: " + e1.getMessage());
+    } finally {
+      // resetting auto commit to properly release DAL trx
+      try {
+        con.setAutoCommit(false);
+      } catch (SQLException e) {
+        log.error("Errer executing vacuum", e);
+      }
     }
   }
 }
