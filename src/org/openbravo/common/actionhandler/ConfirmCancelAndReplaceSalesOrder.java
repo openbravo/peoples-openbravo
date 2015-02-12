@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
@@ -33,7 +32,7 @@ import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.client.application.process.BaseProcessActionHandler;
+import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
@@ -61,11 +60,10 @@ import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.db.DbUtility;
 
-public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler {
-  private static final Logger log4j = Logger.getLogger(ConfirmCancelAndReplaceSalesOrder.class);
+public class ConfirmCancelAndReplaceSalesOrder extends BaseActionHandler {
 
   @Override
-  protected JSONObject doExecute(Map<String, Object> parameters, String content) throws OBException {
+  protected JSONObject execute(Map<String, Object> parameters, String content) throws OBException {
     try {
       // Get request parameters
       JSONObject request = new JSONObject(content);

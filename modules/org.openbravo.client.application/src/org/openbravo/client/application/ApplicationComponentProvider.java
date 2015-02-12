@@ -22,8 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.enterprise.context.ApplicationScoped;
-
 import org.openbravo.client.application.window.WindowDefinitionComponent;
 import org.openbravo.client.kernel.BaseComponentProvider;
 import org.openbravo.client.kernel.Component;
@@ -477,6 +475,11 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
 
     // Product Services
     globalResources.add(createStaticResource("web/js/productServices.js", true));
+
+    // Cancel and Replace
+    globalResources.add(createStaticResource("web/js/cancelAndReplaceSalesOrderProcess.js", false));
+    globalResources.add(createStaticResource("web/js/confirmCancelAndReplaceSalesOrderProcess.js",
+        false));
 
     return globalResources;
   }

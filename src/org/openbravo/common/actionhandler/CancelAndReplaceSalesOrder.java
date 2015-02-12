@@ -24,21 +24,20 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
-import org.openbravo.client.application.process.BaseProcessActionHandler;
+import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 
-public class CancelAndReplaceSalesOrder extends BaseProcessActionHandler {
+public class CancelAndReplaceSalesOrder extends BaseActionHandler {
   private static final Logger log = Logger.getLogger(CancelAndReplaceSalesOrder.class);
 
   @Override
-  protected JSONObject doExecute(Map<String, Object> parameters, String content) {
+  protected JSONObject execute(Map<String, Object> parameters, String content) {
     try {
 
       // Get request parameters
@@ -81,24 +80,12 @@ public class CancelAndReplaceSalesOrder extends BaseProcessActionHandler {
       // Get new Order id
       String newOrderId = newOrder.getId();
 
-      // Return result
-      JSONObject result = new JSONObject();
-
-      // Execute process and prepare an array with actions to be executed after execution
-      JSONArray actions = new JSONArray();
-
       // New record info
       JSONObject recordInfo = new JSONObject();
       recordInfo.put("tabId", tabId);
       recordInfo.put("recordId", newOrderId);
-      recordInfo.put("wait", true);
-      JSONObject recordInfoAction = new JSONObject();
-      recordInfoAction.put("openDirectTab", recordInfo);
-      actions.put(recordInfoAction);
 
-      result.put("responseActions", actions);
-
-      return result;
+      return recordInfo;
     } catch (JSONException e) {
       log.error("Error in process", e);
       return new JSONObject();
