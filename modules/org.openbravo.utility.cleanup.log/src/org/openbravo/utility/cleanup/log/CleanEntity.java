@@ -89,7 +89,13 @@ public class CleanEntity {
     log.debug("  Query: {}", hql);
 
     Session s = OBDal.getInstance().getSession();
-    int affectedRows = s.createQuery(hql).executeUpdate();
+    int affectedRows = 0;
+    try {
+      affectedRows = s.createQuery(hql).executeUpdate();
+    } catch (Exception e) {
+      log.error("Error executing cleanup query \"{}\"", hql, e);
+      bgLogger.log("Error executing cleanup query \"" + hql + "\":  " + e.getMessage() + "\n");
+    }
     String logMsg = "Deleted " + affectedRows + " rows";
 
     log.debug(logMsg);
