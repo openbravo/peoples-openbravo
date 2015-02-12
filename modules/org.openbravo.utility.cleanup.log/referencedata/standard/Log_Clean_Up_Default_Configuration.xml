@@ -23,7 +23,7 @@
     <table id="82D4EDCF39AE44FB9B24E95A1B18B21C" entity-name="ADTable" identifier="AD_Process_Request"/>
     <olderThan>30</olderThan>
     <column xsi:nil="true"/>
-    <hQLWhereClause xsi:nil="true"/>
+    <hQLWhereClause>status = 'COM'</hQLWhereClause>
     <truncateTable>false</truncateTable>
   </OBULOG_Config>
   <OBULOG_Config id="D4ABF737F2DC4B4193EE72F53218C8EC" identifier="AD_Session">
