@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013 Openbravo SLU 
+ * All portions are Copyright (C) 2013-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -53,6 +53,21 @@ public class CleanEntity {
 
   private static final Logger log = LoggerFactory.getLogger(CleanEntity.class);
 
+  /**
+   * Clean logs for an entity
+   * 
+   * @param config
+   *          Configuration regarding how the entity should be cleaned up, such as the number of
+   *          days of info to keep, where clauses, etc.
+   * @param client
+   *          Client to remove data from, in case it is System, all clients will be cleaned up
+   * @param org
+   *          If client is not System, data from this organization and the ones in its tree will be
+   *          removed
+   * @param bgLogger
+   *          Log to be displayed in Process Request window
+   * @return number of deleted rows
+   */
   public int clean(LogCleanUpConfig config, Client client, Organization org, ProcessLogger bgLogger) {
     Entity entity = ModelProvider.getInstance().getEntityByTableId(
         (String) DalUtil.getId(config.getTable()));
@@ -103,6 +118,7 @@ public class CleanEntity {
     return affectedRows;
   }
 
+  /** Returns the where clause to add to the HQL query to add client/org filtering */
   protected String getClientOrgFilter(Client client, Organization org) {
     String clientId = (String) DalUtil.getId(client);
     if (SYSTEM.equals(clientId)) {
