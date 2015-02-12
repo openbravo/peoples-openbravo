@@ -143,6 +143,11 @@ public class LogCleanUpProcess extends DalBaseProcess {
   }
 
   private void truncateTables(Set<String> tablesToTruncate, ProcessLogger bgLogger) {
+    if (tablesToTruncate.isEmpty()) {
+      // nothing to do
+      return;
+    }
+
     Connection con = OBDal.getInstance().getConnection(false);
     PreparedStatement ps = null;
     String logMsg;
