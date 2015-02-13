@@ -28,19 +28,10 @@ public class Issue28591UpdatePSD extends ModuleScript {
       ConnectionProvider cp = getConnectionProvider();
       boolean issue28591UpdatePSD =  Issue28591UpdatePSDData.updateWrongPSD(cp);
       if(!issue28591UpdatePSD) {
-        Issue28591UpdatePSDData[] dataps = Issue28591UpdatePSDData.selectPS(cp);
-        for (Issue28591UpdatePSDData ups : dataps) {
-          Issue28591UpdatePSDData.updateFinPaymentschedule(cp, ups.outstandingamt, ups.paidamt, ups.cInvoiceId);         
-        }
         Issue28591UpdatePSDData[] data = Issue28591UpdatePSDData.selectPSD(cp);
         for (Issue28591UpdatePSDData upsd : data) {
           Issue28591UpdatePSDData.updatePSDAmount(cp, upsd.outstandingamt, upsd.finPaymentScheduledetailId);
         }
-        Issue28591UpdatePSDData[] datapp = Issue28591UpdatePSDData.selectPaymentProposal(cp);
-        for (Issue28591UpdatePSDData uppp : datapp) {
-          Issue28591UpdatePSDData.updatePaymentProposal(cp, uppp.amount, uppp.finPaymentProposalId);
-        }
-        Issue28591UpdatePSDData.updatePaymentProp(cp);
         Issue28591UpdatePSDData.createPreference(cp);
      }
     } catch (Exception e) {
