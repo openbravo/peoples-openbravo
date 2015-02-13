@@ -411,16 +411,18 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseActionHandler {
               negativeAmount, paymentDocumentType, financialAccount);
 
           // Set amount and used credit to zero
-          newPayment.setAmount(BigDecimal.ZERO);
-          newPayment.setUsedCredit(BigDecimal.ZERO);
-          OBDal.getInstance().save(newPayment);
+          // newPayment.setAmount(BigDecimal.ZERO);
+          // newPayment.setUsedCredit(BigDecimal.ZERO);
+          // OBDal.getInstance().save(newPayment);
         }
         // Call to processPayment in order to process it
         ConnectionProvider conn = new DalConnectionProvider();
         VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
-        OBError error = FIN_AddPayment.processPayment(vars, conn, "P", newPayment);
-        if (error.getType().equals("Error")) {
-          throw new OBException(error.getMessage());
+        if (newPayment != null) {
+          OBError error = FIN_AddPayment.processPayment(vars, conn, "P", newPayment);
+          if (error.getType().equals("Error")) {
+            throw new OBException(error.getMessage());
+          }
         }
 
         // Create if needed a second payment for the partially paid
@@ -471,14 +473,16 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseActionHandler {
               outstandingAmount, paymentDocumentType, financialAccount);
 
           // Set amount and used credit to zero
-          newPayment.setAmount(BigDecimal.ZERO);
-          newPayment.setUsedCredit(BigDecimal.ZERO);
-          OBDal.getInstance().save(newPayment2);
+          // newPayment2.setAmount(BigDecimal.ZERO);
+          // newPayment2.setUsedCredit(BigDecimal.ZERO);
+          // OBDal.getInstance().save(newPayment2);
 
           // Call to processPayment in order to process it
-          OBError error2 = FIN_AddPayment.processPayment(vars, conn, "P", newPayment2);
-          if (error2.getType().equals("Error")) {
-            throw new OBException(error2.getMessage());
+          if (newPayment2 != null) {
+            OBError error2 = FIN_AddPayment.processPayment(vars, conn, "P", newPayment2);
+            if (error2.getType().equals("Error")) {
+              throw new OBException(error2.getMessage());
+            }
           }
         }
 
