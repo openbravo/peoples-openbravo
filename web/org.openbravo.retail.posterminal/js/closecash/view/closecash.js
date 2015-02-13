@@ -215,11 +215,6 @@ enyo.kind({
         kind: 'OB.OBPOSCashUp.UI.PostPrintClose',
         name: 'postPrintClose',
         showing: false
-      }, {
-        classes: 'span12',
-        kind: 'OB.OBPOSCashUp.UI.CashSlave',
-        name: 'cashSlave',
-        showing: false
       }]
     },
     rightPanel: {
