@@ -41,9 +41,10 @@ public class ProcessCashCloseMaster extends JSONProcessSimple {
       terminal.put("searchKey", application.getSearchKey());
       terminal.put("name", application.getName());
       OBPOSAppCashup terminalCashUp = getTerminalCashUp(application.getId(), cashUpId);
-      boolean finish = terminalCashUp.isProcessed() && terminalCashUp.isProcessedbo();
+      boolean finish = terminalCashUp != null && terminalCashUp.isProcessed()
+          && terminalCashUp.isProcessedbo();
       terminal.put("finish", finish);
-      terminal.put("cashUpId", terminalCashUp.getId());
+      terminal.put("cashUpId", terminalCashUp != null ? terminalCashUp.getId() : null);
       if (!finish) {
         finishAll = false;
       }
