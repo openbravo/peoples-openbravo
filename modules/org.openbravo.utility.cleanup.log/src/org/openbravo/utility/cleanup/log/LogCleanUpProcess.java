@@ -93,6 +93,7 @@ public class LogCleanUpProcess extends DalBaseProcess {
             (String) DalUtil.getId(config.getTable()));
 
         if (config.isTruncateTable()) {
+          // tables to be truncated don't use CleanEntity
           tablesToTruncate.add(entity.getTableName());
           continue;
         }
@@ -106,6 +107,7 @@ public class LogCleanUpProcess extends DalBaseProcess {
 
         for (Bean<?> beanCleaner : bm.getBeans(CleanEntity.class, new ComponentProvider.Selector(
             entity.getName()))) {
+          // in case there are specific handlers for this entity, use them
           useDefault = false;
           CleanEntity cleaner = (CleanEntity) bm.getReference(beanCleaner, CleanEntity.class,
               bm.createCreationalContext(beanCleaner));
@@ -114,11 +116,13 @@ public class LogCleanUpProcess extends DalBaseProcess {
         }
 
         if (useDefault) {
+          // if there was no specific handler for this entity, use default one
           log.debug("Using default cleaner for entity", entity);
           deletedRowsInEntity += defaultCleaner.clean(config, client, org, bgLogger);
         }
 
         if (deletedRowsInEntity > 0) {
+          // keep tables where actual deletions occurred, to vacuum them in PG later
           tablesWithDeletions.add(entity.getTableName());
         }
         logMsg = "Entity " + entity.getName() + " cleaned up in "
@@ -142,6 +146,7 @@ public class LogCleanUpProcess extends DalBaseProcess {
     }
   }
 
+  /** Truncates tables removing all data */
   private void truncateTables(Set<String> tablesToTruncate, ProcessLogger bgLogger) {
     if (tablesToTruncate.isEmpty()) {
       // nothing to do
@@ -164,21 +169,21 @@ public class LogCleanUpProcess extends DalBaseProcess {
         log.error("Error truncating table {} ", tableName, e);
         bgLogger.log("Error truncating table " + tableName + " " + e.getMessage() + "\n");
       } finally {
-        if (ps != null) {
-          try {
+        try {
+          if (ps != null && !ps.isClosed()) {
             ps.close();
-          } catch (SQLException e) {
-            log.error("Coulnd't close prepared statement to truncate table {}" + tableName);
           }
+        } catch (SQLException e) {
+          log.error("Coulnd't close prepared statement to truncate table {}" + tableName);
         }
       }
     }
   }
 
+  /** vacuums tables if in PostgreSQL */
   private void vacuumTables(Set<String> tablesWithDeletions, ProcessLogger bgLogger) {
     if (!"POSTGRE".equals(OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .get("bbdd.rdbms"))) {
-
       // Executing vacuum only in PG
       return;
     }
@@ -206,7 +211,9 @@ public class LogCleanUpProcess extends DalBaseProcess {
           bgLogger.log("Error executing vacuum " + e.getMessage() + "\n\n");
         } finally {
           try {
-            ps.close();
+            if (ps != null && !ps.isClosed()) {
+              ps.close();
+            }
           } catch (SQLException e) {
             log.error("Error closing call statement for vacuum in table {}", tableName, e);
           }
