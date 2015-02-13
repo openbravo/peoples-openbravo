@@ -26,43 +26,34 @@ static Logger log4j = Logger.getLogger(Issue28591UpdatePSDData.class);
   public String finPaymentDetailId;
   public String isreceipt;
   public String cBpartnerId;
-  public String paidamt;
-  public String finPaymentProposalId;
-  public String amount;
 
   public String getInitRecordNumber() {
     return InitRecordNumber;
   }
 
   public String getField(String fieldName) {
-    if (fieldName.equalsIgnoreCase("FIN_PAYMENT_SCHEDULEDETAIL_ID") || fieldName.equals("finPaymentScheduledetailId"))
+    if (fieldName.equalsIgnoreCase("fin_payment_scheduledetail_id") || fieldName.equals("finPaymentScheduledetailId"))
       return finPaymentScheduledetailId;
-    else if (fieldName.equalsIgnoreCase("OUTSTANDINGAMT"))
+    else if (fieldName.equalsIgnoreCase("outstandingamt"))
       return outstandingamt;
-    else if (fieldName.equalsIgnoreCase("WRONGAMT"))
+    else if (fieldName.equalsIgnoreCase("wrongamt"))
       return wrongamt;
-    else if (fieldName.equalsIgnoreCase("FIN_PAYMENT_SCHEDULE_ID") || fieldName.equals("finPaymentScheduleId"))
+    else if (fieldName.equalsIgnoreCase("fin_payment_schedule_id") || fieldName.equals("finPaymentScheduleId"))
       return finPaymentScheduleId;
-    else if (fieldName.equalsIgnoreCase("C_INVOICE_ID") || fieldName.equals("cInvoiceId"))
+    else if (fieldName.equalsIgnoreCase("c_invoice_id") || fieldName.equals("cInvoiceId"))
       return cInvoiceId;
-    else if (fieldName.equalsIgnoreCase("C_CURRENCY_ID") || fieldName.equals("cCurrencyId"))
+    else if (fieldName.equalsIgnoreCase("c_currency_id") || fieldName.equals("cCurrencyId"))
       return cCurrencyId;
-    else if (fieldName.equalsIgnoreCase("BP_CURRENCY_ID") || fieldName.equals("bpCurrencyId"))
+    else if (fieldName.equalsIgnoreCase("bp_currency_id") || fieldName.equals("bpCurrencyId"))
       return bpCurrencyId;
-    else if (fieldName.equalsIgnoreCase("FIN_PAYMENT_ID") || fieldName.equals("finPaymentId"))
+    else if (fieldName.equalsIgnoreCase("fin_payment_id") || fieldName.equals("finPaymentId"))
       return finPaymentId;
-    else if (fieldName.equalsIgnoreCase("FIN_PAYMENT_DETAIL_ID") || fieldName.equals("finPaymentDetailId"))
+    else if (fieldName.equalsIgnoreCase("fin_payment_detail_id") || fieldName.equals("finPaymentDetailId"))
       return finPaymentDetailId;
-    else if (fieldName.equalsIgnoreCase("ISRECEIPT"))
+    else if (fieldName.equalsIgnoreCase("isreceipt"))
       return isreceipt;
-    else if (fieldName.equalsIgnoreCase("C_BPARTNER_ID") || fieldName.equals("cBpartnerId"))
+    else if (fieldName.equalsIgnoreCase("c_bpartner_id") || fieldName.equals("cBpartnerId"))
       return cBpartnerId;
-    else if (fieldName.equalsIgnoreCase("PAIDAMT"))
-      return paidamt;
-    else if (fieldName.equalsIgnoreCase("FIN_PAYMENT_PROPOSAL_ID") || fieldName.equals("finPaymentProposalId"))
-      return finPaymentProposalId;
-    else if (fieldName.equalsIgnoreCase("AMOUNT"))
-      return amount;
    else {
      log4j.debug("Field does not exist: " + fieldName);
      return null;
@@ -78,8 +69,7 @@ static Logger log4j = Logger.getLogger(Issue28591UpdatePSDData.class);
     strSql = strSql + 
       "        SELECT '' as fin_payment_scheduledetail_id, '' as outstandingamt, '' as wrongamt, " +
       "        '' as fin_payment_schedule_id, '' as c_invoice_id, '' as c_currency_id, '' as bp_currency_id," +
-      "        '' as fin_payment_id, '' as fin_payment_detail_id, '' as isreceipt, '' as c_bpartner_id, '' as paidamt," +
-      "        '' as fin_payment_proposal_id, '' as amount " +
+      "        '' as fin_payment_id, '' as fin_payment_detail_id, '' as isreceipt, '' as c_bpartner_id" +
       "        FROM DUAL";
 
     ResultSet result;
@@ -100,20 +90,17 @@ static Logger log4j = Logger.getLogger(Issue28591UpdatePSDData.class);
       while(continueResult && result.next()) {
         countRecord++;
         Issue28591UpdatePSDData objectIssue28591UpdatePSDData = new Issue28591UpdatePSDData();
-        objectIssue28591UpdatePSDData.finPaymentScheduledetailId = UtilSql.getValue(result, "FIN_PAYMENT_SCHEDULEDETAIL_ID");
-        objectIssue28591UpdatePSDData.outstandingamt = UtilSql.getValue(result, "OUTSTANDINGAMT");
-        objectIssue28591UpdatePSDData.wrongamt = UtilSql.getValue(result, "WRONGAMT");
-        objectIssue28591UpdatePSDData.finPaymentScheduleId = UtilSql.getValue(result, "FIN_PAYMENT_SCHEDULE_ID");
-        objectIssue28591UpdatePSDData.cInvoiceId = UtilSql.getValue(result, "C_INVOICE_ID");
-        objectIssue28591UpdatePSDData.cCurrencyId = UtilSql.getValue(result, "C_CURRENCY_ID");
-        objectIssue28591UpdatePSDData.bpCurrencyId = UtilSql.getValue(result, "BP_CURRENCY_ID");
-        objectIssue28591UpdatePSDData.finPaymentId = UtilSql.getValue(result, "FIN_PAYMENT_ID");
-        objectIssue28591UpdatePSDData.finPaymentDetailId = UtilSql.getValue(result, "FIN_PAYMENT_DETAIL_ID");
-        objectIssue28591UpdatePSDData.isreceipt = UtilSql.getValue(result, "ISRECEIPT");
-        objectIssue28591UpdatePSDData.cBpartnerId = UtilSql.getValue(result, "C_BPARTNER_ID");
-        objectIssue28591UpdatePSDData.paidamt = UtilSql.getValue(result, "PAIDAMT");
-        objectIssue28591UpdatePSDData.finPaymentProposalId = UtilSql.getValue(result, "FIN_PAYMENT_PROPOSAL_ID");
-        objectIssue28591UpdatePSDData.amount = UtilSql.getValue(result, "AMOUNT");
+        objectIssue28591UpdatePSDData.finPaymentScheduledetailId = UtilSql.getValue(result, "fin_payment_scheduledetail_id");
+        objectIssue28591UpdatePSDData.outstandingamt = UtilSql.getValue(result, "outstandingamt");
+        objectIssue28591UpdatePSDData.wrongamt = UtilSql.getValue(result, "wrongamt");
+        objectIssue28591UpdatePSDData.finPaymentScheduleId = UtilSql.getValue(result, "fin_payment_schedule_id");
+        objectIssue28591UpdatePSDData.cInvoiceId = UtilSql.getValue(result, "c_invoice_id");
+        objectIssue28591UpdatePSDData.cCurrencyId = UtilSql.getValue(result, "c_currency_id");
+        objectIssue28591UpdatePSDData.bpCurrencyId = UtilSql.getValue(result, "bp_currency_id");
+        objectIssue28591UpdatePSDData.finPaymentId = UtilSql.getValue(result, "fin_payment_id");
+        objectIssue28591UpdatePSDData.finPaymentDetailId = UtilSql.getValue(result, "fin_payment_detail_id");
+        objectIssue28591UpdatePSDData.isreceipt = UtilSql.getValue(result, "isreceipt");
+        objectIssue28591UpdatePSDData.cBpartnerId = UtilSql.getValue(result, "c_bpartner_id");
         objectIssue28591UpdatePSDData.InitRecordNumber = Integer.toString(firstRegister);
         vector.addElement(objectIssue28591UpdatePSDData);
         if (countRecord >= numberRegisters && numberRegisters != 0) {
@@ -137,98 +124,6 @@ static Logger log4j = Logger.getLogger(Issue28591UpdatePSDData.class);
     Issue28591UpdatePSDData objectIssue28591UpdatePSDData[] = new Issue28591UpdatePSDData[vector.size()];
     vector.copyInto(objectIssue28591UpdatePSDData);
     return(objectIssue28591UpdatePSDData);
-  }
-
-  public static Issue28591UpdatePSDData[] selectPS(ConnectionProvider connectionProvider)    throws ServletException {
-    return selectPS(connectionProvider, 0, 0);
-  }
-
-  public static Issue28591UpdatePSDData[] selectPS(ConnectionProvider connectionProvider, int firstRegister, int numberRegisters)    throws ServletException {
-    String strSql = "";
-    strSql = strSql + 
-      "      select  sum(ps.paidamt) as paidamt, sum (ps.outstandingamt) as outstandingamt, i.c_invoice_id" +
-      "      from FIN_Payment_Schedule ps , c_invoice i" +
-      "      where ps.c_invoice_id=i.c_invoice_id" +
-      "      and i.ispaid='N'" +
-      "      group by i.c_invoice_id , i.totalpaid" +
-      "      having i.totalpaid <> sum(ps.paidamt)  and sum (ps.outstandingamt) =0";
-
-    ResultSet result;
-    Vector<java.lang.Object> vector = new Vector<java.lang.Object>(0);
-    PreparedStatement st = null;
-
-    try {
-    st = connectionProvider.getPreparedStatement(strSql);
-
-      result = st.executeQuery();
-      long countRecord = 0;
-      long countRecordSkip = 1;
-      boolean continueResult = true;
-      while(countRecordSkip < firstRegister && continueResult) {
-        continueResult = result.next();
-        countRecordSkip++;
-      }
-      while(continueResult && result.next()) {
-        countRecord++;
-        Issue28591UpdatePSDData objectIssue28591UpdatePSDData = new Issue28591UpdatePSDData();
-        objectIssue28591UpdatePSDData.paidamt = UtilSql.getValue(result, "PAIDAMT");
-        objectIssue28591UpdatePSDData.outstandingamt = UtilSql.getValue(result, "OUTSTANDINGAMT");
-        objectIssue28591UpdatePSDData.cInvoiceId = UtilSql.getValue(result, "C_INVOICE_ID");
-        objectIssue28591UpdatePSDData.InitRecordNumber = Integer.toString(firstRegister);
-        vector.addElement(objectIssue28591UpdatePSDData);
-        if (countRecord >= numberRegisters && numberRegisters != 0) {
-          continueResult = false;
-        }
-      }
-      result.close();
-    } catch(SQLException e){
-      log4j.error("SQL error in query: " + strSql + "Exception:"+ e);
-      throw new ServletException("@CODE=" + Integer.toString(e.getErrorCode()) + "@" + e.getMessage());
-    } catch(Exception ex){
-      log4j.error("Exception in query: " + strSql + "Exception:"+ ex);
-      throw new ServletException("@CODE=@" + ex.getMessage());
-    } finally {
-      try {
-        connectionProvider.releasePreparedStatement(st);
-      } catch(Exception ignore){
-        ignore.printStackTrace();
-      }
-    }
-    Issue28591UpdatePSDData objectIssue28591UpdatePSDData[] = new Issue28591UpdatePSDData[vector.size()];
-    vector.copyInto(objectIssue28591UpdatePSDData);
-    return(objectIssue28591UpdatePSDData);
-  }
-
-  public static int updateFinPaymentschedule(ConnectionProvider connectionProvider, String outstandingamt, String paidamt, String invoiceId)    throws ServletException {
-    String strSql = "";
-    strSql = strSql + 
-      "      update fin_payment_schedule set paidamt=to_number(?) , outstandingamt= to_number(?) where c_invoice_id=?        ";
-
-    int updateCount = 0;
-    PreparedStatement st = null;
-
-    int iParameter = 0;
-    try {
-    st = connectionProvider.getPreparedStatement(strSql);
-      iParameter++; UtilSql.setValue(st, iParameter, 12, null, outstandingamt);
-      iParameter++; UtilSql.setValue(st, iParameter, 12, null, paidamt);
-      iParameter++; UtilSql.setValue(st, iParameter, 12, null, invoiceId);
-
-      updateCount = st.executeUpdate();
-    } catch(SQLException e){
-      log4j.error("SQL error in query: " + strSql + "Exception:"+ e);
-      throw new ServletException("@CODE=" + Integer.toString(e.getErrorCode()) + "@" + e.getMessage());
-    } catch(Exception ex){
-      log4j.error("Exception in query: " + strSql + "Exception:"+ ex);
-      throw new ServletException("@CODE=@" + ex.getMessage());
-    } finally {
-      try {
-        connectionProvider.releasePreparedStatement(st);
-      } catch(Exception ignore){
-        ignore.printStackTrace();
-      }
-    }
-    return(updateCount);
   }
 
   public static Issue28591UpdatePSDData[] selectPSD(ConnectionProvider connectionProvider)    throws ServletException {
@@ -263,8 +158,8 @@ static Logger log4j = Logger.getLogger(Issue28591UpdatePSDData.class);
       while(continueResult && result.next()) {
         countRecord++;
         Issue28591UpdatePSDData objectIssue28591UpdatePSDData = new Issue28591UpdatePSDData();
-        objectIssue28591UpdatePSDData.outstandingamt = UtilSql.getValue(result, "OUTSTANDINGAMT");
-        objectIssue28591UpdatePSDData.finPaymentScheduledetailId = UtilSql.getValue(result, "FIN_PAYMENT_SCHEDULEDETAIL_ID");
+        objectIssue28591UpdatePSDData.outstandingamt = UtilSql.getValue(result, "outstandingamt");
+        objectIssue28591UpdatePSDData.finPaymentScheduledetailId = UtilSql.getValue(result, "fin_payment_scheduledetail_id");
         objectIssue28591UpdatePSDData.InitRecordNumber = Integer.toString(firstRegister);
         vector.addElement(objectIssue28591UpdatePSDData);
         if (countRecord >= numberRegisters && numberRegisters != 0) {
@@ -329,7 +224,7 @@ static Logger log4j = Logger.getLogger(Issue28591UpdatePSDData.class);
       "        SELECT count(*) as exist" +
       "        FROM DUAL" +
       "        WHERE EXISTS (SELECT 1 FROM ad_preference" +
-      "                      WHERE attribute = 'Issue28591updateWrongPSD2')";
+      "                      WHERE attribute = 'Issue28591updateWrongPSD')";
 
     ResultSet result;
     boolean boolReturn = false;
@@ -340,7 +235,7 @@ static Logger log4j = Logger.getLogger(Issue28591UpdatePSDData.class);
 
       result = st.executeQuery();
       if(result.next()) {
-        boolReturn = !UtilSql.getValue(result, "EXIST").equals("0");
+        boolReturn = !UtilSql.getValue(result, "exist").equals("0");
       }
       result.close();
     } catch(SQLException e){
@@ -359,131 +254,6 @@ static Logger log4j = Logger.getLogger(Issue28591UpdatePSDData.class);
     return(boolReturn);
   }
 
-  public static Issue28591UpdatePSDData[] selectPaymentProposal(ConnectionProvider connectionProvider)    throws ServletException {
-    return selectPaymentProposal(connectionProvider, 0, 0);
-  }
-
-  public static Issue28591UpdatePSDData[] selectPaymentProposal(ConnectionProvider connectionProvider, int firstRegister, int numberRegisters)    throws ServletException {
-    String strSql = "";
-    strSql = strSql + 
-      "       select pp.fin_payment_proposal_id, sum(psd.amount) as amount" +
-      "       from fin_payment_proposal pp, fin_payment_prop_detail ppd, fin_payment_scheduledetail psd" +
-      "       where pp.fin_payment_proposal_id = ppd.fin_payment_proposal_id" +
-      "       and ppd.fin_payment_scheduledetail_id = psd.fin_payment_scheduledetail_id" +
-      "       and ppd.amount > psd.amount" +
-      "       and psd.fin_payment_detail_id IS NULL" +
-      "       group by pp.fin_payment_proposal_id, pp.amount";
-
-    ResultSet result;
-    Vector<java.lang.Object> vector = new Vector<java.lang.Object>(0);
-    PreparedStatement st = null;
-
-    try {
-    st = connectionProvider.getPreparedStatement(strSql);
-
-      result = st.executeQuery();
-      long countRecord = 0;
-      long countRecordSkip = 1;
-      boolean continueResult = true;
-      while(countRecordSkip < firstRegister && continueResult) {
-        continueResult = result.next();
-        countRecordSkip++;
-      }
-      while(continueResult && result.next()) {
-        countRecord++;
-        Issue28591UpdatePSDData objectIssue28591UpdatePSDData = new Issue28591UpdatePSDData();
-        objectIssue28591UpdatePSDData.finPaymentProposalId = UtilSql.getValue(result, "FIN_PAYMENT_PROPOSAL_ID");
-        objectIssue28591UpdatePSDData.amount = UtilSql.getValue(result, "AMOUNT");
-        objectIssue28591UpdatePSDData.InitRecordNumber = Integer.toString(firstRegister);
-        vector.addElement(objectIssue28591UpdatePSDData);
-        if (countRecord >= numberRegisters && numberRegisters != 0) {
-          continueResult = false;
-        }
-      }
-      result.close();
-    } catch(SQLException e){
-      log4j.error("SQL error in query: " + strSql + "Exception:"+ e);
-      throw new ServletException("@CODE=" + Integer.toString(e.getErrorCode()) + "@" + e.getMessage());
-    } catch(Exception ex){
-      log4j.error("Exception in query: " + strSql + "Exception:"+ ex);
-      throw new ServletException("@CODE=@" + ex.getMessage());
-    } finally {
-      try {
-        connectionProvider.releasePreparedStatement(st);
-      } catch(Exception ignore){
-        ignore.printStackTrace();
-      }
-    }
-    Issue28591UpdatePSDData objectIssue28591UpdatePSDData[] = new Issue28591UpdatePSDData[vector.size()];
-    vector.copyInto(objectIssue28591UpdatePSDData);
-    return(objectIssue28591UpdatePSDData);
-  }
-
-  public static int updatePaymentProposal(ConnectionProvider connectionProvider, String sumAmt, String finPaymentProposalId)    throws ServletException {
-    String strSql = "";
-    strSql = strSql + 
-      "      update fin_payment_proposal" +
-      "      set amount = to_number(?)" +
-      "      where fin_payment_proposal_id =?";
-
-    int updateCount = 0;
-    PreparedStatement st = null;
-
-    int iParameter = 0;
-    try {
-    st = connectionProvider.getPreparedStatement(strSql);
-      iParameter++; UtilSql.setValue(st, iParameter, 12, null, sumAmt);
-      iParameter++; UtilSql.setValue(st, iParameter, 12, null, finPaymentProposalId);
-
-      updateCount = st.executeUpdate();
-    } catch(SQLException e){
-      log4j.error("SQL error in query: " + strSql + "Exception:"+ e);
-      throw new ServletException("@CODE=" + Integer.toString(e.getErrorCode()) + "@" + e.getMessage());
-    } catch(Exception ex){
-      log4j.error("Exception in query: " + strSql + "Exception:"+ ex);
-      throw new ServletException("@CODE=@" + ex.getMessage());
-    } finally {
-      try {
-        connectionProvider.releasePreparedStatement(st);
-      } catch(Exception ignore){
-        ignore.printStackTrace();
-      }
-    }
-    return(updateCount);
-  }
-
-  public static int updatePaymentProp(ConnectionProvider connectionProvider)    throws ServletException {
-    String strSql = "";
-    strSql = strSql + 
-      "       update fin_payment_prop_detail ppd" +
-      "       set amount = ( select psd.amount  from fin_payment_scheduledetail  psd  where ppd.fin_payment_scheduledetail_id = psd.fin_payment_scheduledetail_id     and ppd.amount > psd.amount" +
-      "       and psd.fin_payment_detail_id IS NULL)" +
-      "       WHERE EXISTS ( select psd.amount  from fin_payment_scheduledetail psd  where ppd.fin_payment_scheduledetail_id = psd.fin_payment_scheduledetail_id     and ppd.amount > psd.amount" +
-      "       and psd.fin_payment_detail_id IS NULL)";
-
-    int updateCount = 0;
-    PreparedStatement st = null;
-
-    try {
-    st = connectionProvider.getPreparedStatement(strSql);
-
-      updateCount = st.executeUpdate();
-    } catch(SQLException e){
-      log4j.error("SQL error in query: " + strSql + "Exception:"+ e);
-      throw new ServletException("@CODE=" + Integer.toString(e.getErrorCode()) + "@" + e.getMessage());
-    } catch(Exception ex){
-      log4j.error("Exception in query: " + strSql + "Exception:"+ ex);
-      throw new ServletException("@CODE=@" + ex.getMessage());
-    } finally {
-      try {
-        connectionProvider.releasePreparedStatement(st);
-      } catch(Exception ignore){
-        ignore.printStackTrace();
-      }
-    }
-    return(updateCount);
-  }
-
   public static int createPreference(ConnectionProvider connectionProvider)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
@@ -494,7 +264,7 @@ static Logger log4j = Logger.getLogger(Issue28591UpdatePSDData.class);
       "        ) VALUES (" +
       "          get_uuid(), '0', '0', 'Y'," +
       "          '0', NOW(), '0', NOW()," +
-      "          'Issue28591updateWrongPSD2'" +
+      "          'Issue28591updateWrongPSD'" +
       "        )";
 
     int updateCount = 0;
