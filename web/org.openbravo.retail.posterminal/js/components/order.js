@@ -302,7 +302,10 @@ enyo.kind({
       listStyle: 'nonselectablelist',
       columns: ['tax', 'base', 'totaltax'],
       executeAfterRender: function () {
-        this.owner.$.listOrderLines.getScrollArea().scrollToBottom();
+        if (this.owner.$.listOrderLines.scrollToBottom) {
+          this.owner.$.listOrderLines.getScrollArea().scrollToBottom();
+          this.owner.$.listOrderLines.scrollToBottom = false;
+        }
       }
     }, {
       tag: 'li',
@@ -375,11 +378,19 @@ enyo.kind({
     this.$.listTaxLines.setCollection(taxList);
   },
   orderChanged: function (oldValue) {
+    var me = this;
     this.$.totalReceiptLine.renderTotal(this.order.getTotal());
     this.$.totalReceiptLine.renderQty(this.order.getQty());
     this.$.totalTaxLine.renderTax(OB.DEC.sub(this.order.getTotal(), this.order.getNet()));
     this.$.totalTaxLine.renderBase('');
     this.$.listOrderLines.setCollection(this.order.get('lines'));
+    this.$.listOrderLines.collection.on('add change:qty change:promotions', function (model, list) {
+      if (me.$.listOrderLines.collection.models.length > 0 && me.$.listOrderLines.collection.models[me.$.listOrderLines.collection.models.length - 1]._changing) {
+        me.$.listOrderLines.scrollToBottom = true;
+      } else if (list.models && list.length > 0 && model.id === list.models[list.length - 1].id) {
+        me.$.listOrderLines.scrollToBottom = true;
+      }
+    });
     this.$.listPaymentLines.setCollection(this.order.get('payments'));
     this.setTaxes();
     this.order.on('change:gross change:net change:taxes', function (model) {
