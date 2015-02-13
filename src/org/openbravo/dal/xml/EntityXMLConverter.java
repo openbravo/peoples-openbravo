@@ -243,8 +243,11 @@ public class EntityXMLConverter implements OBNotSingleton {
 
       final AttributesImpl rootAttrs = new AttributesImpl();
       rootAttrs.addAttribute("", "", "xmlns:xsi", "CDATA", XMLConstants.XSI_NAMESPACE);
-      rootAttrs.addAttribute("", "", XMLConstants.DEFAULT_VALUES_DATA, "boolean",
-          Boolean.toString(defaultValuesData));
+
+      if (defaultValuesData) {
+        rootAttrs.addAttribute("", "", XMLConstants.DEFAULT_VALUES_DATA, "boolean",
+            Boolean.toString(defaultValuesData));
+      }
 
       xmlHandler.startElement(XMLConstants.OPENBRAVO_NAMESPACE, XMLConstants.OB_ROOT_ELEMENT, "ob:"
           + XMLConstants.OB_ROOT_ELEMENT, rootAttrs);
