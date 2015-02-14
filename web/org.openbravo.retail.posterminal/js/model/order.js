@@ -709,8 +709,14 @@
     },
 
     setUnit: function (line, qty, text, doNotSave) {
-
+      var permission;
+      
       if (OB.DEC.isNumber(qty) && qty !== 0) {
+        permission = 'OBPOS_ReturnLine';
+        if (OB.MobileApp.model.get('permissions')[permission] === false && qty < 0) {
+          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgCannotAddNegative'));
+          return;
+        }
         var oldqty = line.get('qty');
         if (line.get('product').get('groupProduct') === false) {
           this.addProduct(line.get('product'));
