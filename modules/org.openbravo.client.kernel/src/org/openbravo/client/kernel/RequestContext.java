@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -108,7 +108,13 @@ public class RequestContext {
   }
 
   public String getRequestParameter(String name) {
-    return getRequest().getParameter(name);
+    HttpServletRequest localRequest = getRequest();
+    if (localRequest == null) {
+      // there is no request (ie. working in a background process)
+      return null;
+    } else {
+      return localRequest.getParameter(name);
+    }
   }
 
   public Map<?, ?> getParameterMap() {
