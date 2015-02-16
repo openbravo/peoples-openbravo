@@ -39,6 +39,7 @@ enyo.kind({
   i18nContent: 'OBPOS_LblApplyButton',
   tap: function () {
     var amount = OB.DEC.Zero,
+        total = OB.DEC.Zero,
         tmp;
     if (this.owner.$.btnModalMultiSearchInput.getValue().indexOf('%') !== -1) {
       try {
@@ -59,6 +60,12 @@ enyo.kind({
     if (_.isNaN(amount)) {
       this.model.get('multiOrders').get('multiOrdersList').get(this.owner.owner.args.id).setOrderType(null, 0);
       this.model.get('multiOrders').get('multiOrdersList').get(this.owner.owner.args.id).set('amountToLayaway', null);
+      this.doHideThisPopup();
+      return;
+    }
+    total = this.model.get('multiOrders').get('multiOrdersList').get(this.owner.owner.args.id).get('gross');
+    if (OB.DEC.compare(OB.DEC.sub(amount, total)) > 0) {
+      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_notValidInput_header'), OB.I18N.getLabel('OBPOS_notValidQty'));
       this.doHideThisPopup();
       return;
     }
