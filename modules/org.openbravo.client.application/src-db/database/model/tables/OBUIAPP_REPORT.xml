@@ -63,5 +63,6 @@
       </unique>
       <check name="OBUIAPP_REPORT_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="OBUIAPP_REPORT_PDF_AS_XLS_CHK"><![CDATA[USE_PDF_AS_XLS_TEMPLATE IN ('Y', 'N')]]></check>
+      <check name="OBUIAPP_REPORT_TMP_CHK"><![CDATA[PDF_TEMPLATE IS NOT NULL OR XLS_TEMPLATE IS NOT NULL]]></check>
     </table>
   </database>
