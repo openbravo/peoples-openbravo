@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -104,6 +104,7 @@ public class SL_Journal_Period extends HttpSecureAppServlet {
       if (strcPeriodId.equals(""))
         strcPeriodId = strcPeriodIdNew;
     }
+    boolean isStandardPeriod = true;
     if (strChanged.equals("inpcPeriodId") && !strcPeriodId.equals("")) {
       // When C_Period_ID is changed, check if in DateAcct range and set
       // to end date if not
@@ -117,6 +118,7 @@ public class SL_Journal_Period extends HttpSecureAppServlet {
             || DateTimeData.compare(this, EndDate, strDateAcct).equals("-1"))
           strDateAcct = EndDate;
       } else {
+        isStandardPeriod = false;
         strDateAcct = EndDate;
       }
     }
@@ -124,7 +126,9 @@ public class SL_Journal_Period extends HttpSecureAppServlet {
     resultado.append("var calloutName='SL_Journal_Period';\n\n");
     resultado.append("var respuesta = new Array(");
     resultado.append("new Array(\"inpdateacct\", \"" + strDateAcct + "\"),");
-    resultado.append("new Array(\"inpdatedoc\", \"" + strDateAcct + "\"),");
+    if (!isStandardPeriod) {
+      resultado.append("new Array(\"inpdatedoc\", \"" + strDateAcct + "\"),");
+    }
     resultado.append("new Array(\"inpcPeriodId\", \"" + strcPeriodId + "\"),");
     if (myMessage != null) {
       resultado.append("new Array('MESSAGE', \"" + myMessage.getMessage() + "\"),");
