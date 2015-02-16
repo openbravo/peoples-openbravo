@@ -77,7 +77,8 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
     if (OB.POS.modelterminal.get('terminal').ismaster) {
       // Load current cashup info from slaves
       new OB.DS.Process('org.openbravo.retail.posterminal.ProcessCashMgmtMaster').exec({
-        cashUpId: OB.POS.modelterminal.get('terminal').cashUpId
+        cashUpId: OB.POS.modelterminal.get('terminal').cashUpId,
+        terminalSlave: OB.POS.modelterminal.get('terminal').isslave
       }, function (data) {
         if (data && data.exception) {
           // Error handler 

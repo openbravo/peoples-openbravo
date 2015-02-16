@@ -473,10 +473,11 @@ enyo.kind({
     if (selectedPayment && selectedPayment.paymentMethod.iscash) {
       currentCash = selectedPayment.currentCash || OB.DEC.Zero;
     }
-    if (OB.POS.modelterminal.get('terminal').ismaster && selectedPayment.paymentMethod.iscash && selectedPayment.paymentMethod.isshared) {
+    if ((OB.POS.modelterminal.get('terminal').ismaster || OB.POS.modelterminal.get('terminal').isslave) && selectedPayment.paymentMethod.iscash && selectedPayment.paymentMethod.isshared) {
       // Load current cashup info from slaves
       new OB.DS.Process('org.openbravo.retail.posterminal.ProcessCashMgmtMaster').exec({
-        cashUpId: OB.POS.modelterminal.get('terminal').cashUpId
+        cashUpId: OB.POS.modelterminal.get('terminal').cashUpId,
+        terminalSlave: OB.POS.modelterminal.get('terminal').isslave
       }, function (data) {
         if (data && data.exception) {
           // Error handler 
@@ -485,7 +486,7 @@ enyo.kind({
         } else {
           _.each(data, function (pay) {
             if (pay.searchKey === selectedPayment.payment.searchKey) {
-              currentCash = OB.DEC.add(currentCash, pay.totalSales);
+              currentCash = OB.DEC.add(currentCash, pay.startingCash + pay.totalDeposits + pay.totalSales - pay.totalReturns - pay.totalDrops);
             }
           });
         }

@@ -30,16 +30,31 @@ public class ProcessCashMgmtMaster extends JSONProcessSimple {
     JSONArray payments = new JSONArray();
     if (jsonsent.has("cashUpId")) {
       String cashUpId = jsonsent.getString("cashUpId");
-      List<OBPOSAppCashup> cashUpList = getCashUpList(cashUpId);
-      String cashUpIds = "";
-      for (OBPOSAppCashup cashUp : cashUpList) {
-        if (!"".equals(cashUpIds)) {
-          cashUpIds += ", ";
+      boolean terminalSlave = jsonsent.has("terminalSlave") && jsonsent.getBoolean("terminalSlave");
+      // If terminal is slave get parent CashupId
+      if (terminalSlave) {
+        OBPOSAppCashup cashUp = OBDal.getInstance().get(OBPOSAppCashup.class, cashUpId);
+        if (cashUp != null && cashUp.getObposParentCashup() != null) {
+          cashUpId = cashUp.getObposParentCashup().getId();
+        } else {
+          cashUpId = null;
         }
-        cashUpIds += "'" + cashUp.getId() + "'";
       }
-      if (!"".equals(cashUpIds)) {
-        ProcessCashCloseMaster.addPaymentmethodCashup(payments, cashUpIds);
+      if (cashUpId != null) {
+        List<OBPOSAppCashup> cashUpList = getCashUpList(cashUpId);
+        String cashUpIds = terminalSlave ? "'" + cashUpId + "'" : "";
+        for (OBPOSAppCashup cashUp : cashUpList) {
+          if (terminalSlave && cashUp.getId().equals(jsonsent.getString("cashUpId"))) {
+            continue;
+          }
+          if (!"".equals(cashUpIds)) {
+            cashUpIds += ", ";
+          }
+          cashUpIds += "'" + cashUp.getId() + "'";
+        }
+        if (!"".equals(cashUpIds)) {
+          ProcessCashCloseMaster.addPaymentmethodCashup(payments, cashUpIds);
+        }
       }
     }
     result.put("data", payments);
