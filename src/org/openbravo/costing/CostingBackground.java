@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2014 Openbravo SLU
+ * All portions are Copyright (C) 2012-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -24,15 +24,24 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.ServletException;
+
 import org.apache.log4j.Logger;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.erpCommon.utility.PropertyException;
+import org.openbravo.exception.NoConnectionAvailableException;
+import org.openbravo.model.ad.domain.Preference;
+import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.cost.CostingRule;
@@ -40,6 +49,7 @@ import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.scheduling.ProcessLogger;
 import org.openbravo.service.db.DalBaseProcess;
+import org.openbravo.service.db.DalConnectionProvider;
 
 /**
  * @author gorkaion
@@ -50,6 +60,7 @@ public class CostingBackground extends DalBaseProcess {
   public static final String AD_PROCESS_ID = "3F2B4AAC707B4CE7B98D2005CF7310B5";
   private ProcessLogger logger;
   private int maxTransactions = 0;
+  public static final String TRANSACTION_COST_DATEACCT_INITIALIZED = "TransactionCostDateacctInitialized";
 
   @Override
   protected void doExecute(ProcessBundle bundle) throws Exception {
@@ -61,6 +72,9 @@ public class CostingBackground extends DalBaseProcess {
       OBContext.setAdminMode(false);
       result.setType("Success");
       result.setTitle(OBMessageUtils.messageBD("Success"));
+
+      // Initialize Transaction Cost Date Acct
+      initializeMtransCostDateAcct();
 
       // Get organizations with costing rules.
       StringBuffer where = new StringBuffer();
@@ -238,5 +252,54 @@ public class CostingBackground extends DalBaseProcess {
     trxQry.setNamedParameter("orgs", orgsWithRule);
 
     return trxQry.scroll(ScrollMode.FORWARD_ONLY);
+  }
+
+  private void initializeMtransCostDateAcct() throws Exception {
+    boolean transactionCostDateacctInitialized = false;
+    Client client = OBDal.getInstance().get(Client.class, "0");
+    Organization organization = OBDal.getInstance().get(Organization.class, "0");
+    try {
+      transactionCostDateacctInitialized = Preferences.getPreferenceValue(
+          CostingBackground.TRANSACTION_COST_DATEACCT_INITIALIZED, false, client, organization,
+          null, null, null).equals("Y");
+    } catch (PropertyException e1) {
+      transactionCostDateacctInitialized = false;
+    }
+
+    if (!transactionCostDateacctInitialized) {
+
+      try {
+        ConnectionProvider cp = new DalConnectionProvider();
+        InitializeCostingMTransCostDateacctData.initializeCostingMTransCostDateacct(
+            cp.getConnection(), cp);
+        InitializeCostingMTransCostDateacctData.initializeCostingMTransCostDateacct2(
+            cp.getConnection(), cp);
+
+      } catch (ServletException e) {
+        log4j
+            .error("SQL error in Costing Backgroung Initializing Transaction Cost Date Acct: Exception:"
+                + e);
+        throw new OBException("@CODE=" + e.getCause() + "@" + e.getMessage());
+      } catch (NoConnectionAvailableException e) {
+        log4j.error("Connection error in query: Exception:" + e);
+        throw new OBException("@CODE=NoConnectionAvailable");
+      } finally {
+        try {
+        } catch (Exception ignore) {
+        }
+      }
+
+      // Create the preference
+      Preference transactionCostDateacctInitializedPreference = OBProvider.getInstance().get(
+          Preference.class);
+      transactionCostDateacctInitializedPreference.setClient(client);
+      transactionCostDateacctInitializedPreference.setOrganization(organization);
+      transactionCostDateacctInitializedPreference
+          .setAttribute(CostingBackground.TRANSACTION_COST_DATEACCT_INITIALIZED);
+      transactionCostDateacctInitializedPreference.setSearchKey("Y");
+      transactionCostDateacctInitializedPreference.setPropertyList(false);
+      OBDal.getInstance().save(transactionCostDateacctInitializedPreference);
+      OBDal.getInstance().flush();
+    }
   }
 }
