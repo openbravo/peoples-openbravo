@@ -118,6 +118,11 @@ isc.OBParameterWindowView.addProperties({
             click: actionClick
           });
           buttonLayout.push(this.pdfButton);
+          if (this.popup) {
+            buttonLayout.push(isc.LayoutSpacer.create({
+              width: 32
+            }));
+          }
         }
         if (this.xlsExport) {
           this.xlsButton = isc.OBFormButton.create({
@@ -126,8 +131,12 @@ isc.OBParameterWindowView.addProperties({
             _buttonValue: 'XLS',
             click: actionClick
           });
-
           buttonLayout.push(this.xlsButton);
+          if (this.popup) {
+            buttonLayout.push(isc.LayoutSpacer.create({
+              width: 32
+            }));
+          }
         }
       } else {
         this.okButton = isc.OBFormButton.create({
