@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2015 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,10 +27,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.costing.CostingBackground;
 import org.openbravo.costing.CostingStatus;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.DateTimeData;
@@ -39,8 +41,10 @@ import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
@@ -102,6 +106,11 @@ public class ReportValuationStock extends HttpSecureAppServlet {
     if (CostingStatus.getInstance().isMigrated() == false) {
       advise(request, response, "ERROR",
           Utility.messageBD(this, "NotUsingNewCost", vars.getLanguage()), "");
+      return;
+    }
+    if (!transactionCostDateAcctInitialized()) {
+      advise(request, response, "ERROR",
+          Utility.messageBD(this, "TransactionCostDateAcctNotInitilized", vars.getLanguage()), "");
       return;
     }
     if (vars.commandIn("FIND")) {
@@ -262,6 +271,20 @@ public class ReportValuationStock extends HttpSecureAppServlet {
     }
     whereQry.setMaxResult(1);
     return whereQry.uniqueResult() != null;
+  }
+
+  private boolean transactionCostDateAcctInitialized() {
+    boolean transactionCostDateacctInitialized = false;
+    Client client = OBDal.getInstance().get(Client.class, "0");
+    Organization organization = OBDal.getInstance().get(Organization.class, "0");
+    try {
+      transactionCostDateacctInitialized = Preferences.getPreferenceValue(
+          CostingBackground.TRANSACTION_COST_DATEACCT_INITIALIZED, false, client, organization,
+          null, null, null).equals("Y");
+    } catch (PropertyException e1) {
+      transactionCostDateacctInitialized = false;
+    }
+    return transactionCostDateacctInitialized;
   }
 
   public String getServletInfo() {
