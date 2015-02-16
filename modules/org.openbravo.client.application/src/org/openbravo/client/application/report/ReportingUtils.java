@@ -130,7 +130,7 @@ public class ReportingUtils {
       if (!parameters.containsKey(JRParameter.REPORT_VIRTUALIZER)) {
         // virtualizer is essentially using a tmp-file to avoid huge memory consumption by jasper
         // when processing big reports
-        JRSwapFile swap = new JRSwapFile(System.getProperty("java.io.tmpdir"), 4096, 1);
+        JRSwapFile swap = new JRSwapFile(getTempFolder(), 4096, 1);
         // start using the virtualizer when having more than 100 pages of data
         virtualizer = new JRSwapFileVirtualizer(100, swap);
         parameters.put(JRParameter.REPORT_VIRTUALIZER, virtualizer);
