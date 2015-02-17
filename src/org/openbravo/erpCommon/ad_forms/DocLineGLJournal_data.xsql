@@ -12,7 +12,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2010 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2015 Openbravo S.L.U.
  ******************************************************************************
 -->
 
@@ -48,7 +48,7 @@
             VC.C_LOCFROM_ID,
             VC.C_LOCTO_ID,
             COALESCE(JL.M_PRODUCT_ID, VC.M_PRODUCT_ID) AS M_PRODUCT_ID,
-            COALESCE(JL.C_BPARTNER_ID, VC.C_BPARTNER_ID) AS C_BPARTNERr_ID,  
+            COALESCE(JL.C_BPARTNER_ID, VC.C_BPARTNER_ID) AS C_BPARTNER_ID,
             COALESCE(JL.C_SALESREGION_ID,VC.C_SALESREGION_ID) AS C_SALESREGION_ID,
             COALESCE(JL.C_PROJECT_ID,VC.C_PROJECT_ID) AS C_PROJECT_ID,
             COALESCE(JL.C_CAMPAIGN_ID,VC.C_CAMPAIGN_ID) AS C_CAMPAIGN_ID,
