@@ -266,9 +266,8 @@ public class ReportRefundSalesDimensionalAnalyses extends HttpSecureAppServlet {
     }
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-          "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-              "ReportRefundSalesDimensionalAnalyses"), Utility.getContext(this, vars,
-              "#User_Client", "ReportRefundSalesDimensionalAnalyses"), 0);
+          "", Utility.getContext(this, vars, "#User_Org", "ReportRefundSalesDimensionalAnalyses"),
+          Utility.getContext(this, vars, "#User_Client", "ReportRefundSalesDimensionalAnalyses"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData,
           "ReportRefundSalesDimensionalAnalyses", strOrg);
       xmlDocument.setData("reportAD_ORGID", "liststructure", comboTableData.select(false));
@@ -424,7 +423,8 @@ public class ReportRefundSalesDimensionalAnalyses extends HttpSecureAppServlet {
         intDiscard++;
       } else if (strShownArray[i].equals("4")) {
         strTextShow[i] = "AD_COLUMN_IDENTIFIER(to_char('M_Product'), to_char( M_PRODUCT.M_PRODUCT_ID), to_char('"
-            + vars.getLanguage() + "'))|| CASE WHEN uomsymbol IS NULL THEN '' ELSE to_char(' ('||uomsymbol||')') END";
+            + vars.getLanguage()
+            + "'))|| CASE WHEN uomsymbol IS NULL THEN '' ELSE to_char(' ('||uomsymbol||')') END";
         intAuxDiscard = i;
         intDiscard++;
       } else if (strShownArray[i].equals("5")) {

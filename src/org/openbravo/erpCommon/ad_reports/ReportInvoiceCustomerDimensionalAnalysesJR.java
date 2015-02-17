@@ -433,7 +433,7 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-          "", Utility.getContext(this, vars, "#AccessibleOrgTree",
+          "", Utility.getContext(this, vars, "#User_Org",
               "ReportInvoiceCustomerDimensionalAnalysesJR"), Utility.getContext(this, vars,
               "#User_Client", "ReportInvoiceCustomerDimensionalAnalysesJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData,

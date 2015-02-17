@@ -225,9 +225,9 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
 
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-            "D4DF252DEC3B44858454EE5292A8B836", Utility.getContext(this, vars,
-                "#AccessibleOrgTree", "ReportParetoProduct"), Utility.getContext(this, vars,
-                "#User_Client", "ReportParetoProduct"), 0);
+            "D4DF252DEC3B44858454EE5292A8B836", Utility.getContext(this, vars, "#User_Org",
+                "ReportParetoProduct"), Utility.getContext(this, vars, "#User_Client",
+                "ReportParetoProduct"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportParetoProduct",
             strAD_Org_ID);
         xmlDocument.setData("reportAD_Org_ID", "liststructure", comboTableData.select(false));

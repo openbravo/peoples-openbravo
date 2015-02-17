@@ -236,7 +236,7 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
     xmlDocument.setParameter("paramAD_ORG_Id", strOrgTrx);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_ORG_ID", "",
-          "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportAgingBalanceData"),
+          "", Utility.getContext(this, vars, "#User_Org", "ReportAgingBalanceData"),
           Utility.getContext(this, vars, "#User_Client", "ReportAgingBalanceData"), '*');
       comboTableData.fillParameters(null, "ReportAgingBalanceData", strOrgTrx);
       xmlDocument.setData("reportAD_ORGID", "liststructure", comboTableData.select(false));

@@ -361,7 +361,7 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
       comboTableData = null;
 
       comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "", "",
-          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProjectProfitabilityJR"),
+          Utility.getContext(this, vars, "#User_Org", "ReportProjectProfitabilityJR"),
           Utility.getContext(this, vars, "#User_Client", "ReportProjectProfitabilityJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportProjectProfitabilityJR",
           strOrg);

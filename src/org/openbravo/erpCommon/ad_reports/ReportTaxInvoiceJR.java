@@ -285,7 +285,7 @@ public class ReportTaxInvoiceJR extends HttpSecureAppServlet {
       log4j.debug("****** setData reportAD_ORGID");
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-          "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportTaxInvoiceJR"),
+          "", Utility.getContext(this, vars, "#User_Org", "ReportTaxInvoiceJR"),
           Utility.getContext(this, vars, "#User_Client", "ReportTaxInvoiceJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportTaxInvoiceJR", strOrg);
       xmlDocument.setData("reportAD_ORGID", "liststructure", comboTableData.select(false));

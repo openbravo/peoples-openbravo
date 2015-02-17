@@ -164,7 +164,7 @@ public class ReportOrderNotInvoiceJR extends HttpSecureAppServlet {
     }
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-          "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportOrderNotInvoiceJR"),
+          "", Utility.getContext(this, vars, "#User_Org", "ReportOrderNotInvoiceJR"),
           Utility.getContext(this, vars, "#User_Client", "ReportOrderNotInvoiceJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportOrderNotInvoiceJR",
           strCOrgId);

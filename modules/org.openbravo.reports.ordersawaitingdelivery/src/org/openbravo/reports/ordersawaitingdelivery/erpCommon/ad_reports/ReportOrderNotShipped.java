@@ -154,7 +154,7 @@ public class ReportOrderNotShipped extends HttpSecureAppServlet {
     xmlDocument.setParameter("adOrgId", strCOrgId);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-          "49DC1D6F086945AB82F84C66F5F13F16", Utility.getContext(this, vars, "#AccessibleOrgTree",
+          "49DC1D6F086945AB82F84C66F5F13F16", Utility.getContext(this, vars, "#User_Org",
               "ReportOrderNotShipped"), Utility.getContext(this, vars, "#User_Client",
               "ReportOrderNotShipped"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportOrderNotShipped", "");

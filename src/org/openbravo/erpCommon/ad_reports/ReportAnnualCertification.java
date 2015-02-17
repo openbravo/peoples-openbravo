@@ -243,7 +243,7 @@ public class ReportAnnualCertification extends HttpSecureAppServlet {
     try {
       // AD_OrgType_BU_LE
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_ORG_ID", "",
-          "AD_OrgType_BU_LE", Utility.getContext(this, vars, "#AccessibleOrgTree",
+          "AD_OrgType_BU_LE", Utility.getContext(this, vars, "#User_Org",
               "ReportAnnualCertification"), Utility.getContext(this, vars, "#User_Client",
               "ReportAnnualCertification"), '*');
       comboTableData.fillParameters(null, "ReportAnnualCertification", "");

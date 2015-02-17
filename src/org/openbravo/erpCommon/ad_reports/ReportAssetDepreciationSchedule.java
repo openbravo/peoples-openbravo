@@ -185,9 +185,8 @@ public class ReportAssetDepreciationSchedule extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_ORG_ID", "",
-          "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-              "ReportAssetDepreciationSchedule"), Utility.getContext(this, vars, "#User_Client",
-              "ReportAssetDepreciationSchedule"), '*');
+          "", Utility.getContext(this, vars, "#User_Org", "ReportAssetDepreciationSchedule"),
+          Utility.getContext(this, vars, "#User_Client", "ReportAssetDepreciationSchedule"), '*');
       comboTableData.fillParameters(null, "ReportAssetDepreciationSchedule", "");
       xmlDocument.setData("reportAD_ORG_ID", "liststructure", comboTableData.select(false));
     } catch (Exception ex) {

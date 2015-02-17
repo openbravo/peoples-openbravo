@@ -282,9 +282,8 @@ public class ReportMaterialDimensionalAnalysesJR extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-          "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-              "ReportMaterialDimensionalAnalyzeJR"), Utility.getContext(this, vars, "#User_Client",
-              "ReportMaterialDimensionalAnalyzeJR"), 0);
+          "", Utility.getContext(this, vars, "#User_Org", "ReportMaterialDimensionalAnalyzeJR"),
+          Utility.getContext(this, vars, "#User_Client", "ReportMaterialDimensionalAnalyzeJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData,
           "ReportMaterialDimensionalAnalyzeJR", strOrg);
       xmlDocument.setData("reportAD_ORGID", "liststructure", comboTableData.select(false));
