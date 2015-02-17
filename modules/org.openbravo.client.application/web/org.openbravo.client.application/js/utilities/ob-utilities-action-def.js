@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2014 Openbravo SLU
+ * All portions are Copyright (C) 2012-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -142,4 +142,25 @@ OB.Utilities.Action.set('refreshGrid', function (paramObj) {
   if (processView && processView.buttonOwnerView && processView.buttonOwnerView.viewGrid) {
     processView.buttonOwnerView.viewGrid.refreshGrid();
   }
+});
+
+//** {{{ OBUIAPP_downloadReport }}} **
+//This action is used by the BaseReportActionHandler to download the generated file with the
+//report result from the temporary location using the postThroughHiddenForm function. The mode is
+//changed to DOWNLOAD so the BaseReportActionHanlder execute the logic to download the report.
+//Parameters:
+//* {{{processParameters}}}: The process parameters is an object that includes the action handler implementing the download, the report id that it is being executed and the process definition id.
+//* {{{filePath}}}: The complete path of the temporary file.
+//* {{{fileName}}}: The name to be used in the file to download.
+OB.Utilities.Action.set('OBUIAPP_downloadReport', function (paramObj) {
+  var processParameters = paramObj.processParameters,
+      params = isc.clone(processParameters);
+  params._action = processParameters.actionHandler;
+  params.reportId = processParameters.reportId;
+  params.processId = processParameters.processId;
+  params.filePath = paramObj.filePath;
+  params.fileName = paramObj.fileName;
+  params.mode = 'DOWNLOAD';
+  OB.Utilities.postThroughHiddenForm(OB.Application.contextUrl + 'org.openbravo.client.kernel', params);
+
 });

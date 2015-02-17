@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -30,5 +30,16 @@ OB.OnChange = window.OB.OnChange || {};
 OB.OnChange.organizationCurrency = function (item, view, form, grid) {
   if (view && view.messageBar) {
     view.messageBar.setMessage('warning', null, OB.I18N.getLabel('OBUIAPP_OrgCurrencyChange'));
+  }
+};
+
+//** {{{OB.OnChange.processDefinitionUIPattern}}} **
+//Used in the 'Process Definition' window, in the 'UI Pattern' field
+//When OBUIAPP_Report is selected and the Action Handler is empty it sets
+//the BaseReportActionHandler as default value.
+OB.OnChange.processDefinitionUIPattern = function (item, view, form, grid) {
+var classNameItem = form.getItem('javaClassName');
+  if (item.getValue() === 'OBUIAPP_Report' && !classNameItem.getValue()) {
+    classNameItem.setValue('org.openbravo.client.application.report.BaseReportActionHandler');
   }
 };

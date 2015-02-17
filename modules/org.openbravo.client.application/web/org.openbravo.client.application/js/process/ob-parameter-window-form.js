@@ -33,7 +33,7 @@ isc.OBParameterWindowForm.addProperties({
   colWidths: ['*', '*', '*', '*'],
   itemChanged: function (item, newValue) {
     this.paramWindow.handleReadOnlyLogic();
-    this.paramWindow.okButton.setEnabled(this.paramWindow.allRequiredParametersSet());
+    this.paramWindow.handleButtonsStatus();
   },
 
   // this function is invoked on the blur action of the formitems
@@ -59,12 +59,12 @@ isc.OBParameterWindowForm.addProperties({
     // evaluate explicitly the display logic for the grid fields
     this.paramWindow.handleDisplayLogicForGridColumns();
     this.markForRedraw();
-    // this timeout is needed to ensure that the availability of the ok button is updated after the redrawal of the form because:
-    // - the availability of the ok button must be updated after the form redrawal
+    // this timeout is needed to ensure that the availability of the process definition buttons is updated after the redrawal of the form because:
+    // - the availability of the process definition buttons must be updated after the form redrawal
     // - at this point the form cannot be directly redrawn because otherwise the focus does not behave properly, that's why markForRedraw is used
     // - there is no way to assign a callback to the markForRedraw function
     setTimeout(function () {
-      me.paramWindow.okButton.setEnabled(me.paramWindow.allRequiredParametersSet());
+      me.paramWindow.handleButtonsStatus();
     }, 200);
     item._hasChanged = false;
   },

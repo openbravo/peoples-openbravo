@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2014 Openbravo SLU
+ * All portions are Copyright (C) 2012-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -43,6 +43,11 @@ isc.OBParameterWindowView.addProperties({
   viewGrid: null,
 
   addNewButton: null,
+
+  isReport: false,
+  reportId: null,
+  pdfExport: false,
+  xlsExport: false,
 
   gridFields: [],
   members: [],
@@ -78,13 +83,6 @@ isc.OBParameterWindowView.addProperties({
       }
     }
 
-    this.okButton = isc.OBFormButton.create({
-      title: OB.I18N.getLabel('OBUIAPP_Done'),
-      realTitle: '',
-      _buttonValue: 'DONE',
-      click: actionClick
-    });
-
     if (this.popup) {
       buttonLayout.push(isc.LayoutSpacer.create({}));
     }
@@ -111,13 +109,51 @@ isc.OBParameterWindowView.addProperties({
         }
       }
     } else {
-      buttonLayout.push(this.okButton);
-      // TODO: check if this is used, and remove as it is already registered
-      OB.TestRegistry.register('org.openbravo.client.application.process.pickandexecute.button.ok', this.okButton);
-      if (this.popup) {
-        buttonLayout.push(isc.LayoutSpacer.create({
-          width: 32
-        }));
+      if (this.isReport) {
+        if (this.pdfExport) {
+          this.pdfButton = isc.OBFormButton.create({
+            title: OB.I18N.getLabel('OBUIAPP_PDFExport'),
+            realTitle: '',
+            _buttonValue: 'PDF',
+            click: actionClick
+          });
+          buttonLayout.push(this.pdfButton);
+          if (this.popup) {
+            buttonLayout.push(isc.LayoutSpacer.create({
+              width: 32
+            }));
+          }
+        }
+        if (this.xlsExport) {
+          this.xlsButton = isc.OBFormButton.create({
+            title: OB.I18N.getLabel('OBUIAPP_XLSExport'),
+            realTitle: '',
+            _buttonValue: 'XLS',
+            click: actionClick
+          });
+          buttonLayout.push(this.xlsButton);
+          if (this.popup) {
+            buttonLayout.push(isc.LayoutSpacer.create({
+              width: 32
+            }));
+          }
+        }
+      } else {
+        this.okButton = isc.OBFormButton.create({
+          title: OB.I18N.getLabel('OBUIAPP_Done'),
+          realTitle: '',
+          _buttonValue: 'DONE',
+          click: actionClick
+        });
+
+        buttonLayout.push(this.okButton);
+        // TODO: check if this is used, and remove as it is already registered
+        OB.TestRegistry.register('org.openbravo.client.application.process.pickandexecute.button.ok', this.okButton);
+        if (this.popup) {
+          buttonLayout.push(isc.LayoutSpacer.create({
+            width: 32
+          }));
+        }
       }
     }
 
@@ -270,7 +306,15 @@ isc.OBParameterWindowView.addProperties({
 
 
     if (this.popup) {
-      this.firstFocusedItem = this.okButton;
+      if (this.isReport) {
+        if (this.pdfExport) {
+          this.firstFocusedItem = this.pdfButton;
+        } else if (this.xlsExport) {
+          this.firstFocusedItem = this.xlsButton;
+        }
+      } else {
+        this.firstFocusedItem = this.okButton;
+      }
       this.popupButtons = isc.OBFormContainerLayout.create({
         defaultLayoutAlign: 'center',
         align: 'center',
@@ -320,9 +364,19 @@ isc.OBParameterWindowView.addProperties({
 
     OB.TestRegistry.register('org.openbravo.client.application.ParameterWindow_' + this.processId, this);
     OB.TestRegistry.register('org.openbravo.client.application.ParameterWindow_MessageBar_' + this.processId, this.messageBar);
-    OB.TestRegistry.register('org.openbravo.client.application.ParameterWindow_OK_Button_' + this.processId, this.okButton);
     OB.TestRegistry.register('org.openbravo.client.application.ParameterWindow_Form_' + this.processId, this.theForm);
     OB.TestRegistry.register('org.openbravo.client.application.ParameterWindow_FormContainerLayout_' + this.processId, this.formContainerLayout);
+    if (this.isReport) {
+      if (this.pdfExport) {
+        OB.TestRegistry.register('org.openbravo.client.application.ParameterWindow_PDF_Export_' + this.processId, this.pdfExport);
+      }
+      if (this.xlsExport) {
+        OB.TestRegistry.register('org.openbravo.client.application.ParameterWindow_XLS_Export_' + this.processId, this.xlsExport);
+      }
+    } else {
+      OB.TestRegistry.register('org.openbravo.client.application.ParameterWindow_OK_Button_' + this.processId, this.okButton);
+    }
+
   },
 
   handleResponse: function (refreshParent, message, responseActions, retryExecution, data) {
@@ -500,6 +554,7 @@ isc.OBParameterWindowView.addProperties({
       me.showProcessing(true);
       OB.RemoteCallManager.call(me.actionHandler, allProperties, {
         processId: me.processId,
+        reportId: me.reportId,
         windowId: me.windowId
       }, function (rpcResponse, data, rpcRequest) {
         view.handleResponse(!(data && data.refreshParent === false), (data && data.message), (data && data.responseActions), (data && data.retryExecution), data);
@@ -517,7 +572,8 @@ isc.OBParameterWindowView.addProperties({
     var i, field, def, defaults = result.defaults,
         filterExpressions = result.filterExpressions,
         defaultFilter = {},
-        gridsToBeFiltered = [];
+        gridsToBeFiltered = [],
+        allRequiredSet;
     if (!this.theForm) {
       if (this.onLoadFunction) {
         this.onLoadFunction(this);
@@ -567,12 +623,10 @@ isc.OBParameterWindowView.addProperties({
     }
 
     this.handleReadOnlyLogic();
+    this.handleButtonsStatus();
 
     // redraw to execute display logic
     this.theForm.markForRedraw();
-
-    this.okButton.setEnabled(this.allRequiredParametersSet());
-
     this.handleDisplayLogicForGridColumns();
 
     // this flag can be used by Selenium to determine when defaults are set
@@ -661,6 +715,20 @@ isc.OBParameterWindowView.addProperties({
     return (this.buttonOwnerView && this.buttonOwnerView.getContextInfo(onlySessionProperties, classicMode, forceSettingContextVars, convertToClassicFormat)) || {};
   },
 
+  handleButtonsStatus: function() {
+    var allRequiredSet = this.allRequiredParametersSet();
+    if (this.isReport) {
+      if (this.pdfExport) {
+        this.pdfButton.setEnabled(allRequiredSet);
+      }
+      if (this.xlsExport) {
+        this.xlsButton.setEnabled(allRequiredSet);
+      }
+    } else {
+      this.okButton.setEnabled(allRequiredSet);
+    }
+  },
+
   // returns true if any non-grid required parameter does not have a value
   allRequiredParametersSet: function () {
     var i, item, length = this.theForm.getItems().length,
@@ -668,6 +736,10 @@ isc.OBParameterWindowView.addProperties({
     for (i = 0; i < length; i++) {
       item = this.theForm.getItems()[i];
       value = item.getValue();
+      // Multiple selectors value is an array, check that it is not empty
+      if (item.editorType === 'OBMultiSelectorItem' && value.length === 0) {
+        value = null;
+      }
       // do not take into account the grid parameters when looking for required parameters without value
       if (item.type !== 'OBPickEditGridItem' && item.required && item.isVisible() && value !== false && value !== 0 && !value) {
         return false;
