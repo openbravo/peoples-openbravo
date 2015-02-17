@@ -64,7 +64,7 @@ public class Payments extends JSONProcessSimple {
             DataResolvingMode.FULL);
         JSONObject pMethod = converter.toJsonObject((BaseOBObject) objPayment[1],
             DataResolvingMode.FULL);
-        if ("true".equals(pay.get("overrideconfiguration").toString())) {
+        if (pay.getBoolean("overrideconfiguration")) {
           pMethod.put("cashDifferences", pay.get("cashDifferences"));
           pMethod.put("cashDifferences$_identifier", pay.get("cashDifferences$_identifier"));
           pMethod.put("glitemDropdep", pay.get("gLItemForCashDropDeposit"));

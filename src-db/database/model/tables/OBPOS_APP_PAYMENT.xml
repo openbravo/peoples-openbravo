@@ -149,8 +149,7 @@
       <check name="OBPOS_APPPAY_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="OBPOS_APPPAY_MOVEEVRY_CHK"><![CDATA[ALLOWMOVEEVERYTHING IN ('Y', 'N')]]></check>
       <check name="OBPOS_APPPAY_OVERRIDECONF_CH"><![CDATA[OVERRIDECONFIGURATION IN ('Y', 'N')]]></check>
-      <check name="OBPOS_APPPAY_PTYPE_CLOSEGL_CH"><![CDATA[(AUTOMATEMOVEMENTTOOTHER = 'N') OR (C_GLITEM_DROPDEP_ID IS NOT NULL)]]></check>
-      <check name="OBPOS_APPPAY_PTYPE_FIXEDAM_CH"><![CDATA[(KEEPFIXEDAMOUNT = 'N') OR (AMOUNT IS NOT NULL)]]></check>
+      <check name="OBPOS_APPPAY_PTYPE_FIXEDAM_CH"><![CDATA[KEEPFIXEDAMOUNT IN ('Y', 'N')]]></check>
       <check name="OBPOS_APPPAY_VARAMT_CHK"><![CDATA[ALLOWVARIABLEAMOUNT IN ('Y', 'N')]]></check>
     </table>
   </database>
