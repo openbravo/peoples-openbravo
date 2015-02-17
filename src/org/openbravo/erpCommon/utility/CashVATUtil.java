@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013-2014 Openbravo SLU
+ * All portions are Copyright (C) 2013-2015 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -256,7 +256,9 @@ public class CashVATUtil {
           } else {
             // Calculate amounts based on the paid percentage
             calculateAmountsBasedOnPercentage = true;
-            final BigDecimal grandTotalAmt = invoice.getGrandTotalAmount();
+            final boolean isReversal = invoice.getDocumentType().isReversal();
+            final BigDecimal grandTotalAmt = isReversal ? invoice.getGrandTotalAmount().negate()
+                : invoice.getGrandTotalAmount();
             final int currencyPrecission = invoice.getCurrency().getStandardPrecision().intValue();
             percentage = amount.multiply(_100).divide(grandTotalAmt, currencyPrecission,
                 RoundingMode.HALF_UP);
