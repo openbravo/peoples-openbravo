@@ -214,7 +214,13 @@ enyo.kind({
       }
       var payment = OB.MobileApp.model.paymentnames[OB.MobileApp.model.get('paymentcash')];
       if ((model.get('orderType') === 2 || (model.get('isLayaway'))) && model.get('orderType') !== 3 && !model.getPaymentStatus().done) {
-        this.$.creditsalesaction.show();
+        if (OB.MobileApp.model.get('terminal').allowpayoncredit && this.receipt.get('bp')) {
+          if (this.receipt.get('bp').get('creditLimit') > 0 || this.receipt.get('bp').get('creditUsed') < 0) {
+            this.$.creditsalesaction.show();
+          } else {
+            this.$.creditsalesaction.hide();
+          }
+        }
         this.$.layawayaction.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
         this.$.layawayaction.show();
       } else if (model.get('orderType') === 3) {
