@@ -27,6 +27,8 @@ import javax.enterprise.event.Observes;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.ScrollMode;
+import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
@@ -68,6 +70,7 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
         && !prCh.getProduct().getProductGenericProductList().isEmpty()) {
       throw new OBException(OBMessageUtils.messageBD("DeleteVariantChWithVariantsError"));
     }
+    deleteProductCharacteristicValue(prCh);
   }
 
   public void onSave(@Observes
@@ -119,22 +122,21 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
     }
     final ProductCharacteristic prCh = (ProductCharacteristic) event.getTargetInstance();
     final Entity prodCharEntity = ModelProvider.getInstance().getEntity(
-            ProductCharacteristic.ENTITY_NAME);
-    
-    final Property chProp = 
-			prodCharEntity.getProperty(ProductCharacteristic.PROPERTY_CHARACTERISTIC);
-    final Property prdProp = 
-			prodCharEntity.getProperty(ProductCharacteristic.PROPERTY_PRODUCT);
-    
+        ProductCharacteristic.ENTITY_NAME);
+
+    final Property chProp = prodCharEntity
+        .getProperty(ProductCharacteristic.PROPERTY_CHARACTERISTIC);
+    final Property prdProp = prodCharEntity.getProperty(ProductCharacteristic.PROPERTY_PRODUCT);
+
     if (!event.getPreviousState(chProp).equals(event.getCurrentState(chProp))) {
-    	final Product prd = (Product) event.getCurrentState(prdProp);
-	    for (ProductCharacteristicValue pChV : prd.getProductCharacteristicValueList()) {
-	    	if (pChV.getCharacteristic().equals(event.getPreviousState(chProp))) {
-	    		throw new OBException(OBMessageUtils.messageBD("UpdateProductChWithValue"));
-	    	}
-	    }
+      final Product prd = (Product) event.getCurrentState(prdProp);
+      for (ProductCharacteristicValue pChV : prd.getProductCharacteristicValueList()) {
+        if (pChV.getCharacteristic().equals(event.getPreviousState(chProp))) {
+          throw new OBException(OBMessageUtils.messageBD("UpdateProductChWithValue"));
+        }
+      }
     }
-    
+
     if (!prCh.isVariant() && prCh.getProduct().isGeneric()
         && !prCh.getProduct().getProductGenericProductList().isEmpty()) {
       throw new OBException(OBMessageUtils.messageBD("NewVariantChWithVariantsError"));
@@ -251,5 +253,31 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
     charConf.setCode(strCode);
     charConf.setActive(Boolean.parseBoolean(strActive));
     return charConf;
+  }
+
+  private void deleteProductCharacteristicValue(ProductCharacteristic productCharacteristic) {
+    ScrollableResults scroll = null;
+    try {
+      OBCriteria<ProductCharacteristicValue> criteria = OBDal.getInstance().createCriteria(
+          ProductCharacteristicValue.class);
+      criteria.add(Restrictions.eq(ProductCharacteristicValue.PROPERTY_CHARACTERISTIC,
+          productCharacteristic.getCharacteristic()));
+      criteria.add(Restrictions.eq(ProductCharacteristicValue.PROPERTY_PRODUCT,
+          productCharacteristic.getProduct()));
+      scroll = criteria.scroll(ScrollMode.FORWARD_ONLY);
+      int i = 0;
+      while (scroll.next()) {
+        ProductCharacteristicValue productCharacteristicValue = (ProductCharacteristicValue) scroll
+            .get(0);
+        OBDal.getInstance().remove(productCharacteristicValue);
+        i++;
+        if (i % 100 == 0) {
+          OBDal.getInstance().flush();
+          OBDal.getInstance().getSession().clear();
+        }
+      }
+    } finally {
+      scroll.close();
+    }
   }
 }
