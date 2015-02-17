@@ -21,7 +21,7 @@
     <id>CB60EDA17F3F46DE9C5EFE5F1EC46D2E</id>
     <active>true</active>
     <table id="82D4EDCF39AE44FB9B24E95A1B18B21C" entity-name="ADTable" identifier="AD_Process_Request"/>
-    <olderThan>30</olderThan>
+    <olderThan>15</olderThan>
     <column xsi:nil="true"/>
     <hQLWhereClause>status = 'COM'</hQLWhereClause>
     <truncateTable>false</truncateTable>
