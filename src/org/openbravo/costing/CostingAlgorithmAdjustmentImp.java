@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -513,7 +513,7 @@ public abstract class CostingAlgorithmAdjustmentImp {
 
   protected abstract BigDecimal getOutgoingBackdatedTrxAdjAmt(CostAdjustmentLine costAdjLine);
 
-  private BigDecimal getDefaultCostDifference(TrxType calTrxType, CostAdjustmentLine costAdjLine) {
+  protected BigDecimal getDefaultCostDifference(TrxType calTrxType, CostAdjustmentLine costAdjLine) {
     MaterialTransaction trx = costAdjLine.getInventoryTransaction();
     BusinessPartner bp = CostingUtils.getTrxBusinessPartner(trx, calTrxType);
     Organization costOrg = getCostOrg();

@@ -480,6 +480,36 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     return expectedCostAmt.subtract(currentCost);
   }
 
+  @Override
+  protected BigDecimal getDefaultCostDifference(TrxType calTrxType, CostAdjustmentLine costAdjLine) {
+    MaterialTransaction trx = costAdjLine.getInventoryTransaction();
+    Costing costing = getAvgCostOnMovementDate(trx, getCostDimensions(), getCostOrg(),
+        areBackdatedTrxFixed);
+    if (costing == null) {
+      // In case the backdated transaction is on a date where the stock was not initialized there
+      // isn't any costing entry related to an inventory transaction which results in a null
+      // costing.
+      // Try again with average algorithm getProductCost method using the movement date as
+      // parameter.
+      costing = AverageAlgorithm.getProductCost(trx.getMovementDate(), trx.getProduct(),
+          getCostDimensions(), getCostOrg());
+    }
+    if (costing != null) {
+      BigDecimal defaultCost = costing.getCost();
+      Currency costCurrency = getCostCurrency();
+      if (costing.getCurrency() != costCurrency) {
+        defaultCost = FinancialUtils.getConvertedAmount(costing.getCost(), costing.getCurrency(),
+            costCurrency, trx.getTransactionProcessDate(), getCostOrg(),
+            FinancialUtils.PRECISION_COSTING);
+      }
+      BigDecimal trxCalculatedCost = CostAdjustmentUtils.getTrxCost(trx, true, getCostCurrency());
+      defaultCost = trx.getMovementQuantity().abs().multiply(defaultCost)
+          .setScale(costCurPrecission, RoundingMode.HALF_UP);
+      return defaultCost.subtract(trxCalculatedCost);
+    }
+    return super.getDefaultCostDifference(calTrxType, costAdjLine);
+  }
+
   private ScrollableResults getRelatedTransactions() {
     CostingRule costingRule = getCostingRule();
     HashMap<CostDimension, BaseOBObject> costDimensions = getCostDimensions();
