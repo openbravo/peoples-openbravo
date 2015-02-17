@@ -186,7 +186,7 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
     fileUtil.dumpFile(response.getOutputStream());
     response.getOutputStream().flush();
     response.getOutputStream().close();
-    // file.delete();
+    file.delete();
   }
 
   /**
