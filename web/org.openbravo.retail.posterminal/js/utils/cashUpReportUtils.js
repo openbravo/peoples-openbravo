@@ -127,12 +127,12 @@
             if (!auxPay) { //We cannot find this payment in local database, it must be a new payment method, we skip it.
               return;
             }
-            if (order.getGross() > 0 && (orderType === 0 || orderType === 2)) {
-              auxPay.set('totalSales', OB.DEC.add(auxPay.get('totalSales'), payment.get('amount')));
-            } else if (order.getGross() < 0 || orderType === 1) {
+            if (payment.get('amount') < 0) {
               auxPay.set('totalReturns', OB.DEC.sub(auxPay.get('totalReturns'), payment.get('amount')));
-            } else if (orderType === 3) {
-              auxPay.set('totalSales', OB.DEC.sub(auxPay.get('totalSales'), payment.get('amount')));
+            } else if (orderType === 3) { // void layaway 
+              auxPay.set('totalReturns', OB.DEC.add(auxPay.get('totalReturns'), payment.get('amount')));
+            } else {
+              auxPay.set('totalSales', OB.DEC.add(auxPay.get('totalSales'), payment.get('amount')));
             }
             OB.Dal.save(auxPay, null, null);
           }, this);
