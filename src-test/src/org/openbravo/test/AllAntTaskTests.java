@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,7 +23,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.openbravo.erpCommon.info.ClassicSelectorTest;
 import org.openbravo.test.accounting.RecordID2Test;
-import org.openbravo.test.costing.TestCosting;
 import org.openbravo.test.dal.AdminContextTest;
 import org.openbravo.test.dal.ComputedColumnsTest;
 import org.openbravo.test.dal.DalComplexQueryRequisitionTest;
@@ -64,6 +63,7 @@ import org.openbravo.test.security.WritableReadableOrganizationClientTest;
 import org.openbravo.test.system.ErrorTextParserTest;
 import org.openbravo.test.system.SystemServiceTest;
 import org.openbravo.test.system.SystemValidatorTest;
+import org.openbravo.test.system.TestInfrastructure;
 import org.openbravo.test.xml.ClientExportImportTest;
 import org.openbravo.test.xml.DatasetExportTest;
 import org.openbravo.test.xml.EntityXMLImportTestBusinessObject;
@@ -132,7 +132,8 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     // system
     SystemServiceTest.class, //
     SystemValidatorTest.class, //
-    ErrorTextParserTest.class,
+    ErrorTextParserTest.class, //
+    TestInfrastructure.class, //
 
     // xml
     ClientExportImportTest.class, //
@@ -149,8 +150,6 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     ClassicSelectorTest.class,
 
     // Accounting
-   RecordID2Test.class })
-
-
+    RecordID2Test.class })
 public class AllAntTaskTests {
 }

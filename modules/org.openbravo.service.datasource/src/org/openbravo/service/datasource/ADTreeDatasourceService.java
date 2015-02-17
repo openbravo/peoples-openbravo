@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2014 Openbravo SLU
+ * All portions are Copyright (C) 2013-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -102,7 +102,6 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
       // Added as root node
       adTreeNode.setReportSet(ROOT_NODE_DB);
       OBDal.getInstance().save(adTreeNode);
-      OBDal.getInstance().flush(); // force flush in admin mode
     } catch (Exception e) {
       logger.error("Error while adding the tree node", e);
     }
@@ -132,7 +131,6 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
           treeNode.getNode());
       logger.info(nChildrenMoved + " children have been moved to another parent");
       OBDal.getInstance().remove(treeNode);
-      OBDal.getInstance().flush(); // force flush in admin mode
     } catch (Exception e) {
       logger.error("Error while deleting tree node: ", e);
       throw new OBException("The treenode could not be created");
@@ -317,26 +315,6 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
       cont++;
     }
     return responseData;
-  }
-
-  private String getParentRecordIdFromCriteria(JSONArray criteria, String parentPropertyName) {
-    String parentRecordId = null;
-    for (int i = 0; i < criteria.length(); i++) {
-      try {
-        JSONObject criterion = (JSONObject) criteria.get(i);
-        if (criterion.has("criteria")) {
-          return getParentRecordIdFromCriteria(criterion.getJSONArray("criteria"),
-              parentPropertyName);
-        }
-        if (parentPropertyName.equals(criterion.getString("fieldName"))) {
-          parentRecordId = criterion.getString("value");
-          break;
-        }
-      } catch (JSONException e) {
-        logger.error("Error while obtaining a property from a JSONObject", e);
-      }
-    }
-    return parentRecordId;
   }
 
   @Override

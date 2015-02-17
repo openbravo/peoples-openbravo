@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2013-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -135,6 +135,17 @@ public class ManageReservationActionHandler extends BaseProcessActionHandler {
       String strReservationStockId = selectedLine.get("reservationStock").equals(null) ? ""
           : selectedLine.getString("reservationStock");
       boolean existsReservationStock = StringUtils.isNotBlank(strReservationStockId);
+      if (!existsReservationStock) {
+        String released = selectedLine.get("released").equals(null) ? "" : selectedLine
+            .getString("released");
+        if (StringUtils.isNotBlank(released)) {
+          BigDecimal qtyReleased = new BigDecimal(released);
+          if (qtyReleased.compareTo(BigDecimal.ZERO) != 0) {
+            strReservationStockId = selectedLine.getString("id");
+            existsReservationStock = true;
+          }
+        }
+      }
       if (existsReservationStock) {
         resStock = OBDal.getInstance().get(ReservationStock.class, strReservationStockId);
         idList.remove(strReservationStockId);
@@ -186,7 +197,7 @@ public class ManageReservationActionHandler extends BaseProcessActionHandler {
     if (idList.size() > 0) {
       for (String id : idList) {
         ReservationStock resStock = OBDal.getInstance().get(ReservationStock.class, id);
-        if(resStock.getReleased() == null
+        if (resStock.getReleased() == null
             || resStock.getReleased().compareTo(BigDecimal.ZERO) == 0) {
           reservation.getMaterialMgmtReservationStockList().remove(resStock);
           OBDal.getInstance().remove(resStock);

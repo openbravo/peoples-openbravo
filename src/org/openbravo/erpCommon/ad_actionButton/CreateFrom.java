@@ -1583,11 +1583,15 @@ public class CreateFrom extends HttpSecureAppServlet {
               grossAmt = grossAmt.setScale(curPrecision, BigDecimal.ROUND_HALF_UP);
             }
             if (!strPO.equals("")) {
-              String invoiceprepaymentamt = CreateFromInvoiceData.selectInvoicePrepaymentAmt(this,
-                  strKey);
-              String prepaymentamt = CreateFromInvoiceData.selectPrepaymentAmt(this, strPO);
-              BigDecimal totalprepayment = new BigDecimal(invoiceprepaymentamt).add(new BigDecimal(
-                  prepaymentamt));
+              String strInvoiceprepaymentamt = CreateFromInvoiceData.selectInvoicePrepaymentAmt(
+                  this, strKey);
+              BigDecimal invoiceprepaymentamt = (strInvoiceprepaymentamt.equals("") ? BigDecimal.ZERO
+                  : new BigDecimal(strInvoiceprepaymentamt));
+              String strprepaymentamt = CreateFromInvoiceData.selectPrepaymentAmt(this, strPO);
+              BigDecimal prepaymentamt = (strprepaymentamt.equals("") ? BigDecimal.ZERO
+                  : new BigDecimal(strprepaymentamt));
+
+              BigDecimal totalprepayment = invoiceprepaymentamt.add(prepaymentamt);
               CreateFromInvoiceData.updatePrepaymentAmt(conn, this, totalprepayment.toString(),
                   strKey);
             }

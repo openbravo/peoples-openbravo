@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011 Openbravo SLU
+ * All portions are Copyright (C) 2011-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -30,22 +30,26 @@ public class AlertsForWrongInvoices extends ModuleScript {
   @Override
   // Inserting Alerts for invoices which needs to be recalculated/processed
   public void execute() {
-    try {
+    try {      
       ConnectionProvider cp = getConnectionProvider();
-      AlertsForWrongInvoicesData[] data = AlertsForWrongInvoicesData.select(cp);
-      for (AlertsForWrongInvoicesData wrongInvoice : data) {
-        createAlert(cp, wrongInvoice);
-      }
-      
-      // Fix sql for all the alert rules created not taking in account voided payments
-      AlertsForWrongInvoicesData[] oldAlertRules = AlertsForWrongInvoicesData.selectOldAlertRules(cp);
-      for (AlertsForWrongInvoicesData alertRule : oldAlertRules) {
-        // Check if exist any alert created using the wrong sql query. In that case fix the alert
-        AlertsForWrongInvoicesData[] oldAlerts = AlertsForWrongInvoicesData.selectVoidAlerts(cp, alertRule.adAlertruleId);
-        for (AlertsForWrongInvoicesData alert : oldAlerts) {
-          AlertsForWrongInvoicesData.updateAlertStatus(cp, "SOLVED", "Y", alert.adAlertId);
+      boolean isAlertsForWrongInvoicesExecuted = AlertsForWrongInvoicesData.isAlertsForWrongInvoicesExecuted(cp);
+      if (!isAlertsForWrongInvoicesExecuted) {
+        AlertsForWrongInvoicesData[] data = AlertsForWrongInvoicesData.select(cp);
+        for (AlertsForWrongInvoicesData wrongInvoice : data) {
+          createAlert(cp, wrongInvoice);
         }
-        AlertsForWrongInvoicesData.updateAlertRuleSql(cp, ALERT_RULE_SQL, alertRule.adAlertruleId);
+        
+        // Fix sql for all the alert rules created not taking in account voided payments
+        AlertsForWrongInvoicesData[] oldAlertRules = AlertsForWrongInvoicesData.selectOldAlertRules(cp);
+        for (AlertsForWrongInvoicesData alertRule : oldAlertRules) {
+          // Check if exist any alert created using the wrong sql query. In that case fix the alert
+          AlertsForWrongInvoicesData[] oldAlerts = AlertsForWrongInvoicesData.selectVoidAlerts(cp, alertRule.adAlertruleId);
+          for (AlertsForWrongInvoicesData alert : oldAlerts) {
+            AlertsForWrongInvoicesData.updateAlertStatus(cp, "SOLVED", "Y", alert.adAlertId);
+          }
+          AlertsForWrongInvoicesData.updateAlertRuleSql(cp, ALERT_RULE_SQL, alertRule.adAlertruleId);
+        }
+        AlertsForWrongInvoicesData.createPreference(cp); 
       }
       
     } catch (Exception e) {

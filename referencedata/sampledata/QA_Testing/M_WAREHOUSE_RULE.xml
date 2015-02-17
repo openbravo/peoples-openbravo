@@ -12,6 +12,7 @@
   <NAME><![CDATA[Unique Storage Bin]]></NAME>
   <PROCEDURENAME><![CDATA[M_UNIQUELOCATOR_RULE]]></PROCEDURENAME>
   <DESCRIPTION><![CDATA[Returns stock of the first storage bin in the warehouse with enough stock.]]></DESCRIPTION>
+  <TYPE><![CDATA[I]]></TYPE>
 </M_WAREHOUSE_RULE>
 
 <M_WAREHOUSE_RULE>
@@ -26,6 +27,7 @@
   <NAME><![CDATA[Unique Attribute]]></NAME>
   <PROCEDURENAME><![CDATA[M_UNIQUEATTRIBUTE_RULE]]></PROCEDURENAME>
   <DESCRIPTION><![CDATA[Returns stock of the first attribute set instance in the warehouse with enough stock.]]></DESCRIPTION>
+  <TYPE><![CDATA[I]]></TYPE>
 </M_WAREHOUSE_RULE>
 
 <M_WAREHOUSE_RULE>
@@ -40,6 +42,7 @@
   <NAME><![CDATA[Default Warehouse Rule]]></NAME>
   <PROCEDURENAME><![CDATA[M_WAREHOUSE_DEFAULT_RULE]]></PROCEDURENAME>
   <DESCRIPTION><![CDATA[Useful to overwrite a warehouse rule defined at warehouse on specific documents.]]></DESCRIPTION>
+  <TYPE><![CDATA[I]]></TYPE>
 </M_WAREHOUSE_RULE>
 
 </data>

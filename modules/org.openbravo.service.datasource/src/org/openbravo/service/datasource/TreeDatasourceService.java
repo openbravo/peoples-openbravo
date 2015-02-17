@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2014 Openbravo SLU
+ * All portions are Copyright (C) 2013-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -1024,6 +1024,35 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
     // else {} If the entity does not have a summaryLevel property then all its nodes can accept
     // drop
     return canAcceptDrop;
+  }
+
+  /**
+   * Given a criteria and the name of a property, returns the value of that property in the criteria
+   * 
+   * @param criteria
+   *          the criteria that might contain a value for the provided property
+   * @param parentPropertyName
+   *          the property whose value might be contained in the criteria
+   * @return the value of the property in the criteria, or null if it is not found
+   */
+  protected final String getParentRecordIdFromCriteria(JSONArray criteria, String parentPropertyName) {
+    String parentRecordId = null;
+    for (int i = 0; i < criteria.length(); i++) {
+      try {
+        JSONObject criterion = (JSONObject) criteria.get(i);
+        if (criterion.has("criteria")) {
+          return getParentRecordIdFromCriteria(criterion.getJSONArray("criteria"),
+              parentPropertyName);
+        }
+        if (parentPropertyName.equals(criterion.getString("fieldName"))) {
+          parentRecordId = criterion.getString("value");
+          break;
+        }
+      } catch (JSONException e) {
+        log.error("Error while obtaining a property from a JSONObject", e);
+      }
+    }
+    return parentRecordId;
   }
 
 }

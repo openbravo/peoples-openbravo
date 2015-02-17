@@ -8,7 +8,7 @@
  * either express or implied. See the License for the specific language
  * governing rights and limitations under the License. The Original Code is
  * Openbravo ERP. The Initial Developer of the Original Code is Openbravo SLU All
- * portions are Copyright (C) 2001-2014 Openbravo SLU All Rights Reserved.
+ * portions are Copyright (C) 2001-2015 Openbravo SLU All Rights Reserved.
  * Contributor(s): ______________________________________.
  */
 
@@ -306,7 +306,7 @@ public class ReportInvoiceVendorDimensionalAnalysesJR extends HttpSecureAppServl
     }
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-          "", Utility.getContext(this, vars, "#AccessibleOrgTree",
+          "", Utility.getContext(this, vars, "#User_Org",
               "ReportInvoiceVendorDimensionalAnalysesJR"), Utility.getContext(this, vars,
               "#User_Client", "ReportInvoiceVendorDimensionalAnalysesJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData,

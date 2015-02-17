@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2015 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -396,7 +396,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_ORG_ID", "",
-          "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportTrialBalance"),
+          "", Utility.getContext(this, vars, "#User_Org", "ReportTrialBalance"),
           Utility.getContext(this, vars, "#User_Client", "ReportTrialBalance"), '*');
       comboTableData.fillParameters(null, "ReportTrialBalance", "");
       xmlDocument.setData("reportAD_ORGID", "liststructure", comboTableData.select(false));
@@ -767,10 +767,10 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
               data[i].saldoInicial = (new BigDecimal(dataIB[k].saldoInicial).add(parcialInicial))
                   .toPlainString();
             } else {
-              data[i].amtacctdr = (new BigDecimal(dataIB[k].amtacctdr).add(parcialDR))
-                  .toPlainString();
-              data[i].amtacctcr = (new BigDecimal(dataIB[k].amtacctcr).add(parcialCR))
-                  .toPlainString();
+              data[i].amtacctdr = (new BigDecimal(dataIB[k].amtacctdr).add(parcialDR)
+                  .add(new BigDecimal(data[i].amtacctdr))).toPlainString();
+              data[i].amtacctcr = (new BigDecimal(dataIB[k].amtacctcr).add(parcialCR)
+                  .add(new BigDecimal(data[i].amtacctcr))).toPlainString();
             }
             data[i].saldoFinal = (new BigDecimal(dataIB[k].saldoInicial).add(parcialDR)
                 .subtract(parcialCR)).toPlainString();

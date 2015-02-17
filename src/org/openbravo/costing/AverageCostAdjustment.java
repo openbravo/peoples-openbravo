@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -44,6 +44,7 @@ import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.financial.FinancialUtils;
+import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Organization;
@@ -119,6 +120,11 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     // Initialize current unit cost including the cost adjustments.
     Costing costing = AverageAlgorithm.getProductCost(trxDate, basetrx.getProduct(),
         getCostDimensions(), getCostOrg());
+    if (costing == null) {
+      throw new OBException("@NoAvgCostDefined@ @Organization@: " + getCostOrg().getName()
+          + ", @Product@: " + basetrx.getProduct().getName() + ", @Date@: "
+          + OBDateUtils.formatDate(trxDate));
+    }
     BigDecimal cost = null;
     // If current stock is zero the cost is not modified until a related transaction that modifies
     // the stock is found.
@@ -383,6 +389,11 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
       // This is the current costing rule. Check if current average cost needs to be updated.
       Costing currentCosting = AverageAlgorithm.getProductCost(new Date(), basetrx.getProduct(),
           getCostDimensions(), getCostOrg());
+      if (currentCosting == null) {
+        throw new OBException("@NoAvgCostDefined@ @Organization@: " + getCostOrg().getName()
+            + ", @Product@: " + basetrx.getProduct().getName() + ", @Date@: "
+            + OBDateUtils.formatDate(new Date()));
+      }
       if (currentCosting.getCost().compareTo(cost) != 0) {
         basetrx = getTransaction();
         Date newDate = new Date();
@@ -713,7 +724,12 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     where.append(" as c");
     where.append("  left join c." + Costing.PROPERTY_INVENTORYTRANSACTION + " as trx");
     where.append(" where c." + Costing.PROPERTY_PRODUCT + " = :product");
-    where.append("   and c." + Costing.PROPERTY_ORGANIZATION + " = :org");
+    // FIXME: remove when manufacturing costs are fully migrated
+    if (bdCosting.getProduct().isProduction()) {
+      where.append("  and c." + Costing.PROPERTY_CLIENT + " = :client");
+    } else {
+      where.append("  and c." + Costing.PROPERTY_ORGANIZATION + " = :org");
+    }
     where.append("   and c." + Costing.PROPERTY_COSTTYPE + " = 'AVA'");
     if (bdCosting.getWarehouse() == null) {
       where.append(" and c." + Costing.PROPERTY_WAREHOUSE + " is null");
@@ -728,7 +744,12 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
 
     OBQuery<Costing> qryCosting = OBDal.getInstance().createQuery(Costing.class, where.toString());
     qryCosting.setNamedParameter("product", bdCosting.getProduct());
-    qryCosting.setNamedParameter("org", bdCosting.getOrganization());
+    // FIXME: remove when manufacturing costs are fully migrated
+    if (bdCosting.getProduct().isProduction()) {
+      qryCosting.setNamedParameter("client", bdCosting.getClient());
+    } else {
+      qryCosting.setNamedParameter("org", bdCosting.getOrganization());
+    }
     if (bdCosting.getWarehouse() != null) {
       qryCosting.setNamedParameter("warehouse", bdCosting.getWarehouse());
     }
@@ -787,7 +808,12 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     StringBuffer where = new StringBuffer();
     where.append(" as c");
     where.append(" where c." + Costing.PROPERTY_PRODUCT + " = :product");
-    where.append("   and c." + Costing.PROPERTY_ORGANIZATION + " = :org");
+    // FIXME: remove when manufacturing costs are fully migrated
+    if (isManufacturingProduct) {
+      where.append("  and c." + Costing.PROPERTY_CLIENT + " = :client");
+    } else {
+      where.append("  and c." + Costing.PROPERTY_ORGANIZATION + " = :org");
+    }
     if (costDimensions.get(CostDimension.Warehouse) == null) {
       where.append(" and c." + Costing.PROPERTY_WAREHOUSE + " is null");
     } else {
@@ -802,8 +828,12 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
 
     OBQuery<Costing> qryCosting = OBDal.getInstance().createQuery(Costing.class, where.toString());
     qryCosting.setNamedParameter("product", trx.getProduct());
-    qryCosting.setNamedParameter("org",
-        isManufacturingProduct ? OBDal.getInstance().get(Organization.class, "0") : getCostOrg());
+    // FIXME: remove when manufacturing costs are fully migrated
+    if (isManufacturingProduct) {
+      qryCosting.setNamedParameter("client", OBDal.getInstance().get(Client.class, strClientId));
+    } else {
+      qryCosting.setNamedParameter("org", getCostOrg());
+    }
     if (costDimensions.get(CostDimension.Warehouse) != null) {
       qryCosting.setNamedParameter("warehouse", costDimensions.get(CostDimension.Warehouse));
     }

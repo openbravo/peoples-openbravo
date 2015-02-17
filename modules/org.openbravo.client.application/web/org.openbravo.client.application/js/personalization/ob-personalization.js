@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2014 Openbravo SLU
+ * All portions are Copyright (C) 2011-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s): ___________
  ************************************************************************
@@ -498,6 +498,11 @@ OB.Personalization.personalizeForm = function (data, form) {
     form.view.notesDataSource = null;
   }
   form.setFields(newFields);
+
+  if (form.view && isc.isAn.Array(form.view.formFields) && form.view.formFields.length === 0) {
+    // restore formFiels as setFields can invalidate it
+    form.view.formFields = form.getFields();
+  }
 
   // and show me the stuff!
   form.markForRedraw();

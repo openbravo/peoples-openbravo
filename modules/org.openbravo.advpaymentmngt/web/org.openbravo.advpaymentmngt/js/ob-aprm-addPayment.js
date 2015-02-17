@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -116,6 +116,7 @@ OB.APRM.AddPayment.onLoad = function (view) {
     }));
     view.theForm.hideItem('bankStatementLineId');
   }
+
   OB.APRM.AddPayment.paymentMethodMulticurrency(view, view.theForm, !payment);
   OB.APRM.AddPayment.reloadLabels(form);
   glitemGrid.fetchData();
@@ -296,7 +297,6 @@ OB.APRM.AddPayment.orderInvoiceOnLoadGrid = function (grid) {
   var issotrx = this.view.theForm.getItem('issotrx').getValue(),
       payment = this.view.theForm.getItem('fin_payment_id').getValue();
   grid.isReady = true;
-
   if ((issotrx || !payment) && (grid.selectedIds.length === 0)) {
     OB.APRM.AddPayment.distributeAmount(this.view, this.view.theForm, false);
   } else {
@@ -310,6 +310,13 @@ OB.APRM.AddPayment.glitemsOnLoadGrid = function (grid) {
     // If Gl Items Grid contains records when first opened then section is uncollapsed
     if (grid.getSelectedRecords() && grid.getSelectedRecords().size() > 0) {
       grid.view.theForm.getItem('7B6B5F5475634E35A85CF7023165E50B').expandSection();
+    }
+    if (grid.autoFitFieldWidths) {
+      // There is a problem with the grid calculating the auto fit field width if it is drawn inside an collapsed section.
+      // Also, the "_updateFieldWidths" ListGrid function cannot be overwritten.
+      // With this the re-calculation is forced once the grid has been already drawn in its place, so the auto fit field width can be properly calculated.
+      grid.setAutoFitFieldWidths(false);
+      grid.setAutoFitFieldWidths(true);
     }
   }
   grid.isReady = true;
@@ -439,6 +446,9 @@ OB.APRM.AddPayment.distributeAmount = function (view, form, onActualPaymentChang
         if (outstandingAmount.signum() < 0) {
           orderInvoice.setEditValue((i), 'amount', Number(outstandingAmount.toString()));
           orderInvoice.selectRecord(i);
+          if (outstandingAmount.signum() <= 0 || amount.signum() <= 0) {
+            amount = amount.subtract(outstandingAmount);
+          }
         } else {
           orderInvoice.setEditValue((i), 'amount', Number('0'));
           orderInvoice.deselectRecord(i);
@@ -597,6 +607,7 @@ OB.APRM.AddPayment.updateActualExpected = function (form) {
       generateCredit = new BigDecimal(String(form.getItem('generateCredit').getValue() || 0)),
       glitemtotal = new BigDecimal(String(form.getItem('amount_gl_items').getValue() || 0)),
       credit = new BigDecimal(String(form.getItem('used_credit').getValue() || 0)),
+      bslamount = new BigDecimal(String(form.getItem('bslamount').getValue() || 0)),
       selectedRecords = orderInvoice.selectedIds,
       actpayment, i;
   for (i = 0; i < selectedRecords.length; i++) {
@@ -609,7 +620,11 @@ OB.APRM.AddPayment.updateActualExpected = function (form) {
     expectedPayment.setValue(Number('0'));
   }
   if (!issotrx) {
-    actpayment = totalAmount.add(glitemtotal).add(generateCredit);
+    if ((bslamount.compareTo(BigDecimal.prototype.ZERO) !== 0) && (totalAmount.compareTo(BigDecimal.prototype.ZERO) === 0)) {
+      actpayment = totalAmount.add(glitemtotal).add(generateCredit).add(bslamount.abs());
+    } else {
+      actpayment = totalAmount.add(glitemtotal).add(generateCredit);
+    }
     actualPayment.setValue(Number(actpayment));
     if (credit.compareTo(BigDecimal.prototype.ZERO) > 0) {
       if (credit.compareTo(actpayment) > 0) {

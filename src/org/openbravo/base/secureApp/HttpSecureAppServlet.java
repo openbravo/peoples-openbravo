@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2014 Openbravo S.L.U.
+ * Copyright (C) 2001-2015 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -12,7 +12,6 @@
 package org.openbravo.base.secureApp;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -60,6 +59,7 @@ import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.HttpBaseUtils;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.LoginUtils.RoleDefaults;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -312,7 +312,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
           // to N
           if (LoginUtils.fillSessionArguments(this, vars, strUserAuth, strLanguage, strIsRTL,
               strRole, strClient, strOrg, strWarehouse)) {
-            readProperties(vars, globalParameters.getOpenbravoPropertiesPath());
+            readProperties(vars);
             readNumberFormat(vars, globalParameters.getFormatPath());
             saveLoginBD(request, vars, "0", "0");
           } else {
@@ -1078,45 +1078,48 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     out.close();
   }
 
+  /**
+   * @deprecated use {@link HttpSecureAppServlet#readProperties(VariablesSecureApp)} instead
+   */
   protected void readProperties(VariablesSecureApp vars, String strFileProperties) {
+    readProperties(vars);
+  }
+
+  /**
+   * Reads some configuration properties from Openbravo.properties and sets them in session
+   */
+  protected void readProperties(VariablesSecureApp vars) {
     // Read properties file.
-    final Properties properties = new Properties();
-    try {
+    final Properties properties = OBPropertiesProvider.getInstance().getOpenbravoProperties();
 
-      properties.load(new FileInputStream(strFileProperties));
-      final String javaDateFormat = properties.getProperty("dateFormat.java");
-      vars.setSessionValue("#AD_JavaDateFormat", javaDateFormat);
+    final String javaDateFormat = properties.getProperty("dateFormat.java");
+    vars.setSessionValue("#AD_JavaDateFormat", javaDateFormat);
 
-      final String javaDateTimeFormat = properties.getProperty("dateTimeFormat.java");
-      vars.setSessionValue("#AD_JavaDateTimeFormat", javaDateTimeFormat);
+    final String javaDateTimeFormat = properties.getProperty("dateTimeFormat.java");
+    vars.setSessionValue("#AD_JavaDateTimeFormat", javaDateTimeFormat);
 
-      final String sqlDateTimeFormat = properties.getProperty("dateTimeFormat.sql");
-      vars.setSessionValue("#AD_SqlDateTimeFormat", sqlDateTimeFormat);
+    final String sqlDateTimeFormat = properties.getProperty("dateTimeFormat.sql");
+    vars.setSessionValue("#AD_SqlDateTimeFormat", sqlDateTimeFormat);
 
-      final String jsDateFormat = properties.getProperty("dateFormat.js");
-      vars.setSessionValue("#AD_JsDateFormat", jsDateFormat);
+    final String jsDateFormat = properties.getProperty("dateFormat.js");
+    vars.setSessionValue("#AD_JsDateFormat", jsDateFormat);
 
-      final String sqlDateFormat = properties.getProperty("dateFormat.sql");
-      vars.setSessionValue("#AD_SqlDateFormat", sqlDateFormat);
+    final String sqlDateFormat = properties.getProperty("dateFormat.sql");
+    vars.setSessionValue("#AD_SqlDateFormat", sqlDateFormat);
 
-      final String pentahoServer = properties.getProperty("pentahoServer");
-      vars.setSessionValue("#pentahoServer", pentahoServer);
+    final String pentahoServer = properties.getProperty("pentahoServer");
+    vars.setSessionValue("#pentahoServer", pentahoServer);
 
-      final String sourcePath = properties.getProperty("source.path");
-      vars.setSessionValue("#sourcePath", sourcePath);
+    final String sourcePath = properties.getProperty("source.path");
+    vars.setSessionValue("#sourcePath", sourcePath);
 
-      if (log4j.isDebugEnabled()) {
-        log4j.debug("strFileProperties: " + strFileProperties);
-        log4j.debug("javaDateFormat: " + javaDateFormat);
-        log4j.debug("javaDateTimeFormat: " + javaDateTimeFormat);
-        log4j.debug("jsDateFormat: " + jsDateFormat);
-        log4j.debug("sqlDateFormat: " + sqlDateFormat);
-        log4j.debug("pentahoServer: " + pentahoServer);
-        log4j.debug("sourcePath: " + sourcePath);
-      }
-    } catch (final IOException e) {
-      // catch possible io errors from readLine()
-      log4j.error("Error reading properties", e);
+    if (log4j.isDebugEnabled()) {
+      log4j.debug("javaDateFormat: " + javaDateFormat);
+      log4j.debug("javaDateTimeFormat: " + javaDateTimeFormat);
+      log4j.debug("jsDateFormat: " + jsDateFormat);
+      log4j.debug("sqlDateFormat: " + sqlDateFormat);
+      log4j.debug("pentahoServer: " + pentahoServer);
+      log4j.debug("sourcePath: " + sourcePath);
     }
   }
 
