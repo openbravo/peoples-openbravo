@@ -529,10 +529,7 @@ isc.OBPickAndExecuteGrid.addProperties({
     this.Super('dataArrived', arguments);
     if (this.onGridLoadFunction) {
       this.onGridLoadFunction(this);
-      allRequiredSet = this.view.allRequiredParametersSet();
-      this.view.okButton.setEnabled(allRequiredSet);
-      this.view.pdfButton.setEnabled(allRequiredSet);
-      this.view.xlsButton.setEnabled(allRequiredSet);
+      this.view.handleButtonsStatus();
     }
   },
 
