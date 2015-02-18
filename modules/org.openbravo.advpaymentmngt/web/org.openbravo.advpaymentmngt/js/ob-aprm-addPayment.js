@@ -654,6 +654,7 @@ OB.APRM.AddPayment.updateGLItemsTotal = function (form, rowNum, remove) {
       paidOutField = grid.getFieldByColumnName('paid_out'),
       glItemTotalItem = form.getItem('amount_gl_items'),
       issotrx = form.getItem('issotrx').getValue(),
+      affectedParams = [],
       amt, i, bdAmt, receivedInAmt, paidOutAmt, allRecords;
 
   grid.saveAllEdits();
@@ -680,6 +681,8 @@ OB.APRM.AddPayment.updateGLItemsTotal = function (form, rowNum, remove) {
 
   glItemTotalItem.setValue(Number(totalAmt.toString()));
   OB.APRM.AddPayment.updateTotal(form);
+  affectedParams.push(form.getField('overpayment_action_display_logic').paramId);
+  OB.APRM.AddPayment.recalcDisplayLogicOrReadOnlyLogic(form, grid.view, affectedParams);
   return true;
 };
 
@@ -989,7 +992,8 @@ OB.APRM.AddPayment.recalcDisplayLogicOrReadOnlyLogic = function (form, view, aff
       newCriteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
       creditUseGrid.fetchData(newCriteria);
     }
-    thisform.markForRedraw();
+    thisform.redraw();
+    thisview.handleButtonsStatus();
   };
 
   OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.AddPaymentDisplayLogicActionHandler', {
