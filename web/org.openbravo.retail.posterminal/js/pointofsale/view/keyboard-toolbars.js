@@ -53,7 +53,8 @@ enyo.kind({
   },
   toolbarName: 'toolbarpayment',
   events: {
-    onShowPopup: ''
+    onShowPopup: '',
+    onClearPaymentSelect: ''
   },
   handlers: {
     onShowAllButtons: 'showAllButtons',
@@ -286,7 +287,7 @@ enyo.kind({
       btncomponent = this.getButtonComponent(sidebutton);
       if (countbuttons++ < paymentsbuttons) {
         this.createComponent(btncomponent);
-      } else if(this.sideButtons.length !== OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons.length){
+      } else if (this.sideButtons.length !== OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons.length) {
         OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons.push(btncomponent);
         dialogbuttons[sidebutton.command] = sidebutton.label;
       } else {
@@ -322,6 +323,7 @@ enyo.kind({
           // Is not a payment, so continue with the default path...
           keyboard.execCommand(status, null);
         } else {
+          me.bubble('onClearPaymentSelect');
           // It is a payment...
           var exactpayment = allpayments[status] || exactdefault,
               amount = me.model.getPending();

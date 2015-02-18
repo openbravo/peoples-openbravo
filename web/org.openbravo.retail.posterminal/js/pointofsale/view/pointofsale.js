@@ -63,6 +63,7 @@ enyo.kind({
     onLineChecked: 'checkedLine',
     onStatusChanged: 'statusChanged',
     onPaymentChanged: 'paymentChanged',
+    onClearPaymentSelect: 'clearPaymentSelect',
     onLayaways: 'layaways',
     onChangeSalesRepresentative: 'changeSalesRepresentative',
     onMaxLimitAmountError: 'maxLimitAmountError',
@@ -193,7 +194,7 @@ enyo.kind({
       kind: 'OB.UI.ModalSearchFilterBuilder',
       name: 'modalsearchfilterbuilder'
     }, {
-      kind: 'OB.OBPOSPointOfSale.UI.Modals.modalPaymentsSelect',
+      kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalPaymentsSelect',
       name: 'modalPaymentsSelect'
     }]
   }, {
@@ -843,6 +844,10 @@ enyo.kind({
   paymentChanged: function (inSender, inEvent) {
     // sending the event to the components bellow this one
     this.waterfall('onButtonPaymentChanged', inEvent);
+  },
+  clearPaymentSelect: function (inSender, inEvent) {
+    // sending the event to the components bellow this one
+    this.waterfall('onClearPaymentMethodSelect', inEvent);
   },
   layaways: function (inSender, inEvent) {
     this.$.modalPaidReceipts.setParams({

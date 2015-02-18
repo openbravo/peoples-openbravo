@@ -22,12 +22,13 @@
 enyo.kind({
   kind: 'OB.UI.Modal',
   topPosition: '75px',
-  name: 'OB.OBPOSPointOfSale.UI.Modals.modalPaymentsSelect',
+  name: 'OB.OBPOSPointOfSale.UI.Modals.ModalPaymentsSelect',
   events: {
     onHideThisPopup: ''
   },
   handlers: {
-    onSearchAction: 'searchAction'
+    onSearchAction: 'searchAction',
+    onFiltered: 'searchAction'
   },
   body: {
     components: [{
@@ -39,7 +40,8 @@ enyo.kind({
           components: [{
             kind: 'OB.UI.SearchInputAutoFilter',
             name: 'paymentname',
-            style: 'width: 100%;'
+            style: 'width: 100%;',
+            isFirstFocus: true
           }]
         }, {
           style: 'display: table-cell;',
@@ -69,7 +71,7 @@ enyo.kind({
         name: 'paymentMethods',
         kind: 'Scroller',
         horizontal: 'hidden',
-        maxHeight: '330px',
+        maxHeight: '330px; padding-top: 10px;',
         setItems: function (items) {
           var i = 0,
               components = this.getComponents();
@@ -85,7 +87,7 @@ enyo.kind({
               classes: 'paymentmethoditems',
               tag: 'div',
               allowHtml: true,
-              content: '<img class="paymentmethoditemsimage" src="' + item.image + '"/><div class="paymentmethoditemstext">' + item.name + '</div>',
+              content: '<img class="paymentmethoditemsimage" src="' + (item.image ? item.image : 'img/PMImgNotAvailable.png') + '"/><div class="paymentmethoditemstext">' + item.name + '</div>',
               payment: item.payment,
               tap: function () {
                 var dialog = this.owner.owner.owner;
