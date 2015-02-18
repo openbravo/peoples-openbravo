@@ -38,7 +38,7 @@
                 FROM m_transaction m 
                 WHERE  m.m_transaction_id = m_transaction_cost.m_transaction_id
                 )
-            WHERE dateacct = to_date('01/01/1970')
+            WHERE dateacct = '01/01/1970'
       ]]>
     </Sql>
   </SqlMethod>
