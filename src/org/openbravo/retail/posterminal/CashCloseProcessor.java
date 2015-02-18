@@ -28,7 +28,6 @@ import org.openbravo.advpaymentmngt.dao.TransactionsDao;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.client.kernel.RequestContext;
-import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
@@ -51,7 +50,7 @@ public class CashCloseProcessor {
   private Instance<CashupHook> cashupHooks;
 
   public JSONObject processCashClose(OBPOSApplications posTerminal, JSONObject jsonCashup,
-      JSONArray cashMgmtIds, Date cashUpDate) throws Exception {
+      JSONArray cashMgmtIds, Date currentDate) throws Exception {
 
     long t0 = System.currentTimeMillis();
 
@@ -77,12 +76,12 @@ public class CashCloseProcessor {
         continue;
       }
       FIN_Reconciliation reconciliation = createReconciliation(cashCloseObj, posTerminal,
-          paymentType.getFinancialAccount(), cashUpDate);
+          paymentType.getFinancialAccount(), currentDate);
 
       FIN_FinaccTransaction diffTransaction = null;
       if (!differenceToApply.equals(BigDecimal.ZERO)) {
         diffTransaction = createDifferenceTransaction(posTerminal, reconciliation, paymentType,
-            differenceToApply, cashUpDate);
+            differenceToApply, currentDate);
         OBDal.getInstance().save(diffTransaction);
       }
       OBDal.getInstance().save(reconciliation);
@@ -106,11 +105,11 @@ public class CashCloseProcessor {
         }
         if (reconciliationTotal.compareTo(BigDecimal.ZERO) != 0) {
           FIN_FinaccTransaction paymentTransaction = createTotalTransferTransactionPayment(
-              posTerminal, reconciliation, paymentType, reconciliationTotal, cashUpDate);
+              posTerminal, reconciliation, paymentType, reconciliationTotal, currentDate);
           OBDal.getInstance().save(paymentTransaction);
 
           FIN_FinaccTransaction depositTransaction = createTotalTransferTransactionDeposit(
-              posTerminal, reconciliation, paymentType, reconciliationTotal, cashUpDate);
+              posTerminal, reconciliation, paymentType, reconciliationTotal, currentDate);
           OBDal.getInstance().save(depositTransaction);
         }
       }
@@ -209,7 +208,7 @@ public class CashCloseProcessor {
   }
 
   protected FIN_Reconciliation createReconciliation(JSONObject cashCloseObj,
-      OBPOSApplications posTerminal, FIN_FinancialAccount account, Date cashUpDate)
+      OBPOSApplications posTerminal, FIN_FinancialAccount account, Date currentDate)
       throws JSONException {
 
     BigDecimal startingBalance;
@@ -230,8 +229,8 @@ public class CashCloseProcessor {
     reconciliation.setDocumentType(posTerminal.getObposTerminaltype()
         .getDocumentTypeForReconciliations());
     reconciliation.setDocumentNo(getReconciliationDocumentNo(reconciliation.getDocumentType()));
-    reconciliation.setEndingDate(cashUpDate);
-    reconciliation.setTransactionDate(cashUpDate);
+    reconciliation.setEndingDate(currentDate);
+    reconciliation.setTransactionDate(currentDate);
     if (!cashCloseObj.getJSONObject("paymentMethod").isNull("amountToKeep")) {
       reconciliation.setEndingBalance(BigDecimal.valueOf(cashCloseObj
           .getJSONObject("paymentMethod").getDouble("amountToKeep")));
@@ -255,7 +254,7 @@ public class CashCloseProcessor {
 
   protected FIN_FinaccTransaction createDifferenceTransaction(OBPOSApplications terminal,
       FIN_Reconciliation reconciliation, OBPOSAppPayment payment, BigDecimal difference,
-      Date cashUpDate) {
+      Date currentDate) {
     FIN_FinancialAccount account = payment.getFinancialAccount();
     GLItem glItem = null;
     if (payment.isOverrideconfiguration()) {
@@ -280,8 +279,8 @@ public class CashCloseProcessor {
     transaction.setTransactionType("BPW");
     transaction.setStatus("RPPC");
     transaction.setDescription("GL Item: " + glItem.getName());
-    transaction.setDateAcct(cashUpDate);
-    transaction.setTransactionDate(cashUpDate);
+    transaction.setDateAcct(currentDate);
+    transaction.setTransactionDate(currentDate);
     transaction.setReconciliation(reconciliation);
 
     return transaction;
@@ -289,7 +288,7 @@ public class CashCloseProcessor {
 
   protected FIN_FinaccTransaction createTotalTransferTransactionPayment(OBPOSApplications terminal,
       FIN_Reconciliation reconciliation, OBPOSAppPayment paymentType,
-      BigDecimal reconciliationTotal, Date cashUpDate) {
+      BigDecimal reconciliationTotal, Date currentDate) {
     TerminalTypePaymentMethod paymentMethod = paymentType.getPaymentMethod();
     FIN_FinancialAccount account = paymentType.getFinancialAccount();
     GLItem glItem = null;
@@ -309,8 +308,8 @@ public class CashCloseProcessor {
     transaction.setTransactionType("BPW");
     transaction.setStatus("RPPC");
     transaction.setDescription("GL Item: " + glItem.getName());
-    transaction.setDateAcct(cashUpDate);
-    transaction.setTransactionDate(cashUpDate);
+    transaction.setDateAcct(currentDate);
+    transaction.setTransactionDate(currentDate);
     transaction.setReconciliation(reconciliation);
 
     account.setCurrentBalance(account.getCurrentBalance().subtract(reconciliationTotal));
@@ -321,7 +320,7 @@ public class CashCloseProcessor {
 
   protected FIN_FinaccTransaction createTotalTransferTransactionDeposit(OBPOSApplications terminal,
       FIN_Reconciliation reconciliation, OBPOSAppPayment paymentType,
-      BigDecimal reconciliationTotal, Date cashUpDate) {
+      BigDecimal reconciliationTotal, Date currentDate) {
     GLItem glItem = null;
     if (paymentType.isOverrideconfiguration()) {
       glItem = paymentType.getGLItemForCashDropDeposit();
@@ -360,25 +359,13 @@ public class CashCloseProcessor {
     transaction.setTransactionType("BPW");
     transaction.setStatus("RDNC");
     transaction.setDescription("GL Item: " + glItem.getName());
-    transaction.setDateAcct(cashUpDate);
-    transaction.setTransactionDate(cashUpDate);
+    transaction.setDateAcct(currentDate);
+    transaction.setTransactionDate(currentDate);
 
     accountTo.setCurrentBalance(accountTo.getCurrentBalance().add(reconciliationTotal));
 
     return transaction;
 
-  }
-
-  protected OBPOSAppCashup createCashUp(OBPOSApplications posTerminal, String cashUpId,
-      Date cashUpDate) {
-    OBPOSAppCashup cashup = OBProvider.getInstance().get(OBPOSAppCashup.class);
-    cashup.setNewOBObject(true);
-    cashup.setId(cashUpId);
-    cashup.setOrganization(posTerminal.getOrganization());
-    cashup.setCashUpDate(cashUpDate);
-    cashup.setPOSTerminal(posTerminal);
-    cashup.setUserContact(OBContext.getOBContext().getUser());
-    return cashup;
   }
 
   protected OBPOSAppCashReconcil createCashUpReconciliation(OBPOSApplications posTerminal,

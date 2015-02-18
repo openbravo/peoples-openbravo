@@ -10,6 +10,8 @@ package org.openbravo.retail.posterminal;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
@@ -42,6 +44,7 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
     String cashUpId = jsonCashup.getString("id");
     JSONObject jsonData = new JSONObject();
     Date cashUpDate = new Date();
+    Date currentDate = new Date();
     try {
       if (jsonCashup.has("cashUpDate") && jsonCashup.get("cashUpDate") != null
           && StringUtils.isNotEmpty(jsonCashup.getString("cashUpDate"))) {
@@ -50,6 +53,14 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
             ((String) strCashUpDate).subSequence(0, ((String) strCashUpDate).lastIndexOf(".")));
       } else {
         log.debug("Error processing cash close: error retrieving cashUp date. Using current date");
+      }
+      if (jsonCashup.has("currentDate") && jsonCashup.get("currentDate") != null
+          && StringUtils.isNotEmpty(jsonCashup.getString("currentDate"))) {
+        String strCurrentDate = (String) jsonCashup.getString("currentDate");
+        DateFormat isodatefmt = new SimpleDateFormat("dd-MM-yyyy");
+        currentDate = isodatefmt.parse(strCurrentDate);
+      } else {
+        log.debug("Error processing cash close: error retrieving current date. Using server current date");
       }
     } catch (Exception e) {
       log.debug("Error processing cash close: error retrieving cashUp date. Using current date");
@@ -94,7 +105,7 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
       // This cashup is a closed box
       TriggerHandler.getInstance().disable();
       try {
-        getOrderGroupingProcessor().groupOrders(posTerminal, cashUpId, cashUpDate);
+        getOrderGroupingProcessor().groupOrders(posTerminal, cashUpId, currentDate);
 
         posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
             jsonCashup.getString("posterminal"));
@@ -102,7 +113,7 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
         CashCloseProcessor processor = getCashCloseProcessor();
         JSONArray cashMgmtIds = jsonCashup.getJSONArray("cashMgmtIds");
         JSONObject result = processor.processCashClose(posTerminal, jsonCashup, cashMgmtIds,
-            cashUpDate);
+            currentDate);
         // add the messages returned by processCashClose...
         jsonData.put("messages", result.opt("messages"));
         jsonData.put("next", result.opt("next"));
