@@ -149,15 +149,29 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <column name="LEAVEASCREDIT" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <column name="LEAVEASCREDIT" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="AD_IMAGE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="OBPOS_PAY_METHOD_CATEGORY_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
         <onCreateDefault/>
       </column>
       <foreign-key foreignTable="AD_CLIENT" name="OBPOS_APPPAYTYPE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="AD_IMAGE" name="OBPOS_APPPAYTYPE_AD_IMAGE_ID">
+        <reference local="AD_IMAGE_ID" foreign="AD_IMAGE_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="OBPOS_APPPAYTYPE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="OBPOS_PAY_METHOD_CATEGORY" name="OBPOS_APPPAYTYPE_CATEGORY_ID">
+        <reference local="OBPOS_PAY_METHOD_CATEGORY_ID" foreign="OBPOS_PAY_METHOD_CATEGORY_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_CURRENCY" name="OBPOS_APPPAYTYPE_CURR">
         <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>

@@ -14,9 +14,13 @@ enyo.kind({
   published: {
     receipt: null
   },
+  events: {
+    onShowPopup: ''
+  },
   handlers: {
     onButtonStatusChanged: 'buttonStatusChanged',
-    onMaxLimitAmountError: 'maxLimitAmountError'
+    onMaxLimitAmountError: 'maxLimitAmountError',
+    onButtonPaymentChanged: 'paymentChanged'
   },
   getSelectedPayment: function () {
     if (this.receipt && this.receipt.selectedPayment) {
@@ -28,42 +32,81 @@ enyo.kind({
     this.$.totalpending.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(pending, mulrate), symbol, currencySymbolAtTheRight));
   },
   buttonStatusChanged: function (inSender, inEvent) {
-    var payment, amt, change, pending, isMultiOrders, paymentstatus;
-    payment = inEvent.value.payment || OB.MobileApp.model.paymentnames[OB.MobileApp.model.get('paymentcash')];
-    if (_.isUndefined(payment)) {
-      return true;
+    this.$.paymentMethodSelect.setContent('');
+    var maxHeight = 150;
+    // Resize scroll area to fix parent panel
+    var component = this.model.isValidMultiOrderState() ? this.$.multiPayments : this.$.payments;
+    if (component.$.tempty.getShowing()) {
+      maxHeight -= component.$.tempty.getBounds().height;
     }
-    // Clear limit amount error when click on PaymentMethod button
-    if (OB.POS.terminal.terminal.paymentnames[inEvent.value.status]) {
-      this.bubble('onMaxLimitAmountError', {
-        show: false,
-        maxLimitAmount: 0,
-        currency: ''
+    component.$.scrollArea.setStyle("height: " + maxHeight + "px");
+    // Scroll to bottom
+    var height = 0;
+    component.$.tbody.children.forEach(function (line) {
+      height += line.getBounds().height;
+    });
+    component.$.scrollArea.setScrollTop(height - maxHeight);
+    if (inEvent.value.status && inEvent.value.status.indexOf('paymentMethodCategory.showitems.') === 0) {
+      this.doShowPopup({
+        popup: 'modalPaymentsSelect',
+        args: {
+          idCategory: inEvent.value.status.substring(inEvent.value.status.lastIndexOf('.') + 1)
+        }
       });
-    }
-    isMultiOrders = this.model.isValidMultiOrderState();
-    change = this.model.getChange();
-    pending = this.model.getPending();
-    if (!isMultiOrders) {
-      if (!_.isNull(this.receipt)) {
-        this.receipt.selectedPayment = payment.payment.searchKey;
-        paymentstatus = this.receipt.getPaymentStatus();
-      }
     } else {
-      this.model.get('multiOrders').set('selectedPayment', payment.payment.searchKey);
-      paymentstatus = this.model.get('multiOrders').getPaymentStatus();
-    }
+      var payment, amt, change, pending, isMultiOrders, paymentstatus;
+      payment = inEvent.value.payment || OB.MobileApp.model.paymentnames[OB.MobileApp.model.get('paymentcash')];
+      if (_.isUndefined(payment)) {
+        return true;
+      }
+      // Clear limit amount error when click on PaymentMethod button
+      if (OB.POS.terminal.terminal.paymentnames[inEvent.value.status]) {
+        this.bubble('onMaxLimitAmountError', {
+          show: false,
+          maxLimitAmount: 0,
+          currency: ''
+        });
+      }
+      isMultiOrders = this.model.isValidMultiOrderState();
+      change = this.model.getChange();
+      pending = this.model.getPending();
+      if (!isMultiOrders) {
+        if (!_.isNull(this.receipt)) {
+          this.receipt.selectedPayment = payment.payment.searchKey;
+          paymentstatus = this.receipt.getPaymentStatus();
+        }
+      } else {
+        this.model.get('multiOrders').set('selectedPayment', payment.payment.searchKey);
+        paymentstatus = this.model.get('multiOrders').getPaymentStatus();
+      }
 
-    if (!_.isNull(change) && change) {
-      this.$.change.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(change, payment.mulrate), payment.symbol, payment.currencySymbolAtTheRight));
-      OB.MobileApp.model.set('changeReceipt', OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(change, payment.mulrate), payment.symbol, payment.currencySymbolAtTheRight));
-    } else if (!_.isNull(pending) && pending) {
+      if (!_.isNull(change) && change) {
+        this.$.change.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(change, payment.mulrate), payment.symbol, payment.currencySymbolAtTheRight));
+        OB.MobileApp.model.set('changeReceipt', OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(change, payment.mulrate), payment.symbol, payment.currencySymbolAtTheRight));
+      } else if (!_.isNull(pending) && pending) {
       this.setTotalPending(pending, payment.mulrate, payment.symbol, payment.currencySymbolAtTheRight, inSender, inEvent);
+      }
+      this.checkEnoughCashAvailable(paymentstatus, payment);
+      if (!_.isNull(this.receipt) && this.receipt.get('isLayaway')) {
+        this.$.layawayaction.updateVisibility(true);
+      }
     }
-    this.checkEnoughCashAvailable(paymentstatus, payment);
-    if (!_.isNull(this.receipt) && this.receipt.get('isLayaway')) {
-      this.$.layawayaction.updateVisibility(true);
+  },
+  paymentChanged: function (inSender, inEvent) {
+    var maxHeight = 115;
+    // Resize scroll area to fix parent panel
+    var component = this.model.isValidMultiOrderState() ? this.$.multiPayments : this.$.payments;
+    if (component.$.tempty.getShowing()) {
+      maxHeight -= component.$.tempty.getBounds().height;
     }
+    component.$.scrollArea.setStyle("height: " + maxHeight + "px");
+    // Scroll to bottom
+    var height = 0;
+    component.$.tbody.children.forEach(function (line) {
+      height += line.getBounds().height;
+    });
+    component.$.scrollArea.setScrollTop(height - maxHeight);
+    this.$.paymentMethodSelect.setContent(OB.I18N.getLabel('OBPOS_PaymentsSelectedMethod', [inEvent.payment.payment._identifier]));
   },
   maxLimitAmountError: function (inSender, inEvent) {
     var maxHeight;
@@ -79,6 +122,7 @@ enyo.kind({
     if (component.$.tempty.getShowing()) {
       maxHeight -= component.$.tempty.getBounds().height;
     }
+    component.$.scrollArea.setStyle("height: " + maxHeight + "px");
     // Scroll to bottom
     var height = 0;
     component.$.tbody.children.forEach(function (line) {
@@ -180,7 +224,12 @@ enyo.kind({
           showing: false
         }]
       }]
-
+    }, {
+      classes: 'span12',
+      components: [{
+        name: 'paymentMethodSelect',
+        style: 'color: orange; padding-left: 1em'
+      }]
     }, {
       classes: 'span12',
       components: [{

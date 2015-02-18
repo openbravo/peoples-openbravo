@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013 Openbravo S.L.U.
+ * Copyright (C) 2013-2014 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -62,6 +62,7 @@ enyo.kind({
     onSetDiscountQty: 'discountQtyChanged',
     onLineChecked: 'checkedLine',
     onStatusChanged: 'statusChanged',
+    onPaymentChanged: 'paymentChanged',
     onLayaways: 'layaways',
     onChangeSalesRepresentative: 'changeSalesRepresentative',
     onMaxLimitAmountError: 'maxLimitAmountError',
@@ -191,6 +192,9 @@ enyo.kind({
     }, {
       kind: 'OB.UI.ModalSearchFilterBuilder',
       name: 'modalsearchfilterbuilder'
+    }, {
+      kind: 'OB.OBPOSPointOfSale.UI.Modals.modalPaymentsSelect',
+      name: 'modalPaymentsSelect'
     }]
   }, {
     name: 'mainSubWindow',
@@ -835,6 +839,10 @@ enyo.kind({
     this.waterfall('onButtonStatusChanged', {
       value: inEvent
     });
+  },
+  paymentChanged: function (inSender, inEvent) {
+    // sending the event to the components bellow this one
+    this.waterfall('onButtonPaymentChanged', inEvent);
   },
   layaways: function (inSender, inEvent) {
     this.$.modalPaidReceipts.setParams({
