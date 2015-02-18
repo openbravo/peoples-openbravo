@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2014 Openbravo SLU
+ * All portions are Copyright (C) 2001-2015 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -1255,9 +1255,16 @@ public class Utility {
         }
       } else {
         strAux = vars.getStringParameter("inp" + Sqlc.TransformaNombreColumna(name));
+
         if (log4j.isDebugEnabled())
           log4j.debug("parseParameterValues - getStringParameter(inp"
               + Sqlc.TransformaNombreColumna(name) + "): " + strAux);
+
+        if ((strAux == null || strAux.equals("")) && name.startsWith("_propertyField_")) {
+          // property fields are sent in the request with a different format
+          strAux = vars.getStringParameter("inp" + name);
+        }
+
         if (strAux == null || strAux.equals(""))
           strAux = Utility.getContext(conn, vars, name, window);
       }
