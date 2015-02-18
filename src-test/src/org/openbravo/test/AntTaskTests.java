@@ -58,6 +58,7 @@ import org.openbravo.test.system.SystemServiceTest;
 import org.openbravo.test.system.SystemValidatorTest;
 import org.openbravo.test.system.TestInfrastructure;
 import org.openbravo.test.xml.DatasetExportTest;
+import org.openbravo.test.xml.DefaultsDataset;
 import org.openbravo.test.xml.EntityXMLImportTestBusinessObject;
 import org.openbravo.test.xml.EntityXMLImportTestReference;
 import org.openbravo.test.xml.EntityXMLImportTestSingle;
@@ -132,6 +133,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     EntityXMLIssues.class, //
     UniqueConstraintImportTest.class, //
     DatasetExportTest.class, //
+    DefaultsDataset.class, //
     ClassicSelectorTest.class, })
 public class AntTaskTests {
 }

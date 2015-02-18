@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -182,9 +182,9 @@ public class DataExportService implements OBSingleton {
     exc.setOptionExportTransientInfo(true);
     exc.setOptionExportAuditInfo(true);
     exc.setAddSystemAttributes(true);
-    if (dataSet != null) {
-      exc.setDataSet(dataSet);
-    }
+    exc.setDataSet(dataSet);
+    exc.setDefaultValuesData(dataSet.isDefaultValuesDataSet());
+
     final StringWriter out = new StringWriter();
     exc.setOutput(out);
 
@@ -198,7 +198,7 @@ public class DataExportService implements OBSingleton {
 
     final Set<BaseOBObject> toExport = new LinkedHashSet<BaseOBObject>();
     for (final DataSetTable dt : dts) {
-      if(dt.isActive()) {
+      if (dt.isActive()) {
         final Boolean isbo = dt.isBusinessObject();
         exc.setOptionIncludeChildren(isbo != null && isbo.booleanValue());
         final List<BaseOBObject> list = DataSetService.getInstance().getExportableObjects(dt,

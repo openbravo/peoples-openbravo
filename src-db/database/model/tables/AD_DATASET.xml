@@ -69,6 +69,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="ISDEFAULTVALUESDATASET" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="AD_DATASET_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -78,6 +82,7 @@
       <foreign-key foreignTable="AD_ORG" name="AD_DATASET_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <check name="AD_DATASET_DEFAULTDS_CHCK"><![CDATA[ISDEFAULTVALUESDATASET IN ('Y', 'N')]]></check>
       <check name="AD_DATASET_EXPORTALLOWED_CHK"><![CDATA[EXPORTALLOWED IN ('Y', 'N')]]></check>
       <check name="AD_DATASET_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
