@@ -59,7 +59,8 @@ enyo.kind({
   handlers: {
     onShowAllButtons: 'showAllButtons',
     onCloseAllPopups: 'closeAllPopups',
-    onButtonPaymentChanged: 'paymentChanged'
+    onButtonPaymentChanged: 'paymentChanged',
+    onActionPay: 'actionPay'
   },
   components: [{
     kind: 'OB.OBPOSPointOfSale.UI.PaymentMethods',
@@ -67,6 +68,10 @@ enyo.kind({
   }],
   init: function (model) {
     this.model = model;
+  },
+  actionPay: function (inSender, inEvent) {
+    this.bubble('onClearPaymentSelect');
+    this.pay(inEvent.amount, inEvent.key, inEvent.name, inEvent.paymentMethod, inEvent.rate, inEvent.mulrate, inEvent.isocode, inEvent.options);
   },
   pay: function (amount, key, name, paymentMethod, rate, mulrate, isocode, options) {
     if (options && options.percentaje) {
@@ -220,17 +225,25 @@ enyo.kind({
         label: category.name,
         stateless: false,
         action: function (keyboard, txt) {
+          var options = {};
+          if (_.last(txt) === '%') {
+            options.percentaje = true;
+          }
+          var amount = OB.DEC.number(OB.I18N.parseNumber(txt));
+          if (_.isNaN(amount)) {
+            OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NotValidNumber', [txt]));
+            return;
+          }
           if (me.currentPayment) {
-            var options = {};
-            if (_.last(txt) === '%') {
-              options.percentaje = true;
-            }
-            var amount = OB.DEC.number(OB.I18N.parseNumber(txt));
-            if (_.isNaN(amount)) {
-              OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NotValidNumber', [txt]));
-              return;
-            }
             me.pay(amount, me.currentPayment.payment.searchKey, me.currentPayment.payment._identifier, me.currentPayment.paymentMethod, me.currentPayment.rate, me.currentPayment.mulrate, me.currentPayment.isocode, options);
+          } else {
+            me.doShowPopup({
+              popup: 'modalPaymentsSelect',
+              args: {
+                idCategory: category.id,
+                amount: amount
+              }
+            });
           }
         }
       });

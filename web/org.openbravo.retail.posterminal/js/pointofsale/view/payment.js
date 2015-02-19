@@ -15,7 +15,8 @@ enyo.kind({
     receipt: null
   },
   events: {
-    onShowPopup: ''
+    onShowPopup: '',
+    onPaymentActionPay: ''
   },
   handlers: {
     onButtonStatusChanged: 'buttonStatusChanged',
@@ -37,21 +38,8 @@ enyo.kind({
   },
   buttonStatusChanged: function (inSender, inEvent) {
     this.$.paymentMethodSelect.setContent('');
-    var maxHeight = 150;
-    // Resize scroll area to fix parent panel
-    var component = this.model.isValidMultiOrderState() ? this.$.multiPayments : this.$.payments;
-    if (component.$.tempty.getShowing()) {
-      maxHeight -= component.$.tempty.getBounds().height;
-    }
-    component.$.scrollArea.setStyle("height: " + maxHeight + "px");
-    // Scroll to bottom
-    var height = 0;
-    component.$.tbody.children.forEach(function (line) {
-      height += line.getBounds().height;
-    });
-    component.$.scrollArea.setScrollTop(height - maxHeight);
+    this.updateScrollArea();
     if (inEvent.value.status && inEvent.value.status.indexOf('paymentMethodCategory.showitems.') === 0) {
-      this.showPaymentsSelect = true;
       this.doShowPopup({
         popup: 'modalPaymentsSelect',
         args: {
@@ -59,14 +47,9 @@ enyo.kind({
         }
       });
     } else {
-      var payment, amt, change, pending, isMultiOrders, paymentstatus;
+      var payment, change, pending, isMultiOrders, paymentstatus;
       payment = inEvent.value.payment || OB.MobileApp.model.paymentnames[OB.MobileApp.model.get('paymentcash')];
       if (_.isUndefined(payment)) {
-        if (this.showPaymentsSelect) {
-          this.showPaymentsSelect = false;
-          this.updateScrollArea();
-          this.$.paymentMethodSelect.setContent(OB.I18N.getLabel('OBPOS_PaymentsSelectMethod'));
-        }
         return true;
       }
       // Clear limit amount error when click on PaymentMethod button
@@ -100,6 +83,19 @@ enyo.kind({
       if (!_.isNull(this.receipt) && this.receipt.get('isLayaway')) {
         this.$.layawayaction.updateVisibility(true);
       }
+      if (inEvent.value.amount) {
+        this.doPaymentActionPay({
+          amount: inEvent.value.amount,
+          key: payment.payment.searchKey,
+          name: payment.payment._identifier,
+          paymentMethod: payment.paymentMethod,
+          rate: payment.rate,
+          mulrate: payment.mulrate,
+          isocode: payment.isocode,
+          options: null
+        });
+        //me.pay(amount, me.currentPayment.payment.searchKey, me.currentPayment.payment._identifier, me.currentPayment.paymentMethod, me.currentPayment.rate, me.currentPayment.mulrate, me.currentPayment.isocode, options);
+      }
     }
   },
   paymentChanged: function (inSender, inEvent) {
@@ -124,24 +120,12 @@ enyo.kind({
   maxLimitAmountError: function (inSender, inEvent) {
     var maxHeight;
     if (inEvent.show) {
-      maxHeight = 115;
       this.$.errorMaxlimitamount.setContent(OB.I18N.getLabel('OBPOS_PaymentMaxLimitAmount', [inEvent.maxLimitAmount, inEvent.currency]));
     } else {
-      maxHeight = 150;
       this.$.errorMaxlimitamount.setContent('');
     }
     // Resize scroll area to fix parent panel
-    var component = this.model.isValidMultiOrderState() ? this.$.multiPayments : this.$.payments;
-    if (component.$.tempty.getShowing()) {
-      maxHeight -= component.$.tempty.getBounds().height;
-    }
-    component.$.scrollArea.setStyle("height: " + maxHeight + "px");
-    // Scroll to bottom
-    var height = 0;
-    component.$.tbody.children.forEach(function (line) {
-      height += line.getBounds().height;
-    });
-    component.$.scrollArea.setScrollTop(height - maxHeight);
+    this.updateScrollArea();
   },
   components: [{
     style: 'background-color: #363636; color: white; height: 200px; margin: 5px; padding: 5px; position: relative;',

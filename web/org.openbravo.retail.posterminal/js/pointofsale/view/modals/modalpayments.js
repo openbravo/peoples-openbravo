@@ -83,7 +83,8 @@ enyo.kind({
                 var dialog = this.owner.owner.owner;
                 dialog.bubble('onStatusChanged', {
                   payment: this.payment,
-                  status: this.payment.payment.searchKey
+                  status: this.payment.payment.searchKey,
+                  amount: dialog.args.amount
                 });
                 dialog.bubble('onPaymentChanged', {
                   payment: this.payment,
