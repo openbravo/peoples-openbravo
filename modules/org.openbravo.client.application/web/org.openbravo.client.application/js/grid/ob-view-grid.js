@@ -866,7 +866,6 @@ isc.OBViewGrid.addProperties({
         this.contextMenu.destroy();
         this.contextMenu = null;
       }
-      this.refreshContents();
     }
   },
 
