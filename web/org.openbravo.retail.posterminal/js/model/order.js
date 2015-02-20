@@ -712,12 +712,12 @@
       var permission;
       
       if (OB.DEC.isNumber(qty) && qty !== 0) {
+        var oldqty = line.get('qty');
         permission = 'OBPOS_ReturnLine';
-        if (OB.MobileApp.model.get('permissions')[permission] === false && qty < 0) {
+        if (!OB.MobileApp.model.hasPermission(permission, true) && qty < 0 && oldqty > 0) {
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgCannotAddNegative'));
           return;
         }
-        var oldqty = line.get('qty');
         if (line.get('product').get('groupProduct') === false) {
           this.addProduct(line.get('product'));
           return true;
