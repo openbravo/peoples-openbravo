@@ -18,6 +18,7 @@ import javax.inject.Inject;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.base.exception.OBException;
 
 public class PaidReceiptsHeader extends ProcessHQLQuery {
 
@@ -59,7 +60,7 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
           String hql = hook.exec(hqlFilter, filterText);
           hqlFilter = hql;
         } catch (Exception e) {
-          e.printStackTrace();
+          throw new OBException("An error happened when computing a filter in PaidReceipts", e);
         }
       }
       hqlPaidReceipts += " and (" + hqlFilter + ") ";
