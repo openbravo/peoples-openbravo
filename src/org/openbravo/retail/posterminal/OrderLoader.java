@@ -74,6 +74,7 @@ import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.order.OrderLineOffer;
 import org.openbravo.model.common.order.OrderTax;
 import org.openbravo.model.common.plm.AttributeSetInstance;
+import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_OrigPaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
@@ -1543,6 +1544,7 @@ public class OrderLoader extends POSDataSynchronizationProcess {
           .calculateServerDate((String) payment.get("date"), jsonorder.getLong("timezoneOffset"))
           : OBMOBCUtils.stripTime(new Date());
 
+      // insert the payment
       FIN_Payment finPayment = FIN_AddPayment.savePayment(null, true, paymentDocType, paymentDocNo,
           order.getBusinessPartner(), paymentType.getPaymentMethod().getPaymentMethod(), account,
           amount.toString(), calculatedDate, order.getOrganization(), null, detail, paymentAmount,
@@ -1576,6 +1578,8 @@ public class OrderLoader extends POSDataSynchronizationProcess {
       parameters.put("Fin_Payment_ID", finPayment.getId());
       parameters.put("isPOSOrder", "Y");
       pb.setParams(parameters);
+      // the payment that has been created is processed
+      // the transaction is created
       FIN_PaymentProcess process = new FIN_PaymentProcess();
       process.execute(pb);
       OBError result = (OBError) pb.getResult();
@@ -1583,8 +1587,25 @@ public class OrderLoader extends POSDataSynchronizationProcess {
         throw new OBException(result.getMessage());
       }
       vars.setSessionValue("POSOrder", "Y");
+
+      // retrieve the transactions of this payment and set the cashupId to those transactions
+      final OBCriteria<FIN_FinaccTransaction> transactionsCriteria = OBDal.getInstance()
+          .createCriteria(FIN_FinaccTransaction.class);
+      transactionsCriteria.add(Restrictions.eq(FIN_FinaccTransaction.PROPERTY_FINPAYMENT,
+          finPayment));
+      final List<FIN_FinaccTransaction> transactions = transactionsCriteria.list();
+      final String cashupId = jsonorder.getString("obposAppCashup");
+      final OBPOSAppCashup cashup = OBDal.getInstance().get(OBPOSAppCashup.class, cashupId);
+      if (transactions.size() == 0) {
+        throw new OBException("The payment didn't create any transaction");
+      }
+      for (FIN_FinaccTransaction transaction : transactions) {
+        transaction.setObposAppCashup(cashup);
+      }
+
       log.debug("Payment. Create entities: " + (t2 - t1) + "; Save payment: " + (t3 - t2)
           + "; Process payment: " + (System.currentTimeMillis() - t3));
+
     } finally {
       OBContext.restorePreviousMode();
     }

@@ -81,7 +81,7 @@ public class CashCloseProcessor {
       FIN_FinaccTransaction diffTransaction = null;
       if (!differenceToApply.equals(BigDecimal.ZERO)) {
         diffTransaction = createDifferenceTransaction(posTerminal, reconciliation, paymentType,
-            differenceToApply, currentDate);
+            differenceToApply, currentDate, cashUp);
         OBDal.getInstance().save(diffTransaction);
       }
       OBDal.getInstance().save(reconciliation);
@@ -105,11 +105,11 @@ public class CashCloseProcessor {
         }
         if (reconciliationTotal.compareTo(BigDecimal.ZERO) != 0) {
           FIN_FinaccTransaction paymentTransaction = createTotalTransferTransactionPayment(
-              posTerminal, reconciliation, paymentType, reconciliationTotal, currentDate);
+              posTerminal, reconciliation, paymentType, reconciliationTotal, currentDate, cashUp);
           OBDal.getInstance().save(paymentTransaction);
 
           FIN_FinaccTransaction depositTransaction = createTotalTransferTransactionDeposit(
-              posTerminal, reconciliation, paymentType, reconciliationTotal, currentDate);
+              posTerminal, reconciliation, paymentType, reconciliationTotal, currentDate, cashUp);
           OBDal.getInstance().save(depositTransaction);
         }
       }
@@ -160,31 +160,11 @@ public class CashCloseProcessor {
 
   protected void associateTransactions(OBPOSAppPayment paymentType,
       FIN_Reconciliation reconciliation, String cashUpId, JSONArray cashMgmtIds) {
-    String orderTransactionsQueryHQL = " as fintrans, FIN_Payment_ScheduleDetail as schedDetail"
-        + " where schedDetail.paymentDetails.finPayment = fintrans.finPayment"
-        + " and fintrans.account=:account and fintrans.reconciliation is null"
-        + " and schedDetail.orderPaymentSchedule.order.obposAppCashup=:cashUpId";
-
-    OBQuery<FIN_FinaccTransaction> orderTransactionsQuery = OBDal.getInstance().createQuery(
-        FIN_FinaccTransaction.class, orderTransactionsQueryHQL);
-    orderTransactionsQuery.setNamedParameter("account", paymentType.getFinancialAccount());
-    orderTransactionsQuery.setNamedParameter("cashUpId", cashUpId);
-    associateTransactionsFromQuery(orderTransactionsQuery, reconciliation);
-
-    List<String> cashMgmtIdsList = new ArrayList<String>();
-    for (int i = 0; i < cashMgmtIds.length(); i++) {
-      try {
-        cashMgmtIdsList.add(cashMgmtIds.getString(i));
-      } catch (JSONException e) {
-        // Won't happen
-      }
-    }
-    OBQuery<FIN_FinaccTransaction> cashMgmtTransactionsQuery = OBDal.getInstance().createQuery(
+    OBQuery<FIN_FinaccTransaction> transactionsQuery = OBDal.getInstance().createQuery(
         FIN_FinaccTransaction.class, "where obposAppCashup.id=:cashupId and account.id=:account");
-    cashMgmtTransactionsQuery.setNamedParameter("cashupId", cashUpId);
-    cashMgmtTransactionsQuery.setNamedParameter("account", paymentType.getFinancialAccount()
-        .getId());
-    associateTransactionsFromQuery(cashMgmtTransactionsQuery, reconciliation);
+    transactionsQuery.setNamedParameter("cashupId", cashUpId);
+    transactionsQuery.setNamedParameter("account", paymentType.getFinancialAccount().getId());
+    associateTransactionsFromQuery(transactionsQuery, reconciliation);
   }
 
   protected void associateTransactionsFromQuery(OBQuery<FIN_FinaccTransaction> transactionQuery,
@@ -254,7 +234,7 @@ public class CashCloseProcessor {
 
   protected FIN_FinaccTransaction createDifferenceTransaction(OBPOSApplications terminal,
       FIN_Reconciliation reconciliation, OBPOSAppPayment payment, BigDecimal difference,
-      Date currentDate) {
+      Date currentDate, OBPOSAppCashup cashUp) {
     FIN_FinancialAccount account = payment.getFinancialAccount();
     GLItem glItem = null;
     if (payment.isOverrideconfiguration()) {
@@ -279,6 +259,7 @@ public class CashCloseProcessor {
     transaction.setTransactionType("BPW");
     transaction.setStatus("RPPC");
     transaction.setDescription("GL Item: " + glItem.getName());
+    transaction.setObposAppCashup(cashUp);
     transaction.setDateAcct(currentDate);
     transaction.setTransactionDate(currentDate);
     transaction.setReconciliation(reconciliation);
@@ -288,7 +269,7 @@ public class CashCloseProcessor {
 
   protected FIN_FinaccTransaction createTotalTransferTransactionPayment(OBPOSApplications terminal,
       FIN_Reconciliation reconciliation, OBPOSAppPayment paymentType,
-      BigDecimal reconciliationTotal, Date currentDate) {
+      BigDecimal reconciliationTotal, Date currentDate, OBPOSAppCashup cashUp) {
     TerminalTypePaymentMethod paymentMethod = paymentType.getPaymentMethod();
     FIN_FinancialAccount account = paymentType.getFinancialAccount();
     GLItem glItem = null;
@@ -308,6 +289,7 @@ public class CashCloseProcessor {
     transaction.setTransactionType("BPW");
     transaction.setStatus("RPPC");
     transaction.setDescription("GL Item: " + glItem.getName());
+    transaction.setObposAppCashup(cashUp);
     transaction.setDateAcct(currentDate);
     transaction.setTransactionDate(currentDate);
     transaction.setReconciliation(reconciliation);
@@ -320,7 +302,7 @@ public class CashCloseProcessor {
 
   protected FIN_FinaccTransaction createTotalTransferTransactionDeposit(OBPOSApplications terminal,
       FIN_Reconciliation reconciliation, OBPOSAppPayment paymentType,
-      BigDecimal reconciliationTotal, Date currentDate) {
+      BigDecimal reconciliationTotal, Date currentDate, OBPOSAppCashup cashUp) {
     GLItem glItem = null;
     if (paymentType.isOverrideconfiguration()) {
       glItem = paymentType.getGLItemForCashDropDeposit();
@@ -359,6 +341,7 @@ public class CashCloseProcessor {
     transaction.setTransactionType("BPW");
     transaction.setStatus("RDNC");
     transaction.setDescription("GL Item: " + glItem.getName());
+    transaction.setObposAppCashup(cashUp);
     transaction.setDateAcct(currentDate);
     transaction.setTransactionDate(currentDate);
 
