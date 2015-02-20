@@ -580,7 +580,7 @@ public class POSUtils {
               "select c_currency_rate(coalesce(c, p.paymentMethod.currency), "
                   + "p.obposApplications.organization.currency,"
                   + " null, null, p.obposApplications.client.id, "
-                  + "p.obposApplications.organization.id) as rate"
+                  + "p.obposApplications.organization.id) as rate, c_currency_rate(p.obposApplications.organization.currency, p.financialAccount.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as mulrate"
                   + " from OBPOS_App_Payment as p left join p.financialAccount as f "
                   + "left join f.currency as c where p.obposApplications.id ='" + posTerminalId
                   + "'");
