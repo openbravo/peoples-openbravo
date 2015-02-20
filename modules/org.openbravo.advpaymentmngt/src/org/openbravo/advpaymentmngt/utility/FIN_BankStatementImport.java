@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -31,6 +31,7 @@ import java.util.StringTokenizer;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
@@ -257,6 +258,7 @@ public abstract class FIN_BankStatementImport {
       } else {
         OBDal.getInstance().remove(bankStatementLine);
       }
+
     }
     OBDal.getInstance().flush();
     return counter;
@@ -360,6 +362,7 @@ public abstract class FIN_BankStatementImport {
       final OBQuery<BusinessPartner> bp = OBDal.getInstance().createQuery(BusinessPartner.class,
           whereClause.toString(), parameters);
       bp.setFilterOnReadableOrganization(false);
+      bp.setMaxResult(1);
       List<BusinessPartner> matchedBP = bp.list();
       if (matchedBP.size() == 0)
         return null;
@@ -396,73 +399,113 @@ public abstract class FIN_BankStatementImport {
       return null;
     }
     final StringBuilder whereClause = new StringBuilder();
-    List<Object> parameters = new ArrayList<Object>();
     OBContext.setAdminMode();
+    ScrollableResults businessPartnersScroll = null;
     try {
-      whereClause.append(" as b ");
+      whereClause.append("select b.id as id, b.name as name from ");
+      whereClause.append(" BusinessPartner b ");
       whereClause.append(" where (");
       for (String token : list) {
-        whereClause.append(" lower(b." + BusinessPartner.PROPERTY_NAME + ") like lower(?) or ");
-        parameters.add("%" + token + "%");
+        whereClause.append(" lower(b." + BusinessPartner.PROPERTY_NAME + ") like lower('%" + token
+            + "%') or ");
       }
       whereClause.delete(whereClause.length() - 3, whereClause.length()).append(")");
       whereClause.append(" and b." + BusinessPartner.PROPERTY_ORGANIZATION + ".id in (");
       whereClause.append(Utility.getInStrSet(new OrganizationStructureProvider()
           .getNaturalTree(organization.getId())) + ") ");
-      final OBQuery<BusinessPartner> bl = OBDal.getInstance().createQuery(BusinessPartner.class,
-          whereClause.toString(), parameters);
-      bl.setFilterOnReadableOrganization(false);
+      final Query bl = OBDal.getInstance().getSession().createQuery(whereClause.toString());
+      businessPartnersScroll = bl.scroll(ScrollMode.SCROLL_SENSITIVE);
 
-      final ScrollableResults businessPartnersScroll = bl.scroll(ScrollMode.SCROLL_SENSITIVE);
-      int countBp = bl.count();
-      if (countBp == 0) {
+      if (!businessPartnersScroll.next()) {
         return null;
-      } else if (countBp == 1) {
-        businessPartnersScroll.next();
-        return (BusinessPartner) businessPartnersScroll.get(0);
-      } else {
-        BusinessPartner closest = closest(businessPartnersScroll, partnername);
+      }
 
-        return closest;
+      else {
+        final Object[] resultObject = (Object[]) businessPartnersScroll.get(0);
+        if (!businessPartnersScroll.next()) {
+          String strParnterId = "";
+          if (resultObject.getClass().isArray()) {
+            final Object[] values = (Object[]) resultObject;
+            strParnterId = (String) values[0];
+          }
+          BusinessPartner bp = OBDal.getInstance().get(BusinessPartner.class, strParnterId);
+          return bp;
+        }
+
+        else {
+          String closestId = closest(businessPartnersScroll, partnername);
+          BusinessPartner closest = OBDal.getInstance().get(BusinessPartner.class, closestId);
+          return closest;
+        }
       }
 
     } finally {
+      businessPartnersScroll.close();
       OBContext.restorePreviousMode();
     }
   }
 
-  private BusinessPartner closest(ScrollableResults businessPartners, String partnername) {
-    businessPartners.next();
-    BusinessPartner targetBusinessPartner = (BusinessPartner) businessPartners.get(0);
-    businessPartners.beforeFirst();
-    int distance = StringUtils.getLevenshteinDistance(partnername, targetBusinessPartner.getName());
-    String parsedPartnername = partnername.toLowerCase();
-    // Remove exceptions
-    for (String eliminate : stringExceptions) {
-      parsedPartnername = parsedPartnername.replaceAll(eliminate.toLowerCase(), "");
-    }
-    // Remove Numeric characters
-    char[] digits = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
-    for (char character : digits) {
-      parsedPartnername = parsedPartnername.replace(character, ' ');
-      parsedPartnername = parsedPartnername.trim();
-    }
-    while (businessPartners.next()) {
-      BusinessPartner bp = (BusinessPartner) businessPartners.get(0);
-      // Calculates distance between two strings meaning number of changes required for a string to
-      // convert in another string
-      int bpDistance = StringUtils.getLevenshteinDistance(parsedPartnername, bp.getName()
-          .toLowerCase());
-      if (bpDistance < distance) {
-        distance = bpDistance;
-        OBDal.getInstance().getSession().evict(targetBusinessPartner);
-        targetBusinessPartner = bp;
-      } else {
-        OBDal.getInstance().getSession().evict(bp);
+  private String closest(ScrollableResults businessPartners, String partnername) {
+    String targetBusinessPartnerId = "";
+    try {
+      businessPartners.beforeFirst();
+      businessPartners.next();
+      Object[] resultObject = (Object[]) businessPartners.get(0);
+
+      String targetBusinessPartnerName = "";
+      if (resultObject.getClass().isArray()) {
+        final Object[] values = (Object[]) resultObject;
+        targetBusinessPartnerId = (String) values[0];
+        targetBusinessPartnerName = (String) values[1];
       }
-      // The clear is not done because the evict is being done previously
+
+      int distance = StringUtils.getLevenshteinDistance(partnername, targetBusinessPartnerName);
+      String parsedPartnername = partnername.toLowerCase();
+      // Remove exceptions
+      for (String eliminate : stringExceptions) {
+        parsedPartnername = parsedPartnername.replaceAll(eliminate.toLowerCase(), "");
+      }
+
+      // Remove Numeric characters
+      char[] digits = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
+      for (char character : digits) {
+        parsedPartnername = parsedPartnername.replace(character, ' ');
+        parsedPartnername = parsedPartnername.trim();
+      }
+
+      businessPartners.beforeFirst();
+      int i = 0;
+      while (businessPartners.next()) {
+        i++;
+        String bpId = "";
+        String bpName = "";
+        resultObject = (Object[]) businessPartners.get(0);
+        if (resultObject.getClass().isArray()) {
+          final Object[] values = (Object[]) resultObject;
+          bpId = (String) values[0];
+          bpName = (String) values[1];
+        }
+        // Calculates distance between two strings meaning number of changes required for a string
+        // to
+        // convert in another string
+        int bpDistance = StringUtils
+            .getLevenshteinDistance(parsedPartnername, bpName.toLowerCase());
+        if (bpDistance < distance) {
+          distance = bpDistance;
+          targetBusinessPartnerId = bpId;
+        }
+        if (i % 100 == 0) {
+          OBDal.getInstance().flush();
+          OBDal.getInstance().getSession().clear();
+        }
+      }
+      return targetBusinessPartnerId;
+    } catch (Exception e) {
+      log4j.error(e.getStackTrace());
+    } finally {
+      return targetBusinessPartnerId;
     }
-    return targetBusinessPartner;
+
   }
 
   private BankFileFormat getBankFileFormat() {
