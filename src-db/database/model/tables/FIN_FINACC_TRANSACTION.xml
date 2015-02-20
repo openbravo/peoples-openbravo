@@ -204,6 +204,9 @@
         <index-column name="FIN_FINANCIAL_ACCOUNT_ID"/>
         <index-column name="LINE"/>
       </index>
+      <index name="FIN_FINACC_TRANSACTION_CASHUP" unique="true">
+        <index-column name="EM_OBPOS_APP_CASHUP_ID"/>
+      </index>
       <index name="FIN_FINACC_TRANSACTION_DAO" unique="false">
         <index-column name="FIN_FINANCIAL_ACCOUNT_ID"/>
         <index-column name="FIN_RECONCILIATION_ID"/>
