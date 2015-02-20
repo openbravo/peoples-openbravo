@@ -88,7 +88,8 @@ enyo.kind({
                 });
                 dialog.bubble('onPaymentChanged', {
                   payment: this.payment,
-                  status: this.payment.payment.searchKey
+                  status: this.payment.payment.searchKey,
+                  amount: dialog.args.amount
                 });
                 dialog.doHideThisPopup();
               }
@@ -129,7 +130,7 @@ enyo.kind({
   },
   executeOnShow: function () {
     this.setHeader(OB.I18N.getLabel('OBPOS_PaymentsSelectCaption'));
-    //this.$.body.$.paymentname.setValue('');
     this.searchAction();
+    this.bubble('onClearPaymentSelect');
   }
 });

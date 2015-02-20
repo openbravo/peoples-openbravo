@@ -35,6 +35,9 @@ enyo.kind({
   },
   clearPaymentMethodSelect: function (inSender, inEvent) {
     this.$.paymentMethodSelect.setContent('');
+    if (this.receipt) {
+      this.receipt.selectedPayment = null;
+    }
   },
   buttonStatusChanged: function (inSender, inEvent) {
     this.$.paymentMethodSelect.setContent('');
@@ -92,15 +95,16 @@ enyo.kind({
           rate: payment.rate,
           mulrate: payment.mulrate,
           isocode: payment.isocode,
-          options: null
+          options: inEvent.value.options
         });
-        //me.pay(amount, me.currentPayment.payment.searchKey, me.currentPayment.payment._identifier, me.currentPayment.paymentMethod, me.currentPayment.rate, me.currentPayment.mulrate, me.currentPayment.isocode, options);
       }
     }
   },
   paymentChanged: function (inSender, inEvent) {
     this.updateScrollArea();
-    this.$.paymentMethodSelect.setContent(OB.I18N.getLabel('OBPOS_PaymentsSelectedMethod', [inEvent.payment.payment._identifier]));
+    if (!inEvent.amount) {
+      this.$.paymentMethodSelect.setContent(OB.I18N.getLabel('OBPOS_PaymentsSelectedMethod', [inEvent.payment.payment._identifier]));
+    }
   },
   updateScrollArea: function () {
     var maxHeight = 115;

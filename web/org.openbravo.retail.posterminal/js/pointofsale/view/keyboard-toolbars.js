@@ -234,14 +234,16 @@ enyo.kind({
             OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NotValidNumber', [txt]));
             return;
           }
-          if (me.currentPayment) {
+          var buttonClass = keyboard.buttons['paymentMethodCategory.showitems.' + category.id].attributes['class'];
+          if (me.currentPayment && buttonClass.indexOf('btnactive-green') > 0) {
             me.pay(amount, me.currentPayment.payment.searchKey, me.currentPayment.payment._identifier, me.currentPayment.paymentMethod, me.currentPayment.rate, me.currentPayment.mulrate, me.currentPayment.isocode, options);
           } else {
             me.doShowPopup({
               popup: 'modalPaymentsSelect',
               args: {
                 idCategory: category.id,
-                amount: amount
+                amount: amount,
+                options: options
               }
             });
           }
