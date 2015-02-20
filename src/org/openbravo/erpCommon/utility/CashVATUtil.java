@@ -68,8 +68,8 @@ public class CashVATUtil {
     try {
       OBContext.setAdminMode(true);
       final Organization org = OBDal.getInstance().get(Organization.class, strOrgId);
-      final Organization legalEntity = OBContext.getOBContext().getOrganizationStructureProvider(
-          org.getClient().getId()).getLegalEntity(org);
+      final Organization legalEntity = OBContext.getOBContext()
+          .getOrganizationStructureProvider(org.getClient().getId()).getLegalEntity(org);
       if (legalEntity != null && legalEntity.getOrganizationInformationList() != null
           && !legalEntity.getOrganizationInformationList().isEmpty()) {
         return legalEntity.getOrganizationInformationList().get(0).isCashVAT() ? "Y" : "N";
@@ -95,8 +95,8 @@ public class CashVATUtil {
     try {
       OBContext.setAdminMode(true);
       final Organization org = OBDal.getInstance().get(Organization.class, strOrgId);
-      final Organization legalEntity = OBContext.getOBContext().getOrganizationStructureProvider(
-          org.getClient().getId()).getLegalEntity(org);
+      final Organization legalEntity = OBContext.getOBContext()
+          .getOrganizationStructureProvider(org.getClient().getId()).getLegalEntity(org);
       if (legalEntity != null && legalEntity.getOrganizationInformationList() != null
           && !legalEntity.getOrganizationInformationList().isEmpty()) {
         return legalEntity.getOrganizationInformationList().get(0).isDoubleCash() ? "Y" : "N";
