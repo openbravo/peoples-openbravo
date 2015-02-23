@@ -124,11 +124,19 @@ public class MatchStatementOnLoadActionHandler extends BaseActionHandler {
     final ScrollableResults bankLinesSR = APRM_MatchingUtility
         .getPendingToBeMatchedBankStatementLines(strFinancialAccountId, strReconciliationId);
     final List<FIN_FinaccTransaction> excluded = new ArrayList<FIN_FinaccTransaction>();
-    int matchedLines = 0;
+    int matchedLines = 0, i = 0;
     try {
+      List<String> bankLines = new ArrayList<String>();
       while (bankLinesSR.next()) {
         final FIN_BankStatementLine bankStatementLine = (FIN_BankStatementLine) bankLinesSR.get(0);
-
+        bankLines.add(bankStatementLine.getId());
+        i++;
+      }
+      bankLinesSR.close();
+      i = 0;
+      for (i = 0; i < bankLines.size(); i++) {
+        final FIN_BankStatementLine bankStatementLine = OBDal.getInstance().get(
+            FIN_BankStatementLine.class, bankLines.get(i));
         FIN_MatchedTransaction matched;
         // try to match if exception is thrown continue
         try {
@@ -143,16 +151,20 @@ public class MatchStatementOnLoadActionHandler extends BaseActionHandler {
                 reconciliation, matched.getMatchLevel(), false)) {
           excluded.add(transaction);
           matchedLines++;
-          // Required to persist current matching so that it is not rollbacked afterwards because of
+          // Required to persist current matching so that it is not rollbacked afterwards because
+          // of
           // a
           // future error
           OBDal.getInstance().getConnection().commit();
         }
+
+        if ((i % 100) == 0) {
+          OBDal.getInstance().flush();
+          OBDal.getInstance().getSession().clear();
+        }
       }
     } catch (Exception e) {
       OBDal.getInstance().rollbackAndClose();
-    } finally {
-      bankLinesSR.close();
     }
 
     return matchedLines;
