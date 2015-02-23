@@ -404,7 +404,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     });
 
     receipt.on('paymentAccepted', function () {
-      OB.UTIL.showLoading(true);
       receipt.prepareToSend(function () {
         //Create the negative payment for change
         var oldChange = receipt.get('change'),
@@ -474,7 +473,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                 offline: true
               });
               orderList.deleteCurrent();
-              OB.UTIL.showLoading(false);
             }
           });
         } else {
@@ -497,7 +495,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                 offline: true
               });
               orderList.deleteCurrent();
-              OB.UTIL.showLoading(false);
             }
           });
         }
