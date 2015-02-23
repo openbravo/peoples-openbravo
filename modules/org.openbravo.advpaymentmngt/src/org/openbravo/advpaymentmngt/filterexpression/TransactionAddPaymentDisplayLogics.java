@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -55,10 +55,14 @@ public class TransactionAddPaymentDisplayLogics extends AddPaymentDisplayLogicsH
   @Override
   public boolean getCreditToUseDisplayLogic(Map<String, String> requestMap) throws JSONException {
     JSONObject context = new JSONObject(requestMap.get("context"));
-    if (context.has("received_from") && !context.isNull("received_from")
-        && !"".equals(context.getString("received_from"))) {
-      String document = context.getString("trxtype");
-      String strBusinessPartner = context.getString("received_from");
+    if ((context.has("received_from") && !context.isNull("received_from") && !"".equals(context
+        .getString("received_from")))
+        || (context.has("inpreceivedFrom") && !context.isNull("inpreceivedFrom") && !""
+            .equals(context.getString("inpreceivedFrom")))) {
+      String document = !context.isNull("received_from") ? context.getString("trxtype") : context
+          .getString("inptrxtype");
+      String strBusinessPartner = !context.isNull("received_from") ? context
+          .getString("received_from") : context.getString("inpreceivedFrom");
       if (getDefaultGeneratedCredit(requestMap).signum() == 0 || "RCIN".equals(document)) {
         BusinessPartner bpartner = OBDal.getInstance().get(BusinessPartner.class,
             strBusinessPartner);
