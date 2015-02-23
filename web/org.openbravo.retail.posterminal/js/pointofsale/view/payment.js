@@ -83,7 +83,7 @@ enyo.kind({
         this.setTotalPending(pending, payment.mulrate, payment.symbol, payment.currencySymbolAtTheRight, inSender, inEvent);
       }
       this.checkEnoughCashAvailable(paymentstatus, payment);
-      if (!_.isNull(this.receipt) && this.receipt.get('isLayaway')) {
+      if (!_.isNull(this.receipt) && this.receipt.get('isLayaway') && this.receipt.get('orderType') !== 3) {
         this.$.layawayaction.updateVisibility(true);
       }
       if (inEvent.value.amount) {
