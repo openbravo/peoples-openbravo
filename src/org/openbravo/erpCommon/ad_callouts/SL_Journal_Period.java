@@ -79,16 +79,18 @@ public class SL_Journal_Period extends HttpSecureAppServlet {
     String stradClientId = vars.getClient();
     final String stradOrgId = vars.getGlobalVariable("inpadOrgId", "SL_Journal_Period|adOrgId", "");
 
-    AcctSchema acctSchema = OBDal.getInstance().get(AcctSchema.class, strAcctSchemaId);
-    String currencyRate = null;
     OBError myMessage = null;
-    try {
-      currencyRate = SLJournalPeriodData.getCurrencyRate(this, strCurrencyId, acctSchema
-          .getCurrency().getId(), strDateAcctNew, strCurrencyRateType, stradClientId, stradOrgId,
-          strAcctSchemaId);
-    } catch (Exception e) {
-      myMessage = Utility.translateError(this, vars, vars.getLanguage(), e.getMessage());
-      log4j.warn("Currency does not exist. Exception:" + e);
+    String currencyRate = null;
+    if (strAcctSchemaId != null && !strAcctSchemaId.isEmpty()) {
+      AcctSchema acctSchema = OBDal.getInstance().get(AcctSchema.class, strAcctSchemaId);
+      try {
+        currencyRate = SLJournalPeriodData.getCurrencyRate(this, strCurrencyId, acctSchema
+            .getCurrency().getId(), strDateAcctNew, strCurrencyRateType, stradClientId, stradOrgId,
+            strAcctSchemaId);
+      } catch (Exception e) {
+        myMessage = Utility.translateError(this, vars, vars.getLanguage(), e.getMessage());
+        log4j.warn("Currency does not exist. Exception:" + e);
+      }
     }
 
     String strDateAcct = strDateAcctNew;
@@ -132,6 +134,8 @@ public class SL_Journal_Period extends HttpSecureAppServlet {
     resultado.append("new Array(\"inpcPeriodId\", \"" + strcPeriodId + "\"),");
     if (myMessage != null) {
       resultado.append("new Array('MESSAGE', \"" + myMessage.getMessage() + "\"),");
+    }
+    if (currencyRate == null) {
       resultado.append("new Array(\"inpcurrencyrate\", \"" + "1" + "\")");
     } else {
       resultado.append("new Array(\"inpcurrencyrate\", \"" + currencyRate.toString() + "\")");
