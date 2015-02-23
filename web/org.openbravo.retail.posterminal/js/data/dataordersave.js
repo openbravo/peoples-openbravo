@@ -147,6 +147,11 @@
         receipt.set('created', creationDate.getTime());
         receipt.set('obposCreatedabsolute', OB.I18N.formatDateISO(creationDate));
 
+        // multiterminal support
+        // be sure that the active terminal is the one set as the order proprietary
+        receipt.set('posTerminal', OB.MobileApp.model.get('terminal').id);
+        receipt.set('posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.MobileApp.model.get('terminal')._identifier);
+
         receipt.get("approvals").forEach(function (approval) {
           if (typeof (approval.approvalType) === 'object') {
             approval.approvalMessage = OB.I18N.getLabel(approval.approvalType.message, approval.approvalType.params);
@@ -263,6 +268,12 @@
       this.receipt.set('timezoneOffset', creationDate.getTimezoneOffset());
       this.receipt.set('created', creationDate.getTime());
       this.receipt.set('obposCreatedabsolute', OB.I18N.formatDateISO(creationDate)); // Absolute date in ISO format
+
+      // multiterminal support
+      // be sure that the active terminal is the one set as the order proprietary
+      receipt.set('posTerminal', OB.MobileApp.model.get('terminal').id);
+      receipt.set('posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.MobileApp.model.get('terminal')._identifier);
+
       this.receipt.set('obposAppCashup', OB.MobileApp.model.get('terminal').cashUpId);
       this.receipt.set('json', JSON.stringify(this.receipt.toJSON()));
 
