@@ -993,7 +993,9 @@ OB.APRM.AddPayment.recalcDisplayLogicOrReadOnlyLogic = function (form, view, aff
       creditUseGrid.fetchData(newCriteria);
     }
     thisform.redraw();
-    thisview.handleButtonsStatus();
+    if (thisview) {
+      thisview.handleButtonsStatus();
+    }
   };
 
   OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.AddPaymentDisplayLogicActionHandler', {
