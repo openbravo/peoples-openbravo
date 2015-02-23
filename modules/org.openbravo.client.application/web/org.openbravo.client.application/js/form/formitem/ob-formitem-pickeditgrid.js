@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -95,7 +95,10 @@ isc.OBPickEditGridItem.addProperties({
     var allProperties = {},
         grid = this.canvas.viewGrid,
         allRows, len, i, selection, tmp;
-    selection = grid.getSelectedRecords() || [];
+
+    // if available, use grid.pneSelectedRecords because getSelectedRecords can
+    // return inaccurate values in case of records selected in different pages
+    selection = grid.pneSelectedRecords || grid.getSelectedRecords() || [];
     len = selection.length;
     allRows = grid.data.allRows || grid.data.localData || grid.data;
     allProperties._selection = [];
