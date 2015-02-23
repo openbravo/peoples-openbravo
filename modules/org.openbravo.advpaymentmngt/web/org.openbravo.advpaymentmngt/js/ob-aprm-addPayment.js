@@ -546,7 +546,7 @@ OB.APRM.AddPayment.selectionChanged = function (record, state) {
     this.fireOnPause('selectionChanged' + record.id, function () {
       OB.APRM.AddPayment.doSelectionChanged(record, state, this.view);
     }, 200);
-    this.Super('selectionChanged', record, state);
+    this.Super('selectionChanged', [record, state]);
   }
 };
 
@@ -740,7 +740,7 @@ OB.APRM.AddPayment.selectionChangedCredit = function (record, state) {
     this.fireOnPause('selectionChangedCredit' + record.id, function () {
       OB.APRM.AddPayment.doSelectionChangedCredit(record, state, this.view);
     }, 200);
-    this.Super('selectionChangedCredit', record, state);
+    this.Super('selectionChangedCredit', [record, state]);
   }
 };
 
