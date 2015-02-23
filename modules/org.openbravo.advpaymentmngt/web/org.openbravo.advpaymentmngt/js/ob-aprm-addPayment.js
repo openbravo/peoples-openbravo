@@ -148,6 +148,8 @@ OB.APRM.AddPayment.onLoad = function (view) {
 
 OB.APRM.AddPayment.addNewGLItem = function (grid) {
   var returnObject = isc.addProperties({}, grid.data[0]);
+  returnObject.paidOut = 0;
+  returnObject.receivedIn = 0;
   return returnObject;
 };
 
@@ -1036,7 +1038,9 @@ OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall) {
       totalWriteOffAmount = BigDecimal.prototype.ZERO,
       writeOffLineAmount = BigDecimal.prototype.ZERO,
       totalOustandingAmount = BigDecimal.prototype.ZERO,
-      outstandingAmount, i, callbackOnProcessActionHandler, writeoff;
+      glitemGrid = view.theForm.getItem('glitem').canvas.viewGrid,
+      outstandingAmount, i, callbackOnProcessActionHandler, writeoff, allRecords, receivedInAmt, paidOutAmt, receivedInField, paidOutField;
+
 
   // Check if there is pending amount to distribute that could be distributed
   for (i = 0; i < selectedRecords.length; i++) {
@@ -1080,6 +1084,19 @@ OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall) {
     return false;
   }
 
+  //It is not possible to add a glitem with both amounts equal to 0
+  allRecords = (glitemGrid.data.allRows) ? glitemGrid.data.allRows.length : 0;
+  for (i = 0; i < allRecords; i++) {
+    receivedInField = glitemGrid.getFieldByColumnName('received_in');
+    paidOutField = glitemGrid.getFieldByColumnName('paid_out');
+    receivedInAmt = new BigDecimal(String(glitemGrid.getEditedCell(i, receivedInField) || 0));
+    paidOutAmt = new BigDecimal(String(glitemGrid.getEditedCell(i, paidOutField) || 0));
+    if (receivedInAmt.signum() === 0 && paidOutAmt.signum() === 0) {
+      view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_JSAMOUNTDIFFTOZERO'));
+      return false;
+    }
+
+  }
   callbackOnProcessActionHandler = function (response, data, request) {
     //Check if there are blocked Business Partners
     if (data.message.severity === 'error') {
