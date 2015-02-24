@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -1444,7 +1444,7 @@ public class FIN_Utility {
   }
 
   /**
-   * Returns the secuence number of payment status in reference list
+   * Returns the sequence number of payment status in reference list
    * 
    * 
    */
@@ -1452,7 +1452,7 @@ public class FIN_Utility {
     List<Object> parameters = new ArrayList<Object>();
     parameters.add(status);
     int result = Integer.parseInt((String) CallStoredProcedure.getInstance().call(
-        "aprm_seqnumberpaymentstatus", parameters, null));
+        "aprm_seqnumberpaymentstatus", parameters, null, false));
 
     return result;
   }
