@@ -263,6 +263,10 @@ isc.OBFKFilterTextItem.addProperties({
       }
     }
 
+    if (this.form.grid.sourceWidget && this.form.grid.sourceWidget.dataSource) {
+      gridCriteria = this.form.grid.sourceWidget.dataSource.convertRelativeDates(gridCriteria);
+    }
+
     // when in refresh picklist the user is typing
     // a value, filter using that
     if (this.keyPressed && pickListCriteria) {
