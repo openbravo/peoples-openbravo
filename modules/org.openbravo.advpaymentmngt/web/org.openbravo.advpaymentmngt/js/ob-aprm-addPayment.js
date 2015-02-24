@@ -1131,7 +1131,7 @@ OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall) {
     receivedInAmt = new BigDecimal(String(glitemGrid.getEditedCell(i, receivedInField) || 0));
     paidOutAmt = new BigDecimal(String(glitemGrid.getEditedCell(i, paidOutField) || 0));
     if (receivedInAmt.signum() === 0 && paidOutAmt.signum() === 0) {
-      view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_JSAMOUNTDIFFTOZERO'));
+      view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_GLITEMSDIFFERENTZERO'));
       return false;
     }
 
