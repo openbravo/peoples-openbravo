@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -130,6 +130,9 @@ public class MatchStatementOnLoadActionHandler extends BaseActionHandler {
       while (bankLinesSR.next()) {
         final FIN_BankStatementLine bankStatementLine = (FIN_BankStatementLine) bankLinesSR.get(0);
         bankLines.add(bankStatementLine.getId());
+        if ((i % 100) == 0) {
+          OBDal.getInstance().getSession().clear();
+        }
         i++;
       }
       bankLinesSR.close();
