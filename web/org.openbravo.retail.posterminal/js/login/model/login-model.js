@@ -369,6 +369,9 @@
         timeout: 600000,
         timePerRecord: 10000,
         criteria: {},
+        changesPendingCriteria:  {
+          'isprocessed': 'Y'
+        },
         postProcessingFunction: function (data, callback) {
           OB.UTIL.initCashUp(function () {
             var cashUpId = data.at(0).get('id');
@@ -848,46 +851,6 @@
 
     hasPayment: function (key) {
       return this.paymentnames[key];
-    },
-
-    isSafeToResetDatabase: function (callbackIsSafe, callbackIsNotSafe) {
-
-      OB.Dal.find(OB.Model.Order, {
-        hasbeenpaid: 'Y'
-      }, function (models) {
-        if (models.length > 0) {
-          callbackIsNotSafe();
-          return;
-        }
-        OB.Dal.find(OB.Model.CashManagement, {
-          'isbeingprocessed': 'N'
-        }, function (models) {
-          if (models.length > 0) {
-            callbackIsNotSafe();
-            return;
-          }
-          OB.Dal.find(OB.Model.CashUp, {}, function (models) {
-            if (models.length > 1) {
-              callbackIsNotSafe();
-              return;
-            } else if (models.length === 1) {
-              var currentCashupInfo = models.at(0);
-              if (currentCashupInfo.get('netSales') !== 0 || currentCashupInfo.get('grossSales') !== 0 || currentCashupInfo.get('netReturns') !== 0 || currentCashupInfo.get('grossReturns') !== 0) {
-                callbackIsNotSafe();
-                return;
-              }
-            }
-
-            OB.Dal.find(OB.Model.ChangedBusinessPartners, null, function (models) {
-              if (models.length > 0) {
-                callbackIsNotSafe();
-                return;
-              }
-              callbackIsSafe();
-            }, callbackIsSafe);
-          }, callbackIsSafe);
-        }, callbackIsSafe);
-      }, callbackIsSafe);
     },
 
     databaseCannotBeResetAction: function () {
