@@ -96,7 +96,7 @@ static Logger log4j = Logger.getLogger(UpdateCustomerBalanceData.class);
     strSql = strSql + 
       "        SELECT count(*) as existpreference" +
       "        FROM ad_preference" +
-      "        WHERE attribute = 'IsCustomerBalanceRestored'        ";
+      "        WHERE attribute = 'IsCustomerBalanceRestoredV2'        ";
 
     ResultSet result;
     boolean boolReturn = false;
@@ -131,7 +131,7 @@ static Logger log4j = Logger.getLogger(UpdateCustomerBalanceData.class);
     strSql = strSql + 
       "        SELECT count(*) as existpreference" +
       "        FROM ad_preference" +
-      "        WHERE attribute = 'IsCustomerBalanceRestored' AND to_char(value)='Y'        ";
+      "        WHERE attribute = 'IsCustomerBalanceRestoredV2' AND to_char(value)='Y'        ";
 
     ResultSet result;
     boolean boolReturn = false;
@@ -165,7 +165,7 @@ static Logger log4j = Logger.getLogger(UpdateCustomerBalanceData.class);
     String strSql = "";
     strSql = strSql + 
       "        DELETE FROM ad_preference" +
-      "        WHERE attribute = 'IsCustomerBalanceRestored' AND to_char(value)='Y'        ";
+      "        WHERE attribute = 'IsCustomerBalanceRestoredV2' AND to_char(value)='Y'        ";
 
     int updateCount = 0;
     PreparedStatement st = null;
@@ -226,12 +226,12 @@ static Logger log4j = Logger.getLogger(UpdateCustomerBalanceData.class);
     String strSql = "";
     strSql = strSql + 
       "        SELECT A.c_bpartner_id, SUM(A.amount) as customercredit" +
-      "        FROM (SELECT c_bpartner_id, COALESCE(SUM(ps.amount * (CASE WHEN inv.issotrx = 'Y' THEN 1 ELSE -1 END)), 0) as amount" +
+      "        FROM (SELECT c_bpartner_id, COALESCE(SUM(ps.outstandingamt * (CASE WHEN inv.issotrx = 'Y' THEN 1 ELSE -1 END)), 0) as amount" +
       "              FROM fin_payment_schedule ps join c_invoice inv on (ps.c_invoice_id = inv.c_invoice_id)" +
       "              WHERE ps.outstandingamt <> 0" +
       "              GROUP BY c_bpartner_id" +
       "              UNION ALL" +
-      "              SELECT p.c_bpartner_id, COALESCE(SUM((p.generated_credit - p.used_credit) * (CASE WHEN p.isreceipt = 'Y' THEN 1 ELSE -1 END)), 0) as amount" +
+      "              SELECT p.c_bpartner_id, COALESCE(SUM((p.generated_credit - p.used_credit) * (CASE WHEN p.isreceipt = 'Y' THEN -1 ELSE 1 END)), 0) as amount" +
       "              FROM FIN_PAYMENT p" +
       "              WHERE p.c_bpartner_id is not null" +
       "                    AND (p.generated_credit - p.used_credit) <> 0" +
@@ -326,7 +326,7 @@ static Logger log4j = Logger.getLogger(UpdateCustomerBalanceData.class);
       "        ) VALUES (" +
       "          get_uuid(), '0', '0', 'Y'," +
       "          '0', NOW(), '0', NOW()," +
-      "          'IsCustomerBalanceRestored'" +
+      "          'IsCustomerBalanceRestoredV2'" +
       "        )";
 
     int updateCount = 0;
