@@ -47,7 +47,7 @@ BEGIN
     END IF;
 
   END IF;
-
+  
   IF (INSERTING OR (UPDATING AND (:NEW.quantity <> :old.quantity OR :NEW.reservedqty <> :OLD.reservedqty))) THEN
     IF (:NEW.res_status NOT IN ('DR', 'CL') AND :NEW.c_orderline_id IS NOT NULL) THEN
       UPDATE c_orderline
@@ -81,40 +81,39 @@ BEGIN
   IF (UPDATING) THEN
     IF (:OLD.res_status = 'DR' AND :NEW.res_status <> 'DR') THEN
       FOR cur_reservationstock IN (
-	      select r.m_product_id, rs.m_locator_id, rs.m_attributesetinstance_id, r.c_uom_id, SUM(rs.quantity - coalesce(rs.releasedqty,0)) as reservedqty, 
+	      select rs.m_locator_id, rs.m_attributesetinstance_id, SUM(rs.quantity - coalesce(rs.releasedqty,0)) as reservedqty, 
 				SUM(CASE WHEN rs.isallocated = 'Y' THEN (rs.quantity - coalesce(rs.releasedqty,0)) ELSE 0 END) as allocatedqty
-				from m_reservation r, m_reservation_stock rs
-				where r.m_reservation_id = :NEW.m_reservation_id
-				and r.m_reservation_id = rs.m_reservation_id
-				group by r.m_product_id, rs.m_locator_id, rs.m_attributesetinstance_id, r.c_uom_id
+        from m_reservation_stock rs
+				where rs.m_reservation_id = :NEW.m_reservation_id
+				group by rs.m_locator_id, rs.m_attributesetinstance_id
       )
       LOOP
+      select count (*) into v_count from c_orderline;
 			  UPDATE m_storage_detail
 			  SET reservedqty = reservedqty + cur_reservationstock.reservedqty,
 			      allocatedqty = allocatedqty + cur_reservationstock.allocatedqty
-			  WHERE m_product_id = cur_reservationstock.m_product_id
+			  WHERE m_product_id = :NEW.m_product_id
 				AND m_product_uom_id IS NULL
-				AND c_uom_id = cur_reservationstock.c_uom_id
+				AND c_uom_id = :NEW.c_uom_id
 				AND m_locator_id = cur_reservationstock.m_locator_id
 				AND m_attributesetinstance_id = cur_reservationstock.m_attributesetinstance_id;
       END LOOP;
     END IF;
     IF (:OLD.res_status <> 'DR' AND :NEW.res_status = 'DR') THEN
       FOR cur_reservationstock IN (
-	      select r.m_product_id, rs.m_locator_id, rs.m_attributesetinstance_id, r.c_uom_id, SUM(rs.quantity - coalesce(rs.releasedqty,0)) as reservedqty, 
+	      select rs.m_locator_id, rs.m_attributesetinstance_id, SUM(rs.quantity - coalesce(rs.releasedqty,0)) as reservedqty, 
 				SUM(CASE WHEN rs.isallocated = 'Y' THEN (rs.quantity - coalesce(rs.releasedqty,0)) ELSE 0 END) as allocatedqty
-				from m_reservation r, m_reservation_stock rs
-				where r.m_reservation_id = :NEW.m_reservation_id
-				and r.m_reservation_id = rs.m_reservation_id
-				group by r.m_product_id, rs.m_locator_id, rs.m_attributesetinstance_id, r.c_uom_id
+				from m_reservation_stock rs
+				where rs.m_reservation_id = :NEW.m_reservation_id
+				group by rs.m_locator_id, rs.m_attributesetinstance_id
       )
       LOOP
 			  UPDATE m_storage_detail
 			  SET reservedqty = reservedqty - cur_reservationstock.reservedqty,
 			      allocatedqty = allocatedqty - cur_reservationstock.allocatedqty
-			  WHERE m_product_id = cur_reservationstock.m_product_id
+			  WHERE m_product_id = :NEW.m_product_id
 				AND m_product_uom_id IS NULL
-				AND c_uom_id = cur_reservationstock.c_uom_id
+				AND c_uom_id = :NEW.c_uom_id
 				AND m_locator_id = cur_reservationstock.m_locator_id
 				AND m_attributesetinstance_id = cur_reservationstock.m_attributesetinstance_id;
       END LOOP;
