@@ -488,7 +488,7 @@ public class OrderLoader extends POSDataSynchronizationProcess {
 
   protected void createInvoiceLine(Invoice invoice, Order order, JSONObject jsonorder,
       JSONArray orderlines, ArrayList<OrderLine> lineReferences, int numIter, int stdPrecision,
-      ShipmentInOutLine inOutLine, int lineNo) throws JSONException {
+      ShipmentInOutLine inOutLine, int lineNo, int numLines, int actualLine) throws JSONException {
 
     BigDecimal movQty = null;
     if (inOutLine != null && inOutLine.getMovementQuantity() != null) {
@@ -515,10 +515,28 @@ public class OrderLoader extends POSDataSynchronizationProcess {
     // if ratio equals to one, then only one shipment line is related to orderline, then lineNetAmt
     // and gross is populated from JSON
     if (ratio.compareTo(BigDecimal.ONE) != 0) {
-      line.setLineNetAmount(lineReferences.get(numIter).getUnitPrice().multiply(qty)
-          .setScale(stdPrecision, RoundingMode.HALF_UP));
-      line.setGrossAmount(lineReferences.get(numIter).getGrossUnitPrice().multiply(qty)
-          .setScale(stdPrecision, RoundingMode.HALF_UP));
+      // if there are several shipments line to the same orderline, in the last line of the invoice
+      // of this sales order line, the line net amt will be the pending line net amount
+      if (numLines > actualLine) {
+        line.setLineNetAmount(lineReferences.get(numIter).getUnitPrice().multiply(qty)
+            .setScale(stdPrecision, RoundingMode.HALF_UP));
+        line.setGrossAmount(lineReferences.get(numIter).getGrossUnitPrice().multiply(qty)
+            .setScale(stdPrecision, RoundingMode.HALF_UP));
+      } else {
+        BigDecimal partialGrossAmount = BigDecimal.ZERO;
+        BigDecimal partialLineNetAmount = BigDecimal.ZERO;
+        for (InvoiceLine il : invoice.getInvoiceLineList()) {
+          if (il.getSalesOrderLine() != null
+              && il.getSalesOrderLine().getId() == lineReferences.get(numIter).getId()) {
+            partialGrossAmount = partialGrossAmount.add(il.getGrossAmount());
+            partialLineNetAmount = partialLineNetAmount.add(il.getLineNetAmount());
+          }
+        }
+        line.setLineNetAmount(lineReferences.get(numIter).getLineNetAmount()
+            .subtract(partialLineNetAmount).setScale(stdPrecision, RoundingMode.HALF_UP));
+        line.setGrossAmount(lineReferences.get(numIter).getLineGrossAmount()
+            .subtract(partialGrossAmount).setScale(stdPrecision, RoundingMode.HALF_UP));
+      }
     } else {
       line.setLineNetAmount(BigDecimal.valueOf(orderlines.getJSONObject(numIter).getDouble("net"))
           .setScale(stdPrecision, RoundingMode.HALF_UP));
@@ -619,12 +637,14 @@ public class OrderLoader extends POSDataSynchronizationProcess {
       if (iolList.size() == 0) {
         lineNo = lineNo + 10;
         createInvoiceLine(invoice, order, jsonorder, orderlines, lineReferences, i, stdPrecision,
-            null, lineNo);
+            null, lineNo, iolList.size(), 1);
       } else {
+        int numIter = 0;
         for (ShipmentInOutLine iol : iolList) {
+          numIter++;
           lineNo = lineNo + 10;
           createInvoiceLine(invoice, order, jsonorder, orderlines, lineReferences, i, stdPrecision,
-              iol, lineNo);
+              iol, lineNo, iolList.size(), numIter);
         }
       }
     }
