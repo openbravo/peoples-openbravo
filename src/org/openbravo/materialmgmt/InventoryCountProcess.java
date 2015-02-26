@@ -422,12 +422,12 @@ public class InventoryCountProcess implements Process {
       attribute = (!storageDetail.getAttributeSetValue().getIdentifier().isEmpty()) ? " @PCS_ATTRIBUTE@ '"
           + storageDetail.getAttributeSetValue().getIdentifier() + "', "
           : "";
-      throw new OBException(String.format(Utility
+      throw new OBException(Utility
           .messageBD(new DalConnectionProvider(), "insuffient_stock",
               OBContext.getOBContext().getLanguage().getLanguage())
           .replaceAll("%1", storageDetail.getProduct().getIdentifier()).replaceAll("%2", attribute)
           .replaceAll("%3", storageDetail.getUOM().getIdentifier())
-          .replaceAll("%4", storageDetail.getStorageBin().getIdentifier())));
+          .replaceAll("%4", storageDetail.getStorageBin().getIdentifier()));
     }
   }
 
