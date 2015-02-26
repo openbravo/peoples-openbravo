@@ -343,8 +343,8 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
         } else if (cost != null && !isVoidedTrx(trx, currentTrxType)) {
           if (!trx.isCostPermanent()) {
             // Check current trx unit cost matches new expected cost
-            BigDecimal expectedCost = cost.multiply(trx.getMovementQuantity().abs()
-                .setScale(costCurPrecission, RoundingMode.HALF_UP));
+            BigDecimal expectedCost = cost.multiply(trx.getMovementQuantity().abs()).setScale(
+                costCurPrecission, RoundingMode.HALF_UP);
             BigDecimal unitCost = CostAdjustmentUtils.getTrxCost(trx, true, OBDal.getInstance()
                 .get(Currency.class, strCurrentCurId));
             unitCost = unitCost.add(trxAdjAmt);
