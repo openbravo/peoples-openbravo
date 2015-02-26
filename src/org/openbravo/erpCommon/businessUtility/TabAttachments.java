@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2013 Openbravo SLU
+ * All portions are Copyright (C) 2001-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -39,11 +39,15 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.base.structure.OrganizationEnabled;
 import org.openbravo.client.application.window.AttachmentsAH;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.security.SecurityChecker;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
@@ -95,18 +99,23 @@ public class TabAttachments extends HttpSecureAppServlet {
       else
         tableId = data[0].adTableId;
 
+      final String documentOrganization = vars.getStringParameter("inpDocumentOrg");
       final String strFileReference = SequenceIdData.getUUID();
-      final OBError oberrInsert = insert(vars, strFileReference, tableId, key, strDataType, strText);
+      final OBError oberrInsert = insert(vars, strFileReference, tableId, key, strDataType,
+          strText, documentOrganization);
       if (!oberrInsert.getType().equals("Success")) {
         vars.setMessage("TabAttachments", oberrInsert);
         response.sendRedirect(strDireccion + request.getServletPath() + "?Command=DEFAULT");
       } else {
+        // This command is only for 2.50
         if (vars.commandIn("SAVE_NEW_RELATION")) {
           response.sendRedirect(strDireccion + request.getServletPath()
               + "?Command=DEFAULT&inpcFileId=" + strFileReference);
+          // This command is only for 2.50
         } else if (vars.commandIn("SAVE_NEW_EDIT")) {
           response.sendRedirect(strDireccion + request.getServletPath()
               + "?Command=EDIT&inpcFileId=" + strFileReference);
+          // This command is only for 2.50
         } else if (vars.commandIn("SAVE_NEW_NEW")) {
           response.sendRedirect(strDireccion + request.getServletPath() + "?Command=NEW");
         } else if (vars.commandIn("SAVE_NEW_OB3")) {
@@ -136,6 +145,7 @@ public class TabAttachments extends HttpSecureAppServlet {
       final String key = vars.getStringParameter("inpKey");
       vars.setSessionValue("TabAttachments.key", key);
       editDescOB3(response, vars, attachId, strText, strTab, key);
+      // This command is only for 2.50
     } else if (vars.getCommand().startsWith("SAVE_EDIT")) {
       final String strTab = vars.getStringParameter("inpTabId");
       vars.setSessionValue("TabAttachments.tabId", strTab);
@@ -186,6 +196,7 @@ public class TabAttachments extends HttpSecureAppServlet {
               + "?Command=EDIT&inpcFileId=" + strFileReference);
         }
       }
+      // This command is only for 2.50
     } else if (vars.commandIn("DEL")) {
       final String strTab = vars.getStringParameter("inpTabId");
       vars.setSessionValue("TabAttachments.tabId", strTab);
@@ -209,12 +220,14 @@ public class TabAttachments extends HttpSecureAppServlet {
       printPageFile(response, vars, strFileReference, request);
     } else if (vars.getCommand().contains("GET_MULTIPLE_RECORDS_OB3")) {
       printPageFileMultiple(response, vars);
+      // This command is only for 2.50
     } else if (vars.commandIn("DEFAULT")) {
       vars.getGlobalVariable("inpTabId", "TabAttachments.tabId");
       vars.getGlobalVariable("inpwindowId", "TabAttachments.windowId");
       vars.getGlobalVariable("inpKey", "TabAttachments.key");
       vars.getGlobalVariable("inpEditable", "TabAttachments.editable");
       printPageFS(response, vars);
+      // This command is only for 2.50
     } else if (vars.commandIn("FRAME1", "RELATION")) {
       final String strTab = vars.getGlobalVariable("inpTabId", "TabAttachments.tabId");
       final String strWindow = vars.getGlobalVariable("inpwindowId", "TabAttachments.windowId");
@@ -222,22 +235,27 @@ public class TabAttachments extends HttpSecureAppServlet {
       final boolean editable = vars.getGlobalVariable("inpEditable", "TabAttachments.editable")
           .equals("Y");
       printPage(response, vars, strTab, strWindow, key, editable);
+      // This command is only for 2.50
     } else if (vars.commandIn("FRAME2")) {
       whitePage(response);
+      // This command is only for 2.50
     } else if (vars.commandIn("EDIT")) {
       final String strTab = vars.getGlobalVariable("inpTabId", "TabAttachments.tabId");
       final String strWindow = vars.getGlobalVariable("inpwindowId", "TabAttachments.windowId");
       final String key = vars.getGlobalVariable("inpKey", "TabAttachments.key");
       final String strFileReference = vars.getRequiredStringParameter("inpcFileId");
       printPageEdit(response, vars, strTab, strWindow, key, strFileReference);
+      // This command is only for 2.50
     } else if (vars.commandIn("NEW")) {
       final String strTab = vars.getGlobalVariable("inpTabId", "TabAttachments.tabId");
       final String strWindow = vars.getGlobalVariable("inpwindowId", "TabAttachments.windowId");
       final String key = vars.getRequestGlobalVariable("inpKey", "TabAttachments.key");
       printPageEdit(response, vars, strTab, strWindow, key, "");
+      // This command is only for 2.50
     } else if (vars.commandIn("DISPLAY_DATA")) {
       final String strFileReference = vars.getRequiredStringParameter("inpcFileId");
       printPageFile(response, vars, strFileReference, request);
+      // This command is only for 2.50
     } else if (vars.commandIn("CHECK")) {
       final String tabId = vars.getStringParameter("inpTabId");
       final String inpKey = vars.getStringParameter("inpKey");
@@ -255,9 +273,20 @@ public class TabAttachments extends HttpSecureAppServlet {
       String buttonId = vars.getStringParameter("buttonId");
       Tab tab = OBDal.getInstance().get(Tab.class, tabId);
       String tableId = (String) DalUtil.getId(tab.getTable());
+
+      // Checks if the user has readable access to the record where the file is attached
+      Entity entity = ModelProvider.getInstance().getEntityByTableId(tableId);
+      if (entity != null) {
+        Object object = OBDal.getInstance().get(entity.getMappingClass(), recordIds);
+        if (object instanceof OrganizationEnabled) {
+          SecurityChecker.getInstance().checkReadableAccess((OrganizationEnabled) object);
+        }
+      }
+
       OBCriteria<Attachment> attachmentFiles = OBDao.getFilteredCriteria(Attachment.class,
           Restrictions.eq("table.id", tableId), Restrictions.in("record", recordIds.split(",")));
 
+      attachmentFiles.setFilterOnReadableOrganization(false);
       response.setContentType("application/zip");
       response.setHeader("Content-Disposition", "attachment; filename=attachments.zip");
       final ZipOutputStream dest = new ZipOutputStream(response.getOutputStream());
@@ -302,7 +331,8 @@ public class TabAttachments extends HttpSecureAppServlet {
   }
 
   private OBError insert(VariablesSecureApp vars, String strFileReference, String tableId,
-      String key, String strDataType, String strText) throws IOException, ServletException {
+      String key, String strDataType, String strText, String documentOrganization)
+      throws IOException, ServletException {
 
     String cFileId = strFileReference, fileDir = null, path = null;
     OBError myMessage = null;
@@ -331,7 +361,7 @@ public class TabAttachments extends HttpSecureAppServlet {
       }
       boolean fileExists = false;
       final TabAttachmentsData[] files = TabAttachmentsData.select(this, "'" + vars.getClient()
-          + "'", "'" + vars.getOrg() + "'", tableId, key);
+          + "'", "'" + documentOrganization + "'", tableId, key);
       for (TabAttachmentsData data : files) {
         if (data.name.equals(strName)) {
           fileExists = true;
@@ -341,7 +371,7 @@ public class TabAttachments extends HttpSecureAppServlet {
       if (!fileExists) {
         path = getPath(fileDir);
         // We only insert a new record if there is no record for this file
-        TabAttachmentsData.insert(conn, this, cFileId, vars.getClient(), vars.getOrg(),
+        TabAttachmentsData.insert(conn, this, cFileId, vars.getClient(), documentOrganization,
             vars.getUser(), tableId, key, strDataType, strText, strName, path);
       } else {
         // We update the existing record
@@ -571,6 +601,16 @@ public class TabAttachments extends HttpSecureAppServlet {
       String strFileReference, HttpServletRequest request) throws IOException, ServletException {
     String fileDir = null;
     final TabAttachmentsData[] data = TabAttachmentsData.selectEdit(this, strFileReference);
+
+    // Checks if the user has readable access to the record where the file is attached
+    Entity entity = ModelProvider.getInstance().getEntityByTableId(data[0].adTableId);
+    if (entity != null) {
+      Object object = OBDal.getInstance().get(entity.getMappingClass(), data[0].adRecordId);
+      if (object instanceof OrganizationEnabled) {
+        SecurityChecker.getInstance().checkReadableAccess((OrganizationEnabled) object);
+      }
+    }
+
     if (data == null || data.length == 0)
       throw new ServletException("Missing file");
     FileUtility f = new FileUtility();
@@ -615,7 +655,7 @@ public class TabAttachments extends HttpSecureAppServlet {
 
   private void editDescOB3(HttpServletResponse response, VariablesSecureApp vars,
       String attachmentId, String desc, String strTab, String key) {
-    OBContext.setAdminMode(true);
+    OBContext.setAdminMode(false);
     try {
       Attachment attachment = OBDal.getInstance().get(Attachment.class, attachmentId);
 
@@ -623,8 +663,18 @@ public class TabAttachments extends HttpSecureAppServlet {
       OBDal.getInstance().save(attachment);
       OBDal.getInstance().flush();
       OBDal.getInstance().getConnection().commit();
-
       Tab tab = OBDal.getInstance().get(Tab.class, strTab);
+      String tableId = (String) DalUtil.getId(tab.getTable());
+
+      // Checks if the user has readable access to the record where the file is attached
+      Entity entity = ModelProvider.getInstance().getEntityByTableId(tableId);
+      if (entity != null) {
+        Object object = OBDal.getInstance().get(entity.getMappingClass(), key);
+        if (object instanceof OrganizationEnabled) {
+          SecurityChecker.getInstance().checkReadableAccess((OrganizationEnabled) object);
+        }
+      }
+
       JSONObject obj = AttachmentsAH.getAttachmentJSONObject(tab, key);
       String buttonId = vars.getStringParameter("buttonId");
       response.setContentType("text/html; charset=UTF-8");
@@ -704,6 +754,7 @@ public class TabAttachments extends HttpSecureAppServlet {
       attachmentCriteria.add(Restrictions.eq(Attachment.PROPERTY_TABLE, attachmentTable));
       attachmentCriteria.add(Restrictions.eq(Attachment.PROPERTY_NAME, fileName));
 
+      attachmentCriteria.setFilterOnReadableOrganization(false);
       if (attachmentCriteria.count() > 0) {
         Attachment attachment = attachmentCriteria.list().get(0);
         if (attachment.getPath() != null) {

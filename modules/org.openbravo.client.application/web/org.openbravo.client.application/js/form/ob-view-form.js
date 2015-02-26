@@ -321,7 +321,7 @@ OB.ViewFormProperties = {
     }
     if (enable) {
       this.linkedItemSection.collapseSection(true);
-      this.linkedItemSection.setRecordInfo(this.view.entity, this.getValue(OB.Constants.ID));
+      this.linkedItemSection.setRecordInfo(this.view.entity, this.getValue(OB.Constants.ID), this);
       delete this.linkedItemSection.hiddenInForm;
       this.linkedItemSection.show();
     } else {
@@ -336,7 +336,7 @@ OB.ViewFormProperties = {
     }
     if (enable) {
       this.attachmentsSection.collapseSection(true);
-      this.attachmentsSection.setRecordInfo(this.view.entity, this.getValue(OB.Constants.ID), this.view.tabId);
+      this.attachmentsSection.setRecordInfo(this.view.entity, this.getValue(OB.Constants.ID), this.view.tabId, this);
       delete this.attachmentsSection.hiddenInForm;
       this.attachmentsSection.show();
     } else {

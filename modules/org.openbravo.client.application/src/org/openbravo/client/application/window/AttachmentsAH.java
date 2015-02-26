@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2013 Openbravo SLU
+ * All portions are Copyright (C) 2011-2015 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -30,10 +30,14 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.base.structure.OrganizationEnabled;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.security.SecurityChecker;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
@@ -56,8 +60,22 @@ public class AttachmentsAH extends BaseActionHandler {
         String attachmentId = (String) parameters.get("attachId");
         Tab tab = OBDal.getInstance().get(Tab.class, tabId);
         String tableId = (String) DalUtil.getId(tab.getTable());
+
+        // Checks if the user has readable access to the record where the file is attached
+        Entity entity = ModelProvider.getInstance().getEntityByTableId(tableId);
+        if (entity != null) {
+          Object object = OBDal.getInstance().get(entity.getMappingClass(), recordIds);
+          if (object instanceof OrganizationEnabled) {
+            SecurityChecker.getInstance().checkReadableAccess((OrganizationEnabled) object);
+          }
+        }
+
         OBCriteria<Attachment> attachmentFiles = OBDao.getFilteredCriteria(Attachment.class,
             Restrictions.eq("table.id", tableId), Restrictions.in("record", recordIds.split(",")));
+        // do not filter by the attachment's organization
+        // if the user has access to the record where the file its attached, it has access to all
+        // its attachments
+        attachmentFiles.setFilterOnReadableOrganization(false);
         if (attachmentId != null) {
           attachmentFiles.add(Restrictions.eq(Attachment.PROPERTY_ID, attachmentId));
         }
@@ -108,6 +126,10 @@ public class AttachmentsAH extends BaseActionHandler {
         Restrictions.eq("table.id", tableId), Restrictions.in("record", recordIds.split(",")));
     attachmentFiles.addOrderBy("creationDate", false);
     List<JSONObject> attachments = new ArrayList<JSONObject>();
+    // do not filter by the attachment's organization
+    // if the user has access to the record where the file its attached, it has access to all its
+    // attachments
+    attachmentFiles.setFilterOnReadableOrganization(false);
     for (Attachment attachment : attachmentFiles.list()) {
       JSONObject attachmentobj = new JSONObject();
       try {
