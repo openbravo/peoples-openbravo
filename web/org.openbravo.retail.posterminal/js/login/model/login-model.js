@@ -332,37 +332,54 @@
       });
 
       this.get('dataSyncModels').push({
+        name: 'Customer',
         model: OB.Model.ChangedBusinessPartners,
         className: 'org.openbravo.retail.posterminal.CustomerLoader',
-        criteria: {}
+        criteria: {},
+        getIdentifier: function (model) {
+          return JSON.parse(model.get('json'))._identifier;
+        }
       });
 
       this.get('dataSyncModels').push({
+        name: 'Customer Address',
         model: OB.Model.ChangedBPlocation,
         className: 'org.openbravo.retail.posterminal.CustomerAddrLoader',
-        criteria: {}
+        criteria: {},
+        getIdentifier: function (model) {
+          return JSON.parse(model.get('json'))._identifier;
+        }
       });
 
       this.get('dataSyncModels').push({
+        name: 'Order',
         model: OB.Model.Order,
         className: 'org.openbravo.retail.posterminal.OrderLoader',
         timeout: 20000,
         timePerRecord: 1000,
         criteria: {
           hasbeenpaid: 'Y'
+        },
+        getIdentifier: function (model) {
+          return model.get('documentNo');
         }
       });
 
       this.get('dataSyncModels').push({
+        name: 'Cash Management',
         model: OB.Model.CashManagement,
         isPersistent: true,
         className: 'org.openbravo.retail.posterminal.ProcessCashMgmt',
         criteria: {
           'isbeingprocessed': 'N'
+        },
+        getIdentifier: function (model) {
+          return model.get('type') + ': ' + model.get('user') + ' - ' + model.get('time');
         }
       });
 
       this.get('dataSyncModels').push({
+        name: 'Cash Up',
         model: OB.Model.CashUp,
         isPersistent: true,
         className: 'org.openbravo.retail.posterminal.ProcessCashClose',
@@ -390,6 +407,9 @@
             OB.UTIL.deleteCashUps(data);
             callback();
           });
+        },
+        getIdentifier: function (model) {
+          return model.get('creationDate');
         }
       });
 
@@ -680,9 +700,9 @@
         OB.MobileApp.model.triggerLogout();
       });
       this.set('currentView', {
-          name: 'order',
-          params: null
-        });
+        name: 'order',
+        params: null
+      });
       localStorage.setItem('leftColumnCurrentView', JSON.stringify(this.get('currentView')));
     },
 
