@@ -547,6 +547,8 @@ public class OrderGroupingProcessor {
     if (shipmentLines.size() < 2) {
       return new OrderLine[] { ol };
     } else {
+      BigDecimal partialGrossAmount = BigDecimal.ZERO;
+      BigDecimal partialLineNetAmount = BigDecimal.ZERO;
       OrderLine[] arrayOlSplit = new OrderLine[shipmentLines.size()];
       for (int i = 0; i < shipmentLines.size(); i++) {
         lineNo += 10;
@@ -560,12 +562,24 @@ public class OrderGroupingProcessor {
         olSplit.setDeliveredQuantity(shipmentLines.get(i).getMovementQuantity());
         olSplit.setGoodsShipmentLine(shipmentLines.get(i));
         olSplit.setInvoicedQuantity(shipmentLines.get(i).getMovementQuantity());
-        olSplit.setLineGrossAmount(ol.getGrossUnitPrice().multiply(olSplit.getOrderedQuantity())
-            .setScale(stdPrecision, RoundingMode.HALF_UP));
-        olSplit.setLineNetAmount(ol.getUnitPrice().multiply(olSplit.getOrderedQuantity())
-            .setScale(stdPrecision, RoundingMode.HALF_UP));
         olSplit.setTaxableAmount(ol.getUnitPrice().multiply(olSplit.getOrderedQuantity())
             .setScale(stdPrecision, RoundingMode.HALF_UP));
+
+        if (shipmentLines.size() > i + 1) {
+          olSplit.setLineGrossAmount(ol.getGrossUnitPrice().multiply(olSplit.getOrderedQuantity())
+              .setScale(stdPrecision, RoundingMode.HALF_UP));
+          olSplit.setLineNetAmount(ol.getUnitPrice().multiply(olSplit.getOrderedQuantity())
+              .setScale(stdPrecision, RoundingMode.HALF_UP));
+          partialGrossAmount = partialGrossAmount.add(ol.getGrossUnitPrice()
+              .multiply(olSplit.getOrderedQuantity()).setScale(stdPrecision, RoundingMode.HALF_UP));
+          partialLineNetAmount = partialLineNetAmount.add(ol.getUnitPrice()
+              .multiply(olSplit.getOrderedQuantity()).setScale(stdPrecision, RoundingMode.HALF_UP));
+        } else {
+          olSplit.setLineNetAmount(ol.getLineNetAmount().subtract(partialLineNetAmount)
+              .setScale(stdPrecision, RoundingMode.HALF_UP));
+          olSplit.setLineGrossAmount(ol.getLineGrossAmount().subtract(partialGrossAmount)
+              .setScale(stdPrecision, RoundingMode.HALF_UP));
+        }
 
         olSplit.setLineNo(lineNo);
 
