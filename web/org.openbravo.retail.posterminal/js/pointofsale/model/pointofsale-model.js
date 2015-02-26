@@ -599,7 +599,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         return;
       }
       receipt.get('lines').forEach(function (l) {
-        l.unset('noDiscountCandidates');
+        l.unset('noDiscountCandidates', {
+          silent: true
+        });
       });
       OB.Model.Discounts.applyPromotions(receipt);
     }, this);

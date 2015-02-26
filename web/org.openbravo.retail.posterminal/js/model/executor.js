@@ -198,7 +198,9 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
 
     OB.Dal.find(OB.Model.Discount, criteria, function (d) {
       if (d.size() === 0) {
-        line.set('noDiscountCandidates', true);
+        line.set('noDiscountCandidates', true, {
+          silent: true
+        });
       }
       d.forEach(function (disc) {
         actionQueue.add({

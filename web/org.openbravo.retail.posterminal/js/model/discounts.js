@@ -200,7 +200,9 @@
             promotion.lastApplied = undefined;
           });
         }
-        line.unset('noDiscountCandidates');
+        line.unset('noDiscountCandidates', {
+          silent: true
+        });
         rule.addManual(receipt, line, promotion);
       });
 

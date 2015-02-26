@@ -710,7 +710,7 @@
 
     setUnit: function (line, qty, text, doNotSave) {
       var permission;
-      
+
       if (OB.DEC.isNumber(qty) && qty !== 0) {
         var oldqty = line.get('qty');
         permission = 'OBPOS_ReturnLine';
@@ -1794,7 +1794,9 @@
             });
           }
 
-          lineToEdit.set('noDiscountCandidates', l.get('noDiscountCandidates'));
+          lineToEdit.set('noDiscountCandidates', l.get('noDiscountCandidates'), {
+            silent: true
+          });
           //if promotion affects only to few quantities of the line, create a new line with quantities not affected by the promotion
           if (lineToEdit.get('qty') > l.get('qty')) {
             linesToCreate.push({
@@ -1882,7 +1884,9 @@
               line.set('promotionMessages', me.showMessagesPromotions(line.get('promotionMessages'), l.get('promotionMessages')));
               line.set('qtyToApplyDiscount', l.get('qtyToApplyDiscount'));
 
-              line.set('noDiscountCandidates', l.get('noDiscountCandidates'));
+              line.set('noDiscountCandidates', l.get('noDiscountCandidates'), {
+                silent: true
+              });
               _.each(l.get('promotions'), function (promo) {
                 copiedPromo = JSON.parse(JSON.stringify(promo));
                 //when ditributing the promotion between different lines, we save accumulated amount
