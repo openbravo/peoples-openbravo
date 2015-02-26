@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2014 Openbravo SLU
+ * All portions are Copyright (C) 2012-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -198,9 +198,9 @@ public class AverageAlgorithm extends CostingAlgorithm {
     }
     // FIXME: remove when manufacturing costs are fully migrated
     if (product.isProduction()) {
-      costQry.setNamedParameter("client", costOrg.getClient());
+      costQry.setNamedParameter("client", costOrg.getClient().getId());
     } else {
-      costQry.setNamedParameter("org", costOrg);
+      costQry.setNamedParameter("org", costOrg.getId());
     }
 
     List<Costing> costList = costQry.list();
