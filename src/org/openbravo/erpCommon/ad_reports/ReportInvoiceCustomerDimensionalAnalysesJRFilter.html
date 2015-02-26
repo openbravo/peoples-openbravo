@@ -13,7 +13,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2014 Openbravo SLU
+ * All portions are Copyright (C) 2001-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -114,6 +114,13 @@ function onloadFunctions() {
 		updateMenuIcon('buttonMenu');
 
 		setWindowElementFocus('firstElement');
+		
+		var f = getFrame('LayoutMDI');
+        if (f.OB.PropertyStore.get('ShowVoidCheckboxSalesInvoiceDimensionalReport') == 'Y') {
+           displayLogicElement('showexcludevoided_section', true);
+        } else {
+           displayLogicElement('showexcludevoided_section', false);
+        }
 	}
 
 	function onResizeDo(){
@@ -469,6 +476,16 @@ function onloadFunctions() {
                   <td class="TitleCell"><span class="LabelText">Less Than</span></td>
                   <td class="TextBox_ContentCell"> <input dojoType="openbravo:RealNumberTextbox" greaterThan="paramMayor" class="TextBox_OneCell_width" type="text" name="inpMenor" maxlength="10" id="paramMenor" value="" outputformat="euroEdition"></input><script>djConfig.searchIds.push("paramMenor");</script>
                   </td>
+                </tr>
+                <tr id="showexcludevoided_section" >
+                  <td class="TitleCell"><span class="LabelText">Voided invoices needs to be included</span>
+                  </td>
+                  <td class="FieldButton_ContentCell"><span class="Checkbox_container_NOT_Focused"><input type="checkbox" name="inpVoid" id="paramVoid" value="Y"></input></span>
+                  </td>
+                  <td class="TitleCell"></td>
+                  <td class="TitleCell"></td>
+                  <td class="TitleCell"></td>
+                  <td class="TitleCell"></td>
                 </tr>
                 <tr>
                   <td colspan="6">

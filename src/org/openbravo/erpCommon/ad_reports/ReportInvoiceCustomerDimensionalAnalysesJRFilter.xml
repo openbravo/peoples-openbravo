@@ -12,7 +12,7 @@
 * under the License. 
 * The Original Code is Openbravo ERP. 
 * The Initial Developer of the Original Code is Openbravo SLU 
-* All portions are Copyright (C) 2001-2014 Openbravo SLU 
+* All portions are Copyright (C) 2001-2015 Openbravo SLU 
 * All Rights Reserved. 
 * Contributor(s):  ______________________________________.
 ************************************************************************
@@ -79,6 +79,8 @@
   <PARAMETER id="messageBoxID" name="messageType" attribute="class" replace="yy" default="HIDDEN"/>
   <PARAMETER id="messageBoxIDTitle" name="messageTitle" default=""/>
   <PARAMETER id="messageBoxIDMessage" name="messageMessage" default=""/>
+  <PARAMETER id="fieldCheck" name="check" default="Y"/>
+  <PARAMETER id="paramVoid" name="void" boolean="checked" withId="fieldCheck"/>
 
   <structure name="structure1">
     <FIELD id="paramNotShown" attribute="value">id</FIELD>
