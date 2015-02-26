@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -589,7 +589,9 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
     if (ol != null && !"".equals(ol)) {
       reservation = ReservationUtils.getReservationFromOrder(OBDal.getInstance().get(
           OrderLine.class, ol));
-      ReservationUtils.processReserve(reservation, "PR");
+      if (reservation.getRESStatus().equals("DR")) {
+        ReservationUtils.processReserve(reservation, "PR");
+      }
     } else {
       reservation = OBDal.getInstance().get(Reservation.class, strReservation);
     }
