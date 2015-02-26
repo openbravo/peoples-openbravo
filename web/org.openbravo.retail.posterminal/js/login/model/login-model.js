@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2015 Openbravo S.L.U.
+ * Copyright (C) 2012-2013 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -332,61 +332,44 @@
       });
 
       this.get('dataSyncModels').push({
-        name: 'Customer',
         model: OB.Model.ChangedBusinessPartners,
         className: 'org.openbravo.retail.posterminal.CustomerLoader',
-        criteria: {},
-        getIdentifier: function (model) {
-          return JSON.parse(model.get('json'))._identifier;
-        }
+        criteria: {}
       });
 
       this.get('dataSyncModels').push({
-        name: 'Customer Address',
         model: OB.Model.ChangedBPlocation,
         className: 'org.openbravo.retail.posterminal.CustomerAddrLoader',
-        criteria: {},
-        getIdentifier: function (model) {
-          return JSON.parse(model.get('json'))._identifier;
-        }
+        criteria: {}
       });
 
       this.get('dataSyncModels').push({
-        name: 'Order',
         model: OB.Model.Order,
         className: 'org.openbravo.retail.posterminal.OrderLoader',
         timeout: 20000,
         timePerRecord: 1000,
         criteria: {
           hasbeenpaid: 'Y'
-        },
-        getIdentifier: function (model) {
-          return model.get('documentNo');
         }
       });
 
       this.get('dataSyncModels').push({
-        name: 'Cash Management',
         model: OB.Model.CashManagement,
         isPersistent: true,
         className: 'org.openbravo.retail.posterminal.ProcessCashMgmt',
         criteria: {
           'isbeingprocessed': 'N'
-        },
-        getIdentifier: function (model) {
-          return model.get('type') + ': ' + model.get('user') + ' - ' + model.get('time');
         }
       });
 
       this.get('dataSyncModels').push({
-        name: 'Cash Up',
         model: OB.Model.CashUp,
         isPersistent: true,
         className: 'org.openbravo.retail.posterminal.ProcessCashClose',
         timeout: 600000,
         timePerRecord: 10000,
         criteria: {},
-        changesPendingCriteria: {
+        changesPendingCriteria:  {
           'isprocessed': 'Y'
         },
         postProcessingFunction: function (data, callback) {
@@ -407,9 +390,6 @@
             OB.UTIL.deleteCashUps(data);
             callback();
           });
-        },
-        getIdentifier: function (model) {
-          return model.get('creationDate');
         }
       });
 
@@ -423,19 +403,6 @@
 
         // Set Arithmetic properties:
         OB.DEC.setContext(OB.UTIL.getFirstValidValue([me.get('currency').obposPosprecision, me.get('currency').pricePrecision]), BigDecimal.prototype.ROUND_HALF_UP);
-
-        // Set disable promotion discount property
-        OB.Dal.find(OB.Model.Discount, {
-          _whereClause: "where m_offer_type_id in (" + OB.Model.Discounts.getManualPromotions() + ")"
-        }, function (promos) {
-          if (promos.length === 0) {
-            me.set('isDisableDiscount', true);
-          } else {
-            me.set('isDisableDiscount', false);
-          }
-        }, function () {
-          return true;
-        });
 
         OB.UTIL.HookManager.executeHooks('OBPOS_LoadPOSWindow', {}, function () {
           OB.POS.navigate('retail.pointofsale');
@@ -700,9 +667,9 @@
         OB.MobileApp.model.triggerLogout();
       });
       this.set('currentView', {
-        name: 'order',
-        params: null
-      });
+          name: 'order',
+          params: null
+        });
       localStorage.setItem('leftColumnCurrentView', JSON.stringify(this.get('currentView')));
     },
 

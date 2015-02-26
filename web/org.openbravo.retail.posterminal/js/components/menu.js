@@ -495,7 +495,9 @@ enyo.kind({
       return;
     }
 
-    me.setDisabled(OB.UTIL.isDisableDiscount(this.receipt) || false);
+    OB.UTIL.isDisableDiscount(this.receipt, function (disable) {
+      me.setDisabled(disable);
+    });
 
     me.adjustVisibilityBasedOnPermissions();
   },
@@ -521,7 +523,7 @@ enyo.kind({
     this.receipt.on('change', function () {
       this.updateVisibility();
     }, this);
-    
+
     this.receipt.get('lines').on('all', function () {
       this.updateVisibility();
     }, this);
