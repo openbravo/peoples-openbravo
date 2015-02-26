@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2014 Openbravo SLU
+ * All portions are Copyright (C) 2011-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -76,6 +76,7 @@ isc.OBPickAndExecuteGrid.addProperties({
 
     this.selectedIds = [];
     this.deselectedIds = [];
+    this.pneSelectedRecords = [];
     this.lastValidatedValues = [];
 
     // the getValuesAsCriteria function of the edit form of the filter editor should always be called with 
@@ -308,23 +309,48 @@ isc.OBPickAndExecuteGrid.addProperties({
       this.discardEdits(recordIdx);
     }
 
-    this.selectionUpdated(record, this.getSelectedRecords());
+    this.pneSelectionUpdated(record, state);
 
     this.Super('selectionChanged', arguments);
     this.view.theForm.markForRedraw();
   },
 
-  selectionUpdated: function (record, recordList) {
-    var i, j, len = recordList.length,
-        prevSelectedLen = this.selectedIds.length,
-        recordId, found;
+  // overriding selectRecord function because super.selectRecord to maintain selectedIds
+  // as super.selectedRecord does not trigger selectionChanged
+  selectRecord: function (recordNo, state) {
+    // when invoking directly selectRecord, state can be undefined but it should be selected, 
+    // unselectRecord finally invokes this function with state === false
+    var selected = state !== false,
+        actualRecord;
 
-    // Look for deselected records (records in selectedIds not present in recordList)
-    for (i = 0; i < prevSelectedLen; i++) {
-      recordId = this.selectedIds[i];
+    actualRecord = isc.isA.Number(recordNo) ? this.getRecord(recordNo) : recordNo;
+
+    this.pneSelectionUpdated(actualRecord, selected);
+
+    this.Super('selectRecord', arguments);
+  },
+
+  // A new record has been selected/unselected: keep track of it.
+  // this.getSelectedRecords cannot be trusted because in case of several pages,
+  // selection only in latest received page is returned
+  pneSelectionUpdated: function (record, selected) {
+    var recordId = record.id,
+        found, i;
+
+    if (selected) {
+      if (!this.pneSelectedRecords.find('id', recordId)) {
+        // this method can be invoked more than once per selection, ensure we only 
+        // add the record once
+        this.selectedIds.push(recordId);
+        this.pneSelectedRecords.push(record);
+      }
+      this.deselectedIds.remove(recordId);
+    } else {
+      // this method can be invoked more than once per selection, ensure we only 
+      // add the record once: can't use find on a simple array, let's iterate over it
       found = false;
-      for (j = 0; j < len; j++) {
-        if (recordId === recordList[j].id) {
+      for (i = 0; i < this.deselectedIds.length; i++) {
+        if (recordId === this.deselectedIds[i]) {
           found = true;
           break;
         }
@@ -332,19 +358,12 @@ isc.OBPickAndExecuteGrid.addProperties({
       if (!found) {
         this.deselectedIds.push(recordId);
       }
+      this.selectedIds.remove(recordId);
+      this.pneSelectedRecords.remove(this.pneSelectedRecords.find('id', recordId));
     }
 
-    this.selectedIds = [];
-
-    for (i = 0; i < len; i++) {
-      this.selectedIds.push(recordList[i].id);
-      // Remove the record from deselectedIds
-      this.deselectedIds.remove(recordList[i].id);
-    }
     // refresh it all as multiple lines can be selected
     this.markForRedraw('Selection changed');
-
-    this.Super('selectionUpdated', arguments);
   },
 
   cellEditEnd: function (editCompletionEvent, newValue, ficCallDone, autoSaveDone) {
@@ -522,6 +541,7 @@ isc.OBPickAndExecuteGrid.addProperties({
       for (i = 0; i < len; i++) {
         if (rows[i] && rows[i][this.selectionProperty]) {
           this.selectedIds.push(rows[i][OB.Constants.ID]);
+          this.pneSelectedRecords.push(rows[i]);
         }
       }
     }
