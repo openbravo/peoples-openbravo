@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2014 Openbravo SLU
+ * All portions are Copyright (C) 2012-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -487,6 +487,9 @@ public abstract class CostingAlgorithm {
     parts.remove(transaction.getProductionLine());
     BigDecimal totalCost = BigDecimal.ZERO;
     for (ProductionLine prodLine : parts) {
+      // Reload from database in case previous partTrx cost calculation has cleared the session.
+      prodLine = (ProductionLine) OBDal.getInstance().getProxy(ProductionLine.ENTITY_NAME,
+          prodLine.getId());
       MaterialTransaction partTransaction = prodLine.getMaterialMgmtMaterialTransactionList()
           .get(0);
       // Reload from database in case previous partTrx cost calculation has cleared the session.
