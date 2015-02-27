@@ -117,8 +117,11 @@ public class MyOBUtils {
     OBCriteria<WidgetClassMenu> obcMenuItems = OBDal.getInstance().createCriteria(
         WidgetClassMenu.class);
     if (widgetClass.getWidgetSuperclass() != null) {
-      obcMenuItems.add(Restrictions.eq(WidgetClassMenu.PROPERTY_WIDGETCLASS,
-          widgetClass.getWidgetSuperclass()));
+      obcMenuItems
+          .add(Restrictions.or(
+              Restrictions.eq(WidgetClassMenu.PROPERTY_WIDGETCLASS, widgetClass),
+              Restrictions.eq(WidgetClassMenu.PROPERTY_WIDGETCLASS,
+                  widgetClass.getWidgetSuperclass())));
     } else {
       obcMenuItems.add(Restrictions.eq(WidgetClassMenu.PROPERTY_WIDGETCLASS, widgetClass));
     }
