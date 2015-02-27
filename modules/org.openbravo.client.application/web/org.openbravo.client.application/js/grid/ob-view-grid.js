@@ -1450,6 +1450,11 @@ isc.OBViewGrid.addProperties({
           autoSaveEditsBackup = me.autoSaveEdits,
           recordToEdit, originalValuesOfEditedRow;
       if (me.getSelectedRecords().length === 1) {
+        if (me.getEditForm() && me.view && me.view.viewForm) {
+          // copy the list of dynamicCols to the viewForm, as otherwise they will not be set until for form
+          // makes a call to the FIC (see issue https://issues.openbravo.com/view.php?id=28870)
+          me.view.viewForm.dynamicCols = me.getEditForm().dynamicCols;
+        }
         if (me.view.isEditingGrid) {
           // do not save the provisional changes
           me.autoSaveEdits = false;
