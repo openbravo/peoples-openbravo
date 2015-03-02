@@ -64,7 +64,7 @@ enyo.kind({
       return;
     }
     total = this.model.get('multiOrders').get('multiOrdersList').get(this.owner.owner.args.id).get('gross');
-    if (OB.DEC.compare(OB.DEC.sub(amount, total)) > 0) {
+    if (OB.DEC.compare(OB.DEC.sub(amount, total)) > 0 || OB.DEC.compare(amount) < 0) {
       OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_notValidInput_header'), OB.I18N.getLabel('OBPOS_notValidQty'));
       this.doHideThisPopup();
       return;
