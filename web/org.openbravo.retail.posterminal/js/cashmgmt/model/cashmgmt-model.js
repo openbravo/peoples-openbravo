@@ -137,11 +137,57 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
         }
       }
 
+      var PaymentList = new Backbone.Collection(),
+          Found = false,
+          i;
+
+      function addAttributes(depdrop) {
+        var Payment = new OB.Model.PaymentMethodCashUp();
+        if (depdrop.get('type') === 'deposit') {
+          Payment.set('paymentMethodId', depdrop.get('paymentMethodId'));
+          Payment.set('cashup_id', depdrop.get('cashup_id'));
+          Payment.set('totalDeposits', depdrop.get('amount'));
+          Payment.set('totalDrops', 0);
+        } else {
+          Payment.set('paymentMethodId', depdrop.get('paymentMethodId'));
+          Payment.set('cashup_id', depdrop.get('cashup_id'));
+          Payment.set('totalDrops', depdrop.get('amount'));
+          Payment.set('totalDeposits', 0);
+        }
+        return Payment;
+      }
+      _.each(this.depsdropstosave.models, function (depdrop, index) {
+        if (PaymentList.length > 0) {
+          for (i = 0; i < PaymentList.length; i++) {
+            Found = false;
+            if (PaymentList.models[i].get('paymentMethodId') === depdrop.get('paymentMethodId')) {
+              var paymentMethod = PaymentList.models[i],
+                  totalDeposits = 0, totalDrops = 0, depos = paymentMethod.get('totalDeposits'),
+                  drop = paymentMethod.get('totalDrops');
+              if (depdrop.get('type') === 'deposit') {
+                totalDeposits = OB.DEC.add(depos, depdrop.get('amount'));
+                paymentMethod.set('totalDeposits', totalDeposits);
+              } else {
+                totalDrops = OB.DEC.add(drop, depdrop.get('amount'));
+                paymentMethod.set('totalDrops', totalDrops);
+              }
+              Found = true;
+              break;
+            }
+          }
+          if (!Found) {
+            PaymentList.add(addAttributes(depdrop));
+          }
+        } else {
+          PaymentList.add(addAttributes(depdrop));
+        }
+      }, this);
+
       runSyncProcessCM = _.after(this.depsdropstosave.models.length, runSync);
       // Sending drops/deposits to backend
       _.each(this.depsdropstosave.models, function (depdrop, index) {
         OB.Dal.save(depdrop, function () {
-          OB.UTIL.sumCashManagementToCashup(depdrop);
+          OB.UTIL.sumCashManagementToCashup(PaymentList.models[index]);
           OB.UTIL.calculateCurrentCash();
           runSyncProcessCM();
         }, function (error) {

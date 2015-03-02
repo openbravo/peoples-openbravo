@@ -434,38 +434,34 @@
       }
     }
   };
+  OB.UTIL.sumCashManagementToCashup = function (Payment) {
+    if (!OB.UTIL.isNullOrUndefined(Payment)) {
+      var cashupId = Payment.get('cashup_id'),
+          criteria = {
+          'cashup_id': cashupId,
+          'paymentmethod_id': Payment.get('paymentMethodId')
+          };
 
-  OB.UTIL.sumCashManagementToCashup = function (cashMgmt) {
-    var cashupId = cashMgmt.get('cashup_id'),
-        criteria = {
-        'cashup_id': cashupId,
-        'paymentmethod_id': cashMgmt.get('paymentMethodId')
-        };
-
-    OB.Dal.find(OB.Model.PaymentMethodCashUp, criteria, function (paymentMethods) {
-      var paymentMethod = paymentMethods.at(0),
-          totalDeposits = paymentMethod.get('totalDeposits'),
-          totalDrops = paymentMethod.get('totalDrops');
-
-      if (cashMgmt.get('type') === 'deposit') {
-        totalDeposits = OB.DEC.add(totalDeposits, cashMgmt.get('amount'));
+      OB.Dal.find(OB.Model.PaymentMethodCashUp, criteria, function (paymentMethods) {
+        var paymentMethod = paymentMethods.at(0),
+            totalDeposits = paymentMethod.get('totalDeposits'),
+            totalDrops = paymentMethod.get('totalDrops');
+        totalDeposits = OB.DEC.add(totalDeposits, Payment.get('totalDeposits'));
         paymentMethod.set('totalDeposits', totalDeposits);
-      } else {
-        totalDrops = OB.DEC.add(totalDrops, cashMgmt.get('amount'));
+        totalDrops = OB.DEC.add(totalDrops, Payment.get('totalDrops'));
         paymentMethod.set('totalDrops', totalDrops);
-      }
-      OB.Dal.save(paymentMethod, function (success) {
-        // Success
-        OB.Dal.find(OB.Model.CashUp, {
-          'id': cashupId
-        }, function (cashUpObj) {
-          OB.UTIL.composeCashupInfo(cashUpObj, null, null);
+        OB.Dal.save(paymentMethod, function (success) {
+          // Success
+          OB.Dal.find(OB.Model.CashUp, {
+            'id': cashupId
+          }, function (cashUpObj) {
+            OB.UTIL.composeCashupInfo(cashUpObj, null, null);
+          });
+        }, function (error) {
+          // Error
         });
-      }, function (error) {
-        // Error
       });
-    });
-
+    }
   };
   OB.UTIL.calculateCurrentCash = function (callback) {
     var me = this;
