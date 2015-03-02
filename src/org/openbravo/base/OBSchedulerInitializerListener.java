@@ -123,8 +123,12 @@ public class OBSchedulerInitializerListener implements ServletContextListener {
           Statement s = null;
           try {
             s = connection.createStatement();
-            String query = "UPDATE AD_PROCESS_RUN SET END_TIME=NOW(),STATUS='SYR' WHERE END_TIME IS NULL";
-            s.executeUpdate(query);
+            String query = "UPDATE AD_PROCESS_RUN SET END_TIME=NOW(),STATUS='SYR' WHERE STATUS='PRC' AND END_TIME IS NULL";
+            int n = s.executeUpdate(query);
+            if (n > 0) {
+              log.info(n
+                  + " background processes were in execution before Tomcat start, they have been marked as 'System Restarted' ");
+            }
           } finally {
             if (s != null && !s.isClosed()) {
               s.close();
