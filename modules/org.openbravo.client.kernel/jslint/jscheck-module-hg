@@ -4,7 +4,7 @@
 echo "Performing jslint check on modified js resources"
 for i in $(hg log -r $HG_NODE --template '{files}')
 do
-	if [[ $i == *enyo* ]]
+	if [[ $i == *vendor* ]]
 	then
 	  echo "Skipping " $i;
 	else
