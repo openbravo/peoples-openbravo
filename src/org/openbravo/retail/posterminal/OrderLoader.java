@@ -560,11 +560,30 @@ public class OrderLoader extends POSDataSynchronizationProcess {
       // if ratio equals to one, then only one shipment line is related to orderline, then
       // lineNetAmt and gross is populated from JSON
       if (ratio.compareTo(BigDecimal.ONE) != 0) {
-        invoicelinetax.setTaxableAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("net"))
-            .multiply(ratio).setScale(stdPrecision, RoundingMode.HALF_UP));
-        invoicelinetax.setTaxAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("amount"))
-            .multiply(ratio).setScale(stdPrecision, RoundingMode.HALF_UP));
-        totalTaxAmount = totalTaxAmount.add(invoicelinetax.getTaxAmount());
+        // if there are several shipments line to the same orderline, in the last line of the
+        // splited lines, the tax amount will be calculated as the pending tax amount
+        if (numLines > actualLine) {
+          invoicelinetax.setTaxableAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("net"))
+              .multiply(ratio).setScale(stdPrecision, RoundingMode.HALF_UP));
+          invoicelinetax.setTaxAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("amount"))
+              .multiply(ratio).setScale(stdPrecision, RoundingMode.HALF_UP));
+          totalTaxAmount = totalTaxAmount.add(invoicelinetax.getTaxAmount());
+        } else {
+          BigDecimal partialTaxableAmount = BigDecimal.ZERO;
+          BigDecimal partialTaxAmount = BigDecimal.ZERO;
+          for (InvoiceLineTax ilt : invoice.getInvoiceLineTaxList()) {
+            if (ilt.getInvoiceLine().getSalesOrderLine() != null
+                && ilt.getInvoiceLine().getSalesOrderLine().getId() == lineReferences.get(numIter)
+                    .getId() && ilt.getTax() != null && ilt.getTax().getId() == tax.getId()) {
+              partialTaxableAmount = partialTaxableAmount.add(ilt.getTaxableAmount());
+              partialTaxAmount = partialTaxAmount.add(ilt.getTaxAmount());
+            }
+          }
+          invoicelinetax.setTaxableAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("net"))
+              .subtract(partialTaxableAmount).setScale(stdPrecision, RoundingMode.HALF_UP));
+          invoicelinetax.setTaxAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("amount"))
+              .subtract(partialTaxAmount).setScale(stdPrecision, RoundingMode.HALF_UP));
+        }
       } else {
         invoicelinetax.setTaxableAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("net")).setScale(
             stdPrecision, RoundingMode.HALF_UP));

@@ -549,6 +549,9 @@ public class OrderGroupingProcessor {
     } else {
       BigDecimal partialGrossAmount = BigDecimal.ZERO;
       BigDecimal partialLineNetAmount = BigDecimal.ZERO;
+
+      BigDecimal[] partialTaxableAmount = new BigDecimal[ol.getOrderLineTaxList().size()];
+      BigDecimal[] partialTaxAmount = new BigDecimal[ol.getOrderLineTaxList().size()];
       OrderLine[] arrayOlSplit = new OrderLine[shipmentLines.size()];
       for (int i = 0; i < shipmentLines.size(); i++) {
         lineNo += 10;
@@ -583,12 +586,35 @@ public class OrderGroupingProcessor {
 
         olSplit.setLineNo(lineNo);
 
-        for (int j = 0; j < olSplit.getOrderLineTaxList().size(); j++) {
-          OrderLineTax olt = olSplit.getOrderLineTaxList().get(j);
-          olt.setTaxAmount(olt.getTaxAmount().multiply(ratio)
-              .setScale(stdPrecision, RoundingMode.HALF_UP));
-          olt.setTaxableAmount(olt.getTaxableAmount().multiply(ratio)
-              .setScale(stdPrecision, RoundingMode.HALF_UP));
+        if (shipmentLines.size() > i + 1) {
+          for (int j = 0; j < olSplit.getOrderLineTaxList().size(); j++) {
+            OrderLineTax olt = olSplit.getOrderLineTaxList().get(j);
+            olt.setTaxAmount(olt.getTaxAmount().multiply(ratio)
+                .setScale(stdPrecision, RoundingMode.HALF_UP));
+            olt.setTaxableAmount(olt.getTaxableAmount().multiply(ratio)
+                .setScale(stdPrecision, RoundingMode.HALF_UP));
+            // in partialTaxableAmount is added the taxable amount set in the splited lines
+            if (partialTaxableAmount[j] == null) {
+              partialTaxableAmount[j] = olt.getTaxableAmount();
+            } else {
+              partialTaxableAmount[j] = partialTaxableAmount[j].add(olt.getTaxableAmount());
+            }
+            // in partialTaxAmount is added the taxable amount set in the splited lines
+            if (partialTaxAmount[j] == null) {
+              partialTaxAmount[j] = olt.getTaxAmount();
+            } else {
+              partialTaxAmount[j] = partialTaxAmount[j].add(olt.getTaxAmount());
+            }
+          }
+        } else {
+          // in the last line of splited lines, is set to the pending tax amount and taxable amount
+          for (int j = 0; j < olSplit.getOrderLineTaxList().size(); j++) {
+            OrderLineTax olt = olSplit.getOrderLineTaxList().get(j);
+            olt.setTaxAmount(olt.getTaxAmount().subtract(partialTaxAmount[j])
+                .setScale(stdPrecision, RoundingMode.HALF_UP));
+            olt.setTaxableAmount(olt.getTaxableAmount().subtract(partialTaxableAmount[j])
+                .setScale(stdPrecision, RoundingMode.HALF_UP));
+          }
         }
 
         List<OrderLineOffer> promotions = olSplit.getOrderLineOfferList();
@@ -604,5 +630,4 @@ public class OrderGroupingProcessor {
       return arrayOlSplit;
     }
   }
-
 }
