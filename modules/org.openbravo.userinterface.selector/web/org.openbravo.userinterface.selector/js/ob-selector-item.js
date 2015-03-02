@@ -1127,6 +1127,11 @@ isc.OBSelectorItem.addClassMethods({
       }
     }
 
+    // if the selector belongs to a P&E grid, include the info of the record being edited
+    if (selector.grid && selector.grid.getClassName() === 'OBPickAndExecuteGrid') {
+      isc.addProperties(params, selector.grid.getContextInfo(selector.grid.getEditRow()));
+    }
+
     if (selector.form && selector.form.view && selector.form.view.standardWindow) {
       isc.addProperties(params, {
         windowId: selector.form.view.standardWindow.windowId,
