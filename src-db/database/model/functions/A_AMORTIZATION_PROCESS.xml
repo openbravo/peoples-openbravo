@@ -150,6 +150,9 @@
       UPDATE a_asset
         SET IsFullyDepreciated='Y',Updated=now(),UpdatedBy=v_AD_User_ID
       WHERE COALESCE(DepreciatedPlan, -1)=COALESCE(DepreciatedValue, -2) ;
+      UPDATE a_asset
+        SET IsFullyDepreciated='N',Updated=now(),UpdatedBy=v_AD_User_ID
+      WHERE DepreciatedPlan!=DepreciatedValue;
     END IF;
     --<<FINISH_PROCESS>>
     IF(p_PInstance_ID IS NOT NULL) THEN
