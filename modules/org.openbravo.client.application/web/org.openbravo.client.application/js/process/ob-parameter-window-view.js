@@ -715,7 +715,7 @@ isc.OBParameterWindowView.addProperties({
     return (this.buttonOwnerView && this.buttonOwnerView.getContextInfo(onlySessionProperties, classicMode, forceSettingContextVars, convertToClassicFormat)) || {};
   },
 
-  handleButtonsStatus: function() {
+  handleButtonsStatus: function () {
     var allRequiredSet = this.allRequiredParametersSet();
     if (this.isReport) {
       if (this.pdfExport) {

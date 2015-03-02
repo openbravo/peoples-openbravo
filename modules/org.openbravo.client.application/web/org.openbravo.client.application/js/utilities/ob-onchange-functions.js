@@ -19,7 +19,6 @@
 // = On Change Functions =
 //
 // Contains on change functions that are defined in the fields.
-
 OB = window.OB || {};
 OB.OnChange = window.OB.OnChange || {};
 
@@ -38,7 +37,7 @@ OB.OnChange.organizationCurrency = function (item, view, form, grid) {
 //When OBUIAPP_Report is selected and the Action Handler is empty it sets
 //the BaseReportActionHandler as default value.
 OB.OnChange.processDefinitionUIPattern = function (item, view, form, grid) {
-var classNameItem = form.getItem('javaClassName');
+  var classNameItem = form.getItem('javaClassName');
   if (item.getValue() === 'OBUIAPP_Report' && !classNameItem.getValue()) {
     classNameItem.setValue('org.openbravo.client.application.report.BaseReportActionHandler');
   }

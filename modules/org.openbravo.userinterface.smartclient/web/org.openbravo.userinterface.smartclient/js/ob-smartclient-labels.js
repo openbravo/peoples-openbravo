@@ -226,10 +226,10 @@
     clearSortFieldText: getLabel('OBUISC_ListGrid.clearSortFieldText')
   });
   isc.ListGrid.addProperties({
-	  autoFitAllText: getLabel('OBUISC_ListGrid.autoFitAllText')
+    autoFitAllText: getLabel('OBUISC_ListGrid.autoFitAllText')
   });
   isc.ListGrid.addProperties({
-	  autoFitFieldText: getLabel('OBUISC_ListGrid.autoFitFieldText')
+    autoFitFieldText: getLabel('OBUISC_ListGrid.autoFitFieldText')
   });
 
   isc.TreeGrid.parentAlreadyContainsChildMessage = getLabel('OBUISC_TreeGrid.parentAlreadyContainsChildMessage');
