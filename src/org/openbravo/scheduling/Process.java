@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -42,6 +42,8 @@ public interface Process {
   public static final String ERROR = "ERR";
 
   public static final String COMPLETE = "COM";
+
+  public static final String SYSTEM_RESTART = "SYR";
 
   public static final String PREVENT_CONCURRENT_EXECUTIONS = "PCE";
   public static final String PROCESS_NAME = "name";

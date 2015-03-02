@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2014 Openbravo SLU
+ * All portions are Copyright (C) 2008-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -262,6 +262,15 @@ public class OBScheduler {
 
       for (final ProcessRequestData request : data) {
         final String requestId = request.id;
+        if ("Direct".equals(request.channel)
+            || TriggerProvider.TIMING_OPTION_IMMEDIATE.equals(request.timingOption)) {
+          // do not re-schedule immediate and direct requests that were in execution last time
+          // Tomcat stopped
+          ProcessRequestData.update(getConnection(), Process.SYSTEM_RESTART, requestId);
+          log.debug(request.channel + " run of process id " + request.processId
+              + " was scheduled, marked as 'System Restart'");
+          continue;
+        }
         final VariablesSecureApp vars = ProcessContext.newInstance(request.obContext).toVars();
         try {
           final ProcessBundle bundle = ProcessBundle.request(requestId, vars, getConnection());
