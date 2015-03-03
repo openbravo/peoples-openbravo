@@ -218,10 +218,10 @@ public class PaidReceipts extends JSONProcessSimple {
             + "c_currency_rate(p.obposApplications.organization.currency, p.financialAccount.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as mulrate, "
             + "p.financialAccount.currency.iSOCode as isocode, "
             + "p.paymentMethod.openDrawer as openDrawer "
-            + " from OBPOS_App_Payment as p where p.obposApplications.id=? ";
+            + " from OBPOS_App_Payment as p where p.financialAccount.id in (select scheduleDetail.paymentDetails.finPayment.account.id from FIN_Payment_ScheduleDetail as scheduleDetail where scheduleDetail.orderPaymentSchedule.order.id=?)";
         Query paymentsTypeQuery = OBDal.getInstance().getSession().createQuery(hqlPaymentsType);
         // paidReceiptsQuery.setString(0, id);
-        paymentsTypeQuery.setString(0, paidReceipt.getString("posTerminal"));
+        paymentsTypeQuery.setString(0, orderid);
         for (Object objPaymentType : paymentsTypeQuery.list()) {
           Object[] objPaymentsType = (Object[]) objPaymentType;
           JSONObject paymentsType = new JSONObject();
