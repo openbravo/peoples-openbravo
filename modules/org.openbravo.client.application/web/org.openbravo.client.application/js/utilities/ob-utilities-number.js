@@ -35,8 +35,8 @@ OB.Utilities.Number = {};
 // Return:
 // * The rounded JS number
 OB.Utilities.Number.roundJSNumber = function (num, dec) {
-  var result = Math.round(num * Math.pow(10, dec)) / Math.pow(10, dec);
-  return result;
+  var strNum = (isc.isA.String(num) ? num : String(num));
+  return parseFloat(new BigDecimal(strNum).round(dec, BigDecimal.prototype.ROUND_HALF_UP));
 };
 
 // ** {{{ OB.Utilities.Number.OBMaskedToOBPlain }}} **
