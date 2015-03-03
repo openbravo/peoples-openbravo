@@ -73,7 +73,6 @@ public class DocGLJournal extends AcctServer {
     loadDocumentType(); // lines require doc type
     m_PostingType = data[0].getField("PostingType");
     m_IsOpening = data[0].getField("isopening");
-    C_Period_ID = isperiodOpen(conn, data[0].getField("period"));
     C_Currency_ID = data[0].getField("c_currency_id");
     try {
       C_AcctSchema_ID = DocGLJournalData.selectAcctSchema(conn, AD_Client_ID, Record_ID);
