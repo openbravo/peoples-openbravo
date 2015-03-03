@@ -35,7 +35,7 @@
                      END AS AVERAGE_COST,
                SUM(TOTAL_COST) AS TOTAL_COST
         FROM M_TRANSACTION M
-        LEFT JOIN (SELECT M_PRODUCT_CATEGORY.NAME AS CATEGORY_NAME, A.M_PRODUCT_ID, AD_COLUMN_IDENTIFIER (to_char('M_Product'),to_char(M_PRODUCT.M_PRODUCT_ID),to_char(?)) AS PRODUCT_NAME, 
+        INNER JOIN (SELECT M_PRODUCT_CATEGORY.NAME AS CATEGORY_NAME, A.M_PRODUCT_ID, AD_COLUMN_IDENTIFIER (to_char('M_Product'),to_char(M_PRODUCT.M_PRODUCT_ID),to_char(?)) AS PRODUCT_NAME, 
                 C_UOM.NAME AS UOM_NAME, SUM(A.SUMA) AS TOTAL_COST, A.ISCOSTCALCULATED, A.AD_CLIENT_ID, A.C_CURRENCY_ID, A.M_TRANSACTION_ID
              FROM M_PRODUCT_CATEGORY,
              M_TRANSACTION TR 
@@ -74,8 +74,8 @@
       <Parameter name="datePlus"/>
       <Parameter name="datePlus"/>
       <Parameter name="warehouse"/>
-      <Parameter name="adLanguage"/>
       <Parameter name="categoryProduct" optional="true" after="AND   1 = 1"><![CDATA[ AND M_PRODUCT.M_PRODUCT_CATEGORY_ID= ? ]]></Parameter>
+      <Parameter name="adLanguage"/>
   </SqlMethod>
   <SqlMethod name="set" type="constant" return="multiple">
       <SqlMethodComment></SqlMethodComment>
