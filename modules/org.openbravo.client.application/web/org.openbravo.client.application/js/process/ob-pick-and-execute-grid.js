@@ -375,7 +375,7 @@ isc.OBPickAndExecuteGrid.addProperties({
     if (newValue === null || newValue === undefined) {
       newValue = this.getEditValue(rowNum, colNum);
     }
-    if (newValue === null || newValue === undefined) {
+    if ((newValue === null || newValue === undefined) && this.getRecord(rowNum)) {
       newValue = this.getRecord(rowNum)[editField.name];
     }
     // Execute onChangeFunctions if they exist
