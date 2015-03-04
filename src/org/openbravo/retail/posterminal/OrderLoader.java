@@ -312,10 +312,6 @@ public class OrderLoader extends POSDataSynchronizationProcess {
           EmailSender emailSender = new EmailSender(order.getId(), jsonorder);
         }
 
-        if (createInvoice && isMultipleShipmentLine(invoice)) {
-          finishInvoice(invoice);
-        }
-
         // Call all OrderProcess injected.
         executeHooks(orderProcesses, jsonorder, order, shipment, invoice);
       }
@@ -784,56 +780,6 @@ public class OrderLoader extends POSDataSynchronizationProcess {
       taxInv.setTaxableAmount(taxableAmt.setScale(stdPrecision, RoundingMode.HALF_UP));
       taxInv.setTaxAmount(taxAmt.setScale(stdPrecision, RoundingMode.HALF_UP));
       OBDal.getInstance().save(taxInv);
-    }
-  }
-
-  protected void finishInvoice(Invoice invoice) throws JSONException {
-    int stdPrecision = invoice.getCurrency().getStandardPrecision().intValue();
-    BigDecimal grossAmount = BigDecimal.ZERO;
-    BigDecimal netAmount = BigDecimal.ZERO;
-    BigDecimal totalPaid = BigDecimal.ZERO;
-
-    for (InvoiceLine il : invoice.getInvoiceLineList()) {
-      netAmount = netAmount.add(il.getLineNetAmount());
-    }
-
-    grossAmount = netAmount;
-    for (InvoiceLineTax ilt : invoice.getInvoiceLineTaxList()) {
-      grossAmount = grossAmount.add(ilt.getTaxAmount());
-    }
-
-    for (FIN_PaymentSchedule ps : invoice.getFINPaymentScheduleList()) {
-      totalPaid = totalPaid.add(ps.getPaidAmount());
-    }
-
-    // if the total paid is distinct that grossamount, we should recalculate grandtotal and
-    // lineNetAmt and create a new sched detail with the difference
-    if (grossAmount.compareTo(totalPaid) != 0) {
-      // update invoice header data
-      invoice.setGrandTotalAmount(grossAmount.setScale(stdPrecision, RoundingMode.HALF_UP));
-      invoice.setSummedLineAmount(netAmount.setScale(stdPrecision, RoundingMode.HALF_UP));
-      invoice.setTotalPaid(totalPaid.setScale(stdPrecision, RoundingMode.HALF_UP));
-      invoice.setOutstandingAmount(grossAmount.subtract(totalPaid));
-      invoice.setPaymentComplete(grossAmount.compareTo(totalPaid) == 0);
-      invoice.setFinalSettlementDate(grossAmount.compareTo(totalPaid) == 0 ? invoice
-          .getFinalSettlementDate() : null);
-
-      // update invoice payment data
-      FIN_PaymentScheduleDetail newDetail = OBProvider.getInstance().get(
-          FIN_PaymentScheduleDetail.class);
-      newDetail.setAmount(grossAmount.subtract(totalPaid));
-      if (invoice.getFINPaymentScheduleList().size() > 0) {
-        newDetail.setInvoicePaymentSchedule(invoice.getFINPaymentScheduleList().get(0));
-        invoice.getFINPaymentScheduleList().get(0)
-            .getFINPaymentScheduleDetailInvoicePaymentScheduleList().add(newDetail);
-        invoice.getFINPaymentScheduleList().get(0).setAmount(grossAmount);
-        invoice.getFINPaymentScheduleList().get(0)
-            .setOutstandingAmount(grossAmount.subtract(totalPaid));
-      }
-      OBDal.getInstance().save(newDetail);
-      OBDal.getInstance().save(invoice.getFINPaymentScheduleList().get(0));
-      OBDal.getInstance().save(invoice);
-      // OBDal.getInstance().flush();
     }
   }
 
