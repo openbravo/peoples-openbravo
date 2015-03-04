@@ -386,7 +386,7 @@
                 }
               }
             });
-            // Get Cashup id, if objToSend is not filled compose and Syn  
+            // Get Cashup id, if objToSend is not filled compose and synchronize
             OB.UTIL.deleteCashUps(data);
             callback();
           });
