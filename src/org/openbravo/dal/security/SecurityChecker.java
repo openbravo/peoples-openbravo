@@ -211,6 +211,8 @@ public class SecurityChecker implements OBSingleton {
    * an OBSecurityException.
    * 
    * @param organizationEnabledObject
+   *          a {@link BaseOBObject} that implements the {@link OrganizationEnabled} interface. This
+   *          method will check if the user has read access to the provided object
    */
   public void checkReadableAccess(OrganizationEnabled organizationEnabledObject) {
     OBContext obContext = OBContext.getOBContext();
