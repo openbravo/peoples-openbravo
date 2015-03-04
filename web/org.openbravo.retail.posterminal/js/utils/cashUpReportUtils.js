@@ -203,6 +203,10 @@
           var pAux = payments.filter(function (payMthd) {
             return paymentMethodCashUpModel.get('paymentmethod_id') === payMthd.payment.id;
           })[0];
+          if (!pAux) {
+            OB.info('Payment method not found. This is likely due to the fact that the payment method was disabled.');
+            return;
+          }
           if (pAux.payment.active === true || (pAux.payment.active === false && paymentMethodCashUpModel.get('totalSales') !== 0 && paymentMethodCashUpModel.get('totalReturns') !== 0 && paymentMethodCashUpModel.get('totalDepostis') !== 0 && paymentMethodCashUpModel.get('totalDrops') !== 0)) {
             OB.Dal.save(paymentMethodCashUpModel, null, null, true);
           }
