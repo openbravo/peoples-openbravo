@@ -1154,7 +1154,21 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
       final boolean isReceipt = newPayment.isReceipt();
       final Organization Org = newPayment.getOrganization();
 
-      List<FIN_Payment> creditPayments = dao.getCustomerPaymentsWithCredit(Org, bp, isReceipt);
+      final OBCriteria<FIN_Payment> reversepayment = OBDal.getInstance().createCriteria(
+          FIN_Payment.class);
+      reversepayment.add(Restrictions.eq(FIN_Payment.PROPERTY_REVERSEDPAYMENT, newPayment));
+      final FIN_Payment reversepaymnt = (FIN_Payment) reversepayment.uniqueResult();
+
+      List<FIN_Payment> creditPayments;
+      if (reversepaymnt == null) {
+        // Normal scenario
+        creditPayments = dao.getCustomerPaymentsWithCredit(Org, bp, isReceipt);
+      } else {
+        // If it is a reverse payment use its original payment
+        creditPayments = new ArrayList<FIN_Payment>(1);
+        creditPayments.add(reversepaymnt);
+      }
+
       BigDecimal pendingToAllocateAmount = usedAmount;
       for (FIN_Payment creditPayment : creditPayments) {
         BigDecimal availableAmount = creditPayment.getGeneratedCredit().subtract(
