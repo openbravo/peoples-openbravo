@@ -39,7 +39,7 @@ OB.Utilities.Number.roundJSNumber = function (num, dec) {
   if (isNaN(num)) {
     return NaN;
   }
-  strNum = (isc.isA.String(num) ? num : String(num));
+  strNum = ((typeof num === 'string') ? num : String(num));
   return parseFloat(new BigDecimal(strNum).setScale(dec, BigDecimal.prototype.ROUND_HALF_UP));
 };
 
