@@ -742,7 +742,7 @@ OB.APRM.AddPayment.selectionChangedCredit = function (record, state) {
     this.fireOnPause('selectionChangedCredit' + record.id, function () {
       OB.APRM.AddPayment.doSelectionChangedCredit(record, state, this.view);
     }, 200);
-    this.Super('selectionChangedCredit', arguments);
+    this.Super('selectionChanged', arguments);
   }
 };
 
