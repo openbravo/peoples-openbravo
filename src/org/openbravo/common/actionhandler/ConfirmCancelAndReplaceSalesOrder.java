@@ -411,9 +411,9 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseActionHandler {
               negativeAmount, paymentDocumentType, financialAccount);
 
           // Set amount and used credit to zero
-          // newPayment.setAmount(BigDecimal.ZERO);
-          // newPayment.setUsedCredit(BigDecimal.ZERO);
-          // OBDal.getInstance().save(newPayment);
+          newPayment.setAmount(BigDecimal.ZERO);
+          newPayment.setUsedCredit(BigDecimal.ZERO);
+          OBDal.getInstance().save(newPayment);
         }
         // Call to processPayment in order to process it
         ConnectionProvider conn = new DalConnectionProvider();
@@ -473,9 +473,9 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseActionHandler {
               outstandingAmount, paymentDocumentType, financialAccount);
 
           // Set amount and used credit to zero
-          // newPayment2.setAmount(BigDecimal.ZERO);
-          // newPayment2.setUsedCredit(BigDecimal.ZERO);
-          // OBDal.getInstance().save(newPayment2);
+          newPayment2.setAmount(BigDecimal.ZERO);
+          newPayment2.setUsedCredit(BigDecimal.ZERO);
+          OBDal.getInstance().save(newPayment2);
 
           // Call to processPayment in order to process it
           if (newPayment2 != null) {
