@@ -19,6 +19,6 @@
 package org.openbravo.materialmgmt;
 
 public class CSResponseGetStockParam {
-  String p_result;
-  String p_message;
+  public String p_result;
+  public String p_message;
 }
