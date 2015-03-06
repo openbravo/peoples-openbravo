@@ -74,4 +74,28 @@
       ]]>
     </Sql>
   </SqlMethod>
+  <SqlMethod name="createInvoiceIndex" type="preparedStatement" return="rowcount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        alter table c_invoice add constraint c_invoice_key primary key (c_invoice_id)    
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="dropInvoiceIndex" type="preparedStatement" return="rowcount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        alter table c_invoice drop constraint c_invoice_key cascade    
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="analyzeInvoice" type="preparedStatement" return="rowcount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        ANALYZE c_invoice  
+      ]]>
+    </Sql>
+  </SqlMethod>
 </SqlClass>
