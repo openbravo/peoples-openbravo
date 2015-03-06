@@ -152,7 +152,9 @@ enyo.kind({
     }, this);
 
     this.receipt.on('scan', function (params) {
-      this.manualTap('scan', params);
+      if (OB.MobileApp.model.get('lastPaneShown') !== 'scan') {
+        this.manualTap('scan', params);
+      }
     }, this);
 
     this.receipt.get('lines').on('click', function () {
