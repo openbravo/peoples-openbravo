@@ -540,7 +540,7 @@
       cashPaymentMethodInfo.id = auxPay.get('id');
       cashPaymentMethodInfo.startingCash = auxPay.get('startingCash');
       cashPaymentMethodInfo.totalSales = auxPay.get('totalSales');
-      cashPaymentMethodInfo.totalReturn = auxPay.get('totalReturns');
+      cashPaymentMethodInfo.totalReturns = auxPay.get('totalReturns');
       cashPaymentMethodInfo.totalDeposits = auxPay.get('totalDeposits');
       cashPaymentMethodInfo.totalDrops = auxPay.get('totalDrops');
       cashPaymentMethodInfo.rate = curModel.rate;
