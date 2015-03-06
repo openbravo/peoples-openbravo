@@ -299,7 +299,7 @@ enyo.kind({
     }, {
       style: 'display: table-cell; float:right',
       components: [{
-        classes: 'btnlink-gray',
+        classes: 'btnlink-green',
         name: 'cancelMultiOrdersButton',
         kind: 'OB.UI.SmallButton',
         ontap: 'cancelAction'
