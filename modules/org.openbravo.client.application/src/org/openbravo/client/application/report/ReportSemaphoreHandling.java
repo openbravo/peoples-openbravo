@@ -18,6 +18,8 @@
  */
 package org.openbravo.client.application.report;
 
+import java.util.concurrent.Semaphore;
+
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBSingleton;
 import org.openbravo.erpCommon.businessUtility.Preferences;
@@ -34,16 +36,18 @@ import org.slf4j.LoggerFactory;
  * This semaphore handler can/should be used by heavy resource intensive reporting processes.To
  * prevent too many to run at the same time.
  * 
+ * Implementation is based on {@link java.util.concurrent.Semaphore}.
+ * 
  * The {@link #acquire()} and {@link #release()} methods should be called using a try finally block:
  * 
  * <pre>
  * <code>
  * // call acquire before the try:
- * ReportSemaphoreHandling.acquire();
+ * ReportSemaphoreHandling.getInstance().acquire();
  * try {
  * 
  * } finally {
- *   ReportSemaphoreHandling.release();
+ *   ReportSemaphoreHandling.getInstance().release();
  * }
  * </code>
  * </pre>
@@ -52,19 +56,21 @@ import org.slf4j.LoggerFactory;
  */
 public class ReportSemaphoreHandling implements OBSingleton {
   private static int DEFAULT_MAX_THREADS = 3;
-  private static int maxThreads = 3;
-  private static int threadCounter = 0;
+  private static int maxThreads;
+
   private static final Logger log = LoggerFactory.getLogger(ReportSemaphoreHandling.class);
 
-  /**
-   * Increments the threadCounter by one unit. The Max value of the counter can be parameterized by
-   * setting the OBUIAPP_MaxReportThreads System preference. If no preference is found or it is
-   * wrongly configured DEFAULT_MAX_THREADS default value is used.
-   * 
-   * @throws OBException
-   *           When the threadCounter is in its max value.
-   */
-  public static synchronized void acquire() throws OBException {
+  private static ReportSemaphoreHandling instance;
+  private Semaphore semaphore;
+
+  public static synchronized ReportSemaphoreHandling getInstance() {
+    if (instance == null) {
+      instance = new ReportSemaphoreHandling();
+    }
+    return instance;
+  }
+
+  private ReportSemaphoreHandling() {
     String value = "";
     try {
       // strNull needed to avoid ambiguous definition of getPreferenceValue() method. That can
@@ -85,24 +91,29 @@ public class ReportSemaphoreHandling implements OBSingleton {
       log.warn("The value of OBUIAPP_MaxReportThreads property is not a valid number {}.", value, e);
       maxThreads = DEFAULT_MAX_THREADS;
     }
-    if (threadCounter == maxThreads) {
-      log.error("All available threads ({}) occupied.", maxThreads);
-      throw new OBException(OBMessageUtils.messageBD("OBUIAPP_ReportProcessOccupied"));
-    }
-    threadCounter++;
+
+    semaphore = new Semaphore(maxThreads);
   }
 
   /**
-   * Decreases the threadCounter by one unit.
+   * Increments the threadCounter by one unit. The Max value of the counter can be parameterized by
+   * setting the OBUIAPP_MaxReportThreads System preference. If no preference is found or it is
+   * wrongly configured DEFAULT_MAX_THREADS default value is used.
    * 
    * @throws OBException
-   *           In case the current value is zero an Exception is thrown. This can only happen by a
-   *           wrong implementation of the semaphore.
+   *           When the threadCounter is in its max value.
    */
-  public static synchronized void release() throws OBException {
-    if (threadCounter == 0) {
-      throw new OBException("Illegal thread counter, decreasing below zero");
+  public void acquire() throws OBException {
+    boolean acquired = semaphore.tryAcquire();
+
+    if (!acquired) {
+      log.error("All available threads ({}) occupied.", maxThreads);
+      throw new OBException(OBMessageUtils.messageBD("OBUIAPP_ReportProcessOccupied"));
     }
-    threadCounter--;
+  }
+
+  /** Decreases the threadCounter by one unit. */
+  public void release() {
+    semaphore.release();
   }
 }

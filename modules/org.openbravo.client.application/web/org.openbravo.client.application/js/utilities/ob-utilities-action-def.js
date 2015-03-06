@@ -150,7 +150,7 @@ OB.Utilities.Action.set('refreshGrid', function (paramObj) {
 //changed to DOWNLOAD so the BaseReportActionHanlder execute the logic to download the report.
 //Parameters:
 //* {{{processParameters}}}: The process parameters is an object that includes the action handler implementing the download, the report id that it is being executed and the process definition id.
-//* {{{filePath}}}: The complete path of the temporary file.
+//* {{{tmpfileName}}}: Name of the temporary file.
 //* {{{fileName}}}: The name to be used in the file to download.
 OB.Utilities.Action.set('OBUIAPP_downloadReport', function (paramObj) {
   var processParameters = paramObj.processParameters,
@@ -158,7 +158,7 @@ OB.Utilities.Action.set('OBUIAPP_downloadReport', function (paramObj) {
   params._action = processParameters.actionHandler;
   params.reportId = processParameters.reportId;
   params.processId = processParameters.processId;
-  params.filePath = paramObj.filePath;
+  params.tmpfileName = paramObj.tmpfileName;
   params.fileName = paramObj.fileName;
   params.mode = 'DOWNLOAD';
   OB.Utilities.postThroughHiddenForm(OB.Application.contextUrl + 'org.openbravo.client.kernel', params);

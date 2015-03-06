@@ -18,6 +18,7 @@
  */
 package org.openbravo.client.application.report;
 
+import java.io.File;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.HashMap;
@@ -51,6 +52,7 @@ import org.openbravo.service.db.DalConnectionProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** Utilities to generate jasper reports */
 public class ReportingUtils {
   public static final String JASPER_PARAM_OBCONTEXT = "jasper_obContext";
   public static final String JASPER_PARAM_HBSESSION = "jasper_hbSession";
@@ -67,13 +69,14 @@ public class ReportingUtils {
    *          The parameters to be sent to Jasper Report.
    * @param strFileName
    *          The name to be used on the generated file.
-   * @return a String with the complete path of the generated file.
    * @throws OBException
    *           In case there is any error generating the file an exception is thrown with the error
    *           message.
    */
-  public static String exportJR(String jasperFilePath, ExportType expType,
+  public static void exportJR(String jasperFilePath, ExportType expType,
       Map<String, Object> parameters, String strFileName) throws OBException {
+
+    JRSwapFileVirtualizer virtualizer = null;
     try {
       parameters.put(JASPER_PARAM_HBSESSION, OBDal.getInstance().getSession());
       parameters.put(JASPER_PARAM_OBCONTEXT, OBContext.getOBContext());
@@ -125,7 +128,6 @@ public class ReportingUtils {
       }
       parameters.put("Readable_Organizations", strOrgs);
 
-      JRSwapFileVirtualizer virtualizer = null;
       // if no custom virtualizer is requested use a default one
       if (!parameters.containsKey(JRParameter.REPORT_VIRTUALIZER)) {
         // virtualizer is essentially using a tmp-file to avoid huge memory consumption by jasper
@@ -159,14 +161,11 @@ public class ReportingUtils {
       } else {
         jasperPrint = JasperFillManager.fillReport(jasperFilePath, parameters);
       }
-      String target = getTempFolder();
-      if (!target.endsWith("/")) {
-        target += "/";
-      }
-      target += strFileName;
+      File target = new File(getTempFolder(), strFileName);
+
       switch (expType) {
       case PDF:
-        JasperExportManager.exportReportToPdfFile(jasperPrint, target);
+        JasperExportManager.exportReportToPdfFile(jasperPrint, target.getAbsolutePath());
         break;
       case XLS:
         JExcelApiExporter exporter = new JExcelApiExporter();
@@ -181,11 +180,14 @@ public class ReportingUtils {
         exporter.exportReport();
         break;
       }
-
-      return target;
     } catch (JRException e) {
       log.error("Error generating Jasper Report: " + jasperFilePath, e);
       throw new OBException(e.getMessage(), e);
+    } finally {
+      // remove virtualizer tmp files if we created them
+      if (virtualizer != null) {
+        virtualizer.cleanup();
+      }
     }
   }
 
@@ -213,11 +215,13 @@ public class ReportingUtils {
    * is generated.
    */
   public enum ExportType {
+    @SuppressWarnings("serial")
     PDF("pdf", "103", new HashMap<String, Object>() {
       {
         put("IS_IGNORE_PAGINATION", false);
       }
     }), //
+    @SuppressWarnings("serial")
     XLS("xls", "101", new HashMap<String, Object>() {
       {
         put("IS_IGNORE_PAGINATION", true);
@@ -257,9 +261,23 @@ public class ReportingUtils {
         throw new OBException(OBMessageUtils.messageBD("OBUIAPP_UnsupportedAction"));
       }
     }
+
+    /** Checks if temporary file name is a valid one: has extension and the name is a uuid */
+    public boolean isValidTemporaryFileName(String tmpFileName) {
+      if (!tmpFileName.endsWith("." + getExtension())) {
+        // file name should end with the extension
+        return false;
+      }
+      final String tmpFileNameWithoutExtension = tmpFileName.substring(0, tmpFileName.length()
+          - getExtension().length() - 1);
+
+      // temp file must be a valid uuid
+      return tmpFileNameWithoutExtension.matches("[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}");
+    }
   }
 
-  private static String getTempFolder() {
+  /** Returns temporary directory to save generated reports */
+  public static String getTempFolder() {
     final String tmpFolder = System.getProperty("java.io.tmpdir");
 
     return tmpFolder;

@@ -68,13 +68,18 @@ import org.openbravo.utils.FileUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Action Handler used as base for jasper reports generated from process defition. This handler can
+ * be extended to customize its behavior.
+ *
+ */
 public class BaseReportActionHandler extends BaseProcessActionHandler {
   private static final Logger log = LoggerFactory.getLogger(BaseReportActionHandler.class);
   private static final String JASPER_PARAM_PROCESS = "jasper_process";
 
   /**
-   * execute() method overridden to add the logic to download the report file stored in the temporal
-   * folder.
+   * execute() method overridden to add the logic to download the report file stored in the
+   * temporary folder.
    */
   @Override
   public void execute() {
@@ -144,49 +149,58 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
   }
 
   /**
-   * Downloads the file with the report result. The file is stored in a temporal folder with a
+   * Downloads the file with the report result. The file is stored in a temporary folder with a
    * generated name. It is renamed and download as an attachment of the response. Once it is
    * finished the file is removed from the server.
-   * 
-   * @param request
-   * @param parameters
-   *          Map with the needed parameters to download the report.
-   * @throws IOException
    */
   private void doDownload(HttpServletRequest request, Map<String, Object> parameters)
       throws IOException {
     final String strFileName = (String) parameters.get("fileName");
-    final String strFilePath = (String) parameters.get("filePath");
+    final String tmpFileName = (String) parameters.get("tmpfileName");
     ExportType expType = null;
-    if (strFileName.endsWith("pdf")) {
+
+    if (strFileName.endsWith("." + ExportType.PDF.getExtension())) {
       expType = ExportType.PDF;
-    } else {
+    } else if (strFileName.endsWith("." + ExportType.XLS.getExtension())) {
       expType = ExportType.XLS;
-    }
-
-    FileUtility fileUtil = new FileUtility();
-    final File file = new File(strFilePath);
-    fileUtil = new FileUtility(file.getParent(), file.getName(), false, true);
-
-    final HttpServletResponse response = RequestContext.get().getResponse();
-
-    response.setHeader("Content-Type", expType.getContentType());
-    response.setContentType(expType.getContentType());
-    response.setCharacterEncoding("UTF-8");
-    // TODO: Compatibility code with IE8. To be reviewed when its support is stopped.
-    String userAgent = request.getHeader("user-agent");
-    if (userAgent.contains("MSIE")) {
-      response.setHeader("Content-Disposition",
-          "attachment; filename=\"" + URLEncoder.encode(strFileName, "utf-8") + "\"");
     } else {
-      response.setHeader("Content-Disposition",
-          "attachment; filename=\"" + MimeUtility.encodeWord(strFileName, "utf-8", "Q") + "\"");
+      throw new IllegalArgumentException("Trying to download report file with unsupported type "
+          + strFileName);
     }
 
-    fileUtil.dumpFile(response.getOutputStream());
-    response.getOutputStream().flush();
-    response.getOutputStream().close();
-    file.delete();
+    if (!expType.isValidTemporaryFileName(tmpFileName)) {
+      throw new IllegalArgumentException("Trying to download report with invalid name "
+          + strFileName);
+    }
+
+    final String tmpDirectory = ReportingUtils.getTempFolder();
+    final File file = new File(tmpDirectory, tmpFileName);
+    FileUtility fileUtil = new FileUtility(tmpDirectory, tmpFileName, false, true);
+    try {
+      final HttpServletResponse response = RequestContext.get().getResponse();
+
+      response.setHeader("Content-Type", expType.getContentType());
+      response.setContentType(expType.getContentType());
+      response.setCharacterEncoding("UTF-8");
+      // TODO: Compatibility code with IE8. To be reviewed when its support is stopped.
+      // see issue #29109
+      String userAgent = request.getHeader("user-agent");
+      if (userAgent.contains("MSIE")) {
+        response.setHeader("Content-Disposition",
+            "attachment; filename=\"" + URLEncoder.encode(strFileName, "utf-8") + "\"");
+      } else {
+        response.setHeader("Content-Disposition",
+            "attachment; filename=\"" + MimeUtility.encodeWord(strFileName, "utf-8", "Q") + "\"");
+      }
+
+      fileUtil.dumpFile(response.getOutputStream());
+      response.getOutputStream().flush();
+      response.getOutputStream().close();
+    } finally {
+      if (file.exists()) {
+        file.delete();
+      }
+    }
   }
 
   /**
@@ -201,7 +215,6 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
    *          JSONObject with the values set in the filter parameters.
    * @param action
    *          String with the output type of the report.
-   * @throws JSONException
    * @throws OBException
    *           Exception thrown when a validation fails.
    */
@@ -225,6 +238,9 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
       }
     case PDF:
       strJRPath = report.getPDFTemplate();
+      break;
+    default:
+      throw new OBException(OBMessageUtils.messageBD("OBUIAPP_UnsupportedAction"));
     }
     if (StringUtils.isEmpty(strJRPath)) {
       throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoJRTemplateFound"));
@@ -236,7 +252,7 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
     loadReportParams(jrParams, report, jrTemplatePath, jsonContent);
     log.debug("Report: {}. Start export JR process.", report.getId());
     long t1 = System.currentTimeMillis();
-    String strFilePath = doJRExport(jrTemplatePath, expType, jrParams, strTmpFileName);
+    doJRExport(jrTemplatePath, expType, jrParams, strTmpFileName);
     log.debug("Report: {}. Finish export JR process. Elapsed time: {}", report.getId(),
         System.currentTimeMillis() - t1);
 
@@ -245,7 +261,7 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
     params.put("reportId", parameters.get("reportId"));
     params.put("actionHandler", this.getClass().getName());
     recordInfo.put("processParameters", params);
-    recordInfo.put("filePath", strFilePath);
+    recordInfo.put("tmpfileName", strTmpFileName);
     recordInfo.put("fileName", strFileName);
 
     final JSONObject reportAction = new JSONObject();
@@ -280,7 +296,6 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
    *          the Report Definition.
    * @param params
    *          JSONObject with the values set in the filter parameters.
-   * @throws JSONException
    */
   private void loadFilterParams(HashMap<String, Object> jrParams, ReportDefinition report,
       JSONObject params) throws JSONException {
@@ -429,6 +444,7 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
    * @param process
    *          the Process Definition of the Report
    * @param jsonContent
+   *          values set in the filter parameters
    * @param parameters
    *          the current Parameter Map that it is send to the Jasper Report.
    */
@@ -436,13 +452,13 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
       Map<String, Object> parameters) {
   }
 
-  private static String doJRExport(String jrTemplatePath, ExportType expType,
+  private static void doJRExport(String jrTemplatePath, ExportType expType,
       Map<String, Object> parameters, String strFileName) {
-    ReportSemaphoreHandling.acquire();
+    ReportSemaphoreHandling.getInstance().acquire();
     try {
-      return ReportingUtils.exportJR(jrTemplatePath, expType, parameters, strFileName);
+      ReportingUtils.exportJR(jrTemplatePath, expType, parameters, strFileName);
     } finally {
-      ReportSemaphoreHandling.release();
+      ReportSemaphoreHandling.getInstance().release();
     }
   }
 }
