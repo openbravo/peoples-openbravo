@@ -73,7 +73,7 @@ public class RDBMSIndependent {
           String typeAux = types.elementAt(i);
           if (!typeAux.equalsIgnoreCase("out")) {
             iParameter++;
-            UtilSql.setValue(st, iParameter, 12, "Test", parameters.elementAt(i));
+            UtilSql.setValue(st, iParameter, 12, null, parameters.elementAt(i));
           }
         }
       }
