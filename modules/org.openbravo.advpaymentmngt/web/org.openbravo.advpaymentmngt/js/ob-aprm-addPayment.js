@@ -631,12 +631,8 @@ OB.APRM.AddPayment.updateActualExpected = function (form) {
         actualPayment.setValue(Number(actpayment.subtract(credit)));
       }
     }
-    if ((bslamount.compareTo(BigDecimal.prototype.ZERO) !== 0)) {
-      if (actpayment.compareTo(BigDecimal.prototype.ZERO) === 0) {
-        actpayment = actpayment.add(bslamount.abs());
-      } else {
-        actpayment = bslamount.abs();
-      }
+    if ((bslamount.compareTo(BigDecimal.prototype.ZERO) !== 0) && actpayment.compareTo(BigDecimal.prototype.ZERO) === 0) {
+      actpayment = actpayment.add(bslamount.abs());
       actualPayment.setValue(Number(actpayment));
     }
     OB.APRM.AddPayment.updateDifference(form);
