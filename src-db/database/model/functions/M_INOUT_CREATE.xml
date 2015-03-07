@@ -690,6 +690,12 @@ BEGIN --BODY
                 v_lines:=v_lines + 10;
               END IF;
             END IF;--Next_Line
+            UPDATE C_INVOICELINE
+            SET M_INOUTLINE_ID=v_NextNo,
+                Updated=now(),
+                UpdatedBy=v_User_ID
+            WHERE C_ORDERLINE_ID=ol.C_OrderLine_ID
+            AND M_INOUTLINE_ID IS NULL;
             --<<Next_Line>>
             Next_Line:=false;
             FETCH Cur_OrderLine INTO ol;
