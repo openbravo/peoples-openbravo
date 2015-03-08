@@ -387,7 +387,7 @@ enyo.kind({
     this.$.listOrderLines.collection.on('add change:qty change:promotions', function (model, list) {
       if (me.$.listOrderLines.collection.models.length > 0 && me.$.listOrderLines.collection.models[me.$.listOrderLines.collection.models.length - 1]._changing) {
         me.$.listOrderLines.scrollToBottom = true;
-      } else if (list.models && list.length > 0 && model.id === list.models[list.length - 1].id) {
+      } else if (list && list.models && list.length > 0 && model.id === list.models[list.length - 1].id) {
         me.$.listOrderLines.scrollToBottom = true;
       }
     });
