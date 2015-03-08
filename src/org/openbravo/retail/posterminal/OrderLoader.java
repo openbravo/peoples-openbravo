@@ -53,6 +53,8 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.materialmgmt.CSResponseGetStockParam;
+import org.openbravo.materialmgmt.StockUtils;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchronization;
 import org.openbravo.mobile.core.process.JSONPropertyToEntity;
 import org.openbravo.mobile.core.process.PropertyByType;
@@ -1749,48 +1751,6 @@ public class OrderLoader extends POSDataSynchronizationProcess {
       String warehouseRuleId, String reservationId) {
     String processId = SequenceIdData.getUUID();
     OBContext.setAdminMode();
-    List<Object> params = new ArrayList<Object>();
-    // p_uuid
-    params.add(processId);
-    // p_RecordId
-    params.add(recordID);
-    // p_quantity
-    params.add(quantity);
-    // p_ProductId
-    params.add(productId);
-    // p_LocatorId
-    params.add(null);
-    // p_warehouseId
-    params.add(warehouseId);
-    // p_PriorityWarehouseId
-    params.add(null);
-    // p_OrgId
-    params.add(orgId);
-    // p_Attributesetinstanceid
-    params.add(attributesetinstanceId);
-    // p_userId
-    params.add(OBContext.getOBContext().getUser().getId());
-    // p_client
-    params.add(clientId);
-    // p_WarehouseruleId
-    log.debug("warehouseRuleId: " + warehouseRuleId);
-    params.add(warehouseRuleId);
-    // p_uomId
-    params.add(uomId);
-    // p_ProductUomId
-    params.add(null);
-    // p_tableId
-    params.add(null);
-    // p_AuxId
-    params.add(null);
-    // p_lineNo
-    params.add(null);
-    // p_ProcessId
-    params.add(null);
-    // p_reservationId
-    params.add(reservationId);
-    // p_calledFromApp
-    params.add("N");
     try {
       log.debug("Parameters : '" + processId + "', '" + recordID + "', " + quantity + ", '"
           + productId + "', null, '" + warehouseId + "', null, '" + orgId + "', '"
@@ -1798,11 +1758,17 @@ public class OrderLoader extends POSDataSynchronizationProcess {
           + clientId + "', '" + warehouseRuleId + "', '" + uomId
           + "', null, null, null, null, null, '" + reservationId + "', 'N'");
       long initGetStockProcedureCall = System.currentTimeMillis();
-      CallStoredProcedure.getInstance().call("M_GET_STOCK_PARAM", params, null, true, true);
+      CSResponseGetStockParam responseParam = StockUtils.getStock(processId, recordID, quantity,
+          productId, null, warehouseId, null, orgId, attributesetinstanceId, OBContext
+              .getOBContext().getUser().getId(), clientId, warehouseRuleId, uomId, null, null,
+          null, null, null, reservationId, "N");
       long elapsedGetStockProcedureCall = (System.currentTimeMillis() - initGetStockProcedureCall);
       log.debug("Partial time to execute callGetStock Procedure Call() : "
           + elapsedGetStockProcedureCall);
-      return processId;
+      return responseParam.p_result;
+    } catch (Exception ex) {
+      throw new OBException("Error in OrderLoader when getting stock for product " + productId
+          + " order line " + recordID, ex);
     } finally {
       OBContext.restorePreviousMode();
     }
