@@ -59,14 +59,16 @@
         var net = this.get('net');
 
         // 1. verify that the sign of the net, gross and tax is consistent
-        if (Math.abs(totalTaxes) > 0 && ((Math.sign(net) !== Math.sign(gross)) || (Math.sign(net) !== Math.sign(totalTaxes)))) {
+        // Only do this if net+tax!=0, there is a special case if paying by gift card that the net is negative and the tax
+        // positive, for example: net -20, tax +20, total is zero (as the gift card pays for the amount).
+        if ((net + totalTaxes) !== 0 && Math.abs(totalTaxes) > 0 && ((Math.sign(net) !== Math.sign(gross)) || (Math.sign(net) !== Math.sign(totalTaxes)))) {
           // OB.UTIL.saveLogClient(JSON.stringify(signInconsistentErrorMessage), "Error");
           OB.error(enyo.format("%s: the sign of the net, gross and tax is inconsistent. event: '%s', gross: %s, net: %s, tax: %s", errorHeader, eventParams, gross, net, totalTaxes));
           errorCount += 1;
         }
 
         // 2. verify that the net is not higher than the gross
-        if (Math.abs(net) > Math.abs(gross)) {
+        if (net > gross) {
           OB.error(enyo.format("%s: net is bigger than the gross. event: '%s', gross: %s, net: %s, tax: %s", errorHeader, eventParams, gross, net, totalTaxes));
           errorCount += 1;
         }
