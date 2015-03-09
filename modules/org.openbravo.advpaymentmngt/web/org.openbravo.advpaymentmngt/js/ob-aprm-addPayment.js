@@ -615,11 +615,7 @@ OB.APRM.AddPayment.updateActualExpected = function (form) {
     expectedPayment.setValue(Number('0'));
   }
   if (!issotrx) {
-    if ((bslamount.compareTo(BigDecimal.prototype.ZERO) !== 0) && (totalAmount.compareTo(BigDecimal.prototype.ZERO) === 0)) {
-      actpayment = totalAmount.add(glitemtotal).add(generateCredit).add(bslamount.abs());
-    } else {
-      actpayment = totalAmount.add(glitemtotal).add(generateCredit);
-    }
+    actpayment = totalAmount.add(glitemtotal).add(generateCredit);
     actualPayment.setValue(Number(actpayment));
     if (credit.compareTo(BigDecimal.prototype.ZERO) > 0) {
       if (credit.compareTo(actpayment) > 0) {
@@ -627,6 +623,10 @@ OB.APRM.AddPayment.updateActualExpected = function (form) {
       } else {
         actualPayment.setValue(Number(actpayment.subtract(credit)));
       }
+    }
+    if ((bslamount.compareTo(BigDecimal.prototype.ZERO) !== 0) && actpayment.compareTo(BigDecimal.prototype.ZERO) === 0) {
+      actpayment = actpayment.add(bslamount.abs());
+      actualPayment.setValue(Number(actpayment));
     }
     OB.APRM.AddPayment.updateDifference(form);
     OB.APRM.AddPayment.updateConvertedAmount(null, form, false);
