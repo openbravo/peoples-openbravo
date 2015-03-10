@@ -27,8 +27,6 @@ import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.erpCommon.businessUtility.Preferences;
-import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.mobile.core.model.HQLProperty;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
@@ -113,39 +111,30 @@ public class PaidReceipts extends JSONProcessSimple {
           paidReceiptLine.put("priceIncludesTax", paidReceipt.getBoolean("priceIncludesTax"));
 
           // get shipmentLines for returns
-          String value = new String();
-          try {
-            value = Preferences.getPreferenceValue("OBPOS_SplitLinesInShipments", true, OBContext
-                .getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
-                .getCurrentOrganization().getId(), null, null, (String) null);
-          } catch (PropertyException e) {
-            value = "N";
-          }
-          if (value.equals("Y")) {
-            HQLPropertyList hqlPropertiesShipLines = ModelExtensionUtils
-                .getPropertyExtensions(extensionsShipLines);
-            String hqlPaidReceiptsShipLines = "select " + hqlPropertiesShipLines.getHqlSelect() //
-                + " from MaterialMgmtShipmentInOutLine as m where salesOrderLine.id= ? ";
-            OBDal.getInstance().getSession().createQuery(hqlPaidReceiptsShipLines);
-            Query paidReceiptsShipLinesQuery = OBDal.getInstance().getSession()
-                .createQuery(hqlPaidReceiptsShipLines);
-            paidReceiptsShipLinesQuery.setString(0, (String) objpaidReceiptsLines[6]);
 
-            // cycle through the lines of the selected order
-            JSONArray shipmentlines = new JSONArray();
-            for (Object objShipLines : paidReceiptsShipLinesQuery.list()) {
+          HQLPropertyList hqlPropertiesShipLines = ModelExtensionUtils
+              .getPropertyExtensions(extensionsShipLines);
+          String hqlPaidReceiptsShipLines = "select " + hqlPropertiesShipLines.getHqlSelect() //
+              + " from MaterialMgmtShipmentInOutLine as m where salesOrderLine.id= ? ";
+          OBDal.getInstance().getSession().createQuery(hqlPaidReceiptsShipLines);
+          Query paidReceiptsShipLinesQuery = OBDal.getInstance().getSession()
+              .createQuery(hqlPaidReceiptsShipLines);
+          paidReceiptsShipLinesQuery.setString(0, (String) objpaidReceiptsLines[6]);
 
-              JSONObject jsonShipline = new JSONObject();
-              Object[] objpaidReceiptsShipLines = (Object[]) objShipLines;
-              jsonShipline.put("shipLineId", objpaidReceiptsShipLines[0]);
-              jsonShipline.put("shipment", objpaidReceiptsShipLines[1]);
-              jsonShipline.put("shipmentlineNo", objpaidReceiptsShipLines[2]);
-              jsonShipline.put("qty", objpaidReceiptsShipLines[3]);
-              jsonShipline.put("remainingQty", objpaidReceiptsShipLines[4]);
-              shipmentlines.put(jsonShipline);
-            }
-            paidReceiptLine.put("shipmentlines", shipmentlines);
+          // cycle through the lines of the selected order
+          JSONArray shipmentlines = new JSONArray();
+          for (Object objShipLines : paidReceiptsShipLinesQuery.list()) {
+
+            JSONObject jsonShipline = new JSONObject();
+            Object[] objpaidReceiptsShipLines = (Object[]) objShipLines;
+            jsonShipline.put("shipLineId", objpaidReceiptsShipLines[0]);
+            jsonShipline.put("shipment", objpaidReceiptsShipLines[1]);
+            jsonShipline.put("shipmentlineNo", objpaidReceiptsShipLines[2]);
+            jsonShipline.put("qty", objpaidReceiptsShipLines[3]);
+            jsonShipline.put("remainingQty", objpaidReceiptsShipLines[4]);
+            shipmentlines.put(jsonShipline);
           }
+          paidReceiptLine.put("shipmentlines", shipmentlines);
 
           // promotions per line
           OBCriteria<OrderLineOffer> qPromotions = OBDal.getInstance().createCriteria(
