@@ -581,7 +581,7 @@
         'change': OB.DEC.compare(this.getChange()) > 0 ? OB.I18N.formatCurrency(this.getChange()) : null,
         'overpayment': OB.DEC.compare(OB.DEC.sub(pay, total)) > 0 ? OB.I18N.formatCurrency(OB.DEC.sub(pay, total)) : null,
         'isReturn': isReturn,
-        'isNegative': this.get('gross') < 0 ? true : false,
+        'isNegative': (this.get('gross') < 0 || (this.get('gross') > 0 && this.get('orderType') === 3)) ? true : false,
         'changeAmt': this.getChange(),
         'pendingAmt': OB.DEC.compare(OB.DEC.sub(pay, total)) >= 0 ? OB.DEC.Zero : OB.DEC.sub(total, pay),
         'payments': this.get('payments')
