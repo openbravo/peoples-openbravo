@@ -160,6 +160,10 @@ public class ReferencedLink extends HttpSecureAppServlet {
     } else {
       strTableReferenceId = vars.getRequiredStringParameter("inpTableReferenceId");
     }
+    String strNavigationTabId = null;
+    if (vars.hasParameter("inpNavigationTabId")) {
+      strNavigationTabId = vars.getStringParameter("inpNavigationTabId");
+    }
     String strKeyReferenceId = vars.getStringParameter("inpKeyReferenceId");
     // String strTabId = vars.getStringParameter("inpTabId");
     String strWindowId = vars.getStringParameter("inpwindowId");
@@ -255,26 +259,32 @@ public class ReferencedLink extends HttpSecureAppServlet {
     ReferencedLinkData[] data = ReferencedLinkData.select(this, strWindowId, strTableReferenceId);
     if (data == null || data.length == 0)
       throw new ServletException("Window not found: " + strWindowId);
-    // Beginning of my customization
+    // Beginning of Indra customization
     String tabId = null;
     OBContext.setAdminMode(true);
     try {
-      OBCriteria<TableNavigation> tableNavigationCriteria = OBDal.getInstance().createCriteria(
-          TableNavigation.class);
-      tableNavigationCriteria.add(Restrictions.eq("table.id", strTableReferenceId));
-      tableNavigationCriteria.addOrderBy(TableNavigation.PROPERTY_SEQUENCENUMBER, true);
-      List<TableNavigation> tableNavigationList = tableNavigationCriteria.list();
-      for (TableNavigation tableNavigation : tableNavigationList) {
-        // Evaluate HQL logic
-        String hqlWhere = "AS e WHERE " + tableNavigation.getHqllogic();
-        hqlWhere = hqlWhere.replaceAll("@id@", "'" + strKeyReferenceId + "'");
-        Table table = tableNavigation.getTable();
-        Entity obEntity = (Entity) ModelProvider.getInstance().getEntityByTableId(table.getId());
-        final OBQuery<?> query = OBDal.getInstance().createQuery(obEntity.getName(), hqlWhere);
-        final List<?> selectors = query.list();
-        if (!selectors.isEmpty()) {
-          tabId = tableNavigation.getTab().getId();
-          break;
+      if (!"null".equals(strNavigationTabId)) {
+        tabId = strNavigationTabId;
+      }
+
+      if (tabId == null) {
+        OBCriteria<TableNavigation> tableNavigationCriteria = OBDal.getInstance().createCriteria(
+            TableNavigation.class);
+        tableNavigationCriteria.add(Restrictions.eq("table.id", strTableReferenceId));
+        tableNavigationCriteria.addOrderBy(TableNavigation.PROPERTY_SEQUENCENUMBER, true);
+        List<TableNavigation> tableNavigationList = tableNavigationCriteria.list();
+        for (TableNavigation tableNavigation : tableNavigationList) {
+          // Evaluate HQL logic
+          String hqlWhere = "AS e WHERE " + tableNavigation.getHqllogic();
+          hqlWhere = hqlWhere.replaceAll("@id@", "'" + strKeyReferenceId + "'");
+          Table table = tableNavigation.getTable();
+          Entity obEntity = (Entity) ModelProvider.getInstance().getEntityByTableId(table.getId());
+          final OBQuery<?> query = OBDal.getInstance().createQuery(obEntity.getName(), hqlWhere);
+          final List<?> selectors = query.list();
+          if (!selectors.isEmpty()) {
+            tabId = tableNavigation.getTab().getId();
+            break;
+          }
         }
       }
     } catch (Exception e) {
@@ -285,7 +295,7 @@ public class ReferencedLink extends HttpSecureAppServlet {
     if (tabId == null) {
       tabId = data[0].adTabId;
     }
-    // End of my customization
+    // End of Indra customization
     // String tabId = data[0].adTabId;
     if (strKeyReferenceId.equals("")) {
       data = ReferencedLinkData.selectParent(this, strWindowId);

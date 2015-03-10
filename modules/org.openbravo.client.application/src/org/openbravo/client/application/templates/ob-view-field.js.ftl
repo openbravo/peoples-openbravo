@@ -26,6 +26,9 @@ the outputted value is already covered by a default.
 {
 <@compress single_line=true>
     name: '${field.name?js_string}',
+    <#if field.navigationTabId??>
+        navigationTabId: '${field.navigationTabId?js_string}',
+    </#if>
     <#if field.label != ''>
         title: '${field.label?js_string}',
     </#if>
