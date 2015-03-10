@@ -167,6 +167,12 @@ public class AdvancedQueryBuilder {
 
   private int aliasOffset = 0;
 
+  // Sometimes (i.e. in HQLDataSourceServe) the AdvancedQueryBuilder is used only to retrieve the
+  // WHERE clause, and the FROM clause is discarted
+  // In this cases, prevent adding new join aliases in the WHERE clause, as they will not be defined
+  // in the FROM clause
+  private boolean creatingJoinsInWhereClauseIsPrevented = false;
+
   public Entity getEntity() {
     return entity;
   }
@@ -636,7 +642,7 @@ public class AdvancedQueryBuilder {
     }
 
     String clause = null;
-    if (orNesting > 0) {
+    if (!creatingJoinsInWhereClauseIsPrevented && orNesting > 0) {
       boolean fromCriteria = true;
       clause = resolveJoins(properties, useFieldName, fromCriteria);
     } else if (getMainAlias() != null) {
@@ -2004,5 +2010,15 @@ public class AdvancedQueryBuilder {
     }
     properties.set(properties.size() - 1, property);
     return properties;
+  }
+
+  /**
+   * Allows preventing the creation of new join alias when the where clause is built. This is useful
+   * when the AdvancedQueryBuilder is used to obtain the WHERE clause, but when the FROM clause
+   * built is not used (i.e. en HQLDataSourceService)
+   * 
+   */
+  public void preventCreatingJoinsInWhereClause(boolean preventedCreatingJoinsInWhereClause) {
+    this.creatingJoinsInWhereClauseIsPrevented = preventedCreatingJoinsInWhereClause;
   }
 }

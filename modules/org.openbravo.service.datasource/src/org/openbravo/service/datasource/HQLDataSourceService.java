@@ -242,6 +242,9 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     AdvancedQueryBuilder queryBuilder = new AdvancedQueryBuilder();
     queryBuilder.setEntity(ModelProvider.getInstance().getEntityByTableId(table.getId()));
     queryBuilder.setCriteria(criteria);
+    // don't create new join aliases in the where clause, as they would not be present in the
+    // defined HQL FROM clause
+    queryBuilder.preventCreatingJoinsInWhereClause(true);
     if (table.getEntityAlias() != null) {
       queryBuilder.setMainAlias(table.getEntityAlias());
     }
@@ -275,7 +278,6 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
             + getNameOfFirstIdentifierProperty(property.getTargetEntity()) + " " + formClause;
       }
     }
-
     // adds the additional filters (client, organization and criteria) to the query
     hqlQuery = addAdditionalFilters(table, hqlQuery, whereClause, parameters);
 
