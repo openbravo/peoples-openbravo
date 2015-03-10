@@ -404,7 +404,7 @@ isc.OBFKFilterTextItem.addProperties({
   },
 
   getCriterion: function (textMatchStyle, forceFilterByIdentifier) {
-    var value, operator, fieldName, crit;
+    var value, operator, fieldName, crit, manualDSForcedFilterByIdentifier;
 
     // sometimes (i.e. when the filter drop down is populated) it is needed to force a filter using the identifier
     // if the filter using the identifier is not allowed, the filter type will be reverted to 'id' at the end of this function
@@ -439,8 +439,14 @@ isc.OBFKFilterTextItem.addProperties({
       crit = this.replaceCriterionOperator(crit, value, this.operator);
     }
 
-    if (this.allowFkFilterByIdentifier === false && !this.grid.view.alwaysFilterFksByIdentifier) {
-      this.filterType = 'id';
+    if (this.allowFkFilterByIdentifier === false) {
+      // in order to maintain backwards compatibility, manual datasources can be
+      // defined as not supporting filtering by id see issue # 28432
+      manualDSForcedFilterByIdentifier = this.form && this.form.grid && this.form.grid.sourceWidget && this.form.grid.sourceWidget.alwaysFilterFksByIdentifier;
+
+      if (!manualDSForcedFilterByIdentifier) {
+        this.filterType = 'id';
+      }
     }
 
     return crit;
