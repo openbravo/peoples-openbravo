@@ -1765,7 +1765,7 @@ public class OrderLoader extends POSDataSynchronizationProcess {
       long elapsedGetStockProcedureCall = (System.currentTimeMillis() - initGetStockProcedureCall);
       log.debug("Partial time to execute callGetStock Procedure Call() : "
           + elapsedGetStockProcedureCall);
-      return responseParam.p_result;
+      return processId;
     } catch (Exception ex) {
       throw new OBException("Error in OrderLoader when getting stock for product " + productId
           + " order line " + recordID, ex);
