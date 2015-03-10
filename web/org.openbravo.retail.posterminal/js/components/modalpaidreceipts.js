@@ -242,7 +242,7 @@ enyo.kind({
     this.$.topLine.setContent(this.model.get('documentNo') + ' - ' + this.model.get('businessPartner') + returnLabel);
     this.$.bottonLine.setContent(this.model.get('totalamount') + ' (' + this.model.get('orderDate').substring(0, 10) + ') ');
 
-    OB.MobileApp.model.hookManager.executeHooks('OBPOS_RenderPaidReceiptLine', {
+    OB.UTIL.HookManager.executeHooks('OBPOS_RenderPaidReceiptLine', {
       paidReceiptLine: this
     }, function (args) {
       //All should be done in module side
