@@ -2432,7 +2432,7 @@
       this.current.set('generateInvoice', false);
       this.current.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentTypeForQuotations);
       var nextQuotationno = OB.MobileApp.model.getNextQuotationno();
-      this.current.set('quotationDocNoPrefix', OB.MobileApp.model.get('terminal').quotationDocNoPrefix);
+      this.current.set('quotationnoPrefix', OB.MobileApp.model.get('terminal').quotationDocNoPrefix);
       this.current.set('quotationnoSuffix', nextQuotationno.quotationnoSuffix);
       this.current.set('documentNo', nextQuotationno.documentNo);
 
