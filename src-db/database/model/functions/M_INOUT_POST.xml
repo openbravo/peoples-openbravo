@@ -610,7 +610,7 @@
                       ) VALUES (
                         get_uuid(), cur_reserve_stock.ad_client_id, cur_reserve_stock.ad_org_id, 'Y',
                         now(), v_user, now(), v_user,
-                        cur_reserve_stock.m_reservation_id, cur_inoutline.m_attributesetinstance_id, cur_inoutline.m_locator_id, cur_inoutline.c_orderline_id,
+                        cur_reserve_stock.m_reservation_id, coalesce(cur_inoutline.m_attributesetinstance_id,'0'), cur_inoutline.m_locator_id, cur_inoutline.c_orderline_id,
                         v_qtyaux, 0, cur_reserve_stock.isallocated
                       );
                     END IF;
