@@ -28,6 +28,7 @@
   v_dummy               VARCHAR2(2000);
   v_productname         m_product.name%TYPE;
   v_isgeneric           CHAR(1);
+  v_updateOrderAndLines           CHAR(1) = 'N';
   -- Parameter
   TYPE RECORD IS REF CURSOR;
   cur_reservationstock 				RECORD;
@@ -47,8 +48,15 @@ BEGIN
     END IF;
 
   END IF;
-  
-  IF (INSERTING OR (UPDATING AND (:NEW.quantity <> :old.quantity OR :NEW.reservedqty <> :OLD.reservedqty))) THEN
+  IF (UPDATING) THEN
+    IF ( :NEW.quantity <> :old.quantity OR :NEW.reservedqty <> :OLD.reservedqty) THEN
+      v_updateOrderAndLines := 'Y';
+    END IF;
+  END IF;
+  IF (INSERTING) THEN 
+    v_updateOrderAndLines := 'Y';
+  END IF;
+  IF (v_updateOrderAndLines = 'Y') THEN
     IF (:NEW.res_status NOT IN ('DR', 'CL') AND :NEW.c_orderline_id IS NOT NULL) THEN
       UPDATE c_orderline
       SET so_res_status = CASE WHEN :NEW.quantity = :NEW.reservedqty THEN 'CR'
