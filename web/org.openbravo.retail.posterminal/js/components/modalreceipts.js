@@ -108,6 +108,11 @@ enyo.kind({
     this.$.orderNo.setContent(this.model.get('documentNo'));
     this.$.bp.setContent(this.model.get('bp').get('_identifier'));
     this.$.total.setContent(this.model.printTotal());
+    OB.MobileApp.model.hookManager.executeHooks('OBPOS_RenderListReceiptLine', {
+      listReceiptLine: this
+    }, function (args) {
+      //All should be done in module side
+    });
   }
 });
 
