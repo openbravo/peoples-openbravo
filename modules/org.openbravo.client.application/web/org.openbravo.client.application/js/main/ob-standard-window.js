@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -393,7 +393,7 @@ isc.OBStandardWindow.addProperties({
 
   // set window specific user settings, purposely set on class level
   setWindowSettings: function (data) {
-    var i, defaultView, persDefaultValue, views, length, t, tab, view, field, button, st, stView, stBtns, stBtn, disabledFields, personalization, notAccessibleProcesses, alwaysReadOnly = function (view, record, context) {
+    var i, j, defaultView, persDefaultValue, views, length, t, tab, view, field, button, buttonParent, st, stView, stBtns, stBtn, disabledFields, personalization, notAccessibleProcesses, alwaysReadOnly = function (view, record, context) {
         return true;
         };
 
@@ -437,6 +437,16 @@ isc.OBStandardWindow.addProperties({
           button = view.toolBar.rightMembers[i];
           if (notAccessibleProcesses.tabId === button.contextView.tabId && button.property && notAccessibleProcesses.processes.contains(button.property)) {
             button.readOnlyIf = alwaysReadOnly;
+            // set readOnlyIf in actionToolbarButtons because it is required for
+            // a good creation of buttonParents of no-active child tabs.
+            if (!view.parentView && button.view.actionToolbarButtons.containsProperty('property', button.property)) {
+              for (j = 0; j < view.actionToolbarButtons.length; j++) {
+                buttonParent = view.actionToolbarButtons[i];
+                if (buttonParent.property === button.property) {
+                  buttonParent.readOnlyIf = alwaysReadOnly;
+                }
+              }
+            }
             // looking for this button in subtabs
             for (st = 0; st < this.views.length; st++) {
               stView = this.views[st];
