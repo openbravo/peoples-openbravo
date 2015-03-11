@@ -34,7 +34,7 @@ public class ReturnToFromCustomerVendorOrphanHQLTransformer extends HqlQueryTran
 
   private static final String returnReasonLeftClause = " coalesce((select oli.returnReason.id from OrderLine as oli where oli.salesOrder.id = :salesOrderId  and oli.id=ol.id), '')";
   private static final String returnReasonCountQuery = " select count(distinct e.name) from ReturnReason as e where exists (select distinct ol.returnReason from OrderLine as ol where ol.returnReason = e and ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine is null) ";
-  private static final String returnReasonDataQuery = " select distinct e.id, e.name from ReturnReason as e where exists (select distinct ol.returnReason from OrderLine as ol where ol.returnReason = e and ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine is null) ";
+  private static final String returnReasonDataQuery = " select distinct e, e.name from ReturnReason as e where exists (select distinct ol.returnReason from OrderLine as ol where ol.returnReason = e and ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine is null) ";
 
   @Override
   public String transformHqlQuery(String hqlQuery, Map<String, String> requestParameters,

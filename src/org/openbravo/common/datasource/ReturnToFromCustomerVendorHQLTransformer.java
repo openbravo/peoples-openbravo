@@ -39,7 +39,7 @@ public class ReturnToFromCustomerVendorHQLTransformer extends HqlQueryTransforme
   private static final String returnedOthersLeftClause = " coalesce((select sum(ol.orderedQuantity) from OrderLine as ol left join ol.salesOrder as o where ol.goodsShipmentLine = iol and o.processed = true and o.documentStatus <> 'VO'), 0)";
   private static final String returnReasonLeftClause = " coalesce((select ol.returnReason.id from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol), '')";
   private static final String returnReasonCountQuery = " select count(distinct e.name) from ReturnReason as e where exists (select distinct ol.returnReason from OrderLine as ol where ol.returnReason = e and ol.salesOrder.id = :salesOrderId  and ol.goodsShipmentLine is not null) ";
-  private static final String returnReasonDataQuery = " select distinct e.id, e.name  from ReturnReason as e where exists (select distinct ol.returnReason from OrderLine as ol where ol.returnReason = e and ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine is not null) ";
+  private static final String returnReasonDataQuery = " select distinct e, e.name from ReturnReason as e where exists (select distinct ol.returnReason from OrderLine as ol where ol.returnReason = e and ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine is not null) ";
   private static final String unitPriceProperty = "unitPrice";
   private static final String grossUnitPriceProperty = "grossUnitPrice";
 
