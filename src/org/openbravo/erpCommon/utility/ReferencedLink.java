@@ -259,11 +259,11 @@ public class ReferencedLink extends HttpSecureAppServlet {
     ReferencedLinkData[] data = ReferencedLinkData.select(this, strWindowId, strTableReferenceId);
     if (data == null || data.length == 0)
       throw new ServletException("Window not found: " + strWindowId);
-    // Beginning of Indra customization
+    // Beginning of advanced navigation feature
     String tabId = null;
     OBContext.setAdminMode(true);
     try {
-      if (!"null".equals(strNavigationTabId)) {
+      if (strNavigationTabId != null) {
         tabId = strNavigationTabId;
       }
 
@@ -295,8 +295,7 @@ public class ReferencedLink extends HttpSecureAppServlet {
     if (tabId == null) {
       tabId = data[0].adTabId;
     }
-    // End of Indra customization
-    // String tabId = data[0].adTabId;
+    // End of advanced navigation feature
     if (strKeyReferenceId.equals("")) {
       data = ReferencedLinkData.selectParent(this, strWindowId);
       if (data == null || data.length == 0)

@@ -489,8 +489,7 @@ OB.Utilities.openDirectView = function (sourceWindowId, keyColumn, targetEntity,
       inpEntityName: targetEntity,
       inpKeyReferenceId: recordId,
       inpwindowId: sourceWindowId,
-      inpKeyReferenceColumnName: keyColumn,
-      inpNavigationTabId: navigationTabId
+      inpKeyReferenceColumnName: keyColumn
     },
     callback: callback,
     evalResult: true,
@@ -498,6 +497,9 @@ OB.Utilities.openDirectView = function (sourceWindowId, keyColumn, targetEntity,
     useSimpleHttp: true,
     actionURL: actionURL
   };
+  if (navigationTabId) {
+    reqObj.params.inpNavigationTabId = navigationTabId;
+  }
   request = isc.RPCManager.sendRequest(reqObj);
 };
 
