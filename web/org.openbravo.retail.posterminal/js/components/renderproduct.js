@@ -29,7 +29,8 @@ enyo.kind({
       name: 'thumbnail'
     }]
   }, {
-    style: 'float: left; width: 38%; ',
+    style: 'float: left;',
+    name: 'identifierContainer',
     components: [{
       name: 'identifier'
     }, {
@@ -44,7 +45,8 @@ enyo.kind({
     style: 'clear:both;'
   }, {
     name: 'generic',
-    style: 'float: right; width: 20%; text-align: right; font-style: italic; color: grey; padding: 15px; font-weight: bold;'
+    style: 'float: right; width: 20%; text-align: right; font-style: italic; color: grey; padding: 15px; font-weight: bold;',
+    showing: false
   }, {
     style: 'clear:both;'
   }, {
@@ -64,6 +66,7 @@ enyo.kind({
         filterTxt = filterTxt + attr.value;
       });
     }
+    this.$.identifierContainer.addStyles('width: 38%;');
     this.$.identifier.setContent(this.setIdentifierContent());
     this.$.filterAttr.setContent(filterTxt);
     if (this.model.get('showchdesc')) {
@@ -79,8 +82,15 @@ enyo.kind({
       this.$.icon.parent.hide();
     }
 
+    if (OB.MobileApp.model.hasPermission('OBPOS_HideProductImagesInSearchAndBrowse', true)) {
+      this.$.thumbnail.hide();
+      this.$.icon.parent.hide();
+      this.$.identifierContainer.addStyles('width: 70%;');
+    }
+
     if (this.model.get('isGeneric')) {
       this.$.generic.setContent(OB.I18N.getLabel('OBMOBC_LblGeneric'));
+      this.$.generic.show();
     }
   },
   setIdentifierContent: function () {
