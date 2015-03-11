@@ -249,8 +249,15 @@ enyo.kind({
       }
       return;
     }
-    if ((this.model.get('order').get('isEditable') === false && !this.model.get('order').get('isLayaway')) || this.model.get('order').get('orderType') === 3) {
+    if (this.model.get('order').get('isEditable') === false && !this.model.get('order').get('isLayaway')) {
       return true;
+    }
+    if (this.model.get('order').get('orderType') === 3) {
+      me.doTabChange({
+        tabPanel: me.tabPanel,
+        keyboard: 'toolbarpayment',
+        edit: false
+      });
     }
     OB.MobileApp.view.scanningFocus(false);
     if (this.model.get('leftColumnViewManager').isMultiOrder()) {
