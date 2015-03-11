@@ -60,6 +60,7 @@ public class GLJournalEventHandler extends EntityPersistenceEventObserver {
       ScrollableResults scrollLines = gljournallineCriteria.scroll(ScrollMode.FORWARD_ONLY);
       if (gljournallineCriteria.count() > 0) {
         try {
+          int i = 0;
           while (scrollLines.next()) {
             final GLJournalLine journalLine = (GLJournalLine) scrollLines.get()[0];
             if (!glj.getCurrency().getId().equals(journalLine.getCurrency().getId())) {
@@ -69,6 +70,11 @@ public class GLJournalEventHandler extends EntityPersistenceEventObserver {
             if (!glj.getRate().equals(journalLine.getRate())) {
               journalLine.setRate(glj.getRate());
               OBDal.getInstance().save(journalLine);
+            }
+            i++;
+            if (i % 100 == 0) {
+              OBDal.getInstance().flush();
+              OBDal.getInstance().getSession().clear();
             }
           }
         } finally {
