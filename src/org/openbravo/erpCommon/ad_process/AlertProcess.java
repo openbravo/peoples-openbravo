@@ -414,6 +414,9 @@ public class AlertProcess implements Process {
                   if (targetUser == null) {
                     continue;
                   }
+                  if (!targetUser.isActive()) {
+                	  continue;
+                  }
                   final Client targetUserClient = targetUser.getClient();
                   final String targetUserClientLanguage = (targetUserClient.getLanguage() != null ? targetUserClient
                       .getLanguage().getLanguage() : null);
