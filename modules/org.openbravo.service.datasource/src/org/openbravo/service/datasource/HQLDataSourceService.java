@@ -182,6 +182,9 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
         Object[] result = (Object[]) row;
         // the whole referenced BaseOBObject is stored in the first position of the result
         BaseOBObject bob = (BaseOBObject) result[0];
+        if (bob == null) {
+          break;
+        }
         record.put(JsonConstants.ID, bob.getId());
         record.put(JsonConstants.IDENTIFIER, IdentifierProvider.getInstance().getIdentifier(bob));
       } else {
