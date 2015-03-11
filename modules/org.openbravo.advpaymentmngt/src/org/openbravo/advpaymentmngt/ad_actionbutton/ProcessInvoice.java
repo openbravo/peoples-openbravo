@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -59,8 +59,10 @@ import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.ad.process.ProcessInstance;
 import org.openbravo.model.ad.ui.Process;
+import org.openbravo.model.common.currency.ConversionRate;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
@@ -413,11 +415,16 @@ public class ProcessInvoice extends HttpSecureAppServlet {
           final FIN_FinancialAccount bpFinAccount = isSalesTransaction ? invoice
               .getBusinessPartner().getAccount() : invoice.getBusinessPartner()
               .getPOFinancialAccount();
+           // Calculate Conversion Rate
+          final ConversionRate conversionRate = FinancialUtils.getConversionRate(
+               FIN_Utility.getDate(strPaymentDate), invoice.getCurrency(),
+               bpFinAccount.getCurrency(), invoice.getOrganization(), invoice.getClient());
           final FIN_Payment newPayment = FIN_AddPayment.savePayment(null, isSalesTransaction,
               docType, strPaymentDocumentNo, invoice.getBusinessPartner(),
               invoice.getPaymentMethod(), bpFinAccount, "0", FIN_Utility.getDate(strPaymentDate),
               invoice.getOrganization(), invoice.getDocumentNo(), paymentScheduleDetails,
-              paymentScheduleDetailsAmounts, false, false, invoice.getCurrency(), null, null);
+              paymentScheduleDetailsAmounts, false, false, invoice.getCurrency(), 
+              conversionRate != null ? conversionRate.getMultipleRateBy() : null, null);
           newPayment.setAmount(BigDecimal.ZERO);
           newPayment.setGeneratedCredit(BigDecimal.ZERO);
           newPayment.setUsedCredit(totalUsedCreditAmt);
