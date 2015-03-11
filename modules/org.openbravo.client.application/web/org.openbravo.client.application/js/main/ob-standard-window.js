@@ -441,7 +441,7 @@ isc.OBStandardWindow.addProperties({
             // a good creation of buttonParents of no-active child tabs.
             if (!view.parentView && button.view.actionToolbarButtons.containsProperty('property', button.property)) {
               for (j = 0; j < view.actionToolbarButtons.length; j++) {
-                buttonParent = view.actionToolbarButtons[i];
+                buttonParent = view.actionToolbarButtons[j];
                 if (buttonParent.property === button.property) {
                   buttonParent.readOnlyIf = alwaysReadOnly;
                 }
