@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -58,7 +58,7 @@
         SELECT count(*) as exist
         FROM DUAL
         WHERE EXISTS (SELECT 1 FROM ad_preference
-                      WHERE attribute = 'UpdatedTransactionType')
+                      WHERE attribute = 'UpdatedTransactionTypeV2')
       ]]>
     </Sql>
   </SqlMethod>
@@ -70,7 +70,7 @@
            ad_preference_id, ad_client_id, ad_org_id, isactive,
            createdby, created, updatedby, updated,attribute
            ) VALUES (
-           get_uuid(), '0', '0', 'Y', '0', NOW(), '0', NOW(),'UpdatedTransactionType')
+           get_uuid(), '0', '0', 'Y', '0', NOW(), '0', NOW(),'UpdatedTransactionTypeV2')
          ]]>
         </Sql>
    </SqlMethod>
