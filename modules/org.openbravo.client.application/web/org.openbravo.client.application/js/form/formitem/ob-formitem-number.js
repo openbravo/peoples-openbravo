@@ -558,13 +558,19 @@ isc.OBNumberFilterItem.addProperties({
   },
 
   parseValueExpressions: function (value, fieldName, operator) {
-    var ret;
+    var ret, strValue;
 
+
+    // smartclient's implementation of parseValueExpressions does not work properly of the formitem value is 0
+    // this can be circumvented by passing a string instead of a number (the original value is not modified)
     if (isc.isA.String(value)) {
       value = value.trim();
+      strValue = value;
+    } else {
+      strValue = String(value);
     }
 
-    ret = this.Super('parseValueExpressions', [value, fieldName, operator]);
+    ret = this.Super('parseValueExpressions', [strValue, fieldName, operator]);
 
     // if operator is not supported remove it
     if (!this.validOperators.contains(ret.operator)) {
