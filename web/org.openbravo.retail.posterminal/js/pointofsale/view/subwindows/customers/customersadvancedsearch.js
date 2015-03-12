@@ -325,6 +325,13 @@ enyo.kind({
           renderHeader: 'OB.OBPOSPointOfSale.UI.customers.ModalCustomerScrollableHeader',
           renderLine: 'OB.OBPOSPointOfSale.UI.customers.ListCustomersLine',
           renderEmpty: 'OB.UI.RenderEmpty'
+        }, {
+          name: 'renderLoading',
+          style: 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight: bold; font-size: 30px; color: #cccccc',
+          showing: false,
+          initComponents: function () {
+            this.setContent(OB.I18N.getLabel('OBPOS_LblLoading'));
+          }
         }]
       }]
     }]
@@ -339,6 +346,8 @@ enyo.kind({
     var me = this,
         filter, splitFilter, splitFilterLength, _operator, i, criteria = {},
         lastCriteria = [];
+    this.$.stBPAdvSearch.hide();
+    this.$.renderLoading.show();
 
     function errorCallback(tx, error) {
       OB.UTIL.showError("OBDAL error: " + error);
@@ -351,11 +360,15 @@ enyo.kind({
       if (dataBps && dataBps.length > 0) {
         me.bpsList.add(dataBps.models);
       }
+      me.$.renderLoading.hide();
+      me.$.stBPAdvSearch.show();
     }
 
     function reset(me) {
       me.bpsList.reset();
       me.lastCriteria = null;
+      me.$.renderLoading.hide();
+      me.$.stBPAdvSearch.show();
       return true;
     }
 

@@ -39,7 +39,7 @@ enyo.kind({
       OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_Cannot_Change_BPartner'));
       return;
     }
-    
+
     if (!this.disabled) {
       this.doShowPopup({
         popup: 'modalcustomer'
@@ -319,6 +319,13 @@ enyo.kind({
           renderHeader: 'OB.UI.ModalBpScrollableHeader',
           renderLine: 'OB.UI.ListBpsLine',
           renderEmpty: 'OB.UI.RenderEmpty'
+        }, {
+          name: 'renderLoading',
+          style: 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight: bold; font-size: 30px; color: #cccccc',
+          showing: false,
+          initComponents: function () {
+            this.setContent(OB.I18N.getLabel('OBPOS_LblLoading'));
+          }
         }]
       }]
     }]
@@ -331,6 +338,9 @@ enyo.kind({
     var me = this,
         filter = inEvent.bpName;
 
+    this.$.stBPAssignToReceipt.hide();
+    this.$.renderLoading.show();
+
     function errorCallback(tx, error) {
       OB.UTIL.showError("OBDAL error: " + error);
     }
@@ -341,6 +351,8 @@ enyo.kind({
       } else {
         me.bpsList.reset();
       }
+      me.$.renderLoading.hide();
+      me.$.stBPAssignToReceipt.show();
     }
 
     var criteria = {};
