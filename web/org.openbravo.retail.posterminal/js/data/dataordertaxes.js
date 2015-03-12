@@ -68,7 +68,7 @@
         sql = sql + " and (c_tax.to_region_id = bpl.regionId   or tz.to_region_id = bpl.regionId  or (c_tax.to_region_id is null       and (not exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id)           or exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id and z.to_region_id = bpl.regionId)           or exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id and z.to_region_id is null))))";
         sql = sql + " order by orderRegionTo, orderRegionFrom, orderCountryTo, orderCountryFrom, c_tax.validFrom desc, c_tax.isdefault desc";
 
-        OB.MobileApp.model.hookManager.executeHooks('OBPOS_FindTaxRate', {
+        OB.UTIL.HookManager.executeHooks('OBPOS_FindTaxRate', {
           context: receipt,
           line: line,
           sql: sql
@@ -684,6 +684,7 @@
     this.receipt.calculateTaxes = function (callback) {
       var me = this;
       var mytaxes, mytaxesold;
+      var synchId;
       if (window.TAXESLOGIC === 'DEBUG') {
         OB.DATA.legacyCalculateTaxes.call(me, function () {
           mytaxesold = JSON.stringify(getTaxesInfo(me));
@@ -702,13 +703,15 @@
       } else if (window.TAXESLOGIC === 'OLDLOGIC') {
         OB.DATA.legacyCalculateTaxes.call(me, callback);
       } else { // 'NEWLOGIC' (default)
-        OB.POS.EventBus.startProcess();
+        synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('taxescalculation');
         calcTaxes(me).then(function() {
           me.trigger('paintTaxes');
           callback();
-          OB.POS.EventBus.endProcess();
+          OB.UTIL.SynchronizationHelper.finished(synchId, 'taxescalculation');
         });
       }
     };
   };
 }());
+
+var taxcounter = 0;

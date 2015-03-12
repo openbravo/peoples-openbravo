@@ -64,7 +64,7 @@
           // the query is ordered by countryId desc and regionId desc 
           // (so, the first record will be the tax with the same country or region that the customer, 
           // or if toCountryId and toRegionId are nulls then will be ordered by validfromdate)           
-          OB.MobileApp.model.hookManager.executeHooks('OBPOS_FindTaxRate', {
+          OB.UTIL.HookManager.executeHooks('OBPOS_FindTaxRate', {
             context: me,
             line: element,
             sql: sql
@@ -408,7 +408,7 @@
             // the query is ordered by countryId desc and regionId desc 
             // (so, the first record will be the tax with the same country or region that the customer, 
             // or if toCountryId and toRegionId are nulls then will be ordered by validfromdate)    
-            OB.MobileApp.model.hookManager.executeHooks('OBPOS_FindTaxRate', {
+            OB.UTIL.HookManager.executeHooks('OBPOS_FindTaxRate', {
               context: me,
               line: element,
               sql: sql
