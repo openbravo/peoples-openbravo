@@ -725,7 +725,6 @@
           var me = this;
           // sets the new quantity
           line.set('qty', qty);
-          line.calculateGross();
           // sets the undo action
           this.set('undo', {
             text: text || OB.I18N.getLabel('OBPOS_SetUnits', [line.get('qty'), line.get('product').get('_identifier')]),
@@ -733,7 +732,6 @@
             line: line,
             undo: function () {
               line.set('qty', oldqty);
-              line.calculateGross();
               me.set('undo', null);
             }
           });
@@ -763,7 +761,6 @@
           var me = this;
           // sets the new price
           line.set('price', price);
-          line.calculateGross();
           // sets the undo action
           if (options.setUndo) {
             this.set('undo', {
@@ -772,7 +769,6 @@
               line: line,
               undo: function () {
                 line.set('price', oldprice);
-                line.calculateGross();
                 me.set('undo', null);
               }
             });
@@ -830,7 +826,6 @@
       this.adjustPayment();
       if (!doNotSave) {
         this.save();
-        this.calculateGross();
       }
     },
     //Attrs is an object of attributes that will be set in order
