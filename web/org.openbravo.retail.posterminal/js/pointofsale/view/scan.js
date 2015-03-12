@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2012-2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -8,6 +8,40 @@
  */
 
 /*global enyo */
+
+enyo.kind({
+  name: 'OB.OBPOSPointOfSale.UI.InDevHeader',
+  showing: false,
+  handlers: {
+    onInDevHeaderShow: 'doShowHeader'
+  },
+  events: {
+    onShowPopup: ''
+  },
+  doShowHeader: function (inSender, inEvent) {
+    this.show();
+  },
+
+  components: [{
+    name: 'innerDiv',
+    style: 'text-align: center; font-size: 30px; padding: 5px; padding-top: 0px;',
+    components: [{
+      name: 'headerText',
+      kind: 'OB.UI.Button',
+      classes: 'span12 error',
+      style: '  height: 50px; margin-top: 25px; font-size: 20px; cursor: pointer; font-weight: bold',
+      tap: function () {
+        this.owner.doShowPopup({
+          popup: 'modalModulesInDev'
+        });
+      },
+      content: '',
+      init: function () {
+        this.setContent(OB.I18N.getLabel('OBPOS_ModulesInDevelopment'));
+      }
+    }]
+  }]
+});
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.Scan',
@@ -28,6 +62,10 @@ enyo.kind({
           style: 'float:right;',
           name: 'msgwelcomeLbl'
         }]
+      }, {
+        kind: 'OB.OBPOSPointOfSale.UI.InDevHeader',
+        style: 'height: 35px;',
+        name: 'divInDevHeader'
       }, {
         name: 'msgaction',
         showing: false,
