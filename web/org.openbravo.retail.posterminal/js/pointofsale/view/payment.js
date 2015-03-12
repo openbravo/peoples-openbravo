@@ -520,11 +520,11 @@ enyo.kind({
     if (hasEnoughCash && hasAllEnoughCash) {
       this.$.noenoughchangelbl.hide();
       this.$.payments.scrollAreaMaxHeight = '150px';
-      this.$.doneButton.setDisabled(false);
+      this.$.doneButton.setLocalDisabled(false);
     } else {
       this.$.noenoughchangelbl.show();
       this.$.payments.scrollAreaMaxHeight = '130px';
-      this.$.doneButton.setDisabled(true);
+      this.$.doneButton.setLocalDisabled(true);
     }
   },
 
@@ -578,8 +578,29 @@ enyo.kind({
 });
 
 enyo.kind({
-  name: 'OB.OBPOSPointOfSale.UI.DoneButton',
+  name: 'OB.OBPOSPointOfSale.UI.ProcessButton',
   kind: 'OB.UI.RegularButton',
+  processdisabled: false,
+  localdisabled: false,
+  setLocalDisabled: function(value) {
+    this.localdisabled = value;
+    this.setDisabled(this.processdisabled || this.localdisabled);
+  },
+  initComponents: function () {
+    var me = this;
+    this.inherited(arguments);
+    OB.POS.EventBus.on('UI_Enabled', function (state) {
+      me.processdisabled = !state;
+      me.setDisabled(me.processdisabled || me.localdisabled);
+    });
+    me.processdisabled = !OB.POS.EventBus.isProcessEnabled();
+    me.setDisabled(me.processdisabled || me.localdisabled);
+  }
+});
+
+enyo.kind({
+  name: 'OB.OBPOSPointOfSale.UI.DoneButton',
+  kind: 'OB.OBPOSPointOfSale.UI.ProcessButton',
   drawerOpened: true,
   style: 'width: 120px; float: right; margin: 5px 5px 15px 0px; height: 2.5em; display:block; clear: right',
   init: function (model) {
@@ -686,7 +707,7 @@ enyo.kind({
   events: {
     onExactPayment: ''
   },
-  kind: 'OB.UI.RegularButton',
+  kind: 'OB.OBPOSPointOfSale.UI.ProcessButton',
   classes: 'btn-icon-adaptative btn-icon-check btnlink-green',
   style: 'width: 120px; float: right; margin: 5px 5px 15px 0px; height: 2.5em; display:block; clear: right',
   tap: function () {
