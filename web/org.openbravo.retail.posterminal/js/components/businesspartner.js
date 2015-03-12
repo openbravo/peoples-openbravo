@@ -338,7 +338,7 @@ enyo.kind({
     var me = this,
         filter = inEvent.bpName;
 
-    this.$.stBPAssignToReceipt.hide();
+    this.$.stBPAssignToReceipt.$.tbody.hide();
     this.$.renderLoading.show();
 
     function errorCallback(tx, error) {
@@ -352,7 +352,7 @@ enyo.kind({
         me.bpsList.reset();
       }
       me.$.renderLoading.hide();
-      me.$.stBPAssignToReceipt.show();
+      me.$.stBPAssignToReceipt.$.tbody.show();
     }
 
     var criteria = {};

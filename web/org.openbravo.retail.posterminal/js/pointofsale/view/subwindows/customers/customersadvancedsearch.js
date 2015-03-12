@@ -346,7 +346,7 @@ enyo.kind({
     var me = this,
         filter, splitFilter, splitFilterLength, _operator, i, criteria = {},
         lastCriteria = [];
-    this.$.stBPAdvSearch.hide();
+    this.$.stBPAdvSearch.$.tbody.hide();
     this.$.renderLoading.show();
 
     function errorCallback(tx, error) {
@@ -361,14 +361,14 @@ enyo.kind({
         me.bpsList.add(dataBps.models);
       }
       me.$.renderLoading.hide();
-      me.$.stBPAdvSearch.show();
+      me.$.stBPAdvSearch.$.tbody.show();
     }
 
     function reset(me) {
       me.bpsList.reset();
       me.lastCriteria = null;
       me.$.renderLoading.hide();
-      me.$.stBPAdvSearch.show();
+      me.$.stBPAdvSearch.$.tbody.show();
       return true;
     }
 
