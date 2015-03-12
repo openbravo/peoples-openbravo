@@ -181,7 +181,21 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
     function searchCurrentBP() {
       var errorCallback = function (tx, error) {
-          OB.UTIL.showError("OBDAL error while getting BP info: " + error);
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_BPInfoErrorTitle'), OB.I18N.getLabel('OBPOS_BPInfoErrorMessage'), [{
+            label: OB.I18N.getLabel('OBPOS_Reload')
+          }], {
+            onShowFunction: function (popup) {
+              popup.$.headerCloseButton.hide();
+              window.localStorage.removeItem('POSLastTotalRefresh');
+              window.localStorage.removeItem('POSLastIncRefresh');
+            },
+            onHideFunction: function (popup) {
+              window.localStorage.removeItem('POSLastTotalRefresh');
+              window.localStorage.removeItem('POSLastIncRefresh');
+              window.location.reload();
+            },
+            autoDismiss: false
+          });
           };
 
       function successCallbackBPs(dataBps) {
@@ -197,14 +211,14 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               OB.MobileApp.model.set('businessPartner', dataBps);
               me.loadUnpaidOrders();
             };
-            OB.Dal.get(OB.Model.BPLocation, partnerAddressId, successCallbackBPLoc, errorCallback);
+            OB.Dal.get(OB.Model.BPLocation, partnerAddressId, successCallbackBPLoc, errorCallback, errorCallback);
           } else {
             OB.MobileApp.model.set('businessPartner', dataBps);
             me.loadUnpaidOrders();
           }
         }
       }
-      OB.Dal.get(OB.Model.BusinessPartner, OB.MobileApp.model.get('businesspartner'), successCallbackBPs, errorCallback);
+      OB.Dal.get(OB.Model.BusinessPartner, OB.MobileApp.model.get('businesspartner'), successCallbackBPs, errorCallback, errorCallback);
     }
 
     //Because in terminal we've the BP id and we want to have the BP model.
