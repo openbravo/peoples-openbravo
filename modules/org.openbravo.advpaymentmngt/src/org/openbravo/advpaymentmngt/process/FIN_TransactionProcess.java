@@ -119,6 +119,7 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
           }
           payment.setStatus(payment.isReceipt() ? "RDNC" : "PWNC");
           transaction.setStatus(payment.isReceipt() ? "RDNC" : "PWNC");
+          transaction.setTransactionType(payment.isReceipt() ? "BPD" : "BPW");
           OBDal.getInstance().save(payment);
           if (transaction.getDescription() == null || "".equals(transaction.getDescription())) {
             transaction.setDescription(payment.getDescription());

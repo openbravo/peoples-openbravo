@@ -173,7 +173,7 @@ static Logger log4j = Logger.getLogger(UpdateTransactionTypeTransactionTabData.c
       "        SELECT count(*) as exist" +
       "        FROM DUAL" +
       "        WHERE EXISTS (SELECT 1 FROM ad_preference" +
-      "                      WHERE attribute = 'UpdatedTransactionType')";
+      "                      WHERE attribute = 'UpdatedTransactionTypeV2')";
 
     ResultSet result;
     boolean boolReturn = false;
@@ -210,7 +210,7 @@ static Logger log4j = Logger.getLogger(UpdateTransactionTypeTransactionTabData.c
       "           ad_preference_id, ad_client_id, ad_org_id, isactive," +
       "           createdby, created, updatedby, updated,attribute" +
       "           ) VALUES (" +
-      "           get_uuid(), '0', '0', 'Y', '0', NOW(), '0', NOW(),'UpdatedTransactionType')";
+      "           get_uuid(), '0', '0', 'Y', '0', NOW(), '0', NOW(),'UpdatedTransactionTypeV2')";
 
     int updateCount = 0;
     PreparedStatement st = null;
