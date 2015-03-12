@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -19,22 +19,19 @@
 package org.openbravo.modulescript;
 
 import java.sql.PreparedStatement;
+import org.apache.log4j.Logger;
 
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.modulescript.ModuleScript;
 
 public class UpdatePaymentPlan extends ModuleScript {
-
+  private static final Logger log4j = Logger.getLogger(UpdatePaymentPlan.class);
   public void execute() {
     try {
       ConnectionProvider cp = getConnectionProvider();
       boolean isExecuted = UpdatePaymentPlanData.isExecuted(cp);
       if (!isExecuted) {
-        UpdatePaymentPlanData[] paymentSchedule = UpdatePaymentPlanData.select(cp);
-        for (UpdatePaymentPlanData ps : paymentSchedule) {
-          String amount = UpdatePaymentPlanData.selectAmount(cp, ps.finpaymentscheduleid);
-          UpdatePaymentPlanData.update(cp, amount, ps.finpaymentscheduleid);
-        }
+        UpdatePaymentPlanData.update(cp);
         UpdatePaymentPlanData.createPreference(cp);
       }
     } catch (Exception e) {

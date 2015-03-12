@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,60 +28,24 @@
     </Sql>
     <Field name="rownum" value="count"/>
   </SqlMethod>
-  <SqlMethod name="selectAmount" type="preparedStatement" return="string">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-      SELECT SUM(psd.amount) AS paidamt
-      FROM fin_payment p
-      LEFT JOIN fin_financial_account fa ON p.fin_financial_account_id = fa.fin_financial_account_id, fin_payment_detail pd
-      JOIN fin_payment_scheduledetail psd ON pd.fin_payment_detail_id = psd.fin_payment_detail_id
-      LEFT JOIN fin_payment_schedule psi ON psd.fin_payment_schedule_invoice = psi.fin_payment_schedule_id
-      LEFT JOIN c_invoice i ON psi.c_invoice_id = i.c_invoice_id
-      LEFT JOIN fin_payment_schedule pso ON psd.fin_payment_schedule_order = pso.fin_payment_schedule_id
-      LEFT JOIN c_order o ON pso.c_order_id = o.c_order_id
-      LEFT JOIN c_glitem gli ON pd.c_glitem_id = gli.c_glitem_id
-      WHERE p.fin_payment_id = pd.fin_payment_id
-      AND pso.fin_payment_schedule_id = ?
-      ]]>
-    </Sql>
-    <Field name="rownum" value="count"/>
-    <Parameter name="finpaymentscheduleid"/>
-  </SqlMethod>
-  <SqlMethod name="select" type="preparedStatement" return="multiple">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-      SELECT fin.fin_payment_schedule_id AS finpaymentscheduleid
-      FROM fin_payment_schedule fin
-      WHERE paidamt <> (SELECT SUM(psd.amount)
-                           FROM fin_payment p
-                           LEFT JOIN fin_financial_account fa ON p.fin_financial_account_id = fa.fin_financial_account_id, fin_payment_detail pd
-                           JOIN fin_payment_scheduledetail psd ON pd.fin_payment_detail_id = psd.fin_payment_detail_id
-                           LEFT JOIN fin_payment_schedule psi ON psd.fin_payment_schedule_invoice = psi.fin_payment_schedule_id
-                           LEFT JOIN c_invoice i ON psi.c_invoice_id = i.c_invoice_id
-                           LEFT JOIN fin_payment_schedule pso ON psd.fin_payment_schedule_order = pso.fin_payment_schedule_id
-                           LEFT JOIN c_order o ON pso.c_order_id = o.c_order_id
-                           LEFT JOIN c_glitem gli ON pd.c_glitem_id = gli.c_glitem_id
-                          WHERE p.fin_payment_id = pd.fin_payment_id
-                          and pso.fin_payment_schedule_id = fin.fin_payment_schedule_id)
-      ]]>
-    </Sql>
-    <Field name="rownum" value="count"/>
-  </SqlMethod>
   <SqlMethod name="update" type="preparedStatement" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-      UPDATE fin_payment_schedule fin
-      SET outstandingamt = amount - TO_NUMBER(?),
-      paidamt = TO_NUMBER(?)
-      WHERE fin.fin_payment_schedule_id = ?
+     update fin_payment_schedule set outstandingamt = amount - (select sum(psd.amount)
+                                                                from fin_payment_scheduledetail psd
+                                                                where isinvoicepaid='Y'
+                                                                and psd.fin_payment_schedule_order = fin_payment_schedule.fin_payment_schedule_id),
+                                                     paidamt = (select sum(psd.amount)
+                                                                from fin_payment_scheduledetail psd
+                                                                where isinvoicepaid='Y'
+                                                                and psd.fin_payment_schedule_order = fin_payment_schedule.fin_payment_schedule_id)
+     WHERE fin_payment_schedule.paidamt/2 = (select sum(psd.amount)
+     from fin_payment_scheduledetail psd
+     where isinvoicepaid='Y'
+     and psd.fin_payment_schedule_order = fin_payment_schedule.fin_payment_schedule_id)
       ]]>
     </Sql>
-    <Parameter name="totalAmount"/>
-    <Parameter name="totalAmount"/>
-    <Parameter name="finpaymentscheduleid"/>
   </SqlMethod>
   <SqlMethod name="isExecuted" type="preparedStatement" return="boolean">
     <SqlMethodComment></SqlMethodComment>
@@ -90,7 +54,7 @@
         SELECT count(*) as exist
         FROM DUAL
         WHERE EXISTS (SELECT 1 FROM ad_preference
-                      WHERE attribute = 'PaymentPlanUpdated')
+                      WHERE attribute = 'PaymentPlanUpdatedV2')
       ]]>
     </Sql>
   </SqlMethod>
@@ -102,7 +66,7 @@
            ad_preference_id, ad_client_id, ad_org_id, isactive,
            createdby, created, updatedby, updated,attribute
            ) VALUES (
-           get_uuid(), '0', '0', 'Y', '0', NOW(), '0', NOW(),'PaymentPlanUpdated')
+           get_uuid(), '0', '0', 'Y', '0', NOW(), '0', NOW(),'PaymentPlanUpdatedV2')
          ]]>
         </Sql>
    </SqlMethod>
