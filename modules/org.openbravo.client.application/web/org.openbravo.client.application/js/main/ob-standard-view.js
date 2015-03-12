@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -1228,7 +1228,11 @@ isc.OBStandardView.addProperties({
           me.viewGrid.selectRecord(recordIndex);
         }
         if (me.formVisibleBeforeRefresh) {
-          me.switchFormGridVisibility();
+          if (me.viewGrid.getRecordIndex(me.viewForm.getValues()) !== -1) {
+            // it might be that the record selected in the form is no longer present in the grid after being refreshed, due to having been deleted
+            // in that case do not switch to form view, and keep the grid view to show the currently existing records
+            me.switchFormGridVisibility();
+          }
         }
         delete me.formVisibleBeforeRefresh;
         delete me.viewGrid.recordsSelectedBeforeRefresh;
