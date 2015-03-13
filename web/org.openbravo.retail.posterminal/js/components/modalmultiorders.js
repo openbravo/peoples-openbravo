@@ -149,6 +149,7 @@ enyo.kind({
   tap: function () {
     this.inherited(arguments);
     this.model.set('checked', !this.model.get('checked'));
+    this.model.trigger('click', this.model);
   },
   components: [{
     name: 'line',
@@ -266,9 +267,23 @@ enyo.kind({
   },
   multiOrdersList: null,
   init: function (model) {
+    var me = this;
     this.model = model;
     this.multiOrdersList = new Backbone.Collection();
     this.$.multiorderslistitemprinter.setCollection(this.multiOrdersList);
+    this.multiOrdersList.on('click', function (item) {
+      if (item.get('checked')) {
+        me.parent.parent.$.header.$.modalMultiOrdersTopHeader.disableDoneButton(false);
+      } else {
+        me.parent.parent.$.header.$.modalMultiOrdersTopHeader.disableDoneButton(true);
+        _.each(me.multiOrdersList.models, function (e) {
+          if (e.get('checked')) {
+            me.parent.parent.$.header.$.modalMultiOrdersTopHeader.disableDoneButton(false);
+            return;
+          }
+        });
+      }
+    });
   }
 });
 
@@ -310,6 +325,9 @@ enyo.kind({
     this.inherited(arguments);
     this.$.doneMultiOrdersButton.setContent(OB.I18N.getLabel('OBMOBC_LblDone'));
     this.$.cancelMultiOrdersButton.setContent(OB.I18N.getLabel('OBMOBC_LblCancel'));
+  },
+  disableDoneButton: function (value) {
+    this.$.doneMultiOrdersButton.setDisabled(value);
   },
   doneAction: function () {
     var selectedMultiOrders = [],
@@ -380,6 +398,7 @@ enyo.kind({
     var i, j;
     this.$.header.$.modalMultiOrdersTopHeader.$.title.setContent(OB.I18N.getLabel('OBPOS_LblMultiOrders'));
     this.$.body.$.listMultiOrders.cleanFilter = true;
+    this.$.header.$.modalMultiOrdersTopHeader.disableDoneButton(true);
   },
   i18nHeader: '',
   body: {

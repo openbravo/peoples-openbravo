@@ -347,6 +347,7 @@ enyo.kind({
         filter, splitFilter, splitFilterLength, _operator, i, criteria = {},
         lastCriteria = [];
     this.$.stBPAdvSearch.$.tbody.hide();
+    this.$.stBPAdvSearch.$.tempty.hide();
     this.$.renderLoading.show();
 
     function errorCallback(tx, error) {
@@ -354,21 +355,22 @@ enyo.kind({
     }
 
     function successCallbackBPs(dataBps, args) {
+      me.$.renderLoading.hide();
       if (args === 0) {
         me.bpsList.reset();
+        me.$.stBPAdvSearch.$.tempty.show();
       }
       if (dataBps && dataBps.length > 0) {
         me.bpsList.add(dataBps.models);
+        me.$.stBPAdvSearch.$.tbody.show();
       }
-      me.$.renderLoading.hide();
-      me.$.stBPAdvSearch.$.tbody.show();
     }
 
     function reset(me) {
       me.bpsList.reset();
       me.lastCriteria = null;
       me.$.renderLoading.hide();
-      me.$.stBPAdvSearch.$.tbody.show();
+      me.$.stBPAdvSearch.$.tempty.show();
       return true;
     }
 
