@@ -338,6 +338,7 @@ enyo.kind({
     var me = this,
         filter = inEvent.bpName;
 
+    this.$.stBPAssignToReceipt.$.tempty.hide();
     this.$.stBPAssignToReceipt.$.tbody.hide();
     this.$.renderLoading.show();
 
@@ -346,13 +347,14 @@ enyo.kind({
     }
 
     function successCallbackBPs(dataBps) {
+      me.$.renderLoading.hide();
       if (dataBps && dataBps.length > 0) {
         me.bpsList.reset(dataBps.models);
+        me.$.stBPAssignToReceipt.$.tbody.show();
       } else {
         me.bpsList.reset();
+        me.$.stBPAssignToReceipt.$.tempty.show();
       }
-      me.$.renderLoading.hide();
-      me.$.stBPAssignToReceipt.$.tbody.show();
     }
 
     var criteria = {};
