@@ -439,7 +439,7 @@ isc.OBStandardWindow.addProperties({
             button.readOnlyIf = alwaysReadOnly;
             // set readOnlyIf in actionToolbarButtons because it is required for
             // a good creation of buttonParents of no-active child tabs.
-            if (!view.parentView && button.view.actionToolbarButtons.containsProperty('property', button.property)) {
+            if (button.view.actionToolbarButtons.containsProperty('property', button.property)) {
               for (j = 0; j < view.actionToolbarButtons.length; j++) {
                 buttonParent = view.actionToolbarButtons[j];
                 if (buttonParent.property === button.property) {
