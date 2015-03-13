@@ -487,6 +487,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                 offline: true
               });
               orderList.deleteCurrent();
+              orderList.synchronizeCurrentOrder();
             }
           });
         } else {
@@ -509,6 +510,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                 offline: true
               });
               orderList.deleteCurrent();
+              orderList.synchronizeCurrentOrder();
             }
           });
         }
