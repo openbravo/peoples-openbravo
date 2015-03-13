@@ -319,7 +319,7 @@ AND DocStatus NOT IN ('DR','IP')
 AND ((InvoiceRule = 'O'
 AND NOT EXISTS (SELECT 1 FROM C_OrderLine WHERE C_Order.C_Order_ID=C_OrderLine.C_Order_ID AND QtyOrdered <> QtyDelivered)
 AND EXISTS (SELECT 1 FROM C_OrderLine WHERE C_Order.C_Order_ID=C_OrderLine.C_Order_ID AND QtyOrdered <> QtyInvoiced))
-OR (InvoiceRule IN ('D', 'S')
+OR (InvoiceRule = 'D'
 AND EXISTS (SELECT 1 FROM C_OrderLine WHERE C_Order.C_Order_ID=C_OrderLine.C_Order_ID AND QtyOrdered <> QtyInvoiced AND QtyDelivered <> QtyInvoiced))
 OR (InvoiceRule = 'I'
 AND EXISTS (SELECT 1 FROM C_OrderLine WHERE C_Order.C_Order_ID=C_OrderLine.C_Order_ID AND QtyOrdered <> QtyInvoiced))))]]></CODE>
