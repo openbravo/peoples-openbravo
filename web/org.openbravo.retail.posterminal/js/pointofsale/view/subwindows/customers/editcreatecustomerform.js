@@ -137,10 +137,17 @@ enyo.kind({
   windowHeader: 'OB.OBPOSPointOfSale.UI.customers.subwindowNewCustomer_bodyheader',
   newAttributes: [{
     kind: 'OB.UI.CustomerTextProperty',
-    name: 'customerName',
-    modelProperty: 'name',
+    name: 'firstName',
+    modelProperty: 'firstName',
     isFirstFocus: true,
     i18nLabel: 'OBPOS_LblName',
+    maxlength: 60
+  }, {
+    kind: 'OB.UI.CustomerTextProperty',
+    name: 'lastName',
+    modelProperty: 'lastName',
+    isFirstFocus: true,
+    i18nLabel: 'OBPOS_LblLastName',
     maxlength: 60
   }, {
     kind: 'OB.UI.CustomerComboProperty',

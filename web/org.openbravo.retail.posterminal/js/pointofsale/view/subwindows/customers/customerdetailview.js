@@ -191,8 +191,14 @@ enyo.kind({
   newAttributes: [{
     kind: 'OB.UI.CustomerTextProperty',
     name: 'customerName',
-    modelProperty: 'name',
+    modelProperty: 'firstName',
     i18nLabel: 'OBPOS_LblName',
+    readOnly: true
+  }, {
+    kind: 'OB.UI.CustomerTextProperty',
+    name: 'lastName',
+    modelProperty: 'lastName',
+    i18nLabel: 'OBPOS_LblLastName',
     readOnly: true
   }, {
     kind: 'OB.UI.CustomerTextProperty',

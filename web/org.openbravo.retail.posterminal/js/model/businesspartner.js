@@ -140,6 +140,14 @@
     column: 'name',
     type: 'TEXT'
   }, {
+    name: 'firstName',
+    column: 'first_name',
+    type: 'TEXT'
+  }, {
+    name: 'lastName',
+    column: 'last_name',
+    type: 'TEXT'
+  }, {
     name: 'description',
     column: 'description',
     type: 'TEXT'

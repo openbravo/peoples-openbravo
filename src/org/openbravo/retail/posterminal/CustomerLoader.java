@@ -182,7 +182,7 @@ public class CustomerLoader extends POSDataSynchronizationProcess {
       if (name.length() > 60) {
         name = name.substring(0, 60);
       }
-      user.setFirstName(name);
+      user.setName(name);
 
       // Contact exist > modify it. The username is not modified
       OBDal.getInstance().save(user);
@@ -233,7 +233,7 @@ public class CustomerLoader extends POSDataSynchronizationProcess {
       if (name.length() > 60) {
         name = name.substring(0, 60);
       }
-      usr.setFirstName(name);
+      usr.setName(name);
 
       usr.setBusinessPartner(customer);
 
