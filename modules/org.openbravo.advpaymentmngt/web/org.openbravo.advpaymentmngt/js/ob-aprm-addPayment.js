@@ -103,6 +103,8 @@ OB.APRM.AddPayment.onLoad = function (view) {
   glitemGrid.fetchData();
   creditUseGrid.fetchData();
   orderInvoiceGrid.selectionChanged = OB.APRM.AddPayment.selectionChanged;
+  orderInvoiceGrid.userSelectAllRecords = OB.APRM.AddPayment.userSelectAllRecords;
+  orderInvoiceGrid.deselectAllRecords = OB.APRM.AddPayment.deselectAllRecords;
   orderInvoiceGrid.dataProperties.transformData = OB.APRM.AddPayment.ordInvTransformData;
   glitemGrid.removeRecordClick = OB.APRM.AddPayment.removeRecordClick;
   creditUseGrid.selectionChanged = OB.APRM.AddPayment.selectionChangedCredit;
@@ -504,10 +506,27 @@ OB.APRM.AddPayment.doSelectionChanged = function (record, state, view) {
       }
     }
   }
-  OB.APRM.AddPayment.updateInvOrderTotal(view.theForm, orderInvoice);
-  OB.APRM.AddPayment.updateActualExpected(view.theForm);
-  OB.APRM.AddPayment.updateDifference(view.theForm);
+  if (!orderInvoice.obaprmAllRecordsSelectedByUser || (orderInvoice.obaprmAllRecordsSelectedByUser && (orderInvoice.getRecordIndex(record) === orderInvoice.getTotalRows() - 1))) {
+
+    OB.APRM.AddPayment.updateInvOrderTotal(view.theForm, orderInvoice);
+    OB.APRM.AddPayment.updateActualExpected(view.theForm);
+    OB.APRM.AddPayment.updateDifference(view.theForm);
+    if (orderInvoice.obaprmAllRecordsSelectedByUser) {
+      delete orderInvoice.obaprmAllRecordsSelectedByUser;
+    }
+  }
 };
+
+OB.APRM.AddPayment.userSelectAllRecords = function () {
+  this.obaprmAllRecordsSelectedByUser = true;
+  this.Super('userSelectAllRecords', arguments);
+};
+
+OB.APRM.AddPayment.deselectAllRecords = function () {
+  this.obaprmAllRecordsSelectedByUser = true;
+  this.Super('deselectAllRecords', arguments);
+};
+
 
 OB.APRM.AddPayment.updateActualExpected = function (form) {
   var orderInvoice = form.getItem('order_invoice').canvas.viewGrid,
