@@ -221,13 +221,8 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
       log4j.debug("priceActual:" + priceActual.toString());
       if (!cancelPriceAd) {
         priceStd = PriceAdjustment.calculatePriceStd(order, product, qtyOrdered, priceActual);
-        if (PriceAdjustment.calculatePriceActual(
-            order,
-            product,
-            qtyOrdered,
-            (strPriceStd.equals("") ? ZERO : (new BigDecimal(strPriceStd))).setScale(
-                pricePrecision, BigDecimal.ROUND_HALF_UP)).compareTo(ZERO) == 0
-            && priceActual.compareTo(ZERO) == 0) {
+        if (!priceStd.equals(priceActual) && priceStd.compareTo(ZERO) == 0) {
+          // Check whether price adjustment sets priceStd as Zero
           calcDiscount = false;
         } else {
           calcDiscount = true;
@@ -281,18 +276,12 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
             RoundingMode.HALF_UP);
         priceStd = FinancialUtils.calculateNetFromGross(strTaxId, baseGrossAmount, pricePrecision,
             taxBaseAmt, qtyOrdered);
-        if (PriceAdjustment.calculatePriceActual(
-            order,
-            product,
-            qtyOrdered,
-            (strGrossUnitPrice.equals("") ? ZERO : (new BigDecimal(strGrossUnitPrice))).setScale(
-                pricePrecision, BigDecimal.ROUND_HALF_UP)).compareTo(ZERO) == 0
-            && grossUnitPrice.compareTo(ZERO) == 0) {
+        if (!grossBaseUnitPrice.equals(grossUnitPrice) && grossBaseUnitPrice.compareTo(ZERO) == 0) {
+          // Check whether price adjustment sets grossBaseUnitPrice as Zero
           calcDiscount = false;
         } else {
           calcDiscount = true;
         }
-
       }
 
       resultado.append("new Array(\"inpgrosspricestd\", " + grossBaseUnitPrice.toString() + "),");
