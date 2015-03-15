@@ -116,9 +116,18 @@ public class PriceAdjustment {
         }
         log.debug("promo: " + promo + "- " + promo.getDiscount());
         if (applyDiscount) {
-          priceStd = priceStd.add(promo.getDiscountAmount()).divide(
-              BigDecimal.ONE.subtract(promo.getDiscount().divide(BigDecimal.valueOf(100),
-                  precision, BigDecimal.ROUND_HALF_UP)), precision, BigDecimal.ROUND_HALF_UP);
+          // Avoids divide by zero error
+          if (BigDecimal.ONE.subtract(
+              promo.getDiscount().divide(BigDecimal.valueOf(100), precision,
+                  BigDecimal.ROUND_HALF_UP)).compareTo(BigDecimal.ZERO) != 0) {
+            priceStd = priceStd.add(promo.getDiscountAmount()).divide(
+                BigDecimal.ONE.subtract(promo.getDiscount().divide(BigDecimal.valueOf(100),
+                    precision, BigDecimal.ROUND_HALF_UP)), precision, BigDecimal.ROUND_HALF_UP);
+          } else {
+            // 100 % Discount in price adjustment results in priceStd = Zero
+            priceStd = BigDecimal.ZERO;
+          }
+
         }
 
       }
