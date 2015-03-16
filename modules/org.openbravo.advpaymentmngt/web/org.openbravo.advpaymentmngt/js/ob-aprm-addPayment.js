@@ -161,7 +161,8 @@ OB.APRM.AddPayment.paymentMethodMulticurrency = function (view, form, recalcConv
       isSOTrx = form.getItem('issotrx').getValue(),
       currencyId = form.getItem('c_currency_id').getValue(),
       paymentDate = form.getItem('payment_date').getValue(),
-      orgId = form.getItem('ad_org_id').getValue();
+      orgId = form.getItem('ad_org_id').getValue(),
+      trxtype = (form.getItem('trxtype')) ? form.getItem('trxtype').getValue() : "";
 
   callback = function (response, data, request) {
     var isShown = false;
@@ -173,9 +174,9 @@ OB.APRM.AddPayment.paymentMethodMulticurrency = function (view, form, recalcConv
       form.getItem('c_currency_id').valueMap[data.currencyId] = data.currencyIdIdentifier;
     }
     isShown = data.isPayIsMulticurrency && currencyId !== data.currencyToId && currencyId !== undefined;
-    if (data.isWrongFinancialAccount) {
+    if (data.isWrongFinancialAccount && trxtype === "") {
       form.getItem('fin_financial_account_id').setValue('');
-    } else {
+    } else if (!data.isWrongFinancialAccount){
       if (!form.getItem('c_currency_to_id').valueMap) {
         form.getItem('c_currency_to_id').valueMap = {};
       }
