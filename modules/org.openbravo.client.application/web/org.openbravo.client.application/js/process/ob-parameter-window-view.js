@@ -571,7 +571,9 @@ isc.OBParameterWindowView.addProperties({
     // redraw to execute display logic
     this.theForm.markForRedraw();
 
-    this.okButton.setEnabled(this.allRequiredParametersSet());
+    if (this.okButton) {
+      this.okButton.setEnabled(this.allRequiredParametersSet());
+    }
 
     this.handleDisplayLogicForGridColumns();
 
