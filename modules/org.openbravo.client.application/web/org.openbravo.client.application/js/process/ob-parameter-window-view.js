@@ -725,7 +725,9 @@ isc.OBParameterWindowView.addProperties({
         this.xlsButton.setEnabled(allRequiredSet);
       }
     } else {
-      this.okButton.setEnabled(allRequiredSet);
+      if (this.okButton) {
+        this.okButton.setEnabled(allRequiredSet);
+      }
     }
   },
 
