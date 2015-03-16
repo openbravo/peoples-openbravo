@@ -149,7 +149,7 @@ enyo.kind({
   tap: function () {
     this.inherited(arguments);
     this.model.set('checked', !this.model.get('checked'));
-    this.model.trigger('click', this.model);
+    this.model.trigger('verifyDoneButton', this.model);
   },
   components: [{
     name: 'line',
@@ -271,7 +271,7 @@ enyo.kind({
     this.model = model;
     this.multiOrdersList = new Backbone.Collection();
     this.$.multiorderslistitemprinter.setCollection(this.multiOrdersList);
-    this.multiOrdersList.on('click', function (item) {
+    this.multiOrdersList.on('verifyDoneButton', function (item) {
       if (item.get('checked')) {
         me.parent.parent.$.header.$.modalMultiOrdersTopHeader.disableDoneButton(false);
       } else {

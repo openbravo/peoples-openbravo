@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2013 Openbravo S.L.U.
+ * Copyright (C) 2012-2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -127,7 +127,11 @@
               terminalModel.set(me.properties[0], data[0]);
 
               // update the local database with the document sequence received
-              OB.MobileApp.model.saveDocumentSequence(OB.MobileApp.model.get('terminal').lastDocumentNumber, OB.MobileApp.model.get('terminal').lastQuotationDocumentNumber);
+              OB.MobileApp.model.saveDocumentSequence(OB.MobileApp.model.get('terminal').lastDocumentNumber, OB.MobileApp.model.get('terminal').lastQuotationDocumentNumber, function () {
+                if (OB.MobileApp.model.orderList) {
+                  OB.MobileApp.model.orderList.synchronizeCurrentOrder();
+                }
+              });
 
               window.localStorage.setItem('terminalId', data[0].id);
               terminalModel.set('useBarcode', terminalModel.get('terminal').terminalType.usebarcodescanner);
@@ -700,10 +704,10 @@
     isSeqNoReadyEventSent: false,
     // deprecation 27911
     /**
-     * Save the new values if are higher than the last knowwn values
+     * Save the new values if are higher than the last known values
      * - the minimum sequence number can only grow
      */
-    saveDocumentSequence: function (documentnoSuffix, quotationnoSuffix) {
+    saveDocumentSequence: function (documentnoSuffix, quotationnoSuffix, callback) {
       var me = this;
       if (me.restartingDocNo === true) {
         return;
@@ -712,24 +716,6 @@
       if (documentnoSuffix === 0 || quotationnoSuffix === 0) {
         me.restartingDocNo = true;
       }
-
-      /**
-       * If for whatever reason the maxSuffix is not the current order suffix (most likely, the server returning a higher docno value)
-       * 1. if there is a current order
-       * 2. and has no lines (no product added, etc)
-       * 3. if the current order suffix is lower than the minNumbers
-       * 4. delete the order
-       */
-      var synchronizeCurrentOrder = function () {
-          var orderlist = OB.MobileApp.model.orderList;
-          if (orderlist && orderlist.models.length === 1 && orderlist.current) {
-            if (orderlist.current.get('lines') && orderlist.current.get('lines').length === 0) {
-              if (orderlist.current.get('documentnoSuffix') <= me.documentnoThreshold || me.documentnoThreshold === 0) {
-                orderlist.deleteCurrent(true);
-              }
-            }
-          }
-          };
 
       // verify that the values are higher than the local variables
       if (documentnoSuffix > this.documentnoThreshold || documentnoSuffix === 0) {
@@ -773,7 +759,9 @@
         docSeq.set('documentSequence', me.documentnoThreshold);
         docSeq.set('quotationDocumentSequence', me.quotationnoThreshold);
         OB.Dal.save(docSeq, function () {
-          synchronizeCurrentOrder();
+          if (callback) {
+            callback();
+          }
           me.restartingDocNo = false;
         }, function () {
           me.restartingDocNo = false;
@@ -788,11 +776,11 @@
      * Updates the document sequence. This method should only be called when an order has been sent to the server
      * If the order is a quotation, only update the quotationno
      */
-    updateDocumentSequenceWhenOrderSaved: function (documentnoSuffix, quotationnoSuffix) {
+    updateDocumentSequenceWhenOrderSaved: function (documentnoSuffix, quotationnoSuffix, callback) {
       if (quotationnoSuffix >= 0) {
         documentnoSuffix = -1;
       }
-      this.saveDocumentSequence(documentnoSuffix, quotationnoSuffix);
+      this.saveDocumentSequence(documentnoSuffix, quotationnoSuffix, callback);
     },
 
     // get the first document number available

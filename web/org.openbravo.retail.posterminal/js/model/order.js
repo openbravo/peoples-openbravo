@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013 Openbravo S.L.U.
+ * Copyright (C) 2013-2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -2481,6 +2481,21 @@
         this.modelorder.clearWith(this.current);
         this.modelorder.set('isNewReceipt', false);
         this.modelorder.trigger('paintTaxes');
+      }
+    },
+    synchronizeCurrentOrder: function () {
+      // If for whatever reason the maxSuffix is not the current order suffix (most likely, the server returning a higher docno value)
+      // 1. if there are current orders
+      // 2. and have no lines (no product added, etc)
+      // 3. if the order suffix is lower than the minNumbers
+      // 4. delete the orders
+      var orderlist = this;
+      if (orderlist && orderlist.models.length === 1 && orderlist.current) {
+        if (orderlist.current.get('lines') && orderlist.current.get('lines').length === 0) {
+          if (orderlist.current.get('documentnoSuffix') <= OB.MobileApp.model.documentnoThreshold || OB.MobileApp.model.documentnoThreshold === 0) {
+            orderlist.deleteCurrent(true);
+          }
+        }
       }
     }
 
