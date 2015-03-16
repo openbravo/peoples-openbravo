@@ -170,15 +170,17 @@ public class TransactionAddPaymentDefaultValues extends AddPaymentDefaultValuesH
     FinAccPaymentMethod anyFinAccPaymentMethod = null;
     for (FinAccPaymentMethod finAccPaymentMethod : getFinancialAccount(requestMap)
         .getFinancialMgmtFinAccPaymentMethodList()) {
-      if (finAccPaymentMethod.isDefault()) {
+      if (finAccPaymentMethod.isActive()) {
+        if (finAccPaymentMethod.isDefault()) {
+          if ((isReceipt && finAccPaymentMethod.isPayinAllow())
+              || (!isReceipt && finAccPaymentMethod.isPayoutAllow())) {
+            return finAccPaymentMethod.getPaymentMethod().getId();
+          }
+        }
         if ((isReceipt && finAccPaymentMethod.isPayinAllow())
             || (!isReceipt && finAccPaymentMethod.isPayoutAllow())) {
-          return finAccPaymentMethod.getPaymentMethod().getId();
+          anyFinAccPaymentMethod = finAccPaymentMethod;
         }
-      }
-      if ((isReceipt && finAccPaymentMethod.isPayinAllow())
-          || (!isReceipt && finAccPaymentMethod.isPayoutAllow())) {
-        anyFinAccPaymentMethod = finAccPaymentMethod;
       }
     }
     return anyFinAccPaymentMethod != null ? anyFinAccPaymentMethod.getPaymentMethod().getId() : "";
