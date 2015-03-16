@@ -672,17 +672,27 @@ isc.OBPickAndExecuteGrid.addProperties({
   },
 
   processColumnValue: function (rowNum, columnName, columnValue) {
-    var field;
+    var field, valueMap = [];
     if (!columnValue) {
       return;
     }
-
+    field = this.getFieldByColumnName(columnName);
+    if (!field) {
+      return;
+    }
     if (columnValue.entries) {
-      field = this.getFieldByColumnName(columnName);
-      if (!field) {
-        return;
-      }
       this.setValueMap(field.name, columnValue.entries);
+    } else if (field.fkField && columnValue.value && columnValue.identifier) {
+      // build the valueMap manually, set it and set the value of the
+      // fk combo item in the edit form if possible
+      valueMap[0] = {};
+      valueMap[0][OB.Constants.ID] = columnValue.value;
+      valueMap[0][OB.Constants.IDENTIFIER] = columnValue.identifier;
+      this.setValueMap(field.name, valueMap);
+      if (this.isEditing()) {
+        this.setEditValue(this.getEditRow(), field.name, columnValue.value);
+      }
+
     }
   },
 
