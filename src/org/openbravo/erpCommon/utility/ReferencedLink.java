@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -36,6 +36,7 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -48,7 +49,6 @@ import org.openbravo.model.ad.domain.TableNavigation;
 import org.openbravo.model.ad.system.Language;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.WindowTrl;
-import org.openbravo.model.project.Project;
 
 public class ReferencedLink extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
@@ -161,9 +161,7 @@ public class ReferencedLink extends HttpSecureAppServlet {
       strTableReferenceId = vars.getRequiredStringParameter("inpTableReferenceId");
     }
     String strNavigationTabId = null;
-    if (vars.hasParameter("inpNavigationTabId")) {
-      strNavigationTabId = vars.getStringParameter("inpNavigationTabId");
-    }
+    strNavigationTabId = vars.getStringParameter("inpNavigationTabId");
     String strKeyReferenceId = vars.getStringParameter("inpKeyReferenceId");
     // String strTabId = vars.getStringParameter("inpTabId");
     String strWindowId = vars.getStringParameter("inpwindowId");
@@ -185,18 +183,14 @@ public class ReferencedLink extends HttpSecureAppServlet {
       ref = null;
     }
 
+    boolean hasKeyReferenceId = strKeyReferenceId.equals("");
     // Fixes issue #15723 while the complete implementation defined in #15379 is not ready
-    boolean forcedLink;
     try {
       strWindowId = Preferences.getPreferenceValue("ForcedLinkWindow" + strTableName, false,
           vars.getClient(), vars.getOrg(), vars.getUser(), vars.getRole(), strWindowId);
-      forcedLink = true;
+      return getTabId(strWindowId, strTableReferenceId, hasKeyReferenceId);
     } catch (PropertyException e) {
       // Property is not set, follow standard flow
-      forcedLink = false;
-    }
-
-    if (!forcedLink) {
       String strTableRealReference = strTableReferenceId;
       if (strTableReferenceId.equals("800018")) { // DP
         if (ReferencedTablesData.selectKeyId(this, "C_INVOICE_ID", strTableName,
@@ -210,102 +204,88 @@ public class ReferencedLink extends HttpSecureAppServlet {
           }
         }
       }
-      if (strTableReferenceId.equals("203")) {
-        // Project: select window depending on the project type
-        try {
-          OBContext.setAdminMode();
-          Project referencedProject = OBDal.getInstance().get(Project.class, strKeyReferenceId);
-          Table table = OBDal.getInstance().get(Table.class, strTableReferenceId);
-
-          if (table.getWindow() == null) {
-            // If there is no Window defined in Application Dictionary
-            if (referencedProject == null) {
-              // Service project
-              strWindowId = "800001";
-            } else if (referencedProject != null && referencedProject.getProjectCategory() != null
-                && referencedProject.getProjectCategory().equals("S")) {
-              // Multiphase project
-              strWindowId = "130";
-            }
-          } else {
-            // Window defined in Application Dictionary
-            strWindowId = table.getWindow().getId();
-            if (referencedProject != null && referencedProject.getProjectCategory() != null
-                && referencedProject.getProjectCategory().equals("S")) {
-              // Multiphase project
-              strWindowId = "130";
-            }
-          }
-
-        } finally {
-          OBContext.restorePreviousMode();
-        }
-
-      } else {
-        // Standard case, select window based on table definition and isSOTrx
-        ReferencedLinkData[] data = ReferencedLinkData.selectWindows(this, strTableRealReference);
-        if (data == null || data.length == 0)
-          throw new ServletException("Window not found");
-
-        // only in case an adWindowId is returned
-        if (!data[0].adWindowId.equals("")) {
-          strWindowId = data[0].adWindowId;
-        }
-        if (!isSOTrx && !data[0].poWindowId.equals("")) {
-          strWindowId = data[0].poWindowId;
-        }
-      }
-    }
-    ReferencedLinkData[] data = ReferencedLinkData.select(this, strWindowId, strTableReferenceId);
-    if (data == null || data.length == 0)
-      throw new ServletException("Window not found: " + strWindowId);
-    // Beginning of advanced navigation feature
-    String tabId = null;
-    OBContext.setAdminMode(true);
-    try {
-      if (strNavigationTabId != null) {
-        tabId = strNavigationTabId;
-      }
-
-      if (tabId == null) {
-        OBCriteria<TableNavigation> tableNavigationCriteria = OBDal.getInstance().createCriteria(
-            TableNavigation.class);
-        tableNavigationCriteria.add(Restrictions.eq("table.id", strTableReferenceId));
-        tableNavigationCriteria.addOrderBy(TableNavigation.PROPERTY_SEQUENCENUMBER, true);
-        List<TableNavigation> tableNavigationList = tableNavigationCriteria.list();
-        for (TableNavigation tableNavigation : tableNavigationList) {
-          // Evaluate HQL logic
-          String hqlWhere = "AS e WHERE " + tableNavigation.getHqllogic();
-          hqlWhere = hqlWhere.replaceAll("@id@", "'" + strKeyReferenceId + "'");
-          Table table = tableNavigation.getTable();
-          Entity obEntity = (Entity) ModelProvider.getInstance().getEntityByTableId(table.getId());
-          final OBQuery<?> query = OBDal.getInstance().createQuery(obEntity.getName(), hqlWhere);
-          final List<?> selectors = query.list();
-          if (!selectors.isEmpty()) {
-            tabId = tableNavigation.getTab().getId();
-            break;
-          }
-        }
-      }
-    } catch (Exception e) {
-      throw new OBException(e.getMessage());
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-    if (tabId == null) {
-      tabId = data[0].adTabId;
-    }
-    // End of advanced navigation feature
-    if (strKeyReferenceId.equals("")) {
-      data = ReferencedLinkData.selectParent(this, strWindowId);
+      // Standard case, select window based on table definition and isSOTrx
+      ReferencedLinkData[] data = ReferencedLinkData.selectWindows(this, strTableRealReference);
       if (data == null || data.length == 0)
-        throw new ServletException("Window parent not found: " + strWindowId);
-      tabId = data[0].adTabId;
+        throw new ServletException("Window not found");
+
+      // only in case an adWindowId is returned
+      if (!data[0].adWindowId.equals("")) {
+        strWindowId = data[0].adWindowId;
+      }
+      if (!isSOTrx && !data[0].poWindowId.equals("")) {
+        strWindowId = data[0].poWindowId;
+      }
+      // Beginning of advanced navigation feature
+      OBContext.setAdminMode(true);
+      try {
+        if (!"".equals(strNavigationTabId)) {
+          if (strKeyReferenceId.equals("")) {
+            data = ReferencedLinkData.selectParent(this, strWindowId);
+            if (data == null || data.length == 0) {
+              throw new ServletException("Window parent not found: " + strWindowId);
+            }
+            return data[0].adTabId;
+          } else {
+            return strNavigationTabId;
+          }
+        }
+        if (!hasKeyReferenceId) {
+          OBCriteria<TableNavigation> tableNavigationCriteria = OBDal.getInstance().createCriteria(
+              TableNavigation.class);
+          tableNavigationCriteria.add(Restrictions.eq("table.id", strTableReferenceId));
+          tableNavigationCriteria.addOrderBy(TableNavigation.PROPERTY_SEQUENCENUMBER, true);
+          List<TableNavigation> tableNavigationList = tableNavigationCriteria.list();
+          for (TableNavigation tableNavigation : tableNavigationList) {
+            // Evaluate HQL logic
+            String hqlWhere = "AS e WHERE e.id = '" + strKeyReferenceId + "' AND ( "
+                + tableNavigation.getHqllogic() + " )";
+            Table table = tableNavigation.getTable();
+            Entity obEntity = (Entity) ModelProvider.getInstance()
+                .getEntityByTableId(table.getId());
+            final OBQuery<BaseOBObject> query = OBDal.getInstance().createQuery(obEntity.getName(),
+                hqlWhere);
+            query.setMaxResult(1);
+            if (query.uniqueResult() != null) {
+              if (strKeyReferenceId.equals("")) {
+                data = ReferencedLinkData.selectParent(this, strWindowId);
+                if (data == null || data.length == 0) {
+                  throw new ServletException("Window parent not found: " + strWindowId);
+                }
+                return data[0].adTabId;
+              } else {
+                return tableNavigation.getTab().getId();
+              }
+            }
+          }
+        }
+      } catch (Exception e2) {
+        throw new OBException(e2.getMessage());
+      } finally {
+        OBContext.restorePreviousMode();
+      }
+      // End of advanced navigation feature
+      return getTabId(strWindowId, strTableReferenceId, hasKeyReferenceId);
     }
-    return tabId;
   }
 
   public String getServletInfo() {
     return "Servlet that presents the referenced links";
   } // end of getServletInfo() method
+
+  private String getTabId(String strWindowId, String strTableReferenceId, boolean returnParent)
+      throws ServletException {
+    ReferencedLinkData[] data = ReferencedLinkData.select(this, strWindowId, strTableReferenceId);
+    if (data == null || data.length == 0) {
+      throw new ServletException("Window not found: " + strWindowId);
+    }
+    if (returnParent) {
+      data = ReferencedLinkData.selectParent(this, strWindowId);
+      if (data == null || data.length == 0) {
+        throw new ServletException("Window parent not found: " + strWindowId);
+      }
+      return data[0].adTabId;
+    }
+    return data[0].adTabId;
+  }
 }

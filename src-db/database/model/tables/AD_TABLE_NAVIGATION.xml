@@ -56,6 +56,9 @@
       <foreign-key foreignTable="AD_CLIENT" name="AD_TABLE_NAVIGATION_ADCLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="AD_MODULE" name="AD_TABLE_NAVIGATION_ADMODULE">
+        <reference local="AD_MODULE_ID" foreign="AD_MODULE_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="AD_TABLE_NAVIGATION_ADORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
@@ -65,5 +68,8 @@
       <foreign-key foreignTable="AD_TABLE" name="AD_TABLE_NAVIGATION_ADTABLEID">
         <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
       </foreign-key>
+      <index name="AD_TABLE_NAVIGATION_TABLE_IDX" unique="false">
+        <index-column name="AD_TABLE_ID"/>
+      </index>
     </table>
   </database>
