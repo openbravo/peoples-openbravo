@@ -192,18 +192,6 @@ public class ReferencedLink extends HttpSecureAppServlet {
     } catch (PropertyException e) {
       // Property is not set, follow standard flow
       String strTableRealReference = strTableReferenceId;
-      if (strTableReferenceId.equals("800018")) { // DP
-        if (ReferencedTablesData.selectKeyId(this, "C_INVOICE_ID", strTableName,
-            strKeyReferenceColumnName, strKeyReferenceId).equals("")) {
-          if (!ReferencedTablesData.selectKeyId(this, "C_ORDER_ID", strTableName,
-              strKeyReferenceColumnName, strKeyReferenceId).equals("")) {
-            strTableRealReference = ReferencedTablesData.selectTableId(this, "C_Order");
-          } else {
-            strTableRealReference = ReferencedTablesData.selectTableId(this, "C_Settlement");
-            strTableReferenceId = "800021";
-          }
-        }
-      }
       // Standard case, select window based on table definition and isSOTrx
       ReferencedLinkData[] data = ReferencedLinkData.selectWindows(this, strTableRealReference);
       if (data == null || data.length == 0)
@@ -260,7 +248,7 @@ public class ReferencedLink extends HttpSecureAppServlet {
           }
         }
       } catch (Exception e2) {
-        throw new OBException(e2.getMessage());
+        throw new OBException("Error retrieving destination tab: ", e2);
       } finally {
         OBContext.restorePreviousMode();
       }
