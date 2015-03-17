@@ -364,7 +364,7 @@ isc.OBStandardWindow.addProperties({
 
   // set window specific user settings, purposely set on class level
   setWindowSettings: function (data) {
-    var i, defaultView, persDefaultValue, views, length, t, tab, view, field, button, st, stView, stBtns, stBtn, disabledFields, personalization, notAccessibleProcesses, alwaysReadOnly = function (view, record, context) {
+    var i, defaultView, persDefaultValue, views, length, t, tab, view, field, button, st, stView, stBtns, stBtn, disabledFields, personalization, notAccessibleProcesses, extraCallback, alwaysReadOnly = function (view, record, context) {
         return true;
         };
 
@@ -477,6 +477,16 @@ isc.OBStandardWindow.addProperties({
               }
             }
           }
+        }
+      }
+    }
+
+    //Execute extraCallbacks
+    if (data && data.extraCallbacks) {
+      for (i = 0; i < data.extraCallbacks.length; i++) {
+        extraCallback = data.extraCallbacks[i];
+        if (isc.isAFunction(extraCallback)) {
+          extraCallback(this, data);
         }
       }
     }
