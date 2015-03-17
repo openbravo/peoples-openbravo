@@ -25,6 +25,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
@@ -741,12 +745,23 @@ public class DefaultJsonDataService implements JsonDataService {
     return bobs;
   }
 
+  /**
+   * Hooks executed at the end of doPreAction and doPostAction to modify or to validate DataService
+   * calls.
+   */
+  @Inject
+  @Any
+  private Instance<JsonDataServiceExtraActions> extraActions;
+
   protected String doPreAction(Map<String, String> parameters, String content,
       DataSourceAction action) {
     try {
       if (action == DataSourceAction.FETCH) {
         // In fetch operations there is no data. Just call doPreFetch and extraActions.
         doPreFetch(parameters);
+        for (JsonDataServiceExtraActions extraAction : extraActions) {
+          extraAction.doPreAction(parameters, new JSONArray(), action);
+        }
         return "";
       }
       final Object contentObject = getContentAsJSON(content);
@@ -780,6 +795,9 @@ public class DefaultJsonDataService implements JsonDataService {
 
         // and set it in the new array
         newData.put(dataElement);
+      }
+      for (JsonDataServiceExtraActions extraAction : extraActions) {
+        extraAction.doPreAction(parameters, newData, action);
       }
 
       // return the array directly
@@ -840,6 +858,10 @@ public class DefaultJsonDataService implements JsonDataService {
       // update the response with the changes, make it a string
       response.put(JsonConstants.RESPONSE_DATA, newData);
       json.put(JsonConstants.RESPONSE_RESPONSE, response);
+
+      for (JsonDataServiceExtraActions extraAction : extraActions) {
+        extraAction.doPostAction(parameters, json, action, originalObject);
+      }
 
       return json.toString();
     } catch (JSONException e) {
