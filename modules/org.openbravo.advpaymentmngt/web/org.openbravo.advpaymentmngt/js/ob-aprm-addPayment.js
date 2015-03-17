@@ -813,8 +813,21 @@ OB.APRM.AddPayment.creditValidation = function (item, validator, value, record) 
 };
 
 OB.APRM.AddPayment.doSelectionChangedCredit = function (record, state, view) {
+  var issotrx = view.theForm.getItem('issotrx'),
+      grid = view.theForm.getItem('credit_to_use').canvas.viewGrid,
+      amountField = grid.getFieldByColumnName('paymentAmount'),
+      outstanding = new BigDecimal(String(record.outstandingAmount));
+
+  if (state) {
+    grid.setEditValue(grid.getRecordIndex(record), amountField, Number(outstanding));
+  } else {
+    grid.setEditValue(grid.getRecordIndex(record), amountField, '0');
+  }
   OB.APRM.AddPayment.updateCreditTotal(view.theForm);
   OB.APRM.AddPayment.updateActualExpected(view.theForm);
+  if (issotrx) {
+    OB.APRM.AddPayment.distributeAmount(view, view.theForm, true);
+  }
 };
 
 OB.APRM.AddPayment.conversionRateOnChange = function (item, view, form, grid) {
@@ -1100,6 +1113,11 @@ OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall) {
   } else if (total.compareTo(actualPayment.add(creditTotalItem)) > 0) {
     // More than available amount has been distributed
     view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_JSMOREAMOUTALLOCATED'));
+    return false;
+  }
+
+  if ((total.compareTo(creditTotalItem) < 0) && (overpaymentAction === 'CR')) {
+    view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_MORECREDITAMOUNT'));
     return false;
   }
 
