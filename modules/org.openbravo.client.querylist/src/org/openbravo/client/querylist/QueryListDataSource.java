@@ -161,21 +161,38 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
         // Ignore exception.
       }
 
-      String HQL = widgetClass.getOBCQLWidgetQueryList().get(0).getHQL();
+      OBCQL_WidgetQuery widgetQueryInstance = widgetClass.getOBCQLWidgetQueryList().get(0);
+      String HQL = widgetQueryInstance.getHQL();
       // Parse the HQL in case that optional filters are required
       HQL = parseOptionalFilters(HQL, viewMode, parameters, columns, xmlDateFormat);
-
-      if (parameters.containsKey(JsonConstants.SUMMARY_PARAMETER)) {
+      boolean fetchingSummaryFields = parameters.containsKey(JsonConstants.SUMMARY_PARAMETER);
+      if (fetchingSummaryFields) {
         // if the request comes from the summary row, update the select clause so that it obtains
         // the values for the summary fields
-        HQL = updateHQLWithSummaryFields(HQL, parameters.get(JsonConstants.SUMMARY_PARAMETER));
+        HQL = updateHQLWithSummaryFields(HQL, parameters.get(JsonConstants.SUMMARY_PARAMETER),
+            widgetQueryInstance);
       }
 
       if (parameters.containsKey(JsonConstants.SORTBY_PARAMETER)) {
         HQL = updateSortByFields(HQL, parameters.get(JsonConstants.SORTBY_PARAMETER));
       }
 
-      Query widgetQuery = OBDal.getInstance().getSession().createQuery(HQL);
+      Query widgetQuery = null;
+      try {
+        widgetQuery = OBDal.getInstance().getSession().createQuery(HQL);
+      } catch (Exception e) {
+        if (fetchingSummaryFields) {
+          log.error("Exception while fetching the summary columns of the widget "
+              + widgetClass.getWidgetTitle()
+              + ". It is not supported using as summaries columns that are defined using a subquery, or that are defined using a summary function. \n Query = "
+              + HQL);
+        } else {
+          log.error("Exception while executing the HQL query to fetch the data of the widget "
+              + widgetClass.getWidgetTitle() + ". \n Query = " + HQL);
+        }
+        final List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+        return result;
+      }
       String[] queryAliases = widgetQuery.getReturnAliases();
 
       if (!isExport && "widget".equals(viewMode) && !showAll) {
@@ -220,7 +237,7 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
 
       final List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
 
-      if (parameters.containsKey(JsonConstants.SUMMARY_PARAMETER)) {
+      if (fetchingSummaryFields) {
         // process the response for the summary row
         Map<String, Object> summaryData = new LinkedHashMap<String, Object>();
         try {
@@ -267,9 +284,8 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
                   || (!isExport && queryAliases[i].equals(column.getLinkExpression()))) {
                 Object value = resultList[i];
                 if (domainType instanceof DateDomainType || domainType instanceof DateDomainType) {
-                    value = xmlDateFormat.format(value);
-                  }
-                else if (value instanceof Timestamp) {
+                  value = xmlDateFormat.format(value);
+                } else if (value instanceof Timestamp) {
                   value = xmlDateTimeFormat.format(value);
                   value = JsonUtils.convertToCorrectXSDFormat((String) value);
                 }
@@ -342,9 +358,13 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
    *          original HQL query
    * @param summaryParametersString
    *          parameter that contains pairs of summaryField - summaryFunction values
+   * @param widgetQuery
+   *          the instance of the widget, used to obtain the whereCLauseLeftPart of the summary
+   *          parameter
    * @return an updated HQL query that will obtain the values for the summary fields
    */
-  private String updateHQLWithSummaryFields(String hQL, String summaryParametersString) {
+  private String updateHQLWithSummaryFields(String hQL, String summaryParametersString,
+      OBCQL_WidgetQuery widgetQuery) {
     // get rid of the original select clause, a new one is going to be built
     String updatedHQL = removeSelectClause(hQL);
     // the order clause is not needed when obtaining the values for the summary fields
@@ -356,6 +376,11 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
       boolean first = true;
       while (summaryFieldNameIterator.hasNext()) {
         String summaryFieldName = (String) summaryFieldNameIterator.next();
+        String whereClauseLeftPart = getWhereClauseLeftPart(widgetQuery, summaryFieldName);
+        // if the column has whereClauseLeftPart, use it to support using columns with aliases
+        // see issue https://issues.openbravo.com/view.php?id=29174
+        String summaryColumnInnerClause = (whereClauseLeftPart.isEmpty() ? summaryFieldName
+            : whereClauseLeftPart);
         String summaryFunction = summaryFieldsObject.getString(summaryFieldName);
         if (!first) {
           selectClause.append(", ");
@@ -367,9 +392,9 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
         if ("count".equals(summaryFunction)) {
           selectClause.append("count(*)");
         } else if ("sum".equals(summaryFunction)) {
-          selectClause.append("sum(" + summaryFieldName + ")");
+          selectClause.append("sum(" + summaryColumnInnerClause + ")");
         } else if ("avg".equals(summaryFunction)) {
-          selectClause.append("sum(" + summaryFieldName + ")/count(*)");
+          selectClause.append("sum(" + summaryColumnInnerClause + ")/count(*)");
         }
       }
       updatedHQL = selectClause.toString() + " " + updatedHQL;
@@ -377,6 +402,17 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
       log.error("Error obtaining the values of the summary fields", e);
     }
     return updatedHQL;
+  }
+
+  private String getWhereClauseLeftPart(OBCQL_WidgetQuery widgetQuery, String summaryFieldName) {
+    OBCriteria<OBCQL_QueryColumn> columnCriteria = OBDal.getInstance().createCriteria(
+        OBCQL_QueryColumn.class);
+    columnCriteria.add(Restrictions.eq(OBCQL_QueryColumn.PROPERTY_WIDGETQUERY, widgetQuery));
+    columnCriteria.add(Restrictions.eq(OBCQL_QueryColumn.PROPERTY_DISPLAYEXPRESSION,
+        summaryFieldName));
+    OBCQL_QueryColumn queryColumn = (OBCQL_QueryColumn) columnCriteria.uniqueResult();
+    return (queryColumn != null && queryColumn.getWhereClauseLeftPart() != null ? queryColumn
+        .getWhereClauseLeftPart() : "");
   }
 
   /**
