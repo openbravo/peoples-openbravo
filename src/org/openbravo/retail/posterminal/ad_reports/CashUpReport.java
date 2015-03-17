@@ -54,6 +54,7 @@ import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.retail.posterminal.OBPOSAppCashReconcil;
 import org.openbravo.retail.posterminal.OBPOSAppCashup;
+import org.openbravo.retail.posterminal.OBPOSAppPayment;
 
 public class CashUpReport extends HttpSecureAppServlet {
   @Inject
@@ -133,11 +134,35 @@ public class CashUpReport extends HttpSecureAppServlet {
     OBContext.setAdminMode();
     try {
       cashup = OBDal.getInstance().get(OBPOSAppCashup.class, cashupId);
+      // Check for slave
+      if (cashup.getPOSTerminal().getMasterterminal() != null) {
+        // Check if master cashup is closed
+        if (cashup.getObposParentCashup() == null || !cashup.getObposParentCashup().isProcessedbo()) {
+          throw new ServletException(
+              OBMessageUtils.messageBD("OBPOS_ErrCashupReportMasterNotFinish"));
+        }
+        // Check if all payment are shared
+        List<OBPOSAppPayment> paymentMethodList = cashup.getPOSTerminal().getOBPOSAppPaymentList();
+        boolean allShared = true;
+        for (OBPOSAppPayment payment : paymentMethodList) {
+          if (!payment.getPaymentMethod().isShared()) {
+            allShared = false;
+            break;
+          }
+        }
+        if (allShared) {
+          throw new ServletException(OBMessageUtils.messageBD("OBPOS_ErrCashupReportSeeMaster"));
+        }
+      }
       String hqlRecons = " rec where cashUp.id=:cashUpId order by rec.paymentType.commercialName ";
       OBQuery<OBPOSAppCashReconcil> reconsQuery = OBDal.getInstance().createQuery(
           OBPOSAppCashReconcil.class, hqlRecons);
       reconsQuery.setNamedParameter("cashUpId", cashup.getId());
       List<OBPOSAppCashReconcil> recons = reconsQuery.list();
+      // Check for slave terminal and CashUp with all share payment
+      if (cashup.getPOSTerminal().getMasterterminal() != null && recons.size() == 0) {
+        throw new ServletException(OBMessageUtils.messageBD("OBPOS_ErrCashupReportSeeMaster"));
+      }
       Date cashUpDate = cashup.getCashUpDate();
       for (int i = 0; i < recons.size(); i++) {
 
