@@ -301,6 +301,9 @@ OB.APRM.AddPayment.orderInvoiceOnLoadGrid = function (grid) {
   var issotrx = this.view.theForm.getItem('issotrx').getValue(),
       payment = this.view.theForm.getItem('fin_payment_id').getValue();
   grid.isReady = true;
+  if (grid.obaprmAllRecordsSelectedByUser) {
+    delete grid.obaprmAllRecordsSelectedByUser;
+  }
   if ((issotrx || !payment) && (grid.selectedIds.length === 0)) {
     OB.APRM.AddPayment.distributeAmount(this.view, this.view.theForm, false);
   } else {
