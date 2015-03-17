@@ -325,6 +325,9 @@ enyo.kind({
     if (inEvent && inEvent.isReturn) {
       if (receipt.get('bp').get('id') !== OB.MobileApp.model.get('businessPartner').get('id')) {
         inEvent.bpartner = receipt.get('bp');
+      } else if (receipt.get('lines').length > 0) {
+        inEvent.bpartner = receipt.get('bp');
+        inEvent.defaultBP = true;
       }
     }
     this.$.modalPaidReceipts.setParams(inEvent);
