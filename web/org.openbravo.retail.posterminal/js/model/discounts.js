@@ -165,24 +165,19 @@
         lines = _.sortBy(receipt.get('lines').models, function (lo) {
           return -lo.getQty();
         });
-        if (lines.length === 0) {
-          // Removing last line, recalculate total
-          receipt.calculateGross();
+        linesWithoutNoDiscCandidated = lines.filter(function (l) {
+          return l.get('noDiscountCandidates') !== true;
+        });
+        if (linesWithoutNoDiscCandidated.length === 0) {
+          receipt.trigger('discountsApplied');
         } else {
-          linesWithoutNoDiscCandidated = lines.filter(function (l) {
-            return l.get('noDiscountCandidates') !== true;
-          });
-          if (linesWithoutNoDiscCandidated.length === 0) {
-            receipt.trigger('discountsApplied');
-          } else {
-            lines.forEach(function (l) {
-              // with new flow discounts -> skipSave =true
-              // in other case -> false
-              if (l.get('noDiscountCandidates') !== true) {
-                this.applyPromotionsImp(receipt, l, OB.MobileApp.model.hasPermission('OBPOS_discount.newFlow', true));
-              }
-            }, this);
-          }
+          lines.forEach(function (l) {
+            // with new flow discounts -> skipSave =true
+            // in other case -> false
+            if (l.get('noDiscountCandidates') !== true) {
+              this.applyPromotionsImp(receipt, l, OB.MobileApp.model.hasPermission('OBPOS_discount.newFlow', true));
+            }
+          }, this);
         }
       }
     },
