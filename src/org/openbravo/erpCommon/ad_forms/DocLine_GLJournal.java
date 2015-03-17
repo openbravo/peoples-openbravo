@@ -35,11 +35,11 @@ public class DocLine_GLJournal extends DocLine {
           switch (Integer.parseInt(AcctType)) {
           case 1:
             // It is similar to ProductInfo.ACCTTYPE_P_Revenue
-            Account_ID = data[0].glitemCreditAcct;
+            Account_ID = data[0].glitemDebitAcct;
             break;
           case 2:
             // It is similar to ProductInfo.ACCTTYPE_P_Expense
-            Account_ID = data[0].glitemDebitAcct;
+            Account_ID = data[0].glitemCreditAcct;
             break;
           }
         }
