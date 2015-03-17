@@ -586,16 +586,6 @@
         'discountedNetPrice': discountedprice,
         'taxLines': taxesline
       });
-
-
-      // Calculate receipt taxes
-      _.each(coll, function (taxRate, taxIndex) {
-        var taxId = taxRate.get('id');
-        if (taxes[taxId]) {
-          //taxes[taxId].net = taxes[taxId].net;
-          taxes[taxId].amount = OB.DEC.toNumber(taxes[taxId].amount);
-        }
-      });
     });    
   };
 
