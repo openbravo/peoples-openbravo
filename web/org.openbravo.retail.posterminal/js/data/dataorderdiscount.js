@@ -7,11 +7,10 @@
  ************************************************************************************
  */
 
-/*global B */
+/*global OB, BigDecimal */
 
 (function () {
 
-  OB = window.OB || {};
   OB.DATA = window.OB.DATA || {};
 
   OB.DATA.OrderDiscount = function (receipt) {
