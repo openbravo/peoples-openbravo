@@ -270,7 +270,6 @@ public class TabAttachments extends HttpSecureAppServlet {
     try {
       String tabId = vars.getStringParameter("tabId");
       String recordIds = vars.getStringParameter("recordIds");
-      String buttonId = vars.getStringParameter("buttonId");
       Tab tab = OBDal.getInstance().get(Tab.class, tabId);
       String tableId = (String) DalUtil.getId(tab.getTable());
 
@@ -290,7 +289,6 @@ public class TabAttachments extends HttpSecureAppServlet {
       response.setContentType("application/zip");
       response.setHeader("Content-Disposition", "attachment; filename=attachments.zip");
       final ZipOutputStream dest = new ZipOutputStream(response.getOutputStream());
-      attachmentFiles.list().toArray();
       HashMap<String, Integer> writtenFiles = new HashMap<String, Integer>();
       for (Attachment attachmentFile : attachmentFiles.list()) {
         String attachmentDirectory = TabAttachments.getAttachmentDirectory(tableId,
