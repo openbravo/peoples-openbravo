@@ -582,6 +582,7 @@
         'taxLines': {}
       }, {silent:true});   
     
+      var resultpromise;
       var product = line.get('product');
       if (line.get('ignoreTaxes') === true || product.get('ignoreTaxes') === true) {
         // No taxes calculation for this line.
@@ -597,10 +598,10 @@
           'discountedNet': line.get('net'),
           'discountedNetPrice': new BigDecimal(String(line.get('price'))),
           'gross': line.get('net'),
-          'discountedGross': line.get('net'),          
+          'discountedGross': line.get('net')        
         }, {silent:true});    
         
-        return Promise.resolve();
+        resultpromise = Promise.resolve();
       } else {
         
         var linepricenet = line.get('price');
@@ -623,26 +624,32 @@
           'discountedNet': discountedNet,
           'discountedNetPrice': discountedprice,
           'gross': linenet,
-          'discountedGross': discountedNet,          
+          'discountedGross': discountedNet         
         }, {silent:true});        
+        
+        
+        
+        
          
         // Calculate taxes...
-        return calcProductTaxesExcPrice(receipt,line, product, linepricenet, linenet, discountedprice, discountedNet).then(function () {
-          // Calculate linerate and taxamount
-          line.set('linerate', OB.DEC.div(line.get('gross'), line.get('net')), {silent:true});        
-          line.set('taxAmount', OB.DEC.sub(line.get('discountedGross'), line.get('discountedNet')), {silent:true});
-        })['catch'](function (reason) {
-          receipt.deleteLine(line);
-          OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
-            popup: 'OB_UI_MessageDialog',
-            args: {
-              header: OB.I18N.getLabel('OBPOS_TaxNotFound_Header'),
-              message: reason
-            }
-          });
-        });
+        resultpromise = calcProductTaxesExcPrice(receipt,line, product, linepricenet, linenet, discountedprice, discountedNet);
       }
-      };
+
+      return resultpromise.then(function () {
+        // Calculate linerate and taxamount
+        line.set('linerate', OB.DEC.div(line.get('gross'), line.get('net')), {silent:true});        
+        line.set('taxAmount', OB.DEC.sub(line.get('discountedGross'), line.get('discountedNet')), {silent:true});
+      })['catch'](function (reason) {
+        receipt.deleteLine(line);
+        OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
+          popup: 'OB_UI_MessageDialog',
+          args: {
+            header: OB.I18N.getLabel('OBPOS_TaxNotFound_Header'),
+            message: reason
+          }
+        });
+      });
+    };
 
   var calcTaxesExcPrice = function (receipt) {
 
