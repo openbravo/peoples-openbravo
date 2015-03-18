@@ -225,6 +225,9 @@ OB.APRM.AddPayment.orderInvoiceOnLoadGrid = function (grid) {
   var issotrx = this.view.theForm.getItem('issotrx').getValue(),
       payment = this.view.theForm.getItem('fin_payment_id').getValue();
   grid.isReady = true;
+  if (grid.obaprmAllRecordsSelectedByUser) {
+    delete grid.obaprmAllRecordsSelectedByUser;
+  }
 
   if ((issotrx || !payment) && (grid.selectedIds.length === 0)) {
     OB.APRM.AddPayment.distributeAmount(this.view, this.view.theForm, false);
@@ -298,7 +301,7 @@ OB.APRM.AddPayment.distributeAmount = function (view, form, onActualPaymentChang
     }
     return;
   } else {
-	// hide the message bar if it is still showing the APRM_NoDistributeMsg message and the distribution is about to be done
+    // hide the message bar if it is still showing the APRM_NoDistributeMsg message and the distribution is about to be done
     message = orderInvoice.contentView.messageBar.text.contents;
     if (message.contains(OB.I18N.getLabel('APRM_NoDistributeMsg'))) {
       orderInvoice.contentView.messageBar.hide();
