@@ -91,7 +91,7 @@ public class AddTransactionFilterExpression implements FilterExpression {
     String bankStatementLineId = context.getString("bankStatementLineId");
     FIN_BankStatementLine bankstatementline = OBDal.getInstance().get(FIN_BankStatementLine.class,
         bankStatementLineId);
-    if (!(bankstatementline.getDramount().equals(BigDecimal.ZERO))) {
+    if (!(bankstatementline.getDramount().compareTo(BigDecimal.ZERO) == 0)) {
       return "BPW";
     } else {
       return "BPD";
@@ -137,7 +137,7 @@ public class AddTransactionFilterExpression implements FilterExpression {
     String bankStatementLineId = context.getString("bankStatementLineId");
     FIN_BankStatementLine bankstatementline = OBDal.getInstance().get(FIN_BankStatementLine.class,
         bankStatementLineId);
-    if (!(bankstatementline.getDramount().equals(BigDecimal.ZERO))) {
+    if (!(bankstatementline.getDramount().compareTo(BigDecimal.ZERO) == 0)) {
       return "0.00";
     } else {
       return bankstatementline.getCramount().toString();
@@ -149,7 +149,7 @@ public class AddTransactionFilterExpression implements FilterExpression {
     String bankStatementLineId = context.getString("bankStatementLineId");
     FIN_BankStatementLine bankstatementline = OBDal.getInstance().get(FIN_BankStatementLine.class,
         bankStatementLineId);
-    if (!(bankstatementline.getDramount().equals(BigDecimal.ZERO))) {
+    if (!(bankstatementline.getDramount().compareTo(BigDecimal.ZERO) == 0)) {
       return bankstatementline.getDramount().toString();
     } else {
       return "0.00";
