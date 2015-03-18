@@ -21284,6 +21284,8 @@ Advanced features are only granted to the automatic roles defined as advanced.]]
 <!--267A3D0068D048C2991366C96CB19590-->  <COLUMNNAME><![CDATA[AD_Table_Navigation_ID]]></COLUMNNAME>
 <!--267A3D0068D048C2991366C96CB19590-->  <NAME><![CDATA[AD_Table_Navigation_ID]]></NAME>
 <!--267A3D0068D048C2991366C96CB19590-->  <PRINTNAME><![CDATA[AD_Table_Navigation_ID]]></PRINTNAME>
+<!--267A3D0068D048C2991366C96CB19590-->  <DESCRIPTION><![CDATA[A table navigation row is a rule that makes the links of Openbravo wich have that table as a reference navigate to a custom tab]]></DESCRIPTION>
+<!--267A3D0068D048C2991366C96CB19590-->  <HELP><![CDATA[The primary key of the table]]></HELP>
 <!--267A3D0068D048C2991366C96CB19590-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--267A3D0068D048C2991366C96CB19590-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--267A3D0068D048C2991366C96CB19590--></AD_ELEMENT>
@@ -29096,6 +29098,8 @@ By disabling this option standard beats will be sent to HeartBeat server, but no
 <!--A4827245681B4DB7AD944A73AF231759-->  <COLUMNNAME><![CDATA[Hqllogic]]></COLUMNNAME>
 <!--A4827245681B4DB7AD944A73AF231759-->  <NAME><![CDATA[HQL Logic]]></NAME>
 <!--A4827245681B4DB7AD944A73AF231759-->  <PRINTNAME><![CDATA[HQL Logic]]></PRINTNAME>
+<!--A4827245681B4DB7AD944A73AF231759-->  <DESCRIPTION><![CDATA[HQL where clause that the destination row has to meet in order to open the specified tab of the rule]]></DESCRIPTION>
+<!--A4827245681B4DB7AD944A73AF231759-->  <HELP><![CDATA[HQL where clause that the destination row has to meet in order to open the specified tab of the rule]]></HELP>
 <!--A4827245681B4DB7AD944A73AF231759-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--A4827245681B4DB7AD944A73AF231759-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--A4827245681B4DB7AD944A73AF231759--></AD_ELEMENT>
