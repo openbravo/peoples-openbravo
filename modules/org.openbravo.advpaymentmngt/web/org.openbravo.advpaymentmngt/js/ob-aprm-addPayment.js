@@ -1059,7 +1059,8 @@ OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall) {
       amountInvOrds = new BigDecimal(String(view.theForm.getItem('amount_inv_ords').getValue() || 0)),
       total = new BigDecimal(String(view.theForm.getItem('total').getValue() || 0)),
       actualPayment = new BigDecimal(String(view.theForm.getItem('actual_payment').getValue() || 0)),
-      overpaymentAction = view.theForm.getItem('overpayment_action').getValue(),
+      overpaymentField= view.theForm.getItem('overpayment_action'),
+      overpaymentAction = overpaymentField.getValue(),
       creditTotalItem = new BigDecimal(String(view.theForm.getItem('used_credit').getValue() || 0)),
       document = (view.theForm.getItem('trxtype')) ? view.theForm.getItem('trxtype').getValue() : "",
       amountField = orderInvoiceGrid.getFieldByColumnName('amount'),
@@ -1109,7 +1110,7 @@ OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall) {
     return false;
   }
 
-  if ((total.compareTo(creditTotalItem) < 0) && (overpaymentAction === 'CR')) {
+  if ((total.compareTo(creditTotalItem) < 0) && (overpaymentField.isVisible() && overpaymentAction === 'CR')) {
     view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_MORECREDITAMOUNT'));
     return false;
   }
