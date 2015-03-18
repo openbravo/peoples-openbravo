@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2012 Openbravo SLU
+ * All portions are Copyright (C) 2011-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,6 +28,6 @@ isc.OBLinkTitleItem.addInterfaceProperties({
 
   linkButtonClick: function () {
     var sourceWindow = this.form.view.standardWindow.windowId;
-    OB.Utilities.openDirectView(sourceWindow, this.refColumnName, this.targetEntity, this.getValue());
+    OB.Utilities.openDirectView(sourceWindow, this.refColumnName, this.targetEntity, this.getValue(), this.navigationTabId);
   }
 });

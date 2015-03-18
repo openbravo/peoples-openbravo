@@ -2482,7 +2482,7 @@ isc.OBViewGrid.addProperties({
           if (dotIndex !== -1 && fldName.endsWith(OB.Constants.IDENTIFIER)) {
             fldName = fldName.substring(0, dotIndex);
           }
-          OB.Utilities.openDirectView(sourceWindow, field.refColumnName, field.targetEntity, record[fldName]);
+          OB.Utilities.openDirectView(sourceWindow, field.refColumnName, field.targetEntity, record[fldName], field.navigationTabId);
         }
       });
     }
