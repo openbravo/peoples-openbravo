@@ -463,13 +463,6 @@
         return (taxRate.get('destinationCountry') === toCountryId) && (taxRate.get('destinationRegion') === toRegionId) && (taxRate.get('country') === fromCountryId) && (taxRate.get('region') === fromRegionId) && (taxRate.get('validFromDate') === validFromDate);
       });
 
-
-      
-      
-      
-      
-      
-
       var discountedGross = new BigDecimal(String(discountedNet));
       var linegross = new BigDecimal(String(linenet));
       var pricenet = new BigDecimal(String(discountedprice)) || (new BigDecimal(String(linepricenet))); // 2 decimals properly rounded.
@@ -569,10 +562,11 @@
         }
       });      
       
+      // Accumulate gross and discounted gross with the taxes calculated in this invocation.
       line.set({
         'tax': linetaxid,
-        'gross': OB.DEC.toNumber(linegross),
-        'discountedGross': OB.DEC.toNumber(discountedGross)
+        'gross': OB.DEC.add(line.get('gross'), OB.DEC.sub(OB.DEC.toNumber(linegross), linenet)),
+        'discountedGross': OB.DEC.add(line.get('discountedGross'), OB.DEC.sub(OB.DEC.toNumber(discountedGross), discountedNet))
       }, {silent:true});
     });    
   };
