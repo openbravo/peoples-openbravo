@@ -721,10 +721,8 @@
       } else if (window.TAXESLOGIC === 'OLDLOGIC') {
         OB.DATA.legacyCalculateTaxes.call(me, callback);
       } else { // 'NEWLOGIC' (default)
-        console.log('starttaxes');
         synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('taxescalculation');
         calcTaxes(me).then(function() {
-          console.log('endtaxes');
           me.trigger('paintTaxes');
           callback();
           OB.UTIL.SynchronizationHelper.finished(synchId, 'taxescalculation');
