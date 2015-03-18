@@ -450,8 +450,8 @@
   
   var calcProductTaxesExcPrice = function (receipt, line, product, linepricenet, linenet, discountedprice, discountedNet) {
 
-    
     return findTaxesCollection(receipt, line, product).then(function (coll) {
+      
       // First calculate the line rate.
       var linetaxid = coll.at(0).get('id');
       var validFromDate = coll.at(0).get('validFromDate');
@@ -563,8 +563,10 @@
       });      
       
       // Accumulate gross and discounted gross with the taxes calculated in this invocation.
+      if (!line.get('tax')) {
+        line.set('tax', linetaxid, {silent: true});
+      }      
       line.set({
-        'tax': linetaxid,
         'gross': OB.DEC.add(line.get('gross'), OB.DEC.sub(OB.DEC.toNumber(linegross), linenet)),
         'discountedGross': OB.DEC.add(line.get('discountedGross'), OB.DEC.sub(OB.DEC.toNumber(discountedGross), discountedNet))
       }, {silent:true});
@@ -620,6 +622,7 @@
           discountedNet = linenet;
         }   
         
+        // Initialize line calculations
         line.set({
           'discountedNet': discountedNet,
           'discountedNetPrice': discountedprice,
@@ -627,12 +630,64 @@
           'discountedGross': discountedNet         
         }, {silent:true});        
         
-        
-        
-        
-         
-        // Calculate taxes...
-        resultpromise = calcProductTaxesExcPrice(receipt,line, product, linepricenet, linenet, discountedprice, discountedNet);
+        resultpromise = isTaxCategoryBOM(product.get('taxCategory')).then(function (isbom) {
+          if (isbom) {
+            // Find the taxid
+            return findTaxesCollection(receipt, line, product).then(function (coll) {
+              // complete the taxid
+              line.set('tax', coll.at(0).get('id'), {silent:true});
+  
+              // BOM, calculate taxes based on the products list
+              return getProductBOM(product.get('id')).then(function (data) {
+  
+                // Calculate the total BOM
+                var totalbom = data.reduce(function (s, productbom) {
+                  return OB.DEC.add(s, OB.DEC.mul(productbom.get('bomprice'), productbom.get('bomquantity')));
+                }, OB.DEC.Zero);
+  
+                // Calculate the corresponding gross and discounted gross for each product in BOM
+                var acclinenet = linenet;
+                var accdiscountedNet = discountedNet;
+                var acclinepricenet = linepricenet;               
+                
+                data.forEach(function (productbom) {
+                  var ratebom = OB.DEC.mul(productbom.get('bomprice'), productbom.get('bomquantity'));
+  
+                  var linenetbom = OB.DEC.div(OB.DEC.mul(ratebom, linenet), totalbom);
+                  acclinenet = OB.DEC.sub(acclinenet, linenetbom);
+                  productbom.set('bomnet', linenetbom);
+
+                  var discountedNetbom = OB.DEC.div(OB.DEC.mul(ratebom, discountedNet), totalbom);
+                  accdiscountedNet = OB.DEC.sub(accdiscountedNet, discountedNetbom);
+                  productbom.set('bomdiscountednet', discountedNetbom);
+
+                  var linepricenetbom = OB.DEC.div(OB.DEC.mul(ratebom, linepricenet), totalbom);
+                  acclinepricenet = OB.DEC.sub(acclinepricenet, linepricenetbom);
+                  productbom.set('bomlinepricenet', linepricenetbom);
+                });
+                // Adjust rounding in the first item of the bom
+                var lastproductbom = data.at(0);
+                lastproductbom.set('bomnet', OB.DEC.add(lastproductbom.get('bomnet'), acclinenet));
+                lastproductbom.set('bomdiscountednet', OB.DEC.add(lastproductbom.get('bomdiscountednet'), accdiscountedNet));
+                lastproductbom.set('bomlinepricenet', OB.DEC.add(lastproductbom.get('bomlinepricenet'), acclinepricenet));
+      
+                return Promise.all(data.map(function (productbom) {
+                  return calcProductTaxesExcPrice(receipt, line, new Backbone.Model({
+                    id: productbom.get('bomproduct'),
+                    taxCategory: productbom.get('bomtaxcategory')
+                  }), 
+                  productbom.get('bomlinepricenet'), 
+                  productbom.get('bomnet'),
+                  new BigDecimal(String(productbom.get('bomdiscountednet'))).divide(new BigDecimal(String(line.get('qty'))), 20, BigDecimal.prototype.ROUND_HALF_UP),
+                  productbom.get('bomdiscountednet'));
+                }));
+              });
+            });
+          } else {
+            // Not BOM, calculate taxes based on the line product
+            return calcProductTaxesExcPrice(receipt,line, product, linepricenet, linenet, discountedprice, discountedNet);
+          }
+        });        
       }
 
       return resultpromise.then(function () {
