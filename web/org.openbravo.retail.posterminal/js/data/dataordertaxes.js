@@ -181,11 +181,14 @@
           });
         }
         line.set({
-          'taxAmount': OB.DEC.add(line.get('taxAmount'), OB.DEC.sub(orggross, linenet)), 'net': OB.DEC.add(line.get('net'), calculatedLineNet),
+          'taxAmount': OB.DEC.add(line.get('taxAmount'), OB.DEC.sub(orggross, linenet)),
+          'net': OB.DEC.add(line.get('net'), calculatedLineNet),
           'pricenet': OB.DEC.add(line.get('pricenet'), roundedLinePriceNet)
         });
 
-        receipt.set('net', OB.DEC.add(receipt.get('net'), calculatedLineNet), {silent:true});
+        receipt.set('net', OB.DEC.add(receipt.get('net'), calculatedLineNet), {
+          silent: true
+        });
 
         //We follow the same formula of function c_get_net_price_from_gross to compute the discounted net
         if (!(_.isNull(discountedGross) || _.isUndefined(discountedGross))) {
@@ -209,7 +212,9 @@
           discountedNet = OB.DEC.mul(pricenet, new BigDecimal(String(line.get('qty'))));
         }
         pricenetcascade = pricenet;
-        line.set('discountedNet', OB.DEC.add(line.get('discountedNet'), discountedNet), {silent:true});
+        line.set('discountedNet', OB.DEC.add(line.get('discountedNet'), discountedNet), {
+          silent: true
+        });
 
         // second calculate tax lines.          
         var taxesline = {};
@@ -372,7 +377,9 @@
           // Find the taxid
           return findTaxesCollection(receipt, line, product).then(function (coll) {
             // complete the taxid
-            line.set('tax', coll.at(0).get('id'), {silent:true});
+            line.set('tax', coll.at(0).get('id'), {
+              silent: true
+            });
 
             // BOM, calculate taxes based on the products list
             return getProductBOM(product.get('id')).then(function (data) {
@@ -419,7 +426,9 @@
         }
       }).then(function () {
         // Calculate linerate
-        line.set('linerate', OB.DEC.div(orggross, line.get('net')), {silent:true});
+        line.set('linerate', OB.DEC.div(orggross, line.get('net')), {
+          silent: true
+        });
       })['catch'](function (reason) {
         receipt.deleteLine(line);
         OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
@@ -447,134 +456,138 @@
         return calcLineTaxesIncPrice(receipt, line);
       }));
       };
-  
+
   var calcProductTaxesExcPrice = function (receipt, line, product, linepricenet, linenet, discountedprice, discountedNet) {
 
-    return findTaxesCollection(receipt, line, product).then(function (coll) {
-      
-      // First calculate the line rate.
-      var linetaxid = coll.at(0).get('id');
-      var validFromDate = coll.at(0).get('validFromDate');
-      var fromCountryId = coll.at(0).get('country');
-      var fromRegionId = coll.at(0).get('region');
-      var toCountryId = coll.at(0).get('destinationCountry');
-      var toRegionId = coll.at(0).get('destinationRegion');
-      coll = _.filter(coll.models, function (taxRate) {
-        return (taxRate.get('destinationCountry') === toCountryId) && (taxRate.get('destinationRegion') === toRegionId) && (taxRate.get('country') === fromCountryId) && (taxRate.get('region') === fromRegionId) && (taxRate.get('validFromDate') === validFromDate);
-      });
+      return findTaxesCollection(receipt, line, product).then(function (coll) {
 
-      var discountedGross = new BigDecimal(String(discountedNet));
-      var linegross = new BigDecimal(String(linenet));
-      var pricenet = new BigDecimal(String(discountedprice)) || (new BigDecimal(String(linepricenet))); // 2 decimals properly rounded.
-      var pricenetcascade = pricenet;
+        // First calculate the line rate.
+        var linetaxid = coll.at(0).get('id');
+        var validFromDate = coll.at(0).get('validFromDate');
+        var fromCountryId = coll.at(0).get('country');
+        var fromRegionId = coll.at(0).get('region');
+        var toCountryId = coll.at(0).get('destinationCountry');
+        var toRegionId = coll.at(0).get('destinationRegion');
+        coll = _.filter(coll.models, function (taxRate) {
+          return (taxRate.get('destinationCountry') === toCountryId) && (taxRate.get('destinationRegion') === toRegionId) && (taxRate.get('country') === fromCountryId) && (taxRate.get('region') === fromRegionId) && (taxRate.get('validFromDate') === validFromDate);
+        });
 
-      // second calculate tax lines.
-      var taxes = receipt.get('taxes');
-      var taxesline = {};
-      var callbackNotInclTax = function (taxRate, taxIndex, taxList) {
-          var pricenetAux = pricenet;
-          if (!taxRate.get('summaryLevel')) {
+        var discountedGross = new BigDecimal(String(discountedNet));
+        var linegross = new BigDecimal(String(linenet));
+        var pricenet = new BigDecimal(String(discountedprice)) || (new BigDecimal(String(linepricenet))); // 2 decimals properly rounded.
+        var pricenetcascade = pricenet;
 
-            var taxId = taxRate.get('id');
-            var rate = new BigDecimal(String(taxRate.get('rate')));
-            rate = rate.divide(new BigDecimal('100'), 20, BigDecimal.prototype.ROUND_HALF_UP);
-            var net = OB.DEC.mul(pricenetAux, line.get('qty')); //=== discountedNet
-            if (taxRate.get('cascade')) {
+        // second calculate tax lines.
+        var taxes = receipt.get('taxes');
+        var taxesline = {};
+        var callbackNotInclTax = function (taxRate, taxIndex, taxList) {
+            var pricenetAux = pricenet;
+            if (!taxRate.get('summaryLevel')) {
 
-              linegross = linegross.multiply(rate.add(BigDecimal.prototype.ONE));
-              discountedGross = discountedGross.add(new BigDecimal(OB.DEC.toNumber(discountedGross.multiply(rate)).toString()));
-              pricenetAux = pricenetcascade;
-            } else if (taxRate.get('taxBase')) {
+              var taxId = taxRate.get('id');
+              var rate = new BigDecimal(String(taxRate.get('rate')));
+              rate = rate.divide(new BigDecimal('100'), 20, BigDecimal.prototype.ROUND_HALF_UP);
+              var net = OB.DEC.mul(pricenetAux, line.get('qty')); //=== discountedNet
+              if (taxRate.get('cascade')) {
 
-              var baseTax = taxesline[taxRate.get('taxBase')];
-              if (!_.isUndefined(baseTax)) { //if the baseTax of this tax have been processed, we skip this tax till baseTax is processed.
-                net = OB.DEC.add(OB.DEC.mul(pricenetAux, line.get('qty')), baseTax.amount);
-                var baseAmount = new BigDecimal(String(linenet)).add(new BigDecimal(String(baseTax.amount)));
-                linegross = linegross.add(baseAmount.multiply(new BigDecimal(String(rate))));
-                var discBaseAmount = new BigDecimal(String(discountedNet)).add(new BigDecimal(String(baseTax.amount)));
-                discountedGross = discountedGross.add(discBaseAmount.multiply(new BigDecimal(String(rate))));
-              } else { //if the baseTax of this tax have not been processed yet, we skip this tax till baseTax is processed.
-                return;
+                linegross = linegross.multiply(rate.add(BigDecimal.prototype.ONE));
+                discountedGross = discountedGross.add(new BigDecimal(OB.DEC.toNumber(discountedGross.multiply(rate)).toString()));
+                pricenetAux = pricenetcascade;
+              } else if (taxRate.get('taxBase')) {
+
+                var baseTax = taxesline[taxRate.get('taxBase')];
+                if (!_.isUndefined(baseTax)) { //if the baseTax of this tax have been processed, we skip this tax till baseTax is processed.
+                  net = OB.DEC.add(OB.DEC.mul(pricenetAux, line.get('qty')), baseTax.amount);
+                  var baseAmount = new BigDecimal(String(linenet)).add(new BigDecimal(String(baseTax.amount)));
+                  linegross = linegross.add(baseAmount.multiply(new BigDecimal(String(rate))));
+                  var discBaseAmount = new BigDecimal(String(discountedNet)).add(new BigDecimal(String(baseTax.amount)));
+                  discountedGross = discountedGross.add(discBaseAmount.multiply(new BigDecimal(String(rate))));
+                } else { //if the baseTax of this tax have not been processed yet, we skip this tax till baseTax is processed.
+                  return;
+                }
+              } else {
+                linegross = linegross.add(new BigDecimal(String(linenet)).multiply(new BigDecimal(String(rate))));
+                discountedGross = discountedGross.add(new BigDecimal(OB.DEC.toNumber(new BigDecimal(String(discountedNet)).multiply(rate)).toString()));
+              }
+
+              var roundingLoses;
+              var amount = OB.DEC.mul(net, rate);
+              pricenetcascade = pricenetAux.multiply(rate.add(BigDecimal.prototype.ONE));
+
+              taxesline[taxId] = {};
+              taxesline[taxId].name = taxRate.get('name');
+              taxesline[taxId].rate = taxRate.get('rate');
+              taxesline[taxId].net = net;
+              taxesline[taxId].amount = amount;
+              if (taxes[taxId]) {
+                taxes[taxId].net = OB.DEC.add(taxes[taxId].net, OB.DEC.mul(discountedprice, line.get('qty')));
+                if (discountedNet !== linenet) {
+                  roundingLoses = discountedprice.subtract(discountedprice).multiply(new BigDecimal('2'));
+                  if (roundingLoses.compareTo(BigDecimal.prototype.ZERO) !== 0) {
+                    roundingLoses = OB.DEC.toNumber(roundingLoses);
+                    taxes[taxId].net = OB.DEC.add(taxes[taxId].net, roundingLoses);
+                  }
+                }
+                taxes[taxId].amount = OB.DEC.add(taxes[taxId].amount, amount);
+              } else {
+                taxes[taxId] = {};
+                taxes[taxId].name = taxRate.get('name');
+                taxes[taxId].rate = taxRate.get('rate');
+                taxes[taxId].net = net;
+                if (discountedNet !== linenet) {
+                  //If we lost precision because the price that we are showing is not the real one
+                  //we correct this small number in tax net.
+                  roundingLoses = discountedprice.subtract(discountedprice).multiply(new BigDecimal('2'));
+                  if (roundingLoses.compareTo(BigDecimal.prototype.ZERO) !== 0) {
+                    roundingLoses = OB.DEC.toNumber(roundingLoses);
+                    taxes[taxId].net = OB.DEC.add(taxes[taxId].net, roundingLoses);
+                  }
+                }
+                taxes[taxId].amount = amount;
               }
             } else {
-              linegross = linegross.add(new BigDecimal(String(linenet)).multiply(new BigDecimal(String(rate))));
-              discountedGross = discountedGross.add(new BigDecimal(OB.DEC.toNumber(new BigDecimal(String(discountedNet)).multiply(rate)).toString()));
+              linetaxid = taxRate.get('id');
             }
-
-            var roundingLoses;
-            var amount = OB.DEC.mul(net, rate);
-            pricenetcascade = pricenetAux.multiply(rate.add(BigDecimal.prototype.ONE));
-
-            taxesline[taxId] = {};
-            taxesline[taxId].name = taxRate.get('name');
-            taxesline[taxId].rate = taxRate.get('rate');
-            taxesline[taxId].net = net;
-            taxesline[taxId].amount = amount;
-            if (taxes[taxId]) {
-              taxes[taxId].net = OB.DEC.add(taxes[taxId].net, OB.DEC.mul(discountedprice, line.get('qty')));
-              if (discountedNet !== linenet) {
-                roundingLoses = discountedprice.subtract(discountedprice).multiply(new BigDecimal('2'));
-                if (roundingLoses.compareTo(BigDecimal.prototype.ZERO) !== 0) {
-                  roundingLoses = OB.DEC.toNumber(roundingLoses);
-                  taxes[taxId].net = OB.DEC.add(taxes[taxId].net, roundingLoses);
-                }
-              }
-              taxes[taxId].amount = OB.DEC.add(taxes[taxId].amount, amount);
-            } else {
-              taxes[taxId] = {};
-              taxes[taxId].name = taxRate.get('name');
-              taxes[taxId].rate = taxRate.get('rate');
-              taxes[taxId].net = net;
-              if (discountedNet !== linenet) {
-                //If we lost precision because the price that we are showing is not the real one
-                //we correct this small number in tax net.
-                roundingLoses = discountedprice.subtract(discountedprice).multiply(new BigDecimal('2'));
-                if (roundingLoses.compareTo(BigDecimal.prototype.ZERO) !== 0) {
-                  roundingLoses = OB.DEC.toNumber(roundingLoses);
-                  taxes[taxId].net = OB.DEC.add(taxes[taxId].net, roundingLoses);
-                }
-              }
-              taxes[taxId].amount = amount;
-            }
-          } else {
-            linetaxid = taxRate.get('id');
-          }
-          //Remove processed tax from the collection
-          taxList.splice(taxList.indexOf(taxRate), 1);
-          };
-      var collClone = coll.slice(0);
-      while (collClone.length > 0) { //Iterate taxes until the collection is empty
-        _.each(collClone, callbackNotInclTax);
-      }
-
-      // Accumulate to taxes line
-      var accumtaxesline = line.get('taxLines');
-      _.each(taxesline, function (taxline, taxid) {
-        if (accumtaxesline[taxid]) {
-          accumtaxesline[taxid].net = OB.DEC.add(accumtaxesline[taxid].net, taxline.net);
-          accumtaxesline[taxid].amount = OB.DEC.add(accumtaxesline[taxid].amount, taxline.amount);
-        } else {
-          accumtaxesline[taxid] = {};
-          accumtaxesline[taxid].name = taxline.name;
-          accumtaxesline[taxid].rate = taxline.rate;
-          accumtaxesline[taxid].net = taxline.net;
-          accumtaxesline[taxid].amount = taxline.amount;
+            //Remove processed tax from the collection
+            taxList.splice(taxList.indexOf(taxRate), 1);
+            };
+        var collClone = coll.slice(0);
+        while (collClone.length > 0) { //Iterate taxes until the collection is empty
+          _.each(collClone, callbackNotInclTax);
         }
-      });      
-      
-      // Accumulate gross and discounted gross with the taxes calculated in this invocation.
-      if (!line.get('tax')) {
-        line.set('tax', linetaxid, {silent: true});
-      }      
-      line.set({
-        'gross': OB.DEC.add(line.get('gross'), OB.DEC.sub(OB.DEC.toNumber(linegross), linenet)),
-        'discountedGross': OB.DEC.add(line.get('discountedGross'), OB.DEC.sub(OB.DEC.toNumber(discountedGross), discountedNet))
-      }, {silent:true});
-    });    
-  };
+
+        // Accumulate to taxes line
+        var accumtaxesline = line.get('taxLines');
+        _.each(taxesline, function (taxline, taxid) {
+          if (accumtaxesline[taxid]) {
+            accumtaxesline[taxid].net = OB.DEC.add(accumtaxesline[taxid].net, taxline.net);
+            accumtaxesline[taxid].amount = OB.DEC.add(accumtaxesline[taxid].amount, taxline.amount);
+          } else {
+            accumtaxesline[taxid] = {};
+            accumtaxesline[taxid].name = taxline.name;
+            accumtaxesline[taxid].rate = taxline.rate;
+            accumtaxesline[taxid].net = taxline.net;
+            accumtaxesline[taxid].amount = taxline.amount;
+          }
+        });
+
+        // Accumulate gross and discounted gross with the taxes calculated in this invocation.
+        if (!line.get('tax')) {
+          line.set('tax', linetaxid, {
+            silent: true
+          });
+        }
+        line.set({
+          'gross': OB.DEC.add(line.get('gross'), OB.DEC.sub(OB.DEC.toNumber(linegross), linenet)),
+          'discountedGross': OB.DEC.add(line.get('discountedGross'), OB.DEC.sub(OB.DEC.toNumber(discountedGross), discountedNet))
+        }, {
+          silent: true
+        });
+      });
+      };
 
   var calcLineTaxesExcPrice = function (receipt, line) {
-    
+
       line.set({
         'pricenet': line.get('price'),
         'net': OB.DEC.mul(line.get('price'), line.get('qty')),
@@ -582,8 +595,10 @@
         'tax': null,
         'taxAmount': OB.DEC.Zero,
         'taxLines': {}
-      }, {silent:true});   
-    
+      }, {
+        silent: true
+      });
+
       var resultpromise;
       var product = line.get('product');
       if (line.get('ignoreTaxes') === true || product.get('ignoreTaxes') === true) {
@@ -593,19 +608,21 @@
           amount: 0,
           rate: 0,
           net: line.get('net')
-        };        
-        
+        };
+
         line.set({
           'tax': OB.MobileApp.model.get('terminal').taxexempid,
           'discountedNet': line.get('net'),
           'discountedNetPrice': new BigDecimal(String(line.get('price'))),
           'gross': line.get('net'),
-          'discountedGross': line.get('net')        
-        }, {silent:true});    
-        
+          'discountedGross': line.get('net')
+        }, {
+          silent: true
+        });
+
         resultpromise = Promise.resolve();
       } else {
-        
+
         var linepricenet = line.get('price');
         var linenet = line.get('net');
         var discAmt = null;
@@ -620,39 +637,43 @@
         } else {
           discountedprice = new BigDecimal(String(line.get('price')));
           discountedNet = linenet;
-        }   
-        
+        }
+
         // Initialize line calculations
         line.set({
           'discountedNet': discountedNet,
           'discountedNetPrice': discountedprice,
           'gross': linenet,
-          'discountedGross': discountedNet         
-        }, {silent:true});        
-        
+          'discountedGross': discountedNet
+        }, {
+          silent: true
+        });
+
         resultpromise = isTaxCategoryBOM(product.get('taxCategory')).then(function (isbom) {
           if (isbom) {
             // Find the taxid
             return findTaxesCollection(receipt, line, product).then(function (coll) {
               // complete the taxid
-              line.set('tax', coll.at(0).get('id'), {silent:true});
-  
+              line.set('tax', coll.at(0).get('id'), {
+                silent: true
+              });
+
               // BOM, calculate taxes based on the products list
               return getProductBOM(product.get('id')).then(function (data) {
-  
+
                 // Calculate the total BOM
                 var totalbom = data.reduce(function (s, productbom) {
                   return OB.DEC.add(s, OB.DEC.mul(productbom.get('bomprice'), productbom.get('bomquantity')));
                 }, OB.DEC.Zero);
-  
+
                 // Calculate the corresponding gross and discounted gross for each product in BOM
                 var acclinenet = linenet;
                 var accdiscountedNet = discountedNet;
-                var acclinepricenet = linepricenet;               
-                
+                var acclinepricenet = linepricenet;
+
                 data.forEach(function (productbom) {
                   var ratebom = OB.DEC.mul(productbom.get('bomprice'), productbom.get('bomquantity'));
-  
+
                   var linenetbom = OB.DEC.div(OB.DEC.mul(ratebom, linenet), totalbom);
                   acclinenet = OB.DEC.sub(acclinenet, linenetbom);
                   productbom.set('bomnet', linenetbom);
@@ -670,30 +691,30 @@
                 lastproductbom.set('bomnet', OB.DEC.add(lastproductbom.get('bomnet'), acclinenet));
                 lastproductbom.set('bomdiscountednet', OB.DEC.add(lastproductbom.get('bomdiscountednet'), accdiscountedNet));
                 lastproductbom.set('bomlinepricenet', OB.DEC.add(lastproductbom.get('bomlinepricenet'), acclinepricenet));
-      
+
                 return Promise.all(data.map(function (productbom) {
                   return calcProductTaxesExcPrice(receipt, line, new Backbone.Model({
                     id: productbom.get('bomproduct'),
                     taxCategory: productbom.get('bomtaxcategory')
-                  }), 
-                  productbom.get('bomlinepricenet'), 
-                  productbom.get('bomnet'),
-                  new BigDecimal(String(productbom.get('bomdiscountednet'))).divide(new BigDecimal(String(line.get('qty'))), 20, BigDecimal.prototype.ROUND_HALF_UP),
-                  productbom.get('bomdiscountednet'));
+                  }), productbom.get('bomlinepricenet'), productbom.get('bomnet'), new BigDecimal(String(productbom.get('bomdiscountednet'))).divide(new BigDecimal(String(line.get('qty'))), 20, BigDecimal.prototype.ROUND_HALF_UP), productbom.get('bomdiscountednet'));
                 }));
               });
             });
           } else {
             // Not BOM, calculate taxes based on the line product
-            return calcProductTaxesExcPrice(receipt,line, product, linepricenet, linenet, discountedprice, discountedNet);
+            return calcProductTaxesExcPrice(receipt, line, product, linepricenet, linenet, discountedprice, discountedNet);
           }
-        });        
+        });
       }
 
       return resultpromise.then(function () {
         // Calculate linerate and taxamount
-        line.set('linerate', OB.DEC.div(line.get('gross'), line.get('net')), {silent:true});        
-        line.set('taxAmount', OB.DEC.sub(line.get('discountedGross'), line.get('discountedNet')), {silent:true});
+        line.set('linerate', OB.DEC.div(line.get('gross'), line.get('net')), {
+          silent: true
+        });
+        line.set('taxAmount', OB.DEC.sub(line.get('discountedGross'), line.get('discountedNet')), {
+          silent: true
+        });
       })['catch'](function (reason) {
         receipt.deleteLine(line);
         OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
@@ -704,7 +725,7 @@
           }
         });
       });
-    };
+      };
 
   var calcTaxesExcPrice = function (receipt) {
 
@@ -778,7 +799,7 @@
         OB.DATA.legacyCalculateTaxes.call(me, callback);
       } else { // 'NEWLOGIC' (default)
         synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('taxescalculation');
-        calcTaxes(me).then(function() {
+        calcTaxes(me).then(function () {
           me.trigger('paintTaxes');
           callback();
           OB.UTIL.SynchronizationHelper.finished(synchId, 'taxescalculation');
@@ -787,4 +808,3 @@
     };
   };
 }());
-
