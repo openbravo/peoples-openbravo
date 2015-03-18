@@ -110,6 +110,9 @@ enyo.kind({
   dataReadyFunction: function (data, inEvent) {
     var index = 0,
       result = null;
+    if (this.destroyed) {
+      return;
+    }
     if (data) {
       this.collection.reset(data.models);
     } else {
