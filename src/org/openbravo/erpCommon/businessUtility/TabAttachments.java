@@ -276,9 +276,11 @@ public class TabAttachments extends HttpSecureAppServlet {
       // Checks if the user has readable access to the record where the file is attached
       Entity entity = ModelProvider.getInstance().getEntityByTableId(tableId);
       if (entity != null) {
-        Object object = OBDal.getInstance().get(entity.getMappingClass(), recordIds);
-        if (object instanceof OrganizationEnabled) {
-          SecurityChecker.getInstance().checkReadableAccess((OrganizationEnabled) object);
+        for (String recordId : recordIds.split(",")) {
+          Object object = OBDal.getInstance().get(entity.getMappingClass(), recordId);
+          if (object instanceof OrganizationEnabled) {
+            SecurityChecker.getInstance().checkReadableAccess((OrganizationEnabled) object);
+          }
         }
       }
 
