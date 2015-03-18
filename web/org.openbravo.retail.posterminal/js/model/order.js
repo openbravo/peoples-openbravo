@@ -689,7 +689,6 @@
       }
 
       this.set('isEditable', _order.get('isEditable'));
-      this.trigger('calculategross');
       this.trigger('change');
       this.trigger('clear');
     },
