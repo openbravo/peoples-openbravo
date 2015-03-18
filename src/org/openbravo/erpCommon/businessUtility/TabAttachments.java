@@ -304,6 +304,10 @@ public class TabAttachments extends HttpSecureAppServlet {
         } else {
           int num = writtenFiles.get(file.getName()) + 1;
           int indDot = file.getName().lastIndexOf(".");
+          if (indDot == -1) {
+            // file has no extension
+            indDot = file.getName().length();
+          }
           zipName = file.getName().substring(0, indDot) + " (" + num + ")"
               + file.getName().substring(indDot);
           writtenFiles.put(file.getName(), new Integer(num));
