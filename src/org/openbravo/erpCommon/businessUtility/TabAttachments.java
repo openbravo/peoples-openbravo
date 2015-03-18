@@ -293,8 +293,8 @@ public class TabAttachments extends HttpSecureAppServlet {
       attachmentFiles.list().toArray();
       HashMap<String, Integer> writtenFiles = new HashMap<String, Integer>();
       for (Attachment attachmentFile : attachmentFiles.list()) {
-        String attachmentDirectory = TabAttachments.getAttachmentDirectory(tableId, recordIds,
-            attachmentFile.getName());
+        String attachmentDirectory = TabAttachments.getAttachmentDirectory(tableId,
+            attachmentFile.getRecord(), attachmentFile.getName());
         final File file = new File(globalParameters.strFTPDirectory + "/" + attachmentDirectory,
             attachmentFile.getName());
         String zipName = "";
