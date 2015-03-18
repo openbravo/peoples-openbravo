@@ -53,7 +53,6 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.materialmgmt.CSResponseGetStockParam;
 import org.openbravo.materialmgmt.StockUtils;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchronization;
 import org.openbravo.mobile.core.process.JSONPropertyToEntity;
@@ -61,7 +60,6 @@ import org.openbravo.mobile.core.process.PropertyByType;
 import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.ad.access.InvoiceLineTax;
 import org.openbravo.model.ad.access.OrderLineTax;
-import org.openbravo.model.ad.ui.Process;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.businesspartner.Location;
 import org.openbravo.model.common.enterprise.DocumentType;
@@ -841,12 +839,8 @@ public class OrderLoader extends POSDataSynchronizationProcess {
       } else {
         HashMap<String, ShipmentInOutLine> usedBins = new HashMap<String, ShipmentInOutLine>();
         if (pendingQty.compareTo(BigDecimal.ZERO) > 0) {
-          // The M_GetStock function is used
-          Process process = OBDal.getInstance().get(Process.class,
-              "FF80818132C964E30132C9747257002E");
 
           String id = callProcessGetStock(
-              process,
               orderLine.getId(),
               (String) DalUtil.getId(orderLine.getClient()),
               (String) DalUtil.getId(orderLine.getOrganization()),
@@ -1745,10 +1739,9 @@ public class OrderLoader extends POSDataSynchronizationProcess {
 
   }
 
-  private static String callProcessGetStock(org.openbravo.model.ad.ui.Process process,
-      String recordID, String clientId, String orgId, String productId, String uomId,
-      String warehouseId, String attributesetinstanceId, BigDecimal quantity,
-      String warehouseRuleId, String reservationId) {
+  private static String callProcessGetStock(String recordID, String clientId, String orgId,
+      String productId, String uomId, String warehouseId, String attributesetinstanceId,
+      BigDecimal quantity, String warehouseRuleId, String reservationId) {
     String processId = SequenceIdData.getUUID();
     OBContext.setAdminMode();
     try {
@@ -1758,10 +1751,9 @@ public class OrderLoader extends POSDataSynchronizationProcess {
           + clientId + "', '" + warehouseRuleId + "', '" + uomId
           + "', null, null, null, null, null, '" + reservationId + "', 'N'");
       long initGetStockProcedureCall = System.currentTimeMillis();
-      CSResponseGetStockParam responseParam = StockUtils.getStock(processId, recordID, quantity,
-          productId, null, warehouseId, null, orgId, attributesetinstanceId, OBContext
-              .getOBContext().getUser().getId(), clientId, warehouseRuleId, uomId, null, null,
-          null, null, null, reservationId, "N");
+      StockUtils.getStock(processId, recordID, quantity, productId, null, warehouseId, null, orgId,
+          attributesetinstanceId, OBContext.getOBContext().getUser().getId(), clientId,
+          warehouseRuleId, uomId, null, null, null, null, null, reservationId, "N");
       long elapsedGetStockProcedureCall = (System.currentTimeMillis() - initGetStockProcedureCall);
       log.debug("Partial time to execute callGetStock Procedure Call() : "
           + elapsedGetStockProcedureCall);

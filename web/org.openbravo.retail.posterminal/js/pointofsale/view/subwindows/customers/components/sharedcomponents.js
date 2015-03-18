@@ -109,7 +109,10 @@ enyo.kind({
   },
   dataReadyFunction: function (data, inEvent) {
     var index = 0,
-      result = null;
+        result = null;
+    if (this.destroyed) {
+      return;
+    }
     if (data) {
       this.collection.reset(data.models);
     } else {
@@ -195,7 +198,7 @@ enyo.kind({
   },
   saveCustomer: function (inSender, inEvent) {
     var me = this,
-      sw = me.subWindow;
+        sw = me.subWindow;
 
     function getCustomerValues(params) {
       me.waterfall('onSaveChange', {
@@ -260,7 +263,7 @@ enyo.kind({
     this.attributeContainer = this.$.customerAttributes;
     enyo.forEach(this.newAttributes, function (natt) {
       var resultDisplay = true,
-        undf;
+          undf;
       if (natt.displayLogic !== undf && natt.displayLogic !== null) {
         if (enyo.isFunction(natt.displayLogic)) {
           resultDisplay = natt.displayLogic(this);
