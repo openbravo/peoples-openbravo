@@ -983,10 +983,4 @@
     IDENTIFIER: '_identifier'
   };
 
-  OB.Format = window.OB.Format || {};
-
-  OB.I18N = window.OB.I18N || {};
-
-  OB.I18N.labels = {};
-
 }());
