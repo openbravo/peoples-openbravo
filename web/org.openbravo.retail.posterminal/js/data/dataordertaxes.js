@@ -110,9 +110,8 @@
         });
 
         var taxeslineAux = {};
-        var collClone = coll.slice(0);
-        while (collClone.length > 0) { //Iterate taxes until the collection is empty
-          _.each(collClone, function (taxRate, taxIndex, taxList) {
+
+        var callbackTaxRate = function (taxRate, taxIndex, taxList) {
             if (!taxRate.get('summaryLevel')) {
 
               var taxId = taxRate.get('id');
@@ -156,7 +155,10 @@
             }
             //Remove processed tax from the collection
             taxList.splice(taxList.indexOf(taxRate), 1);
-          });
+            };
+        var collClone = coll.slice(0);
+        while (collClone.length > 0) { //Iterate taxes until the collection is empty
+          _.each(collClone, callbackTaxRate);
         }
 
         // the line net price is calculated by doing price*price/(price*rate), as it is done in
@@ -216,11 +218,9 @@
           silent: true
         });
 
-        // second calculate tax lines.          
+        // second calculate tax lines.  
         var taxesline = {};
-        collClone = coll.slice(0);
-        while (collClone.length > 0) { //Iterate taxes until the collection is empty
-          _.each(collClone, function (taxRate, taxIndex, taxList) {
+        var callbackTaxLinesCreate = function (taxRate, taxIndex, taxList) {
             var pricenetAux = pricenet;
             if (!taxRate.get('summaryLevel')) {
 
@@ -252,7 +252,10 @@
             }
             //Remove processed tax from the collection
             taxList.splice(taxList.indexOf(taxRate), 1);
-          });
+            };
+        collClone = coll.slice(0);
+        while (collClone.length > 0) { //Iterate taxes until the collection is empty
+          _.each(collClone, callbackTaxLinesCreate);
         }
 
         // We need to make a final adjustment: we will sum all the tax lines,
