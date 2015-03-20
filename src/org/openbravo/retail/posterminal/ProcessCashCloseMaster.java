@@ -80,7 +80,7 @@ public class ProcessCashCloseMaster extends JSONProcessSimple {
    *          Parent cash up id.
    * @return
    */
-  private OBPOSAppCashup getTerminalCashUp(String posterminal, String parentCashUp) {
+  public static OBPOSAppCashup getTerminalCashUp(String posterminal, String parentCashUp) {
     OBCriteria<OBPOSAppCashup> obCriteria = OBDal.getInstance()
         .createCriteria(OBPOSAppCashup.class);
     obCriteria.add(Restrictions.eq(OBPOSAppCashup.PROPERTY_POSTERMINAL + ".id", posterminal));
@@ -106,7 +106,8 @@ public class ProcessCashCloseMaster extends JSONProcessSimple {
         + OBPOSPaymentMethodCashup.PROPERTY_TOTALDEPOSITS + "), sum("
         + OBPOSPaymentMethodCashup.PROPERTY_TOTALDROPS + "), sum("
         + OBPOSPaymentMethodCashup.PROPERTY_TOTALRETURNS + "), sum("
-        + OBPOSPaymentMethodCashup.PROPERTY_TOTALSALES + ") " + "from OBPOS_Paymentmethodcashup "
+        + OBPOSPaymentMethodCashup.PROPERTY_TOTALSALES + "), sum( "
+        + OBPOSPaymentMethodCashup.PROPERTY_AMOUNTTOKEEP + ") " + "from OBPOS_Paymentmethodcashup "
         + "where cashUp.id in (" + cashUpIds + ") and paymentType.paymentMethod.isshared = 'Y'"
         + "group by 1";
     final Session session = OBDal.getInstance().getSession();
@@ -121,6 +122,7 @@ public class ProcessCashCloseMaster extends JSONProcessSimple {
       paymentCashup.put("totalDrops", item[3]);
       paymentCashup.put("totalReturns", item[4]);
       paymentCashup.put("totalSales", item[5]);
+      paymentCashup.put("amountToKeep", item[6]);
       payments.put(paymentCashup);
     }
   }

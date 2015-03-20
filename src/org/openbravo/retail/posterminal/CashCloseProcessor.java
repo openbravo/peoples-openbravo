@@ -52,6 +52,11 @@ public class CashCloseProcessor {
 
   public JSONObject processCashClose(OBPOSApplications posTerminal, JSONObject jsonCashup,
       JSONArray cashMgmtIds, Date cashUpDate) throws Exception {
+    return processCashClose(posTerminal, jsonCashup, cashMgmtIds, cashUpDate, null);
+  }
+
+  public JSONObject processCashClose(OBPOSApplications posTerminal, JSONObject jsonCashup,
+      JSONArray cashMgmtIds, Date cashUpDate, List<String> slaveCashupIds) throws Exception {
 
     long t0 = System.currentTimeMillis();
 
@@ -112,7 +117,7 @@ public class CashCloseProcessor {
           OBDal.getInstance().save(depositTransaction);
         }
       }
-      associateTransactions(paymentType, reconciliation, cashUpId, cashMgmtIds);
+      associateTransactions(paymentType, reconciliation, cashUpId, cashMgmtIds, slaveCashupIds);
     }
 
     long t1 = System.currentTimeMillis();
@@ -158,16 +163,26 @@ public class CashCloseProcessor {
   }
 
   protected void associateTransactions(OBPOSAppPayment paymentType,
-      FIN_Reconciliation reconciliation, String cashUpId, JSONArray cashMgmtIds) {
+      FIN_Reconciliation reconciliation, String cashUpId, JSONArray cashMgmtIds,
+      List<String> slaveCashupIds) {
     String orderTransactionsQueryHQL = " as fintrans, FIN_Payment_ScheduleDetail as schedDetail"
         + " where schedDetail.paymentDetails.finPayment = fintrans.finPayment"
-        + " and fintrans.account=:account and fintrans.reconciliation is null"
-        + " and schedDetail.orderPaymentSchedule.order.obposAppCashup=:cashUpId";
+        + " and fintrans.account=:account and fintrans.reconciliation is null";
+    if (slaveCashupIds == null) {
+      orderTransactionsQueryHQL += " and schedDetail.orderPaymentSchedule.order.obposAppCashup=:cashUpId";
+    } else {
+      orderTransactionsQueryHQL += " and schedDetail.orderPaymentSchedule.order.obposAppCashup in (:cashUpIds)";
+    }
 
     OBQuery<FIN_FinaccTransaction> orderTransactionsQuery = OBDal.getInstance().createQuery(
         FIN_FinaccTransaction.class, orderTransactionsQueryHQL);
     orderTransactionsQuery.setNamedParameter("account", paymentType.getFinancialAccount());
-    orderTransactionsQuery.setNamedParameter("cashUpId", cashUpId);
+    if (slaveCashupIds == null) {
+      orderTransactionsQuery.setNamedParameter("cashUpId", cashUpId);
+    } else {
+      slaveCashupIds.add(cashUpId);
+      orderTransactionsQuery.setNamedParameter("cashUpIds", slaveCashupIds);
+    }
     associateTransactionsFromQuery(orderTransactionsQuery, reconciliation);
 
     List<String> cashMgmtIdsList = new ArrayList<String>();
@@ -179,8 +194,14 @@ public class CashCloseProcessor {
       }
     }
     OBQuery<FIN_FinaccTransaction> cashMgmtTransactionsQuery = OBDal.getInstance().createQuery(
-        FIN_FinaccTransaction.class, "where obposAppCashup.id=:cashupId and account.id=:account");
-    cashMgmtTransactionsQuery.setNamedParameter("cashupId", cashUpId);
+        FIN_FinaccTransaction.class,
+        "where obposAppCashup.id " + (slaveCashupIds == null ? "= :cashupId" : "in (:cashupIds)")
+            + " and account.id=:account");
+    if (slaveCashupIds == null) {
+      cashMgmtTransactionsQuery.setNamedParameter("cashupId", cashUpId);
+    } else {
+      cashMgmtTransactionsQuery.setNamedParameter("cashupIds", slaveCashupIds);
+    }
     cashMgmtTransactionsQuery.setNamedParameter("account", paymentType.getFinancialAccount()
         .getId());
     associateTransactionsFromQuery(cashMgmtTransactionsQuery, reconciliation);

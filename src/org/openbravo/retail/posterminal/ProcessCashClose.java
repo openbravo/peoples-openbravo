@@ -9,6 +9,7 @@
 package org.openbravo.retail.posterminal;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -108,6 +109,7 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
             OBPOSAppCashup.class, query);
         appCashupQuery.setNamedParameter("parantCashupId", cashUpId);
         List<OBPOSAppCashup> slaveCashupList = appCashupQuery.list();
+        List<String> slaveCashupIds = new ArrayList<String>();
         for (OBPOSAppCashup slaveCashup : slaveCashupList) {
           String dbJsoncashup = slaveCashup.getJsoncashup();
           if (StringUtils.isEmpty(dbJsoncashup)) {
@@ -117,14 +119,17 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
           }
           JSONObject slaveJsonCashup = new JSONObject(dbJsoncashup);
           doReconciliationAndInvoices(slaveCashup.getPOSTerminal(), slaveCashup.getId(),
-              slaveCashup.getCashUpDate(), slaveJsonCashup, jsonData);
+              slaveCashup.getCashUpDate(), slaveJsonCashup, jsonData, false, null);
+          slaveCashupIds.add(slaveCashup.getId());
         }
         // Reconciliation and invoices of master
-        doReconciliationAndInvoices(posTerminal, cashUpId, cashUpDate, jsonCashup, jsonData);
+        doReconciliationAndInvoices(posTerminal, cashUpId, cashUpDate, jsonCashup, jsonData, true,
+            slaveCashupIds);
         // Accumulate slave Payment Method Cashup on Master
         doAccumulatePaymentMethodCashup(cashUpId);
       } else {
-        doReconciliationAndInvoices(posTerminal, cashUpId, cashUpDate, jsonCashup, jsonData);
+        doReconciliationAndInvoices(posTerminal, cashUpId, cashUpDate, jsonCashup, jsonData, true,
+            null);
       }
     } else {
       // This cashup is a cash order. Nothing needs to be done
@@ -209,10 +214,12 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
   }
 
   private void doReconciliationAndInvoices(OBPOSApplications posTerminal, String cashUpId,
-      Date cashUpDate, JSONObject jsonCashup, JSONObject jsonData) throws Exception {
+      Date cashUpDate, JSONObject jsonCashup, JSONObject jsonData, boolean skipSlave,
+      List<String> slaveCashupIds) throws Exception {
     // check if there is a reconciliation in draft status
     for (OBPOSAppPayment payment : posTerminal.getOBPOSAppPaymentList()) {
-      if (posTerminal.getMasterterminal() != null && payment.getPaymentMethod().isShared()) {
+      if (skipSlave && posTerminal.getMasterterminal() != null
+          && payment.getPaymentMethod().isShared()) {
         // Skip share payment method on slave terminals
         continue;
       }
@@ -249,7 +256,8 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
 
       CashCloseProcessor processor = getCashCloseProcessor();
       JSONArray cashMgmtIds = jsonCashup.getJSONArray("cashMgmtIds");
-      JSONObject result = processor.processCashClose(posTerm, jsonCashup, cashMgmtIds, cashUpDate);
+      JSONObject result = processor.processCashClose(posTerm, jsonCashup, cashMgmtIds, cashUpDate,
+          slaveCashupIds);
       // add the messages returned by processCashClose...
       jsonData.put("messages", result.opt("messages"));
       jsonData.put("next", result.opt("next"));
