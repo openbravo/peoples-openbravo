@@ -442,7 +442,7 @@ public class CashUpReport extends HttpSecureAppServlet {
         String hqlDifferenceDeposit = "select trans.paymentAmount, trans.depositAmount  "
             + "from org.openbravo.retail.posterminal.OBPOSAppPayment as payment, org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction as trans "
             + "where trans.gLItem=payment.paymentMethod.cashDifferences and trans.reconciliation=? "
-            + "and trans.account=payment.financialAccount";
+            + "and trans.account=payment.financialAccount and payment.obposApplications.masterterminal is null ";
         Query differenceDepositQuery = OBDal.getInstance().getSession()
             .createQuery(hqlDifferenceDeposit);
         differenceDepositQuery.setString(0, recons.get(i).getReconciliation().getId());
@@ -697,9 +697,8 @@ public class CashUpReport extends HttpSecureAppServlet {
       parameters.put("GROSS_RETURNS_LABEL",
           OBMessageUtils.getI18NMessage("OBPOS_LblGrossReturns", new String[] {}));
       parameters.put("GROSS_RETURNS_VALUE", totalGrossReturnsAmount.toString());
-      parameters.put("TOTAL_RETAIL_TRANS_LABEL", OBMessageUtils.getI18NMessage(
-          isSlave || isMaster ? "OBPOS_LblTotalRetailTransLocal" : "OBPOS_LblTotalRetailTrans",
-          new String[] {}));
+      parameters.put("TOTAL_RETAIL_TRANS_LABEL",
+          OBMessageUtils.getI18NMessage("OBPOS_LblTotalRetailTrans", new String[] {}));
       parameters.put("TOTAL_RETAIL_TRANS_VALUE", totalRetailTransactions.toString());
       parameters.put("TOTAL_DROPS", totalDrops.toString());
       parameters.put("TOTAL_DEPOSITS", totalDeposits.toString());
