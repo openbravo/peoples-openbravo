@@ -308,7 +308,7 @@
           startingCash = pAux.paymentMethod.amountToKeep;
         }
       }
-      
+
       if (!deposits) {
         deposits = OB.DEC.Zero;
       }
@@ -430,37 +430,34 @@
     }
   };
 
-  OB.UTIL.sumCashManagementToCashup = function (cashMgmt) {
-    var cashupId = cashMgmt.get('cashup_id'),
-        criteria = {
-        'cashup_id': cashupId,
-        'paymentmethod_id': cashMgmt.get('paymentMethodId')
-        };
+  OB.UTIL.sumCashManagementToCashup = function (payment) {
+    if (!OB.UTIL.isNullOrUndefined(payment)) {
+      var cashupId = payment.get('cashup_id'),
+          criteria = {
+          'cashup_id': cashupId,
+          'paymentmethod_id': payment.get('paymentMethodId')
+          };
 
-    OB.Dal.find(OB.Model.PaymentMethodCashUp, criteria, function (paymentMethods) {
-      var paymentMethod = paymentMethods.at(0),
-          totalDeposits = paymentMethod.get('totalDeposits'),
-          totalDrops = paymentMethod.get('totalDrops');
-
-      if (cashMgmt.get('type') === 'deposit') {
-        totalDeposits = OB.DEC.add(totalDeposits, cashMgmt.get('origAmount'));
+      OB.Dal.find(OB.Model.PaymentMethodCashUp, criteria, function (paymentMethods) {
+        var paymentMethod = paymentMethods.at(0),
+            totalDeposits = paymentMethod.get('totalDeposits'),
+            totalDrops = paymentMethod.get('totalDrops');
+        totalDeposits = OB.DEC.add(totalDeposits, payment.get('totalDeposits'));
         paymentMethod.set('totalDeposits', totalDeposits);
-      } else {
-        totalDrops = OB.DEC.add(totalDrops, cashMgmt.get('origAmount'));
+        totalDrops = OB.DEC.add(totalDrops, payment.get('totalDrops'));
         paymentMethod.set('totalDrops', totalDrops);
-      }
-      OB.Dal.save(paymentMethod, function (success) {
-        // Success
-        OB.Dal.find(OB.Model.CashUp, {
-          'id': cashupId
-        }, function (cashUpObj) {
-          OB.UTIL.composeCashupInfo(cashUpObj, null, null);
+        OB.Dal.save(paymentMethod, function (success) {
+          // Success
+          OB.Dal.find(OB.Model.CashUp, {
+            'id': cashupId
+          }, function (cashUpObj) {
+            OB.UTIL.composeCashupInfo(cashUpObj, null, null);
+          });
+        }, function (error) {
+          // Error
         });
-      }, function (error) {
-        // Error
       });
-    });
-
+    }
   };
   OB.UTIL.calculateCurrentCash = function (callback) {
     var me = this;
