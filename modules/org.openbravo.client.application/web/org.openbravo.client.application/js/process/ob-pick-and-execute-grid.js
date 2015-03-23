@@ -682,7 +682,7 @@ isc.OBPickAndExecuteGrid.addProperties({
     }
     if (columnValue.entries) {
       this.setValueMap(field.name, columnValue.entries);
-    } else if (field.fkField && columnValue.value && columnValue.identifier) {
+    } else if (field.fkField && columnValue.value && columnValue.identifier && field.canEdit !== false) {
       // build the valueMap manually, set it and set the value of the
       // fk combo item in the edit form if possible
       valueMap[0] = {};
