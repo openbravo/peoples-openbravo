@@ -18,6 +18,7 @@
  */
 package org.openbravo.advpaymentmngt.process;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.hibernate.criterion.Restrictions;
@@ -106,7 +107,11 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
             }
             payment.setStatus(payment.isReceipt() ? "RDNC" : "PWNC");
             transaction.setStatus(payment.isReceipt() ? "RDNC" : "PWNC");
-            transaction.setTransactionType(payment.isReceipt() ? "BPD" : "BPW");
+            if (transaction.getPaymentAmount().compareTo(BigDecimal.ZERO) > 0) {
+             transaction.setTransactionType(TRXTYPE_BPWithdrawal);
+            } else {
+             transaction.setTransactionType(TRXTYPE_BPDeposit);
+            }
             OBDal.getInstance().save(payment);
             if (transaction.getDescription() == null || "".equals(transaction.getDescription())) {
               transaction.setDescription(payment.getDescription());
