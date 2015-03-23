@@ -227,7 +227,7 @@ public class CashUpReport extends HttpSecureAppServlet {
             + "payment.financialAccount.currency.iSOCode as isocode, payment.paymentMethod.isshared "
             + "from org.openbravo.retail.posterminal.OBPOSAppPayment as payment, org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction as trans "
             + "where (trans.gLItem=payment.paymentMethod.gLItemForDrops or trans.gLItem=payment.paymentMethod.gLItemForDeposits) and trans.reconciliation=? "
-            + "and trans.account=payment.financialAccount order by payment.commercialName";
+            + "and trans.account=payment.financialAccount and payment.obposApplications.masterterminal is null order by payment.commercialName";
         Query dropsDepositsQuery = OBDal.getInstance().getSession().createQuery(hqlDropsDeposits);
 
         dropsDepositsQuery.setDate(0, cashUpDate);
