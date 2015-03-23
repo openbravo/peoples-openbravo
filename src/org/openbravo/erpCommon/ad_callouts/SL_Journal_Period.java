@@ -103,8 +103,24 @@ public class SL_Journal_Period extends HttpSecureAppServlet {
     // When DateAcct is changed, set C_Period_ID
     if (strChanged.equals("inpdateacct")) {
       strcPeriodId = SLJournalPeriodData.period(this, stradClientId, stradOrgId, strDateAcct);
-      if (strcPeriodId.equals(""))
-        strcPeriodId = strcPeriodIdNew;
+      if (strcPeriodId.equals("")) {
+//        strcPeriodId = strcPeriodIdNew;
+
+        StringBuffer resultado = new StringBuffer();
+        resultado.append("var calloutName='SL_Journal_Period';\n\n");
+        resultado.append("var respuesta = new Array(");
+        resultado.append("new Array(\"ERROR\", \"" 
+            + Utility.messageBD(this, "PeriodNotValid", vars.getLanguage()) + "\")");
+        resultado.append(");");
+        xmlDocument.setParameter("array", resultado.toString());
+        xmlDocument.setParameter("frameName", "appFrame");
+        response.setContentType("text/html; charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        out.println(xmlDocument.print());
+        out.close();
+        return;
+      }
+      
     }
     boolean isStandardPeriod = true;
     if (strChanged.equals("inpcPeriodId") && !strcPeriodId.equals("")) {
