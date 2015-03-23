@@ -521,10 +521,12 @@ enyo.kind({
       this.$.noenoughchangelbl.hide();
       this.$.payments.scrollAreaMaxHeight = '150px';
       this.$.doneButton.setDisabled(false);
+      this.$.exactButton.setDisabled(false);
     } else {
       this.$.noenoughchangelbl.show();
       this.$.payments.scrollAreaMaxHeight = '130px';
       this.$.doneButton.setDisabled(true);
+      this.$.exactButton.setDisabled(true);
     }
   },
 
