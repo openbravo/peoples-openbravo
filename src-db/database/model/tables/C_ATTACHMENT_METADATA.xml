@@ -33,7 +33,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="ATTACHMETHOD" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
+      <column name="C_ATTACHMENT_METHOD_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -41,14 +41,16 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <foreign-key foreignTable="C_ATTACHMENT_METHOD" name="C_ATT_METADATA_C_ATT_METHOD_ID">
+        <reference local="C_ATTACHMENT_METHOD_ID" foreign="C_ATTACHMENT_METHOD_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="C_ATTACHMENT_METADATA_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="C_ATTACHMNT_METADATA_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <unique name="C_ATTACHMNT_METADATA_ID_NAME">
-        <unique-column name="ATTACHMETHOD"/>
+      <unique name="C_ATTACHMNT_METADATA_NAME">
         <unique-column name="NAME"/>
       </unique>
     </table>
