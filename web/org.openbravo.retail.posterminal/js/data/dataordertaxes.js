@@ -211,10 +211,10 @@
                 } else {
                   //net unit price (rounded)
                   pricenet = roundedLinePriceNet; // 2 decimals properly rounded.
+                  discountedNet = OB.DEC.mul(pricenet, new BigDecimal(String(element.get('qty'))));
                 }
                 //pricenet = OB.DEC.toNumber(pricenet);
-                element.set('discountedNet', OB.DEC.mul(pricenet, new BigDecimal(String(element.get('qty')))));
-                discountedNet = element.get('discountedNet');
+                element.set('discountedNet', discountedNet);
                 pricenetcascade = pricenet;
 
                 // second calculate tax lines.
