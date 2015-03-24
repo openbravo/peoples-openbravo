@@ -67,6 +67,9 @@ enyo.kind({
     var me = this;
     me.customer.set('locId', me.customerAddr.get('id'));
     me.customer.set('locName', me.customerAddr.get('name'));
+    me.customer.set('postalCode', me.customerAddr.get('postalCode'));
+    me.customer.set('cityName', me.customerAddr.get('cityName'));
+    me.customer.set('countryName', me.customerAddr.get('countryName'));
     me.doChangeBusinessPartner({
       businessPartner: me.customer
     });
