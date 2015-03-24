@@ -61,6 +61,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="C_ATTACHMENT_CONF_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="C_FILE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -69,6 +73,9 @@
       </foreign-key>
       <foreign-key foreignTable="AD_TABLE" name="C_FILE_AD_TABLE" onDelete="cascade">
         <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_ATTACHMENT_CONF" name="C_FILE_C_ATTACHMENT_CONF">
+        <reference local="C_ATTACHMENT_CONF_ID" foreign="C_ATTACHMENT_CONF_ID"/>
       </foreign-key>
       <index name="C_FILE_RECORD_IDX" unique="false">
         <index-column name="AD_TABLE_ID"/>
