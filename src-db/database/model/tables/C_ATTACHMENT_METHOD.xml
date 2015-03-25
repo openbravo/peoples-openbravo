@@ -60,6 +60,6 @@
       <unique name="C_ATTACHMENT_METHOD_VALUE">
         <unique-column name="VALUE"/>
       </unique>
-      <check name="C_ATT_METHOD_ISACTIVE_CHK"><![CDATA[ISACTIVE IN 'Y', 'N']]></check>
+      <check name="C_ATT_METHOD_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>
