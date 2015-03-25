@@ -33,5 +33,6 @@ public interface ExtraSettingsInjector {
    *          WindowSettingsActionHandler json
    * @throws OBException
    */
-  Map<String, Object> doAddSetting(JSONObject json) throws OBException;
+  Map<String, Object> doAddSetting(Map<String, Object> parameters, JSONObject json)
+      throws OBException;
 }

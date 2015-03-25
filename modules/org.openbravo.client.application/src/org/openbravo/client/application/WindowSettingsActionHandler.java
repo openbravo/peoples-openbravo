@@ -205,7 +205,9 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
 
       // Add the extraSettings injected
       for (ExtraSettingsInjector nextSetting : extraSettings) {
-        Map<String, Object> settingsToAdd = nextSetting.doAddSetting(json);
+        Map<String, Object> settingsToAdd = nextSetting.doAddSetting(parameters, json);
+        JSONObject extraSettingsJson = new JSONObject();
+        json.put("extraSettings", extraSettingsJson);
         for (Entry<String, Object> setting : settingsToAdd.entrySet()) {
           String settingKey = setting.getKey();
           Object settingValue = setting.getValue();
@@ -228,7 +230,7 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
               log4j.warn("You are trying to set a wrong instance of extraCallbacks");
             }
           } else {
-            json.put(settingKey, settingValue);
+            extraSettingsJson.put(settingKey, settingValue);
           }
         }
       }
