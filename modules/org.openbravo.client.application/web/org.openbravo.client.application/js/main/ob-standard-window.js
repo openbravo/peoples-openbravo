@@ -485,19 +485,20 @@ isc.OBStandardWindow.addProperties({
     if (data && data.extraCallbacks) {
       for (i = 0; i < data.extraCallbacks.length; i++) {
         extraCallback = data.extraCallbacks[i];
-        this.executeFunctionByName(extraCallback, window, data);
+        this.executeFunctionByName(extraCallback, data);
       }
     }
   },
 
-  executeFunctionByName: function (functionName, context, args) {
-    var args = [].slice.call(arguments).splice(2);
-    var namespaces = functionName.split(".");
-    var func = namespaces.pop();
-    for (var i = 0; i < namespaces.length; i++) {
+  executeFunctionByName: function (functionName, data) {
+    var namespaces = functionName.split('.'),
+        func = namespaces.pop(),
+        context = window,
+        i;
+    for (i = 0; i < namespaces.length; i++) {
       context = context[namespaces[i]];
     }
-    return context[func].apply(this, args);
+    return context[func].apply(this, [data]);
   },
 
   checkIfDefaultSavedView: function () {
