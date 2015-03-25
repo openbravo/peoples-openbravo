@@ -49,5 +49,6 @@
       <unique name="C_ATTACH_CONF_ID_AD_CLIENT_ID">
         <unique-column name="AD_CLIENT_ID"/>
       </unique>
+      <check name="C_ATTACHMENT_CONF_ISACTIVE_CHK"><![CDATA[ISACTIVE IN 'Y', 'N']]></check>
     </table>
   </database>

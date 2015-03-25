@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-  <database name="TRIGGER C_ATTACHMENT_METHOD_MOD_TRG">
-    <trigger name="C_ATTACHMENT_METHOD_MOD_TRG" table="C_ATTACHMENT_METHOD" fires="before" insert="true" update="true" delete="true" foreach="row">
+  <database name="TRIGGER C_ATTACHMENT_METADATA_MOD_TRG">
+    <trigger name="C_ATTACHMENT_METADATA_MOD_TRG" table="C_ATTACHMENT_METADATA" fires="before" insert="true" update="true" delete="true" foreach="row">
       <body><![CDATA[
 
 /*************************************************************************
@@ -52,10 +52,10 @@ BEGIN
   END IF;
      
   IF (UPDATING OR INSERTING) THEN
-    currentID := :new.C_Attachment_Method_ID;
+    currentID := :new.C_Attachment_Metadata_ID;
     currentModuleID := :new.AD_Module_ID;
   ELSE
-    currentID := :old.C_Attachment_Method_ID;
+    currentID := :old.C_Attachment_Metadata_ID;
     currentModuleID := :old.AD_Module_ID;
   END IF;
   
@@ -69,9 +69,7 @@ BEGIN
         COALESCE(:NEW.AD_Client_ID , '.') != COALESCE(:OLD.AD_Client_ID , '.') OR
         COALESCE(:NEW.AD_Org_ID , '.') != COALESCE(:OLD.AD_Org_ID , '.') OR
         COALESCE(:NEW.IsActive , '.') != COALESCE(:OLD.IsActive , '.') OR
-        COALESCE(:NEW.Name , '.') != COALESCE(:OLD.Name , '.') OR
-        COALESCE(:NEW.Value , '.') != COALESCE(:OLD.Value , '.') OR
-        COALESCE(:NEW.AD_Module_ID , '.') != COALESCE(:OLD.AD_Module_ID , '.')) THEN
+        COALESCE(:NEW.Name , '.') != COALESCE(:OLD.Name , '.')) THEN
       
       RAISE_APPLICATION_ERROR(-20000, '@20532@');
     END IF;
@@ -80,7 +78,7 @@ BEGIN
   IF ((DELETING OR INSERTING) AND devModule='N') THEN
     RAISE_APPLICATION_ERROR(-20000, '@20533@');
   END IF;
-END C_ATTACHMENT_METHOD_MOD_TRG
+END C_ATTACHMENT_METADATA_MOD_TRG
 ]]></body>
     </trigger>
   </database>

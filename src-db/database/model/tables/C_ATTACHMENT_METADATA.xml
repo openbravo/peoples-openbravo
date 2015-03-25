@@ -50,8 +50,10 @@
       <foreign-key foreignTable="AD_CLIENT" name="C_ATTACHMNT_METADATA_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <unique name="C_ATTACHMNT_METADATA_NAME">
+      <unique name="C_ATT_METADATA_METHOD_NAME">
+        <unique-column name="C_ATTACHMENT_METHOD_ID"/>
         <unique-column name="NAME"/>
       </unique>
+      <check name="C_ATT_METADATA_ISACTIVE_CHK"><![CDATA[ISACTIVE IN 'Y', 'N']]></check>
     </table>
   </database>
