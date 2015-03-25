@@ -36,28 +36,18 @@ BEGIN
     FROM AD_MODULE
    WHERE IsInDevelopment = 'Y'
      AND Type = 'T';
-  
-  --Check if trying to move object from module not in dev   
-  IF (UPDATING) THEN
-    IF (COALESCE(:NEW.AD_Module_ID , '.') != COALESCE(:OLD.AD_Module_ID , '.')) THEN
-      SELECT COUNT(*) 
-        INTO vAux
-        FROM AD_MODULE
-       WHERE AD_MODULE_ID = :old.AD_Module_ID
-        AND isindevelopment = 'N';
-      IF (vAux!=0) THEN
-        RAISE_APPLICATION_ERROR(-20000, '@ChangeNotInDevModule@');
-      END IF;
-    END IF;
-  END IF;
-     
+    
   IF (UPDATING OR INSERTING) THEN
     currentID := :new.C_Attachment_Metadata_ID;
-    currentModuleID := :new.AD_Module_ID;
   ELSE
     currentID := :old.C_Attachment_Metadata_ID;
-    currentModuleID := :old.AD_Module_ID;
   END IF;
+
+  SELECT ad_module_id 
+  INTO currentModuleID 
+  FROM c_attachment_method 
+    JOIN c_attachment_metadata me ON m.c_attachment_method_id=me.c_attachment_method_id 
+  WHERE me.c_attachment_metadata_id=currentID;
   
   SELECT M.IsInDevelopment
     INTO devModule
