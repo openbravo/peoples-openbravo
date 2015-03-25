@@ -28,7 +28,7 @@
   v_dummy               VARCHAR2(2000);
   v_productname         m_product.name%TYPE;
   v_isgeneric           CHAR(1);
-  v_updateOrderAndLines           CHAR(1) = 'N';
+  v_updateOrderAndLines           CHAR(1) := 'N';
   -- Parameter
   TYPE RECORD IS REF CURSOR;
   cur_reservationstock 				RECORD;
