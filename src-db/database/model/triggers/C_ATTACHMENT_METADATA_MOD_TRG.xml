@@ -45,7 +45,7 @@ BEGIN
 
   SELECT ad_module_id 
   INTO currentModuleID 
-  FROM c_attachment_method 
+  FROM c_attachment_method m
     JOIN c_attachment_metadata me ON m.c_attachment_method_id=me.c_attachment_method_id 
   WHERE me.c_attachment_metadata_id=currentID;
   
