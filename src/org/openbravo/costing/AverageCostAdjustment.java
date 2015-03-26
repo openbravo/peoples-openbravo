@@ -490,7 +490,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
           FinancialUtils.PRECISION_COSTING);
     }
     BigDecimal expectedCostAmt = trx.getMovementQuantity().abs().multiply(cost)
-        .setScale(costCurPrecission, RoundingMode.HALF_UP);
+        .setScale(stdCurPrecission, RoundingMode.HALF_UP);
     BigDecimal currentCost = trx.getTransactionCost();
     return expectedCostAmt.subtract(currentCost);
   }
@@ -519,7 +519,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
       }
       BigDecimal trxCalculatedCost = CostAdjustmentUtils.getTrxCost(trx, true, getCostCurrency());
       defaultCost = trx.getMovementQuantity().abs().multiply(defaultCost)
-          .setScale(costCurPrecission, RoundingMode.HALF_UP);
+          .setScale(stdCurPrecission, RoundingMode.HALF_UP);
       return defaultCost.subtract(trxCalculatedCost);
     }
     return super.getDefaultCostDifference(calTrxType, costAdjLine);
