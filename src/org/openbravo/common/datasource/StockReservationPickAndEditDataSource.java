@@ -1494,16 +1494,20 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
       } else if (filterCriteria.startsWith("{")) {
         JSONObject myJSON = new JSONObject(filterCriteria);
         if (myJSON.getString("fieldName").equals(fieldName)) {
-          if (myJSON.getString("operator").equals("equals")) {
-            return amount.compareTo(new BigDecimal(myJSON.getDouble("value"))) == 0;
-          } else if (myJSON.getString("operator").equals("greaterThan")) {
-            return amount.compareTo(new BigDecimal(myJSON.getDouble("value"))) > 0;
-          } else if (myJSON.getString("operator").equals("lessThan")) {
-            return amount.compareTo(new BigDecimal(myJSON.getDouble("value"))) < 0;
-          } else if (myJSON.getString("operator").equals("greaterOrEqual")) {
-            return amount.compareTo(new BigDecimal(myJSON.getDouble("value"))) >= 0;
-          } else if (myJSON.getString("operator").equals("lessOrEqual")) {
-            return amount.compareTo(new BigDecimal(myJSON.getDouble("value"))) <= 0;
+          try {
+            BigDecimal value = new BigDecimal(myJSON.get("value").toString());
+            if (myJSON.getString("operator").equals("equals")) {
+              return amount.compareTo(value) == 0;
+            } else if (myJSON.getString("operator").equals("greaterThan")) {
+              return amount.compareTo(value) > 0;
+            } else if (myJSON.getString("operator").equals("lessThan")) {
+              return amount.compareTo(value) < 0;
+            } else if (myJSON.getString("operator").equals("greaterOrEqual")) {
+              return amount.compareTo(value) >= 0;
+            } else if (myJSON.getString("operator").equals("lessOrEqual")) {
+              return amount.compareTo(value) <= 0;
+            }
+          } catch (NumberFormatException e) {
           }
         }
 
