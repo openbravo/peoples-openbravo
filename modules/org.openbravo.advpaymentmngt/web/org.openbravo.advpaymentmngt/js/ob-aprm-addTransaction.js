@@ -30,12 +30,14 @@ OB.APRM.AddTransaction.onLoad = function (view) {
 };
 
 
-OB.APRM.AddTransaction.onProcess = function (view, actionHandlerCall) {
+OB.APRM.AddTransaction.onProcess = function (view, actionHandlerCall, clientSideValidationFail) {
   var execute;
 
   execute = function (ok) {
     if (ok) {
       actionHandlerCall(view);
+    } else {
+      clientSideValidationFail();
     }
   };
 
@@ -52,6 +54,7 @@ OB.APRM.AddTransaction.onProcess = function (view, actionHandlerCall) {
 
     if (("BPD" === trxType || "BPW" === trxType) && !glitemId && !paymentId) {
       view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_INVALID_TRANSACTION'));
+      clientSideValidationFail();
     } else if (trxAmt !== blineAmt) {
       // Split required
       if (hideSplitConfirmation === 'Y') {
