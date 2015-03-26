@@ -533,12 +533,8 @@ public class CashUpReport extends HttpSecureAppServlet {
 
       /******************************* SALES ***************************************************************/
       String hqlSales = "select abs(sum(ordLine.lineNetAmount)) from OrderLine as ordLine"
-          + " where exists (select 1 from FIN_Payment_ScheduleDetail d"
-          + "              where d.orderPaymentSchedule.order = ordLine.salesOrder"
-          + "                 and exists (select 1 "
-          + "                               from FIN_Finacc_Transaction t"
-          + "                              where t.reconciliation.id in (" + reconIds + ")"
-          + "                                and t.finPayment = d.paymentDetails.finPayment))";
+          + " where ordLine.salesOrder.documentType.sOSubType = 'WR' and ordLine.salesOrder.obposAppCashup = "
+          + "'" + cashupId + "' ";
       hqlWhere = "and ordLine.orderedQuantity > 0";
       Query salesQuery = OBDal.getInstance().getSession().createQuery(hqlSales + hqlWhere);
       BigDecimal totalSalesAmount = (BigDecimal) salesQuery.list().get(0);
@@ -567,15 +563,8 @@ public class CashUpReport extends HttpSecureAppServlet {
 
       // SALES TAXES
       String hqlTaxes = "select orderLineTax.tax.name ,str(abs(sum(orderLineTax.taxAmount))) from OrderLineTax as orderLineTax "
-          + " where exists (select 1 "
-          + "                 from FIN_Payment_ScheduleDetail d"
-          + "              where d.orderPaymentSchedule.order = orderLineTax.salesOrder"
-          + "                 and exists (select 1 "
-          + "                               from FIN_Finacc_Transaction t"
-          + "                              where t.reconciliation.id in ("
-          + reconIds
-          + ") "
-          + "                                and t.finPayment = d.paymentDetails.finPayment)) ";
+          + " where orderLineTax.salesOrderLine.salesOrder.documentType.sOSubType = 'WR' and orderLineTax.salesOrderLine.salesOrder.obposAppCashup = "
+          + "'" + cashupId + "' ";
       hqlWhere = "and orderLineTax.salesOrderLine.orderedQuantity > 0 group by orderLineTax.tax.name order by orderLineTax.tax.name";
       Query salesTaxesQuery = OBDal.getInstance().getSession().createQuery(hqlTaxes + hqlWhere);
       salesTaxList = salesTaxesQuery.list();

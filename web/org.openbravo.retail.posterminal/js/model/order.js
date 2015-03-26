@@ -450,17 +450,15 @@
     calculateGross: function () {
       var me = this;
 
-      // reset some vital receipt values because, at this point, they are obsolete
-      this.set('net', OB.DEC.Zero, {
+      // reset some vital receipt values because, at this point, they are obsolete. do not fire the change event
+      me.set({
+        'net': OB.DEC.Zero,
+        'gross': OB.DEC.Zero,
+        'taxes': null,
+        'qty': OB.DEC.Zero
+      }, {
         silent: true
       });
-      this.set('gross', OB.DEC.Zero, {
-        silent: true
-      });
-      this.set('taxes', null, {
-        silent: true
-      });
-
       var saveAndTriggerEvents = function (gross) {
           var net = me.get('lines').reduce(function (memo, e) {
             var netLine = e.get('discountedNet');
@@ -487,19 +485,14 @@
               return memo;
             }
           }, OB.DEC.Zero);
-          // be sure all the values are set before the change events are fired
-          me.set('gross', gross, {
-            silent: true
+
+          // all attributes are set at once, preventing the change event of each attribute to be fired until all values are set
+          me.set({
+            'net': net,
+            'gross': gross,
+            'qty': qty
           });
-          me.set('net', net, {
-            silent: true
-          });
-          me.set('qty', qty, {
-            silent: true
-          });
-          me.set('gross', gross);
-          me.set('net', net);
-          me.set('qty', qty);
+
           me.adjustPayment();
           me.trigger('calculategross');
           me.trigger('saveCurrent');

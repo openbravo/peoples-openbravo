@@ -304,8 +304,8 @@ enyo.kind({
       executeAfterRender: function () {
         if (this.owner.$.listOrderLines.scrollToBottom) {
           this.owner.$.listOrderLines.getScrollArea().scrollToBottom();
-          this.owner.$.listOrderLines.scrollToBottom = false;
         }
+        this.owner.$.listOrderLines.scrollToBottom = false;
       }
     }, {
       tag: 'li',
@@ -385,6 +385,7 @@ enyo.kind({
     this.$.totalTaxLine.renderBase('');
     this.$.listOrderLines.setCollection(this.order.get('lines'));
     this.$.listOrderLines.collection.on('add change:qty change:promotions', function (model, list) {
+      me.$.listOrderLines.scrollToBottom = false;
       if (me.$.listOrderLines.collection.models.length > 0 && me.$.listOrderLines.collection.models[me.$.listOrderLines.collection.models.length - 1]._changing) {
         me.$.listOrderLines.scrollToBottom = true;
       } else if (list && list.models && list.length > 0 && model.id === list.models[list.length - 1].id) {

@@ -137,7 +137,7 @@
               terminalModel.set('useBarcode', terminalModel.get('terminal').terminalType.usebarcodescanner);
               OB.MobileApp.view.scanningFocus(true);
               if (!terminalModel.usermodel) {
-                terminalModel.setUserModelOnline();
+                OB.MobileApp.model.loadingErrorsActions("The terminal.usermodel should be loaded at this point");
               } else {
                 terminalModel.propertiesReady(me.properties);
               }
