@@ -984,3 +984,30 @@
   };
 
 }());
+var origTap = OB.UI.ProfileDialogApply.prototype.tap;
+OB.UI.ProfileDialogApply.prototype.tap = _.wrap(OB.UI.ProfileDialogApply.prototype.tap, function (wrapped) {
+  var tap = _.bind(origTap, this),
+      widgetForm = this.owner.owner.$.bodyContent.$,
+      newRoleId = widgetForm.roleList.getValue(),
+      isDefault = widgetForm.defaultBox.checked,
+      process = new OB.DS.Process('org.openbravo.retail.posterminal.Profile');
+  if (!this.isActive) {
+    return;
+  }
+  if (isDefault) {
+    this.isActive = true;
+    process.exec({
+      role: newRoleId
+    }, function (data) {
+      if (data.success) {
+        tap();
+      } else {
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_ErrorWhileSavingUser'));
+      }
+    }, function () {
+      OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
+    });
+  } else {
+    tap();
+  }
+});
