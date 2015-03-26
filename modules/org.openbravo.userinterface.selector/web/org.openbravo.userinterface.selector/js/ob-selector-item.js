@@ -941,7 +941,8 @@ isc.OBSelectorItem.addProperties({
     // Avoid that windowId is null. WindowId in params is necessary
     // to check access process of OBUISEL_Selector Reference.
     if (!params.windowId) {
-      params.windowId = view.standardWindow.windowId;
+      params.windowId = view && view.standardWindow && view.standardWindow.windowId;
+
     }
     if (additionalProcessProperties) {
       isc.addProperties(params, additionalProcessProperties);
