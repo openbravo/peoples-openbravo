@@ -540,7 +540,7 @@ isc.OBAttachmentsLayout.addProperties({
         canvas: me,
         click: function () {
           var fileName, form = this.theForm,
-              addFunction;
+              addFunction, d;
           addFunction = function (clickedOK) {
             if (clickedOK) {
               var hTempLayout = isc.HLayout.create();
@@ -567,8 +567,22 @@ isc.OBAttachmentsLayout.addProperties({
                 }
               }
               OB.Utilities.currentUploader = form.theCanvas.ID;
-              form.submitForm();
+              //              form.submitForm();
+              d = {
+                Command: 'EDIT_DESC_OB3',
+                tabId: form.getItem('inpTabId').value,
+                buttonId: form.getItem('buttonId').value,
+                //recordIds: this.canvas.recordId,
+                attachId: form.getItem('inpAttachId').value,
+                description: form.getItem('inpDescription')._value,
+                inpname: form.getItem('inpname').value,
+                inpwindowId: form.getItem('inpwindowId').value,
+                recordId: form.getItem('inpKey').value
+              };
               form.popup.hide();
+              OB.RemoteCallManager.call('org.openbravo.client.application.window.AttachmentsAH', {}, d, function (response, data, request) {
+                OB.Utilities.uploadFinished(data.buttonId, data);
+              });
             }
           };
           var value = this.theForm.getItem('inpname').getElement().value;
