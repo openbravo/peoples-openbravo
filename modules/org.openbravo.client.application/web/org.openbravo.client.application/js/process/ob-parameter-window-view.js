@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2014 Openbravo SLU
+ * All portions are Copyright (C) 2012-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -59,6 +59,7 @@ isc.OBParameterWindowView.addProperties({
     // Buttons
 
     function actionClick() {
+      view.okButton.setEnabled(false);
       view.messageBar.hide();
       if (view.theForm) {
         view.theForm.errorMessage = '';
@@ -75,6 +76,7 @@ isc.OBParameterWindowView.addProperties({
             view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_ErrorInFields'));
           }
         }
+        view.okButton.setEnabled(view.allRequiredParametersSet());
       }
     }
 
@@ -348,6 +350,7 @@ isc.OBParameterWindowView.addProperties({
       }
     }
 
+    this.okButton.setEnabled(this.allRequiredParametersSet());
     this.showProcessing(false);
     if (message) {
       if (this.popup) {
@@ -477,7 +480,7 @@ isc.OBParameterWindowView.addProperties({
   doProcess: function (btnValue) {
     var i, tmp, view = this,
         grid, allProperties = this.getUnderLyingRecordContext(false, true, false, true),
-        selection, len, allRows, params, tab, actionHandlerCall;
+        selection, len, allRows, params, tab, actionHandlerCall, clientSideValidationFail;
     // activeView = view.parentWindow && view.parentWindow.activeView,  ???.
     if (this.resultLayout && this.resultLayout.destroy) {
       this.resultLayout.destroy();
@@ -507,7 +510,10 @@ isc.OBParameterWindowView.addProperties({
     };
 
     if (this.clientSideValidation) {
-      this.clientSideValidation(this, actionHandlerCall);
+      clientSideValidationFail = function () {
+        view.okButton.setEnabled(view.allRequiredParametersSet());
+      };
+      this.clientSideValidation(this, actionHandlerCall, clientSideValidationFail);
     } else {
       actionHandlerCall(this);
     }
