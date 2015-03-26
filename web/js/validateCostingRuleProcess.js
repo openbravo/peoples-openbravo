@@ -30,7 +30,7 @@ OB.ValidateCostingRule.onProcess = function (view, actionHandlerCall, clientSide
   callbackOnProcessActionHandler = function (response, data, request) {
     execute = function (ok) {
       if (ok) {
-        actionHandlerCall(view);
+        actionHandlerCall();
       } else {
         view.parentElement.parentElement.closeClick();
       }
@@ -38,7 +38,7 @@ OB.ValidateCostingRule.onProcess = function (view, actionHandlerCall, clientSide
     if (data.message.text) {
       isc.confirm(data.message.text, execute);
     } else {
-      actionHandlerCall(view);
+      actionHandlerCall();
     }
   };
   view.messageBar.setMessage(isc.OBMessageBar.TYPE_INFO, null, OB.I18N.getLabel('CostingRuleHelp'));

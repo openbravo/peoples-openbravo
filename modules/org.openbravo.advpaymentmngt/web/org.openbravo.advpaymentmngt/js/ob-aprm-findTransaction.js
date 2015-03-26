@@ -24,7 +24,7 @@ OB.APRM.FindTransactions.onProcess = function (view, actionHandlerCall, clientSi
 
   execute = function (ok) {
     if (ok) {
-      actionHandlerCall(view);
+      actionHandlerCall();
     } else {
       clientSideValidationFail();
     }
@@ -44,7 +44,7 @@ OB.APRM.FindTransactions.onProcess = function (view, actionHandlerCall, clientSi
         // Split required
         if (hideSplitConfirmation === 'Y') {
           // Continue with the match
-          actionHandlerCall(view);
+          actionHandlerCall();
         } else {
           if (isc.isA.emptyObject(OB.TestRegistry.registry)) {
             isc.confirm(OB.I18N.getLabel('APRM_SplitBankStatementLineConfirm'), execute);
@@ -54,7 +54,7 @@ OB.APRM.FindTransactions.onProcess = function (view, actionHandlerCall, clientSi
         }
       } else {
         // Continue with the match
-        actionHandlerCall(view);
+        actionHandlerCall();
       }
     } else {
       // No Transaction selected

@@ -553,12 +553,12 @@ isc.OBParameterWindowView.addProperties({
     // allow to add external parameters
     isc.addProperties(allProperties._params, this.externalParams);
 
-    actionHandlerCall = function (me) {
-      me.showProcessing(true);
-      OB.RemoteCallManager.call(me.actionHandler, allProperties, {
-        processId: me.processId,
-        reportId: me.reportId,
-        windowId: me.windowId
+    actionHandlerCall = function () {
+      view.showProcessing(true);
+      OB.RemoteCallManager.call(view.actionHandler, allProperties, {
+        processId: view.processId,
+        reportId: view.reportId,
+        windowId: view.windowId
       }, function (rpcResponse, data, rpcRequest) {
         view.handleResponse(!(data && data.refreshParent === false), (data && data.message), (data && data.responseActions), (data && data.retryExecution), data);
       });
@@ -570,7 +570,7 @@ isc.OBParameterWindowView.addProperties({
       };
       this.clientSideValidation(this, actionHandlerCall, clientSideValidationFail);
     } else {
-      actionHandlerCall(this);
+      actionHandlerCall();
     }
   },
 

@@ -60,7 +60,7 @@ OB.APRM.MatchStatement.onProcess = function (view, actionHandlerCall, clientSide
   var execute;
   execute = function (ok) {
     if (ok) {
-      actionHandlerCall(view);
+      actionHandlerCall();
     } else {
       view.parentElement.parentElement.closeClick();
     }

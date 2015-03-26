@@ -35,7 +35,7 @@ OB.APRM.AddTransaction.onProcess = function (view, actionHandlerCall, clientSide
 
   execute = function (ok) {
     if (ok) {
-      actionHandlerCall(view);
+      actionHandlerCall();
     } else {
       clientSideValidationFail();
     }
@@ -59,16 +59,16 @@ OB.APRM.AddTransaction.onProcess = function (view, actionHandlerCall, clientSide
       // Split required
       if (hideSplitConfirmation === 'Y') {
         // Continue with the match
-        actionHandlerCall(view);
+        actionHandlerCall();
       } else {
         isc.confirm(OB.I18N.getLabel('APRM_SplitBankStatementLineConfirm'), execute);
       }
     } else {
       // Continue with the match
-      actionHandlerCall(view);
+      actionHandlerCall();
     }
   } else {
-    actionHandlerCall(view);
+    actionHandlerCall();
   }
 };
 

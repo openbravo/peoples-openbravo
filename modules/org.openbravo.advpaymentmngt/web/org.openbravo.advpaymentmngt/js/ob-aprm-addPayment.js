@@ -1156,7 +1156,7 @@ OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall, clientSideVali
         return clientSideValidationFail();
       }
     }
-    actionHandlerCall(view);
+    actionHandlerCall();
   };
 
   OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.AddPaymentOnProcessActionHandler', {
