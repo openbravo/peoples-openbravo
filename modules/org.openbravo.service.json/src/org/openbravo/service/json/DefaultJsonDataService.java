@@ -257,9 +257,8 @@ public class DefaultJsonDataService implements JsonDataService {
 
   public void fetch(Map<String, String> parameters, QueryResultWriter writer) {
     long t = System.currentTimeMillis();
-    final String entityName = parameters.get(JsonConstants.ENTITYNAME);
+
     final DataEntityQueryService queryService = createSetQueryService(parameters, false);
-    queryService.setEntityName(entityName);
 
     String selectedProperties = parameters.get(JsonConstants.SELECTEDPROPERTIES_PARAMETER);
 
