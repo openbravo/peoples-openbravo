@@ -228,12 +228,22 @@ public class ReportingUtils {
       }
     });
     private final String extension;
-    private final FileType fileType;
+    private final String fileType;
     private final Map<String, Object> params;
 
     ExportType(String extension, String strFileTypeId, Map<String, Object> params) {
       this.extension = extension;
-      this.fileType = OBDal.getInstance().get(FileType.class, strFileTypeId);
+      OBContext.setAdminMode(true);
+      try {
+        FileType type = OBDal.getInstance().get(FileType.class, strFileTypeId);
+        if (type != null) {
+          fileType = type.getFormat();
+        } else {
+          fileType = "application/" + extension;
+        }
+      } finally {
+        OBContext.restorePreviousMode();
+      }
       this.params = params;
     }
 
@@ -242,7 +252,7 @@ public class ReportingUtils {
     }
 
     public String getContentType() {
-      return fileType.getFormat();
+      return fileType;
     }
 
     public Map<String, Object> getExportParameters() {
