@@ -246,7 +246,10 @@ public class ReportingUtils {
     }
 
     public Map<String, Object> getExportParameters() {
-      return params;
+      // An instance of the Map is done for making sure
+      // that if this method is called, it is only accessing
+      // to the parameters of the current Map instance.
+      return new HashMap<String, Object>(params);
     }
 
     /**
