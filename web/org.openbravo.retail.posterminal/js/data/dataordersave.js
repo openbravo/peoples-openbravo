@@ -27,31 +27,12 @@
 
       // protect the application against verification exceptions
       try {
-        // get tax information
         var totalTaxes = 0;
         _.each(this.get('taxes'), function (tax) {
-          // tax.amount;
-          // tax.gross;
-          // tax.net;
           totalTaxes += tax.amount;
         }, this);
-
         var gross = this.get('gross');
         var net = this.get('net');
-
-        // Deactivated. Still experimental
-        // // 1. verify that the sign of the net, gross and tax is consistent
-        // // Only do this if net+tax!=0, there is a special case if paying by gift card that the net is negative and the tax
-        // // positive, for example: net -20, tax +20, total is zero (as the gift card pays for the amount).
-        // if ((net + totalTaxes) !== 0 && Math.abs(totalTaxes) > 0 && ((Math.sign(net) !== Math.sign(gross)) || (Math.sign(net) !== Math.sign(totalTaxes)))) {
-        //   OB.error(enyo.format("%s: the sign of the net, gross and tax is inconsistent. event: '%s', gross: %s, net: %s, tax: %s", errorHeader, eventParams, gross, net, totalTaxes));
-        // }
-
-        // Deactivated. Still experimental
-        // // 2. verify that the net is not higher than the gross
-        // if ((net + totalTaxes) !== 0 && Math.abs(net) > Math.abs(gross)) {
-        //   OB.error(enyo.format("%s: net is bigger than the gross. event: '%s', gross: %s, net: %s, tax: %s", errorHeader, eventParams, gross, net, totalTaxes));
-        // }
 
         // 3. verify that the sum of the gross of each line equals the total gross
         var difference;
