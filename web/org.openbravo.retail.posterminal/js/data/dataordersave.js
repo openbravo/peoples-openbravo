@@ -19,30 +19,11 @@
     this.ordersToSend = OB.DEC.Zero;
     this.hasInvLayaways = false;
 
-    // start of receipt verifications
-    var maxLogLinesPerReceipt = 100;
-    var errorsFound = 0;
-    this.receipt.on('all', function (eventParams) {
-      // list of events to be processed
-      var isVerify = false;
-      isVerify = isVerify || (eventParams === 'eventExecutionDone');
-      isVerify = isVerify || (eventParams === 'calculategross');
-      isVerify = isVerify || (eventParams === 'saveCurrent');
-      isVerify = isVerify || (eventParams === 'closed');
-      if (!isVerify) {
-        return;
-      }
-      // restart the number of allowed log lines when the receipt is closed/finished
-      if (eventParams === 'closed') {
-        errorsFound = 0;
-      }
-      if (errorsFound >= maxLogLinesPerReceipt) {
-        return;
-      }
-
-      // the same header in all messages is important when looking for records in the database
+    // starting receipt verifications
+    this.receipt.on('closed', function () {
+      // is important to write all the errors with the same and unique header to find the records in the database
       var errorHeader = "Receipt verification error";
-      var errorCount = 0;
+      var eventParams = 'closed';
 
       // protect the application against verification exceptions
       try {
@@ -58,20 +39,19 @@
         var gross = this.get('gross');
         var net = this.get('net');
 
-        // 1. verify that the sign of the net, gross and tax is consistent
-        // Only do this if net+tax!=0, there is a special case if paying by gift card that the net is negative and the tax
-        // positive, for example: net -20, tax +20, total is zero (as the gift card pays for the amount).
-        if ((net + totalTaxes) !== 0 && Math.abs(totalTaxes) > 0 && ((Math.sign(net) !== Math.sign(gross)) || (Math.sign(net) !== Math.sign(totalTaxes)))) {
-          // OB.UTIL.saveLogClient(JSON.stringify(signInconsistentErrorMessage), "Error");
-          OB.error(enyo.format("%s: the sign of the net, gross and tax is inconsistent. event: '%s', gross: %s, net: %s, tax: %s", errorHeader, eventParams, gross, net, totalTaxes));
-          errorCount += 1;
-        }
+        // Deactivated. Still experimental
+        // // 1. verify that the sign of the net, gross and tax is consistent
+        // // Only do this if net+tax!=0, there is a special case if paying by gift card that the net is negative and the tax
+        // // positive, for example: net -20, tax +20, total is zero (as the gift card pays for the amount).
+        // if ((net + totalTaxes) !== 0 && Math.abs(totalTaxes) > 0 && ((Math.sign(net) !== Math.sign(gross)) || (Math.sign(net) !== Math.sign(totalTaxes)))) {
+        //   OB.error(enyo.format("%s: the sign of the net, gross and tax is inconsistent. event: '%s', gross: %s, net: %s, tax: %s", errorHeader, eventParams, gross, net, totalTaxes));
+        // }
 
-        // 2. verify that the net is not higher than the gross
-        if ((net + totalTaxes) !== 0 && Math.abs(net) > Math.abs(gross)) {
-          OB.error(enyo.format("%s: net is bigger than the gross. event: '%s', gross: %s, net: %s, tax: %s", errorHeader, eventParams, gross, net, totalTaxes));
-          errorCount += 1;
-        }
+        // Deactivated. Still experimental
+        // // 2. verify that the net is not higher than the gross
+        // if ((net + totalTaxes) !== 0 && Math.abs(net) > Math.abs(gross)) {
+        //   OB.error(enyo.format("%s: net is bigger than the gross. event: '%s', gross: %s, net: %s, tax: %s", errorHeader, eventParams, gross, net, totalTaxes));
+        // }
 
         // 3. verify that the sum of the gross of each line equals the total gross
         var difference;
@@ -94,16 +74,13 @@
         });
         if (!isFieldUndefined && difference !== 0) {
           OB.error(enyo.format("%s: total gross does not equal the sum of the gross of each line. event: '%s', gross: %s, difference: %s", errorHeader, eventParams, gross, difference));
-          errorCount += 1;
         }
 
       } catch (e) {
-        console.error(enyo.format("%s. event: %s. %s", errorHeader, eventParams, e.stack));
-        errorCount += 1;
+        // do nothing, we do not want to generate another error
       }
-      errorsFound += errorCount;
     });
-    // end of receipt verifications
+    // finished receipt verifications
 
     this.receipt.on('closed', function (eventParams) {
       this.receipt = model.get('order');
