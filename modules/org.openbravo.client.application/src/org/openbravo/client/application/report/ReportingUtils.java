@@ -171,7 +171,7 @@ public class ReportingUtils {
         JExcelApiExporter exporter = new JExcelApiExporter();
         Map<Object, Object> exportParameters = new HashMap<Object, Object>();
         exportParameters.put(JRExporterParameter.JASPER_PRINT, jasperPrint);
-        exportParameters.put(JRExporterParameter.OUTPUT_FILE_NAME, target);
+        exportParameters.put(JRExporterParameter.OUTPUT_FILE_NAME, target.getAbsolutePath());
         exportParameters.put(JExcelApiExporterParameter.IS_ONE_PAGE_PER_SHEET, Boolean.FALSE);
         exportParameters.put(JExcelApiExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_ROWS,
             Boolean.TRUE);
