@@ -449,6 +449,7 @@
 
     calculateGross: function () {
       var me = this;
+      var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('calculateGross');
 
       // reset some vital receipt values because, at this point, they are obsolete. do not fire the change event
       me.set({
@@ -496,6 +497,7 @@
           me.adjustPayment();
           me.trigger('calculategross');
           me.trigger('saveCurrent');
+          OB.UTIL.SynchronizationHelper.finished(synchId, 'calculateGross');
           };
 
       if (this.get('priceIncludesTax')) {
