@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -397,6 +397,9 @@ public class DocFINPayment extends AcctServer {
             bpAmountConverted = convertAmount(new BigDecimal(bpAmount), !isReceipt, DateAcct,
                 TABLEID_Invoice, invoice.getId(), C_Currency_ID, as.m_C_Currency_ID, line, as,
                 fact, Fact_Acct_Group_ID, nextSeqNo(SeqNo), conn).toString();
+            // Cash VAT
+            SeqNo = CashVATUtil.createFactCashVAT(as, conn, fact, Fact_Acct_Group_ID, line,
+                invoice, DocumentType, C_Currency_ID, SeqNo);
             if (!isPrepayment) {
               if (line.getDoubtFulDebtAmount().signum() != 0) {
                 BigDecimal doubtFulDebtAmount = convertAmount(line.getDoubtFulDebtAmount(),
@@ -445,10 +448,6 @@ public class DocFINPayment extends AcctServer {
                   assignedAmount = assignedAmount.add(lineAmount);
                 }
               }
-
-              // Cash VAT
-              SeqNo = CashVATUtil.createFactCashVAT(as, conn, fact, Fact_Acct_Group_ID, line,
-                  invoice, DocumentType, C_Currency_ID, SeqNo);
             }
           }
           fact.createLine(line, getAccountBPartner(bpartnerId, as, isReceipt, isPrepayment, conn),
