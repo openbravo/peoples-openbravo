@@ -18,7 +18,6 @@
  */
 package org.openbravo.client.application;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -201,7 +200,7 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
         ps.put(KernelUtils.getProperty(f).getName());
       }
 
-      List<String> extraCallbacks = new ArrayList<String>();
+      JSONArray extraCallbacks = new JSONArray();
 
       // Add the extraSettings injected
       for (ExtraSettingsInjector nextSetting : extraSettings) {
@@ -216,16 +215,16 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
             continue;
           }
           if (settingKey.equals("extraCallbacks")) {
-            if (settingValue instanceof List<?>) {
+            if (settingValue instanceof List) {
               for (Object callbackExtra : (List<?>) settingValue) {
                 if (callbackExtra instanceof String) {
-                  extraCallbacks.add((String) callbackExtra);
+                  extraCallbacks.put((String) callbackExtra);
                 } else {
                   log4j.warn("You are trying to set a wrong instance of extraCallbacks");
                 }
               }
             } else if (settingValue instanceof String) {
-              extraCallbacks.add((String) settingValue);
+              extraCallbacks.put((String) settingValue);
             } else {
               log4j.warn("You are trying to set a wrong instance of extraCallbacks");
             }
