@@ -41,6 +41,7 @@ import org.hibernate.Query;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.provider.OBNotSingleton;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.util.Check;
 import org.openbravo.dal.security.EntityAccessChecker;
@@ -1085,6 +1086,11 @@ public class OBContext implements OBNotSingleton {
       return null;
     }
     return (String) session.getAttribute(param.toUpperCase());
+  }
+
+  public VariablesSecureApp createVariablesSecureApp() {
+    return new VariablesSecureApp(getUser().getId(), getCurrentClient().getId(),
+        getCurrentOrganization().getId(), getRole().getId(), getLanguage().getLanguage());
   }
 
   public boolean isSerialized() {
