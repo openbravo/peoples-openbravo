@@ -54,6 +54,7 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.materialmgmt.StockUtils;
+import org.openbravo.mobile.core.process.DataSynchronizationImportProcess;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchronization;
 import org.openbravo.mobile.core.process.JSONPropertyToEntity;
 import org.openbravo.mobile.core.process.PropertyByType;
@@ -95,7 +96,8 @@ import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonToDataConverter;
 
 @DataSynchronization(entity = "Order")
-public class OrderLoader extends POSDataSynchronizationProcess {
+public class OrderLoader extends POSDataSynchronizationProcess implements
+    DataSynchronizationImportProcess {
 
   private static final Logger log = Logger.getLogger(OrderLoader.class);
 
@@ -127,6 +129,10 @@ public class OrderLoader extends POSDataSynchronizationProcess {
   @Inject
   @Any
   private Instance<OrderLoaderPreProcessHook> orderPreProcesses;
+
+  protected String getImportQualifier() {
+    return "Order";
+  }
 
   @Override
   public JSONObject saveRecord(JSONObject jsonorder) throws Exception {
@@ -318,7 +324,7 @@ public class OrderLoader extends POSDataSynchronizationProcess {
       long t5 = System.currentTimeMillis();
       OBDal.getInstance().flush();
 
-      log.info("Order with docno: " + order.getDocumentNo() + " (uuid: " + order.getId()
+      log.debug("Order with docno: " + order.getDocumentNo() + " (uuid: " + order.getId()
           + ") saved correctly. Initial flush: " + (t1 - t0) + "; Generate bobs:" + (t11 - t1)
           + "; Save bobs:" + (t2 - t11) + "; First flush:" + (t3 - t2) + "; Second flush: "
           + (t4 - t3) + "; Process Payments:" + (t5 - t4) + " Final flush: "
@@ -1567,7 +1573,9 @@ public class OrderLoader extends POSDataSynchronizationProcess {
       if (result.getType().equalsIgnoreCase("Error")) {
         throw new OBException(result.getMessage());
       }
-      vars.setSessionValue("POSOrder", "Y");
+      if (vars.hasSession()) {
+        vars.setSessionValue("POSOrder", "Y");
+      }
 
       // retrieve the transactions of this payment and set the cashupId to those transactions
       final OBCriteria<FIN_FinaccTransaction> transactionsCriteria = OBDal.getInstance()
