@@ -27,9 +27,9 @@ enyo.kind({
     style: 'text-align: center; font-size: 30px; padding: 5px; padding-top: 0px;',
     components: [{
       name: 'headerText',
-      kind: 'OB.UI.Button',
-      classes: 'span12 error',
-      style: '  height: 50px; margin-top: 25px; font-size: 20px; cursor: pointer; font-weight: bold',
+      kind: 'OB.UI.SmallButton',
+      classes: 'span12 btnlink-red',
+      style: '  height: 50px; margin: 5px 5px 0px 0px; font-size: 20px; cursor: pointer; font-weight: bold',
       tap: function () {
         this.owner.doShowPopup({
           popup: 'modalModulesInDev'
@@ -63,10 +63,6 @@ enyo.kind({
           name: 'msgwelcomeLbl'
         }]
       }, {
-        kind: 'OB.OBPOSPointOfSale.UI.InDevHeader',
-        style: 'height: 35px;',
-        name: 'divInDevHeader'
-      }, {
         name: 'msgaction',
         showing: false,
         components: [{
@@ -86,6 +82,10 @@ enyo.kind({
             }
           }]
         }]
+      }, {
+        kind: 'OB.OBPOSPointOfSale.UI.InDevHeader',
+        style: 'height: 35px;',
+        name: 'divInDevHeader'
       }]
     }]
   }],

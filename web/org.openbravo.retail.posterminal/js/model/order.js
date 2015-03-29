@@ -449,18 +449,17 @@
 
     calculateGross: function () {
       var me = this;
+      var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('calculateGross');
 
-      // reset some vital receipt values because, at this point, they are obsolete
-      this.set('net', OB.DEC.Zero, {
+      // reset some vital receipt values because, at this point, they are obsolete. do not fire the change event
+      me.set({
+        'net': OB.DEC.Zero,
+        'gross': OB.DEC.Zero,
+        'taxes': null,
+        'qty': OB.DEC.Zero
+      }, {
         silent: true
       });
-      this.set('gross', OB.DEC.Zero, {
-        silent: true
-      });
-      this.set('taxes', null, {
-        silent: true
-      });
-
       var saveAndTriggerEvents = function (gross) {
           var net = me.get('lines').reduce(function (memo, e) {
             var netLine = e.get('discountedNet');
@@ -487,22 +486,18 @@
               return memo;
             }
           }, OB.DEC.Zero);
-          // be sure all the values are set before the change events are fired
-          me.set('gross', gross, {
-            silent: true
+
+          // all attributes are set at once, preventing the change event of each attribute to be fired until all values are set
+          me.set({
+            'net': net,
+            'gross': gross,
+            'qty': qty
           });
-          me.set('net', net, {
-            silent: true
-          });
-          me.set('qty', qty, {
-            silent: true
-          });
-          me.set('gross', gross);
-          me.set('net', net);
-          me.set('qty', qty);
+
           me.adjustPayment();
           me.trigger('calculategross');
           me.trigger('saveCurrent');
+          OB.UTIL.SynchronizationHelper.finished(synchId, 'calculateGross');
           };
 
       if (this.get('priceIncludesTax')) {
@@ -1734,7 +1729,11 @@
           localSkipApplyPromotions;
 
       localSkipApplyPromotions = this.get('skipApplyPromotions');
-      this.set('skipApplyPromotions', true);
+      this.set({
+        'skipApplyPromotions': true
+      }, {
+        silent: true
+      });
       _.each(auxLines, function (l) {
         lineToMerge = _.find(lines.models, function (line) {
           if (l !== line && l.get('product').id === line.get('product').id && l.get('price') === line.get('price') && line.get('qty') > 0 && l.get('qty') > 0 && !_.find(line.get('promotions'), function (promo) {
@@ -1754,7 +1753,11 @@
           lines.remove(l);
         }
       });
-      this.set('skipApplyPromotions', localSkipApplyPromotions);
+      this.set({
+        'skipApplyPromotions': localSkipApplyPromotions
+      }, {
+        silent: true
+      });
     },
     fillPromotionsWith: function (groupedOrder, isFirstTime) {
       var me = this,
@@ -1763,7 +1766,11 @@
           localSkipApplyPromotions;
 
       localSkipApplyPromotions = this.get('skipApplyPromotions');
-      this.set('skipApplyPromotions', true);
+      this.set({
+        'skipApplyPromotions': true
+      }, {
+        silent: true
+      });
       //reset pendingQtyOffer value of each promotion
       groupedOrder.get('lines').forEach(function (l) {
         _.each(l.get('promotions'), function (promo) {
@@ -1990,7 +1997,11 @@
       });
       this.calculateGross();
       this.trigger('promotionsUpdated');
-      this.set('skipApplyPromotions', localSkipApplyPromotions);
+      this.set({
+        'skipApplyPromotions': localSkipApplyPromotions
+      }, {
+        silent: true
+      });
     },
 
 
