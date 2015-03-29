@@ -18,6 +18,10 @@
  */
 package org.openbravo.service.importprocess;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.sql.BatchUpdateException;
+
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -29,6 +33,24 @@ import org.openbravo.base.exception.OBException;
  * @author mtaal
  */
 public class ImportProcessUtils {
+
+  public static String getErrorMessage(Throwable e) {
+    StringWriter sb = new StringWriter();
+
+    PrintWriter pw = new PrintWriter(sb);
+
+    e.printStackTrace(pw);
+
+    if (e.getCause() instanceof BatchUpdateException) {
+      final BatchUpdateException batchException = (BatchUpdateException) e.getCause();
+      if (batchException.getNextException() != null) {
+        pw.write("\n >>>> Next Exception:\n");
+        batchException.getNextException().printStackTrace(pw);
+      }
+    }
+
+    return sb.toString();
+  }
 
   /**
    * Data send from clients can contain a single data element or be an array. If it is an array then

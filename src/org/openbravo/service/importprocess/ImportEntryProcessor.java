@@ -395,9 +395,13 @@ public abstract class ImportEntryProcessor {
         final String clientId = (String) DalUtil.getId(importEntry.getClient());
         OBContext.setOBContext(userId, null, clientId, orgId);
         cachedOBContexts.put(cacheKey, OBContext.getOBContext());
+        obContext = OBContext.getOBContext();
       }
-      RequestContext.get()
-          .setVariableSecureApp(OBContext.getOBContext().createVariablesSecureApp());
+      final VariablesSecureApp variablesSecureApp = new VariablesSecureApp(obContext.getUser()
+          .getId(), obContext.getCurrentClient().getId(), obContext.getCurrentOrganization()
+          .getId(), obContext.getRole().getId(), obContext.getLanguage().getLanguage());
+
+      RequestContext.get().setVariableSecureApp(variablesSecureApp);
     }
 
     protected void cleanUpThreadForNextCycle() {

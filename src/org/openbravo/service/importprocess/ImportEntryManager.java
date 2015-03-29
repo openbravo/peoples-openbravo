@@ -43,7 +43,6 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
-import org.openbravo.mobile.core.process.DataSynchronizationErrorHandler;
 
 /**
  * This class is the main manager for performing multi-threaded and parallel import of data from the
@@ -251,7 +250,7 @@ public class ImportEntryManager {
 
   public void handleImportError(ImportEntry importEntry, Throwable t) {
     importEntry.setImportStatus("Error");
-    importEntry.setErrorinfo(DataSynchronizationErrorHandler.getErrorMessage(t));
+    importEntry.setErrorinfo(ImportProcessUtils.getErrorMessage(t));
     OBDal.getInstance().save(importEntry);
   }
 
@@ -274,7 +273,7 @@ public class ImportEntryManager {
     ImportEntry importEntry = OBDal.getInstance().get(ImportEntry.class, importEntryId);
     if (importEntry != null && !"Processed".equals(importEntry.getImportStatus())) {
       importEntry.setImportStatus("Error");
-      importEntry.setErrorinfo(DataSynchronizationErrorHandler.getErrorMessage(t));
+      importEntry.setErrorinfo(ImportProcessUtils.getErrorMessage(t));
       OBDal.getInstance().save(importEntry);
     }
   }
@@ -292,7 +291,7 @@ public class ImportEntryManager {
       ImportEntry importEntry = OBDal.getInstance().get(ImportEntry.class, importEntryId);
       if (importEntry != null && !"Processed".equals(importEntry.getImportStatus())) {
         importEntry.setImportStatus("Error");
-        importEntry.setErrorinfo(DataSynchronizationErrorHandler.getErrorMessage(t));
+        importEntry.setErrorinfo(ImportProcessUtils.getErrorMessage(t));
         OBDal.getInstance().save(importEntry);
         OBDal.getInstance().commitAndClose();
       }
