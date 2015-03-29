@@ -161,7 +161,8 @@ OB.APRM.AddPayment.paymentMethodMulticurrency = function (view, form, recalcConv
       isSOTrx = form.getItem('issotrx').getValue(),
       currencyId = form.getItem('c_currency_id').getValue(),
       paymentDate = form.getItem('payment_date').getValue(),
-      orgId = form.getItem('ad_org_id').getValue();
+      orgId = form.getItem('ad_org_id').getValue(),
+      trxtype = (form.getItem('trxtype')) ? form.getItem('trxtype').getValue() : "";
 
   callback = function (response, data, request) {
     var isShown = false;
@@ -173,9 +174,9 @@ OB.APRM.AddPayment.paymentMethodMulticurrency = function (view, form, recalcConv
       form.getItem('c_currency_id').valueMap[data.currencyId] = data.currencyIdIdentifier;
     }
     isShown = data.isPayIsMulticurrency && currencyId !== data.currencyToId && currencyId !== undefined;
-    if (data.isWrongFinancialAccount) {
+    if (data.isWrongFinancialAccount && trxtype === "") {
       form.getItem('fin_financial_account_id').setValue('');
-    } else {
+    } else if (!data.isWrongFinancialAccount) {
       if (!form.getItem('c_currency_to_id').valueMap) {
         form.getItem('c_currency_to_id').valueMap = {};
       }
@@ -1061,7 +1062,7 @@ OB.APRM.AddPayment.reloadLabels = function (form) {
   OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.AddPaymentReloadLabelsActionHandler', {}, params, callbackReloadLabelsActionHandler);
 };
 
-OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall) {
+OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall, clientSideValidationFail) {
   var orderInvoiceGrid = view.theForm.getItem('order_invoice').canvas.viewGrid,
       receivedFrom = view.theForm.getItem('received_from').getValue(),
       issotrx = view.theForm.getItem('issotrx').getValue(),
@@ -1069,7 +1070,7 @@ OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall) {
       amountInvOrds = new BigDecimal(String(view.theForm.getItem('amount_inv_ords').getValue() || 0)),
       total = new BigDecimal(String(view.theForm.getItem('total').getValue() || 0)),
       actualPayment = new BigDecimal(String(view.theForm.getItem('actual_payment').getValue() || 0)),
-      overpaymentField= view.theForm.getItem('overpayment_action'),
+      overpaymentField = view.theForm.getItem('overpayment_action'),
       overpaymentAction = overpaymentField.getValue(),
       creditTotalItem = new BigDecimal(String(view.theForm.getItem('used_credit').getValue() || 0)),
       document = (view.theForm.getItem('trxtype')) ? view.theForm.getItem('trxtype').getValue() : "",
@@ -1102,31 +1103,31 @@ OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall) {
   // If there is Overpayment check it exists a business partner
   if (overpaymentAction && receivedFrom === null) {
     view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_CreditWithoutBPartner'));
-    return false;
+    return clientSideValidationFail();
   }
   //If Actual Payment amount is negative, it is not necessary to use credit.
   if ((total.compareTo(BigDecimal.prototype.ZERO) < 0) && (creditTotalItem.signum() !== 0)) {
     view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_CreditWithNegativeAmt'));
-    return false;
+    return clientSideValidationFail();
   }
   if (actualPayment.compareTo(total.subtract(creditTotalItem)) > 0 && totalOustandingAmount.compareTo(amountInvOrds.add(totalWriteOffAmount)) > 0) {
     // Not all the payment amount has been allocated
     view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_JSNOTALLAMOUTALLOCATED'));
-    return false;
+    return clientSideValidationFail();
   } else if (total.compareTo(actualPayment.add(creditTotalItem)) > 0) {
     // More than available amount has been distributed
     view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_JSMOREAMOUTALLOCATED'));
-    return false;
+    return clientSideValidationFail();
   }
 
   if ((total.compareTo(creditTotalItem) < 0) && (overpaymentField.isVisible() && overpaymentAction === 'CR')) {
     view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_MORECREDITAMOUNT'));
-    return false;
+    return clientSideValidationFail();
   }
 
   if (document !== null && document !== '' && actualPayment.compareTo(BigDecimal.prototype.ZERO) === 0 && view.parentWindow && view.parentWindow.windowId) {
     view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_ZEROAMOUNTPAYMENTTRANSACTION'));
-    return false;
+    return clientSideValidationFail();
   }
 
   //It is not possible to add a glitem with both amounts equal to 0
@@ -1138,7 +1139,7 @@ OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall) {
     paidOutAmt = new BigDecimal(String(glitemGrid.getEditedCell(i, paidOutField) || 0));
     if (receivedInAmt.signum() === 0 && paidOutAmt.signum() === 0) {
       view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_GLITEMSDIFFERENTZERO'));
-      return false;
+      return clientSideValidationFail();
     }
 
   }
@@ -1146,16 +1147,16 @@ OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall) {
     //Check if there are blocked Business Partners
     if (data.message.severity === 'error') {
       view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, data.message.title, data.message.text);
-      return false;
+      return clientSideValidationFail();
     }
     // Check if the write off limit has been exceeded
     if (writeOffLimitPreference === 'Y') {
       if (totalWriteOffAmount > data.writeofflimit) {
         view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_NotAllowWriteOff'));
-        return false;
+        return clientSideValidationFail();
       }
     }
-    actionHandlerCall(view);
+    actionHandlerCall();
   };
 
   OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.AddPaymentOnProcessActionHandler', {

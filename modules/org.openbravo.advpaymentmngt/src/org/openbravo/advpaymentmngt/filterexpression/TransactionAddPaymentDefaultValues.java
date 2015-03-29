@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -170,15 +170,17 @@ public class TransactionAddPaymentDefaultValues extends AddPaymentDefaultValuesH
     FinAccPaymentMethod anyFinAccPaymentMethod = null;
     for (FinAccPaymentMethod finAccPaymentMethod : getFinancialAccount(requestMap)
         .getFinancialMgmtFinAccPaymentMethodList()) {
-      if (finAccPaymentMethod.isDefault()) {
+      if (finAccPaymentMethod.isActive()) {
+        if (finAccPaymentMethod.isDefault()) {
+          if ((isReceipt && finAccPaymentMethod.isPayinAllow())
+              || (!isReceipt && finAccPaymentMethod.isPayoutAllow())) {
+            return finAccPaymentMethod.getPaymentMethod().getId();
+          }
+        }
         if ((isReceipt && finAccPaymentMethod.isPayinAllow())
             || (!isReceipt && finAccPaymentMethod.isPayoutAllow())) {
-          return finAccPaymentMethod.getPaymentMethod().getId();
+          anyFinAccPaymentMethod = finAccPaymentMethod;
         }
-      }
-      if ((isReceipt && finAccPaymentMethod.isPayinAllow())
-          || (!isReceipt && finAccPaymentMethod.isPayoutAllow())) {
-        anyFinAccPaymentMethod = finAccPaymentMethod;
       }
     }
     return anyFinAccPaymentMethod != null ? anyFinAccPaymentMethod.getPaymentMethod().getId() : "";

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,12 +19,14 @@
 
 OB.APRM.FindTransactions = {};
 
-OB.APRM.FindTransactions.onProcess = function (view, actionHandlerCall) {
+OB.APRM.FindTransactions.onProcess = function (view, actionHandlerCall, clientSideValidationFail) {
   var execute;
 
   execute = function (ok) {
     if (ok) {
-      actionHandlerCall(view);
+      actionHandlerCall();
+    } else {
+      clientSideValidationFail();
     }
   };
 
@@ -42,7 +44,7 @@ OB.APRM.FindTransactions.onProcess = function (view, actionHandlerCall) {
         // Split required
         if (hideSplitConfirmation === 'Y') {
           // Continue with the match
-          actionHandlerCall(view);
+          actionHandlerCall();
         } else {
           if (isc.isA.emptyObject(OB.TestRegistry.registry)) {
             isc.confirm(OB.I18N.getLabel('APRM_SplitBankStatementLineConfirm'), execute);
@@ -52,11 +54,12 @@ OB.APRM.FindTransactions.onProcess = function (view, actionHandlerCall) {
         }
       } else {
         // Continue with the match
-        actionHandlerCall(view);
+        actionHandlerCall();
       }
     } else {
       // No Transaction selected
       view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_SELECT_RECORD_ERROR'));
+      clientSideValidationFail();
     }
   }
 };

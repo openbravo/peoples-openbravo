@@ -64,6 +64,7 @@ isc.OBParameterWindowView.addProperties({
     // Buttons
 
     function actionClick() {
+      view.setAllButtonEnabled(false);
       view.messageBar.hide();
       if (view.theForm) {
         view.theForm.errorMessage = '';
@@ -80,6 +81,7 @@ isc.OBParameterWindowView.addProperties({
             view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_ErrorInFields'));
           }
         }
+        view.setAllButtonEnabled(view.allRequiredParametersSet());
       }
     }
 
@@ -402,6 +404,7 @@ isc.OBParameterWindowView.addProperties({
       }
     }
 
+    this.setAllButtonEnabled(this.allRequiredParametersSet());
     this.showProcessing(false);
     if (message) {
       if (this.popup) {
@@ -531,7 +534,7 @@ isc.OBParameterWindowView.addProperties({
   doProcess: function (btnValue) {
     var i, tmp, view = this,
         grid, allProperties = this.getUnderLyingRecordContext(false, true, false, true),
-        selection, len, allRows, params, tab, actionHandlerCall;
+        selection, len, allRows, params, tab, actionHandlerCall, clientSideValidationFail;
     // activeView = view.parentWindow && view.parentWindow.activeView,  ???.
     if (this.resultLayout && this.resultLayout.destroy) {
       this.resultLayout.destroy();
@@ -550,21 +553,24 @@ isc.OBParameterWindowView.addProperties({
     // allow to add external parameters
     isc.addProperties(allProperties._params, this.externalParams);
 
-    actionHandlerCall = function (me) {
-      me.showProcessing(true);
-      OB.RemoteCallManager.call(me.actionHandler, allProperties, {
-        processId: me.processId,
-        reportId: me.reportId,
-        windowId: me.windowId
+    actionHandlerCall = function () {
+      view.showProcessing(true);
+      OB.RemoteCallManager.call(view.actionHandler, allProperties, {
+        processId: view.processId,
+        reportId: view.reportId,
+        windowId: view.windowId
       }, function (rpcResponse, data, rpcRequest) {
         view.handleResponse(!(data && data.refreshParent === false), (data && data.message), (data && data.responseActions), (data && data.retryExecution), data);
       });
     };
 
     if (this.clientSideValidation) {
-      this.clientSideValidation(this, actionHandlerCall);
+      clientSideValidationFail = function () {
+        view.setAllButtonEnabled(view.allRequiredParametersSet());
+      };
+      this.clientSideValidation(this, actionHandlerCall, clientSideValidationFail);
     } else {
-      actionHandlerCall(this);
+      actionHandlerCall();
     }
   },
 
@@ -715,20 +721,25 @@ isc.OBParameterWindowView.addProperties({
     return (this.buttonOwnerView && this.buttonOwnerView.getContextInfo(onlySessionProperties, classicMode, forceSettingContextVars, convertToClassicFormat)) || {};
   },
 
-  handleButtonsStatus: function () {
-    var allRequiredSet = this.allRequiredParametersSet();
+
+  setAllButtonEnabled: function (enabled) {
     if (this.isReport) {
       if (this.pdfExport) {
-        this.pdfButton.setEnabled(allRequiredSet);
+        this.pdfButton.setEnabled(enabled);
       }
       if (this.xlsExport) {
-        this.xlsButton.setEnabled(allRequiredSet);
+        this.xlsButton.setEnabled(enabled);
       }
     } else {
       if (this.okButton) {
-        this.okButton.setEnabled(allRequiredSet);
+        this.okButton.setEnabled(enabled);
       }
     }
+  },
+
+  handleButtonsStatus: function () {
+    var allRequiredSet = this.allRequiredParametersSet();
+    this.setAllButtonEnabled(allRequiredSet);
   },
 
   // returns true if any non-grid required parameter does not have a value

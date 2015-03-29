@@ -938,6 +938,12 @@ isc.OBSelectorItem.addProperties({
       windowId: view.windowId,
       windowTitle: OB.I18N.getLabel('OBUISEL_AddNewRecord', [this.title])
     };
+    // Avoid that windowId is null. WindowId in params is necessary
+    // to check access process of OBUISEL_Selector Reference.
+    if (!params.windowId) {
+      params.windowId = view && view.standardWindow && view.standardWindow.windowId;
+
+    }
     if (additionalProcessProperties) {
       isc.addProperties(params, additionalProcessProperties);
     }

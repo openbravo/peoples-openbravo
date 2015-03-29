@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -155,6 +155,7 @@ public class JsonRestServlet extends BaseWebServiceServlet {
         writeResult(response, result);
       } else {
         JSONStreamWriter writer = new JSONStreamWriter(response, parameters);
+        parameters.put(JsonConstants.USE_ALIAS, "true");
         DefaultJsonDataService.getInstance().fetch(parameters, writer);
         writer.close();
       }

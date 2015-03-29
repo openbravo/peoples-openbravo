@@ -56,11 +56,11 @@ OB.APRM.MatchStatement.onRefresh = function (view) {
   grid.fetchData(newCriteria);
 };
 
-OB.APRM.MatchStatement.onProcess = function (view, actionHandlerCall) {
+OB.APRM.MatchStatement.onProcess = function (view, actionHandlerCall, clientSideValidationFail	) {
   var execute;
   execute = function (ok) {
     if (ok) {
-      actionHandlerCall(view);
+      actionHandlerCall();
     } else {
       view.parentElement.parentElement.closeClick();
     }
