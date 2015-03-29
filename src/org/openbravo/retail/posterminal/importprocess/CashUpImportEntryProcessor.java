@@ -10,7 +10,7 @@ package org.openbravo.retail.posterminal.importprocess;
 
 import javax.enterprise.context.ApplicationScoped;
 
-import org.activiti.engine.impl.util.json.JSONObject;
+import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBDal;
@@ -56,6 +56,7 @@ public class CashUpImportEntryProcessor extends ImportEntryProcessor {
     protected void processEntry(ImportEntry importEntry) throws Exception {
       // check that there are no orders import entries for the terminal
       // which have not yet been processed
+
       final JSONObject json = new JSONObject(importEntry.getJsoninfo());
       if (json.has("isprocessed") && "Y".equals(json.getString("isprocessed"))
           && thereAreOrdersInImportQueue(importEntry)) {
