@@ -18,11 +18,11 @@
  */
 package org.openbravo.service.importprocess;
 
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.WeakHashMap;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -72,12 +72,6 @@ import org.openbravo.model.common.enterprise.Organization;
  * {@link #getProcessSelectionKey(ImportEntry)} method. This method determines which/how the correct
  * {@link ImportEntryProcessRunnable} is chosen.
  * 
- * The receiving of new entries and assigning to an existing {@link ImportEntryProcessRunnable} is
- * done in a multi-threaded environment. So there is a slight change that a new entry is assigned to
- * a thread which is about to stop running. This is only a slight change and if this happens there
- * is not a problem, the import entry will be offered again in the next cycle of the
- * {@link ImportEntryManager}.
- * 
  * The default/base implementation of the {@link ImportEntryProcessRunnable} provides standard
  * features related to caching of {@link OBContext}, error handling and transaction handling.
  * 
@@ -96,18 +90,23 @@ import org.openbravo.model.common.enterprise.Organization;
  * implementation has mechanism to prevent double processing in some cases.
  * 
  * Note: it is save for an ImportEntryProcessor to occasionally not process an {@link ImportEntry}.
- * The {@link ImportEntryManager} will offer the {@link ImportEntry} again in its next cycle.
+ * The {@link ImportEntryManager} will offer the {@link ImportEntry} again in its next cycle. But it
+ * is quite important that this only happens if the order of the entries being processed is
+ * maintained or not relevant.
  * 
  * @author mtaal
  */
 @ApplicationScoped
 public abstract class ImportEntryProcessor {
 
+  // not static to create a Logger for each subclass
   private Logger log;
 
   private boolean initialized = false;
 
-  private Map<String, ImportEntryProcessRunnable> runnables = new ConcurrentHashMap<String, ImportEntryProcessRunnable>();
+  // multiple threads access this map, its access is handled through
+  // synchronized methods
+  private Map<String, ImportEntryProcessRunnable> runnables = new HashMap<String, ImportEntryProcessRunnable>();
   private ExecutorService executorService;
 
   @Inject
@@ -124,7 +123,7 @@ public abstract class ImportEntryProcessor {
     // TODO: make number of threads configurable through a preference
     // threads are created on demand, so if not needed then it is not
     // used
-    executorService = Executors.newFixedThreadPool(getMaxNumberOfThreads());
+    executorService = Executors.newFixedThreadPool(Math.max(1, getMaxNumberOfThreads()));
 
     initialized = true;
   }
@@ -163,13 +162,8 @@ public abstract class ImportEntryProcessor {
    * method. The implementation should be able to gracefully handle duplicate entries. Also the
    * implementation should check if the {@link ImportEntry} was possibly already handled and ignore
    * it then.
-   * 
-   * Note: this method is synchronized to be on the 'save' side, there should not be 2 or more
-   * threads for the same processing key. This method is only called normally from a single thread
-   * (the ImportEntryManager.ImportEntryManagerThread, synchronized is not strictly needed but added
-   * to be on the save side.
    */
-  public synchronized void handleImportEntry(ImportEntry importEntry) {
+  public void handleImportEntry(ImportEntry importEntry) {
 
     initialize();
 
@@ -180,16 +174,27 @@ public abstract class ImportEntryProcessor {
     // importentry.
     final String key = getProcessSelectionKey(importEntry);
 
+    // the next call is synchronized to manage the case
+    // that a thread deregisters itself at the same time
+    assignEntryToThread(key, importEntry);
+  }
+
+  // synchronized to handle the case that a thread tries to deregister
+  // itself at the same time
+  protected synchronized void assignEntryToThread(String key, ImportEntry importEntry) {
+
     // runnables is a concurrent hashmap
     ImportEntryProcessRunnable runnable = runnables.get(key);
 
     // note: don't if here on an isProcessing flag on the runnable
     // this can result in 2 runnables for the same key
-    // a runnable can be in a queue of the executorservice
-    // waiting to be processed.
+    // as runnable can already be in a queue of the executorservice
+    // waiting to be processed, but not yet started
     if (runnable != null) {
       // there is runnable which can handle this ImportEntry
-      log.debug("Adding entry to runnable with key " + key);
+      if (log.isDebugEnabled()) {
+        log.debug("Adding entry to runnable with key " + key);
+      }
       // give it to the runnable
       runnable.addEntry(importEntry);
 
@@ -213,17 +218,23 @@ public abstract class ImportEntryProcessor {
 
     // and give it to the executorServer to run
     executorService.submit(runnable);
-
-    return;
   }
 
   /**
    * Is called when a {@link ImportEntryProcessRunnable} is ready with its current sets of
    * {@link ImportEntry} and stops running.
+   * 
+   * Is synchronized to be handle the case that deregistering happens while also an entry was added.
+   * If an entry was added false is returned and the thread continues.
    */
-  private void removeRunnable(ImportEntryProcessRunnable runnable) {
+  private synchronized boolean deregisterProcessThread(ImportEntryProcessRunnable runnable) {
+    if (!runnable.getImportEntryQueue().isEmpty()) {
+      // a new entry was entered while we tried to deregister
+      return false;
+    }
     log.debug("Removing runnable " + runnable.getKey());
     runnables.remove(runnable.getKey());
+    return true;
   }
 
   /**
@@ -271,7 +282,7 @@ public abstract class ImportEntryProcessor {
    *
    */
   public static abstract class ImportEntryProcessRunnable implements Runnable {
-    private ConcurrentLinkedDeque<ImportEntry> importEntries = new ConcurrentLinkedDeque<ImportEntry>();
+    private Deque<ImportEntry> importEntries = new ConcurrentLinkedDeque<ImportEntry>();
 
     private Logger logger;
 
@@ -294,7 +305,7 @@ public abstract class ImportEntryProcessor {
           final ImportEntry importEntry = importEntries.pop();
           try {
 
-            long t = System.currentTimeMillis();
+            final long t = System.currentTimeMillis();
 
             // start from scratch
             OBDal.getInstance().rollbackAndClose();
@@ -321,7 +332,7 @@ public abstract class ImportEntryProcessor {
               // not changed, process
               processEntry(localImportEntry);
             } finally {
-              cleanUpThread();
+              cleanUpThreadForNextCycle();
             }
 
             // keep some stats
@@ -329,7 +340,7 @@ public abstract class ImportEntryProcessor {
             final long timeForEntry = (System.currentTimeMillis() - t);
             totalT += timeForEntry;
             importEntryManager.reportStats(importEntry.getTypeofdata(), timeForEntry);
-            if ((cnt % 100) == 0) {
+            if ((cnt % 100) == 0 && logger.isDebugEnabled()) {
               logger.debug("Runnable: " + key + ", processed " + cnt + " import entries in "
                   + totalT + " millis, " + (totalT / cnt)
                   + " per import entry, current queue size: " + importEntries.size());
@@ -345,10 +356,12 @@ public abstract class ImportEntryProcessor {
             importEntryManager.setImportEntryErrorIndependent(importEntry.getId(), t);
           }
         }
-        logger.debug("Runnable: " + key + ", processed " + cnt + " import entries in " + totalT
-            + " millis, " + (totalT / cnt) + " per import entry, current queue size: "
-            + importEntries.size());
+        if (logger.isDebugEnabled()) {
+          logger.debug("Runnable: " + key + ", processed " + cnt + " import entries in " + totalT
+              + " millis, " + (totalT / cnt) + " per import entry, current queue size: "
+              + importEntries.size());
 
+        }
       } finally {
 
         // bit rough but ensures that the connection is released/closed
@@ -357,11 +370,18 @@ public abstract class ImportEntryProcessor {
         } catch (Exception ignored) {
         }
 
-        importEntryIds.clear();
-        cachedOBContexts.clear();
-        // and remove us from the runnables
-        importEntryProcessor.removeRunnable(this);
+        if (!importEntryProcessor.deregisterProcessThread(this)) {
+          // a new entry was added when we tried to deregister, restart ourselves
+          run();
+        } else {
+          importEntryIds.clear();
+          cachedOBContexts.clear();
+        }
       }
+    }
+
+    protected Deque<ImportEntry> getImportEntryQueue() {
+      return importEntries;
     }
 
     protected void setOBContext(ImportEntry importEntry) {
@@ -380,7 +400,7 @@ public abstract class ImportEntryProcessor {
           .setVariableSecureApp(OBContext.getOBContext().createVariablesSecureApp());
     }
 
-    protected void cleanUpThread() {
+    protected void cleanUpThreadForNextCycle() {
       OBContext.setOBContext((OBContext) null);
       RequestContext.get().setVariableSecureApp(null);
     }
@@ -404,12 +424,12 @@ public abstract class ImportEntryProcessor {
 
         // hardcoded way of not letting the mem usage to get out of hand
         // duplicates are also handled above in the code
-        if (importEntryIds.size() > 1000) {
+        if (importEntryIds.size() > 10000) {
           importEntryIds.clear();
         }
 
         importEntryIds.add(importEntry.getId());
-        importEntries.push(importEntry);
+        importEntries.add(importEntry);
       }
     }
 
