@@ -11,6 +11,35 @@
       <stringProp name="TestPlan.user_define_classpath"></stringProp>
     </TestPlan>
     <hashTree>
+      <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+        <collectionProp name="Arguments.arguments">
+          <elementProp name="url" elementType="Argument">
+            <stringProp name="Argument.name">url</stringProp>
+            <stringProp name="Argument.value">http://localhost:8080/openbravo</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="appName" elementType="Argument">
+            <stringProp name="Argument.name">appName</stringProp>
+            <stringProp name="Argument.value">WebPOS</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+        </collectionProp>
+      </Arguments>
+      <hashTree/>
+      <UserParameters guiclass="UserParametersGui" testclass="UserParameters" testname="User Parameters" enabled="true">
+        <collectionProp name="UserParameters.names">
+          <stringProp name="-1440013438">messageId</stringProp>
+          <stringProp name="1937367367">ticketId</stringProp>
+        </collectionProp>
+        <collectionProp name="UserParameters.thread_values">
+          <collectionProp name="1410920833">
+            <stringProp name="-1719143956">${__RandomString(32, 0123456789ABCDEF)}</stringProp>
+            <stringProp name="-1719143956">${__RandomString(32, 0123456789ABCDEF)}</stringProp>
+          </collectionProp>
+        </collectionProp>
+        <boolProp name="UserParameters.per_iteration">false</boolProp>
+      </UserParameters>
+      <hashTree/>
       <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
         <boolProp name="ResultCollector.error_logging">false</boolProp>
         <objProp>
@@ -44,7 +73,7 @@
         <stringProp name="filename"></stringProp>
       </ResultCollector>
       <hashTree/>
-      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="VBS-1" enabled="true">
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="VBS-1" enabled="false">
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
           <boolProp name="LoopController.continue_forever">false</boolProp>
@@ -1253,7 +1282,7 @@
           </hashTree>
         </hashTree>
       </hashTree>
-      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="PS-1" enabled="true">
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="PS-1" enabled="false">
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
           <boolProp name="LoopController.continue_forever">false</boolProp>
@@ -1960,13 +1989,13 @@
           </hashTree>
         </hashTree>
       </hashTree>
-      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="CMS-1" enabled="false">
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="CMS-1" enabled="true">
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
           <boolProp name="LoopController.continue_forever">false</boolProp>
           <stringProp name="LoopController.loops">1</stringProp>
         </elementProp>
-        <stringProp name="ThreadGroup.num_threads">35</stringProp>
+        <stringProp name="ThreadGroup.num_threads">1</stringProp>
         <stringProp name="ThreadGroup.ramp_time">5</stringProp>
         <longProp name="ThreadGroup.start_time">1339573754000</longProp>
         <longProp name="ThreadGroup.end_time">1339573754000</longProp>
@@ -2205,7 +2234,7 @@
           <hashTree/>
           <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
             <boolProp name="LoopController.continue_forever">true</boolProp>
-            <stringProp name="LoopController.loops">100</stringProp>
+            <stringProp name="LoopController.loops">10</stringProp>
           </LoopController>
           <hashTree>
             <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="OrderLoaderTest" enabled="true">
@@ -2632,7 +2661,7 @@
           <boolProp name="LoopController.continue_forever">false</boolProp>
           <stringProp name="LoopController.loops">1</stringProp>
         </elementProp>
-        <stringProp name="ThreadGroup.num_threads">10</stringProp>
+        <stringProp name="ThreadGroup.num_threads">1</stringProp>
         <stringProp name="ThreadGroup.ramp_time">5</stringProp>
         <longProp name="ThreadGroup.start_time">1339573754000</longProp>
         <longProp name="ThreadGroup.end_time">1339573754000</longProp>
@@ -2747,45 +2776,21 @@
           <boolProp name="ResultCollector.success_only_logging">true</boolProp>
         </ResultCollector>
         <hashTree/>
-        <UserParameters guiclass="UserParametersGui" testclass="UserParameters" testname="User Parameters" enabled="true">
-          <collectionProp name="UserParameters.names">
-            <stringProp name="-1440013438">messageId</stringProp>
-            <stringProp name="1937367367">ticketId</stringProp>
-          </collectionProp>
-          <collectionProp name="UserParameters.thread_values">
-            <collectionProp name="1410920833">
-              <stringProp name="-1719143956">${__RandomString(32, 0123456789ABCDEF)}</stringProp>
-              <stringProp name="-1719143956">${__RandomString(32, 0123456789ABCDEF)}</stringProp>
-            </collectionProp>
-          </collectionProp>
-          <boolProp name="UserParameters.per_iteration">false</boolProp>
-        </UserParameters>
-        <hashTree/>
         <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
           <collectionProp name="Arguments.arguments">
             <elementProp name="terminalName" elementType="Argument">
               <stringProp name="Argument.name">terminalName</stringProp>
-              <stringProp name="Argument.value">YS-1</stringProp>
+              <stringProp name="Argument.value">YS-11</stringProp>
               <stringProp name="Argument.metadata">=</stringProp>
             </elementProp>
             <elementProp name="usr" elementType="Argument">
               <stringProp name="Argument.name">usr</stringProp>
-              <stringProp name="Argument.value">demouser</stringProp>
-              <stringProp name="Argument.metadata">=</stringProp>
-            </elementProp>
-            <elementProp name="url" elementType="Argument">
-              <stringProp name="Argument.name">url</stringProp>
-              <stringProp name="Argument.value">http://localhost:8080/openbravo</stringProp>
+              <stringProp name="Argument.value">vallblanca</stringProp>
               <stringProp name="Argument.metadata">=</stringProp>
             </elementProp>
             <elementProp name="pwd" elementType="Argument">
               <stringProp name="Argument.name">pwd</stringProp>
               <stringProp name="Argument.value">openbravo</stringProp>
-              <stringProp name="Argument.metadata">=</stringProp>
-            </elementProp>
-            <elementProp name="appName" elementType="Argument">
-              <stringProp name="Argument.name">appName</stringProp>
-              <stringProp name="Argument.value">WebPOS</stringProp>
               <stringProp name="Argument.metadata">=</stringProp>
             </elementProp>
           </collectionProp>
@@ -2845,7 +2850,7 @@
                 </elementProp>
                 <elementProp name="terminalName" elementType="HTTPArgument">
                   <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                  <stringProp name="Argument.value">YS-1</stringProp>
+                  <stringProp name="Argument.value">YS-11</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                   <boolProp name="HTTPArgument.use_equals">true</boolProp>
                   <stringProp name="Argument.name">terminalName</stringProp>
