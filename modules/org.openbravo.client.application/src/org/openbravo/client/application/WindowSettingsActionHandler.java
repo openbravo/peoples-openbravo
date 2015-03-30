@@ -200,13 +200,13 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
         ps.put(KernelUtils.getProperty(f).getName());
       }
 
+      JSONObject extraSettingsJson = new JSONObject();
+      json.put("extraSettings", extraSettingsJson);
       JSONArray extraCallbacks = new JSONArray();
 
       // Add the extraSettings injected
       for (ExtraSettingsInjector nextSetting : extraSettings) {
         Map<String, Object> settingsToAdd = nextSetting.doAddSetting(parameters, json);
-        JSONObject extraSettingsJson = new JSONObject();
-        json.put("extraSettings", extraSettingsJson);
         for (Entry<String, Object> setting : settingsToAdd.entrySet()) {
           String settingKey = setting.getKey();
           Object settingValue = setting.getValue();
