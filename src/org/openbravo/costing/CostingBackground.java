@@ -289,6 +289,7 @@ public class CostingBackground extends DalBaseProcess {
       transactionCostDateacctInitializedPreference.setPropertyList(false);
       OBDal.getInstance().save(transactionCostDateacctInitializedPreference);
       OBDal.getInstance().flush();
+      OBDal.getInstance().getConnection(true).commit();
     }
   }
 }
