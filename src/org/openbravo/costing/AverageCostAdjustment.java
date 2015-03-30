@@ -78,6 +78,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     Date trxDate = basetrx.getTransactionProcessDate();
 
     BigDecimal adjustmentBalance = BigDecimal.ZERO;
+    BigDecimal unitCostAdjustmentBalance = BigDecimal.ZERO;
     // Initialize adjustment balance looping through all cost adjustment lines of current
     // transaction.
     log.debug("Initialize adjustment balance");
@@ -105,6 +106,9 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
             FinancialUtils.PRECISION_STANDARD);
       }
       adjustmentBalance = adjustmentBalance.add(adjustmentAmt.multiply(signMultiplier));
+      if (costAdjLine.isUnitCost()) {
+        unitCostAdjustmentBalance = unitCostAdjustmentBalance.add(adjustmentAmt);
+      }
     }
 
     // Initialize current stock qty and value amt.
@@ -134,12 +138,12 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     }
     log.debug("Starting average cost {}", cost == null ? "not cost" : cost.toPlainString());
     if (cost != null && (AverageAlgorithm.modifiesAverage(trxType) || !baseCAL.isBackdatedTrx())) {
-      BigDecimal trxCost = CostAdjustmentUtils.getTrxCost(basetrx, false, getCostCurrency());
+      BigDecimal trxUnitCost = CostAdjustmentUtils.getTrxCost(basetrx, true, getCostCurrency());
       BigDecimal trxPrice = null;
       if (basetrx.getMovementQuantity().signum() == 0) {
         trxPrice = BigDecimal.ZERO;
       } else {
-        trxPrice = trxCost.add(adjustmentBalance.multiply(signMultiplier)).divide(
+        trxPrice = trxUnitCost.add(unitCostAdjustmentBalance).divide(
             basetrx.getMovementQuantity().abs(), costCurPrecission, RoundingMode.HALF_UP);
       }
       if (checkNegativeStockCorrection && currentStock.compareTo(basetrx.getMovementQuantity()) < 0
@@ -203,7 +207,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
             curCosting.setOriginalCost(curCosting.getCost());
           }
           curCosting.setCost(cost);
-          curCosting.setPrice(cost);
+          curCosting.setPrice(trxPrice);
           curCosting.setPermanent(Boolean.TRUE);
           OBDal.getInstance().flush();
           OBDal.getInstance().save(curCosting);
@@ -223,6 +227,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
         log.debug("Process related transaction {}", trx.getIdentifier());
         BigDecimal trxSignMultiplier = new BigDecimal(trx.getMovementQuantity().signum());
         BigDecimal trxAdjAmt = BigDecimal.ZERO;
+        BigDecimal trxUnitCostAdjAmt = BigDecimal.ZERO;
         if (StringUtils.isNotEmpty(bdCostingId) && !isBackdatedTransaction(trx)) {
           // If there is a backdated source adjustment pending modify the dates of its m_costing.
           updateBDCostingTimeRange(trx);
@@ -260,6 +265,9 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
             }
             trxAdjAmt = trxAdjAmt.add(adjustmentAmt);
             adjustmentBalance = adjustmentBalance.add(adjustmentAmt.multiply(trxSignMultiplier));
+            if (existingCAL.isUnitCost()) {
+              trxUnitCostAdjAmt = trxUnitCostAdjAmt.add(adjustmentAmt);
+            }
           }
 
           existingCAL.setRelatedTransactionAdjusted(Boolean.TRUE);
@@ -272,8 +280,9 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
 
         BigDecimal trxCost = CostAdjustmentUtils.getTrxCost(trx, false,
             OBDal.getInstance().get(Currency.class, strCurrentCurId));
-        currentValueAmt = currentValueAmt.add(trxCost.multiply(new BigDecimal(trx
-            .getMovementQuantity().signum())));
+        BigDecimal trxUnitCost = CostAdjustmentUtils.getTrxCost(trx, true,
+            OBDal.getInstance().get(Currency.class, strCurrentCurId));
+        currentValueAmt = currentValueAmt.add(trxCost.multiply(trxSignMultiplier));
         currentStock = currentStock.add(trx.getMovementQuantity());
         log.debug("Updated current stock {} and, current value {}", currentStock.toPlainString(),
             currentValueAmt.toPlainString());
@@ -295,9 +304,8 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
           if (trx.getMovementQuantity().signum() == 0) {
             trxPrice = BigDecimal.ZERO;
           } else {
-            trxPrice = curCosting.getPrice().multiply(trx.getMovementQuantity().abs())
-                .add(trxAdjAmt.multiply(trxSignMultiplier))
-                .divide(trx.getMovementQuantity().abs(), costCurPrecission, RoundingMode.HALF_UP);
+            trxPrice = trxUnitCost.add(trxUnitCostAdjAmt).divide(trx.getMovementQuantity().abs(),
+                costCurPrecission, RoundingMode.HALF_UP);
           }
 
           if (checkNegativeStockCorrection && currentStock.compareTo(trx.getMovementQuantity()) < 0
@@ -353,6 +361,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
             if (expectedCost.compareTo(unitCost) != 0) {
               trxAdjAmt = trxAdjAmt
                   .add(expectedCost.subtract(unitCost).multiply(trxSignMultiplier));
+              trxUnitCostAdjAmt = trxUnitCostAdjAmt.add(expectedCost.subtract(unitCost));
               adjustmentBalance = adjustmentBalance.add(expectedCost.subtract(unitCost).multiply(
                   trxSignMultiplier));
               // If there is a difference insert a cost adjustment line.
@@ -374,9 +383,8 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
             if (trx.getMovementQuantity().signum() == 0) {
               trxPrice = BigDecimal.ZERO;
             } else {
-              trxPrice = curCosting.getPrice().multiply(trx.getMovementQuantity().abs())
-                  .add(trxAdjAmt.multiply(trxSignMultiplier))
-                  .divide(trx.getMovementQuantity().abs(), costCurPrecission, RoundingMode.HALF_UP);
+              trxPrice = trxUnitCost.add(trxUnitCostAdjAmt).divide(trx.getMovementQuantity().abs(),
+                  costCurPrecission, RoundingMode.HALF_UP);
             }
             if (curCosting.getCost().compareTo(cost) != 0) {
               curCosting.setPermanent(Boolean.FALSE);
