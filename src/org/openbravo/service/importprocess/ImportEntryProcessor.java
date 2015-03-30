@@ -18,12 +18,12 @@
  */
 package org.openbravo.service.importprocess;
 
-import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Queue;
 import java.util.WeakHashMap;
-import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -282,7 +282,7 @@ public abstract class ImportEntryProcessor {
    *
    */
   public static abstract class ImportEntryProcessRunnable implements Runnable {
-    private Deque<ImportEntry> importEntries = new ConcurrentLinkedDeque<ImportEntry>();
+    private Queue<ImportEntry> importEntries = new ConcurrentLinkedQueue<ImportEntry>();
 
     private Logger logger;
 
@@ -301,10 +301,9 @@ public abstract class ImportEntryProcessor {
       try {
         int cnt = 0;
         long totalT = 0;
-        while (!importEntries.isEmpty()) {
-          final ImportEntry importEntry = importEntries.pop();
+        ImportEntry importEntry;
+        while ((importEntry = importEntries.poll()) != null) {
           try {
-
             final long t = System.currentTimeMillis();
 
             // start from scratch
@@ -380,7 +379,7 @@ public abstract class ImportEntryProcessor {
       }
     }
 
-    protected Deque<ImportEntry> getImportEntryQueue() {
+    protected Queue<ImportEntry> getImportEntryQueue() {
       return importEntries;
     }
 
