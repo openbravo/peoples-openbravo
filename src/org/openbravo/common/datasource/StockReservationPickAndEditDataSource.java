@@ -1508,6 +1508,7 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
               return amount.compareTo(value) <= 0;
             }
           } catch (NumberFormatException e) {
+            return false;
           }
         }
 
