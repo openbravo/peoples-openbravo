@@ -427,7 +427,7 @@ isc.OBSelectorPopupWindow.addProperties({
 // 1) a combo box with a picker icon
 // 2) a popup window showing a search grid with data
 //
-isc.ClassFactory.defineClass('OBSelectorItem', isc.ComboBoxItem);
+isc.ClassFactory.defineClass('OBSelectorItem', isc.OBComboBoxItem);
 
 isc.ClassFactory.mixInInterface('OBSelectorItem', 'OBLinkTitleItem');
 
@@ -475,18 +475,6 @@ isc.OBSelectorItem.addProperties({
     dataProperties: {
       useClientFiltering: false
     }
-  },
-
-  filterComplete: function () {
-    var ret;
-
-    // Prevents validation of this item while filtering because real value is
-    // not yet set. This also caused form item to be redrawn removing typed 
-    // text for filtering (see issue #26189)
-    this.preventValidation = true;
-    ret = this.Super('filterComplete', arguments);
-    delete this.preventValidation;
-    return ret;
   },
 
   hidePickListOnBlur: function () {
