@@ -834,7 +834,18 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   protected void createShipmentLines(ShipmentInOut shipment, Order order, JSONObject jsonorder,
       JSONArray orderlines, ArrayList<OrderLine> lineReferences) throws JSONException {
     int lineNo = 0;
+    boolean foundSingleBin = false;
+    boolean useSingleBin = false;
+    Locator foundBin = null;
     Entity shplineentity = ModelProvider.getInstance().getEntity(ShipmentInOutLine.class);
+
+    final OBCriteria<Locator> locators = OBDal.getInstance().createCriteria(Locator.class);
+    locators.add(Restrictions.eq(Locator.PROPERTY_ACTIVE, true));
+    locators.add(Restrictions.eq(Locator.PROPERTY_WAREHOUSE, shipment.getWarehouse()));
+    if (locators.count() == 1) {
+      foundSingleBin = true;
+      foundBin = (Locator) locators.uniqueResult();
+    }
     for (int i = 0; i < orderlines.length(); i++) {
       String hqlWhereClause;
 
@@ -842,13 +853,23 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       BigDecimal pendingQty = orderLine.getOrderedQuantity().abs();
       boolean negativeLine = orderLine.getOrderedQuantity().compareTo(BigDecimal.ZERO) < 0;
 
+      useSingleBin = foundSingleBin == true && orderLine.getAttributeSetValue() == null
+          && orderLine.getProduct().getAttributeSet() == null
+          && orderLine.getWarehouseRule() == null;
+
       AttributeSetInstance oldAttributeSetValues = null;
+
       if (negativeLine) {
         lineNo += 10;
         addShipemntline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine, jsonorder,
             lineNo, pendingQty.negate(), getBinForReturns(jsonorder.getString("posTerminal")), null);
-
+      }
+      if (useSingleBin) {
+        lineNo += 10;
+        addShipemntline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine, jsonorder,
+            lineNo, pendingQty, foundBin, null);
       } else {
+
         HashMap<String, ShipmentInOutLine> usedBins = new HashMap<String, ShipmentInOutLine>();
         if (pendingQty.compareTo(BigDecimal.ZERO) > 0) {
 
