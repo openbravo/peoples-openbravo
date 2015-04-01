@@ -340,6 +340,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                   FIN_ExecutePayment executePayment = new FIN_ExecutePayment();
                   executePayment.init("APP", executionProcess, payments, null,
                       payment.getOrganization());
+                  executePayment.addInternalParameter("comingFrom", "TRANSACTION");
                   OBError result = executePayment.execute();
                   if ("Error".equals(result.getType())) {
                     msg.setType("Warning");
