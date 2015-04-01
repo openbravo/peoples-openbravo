@@ -98,7 +98,6 @@ import org.openbravo.service.json.JsonToDataConverter;
 @DataSynchronization(entity = "Order")
 public class OrderLoader extends POSDataSynchronizationProcess implements
     DataSynchronizationImportProcess {
-
   private static final Logger log = Logger.getLogger(OrderLoader.class);
 
   private static final BigDecimal NEGATIVE_ONE = new BigDecimal(-1);
@@ -272,9 +271,16 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
         if (!isQuotation) {
           if (!isLayaway && !partialpayLayaway && createShipment) {
-            // Stock manipulation
-            handleStock(shipment);
-            // Send email
+            org.openbravo.database.ConnectionProvider cp = new DalConnectionProvider(false);
+            CallableStatement updateStockStatement = cp.getConnection().prepareCall(
+                "{call M_UPDATE_INVENTORY (?,?,?,?,?,?,?,?,?,?,?,?,?)}");
+            try {
+              // Stock manipulation
+              handleStock(shipment, updateStockStatement);
+              // Send email
+            } finally {
+              updateStockStatement.close();
+            }
           }
         }
 
@@ -1151,7 +1157,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     }
   }
 
-  protected void handleStock(ShipmentInOut shipment) {
+  protected void handleStock(ShipmentInOut shipment, CallableStatement updateStockStatement) {
     for (ShipmentInOutLine line : shipment.getMaterialMgmtShipmentInOutLineList()) {
       if (line.getProduct().getProductType().equals("I") && line.getProduct().isStocked()) {
         // Stock is changed only for stocked products of type "Item"
@@ -1168,52 +1174,50 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         transaction.setGoodsShipmentLine(line);
         transaction.setAttributeSetValue(line.getAttributeSetValue());
 
-        updateInventory(transaction);
+        updateInventory(transaction, updateStockStatement);
 
         OBDal.getInstance().save(transaction);
       }
     }
   }
 
-  protected void updateInventory(MaterialTransaction transaction) {
+  protected void updateInventory(MaterialTransaction transaction,
+      CallableStatement updateStockStatement) {
     try {
-      org.openbravo.database.ConnectionProvider cp = new DalConnectionProvider(false);
-      CallableStatement cs = cp.getConnection().prepareCall(
-          "{call M_UPDATE_INVENTORY (?,?,?,?,?,?,?,?,?,?,?,?,?)}");
 
       // client
-      cs.setString(1, OBContext.getOBContext().getCurrentClient().getId());
+      updateStockStatement.setString(1, OBContext.getOBContext().getCurrentClient().getId());
       // org
-      cs.setString(2, OBContext.getOBContext().getCurrentOrganization().getId());
+      updateStockStatement.setString(2, OBContext.getOBContext().getCurrentOrganization().getId());
       // user
-      cs.setString(3, OBContext.getOBContext().getUser().getId());
+      updateStockStatement.setString(3, OBContext.getOBContext().getUser().getId());
       // product
-      cs.setString(4, transaction.getProduct().getId());
+      updateStockStatement.setString(4, transaction.getProduct().getId());
       // locator
-      cs.setString(5, transaction.getStorageBin().getId());
+      updateStockStatement.setString(5, transaction.getStorageBin().getId());
       // attributesetinstance
-      cs.setString(6, transaction.getAttributeSetValue() != null ? transaction
+      updateStockStatement.setString(6, transaction.getAttributeSetValue() != null ? transaction
           .getAttributeSetValue().getId() : null);
       // uom
-      cs.setString(7, transaction.getUOM().getId());
+      updateStockStatement.setString(7, transaction.getUOM().getId());
       // product uom
-      cs.setString(8, null);
+      updateStockStatement.setString(8, null);
       // p_qty
-      cs.setBigDecimal(9,
+      updateStockStatement.setBigDecimal(9,
           transaction.getMovementQuantity() != null ? transaction.getMovementQuantity() : null);
       // p_qtyorder
-      cs.setBigDecimal(10, transaction.getOrderQuantity() != null ? transaction.getOrderQuantity()
-          : null);
+      updateStockStatement.setBigDecimal(10,
+          transaction.getOrderQuantity() != null ? transaction.getOrderQuantity() : null);
       // p_dateLastInventory --- **
-      cs.setDate(11, null);
+      updateStockStatement.setDate(11, null);
       // p_preqty
-      cs.setBigDecimal(12, BigDecimal.ZERO);
+      updateStockStatement.setBigDecimal(12, BigDecimal.ZERO);
       // p_preqtyorder
-      cs.setBigDecimal(13, transaction.getOrderQuantity() != null ? transaction.getOrderQuantity()
-          .multiply(NEGATIVE_ONE) : null);
+      updateStockStatement.setBigDecimal(13, transaction.getOrderQuantity() != null ? transaction
+          .getOrderQuantity().multiply(NEGATIVE_ONE) : null);
 
-      cs.execute();
-      cs.close();
+      updateStockStatement.execute();
+
     } catch (Exception e) {
       System.out.println("Error calling to M_UPDATE_INVENTORY");
       throw new OBException(e.getMessage());
