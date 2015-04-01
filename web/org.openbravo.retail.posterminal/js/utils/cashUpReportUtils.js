@@ -46,7 +46,7 @@
             orderType: cashuptaxes[i].taxOrderType,
             cashup_id: cashuptaxes[i].cashupID
           }), function () {
-            findAndSave(cashuptaxes, i + 1, finishCallback);
+            findAndSave(cashuptaxes, i + 1, finishCallback, trxName);
           }, null);
         } else {
           tax.at(0).set('amount', OB.DEC.add(tax.at(0).get('amount'), cashuptaxes[i].taxAmount));
@@ -172,8 +172,9 @@
             saveIfInTransaction(auxPay, null, null);
           }, this);
           findAndSave(cashuptaxes, 0, function () {
-            OB.UTIL.composeCashupInfo(cashUp, null, null);
-            updateCashUpInfo(cashUp, receipt, j + 1, callback, trxName);
+            OB.UTIL.composeCashupInfo(cashUp, null, function () {
+              updateCashUpInfo(cashUp, receipt, j + 1, callback, trxName);
+            }, trxName);
           }, trxName);
         });
       }
@@ -605,14 +606,24 @@
     }, this);
   };
 
-  OB.UTIL.saveComposeInfo = function (me, callback, objToSend, cashUp) {
+  OB.UTIL.saveComposeInfo = function (me, callback, objToSend, cashUp, trxName) {
+    var saveIfInTransaction;
+
+    saveIfInTransaction = function (model, success, error, forceInsert) {
+      if (trxName) {
+        OB.Dal.saveInTransaction(trxName, model, success, error, forceInsert);
+      } else {
+        OB.Dal.save(model, success, error, forceInsert);
+      }
+    };
+
     cashUp.at(0).set('userId', OB.MobileApp.model.get('context').user.id);
     objToSend.set('userId', OB.MobileApp.model.get('context').user.id);
     cashUp.at(0).set('objToSend', JSON.stringify(objToSend));
     if (callback) {
-      OB.Dal.save(cashUp.at(0), callback(me), null);
+      saveIfInTransaction(cashUp.at(0), callback(me), null);
     } else {
-      OB.Dal.save(cashUp.at(0), null, null);
+      saveIfInTransaction(cashUp.at(0), null, null);
     }
   };
   OB.UTIL.getTaxCashUp = function (taxcashups, objToSend, cashUp) {
@@ -634,8 +645,8 @@
     }, this);
   };
 
-  OB.UTIL.composeCashupInfo = function (cashUp, me, callback) {
-    var objToSend = new Backbone.Model({
+  OB.UTIL.composeCashupInfo = function (cashUp, me, callback, trxName) {
+    var findIfInTransaction, objToSend = new Backbone.Model({
       posterminal: OB.MobileApp.model.get('terminal').id,
       id: cashUp.at(0).get('id'),
       isprocessed: cashUp.at(0).get('isprocessed'),
@@ -652,20 +663,28 @@
       creationDate: (new Date(cashUp.at(0).get('creationDate'))).toISOString()
     });
 
+    findIfInTransaction = function (model, whereClause, success, error, args) {
+      if (trxName) {
+        OB.Dal.findInTransaction(trxName, model, whereClause, success, error, args);
+      } else {
+        OB.Dal.find(model, whereClause, success, error, args);
+      }
+    };
+
     //process the payment method cash ups
-    OB.Dal.find(OB.Model.PaymentMethodCashUp, {
+    findIfInTransaction(OB.Model.PaymentMethodCashUp, {
       'cashup_id': cashUp.at(0).get('id'),
       '_orderByClause': 'name asc'
     }, function (payMthds) {
       OB.UTIL.getPaymethodCashUp(payMthds, objToSend, cashUp);
 
       //process the taxs cash ups
-      OB.Dal.find(OB.Model.TaxCashUp, {
+      findIfInTransaction(OB.Model.TaxCashUp, {
         'cashup_id': cashUp.at(0).get('id'),
         '_orderByClause': 'name asc'
       }, function (taxcashups) {
         OB.UTIL.getTaxCashUp(taxcashups, objToSend, cashUp);
-        OB.UTIL.saveComposeInfo(me, callback, objToSend, cashUp);
+        OB.UTIL.saveComposeInfo(me, callback, objToSend, cashUp, trxName);
       });
     });
   };
