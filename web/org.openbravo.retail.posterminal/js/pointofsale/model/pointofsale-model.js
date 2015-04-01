@@ -285,53 +285,63 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     this.set('multiOrders', multiOrders);
 
     this.get('multiOrders').on('paymentAccepted', function () {
+      var processOrdersAfterAllTaxesCalculated;
       OB.UTIL.showLoading(true);
       ordersLength = this.get('multiOrders').get('multiOrdersList').length;
 
-      function readyToSendFunction() {
-        //this function is executed when all orders are ready to be sent
-        me.get('leftColumnViewManager').setOrderMode();
-        if (me.get('orderList').length > _.filter(me.get('multiOrders').get('multiOrdersList').models, function (order) {
-          return !order.get('isLayaway');
-        }).length) {
-          me.get('orderList').addNewOrder();
-        }
-      }
+      processOrdersAfterAllTaxesCalculated = _.after(ordersLength, function () {
+        var trxName = 'multiOrdersTrx';
+        OB.Dal.doInTransaction(trxName, function (finalizationCallback) {
+          function prepareToSendCallback(order) {
+            function readyToSendFunction() {
+              //this function is executed when all orders are ready to be sent
+              me.get('leftColumnViewManager').setOrderMode();
+              if (me.get('orderList').length > _.filter(me.get('multiOrders').get('multiOrdersList').models, function (order) {
+                return !order.get('isLayaway');
+              }).length) {
+                me.get('orderList').addNewOrder();
+              }
+              finalizationCallback();
+              OB.UTIL.showLoading(false);
+            }
+            auxReceipt = new OB.Model.Order();
+            auxReceipt.clearWith(order);
 
-      function prepareToSendCallback(order) {
-        auxReceipt = new OB.Model.Order();
-        auxReceipt.clearWith(order);
+            if (order.get('orderType') !== 2 && order.get('orderType') !== 3) {
+              var negativeLines = _.filter(order.get('lines').models, function (line) {
+                return line.get('qty') < 0;
+              }).length;
+              if (negativeLines === order.get('lines').models.length) {
+                order.setOrderType('OBPOS_receipt.return', OB.DEC.One, {
+                  applyPromotions: false,
+                  saveOrder: false
+                });
+              } else {
+                order.setOrderType('', OB.DEC.Zero, {
+                  applyPromotions: false,
+                  saveOrder: false
+                });
+              }
+            }
+            me.get('multiOrders').trigger('closed', order, trxName);
+            me.get('multiOrders').trigger('print', order, {
+              offline: true
+            });
 
-        if (order.get('orderType') !== 2 && order.get('orderType') !== 3) {
-          var negativeLines = _.filter(order.get('lines').models, function (line) {
-            return line.get('qty') < 0;
-          }).length;
-          if (negativeLines === order.get('lines').models.length) {
-            order.setOrderType('OBPOS_receipt.return', OB.DEC.One, {
-              applyPromotions: false,
-              saveOrder: false
-            });
-          } else {
-            order.setOrderType('', OB.DEC.Zero, {
-              applyPromotions: false,
-              saveOrder: false
-            });
+            auxReceiptList.push(auxReceipt);
+            if (auxReceiptList.length === me.get('multiOrders').get('multiOrdersList').length) {
+              OB.UTIL.cashUpReport(auxReceiptList, function () {
+                readyToSendFunction();
+              }, trxName);
+              auxReceiptList = [];
+            }
           }
-        }
-        me.get('multiOrders').trigger('closed', order);
-        me.get('multiOrders').trigger('print', order, {
-          offline: true
-        }); // to guaranty execution order
-        SyncReadyToSendFunction();
+          _.each(me.get('multiOrders').get('multiOrdersList').models, function (order) {
+            prepareToSendCallback(order);
+          });
+        });
+      });
 
-        auxReceiptList.push(auxReceipt);
-        if (auxReceiptList.length === me.get('multiOrders').get('multiOrdersList').length) {
-          OB.UTIL.cashUpReport(auxReceiptList);
-        }
-      }
-
-      //this var is a function (copy of the above one) which is called by every items, but it is just executed once (when ALL items has called to it)
-      SyncReadyToSendFunction = _.after(this.get('multiOrders').get('multiOrdersList').length, readyToSendFunction);
 
       for (j = 0; j < ordersLength; j++) {
         //Create the negative payment for change
@@ -397,7 +407,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             }
           }
         }
-        iter.prepareToSend(prepareToSendCallback);
+        iter.prepareToSend(processOrdersAfterAllTaxesCalculated);
       }
 
     }, this);
