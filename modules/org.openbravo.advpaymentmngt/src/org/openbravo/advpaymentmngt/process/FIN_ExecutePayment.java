@@ -193,8 +193,7 @@ public class FIN_ExecutePayment {
 
                     if (FIN_Utility.isAutomaticDepositWithdrawn(paymentRunPayment.getPayment())
                         && paymentRunPayment.getPayment().getAmount().compareTo(BigDecimal.ZERO) != 0
-                        && !StringUtils
-                            .equals(internalParameters.get("comingFrom"), "TRANSACTION")) {
+                        && !StringUtils.equals(internalParameters.get("comingFrom"), "TRANSACTION")) {
                       FIN_FinaccTransaction transaction = TransactionsDao
                           .createFinAccTransaction(paymentRunPayment.getPayment());
                       VariablesSecureApp vars = new VariablesSecureApp(RequestContext.get()
@@ -257,7 +256,7 @@ public class FIN_ExecutePayment {
     final List<PaymentExecutionProcessParameter> allParameters = executionProcess
         .getFinancialMgmtPaymentExecutionProcessParameterList();
     for (PaymentExecutionProcessParameter parameter : allParameters)
-      if ("CONSTANT".equals(parameter.getInputType()))
+      if ("CONSTANT".equals(parameter.getParameterType()))
         constantParameters.put(parameter.getSearchKey(), parameter.getDefaultTextValue());
   }
 
