@@ -1,3 +1,22 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SLU
+ * All portions are Copyright (C) 2015 Openbravo SLU
+ * All Rights Reserved.
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+ */
+
 package org.openbravo.client.application.window;
 
 import java.io.File;
@@ -8,18 +27,16 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.mail.internet.MimeUtility;
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.fileupload.FileItem;
-import org.apache.log4j.Logger;
-import org.openbravo.base.ConfigParameters;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.common.actionhandler.OrderCreatePOLines;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.TabAttachments;
@@ -27,60 +44,51 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.reporting.ReportingException;
 import org.openbravo.model.ad.utility.Attachment;
 import org.openbravo.utils.FileUtility;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-@ComponentProvider.Qualifier("Default")
+@ApplicationScoped
+@ComponentProvider.Qualifier(CoreAttachImplementation.DEFAULT)
 public class CoreAttachImplementation extends AttachImplementation {
-  private Logger log = Logger.getLogger(CoreAttachImplementation.class);
+  private Logger log = LoggerFactory.getLogger(OrderCreatePOLines.class);
+
+  public static final String DEFAULT = "Default";
+
+  // final public String DEFAULT = "Default";
 
   @Override
-  public void uploadFile(FileItem fileItem, Attachment attachment, String strDataType,
-      String description, Map<String, Object> parameters, File file) {
-
+  public void uploadFile(Attachment attachment, String strDataType, String description,
+      Map<String, Object> parameters, File file, String strTab) {
+    log.debug("CoreAttachImplemententation - Uploading files");
     String tableId = attachment.getTable().getId();
-    String key = attachment.getRecord();
-    String fileDir = null;
+    String strKey = attachment.getRecord();
+    String strFileDir = TabAttachments.getAttachmentDirectoryForNewAttachments(tableId, strKey);
 
-    if (log.isDebugEnabled()) {
-      log.debug("CoreAttachImplemententation - Uploading files");
-    }
-    fileDir = TabAttachments.getAttachmentDirectoryForNewAttachments(tableId, key);
     try {
       // FIXME: Get the directory separator from Java runtime
-      ServletContext scontext = RequestContext.getServletContext();
-      ConfigParameters globalParameters = ConfigParameters.retrieveFrom(scontext);
-      final File uploadedDir = new File(globalParameters.strFTPDirectory + "/" + fileDir);
+      String attachmentFolder = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+          .getProperty("attach.path");
+      final File uploadedDir = new File(attachmentFolder + "/" + strFileDir);
       if (!uploadedDir.exists()) {
         uploadedDir.mkdirs();
       }
       String strName = "";
       File uploadedFile = null;
-      if (file == null) {
-        strName = fileItem.getName();
-        // FIXME: Get the directory separator from Java runtime
-        int i = strName.lastIndexOf("\\");
-        if (i != -1) {
-          strName = strName.substring(i + 1);
-          // FIXME: Get the directory separator from Java runtime
-        } else if ((i = strName.lastIndexOf("/")) != -1) {
-          strName = strName.substring(i + 1);
-        }
-        uploadedFile = new File(uploadedDir, strName);
-        fileItem.write(uploadedFile);
-      } else { // when fileItem == null
-        strName = file.getName();
-        uploadedFile = new File(uploadedDir, strName);
-        log.debug("Destination file before renaming: " + uploadedFile);
-        if (!file.renameTo(uploadedFile))
-          throw new ReportingException(String.format(OBMessageUtils
-              .messageBD("UnreachableDestination")) + uploadedDir);
+      strName = file.getName();
+      uploadedFile = new File(uploadedDir, strName);
+      log.debug("Destination file before renaming: " + uploadedFile);
+      if (!file.renameTo(uploadedFile)) {
+        throw new ReportingException(OBMessageUtils.messageBD("UnreachableDestination")
+            + uploadedDir);
       }
+      // }
 
       attachment.setText(description);
-      attachment.setPath(TabAttachments.getPath(fileDir));
+      attachment.setPath(TabAttachments.getPath(strFileDir));
       attachment.setDataType(strDataType);
 
     } catch (final Exception e) {
-      throw new OBException(e.getMessage());
+      throw new OBException("Error while uploading a file", e);
     }
 
   }
@@ -90,30 +98,27 @@ public class CoreAttachImplementation extends AttachImplementation {
     HttpServletResponse response = RequestContext.get().getResponse();
     HttpServletRequest request = RequestContext.get().getRequest();
     String fileDir = null;
-
-    if (log.isDebugEnabled()) {
-      log.debug("CoreAttachImplemententation - download file");
-    }
+    log.debug("CoreAttachImplemententation - download file");
 
     FileUtility f = new FileUtility();
     fileDir = TabAttachments.getAttachmentDirectory(attachment.getTable().getId(),
         attachment.getRecord(), attachment.getName());
     // FIXME: Get the directory separator from Java runtime
-    ServletContext scontext = RequestContext.getServletContext();
-    ConfigParameters globalParameters = ConfigParameters.retrieveFrom(scontext);
-    final File file = new File(globalParameters.strFTPDirectory + "/" + fileDir,
-        attachment.getName());
+    String attachmentFolder = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+        .getProperty("attach.path");
+    final File file = new File(attachmentFolder + "/" + fileDir, attachment.getName());
     try {
-      if (file.exists())
-        f = new FileUtility(globalParameters.strFTPDirectory + "/" + fileDir, attachment.getName(),
-            false, true);
-      else
-        f = new FileUtility(globalParameters.strFTPDirectory, attachment.getId(), false, true);
+      if (file.exists()) {
+        f = new FileUtility(attachmentFolder + "/" + fileDir, attachment.getName(), false, true);
+      } else {
+        f = new FileUtility(attachmentFolder, attachment.getId(), false, true);
+      }
 
-      if (attachment.getDataType().equals(""))
+      if (attachment.getDataType().equals("")) {
         response.setContentType("application/txt");
-      else
+      } else {
         response.setContentType(attachment.getDataType());
+      }
       response.setCharacterEncoding("UTF-8");
       String userAgent = request.getHeader("user-agent");
       if (userAgent.contains("MSIE")) {
@@ -133,28 +138,25 @@ public class CoreAttachImplementation extends AttachImplementation {
       response.getOutputStream().flush();
       response.getOutputStream().close();
     } catch (final Exception ex) {
-      throw new OBException(ex.getMessage());// ServletException(ex);
+      throw new OBException(ex.getMessage());
     }
   }
 
   @Override
   public void downloadAll(Attachment attachmentFile, HashMap<String, Integer> writtenFiles,
       ZipOutputStream dest) {
-
-    if (log.isDebugEnabled()) {
-      log.debug("CoreAttachImplemententation - downloadAll records");
-    }
+    log.debug("CoreAttachImplemententation - downloadAll records");
     try {
-      ServletContext scontext = RequestContext.getServletContext();
-      ConfigParameters globalParameters = ConfigParameters.retrieveFrom(scontext);
       String attachmentDirectory = TabAttachments.getAttachmentDirectory(attachmentFile.getTable()
           .getId(), attachmentFile.getRecord(), attachmentFile.getName());
-      final File file = new File(globalParameters.strFTPDirectory + "/" + attachmentDirectory,
+      String attachmentFolder = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+          .getProperty("attach.path");
+      final File file = new File(attachmentFolder + "/" + attachmentDirectory,
           attachmentFile.getName());
       String zipName = "";
       if (!writtenFiles.containsKey(file.getName())) {
         zipName = file.getName();
-        writtenFiles.put(file.getName(), new Integer(0));
+        writtenFiles.put(file.getName(), 0);
       } else {
         int num = writtenFiles.get(file.getName()) + 1;
         int indDot = file.getName().lastIndexOf(".");
@@ -164,7 +166,7 @@ public class CoreAttachImplementation extends AttachImplementation {
         }
         zipName = file.getName().substring(0, indDot) + " (" + num + ")"
             + file.getName().substring(indDot);
-        writtenFiles.put(file.getName(), new Integer(num));
+        writtenFiles.put(file.getName(), num);
       }
       byte[] buf = new byte[1024];
       dest.putNextEntry(new ZipEntry(zipName));
@@ -178,15 +180,15 @@ public class CoreAttachImplementation extends AttachImplementation {
 
     } catch (Exception e) {
       log.error("Error while downloading attachments", e);
-      throw new OBException(e.getMessage());
+      throw new OBException("Error while downloading attachments ", e);
     }
   }
 
   @Override
   public void deleteFile(Attachment attachment) {
-    if (log.isDebugEnabled()) {
-      log.debug("CoreAttachImplemententation - Removing files");
-    }
+
+    log.debug("CoreAttachImplemententation - Removing files");
+
     String attachmentFolder = OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .getProperty("attach.path");
     String fileDir = TabAttachments.getAttachmentDirectory(attachment.getTable().getId(),
@@ -199,7 +201,7 @@ public class CoreAttachImplementation extends AttachImplementation {
         f = new FileUtility(fileDirPath, attachment.getName(), false);
         f.deleteFile();
       } catch (Exception e) {
-        throw new OBException("//Error while removing file", e);
+        throw new OBException("Error while removing file", e);
       }
 
     } else {
@@ -212,9 +214,8 @@ public class CoreAttachImplementation extends AttachImplementation {
       Map<String, Object> parameters) {
     OBContext.setAdminMode(true);
 
-    if (log.isDebugEnabled()) {
-      log.debug("CoreAttachImplemententation - Updating files");
-    }
+    log.debug("CoreAttachImplemententation - Updating files");
+
     try {
       attachment.setText(description);
       OBDal.getInstance().save(attachment);
@@ -222,9 +223,9 @@ public class CoreAttachImplementation extends AttachImplementation {
       // OBDal.getInstance().getConnection().commit();
 
     } catch (Exception e) {
-      log.debug("coreAttachImplementation - Problem updating attachment: " + e.getMessage());
+      log.debug("coreAttachImplementation - Problem deleting attachment: " + e);
       // OBDal.getInstance().rollbackAndClose();
-      throw new OBException("Error while updating file", e);
+      throw new OBException("Error while updating a file", e);
 
     } finally {
       OBContext.restorePreviousMode();

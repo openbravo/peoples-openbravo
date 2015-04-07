@@ -18,6 +18,7 @@
  */
 package org.openbravo.erpCommon.businessUtility;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
@@ -33,6 +34,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.window.AttachImplementationManager;
 import org.openbravo.client.application.window.AttachmentsAH;
@@ -50,6 +52,7 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class TabAttachments extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
   private static Logger log = Logger.getLogger(TabAttachments.class);
+  private static final String TEMP_FILE_DIR = "tmp";
 
   @Override
   public void init(ServletConfig config) {
@@ -68,9 +71,11 @@ public class TabAttachments extends HttpSecureAppServlet {
   public void post(VariablesSecureApp vars, HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
     OBError myMessage = null;
+
     AttachImplementationManager aim = WeldUtils
         .getInstanceFromStaticBeanManager(AttachImplementationManager.class);
     if (vars.getCommand().startsWith("SAVE_NEW")) {
+
       final String strTab = vars.getStringParameter("inpTabId");
       vars.setSessionValue("TabAttachments.tabId", strTab);
       final String strWindow = vars.getStringParameter("inpwindowId");
@@ -79,21 +84,39 @@ public class TabAttachments extends HttpSecureAppServlet {
       vars.setSessionValue("TabAttachments.key", key);
       final String strText = vars.getStringParameter("inpDescription");
       final String strDataType = vars.getStringParameter("inpadDatatypeId");
-      final TabAttachmentsData[] data = TabAttachmentsData.selectTabInfo(this, strTab);
-      String tableId = "";
-      if (data == null || data.length == 0)
-        throw new ServletException("Tab not found: " + strTab);
-      else
-        tableId = data[0].adTableId;
 
-      final String documentOrganization = vars.getStringParameter("inpDocumentOrg");
+      final String strDocumentOrganization = vars.getStringParameter("inpDocumentOrg");
       final String inpName = "inpname";
       final FileItem file = vars.getMultiFile(inpName);
       if (file == null)
         throw new ServletException("Empty file");
 
+      String attachmentFolder = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+          .getProperty("attach.path");
+      final File targetDirectory = new File(attachmentFolder + "/" + TEMP_FILE_DIR);
+      if (!targetDirectory.exists()) {
+        targetDirectory.mkdirs();
+      }
+      String strName = file.getName();
+      // FIXME: Get the directory separator from Java runtime
+      int i = strName.lastIndexOf("\\");
+      if (i != -1) {
+        strName = strName.substring(i + 1);
+        // FIXME: Get the directory separator from Java runtime
+      } else if ((i = strName.lastIndexOf("/")) != -1) {
+        strName = strName.substring(i + 1);
+      }
+      File tempFile = new File(targetDirectory, strName);
+      // TODO: get Exception and delete the document in /tmp
+      try {
+        file.write(tempFile);
+      } catch (Exception e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+
       // TODO: get Params
-      aim.upload(file, tableId, key, strDataType, documentOrganization, strText, null, null);
+      aim.upload(strTab, key, strDataType, strDocumentOrganization, strText, null, tempFile);
       OBContext.setAdminMode();
       try {
         Tab tab = OBDal.getInstance().get(Tab.class, strTab);

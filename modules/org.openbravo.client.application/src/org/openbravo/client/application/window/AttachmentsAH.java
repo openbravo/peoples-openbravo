@@ -29,14 +29,10 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.base.model.Entity;
-import org.openbravo.base.model.ModelProvider;
-import org.openbravo.base.structure.OrganizationEnabled;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.security.SecurityChecker;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
@@ -60,14 +56,14 @@ public class AttachmentsAH extends BaseActionHandler {
         Tab tab = OBDal.getInstance().get(Tab.class, tabId);
         String tableId = (String) DalUtil.getId(tab.getTable());
 
-        // Checks if the user has readable access to the record where the file is attached
-        Entity entity = ModelProvider.getInstance().getEntityByTableId(tableId);
-        if (entity != null) {
-          Object object = OBDal.getInstance().get(entity.getMappingClass(), recordIds);
-          if (object instanceof OrganizationEnabled) {
-            SecurityChecker.getInstance().checkReadableAccess((OrganizationEnabled) object);
-          }
-        }
+        // // Checks if the user has readable access to the record where the file is attached
+        // Entity entity = ModelProvider.getInstance().getEntityByTableId(tableId);
+        // if (entity != null) {
+        // Object object = OBDal.getInstance().get(entity.getMappingClass(), recordIds);
+        // if (object instanceof OrganizationEnabled) {
+        // SecurityChecker.getInstance().checkReadableAccess((OrganizationEnabled) object);
+        // }
+        // }
 
         OBCriteria<Attachment> attachmentFiles = OBDao.getFilteredCriteria(Attachment.class,
             Restrictions.eq("table.id", tableId), Restrictions.in("record", recordIds.split(",")));
