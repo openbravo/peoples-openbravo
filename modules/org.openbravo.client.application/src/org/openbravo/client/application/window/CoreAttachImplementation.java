@@ -184,25 +184,20 @@ public class CoreAttachImplementation extends AttachImplementation {
 
   @Override
   public void deleteFile(Attachment attachment) {
-
     log.debug("CoreAttachImplemententation - Removing files");
-
     String attachmentFolder = OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .getProperty("attach.path");
     String fileDir = TabAttachments.getAttachmentDirectory(attachment.getTable().getId(),
         attachment.getRecord(), attachment.getName());
     String fileDirPath = attachmentFolder + "/" + fileDir;
-    FileUtility f = new FileUtility();
     final File file = new File(fileDirPath, attachment.getName());
     if (file.exists()) {
       try {
-        f = new FileUtility(fileDirPath, attachment.getName(), false);
-        f.deleteFile();
+        file.delete();
       } catch (Exception e) {
         log.error("coreAttachImplementation - Problem deleting attachment: " + e);
         throw new OBException("CoreAttachImplemententation - Error while removing file", e);
       }
-
     } else {
       log.warn("No file was removed as file could not be found");
     }
