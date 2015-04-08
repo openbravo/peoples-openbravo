@@ -1661,7 +1661,7 @@ or (@AD_Module_ID@ is not null and AD_Client_ID =  '0')]]></CODE>
 <!--6910516E0A54432CA2E6A0C058346F92-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--6910516E0A54432CA2E6A0C058346F92-->  <NAME><![CDATA[Fin_FinancialAccountofPaymentMethod]]></NAME>
 <!--6910516E0A54432CA2E6A0C058346F92-->  <TYPE><![CDATA[S]]></TYPE>
-<!--6910516E0A54432CA2E6A0C058346F92-->  <CODE><![CDATA[Fin_Financial_Account_ID IN (SELECT Fin_Financial_Account_ID FROM Fin_Finacc_Paymentmethod WHERE Fin_Paymentmethod_ID=@Fin_Paymentmethod_ID@ AND (CASE WHEN @IsReceipt@='Y' THEN Payin_Allow  ELSE Payout_Allow END)='Y')]]></CODE>
+<!--6910516E0A54432CA2E6A0C058346F92-->  <CODE><![CDATA[Fin_Financial_Account_ID IN (SELECT Fin_Financial_Account_ID FROM Fin_Finacc_Paymentmethod WHERE Fin_Paymentmethod_ID=@Fin_Paymentmethod_ID@ AND (CASE WHEN @IsReceipt@='Y' THEN Payin_Allow  ELSE Payout_Allow END)='Y' AND isActive='Y')]]></CODE>
 <!--6910516E0A54432CA2E6A0C058346F92-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--6910516E0A54432CA2E6A0C058346F92--></AD_VAL_RULE>
 
@@ -2425,6 +2425,7 @@ AND fapm.Payout_Allow = (SELECT CASE WHEN '@IsSOTrx@'='N' THEN 'Y' ELSE fapm.Pay
 <!--FF80808130B107670130B118E5F60020-->  <DESCRIPTION><![CDATA[Filters only the payment methods that belong to a financial account taking in account payment in / out allowed flags]]></DESCRIPTION>
 <!--FF80808130B107670130B118E5F60020-->  <TYPE><![CDATA[S]]></TYPE>
 <!--FF80808130B107670130B118E5F60020-->  <CODE><![CDATA[EXISTS (SELECT 1 FROM FIN_FinAcc_PaymentMethod fapm WHERE FIN_PaymentMethod.FIN_PaymentMethod_ID=fapm.FIN_PaymentMethod_ID
+AND fapm.isActive='Y'
 AND fapm.Payin_Allow = (SELECT CASE WHEN '@FIN_ISRECEIPT@'='Y' THEN 'Y' ELSE fapm.Payin_Allow END FROM DUAL)
 AND fapm.Payout_Allow = (SELECT CASE WHEN '@FIN_ISRECEIPT@'='N' THEN 'Y' ELSE fapm.Payout_Allow END FROM DUAL))]]></CODE>
 <!--FF80808130B107670130B118E5F60020-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>

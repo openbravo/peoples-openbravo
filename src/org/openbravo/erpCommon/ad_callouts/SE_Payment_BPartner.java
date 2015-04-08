@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,11 +20,18 @@ package org.openbravo.erpCommon.ad_callouts;
 
 import javax.servlet.ServletException;
 
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
+import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
+import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
+import org.openbravo.service.db.DalConnectionProvider;
 
 public class SE_Payment_BPartner extends SimpleCallout {
 
@@ -37,13 +44,40 @@ public class SE_Payment_BPartner extends SimpleCallout {
     String strisreceipt = vars.getStringParameter("inpisreceipt");
     BusinessPartner bpartner = OBDal.getInstance().get(BusinessPartner.class, strcBpartnerId);
     boolean isReceipt = "Y".equals(strisreceipt);
-    try {
-      info.addResult("inpfinPaymentmethodId", isReceipt ? bpartner.getPaymentMethod().getId()
-          : bpartner.getPOPaymentMethod().getId());
-      info.addResult("inpfinFinancialAccountId", isReceipt ? bpartner.getAccount().getId()
-          : bpartner.getPOFinancialAccount().getId());
-    } catch (Exception e) {
-      log4j.info("No default info for the selected business partner");
+
+    // Get the Payment Method and the Financial Acoount
+    FIN_PaymentMethod paymentMethod;
+    FIN_FinancialAccount financialAccount;
+    if (isReceipt) {
+      paymentMethod = bpartner.getPaymentMethod();
+      financialAccount = bpartner.getAccount();
+    } else {
+      paymentMethod = bpartner.getPOPaymentMethod();
+      financialAccount = bpartner.getPOFinancialAccount();
+    }
+    final OBCriteria<FinAccPaymentMethod> apmCriteria = OBDal.getInstance().createCriteria(FinAccPaymentMethod.class);
+    apmCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, paymentMethod));
+    apmCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, financialAccount));
+    apmCriteria.setFilterOnActive(false);
+    FinAccPaymentMethod accPaymentMethod = (FinAccPaymentMethod) apmCriteria.uniqueResult();
+    if (financialAccount.isActive() && accPaymentMethod.isActive()) {
+      try {
+        info.addResult("inpfinPaymentmethodId", isReceipt ? bpartner.getPaymentMethod().getId()
+            : bpartner.getPOPaymentMethod().getId());
+        info.addResult("inpfinFinancialAccountId", isReceipt ? bpartner.getAccount().getId()
+            : bpartner.getPOFinancialAccount().getId());
+      } catch (Exception e) {
+        log4j.info("No default info for the selected business partner");
+      }
+    } else if (!financialAccount.isActive() && !accPaymentMethod.isActive()) {
+      info.addResult("WARNING", String.format(
+          Utility.messageBD(new DalConnectionProvider(), "finnac_paymet_inact", vars.getLanguage()), financialAccount.getIdentifier(), paymentMethod.getIdentifier()));
+    } else if (!financialAccount.isActive()) {
+      info.addResult("WARNING", String.format(
+          Utility.messageBD(new DalConnectionProvider(), "finnac_inact", vars.getLanguage()), financialAccount.getIdentifier()));
+    } else if (!accPaymentMethod.isActive()) {
+      info.addResult("WARNING", String.format(
+          Utility.messageBD(new DalConnectionProvider(), "paymet_inact", vars.getLanguage()), paymentMethod.getIdentifier(), financialAccount.getIdentifier()));
     }
     if ((!strcBpartnerId.equals(""))
         && (FIN_Utility.isBlockedBusinessPartner(strcBpartnerId, "Y".equals(strisreceipt), 4))) {
