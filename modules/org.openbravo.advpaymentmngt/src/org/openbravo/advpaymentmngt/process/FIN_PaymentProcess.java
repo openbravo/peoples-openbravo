@@ -391,7 +391,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                     paidAmount = BigDecimal.ZERO;
                     String fromCurrency = payment.getCurrency().getId();
                     if (businessPartner.getCurrency() == null) {
-                      String errorMSG = OBMessageUtils.messageBD("InitBPCurrencyLnk");
+                      String errorMSG = OBMessageUtils.messageBD("InitBPCurrencyLnk", false);
                       msg = String.format(errorMSG, businessPartner.getId(),
                           businessPartner.getName());
                       throw new OBException(msg);
@@ -783,8 +783,12 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                     paidAmount = BigDecimal.ZERO;
                     if (!(businessPartner == null)) {
                       final Currency fromCurrency = payment.getCurrency();
-                      // At this point the BP must have a currency, because it is set when
-                      // processing the payment associated to the invoice
+                      if (businessPartner.getCurrency() == null) {
+                        String errorMSG = OBMessageUtils.messageBD("InitBPCurrencyLnk", false);
+                        msg = String.format(errorMSG, businessPartner.getId(),
+                            businessPartner.getName());
+                        throw new OBException(msg);
+                      }
                       final Currency toCurrency = businessPartner.getCurrency();
                       if (fromCurrency != null && toCurrency != null
                           && !fromCurrency.getId().equals(toCurrency.getId())) {
@@ -1262,8 +1266,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
       OBCriteria<ConversionRateDoc> obc = OBDal.getInstance().createCriteria(
           ConversionRateDoc.class);
       obc.add(Restrictions.eq(ConversionRateDoc.PROPERTY_CURRENCY, invoice.getCurrency()));
-      obc.add(Restrictions.eq(ConversionRateDoc.PROPERTY_TOCURRENCY, isReceipt ? invoice
-          .getBusinessPartner().getCurrency() : invoice.getBusinessPartner().getPurchasePricelist()
+      obc.add(Restrictions.eq(ConversionRateDoc.PROPERTY_TOCURRENCY, invoice.getBusinessPartner()
           .getCurrency()));
       obc.add(Restrictions.eq(ConversionRateDoc.PROPERTY_INVOICE, invoice));
       return obc.list();
