@@ -82,7 +82,9 @@ public class ReferencedLink extends HttpSecureAppServlet {
 
         response.sendRedirect(servletURL.toString());
 
-      } else if (vars.commandIn("JSON")) {
+      }
+      // Standard flow
+      else if (vars.commandIn("JSON")) {
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
@@ -155,6 +157,7 @@ public class ReferencedLink extends HttpSecureAppServlet {
       strTableReferenceId = vars.getRequiredStringParameter("inpTableReferenceId");
       obEntity = ModelProvider.getInstance().getEntityByTableId(strTableReferenceId);
     }
+    // Retrieve the navigation tab, if its not defined it will be the empty String
     String strNavigationTabId = vars.getStringParameter("inpNavigationTabId");
     String strKeyReferenceId = vars.getStringParameter("inpKeyReferenceId");
     String strWindowId = vars.getStringParameter("inpwindowId");
@@ -164,7 +167,7 @@ public class ReferencedLink extends HttpSecureAppServlet {
         + strWindowId + " strTableName:" + strTableName);
 
     boolean hasKeyReferenceId = StringUtils.isNotEmpty(strKeyReferenceId);
-    // 1st Check - Forced Links
+    // 1st Check - Forced Links - Rules defined as a preference
     try {
       strWindowId = Preferences.getPreferenceValue("ForcedLinkWindow" + strTableName, false,
           vars.getClient(), vars.getOrg(), vars.getUser(), vars.getRole(), strWindowId);
@@ -175,7 +178,7 @@ public class ReferencedLink extends HttpSecureAppServlet {
     catch (PropertyException ignore) {
     }
     try {
-      // 2nd Check - NavigationTab
+      // 2nd Check - NavigationTab - Rules defined at field level
       if (StringUtils.isNotEmpty(strNavigationTabId)) {
         // If the field from which navigates is empty, no id is sent, so hasKeyReferenceId is false
         if (!hasKeyReferenceId) {
@@ -190,13 +193,14 @@ public class ReferencedLink extends HttpSecureAppServlet {
           return strNavigationTabId;
         }
       }
-      // 3rd Check - Navigation Rules
+      // 3rd Check - Navigation Rules - Rules defined at table level
       if (hasKeyReferenceId) {
         OBCriteria<TableNavigation> tableNavigationCriteria = OBDal.getInstance().createCriteria(
             TableNavigation.class);
         tableNavigationCriteria.add(Restrictions.eq("table.id", strTableReferenceId));
         tableNavigationCriteria.addOrderBy(TableNavigation.PROPERTY_SEQUENCENUMBER, true);
         List<TableNavigation> tableNavigationList = tableNavigationCriteria.list();
+        // Iterate navigation rules
         for (TableNavigation tableNavigation : tableNavigationList) {
           String hqlWhere = "AS e WHERE e.id = :strKeyReferenceId AND ( "
               + tableNavigation.getHqllogic() + " )";
@@ -206,6 +210,7 @@ public class ReferencedLink extends HttpSecureAppServlet {
           query.setNamedParameter("strKeyReferenceId", strKeyReferenceId);
 
           query.setMaxResult(1);
+          // If the query returns at least 1 result the rule has to be applied
           if (query.uniqueResult() != null) {
             return tableNavigation.getTab().getId();
           }
