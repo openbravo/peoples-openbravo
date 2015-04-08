@@ -117,6 +117,9 @@ public class TabAttachments extends HttpSecureAppServlet {
 
       // TODO: get Params
       aim.upload(strTab, key, strDataType, strDocumentOrganization, strText, null, tempFile);
+      if (tempFile.exists()) { // If tempFile still exists in attachments/tmp must be removed
+        tempFile.delete();
+      }
       OBContext.setAdminMode();
       try {
         Tab tab = OBDal.getInstance().get(Tab.class, strTab);
