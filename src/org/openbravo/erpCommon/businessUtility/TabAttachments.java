@@ -34,7 +34,6 @@ import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.window.AttachImplementationManager;
 import org.openbravo.client.application.window.AttachmentsAH;
@@ -52,7 +51,6 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class TabAttachments extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
   private static Logger log = Logger.getLogger(TabAttachments.class);
-  private static final String TEMP_FILE_DIR = "tmp";
 
   @Override
   public void init(ServletConfig config) {
@@ -90,10 +88,8 @@ public class TabAttachments extends HttpSecureAppServlet {
       final FileItem file = vars.getMultiFile(inpName);
       if (file == null)
         throw new ServletException("Empty file");
-
-      String attachmentFolder = OBPropertiesProvider.getInstance().getOpenbravoProperties()
-          .getProperty("attach.path");
-      final File targetDirectory = new File(attachmentFolder + "/" + TEMP_FILE_DIR);
+      final String tmpFolder = System.getProperty("java.io.tmpdir");
+      final File targetDirectory = new File(tmpFolder);
       if (!targetDirectory.exists()) {
         targetDirectory.mkdirs();
       }
