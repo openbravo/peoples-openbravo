@@ -155,21 +155,27 @@ public class AttachImplementationManager {
    */
   public void update(String attachID, String tabId, String description,
       Map<String, Object> parameters) throws OBException {
+    try {
+      OBContext.setAdminMode(true);
 
-    Attachment attachment = OBDal.getInstance().get(Attachment.class, attachID);
-    if (attachment == null) {
-      throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoAttachmentFound"));
+      Attachment attachment = OBDal.getInstance().get(Attachment.class, attachID);
+      if (attachment == null) {
+        throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoAttachmentFound"));
+      }
+
+      checkReadableAccess(attachment);
+
+      AttachImplementation handler = getHandler(attachment.getAttachmentMethod() == null ? "Default"
+          : attachment.getAttachmentMethod().getValue());
+      if (handler == null) {
+        throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoMethod"));
+      }
+      handler.updateFile(attachment, tabId, description, parameters);
+      OBDal.getInstance().save(attachment);
+      OBDal.getInstance().flush();
+    } finally {
+      OBContext.restorePreviousMode();
     }
-
-    checkReadableAccess(attachment);
-
-    AttachImplementation handler = getHandler(attachment.getAttachmentMethod() == null ? "Default"
-        : attachment.getAttachmentMethod().getValue());
-    if (handler == null) {
-      throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoMethod"));
-    }
-    handler.updateFile(attachment, tabId, description, parameters);
-
   }
 
   /**

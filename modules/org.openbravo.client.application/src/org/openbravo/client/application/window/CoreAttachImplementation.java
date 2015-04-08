@@ -37,8 +37,6 @@ import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.common.actionhandler.OrderCreatePOLines;
-import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.TabAttachments;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.reporting.ReportingException;
@@ -201,7 +199,8 @@ public class CoreAttachImplementation extends AttachImplementation {
         f = new FileUtility(fileDirPath, attachment.getName(), false);
         f.deleteFile();
       } catch (Exception e) {
-        throw new OBException("Error while removing file", e);
+        log.error("coreAttachImplementation - Problem deleting attachment: " + e);
+        throw new OBException("CoreAttachImplemententation - Error while removing file", e);
       }
 
     } else {
@@ -212,23 +211,13 @@ public class CoreAttachImplementation extends AttachImplementation {
   @Override
   public void updateFile(Attachment attachment, String strTab, String description,
       Map<String, Object> parameters) {
-    OBContext.setAdminMode(true);
-
     log.debug("CoreAttachImplemententation - Updating files");
-
     try {
       attachment.setText(description);
-      OBDal.getInstance().save(attachment);
-      OBDal.getInstance().flush();
-      // OBDal.getInstance().getConnection().commit();
-
     } catch (Exception e) {
-      log.debug("coreAttachImplementation - Problem deleting attachment: " + e);
-      // OBDal.getInstance().rollbackAndClose();
+      log.error("coreAttachImplementation - Problem updating attachment: " + e);
       throw new OBException("Error while updating a file", e);
 
-    } finally {
-      OBContext.restorePreviousMode();
     }
 
   }
