@@ -43,7 +43,6 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
-import org.openbravo.data.Sqlc;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.domain.TableNavigation;
@@ -99,11 +98,9 @@ public class ReferencedLink extends HttpSecureAppServlet {
   private String getJSON(VariablesSecureApp vars) throws ServletException {
     String tabId = getTabId(vars);
     String recordId = vars.getStringParameter("inpKeyReferenceId");
-    JSONObject json = null;
+    JSONObject json = new JSONObject();
 
     try {
-
-      json = new JSONObject();
 
       Tab tab = OBDal.getInstance().get(Tab.class, tabId);
 
@@ -134,12 +131,7 @@ public class ReferencedLink extends HttpSecureAppServlet {
         tabTitle = tab.getWindow().getName();
       }
 
-      json.put("keyParameter",
-          "inp" + Sqlc.TransformaNombreColumna(entity.getIdProperties().get(0).getColumnName()));
       json.put("tabTitle", tabTitle);
-
-      // Find the model object mapping
-      json.put("mappingName", Utility.getTabURL(tabId, "E", false));
     } catch (Exception e) {
       try {
         json.put("error", e.getMessage());
@@ -177,28 +169,23 @@ public class ReferencedLink extends HttpSecureAppServlet {
       strWindowId = Preferences.getPreferenceValue("ForcedLinkWindow" + strTableName, false,
           vars.getClient(), vars.getOrg(), vars.getUser(), vars.getRole(), strWindowId);
       return getTabIdFromWindow(strWindowId, strTableReferenceId, hasKeyReferenceId);
-    } catch (PropertyException ignore) {
+    }
+    // The normal flow throws a propertyException because there are not any forced link, this
+    // exception will be ignored
+    catch (PropertyException ignore) {
     }
     try {
       // 2nd Check - NavigationTab
-      if (!"".equals(strNavigationTabId)) {
+      if (StringUtils.isNotEmpty(strNavigationTabId)) {
+        // If the field from which navigates is empty, no id is sent, so hasKeyReferenceId is false
         if (!hasKeyReferenceId) {
           Tab currentTab = OBDal.getInstance().get(Tab.class, strNavigationTabId);
-          Window currentWindow = currentTab.getWindow();
-          if (currentWindow != null) {
-            String currentWindowId = currentWindow.getId();
-            if (StringUtils.isNotEmpty(currentWindowId)) {
-              ReferencedLinkData[] data = ReferencedLinkData.selectParent(this, currentWindowId);
-              if (data == null || data.length == 0) {
-                throw new ServletException("Window parent not found: " + strWindowId);
-              }
-              return data[0].adTabId;
-            } else {
-              throw new ServletException("Window not found");
-            }
-          } else {
-            throw new ServletException("Window not found");
+          String currentWindowId = DalUtil.getId(currentTab.getWindow()).toString();
+          ReferencedLinkData[] data = ReferencedLinkData.selectParent(this, currentWindowId);
+          if (data == null || data.length == 0) {
+            throw new ServletException("Window parent not found: " + strWindowId);
           }
+          return data[0].adTabId;
         } else {
           return strNavigationTabId;
         }
@@ -230,35 +217,24 @@ public class ReferencedLink extends HttpSecureAppServlet {
 
     // 4th Check - Standard case, select window based on table definition and isSOTrx
     Table table = OBDal.getInstance().get(Table.class, strTableReferenceId);
-    if (table.getWindow() == null) {
+    Window window = table.getWindow();
+    if (window == null) {
       throw new ServletException("Window not found");
     }
-    Window window = table.getWindow();
     // Only in case an adWindowId is returned
-    if (window != null) {
-      String windowId = window.getId();
-      if (StringUtils.isNotEmpty(windowId)) {
-        strWindowId = windowId;
+    strWindowId = DalUtil.getId(window).toString();
+
+    boolean isSOTrx = isSOTrx(strTableReferenceId, strKeyReferenceColumnName, strKeyReferenceId,
+        vars, strWindowId);
+    if (!isSOTrx) {
+      Window poWindow = table.getPOWindow();
+      if (poWindow != null) {
+        strWindowId = DalUtil.getId(poWindow).toString();
       }
     }
 
-    Window poWindow = table.getPOWindow();
-    if (poWindow != null) {
-      boolean isSOTrx = getISSOTrx(strTableReferenceId, strKeyReferenceColumnName,
-          strKeyReferenceId, vars, strWindowId);
-      String poWindowId = poWindow.getId();
-      if (!isSOTrx && StringUtils.isNotEmpty(poWindowId)) {
-        strWindowId = poWindowId;
-      }
-    }
-
-    // End of advanced navigation feature
     return getTabIdFromWindow(strWindowId, strTableReferenceId, !hasKeyReferenceId);
   }
-
-  public String getServletInfo() {
-    return "Servlet that presents the referenced links";
-  } // end of getServletInfo() method
 
   private String getTabIdFromWindow(String strWindowId, String strTableReferenceId,
       boolean returnParent) throws ServletException {
@@ -276,10 +252,10 @@ public class ReferencedLink extends HttpSecureAppServlet {
     return data[0].adTabId;
   }
 
-  private boolean getISSOTrx(String strTableReferenceId, String strKeyReferenceColumnName,
+  private boolean isSOTrx(String strTableReferenceId, String strKeyReferenceColumnName,
       String strKeyReferenceId, VariablesSecureApp vars, String strWindowId)
       throws ServletException {
-    boolean isSOTrx = true;
+    boolean isSOTrx;
     ReferencedTables ref = new ReferencedTables(this, strTableReferenceId,
         strKeyReferenceColumnName, strKeyReferenceId);
     if (!ref.hasSOTrx()) {
