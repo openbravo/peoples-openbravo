@@ -1989,7 +1989,7 @@
           </hashTree>
         </hashTree>
       </hashTree>
-      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="CMS-1" enabled="true">
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="CMS-1" enabled="false">
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
           <boolProp name="LoopController.continue_forever">false</boolProp>
@@ -3291,6 +3291,1215 @@
             <GaussianRandomTimer guiclass="GaussianRandomTimerGui" testclass="GaussianRandomTimer" testname="Gaussian Random Timer" enabled="true">
               <stringProp name="ConstantTimer.delay">1000</stringProp>
               <stringProp name="RandomTimer.range">1500.0</stringProp>
+            </GaussianRandomTimer>
+            <hashTree/>
+          </hashTree>
+        </hashTree>
+      </hashTree>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="VBS-1 - Single" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <stringProp name="LoopController.loops">1</stringProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">1</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">5</stringProp>
+        <longProp name="ThreadGroup.start_time">1339573754000</longProp>
+        <longProp name="ThreadGroup.end_time">1339573754000</longProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+        <stringProp name="ThreadGroup.duration"></stringProp>
+        <stringProp name="ThreadGroup.delay"></stringProp>
+      </ThreadGroup>
+      <hashTree>
+        <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>false</responseData>
+              <samplerData>false</samplerData>
+              <xml>true</xml>
+              <fieldNames>false</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>false</responseDataOnError>
+              <saveAssertionResultsFailureMessage>false</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+              <threadCounts>true</threadCounts>
+            </value>
+          </objProp>
+          <stringProp name="filename"></stringProp>
+        </ResultCollector>
+        <hashTree/>
+        <CookieManager guiclass="CookiePanel" testclass="CookieManager" testname="HTTP Cookie Manager" enabled="true">
+          <collectionProp name="CookieManager.cookies"/>
+          <boolProp name="CookieManager.clearEachIteration">false</boolProp>
+          <stringProp name="CookieManager.policy">rfc2109</stringProp>
+        </CookieManager>
+        <hashTree/>
+        <ResultCollector guiclass="AssertionVisualizer" testclass="ResultCollector" testname="Assertion Results" enabled="true">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>false</responseData>
+              <samplerData>false</samplerData>
+              <xml>true</xml>
+              <fieldNames>false</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>false</responseDataOnError>
+              <saveAssertionResultsFailureMessage>false</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+              <threadCounts>true</threadCounts>
+            </value>
+          </objProp>
+          <stringProp name="filename"></stringProp>
+        </ResultCollector>
+        <hashTree/>
+        <ResultCollector guiclass="TableVisualizer" testclass="ResultCollector" testname="View Results in Table" enabled="true">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>false</responseData>
+              <samplerData>false</samplerData>
+              <xml>true</xml>
+              <fieldNames>false</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>false</responseDataOnError>
+              <saveAssertionResultsFailureMessage>false</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+              <threadCounts>true</threadCounts>
+            </value>
+          </objProp>
+          <stringProp name="filename"></stringProp>
+          <boolProp name="ResultCollector.success_only_logging">true</boolProp>
+        </ResultCollector>
+        <hashTree/>
+        <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="Summary Report" enabled="true">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>false</responseData>
+              <samplerData>false</samplerData>
+              <xml>true</xml>
+              <fieldNames>false</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>false</responseDataOnError>
+              <saveAssertionResultsFailureMessage>false</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+              <threadCounts>true</threadCounts>
+            </value>
+          </objProp>
+          <stringProp name="filename"></stringProp>
+        </ResultCollector>
+        <hashTree/>
+        <UserParameters guiclass="UserParametersGui" testclass="UserParameters" testname="User Parameters" enabled="true">
+          <collectionProp name="UserParameters.names">
+            <stringProp name="-1440013438">messageId</stringProp>
+            <stringProp name="1937367367">ticketId</stringProp>
+          </collectionProp>
+          <collectionProp name="UserParameters.thread_values">
+            <collectionProp name="1410920833">
+              <stringProp name="-1719143956">${__RandomString(32, 0123456789ABCDEF)}</stringProp>
+              <stringProp name="-1719143956">${__RandomString(32, 0123456789ABCDEF)}</stringProp>
+            </collectionProp>
+          </collectionProp>
+          <boolProp name="UserParameters.per_iteration">false</boolProp>
+        </UserParameters>
+        <hashTree/>
+        <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+          <collectionProp name="Arguments.arguments">
+            <elementProp name="terminalName" elementType="Argument">
+              <stringProp name="Argument.name">terminalName</stringProp>
+              <stringProp name="Argument.value">VBS-1</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="usr" elementType="Argument">
+              <stringProp name="Argument.name">usr</stringProp>
+              <stringProp name="Argument.value">vallblanca</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="url" elementType="Argument">
+              <stringProp name="Argument.name">url</stringProp>
+              <stringProp name="Argument.value">http://localhost:8080/openbravo</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="pwd" elementType="Argument">
+              <stringProp name="Argument.name">pwd</stringProp>
+              <stringProp name="Argument.value">openbravo</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="appName" elementType="Argument">
+              <stringProp name="Argument.name">appName</stringProp>
+              <stringProp name="Argument.value">WebPOS</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+          </collectionProp>
+        </Arguments>
+        <hashTree/>
+        <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Request Flow" enabled="true"/>
+        <hashTree>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Login" enabled="true">
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="user" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                  <stringProp name="Argument.value">${usr}</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                  <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                  <stringProp name="Argument.name">user</stringProp>
+                </elementProp>
+                <elementProp name="password" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                  <stringProp name="Argument.value">${pwd}</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                  <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                  <stringProp name="Argument.name">password</stringProp>
+                </elementProp>
+                <elementProp name="terminalName" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                  <stringProp name="Argument.value">VBS-1</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                  <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                  <stringProp name="Argument.name">terminalName</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+            <stringProp name="HTTPSampler.domain"></stringProp>
+            <stringProp name="HTTPSampler.port"></stringProp>
+            <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+            <stringProp name="HTTPSampler.response_timeout"></stringProp>
+            <stringProp name="HTTPSampler.protocol"></stringProp>
+            <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+            <stringProp name="HTTPSampler.path">${url}/org.openbravo.retail.posterminal/POSLoginHandler</stringProp>
+            <stringProp name="HTTPSampler.method">POST</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+            <stringProp name="HTTPSampler.implementation">Java</stringProp>
+            <boolProp name="HTTPSampler.monitor">false</boolProp>
+            <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          </HTTPSamplerProxy>
+          <hashTree/>
+          <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+            <boolProp name="LoopController.continue_forever">true</boolProp>
+            <stringProp name="LoopController.loops">1000</stringProp>
+          </LoopController>
+          <hashTree>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="OrderLoaderTest" enabled="true">
+              <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="" elementType="HTTPArgument">
+                    <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                    <stringProp name="Argument.value">{&#xd;
+    &quot;messageId&quot;: &quot;${messageId}&quot;,&#xd;
+    &quot;data&quot;: [{&#xd;
+        &quot;id&quot;: &quot;${ticketId}&quot;,&#xd;
+        &quot;hasbeenpaid&quot;: &quot;Y&quot;,&#xd;
+        &quot;isbeingprocessed&quot;: &quot;N&quot;,&#xd;
+        &quot;client&quot;: &quot;39363B0921BB4293B48383844325E84C&quot;,&#xd;
+        &quot;organization&quot;: &quot;D270A5AC50874F8BA67A88EE977F8E3B&quot;,&#xd;
+        &quot;createdBy&quot;: &quot;3073EDF96A3C42CC86C7069E379522D2&quot;,&#xd;
+        &quot;updatedBy&quot;: &quot;3073EDF96A3C42CC86C7069E379522D2&quot;,&#xd;
+        &quot;documentType&quot;: &quot;511A9371A0F74195AA3F6D66C722729D&quot;,&#xd;
+        &quot;orderType&quot;: 0,&#xd;
+        &quot;generateInvoice&quot;: false,&#xd;
+        &quot;isQuotation&quot;: false,&#xd;
+        &quot;oldId&quot;: null,&#xd;
+        &quot;priceList&quot;: &quot;496CF965DF9744D2A41248392D1DE407&quot;,&#xd;
+        &quot;priceIncludesTax&quot;: true,&#xd;
+        &quot;currency&quot;: &quot;102&quot;,&#xd;
+        &quot;currency$_identifier&quot;: &quot;EUR&quot;,&#xd;
+        &quot;session&quot;: &quot;5DB46E6B67CF0EC92F0EABBC8CA32F9D&quot;,&#xd;
+        &quot;warehouse&quot;: &quot;CE7AB151695342FF879938F837F12E6E&quot;,&#xd;
+        &quot;salesRepresentative&quot;: &quot;3073EDF96A3C42CC86C7069E379522D2&quot;,&#xd;
+        &quot;salesRepresentative$_identifier&quot;: &quot;Vall Blanca Store User&quot;,&#xd;
+        &quot;posTerminal&quot;: &quot;9104513C2D0741D4850AE8493998A7C8&quot;,&#xd;
+        &quot;posTerminal$_identifier&quot;: &quot;VBS POS Terminal&quot;,&#xd;
+        &quot;orderDate&quot;: &quot;2015-03-27T13:03:46.085Z&quot;,&#xd;
+        &quot;creationDate&quot;: &quot;2015-03-27T13:30:44.563Z&quot;,&#xd;
+        &quot;documentnoPrefix&quot;: &quot;VBS1&quot;,&#xd;
+        &quot;quotationnoPrefix&quot;: -1,&#xd;
+        &quot;documentnoSuffix&quot;: 91,&#xd;
+        &quot;quotationnoSuffix&quot;: -1,&#xd;
+        &quot;documentNo&quot;: &quot;VBS1\/0000091&quot;,&#xd;
+        &quot;bp&quot;: {&#xd;
+            &quot;id&quot;: &quot;ABD91C9D3BC94175B876FBBE9CACA008&quot;,&#xd;
+            &quot;organization&quot;: &quot;D270A5AC50874F8BA67A88EE977F8E3B&quot;,&#xd;
+            &quot;searchKey&quot;: &quot;VBS\/C0001&quot;,&#xd;
+            &quot;_identifier&quot;: &quot;VBS Customer&quot;,&#xd;
+            &quot;name&quot;: &quot;VBS Customer&quot;,&#xd;
+            &quot;description&quot;: null,&#xd;
+            &quot;taxID&quot;: null,&#xd;
+            &quot;taxCategory&quot;: null,&#xd;
+            &quot;paymentMethod&quot;: &quot;45A202BF44884F05B8A1BF741E2063B6&quot;,&#xd;
+            &quot;paymentTerms&quot;: &quot;D8955F8808A54C63BBF478A6843D834D&quot;,&#xd;
+            &quot;priceList &quot;: &quot;undefined&quot;,&#xd;
+            &quot;invoiceTerms&quot;: &quot;I&quot;,&#xd;
+            &quot;locId&quot;: &quot;2AA7EADDF7EC405899262DDA3E572436&quot;,&#xd;
+            &quot;locName&quot;: &quot;Pau Claris 138 1-1&quot;,&#xd;
+            &quot;postalCode&quot;: &quot;08009&quot;,&#xd;
+            &quot;cityName&quot;: &quot;Barcelona&quot;,&#xd;
+            &quot;countryName&quot;: &quot;Spain&quot;,&#xd;
+            &quot;contactId&quot;: &quot;032576220FC44B0DA80145B3265E4D9A&quot;,&#xd;
+            &quot;phone&quot;: null,&#xd;
+            &quot;email&quot;: null,&#xd;
+            &quot;businessPartnerCategory&quot;: &quot;B1DD8B371643421C987EF1D5B358D5E9&quot;,&#xd;
+            &quot;businessPartnerCategory_name&quot;: &quot;Customer&quot;,&#xd;
+            &quot;creditLimit&quot;: 0,&#xd;
+            &quot;creditUsed&quot;: 0,&#xd;
+            &quot;taxExempt&quot;: false,&#xd;
+            &quot;customerBlocking&quot;: false,&#xd;
+            &quot;salesOrderBlocking&quot;: true,&#xd;
+            &quot;undefined&quot;: &quot;VBS Customer###Pau Claris 138 1-1###&quot;,&#xd;
+            &quot;_idx&quot;: 4&#xd;
+        },&#xd;
+        &quot;lines&quot;: [{&#xd;
+            &quot;product&quot;: {&#xd;
+                &quot;id&quot;: &quot;C1757506CB6B469B8DE4739F04523B7C&quot;,&#xd;
+                &quot;searchkey&quot;: &quot;WVG\/B0016&quot;,&#xd;
+                &quot;uPCEAN&quot;: null,&#xd;
+                &quot;uOM&quot;: &quot;100&quot;,&#xd;
+                &quot;uOMsymbol&quot;: &quot;Ud &quot;,&#xd;
+                &quot;productCategory&quot;: &quot;0C20B3F7AB234915B2239FCD8BE10CD1&quot;,&#xd;
+                &quot;taxCategory&quot;: &quot;FF80818123B7FC160123B804AB88000B&quot;,&#xd;
+                &quot;description&quot;: &quot;High strength insect repellent.&quot;,&#xd;
+                &quot;obposScale&quot;: false,&#xd;
+                &quot;groupProduct&quot;: true,&#xd;
+                &quot;stocked&quot;: true,&#xd;
+                &quot;showstock&quot;: false,&#xd;
+                &quot;isGeneric&quot;: false,&#xd;
+                &quot;generic_product_id&quot;: null,&#xd;
+                &quot;brand&quot;: &quot;C7B171B9289C4677829A13D7FAACE4F6&quot;,&#xd;
+                &quot;characteristicDescription&quot;: &quot;Object: First-Aid, Price: &lt; 20€, Use: High Mountaineering &amp; Expeditions, Hiking &amp; Trekking, Weight: Under 1Kg&quot;,&#xd;
+                &quot;showchdesc&quot;: true,&#xd;
+                &quot;bestseller&quot;: true,&#xd;
+                &quot;ispack&quot;: false,&#xd;
+                &quot;listPrice&quot;: 14.5,&#xd;
+                &quot;standardPrice&quot;: 14.5,&#xd;
+                &quot;priceLimit&quot;: 14.5,&#xd;
+                &quot;cost&quot;: 0,&#xd;
+                &quot;algorithm&quot;: &quot;S&quot;,&#xd;
+                &quot;_identifier&quot;: &quot;Insect repellent&quot;,&#xd;
+                &quot;undefined&quot;: &quot;WVG\/B0016###Insect repellent###&quot;,&#xd;
+                &quot;_idx&quot;: 56,&#xd;
+                &quot;originalStandardPrice&quot;: 14.5&#xd;
+            },&#xd;
+            &quot;productidentifier&quot;: null,&#xd;
+            &quot;uOM&quot;: &quot;100&quot;,&#xd;
+            &quot;qty&quot;: 1,&#xd;
+            &quot;price&quot;: 14.5,&#xd;
+            &quot;priceList&quot;: 14.5,&#xd;
+            &quot;gross&quot;: 14.5,&#xd;
+            &quot;net&quot;: 11.98,&#xd;
+            &quot;description&quot;: &quot;&quot;,&#xd;
+            &quot;priceIncludesTax&quot;: true,&#xd;
+            &quot;warehouse&quot;: {&#xd;
+                &quot;id&quot;: &quot;A154EC30A296479BB078B0AFFD74CA22&quot;,&#xd;
+                &quot;warehousename&quot;: &quot;Vall Blanca Store Warehouse&quot;&#xd;
+            },&#xd;
+            &quot;promotions&quot;: [],&#xd;
+            &quot;grossListPrice&quot;: 14.5,&#xd;
+            &quot;promotionCandidates&quot;: [],&#xd;
+            &quot;promotionMessages&quot;: [],&#xd;
+            &quot;noDiscountCandidates&quot;: true,&#xd;
+            &quot;linerate&quot;: 1.21,&#xd;
+            &quot;tax&quot;: &quot;5235D8E99A2749EFA17A5C92A52AEFC6&quot;,&#xd;
+            &quot;taxAmount&quot;: 2.52,&#xd;
+            &quot;pricenet&quot;: 11.98,&#xd;
+            &quot;discountedNet&quot;: 11.98,&#xd;
+            &quot;taxLines&quot;: {&#xd;
+                &quot;5235D8E99A2749EFA17A5C92A52AEFC6&quot;: {&#xd;
+                    &quot;name&quot;: &quot;Entregas IVA 21%&quot;,&#xd;
+                    &quot;rate&quot;: 21,&#xd;
+                    &quot;net&quot;: 11.98,&#xd;
+                    &quot;amount&quot;: 2.52&#xd;
+                }&#xd;
+            },&#xd;
+            &quot;hasComplementary&quot;: false,&#xd;
+            &quot;complementaryViewed&quot;: false,&#xd;
+            &quot;discountPercentage&quot;: 0,&#xd;
+            &quot;listPrice&quot;: 11.98,&#xd;
+            &quot;standardPrice&quot;: 11.98,&#xd;
+            &quot;grossUnitPrice&quot;: 14.5,&#xd;
+            &quot;lineGrossAmount&quot;: 14.5&#xd;
+        }, {&#xd;
+            &quot;product&quot;: {&#xd;
+                &quot;id&quot;: &quot;096034DBF276449B9C5AADF5D17FEBA2&quot;,&#xd;
+                &quot;searchkey&quot;: &quot;WVG\/S0015&quot;,&#xd;
+                &quot;uPCEAN&quot;: null,&#xd;
+                &quot;uOM&quot;: &quot;100&quot;,&#xd;
+                &quot;uOMsymbol&quot;: &quot;Ud &quot;,&#xd;
+                &quot;productCategory&quot;: &quot;BAB090917A274B26B18AF8C8636EB5FD&quot;,&#xd;
+                &quot;taxCategory&quot;: &quot;FF80818123B7FC160123B804AB88000B&quot;,&#xd;
+                &quot;description&quot;: &quot;Aluminium alpine ski poles.&quot;,&#xd;
+                &quot;obposScale&quot;: false,&#xd;
+                &quot;groupProduct&quot;: true,&#xd;
+                &quot;stocked&quot;: true,&#xd;
+                &quot;showstock&quot;: false,&#xd;
+                &quot;isGeneric&quot;: false,&#xd;
+                &quot;generic_product_id&quot;: null,&#xd;
+                &quot;brand&quot;: &quot;2665E6FECB6448ECA813EF5AB6F4DACB&quot;,&#xd;
+                &quot;characteristicDescription&quot;: &quot;Price: 20€ - 50€, Use: Alpine Skiing, Ski Touring, Object: Poles&quot;,&#xd;
+                &quot;showchdesc&quot;: true,&#xd;
+                &quot;bestseller&quot;: false,&#xd;
+                &quot;ispack&quot;: false,&#xd;
+                &quot;listPrice&quot;: 36.5,&#xd;
+                &quot;standardPrice&quot;: 36.5,&#xd;
+                &quot;priceLimit&quot;: 36.5,&#xd;
+                &quot;cost&quot;: 0,&#xd;
+                &quot;algorithm&quot;: &quot;S&quot;,&#xd;
+                &quot;_identifier&quot;: &quot;Alpine poles&quot;,&#xd;
+                &quot;undefined&quot;: &quot;WVG\/S0015###Alpine poles###&quot;,&#xd;
+                &quot;_idx&quot;: 2,&#xd;
+                &quot;originalStandardPrice&quot;: 36.5&#xd;
+            },&#xd;
+            &quot;productidentifier&quot;: null,&#xd;
+            &quot;uOM&quot;: &quot;100&quot;,&#xd;
+            &quot;qty&quot;: 1,&#xd;
+            &quot;price&quot;: 36.5,&#xd;
+            &quot;priceList&quot;: 36.5,&#xd;
+            &quot;gross&quot;: 36.5,&#xd;
+            &quot;net&quot;: 30.17,&#xd;
+            &quot;description&quot;: &quot;&quot;,&#xd;
+            &quot;priceIncludesTax&quot;: true,&#xd;
+            &quot;warehouse&quot;: {&#xd;
+                &quot;id&quot;: &quot;A154EC30A296479BB078B0AFFD74CA22&quot;,&#xd;
+                &quot;warehousename&quot;: &quot;Vall Blanca Store Warehouse&quot;&#xd;
+            },&#xd;
+            &quot;promotions&quot;: [],&#xd;
+            &quot;grossListPrice&quot;: 36.5,&#xd;
+            &quot;promotionCandidates&quot;: [],&#xd;
+            &quot;promotionMessages&quot;: [],&#xd;
+            &quot;noDiscountCandidates&quot;: true,&#xd;
+            &quot;linerate&quot;: 1.21,&#xd;
+            &quot;tax&quot;: &quot;5235D8E99A2749EFA17A5C92A52AEFC6&quot;,&#xd;
+            &quot;taxAmount&quot;: 6.33,&#xd;
+            &quot;pricenet&quot;: 30.17,&#xd;
+            &quot;discountedNet&quot;: 30.17,&#xd;
+            &quot;taxLines&quot;: {&#xd;
+                &quot;5235D8E99A2749EFA17A5C92A52AEFC6&quot;: {&#xd;
+                    &quot;name&quot;: &quot;Entregas IVA 21%&quot;,&#xd;
+                    &quot;rate&quot;: 21,&#xd;
+                    &quot;net&quot;: 30.17,&#xd;
+                    &quot;amount&quot;: 6.33&#xd;
+                }&#xd;
+            },&#xd;
+            &quot;hasComplementary&quot;: false,&#xd;
+            &quot;complementaryViewed&quot;: false,&#xd;
+            &quot;discountPercentage&quot;: 0,&#xd;
+            &quot;listPrice&quot;: 30.17,&#xd;
+            &quot;standardPrice&quot;: 30.17,&#xd;
+            &quot;grossUnitPrice&quot;: 36.5,&#xd;
+            &quot;lineGrossAmount&quot;: 36.5&#xd;
+        }, {&#xd;
+            &quot;product&quot;: {&#xd;
+                &quot;id&quot;: &quot;7FF7B76FD0B54E39BFF71AF603CB7CF6&quot;,&#xd;
+                &quot;searchkey&quot;: &quot;WVG\/B0004&quot;,&#xd;
+                &quot;uPCEAN&quot;: null,&#xd;
+                &quot;uOM&quot;: &quot;100&quot;,&#xd;
+                &quot;uOMsymbol&quot;: &quot;Ud &quot;,&#xd;
+                &quot;productCategory&quot;: &quot;0C20B3F7AB234915B2239FCD8BE10CD1&quot;,&#xd;
+                &quot;taxCategory&quot;: &quot;FF80818123B7FC160123B804AB88000B&quot;,&#xd;
+                &quot;description&quot;: &quot;Baby carrier for children up to 2 years old.&quot;,&#xd;
+                &quot;obposScale&quot;: false,&#xd;
+                &quot;groupProduct&quot;: true,&#xd;
+                &quot;stocked&quot;: true,&#xd;
+                &quot;showstock&quot;: false,&#xd;
+                &quot;isGeneric&quot;: false,&#xd;
+                &quot;generic_product_id&quot;: null,&#xd;
+                &quot;brand&quot;: &quot;D50C0D7B118A4FB3A67A79A02EB606E0&quot;,&#xd;
+                &quot;characteristicDescription&quot;: &quot;Price: 100€ - 200€, Weight: Up to 5 Kg, Object: Kids, Use: Hiking &amp; Trekking, Capacity: 4L - 10L, Dimensions: 51 x 35 x 32 cm&quot;,&#xd;
+                &quot;showchdesc&quot;: true,&#xd;
+                &quot;bestseller&quot;: false,&#xd;
+                &quot;ispack&quot;: false,&#xd;
+                &quot;listPrice&quot;: 110.5,&#xd;
+                &quot;standardPrice&quot;: 110.5,&#xd;
+                &quot;priceLimit&quot;: 110.5,&#xd;
+                &quot;cost&quot;: 0,&#xd;
+                &quot;algorithm&quot;: &quot;S&quot;,&#xd;
+                &quot;_identifier&quot;: &quot;Baby carrier&quot;,&#xd;
+                &quot;undefined&quot;: &quot;WVG\/B0004###Baby carrier###&quot;,&#xd;
+                &quot;_idx&quot;: 6,&#xd;
+                &quot;originalStandardPrice&quot;: 110.5&#xd;
+            },&#xd;
+            &quot;productidentifier&quot;: null,&#xd;
+            &quot;uOM&quot;: &quot;100&quot;,&#xd;
+            &quot;qty&quot;: 1,&#xd;
+            &quot;price&quot;: 110.5,&#xd;
+            &quot;priceList&quot;: 110.5,&#xd;
+            &quot;gross&quot;: 110.5,&#xd;
+            &quot;net&quot;: 91.32,&#xd;
+            &quot;description&quot;: &quot;&quot;,&#xd;
+            &quot;priceIncludesTax&quot;: true,&#xd;
+            &quot;warehouse&quot;: {&#xd;
+                &quot;id&quot;: &quot;A154EC30A296479BB078B0AFFD74CA22&quot;,&#xd;
+                &quot;warehousename&quot;: &quot;Vall Blanca Store Warehouse&quot;&#xd;
+            },&#xd;
+            &quot;promotions&quot;: [],&#xd;
+            &quot;grossListPrice&quot;: 110.5,&#xd;
+            &quot;promotionCandidates&quot;: null,&#xd;
+            &quot;promotionMessages&quot;: [],&#xd;
+            &quot;noDiscountCandidates&quot;: true,&#xd;
+            &quot;linerate&quot;: 1.21,&#xd;
+            &quot;tax&quot;: &quot;5235D8E99A2749EFA17A5C92A52AEFC6&quot;,&#xd;
+            &quot;taxAmount&quot;: 19.18,&#xd;
+            &quot;pricenet&quot;: 91.32,&#xd;
+            &quot;discountedNet&quot;: 91.32,&#xd;
+            &quot;taxLines&quot;: {&#xd;
+                &quot;5235D8E99A2749EFA17A5C92A52AEFC6&quot;: {&#xd;
+                    &quot;name&quot;: &quot;Entregas IVA 21%&quot;,&#xd;
+                    &quot;rate&quot;: 21,&#xd;
+                    &quot;net&quot;: 91.32,&#xd;
+                    &quot;amount&quot;: 19.18&#xd;
+                }&#xd;
+            },&#xd;
+            &quot;hasComplementary&quot;: false,&#xd;
+            &quot;complementaryViewed&quot;: false,&#xd;
+            &quot;discountPercentage&quot;: 0,&#xd;
+            &quot;listPrice&quot;: 91.32,&#xd;
+            &quot;standardPrice&quot;: 91.32,&#xd;
+            &quot;grossUnitPrice&quot;: 110.5,&#xd;
+            &quot;lineGrossAmount&quot;: 110.5&#xd;
+        }],&#xd;
+        &quot;payments&quot;: [{&#xd;
+            &quot;amount&quot;: 161.5,&#xd;
+            &quot;origAmount&quot;: 161.5,&#xd;
+            &quot;paid&quot;: 161.5,&#xd;
+            &quot;date&quot;: &quot;2015-03-27T13:30:40.174Z&quot;,&#xd;
+            &quot;kind&quot;: &quot;OBPOS_payment.cash&quot;,&#xd;
+            &quot;name&quot;: &quot;Cash&quot;,&#xd;
+            &quot;rate&quot;: &quot;1&quot;,&#xd;
+            &quot;mulrate&quot;: &quot;1.000000000000&quot;,&#xd;
+            &quot;isocode&quot;: &quot;EUR&quot;,&#xd;
+            &quot;allowOpenDrawer&quot;: true,&#xd;
+            &quot;isCash&quot;: true,&#xd;
+            &quot;openDrawer&quot;: false,&#xd;
+            &quot;printtwice&quot;: false&#xd;
+        }],&#xd;
+        &quot;payment&quot;: 161.5,&#xd;
+        &quot;change&quot;: 0,&#xd;
+        &quot;qty&quot;: 3,&#xd;
+        &quot;gross&quot;: 161.5,&#xd;
+        &quot;net&quot;: 133.47,&#xd;
+        &quot;taxes&quot;: {&#xd;
+            &quot;5235D8E99A2749EFA17A5C92A52AEFC6&quot;: {&#xd;
+                &quot;name&quot;: &quot;Entregas IVA 21%&quot;,&#xd;
+                &quot;rate&quot;: 21,&#xd;
+                &quot;net&quot;: 133.47,&#xd;
+                &quot;amount&quot;: 28.03&#xd;
+            }&#xd;
+        },&#xd;
+        &quot;description&quot;: &quot;&quot;,&#xd;
+        &quot;print&quot;: true,&#xd;
+        &quot;sendEmail&quot;: false,&#xd;
+        &quot;isPaid&quot;: false,&#xd;
+        &quot;paidOnCredit&quot;: false,&#xd;
+        &quot;isLayaway&quot;: false,&#xd;
+        &quot;isEditable&quot;: true,&#xd;
+        &quot;openDrawer&quot;: false,&#xd;
+        &quot;totalamount&quot;: null,&#xd;
+        &quot;approvals&quot;: [],&#xd;
+        &quot;isNewReceipt&quot;: false,&#xd;
+        &quot;cloningReceipt&quot;: false,&#xd;
+        &quot;pOSSBusinessDate&quot;: &quot;2015-03-26T23:00:00.000Z&quot;,&#xd;
+        &quot;timezoneOffset&quot;: -60,&#xd;
+        &quot;created&quot;: 1427463044563,&#xd;
+        &quot;obposCreatedabsolute&quot;: &quot;2015-03-27 14:30:44.563&quot;,&#xd;
+        &quot;obposAppCashup&quot;: &quot;9C658956BC50A2B7EBB02A5A92F5E6EF&quot;&#xd;
+    }],&#xd;
+    &quot;client&quot;: &quot;39363B0921BB4293B48383844325E84C&quot;,&#xd;
+    &quot;organization&quot;: &quot;D270A5AC50874F8BA67A88EE977F8E3B&quot;,&#xd;
+    &quot;pos&quot;: &quot;9104513C2D0741D4850AE8493998A7C8&quot;,&#xd;
+    &quot;terminalName&quot;: &quot;VBS-1&quot;,&#xd;
+    &quot;appName&quot;: &quot;WebPOS&quot;&#xd;
+}</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+              <stringProp name="HTTPSampler.domain"></stringProp>
+              <stringProp name="HTTPSampler.port">8080</stringProp>
+              <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+              <stringProp name="HTTPSampler.response_timeout"></stringProp>
+              <stringProp name="HTTPSampler.protocol">http</stringProp>
+              <stringProp name="HTTPSampler.contentEncoding">UTF-8</stringProp>
+              <stringProp name="HTTPSampler.path">${url}//org.openbravo.retail.posterminal.service.jsonrest/org.openbravo.retail.posterminal.OrderLoader</stringProp>
+              <stringProp name="HTTPSampler.method">POST</stringProp>
+              <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+              <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+              <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+              <stringProp name="HTTPSampler.implementation">Java</stringProp>
+              <boolProp name="HTTPSampler.image_parser">true</boolProp>
+              <boolProp name="HTTPSampler.monitor">false</boolProp>
+              <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+            </HTTPSamplerProxy>
+            <hashTree>
+              <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="true">
+                <collectionProp name="Asserion.test_strings">
+                  <stringProp name="-1996806683">&quot;response&quot;:{&quot;status&quot;:0,&quot;result&quot;:&quot;0&quot;</stringProp>
+                </collectionProp>
+                <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+                <boolProp name="Assertion.assume_success">false</boolProp>
+                <intProp name="Assertion.test_type">2</intProp>
+              </ResponseAssertion>
+              <hashTree/>
+              <DurationAssertion guiclass="DurationAssertionGui" testclass="DurationAssertion" testname="Duration Assertion" enabled="true">
+                <stringProp name="DurationAssertion.duration">5000</stringProp>
+              </DurationAssertion>
+              <hashTree/>
+              <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+                <collectionProp name="HeaderManager.headers">
+                  <elementProp name="Content-Type" elementType="Header">
+                    <stringProp name="Header.name">Content-Type</stringProp>
+                    <stringProp name="Header.value">application/json;charset=UTF-8</stringProp>
+                  </elementProp>
+                  <elementProp name="Accept-Language" elementType="Header">
+                    <stringProp name="Header.name">Accept-Language</stringProp>
+                    <stringProp name="Header.value">en-US,en;q=0.8</stringProp>
+                  </elementProp>
+                  <elementProp name="Accept" elementType="Header">
+                    <stringProp name="Header.name">Accept</stringProp>
+                    <stringProp name="Header.value">application/json, text/javascript, */*; q=0.01</stringProp>
+                  </elementProp>
+                  <elementProp name="Origin" elementType="Header">
+                    <stringProp name="Header.name">Origin</stringProp>
+                    <stringProp name="Header.value">http://localhost:8080</stringProp>
+                  </elementProp>
+                  <elementProp name="User-Agent" elementType="Header">
+                    <stringProp name="Header.name">User-Agent</stringProp>
+                    <stringProp name="Header.value">Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.1 (KHTML, like Gecko) Chrome/13.0.782.215 Safari/535.1</stringProp>
+                  </elementProp>
+                  <elementProp name="Accept-Charset" elementType="Header">
+                    <stringProp name="Header.name">Accept-Charset</stringProp>
+                    <stringProp name="Header.value">ISO-8859-1,utf-8;q=0.7,*;q=0.3</stringProp>
+                  </elementProp>
+                  <elementProp name="Referer" elementType="Header">
+                    <stringProp name="Header.name">Referer</stringProp>
+                    <stringProp name="Header.value">http://localhost:8080/openbravo/web/org.openbravo.retail.posterminal/?terminal=POS-1&amp;window=retail.pointofsale</stringProp>
+                  </elementProp>
+                  <elementProp name="X-Requested-With" elementType="Header">
+                    <stringProp name="Header.name">X-Requested-With</stringProp>
+                    <stringProp name="Header.value">XMLHttpRequest</stringProp>
+                  </elementProp>
+                  <elementProp name="Accept-Encoding" elementType="Header">
+                    <stringProp name="Header.name">Accept-Encoding</stringProp>
+                    <stringProp name="Header.value">gzip,deflate,sdch</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </HeaderManager>
+              <hashTree/>
+            </hashTree>
+            <GaussianRandomTimer guiclass="GaussianRandomTimerGui" testclass="GaussianRandomTimer" testname="Gaussian Random Timer" enabled="true">
+              <stringProp name="ConstantTimer.delay">100</stringProp>
+              <stringProp name="RandomTimer.range">100.0</stringProp>
+            </GaussianRandomTimer>
+            <hashTree/>
+          </hashTree>
+        </hashTree>
+        <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="PS-1" enabled="false"/>
+        <hashTree>
+          <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="url" elementType="Argument">
+                <stringProp name="Argument.name">url</stringProp>
+                <stringProp name="Argument.value">http://localhost:8080/openbravo</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="usr" elementType="Argument">
+                <stringProp name="Argument.name">usr</stringProp>
+                <stringProp name="Argument.value">posets</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="pwd" elementType="Argument">
+                <stringProp name="Argument.name">pwd</stringProp>
+                <stringProp name="Argument.value">openbravo</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="appName" elementType="Argument">
+                <stringProp name="Argument.name">appName</stringProp>
+                <stringProp name="Argument.value">WebPOS</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="terminalName" elementType="Argument">
+                <stringProp name="Argument.name">terminalName</stringProp>
+                <stringProp name="Argument.value">PS-1</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </Arguments>
+          <hashTree/>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Login" enabled="true">
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="user" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                  <stringProp name="Argument.value">${usr}</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                  <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                  <stringProp name="Argument.name">user</stringProp>
+                </elementProp>
+                <elementProp name="password" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                  <stringProp name="Argument.value">${pwd}</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                  <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                  <stringProp name="Argument.name">password</stringProp>
+                </elementProp>
+                <elementProp name="terminalName" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                  <stringProp name="Argument.value">PS-1</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                  <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                  <stringProp name="Argument.name">terminalName</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+            <stringProp name="HTTPSampler.domain"></stringProp>
+            <stringProp name="HTTPSampler.port"></stringProp>
+            <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+            <stringProp name="HTTPSampler.response_timeout"></stringProp>
+            <stringProp name="HTTPSampler.protocol"></stringProp>
+            <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+            <stringProp name="HTTPSampler.path">${url}/org.openbravo.retail.posterminal/POSLoginHandler</stringProp>
+            <stringProp name="HTTPSampler.method">POST</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+            <stringProp name="HTTPSampler.implementation">Java</stringProp>
+            <boolProp name="HTTPSampler.monitor">false</boolProp>
+            <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <ResultSaver guiclass="ResultSaverGui" testclass="ResultSaver" testname="Save Responses to a file" enabled="true">
+              <stringProp name="FileSaver.filename"></stringProp>
+              <boolProp name="FileSaver.errorsonly">false</boolProp>
+              <boolProp name="FileSaver.skipautonumber">false</boolProp>
+              <boolProp name="FileSaver.skipsuffix">false</boolProp>
+              <boolProp name="FileSaver.successonly">false</boolProp>
+            </ResultSaver>
+            <hashTree/>
+          </hashTree>
+          <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+            <boolProp name="LoopController.continue_forever">true</boolProp>
+            <stringProp name="LoopController.loops">100</stringProp>
+          </LoopController>
+          <hashTree>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="OrderLoaderTest" enabled="true">
+              <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="" elementType="HTTPArgument">
+                    <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                    <stringProp name="Argument.value">{&#xd;
+    &quot;messageId&quot;: &quot;${messageId}&quot;,&#xd;
+    &quot;data&quot;: [{&#xd;
+        &quot;id&quot;: &quot;${ticketId}&quot;,&#xd;
+       &quot;hasbeenpaid&quot;: &quot;Y&quot;,&#xd;
+        &quot;isbeingprocessed&quot;: &quot;N&quot;,&#xd;
+        &quot;client&quot;: &quot;39363B0921BB4293B48383844325E84C&quot;,&#xd;
+        &quot;organization&quot;: &quot;B5DE96143D6642228E3B9DEC69886A47&quot;,&#xd;
+        &quot;createdBy&quot;: &quot;B8D524AE26F245A0B8FA4407CCB78ED7&quot;,&#xd;
+        &quot;updatedBy&quot;: &quot;B8D524AE26F245A0B8FA4407CCB78ED7&quot;,&#xd;
+        &quot;documentType&quot;: &quot;1D252C36D16F4EF0A32CE4FC24F14759&quot;,&#xd;
+        &quot;orderType&quot;: 0,&#xd;
+        &quot;generateInvoice&quot;: false,&#xd;
+        &quot;isQuotation&quot;: false,&#xd;
+        &quot;oldId&quot;: null,&#xd;
+        &quot;priceList&quot;: &quot;8A22922DD19F4EB2984F3E487558F88F&quot;,&#xd;
+        &quot;priceIncludesTax&quot;: false,&#xd;
+        &quot;currency&quot;: &quot;102&quot;,&#xd;
+        &quot;currency$_identifier&quot;: &quot;EUR&quot;,&#xd;
+        &quot;session&quot;: &quot;884AADFA900CFF0205949AE8F3A44521&quot;,&#xd;
+        &quot;warehouse&quot;: &quot;0B3E1D8D0FCB44FB81EA1A3FF158B086&quot;,&#xd;
+        &quot;salesRepresentative&quot;: &quot;B8D524AE26F245A0B8FA4407CCB78ED7&quot;,&#xd;
+        &quot;salesRepresentative$_identifier&quot;: &quot;Posets Store User&quot;,&#xd;
+        &quot;posTerminal&quot;: &quot;7AEE148E334346C6A1783822A1306BB3&quot;,&#xd;
+        &quot;posTerminal$_identifier&quot;: &quot;PS POS Terminal&quot;,&#xd;
+        &quot;orderDate&quot;: &quot;2015-03-27T19:31:47.621Z&quot;,&#xd;
+        &quot;creationDate&quot;: &quot;2015-03-27T19:32:21.559Z&quot;,&#xd;
+        &quot;documentnoPrefix&quot;: &quot;PS1&quot;,&#xd;
+        &quot;quotationnoPrefix&quot;: -1,&#xd;
+        &quot;documentnoSuffix&quot;: 8,&#xd;
+        &quot;quotationnoSuffix&quot;: -1,&#xd;
+        &quot;documentNo&quot;: &quot;PS1\/0000008&quot;,&#xd;
+        &quot;bp&quot;: {&#xd;
+            &quot;id&quot;: &quot;4CB3519D76E4404A9D2BE36A5D8AC3EE&quot;,&#xd;
+            &quot;organization&quot;: &quot;B5DE96143D6642228E3B9DEC69886A47&quot;,&#xd;
+            &quot;searchKey&quot;: &quot;PS\/C0001&quot;,&#xd;
+            &quot;_identifier&quot;: &quot;PS Customer&quot;,&#xd;
+            &quot;name&quot;: &quot;PS Customer&quot;,&#xd;
+            &quot;description&quot;: null,&#xd;
+            &quot;taxID&quot;: null,&#xd;
+            &quot;taxCategory&quot;: null,&#xd;
+            &quot;paymentMethod&quot;: &quot;45A202BF44884F05B8A1BF741E2063B6&quot;,&#xd;
+            &quot;paymentTerms&quot;: &quot;D8955F8808A54C63BBF478A6843D834D&quot;,&#xd;
+            &quot;priceList &quot;: &quot;undefined&quot;,&#xd;
+            &quot;invoiceTerms&quot;: &quot;I&quot;,&#xd;
+            &quot;locId&quot;: &quot;9D9B26422C6546929FBA69F7742D231C&quot;,&#xd;
+            &quot;locName&quot;: &quot;Plaza Mayor 1&quot;,&#xd;
+            &quot;postalCode&quot;: null,&#xd;
+            &quot;cityName&quot;: &quot;Cádiz&quot;,&#xd;
+            &quot;countryName&quot;: &quot;Spain&quot;,&#xd;
+            &quot;contactId&quot;: &quot;2567059790B54460AD7D8AFED2E23A71&quot;,&#xd;
+            &quot;phone&quot;: null,&#xd;
+            &quot;email&quot;: null,&#xd;
+            &quot;businessPartnerCategory&quot;: &quot;B1DD8B371643421C987EF1D5B358D5E9&quot;,&#xd;
+            &quot;businessPartnerCategory_name&quot;: &quot;Customer&quot;,&#xd;
+            &quot;creditLimit&quot;: 0,&#xd;
+            &quot;creditUsed&quot;: 0,&#xd;
+            &quot;taxExempt&quot;: false,&#xd;
+            &quot;customerBlocking&quot;: false,&#xd;
+            &quot;salesOrderBlocking&quot;: true,&#xd;
+            &quot;undefined&quot;: &quot;PS Customer###Plaza Mayor 1###&quot;,&#xd;
+            &quot;_idx&quot;: 3&#xd;
+        },&#xd;
+        &quot;lines&quot;: [{&#xd;
+            &quot;product&quot;: {&#xd;
+                &quot;id&quot;: &quot;F7029D77812B442C98611AE5C898CA8E&quot;,&#xd;
+                &quot;searchkey&quot;: &quot;WVG\/B0002&quot;,&#xd;
+                &quot;uPCEAN&quot;: null,&#xd;
+                &quot;uOM&quot;: &quot;100&quot;,&#xd;
+                &quot;uOMsymbol&quot;: &quot;Ud &quot;,&#xd;
+                &quot;productCategory&quot;: &quot;0C20B3F7AB234915B2239FCD8BE10CD1&quot;,&#xd;
+                &quot;taxCategory&quot;: &quot;FF80818123B7FC160123B804AB88000B&quot;,&#xd;
+                &quot;description&quot;: &quot;Backcountry backpack. 27 L.&quot;,&#xd;
+                &quot;obposScale&quot;: false,&#xd;
+                &quot;groupProduct&quot;: true,&#xd;
+                &quot;stocked&quot;: true,&#xd;
+                &quot;showstock&quot;: false,&#xd;
+                &quot;isGeneric&quot;: false,&#xd;
+                &quot;generic_product_id&quot;: null,&#xd;
+                &quot;brand&quot;: &quot;B4503E9726924FD799EA66A401666875&quot;,&#xd;
+                &quot;characteristicDescription&quot;: &quot;Price: 100€ - 200€, Object: Backpacks, Weight: 1Kg - 2Kg, Use: High Mountaineering &amp; Expeditions, Hiking &amp; Trekking, Capacity: 10L - 45L, Dimensions: 64 x 29 x 28 cm&quot;,&#xd;
+                &quot;showchdesc&quot;: true,&#xd;
+                &quot;bestseller&quot;: false,&#xd;
+                &quot;ispack&quot;: false,&#xd;
+                &quot;listPrice&quot;: 109.9,&#xd;
+                &quot;standardPrice&quot;: 109.9,&#xd;
+                &quot;priceLimit&quot;: 109.9,&#xd;
+                &quot;cost&quot;: 0,&#xd;
+                &quot;algorithm&quot;: &quot;S&quot;,&#xd;
+                &quot;_identifier&quot;: &quot;Alpine skiing backpack 27 L&quot;,&#xd;
+                &quot;undefined&quot;: &quot;WVG\/B0002###Alpine skiing backpack 27 L###&quot;,&#xd;
+                &quot;_idx&quot;: 4,&#xd;
+                &quot;originalStandardPrice&quot;: 109.9&#xd;
+            },&#xd;
+            &quot;productidentifier&quot;: null,&#xd;
+            &quot;uOM&quot;: &quot;100&quot;,&#xd;
+            &quot;qty&quot;: 1,&#xd;
+            &quot;price&quot;: 109.9,&#xd;
+            &quot;priceList&quot;: 109.9,&#xd;
+            &quot;gross&quot;: 132.98,&#xd;
+            &quot;net&quot;: 109.9,&#xd;
+            &quot;description&quot;: &quot;&quot;,&#xd;
+            &quot;id&quot;: &quot;61532B5F95ECA34E4AB74E2B29AF6D84&quot;,&#xd;
+            &quot;priceIncludesTax&quot;: false,&#xd;
+            &quot;warehouse&quot;: {&#xd;
+                &quot;id&quot;: &quot;0B3E1D8D0FCB44FB81EA1A3FF158B086&quot;,&#xd;
+                &quot;warehousename&quot;: &quot;Posets Store Warehouse&quot;&#xd;
+            },&#xd;
+            &quot;promotions&quot;: [],&#xd;
+            &quot;grossListPrice&quot;: 0,&#xd;
+            &quot;promotionCandidates&quot;: [],&#xd;
+            &quot;promotionMessages&quot;: [],&#xd;
+            &quot;noDiscountCandidates&quot;: true,&#xd;
+            &quot;hasComplementary&quot;: false,&#xd;
+            &quot;complementaryViewed&quot;: false,&#xd;
+            &quot;linerate&quot;: 1.21,&#xd;
+            &quot;tax&quot;: &quot;5235D8E99A2749EFA17A5C92A52AEFC6&quot;,&#xd;
+            &quot;pricenet&quot;: 109.9,&#xd;
+            &quot;fullgross&quot;: {&#xd;
+                &quot;ind&quot;: 1,&#xd;
+                &quot;form&quot;: 0,&#xd;
+                &quot;mant&quot;: [1, 3, 2, 9, 7, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],&#xd;
+                &quot;exp&quot;: -21&#xd;
+            },&#xd;
+            &quot;discountedGross&quot;: 132.98,&#xd;
+            &quot;discountedNet&quot;: 109.9,&#xd;
+            &quot;taxAmount&quot;: 23.08,&#xd;
+            &quot;discountedNetPrice&quot;: {&#xd;
+                &quot;ind&quot;: 1,&#xd;
+                &quot;form&quot;: 0,&#xd;
+                &quot;mant&quot;: [1, 0, 9, 9],&#xd;
+                &quot;exp&quot;: -1&#xd;
+            },&#xd;
+            &quot;taxLines&quot;: {&#xd;
+                &quot;5235D8E99A2749EFA17A5C92A52AEFC6&quot;: {&#xd;
+                    &quot;name&quot;: &quot;Entregas IVA 21%&quot;,&#xd;
+                    &quot;rate&quot;: 21,&#xd;
+                    &quot;net&quot;: 109.9,&#xd;
+                    &quot;amount&quot;: 23.08&#xd;
+                }&#xd;
+            },&#xd;
+            &quot;discountPercentage&quot;: 0,&#xd;
+            &quot;nondiscountedprice&quot;: 109.9,&#xd;
+            &quot;nondiscountednet&quot;: 109.9,&#xd;
+            &quot;standardPrice&quot;: 109.9,&#xd;
+            &quot;listPrice&quot;: 109.9,&#xd;
+            &quot;lineGrossAmount&quot;: 0&#xd;
+        }, {&#xd;
+            &quot;product&quot;: {&#xd;
+                &quot;id&quot;: &quot;AAB5E2C820124BC3B436114564A3959B&quot;,&#xd;
+                &quot;searchkey&quot;: &quot;WVG\/T0013&quot;,&#xd;
+                &quot;uPCEAN&quot;: null,&#xd;
+                &quot;uOM&quot;: &quot;100&quot;,&#xd;
+                &quot;uOMsymbol&quot;: &quot;Ud &quot;,&#xd;
+                &quot;productCategory&quot;: &quot;5E0287DDDBB9432B9CA00CCCE9296BEC&quot;,&#xd;
+                &quot;taxCategory&quot;: &quot;FF80818123B7FC160123B804AB88000B&quot;,&#xd;
+                &quot;description&quot;: &quot;Rectangular travel liner. 100% cotton. 185 cm.&quot;,&#xd;
+                &quot;obposScale&quot;: false,&#xd;
+                &quot;groupProduct&quot;: true,&#xd;
+                &quot;stocked&quot;: true,&#xd;
+                &quot;showstock&quot;: false,&#xd;
+                &quot;isGeneric&quot;: false,&#xd;
+                &quot;generic_product_id&quot;: null,&#xd;
+                &quot;brand&quot;: &quot;300AA8419C5B40A3AF33985D519AD7C3&quot;,&#xd;
+                &quot;characteristicDescription&quot;: &quot;Price: 20€ - 50€, Use: High Mountaineering &amp; Expeditions, Hiking &amp; Trekking, Object: Sleeping bags, Material: Cotton&quot;,&#xd;
+                &quot;showchdesc&quot;: true,&#xd;
+                &quot;bestseller&quot;: false,&#xd;
+                &quot;ispack&quot;: false,&#xd;
+                &quot;listPrice&quot;: 21.9,&#xd;
+                &quot;standardPrice&quot;: 21.9,&#xd;
+                &quot;priceLimit&quot;: 21.9,&#xd;
+                &quot;cost&quot;: 0,&#xd;
+                &quot;algorithm&quot;: &quot;S&quot;,&#xd;
+                &quot;_identifier&quot;: &quot;Cotton liner&quot;,&#xd;
+                &quot;undefined&quot;: &quot;WVG\/T0013###Cotton liner###&quot;,&#xd;
+                &quot;_idx&quot;: 19,&#xd;
+                &quot;originalStandardPrice&quot;: 21.9&#xd;
+            },&#xd;
+            &quot;productidentifier&quot;: null,&#xd;
+            &quot;uOM&quot;: &quot;100&quot;,&#xd;
+            &quot;qty&quot;: 1,&#xd;
+            &quot;price&quot;: 21.9,&#xd;
+            &quot;priceList&quot;: 21.9,&#xd;
+            &quot;gross&quot;: 26.5,&#xd;
+            &quot;net&quot;: 21.9,&#xd;
+            &quot;description&quot;: &quot;&quot;,&#xd;
+            &quot;id&quot;: &quot;7A8D4761A7F623C3B20D8F4823CEB746&quot;,&#xd;
+            &quot;priceIncludesTax&quot;: false,&#xd;
+            &quot;warehouse&quot;: {&#xd;
+                &quot;id&quot;: &quot;0B3E1D8D0FCB44FB81EA1A3FF158B086&quot;,&#xd;
+                &quot;warehousename&quot;: &quot;Posets Store Warehouse&quot;&#xd;
+            },&#xd;
+            &quot;promotions&quot;: [],&#xd;
+            &quot;grossListPrice&quot;: 0,&#xd;
+            &quot;promotionCandidates&quot;: [],&#xd;
+            &quot;promotionMessages&quot;: [],&#xd;
+            &quot;noDiscountCandidates&quot;: true,&#xd;
+            &quot;linerate&quot;: 1.21,&#xd;
+            &quot;tax&quot;: &quot;5235D8E99A2749EFA17A5C92A52AEFC6&quot;,&#xd;
+            &quot;pricenet&quot;: 21.9,&#xd;
+            &quot;fullgross&quot;: {&#xd;
+                &quot;ind&quot;: 1,&#xd;
+                &quot;form&quot;: 0,&#xd;
+                &quot;mant&quot;: [2, 6, 4, 9, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],&#xd;
+                &quot;exp&quot;: -21&#xd;
+            },&#xd;
+            &quot;discountedGross&quot;: 26.5,&#xd;
+            &quot;discountedNet&quot;: 21.9,&#xd;
+            &quot;taxAmount&quot;: 4.6,&#xd;
+            &quot;discountedNetPrice&quot;: {&#xd;
+                &quot;ind&quot;: 1,&#xd;
+                &quot;form&quot;: 0,&#xd;
+                &quot;mant&quot;: [2, 1, 9],&#xd;
+                &quot;exp&quot;: -1&#xd;
+            },&#xd;
+            &quot;taxLines&quot;: {&#xd;
+                &quot;5235D8E99A2749EFA17A5C92A52AEFC6&quot;: {&#xd;
+                    &quot;name&quot;: &quot;Entregas IVA 21%&quot;,&#xd;
+                    &quot;rate&quot;: 21,&#xd;
+                    &quot;net&quot;: 21.9,&#xd;
+                    &quot;amount&quot;: 4.6&#xd;
+                }&#xd;
+            },&#xd;
+            &quot;hasComplementary&quot;: false,&#xd;
+            &quot;complementaryViewed&quot;: false,&#xd;
+            &quot;discountPercentage&quot;: 0,&#xd;
+            &quot;nondiscountedprice&quot;: 21.9,&#xd;
+            &quot;nondiscountednet&quot;: 21.9,&#xd;
+            &quot;standardPrice&quot;: 21.9,&#xd;
+            &quot;listPrice&quot;: 21.9,&#xd;
+            &quot;lineGrossAmount&quot;: 0&#xd;
+        }, {&#xd;
+            &quot;product&quot;: {&#xd;
+                &quot;id&quot;: &quot;666EDC10C86A43838731748EE4176F49&quot;,&#xd;
+                &quot;searchkey&quot;: &quot;WVG\/L0011&quot;,&#xd;
+                &quot;uPCEAN&quot;: null,&#xd;
+                &quot;uOM&quot;: &quot;100&quot;,&#xd;
+                &quot;uOMsymbol&quot;: &quot;Ud &quot;,&#xd;
+                &quot;productCategory&quot;: &quot;9BE78BE519494875B84A004EFD4B5ADC&quot;,&#xd;
+                &quot;taxCategory&quot;: &quot;FF80818123B7FC160123B804AB88000B&quot;,&#xd;
+                &quot;description&quot;: &quot;Bright lantern with foldable legs.&quot;,&#xd;
+                &quot;obposScale&quot;: false,&#xd;
+                &quot;groupProduct&quot;: true,&#xd;
+                &quot;stocked&quot;: true,&#xd;
+                &quot;showstock&quot;: false,&#xd;
+                &quot;isGeneric&quot;: false,&#xd;
+                &quot;generic_product_id&quot;: null,&#xd;
+                &quot;brand&quot;: &quot;2E717C2178284698AD2053225E4BE878&quot;,&#xd;
+                &quot;characteristicDescription&quot;: &quot;Price: 20€ - 50€, Object: Lanterns, Battery Life: 60h, Use: High Mountaineering &amp; Expeditions, Hiking &amp; Trekking, Weight: Under 1Kg, Dimensions: 250 x 50 mm&quot;,&#xd;
+                &quot;showchdesc&quot;: true,&#xd;
+                &quot;bestseller&quot;: false,&#xd;
+                &quot;ispack&quot;: false,&#xd;
+                &quot;listPrice&quot;: 31.9,&#xd;
+                &quot;standardPrice&quot;: 31.9,&#xd;
+                &quot;priceLimit&quot;: 31.9,&#xd;
+                &quot;cost&quot;: 0,&#xd;
+                &quot;algorithm&quot;: &quot;S&quot;,&#xd;
+                &quot;_identifier&quot;: &quot;Basecamp lantern with legs&quot;,&#xd;
+                &quot;undefined&quot;: &quot;WVG\/L0011###Basecamp lantern with legs###&quot;,&#xd;
+                &quot;_idx&quot;: 9,&#xd;
+                &quot;originalStandardPrice&quot;: 31.9&#xd;
+            },&#xd;
+            &quot;productidentifier&quot;: null,&#xd;
+            &quot;uOM&quot;: &quot;100&quot;,&#xd;
+            &quot;qty&quot;: 1,&#xd;
+            &quot;price&quot;: 31.9,&#xd;
+            &quot;priceList&quot;: 31.9,&#xd;
+            &quot;gross&quot;: 38.6,&#xd;
+            &quot;net&quot;: 31.9,&#xd;
+            &quot;description&quot;: &quot;&quot;,&#xd;
+            &quot;id&quot;: &quot;7664B85B7501A1D543AC157A6E4D20A5&quot;,&#xd;
+            &quot;priceIncludesTax&quot;: false,&#xd;
+            &quot;warehouse&quot;: {&#xd;
+                &quot;id&quot;: &quot;0B3E1D8D0FCB44FB81EA1A3FF158B086&quot;,&#xd;
+                &quot;warehousename&quot;: &quot;Posets Store Warehouse&quot;&#xd;
+            },&#xd;
+            &quot;promotions&quot;: [],&#xd;
+            &quot;grossListPrice&quot;: 0,&#xd;
+            &quot;promotionCandidates&quot;: null,&#xd;
+            &quot;promotionMessages&quot;: [],&#xd;
+            &quot;noDiscountCandidates&quot;: true,&#xd;
+            &quot;linerate&quot;: 1.21,&#xd;
+            &quot;tax&quot;: &quot;5235D8E99A2749EFA17A5C92A52AEFC6&quot;,&#xd;
+            &quot;pricenet&quot;: 31.9,&#xd;
+            &quot;fullgross&quot;: {&#xd;
+                &quot;ind&quot;: 1,&#xd;
+                &quot;form&quot;: 0,&#xd;
+                &quot;mant&quot;: [3, 8, 5, 9, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],&#xd;
+                &quot;exp&quot;: -21&#xd;
+            },&#xd;
+            &quot;discountedGross&quot;: 38.6,&#xd;
+            &quot;discountedNet&quot;: 31.9,&#xd;
+            &quot;taxAmount&quot;: 6.7,&#xd;
+            &quot;discountedNetPrice&quot;: {&#xd;
+                &quot;ind&quot;: 1,&#xd;
+                &quot;form&quot;: 0,&#xd;
+                &quot;mant&quot;: [3, 1, 9],&#xd;
+                &quot;exp&quot;: -1&#xd;
+            },&#xd;
+            &quot;taxLines&quot;: {&#xd;
+                &quot;5235D8E99A2749EFA17A5C92A52AEFC6&quot;: {&#xd;
+                    &quot;name&quot;: &quot;Entregas IVA 21%&quot;,&#xd;
+                    &quot;rate&quot;: 21,&#xd;
+                    &quot;net&quot;: 31.9,&#xd;
+                    &quot;amount&quot;: 6.7&#xd;
+                }&#xd;
+            },&#xd;
+            &quot;hasComplementary&quot;: false,&#xd;
+            &quot;complementaryViewed&quot;: false,&#xd;
+            &quot;discountPercentage&quot;: 0,&#xd;
+            &quot;nondiscountedprice&quot;: 31.9,&#xd;
+            &quot;nondiscountednet&quot;: 31.9,&#xd;
+            &quot;standardPrice&quot;: 31.9,&#xd;
+            &quot;listPrice&quot;: 31.9,&#xd;
+            &quot;lineGrossAmount&quot;: 0&#xd;
+        }],&#xd;
+        &quot;payments&quot;: [{&#xd;
+            &quot;amount&quot;: 198.08,&#xd;
+            &quot;origAmount&quot;: 198.08,&#xd;
+            &quot;paid&quot;: 198.08,&#xd;
+            &quot;date&quot;: &quot;2015-03-27T19:32:20.715Z&quot;,&#xd;
+            &quot;kind&quot;: &quot;OBPOS_payment.cash&quot;,&#xd;
+            &quot;name&quot;: &quot;Cash&quot;,&#xd;
+            &quot;rate&quot;: &quot;1&quot;,&#xd;
+            &quot;mulrate&quot;: &quot;1.000000000000&quot;,&#xd;
+            &quot;isocode&quot;: &quot;EUR&quot;,&#xd;
+            &quot;allowOpenDrawer&quot;: true,&#xd;
+            &quot;isCash&quot;: true,&#xd;
+            &quot;openDrawer&quot;: false,&#xd;
+            &quot;printtwice&quot;: false&#xd;
+        }],&#xd;
+        &quot;payment&quot;: 198.08,&#xd;
+        &quot;change&quot;: 0,&#xd;
+        &quot;qty&quot;: 3,&#xd;
+        &quot;gross&quot;: 198.08,&#xd;
+        &quot;net&quot;: 163.7,&#xd;
+        &quot;taxes&quot;: {&#xd;
+            &quot;5235D8E99A2749EFA17A5C92A52AEFC6&quot;: {&#xd;
+                &quot;name&quot;: &quot;Entregas IVA 21%&quot;,&#xd;
+                &quot;rate&quot;: 21,&#xd;
+                &quot;net&quot;: 163.7,&#xd;
+                &quot;amount&quot;: 34.38&#xd;
+            }&#xd;
+        },&#xd;
+        &quot;description&quot;: &quot;&quot;,&#xd;
+        &quot;print&quot;: true,&#xd;
+        &quot;sendEmail&quot;: false,&#xd;
+        &quot;isPaid&quot;: false,&#xd;
+        &quot;paidOnCredit&quot;: false,&#xd;
+        &quot;isLayaway&quot;: false,&#xd;
+        &quot;isEditable&quot;: true,&#xd;
+        &quot;openDrawer&quot;: false,&#xd;
+        &quot;totalamount&quot;: null,&#xd;
+        &quot;approvals&quot;: [],&#xd;
+        &quot;isNewReceipt&quot;: false,&#xd;
+        &quot;cloningReceipt&quot;: false,&#xd;
+        &quot;pOSSBusinessDate&quot;: &quot;2015-03-26T23:00:00.000Z&quot;,&#xd;
+        &quot;timezoneOffset&quot;: -60,&#xd;
+        &quot;created&quot;: 1427484741559,&#xd;
+        &quot;obposCreatedabsolute&quot;: &quot;2015-03-27 20:32:21.559&quot;,&#xd;
+        &quot;obposAppCashup&quot;: &quot;E337DCCE0A8B8E65BA2E250EB2C65B17&quot;&#xd;
+    }],&#xd;
+    &quot;client&quot;: &quot;39363B0921BB4293B48383844325E84C&quot;,&#xd;
+    &quot;organization&quot;: &quot;B5DE96143D6642228E3B9DEC69886A47&quot;,&#xd;
+    &quot;pos&quot;: &quot;7AEE148E334346C6A1783822A1306BB3&quot;,&#xd;
+    &quot;terminalName&quot;: &quot;PS-1&quot;,&#xd;
+    &quot;appName&quot;: &quot;WebPOS&quot;&#xd;
+}</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+              <stringProp name="HTTPSampler.domain"></stringProp>
+              <stringProp name="HTTPSampler.port">8080</stringProp>
+              <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+              <stringProp name="HTTPSampler.response_timeout"></stringProp>
+              <stringProp name="HTTPSampler.protocol">http</stringProp>
+              <stringProp name="HTTPSampler.contentEncoding">UTF-8</stringProp>
+              <stringProp name="HTTPSampler.path">${url}//org.openbravo.retail.posterminal.service.jsonrest/org.openbravo.retail.posterminal.OrderLoader</stringProp>
+              <stringProp name="HTTPSampler.method">POST</stringProp>
+              <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+              <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+              <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+              <stringProp name="HTTPSampler.implementation">Java</stringProp>
+              <boolProp name="HTTPSampler.image_parser">true</boolProp>
+              <boolProp name="HTTPSampler.monitor">false</boolProp>
+              <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+            </HTTPSamplerProxy>
+            <hashTree>
+              <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="true">
+                <collectionProp name="Asserion.test_strings">
+                  <stringProp name="-1996806683">&quot;response&quot;:{&quot;status&quot;:0,&quot;result&quot;:&quot;0&quot;</stringProp>
+                </collectionProp>
+                <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+                <boolProp name="Assertion.assume_success">false</boolProp>
+                <intProp name="Assertion.test_type">2</intProp>
+              </ResponseAssertion>
+              <hashTree/>
+              <DurationAssertion guiclass="DurationAssertionGui" testclass="DurationAssertion" testname="Duration Assertion" enabled="true">
+                <stringProp name="DurationAssertion.duration">5000</stringProp>
+              </DurationAssertion>
+              <hashTree/>
+              <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+                <collectionProp name="HeaderManager.headers">
+                  <elementProp name="Content-Type" elementType="Header">
+                    <stringProp name="Header.name">Content-Type</stringProp>
+                    <stringProp name="Header.value">application/json;charset=UTF-8</stringProp>
+                  </elementProp>
+                  <elementProp name="Accept-Language" elementType="Header">
+                    <stringProp name="Header.name">Accept-Language</stringProp>
+                    <stringProp name="Header.value">en-US,en;q=0.8</stringProp>
+                  </elementProp>
+                  <elementProp name="Accept" elementType="Header">
+                    <stringProp name="Header.name">Accept</stringProp>
+                    <stringProp name="Header.value">application/json, text/javascript, */*; q=0.01</stringProp>
+                  </elementProp>
+                  <elementProp name="Origin" elementType="Header">
+                    <stringProp name="Header.name">Origin</stringProp>
+                    <stringProp name="Header.value">http://localhost:8080</stringProp>
+                  </elementProp>
+                  <elementProp name="User-Agent" elementType="Header">
+                    <stringProp name="Header.name">User-Agent</stringProp>
+                    <stringProp name="Header.value">Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.1 (KHTML, like Gecko) Chrome/13.0.782.215 Safari/535.1</stringProp>
+                  </elementProp>
+                  <elementProp name="Accept-Charset" elementType="Header">
+                    <stringProp name="Header.name">Accept-Charset</stringProp>
+                    <stringProp name="Header.value">ISO-8859-1,utf-8;q=0.7,*;q=0.3</stringProp>
+                  </elementProp>
+                  <elementProp name="Referer" elementType="Header">
+                    <stringProp name="Header.name">Referer</stringProp>
+                    <stringProp name="Header.value">http://localhost:8080/openbravo/web/org.openbravo.retail.posterminal/?terminal=POS-1&amp;window=retail.pointofsale</stringProp>
+                  </elementProp>
+                  <elementProp name="X-Requested-With" elementType="Header">
+                    <stringProp name="Header.name">X-Requested-With</stringProp>
+                    <stringProp name="Header.value">XMLHttpRequest</stringProp>
+                  </elementProp>
+                  <elementProp name="Accept-Encoding" elementType="Header">
+                    <stringProp name="Header.name">Accept-Encoding</stringProp>
+                    <stringProp name="Header.value">gzip,deflate,sdch</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </HeaderManager>
+              <hashTree/>
+            </hashTree>
+            <GaussianRandomTimer guiclass="GaussianRandomTimerGui" testclass="GaussianRandomTimer" testname="Gaussian Random Timer" enabled="true">
+              <stringProp name="ConstantTimer.delay">100</stringProp>
+              <stringProp name="RandomTimer.range">300.0</stringProp>
             </GaussianRandomTimer>
             <hashTree/>
           </hashTree>
