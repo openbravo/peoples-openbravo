@@ -20,13 +20,10 @@
 package org.openbravo.client.application.window;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.zip.ZipOutputStream;
 
 import org.openbravo.base.exception.OBException;
 import org.openbravo.model.ad.utility.Attachment;
-import org.openbravo.utils.FileUtility;
 
 /**
  * Public class to allow extend the functionality
@@ -61,7 +58,7 @@ public abstract class AttachImplementation {
    * @param attachment
    *          The attachment that will be downloaded
    */
-  public abstract FileUtility downloadFile(Attachment attachment) throws OBException;
+  public abstract File downloadFile(Attachment attachment) throws OBException;
 
   /**
    * Abstract method to delete a file
@@ -85,17 +82,6 @@ public abstract class AttachImplementation {
    */
   public abstract void updateFile(Attachment attachment, String strTab, String description,
       Map<String, Object> parameters) throws OBException;
-
-  /**
-   * 
-   * 
-   * @param tabId
-   *          The tab Id where the download process is being executed
-   * @param recordId
-   *          All the attachment related to this recordID will be downloaded in a single .zip file
-   */
-  public abstract void downloadAll(Attachment attachmentFile,
-      HashMap<String, Integer> writtenFiles, ZipOutputStream dest) throws OBException;
 
   /**
    * This method is used to know whether the attach method is creating a temporary file in the temp

@@ -167,7 +167,11 @@ public class TabAttachments extends HttpSecureAppServlet {
     } else if (vars.getCommand().contains("GET_MULTIPLE_RECORDS_OB3")) {
       String tabId = vars.getStringParameter("tabId");
       String recordIds = vars.getStringParameter("recordIds");
-      aim.dowloadAll(tabId, recordIds);
+      response.setContentType("application/zip");
+      response.setHeader("Content-Disposition", "attachment; filename=attachments.zip");
+
+      aim.dowloadAll(tabId, recordIds, response.getOutputStream());
+
     } else if (vars.commandIn("DEFAULT")) {
       vars.getGlobalVariable("inpTabId", "TabAttachments.tabId");
       vars.getGlobalVariable("inpwindowId", "TabAttachments.windowId");

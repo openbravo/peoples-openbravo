@@ -20,12 +20,7 @@
 package org.openbravo.client.application.window;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 import javax.enterprise.context.ApplicationScoped;
 
@@ -88,7 +83,7 @@ public class CoreAttachImplementation extends AttachImplementation {
   }
 
   @Override
-  public FileUtility downloadFile(Attachment attachment) {
+  public File downloadFile(Attachment attachment) {
     String fileDir = null;
     log.debug("CoreAttachImplemententation - download file");
 
@@ -99,59 +94,7 @@ public class CoreAttachImplementation extends AttachImplementation {
     String attachmentFolder = OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .getProperty("attach.path");
     final File file = new File(attachmentFolder + "/" + fileDir, attachment.getName());
-    try {
-
-      if (file.exists()) {
-        f = new FileUtility(attachmentFolder + "/" + fileDir, attachment.getName(), false, true);
-      } else {
-        f = new FileUtility(attachmentFolder, attachment.getId(), false, true);
-      }
-      return f;
-    } catch (IOException e) {
-      throw new OBException("Error while downloading an attachment ", e);
-    }
-  }
-
-  @Override
-  public void downloadAll(Attachment attachmentFile, HashMap<String, Integer> writtenFiles,
-      ZipOutputStream dest) {
-    log.debug("CoreAttachImplemententation - downloadAll records");
-    try {
-      String attachmentDirectory = TabAttachments.getAttachmentDirectory(attachmentFile.getTable()
-          .getId(), attachmentFile.getRecord(), attachmentFile.getName());
-      String attachmentFolder = OBPropertiesProvider.getInstance().getOpenbravoProperties()
-          .getProperty("attach.path");
-      final File file = new File(attachmentFolder + "/" + attachmentDirectory,
-          attachmentFile.getName());
-      String zipName = "";
-      if (!writtenFiles.containsKey(file.getName())) {
-        zipName = file.getName();
-        writtenFiles.put(file.getName(), 0);
-      } else {
-        int num = writtenFiles.get(file.getName()) + 1;
-        int indDot = file.getName().lastIndexOf(".");
-        if (indDot == -1) {
-          // file has no extension
-          indDot = file.getName().length();
-        }
-        zipName = file.getName().substring(0, indDot) + " (" + num + ")"
-            + file.getName().substring(indDot);
-        writtenFiles.put(file.getName(), num);
-      }
-      byte[] buf = new byte[1024];
-      dest.putNextEntry(new ZipEntry(zipName));
-      FileInputStream in = new FileInputStream(file.toString());
-      int len;
-      while ((len = in.read(buf)) > 0) {
-        dest.write(buf, 0, len);
-      }
-      dest.closeEntry();
-      in.close();
-
-    } catch (Exception e) {
-      log.error("Error while downloading attachments", e);
-      throw new OBException("Error while downloading attachments ", e);
-    }
+    return file;
   }
 
   @Override

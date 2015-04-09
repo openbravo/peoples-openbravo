@@ -20,16 +20,17 @@
 package org.openbravo.client.application.window;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletResponse;
 
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
@@ -38,7 +39,6 @@ import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.OrganizationEnabled;
 import org.openbravo.client.kernel.ComponentProvider;
-import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.SecurityChecker;
@@ -205,7 +205,14 @@ public class AttachImplementationManager {
       if (handler == null) {
         throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoMethod"));
       }
-      FileUtility fileUt = handler.downloadFile(attachment);
+      File file = handler.downloadFile(attachment);
+      FileUtility fileUt = null;
+      if (file.exists()) {
+        fileUt = new FileUtility(file.getParent(), attachment.getName(), false, true);
+      } else {
+        throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoAttachmentFound"));
+      }
+
       fileUt.dumpFile(os);
       boolean isTempFile = handler.isTempFile();
       if (isTempFile) {
@@ -213,6 +220,7 @@ public class AttachImplementationManager {
       }
 
     } catch (IOException e) {
+
       throw new OBException(OBMessageUtils.messageBD("Error downloading file"));
     } finally {
       OBContext.restorePreviousMode();
@@ -229,18 +237,13 @@ public class AttachImplementationManager {
    *          All the attachment related to this recordID will be downloaded in a single .zip file
    */
 
-  public void dowloadAll(String tabId, String recordIds) throws OBException {
+  public void dowloadAll(String tabId, String recordIds, OutputStream os) throws OBException {
 
     Tab tab = OBDal.getInstance().get(Tab.class, tabId);
     String tableId = (String) DalUtil.getId(tab.getTable());
     try {
       OBContext.setAdminMode(true);
-      HttpServletResponse response = RequestContext.get().getResponse();
-
-      response.setContentType("application/zip");
-      response.setHeader("Content-Disposition", "attachment; filename=attachments.zip");
-      final ZipOutputStream dest = new ZipOutputStream(response.getOutputStream());
-      // attachmentFiles.list().toArray();
+      final ZipOutputStream dest = new ZipOutputStream(os);
       HashMap<String, Integer> writtenFiles = new HashMap<String, Integer>();
       OBCriteria<Attachment> attachmentFiles = OBDao.getFilteredCriteria(Attachment.class,
           Restrictions.eq("table.id", tableId), Restrictions.in("record", recordIds.split(",")));
@@ -251,7 +254,37 @@ public class AttachImplementationManager {
         if (handler == null) {
           throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoMethod"));
         }
-        handler.downloadAll(attachmentFile, writtenFiles, dest);
+        File file = handler.downloadFile(attachmentFile);
+
+        String zipName = "";
+        if (!writtenFiles.containsKey(file.getName())) {
+          zipName = file.getName();
+          writtenFiles.put(file.getName(), 0);
+        } else {
+          int num = writtenFiles.get(file.getName()) + 1;
+          int indDot = file.getName().lastIndexOf(".");
+          if (indDot == -1) {
+            // file has no extension
+            indDot = attachmentFile.getName().length();
+          }
+          zipName = attachmentFile.getName().substring(0, indDot) + " (" + num + ")"
+              + attachmentFile.getName().substring(indDot);
+          writtenFiles.put(attachmentFile.getName(), num);
+        }
+        byte[] buf = new byte[1024];
+        dest.putNextEntry(new ZipEntry(zipName));
+
+        FileInputStream in = new FileInputStream(file.toString());
+        int len;
+        while ((len = in.read(buf)) > 0) {
+          dest.write(buf, 0, len);
+        }
+        dest.closeEntry();
+        in.close();
+        boolean isTempFile = handler.isTempFile();
+        if (isTempFile) {
+          file.delete();
+        }
       }
       dest.close();
 
