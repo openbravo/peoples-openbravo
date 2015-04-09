@@ -77,7 +77,7 @@ public class OrderGroupingProcessor {
     // reconciled. This query must be kept in sync with the one in CashCloseReport
 
     String hqlWhereClause = "as line"
-        + " where line.salesOrder.obposApplications = :terminal and line.salesOrder.obposAppCashup=:cashUpId and line.deliveredQuantity=line.orderedQuantity and line.orderedQuantity <> 0"
+        + " where line.salesOrder.obposAppCashup=:cashUpId and line.deliveredQuantity=line.orderedQuantity and line.orderedQuantity <> 0"
         + " and line.salesOrder.documentType.id in ('"
         + posTerminal.getObposTerminaltype().getDocumentType().getId()
         + "', '"
@@ -87,7 +87,6 @@ public class OrderGroupingProcessor {
         + " order by line.businessPartner.id, line.salesOrder.invoiceAddress.id, line.salesOrder.id";
 
     OBQuery<OrderLine> query = OBDal.getInstance().createQuery(OrderLine.class, hqlWhereClause);
-    query.setNamedParameter("terminal", posTerminal);
     query.setNamedParameter("cashUpId", cashUpId);
 
     List<String> invoicesToSetDocumentNos = new ArrayList<String>();
