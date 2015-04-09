@@ -62,7 +62,7 @@
       <foreign-key foreignTable="AD_ORG" name="AD_TABLE_NAVIGATION_ADORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_TAB" name="AD_TABLE_NAVIGATION_ADTABID">
+      <foreign-key foreignTable="AD_TAB" name="AD_TABLE_NAVIGATION_ADTABID" onDelete="cascade">
         <reference local="AD_TAB_ID" foreign="AD_TAB_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_TABLE" name="AD_TABLE_NAVIGATION_ADTABLEID">
