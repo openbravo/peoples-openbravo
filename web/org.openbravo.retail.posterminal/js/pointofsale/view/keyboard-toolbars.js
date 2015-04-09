@@ -125,7 +125,7 @@ enyo.kind({
           this.bubble('onMaxLimitAmountError', {
             show: true,
             maxLimitAmount: paymentMethod.maxLimitAmount,
-            currency: paymentMethod.currency$_identifier === 'EUR' ? '€' : paymentMethod.currency$_identifier
+            currency: OB.MobileApp.model.paymentnames[key].symbol
           });
         } else {
           // Hide error and process payment
