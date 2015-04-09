@@ -142,8 +142,10 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
       JSONArray criterias = (JSONArray) JsonUtils.buildCriteria(parameters).get("criteria");
       for (int i = 0; i < criterias.length(); i++) {
         final JSONObject criteria = criterias.getJSONObject(i);
-        filterCriteria.put(criteria.getString("fieldName"),
-            criteria.has("value") ? criteria.getString("value") : criteria.toString());
+        if (criteria.has("fieldName")) {
+          filterCriteria.put(criteria.getString("fieldName"),
+              criteria.has("value") ? criteria.getString("value") : criteria.toString());
+        }
       }
     } catch (JSONException e) {
       log4j.error("Error while building the criteria", e);
@@ -449,8 +451,10 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
       JSONArray criterias = (JSONArray) JsonUtils.buildCriteria(parameters).get("criteria");
       for (int i = 0; i < criterias.length(); i++) {
         final JSONObject criteria = criterias.getJSONObject(i);
-        filterCriteria.put(criteria.getString("fieldName"),
-            criteria.has("value") ? criteria.getString("value") : criteria.toString());
+        if (criteria.has("fieldName")) {
+          filterCriteria.put(criteria.getString("fieldName"),
+              criteria.has("value") ? criteria.getString("value") : criteria.toString());
+        }
       }
     } catch (JSONException e) {
       log4j.error("Error while building the criteria", e);
