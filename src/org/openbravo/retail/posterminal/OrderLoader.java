@@ -49,7 +49,6 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.ad_forms.AcctServer;
-import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
@@ -89,15 +88,16 @@ import org.openbravo.model.materialmgmt.onhandquantity.StockProposed;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
-import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DalConnectionProvider;
+import org.openbravo.service.importprocess.ImportEntryManager;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonToDataConverter;
 
 @DataSynchronization(entity = "Order")
 public class OrderLoader extends POSDataSynchronizationProcess implements
     DataSynchronizationImportProcess {
+
   private static final Logger log = Logger.getLogger(OrderLoader.class);
 
   private static final BigDecimal NEGATIVE_ONE = new BigDecimal(-1);
@@ -135,6 +135,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
   @Override
   public JSONObject saveRecord(JSONObject jsonorder) throws Exception {
+    long t0 = 0, t1 = 0, t11 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0, t111 = 0, t112 = 0, t113 = 0, t115 = 0, t116 = 0;
 
     documentNoHandlers.set(new ArrayList<OrderLoader.DocumentNoHandler>());
     try {
@@ -146,8 +147,11 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           && (!jsonorder.has("preserveId") || jsonorder.getBoolean("preserveId"))) {
         return successMessage(jsonorder);
       }
-      long t0 = System.currentTimeMillis();
-      long t1, t11, t2, t3;
+
+      t0 = System.currentTimeMillis();
+      if (log.isDebugEnabled()) {
+        t0 = System.currentTimeMillis();
+      }
       Order order = null;
       OrderLine orderLine = null;
       ShipmentInOut shipment = null;
@@ -170,7 +174,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           }
         }
 
-        t1 = System.currentTimeMillis();
+        if (log.isDebugEnabled()) {
+          t1 = System.currentTimeMillis();
+        }
         // An invoice will be automatically created if:
         // - The order is not a layaway and is not completely paid (ie. it's paid on credit)
         // - Or, the order is a normal order or a fully paid layaway, and has the "generateInvoice"
@@ -196,7 +202,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         }
         sendEmail = (jsonorder.has("sendEmail") && jsonorder.getBoolean("sendEmail"));
         // Order header
-        long t111 = System.currentTimeMillis();
+        if (log.isDebugEnabled()) {
+          t111 = System.currentTimeMillis();
+        }
         ArrayList<OrderLine> lineReferences = new ArrayList<OrderLine>();
         JSONArray orderlines = jsonorder.getJSONArray("lines");
         if (fullpayLayaway) {
@@ -218,9 +226,11 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           lineReferences = new ArrayList<OrderLine>();
           createOrderLines(order, jsonorder, orderlines, lineReferences);
         }
-        long t112 = System.currentTimeMillis();
-        // Order lines
+        if (log.isDebugEnabled()) {
+          t112 = System.currentTimeMillis();
+        }
 
+        // Order lines
         if (jsonorder.has("oldId") && !jsonorder.getString("oldId").equals("null")
             && (!jsonorder.has("isQuotation") || !jsonorder.getBoolean("isQuotation"))) {
           try {
@@ -232,7 +242,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           }
         }
 
-        long t113 = System.currentTimeMillis();
+        if (log.isDebugEnabled()) {
+          t113 = System.currentTimeMillis();
+        }
         if (createShipment) {
           if (order.getWarehouse().getLocatorList().isEmpty()) {
             throw new OBException(Utility.messageBD(new DalConnectionProvider(false),
@@ -249,7 +261,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           createShipmentLines(shipment, order, jsonorder, orderlines, lineReferences);
 
         }
-        long t115 = System.currentTimeMillis();
+        if (log.isDebugEnabled()) {
+          t115 = System.currentTimeMillis();
+        }
         if (createInvoice) {
           // Invoice header
           invoice = OBProvider.getInstance().get(Invoice.class);
@@ -260,14 +274,19 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           createInvoiceLines(invoice, order, jsonorder, orderlines, lineReferences);
         }
 
-        long t116 = System.currentTimeMillis();
+        if (log.isDebugEnabled()) {
+          t116 = System.currentTimeMillis();
+        }
         createApprovals(order, jsonorder);
 
-        t11 = System.currentTimeMillis();
-
-        t2 = System.currentTimeMillis();
+        if (log.isDebugEnabled()) {
+          t11 = System.currentTimeMillis();
+          t2 = System.currentTimeMillis();
+        }
         updateAuditInfo(order, invoice, jsonorder);
-        t3 = System.currentTimeMillis();
+        if (log.isDebugEnabled()) {
+          t3 = System.currentTimeMillis();
+        }
 
         if (!isQuotation) {
           if (!isLayaway && !partialpayLayaway && createShipment) {
@@ -277,18 +296,19 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
             try {
               // Stock manipulation
               handleStock(shipment, updateStockStatement);
-              // Send email
             } finally {
               updateStockStatement.close();
             }
           }
         }
 
-        long t4 = System.currentTimeMillis();
+        if (log.isDebugEnabled()) {
+          t4 = System.currentTimeMillis();
 
-        log.debug("Creation of bobs. Order: " + (t112 - t111) + "; Orderlines: " + (t113 - t112)
-            + "; Shipment: " + (t115 - t113) + "; Invoice: " + (t116 - t115) + "; Approvals"
-            + (t11 - t116) + "; stock" + (t4 - t3));
+          log.debug("Creation of bobs. Order: " + (t112 - t111) + "; Orderlines: " + (t113 - t112)
+              + "; Shipment: " + (t115 - t113) + "; Invoice: " + (t116 - t115) + "; Approvals"
+              + (t11 - t116) + "; stock" + (t4 - t3));
+        }
 
         // do the docnumbers at the end
         OBContext.setAdminMode();
@@ -312,7 +332,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         TriggerHandler.getInstance().enable();
       }
 
-      long t4 = System.currentTimeMillis();
+      if (log.isDebugEnabled()) {
+        t5 = System.currentTimeMillis();
+      }
 
       if (!isQuotation) {
         // Payment
@@ -327,14 +349,20 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         // Call all OrderProcess injected.
         executeHooks(orderProcesses, jsonorder, order, shipment, invoice);
       }
-      long t5 = System.currentTimeMillis();
+      if (log.isDebugEnabled()) {
+        t6 = System.currentTimeMillis();
+      }
       OBDal.getInstance().flush();
 
-      log.debug("Order with docno: " + order.getDocumentNo() + " (uuid: " + order.getId()
-          + ") saved correctly. Initial flush: " + (t1 - t0) + "; Generate bobs:" + (t11 - t1)
-          + "; Save bobs:" + (t2 - t11) + "; First flush:" + (t3 - t2) + "; Second flush: "
-          + (t4 - t3) + "; Process Payments:" + (t5 - t4) + " Final flush: "
-          + (System.currentTimeMillis() - t5));
+      if (log.isDebugEnabled()) {
+        log.debug("Order with docno: " + order.getDocumentNo() + " (uuid: " + order.getId()
+            + ") saved correctly. Initial flush: " + (t1 - t0) + "; Generate bobs:" + (t11 - t1)
+            + "; Save bobs:" + (t2 - t11) + "; First flush:" + (t3 - t2) + "; Process Payments:"
+            + (t6 - t5) + " Final flush: " + (System.currentTimeMillis() - t6));
+      }
+
+      ImportEntryManager.getInstance()
+          .reportStats("orderLoader", (System.currentTimeMillis() - t0));
 
       return successMessage(jsonorder);
     } finally {
@@ -834,17 +862,16 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   protected void createShipmentLines(ShipmentInOut shipment, Order order, JSONObject jsonorder,
       JSONArray orderlines, ArrayList<OrderLine> lineReferences) throws JSONException {
     int lineNo = 0;
-    boolean foundSingleBin = false;
-    boolean useSingleBin = false;
-    Locator foundBin = null;
+    Locator foundSingleBin = null;
     Entity shplineentity = ModelProvider.getInstance().getEntity(ShipmentInOutLine.class);
 
     final OBCriteria<Locator> locators = OBDal.getInstance().createCriteria(Locator.class);
     locators.add(Restrictions.eq(Locator.PROPERTY_ACTIVE, true));
     locators.add(Restrictions.eq(Locator.PROPERTY_WAREHOUSE, shipment.getWarehouse()));
+    // note the count causes a query but the good thing is that it doesn't cause loading
+    // additional bin locations if there are too many
     if (locators.count() == 1) {
-      foundSingleBin = true;
-      foundBin = (Locator) locators.uniqueResult();
+      foundSingleBin = (Locator) locators.uniqueResult();
     }
     for (int i = 0; i < orderlines.length(); i++) {
       String hqlWhereClause;
@@ -853,7 +880,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       BigDecimal pendingQty = orderLine.getOrderedQuantity().abs();
       boolean negativeLine = orderLine.getOrderedQuantity().compareTo(BigDecimal.ZERO) < 0;
 
-      useSingleBin = foundSingleBin == true && orderLine.getAttributeSetValue() == null
+      boolean useSingleBin = foundSingleBin != null && orderLine.getAttributeSetValue() == null
           && orderLine.getProduct().getAttributeSet() == null
           && orderLine.getWarehouseRule() == null;
 
@@ -861,15 +888,13 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
       if (negativeLine) {
         lineNo += 10;
-        addShipemntline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine, jsonorder,
+        addShipmentline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine, jsonorder,
             lineNo, pendingQty.negate(), getBinForReturns(jsonorder.getString("posTerminal")), null);
-      }
-      if (useSingleBin) {
+      } else if (useSingleBin) {
         lineNo += 10;
-        addShipemntline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine, jsonorder,
-            lineNo, pendingQty, foundBin, null);
+        addShipmentline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine, jsonorder,
+            lineNo, pendingQty, foundSingleBin, null);
       } else {
-
         HashMap<String, ShipmentInOutLine> usedBins = new HashMap<String, ShipmentInOutLine>();
         if (pendingQty.compareTo(BigDecimal.ZERO) > 0) {
 
@@ -916,7 +941,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
               if (negativeLine) {
                 qty = qty.negate();
               }
-              ShipmentInOutLine objShipmentLine = addShipemntline(shipment, shplineentity,
+              ShipmentInOutLine objShipmentLine = addShipmentline(shipment, shplineentity,
                   orderlines.getJSONObject(i), orderLine, jsonorder, lineNo, qty, stock
                       .getStorageDetail().getStorageBin(), stock.getStorageDetail()
                       .getAttributeSetValue());
@@ -964,7 +989,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
                 .add(pendingQty));
             OBDal.getInstance().save(objShipmentInOutLine);
           } else {
-            addShipemntline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine,
+            addShipmentline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine,
                 jsonorder, lineNo, pendingQty, queryLoc.list().get(0), oldAttributeSetValues);
           }
         }
@@ -972,7 +997,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     }
   }
 
-  private ShipmentInOutLine addShipemntline(ShipmentInOut shipment, Entity shplineentity,
+  private ShipmentInOutLine addShipmentline(ShipmentInOut shipment, Entity shplineentity,
       JSONObject jsonOrderLine, OrderLine orderLine, JSONObject jsonorder, long lineNo,
       BigDecimal qty, Locator bin, AttributeSetInstance attributeSetInstance) throws JSONException {
     ShipmentInOutLine line = OBProvider.getInstance().get(ShipmentInOutLine.class);
@@ -1205,7 +1230,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   protected void updateInventory(MaterialTransaction transaction,
       CallableStatement updateStockStatement) {
     try {
-
       // client
       updateStockStatement.setString(1, OBContext.getOBContext().getCurrentClient().getId());
       // org
@@ -1452,7 +1476,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       FIN_PaymentSchedule paymentScheduleInvoice, Order order, Invoice invoice,
       OBPOSAppPayment paymentType, JSONObject payment, BigDecimal writeoffAmt, JSONObject jsonorder)
       throws Exception {
-    long t1 = System.currentTimeMillis();
     OBContext.setAdminMode(true);
     try {
       boolean totalIsNegative = jsonorder.getDouble("gross") < 0;
@@ -1541,9 +1564,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
       FIN_FinancialAccount account = paymentType.getFinancialAccount();
 
-      long t2 = System.currentTimeMillis();
       // Save Payment
-
       List<FIN_PaymentScheduleDetail> detail = new ArrayList<FIN_PaymentScheduleDetail>();
       detail.add(paymentScheduleDetail);
 
@@ -1579,35 +1600,19 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       description += ": " + order.getDocumentNo() + "\n";
       finPayment.setDescription(description);
 
-      long t3 = System.currentTimeMillis();
-      // Process Payment
+      long t1 = System.currentTimeMillis();
+      FIN_PaymentProcess process = new FIN_PaymentProcess();
+      process.processPayment(finPayment, "D", true, null, null);
+      ImportEntryManager.getInstance().reportStats("processPayments",
+          (System.currentTimeMillis() - t1));
 
       VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
-      ProcessBundle pb = new ProcessBundle("6255BE488882480599C81284B70CD9B3", vars)
-          .init(new DalConnectionProvider(false));
-      HashMap<String, Object> parameters = new HashMap<String, Object>();
-      parameters.put("action", "D");
-      parameters.put("Fin_Payment_ID", finPayment.getId());
-      parameters.put("isPOSOrder", "Y");
-      pb.setParams(parameters);
-      // the payment that has been created is processed
-      // the transaction is created
-      FIN_PaymentProcess process = new FIN_PaymentProcess();
-      process.execute(pb);
-      OBError result = (OBError) pb.getResult();
-      if (result.getType().equalsIgnoreCase("Error")) {
-        throw new OBException(result.getMessage());
-      }
       if (vars.hasSession()) {
         vars.setSessionValue("POSOrder", "Y");
       }
 
       // retrieve the transactions of this payment and set the cashupId to those transactions
-      final OBCriteria<FIN_FinaccTransaction> transactionsCriteria = OBDal.getInstance()
-          .createCriteria(FIN_FinaccTransaction.class);
-      transactionsCriteria.add(Restrictions.eq(FIN_FinaccTransaction.PROPERTY_FINPAYMENT,
-          finPayment));
-      final List<FIN_FinaccTransaction> transactions = transactionsCriteria.list();
+      final List<FIN_FinaccTransaction> transactions = finPayment.getFINFinaccTransactionList();
       final String cashupId = jsonorder.getString("obposAppCashup");
       final OBPOSAppCashup cashup = OBDal.getInstance().get(OBPOSAppCashup.class, cashupId);
       if (transactions.size() == 0) {
@@ -1616,9 +1621,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       for (FIN_FinaccTransaction transaction : transactions) {
         transaction.setObposAppCashup(cashup);
       }
-
-      log.debug("Payment. Create entities: " + (t2 - t1) + "; Save payment: " + (t3 - t2)
-          + "; Process payment: " + (System.currentTimeMillis() - t3));
 
     } finally {
       OBContext.restorePreviousMode();
@@ -1667,17 +1669,25 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       }
       String oldKey = key;
       if (entity.hasProperty(key)) {
-        log.debug("Found property: " + key + " in entity " + entity.getName());
+        if (log.isDebugEnabled()) {
+          log.debug("Found property: " + key + " in entity " + entity.getName());
+        }
       } else {
         key = getEquivalentKey(key);
         if (key == null) {
-          log.debug("Did not find property: " + oldKey);
+          if (log.isDebugEnabled()) {
+            log.debug("Did not find property: " + oldKey);
+          }
           continue;
         } else {
           if (entity.hasProperty(key)) {
-            log.debug("Found equivalent key: " + key);
+            if (log.isDebugEnabled()) {
+              log.debug("Found equivalent key: " + key);
+            }
           } else {
-            log.debug("Did not find property: " + oldKey);
+            if (log.isDebugEnabled()) {
+              log.debug("Did not find property: " + oldKey);
+            }
             continue;
           }
         }
@@ -1778,18 +1788,22 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     String processId = SequenceIdData.getUUID();
     OBContext.setAdminMode();
     try {
-      log.debug("Parameters : '" + processId + "', '" + recordID + "', " + quantity + ", '"
-          + productId + "', null, '" + warehouseId + "', null, '" + orgId + "', '"
-          + attributesetinstanceId + "', '" + OBContext.getOBContext().getUser().getId() + "', '"
-          + clientId + "', '" + warehouseRuleId + "', '" + uomId
-          + "', null, null, null, null, null, '" + reservationId + "', 'N'");
+      if (log.isDebugEnabled()) {
+        log.debug("Parameters : '" + processId + "', '" + recordID + "', " + quantity + ", '"
+            + productId + "', null, '" + warehouseId + "', null, '" + orgId + "', '"
+            + attributesetinstanceId + "', '" + OBContext.getOBContext().getUser().getId() + "', '"
+            + clientId + "', '" + warehouseRuleId + "', '" + uomId
+            + "', null, null, null, null, null, '" + reservationId + "', 'N'");
+      }
       long initGetStockProcedureCall = System.currentTimeMillis();
       StockUtils.getStock(processId, recordID, quantity, productId, null, warehouseId, null, orgId,
           attributesetinstanceId, OBContext.getOBContext().getUser().getId(), clientId,
           warehouseRuleId, uomId, null, null, null, null, null, reservationId, "N");
       long elapsedGetStockProcedureCall = (System.currentTimeMillis() - initGetStockProcedureCall);
-      log.debug("Partial time to execute callGetStock Procedure Call() : "
-          + elapsedGetStockProcedureCall);
+      if (log.isDebugEnabled()) {
+        log.debug("Partial time to execute callGetStock Procedure Call() : "
+            + elapsedGetStockProcedureCall);
+      }
       return processId;
     } catch (Exception ex) {
       throw new OBException("Error in OrderLoader when getting stock for product " + productId
