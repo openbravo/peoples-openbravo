@@ -37,7 +37,8 @@
       
       if (this.receipt.get('isQuotation')) {
         // The receipt is a quotation, verify the creationDate exist
-        if (this.receipt.get('creationDate')) {
+        OB.info('Actual creation date ' + this.receipt.get('creationDate'));
+        if (this.receipt.get('creationDate') && this.receipt.get('creationDate').toString() !== "Invalid Date") {
           creationDate = this.receipt.get('creationDate');
           creationDateTransformed = new Date(creationDate.getUTCFullYear(), creationDate.getUTCMonth(), creationDate.getUTCDate(), creationDate.getUTCHours(), creationDate.getUTCMinutes(), creationDate.getUTCSeconds());
         } else {
