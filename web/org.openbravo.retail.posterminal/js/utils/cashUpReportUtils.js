@@ -355,7 +355,8 @@
         if (!skipSearchBackend) {
           // Search in the backoffice
           new OB.DS.Process('org.openbravo.retail.posterminal.master.Cashup').exec({
-            isprocessed: 'N'
+            isprocessed: 'N',
+            isprocessedbo: 'N'
           }, function (data) {
             // Found non processed cashups
             if (data[0]) {

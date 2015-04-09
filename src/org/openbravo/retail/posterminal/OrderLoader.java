@@ -141,6 +141,11 @@ public class OrderLoader extends POSDataSynchronizationProcess {
           && (!jsonorder.has("preserveId") || jsonorder.getBoolean("preserveId"))) {
         return successMessage(jsonorder);
       }
+
+      if (!isQuotation && !jsonorder.getBoolean("isLayaway")) {
+        verifyCashupStatus(jsonorder);
+      }
+
       long t0 = System.currentTimeMillis();
       long t1, t11, t2, t3;
       Order order = null;
@@ -1591,6 +1596,23 @@ public class OrderLoader extends POSDataSynchronizationProcess {
       OBContext.restorePreviousMode();
     }
 
+  }
+
+  protected void verifyCashupStatus(JSONObject jsonorder) throws JSONException, OBException {
+    OBContext.setAdminMode(false);
+    try {
+      if (jsonorder.has("obposAppCashup") && jsonorder.getString("obposAppCashup") != null
+          && !jsonorder.getString("obposAppCashup").equals("")) {
+        OBPOSAppCashup cashUp = OBDal.getInstance().get(OBPOSAppCashup.class,
+            jsonorder.getString("obposAppCashup"));
+        if (cashUp != null && cashUp.isProcessedbo()) {
+          // Additional check to verify that the cashup related to the order has not been processed
+          throw new OBException("The cashup related to this order has been processed");
+        }
+      }
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   protected void createApprovals(Order order, JSONObject jsonorder) {
