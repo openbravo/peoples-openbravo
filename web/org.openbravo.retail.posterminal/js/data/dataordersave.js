@@ -62,7 +62,6 @@
       }
     });
     // finished receipt verifications
-
     this.receipt.on('closed', function (eventParams) {
       this.receipt = model.get('order');
       OB.info('Ticket closed', this.receipt.getOrderDescription());
@@ -221,6 +220,11 @@
           receiptId = this.receipt.get('id'),
           creationDate = this.receipt.get('creationDate') || new Date();
 
+      // issue 29164: sometimes, the quotations are sync without creation date
+      if (creationDate === "Invalid Date") {
+        creationDate = new Date();
+      }
+
       this.receipt.set('creationDate', creationDate);
       this.receipt.set('hasbeenpaid', 'Y');
       this.context.get('multiOrders').trigger('integrityOk', this.receipt);
@@ -230,7 +234,6 @@
       this.receipt.set('timezoneOffset', creationDate.getTimezoneOffset());
       this.receipt.set('created', creationDate.getTime());
       this.receipt.set('obposCreatedabsolute', OB.I18N.formatDateISO(creationDate)); // Absolute date in ISO format
-
       // multiterminal support
       // be sure that the active terminal is the one set as the order proprietary
       receipt.set('posTerminal', OB.MobileApp.model.get('terminal').id);
