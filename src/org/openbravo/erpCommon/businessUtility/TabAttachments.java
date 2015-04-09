@@ -22,7 +22,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.net.URLEncoder;
 
+import javax.mail.internet.MimeUtility;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -132,8 +134,36 @@ public class TabAttachments extends HttpSecureAppServlet {
       }
     } else if (vars.commandIn("DISPLAY_DATA")) {
       final String strFileReference = vars.getStringParameter("inpcFileId");
-      aim.download(strFileReference);
-      // printPageFile(response, vars, strFileReference, request);
+      try {
+        OBContext.setAdminMode();
+        Attachment attachment = OBDal.getInstance().get(Attachment.class, strFileReference);
+
+        if (attachment.getDataType().equals("")) {
+          response.setContentType("application/txt");
+        } else {
+          response.setContentType(attachment.getDataType());
+        }
+        response.setCharacterEncoding("UTF-8");
+        String userAgent = request.getHeader("user-agent");
+        if (userAgent.contains("MSIE")) {
+          response.setHeader(
+              "Content-Disposition",
+              "attachment; filename=\""
+                  + URLEncoder.encode(attachment.getName().replace("\"", "\\\""), "utf-8") + "\"");
+        } else {
+          response.setHeader(
+              "Content-Disposition",
+              "attachment; filename=\""
+                  + MimeUtility
+                      .encodeWord(attachment.getName().replace("\"", "\\\""), "utf-8", "Q") + "\"");
+        }
+      } finally {
+        OBContext.restorePreviousMode();
+      }
+      aim.download(strFileReference, response.getOutputStream());
+      response.getOutputStream().flush();
+      response.getOutputStream().close();
+
     } else if (vars.getCommand().contains("GET_MULTIPLE_RECORDS_OB3")) {
       String tabId = vars.getStringParameter("tabId");
       String recordIds = vars.getStringParameter("recordIds");
@@ -155,11 +185,6 @@ public class TabAttachments extends HttpSecureAppServlet {
       // This command is only for 2.50
     } else if (vars.commandIn("FRAME2")) {
       whitePage(response);
-      // This command is only for 2.50
-    } else if (vars.commandIn("DISPLAY_DATA")) {
-      final String strFileReference = vars.getRequiredStringParameter("inpcFileId");
-      aim.download(strFileReference);
-      // printPageFile(response, vars, strFileReference, request);
       // This command is only for 2.50
     } else if (vars.commandIn("CHECK")) {
       final String tabId = vars.getStringParameter("inpTabId");

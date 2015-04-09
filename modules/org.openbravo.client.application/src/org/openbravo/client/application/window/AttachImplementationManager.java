@@ -20,6 +20,8 @@
 package org.openbravo.client.application.window;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.ZipOutputStream;
@@ -51,6 +53,7 @@ import org.openbravo.model.ad.utility.Attachment;
 import org.openbravo.model.ad.utility.AttachmentConfig;
 import org.openbravo.model.ad.utility.AttachmentMethod;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.utils.FileUtility;
 
 public class AttachImplementationManager {
 
@@ -183,8 +186,10 @@ public class AttachImplementationManager {
    * 
    * @param attachmentId
    *          the attachment Id that will be downloaded
+   * @param os
+   *          The output stream to dump the file
    */
-  public void download(String attachmentId) throws OBException {
+  public void download(String attachmentId, OutputStream os) throws OBException {
     OBContext.setAdminMode();
     try {
       Attachment attachment = OBDal.getInstance().get(Attachment.class, attachmentId);
@@ -200,12 +205,18 @@ public class AttachImplementationManager {
       if (handler == null) {
         throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoMethod"));
       }
-      handler.downloadFile(attachment);
+      FileUtility fileUt = handler.downloadFile(attachment);
+      fileUt.dumpFile(os);
+      boolean isTempFile = handler.isTempFile();
+      if (isTempFile) {
+        fileUt.deleteFile();
+      }
 
+    } catch (IOException e) {
+      throw new OBException(OBMessageUtils.messageBD("Error downloading file"));
     } finally {
       OBContext.restorePreviousMode();
     }
-
   }
 
   /**

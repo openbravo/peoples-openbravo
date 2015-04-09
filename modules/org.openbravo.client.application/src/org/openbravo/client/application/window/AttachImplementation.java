@@ -26,6 +26,7 @@ import java.util.zip.ZipOutputStream;
 
 import org.openbravo.base.exception.OBException;
 import org.openbravo.model.ad.utility.Attachment;
+import org.openbravo.utils.FileUtility;
 
 /**
  * Public class to allow extend the functionality
@@ -60,7 +61,7 @@ public abstract class AttachImplementation {
    * @param attachment
    *          The attachment that will be downloaded
    */
-  public abstract void downloadFile(Attachment attachment) throws OBException;
+  public abstract FileUtility downloadFile(Attachment attachment) throws OBException;
 
   /**
    * Abstract method to delete a file
@@ -95,5 +96,15 @@ public abstract class AttachImplementation {
    */
   public abstract void downloadAll(Attachment attachmentFile,
       HashMap<String, Integer> writtenFiles, ZipOutputStream dest) throws OBException;
+
+  /**
+   * This method is used to know whether the attach method is creating a temporary file in the temp
+   * directory of Openbravo server when downloading a file. If it is true, the process will remove
+   * the temporary file. If it s false, the process will not remove the file
+   * 
+   * @return true if the attachment method creates a temporary file in Openbravo server. False if it
+   *         does not create a temporary file
+   */
+  public abstract boolean isTempFile();
 
 }

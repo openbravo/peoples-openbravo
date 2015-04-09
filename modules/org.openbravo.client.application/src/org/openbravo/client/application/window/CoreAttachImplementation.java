@@ -21,21 +21,17 @@ package org.openbravo.client.application.window;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.net.URLEncoder;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.mail.internet.MimeUtility;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.ComponentProvider;
-import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.common.actionhandler.OrderCreatePOLines;
 import org.openbravo.erpCommon.businessUtility.TabAttachments;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
@@ -92,9 +88,7 @@ public class CoreAttachImplementation extends AttachImplementation {
   }
 
   @Override
-  public void downloadFile(Attachment attachment) {
-    HttpServletResponse response = RequestContext.get().getResponse();
-    HttpServletRequest request = RequestContext.get().getRequest();
+  public FileUtility downloadFile(Attachment attachment) {
     String fileDir = null;
     log.debug("CoreAttachImplemententation - download file");
 
@@ -106,37 +100,15 @@ public class CoreAttachImplementation extends AttachImplementation {
         .getProperty("attach.path");
     final File file = new File(attachmentFolder + "/" + fileDir, attachment.getName());
     try {
+
       if (file.exists()) {
         f = new FileUtility(attachmentFolder + "/" + fileDir, attachment.getName(), false, true);
       } else {
         f = new FileUtility(attachmentFolder, attachment.getId(), false, true);
       }
-
-      if (attachment.getDataType().equals("")) {
-        response.setContentType("application/txt");
-      } else {
-        response.setContentType(attachment.getDataType());
-      }
-      response.setCharacterEncoding("UTF-8");
-      String userAgent = request.getHeader("user-agent");
-      if (userAgent.contains("MSIE")) {
-        response.setHeader(
-            "Content-Disposition",
-            "attachment; filename=\""
-                + URLEncoder.encode(attachment.getName().replace("\"", "\\\""), "utf-8") + "\"");
-      } else {
-        response.setHeader(
-            "Content-Disposition",
-            "attachment; filename=\""
-                + MimeUtility.encodeWord(attachment.getName().replace("\"", "\\\""), "utf-8", "Q")
-                + "\"");
-      }
-
-      f.dumpFile(response.getOutputStream());
-      response.getOutputStream().flush();
-      response.getOutputStream().close();
-    } catch (final Exception ex) {
-      throw new OBException(ex.getMessage());
+      return f;
+    } catch (IOException e) {
+      throw new OBException("Error while downloading an attachment ", e);
     }
   }
 
@@ -215,5 +187,10 @@ public class CoreAttachImplementation extends AttachImplementation {
 
     }
 
+  }
+
+  @Override
+  public boolean isTempFile() {
+    return false;
   }
 }
