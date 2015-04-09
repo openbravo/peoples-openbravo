@@ -104,6 +104,12 @@ public class ImportEntryManager {
 
   private static final Logger log = Logger.getLogger(ImportEntryManager.class);
 
+  private static ImportEntryManager instance;
+
+  public static ImportEntryManager getInstance() {
+    return instance;
+  }
+
   @Inject
   @Any
   private Instance<ImportEntryPreProcessor> entryPreProcessors;
@@ -121,6 +127,10 @@ public class ImportEntryManager {
 
   // TODO: make this a preference
   private long managerWaitTime = 60000;
+
+  public ImportEntryManager() {
+    instance = this;
+  }
 
   public void start() {
     log.debug("Starting Import Entry Framework");
@@ -451,6 +461,8 @@ public class ImportEntryManager {
 
     public synchronized void log() {
       log.info("Timings for " + typeOfData + " cnt: " + cnt + " avg millis: " + (totalTime / cnt));
+      System.err.println("Timings for " + typeOfData + " cnt: " + cnt + " avg millis: "
+          + (totalTime / cnt));
     }
   }
 }

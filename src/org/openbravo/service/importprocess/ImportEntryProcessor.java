@@ -304,7 +304,7 @@ public abstract class ImportEntryProcessor {
         ImportEntry importEntry;
         while ((importEntry = importEntries.poll()) != null) {
           try {
-            final long t = System.currentTimeMillis();
+            final long t0 = System.currentTimeMillis();
 
             // start from scratch
             OBDal.getInstance().rollbackAndClose();
@@ -312,6 +312,7 @@ public abstract class ImportEntryProcessor {
             // set the same obcontext as was being used for the original
             // entry
             setOBContext(importEntry);
+
             try {
               OBContext.setAdminMode();
               ImportEntry localImportEntry;
@@ -330,13 +331,14 @@ public abstract class ImportEntryProcessor {
 
               // not changed, process
               processEntry(localImportEntry);
+
             } finally {
               cleanUpThreadForNextCycle();
             }
 
             // keep some stats
             cnt++;
-            final long timeForEntry = (System.currentTimeMillis() - t);
+            final long timeForEntry = (System.currentTimeMillis() - t0);
             totalT += timeForEntry;
             importEntryManager.reportStats(importEntry.getTypeofdata(), timeForEntry);
             if ((cnt % 100) == 0 && logger.isDebugEnabled()) {
