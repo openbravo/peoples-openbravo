@@ -1375,10 +1375,12 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
             .getStorageBin().getWarehouse().getId() : null);
     myMap.put("warehouse$_identifier", (rs.getStorageBin() != null && rs.getStorageBin()
         .getWarehouse() != null) ? rs.getStorageBin().getWarehouse().getIdentifier() : "");
-    myMap.put("attributeSetValue", rs.getAttributeSetValue() != null ? rs.getAttributeSetValue()
-        .getId() : null);
-    myMap.put("attributeSetValue$_identifier", rs.getAttributeSetValue() != null ? rs
-        .getAttributeSetValue().getIdentifier() : "");
+    myMap.put("attributeSetValue", rs.getAttributeSetValue() != null
+        && !rs.getAttributeSetValue().getId().equals("0") ? rs.getAttributeSetValue().getId()
+        : null);
+    myMap.put("attributeSetValue$_identifier", rs.getAttributeSetValue() != null
+        && !rs.getAttributeSetValue().getId().equals("0") ? rs.getAttributeSetValue()
+        .getIdentifier() : "");
     myMap.put("purchaseOrderLine", rs.getSalesOrderLine() == null ? null : rs.getSalesOrderLine()
         .getId());
     myMap.put("purchaseOrderLine$_identifier", rs.getSalesOrderLine() == null ? "" : rs
@@ -1423,10 +1425,12 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
           .getWarehouse().getId() : null);
       myMap.put("warehouse$_identifier", (sd.getStorageBin().getWarehouse() != null) ? sd
           .getStorageBin().getWarehouse().getIdentifier() : "");
-      myMap.put("attributeSetValue", sd.getAttributeSetValue() != null ? sd.getAttributeSetValue()
-          .getId() : null);
-      myMap.put("attributeSetValue$_identifier", sd.getAttributeSetValue() != null ? sd
-          .getAttributeSetValue().getIdentifier() : "");
+      myMap.put("attributeSetValue", sd.getAttributeSetValue() != null
+          && !sd.getAttributeSetValue().getId().equals("0") ? sd.getAttributeSetValue().getId()
+          : null);
+      myMap.put("attributeSetValue$_identifier", sd.getAttributeSetValue() != null
+          && !sd.getAttributeSetValue().getId().equals("0") ? sd.getAttributeSetValue()
+          .getIdentifier() : "");
       myMap.put("purchaseOrderLine", null);
       myMap.put("purchaseOrderLine$_identifier", "");
 
