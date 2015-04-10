@@ -301,9 +301,7 @@ public class OBViewFieldHandler {
         viewField.setProperty(property);
 
         viewField.setField(field);
-        if (field.getNavigationAdTab() != null) {
-          viewField.setNavigationTabId((String) DalUtil.getId(field.getNavigationAdTab()));
-        }
+        viewField.setId(field);
         viewField.setRedrawOnChange(fieldsInDynamicExpression.contains(field));
         viewField.setShowIf(displayLogicMap.get(field) != null ? displayLogicMap.get(field) : "");
         viewField.setReadOnlyIf(readOnlyLogicMap.get(field) != null ? readOnlyLogicMap.get(field)
@@ -544,7 +542,7 @@ public class OBViewFieldHandler {
 
     public String getName();
 
-    public String getNavigationTabId();
+    public String getId();
 
     public String getType();
 
@@ -852,7 +850,7 @@ public class OBViewFieldHandler {
       return false;
     }
 
-    public String getNavigationTabId() {
+    public String getId() {
       return null;
     }
 
@@ -1106,7 +1104,7 @@ public class OBViewFieldHandler {
       return false;
     }
 
-    public String getNavigationTabId() {
+    public String getId() {
       return null;
     }
   }
@@ -1121,7 +1119,7 @@ public class OBViewFieldHandler {
     private String showIf = "";
     private String readOnlyIf = "";
     private int gridSort = 0;
-    private String navigationTabId;
+    private String id;
 
     public String getClientClass() {
       return field.getClientclass() == null ? "" : field.getClientclass();
@@ -1367,12 +1365,12 @@ public class OBViewFieldHandler {
       this.field = field;
     }
 
-    public void setNavigationTabId(String id) {
-      this.navigationTabId = id;
+    public void setId(Field field) {
+      this.id = field.getId();
     }
 
-    public String getNavigationTabId() {
-      return navigationTabId;
+    public String getId() {
+      return id;
     }
 
     public boolean getStandardField() {
@@ -1681,7 +1679,7 @@ public class OBViewFieldHandler {
       return true;
     }
 
-    public String getNavigationTabId() {
+    public String getId() {
       return null;
     }
   }
@@ -2115,7 +2113,7 @@ public class OBViewFieldHandler {
       return true;
     }
 
-    public String getNavigationTabId() {
+    public String getId() {
       return null;
     }
 

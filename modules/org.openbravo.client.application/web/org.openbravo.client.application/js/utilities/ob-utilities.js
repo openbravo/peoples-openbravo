@@ -475,7 +475,7 @@ OB.Utilities.openView = function (windowId, tabId, tabTitle, recordId, command, 
 
 // ** {{{OB.Utilities.openDirectView}}} **
 // Open the correct view for a passed in target definition, coming from a certain source Window.
-OB.Utilities.openDirectView = function (sourceWindowId, keyColumn, targetEntity, recordId, navigationTabId) {
+OB.Utilities.openDirectView = function (sourceWindowId, keyColumn, targetEntity, recordId, fieldId) {
   var actionURL = OB.Application.contextUrl + 'utility/ReferencedLink.html',
       callback, reqObj, request;
 
@@ -489,7 +489,8 @@ OB.Utilities.openDirectView = function (sourceWindowId, keyColumn, targetEntity,
       inpEntityName: targetEntity,
       inpKeyReferenceId: recordId,
       inpwindowId: sourceWindowId,
-      inpKeyReferenceColumnName: keyColumn
+      inpKeyReferenceColumnName: keyColumn,
+      inpFieldId: fieldId
     },
     callback: callback,
     evalResult: true,
@@ -497,7 +498,6 @@ OB.Utilities.openDirectView = function (sourceWindowId, keyColumn, targetEntity,
     useSimpleHttp: true,
     actionURL: actionURL
   };
-  reqObj.params.inpNavigationTabId = navigationTabId || '';
   request = isc.RPCManager.sendRequest(reqObj);
 };
 
