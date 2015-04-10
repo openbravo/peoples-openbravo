@@ -161,7 +161,7 @@
     column: 'c_paymentterm_id',
     type: 'TEXT'
   }, {
-    name: 'priceList ',
+    name: 'priceList',
     column: 'm_pricelist_id',
     type: 'TEXT '
   }, {
