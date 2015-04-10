@@ -45,8 +45,6 @@
                 //There are no pending orders, we can safely swap the cache
                 window.applicationCache.swapCache();
                 window.location.reload();
-              } else {
-                OB.ModelApp.view.$.containerWindow.getRoot().$.DatabaseDialog.show();
               }
             }, function () {
               window.console.error(arguments);

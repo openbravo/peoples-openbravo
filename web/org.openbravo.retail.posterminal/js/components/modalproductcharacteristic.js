@@ -258,6 +258,7 @@ enyo.kind({
     this.$.doneChButton.setContent(OB.I18N.getLabel('OBMOBC_LblDone'));
     this.$.cancelChButton.setContent(OB.I18N.getLabel('OBMOBC_LblCancel'));
     this.selectedToSend = [];
+    this.parent.parent.parent.selected = [];
   },
   backAction: function () {
     this.doGetPrevCollection();

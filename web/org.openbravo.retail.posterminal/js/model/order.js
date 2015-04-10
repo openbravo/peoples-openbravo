@@ -449,6 +449,7 @@
 
     calculateGross: function () {
       var me = this;
+      var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('calculateGross');
 
       // reset some vital receipt values because, at this point, they are obsolete. do not fire the change event
       me.set({
@@ -496,6 +497,7 @@
           me.adjustPayment();
           me.trigger('calculategross');
           me.trigger('saveCurrent');
+          OB.UTIL.SynchronizationHelper.finished(synchId, 'calculateGross');
           };
 
       if (this.get('priceIncludesTax')) {
@@ -1721,7 +1723,11 @@
           localSkipApplyPromotions;
 
       localSkipApplyPromotions = this.get('skipApplyPromotions');
-      this.set('skipApplyPromotions', true);
+      this.set({
+        'skipApplyPromotions': true
+      }, {
+        silent: true
+      });
       _.each(auxLines, function (l) {
         lineToMerge = _.find(lines.models, function (line) {
           if (l !== line && l.get('product').id === line.get('product').id && l.get('price') === line.get('price') && line.get('qty') > 0 && l.get('qty') > 0 && !_.find(line.get('promotions'), function (promo) {
@@ -1741,7 +1747,11 @@
           lines.remove(l);
         }
       });
-      this.set('skipApplyPromotions', localSkipApplyPromotions);
+      this.set({
+        'skipApplyPromotions': localSkipApplyPromotions
+      }, {
+        silent: true
+      });
     },
     fillPromotionsWith: function (groupedOrder, isFirstTime) {
       var me = this,
@@ -1750,7 +1760,11 @@
           localSkipApplyPromotions;
 
       localSkipApplyPromotions = this.get('skipApplyPromotions');
-      this.set('skipApplyPromotions', true);
+      this.set({
+        'skipApplyPromotions': true
+      }, {
+        silent: true
+      });
       //reset pendingQtyOffer value of each promotion
       groupedOrder.get('lines').forEach(function (l) {
         _.each(l.get('promotions'), function (promo) {
@@ -1977,7 +1991,11 @@
       });
       this.calculateGross();
       this.trigger('promotionsUpdated');
-      this.set('skipApplyPromotions', localSkipApplyPromotions);
+      this.set({
+        'skipApplyPromotions': localSkipApplyPromotions
+      }, {
+        silent: true
+      });
     },
 
 
