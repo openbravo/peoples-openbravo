@@ -324,10 +324,14 @@ public class OBViewFieldHandler {
         viewField.setProperty(property);
 
         viewField.setField(field);
+<<<<<<< local
         viewField.setId(field);
         if (field.getNavigationAdTab() != null) {
           viewField.setNavigationTabId((String) DalUtil.getId(field.getNavigationAdTab()));
         }
+=======
+        viewField.setId(field);
+>>>>>>> other
         viewField.setRedrawOnChange(fieldsInDynamicExpression.contains(field));
         viewField.setShowIf(displayLogicMap.get(field) != null ? displayLogicMap.get(field) : "");
         viewField.setDisplayLogicGrid(displayLogicGridMap.get(field) != null ? displayLogicGridMap
@@ -570,9 +574,13 @@ public class OBViewFieldHandler {
 
     public String getName();
 
+<<<<<<< local
     public String getId();
     
     public String getNavigationTabId();
+=======
+    public String getId();
+>>>>>>> other
 
     public String getType();
 
@@ -881,11 +889,15 @@ public class OBViewFieldHandler {
       return false;
     }
 
+<<<<<<< local
     public String getDisplayLogicGrid() {
       return "";
     }
     
     public String getNavigationTabId() {
+=======
+    public String getId() {
+>>>>>>> other
       return null;
     }
 
@@ -1156,11 +1168,15 @@ public class OBViewFieldHandler {
       return false;
     }
 
+<<<<<<< local
     public String getId() {
       return null;
     }
     
     public String getNavigationTabId() {
+=======
+    public String getId() {
+>>>>>>> other
       return null;
     }
   }
@@ -1176,8 +1192,12 @@ public class OBViewFieldHandler {
     private String readOnlyIf = "";
     private String displayLogicGrid = "";
     private int gridSort = 0;
+<<<<<<< local
     private String id;
     private String navigationTabId;
+=======
+    private String id;
+>>>>>>> other
 
     public String getClientClass() {
       return field.getClientclass() == null ? "" : field.getClientclass();
@@ -1427,20 +1447,30 @@ public class OBViewFieldHandler {
       this.field = field;
     }
 
+<<<<<<< local
     public void setId(Field field) {
       this.id = field.getId();
     }
     
     public void setNavigationTabId(String id) {
       this.navigationTabId = id;
+=======
+    public void setId(Field field) {
+      this.id = field.getId();
+>>>>>>> other
     }
 
+<<<<<<< local
     public String getId() {
       return id;
     }
     
     public String getNavigationTabId() {
       return navigationTabId;
+=======
+    public String getId() {
+      return id;
+>>>>>>> other
     }
 
     public boolean getStandardField() {
@@ -1760,11 +1790,15 @@ public class OBViewFieldHandler {
       return true;
     }
 
+<<<<<<< local
     public String getDisplayLogicGrid() {
       return "";
     }
     
     public String getNavigationTabId() {
+=======
+    public String getId() {
+>>>>>>> other
       return null;
     }
 
@@ -2202,11 +2236,15 @@ public class OBViewFieldHandler {
       return true;
     }
 
+<<<<<<< local
     public String getDisplayLogicGrid() {
       return "";
     }
     
     public String getNavigationTabId() {
+=======
+    public String getId() {
+>>>>>>> other
       return null;
     }
 

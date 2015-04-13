@@ -47,6 +47,7 @@ import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.domain.TableNavigation;
 import org.openbravo.model.ad.system.Language;
+import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.model.ad.ui.WindowTrl;
@@ -157,8 +158,7 @@ public class ReferencedLink extends HttpSecureAppServlet {
       strTableReferenceId = vars.getRequiredStringParameter("inpTableReferenceId");
       obEntity = ModelProvider.getInstance().getEntityByTableId(strTableReferenceId);
     }
-    // Retrieve the navigation tab, if its not defined it will be the empty String
-    String strNavigationTabId = vars.getStringParameter("inpNavigationTabId");
+    String fieldId = vars.getStringParameter("inpFieldId");
     String strKeyReferenceId = vars.getStringParameter("inpKeyReferenceId");
     String strWindowId = vars.getStringParameter("inpwindowId");
     String strTableName = ReferencedLinkData.selectTableName(this, strTableReferenceId);
@@ -166,7 +166,7 @@ public class ReferencedLink extends HttpSecureAppServlet {
         + strTableReferenceId + " strKeyReferenceId:" + strKeyReferenceId + " strWindowId:"
         + strWindowId + " strTableName:" + strTableName);
 
-    boolean hasKeyReferenceId = StringUtils.isNotEmpty(strKeyReferenceId);
+    boolean hasKeyReferenceId = !StringUtils.equals("null", strKeyReferenceId);
     // 1st Check - Forced Links - Rules defined as a preference
     try {
       strWindowId = Preferences.getPreferenceValue("ForcedLinkWindow" + strTableName, false,
@@ -179,31 +179,40 @@ public class ReferencedLink extends HttpSecureAppServlet {
     }
     try {
       // 2nd Check - NavigationTab - Rules defined at field level
-      if (StringUtils.isNotEmpty(strNavigationTabId)) {
-        // If the field from which navigates is empty, no id is sent, so hasKeyReferenceId is false
-        if (!hasKeyReferenceId) {
-          Tab currentTab = OBDal.getInstance().get(Tab.class, strNavigationTabId);
-          String currentWindowId = DalUtil.getId(currentTab.getWindow()).toString();
-          ReferencedLinkData[] data = ReferencedLinkData.selectParent(this, currentWindowId);
-          if (data == null || data.length == 0) {
-            throw new ServletException("Window parent not found: " + strWindowId);
-          }
-          return data[0].adTabId;
-        } else {
-          return strNavigationTabId;
-        }
-      }
-      // 3rd Check - Navigation Rules - Rules defined at table level
+      // If the field from which navigates is empty, no id is sent, so hasKeyReferenceId is false
       if (hasKeyReferenceId) {
+        Field field = OBDal.getInstance().get(Field.class, fieldId);
         OBCriteria<TableNavigation> tableNavigationCriteria = OBDal.getInstance().createCriteria(
             TableNavigation.class);
         tableNavigationCriteria.add(Restrictions.eq("table.id", strTableReferenceId));
+        tableNavigationCriteria.add(Restrictions.eq(TableNavigation.PROPERTY_FIELD, field));
         tableNavigationCriteria.addOrderBy(TableNavigation.PROPERTY_SEQUENCENUMBER, true);
         List<TableNavigation> tableNavigationList = tableNavigationCriteria.list();
-        // Iterate navigation rules
+        // Iterate the navigation rules with a field
         for (TableNavigation tableNavigation : tableNavigationList) {
           String hqlWhere = "AS e WHERE e.id = :strKeyReferenceId AND ( "
-              + tableNavigation.getHqllogic() + " )";
+              + tableNavigation.getHQLLogic() + " )";
+
+          final OBQuery<BaseOBObject> query = OBDal.getInstance().createQuery(obEntity.getName(),
+              hqlWhere);
+          query.setNamedParameter("strKeyReferenceId", strKeyReferenceId);
+
+          query.setMaxResult(1);
+          // If the query returns at least 1 result the rule has to be applied
+          if (query.uniqueResult() != null) {
+            return tableNavigation.getTab().getId();
+          }
+        }
+        // 3rd Check - Navigation Rules - Rules defined at table level
+        tableNavigationCriteria = OBDal.getInstance().createCriteria(TableNavigation.class);
+        tableNavigationCriteria.add(Restrictions.eq("table.id", strTableReferenceId));
+        tableNavigationCriteria.add(Restrictions.isNull(TableNavigation.PROPERTY_FIELD));
+        tableNavigationCriteria.addOrderBy(TableNavigation.PROPERTY_SEQUENCENUMBER, true);
+        tableNavigationList = tableNavigationCriteria.list();
+        // Iterate the navigation rules of the table without field
+        for (TableNavigation tableNavigation : tableNavigationList) {
+          String hqlWhere = "AS e WHERE e.id = :strKeyReferenceId AND ( "
+              + tableNavigation.getHQLLogic() + " )";
 
           final OBQuery<BaseOBObject> query = OBDal.getInstance().createQuery(obEntity.getName(),
               hqlWhere);

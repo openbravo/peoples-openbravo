@@ -53,8 +53,15 @@
         <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
+      <column name="AD_FIELD_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="AD_TABLE_NAVIGATION_ADCLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_FIELD" name="AD_TABLE_NAVIGATION_ADFIELD">
+        <reference local="AD_FIELD_ID" foreign="AD_FIELD_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_MODULE" name="AD_TABLE_NAVIGATION_ADMODULE">
         <reference local="AD_MODULE_ID" foreign="AD_MODULE_ID"/>
