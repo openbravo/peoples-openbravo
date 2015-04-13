@@ -400,8 +400,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                     if (!fromCurrency.equals(toCurrency)) {
                       BigDecimal exchangeRate = BigDecimal.ZERO;
                       // check at invoice document level
-                      List<ConversionRateDoc> conversionRateDocumentForInvoice = getConversionRateDocumentForInvoice(
-                          invoiceForConversion, isReceipt);
+                      List<ConversionRateDoc> conversionRateDocumentForInvoice = getConversionRateDocumentForInvoice(invoiceForConversion);
                       if (conversionRateDocumentForInvoice.size() > 0) {
                         exchangeRate = conversionRateDocumentForInvoice.get(0).getRate();
                       } else {
@@ -794,8 +793,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                           && !fromCurrency.getId().equals(toCurrency.getId())) {
                         BigDecimal exchangeRate = BigDecimal.ZERO;
                         // check at invoice document level
-                        List<ConversionRateDoc> conversionRateDocumentForInvoice = getConversionRateDocumentForInvoice(
-                            invoiceForConversion, isReceipt);
+                        List<ConversionRateDoc> conversionRateDocumentForInvoice = getConversionRateDocumentForInvoice(invoiceForConversion);
                         if (conversionRateDocumentForInvoice.size() > 0) {
                           exchangeRate = conversionRateDocumentForInvoice.get(0).getRate();
                         } else {
@@ -1259,8 +1257,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
     }
   }
 
-  private List<ConversionRateDoc> getConversionRateDocumentForInvoice(Invoice invoice,
-      boolean isReceipt) {
+  private List<ConversionRateDoc> getConversionRateDocumentForInvoice(Invoice invoice) {
     OBContext.setAdminMode(true);
     try {
       OBCriteria<ConversionRateDoc> obc = OBDal.getInstance().createCriteria(
