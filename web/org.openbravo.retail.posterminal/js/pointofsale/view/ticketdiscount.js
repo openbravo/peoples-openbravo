@@ -167,6 +167,11 @@ enyo.kind({
     //load discounts
     OB.Dal.find(OB.Model.Discount, {
       _whereClause: "where m_offer_type_id in (" + OB.Model.Discounts.getManualPromotions() + ") AND date('now') BETWEEN DATEFROM AND COALESCE(date(DATETO), date('9999-12-31'))"
+      // filter by order price list
+      + " AND (" + " (pricelist_selection = 'Y' AND NOT EXISTS " //
+      + " (SELECT 1 FROM m_offer_pricelist opl WHERE m_offer.m_offer_id = opl.m_offer_id AND opl.m_pricelist_id = '" + me.order.get('priceList') + "'))" // 
+      + " OR (pricelist_selection = 'N' AND EXISTS " //
+      + " (SELECT 1 FROM m_offer_pricelist opl WHERE m_offer.m_offer_id = opl.m_offer_id AND opl.m_pricelist_id = '" + me.order.get('priceList') + "')))" //
       // filter discretionary discounts by current role
       + " AND ((EM_OBDISC_ROLE_SELECTION = 'Y'" //
       + " AND NOT EXISTS" //

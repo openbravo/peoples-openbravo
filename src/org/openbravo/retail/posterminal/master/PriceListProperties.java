@@ -26,6 +26,7 @@ public class PriceListProperties extends ModelExtension {
       {
         add(new HQLProperty("pl.id", "m_pricelist_id"));
         add(new HQLProperty("pl.name", "name"));
+        add(new HQLProperty("pl.priceIncludesTax", "priceIncludesTax"));
         add(new HQLProperty("pl.currency.id", "c_currency_id"));
       }
     };

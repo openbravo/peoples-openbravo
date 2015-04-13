@@ -962,6 +962,27 @@
     addProduct: function (p, qty, options, attrs) {
       OB.debug('_addProduct');
       var me = this;
+      if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true) && this.get('priceList') !== OB.MobileApp.model.get('terminal').priceList) {
+        OB.Dal.find(OB.Model.ProductPrice, {
+          m_pricelist_id: this.get('priceList'),
+          m_product_id: p.id
+        }, function (productPrices) {
+          if (productPrices.length > 0) {
+            p = p.clone();
+            p.set('standardPrice', productPrices.at(0).get('pricestd'));
+            p.set('listPrice', productPrices.at(0).get('pricelist'));
+          }
+          me.addProduct2(p, qty, options, attrs);
+        }, function () {
+          me.addProduct2(p, qty, options, attrs);
+        });
+      } else {
+        me.addProduct2(p, qty, options, attrs);
+      }
+    },
+
+    addProduct2: function (p, qty, options, attrs) {
+      var me = this;
       OB.UTIL.HookManager.executeHooks('OBPOS_AddProductToOrder', {
         receipt: this,
         productToAdd: p,
@@ -1237,6 +1258,7 @@
           }
         }
       }
+      // Get prices from BP pricelist 
       var newline = new OrderLine({
         id: OB.Dal.get_uuid(),
         product: p,
@@ -1283,6 +1305,7 @@
       this.adjustPayment();
       return newline;
     },
+
     returnLine: function (line, options, skipValidaton) {
       var me = this;
       if (OB.MobileApp.model.get('permissions').OBPOS_NotAllowSalesWithReturn && !skipValidaton) {
@@ -1341,9 +1364,46 @@
           }
         });
       }
-      if (saveChange) {
-        this.save();
+      if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true) && oldbp.get('priceList') !== businessPartner.get('priceList')) {
+        me.set('priceList', businessPartner.get('priceList'));
+        if (me.get('priceList') !== OB.MobileApp.model.get('terminal').priceList) {
+          OB.Dal.get(OB.Model.PriceList, me.get('priceList'), function (priceList) {
+            me.set('priceIncludesTax', priceList.get('priceIncludesTax'));
+            if (saveChange) {
+              me.save();
+            }
+            me.removeAndInsertLines();
+          });
+        } else {
+          me.set('priceIncludesTax', OB.MobileApp.model.get('pricelist').priceIncludesTax);
+          if (saveChange) {
+            me.save();
+          }
+          me.removeAndInsertLines();
+        }
+      } else {
+        if (saveChange) {
+          this.save();
+        }
       }
+    },
+
+    removeAndInsertLines: function () {
+      var me = this;
+      // Remove all lines and insert again with new prices
+      var orderlines = [];
+      _.each(me.get('lines').models, function (line) {
+        orderlines.push(line);
+      });
+      _.each(orderlines, function (line) {
+        me.deleteLine(line, true);
+      });
+      _.each(orderlines, function (line) {
+        // TODO: Lost options and attributes, maybe has problems with other modules (like Complementary Products)
+        OB.Dal.get(OB.Model.Product, line.get('product').id, function (product) {
+          me.addProduct(product, line.get('qty'));
+        });
+      });
     },
 
     setOrderType: function (permission, orderType, options) {
@@ -2191,8 +2251,17 @@
       order.set('isQuotation', false);
       order.set('oldId', null);
       order.set('session', OB.MobileApp.model.get('session'));
-      order.set('priceList', OB.MobileApp.model.get('terminal').priceList);
-      order.set('priceIncludesTax', OB.MobileApp.model.get('pricelist').priceIncludesTax);
+      order.set('bp', OB.MobileApp.model.get('businessPartner'));
+      // Set price list for order
+      if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true) && order.get('priceList') !== OB.MobileApp.model.get('terminal').priceList) {
+        order.set('priceList', OB.MobileApp.model.get('businessPartner').get('priceList'));
+        OB.Dal.get(OB.Model.PriceList, OB.MobileApp.model.get('businessPartner').get('priceList'), function (priceList) {
+          order.set('priceIncludesTax', priceList.get('priceIncludesTax'));
+        });
+      } else {
+        order.set('priceList', OB.MobileApp.model.get('terminal').priceList);
+        order.set('priceIncludesTax', OB.MobileApp.model.get('pricelist').priceIncludesTax);
+      }
       if (OB.MobileApp.model.hasPermission('OBPOS_receipt.invoice')) {
         if (OB.MobileApp.model.hasPermission('OBPOS_retail.restricttaxidinvoice', true) && !OB.MobileApp.model.get('businessPartner').get('taxID')) {
           if (OB.MobileApp.model.get('terminal').terminalType.generateInvoice) {
@@ -2226,7 +2295,6 @@
       order.set('documentnoSuffix', nextDocumentno.documentnoSuffix);
       order.set('documentNo', nextDocumentno.documentNo);
 
-      order.set('bp', OB.MobileApp.model.get('businessPartner'));
       order.set('print', true);
       order.set('sendEmail', false);
       order.set('openDrawer', false);

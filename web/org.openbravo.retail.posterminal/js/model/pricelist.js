@@ -33,6 +33,10 @@
     column: 'name',
     type: 'TEXT'
   }, {
+    name: 'priceIncludesTax',
+    column: 'priceIncludesTax',
+    type: 'TEXT'
+  }, {
     name: 'c_currency_id',
     column: 'c_currency_id',
     type: 'TEXT'

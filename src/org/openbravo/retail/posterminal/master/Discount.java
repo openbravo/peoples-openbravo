@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2012-2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -64,27 +64,26 @@ public class Discount extends ProcessHQLQuery {
 
     // TODO: Verify multi-price list conditions
 
-    /*
-     * String plIds = org.openbravo.retail.posterminal.master.PriceList.getPriceListIds(orgId); if
-     * ("".equals(plIds)) { plIds = "'" + priceListId + "'"; } else { plIds = "'" + priceListId +
-     * "', " + plIds; }
-     */
-
-    String plIds = "'" + priceListId + "'";
+    // String plIds = org.openbravo.retail.posterminal.master.PriceList.getPriceListIds(orgId);
+    // if ("".equals(plIds)) {
+    // plIds = "'" + priceListId + "'";
+    // } else {
+    // plIds = "'" + priceListId + "', " + plIds;
+    // }
     // price list
-    hql += "and ((includePriceLists='Y' ";
-    hql += "  and not exists (select 1 ";
-    hql += "         from PricingAdjustmentPriceList pl";
-    hql += "        where active = true";
-    hql += "          and pl.priceAdjustment = p";
-    hql += "          and pl.priceList.id in (" + plIds + "))) ";
-    hql += "   or (includePriceLists='N' ";
-    hql += "  and  exists (select 1 ";
-    hql += "         from PricingAdjustmentPriceList pl";
-    hql += "        where active = true";
-    hql += "          and pl.priceAdjustment = p";
-    hql += "          and pl.priceList.id in (" + plIds + "))) ";
-    hql += "    ) ";
+    // hql += "and ((includePriceLists='Y' ";
+    // hql += "  and not exists (select 1 ";
+    // hql += "         from PricingAdjustmentPriceList pl";
+    // hql += "        where active = true";
+    // hql += "          and pl.priceAdjustment = p";
+    // hql += "          and pl.priceList.id in (" + plIds + "))) ";
+    // hql += "   or (includePriceLists='N' ";
+    // hql += "  and  exists (select 1 ";
+    // hql += "         from PricingAdjustmentPriceList pl";
+    // hql += "        where active = true";
+    // hql += "          and pl.priceAdjustment = p";
+    // hql += "          and pl.priceList.id in (" + plIds + "))) ";
+    // hql += "    ) ";
 
     // organization
     hql += "and ((includedOrganizations='Y' ";
