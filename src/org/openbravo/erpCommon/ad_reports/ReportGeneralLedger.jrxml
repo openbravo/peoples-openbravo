@@ -227,7 +227,7 @@
 						<textElement textAlignment="Right" verticalAlignment="Middle">
 							<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 						</textElement>
-						<textFieldExpression class="java.lang.String"><![CDATA[($F{PREVIOUSDEBIT}!=null)?$P{NUMBERFORMAT}.format($F{PREVIOUSDEBIT}).toString():new String(" ")]]></textFieldExpression>
+						<textFieldExpression class="java.lang.String"><![CDATA[($F{TOTALACCTDR}!=null)?$P{NUMBERFORMAT}.format($F{TOTALACCTDR}.subtract($F{AMTACCTDR})).toString():new String(" ")]]></textFieldExpression>
 					</textField>
 					<textField pattern="##0.00" isBlankWhenNull="false">
 						<reportElement key="textField-35" style="Detail_Data_Field" x="130" y="0" width="65" height="12"/>
@@ -240,7 +240,7 @@
 						<textElement textAlignment="Right" verticalAlignment="Middle">
 							<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 						</textElement>
-						<textFieldExpression class="java.lang.String"><![CDATA[($F{PREVIOUSCREDIT}!=null)?$P{NUMBERFORMAT}.format($F{PREVIOUSCREDIT}).toString():new String(" ")]]></textFieldExpression>
+						<textFieldExpression class="java.lang.String"><![CDATA[($F{TOTALACCTCR}!=null)?$P{NUMBERFORMAT}.format($F{TOTALACCTCR}.subtract($F{AMTACCTCR})).toString():new String(" ")]]></textFieldExpression>
 					</textField>
 					<textField pattern="##0.00" isBlankWhenNull="false">
 						<reportElement key="textField-36" style="Detail_Data_Field" x="195" y="0" width="65" height="12"/>
@@ -253,7 +253,7 @@
 						<textElement textAlignment="Right" verticalAlignment="Middle">
 							<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 						</textElement>
-						<textFieldExpression class="java.lang.String"><![CDATA[($F{PREVIOUSTOTAL}!=null)?$P{NUMBERFORMAT}.format($F{PREVIOUSTOTAL}).toString():new String(" ")]]></textFieldExpression>
+						<textFieldExpression class="java.lang.String"><![CDATA[($F{TOTALACCTSUB}!=null)?$P{NUMBERFORMAT}.format($F{TOTALACCTSUB}.subtract($F{TOTAL})).toString():new String(" ")]]></textFieldExpression>
 					</textField>
 				</frame>
 				<line>
@@ -474,7 +474,7 @@
 						<textElement textAlignment="Right" verticalAlignment="Middle">
 							<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 						</textElement>
-						<textFieldExpression class="java.lang.String"><![CDATA[($F{FINALDEBIT}!=null)?$P{NUMBERFORMAT}.format($F{FINALDEBIT}).toString():new String(" ")]]></textFieldExpression>
+						<textFieldExpression class="java.lang.String"><![CDATA[($F{TOTALACCTDR}!=null)?$P{NUMBERFORMAT}.format($F{TOTALACCTDR}).toString():new String(" ")]]></textFieldExpression>
 					</textField>
 					<textField pattern="" isBlankWhenNull="false">
 						<reportElement key="textField-32" x="130" y="0" width="65" height="12"/>
@@ -487,7 +487,7 @@
 						<textElement textAlignment="Right" verticalAlignment="Middle">
 							<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 						</textElement>
-						<textFieldExpression class="java.lang.String"><![CDATA[($F{FINALCREDIT}!=null)?$P{NUMBERFORMAT}.format($F{FINALCREDIT}).toString():new String(" ")]]></textFieldExpression>
+						<textFieldExpression class="java.lang.String"><![CDATA[($F{TOTALACCTCR}!=null)?$P{NUMBERFORMAT}.format($F{TOTALACCTCR}).toString():new String(" ")]]></textFieldExpression>
 					</textField>
 					<textField pattern="" isBlankWhenNull="false">
 						<reportElement key="textField-33" x="195" y="0" width="65" height="12"/>
@@ -500,7 +500,7 @@
 						<textElement textAlignment="Right" verticalAlignment="Middle">
 							<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 						</textElement>
-						<textFieldExpression class="java.lang.String"><![CDATA[($F{FINALTOTAL}!=null)?$P{NUMBERFORMAT}.format($F{FINALTOTAL}).toString():new String(" ")]]></textFieldExpression>
+						<textFieldExpression class="java.lang.String"><![CDATA[($F{TOTALACCTSUB}!=null)?$P{NUMBERFORMAT}.format($F{TOTALACCTSUB}).toString():new String(" ")]]></textFieldExpression>
 					</textField>
 				</frame>
 				<line>
@@ -647,7 +647,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[($F{TOTAL}!=null)?$P{NUMBERFORMAT}.format($F{TOTALACCTSUB}).toString():new String(" ")]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[($F{TOTALACCTSUB}!=null)?$P{NUMBERFORMAT}.format($F{TOTALACCTSUB}).toString():new String(" ")]]></textFieldExpression>
 				</textField>
 				<textField pattern="dd/MM/yyyy" isBlankWhenNull="false">
 					<reportElement key="textField-17" stretchType="RelativeToBandHeight" x="0" y="0" width="65" height="12"/>

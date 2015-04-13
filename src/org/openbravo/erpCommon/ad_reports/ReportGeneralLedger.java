@@ -568,172 +568,54 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       strAllaccounts = "N";
     }
 
-    String strInitRecord = vars.getSessionValue("ReportGeneralLedger.initRecordNumber");
-    int initRecordNumber = (strInitRecord.equals("") ? 0 : Integer.parseInt(strInitRecord));
-    BigDecimal previousDebit = BigDecimal.ZERO;
-    BigDecimal previousCredit = BigDecimal.ZERO;
-    ReportGeneralLedgerData[] data = null;
-    data = ReportGeneralLedgerData.set();
-    ReportGeneralLedgerData scroll = null;
+    ReportGeneralLedgerData data = null;
     try {
-      scroll = ReportGeneralLedgerData.select2(this, "0", strGroupByText, strGroupBy,
-          strAllaccounts, strcelementvaluefrom, strcelementvalueto,
+      data = ReportGeneralLedgerData.select2(this, "0", strGroupByText, strGroupBy, strAllaccounts,
+          strcelementvaluefrom, strcelementvalueto,
           Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
           Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
           "Y".equals(strShowOpenBalances) ? strDateTo : null, strcAcctSchemaId, strDateFrom,
           toDatePlusOne, strOrgFamily, strcBpartnerId, strmProductId, strcProjectId, strAmtFrom,
           strAmtTo, null, null, null, null, null, null);
-      Vector<ReportGeneralLedgerData> res = new Vector<ReportGeneralLedgerData>();
-      while (scroll.next()) {
-        res.add(scroll.get());
+
+      if (!data.hasData()) {
+        advisePopUp(request, response, "WARNING",
+            Utility.messageBD(this, "ProcessStatus-W", vars.getLanguage()),
+            Utility.messageBD(this, "NoDataFound", vars.getLanguage()));
+        return;
       }
-      data = new ReportGeneralLedgerData[res.size()];
-      res.copyInto(data);
+
+      // augment data with totals
+      AddTotals dataWithTotals = new AddTotals(data, strGroupByText, strcBpartnerId, strmProductId,
+          strcProjectId, strcAcctSchemaId, strDateFrom, strOrgFamily, this);
+
+      String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportGeneralLedger.jrxml";
+      response.setHeader("Content-disposition", "inline; filename=ReportGeneralLedgerPDF.pdf");
+
+      HashMap<String, Object> parameters = new HashMap<String, Object>();
+
+      String strLanguage = vars.getLanguage();
+
+      parameters.put("ShowGrouping", new Boolean(!strGroupBy.equals("")));
+      StringBuilder strSubTitle = new StringBuilder();
+      strSubTitle.append(Utility.messageBD(this, "DateFrom", strLanguage) + ": " + strDateFrom
+          + " - " + Utility.messageBD(this, "DateTo", strLanguage) + ": " + strDateTo + " (");
+      strSubTitle.append(ReportGeneralLedgerData.selectCompany(this, vars.getClient()) + " - ");
+      strSubTitle.append(ReportGeneralLedgerData.selectOrganization(this, strOrg) + ")");
+      parameters.put("REPORT_SUBTITLE", strSubTitle.toString());
+      parameters.put("Previous", Utility.messageBD(this, "Initial Balance", strLanguage));
+      parameters.put("Total", Utility.messageBD(this, "Total", strLanguage));
+      parameters.put("PageNo", strPageNo);
+      String strDateFormat;
+      strDateFormat = vars.getJavaDateFormat();
+      parameters.put("strDateFormat", strDateFormat);
+
+      renderJR(vars, response, strReportName, null, "pdf", parameters, dataWithTotals, null);
     } finally {
-      if (scroll != null) {
-        scroll.close();
+      if (data != null) {
+        data.close();
       }
     }
-
-    ReportGeneralLedgerData[] dataTotal = null;
-    ReportGeneralLedgerData[] dataSubtotal = null;
-    String strOld = "";
-    ReportGeneralLedgerData[] subreportElement = new ReportGeneralLedgerData[1];
-    for (int i = 0; data != null && i < data.length; i++) {
-      if (!strOld.equals(data[i].groupbyid + data[i].id)) {
-        subreportElement = new ReportGeneralLedgerData[1];
-        // firstPagBlock = false;
-        if (i == 0 && initRecordNumber > 0) {
-          // firstPagBlock = true;
-          Long init = System.currentTimeMillis();
-          dataTotal = ReportGeneralLedgerData.select2Total(this, "0", strGroupByText, strGroupBy,
-              strAllaccounts, strcelementvaluefrom, strcelementvalueto,
-              Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
-              Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
-              strcAcctSchemaId, "", DateTimeData.nDaysAfter(this, data[0].dateacct, "1"),
-              strOrgFamily, strcBpartnerId, strmProductId, strcProjectId, strAmtFrom, strAmtTo,
-              data[0].id, data[0].groupbyid, null, null, null, data[0].dateacctnumber
-                  + data[0].factaccttype + data[0].factAcctGroupId + data[0].factAcctId);
-          dataSubtotal = ReportGeneralLedgerData.select2sum(this, "0", strGroupByText, strGroupBy,
-              strAllaccounts, strcelementvaluefrom, strcelementvalueto,
-              Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
-              Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
-              strcAcctSchemaId, strDateFrom, toDatePlusOne, strOrgFamily,
-                  (strGroupBy.equals("BPartner") ? "('" + data[i].groupbyid + "')" : strcBpartnerId),
-                  (strGroupBy.equals("Product") ? "('" + data[i].groupbyid + "')" : strmProductId),
-                  (strGroupBy.equals("Project") ? "('" + data[i].groupbyid + "')" : strcProjectId),
-                  strAmtFrom, strAmtTo, null, null, null, null, null, data[0].dateacctnumber
-                      + data[0].factaccttype + data[0].factAcctGroupId + data[0].factAcctId,
-                  data[0].id);
-
-          log4j.debug("Select2Total. Time in mils: " + (System.currentTimeMillis() - init));
-          // Now dataTotal is covered adding debit and credit amounts
-          for (int j = 0; dataTotal != null && j < dataTotal.length; j++) {
-            previousDebit = previousDebit.add(new BigDecimal(dataTotal[j].amtacctdr));
-            previousCredit = previousCredit.add(new BigDecimal(dataTotal[j].amtacctcr));
-          }
-          subreportElement = new ReportGeneralLedgerData[1];
-          subreportElement[0] = new ReportGeneralLedgerData();
-          subreportElement[0].totalacctdr = previousDebit.toPlainString();
-          subreportElement[0].totalacctcr = previousCredit.toPlainString();
-          data[0].amtacctdrprevsum = (dataSubtotal != null) ? dataSubtotal[0].amtacctdr
-              : data[0].amtacctdrprevsum;
-          data[0].amtacctcrprevsum = (dataSubtotal != null) ? dataSubtotal[0].amtacctcr
-              : data[0].amtacctcrprevsum;
-          subreportElement[0].total = previousDebit.subtract(previousCredit).toPlainString();
-        } else {
-          if ("".equals(data[i].groupbyid)) {
-            // The argument " " is used to simulate one value and put the optional parameter-->
-            // AND FACT_ACCT.C_PROJECT_ID IS NULL for example
-            Long init = System.currentTimeMillis();
-            subreportElement = ReportGeneralLedgerData.selectTotal2(this, strcBpartnerId,
-                (strGroupBy.equals("BPartner") ? " " : null), strmProductId,
-                (strGroupBy.equals("Product") ? " " : null), strcProjectId,
-                (strGroupBy.equals("Project") ? " " : null), strcAcctSchemaId, data[i].id, "",
-                strDateFrom, strOrgFamily);
-            log4j.debug("SelectTotalNew. Time in mils: " + (System.currentTimeMillis() - init));
-          } else {
-            Long init = System.currentTimeMillis();
-            subreportElement = ReportGeneralLedgerData.selectTotal2(this, (strGroupBy
-                .equals("BPartner") ? "('" + data[i].groupbyid + "')" : strcBpartnerId), null,
-                (strGroupBy.equals("Product") ? "('" + data[i].groupbyid + "')" : strmProductId),
-                null, (strGroupBy.equals("Project") ? "('" + data[i].groupbyid + "')"
-                    : strcProjectId), null, strcAcctSchemaId, data[i].id, "", strDateFrom,
-                strOrgFamily);
-            log4j.debug("SelectTotalNew. Time in mils: " + (System.currentTimeMillis() - init));
-          }
-        }
-        // We calculate the totalacctdr, the totalacctcr and totalacctsub for the first row
-        data[i].totalacctdr = (new BigDecimal(subreportElement[0].totalacctdr).add(new BigDecimal(data[i].amtacctdr))).toPlainString();
-        data[i].totalacctcr = (new BigDecimal(subreportElement[0].totalacctcr).add(new BigDecimal(data[i].amtacctcr))).toPlainString();
-        data[i].totalacctsub = (new BigDecimal(data[i].totalacctdr).subtract(new BigDecimal(data[i].totalacctcr))).toPlainString();
-      } else {
-        // We calculate the totalacctdr, the totalacctcr and totalacctsub for the rest
-        data[i].totalacctdr = (new BigDecimal(data[i-1].totalacctdr).add(new BigDecimal(data[i].amtacctdr))).toPlainString();
-        data[i].totalacctcr = (new BigDecimal(data[i-1].totalacctcr).add(new BigDecimal(data[i].amtacctcr))).toPlainString();
-        data[i].totalacctsub = (new BigDecimal(data[i].totalacctdr).subtract(new BigDecimal(data[i].totalacctcr))).toPlainString();
-      }
-      data[i].previousdebit = subreportElement[0].totalacctdr;
-      data[i].previouscredit = subreportElement[0].totalacctcr;
-      data[i].previoustotal = subreportElement[0].total;
-      strOld = data[i].groupbyid + data[i].id;
-    }
-
-    String strTotal = "";
-    subreportElement = new ReportGeneralLedgerData[1];
-    for (int i = 0; data != null && i < data.length; i++) {
-      if (!strTotal.equals(data[i].groupbyid + data[i].id)) {
-        subreportElement = new ReportGeneralLedgerData[1];
-        if ("".equals(data[i].groupbyid)) {
-          // The argument " " is used to simulate one value and put the optional parameter--> AND
-          // FACT_ACCT.C_PROJECT_ID IS NULL for example
-          Long init = System.currentTimeMillis();
-          subreportElement = ReportGeneralLedgerData.selectTotal2(this, strcBpartnerId,
-              (strGroupBy.equals("BPartner") ? " " : null), strmProductId,
-              (strGroupBy.equals("Product") ? " " : null), strcProjectId,
-              (strGroupBy.equals("Project") ? " " : null), strcAcctSchemaId, data[i].id, "",
-              toDatePlusOne, strOrgFamily);
-          log4j.debug("SelectTotal2. Time in mils: " + (System.currentTimeMillis() - init));
-        } else {
-          Long init = System.currentTimeMillis();
-          subreportElement = ReportGeneralLedgerData.selectTotal2(this,
-              (strGroupBy.equals("BPartner") ? "('" + data[i].groupbyid + "')" : strcBpartnerId),
-              null,
-              (strGroupBy.equals("Product") ? "('" + data[i].groupbyid + "')" : strmProductId),
-              null,
-              (strGroupBy.equals("Project") ? "('" + data[i].groupbyid + "')" : strcProjectId),
-              null, strcAcctSchemaId, data[i].id, "", toDatePlusOne, strOrgFamily);
-          log4j.debug("SelectTotal2. Time in mils: " + (System.currentTimeMillis() - init));
-        }
-      }
-      data[i].finaldebit = subreportElement[0].totalacctdr;
-      data[i].finalcredit = subreportElement[0].totalacctcr;
-      data[i].finaltotal = subreportElement[0].total;
-      strTotal = data[i].groupbyid + data[i].id;
-    }
-
-    String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportGeneralLedger.jrxml";
-    response.setHeader("Content-disposition", "inline; filename=ReportGeneralLedgerPDF.pdf");
-
-    HashMap<String, Object> parameters = new HashMap<String, Object>();
-
-    String strLanguage = vars.getLanguage();
-
-    parameters.put("ShowGrouping", new Boolean(!strGroupBy.equals("")));
-    StringBuilder strSubTitle = new StringBuilder();
-    strSubTitle.append(Utility.messageBD(this, "DateFrom", strLanguage) + ": " + strDateFrom
-        + " - " + Utility.messageBD(this, "DateTo", strLanguage) + ": " + strDateTo + " (");
-    strSubTitle.append(ReportGeneralLedgerData.selectCompany(this, vars.getClient()) + " - ");
-    strSubTitle.append(ReportGeneralLedgerData.selectOrganization(this, strOrg) + ")");
-    parameters.put("REPORT_SUBTITLE", strSubTitle.toString());
-    parameters.put("Previous", Utility.messageBD(this, "Initial Balance", strLanguage));
-    parameters.put("Total", Utility.messageBD(this, "Total", strLanguage));
-    parameters.put("PageNo", strPageNo);
-    String strDateFormat;
-    strDateFormat = vars.getJavaDateFormat();
-    parameters.put("strDateFormat", strDateFormat);
-
-    renderJR(vars, response, strReportName, null, "pdf", parameters, data, null);
   }
 
   private void printPageDataXLS(HttpServletRequest request, HttpServletResponse response,
