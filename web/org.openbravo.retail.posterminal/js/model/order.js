@@ -223,7 +223,7 @@
     tableName: 'c_order',
     entityName: 'Order',
     source: '',
-    dataLimit: 300,
+    dataLimit: 100,
     properties: ['id', 'json', 'session', 'hasbeenpaid', 'isbeingprocessed'],
     propertyMap: {
       'id': 'c_order_id',

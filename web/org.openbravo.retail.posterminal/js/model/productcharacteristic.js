@@ -16,7 +16,7 @@
     tableName: 'm_product_ch',
     entityName: 'ProductCharacteristic',
     source: 'org.openbravo.retail.posterminal.master.ProductCharacteristic',
-    dataLimit: 300
+    dataLimit: 100
   });
 
   ProductCharacteristic.addProperties([{

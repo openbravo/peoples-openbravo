@@ -16,7 +16,7 @@
     tableName: 'c_bpartner',
     entityName: 'BusinessPartner',
     source: 'org.openbravo.retail.posterminal.master.BusinessPartner',
-    dataLimit: 300,
+    dataLimit: 100,
     saveCustomer: function (silent) {
       var nameLength, newSk;
 

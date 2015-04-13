@@ -16,7 +16,7 @@
     tableName: 'ad_sales_representative',
     entityName: 'SalesRepresentative',
     source: 'org.openbravo.retail.posterminal.master.SalesRepresentative',
-    dataLimit: 300
+    dataLimit: 100
   });
 
   SalesRepresentative.addProperties([{

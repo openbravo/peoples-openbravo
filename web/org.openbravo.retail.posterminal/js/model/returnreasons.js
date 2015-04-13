@@ -16,7 +16,7 @@
     tableName: 'c_return_reason',
     entityName: 'ReturnReason',
     source: 'org.openbravo.retail.posterminal.master.ReturnReason',
-    dataLimit: 300
+    dataLimit: 100
   });
 
   ReturnReason.addProperties([{

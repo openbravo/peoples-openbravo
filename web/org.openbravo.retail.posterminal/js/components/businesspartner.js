@@ -205,7 +205,7 @@ enyo.kind({
         style: 'display: table-cell; width: 100%;',
         components: [{
           kind: 'OB.UI.SearchInputAutoFilter',
-          name: 'filterText',
+          name: 'customerFilterText',
           style: 'width: 100%'
         }]
       }, {
@@ -246,12 +246,12 @@ enyo.kind({
     }]
   }],
   clearAction: function () {
-    this.$.filterText.setValue('');
+    this.$.customerFilterText.setValue('');
     this.doClearAction();
   },
   searchAction: function () {
     this.doSearchAction({
-      bpName: this.$.filterText.getValue()
+      bpName: this.$.customerFilterText.getValue()
     });
     return true;
   }

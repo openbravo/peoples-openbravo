@@ -16,7 +16,7 @@
     tableName: 'm_product',
     entityName: 'Product',
     source: 'org.openbravo.retail.posterminal.master.Product',
-    dataLimit: 300,
+    dataLimit: 100,
     includeTerminalDate: true,
     initialize: function () {
       this.set('originalStandardPrice', this.get('standardPrice'));

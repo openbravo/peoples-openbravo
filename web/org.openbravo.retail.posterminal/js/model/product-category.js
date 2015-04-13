@@ -16,7 +16,7 @@
     tableName: 'm_product_category',
     entityName: 'ProductCategory',
     source: 'org.openbravo.retail.posterminal.master.Category',
-    dataLimit: 300,
+    dataLimit: 100,
     includeTerminalDate: true,
     createBestSellerCategory: function () {
       this.set('id', 'OBPOS_bestsellercategory');
