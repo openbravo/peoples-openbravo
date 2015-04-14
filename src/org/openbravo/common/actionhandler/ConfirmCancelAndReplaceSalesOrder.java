@@ -278,6 +278,8 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseActionHandler {
             goodsShipment.setProcessed(false);
             OBDal.getInstance().save(goodsShipment);
             OBDal.getInstance().flush();
+            // Assign old shipment header to the new order
+            goodsShipment.setSalesOrder(newOrder);
             // Assign old shipment line to the new order line
             goodsShipmentLine.setSalesOrderLine(newOrderLine);
             OBDal.getInstance().save(goodsShipmentLine);
@@ -291,63 +293,64 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseActionHandler {
         }
       }
 
-      // Create if needed a new goods shipment
-      // TODO?
-
       // Get accountPaymentMethod in order to avoid automatic payment creation during c_order_post
       FIN_PaymentMethod paymentMethod = inverseOrder.getPaymentMethod();
-      if (paymentMethod == null) {
-        throw new OBException("The business partner has not a payment method defined");
-      }
       BusinessPartner businessPartner = inverseOrder.getBusinessPartner();
       FIN_FinancialAccount businessPartnerAccount = businessPartner.getAccount();
-      if (businessPartnerAccount == null) {
-        throw new OBException("The business partner has not a finnancial account defined");
-      }
-      OBCriteria<FinAccPaymentMethod> accountPaymentMethodCriteria = OBDal.getInstance()
-          .createCriteria(FinAccPaymentMethod.class);
-      accountPaymentMethodCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD,
-          paymentMethod));
-      accountPaymentMethodCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT,
-          businessPartnerAccount));
-      List<FinAccPaymentMethod> accountPaymentMethodList = accountPaymentMethodCriteria.list();
-      if (accountPaymentMethodList.size() == 0) {
-        throw new OBException("The payment method " + paymentMethod.getName()
-            + " is not in the financial account " + businessPartnerAccount.getName());
-      } else if (accountPaymentMethodList.size() > 1) {
-        throw new OBException("The payment method " + paymentMethod.getName()
-            + " appears more than once in the financial account "
-            + businessPartnerAccount.getName());
-      }
-      FinAccPaymentMethod accountPaymentMethod = accountPaymentMethodList.get(0);
-      // Disable Automatic Receipt check
-      boolean originalAutomaticReceipt = accountPaymentMethod.isAutomaticReceipt();
-      accountPaymentMethod.setAutomaticReceipt(false);
+      FinAccPaymentMethod accountPaymentMethod = null;
+      boolean originalAutomaticReceipt = false;
 
-      // Change inverse order document type to Standard Order in order to avoid shipment and
-      // invoice creation during c_order_post call
-      // OBCriteria<DocumentType> standardOrderDocumentTypeCriteria = OBDal.getInstance()
-      // .createCriteria(DocumentType.class);
-      // standardOrderDocumentTypeCriteria.add(Restrictions.eq(DocumentType.PROPERTY_NAME,
-      // "Standard Order"));
-      // OrganizationStructureProvider osp = OBContext.getOBContext()
-      // .getOrganizationStructureProvider(inverseOrder.getOrganization().getClient().getId());
-      // ;
-      // List<String> parentOrganizationIdList = osp.getParentList(inverseOrder.getOrganization()
-      // .getId(), true);
-      //
-      // standardOrderDocumentTypeCriteria.add(Restrictions.in(DocumentType.PROPERTY_ORGANIZATION
-      // + ".id", parentOrganizationIdList));
-      // List<DocumentType> standardOrderDocumentTypeList =
-      // standardOrderDocumentTypeCriteria.list();
-      // if (standardOrderDocumentTypeList.size() != 1) {
-      // throw new OBException(
-      // "Only one Standard Order named document can exist for the organization "
-      // + inverseOrder.getOrganization().getName());
-      // }
+      // Only disable Automatic Receipt Check if the bussinessPartner has a financial account and
+      // the order a paymentMethod
+      if (businessPartnerAccount != null && paymentMethod != null) {
+        OBCriteria<FinAccPaymentMethod> accountPaymentMethodCriteria = OBDal.getInstance()
+            .createCriteria(FinAccPaymentMethod.class);
+        accountPaymentMethodCriteria.add(Restrictions.eq(
+            FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, paymentMethod));
+        accountPaymentMethodCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT,
+            businessPartnerAccount));
+        List<FinAccPaymentMethod> accountPaymentMethodList = accountPaymentMethodCriteria.list();
+        if (accountPaymentMethodList.size() == 0) {
+          throw new OBException("The payment method " + paymentMethod.getName()
+              + " is not in the financial account " + businessPartnerAccount.getName());
+        } else if (accountPaymentMethodList.size() > 1) {
+          throw new OBException("The payment method " + paymentMethod.getName()
+              + " appears more than once in the financial account "
+              + businessPartnerAccount.getName());
+        }
+        accountPaymentMethod = accountPaymentMethodList.get(0);
 
-      // Set Standard Order to inverse order document type
-      // inverseOrder.setDocumentType(standardOrderDocumentTypeList.get(0));
+        // Save originalAutomaticReceipt status
+        originalAutomaticReceipt = accountPaymentMethod.isAutomaticReceipt();
+
+        // Disable Automatic Receipt check
+        accountPaymentMethod.setAutomaticReceipt(false);
+
+        // Change inverse order document type to Standard Order in order to avoid shipment and
+        // invoice creation during c_order_post call
+        // OBCriteria<DocumentType> standardOrderDocumentTypeCriteria = OBDal.getInstance()
+        // .createCriteria(DocumentType.class);
+        // standardOrderDocumentTypeCriteria.add(Restrictions.eq(DocumentType.PROPERTY_NAME,
+        // "Standard Order"));
+        // OrganizationStructureProvider osp = OBContext.getOBContext()
+        // .getOrganizationStructureProvider(inverseOrder.getOrganization().getClient().getId());
+        // ;
+        // List<String> parentOrganizationIdList = osp.getParentList(inverseOrder.getOrganization()
+        // .getId(), true);
+        //
+        // standardOrderDocumentTypeCriteria.add(Restrictions.in(DocumentType.PROPERTY_ORGANIZATION
+        // + ".id", parentOrganizationIdList));
+        // List<DocumentType> standardOrderDocumentTypeList =
+        // standardOrderDocumentTypeCriteria.list();
+        // if (standardOrderDocumentTypeList.size() != 1) {
+        // throw new OBException(
+        // "Only one Standard Order named document can exist for the organization "
+        // + inverseOrder.getOrganization().getName());
+        // }
+
+        // Set Standard Order to inverse order document type
+        // inverseOrder.setDocumentType(standardOrderDocumentTypeList.get(0));
+      }
 
       // Complete inverse order
       callCOrderPost(inverseOrder);
@@ -359,6 +362,11 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseActionHandler {
       // Restore document type of the inverse order
       // inverseOrder.setDocumentType(oldOrder.getDocumentType());
 
+      // Close original order
+      oldOrder.setDocumentAction("CL");
+      OBDal.getInstance().save(oldOrder);
+      callCOrderPost(oldOrder);
+
       // Set Stardard Order to new order document type
 
       // Complete new order and generate good shipment and sales invoice
@@ -369,8 +377,10 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseActionHandler {
       // Restore document type of the new order
       // newOrder.setDocumentType(oldOrder.getDocumentType());
 
-      // Restore Automatic Receipt check
-      accountPaymentMethod.setAutomaticReceipt(originalAutomaticReceipt);
+      if (businessPartnerAccount != null && paymentMethod != null) {
+        // Restore Automatic Receipt check
+        accountPaymentMethod.setAutomaticReceipt(originalAutomaticReceipt);
+      }
 
       // Payment Creation
       // Get the payment schedule detail of the oldOrder
@@ -393,7 +403,10 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseActionHandler {
             .list();
         // New payment definition
         FIN_Payment newPayment = null;
+        ConnectionProvider conn = new DalConnectionProvider();
+        VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
         for (FIN_PaymentScheduleDetail paymentScheduleDetail : paymentScheduleDetailList) {
+          newPayment = null;
           FIN_PaymentDetail paymentDetail = paymentScheduleDetail.getPaymentDetails();
           FIN_Payment payment = paymentDetail.getFinPayment();
           FIN_PaymentMethod paymentPaymentMethod = payment.getPaymentMethod();
@@ -414,11 +427,8 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseActionHandler {
           newPayment.setAmount(BigDecimal.ZERO);
           newPayment.setUsedCredit(BigDecimal.ZERO);
           OBDal.getInstance().save(newPayment);
-        }
-        // Call to processPayment in order to process it
-        ConnectionProvider conn = new DalConnectionProvider();
-        VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
-        if (newPayment != null) {
+
+          // Call to processPayment in order to process it
           OBError error = FIN_AddPayment.processPayment(vars, conn, "P", newPayment);
           if (error.getType().equals("Error")) {
             throw new OBException(error.getMessage());
@@ -429,7 +439,6 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseActionHandler {
         BigDecimal outstandingAmount = paymentSchedule.getOutstandingAmount();
         if (outstandingAmount.compareTo(BigDecimal.ZERO) != 0) {
           BigDecimal negativeOutstandingAmount = outstandingAmount.negate();
-          FIN_PaymentMethod paymentPaymentMethod = oldOrder.getBusinessPartner().getPaymentMethod();
 
           OBCriteria<DocumentType> arReceiptDocumentTypeCriteria = OBDal.getInstance()
               .createCriteria(DocumentType.class);
@@ -461,7 +470,23 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseActionHandler {
             throw new OBException("No document type found for the new payment");
           }
           DocumentType paymentDocumentType = arReceiptDocumentTypeList.get(0);
-          FIN_FinancialAccount financialAccount = oldOrder.getBusinessPartner().getAccount();
+          FIN_FinancialAccount financialAccount = null;
+          FIN_PaymentMethod paymentPaymentMethod = null;
+          if (newPayment != null) {
+            financialAccount = newPayment.getAccount();
+            paymentPaymentMethod = newPayment.getPaymentMethod();
+          } else {
+            if (oldOrder.getBusinessPartner().getAccount() != null) {
+              financialAccount = oldOrder.getBusinessPartner().getAccount();
+            } else {
+              throw new OBException("The business partner has not a finnancial account defined");
+            }
+            if (oldOrder.getBusinessPartner().getPaymentMethod() != null) {
+              paymentPaymentMethod = oldOrder.getBusinessPartner().getPaymentMethod();
+            } else {
+              throw new OBException("The business partner has not a payment method defined");
+            }
+          }
           FIN_Payment newPayment2 = null;
 
           // Duplicate payment with negative amount
