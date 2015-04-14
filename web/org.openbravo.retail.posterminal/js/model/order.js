@@ -645,6 +645,9 @@
       this.set('openDrawer', false);
       this.set('totalamount', null);
       this.set('approvals', []);
+      if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true)) {
+        this.loadAutomaticDiscount();
+      }
     },
 
     clearWith: function (_order) {
@@ -687,6 +690,9 @@
       this.trigger('calculategross');
       this.trigger('change');
       this.trigger('clear');
+      if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true)) {
+        this.loadAutomaticDiscount();
+      }
     },
 
     removeUnit: function (line, qty) {
@@ -1127,6 +1133,16 @@
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationClosed'));
         return;
       }
+      if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true)) {
+        if (this.get('autoDiscounts')) {
+          var d = _.find(this.get('autoDiscounts'), function (promo) {
+            return promo === rule.get('id');
+          });
+          if (!d) {
+            return;
+          }
+        }
+      }
       var promotions = line.get('promotions') || [],
           disc = {},
           i, replaced = false;
@@ -1348,6 +1364,57 @@
       this.save();
 
     },
+    loadAutomaticDiscount: function (callback) {
+      OB.debug('loadAutomaticDiscount...');
+      var me = this;
+      if (!this.get('priceList') || (this.get('autoDiscountsPriceList') && this.get('autoDiscountsPriceList') === this.get('priceList'))) {
+        if (callback) {
+          callback();
+        }
+        return;
+      }
+      OB.debug('loadAutomaticDiscount... from local DB');
+      OB.Dal.find(OB.Model.Discount, {
+        _whereClause: "where m_offer_type_id not in (" + OB.Model.Discounts.getManualPromotions() + ") AND date('now') BETWEEN DATEFROM AND COALESCE(date(DATETO), date('9999-12-31'))"
+        // filter by order price list
+        + " AND (" + " (pricelist_selection = 'Y' AND NOT EXISTS " //
+        + " (SELECT 1 FROM m_offer_pricelist opl WHERE m_offer.m_offer_id = opl.m_offer_id AND opl.m_pricelist_id = '" + this.get('priceList') + "'))" // 
+        + " OR (pricelist_selection = 'N' AND EXISTS " //
+        + " (SELECT 1 FROM m_offer_pricelist opl WHERE m_offer.m_offer_id = opl.m_offer_id AND opl.m_pricelist_id = '" + this.get('priceList') + "')))" //
+        // filter discretionary discounts by current role
+        + " AND ((EM_OBDISC_ROLE_SELECTION = 'Y'" //
+        + " AND NOT EXISTS" //
+        + " (SELECT 1" //
+        + " FROM OBDISC_OFFER_ROLE" //
+        + " WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID" //
+        + "   AND AD_ROLE_ID = '" + OB.MobileApp.model.get('context').role.id + "'" //
+        + " ))" //
+        + " OR (EM_OBDISC_ROLE_SELECTION = 'N'" //
+        + " AND EXISTS" //
+        + " (SELECT 1" //
+        + " FROM OBDISC_OFFER_ROLE" //
+        + " WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID" //
+        + "   AND AD_ROLE_ID = '" + OB.MobileApp.model.get('context').role.id + "'" //
+        + " )))" //
+      }, function (promos) {
+        me.set('autoDiscountsPriceList', me.get('priceList'));
+        var autoDiscounts = [];
+        _.each(promos.models, function (promo) {
+          autoDiscounts.push(promo.get('id'));
+        });
+        me.set('autoDiscounts', autoDiscounts);
+        if (callback) {
+          callback();
+        }
+      }, function () {
+        // TODO: Show error
+        me.set('autoDiscountsPriceList', null);
+        me.set('autoDiscounts', []);
+        if (callback) {
+          callback();
+        }
+      });
+    },
     setBPandBPLoc: function (businessPartner, showNotif, saveChange) {
       var me = this,
           undef;
@@ -1372,14 +1439,18 @@
             if (saveChange) {
               me.save();
             }
-            me.removeAndInsertLines();
+            me.loadAutomaticDiscount(function () {
+              me.removeAndInsertLines();
+            });
           });
         } else {
           me.set('priceIncludesTax', OB.MobileApp.model.get('pricelist').priceIncludesTax);
           if (saveChange) {
             me.save();
           }
-          me.removeAndInsertLines();
+          me.loadAutomaticDiscount(function () {
+            me.removeAndInsertLines();
+          });
         }
       } else {
         if (saveChange) {
