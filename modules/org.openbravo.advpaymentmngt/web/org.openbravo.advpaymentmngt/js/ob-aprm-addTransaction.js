@@ -118,3 +118,7 @@ OB.APRM.AddTransaction.glitemOnChangeFunction = function (item, view, form, grid
     strGLItemId: strGLItemId
   }, {}, callback);
 };
+
+OB.APRM.AddTransaction.trxDateOnChangeFunction = function (item, view, form, grid) {
+  form.getItem('dateacct').setDateParameterValue(new Date(item.getValue()));
+};
