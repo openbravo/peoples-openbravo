@@ -671,9 +671,7 @@ public class DocFINReconciliation extends AcctServer {
           nextSeqNo(SeqNo), DocumentType, line.m_DateAcct, null, conn);
     } else if (!getDocumentPaymentConfirmation(payment)) {
       FieldProviderFactory[] data = loadLinesPaymentDetailsFieldProvider(transaction);
-      ArrayList<String> usedPaymentDetailList = new ArrayList<String>();
       for (int i = 0; i < data.length; i++) {
-        ArrayList<String> paymentDetailList = new ArrayList<String>();
         if (data[i] == null)
           continue;
         DocLine_FINReconciliation detail = new DocLine_FINReconciliation(DocumentType, Record_ID,
@@ -701,16 +699,7 @@ public class DocFINReconciliation extends AcctServer {
         // Cambiar line to reflect BPs
         FIN_PaymentDetail paymentDetail = OBDal.getInstance().get(FIN_PaymentDetail.class,
             finPaymentDetailID);
-        // Check whether payment detail is merged
-        paymentDetailList.add(finPaymentDetailID);
-        for (FIN_PaymentDetail pdl : paymentDetail.getFinPayment().getFINPaymentDetailList()) {
-          if (pdl.getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule() == null
-              && !usedPaymentDetailList.contains(pdl.getId())) {
-            paymentDetailList.add(pdl.getId());
-            usedPaymentDetailList.add(pdl.getId());
-          }
-        }
-        detail.setInvoiceTaxCashVAT_V(paymentDetailList);
+        detail.setInvoiceTaxCashVAT_V(finPaymentDetailID);
         fact = createFactPaymentDetails(detail, paymentDetail, as, conn, fact, Fact_Acct_Group_ID,
             Fact_Acct_Group_ID2);
       }

@@ -36,7 +36,6 @@ import org.openbravo.model.common.invoice.InvoiceTaxCashVAT_V;
 public class DocLineCashVATReady_PaymentTransactionReconciliation extends DocLine {
 
   List<InvoiceTaxCashVAT_V> invoiceTaxCashVAT_V = null;
-  String paymentDetailID = null;
 
   public DocLineCashVATReady_PaymentTransactionReconciliation(String DocumentType,
       String TrxHeader_ID, String TrxLine_ID) {
@@ -51,8 +50,8 @@ public class DocLineCashVATReady_PaymentTransactionReconciliation extends DocLin
     this.invoiceTaxCashVAT_V = invoiceTaxCashVAT_V;
   }
 
-  public void setInvoiceTaxCashVAT_V(ArrayList<String> finPaymentDetailID) {
-	if (finPaymentDetailID.isEmpty()) {
+  public void setInvoiceTaxCashVAT_V(String finPaymentDetailID) {
+    if (StringUtils.isBlank(finPaymentDetailID)) {
       this.invoiceTaxCashVAT_V = new ArrayList<InvoiceTaxCashVAT_V>();
     } else {
       try {
@@ -60,7 +59,7 @@ public class DocLineCashVATReady_PaymentTransactionReconciliation extends DocLin
         final StringBuffer hql = new StringBuffer();
         hql.append(" as itcv ");
         hql.append(" where itcv." + InvoiceTaxCashVAT_V.PROPERTY_PAYMENTDETAILS
-            + ".id IN :finPaymentDetailID ");
+            + ".id = :finPaymentDetailID ");
         hql.append(" and itcv." + InvoiceTaxCashVAT_V.PROPERTY_CANCELED + " = false");
         OBQuery<InvoiceTaxCashVAT_V> obq = OBDal.getInstance().createQuery(
             InvoiceTaxCashVAT_V.class, hql.toString());
