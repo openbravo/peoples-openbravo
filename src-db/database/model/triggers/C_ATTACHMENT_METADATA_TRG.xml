@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+  <database name="TRIGGER C_ATTACHMENT_METADATA_TRG">
+    <trigger name="C_ATTACHMENT_METADATA_TRG" table="C_ATTACHMENT_METADATA" fires="after" insert="true" update="true" delete="true" foreach="row">
+      <body><![CDATA[
+
+
+
+
+/*************************************************************************
+* The contents of this file are subject to the Openbravo  Public  License
+* Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
+* Version 1.1  with a permitted attribution clause; you may not  use this
+* file except in compliance with the License. You  may  obtain  a copy of
+* the License at http://www.openbravo.com/legal/license.html
+* Software distributed under the License  is  distributed  on  an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+* License for the specific  language  governing  rights  and  limitations
+* under the License.
+* The Original Code is Openbravo ERP.
+* The Initial Developer of the Original Code is Openbravo SLU
+* All portions are Copyright (C) 2015 Openbravo SLU
+* All Rights Reserved.
+* Contributor(s):  ______________________________________.
+************************************************************************/
+moduleID  VARCHAR2(32);
+    
+BEGIN
+    
+    IF AD_isTriggerEnabled()='N' THEN RETURN;
+    END IF;
+
+
+  -- Insert C_ATTACHMENT_METADATA Trigger
+  --  for Translation
+  IF INSERTING
+  THEN
+    SELECT AD_MODULE_ID into moduleID
+    FROM c_attachment_method
+    WHERE c_attachment_method_id = :NEW.C_ATTACHMENT_METHOD_ID;
+  
+    --  Create Translation Row
+    INSERT INTO c_attachment_metadata_trl
+                (c_attachment_metadata_trl_ID, c_attachment_metadata_id, AD_LANGUAGE, AD_CLIENT_ID, AD_ORG_ID,
+                 ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, NAME,
+                 ISTRANSLATED)
+      SELECT get_uuid(), :NEW.c_attachment_metadata_id, AD_LANGUAGE.AD_LANGUAGE, :NEW.AD_CLIENT_ID,
+             :NEW.AD_ORG_ID, :NEW.ISACTIVE, :NEW.CREATED, :NEW.CREATEDBY,
+             :NEW.UPDATED, :NEW.UPDATEDBY, :NEW.NAME, 'N'
+        FROM AD_LANGUAGE, AD_Module M
+       WHERE AD_LANGUAGE.ISACTIVE = 'Y' AND ISSYSTEMLANGUAGE = 'Y'
+       AND M.AD_Module_ID = moduleID
+       AND M.AD_Language != AD_Language.AD_Language;
+  END IF;
+
+  -- Inserting
+  -- C_ATTACHMENT_METADATA update trigger
+  --  synchronize text
+  IF UPDATING
+  THEN
+    IF (COALESCE (:OLD.TEXT, '.') <> COALESCE (:NEW.TEXT, '.'))
+    THEN
+      -- Update c_attachment_metadata_trl
+      -- Translation
+      UPDATE c_attachment_metadata_trl
+         SET ISTRANSLATED = 'N',
+             UPDATED = now()
+       WHERE c_attachment_metadata_id = :NEW.c_attachment_metadata_id;
+    END IF;
+  END IF;
+-- Updating
+
+END C_ATTACHMENT_METADATA_TRG
+]]></body>
+    </trigger>
+  </database>
