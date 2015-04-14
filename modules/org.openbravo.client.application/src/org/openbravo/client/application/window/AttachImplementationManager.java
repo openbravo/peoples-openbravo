@@ -255,7 +255,10 @@ public class AttachImplementationManager {
           throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoMethod"));
         }
         File file = handler.downloadFile(attachmentFile);
-
+        if (!file.exists()) {
+          throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoAttachmentFound") + " :"
+              + file.getName());
+        }
         String zipName = "";
         if (!writtenFiles.containsKey(file.getName())) {
           zipName = file.getName();
@@ -288,9 +291,11 @@ public class AttachImplementationManager {
       }
       dest.close();
 
-    } catch (Exception e) {
-      throw new OBException(e.getMessage());
-    } finally {
+    } catch (IOException e) {
+      throw new OBException(OBMessageUtils.messageBD("OBUIAPP_ErrorWiththeFile"));
+    }
+
+    finally {
       OBContext.restorePreviousMode();
     }
 

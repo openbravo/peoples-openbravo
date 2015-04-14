@@ -18,6 +18,7 @@
  */
 package org.openbravo.erpCommon.businessUtility;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -34,6 +35,7 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.weld.WeldUtils;
@@ -134,8 +136,11 @@ public class TabAttachments extends HttpSecureAppServlet {
       }
     } else if (vars.commandIn("DISPLAY_DATA")) {
       final String strFileReference = vars.getStringParameter("inpcFileId");
+      ByteArrayOutputStream os = null;
       try {
         OBContext.setAdminMode();
+        os = new ByteArrayOutputStream();
+        aim.download(strFileReference, os);
         Attachment attachment = OBDal.getInstance().get(Attachment.class, strFileReference);
 
         if (attachment.getDataType().equals("")) {
@@ -143,6 +148,7 @@ public class TabAttachments extends HttpSecureAppServlet {
         } else {
           response.setContentType(attachment.getDataType());
         }
+
         response.setCharacterEncoding("UTF-8");
         String userAgent = request.getHeader("user-agent");
         if (userAgent.contains("MSIE")) {
@@ -157,20 +163,49 @@ public class TabAttachments extends HttpSecureAppServlet {
                   + MimeUtility
                       .encodeWord(attachment.getName().replace("\"", "\\\""), "utf-8", "Q") + "\"");
         }
+
+        response.getOutputStream().write(os.toByteArray());
+        response.getOutputStream().flush();
+        response.getOutputStream().close();
+
+      } catch (OBException e) {
+        String viewId = vars.getStringParameter("viewId");
+        response.setContentType("text/html; charset=UTF-8");
+        Writer writer = response.getWriter();
+        writer.write("<HTML><BODY><script type=\"text/javascript\">");
+        writer.write("top.OB.Utilities.writeErrorMessage(\"" + viewId + "\",\"" + e.getMessage()
+            + "\");");
+        writer.write("</SCRIPT></BODY></HTML>");
+
       } finally {
+        os.close();
         OBContext.restorePreviousMode();
       }
-      aim.download(strFileReference, response.getOutputStream());
-      response.getOutputStream().flush();
-      response.getOutputStream().close();
 
     } else if (vars.getCommand().contains("GET_MULTIPLE_RECORDS_OB3")) {
       String tabId = vars.getStringParameter("tabId");
       String recordIds = vars.getStringParameter("recordIds");
-      response.setContentType("application/zip");
-      response.setHeader("Content-Disposition", "attachment; filename=attachments.zip");
+      ByteArrayOutputStream os = null;
+      try {
+        os = new ByteArrayOutputStream();
+        aim.dowloadAll(tabId, recordIds, os);
+        response.setContentType("application/zip");
+        response.setHeader("Content-Disposition", "attachment; filename=attachments.zip");
+        response.getOutputStream().write(os.toByteArray());
+        response.getOutputStream().flush();
+        response.getOutputStream().close();
+      } catch (OBException e) {
+        String viewId = vars.getStringParameter("viewId");
+        response.setContentType("text/html; charset=UTF-8");
+        Writer writer = response.getWriter();
+        writer.write("<HTML><BODY><script type=\"text/javascript\">");
+        writer.write("top.OB.Utilities.writeErrorMessage(\"" + viewId + "\",\"" + e.getMessage()
+            + "\");");
+        writer.write("</SCRIPT></BODY></HTML>");
 
-      aim.dowloadAll(tabId, recordIds, response.getOutputStream());
+      } finally {
+        os.close();
+      }
 
     } else if (vars.commandIn("DEFAULT")) {
       vars.getGlobalVariable("inpTabId", "TabAttachments.tabId");
