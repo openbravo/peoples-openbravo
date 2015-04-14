@@ -449,7 +449,8 @@ isc.OBAttachmentsLayout.addProperties({
             var d = {
               Command: 'GET_MULTIPLE_RECORDS_OB3',
               tabId: canvas.tabId,
-              recordIds: canvas.recordId
+              recordIds: canvas.recordId,
+              viewId: canvas.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.view.ID
             };
             OB.Utilities.postThroughHiddenForm('./businessUtility/TabAttachments_FS.html', d);
           }
@@ -488,7 +489,8 @@ isc.OBAttachmentsLayout.addProperties({
     downloadActions = function () {
       var d = {
         Command: 'DISPLAY_DATA',
-        inpcFileId: this.attachId
+        inpcFileId: this.attachId,
+        viewId: this.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.ID
       };
       OB.Utilities.postThroughHiddenForm('./businessUtility/TabAttachments_FS.html', d);
     };
