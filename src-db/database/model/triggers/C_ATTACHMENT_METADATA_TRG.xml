@@ -57,7 +57,7 @@ BEGIN
   --  synchronize text
   IF UPDATING
   THEN
-    IF (COALESCE (:OLD.TEXT, '.') <> COALESCE (:NEW.TEXT, '.'))
+    IF (COALESCE (:OLD.NAME, '.') <> COALESCE (:NEW.NAME, '.'))
     THEN
       -- Update c_attachment_metadata_trl
       -- Translation
