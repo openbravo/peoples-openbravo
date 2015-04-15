@@ -30,9 +30,7 @@ import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.common.actionhandler.OrderCreatePOLines;
 import org.openbravo.erpCommon.businessUtility.TabAttachments;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
-import org.openbravo.erpCommon.utility.reporting.ReportingException;
 import org.openbravo.model.ad.utility.Attachment;
-import org.openbravo.utils.FileUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,47 +45,38 @@ public class CoreAttachImplementation extends AttachImplementation {
 
   @Override
   public void uploadFile(Attachment attachment, String strDataType, String description,
-      Map<String, Object> parameters, File file, String strTab) {
+      Map<String, Object> parameters, File file, String strTab) throws OBException {
     log.debug("CoreAttachImplemententation - Uploading files");
     String tableId = attachment.getTable().getId();
     String strKey = attachment.getRecord();
     String strFileDir = TabAttachments.getAttachmentDirectoryForNewAttachments(tableId, strKey);
 
-    try {
-      // FIXME: Get the directory separator from Java runtime
-      String attachmentFolder = OBPropertiesProvider.getInstance().getOpenbravoProperties()
-          .getProperty("attach.path");
-      final File uploadedDir = new File(attachmentFolder + "/" + strFileDir);
-      if (!uploadedDir.exists()) {
-        uploadedDir.mkdirs();
-      }
-      String strName = "";
-      File uploadedFile = null;
-      strName = file.getName();
-      uploadedFile = new File(uploadedDir, strName);
-      log.debug("Destination file before renaming: " + uploadedFile);
-      if (!file.renameTo(uploadedFile)) {
-        throw new ReportingException(OBMessageUtils.messageBD("UnreachableDestination")
-            + uploadedDir);
-      }
-      // }
-
-      attachment.setText(description);
-      attachment.setPath(TabAttachments.getPath(strFileDir));
-      attachment.setDataType(strDataType);
-
-    } catch (final Exception e) {
-      throw new OBException("Error while uploading a file", e);
+    // FIXME: Get the directory separator from Java runtime
+    String attachmentFolder = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+        .getProperty("attach.path");
+    final File uploadedDir = new File(attachmentFolder + "/" + strFileDir);
+    if (!uploadedDir.exists()) {
+      uploadedDir.mkdirs();
     }
-
+    String strName = "";
+    File uploadedFile = null;
+    strName = file.getName();
+    uploadedFile = new File(uploadedDir, strName);
+    log.debug("Destination file before renaming: " + uploadedFile);
+    if (!file.renameTo(uploadedFile)) {
+      log.error("CoreAttachImplmentation: Error renaming the file. Unreachable destination: "
+          + uploadedDir);
+      throw new OBException(OBMessageUtils.messageBD("UnreachableDestination") + uploadedDir);
+    }
+    attachment.setText(description);
+    attachment.setPath(TabAttachments.getPath(strFileDir));
+    attachment.setDataType(strDataType);
   }
 
   @Override
-  public File downloadFile(Attachment attachment) {
+  public File downloadFile(Attachment attachment) throws OBException {
     String fileDir = null;
     log.debug("CoreAttachImplemententation - download file");
-
-    FileUtility f = new FileUtility();
     fileDir = TabAttachments.getAttachmentDirectory(attachment.getTable().getId(),
         attachment.getRecord(), attachment.getName());
     // FIXME: Get the directory separator from Java runtime
@@ -98,7 +87,7 @@ public class CoreAttachImplementation extends AttachImplementation {
   }
 
   @Override
-  public void deleteFile(Attachment attachment) {
+  public void deleteFile(Attachment attachment) throws OBException {
     log.debug("CoreAttachImplemententation - Removing files");
     String attachmentFolder = OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .getProperty("attach.path");
@@ -107,12 +96,7 @@ public class CoreAttachImplementation extends AttachImplementation {
     String fileDirPath = attachmentFolder + "/" + fileDir;
     final File file = new File(fileDirPath, attachment.getName());
     if (file.exists()) {
-      try {
-        file.delete();
-      } catch (Exception e) {
-        log.error("coreAttachImplementation - Problem deleting attachment: " + e);
-        throw new OBException("CoreAttachImplemententation - Error while removing file", e);
-      }
+      file.delete();
     } else {
       log.warn("No file was removed as file could not be found");
     }
@@ -120,20 +104,14 @@ public class CoreAttachImplementation extends AttachImplementation {
 
   @Override
   public void updateFile(Attachment attachment, String strTab, String description,
-      Map<String, Object> parameters) {
+      Map<String, Object> parameters) throws OBException {
     log.debug("CoreAttachImplemententation - Updating files");
-    try {
-      attachment.setText(description);
-    } catch (Exception e) {
-      log.error("coreAttachImplementation - Problem updating attachment: " + e);
-      throw new OBException("Error while updating a file", e);
-
-    }
-
+    attachment.setText(description);
   }
 
   @Override
   public boolean isTempFile() {
     return false;
   }
+
 }

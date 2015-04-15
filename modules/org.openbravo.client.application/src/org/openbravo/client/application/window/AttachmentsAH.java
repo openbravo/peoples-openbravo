@@ -46,24 +46,18 @@ public class AttachmentsAH extends BaseActionHandler {
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) {
     OBContext.setAdminMode();
+    String tabId = parameters.get("tabId").toString();
+    Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+    String recordIds = "";
     try {
       AttachImplementationManager aim = WeldUtils
           .getInstanceFromStaticBeanManager(AttachImplementationManager.class);
       if (parameters.get("Command").equals("DELETE")) {
-        String tabId = parameters.get("tabId").toString();
-        String recordIds = parameters.get("recordIds").toString();
-        String attachmentId = (String) parameters.get("attachId");
-        Tab tab = OBDal.getInstance().get(Tab.class, tabId);
-        String tableId = (String) DalUtil.getId(tab.getTable());
 
-        // // Checks if the user has readable access to the record where the file is attached
-        // Entity entity = ModelProvider.getInstance().getEntityByTableId(tableId);
-        // if (entity != null) {
-        // Object object = OBDal.getInstance().get(entity.getMappingClass(), recordIds);
-        // if (object instanceof OrganizationEnabled) {
-        // SecurityChecker.getInstance().checkReadableAccess((OrganizationEnabled) object);
-        // }
-        // }
+        recordIds = parameters.get("recordIds").toString();
+        String attachmentId = (String) parameters.get("attachId");
+
+        String tableId = (String) DalUtil.getId(tab.getTable());
 
         OBCriteria<Attachment> attachmentFiles = OBDao.getFilteredCriteria(Attachment.class,
             Restrictions.eq("table.id", tableId), Restrictions.in("record", recordIds.split(",")));
@@ -82,16 +76,13 @@ public class AttachmentsAH extends BaseActionHandler {
         obj.put("buttonId", parameters.get("buttonId"));
         return obj;
       } else if (parameters.get("Command").equals("EDIT_DESC_OB3")) {
-        String tabId = parameters.get("tabId").toString();
-        String recordIds = parameters.get("recordId").toString();
+        recordIds = parameters.get("recordId").toString();
         String attachmentId = (String) parameters.get("attachId");
-        Tab tab = OBDal.getInstance().get(Tab.class, tabId);
         String description = parameters.get("description").toString();
 
         // TODO: call aim.update(attachmentId, tabId, parameters); (change methods to remove
         // description from the input parameter)
         aim.update(attachmentId, tabId, description, null);
-
         JSONObject obj = getAttachmentJSONObject(tab, recordIds);
         obj.put("buttonId", parameters.get("buttonId"));
         return obj;
@@ -100,6 +91,22 @@ public class AttachmentsAH extends BaseActionHandler {
       }
     } catch (JSONException e) {
       throw new OBException("Error while removing file", e);
+    } catch (OBException e) {
+      // throw new OBException(e.getMessage(), e);
+      OBDal.getInstance().rollbackAndClose();
+      log.error(e.getMessage());
+      JSONObject obj = getAttachmentJSONObject(tab, recordIds);
+      try {
+        obj.put("buttonId", parameters.get("buttonId"));
+        obj.put("viewId", parameters.get("viewId"));
+        obj.put("status", -1);
+        obj.put("errorMessage", e.getMessage());
+      } catch (Exception ex) {
+        // do nothing
+      }
+
+      return obj;
+      // // throw new OBException("", e);
     } finally {
       OBContext.restorePreviousMode();
     }

@@ -85,7 +85,6 @@ public class AttachImplementationManager {
     Organization org = OBDal.getInstance().get(Organization.class, strDocumentOrganization);
 
     Tab tab = OBDal.getInstance().get(Tab.class, strTab);
-
     if (file == null) {
       throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoFileToAttach"));
     }
@@ -247,6 +246,7 @@ public class AttachImplementationManager {
       HashMap<String, Integer> writtenFiles = new HashMap<String, Integer>();
       OBCriteria<Attachment> attachmentFiles = OBDao.getFilteredCriteria(Attachment.class,
           Restrictions.eq("table.id", tableId), Restrictions.in("record", recordIds.split(",")));
+      attachmentFiles.setFilterOnReadableOrganization(false);
       for (Attachment attachmentFile : attachmentFiles.list()) {
         checkReadableAccess(attachmentFile);
         AttachImplementation handler = getHandler(attachmentFile.getAttachmentMethod() == null ? "Default"
@@ -332,6 +332,7 @@ public class AttachImplementationManager {
     obc.add(Restrictions.eq(Attachment.PROPERTY_RECORD, recordId));
     obc.add(Restrictions.eq(Attachment.PROPERTY_TABLE, table));
     obc.addOrderBy(Attachment.PROPERTY_SEQUENCENUMBER, false);
+    obc.setFilterOnReadableOrganization(false);
     obc.setMaxResults(1);
     if (obc.uniqueResult() != null) {
       Attachment attach = (Attachment) obc.uniqueResult();
@@ -357,6 +358,7 @@ public class AttachImplementationManager {
     obc.add(Restrictions.eq(Attachment.PROPERTY_RECORD, recordId));
     obc.add(Restrictions.eq(Attachment.PROPERTY_NAME, fileName));
     obc.add(Restrictions.eq(Attachment.PROPERTY_TABLE, table));
+    obc.setFilterOnReadableOrganization(false);
     obc.setMaxResults(1);
     return (Attachment) obc.uniqueResult();
   }

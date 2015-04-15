@@ -336,6 +336,10 @@ isc.OBAttachmentsLayout.addProperties({
               name: 'inpwindowId',
               type: 'hidden',
               value: this.canvas.windowId
+            }, {
+              name: 'viewId',
+              type: 'hidden',
+              value: this.canvas.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.view.ID
             }],
             encoding: 'multipart',
             action: './businessUtility/TabAttachments_FS.html',
@@ -466,13 +470,17 @@ isc.OBAttachmentsLayout.addProperties({
           Command: 'DELETE',
           tabId: this.canvas.tabId,
           buttonId: this.canvas.ID,
-          recordIds: this.canvas.recordId
+          recordIds: this.canvas.recordId,
+          viewId: this.canvas.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.ID
         };
         var canvas = this.canvas;
         isc.confirm(OB.I18N.getLabel('OBUIAPP_ConfirmRemoveAll'), function (clickedOK) {
           if (clickedOK) {
             OB.RemoteCallManager.call('org.openbravo.client.application.window.AttachmentsAH', {}, d, function (response, data, request) {
               canvas.fillAttachments(data.attachments);
+              if (data.status === -1) {
+                OB.Utilities.writeErrorMessage(data.viewId, data.errorMessage);
+              }
             });
           }
         }, {
@@ -502,7 +510,8 @@ isc.OBAttachmentsLayout.addProperties({
         tabId: this.canvas.tabId,
         buttonId: this.canvas.ID,
         recordIds: this.canvas.recordId,
-        attachId: this.attachmentId
+        attachId: this.attachmentId,
+        viewId: this.canvas.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.ID
       },
           canvas = this.canvas;
 
@@ -510,6 +519,9 @@ isc.OBAttachmentsLayout.addProperties({
         if (clickedOK) {
           OB.RemoteCallManager.call('org.openbravo.client.application.window.AttachmentsAH', {}, d, function (response, data, request) {
             canvas.fillAttachments(data.attachments);
+            if (data.status === -1) {
+              OB.Utilities.writeErrorMessage(data.viewId, data.errorMessage);
+            }
           });
         }
       }, {
@@ -602,7 +614,7 @@ isc.OBAttachmentsLayout.addProperties({
         canvas: me,
         click: function () {
           var fileName, form = this.theForm,
-              addFunction, d;
+              addFunction, params;
           addFunction = function (clickedOK) {
             if (clickedOK) {
               var hTempLayout = isc.HLayout.create();
@@ -639,7 +651,7 @@ isc.OBAttachmentsLayout.addProperties({
                 }
               }
 
-              d = {
+              params = {
                 Command: 'EDIT_DESC_OB3',
                 tabId: form.getItem('inpTabId').value,
                 buttonId: form.getItem('buttonId').value,
@@ -649,12 +661,16 @@ isc.OBAttachmentsLayout.addProperties({
                 updatedMetadata: updatedValues,
                 inpname: form.getItem('inpname').value,
                 inpwindowId: form.getItem('inpwindowId').value,
-                recordId: form.getItem('inpKey').value
+                recordId: form.getItem('inpKey').value,
+                viewId: form.theCanvas.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.ID
               };
 
               form.popup.hide();
-              OB.RemoteCallManager.call('org.openbravo.client.application.window.AttachmentsAH', {}, d, function (response, data, request) {
+              OB.RemoteCallManager.call('org.openbravo.client.application.window.AttachmentsAH', {}, params, function (response, data, request) {
                 OB.Utilities.uploadFinished(data.buttonId, data);
+                if (data.status === -1) {
+                  OB.Utilities.writeErrorMessage(data.viewId, data.errorMessage);
+                }
               });
             }
           };
