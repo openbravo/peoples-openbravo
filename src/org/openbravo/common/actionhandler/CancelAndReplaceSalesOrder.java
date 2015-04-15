@@ -59,7 +59,6 @@ public class CancelAndReplaceSalesOrder extends BaseActionHandler {
       newOrder.setSummedLineAmount(BigDecimal.ZERO);
       Date today = new Date();
       newOrder.setOrderDate(today);
-      newOrder.setScheduledDeliveryDate(today);
       String newDocumentNo = FIN_Utility
           .getDocumentNo(oldOrder.getDocumentType(), Order.TABLE_NAME);
       newOrder.setDocumentNo(newDocumentNo);

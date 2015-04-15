@@ -54,6 +54,7 @@ import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
+import org.openbravo.model.materialmgmt.onhandquantity.Reservation;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.service.db.CallStoredProcedure;
@@ -172,6 +173,8 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseActionHandler {
             nettingGoodsShipment.setSalesOrder(null);
             nettingGoodsShipment.setPosted("N");
             nettingGoodsShipment.setProcessed(false);
+            nettingGoodsShipment.setDocumentStatus("DR");
+            nettingGoodsShipment.setDocumentAction("CO");
             OBDal.getInstance().flush();
             String nettingGoodsShipmentDocumentNo = FIN_Utility.getDocumentNo(
                 nettingGoodsShipment.getDocumentType(), ShipmentInOut.TABLE_NAME);
@@ -206,6 +209,8 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseActionHandler {
             nettingGoodsShipment.setSalesOrder(null);
             nettingGoodsShipment.setPosted("N");
             nettingGoodsShipment.setProcessed(false);
+            nettingGoodsShipment.setDocumentStatus("DR");
+            nettingGoodsShipment.setDocumentAction("CO");
             OBDal.getInstance().flush();
             String nettingGoodsShipmentDocumentNo = FIN_Utility.getDocumentNo(
                 nettingGoodsShipment.getDocumentType(), ShipmentInOut.TABLE_NAME);
@@ -221,7 +226,7 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseActionHandler {
 
         }
         // For the oldOrderLine
-        newGoodsShipmentLine1.setLineNo(10 * lineNoCounter);
+        newGoodsShipmentLine1.setLineNo(10 * lineNoCounter + 1);
         newGoodsShipmentLine1.setSalesOrderLine(oldOrderLine);
         newGoodsShipmentLine1.setShipmentReceipt(nettingGoodsShipment);
         OBDal.getInstance().save(newGoodsShipmentLine1);
@@ -233,6 +238,7 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseActionHandler {
         // Set old order delivered quantity to the ordered quantity
         oldOrderLine.setDeliveredQuantity(orderedQuantity);
         OBDal.getInstance().save(oldOrderLine);
+        OBDal.getInstance().flush();
 
         // For the inverseOrderLine
         newGoodsShipmentLine2.setLineNo(10 * lineNoCounter);
@@ -244,9 +250,10 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseActionHandler {
         OBDal.getInstance().save(newGoodsShipmentLine2);
         OBDal.getInstance().flush();
 
-        // Set inverse order delivered quantity to the ordered quantity
-        inverseOrderLine.setDeliveredQuantity(inverseOrderedQuantity);
+        // Set inverse order delivered quantity to zero
+        inverseOrderLine.setDeliveredQuantity(BigDecimal.ZERO);
         OBDal.getInstance().save(inverseOrderLine);
+        OBDal.getInstance().flush();
 
         // Increase counter
         lineNoCounter++;
@@ -257,7 +264,28 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseActionHandler {
       for (OrderLine newOrderLine : newOrderLineList) {
         OrderLine replacedOrderLine = newOrderLine.getReplacedorderline();
         if (replacedOrderLine != null) {
+          // Manage reservations
+          OBCriteria<Reservation> reservationCriteria = OBDal.getInstance().createCriteria(
+              Reservation.class);
+          reservationCriteria.add(Restrictions.eq(Reservation.PROPERTY_SALESORDERLINE,
+              replacedOrderLine));
+          reservationCriteria.setMaxResults(1);
+          Reservation reservation = (Reservation) reservationCriteria.uniqueResult();
+          if (reservation != null) {
+            Reservation newReservation = (Reservation) DalUtil.copy(reservation, true, true);
+            newReservation.setSalesOrderLine(newOrderLine);
+            newReservation.setReservedQty(BigDecimal.ZERO);
+            newReservation.setReleased(BigDecimal.ZERO);
+            OBDal.getInstance().save(newReservation);
+          }
+
           newOrderLine.setDeliveredQuantity(replacedOrderLine.getDeliveredQuantity());
+
+          // Set old order delivered quantity zero
+          replacedOrderLine.setDeliveredQuantity(BigDecimal.ZERO);
+          OBDal.getInstance().save(replacedOrderLine);
+          OBDal.getInstance().flush();
+
           newOrderLine.setInvoicedQuantity(replacedOrderLine.getInvoicedQuantity());
           OBCriteria<ShipmentInOutLine> goodsShipmentLineCriteria = OBDal.getInstance()
               .createCriteria(ShipmentInOutLine.class);
@@ -267,9 +295,9 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseActionHandler {
               replacedOrderLine.getLineNo()));
           goodsShipmentLineCriteria.addOrderBy(ShipmentInOutLine.PROPERTY_UPDATED, true);
           List<ShipmentInOutLine> goodsShipmentLineList = goodsShipmentLineCriteria.list();
-          if (goodsShipmentLineList.size() < 2) {
+          if (goodsShipmentLineList.size() < 1) {
             // Line without shipment
-          } else if (goodsShipmentLineList.size() > 2) {
+          } else if (goodsShipmentLineList.size() > 1) {
             throw new OBException("More than two goods shipment lines associated to a order line");
           } else {
             ShipmentInOutLine goodsShipmentLine = goodsShipmentLineList.get(0);
@@ -354,6 +382,10 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseActionHandler {
 
       // Complete inverse order
       callCOrderPost(inverseOrder);
+
+      // Complete nettingGoodsShipment
+      callMInoutPostPost(nettingGoodsShipment);
+
       // Close inverse order
       inverseOrder.setDocumentAction("CL");
       OBDal.getInstance().save(inverseOrder);
@@ -535,6 +567,14 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseActionHandler {
     parameters.add(null);
     parameters.add(order.getId());
     final String procedureName = "c_order_post1";
+    CallStoredProcedure.getInstance().call(procedureName, parameters, null, true, false);
+  }
+
+  private static void callMInoutPostPost(ShipmentInOut shipment) throws OBException {
+    final List<Object> parameters = new ArrayList<Object>();
+    parameters.add(null);
+    parameters.add(shipment.getId());
+    final String procedureName = "m_inout_post";
     CallStoredProcedure.getInstance().call(procedureName, parameters, null, true, false);
   }
 

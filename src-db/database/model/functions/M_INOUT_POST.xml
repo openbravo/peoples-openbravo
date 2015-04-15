@@ -520,7 +520,7 @@
             (SELECT *
             FROM M_INOUTLINE
             WHERE M_InOut_ID=Cur_InOut.M_InOut_ID
-              AND IsActive='Y'  FOR UPDATE
+              AND IsActive='Y' ORDER BY line FOR UPDATE
             )
           LOOP
             -- Incomming or Outgoing :1:2
