@@ -78,7 +78,8 @@ public class UpdateAttachmentMetadataHandler extends BaseActionHandler {
           final List<AttachmentMetadata> attachmeta = crit.list();
           for (AttachmentMetadata am : attachmeta) {
             JSONObject metadata = new JSONObject();
-            metadata.put("metadata", am.getName());
+            metadata.put("Name", am.getName());
+            metadata.put("SearchKey", am.getValue());
             metadataArray.put(metadata);
           }
         }

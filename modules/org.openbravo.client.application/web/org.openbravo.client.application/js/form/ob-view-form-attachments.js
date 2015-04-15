@@ -287,8 +287,8 @@ isc.OBAttachmentsLayout.addProperties({
               for (j = 0; j < data.attMetadataList.length; j++) {
                 metadataFields[j] = isc.DynamicForm.create({
                   fields: [{
-                    name: "inpMetadata" + j,
-                    title: data.attMetadataList[j].metadata,
+                    name: data.attMetadataList[j].SearchKey,
+                    title: data.attMetadataList[j].Name,
                     type: 'text'
                   }]
                 });
@@ -541,8 +541,8 @@ isc.OBAttachmentsLayout.addProperties({
           for (j = 0; j < data.attMetadataList.length; j++) {
             metadataFields[j] = isc.DynamicForm.create({
               fields: [{
-                name: "inpMetadata" + j,
-                title: data.attMetadataList[j].metadata,
+                name: data.attMetadataList[j].SearchKey,
+                title: data.attMetadataList[j].Name,
                 type: 'text',
                 value: data.attMetadataList[j].value
               }]
