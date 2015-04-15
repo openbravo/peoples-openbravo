@@ -208,6 +208,7 @@ create.database: creates the database from scratch.
         </fileset>
       </classpath>
       <transaction>
+        DROP DATABASE IF EXISTS ${bbdd.sid};
         CREATE DATABASE ${bbdd.sid}
                   WITH ENCODING='UTF8'
                   OWNER=${bbdd.user}
