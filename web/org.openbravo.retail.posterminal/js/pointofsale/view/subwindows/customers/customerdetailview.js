@@ -238,5 +238,25 @@ enyo.kind({
     modelProperty: 'email',
     i18nLabel: 'OBPOS_LblEmail',
     readOnly: true
+  }, {
+    kind: 'OB.UI.CustomerTextProperty',
+    name: 'customerPriceList',
+    modelProperty: 'priceList',
+    i18nLabel: 'OBPOS_PriceList',
+    readOnly: true,
+    loadValue: function (inSender, inEvent) {
+      if (inEvent.customer !== undefined) {
+        if (inEvent.customer.get(this.modelProperty) !== undefined) {
+          OB.UTIL.getPriceListName(inEvent.customer.get(this.modelProperty), this, function (name) {
+            this.setValue(name);
+          });
+        }
+      } else {
+        this.setValue('');
+      }
+    },
+    displayLogic: function () {
+      return OB.MobileApp.model.hasPermission('EnableMultiPriceList', true);
+    }
   }]
 });

@@ -1365,7 +1365,6 @@
 
     },
     loadAutomaticDiscount: function (callback) {
-      OB.debug('loadAutomaticDiscount...');
       var me = this;
       if (!this.get('priceList') || (this.get('autoDiscountsPriceList') && this.get('autoDiscountsPriceList') === this.get('priceList'))) {
         if (callback) {
@@ -1373,7 +1372,6 @@
         }
         return;
       }
-      OB.debug('loadAutomaticDiscount... from local DB');
       OB.Dal.find(OB.Model.Discount, {
         _whereClause: "where m_offer_type_id not in (" + OB.Model.Discounts.getManualPromotions() + ") AND date('now') BETWEEN DATEFROM AND COALESCE(date(DATETO), date('9999-12-31'))"
         // filter by order price list

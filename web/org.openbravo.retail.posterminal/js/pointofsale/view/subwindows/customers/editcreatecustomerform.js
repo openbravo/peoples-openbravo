@@ -217,5 +217,47 @@ enyo.kind({
     modelProperty: 'email',
     i18nLabel: 'OBPOS_LblEmail',
     maxlength: 255
+  }, {
+    kind: 'OB.UI.CustomerComboProperty',
+    name: 'customerPriceList',
+    modelProperty: 'priceList',
+    //Required: property where the selected value will be get and where the value will be saved
+    modelPropertyText: 'priceList_name',
+    //optional: When saving, the property which will store the selected text
+    collectionName: 'PriceListList',
+    defaultValue: function () {
+      return OB.MobileApp.model.get('pricelist').id;
+    },
+    //Default value for new lines
+    retrievedPropertyForValue: 'm_pricelist_id',
+    //property of the retrieved model to get the value of the combo item
+    retrievedPropertyForText: 'name',
+    //property of the retrieved model to get the text of the combo item
+    //function to retrieve the data
+    fetchDataFunction: function (args) {
+      var me = this,
+          criteria;
+      criteria = {
+        _orderByClause: 'name asc'
+      };
+      OB.Dal.find(OB.Model.PriceList, criteria, function (data, args) {
+        //This function must be called when the data is ready
+        data.add([{
+          m_pricelist_id: OB.MobileApp.model.get('pricelist').id,
+          name: OB.MobileApp.model.get('pricelist').name
+        }], {
+          at: 0
+        });
+        me.dataReadyFunction(data, args);
+      }, function (error) {
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_ErrorGettingBPPriceList'));
+        //This function must be called when the data is ready
+        me.dataReadyFunction(null, args);
+      }, args);
+    },
+    i18nLabel: 'OBPOS_PriceList',
+    displayLogic: function () {
+      return OB.MobileApp.model.hasPermission('EnableMultiPriceList', true);
+    }
   }]
 });
