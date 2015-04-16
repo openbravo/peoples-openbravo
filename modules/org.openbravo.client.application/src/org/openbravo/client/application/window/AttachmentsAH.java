@@ -49,13 +49,51 @@ public class AttachmentsAH extends BaseActionHandler {
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) {
     OBContext.setAdminMode();
-    String tabId = parameters.get("tabId").toString();
-    Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+    String tabId = "";
+    Tab tab = null;
+    if (parameters.get("tabId") != null) {
+      tabId = parameters.get("tabId").toString();
+      tab = OBDal.getInstance().get(Tab.class, tabId);
+    }
+
     String recordIds = "";
     try {
+      final JSONObject request = new JSONObject(content);
+      String action = "";
+      if (!request.isNull("action")) {
+        action = request.getString("action");
+      }
       AttachImplementationManager aim = WeldUtils
           .getInstanceFromStaticBeanManager(AttachImplementationManager.class);
-      if (parameters.get("Command").equals("DELETE")) {
+
+      if ("INITIALIZE".equals(action) || "INITIALIZE_EDIT".equals(action)) {
+        JSONObject response = new JSONObject();
+        AttachmentMethod attMethod = null;
+        Attachment attachment = null;
+        if ("INITIALIZE".equals(action)) {
+          attMethod = aim.getAttachmenMethod(OBContext.getOBContext().getCurrentClient());
+        } else {
+          final String attachId = request.getString("attachId");
+          attachment = OBDal.getInstance().get(Attachment.class, attachId);
+          attMethod = attachment.getAttachmentMethod();
+        }
+        JSONArray metadataArray = new JSONArray();
+
+        for (AttachmentMetadata am : attMethod.getCAttachmentMetadataList()) {
+          JSONObject metadata = new JSONObject();
+          metadata.put("Name", am.getName());
+          metadata.put("SearchKey", am.getValue());
+          metadataArray.put(metadata);
+
+        }
+        response.put("attMetadataList", metadataArray);
+        if ("INITIALIZE_EDIT".equals(action)) { // get MetadataValues
+          aim.getMetadataValues(attachment, metadataArray);
+        }
+        return response;
+      }
+
+      else if (parameters.get("Command").equals("DELETE")) {
 
         recordIds = parameters.get("recordIds").toString();
         String attachmentId = (String) parameters.get("attachId");
