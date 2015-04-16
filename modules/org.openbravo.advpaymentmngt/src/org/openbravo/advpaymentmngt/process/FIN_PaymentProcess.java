@@ -111,7 +111,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
     fpp.processPayment(payment, strAction, isPosOrder, paymentDate, comingFrom);
   }
 
-  public void processPayment(FIN_Payment payment, String strAction, Boolean isPosOrder,
+  private void processPayment(FIN_Payment payment, String strAction, Boolean isPosOrder,
       String paymentDate, String comingFrom) throws OBException {
     dao = new AdvPaymentMngtDao();
     String msg = "";
@@ -156,14 +156,14 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
         }
       }
 
-      OBDal.getInstance().flush();
       if (strAction.equals("P") || strAction.equals("D")) {
         // Guess if this is a refund payment
         boolean isRefund = false;
         OBContext.setAdminMode(false);
         try {
-          if (payment.getFINPaymentDetailList().size() > 0) {
-            for (FIN_PaymentDetail det : payment.getFINPaymentDetailList()) {
+          List<FIN_PaymentDetail> paymentDetailList = payment.getFINPaymentDetailList();
+          if (paymentDetailList.size() > 0) {
+            for (FIN_PaymentDetail det : paymentDetailList) {
               if (det.isRefund()) {
                 isRefund = true;
                 break;
