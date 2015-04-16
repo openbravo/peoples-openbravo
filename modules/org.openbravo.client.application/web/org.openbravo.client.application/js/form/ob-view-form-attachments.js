@@ -311,7 +311,9 @@ isc.OBAttachmentsLayout.addProperties({
             fields: [{
               name: 'inpname',
               title: attachmentFile,
-              type: 'upload'
+              type: 'upload',
+              multiple: false,
+              canFocus: false
             }, {
               name: 'Command',
               type: 'hidden',
