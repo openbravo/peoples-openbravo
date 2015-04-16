@@ -254,7 +254,8 @@ public class ReportManager {
     AttachImplementationManager aim = WeldUtils
         .getInstanceFromStaticBeanManager(AttachImplementationManager.class);
 
-    aim.upload(tableId, report.getDocumentId(), "103", vars.getOrg(), null, sourceFile);
+    aim.upload(vars.getSessionValue("inpTabId"), report.getDocumentId(), "103", vars.getOrg(),
+        null, sourceFile);
 
     report.setAttached(true);
 
