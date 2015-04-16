@@ -125,10 +125,7 @@ public class AttachmentsAH extends BaseActionHandler {
 
         Map<String, String> metadata = new HashMap<String, String>();
         for (AttachmentMetadata met : attachMethod.getCAttachmentMetadataList()) {
-          metadata.put(
-              met.getValue(),
-              "null".equals(metadataJson.get(met.getValue()).toString()) ? "" : metadataJson.get(
-                  met.getValue()).toString());
+          metadata.put(met.getValue(), metadataJson.get(met.getValue()).toString());
         }
 
         aim.update(attachmentId, tabId, metadata);
