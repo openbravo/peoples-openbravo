@@ -408,7 +408,7 @@ isc.OBAttachmentsLayout.addProperties({
           });
 
           //Calls Callback (INITIALIZE action) in order to create the form correctly and shows popup.
-          OB.RemoteCallManager.call('org.openbravo.event.UpdateAttachmentMetadataHandler', {
+          OB.RemoteCallManager.call('org.openbravo.client.application.window.AttachmentsAH', {
             action: "INITIALIZE"
           }, {}, callback);
 
@@ -679,9 +679,9 @@ isc.OBAttachmentsLayout.addProperties({
         }
       });
 
-      //Calls callback with EDIT action in order te 
-      OB.RemoteCallManager.call('org.openbravo.event.UpdateAttachmentMetadataHandler', {
-        action: "EDIT",
+      //Calls callback with INITIALIZE_EDIT action.
+      OB.RemoteCallManager.call('org.openbravo.client.application.window.AttachmentsAH', {
+        action: "INITIALIZE_EDIT",
         attachId: form.getItem('inpAttachId').value
       }, {}, callbackEdit);
     };
