@@ -47,7 +47,7 @@ public class CoreAttachImplementation extends AttachImplementation {
   // final public String DEFAULT = "Default";
 
   @Override
-  public void uploadFile(Attachment attachment, String strDataType, Map<String, Object> parameters,
+  public void uploadFile(Attachment attachment, String strDataType, Map<String, String> parameters,
       File file, String strTab) throws OBException {
     log.debug("CoreAttachImplemententation - Uploading files");
     String tableId = attachment.getTable().getId();
@@ -109,7 +109,7 @@ public class CoreAttachImplementation extends AttachImplementation {
   }
 
   @Override
-  public void updateFile(Attachment attachment, String strTab, Map<String, Object> parameters)
+  public void updateFile(Attachment attachment, String strTab, Map<String, String> parameters)
       throws OBException {
     log.debug("CoreAttachImplemententation - Updating files");
     attachment.setText(parameters.get(METADATA_DESCRIPTION).toString());

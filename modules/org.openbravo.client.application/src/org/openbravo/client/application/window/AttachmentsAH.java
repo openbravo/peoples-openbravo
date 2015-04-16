@@ -116,16 +116,19 @@ public class AttachmentsAH extends BaseActionHandler {
         JSONObject obj = getAttachmentJSONObject(tab, recordIds);
         obj.put("buttonId", parameters.get("buttonId"));
         return obj;
-      } else if (parameters.get("Command").equals("EDIT_DESC_OB3")) {
+      } else if (parameters.get("Command").equals("EDIT")) {
         recordIds = parameters.get("recordId").toString();
         String attachmentId = (String) parameters.get("attachId");
         AttachmentMethod attachMethod = OBDal.getInstance().get(Attachment.class, attachmentId)
             .getAttachmentMethod();
         JSONObject metadataJson = new JSONObject(parameters.get("updatedMetadata").toString());
 
-        Map<String, Object> metadata = new HashMap<String, Object>();
+        Map<String, String> metadata = new HashMap<String, String>();
         for (AttachmentMetadata met : attachMethod.getCAttachmentMetadataList()) {
-          metadata.put(met.getValue(), metadataJson.get(met.getValue()));
+          metadata.put(
+              met.getValue(),
+              "null".equals(metadataJson.get(met.getValue()).toString()) ? "" : metadataJson.get(
+                  met.getValue()).toString());
         }
 
         aim.update(attachmentId, tabId, metadata);

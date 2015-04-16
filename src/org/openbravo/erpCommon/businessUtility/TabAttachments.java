@@ -123,11 +123,11 @@ public class TabAttachments extends HttpSecureAppServlet {
           throw new OBException(OBMessageUtils.messageBD("ErrorUploadingFile"), e);
         }
         //
-        Map<String, Object> metadata = new HashMap<String, Object>();
+        Map<String, String> metadata = new HashMap<String, String>();
         AttachmentMethod attachMethod = aim.getAttachmenMethod(OBContext.getOBContext()
             .getCurrentClient());
         for (AttachmentMetadata met : attachMethod.getCAttachmentMetadataList()) {
-          metadata.put(met.getValue(), vars.getStringParameter(met.getValue()));
+          metadata.put(met.getValue(), vars.getStringParameter(met.getValue()).toString());
         }
 
         aim.upload(strTab, key, strDataType, strDocumentOrganization, metadata, tempFile);

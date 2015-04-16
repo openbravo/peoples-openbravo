@@ -82,7 +82,7 @@ public class AttachImplementationManager {
    *          The file to be uploaded
    */
   public void upload(String strTab, String strKey, String strDataType,
-      String strDocumentOrganization, Map<String, Object> parameters, File file) throws OBException {
+      String strDocumentOrganization, Map<String, String> parameters, File file) throws OBException {
     Organization org = OBDal.getInstance().get(Organization.class, strDocumentOrganization);
 
     Tab tab = OBDal.getInstance().get(Tab.class, strTab);
@@ -156,7 +156,7 @@ public class AttachImplementationManager {
    * @param parameters
    *          more metadata to be updated
    */
-  public void update(String attachID, String tabId, Map<String, Object> parameters)
+  public void update(String attachID, String tabId, Map<String, String> parameters)
       throws OBException {
     try {
       OBContext.setAdminMode(true);

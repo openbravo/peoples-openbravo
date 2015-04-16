@@ -575,7 +575,7 @@ isc.OBAttachmentsLayout.addProperties({
         }, {
           name: 'Command',
           type: 'hidden',
-          value: 'EDIT_DESC_OB3'
+          value: 'EDIT'
         }, {
           name: 'buttonId',
           type: 'hidden',
@@ -654,7 +654,7 @@ isc.OBAttachmentsLayout.addProperties({
               }
 
               params = {
-                Command: 'EDIT_DESC_OB3',
+                Command: 'EDIT',
                 tabId: form.getItem('inpTabId').value,
                 buttonId: form.getItem('buttonId').value,
                 //recordIds: this.canvas.recordId,
