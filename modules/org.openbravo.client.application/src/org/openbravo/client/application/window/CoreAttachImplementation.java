@@ -24,6 +24,8 @@ import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
 
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.ComponentProvider;
@@ -40,12 +42,13 @@ public class CoreAttachImplementation extends AttachImplementation {
   private Logger log = LoggerFactory.getLogger(OrderCreatePOLines.class);
 
   public static final String DEFAULT = "Default";
+  public static final String METADATA_DESCRIPTION = "Description";
 
   // final public String DEFAULT = "Default";
 
   @Override
-  public void uploadFile(Attachment attachment, String strDataType, String description,
-      Map<String, Object> parameters, File file, String strTab) throws OBException {
+  public void uploadFile(Attachment attachment, String strDataType, Map<String, Object> parameters,
+      File file, String strTab) throws OBException {
     log.debug("CoreAttachImplemententation - Uploading files");
     String tableId = attachment.getTable().getId();
     String strKey = attachment.getRecord();
@@ -68,7 +71,10 @@ public class CoreAttachImplementation extends AttachImplementation {
           + uploadedDir);
       throw new OBException(OBMessageUtils.messageBD("UnreachableDestination") + uploadedDir);
     }
-    attachment.setText(description);
+    if (parameters != null && parameters.get(METADATA_DESCRIPTION) != null) {
+      attachment.setText(parameters.get(METADATA_DESCRIPTION).toString());
+    }
+
     attachment.setPath(TabAttachments.getPath(strFileDir));
     attachment.setDataType(strDataType);
   }
@@ -103,10 +109,10 @@ public class CoreAttachImplementation extends AttachImplementation {
   }
 
   @Override
-  public void updateFile(Attachment attachment, String strTab, String description,
-      Map<String, Object> parameters) throws OBException {
+  public void updateFile(Attachment attachment, String strTab, Map<String, Object> parameters)
+      throws OBException {
     log.debug("CoreAttachImplemententation - Updating files");
-    attachment.setText(description);
+    attachment.setText(parameters.get(METADATA_DESCRIPTION).toString());
   }
 
   @Override
@@ -114,4 +120,18 @@ public class CoreAttachImplementation extends AttachImplementation {
     return false;
   }
 
+  @Override
+  public void getMetadataValues(Attachment attachment, JSONArray metadataArray) {
+    try {
+
+      for (int i = 0; i < metadataArray.length(); i++) {
+        if (METADATA_DESCRIPTION.equals(metadataArray.getJSONObject(i).get("SearchKey"))) {
+          metadataArray.getJSONObject(i).put("value", attachment.getText());
+        }
+      }
+    } catch (JSONException e) {
+      log.error("CoreAttachImplementation - getMetadataAndValues. Error with the json");
+      throw new OBException("JSONError", e);
+    }
+  }
 }

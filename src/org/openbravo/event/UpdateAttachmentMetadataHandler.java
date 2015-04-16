@@ -18,20 +18,20 @@
  */
 package org.openbravo.event;
 
-import java.util.List;
 import java.util.Map;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.criterion.Restrictions;
+import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.client.application.window.AttachImplementationManager;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
-import org.openbravo.model.ad.utility.AttachmentConfig;
+import org.openbravo.model.ad.utility.Attachment;
 import org.openbravo.model.ad.utility.AttachmentMetadata;
+import org.openbravo.model.ad.utility.AttachmentMethod;
 import org.openbravo.service.db.DbUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,34 +58,38 @@ public class UpdateAttachmentMetadataHandler extends BaseActionHandler {
       final JSONObject request = new JSONObject(content);
 
       final String action = request.getString("action");
-
+      AttachImplementationManager aim = WeldUtils
+          .getInstanceFromStaticBeanManager(AttachImplementationManager.class);
       // Action INITIALIZE: Populates the attachment metadata pop up
+      // Action EDIT populates the attachment metadata popup that the values that already have in
+      // the attachment
       if ("INITIALIZE".equals(action) || "EDIT".equals(action)) {
-        // Retrieves all metadata associated to Attachment Method configured.
-        OBCriteria<AttachmentConfig> criteria = OBDal.getInstance().createCriteria(
-            AttachmentConfig.class);
-        criteria.add(Restrictions.eq(AttachmentConfig.PROPERTY_ACTIVE, true));
-
+        AttachmentMethod attMethod = null;
+        Attachment attachment = null;
+        if ("INITIALIZE".equals(action)) {
+          attMethod = aim.getAttachmenMethod(OBContext.getOBContext().getCurrentClient());
+        } else {
+          final String attachId = request.getString("attachId");
+          attachment = OBDal.getInstance().get(Attachment.class, attachId);
+          attMethod = attachment.getAttachmentMethod();
+        }
         JSONArray metadataArray = new JSONArray();
 
-        final List<AttachmentConfig> attachconfig = criteria.list();
-        for (AttachmentConfig ac : attachconfig) {
-          // Retrieves the current selected value
-          OBCriteria<AttachmentMetadata> crit = OBDal.getInstance().createCriteria(
-              AttachmentMetadata.class);
-          crit.add(Restrictions.eq(AttachmentMetadata.PROPERTY_ATTACHMENTMETHOD,
-              ac.getAttachmentMethod()));
-          final List<AttachmentMetadata> attachmeta = crit.list();
-          for (AttachmentMetadata am : attachmeta) {
-            JSONObject metadata = new JSONObject();
-            metadata.put("Name", am.getName());
-            metadata.put("SearchKey", am.getValue());
-            metadataArray.put(metadata);
-          }
+        for (AttachmentMetadata am : attMethod.getCAttachmentMetadataList()) {
+          JSONObject metadata = new JSONObject();
+          metadata.put("Name", am.getName());
+          metadata.put("SearchKey", am.getValue());
+          // metadata.put("value", "");
+          metadataArray.put(metadata);
+
         }
         response.put("attMetadataList", metadataArray);
+        if ("EDIT".equals(action)) { // get MetadataValues
+          aim.getMetadataValues(attachment, metadataArray);
+        }
         return response;
       }
+
     } catch (Exception e) {
       OBDal.getInstance().rollbackAndClose();
       log.error("UpdateAttachmentMetadata error: " + e.getMessage(), e);

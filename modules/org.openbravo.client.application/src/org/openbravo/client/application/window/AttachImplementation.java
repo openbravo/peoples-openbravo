@@ -22,6 +22,7 @@ package org.openbravo.client.application.window;
 import java.io.File;
 import java.util.Map;
 
+import org.codehaus.jettison.json.JSONArray;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.model.ad.utility.Attachment;
 
@@ -39,8 +40,6 @@ public abstract class AttachImplementation {
    *          The attachment created in c_file with empty metadata
    * @param strDataType
    *          DataType of the attachment
-   * @param description
-   *          The description parameter/metadata
    * @param parameters
    *          A map with the metadata and its values to be updated in the corresponding file
    *          management system and in the attachment
@@ -49,7 +48,7 @@ public abstract class AttachImplementation {
    * @param strTab
    *          The tabID where the file is attached
    */
-  public abstract void uploadFile(Attachment attachment, String strDataType, String description,
+  public abstract void uploadFile(Attachment attachment, String strDataType,
       Map<String, Object> parameters, File file, String strTab) throws OBException;
 
   /**
@@ -75,12 +74,10 @@ public abstract class AttachImplementation {
    *          The attachment to be modified
    * @param strTab
    *          The tabID where the file was attached
-   * @param description
-   *          The description (metadata) to be modified
    * @param parameters
-   *          More metadata to be modified
+   *          The metadata to be modified
    */
-  public abstract void updateFile(Attachment attachment, String strTab, String description,
+  public abstract void updateFile(Attachment attachment, String strTab,
       Map<String, Object> parameters) throws OBException;
 
   /**
@@ -92,5 +89,18 @@ public abstract class AttachImplementation {
    *         does not create a temporary file
    */
   public abstract boolean isTempFile();
+
+  /**
+   * This methods completes the metadataArray with the values saved of each metadata in attachment
+   * 
+   * @param attachment
+   *          the attachment that is edited
+   * @param metadataArray
+   *          the metadata Array with JSONObject with the next estructure(Name, SearchKey, value):
+   *          Name: the Name of the metadata. SearchKey: the searchkey of the metadata. value: the
+   *          value that has this metadata in the c_file (attachment). This value, is the
+   *          information to be fulfilled by this method
+   */
+  public abstract void getMetadataValues(Attachment attachment, JSONArray metadataArray);
 
 }

@@ -32,6 +32,7 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.codehaus.jettison.json.JSONArray;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
@@ -51,6 +52,7 @@ import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.Attachment;
 import org.openbravo.model.ad.utility.AttachmentConfig;
+import org.openbravo.model.ad.utility.AttachmentMetadata;
 import org.openbravo.model.ad.utility.AttachmentMethod;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.utils.FileUtility;
@@ -80,8 +82,7 @@ public class AttachImplementationManager {
    *          The file to be uploaded
    */
   public void upload(String strTab, String strKey, String strDataType,
-      String strDocumentOrganization, String strText, Map<String, Object> parameters, File file)
-      throws OBException {
+      String strDocumentOrganization, Map<String, Object> parameters, File file) throws OBException {
     Organization org = OBDal.getInstance().get(Organization.class, strDocumentOrganization);
 
     Tab tab = OBDal.getInstance().get(Tab.class, strTab);
@@ -89,7 +90,7 @@ public class AttachImplementationManager {
       throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoFileToAttach"));
     }
 
-    AttachmentMethod attachMethod = getAttachmenMethod(org.getClient());
+    AttachmentMethod attachMethod = getAttachmenMethod(OBContext.getOBContext().getCurrentClient());
 
     String strName = file.getName();
 
@@ -99,7 +100,7 @@ public class AttachImplementationManager {
       attachment = getAttachment(tab.getTable(), strKey, strName);
       if (attachment == null) {
         attachment = OBProvider.getInstance().get(Attachment.class);
-        attachment.setClient(org.getClient());
+        attachment.setClient(OBContext.getOBContext().getCurrentClient());
         attachment.setSequenceNumber(getSequenceNumber(tab.getTable(), strKey));
         attachment.setName(strName);
         attachment.setTable(tab.getTable());
@@ -117,7 +118,7 @@ public class AttachImplementationManager {
       if (handler == null) {
         throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoMethod"));
       }
-      handler.uploadFile(attachment, strDataType, strText, parameters, file, strTab);
+      handler.uploadFile(attachment, strDataType, parameters, file, strTab);
       OBDal.getInstance().flush();
     } finally {
       OBContext.restorePreviousMode();
@@ -155,8 +156,8 @@ public class AttachImplementationManager {
    * @param parameters
    *          more metadata to be updated
    */
-  public void update(String attachID, String tabId, String description,
-      Map<String, Object> parameters) throws OBException {
+  public void update(String attachID, String tabId, Map<String, Object> parameters)
+      throws OBException {
     try {
       OBContext.setAdminMode(true);
 
@@ -172,7 +173,7 @@ public class AttachImplementationManager {
       if (handler == null) {
         throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoMethod"));
       }
-      handler.updateFile(attachment, tabId, description, parameters);
+      handler.updateFile(attachment, tabId, parameters);
       OBDal.getInstance().save(attachment);
       OBDal.getInstance().flush();
     } finally {
@@ -301,7 +302,25 @@ public class AttachImplementationManager {
 
   }
 
-  private AttachmentMethod getAttachmenMethod(Client client) {
+  /**
+   * Method to obtain the metadata related to an attachmentMethod. The Values will be null
+   * 
+   * @param attachmentMethodId
+   *          The attachment Method ID to take metadata
+   * @return Returns a map with the metadata that belongs to attachmentMethodId
+   */
+
+  public Map<String, Object> getMetadataList(String attachmentMethodId) {
+    AttachmentMethod attachmentMethod = OBDal.getInstance().get(AttachmentMethod.class,
+        attachmentMethodId);
+    Map<String, Object> metadataList = new HashMap<String, Object>();
+    for (AttachmentMetadata metadata : attachmentMethod.getCAttachmentMetadataList()) {
+      metadataList.put(metadata.getValue(), null);
+    }
+    return metadataList;
+  }
+
+  public AttachmentMethod getAttachmenMethod(Client client) {
     OBCriteria<AttachmentConfig> obc = OBDal.getInstance().createCriteria(AttachmentConfig.class);
     obc.add(Restrictions.eq(AttachmentConfig.PROPERTY_CLIENT, client));
     obc.setMaxResults(1);
@@ -316,6 +335,18 @@ public class AttachImplementationManager {
     } else {
       throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoMethod"));
     }
+  }
+
+  public void getMetadataValues(Attachment attachment, JSONArray metadataArray) {
+    checkReadableAccess(attachment);
+
+    AttachImplementation handler = getHandler(attachment.getAttachmentMethod() == null ? "Default"
+        : attachment.getAttachmentMethod().getValue());
+    if (handler == null) {
+      throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoMethod"));
+    }
+    handler.getMetadataValues(attachment, metadataArray);
+
   }
 
   /**

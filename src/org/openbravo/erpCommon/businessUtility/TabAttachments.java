@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.mail.internet.MimeUtility;
 import javax.servlet.ServletConfig;
@@ -51,6 +53,8 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.Attachment;
+import org.openbravo.model.ad.utility.AttachmentMetadata;
+import org.openbravo.model.ad.utility.AttachmentMethod;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class TabAttachments extends HttpSecureAppServlet {
@@ -85,7 +89,6 @@ public class TabAttachments extends HttpSecureAppServlet {
       vars.setSessionValue("TabAttachments.windowId", strWindow);
       final String key = vars.getStringParameter("inpKey");
       vars.setSessionValue("TabAttachments.key", key);
-      final String strText = vars.getStringParameter("inpDescription");
       final String strDataType = vars.getStringParameter("inpadDatatypeId");
 
       final String strDocumentOrganization = vars.getStringParameter("inpDocumentOrg");
@@ -119,8 +122,15 @@ public class TabAttachments extends HttpSecureAppServlet {
           log.error("Error creating temp file");
           throw new OBException(OBMessageUtils.messageBD("ErrorUploadingFile"), e);
         }
-        // TODO: get Params
-        aim.upload(strTab, key, strDataType, strDocumentOrganization, strText, null, tempFile);
+        //
+        Map<String, Object> metadata = new HashMap<String, Object>();
+        AttachmentMethod attachMethod = aim.getAttachmenMethod(OBContext.getOBContext()
+            .getCurrentClient());
+        for (AttachmentMetadata met : attachMethod.getCAttachmentMetadataList()) {
+          metadata.put(met.getValue(), vars.getStringParameter(met.getValue()));
+        }
+
+        aim.upload(strTab, key, strDataType, strDocumentOrganization, metadata, tempFile);
         obj = AttachmentsAH.getAttachmentJSONObject(tab, key);
         response.setContentType("text/html; charset=UTF-8");
         Writer writer = response.getWriter();

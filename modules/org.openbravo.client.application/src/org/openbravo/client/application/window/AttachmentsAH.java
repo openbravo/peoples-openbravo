@@ -20,6 +20,7 @@ package org.openbravo.client.application.window;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,6 +39,8 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.Attachment;
+import org.openbravo.model.ad.utility.AttachmentMetadata;
+import org.openbravo.model.ad.utility.AttachmentMethod;
 
 public class AttachmentsAH extends BaseActionHandler {
 
@@ -78,11 +81,17 @@ public class AttachmentsAH extends BaseActionHandler {
       } else if (parameters.get("Command").equals("EDIT_DESC_OB3")) {
         recordIds = parameters.get("recordId").toString();
         String attachmentId = (String) parameters.get("attachId");
-        String description = parameters.get("description").toString();
+        AttachmentMethod attachMethod = OBDal.getInstance().get(Attachment.class, attachmentId)
+            .getAttachmentMethod();
+        JSONObject metadataJson = new JSONObject(parameters.get("updatedMetadata").toString());
 
-        // TODO: call aim.update(attachmentId, tabId, parameters); (change methods to remove
-        // description from the input parameter)
-        aim.update(attachmentId, tabId, description, null);
+        Map<String, Object> metadata = new HashMap<String, Object>();
+        for (AttachmentMetadata met : attachMethod.getCAttachmentMetadataList()) {
+          metadata.put(met.getValue(), metadataJson.get(met.getValue()));
+        }
+
+        aim.update(attachmentId, tabId, metadata);
+
         JSONObject obj = getAttachmentJSONObject(tab, recordIds);
         obj.put("buttonId", parameters.get("buttonId"));
         return obj;

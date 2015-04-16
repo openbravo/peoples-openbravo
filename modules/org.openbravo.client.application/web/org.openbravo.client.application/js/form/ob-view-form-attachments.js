@@ -681,7 +681,8 @@ isc.OBAttachmentsLayout.addProperties({
 
       //Calls callback with EDIT action in order te 
       OB.RemoteCallManager.call('org.openbravo.event.UpdateAttachmentMetadataHandler', {
-        action: "EDIT"
+        action: "EDIT",
+        attachId: form.getItem('inpAttachId').value
       }, {}, callbackEdit);
     };
 
