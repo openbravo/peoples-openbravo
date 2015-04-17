@@ -1315,7 +1315,14 @@ public class FormInitializationComponent extends BaseActionHandler {
     }
 
     try {
-      String fieldId = "inp" + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName());
+      String fieldId = null;
+      if (field.getProperty() != null && !field.getProperty().isEmpty()) {
+        fieldId = "inp" + "_propertyField_"
+            + Sqlc.TransformaNombreColumna(field.getName()).replace(" ", "") + "_"
+            + field.getColumn().getDBColumnName();
+      } else {
+        fieldId = "inp" + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName());
+      }
       RequestContext.get().setRequestParameter(
           fieldId,
           jsonObj.has("classicValue") && jsonObj.get("classicValue") != null
