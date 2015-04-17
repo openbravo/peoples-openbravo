@@ -287,12 +287,16 @@ OB.UTIL.Math.sign = function (x) {
 };
 
 OB.UTIL.getPriceListName = function (priceListId, scope, callback) {
-  if (OB.MobileApp.model.get('pricelist').id === priceListId) {
-    callback.call(scope, OB.MobileApp.model.get('pricelist').name);
+  if (priceListId) {
+    if (OB.MobileApp.model.get('pricelist').id === priceListId) {
+      callback.call(scope, OB.MobileApp.model.get('pricelist').name);
+    } else {
+      OB.Dal.get(OB.Model.PriceList, priceListId, function (pList) {
+        callback.call(scope, pList.get('name'));
+      });
+    }
   } else {
-    OB.Dal.get(OB.Model.PriceList, priceListId, function (pList) {
-      callback.call(scope, pList.get('name'));
-    });
+    callback.call(scope, "");
   }
 
 };

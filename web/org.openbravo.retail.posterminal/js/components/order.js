@@ -32,6 +32,9 @@ enyo.kind({
   }, {
     name: 'receiptButtons'
   }],
+  events: {
+    onPricelistChanged: ''
+  },
   orderChanged: function (oldValue) {
     _.each(this.$.receiptLabels.$, function (comp) {
       if (comp.setOrder) {
@@ -43,6 +46,19 @@ enyo.kind({
         comp.setOrder(this.order);
       }
     }, this);
+    var me = this;
+    if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true)) {
+      this.order.on('change:priceList', function (model) {
+        _.each(me.$.receiptLabels.$, function (comp) {
+          if (comp.renderData) {
+            comp.renderData(model.get('documentNo'));
+          }
+        }, this);
+        me.doPricelistChanged({
+          priceList: model.get('priceList')
+        });
+      });
+    }
   },
   initComponents: function () {
     this.inherited(arguments);

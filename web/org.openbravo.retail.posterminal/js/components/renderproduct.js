@@ -40,7 +40,8 @@ enyo.kind({
     }]
   }, {
     name: 'price',
-    style: 'float: right; width: 27%; text-align: right; font-weight:bold;'
+    style: 'float: right; width: 27%; text-align: right; font-weight:bold;',
+    allowHtml: true
   }, {
     style: 'clear:both;'
   }, {
@@ -72,7 +73,15 @@ enyo.kind({
     if (this.model.get('showchdesc')) {
       this.$.bottonLine.setContent(this.model.get('characteristicDescription'));
     }
-    this.$.price.setContent(OB.I18N.formatCurrency(this.model.get('standardPrice')));
+    if (this.model.get('currentStandardPrice') && this.model.get('currentStandardPrice') !== "undefined") {
+      var price = OB.I18N.formatCurrency(this.model.get('currentStandardPrice'));
+      if (OB.MobileApp.model.hasPermission('ShowStandardPriceOnSearchAndBrowse', true)) {
+        price += '<br><span style="color: grey; font-size: 14px;">' + OB.I18N.formatCurrency(this.model.get('standardPrice')) + '</span>';
+      }
+      this.$.price.setContent(price);
+    } else {
+      this.$.price.setContent(OB.I18N.formatCurrency(this.model.get('standardPrice')));
+    }
 
     if (OB.MobileApp.model.get('permissions')["OBPOS_retail.productImages"]) {
       this.$.icon.applyStyle('background-image', 'url(' + OB.UTIL.getImageURL(this.model.get('id')) + '), url(' + "../org.openbravo.mobile.core/assets/img/box.png" + ')');

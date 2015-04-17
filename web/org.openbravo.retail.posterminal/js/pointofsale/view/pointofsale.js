@@ -77,7 +77,8 @@ enyo.kind({
     onSelectFilter: 'selectFilter',
     onShowLeftHeader: 'doShowLeftHeader',
     onWarehouseSelected: 'warehouseSelected',
-    onClearUserInput: 'clearUserInput'
+    onClearUserInput: 'clearUserInput',
+    onPricelistChanged: 'pricelistChanged'
   },
   events: {
     onShowPopup: '',
@@ -198,9 +199,9 @@ enyo.kind({
       kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalPaymentsSelect',
       name: 'modalPaymentsSelect'
     }, {
-        kind: 'OB.UI.ModalModulesInDev',
-        name: 'modalModulesInDev'
-      }]
+      kind: 'OB.UI.ModalModulesInDev',
+      name: 'modalModulesInDev'
+    }]
   }, {
     name: 'mainSubWindow',
     isMainSubWindow: true,
@@ -934,6 +935,9 @@ enyo.kind({
   },
   clearUserInput: function (inSender, inEvent) {
     this.waterfall('onClearEditBox', inEvent);
+  },
+  pricelistChanged: function (inSender, inEvent) {
+    this.waterfall('onChangePricelist', inEvent);
   },
   init: function () {
     var receipt, receiptList, LeftColumnCurrentView;

@@ -19,8 +19,7 @@ enyo.kind({
   },
   initComponents: function () {},
   renderData: function (docNo) {
-    var content, me = this,
-        orderDate = this.order.get('orderDate');
+    var content, orderDate = this.order.get('orderDate');
     if (this.order.get('hasbeenpaid') === 'Y' || this.order.get('isLayaway')) {
       orderDate = this.order.get('creationDate');
     }
@@ -29,13 +28,7 @@ enyo.kind({
     } else {
       content = orderDate + ' - ' + docNo;
     }
-    OB.UTIL.HookManager.executeHooks('OBPOS_OrderDetailContentHook', {
-      content: content,
-      docNo: docNo,
-      order: me.order
-    }, function (args) {
-      me.setContent(args.content);
-    });
+    this.setContentDetail(content, docNo);
   },
   renderDataFromModel: function (order) {
     var content, me = this,
@@ -49,14 +42,30 @@ enyo.kind({
     } else {
       content = orderDate + ' - ' + docNo;
     }
-    OB.UTIL.HookManager.executeHooks('OBPOS_OrderDetailContentHook', {
-      content: content,
-      docNo: docNo,
-      order: order,
-      orderDate: orderDate
-    }, function (args) {
-      me.setContent(args.content);
-    });
+    this.setContentDetail(content, docNo);
+  },
+  setContentDetail: function (content, docNo) {
+    var me = this;
+    if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true)) {
+      OB.UTIL.getPriceListName(this.order.get('priceList'), this, function (priceListName) {
+        content += " - " + priceListName;
+        OB.UTIL.HookManager.executeHooks('OBPOS_OrderDetailContentHook', {
+          content: content,
+          docNo: docNo,
+          order: me.order
+        }, function (args) {
+          me.setContent(args.content);
+        });
+      });
+    } else {
+      OB.UTIL.HookManager.executeHooks('OBPOS_OrderDetailContentHook', {
+        content: content,
+        docNo: docNo,
+        order: me.order
+      }, function (args) {
+        me.setContent(args.content);
+      });
+    }
   },
   orderChanged: function (oldValue) {
     this.renderData(this.order.get('documentNo'));
