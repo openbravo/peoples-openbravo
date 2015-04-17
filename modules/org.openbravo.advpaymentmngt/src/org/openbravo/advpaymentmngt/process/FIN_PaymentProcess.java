@@ -80,6 +80,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
       // retrieve custom params
       final String strAction = (String) bundle.getParams().get("action");
       final String comingFrom = (String) bundle.getParams().get("comingFrom");
+      final String selectedCreditLineIds = (String) bundle.getParams().get("selectedCreditLineIds");
       // retrieve standard params
       final String recordID = (String) bundle.getParams().get("Fin_Payment_ID");
       final FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, recordID);
@@ -90,7 +91,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
         isPosOrder = bundle.getParams().get("isPOSOrder").equals("Y");
       }
       final String paymentDate = (String) bundle.getParams().get("paymentdate");
-      processPayment(payment, strAction, isPosOrder, paymentDate, comingFrom);
+      processPayment(payment, strAction, isPosOrder, paymentDate, comingFrom, selectedCreditLineIds);
       bundle.setResult(msg);
     } catch (Exception e) {
       log4j.error(e.getMessage());
@@ -106,11 +107,11 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
   public static void doProcessPayment(FIN_Payment payment, String strAction, Boolean isPosOrder,
       String paymentDate, String comingFrom) throws OBException {
     FIN_PaymentProcess fpp = WeldUtils.getInstanceFromStaticBeanManager(FIN_PaymentProcess.class);
-    fpp.processPayment(payment, strAction, isPosOrder, paymentDate, comingFrom);
+    fpp.processPayment(payment, strAction, isPosOrder, paymentDate, comingFrom, null);
   }
 
   private void processPayment(FIN_Payment payment, String strAction, Boolean isPosOrder,
-      String paymentDate, String comingFrom) throws OBException {
+      String paymentDate, String comingFrom, String selectedCreditLineIds) throws OBException {
     dao = new AdvPaymentMngtDao();
     String msg = "";
     try {
@@ -282,7 +283,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
             payment.setUsedCredit(paymentAmount.subtract(payment.getAmount()));
           }
           if (payment.getUsedCredit().compareTo(BigDecimal.ZERO) != 0) {
-            updateUsedCredit(payment);
+            updateUsedCredit(payment, selectedCreditLineIds);
           }
 
           payment.setWriteoffAmount(paymentWriteOfAmount);
@@ -632,7 +633,8 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
         String newStrAction = "P";
         FIN_PaymentProcess fpp = WeldUtils
             .getInstanceFromStaticBeanManager(FIN_PaymentProcess.class);
-        fpp.processPayment(reversedPayment, newStrAction, isPosOrder, paymentDate, comingFrom);
+        fpp.processPayment(reversedPayment, newStrAction, isPosOrder, paymentDate, comingFrom,
+            selectedCreditLineIds);
 
         return;
 
@@ -1149,23 +1151,29 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
     return true;
   }
 
-  private void updateUsedCredit(FIN_Payment newPayment) {
+  private void updateUsedCredit(FIN_Payment newPayment, String selectedCreditLineIds) {
     if (newPayment.getFINPaymentCreditList().isEmpty()) {
       // We process the payment from the Payment In/Out window (not from the Process Invoice flow)
       final BigDecimal usedAmount = newPayment.getUsedCredit();
       final BusinessPartner bp = newPayment.getBusinessPartner();
       final boolean isReceipt = newPayment.isReceipt();
       final Organization Org = newPayment.getOrganization();
-
+      List<FIN_Payment> selectedCreditPayments = null;
+      if (selectedCreditLineIds != null) {
+        selectedCreditPayments = FIN_Utility.getOBObjectList(FIN_Payment.class,
+            selectedCreditLineIds);
+      }
       final OBCriteria<FIN_Payment> reversepayment = OBDal.getInstance().createCriteria(
           FIN_Payment.class);
       reversepayment.add(Restrictions.eq(FIN_Payment.PROPERTY_REVERSEDPAYMENT, newPayment));
       final FIN_Payment reversepaymnt = (FIN_Payment) reversepayment.uniqueResult();
 
       List<FIN_Payment> creditPayments;
-      if (reversepaymnt == null) {
+      if (reversepaymnt == null && selectedCreditLineIds == null) {
         // Normal scenario
         creditPayments = dao.getCustomerPaymentsWithCredit(Org, bp, isReceipt);
+      } else if (selectedCreditLineIds != null) {
+        creditPayments = selectedCreditPayments;
       } else {
         // If it is a reverse payment use its original payment
         creditPayments = new ArrayList<FIN_Payment>(1);
