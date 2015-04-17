@@ -18,6 +18,8 @@
  */
 package org.openbravo.client.application.window;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -125,7 +127,8 @@ public class AttachmentsAH extends BaseActionHandler {
 
         Map<String, String> metadata = new HashMap<String, String>();
         for (AttachmentMetadata met : attachMethod.getCAttachmentMetadataList()) {
-          metadata.put(met.getValue(), metadataJson.get(met.getValue()).toString());
+          metadata.put(met.getValue(),
+              URLDecoder.decode(metadataJson.get(met.getValue()).toString(), "UTF-8"));
         }
 
         aim.update(attachmentId, tabId, metadata);
@@ -138,6 +141,8 @@ public class AttachmentsAH extends BaseActionHandler {
       }
     } catch (JSONException e) {
       throw new OBException("Error while removing file", e);
+    } catch (UnsupportedEncodingException e) {
+      throw new OBException("Error decoding parameter", e);
     } catch (OBException e) {
       // throw new OBException(e.getMessage(), e);
       OBDal.getInstance().rollbackAndClose();

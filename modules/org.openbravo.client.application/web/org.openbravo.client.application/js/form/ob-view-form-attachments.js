@@ -648,11 +648,11 @@ isc.OBAttachmentsLayout.addProperties({
                   updatedValues = {};
               for (i = 0; i < itemsList.items.length; i++) {
                 if ((itemsList.items[i].name !== "Command") & (itemsList.items[i].name !== "buttonId") & (itemsList.items[i].name !== "inpTabId") & (itemsList.items[i].name !== "inpAttachId") & (itemsList.items[i].name !== "inpname") & (itemsList.items[i].name !== "inpwindowId") & (itemsList.items[i].name !== "inpKey") & (itemsList.items[i].name !== "inpDocumentOrg")) {
-                	if (itemsList.items[i]._value === null){
-                		updatedValues[itemsList.items[i].name] = "";
-                	}else{
-                		updatedValues[itemsList.items[i].name] = itemsList.items[i]._value;
-                	}
+                  if (itemsList.items[i]._value === null) {
+                    updatedValues[itemsList.items[i].name] = encodeURIComponent("");
+                  } else {
+                    updatedValues[itemsList.items[i].name] = encodeURIComponent(itemsList.items[i]._value);
+                  }
                 }
               }
 
