@@ -12996,8 +12996,7 @@ public class TestCosting extends BaseDataSourceTestDal {
             } else {
               assertEquals(accountingFact.getProduct().getId(), productId);
             }
-            if (line.getEntity().getProperty("uOM", false) == null
-                || doc.getEntityName().equals(ProductionTransaction.ENTITY_NAME)) {
+            if (line.getEntity().getProperty("uOM", false) == null) {
               assertEquals(accountingFact.getUOM(), null);
             } else {
               assertEquals(accountingFact.getUOM(), line.get("uOM"));
@@ -13030,8 +13029,7 @@ public class TestCosting extends BaseDataSourceTestDal {
 
         assertEquals(accountingFact.getPostingType(), "A");
 
-        if (doc.getEntityName().equals(ReceiptInvoiceMatch.ENTITY_NAME)
-            || doc.getEntityName().equals(ProductionTransaction.ENTITY_NAME)) {
+        if (doc.getEntityName().equals(ReceiptInvoiceMatch.ENTITY_NAME)) {
           assertEquals(accountingFact.getStorageBin(), null);
         } else if (doc.getEntityName().equals(InternalMovement.ENTITY_NAME)) {
           if (i % 2 == 0) {
