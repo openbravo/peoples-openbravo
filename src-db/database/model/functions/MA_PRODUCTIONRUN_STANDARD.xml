@@ -165,19 +165,21 @@
           END LOOP;
         END;
         Ad_Sequence_Next('MA_ToolsetUsed', v_Client_ID, v_ToolsetUsed_ID) ;
-        INSERT
-        INTO MA_ToolsetUsed
-          (
-            MA_ToolsetUsed_ID, AD_Client_ID, AD_Org_ID, Created,
-            Createdby, Isactive, M_ProductionPlan_ID, MA_Toolset_ID,
-            Updated, Updatedby, Used
-          )
-          VALUES
-          (
-            v_ToolsetUsed_ID, v_Client_ID, v_PlanOrg_ID, now(),
-            v_User_ID, 'Y', v_Record_ID, v_Toolset_ID,
-            now(), v_User_ID, Cur_ToolsetProcess.UseCoef*v_DoneQuantity
-          );
+	IF (v_Toolset_ID IS NOT NULL) THEN
+          INSERT
+	  INTO MA_ToolsetUsed
+            (
+              MA_ToolsetUsed_ID, AD_Client_ID, AD_Org_ID, Created,
+              Createdby, Isactive, M_ProductionPlan_ID, MA_Toolset_ID,
+              Updated, Updatedby, Used
+            )
+            VALUES
+            (
+              v_ToolsetUsed_ID, v_Client_ID, v_PlanOrg_ID, now(),
+              v_User_ID, 'Y', v_Record_ID, v_Toolset_ID,
+              now(), v_User_ID, Cur_ToolsetProcess.UseCoef*v_DoneQuantity
+            );
+        END IF;
       END LOOP;
       --Insert Products
       v_Line:=0;
