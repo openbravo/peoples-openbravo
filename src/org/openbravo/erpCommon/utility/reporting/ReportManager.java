@@ -231,7 +231,6 @@ public class ReportManager {
 
   public File createAttachmentForReport(ConnectionProvider connectionProvider, Report report,
       String tableId, VariablesSecureApp vars) throws ReportingException, IOException {
-    String path = null;
     if (report.isAttached())
       throw new ReportingException(Utility.messageBD(connectionProvider, "AttachmentExists",
           vars.getLanguage()));
