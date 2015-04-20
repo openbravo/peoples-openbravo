@@ -82,6 +82,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
       // retrieve custom params
       final String strAction = (String) bundle.getParams().get("action");
       final String comingFrom = (String) bundle.getParams().get("comingFrom");
+      final String selectedCreditLineIds = (String) bundle.getParams().get("selectedCreditLineIds");
       // retrieve standard params
       final String recordID = (String) bundle.getParams().get("Fin_Payment_ID");
       final FIN_Payment payment = dao.getObject(FIN_Payment.class, recordID);
@@ -286,7 +287,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
             payment.setUsedCredit(paymentAmount.subtract(payment.getAmount()));
           }
           if (payment.getUsedCredit().compareTo(BigDecimal.ZERO) != 0) {
-            updateUsedCredit(payment);
+            updateUsedCredit(payment, selectedCreditLineIds);
           }
 
           payment.setWriteoffAmount(paymentWriteOfAmount);
@@ -1281,7 +1282,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
     return true;
   }
 
-  private void updateUsedCredit(FIN_Payment newPayment) {
+  private void updateUsedCredit(FIN_Payment newPayment, String selectedCreditLineIds) {
     if (newPayment.getFINPaymentCreditList().isEmpty()) {
       // We process the payment from the Payment In/Out window (not from the Process Invoice flow)
       final BigDecimal usedAmount = newPayment.getUsedCredit();
@@ -1289,7 +1290,17 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
       final boolean isReceipt = newPayment.isReceipt();
       final Organization Org = newPayment.getOrganization();
 
-      List<FIN_Payment> creditPayments = dao.getCustomerPaymentsWithCredit(Org, bp, isReceipt);
+      List<FIN_Payment> selectedCreditPayments = null;
+      if (selectedCreditLineIds != null) {
+        selectedCreditPayments = FIN_Utility.getOBObjectList(FIN_Payment.class,
+            selectedCreditLineIds);
+      }
+      List<FIN_Payment> creditPayments;
+      if (selectedCreditLineIds == null) {
+        creditPayments = dao.getCustomerPaymentsWithCredit(Org, bp, isReceipt);
+      } else {
+        creditPayments = selectedCreditPayments;
+      }
       BigDecimal pendingToAllocateAmount = usedAmount;
       for (FIN_Payment creditPayment : creditPayments) {
         BigDecimal availableAmount = creditPayment.getGeneratedCredit().subtract(
