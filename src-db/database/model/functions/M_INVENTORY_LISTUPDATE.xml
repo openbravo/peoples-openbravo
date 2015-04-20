@@ -100,6 +100,29 @@
   */
   IF(NOT END_PROCESS) THEN
     v_ResultStr:='UpdatingLine';
+    DELETE FROM M_InventoryLine
+      WHERE M_Inventory_ID=v_Record_ID
+        AND (NOT EXISTS
+        (SELECT *
+        FROM M_Storage_Detail s
+        WHERE s.M_Product_ID=M_InventoryLine.M_Product_ID
+          AND s.M_Locator_ID=M_InventoryLine.M_Locator_ID
+          AND COALESCE(s.M_ATTRIBUTESETINSTANCE_ID, '0')=COALESCE(M_InventoryLine.M_ATTRIBUTESETINSTANCE_ID, '0')
+          AND s.C_UOM_ID=M_InventoryLine.C_UOM_ID
+          AND COALESCE(s.M_Product_UOM_ID, '-1')=COALESCE(M_InventoryLine.M_Product_UOM_ID, '-1')
+        ) OR EXISTS
+        (SELECT *
+        FROM M_Storage_Detail s
+        WHERE s.M_Product_ID=M_InventoryLine.M_Product_ID
+          AND s.M_Locator_ID=M_InventoryLine.M_Locator_ID
+          AND COALESCE(s.M_ATTRIBUTESETINSTANCE_ID, '0')=COALESCE(M_InventoryLine.M_ATTRIBUTESETINSTANCE_ID, '0')
+          AND s.C_UOM_ID=M_InventoryLine.C_UOM_ID
+          AND COALESCE(s.M_Product_UOM_ID, '-1')=COALESCE(M_InventoryLine.M_Product_UOM_ID, '-1')
+          AND s.QTYONHAND = 0
+          AND (s.QTYORDERONHAND = 0 OR s.QTYORDERONHAND IS NULL)
+        ))
+    ;
+
     UPDATE M_InventoryLine
       SET QtyBook=
       (SELECT QtyOnHand
