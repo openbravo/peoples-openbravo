@@ -324,6 +324,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         auxReceiptList.push(auxReceipt);
         if (auxReceiptList.length === me.get('multiOrders').get('multiOrdersList').length) {
           OB.UTIL.cashUpReport(auxReceiptList);
+          auxReceiptList = [];
         }
       }
 
