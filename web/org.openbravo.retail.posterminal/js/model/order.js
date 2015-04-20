@@ -1223,6 +1223,23 @@
     //Attrs is an object of attributes that will be set in order line
     createLine: function (p, units, options, attrs) {
       var me = this;
+
+      if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.product', true)) {
+        if (!localStorage['hgVolProducts']) {
+          localStorage['hgVolProducts'] = JSON.stringify([]);
+        }
+        var temp = JSON.parse(localStorage['hgVolProducts']);
+        if (!_.find(temp, function (id) {
+          return id === p.id;
+        })) {
+          OB.Dal.save(p, function () {}, function () {
+            OB.error(arguments);
+          }, true);
+        }
+
+        temp.push(p.id);
+        localStorage['hgVolProducts'] = JSON.stringify(temp);
+      }
       if (OB.MobileApp.model.get('permissions').OBPOS_NotAllowSalesWithReturn) {
         var negativeLines = _.filter(this.get('lines').models, function (line) {
           return line.get('qty') < 0;
@@ -2458,8 +2475,24 @@
       });
     },
     deleteCurrent: function (forceCreateNew) {
+      var i;
       if (!this.current) {
         return;
+      }
+      if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.product', true)) {
+        for (i = 0, max = this.current.get('lines').length; i < this.current.get('lines').length; i++) {
+          var temp = JSON.parse(localStorage['hgVolProducts']);
+          var p = this.current.get('lines').models[i].get('product');
+          temp.splice(_.indexOf(temp, p.id), 1);
+          localStorage['hgVolProducts'] = JSON.stringify(temp);
+          if (_.indexOf(temp, p.id) === -1) {
+            OB.Dal.remove(p, function () {
+              return true;
+            }, function () {
+              OB.UTIL.showError('Error removing');
+            });
+          }
+        }
       }
       this.remove(this.current);
       var createNew = forceCreateNew || this.length === 0;
