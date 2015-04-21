@@ -21,6 +21,7 @@ package org.openbravo.advpaymentmngt.process;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.APRM_FinaccTransactionV;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
@@ -108,9 +109,9 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
             payment.setStatus(payment.isReceipt() ? "RDNC" : "PWNC");
             transaction.setStatus(payment.isReceipt() ? "RDNC" : "PWNC");
             if (transaction.getPaymentAmount().compareTo(BigDecimal.ZERO) > 0) {
-             transaction.setTransactionType(TRXTYPE_BPWithdrawal);
+              transaction.setTransactionType(TRXTYPE_BPWithdrawal);
             } else {
-             transaction.setTransactionType(TRXTYPE_BPDeposit);
+              transaction.setTransactionType(TRXTYPE_BPDeposit);
             }
             OBDal.getInstance().save(payment);
             if (transaction.getDescription() == null || "".equals(transaction.getDescription())) {
@@ -131,6 +132,13 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
                   OBDal.getInstance().save(psd);
                 }
               }
+            }
+
+            if (!StringUtils.equals(transaction.getCurrency().getId(), payment.getCurrency()
+                .getId())) {
+              transaction.setForeignCurrency(payment.getCurrency());
+              transaction.setForeignConversionRate(payment.getFinancialTransactionConvertRate());
+              transaction.setForeignAmount(payment.getAmount());
             }
 
           } else {
