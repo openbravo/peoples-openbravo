@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014 Openbravo SLU 
+ * All portions are Copyright (C) 2014-15 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,7 +19,6 @@
 package org.openbravo.costing;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -86,19 +85,11 @@ public class PriceDifferenceByDateProcess extends BaseProcessActionHandler {
           new OrganizationStructureProvider().getChildTree(orgId, true));
       update.setDate("date", movementdate);
 
-      int updated = update.executeUpdate();
+      update.executeUpdate();
 
-      PriceDifferenceProcess.processPriceDifference(null, null);
-
-      Map<String, String> map = new HashMap<String, String>();
-      map.put("trxsNumber", Integer.toString(updated));
-
-      String messageText = OBMessageUtils.messageBD("PriceDifferenceChecked");
       JSONObject msg = new JSONObject();
-      msg.put("severity", "success");
-      msg.put("text", OBMessageUtils.parseTranslation(messageText, map));
+      msg = PriceDifferenceProcess.processPriceDifference(null, null);
       jsonRequest.put("message", msg);
-
     } catch (Exception e) {
       log.error("Error Process Price Correction", e);
 

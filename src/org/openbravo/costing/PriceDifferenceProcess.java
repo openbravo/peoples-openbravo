@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-15 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -21,6 +21,8 @@ package org.openbravo.costing;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -45,11 +47,12 @@ import org.openbravo.model.procurement.ReceiptInvoiceMatch;
 public class PriceDifferenceProcess {
   private static CostAdjustment costAdjHeader = null;
 
-  private static void calculateTransactionPriceDifference(MaterialTransaction materialTransaction)
+  private static boolean calculateTransactionPriceDifference(MaterialTransaction materialTransaction)
       throws OBException {
+    boolean costAdjCreated = false;
     if (materialTransaction.isCostPermanent()) {
       // Permanently adjusted transaction costs are not checked for price differences.
-      return;
+      return false;
     }
     Currency trxCurrency = materialTransaction.getCurrency();
     Organization trxOrg = materialTransaction.getOrganization();
@@ -58,7 +61,7 @@ public class PriceDifferenceProcess {
     ShipmentInOutLine receiptLine = materialTransaction.getGoodsShipmentLine();
     if (receiptLine == null || receiptLine.getShipmentReceipt().isSalesTransaction()) {
       // We can only adjust cost of receipt lines.
-      return;
+      return false;
     }
     BigDecimal receiptQty = receiptLine.getMovementQuantity();
     boolean isNegativeReceipt = receiptQty.signum() == -1;
@@ -139,11 +142,13 @@ public class PriceDifferenceProcess {
           Boolean.TRUE, costAdjDateAcct);
       costAdjLine.setNeedsPosting(Boolean.TRUE);
       OBDal.getInstance().save(costAdjLine);
+      costAdjCreated = true;
     }
 
     materialTransaction.setCheckpricedifference(Boolean.FALSE);
     OBDal.getInstance().save(materialTransaction);
     OBDal.getInstance().flush();
+    return costAdjCreated;
   }
 
   public static JSONObject processPriceDifferenceTransaction(MaterialTransaction materialTransaction)
@@ -187,8 +192,10 @@ public class PriceDifferenceProcess {
    */
   public static JSONObject processPriceDifference(Date date, Product product) throws OBException {
 
+    JSONObject message = null;
     costAdjHeader = null;
-
+    boolean costAdjCreated = false;
+    int count = 0;
     OBCriteria<MaterialTransaction> mTrxs = OBDal.getInstance().createCriteria(
         MaterialTransaction.class);
     if (date != null) {
@@ -205,29 +212,41 @@ public class PriceDifferenceProcess {
     try {
       while (lines.next()) {
         MaterialTransaction line = (MaterialTransaction) lines.get(0);
-        calculateTransactionPriceDifference(line);
+        costAdjCreated = calculateTransactionPriceDifference(line);
+        if (costAdjCreated) {
+          count++;
+        }
+
       }
     } finally {
       lines.close();
     }
+
+    Map<String, String> map = new HashMap<String, String>();
+    map.put("trxsNumber", Integer.toString(count));
+    String messageText = OBMessageUtils.messageBD("PriceDifferenceChecked");
+
     if (costAdjHeader != null) {
       OBDal.getInstance().flush();
-      JSONObject message = CostAdjustmentProcess.doProcessCostAdjustment(costAdjHeader);
+      message = CostAdjustmentProcess.doProcessCostAdjustment(costAdjHeader);
       try {
         if (message.get("severity") != "success") {
           throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@") + ": "
               + costAdjHeader.getDocumentNo() + " - " + message.getString("text"));
+        } else {
+          message.put("title", OBMessageUtils.messageBD("Success"));
+          message.put("text", OBMessageUtils.parseTranslation(messageText, map));
         }
       } catch (JSONException e) {
         throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@"));
       }
       return message;
     } else {
-      JSONObject message = new JSONObject();
       try {
+        message = new JSONObject();
         message.put("severity", "success");
-        message.put("title", "");
-        message.put("text", OBMessageUtils.messageBD("Success"));
+        message.put("title", OBMessageUtils.messageBD("Success"));
+        message.put("text", OBMessageUtils.parseTranslation(messageText, map));
       } catch (JSONException ignore) {
       }
       return message;
