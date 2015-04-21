@@ -52,7 +52,7 @@ public class Payments extends JSONProcessSimple {
 
       SimpleQueryBuilder querybuilder = new SimpleQueryBuilder(hqlPayments, OBContext
           .getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
-          .getCurrentOrganization().getId(), null);
+          .getCurrentOrganization().getId(), null, null, null);
 
       final Session session = OBDal.getInstance().getSession();
       final Query paymentsquery = session.createQuery(querybuilder.getHQLQuery());

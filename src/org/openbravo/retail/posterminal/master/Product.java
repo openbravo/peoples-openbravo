@@ -25,6 +25,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.mobile.core.model.HQLProperty;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
@@ -43,6 +44,50 @@ public class Product extends ProcessHQLQuery {
   @Any
   @Qualifier(productPropertyExtension)
   private Instance<ModelExtension> extensions;
+
+  @Override
+  protected List<HQLPropertyList> getHqlProperties() {
+    // Get Product Properties
+    List<HQLPropertyList> propertiesList = new ArrayList<HQLPropertyList>();
+    String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
+    final PriceList priceList = POSUtils.getPriceListByOrgId(orgId);
+    String posPrecision = "";
+    try {
+      OBContext.setAdminMode();
+      posPrecision = (priceList.getCurrency().getObposPosprecision() == null ? priceList
+          .getCurrency().getPricePrecision() : priceList.getCurrency().getObposPosprecision())
+          .toString();
+    } catch (Exception e) {
+      log.error("Error getting currency by id: " + e.getMessage(), e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    Map<String, Object> args = new HashMap<String, Object>();
+    args.put("posPrecision", posPrecision);
+
+    HQLPropertyList regularProductsHQLProperties = ModelExtensionUtils.getPropertyExtensions(
+        extensions, args);
+
+    // Get Filter Properties in the manual HQL discounts query
+    HQLPropertyList discountsHQLProperties = new HQLPropertyList();
+    List<HQLProperty> discountsHQLPropertiesList = new ArrayList<HQLProperty>();
+    String discountNameTrl;
+    if (OBContext.hasTranslationInstalled()) {
+      discountNameTrl = "coalesce ((select pt.name from PricingAdjustmentTrl pt where pt.promotionDiscount=p and pt.language='"
+          + OBContext.getOBContext().getLanguage().getLanguage() + "'), p.name) ";
+    } else {
+      discountNameTrl = "p.name";
+    }
+    discountsHQLPropertiesList.add(new HQLProperty(discountNameTrl, "searchkey"));
+    discountsHQLPropertiesList.add(new HQLProperty(discountNameTrl, "_identifier"));
+    discountsHQLProperties.addAll(discountsHQLPropertiesList);
+
+    propertiesList.add(regularProductsHQLProperties);
+    propertiesList.add(discountsHQLProperties);
+    propertiesList.add(regularProductsHQLProperties);
+
+    return propertiesList;
+  }
 
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
@@ -90,9 +135,10 @@ public class Product extends ProcessHQLQuery {
         + regularProductsHQLProperties.getHqlSelect()
         + "FROM OBRETCO_Prol_Product as pli left outer join pli.product.image img inner join pli.product as product, "
         + "PricingProductPrice ppp, " + "PricingPriceListVersion pplv "
-        + "WHERE (pli.obretcoProductlist = '" + productList.getId() + "') " + "AND (" + "pplv.id='"
-        + priceListVersion.getId() + "'" + ") AND (" + "ppp.priceListVersion.id = pplv.id"
-        + ") AND (" + "pli.product.id = ppp.product.id" + ") ";
+        + "WHERE  $filtersCriteria AND (pli.obretcoProductlist = '" + productList.getId() + "') "
+        + "AND (" + "pplv.id='" + priceListVersion.getId() + "'" + ") AND ("
+        + "ppp.priceListVersion.id = pplv.id" + ") AND (" + "pli.product.id = ppp.product.id"
+        + ") ";
 
     if (lastUpdated != null) {
       hql += "AND ((pli.product.$incrementalUpdateCriteria) OR (pli.$incrementalUpdateCriteria) OR (ppp.$incrementalUpdateCriteria)) ";
@@ -121,7 +167,7 @@ public class Product extends ProcessHQLQuery {
             + posPrecision
             + ") as standardPrice, p.obdiscUpc as uPCEAN, img.bindaryData as img, '[[null]]' as generic_product_id, 'false' as showchdesc, 'true' as ispack, 'false' as isGeneric , 'false' as stocked"//
             + "  from PricingAdjustment as p left outer join p.obdiscImage img" //
-            + " where p.discountType.obposIsCategory = true "//
+            + " where $filtersCriteria AND p.discountType.obposIsCategory = true "//
             + "   and p.discountType.active = true " //
             + "   and p.$readableSimpleClientCriteria"//
             + "   and (p.endingDate is null or p.endingDate >= TO_DATE('"
@@ -144,7 +190,7 @@ public class Product extends ProcessHQLQuery {
     products
         .add("select "
             + regularProductsHQLProperties.getHqlSelect()
-            + " from Product product left outer join product.image img left join product.oBRETCOProlProductList as pli left outer join product.pricingProductPriceList ppp where (product.$incrementalUpdateCriteria) and exists (select 1 from Product product2 left join product2.oBRETCOProlProductList as pli2, PricingProductPrice ppp2 where product.id = product2.genericProduct.id and product2 = ppp2.product and ppp2.priceListVersion.id = '"
+            + " from Product product left outer join product.image img left join product.oBRETCOProlProductList as pli left outer join product.pricingProductPriceList ppp where $filtersCriteria AND (product.$incrementalUpdateCriteria) and exists (select 1 from Product product2 left join product2.oBRETCOProlProductList as pli2, PricingProductPrice ppp2 where product.id = product2.genericProduct.id and product2 = ppp2.product and ppp2.priceListVersion.id = '"
             + priceListVersion.getId() + "' and pli2.obretcoProductlist.id = '"
             + productList.getId() + "')");
 
