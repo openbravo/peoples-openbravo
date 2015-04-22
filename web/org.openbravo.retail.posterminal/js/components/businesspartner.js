@@ -364,7 +364,13 @@ enyo.kind({
         value: filter
       };
     }
-
+    var filterIdentifier = {
+      columns: ['_identifier'],
+      operator: 'startsWith',
+      value: filter
+    };
+    var hgVolCriteria = [filterIdentifier];
+    criteria.hgVolFilters = hgVolCriteria;
     OB.Dal.find(OB.Model.BusinessPartner, criteria, successCallbackBPs, errorCallback);
     return true;
   },

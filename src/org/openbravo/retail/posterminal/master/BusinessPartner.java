@@ -8,6 +8,7 @@
  */
 package org.openbravo.retail.posterminal.master;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -32,6 +33,18 @@ public class BusinessPartner extends ProcessHQLQuery {
   private Instance<ModelExtension> extensions;
 
   @Override
+  protected List<HQLPropertyList> getHqlProperties() {
+    List<HQLPropertyList> propertiesList = new ArrayList<HQLPropertyList>();
+    HQLPropertyList regularBusinessPartnerHQLProperties = ModelExtensionUtils
+        .getPropertyExtensions(extensions);
+
+    propertiesList.add(regularBusinessPartnerHQLProperties);
+    propertiesList.add(regularBusinessPartnerHQLProperties);
+
+    return propertiesList;
+  }
+
+  @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
     Long lastUpdated = (jsonsent.has("lastUpdated") && jsonsent.get("lastUpdated") != null && !jsonsent
         .get("lastUpdated").equals("undefined")) ? jsonsent.getLong("lastUpdated") : null;
@@ -43,7 +56,7 @@ public class BusinessPartner extends ProcessHQLQuery {
     String hql = "SELECT "
         + regularBusinessPartnerHQLProperties.getHqlSelect() //
         + "FROM BusinessPartnerLocation AS bpl left outer join bpl.businessPartner.aDUserList AS ulist "
-        + "WHERE "
+        + "WHERE $filtersCriteria AND "
         + "bpl.invoiceToAddress = true AND "
         + "bpl.businessPartner.customer = true AND "
         + "bpl.businessPartner.priceList IS NOT NULL AND "
@@ -60,7 +73,7 @@ public class BusinessPartner extends ProcessHQLQuery {
     String hql2 = "SELECT"
         + regularBusinessPartnerHQLProperties.getHqlSelect() //
         + "FROM BusinessPartnerLocation AS bpl left outer join bpl.businessPartner.aDUserList AS ulist "
-        + "WHERE "
+        + "WHERE $filtersCriteria AND "
         + "bpl.invoiceToAddress = true AND "
         + "bpl.businessPartner.customer = true AND "
         + "bpl.businessPartner.priceList IS NOT NULL AND "
