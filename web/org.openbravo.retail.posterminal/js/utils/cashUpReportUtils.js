@@ -13,45 +13,27 @@
 
   OB.UTIL = window.OB.UTIL || {};
 
-  function findAndSave(cashuptaxes, i, finishCallback, trxName) {
-
-    var saveIfInTransaction, findIfInTransaction;
-
-    saveIfInTransaction = function (model, success, error, forceInsert) {
-      if (trxName) {
-        OB.Dal.saveInTransaction(trxName, model, success, error, forceInsert);
-      } else {
-        OB.Dal.save(model, success, error, forceInsert);
-      }
-    };
-
-    findIfInTransaction = function (model, whereClause, success, error, args) {
-      if (trxName) {
-        OB.Dal.findInTransaction(trxName, model, whereClause, success, error, args);
-      } else {
-        OB.Dal.find(model, whereClause, success, error, args);
-      }
-    };
+  function findAndSave(cashuptaxes, i, finishCallback, tx) {
 
     if (i < cashuptaxes.length) {
-      findIfInTransaction(OB.Model.TaxCashUp, {
+      OB.Dal.findInTransaction(tx, OB.Model.TaxCashUp, {
         'cashup_id': cashuptaxes[i].cashupID,
         'name': cashuptaxes[i].taxName,
         'orderType': cashuptaxes[i].taxOrderType
       }, function (tax) {
         if (tax.length === 0) {
-          saveIfInTransaction(new OB.Model.TaxCashUp({
+          OB.Dal.saveInTransaction(tx, new OB.Model.TaxCashUp({
             name: cashuptaxes[i].taxName,
             amount: cashuptaxes[i].taxAmount,
             orderType: cashuptaxes[i].taxOrderType,
             cashup_id: cashuptaxes[i].cashupID
           }), function () {
-            findAndSave(cashuptaxes, i + 1, finishCallback, trxName);
+            findAndSave(cashuptaxes, i + 1, finishCallback, tx);
           }, null);
         } else {
           tax.at(0).set('amount', OB.DEC.add(tax.at(0).get('amount'), cashuptaxes[i].taxAmount));
-          saveIfInTransaction(tax.at(0), function () {
-            findAndSave(cashuptaxes, i + 1, finishCallback, trxName);
+          OB.Dal.saveInTransaction(tx, tax.at(0), function () {
+            findAndSave(cashuptaxes, i + 1, finishCallback, tx);
           }, null);
         }
       });
@@ -62,24 +44,8 @@
     }
   }
 
-  function updateCashUpInfo(cashUp, receipt, j, callback, trxName) {
-    var cashuptaxes, order, orderType, gross, i, taxOrderType, taxAmount, auxPay, saveIfInTransaction, findIfInTransaction;
-
-    saveIfInTransaction = function (model, success, error, forceInsert) {
-      if (trxName) {
-        OB.Dal.saveInTransaction(trxName, model, success, error, forceInsert);
-      } else {
-        OB.Dal.save(model, success, error, forceInsert);
-      }
-    };
-
-    findIfInTransaction = function (model, whereClause, success, error, args) {
-      if (trxName) {
-        OB.Dal.findInTransaction(trxName, model, whereClause, success, error, args);
-      } else {
-        OB.Dal.find(model, whereClause, success, error, args);
-      }
-    };
+  function updateCashUpInfo(cashUp, receipt, j, callback, tx) {
+    var cashuptaxes, order, orderType, gross, i, taxOrderType, taxAmount, auxPay;
 
     if (j < receipt.length) {
       order = receipt[j];
@@ -113,7 +79,7 @@
           }
         });
         cashUp.at(0).set('totalRetailTransactions', OB.DEC.sub(cashUp.at(0).get('grossSales'), cashUp.at(0).get('grossReturns')));
-        saveIfInTransaction(cashUp.at(0), null, null);
+        OB.Dal.saveInTransaction(tx, cashUp.at(0), null, null);
 
         // group and sum the taxes
         cashuptaxes = [];
@@ -152,7 +118,7 @@
           });
         });
 
-        findIfInTransaction(OB.Model.PaymentMethodCashUp, {
+        OB.Dal.findInTransaction(tx, OB.Model.PaymentMethodCashUp, {
           'cashup_id': cashUp.at(0).get('id')
         }, function (payMthds) { //OB.Dal.find success
           _.each(order.get('payments').models, function (payment) {
@@ -169,13 +135,13 @@
             } else {
               auxPay.set('totalSales', OB.DEC.add(auxPay.get('totalSales'), payment.get('amount')));
             }
-            saveIfInTransaction(auxPay, null, null);
+            OB.Dal.saveInTransaction(tx, auxPay, null, null);
           }, this);
           findAndSave(cashuptaxes, 0, function () {
             OB.UTIL.composeCashupInfo(cashUp, null, function () {
-              updateCashUpInfo(cashUp, receipt, j + 1, callback, trxName);
-            }, trxName);
-          }, trxName);
+              updateCashUpInfo(cashUp, receipt, j + 1, callback, tx);
+            }, tx);
+          }, tx);
         });
       }
     } else if (typeof callback === 'function') {
@@ -183,25 +149,17 @@
     }
   }
 
-  OB.UTIL.cashUpReport = function (receipt, callback, trxName) {
+  OB.UTIL.cashUpReport = function (receipt, callback, tx) {
     var auxPay, orderType, taxOrderType, taxAmount, gross;
     if (!Array.isArray(receipt)) {
       receipt = [receipt];
     }
 
-    if (trxName) {
-      OB.Dal.findInTransaction(trxName, OB.Model.CashUp, {
-        'isprocessed': 'N'
-      }, function (cashUp) {
-        updateCashUpInfo(cashUp, receipt, 0, callback, trxName);
-      });
-    } else {
-      OB.Dal.find(OB.Model.CashUp, {
-        'isprocessed': 'N'
-      }, function (cashUp) {
-        updateCashUpInfo(cashUp, receipt, 0, callback);
-      });
-    }
+    OB.Dal.findInTransaction(tx, OB.Model.CashUp, {
+      'isprocessed': 'N'
+    }, function (cashUp) {
+      updateCashUpInfo(cashUp, receipt, 0, callback, tx);
+    });
   };
 
   OB.UTIL.deleteCashUps = function (cashUpModels) {
@@ -513,22 +471,13 @@
       });
     }
   };
-  OB.UTIL.calculateCurrentCash = function (callback, trxName) {
-    var me = this,
-        findIfInTransaction;
+  OB.UTIL.calculateCurrentCash = function (callback, tx) {
+    var me = this;
 
-    findIfInTransaction = function (model, whereClause, success, error, args) {
-      if (trxName) {
-        OB.Dal.findInTransaction(trxName, model, whereClause, success, error, args);
-      } else {
-        OB.Dal.find(model, whereClause, success, error, args);
-      }
-    };
-
-    findIfInTransaction(OB.Model.CashUp, {
+    OB.Dal.findInTransaction(tx, OB.Model.CashUp, {
       'isprocessed': 'N'
     }, function (cashUp) {
-      findIfInTransaction(OB.Model.PaymentMethodCashUp, {
+      OB.Dal.findInTransaction(tx, OB.Model.PaymentMethodCashUp, {
         'cashup_id': cashUp.at(0).get('id')
       }, function (payMthds) { //OB.Dal.find success
         var payMthdsCash;
@@ -607,25 +556,12 @@
     }, this);
   };
 
-  OB.UTIL.saveComposeInfo = function (me, callback, objToSend, cashUp, trxName) {
-    var saveIfInTransaction;
-
-    saveIfInTransaction = function (model, success, error, forceInsert) {
-      if (trxName) {
-        OB.Dal.saveInTransaction(trxName, model, success, error, forceInsert);
-      } else {
-        OB.Dal.save(model, success, error, forceInsert);
-      }
-    };
+  OB.UTIL.saveComposeInfo = function (me, callback, objToSend, cashUp, tx) {
 
     cashUp.at(0).set('userId', OB.MobileApp.model.get('context').user.id);
     objToSend.set('userId', OB.MobileApp.model.get('context').user.id);
     cashUp.at(0).set('objToSend', JSON.stringify(objToSend));
-    if (callback) {
-      saveIfInTransaction(cashUp.at(0), callback(me), null);
-    } else {
-      saveIfInTransaction(cashUp.at(0), null, null);
-    }
+    OB.Dal.saveInTransaction(tx, cashUp.at(0), callback ? callback(me) : null, null);
   };
   OB.UTIL.getTaxCashUp = function (taxcashups, objToSend, cashUp) {
     _.each(taxcashups.models, function (currentTax) {
@@ -646,8 +582,8 @@
     }, this);
   };
 
-  OB.UTIL.composeCashupInfo = function (cashUp, me, callback, trxName) {
-    var findIfInTransaction, objToSend = new Backbone.Model({
+  OB.UTIL.composeCashupInfo = function (cashUp, me, callback, tx) {
+    var objToSend = new Backbone.Model({
       posterminal: OB.MobileApp.model.get('terminal').id,
       id: cashUp.at(0).get('id'),
       isprocessed: cashUp.at(0).get('isprocessed'),
@@ -664,28 +600,20 @@
       creationDate: (new Date(cashUp.at(0).get('creationDate'))).toISOString()
     });
 
-    findIfInTransaction = function (model, whereClause, success, error, args) {
-      if (trxName) {
-        OB.Dal.findInTransaction(trxName, model, whereClause, success, error, args);
-      } else {
-        OB.Dal.find(model, whereClause, success, error, args);
-      }
-    };
-
     //process the payment method cash ups
-    findIfInTransaction(OB.Model.PaymentMethodCashUp, {
+    OB.Dal.findInTransaction(tx, OB.Model.PaymentMethodCashUp, {
       'cashup_id': cashUp.at(0).get('id'),
       '_orderByClause': 'name asc'
     }, function (payMthds) {
       OB.UTIL.getPaymethodCashUp(payMthds, objToSend, cashUp);
 
       //process the taxs cash ups
-      findIfInTransaction(OB.Model.TaxCashUp, {
+      OB.Dal.findInTransaction(tx, OB.Model.TaxCashUp, {
         'cashup_id': cashUp.at(0).get('id'),
         '_orderByClause': 'name asc'
       }, function (taxcashups) {
         OB.UTIL.getTaxCashUp(taxcashups, objToSend, cashUp);
-        OB.UTIL.saveComposeInfo(me, callback, objToSend, cashUp, trxName);
+        OB.UTIL.saveComposeInfo(me, callback, objToSend, cashUp, tx);
       });
     });
   };
