@@ -146,7 +146,7 @@ public class DocFINFinAccTransaction extends AcctServer {
         // into one.
         // https://issues.openbravo.com/view.php?id=19567
         HashMap<String, BigDecimal> amountAndWriteOff = getPaymentDetailWriteOffAndAmount(
-            paymentDetails, ps, psi, pso, i);
+            paymentDetails, ps, psi, pso, i, data[i]);
         BigDecimal amount = amountAndWriteOff.get("amount");
         BigDecimal writeOff = amountAndWriteOff.get("writeoff");
         if (amount == null) {
@@ -387,7 +387,9 @@ public class DocFINFinAccTransaction extends AcctServer {
                   .getInvoice()
                   : null);
           docLine.setDoubtFulDebtAmount(new BigDecimal(data[i].getField("DoubtFulDebtAmount")));
+
           docLine.setInvoiceTaxCashVAT_V(paymentDetail_ID);
+          docLine.setInvoiceTaxCashVAT_V(data[i].getField("MergedPaymentDetailId"));
         }
         docLine.setIsPrepayment(data[i].getField("isprepayment"));
         docLine.setCGlItemId(data[i].getField("cGlItemId"));

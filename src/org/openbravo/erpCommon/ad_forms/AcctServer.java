@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2014 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2015 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -53,6 +53,7 @@ import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.DateTimeData;
+import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
@@ -2912,7 +2913,37 @@ public abstract class AcctServer {
   public HashMap<String, BigDecimal> getPaymentDetailWriteOffAndAmount(
       List<FIN_PaymentDetail> paymentDetails, FIN_PaymentSchedule ps, FIN_PaymentSchedule psi,
       FIN_PaymentSchedule pso, int currentPaymentDetailIndex) {
+    return getPaymentDetailWriteOffAndAmount(paymentDetails, ps, psi, pso,
+        currentPaymentDetailIndex, null);
+  }
 
+  /**
+   * Returns the writeoff and the amount of a Payment Detail. In case the related Payment Schedule
+   * Detail was generated for compensate the difference between an Order and a related Invoice, it
+   * merges it's amount with the next Payment Schedule Detail. Issue 19567:
+   * https://issues.openbravo.com/view.php?id=19567 <br />
+   * It does exactly the same as the
+   * {@link #getPaymentDetailWriteOffAndAmount(List, FIN_PaymentSchedule, FIN_PaymentSchedule, FIN_PaymentSchedule, int)}
+   * method, but it also stores a new field "MergedPaymentDetailId" inside the fieldProvider with
+   * the merged payment detail id (if any).
+   * 
+   * @param paymentDetails
+   *          List of payment Details
+   * @param ps
+   *          Previous Payment Schedule
+   * @param psi
+   *          Invoice Payment Schedule of actual Payment Detail
+   * @param pso
+   *          Order Payment Schedule of actual Payment Detail
+   * @param currentPaymentDetailIndex
+   *          Index
+   * @param fieldProvider
+   *          contains the FieldProvider with the Payment Detail currently being processed. Used to
+   *          store the "MergedPaymentDetailId" (if any) as a new field of the fieldProvider
+   */
+  public HashMap<String, BigDecimal> getPaymentDetailWriteOffAndAmount(
+      List<FIN_PaymentDetail> paymentDetails, FIN_PaymentSchedule ps, FIN_PaymentSchedule psi,
+      FIN_PaymentSchedule pso, int currentPaymentDetailIndex, final FieldProvider fieldProvider) {
     HashMap<String, BigDecimal> amountAndWriteOff = new HashMap<String, BigDecimal>();
 
     // Default return values
@@ -2947,6 +2978,10 @@ public abstract class AcctServer {
               "writeoff",
               paymentDetails.get(currentPaymentDetailIndex).getWriteoffAmount()
                   .add(paymentDetails.get(currentPaymentDetailIndex - 1).getWriteoffAmount()));
+          if (fieldProvider != null) {
+            FieldProviderFactory.setField(fieldProvider, "MergedPaymentDetailId", paymentDetails
+                .get(currentPaymentDetailIndex - 1).getId());
+          }
         }
       }
     }

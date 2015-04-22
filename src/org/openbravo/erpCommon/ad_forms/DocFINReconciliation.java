@@ -192,7 +192,7 @@ public class DocFINReconciliation extends AcctServer {
         // into one.
         // https://issues.openbravo.com/view.php?id=19567
         HashMap<String, BigDecimal> amountAndWriteOff = getPaymentDetailWriteOffAndAmount(
-            paymentDetails, ps, psi, pso, i);
+            paymentDetails, ps, psi, pso, i, data[i]);
         BigDecimal amount = amountAndWriteOff.get("amount");
         BigDecimal writeOff = amountAndWriteOff.get("writeoff");
         if (amount == null) {
@@ -700,6 +700,7 @@ public class DocFINReconciliation extends AcctServer {
         FIN_PaymentDetail paymentDetail = OBDal.getInstance().get(FIN_PaymentDetail.class,
             finPaymentDetailID);
         detail.setInvoiceTaxCashVAT_V(finPaymentDetailID);
+        detail.setInvoiceTaxCashVAT_V(data[i].getField("MergedPaymentDetailId"));
         fact = createFactPaymentDetails(detail, paymentDetail, as, conn, fact, Fact_Acct_Group_ID,
             Fact_Acct_Group_ID2);
       }

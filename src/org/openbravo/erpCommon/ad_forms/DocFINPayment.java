@@ -118,7 +118,7 @@ public class DocFINPayment extends AcctServer {
         // into one.
         // https://issues.openbravo.com/view.php?id=19567
         HashMap<String, BigDecimal> amountAndWriteOff = getPaymentDetailWriteOffAndAmount(
-            paymentDetails, ps, psi, pso, i);
+            paymentDetails, ps, psi, pso, i, data[i]);
         BigDecimal amount = amountAndWriteOff.get("amount");
         BigDecimal writeOff = amountAndWriteOff.get("writeoff");
         if (amount == null) {
@@ -302,6 +302,7 @@ public class DocFINPayment extends AcctServer {
                 : null);
         docLine.m_Record_Id2 = data[i].getField("recordId2");
         docLine.setInvoiceTaxCashVAT_V(Line_ID);
+        docLine.setInvoiceTaxCashVAT_V(data[i].getField("MergedPaymentDetailId"));
         list.add(docLine);
       } finally {
         OBContext.restorePreviousMode();
