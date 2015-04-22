@@ -70,7 +70,7 @@ public class CostingTransactionsHQLTransformer extends HqlQueryTransformer {
 
       costDimensions = CostingUtils.getEmptyDimensions();
 
-      CostingRule costingRule = CostingUtils.getCostDimensionRule(costing.getOrganization(),
+      CostingRule costingRule = CostingUtils.getCostDimensionRule(transaction.getOrganization(),
           transaction.getTransactionProcessDate());
 
       if (costing.getProduct().isProduction()) {
