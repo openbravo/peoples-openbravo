@@ -352,6 +352,7 @@ public class FormInitializationComponent extends BaseActionHandler {
   private int computeNoteCount(Tab tab, String rowId) {
     OBQuery<Note> obq = OBDal.getInstance().createQuery(Note.class,
         " table.id=:tableId and record=:recordId");
+    obq.setFilterOnReadableOrganization(false);
     obq.setNamedParameter("tableId", (String) DalUtil.getId(tab.getTable()));
     obq.setNamedParameter("recordId", rowId);
     return obq.count();

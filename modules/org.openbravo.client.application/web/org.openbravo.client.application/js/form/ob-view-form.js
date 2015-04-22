@@ -300,7 +300,7 @@ OB.ViewFormProperties = {
       return;
     }
     if (enable) {
-      this.noteSection.setRecordInfo(this.view.entity, this.getValue(OB.Constants.ID));
+      this.noteSection.setRecordInfo(this.view.entity, this.getValue(OB.Constants.ID), this);
       this.noteSection.collapseSection(true);
       delete this.noteSection.hiddenInForm;
       this.noteSection.refresh();
