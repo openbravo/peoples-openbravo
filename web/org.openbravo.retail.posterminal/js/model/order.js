@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, _, moment, Backbone, enyo, BigDecimal, alert */
+/*global OB, _, moment, Backbone, enyo, BigDecimal, alert, localStorage */
 
 (function () {
 
@@ -1225,10 +1225,10 @@
       var me = this;
 
       if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.product', true)) {
-        if (!localStorage['hgVolProducts']) {
-          localStorage['hgVolProducts'] = JSON.stringify([]);
+        if (!localStorage.hgVolProducts) {
+          localStorage.hgVolProducts = JSON.stringify([]);
         }
-        var temp = JSON.parse(localStorage['hgVolProducts']);
+        var temp = JSON.parse(localStorage.hgVolProducts);
         if (!_.find(temp, function (id) {
           return id === p.id;
         })) {
@@ -1238,7 +1238,7 @@
         }
 
         temp.push(p.id);
-        localStorage['hgVolProducts'] = JSON.stringify(temp);
+        localStorage.hgVolProducts = JSON.stringify(temp);
       }
       if (OB.MobileApp.model.get('permissions').OBPOS_NotAllowSalesWithReturn) {
         var negativeLines = _.filter(this.get('lines').models, function (line) {
@@ -2325,6 +2325,22 @@
             }
 
             OB.Dal.get(OB.Model.Product, iter.id, function (prod) {
+              if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.product', true)) {
+                if (!localStorage.hgVolProducts) {
+                  localStorage.hgVolProducts = JSON.stringify([]);
+                }
+                var temp = JSON.parse(localStorage.hgVolProducts);
+                if (!_.find(temp, function (id) {
+                  return id === prod.id;
+                })) {
+                  OB.Dal.save(prod, function () {}, function () {
+                    OB.error(arguments);
+                  }, true);
+                }
+
+                temp.push(prod.id);
+                localStorage.hgVolProducts = JSON.stringify(temp);
+              }
               newline = new OrderLine({
                 product: prod,
                 uOM: iter.uOM,
@@ -2475,22 +2491,23 @@
       });
     },
     deleteCurrent: function (forceCreateNew) {
-      var i;
+      var i, max, successCallback = function () {
+          return true;
+          },
+          errorCallback = function () {
+          OB.UTIL.showError('Error removing');
+          };
       if (!this.current) {
         return;
       }
       if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.product', true)) {
         for (i = 0, max = this.current.get('lines').length; i < this.current.get('lines').length; i++) {
-          var temp = JSON.parse(localStorage['hgVolProducts']);
+          var temp = JSON.parse(localStorage.hgVolProducts);
           var p = this.current.get('lines').models[i].get('product');
           temp.splice(_.indexOf(temp, p.id), 1);
-          localStorage['hgVolProducts'] = JSON.stringify(temp);
+          localStorage.hgVolProducts = JSON.stringify(temp);
           if (_.indexOf(temp, p.id) === -1) {
-            OB.Dal.remove(p, function () {
-              return true;
-            }, function () {
-              OB.UTIL.showError('Error removing');
-            });
+            OB.Dal.remove(p, successCallback, errorCallback);
           }
         }
       }
