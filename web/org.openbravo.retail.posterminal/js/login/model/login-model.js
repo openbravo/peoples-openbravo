@@ -707,7 +707,7 @@
      * Save the new values if are higher than the last known values
      * - the minimum sequence number can only grow
      */
-    saveDocumentSequence: function (documentnoSuffix, quotationnoSuffix, callback, transactionName) {
+    saveDocumentSequence: function (documentnoSuffix, quotationnoSuffix, callback, tx) {
       var me = this,
           processDocumentSequenceList;
       if (me.restartingDocNo === true) {
@@ -756,52 +756,33 @@
         // update the database
         docSeq.set('documentSequence', me.documentnoThreshold);
         docSeq.set('quotationDocumentSequence', me.quotationnoThreshold);
-        if (transactionName) {
-          OB.Dal.saveInTransaction(transactionName, docSeq, function () {
-            if (callback) {
-              callback();
-            }
-            me.restartingDocNo = false;
-          }, function () {
-            me.restartingDocNo = false;
-          });
-        } else {
-          OB.Dal.save(docSeq, function () {
-            if (callback) {
-              callback();
-            }
-            me.restartingDocNo = false;
-          }, function () {
-            me.restartingDocNo = false;
-          });
-        }
+        OB.Dal.saveInTransaction(tx, docSeq, function () {
+          if (callback) {
+            callback();
+          }
+          me.restartingDocNo = false;
+        }, function () {
+          me.restartingDocNo = false;
+        });
       };
 
       // verify the database values
-      if (transactionName) {
-        OB.Dal.findInTransaction(transactionName, OB.Model.DocumentSequence, {
-          'posSearchKey': this.get('terminal').searchKey
-        }, processDocumentSequenceList, function () {
-          me.restartingDocNo = false;
-        });
-      } else {
-        OB.Dal.find(OB.Model.DocumentSequence, {
-          'posSearchKey': this.get('terminal').searchKey
-        }, processDocumentSequenceList, function () {
-          me.restartingDocNo = false;
-        });
-      }
+      OB.Dal.findInTransaction(tx, OB.Model.DocumentSequence, {
+        'posSearchKey': this.get('terminal').searchKey
+      }, processDocumentSequenceList, function () {
+        me.restartingDocNo = false;
+      });
     },
 
     /**
      * Updates the document sequence. This method should only be called when an order has been sent to the server
      * If the order is a quotation, only update the quotationno
      */
-    updateDocumentSequenceWhenOrderSaved: function (documentnoSuffix, quotationnoSuffix, callback, transactionName) {
+    updateDocumentSequenceWhenOrderSaved: function (documentnoSuffix, quotationnoSuffix, callback, tx) {
       if (quotationnoSuffix >= 0) {
         documentnoSuffix = -1;
       }
-      this.saveDocumentSequence(documentnoSuffix, quotationnoSuffix, callback, transactionName);
+      this.saveDocumentSequence(documentnoSuffix, quotationnoSuffix, callback, tx);
     },
 
     // get the first document number available

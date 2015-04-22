@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013 Openbravo S.L.U.
+ * Copyright (C) 2013-2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -54,7 +54,7 @@ enyo.kind({
   initComponents: function () {
     this.inherited(arguments);
     this.$.checkBoxColumn.hide();
-    this.$.product.setContent(this.model.get('product').get('_identifier'));
+    this.$.product.setContent(this.setIdentifierContent());
     this.$.quantity.setContent(this.model.printQty());
     this.$.price.setContent(this.model.printPrice());
     if (this.model.get('priceIncludesTax')) {
@@ -82,20 +82,8 @@ enyo.kind({
           return;
         }
         this.createComponent({
-          style: 'display: block;',
-          components: [{
-            content: '-- ' + d.name,
-            attributes: {
-              style: 'float: left; width: 80%;'
-            }
-          }, {
-            content: OB.I18N.formatCurrency(-d.amt),
-            attributes: {
-              style: 'float: right; width: 20%; text-align: right;'
-            }
-          }, {
-            style: 'clear: both;'
-          }]
+          kind: 'OB.UI.RenderOrderLineDiscount',
+          discount: d
         });
       }, this);
 
@@ -128,6 +116,9 @@ enyo.kind({
       this.$.checkBoxColumn.hide();
       this.changeEditMode(this, false);
     }
+  },
+  setIdentifierContent: function () {
+    return this.model.get('product').get('_identifier');
   }
 
 });
@@ -248,5 +239,24 @@ enyo.kind({
   style: 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight: bold; font-size: 30px; color: #cccccc',
   initComponents: function () {
     this.inherited(arguments);
+  }
+});
+enyo.kind({
+  name: 'OB.UI.RenderOrderLineDiscount',
+  style: 'display: block;',
+  discount: null,
+  components: [{
+    name: 'discountName',
+    style: 'float: left; width: 80%;'
+  }, {
+    name: 'discountAmount',
+    style: 'float: right; width: 20%; text-align: right;'
+  }, {
+    style: 'clear: both;'
+  }],
+  initComponents: function () {
+    this.inherited(arguments);
+    this.$.discountName.setContent('-- ' + this.discount.identifier);
+    this.$.discountAmount.setContent(OB.I18N.formatCurrency(-this.discount.amt));
   }
 });
