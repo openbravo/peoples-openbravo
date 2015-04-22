@@ -20,6 +20,7 @@
     source: 'org.openbravo.retail.posterminal.master.BPLocation',
     dataLimit: 100,
     local: false,
+    hgvol: 'OBPOS_highVolume.customer',
     saveCustomerAddr: function (silent) {
       var nameLength, newSk;
 
