@@ -455,6 +455,7 @@ isc.OBParameterWindowView.addProperties({
         if (me.buttonOwnerView && isc.isA.Function(me.buttonOwnerView.refreshParentRecord) && isc.isA.Function(me.buttonOwnerView.refreshChildViews)) {
           me.buttonOwnerView.refreshParentRecord();
           me.buttonOwnerView.refreshChildViews();
+          me.buttonOwnerView.toolBar.updateButtonState();
         }
       };
       if (refreshParent) {
