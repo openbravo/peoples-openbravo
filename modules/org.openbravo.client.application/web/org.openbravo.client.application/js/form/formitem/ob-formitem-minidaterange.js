@@ -463,6 +463,13 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
     this.setElementValue('', '');
   },
 
+  clearValue: function () {
+    // Clear all the filter values, using clearFilterValues
+    // See issue https://issues.openbravo.com/view.php?id=29554
+    this.clearFilterValues();
+    return this.Super('clearValue', arguments);
+  },
+
   setSingleDateValue: function (value) {
     var displayValue = OB.Utilities.Date.JSToOB(value, this.dateFormat);
     this.singleDateValue = value;
@@ -635,6 +642,9 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
   displayValue: function (value) {
     var displayValue = this.mapValueToDisplay(value) || '';
     this.setElementValue(displayValue, value);
+    // Use setValue() to prevent the clearing of the filter invoked through setItemValues method of the form when this.getValue() returns undefined
+    // See issue https://issues.openbravo.com/view.php?id=29554
+    this.setValue(displayValue);
   },
 
   setElementValue: function () {
