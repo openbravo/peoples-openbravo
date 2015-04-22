@@ -87,8 +87,6 @@ OB.APRM.AddTransaction.trxTypeOnChangeFunction = function (item, view, form, gri
     form.getItem('depositamt').setDisabled(false);
     form.getItem('withdrawalamt').setDisabled(false);
     form.getItem('description').setValue('');
-    form.getItem('c_glitem_id').setValue(null);
-    form.getItem('fin_payment_id').setValue(null);
   }
 };
 
