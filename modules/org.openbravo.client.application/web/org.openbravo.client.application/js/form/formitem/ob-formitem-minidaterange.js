@@ -539,6 +539,9 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
     }
 
     if (this.rangeItem) {
+      // Clear the range before applying the criteria
+      // See issue https://issues.openbravo.com/view.php?id=29661
+      this.rangeItem.setValue(null);
       this.rangeItem.setCriterion(criterion);
       this.singleDateMode = false;
       this.singleDateValue = null;
