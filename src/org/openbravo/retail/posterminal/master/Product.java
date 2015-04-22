@@ -25,7 +25,6 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.mobile.core.model.HQLProperty;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
@@ -38,12 +37,17 @@ import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
 public class Product extends ProcessHQLQuery {
   public static final String productPropertyExtension = "OBPOS_ProductExtension";
+  public static final String productDiscPropertyExtension = "OBPOS_ProductDiscExtension";
   public static final Logger log = Logger.getLogger(Product.class);
 
   @Inject
   @Any
   @Qualifier(productPropertyExtension)
   private Instance<ModelExtension> extensions;
+  @Inject
+  @Any
+  @Qualifier(productDiscPropertyExtension)
+  private Instance<ModelExtension> extensionsDisc;
 
   @Override
   protected List<HQLPropertyList> getHqlProperties() {
@@ -67,23 +71,11 @@ public class Product extends ProcessHQLQuery {
 
     HQLPropertyList regularProductsHQLProperties = ModelExtensionUtils.getPropertyExtensions(
         extensions, args);
-
-    // Get Filter Properties in the manual HQL discounts query
-    HQLPropertyList discountsHQLProperties = new HQLPropertyList();
-    List<HQLProperty> discountsHQLPropertiesList = new ArrayList<HQLProperty>();
-    String discountNameTrl;
-    if (OBContext.hasTranslationInstalled()) {
-      discountNameTrl = "coalesce ((select pt.name from PricingAdjustmentTrl pt where pt.promotionDiscount=p and pt.language='"
-          + OBContext.getOBContext().getLanguage().getLanguage() + "'), p.name) ";
-    } else {
-      discountNameTrl = "p.name";
-    }
-    discountsHQLPropertiesList.add(new HQLProperty(discountNameTrl, "searchkey"));
-    discountsHQLPropertiesList.add(new HQLProperty(discountNameTrl, "_identifier"));
-    discountsHQLProperties.addAll(discountsHQLPropertiesList);
+    HQLPropertyList regularProductsDiscHQLProperties = ModelExtensionUtils.getPropertyExtensions(
+        extensionsDisc, args);
 
     propertiesList.add(regularProductsHQLProperties);
-    propertiesList.add(discountsHQLProperties);
+    propertiesList.add(regularProductsDiscHQLProperties);
     propertiesList.add(regularProductsHQLProperties);
 
     return propertiesList;
@@ -127,6 +119,9 @@ public class Product extends ProcessHQLQuery {
 
     HQLPropertyList regularProductsHQLProperties = ModelExtensionUtils.getPropertyExtensions(
         extensions, args);
+    HQLPropertyList regularProductsDiscHQLProperties = ModelExtensionUtils.getPropertyExtensions(
+        extensionsDisc, args);
+
     Long lastUpdated = jsonsent.has("lastUpdated")
         && !jsonsent.get("lastUpdated").equals("undefined") ? jsonsent.getLong("lastUpdated")
         : null;
@@ -148,43 +143,27 @@ public class Product extends ProcessHQLQuery {
     hql += "order by pli.product.name";
     products.add(hql);
 
-    // discounts which type is defined as category
-    String discountNameTrl;
-    if (OBContext.hasTranslationInstalled()) {
-      discountNameTrl = "coalesce ((select pt.name from PricingAdjustmentTrl pt where pt.promotionDiscount=p and pt.language='"
-          + OBContext.getOBContext().getLanguage().getLanguage() + "'), p.name) ";
-    } else {
-      discountNameTrl = "p.name";
-    }
-    products
-        .add("select p.id as id, "
-            + discountNameTrl
-            + " as searchkey, "
-            + discountNameTrl
-            + " as _identifier, p.discountType.id as productCategory, round(p.obdiscPrice, "
-            + posPrecision
-            + ") as listPrice, round(p.obdiscPrice, "
-            + posPrecision
-            + ") as standardPrice, p.obdiscUpc as uPCEAN, img.bindaryData as img, '[[null]]' as generic_product_id, 'false' as showchdesc, 'true' as ispack, 'false' as isGeneric , 'false' as stocked"//
-            + "  from PricingAdjustment as p left outer join p.obdiscImage img" //
-            + " where $filtersCriteria AND p.discountType.obposIsCategory = true "//
-            + "   and p.discountType.active = true " //
-            + "   and p.$readableSimpleClientCriteria"//
-            + "   and (p.endingDate is null or p.endingDate >= TO_DATE('"
-            + format.format(now.getTime())
-            + "', 'yyyy/MM/dd'))" //
-            + "   and p.startingDate <= TO_DATE('"
-            + format.format(now.getTime())
-            + "', 'yyyy/MM/dd')"
-            + "   and (p.$incrementalUpdateCriteria) "//
-            // organization
-            + "and ((p.includedOrganizations='Y' " + "  and not exists (select 1 "
-            + "         from PricingAdjustmentOrganization o" + "        where active = true"
-            + "          and o.priceAdjustment = p" + "          and o.organization.id ='" + orgId
-            + "')) " + "   or (p.includedOrganizations='N' " + "  and  exists (select 1 "
-            + "         from PricingAdjustmentOrganization o" + "        where active = true"
-            + "          and o.priceAdjustment = p" + "          and o.organization.id ='" + orgId
-            + "')) " + "    ) ");
+    products.add("select "
+        + regularProductsDiscHQLProperties.getHqlSelect()
+        + " from PricingAdjustment as p left outer join p.obdiscImage img" //
+        + " where $filtersCriteria AND p.discountType.obposIsCategory = true "//
+        + "   and p.discountType.active = true " //
+        + "   and p.$readableSimpleClientCriteria"//
+        + "   and (p.endingDate is null or p.endingDate >= TO_DATE('"
+        + format.format(now.getTime())
+        + "', 'yyyy/MM/dd'))" //
+        + "   and p.startingDate <= TO_DATE('"
+        + format.format(now.getTime())
+        + "', 'yyyy/MM/dd')"
+        + "   and (p.$incrementalUpdateCriteria) "//
+        // organization
+        + "and ((p.includedOrganizations='Y' " + "  and not exists (select 1 "
+        + "         from PricingAdjustmentOrganization o" + "        where active = true"
+        + "          and o.priceAdjustment = p" + "          and o.organization.id ='" + orgId
+        + "')) " + "   or (p.includedOrganizations='N' " + "  and  exists (select 1 "
+        + "         from PricingAdjustmentOrganization o" + "        where active = true"
+        + "          and o.priceAdjustment = p" + "          and o.organization.id ='" + orgId
+        + "')) " + "    ) ");
 
     // generic products
     products
