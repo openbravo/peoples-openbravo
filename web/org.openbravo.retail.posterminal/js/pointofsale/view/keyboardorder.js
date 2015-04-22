@@ -482,10 +482,18 @@ enyo.kind({
   },
 
   searchProduct: function (code, callback) {
-    var me = this;
-    OB.Dal.find(OB.Model.Product, {
-      uPCEAN: code
-    }, function (data) {
+    var me = this,
+        criteria = {
+        uPCEAN: code
+        };
+    var uPCEAN = {
+      columns: ['uPCEAN'],
+      operator: 'equals',
+      value: code
+    };
+    var hgVolCriteria = [uPCEAN];
+    criteria.hgVolFilters = hgVolCriteria;
+    OB.Dal.find(OB.Model.Product, criteria, function (data) {
       me.searchProductCallback(data, code, callback);
     }, me.errorCallback, this);
   },
@@ -497,7 +505,7 @@ enyo.kind({
   successCallbackProducts: function (dataProducts, code, callback) {
     if (dataProducts && dataProducts.length > 0) {
       OB.debug('productfound');
-      callback(new Backbone.Model(dataProducts.at(0)));
+      callback(dataProducts.at(0));
     } else {
       // 'UPC/EAN code not found'
       OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_KbUPCEANCodeNotFound', [code]));
