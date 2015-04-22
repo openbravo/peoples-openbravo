@@ -762,7 +762,7 @@ isc.OBStandardView.addProperties({
   // this
   // parent.
   addChildView: function (childView) {
-    if ((childView.isTrlTab && OB.PropertyStore.get('ShowTrl', this.windowId) !== 'Y') || (childView.isAcctTab && OB.PropertyStore.get('ShowAcct', this.windowId) !== 'Y')) {
+    if ((childView.isTrlTab && OB.PropertyStore.get('ShowTrl', this.standardWindow.windowId) !== 'Y') || (childView.isAcctTab && OB.PropertyStore.get('ShowAcct', this.standardWindow.windowId) !== 'Y')) {
       return;
     }
 
