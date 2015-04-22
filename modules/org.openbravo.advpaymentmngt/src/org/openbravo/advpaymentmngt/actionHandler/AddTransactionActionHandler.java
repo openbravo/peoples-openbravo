@@ -157,8 +157,15 @@ public class AddTransactionActionHandler extends BaseProcessActionHandler {
       final String strElement_CC = params.getString("c_costcenter_id");
       costcenter = OBDal.getInstance().get(Costcenter.class, strElement_CC);
 
-      if (!selectedPaymentId.equals("null")) { // Payment
-        payment = OBDal.getInstance().get(FIN_Payment.class, selectedPaymentId);
+      String paymentId = selectedPaymentId;
+      String glitemId = strGLItemId;
+      if (strTransactionType.equals("BF")) {
+        paymentId = "null";
+        glitemId = "null";
+      }
+
+      if (!paymentId.equals("null")) { // Payment
+        payment = OBDal.getInstance().get(FIN_Payment.class, paymentId);
         depositAmt = FIN_Utility.getDepositAmount(payment.isReceipt(),
             payment.getFinancialTransactionAmount());
         paymentAmt = FIN_Utility.getPaymentAmount(payment.isReceipt(),
@@ -170,8 +177,8 @@ public class AddTransactionActionHandler extends BaseProcessActionHandler {
         paymentCurrency = payment.getCurrency();
         convertRate = payment.getFinancialTransactionConvertRate();
         sourceAmount = payment.getAmount();
-      } else if (!strGLItemId.equals("null")) {// GL item
-        glItem = OBDal.getInstance().get(GLItem.class, strGLItemId);
+      } else if (!glitemId.equals("null")) {// GL item
+        glItem = OBDal.getInstance().get(GLItem.class, glitemId);
 
         depositAmt = new BigDecimal(strDepositAmount);
         paymentAmt = new BigDecimal(strWithdrawalamt);
