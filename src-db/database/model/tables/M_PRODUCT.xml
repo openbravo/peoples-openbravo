@@ -425,11 +425,23 @@
       <index name="M_PRODUCT_NAME" unique="false">
         <index-column name="NAME"/>
       </index>
+      <index name="M_PRODUCT_NAME_ID" unique="false">
+        <index-column name="NAME"/>
+        <index-column name="M_PRODUCT_ID"/>
+      </index>
       <index name="M_PRODUCT_PRODUCTCATEGORY" unique="false">
         <index-column name="M_PRODUCT_CATEGORY_ID"/>
       </index>
       <index name="M_PRODUCT_UPC" unique="false">
         <index-column name="UPC"/>
+      </index>
+      <index name="M_PRODUCT_UPC_ID" unique="false">
+        <index-column name="UPC"/>
+        <index-column name="M_PRODUCT_ID"/>
+      </index>
+      <index name="M_PRODUCT_VALUE_ID" unique="false">
+        <index-column name="VALUE"/>
+        <index-column name="M_PRODUCT_ID"/>
       </index>
       <unique name="M_PRODUCT_EXPENSETYPE">
         <unique-column name="S_EXPENSETYPE_ID"/>
