@@ -66,43 +66,50 @@ public class CostingTransactionsHQLTransformer extends HqlQueryTransformer {
       Costing costing = OBDal.getInstance().get(Costing.class, costingId);
       MaterialTransaction transaction = costing.getInventoryTransaction();
 
-      OrganizationStructureProvider osp = OBContext.getOBContext()
-          .getOrganizationStructureProvider(transaction.getClient().getId());
+      if (transaction != null) {
+        OrganizationStructureProvider osp = OBContext.getOBContext()
+            .getOrganizationStructureProvider(transaction.getClient().getId());
 
-      Organization org = OBContext.getOBContext()
-          .getOrganizationStructureProvider(transaction.getClient().getId())
-          .getLegalEntity(transaction.getOrganization());
+        Organization org = OBContext.getOBContext()
+            .getOrganizationStructureProvider(transaction.getClient().getId())
+            .getLegalEntity(transaction.getOrganization());
 
-      costDimensions = CostingUtils.getEmptyDimensions();
+        costDimensions = CostingUtils.getEmptyDimensions();
 
-      CostingRule costingRule = CostingUtils.getCostDimensionRule(org,
-          transaction.getTransactionProcessDate());
+        CostingRule costingRule = CostingUtils.getCostDimensionRule(org,
+            transaction.getTransactionProcessDate());
 
-      if (costing.getProduct().isProduction()) {
-        orgs = osp.getChildTree("0", false);
-      } else {
-        orgs = osp.getChildTree(costing.getOrganization().getId(), true);
-        if (costingRule.isWarehouseDimension()) {
-          costDimensions.put(CostDimension.Warehouse, transaction.getStorageBin().getWarehouse());
+        if (costing.getProduct().isProduction()) {
+          orgs = osp.getChildTree("0", false);
+        } else {
+          orgs = osp.getChildTree(costing.getOrganization().getId(), true);
+          if (costingRule.isWarehouseDimension()) {
+            costDimensions.put(CostDimension.Warehouse, transaction.getStorageBin().getWarehouse());
+          }
         }
+
+        StringBuffer whereClause = getWhereClause(costing, queryNamedParameters);
+        transformedHqlQuery = hqlQuery.replace("@whereClause@", whereClause.toString());
+
+        Costing prevCosting = getPreviousCosting(transaction);
+        String costOnQuery = addCostOnQuery(prevCosting);
+        transformedHqlQuery = transformedHqlQuery.replace("@previousCostingCost@", costOnQuery);
+
+        StringBuffer cumQty = addCumQty(costing, queryNamedParameters);
+        transformedHqlQuery = transformedHqlQuery.replace("@cumQty@", cumQty.toString());
+
+        StringBuffer cumCost = addCumCost(cumQty, costing, prevCosting);
+        transformedHqlQuery = transformedHqlQuery.replace("@cumCost@", cumCost);
+
+        transformedHqlQuery = appendOrderByClause(transformedHqlQuery, justCount);
+        return transformedHqlQuery;
       }
-
-      StringBuffer whereClause = getWhereClause(costing, queryNamedParameters);
-      transformedHqlQuery = hqlQuery.replace("@whereClause@", whereClause.toString());
-
-      Costing prevCosting = getPreviousCosting(transaction);
-      String costOnQuery = addCostOnQuery(prevCosting);
-      transformedHqlQuery = transformedHqlQuery.replace("@previousCostingCost@", costOnQuery);
-
-      StringBuffer cumQty = addCumQty(costing, queryNamedParameters);
-      transformedHqlQuery = transformedHqlQuery.replace("@cumQty@", cumQty.toString());
-
-      StringBuffer cumCost = addCumCost(cumQty, costing, prevCosting);
-      transformedHqlQuery = transformedHqlQuery.replace("@cumCost@", cumCost);
-
-      transformedHqlQuery = appendOrderByClause(transformedHqlQuery, justCount);
     }
 
+    transformedHqlQuery = hqlQuery.replace("@whereClause@", " 1 = 2 ");
+    transformedHqlQuery = transformedHqlQuery.replace("@previousCostingCost@", "0");
+    transformedHqlQuery = transformedHqlQuery.replace("@cumQty@", "0");
+    transformedHqlQuery = transformedHqlQuery.replace("@cumCost@", "0");
     return transformedHqlQuery;
   }
 
@@ -346,6 +353,7 @@ public class CostingTransactionsHQLTransformer extends HqlQueryTransformer {
     prevCostingQuery.setParameter("clientId", transaction.getClient().getId());
     prevCostingQuery.setMaxResults(1);
 
+    @SuppressWarnings("unchecked")
     final List<String> preCostingIdList = prevCostingQuery.list();
 
     Costing prevCosting = null;
