@@ -34,6 +34,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.enterprise.Locator;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.materialmgmt.cost.Costing;
 import org.openbravo.model.materialmgmt.cost.CostingRule;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
@@ -68,9 +69,13 @@ public class CostingTransactionsHQLTransformer extends HqlQueryTransformer {
       OrganizationStructureProvider osp = OBContext.getOBContext()
           .getOrganizationStructureProvider(transaction.getClient().getId());
 
+      Organization org = OBContext.getOBContext()
+          .getOrganizationStructureProvider(transaction.getClient().getId())
+          .getLegalEntity(transaction.getOrganization());
+
       costDimensions = CostingUtils.getEmptyDimensions();
 
-      CostingRule costingRule = CostingUtils.getCostDimensionRule(transaction.getOrganization(),
+      CostingRule costingRule = CostingUtils.getCostDimensionRule(org,
           transaction.getTransactionProcessDate());
 
       if (costing.getProduct().isProduction()) {
