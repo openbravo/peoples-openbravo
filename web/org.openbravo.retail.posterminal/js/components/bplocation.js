@@ -323,6 +323,18 @@ enyo.kind({
       value: filter
     };
     criteria.bpartner = this.bPartnerId;
+    var filterIdentifier = {
+      columns: ['_identifier'],
+      operator: 'startsWith',
+      value: filter
+    },
+        bPartnerId = {
+        columns: ['bpartner'],
+        operator: 'equals',
+        value: this.bPartnerId
+        };
+    var hgVolCriteria = [filterIdentifier, bPartnerId];
+    criteria.hgVolFilters = hgVolCriteria;
     OB.Dal.find(OB.Model.BPLocation, criteria, successCallbackBPsLoc, errorCallback);
     return true;
   },

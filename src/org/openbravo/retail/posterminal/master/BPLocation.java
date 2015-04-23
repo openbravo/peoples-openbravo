@@ -20,12 +20,9 @@ import javax.inject.Inject;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
-import org.openbravo.dal.core.OBContext;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
-import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
 public class BPLocation extends ProcessHQLQuery {
@@ -37,6 +34,17 @@ public class BPLocation extends ProcessHQLQuery {
   private Instance<ModelExtension> extensions;
 
   @Override
+  protected List<HQLPropertyList> getHqlProperties() {
+    List<HQLPropertyList> propertiesList = new ArrayList<HQLPropertyList>();
+    HQLPropertyList regularBPLocationHQLProperties = ModelExtensionUtils
+        .getPropertyExtensions(extensions);
+
+    propertiesList.add(regularBPLocationHQLProperties);
+
+    return propertiesList;
+  }
+
+  @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
     Long lastUpdated = jsonsent.has("lastUpdated")
         && !jsonsent.get("lastUpdated").equals("undefined") ? jsonsent.getLong("lastUpdated")
@@ -45,16 +53,14 @@ public class BPLocation extends ProcessHQLQuery {
     // incremental refresh, we need to retrieve it if some (OR) ot the entities have changed
     String operator = lastUpdated == null ? " AND " : " OR ";
     List<String> hqlQueries = new ArrayList<String>();
-    Organization org = POSUtils.getOrganization(OBContext.getOBContext().getCurrentOrganization()
-        .getId());
 
     HQLPropertyList regularBPLocationHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions);
     String hql = "select" + regularBPLocationHQLProperties.getHqlSelect()
         + "from BusinessPartnerLocation AS bploc " + "where exists (" + "SELECT "
-        + "bp.id FROM BusinessPartner AS bp " + "WHERE " + "bp.customer = true AND "
-        + "bp.priceList IS NOT NULL AND " + "bploc.businessPartner.id = bp.id) AND "
-        + "(bploc.$incrementalUpdateCriteria" + operator
+        + "bp.id FROM BusinessPartner AS bp " + "WHERE $filtersCriteria AND "
+        + "bp.customer = true AND " + "bp.priceList IS NOT NULL AND "
+        + "bploc.businessPartner.id = bp.id) AND " + "(bploc.$incrementalUpdateCriteria" + operator
         + "bploc.businessPartner.$incrementalUpdateCriteria) ";
     if (lastUpdated != null) {
       hql += " OR (bploc.locationAddress.$incrementalUpdateCriteria) ";
