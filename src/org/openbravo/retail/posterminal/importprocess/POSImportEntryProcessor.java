@@ -8,6 +8,9 @@
  */
 package org.openbravo.retail.posterminal.importprocess;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
@@ -27,24 +30,32 @@ public class POSImportEntryProcessor extends ImportEntryPreProcessor {
 
   public void beforeCreate(ImportEntry importEntry) {
     try {
-      JSONObject jsonObject = new JSONObject(importEntry.getJsoninfo());
+      if (POStypeofdata(importEntry)) {
+        JSONObject jsonObject = new JSONObject(importEntry.getData());
 
-      // TODO: using 2 different ways of writing posTerminal is just not nice...
-      String posTerminalId = ImportProcessUtils.getJSONProperty(jsonObject, "posterminal");
-      if (posTerminalId == null) {
-        posTerminalId = ImportProcessUtils.getJSONProperty(jsonObject, "posTerminal");
-      }
-      if (posTerminalId == null) {
-        posTerminalId = ImportProcessUtils.getJSONProperty(jsonObject, "pos");
-      }
-      if (posTerminalId != null) {
-        OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
-            posTerminalId);
-        importEntry.setOBPOSPOSTerminal(posTerminal);
-        importEntry.setOrganization(posTerminal.getOrganization());
+        // TODO: using 2 different ways of writing posTerminal is just not nice...
+        String posTerminalId = ImportProcessUtils.getJSONProperty(jsonObject, "posterminal");
+        if (posTerminalId == null) {
+          posTerminalId = ImportProcessUtils.getJSONProperty(jsonObject, "posTerminal");
+        }
+        if (posTerminalId == null) {
+          posTerminalId = ImportProcessUtils.getJSONProperty(jsonObject, "pos");
+        }
+        if (posTerminalId != null) {
+          OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
+              posTerminalId);
+          importEntry.setOBPOSPOSTerminal(posTerminal);
+          importEntry.setOrganization(posTerminal.getOrganization());
+        }
       }
     } catch (JSONException e) {
       throw new OBException(e);
     }
+  }
+
+  private boolean POStypeofdata(ImportEntry importEntry) {
+    List<String> posTypeOfData = Arrays.asList("Order", "BusinessPartner",
+        "BusinessPartnerLocation", "OBPOS_App_Cashup", "FIN_Finacc_Transaction");
+    return posTypeOfData.contains(importEntry.getTypeofdata());
   }
 }

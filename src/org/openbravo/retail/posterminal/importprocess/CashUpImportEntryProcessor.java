@@ -57,7 +57,7 @@ public class CashUpImportEntryProcessor extends ImportEntryProcessor {
       // check that there are no orders import entries for the terminal
       // which have not yet been processed
 
-      final JSONObject json = new JSONObject(importEntry.getJsoninfo());
+      final JSONObject json = new JSONObject(importEntry.getData());
       if (json.has("isprocessed") && "Y".equals(json.getString("isprocessed"))
           && thereAreOrdersInImportQueue(importEntry)) {
         return;
