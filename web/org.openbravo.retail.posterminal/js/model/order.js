@@ -674,7 +674,7 @@
         this.set('idExecution', idExecution);
       }
 
-      OB.UTIL.clone(_order, this);
+      OB.UTIL.clone(_order, this, {silent: true});
 
       if (!OB.UTIL.isNullOrUndefined(this.get('idExecution')) && this.get('idExecution') === idExecution) {
         _order.set('cloningReceipt', false);
