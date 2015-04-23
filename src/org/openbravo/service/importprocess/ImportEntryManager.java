@@ -160,7 +160,7 @@ public class ImportEntryManager {
    * 
    * @param json
    */
-  public void createImportEntry(String id, String typeOfData, String json) {
+  public void createImportEntry(String id, String typeOfData, String data) {
     OBDal.getInstance().flush();
     OBContext.setAdminMode(false);
     try {
@@ -180,7 +180,7 @@ public class ImportEntryManager {
       importEntry.setStored(new Date());
       importEntry.setImported(null);
       importEntry.setTypeofdata(typeOfData);
-      importEntry.setJsoninfo(json);
+      importEntry.setData(data);
 
       for (Iterator<? extends Object> procIter = entryPreProcessors.iterator(); procIter.hasNext();) {
         ImportEntryPreProcessor processor = (ImportEntryPreProcessor) procIter.next();
@@ -231,8 +231,8 @@ public class ImportEntryManager {
       ImportEntryProcessor entryProcessor = getImportEntryProcessor(importEntry.getTypeofdata());
       if (entryProcessor == null) {
         log.warn("No import entry processor defined for type of data "
-            + importEntry.getTypeofdata() + " with json " + importEntry.getJsoninfo()
-            + " imported on " + importEntry.getImported() + " by " + importEntry.getCreatedBy());
+            + importEntry.getTypeofdata() + " with json " + importEntry.getData() + " imported on "
+            + importEntry.getImported() + " by " + importEntry.getCreatedBy());
       } else {
         entryProcessor.handleImportEntry(importEntry);
       }
