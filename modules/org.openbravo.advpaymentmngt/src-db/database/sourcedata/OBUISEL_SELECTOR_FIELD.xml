@@ -6,10 +6,10 @@
 <!--020AFFE4543C44DB9423BD0E1069AC16-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--020AFFE4543C44DB9423BD0E1069AC16-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--020AFFE4543C44DB9423BD0E1069AC16-->  <AD_MODULE_ID><![CDATA[A918E3331C404B889D69AA9BFAFB23AC]]></AD_MODULE_ID>
-<!--020AFFE4543C44DB9423BD0E1069AC16-->  <AD_COLUMN_ID><![CDATA[4970]]></AD_COLUMN_ID>
-<!--020AFFE4543C44DB9423BD0E1069AC16-->  <NAME><![CDATA[Name]]></NAME>
-<!--020AFFE4543C44DB9423BD0E1069AC16-->  <DESCRIPTION><![CDATA[A non-unique identifier for a record/document often used as a search tool.]]></DESCRIPTION>
-<!--020AFFE4543C44DB9423BD0E1069AC16-->  <HELP><![CDATA[A more descriptive identifier (that does need to be unique) of a record/document that is used as a default search option along with the search key (that is unique and mostly shorter). It is up to 60 characters in length.]]></HELP>
+<!--020AFFE4543C44DB9423BD0E1069AC16-->  <AD_COLUMN_ID><![CDATA[4940]]></AD_COLUMN_ID>
+<!--020AFFE4543C44DB9423BD0E1069AC16-->  <NAME><![CDATA[Business Partner Category]]></NAME>
+<!--020AFFE4543C44DB9423BD0E1069AC16-->  <DESCRIPTION><![CDATA[A classification of business partners based on defined similarities.]]></DESCRIPTION>
+<!--020AFFE4543C44DB9423BD0E1069AC16-->  <HELP><![CDATA[A way of grouping business partners together for classification and reporting purposes. Provides a method of defining certain defaults to be used when opening new business partners.]]></HELP>
 <!--020AFFE4543C44DB9423BD0E1069AC16-->  <PROPERTY><![CDATA[businessPartnerCategory.name]]></PROPERTY>
 <!--020AFFE4543C44DB9423BD0E1069AC16-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
 <!--020AFFE4543C44DB9423BD0E1069AC16-->  <SORT><![CDATA[Y]]></SORT>
