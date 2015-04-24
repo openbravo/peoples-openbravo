@@ -35,7 +35,6 @@ import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.datamodel.Table;
-import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.OrganizationInformation;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.service.datasource.HQLDataSourceService;
@@ -85,14 +84,6 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
       hqlQuery = removeGridFilters(hqlQuery);
       queryNamedParameters.clear();
       hqlQuery = calculateHavingClause(hqlQuery, transactionType, criteria, queryNamedParameters);
-      Organization org = OBDal.getInstance().get(Organization.class,
-          requestParameters.get("ad_org_id"));
-      if (org.getOrganizationInformationList() != null) {
-        OrganizationInformation oinfo = org.getOrganizationInformationList().get(0);
-        if (oinfo.getAPRMPaymentDescription().equals("Supplier Reference")) {
-          hqlQuery = hqlQuery.replaceAll("inv.documentNo", "inv.orderReference");
-        }
-      }
     } else {
       hqlQuery = hqlQuery.replace("@havingClause@", "");
     }
