@@ -90,7 +90,7 @@ public class DefaultDataSourceService extends BaseDataSourceService {
     }
   }
 
-  protected void addFetchParameters(Map<String, String> parameters) {
+  private void addFetchParameters(Map<String, String> parameters) {
 
     if (getEntity() != null) {
       parameters.put(JsonConstants.ENTITYNAME, getEntity().getName());
