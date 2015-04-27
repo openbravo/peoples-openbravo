@@ -49,7 +49,6 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.ad_forms.AcctServer;
-import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
@@ -89,7 +88,6 @@ import org.openbravo.model.materialmgmt.onhandquantity.StockProposed;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
-import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.importprocess.ImportEntryManager;
@@ -155,8 +153,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         verifyCashupStatus(jsonorder);
       }
 
-      long t0 = System.currentTimeMillis();
-      long t1, t11, t2, t3;
+      t0 = System.currentTimeMillis();
       Order order = null;
       OrderLine orderLine = null;
       ShipmentInOut shipment = null;
@@ -296,9 +293,16 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
         if (createShipment) {
           // Stock manipulation
-          handleStock(shipment);
+          org.openbravo.database.ConnectionProvider cp = new DalConnectionProvider(false);
+          CallableStatement updateStockStatement = cp.getConnection().prepareCall(
+              "{call M_UPDATE_INVENTORY (?,?,?,?,?,?,?,?,?,?,?,?,?)}");
+          try {
+            // Stock manipulation
+            handleStock(shipment, updateStockStatement);
+          } finally {
+            updateStockStatement.close();
+          }
         }
-
         if (log.isDebugEnabled()) {
           t4 = System.currentTimeMillis();
 
@@ -1617,9 +1621,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       for (FIN_FinaccTransaction transaction : transactions) {
         transaction.setObposAppCashup(cashup);
       }
-
-      log.debug("Payment. Create entities: " + (t2 - t1) + "; Save payment: " + (t3 - t2)
-          + "; Process payment: " + (System.currentTimeMillis() - t3));
 
     } finally {
       OBContext.restorePreviousMode();
