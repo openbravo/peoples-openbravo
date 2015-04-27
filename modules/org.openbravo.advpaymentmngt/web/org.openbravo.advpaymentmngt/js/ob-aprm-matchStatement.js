@@ -50,13 +50,15 @@ OB.APRM.MatchStatement.onLoad = function (view) {
 OB.APRM.MatchStatement.onRefresh = function (view) {
   var grid = view.theForm.getItem('match_statement').canvas.viewGrid,
       newCriteria = {};
-  newCriteria.criteria = [];
+  newCriteria = grid.addSelectedIDsToCriteria(grid.getCriteria(), false);
+  newCriteria.criteria = newCriteria.criteria || [];
   // add dummy criterion to force fetch
   newCriteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
-  grid.fetchData(newCriteria);
+  grid.invalidateCache();
+  view.theForm.redraw();
 };
 
-OB.APRM.MatchStatement.onProcess = function (view, actionHandlerCall, clientSideValidationFail	) {
+OB.APRM.MatchStatement.onProcess = function (view, actionHandlerCall, clientSideValidationFail) {
   var execute;
   execute = function (ok) {
     if (ok) {
