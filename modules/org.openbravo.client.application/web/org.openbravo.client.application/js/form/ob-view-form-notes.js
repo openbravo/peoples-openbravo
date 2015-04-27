@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2014 Openbravo SLU
+ * All portions are Copyright (C) 2011-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s): Valery Lezhebokov.
  ************************************************************************
@@ -86,8 +86,8 @@ isc.OBNoteSectionItem.addProperties({
     return this.noteCanvasItem.canvas;
   },
 
-  setRecordInfo: function (entity, id) {
-    this.getNotePart().setRecordInfo(entity, id);
+  setRecordInfo: function (entity, id, notesForm) {
+    this.getNotePart().setRecordInfo(entity, id, notesForm);
   },
 
   refresh: function () {
@@ -194,14 +194,22 @@ isc.OBNoteLayout.addProperties({
     this.noteDynamicForm.validate();
 
     var noteDS = this.getNoteDataSource();
-
     var currentTime = new Date();
+    var organizationOfTheNote;
+
+    //Here we are checking if the entity is 'Organization' because the way of obtaining the
+    //id of the organization of the form is different depending on the entity
+    if (this.entity === 'Organization') {
+      organizationOfTheNote = this.recordId;
+    } else {
+      organizationOfTheNote = this.notesForm.values.organization;
+    }
 
     noteDS.addData({
       'client': OB.User.clientId,
-      'organization': OB.User.organizationId,
-      'table': this.getForm().view.standardProperties.inpTableId,
-      'record': this.getForm().view.viewGrid.getSelectedRecord().id,
+      'organization': organizationOfTheNote,
+      'table': this.notesForm.view.standardProperties.inpTableId,
+      'record': this.notesForm.view.viewGrid.getSelectedRecord().id,
       'note': note
     }, addNoteCallback);
 
@@ -439,9 +447,10 @@ isc.OBNoteLayout.addProperties({
   /**
    * Sets record information.
    */
-  setRecordInfo: function (entity, id) {
+  setRecordInfo: function (entity, id, notesForm) {
     this.entity = entity;
     this.recordId = id;
+    this.notesForm = notesForm;
   },
 
   refresh: function () {

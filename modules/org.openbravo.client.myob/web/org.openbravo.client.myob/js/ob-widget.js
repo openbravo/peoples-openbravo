@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -70,7 +70,7 @@ isc.defineClass('OBWidgetMenuItem', isc.MenuButton).addProperties({
 
   showMenu: function () {
     var me = this,
-        menuItems, i, baseMenuItem;
+        menuItems, i, baseMenuItem, clickFunction;
 
     baseMenuItem = {
       title: '',
@@ -129,13 +129,22 @@ isc.defineClass('OBWidgetMenuItem', isc.MenuButton).addProperties({
           continue;
         }
 
-        if (!this.widget[this.menuItems[i].click]) {
+        // click can be a method within the widget or a global function
+        if (isc.isA.Function(this.widget[this.menuItems[i].click])) {
+          clickFunction = this.widget[this.menuItems[i].click];
+        } else if (isc.isA.Function(isc.Func.expressionToFunction('', this.menuItems[i].click)())) {
+          clickFunction = isc.Func.expressionToFunction('', this.menuItems[i].click)();
+        } else {
+          clickFunction = null;
+        }
+
+        if (!clickFunction) {
           isc.Log.logWarn('Method: ' + this.menuItems[i].click + ' not defined for widget: ' + this.widget);
         }
 
         menuItems.push(isc.addProperties({}, baseMenuItem, {
           title: this.menuItems[i].title,
-          click: this.widget[this.menuItems[i].click]
+          click: clickFunction
         }));
       }
     }

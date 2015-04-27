@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -135,9 +135,37 @@ public class AddTransactionActionHandler extends BaseProcessActionHandler {
 
       final FIN_BankStatementLine bankStatementLine = OBDal.getInstance().get(
           FIN_BankStatementLine.class, strFinBankStatementLineId);
+      // Accounting Dimensions
+      final String strElement_OT = params.getString("ad_org_id");
+      organization = OBDal.getInstance().get(Organization.class, strElement_OT);
+      final String strElement_BP = params.getString("c_bpartner_id");
+      businessPartner = OBDal.getInstance().get(BusinessPartner.class, strElement_BP);
+      final String strElement_PR = params.getString("m_product_id");
+      product = OBDal.getInstance().get(Product.class, strElement_PR);
+      final String strElement_PJ = params.getString("c_project_id");
+      project = OBDal.getInstance().get(Project.class, strElement_PJ);
+      final String strElement_AY = params.getString("c_activity_id");
+      activity = OBDal.getInstance().get(ABCActivity.class, strElement_AY);
+      final String strElement_SR = params.getString("c_salesregion_id");
+      salesRegion = OBDal.getInstance().get(SalesRegion.class, strElement_SR);
+      final String strElement_MC = params.getString("c_campaign_id");
+      campaign = OBDal.getInstance().get(Campaign.class, strElement_MC);
+      final String strElement_U1 = params.getString("user1_id");
+      user1 = OBDal.getInstance().get(UserDimension1.class, strElement_U1);
+      final String strElement_U2 = params.getString("user2_id");
+      user2 = OBDal.getInstance().get(UserDimension2.class, strElement_U2);
+      final String strElement_CC = params.getString("c_costcenter_id");
+      costcenter = OBDal.getInstance().get(Costcenter.class, strElement_CC);
 
-      if (!selectedPaymentId.equals("null")) { // Payment
-        payment = OBDal.getInstance().get(FIN_Payment.class, selectedPaymentId);
+      String paymentId = selectedPaymentId;
+      String glitemId = strGLItemId;
+      if (strTransactionType.equals("BF")) {
+        paymentId = "null";
+        glitemId = "null";
+      }
+
+      if (!paymentId.equals("null")) { // Payment
+        payment = OBDal.getInstance().get(FIN_Payment.class, paymentId);
         depositAmt = FIN_Utility.getDepositAmount(payment.isReceipt(),
             payment.getFinancialTransactionAmount());
         paymentAmt = FIN_Utility.getPaymentAmount(payment.isReceipt(),
@@ -149,30 +177,8 @@ public class AddTransactionActionHandler extends BaseProcessActionHandler {
         paymentCurrency = payment.getCurrency();
         convertRate = payment.getFinancialTransactionConvertRate();
         sourceAmount = payment.getAmount();
-      } else if (!strGLItemId.equals("null")) {// GL item
-        // Accounting Dimensions
-        final String strElement_OT = params.getString("ad_org_id");
-        organization = OBDal.getInstance().get(Organization.class, strElement_OT);
-        final String strElement_BP = params.getString("c_bpartner_id");
-        businessPartner = OBDal.getInstance().get(BusinessPartner.class, strElement_BP);
-        final String strElement_PR = params.getString("m_product_id");
-        product = OBDal.getInstance().get(Product.class, strElement_PR);
-        final String strElement_PJ = params.getString("c_project_id");
-        project = OBDal.getInstance().get(Project.class, strElement_PJ);
-        final String strElement_AY = params.getString("c_activity_id");
-        activity = OBDal.getInstance().get(ABCActivity.class, strElement_AY);
-        final String strElement_SR = params.getString("c_salesregion_id");
-        salesRegion = OBDal.getInstance().get(SalesRegion.class, strElement_SR);
-        final String strElement_MC = params.getString("c_campaign_id");
-        campaign = OBDal.getInstance().get(Campaign.class, strElement_MC);
-        final String strElement_U1 = params.getString("user1_id");
-        user1 = OBDal.getInstance().get(UserDimension1.class, strElement_U1);
-        final String strElement_U2 = params.getString("user2_id");
-        user2 = OBDal.getInstance().get(UserDimension2.class, strElement_U2);
-        final String strElement_CC = params.getString("c_costcenter_id");
-        costcenter = OBDal.getInstance().get(Costcenter.class, strElement_CC);
-
-        glItem = OBDal.getInstance().get(GLItem.class, strGLItemId);
+      } else if (!glitemId.equals("null")) {// GL item
+        glItem = OBDal.getInstance().get(GLItem.class, glitemId);
 
         depositAmt = new BigDecimal(strDepositAmount);
         paymentAmt = new BigDecimal(strWithdrawalamt);

@@ -503,6 +503,12 @@ isc.OBPickAndExecuteGrid.addProperties({
     this.Super('handleFilterEditorSubmit', [crit, context]);
   },
 
+  isDataLoaded: function () {
+    // When the data is being loaded, every element in the localData array is set with the "loading" value
+    // So we just need to check the first position of the array
+    return this.data.localData && !Array.isLoading(this.data.localData[0]);
+  },
+
   dataArrived: function (startRow, endRow) {
     var record, i, rows, selectedLen = this.selectedIds.length,
         len, savedRecord, index, j, fields, allRequiredSet;
@@ -547,7 +553,9 @@ isc.OBPickAndExecuteGrid.addProperties({
     }
 
     this.Super('dataArrived', arguments);
-    if (this.onGridLoadFunction) {
+    // See issue 29560: check if the local data is loaded to execute the on grid load function
+    // This prevents errors when a request is done and the load of a previous request has not finished
+    if (this.onGridLoadFunction && this.isDataLoaded()) {
       this.onGridLoadFunction(this);
       this.view.handleButtonsStatus();
     }

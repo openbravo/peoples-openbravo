@@ -83,6 +83,10 @@ public class DefaultJsonDataService implements JsonDataService {
    * @see org.openbravo.service.json.JsonDataService#fetch(java.util.Map)
    */
   public String fetch(Map<String, String> parameters) {
+    return fetch(parameters, true);
+  }
+
+  public String fetch(Map<String, String> parameters, boolean filterOnReadableOrganizations) {
     try {
       final String entityName = parameters.get(JsonConstants.ENTITYNAME);
       Check.isNotNull(entityName, "The name of the service/entityname should not be null");
@@ -165,7 +169,8 @@ public class DefaultJsonDataService implements JsonDataService {
           jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, count);
           return jsonResponse.toString();
         }
-        queryService = createSetQueryService(parameters, false);
+        queryService = createSetQueryService(parameters, false, false,
+            filterOnReadableOrganizations);
 
         if (parameters.containsKey(JsonConstants.SUMMARY_PARAMETER)) {
           final JSONObject singleResult = new JSONObject();
@@ -300,11 +305,11 @@ public class DefaultJsonDataService implements JsonDataService {
 
   protected DataEntityQueryService createSetQueryService(Map<String, String> parameters,
       boolean forCountOperation) {
-    return createSetQueryService(parameters, forCountOperation, false);
+    return createSetQueryService(parameters, forCountOperation, false, true);
   }
 
   private DataEntityQueryService createSetQueryService(Map<String, String> parameters,
-      boolean forCountOperation, boolean forSubEntity) {
+      boolean forCountOperation, boolean forSubEntity, boolean filterOnReadableOrganizations) {
     boolean hasSubentity = false;
     String entityName = parameters.get(JsonConstants.ENTITYNAME);
     final DataEntityQueryService queryService = OBProvider.getInstance().get(
@@ -375,11 +380,13 @@ public class DefaultJsonDataService implements JsonDataService {
       queryService.setFilterOnActive(false);
 
       // create now subentity
-      queryService.setSubEntity(entityName,
-          createSetQueryService(paramSubCriteria, forCountOperation, true), distinctProperty,
-          distinctPropertyPath);
+      queryService.setSubEntity(
+          entityName,
+          createSetQueryService(paramSubCriteria, forCountOperation, true,
+              filterOnReadableOrganizations), distinctProperty, distinctPropertyPath);
     } else {
       queryService.setEntityName(entityName);
+      queryService.setFilterOnReadableOrganizations(filterOnReadableOrganizations);
       if (parameters.containsKey(JsonConstants.USE_ALIAS)) {
         queryService.setUseAlias();
       }

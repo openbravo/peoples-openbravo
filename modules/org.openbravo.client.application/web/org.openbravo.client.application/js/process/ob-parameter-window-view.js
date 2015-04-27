@@ -455,6 +455,7 @@ isc.OBParameterWindowView.addProperties({
         if (me.buttonOwnerView && isc.isA.Function(me.buttonOwnerView.refreshParentRecord) && isc.isA.Function(me.buttonOwnerView.refreshChildViews)) {
           me.buttonOwnerView.refreshParentRecord();
           me.buttonOwnerView.refreshChildViews();
+          me.buttonOwnerView.toolBar.updateButtonState();
         }
       };
       if (refreshParent) {
@@ -744,7 +745,7 @@ isc.OBParameterWindowView.addProperties({
 
   // returns true if any non-grid required parameter does not have a value
   allRequiredParametersSet: function () {
-    var i, item, length = this.theForm.getItems().length,
+    var i, item, length = this.theForm && this.theForm.getItems().length,
         value, undef, nullValue = null;
     for (i = 0; i < length; i++) {
       item = this.theForm.getItems()[i];

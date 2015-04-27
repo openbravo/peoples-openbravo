@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  Enterprise Intelligence Systems (http://www.eintel.com.au).
  *************************************************************************
@@ -554,10 +554,20 @@ public class AdvPaymentMngtDao {
       paymentScheduleDetails.add(paymentScheduleDetail);
       newPaymentDetail.setFINPaymentScheduleDetailList(paymentScheduleDetails);
 
+      if (payment.getDocumentType().getDocumentSequence() != null) {
+        OBContext.getOBContext().addWritableOrganization(
+            payment.getDocumentType().getDocumentSequence().getOrganization().getId());
+      }
+
       OBDal.getInstance().save(payment);
       OBDal.getInstance().save(newPaymentDetail);
       OBDal.getInstance().save(paymentScheduleDetail);
       OBDal.getInstance().flush();
+
+      if (payment.getDocumentType().getDocumentSequence() != null) {
+        OBContext.getOBContext().removeWritableOrganization(
+            payment.getDocumentType().getDocumentSequence().getOrganization().getId());
+      }
 
       return newPaymentDetail;
     } finally {

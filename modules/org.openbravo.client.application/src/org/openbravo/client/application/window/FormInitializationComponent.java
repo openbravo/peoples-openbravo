@@ -352,6 +352,7 @@ public class FormInitializationComponent extends BaseActionHandler {
   private int computeNoteCount(Tab tab, String rowId) {
     OBQuery<Note> obq = OBDal.getInstance().createQuery(Note.class,
         " table.id=:tableId and record=:recordId");
+    obq.setFilterOnReadableOrganization(false);
     obq.setNamedParameter("tableId", (String) DalUtil.getId(tab.getTable()));
     obq.setNamedParameter("recordId", rowId);
     return obq.count();
@@ -1315,7 +1316,14 @@ public class FormInitializationComponent extends BaseActionHandler {
     }
 
     try {
-      String fieldId = "inp" + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName());
+      String fieldId = null;
+      if (field.getProperty() != null && !field.getProperty().isEmpty()) {
+        fieldId = "inp" + "_propertyField_"
+            + Sqlc.TransformaNombreColumna(field.getName()).replace(" ", "") + "_"
+            + field.getColumn().getDBColumnName();
+      } else {
+        fieldId = "inp" + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName());
+      }
       RequestContext.get().setRequestParameter(
           fieldId,
           jsonObj.has("classicValue") && jsonObj.get("classicValue") != null

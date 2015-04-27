@@ -442,7 +442,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       List<ProductCostingAssert> productCostingAssertList = new ArrayList<ProductCostingAssert>();
       productCostingAssertList.add(new ProductCostingAssert(transactionList.get(0), price1, null,
           price1, quantity1));
-      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(1), price5, price4,
+      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(1), price3, price4,
           price5, quantity1.add(quantity2)));
       assertProductCosting(product.getId(), productCostingAssertList);
 
@@ -999,7 +999,7 @@ public class TestCosting extends BaseDataSourceTestDal {
           price2, quantity2));
       productCostingAssertList.add(new ProductCostingAssert(transactionList.get(1), price2, price1,
           price2, quantity2.add(quantity3)));
-      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(3), price6, price5,
+      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(3), price4, price5,
           price6, quantity2.add(quantity3).add((quantity4).negate()).add(quantity5)));
       productCostingAssertList
           .add(new ProductCostingAssert(transactionList.get(4), price4, price3, price7, quantity2
@@ -1618,7 +1618,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       List<ProductCostingAssert> productCostingAssertList = new ArrayList<ProductCostingAssert>();
       productCostingAssertList.add(new ProductCostingAssert(transactionList.get(0), price1, null,
           price1, quantity1));
-      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(1), price2, price3,
+      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(1), price4, price3,
           price2, quantity2));
       assertProductCosting(product.getId(), productCostingAssertList);
 
@@ -2543,7 +2543,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       List<ProductCostingAssert> productCostingAssertList = new ArrayList<ProductCostingAssert>();
       productCostingAssertList.add(new ProductCostingAssert(transactionList.get(1), price1, price2,
           price1, quantity2));
-      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(0), price5, price3,
+      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(0), price4, price3,
           price6, quantity3));
       assertProductCosting(product.getId(), productCostingAssertList);
 
@@ -2814,7 +2814,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       productCostingAssertList.add(new ProductCostingAssert(transactionList.get(2), WAREHOUSE2_ID,
           price2, price1, price2, quantity2));
       productCostingAssertList.add(new ProductCostingAssert(transactionList.get(1), WAREHOUSE1_ID,
-          price5, price5, price4, quantity3));
+          price2, price5, price4, quantity3));
       assertProductCosting(product.getId(), productCostingAssertList);
 
       // Assert cost adjustment
@@ -2938,7 +2938,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       productCostingAssertList.add(new ProductCostingAssert(transactionList.get(2), WAREHOUSE2_ID,
           price4, price1, price4, quantity2));
       productCostingAssertList.add(new ProductCostingAssert(transactionList.get(1), WAREHOUSE1_ID,
-          price5, price6, price5, quantity3));
+          price3, price6, price5, quantity3));
       assertProductCosting(product.getId(), productCostingAssertList);
 
       // Assert cost adjustment
@@ -3073,7 +3073,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       productCostingAssertList.add(new ProductCostingAssert(transactionList.get(2), WAREHOUSE2_ID,
           price3, price1, price3, quantity2));
       productCostingAssertList.add(new ProductCostingAssert(transactionList.get(1), WAREHOUSE1_ID,
-          price5, price4, price3, quantity3));
+          price3, price4, price3, quantity3));
       assertProductCosting(product.getId(), productCostingAssertList);
 
       // Assert cost adjustment
@@ -3263,9 +3263,9 @@ public class TestCosting extends BaseDataSourceTestDal {
       productCostingAssertList.add(new ProductCostingAssert(transactionList.get(1), WAREHOUSE2_ID,
           price3, price2, price3, quantity1));
       productCostingAssertList.add(new ProductCostingAssert(transactionList.get(4), WAREHOUSE1_ID,
-          price6, price3, price6, quantity6));
+          price4, price3, price6, quantity6));
       productCostingAssertList.add(new ProductCostingAssert(transactionList.get(6), WAREHOUSE1_ID,
-          price7, price8, price7, quantity7));
+          price5, price8, price7, quantity7));
       productCostingAssertList.add(new ProductCostingAssert(transactionList.get(5), WAREHOUSE2_ID,
           price9, null, price9, quantity2));
       assertProductCosting(product.getId(), productCostingAssertList);
@@ -3456,7 +3456,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Assert product costing
       List<MaterialTransaction> transactionList2 = getProductTransactions(product.getId());
       List<ProductCostingAssert> productCostingAssertList2 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(0), price4,
+      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(0), price1,
           price1, price4, quantity1));
       assertProductCosting(product.getId(), productCostingAssertList2);
 
@@ -4065,7 +4065,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       List<ProductCostingAssert> productCostingAssertList = new ArrayList<ProductCostingAssert>();
       productCostingAssertList.add(new ProductCostingAssert(transactionList.get(0), price2, price1,
           price2, quantity1));
-      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(1), price4, price5,
+      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(1), price2, price5,
           price4, quantity1.add(quantity2.negate())));
       assertProductCosting(product.getId(), productCostingAssertList);
 
@@ -4394,7 +4394,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Assert product costing
       List<MaterialTransaction> transactionList = getProductTransactions(product.getId());
       List<ProductCostingAssert> productCostingAssertList = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(0), price5, price1,
+      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(0), price2, price1,
           price5, quantity1));
       assertProductCosting(product.getId(), productCostingAssertList);
 
@@ -4517,11 +4517,11 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Assert product costing
       List<MaterialTransaction> transactionList = getProductTransactions(product.getId());
       List<ProductCostingAssert> productCostingAssertList = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(0), price5, price1,
+      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(0), price4, price1,
           price5, quantity2));
-      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(1), price5, price1,
+      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(1), price4, price1,
           price5, quantity2.add(quantity3)));
-      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(2), price5, price1,
+      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(2), price4, price1,
           price5, quantity2.add(quantity3).add(quantity4)));
       assertProductCosting(product.getId(), productCostingAssertList);
 
@@ -4773,11 +4773,11 @@ public class TestCosting extends BaseDataSourceTestDal {
       List<ProductCostingAssert> productCostingAssertList1 = new ArrayList<ProductCostingAssert>();
       productCostingAssertList1.add(new ProductCostingAssert(null, null, null, price1, null,
           costType));
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(0), price6,
+      productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(0), price1,
           price1, price6, quantity1));
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(1), price7,
+      productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(1), price1,
           price1, price12, quantity1.add(quantity3)));
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(2), price8,
+      productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(2), price1,
           price1, price13, quantity1.add(quantity3).add(quantity5)));
       assertProductCosting(product1.getId(), productCostingAssertList1);
 
@@ -4786,11 +4786,11 @@ public class TestCosting extends BaseDataSourceTestDal {
       List<ProductCostingAssert> productCostingAssertList2 = new ArrayList<ProductCostingAssert>();
       productCostingAssertList2.add(new ProductCostingAssert(null, null, null, price2, null,
           costType));
-      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(0), price9,
+      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(0), price2,
           price2, price9, quantity2));
-      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(1), price14,
+      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(1), price5,
           price2, price14, quantity2.add(quantity4)));
-      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(2), price11,
+      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(2), price2,
           price2, price15, quantity2.add(quantity4).add(quantity6)));
       assertProductCosting(product2.getId(), productCostingAssertList2);
 
@@ -4952,14 +4952,14 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Assert product costing 1
       List<MaterialTransaction> transactionList1 = getProductTransactions(product1.getId());
       List<ProductCostingAssert> productCostingAssertList1 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(0), price5,
+      productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(0), price1,
           price1, price5, quantity1));
       assertProductCosting(product1.getId(), productCostingAssertList1);
 
       // Assert product costing 2
       List<MaterialTransaction> transactionList2 = getProductTransactions(product2.getId());
       List<ProductCostingAssert> productCostingAssertList2 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(0), price6,
+      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(0), price2,
           price2, price6, quantity2));
       assertProductCosting(product2.getId(), productCostingAssertList2);
 
@@ -5070,14 +5070,14 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Assert product costing 1
       List<MaterialTransaction> transactionList1 = getProductTransactions(product1.getId());
       List<ProductCostingAssert> productCostingAssertList1 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(0), price6,
+      productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(0), price1,
           price1, price6, quantity1));
       assertProductCosting(product1.getId(), productCostingAssertList1);
 
       // Assert product costing 2
       List<MaterialTransaction> transactionList2 = getProductTransactions(product2.getId());
       List<ProductCostingAssert> productCostingAssertList2 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(0), price7,
+      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(0), price2,
           price2, price7, quantity2));
       assertProductCosting(product2.getId(), productCostingAssertList2);
 
@@ -5253,14 +5253,14 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Assert product costing 1
       List<MaterialTransaction> transactionList1 = getProductTransactions(product1.getId());
       List<ProductCostingAssert> productCostingAssertList1 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(0), price9,
+      productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(0), price1,
           price1, price9, quantity2));
       assertProductCosting(product1.getId(), productCostingAssertList1);
 
       // Assert product costing 2
       List<MaterialTransaction> transactionList2 = getProductTransactions(product2.getId());
       List<ProductCostingAssert> productCostingAssertList2 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(0), price11,
+      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(0), price10,
           price10, price11, quantity1));
       assertProductCosting(product2.getId(), productCostingAssertList2);
 
@@ -5412,7 +5412,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Assert product costing
       List<MaterialTransaction> transactionList = getProductTransactions(product.getId());
       List<ProductCostingAssert> productCostingAssertList1 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList.get(0), price4,
+      productCostingAssertList1.add(new ProductCostingAssert(transactionList.get(0), price1,
           price1, price4, quantity1));
       assertProductCosting(product.getId(), productCostingAssertList1);
 
@@ -5487,7 +5487,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Assert product costing
       List<MaterialTransaction> transactionList = getProductTransactions(product.getId());
       List<ProductCostingAssert> productCostingAssertList1 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList.get(0), price4,
+      productCostingAssertList1.add(new ProductCostingAssert(transactionList.get(0), price1,
           price1, price4, quantity1));
       assertProductCosting(product.getId(), productCostingAssertList1);
 
@@ -5584,7 +5584,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Assert product costing
       List<MaterialTransaction> transactionList = getProductTransactions(product.getId());
       List<ProductCostingAssert> productCostingAssertList1 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList.get(0), price6,
+      productCostingAssertList1.add(new ProductCostingAssert(transactionList.get(0), price1,
           price1, price6, quantity1));
       assertProductCosting(product.getId(), productCostingAssertList1);
 
@@ -5681,7 +5681,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Assert product costing
       List<MaterialTransaction> transactionList = getProductTransactions(product.getId());
       List<ProductCostingAssert> productCostingAssertList1 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList.get(0), price6,
+      productCostingAssertList1.add(new ProductCostingAssert(transactionList.get(0), price1,
           price1, price6, quantity1));
       assertProductCosting(product.getId(), productCostingAssertList1);
 
@@ -5781,7 +5781,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Assert product costing
       List<MaterialTransaction> transactionList = getProductTransactions(product.getId());
       List<ProductCostingAssert> productCostingAssertList1 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList.get(0), price6,
+      productCostingAssertList1.add(new ProductCostingAssert(transactionList.get(0), price1,
           price1, price6, quantity1));
       assertProductCosting(product.getId(), productCostingAssertList1);
 
@@ -5876,7 +5876,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Assert product costing
       List<MaterialTransaction> transactionList = getProductTransactions(product.getId());
       List<ProductCostingAssert> productCostingAssertList1 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList.get(0), price6,
+      productCostingAssertList1.add(new ProductCostingAssert(transactionList.get(0), price1,
           price1, price6, quantity1));
       assertProductCosting(product.getId(), productCostingAssertList1);
 
@@ -5957,7 +5957,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Assert product costing 1
       List<MaterialTransaction> transactionList1 = getProductTransactions(product1.getId());
       List<ProductCostingAssert> productCostingAssertList1 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(0), price4,
+      productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(0), price1,
           price1, price4, quantity1));
       assertProductCosting(product1.getId(), productCostingAssertList1);
 
@@ -6066,7 +6066,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Assert product costing
       List<MaterialTransaction> transactionList = getProductTransactions(product.getId());
       List<ProductCostingAssert> productCostingAssertList1 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList.get(0), price6,
+      productCostingAssertList1.add(new ProductCostingAssert(transactionList.get(0), price1,
           price1, price6, quantity1));
       assertProductCosting(product.getId(), productCostingAssertList1);
 
@@ -6238,7 +6238,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Assert product costing
       List<MaterialTransaction> transactionList = getProductTransactions(product.getId());
       List<ProductCostingAssert> productCostingAssertList1 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList.get(0), price6,
+      productCostingAssertList1.add(new ProductCostingAssert(transactionList.get(0), price1,
           price1, price6, quantity1));
       assertProductCosting(product.getId(), productCostingAssertList1);
 
@@ -6297,7 +6297,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Assert product costing
       List<MaterialTransaction> transactionList2 = getProductTransactions(product.getId());
       List<ProductCostingAssert> productCostingAssertList2 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(0), price7,
+      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(0), price1,
           price1, price7, quantity1));
       assertProductCosting(product.getId(), productCostingAssertList2);
 
@@ -6451,7 +6451,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Assert product costing 1
       List<MaterialTransaction> transactionList1 = getProductTransactions(product1.getId());
       List<ProductCostingAssert> productCostingAssertList1 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(0), price6,
+      productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(0), price1,
           price1, price6, quantity1));
       productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(1), price1,
           price1, price7, quantity1.add(quantity6)));
@@ -6460,7 +6460,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Assert product costing 2
       List<MaterialTransaction> transactionList2 = getProductTransactions(product2.getId());
       List<ProductCostingAssert> productCostingAssertList2 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(0), price8,
+      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(0), price2,
           price2, price8, quantity2));
       productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(1), price2,
           price2, price9, quantity2.add(quantity3)));
@@ -6637,7 +6637,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Assert product costing 1
       List<MaterialTransaction> transactionList1 = getProductTransactions(product1.getId());
       List<ProductCostingAssert> productCostingAssertList1 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(0), price6,
+      productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(0), price1,
           price1, price6, quantity1));
       productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(1), price1,
           price1, price7, quantity1.add(quantity6)));
@@ -6646,7 +6646,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Assert product costing 2
       List<MaterialTransaction> transactionList2 = getProductTransactions(product2.getId());
       List<ProductCostingAssert> productCostingAssertList2 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(0), price8,
+      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(0), price2,
           price2, price8, quantity2));
       productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(1), price2,
           price2, price9, quantity2.add(quantity3)));
@@ -6822,7 +6822,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Assert product costing 1
       List<MaterialTransaction> transactionList1 = getProductTransactions(product1.getId());
       List<ProductCostingAssert> productCostingAssertList1 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(0), price6,
+      productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(0), price1,
           price1, price6, quantity1));
       productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(1), price1,
           price1, price7, quantity1.add(quantity6)));
@@ -6831,9 +6831,9 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Assert product costing 2
       List<MaterialTransaction> transactionList2 = getProductTransactions(product2.getId());
       List<ProductCostingAssert> productCostingAssertList2 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(0), price8,
+      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(0), price2,
           price2, price8, quantity2));
-      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(1), price8,
+      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(1), price2,
           price2, price8, quantity2.add(quantity3)));
       assertProductCosting(product2.getId(), productCostingAssertList2);
 
@@ -7013,7 +7013,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Assert product costing 1
       List<MaterialTransaction> transactionList1 = getProductTransactions(product1.getId());
       List<ProductCostingAssert> productCostingAssertList1 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(0), price6,
+      productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(0), price1,
           price1, price6, quantity1));
       productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(1), price1,
           price1, price7, quantity1.add(quantity6)));
@@ -7022,9 +7022,9 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Assert product costing 2
       List<MaterialTransaction> transactionList2 = getProductTransactions(product2.getId());
       List<ProductCostingAssert> productCostingAssertList2 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(0), price8,
+      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(0), price2,
           price2, price8, quantity2));
-      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(1), price8,
+      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(1), price2,
           price2, price8, quantity2.add(quantity3)));
       assertProductCosting(product2.getId(), productCostingAssertList2);
 
@@ -7208,7 +7208,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Assert product costing 1
       List<MaterialTransaction> transactionList1 = getProductTransactions(product1.getId());
       List<ProductCostingAssert> productCostingAssertList1 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(0), price6,
+      productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(0), price1,
           price1, price6, quantity1));
       productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(1), price1,
           price1, price7, quantity1.add(quantity6)));
@@ -7217,18 +7217,18 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Assert product costing 2
       List<MaterialTransaction> transactionList2 = getProductTransactions(product2.getId());
       List<ProductCostingAssert> productCostingAssertList2 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(0), price8,
+      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(0), price2,
           price2, price8, quantity2));
-      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(1), price8,
+      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(1), price2,
           price2, price8, quantity2.add(quantity3)));
       assertProductCosting(product2.getId(), productCostingAssertList2);
 
       // Assert product costing 3
       List<MaterialTransaction> transactionList3 = getProductTransactions(product3.getId());
       List<ProductCostingAssert> productCostingAssertList3 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList3.add(new ProductCostingAssert(transactionList3.get(0), price9,
+      productCostingAssertList3.add(new ProductCostingAssert(transactionList3.get(0), price3,
           price3, price9, quantity4));
-      productCostingAssertList3.add(new ProductCostingAssert(transactionList3.get(1), price10,
+      productCostingAssertList3.add(new ProductCostingAssert(transactionList3.get(1), price3,
           price3, price10, quantity4.add(quantity5)));
       assertProductCosting(product3.getId(), productCostingAssertList3);
 
@@ -7423,7 +7423,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Assert product costing 1
       List<MaterialTransaction> transactionList1 = getProductTransactions(product1.getId());
       List<ProductCostingAssert> productCostingAssertList1 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(0), price6,
+      productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(0), price1,
           price1, price6, quantity1));
       productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(1), price1,
           price1, price7, quantity1.add(quantity6)));
@@ -7432,18 +7432,18 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Assert product costing 2
       List<MaterialTransaction> transactionList2 = getProductTransactions(product2.getId());
       List<ProductCostingAssert> productCostingAssertList2 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(0), price8,
+      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(0), price2,
           price2, price8, quantity2));
-      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(1), price8,
+      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(1), price2,
           price2, price8, quantity2.add(quantity3)));
       assertProductCosting(product2.getId(), productCostingAssertList2);
 
       // Assert product costing 3
       List<MaterialTransaction> transactionList3 = getProductTransactions(product3.getId());
       List<ProductCostingAssert> productCostingAssertList3 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList3.add(new ProductCostingAssert(transactionList3.get(0), price9,
+      productCostingAssertList3.add(new ProductCostingAssert(transactionList3.get(0), price3,
           price3, price9, quantity4));
-      productCostingAssertList3.add(new ProductCostingAssert(transactionList3.get(1), price10,
+      productCostingAssertList3.add(new ProductCostingAssert(transactionList3.get(1), price3,
           price3, price10, quantity4.add(quantity5)));
       assertProductCosting(product3.getId(), productCostingAssertList3);
 
@@ -7566,7 +7566,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Assert product costing
       List<MaterialTransaction> transactionList = getProductTransactions(product.getId());
       List<ProductCostingAssert> productCostingAssertList1 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList.get(0), price3,
+      productCostingAssertList1.add(new ProductCostingAssert(transactionList.get(0), price1,
           price1, price3, quantity1));
       assertProductCosting(product.getId(), productCostingAssertList1);
 
@@ -7640,7 +7640,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Assert product costing
       List<MaterialTransaction> transactionList = getProductTransactions(product.getId());
       List<ProductCostingAssert> productCostingAssertList1 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList.get(0), price3,
+      productCostingAssertList1.add(new ProductCostingAssert(transactionList.get(0), price1,
           price1, price3, quantity1));
       assertProductCosting(product.getId(), productCostingAssertList1);
 
@@ -7725,7 +7725,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Assert product costing
       List<MaterialTransaction> transactionList = getProductTransactions(product.getId());
       List<ProductCostingAssert> productCostingAssertList1 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList.get(0), price3,
+      productCostingAssertList1.add(new ProductCostingAssert(transactionList.get(0), price1,
           price1, price3, quantity1));
       assertProductCosting(product.getId(), productCostingAssertList1);
 
@@ -7799,7 +7799,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Assert product costing
       List<MaterialTransaction> transactionList = getProductTransactions(product.getId());
       List<ProductCostingAssert> productCostingAssertList1 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList.get(0), price3,
+      productCostingAssertList1.add(new ProductCostingAssert(transactionList.get(0), price1,
           price1, price3, quantity1));
       assertProductCosting(product.getId(), productCostingAssertList1);
 
@@ -7913,7 +7913,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Assert product costing
       List<MaterialTransaction> transactionList = getProductTransactions(product.getId());
       List<ProductCostingAssert> productCostingAssertList1 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList.get(0), price5,
+      productCostingAssertList1.add(new ProductCostingAssert(transactionList.get(0), price1,
           price1, price5, quantity1));
       productCostingAssertList1.add(new ProductCostingAssert(transactionList.get(1), price7, null,
           price7, quantity1.add(quantity3.negate())));
@@ -8137,7 +8137,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       List<ProductCostingAssert> productCostingAssertList1 = new ArrayList<ProductCostingAssert>();
       productCostingAssertList1.add(new ProductCostingAssert(transactionList.get(0), price1, null,
           price1, quantity1));
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList.get(1), price4,
+      productCostingAssertList1.add(new ProductCostingAssert(transactionList.get(1), price5,
           price6, price4, quantity1.add(quantity1)));
       assertProductCosting(product.getId(), productCostingAssertList1);
 

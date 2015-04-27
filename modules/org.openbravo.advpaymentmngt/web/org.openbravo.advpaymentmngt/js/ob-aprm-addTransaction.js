@@ -83,8 +83,6 @@ OB.APRM.AddTransaction.trxTypeOnChangeFunction = function (item, view, form, gri
     form.getItem('depositamt').setDisabled(false);
     form.getItem('withdrawalamt').setDisabled(false);
     form.getItem('description').setValue('');
-    form.getItem('c_glitem_id').setValue(null);
-    form.getItem('fin_payment_id').setValue(null);
   }
 };
 
@@ -113,4 +111,8 @@ OB.APRM.AddTransaction.glitemOnChangeFunction = function (item, view, form, grid
   OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.GLItemTransactionActionHandler', {
     strGLItemId: strGLItemId
   }, {}, callback);
+};
+
+OB.APRM.AddTransaction.trxDateOnChangeFunction = function (item, view, form, grid) {
+  form.getItem('dateacct').setDateParameterValue(new Date(item.getValue()));
 };

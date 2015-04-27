@@ -231,9 +231,9 @@ BEGIN
 
   -- Insert Values from Storage Detail
   FOR Cur_Stock  IN (
-      SELECT t.m_storage_detail_id, t.qtyonhand - (CASE WHEN v_reservation_id IS NOT NULL THEN t.allocatedqty ELSE t.reservedqty END) AS qty, 
+      SELECT t.m_storage_detail_id, t.qtyonhand - (CASE WHEN COUNT(rs.m_reservation_id) > 0 THEN t.allocatedqty ELSE t.reservedqty END) AS qty, 
       t.qtyorderonhand AS qtyorder, l.priorityno, t.UPDATED AS lastupdated, t.qtyonhand, 
-      (CASE WHEN v_reservation_id IS NOT NULL THEN t.allocatedqty ELSE t.reservedqty END) as reservedqty
+      (CASE WHEN COUNT(rs.m_reservation_id) > 0 THEN t.allocatedqty ELSE t.reservedqty END) as reservedqty
       FROM m_storage_detail t 
           JOIN m_locator l ON t.m_locator_id=l.m_locator_id
           JOIN m_warehouse w ON l.m_warehouse_id = w.m_warehouse_id
@@ -242,6 +242,7 @@ BEGIN
           LEFT JOIN m_product_uom pu ON t.m_product_uom_id = pu.m_product_uom_id
           LEFT JOIN c_uom u ON pu.c_uom_id = u.c_uom_id
           LEFT JOIN m_reservation r ON r.m_reservation_id = v_reservation_id AND r.m_product_id = t.m_product_id AND r.c_uom_id = t.c_uom_id
+          LEFT JOIN m_reservation_stock rs ON rs.m_reservation_id = v_reservation_id AND rs.m_attributesetinstance_id = t.m_attributesetinstance_id AND rs.m_locator_id = t.m_locator_id
       WHERE t.m_product_id=v_productid
         AND t.c_uom_id = COALESCE(v_uomid, t.c_uom_id)
         AND COALESCE(t.m_product_uom_id, '-1') = COALESCE(v_productuomid, t.m_product_uom_id, '-1')
@@ -250,10 +251,11 @@ BEGIN
         AND w.m_warehouse_id = COALESCE(v_warehouseid, w.m_warehouse_id)
         AND ow.ad_org_id = v_orgid
         AND COALESCE(t.qtyonhand, 0)>0
-        AND t.qtyonhand - (CASE WHEN v_reservation_id IS NOT NULL THEN t.allocatedqty ELSE t.reservedqty END)  > 0
+        AND t.qtyonhand - (CASE WHEN rs.m_reservation_id IS NOT NULL THEN t.allocatedqty ELSE t.reservedqty END)  > 0
         AND w.m_warehouse_id = COALESCE(r.m_warehouse_id, w.m_warehouse_id)
         AND l.m_locator_id = COALESCE(r.m_locator_id, l.m_locator_id)
         AND asi.m_attributesetinstance_id = COALESCE(r.m_attributesetinstance_id, asi.m_attributesetinstance_id)
+      GROUP BY w.m_warehouse_id, ow.priority, l.priorityno, asi.created, t.created, t.m_storage_detail_id, t.qtyonhand, t.allocatedqty, t.reservedqty, t.qtyorderonhand, t.updated
       ORDER BY CASE w.m_warehouse_id WHEN COALESCE(v_PriorityWarehouseID, '-1') THEN 0 ELSE 1 END, ow.priority, l.priorityno, asi.created, t.created
   ) LOOP
     IF (cur_stock.qtyonhand > cur_stock.reservedqty) THEN

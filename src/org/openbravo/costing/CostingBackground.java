@@ -27,6 +27,7 @@ import java.util.List;
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.openbravo.base.exception.OBException;
@@ -162,23 +163,45 @@ public class CostingBackground extends DalBaseProcess {
     }
   }
 
+  /**
+   * Get Transactions with Processed flag = 'Y' and it's cost is Not Calculated and set Processed
+   * flag = 'N'
+   */
   private void setNotProcessedWhenNotCalculatedTransactions(List<String> orgsWithRule) {
-    ScrollableResults trxs = getTransactionsNotCalculated(orgsWithRule);
-    while (trxs.next()) {
-      MaterialTransaction transaction = (MaterialTransaction) trxs.get(0);
-      transaction.setProcessed(Boolean.FALSE);
-      OBDal.getInstance().save(transaction);
-    }
+    final StringBuilder hqlTransactions = new StringBuilder();
+    hqlTransactions.append(" update " + MaterialTransaction.ENTITY_NAME + " as trx set trx."
+        + MaterialTransaction.PROPERTY_ISPROCESSED + " = false ");
+    hqlTransactions.append(" where trx." + MaterialTransaction.PROPERTY_ISPROCESSED + " = true");
+    hqlTransactions.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED
+        + " = false");
+    hqlTransactions.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION
+        + ".id in (:orgs)");
+    Query updateTransactions = OBDal.getInstance().getSession()
+        .createQuery(hqlTransactions.toString());
+    updateTransactions.setParameterList("orgs", orgsWithRule);
+    updateTransactions.executeUpdate();
+
     OBDal.getInstance().flush();
   }
 
+  /**
+   * Get Transactions with Processed flag = 'N' and it's cost is Calculated and set Processed flag =
+   * 'Y'
+   */
   private void setCalculatedTransactionsAsProcessed(List<String> orgsWithRule) {
-    ScrollableResults trxs = getTransactionsCalculated(orgsWithRule);
-    while (trxs.next()) {
-      MaterialTransaction transaction = (MaterialTransaction) trxs.get(0);
-      transaction.setProcessed(Boolean.TRUE);
-      OBDal.getInstance().save(transaction);
-    }
+    final StringBuilder hqlTransactions = new StringBuilder();
+    hqlTransactions.append(" update " + MaterialTransaction.ENTITY_NAME + " as trx set trx."
+        + MaterialTransaction.PROPERTY_ISPROCESSED + " = true ");
+    hqlTransactions.append(" where trx." + MaterialTransaction.PROPERTY_ISPROCESSED + " = false");
+    hqlTransactions.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED
+        + " = true");
+    hqlTransactions.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION
+        + ".id in (:orgs)");
+    Query updateTransactions = OBDal.getInstance().getSession()
+        .createQuery(hqlTransactions.toString());
+    updateTransactions.setParameterList("orgs", orgsWithRule);
+    updateTransactions.executeUpdate();
+
     OBDal.getInstance().flush();
   }
 
@@ -216,40 +239,6 @@ public class CostingBackground extends DalBaseProcess {
       log4j.error("error: " + e.getMessage(), e);
       throw new OBException(e.getMessage());
     }
-
-    return trxQry.scroll(ScrollMode.FORWARD_ONLY);
-  }
-
-  /**
-   * Get Transactions with Processed flag = 'Y' but it's cost is Not Calculated
-   */
-  private ScrollableResults getTransactionsNotCalculated(List<String> orgsWithRule) {
-    StringBuffer where = new StringBuffer();
-    where.append(" as trx");
-    where.append(" where trx." + MaterialTransaction.PROPERTY_ISPROCESSED + " = true");
-    where.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = false");
-    where.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
-    OBQuery<MaterialTransaction> trxQry = OBDal.getInstance().createQuery(
-        MaterialTransaction.class, where.toString());
-    trxQry.setFilterOnReadableOrganization(false);
-    trxQry.setNamedParameter("orgs", orgsWithRule);
-
-    return trxQry.scroll(ScrollMode.FORWARD_ONLY);
-  }
-
-  /**
-   * Get Transactions with Processed flag = 'N' but it's cost is Calculated
-   */
-  private ScrollableResults getTransactionsCalculated(List<String> orgsWithRule) {
-    StringBuffer where = new StringBuffer();
-    where.append(" as trx");
-    where.append(" where trx." + MaterialTransaction.PROPERTY_ISPROCESSED + " = false");
-    where.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
-    where.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
-    OBQuery<MaterialTransaction> trxQry = OBDal.getInstance().createQuery(
-        MaterialTransaction.class, where.toString());
-    trxQry.setFilterOnReadableOrganization(false);
-    trxQry.setNamedParameter("orgs", orgsWithRule);
 
     return trxQry.scroll(ScrollMode.FORWARD_ONLY);
   }
@@ -300,6 +289,7 @@ public class CostingBackground extends DalBaseProcess {
       transactionCostDateacctInitializedPreference.setPropertyList(false);
       OBDal.getInstance().save(transactionCostDateacctInitializedPreference);
       OBDal.getInstance().flush();
+      OBDal.getInstance().getConnection(true).commit();
     }
   }
 }

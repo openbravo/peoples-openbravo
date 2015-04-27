@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.dao.TransactionsDao;
 import org.openbravo.advpaymentmngt.exception.NoExecutionProcessFoundException;
@@ -56,8 +57,9 @@ public class FIN_ExecutePayment {
   private AdvPaymentMngtDao dao;
   private FIN_PaymentExecutionProcess paymentExecutionProcess = null;
   private PaymentExecutionProcess executionProcess;
-  private HashMap<String, String> constantParameters;
-  private HashMap<String, String> parameters;
+  private HashMap<String, String> constantParameters = new HashMap<String, String>();
+  private HashMap<String, String> parameters = new HashMap<String, String>();
+  private HashMap<String, String> internalParameters = new HashMap<String, String>();
   private PaymentRun paymentRun;
 
   public void init(String sourceType, PaymentExecutionProcess _executionProcess,
@@ -188,8 +190,10 @@ public class FIN_ExecutePayment {
               for (FIN_PaymentDetail pd : payment.getFINPaymentDetailList()) {
                 for (FIN_PaymentScheduleDetail psd : pd.getFINPaymentScheduleDetailList()) {
                   if (pd.getGLItem() != null || psd.isInvoicePaid()) {
+
                     if (FIN_Utility.isAutomaticDepositWithdrawn(paymentRunPayment.getPayment())
-                        && paymentRunPayment.getPayment().getAmount().compareTo(BigDecimal.ZERO) != 0) {
+                        && paymentRunPayment.getPayment().getAmount().compareTo(BigDecimal.ZERO) != 0
+                        && !StringUtils.equals(internalParameters.get("comingFrom"), "TRANSACTION")) {
                       FIN_FinaccTransaction transaction = TransactionsDao
                           .createFinAccTransaction(paymentRunPayment.getPayment());
                       VariablesSecureApp vars = new VariablesSecureApp(RequestContext.get()
@@ -241,10 +245,10 @@ public class FIN_ExecutePayment {
     final List<PaymentExecutionProcessParameter> allParameters = executionProcess
         .getFinancialMgmtPaymentExecutionProcessParameterList();
     for (PaymentExecutionProcessParameter parameter : allParameters)
-      if ("IN".equals(parameter.getInputType()))
-        if ("CHECK".equals(parameter.getParameterType()))
+      if ("IN".equals(parameter.getParameterType()))
+        if ("CHECK".equals(parameter.getInputType()))
           constantParameters.put(parameter.getSearchKey(), parameter.getDefaultValueForFlag());
-        else if ("TEXT".equals(parameter.getParameterType()))
+        else if ("TEXT".equals(parameter.getInputType()))
           constantParameters.put(parameter.getSearchKey(), parameter.getDefaultTextValue());
   }
 
@@ -252,7 +256,7 @@ public class FIN_ExecutePayment {
     final List<PaymentExecutionProcessParameter> allParameters = executionProcess
         .getFinancialMgmtPaymentExecutionProcessParameterList();
     for (PaymentExecutionProcessParameter parameter : allParameters)
-      if ("CONSTANT".equals(parameter.getInputType()))
+      if ("CONSTANT".equals(parameter.getParameterType()))
         constantParameters.put(parameter.getSearchKey(), parameter.getDefaultTextValue());
   }
 
@@ -327,6 +331,10 @@ public class FIN_ExecutePayment {
     new FIN_TransactionProcess().execute(pb);
     myMessage = (OBError) pb.getResult();
     return myMessage;
+  }
+
+  public void addInternalParameter(final String key, final String value) {
+    this.internalParameters.put(key, value);
   }
 
 }
