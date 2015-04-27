@@ -419,7 +419,10 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
             getAggregatorFunction("ord.documentNo"));
       }
       if (havingGridFilters.contains("@invoiceNo@")) {
-        havingGridFilters = havingGridFilters.replaceAll("@invoiceNo@", "inv.documentNo");
+        havingGridFilters = havingGridFilters.replaceAll("@invoiceNo@",
+            " case when (inv.salesTransaction = false and oinfo is not null"
+                + " and oinfo.aPRMPaymentDescription like 'Supplier Reference')"
+                + " then inv.orderReference else inv.documentNo end");
       }
       if (havingGridFilters.contains("@paymentMethod@")) {
         havingGridFilters = havingGridFilters.replaceAll("@paymentMethod@",
@@ -446,8 +449,11 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
         havingGridFilters = havingGridFilters.replaceAll("@salesOrderNo@", "ord.documentNo");
       }
       if (havingGridFilters.contains("@invoiceNo@")) {
+        getAggregatorFunction("inv.documentNo");
         havingGridFilters = havingGridFilters.replaceAll("@invoiceNo@",
-            getAggregatorFunction("inv.documentNo"));
+            " hqlagg(case when (inv.salesTransaction = false and oinfo is not null"
+                + " and oinfo.aPRMPaymentDescription like 'Supplier Reference')"
+                + " then inv.orderReference else inv.documentNo end)");
       }
       if (havingGridFilters.contains("@paymentMethod@")) {
         havingGridFilters = havingGridFilters.replaceAll("@paymentMethod@",
@@ -474,7 +480,10 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
         havingGridFilters = havingGridFilters.replaceAll("@salesOrderNo@", "ord.documentNo");
       }
       if (havingGridFilters.contains("@invoiceNo@")) {
-        havingGridFilters = havingGridFilters.replaceAll("@invoiceNo@", "inv.documentNo");
+        havingGridFilters = havingGridFilters.replaceAll("@invoiceNo@",
+            " case when (inv.salesTransaction = false and oinfo is not null"
+                + " and oinfo.aPRMPaymentDescription like 'Supplier Reference')"
+                + " then inv.orderReference else inv.documentNo end");
       }
       if (havingGridFilters.contains("@paymentMethod@")) {
         havingGridFilters = havingGridFilters.replaceAll("@paymentMethod@",
