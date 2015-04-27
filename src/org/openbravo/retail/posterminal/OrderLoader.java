@@ -114,9 +114,10 @@ public class OrderLoader extends POSDataSynchronizationProcess {
   HashMap<String, DocumentType> invoiceDocTypes = new HashMap<String, DocumentType>();
   HashMap<String, DocumentType> shipmentDocTypes = new HashMap<String, DocumentType>();
   String paymentDescription = null;
-  boolean isLayaway = false;
-  boolean partialpayLayaway = false;
-  boolean fullpayLayaway = false;
+  boolean newLayaway = false;
+  boolean notpaidLayaway = false;
+  boolean creditpaidLayaway = false;
+  boolean fullypaidLayaway = false;
   boolean createShipment = true;
   Locator binForRetuns = null;
 
@@ -154,11 +155,14 @@ public class OrderLoader extends POSDataSynchronizationProcess {
       Invoice invoice = null;
       boolean sendEmail, createInvoice = false;
       TriggerHandler.getInstance().disable();
-      isLayaway = jsonorder.has("orderType") && jsonorder.getLong("orderType") == 2
-          && jsonorder.getDouble("payment") < jsonorder.getDouble("gross");
-      partialpayLayaway = jsonorder.getBoolean("isLayaway")
-          && jsonorder.getDouble("payment") < jsonorder.getDouble("gross");
-      fullpayLayaway = jsonorder.getBoolean("isLayaway")
+      newLayaway = jsonorder.has("orderType") && jsonorder.getLong("orderType") == 2;
+      notpaidLayaway = (jsonorder.getBoolean("isLayaway") || jsonorder.optLong("orderType") == 2)
+          && jsonorder.getDouble("payment") < jsonorder.getDouble("gross")
+          && !jsonorder.optBoolean("paidOnCredit");
+      creditpaidLayaway = (jsonorder.getBoolean("isLayaway") || jsonorder.optLong("orderType") == 2)
+          && jsonorder.getDouble("payment") < jsonorder.getDouble("gross")
+          && jsonorder.optBoolean("paidOnCredit");
+      fullypaidLayaway = (jsonorder.getBoolean("isLayaway") || jsonorder.optLong("orderType") == 2)
           && jsonorder.getDouble("payment") >= jsonorder.getDouble("gross");
       try {
         if (jsonorder.has("oldId") && !jsonorder.getString("oldId").equals("null")
@@ -175,10 +179,8 @@ public class OrderLoader extends POSDataSynchronizationProcess {
         // - The order is not a layaway and is not completely paid (ie. it's paid on credit)
         // - Or, the order is a normal order or a fully paid layaway, and has the "generateInvoice"
         // flag
-        wasPaidOnCredit = !isLayaway
-            && !partialpayLayaway
-            && !fullpayLayaway
-            && !isQuotation
+        wasPaidOnCredit = !isQuotation
+            && !notpaidLayaway
             && Math.abs(jsonorder.getDouble("payment")) < Math.abs(new Double(jsonorder
                 .getDouble("gross")));
         if (jsonorder.has("oBPOSNotInvoiceOnCashUp")
@@ -186,10 +188,10 @@ public class OrderLoader extends POSDataSynchronizationProcess {
           createInvoice = false;
         } else {
           createInvoice = wasPaidOnCredit
-              || (!isQuotation && (!isLayaway && !partialpayLayaway || fullpayLayaway) && (jsonorder
-                  .has("generateInvoice") && jsonorder.getBoolean("generateInvoice")));
+              || (!isQuotation && !notpaidLayaway && (jsonorder.has("generateInvoice") && jsonorder
+                  .getBoolean("generateInvoice")));
         }
-        createShipment = !isQuotation && (!isLayaway && !partialpayLayaway || fullpayLayaway);
+        createShipment = !isQuotation && !notpaidLayaway;
         if (jsonorder.has("generateShipment")) {
           createShipment &= jsonorder.getBoolean("generateShipment");
           createInvoice &= jsonorder.getBoolean("generateShipment");
@@ -199,7 +201,10 @@ public class OrderLoader extends POSDataSynchronizationProcess {
         long t111 = System.currentTimeMillis();
         ArrayList<OrderLine> lineReferences = new ArrayList<OrderLine>();
         JSONArray orderlines = jsonorder.getJSONArray("lines");
-        if (fullpayLayaway) {
+        if (!newLayaway && notpaidLayaway) {
+          order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
+          order.setObposAppCashup(jsonorder.getString("obposAppCashup"));
+        } else if (!newLayaway && (creditpaidLayaway || fullypaidLayaway)) {
           order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
           order.setObposAppCashup(jsonorder.getString("obposAppCashup"));
           order.setDelivered(true);
@@ -208,9 +213,6 @@ public class OrderLoader extends POSDataSynchronizationProcess {
             orderLine = order.getOrderLineList().get(i);
             orderLine.setDeliveredQuantity(orderLine.getOrderedQuantity());
           }
-        } else if (partialpayLayaway) {
-          order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
-          order.setObposAppCashup(jsonorder.getString("obposAppCashup"));
         } else {
           order = OBProvider.getInstance().get(Order.class);
           createOrder(order, jsonorder);
@@ -269,12 +271,10 @@ public class OrderLoader extends POSDataSynchronizationProcess {
         updateAuditInfo(order, invoice, jsonorder);
         t3 = System.currentTimeMillis();
 
-        if (!isQuotation) {
-          if (!isLayaway && !partialpayLayaway && createShipment) {
-            // Stock manipulation
-            handleStock(shipment);
-            // Send email
-          }
+        if (createShipment) {
+          // Stock manipulation
+          handleStock(shipment);
+          // Send email
         }
 
         long t4 = System.currentTimeMillis();
@@ -1023,7 +1023,7 @@ public class OrderLoader extends POSDataSynchronizationProcess {
       orderline.setLineNetAmount(BigDecimal.valueOf(jsonOrderLine.getDouble("net")).setScale(
           stdPrecision, RoundingMode.HALF_UP));
 
-      if (!isLayaway && !partialpayLayaway && createShipment) {
+      if (createShipment) {
         // shipment is created, so all is delivered
         orderline.setDeliveredQuantity(orderline.getOrderedQuantity());
       }
@@ -1273,7 +1273,7 @@ public class OrderLoader extends POSDataSynchronizationProcess {
       BigDecimal amt = BigDecimal.valueOf(jsonorder.getDouble("payment"));
       FIN_PaymentSchedule paymentSchedule = OBProvider.getInstance().get(FIN_PaymentSchedule.class);
       int stdPrecision = order.getCurrency().getStandardPrecision().intValue();
-      if (fullpayLayaway || partialpayLayaway) {
+      if (!newLayaway && (notpaidLayaway || creditpaidLayaway || fullypaidLayaway)) {
         paymentSchedule = order.getFINPaymentScheduleList().get(0);
         stdPrecision = order.getCurrency().getStandardPrecision().intValue();
       } else {
@@ -1378,7 +1378,7 @@ public class OrderLoader extends POSDataSynchronizationProcess {
           writeoffAmt = writeoffAmt.subtract(tempWriteoffAmt);
         }
       }
-      if (invoice != null && fullpayLayaway) {
+      if (invoice != null && (creditpaidLayaway || fullypaidLayaway)) {
         for (int j = 0; j < paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList()
             .size(); j++) {
           if (paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().get(j)
@@ -1461,7 +1461,7 @@ public class OrderLoader extends POSDataSynchronizationProcess {
           amount = amount.subtract(writeoffAmt.abs()).setScale(stdPrecision, RoundingMode.HALF_UP);
         }
       } else if (writeoffAmt.signum() == -1
-          && (!isLayaway && !partialpayLayaway && !fullpayLayaway && !checkPaidOnCreditChecked)) {
+          && (!notpaidLayaway && !creditpaidLayaway && !fullypaidLayaway && !checkPaidOnCreditChecked)) {
         if (totalIsNegative) {
           amount = amount.add(writeoffAmt).setScale(stdPrecision, RoundingMode.HALF_UP);
         } else {
