@@ -266,17 +266,9 @@ enyo.kind({
       }
       var payment = OB.MobileApp.model.paymentnames[OB.MobileApp.model.get('paymentcash')];
       if ((model.get('orderType') === 2 || (model.get('isLayaway'))) && model.get('orderType') !== 3 && !model.getPaymentStatus().done) {
-        if (OB.MobileApp.model.get('terminal').allowpayoncredit && this.receipt.get('bp')) {
-          if (this.receipt.get('bp').get('creditLimit') > 0 || this.receipt.get('bp').get('creditUsed') < 0) {
-            this.$.creditsalesaction.show();
-          } else {
-            this.$.creditsalesaction.hide();
-          }
-        }
         this.$.layawayaction.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
         this.$.layawayaction.show();
       } else if (model.get('orderType') === 3) {
-        this.$.creditsalesaction.hide();
         this.$.layawayaction.hide();
       } else {
         this.$.layawayaction.hide();
@@ -284,6 +276,25 @@ enyo.kind({
     }, this);
   },
 
+  updateCreditSalesAction: function () {
+
+    // The terminal allows to pay on credit
+    var visible = OB.MobileApp.model.get('terminal').allowpayoncredit;
+    // And is a loaded layaway or a regular order (no new layaway and no voided layaway)
+    // this.receipt.get('orderType') === 2 --> New layaway 
+    // this.receipt.get('isLayaway') --> Loaded layaway    
+    visible = visible && (this.receipt.get('isLayaway') || (this.receipt.get('orderType') !== 2 && this.receipt.get('orderType') !== 3));
+    // And receipt has not been paid
+    visible = visible && !this.receipt.getPaymentStatus().done;
+    // And Business Partner exists and is elegible to sell on credit.
+    visible = visible && this.receipt.get('bp') && (this.receipt.get('bp').get('creditLimit') > 0 || this.receipt.get('bp').get('creditUsed') < 0 || this.receipt.getGross() < 0);
+
+    if (visible) {
+      this.$.creditsalesaction.show();
+    } else {
+      this.$.creditsalesaction.hide();
+    }
+  },
 
   updatePending: function () {
     if (this.model.get('leftColumnViewManager').isMultiOrder()) {
@@ -330,7 +341,6 @@ enyo.kind({
       if (!_.isEmpty(OB.MobileApp.model.paymentnames)) {
         this.$.doneaction.show();
       }
-      this.$.creditsalesaction.hide();
       this.$.layawayaction.hide();
     } else {
       this.setTotalPending(this.receipt.getPending(), rate, symbol, symbolAtRight);
@@ -347,18 +357,10 @@ enyo.kind({
         this.$.doneButton.setContent(OB.I18N.getLabel('OBPOS_LblOpen'));
         this.$.doneButton.drawerOpened = false;
       }
-      if (OB.MobileApp.model.get('terminal').allowpayoncredit && this.receipt.get('bp')) {
-        if (this.receipt.get('bp').get('creditLimit') > 0 || this.receipt.get('bp').get('creditUsed') < 0 || this.receipt.getGross() < 0) {
-          this.$.creditsalesaction.show();
-        } else {
-          this.$.creditsalesaction.hide();
-        }
-      }
     }
 
     if (paymentstatus.done || this.receipt.getGross() === 0) {
       this.$.exactaction.hide();
-      this.$.creditsalesaction.hide();
       this.$.layawayaction.hide();
     } else {
       if (!_.isEmpty(OB.MobileApp.model.paymentnames)) {
@@ -371,13 +373,6 @@ enyo.kind({
         }
       } else if (this.receipt.get('orderType') === 3) {
         this.$.layawayaction.hide();
-      }
-      if (OB.MobileApp.model.get('terminal').allowpayoncredit && this.receipt.get('bp')) {
-        if (this.receipt.get('bp').get('creditLimit') > 0 || this.receipt.get('bp').get('creditUsed') < 0 || this.receipt.getGross() < 0) {
-          this.$.creditsalesaction.show();
-        } else {
-          this.$.creditsalesaction.hide();
-        }
       }
     }
     if (paymentstatus.done && !paymentstatus.change && !paymentstatus.overpayment) {
@@ -398,6 +393,8 @@ enyo.kind({
       this.$.exactlbl.hide();
       this.$.donezerolbl.hide();
     }
+
+    this.updateCreditSalesAction();
   },
   updatePendingMultiOrders: function () {
     var paymentstatus = this.model.get('multiOrders');
@@ -448,7 +445,6 @@ enyo.kind({
       if (!_.isEmpty(OB.MobileApp.model.paymentnames)) {
         this.$.doneaction.show();
       }
-      this.$.creditsalesaction.hide();
       //            this.$.layawayaction.hide();
     } else {
       this.setTotalPending(OB.DEC.sub(paymentstatus.get('total'), paymentstatus.get('payment')), rate, symbol, symbolAtRight);
