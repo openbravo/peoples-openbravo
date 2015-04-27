@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2012-1015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -28,6 +28,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
@@ -56,46 +57,55 @@ public class GeneralLedgerOrganizationHandler extends EntityPersistenceEventObse
 
     final Organization organization = (Organization) event.getTargetInstance();
     if (organization != null) {
-      final AcctSchema generalLedger = organization.getGeneralLedger();
+      if ((event.getPreviousState(getProperty(Organization.PROPERTY_GENERALLEDGER)) == null && event
+          .getCurrentState(getProperty(Organization.PROPERTY_GENERALLEDGER)) != null)
+          || (event.getPreviousState(getProperty(Organization.PROPERTY_GENERALLEDGER)) != null && !event
+              .getPreviousState(getProperty(Organization.PROPERTY_GENERALLEDGER)).equals(
+                  event.getCurrentState(getProperty(Organization.PROPERTY_GENERALLEDGER))))) {
+        final AcctSchema generalLedger = organization.getGeneralLedger();
 
-      OBCriteria<OrganizationAcctSchema> orgSchema = OBDal.getInstance().createCriteria(
-          OrganizationAcctSchema.class);
-      orgSchema.setFilterOnReadableOrganization(false);
-      orgSchema.setFilterOnActive(false);
-      orgSchema.add(Restrictions.eq(OrganizationAcctSchema.PROPERTY_ORGANIZATION, organization));
-      List<OrganizationAcctSchema> orgSchemalist = orgSchema.list();
-      ArrayList<String> idlist = new ArrayList<String>();
+        OBCriteria<OrganizationAcctSchema> orgSchema = OBDal.getInstance().createCriteria(
+            OrganizationAcctSchema.class);
+        orgSchema.setFilterOnReadableOrganization(false);
+        orgSchema.setFilterOnActive(false);
+        orgSchema.add(Restrictions.eq(OrganizationAcctSchema.PROPERTY_ORGANIZATION, organization));
+        List<OrganizationAcctSchema> orgSchemalist = orgSchema.list();
+        ArrayList<String> idlist = new ArrayList<String>();
 
-      boolean exist = false;
+        boolean exist = false;
 
-      for (OrganizationAcctSchema oas : orgSchemalist) {
-        idlist.add(oas.getId());
-      }
-      for (String ids : idlist) {
-        OrganizationAcctSchema orgAcctSchema = OBDal.getInstance().get(
-            OrganizationAcctSchema.class, ids);
-        if (generalLedger != null
-            && generalLedger.getId() == orgAcctSchema.getAccountingSchema().getId()) {
-          orgAcctSchema.setActive(true);
-          exist = true;
-          continue;
+        for (OrganizationAcctSchema oas : orgSchemalist) {
+          idlist.add(oas.getId());
         }
-        if (orgAcctSchema.getOrganizationClosingList().size() == 0) {
-          OBDal.getInstance().remove(orgAcctSchema);
-        } else {
-          orgAcctSchema.setActive(false);
+        for (String ids : idlist) {
+          OrganizationAcctSchema orgAcctSchema = OBDal.getInstance().get(
+              OrganizationAcctSchema.class, ids);
+          if (generalLedger != null
+              && generalLedger.getId() == orgAcctSchema.getAccountingSchema().getId()) {
+            orgAcctSchema.setActive(true);
+            exist = true;
+            continue;
+          }
+          if (orgAcctSchema.getOrganizationClosingList().size() == 0) {
+            OBDal.getInstance().remove(orgAcctSchema);
+          } else {
+            orgAcctSchema.setActive(false);
+            OBDal.getInstance().save(orgAcctSchema);
+          }
+        }
+
+        if ((generalLedger != null) && !exist) {
+          final OrganizationAcctSchema orgAcctSchema = OBProvider.getInstance().get(
+              OrganizationAcctSchema.class);
+          orgAcctSchema.setOrganization(organization);
+          orgAcctSchema.setAccountingSchema(generalLedger);
           OBDal.getInstance().save(orgAcctSchema);
         }
       }
-
-      if ((generalLedger != null) && !exist) {
-        final OrganizationAcctSchema orgAcctSchema = OBProvider.getInstance().get(
-            OrganizationAcctSchema.class);
-        orgAcctSchema.setOrganization(organization);
-        orgAcctSchema.setAccountingSchema(generalLedger);
-        OBDal.getInstance().save(orgAcctSchema);
-      }
-
     }
+  }
+
+  private Property getProperty(String property) {
+    return entities[0].getProperty(property);
   }
 }
