@@ -36,6 +36,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.ProcessInvoiceHook;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
@@ -417,7 +418,8 @@ public class ProcessInvoice extends HttpSecureAppServlet {
               .getBusinessPartner().getAccount() : invoice.getBusinessPartner()
               .getPOFinancialAccount();
           // Calculate Conversion Rate
-          final ConversionRate conversionRate = FinancialUtils.getConversionRate(
+          final ConversionRate conversionRate = StringUtils.equals(invoice.getCurrency().getId(),
+              bpFinAccount.getCurrency().getId()) ? null : FinancialUtils.getConversionRate(
               FIN_Utility.getDate(strPaymentDate), invoice.getCurrency(),
               bpFinAccount.getCurrency(), invoice.getOrganization(), invoice.getClient());
           final FIN_Payment newPayment = FIN_AddPayment.savePayment(null, isSalesTransaction,
