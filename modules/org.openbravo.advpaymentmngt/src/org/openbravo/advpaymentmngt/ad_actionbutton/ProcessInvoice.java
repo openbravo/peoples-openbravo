@@ -157,21 +157,22 @@ public class ProcessInvoice extends HttpSecureAppServlet {
         }
         // check BP currency
         if ("CO".equals(strdocaction)) {
-            // check BP currency
-            if (invoice.getBusinessPartner().getCurrency() == null) {
-            	String errorMSG =  
-            			Utility.messageBD(this, "InitBPCurrencyLnk", vars.getLanguage(), false);
-               msg = new OBError();
-               msg.setType("Error");
-               msg.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
-               msg.setMessage(String.format(errorMSG, invoice.getBusinessPartner().getId(), invoice.getBusinessPartner().getName()));
+          // check BP currency
+          if (invoice.getBusinessPartner().getCurrency() == null) {
+            String errorMSG = Utility.messageBD(this, "InitBPCurrencyLnk", vars.getLanguage(),
+                false);
+            msg = new OBError();
+            msg.setType("Error");
+            msg.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
+            msg.setMessage(String.format(errorMSG, invoice.getBusinessPartner().getId(), invoice
+                .getBusinessPartner().getName()));
 
-               vars.setMessage(strTabId, msg);
-               printPageClosePopUp(response, vars, Utility.getTabURL(strTabId, "R", true));
-               return;
-            }
+            vars.setMessage(strTabId, msg);
+            printPageClosePopUp(response, vars, Utility.getTabURL(strTabId, "R", true));
+            return;
+          }
         }
-        
+
         OBContext.setAdminMode(true);
         Process process = null;
         try {
@@ -415,15 +416,15 @@ public class ProcessInvoice extends HttpSecureAppServlet {
           final FIN_FinancialAccount bpFinAccount = isSalesTransaction ? invoice
               .getBusinessPartner().getAccount() : invoice.getBusinessPartner()
               .getPOFinancialAccount();
-           // Calculate Conversion Rate
+          // Calculate Conversion Rate
           final ConversionRate conversionRate = FinancialUtils.getConversionRate(
-               FIN_Utility.getDate(strPaymentDate), invoice.getCurrency(),
-               bpFinAccount.getCurrency(), invoice.getOrganization(), invoice.getClient());
+              FIN_Utility.getDate(strPaymentDate), invoice.getCurrency(),
+              bpFinAccount.getCurrency(), invoice.getOrganization(), invoice.getClient());
           final FIN_Payment newPayment = FIN_AddPayment.savePayment(null, isSalesTransaction,
               docType, strPaymentDocumentNo, invoice.getBusinessPartner(),
               invoice.getPaymentMethod(), bpFinAccount, "0", FIN_Utility.getDate(strPaymentDate),
               invoice.getOrganization(), invoice.getDocumentNo(), paymentScheduleDetails,
-              paymentScheduleDetailsAmounts, false, false, invoice.getCurrency(), 
+              paymentScheduleDetailsAmounts, false, false, invoice.getCurrency(),
               conversionRate != null ? conversionRate.getMultipleRateBy() : null, null);
           newPayment.setAmount(BigDecimal.ZERO);
           newPayment.setGeneratedCredit(BigDecimal.ZERO);
@@ -704,4 +705,3 @@ public class ProcessInvoice extends HttpSecureAppServlet {
     return "Servlet to Process Invoice";
   }
 }
-
