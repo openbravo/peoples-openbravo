@@ -62,7 +62,6 @@
       }
     });
     // finished receipt verifications
-
     this.receipt.on('closed', function (eventParams) {
       this.receipt = model.get('order');
       OB.info('Ticket closed', this.receipt.getOrderDescription());
@@ -131,78 +130,75 @@
         OB.trace('Calculationg cashup information.');
 
         auxReceipt.clearWith(receipt);
-        OB.UTIL.cashUpReport(auxReceipt, function () {
-          OB.UTIL.calculateCurrentCash();
+        OB.Dal.transaction(function (tx) {
+          OB.UTIL.cashUpReport(auxReceipt, function () {
+            OB.UTIL.calculateCurrentCash(null, tx);
+            OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(receipt.get('documentnoSuffix'), receipt.get('quotationnoSuffix'), function () {
+              OB.trace('Saving receipt.');
+              OB.Dal.saveInTransaction(tx, receipt);
+            }, tx);
+          }, tx);
+        }, null, function () {
+          // success transaction...
+          OB.trace('Executing of post order save hook.');
 
-          OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(receipt.get('documentnoSuffix'), receipt.get('quotationnoSuffix'), function () {
-            OB.trace('Saving receipt.');
+          var successCallback = function (model) {
+              OB.trace('Sync process success.');
 
-            OB.Dal.save(receipt, function () {
-
-              var successCallback = function (model) {
-                  OB.trace('Sync process success.');
-
-                  //In case the processed document is a quotation, we remove its id so it can be reactivated
-                  if (model && !_.isNull(model)) {
-                    if (model.get('order') && model.get('order').get('isQuotation')) {
-                      model.get('order').set('oldId', model.get('order').get('id'));
-                      model.get('order').set('id', null);
-                      model.get('order').set('isbeingprocessed', 'N');
-                      OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationSaved', [currentDocNo]));
-                    } else {
-                      if (isLayaway) {
-                        OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgLayawaySaved', [currentDocNo]));
-                      } else {
-                        OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgReceiptSaved', [currentDocNo]));
-                      }
-                    }
+              //In case the processed document is a quotation, we remove its id so it can be reactivated
+              if (model && !_.isNull(model)) {
+                if (model.get('order') && model.get('order').get('isQuotation')) {
+                  model.get('order').set('oldId', model.get('order').get('id'));
+                  model.get('order').set('id', null);
+                  model.get('order').set('isbeingprocessed', 'N');
+                  OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationSaved', [currentDocNo]));
+                } else {
+                  if (isLayaway) {
+                    OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgLayawaySaved', [currentDocNo]));
+                  } else {
+                    OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgReceiptSaved', [currentDocNo]));
                   }
-
-                  OB.trace('Order successfully removed.');
-                  };
-
-              OB.trace('Executing of post order save hook.');
-
-              if (OB.UTIL.HookManager.get('OBPOS_PostSyncReceipt')) {
-                //If there are elements in the hook, we are forced to execute the callback only after the synchronization process
-                //has been executed, to prevent race conditions with the callback processes (printing and deleting the receipt)
-                OB.trace('Execution Sync process.');
-
-                OB.MobileApp.model.runSyncProcess(function () {
-                  OB.UTIL.HookManager.executeHooks('OBPOS_PostSyncReceipt', {
-                    receipt: auxReceipt
-                  }, function (args) {
-                    successCallback();
-                    if (eventParams && eventParams.callback) {
-                      eventParams.callback();
-                    }
-                  });
-                }, function () {
-                  OB.UTIL.HookManager.executeHooks('OBPOS_PostSyncReceipt', {
-                    receipt: auxReceipt
-                  }, function (args) {
-                    if (eventParams && eventParams.callback) {
-                      eventParams.callback();
-                    }
-                  });
-                });
-              } else {
-
-                OB.trace('Execution Sync process.');
-
-                //If there are no elements in the hook, we can execute the callback asynchronusly with the synchronization process
-                OB.MobileApp.model.runSyncProcess(function () {
-                  successCallback(model);
-                });
-                if (eventParams && eventParams.callback) {
-                  eventParams.callback();
                 }
               }
 
+              OB.trace('Order successfully removed.');
+              };
+
+          if (OB.UTIL.HookManager.get('OBPOS_PostSyncReceipt')) {
+            //If there are elements in the hook, we are forced to execute the callback only after the synchronization process
+            //has been executed, to prevent race conditions with the callback processes (printing and deleting the receipt)
+            OB.trace('Execution Sync process.');
+
+            OB.MobileApp.model.runSyncProcess(function () {
+              OB.UTIL.HookManager.executeHooks('OBPOS_PostSyncReceipt', {
+                receipt: auxReceipt
+              }, function (args) {
+                successCallback();
+                if (eventParams && eventParams.callback) {
+                  eventParams.callback();
+                }
+              });
             }, function () {
-              //We do nothing: we don't need to alert the user, as the order is still present in the database, so it will be resent as soon as the user logs in again
+              OB.UTIL.HookManager.executeHooks('OBPOS_PostSyncReceipt', {
+                receipt: auxReceipt
+              }, function (args) {
+                if (eventParams && eventParams.callback) {
+                  eventParams.callback();
+                }
+              });
             });
-          });
+          } else {
+
+            OB.trace('Execution Sync process.');
+
+            //If there are no elements in the hook, we can execute the callback asynchronusly with the synchronization process
+            OB.MobileApp.model.runSyncProcess(function () {
+              successCallback(model);
+            });
+            if (eventParams && eventParams.callback) {
+              eventParams.callback();
+            }
+          }
         });
       });
     }, this);
@@ -221,6 +217,11 @@
           receiptId = this.receipt.get('id'),
           creationDate = this.receipt.get('creationDate') || new Date();
 
+      // issue 29164: sometimes, the quotations are sync without creation date
+      if (creationDate === "Invalid Date") {
+        creationDate = new Date();
+      }
+
       this.receipt.set('creationDate', creationDate);
       this.receipt.set('hasbeenpaid', 'Y');
       this.context.get('multiOrders').trigger('integrityOk', this.receipt);
@@ -230,7 +231,6 @@
       this.receipt.set('timezoneOffset', creationDate.getTimezoneOffset());
       this.receipt.set('created', creationDate.getTime());
       this.receipt.set('obposCreatedabsolute', OB.I18N.formatDateISO(creationDate)); // Absolute date in ISO format
-
       // multiterminal support
       // be sure that the active terminal is the one set as the order proprietary
       receipt.set('posTerminal', OB.MobileApp.model.get('terminal').id);

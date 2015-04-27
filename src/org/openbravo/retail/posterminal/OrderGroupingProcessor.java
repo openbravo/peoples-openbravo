@@ -26,7 +26,6 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
-import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -41,6 +40,7 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.InvoiceLineTax;
 import org.openbravo.model.ad.access.OrderLineTax;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
+import org.openbravo.model.common.businesspartner.Location;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.invoice.InvoiceLine;
@@ -77,17 +77,16 @@ public class OrderGroupingProcessor {
     // reconciled. This query must be kept in sync with the one in CashCloseReport
 
     String hqlWhereClause = "as line"
-        + " where line.salesOrder.obposApplications = :terminal and line.salesOrder.obposAppCashup=:cashUpId and line.deliveredQuantity=line.orderedQuantity and line.orderedQuantity <> 0"
+        + " where line.salesOrder.obposAppCashup=:cashUpId and line.deliveredQuantity=line.orderedQuantity and line.orderedQuantity <> 0"
         + " and line.salesOrder.documentType.id in ('"
         + posTerminal.getObposTerminaltype().getDocumentType().getId()
         + "', '"
         + posTerminal.getObposTerminaltype().getDocumentTypeForReturns().getId()
         + "') and not exists (select 1 from OrderLine as ord where invoicedQuantity<>0 and ord.salesOrder = line.salesOrder)"
         + " and line.salesOrder.oBPOSNotInvoiceOnCashUp = false"
-        + " order by line.businessPartner.id, line.salesOrder.id";
+        + " order by line.businessPartner.id, line.salesOrder.invoiceAddress.id, line.salesOrder.id";
 
     OBQuery<OrderLine> query = OBDal.getInstance().createQuery(OrderLine.class, hqlWhereClause);
-    query.setNamedParameter("terminal", posTerminal);
     query.setNamedParameter("cashUpId", cashUpId);
 
     List<String> invoicesToSetDocumentNos = new ArrayList<String>();
@@ -99,7 +98,9 @@ public class OrderGroupingProcessor {
     String currentOrderId = "";
     Order currentOrder = null;
     String currentbpId = "";
+    String currentbpLocId = "";
     BusinessPartner currentBp = null;
+    Location currentBpLoc = null;
     HashMap<String, InvoiceTax> invoiceTaxes = null;
     BigDecimal totalNetAmount = BigDecimal.ZERO;
     List<String> processedOrders = new ArrayList<String>();
@@ -147,10 +148,13 @@ public class OrderGroupingProcessor {
         }
 
         String bpId = (String) DalUtil.getId(orderLine.getBusinessPartner());
+        String bpLocId = (String) DalUtil.getId(orderLine.getSalesOrder().getInvoiceAddress());
         if (bpId == null) {
           bpId = (String) DalUtil.getId(orderLine.getSalesOrder().getBusinessPartner());
         }
-        if (!bpId.equals(currentbpId) && posTerminal.getObposTerminaltype().isGroupingOrders()) {
+
+        if ((!bpId.equals(currentbpId) || !bpLocId.equals(currentbpLocId))
+            && posTerminal.getObposTerminaltype().isGroupingOrders()) {
           // New business partner. We need to finish current invoice, and create a new one
           finishInvoice(invoice, totalNetAmount, invoiceTaxes, paymentSchedule,
               origPaymentSchedule, currentDate);
@@ -160,8 +164,10 @@ public class OrderGroupingProcessor {
           }
 
           currentbpId = bpId;
+          currentbpLocId = bpLocId;
           currentBp = OBDal.getInstance().get(BusinessPartner.class, bpId);
-          invoice = createNewInvoice(posTerminal, currentBp, orderLine, currentDate);
+          currentBpLoc = OBDal.getInstance().get(Location.class, currentbpLocId);
+          invoice = createNewInvoice(posTerminal, currentBp, currentBpLoc, orderLine, currentDate);
           paymentSchedule = createNewPaymentSchedule(invoice, currentDate);
           origPaymentSchedule = createOriginalPaymentSchedule(invoice, paymentSchedule);
           invoiceTaxes = new HashMap<String, InvoiceTax>();
@@ -422,13 +428,10 @@ public class OrderGroupingProcessor {
   }
 
   protected Invoice createNewInvoice(OBPOSApplications terminal, BusinessPartner bp,
-      OrderLine firstLine, Date currentDate) {
+      Location bpLoc, OrderLine firstLine, Date currentDate) {
     Invoice invoice = OBProvider.getInstance().get(Invoice.class);
     invoice.setBusinessPartner(bp);
-    if (bp.getBusinessPartnerLocationList().size() == 0) {
-      throw new OBException("No addresses defined for the business partner " + bp.getName());
-    }
-    invoice.setPartnerAddress(bp.getBusinessPartnerLocationList().get(0));
+    invoice.setPartnerAddress(bpLoc);
     invoice.setCurrency(firstLine.getCurrency());
     invoice.setOrganization(terminal.getOrganization());
     invoice.setSalesTransaction(true);
@@ -456,11 +459,7 @@ public class OrderGroupingProcessor {
       Date currentDate) {
     Invoice invoice = OBProvider.getInstance().get(Invoice.class);
     invoice.setBusinessPartner(order.getBusinessPartner());
-    if (order.getBusinessPartner().getBusinessPartnerLocationList().size() == 0) {
-      throw new OBException("No addresses defined for the business partner "
-          + order.getBusinessPartner().getName());
-    }
-    invoice.setPartnerAddress(order.getBusinessPartner().getBusinessPartnerLocationList().get(0));
+    invoice.setPartnerAddress(order.getInvoiceAddress());
     invoice.setCurrency(firstLine.getCurrency());
     invoice.setSalesTransaction(true);
     invoice.setOrganization(terminal.getOrganization());

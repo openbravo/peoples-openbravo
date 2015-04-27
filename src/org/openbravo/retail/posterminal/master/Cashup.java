@@ -47,10 +47,17 @@ public class Cashup extends JSONProcessSimple {
       JSONArray respArray = new JSONArray();
       String posId = RequestContext.get().getSessionAttribute("POSTerminal").toString();
       String isprocessed = jsonsent.getString("isprocessed");
+      String isprocessedbo = "";
+      if (jsonsent.has("isprocessedbo")) {
+        isprocessedbo = " and c.isprocessedbo = "
+            + jsonsent.getString("isprocessedbo").equalsIgnoreCase("Y");
+      }
+
       String hqlCashup = "select c.id, c.netsales as netSales, c.grosssales as grossSales, "
           + "c.netreturns as netReturns, c.grossreturns as grossReturns, c.totalretailtransactions as totalRetailTransactions,"
           + "c.creationDate as creationDate, c.createdBy.id as userId, c.isbeingprocessed, c.isProcessed, c.pOSTerminal.id as posterminal "
-          + "from OBPOS_App_Cashup c where c.isProcessed=:isprocessed and c.pOSTerminal.id= :terminal order by c.creationDate desc";
+          + "from OBPOS_App_Cashup c where c.isProcessed=:isprocessed and c.pOSTerminal.id= :terminal "
+          + isprocessedbo + " order by c.creationDate desc";
 
       SimpleQueryBuilder querybuilder = new SimpleQueryBuilder(hqlCashup, OBContext.getOBContext()
           .getCurrentClient().getId(), OBContext.getOBContext().getCurrentOrganization().getId(),

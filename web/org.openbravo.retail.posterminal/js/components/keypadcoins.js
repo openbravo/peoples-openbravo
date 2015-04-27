@@ -230,13 +230,13 @@ enyo.kind({
         });
       }
       // Check Max. Limit Amount
-      var paymentMethod = OB.POS.terminal.terminal.paymentnames[this.paymenttype].paymentMethod;
-      if (paymentMethod.maxLimitAmount && amountToPay > paymentMethod.maxLimitAmount) {
+      var paymentMethod = OB.POS.terminal.terminal.paymentnames[this.paymenttype];
+      if (paymentMethod.paymentMethod.maxLimitAmount && amountToPay > paymentMethod.paymentMethod.maxLimitAmount) {
         // Show error and abort payment
         this.bubble('onMaxLimitAmountError', {
           show: true,
-          maxLimitAmount: paymentMethod.maxLimitAmount,
-          currency: paymentMethod.currency$_identifier === 'EUR' ? '€' : paymentMethod.currency$_identifier
+          maxLimitAmount: paymentMethod.paymentMethod.maxLimitAmount,
+          currency: paymentMethod.symbol
         });
       } else {
         // Hide error and process payment
