@@ -15,4 +15,8 @@ public abstract class ProcessHQLQuery extends org.openbravo.mobile.core.process.
   protected String getFormId() {
     return WEBPOS_FORM_ID;
   }
+
+  public static String escape(String value) {
+    return value == null ? "" : value.replaceAll("'", "''");
+  }
 }
