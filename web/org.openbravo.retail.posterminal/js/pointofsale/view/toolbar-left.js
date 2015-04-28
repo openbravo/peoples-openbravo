@@ -197,28 +197,78 @@ enyo.kind({
     this.disabledChanged(false);
   },
   disabledChanged: function (isDisabled) {
-    // if the button is requested to be enabled, verify that the conditions are met
-    if (isDisabled === false) {
-      // by default, disabled
-      isDisabled = true;
-      if (OB.UTIL.SynchronizationHelper.isSynchronized()) {
-        if (this.model) {
-          var receipt = this.model.get('order');
-          if (receipt) {
-            if (receipt.get('id') && receipt.get('documentNo') && receipt.get('documentNo').length > 3 && receipt.get('bp') && receipt.get('bp').get('id')) {
-              if (receipt.get('lines') && receipt.get('lines').length > 0) {
-                if (receipt.get('hasbeenpaid') === 'N') {
-                  // enable it if all conditions are met
-                  isDisabled = false;
-                }
-              }
-            }
-          }
-        }
+    // logic decide if the button will be allowed to be enabled
+    // the decision to enable the button is made based on several requirements that must be met
+    var requirements;
+    function requirementsAreMet(model) {
+      requirements = {
+        isSynchronized: undefined,
+        isModel: undefined,
+        isReceipt: undefined,
+        isReceiptId: undefined,
+        isReceiptDocno: undefined,
+        isReceiptBp: undefined,
+        isReceiptLines: undefined,
+        isReceiptBpId: undefined,
+        isReceiptDocnoLengthGreaterThan3: undefined,
+        isReceiptLinesLengthGreaterThanZero: undefined,
+        isReceiptHasbeenpaidEqualToN: undefined
+      };
+
+      // if any requirement is not met, return false
+      // checks are grouped as objects are known to exists
+      requirements.isSynchronized = OB.UTIL.SynchronizationHelper.isSynchronized();
+      if (!requirements.isSynchronized) {
+        return false;
       }
+      requirements.isModel = model !== undefined;
+      if (!requirements.isModel) {
+        return false;
+      }
+      var receipt = model.get('order');
+      requirements.isReceipt = receipt !== undefined;
+      if (!requirements.isReceipt) {
+        return false;
+      }
+      requirements.isReceiptId = receipt.get('id') !== undefined;
+      requirements.isReceiptDocno = receipt.get('documentNo') !== undefined;
+      requirements.isReceiptBp = receipt.get('bp') !== undefined;
+      requirements.isReceiptLines = receipt.get('lines') !== undefined;
+      if (!requirements.isReceiptId || !requirements.isReceiptDocno || !requirements.isReceiptBp || !requirements.isReceiptLines) {
+        return false;
+      }
+      requirements.isReceiptBpId= receipt.get('bp').get('id') !== undefined;
+      requirements.isReceiptDocnoLengthGreaterThan3 = receipt.get('documentNo').length > 3;
+      requirements.isReceiptLinesLengthGreaterThanZero = receipt.get('lines').length > 0;
+      requirements.isReceiptHasbeenpaidEqualToN = receipt.get('hasbeenpaid') === 'N';
+      if (!requirements.isReceiptBpId || !requirements.isReceiptDocnoLengthGreaterThan3 || !requirements.isReceiptLinesLengthGreaterThanZero || !requirements.isReceiptHasbeenpaidEqualToN)  {
+        return false;
+      }
+      // all requirements are met
+      return true;
     }
-    this.disabled = isDisabled; // for getDisabled() to return the correct value
-    this.setAttribute('disabled', isDisabled); // to effectively turn the button enabled or disabled
+    var newIsDisabledState;
+    if (requirementsAreMet(this.model)) {
+      newIsDisabledState = false;
+    } else {
+      newIsDisabledState = true;
+    }
+    OB.UTIL.Debug.execute(function() {
+      if (!requirements) {
+        throw "The 'requirementsAreMet' function must have been called before this point";
+      }
+    });
+
+    // log the status and requirements of the pay button state
+    var msg = enyo.format("Pay button is %s. ", (newIsDisabledState ? 'disabled': 'enabled'));
+    if (requirements.isSynchronized) {
+      OB.debug(msg, requirements); // tweak this log level to log the state of the button when it goes enabled
+    } else {
+      OB.debug(msg, requirements); // tweak this log level if the previous line does not log anything
+    }
+
+    this.disabled = newIsDisabledState; // for getDisabled() to return the correct value
+    this.setAttribute('disabled', newIsDisabledState); // to effectively turn the button enabled or disabled
   },
   events: {
     onTabChange: '',
