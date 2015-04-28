@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,8 +23,8 @@ test('Basic requirements', function () {
   ok(OB.RecentUtilities, 'recent utilities defined');
 });
 
-test('Test user info data read', function () {
-  stop(1000);
+test('Test user info data read', function (assert) {
+  var done = assert.async();
 
   expect(16);
 
@@ -47,9 +47,9 @@ test('Test user info data read', function () {
     ok(data.role.roles.length > 0, 'More than one role present');
     ok(data.role.roles[0].id, 'Role id set');
     ok(data.role.roles[0].organizationValueMap, 'Role org value map set');
-    ok(data.role.roles[0].warehouseValueMap, 'Role wh value map set');
+    ok(data.role.roles[0].warehouseOrgMap, 'Role wh value map set');
 
-    start();
+    done();
   };
   var action = 'org.openbravo.client.application.navigationbarcomponents.UserInfoWidgetActionHandler';
   OB.RemoteCallManager.call(action, {}, {
