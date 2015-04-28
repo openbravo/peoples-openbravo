@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -41,8 +41,9 @@
         '' AS StdPrecision, '' AS PricePrecision, '' AS EnforcePriceLimit,
         C_INVOICELINE.ACCOUNT_ID AS ACCOUNT_ID
         FROM C_INVOICELINE 
+        LEFT JOIN C_INVOICE ON C_INVOICE.C_INVOICE_ID = C_INVOICELINE.C_INVOICE_ID
         LEFT OUTER JOIN C_INVOICE_DISCOUNT ON C_INVOICELINE.C_INVOICE_DISCOUNT_ID = C_INVOICE_DISCOUNT.C_INVOICE_DISCOUNT_ID
-        LEFT OUTER JOIN C_BPARTNER_DISCOUNT ON C_INVOICE_DISCOUNT.C_DISCOUNT_ID = C_BPARTNER_DISCOUNT.C_DISCOUNT_ID
+        LEFT OUTER JOIN C_BPARTNER_DISCOUNT ON C_INVOICE_DISCOUNT.C_DISCOUNT_ID = C_BPARTNER_DISCOUNT.C_DISCOUNT_ID AND C_BPARTNER_DISCOUNT.C_BPARTNER_ID = C_INVOICE.C_BPARTNER_ID
         WHERE C_INVOICELINE.C_Invoice_ID = ?
         AND C_INVOICELINE.AD_CLIENT_ID IN ('1')
         AND C_INVOICELINE.AD_ORG_ID IN ('1')
