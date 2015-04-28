@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -35,7 +35,7 @@ test('Set/Get Property', function () {
 
   OB.PropertyStore.set(propName, testValue);
   propValue = OB.PropertyStore.get(propName);
-  same(propValue, testValue, 'Equal values');
+  equal(propValue, testValue, 'Equal values');
   // clear the test property
   // with a short delay to make sure that the previous set does not interfere
   // on the server
