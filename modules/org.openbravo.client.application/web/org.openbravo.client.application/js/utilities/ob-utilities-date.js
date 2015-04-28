@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2009-2014 Openbravo SLU
+ * All portions are Copyright (C) 2009-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -134,7 +134,7 @@ OB.Utilities.Date.OBToJS = function (OBDate, dateFormat) {
   var dateSeparator = dateFormat.substring(2, 3);
   var timeSeparator = dateFormat.substring(11, 12);
   var isFullYear = (dateFormat.indexOf('%Y') !== -1);
-  if (OBDate.indexOf(PMIndicator) !== 1 || OBDate.indexOf(AMIndicator) !== 1) {
+  if (OBDate.indexOf(PMIndicator) !== -1 || OBDate.indexOf(AMIndicator) !== -1) {
     is24h = false;
   }
   if (!is24h && OBDate.indexOf(PMIndicator) !== -1) {
