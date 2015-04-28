@@ -34,57 +34,49 @@
   <script>
     var isomorphicDir='../../org.openbravo.userinterface.smartclient/isomorphic/',
         OBTest = { testStarted: false,
-    		  completed: false,
-    		  failures: {},
-    		  success: {}
-    		};
+              completed: false,
+              executed: {}
+            };
     $LAB.setGlobalDefaults({CacheBust:true});
     
     QUnit.done(function (details) {
-    	if (OBTest.testStarted){
-    	  isc.Class.fireOnPause('testExecution', function(){
-    	    if (QUnit.config.queue.length === 0) {
-    	      OBTest.completed = true;
-    	      OBTest.failed = details.failed;
-    	      OBTest.passed = details.passed;
-    	      OBTest.total = details.total;
-    	      OBTest.runtime = details.runtime;
-    	      console.log('Tests completed',OBTest);
-    	    }
-    	  }, 1000);
-    	}
+        if (OBTest.testStarted){
+          isc.Class.fireOnPause('testExecution', function(){
+            if (QUnit.config.queue.length === 0) {
+              // mark execution as completed so Selenium gets notified
+              OBTest.completed = true;
+              OBTest.failed = details.failed;
+              OBTest.passed = details.passed;
+              OBTest.total = details.total;
+              OBTest.runtime = details.runtime;
+              console.log('Tests completed',OBTest);
+            }
+          }, 1000);
+        }
     });
     
     QUnit.log(function (details) {
-    	console.log('log', details)
-      var result = details.result ? OBTest.success : OBTest.failures, mod, testCase, assertName, i;
+      var result = OBTest.executed, testCase, assertName, i;
       
-      if (!result[details.mdule]){
-    	  result[details.module] = {};
+      if (!result[details.module + ' - ' + details.name]){
+          result[details.module + ' - ' + details.name] = {};
       }
       
-      mod = result[details.module];
-      
-      if (!mod[details.name]) {
-    	  mod[details.name] = {};
-      }
-      
-      testCase = mod[details.name];
+      testCase = result[details.module + ' - ' + details.name];
       
       assertName = details.message;
       testCase[assertName] = { success: details.result, runtime: details.runtime};
       
       if (!details.result) {
-    	  testCase[assertName].expected = details.expected;
-    	  testCase[assertName].actual = details.actual;
-    	  testCase[assertName].source = details.source;
+          testCase[assertName].expected = details.expected;
+          testCase[assertName].actual = details.actual;
+          testCase[assertName].source = details.source;
       }
     });
 
     function OBStartApplication() {
-        console.log('starting...');
-        OBTest.testStarted = true;
-        $LAB.script('../../../org.openbravo.client.kernel/OBCLKER_Kernel/TestResources');
+      OBTest.testStarted = true;
+      $LAB.script('../../../org.openbravo.client.kernel/OBCLKER_Kernel/TestResources');
     }
   </script>
   
@@ -95,8 +87,8 @@
   (
     function () {
       var requestApplication = function () {
-    	  // Now we have a valid session, all StaticResources can be retrieved
-    	  isc.RPCManager.sendRequest({actionURL:'../../../org.openbravo.client.kernel/OBCLKER_Kernel/StaticResources?_mode=3.00&_skinVersion=Default', 
+          // Now we have a valid session, all StaticResources can be retrieved
+          isc.RPCManager.sendRequest({actionURL:'../../../org.openbravo.client.kernel/OBCLKER_Kernel/StaticResources?_mode=3.00&_skinVersion=Default', 
               evalResult: false,
               callback:function (resp, data) {
                   test('Static Resources can be requested', function () {
@@ -108,24 +100,24 @@
                       idx = app.indexOf(".js'>");
                       ok(idx !== -1, 'StaticResource file is a js file');
                       app = app.substring(0, idx + 3);
-                	  
+                      
                       if (idx !== -1) {
-                	    $LAB.script(app);
+                        $LAB.script(app);
                       }
                   });
               }});
-      }
-    	
+      };
+        
       // at this point we have SC, we need a sesison to get the application
       isc.RPCManager.sendRequest({actionURL:'../../../secureApp/LoginHandler.html?user=Openbravo&password=openbravo', 
-    		evalResult: true,
-    		callback:function (resp, data) {
-    			module('org.openbravo.security');
-    			test('Login', function (){
-    		      ok(data && data.showMessage === false, 'Login correct');
-    		      requestApplication();
-    			});
-    		}});
+            evalResult: true,
+            callback:function (resp, data) {
+                module('org.openbravo.security');
+                test('Login', function (){
+                  ok(data && data.showMessage === false, 'Login correct');
+                  requestApplication();
+                });
+            }});
     }
   )();
   </script>
