@@ -38,10 +38,6 @@ function checkMissingDbInstanceId(w) {
   return false;
 }
 
-//asyncTest('Create Workspace', function () {
-//  OB.Layout.ViewManager.createAddStartTab();
-//});
-//
 asyncTest('Add widget', function () {
 
   var post = isc.addProperties({}, d, {

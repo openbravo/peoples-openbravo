@@ -47,7 +47,7 @@ test('Test user info data read', function (assert) {
     ok(data.role.roles.length > 0, 'More than one role present');
     ok(data.role.roles[0].id, 'Role id set');
     ok(data.role.roles[0].organizationValueMap, 'Role org value map set');
-    ok(data.role.roles[0].warehouseValueMap, 'Role wh value map set');
+    ok(data.role.roles[0].warehouseOrgMap, 'Role wh value map set');
 
     done();
   };
