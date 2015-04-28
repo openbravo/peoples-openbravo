@@ -637,30 +637,35 @@ public class ProcessInvoice extends HttpSecureAppServlet {
     SimpleDateFormat dateFormater = new SimpleDateFormat(dateFormat);
 
     BigDecimal pendingToPay = invoice.getGrandTotalAmount();
-    for (int i = 0; i < data.length; i++) {
-      FieldProviderFactory.setField(data[i], "finCreditPaymentId", creditPayments.get(i).getId());
-      FieldProviderFactory.setField(data[i], "documentNo", creditPayments.get(i).getDocumentNo());
-      FieldProviderFactory.setField(data[i], "paymentDescription", creditPayments.get(i)
-          .getDescription());
-      if (creditPayments.get(i).getPaymentDate() != null) {
-        FieldProviderFactory.setField(data[i], "documentDate",
-            dateFormater.format(creditPayments.get(i).getPaymentDate()).toString());
+    try {
+      OBContext.setAdminMode(true);
+      for (int i = 0; i < data.length; i++) {
+        FieldProviderFactory.setField(data[i], "finCreditPaymentId", creditPayments.get(i).getId());
+        FieldProviderFactory.setField(data[i], "documentNo", creditPayments.get(i).getDocumentNo());
+        FieldProviderFactory.setField(data[i], "paymentDescription", creditPayments.get(i)
+            .getDescription());
+        if (creditPayments.get(i).getPaymentDate() != null) {
+          FieldProviderFactory.setField(data[i], "documentDate",
+              dateFormater.format(creditPayments.get(i).getPaymentDate()).toString());
+        }
+
+        final BigDecimal outStandingAmt = creditPayments.get(i).getGeneratedCredit()
+            .subtract(creditPayments.get(i).getUsedCredit());
+        FieldProviderFactory.setField(data[i], "outstandingAmount", outStandingAmt.toString());
+
+        FieldProviderFactory.setField(
+            data[i],
+            "paymentAmount",
+            pendingToPay.compareTo(outStandingAmt) > 0 ? outStandingAmt.toString() : (pendingToPay
+                .compareTo(BigDecimal.ZERO) > 0 ? pendingToPay.toString() : ""));
+        pendingToPay = pendingToPay.subtract(outStandingAmt);
+
+        FieldProviderFactory.setField(data[i], "finSelectedCreditPaymentId",
+            "".equals(data[i].getField("paymentAmount")) ? "" : creditPayments.get(i).getId());
+        FieldProviderFactory.setField(data[i], "rownum", String.valueOf(i));
       }
-
-      final BigDecimal outStandingAmt = creditPayments.get(i).getGeneratedCredit()
-          .subtract(creditPayments.get(i).getUsedCredit());
-      FieldProviderFactory.setField(data[i], "outstandingAmount", outStandingAmt.toString());
-
-      FieldProviderFactory.setField(
-          data[i],
-          "paymentAmount",
-          pendingToPay.compareTo(outStandingAmt) > 0 ? outStandingAmt.toString() : (pendingToPay
-              .compareTo(BigDecimal.ZERO) > 0 ? pendingToPay.toString() : ""));
-      pendingToPay = pendingToPay.subtract(outStandingAmt);
-
-      FieldProviderFactory.setField(data[i], "finSelectedCreditPaymentId",
-          "".equals(data[i].getField("paymentAmount")) ? "" : creditPayments.get(i).getId());
-      FieldProviderFactory.setField(data[i], "rownum", String.valueOf(i));
+    } finally {
+      OBContext.restorePreviousMode();
     }
 
     return data;
