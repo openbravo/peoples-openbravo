@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -48,6 +48,12 @@ public class SE_Payment_Transaction extends SimpleCallout {
       } else {
         info.addResult("inpdepositamt", BigDecimal.ZERO);
         info.addResult("inppaymentamt", payment.getFinancialTransactionAmount().abs());
+      }
+      String strWindowId = info.getStringParameter("inpwindowId", null);
+      if (payment.isReceipt()) {
+        info.vars.setSessionValue(strWindowId + "|IsSOTrx", "Y");
+      } else {
+        info.vars.setSessionValue(strWindowId + "|IsSOTrx", "N");
       }
       if (payment.getBusinessPartner() != null) {
         info.addResult("inpcBpartnerId", payment.getBusinessPartner().getId());
