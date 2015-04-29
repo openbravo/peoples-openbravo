@@ -68,9 +68,6 @@ the outputted value is already covered by a default.
     <#if field.hasDefaultValue>
         hasDefaultValue: true,
     </#if>
-    <#if field.id??>
-        id: '${field.id?js_string}',
-    </#if>
 </@compress>
     <#if field.standardField>
 <@compress single_line=true>
