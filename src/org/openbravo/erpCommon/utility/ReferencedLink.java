@@ -79,7 +79,7 @@ public class ReferencedLink extends HttpSecureAppServlet {
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
-        out.print(getJSON(vars));
+        out.print(getJSON(vars).toString());
         out.close();
       } else
         throw new ServletException();
@@ -96,7 +96,7 @@ public class ReferencedLink extends HttpSecureAppServlet {
    * @return A JSON Object with the destination window, tab and row
    */
 
-  private String getJSON(VariablesSecureApp vars) throws ServletException {
+  private JSONObject getJSON(VariablesSecureApp vars) throws ServletException {
     String tabId = getTabId(vars);
     String recordId = vars.getStringParameter("inpKeyReferenceId");
     JSONObject json = new JSONObject();
@@ -141,7 +141,7 @@ public class ReferencedLink extends HttpSecureAppServlet {
       }
     }
 
-    return json.toString();
+    return json;
   }
 
   /**
@@ -300,11 +300,11 @@ public class ReferencedLink extends HttpSecureAppServlet {
 
   private String applyRules(String fieldId, String strTableReferenceId, Entity obEntity,
       String strKeyReferenceId, boolean fieldRules) {
-    Field field = OBDal.getInstance().get(Field.class, fieldId);
     OBCriteria<TableNavigation> tableNavigationCriteria = OBDal.getInstance().createCriteria(
         TableNavigation.class);
     tableNavigationCriteria.add(Restrictions.eq("table.id", strTableReferenceId));
     if (fieldRules) {
+      Field field = OBDal.getInstance().get(Field.class, fieldId);
       tableNavigationCriteria.add(Restrictions.eq(TableNavigation.PROPERTY_FIELD, field));
     } else {
       tableNavigationCriteria.add(Restrictions.isNull(TableNavigation.PROPERTY_FIELD));
