@@ -934,7 +934,11 @@ public class FormInitializationComponent extends BaseActionHandler {
       parentRecord = KernelUtils.getInstance().getParentRecord(row, tab);
     }
     Tab parentTab = KernelUtils.getInstance().getParentTab(tab);
-    if (parentId != null && parentTab != null) {
+    // If the parent table is not based in a db table, don't try to retrieve the record
+    // Because tables not based on db tables do not have BaseOBObjects
+    // See issue https://issues.openbravo.com/view.php?id=29667
+    if (parentId != null && parentTab != null
+        && ApplicationConstants.TABLEBASEDTABLE.equals(parentTab.getTable().getDataOriginType())) {
       parentRecord = OBDal.getInstance().get(
           ModelProvider.getInstance().getEntityByTableName(parentTab.getTable().getDBTableName())
               .getName(), parentId);
