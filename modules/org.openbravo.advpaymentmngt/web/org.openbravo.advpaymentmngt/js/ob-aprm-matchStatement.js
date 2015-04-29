@@ -50,9 +50,7 @@ OB.APRM.MatchStatement.onLoad = function (view) {
 OB.APRM.MatchStatement.onRefresh = function (view) {
   var grid = view.theForm.getItem('match_statement').canvas.viewGrid,
       newCriteria = {};
-  newCriteria = grid.addSelectedIDsToCriteria(grid.getCriteria(), false);
-  newCriteria.criteria = newCriteria.criteria || [];
-  // add dummy criterion to force fetch
+  newCriteria.criteria = [];
   newCriteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
   grid.invalidateCache();
   view.theForm.redraw();
