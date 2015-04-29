@@ -645,9 +645,7 @@
       this.set('openDrawer', false);
       this.set('totalamount', null);
       this.set('approvals', []);
-      if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true)) {
-        this.loadAutomaticDiscount();
-      }
+      this.loadAutomaticDiscount();
     },
 
     clearWith: function (_order) {
@@ -690,9 +688,7 @@
       this.trigger('calculategross');
       this.trigger('change');
       this.trigger('clear');
-      if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true)) {
-        this.loadAutomaticDiscount();
-      }
+      this.loadAutomaticDiscount();
     },
 
     removeUnit: function (line, qty) {
@@ -977,10 +973,12 @@
             p = p.clone();
             p.set('standardPrice', productPrices.at(0).get('pricestd'));
             p.set('listPrice', productPrices.at(0).get('pricelist'));
+            me.addProduct2(p, qty, options, attrs);
+          } else {
+            OB.UTIL.showI18NWarning('OBPOS_ProductNotFoundInPriceList');
           }
-          me.addProduct2(p, qty, options, attrs);
         }, function () {
-          me.addProduct2(p, qty, options, attrs);
+          OB.UTIL.showI18NWarning('OBPOS_ProductNotFoundInPriceList');
         });
       } else {
         me.addProduct2(p, qty, options, attrs);
@@ -1133,14 +1131,12 @@
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationClosed'));
         return;
       }
-      if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true)) {
-        if (this.get('autoDiscounts')) {
-          var d = _.find(this.get('autoDiscounts'), function (promo) {
-            return promo === rule.get('id');
-          });
-          if (!d) {
-            return;
-          }
+      if (this.get('autoDiscounts')) {
+        var d = _.find(this.get('autoDiscounts'), function (promo) {
+          return promo === rule.get('id');
+        });
+        if (!d) {
+          return;
         }
       }
       var promotions = line.get('promotions') || [],
@@ -1451,6 +1447,7 @@
           });
         }
       } else {
+        me.loadAutomaticDiscount();
         if (saveChange) {
           this.save();
         }
