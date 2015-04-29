@@ -41,6 +41,10 @@ import org.openbravo.dal.service.OBQuery;
 /**
  * Class responsible for moving {@link ImportEntry} objects to the {@link ImportEntryArchive} table.
  * 
+ * Every {@link #ARCHIVE_INTERVAL} the thread will check if there are Processed {@link ImportEntry}
+ * records. If so then they are moved to the {@link ImportEntryArchive} table in batches of 1000
+ * records.
+ * 
  * @author mtaal
  */
 @ApplicationScoped
@@ -50,7 +54,7 @@ public class ImportEntryArchiveManager {
 
   // TODO: make this a preference
   // Archive hourly for now
-  private static final long ARCHIVE_INTERVAL = 60000;
+  private static final long ARCHIVE_INTERVAL = 60 * 60000;
 
   private static ImportEntryArchiveManager instance;
 
