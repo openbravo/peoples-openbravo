@@ -16,38 +16,41 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-module('org.openbravo.client.application.navigationbarcomponents');
 
-test('Basic requirements', function () {
-  expect(1);
-  ok(OB.RecentUtilities, 'recent utilities defined');
+/*global QUnit */
+
+QUnit.module('org.openbravo.client.application.navigationbarcomponents');
+
+QUnit.test('Basic requirements', function () {
+  QUnit.expect(1);
+  QUnit.ok(OB.RecentUtilities, 'recent utilities defined');
 });
 
-test('Test user info data read', function (assert) {
+QUnit.test('Test user info data read', function (assert) {
   var done = assert.async();
 
-  expect(16);
+  QUnit.expect(16);
 
   var callback;
   callback = function (rpcResponse, data, rpcRequest) {
-    ok(data.language, 'Language present');
-    ok(data.language.value, 'Language value present');
-    ok(data.language.valueMap, 'Language valueMap present');
-    ok(data.language.value, 'Language value present');
+    QUnit.ok(data.language, 'Language present');
+    QUnit.ok(data.language.value, 'Language value present');
+    QUnit.ok(data.language.valueMap, 'Language valueMap present');
+    QUnit.ok(data.language.value, 'Language value present');
 
-    ok(data.initialValues.role, 'Initial role value set');
-    ok(data.initialValues.client, 'Initial client value set');
-    ok(data.initialValues.organization, 'Initial organization value set');
-    ok(data.initialValues.language, 'Initial language value set');
+    QUnit.ok(data.initialValues.role, 'Initial role value set');
+    QUnit.ok(data.initialValues.client, 'Initial client value set');
+    QUnit.ok(data.initialValues.organization, 'Initial organization value set');
+    QUnit.ok(data.initialValues.language, 'Initial language value set');
 
-    ok(data.role, 'Role set');
-    ok(data.role.value, 'Role value set');
-    ok(data.role.valueMap, 'Role valueMap set');
-    ok(data.role.roles, 'Role info set');
-    ok(data.role.roles.length > 0, 'More than one role present');
-    ok(data.role.roles[0].id, 'Role id set');
-    ok(data.role.roles[0].organizationValueMap, 'Role org value map set');
-    ok(data.role.roles[0].warehouseOrgMap, 'Role wh value map set');
+    QUnit.ok(data.role, 'Role set');
+    QUnit.ok(data.role.value, 'Role value set');
+    QUnit.ok(data.role.valueMap, 'Role valueMap set');
+    QUnit.ok(data.role.roles, 'Role info set');
+    QUnit.ok(data.role.roles.length > 0, 'More than one role present');
+    QUnit.ok(data.role.roles[0].id, 'Role id set');
+    QUnit.ok(data.role.roles[0].organizationValueMap, 'Role org value map set');
+    QUnit.ok(data.role.roles[0].warehouseOrgMap, 'Role wh value map set');
 
     done();
   };

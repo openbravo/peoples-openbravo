@@ -94,11 +94,11 @@
                   test('Static Resources can be requested', function () {
                       var app = data, idx;
                       idx = app.indexOf("src='");
-                      ok(idx !== -1, 'Static Resources file is present');
+                      QUnit.ok(idx !== -1, 'Static Resources file is present');
                       app = app.substring(idx + 5);
                       
                       idx = app.indexOf(".js'>");
-                      ok(idx !== -1, 'StaticResource file is a js file');
+                      QUnit.ok(idx !== -1, 'StaticResource file is a js file');
                       app = app.substring(0, idx + 3);
                       
                       if (idx !== -1) {
@@ -112,11 +112,11 @@
       isc.RPCManager.sendRequest({actionURL:'../../../secureApp/LoginHandler.html?user=Openbravo&password=openbravo', 
             evalResult: true,
             callback:function (resp, data) {
-                module('org.openbravo.security');
-                test('Login', function (){
-                  ok(data && data.showMessage === false, 'Login correct');
-                  requestApplication();
-                });
+            	QUnit.module('org.openbravo.security');
+            	QUnit.test('Login', function (){
+                QUnit.ok(data && data.showMessage === false, 'Login correct');
+                requestApplication();
+              });
             }});
     }
   )();

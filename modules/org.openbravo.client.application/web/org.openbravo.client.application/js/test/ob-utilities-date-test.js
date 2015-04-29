@@ -11,19 +11,22 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-module('org.openbravo.client.application');
 
-test('OB.Utilities.Date.* functions', function () {
-  expect(4);
+/*global QUnit */
+
+QUnit.module('org.openbravo.client.application');
+
+QUnit.test('OB.Utilities.Date.* functions', function () {
+  QUnit.expect(4);
 
   var outputText = '';
 
-  ok((function () {
+  QUnit.ok((function () {
     var expectedCenturyReference = 50;
     var successText = 'OB.Utilities.Date.centuryReference has a valid value';
     var failureText = 'OB.Utilities.Date.centuryReference ';
@@ -42,7 +45,7 @@ test('OB.Utilities.Date.* functions', function () {
     return success;
   }()), outputText);
 
-  ok((function () {
+  QUnit.ok((function () {
     var i;
     var successText = 'OB.Utilities.Date.normalizeDisplayFormat works properly';
     var failureText = 'OB.Utilities.Date.normalizeDisplayFormat failed while eval';
@@ -82,7 +85,7 @@ test('OB.Utilities.Date.* functions', function () {
     return success;
   }()), outputText);
 
-  ok((function () {
+  QUnit.ok((function () {
     var i;
     var successText = 'OB.Utilities.Date.OBToJS works properly';
     var failureText = 'OB.Utilities.Date.OBToJS failed while eval';
@@ -135,7 +138,7 @@ test('OB.Utilities.Date.* functions', function () {
   }()), outputText);
 
 
-  ok((function () {
+  QUnit.ok((function () {
     var i;
     var successText = 'OB.Utilities.Date.JSToOB works properly';
     var failureText = 'OB.Utilities.Date.JSToOB failed while eval';
