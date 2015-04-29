@@ -118,6 +118,10 @@ public class ImportEntryManager {
   @Any
   private Instance<ImportEntryProcessor> entryProcessors;
 
+  @Inject
+  @Any
+  private ImportEntryArchiveManager importEntryArchiveManager;
+
   private ImportEntryManagerThread managerThread;
   private ExecutorService executorService;
 
@@ -138,6 +142,7 @@ public class ImportEntryManager {
     // passing ourselves as we have the Weld injected code
     managerThread = new ImportEntryManagerThread(this);
     executorService.execute(managerThread);
+    importEntryArchiveManager.start();
   }
 
   /**
@@ -149,6 +154,7 @@ public class ImportEntryManager {
     for (ImportEntryProcessor importEntryProcessor : importEntryProcessors.values()) {
       importEntryProcessor.shutdown();
     }
+    importEntryArchiveManager.shutdown();
   }
 
   /**
@@ -387,7 +393,7 @@ public class ImportEntryManager {
                 manager.handleImportEntry(importEntry);
               }
             } catch (Throwable t) {
-              log.error(t.getMessage(), t);
+              ImportProcessUtils.logError(log, t);
             }
           } finally {
             OBDal.getInstance().commitAndClose();
@@ -406,7 +412,7 @@ public class ImportEntryManager {
           doWait();
 
         } catch (Throwable t) {
-          log.error(t.getMessage(), t);
+          ImportProcessUtils.logError(log, t);
 
           // wait otherwise the loop goes wild
           try {

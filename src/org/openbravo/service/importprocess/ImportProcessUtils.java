@@ -22,6 +22,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.sql.BatchUpdateException;
 
+import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -33,6 +34,14 @@ import org.openbravo.base.exception.OBException;
  * @author mtaal
  */
 public class ImportProcessUtils {
+
+  public static void logError(Logger log, Throwable t) {
+    Throwable toReport = t;
+    if (t.getCause() instanceof BatchUpdateException) {
+      toReport = ((BatchUpdateException) t.getCause()).getNextException();
+    }
+    log.error(toReport.getMessage(), toReport);
+  }
 
   public static String getErrorMessage(Throwable e) {
     StringWriter sb = new StringWriter();
