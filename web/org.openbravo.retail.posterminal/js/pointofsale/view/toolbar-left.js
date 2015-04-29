@@ -200,6 +200,7 @@ enyo.kind({
     // logic decide if the button will be allowed to be enabled
     // the decision to enable the button is made based on several requirements that must be met
     var requirements;
+
     function requirementsAreMet(model) {
       requirements = {
         isSynchronized: undefined,
@@ -221,27 +222,27 @@ enyo.kind({
       if (!requirements.isSynchronized) {
         return false;
       }
-      requirements.isModel = model !== undefined;
+      requirements.isModel = !OB.UTIL.isNullOrUndefined(model);
       if (!requirements.isModel) {
         return false;
       }
       var receipt = model.get('order');
-      requirements.isReceipt = receipt !== undefined;
+      requirements.isReceipt = !OB.UTIL.isNullOrUndefined(receipt);
       if (!requirements.isReceipt) {
         return false;
       }
-      requirements.isReceiptId = receipt.get('id') !== undefined;
-      requirements.isReceiptDocno = receipt.get('documentNo') !== undefined;
-      requirements.isReceiptBp = receipt.get('bp') !== undefined;
-      requirements.isReceiptLines = receipt.get('lines') !== undefined;
+      requirements.isReceiptId = !OB.UTIL.isNullOrUndefined(receipt.get('id'));
+      requirements.isReceiptDocno = !OB.UTIL.isNullOrUndefined(receipt.get('documentNo'));
+      requirements.isReceiptBp = !OB.UTIL.isNullOrUndefined(receipt.get('bp'));
+      requirements.isReceiptLines = !OB.UTIL.isNullOrUndefined(receipt.get('lines'));
       if (!requirements.isReceiptId || !requirements.isReceiptDocno || !requirements.isReceiptBp || !requirements.isReceiptLines) {
         return false;
       }
-      requirements.isReceiptBpId= receipt.get('bp').get('id') !== undefined;
+      requirements.isReceiptBpId = !OB.UTIL.isNullOrUndefined(receipt.get('bp').get('id'));
       requirements.isReceiptDocnoLengthGreaterThan3 = receipt.get('documentNo').length > 3;
       requirements.isReceiptLinesLengthGreaterThanZero = receipt.get('lines').length > 0;
       requirements.isReceiptHasbeenpaidEqualToN = receipt.get('hasbeenpaid') === 'N';
-      if (!requirements.isReceiptBpId || !requirements.isReceiptDocnoLengthGreaterThan3 || !requirements.isReceiptLinesLengthGreaterThanZero || !requirements.isReceiptHasbeenpaidEqualToN)  {
+      if (!requirements.isReceiptBpId || !requirements.isReceiptDocnoLengthGreaterThan3 || !requirements.isReceiptLinesLengthGreaterThanZero || !requirements.isReceiptHasbeenpaidEqualToN) {
         return false;
       }
       // all requirements are met
@@ -253,14 +254,14 @@ enyo.kind({
     } else {
       newIsDisabledState = true;
     }
-    OB.UTIL.Debug.execute(function() {
+    OB.UTIL.Debug.execute(function () {
       if (!requirements) {
         throw "The 'requirementsAreMet' function must have been called before this point";
       }
     });
 
     // log the status and requirements of the pay button state
-    var msg = enyo.format("Pay button is %s. ", (newIsDisabledState ? 'disabled': 'enabled'));
+    var msg = enyo.format("Pay button is %s. ", (newIsDisabledState ? 'disabled' : 'enabled'));
     if (requirements.isSynchronized) {
       OB.debug(msg, requirements); // tweak this log level to log the state of the button when it goes enabled
     } else {
