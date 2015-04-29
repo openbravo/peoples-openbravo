@@ -1599,7 +1599,11 @@ isc.OBViewGrid.addProperties({
 
     // do not refresh if the parent is not selected and we have no data
     // anyway
-    if (this.view.parentProperty && (!this.data || !this.data.getLength || this.data.getLength() === 0)) {
+    // we use this.view.parentView to identify if we are on a child tab
+    // this.view.parentProperty was used before but this value could be
+    // undefined under some circumstances
+    // See issue https://issues.openbravo.com/view.php?id=29665
+    if (this.view.parentView && (!this.data || !this.data.getLength || this.data.getLength() === 0)) {
       if (this.view.parentView.isShowingTree) {
         selectedValues = this.view.parentView.treeGrid.getSelectedRecords();
       } else {
