@@ -19,9 +19,16 @@
 
 OB.APRM.MatchStatement = {};
 
+OB.APRM.MatchStatement.addPreference = function (view) {
+  var onLoadCallback;
+  onLoadCallback = function (response, data, request) {};
+  OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.MatchStatementOnLoadPreferenceActionHandler', {}, {}, onLoadCallback);
+};
 
 OB.APRM.MatchStatement.onLoad = function (view) {
   var execute, grid = view.theForm.getItem('match_statement').canvas.viewGrid;
+  view.cancelButton.hide();
+  view.parentElement.parentElement.closeButton.hide();
 
   grid.dataSourceOrig = grid.dataSource;
   grid.dataSource = null;
@@ -40,16 +47,17 @@ OB.APRM.MatchStatement.onLoad = function (view) {
       grid.filterByEditor();
     };
     OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.MatchStatementOnLoadActionHandler', {}, params, onLoadCallback);
-    if (grid && grid.parentElement && grid.parentElement.messageBar && grid.parentElement.messageBar.text && grid.parentElement.messageBar.text.contents) {
-      grid.parentElement.messageBar.text.setContents(grid.parentElement.messageBar.text.contents.replace(OB.I18N.getLabel('OBUIAPP_ClearFilters'), OB.I18N.getLabel('OBUIAPP_ClearFilters') + '<br/>' + OB.I18N.getLabel('APRM_GRID_PERSIST_MESSAGE')));
-    }
   };
-  // FIXME: How to manage if sometimes in test the boolean parameter is true and other times is false??
-  if (isc.isA.emptyObject(OB.TestRegistry.registry)) {
-    isc.confirm(OB.I18N.getLabel('APRM_AlgorithmConfirm'), execute);
-  } else {
-    execute(false);
+  if (grid && grid.parentElement && grid.parentElement.messageBar) {
+    var onLoadCallback;
+    onLoadCallback = function (response, data, request) {
+      if (!data.preference) {
+        grid.parentElement.messageBar.setMessage(isc.OBMessageBar.TYPE_INFO, '<div><div class="' + OB.Styles.MessageBar.leftMsgContainerStyle + '">' + OB.I18N.getLabel('APRM_GRID_PERSIST_MESSAGE') + '</div><div class="' + OB.Styles.MessageBar.rightMsgContainerStyle + '"><a href="#" class="' + OB.Styles.MessageBar.rightMsgTextStyle + '" onclick="' + 'window[\'' + grid.parentElement.messageBar.ID + '\'].hide(); OB.APRM.MatchStatement.addPreference();">' + OB.I18N.getLabel('OBUIAPP_NeverShowMessageAgain') + '</a></div></div>', ' ');
+      }
+    };
+    OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.MatchStatementOnLoadGetPreferenceActionHandler', {}, {}, onLoadCallback);
   }
+  isc.confirm(OB.I18N.getLabel('APRM_AlgorithmConfirm'), execute);
 };
 
 OB.APRM.MatchStatement.onRefresh = function (view) {
@@ -61,21 +69,8 @@ OB.APRM.MatchStatement.onRefresh = function (view) {
   grid.fetchData(newCriteria);
 };
 
-OB.APRM.MatchStatement.onProcess = function (view, actionHandlerCall, clientSideValidationFail	) {
-  var execute;
-  execute = function (ok) {
-    if (ok) {
-      actionHandlerCall(view);
-    } else {
-      view.parentElement.parentElement.closeClick();
-    }
-  };
-  if (isc.isA.emptyObject(OB.TestRegistry.registry)) {
-    isc.confirm(OB.I18N.getLabel('APRM_ProcessReconciliation'), execute);
-  } else {
-    execute(true);
-  }
-
+OB.APRM.MatchStatement.onProcess = function (view, actionHandlerCall, clientSideValidationFail) {
+  actionHandlerCall(view);
 };
 
 
