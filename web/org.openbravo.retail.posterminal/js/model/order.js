@@ -252,7 +252,7 @@
         attributes = JSON.parse(attributes.json);
         attributes.id = orderId;
       }
-
+      var me = this;
       if (attributes && attributes.documentNo) {
         this.set('id', attributes.id);
         this.set('client', attributes.client);
@@ -1225,20 +1225,9 @@
       var me = this;
 
       if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.product', true)) {
-        if (!localStorage.hgVolProducts) {
-          localStorage.hgVolProducts = JSON.stringify([]);
-        }
-        var temp = JSON.parse(localStorage.hgVolProducts);
-        if (!_.find(temp, function (id) {
-          return id === p.id;
-        })) {
-          OB.Dal.save(p, function () {}, function () {
-            OB.error(arguments);
-          }, true);
-        }
-
-        temp.push(p.id);
-        localStorage.hgVolProducts = JSON.stringify(temp);
+        OB.Dal.saveHgvol(p, function () {}, function () {
+          OB.error(arguments);
+        }, true);
       }
       if (OB.MobileApp.model.get('permissions').OBPOS_NotAllowSalesWithReturn) {
         var negativeLines = _.filter(this.get('lines').models, function (line) {
@@ -1346,6 +1335,46 @@
       var me = this,
           undef;
       var oldbp = this.get('bp');
+      if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.customer', true)) {
+        if (oldbp.id !== businessPartner.id) { //Business Partner have changed
+          OB.Dal.removeHgvol(new OB.Model.BusinessPartner(oldbp), function () {}, function () {
+            OB.UTIL.showError('Error removing');
+          });
+
+          OB.Dal.saveHgvol(businessPartner, function () {}, function () {
+            OB.error(arguments);
+          }, true);
+
+          OB.Dal.get(OB.Model.BPLocation, businessPartner.get('locId'), function (location) {
+
+            var loc = oldbp.get('locationModel');
+            OB.Dal.removeHgvol(loc, function () {}, function () {
+              OB.UTIL.showError('Error removing');
+            });
+
+            OB.Dal.saveHgvol(location, function () {
+              businessPartner.set('locationModel', location);
+              me.set('bp', businessPartner);
+            }, function () {
+              OB.error(arguments);
+            }, true);
+
+          }, function () {
+            OB.error(arguments);
+          }, true);
+
+        } else { //Location have changed
+          var location = oldbp.get('locationModel');
+          OB.Dal.removeHgvol(location, function () {}, function () {
+            OB.UTIL.showError('Error removing');
+          });
+          OB.Dal.saveHgvol(businessPartner.get('locationModel'), function () {
+            me.set('bp', businessPartner);
+          }, function () {
+            OB.error(arguments);
+          }, true);
+        }
+      }
       this.set('bp', businessPartner);
       // set the undo action
       if (showNotif === undef || showNotif === true) {
@@ -2311,6 +2340,7 @@
         OB.Dal.get(OB.Model.BPLocation, bpLocId, function (bpLoc) {
           bp.set('locName', bpLoc.get('name'));
           bp.set('locId', bpLoc.get('id'));
+          bp.set('locationModel', bpLoc);
           order.set('bp', bp);
           order.set('gross', model.totalamount);
           order.set('net', model.totalNetAmount);
@@ -2326,20 +2356,9 @@
 
             OB.Dal.get(OB.Model.Product, iter.id, function (prod) {
               if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.product', true)) {
-                if (!localStorage.hgVolProducts) {
-                  localStorage.hgVolProducts = JSON.stringify([]);
-                }
-                var temp = JSON.parse(localStorage.hgVolProducts);
-                if (!_.find(temp, function (id) {
-                  return id === prod.id;
-                })) {
-                  OB.Dal.save(prod, function () {}, function () {
-                    OB.error(arguments);
-                  }, true);
-                }
-
-                temp.push(prod.id);
-                localStorage.hgVolProducts = JSON.stringify(temp);
+                OB.Dal.saveHgvol(prod, function () {}, function () {
+                  OB.error(arguments);
+                }, true);
               }
               newline = new OrderLine({
                 product: prod,
@@ -2435,6 +2454,13 @@
       callback(order);
     },
     addNewOrder: function () {
+      var me = this;
+      OB.Dal.saveHgvol(OB.MobileApp.model.get('businessPartner'), function () {}, function () {
+        OB.error(arguments);
+      }, true);
+      OB.Dal.saveHgvol(OB.MobileApp.model.get('businessPartner').get('locationModel'), function () {}, function () {
+        OB.error(arguments);
+      }, true);
       this.saveCurrent();
       this.current = this.newOrder();
       this.add(this.current);
@@ -2502,19 +2528,30 @@
       }
       if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.product', true)) {
         for (i = 0, max = this.current.get('lines').length; i < this.current.get('lines').length; i++) {
-          var temp = JSON.parse(localStorage.hgVolProducts);
           var p = this.current.get('lines').models[i].get('product');
-          temp.splice(_.indexOf(temp, p.id), 1);
-          localStorage.hgVolProducts = JSON.stringify(temp);
-          if (_.indexOf(temp, p.id) === -1) {
-            OB.Dal.remove(p, successCallback, errorCallback);
-          }
+          OB.Dal.removeHgvol(p, successCallback, errorCallback);
         }
       }
+      if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.customer', true)) {
+        OB.Dal.removeHgvol(this.current.get('bp'), successCallback, errorCallback);
+        if (this.current.get('bp').get('locationModel')) {
+          OB.Dal.removeHgvol(this.current.get('bp').get('locationModel'), successCallback, errorCallback);
+        }
+      }
+
       this.remove(this.current);
       var createNew = forceCreateNew || this.length === 0;
       if (createNew) {
         this.add(this.newOrder());
+        if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.customer', true)) {
+          OB.Dal.saveHgvol(OB.MobileApp.model.get('businessPartner'), function () {}, function () {
+            OB.error(arguments);
+          }, true);
+          OB.Dal.saveHgvol(OB.MobileApp.model.get('businessPartner').get('locationModel'), function () {}, function () {
+            OB.error(arguments);
+          }, true);
+        }
+
       }
       this.current = this.at(this.length - 1);
       this.loadCurrent(createNew);

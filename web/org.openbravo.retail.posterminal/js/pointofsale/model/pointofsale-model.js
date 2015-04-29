@@ -208,6 +208,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             successCallbackBPLoc = function (bpLoc) {
               dataBps.set('locId', bpLoc.get('id'));
               dataBps.set('locName', bpLoc.get('name'));
+              dataBps.set('locationModel', bpLoc);
               OB.MobileApp.model.set('businessPartner', dataBps);
               me.loadUnpaidOrders();
             };
