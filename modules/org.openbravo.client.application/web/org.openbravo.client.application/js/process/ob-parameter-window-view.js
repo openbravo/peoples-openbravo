@@ -160,7 +160,7 @@ isc.OBParameterWindowView.addProperties({
     }
 
     if (this.popup) {
-      cancelButton = isc.OBFormButton.create({
+      this.cancelButton = isc.OBFormButton.create({
         process: this,
         title: OB.I18N.getLabel('OBUISC_Dialog.CANCEL_BUTTON_TITLE'),
         realTitle: '',
@@ -172,11 +172,11 @@ isc.OBParameterWindowView.addProperties({
           }
         }
       });
-      buttonLayout.push(cancelButton);
+      buttonLayout.push(this.cancelButton);
       buttonLayout.push(isc.LayoutSpacer.create({}));
-      OB.TestRegistry.register('org.openbravo.client.application.ParameterWindow_Cancel_Button_' + this.processId, cancelButton);
+      OB.TestRegistry.register('org.openbravo.client.application.ParameterWindow_Cancel_Button_' + this.processId, this.cancelButton);
       // TODO: check if this is used, and remove as it is already registered
-      OB.TestRegistry.register('org.openbravo.client.application.process.pickandexecute.button.cancel', cancelButton);
+      OB.TestRegistry.register('org.openbravo.client.application.process.pickandexecute.button.cancel', this.cancelButton);
     }
 
     if (!this.popup) {
