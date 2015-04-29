@@ -12938,7 +12938,7 @@ The corresponding tables have then the following setting:
 <!--2B7DB9260C3C452AB7535DE2ABC9CAE5-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--2B7DB9260C3C452AB7535DE2ABC9CAE5-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--2B7DB9260C3C452AB7535DE2ABC9CAE5-->  <NAME><![CDATA[Navigation Rules]]></NAME>
-<!--2B7DB9260C3C452AB7535DE2ABC9CAE5-->  <HELP><![CDATA[Configuration of the rules that a window's link has to meet to reach a tab. The rules are in short HQL where clauses in which "e" is the current table. In short are the condition a row has to meet in order to open the specified tab of the rule.]]></HELP>
+<!--2B7DB9260C3C452AB7535DE2ABC9CAE5-->  <HELP><![CDATA[Configuration of the rules that a window's link has to meet to reach a tab. The rules are in short HQL where clauses in which "e" is the current table.]]></HELP>
 <!--2B7DB9260C3C452AB7535DE2ABC9CAE5-->  <AD_TABLE_ID><![CDATA[F405303D868347EE8F594739FC4D13ED]]></AD_TABLE_ID>
 <!--2B7DB9260C3C452AB7535DE2ABC9CAE5-->  <AD_WINDOW_ID><![CDATA[102]]></AD_WINDOW_ID>
 <!--2B7DB9260C3C452AB7535DE2ABC9CAE5-->  <SEQNO><![CDATA[105]]></SEQNO>
@@ -15269,7 +15269,7 @@ AND e.pending <> 0]]></HQLWHERECLAUSE>
 <!--99300F44A0A24D40A69B8C06C53838A8-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--99300F44A0A24D40A69B8C06C53838A8-->  <NAME><![CDATA[Navigation Rules]]></NAME>
 <!--99300F44A0A24D40A69B8C06C53838A8-->  <DESCRIPTION><![CDATA[Destination tab link rules]]></DESCRIPTION>
-<!--99300F44A0A24D40A69B8C06C53838A8-->  <HELP><![CDATA[Configuration of the rules that a window's link has to meet to reach a tab. The rules are in short HQL where clauses in which "e" is the current table. In short are the condition a row has to meet in order to open the specified tab of the rule.]]></HELP>
+<!--99300F44A0A24D40A69B8C06C53838A8-->  <HELP><![CDATA[Configuration of the rules that a window's link has to meet to reach a tab. The rules are in short HQL where clauses in which "e" is the current table.]]></HELP>
 <!--99300F44A0A24D40A69B8C06C53838A8-->  <AD_TABLE_ID><![CDATA[F405303D868347EE8F594739FC4D13ED]]></AD_TABLE_ID>
 <!--99300F44A0A24D40A69B8C06C53838A8-->  <AD_WINDOW_ID><![CDATA[100]]></AD_WINDOW_ID>
 <!--99300F44A0A24D40A69B8C06C53838A8-->  <SEQNO><![CDATA[50]]></SEQNO>

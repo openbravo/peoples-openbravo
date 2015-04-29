@@ -41,10 +41,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="HQLLOGIC" primaryKey="false" required="true" type="VARCHAR" size="2000" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="AD_TABLE_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
@@ -57,10 +53,18 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="HQLLOGIC" primaryKey="false" required="false" type="VARCHAR" size="2000" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="DIRECTNAVIGATION" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="AD_TABLE_NAVIGATION_ADCLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_FIELD" name="AD_TABLE_NAVIGATION_ADFIELD">
+      <foreign-key foreignTable="AD_FIELD" name="AD_TABLE_NAVIGATION_ADFIELD" onDelete="cascade">
         <reference local="AD_FIELD_ID" foreign="AD_FIELD_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_MODULE" name="AD_TABLE_NAVIGATION_ADMODULE">
@@ -69,14 +73,15 @@
       <foreign-key foreignTable="AD_ORG" name="AD_TABLE_NAVIGATION_ADORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_TAB" name="AD_TABLE_NAVIGATION_ADTABID">
+      <foreign-key foreignTable="AD_TAB" name="AD_TABLE_NAVIGATION_ADTABID" onDelete="cascade">
         <reference local="AD_TAB_ID" foreign="AD_TAB_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_TABLE" name="AD_TABLE_NAVIGATION_ADTABLEID">
+      <foreign-key foreignTable="AD_TABLE" name="AD_TABLE_NAVIGATION_ADTABLEID" onDelete="cascade">
         <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
       </foreign-key>
       <index name="AD_TABLE_NAVIGATION_TABLE_IDX" unique="false">
         <index-column name="AD_TABLE_ID"/>
       </index>
+      <check name="AD_TABLE_NAVIGATION_CHECK"><![CDATA[((DIRECTNAVIGATION = 'N') AND (HQLLOGIC IS NOT NULL)) OR (DIRECTNAVIGATION = 'Y')]]></check>
     </table>
   </database>
