@@ -8,6 +8,8 @@ CREATE INDEX c_bpartner_value_upper ON c_bpartner USING btree (upper(value) COLL
 CREATE INDEX c_bpartner_name_upper ON c_bpartner USING btree (upper(name) COLLATE pg_catalog."default" varchar_pattern_ops);
 CREATE INDEX c_bpartner_referenceno_upper ON c_bpartner USING btree (upper(referenceno) COLLATE pg_catalog."default" varchar_pattern_ops);
 
-
 --c_order indexes
 CREATE INDEX c_order_documentno_upper ON c_order USING btree (upper(documentno) COLLATE pg_catalog."default" varchar_pattern_ops);
+
+--m_inout indexes
+CREATE INDEX m_inout_documentno_upper ON m_inout USING btree (upper(documentno) COLLATE pg_catalog."default" varchar_pattern_ops);
