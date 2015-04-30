@@ -41,6 +41,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.Attachment;
+import org.openbravo.model.ad.utility.AttachmentConfig;
 import org.openbravo.model.ad.utility.AttachmentMetadata;
 import org.openbravo.model.ad.utility.AttachmentMethod;
 
@@ -70,16 +71,21 @@ public class AttachmentsAH extends BaseActionHandler {
 
       if ("INITIALIZE".equals(action) || "INITIALIZE_EDIT".equals(action)) {
         JSONObject response = new JSONObject();
+        AttachmentConfig attConf = null;
         AttachmentMethod attMethod = null;
         Attachment attachment = null;
         if ("INITIALIZE".equals(action)) {
-          attMethod = aim.getAttachmenMethod(OBContext.getOBContext().getCurrentClient());
+        	attConf = aim.getAttachmenConfig(OBContext.getOBContext().getCurrentClient());
+        	attMethod = attConf.getAttachmentMethod();
         } else {
           final String attachId = request.getString("attachId");
           attachment = OBDal.getInstance().get(Attachment.class, attachId);
-          attMethod = attachment.getAttachmentMethod();
+          attConf = attachment.getAttachmentConf();
+          attMethod = attConf.getAttachmentMethod();
         }
         JSONArray metadataArray = new JSONArray();
+
+        
 
         for (AttachmentMetadata am : attMethod.getCAttachmentMetadataList()) {
           JSONObject metadata = new JSONObject();
@@ -122,7 +128,7 @@ public class AttachmentsAH extends BaseActionHandler {
         recordIds = parameters.get("recordId").toString();
         String attachmentId = (String) parameters.get("attachId");
         AttachmentMethod attachMethod = OBDal.getInstance().get(Attachment.class, attachmentId)
-            .getAttachmentMethod();
+        	        .getAttachmentConf().getAttachmentMethod();
         JSONObject metadataJson = new JSONObject(parameters.get("updatedMetadata").toString());
 
         Map<String, String> metadata = new HashMap<String, String>();

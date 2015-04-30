@@ -61,10 +61,13 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="C_ATTACHMENT_METHOD_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+      <column name="C_ATTACHMENT_CONF_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
-        <onCreateDefault><![CDATA['D7B1319FC2B340799283BBF8E838DF9F']]></onCreateDefault>
+        <onCreateDefault/>
       </column>
+      <foreign-key foreignTable="C_ATTACHMENT_CONF" name="C_CONF_ID_FKEY">
+        <reference local="C_ATTACHMENT_CONF_ID" foreign="C_ATTACHMENT_CONF_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="C_FILE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -73,9 +76,6 @@
       </foreign-key>
       <foreign-key foreignTable="AD_TABLE" name="C_FILE_AD_TABLE" onDelete="cascade">
         <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_ATTACHMENT_METHOD" name="C_FILE_C_ATTACHMENT_METHOD">
-        <reference local="C_ATTACHMENT_METHOD_ID" foreign="C_ATTACHMENT_METHOD_ID"/>
       </foreign-key>
       <index name="C_FILE_RECORD_IDX" unique="false">
         <index-column name="AD_TABLE_ID"/>

@@ -90,8 +90,9 @@ public class AttachImplementationManager {
       throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoFileToAttach"));
     }
 
-    AttachmentMethod attachMethod = getAttachmenMethod(OBContext.getOBContext().getCurrentClient());
-
+    AttachmentConfig attachConf = getAttachmenConfig(OBContext.getOBContext().getCurrentClient());
+    AttachmentMethod attachMethod = attachConf.getAttachmentMethod();
+    
     String strName = file.getName();
 
     Attachment attachment = null;
@@ -106,14 +107,13 @@ public class AttachImplementationManager {
         attachment.setTable(tab.getTable());
         attachment.setRecord(strKey);
       }
-      attachment.setAttachmentMethod(attachMethod);
+      attachment.setAttachmentConf(attachConf);
       attachment.setOrganization(org);
       attachment.setActive(true);
 
       OBDal.getInstance().save(attachment);
 
-      AttachImplementation handler = getHandler(attachMethod == null ? "Default" : attachMethod
-          .getValue());
+      AttachImplementation handler = getHandler(attachMethod== null ? "Default" : attachMethod.getValue());
 
       if (handler == null) {
         throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoMethod"));
@@ -134,8 +134,7 @@ public class AttachImplementationManager {
    */
   public void delete(Attachment attachment) throws OBException {
     checkReadableAccess(attachment);
-    AttachImplementation handler = getHandler(attachment.getAttachmentMethod() == null ? "Default"
-        : attachment.getAttachmentMethod().getValue());
+    AttachImplementation handler = getHandler(attachment.getAttachmentConf().getAttachmentMethod() == null ? "Default" : attachment.getAttachmentConf().getAttachmentMethod().getValue());
     if (handler == null) {
       throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoMethod"));
     }
@@ -168,8 +167,8 @@ public class AttachImplementationManager {
 
       checkReadableAccess(attachment);
 
-      AttachImplementation handler = getHandler(attachment.getAttachmentMethod() == null ? "Default"
-          : attachment.getAttachmentMethod().getValue());
+      AttachImplementation handler = getHandler(attachment.getAttachmentConf().getAttachmentMethod() == null ? "Default" : attachment.getAttachmentConf().getAttachmentMethod().getValue());
+
       if (handler == null) {
         throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoMethod"));
       }
@@ -200,8 +199,7 @@ public class AttachImplementationManager {
 
       checkReadableAccess(attachment);
 
-      AttachImplementation handler = getHandler(attachment.getAttachmentMethod() == null ? "Default"
-          : attachment.getAttachmentMethod().getValue());
+      AttachImplementation handler = getHandler(attachment.getAttachmentConf().getAttachmentMethod() == null ? "Default"  : attachment.getAttachmentConf().getAttachmentMethod().getValue());
       if (handler == null) {
         throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoMethod"));
       }
@@ -250,8 +248,8 @@ public class AttachImplementationManager {
       attachmentFiles.setFilterOnReadableOrganization(false);
       for (Attachment attachmentFile : attachmentFiles.list()) {
         checkReadableAccess(attachmentFile);
-        AttachImplementation handler = getHandler(attachmentFile.getAttachmentMethod() == null ? "Default"
-            : attachmentFile.getAttachmentMethod().getValue());
+        AttachImplementation handler = getHandler(attachmentFile.getAttachmentConf() == null ? "Default"
+            : attachmentFile.getAttachmentConf().getId());
         if (handler == null) {
           throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoMethod"));
         }
@@ -311,37 +309,36 @@ public class AttachImplementationManager {
    */
 
   public Map<String, Object> getMetadataList(String attachmentMethodId) {
-    AttachmentMethod attachmentMethod = OBDal.getInstance().get(AttachmentMethod.class,
-        attachmentMethodId);
+    AttachmentMethod attachMethod = OBDal.getInstance().get(AttachmentMethod.class, attachmentMethodId);
     Map<String, Object> metadataList = new HashMap<String, Object>();
-    for (AttachmentMetadata metadata : attachmentMethod.getCAttachmentMetadataList()) {
+    for (AttachmentMetadata metadata : attachMethod.getCAttachmentMetadataList()) {
       metadataList.put(metadata.getValue(), null);
     }
     return metadataList;
   }
 
-  public AttachmentMethod getAttachmenMethod(Client client) {
-    OBCriteria<AttachmentConfig> obc = OBDal.getInstance().createCriteria(AttachmentConfig.class);
-    obc.add(Restrictions.eq(AttachmentConfig.PROPERTY_CLIENT, client));
-    obc.setMaxResults(1);
-    if (obc.uniqueResult() != null) {
-      return ((AttachmentConfig) obc.uniqueResult()).getAttachmentMethod();
-    }
-    OBCriteria<AttachmentMethod> am = OBDal.getInstance().createCriteria(AttachmentMethod.class);
-    obc.add(Restrictions.eq(AttachmentMethod.PROPERTY_VALUE, "Default"));
-    obc.setMaxResults(1);
-    if (am.uniqueResult() != null) {
-      return (AttachmentMethod) am.uniqueResult();
-    } else {
-      throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoMethod"));
-    }
-  }
-
+  public AttachmentConfig getAttachmenConfig(Client client) {
+	    OBCriteria<AttachmentConfig> obc = OBDal.getInstance().createCriteria(AttachmentConfig.class);
+	    obc.add(Restrictions.eq(AttachmentConfig.PROPERTY_CLIENT, client));
+	    obc.setMaxResults(1);
+	    if (obc.uniqueResult() != null) {
+	      return ((AttachmentConfig) obc.uniqueResult());
+	    }
+	    OBCriteria<AttachmentMethod> am = OBDal.getInstance().createCriteria(AttachmentMethod.class);
+	    obc.add(Restrictions.eq(AttachmentMethod.PROPERTY_VALUE, "Default"));
+	    obc.setMaxResults(1);
+	    if (am.uniqueResult() != null) {
+	      return (AttachmentConfig) am.uniqueResult();
+	    } else {
+	      throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoMethod"));
+	    }
+	  }
+  
   public void getMetadataValues(Attachment attachment, JSONArray metadataArray) {
     checkReadableAccess(attachment);
 
-    AttachImplementation handler = getHandler(attachment.getAttachmentMethod() == null ? "Default"
-        : attachment.getAttachmentMethod().getValue());
+    AttachImplementation handler = getHandler(attachment.getAttachmentConf().getAttachmentMethod() == null ? "Default"
+    	        : attachment.getAttachmentConf().getAttachmentMethod().getValue());
     if (handler == null) {
       throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoMethod"));
     }
