@@ -248,8 +248,8 @@ public class AttachImplementationManager {
       attachmentFiles.setFilterOnReadableOrganization(false);
       for (Attachment attachmentFile : attachmentFiles.list()) {
         checkReadableAccess(attachmentFile);
-        AttachImplementation handler = getHandler(attachmentFile.getAttachmentConf() == null ? "Default"
-            : attachmentFile.getAttachmentConf().getId());
+        AttachImplementation handler = getHandler(attachmentFile.getAttachmentConf().getAttachmentMethod() == null ? "Default"
+            : attachmentFile.getAttachmentConf().getAttachmentMethod().getValue());
         if (handler == null) {
           throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoMethod"));
         }
