@@ -256,8 +256,7 @@ public class AdvPaymentMngtDao {
 
       // remove selected payments
       if (selectedScheduledPaymentDetails != null && selectedScheduledPaymentDetails.size() > 0) {
-        String strSelectedPaymentDetails = FIN_Utility
-            .getInStrList(selectedScheduledPaymentDetails);
+        String strSelectedPaymentDetails = Utility.getInStrList(selectedScheduledPaymentDetails);
         whereClause.append(" and psd not in (");
         whereClause.append(strSelectedPaymentDetails);
         whereClause.append(")");
@@ -272,7 +271,7 @@ public class AdvPaymentMngtDao {
         for (FIN_PaymentPropDetail ppd : obc.list()) {
           aux.add(ppd.getFINPaymentScheduledetail());
         }
-        whereClause.append(" and psd.id not in (" + FIN_Utility.getInStrList(aux) + ")");
+        whereClause.append(" and psd.id not in (" + Utility.getInStrList(aux) + ")");
       }
       if (!StringUtils.isEmpty(strAmountFrom)) {
         whereClause.append(" and psd.");

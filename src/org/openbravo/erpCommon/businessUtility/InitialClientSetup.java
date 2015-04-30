@@ -658,11 +658,7 @@ public class InitialClientSetup {
 
     UpdateReferenceDataData[] data;
     try {
-      final StringBuffer strModulesSB = new StringBuffer();
-      for (Module module : refDataModules) {
-        strModulesSB.append(module.getId()).append(",");
-      }
-      final String strModules = Utility.stringList("(" + strModulesSB.toString() + ")");
+      final String strModules = Utility.getInStrList(refDataModules, true);
 
       data = UpdateReferenceDataData.selectModules(new DalConnectionProvider(false), strModules,
           "0");
