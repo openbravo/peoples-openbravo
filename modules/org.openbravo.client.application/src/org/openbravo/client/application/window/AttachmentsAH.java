@@ -75,8 +75,8 @@ public class AttachmentsAH extends BaseActionHandler {
         AttachmentMethod attMethod = null;
         Attachment attachment = null;
         if ("INITIALIZE".equals(action)) {
-        	attConf = aim.getAttachmenConfig(OBContext.getOBContext().getCurrentClient());
-        	attMethod = attConf.getAttachmentMethod();
+          attConf = aim.getAttachmenConfig(OBContext.getOBContext().getCurrentClient());
+          attMethod = attConf.getAttachmentMethod();
         } else {
           final String attachId = request.getString("attachId");
           attachment = OBDal.getInstance().get(Attachment.class, attachId);
@@ -84,8 +84,6 @@ public class AttachmentsAH extends BaseActionHandler {
           attMethod = attConf.getAttachmentMethod();
         }
         JSONArray metadataArray = new JSONArray();
-
-        
 
         for (AttachmentMetadata am : attMethod.getCAttachmentMetadataList()) {
           JSONObject metadata = new JSONObject();
@@ -128,7 +126,7 @@ public class AttachmentsAH extends BaseActionHandler {
         recordIds = parameters.get("recordId").toString();
         String attachmentId = (String) parameters.get("attachId");
         AttachmentMethod attachMethod = OBDal.getInstance().get(Attachment.class, attachmentId)
-        	        .getAttachmentConf().getAttachmentMethod();
+            .getAttachmentConf().getAttachmentMethod();
         JSONObject metadataJson = new JSONObject(parameters.get("updatedMetadata").toString());
 
         Map<String, String> metadata = new HashMap<String, String>();
