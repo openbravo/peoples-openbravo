@@ -96,9 +96,6 @@ public class StandardAlgorithm extends CostingAlgorithm {
   }
 
   private void insertCost(Costing currentCosting, BigDecimal newCost) {
-    currentCosting.setEndingDate(transaction.getTransactionProcessDate());
-    OBDal.getInstance().save(currentCosting);
-
     Costing costing = (Costing) DalUtil.copy(currentCosting, false);
     costing.setCost(newCost);
     costing.setStartingDate(transaction.getTransactionProcessDate());
@@ -112,8 +109,10 @@ public class StandardAlgorithm extends CostingAlgorithm {
     costing.setCostType("STA");
     costing.setManual(false);
     costing.setPermanent(true);
-
     OBDal.getInstance().save(costing);
+
+    currentCosting.setEndingDate(transaction.getTransactionProcessDate());
+    OBDal.getInstance().save(currentCosting);
   }
 
 }
