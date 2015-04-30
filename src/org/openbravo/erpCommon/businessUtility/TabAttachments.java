@@ -124,8 +124,8 @@ public class TabAttachments extends HttpSecureAppServlet {
         }
         //
         Map<String, String> metadata = new HashMap<String, String>();
-        AttachmentMethod attachMethod = aim.getAttachmenMethod(OBContext.getOBContext()
-            .getCurrentClient());
+        AttachmentMethod attachMethod = aim.getAttachmenConfig(OBContext.getOBContext()
+            .getCurrentClient()).getAttachmentMethod();
         for (AttachmentMetadata met : attachMethod.getCAttachmentMetadataList()) {
           metadata.put(met.getValue(), vars.getStringParameter(met.getValue()).toString());
         }
