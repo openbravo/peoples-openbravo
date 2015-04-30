@@ -75,7 +75,6 @@ public class ReferencedLink extends HttpSecureAppServlet {
       VariablesSecureApp vars = new VariablesSecureApp(request);
 
       if (vars.commandIn("JSON")) {
-        // Standard flow
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
@@ -178,25 +177,23 @@ public class ReferencedLink extends HttpSecureAppServlet {
       strWindowId = Preferences.getPreferenceValue("ForcedLinkWindow" + strTableName, false,
           vars.getClient(), vars.getOrg(), vars.getUser(), vars.getRole(), strWindowId);
       return getTabIdFromWindow(strWindowId, strTableReferenceId, hasKeyReferenceId);
-    }
-    // The normal flow throws a propertyException because there are not any forced link, this
-    // exception will be ignored
-    catch (PropertyException ignore) {
+    } catch (PropertyException ignore) {
+      // The normal flow throws a propertyException because there are not any forced link, this
+      // exception will be ignored
     }
     try {
-      if (hasKeyReferenceId) {
-        // 2nd Check - NavigationTab - Rules defined at field level
-        // If the field from which navigates is empty, no id is sent, so hasKeyReferenceId is false
-        String returnTabId = applyRules(fieldId, strTableReferenceId, obEntity, strKeyReferenceId,
-            true);
-        if (returnTabId != null) {
-          return returnTabId;
-        }
-        // 3rd Check - Navigation Rules - Rules defined at table level
-        returnTabId = applyRules(fieldId, strTableReferenceId, obEntity, strKeyReferenceId, false);
-        if (returnTabId != null) {
-          return returnTabId;
-        }
+      // 2nd Check - NavigationTab - Rules defined at field level
+      // If the field from which navigates is empty, no id is sent, so hasKeyReferenceId is false
+      String returnTabId = applyRules(fieldId, strTableReferenceId, obEntity, strKeyReferenceId,
+          true, hasKeyReferenceId);
+      if (returnTabId != null) {
+        return returnTabId;
+      }
+      // 3rd Check - Navigation Rules - Rules defined at table level
+      returnTabId = applyRules(fieldId, strTableReferenceId, obEntity, strKeyReferenceId, false,
+          hasKeyReferenceId);
+      if (returnTabId != null) {
+        return returnTabId;
       }
     } catch (Exception e2) {
       throw new OBException("Error retrieving destination tab: ", e2);
@@ -295,11 +292,11 @@ public class ReferencedLink extends HttpSecureAppServlet {
    * @param fieldRules
    *          boolean that determines if the rules to be applied are the field level ones or the
    *          table level ones
-   * @return is sales order transaction
+   * @return destination tab id or null if no rule is met
    */
 
   private String applyRules(String fieldId, String strTableReferenceId, Entity obEntity,
-      String strKeyReferenceId, boolean fieldRules) {
+      String strKeyReferenceId, boolean fieldRules, boolean hasKeyReferenceId) {
     OBCriteria<TableNavigation> tableNavigationCriteria = OBDal.getInstance().createCriteria(
         TableNavigation.class);
     tableNavigationCriteria.add(Restrictions.eq("table.id", strTableReferenceId));
@@ -316,17 +313,19 @@ public class ReferencedLink extends HttpSecureAppServlet {
       if (tableNavigation.isDirectNavigation()) {
         return tableNavigation.getTab().getId();
       }
-      String hqlWhere = "AS e WHERE e.id = :strKeyReferenceId AND ( "
-          + tableNavigation.getHQLLogic() + " )";
+      if (hasKeyReferenceId) {
+        String hqlWhere = "AS e WHERE e.id = :strKeyReferenceId AND ( "
+            + tableNavigation.getHQLLogic() + " )";
 
-      final OBQuery<BaseOBObject> query = OBDal.getInstance().createQuery(obEntity.getName(),
-          hqlWhere);
-      query.setNamedParameter("strKeyReferenceId", strKeyReferenceId);
+        final OBQuery<BaseOBObject> query = OBDal.getInstance().createQuery(obEntity.getName(),
+            hqlWhere);
+        query.setNamedParameter("strKeyReferenceId", strKeyReferenceId);
 
-      query.setMaxResult(1);
-      // If the query returns at least 1 result the rule has to be applied
-      if (query.uniqueResult() != null) {
-        return tableNavigation.getTab().getId();
+        query.setMaxResult(1);
+        // If the query returns at least 1 result the rule has to be applied
+        if (query.uniqueResult() != null) {
+          return tableNavigation.getTab().getId();
+        }
       }
     }
     return null;

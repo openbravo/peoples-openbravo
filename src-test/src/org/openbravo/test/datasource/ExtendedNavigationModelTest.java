@@ -73,7 +73,11 @@ public class ExtendedNavigationModelTest extends BaseDataSourceTestDal {
   // Return from customer window
   private static String returnFromCustomerWindow = "FF808081330213E60133021822E40007";
 
-  // Test the link to the lines tab of the sales order window
+  /**
+   * This method test the link to the lines tab of the sales order window
+   * 
+   * @throws Exception
+   */
   @Test
   public void testTableLevelRulesSalesOrder() throws Exception {
     // Change profile
@@ -96,7 +100,11 @@ public class ExtendedNavigationModelTest extends BaseDataSourceTestDal {
         responseJson.getString("windowId"), equalTo(salesOrderWindow));
   }
 
-  // Test the link to the lines tab of the return from customer window
+  /**
+   * This method test the link to the lines tab of the return from customer window
+   * 
+   * @throws Exception
+   */
   @Test
   public void testTableLevelRulesReturnFromCustomer() throws Exception {
     // Change profile
