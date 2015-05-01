@@ -322,7 +322,7 @@ public class ImportEntryManager {
     private final ImportEntryManager manager;
 
     private Object monitorObject = new Object();
-    private boolean wasPingedInParallel = false;
+    private boolean wasNotifiedInParallel = false;
 
     ImportEntryManagerThread(ImportEntryManager manager) {
       this.manager = manager;
@@ -333,29 +333,22 @@ public class ImportEntryManager {
     // the synchronization should happen on the monitorObject
     private void doNotify() {
       synchronized (monitorObject) {
-        wasPingedInParallel = true;
-        monitorObject.notify();
+        wasNotifiedInParallel = true;
+        monitorObject.notifyAll();
       }
     }
 
     private void doWait() {
       synchronized (monitorObject) {
         try {
-          if (!wasPingedInParallel) {
+          if (!wasNotifiedInParallel) {
             log.debug("Waiting for next cycle or new import entries");
             monitorObject.wait(10 * manager.managerWaitTime);
             log.debug("Woken");
           }
-          wasPingedInParallel = false;
+          wasNotifiedInParallel = false;
         } catch (InterruptedException ignore) {
         }
-      }
-      // thread can be woken by new import entries
-      // wait 5 seconds for more importentries to arrive
-      // before processing them
-      try {
-        Thread.sleep(5000);
-      } catch (InterruptedException ignore) {
       }
     }
 
@@ -375,7 +368,6 @@ public class ImportEntryManager {
       OBContext.setOBContext("0", "0", "0", "0");
       while (true) {
         try {
-          boolean dataProcessed = false;
           try {
             OBQuery<ImportEntry> entriesQry = OBDal.getInstance().createQuery(
                 ImportEntry.class,
@@ -389,7 +381,6 @@ public class ImportEntryManager {
               final List<ImportEntry> entries = entriesQry.list();
               log.debug("Found " + entries.size() + " import entries");
               for (ImportEntry importEntry : entries) {
-                dataProcessed = true;
                 manager.handleImportEntry(importEntry);
               }
             } catch (Throwable t) {
@@ -397,14 +388,6 @@ public class ImportEntryManager {
             }
           } finally {
             OBDal.getInstance().commitAndClose();
-          }
-
-          // always wait 1 cycle if data was processed, so that
-          // the data can be processed in parallel and the system
-          // does not continuously read/take the same import entries
-          // which are already being processed
-          if (dataProcessed) {
-            Thread.sleep(manager.managerWaitTime);
           }
 
           // now wait for new ones to arrive or check after a certain

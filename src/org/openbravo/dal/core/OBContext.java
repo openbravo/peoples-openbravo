@@ -475,6 +475,7 @@ public class OBContext implements OBNotSingleton {
   private String userLevel;
   private Map<String, OrganizationStructureProvider> organizationStructureProviderByClient;
   private EntityAccessChecker entityAccessChecker;
+  private boolean doEntityAccessChecking = true;
 
   // the "0" user is the administrator
   private boolean isAdministrator;
@@ -1151,5 +1152,13 @@ public class OBContext implements OBNotSingleton {
 
   private void setTranslationInstalled(boolean translationInstalled) {
     this.translationInstalled = translationInstalled;
+  }
+
+  public boolean isDoEntityAccessChecking() {
+    return doEntityAccessChecking;
+  }
+
+  public void setDoEntityAccessChecking(boolean doEntityAccessChecking) {
+    this.doEntityAccessChecking = doEntityAccessChecking;
   }
 }

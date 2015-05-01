@@ -100,6 +100,10 @@ public class EntityAccessChecker implements OBNotSingleton {
    * @see ModelProvider
    */
   public synchronized void initialize() {
+    if (!obContext.isDoEntityAccessChecking()) {
+      return;
+    }
+
     OBContext.setAdminMode();
     try {
       final ModelProvider mp = ModelProvider.getInstance();
@@ -271,6 +275,10 @@ public class EntityAccessChecker implements OBNotSingleton {
    * @return true if the entity is derived readable for this user, otherwise false is returned.
    */
   public boolean isDerivedReadable(Entity entity) {
+    if (!obContext.isDoEntityAccessChecking()) {
+      return false;
+    }
+
     // prevent infinite looping
     if (!isInitialized) {
       return false;
@@ -289,6 +297,10 @@ public class EntityAccessChecker implements OBNotSingleton {
    * @return true if the entity is writable for this user, otherwise false is returned.
    */
   public boolean isWritable(Entity entity) {
+    if (!obContext.isDoEntityAccessChecking()) {
+      return true;
+    }
+
     // prevent infinite looping
     if (!isInitialized) {
       return true;
@@ -312,6 +324,10 @@ public class EntityAccessChecker implements OBNotSingleton {
    * @throws OBSecurityException
    */
   public void checkWritable(Entity entity) {
+    if (!obContext.isDoEntityAccessChecking()) {
+      return;
+    }
+
     if (!isWritable(entity)) {
       throw new OBSecurityException("Entity " + entity + " is not writable by this user");
     }
@@ -325,6 +341,10 @@ public class EntityAccessChecker implements OBNotSingleton {
    * @throws OBSecurityException
    */
   public void checkReadable(Entity entity) {
+    if (!obContext.isDoEntityAccessChecking()) {
+      return;
+    }
+
     // prevent infinite looping
     if (!isInitialized) {
       return;
