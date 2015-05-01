@@ -41,11 +41,11 @@ public class MatchStatementOnLoadGetPreferenceActionHandler extends BaseActionHa
       OBContext.setAdminMode(true);
       StringBuffer whereClause = new StringBuffer();
       whereClause.append(" as p ");
-      whereClause.append(" where p.userContact.id = '")
-          .append(OBContext.getOBContext().getUser().getId()).append("' ");
+      whereClause.append(" where p.userContact.id = :userId");
       whereClause.append("   and p.attribute = 'APRM_NoPersistInfoMessageInMatching' ");
       OBQuery<Preference> query = OBDal.getInstance().createQuery(Preference.class,
           whereClause.toString());
+      query.setNamedParameter("userId", OBContext.getOBContext().getUser().getId());
       for (Preference preference : query.list()) {
         jsonResponse.put("preference", preference.getSearchKey());
         return jsonResponse;
