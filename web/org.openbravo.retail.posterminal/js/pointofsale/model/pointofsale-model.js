@@ -214,6 +214,18 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             };
             OB.Dal.get(OB.Model.BPLocation, partnerAddressId, successCallbackBPLoc, errorCallback, errorCallback);
           } else {
+            // set locationModel
+            if (dataBps.get('locId')) {
+              successCallbackBPLoc = function (bpLoc) {
+                dataBps.set('locId', bpLoc.get('id'));
+                dataBps.set('locName', bpLoc.get('name'));
+                dataBps.set('locationModel', bpLoc);
+                OB.MobileApp.model.set('businessPartner', dataBps);
+                me.loadUnpaidOrders();
+              };
+              OB.Dal.get(OB.Model.BPLocation, dataBps.get('locId'), successCallbackBPLoc, errorCallback, errorCallback);
+            }
+
             OB.MobileApp.model.set('businessPartner', dataBps);
             me.loadUnpaidOrders();
           }
