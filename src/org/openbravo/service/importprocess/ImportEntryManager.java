@@ -368,6 +368,7 @@ public class ImportEntryManager {
       OBContext.setOBContext("0", "0", "0", "0");
       while (true) {
         try {
+          boolean dataPresent = false;
           try {
             OBQuery<ImportEntry> entriesQry = OBDal.getInstance().createQuery(
                 ImportEntry.class,
@@ -378,7 +379,9 @@ public class ImportEntryManager {
 
             // do a try catch block here
             try {
+              System.err.println("r");
               final List<ImportEntry> entries = entriesQry.list();
+              dataPresent = !entries.isEmpty();
               log.debug("Found " + entries.size() + " import entries");
               for (ImportEntry importEntry : entries) {
                 manager.handleImportEntry(importEntry);
@@ -392,7 +395,9 @@ public class ImportEntryManager {
 
           // now wait for new ones to arrive or check after a certain
           // amount of time
-          doWait();
+          if (!dataPresent) {
+            doWait();
+          }
 
         } catch (Throwable t) {
           ImportProcessUtils.logError(log, t);
