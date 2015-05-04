@@ -35,7 +35,6 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.security.EntityAccessChecker;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.enterprise.Organization;
 
@@ -386,20 +385,6 @@ public abstract class ImportEntryProcessor {
       return importEntries;
     }
 
-    /**
-     * EntityAccessChecking uses the {@link EntityAccessChecker}. This class needs to be initialized
-     * when it is used for the first time. This is often the case in import entry processing as
-     * OBContexts (which holds an instance of the {@link EntityAccessChecker}) can be created for
-     * each ImportEntry which is processed. Entity access checking is not always needed as access to
-     * specific services is already checked by using form access and role checks.
-     * 
-     * Depending on the service which processes the data this check was already done and no new
-     * checks are needed. As a default the entity access checking is enabled.
-     */
-    protected boolean isEntityAccessCheckingNeeded() {
-      return true;
-    }
-
     protected void setOBContext(ImportEntry importEntry) {
       final String userId = (String) DalUtil.getId(importEntry.getCreatedBy());
       final String orgId = (String) DalUtil.getId(importEntry.getOrganization());
@@ -412,9 +397,12 @@ public abstract class ImportEntryProcessor {
         OBContext.setOBContext(userId, null, clientId, orgId);
         cachedOBContexts.put(cacheKey, OBContext.getOBContext());
         obContext = OBContext.getOBContext();
-      }
 
-      obContext.setDoEntityAccessChecking(isEntityAccessCheckingNeeded());
+        // initialize
+        obContext.getEntityAccessChecker().initialize();
+        // and start with a new clean session
+        OBDal.getInstance().getSession().clear();
+      }
 
       OBContext.setAdminMode();
       try {
