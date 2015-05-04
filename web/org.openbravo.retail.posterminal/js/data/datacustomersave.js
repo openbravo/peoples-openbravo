@@ -56,7 +56,7 @@
         }, function () {
           //error saving BP changes with changes in changedbusinesspartners
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorSavingCustomerChanges', [me.customer.get('_identifier')]));
-        }, true);
+        });
       } else {
         //save that the customer is being processed by server
         OB.Dal.save(this.customer, function () {

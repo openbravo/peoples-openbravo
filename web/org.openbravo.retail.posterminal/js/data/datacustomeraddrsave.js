@@ -57,7 +57,7 @@
         }, function () {
           //error saving BP changes with changes in changedbusinesspartners
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorSavingCustomerAddrChn', [me.customerAddr.get('_identifier')]));
-        }, true);
+        });
       } else {
         //save that the customer address is being processed by server
         OB.Dal.save(this.customerAddr, function () {
