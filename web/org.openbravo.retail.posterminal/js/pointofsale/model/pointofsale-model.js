@@ -225,9 +225,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               };
               OB.Dal.get(OB.Model.BPLocation, dataBps.get('locId'), successCallbackBPLoc, errorCallback, errorCallback);
             }
-
-            OB.MobileApp.model.set('businessPartner', dataBps);
-            me.loadUnpaidOrders();
           }
         }
       }
