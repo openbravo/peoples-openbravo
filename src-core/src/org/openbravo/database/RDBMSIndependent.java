@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2013 Openbravo S.L.U.
+ * Copyright (C) 2001-2015 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -73,7 +73,7 @@ public class RDBMSIndependent {
           String typeAux = types.elementAt(i);
           if (!typeAux.equalsIgnoreCase("out")) {
             iParameter++;
-            UtilSql.setValue(st, iParameter, 12, "Test", parameters.elementAt(i));
+            UtilSql.setValue(st, iParameter, 12, null, parameters.elementAt(i));
           }
         }
       }
