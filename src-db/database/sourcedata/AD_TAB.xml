@@ -13724,6 +13724,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--20DD1153AC7448B19B844B25CF38F54C-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--20DD1153AC7448B19B844B25CF38F54C-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--20DD1153AC7448B19B844B25CF38F54C-->  <NAME><![CDATA[Stock]]></NAME>
+<!--20DD1153AC7448B19B844B25CF38F54C-->  <DESCRIPTION><![CDATA[This Tab shows the available Stock for this Product in the application. It only shows Storage Bins for which the quantity available of the Product is not 0]]></DESCRIPTION>
 <!--20DD1153AC7448B19B844B25CF38F54C-->  <HELP><![CDATA[This Tab shows the available Stock for this Product in the application. It only shows Storage Bins for which the quantity available of the Product is not 0]]></HELP>
 <!--20DD1153AC7448B19B844B25CF38F54C-->  <AD_TABLE_ID><![CDATA[800036]]></AD_TABLE_ID>
 <!--20DD1153AC7448B19B844B25CF38F54C-->  <AD_WINDOW_ID><![CDATA[140]]></AD_WINDOW_ID>
