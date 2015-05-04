@@ -498,6 +498,7 @@
           });
 
           me.adjustPayment();
+          me.save();
           me.trigger('calculategross');
           me.trigger('saveCurrent');
           OB.UTIL.SynchronizationHelper.finished(synchId, 'calculateGross');

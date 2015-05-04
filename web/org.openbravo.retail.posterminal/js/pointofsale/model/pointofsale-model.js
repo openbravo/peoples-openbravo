@@ -71,11 +71,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           //  add an initial empty order
           orderlist.addFirstOrder();
         } else {
-          // Recalculate total properly for all  pendingorders.
-          args.ordersNotPaid.each(function (pendingorder) {
-            OB.DATA.OrderTaxes(pendingorder);
-            pendingorder.calculateGross();
-          });
           // The order object is stored in the json property of the row fetched from the database
           orderlist.reset(args.ordersNotPaid.models);
           // At this point it is sure that there exists at least one order
@@ -608,7 +603,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         return;
       }
       //When we do not want to launch promotions process (Not apply or remove discounts)
-      if (receipt.get('skipApplyPromotions') || line.get('skipApplyPromotions')) {
+      if (receipt.get('cloningReceipt') || receipt.get('skipApplyPromotions') || line.get('skipApplyPromotions')) {
         return;
       }
       OB.Model.Discounts.applyPromotions(receipt, line);
