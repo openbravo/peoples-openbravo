@@ -252,7 +252,8 @@
         attributes = JSON.parse(attributes.json);
         attributes.id = orderId;
       }
-      var me = this;
+      var me = this,
+          bpModel;
       if (attributes && attributes.documentNo) {
         this.set('id', attributes.id);
         this.set('client', attributes.client);
@@ -282,7 +283,9 @@
         this.set('quotationnoSuffix', attributes.quotationnoSuffix);
         this.set('documentNo', attributes.documentNo);
         this.set('undo', attributes.undo);
-        this.set('bp', new Backbone.Model(attributes.bp));
+        bpModel = new Backbone.Model(attributes.bp);
+        bpModel.set('locationModel', new OB.Model.BPLocation(attributes.bp.locationModel));
+        this.set('bp', bpModel);
         this.set('lines', new OrderLineList().reset(attributes.lines));
         this.set('payments', new PaymentLineList().reset(attributes.payments));
         this.set('payment', attributes.payment);
@@ -674,7 +677,9 @@
         this.set('idExecution', idExecution);
       }
 
-      OB.UTIL.clone(_order, this, {silent: true});
+      OB.UTIL.clone(_order, this, {
+        silent: true
+      });
 
       if (!OB.UTIL.isNullOrUndefined(this.get('idExecution')) && this.get('idExecution') === idExecution) {
         _order.set('cloningReceipt', false);
@@ -2533,7 +2538,7 @@
         }
       }
       if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.customer', true)) {
-        OB.Dal.removeHgvol(this.current.get('bp'), successCallback, errorCallback);
+        OB.Dal.removeHgvol(new OB.Model.BusinessPartner(this.current.get('bp')), successCallback, errorCallback);
         if (this.current.get('bp').get('locationModel')) {
           OB.Dal.removeHgvol(this.current.get('bp').get('locationModel'), successCallback, errorCallback);
         }
