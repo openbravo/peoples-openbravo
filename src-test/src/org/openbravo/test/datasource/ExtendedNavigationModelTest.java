@@ -74,9 +74,7 @@ public class ExtendedNavigationModelTest extends BaseDataSourceTestDal {
   private static String returnFromCustomerWindow = "FF808081330213E60133021822E40007";
 
   /**
-   * This method test the link to the lines tab of the sales order window
-   * 
-   * @throws Exception
+   * Tests the link to the lines tab of the sales order window
    */
   @Test
   public void testTableLevelRulesSalesOrder() throws Exception {
@@ -101,9 +99,7 @@ public class ExtendedNavigationModelTest extends BaseDataSourceTestDal {
   }
 
   /**
-   * This method test the link to the lines tab of the return from customer window
-   * 
-   * @throws Exception
+   * Tests the link to the lines tab of the return from customer window
    */
   @Test
   public void testTableLevelRulesReturnFromCustomer() throws Exception {
