@@ -1884,6 +1884,10 @@ public class Utility {
     origOBProperties.load(new FileInputStream(originalFile));
     newOBProperties.load(new FileInputStream(newFile));
 
+    // not consider "externalPoolClassName" property to avoid include in old instances that not uses
+    // external pool
+    newOBProperties.remove("externalPoolClassName");
+
     Enumeration<?> newProps = newOBProperties.propertyNames();
     while (newProps.hasMoreElements()) {
       String propName = (String) newProps.nextElement();
