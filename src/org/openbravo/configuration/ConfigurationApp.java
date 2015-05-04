@@ -975,32 +975,50 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
    */
   private static void replaceAProperty(File fileR, String addressFilePath, String searchOption,
       String changeOption, Project p) {
-    boolean isFound = false;
     try {
-      FileReader fr = new FileReader(fileR);
-      BufferedReader br = new BufferedReader(fr);
-      // auxiliary file to rewrite
-      File fileW = new File(addressFilePath);
-      FileWriter fw = new FileWriter(fileW);
-      // data for restore
-      String line;
-      while ((line = br.readLine()) != null) {
-        if (line.indexOf(searchOption) == 0) {
-          // Replace new option
-          line = line.replace(line, searchOption + changeOption);
-          isFound = true;
-        }
-        fw.write(line + "\n");
-      }
-      if (!isFound) {
-        fw.write(searchOption + changeOption);
-      }
-      fr.close();
-      fw.close();
-      br.close();
+      replaceProperty(fileR, addressFilePath, searchOption, changeOption);
     } catch (Exception e1) {
       p.log("Exception reading/writing file: " + e1);
     }
+  }
+
+  /**
+   * This method replace a value changeOption in addressFilePath. FileR is used to check that exists
+   * searchOption with different value.
+   *
+   * @param fileR
+   *          old file to read
+   * @param addressFilePath
+   *          file to write new property
+   * @param searchOption
+   *          Prefix to search
+   * @param changeOption
+   *          Value to write in addressFilePath
+   */
+  public static void replaceProperty(File fileR, String addressFilePath, String searchOption,
+      String changeOption) throws IOException {
+    boolean isFound = false;
+    FileReader fr = new FileReader(fileR);
+    BufferedReader br = new BufferedReader(fr);
+    // auxiliary file to rewrite
+    File fileW = new File(addressFilePath);
+    FileWriter fw = new FileWriter(fileW);
+    // data for restore
+    String line;
+    while ((line = br.readLine()) != null) {
+      if (line.indexOf(searchOption) == 0) {
+        // Replace new option
+        line = line.replace(line, searchOption + changeOption);
+        isFound = true;
+      }
+      fw.write(line + "\n");
+    }
+    if (!isFound) {
+      fw.write(searchOption + changeOption);
+    }
+    fr.close();
+    fw.close();
+    br.close();
   }
 
   /**
@@ -1041,21 +1059,37 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
   private static String searchOptionsProperties(File fileO, String searchOption, Project p) {
     String valueSearched = "";
     try {
-      FileReader fr = new FileReader(fileO);
-      BufferedReader br = new BufferedReader(fr);
-      String line;
-      while ((line = br.readLine()) != null) {
-        if (line.indexOf(searchOption) == 0) {
-          valueSearched = line.substring(searchOption.length() + 1);
-          break;
-        }
-      }
-      fr.close();
-      br.close();
+      valueSearched = searchProperty(fileO, searchOption);
     } catch (Exception e1) {
       p.log("Exception reading/writing file: " + e1);
     }
     return valueSearched;
+  }
+
+  /**
+   * This function searches an option in filePath file and returns the value of searchOption.
+   *
+   * @param filePath
+   *          Path of file
+   * @param searchOption
+   *          Prefix of property to search
+   * @return valueFound Value found
+   */
+  public static String searchProperty(File filePath, String searchOption) throws IOException {
+    String valueFound = "";
+    FileReader fr = new FileReader(filePath);
+    BufferedReader br = new BufferedReader(fr);
+    String line;
+    while ((line = br.readLine()) != null) {
+      if (line.indexOf(searchOption) == 0) {
+        valueFound = line.substring(searchOption.length() + 1);
+        break;
+      }
+    }
+    fr.close();
+    br.close();
+
+    return valueFound;
   }
 
   /**
