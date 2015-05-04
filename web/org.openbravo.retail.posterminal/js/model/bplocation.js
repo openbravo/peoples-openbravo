@@ -32,17 +32,14 @@
     },
     loadById: function (CusAddrId, userCallback) {
       //search data in local DB and load it to this
-      var me = this,
-          criteria = {
-          id: CusAddrId
-          };
-      OB.Dal.find(OB.Model.BPLocation, criteria, function (customerAddr) { //OB.Dal.find success
+      var me = this;
+      OB.Dal.get(OB.Model.BPLocation, CusAddrId, function (customerAddr) { //OB.Dal.find success
         var successCallback, errorCallback;
         if (!customerAddr || customerAddr.length === 0) {
           me.clearModelWith(null);
           userCallback(me);
         } else {
-          me.clearModelWith(customerAddr.at(0));
+          me.clearModelWith(customerAddr);
           userCallback(me);
         }
       });
