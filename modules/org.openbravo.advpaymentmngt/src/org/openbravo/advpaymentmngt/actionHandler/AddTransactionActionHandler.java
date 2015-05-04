@@ -183,7 +183,7 @@ public class AddTransactionActionHandler extends BaseProcessActionHandler {
         depositAmt = new BigDecimal(strDepositAmount);
         paymentAmt = new BigDecimal(strWithdrawalamt);
         isReceipt = (depositAmt.compareTo(paymentAmt) >= 0);
-        description = StringUtils.isBlank(strDescription) ? OBMessageUtils.messageBD("APRM_GLItem")
+        description = (StringUtils.isBlank(strDescription) || strDescription.equals("null")) ? OBMessageUtils.messageBD("APRM_GLItem")
             + ": " + glItem.getName() : strDescription;
       } else { // Bank Fee or transaction without payment and gl item
         depositAmt = new BigDecimal(strDepositAmount);

@@ -2835,10 +2835,10 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Post cost adjustment and assert it
       postDocument(costAdjustmentList.get(0));
       List<DocumentPostAssert> documentPostAssertList1 = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList1.add(new DocumentPostAssert("35000", amount0, quantity2.multiply(
-          price1).add(quantity2.multiply(price2).negate()), null));
-      documentPostAssertList1.add(new DocumentPostAssert("61000", quantity2.multiply(price1).add(
+      documentPostAssertList1.add(new DocumentPostAssert("35000", quantity2.multiply(price1).add(
           quantity2.multiply(price2).negate()), amount0, null));
+      documentPostAssertList1.add(new DocumentPostAssert("61000", amount0, quantity2.multiply(
+          price1).add(quantity2.multiply(price2).negate()), null));
       documentPostAssertList1.add(new DocumentPostAssert("61000", quantity2.multiply(price1).add(
           quantity2.multiply(price2).negate()), amount0, null));
       documentPostAssertList1.add(new DocumentPostAssert("35000", amount0, quantity2.multiply(
@@ -2963,10 +2963,10 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Post cost adjustment and assert it
       postDocument(costAdjustmentList.get(0));
       List<DocumentPostAssert> documentPostAssertList1 = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList1.add(new DocumentPostAssert("35000", amount0, quantity2.multiply(
-          price1).add(quantity2.multiply(price2).negate()), null));
-      documentPostAssertList1.add(new DocumentPostAssert("61000", quantity2.multiply(price1).add(
+      documentPostAssertList1.add(new DocumentPostAssert("35000", quantity2.multiply(price1).add(
           quantity2.multiply(price2).negate()), amount0, null));
+      documentPostAssertList1.add(new DocumentPostAssert("61000", amount0, quantity2.multiply(
+          price1).add(quantity2.multiply(price2).negate()), null));
       documentPostAssertList1.add(new DocumentPostAssert("61000", quantity2.multiply(price1).add(
           quantity2.multiply(price2).negate()), amount0, null));
       documentPostAssertList1.add(new DocumentPostAssert("35000", amount0, quantity2.multiply(
@@ -2982,10 +2982,10 @@ public class TestCosting extends BaseDataSourceTestDal {
           price3).add(quantity1.multiply(price1).negate()), null));
       documentPostAssertList2.add(new DocumentPostAssert("35000", quantity1.multiply(price3).add(
           quantity1.multiply(price1).negate()), amount0, null));
-      documentPostAssertList2.add(new DocumentPostAssert("35000", quantity2.multiply(price3).add(
-          quantity2.multiply(price1).negate()), amount0, null));
-      documentPostAssertList2.add(new DocumentPostAssert("61000", amount0, quantity2.multiply(
+      documentPostAssertList2.add(new DocumentPostAssert("35000", amount0, quantity2.multiply(
           price3).add(quantity2.multiply(price1).negate()), null));
+      documentPostAssertList2.add(new DocumentPostAssert("61000", quantity2.multiply(price3).add(
+          quantity2.multiply(price1).negate()), amount0, null));
       documentPostAssertList2.add(new DocumentPostAssert("61000", amount0, quantity2.multiply(
           price3).add(quantity2.multiply(price1).negate()), null));
       documentPostAssertList2.add(new DocumentPostAssert("35000", quantity2.multiply(price3).add(
@@ -3018,7 +3018,6 @@ public class TestCosting extends BaseDataSourceTestDal {
     final BigDecimal price2 = new BigDecimal("10.00");
     final BigDecimal price3 = new BigDecimal("15.00");
     final BigDecimal price4 = new BigDecimal("11.9524");
-    final BigDecimal price5 = new BigDecimal("16.9524");
     final BigDecimal quantity1 = new BigDecimal("820");
     final BigDecimal quantity2 = new BigDecimal("400");
     final BigDecimal quantity3 = new BigDecimal("420");
@@ -3098,10 +3097,10 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Post cost adjustment and assert it
       postDocument(costAdjustmentList.get(0));
       List<DocumentPostAssert> documentPostAssertList1 = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList1.add(new DocumentPostAssert("35000", amount0, quantity2.multiply(
-          price1).add(quantity2.multiply(price2).negate()), null));
-      documentPostAssertList1.add(new DocumentPostAssert("61000", quantity2.multiply(price1).add(
+      documentPostAssertList1.add(new DocumentPostAssert("35000", quantity2.multiply(price1).add(
           quantity2.multiply(price2).negate()), amount0, null));
+      documentPostAssertList1.add(new DocumentPostAssert("61000", amount0, quantity2.multiply(
+          price1).add(quantity2.multiply(price2).negate()), null));
       documentPostAssertList1.add(new DocumentPostAssert("61000", quantity2.multiply(price1).add(
           quantity2.multiply(price2).negate()), amount0, null));
       documentPostAssertList1.add(new DocumentPostAssert("35000", amount0, quantity2.multiply(
@@ -3117,10 +3116,10 @@ public class TestCosting extends BaseDataSourceTestDal {
           price3).add(quantity1.multiply(price1).negate()), null));
       documentPostAssertList2.add(new DocumentPostAssert("35000", quantity1.multiply(price3).add(
           quantity1.multiply(price1).negate()), amount0, null));
-      documentPostAssertList2.add(new DocumentPostAssert("35000", quantity2.multiply(price3).add(
-          quantity2.multiply(price2).negate()), amount0, null));
-      documentPostAssertList2.add(new DocumentPostAssert("61000", amount0, quantity2.multiply(
+      documentPostAssertList2.add(new DocumentPostAssert("35000", amount0, quantity2.multiply(
           price3).add(quantity2.multiply(price2).negate()), null));
+      documentPostAssertList2.add(new DocumentPostAssert("61000", quantity2.multiply(price3).add(
+          quantity2.multiply(price2).negate()), amount0, null));
       documentPostAssertList2.add(new DocumentPostAssert("61000", amount0, quantity2.multiply(
           price3).add(quantity2.multiply(price2).negate()), null));
       documentPostAssertList2.add(new DocumentPostAssert("35000", quantity2.multiply(price3).add(
@@ -3332,10 +3331,10 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Post cost adjustment and assert it
       postDocument(costAdjustmentList.get(2));
       List<DocumentPostAssert> documentPostAssertList3 = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList3.add(new DocumentPostAssert("35000", amount0, quantity5.multiply(
-          price3).add(quantity5.multiply(price5).negate()), null));
-      documentPostAssertList3.add(new DocumentPostAssert("61000", quantity5.multiply(price3).add(
+      documentPostAssertList3.add(new DocumentPostAssert("35000", quantity5.multiply(price3).add(
           quantity5.multiply(price5).negate()), amount0, null));
+      documentPostAssertList3.add(new DocumentPostAssert("61000", amount0, quantity5.multiply(
+          price3).add(quantity5.multiply(price5).negate()), null));
       documentPostAssertList3.add(new DocumentPostAssert("61000", quantity5.multiply(price3).add(
           quantity5.multiply(price5).negate()), amount0, null));
       documentPostAssertList3.add(new DocumentPostAssert("35000", amount0, quantity5.multiply(

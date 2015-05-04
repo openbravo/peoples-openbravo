@@ -120,7 +120,7 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
 
     Connection conn = null;
     try {
-      conn = new DalConnectionProvider(false).getConnection();
+      conn = new DalConnectionProvider(false).getTransactionConnection();
 
       ExpenseAPInvoiceData[] data = ExpenseAPInvoiceData.select(this,
           Utility.getContext(this, vars, "#User_Client", "ExpenseAPInvoice"),

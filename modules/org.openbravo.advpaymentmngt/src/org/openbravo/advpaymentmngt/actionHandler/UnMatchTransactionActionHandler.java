@@ -70,7 +70,6 @@ public class UnMatchTransactionActionHandler extends BaseActionHandler {
         throw new OBStaleObjectException("@APRM_StaleDate@");
       }
       final FIN_FinaccTransaction transaction = bsline.getFinancialAccountTransaction();
-
       if (transaction != null) {
         APRM_MatchingUtility.unmatch(bsline);
       }

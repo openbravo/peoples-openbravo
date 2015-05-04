@@ -21640,6 +21640,8 @@ Advanced features are only granted to the automatic roles defined as advanced.]]
 <!--1E5CB7185CF94CC595BDB2A1C2129C75-->  <COLUMNNAME><![CDATA[AllocatedQty]]></COLUMNNAME>
 <!--1E5CB7185CF94CC595BDB2A1C2129C75-->  <NAME><![CDATA[AllocatedQuantity]]></NAME>
 <!--1E5CB7185CF94CC595BDB2A1C2129C75-->  <PRINTNAME><![CDATA[AllocatedQuantity]]></PRINTNAME>
+<!--1E5CB7185CF94CC595BDB2A1C2129C75-->  <HELP><![CDATA[From a Reservation, the quantity that it is already allocated, which means that the Reserved Stock already has an
+ Storage Bin and an Attribute values assigned to it]]></HELP>
 <!--1E5CB7185CF94CC595BDB2A1C2129C75-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1E5CB7185CF94CC595BDB2A1C2129C75-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--1E5CB7185CF94CC595BDB2A1C2129C75--></AD_ELEMENT>

@@ -11,12 +11,15 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-module('org.openbravo.client.myob');
+
+/*global QUnit */
+
+QUnit.module('org.openbravo.client.myob');
 
 var d = {
   'eventType': '',
@@ -24,6 +27,9 @@ var d = {
     'adminMode': false
   }
 };
+
+OB.MyOB = OB.MyOB || {};
+OB.MyOB.widgets = OB.MyOB.widgets || {};
 
 function checkMissingDbInstanceId(w) {
   var i, widgets = w || OB.MyOB.widgets;
@@ -35,11 +41,7 @@ function checkMissingDbInstanceId(w) {
   return false;
 }
 
-asyncTest('Create Workspace', function () {
-  OB.Layout.ViewManager.createAddStartTab();
-});
-
-asyncTest('Add widget', function () {
+QUnit.asyncTest('Add widget', function () {
 
   var post = isc.addProperties({}, d, {
     'eventType': 'WIDGET_ADDED',
@@ -47,7 +49,7 @@ asyncTest('Add widget', function () {
   }),
       widget = isc.addProperties({}, OB.MyOB.widgets[0]);
 
-  expect(2);
+  QUnit.expect(2);
 
   widget.rowNum += 1;
   widget.dbInstanceId = '';
@@ -56,16 +58,16 @@ asyncTest('Add widget', function () {
 
   OB.RemoteCallManager.call('org.openbravo.client.myob.MyOpenbravoActionHandler', post, {}, function (rpcResponse, data, rpcRequest) {
 
-    equals(data.message.type, 'Success', 'Widget added');
+    QUnit.strictEqual(data.message.type, 'Success', 'Widget added');
 
     OB.MyOB.widgets = data && data.widgets ? eval(data.widgets) : OB.MyOB.widgets; // refreshing widgets
-    ok(!checkMissingDbInstanceId(), 'All widgets have a dbInstanceId');
+    QUnit.ok(!checkMissingDbInstanceId(), 'All widgets have a dbInstanceId');
 
-    start(); // restart the flow
+    QUnit.start(); // restart the flow
   });
 });
 
-asyncTest('Move widget', function () {
+QUnit.asyncTest('Move widget', function () {
 
   var post = isc.addProperties({}, d, {
     'eventType': 'WIDGET_MOVED',
@@ -79,11 +81,12 @@ asyncTest('Move widget', function () {
       w2 = OB.MyOB.widgets[1];
 
   if (!w1 || !w2) {
-    start(); // skip the test
+    QUnit.ok(true);
+    QUnit.start(); // skip the test
     return;
   }
 
-  expect(3);
+  QUnit.expect(3);
 
   tmp.colNum = w1.colNum;
   tmp.rowNum = w1.rowNum;
@@ -92,20 +95,20 @@ asyncTest('Move widget', function () {
   w2.colNum = tmp.colNum;
   w2.rowNum = tmp.rowNum;
 
-  ok(!checkMissingDbInstanceId(post.widgets), 'All posted widgets have a dbInstanceId');
+  QUnit.ok(!checkMissingDbInstanceId(post.widgets), 'All posted widgets have a dbInstanceId');
 
   OB.RemoteCallManager.call('org.openbravo.client.myob.MyOpenbravoActionHandler', post, {}, function (rpcResponse, data, rpcRequest) {
 
-    equals(data.message.type, 'Success', 'Widget moved');
+    QUnit.strictEqual(data.message.type, 'Success', 'Widget moved');
 
     OB.MyOB.widgets = data && data.widgets ? eval(data.widgets) : OB.MyOB.widgets; // refreshing widgets
     ok(!checkMissingDbInstanceId(), 'All widgets have a dbInstanceId');
 
-    start(); // restart the flow
+    QUnit.start(); // restart the flow
   });
 });
 
-asyncTest('Remove widget', function () {
+QUnit.asyncTest('Remove widget', function () {
 
   var post = isc.addProperties({}, d, {
     'eventType': 'WIDGET_REMOVED',
@@ -113,35 +116,36 @@ asyncTest('Remove widget', function () {
   }),
       removed = OB.MyOB.widgets.splice(-1, 1);
 
-  expect(2);
+  QUnit.expect(2);
 
   OB.RemoteCallManager.call('org.openbravo.client.myob.MyOpenbravoActionHandler', post, {}, function (rpcResponse, data, rpcRequest) {
 
-    equals(data.message.type, 'Success', 'Widget removed');
+    QUnit.strictEqual(data.message.type, 'Success', 'Widget removed');
 
     OB.MyOB.widgets = data && data.widgets ? eval(data.widgets) : OB.MyOB.widgets; // refreshing widgets
-    ok(!checkMissingDbInstanceId(), 'All widgets have a dbInstanceId');
+    QUnit.ok(!checkMissingDbInstanceId(), 'All widgets have a dbInstanceId');
 
-    start(); // restart the flow
+    QUnit.start(); // restart the flow
   });
 });
 
-asyncTest('Get user widgets', function () {
+QUnit.asyncTest('Get user widgets', function () {
 
   var post = isc.addProperties({}, d, {
     'eventType': 'RELOAD_WIDGETS',
     'widgets': []
   });
 
-  expect(2);
+  QUnit.expect(2);
 
   OB.RemoteCallManager.call('org.openbravo.client.myob.MyOpenbravoActionHandler', post, {}, function (rpcResponse, data, rpcRequest) {
 
-    equals(data.message.type, 'Success', 'Widgets reloaded');
+    QUnit.strictEqual(data.message.type, 'Success', 'Widgets reloaded');
 
-    OB.MyOB.widgets = data && data.widgets ? eval(data.widgets) : OB.MyOB.widgets; // refreshing widgets
-    ok(!checkMissingDbInstanceId(), 'All widgets have a dbInstanceId');
+    OB.MyOB = OB.MyOB || {};
+    OB.MyOB.widgets = data && data.widgets; // refreshing widgets
+    QUnit.ok(!checkMissingDbInstanceId(), 'All widgets have a dbInstanceId');
 
-    start(); // restart the flow
+    QUnit.start(); // restart the flow
   });
 });

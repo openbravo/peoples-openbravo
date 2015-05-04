@@ -73,6 +73,7 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBConfigFileProvider;
 import org.openbravo.base.secureApp.OrgTree;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
@@ -1429,6 +1430,44 @@ public class Utility {
     if (hasBrackets)
       ret = "(" + ret + ")";
     return ret;
+  }
+
+  /**
+   * Creates a comma separated string with the Id's of the OBObjects included in the List.
+   * 
+   * @param <T>
+   * @param obObjectList
+   *          List of OBObjects
+   * @return Comma separated string of Id's
+   */
+  public static <T extends BaseOBObject> String getInStrList(List<T> obObjectList) {
+    return getInStrList(obObjectList, false);
+  }
+
+  /**
+   * Creates a comma separated string with the Id's of the OBObjects included in the List.
+   * 
+   * @param <T>
+   * @param obObjectList
+   *          List of OBObjects
+   * @param addParentheses
+   *          String will be surrounded with parentheses
+   * @return Comma separated string of Id's
+   */
+  public static <T extends BaseOBObject> String getInStrList(List<T> obObjectList,
+      boolean addParentheses) {
+    StringBuilder strInList = new StringBuilder();
+    for (T obObject : obObjectList) {
+      if (strInList.length() == 0)
+        strInList.append("'" + obObject.getId() + "'");
+      else
+        strInList.append(", '" + obObject.getId() + "'");
+    }
+    if (addParentheses) {
+      return "(" + strInList.toString() + ")";
+    } else {
+      return strInList.toString();
+    }
   }
 
   /**

@@ -39,20 +39,22 @@ import org.slf4j.LoggerFactory;
 
 public class MatchStatementActionHandler extends BaseProcessActionHandler {
   private static final Logger log = LoggerFactory.getLogger(MatchStatementActionHandler.class);
+  private static final String OK_ACTION = "OK";
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
     JSONObject jsonResponse = new JSONObject();
-    String strReconciliationId = null;
     OBContext.setAdminMode(true);
     try {
       JSONObject jsonRequest = new JSONObject(content);
       final String strFinancialAccount = jsonRequest.getString("Fin_Financial_Account_ID");
+      final String action = jsonRequest.getString("_buttonValue");
+      if (OK_ACTION.equals(action))
+        return jsonResponse;
       final FIN_FinancialAccount finAccount = OBDal.getInstance().get(FIN_FinancialAccount.class,
           strFinancialAccount);
       final FIN_Reconciliation lastReconciliation = TransactionsDao.getLastReconciliation(
           finAccount, "N");
-      strReconciliationId = lastReconciliation.getId();
       if (APRM_MatchingUtility.updateReconciliation(lastReconciliation, finAccount, true)) {
         final VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
         final JSONObject msg = new JSONObject();

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -36,6 +36,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.ProcessInvoiceHook;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
@@ -59,8 +60,10 @@ import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.ad.process.ProcessInstance;
 import org.openbravo.model.ad.ui.Process;
+import org.openbravo.model.common.currency.ConversionRate;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
@@ -155,21 +158,22 @@ public class ProcessInvoice extends HttpSecureAppServlet {
         }
         // check BP currency
         if ("CO".equals(strdocaction)) {
-            // check BP currency
-            if (invoice.getBusinessPartner().getCurrency() == null) {
-            	String errorMSG =  
-            			Utility.messageBD(this, "InitBPCurrencyLnk", vars.getLanguage(), false);
-               msg = new OBError();
-               msg.setType("Error");
-               msg.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
-               msg.setMessage(String.format(errorMSG, invoice.getBusinessPartner().getId(), invoice.getBusinessPartner().getName()));
+          // check BP currency
+          if (invoice.getBusinessPartner().getCurrency() == null) {
+            String errorMSG = Utility.messageBD(this, "InitBPCurrencyLnk", vars.getLanguage(),
+                false);
+            msg = new OBError();
+            msg.setType("Error");
+            msg.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
+            msg.setMessage(String.format(errorMSG, invoice.getBusinessPartner().getId(), invoice
+                .getBusinessPartner().getName()));
 
-               vars.setMessage(strTabId, msg);
-               printPageClosePopUp(response, vars, Utility.getTabURL(strTabId, "R", true));
-               return;
-            }
+            vars.setMessage(strTabId, msg);
+            printPageClosePopUp(response, vars, Utility.getTabURL(strTabId, "R", true));
+            return;
+          }
         }
-        
+
         OBContext.setAdminMode(true);
         Process process = null;
         try {
@@ -413,11 +417,17 @@ public class ProcessInvoice extends HttpSecureAppServlet {
           final FIN_FinancialAccount bpFinAccount = isSalesTransaction ? invoice
               .getBusinessPartner().getAccount() : invoice.getBusinessPartner()
               .getPOFinancialAccount();
+          // Calculate Conversion Rate
+          final ConversionRate conversionRate = StringUtils.equals(invoice.getCurrency().getId(),
+              bpFinAccount.getCurrency().getId()) ? null : FinancialUtils.getConversionRate(
+              FIN_Utility.getDate(strPaymentDate), invoice.getCurrency(),
+              bpFinAccount.getCurrency(), invoice.getOrganization(), invoice.getClient());
           final FIN_Payment newPayment = FIN_AddPayment.savePayment(null, isSalesTransaction,
               docType, strPaymentDocumentNo, invoice.getBusinessPartner(),
               invoice.getPaymentMethod(), bpFinAccount, "0", FIN_Utility.getDate(strPaymentDate),
               invoice.getOrganization(), invoice.getDocumentNo(), paymentScheduleDetails,
-              paymentScheduleDetailsAmounts, false, false, invoice.getCurrency(), null, null);
+              paymentScheduleDetailsAmounts, false, false, invoice.getCurrency(),
+              conversionRate != null ? conversionRate.getMultipleRateBy() : null, null);
           newPayment.setAmount(BigDecimal.ZERO);
           newPayment.setGeneratedCredit(BigDecimal.ZERO);
           newPayment.setUsedCredit(totalUsedCreditAmt);
@@ -475,7 +485,7 @@ public class ProcessInvoice extends HttpSecureAppServlet {
       vars.setSessionValue("ExecutePayments|Window_ID", strWindowId);
       vars.setSessionValue("ExecutePayments|Tab_ID", strTabId);
       vars.setSessionValue("ExecutePayments|Org_ID", strOrg);
-      vars.setSessionValue("ExecutePayments|payments", FIN_Utility.getInStrList(payments));
+      vars.setSessionValue("ExecutePayments|payments", Utility.getInStrList(payments));
       if (myMessage != null)
         vars.setMessage("ExecutePayments|message", myMessage);
       response.sendRedirect(strDireccion
@@ -627,30 +637,35 @@ public class ProcessInvoice extends HttpSecureAppServlet {
     SimpleDateFormat dateFormater = new SimpleDateFormat(dateFormat);
 
     BigDecimal pendingToPay = invoice.getGrandTotalAmount();
-    for (int i = 0; i < data.length; i++) {
-      FieldProviderFactory.setField(data[i], "finCreditPaymentId", creditPayments.get(i).getId());
-      FieldProviderFactory.setField(data[i], "documentNo", creditPayments.get(i).getDocumentNo());
-      FieldProviderFactory.setField(data[i], "paymentDescription", creditPayments.get(i)
-          .getDescription());
-      if (creditPayments.get(i).getPaymentDate() != null) {
-        FieldProviderFactory.setField(data[i], "documentDate",
-            dateFormater.format(creditPayments.get(i).getPaymentDate()).toString());
+    try {
+      OBContext.setAdminMode(true);
+      for (int i = 0; i < data.length; i++) {
+        FieldProviderFactory.setField(data[i], "finCreditPaymentId", creditPayments.get(i).getId());
+        FieldProviderFactory.setField(data[i], "documentNo", creditPayments.get(i).getDocumentNo());
+        FieldProviderFactory.setField(data[i], "paymentDescription", creditPayments.get(i)
+            .getDescription());
+        if (creditPayments.get(i).getPaymentDate() != null) {
+          FieldProviderFactory.setField(data[i], "documentDate",
+              dateFormater.format(creditPayments.get(i).getPaymentDate()).toString());
+        }
+
+        final BigDecimal outStandingAmt = creditPayments.get(i).getGeneratedCredit()
+            .subtract(creditPayments.get(i).getUsedCredit());
+        FieldProviderFactory.setField(data[i], "outstandingAmount", outStandingAmt.toString());
+
+        FieldProviderFactory.setField(
+            data[i],
+            "paymentAmount",
+            pendingToPay.compareTo(outStandingAmt) > 0 ? outStandingAmt.toString() : (pendingToPay
+                .compareTo(BigDecimal.ZERO) > 0 ? pendingToPay.toString() : ""));
+        pendingToPay = pendingToPay.subtract(outStandingAmt);
+
+        FieldProviderFactory.setField(data[i], "finSelectedCreditPaymentId",
+            "".equals(data[i].getField("paymentAmount")) ? "" : creditPayments.get(i).getId());
+        FieldProviderFactory.setField(data[i], "rownum", String.valueOf(i));
       }
-
-      final BigDecimal outStandingAmt = creditPayments.get(i).getGeneratedCredit()
-          .subtract(creditPayments.get(i).getUsedCredit());
-      FieldProviderFactory.setField(data[i], "outstandingAmount", outStandingAmt.toString());
-
-      FieldProviderFactory.setField(
-          data[i],
-          "paymentAmount",
-          pendingToPay.compareTo(outStandingAmt) > 0 ? outStandingAmt.toString() : (pendingToPay
-              .compareTo(BigDecimal.ZERO) > 0 ? pendingToPay.toString() : ""));
-      pendingToPay = pendingToPay.subtract(outStandingAmt);
-
-      FieldProviderFactory.setField(data[i], "finSelectedCreditPaymentId",
-          "".equals(data[i].getField("paymentAmount")) ? "" : creditPayments.get(i).getId());
-      FieldProviderFactory.setField(data[i], "rownum", String.valueOf(i));
+    } finally {
+      OBContext.restorePreviousMode();
     }
 
     return data;
@@ -697,4 +712,3 @@ public class ProcessInvoice extends HttpSecureAppServlet {
     return "Servlet to Process Invoice";
   }
 }
-

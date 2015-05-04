@@ -14,7 +14,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2013 Openbravo SLU
+* All portions are Copyright (C) 2001-2015 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -57,7 +57,7 @@ BEGIN
     -- Create Valid Combination
     IF(:new.elementlevel = 'S') THEN
 	    FOR cur_AcctSchema IN
-        (SELECT C_AcctSchema_ID
+        (SELECT distinct (C_AcctSchema_ID)
         FROM C_AcctSchema_Element
         WHERE C_AcctSchema_Element.C_Element_ID = :new.C_Element_ID
         )
@@ -185,7 +185,7 @@ BEGIN
 	  END IF;
 	ELSE
 		  	    FOR cur_AcctSchema IN
-			        (SELECT C_AcctSchema_ID
+			        (SELECT distinct (C_AcctSchema_ID)
 			        FROM C_AcctSchema_Element
 			        WHERE C_AcctSchema_Element.C_Element_ID = :new.C_Element_ID
 			        )
