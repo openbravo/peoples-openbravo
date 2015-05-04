@@ -35,6 +35,9 @@ enyo.kind({
   },
   clearPaymentMethodSelect: function (inSender, inEvent) {
     this.$.paymentMethodSelect.setContent('');
+    if (this.receipt) {
+      this.receipt.selectedPayment = null;
+    }
   },
   buttonStatusChanged: function (inSender, inEvent) {
     this.$.paymentMethodSelect.setContent('');
