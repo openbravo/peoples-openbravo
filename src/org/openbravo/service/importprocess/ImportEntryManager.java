@@ -379,7 +379,6 @@ public class ImportEntryManager {
 
             // do a try catch block here
             try {
-              System.err.println("r");
               final List<ImportEntry> entries = entriesQry.list();
               dataPresent = !entries.isEmpty();
               log.debug("Found " + entries.size() + " import entries");
