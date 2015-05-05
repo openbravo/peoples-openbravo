@@ -32,9 +32,9 @@ public interface JsonDataServiceExtraActions {
    * @param data
    *          JSONArray with the records that are going to be inserted, updated or deleted. Modify
    *          this object in case it is required to modify the data before executing the action.
-   *          Fetch operations receive an emptyArray.
+   *          Fetch operations receive an empty array.
    * @param action
-   *          The action of the DataSource call possible values are FETCH, ADD, UPDATE, REMOVE
+   *          The action of the DataSource call. Possible values are FETCH, ADD, UPDATE and REMOVE
    * 
    */
   void doPreAction(Map<String, String> parameters, JSONArray data, DataSourceAction action);
@@ -49,7 +49,7 @@ public interface JsonDataServiceExtraActions {
    *          JSONObject with the current content that is returned to the client. Modify this object
    *          in case it is required to modify the data before is returned.
    * @param action
-   *          The action of the DataSource call possible values are FETCH, ADD, UPDATE, REMOVE
+   *          The action of the DataSource call. Possible values are FETCH, ADD, UPDATE and REMOVE
    * @param originalObject
    *          JSONObject String available only on ADD and UPDATE with the original values of the
    *          data.
