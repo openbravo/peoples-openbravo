@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -364,7 +364,9 @@ isc.OBStandardWindow.addProperties({
 
   // set window specific user settings, purposely set on class level
   setWindowSettings: function (data) {
-    var i, defaultView, persDefaultValue, views, length, t, tab, view, field, button, st, stView, stBtns, stBtn, disabledFields, personalization, notAccessibleProcesses, extraCallback, alwaysReadOnly = function (view, record, context) {
+    var i, defaultView, persDefaultValue, views, length, t, tab, view, field, button, st, stView, //
+    stBtns, stBtn, disabledFields, personalization, notAccessibleProcesses, extraCallback, //
+    callbackFunc, alwaysReadOnly = function (view, record, context) {
         return true;
         };
 
@@ -484,21 +486,16 @@ isc.OBStandardWindow.addProperties({
     //Execute extraCallbacks
     if (data && data.extraCallbacks) {
       for (i = 0; i < data.extraCallbacks.length; i++) {
-        extraCallback = data.extraCallbacks[i];
-        this.executeFunctionByName(extraCallback, data);
+        extraCallback = data.extraCallbacks[i].trim();
+        // extraCallback functions only allow 'data' as unique argument. If implementor just sets
+        // the name of the function append the argument to complete the call.
+        if (!extraCallback.endsWith('(data)') && !extraCallback.endsWith('(data);')) {
+          extraCallback += '(data);';
+        }
+        callbackFunc = isc.Func.expressionToFunction('data', extraCallback);
+        callbackFunc(data);
       }
     }
-  },
-
-  executeFunctionByName: function (functionName, data) {
-    var namespaces = functionName.split('.'),
-        func = namespaces.pop(),
-        context = window,
-        i;
-    for (i = 0; i < namespaces.length; i++) {
-      context = context[namespaces[i]];
-    }
-    return context[func].apply(this, [data]);
   },
 
   checkIfDefaultSavedView: function () {
