@@ -57,7 +57,7 @@
         }, function () {
           //error saving BP changes with changes in changedbusinesspartners
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorSavingCustomerAddrChn', [me.customerAddr.get('_identifier')]));
-        });
+        }, isNew);
       } else {
         //save that the customer address is being processed by server
         OB.Dal.save(this.customerAddr, function () {
@@ -103,12 +103,12 @@
           }, function () {
             //error saving BP changes with changes in changedbusinesspartners
             OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorSavingCustomerAddrChn', [me.customerAddr.get('_identifier')]));
-          });
+          }, isNew);
         }, function () {
           //error saving BP Location with new values in c_bpartner_location
           OB.error(arguments);
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorSavingCustomerAddrLocally', [me.customerAddr.get('_identifier')]));
-        });
+        }, isNew);
       }
 
 
