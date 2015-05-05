@@ -11,21 +11,22 @@ package org.openbravo.retail.posterminal;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
+import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.ScrollMode;
-import org.hibernate.ScrollableResults;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -33,14 +34,14 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.DalUtil;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.InvoiceLineTax;
 import org.openbravo.model.ad.access.OrderLineTax;
-import org.openbravo.model.common.businesspartner.BusinessPartner;
-import org.openbravo.model.common.businesspartner.Location;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.invoice.InvoiceLine;
@@ -72,160 +73,119 @@ public class OrderGroupingProcessor {
    * 
    */
   public JSONObject groupOrders(OBPOSApplications posTerminal, String cashUpId, Date currentDate)
-      throws JSONException, SQLException {
+      throws JSONException, SQLException, ServletException {
     // Obtaining order lines that have been created in current terminal and have not already been
     // reconciled. This query must be kept in sync with the one in CashCloseReport
 
-    String hqlWhereClause = "as line"
-        + " where line.salesOrder.obposAppCashup=:cashUpId and line.deliveredQuantity=line.orderedQuantity and line.orderedQuantity <> 0"
-        + " and line.salesOrder.documentType.id in ('"
-        + posTerminal.getObposTerminaltype().getDocumentType().getId()
-        + "', '"
-        + posTerminal.getObposTerminaltype().getDocumentTypeForReturns().getId()
-        + "') and not exists (select 1 from OrderLine as ord where invoicedQuantity<>0 and ord.salesOrder = line.salesOrder)"
-        + " and line.salesOrder.oBPOSNotInvoiceOnCashUp = false"
-        + " order by line.businessPartner.id, line.salesOrder.invoiceAddress.id, line.salesOrder.id";
+    ConnectionProvider conn = new DalConnectionProvider(false);
 
-    OBQuery<OrderLine> query = OBDal.getInstance().createQuery(OrderLine.class, hqlWhereClause);
-    query.setNamedParameter("cashUpId", cashUpId);
+    long t0 = System.currentTimeMillis();
+    long t1, t2, t3, t4, t5, t6, t7, t8, t9, t10;
+    final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+    final String strUserId = (String) DalUtil.getId(OBContext.getOBContext().getUser());
+    final String strCurrentDate = dateFormatter.format(currentDate);
+    final String strLang = RequestContext.get().getVariablesSecureApp().getLanguage();
+    final String strPosTerminalId = (String) DalUtil.getId(posTerminal);
 
-    List<String> invoicesToSetDocumentNos = new ArrayList<String>();
+    // TODO: check if the audit should be retrieved from json or from session
 
-    ScrollableResults orderLines = query.scroll(ScrollMode.FORWARD_ONLY);
-    Invoice invoice = null;
-    FIN_PaymentSchedule paymentSchedule = null;
-    Fin_OrigPaymentSchedule origPaymentSchedule = null;
-    String currentOrderId = "";
-    Order currentOrder = null;
-    String currentbpId = "";
-    String currentbpLocId = "";
-    BusinessPartner currentBp = null;
-    Location currentBpLoc = null;
-    HashMap<String, InvoiceTax> invoiceTaxes = null;
-    BigDecimal totalNetAmount = BigDecimal.ZERO;
-    List<String> processedOrders = new ArrayList<String>();
-    boolean isMultiShipmentLine;
-    long lineno = 10;
-    long taxLineNo = 0;
-    try {
-      while (orderLines.next()) {
-        isMultiShipmentLine = false;
-        OrderLine orderLine = (OrderLine) orderLines.get(0);
-        log.debug("Line id:" + orderLine.getId());
+    // random string is created with currentTimeMillis(14 numbers)
+    String strExecutionUUId = ((Long) System.currentTimeMillis()).toString();
 
-        String orderId = (String) DalUtil.getId(orderLine.getSalesOrder());
-        if (!orderId.equals(currentOrderId)
-            && !posTerminal.getObposTerminaltype().isGroupingOrders()) {
+    System.out.println("Execution_id: " + strExecutionUUId);
 
-          // New Order. We need to finish current invoice, and create a new one
-          finishInvoice(invoice, totalNetAmount, invoiceTaxes, paymentSchedule,
-              origPaymentSchedule, currentDate);
+    if (posTerminal.getObposTerminaltype().isGroupingOrders()) {
+      OrderGroupingProcessorData.insertHeaderGrouping(conn, strUserId, strExecutionUUId,
+          strCurrentDate, strPosTerminalId, cashUpId);
+    } else {
+      OrderGroupingProcessorData.insertHeaderNoGrouping(conn, strUserId, strExecutionUUId, strLang,
+          strCurrentDate, strPosTerminalId, cashUpId);
+    }
 
-          if (invoice != null) {
-            invoicesToSetDocumentNos.add(invoice.getId());
-          }
+    t1 = System.currentTimeMillis();
 
-          currentOrderId = orderId;
-          Order order = OBDal.getInstance().get(Order.class, orderId);
-          currentOrder = OBDal.getInstance().get(Order.class, orderId);
-          invoice = createNewInvoice(posTerminal, currentOrder, orderLine, currentDate);
-          paymentSchedule = createNewPaymentSchedule(invoice, currentDate);
-          if (!posTerminal.getObposTerminaltype().isGroupingOrders()) {
+    // insert invoice lines
+    if (posTerminal.getObposTerminaltype().isGroupingOrders()) {
+      OrderGroupingProcessorData.insertLinesGrouping(conn, strPosTerminalId, cashUpId,
+          strExecutionUUId);
+    } else {
+      OrderGroupingProcessorData.insertLinesNoGrouping(conn, strPosTerminalId, cashUpId,
+          strExecutionUUId);
+    }
 
-            String language = RequestContext.get().getVariablesSecureApp().getLanguage();
-            String description = Utility.messageBD(new DalConnectionProvider(false),
-                "OrderDocumentno", language) + ": " + order.getDocumentNo() + "\n";
-            invoice.setDescription(description);
-          }
-          origPaymentSchedule = createOriginalPaymentSchedule(invoice, paymentSchedule);
-          invoiceTaxes = new HashMap<String, InvoiceTax>();
-          totalNetAmount = BigDecimal.ZERO;
-          taxLineNo = 10;
-          lineno = 10;
-          OBDal.getInstance().save(invoice);
-          OBDal.getInstance().save(paymentSchedule);
-          OBDal.getInstance().save(origPaymentSchedule);
-        }
+    t2 = System.currentTimeMillis();
 
-        String bpId = (String) DalUtil.getId(orderLine.getBusinessPartner());
-        String bpLocId = (String) DalUtil.getId(orderLine.getSalesOrder().getInvoiceAddress());
-        if (bpId == null) {
-          bpId = (String) DalUtil.getId(orderLine.getSalesOrder().getBusinessPartner());
-        }
+    // update the invoiced quantity of order lines
+    if (posTerminal.getObposTerminaltype().isGroupingOrders()) {
+      OrderGroupingProcessorData.updateQtyOrderLinesGrouping(conn, strExecutionUUId);
+    } else {
+      OrderGroupingProcessorData.updateQtyOrderLinesNoGrouping(conn, strExecutionUUId);
+    }
 
-        if ((!bpId.equals(currentbpId) || !bpLocId.equals(currentbpLocId))
-            && posTerminal.getObposTerminaltype().isGroupingOrders()) {
-          // New business partner. We need to finish current invoice, and create a new one
-          finishInvoice(invoice, totalNetAmount, invoiceTaxes, paymentSchedule,
-              origPaymentSchedule, currentDate);
+    // insert invoice lines Tax
+    if (posTerminal.getObposTerminaltype().isGroupingOrders()) {
+      OrderGroupingProcessorData.insertTaxLinesGrouping(conn, strExecutionUUId);
+    } else {
+      OrderGroupingProcessorData.insertTaxLinesNoGrouping(conn, strExecutionUUId);
+    }
 
-          if (invoice != null) {
-            invoicesToSetDocumentNos.add(invoice.getId());
-          }
+    t3 = System.currentTimeMillis();
 
-          currentbpId = bpId;
-          currentbpLocId = bpLocId;
-          currentBp = OBDal.getInstance().get(BusinessPartner.class, bpId);
-          currentBpLoc = OBDal.getInstance().get(Location.class, currentbpLocId);
-          invoice = createNewInvoice(posTerminal, currentBp, currentBpLoc, orderLine, currentDate);
-          paymentSchedule = createNewPaymentSchedule(invoice, currentDate);
-          origPaymentSchedule = createOriginalPaymentSchedule(invoice, paymentSchedule);
-          invoiceTaxes = new HashMap<String, InvoiceTax>();
-          totalNetAmount = BigDecimal.ZERO;
-          taxLineNo = 10;
-          lineno = 10;
-          OBDal.getInstance().save(invoice);
-          OBDal.getInstance().save(paymentSchedule);
-          OBDal.getInstance().save(origPaymentSchedule);
-        }
+    // insert invoice lines Offer (discounts)
+    if (posTerminal.getObposTerminaltype().isGroupingOrders()) {
+      OrderGroupingProcessorData.insertOfferLinesGrouping(conn, strExecutionUUId);
+    } else {
+      OrderGroupingProcessorData.insertOfferLinesNoGrouping(conn, strExecutionUUId);
+    }
 
-        List<FIN_PaymentSchedule> finPaymentScheduleList = orderLine.getSalesOrder()
-            .getFINPaymentScheduleList();
-        if (!processedOrders.contains((String) DalUtil.getId(orderLine.getSalesOrder()))
-            && !finPaymentScheduleList.isEmpty()
-            && finPaymentScheduleList.get(0).getFINPaymentScheduleDetailOrderPaymentScheduleList()
-                .size() > 0) {
-          boolean success = processPaymentsFromOrder(invoice, orderLine.getSalesOrder(),
-              paymentSchedule, origPaymentSchedule);
-          if (!success) {
-            continue;
-          }
-          processedOrders.add((String) DalUtil.getId(orderLine.getSalesOrder()));
-          log.debug("processed payment");
-        }
+    t4 = System.currentTimeMillis();
 
-        // the line is split in goods shipment lines
-        OrderLine[] orderLinesSplittedByShipmentLine = splitOrderLineByShipmentLine(orderLine);
-        if (orderLinesSplittedByShipmentLine.length > 1) {
-          isMultiShipmentLine = true;
-        }
+    // insert invoice tax
+    if (posTerminal.getObposTerminaltype().isGroupingOrders()) {
+      OrderGroupingProcessorData.insertInvoiceTaxGrouping(conn, strExecutionUUId);
+    } else {
+      OrderGroupingProcessorData.insertInvoiceTaxNoGrouping(conn, strExecutionUUId);
+    }
+    t5 = System.currentTimeMillis();
+
+    // check if there are orderlines splitted by inoutlines
+    OrderGroupingProcessorData[] orderLinesToSplit = OrderGroupingProcessorData
+        .selectSplitOrderLines(conn, cashUpId);
+
+    for (OrderGroupingProcessorData orderLineToSplit : orderLinesToSplit) {
+      OrderLine orderLine = OBDal.getInstance().get(OrderLine.class, orderLineToSplit.cOrderlineId);
+
+      OrderLine[] orderLinesSplittedByShipmentLine = splitOrderLineByShipmentLine(orderLine);
+      if (orderLinesSplittedByShipmentLine.length > 1) {
+        InvoiceLine oldInvoiceLine = orderLine.getInvoiceLineList().get(0);
+        Invoice invoice = oldInvoiceLine.getInvoice();
+        Long lineno = oldInvoiceLine.getLineNo();
+        OBDal.getInstance().remove(oldInvoiceLine);
+
         for (int i = 0; i < orderLinesSplittedByShipmentLine.length; i++) {
           OrderLine olSplitted = orderLinesSplittedByShipmentLine[i];
 
-          InvoiceLine invoiceLine = createInvoiceLine(olSplitted, orderLine, isMultiShipmentLine);
+          InvoiceLine invoiceLine = createInvoiceLine(olSplitted, orderLine);
+
+          OBCriteria<InvoiceLine> obc = OBDal.getInstance().createCriteria(InvoiceLine.class);
+          obc.add(Restrictions.eq(InvoiceLine.PROPERTY_INVOICE, invoice));
+          obc.setProjection(Projections.max(InvoiceLine.PROPERTY_LINENO));
+          Long maxInvoiceLineNo = 0L;
+          Object o = obc.uniqueResult();
+          if (o != null) {
+            maxInvoiceLineNo = (Long) o;
+          }
+
+          if (i != 0) {
+            maxInvoiceLineNo += 10L;
+            lineno = maxInvoiceLineNo;
+          }
+
           invoiceLine.setLineNo(lineno);
-          lineno += 10;
           invoiceLine.setInvoice(invoice);
-          totalNetAmount = totalNetAmount.add(invoiceLine.getLineNetAmount());
 
           List<InvoiceLineTax> lineTaxes = createInvoiceLineTaxes(olSplitted);
           for (InvoiceLineTax tax : lineTaxes) {
-            String taxId = (String) DalUtil.getId(tax.getTax());
-            InvoiceTax invoiceTax = null;
-            if (invoiceTaxes.containsKey(taxId)) {
-              invoiceTax = invoiceTaxes.get(taxId);
-            } else {
-              invoiceTax = OBProvider.getInstance().get(InvoiceTax.class);
-              invoiceTax.setTax(tax.getTax());
-              invoiceTax.setTaxableAmount(BigDecimal.ZERO);
-              invoiceTax.setTaxAmount(BigDecimal.ZERO);
-              invoiceTax.setLineNo(taxLineNo);
-              taxLineNo += 10;
-              invoiceTaxes.put(taxId, invoiceTax);
-            }
-            invoiceTax.setTaxableAmount(invoiceTax.getTaxableAmount().add(tax.getTaxableAmount()));
-            invoiceTax.setTaxAmount(invoiceTax.getTaxAmount().add(tax.getTaxAmount()));
-
             tax.setInvoiceLine(invoiceLine);
             tax.setInvoice(invoice);
             invoiceLine.getInvoiceLineTaxList().add(tax);
@@ -236,27 +196,68 @@ public class OrderGroupingProcessor {
           OBDal.getInstance().save(invoiceLine);
         }
       }
-    } finally {
-      orderLines.close();
-    }
-    finishInvoice(invoice, totalNetAmount, invoiceTaxes, paymentSchedule, origPaymentSchedule,
-        currentDate);
-
-    if (invoice != null) {
-      invoicesToSetDocumentNos.add(invoice.getId());
+      OBDal.getInstance().flush();
     }
 
-    OBDal.getInstance().flush();
+    t6 = System.currentTimeMillis();
 
-    // set the document nos in a separate loop and flush
-    // now set all the document nos
-    for (String invoiceId : invoicesToSetDocumentNos) {
-      invoice = OBDal.getInstance().get(Invoice.class, invoiceId);
+    // insert payment schedule
+    OrderGroupingProcessorData.insertPaymentSchedule(conn, strCurrentDate, strExecutionUUId);
+
+    t7 = System.currentTimeMillis();
+
+    // update payment schedule of orders
+    OrderGroupingProcessorData[] arrayOrderAndInvoiceId = OrderGroupingProcessorData
+        .selectOrderAndInvoiceId(conn, strExecutionUUId);
+
+    for (OrderGroupingProcessorData orderAndInvoiceId : arrayOrderAndInvoiceId) {
+      Order order = OBDal.getInstance().get(Order.class, orderAndInvoiceId.cOrderId);
+      Invoice invoice = OBDal.getInstance().get(Invoice.class, orderAndInvoiceId.cInvoiceId);
+
+      List<FIN_PaymentSchedule> finPaymentScheduleList = order.getFINPaymentScheduleList();
+      if (!finPaymentScheduleList.isEmpty()
+          && finPaymentScheduleList.get(0).getFINPaymentScheduleDetailOrderPaymentScheduleList()
+              .size() > 0) {
+        boolean success = processPaymentsFromOrder(order, invoice);
+        if (!success) {
+          continue;
+        }
+        log.debug("processed payment");
+      }
+    }
+
+    t8 = System.currentTimeMillis();
+
+    OrderGroupingProcessorData[] arrayInvoicesId = OrderGroupingProcessorData.selectInvoiceId(conn,
+        strExecutionUUId);
+
+    Invoice invoice = null;
+    for (OrderGroupingProcessorData invoiceId : arrayInvoicesId) {
+      invoice = OBDal.getInstance().get(Invoice.class, invoiceId.cInvoiceId);
       invoice.setDocumentNo(getInvoiceDocumentNo(invoice.getTransactionDocument(),
           invoice.getDocumentType()));
+      finishInvoice(invoice, currentDate);
       executeHooks(invoice, cashUpId);
     }
-    OBDal.getInstance().flush();
+
+    t9 = System.currentTimeMillis();
+
+    // OBDal.getInstance().rollbackAndClose();
+    OBDal.getInstance().commitAndClose();
+
+    t10 = System.currentTimeMillis();
+
+    log.debug("time execution query Headers: " + (t1 - t0));
+    log.debug("time execution query Lines: " + (t2 - t1));
+    log.debug("time execution query Lines Tax: " + (t3 - t2));
+    log.debug("time execution query Lines Offers: " + (t4 - t3));
+    log.debug("time execution query Tax: " + (t5 - t4));
+    log.debug("time execution splitOrderLines: " + (t6 - t5));
+    log.debug("time execution query Paym Sched: " + (t7 - t6));
+    log.debug("time execution query Upd PS: " + (t8 - t7));
+    log.debug("time execution documentNo: " + (t9 - t8));
+    log.debug("time execution Commit : " + (t10 - t9));
+    log.debug("time execution total: " + (t10 - t0));
 
     JSONObject jsonResponse = new JSONObject();
     jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
@@ -367,8 +368,7 @@ public class OrderGroupingProcessor {
     return taxes;
   }
 
-  protected InvoiceLine createInvoiceLine(OrderLine orderLine, OrderLine origOrderLine,
-      boolean isMultiShipmentLine) {
+  protected InvoiceLine createInvoiceLine(OrderLine orderLine, OrderLine origOrderLine) {
     InvoiceLine invoiceLine = OBProvider.getInstance().get(InvoiceLine.class);
     copyObject(orderLine, invoiceLine);
     invoiceLine.setTaxableAmount(BigDecimal.ZERO);
@@ -393,9 +393,17 @@ public class OrderGroupingProcessor {
       copyObject(orderLinePromotion, promotion);
 
       promotion.setInvoiceLine(invoiceLine);
+      promotion.setCreatedBy(OBContext.getOBContext().getUser());
+      promotion.setUpdatedBy(OBContext.getOBContext().getUser());
+      promotion.setCreationDate(new Date());
+      promotion.setUpdated(new Date());
       invoiceLine.getInvoiceLineOfferList().add(promotion);
     }
 
+    invoiceLine.setCreatedBy(OBContext.getOBContext().getUser());
+    invoiceLine.setUpdatedBy(OBContext.getOBContext().getUser());
+    invoiceLine.setCreationDate(new Date());
+    invoiceLine.setUpdated(new Date());
     return invoiceLine;
   }
 
@@ -427,84 +435,21 @@ public class OrderGroupingProcessor {
             : doctype.getId(), false, true);
   }
 
-  protected Invoice createNewInvoice(OBPOSApplications terminal, BusinessPartner bp,
-      Location bpLoc, OrderLine firstLine, Date currentDate) {
-    Invoice invoice = OBProvider.getInstance().get(Invoice.class);
-    invoice.setBusinessPartner(bp);
-    invoice.setPartnerAddress(bpLoc);
-    invoice.setCurrency(firstLine.getCurrency());
-    invoice.setOrganization(terminal.getOrganization());
-    invoice.setSalesTransaction(true);
-    invoice.setDocumentStatus("CO");
-    invoice.setDocumentAction("RE");
-    invoice.setAPRMProcessinvoice("RE");
-    invoice.setProcessed(true);
-    invoice.setPaymentMethod(bp.getPaymentMethod());
-    invoice.setPaymentTerms(bp.getPaymentTerms());
-    invoice.setDocumentType(terminal.getObposTerminaltype().getDocumentType()
-        .getDocumentTypeForInvoice());
-    invoice.setTransactionDocument(terminal.getObposTerminaltype().getDocumentType()
-        .getDocumentTypeForInvoice());
-    // set to a dummy value, will be set at the end to prevent locking
-    invoice.setDocumentNo("9999");
-    invoice.setAccountingDate(currentDate);
-    invoice.setInvoiceDate(currentDate);
-    invoice.setPriceList(firstLine.getSalesOrder().getPriceList());
-    invoice.setSalesRepresentative(firstLine.getSalesOrder().getSalesRepresentative());
-    invoice.setUserContact(firstLine.getSalesOrder().getUserContact());
-    return invoice;
-  }
-
-  protected Invoice createNewInvoice(OBPOSApplications terminal, Order order, OrderLine firstLine,
-      Date currentDate) {
-    Invoice invoice = OBProvider.getInstance().get(Invoice.class);
-    invoice.setBusinessPartner(order.getBusinessPartner());
-    invoice.setPartnerAddress(order.getInvoiceAddress());
-    invoice.setCurrency(firstLine.getCurrency());
-    invoice.setSalesTransaction(true);
-    invoice.setOrganization(terminal.getOrganization());
-    invoice.setDocumentStatus("CO");
-    invoice.setDocumentAction("RE");
-    invoice.setAPRMProcessinvoice("RE");
-    invoice.setProcessed(true);
-    invoice.setPaymentMethod(order.getBusinessPartner().getPaymentMethod());
-    invoice.setPaymentTerms(order.getBusinessPartner().getPaymentTerms());
-    invoice.setDocumentType(terminal.getObposTerminaltype().getDocumentType()
-        .getDocumentTypeForInvoice());
-    invoice.setTransactionDocument(terminal.getObposTerminaltype().getDocumentType()
-        .getDocumentTypeForInvoice());
-    // set to a dummy value, will be set at the end to prevent locking
-    invoice.setDocumentNo("9999");
-    invoice.setAccountingDate(currentDate);
-    invoice.setInvoiceDate(currentDate);
-    invoice.setPriceList(firstLine.getSalesOrder().getPriceList());
-    invoice.setSalesOrder(order);
-    invoice.setSalesRepresentative(firstLine.getSalesOrder().getSalesRepresentative());
-    invoice.setUserContact(firstLine.getSalesOrder().getUserContact());
-    return invoice;
-  }
-
-  protected void finishInvoice(Invoice oriInvoice, BigDecimal totalNetAmount,
-      HashMap<String, InvoiceTax> invoiceTaxes, FIN_PaymentSchedule paymentSchedule,
-      Fin_OrigPaymentSchedule origPaymentSchedule, Date currentDate) throws SQLException {
+  protected void finishInvoice(Invoice oriInvoice, Date currentDate) throws SQLException {
     if (oriInvoice == null) {
       return;
     }
     Invoice invoice = OBDal.getInstance().get(Invoice.class, oriInvoice.getId());
 
     OBDal.getInstance().save(invoice);
-    BigDecimal grossamount = totalNetAmount;
-    for (InvoiceTax tax : invoiceTaxes.values()) {
-      tax.setRecalculate(true);
-      tax.setInvoice(invoice);
-      invoice.getInvoiceTaxList().add(tax);
-      OBDal.getInstance().save(tax);
+    BigDecimal grossamount = invoice.getSummedLineAmount();
+    for (InvoiceTax tax : invoice.getInvoiceTaxList()) {
       grossamount = grossamount.add(tax.getTaxAmount());
     }
 
     BigDecimal totalPaid = BigDecimal.ZERO;
-    for (FIN_PaymentScheduleDetail psd : paymentSchedule
-        .getFINPaymentScheduleDetailInvoicePaymentScheduleList()) {
+    FIN_PaymentSchedule ps = invoice.getFINPaymentScheduleList().get(0);
+    for (FIN_PaymentScheduleDetail psd : ps.getFINPaymentScheduleDetailInvoicePaymentScheduleList()) {
       totalPaid = totalPaid.add(psd.getAmount());
     }
 
@@ -514,18 +459,19 @@ public class OrderGroupingProcessor {
       FIN_PaymentScheduleDetail newDetail = OBProvider.getInstance().get(
           FIN_PaymentScheduleDetail.class);
       newDetail.setAmount(grossamount.subtract(totalPaid));
-      newDetail.setInvoicePaymentSchedule(paymentSchedule);
-      paymentSchedule.getFINPaymentScheduleDetailInvoicePaymentScheduleList().add(newDetail);
-      paymentSchedule.setOutstandingAmount(grossamount.subtract(totalPaid));
-
+      newDetail.setInvoicePaymentSchedule(invoice.getFINPaymentScheduleList().get(0));
+      invoice.getFINPaymentScheduleList().get(0)
+          .getFINPaymentScheduleDetailInvoicePaymentScheduleList().add(newDetail);
+      invoice.getFINPaymentScheduleList().get(0)
+          .setOutstandingAmount(grossamount.subtract(totalPaid));
     }
+    OBDal.getInstance().save(ps);
 
     if (grossamount.compareTo(BigDecimal.ZERO) == 0) {
       totalPaid = BigDecimal.ZERO;
     }
 
     invoice.setGrandTotalAmount(grossamount);
-    invoice.setSummedLineAmount(totalNetAmount);
     invoice.setPaymentComplete(grossamount.compareTo(totalPaid) == 0);
     invoice.setTotalPaid(totalPaid);
     invoice.setPercentageOverdue(new Long(0));
@@ -533,19 +479,18 @@ public class OrderGroupingProcessor {
     invoice.setDaysSalesOutstanding(new Long(0));
     invoice.setOutstandingAmount(grossamount.subtract(totalPaid));
 
-    paymentSchedule.setAmount(grossamount);
-    paymentSchedule.setPaidAmount(totalPaid);
-    origPaymentSchedule.setAmount(grossamount);
+    ps.setAmount(grossamount);
+    ps.setPaidAmount(totalPaid);
 
     if (grossamount.compareTo(BigDecimal.ZERO) == 0) {
-      for (FIN_PaymentScheduleDetail detail : paymentSchedule
+      for (FIN_PaymentScheduleDetail detail : ps
           .getFINPaymentScheduleDetailInvoicePaymentScheduleList()) {
         detail.setInvoicePaymentSchedule(null);
       }
-      paymentSchedule.getFINPaymentScheduleDetailInvoicePaymentScheduleList().clear();
-      paymentSchedule.setActive(false);
-      OBDal.getInstance().remove(paymentSchedule);
-      OBDal.getInstance().remove(origPaymentSchedule);
+      ps.getFINPaymentScheduleDetailInvoicePaymentScheduleList().clear();
+      ps.setActive(false);
+      invoice.getFINPaymentScheduleList().clear();
+      OBDal.getInstance().remove(ps);
     }
   }
 
@@ -646,6 +591,44 @@ public class OrderGroupingProcessor {
         arrayOlSplit[i] = olSplit;
       }
       return arrayOlSplit;
+    }
+  }
+
+  protected boolean processPaymentsFromOrder(Order order, Invoice invoice) {
+    FIN_PaymentSchedule orderPaymentSchedule = null;
+    FIN_PaymentSchedule paymentScheduleInvoice = null;
+    // In case order is payed using different payment methods, payment schedule list size will be >1
+    for (FIN_PaymentSchedule sched : order.getFINPaymentScheduleList()) {
+      paymentScheduleInvoice = invoice.getFINPaymentScheduleList().get(0);
+
+      FIN_PaymentScheduleDetail paymentScheduleDetail = null;
+      for (FIN_PaymentScheduleDetail detail : sched
+          .getFINPaymentScheduleDetailOrderPaymentScheduleList()) {
+        orderPaymentSchedule = sched;
+        paymentScheduleDetail = detail;
+
+        paymentScheduleInvoice.getFINPaymentScheduleDetailInvoicePaymentScheduleList().add(
+            paymentScheduleDetail);
+        paymentScheduleDetail.setInvoicePaymentSchedule(paymentScheduleInvoice);
+        paymentScheduleDetail.setInvoicePaid(Boolean.TRUE);
+
+        paymentScheduleInvoice.setAmount(paymentScheduleInvoice.getAmount().add(
+            paymentScheduleDetail.getAmount()));
+      }
+
+      if (paymentScheduleDetail == null) {
+        log.error("Couldn't find payment schedule detail for order : " + order.getDocumentNo()
+            + ". Ignoring order");
+        return false;
+      }
+    }
+
+    if (orderPaymentSchedule == null) {
+      log.error("Couldn't find payment schedule for order: " + order.getDocumentNo()
+          + ". Ignoring order");
+      return false;
+    } else {
+      return true;
     }
   }
 }

@@ -1,0 +1,431 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SLU
+ * All portions are Copyright (C) 2015 Openbravo SLU
+ * All Rights Reserved.
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+
+<SqlClass name="OrderGroupingProcessorData" package="org.openbravo.retail.posterminal">
+  <SqlClassComment></SqlClassComment>
+  <SqlMethod name="selectSplitOrderLines" type="preparedStatement" return="multiple">
+    <SqlMethodComment>select orderlines with multiple shipmentlines</SqlMethodComment>
+    <Sql>
+    <![CDATA[
+        select ol.c_orderline_id, o.c_order_id, '' as c_invoice_id
+        from c_orderline ol, c_order o
+        where ol.c_order_id = o.c_order_id
+        and (select count(1) from m_inoutline il where il.c_orderline_id = ol.c_orderline_id) > 1
+        and o.em_obpos_app_cashup_id = ?
+    ]]></Sql>
+    <Parameter name="cashupId"/>
+  </SqlMethod>
+  <SqlMethod name="insertHeaderGrouping" type="preparedStatement" return="rowcount">
+    <SqlMethodComment>Insert invoice headers grouping orders</SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        insert into c_invoice
+        (c_invoice_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, issotrx,
+         documentno, docstatus, docaction, processing, processed, posted, c_doctype_id, c_doctypetarget_id, c_order_id, description, dateordered,
+         salesrep_id, dateinvoiced, dateacct, c_bpartner_id, c_bpartner_location_id,  c_currency_id, paymentrule, c_paymentterm_id, totallines,
+         grandtotal, m_pricelist_id, ispaid, totalpaid, outstandingamt, fin_paymentmethod_id, em_aprm_processinvoice)
+        select get_uuid(), o.ad_client_id, o.ad_org_id, 'Y', now(), ?, now(), ?, 'Y', ?,
+        'CO', 'RE', 'N', 'Y', 'N', dt.c_doctypeinvoice_id, dt.c_doctypeinvoice_id,
+        null, null, null, max(o.salesrep_id), to_timestamp(to_char(?), to_char('DD-MM-YYYY HH24:MI:SS')),
+        to_timestamp(to_char(?), to_char('DD-MM-YYYY HH24:MI:SS')), o.c_bpartner_id, o.c_bpartner_location_id,
+        o.c_currency_id, bp.paymentrule, bp.c_paymentterm_id, sum(o.totallines), sum(o.grandtotal), max(o.m_pricelist_id),
+        'Y', sum(o.grandtotal),  0, bp.fin_paymentmethod_id, 'RE'
+        from  c_order o, obpos_applications ap, obpos_terminaltype tt, c_doctype dt, c_bpartner bp
+        where o.em_obpos_applications_id = ap.obpos_applications_id
+        and ap.obpos_terminaltype_id = tt.obpos_terminaltype_id
+        and tt.c_doctype_id = dt.c_doctype_id
+        and o.c_bpartner_id = bp.c_bpartner_id
+        and o.em_obpos_applications_id = ?
+        and o.em_obpos_app_cashup_id = ?
+        and o.c_doctype_id in (tt.c_doctype_id, tt.c_doctyperet_id)
+        and not exists (select 1 from c_orderline ol2 where (ol2.qtyinvoiced <> 0 or ol2.qtydelivered <> ol2.qtyordered) and ol2.c_order_id = o.c_order_id)
+        and o.em_obpos_notinvoiceoncashup = 'N'
+        group by  o.ad_client_id, o.ad_org_id, dt.c_doctypeinvoice_id, dt.c_doctypeinvoice_id,
+        o.c_bpartner_id, o.c_bpartner_location_id, o.c_currency_id, bp.paymentrule,
+        bp.c_paymentterm_id, o.m_pricelist_id, bp.fin_paymentmethod_id
+    ]]>
+    </Sql>
+    <Parameter name="userId"/>
+    <Parameter name="userId"/>
+    <Parameter name="executionId"/>
+    <Parameter name="currentDate"/>
+    <Parameter name="currentDate"/>
+    <Parameter name="terminalId"/>
+    <Parameter name="cashupId"/>
+  </SqlMethod>
+
+  <SqlMethod name="insertHeaderNoGrouping" type="preparedStatement" return="rowcount">
+    <SqlMethodComment>Insert invoice headers no grouping orders</SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        insert into c_invoice
+        (c_invoice_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, issotrx,
+         documentno, docstatus, docaction, processing, processed, posted, c_doctype_id, c_doctypetarget_id, c_order_id, description, dateordered,
+         salesrep_id, dateinvoiced, dateacct, c_bpartner_id, c_bpartner_location_id,  c_currency_id, paymentrule, c_paymentterm_id, totallines,
+         grandtotal, m_pricelist_id, ispaid, totalpaid, outstandingamt, fin_paymentmethod_id, em_aprm_processinvoice)
+        select get_uuid(), o.ad_client_id, o.ad_org_id, 'Y', now(), ?, now(), ?, 'Y', ?, 'CO', 'RE', 'N', 'Y', 'N',
+        dt.c_doctypeinvoice_id, dt.c_doctypeinvoice_id,
+        o.c_order_id, ad_message_get2('OrderDocumentno', ?) || ' ' || o.documentno, o.dateordered,
+        max(o.salesrep_id), to_timestamp(to_char(?), to_char('DD-MM-YYYY HH24:MI:SS')),
+        to_timestamp(to_char(?), to_char('DD-MM-YYYY HH24:MI:SS')),
+        o.c_bpartner_id, o.c_bpartner_location_id, o.c_currency_id, bp.paymentrule,
+        bp.c_paymentterm_id, sum(o.totallines), sum(o.grandtotal), max(o.m_pricelist_id), 'Y', sum(o.grandtotal),  0, bp.fin_paymentmethod_id, 'RE'
+        from  c_order o, obpos_applications ap, obpos_terminaltype tt, c_doctype dt, c_bpartner bp
+        where o.em_obpos_applications_id = ap.obpos_applications_id
+        and ap.obpos_terminaltype_id = tt.obpos_terminaltype_id
+        and tt.c_doctype_id = dt.c_doctype_id
+        and o.c_bpartner_id = bp.c_bpartner_id
+        and o.em_obpos_applications_id = ?
+        and o.em_obpos_app_cashup_id = ?
+        and o.c_doctype_id in (tt.c_doctype_id, tt.c_doctyperet_id)
+        and not exists (select 1 from c_orderline ol2 where (ol2.qtyinvoiced <> 0 or ol2.qtydelivered <> ol2.qtyordered) and ol2.c_order_id = o.c_order_id)
+        and o.em_obpos_notinvoiceoncashup = 'N'
+        group by  o.ad_client_id, o.ad_org_id, dt.c_doctypeinvoice_id, dt.c_doctypeinvoice_id,
+        o.c_bpartner_id, o.c_bpartner_location_id, o.c_currency_id, bp.paymentrule,
+        bp.c_paymentterm_id, o.m_pricelist_id, bp.fin_paymentmethod_id,
+        o.c_order_id, o.dateOrdered, ad_message_get2('OrderDocumentno', ?), o.documentno
+        order by o.dateOrdered, o.documentno
+      ]]>
+    </Sql>
+    <Parameter name="userId"/>
+    <Parameter name="userId"/>
+    <Parameter name="executionId"/>
+    <Parameter name="lang"/>
+    <Parameter name="currentDate"/>
+    <Parameter name="currentDate"/>
+    <Parameter name="terminalId"/>
+    <Parameter name="cashupId"/>
+    <Parameter name="lang"/>
+  </SqlMethod>
+  <SqlMethod name="insertLinesGrouping" type="preparedStatement" return="rowcount">
+    <SqlMethodComment>Insert invoice lines grouping orders</SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        insert into c_invoiceline
+        (c_invoiceline_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby,
+         c_invoice_id, c_orderline_id, m_inoutline_id, line,
+         description, m_product_id, qtyinvoiced, pricelist, priceactual, pricelimit, linenetamt,
+         c_uom_id, c_tax_id, taxamt, m_attributesetinstance_id, pricestd,
+         taxbaseamt, line_gross_amount, gross_unit_price,
+         c_bpartner_id, grosspricestd, grosspricelist,
+         a_asset_id, c_project_id, user1_id, user2_id, c_costcenter_id)
+        select get_uuid(), i.ad_client_id, i.ad_org_id, 'Y', now(), i.createdby, now(), i.updatedby,
+        i.c_invoice_id, ol.c_orderline_id, max(iol.m_inoutline_id), row_number() over (partition by i.c_invoice_id order by o.documentno, ol.line) * 10 as line,
+        ol.description, ol.m_product_id, ol.qtyordered, ol.pricelist, ol.priceactual, ol.pricelimit, ol.linenetamt,
+        ol.c_uom_id, ol.c_tax_id, 0, ol.m_attributesetinstance_id, ol.pricestd,
+        ol.linenetamt , (case when pl.istaxincluded = 'Y' then ol.line_gross_amount else 0 end), ol.gross_unit_price,
+        ol.c_bpartner_id, ol.grosspricestd, ol.grosspricelist,
+        ol.a_asset_id, ol.c_project_id, ol.user1_id, ol.user2_id, ol.c_costcenter_id
+        from c_order o, m_pricelist pl, obpos_applications ap, obpos_terminaltype tt, c_doctype dt, c_invoice i,
+        c_orderline ol left join m_inoutline iol on ol.c_orderline_id = iol.c_orderline_id
+        where ol.c_order_id = o.c_order_id
+        and o.m_pricelist_id = pl.m_pricelist_id
+        and o.em_obpos_applications_id = ap.obpos_applications_id
+        and ap.obpos_terminaltype_id = tt.obpos_terminaltype_id
+        and tt.c_doctype_id = dt.c_doctype_id
+        and o.em_obpos_applications_id = ?
+        and o.em_obpos_app_cashup_id = ?
+        and ol.qtydelivered = ol.qtyordered
+        and ol.qtyordered <> 0
+        and o.c_doctype_id in (tt.c_doctype_id, tt.c_doctyperet_id)
+        and not exists (select 1 from c_orderline ol2 where ol2.qtyinvoiced <> 0 and ol2.c_order_id = o.c_order_id)
+        and o.em_obpos_notinvoiceoncashup = 'N'
+        and i.documentno = ?
+        and i.c_bpartner_id = o.c_bpartner_id and i.c_bpartner_location_id = o.billto_id
+        group by i.ad_client_id, i.ad_org_id, i.createdby, i.updatedby,
+        i.c_invoice_id, ol.c_orderline_id, ol.description, ol.m_product_id,
+        ol.qtyordered, ol.pricelist, ol.priceactual, ol.pricelimit, ol.linenetamt,
+        ol.c_uom_id, ol.c_tax_id, ol.m_attributesetinstance_id, ol.pricestd,
+        ol.linenetamt , ol.line_gross_amount, ol.gross_unit_price,
+        ol.c_bpartner_id, ol.grosspricestd, ol.grosspricelist,
+        ol.a_asset_id, ol.c_project_id, ol.user1_id, ol.user2_id, ol.c_costcenter_id, pl.istaxincluded,
+        o.documentno, ol.line, o.c_order_id
+        order by o.documentno, ol.line
+      ]]>
+    </Sql>
+    <Parameter name="terminalId"/>
+    <Parameter name="cashupId"/>
+    <Parameter name="executionId"/>
+  </SqlMethod>
+  <SqlMethod name="insertLinesNoGrouping" type="preparedStatement" return="rowcount" >
+    <SqlMethodComment>Insert invoice lines no grouping orders</SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        insert into c_invoiceline
+        (c_invoiceline_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby,
+         c_invoice_id, c_orderline_id, m_inoutline_id, line,
+         description, m_product_id, qtyinvoiced, pricelist, priceactual, pricelimit, linenetamt,
+         c_uom_id, c_tax_id, taxamt, m_attributesetinstance_id, pricestd,
+         taxbaseamt, line_gross_amount, gross_unit_price,
+         c_bpartner_id, grosspricestd, grosspricelist,
+         a_asset_id, c_project_id, user1_id, user2_id, c_costcenter_id)
+        select get_uuid(), i.ad_client_id, i.ad_org_id, 'Y', now(), i.createdby, now(), i.updatedby,
+        i.c_invoice_id, ol.c_orderline_id, max(iol.m_inoutline_id), row_number() over (partition by i.c_invoice_id order by o.documentno, ol.line asc) * 10 as line,
+        ol.description, ol.m_product_id, ol.qtyordered, ol.pricelist, ol.priceactual, ol.pricelimit, ol.linenetamt,
+        ol.c_uom_id, ol.c_tax_id, 0, ol.m_attributesetinstance_id, ol.pricestd,
+        ol.linenetamt , (case when pl.istaxincluded = 'Y' then ol.line_gross_amount else 0 end), ol.gross_unit_price,
+        ol.c_bpartner_id, ol.grosspricestd, ol.grosspricelist,
+        ol.a_asset_id, ol.c_project_id, ol.user1_id, ol.user2_id, ol.c_costcenter_id
+        from c_order o, m_pricelist pl, obpos_applications ap, obpos_terminaltype tt, c_doctype dt, c_invoice i,
+        c_orderline ol left join m_inoutline iol on ol.c_orderline_id = iol.c_orderline_id
+        where ol.c_order_id = o.c_order_id
+        and o.m_pricelist_id = pl.m_pricelist_id
+        and o.em_obpos_applications_id = ap.obpos_applications_id
+        and ap.obpos_terminaltype_id = tt.obpos_terminaltype_id
+        and tt.c_doctype_id = dt.c_doctype_id
+        and o.em_obpos_applications_id = ?
+        and o.em_obpos_app_cashup_id = ?
+        and ol.qtydelivered = ol.qtyordered
+        and ol.qtyordered <> 0
+        and o.c_doctype_id in (tt.c_doctype_id, tt.c_doctyperet_id)
+        and not exists (select 1 from c_orderline ol2 where ol2.qtyinvoiced <> 0 and ol2.c_order_id = o.c_order_id)
+        and o.em_obpos_notinvoiceoncashup = 'N'
+        and i.documentno = ?
+        and i.c_order_id = o.c_order_id
+        group by i.ad_client_id, i.ad_org_id, i.createdby, i.updatedby,
+        i.c_invoice_id, ol.c_orderline_id, ol.description, ol.m_product_id,
+        ol.qtyordered, ol.pricelist, ol.priceactual, ol.pricelimit, ol.linenetamt,
+        ol.c_uom_id, ol.c_tax_id, ol.m_attributesetinstance_id, ol.pricestd,
+        ol.linenetamt , ol.line_gross_amount, ol.gross_unit_price,
+        ol.c_bpartner_id, ol.grosspricestd, ol.grosspricelist,
+        ol.a_asset_id, ol.c_project_id, ol.user1_id, ol.user2_id, ol.c_costcenter_id, pl.istaxincluded,
+        o.documentno, ol.line, o.c_order_id
+        order by o.documentno, ol.line
+      ]]>
+    </Sql>
+    <Parameter name="terminalId"/>
+    <Parameter name="cashupId"/>
+    <Parameter name="executionId"/>
+  </SqlMethod>
+
+  <SqlMethod name="updateQtyOrderLinesGrouping" type="preparedStatement" return="rowcount" >
+    <SqlMethodComment>Update qty invoiced of order lines grouping orders</SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        update c_orderline set qtyinvoiced=qtyordered
+        where c_orderline_id in (
+          select ol.c_orderline_id
+          from c_order o, c_orderline ol, c_orderlinetax olt, c_invoice i, c_invoiceline il
+          where o.c_order_id = ol.c_order_id
+          and ol.c_orderline_id = olt.c_orderline_id
+          and ol.c_orderline_id = il.c_orderline_id
+          and il.c_invoice_id = i.c_invoice_id
+          and i.documentno = ?
+          and i.c_bpartner_id = o.c_bpartner_id
+          and i.c_bpartner_location_id = o.billto_id)
+      ]]>
+    </Sql>
+    <Parameter name="executionId"/>
+  </SqlMethod>
+  <SqlMethod name="updateQtyOrderLinesNoGrouping" type="preparedStatement" return="rowcount" >
+    <SqlMethodComment>Update qty invoiced of order lines no grouping orders</SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        update c_orderline set qtyinvoiced=qtyordered
+        where c_orderline_id in (
+          select ol.c_orderline_id
+          from c_order o, c_orderline ol, c_orderlinetax olt, c_invoice i, c_invoiceline il
+          where o.c_order_id = ol.c_order_id
+          and ol.c_orderline_id = olt.c_orderline_id
+          and ol.c_orderline_id = il.c_orderline_id
+          and il.c_invoice_id = i.c_invoice_id
+          and i.documentno = ?
+          and i.c_order_id = o.c_order_id)
+      ]]>
+    </Sql>
+    <Parameter name="executionId"/>
+  </SqlMethod>
+  <SqlMethod name="insertTaxLinesGrouping" type="preparedStatement" return="rowcount" >
+    <SqlMethodComment>Insert invoice tax lines grouping orders</SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        insert into c_invoicelinetax (c_invoicelinetax_id, c_tax_id, c_invoice_id, c_invoiceline_id,
+        ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby,
+        taxbaseamt, taxamt, line, recalculate)
+        select get_uuid(), olt.c_tax_id, i.c_invoice_id, il.c_invoiceline_id,
+        i.ad_client_id, i.ad_org_id, 'Y', now(), i.createdby, now(), i.updatedby,
+        olt.taxbaseamt, olt.taxamt, olt.line, 'Y'
+        from c_order o, c_orderline ol, c_orderlinetax olt, c_invoice i, c_invoiceline il
+        where o.c_order_id = ol.c_order_id
+        and ol.c_orderline_id = olt.c_orderline_id
+        and ol.c_orderline_id = il.c_orderline_id
+        and il.c_invoice_id = i.c_invoice_id
+        and i.documentno = ?
+        and i.c_bpartner_id = o.c_bpartner_id
+        and i.c_bpartner_location_id = o.billto_id
+      ]]>
+    </Sql>
+    <Parameter name="executionId"/>
+  </SqlMethod>
+  <SqlMethod name="insertTaxLinesNoGrouping" type="preparedStatement" return="rowcount" >
+    <SqlMethodComment>Insert invoice tax lines no grouping orders</SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        insert into c_invoicelinetax (c_invoicelinetax_id, c_tax_id, c_invoice_id, c_invoiceline_id,
+        ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby,
+        taxbaseamt, taxamt, line, recalculate)
+        select get_uuid(), olt.c_tax_id, i.c_invoice_id, il.c_invoiceline_id,
+        i.ad_client_id, i.ad_org_id, 'Y', now(), i.createdby, now(), i.updatedby,
+        olt.taxbaseamt, olt.taxamt, olt.line, 'Y'
+        from c_order o, c_orderline ol, c_orderlinetax olt, c_invoice i, c_invoiceline il
+        where o.c_order_id = ol.c_order_id
+        and ol.c_orderline_id = olt.c_orderline_id
+        and ol.c_orderline_id = il.c_orderline_id
+        and il.c_invoice_id = i.c_invoice_id
+        and i.documentno = ?
+        and i.c_order_id = o.c_order_id
+      ]]>
+    </Sql>
+    <Parameter name="executionId"/>
+  </SqlMethod>
+  <SqlMethod name="insertOfferLinesGrouping" type="preparedStatement" return="rowcount" >
+    <SqlMethodComment>Insert invoice offer lines grouping orders</SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        insert into c_invoiceline_offer
+        (c_invoiceline_offer_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby,
+         c_invoiceline_id, line, m_offer_id, priceoffer, amtoffer, priceoffergross, totalamt, displayedtotalamt, em_obdisc_qtyoffer)
+        select get_uuid(), i.ad_client_id, i.ad_org_id, 'Y', now(), i.createdby, now(), i.updatedby,
+        il.c_invoiceline_id, olo.line, olo.m_offer_id, olo.priceoffer , olo.amtoffer,
+        olo.priceoffergross , olo.totalamt,
+        olo.displayedtotalamt, olo.em_obdisc_qtyoffer
+        from c_order o, c_orderline ol, c_orderline_offer olo, c_invoice i, c_invoiceline il
+        where o.c_order_id = ol.c_order_id
+        and ol.c_orderline_id = olo.c_orderline_id
+        and ol.c_orderline_id = il.c_orderline_id
+        and il.c_invoice_id = i.c_invoice_id
+        and i.documentno = ?
+        and i.c_bpartner_id = o.c_bpartner_id
+        and i.c_bpartner_location_id = o.billto_id
+      ]]>
+    </Sql>
+    <Parameter name="executionId"/>
+  </SqlMethod>
+  <SqlMethod name="insertOfferLinesNoGrouping" type="preparedStatement" return="rowcount" >
+    <SqlMethodComment>Insert invoice offer lines no grouping orders</SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        insert into c_invoiceline_offer
+        (c_invoiceline_offer_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby,
+         c_invoiceline_id, line, m_offer_id, priceoffer, amtoffer, priceoffergross, totalamt, displayedtotalamt, em_obdisc_qtyoffer)
+        select get_uuid(), i.ad_client_id, i.ad_org_id, 'Y', now(), i.createdby, now(), i.updatedby,
+        il.c_invoiceline_id, olo.line, olo.m_offer_id, olo.priceoffer , olo.amtoffer,
+        olo.priceoffergross , olo.totalamt,
+        olo.displayedtotalamt, olo.em_obdisc_qtyoffer
+        from c_order o, c_orderline ol, c_orderline_offer olo, c_invoice i, c_invoiceline il
+        where o.c_order_id = ol.c_order_id
+        and ol.c_orderline_id = olo.c_orderline_id
+        and ol.c_orderline_id = il.c_orderline_id
+        and il.c_invoice_id = i.c_invoice_id
+        and i.documentno = ?
+        and i.c_order_id = o.c_order_id
+      ]]>
+    </Sql>
+    <Parameter name="executionId"/>
+  </SqlMethod>
+  <SqlMethod name="insertInvoiceTaxGrouping" type="preparedStatement" return="rowcount" >
+    <SqlMethodComment>Insert invoice tax grouping orders</SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        insert into c_invoicetax
+        (c_tax_id, c_invoice_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby,
+         taxbaseamt, taxamt, line, c_invoicetax_id, recalculate)
+        select olt.c_tax_id, i.c_invoice_id, i.ad_client_id, i.ad_org_id, 'Y', now(), i.createdby, now(), i.updatedby,
+        sum(olt.taxbaseamt), sum(olt.taxamt),
+        row_number() over (partition by i.c_invoice_id order by olt.c_tax_id asc) * 10 as line, get_uuid(), 'Y'
+        from c_order o, c_orderline ol, c_orderlinetax olt, c_invoiceline il, c_invoice i
+        where o.c_order_id = ol.c_order_id
+        and ol.c_orderline_id = olt.c_orderline_id
+        and ol.c_orderline_id = il.c_orderline_id
+        and il.c_invoice_id = i.c_invoice_id
+        and i.documentno = ?
+        and i.c_bpartner_id = o.c_bpartner_id and i.c_bpartner_location_id = o.billto_id
+        group by olt.c_tax_id, i.c_invoice_id, i.ad_client_id, i.ad_org_id, i.createdby, i.updatedby
+      ]]>
+    </Sql>
+    <Parameter name="executionId"/>
+  </SqlMethod>
+  <SqlMethod name="insertInvoiceTaxNoGrouping" type="preparedStatement" return="rowcount" >
+    <SqlMethodComment>Insert invoice tax no grouping orders</SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        insert into c_invoicetax
+        (c_tax_id, c_invoice_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby,
+         taxbaseamt, taxamt, line, c_invoicetax_id, recalculate)
+        select olt.c_tax_id, i.c_invoice_id, i.ad_client_id, i.ad_org_id, 'Y', now(), i.createdby, now(), i.updatedby,
+        sum(olt.taxbaseamt), sum(olt.taxamt),
+        row_number() over (partition by i.c_invoice_id order by olt.c_tax_id asc) * 10 as line, get_uuid(), 'Y'
+        from c_order o, c_orderline ol, c_orderlinetax olt, c_invoiceline il, c_invoice i
+        where o.c_order_id = ol.c_order_id
+        and ol.c_orderline_id = olt.c_orderline_id
+        and ol.c_orderline_id = il.c_orderline_id
+        and il.c_invoice_id = i.c_invoice_id
+        and i.documentno = ?
+        and i.c_order_id = o.c_order_id
+        group by olt.c_tax_id, i.c_invoice_id, i.ad_client_id, i.ad_org_id, i.createdby, i.updatedby
+      ]]>
+    </Sql>
+    <Parameter name="executionId"/>
+  </SqlMethod>
+  <SqlMethod name="insertPaymentSchedule" type="preparedStatement" return="rowcount" >
+    <SqlMethodComment>Insert invoice payment schedule</SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        insert into fin_payment_schedule
+        (fin_payment_schedule_id, ad_client_id, ad_org_id, created, createdby, updated, updatedby,
+         c_invoice_id, duedate, fin_paymentmethod_id, c_currency_id,
+         amount, paidamt, outstandingamt, isactive,
+         fin_payment_priority_id, origduedate, expecteddate)
+        select get_uuid(), i.ad_client_id, i.ad_org_id, now(), i.createdby, now(), i.updatedby,
+        i.c_invoice_id, to_timestamp(to_char(?), to_char('DD-MM-YYYY HH24:MI:SS')), i.fin_paymentmethod_id, i.c_currency_id,
+        0, 0, 0, 'Y', i.fin_payment_priority_id, to_timestamp(to_char(?), to_char('DD-MM-YYYY HH24:MI:SS')),
+        to_timestamp(to_char(?), to_char('DD-MM-YYYY HH24:MI:SS'))
+        from c_invoice i
+        where i.documentno = ?
+      ]]>
+    </Sql>
+    <Parameter name="currentDate"/>
+    <Parameter name="currentDate"/>
+    <Parameter name="currentDate"/>
+    <Parameter name="executionId"/>
+  </SqlMethod>
+  <SqlMethod name="selectOrderAndInvoiceId" type="preparedStatement" return="multiple" >
+    <SqlMethodComment>select orderlines with multiple shipmentlines</SqlMethodComment>
+    <Sql>
+    <![CDATA[
+        select distinct ol.c_order_id, i.c_invoice_id
+        from c_orderline ol, c_invoiceline il, c_invoice i
+        where ol.c_orderline_id = il.c_orderline_id
+        and il.c_invoice_id = i.c_invoice_id
+        and i.documentno = ?
+    ]]></Sql>
+    <Parameter name="executionId"/>
+  </SqlMethod>
+  <SqlMethod name="selectInvoiceId" type="preparedStatement" return="multiple" >
+    <SqlMethodComment>select orderlines with multiple shipmentlines</SqlMethodComment>
+    <Sql>
+    <![CDATA[
+        select i.c_invoice_id
+        from c_invoice i
+        where i.documentno = ?
+    ]]></Sql>
+    <Parameter name="executionId"/>
+  </SqlMethod>
+</SqlClass>
