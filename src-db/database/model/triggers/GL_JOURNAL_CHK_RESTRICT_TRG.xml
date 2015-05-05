@@ -23,8 +23,7 @@
     * All Rights Reserved.
     * Contributor(s):  ______________________________________.
     ************************************************************************/
-    v_DateNull DATE := TO_DATE('01-01-1900', 'DD-MM-YYYY');
-    v_ValidPeriod NUMBER;    
+    v_DateNull DATE := TO_DATE('01-01-1900', 'DD-MM-YYYY');  
 BEGIN
     
     IF AD_isTriggerEnabled()='N' THEN RETURN;
