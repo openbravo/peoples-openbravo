@@ -29,7 +29,7 @@
     },
     applyPromotionsLat: function (receipt, line) {
       var me = this;
-      if (receipt.get('skipApplyPromotions') || receipt.get('cloningReceipt') || this.preventApplyPromotions) {
+      if (receipt.get('skipApplyPromotions') || this.preventApplyPromotions) {
         return;
       }
 
