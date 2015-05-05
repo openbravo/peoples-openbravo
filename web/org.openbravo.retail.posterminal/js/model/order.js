@@ -1381,7 +1381,6 @@
           }, true);
         }
       }
-      this.set('bp', businessPartner);
       // set the undo action
       if (showNotif === undef || showNotif === true) {
         this.set('undo', {

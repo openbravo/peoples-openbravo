@@ -172,6 +172,7 @@ enyo.kind({
 
             me.customer.set('locId', customerAddr.get('id'));
             me.customer.set('locName', customerAddr.get('name'));
+            me.customer.set('locationModel', customerAddr);
             OB.Dal.save(me.customer, function success(tx) {
               me.doChangeBusinessPartner({
                 businessPartner: me.customer
