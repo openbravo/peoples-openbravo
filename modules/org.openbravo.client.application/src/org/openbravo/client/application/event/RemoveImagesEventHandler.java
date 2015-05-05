@@ -24,6 +24,7 @@ import java.util.List;
 
 import javax.enterprise.event.Observes;
 
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -31,8 +32,10 @@ import org.openbravo.client.kernel.event.EntityDeleteEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.utility.Image;
+import org.openbravo.model.common.plm.Product;
 
 public class RemoveImagesEventHandler extends EntityPersistenceEventObserver {
 
@@ -58,8 +61,9 @@ public class RemoveImagesEventHandler extends EntityPersistenceEventObserver {
       if (event.getCurrentState(imageProperty) != null) {
 
         Image bob = (Image) event.getCurrentState(imageProperty);
-
-        if (bob != null) {
+        String selectedProduct = event.getId();
+        Product product = checkImageUtilization(selectedProduct, bob);
+        if (bob != null && product == null) {
           OBContext.setAdminMode(true);
           try {
             OBDal.getInstance().remove(bob);
@@ -87,8 +91,9 @@ public class RemoveImagesEventHandler extends EntityPersistenceEventObserver {
           && event.getCurrentState(imageProperty) != event.getPreviousState(imageProperty)) {
 
         Image bob = (Image) event.getPreviousState(imageProperty);
-
-        if (bob != null) {
+        String selectedProduct = event.getId();
+        Product product = checkImageUtilization(selectedProduct, bob);
+        if (bob != null && product == null) {
           OBContext.setAdminMode(true);
           try {
             OBDal.getInstance().remove(bob);
@@ -108,6 +113,20 @@ public class RemoveImagesEventHandler extends EntityPersistenceEventObserver {
       entityArray.add(entity);
     }
     return (Entity[]) entityArray.toArray(new Entity[entityArray.size()]);
+  }
+
+  // Check if this image is used by another product
+  private static Product checkImageUtilization(String productId, Image bob) {
+    final OBCriteria<Product> obCriteria = OBDal.getInstance().createCriteria(Product.class);
+    obCriteria.add(Restrictions.eq(Product.PROPERTY_IMAGE, bob));
+    obCriteria.add(Restrictions.ne(Product.PROPERTY_ID, productId));
+    obCriteria.setFilterOnActive(false);
+    obCriteria.setFilterOnReadableClients(false);
+    obCriteria.setFilterOnReadableOrganization(false);
+    obCriteria.setMaxResults(1);
+    Product product = (Product) obCriteria.uniqueResult();
+
+    return product;
   }
 
   private static List<String> getImageProperties(Entity entity) {
