@@ -19,12 +19,9 @@ package org.openbravo.client.application;
 
 import java.util.Map;
 
-import javax.enterprise.context.RequestScoped;
-
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 
-@RequestScoped
 public interface ExtraSettingsInjector {
   /**
    * This method adds extra settings to the previously defined on the WindowSettingsActionHandler.

@@ -211,10 +211,6 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
         for (Entry<String, Object> setting : settingsToAdd.entrySet()) {
           String settingKey = setting.getKey();
           Object settingValue = setting.getValue();
-          if (json.has(settingKey)) {
-            log4j.warn("You are trying to override " + settingKey + " property");
-            continue;
-          }
           if (settingKey.equals(EXTRA_CALLBACKS)) {
             if (settingValue instanceof List) {
               for (Object callbackExtra : (List<?>) settingValue) {
