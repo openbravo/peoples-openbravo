@@ -408,6 +408,13 @@ enyo.kind({
           operator: _operator,
           value: splitFilter[i]
         };
+        var filterIdentifier = {
+          columns: ['_identifier'],
+          operator: 'startsWith',
+          value: splitFilter[i]
+        };
+        var hgVolCriteria = [filterIdentifier];
+        criteria.hgVolFilters = hgVolCriteria;
         OB.Dal.find(OB.Model.BusinessPartner, criteria, successCallbackBPs, errorCallback, i);
         lastCriteria.push(enyo.clone(criteria));
       }
