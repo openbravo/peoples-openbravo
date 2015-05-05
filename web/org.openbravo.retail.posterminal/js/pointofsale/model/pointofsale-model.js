@@ -478,7 +478,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                   silent: true
                 });
               });
-              // receipt is cloned because the receipt is deleted in the next sentence (orderList.deleteCurrent(true);)
+              // receipt is cloned because the receipt is deleted in the next sentence (orderList.deleteCurrent();)
               // so, if exists a method no synchronous (for example, hook OBPOS_PrePrint) the "receipt" has changed
               receipt.set('cloningReceipt', true);
               var orderToPrint = OB.UTIL.clone(receipt);
@@ -487,7 +487,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               receipt.trigger('print', orderToPrint, {
                 offline: true
               });
-              orderList.deleteCurrent(true);
+              orderList.deleteCurrent();
               orderList.synchronizeCurrentOrder();
             }
           });
@@ -510,7 +510,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               receipt.trigger('print', orderToPrint, {
                 offline: true
               });
-              orderList.deleteCurrent(true);
+              orderList.deleteCurrent();
               orderList.synchronizeCurrentOrder();
             }
           });
