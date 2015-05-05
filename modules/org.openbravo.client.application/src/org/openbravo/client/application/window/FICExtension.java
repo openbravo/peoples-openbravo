@@ -27,6 +27,33 @@ import org.openbravo.model.ad.ui.Tab;
 
 public interface FICExtension {
 
+  /**
+   * Extension hook on the FormInitilizationComponent class. It is executed just before the response
+   * JSONObject is built. It receives all the instances of the objects used to build the response.
+   * 
+   * @param mode
+   *          The execution mode.
+   * @param tab
+   *          The Tab owner of the Form that it is being executed.
+   * @param columnValues
+   *          Map with the values of forms columns.
+   * @param row
+   *          The BaseOBObject that it is being edited in the form.
+   * @param changeEventCols
+   *          The List of dynamic columns that fire the CHANGE event mode.
+   * @param calloutMessages
+   *          The list of messages returned by the callouts that have been executed.
+   * @param attachments
+   *          The list with the attachments related to the record that it is being edited.
+   * @param jsExcuteCode
+   *          The list of JavaScrip code returned by the callouts to be executed in the client.
+   * @param hiddenInputs
+   *          The Map with all the hidden fields with their values.
+   * @param noteCount
+   *          count of notes available on the record that it is being edited.
+   * @param overwrittenAuxiliaryInputs
+   *          The list of the Auxiliary Inputs that have been overriden by callouts.
+   */
   void execute(String mode, Tab tab, Map<String, JSONObject> columnValues, BaseOBObject row,
       List<String> changeEventCols, List<JSONObject> calloutMessages, List<JSONObject> attachments,
       List<String> jsExcuteCode, Map<String, Object> hiddenInputs, int noteCount,

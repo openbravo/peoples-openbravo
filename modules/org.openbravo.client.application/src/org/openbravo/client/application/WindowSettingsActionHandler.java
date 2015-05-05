@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -61,6 +61,7 @@ import org.openbravo.service.db.DalConnectionProvider;
 @ApplicationScoped
 public class WindowSettingsActionHandler extends BaseActionHandler {
   private static final Logger log4j = Logger.getLogger(WindowSettingsActionHandler.class);
+  public static final String EXTRA_CALLBACKS = "extraCallbacks";
 
   @Inject
   private PersonalizationHandler personalizationHandler;
@@ -214,7 +215,7 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
             log4j.warn("You are trying to override " + settingKey + " property");
             continue;
           }
-          if (settingKey.equals("extraCallbacks")) {
+          if (settingKey.equals(EXTRA_CALLBACKS)) {
             if (settingValue instanceof List) {
               for (Object callbackExtra : (List<?>) settingValue) {
                 if (callbackExtra instanceof String) {

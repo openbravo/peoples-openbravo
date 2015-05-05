@@ -29,8 +29,19 @@ public interface ExtraSettingsInjector {
   /**
    * This method adds extra settings to the previously defined on the WindowSettingsActionHandler.
    * 
+   * Using the WindowSettingsActionHandler.EXTRA_CALLBACK key it is possible to return a
+   * List<String> with JavaScript functions that are executed on the callback of the
+   * WindowSettingsActionHandler execution.
+   * 
+   * All other keys will be included in a "extraSettings" JavaScript object in the response "data"
+   * object.
+   * 
+   * @param parameters
+   *          the parameters Map of the current WindowSettingsActionHandler execution.
    * @param json
-   *          WindowSettingsActionHandler json
+   *          the JSONObject instance of the response of the WindowSettingsActionHandler.
+   * @return A Map<String, Object> with all the extra settings desired to be included in the
+   *         WindowSettingsActionHandler response.
    * @throws OBException
    */
   Map<String, Object> doAddSetting(Map<String, Object> parameters, JSONObject json)
