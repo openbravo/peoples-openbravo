@@ -25,6 +25,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
@@ -38,6 +42,7 @@ import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.util.Check;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -67,7 +72,8 @@ public class DefaultJsonDataService implements JsonDataService {
 
   private static final String ADD_FLAG = "_doingAdd";
 
-  private static DefaultJsonDataService instance = new DefaultJsonDataService();
+  private static DefaultJsonDataService instance = WeldUtils
+      .getInstanceFromStaticBeanManager(DefaultJsonDataService.class);
 
   public static DefaultJsonDataService getInstance() {
     return instance;
@@ -92,6 +98,7 @@ public class DefaultJsonDataService implements JsonDataService {
       Check.isNotNull(entityName, "The name of the service/entityname should not be null");
       Check.isNotNull(parameters, "The parameters should not be null");
 
+      doPreAction(parameters, "", DataSourceAction.FETCH);
       String selectedProperties = parameters.get(JsonConstants.SELECTEDPROPERTIES_PARAMETER);
       // The display property is present only for displaying table references in filter.
       // This parameter is used to set the identifier with the display column value.
@@ -263,6 +270,7 @@ public class DefaultJsonDataService implements JsonDataService {
   public void fetch(Map<String, String> parameters, QueryResultWriter writer) {
     long t = System.currentTimeMillis();
 
+    doPreAction(parameters, "", DataSourceAction.FETCH);
     final DataEntityQueryService queryService = createSetQueryService(parameters, false);
 
     String selectedProperties = parameters.get(JsonConstants.SELECTEDPROPERTIES_PARAMETER);
@@ -582,7 +590,7 @@ public class DefaultJsonDataService implements JsonDataService {
         jsonResult.put(JsonConstants.RESPONSE_RESPONSE, jsonResponse);
         OBDal.getInstance().commitAndClose();
 
-        doPreRemove(parameters, jsonObjects.get(0));
+        doPreAction(parameters, jsonObjects.toString(), DataSourceAction.REMOVE);
 
         // now do the real delete in a separate transaction
         // to prevent side effects that a child can not be deleted
@@ -787,9 +795,25 @@ public class DefaultJsonDataService implements JsonDataService {
     return bobs;
   }
 
+  /**
+   * Hooks executed at the end of doPreAction and doPostAction to modify or to validate DataService
+   * calls.
+   */
+  @Inject
+  @Any
+  private Instance<JsonDataServiceExtraActions> extraActions;
+
   protected String doPreAction(Map<String, String> parameters, String content,
       DataSourceAction action) {
     try {
+      if (action == DataSourceAction.FETCH) {
+        // In fetch operations there is no data. Just call doPreFetch and extraActions.
+        doPreFetch(parameters);
+        for (JsonDataServiceExtraActions extraAction : extraActions) {
+          extraAction.doPreAction(parameters, new JSONArray(), action);
+        }
+        return "";
+      }
       final Object contentObject = getContentAsJSON(content);
       final boolean isArray = contentObject instanceof JSONArray;
       final JSONArray data;
@@ -822,6 +846,9 @@ public class DefaultJsonDataService implements JsonDataService {
         // and set it in the new array
         newData.put(dataElement);
       }
+      for (JsonDataServiceExtraActions extraAction : extraActions) {
+        extraAction.doPreAction(parameters, newData, action);
+      }
 
       // return the array directly
       if (isArray) {
@@ -835,7 +862,10 @@ public class DefaultJsonDataService implements JsonDataService {
     } catch (JSONException e) {
       throw new OBException(e);
     } finally {
-      OBDal.getInstance().flush();
+      if (DataSourceAction.FETCH != action) {
+        // Only flush non fetch operations.
+        OBDal.getInstance().flush();
+      }
     }
   }
 
@@ -883,6 +913,11 @@ public class DefaultJsonDataService implements JsonDataService {
       // update the response with the changes, make it a string
       response.put(JsonConstants.RESPONSE_DATA, newData);
       json.put(JsonConstants.RESPONSE_RESPONSE, response);
+
+      for (JsonDataServiceExtraActions extraAction : extraActions) {
+        extraAction.doPostAction(parameters, json, action, originalObject);
+      }
+
       return json.toString();
     } catch (JSONException e) {
       throw new OBException(e);
@@ -905,6 +940,14 @@ public class DefaultJsonDataService implements JsonDataService {
    */
   protected void doPostRemove(Map<String, String> parameters, JSONObject removed)
       throws JSONException {
+
+  }
+
+  /**
+   * Is called before fetching an object. This method is called in the same transaction as the main
+   * fetch operation.
+   */
+  protected void doPreFetch(Map<String, String> parameters) throws JSONException {
 
   }
 
@@ -964,7 +1007,7 @@ public class DefaultJsonDataService implements JsonDataService {
       String originalToUpdate) throws JSONException {
   }
 
-  protected enum DataSourceAction {
+  public enum DataSourceAction {
     FETCH, ADD, UPDATE, REMOVE
   }
 

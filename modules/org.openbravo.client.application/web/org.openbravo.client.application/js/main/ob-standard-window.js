@@ -393,7 +393,9 @@ isc.OBStandardWindow.addProperties({
 
   // set window specific user settings, purposely set on class level
   setWindowSettings: function (data) {
-    var i, j, defaultView, persDefaultValue, views, length, t, tab, view, field, button, buttonParent, st, stView, stBtns, stBtn, disabledFields, personalization, notAccessibleProcesses, alwaysReadOnly = function (view, record, context) {
+    var i, j, defaultView, persDefaultValue, views, length, t, tab, view, field, button, buttonParent, //
+    st, stView, stBtns, stBtn, disabledFields, personalization, notAccessibleProcesses, extraCallback, //
+    callbackFunc, alwaysReadOnly = function (view, record, context) {
         return true;
         };
 
@@ -517,6 +519,20 @@ isc.OBStandardWindow.addProperties({
             }
           }
         }
+      }
+    }
+
+    //Execute extraCallbacks
+    if (data && data.extraCallbacks) {
+      for (i = 0; i < data.extraCallbacks.length; i++) {
+        extraCallback = data.extraCallbacks[i].trim();
+        // extraCallback functions only allow 'data' as unique argument. If implementor just sets
+        // the name of the function append the argument to complete the call.
+        if (!extraCallback.endsWith('(data)') && !extraCallback.endsWith('(data);')) {
+          extraCallback += '(data);';
+        }
+        callbackFunc = isc.Func.expressionToFunction('data', extraCallback);
+        callbackFunc(data);
       }
     }
   },

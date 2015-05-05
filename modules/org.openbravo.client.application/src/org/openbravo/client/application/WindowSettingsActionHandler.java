@@ -11,18 +11,22 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.client.application;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
@@ -57,9 +61,14 @@ import org.openbravo.service.db.DalConnectionProvider;
 @ApplicationScoped
 public class WindowSettingsActionHandler extends BaseActionHandler {
   private static final Logger log4j = Logger.getLogger(WindowSettingsActionHandler.class);
+  public static final String EXTRA_CALLBACKS = "extraCallbacks";
 
   @Inject
   private PersonalizationHandler personalizationHandler;
+
+  @Inject
+  @Any
+  private Instance<ExtraSettingsInjector> extraSettings;
 
   protected JSONObject execute(Map<String, Object> parameters, String data) {
 
@@ -196,6 +205,37 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
         }
         ps.put(KernelUtils.getProperty(f).getName());
       }
+
+      JSONObject extraSettingsJson = new JSONObject();
+      json.put("extraSettings", extraSettingsJson);
+      JSONArray extraCallbacks = new JSONArray();
+
+      // Add the extraSettings injected
+      for (ExtraSettingsInjector nextSetting : extraSettings) {
+        Map<String, Object> settingsToAdd = nextSetting.doAddSetting(parameters, json);
+        for (Entry<String, Object> setting : settingsToAdd.entrySet()) {
+          String settingKey = setting.getKey();
+          Object settingValue = setting.getValue();
+          if (settingKey.equals(EXTRA_CALLBACKS)) {
+            if (settingValue instanceof List) {
+              for (Object callbackExtra : (List<?>) settingValue) {
+                if (callbackExtra instanceof String) {
+                  extraCallbacks.put((String) callbackExtra);
+                } else {
+                  log4j.warn("You are trying to set a wrong instance of extraCallbacks");
+                }
+              }
+            } else if (settingValue instanceof String) {
+              extraCallbacks.put((String) settingValue);
+            } else {
+              log4j.warn("You are trying to set a wrong instance of extraCallbacks");
+            }
+          } else {
+            extraSettingsJson.put(settingKey, settingValue);
+          }
+        }
+      }
+      json.put("extraCallbacks", extraCallbacks);
 
       return json;
     } catch (Exception e) {

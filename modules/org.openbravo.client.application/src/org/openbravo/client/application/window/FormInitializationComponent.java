@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,6 +29,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
@@ -104,6 +106,10 @@ public class FormInitializationComponent extends BaseActionHandler {
 
   @Inject
   private ApplicationDictionaryCachedStructures cachedStructures;
+
+  @Inject
+  @Any
+  private Instance<FICExtension> ficExtensions;
 
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) {
@@ -286,16 +292,23 @@ public class FormInitializationComponent extends BaseActionHandler {
       long t8 = System.currentTimeMillis();
       int noteCount = computeNoteCount(tab, rowId);
 
-      // Construction of the final JSONObject
+      // Execute hooks implementing FICExtension.
       long t9 = System.currentTimeMillis();
+      for (FICExtension ficExtension : ficExtensions) {
+        ficExtension.execute(mode, tab, columnValues, row, changeEventCols, calloutMessages,
+            attachments, jsExcuteCode, hiddenInputs, noteCount, overwrittenAuxiliaryInputs);
+      }
+
+      // Construction of the final JSONObject
+      long t10 = System.currentTimeMillis();
       JSONObject finalObject = buildJSONObject(mode, tab, columnValues, row, changeEventCols,
           calloutMessages, attachments, jsExcuteCode, hiddenInputs, noteCount,
           overwrittenAuxiliaryInputs);
       analyzeResponse(tab, columnValues);
-      long t10 = System.currentTimeMillis();
+      long t11 = System.currentTimeMillis();
       log.debug("Elapsed time: " + (System.currentTimeMillis() - iniTime) + "(" + (t2 - t1) + ","
           + (t3 - t2) + "," + (t4 - t3) + "," + (t5 - t4) + "," + (t6 - t5) + "," + (t7 - t6) + ","
-          + (t8 - t7) + "," + (t9 - t8) + "," + (t10 - t9) + ")");
+          + (t8 - t7) + "," + (t9 - t8) + "," + (t10 - t9) + "," + (t11 - t10) + ")");
       log.debug("Attachment exists: " + finalObject.getBoolean("attachmentExists"));
       return finalObject;
     } catch (Throwable t) {
