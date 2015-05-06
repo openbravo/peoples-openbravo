@@ -176,7 +176,7 @@ OB.APRM.AddPayment.paymentMethodMulticurrency = function (view, form, recalcConv
     isShown = data.isPayIsMulticurrency && currencyId !== data.currencyToId && currencyId !== undefined;
     if (data.isWrongFinancialAccount && trxtype === "") {
       form.getItem('fin_financial_account_id').setValue('');
-    } else if (!data.isWrongFinancialAccount){
+    } else if (!data.isWrongFinancialAccount) {
       if (!form.getItem('c_currency_to_id').valueMap) {
         form.getItem('c_currency_to_id').valueMap = {};
       }
@@ -1073,7 +1073,7 @@ OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall, clientSideVali
       amountInvOrds = new BigDecimal(String(view.theForm.getItem('amount_inv_ords').getValue() || 0)),
       total = new BigDecimal(String(view.theForm.getItem('total').getValue() || 0)),
       actualPayment = new BigDecimal(String(view.theForm.getItem('actual_payment').getValue() || 0)),
-      overpaymentField= view.theForm.getItem('overpayment_action'),
+      overpaymentField = view.theForm.getItem('overpayment_action'),
       overpaymentAction = overpaymentField.getValue(),
       creditTotalItem = new BigDecimal(String(view.theForm.getItem('used_credit').getValue() || 0)),
       document = (view.theForm.getItem('trxtype')) ? view.theForm.getItem('trxtype').getValue() : "",
