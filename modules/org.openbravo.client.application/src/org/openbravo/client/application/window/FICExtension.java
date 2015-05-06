@@ -25,11 +25,17 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.model.ad.ui.Tab;
 
+/**
+ * Classes implementing this interface are injected in the {@link FormInitializationComponent}
+ * class. Using this interface it is possible to customize the return object of that class or to
+ * perform some custom validations.
+ */
 public interface FICExtension {
 
   /**
-   * Extension hook on the FormInitilizationComponent class. It is executed just before the response
-   * JSONObject is built. It receives all the instances of the objects used to build the response.
+   * This method is executed in the {@link FormInitializationComponent#execute(Map, String) execute}
+   * method just before the response JSONObject is built. It receives all the instances of the
+   * objects used to build the response.
    * 
    * @param mode
    *          The execution mode.
@@ -54,7 +60,7 @@ public interface FICExtension {
    * @param overwrittenAuxiliaryInputs
    *          The list of the Auxiliary Inputs that have been overriden by callouts.
    */
-  void execute(String mode, Tab tab, Map<String, JSONObject> columnValues, BaseOBObject row,
+  public void execute(String mode, Tab tab, Map<String, JSONObject> columnValues, BaseOBObject row,
       List<String> changeEventCols, List<JSONObject> calloutMessages, List<JSONObject> attachments,
       List<String> jsExcuteCode, Map<String, Object> hiddenInputs, int noteCount,
       List<String> overwrittenAuxiliaryInputs);

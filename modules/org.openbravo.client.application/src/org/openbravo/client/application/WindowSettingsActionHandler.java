@@ -68,7 +68,7 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
 
   @Inject
   @Any
-  private Instance<ExtraSettingsInjector> extraSettings;
+  private Instance<ExtraWindowSettingsInjector> extraSettings;
 
   protected JSONObject execute(Map<String, Object> parameters, String data) {
 
@@ -206,7 +206,7 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
       JSONArray extraCallbacks = new JSONArray();
 
       // Add the extraSettings injected
-      for (ExtraSettingsInjector nextSetting : extraSettings) {
+      for (ExtraWindowSettingsInjector nextSetting : extraSettings) {
         Map<String, Object> settingsToAdd = nextSetting.doAddSetting(parameters, json);
         for (Entry<String, Object> setting : settingsToAdd.entrySet()) {
           String settingKey = setting.getKey();

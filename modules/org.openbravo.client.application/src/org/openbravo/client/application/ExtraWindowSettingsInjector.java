@@ -22,9 +22,17 @@ import java.util.Map;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 
-public interface ExtraSettingsInjector {
+/**
+ * Classes implementing this interface are injected in the {@link WindowSettingsActionHandler}
+ * class. Using this interface it is possible to customize the return object of that class or to
+ * perform some custom validations. It is also possible to add some JavaScript functions to be
+ * executed on the Callback function of the Action Handler.
+ */
+public interface ExtraWindowSettingsInjector {
+
   /**
-   * This method adds extra settings to the previously defined on the WindowSettingsActionHandler.
+   * This method is executed in the {@link WindowSettingsActionHandler#execute(Map, String) execute}
+   * method.
    * 
    * Using the WindowSettingsActionHandler.EXTRA_CALLBACK key it is possible to return a
    * List<String> with JavaScript functions that are executed on the callback of the
@@ -42,6 +50,6 @@ public interface ExtraSettingsInjector {
    *         WindowSettingsActionHandler response.
    * @throws OBException
    */
-  Map<String, Object> doAddSetting(Map<String, Object> parameters, JSONObject json)
+  public Map<String, Object> doAddSetting(Map<String, Object> parameters, JSONObject json)
       throws OBException;
 }
