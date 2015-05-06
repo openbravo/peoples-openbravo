@@ -85,7 +85,6 @@ public class OrderGroupingProcessor {
     final String strUserId = (String) DalUtil.getId(OBContext.getOBContext().getUser());
     final String strCurrentDate = dateFormatter.format(currentDate);
     final String strLang = RequestContext.get().getVariablesSecureApp().getLanguage();
-    final String strPosTerminalId = (String) DalUtil.getId(posTerminal);
 
     // TODO: check if the audit should be retrieved from json or from session
 
@@ -96,21 +95,19 @@ public class OrderGroupingProcessor {
 
     if (posTerminal.getObposTerminaltype().isGroupingOrders()) {
       OrderGroupingProcessorData.insertHeaderGrouping(conn, strUserId, strExecutionUUId,
-          strCurrentDate, strPosTerminalId, cashUpId);
+          strCurrentDate, cashUpId);
     } else {
       OrderGroupingProcessorData.insertHeaderNoGrouping(conn, strUserId, strExecutionUUId, strLang,
-          strCurrentDate, strPosTerminalId, cashUpId);
+          strCurrentDate, cashUpId);
     }
 
     t1 = System.currentTimeMillis();
 
     // insert invoice lines
     if (posTerminal.getObposTerminaltype().isGroupingOrders()) {
-      OrderGroupingProcessorData.insertLinesGrouping(conn, strPosTerminalId, cashUpId,
-          strExecutionUUId);
+      OrderGroupingProcessorData.insertLinesGrouping(conn, cashUpId, strExecutionUUId);
     } else {
-      OrderGroupingProcessorData.insertLinesNoGrouping(conn, strPosTerminalId, cashUpId,
-          strExecutionUUId);
+      OrderGroupingProcessorData.insertLinesNoGrouping(conn, cashUpId, strExecutionUUId);
     }
 
     t2 = System.currentTimeMillis();

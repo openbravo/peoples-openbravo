@@ -42,7 +42,6 @@
         and ap.obpos_terminaltype_id = tt.obpos_terminaltype_id
         and tt.c_doctype_id = dt.c_doctype_id
         and o.c_bpartner_id = bp.c_bpartner_id
-        and o.em_obpos_applications_id = ?
         and o.em_obpos_app_cashup_id = ?
         and o.c_doctype_id in (tt.c_doctype_id, tt.c_doctyperet_id)
         and not exists (select 1 from c_orderline ol2 where (ol2.qtyinvoiced <> 0 or ol2.qtydelivered <> ol2.qtyordered) and ol2.c_order_id = o.c_order_id)
@@ -57,7 +56,6 @@
     <Parameter name="executionId"/>
     <Parameter name="currentDate"/>
     <Parameter name="currentDate"/>
-    <Parameter name="terminalId"/>
     <Parameter name="cashupId"/>
   </SqlMethod>
 
@@ -82,7 +80,6 @@
         and ap.obpos_terminaltype_id = tt.obpos_terminaltype_id
         and tt.c_doctype_id = dt.c_doctype_id
         and o.c_bpartner_id = bp.c_bpartner_id
-        and o.em_obpos_applications_id = ?
         and o.em_obpos_app_cashup_id = ?
         and o.c_doctype_id in (tt.c_doctype_id, tt.c_doctyperet_id)
         and not exists (select 1 from c_orderline ol2 where (ol2.qtyinvoiced <> 0 or ol2.qtydelivered <> ol2.qtyordered) and ol2.c_order_id = o.c_order_id)
@@ -100,7 +97,6 @@
     <Parameter name="lang"/>
     <Parameter name="currentDate"/>
     <Parameter name="currentDate"/>
-    <Parameter name="terminalId"/>
     <Parameter name="cashupId"/>
     <Parameter name="lang"/>
   </SqlMethod>
@@ -130,7 +126,6 @@
         and o.em_obpos_applications_id = ap.obpos_applications_id
         and ap.obpos_terminaltype_id = tt.obpos_terminaltype_id
         and tt.c_doctype_id = dt.c_doctype_id
-        and o.em_obpos_applications_id = ?
         and o.em_obpos_app_cashup_id = ?
         and ol.qtydelivered = ol.qtyordered
         and ol.qtyordered <> 0
@@ -150,7 +145,6 @@
         order by o.documentno, ol.line
       ]]>
     </Sql>
-    <Parameter name="terminalId"/>
     <Parameter name="cashupId"/>
     <Parameter name="executionId"/>
   </SqlMethod>
@@ -180,7 +174,6 @@
         and o.em_obpos_applications_id = ap.obpos_applications_id
         and ap.obpos_terminaltype_id = tt.obpos_terminaltype_id
         and tt.c_doctype_id = dt.c_doctype_id
-        and o.em_obpos_applications_id = ?
         and o.em_obpos_app_cashup_id = ?
         and ol.qtydelivered = ol.qtyordered
         and ol.qtyordered <> 0
@@ -200,7 +193,6 @@
         order by o.documentno, ol.line
       ]]>
     </Sql>
-    <Parameter name="terminalId"/>
     <Parameter name="cashupId"/>
     <Parameter name="executionId"/>
   </SqlMethod>
