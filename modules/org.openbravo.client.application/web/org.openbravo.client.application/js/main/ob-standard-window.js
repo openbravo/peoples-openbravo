@@ -1221,6 +1221,8 @@ isc.OBStandardWindow.addProperties({
     // always return false to force new tabs
     if (this.multiDocumentEnabled) {
       return false;
+    } else if (OB.PropertyStore.get('AllowMultiTab', this.windowId) === 'Y'){
+      return false;
     }
     return this.isEqualParams(params) && viewName === this.getClassName();
   },
