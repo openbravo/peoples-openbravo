@@ -23,9 +23,17 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.service.json.DefaultJsonDataService.DataSourceAction;
 
+/**
+ * Classes implementing this interface are injected in the {@link DefaultJsonDataService} class.
+ * Using this interface it is possible to customize the data that it is being send to or retrieved
+ * from the database on any action.
+ */
 public interface JsonDataServiceExtraActions {
+
   /**
-   * Implement this method to modify or validate the data before the action is executed.
+   * This method is executed on the
+   * {@link DefaultJsonDataService#doPreAction(Map, String, DataSourceAction)} Implement this method
+   * to modify or validate the data before the action is executed.
    * 
    * @param parameters
    *          The Map with the parameters of the DataSource call.
@@ -35,13 +43,14 @@ public interface JsonDataServiceExtraActions {
    *          Fetch operations receive an empty array.
    * @param action
    *          The action of the DataSource call. Possible values are FETCH, ADD, UPDATE and REMOVE
-   * 
    */
-  void doPreAction(Map<String, String> parameters, JSONArray data, DataSourceAction action);
+  public void doPreAction(Map<String, String> parameters, JSONArray data, DataSourceAction action);
 
   /**
-   * Implement this method to modify or validate the data after the action is executed and before is
-   * returned to the client.
+   * This method is executed on the
+   * {@link DefaultJsonDataService#doPostAction(Map, String, DataSourceAction, String)} Implement
+   * this method to modify or validate the data after the action is executed and before is returned
+   * to the client.
    * 
    * @param parameters
    *          The Map with the parameters of the DataSource call.
@@ -54,6 +63,6 @@ public interface JsonDataServiceExtraActions {
    *          JSONObject String available only on ADD and UPDATE with the original values of the
    *          data.
    */
-  void doPostAction(Map<String, String> parameters, JSONObject content, DataSourceAction action,
-      String originalObject);
+  public void doPostAction(Map<String, String> parameters, JSONObject content,
+      DataSourceAction action, String originalObject);
 }
