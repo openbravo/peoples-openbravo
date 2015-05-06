@@ -999,7 +999,8 @@ OB.APRM.AddPayment.receivedFromOnChange = function (item, view, form, grid) {
 
 OB.APRM.AddPayment.recalcDisplayLogicOrReadOnlyLogic = function (form, view, affectedParams) {
   var callbackDisplayLogicActionHandler, params = {},
-      thisform, thisview, creditUseGrid = form.getItem('credit_to_use').canvas.viewGrid;
+      thisform, thisview, creditUseGrid = form.getItem('credit_to_use').canvas.viewGrid,
+      allRequiredSet;
   thisform = form;
   thisview = view;
   params.context = form.paramWindow.getContextInfo();
@@ -1040,7 +1041,10 @@ OB.APRM.AddPayment.recalcDisplayLogicOrReadOnlyLogic = function (form, view, aff
     }
     thisform.redraw();
     if (thisview) {
-      thisview.handleButtonsStatus();
+      allRequiredSet = thisview.allRequiredParametersSet();
+      if (thisview.okButton) {
+        thisview.okButton.setEnabled(allRequiredSet);
+      }
     }
   };
 
