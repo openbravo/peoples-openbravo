@@ -16,6 +16,8 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.mobile.core.model.HQLProperty;
 import org.openbravo.mobile.core.model.ModelExtension;
 
@@ -40,30 +42,41 @@ public class ProductDiscProperties extends ModelExtension {
     }
     final String posPrecision = localPosPrecision;
 
-    final String discountNameTrl;
-    if (OBContext.hasTranslationInstalled()) {
-      discountNameTrl = "coalesce ((select pt.name from PricingAdjustmentTrl pt where pt.promotionDiscount=p and pt.language='"
-          + OBContext.getOBContext().getLanguage().getLanguage() + "'), p.name) ";
-    } else {
-      discountNameTrl = "p.name";
+    ArrayList<HQLProperty> list;
+    try {
+      list = new ArrayList<HQLProperty>() {
+        private static final long serialVersionUID = 1L;
+        {
+          boolean isHgvol = "Y".equals(Preferences.getPreferenceValue("OBPOS_highVolume.customer",
+              true, OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
+                  .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
+                  .getOBContext().getRole(), null));
+          String discountNameTrl;
+          if (OBContext.hasTranslationInstalled() && !isHgvol) {
+            discountNameTrl = "coalesce ((select pt.name from PricingAdjustmentTrl pt where pt.promotionDiscount=p and pt.language='"
+                + OBContext.getOBContext().getLanguage().getLanguage() + "'), p.name) ";
+          } else {
+            discountNameTrl = "p.name";
+          }
+
+          add(new HQLProperty("p.id", "id"));
+          add(new HQLProperty(discountNameTrl, "searchkey"));
+          add(new HQLProperty(discountNameTrl, "_identifier"));
+          add(new HQLProperty("round(p.obdiscPrice, " + posPrecision + ")", "listPrice"));
+          add(new HQLProperty("round(p.obdiscPrice, " + posPrecision + ")", "standardPrice"));
+          add(new HQLProperty("p.obdiscUpc", "uPCEAN"));
+          add(new HQLProperty("img.bindaryData", "img"));
+          add(new HQLProperty("'[[null]]'", "generic_product_id"));
+          add(new HQLProperty("'false'", "showchdesc"));
+          add(new HQLProperty("'true'", "ispack"));
+          add(new HQLProperty("'false'", "isGeneric"));
+          add(new HQLProperty("'false'", "stocked"));
+        }
+      };
+      return list;
+    } catch (PropertyException e) {
+      log.error("Error getting preference: " + e.getMessage(), e);
     }
-    ArrayList<HQLProperty> list = new ArrayList<HQLProperty>() {
-      private static final long serialVersionUID = 1L;
-      {
-        add(new HQLProperty("p.id", "id"));
-        add(new HQLProperty(discountNameTrl, "searchkey"));
-        add(new HQLProperty(discountNameTrl, "_identifier"));
-        add(new HQLProperty("round(p.obdiscPrice, " + posPrecision + ")", "listPrice"));
-        add(new HQLProperty("round(p.obdiscPrice, " + posPrecision + ")", "standardPrice"));
-        add(new HQLProperty("p.obdiscUpc", "uPCEAN"));
-        add(new HQLProperty("img.bindaryData", "img"));
-        add(new HQLProperty("'[[null]]'", "generic_product_id"));
-        add(new HQLProperty("'false'", "showchdesc"));
-        add(new HQLProperty("'true'", "ispack"));
-        add(new HQLProperty("'false'", "isGeneric"));
-        add(new HQLProperty("'false'", "stocked"));
-      }
-    };
-    return list;
+    return null;
   }
 }
