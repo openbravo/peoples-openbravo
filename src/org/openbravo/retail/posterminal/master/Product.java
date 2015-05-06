@@ -25,6 +25,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
@@ -103,11 +104,16 @@ public class Product extends ProcessHQLQuery {
 
     List<String> products = new ArrayList<String>();
     String posPrecision = "";
+    boolean isHgvol = false;
     try {
       OBContext.setAdminMode();
       posPrecision = (priceList.getCurrency().getObposPosprecision() == null ? priceList
           .getCurrency().getPricePrecision() : priceList.getCurrency().getObposPosprecision())
           .toString();
+      isHgvol = "Y".equals(Preferences.getPreferenceValue("OBPOS_highVolume.customer", true,
+          OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
+              .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
+              .getOBContext().getRole(), null));
     } catch (Exception e) {
       log.error("Error getting currency by id: " + e.getMessage(), e);
     } finally {
@@ -142,36 +148,39 @@ public class Product extends ProcessHQLQuery {
     }
     hql += "order by pli.product.name";
     products.add(hql);
-
-    products.add("select "
-        + regularProductsDiscHQLProperties.getHqlSelect()
-        + " from PricingAdjustment as p left outer join p.obdiscImage img" //
-        + " where $filtersCriteria AND p.discountType.obposIsCategory = true "//
-        + "   and p.discountType.active = true " //
-        + "   and p.$readableSimpleClientCriteria"//
-        + "   and (p.endingDate is null or p.endingDate >= TO_DATE('"
-        + format.format(now.getTime())
-        + "', 'yyyy/MM/dd'))" //
-        + "   and p.startingDate <= TO_DATE('"
-        + format.format(now.getTime())
-        + "', 'yyyy/MM/dd')"
-        + "   and (p.$incrementalUpdateCriteria) "//
-        // organization
-        + "and ((p.includedOrganizations='Y' " + "  and not exists (select 1 "
-        + "         from PricingAdjustmentOrganization o" + "        where active = true"
-        + "          and o.priceAdjustment = p" + "          and o.organization.id ='" + orgId
-        + "')) " + "   or (p.includedOrganizations='N' " + "  and  exists (select 1 "
-        + "         from PricingAdjustmentOrganization o" + "        where active = true"
-        + "          and o.priceAdjustment = p" + "          and o.organization.id ='" + orgId
-        + "')) " + "    ) ");
+    if (!isHgvol) {// TODO:Discounts like packs or combos are not supported yet
+      products.add("select "
+          + regularProductsDiscHQLProperties.getHqlSelect()
+          + " from PricingAdjustment as p left outer join p.obdiscImage img" //
+          + " where $filtersCriteria AND p.discountType.obposIsCategory = true "//
+          + "   and p.discountType.active = true " //
+          + "   and p.$readableSimpleClientCriteria"//
+          + "   and (p.endingDate is null or p.endingDate >= TO_DATE('"
+          + format.format(now.getTime())
+          + "', 'yyyy/MM/dd'))" //
+          + "   and p.startingDate <= TO_DATE('"
+          + format.format(now.getTime())
+          + "', 'yyyy/MM/dd')"
+          + "   and (p.$incrementalUpdateCriteria) "//
+          // organization
+          + "and ((p.includedOrganizations='Y' " + "  and not exists (select 1 "
+          + "         from PricingAdjustmentOrganization o" + "        where active = true"
+          + "          and o.priceAdjustment = p" + "          and o.organization.id ='" + orgId
+          + "')) " + "   or (p.includedOrganizations='N' " + "  and  exists (select 1 "
+          + "         from PricingAdjustmentOrganization o" + "        where active = true"
+          + "          and o.priceAdjustment = p" + "          and o.organization.id ='" + orgId
+          + "')) " + "    ) ");
+    }
 
     // generic products
-    products
-        .add("select "
-            + regularProductsHQLProperties.getHqlSelect()
-            + " from Product product left outer join product.image img left join product.oBRETCOProlProductList as pli left outer join product.pricingProductPriceList ppp where $filtersCriteria AND (product.$incrementalUpdateCriteria) and exists (select 1 from Product product2 left join product2.oBRETCOProlProductList as pli2, PricingProductPrice ppp2 where product.id = product2.genericProduct.id and product2 = ppp2.product and ppp2.priceListVersion.id = '"
-            + priceListVersion.getId() + "' and pli2.obretcoProductlist.id = '"
-            + productList.getId() + "')");
+    if (!isHgvol) {// BROWSE tab is hidden, we do not need to send generic products
+      products
+          .add("select "
+              + regularProductsHQLProperties.getHqlSelect()
+              + " from Product product left outer join product.image img left join product.oBRETCOProlProductList as pli left outer join product.pricingProductPriceList ppp where $filtersCriteria AND (product.$incrementalUpdateCriteria) and exists (select 1 from Product product2 left join product2.oBRETCOProlProductList as pli2, PricingProductPrice ppp2 where product.id = product2.genericProduct.id and product2 = ppp2.product and ppp2.priceListVersion.id = '"
+              + priceListVersion.getId() + "' and pli2.obretcoProductlist.id = '"
+              + productList.getId() + "')");
+    }
 
     return products;
 
