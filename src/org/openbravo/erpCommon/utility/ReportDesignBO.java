@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2007-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2007-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -33,7 +33,7 @@ import net.sf.jasperreports.engine.type.StretchTypeEnum;
 
 import org.apache.log4j.Logger;
 
-class ReportDesignBO {
+public class ReportDesignBO {
   public static Logger log4j = Logger.getLogger("org.openbravo.erpCommon.utility.GridBO");
   private int px = 0;
 

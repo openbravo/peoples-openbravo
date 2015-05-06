@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2007-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2007-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,7 +23,7 @@ import java.util.List;
 
 import org.openbravo.data.FieldProvider;
 
-class GridReportVO {
+public class GridReportVO {
   private String jrxmlTemplate;
   private String sql;
   private String title;

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2007-2010 Openbravo SLU
+ * All portions are Copyright (C) 2007-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,13 +28,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRParameter;
-import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.design.JasperDesign;
-import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.client.application.report.ReportingUtils;
 import org.openbravo.data.Sqlc;
 import org.openbravo.reference.Reference;
 import org.openbravo.reference.ui.UIReference;
@@ -80,8 +78,7 @@ public class PrintJR extends HttpSecureAppServlet {
           Replace.replace(strReportName, "@basedesign@", strBaseDesign), "@attach@", strAttach);
 
       try {
-        JasperDesign jasperDesign = JRXmlLoader.load(strReportName);
-        jasperReport = JasperCompileManager.compileReport(jasperDesign);
+        jasperReport = ReportingUtils.compileReport(strReportName);
       } catch (JRException e) {
         if (log4j.isDebugEnabled())
           log4j.debug("JR: Error: " + e);

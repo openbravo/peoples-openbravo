@@ -16,8 +16,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.HashMap;
@@ -37,20 +35,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JRExporterParameter;
-import net.sf.jasperreports.engine.JRParameter;
-import net.sf.jasperreports.engine.JasperExportManager;
-import net.sf.jasperreports.engine.JasperFillManager;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.export.JExcelApiExporter;
-import net.sf.jasperreports.engine.export.JExcelApiExporterParameter;
-import net.sf.jasperreports.engine.export.JRHtmlExporter;
 import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
-import net.sf.jasperreports.engine.fill.JRSwapFileVirtualizer;
-import net.sf.jasperreports.engine.util.JRSwapFile;
-import net.sf.jasperreports.j2ee.servlets.ImageServlet;
 
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
@@ -60,6 +45,8 @@ import org.openbravo.base.HttpBaseUtils;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.LoginUtils.RoleDefaults;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.client.application.report.ReportingUtils;
+import org.openbravo.client.application.report.ReportingUtils.ExportType;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -73,7 +60,6 @@ import org.openbravo.erpCommon.obps.ActivationKey.LicenseRestriction;
 import org.openbravo.erpCommon.security.SessionLogin;
 import org.openbravo.erpCommon.security.UsageAudit;
 import org.openbravo.erpCommon.utility.JRFieldProviderDataSource;
-import org.openbravo.erpCommon.utility.JRFormatFactory;
 import org.openbravo.erpCommon.utility.JRScrollableFieldProviderDataSource;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
@@ -1262,19 +1248,10 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
     ServletOutputStream os = null;
     UUID reportId = null;
-    JRSwapFileVirtualizer virtualizer = null;
     try {
-
-      final JasperReport jasperReport = Utility.getTranslatedJasperReport(this, strReportName,
-          strLanguage, strBaseDesign);
       if (designParameters == null)
         designParameters = new HashMap<String, Object>();
 
-      Boolean pagination = true;
-      if (strOutputType.equals("pdf"))
-        pagination = false;
-
-      designParameters.put("IS_IGNORE_PAGINATION", pagination);
       designParameters.put("BASE_WEB", strReplaceWithFull);
       designParameters.put("BASE_DESIGN", strBaseDesign);
       designParameters.put("ATTACH", strAttach);
@@ -1292,78 +1269,30 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
           variables.getSessionValue("#AD_ReportNumberFormat"), dfs);
       designParameters.put("NUMBERFORMAT", numberFormat);
 
-      if (log4j.isDebugEnabled())
-        log4j.debug("creating the format factory: " + variables.getJavaDateFormat());
-      final JRFormatFactory jrFormatFactory = new JRFormatFactory();
-      jrFormatFactory.setDatePattern(variables.getJavaDateFormat());
-      designParameters.put(JRParameter.REPORT_FORMAT_FACTORY, jrFormatFactory);
-
-      // if no custom virtualizer is requested use a default one
-      if (!designParameters.containsKey(JRParameter.REPORT_VIRTUALIZER)) {
-        // virtualizer is essentially using a tmp-file to avoid huge memory consumption by jasper
-        // when processing big reports
-        JRSwapFile swap = new JRSwapFile(System.getProperty("java.io.tmpdir"), 4096, 1);
-        // start using the virtualizer when having more than 100 pages of data
-        virtualizer = new JRSwapFileVirtualizer(100, swap);
-        designParameters.put(JRParameter.REPORT_VIRTUALIZER, virtualizer);
-      }
-
-      JasperPrint jasperPrint;
-      Connection con = null;
-      try {
-        con = getTransactionConnection();
-        if (data != null) {
-          designParameters.put("REPORT_CONNECTION", con);
-          jasperPrint = JasperFillManager.fillReport(jasperReport, designParameters, data);
-        } else {
-          jasperPrint = JasperFillManager.fillReport(jasperReport, designParameters, con);
-        }
-      } catch (final Exception e) {
-        Throwable t = (e.getCause() != null) ? e.getCause().getCause() : null;
-        if (t != null) {
-          throw new ServletException((t instanceof SQLException && t.getMessage().contains(
-              "@NoConversionRate@")) ? t.getMessage() : e.getMessage(), e);
-        } else {
-          throw new ServletException(e.getCause() instanceof SQLException ? e.getCause()
-              .getMessage() : e.getMessage(), e);
-        }
-      } finally {
-        releaseRollbackConnection(con);
-      }
-
       os = response.getOutputStream();
       if (exportParameters == null)
         exportParameters = new HashMap<Object, Object>();
       if (strOutputType == null || strOutputType.equals(""))
         strOutputType = "html";
+      final ExportType expType = ExportType.getExportType(strOutputType.toUpperCase());
+
       if (strOutputType.equals("html")) {
         if (log4j.isDebugEnabled())
           log4j.debug("JR: Print HTML");
         response.setHeader("Content-disposition", "inline" + "; filename=" + strFileName + "."
             + strOutputType);
-        final JRHtmlExporter exporter = new JRHtmlExporter();
-        exportParameters.put(JRHtmlExporterParameter.JASPER_PRINT, jasperPrint);
-        exportParameters.put(JRHtmlExporterParameter.IS_USING_IMAGES_TO_ALIGN, Boolean.FALSE);
-        exportParameters.put(JRHtmlExporterParameter.SIZE_UNIT,
-            JRHtmlExporterParameter.SIZE_UNIT_POINT);
-        exportParameters.put(JRHtmlExporterParameter.OUTPUT_STREAM, os);
-
-        HttpSession session = (HttpSession) designParameters.get("HTTP_SESSION");
-        if (session != null) {
-          session.setAttribute(ImageServlet.DEFAULT_JASPER_PRINT_SESSION_ATTRIBUTE, jasperPrint);
-        }
-
         HttpServletRequest request = RequestContext.get().getRequest();
         String localAddress = HttpBaseUtils.getLocalAddress(request);
         exportParameters.put(JRHtmlExporterParameter.IMAGES_URI, localAddress
             + "/servlets/image?image=");
-
-        exporter.setParameters(exportParameters);
-        exporter.exportReport();
+        ReportingUtils.exportJR(strReportName, expType, designParameters, os, false, this, data,
+            exportParameters);
       } else if (strOutputType.equals("pdf") || strOutputType.equalsIgnoreCase("xls")) {
         reportId = UUID.randomUUID();
-        saveReport(variables, jasperPrint, exportParameters, strFileName + "-" + (reportId) + "."
-            + strOutputType);
+        File outputFile = new File(globalParameters.strFTPDirectory + "/" + strFileName + "-"
+            + (reportId) + "." + strOutputType);
+        ReportingUtils.exportJR(strReportName, expType, designParameters, outputFile, false, this,
+            data, exportParameters);
         response.setContentType("text/html;charset=UTF-8");
         response.setHeader("Content-disposition", "inline" + "; filename=" + strFileName + "-"
             + (reportId) + ".html");
@@ -1374,12 +1303,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
           printPagePopUpDownload(response.getOutputStream(), strFileName + "-" + (reportId) + "."
               + strOutputType);
         }
-      } else {
-        throw new ServletException("Output format no supported");
       }
-    } catch (final JRException e) {
-      log4j.error("JR: Error: ", e);
-      throw new ServletException(e.getMessage(), e);
+
     } catch (IOException ioe) {
       try {
         FileUtility f = new FileUtility(globalParameters.strFTPDirectory, strFileName + "-"
@@ -1396,10 +1321,6 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       try {
         os.close();
       } catch (final Exception e) {
-      }
-      // remove virtualizer tmp files if we created them
-      if (virtualizer != null) {
-        virtualizer.cleanup();
       }
     }
   }
@@ -1443,41 +1364,6 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
             + ioex.getMessage());
       }
     }
-  }
-
-  /**
-   * Saves the report on the attachments folder for future retrieval
-   * 
-   * @param vars
-   *          An instance of VariablesSecureApp that contains the request parameters
-   * @param jp
-   *          An instance of JasperPrint of the loaded JRXML template
-   * @param exportParameters
-   *          A Map with all the parameters passed to all reports
-   * @param fileName
-   *          The file name for the report
-   * @throws JRException
-   */
-  private void saveReport(VariablesSecureApp vars, JasperPrint jp,
-      Map<Object, Object> exportParameters, String fileName) throws JRException {
-    final String outputFile = globalParameters.strFTPDirectory + "/" + fileName;
-    final String reportType = fileName.substring(fileName.lastIndexOf(".") + 1);
-    if (reportType.equalsIgnoreCase("pdf")) {
-      JasperExportManager.exportReportToPdfFile(jp, outputFile);
-    } else if (reportType.equalsIgnoreCase("xls")) {
-      JExcelApiExporter exporter = new JExcelApiExporter();
-      exportParameters.put(JRExporterParameter.JASPER_PRINT, jp);
-      exportParameters.put(JRExporterParameter.OUTPUT_FILE_NAME, outputFile);
-      exportParameters.put(JExcelApiExporterParameter.IS_ONE_PAGE_PER_SHEET, Boolean.FALSE);
-      exportParameters.put(JExcelApiExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_ROWS,
-          Boolean.TRUE);
-      exportParameters.put(JExcelApiExporterParameter.IS_DETECT_CELL_TYPE, true);
-      exporter.setParameters(exportParameters);
-      exporter.exportReport();
-    } else {
-      throw new JRException("Report type not supported");
-    }
-
   }
 
   /**
