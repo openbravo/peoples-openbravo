@@ -2,6 +2,8 @@
 CREATE INDEX m_product_value_upper ON m_product USING btree (upper(value::text) COLLATE pg_catalog."default" varchar_pattern_ops);
 CREATE INDEX m_product_name_upper ON m_product USING btree (upper(name) COLLATE pg_catalog."default" varchar_pattern_ops);
 CREATE INDEX m_product_upc_upper ON m_product USING btree (upper(upc::text) COLLATE pg_catalog."default" varchar_pattern_ops);
+--m_product indexes (webpos)
+CREATE INDEX m_product_webpos_search ON m_product USING btree (upper(M_Product_Category_ID) COLLATE pg_catalog."default" varchar_pattern_ops, upper(name) COLLATE pg_catalog."default" varchar_pattern_ops, IsActive COLLATE pg_catalog."default" );
 
 --c_bpartner indexes
 CREATE INDEX c_bpartner_value_upper ON c_bpartner USING btree (upper(value) COLLATE pg_catalog."default" varchar_pattern_ops);
