@@ -132,10 +132,11 @@ OB.RM.RMShipmentSelectionChange = function (grid, record, state) {
       availableQty = new BigDecimal(String(record.availableQty)),
       storageBin = record.storageBin,
       editedRecord = null,
+      isstocked = record.stockable,
       i;
   if (state) {
     //Cheking available stock
-    if (storageBin === null) {
+    if (storageBin === null && isstocked) {
       grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_RM_NotAvailableStock', [record.rMOrderNo]));
       return false;
     }
