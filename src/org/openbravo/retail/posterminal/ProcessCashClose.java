@@ -22,6 +22,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.TriggerHandler;
@@ -45,6 +46,9 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
     JSONObject jsonData = new JSONObject();
     Date cashUpDate = new Date();
     Date currentDate = new Date();
+    OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
+        jsonCashup.getString("posterminal"));
+
     try {
       if (jsonCashup.has("cashUpDate") && jsonCashup.get("cashUpDate") != null
           && StringUtils.isNotEmpty(jsonCashup.getString("cashUpDate"))) {
@@ -57,7 +61,13 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
       if (jsonCashup.has("currentDate") && jsonCashup.get("currentDate") != null
           && StringUtils.isNotEmpty(jsonCashup.getString("currentDate"))) {
         String strCurrentDate = (String) jsonCashup.getString("currentDate");
-        DateFormat isodatefmt = new SimpleDateFormat("dd-MM-yyyy");
+        String dateFormatStr = posTerminal.getOrganization().getObposDateFormat();
+        if (dateFormatStr == null) {
+          dateFormatStr = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+              .getProperty("dateFormat.java");
+        }
+
+        DateFormat isodatefmt = new SimpleDateFormat(dateFormatStr);
         currentDate = isodatefmt.parse(strCurrentDate);
       } else {
         log.debug("Error processing cash close: error retrieving current date. Using server current date");
@@ -66,8 +76,6 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
       log.debug("Error processing cash close: error retrieving cashUp date. Using current date");
     }
 
-    OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
-        jsonCashup.getString("posterminal"));
     OBContext.setOBContext(jsonCashup.getString("userId"), OBContext.getOBContext().getRole()
         .getId(), OBContext.getOBContext().getCurrentClient().getId(), posTerminal
         .getOrganization().getId());
