@@ -206,12 +206,12 @@ enyo.kind({
         isSynchronized: undefined,
         isModel: undefined,
         isReceipt: undefined,
-        isReceiptId: undefined,
-        isReceiptDocno: undefined,
+        receiptId: undefined,
+        receiptDocno: undefined,
+        isReceiptDocnoLengthGreaterThanThree: undefined,
         isReceiptBp: undefined,
+        receiptBpId: undefined,
         isReceiptLines: undefined,
-        isReceiptBpId: undefined,
-        isReceiptDocnoLengthGreaterThan3: undefined,
         isReceiptLinesLengthGreaterThanZero: undefined,
         isReceiptHasbeenpaidEqualToN: undefined
       };
@@ -231,18 +231,18 @@ enyo.kind({
       if (!requirements.isReceipt) {
         return false;
       }
-      requirements.isReceiptId = !OB.UTIL.isNullOrUndefined(receipt.get('id'));
-      requirements.isReceiptDocno = !OB.UTIL.isNullOrUndefined(receipt.get('documentNo'));
+      requirements.receiptId = receipt.get('id');
+      requirements.receiptDocno = receipt.get('documentNo');
       requirements.isReceiptBp = !OB.UTIL.isNullOrUndefined(receipt.get('bp'));
       requirements.isReceiptLines = !OB.UTIL.isNullOrUndefined(receipt.get('lines'));
-      if (!requirements.isReceiptId || !requirements.isReceiptDocno || !requirements.isReceiptBp || !requirements.isReceiptLines) {
+      if (OB.UTIL.isNullOrUndefined(requirements.receiptId) || OB.UTIL.isNullOrUndefined(requirements.receiptDocno) || !requirements.isReceiptBp || !requirements.isReceiptLines) {
         return false;
       }
-      requirements.isReceiptBpId = !OB.UTIL.isNullOrUndefined(receipt.get('bp').get('id'));
-      requirements.isReceiptDocnoLengthGreaterThan3 = receipt.get('documentNo').length > 3;
+      requirements.receiptBpId = receipt.get('bp').get('id');
+      requirements.isReceiptDocnoLengthGreaterThanThree = receipt.get('documentNo').length > 3;
       requirements.isReceiptLinesLengthGreaterThanZero = receipt.get('lines').length > 0;
       requirements.isReceiptHasbeenpaidEqualToN = receipt.get('hasbeenpaid') === 'N';
-      if (!requirements.isReceiptBpId || !requirements.isReceiptDocnoLengthGreaterThan3 || !requirements.isReceiptLinesLengthGreaterThanZero || !requirements.isReceiptHasbeenpaidEqualToN) {
+      if (OB.UTIL.isNullOrUndefined(requirements.receiptBpId) || !requirements.isReceiptDocnoLengthGreaterThanThree || !requirements.isReceiptLinesLengthGreaterThanZero || !requirements.isReceiptHasbeenpaidEqualToN) {
         return false;
       }
       // all requirements are met
@@ -254,6 +254,7 @@ enyo.kind({
     } else {
       newIsDisabledState = true;
     }
+
     OB.UTIL.Debug.execute(function () {
       if (!requirements) {
         throw "The 'requirementsAreMet' function must have been called before this point";
@@ -261,11 +262,15 @@ enyo.kind({
     });
 
     // log the status and requirements of the pay button state
-    var msg = enyo.format("Pay button is %s. ", (newIsDisabledState ? 'disabled' : 'enabled'));
-    if (requirements.isSynchronized) {
-      OB.debug(msg, requirements); // tweak this log level to log the state of the button when it goes enabled
+    var msg = enyo.format("Pay button is %s", (newIsDisabledState ? 'disabled' : 'enabled'));
+    if (newIsDisabledState === true && requirements.isReceiptLinesLengthGreaterThanZero && requirements.isReceiptHasbeenpaidEqualToN) {
+      msg += " and should be enabled";
+      OB.error(msg, requirements);
+      OB.UTIL.Debug.execute(function () {
+        throw msg;
+      });
     } else {
-      OB.debug(msg, requirements); // tweak this log level if the previous line does not log anything
+      OB.debug(msg, requirements); // tweak this log level if the previous line is not enough
     }
 
     this.disabled = newIsDisabledState; // for getDisabled() to return the correct value
@@ -275,7 +280,6 @@ enyo.kind({
     onTabChange: '',
     onClearUserInput: ''
   },
-
   showPaymentTab: function () {
     var receipt = this.model.get('order'),
         me = this;
@@ -327,7 +331,6 @@ enyo.kind({
       colNum: 1
     });
   },
-
   tap: function () {
     if (this.disabled === false) {
       this.model.on('approvalChecked', function (event) {
