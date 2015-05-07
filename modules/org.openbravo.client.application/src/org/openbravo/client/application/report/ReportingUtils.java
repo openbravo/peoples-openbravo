@@ -259,10 +259,20 @@ public class ReportingUtils {
       ConnectionProvider connectionProvider, JRDataSource data,
       Map<Object, Object> additionalExportParameters, boolean compileSubreports) throws OBException {
 
+    JRSwapFileVirtualizer virtualizer = null;
     Map<Object, Object> exportParameters = new HashMap<Object, Object>();
     parameters.putAll(expType.getExportParameters());
     if (additionalExportParameters != null && additionalExportParameters.size() > 0) {
       exportParameters.putAll(additionalExportParameters);
+    }
+    // if no custom virtualizer is requested use a default one
+    if (!parameters.containsKey(JRParameter.REPORT_VIRTUALIZER)) {
+      // virtualizer is essentially using a tmp-file to avoid huge memory consumption by jasper
+      // when processing big reports
+      JRSwapFile swap = new JRSwapFile(getTempFolder(), 4096, 1);
+      // start using the virtualizer when having more than 100 pages of data
+      virtualizer = new JRSwapFileVirtualizer(100, swap);
+      parameters.put(JRParameter.REPORT_VIRTUALIZER, virtualizer);
     }
     if (addProcessDefinitionParameters) {
       addProcessDefinitionParameters(parameters);
@@ -280,6 +290,11 @@ public class ReportingUtils {
     } catch (JRException e) {
       log.error("Error generating Jasper Report: " + jasperFilePath, e);
       throw new OBException(e.getMessage(), e);
+    } finally {
+      // remove virtualizer tmp files if we created them
+      if (virtualizer != null) {
+        virtualizer.cleanup();
+      }
     }
   }
 
@@ -317,10 +332,20 @@ public class ReportingUtils {
       JRDataSource data, Map<Object, Object> additionalExportParameters, boolean compileSubreports)
       throws OBException {
 
+    JRSwapFileVirtualizer virtualizer = null;
     Map<Object, Object> exportParameters = new HashMap<Object, Object>();
     parameters.putAll(expType.getExportParameters());
     if (additionalExportParameters != null && additionalExportParameters.size() > 0) {
       exportParameters.putAll(additionalExportParameters);
+    }
+    // if no custom virtualizer is requested use a default one
+    if (!parameters.containsKey(JRParameter.REPORT_VIRTUALIZER)) {
+      // virtualizer is essentially using a tmp-file to avoid huge memory consumption by jasper
+      // when processing big reports
+      JRSwapFile swap = new JRSwapFile(getTempFolder(), 4096, 1);
+      // start using the virtualizer when having more than 100 pages of data
+      virtualizer = new JRSwapFileVirtualizer(100, swap);
+      parameters.put(JRParameter.REPORT_VIRTUALIZER, virtualizer);
     }
     if (addProcessDefinitionParameters) {
       addProcessDefinitionParameters(parameters);
@@ -338,6 +363,11 @@ public class ReportingUtils {
     } catch (JRException e) {
       log.error("Error generating Jasper Report: " + jasperFilePath, e);
       throw new OBException(e.getMessage(), e);
+    } finally {
+      // remove virtualizer tmp files if we created them
+      if (virtualizer != null) {
+        virtualizer.cleanup();
+      }
     }
   }
 
@@ -608,21 +638,9 @@ public class ReportingUtils {
       ConnectionProvider connectionProvider, JRDataSource data) throws OBException {
 
     JasperPrint jasperPrint = null;
-    JRSwapFileVirtualizer virtualizer = null;
     String language = OBContext.getOBContext().getLanguage().getLanguage();
     try {
       setReportFormatFactory(parameters);
-
-      // if no custom virtualizer is requested use a default one
-      if (!parameters.containsKey(JRParameter.REPORT_VIRTUALIZER)) {
-        // virtualizer is essentially using a tmp-file to avoid huge memory consumption by jasper
-        // when processing big reports
-        JRSwapFile swap = new JRSwapFile(getTempFolder(), 4096, 1);
-        // start using the virtualizer when having more than 100 pages of data
-        virtualizer = new JRSwapFileVirtualizer(100, swap);
-        parameters.put(JRParameter.REPORT_VIRTUALIZER, virtualizer);
-      }
-
       if (log.isDebugEnabled()) {
         log.debug("list of parameters available in the jasper report");
         for (Iterator<String> keys = parameters.keySet().iterator(); keys.hasNext();) {
@@ -679,11 +697,6 @@ public class ReportingUtils {
     } catch (JRException e) {
       log.error("Error generating Jasper Report: " + jasperFilePath, e);
       throw new OBException(e.getMessage(), e);
-    } finally {
-      // remove virtualizer tmp files if we created them
-      if (virtualizer != null) {
-        virtualizer.cleanup();
-      }
     }
   }
 
