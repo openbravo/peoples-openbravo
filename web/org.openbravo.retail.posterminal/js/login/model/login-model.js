@@ -85,43 +85,45 @@
         properties: ['terminal'],
         loadFunction: function (terminalModel) {
           OB.info('[terminal] Loading... ' + this.properties);
-          var me = this;
+          var me = this,
+              handleError;
+          handleError = function (data) {
+            if (data && data.exception && data.exception.message && data.exception.message === 'OBPOS_OrgDesynchronization') {
+              //Context error, terminal organization does not match user organization.
+              // We need to logout and login again to fix this.
+              OB.UTIL.showConfirmation.display('Error', OB.I18N.getLabel('OBPOS_errorLoadingTerminal') + ' ' + OB.I18N.getLabel('OBPOS_OrgDesynchronization'), [{
+                label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                isConfirmButton: true,
+                action: function () {
+                  OB.UTIL.showLoggingOut(true);
+                  terminalModel.logout();
+                }
+              }], {
+                onShowFunction: function (popup) {
+                  popup.$.headerCloseButton.hide();
+                },
+                autoDismiss: false
+              });
+            } else if (OB.MobileApp.model.get('isLoggingIn') === true) {
+              var msg = OB.I18N.getLabel('OBPOS_errorLoadingTerminal') + ' ' + OB.I18N.getLabel('OBMOBC_LoadingErrorBody');
+              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), msg, [{
+                label: OB.I18N.getLabel('OBMOBC_Reload'),
+                action: function () {
+                  window.location.reload();
+                }
+              }], {
+                onShowFunction: function (popup) {
+                  window.localStorage.removeItem('cacheAvailableForUser:' + OB.MobileApp.model.get('orgUserId'));
+                  popup.$.headerCloseButton.hide();
+                  OB.MobileApp.view.$.containerWindow.destroyComponents();
+                },
+                autoDismiss: false
+              });
+            }
+          };
           new OB.DS.Request('org.openbravo.retail.posterminal.term.Terminal').exec(null, function (data) {
             if (data.exception) {
-              if (OB.I18N.hasLabel(data.exception.message)) {
-                OB.UTIL.showLoading(false);
-                OB.UTIL.showConfirmation.display('Error', OB.I18N.getLabel(data.exception.message), [{
-                  label: OB.I18N.getLabel('OBMOBC_LblOk'),
-                  isConfirmButton: true,
-                  action: function () {
-                    terminalModel.logout();
-                    OB.UTIL.showLoading(true);
-                  }
-                }], {
-                  onHideFunction: function () {
-                    OB.UTIL.showLoading(true);
-                    terminalModel.logout();
-                  }
-                });
-              } else {
-                var msg = "";
-                if (data.exception.message !== undefined) {
-                  msg = " Error: " + data.exception.message;
-                }
-                OB.UTIL.showConfirmation.display('Error', OB.I18N.getLabel('OBPOS_errorLoadingTerminal') + msg, [{
-                  label: OB.I18N.getLabel('OBMOBC_LblOk'),
-                  isConfirmButton: true,
-                  action: function () {
-                    OB.UTIL.showLoading(true);
-                    terminalModel.logout();
-                  }
-                }], {
-                  onHideFunction: function () {
-                    OB.UTIL.showLoading(true);
-                    terminalModel.logout();
-                  }
-                });
-              }
+              handleError(data);
             } else if (data[0]) {
               // load the OB.MobileApp.model.get('terminal') attributes
               terminalModel.set(me.properties[0], data[0]);
@@ -152,6 +154,7 @@
             OB.UTIL.Debug.execute(function () {
               OB.error("Error while retrieving the terminal info ", data);
             });
+            handleError(data);
           });
         }
       });
@@ -174,12 +177,45 @@
             },
             contentType: 'application/json;charset=utf-8',
             success: function (inSender, inResponse) {
-              if (inResponse && !inResponse.exception) {
+              if (inResponse && inResponse.data) {
                 terminalModel.set(me.properties[0], inResponse.data[0]);
                 terminalModel.propertiesReady(me.properties);
+              } else {
+                //Something went wrong server-side
+                if (OB.MobileApp.model.get('isLoggingIn') === true) {
+                  var msg = OB.I18N.getLabel('OBMOBC_ContextErrorBody') + OB.I18N.getLabel('OBMOBC_LoadingErrorBody');
+                  OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), msg, [{
+                    label: OB.I18N.getLabel('OBMOBC_Reload'),
+                    action: function () {
+                      window.location.reload();
+                    }
+                  }], {
+                    onShowFunction: function (popup) {
+                      window.localStorage.removeItem('cacheAvailableForUser:' + OB.MobileApp.model.get('orgUserId'));
+                      popup.$.headerCloseButton.hide();
+                    },
+                    autoDismiss: false
+                  });
+                }
               }
             },
-            fail: function (inSender, inResponse) {}
+            fail: function (inSender, inResponse) {
+              if (OB.MobileApp.model.get('isLoggingIn') === true) {
+                var msg = OB.I18N.getLabel('OBMOBC_ContextErrorBody') + OB.I18N.getLabel('OBMOBC_LoadingErrorBody');
+                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), msg, [{
+                  label: OB.I18N.getLabel('OBMOBC_Reload'),
+                  action: function () {
+                    window.location.reload();
+                  }
+                }], {
+                  onShowFunction: function (popup) {
+                    window.localStorage.removeItem('cacheAvailableForUser:' + OB.MobileApp.model.get('orgUserId'));
+                    popup.$.headerCloseButton.hide();
+                  },
+                  autoDismiss: false
+                });
+              }
+            }
           });
           ajaxRequest2.go(ajaxRequest2.data).response('success').error('fail');
         }
@@ -190,7 +226,7 @@
         loadFunction: function (terminalModel) {
           OB.info('[terminal] Loading... ' + this.properties);
           var me = this;
-          new OB.DS.Request('org.openbravo.retail.posterminal.term.Payments').exec(null, function (data) {
+          OB.MobileApp.model.handlePropertiesLoader(this.properties, 'org.openbravo.retail.posterminal.term.Payments', null, function (data) {
             if (data) {
               var i, max, paymentlegacy, paymentcash, paymentcashcurrency;
               terminalModel.set(me.properties[0], data);
@@ -205,7 +241,7 @@
         loadFunction: function (terminalModel) {
           OB.info('[terminal] Loading... ' + this.properties);
           var me = this;
-          new OB.DS.Request('org.openbravo.retail.posterminal.term.CashMgmtDepositEvents').exec(null, function (data) {
+          OB.MobileApp.model.handlePropertiesLoader(this.properties, 'org.openbravo.retail.posterminal.term.CashMgmtDepositEvents', null, function (data) {
             if (data) {
               terminalModel.set(me.properties[0], data);
               terminalModel.propertiesReady(me.properties);
@@ -219,7 +255,7 @@
         loadFunction: function (terminalModel) {
           OB.info('[terminal] Loading... ' + this.properties);
           var me = this;
-          new OB.DS.Request('org.openbravo.retail.posterminal.term.CashMgmtDropEvents').exec(null, function (data) {
+          OB.MobileApp.model.handlePropertiesLoader(this.properties, 'org.openbravo.retail.posterminal.term.CashMgmtDropEvents', null, function (data) {
             if (data) {
               terminalModel.set(me.properties[0], data);
               terminalModel.propertiesReady(me.properties);
@@ -233,7 +269,7 @@
         loadFunction: function (terminalModel) {
           OB.info('[terminal] Loading... ' + this.properties);
           var me = this;
-          new OB.DS.Request('org.openbravo.retail.posterminal.term.BusinessPartner').exec(null, function (data) {
+          OB.MobileApp.model.handlePropertiesLoader(this.properties, 'org.openbravo.retail.posterminal.term.BusinessPartner', null, function (data) {
             if (data[0]) {
               //TODO set backbone model
               terminalModel.set(me.properties[0], data[0].id);
@@ -248,7 +284,7 @@
         loadFunction: function (terminalModel) {
           OB.info('[terminal] Loading... ' + this.properties);
           var me = this;
-          new OB.DS.Request('org.openbravo.retail.posterminal.term.Location').exec(null, function (data) {
+          OB.MobileApp.model.handlePropertiesLoader(this.properties, 'org.openbravo.retail.posterminal.term.Location', null, function (data) {
             if (data[0]) {
               terminalModel.set(me.properties[0], data[0]);
               terminalModel.propertiesReady(me.properties);
@@ -262,7 +298,7 @@
         loadFunction: function (terminalModel) {
           OB.info('[terminal] Loading... ' + this.properties);
           var me = this;
-          new OB.DS.Request('org.openbravo.retail.posterminal.term.PriceList').exec(null, function (data) {
+          OB.MobileApp.model.handlePropertiesLoader(this.properties, 'org.openbravo.retail.posterminal.term.PriceList', null, function (data) {
             if (data[0]) {
               terminalModel.set(me.properties[0], data[0]);
               terminalModel.propertiesReady(me.properties);
@@ -276,7 +312,7 @@
         loadFunction: function (terminalModel) {
           OB.info('[terminal] Loading... ' + this.properties);
           var me = this;
-          new OB.DS.Request('org.openbravo.retail.posterminal.term.Warehouses').exec(null, function (data) {
+          OB.MobileApp.model.handlePropertiesLoader(this.properties, 'org.openbravo.retail.posterminal.term.Warehouses', null, function (data) {
             if (data && data.exception) {
               //MP17
               terminalModel.set(me.properties[0], []);
@@ -293,7 +329,7 @@
         loadFunction: function (terminalModel) {
           OB.info('[terminal] Loading... ' + this.properties);
           var me = this;
-          new OB.DS.Process('org.openbravo.retail.posterminal.term.WritableOrganizations').exec(null, function (data) {
+          OB.MobileApp.model.handlePropertiesLoader(this.properties, 'org.openbravo.retail.posterminal.term.WritableOrganizations', null, function (data) {
             if (data.length > 0) {
               terminalModel.set(me.properties[0], data);
               terminalModel.propertiesReady(me.properties);
@@ -311,7 +347,7 @@
           var currentDate = new Date();
           params.terminalTime = currentDate;
           params.terminalTimeOffset = currentDate.getTimezoneOffset();
-          new OB.DS.Request('org.openbravo.retail.posterminal.term.PriceListVersion').exec(params, function (data) {
+          OB.MobileApp.model.handlePropertiesLoader(this.properties, 'org.openbravo.retail.posterminal.term.PriceListVersion', params, function (data) {
             if (data[0]) {
               terminalModel.set(me.properties[0], data[0]);
               terminalModel.propertiesReady(me.properties);
@@ -325,7 +361,7 @@
         loadFunction: function (terminalModel) {
           OB.info('[terminal] Loading... ' + this.properties);
           var me = this;
-          new OB.DS.Request('org.openbravo.retail.posterminal.term.Currency').exec(null, function (data) {
+          OB.MobileApp.model.handlePropertiesLoader(this.properties, 'org.openbravo.retail.posterminal.term.Currency', null, function (data) {
             if (data[0]) {
               terminalModel.set(me.properties[0], data[0]);
               //Precision used by arithmetics operations is set using the currency
