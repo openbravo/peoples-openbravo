@@ -21,7 +21,8 @@
     modelName: 'DiscountFilterBusinessPartner',
     generatedStructure: true,
     entityName: 'PricingAdjustmentBusinessPartner',
-    source: 'org.openbravo.retail.posterminal.master.DiscountFilterBusinessPartner'
+    source: 'org.openbravo.retail.posterminal.master.DiscountFilterBusinessPartner',
+    hgvol: 'OBPOS_highVolume.discount.bp'
   });
 
   var promotionsBPCategory = Backbone.Model.extend({
