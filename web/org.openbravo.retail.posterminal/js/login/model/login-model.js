@@ -88,10 +88,10 @@
           var me = this,
               handleError;
           handleError = function (data) {
-            if (data && data.exception && data.exception.message && data.exception.message === 'OBPOS_OrgDesynchronization') {
-              //Context error, terminal organization does not match user organization.
-              // We need to logout and login again to fix this.
-              OB.UTIL.showConfirmation.display('Error', OB.I18N.getLabel('OBPOS_errorLoadingTerminal') + ' ' + OB.I18N.getLabel('OBPOS_OrgDesynchronization'), [{
+            if (data && data.exception && data.exception.message && OB.I18N.hasLabel(data.exception.message)) {
+              //Common error (not a random caught exception).
+              // We might need to logout and login again to fix this.
+              OB.UTIL.showConfirmation.display('Error', OB.I18N.getLabel('OBPOS_errorLoadingTerminal') + ' ' + OB.I18N.getLabel(data.exception.message), [{
                 label: OB.I18N.getLabel('OBMOBC_LblOk'),
                 isConfirmButton: true,
                 action: function () {
