@@ -21,5 +21,13 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="EM_APRM_ADDTRANSACTIONPD" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="EM_APRM_FINDTRANSACTIONSPD" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
     </table>
   </database>

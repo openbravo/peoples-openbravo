@@ -22,7 +22,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2014 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2015 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -112,6 +112,10 @@
     v_penqty NUMBER;
     v_qtysumorders NUMBER;
     v_released  NUMBER;
+    
+    v_bp_isactive c_bpartner.isactive%Type;
+    v_IsQtyVariable M_Product.IsQuantityVariable%TYPE;
+    v_IsReversedDoc CHAR(1);
 
   BEGIN
   
@@ -157,6 +161,7 @@
         FINISH_PROCESS:=true;
       END IF;
     END IF;
+    
   BEGIN --BODY
   	IF(NOT FINISH_PROCESS) THEN
   	  v_PUser:=v_User;
@@ -221,38 +226,60 @@
              RAISE_APPLICATION_ERROR(-20000, '@Inline@ '||v_Message_Qty||' '||'@ProductNotNullAndMovementQtyZero@') ;
           END IF;
 	     End ;
-      if(v_isreturndoctype = 'N' AND v_isSoTrx = 'Y' and v_DocAction<>'RC') then
+      SELECT CASE WHEN COALESCE(instr(M_INOUT.Description,'*R*:'),0) = 0 THEN 'N' ELSE 'Y' END
+            INTO v_IsReversedDoc
+            FROM M_INOUT
+            WHERE M_INOUT.M_INOUT_id = v_Record_ID;
+      -- Skip MovementQtyCheck when it is reversed document
+      if(v_isreturndoctype = 'N' AND v_isSoTrx = 'Y' and v_DocAction<>'RC' AND v_IsReversedDoc='N') then
         v_message := null;
         for Cur_OrderLine in (
-          select c_orderline_id, line
+          select c_orderline_id, line, m_product_id
           from m_inoutline
           where m_inout_id = v_Record_ID
           and c_orderline_id is not null
           order by line
         ) loop
-          select COALESCE(sum(movementqty), 0)
+          select COALESCE(sum(ABS(movementqty)), 0)
           into v_qty
           from m_inoutline
           where m_inout_id = v_Record_ID
           and c_orderline_id = Cur_OrderLine.c_orderline_id;
 
-          select qtyordered, (coalesce(qtydelivered, 0) + v_qty)
+          select ABS(qtyordered), (coalesce(ABS(qtydelivered), 0) + v_qty)
           into v_QuantityOrder, v_qty
           from c_orderline
           where c_orderline_id = Cur_OrderLine.c_orderline_id;
 
-          if(v_QuantityOrder < v_qty) then
-            if v_message is null THEN
-              v_message := Cur_OrderLine.line;
-            ELSE
-              v_message := v_message || ', ' || Cur_OrderLine.line;
-            END IF;
-          end if;
+          SELECT IsQuantityVariable INTO v_IsQtyVariable
+          FROM M_Product
+          WHERE M_Product_ID = Cur_OrderLine.M_Product_ID;
+
+          IF(v_IsQtyVariable='N') THEN
+            if(v_QuantityOrder < v_qty) then
+              if v_message is null THEN
+                v_message := Cur_OrderLine.line;
+              ELSE
+                v_message := v_message || ', ' || Cur_OrderLine.line;
+              END IF;
+            end if;
+          END IF;
         end loop;
         if v_message is not null then
           RAISE_APPLICATION_ERROR(-20000, '@MovementQtyCheck@'||' '||'@Inlines@'||' '||v_message);
         end if;
       end if;
+    
+    
+    /* Check active business partner*/
+      select bp.isactive into v_bp_isactive
+      from m_inout io 
+      left join c_bpartner bp on io.C_BPARTNER_ID = bp.C_BPARTNER_ID
+      where io.M_INOUT_ID = v_Record_ID;
+
+      IF(v_bp_isactive = 'N') THEN
+        RAISE_APPLICATION_ERROR(-20000, '@InActiveBusinessPartner@');
+      END IF;
 
       --Check whether warehouse belongs to the organization.
       SELECT count(AD_ORG_ID)
@@ -583,7 +610,7 @@
                       ) VALUES (
                         get_uuid(), cur_reserve_stock.ad_client_id, cur_reserve_stock.ad_org_id, 'Y',
                         now(), v_user, now(), v_user,
-                        cur_reserve_stock.m_reservation_id, cur_inoutline.m_attributesetinstance_id, cur_inoutline.m_locator_id, cur_inoutline.c_orderline_id,
+                        cur_reserve_stock.m_reservation_id, coalesce(cur_inoutline.m_attributesetinstance_id,'0'), cur_inoutline.m_locator_id, cur_inoutline.c_orderline_id,
                         v_qtyaux, 0, cur_reserve_stock.isallocated
                       );
                     END IF;
@@ -600,6 +627,7 @@
               ELSIF (cur_inout.issotrx = 'N' AND cur_inoutline.canceled_inoutline_id IS NOT NULL AND v_qty < 0) THEN
                 -- Revert to pre-reservations
 
+		BEGIN
                   select  sum(iol.movementqty)
                   into v_qtysumorders
                   from m_inoutline iol
@@ -612,6 +640,11 @@
                   where c_orderline_id=cur_inoutline.c_orderline_id
                   and rs.m_locator_id=cur_inoutline.m_locator_id;
 
+                EXCEPTION
+                  WHEN NO_DATA_FOUND THEN
+                  v_qtysumorders:=0;
+                  v_released:=0;
+                END;
                   v_penqty := -v_qty - ((v_qtysumorders+(-cur_inoutline.movementqty))-v_released);
 
                 DECLARE
@@ -866,6 +899,13 @@
                   )
                   ;
               END LOOP;
+              -- Set check price difference to true in case the receipt line has a related invoice.
+              UPDATE M_TRANSACTION
+              SET checkpricedifference = 'Y'
+              WHERE M_INOUTLINE_ID IN (SELECT DISTINCT il.m_inoutline_id
+                                       FROM m_inoutline il
+                                          JOIN m_matchinv mi ON il.m_inoutline_id = mi.m_inoutline_id
+                                       WHERE il.m_inout_id = Cur_InOut.M_InOut_ID);
             END;
           ELSE
             --Void document is created automatically from main document . 
@@ -1124,6 +1164,14 @@
             UpdatedBy=v_User,
             DocStatus='VO' -- the reversal transaction
           WHERE M_InOut_ID=v_RInOut_ID;
+
+          -- transactions related with original inout and with voided inout will be mark as is cost permanent
+          UPDATE M_TRANSACTION TRX
+          SET ISCOSTPERMANENT='Y'
+          WHERE TRX.M_INOUTLINE_ID IN (SELECT M_INOUTLINE_ID 
+                                       FROM M_INOUTLINE
+                                       WHERE (M_INOUT_ID = v_RInOut_ID 
+                                              OR M_INOUT_ID = Cur_InOut.m_inout_id));
         END IF; -- ReverseCorrection
 
         --M_Inout_Post - Finish_Process Extension Point

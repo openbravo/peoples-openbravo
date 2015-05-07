@@ -54,7 +54,9 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.domain.ReferencedTable;
+import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.ui.Tab;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.db.DalConnectionProvider;
 
 /**
@@ -165,6 +167,12 @@ public class AdvancedQueryBuilder {
 
   private int aliasOffset = 0;
 
+  // Sometimes (i.e. in HQLDataSourceServe) the AdvancedQueryBuilder is used only to retrieve the
+  // WHERE clause, and the FROM clause is discarted
+  // In this cases, prevent adding new join aliases in the WHERE clause, as they will not be defined
+  // in the FROM clause
+  private boolean creatingJoinsInWhereClauseIsPrevented = false;
+
   public Entity getEntity() {
     return entity;
   }
@@ -216,9 +224,27 @@ public class AdvancedQueryBuilder {
 
     if (subEntity != null) {
       // if there's subentity, process it as a subquery with "exists"
-      String subEntityClientOrg = " and e.organization.id "
+
+      String orgPath;
+      if (subEntity.getMappingClass().isAssignableFrom(Organization.class)) {
+        // special case subentity is Organization, so no extra path required to get it
+        orgPath = "e";
+      } else {
+        orgPath = "e.organization";
+      }
+
+      String subEntityClientOrg = " and " + orgPath + ".id "
           + createInClause(OBContext.getOBContext().getReadableOrganizations());
-      subEntityClientOrg += " and e.client.id "
+
+      String clientPath;
+      if (subEntity.getMappingClass().isAssignableFrom(Client.class)) {
+        // special case subentity is Client, so no extra path required to get it
+        clientPath = "e";
+      } else {
+        clientPath = "e.client";
+      }
+
+      subEntityClientOrg += " and " + clientPath + ".id "
           + createInClause(OBContext.getOBContext().getReadableClients());
 
       AdvancedQueryBuilder subEntityQueryBuilder = subDataEntityQueryService.getQueryBuilder();
@@ -616,7 +642,7 @@ public class AdvancedQueryBuilder {
     }
 
     String clause = null;
-    if (orNesting > 0) {
+    if (!creatingJoinsInWhereClauseIsPrevented && orNesting > 0) {
       boolean fromCriteria = true;
       clause = resolveJoins(properties, useFieldName, fromCriteria);
     } else if (getMainAlias() != null) {
@@ -637,8 +663,51 @@ public class AdvancedQueryBuilder {
         clause = getMainAlias() + DalUtil.DOT
             + useFieldName.replace(DalUtil.DOT + JsonConstants.IDENTIFIER, "");
       } else {
-        clause = computeLeftWhereClauseForIdentifier(useProperty, useFieldName, clause,
-            tableReference);
+        final Property refProperty = this.distinctProperty;
+        if (refProperty != null) {
+          tableReference = refProperty.getDomainType() instanceof TableDomainType;
+        }
+        if (subEntity != null && tableReference) {
+          final boolean isTable = property.getEntity() == ModelProvider.getInstance().getEntity(
+              Table.ENTITY_NAME);
+          if (isTable) {
+            useProperty = property.getEntity().getProperty(Table.PROPERTY_NAME);
+            final int index = useFieldName.indexOf(DalUtil.DOT);
+            useFieldName = useFieldName.substring(0, index + 1) + useProperty.getName();
+          } else {
+            // read the reference to get the table reference
+            final Reference reference = OBDal.getInstance().get(Reference.class,
+                refProperty.getDomainType().getReference().getId());
+            for (ReferencedTable referencedTable : reference.getADReferencedTableList()) {
+              if (referencedTable.isActive() && referencedTable.getDisplayedColumn() != null
+                  && referencedTable.getDisplayedColumn().isActive()) {
+                useProperty = property.getEntity().getPropertyByColumnName(
+                    referencedTable.getDisplayedColumn().getDBColumnName());
+                final int index = useFieldName.lastIndexOf(DalUtil.DOT);
+                if (useProperty.isPrimitive()) {
+                  useFieldName = useFieldName.substring(0, index + 1) + useProperty.getName();
+                } else {
+                  // adding _identifier so that the identifier properties will be formed properly in
+                  // computeLeftWhereClauseForIdentifier.
+                  useFieldName = useFieldName.substring(0, index + 1) + useProperty.getName()
+                      + DalUtil.DOT + JsonConstants.IDENTIFIER;
+                }
+                break;
+              }
+            }
+          }
+          clause = getEntity() + DalUtil.DOT + useFieldName;
+          if (!useProperty.isPrimitive()) {
+            clause = computeLeftWhereClauseForIdentifier(useProperty, useFieldName, clause,
+                tableReference);
+          } else {
+            // passing true for last argument to apply filterCriteria
+            clause = getMainAlias() + DalUtil.DOT + useFieldName;
+          }
+        } else {
+          clause = computeLeftWhereClauseForIdentifier(useProperty, useFieldName, clause,
+              tableReference);
+        }
       }
     } else if (!useProperty.isPrimitive()) {
       clause = clause + ".id";
@@ -648,7 +717,6 @@ public class AdvancedQueryBuilder {
       clause = computeLeftWhereClauseForIdentifier(useProperty, useFieldName, clause,
           tableReference);
     }
-
     if (ignoreCase(properties, operator)) {
       clause = "upper(" + clause + ")";
     }
@@ -867,15 +935,17 @@ public class AdvancedQueryBuilder {
     // property, that should work fine, as this last property is always part of the
     // identifier
     List<Property> identifierProperties = null;
+    identifierProperties = property.getEntity().getIdentifierProperties();
     if (!isTableReference) {
-      identifierProperties = property.getEntity().getIdentifierProperties();
       Check.isTrue(identifierProperties.contains(property), "Property " + property
           + " not part of identifier of " + property.getEntity());
     } else {
       // for table references, the display column identifier properties should be used in the joins
-      identifierProperties = property.getTargetEntity().getIdentifierProperties();
+      if (property.getTargetEntity() != null) {
+        identifierProperties = property.getTargetEntity().getIdentifierProperties();
+      }
     }
-    String prefix;
+    String prefix = "";
     final int index = leftWherePart.lastIndexOf(DalUtil.DOT);
     if (key.equals(JsonConstants.IDENTIFIER)) {
       prefix = getMainAlias() + DalUtil.DOT;
@@ -890,7 +960,9 @@ public class AdvancedQueryBuilder {
       prefix = "";
     } else {
       // the + 1 makes sure that the dot is included
-      prefix = leftWherePart.substring(0, index + 1);
+      if (index != -1) {
+        prefix = leftWherePart.substring(0, index + 1);
+      }
     }
     return createIdentifierLeftClause(identifierProperties, prefix);
   }
@@ -1141,6 +1213,7 @@ public class AdvancedQueryBuilder {
           tab = OBDal.getInstance().get(Tab.class, tabId);
         }
         Tab ancestorTab = KernelUtils.getInstance().getParentTab(tab);
+        boolean checkIsNotNull = false;
 
         while (ancestorTab != null && paramValue.equals("")) {
 
@@ -1151,8 +1224,12 @@ public class AdvancedQueryBuilder {
             paramValue = vars.getStringParameter("@" + paramEntity.getName() + ".id@");
           } else {
             try {
-              Property prop = tabEntity.getPropertyByColumnName(param);
-              paramValue = vars.getStringParameter("@" + tabEntity + "." + prop.getName() + "@");
+              Property prop = tabEntity.getPropertyByColumnName(param, checkIsNotNull);
+              if (prop == null) {
+                paramValue = "";
+              } else {
+                paramValue = vars.getStringParameter("@" + tabEntity + "." + prop.getName() + "@");
+              }
             } catch (Exception ignore) {
               // ignoring exception as the property might be found from context.
               // for eg., refer issue https://issues.openbravo.com/view.php?id=26871
@@ -1346,6 +1423,7 @@ public class AdvancedQueryBuilder {
     // table.window.identifier as the sort string
     boolean isIdentifier = localOrderBy.equals(JsonConstants.IDENTIFIER)
         || localOrderBy.endsWith(DalUtil.DOT + JsonConstants.IDENTIFIER);
+    Property originalProp = null;
     if (isIdentifier) {
       Entity searchEntity = getEntity();
       // a path to an entity, find the last entity
@@ -1359,7 +1437,7 @@ public class AdvancedQueryBuilder {
         prefix = localOrderBy.substring(0, localOrderBy.lastIndexOf(DalUtil.DOT) + 1);
 
         String originalPropName = localOrderBy.replace(DalUtil.DOT + JsonConstants.IDENTIFIER, "");
-        Property originalProp = DalUtil.getPropertyFromPath(getEntity(), originalPropName);
+        originalProp = DalUtil.getPropertyFromPath(getEntity(), originalPropName);
         if (originalProp.isComputedColumn()) {
           prefix += Entity.COMPUTED_COLUMNS_PROXY_PROPERTY + DalUtil.DOT + prefix;
         }
@@ -1367,22 +1445,65 @@ public class AdvancedQueryBuilder {
       } else {
         prefix = "";
       }
-      for (Property prop : searchEntity.getIdentifierProperties()) {
-        if (prop.isOneToMany()) {
-          // not supported ignoring it
-          continue;
+      boolean tableReference = false;
+      if (originalProp == null) {
+        if (distinctProperty != null) {
+          tableReference = distinctProperty.getDomainType() instanceof TableDomainType;
+          if (tableReference) {
+            originalProp = distinctProperty;
+          }
         }
-        if (!prop.isPrimitive()) {
-          // get identifier properties from target entity
-          // TODO: currently only supports one level, recursive
-          // calls have the danger of infinite loops in case of
-          // wrong identifier definitions in the AD
-          final Entity targetEntity = prop.getTargetEntity();
+      } else {
+        tableReference = originalProp.getDomainType() instanceof TableDomainType;
+      }
+
+      if (tableReference) {
+        // special case table reference itself
+        final boolean isTable = originalProp.getEntity() == ModelProvider.getInstance().getEntity(
+            Table.ENTITY_NAME);
+        Property useProperty = null;
+        if (isTable) {
+          useProperty = originalProp.getEntity().getProperty(Table.PROPERTY_NAME);
+        } else {
+          // read the reference to get the table reference
+          final Reference reference = OBDal.getInstance().get(Reference.class,
+              originalProp.getDomainType().getReference().getId());
+          for (ReferencedTable referencedTable : reference.getADReferencedTableList()) {
+            if (referencedTable.isActive() && referencedTable.getDisplayedColumn() != null
+                && referencedTable.getDisplayedColumn().isActive()) {
+              useProperty = originalProp.getTargetEntity().getPropertyByColumnName(
+                  referencedTable.getDisplayedColumn().getDBColumnName());
+              break;
+            }
+          }
+        }
+        if (!useProperty.isPrimitive()) {
+          final Entity targetEntity = useProperty.getTargetEntity();
           for (Property targetEntityProperty : targetEntity.getIdentifierProperties()) {
-            paths.add(prefix + prop.getName() + DalUtil.DOT + targetEntityProperty.getName());
+            paths
+                .add(prefix + useProperty.getName() + DalUtil.DOT + targetEntityProperty.getName());
           }
         } else {
-          paths.add(prefix + prop.getName());
+          paths.add(prefix + useProperty.getName());
+        }
+      } else {
+        for (Property prop : searchEntity.getIdentifierProperties()) {
+          if (prop.isOneToMany()) {
+            // not supported ignoring it
+            continue;
+          }
+          if (!prop.isPrimitive()) {
+            // get identifier properties from target entity
+            // TODO: currently only supports one level, recursive
+            // calls have the danger of infinite loops in case of
+            // wrong identifier definitions in the AD
+            final Entity targetEntity = prop.getTargetEntity();
+            for (Property targetEntityProperty : targetEntity.getIdentifierProperties()) {
+              paths.add(prefix + prop.getName() + DalUtil.DOT + targetEntityProperty.getName());
+            }
+          } else {
+            paths.add(prefix + prop.getName());
+          }
         }
       }
     } else {
@@ -1780,28 +1901,33 @@ public class AdvancedQueryBuilder {
   }
 
   public void addSelectFunctionPart(String function, String field) {
-    String localField = field;
-    List<Property> properties = JsonUtils.getPropertiesOnPath(getEntity(), localField);
-    properties = getPropertyForTableReference(properties);
-    boolean fromCriteria = false;
-    localField = resolveJoins(properties, localField, fromCriteria);
-    if (properties.size() > 0) {
-      final Property lastProperty = properties.get(properties.size() - 1);
-      if (lastProperty.getTargetEntity() != null) {
-        final StringBuilder sb = new StringBuilder();
-        for (Property identifierProperty : lastProperty.getTargetEntity().getIdentifierProperties()) {
-          if (sb.length() > 0) {
-            sb.append(" + ");
+    if ("count".equals(function)) {
+      selectClauseParts.add(function + "(*)");
+    } else {
+      String localField = field;
+      List<Property> properties = JsonUtils.getPropertiesOnPath(getEntity(), localField);
+      properties = getPropertyForTableReference(properties);
+      boolean fromCriteria = false;
+      localField = resolveJoins(properties, localField, fromCriteria);
+      if (properties.size() > 0) {
+        final Property lastProperty = properties.get(properties.size() - 1);
+        if (lastProperty.getTargetEntity() != null) {
+          final StringBuilder sb = new StringBuilder();
+          for (Property identifierProperty : lastProperty.getTargetEntity()
+              .getIdentifierProperties()) {
+            if (sb.length() > 0) {
+              sb.append(" + ");
+            }
+            sb.append(localField + "." + identifierProperty.getName());
           }
-          sb.append(localField + "." + identifierProperty.getName());
+          localField = sb.toString();
         }
-        localField = sb.toString();
       }
+      // for select clause with functions replace the joins before so that the join values are not
+      // lost later. Refer issue https://issues.openbravo.com/view.php?id=25008
+      localField = replaceJoinsWithValue(localField);
+      selectClauseParts.add(function + "(" + localField + ")");
     }
-    // for select clause with functions replace the joins before so that the join values are not
-    // lost later. Refer issue https://issues.openbravo.com/view.php?id=25008
-    localField = replaceJoinsWithValue(localField);
-    selectClauseParts.add(function + "(" + localField + ")");
   }
 
   public void addSelectClausePart(String selectClausePart) {
@@ -1884,5 +2010,15 @@ public class AdvancedQueryBuilder {
     }
     properties.set(properties.size() - 1, property);
     return properties;
+  }
+
+  /**
+   * Allows preventing the creation of new join alias when the where clause is built. This is useful
+   * when the AdvancedQueryBuilder is used to obtain the WHERE clause, but when the FROM clause
+   * built is not used (i.e. en HQLDataSourceService)
+   * 
+   */
+  public void preventCreatingJoinsInWhereClause(boolean preventedCreatingJoinsInWhereClause) {
+    this.creatingJoinsInWhereClauseIsPrevented = preventedCreatingJoinsInWhereClause;
   }
 }

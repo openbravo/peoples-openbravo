@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2014 Openbravo SLU
+ * All portions are Copyright (C) 2013-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -27,12 +27,15 @@ import javax.enterprise.event.Observes;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.ScrollMode;
+import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.client.kernel.event.EntityDeleteEvent;
 import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
@@ -42,8 +45,10 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.access.CharacteristicSubsetValue;
 import org.openbravo.model.common.plm.CharacteristicValue;
+import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.plm.ProductCharacteristic;
 import org.openbravo.model.common.plm.ProductCharacteristicConf;
+import org.openbravo.model.common.plm.ProductCharacteristicValue;
 
 public class ProductCharacteristicEventHandler extends EntityPersistenceEventObserver {
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(
@@ -55,7 +60,21 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
     return entities;
   }
 
-  public void onSave(@Observes EntityNewEvent event) {
+  public void onDelete(@Observes
+  EntityDeleteEvent event) {
+    if (!isValidEvent(event)) {
+      return;
+    }
+    final ProductCharacteristic prCh = (ProductCharacteristic) event.getTargetInstance();
+    if (prCh.isVariant() && prCh.getProduct().isGeneric()
+        && !prCh.getProduct().getProductGenericProductList().isEmpty()) {
+      throw new OBException(OBMessageUtils.messageBD("DeleteVariantChWithVariantsError"));
+    }
+    deleteProductCharacteristicValue(prCh);
+  }
+
+  public void onSave(@Observes
+  EntityNewEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -90,23 +109,39 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
           .getCurrentState(charConfListProperty);
       Set<String[]> newChValues = getValuesToAdd(prCh);
       for (String[] strChValueId : newChValues) {
-        prChConfs.add(getCharacteristicConf(prCh, strChValueId[0], strChValueId[1]));
+        prChConfs
+            .add(getCharacteristicConf(prCh, strChValueId[0], strChValueId[1], strChValueId[2]));
       }
     }
   }
 
-  public void onUpdate(@Observes EntityUpdateEvent event) {
+  public void onUpdate(@Observes
+  EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
     final ProductCharacteristic prCh = (ProductCharacteristic) event.getTargetInstance();
+    final Entity prodCharEntity = ModelProvider.getInstance().getEntity(
+        ProductCharacteristic.ENTITY_NAME);
+
+    final Property chProp = prodCharEntity
+        .getProperty(ProductCharacteristic.PROPERTY_CHARACTERISTIC);
+    final Property prdProp = prodCharEntity.getProperty(ProductCharacteristic.PROPERTY_PRODUCT);
+
+    if (!event.getPreviousState(chProp).equals(event.getCurrentState(chProp))) {
+      final Product prd = (Product) event.getCurrentState(prdProp);
+      for (ProductCharacteristicValue pChV : prd.getProductCharacteristicValueList()) {
+        if (pChV.getCharacteristic().equals(event.getPreviousState(chProp))) {
+          throw new OBException(OBMessageUtils.messageBD("UpdateProductChWithValue"));
+        }
+      }
+    }
+
     if (!prCh.isVariant() && prCh.getProduct().isGeneric()
         && !prCh.getProduct().getProductGenericProductList().isEmpty()) {
       throw new OBException(OBMessageUtils.messageBD("NewVariantChWithVariantsError"));
     }
     if (prCh.isVariant() && prCh.getProduct().isGeneric()) {
-      final Entity prodCharEntity = ModelProvider.getInstance().getEntity(
-          ProductCharacteristic.ENTITY_NAME);
       final Property variantProperty = prodCharEntity
           .getProperty(ProductCharacteristic.PROPERTY_VARIANT);
       boolean oldIsVariant = (Boolean) event.getPreviousState(variantProperty);
@@ -150,13 +185,15 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
               ProductCharacteristicConf.PROPERTY_CHARACTERISTICOFPRODUCT, prCh));
           prChConfCrit.add(Restrictions.eq(ProductCharacteristicConf.PROPERTY_CHARACTERISTICVALUE,
               OBDal.getInstance().get(CharacteristicValue.class, strNewValue[0])));
+          prChConfCrit.setFilterOnActive(false);
           ProductCharacteristicConf prChConf = (ProductCharacteristicConf) prChConfCrit
               .uniqueResult();
           prChConf.setCode(strNewValue[1]);
+          prChConf.setActive(Boolean.parseBoolean(strNewValue[2]));
           OBDal.getInstance().save(prChConf);
           continue;
         }
-        prChConfs.add(getCharacteristicConf(prCh, strNewValue[0], strNewValue[1]));
+        prChConfs.add(getCharacteristicConf(prCh, strNewValue[0], strNewValue[1], strNewValue[2]));
       }
       // remove not needed
       if (!existingValues.isEmpty()) {
@@ -167,6 +204,7 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
               ProductCharacteristicConf.PROPERTY_CHARACTERISTICOFPRODUCT, prCh));
           prChConfCrit.add(Restrictions.eq(ProductCharacteristicConf.PROPERTY_CHARACTERISTICVALUE,
               OBDal.getInstance().get(CharacteristicValue.class, strChValueId)));
+          prChConfCrit.setFilterOnActive(false);
           ProductCharacteristicConf prChConf = (ProductCharacteristicConf) prChConfCrit
               .uniqueResult();
 
@@ -187,7 +225,8 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
         if (StringUtils.isBlank(strCode)) {
           strCode = subsetValue.getCharacteristicValue().getCode();
         }
-        String[] strValues = { subsetValue.getCharacteristicValue().getId(), strCode };
+        String[] strValues = { subsetValue.getCharacteristicValue().getId(), strCode,
+            subsetValue.getCharacteristicValue().isActive().toString() };
         chValues.add(strValues);
       }
       return chValues;
@@ -195,7 +234,8 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
     // Add all not summary values.
     for (CharacteristicValue chValue : prCh.getCharacteristic().getCharacteristicValueList()) {
       if (!chValue.isSummaryLevel()) {
-        String[] strValues = { chValue.getId(), chValue.getCode() };
+        String[] strValues = { chValue.getId(), chValue.getCode(),
+            chValue.get(CharacteristicValue.PROPERTY_ACTIVE).toString() };
         chValues.add(strValues);
       }
     }
@@ -203,7 +243,7 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
   }
 
   private ProductCharacteristicConf getCharacteristicConf(ProductCharacteristic prCh,
-      String strCharacteristicValueId, String strCode) {
+      String strCharacteristicValueId, String strCode, String strActive) {
     ProductCharacteristicConf charConf = OBProvider.getInstance().get(
         ProductCharacteristicConf.class);
     charConf.setCharacteristicOfProduct(prCh);
@@ -211,6 +251,33 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
     charConf.setCharacteristicValue((CharacteristicValue) OBDal.getInstance().getProxy(
         CharacteristicValue.ENTITY_NAME, strCharacteristicValueId));
     charConf.setCode(strCode);
+    charConf.setActive(Boolean.parseBoolean(strActive));
     return charConf;
+  }
+
+  private void deleteProductCharacteristicValue(ProductCharacteristic productCharacteristic) {
+    ScrollableResults scroll = null;
+    try {
+      OBCriteria<ProductCharacteristicValue> criteria = OBDal.getInstance().createCriteria(
+          ProductCharacteristicValue.class);
+      criteria.add(Restrictions.eq(ProductCharacteristicValue.PROPERTY_CHARACTERISTIC,
+          productCharacteristic.getCharacteristic()));
+      criteria.add(Restrictions.eq(ProductCharacteristicValue.PROPERTY_PRODUCT,
+          productCharacteristic.getProduct()));
+      scroll = criteria.scroll(ScrollMode.FORWARD_ONLY);
+      int i = 0;
+      while (scroll.next()) {
+        ProductCharacteristicValue productCharacteristicValue = (ProductCharacteristicValue) scroll
+            .get(0);
+        OBDal.getInstance().remove(productCharacteristicValue);
+        i++;
+        if (i % 100 == 0) {
+          OBDal.getInstance().flush();
+          OBDal.getInstance().getSession().clear();
+        }
+      }
+    } finally {
+      scroll.close();
+    }
   }
 }

@@ -392,7 +392,7 @@
 		<variableExpression><![CDATA[($V{CONVAMOUNTREF_TOTAL}.equals(new BigDecimal(0.0)))?null:$V{CONVAMOUNT_TOTAL}.subtract( $V{CONVAMOUNTREF_TOTAL} ).multiply(new BigDecimal(100.0)).divide( $V{CONVAMOUNTREF_TOTAL}, 6)]]></variableExpression>
 	</variable>
 	<variable name="QTY_PCT_1" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL1">
-		<variableExpression><![CDATA[($V{QTYREF_SUM1}.equals(new BigDecimal(0.0)))?null:$V{QTY_SUM1}.subtract( $V{QTYREF_SUM1} ).multiply(new BigDecimal(100.0)).divide( $V{QTYREF_SUM2}, 2, 6)]]></variableExpression>
+		<variableExpression><![CDATA[($V{QTYREF_SUM1}.equals(new BigDecimal(0.0)))?null:$V{QTY_SUM1}.subtract( $V{QTYREF_SUM1} ).multiply(new BigDecimal(100.0)).divide( $V{QTYREF_SUM1}, 2, 6)]]></variableExpression>
 	</variable>
 	<variable name="QTY_PCT_2" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL2">
 		<variableExpression><![CDATA[($V{QTYREF_SUM2}.equals(new BigDecimal(0.0)))?null:$V{QTY_SUM2}.subtract( $V{QTYREF_SUM2} ).multiply(new BigDecimal(100.0)).divide( $V{QTYREF_SUM2}, 2, 6)]]></variableExpression>

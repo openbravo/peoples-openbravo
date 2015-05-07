@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -255,7 +255,7 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-          "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportBudgetGenerateExcel"),
+          "", Utility.getContext(this, vars, "#User_Org", "ReportBudgetGenerateExcel"),
           Utility.getContext(this, vars, "#User_Client", "ReportBudgetGenerateExcel"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportBudgetGenerateExcel", "");
       xmlDocument.setData("reportTrxOrg", "liststructure", comboTableData.select(false));

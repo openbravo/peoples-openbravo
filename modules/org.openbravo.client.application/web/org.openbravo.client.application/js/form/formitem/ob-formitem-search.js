@@ -41,6 +41,12 @@ isc.ClassFactory.mixInInterface('OBSearchItem', 'OBLinkTitleItem');
       targetFld.valueMap[targetFld.getValue()] = display;
       if (targetFld.displayField) {
         targetFld.form.setValue(targetFld.displayField, display);
+        //setting the grid value so that it is not lost when there is another search field in the grid.
+        //refer issue https://issues.openbravo.com/view.php?id=27243
+        if (targetFld.form.grid && targetFld.form.grid.getEditForm()) {
+          targetFld.form.grid.setEditValue(targetFld.form.grid.getEditRow(), targetFld.name, value);
+          targetFld.form.grid.setEditValue(targetFld.form.grid.getEditRow(), targetFld.displayField, display);
+        }
       }
       targetFld.updateValueMap(true);
 

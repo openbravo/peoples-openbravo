@@ -29,6 +29,8 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.client.application.Parameter;
+import org.openbravo.client.application.Process;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -51,6 +53,7 @@ public class DimensionDisplayUtility {
   public static final String DIM_Organization = "OO";
   public static final String DIM_Project = "PJ";
   public static final String DIM_BPartner = "BP";
+  public static final String DIM_BPartnerD = "BP";
   public static final String DIM_Product = "PR";
   public static final String DIM_CostCenter = "CC";
   public static final String DIM_User1 = "U1";
@@ -78,6 +81,7 @@ public class DimensionDisplayUtility {
   public static final String ARCreditMemo = "ARC";
   public static final String Reconciliation = "REC";
   public static final String ARReceipt = "ARR";
+  public static final String MatInternalConsumption = "MIC";
 
   /** Session variable **/
   public static final String IsAcctDimCentrally = "$IsAcctDimCentrally";
@@ -91,6 +95,9 @@ public class DimensionDisplayUtility {
   public static final String LEVELS_REFERENCE = "3DDC9BFFE43342C4826EC65E97D40586";
   public static final String ELEMENT = "$Element";
 
+  public final static String ADD_TRANSACTION_PROCESS_ID = "E68790A7B65F4D45AB35E2BAE34C1F39";
+  public final static String FIN_FINACC_TRANSACTION_TABLE_ID = "4D8C3B3C31D1410DA046140C9F024D17";
+
   private static Map<String, String> columnDimensionMap = null;
 
   private static void initialize() {
@@ -98,6 +105,7 @@ public class DimensionDisplayUtility {
     columnDimensionMap.put("AD_ORG_ID", DIM_Organization);
     columnDimensionMap.put("C_PROJECT_ID", DIM_Project);
     columnDimensionMap.put("C_BPARTNER_ID", DIM_BPartner);
+    columnDimensionMap.put("C_BPARTNER_ID_DIM", DIM_BPartnerD);
     columnDimensionMap.put("M_PRODUCT_ID", DIM_Product);
     columnDimensionMap.put("C_COSTCENTER_ID", DIM_CostCenter);
     columnDimensionMap.put("USER1_ID", DIM_User1);
@@ -557,5 +565,169 @@ public class DimensionDisplayUtility {
     cad.setShowInBreakdown(showInBreakDown);
     OBDal.getInstance().save(cad);
     return cad;
+  }
+
+  /**
+   * Calculates the list of session variables that will be used for computing the display logic of
+   * the parameter.
+   * 
+   * @param process
+   *          Process Definition
+   * @param parameter
+   *          Parameter of Process Definition
+   */
+  @SuppressWarnings("unchecked")
+  public static List<String> getRequiredSessionVariablesForTab(Process process, Parameter parameter) {
+    List<String> sessionVariables = new ArrayList<String>();
+    if (columnDimensionMap == null) {
+      initialize();
+    }
+
+    try {
+      OBContext.setAdminMode(true);
+      String tableId = null;
+      // Process Definition Id of Add Transaction
+      // Table Id of FIN_Finacc_Transaction
+      // The dimensions displayed in Add Transaction would be the sames as Transaction tab in
+      // Financial Account
+      if (ADD_TRANSACTION_PROCESS_ID.equals(process.getId())) {
+        tableId = FIN_FINACC_TRANSACTION_TABLE_ID;
+      } else {
+        return new ArrayList<String>();
+      }
+      final String columnName = parameter.getDBColumnName();
+      String dimension = columnDimensionMap.get(columnName.toUpperCase());
+      if (dimension == null) {
+        log4j.error("Parameter (" + parameter.getId() + " | " + parameter.getName()
+            + ") not mapping any dimension.");
+        return sessionVariables;
+      }
+
+      // Load always IsAcctDimCentrally global variable
+      sessionVariables.add(IsAcctDimCentrally);
+
+      // Load old accounting dimension visibility session variable
+      // It is required for all the accounting dimension fields
+      sessionVariables.add(ELEMENT + "_" + dimension);
+
+      // Load new accounting dimension visibility session variable
+      StringBuilder hql = new StringBuilder();
+      final Session session = OBDal.getInstance().getSession();
+      hql.append(" select distinct dm.%s ");
+      hql.append(" from " + DimensionMapping.ENTITY_NAME + " as dm ");
+      hql.append(" where dm." + DimensionMapping.PROPERTY_TABLE + ".id = ? ");
+      hql.append("       and dm." + DimensionMapping.PROPERTY_ACCOUNTINGDIMENSION + " = ? ");
+
+      final Query queryDoc = session.createQuery(String.format(hql.toString(),
+          DimensionMapping.PROPERTY_DOCUMENTCATEGORY));
+      queryDoc.setParameter(0, tableId);
+      queryDoc.setParameter(1, dimension);
+      List<String> docBaseTypeList = queryDoc.list();
+
+      final Query queryLevel = session.createQuery(String.format(hql.toString(),
+          DimensionMapping.PROPERTY_LEVEL));
+      queryLevel.setParameter(0, tableId);
+      queryLevel.setParameter(1, dimension);
+      List<String> levelList = queryLevel.list();
+
+      for (String doc : docBaseTypeList) {
+        for (String level : levelList) {
+          sessionVariables.add(ELEMENT + "_" + dimension + "_" + doc + "_" + level);
+        }
+      }
+    } catch (Exception e) {
+      log4j.error("Not possible to load session variables for process: " + process.getId(), e);
+      return new ArrayList<String>();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return sessionVariables;
+  }
+
+  /**
+   * Compute the JavaScript code to embed in the process definition for computing the display logic.
+   * 
+   * @param process
+   *          Process Definition
+   * @param parameter
+   *          Parameter of Process Definition
+   */
+  public static String computeAccountingDimensionDisplayLogic(Process process, Parameter parameter) {
+    // Example
+    // (context.$IsAcctDimCentrally === 'N' && context.$Element_U2 === 'Y') ||
+    // (context.$IsAcctDimCentrally === 'Y' && context['$Element_U2_' +
+    // OB.Utilities.getValue(currentValues, 'DOCBASETYPE') '+ _H'] === 'Y')
+    String displayLogicPart1 = "(context." + IsAcctDimCentrally
+        + " === 'N' && context.$Element_%s === 'Y')";
+    String displayLogicPart2 = " || (context."
+        + IsAcctDimCentrally
+        + " === 'Y' && context['$Element_%s_' + OB.Utilities.getValue(currentValues, \"%s\") + '_%s'] === 'Y')";
+
+    try {
+      OBContext.setAdminMode(true);
+      if (columnDimensionMap == null) {
+        initialize();
+      }
+      // Process Definition Id of Add Transaction
+      // Table Id of FIN_Finacc_Transaction
+      // The dimensions displayed in Add Transaction would be the sames as Transaction tab in
+      // Financial Account
+      String tableId = null;
+      if (ADD_TRANSACTION_PROCESS_ID.equals(process.getId())) {
+        tableId = FIN_FINACC_TRANSACTION_TABLE_ID;
+      } else {
+        return "";
+      }
+      String columnName = parameter.getDBColumnName();
+      String dimension = columnDimensionMap.get(columnName.toUpperCase());
+      if (dimension == null) {
+        log4j.error("Parameter (" + parameter.getId() + " | " + parameter.getName()
+            + ") not mapping any dimension.");
+        return "";
+      }
+
+      // Create the old accounting dimension visibility if {Campaign, Activity, Asset} fields
+      // have @ACCT_DIMENSION_DISPLAY@ display logic.
+      if (dimension.equals(DIM_Campaign) || dimension.equals(DIM_Activity)
+          || dimension.equals(DIM_Asset)) {
+        log4j
+            .error(parameter.getName()
+                + " parameter contains @ACCT_DIMENSION_DISPLAY@ display logic but is not supported. Change it.");
+        return String.format(displayLogicPart1, dimension);
+      }
+
+      // Get the corresponding level for the table
+      StringBuilder hql = new StringBuilder();
+      final Session session = OBDal.getInstance().getSession();
+      hql.append(" select distinct dm." + DimensionMapping.PROPERTY_LEVEL);
+      hql.append(" from " + DimensionMapping.ENTITY_NAME + " as dm ");
+      hql.append(" where dm." + DimensionMapping.PROPERTY_TABLE + ".id = ? ");
+      hql.append("       and dm." + DimensionMapping.PROPERTY_ACCOUNTINGDIMENSION + " = ? ");
+      final Query queryLevel = session.createQuery(hql.toString());
+      queryLevel.setParameter(0, tableId);
+      queryLevel.setParameter(1, dimension);
+      @SuppressWarnings("unchecked")
+      List<String> levelList = queryLevel.list();
+      int size = levelList.size();
+      if (size == 0) {
+        log4j.error("Same table (" + tableId + ") does not map with any levels.");
+      }
+      if (size > 1) {
+        log4j.error("Same table (" + tableId + ") mapping with " + size + " levels.");
+      }
+      for (String l : levelList) {
+        // The same table can only map with one level
+        return String.format(displayLogicPart1 + displayLogicPart2, dimension, dimension,
+            DIM_AUXILIAR_INPUT, l);
+      }
+
+    } catch (Exception e) {
+      log4j.error("Not possible to compute display logic for parameter " + parameter.getId(), e);
+      return "";
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+
+    return "";
   }
 }

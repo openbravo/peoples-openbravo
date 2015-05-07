@@ -15,7 +15,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2012-2013 Openbravo SLU
+* All portions are Copyright (C) 2012-2015 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -28,6 +28,10 @@
   v_dummy               VARCHAR2(2000);
   v_productname         m_product.name%TYPE;
   v_isgeneric           CHAR(1);
+  v_updateOrderAndLines           CHAR(1) := 'N';
+  -- Parameter
+  TYPE RECORD IS REF CURSOR;
+  cur_reservationstock 				RECORD;
 BEGIN
   IF (AD_isTriggerEnabled()='N') THEN
     RETURN;
@@ -44,12 +48,20 @@ BEGIN
     END IF;
 
   END IF;
-
-  IF (INSERTING OR UPDATING) THEN
+  IF (UPDATING) THEN
+    IF ( :NEW.quantity <> :old.quantity OR :NEW.reservedqty <> :OLD.reservedqty) THEN
+      v_updateOrderAndLines := 'Y';
+    END IF;
+  END IF;
+  IF (INSERTING) THEN 
+    v_updateOrderAndLines := 'Y';
+  END IF;
+  IF (v_updateOrderAndLines = 'Y') THEN
     IF (:NEW.res_status NOT IN ('DR', 'CL') AND :NEW.c_orderline_id IS NOT NULL) THEN
       UPDATE c_orderline
       SET so_res_status = CASE WHEN :NEW.quantity = :NEW.reservedqty THEN 'CR'
-                               ELSE 'PR'
+                               WHEN :NEW.quantity > :NEW.reservedqty AND :NEW.reservedqty > 0 THEN 'PR'
+                               ELSE 'NR'
                           END
       WHERE c_orderline_id = :NEW.c_orderline_id;
 
@@ -74,8 +86,50 @@ BEGIN
     END IF;
   END IF;
 
+  IF (UPDATING) THEN
+    IF (:OLD.res_status = 'DR' AND :NEW.res_status <> 'DR') THEN
+      FOR cur_reservationstock IN (
+	      select rs.m_locator_id, rs.m_attributesetinstance_id, SUM(rs.quantity - coalesce(rs.releasedqty,0)) as reservedqty, 
+				SUM(CASE WHEN rs.isallocated = 'Y' THEN (rs.quantity - coalesce(rs.releasedqty,0)) ELSE 0 END) as allocatedqty
+        from m_reservation_stock rs
+				where rs.m_reservation_id = :NEW.m_reservation_id
+				group by rs.m_locator_id, rs.m_attributesetinstance_id
+      )
+      LOOP
+      select count (*) into v_count from c_orderline;
+			  UPDATE m_storage_detail
+			  SET reservedqty = reservedqty + cur_reservationstock.reservedqty,
+			      allocatedqty = allocatedqty + cur_reservationstock.allocatedqty
+			  WHERE m_product_id = :NEW.m_product_id
+				AND m_product_uom_id IS NULL
+				AND c_uom_id = :NEW.c_uom_id
+				AND m_locator_id = cur_reservationstock.m_locator_id
+				AND m_attributesetinstance_id = cur_reservationstock.m_attributesetinstance_id;
+      END LOOP;
+    END IF;
+    IF (:OLD.res_status <> 'DR' AND :NEW.res_status = 'DR') THEN
+      FOR cur_reservationstock IN (
+	      select rs.m_locator_id, rs.m_attributesetinstance_id, SUM(rs.quantity - coalesce(rs.releasedqty,0)) as reservedqty, 
+				SUM(CASE WHEN rs.isallocated = 'Y' THEN (rs.quantity - coalesce(rs.releasedqty,0)) ELSE 0 END) as allocatedqty
+				from m_reservation_stock rs
+				where rs.m_reservation_id = :NEW.m_reservation_id
+				group by rs.m_locator_id, rs.m_attributesetinstance_id
+      )
+      LOOP
+			  UPDATE m_storage_detail
+			  SET reservedqty = reservedqty - cur_reservationstock.reservedqty,
+			      allocatedqty = allocatedqty - cur_reservationstock.allocatedqty
+			  WHERE m_product_id = :NEW.m_product_id
+				AND m_product_uom_id IS NULL
+				AND c_uom_id = :NEW.c_uom_id
+				AND m_locator_id = cur_reservationstock.m_locator_id
+				AND m_attributesetinstance_id = cur_reservationstock.m_attributesetinstance_id;
+      END LOOP;
+    END IF;
+  END IF;
+
   IF (DELETING) THEN
-    IF (:OLD.res_status != 'DR') THEN
+    IF (:OLD.res_status <> 'DR') THEN
       RAISE_APPLICATION_ERROR(-20000, '@DocumentProcessed@');
     ELSIF (:OLD.releasedqty <> 0) THEN
       RAISE_APPLICATION_ERROR(-20000, '@CannotDeleteReleasedReservation@');

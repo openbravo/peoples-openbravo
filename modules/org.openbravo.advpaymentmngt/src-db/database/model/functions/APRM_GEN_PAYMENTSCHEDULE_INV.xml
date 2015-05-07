@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2010-2014 Openbravo SLU
+* All portions are Copyright (C) 2010-2015 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -94,6 +94,10 @@ cur_PaymentScheduleOrder RECORD;
 cur_linktopayment_scheddetails RECORD;
 cur_update_scheddetails RECORD;
 cur_invoicepaid RECORD;
+
+v_paymentamt NUMBER:=0;
+v_depositamt NUMBER:=0;
+v_transactiontype VARCHAR2(32);
 
 BEGIN
 
@@ -463,7 +467,8 @@ BEGIN
                   fin_payment_schedule_order,
                   fin_payment_schedule_invoice,
                   fin_payment_detail_id,
-                  amount
+                  amount,
+                  c_bpartner_id
                 )
                 VALUES
                 (
@@ -472,7 +477,8 @@ BEGIN
                   order_schdet.fin_payment_schedule_order,
                   null,
                   order_schdet.fin_payment_detail_id,
-                  v_differenceamount
+                  v_differenceamount,
+                  v_BPartner_ID
                 );
                 -- update amount of the current payment schedule detail
                 UPDATE fin_payment_scheduledetail
@@ -526,7 +532,7 @@ BEGIN
 
 	      -- Create C_InvoiceTax_CashVAT records
 	      IF (v_IsCashVAT = 'Y' AND order_schdet.fin_payment_detail_id IS NOT NULL) THEN
-                v_PercentageCashVAT := abs(c_currency_round(v_scheduledetailamount * 100 / v_GrandTotal, v_Currency_ID, null));
+                v_PercentageCashVAT := c_currency_round(v_scheduledetailamount * 100 / v_GrandTotal, v_Currency_ID, null);
 		FOR cur_cinvoicetax IN (
 		  SELECT it.C_InvoiceTax_ID, it.taxamt, it.taxbaseamt
                   FROM C_InvoiceTax it INNER JOIN C_Tax t on (it.c_tax_id = t.c_tax_id)
@@ -563,7 +569,8 @@ BEGIN
               fin_payment_schedule_order,
               fin_payment_schedule_invoice,
               fin_payment_detail_id,
-              amount
+              amount,
+              c_bpartner_id
             )
             VALUES
             (
@@ -572,7 +579,8 @@ BEGIN
               null,
               v_payment_schedule_invoice,
               null,
-              v_scheduledamount
+              v_scheduledamount,
+              v_BPartner_ID
             );
           END IF;
         END LOOP;
@@ -607,7 +615,8 @@ BEGIN
           DUEAMT =  V_DueAmount,
           DAYSTILLDUE = V_DayStillDue,
           LASTCALCULATEDONDATE = now(),
-          ISPAID = CASE v_OutstandingAmount WHEN 0 THEN 'Y' ELSE 'N' END
+          ISPAID = CASE v_OutstandingAmount WHEN 0 THEN 'Y' ELSE 'N' END,
+          FINALSETTLEMENT = CASE v_OutstandingAmount WHEN 0 THEN now() ELSE NULL END
       WHERE C_INVOICE_ID = P_RECORD_ID;
 
       -- Updating SO_CREDITUSED when Invoices are being processed
@@ -810,7 +819,7 @@ BEGIN
                   
                 -- Create C_InvoiceTax_CashVAT records
 	      IF (v_IsCashVAT = 'Y') THEN
-                v_PercentageCashVAT := abs(c_currency_round(cur_linktopayment_scheddetails.AMOUNT * 100 / v_GrandTotal, v_Currency_ID, null));
+                v_PercentageCashVAT := c_currency_round(cur_linktopayment_scheddetails.AMOUNT * 100 / v_GrandTotal, v_Currency_ID, null);
                 FOR cur_cinvoicetax IN (
                   SELECT it.C_InvoiceTax_ID, it.taxamt, it.taxbaseamt
                   FROM C_InvoiceTax it INNER JOIN C_Tax t on (it.c_tax_id = t.c_tax_id)
@@ -991,7 +1000,21 @@ BEGIN
                 v_ResultStr:='Generating FIN_FINACC_TRANSACTION';
                 v_FIN_FINACC_TRANSACTION_ID := GET_UUID();
                 SELECT COALESCE(MAX(LINE),0) INTO v_Line FROM FIN_FINACC_TRANSACTION WHERE FIN_FINANCIAL_ACCOUNT_ID = v_Financial_Account_ID;
-                --check the currency of the invoice and the currency of the financial account
+		IF (v_IsSOTrx='Y') THEN
+		 IF (cur_paymentschedule.OUTSTANDINGAMT>0) THEN v_depositamt:=cur_paymentschedule.OUTSTANDINGAMT; 
+		 ELSE v_paymentamt:=abs(cur_paymentschedule.OUTSTANDINGAMT); 
+		 END IF;				
+		ELSE
+		 IF (cur_paymentschedule.OUTSTANDINGAMT<0) THEN v_depositamt:=abs(cur_paymentschedule.OUTSTANDINGAMT); 
+		 ELSE  v_paymentamt:=cur_paymentschedule.OUTSTANDINGAMT; END IF;			
+		END IF;
+
+		IF (v_paymentamt> 0) THEN
+		 v_transactiontype:='BPW';
+		ELSE
+		 v_transactiontype:='BPD';
+		END IF;                 
+               --check the currency of the invoice and the currency of the financial account
                 select c_currency_id into v_finacct_currency from FIN_Financial_Account where FIN_Financial_Account_id =v_Financial_Account_ID;
                 IF (v_finacct_currency<>cur_paymentschedule.C_CURRENCY_ID AND cur_finaccpaymentmethod.multicurrency='Y') THEN
                   v_rate := C_CURRENCY_RATE(cur_paymentschedule.C_CURRENCY_ID, v_finacct_currency, cur_paymentschedule.DUEDATE, NULL, v_client_id, cur_paymentschedule.AD_ORG_ID );
@@ -1002,13 +1025,13 @@ BEGIN
                     line, fin_payment_id, dateacct, c_glitem_id, status, paymentamt,
                     depositamt, processed, processing, posted, c_project_id, c_campaign_id, c_costcenter_id,
                     c_activity_id, user1_id, user2_id, trxtype, statementdate, description,
-                    fin_reconciliation_id, foreign_currency_id, foreign_convert_rate, foreign_amount)
+                    fin_reconciliation_id, foreign_currency_id, foreign_convert_rate, foreign_amount, c_bpartner_id)
                   VALUES (v_FIN_FINACC_TRANSACTION_ID, v_client_id, cur_paymentschedule.AD_ORG_ID, now(), p_user,
                     now(), p_user, 'Y', v_finacct_currency, v_Financial_Account_ID,
-                    v_Line, v_FIN_PAYMENT_ID, cur_paymentschedule.DUEDATE, NULL, CASE WHEN v_IsSOTrx='Y' THEN 'RDNC' ELSE 'PWNC' END, CASE WHEN v_IsSOTrx='N' THEN ROUND(cur_paymentschedule.OUTSTANDINGAMT*v_rate, v_PricePr) ELSE 0 END,
-                    CASE WHEN v_IsSOTrx='Y' THEN ROUND(cur_paymentschedule.OUTSTANDINGAMT*v_rate, v_PricePr) ELSE 0 END, 'Y', 'N', 'N', v_project_id, v_campaign_id, v_costcenter,
-                    v_activity_id, v_user1, v_user2, CASE WHEN v_IsSOTrx='N' THEN 'BPW' ELSE 'BPD' END, cur_paymentschedule.DUEDATE, 'Invoice No.: ' || v_documentno,
-                    NULL, cur_paymentschedule.C_CURRENCY_ID, v_rate , CASE WHEN v_IsSOTrx='N' THEN cur_paymentschedule.OUTSTANDINGAMT ELSE cur_paymentschedule.OUTSTANDINGAMT END);
+                    v_Line, v_FIN_PAYMENT_ID, cur_paymentschedule.DUEDATE, NULL, CASE WHEN v_IsSOTrx='Y' THEN 'RDNC' ELSE 'PWNC' END, ROUND(v_paymentamt*v_rate, v_PricePr) , ROUND(v_depositamt*v_rate, v_PricePr) ,
+                   'Y', 'N', 'N', v_project_id, v_campaign_id, v_costcenter,
+                    v_activity_id, v_user1, v_user2, v_transactiontype , cur_paymentschedule.DUEDATE, 'Invoice No.: ' || v_documentno,
+                    NULL, cur_paymentschedule.C_CURRENCY_ID, v_rate , CASE WHEN v_IsSOTrx='N' THEN cur_paymentschedule.OUTSTANDINGAMT ELSE cur_paymentschedule.OUTSTANDINGAMT END, v_BPartner_ID);
                 ELSE
                   INSERT INTO fin_finacc_transaction(
                     fin_finacc_transaction_id, ad_client_id, ad_org_id, created,
@@ -1016,13 +1039,13 @@ BEGIN
                     line, fin_payment_id, dateacct, c_glitem_id, status, paymentamt,
                     depositamt, processed, processing, posted, c_project_id, c_campaign_id, c_costcenter_id,
                     c_activity_id, user1_id, user2_id, trxtype, statementdate, description,
-                    fin_reconciliation_id)
+                    fin_reconciliation_id, c_bpartner_id)
                   VALUES (v_FIN_FINACC_TRANSACTION_ID, v_client_id, cur_paymentschedule.AD_ORG_ID, now(), p_user,
                     now(), p_user, 'Y', cur_paymentschedule.C_CURRENCY_ID, v_Financial_Account_ID,
-                    v_Line, v_FIN_PAYMENT_ID, cur_paymentschedule.DUEDATE, NULL, CASE WHEN v_IsSOTrx='Y' THEN 'RDNC' ELSE 'PWNC' END, CASE WHEN v_IsSOTrx='N' THEN cur_paymentschedule.OUTSTANDINGAMT ELSE 0 END,
-                    CASE WHEN v_IsSOTrx='Y' THEN cur_paymentschedule.OUTSTANDINGAMT ELSE 0 END, 'Y', 'N', 'N', v_project_id, v_campaign_id, v_costcenter,
-                    v_activity_id, v_user1, v_user2, CASE WHEN v_IsSOTrx='N' THEN 'BPW' ELSE 'BPD' END, cur_paymentschedule.DUEDATE, 'Invoice No.: ' || v_documentno,
-                    NULL);
+                    v_Line, v_FIN_PAYMENT_ID, cur_paymentschedule.DUEDATE, NULL, CASE WHEN v_IsSOTrx='Y' THEN 'RDNC' ELSE 'PWNC' END,v_paymentamt, v_depositamt,
+                    'Y', 'N', 'N', v_project_id, v_campaign_id, v_costcenter,
+                    v_activity_id, v_user1, v_user2, v_transactiontype , cur_paymentschedule.DUEDATE, 'Invoice No.: ' || v_documentno,
+                    NULL, v_BPartner_ID);
                 END IF;
                 
                 

@@ -19,7 +19,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2012 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2014 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -253,8 +253,8 @@
               v_User_ID, 'N', v_DocumentNo, 'DR',
                'CO', 'N', 'N', v_DocType_ID,
               v_DocType_ID, CUR_Shipment.Description, CUR_Shipment.salesrep_id, 
-              now(), NULL, 'N', now(),
-              now(), v_C_PaymentTerm_ID, CUR_Shipment.C_BPartner_ID, CUR_Shipment.C_BPartner_Location_ID,
+              trunc(now()), NULL, 'N', now(),
+              trunc(now()), v_C_PaymentTerm_ID, CUR_Shipment.C_BPartner_ID, CUR_Shipment.C_BPartner_Location_ID,
               CUR_Shipment.AD_User_ID, NULL, CUR_Shipment.DateOrdered, v_IsDiscountPrinted,
               v_C_Currency_ID, v_PaymentRule, NULL, 0,
               0, 0, v_M_PriceList_ID, CUR_Shipment.C_Campaign_ID,

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2013 Openbravo SLU
+ * All portions are Copyright (C) 2011-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -429,7 +429,7 @@ isc.OBNumberItem.addProperties({
   },
 
   blur: function () {
-    var value, roundedValue, textRoundedValue;
+    var value, roundedValue, textRoundedValue, isFormula = false;
 
     // Make sure the number is rounded using the number of decimal digits specified in the number typeInstance
     if (isc.isA.String(this.getValue())) {
@@ -438,11 +438,15 @@ isc.OBNumberItem.addProperties({
         value = OB.Utilities.Number.OBPlainToOBMasked(this.getValue(), this.typeInstance.maskNumeric, this.typeInstance.decSeparator, this.typeInstance.groupSeparator, OB.Format.defaultGroupingSize);
       } else {
         value = this.getValue();
+        isFormula = true;
       }
       this.setValue(OB.Utilities.Number.OBMaskedToJS(value, this.typeInstance.decSeparator, this.typeInstance.groupSeparator));
       if (this.form.setTextualValue) {
         this.form.setTextualValue(this.name, value, this.typeInstance);
       }
+    } else {
+      value = this.roundJsNumberUsingTypeInstance(this.getValue(), this.typeInstance);
+      this.setValue(value);
     }
 
     if (this.grid && this.grid.isEditing && this.grid.isEditing()) {
@@ -463,15 +467,28 @@ isc.OBNumberItem.addProperties({
       this.validate();
 
       value = this.getValue();
-
+      if (isFormula) {
+        // the formula is evaluated in the validate function, so until then it is not possible to round it, do it now
+        value = this.roundJsNumberUsingTypeInstance(value, this.typeInstance);
+        if (this.form.setTextualValue) {
+          textRoundedValue = OB.Utilities.Number.JSToOBMasked(value, this.typeInstance.maskNumeric, this.typeInstance.decSeparator, this.typeInstance.groupSeparator, OB.Format.defaultGroupingSize);
+          this.form.setTextualValue(this.name, textRoundedValue, this.typeInstance);
+        }
+        this.setValue(value);
+      }
       // first check if the number is valid
       if (!isc.isA.String(value)) {
         // format the value to be displayed.
-        value = OB.Utilities.Number.OBPlainToOBMasked(value, this.typeInstance.maskNumeric, this.typeInstance.decSeparator, this.typeInstance.groupSeparator, OB.Format.defaultGroupingSize);
+        value = OB.Utilities.Number.JSToOBMasked(value, this.typeInstance.maskNumeric, this.typeInstance.decSeparator, this.typeInstance.groupSeparator, OB.Format.defaultGroupingSize);
         this.setElementValue(this.mapValueToDisplay(value));
       }
     }
     return this.Super('blur', arguments);
+  },
+
+  roundJsNumberUsingTypeInstance: function (jsNumber, typeInstance) {
+    var roundedStringNumber = OB.Utilities.Number.JSToOBMasked(jsNumber, typeInstance.maskNumeric, typeInstance.decSeparator, typeInstance.groupSeparator);
+    return OB.Utilities.Number.OBMaskedToJS(roundedStringNumber, typeInstance.decSeparator, typeInstance.groupSeparator);
   }
 });
 
@@ -541,13 +558,19 @@ isc.OBNumberFilterItem.addProperties({
   },
 
   parseValueExpressions: function (value, fieldName, operator) {
-    var ret;
+    var ret, strValue;
 
+
+    // smartclient's implementation of parseValueExpressions does not work properly of the formitem value is 0
+    // this can be circumvented by passing a string instead of a number (the original value is not modified)
     if (isc.isA.String(value)) {
       value = value.trim();
+      strValue = value;
+    } else {
+      strValue = String(value);
     }
 
-    ret = this.Super('parseValueExpressions', [value, fieldName, operator]);
+    ret = this.Super('parseValueExpressions', [strValue, fieldName, operator]);
 
     // if operator is not supported remove it
     if (!this.validOperators.contains(ret.operator)) {

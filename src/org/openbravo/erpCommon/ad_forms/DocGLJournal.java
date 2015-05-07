@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2010 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2015 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -36,6 +36,7 @@ public class DocGLJournal extends AcctServer {
   static Logger log4jDocGLJournal = Logger.getLogger(DocGLJournal.class);
 
   private String SeqNo = "0";
+  private String C_AcctSchema_ID;
 
   /**
    * Constructor
@@ -70,11 +71,14 @@ public class DocGLJournal extends AcctServer {
    */
   public boolean loadDocumentDetails(FieldProvider[] data, ConnectionProvider conn) {
     loadDocumentType(); // lines require doc type
-
     m_PostingType = data[0].getField("PostingType");
     m_IsOpening = data[0].getField("isopening");
-    C_Period_ID = isperiodOpen(conn, data[0].getField("period"));
-
+    C_Currency_ID = data[0].getField("c_currency_id");
+    try {
+      C_AcctSchema_ID = DocGLJournalData.selectAcctSchema(conn, AD_Client_ID, Record_ID);
+    } catch (ServletException e) {
+      log4j.error("Error retrieving the accounting schema (general ledger)", e);
+    }
     // Contained Objects
     p_lines = loadLines(conn);
     log4jDocGLJournal.debug("Lines=" + p_lines.length);
@@ -88,24 +92,20 @@ public class DocGLJournal extends AcctServer {
    */
   private DocLine[] loadLines(ConnectionProvider conn) {
     ArrayList<Object> list = new ArrayList<Object>();
-
     DocLineGLJournalData[] data = null;
     try {
       data = DocLineGLJournalData.select(conn, Record_ID);
       for (int i = 0; i < data.length; i++) {
         String Line_ID = data[i].glJournallineId;
-        DocLine docLine = new DocLine(DocumentType, Record_ID, Line_ID);
+        DocLine_GLJournal docLine = new DocLine_GLJournal(DocumentType, Record_ID, Line_ID);
         docLine.loadAttributes(data[i], this);
         docLine.m_Record_Id2 = data[i].cDebtPaymentId;
         // -- Source Amounts
-        String AmtSourceDr = data[i].amtsourcedr;
-        String AmtSourceCr = data[i].amtsourcecr;
-        docLine.setAmount(AmtSourceDr, AmtSourceCr);
-        // -- Converted Amounts
-        String C_AcctSchema_ID = data[i].cAcctschemaId;
-        String AmtAcctDr = data[i].amtacctdr;
-        String AmtAcctCr = data[i].amtacctcr;
-        docLine.setConvertedAmt(C_AcctSchema_ID, AmtAcctDr, AmtAcctCr);
+        docLine.setAmount(data[i].amtsourcedr, data[i].amtsourcecr);
+        // -- Converted Amounts (only in non multi-general ledger)
+        if (!"".equals(C_AcctSchema_ID)) {
+          docLine.setConvertedAmt(null, data[i].amtacctdr, data[i].amtacctcr);
+        }
         docLine.m_DateAcct = this.DateAcct;
         // -- Account
         String C_ValidCombination_ID = data[i].cValidcombinationId;
@@ -118,7 +118,6 @@ public class DocGLJournal extends AcctServer {
         docLine.setAccount(acct);
         // -- Set Org from account (x-org)
         docLine.setAD_Org_ID(data[i].adOrgId);
-        //
         list.add(docLine);
       }
     } catch (ServletException e) {
@@ -144,7 +143,6 @@ public class DocGLJournal extends AcctServer {
       sb.append("+").append(p_lines[i].getAmount());
     }
     sb.append("]");
-    //
     log4jDocGLJournal.debug(toString() + " Balance=" + retValue + sb.toString());
     return retValue;
   } // getBalance
@@ -184,13 +182,17 @@ public class DocGLJournal extends AcctServer {
       // account DR CR
       OBContext.setAdminMode(true);
       try {
+        Account account;
         for (int i = 0; i < p_lines.length; i++) {
-          if (p_lines[i].getC_AcctSchema_ID().equals(as.getC_AcctSchema_ID())) {
-            fact.createLine(p_lines[i], p_lines[i].getAccount(), C_Currency_ID,
-                p_lines[i].getAmtSourceDr(), p_lines[i].getAmtSourceCr(), Fact_Acct_Group_ID,
-                nextSeqNo(SeqNo), DocumentType, conn);
+          if (Float.parseFloat(p_lines[i].getAmtSourceDr()) > Float.parseFloat(p_lines[i]
+              .getAmtSourceCr())) {
+            account = ((DocLine_GLJournal) p_lines[i]).getAccount("1", as, conn);
+          } else {
+            account = ((DocLine_GLJournal) p_lines[i]).getAccount("2", as, conn);
           }
-        } // for all lines
+          fact.createLine(p_lines[i], account, C_Currency_ID, p_lines[i].getAmtSourceDr(),
+              p_lines[i].getAmtSourceCr(), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+        }
       } finally {
         OBContext.restorePreviousMode();
       }
@@ -274,6 +276,31 @@ public class DocGLJournal extends AcctServer {
       setStatus(STATUS_DocumentDisabled);
       return false;
     }
+    DocGLJournalData[] data = null;
+    try {
+      data = DocGLJournalData.select(conn, AD_Client_ID, strRecordId);
+      AcctSchema[] m_acctSchemas = reloadLocalAcctSchemaArray(data[0].adOrgId);
+
+      AcctSchema acct = null;
+
+      for (int i = 0; i < m_acctSchemas.length; i++) {
+        acct = m_acctSchemas[i];
+        data = DocGLJournalData.selectFinInvCount(conn, strRecordId, acct.m_C_AcctSchema_ID);
+        int countFinInv = Integer.parseInt(data[0].fininvcount);
+        int countGLItemAcct = Integer.parseInt(data[0].finacctcount);
+        // For any GL Item used in financial invoice lines debit/credit accounts must be defined
+        if (countFinInv != 0 && (countFinInv != countGLItemAcct)) {
+          log4jDocGLJournal
+              .debug("DocGLJournal - getDocumentConfirmation - GL Item used in financial "
+                  + "GLJournal lines debit/credit accounts must be defined.");
+          setStatus(STATUS_InvalidAccount);
+          return false;
+        }
+      }
+
+    } catch (Exception e) {
+      log4jDocGLJournal.error("Exception in getDocumentConfirmation method.", e);
+    }
     return true;
   }
 
@@ -297,4 +324,25 @@ public class DocGLJournal extends AcctServer {
   public String getServletInfo() {
     return "Servlet for the accounting";
   } // end of getServletInfo() method
+
+  private AcctSchema[] reloadLocalAcctSchemaArray(String adOrgId) throws ServletException {
+    AcctSchema acct = null;
+    ArrayList<Object> new_as = new ArrayList<Object>();
+    // We reload again all the acct schemas of the client
+    AcctSchema[] m_aslocal = AcctSchema.getAcctSchemaArray(connectionProvider, AD_Client_ID,
+        adOrgId);
+    // Filter the right acct schemas for the organization
+    for (int i = 0; i < m_aslocal.length; i++) {
+      acct = m_aslocal[i];
+      if (AcctSchemaData.selectAcctSchemaTable(connectionProvider, acct.m_C_AcctSchema_ID,
+          AD_Table_ID)) {
+        new_as.add(new AcctSchema(connectionProvider, acct.m_C_AcctSchema_ID));
+      }
+    }
+    AcctSchema[] retValue = new AcctSchema[new_as.size()];
+    new_as.toArray(retValue);
+    m_aslocal = retValue;
+    return m_aslocal;
+  }
+
 }

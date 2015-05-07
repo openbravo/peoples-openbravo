@@ -77,6 +77,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="ISALLOCATED" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
       <foreign-key foreignTable="C_LOCATION" name="C_LOCATION_WAREHOUSE">
         <reference local="C_LOCATION_ID" foreign="C_LOCATION_ID"/>
       </foreign-key>
@@ -96,6 +100,7 @@
         <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="NAME"/>
       </unique>
+      <check name="M_WAREHOUSE_ALLOCATED"><![CDATA[ISALLOCATED IN ('Y', 'N')]]></check>
       <check name="M_WAREHOUSE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="M_WAREHOUSE_ISSHIPPER_CHK"><![CDATA[ISSHIPPER IN ('Y', 'N')]]></check>
     </table>

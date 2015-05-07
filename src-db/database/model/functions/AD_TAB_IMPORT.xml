@@ -66,6 +66,7 @@
     v_DisplayLength NUMBER(10) ;
     v_PInstance_Log_ID VARCHAR2(32);
     v_Client_ID VARCHAR2(32);
+    v_IgnoreInWad CHAR(1):='N';
   BEGIN
     IF(p_PInstance_ID IS NOT NULL) THEN
       --  Update AD_PInstance
@@ -128,7 +129,7 @@
     end if;
     
     FOR Cur_Column IN(-- added by Pablo Sarobe
-    SELECT c.Columnname, c.Name, c.Description, c.Help, c.AD_Column_ID, c.FieldLength, t.tablename, c.AD_Module_ID, c.IsIdentifier
+    SELECT c.Columnname, c.Name, c.Description, c.Help, c.AD_Column_ID, c.FieldLength, t.tablename, c.AD_Module_ID, c.IsIdentifier, c.sqllogic
     FROM AD_Column c, AD_Table t
     WHERE NOT EXISTS
       (SELECT *
@@ -198,7 +199,11 @@
       else
         v_fieldModule := v_module_id;
       end if;
-      
+
+      IF Cur_Column.AD_Column_ID IS NOT NULL AND Cur_Column.sqllogic IS NOT NULL THEN
+        v_IgnoreInWad := 'Y';
+      END If;
+
       INSERT
       INTO AD_Field
         (
@@ -207,7 +212,7 @@
           name, description, help, seqno, AD_Tab_ID,
           AD_Column_ID, DisplayLength, IsCentrallyMaintained,
           isdisplayed, isreadonly, sortno, issameline, showinrelation, ad_module_id,
-          grid_seqNo
+          grid_seqNo, ignoreinwad
         )
         VALUES
         (v_NextNo, '0', '0', 'Y',
@@ -215,7 +220,7 @@
         Cur_Column.Name, Cur_Column.Description, Cur_Column.Help, v_SeqNo, v_Record_ID,
         Cur_Column.AD_Column_ID, v_DisplayLength, 'Y', 
         v_isDisplayed, v_isReadOnly, v_sortNo, 'N', v_showInRelation, v_fieldModule,
-        v_gridSeqno) ;
+        v_gridSeqno, v_IgnoreInWad) ;
       --
       v_count:=v_count + 1;
       -- Added by Pablo Sarobe

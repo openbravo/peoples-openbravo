@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,6 +28,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBProvider;
@@ -227,7 +229,14 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
         response.setContentType("text/html; charset=UTF-8");
         PrintWriter writer = response.getWriter();
         String selectorId = orgId = vars.getStringParameter("inpSelectorId");
-        writeRedirectOB3(writer, selectorId, imageId, imageSizeAction, sizeOld, sizeNew);
+        writeRedirectOB3(writer, selectorId, imageId, imageSizeAction, sizeOld, sizeNew, null);
+      } catch (Throwable t) {
+        log4j.error("Error uploading image", t);
+        response.setContentType("text/html; charset=UTF-8");
+        PrintWriter writer = response.getWriter();
+        String selectorId = orgId = vars.getStringParameter("inpSelectorId");
+        writeRedirectOB3(writer, selectorId, "", "ERROR_UPLOADING", new Long[] { 0L, 0L },
+            new Long[] { 0L, 0L }, t.getMessage());
       } finally {
         OBContext.restorePreviousMode();
       }
@@ -272,12 +281,17 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
   }
 
   private void writeRedirectOB3(PrintWriter writer, String selectorId, String imageId,
-      String imageSizeAction, Long[] sizeOld, Long[] sizeNew) {
+      String imageSizeAction, Long[] sizeOld, Long[] sizeNew, String msg) {
     writer.write("<HTML><BODY><script type=\"text/javascript\">");
     writer.write("top." + selectorId + ".callback('" + imageId + "', '" + imageSizeAction + "', '"
-        + sizeOld[0] + "' ,'" + sizeOld[1] + "' ,'" + sizeNew[0] + "' ,'" + sizeNew[1] + "');");
-    writer.write("</SCRIPT></BODY></HTML>");
+        + sizeOld[0] + "' ,'" + sizeOld[1] + "' ,'" + sizeNew[0] + "' ,'" + sizeNew[1] + "'");
 
+    if (StringUtils.isNotEmpty(msg)) {
+      writer.write(", '" + StringEscapeUtils.escapeJavaScript(msg) + "'");
+    }
+
+    writer.write(");");
+    writer.write("</SCRIPT></BODY></HTML>");
   }
 
   private void printPageFrame(HttpServletResponse response, VariablesSecureApp vars,

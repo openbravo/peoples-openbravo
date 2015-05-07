@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013 Openbravo SLU 
+ * All portions are Copyright (C) 2013-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -78,6 +78,15 @@ public class ManageReservationActionHandler extends BaseProcessActionHandler {
 
         processReservation = reservation.getRESStatus().equals("DR");
       }
+      if (processReservation) {
+        OBError result = ReservationUtils.processReserve(reservation, "PR");
+        if (result.getType().equals("Error")) {
+          JSONObject errorMessage = new JSONObject();
+          errorMessage.put("severity", result.getType().toLowerCase());
+          errorMessage.put("text", result.getMessage());
+          jsonRequest.put("message", errorMessage);
+        }
+      }
       if (reservation != null) {
         // FIXME: Replace with OBDao method when handler is merged with latest pi.
         // List<String> idList = OBDao.getIDListFromOBObject(reservation
@@ -87,15 +96,6 @@ public class ManageReservationActionHandler extends BaseProcessActionHandler {
           idList.add(resStock.getId());
         }
         manageReservedStockLines(jsonRequest, reservation, idList);
-      }
-      if (processReservation) {
-        OBError result = ReservationUtils.processReserve(reservation, "PR");
-        if (result.getType().equals("Error")) {
-          JSONObject errorMessage = new JSONObject();
-          errorMessage.put("severity", result.getType().toLowerCase());
-          errorMessage.put("text", result.getMessage());
-          jsonRequest.put("message", errorMessage);
-        }
       }
 
     } catch (Exception e) {
@@ -135,6 +135,17 @@ public class ManageReservationActionHandler extends BaseProcessActionHandler {
       String strReservationStockId = selectedLine.get("reservationStock").equals(null) ? ""
           : selectedLine.getString("reservationStock");
       boolean existsReservationStock = StringUtils.isNotBlank(strReservationStockId);
+      if (!existsReservationStock) {
+        String released = selectedLine.get("released").equals(null) ? "" : selectedLine
+            .getString("released");
+        if (StringUtils.isNotBlank(released)) {
+          BigDecimal qtyReleased = new BigDecimal(released);
+          if (qtyReleased.compareTo(BigDecimal.ZERO) != 0) {
+            strReservationStockId = selectedLine.getString("id");
+            existsReservationStock = true;
+          }
+        }
+      }
       if (existsReservationStock) {
         resStock = OBDal.getInstance().get(ReservationStock.class, strReservationStockId);
         idList.remove(strReservationStockId);
@@ -186,8 +197,11 @@ public class ManageReservationActionHandler extends BaseProcessActionHandler {
     if (idList.size() > 0) {
       for (String id : idList) {
         ReservationStock resStock = OBDal.getInstance().get(ReservationStock.class, id);
-        reservation.getMaterialMgmtReservationStockList().remove(resStock);
-        OBDal.getInstance().remove(resStock);
+        if (resStock.getReleased() == null
+            || resStock.getReleased().compareTo(BigDecimal.ZERO) == 0) {
+          reservation.getMaterialMgmtReservationStockList().remove(resStock);
+          OBDal.getInstance().remove(resStock);
+        }
       }
       OBDal.getInstance().save(reservation);
       OBDal.getInstance().flush();

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,8 +19,12 @@
 
 package org.openbravo.service.json.test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
+import org.junit.Test;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.geography.Country;
@@ -43,11 +47,12 @@ public class JsonUpdateRestTest extends JsonRestTest {
   /**
    * Test update of description of Country
    */
+  @Test
   public void testUpdate() throws Exception {
     String description = "";
     {
-      final JSONObject jsonCountryObject = doRequest(URL_PART + "/Country/100", JsonConstants.IDENTIFIER,
-          "GET", 200);
+      final JSONObject jsonCountryObject = doRequest(URL_PART + "/Country/100",
+          JsonConstants.IDENTIFIER, "GET", 200);
       description = jsonCountryObject.getString("description");
       jsonCountryObject.put("description", description + "T");
 
@@ -64,8 +69,8 @@ public class JsonUpdateRestTest extends JsonRestTest {
       assertEquals(1, jsonResultArray.length());
     }
     {
-      final JSONObject jsonCountryObject = doRequest(URL_PART + "/Country/100", JsonConstants.IDENTIFIER,
-          "GET", 200);
+      final JSONObject jsonCountryObject = doRequest(URL_PART + "/Country/100",
+          JsonConstants.IDENTIFIER, "GET", 200);
       assertEquals(description + "T", jsonCountryObject.getString("description"));
     }
   }
@@ -73,6 +78,7 @@ public class JsonUpdateRestTest extends JsonRestTest {
   /**
    * Test insert and delete of Country
    */
+  @Test
   public void testInsertDelete() throws Exception {
     String newId = null;
     setSystemAdministratorContext();

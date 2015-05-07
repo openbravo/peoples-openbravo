@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,34 +19,47 @@
 
 package org.openbravo.advpaymentmngt.test.draft;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.openbravo.advpaymentmngt.test.draft.FinancialAccountTest;
+import org.openbravo.advpaymentmngt.test.draft.PaymentMethodTest;
+import org.openbravo.advpaymentmngt.test.draft.PaymentTest_01;
+import org.openbravo.advpaymentmngt.test.draft.PaymentTest_02;
+import org.openbravo.advpaymentmngt.test.draft.PaymentTest_03;
+import org.openbravo.advpaymentmngt.test.draft.PaymentTest_04;
+import org.openbravo.advpaymentmngt.test.draft.PaymentTest_05;
+import org.openbravo.advpaymentmngt.test.draft.PaymentTest_06;
+import org.openbravo.advpaymentmngt.test.draft.PaymentTest_07;
+import org.openbravo.advpaymentmngt.test.draft.PaymentTest_08;
+import org.openbravo.advpaymentmngt.test.draft.PaymentTest_09;
+import org.openbravo.advpaymentmngt.test.draft.PaymentTest_10;
+import org.openbravo.advpaymentmngt.test.draft.PaymentTest_11;
 
-public class AllTests {
+/**
+ * 
+ * Test for org.openbravo.advpaymentmngt
+ * 
+ */
 
-  public static Test suite() {
-    final TestSuite suite = new TestSuite("Test for org.openbravo.advpaymentmngt");
-    // $JUnit-BEGIN$
-
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+  
     // Master Data Configuration
-    suite.addTestSuite(FinancialAccountTest.class);
-    suite.addTestSuite(PaymentMethodTest.class);
-
+    FinancialAccountTest.class, //
+    PaymentMethodTest.class,
+    
     // Payment scenarios
-    suite.addTestSuite(PaymentTest_01.class);
-    suite.addTestSuite(PaymentTest_02.class);
-    suite.addTestSuite(PaymentTest_03.class);
-    suite.addTestSuite(PaymentTest_04.class);
-    suite.addTestSuite(PaymentTest_05.class);
-    suite.addTestSuite(PaymentTest_06.class);
-    suite.addTestSuite(PaymentTest_07.class);
-    suite.addTestSuite(PaymentTest_08.class);
-    suite.addTestSuite(PaymentTest_09.class);
-    suite.addTestSuite(PaymentTest_10.class);
-    suite.addTestSuite(PaymentTest_11.class);
-
-    // $JUnit-END$
-    return suite;
-  }
+    PaymentTest_01.class, //
+    PaymentTest_02.class, //
+    PaymentTest_03.class, //
+    PaymentTest_04.class, //
+    PaymentTest_05.class, //
+    PaymentTest_06.class, //
+    PaymentTest_07.class, //
+    PaymentTest_08.class, //
+    PaymentTest_09.class, //
+    PaymentTest_10.class, //
+    PaymentTest_11.class })
+public class AllTests {
 
 }

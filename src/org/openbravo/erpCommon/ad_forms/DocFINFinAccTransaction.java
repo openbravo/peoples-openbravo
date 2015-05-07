@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -146,7 +146,7 @@ public class DocFINFinAccTransaction extends AcctServer {
         // into one.
         // https://issues.openbravo.com/view.php?id=19567
         HashMap<String, BigDecimal> amountAndWriteOff = getPaymentDetailWriteOffAndAmount(
-            paymentDetails, ps, psi, pso, i);
+            paymentDetails, ps, psi, pso, i, data[i]);
         BigDecimal amount = amountAndWriteOff.get("amount");
         BigDecimal writeOff = amountAndWriteOff.get("writeoff");
         if (amount == null) {
@@ -387,7 +387,9 @@ public class DocFINFinAccTransaction extends AcctServer {
                   .getInvoice()
                   : null);
           docLine.setDoubtFulDebtAmount(new BigDecimal(data[i].getField("DoubtFulDebtAmount")));
-          docLine.setInvoiceTaxCashVAT_V(strPaymentId);
+
+          docLine.setInvoiceTaxCashVAT_V(paymentDetail_ID);
+          docLine.setInvoiceTaxCashVAT_V(data[i].getField("MergedPaymentDetailId"));
         }
         docLine.setIsPrepayment(data[i].getField("isprepayment"));
         docLine.setCGlItemId(data[i].getField("cGlItemId"));
@@ -430,8 +432,10 @@ public class DocFINFinAccTransaction extends AcctServer {
           AcctSchemaTableDocType.class, whereClause.toString());
       final List<AcctSchemaTableDocType> acctSchemaTableDocTypes = obqParameters.list();
 
-      if (acctSchemaTableDocTypes != null && acctSchemaTableDocTypes.size() > 0)
+      if (acctSchemaTableDocTypes != null && acctSchemaTableDocTypes.size() > 0
+          && acctSchemaTableDocTypes.get(0).getCreatefactTemplate() != null) {
         strClassname = acctSchemaTableDocTypes.get(0).getCreatefactTemplate().getClassname();
+      }
 
       if (strClassname.equals("")) {
         final StringBuilder whereClause2 = new StringBuilder();
@@ -814,7 +818,7 @@ public class DocFINFinAccTransaction extends AcctServer {
               ((DocLine_FINFinAccTransaction) p_lines[i]).DepositAmount);
           lineBalance = lineBalance.subtract(new BigDecimal(
               ((DocLine_FINFinAccTransaction) p_lines[i]).PaymentAmount));
-          retValue = retValue.subtract(lineBalance);
+          retValue = retValue.add(lineBalance);
         } else {
           BigDecimal lineBalance = payment.isReceipt() ? new BigDecimal(
               ((DocLine_FINFinAccTransaction) p_lines[i]).getAmount()) : new BigDecimal(
@@ -822,7 +826,7 @@ public class DocFINFinAccTransaction extends AcctServer {
           BigDecimal lineWriteoff = payment.isReceipt() ? new BigDecimal(
               ((DocLine_FINFinAccTransaction) p_lines[i]).getWriteOffAmt()) : new BigDecimal(
               ((DocLine_FINFinAccTransaction) p_lines[i]).getWriteOffAmt()).negate();
-          retValue = retValue.subtract(lineBalance).subtract(lineWriteoff);
+          retValue = retValue.add(lineBalance).add(lineWriteoff);
         }
       }
     } finally {

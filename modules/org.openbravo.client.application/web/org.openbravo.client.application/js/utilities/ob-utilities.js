@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2014 Openbravo SLU
+ * All portions are Copyright (C) 2011-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -213,7 +213,8 @@ OB.Utilities.createLoadingLayout = function (label) {
   loadingLayout.addMember(isc.Label.create({
     contents: label,
     styleName: OB.Styles.LoadingPrompt.loadingTextStyleName,
-    width: 1,
+    width: 100,
+    align: 'right',
     overflow: 'visible'
   }));
   loadingLayout.addMember(isc.Img.create(OB.Styles.LoadingPrompt.loadingImage));
@@ -337,14 +338,13 @@ OB.Utilities.useClassicMode = function (windowId) {
 // Open a view using a tab id and record id. The tab can be a child tab. If the record id
 // is not set then the tab is opened in grid mode. If command is not set then default is
 // used.
-OB.Utilities.openDirectTab = function (tabId, recordId, command, position, criteria, direct) {
-
+OB.Utilities.openDirectTab = function (tabId, recordId, command, position, criteria, direct, urlParams) {
+  var callback, isDirect = direct;
+  // if the url params are not passed to the function, obtain then from the url
+  urlParams = urlParams || OB.Utilities.getUrlParameters();
   tabId = OB.Utilities.removeFragment(tabId);
   recordId = OB.Utilities.removeFragment(recordId);
   command = OB.Utilities.removeFragment(command);
-
-  var urlParams = OB.Utilities.getUrlParameters(),
-      callback, isDirect = direct;
 
   //added to have the additional filter clause and tabid. Mallikarjun M
   callback = function (response, data, request) {
@@ -379,6 +379,13 @@ OB.Utilities.openDirectTab = function (tabId, recordId, command, position, crite
     if (urlParams.criteria) {
       view.additionalCriteriaTabId = data.tabId;
       view.additionalCriteria = urlParams.criteria;
+      if (urlParams.fkCache) {
+        view.fkCache = urlParams.fkCache;
+      }
+    }
+
+    if (urlParams.emptyFilterClause) {
+      view.emptyFilterClause = urlParams.emptyFilterClause;
     }
 
     if (urlParams.replaceDefaultFilter) {
@@ -417,15 +424,12 @@ OB.Utilities.removeFragment = function (str) {
 // Returns the object used to open the window.
 OB.Utilities.openView = function (windowId, tabId, tabTitle, recordId, command, icon, readOnly, singleRecord, direct, editOrDeleteOnly) {
   var isClassicEnvironment = OB.Utilities.useClassicMode(windowId),
-      openObject, isDirect = direct,
-      isSingleRecord;
+      openObject, isDirect = direct;
   if (recordId) {
     if (direct !== false) {
       isDirect = true;
     }
-    if (singleRecord !== false) {
-      isSingleRecord = true;
-    }
+
   }
   if (isClassicEnvironment) {
     if (recordId) {
@@ -450,7 +454,7 @@ OB.Utilities.openView = function (windowId, tabId, tabTitle, recordId, command, 
       tabTitle: tabTitle,
       windowId: windowId,
       readOnly: readOnly,
-      singleRecord: isSingleRecord,
+      singleRecord: singleRecord,
       editOrDeleteOnly: editOrDeleteOnly
     };
   } else {
@@ -462,7 +466,7 @@ OB.Utilities.openView = function (windowId, tabId, tabTitle, recordId, command, 
       windowId: windowId,
       icon: icon,
       readOnly: readOnly,
-      singleRecord: isSingleRecord,
+      singleRecord: singleRecord,
       editOrDeleteOnly: editOrDeleteOnly
     };
   }
@@ -1285,4 +1289,19 @@ OB.Utilities.getObjectSize = function (object) {
     }
   }
   return size;
+};
+
+//** {{{ OB.Utilities.createResultSetManually }}} **
+//
+// Creates a ResultSet manually for a grid
+// Parameters:
+//  * {{{grid}}} The grid whose ResultSet will be created manually
+OB.Utilities.createResultSetManually = function (grid) {
+  grid.dataProperties.dataSource = grid.dataSource;
+  grid.dataProperties.initialData = [];
+  grid.dataProperties.resultSize = 100;
+  grid.dataProperties.useClientFiltering = false;
+  grid.dataProperties.manualResultSet = true;
+  grid.setData(grid.createDataModel());
+  grid.serverDataNotLoaded = true;
 };

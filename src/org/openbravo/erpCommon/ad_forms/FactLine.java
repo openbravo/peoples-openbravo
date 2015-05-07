@@ -458,6 +458,14 @@ public class FactLine {
     m_AmtAcctDr = amtAcctDr;
   }
 
+  public String getM_AmtSourceDr() {
+    return m_AmtSourceDr;
+  }
+
+  public String getM_AmtSourceCr() {
+    return m_AmtSourceCr;
+  }
+
   /**
    * Returns Source Balance of line
    * 

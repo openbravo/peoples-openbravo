@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2014 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2015 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -33,15 +33,18 @@ import java.util.Set;
 import java.util.Vector;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.APRM_FinaccTransactionV;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -50,8 +53,10 @@ import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.DateTimeData;
+import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.exception.NoConnectionAvailableException;
@@ -252,6 +257,8 @@ public abstract class AcctServer {
   public static final String DOCTYPE_MatMovement = "MMM";
   /** Material Production */
   public static final String DOCTYPE_MatProduction = "MMP";
+  /** Material Internal Consumption */
+  public static final String DOCTYPE_MatInternalConsumption = "MIC";
 
   /** Match Invoice */
   public static final String DOCTYPE_MatMatchInv = "MXI";
@@ -275,6 +282,12 @@ public abstract class AcctServer {
   public static final String DOCTYPE_Reconciliation = "REC";
   // FinBankStatement
   public static final String DOCTYPE_FinBankStatement = "BST";
+  // CostAdjustment
+  public static final String DOCTYPE_CostAdjustment = "CAD";
+  // LandedCost
+  public static final String DOCTYPE_LandedCost = "LDC";
+  // LandedCostCost
+  public static final String DOCTYPE_LandedCostCost = "LCC";
 
   /*************************************************************************/
 
@@ -470,7 +483,7 @@ public abstract class AcctServer {
         || AD_Table_ID.equals("407") || AD_Table_ID.equals("392") || AD_Table_ID.equals("259")
         || AD_Table_ID.equals("800019") || AD_Table_ID.equals("319") || AD_Table_ID.equals("321")
         || AD_Table_ID.equals("323") || AD_Table_ID.equals("325") || AD_Table_ID.equals("224")
-        || AD_Table_ID.equals("472")) {
+        || AD_Table_ID.equals("472") || AD_Table_ID.equals("800168")) {
       switch (Integer.parseInt(AD_Table_ID)) {
       case 318:
         acct = new DocInvoice(AD_Client_ID, AD_Org_ID, connectionProvider);
@@ -571,6 +584,13 @@ public abstract class AcctServer {
         acct.tableName = "M_MatchInv";
         acct.strDateColumn = "DateTrx";
         acct.AD_Table_ID = "472";
+        acct.reloadAcctSchemaArray();
+        break;
+      case 800168:
+        acct = new DocInternalConsumption(AD_Client_ID, AD_Org_ID, connectionProvider);
+        acct.tableName = "M_Internal_Consumption";
+        acct.strDateColumn = "MovementDate";
+        acct.AD_Table_ID = "800168";
         acct.reloadAcctSchemaArray();
         break;
       // case 473: acct = new
@@ -707,8 +727,8 @@ public abstract class AcctServer {
         errors++;
         Status = AcctServer.STATUS_Error;
         save(conn, vars.getUser());
-        log4j.warn(e);
-        e.printStackTrace();
+        log4j.error(
+            "An error ocurred posting RecordId: " + strClave + " - tableId: " + AD_Table_ID, e);
       }
     } catch (ServletException e) {
       log4j.error(e);
@@ -735,9 +755,10 @@ public abstract class AcctServer {
     // Create Fact per AcctSchema
     // if (log4j.isDebugEnabled()) log4j.debug("POSTLOADING ARRAY: " +
     // AD_Client_ID);
-    if (!DocumentType.equals(DOCTYPE_GLJournal))
+    if (!String.valueOf(data[0].getField("multiGl")).equals("N")) {
       // m_as = AcctSchema.getAcctSchemaArray(conn, AD_Client_ID, AD_Org_ID);
       reloadAcctSchemaArray(AD_Org_ID);
+    }
     // if (log4j.isDebugEnabled())
     // log4j.debug("AcctServer - Post - Antes de new Fact - C_CURRENCY_ID = "
     // + C_Currency_ID);
@@ -1086,9 +1107,21 @@ public abstract class AcctServer {
     // createFacts
     try {
       m_fact[index] = createFact(m_as[index], conn, con, vars);
+    } catch (OBException e) {
+      log4j.warn(
+          "Accounting process failed. RecordID: " + Record_ID + " - TableId: " + AD_Table_ID, e);
+      String strMessageError = e.getMessage();
+      if (strMessageError.indexOf("") != -1) {
+        setMessageResult(OBMessageUtils.translateError(strMessageError));
+        if ("@NotConvertible@".equals(strMessageError)) {
+          return STATUS_NotConvertible;
+        }
+      }
+      return STATUS_Error;
     } catch (Exception e) {
-      log4j.warn(e);
-      e.printStackTrace();
+      log4j.warn(
+          "Accounting process failed. RecordID: " + Record_ID + " - TableId: " + AD_Table_ID, e);
+      return STATUS_Error;
     }
     if (!Status.equals(STATUS_NotPosted))
       return Status;
@@ -1307,7 +1340,6 @@ public abstract class AcctServer {
       log4j.debug("AcctServer - getConvertedAmount - starting method - Amt : " + Amt
           + " - CurFrom_ID : " + CurFrom_ID + " - CurTo_ID : " + CurTo_ID + "- ConvDate: "
           + ConvDate + " - RateType:" + RateType + " - client:" + client + "- org:" + org);
-
     if (Amt.equals(""))
       throw new IllegalArgumentException(
           "AcctServer - getConvertedAmt - required parameter missing - Amt");
@@ -2146,7 +2178,20 @@ public abstract class AcctServer {
    */
   public void setMessageResult(ConnectionProvider conn, String _strStatus, String strMessageType,
       Map<String, String> _parameters) {
-    VariablesSecureApp vars = new VariablesSecureApp(RequestContext.get().getRequest());
+    HttpServletRequest request = RequestContext.get().getRequest();
+    VariablesSecureApp vars;
+
+    if (request != null) {
+      // getting context info from session
+      vars = new VariablesSecureApp(RequestContext.get().getRequest());
+    } else {
+      // there is no session, getting context info from OBContext
+      OBContext ctx = OBContext.getOBContext();
+      vars = new VariablesSecureApp((String) DalUtil.getId(ctx.getUser()),
+          (String) DalUtil.getId(ctx.getCurrentClient()), (String) DalUtil.getId(ctx
+              .getCurrentOrganization()), (String) DalUtil.getId(ctx.getRole()), ctx.getLanguage()
+              .getLanguage());
+    }
     setMessageResult(conn, vars, _strStatus, strMessageType, _parameters);
   }
 
@@ -2393,8 +2438,13 @@ public abstract class AcctServer {
       if (conversionRateDoc != null) {
         amtFrom = applyRate(_amount, conversionRateDoc, false);
       } else {
-        amtFrom = new BigDecimal(getConvertedAmt(_amount.toString(), currencyIDFrom, currencyIDTo,
-            conversionDate, "", AD_Client_ID, AD_Org_ID, conn));
+        String convertedAmt = getConvertedAmt(_amount.toString(), currencyIDFrom, currencyIDTo,
+            conversionDate, "", AD_Client_ID, AD_Org_ID, conn);
+        if (convertedAmt != null && !"".equals(convertedAmt)) {
+          amtFrom = new BigDecimal(convertedAmt);
+        } else {
+          throw new OBException("@NotConvertible@");
+        }
       }
     }
     ConversionRateDoc conversionRateCurrentDoc = getConversionRateDoc(AD_Table_ID, Record_ID,
@@ -2418,6 +2468,8 @@ public abstract class AcctServer {
       conversionDate = dateFormat.format(transaction.getDateAcct());
       conversionRateCurrentDoc = getConversionRateDoc(TABLEID_Transaction, transaction.getId(),
           currencyIDFrom, currencyIDTo);
+    } else {
+      conversionDate = dateAcct;
     }
     if (conversionRateCurrentDoc != null) {
       amtTo = applyRate(_amount, conversionRateCurrentDoc, true);
@@ -2437,10 +2489,18 @@ public abstract class AcctServer {
         amtTo = applyRate(_amount, conversionRateCurrentDoc, false);
         amtFromSourcecurrency = applyRate(amtFrom, conversionRateCurrentDoc, true);
       } else {
-        amtTo = new BigDecimal(getConvertedAmt(_amount.toString(), currencyIDFrom, currencyIDTo,
-            conversionDate, "", AD_Client_ID, AD_Org_ID, conn));
-        amtFromSourcecurrency = amtFrom.multiply(_amount).divide(amtTo, conversionRatePrecision,
-            BigDecimal.ROUND_HALF_EVEN);
+        String convertedAmt = getConvertedAmt(_amount.toString(), currencyIDFrom, currencyIDTo,
+            conversionDate, "", AD_Client_ID, AD_Org_ID, conn);
+        if (convertedAmt != null && !"".equals(convertedAmt)) {
+          amtTo = new BigDecimal(convertedAmt);
+        } else {
+          throw new OBException("@NotConvertible@");
+        }
+        if (amtTo.compareTo(BigDecimal.ZERO) != 0)
+          amtFromSourcecurrency = amtFrom.multiply(_amount).divide(amtTo, conversionRatePrecision,
+              BigDecimal.ROUND_HALF_EVEN);
+        else
+          amtFromSourcecurrency = amtFrom;
       }
     }
     amtDiff = (amtTo).subtract(amtFrom);
@@ -2853,7 +2913,37 @@ public abstract class AcctServer {
   public HashMap<String, BigDecimal> getPaymentDetailWriteOffAndAmount(
       List<FIN_PaymentDetail> paymentDetails, FIN_PaymentSchedule ps, FIN_PaymentSchedule psi,
       FIN_PaymentSchedule pso, int currentPaymentDetailIndex) {
+    return getPaymentDetailWriteOffAndAmount(paymentDetails, ps, psi, pso,
+        currentPaymentDetailIndex, null);
+  }
 
+  /**
+   * Returns the writeoff and the amount of a Payment Detail. In case the related Payment Schedule
+   * Detail was generated for compensate the difference between an Order and a related Invoice, it
+   * merges it's amount with the next Payment Schedule Detail. Issue 19567:
+   * https://issues.openbravo.com/view.php?id=19567 <br />
+   * It does exactly the same as the
+   * {@link #getPaymentDetailWriteOffAndAmount(List, FIN_PaymentSchedule, FIN_PaymentSchedule, FIN_PaymentSchedule, int)}
+   * method, but it also stores a new field "MergedPaymentDetailId" inside the fieldProvider with
+   * the merged payment detail id (if any).
+   * 
+   * @param paymentDetails
+   *          List of payment Details
+   * @param ps
+   *          Previous Payment Schedule
+   * @param psi
+   *          Invoice Payment Schedule of actual Payment Detail
+   * @param pso
+   *          Order Payment Schedule of actual Payment Detail
+   * @param currentPaymentDetailIndex
+   *          Index
+   * @param fieldProvider
+   *          contains the FieldProvider with the Payment Detail currently being processed. Used to
+   *          store the "MergedPaymentDetailId" (if any) as a new field of the fieldProvider
+   */
+  public HashMap<String, BigDecimal> getPaymentDetailWriteOffAndAmount(
+      List<FIN_PaymentDetail> paymentDetails, FIN_PaymentSchedule ps, FIN_PaymentSchedule psi,
+      FIN_PaymentSchedule pso, int currentPaymentDetailIndex, final FieldProvider fieldProvider) {
     HashMap<String, BigDecimal> amountAndWriteOff = new HashMap<String, BigDecimal>();
 
     // Default return values
@@ -2888,6 +2978,10 @@ public abstract class AcctServer {
               "writeoff",
               paymentDetails.get(currentPaymentDetailIndex).getWriteoffAmount()
                   .add(paymentDetails.get(currentPaymentDetailIndex - 1).getWriteoffAmount()));
+          if (fieldProvider != null) {
+            FieldProviderFactory.setField(fieldProvider, "MergedPaymentDetailId", paymentDetails
+                .get(currentPaymentDetailIndex - 1).getId());
+          }
         }
       }
     }

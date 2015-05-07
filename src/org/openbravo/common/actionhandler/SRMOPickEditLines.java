@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -108,7 +108,12 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
 
   private void createOrderLines(JSONObject jsonRequest, List<String> idList) throws JSONException,
       OBException {
-    JSONArray selectedLines = jsonRequest.getJSONArray("_selection");
+    JSONObject grid = jsonRequest.getJSONObject("_params").getJSONObject("grid");
+    JSONArray selectedLines = grid.getJSONArray("_selection");
+    JSONObject orphanlinesgrid = jsonRequest.getJSONObject("_params").getJSONObject(
+        "orphanlinesgrid");
+    JSONArray selectedLinesOrphan = orphanlinesgrid.getJSONArray("_selection");
+
     final String strOrderId = jsonRequest.getString("C_Order_ID");
     Order order = OBDal.getInstance().get(Order.class, strOrderId);
     boolean isSOTrx = order.isSalesTransaction();
@@ -124,6 +129,10 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
     Object o = obc.list().get(0);
     if (o != null) {
       lineNo = (Long) o;
+    }
+    for (long i = 0; i < selectedLinesOrphan.length(); i++) {
+      JSONObject selectedLineOrphan = selectedLinesOrphan.getJSONObject((int) i);
+      selectedLines.put(selectedLineOrphan);
     }
 
     for (long i = 0; i < selectedLines.length(); i++) {
@@ -173,7 +182,7 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
         tax = shipmentLine.getSalesOrderLine().getTax();
       } else {
         String taxId = "";
-        if (selectedLine.get("tax").equals(null)) {
+        if (selectedLine.get("tax").equals(null) || selectedLine.get("tax").equals("")) {
           List<Object> parameters = new ArrayList<Object>();
 
           parameters.add(product.getId());
@@ -209,7 +218,7 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
       final int pricePrecision = order.getCurrency().getPricePrecision().intValue();
       final int stdPrecision = order.getCurrency().getStandardPrecision().intValue();
 
-      if (selectedLine.get("unitPrice").equals(null)) {
+      if (selectedLine.get("unitPrice").equals(null) || "".equals(selectedLine.get("unitPrice"))) {
         try {
           final ProductPrice pp = FinancialUtils.getProductPrice(product, order.getOrderDate(),
               isSOTrx, order.getPriceList());

@@ -78,12 +78,21 @@ public class DynamicExpressionParser {
   private boolean tabLevelDisplayLogic = false;
   private boolean parameterDisplayLogic = false;
   Process process;
+  private Parameter parameter;
 
   private ApplicationDictionaryCachedStructures cachedStructures;
 
   public DynamicExpressionParser(String code, Process process, boolean parameterDisplayLogic) {
     this.code = code;
     this.process = process;
+    this.parameterDisplayLogic = parameterDisplayLogic;
+    parse();
+  }
+
+  public DynamicExpressionParser(String code, Parameter parameter, boolean parameterDisplayLogic) {
+    this.code = code;
+    this.parameter = parameter;
+    this.process = parameter.getObuiappProcess();
     this.parameterDisplayLogic = parameterDisplayLogic;
     parse();
   }
@@ -167,13 +176,25 @@ public class DynamicExpressionParser {
     }
     // Handle accounting dimensions special display logic
     if (jsCode.toString().contains(DimensionDisplayUtility.DIM_DISPLAYLOGIC)) {
-      List<String> sessionVariablesToLoad = DimensionDisplayUtility
-          .getRequiredSessionVariablesForTab(this.tab, this.field);
-      for (String sv : sessionVariablesToLoad) {
-        sessionAttributesInExpression.add(sv);
+      String parsedDisplay = null;
+      if (this.parameterDisplayLogic) {
+        List<String> sessionVariablesToLoad = DimensionDisplayUtility
+            .getRequiredSessionVariablesForTab(this.process, this.parameter);
+        for (String sv : sessionVariablesToLoad) {
+          sessionAttributesInExpression.add(sv);
+        }
+        parsedDisplay = DimensionDisplayUtility.computeAccountingDimensionDisplayLogic(
+            this.process, this.parameter);
+      } else {
+        List<String> sessionVariablesToLoad = DimensionDisplayUtility
+            .getRequiredSessionVariablesForTab(this.tab, this.field);
+        for (String sv : sessionVariablesToLoad) {
+          sessionAttributesInExpression.add(sv);
+        }
+        parsedDisplay = DimensionDisplayUtility.computeAccountingDimensionDisplayLogic(this.tab,
+            this.field);
       }
-      String parsedDisplay = DimensionDisplayUtility.computeAccountingDimensionDisplayLogic(
-          this.tab, this.field);
+
       if (!"".equals(parsedDisplay)) {
         parsedDisplay = "(" + parsedDisplay + ")";
       }

@@ -29,6 +29,7 @@
   v_CurrencyRate      NUMBER;
   v_CurrencyRateType  VARCHAR(60) ;
   v_DateAcct          DATE;
+  v_IsMultiGL     CHAR(1);
     
 BEGIN
     
@@ -43,11 +44,11 @@ BEGIN
   SELECT C_AcctSchema_ID,
     CurrencyRate,
     COALESCE(CurrencyRateType, 'S'),
-    dateacct
+    dateacct, multi_gl
   INTO v_AcctSchema_ID,
     v_CurrencyRate,
     v_CurrencyRateType,
-    v_DateAcct
+    v_DateAcct, v_IsMultiGL
   FROM GL_Journal
   WHERE GL_Journal_ID=:NEW.GL_Journal_ID;
   SELECT COALESCE(MAX(c.C_Currency_ID), '0'),
@@ -61,6 +62,9 @@ BEGIN
   v_rate:=v_CurrencyRate;
   IF(v_rate IS NULL OR v_rate = 0) THEN
     v_rate:=C_CURRENCY_RATE(:NEW.C_Currency_ID, v_TargetCurrency_ID, v_DateAcct, v_CurrencyRateType, :NEW.AD_CLIENT_ID, :NEW.AD_ORG_ID) ;
+  END IF;
+  IF(v_IsMultiGL = 'Y') THEN
+    v_rate:= 1;
   END IF;
   :NEW.AMTACCTDR:=ROUND(COALESCE(:NEW.AMTSOURCEDR, 0) *v_rate, v_StdPrecision) ;
   :NEW.AMTACCTCR:=ROUND(COALESCE(:NEW.AMTSOURCECR, 0) *v_rate, v_StdPrecision) ;

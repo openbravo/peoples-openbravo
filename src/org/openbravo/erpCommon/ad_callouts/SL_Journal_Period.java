@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -79,16 +79,18 @@ public class SL_Journal_Period extends HttpSecureAppServlet {
     String stradClientId = vars.getClient();
     final String stradOrgId = vars.getGlobalVariable("inpadOrgId", "SL_Journal_Period|adOrgId", "");
 
-    AcctSchema acctSchema = OBDal.getInstance().get(AcctSchema.class, strAcctSchemaId);
-    String currencyRate = null;
     OBError myMessage = null;
-    try {
-      currencyRate = SLJournalPeriodData.getCurrencyRate(this, strCurrencyId, acctSchema
-          .getCurrency().getId(), strDateAcctNew, strCurrencyRateType, stradClientId, stradOrgId,
-          strAcctSchemaId);
-    } catch (Exception e) {
-      myMessage = Utility.translateError(this, vars, vars.getLanguage(), e.getMessage());
-      log4j.warn("Currency does not exist. Exception:" + e);
+    String currencyRate = null;
+    if (strAcctSchemaId != null && !strAcctSchemaId.isEmpty()) {
+      AcctSchema acctSchema = OBDal.getInstance().get(AcctSchema.class, strAcctSchemaId);
+      try {
+        currencyRate = SLJournalPeriodData.getCurrencyRate(this, strCurrencyId, acctSchema
+            .getCurrency().getId(), strDateAcctNew, strCurrencyRateType, stradClientId, stradOrgId,
+            strAcctSchemaId);
+      } catch (Exception e) {
+        myMessage = Utility.translateError(this, vars, vars.getLanguage(), e.getMessage());
+        log4j.warn("Currency does not exist. Exception:" + e);
+      }
     }
 
     String strDateAcct = strDateAcctNew;
@@ -101,9 +103,24 @@ public class SL_Journal_Period extends HttpSecureAppServlet {
     // When DateAcct is changed, set C_Period_ID
     if (strChanged.equals("inpdateacct")) {
       strcPeriodId = SLJournalPeriodData.period(this, stradClientId, stradOrgId, strDateAcct);
-      if (strcPeriodId.equals(""))
-        strcPeriodId = strcPeriodIdNew;
+      if (strcPeriodId.equals("")) {
+        StringBuffer resultado = new StringBuffer();
+        resultado.append("var calloutName='SL_Journal_Period';\n\n");
+        resultado.append("var respuesta = new Array(");
+        resultado.append("new Array(\"ERROR\", \""
+            + Utility.messageBD(this, "PeriodNotValid", vars.getLanguage()) + "\")");
+        resultado.append(");");
+        xmlDocument.setParameter("array", resultado.toString());
+        xmlDocument.setParameter("frameName", "appFrame");
+        response.setContentType("text/html; charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        out.println(xmlDocument.print());
+        out.close();
+        return;
+      }
+
     }
+    boolean isStandardPeriod = true;
     if (strChanged.equals("inpcPeriodId") && !strcPeriodId.equals("")) {
       // When C_Period_ID is changed, check if in DateAcct range and set
       // to end date if not
@@ -117,6 +134,7 @@ public class SL_Journal_Period extends HttpSecureAppServlet {
             || DateTimeData.compare(this, EndDate, strDateAcct).equals("-1"))
           strDateAcct = EndDate;
       } else {
+        isStandardPeriod = false;
         strDateAcct = EndDate;
       }
     }
@@ -124,9 +142,14 @@ public class SL_Journal_Period extends HttpSecureAppServlet {
     resultado.append("var calloutName='SL_Journal_Period';\n\n");
     resultado.append("var respuesta = new Array(");
     resultado.append("new Array(\"inpdateacct\", \"" + strDateAcct + "\"),");
+    if (!isStandardPeriod) {
+      resultado.append("new Array(\"inpdatedoc\", \"" + strDateAcct + "\"),");
+    }
     resultado.append("new Array(\"inpcPeriodId\", \"" + strcPeriodId + "\"),");
     if (myMessage != null) {
       resultado.append("new Array('MESSAGE', \"" + myMessage.getMessage() + "\"),");
+    }
+    if (currencyRate == null) {
       resultado.append("new Array(\"inpcurrencyrate\", \"" + "1" + "\")");
     } else {
       resultado.append("new Array(\"inpcurrencyrate\", \"" + currencyRate.toString() + "\")");

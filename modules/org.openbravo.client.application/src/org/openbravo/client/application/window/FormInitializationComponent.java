@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,6 +29,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
@@ -105,6 +107,10 @@ public class FormInitializationComponent extends BaseActionHandler {
   @Inject
   private ApplicationDictionaryCachedStructures cachedStructures;
 
+  @Inject
+  @Any
+  private Instance<FICExtension> ficExtensions;
+
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) {
     OBContext.setAdminMode(true);
@@ -177,7 +183,9 @@ public class FormInitializationComponent extends BaseActionHandler {
       List<String> overwrittenAuxiliaryInputs = new ArrayList<String>();
       // The provided overwrittenAuxiliaryInputs only have to be persisted when calling the FIC in
       // CHANGE mode. In the rest of the modes all auxiliary inputs are computed regardless of
-      // whether a callout have modified them in a previous request
+      // whether a callout have modified them in a previous request with the exception of NEW. In
+      // NEW mode auxiliary inputs are not recomputed if they were previously calculated by callouts
+      // (within in the same request)
       if (jsContent.has("overwrittenAuxiliaryInputs") && "CHANGE".equals(mode)) {
         overwrittenAuxiliaryInputs = convertJSONArray(jsContent
             .getJSONArray("overwrittenAuxiliaryInputs"));
@@ -284,16 +292,23 @@ public class FormInitializationComponent extends BaseActionHandler {
       long t8 = System.currentTimeMillis();
       int noteCount = computeNoteCount(tab, rowId);
 
-      // Construction of the final JSONObject
+      // Execute hooks implementing FICExtension.
       long t9 = System.currentTimeMillis();
+      for (FICExtension ficExtension : ficExtensions) {
+        ficExtension.execute(mode, tab, columnValues, row, changeEventCols, calloutMessages,
+            attachments, jsExcuteCode, hiddenInputs, noteCount, overwrittenAuxiliaryInputs);
+      }
+
+      // Construction of the final JSONObject
+      long t10 = System.currentTimeMillis();
       JSONObject finalObject = buildJSONObject(mode, tab, columnValues, row, changeEventCols,
           calloutMessages, attachments, jsExcuteCode, hiddenInputs, noteCount,
           overwrittenAuxiliaryInputs);
       analyzeResponse(tab, columnValues);
-      long t10 = System.currentTimeMillis();
+      long t11 = System.currentTimeMillis();
       log.debug("Elapsed time: " + (System.currentTimeMillis() - iniTime) + "(" + (t2 - t1) + ","
           + (t3 - t2) + "," + (t4 - t3) + "," + (t5 - t4) + "," + (t6 - t5) + "," + (t7 - t6) + ","
-          + (t8 - t7) + "," + (t9 - t8) + "," + (t10 - t9) + ")");
+          + (t8 - t7) + "," + (t9 - t8) + "," + (t10 - t9) + "," + (t11 - t10) + ")");
       log.debug("Attachment exists: " + finalObject.getBoolean("attachmentExists"));
       return finalObject;
     } catch (Throwable t) {
@@ -350,6 +365,7 @@ public class FormInitializationComponent extends BaseActionHandler {
   private int computeNoteCount(Tab tab, String rowId) {
     OBQuery<Note> obq = OBDal.getInstance().createQuery(Note.class,
         " table.id=:tableId and record=:recordId");
+    obq.setFilterOnReadableOrganization(false);
     obq.setNamedParameter("tableId", (String) DalUtil.getId(tab.getTable()));
     obq.setNamedParameter("recordId", rowId);
     return obq.count();
@@ -547,6 +563,11 @@ public class FormInitializationComponent extends BaseActionHandler {
     String attribute = null, attrValue = null;
     for (String attrName : parser.getSessionAttributes()) {
       if (!sessionAttributesMap.containsKey(attrName)) {
+        if (attrName.startsWith("inp_propertyField")) {
+          // do not add the property fields to the session attributes to avoid overwriting its value
+          // with an empty string
+          continue;
+        }
         if (attrName.startsWith("#")) {
           attribute = attrName.substring(1, attrName.length());
           attrValue = Utility.getContext(new DalConnectionProvider(false), RequestContext.get()
@@ -888,7 +909,7 @@ public class FormInitializationComponent extends BaseActionHandler {
   private void computeAuxiliaryInputs(String mode, Tab tab, Map<String, JSONObject> columnValues,
       List<String> overwrittenAuxiliaryInputs) {
     for (AuxiliaryInput auxIn : getAuxiliaryInputList(tab.getId())) {
-      if (mode.equals("CHANGE")) {
+      if (mode.equals("CHANGE") || mode.equals("NEW")) {
         // Don't compute the auxiliary inputs that have been overwritten by callouts
         if (overwrittenAuxiliaryInputs.contains(auxIn.getName())) {
           continue;
@@ -926,7 +947,11 @@ public class FormInitializationComponent extends BaseActionHandler {
       parentRecord = KernelUtils.getInstance().getParentRecord(row, tab);
     }
     Tab parentTab = KernelUtils.getInstance().getParentTab(tab);
-    if (parentId != null && parentTab != null) {
+    // If the parent table is not based in a db table, don't try to retrieve the record
+    // Because tables not based on db tables do not have BaseOBObjects
+    // See issue https://issues.openbravo.com/view.php?id=29667
+    if (parentId != null && parentTab != null
+        && ApplicationConstants.TABLEBASEDTABLE.equals(parentTab.getTable().getDataOriginType())) {
       parentRecord = OBDal.getInstance().get(
           ModelProvider.getInstance().getEntityByTableName(parentTab.getTable().getDBTableName())
               .getName(), parentId);
@@ -1308,7 +1333,14 @@ public class FormInitializationComponent extends BaseActionHandler {
     }
 
     try {
-      String fieldId = "inp" + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName());
+      String fieldId = null;
+      if (field.getProperty() != null && !field.getProperty().isEmpty()) {
+        fieldId = "inp" + "_propertyField_"
+            + Sqlc.TransformaNombreColumna(field.getName()).replace(" ", "") + "_"
+            + field.getColumn().getDBColumnName();
+      } else {
+        fieldId = "inp" + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName());
+      }
       RequestContext.get().setRequestParameter(
           fieldId,
           jsonObj.has("classicValue") && jsonObj.get("classicValue") != null

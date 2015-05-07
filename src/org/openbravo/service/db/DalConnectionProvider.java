@@ -27,9 +27,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
 
-import org.hibernate.StatelessSession;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.session.SessionFactoryController;
+import org.openbravo.dal.core.DalSessionFactory;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.exception.NoConnectionAvailableException;
@@ -95,10 +95,21 @@ public class DalConnectionProvider implements ConnectionProvider {
     return getProperties().getProperty("bbdd.rdbms");
   }
 
+  private boolean closeConnection(Connection conn) {
+    if (conn == null)
+      return false;
+    try {
+      conn.setAutoCommit(true);
+      conn.close();
+    } catch (Exception ex) {
+      return false;
+    }
+    return true;
+  }
+
   public Connection getTransactionConnection() throws NoConnectionAvailableException, SQLException {
-    final StatelessSession session = SessionFactoryController.getInstance().getSessionFactory()
-        .openStatelessSession();
-    Connection conn = session.connection();
+    Connection conn = ((DalSessionFactory) SessionFactoryController.getInstance()
+        .getSessionFactory()).getConnectionProvider().getConnection();
 
     if (conn == null) {
       throw new NoConnectionAvailableException("Couldn´t get an available connection");
@@ -111,12 +122,14 @@ public class DalConnectionProvider implements ConnectionProvider {
     if (conn == null)
       return;
     conn.commit();
+    closeConnection(conn);
   }
 
   public void releaseRollbackConnection(Connection conn) throws SQLException {
     if (conn == null)
       return;
     conn.rollback();
+    closeConnection(conn);
   }
 
   public PreparedStatement getPreparedStatement(String SQLPreparedStatement) throws Exception {

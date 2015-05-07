@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2014 Openbravo SLU
+ * All portions are Copyright (C) 2011-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s): ___________
  ************************************************************************
@@ -187,7 +187,7 @@ OB.Personalization.updatePersonalizationDataFromFields = function (dataFields, f
 
     // for each field create a tree record, a tree record is identified
     // by its name
-    if (isc.isA.SectionItem(fld)) {
+    if (isc.isA.SectionItem(fld) || fld.type === 'OBSectionItem') {
       // section items are shown as folders which can not be dragged
       // or edited
       record = {
@@ -204,12 +204,13 @@ OB.Personalization.updatePersonalizationDataFromFields = function (dataFields, f
         title: fld.title,
         name: fld.name,
         hiddenInForm: fld.hiddenInForm,
-        startRow: fld.startRow,
-        colSpan: fld.colSpan,
         required: fld.required,
         hasDefaultValue: fld.hasDefaultValue,
-        rowSpan: fld.rowSpan
+        colSpan: (fld.colSpan !== undefined) ? fld.colSpan : 1,
+        rowSpan: (fld.rowSpan !== undefined) ? fld.rowSpan : 1,
+        startRow: (fld.startRow !== undefined) ? fld.startRow : false
       };
+
     }
 
     // is used below to get rid of non-displayed fields which 
@@ -497,6 +498,11 @@ OB.Personalization.personalizeForm = function (data, form) {
     form.view.notesDataSource = null;
   }
   form.setFields(newFields);
+
+  if (form.view && isc.isAn.Array(form.view.formFields) && form.view.formFields.length === 0) {
+    // restore formFiels as setFields can invalidate it
+    form.view.formFields = form.getFields();
+  }
 
   // and show me the stuff!
   form.markForRedraw();

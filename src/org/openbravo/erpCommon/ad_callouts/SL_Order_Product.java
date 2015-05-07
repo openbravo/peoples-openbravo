@@ -115,18 +115,25 @@ public class SL_Order_Product extends HttpSecureAppServlet {
       Order order = OBDal.getInstance().get(Order.class, strCOrderId);
       Product product = OBDal.getInstance().get(Product.class, strMProductID);
 
-      if (isTaxIncludedPriceList) {
-        strPriceActual = PriceAdjustment.calculatePriceActual(order, product,
-            "".equals(strQty) ? BigDecimal.ZERO : new BigDecimal(strQty),
-            new BigDecimal(strGrossBaseUnitPrice.equals("") ? "0" : strGrossBaseUnitPrice))
-            .toString();
-        strNetPriceList = "0";
-      } else {
-        strPriceActual = PriceAdjustment.calculatePriceActual(order, product,
-            "".equals(strQty) ? BigDecimal.ZERO : new BigDecimal(strQty),
-            new BigDecimal(strPriceStd.equals("") ? "0" : strPriceStd)).toString();
-        strGrossPriceList = "0";
-      }
+      if (!"Y".equals(cancelPriceAd)) {
+        if (isTaxIncludedPriceList) {
+          strPriceActual = PriceAdjustment.calculatePriceActual(order, product,
+              "".equals(strQty) ? BigDecimal.ZERO : new BigDecimal(strQty),
+              new BigDecimal(strGrossBaseUnitPrice.equals("") ? "0" : strGrossBaseUnitPrice))
+              .toString();
+          strNetPriceList = "0";
+        } else {
+          strPriceActual = PriceAdjustment.calculatePriceActual(order, product,
+              "".equals(strQty) ? BigDecimal.ZERO : new BigDecimal(strQty),
+              new BigDecimal(strPriceStd.equals("") ? "0" : strPriceStd)).toString();
+          strGrossPriceList = "0";
+        }
+     } else {
+        if (isTaxIncludedPriceList)
+          strPriceActual = strGrossBaseUnitPrice;
+        else
+          strPriceActual = strPriceList;
+     }
     } else {
       strUOM = strNetPriceList = strGrossPriceList = strPriceLimit = strPriceStd = "";
     }

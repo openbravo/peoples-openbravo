@@ -326,7 +326,7 @@ public class ExecutePayments extends HttpSecureAppServlet {
           "inpfinPaymentProposalId", IsIDFilter.instance);
       final FIN_PaymentProposal paymentProposal = dao.getObject(FIN_PaymentProposal.class,
           strPaymentProposalId);
-      payments = FIN_Utility.getInStrList(dao.getPaymentProposalPayments(paymentProposal));
+      payments = Utility.getInStrList(dao.getPaymentProposalPayments(paymentProposal));
 
     } else if (BatchPaymentExecutionForm.equals(strWindowId)) {
       payments = vars.getRequestGlobalVariable("inpSelectedRowList", "");

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -83,6 +83,9 @@ import org.openbravo.model.financialmgmt.payment.MatchingAlgorithm;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.xmlEngine.XmlDocument;
 
+/**
+ * @deprecated
+ */
 public class MatchTransaction extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
   VariablesSecureApp vars = null;
@@ -871,9 +874,6 @@ public class MatchTransaction extends HttpSecureAppServlet {
     OBContext.setAdminMode();
     try {
       bsline = OBDal.getInstance().get(FIN_BankStatementLine.class, bsline.getId());
-      // merge if the bank statement line was split before
-      mergeBankStatementLine(bsline);
-
       FIN_FinaccTransaction finTrans = bsline.getFinancialAccountTransaction();
       if (finTrans == null) {
         String strTransactionId = vars.getStringParameter("inpFinancialTransactionId_"
@@ -893,6 +893,9 @@ public class MatchTransaction extends HttpSecureAppServlet {
       bsline.setMatchingtype(null);
       OBDal.getInstance().save(bsline);
       // OBDal.getInstance().flush();
+
+      // merge if the bank statement line was split before
+      mergeBankStatementLine(bsline);
 
       if (finTrans != null) {
         if (finTrans.getFinPayment() != null) {

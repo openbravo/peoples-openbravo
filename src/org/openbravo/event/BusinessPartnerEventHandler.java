@@ -25,6 +25,7 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.client.kernel.event.EntityNewEvent;
+import org.openbravo.client.kernel.event.EntityPersistenceEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
@@ -39,15 +40,7 @@ public class BusinessPartnerEventHandler extends EntityPersistenceEventObserver 
     return entities;
   }
 
-  public void onSave(@Observes
-  EntityNewEvent event) {
-    if (!isValidEvent(event)) {
-      return;
-    }
-  }
-
-  public void onUpdate(@Observes
-  EntityUpdateEvent event) {
+  public void onSave(@Observes EntityNewEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -55,7 +48,15 @@ public class BusinessPartnerEventHandler extends EntityPersistenceEventObserver 
     setUpdateCurrency(event, bp);
   }
 
-  private void setUpdateCurrency(EntityUpdateEvent event, BusinessPartner bp) {
+  public void onUpdate(@Observes EntityUpdateEvent event) {
+    if (!isValidEvent(event)) {
+      return;
+    }
+    final BusinessPartner bp = (BusinessPartner) event.getTargetInstance();
+    setUpdateCurrency(event, bp);
+  }
+
+  private void setUpdateCurrency(EntityPersistenceEvent event, BusinessPartner bp) {
     if (bp.getCurrency() == null
         && (bp.getPriceList() != null || bp.getPurchasePricelist() != null)) {
 

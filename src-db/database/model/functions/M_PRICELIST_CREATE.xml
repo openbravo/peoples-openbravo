@@ -19,7 +19,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2012 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2015 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -56,6 +56,13 @@
     -- Get PL Parameter
     Cur_DiscountLine RECORD;
     rowcount NUMBER;
+    --ExtensionPoint--
+    v_ep_count NUMBER;
+    v_result NUMBER:=1;
+    v_user AD_USER.AD_USER_ID%TYPE;
+    
+    v_shline_count rowcount%TYPE;
+    
   BEGIN
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing') ;
@@ -66,6 +73,7 @@
     v_ResultStr:='ReadingParameters';
     FOR Cur_Parameter IN
       (SELECT i.Record_ID,
+        i.ad_user_id,
         p.ParameterName,
         p.P_String,
         p.P_Number,
@@ -78,6 +86,7 @@
       )
     LOOP
       v_PriceList_Version_ID:=Cur_Parameter.Record_ID;
+      v_user:=Cur_Parameter.ad_user_id;
 
       IF(Cur_Parameter.ParameterName='DeleteOld') THEN
         v_DeleteOld:=Cur_Parameter.P_String;
@@ -218,6 +227,7 @@
       /**
       * For All Discount Lines in Sequence
       */
+      v_shline_count := 0;
       FOR Cur_DiscountLine IN
         (SELECT *
         FROM M_DiscountSchemaLine
@@ -544,9 +554,53 @@
           ;   
         END IF;
         v_Message:='';
+        v_shline_count := v_shline_count + 1;
       END LOOP; -- For all DiscountLines
+      IF (v_shline_count = 0) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@PLSchemaLinesRequired@');
+      END IF;
       -- Delete Temporary Selection
       DELETE FROM C_TEMP_Selection;
+      
+      --Extension Point--
+      SELECT count(*) INTO v_ep_count FROM DUAL
+      WHERE EXISTS (SELECT 1 FROM ad_ep_procedures WHERE ad_extension_points_id = 'C4D70CF1F5454B49B7FA1D9704DB086C');
+      
+      IF (v_ep_count = 1) THEN
+        DECLARE
+          v_ep_instance VARCHAR2(32);
+          v_extension_point_id VARCHAR2(32) := 'C4D70CF1F5454B49B7FA1D9704DB086C';
+        BEGIN
+          v_ep_instance := get_uuid();
+          
+          AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'Record_ID',
+            v_PriceList_Version_ID, NULL, NULL, NULL, NULL, NULL, NULL);
+          AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'DeleteOld',
+            v_DeleteOld, NULL, NULL, NULL, NULL, NULL, NULL);
+          AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'User',
+            v_User, NULL, NULL, NULL, NULL, NULL, NULL);
+          AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'Message',
+            NULL, NULL, NULL, NULL, NULL, NULL, v_Message);
+          AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'Result',
+            NULL, NULL, v_result, NULL, NULL, NULL, NULL);
+          
+          AD_EXTENSION_POINT_HANDLER(v_ep_instance, v_extension_point_id);
+         
+          SELECT p_number INTO v_Result
+          FROM ad_ep_instance_para
+          WHERE ad_ep_instance_id = v_ep_instance
+            AND parametername LIKE 'Result';
+          
+          SELECT p_text INTO v_Message
+          FROM ad_ep_instance_para
+          WHERE ad_ep_instance_id = v_ep_instance
+            AND parametername LIKE 'Message';
+
+          DELETE FROM ad_ep_instance_para
+          WHERE ad_ep_instance_id = v_ep_instance;
+        END;
+      END IF;
+      --end Extension Point--
       --<<FINISH_PROCESS>>
       --  Update AD_PInstance
       DBMS_OUTPUT.PUT_LINE(v_Message) ;

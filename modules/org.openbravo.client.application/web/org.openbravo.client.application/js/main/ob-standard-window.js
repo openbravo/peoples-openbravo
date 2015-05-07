@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -286,7 +286,11 @@ isc.OBStandardWindow.addProperties({
       processClass = isc[className] || isc[originalClassName];
 
       if (processClass) {
-        processOwnerView = this.getProcessOwnerView(params.processId);
+        if (params.processOwnerView) {
+          processOwnerView = params.processOwnerView;
+        } else {
+          processOwnerView = this.getProcessOwnerView(params.processId);
+        }
         runningProcess = processClass.create(isc.addProperties({}, params, {
           parentWindow: this,
           sourceView: this.activeView,
@@ -389,7 +393,9 @@ isc.OBStandardWindow.addProperties({
 
   // set window specific user settings, purposely set on class level
   setWindowSettings: function (data) {
-    var i, defaultView, persDefaultValue, views, length, t, tab, view, field, button, st, stView, stBtns, stBtn, disabledFields, personalization, notAccessibleProcesses, alwaysReadOnly = function (view, record, context) {
+    var i, j, defaultView, persDefaultValue, views, length, t, tab, view, field, button, buttonParent, //
+    st, stView, stBtns, stBtn, disabledFields, personalization, notAccessibleProcesses, extraCallback, //
+    callbackFunc, alwaysReadOnly = function (view, record, context) {
         return true;
         };
 
@@ -433,6 +439,16 @@ isc.OBStandardWindow.addProperties({
           button = view.toolBar.rightMembers[i];
           if (notAccessibleProcesses.tabId === button.contextView.tabId && button.property && notAccessibleProcesses.processes.contains(button.property)) {
             button.readOnlyIf = alwaysReadOnly;
+            // set readOnlyIf in actionToolbarButtons because it is required for
+            // a good creation of buttonParents of no-active child tabs.
+            if (button.view.actionToolbarButtons.containsProperty('property', button.property)) {
+              for (j = 0; j < view.actionToolbarButtons.length; j++) {
+                buttonParent = view.actionToolbarButtons[j];
+                if (buttonParent.property === button.property) {
+                  buttonParent.readOnlyIf = alwaysReadOnly;
+                }
+              }
+            }
             // looking for this button in subtabs
             for (st = 0; st < this.views.length; st++) {
               stView = this.views[st];
@@ -494,7 +510,7 @@ isc.OBStandardWindow.addProperties({
                 }
                 for (stBtns = 0; stBtns < stView.toolBar.rightMembers.length; stBtns++) {
                   stBtn = stView.toolBar.rightMembers[stBtns];
-                  if (stBtn.contextView === button.contextView && stBtn.property && !tab.fields[stBtn.property]) {
+                  if (stBtn.contextView === button.contextView && button.property === stBtn.property && !tab.fields[stBtn.property]) {
                     stBtn.readOnlyIf = alwaysReadOnly;
                     break;
                   }
@@ -503,6 +519,20 @@ isc.OBStandardWindow.addProperties({
             }
           }
         }
+      }
+    }
+
+    //Execute extraCallbacks
+    if (data && data.extraCallbacks) {
+      for (i = 0; i < data.extraCallbacks.length; i++) {
+        extraCallback = data.extraCallbacks[i].trim();
+        // extraCallback functions only allow 'data' as unique argument. If implementor just sets
+        // the name of the function append the argument to complete the call.
+        if (!extraCallback.endsWith('(data)') && !extraCallback.endsWith('(data);')) {
+          extraCallback += '(data);';
+        }
+        callbackFunc = isc.Func.expressionToFunction('data', extraCallback);
+        callbackFunc(data);
       }
     }
   },
@@ -544,8 +574,8 @@ isc.OBStandardWindow.addProperties({
 
     // find the default view, the personalizations are
     // returned in order of prio, then do sort by name
-    if (this.getClass().personalization.views) {
-      views = this.getClass().personalization.views;
+    views = this.getClass().personalization.views;
+    if (views && isc.isA.Array(views) && views.length > 0) {
       length = views.length;
 
       this.getClass().personalization.views.sort(function (v1, v2) {
@@ -593,6 +623,13 @@ isc.OBStandardWindow.addProperties({
             }
           }
         }
+      }
+    } else {
+      if (this.view.dataLoadDelayedForDefaultSavedView) {
+        // it might happen that the load of the initial grid data was delayed because it had a 
+        // default saved view, but then the default saved view is not returned by the WindowSettingsActionHandler.
+        // in that case, detect it and load the grid now
+        this.view.viewGrid.fetchData(this.view.viewGrid.getCriteria());
       }
     }
 
@@ -1183,6 +1220,8 @@ isc.OBStandardWindow.addProperties({
   isSameTab: function (viewName, params) {
     // always return false to force new tabs
     if (this.multiDocumentEnabled) {
+      return false;
+    } else if (OB.PropertyStore.get('AllowMultiTab', this.windowId) === 'Y'){
       return false;
     }
     return this.isEqualParams(params) && viewName === this.getClassName();

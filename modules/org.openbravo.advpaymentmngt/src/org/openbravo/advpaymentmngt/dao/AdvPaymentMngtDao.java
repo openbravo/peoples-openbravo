@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  Enterprise Intelligence Systems (http://www.eintel.com.au).
  *************************************************************************
@@ -256,8 +256,7 @@ public class AdvPaymentMngtDao {
 
       // remove selected payments
       if (selectedScheduledPaymentDetails != null && selectedScheduledPaymentDetails.size() > 0) {
-        String strSelectedPaymentDetails = FIN_Utility
-            .getInStrList(selectedScheduledPaymentDetails);
+        String strSelectedPaymentDetails = Utility.getInStrList(selectedScheduledPaymentDetails);
         whereClause.append(" and psd not in (");
         whereClause.append(strSelectedPaymentDetails);
         whereClause.append(")");
@@ -272,7 +271,7 @@ public class AdvPaymentMngtDao {
         for (FIN_PaymentPropDetail ppd : obc.list()) {
           aux.add(ppd.getFINPaymentScheduledetail());
         }
-        whereClause.append(" and psd.id not in (" + FIN_Utility.getInStrList(aux) + ")");
+        whereClause.append(" and psd.id not in (" + Utility.getInStrList(aux) + ")");
       }
       if (!StringUtils.isEmpty(strAmountFrom)) {
         whereClause.append(" and psd.");
@@ -554,10 +553,20 @@ public class AdvPaymentMngtDao {
       paymentScheduleDetails.add(paymentScheduleDetail);
       newPaymentDetail.setFINPaymentScheduleDetailList(paymentScheduleDetails);
 
+      if (payment.getDocumentType().getDocumentSequence() != null) {
+        OBContext.getOBContext().addWritableOrganization(
+            payment.getDocumentType().getDocumentSequence().getOrganization().getId());
+      }
+
       OBDal.getInstance().save(payment);
       OBDal.getInstance().save(newPaymentDetail);
       OBDal.getInstance().save(paymentScheduleDetail);
       OBDal.getInstance().flush();
+
+      if (payment.getDocumentType().getDocumentSequence() != null) {
+        OBContext.getOBContext().removeWritableOrganization(
+            payment.getDocumentType().getDocumentSequence().getOrganization().getId());
+      }
 
       return newPaymentDetail;
     } finally {
@@ -1181,7 +1190,10 @@ public class AdvPaymentMngtDao {
       whereClause.append(" as ft");
       whereClause.append(" where ft.");
       whereClause.append(FIN_FinaccTransaction.PROPERTY_ACCOUNT);
-      whereClause.append(".id = ?) ");
+      whereClause.append(".id = ? ");
+      whereClause.append(" and ft.");
+      whereClause.append(FIN_FinaccTransaction.PROPERTY_PROCESSED);
+      whereClause.append(" = true) ");
       whereClause.append(" and p.");
       whereClause.append(FIN_Payment.PROPERTY_ACCOUNT);
       whereClause.append(".id = ? ");

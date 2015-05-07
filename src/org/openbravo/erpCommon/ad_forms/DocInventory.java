@@ -180,7 +180,12 @@ public class DocInventory extends AcctServer {
     int countInvLinesWithTrnCostZero = 0;
     for (int i = 0; i < p_lines.length; i++) {
       DocLine_Material line = (DocLine_Material) p_lines[i];
-      if (line.transaction.getTransactionCost().compareTo(ZERO) == 0) {
+      if ("NC".equals(line.transaction.getCostingStatus())) {
+        setStatus(STATUS_NotCalculatedCost);
+      }
+
+      if (line.transaction.getTransactionCost() != null
+          && line.transaction.getTransactionCost().compareTo(ZERO) == 0) {
         countInvLinesWithTrnCostZero++;
       }
     }

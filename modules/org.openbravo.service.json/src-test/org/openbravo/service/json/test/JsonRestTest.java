@@ -11,13 +11,15 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 
 package org.openbravo.service.json.test;
+
+import static org.junit.Assert.assertEquals;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -32,7 +34,7 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.service.json.JsonRestServlet;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Base class for Json test Rest http requests. To test the {@link JsonRestServlet}. This test class
@@ -40,7 +42,7 @@ import org.openbravo.test.base.BaseTest;
  * 
  * @author mtaal
  */
-public class JsonRestTest extends BaseTest {
+public class JsonRestTest extends OBBaseTest {
   private static final Logger log = Logger.getLogger(JsonRestTest.class);
 
   private static final String OB_URL = "http://localhost:8080/openbravo";

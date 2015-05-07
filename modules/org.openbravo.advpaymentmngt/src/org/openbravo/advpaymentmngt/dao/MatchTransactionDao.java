@@ -26,6 +26,8 @@ import java.util.List;
 
 import javax.servlet.ServletException;
 
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
@@ -264,6 +266,8 @@ public class MatchTransactionDao {
       whereClause.append(".id = '").append(strFinancialAccountId).append("'");
       whereClause.append("   and ft.").append(FIN_FinaccTransaction.PROPERTY_RECONCILIATION);
       whereClause.append(" is null");
+      whereClause.append("   and ft.").append(FIN_FinaccTransaction.PROPERTY_PROCESSED);
+      whereClause.append(" = true");
       whereClause.append("   and ft.").append(FIN_FinaccTransaction.PROPERTY_STATUS);
       whereClause.append(" <> 'RPPC' ");
       whereClause.append("   and (ft.").append(FIN_FinaccTransaction.PROPERTY_DEPOSITAMOUNT);
@@ -321,6 +325,8 @@ public class MatchTransactionDao {
       whereClause.append(".id = '").append(strFinancialAccountId).append("'");
       whereClause.append("   and ft.").append(FIN_FinaccTransaction.PROPERTY_RECONCILIATION);
       whereClause.append(" is null");
+      whereClause.append("   and ft.").append(FIN_FinaccTransaction.PROPERTY_PROCESSED);
+      whereClause.append(" = true");
       whereClause.append("   and ft.").append(FIN_FinaccTransaction.PROPERTY_STATUS);
       whereClause.append(" <> 'RPPC' ");
       whereClause.append("   and (ft.").append(FIN_FinaccTransaction.PROPERTY_DEPOSITAMOUNT);
@@ -374,6 +380,8 @@ public class MatchTransactionDao {
     whereClause.append(".id = '").append(strFinancialAccountId).append("'");
     whereClause.append("   and ft.").append(FIN_FinaccTransaction.PROPERTY_RECONCILIATION);
     whereClause.append(" is null");
+    whereClause.append("   and ft.").append(FIN_FinaccTransaction.PROPERTY_PROCESSED);
+    whereClause.append(" = true");
     whereClause.append("   and ft.").append(FIN_FinaccTransaction.PROPERTY_STATUS);
     whereClause.append(" <> 'RPPC' ");
     whereClause.append("   and (ft.").append(FIN_FinaccTransaction.PROPERTY_DEPOSITAMOUNT);
@@ -606,15 +614,39 @@ public class MatchTransactionDao {
     OBContext.setAdminMode(false);
     try {
       BigDecimal endingBalance = reconciliation.getAccount().getInitialBalance();
-      endingBalance = endingBalance
-          .add(getBSLAmount(reconciliation, reconciliation.getEndingDate()));
+      endingBalance = endingBalance.add(getBSLAmount(reconciliation)).add(
+          getManualReconciliationAmount(reconciliation));
       return endingBalance;
     } finally {
       OBContext.restorePreviousMode();
     }
   }
 
-  private static BigDecimal getBSLAmount(FIN_Reconciliation reconciliation, Date date) {
+  private static BigDecimal getManualReconciliationAmount(FIN_Reconciliation reconciliation) {
+    BigDecimal total = BigDecimal.ZERO;
+    OBContext.setAdminMode(false);
+    try {
+      final StringBuilder hqlString = new StringBuilder();
+      hqlString.append("select coalesce(sum(e.depositAmount-e.paymentAmount),0)");
+      hqlString.append(" from FIN_Finacc_Transaction as e");
+      hqlString.append(" where e.account.id = :account");
+      hqlString.append(" and e.processed = true");
+      hqlString.append(" and e.reconciliation is not null");
+      hqlString
+          .append(" and not exists (select 1 from FIN_BankStatementLine as bsl where bsl.financialAccountTransaction = e)");
+      hqlString.append(" and e.transactionDate <= :date");
+      final Session session = OBDal.getInstance().getSession();
+      final Query query = session.createQuery(hqlString.toString());
+      query.setParameter("account", reconciliation.getAccount().getId());
+      query.setParameter("date", reconciliation.getEndingDate());
+      total = (BigDecimal) query.uniqueResult();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return total;
+  }
+
+  private static BigDecimal getBSLAmount(FIN_Reconciliation reconciliation) {
     BigDecimal total = BigDecimal.ZERO;
     OBContext.setAdminMode(false);
     try {
@@ -626,7 +658,8 @@ public class MatchTransactionDao {
       obcBsl.add(Restrictions.eq("bs." + FIN_BankStatement.PROPERTY_ACCOUNT,
           reconciliation.getAccount()));
       obcBsl.add(Restrictions.eq("bs." + FIN_BankStatement.PROPERTY_PROCESSED, true));
-      obcBsl.add(Restrictions.le(FIN_BankStatementLine.PROPERTY_TRANSACTIONDATE, date));
+      obcBsl.add(Restrictions.le(FIN_BankStatementLine.PROPERTY_TRANSACTIONDATE,
+          reconciliation.getEndingDate()));
       ProjectionList projections = Projections.projectionList();
       projections.add(Projections.sum(FIN_BankStatementLine.PROPERTY_CRAMOUNT));
       projections.add(Projections.sum(FIN_BankStatementLine.PROPERTY_DRAMOUNT));

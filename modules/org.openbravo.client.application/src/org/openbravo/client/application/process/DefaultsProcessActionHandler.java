@@ -24,6 +24,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -67,12 +68,17 @@ public class DefaultsProcessActionHandler extends BaseProcessActionHandler {
       OBContext.setAdminMode(true);
 
       final String processId = (String) parameters.get("processId");
+      final Process processDefinition = OBDal.getInstance().get(Process.class, processId);
 
       JSONObject context = null;
-      if (parameters.get("context") != null) {
-        context = new JSONObject((String) parameters.get("context"));
+      if (StringUtils.isNotEmpty(content)) {
+        try {
+          context = new JSONObject(content);
+        } catch (JSONException e) {
+          log.error("Error getting context for process definition " + processDefinition, e);
+        }
       }
-      final Process processDefinition = OBDal.getInstance().get(Process.class, processId);
+
       JSONObject defaults = new JSONObject();
       JSONObject filterExpressions = new JSONObject();
       final List<Parameter> orderedParams = new ArrayList<Parameter>();
@@ -105,7 +111,7 @@ public class DefaultsProcessActionHandler extends BaseProcessActionHandler {
               defaultValue = context.get(inpName);
               inpName = "inp" + Sqlc.TransformaNombreColumna(param.getDBColumnName());
             } else {
-              Map<String, String> requestMap = fixRequestMap(parameters);
+              Map<String, String> requestMap = fixRequestMap(parameters, context);
               requestMap.put("currentParam", param.getDBColumnName());
               defaultValue = ParameterUtils.getJSExpressionResult(requestMap,
                   (HttpSession) parameters.get(KernelConstants.HTTP_SESSION), rawDefaultValue);
@@ -156,7 +162,7 @@ public class DefaultsProcessActionHandler extends BaseProcessActionHandler {
                   Object defaultExpression;
                   parameters.put("filterExpressionColumnName", field.getColumn().getDBColumnName());
                   defaultExpression = ParameterUtils.getJSExpressionResult(
-                      fixRequestMap(parameters),
+                      fixRequestMap(parameters, context),
                       (HttpSession) parameters.get(KernelConstants.HTTP_SESSION),
                       rawDefaultExpression);
 

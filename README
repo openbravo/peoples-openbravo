@@ -2,17 +2,9 @@
 
 * Installation
 
-First, download the setup binary corresponding to your system:
+First, configure Openbravo properties run:
 
   ant setup
-
-Next run the downloaded file in the config directory. For example in
-x86 Linux:
-
-  ./setup-properties-linux.bin
-
-If there is no setup binary for your operating system and architecture,
-send a request to <staff.rm at openbravo dot com>.
 
 Then, to install it run:
 

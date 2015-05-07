@@ -112,10 +112,12 @@ public class SL_Internal_Consumption_Product extends HttpSecureAppServlet {
     } finally {
       OBContext.restorePreviousMode();
     }
-    resultado.append("new Array(\"inpattributeset\", \"" + FormatUtilities.replaceJS(strAttrSet)
+    resultado.append("new Array(\"inpattributeset\", \"" 
+        + (strAttrSet == null || strAttrSet.equals("") ? "" : FormatUtilities.replaceJS(strAttrSet))
         + "\"),\n");
     resultado.append("new Array(\"inpattrsetvaluetype\", \""
-        + FormatUtilities.replaceJS(strAttrSetValueType) + "\"),\n");
+        + (strAttrSetValueType == null || strAttrSetValueType.equals("") ? "" : FormatUtilities.replaceJS(strAttrSetValueType))
+    	+ "\"),\n");
     resultado.append("new Array(\"inpmovementqty\", " + (strQty.equals("") ? "\"\"" : strQty)
         + "),\n");
     resultado.append("new Array(\"inpquantityorder\", " + (strPQty.equals("") ? "\"\"" : strPQty)

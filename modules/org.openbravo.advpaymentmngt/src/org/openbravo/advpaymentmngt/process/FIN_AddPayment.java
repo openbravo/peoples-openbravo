@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -1213,8 +1213,10 @@ public class FIN_AddPayment {
             finalSettlementDate));
       }
       invoice.setPaymentComplete(true);
-    } else
+    } else {
       invoice.setPaymentComplete(false);
+      invoice.setFinalSettlementDate(null);
+    }
     List<FIN_PaymentSchedule> paymentSchedList = invoice.getFINPaymentScheduleList();
     Date firstDueDate = null;
     for (FIN_PaymentSchedule paymentSchedule : paymentSchedList) {
@@ -1362,10 +1364,59 @@ public class FIN_AddPayment {
    */
   public static OBError processPayment(VariablesSecureApp vars, ConnectionProvider conn,
       String strAction, FIN_Payment payment) throws Exception {
+    OBError myMessage = processPayment(vars, conn, strAction, payment, null, null);
+    return myMessage;
+  }
+
+  /**
+   * It calls the PAyment Process for the given payment, action and origin.
+   * 
+   * @param vars
+   *          VariablesSecureApp with the session data.
+   * @param conn
+   *          ConnectionProvider with the connection being used.
+   * @param strAction
+   *          String with the action of the process. {P, D, R}
+   * @param payment
+   *          FIN_Payment that needs to be processed.
+   * @param comingFrom
+   *          Origin where the process is invoked
+   * @return a OBError with the result message of the process.
+   * @throws Exception
+   */
+  public static OBError processPayment(VariablesSecureApp vars, ConnectionProvider conn,
+      String strAction, FIN_Payment payment, String comingFrom) throws Exception {
+    OBError myMessage = processPayment(vars, conn, strAction, payment, comingFrom, null);
+    return myMessage;
+  }
+
+  /**
+   * It calls the PAyment Process for the given payment, action and origin.
+   * 
+   * @param vars
+   *          VariablesSecureApp with the session data.
+   * @param conn
+   *          ConnectionProvider with the connection being used.
+   * @param strAction
+   *          String with the action of the process. {P, D, R}
+   * @param payment
+   *          FIN_Payment that needs to be processed.
+   * @param comingFrom
+   *          Origin where the process is invoked
+   * @param selectedCreditLineIds
+   *          Id's of selected lines in Credit to Use grid
+   * @return a OBError with the result message of the process.
+   * @throws Exception
+   */
+  public static OBError processPayment(VariablesSecureApp vars, ConnectionProvider conn,
+      String strAction, FIN_Payment payment, String comingFrom, String selectedCreditLineIds)
+      throws Exception {
     ProcessBundle pb = new ProcessBundle("6255BE488882480599C81284B70CD9B3", vars).init(conn);
     HashMap<String, Object> parameters = new HashMap<String, Object>();
     parameters.put("action", strAction);
     parameters.put("Fin_Payment_ID", payment.getId());
+    parameters.put("comingFrom", comingFrom);
+    parameters.put("selectedCreditLineIds", selectedCreditLineIds);
     pb.setParams(parameters);
     OBError myMessage = null;
     new FIN_PaymentProcess().execute(pb);

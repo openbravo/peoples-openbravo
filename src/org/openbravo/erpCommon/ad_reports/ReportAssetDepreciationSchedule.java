@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -185,9 +185,8 @@ public class ReportAssetDepreciationSchedule extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_ORG_ID", "",
-          "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-              "ReportAssetDepreciationSchedule"), Utility.getContext(this, vars, "#User_Client",
-              "ReportAssetDepreciationSchedule"), '*');
+          "", Utility.getContext(this, vars, "#User_Org", "ReportAssetDepreciationSchedule"),
+          Utility.getContext(this, vars, "#User_Client", "ReportAssetDepreciationSchedule"), '*');
       comboTableData.fillParameters(null, "ReportAssetDepreciationSchedule", "");
       xmlDocument.setData("reportAD_ORG_ID", "liststructure", comboTableData.select(false));
     } catch (Exception ex) {

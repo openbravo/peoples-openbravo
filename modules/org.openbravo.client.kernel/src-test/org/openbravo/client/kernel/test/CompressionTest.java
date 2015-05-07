@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,12 +19,16 @@
 
 package org.openbravo.client.kernel.test;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import org.junit.Test;
 import org.openbravo.client.kernel.JSCompressor;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Test the compression of a static js file.
@@ -32,8 +36,9 @@ import org.openbravo.test.base.BaseTest;
  * @author mtaal
  */
 
-public class CompressionTest extends BaseTest {
+public class CompressionTest extends OBBaseTest {
 
+  @Test
   public void testCompression() throws Exception {
     final JSCompressor compressor = new JSCompressor();
     final InputStream is = this.getClass().getResourceAsStream("test-compression.js");

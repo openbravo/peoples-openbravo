@@ -203,7 +203,7 @@ public class ReportProductMovement extends HttpSecureAppServlet {
             Utility.getContext(this, vars, "#User_Client", "ReportProductMovement"),
             Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProductMovement"),
             strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strcBpartnerId,
-            strmProductId);
+            strmProductId, strmAttributesetinstanceId);
         if (data3 == null || data3.length == 0) {
           discard[3] = "selEliminar4";
           data3 = ReportProductMovementData.set();

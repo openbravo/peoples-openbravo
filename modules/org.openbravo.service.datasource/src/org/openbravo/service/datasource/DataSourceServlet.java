@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2015 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -48,6 +48,8 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.exception.SQLGrammarException;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Entity;
@@ -55,6 +57,10 @@ import org.openbravo.base.model.Property;
 import org.openbravo.base.model.domaintype.EnumerateDomainType;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.client.application.Parameter;
+import org.openbravo.client.application.Process;
+import org.openbravo.client.application.RefWindow;
+import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.client.application.window.OBViewUtil;
 import org.openbravo.client.kernel.BaseKernelServlet;
 import org.openbravo.client.kernel.KernelUtils;
@@ -66,6 +72,7 @@ import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.businessUtility.Preferences;
@@ -74,6 +81,7 @@ import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.PropertyNotFoundException;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.datamodel.Column;
+import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.ui.Element;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.FieldTrl;
@@ -554,7 +562,10 @@ public class DataSourceServlet extends BaseKernelServlet {
           } else if (keyValue instanceof Number && keyValue != null) {
             DecimalFormat format = formats.get(key);
             if (format == null) {
-              keyValue = keyValue.toString().replace(".", decimalSeparator);
+              // if the CSV decimal separator property is defined, used it over the character
+              // defined in Format.xml
+              keyValue = keyValue.toString().replace(".",
+                  prefDecimalSeparator != null ? prefDecimalSeparator : decimalSeparator);
             } else {
               keyValue = format.format(new BigDecimal(keyValue.toString()));
               if (prefDecimalSeparator != null) {
@@ -706,6 +717,9 @@ public class DataSourceServlet extends BaseKernelServlet {
 
   private void handleException(Exception e, HttpServletResponse response) throws IOException {
     log4j.error(e.getMessage(), e);
+    if (e instanceof SQLGrammarException) {
+      log.error(((SQLGrammarException) e).getSQL());
+    }
     if (!response.isCommitted()) {
       final JSONObject jsonResult = new JSONObject();
       final JSONObject jsonResponse = new JSONObject();
@@ -964,12 +978,80 @@ public class DataSourceServlet extends BaseKernelServlet {
         return true;
       }
       VariablesSecureApp vars = new VariablesSecureApp(req);
-      return hasGeneralAccess(vars, "W", tabId);
+      boolean hasAccess = hasGeneralAccess(vars, "W", tabId);
+      if (hasAccess) {
+        return true;
+      }
+      // Here is checked process definition that containing parameters defined as "window",
+      // automatically inherit permissions. See issue #29035
+      try {
+        OBContext.setAdminMode(true);
+        Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+        if (tab == null) {
+          return false;
+        }
+        // Search window references that linked with the window of the provided tab.
+        OBCriteria<RefWindow> obcRefWindow = OBDal.getInstance().createCriteria(RefWindow.class);
+        obcRefWindow.add(Restrictions.eq(RefWindow.PROPERTY_WINDOW, tab.getWindow()));
+        if (obcRefWindow.list().size() == 0) {
+          return false;
+        }
+        final List<Reference> references = new ArrayList<Reference>();
+        for (RefWindow refWindow : obcRefWindow.list()) {
+          references.add(refWindow.getReference());
+        }
 
+        // Then search parameters that linked with references and get theirs processes.
+        OBCriteria<Parameter> obParameters = OBDal.getInstance().createCriteria(Parameter.class);
+        obParameters.add(Restrictions.in(Parameter.PROPERTY_REFERENCESEARCHKEY, references));
+        if (obParameters.list().size() == 0) {
+          return false;
+        }
+        final List<Process> obuiapProcesses = new ArrayList<Process>();
+        for (Parameter parameter : obParameters.list()) {
+          obuiapProcesses.add(parameter.getObuiappProcess());
+        }
+
+        // Finally select all columns that linked with selected processes and get their fields.
+        OBCriteria<Column> columns = OBDal.getInstance().createCriteria(Column.class);
+        columns.add(Restrictions.in(Column.PROPERTY_OBUIAPPPROCESS, obuiapProcesses));
+        if (columns.list().size() == 0) {
+          return false;
+        }
+        final List<Field> fields = new ArrayList<Field>();
+        for (Column col : columns.list()) {
+          for (Field field : col.getADFieldList()) {
+            fields.add(field);
+          }
+        }
+
+        Map<String, Object> parameters = new HashMap<String, Object>();
+        // Avoid to invoke hasAccess() method with same window.
+        final List<String> windowCheck = new ArrayList<String>();
+        for (Field f : fields) {
+          // Check access with OBUIAPPProcess & windowId for each field.
+          String windowId = (String) DalUtil.getId(f.getTab().getWindow());
+          if (!windowCheck.contains(windowId)) {
+            windowCheck.add(windowId);
+            parameters.put("windowId", windowId);
+            boolean hasAccessEntity = BaseProcessActionHandler.hasAccess(f.getColumn()
+                .getOBUIAPPProcess(), parameters);
+            if (hasAccessEntity) {
+              return true;
+            }
+          }
+        }
+        // here there is no access to current tabId
+        return false;
+      } catch (final Exception e) {
+        log4j.error("Error checking access: ", e);
+        return false;
+      } finally {
+        OBContext.restorePreviousMode();
+      }
     } catch (final Exception e) {
       log4j.error("Error checking access: ", e);
       return false;
     }
   }
-
 }

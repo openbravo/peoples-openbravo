@@ -54,6 +54,7 @@
         FROM C_ORDERLINE OL, C_ORDER O
         WHERE OL.C_ORDER_ID = ?
               AND OL.C_ORDER_ID = O.C_ORDER_ID
+              AND OL.C_ORDER_DISCOUNT_ID IS NULL
         ORDER BY OL.LINE ASC
       ]]>
     </Sql>

@@ -17,7 +17,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2014 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2015 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -86,13 +86,7 @@ IF (UPDATING) THEN
     FROM m_reservation 
     WHERE c_orderline_id = :OLD.c_orderline_id;
     IF (v_count > 0) THEN
-      SELECT m_reservation_id INTO v_reservation_id
-      FROM m_reservation
-      WHERE c_orderline_id = :OLD.c_orderline_id;
-      DELETE FROM m_reservation_stock
-      WHERE m_reservation_id = v_reservation_id;
-      DELETE FROM m_reservation
-      WHERE m_reservation_id = v_reservation_id;
+      RAISE_APPLICATION_ERROR(-20000, '@DeleteRelatedReservation@');
     END IF;
   ELSE
     DELETE FROM m_reservation_stock
@@ -135,8 +129,8 @@ IF (UPDATING) THEN
          SELECT max(m_reservation_id) INTO v_reservation_id
          FROM m_reservation 
          WHERE c_orderline_id = :OLD.c_orderline_id
-         AND res_status = 'DR'
-         ORDER BY CREATED DESC;
+         AND m_product_id = :OLD.m_product_id
+         AND res_status = 'DR';
          DELETE FROM m_reservation_stock
          WHERE m_reservation_id = v_reservation_id;
          UPDATE m_reservation

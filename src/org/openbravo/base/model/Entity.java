@@ -586,7 +586,7 @@ public class Entity {
    * @throws CheckException
    */
   public Property getPropertyByColumnName(String columnName, boolean checkIsNotNull) {
-    final Property prop = propertiesByColumnName.get(columnName);
+    final Property prop = propertiesByColumnName.get(columnName.toLowerCase());
     if (checkIsNotNull) {
       Check.isNotNull(prop, "Property " + columnName + " does not exist for entity " + this);
     }

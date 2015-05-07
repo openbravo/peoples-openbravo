@@ -38,7 +38,7 @@
     v_Org VARCHAR2(32);
     v_Createdby VARCHAR2(32);
     v_Dateordered DATE;
-    v_BillTo NUMBER;
+    v_BillTo VARCHAR2(32);
     v_BpartnerLocation VARCHAR2(32);
     v_Pricelist VARCHAR2(32);
     v_Pricelimit NUMBER;

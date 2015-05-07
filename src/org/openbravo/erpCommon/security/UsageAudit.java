@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -145,12 +145,13 @@ public class UsageAudit {
     if (!auditAction) {
       return;
     }
-
+    Connection con = null;
     try {
       log4j.debug("Auditing sessionId: " + sessionId + " -  action:" + action + " - objectType:"
           + objectType + " - moduleId:" + moduleId + " - objectId:" + objectId
           + " - javaClassName:" + javaClassName);
-      Connection con = conn.getTransactionConnection();
+
+      con = conn.getTransactionConnection();
       SessionLoginData.insertUsageAudit(con, conn, SessionInfo.getUserId(), sessionId, objectId,
           moduleId, action, javaClassName, objectType, time);
       conn.releaseCommitConnection(con);
@@ -160,7 +161,16 @@ public class UsageAudit {
       log4j.error("Error getting connection to insert usage audit", e);
     } catch (SQLException e) {
       log4j.error("Error inserting usage audit", e);
+    } finally {
+      try {
+        // at this point, connection should be closed if everything went ok. If it is not the case,
+        // let's rollback and close
+        if (con != null && !con.isClosed()) {
+          conn.releaseRollbackConnection(con);
+        }
+      } catch (SQLException e) {
+        log4j.error("Error while releasing connection", e);
+      }
     }
   }
-
 }

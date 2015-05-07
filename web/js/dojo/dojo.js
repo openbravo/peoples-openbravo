@@ -12529,6 +12529,16 @@ return _b21;
 }
 }
 };
+originalDateSeparator=function(_b22){
+var _b23 = dojo.lang.shallowCopy(_b22), _b24;
+_b23=_b23.replace("mm","MM").replace("dd","DD").replace("yyyy","YYYY");
+_b23=_b23.replace("mm","MM").replace("dd","DD").replace("yy","YY");
+_b23=_b23.replace("%D","%d").replace("%M","%m");
+_b23=_b23.replace("%d","DD").replace("%m","MM").replace("%y","YY").replace("%Y","YYYY");
+_b24=_b23.replace(/D/g,"").replace(/M/g,"").replace(/Y/g,"").substr(0,1);
+return _b24;
+};
+var _b30 = originalDateSeparator(_b1c);
 purgeDateFormat=function(_b22){
 _b22=_b22.replace("mm","MM").replace("dd","DD").replace("yyyy","YYYY");
 _b22=_b22.replace("mm","MM").replace("dd","DD").replace("yy","YY");
@@ -12580,8 +12590,7 @@ return true;
 }
 }
 }
-var _b26=_b1c.replace(/D/g,"").replace(/M/g,"").replace(/Y/g,"").substr(0,1);
-var _b27=_b24[1]+_b26+_b24[2]+_b26+_b24[3];
+var _b27=_b24[1]+_b30+_b24[2]+_b30+_b24[3];
 return _b27;
 }else{
 return false;

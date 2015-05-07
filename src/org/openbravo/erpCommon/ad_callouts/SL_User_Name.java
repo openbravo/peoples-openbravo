@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -50,9 +50,11 @@ public class SL_User_Name extends HttpSecureAppServlet {
       String strFirstname = vars.getStringParameter("inpfirstname");
       String strLastname = vars.getStringParameter("inplastname");
       String strName = vars.getStringParameter("inpname");
+      String strUserName = vars.getStringParameter("inpusername");
       String strTabId = vars.getStringParameter("inpTabId");
       try {
-        printPage(response, vars, strChanged, strFirstname, strLastname, strName, strTabId);
+        printPage(response, vars, strChanged, strFirstname, strLastname, strName, strUserName,
+            strTabId);
       } catch (ServletException ex) {
         pageErrorCallOut(response);
       }
@@ -61,8 +63,8 @@ public class SL_User_Name extends HttpSecureAppServlet {
   }
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strChanged,
-      String strFirstname, String strLastname, String strName, String strTabId) throws IOException,
-      ServletException {
+      String strFirstname, String strLastname, String strName, String strUserName, String strTabId)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -86,22 +88,34 @@ public class SL_User_Name extends HttpSecureAppServlet {
       resultado.append("new Array(\"inpname\", \"" + strName + "\"),");
     }
     // if we have a name filled in use that for the username
-    if (!strName.equals("")) {
-      if (FormatUtilities.replaceJS(strName).length() > maxChar) {
-        resultado.append("new Array(\"inpusername\", \""
-            + FormatUtilities.replaceJS(strName).substring(0, maxChar) + "\")");
+    if (strUserName.equals("")) {
+      if (!strName.equals("")) {
+        if (FormatUtilities.replaceJS(strName).length() > maxChar) {
+          resultado.append("new Array(\"inpusername\", \""
+              + FormatUtilities.replaceJS(strName).substring(0, maxChar) + "\")");
+        } else {
+          resultado.append("new Array(\"inpusername\", \"" + FormatUtilities.replaceJS(strName)
+              + "\")");
+        }
       } else {
-        resultado.append("new Array(\"inpusername\", \"" + FormatUtilities.replaceJS(strName)
-            + "\")");
+        // else concatenate first- and lastname
+        if (FormatUtilities.replaceJS(strFirstname + strLastname).length() > maxChar) {
+          resultado
+              .append("new Array(\"inpusername\", \""
+                  + FormatUtilities.replaceJS(strFirstname + strLastname).substring(0, maxChar)
+                  + "\")");
+        } else {
+          resultado.append("new Array(\"inpusername\", \""
+              + FormatUtilities.replaceJS(strFirstname + strLastname) + "\")");
+        }
       }
     } else {
-      // else concatenate first- and lastname
-      if (FormatUtilities.replaceJS(strFirstname + strLastname).length() > maxChar) {
+      if (FormatUtilities.replaceJS(strUserName).length() > maxChar) {
         resultado.append("new Array(\"inpusername\", \""
-            + FormatUtilities.replaceJS(strFirstname + strLastname).substring(0, maxChar) + "\")");
+            + FormatUtilities.replaceJS(strUserName).substring(0, maxChar) + "\")");
       } else {
-        resultado.append("new Array(\"inpusername\", \""
-            + FormatUtilities.replaceJS(strFirstname + strLastname) + "\")");
+        resultado.append("new Array(\"inpusername\", \"" + FormatUtilities.replaceJS(strUserName)
+            + "\")");
       }
     }
     // informs about characters cut

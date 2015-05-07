@@ -46,6 +46,7 @@ import org.openbravo.model.ad.ui.AuxiliaryInput;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
+import org.openbravo.service.datasource.DataSource;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
 
@@ -434,5 +435,12 @@ public class OBViewGridComponent extends BaseTemplateComponent {
     } else {
       return false;
     }
+  }
+
+  public boolean getAlwaysFilterFksByIdentifier() {
+    DataSource dataSource = tab.getTable().getObserdsDatasource();
+    // always filter using the identifier if the grid fetches its data from a manual datasource and
+    // if that datasource does not support filtering foreign keys using their ids
+    return (dataSource != null && !dataSource.isSupportIdFkFiltering());
   }
 }

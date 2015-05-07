@@ -57,8 +57,9 @@
     // result.
     // * {{{callerContext}}}: a context object which is available
     // (as rpcRequest.clientContext) when the callback gets called
+    // * {{{errorCallback}}}: a function that is executed when the call returns with an error status
     //
-    call: function (actionName, data, requestParams, callback, callerContext) {
+    call: function (actionName, data, requestParams, callback, callerContext, errorCallback) {
 
       var requestParameters = {};
       ISC.addProperties(requestParameters, requestParams);
@@ -72,6 +73,9 @@
 
       rpcRequest.actionURL = OB.Application.contextUrl + 'org.openbravo.client.kernel';
       rpcRequest.callback = callback;
+      if (isc.isA.Function(errorCallback)) {
+        rpcRequest.errorCallback = errorCallback;
+      }
       if (data) {
         rpcRequest.data = ISC.JSON.encode(data);
         rpcRequest.httpMethod = 'POST';

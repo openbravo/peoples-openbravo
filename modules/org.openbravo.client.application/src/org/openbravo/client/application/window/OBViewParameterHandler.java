@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2012-2015 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.openbravo.base.model.ModelProvider;
 import org.openbravo.client.application.DynamicExpressionParser;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.Process;
@@ -38,6 +39,7 @@ import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.ui.FieldGroup;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
+import org.openbravo.userinterface.selector.reference.FKSelectorUIDefinition;
 
 public class OBViewParameterHandler {
   private static final Logger log = Logger.getLogger(OBViewParameterHandler.class);
@@ -60,7 +62,7 @@ public class OBViewParameterHandler {
     for (Parameter param : process.getOBUIAPPParameterList()) {
       if (param.isActive() && param.getDisplayLogic() != null && !param.getDisplayLogic().isEmpty()) {
         final DynamicExpressionParser parser = new DynamicExpressionParser(param.getDisplayLogic(),
-            param.getObuiappProcess(), true);
+            param, true);
         displayLogicMap.put(param, parser.getJSExpression());
         for (Parameter parameterExpression : parser.getParameters()) {
           if (!parametersInExpression.contains(parameterExpression)) {
@@ -76,7 +78,7 @@ public class OBViewParameterHandler {
       if (param.isActive() && !param.isFixed() && param.getReadOnlyLogic() != null
           && !param.getReadOnlyLogic().isEmpty()) {
         final DynamicExpressionParser parser = new DynamicExpressionParser(
-            param.getReadOnlyLogic(), param.getObuiappProcess(), true);
+            param.getReadOnlyLogic(), param, true);
         readOnlyLogicMap.put(param, parser.getJSExpression());
         for (Parameter parameterExpression : parser.getParameters()) {
           if (!parametersInExpression.contains(parameterExpression)) {
@@ -312,6 +314,17 @@ public class OBViewParameterHandler {
         return -1L;
       }
       return parameter.getLength();
+    }
+
+    public String getTargetEntity() {
+      String entityName = "";
+      if (uiDefinition instanceof FKSelectorUIDefinition
+          && parameter.getReferenceSearchKey() != null) {
+        String idOfTheTable = parameter.getReferenceSearchKey().getOBUISELSelectorList().get(0)
+            .getTable().getId();
+        entityName = ModelProvider.getInstance().getEntityByTableId(idOfTheTable).getName();
+      }
+      return entityName;
     }
 
     public String getOnChangeFunction() {

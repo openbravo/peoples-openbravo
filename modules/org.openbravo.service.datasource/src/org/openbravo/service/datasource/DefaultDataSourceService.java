@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -66,10 +66,15 @@ public class DefaultDataSourceService extends BaseDataSourceService {
    * @see org.openbravo.service.datasource.DataSource#fetch(java.util.Map)
    */
   public String fetch(Map<String, String> parameters) {
-    OBContext.setAdminMode(true);
+    return fetch(parameters, true);
+  }
+
+  protected String fetch(Map<String, String> parameters, boolean shouldFilterOnRedeableOrganizations) {
+    OBContext.setAdminMode(shouldFilterOnRedeableOrganizations);
     try {
       addFetchParameters(parameters);
-      return DefaultJsonDataService.getInstance().fetch(parameters);
+      return DefaultJsonDataService.getInstance().fetch(parameters,
+          shouldFilterOnRedeableOrganizations);
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -139,7 +144,12 @@ public class DefaultDataSourceService extends BaseDataSourceService {
    */
   @Override
   public String remove(Map<String, String> parameters) {
-    OBContext.setAdminMode(true);
+    return remove(parameters, true);
+  }
+
+  protected String remove(Map<String, String> parameters,
+      boolean shouldFilterOnRedeableOrganizations) {
+    OBContext.setAdminMode(shouldFilterOnRedeableOrganizations);
     try {
       parameters.put(JsonConstants.ENTITYNAME, getEntity().getName());
       return DefaultJsonDataService.getInstance().remove(parameters);
@@ -155,7 +165,12 @@ public class DefaultDataSourceService extends BaseDataSourceService {
    */
   @Override
   public String add(Map<String, String> parameters, String content) {
-    OBContext.setAdminMode(true);
+    return add(parameters, content, true);
+  }
+
+  protected String add(Map<String, String> parameters, String content,
+      boolean shouldFilterOnRedeableOrganizations) {
+    OBContext.setAdminMode(shouldFilterOnRedeableOrganizations);
     try {
       parameters.put(JsonConstants.ENTITYNAME, getEntity().getName());
       testAccessPermissions(parameters, content);

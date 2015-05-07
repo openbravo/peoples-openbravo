@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2015 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -243,7 +243,7 @@ public class ReportAnnualCertification extends HttpSecureAppServlet {
     try {
       // AD_OrgType_BU_LE
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_ORG_ID", "",
-          "AD_OrgType_BU_LE", Utility.getContext(this, vars, "#AccessibleOrgTree",
+          "AD_OrgType_BU_LE", Utility.getContext(this, vars, "#User_Org",
               "ReportAnnualCertification"), Utility.getContext(this, vars, "#User_Client",
               "ReportAnnualCertification"), '*');
       comboTableData.fillParameters(null, "ReportAnnualCertification", "");

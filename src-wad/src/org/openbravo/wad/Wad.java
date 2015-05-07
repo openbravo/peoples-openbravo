@@ -1428,7 +1428,7 @@ public class Wad extends DefaultHandler {
    *          String with the where clause of the query.
    * @param vecFields
    *          Vector with the fields of the query.
-   * @param isSOTr
+   * @param isSOTrx
    *          String that indicates if is a Sales Order tab or not (Y | N).
    * @param allTabs
    *          Array with the tabs.
@@ -1441,7 +1441,7 @@ public class Wad extends DefaultHandler {
    * @param isSecondaryKey
    *          Boolean that indicates if the tab key is a secondary key.
    * @param grandfatherField
-   *          The grnadfather field of this tab.
+   *          The grandfather field of this tab.
    * @param tablevel
    *          The tab level.
    * @param tableId
@@ -3530,8 +3530,6 @@ public class Wad extends DefaultHandler {
    *          Id of the process associated to the tab.
    * @param strDirectPrint
    *          Indicate if the process is a direct print or has a preview mode.
-   * @param strParentNameDescription
-   *          The human description of the parent tab.
    * @param WindowPathName
    *          The name of the window for the path.
    * @param strLanguage
@@ -4320,8 +4318,6 @@ public class Wad extends DefaultHandler {
    *          Id of the parent tab.
    * @param strTabSelected
    *          Id of the selected tab.
-   * @param strLanguage
-   *          Language to translate the names of the subtabs.
    * @throws IOException
    * @throws ServletException
    */

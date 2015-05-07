@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,7 +29,10 @@ isc.defineClass('OBExternalPage', isc.HTMLFlow).addProperties({
   padding: 0,
   margin: 0,
   height: '100%',
-  width: '100%'
+  width: '100%',
+  // hack: force z-index to be small to make contextual menus in other tabs work
+  // see https://issues.openbravo.com/view.php?id=27869
+  zIndex: 1
 });
 
 // get the label and set it in the class

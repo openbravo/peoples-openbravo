@@ -34,7 +34,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2012 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2015 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -143,6 +143,10 @@
   NEXT_PRODUCT BOOLEAN:=false;
   Cur_Storage_ISOPEN BOOLEAN:=false;
   Cur_OrderLine_ISOPEN BOOLEAN:=false;
+
+  v_AllowPartialShipment VARCHAR2(2000);
+  v_ForceDelivery CHAR(1);
+  v_DeliveryRule CHAR(1);
 BEGIN
   -- Process Parameters
   IF (p_pinstance_id IS NOT NULL) THEN
@@ -210,6 +214,16 @@ BEGIN --BODY
     IF(v_Selection IS NULL) THEN
       v_Selection:='N';
     END IF;
+    IF (p_ForceDelivery = 'Y') THEN
+      SELECT COUNT(*) INTO v_count
+      FROM DUAL
+      WHERE EXISTS (SELECT 1 FROM ad_preference WHERE property = 'AllowPartialShipment');
+      IF (v_count = 1) THEN
+        v_AllowPartialShipment := AD_GET_PREFERENCE_VALUE('AllowPartialShipment', 'Y', v_AD_Client_ID, v_AD_Org_ID, NULL, NULL, NULL);
+      ELSE
+        v_AllowPartialShipment := 'N';
+      END IF;
+    END IF;
     /**************************************************************************
     * Order Loop goes though all open orders, where we would need to ship something
     * (if v_Record_ID = '0')
@@ -228,8 +242,7 @@ BEGIN --BODY
           AND o.C_DocType_ID IN (SELECT C_DocType_ID
                                  FROM C_DOCTYPE
                                  WHERE DocBaseType='SOO'
-                                   AND DocSubTypeSO NOT IN('ON', 'OB')
-                                   AND isReturn = 'N')
+                                   AND DocSubTypeSO NOT IN('ON', 'OB'))
           AND ((v_Selection='Y' AND o.IsSelected='Y')
               OR (v_Selection<>'Y'
                   AND (v_AD_Org_ID IS NULL OR v_AD_Org_ID=o.AD_Org_ID) 
@@ -275,8 +288,7 @@ BEGIN --BODY
           AND o.C_DocType_ID IN (SELECT C_DocType_ID
                                  FROM C_DOCTYPE
                                  WHERE DocBaseType='SOO'
-                                   AND DocSubTypeSO NOT IN('ON', 'OB')
-                                   AND isReturn = 'N')
+                                   AND DocSubTypeSO NOT IN('ON', 'OB'))
           -- Manually Selected
           AND ((v_Selection='Y' AND o.IsSelected='Y')
               OR (v_Selection<>'Y' -- Specific or individual organization
@@ -301,16 +313,23 @@ BEGIN --BODY
              o.DELIVERY_LOCATION_ID -- Added by Rafa Roda to include delivery location
         ORDER BY o.PriorityRule,o.DocumentNo
     ) LOOP
+      IF (v_AllowPartialShipment = 'Y') THEN
+        v_ForceDelivery := 'N';
+        v_DeliveryRule := 'A';
+      ELSE
+        v_ForceDelivery := p_ForceDelivery;
+        v_DeliveryRule := Cur_Order.DeliveryRule;
+      END IF;
       v_DocumentNo:='';
       v_order_count := v_order_count +1;
-      DBMS_OUTPUT.PUT_LINE('Order ' || Cur_Order.DocumentNo || '/' || Cur_Order.C_Order_ID || ', Wh=' || Cur_Order.M_Warehouse_ID || ', Force=' || p_ForceDelivery || ', Delivery=' || Cur_Order.DeliveryRule) ;
+      DBMS_OUTPUT.PUT_LINE('Order ' || Cur_Order.DocumentNo || '/' || Cur_Order.C_Order_ID || ', Wh=' || Cur_Order.M_Warehouse_ID || ', Force=' || v_ForceDelivery || ', Delivery=' || v_DeliveryRule) ;
       -- Delivery Rules
       --  (A)vailability
       --  Complete (L)ine
       --  Complete (O)rder
       --  After (R)eceipt
       -- (A)vailability (L)ine   -- Do we have something to ship ?
-      IF (Cur_Order.DeliveryRule IN('A', 'L', 'R', 'O')) THEN
+      IF (v_DeliveryRule IN('A', 'L', 'R', 'O')) THEN
         v_ResultStr:='CheckSomethingToShip';
         OPEN Cur_OrderLine(Cur_Order.C_Order_ID, Cur_Order.M_Warehouse_ID) ;
         Cur_OrderLine_ISOPEN:=true;
@@ -321,7 +340,7 @@ BEGIN --BODY
           Next_Order:=true;
         END IF;
       ELSE
-        DBMS_OUTPUT.PUT_LINE('** DeliveryRule=' || Cur_Order.DeliveryRule || ' not implemented') ;
+        DBMS_OUTPUT.PUT_LINE('** DeliveryRule=' || v_DeliveryRule || ' not implemented') ;
         Next_Order:=true;
       END IF;
 
@@ -374,7 +393,7 @@ BEGIN --BODY
             now(), v_User_ID, v_DocumentNo, v_DocType_ID,
             Cur_Order.Description, 'N', 'C-', v_NEWORDERDATE,
             TRUNC(now()), Cur_Order.C_BPartner_ID, Cur_Order.C_BPartner_Location_ID, Cur_Order.AD_User_ID,
-            Cur_Order.M_Warehouse_ID, Cur_Order.POReference, Cur_Order.DateOrdered, Cur_Order.DeliveryRule,
+            Cur_Order.M_Warehouse_ID, Cur_Order.POReference, Cur_Order.DateOrdered, v_DeliveryRule,
             Cur_Order.FreightCostRule, Cur_Order.FreightAmt, Cur_Order.C_Project_ID, Cur_Order.C_Activity_ID,
             Cur_Order.C_Campaign_ID, Cur_Order.AD_OrgTrx_ID, Cur_Order.User1_ID, Cur_Order.User2_ID,
             Cur_Order.DeliveryViaRule, Cur_Order.M_Shipper_ID, Cur_Order.C_Charge_ID, Cur_Order.ChargeAmt,
@@ -459,30 +478,9 @@ BEGIN --BODY
                   v_reservation_id VARCHAR2(32);
                 BEGIN
                   v_pinstance_id := get_uuid();
-                  INSERT INTO ad_pinstance (
-                      ad_pinstance_id, ad_process_id, record_id, isactive, 
-                      ad_user_id, ad_client_id, ad_org_id, created, createdby,
-                      updated, updatedby
-                  ) VALUES (
-                      v_pinstance_id, 'FF80818132C964E30132C9747257002E', v_record_id, 'Y',
-                      v_User_ID, v_ad_client_id, ol.AD_Org_ID, now(), v_User_ID,
-                      now(), v_User_ID
-                  );
-    
-                  AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '10', 'AD_Client_ID', v_ad_client_id, null, null, null, null, null);
-                  AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '20', 'AD_Org_ID', Cur_Order.AD_Org_ID, null, null, null, null, null);
-                  AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '30', 'M_Product_ID', v_Product_old, null, null, null, null, null);
-                  AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '40', 'C_Uom_ID', v_UOM_old, null, null, null, null, null);
-                  AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '50', 'M_Product_Uom_ID', v_Product_UOM_old, null, null, null, null, null);
-                  AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '60', 'Priority_Warehouse_ID', v_Warehouse_old, null, null, null, null, null);
-                  AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '70', 'M_AttributesetInstance_ID', v_Attribute_old, null, null, null, null, null);
-                  AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '80', 'Quantity', null, null, v_Qty, null, null, null);
-                  AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '90', 'ProcessID', '118', null, null, null, null, null);
-
                   SELECT m_warehouse_rule_id INTO v_warehouse_rule_id
                   FROM c_orderline
                   WHERE c_orderline_id = ol.c_orderline_id;
-                  AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '100', 'M_Warehouse_Rule_ID', v_warehouse_rule_id, null, null, null, null, null);
 
                   SELECT count(*) INTO v_count
                   FROM m_reservation
@@ -496,15 +494,10 @@ BEGIN --BODY
                     FROM m_reservation
                     WHERE res_status != 'CL'
                       AND c_orderline_id = ol.c_orderline_id;
-                    AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '110', 'M_Reservation_ID', v_reservation_id, null, null, null, null, null);
                   END IF;
 
-                  M_GET_STOCK(v_pinstance_ID, 'N');
+                  M_GET_STOCK_PARAM(v_pinstance_ID, v_record_id, v_Qty, v_Product_old, null, null, v_Warehouse_old, Cur_Order.AD_Org_ID, v_Attribute_old, v_User_ID, v_ad_client_id, v_warehouse_rule_id, v_UOM_old, v_Product_UOM_old, null, null, null, 'FF80818132C964E30132C9747257002E', v_reservation_id, 'N', v_pinstance_result, v_pinstance_msg);
                   -- Check result
-                  SELECT result, errormsg
-                    INTO v_pinstance_result, v_pinstance_msg
-                  FROM ad_pinstance
-                  WHERE ad_pinstance_id = v_pinstance_id;
                   IF (v_pinstance_result = 0) THEN
                     -- Error on m_get_stock
                     RAISE_APPLICATION_ERROR(-20000, v_pinstance_msg);
@@ -585,7 +578,7 @@ BEGIN --BODY
                 END IF;--NEXT_PRODUCT
                 --<<NEXT_PRODUCT>>
                 NEXT_PRODUCT:=false;
-                IF (v_Qty<>0 AND (p_ForceDelivery='Y' OR v_allownegativestock = 'Y')) THEN
+                IF (v_Qty<>0 AND (v_ForceDelivery='Y' OR v_allownegativestock = 'Y')) THEN
                   -- Create InOut Line
                   Ad_Sequence_Next('M_InOutLine', Cur_Order.C_Order_ID, v_NextNo) ;
                   IF (v_ProductUOM IS NOT NULL) THEN
@@ -634,12 +627,12 @@ BEGIN --BODY
                                        and c_orderline_id = (SELECT BOM_parent_id from c_orderline WHERE c_orderline_id = ol.C_OrderLine_ID)));
                   v_lines:=v_lines + 10;
                 ELSIF (v_qty <> 0) THEN
-                  IF (cur_order.deliveryrule = 'O') THEN
+                  IF (v_DeliveryRule = 'O') THEN
                     DBMS_OUTPUT.PUT_LINE('Not enough stocked products, delivery type Order');
                     next_order := true;
                     v_lines := 0;
                     EXIT;
-                  ELSIF (Cur_order.deliveryrule = 'L') THEN
+                  ELSIF (v_DeliveryRule = 'L') THEN
                     DBMS_OUTPUT.PUT_LINE('Not enough stocked products, delivery type Line');
                     v_lines := v_lines - v_lines_per_orderline;
                     IF (LENGTH(v_resultlinesstr || '<br>@OrderLine@: ' || ol.Line || ' @ForProduct@ ' || ol.name || ': @notEnoughStockDeliveryRuleLine@.') <= 1800 ) THEN
@@ -697,6 +690,12 @@ BEGIN --BODY
                 v_lines:=v_lines + 10;
               END IF;
             END IF;--Next_Line
+            UPDATE C_INVOICELINE
+            SET M_INOUTLINE_ID=v_NextNo,
+                Updated=now(),
+                UpdatedBy=v_User_ID
+            WHERE C_ORDERLINE_ID=ol.C_OrderLine_ID
+            AND M_INOUTLINE_ID IS NULL;
             --<<Next_Line>>
             Next_Line:=false;
             FETCH Cur_OrderLine INTO ol;
@@ -712,7 +711,7 @@ BEGIN --BODY
         DELETE FROM M_INOUT
         WHERE M_INOUT_ID = p_InOut_ID;
         next_order := TRUE;
-        IF (Cur_Order.DeliveryRule='O') THEN
+        IF (v_DeliveryRule='O') THEN
           result_String := '@OrderDocumentno@ ' || cur_order.DocumentNo || ': ' || '@ShipmentError@. @notEnoughStockDeliveryRuleOrder@.';
         ELSE
           result_String := '@OrderDocumentno@ ' || cur_order.DocumentNo || ': ' || '@ShipmentError@.' || v_resultlinesstr;

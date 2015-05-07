@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -104,7 +104,8 @@ public class ActionButtonUtility {
         data1.setData("ID", "CO");
         v.addElement(data1);
         if (!strTable.equals("319") && !strTable.equals("800212") && !isQuotation
-            && !"224".equals(strTable)) {
+            && !"224".equals(strTable)
+            && (strDocStatus.equals("IP") || (!strTable.equals("318")))) {
           data1 = new SQLReturnObject();
           data1.setData("ID", "VO");
           v.addElement(data1);

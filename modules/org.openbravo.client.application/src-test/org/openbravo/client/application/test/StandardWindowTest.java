@@ -18,6 +18,7 @@
  */
 package org.openbravo.client.application.test;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.client.application.window.StandardWindowComponent;
@@ -55,6 +56,8 @@ public class StandardWindowTest extends WeldBaseTest {
   /**
    * Tests generating the javascript for one window to analyze problems.
    */
+  @Ignore
+  @Test
   public void _testOneStandardViewGeneration() throws Exception {
     setSystemAdministratorContext();
     generateForWindow(OBDal.getInstance().get(Window.class, "1005400002"));

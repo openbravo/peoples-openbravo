@@ -49,6 +49,7 @@
     allowDelete: true,
     </#if>
     showSelect: ${tabComponent.showSelect?string},
+    selectionType: '${tabComponent.selectionType?string}',
     <#if tabComponent.newFunction != ''>
     newFn: ${tabComponent.newFunction},
     </#if>

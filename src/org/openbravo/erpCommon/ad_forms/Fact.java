@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2011 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2014 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -33,6 +33,10 @@ public class Fact {
 
   /** Document */
   private AcctServer m_doc = null;
+
+  public AcctServer getM_doc() {
+    return m_doc;
+  }
 
   /** Accounting Schema */
   private AcctSchema m_acctSchema = null;
@@ -205,8 +209,8 @@ public class Fact {
       // If this is a manual entry then we need to recompute Amounts which were set in loadLines for
       // GL Journal Document
       if ("GLJ".equals(DocBaseType)) {
-        docLine.setConvertedAmt(docLine.m_C_AcctSchema_ID, DebitAmt.toString(),
-            CreditAmt.toString());
+        docLine.setConvertedAmt(docLine.m_C_AcctSchema_ID, DebitAmt.toString(), CreditAmt
+            .toString());
       }
       if (strNegate.equals("N") && (DebitAmt.compareTo(ZERO) < 0 || CreditAmt.compareTo(ZERO) < 0)) {
         return createLine(docLine, account, C_Currency_ID, CreditAmt.abs().toString(), DebitAmt
@@ -249,8 +253,8 @@ public class Fact {
     if (conversionRate != null) {
       line.convertByRate(m_acctSchema.getC_Currency_ID(), conversionRate);
     } else {
-      line.convert(m_acctSchema.getC_Currency_ID(), conversionDate,
-          m_acctSchema.getCurrencyRateType(), conn);
+      line.convert(m_acctSchema.getC_Currency_ID(), conversionDate, m_acctSchema
+          .getCurrencyRateType(), conn);
     }
     // Optionally overwrite Acct Amount
     if (docLine != null && !docLine.m_AmtAcctDr.equals("") && !docLine.m_AmtAcctCr.equals(""))
@@ -409,8 +413,8 @@ public class Fact {
       // positive balance => CR
       line.setAmtSource(m_doc.C_Currency_ID, ZERO.toString(), diff.toString());
     // Convert
-    line.convert(m_acctSchema.getC_Currency_ID(), m_doc.DateAcct,
-        m_acctSchema.getCurrencyRateType(), conn);
+    line.convert(m_acctSchema.getC_Currency_ID(), m_doc.DateAcct, m_acctSchema
+        .getCurrencyRateType(), conn);
     line.setAccount(m_acctSchema, m_acctSchema.getSuspenseBalancing_Acct());
     //
     log4jFact.debug("balanceSource - ");
@@ -584,8 +588,8 @@ public class Fact {
             line.setAmtSource(m_doc.C_Currency_ID, ZERO.toString(), diff.abs().toString());
             line.setAccount(m_acctSchema, m_acctSchema.m_DueTo_Acct);
           }
-          line.convert(m_acctSchema.getC_Currency_ID(), m_doc.DateAcct,
-              m_acctSchema.getCurrencyRateType(), conn);
+          line.convert(m_acctSchema.getC_Currency_ID(), m_doc.DateAcct, m_acctSchema
+              .getCurrencyRateType(), conn);
           line.setAD_Org_ID(key);
           log4jFact.debug("balanceSegment (" + segmentType + ") - ");
           log4jFact.debug("************* fact - balanceSegment - m_lines.size() - "
@@ -657,8 +661,8 @@ public class Fact {
 
       // Amount
       line.setAmtSource(m_doc.C_Currency_ID, ZERO.toString(), ZERO.toString());
-      line.convert(m_acctSchema.getC_Currency_ID(), m_doc.DateAcct,
-          m_acctSchema.getCurrencyRateType(), conn);
+      line.convert(m_acctSchema.getC_Currency_ID(), m_doc.DateAcct, m_acctSchema
+          .getCurrencyRateType(), conn);
       if (diff.compareTo(ZERO) < 0)
         line.setAmtAcct(diff.abs().toString(), ZERO.toString());
       else

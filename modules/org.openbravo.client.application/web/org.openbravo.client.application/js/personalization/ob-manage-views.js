@@ -98,7 +98,7 @@
 // ** {{{OB.Personalization.applyViewDefinition}}} **
 // Apply a selected view definition to a window
 OB.Personalization.applyViewDefinition = function (persId, viewDefinition, standardWindow) {
-  var i, view, viewTabDefinition, showTreeGrid, length = standardWindow.views.length,
+  var i, view, viewTabDefinition, showTreeGrid, selectedView, length = standardWindow.views.length,
       windowDefinition = viewDefinition.window;
 
   // delete the current form personalization 
@@ -107,47 +107,13 @@ OB.Personalization.applyViewDefinition = function (persId, viewDefinition, stand
 
   standardWindow.selectedPersonalizationId = persId;
 
-  if (windowDefinition) {
-    if (windowDefinition.activeTabId) {
-      for (i = 0; i < length; i++) {
-        if (standardWindow.views[i].tabId === windowDefinition.activeTabId) {
-          view = standardWindow.views[i];
-          break;
-        }
-      }
-      if (view) {
-        // force an active view
-        if (standardWindow.activeView === view) {
-          standardWindow.activeView = null;
-        }
-        view.setAsActiveView(true);
-        if (windowDefinition.parentTabSetState && view.parentTabSet) {
-          view.parentTabSet.setState(windowDefinition.parentTabSetState);
-          view.parentTabSet.setHeight(windowDefinition.parentTabSetHeight);
-          // in this case the visibility of the top part of the parent view has to be set
-          // as it can be hidden previously
-          // https://issues.openbravo.com/view.php?id=18951
-          if (view.parentView && !view.parentView.members[0].isVisible() && isc.OBStandardView.STATE_BOTTOM_MAX !== windowDefinition.parentTabSetState) {
-            view.parentView.members[0].show();
-          }
-        } else if (windowDefinition.childTabSetState && view.childTabSet) {
-          // in this case the visibility of the top part of the view has to be set
-          // as it can be hidden previously
-          // https://issues.openbravo.com/view.php?id=18951
-          if (!view.members[0].isVisible() && isc.OBStandardView.STATE_BOTTOM_MAX !== windowDefinition.childTabSetState) {
-            view.members[0].show();
-          }
-          view.childTabSet.setState(windowDefinition.childTabSetState);
-          view.childTabSet.setHeight(windowDefinition.childTabSetHeight);
-        }
-      }
-    }
-  }
-
   // the viewdefinition contains both the global info (form, canDelete, personalizationid)  
   // set the view state for each tab
   for (i = 0; i < length; i++) {
     view = standardWindow.views[i];
+    if (!selectedView && windowDefinition && windowDefinition.activeTabId && standardWindow.views[i].tabId === windowDefinition.activeTabId) {
+      selectedView = view;
+    }
     viewTabDefinition = viewDefinition[view.tabId];
     if (viewTabDefinition) {
       if (viewTabDefinition.viewMode === 'tree' && view.treeGrid) {
@@ -167,6 +133,35 @@ OB.Personalization.applyViewDefinition = function (persId, viewDefinition, stand
       }
     }
   }
+
+  if (selectedView) {
+    if (windowDefinition.parentTabSetState && selectedView.parentTabSet) {
+      selectedView.parentTabSet.setState(windowDefinition.parentTabSetState);
+      selectedView.parentTabSet.setHeight(windowDefinition.parentTabSetHeight);
+      // in this case the visibility of the top part of the parent view has to be set
+      // as it can be hidden previously
+      // https://issues.openbravo.com/view.php?id=18951
+      if (selectedView.parentView && !selectedView.parentView.members[0].isVisible() && isc.OBStandardView.STATE_BOTTOM_MAX !== windowDefinition.parentTabSetState) {
+        selectedView.parentView.members[0].show();
+      }
+    } else if (windowDefinition.childTabSetState && selectedView.childTabSet) {
+      // in this case the visibility of the top part of the view has to be set
+      // as it can be hidden previously
+      // https://issues.openbravo.com/view.php?id=18951
+      if (!selectedView.members[0].isVisible() && isc.OBStandardView.STATE_BOTTOM_MAX !== windowDefinition.childTabSetState) {
+        selectedView.members[0].show();
+      }
+      selectedView.childTabSet.setState(windowDefinition.childTabSetState);
+      selectedView.childTabSet.setHeight(windowDefinition.childTabSetHeight);
+    }
+
+    // force an active view
+    if (standardWindow.activeView === selectedView) {
+      standardWindow.activeView = null;
+    }
+    selectedView.setAsActiveView(true);
+  }
+
 };
 
 // ** {{{OB.Personalization.applyViewDefinitionToView}}} **

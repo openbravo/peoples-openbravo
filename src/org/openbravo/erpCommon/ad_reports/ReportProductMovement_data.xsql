@@ -175,6 +175,7 @@
     <Parameter name="parDateTo" optional="true" after="AND 1=1"><![CDATA[ AND M_TRANSACTION.MOVEMENTDATE < to_date(?)]]></Parameter>
     <Parameter name="cBpartner" optional="true" after="AND 1=1"><![CDATA[ AND C_BPARTNER.C_BPARTNER_ID = ?]]></Parameter>
     <Parameter name="mProductId" optional="true" after="AND 1=1"><![CDATA[ AND M_PRODUCT.M_PRODUCT_ID = ?]]></Parameter>
+    <Parameter name="parmAttributeSetInstanceId" optional="true" after="AND 1=1"><![CDATA[AND M_TRANSACTION.M_ATTRIBUTESETINSTANCE_ID = ?]]></Parameter>
   </SqlMethod>
   
   <SqlMethod name="selectInternalConsumption" type="preparedStatement" return="multiple">

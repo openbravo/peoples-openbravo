@@ -29,21 +29,21 @@ static Logger log4j = Logger.getLogger(AlertsForWrongInvoicesData.class);
   }
 
   public String getField(String fieldName) {
-    if (fieldName.equalsIgnoreCase("AD_CLIENT_ID") || fieldName.equals("adClientId"))
+    if (fieldName.equalsIgnoreCase("ad_client_id") || fieldName.equals("adClientId"))
       return adClientId;
-    else if (fieldName.equalsIgnoreCase("INVOICE"))
+    else if (fieldName.equalsIgnoreCase("invoice"))
       return invoice;
-    else if (fieldName.equalsIgnoreCase("C_INVOICE_ID") || fieldName.equals("cInvoiceId"))
+    else if (fieldName.equalsIgnoreCase("c_invoice_id") || fieldName.equals("cInvoiceId"))
       return cInvoiceId;
-    else if (fieldName.equalsIgnoreCase("AD_ORG_ID") || fieldName.equals("adOrgId"))
+    else if (fieldName.equalsIgnoreCase("ad_org_id") || fieldName.equals("adOrgId"))
       return adOrgId;
-    else if (fieldName.equalsIgnoreCase("ISSOTRX"))
+    else if (fieldName.equalsIgnoreCase("issotrx"))
       return issotrx;
-    else if (fieldName.equalsIgnoreCase("AD_ROLE_ID") || fieldName.equals("adRoleId"))
+    else if (fieldName.equalsIgnoreCase("ad_role_id") || fieldName.equals("adRoleId"))
       return adRoleId;
-    else if (fieldName.equalsIgnoreCase("AD_ALERTRULE_ID") || fieldName.equals("adAlertruleId"))
+    else if (fieldName.equalsIgnoreCase("ad_alertrule_id") || fieldName.equals("adAlertruleId"))
       return adAlertruleId;
-    else if (fieldName.equalsIgnoreCase("AD_ALERT_ID") || fieldName.equals("adAlertId"))
+    else if (fieldName.equalsIgnoreCase("ad_alert_id") || fieldName.equals("adAlertId"))
       return adAlertId;
    else {
      log4j.debug("Field does not exist: " + fieldName);
@@ -86,14 +86,14 @@ static Logger log4j = Logger.getLogger(AlertsForWrongInvoicesData.class);
       while(continueResult && result.next()) {
         countRecord++;
         AlertsForWrongInvoicesData objectAlertsForWrongInvoicesData = new AlertsForWrongInvoicesData();
-        objectAlertsForWrongInvoicesData.adClientId = UtilSql.getValue(result, "AD_CLIENT_ID");
-        objectAlertsForWrongInvoicesData.invoice = UtilSql.getValue(result, "INVOICE");
-        objectAlertsForWrongInvoicesData.cInvoiceId = UtilSql.getValue(result, "C_INVOICE_ID");
-        objectAlertsForWrongInvoicesData.adOrgId = UtilSql.getValue(result, "AD_ORG_ID");
-        objectAlertsForWrongInvoicesData.issotrx = UtilSql.getValue(result, "ISSOTRX");
-        objectAlertsForWrongInvoicesData.adRoleId = UtilSql.getValue(result, "AD_ROLE_ID");
-        objectAlertsForWrongInvoicesData.adAlertruleId = UtilSql.getValue(result, "AD_ALERTRULE_ID");
-        objectAlertsForWrongInvoicesData.adAlertId = UtilSql.getValue(result, "AD_ALERT_ID");
+        objectAlertsForWrongInvoicesData.adClientId = UtilSql.getValue(result, "ad_client_id");
+        objectAlertsForWrongInvoicesData.invoice = UtilSql.getValue(result, "invoice");
+        objectAlertsForWrongInvoicesData.cInvoiceId = UtilSql.getValue(result, "c_invoice_id");
+        objectAlertsForWrongInvoicesData.adOrgId = UtilSql.getValue(result, "ad_org_id");
+        objectAlertsForWrongInvoicesData.issotrx = UtilSql.getValue(result, "issotrx");
+        objectAlertsForWrongInvoicesData.adRoleId = UtilSql.getValue(result, "ad_role_id");
+        objectAlertsForWrongInvoicesData.adAlertruleId = UtilSql.getValue(result, "ad_alertrule_id");
+        objectAlertsForWrongInvoicesData.adAlertId = UtilSql.getValue(result, "ad_alert_id");
         objectAlertsForWrongInvoicesData.InitRecordNumber = Integer.toString(firstRegister);
         vector.addElement(objectAlertsForWrongInvoicesData);
         if (countRecord >= numberRegisters && numberRegisters != 0) {
@@ -164,8 +164,8 @@ Identify alerts created not taking in account the void payment functionality.
       while(continueResult && result.next()) {
         countRecord++;
         AlertsForWrongInvoicesData objectAlertsForWrongInvoicesData = new AlertsForWrongInvoicesData();
-        objectAlertsForWrongInvoicesData.cInvoiceId = UtilSql.getValue(result, "C_INVOICE_ID");
-        objectAlertsForWrongInvoicesData.adAlertId = UtilSql.getValue(result, "AD_ALERT_ID");
+        objectAlertsForWrongInvoicesData.cInvoiceId = UtilSql.getValue(result, "c_invoice_id");
+        objectAlertsForWrongInvoicesData.adAlertId = UtilSql.getValue(result, "ad_alert_id");
         objectAlertsForWrongInvoicesData.InitRecordNumber = Integer.toString(firstRegister);
         vector.addElement(objectAlertsForWrongInvoicesData);
         if (countRecord >= numberRegisters && numberRegisters != 0) {
@@ -197,7 +197,6 @@ Identify alerts created not taking in account the void payment functionality.
       "       SELECT COUNT(*) AS EXISTING" +
       "       FROM AD_ALERTRULE" +
       "       WHERE NAME = ?" +
-      "         AND ISACTIVE = 'Y'" +
       "         AND AD_CLIENT_ID = ?";
 
     ResultSet result;
@@ -212,7 +211,7 @@ Identify alerts created not taking in account the void payment functionality.
 
       result = st.executeQuery();
       if(result.next()) {
-        boolReturn = !UtilSql.getValue(result, "EXISTING").equals("0");
+        boolReturn = !UtilSql.getValue(result, "existing").equals("0");
       }
       result.close();
     } catch(SQLException e){
@@ -252,7 +251,7 @@ Identify alerts created not taking in account the void payment functionality.
 
       result = st.executeQuery();
       if(result.next()) {
-        boolReturn = !UtilSql.getValue(result, "EXISTING").equals("0");
+        boolReturn = !UtilSql.getValue(result, "existing").equals("0");
       }
       result.close();
     } catch(SQLException e){
@@ -292,7 +291,7 @@ Identify alerts created not taking in account the void payment functionality.
 
       result = st.executeQuery();
       if(result.next()) {
-        strReturn = UtilSql.getValue(result, "NAME");
+        strReturn = UtilSql.getValue(result, "name");
       }
       result.close();
     } catch(SQLException e){
@@ -343,7 +342,7 @@ Identify alerts created not taking in account the void payment functionality.
       while(continueResult && result.next()) {
         countRecord++;
         AlertsForWrongInvoicesData objectAlertsForWrongInvoicesData = new AlertsForWrongInvoicesData();
-        objectAlertsForWrongInvoicesData.adAlertruleId = UtilSql.getValue(result, "AD_ALERTRULE_ID");
+        objectAlertsForWrongInvoicesData.adAlertruleId = UtilSql.getValue(result, "ad_alertrule_id");
         objectAlertsForWrongInvoicesData.InitRecordNumber = Integer.toString(firstRegister);
         vector.addElement(objectAlertsForWrongInvoicesData);
         if (countRecord >= numberRegisters && numberRegisters != 0) {
@@ -403,7 +402,7 @@ Identify alerts created not taking in account the void payment functionality.
       while(continueResult && result.next()) {
         countRecord++;
         AlertsForWrongInvoicesData objectAlertsForWrongInvoicesData = new AlertsForWrongInvoicesData();
-        objectAlertsForWrongInvoicesData.adRoleId = UtilSql.getValue(result, "AD_ROLE_ID");
+        objectAlertsForWrongInvoicesData.adRoleId = UtilSql.getValue(result, "ad_role_id");
         objectAlertsForWrongInvoicesData.InitRecordNumber = Integer.toString(firstRegister);
         vector.addElement(objectAlertsForWrongInvoicesData);
         if (countRecord >= numberRegisters && numberRegisters != 0) {
@@ -598,6 +597,78 @@ Identify alerts created not taking in account the void payment functionality.
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, status);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, isfixed);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, alertId);
+
+      updateCount = st.executeUpdate();
+    } catch(SQLException e){
+      log4j.error("SQL error in query: " + strSql + "Exception:"+ e);
+      throw new ServletException("@CODE=" + Integer.toString(e.getErrorCode()) + "@" + e.getMessage());
+    } catch(Exception ex){
+      log4j.error("Exception in query: " + strSql + "Exception:"+ ex);
+      throw new ServletException("@CODE=@" + ex.getMessage());
+    } finally {
+      try {
+        connectionProvider.releasePreparedStatement(st);
+      } catch(Exception ignore){
+        ignore.printStackTrace();
+      }
+    }
+    return(updateCount);
+  }
+
+  public static boolean isAlertsForWrongInvoicesExecuted(ConnectionProvider connectionProvider)    throws ServletException {
+    String strSql = "";
+    strSql = strSql + 
+      "        SELECT count(*) as exist" +
+      "        FROM DUAL" +
+      "        WHERE EXISTS (SELECT 1 FROM ad_preference" +
+      "                      WHERE attribute = 'AlertsForWrongInvoices')";
+
+    ResultSet result;
+    boolean boolReturn = false;
+    PreparedStatement st = null;
+
+    try {
+    st = connectionProvider.getPreparedStatement(strSql);
+
+      result = st.executeQuery();
+      if(result.next()) {
+        boolReturn = !UtilSql.getValue(result, "exist").equals("0");
+      }
+      result.close();
+    } catch(SQLException e){
+      log4j.error("SQL error in query: " + strSql + "Exception:"+ e);
+      throw new ServletException("@CODE=" + Integer.toString(e.getErrorCode()) + "@" + e.getMessage());
+    } catch(Exception ex){
+      log4j.error("Exception in query: " + strSql + "Exception:"+ ex);
+      throw new ServletException("@CODE=@" + ex.getMessage());
+    } finally {
+      try {
+        connectionProvider.releasePreparedStatement(st);
+      } catch(Exception ignore){
+        ignore.printStackTrace();
+      }
+    }
+    return(boolReturn);
+  }
+
+  public static int createPreference(ConnectionProvider connectionProvider)    throws ServletException {
+    String strSql = "";
+    strSql = strSql + 
+      "        INSERT INTO ad_preference (" +
+      "          ad_preference_id, ad_client_id, ad_org_id, isactive," +
+      "          createdby, created, updatedby, updated," +
+      "          attribute" +
+      "        ) VALUES (" +
+      "          get_uuid(), '0', '0', 'Y'," +
+      "          '0', NOW(), '0', NOW()," +
+      "          'AlertsForWrongInvoices'" +
+      "        )";
+
+    int updateCount = 0;
+    PreparedStatement st = null;
+
+    try {
+    st = connectionProvider.getPreparedStatement(strSql);
 
       updateCount = st.executeUpdate();
     } catch(SQLException e){

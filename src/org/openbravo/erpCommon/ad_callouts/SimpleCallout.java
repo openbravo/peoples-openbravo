@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,9 +29,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.filter.IsIDFilter;
+import org.openbravo.base.filter.RegexFilter;
 import org.openbravo.base.filter.RequestFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -138,7 +141,6 @@ public abstract class SimpleCallout extends HttpSecureAppServlet {
      */
     public VariablesSecureApp vars;
 
-
     private CalloutInfo(VariablesSecureApp vars, String classname, ServletConfig config) {
       this.config = config;
       this.vars = vars;
@@ -161,7 +163,7 @@ public abstract class SimpleCallout extends HttpSecureAppServlet {
      * 
      * Invokes another SimpleCallout. This method allows to divide callouts functionality into
      * several callout classes
-     *
+     * 
      * @param callout
      *          SimpleCallout instance to invoke
      */
@@ -171,7 +173,7 @@ public abstract class SimpleCallout extends HttpSecureAppServlet {
     }
 
     /**
-     *
+     * 
      * @return The name of field that triggered the callout.
      */
     public String getLastFieldChanged() {
@@ -319,6 +321,19 @@ public abstract class SimpleCallout extends HttpSecureAppServlet {
     public void addResult(String param, String value) {
       addResult(param, (Object) (value == null ? null : "\"" + FormatUtilities.replaceJS(value)
           + "\""));
+    }
+
+    /**
+     * Adds a default document number to the result.
+     */
+    void addDocumentNo() {
+      String strTableNameId = getStringParameter("inpkeyColumnId", new RegexFilter(
+          "[a-zA-Z0-9_]*_ID"));
+      String strDocType_Id = getStringParameter("inpcDoctypeId", IsIDFilter.instance);
+      String strTableName = strTableNameId.substring(0, strTableNameId.length() - 3);
+      String strDocumentNo = Utility.getDocumentNo(new DalConnectionProvider(false), vars,
+          getWindowId(), strTableName, strDocType_Id, strDocType_Id, false, false);
+      addResult("inpdocumentno", "<" + strDocumentNo + ">");
     }
 
     /**

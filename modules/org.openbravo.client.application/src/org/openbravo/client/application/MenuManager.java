@@ -30,13 +30,18 @@ import javax.inject.Inject;
 
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.session.SessionFactoryController;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.ActivationKey.FeatureRestriction;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.access.Role;
+import org.openbravo.model.ad.access.TabAccess;
+import org.openbravo.model.ad.access.WindowAccess;
 import org.openbravo.model.ad.ui.Form;
 import org.openbravo.model.ad.ui.Menu;
 import org.openbravo.model.ad.ui.MenuTrl;
@@ -311,8 +316,57 @@ public class MenuManager implements Serializable {
       return Boolean.toString(isSingleRecord());
     }
 
+    /**
+     * This method returns true if the menu entry is read only. The menu entry will be read only
+     * either if the uipattern of its tab is "RO" (Read Only) or if the current role only has read
+     * only access to the tab or to its window
+     */
     public boolean isReadOnly() {
-      return getTab() != null && getTab().getUIPattern().equals("RO");
+      boolean tabIsReadOnlyForAll = getTab() != null && getTab().getUIPattern().equals("RO");
+      boolean tabIsReadOnlyForRole = isTabReadOnlyforRole();
+      return tabIsReadOnlyForAll || tabIsReadOnlyForRole;
+    }
+
+    /**
+     * Returns true if the tab is not editable by the current role by checking the WindowAccess and
+     * TabAccess entities
+     */
+    public boolean isTabReadOnlyforRole() {
+      boolean isReadOnly = false;
+      // If there is no tab there is nothing to check
+      if (getTab() == null) {
+        return false;
+      }
+      // Obtains the Window Access for the current role
+      Role role = OBContext.getOBContext().getRole();
+      OBCriteria<WindowAccess> windowAccessCriteria = OBDal.getInstance().createCriteria(
+          WindowAccess.class);
+      windowAccessCriteria.add(Restrictions.eq(WindowAccess.PROPERTY_ROLE, role));
+      windowAccessCriteria.add(Restrictions.eq(WindowAccess.PROPERTY_WINDOW, getTab().getWindow()));
+      WindowAccess windowAccess = (WindowAccess) windowAccessCriteria.uniqueResult();
+      if (windowAccess != null) {
+        // there is a window access defined for this window and this role
+        OBCriteria<TabAccess> tabAccessCriteria = OBDal.getInstance().createCriteria(
+            TabAccess.class);
+        tabAccessCriteria.add(Restrictions.eq(TabAccess.PROPERTY_TAB, tab));
+        tabAccessCriteria.add(Restrictions.eq(TabAccess.PROPERTY_WINDOWACCESS, windowAccess));
+        TabAccess tabAccess = (TabAccess) tabAccessCriteria.uniqueResult();
+        if (tabAccess != null) {
+          // there is a window access defined and a tab access defined too
+          // The menu entry will be read only if the tab is not editable by this role
+          isReadOnly = !tabAccess.isEditableField();
+          //
+        } else {
+          // There is a window access defined but there is not a tab access defined
+          // The menu entry will be read only if the window is not editable by this role
+          isReadOnly = !windowAccess.isEditableField();
+        }
+      } else {
+        // there is not a window access defined. the user should not even be capable of opening the
+        // window
+        isReadOnly = true;
+      }
+      return isReadOnly;
     }
 
     public String getReadOnlyStringValue() {

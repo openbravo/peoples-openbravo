@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -22,12 +22,14 @@ package org.openbravo.advpaymentmngt.test.draft;
 import java.util.List;
 
 import org.hibernate.criterion.Restrictions;
+import org.junit.Before;
+import org.junit.Test;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
-public class PaymentMethodTest extends BaseTest {
+public class PaymentMethodTest extends OBBaseTest {
 
   private static final String AUTOMATIC_EXECUTION = "A";
   private static final String MANUAL_EXECUTION = "M";
@@ -37,12 +39,16 @@ public class PaymentMethodTest extends BaseTest {
   private static final String DEPOSIT_ACCOUNT = "DEP";
   private static final String STANDARD_DESCRIPTION = "JUnit Test";
 
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
+  /**
+   * This before method is named setUpP() to avoid overwriting the super 
+   * setUp method that is invoke automatically before this one.
+   */
+  @Before
+  public void setUpP() throws Exception {
     TestUtility.setTestContext();
   }
 
+  @Test
   public void testAddPaymentMethodValid1() {
     TestUtility.insertPaymentMethod("APRM_PAYMENT_METHOD_1", STANDARD_DESCRIPTION, true, false,
         false, MANUAL_EXECUTION, null, false, IN_TRANSIT_ACCOUNT, DEPOSIT_ACCOUNT, CLEARED_ACCOUNT,
@@ -50,6 +56,7 @@ public class PaymentMethodTest extends BaseTest {
         CLEARED_ACCOUNT, true, false);
   }
 
+  @Test
   public void testAddPaymentMethodValid2() {
     TestUtility.insertPaymentMethod("APRM_PAYMENT_METHOD_2", STANDARD_DESCRIPTION, true, false,
         false, AUTOMATIC_EXECUTION, null, false, IN_TRANSIT_ACCOUNT, DEPOSIT_ACCOUNT,
@@ -57,12 +64,14 @@ public class PaymentMethodTest extends BaseTest {
         WITHDRAWN_ACCOUNT, CLEARED_ACCOUNT, true, false);
   }
 
+  @Test
   public void testAddPaymentMethodValid3() {
     TestUtility.insertPaymentMethod("APRM_PAYMENT_METHOD_3", STANDARD_DESCRIPTION, true, false,
         false, MANUAL_EXECUTION, null, false, null, null, null, true, false, false,
         MANUAL_EXECUTION, null, false, null, null, null, true, false);
   }
 
+  @Test
   public void testAddPaymentMethodValid4() {
     TestUtility.insertPaymentMethod("APRM_PAYMENT_METHOD_4", STANDARD_DESCRIPTION, true, true,
         true, MANUAL_EXECUTION, null, false, null, null, null, true, true, true, MANUAL_EXECUTION,
@@ -70,6 +79,7 @@ public class PaymentMethodTest extends BaseTest {
   }
 
   // Requisite: at least one Execution Process created
+  @Test
   public void testAddPaymentMethodValid5() {
     TestUtility.insertPaymentMethod("APRM_PAYMENT_METHOD_5", STANDARD_DESCRIPTION, true, false,
         false, AUTOMATIC_EXECUTION, /* getOneInstance(PaymentExecutionProcess.class) */null, false,
@@ -82,6 +92,7 @@ public class PaymentMethodTest extends BaseTest {
   /**
    * Deletes all the Payment Methods created for testing
    */
+  @Test
   public void testDeletePaymentMethod() {
     final OBCriteria<FIN_PaymentMethod> obCriteria = OBDal.getInstance().createCriteria(
         FIN_PaymentMethod.class);
@@ -91,5 +102,4 @@ public class PaymentMethodTest extends BaseTest {
       OBDal.getInstance().remove(pm);
     }
   }
-
 }

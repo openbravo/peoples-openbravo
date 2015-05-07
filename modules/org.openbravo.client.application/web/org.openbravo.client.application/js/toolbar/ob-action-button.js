@@ -60,7 +60,7 @@ isc.OBToolbarActionButton.addProperties({
         me = this,
         standardWindow = this.view.standardWindow,
         autosaveButton = this.autosave,
-        param, allProperties, sessionProperties, callbackFunction, popupParams;
+        param, allProperties, sessionProperties, callbackFunction, popupParams, errorCallback;
     //Modified check from 'rowNum to 'rowNum ! = null' to handle case where rowNum is 0.
     if (rowNum !== null && !theView.viewGrid.getSelectedRecord()) {
       // Current selection was lost, restore it
@@ -102,7 +102,12 @@ isc.OBToolbarActionButton.addProperties({
 
       if (!me.opening) {
         me.opening = true; // To avoid button could be clicked twice
-        theView.setContextInfo(sessionProperties, callbackFunction, true);
+        // prevent blocking the button by setting me.opening to false if there is a problem in the request done in theView.setContextInfo 
+        errorCallback = function () {
+          me.opening = false;
+        };
+        theView.setContextInfo(sessionProperties, callbackFunction, true, errorCallback);
+
       }
       return;
     }
@@ -145,9 +150,8 @@ isc.OBToolbarActionButton.addProperties({
         currentView = this.view,
         afterRefresh, isAfterRefreshAlreadyExecuted, parsePathPart, parts;
 
-    afterRefresh = function (doRefresh) {
-      var undef, refresh = (doRefresh === undef || doRefresh),
-          autosaveDone = false,
+    afterRefresh = function () {
+      var autosaveDone = false,
           currentRecordId, recordsAfterRefresh;
 
       if (isAfterRefreshAlreadyExecuted) {
@@ -173,41 +177,31 @@ isc.OBToolbarActionButton.addProperties({
         // let's set half for each in order to see the message
         contextView.setHalfSplit();
       }
-      // Refresh in order to show possible new records
-      if (refresh) {
-        // The selected record should be shown after the refresh, even
-        // if the filter would exclude it
-        // See issue https://issues.openbravo.com/view.php?id=20722
-        if (currentView.parentTabId) {
-          recordsAfterRefresh = currentView.newRecordsAfterRefresh[currentView.parentTabId];
-        } else {
-          recordsAfterRefresh = currentView.newRecordsAfterRefresh;
-        }
-        currentView.refresh(null, autosaveDone, recordsAfterRefresh);
-      }
       if (contextView.viewGrid.isGrouped) {
         // if the grid is grouped refresh the grid to show the records properly
         contextView.viewGrid.refreshGrid();
       }
+      contextView.refreshParentRecord();
+      contextView.refreshChildViews();
     };
 
     if (this.autosave) {
-      if (currentView.parentView) {
-        currentView.parentView.setChildsToRefresh();
+      if (contextView.parentView) {
+        contextView.parentView.setChildsToRefresh();
       } else {
-        currentView.setChildsToRefresh();
+        contextView.setChildsToRefresh();
       }
 
-      if (currentView.viewGrid.getSelectedRecord()) {
+      if (contextView.viewGrid.getSelectedRecord()) {
         // There is a record selected, refresh it and its parent
-        currentView.refreshCurrentRecord(afterRefresh);
+        contextView.refreshCurrentRecord(afterRefresh);
       } else {
         // No record selected, refresh parent
-        currentView.refreshParentRecord(afterRefresh);
+        contextView.refreshParentRecord(afterRefresh);
       }
     } else {
       // If the button is not autosave, do not refresh but get message.
-      afterRefresh(false);
+      afterRefresh();
     }
 
     OB.ActionButton.executingProcess = null;
@@ -251,15 +245,18 @@ isc.OBToolbarActionButton.addProperties({
   },
 
   updateState: function (record, hide, context, keepNonAutosave) {
-    var currentValues = isc.shallowClone(record || this.contextView.getCurrentValues() || {});
+    var currentValues = isc.shallowClone(record || this.contextView.getCurrentValues() || {}),
+        grid;
     // do not hide non autosave buttons when hidding the rest if keepNonAutosave === true
     var hideButton = hide && (!keepNonAutosave || this.autosave);
 
     var multiSelect = false,
         readonly, i, selection;
 
+    grid = this.contextView.isShowingTree ? this.contextView.treeGrid : this.contextView.viewGrid;
+
     if (hideButton || !record) {
-      multiSelect = this.multiRecord && this.contextView.viewGrid.getSelectedRecords().length > 1;
+      multiSelect = this.multiRecord && grid.getSelectedRecords().length > 1;
       if (!multiSelect) {
         this.hide();
         return;
@@ -297,7 +294,7 @@ isc.OBToolbarActionButton.addProperties({
       // For multi selection processes:
       //   -Button is displayed in case it should be displayed in ALL selected records
       //   -Button is readonly in case it should be readonly in ALL sected records
-      selection = this.contextView.viewGrid.getSelectedRecords();
+      selection = grid.getSelectedRecords();
       readonly = false;
       this.visible = true;
       for (i = 0; i < selection.length; i++) {

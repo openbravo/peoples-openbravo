@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2014 Openbravo SLU
+ * All portions are Copyright (C) 2011-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -35,8 +35,12 @@ OB.Utilities.Number = {};
 // Return:
 // * The rounded JS number
 OB.Utilities.Number.roundJSNumber = function (num, dec) {
-  var result = Math.round(num * Math.pow(10, dec)) / Math.pow(10, dec);
-  return result;
+  var strNum;
+  if (isNaN(num)) {
+    return NaN;
+  }
+  strNum = ((typeof num === 'string') ? num : String(num));
+  return parseFloat(new BigDecimal(strNum).setScale(dec, BigDecimal.prototype.ROUND_HALF_UP));
 };
 
 // ** {{{ OB.Utilities.Number.OBMaskedToOBPlain }}} **
@@ -119,6 +123,9 @@ OB.Utilities.Number.OBPlainToOBMasked = function (number, maskNumeric, decSepara
     return number;
   }
 
+  if (groupInterval === null || groupInterval === undefined) {
+    groupInterval = OB.Format.defaultGroupingSize;
+  }
   // Management of the mask
   if (maskNumeric.indexOf('+') === 0 || maskNumeric.indexOf('-') === 0) {
     maskNumeric = maskNumeric.substring(1, maskNumeric.length);
@@ -447,18 +454,23 @@ OB.Utilities.Number.ScientificToDecimal = function (number, decSeparator) {
     }
     //Create the final number
     number = '0.' + zeros + coeficient;
-  } else if (exponent.indexOf('+') !== -1) { // Case the number is bigger than 1
-    numberOfZeros = exponent.substring(1, exponent.length);
+  } else { // Case the number is bigger than 1
+    numberOfZeros = exponent.indexOf('+') !== -1 ? exponent.substring(1, exponent.length) : exponent;
     if (split) {
       numberOfZeros = numberOfZeros - split[1].length;
     }
 
-    //Create the string of zeros
-    for (i = 0; i < numberOfZeros; i++) {
-      zeros = zeros + '0';
+    if (numberOfZeros >= 0) {
+      //Need to concatenate zeros to the coefficient
+      for (i = 0; i < numberOfZeros; i++) {
+        zeros = zeros + '0';
+      }
+      //Create the final number
+      number = coeficient + zeros;
+    } else {
+      // final decimal number is not integer: add dot decimal separator in the correct position
+      number = coeficient.substr(0, coeficient.length + numberOfZeros) + '.' + coeficient.substr(coeficient.length + numberOfZeros);
     }
-    //Create the final number
-    number = coeficient + zeros;
   }
 
   return number;

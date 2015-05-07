@@ -11,13 +11,16 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 
 package org.openbravo.dal.security;
+
+import java.util.Arrays;
+import java.util.List;
 
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Entity;
@@ -201,5 +204,29 @@ public class SecurityChecker implements OBSingleton {
 
     // accesslevel check must also be done for administrators
     entity.checkAccessLevel(clientId, orgId);
+  }
+
+  /**
+   * Checks if there is access to the entity and if the organization is readable. If not, it throws
+   * an OBSecurityException.
+   * 
+   * @param organizationEnabledObject
+   *          a {@link BaseOBObject} that implements the {@link OrganizationEnabled} interface. This
+   *          method will check if the user has read access to the provided object
+   */
+  public void checkReadableAccess(OrganizationEnabled organizationEnabledObject) {
+    OBContext obContext = OBContext.getOBContext();
+    final Entity entity = ((BaseOBObject) organizationEnabledObject).getEntity();
+
+    obContext.getEntityAccessChecker().checkReadable(entity);
+    String orgId = (String) DalUtil.getId(((OrganizationEnabled) organizationEnabledObject)
+        .getOrganization());
+    String readableOrganizations[] = obContext.getReadableOrganizations();
+    List<String> organizations = Arrays.asList(readableOrganizations);
+    if (!organizations.contains(orgId)) {
+      throw new OBSecurityException("Organization " + orgId + " of object ("
+          + organizationEnabledObject + ") is not present in OrganizationList "
+          + organizations.toString());
+    }
   }
 }

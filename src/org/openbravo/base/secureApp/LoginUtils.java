@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2013 Openbravo S.L.U.
+ * Copyright (C) 2001-2014 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -244,8 +244,8 @@ public class LoginUtils {
       vars.setSessionValue("#Approval_Amt", data[0].amtapproval);
       vars.setSessionValue("#Client_Value", data[0].value);
       vars.setSessionValue("#Client_SMTP", data[0].smtphost);
-
       data = null;
+
       AttributeData[] attr = AttributeData.select(conn,
           Utility.getContext(conn, vars, "#User_Client", "LoginHandler"),
           Utility.getContext(conn, vars, "#User_Org", "LoginHandler"));
@@ -307,7 +307,7 @@ public class LoginUtils {
         for (int i = 0; i < ds.length; i++) {
           String value = DefaultValuesData.select(conn, ds[i].columnname, ds[i].tablename,
               Utility.getContext(conn, vars, "#User_Client", "LoginHandler"),
-              Utility.getContext(conn, vars, "#User_Org", "LoginHandler"));
+              Utility.getContext(conn, vars, "#AccessibleOrgTree", "LoginHandler"));
           if (ds[i].tablename.equals("C_DocType"))
             vars.setSessionValue("#C_DocTypeTarget_ID", value);
           vars.setSessionValue("#" + ds[i].columnname, value);

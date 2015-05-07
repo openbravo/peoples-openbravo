@@ -35,4 +35,20 @@
       ]]>
     </Sql>
   </SqlMethod>
+  <SqlMethod name="fixAccountingReportSetup" type="preparedStatement" return="rowcount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        update ad_tree set ad_table_id = '800178' where treetype = 'AR' and ad_table_id = '800223'
+      ]]>
+    </Sql>
+  </SqlMethod>  
+  <SqlMethod name="deleteTreeTypeFromFinancialMgmtAccountingReport" type="preparedStatement" return="rowcount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        update ad_table set treetype = null where ad_table_id = '800223'
+      ]]>
+    </Sql>
+  </SqlMethod>    
 </SqlClass>

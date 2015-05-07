@@ -414,6 +414,9 @@ public class AlertProcess implements Process {
                   if (targetUser == null) {
                     continue;
                   }
+                  if (!targetUser.isActive()) {
+                	  continue;
+                  }
                   final Client targetUserClient = targetUser.getClient();
                   final String targetUserClientLanguage = (targetUserClient.getLanguage() != null ? targetUserClient
                       .getLanguage().getLanguage() : null);
@@ -457,7 +460,7 @@ public class AlertProcess implements Process {
                       targetUserClientLanguage) + "\n" + finalMessage;
                   final String contentType = "text/plain; charset=utf-8";
                   final List<File> attachments = null;
-                  final Date sentDate = null;
+                  final Date sentDate = new Date();
                   final List<String> headerExtras = null;
 
                   final Object[] email = { host, auth, username, password, connSecurity, port,

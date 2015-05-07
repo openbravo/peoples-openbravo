@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="TRIGGER C_CONVERSION_RATE_TRG">
-    <trigger name="C_CONVERSION_RATE_TRG" table="C_CONVERSION_RATE" fires="before" insert="true" update="true" delete="false" foreach="row">
+    <trigger name="C_CONVERSION_RATE_TRG" table="C_CONVERSION_RATE" fires="before" insert="true" update="true" delete="true" foreach="row">
       <body><![CDATA[
     /*************************************************************************
     * The contents of this file are subject to the Compiere Public
@@ -17,7 +17,7 @@
     * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
     * All Rights Reserved.
     * Contributor(s): Openbravo SLU
-    * Contributions are Copyright (C) 2001-2012 Openbravo, S.L.U.
+    * Contributions are Copyright (C) 2001-2014 Openbravo, S.L.U.
     *
     * Specifically, this derivative work is based upon the following Compiere
     * file and version.
@@ -35,15 +35,16 @@ BEGIN
     IF AD_isTriggerEnabled()='N' THEN RETURN;
     END IF;
 
-
-  --RAISE_APPLICATION_ERROR (-20000, '@20506@');
-  IF(:new.ValidTo IS NULL) THEN
-    -- If there is no end date, set it to X
-      :new.ValidTo:=TO_DATE('31-12-9999', 'DD-MM-YYYY') ;
-  END IF;
-  --Check for invalid dates
-  IF :new.ValidTo < :new.ValidFrom THEN
-    RAISE_APPLICATION_ERROR(-20000, '@20505@');
+  IF (INSERTING OR UPDATING) THEN
+	  --RAISE_APPLICATION_ERROR (-20000, '@20506@');
+	  IF(:new.ValidTo IS NULL) THEN
+	    -- If there is no end date, set it to X
+	      :new.ValidTo:=TO_DATE('31-12-9999', 'DD-MM-YYYY') ;
+	  END IF;
+	  --Check for invalid dates
+	  IF :new.ValidTo < :new.ValidFrom THEN
+	    RAISE_APPLICATION_ERROR(-20000, '@20505@');
+	  END IF;
   END IF;
 
   IF UPDATING THEN

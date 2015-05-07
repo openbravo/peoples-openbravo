@@ -75,8 +75,8 @@ public class StringUIDefinition extends UIDefinition {
       displaylength = length;
     }
 
-    // custom override
-    if (field.getColumn().getDBColumnName().compareToIgnoreCase("documentno") == 0) {
+    // custom override in case the length of a document number column is 0
+    if (field.getColumn().getDBColumnName().compareToIgnoreCase("documentno") == 0 && length == 0) {
       length = new Long(20);
     }
     return getShowHoverGridFieldSettings(field) + (length != null ? ", length:" + length : "")

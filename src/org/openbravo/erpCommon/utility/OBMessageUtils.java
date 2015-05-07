@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2012-2015 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -43,6 +43,10 @@ import org.openbravo.utils.Replace;
 public class OBMessageUtils {
   static Logger log4j = Logger.getLogger(OBMessageUtils.class);
 
+  public static String messageBD(String strCode, boolean escape) {
+    return messageBD(strCode, true, escape);
+  }
+
   /**
    * Translate the given code into some message from the application dictionary. It searches first
    * in AD_Message table and if there are not matchings then in AD_Element table.
@@ -51,23 +55,44 @@ public class OBMessageUtils {
    *          String with the search key to search.
    * @return String with the translated message.
    */
+
   public static String messageBD(String strCode) {
+    return messageBD(strCode, true, true);
+  }
+
+  /**
+   * @param strCode
+   *          String with the search key to search.
+   * @param ignoreCase
+   *          Ignore Case while finding message.
+   * @param escape
+   *          Escape \n and " characters
+   * @return String with the translated message.
+   */
+
+  public static String messageBD(String strCode, boolean ignoreCase, boolean escape) {
     String strMessage = "";
     final String strLanguageId = OBContext.getOBContext().getLanguage().getId();
-
     // Search strCode in AD_Message table.
     try {
       OBContext.setAdminMode(false);
       log4j.debug("messageBD - Message Code: " + strCode);
       OBCriteria<Message> obcMessage = OBDal.getInstance().createCriteria(Message.class);
-      obcMessage.add(Restrictions.eq(Message.PROPERTY_SEARCHKEY, strCode).ignoreCase());
-      if (obcMessage.count() > 0) {
-        Message msg = obcMessage.list().get(0);
+      if (ignoreCase) {
+        obcMessage.add(Restrictions.eq(Message.PROPERTY_SEARCHKEY, strCode).ignoreCase());
+      } else {
+        obcMessage.add(Restrictions.eq(Message.PROPERTY_SEARCHKEY, strCode));
+      }
+      obcMessage.setMaxResults(1);
+      Message msg = (Message) obcMessage.uniqueResult();
+      if (msg != null) {
         strMessage = msg.getMessageText();
-        for (MessageTrl msgTrl : msg.getADMessageTrlList()) {
-          if (DalUtil.getId(msgTrl.getLanguage()).equals(strLanguageId)) {
-            strMessage = msgTrl.getMessageText();
-            break;
+        if (OBContext.getOBContext().isTranslationInstalled()) {
+          for (MessageTrl msgTrl : msg.getADMessageTrlList()) {
+            if (DalUtil.getId(msgTrl.getLanguage()).equals(strLanguageId)) {
+              strMessage = msgTrl.getMessageText();
+              break;
+            }
           }
         }
       }
@@ -102,7 +127,9 @@ public class OBMessageUtils {
     if ("".equals(strMessage)) {
       strMessage = strCode;
     }
-    strMessage = Replace.replace(Replace.replace(strMessage, "\n", "\\n"), "\"", "&quot;");
+    if (escape) {
+      strMessage = Replace.replace(Replace.replace(strMessage, "\n", "\\n"), "\"", "&quot;");
+    }
     return strMessage;
   }
 

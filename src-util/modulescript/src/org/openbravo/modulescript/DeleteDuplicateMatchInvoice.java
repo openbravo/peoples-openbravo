@@ -26,8 +26,13 @@ public class DeleteDuplicateMatchInvoice extends ModuleScript {
   public void execute() {
     try {
       ConnectionProvider cp = getConnectionProvider();
-      DeleteDuplicateMatchInvoiceData.deletePurchase(cp);
-      DeleteDuplicateMatchInvoiceData.deleteSales(cp);
+      boolean isDuplicateMatchInvoiceExecuted= DeleteDuplicateMatchInvoiceData.isDuplicateMatchInvoiceExecuted(cp);
+      if (!isDuplicateMatchInvoiceExecuted){
+        DeleteDuplicateMatchInvoiceData.deletePurchase(cp);
+        DeleteDuplicateMatchInvoiceData.deleteSalesFirstPart(cp);
+        DeleteDuplicateMatchInvoiceData.deleteSalesSecondPart(cp);
+        DeleteDuplicateMatchInvoiceData.createPreference(cp);
+      }
     } catch (Exception e) {
       handleError(e);
     }

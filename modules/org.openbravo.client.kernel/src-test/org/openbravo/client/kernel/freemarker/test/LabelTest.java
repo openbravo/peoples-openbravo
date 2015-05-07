@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,10 +19,14 @@
 
 package org.openbravo.client.kernel.freemarker.test;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.HashMap;
 
 import javax.inject.Inject;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.weld.test.WeldBaseTest;
@@ -52,8 +56,9 @@ public class LabelTest extends WeldBaseTest {
   @ComponentProvider.Qualifier(KernelComponentProvider.QUALIFIER)
   private ComponentProvider kernelComponentProvider;
 
-  public void setUp() throws Exception {
-    super.setUp();
+  @Before
+  public void setUpLt() throws Exception {
+    // super.setUp();
     setSystemAdministratorContext();
   }
 

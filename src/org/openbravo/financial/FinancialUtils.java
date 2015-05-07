@@ -21,6 +21,7 @@ package org.openbravo.financial;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -28,14 +29,17 @@ import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.util.Check;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBDateUtils;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.currency.ConversionRate;
+import org.openbravo.model.common.currency.ConversionRateDoc;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.Product;
@@ -224,6 +228,17 @@ public class FinancialUtils {
   }
 
   /**
+   * It calls
+   * {@link FinancialUtils#getConvertedAmount(BigDecimal, Currency, Currency, Date, Organization, String, List)}
+   * with an empty list of conversion rates at document level
+   */
+  public static BigDecimal getConvertedAmount(BigDecimal amount, Currency curFrom, Currency curTo,
+      Date date, Organization org, String strPrecision) throws OBException {
+    return getConvertedAmount(amount, curFrom, curTo, date, org, strPrecision,
+        Collections.<ConversionRateDoc> emptyList());
+  }
+
+  /**
    * Converts an amount.
    * 
    * @param amount
@@ -238,21 +253,38 @@ public class FinancialUtils {
    *          Organization of the document that needs to be converted.
    * @param strPrecision
    *          type of precision to be used to round the converted amount.
+   * @param rateDocs
+   *          list of conversion rates defined on the document of the amount that needs to be
+   *          converted.
    * @return a BigDecimal representing the converted amount.
    * @throws OBException
    *           when no Conversion Rate is found for the given parameters.
    */
-
   public static BigDecimal getConvertedAmount(BigDecimal amount, Currency curFrom, Currency curTo,
-      Date date, Organization org, String strPrecision) throws OBException {
+      Date date, Organization org, String strPrecision, List<ConversionRateDoc> rateDocs)
+      throws OBException {
+    Check.isNotNull(rateDocs, OBMessageUtils.messageBD("ParameterMissing") + " (rateDocs)");
     if (curFrom.getId().equals(curTo.getId()) || amount.signum() == 0) {
       return amount;
     }
-    ConversionRate cr = getConversionRate(date, curFrom, curTo, org, org.getClient());
-    if (cr == null) {
-      throw new OBException("@NoCurrencyConversion@ " + curFrom.getISOCode() + " @to@ "
-          + curTo.getISOCode() + " @ForDate@ " + OBDateUtils.formatDate(date)
-          + " @And@ @ACCS_AD_ORG_ID_D@ " + org.getIdentifier());
+    BigDecimal rate = null;
+    if (rateDocs.size() > 0) {
+      for (ConversionRateDoc rateDoc : rateDocs) {
+        if (curFrom.getId().equals(rateDoc.getCurrency().getId())
+            && curTo.getId().equals(rateDoc.getToCurrency().getId())) {
+          rate = rateDoc.getRate();
+          break;
+        }
+      }
+    }
+    if (rate == null) {
+      ConversionRate cr = getConversionRate(date, curFrom, curTo, org, org.getClient());
+      if (cr == null) {
+        throw new OBException("@NoCurrencyConversion@ " + curFrom.getISOCode() + " @to@ "
+            + curTo.getISOCode() + " @ForDate@ " + OBDateUtils.formatDate(date)
+            + " @And@ @ACCS_AD_ORG_ID_D@ " + org.getIdentifier());
+      }
+      rate = cr.getMultipleRateBy();
     }
     Long precision = curTo.getStandardPrecision();
     if (PRECISION_COSTING.equals(strPrecision)) {
@@ -260,8 +292,7 @@ public class FinancialUtils {
     } else if (PRECISION_PRICE.equals(strPrecision)) {
       precision = curTo.getPricePrecision();
     }
-    return amount.multiply(cr.getMultipleRateBy()).setScale(precision.intValue(),
-        RoundingMode.HALF_UP);
+    return amount.multiply(rate).setScale(precision.intValue(), RoundingMode.HALF_UP);
   }
 
   /**

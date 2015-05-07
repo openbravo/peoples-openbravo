@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -192,7 +192,7 @@ public class DocFINReconciliation extends AcctServer {
         // into one.
         // https://issues.openbravo.com/view.php?id=19567
         HashMap<String, BigDecimal> amountAndWriteOff = getPaymentDetailWriteOffAndAmount(
-            paymentDetails, ps, psi, pso, i);
+            paymentDetails, ps, psi, pso, i, data[i]);
         BigDecimal amount = amountAndWriteOff.get("amount");
         BigDecimal writeOff = amountAndWriteOff.get("writeoff");
         if (amount == null) {
@@ -556,8 +556,10 @@ public class DocFINReconciliation extends AcctServer {
           AcctSchemaTableDocType.class, whereClause.toString());
       final List<AcctSchemaTableDocType> acctSchemaTableDocTypes = obqParameters.list();
 
-      if (acctSchemaTableDocTypes != null && acctSchemaTableDocTypes.size() > 0)
+      if (acctSchemaTableDocTypes != null && acctSchemaTableDocTypes.size() > 0
+          && acctSchemaTableDocTypes.get(0).getCreatefactTemplate() != null) {
         strClassname = acctSchemaTableDocTypes.get(0).getCreatefactTemplate().getClassname();
+      }
 
       if (strClassname.equals("")) {
         final StringBuilder whereClause2 = new StringBuilder();
@@ -697,7 +699,8 @@ public class DocFINReconciliation extends AcctServer {
         // Cambiar line to reflect BPs
         FIN_PaymentDetail paymentDetail = OBDal.getInstance().get(FIN_PaymentDetail.class,
             finPaymentDetailID);
-        detail.setInvoiceTaxCashVAT_V(paymentDetail.getFinPayment().getId());
+        detail.setInvoiceTaxCashVAT_V(finPaymentDetailID);
+        detail.setInvoiceTaxCashVAT_V(data[i].getField("MergedPaymentDetailId"));
         fact = createFactPaymentDetails(detail, paymentDetail, as, conn, fact, Fact_Acct_Group_ID,
             Fact_Acct_Group_ID2);
       }
@@ -1184,6 +1187,10 @@ public class DocFINReconciliation extends AcctServer {
           obCriteria.setFilterOnReadableClients(false);
           obCriteria.setFilterOnReadableOrganization(false);
           List<FinAccPaymentMethod> lines = obCriteria.list();
+          if (lines.isEmpty()) {
+            setStatus(STATUS_DocumentDisabled);
+            return false;
+          }
           for (FIN_FinancialAccountAccounting account : accounts) {
             if (payment.isReceipt()) {
               if (("INT").equals(lines.get(0).getINUponClearingUse())

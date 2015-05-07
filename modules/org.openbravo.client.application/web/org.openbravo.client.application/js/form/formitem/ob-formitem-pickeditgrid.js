@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -72,10 +72,14 @@ isc.OBPickEditGridItem.addProperties({
     pickAndExecuteViewProperties.onGridLoadFunction = this.onGridLoadFunction;
     if (this.view.isPickAndExecuteWindow) {
       this.view.resized = function (messagebarVisible) {
+        var heightCorrection = 95;
+        if (me.view.isExpandedRecord) {
+          heightCorrection = heightCorrection - 61;
+        }
         if (messagebarVisible) {
-          me.canvas.setHeight(me.view.height - (95 + me.view.messageBar.height));
+          me.canvas.setHeight(me.view.height - (heightCorrection + me.view.messageBar.height));
         } else {
-          me.canvas.setHeight(me.view.height - 95);
+          me.canvas.setHeight(me.view.height - heightCorrection);
         }
         me.canvas.redraw();
       };
@@ -91,7 +95,10 @@ isc.OBPickEditGridItem.addProperties({
     var allProperties = {},
         grid = this.canvas.viewGrid,
         allRows, len, i, selection, tmp;
-    selection = grid.getSelectedRecords() || [];
+
+    // if available, use grid.pneSelectedRecords because getSelectedRecords can
+    // return inaccurate values in case of records selected in different pages
+    selection = grid.pneSelectedRecords || grid.getSelectedRecords() || [];
     len = selection.length;
     allRows = grid.data.allRows || grid.data.localData || grid.data;
     allProperties._selection = [];

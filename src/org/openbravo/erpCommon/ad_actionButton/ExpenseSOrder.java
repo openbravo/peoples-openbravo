@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2012 Openbravo SLU
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -106,11 +106,28 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
       String strOldBPartner = "-1";
       String strOldProject = "-1";
       String strCOrderId = "";
+      String strMWarehouseId = "";
+      String strDocumentNo = "";
       int line = 0;
       // ArrayList order = new ArrayList();
       for (int i = 0; data != null && i < data.length; i++) {
-        // If the sales order header information (business partner, project and organization) is not
-        // the same as the previous data line, complete the previous sales order, create a new sales
+        // Checking if warehouse is created for expense
+        strMWarehouseId = data[i].mWarehouseId;
+        strDocumentNo = data[i].documentno;
+
+        myMessage = orgOnHandWarehouseCheck(vars, strMWarehouseId, strDocumentNo);
+        if (myMessage != null) {
+          myMessage.setMessage(Utility.messageBD(this, "Created", vars.getLanguage()) + ": "
+              + Integer.toString(total) + "<br/>"
+              + textoMensaje.append(myMessage.getMessage()).toString());
+          releaseRollbackConnection(conn);
+          return myMessage;
+        }
+
+        // If the sales order header information (business partner, project and organization) is
+        // not
+        // the same as the previous data line, complete the previous sales order, create a new
+        // sales
         // order header and insert the first line
         if (!data[i].cBpartnerId.equals(strOldBPartner)
             || !data[i].cProjectId.equals(strOldProject)
@@ -187,6 +204,7 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
             }
           }
         }
+
         // If we are in the last data line, complete the order
         if (i + 1 == data.length) {
           // Automatically processes Sales Order
@@ -209,7 +227,9 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
           total++;
           conn = getTransactionConnection();
         }
+
       }
+
       releaseCommitConnection(conn);
       myMessage.setType("Success");
       myMessage.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
@@ -225,6 +245,24 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
       } catch (Exception ignored) {
       }
     }
+    return myMessage;
+  }
+
+  private OBError orgOnHandWarehouseCheck(VariablesSecureApp vars, String strMWarehouseId,
+      String strDocumentNo) throws SQLException {
+    OBError myMessage = null;
+
+    if (strMWarehouseId.equals("") || strMWarehouseId == null) {
+      myMessage = new OBError();
+      myMessage.setType("Error");
+      myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
+      myMessage.setMessage(Utility.messageBD(this, "ExpenseSheetNo", vars.getLanguage()) + " "
+          + strDocumentNo + ": "
+          + Utility.messageBD(this, "NoExpenseWarehouse", vars.getLanguage()) + ".");
+
+      return myMessage;
+    }
+
     return myMessage;
   }
 

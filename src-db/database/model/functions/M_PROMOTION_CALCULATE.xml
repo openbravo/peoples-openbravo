@@ -35,6 +35,7 @@
   v_taxIncluded VARCHAR(1);
 
   v_count NUMBER;
+  v_apply_discount NUMBER:= 1;
 
   TYPE RECORD IS REF CURSOR;
   Cur_Order RECORD;
@@ -294,14 +295,67 @@ BEGIN
           WHERE O.M_OFFER_ID = M_OFFER.M_OFFER_ID
             AND O.AD_ORG_ID = Cur_Order.AD_Org_ID
           )))
+          AND ((CHARACTERISTICS_SELECTION = 'Y'
+          AND NOT EXISTS
+          (SELECT 1
+          FROM M_OFFER_CHARACTERISTIC C, M_PRODUCT_CH_VALUE V
+          WHERE C.M_OFFER_ID = M_OFFER.M_OFFER_ID
+            AND V.M_PRODUCT_ID = Cur_Order.M_Product_ID
+            AND m_isparent_ch_value(V.M_CH_VALUE_ID, C.M_CH_VALUE_ID, C.M_CHARACTERISTIC_ID) <> -1
+          ))
+          OR(CHARACTERISTICS_SELECTION = 'N'
+          AND EXISTS
+          (SELECT 1
+          FROM M_OFFER_CHARACTERISTIC C, M_PRODUCT_CH_VALUE V
+          WHERE C.M_OFFER_ID = M_OFFER.M_OFFER_ID
+            AND V.M_PRODUCT_ID = Cur_Order.M_Product_ID
+            AND m_isparent_ch_value(V.M_CH_VALUE_ID, C.M_CH_VALUE_ID, C.M_CHARACTERISTIC_ID) <> -1
+          ))
+          )
         ORDER BY PRIORITY,
           M_OFFER_ID
         )
       loop
-        if (v_apply_next = 'Y' AND Cur_Offer.PL_Order_Implementor is not null) then
-          v_method := Cur_Offer.PL_Order_Implementor || '('''||p_type||''', '''||Cur_Offer.M_Offer_ID||''','''||Cur_Order.id||''', '||v_precision||', '|| v_stdprecision||', '''||p_user_id||''', '''||v_taxIncluded||''')';
-          v_apply_next := AD_Execute_Function(v_method);
-        end if;
+
+        --M_Promotions_Calculate - Extension Point to apply additional filters to discounts
+        SELECT count(*) INTO v_count
+        FROM DUAL
+        WHERE EXISTS (SELECT 1 FROM ad_ep_procedures WHERE ad_extension_points_id = 'F20050CAA4E1420B8766E1867F7D07CC');
+        IF (v_count=1) THEN
+        DECLARE
+        v_ep_instance VARCHAR2(32);
+        v_extension_point_id VARCHAR2(32) := 'F20050CAA4E1420B8766E1867F7D07CC';
+        v_Record_ID varchar(32) := Cur_Offer.M_Offer_ID; --OBTG:VARCHAR2--
+        v_Product_ID varchar(32) := Cur_Order.M_Product_ID; --OBTG:VARCHAR2--
+
+        BEGIN
+          v_ep_instance := get_uuid();
+
+          AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'Record_ID',
+          v_Record_ID, NULL, NULL, NULL, NULL, NULL, NULL);
+          AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'Product',
+          v_Product_ID, NULL, NULL, NULL, NULL, NULL, NULL);
+          AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'Result',
+          NULL, NULL, v_apply_discount, NULL, NULL, NULL, NULL);
+          AD_EXTENSION_POINT_HANDLER(v_ep_instance, v_extension_point_id);
+
+          SELECT p_number INTO v_apply_discount
+          FROM ad_ep_instance_para
+          WHERE ad_ep_instance_id = v_ep_instance
+          AND parametername LIKE 'Result';
+
+          DELETE FROM ad_ep_instance_para
+          WHERE ad_ep_instance_id = v_ep_instance;
+        END;
+        END IF;
+
+        IF v_apply_discount = 1 THEN
+          if (v_apply_next = 'Y' AND Cur_Offer.PL_Order_Implementor is not null) then
+            v_method := Cur_Offer.PL_Order_Implementor || '('''||p_type||''', '''||Cur_Offer.M_Offer_ID||''','''||Cur_Order.id||''', '||v_precision||', '|| v_stdprecision||', '''||p_user_id||''', '''||v_taxIncluded||''')';
+            v_apply_next := AD_Execute_Function(v_method);
+          end if;
+        END IF;
+        v_apply_discount :=1;
       end loop;
     end if;
   end loop;

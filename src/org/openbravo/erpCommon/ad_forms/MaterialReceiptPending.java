@@ -376,6 +376,15 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
             conversion.add(Restrictions.eq(UOMConversion.PROPERTY_TOUOM,
                 OBDal.getInstance().get(ProductUOM.class, dataLine[0].mProductUomId).getUOM()));
 
+            // Inverting search of UOM conversion if conversion list is empty
+            if (conversion.list().size() == 0) {
+              conversion = OBDal.getInstance().createCriteria(UOMConversion.class);
+              conversion.add(Restrictions.eq(UOMConversion.PROPERTY_UOM,
+                  OBDal.getInstance().get(ProductUOM.class, dataLine[0].mProductUomId).getUOM()));
+              conversion.add(Restrictions.eq(UOMConversion.PROPERTY_TOUOM,
+                  OBDal.getInstance().get(UOM.class, dataLine[0].cUomId)));
+            }
+
             for (UOMConversion conv : conversion.list()) {
               qtyorder = new BigDecimal(strQtyordered).multiply(conv.getMultipleRateBy())
                   .toString();
@@ -386,10 +395,11 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
             MaterialReceiptPendingLinesData.insert(conn, this, strSequenceLine, vars.getClient(),
                 dataLine[0].adOrgId, "Y", vars.getUser(), vars.getUser(), String.valueOf(line),
                 dataLine[0].description, strmInoutId, strOrderlineId, strLocator,
-                dataLine[0].mProductId, dataLine[0].cUomId, strQtyordered, "N",
-                dataLine[0].mAttributesetinstanceId, "N", qtyorder, dataLine[0].mProductUomId,
-                dataLine[0].cProjectId, dataLine[0].user1Id, dataLine[0].user2Id,
-                dataLine[0].cCostcenterId, dataLine[0].aAssetId);
+                dataLine[0].mProductId, dataLine[0].cUomId,
+                new BigDecimal(strQtyordered).toString(), "N", dataLine[0].mAttributesetinstanceId,
+                "N", qtyorder, dataLine[0].mProductUomId, dataLine[0].cProjectId,
+                dataLine[0].user1Id, dataLine[0].user2Id, dataLine[0].cCostcenterId,
+                dataLine[0].aAssetId);
           } catch (ServletException ex) {
             myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
             releaseRollbackConnection(conn);

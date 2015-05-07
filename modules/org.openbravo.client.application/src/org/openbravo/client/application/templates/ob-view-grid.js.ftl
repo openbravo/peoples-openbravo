@@ -41,6 +41,9 @@ isc.OBViewGrid.create({
     <#if data.lazyFiltering>
         lazyFiltering: ${data.lazyFiltering?string},
     </#if>    
+    <#if data.alwaysFilterFksByIdentifier>
+        alwaysFilterFksByIdentifier: ${data.alwaysFilterFksByIdentifier?string},
+    </#if>       
     //List of properties  that must be always included in this grid
     requiredGridProperties: [
     <#list data.requiredGridProperties as property>

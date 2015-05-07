@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,8 +19,12 @@
 
 package org.openbravo.service.json.test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.List;
 
+import org.junit.Test;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.DalUtil;
@@ -37,7 +41,7 @@ import org.openbravo.service.json.DataEntityQueryService;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.QueryBuilder;
 import org.openbravo.service.json.QueryBuilder.TextMatching;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Test the {@link DataEntityQueryService} and {@link QueryBuilder} classes.
@@ -45,11 +49,12 @@ import org.openbravo.test.base.BaseTest;
  * @author mtaal
  */
 
-public class DataQueryServiceTest extends BaseTest {
+public class DataQueryServiceTest extends OBBaseTest {
 
   /**
    * First simple test, read rows 10-100 from ADColumn
    */
+  @Test
   public void testQueryForColumn() throws Exception {
     setSystemAdministratorContext();
     final DataEntityQueryService queryService = new DataEntityQueryService();
@@ -71,6 +76,7 @@ public class DataQueryServiceTest extends BaseTest {
   /**
    * Filter on identifier
    */
+  @Test
   public void testFilterOnIdentifierStartsWith() throws Exception {
     setSystemAdministratorContext();
     final DataEntityQueryService queryService = new DataEntityQueryService();
@@ -92,6 +98,7 @@ public class DataQueryServiceTest extends BaseTest {
   /**
    * Filter on accessible org
    */
+  @Test
   public void testFilterOnAccessibleOrg() throws Exception {
     OBContext.setOBContext("1000000", "1000000", "1000000", "1000008");
     try {
@@ -169,6 +176,7 @@ public class DataQueryServiceTest extends BaseTest {
   /**
    * Filter on identifier and name with contains
    */
+  @Test
   public void testFilterOnIdentifierSubstring() throws Exception {
     setSystemAdministratorContext();
     final DataEntityQueryService queryService = new DataEntityQueryService();
@@ -190,6 +198,7 @@ public class DataQueryServiceTest extends BaseTest {
   /**
    * Filter on identifier and name with contains
    */
+  @Test
   public void testFilterOnMultipleValues() throws Exception {
     setSystemAdministratorContext();
     final DataEntityQueryService queryService = new DataEntityQueryService();
@@ -213,6 +222,7 @@ public class DataQueryServiceTest extends BaseTest {
   /**
    * Filter on property of referenced entity
    */
+  @Test
   public void testFilterOnPropertyOfReference() throws Exception {
     setSystemAdministratorContext();
     final DataEntityQueryService queryService = new DataEntityQueryService();
@@ -232,6 +242,7 @@ public class DataQueryServiceTest extends BaseTest {
     }
   }
 
+  @Test
   public void testFilterOnReferenceOfReference() throws Exception {
     setSystemAdministratorContext();
     final DataEntityQueryService queryService = new DataEntityQueryService();
@@ -255,6 +266,7 @@ public class DataQueryServiceTest extends BaseTest {
     }
   }
 
+  @Test
   public void testFilterOnIdentifierOfReferenceOfReference() throws Exception {
     setSystemAdministratorContext();
     final DataEntityQueryService queryService = new DataEntityQueryService();
@@ -281,6 +293,7 @@ public class DataQueryServiceTest extends BaseTest {
   /**
    * Filter on property of referenced entity
    */
+  @Test
   public void testFilterOnPropertyOfReferenceOuterJoining() throws Exception {
     setSystemAdministratorContext();
     final DataEntityQueryService queryService = new DataEntityQueryService();
@@ -309,6 +322,7 @@ public class DataQueryServiceTest extends BaseTest {
   /**
    * Orderby on identifier with foreign keys
    */
+  @Test
   public void testOrderByOnIdentifier() throws Exception {
     setTestUserContext();
     OBContext.setAdminMode();

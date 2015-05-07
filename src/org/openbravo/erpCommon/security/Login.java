@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,6 +21,9 @@ package org.openbravo.erpCommon.security;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -48,6 +51,10 @@ public class Login extends HttpBaseServlet {
 
   private static final String GOOGLE_INTEGRATION_MODULE_ID = "FF8080813129ADA401312CA1222A0005";
   private static final String GOOGLE_PREFERENCE_PROPERTY = "OBSEIG_ShowGIcon";
+
+  @Inject
+  @Any
+  private Instance<SignInProvider> signInProvider;
 
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
@@ -333,16 +340,22 @@ public class Login extends HttpBaseServlet {
     xmlDocument.setParameter("recBrowserMsgText", recBrowserMsgTextFinal.replaceAll("\\n", "\n"));
 
     if (showGoogleIcon) {
-
-      String authServlet = "../org.openbravo.service.integration.google/auth.html";
-      String link = "<p class=\"LabelText Login_LabelText\" style=\"line-height:24px;\">"
-          + Utility.messageBD(this, "OBSEIG_SignIn", vars.getLanguage()) + "&nbsp; <a href=\""
-          + authServlet + "\" title=\""
-          + Utility.messageBD(this, "OBSEIG_SignInAltMsg", vars.getLanguage())
-          + "\" target=\"_top\" "
-          + "><img style=\"vertical-align:middle;\" src=\"../web/images/google.png\" alt=\""
-          + Utility.messageBD(this, "OBSEIG_SignInAltMsg", vars.getLanguage())
-          + "\" width=\"24\" height=\"24\" border=\"0\"/></a></p>";
+      String link;
+      if (signInProvider.isUnsatisfied()) {
+        // there is no external sign in provider, using default OpenID link
+        String authServlet = "../org.openbravo.service.integration.google/auth.html";
+        link = "<p class=\"LabelText Login_LabelText\" style=\"line-height:24px;\">"
+            + Utility.messageBD(this, "OBSEIG_SignIn", vars.getLanguage()) + "&nbsp; <a href=\""
+            + authServlet + "\" title=\""
+            + Utility.messageBD(this, "OBSEIG_SignInAltMsg", vars.getLanguage())
+            + "\" target=\"_top\" "
+            + "><img style=\"vertical-align:middle;\" src=\"../web/images/google.png\" alt=\""
+            + Utility.messageBD(this, "OBSEIG_SignInAltMsg", vars.getLanguage())
+            + "\" width=\"24\" height=\"24\" border=\"0\"/></a></p>";
+      } else {
+        // a module is providing a different sign in: including its HTML code in Log In page
+        link = signInProvider.get().getLoginPageSignInHTMLCode();
+      }
 
       xmlDocument.setParameter("sign-in", link);
     }

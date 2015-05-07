@@ -123,19 +123,19 @@ public class OpenClosePeriodHandler extends BaseActionHandler {
           }
         } else {
           for (Period p : PeriodControlUtility.getOrderedPeriods(periodIdList)) {
-            PeriodControlLog pcl = OBProvider.getInstance().get(PeriodControlLog.class);
-            pcl.setClient(p.getClient());
-            pcl.setOrganization(p.getOrganization());
-            pcl.setCalendar(p.getYear().getCalendar());
-            pcl.setCascade(true);
-            pcl.setPeriodAction(action);
-            pcl.setPeriodNo(p);
-            pcl.setPeriod(p);
-            pcl.setYear(p.getYear());
-            pcl.setProcessed(false);
-            pcl.setProcessNow(false);
             OBContext.setAdminMode(false);
+            PeriodControlLog pcl = OBProvider.getInstance().get(PeriodControlLog.class);
             try {
+              pcl.setClient(p.getClient());
+              pcl.setOrganization(p.getOrganization());
+              pcl.setCalendar(p.getYear().getCalendar());
+              pcl.setCascade(true);
+              pcl.setPeriodAction(action);
+              pcl.setPeriodNo(p);
+              pcl.setPeriod(p);
+              pcl.setYear(p.getYear());
+              pcl.setProcessed(false);
+              pcl.setProcessNow(false);
               OBDal.getInstance().save(pcl);
               OBDal.getInstance().flush();
             } finally {

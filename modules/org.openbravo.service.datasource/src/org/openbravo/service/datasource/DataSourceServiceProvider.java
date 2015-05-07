@@ -26,6 +26,7 @@ import javax.inject.Inject;
 
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.util.OBClassLoader;
 import org.openbravo.base.weld.WeldUtils;
@@ -54,63 +55,124 @@ public class DataSourceServiceProvider {
    * Checks the internal cache for a datasource with the requested name and returns it if found. If
    * not found a new one is created, which is cached and then returned.
    * 
-   * @param name
+   * @param dataSourceIdentifier
    *          the name by which to search and identify the data source.
    * @return a {@link DataSourceService} object
    */
-  @SuppressWarnings("unchecked")
-  public DataSourceService getDataSource(String name) {
-    DataSourceService ds = dataSources.get(name);
-    if (ds == null) {
+  public DataSourceService getDataSource(String dataSourceIdentifier) {
+    DataSourceService dataSourceService = dataSources.get(dataSourceIdentifier);
+    if (dataSourceService == null) {
       OBContext.setAdminMode();
       try {
-        DataSource dataSource = OBDal.getInstance().get(DataSource.class, name);
-        if (dataSource == null) {
-
-          final OBCriteria<DataSource> obCriteria = OBDal.getInstance().createCriteria(
-              DataSource.class);
-          obCriteria.add(Restrictions.eq(DataSource.PROPERTY_NAME, name));
-          if (!obCriteria.list().isEmpty()) {
-            dataSource = obCriteria.list().get(0);
-          }
-        }
-        if (dataSource == null) {
-          final OBCriteria<Table> qTable = OBDal.getInstance().createCriteria(Table.class);
-          qTable.add(Restrictions.eq(Table.PROPERTY_NAME, name));
-          if (!qTable.list().isEmpty()) {
-            Table table = (Table) qTable.list().get(0);
-            if (ApplicationConstants.DATASOURCEBASEDTABLE.equals(table.getDataOriginType())) {
-              dataSource = table.getObserdsDatasource();
-              ds.setEntity(ModelProvider.getInstance().getEntityByTableId(table.getId()));
-            } else if (ApplicationConstants.HQLBASEDTABLE.equals(table.getDataOriginType())) {
-              dataSource = OBDal.getInstance().get(DataSource.class,
-                  ApplicationConstants.HQL_TABLE_DATASOURCE_ID);
-            }
-          }
-          if (dataSource == null) {
-            ds = weldUtils.getInstance(DefaultDataSourceService.class);
-            ds.setName(name);
-            ds.setEntity(ModelProvider.getInstance().getEntity(name));
-            dataSources.put(name, ds);
-          }
-
-        } else {
-          if (dataSource.getJavaClassName() != null) {
-            final Class<DataSourceService> clz = (Class<DataSourceService>) OBClassLoader
-                .getInstance().loadClass(dataSource.getJavaClassName());
-            ds = weldUtils.getInstance(clz);
-          } else {
-            ds = new DefaultDataSourceService();
-          }
-          ds.setDataSource(dataSource);
-          dataSources.put(name, ds);
-        }
+        DataSource dataSource = getRealDataSource(dataSourceIdentifier);
+        dataSourceService = getDataSourceServiceFromDataSource(dataSource, dataSourceIdentifier);
+        dataSources.put(dataSourceIdentifier, dataSourceService);
       } catch (Exception e) {
         throw new OBException(e);
       } finally {
         OBContext.restorePreviousMode();
       }
     }
+    return dataSourceService;
+  }
+
+  /**
+   * Obtains a dataSource given a dataSource identifier.
+   * 
+   * This class should have been named getDataSource instead of getRealDataSource, but the name was
+   * already taken by a public method that returns a DataSourceService
+   * 
+   * @param dataSourceIdentifier
+   *          a string that identifies the dataSource. it can be either the ID of the DataSource,
+   *          the name of the DataSource or the name of the Table whose datasource is to be
+   *          retrieved
+   * @return the datasource associated with the provided identifier or null if there aren't any
+   */
+  private DataSource getRealDataSource(String dataSourceIdentifier) {
+    // Checks if the dataSourceIdentifier the ID of the DataSource
+    DataSource dataSource = getDataSourceFromDataSourceId(dataSourceIdentifier);
+    if (dataSource == null) {
+      // If it is not the ID of the DataSource, checks if it is its name
+      dataSource = getDataSourceFromDataSourceName(dataSourceIdentifier);
+      if (dataSource == null) {
+        // If the dataSourceIdentifier is not the DataSource ID nor its name, checks if it is the
+        // name of a Table
+        dataSource = getDataSourceFromTableName(dataSourceIdentifier);
+      }
+    }
+    return dataSource;
+  }
+
+  private DataSource getDataSourceFromDataSourceId(String dataSourceId) {
+    return OBDal.getInstance().get(DataSource.class, dataSourceId);
+  }
+
+  private DataSource getDataSourceFromDataSourceName(String dataSourceName) {
+    DataSource dataSource = null;
+    final OBCriteria<DataSource> obCriteria = OBDal.getInstance().createCriteria(DataSource.class);
+    obCriteria.add(Restrictions.eq(DataSource.PROPERTY_NAME, dataSourceName));
+    if (!obCriteria.list().isEmpty()) {
+      dataSource = obCriteria.list().get(0);
+    }
+    return dataSource;
+  }
+
+  private DataSource getDataSourceFromTableName(String tableName) {
+    DataSource dataSource = null;
+    final OBCriteria<Table> qTable = OBDal.getInstance().createCriteria(Table.class);
+    qTable.add(Restrictions.eq(Table.PROPERTY_NAME, tableName));
+    if (!qTable.list().isEmpty()) {
+      Table table = (Table) qTable.list().get(0);
+      if (ApplicationConstants.DATASOURCEBASEDTABLE.equals(table.getDataOriginType())) {
+        // If the table is based on a manual datasource, return that particular datasource
+        dataSource = table.getObserdsDatasource();
+      } else if (ApplicationConstants.HQLBASEDTABLE.equals(table.getDataOriginType())) {
+        // If the table is based on a HQL table, use the 'HQL Tables Datasource'
+        dataSource = OBDal.getInstance().get(DataSource.class,
+            ApplicationConstants.HQL_TABLE_DATASOURCE_ID);
+      }
+    }
+    return dataSource;
+  }
+
+  /**
+   * Returns a DataSourceService given a DataSource
+   * 
+   * @param dataSource
+   *          the dataSource whose DataSourceService is to be retrieved
+   * @param dataSourceIdentifier
+   *          the name that was used to retrieve the dataSource
+   * @return the DataSourceService associated with the provided DataSource, or the
+   *         DefaultDataSourceService otherwise
+   * @throws ClassNotFoundException
+   */
+  private DataSourceService getDataSourceServiceFromDataSource(DataSource dataSource,
+      String dataSourceIdentifier) throws ClassNotFoundException {
+    DataSourceService ds = null;
+    if (dataSource == null) {
+      // if no dataSource is provided, return the DefaultDataSourceService
+      ds = weldUtils.getInstance(DefaultDataSourceService.class);
+      ds.setName(dataSourceIdentifier);
+    } else {
+      // try to retrieve the DataSourceService through the dataSource java class name, otherwise
+      // return the DefaultDataSourceService
+      if (dataSource.getJavaClassName() != null) {
+        @SuppressWarnings("unchecked")
+        final Class<DataSourceService> clz = (Class<DataSourceService>) OBClassLoader.getInstance()
+            .loadClass(dataSource.getJavaClassName());
+        ds = weldUtils.getInstance(clz);
+      } else {
+        ds = new DefaultDataSourceService();
+      }
+      ds.setDataSource(dataSource);
+    }
+    // don't fail if the entity does not exist, just don't assign it to the DataSourceService
+    boolean checkIfNotExists = false;
+    Entity entity = ModelProvider.getInstance().getEntity(dataSourceIdentifier, checkIfNotExists);
+    if (entity != null) {
+      ds.setEntity(entity);
+    }
     return ds;
   }
+
 }

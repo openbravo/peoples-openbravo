@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2015 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -371,7 +371,7 @@ public class ApplyModules extends HttpSecureAppServlet {
           + build.getMainSteps().get(0).getCode() + "'");
       ps2.executeUpdate();
       // We also cancel sessions opened for users different from the current one
-      updateSession = getPreparedStatement("UPDATE AD_SESSION SET SESSION_ACTIVE='N' WHERE CREATEDBY<>?");
+      updateSession = getPreparedStatement("UPDATE AD_SESSION SET SESSION_ACTIVE='N' WHERE CREATEDBY<>? and SESSION_ACTIVE='Y'");
       updateSession.setString(1, currentUser.getId());
       updateSession.executeUpdate();
 

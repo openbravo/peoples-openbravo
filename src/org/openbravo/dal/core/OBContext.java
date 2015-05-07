@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -1145,7 +1145,7 @@ public class OBContext implements OBNotSingleton {
     this.isRTL = isRTL;
   }
 
-  private boolean isTranslationInstalled() {
+  public boolean isTranslationInstalled() {
     return translationInstalled;
   }
 

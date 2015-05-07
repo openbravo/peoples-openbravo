@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2014 Openbravo SLU
+ * All portions are Copyright (C) 2012-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -73,6 +73,9 @@ OB.Utilities.Action.set('showMsgInProcessView', function (paramObj) {
   var processView = paramObj._processView;
   if (processView.messageBar && paramObj.force === true) {
     processView.messageBar.setMessage(paramObj.msgType, paramObj.msgTitle, paramObj.msgText);
+  } else if (processView.callerField && processView.callerField.view && processView.callerField.view.messageBar) {
+    // In the case we are inside a process called from another process we want to show the message inside the caller process instead of the main window.
+    processView.callerField.view.messageBar.setMessage(paramObj.msgType, paramObj.msgTitle, paramObj.msgText);
   } else if (processView.popup && processView.buttonOwnerView && processView.buttonOwnerView.messageBar) {
     processView.buttonOwnerView.messageBar.setMessage(paramObj.msgType, paramObj.msgTitle, paramObj.msgText);
   } else if (processView.messageBar) {
@@ -130,4 +133,34 @@ OB.Utilities.Action.set('setSelectorValueFromRecord', function (paramObj) {
     return;
   }
   callerField.setValueFromRecord(paramObj.record, true, true);
+});
+
+//** {{{ refreshGrid }}} **
+//It refreshes the grid where the process button is defined. Only needed if the process adds or deletes records from this tab
+OB.Utilities.Action.set('refreshGrid', function (paramObj) {
+  var processView = paramObj._processView;
+  if (processView && processView.buttonOwnerView && processView.buttonOwnerView.viewGrid) {
+    processView.buttonOwnerView.viewGrid.refreshGrid();
+  }
+});
+
+//** {{{ OBUIAPP_downloadReport }}} **
+//This action is used by the BaseReportActionHandler to download the generated file with the
+//report result from the temporary location using the postThroughHiddenForm function. The mode is
+//changed to DOWNLOAD so the BaseReportActionHanlder execute the logic to download the report.
+//Parameters:
+//* {{{processParameters}}}: The process parameters is an object that includes the action handler implementing the download, the report id that it is being executed and the process definition id.
+//* {{{tmpfileName}}}: Name of the temporary file.
+//* {{{fileName}}}: The name to be used in the file to download.
+OB.Utilities.Action.set('OBUIAPP_downloadReport', function (paramObj) {
+  var processParameters = paramObj.processParameters,
+      params = isc.clone(processParameters);
+  params._action = processParameters.actionHandler;
+  params.reportId = processParameters.reportId;
+  params.processId = processParameters.processId;
+  params.tmpfileName = paramObj.tmpfileName;
+  params.fileName = paramObj.fileName;
+  params.mode = 'DOWNLOAD';
+  OB.Utilities.postThroughHiddenForm(OB.Application.contextUrl + 'org.openbravo.client.kernel', params);
+
 });

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -241,8 +241,10 @@ public class UsedByLink extends HttpSecureAppServlet {
       jsonObject = buildJsonObject(jsonObject, searchResult);
 
     } catch (Exception e) {
+      log4j.error(
+          "Error getting Categories for windowId: " + windowId + " - entity: " + entityName, e);
       try {
-        jsonObject.put("msg", e.getMessage());
+        jsonObject.put("msg", "" + e.getMessage());
       } catch (JSONException jex) {
         log4j.error("Error trying to generate message: " + jex.getMessage(), jex);
       }
@@ -291,8 +293,9 @@ public class UsedByLink extends HttpSecureAppServlet {
       }
 
     } catch (Exception e) {
+      log4j.error("Error getting linkend items for tab " + adTabId, e);
       try {
-        jsonObject.put("msg", e.getMessage());
+        jsonObject.put("msg", "" + e.getMessage());
       } catch (JSONException jex) {
         log4j.error("Error trying to generate message: " + jex.getMessage(), jex);
       }
@@ -538,7 +541,6 @@ public class UsedByLink extends HttpSecureAppServlet {
         usedByLinkDataJsonObj.put("editOrDeleteOnly", "ED".equals(data.uipattern));
         usedByLinkDataJsonObjects.add(usedByLinkDataJsonObj);
       }
-
       jsonObject.put("usedByLinkData", usedByLinkDataJsonObjects);
     }
     if (msg != null) {
@@ -655,7 +657,8 @@ public class UsedByLink extends HttpSecureAppServlet {
           // ignore one-to-many (a list of children)
           if (!property.isOneToMany() && property.getColumnName() != null
               && property.getTargetEntity() != null
-              && property.getTargetEntity().getTableName().equalsIgnoreCase(tableName)) {
+              && property.getTargetEntity().getTableName().equalsIgnoreCase(tableName)
+              && !property.isComputedColumn()) {
             // Datasource tables are skipped
             linkedTableId = property.getEntity().getTableId();
             linkedTableObject = OBDal.getInstance().get(Table.class, linkedTableId);

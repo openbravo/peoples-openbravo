@@ -2,6 +2,7 @@
   <database name="TRIGGER M_CH_VALUE_TRG">
     <trigger name="M_CH_VALUE_TRG" table="M_CH_VALUE" fires="after" insert="true" update="false" delete="true" foreach="row">
       <body><![CDATA[
+
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
@@ -14,7 +15,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2013 Openbravo SLU
+* All portions are Copyright (C) 2013-2014 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -23,6 +24,8 @@
   v_Parent_ID         VARCHAR2(32);
   v_NextNo            VARCHAR2(32);
   v_count             NUMBER;
+  v_active            VARCHAR2(32):='N';
+  v_exist NUMBER:=0;
 
 BEGIN
   IF (AD_isTriggerEnabled()='N') THEN
@@ -63,17 +66,32 @@ BEGIN
           END
       );
     END IF;
+
+    select count(*) into v_exist
+    from ad_preference
+    where ad_client_id=:new.ad_client_id
+    and property='IsActiveNewChValueProd';
+
+    IF (v_exist > 0) THEN
+      select value into v_active
+      from ad_preference
+      where ad_client_id=:new.ad_client_id
+      and property='IsActiveNewChValueProd';
+    END IF;  
+
     INSERT INTO m_product_ch_conf (
       m_product_ch_conf_id, ad_client_id, ad_org_id, isactive,
       created, createdby, updated, updatedby,
       m_product_ch_id, m_ch_value_id, skcode
     ) SELECT
-      get_uuid(), :new.ad_client_id, :new.ad_org_id, 'N',
+      get_uuid(), :new.ad_client_id, :new.ad_org_id, v_active,
       now(), :new.createdby, now(), :new.updatedby,
       pch.m_product_ch_id, :new.m_ch_value_id, :new.skcode
       FROM m_product_ch pch
       WHERE pch.m_characteristic_id = :new.m_characteristic_id
-        AND pch.m_ch_subset_id IS NULL;
+        AND pch.m_ch_subset_id IS NULL
+		AND exists (select 1 from  m_product where m_product_id=pch.m_product_id AND isgeneric='Y')
+		AND pch.isvariant='Y';
   END IF;
 
   IF DELETING THEN

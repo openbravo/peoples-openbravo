@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2013 Openbravo SLU
+* All portions are Copyright (C) 2013-2015 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -149,10 +149,12 @@ BEGIN
         ) LOOP
           UPDATE fin_payment_scheduledetail
           SET fin_payment_schedule_order = v_payment_schedule_order
-          WHERE fin_payment_scheduledetail_id = cur_invoicepayments.fin_payment_scheduledetail_id;
+          WHERE fin_payment_scheduledetail_id = cur_invoicepayments.fin_payment_scheduledetail_id
+          AND fin_payment_schedule_order is null;
           SELECT v_pendingamount -(amount + coalesce(writeoffamt, 0)) INTO v_pendingamount
           FROM fin_payment_scheduledetail
-          WHERE fin_payment_scheduledetail_id = cur_invoicepayments.fin_payment_scheduledetail_id;
+          WHERE fin_payment_scheduledetail_id = cur_invoicepayments.fin_payment_scheduledetail_id
+          AND fin_payment_schedule_order = v_payment_schedule_order;
           UPDATE fin_payment_schedule
           SET paidamt = paidamt + cur_invoicepayments.paidamt,
           outstandingamt = outstandingamt - cur_invoicepayments.paidamt
@@ -167,7 +169,8 @@ BEGIN
           created, createdby, updated, updatedby,
           fin_payment_schedule_order,
           fin_payment_schedule_invoice, fin_payment_detail_id,
-          amount
+          amount,
+          c_bpartner_id
          )
         VALUES
         (
@@ -175,7 +178,8 @@ BEGIN
           now(), p_user, now(), p_user,
           v_payment_schedule_order,
           null, null,
-          v_pendingamount
+          v_pendingamount,
+          v_BPartner_ID
         );
       END IF;
     END;
@@ -237,7 +241,6 @@ BEGIN
 			WHERE fin_payment_schedule_invoice = v_payment_schedule_invoice
 			AND fin_payment_schedule_order IS NULL)
         WHERE fin_payment_scheduledetail_id = v_FinPaymentScheduleDetailId;
-
         DELETE FROM fin_payment_scheduledetail
         WHERE fin_payment_scheduledetail_id <> v_FinPaymentScheduleDetailId
         AND fin_payment_schedule_invoice = v_payment_schedule_invoice
@@ -285,12 +288,12 @@ BEGIN
               fin_payment_scheduledetail_id, ad_client_id, ad_org_id, isactive,
               created, createdby, updated, updatedby,
               fin_payment_detail_id, fin_payment_schedule_order, fin_payment_schedule_invoice,
-              amount, writeoffamt, iscanceled
+              amount, writeoffamt, iscanceled, c_bpartner_id
           ) VALUES (
               get_uuid(), v_Client_ID, v_Org_ID,'Y',
               now(), p_user, now(), p_user,
               null, v_FinPaymentScheduleId, null,
-              v_difference, 0 ,'N'
+              v_difference, 0 ,'N', v_BPartner_ID
           );
         END IF;
         UPDATE fin_payment_schedule 

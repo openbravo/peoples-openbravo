@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013 Openbravo SLU
+ * All portions are Copyright (C) 2013-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -21,7 +21,6 @@ package org.openbravo.materialmgmt;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -44,6 +43,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.utility.Image;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.plm.ProductAccounts;
@@ -131,12 +131,24 @@ public class VariantAutomaticGenerationProcess implements Process {
       boolean hasNext = true;
       int productNo = 0;
       int k = 0;
-      Long start = new Date().getTime();
+      Long start = System.currentTimeMillis();
+      boolean multilingualDocs = ((Client) OBDal.getInstance().get(Client.class,
+          bundle.getContext().getClient())).isMultilingualDocuments();
       do {
         k = k + 1;
         // Create variant product
         product = OBDal.getInstance().get(Product.class, recordID);
         Product variant = (Product) DalUtil.copy(product);
+
+        if (multilingualDocs) {
+          variant.set(Product.PROPERTY_PRODUCTTRLLIST, null);
+        }
+
+        if (product.getImage() != null) {
+          Image newPrImage = (Image) DalUtil.copy(product.getImage(), false);
+          OBDal.getInstance().save(newPrImage);
+          variant.setImage(newPrImage);
+        }
 
         variant.setGenericProduct(product);
         variant.setProductAccountsList(Collections.<ProductAccounts> emptyList());
@@ -162,7 +174,7 @@ public class VariantAutomaticGenerationProcess implements Process {
         searchKey += productNo;
         variant.setSearchKey(searchKey);
         OBDal.getInstance().save(variant);
-
+        String strChDesc = "";
         for (i = 0; i < chNumber; i++) {
           ProductCharacteristicConf prChConf = OBDal.getInstance().get(
               ProductCharacteristicConf.class, currentValues[i]);
@@ -171,6 +183,12 @@ public class VariantAutomaticGenerationProcess implements Process {
           newPrChValue.setCharacteristic(prChConf.getCharacteristicOfProduct().getCharacteristic());
           newPrChValue.setCharacteristicValue(prChConf.getCharacteristicValue());
           newPrChValue.setProduct(variant);
+          newPrChValue.setOrganization(product.getOrganization());
+          if (StringUtils.isNotBlank(strChDesc)) {
+            strChDesc += ", ";
+          }
+          strChDesc += prChConf.getCharacteristicOfProduct().getCharacteristic().getName() + ":";
+          strChDesc += " " + prChConf.getCharacteristicValue().getName();
           OBDal.getInstance().save(newPrChValue);
           if (prChConf.getCharacteristicOfProduct().isDefinesPrice()
               && prChConf.getNetUnitPrice() != null) {
@@ -183,8 +201,8 @@ public class VariantAutomaticGenerationProcess implements Process {
             variant.setImage(newImage);
           }
         }
+        variant.setCharacteristicDescription(strChDesc);
         OBDal.getInstance().save(variant);
-        new VariantChDescUpdateProcess().update(variant.getId(), null);
 
         for (i = 0; i < chNumber; i++) {
           ProductCharacteristicAux prChConfAux = prChUseCode.get(prChs.get(i));
@@ -197,14 +215,14 @@ public class VariantAutomaticGenerationProcess implements Process {
         }
         productNo++;
 
-        // Create variants from 1 to 1000.
+        // Creates variants from 1 to 1000 and shows time spent on it.
         if (k == 1000) {
           OBDal.getInstance().flush();
           OBDal.getInstance().getSession().clear();
-          log4j.error("dentro bucle variants: " + productNo + " : "
-              + ((new Date().getTime()) - (start)));
+          log4j.debug("Variants loop: " + productNo + " : "
+              + ((System.currentTimeMillis()) - (start)));
           k = 0;
-          start = new Date().getTime();
+          start = System.currentTimeMillis();
         }
 
       } while (hasNext);

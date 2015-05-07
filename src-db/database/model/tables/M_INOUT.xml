@@ -299,7 +299,7 @@
       <foreign-key foreignTable="C_DOCTYPE" name="M_INOUT_C_DOCTYPE">
         <reference local="C_DOCTYPE_ID" foreign="C_DOCTYPE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_INVOICE" name="M_INOUT_C_INVOICE">
+      <foreign-key foreignTable="C_INVOICE" name="M_INOUT_C_INVOICE" onDelete="setnull">
         <reference local="C_INVOICE_ID" foreign="C_INVOICE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_ORDER" name="M_INOUT_C_ORDER">

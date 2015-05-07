@@ -114,7 +114,7 @@
       DECLARE
         Cur_Lines RECORD;
         v_Lines VARCHAR2(4000):='';
-        v_Lines_Aux NUMBER(10) ;
+        v_Lines_Aux VARCHAR2(32);
         v_StrSQL VARCHAR2(4000):='';
       BEGIN
         FOR Cur_Lines IN

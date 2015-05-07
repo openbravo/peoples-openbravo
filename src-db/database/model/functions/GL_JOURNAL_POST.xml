@@ -22,7 +22,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2013 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2015 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -345,7 +345,7 @@
       ELSE
         UPDATE GL_Journal
           SET DocStatus='CO',
-          DocAction='--',
+          DocAction='RE',
           Processed='Y',
           Updated=now()
         WHERE GL_Journal_ID=v_Record_ID;

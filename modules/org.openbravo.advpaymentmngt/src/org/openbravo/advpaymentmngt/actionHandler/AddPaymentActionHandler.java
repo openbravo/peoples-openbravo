@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -34,6 +34,7 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
 import org.openbravo.advpaymentmngt.process.FIN_PaymentProcess;
+import org.openbravo.advpaymentmngt.utility.APRMConstants;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.filter.IsIDFilter;
@@ -82,13 +83,28 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
     JSONObject jsonResponse = new JSONObject();
     OBContext.setAdminMode(true);
+    boolean openedFromMenu = false;
+    String comingFrom = null;
     try {
       VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
       // Get Params
       JSONObject jsonRequest = new JSONObject(content);
       JSONObject jsonparams = jsonRequest.getJSONObject("_params");
 
-      final String strOrgId = jsonRequest.getString("inpadOrgId");
+      if (jsonRequest.has("inpwindowId") && jsonRequest.get("inpwindowId") != JSONObject.NULL) {
+        openedFromMenu = false;
+        if (APRMConstants.TRANSACTION_WINDOW_ID.equals(jsonRequest.getString("inpwindowId"))) {
+          comingFrom = "TRANSACTION";
+        }
+      } else {
+        openedFromMenu = "null".equals(parameters.get("windowId").toString()) ? true : false;
+      }
+      String strOrgId = null;
+      if (jsonRequest.has("inpadOrgId") && jsonRequest.get("inpadOrgId") != JSONObject.NULL) {
+        strOrgId = jsonRequest.getString("inpadOrgId");
+      } else if (jsonparams.has("ad_org_id") && jsonparams.get("ad_org_id") != JSONObject.NULL) {
+        strOrgId = jsonparams.getString("ad_org_id");
+      }
       Organization org = OBDal.getInstance().get(Organization.class, strOrgId);
       boolean isReceipt = jsonparams.getBoolean("issotrx");
 
@@ -153,8 +169,9 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
           JSONObject errorMessage = new JSONObject();
           errorMessage.put("severity", "error");
           errorMessage.put("text", e.getMessage());
+          jsonResponse.put("retryExecution", openedFromMenu);
           jsonResponse.put("message", errorMessage);
-          return errorMessage;
+          return jsonResponse;
         }
       }
       payment.setAmount(new BigDecimal(strActualPayment));
@@ -162,7 +179,7 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
           convertedAmount);
       OBDal.getInstance().save(payment);
 
-      addCredit(payment, jsonparams);
+      addCredit(payment, jsonparams, differenceAmount, strDifferenceAction);
       addSelectedPSDs(payment, jsonparams, pdToRemove);
       addGLItems(payment, jsonparams);
 
@@ -172,12 +189,30 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
           || strAction.equals("PPW")) {
 
         OBError message = processPayment(payment, strAction, strDifferenceAction, differenceAmount,
-            exchangeRate);
+            exchangeRate, jsonparams, comingFrom);
         JSONObject errorMessage = new JSONObject();
-        errorMessage.put("severity", message.getType().toLowerCase());
-        errorMessage.put("title", message.getTitle());
-        errorMessage.put("text", message.getMessage());
-        jsonResponse.put("message", errorMessage);
+        if (!"TRANSACTION".equals(comingFrom)) {
+          errorMessage.put("severity", message.getType().toLowerCase());
+          errorMessage.put("title", message.getTitle());
+          errorMessage.put("text", message.getMessage());
+          jsonResponse.put("retryExecution", openedFromMenu);
+          jsonResponse.put("message", errorMessage);
+          jsonResponse.put("refreshParent", true);
+        } else {
+          jsonResponse.put("refreshParent", false);
+        }
+        JSONObject setSelectorValueFromRecord = new JSONObject();
+        JSONObject record = new JSONObject();
+        JSONObject responseActions = new JSONObject();
+        record.put("value", payment.getId());
+        record.put("map", payment.getIdentifier());
+        setSelectorValueFromRecord.put("record", record);
+        responseActions.put("setSelectorValueFromRecord", setSelectorValueFromRecord);
+        if (openedFromMenu) {
+          responseActions.put("reloadParameters", setSelectorValueFromRecord);
+        }
+        jsonResponse.put("responseActions", responseActions);
+
       }
 
     } catch (Exception e) {
@@ -191,6 +226,7 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
         JSONObject errorMessage = new JSONObject();
         errorMessage.put("severity", "error");
         errorMessage.put("text", message);
+        jsonResponse.put("retryExecution", openedFromMenu);
         jsonResponse.put("message", errorMessage);
 
       } catch (Exception ignore) {
@@ -304,10 +340,12 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
     }
   }
 
-  private void addCredit(FIN_Payment payment, JSONObject jsonparams) throws JSONException {
+  private void addCredit(FIN_Payment payment, JSONObject jsonparams, BigDecimal differenceAmount,
+      String strDifferenceAction) throws JSONException {
     // Credit to Use Grid
     JSONObject creditToUseGrid = jsonparams.getJSONObject("credit_to_use");
     JSONArray selectedCreditLines = creditToUseGrid.getJSONArray("_selection");
+    BigDecimal remainingRefundAmt = differenceAmount;
     String strSelectedCreditLinesIds = null;
     if (selectedCreditLines.length() > 0) {
       strSelectedCreditLinesIds = getSelectedCreditLinesIds(selectedCreditLines);
@@ -317,7 +355,16 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
           selectedCreditLines, selectedCreditPayment);
 
       for (final FIN_Payment creditPayment : selectedCreditPayment) {
-        final BigDecimal usedCreditAmt = selectedCreditPaymentAmounts.get(creditPayment.getId());
+        BigDecimal usedCreditAmt = selectedCreditPaymentAmounts.get(creditPayment.getId());
+        if (strDifferenceAction.equals("refund")) {
+          if (remainingRefundAmt.compareTo(usedCreditAmt) > 0) {
+            remainingRefundAmt = remainingRefundAmt.subtract(usedCreditAmt);
+            usedCreditAmt = BigDecimal.ZERO;
+          } else {
+            usedCreditAmt = usedCreditAmt.subtract(remainingRefundAmt);
+            remainingRefundAmt = BigDecimal.ZERO;
+          }
+        }
         final StringBuffer description = new StringBuffer();
         if (creditPayment.getDescription() != null && !creditPayment.getDescription().equals("")) {
           description.append(creditPayment.getDescription()).append("\n");
@@ -329,7 +376,10 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
         creditPayment.setDescription(truncateDescription);
         // Set Used Credit = Amount + Previous used credit introduced by the user
         creditPayment.setUsedCredit(usedCreditAmt.add(creditPayment.getUsedCredit()));
-        FIN_PaymentProcess.linkCreditPayment(payment, usedCreditAmt, creditPayment);
+
+        if (usedCreditAmt.compareTo(BigDecimal.ZERO) > 0) {
+          FIN_PaymentProcess.linkCreditPayment(payment, usedCreditAmt, creditPayment);
+        }
         OBDal.getInstance().save(creditPayment);
       }
     }
@@ -468,7 +518,8 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
   }
 
   private OBError processPayment(FIN_Payment payment, String strAction, String strDifferenceAction,
-      BigDecimal refundAmount, BigDecimal exchangeRate) throws Exception {
+      BigDecimal refundAmount, BigDecimal exchangeRate, JSONObject jsonparams, String comingFrom)
+      throws Exception {
     ConnectionProvider conn = new DalConnectionProvider(true);
     VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
 
@@ -486,22 +537,34 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
     }
 
     OBError message = FIN_AddPayment.processPayment(vars, conn,
-        (strAction.equals("PRP") || strAction.equals("PPP")) ? "P" : "D", payment);
+        (strAction.equals("PRP") || strAction.equals("PPP")) ? "P" : "D", payment, comingFrom);
     String strNewPaymentMessage = OBMessageUtils.parseTranslation("@PaymentCreated@" + " "
         + payment.getDocumentNo())
         + ".";
     if (!"Error".equalsIgnoreCase(message.getType())) {
       message.setMessage(strNewPaymentMessage + " " + message.getMessage());
       message.setType(message.getType().toLowerCase());
+    } else {
+      conn = new DalConnectionProvider(true);
+      OBDal.getInstance().getSession().clear();
+      payment = OBDal.getInstance().get(FIN_Payment.class, payment.getId());
+      addCredit(payment, jsonparams, refundAmount, strDifferenceAction);
     }
     if (!strDifferenceAction.equals("refund")) {
       return message;
     }
     boolean newPayment = !payment.getFINPaymentDetailList().isEmpty();
+    JSONObject creditToUseGrid = jsonparams.getJSONObject("credit_to_use");
+    JSONArray selectedCreditLines = creditToUseGrid.getJSONArray("_selection");
+    String strSelectedCreditLinesIds = null;
+    if (selectedCreditLines.length() > 0) {
+      strSelectedCreditLinesIds = getSelectedCreditLinesIds(selectedCreditLines);
+    }
     FIN_Payment refundPayment = FIN_AddPayment.createRefundPayment(conn, vars, payment,
         refundAmount.negate(), exchangeRate);
     OBError auxMessage = FIN_AddPayment.processPayment(vars, conn,
-        (strAction.equals("PRP") || strAction.equals("PPP")) ? "P" : "D", refundPayment);
+        (strAction.equals("PRP") || strAction.equals("PPP")) ? "P" : "D", refundPayment,
+        comingFrom, strSelectedCreditLinesIds);
     if (newPayment && !"Error".equalsIgnoreCase(auxMessage.getType())) {
       final String strNewRefundPaymentMessage = OBMessageUtils
           .parseTranslation("@APRM_RefundPayment@" + ": " + refundPayment.getDocumentNo()) + ".";

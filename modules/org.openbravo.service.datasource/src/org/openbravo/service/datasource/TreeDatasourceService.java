@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2014 Openbravo SLU
+ * All portions are Copyright (C) 2013-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -42,6 +42,7 @@ import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.ComponentProvider;
+import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -733,12 +734,28 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
     HashMap<String, String> replacements = new HashMap<String, String>();
     while (matcher.find()) {
       String contextPropertyName = hqlTreeWhereClause.substring(matcher.start(), matcher.end());
-      String value = parameters.get(contextPropertyName);
+      String value = null;
+      if (parameters.containsKey(contextPropertyName)) {
+        value = parameters.get(contextPropertyName);
+      } else if (parameters.containsKey(contextPropertyName.substring(1,
+          contextPropertyName.length() - 1))) {
+        // try again without the '@'
+        value = parameters.get(contextPropertyName.substring(1, contextPropertyName.length() - 1));
+      }
       replacements.put(contextPropertyName, "'" + value + "'");
     }
     String hqlCopy = new String(hqlTreeWhereClause);
     for (String key : replacements.keySet()) {
-      hqlCopy = hqlCopy.replaceAll(key, replacements.get(key));
+      // if the key is not found in the request parameters, its value in the replacement list will
+      // be 'null'
+      if (replacements.get(key).equals("'null'")) {
+        // Strip the "@" from the key
+        String keyWithoutAt = key.substring(1, key.length() - 1);
+        hqlCopy = hqlCopy.replaceAll(key,
+            "'" + (String) RequestContext.get().getSessionAttribute(keyWithoutAt) + "'");
+      } else {
+        hqlCopy = hqlCopy.replaceAll(key, replacements.get(key));
+      }
     }
     return hqlCopy;
   }
@@ -1007,6 +1024,35 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
     // else {} If the entity does not have a summaryLevel property then all its nodes can accept
     // drop
     return canAcceptDrop;
+  }
+
+  /**
+   * Given a criteria and the name of a property, returns the value of that property in the criteria
+   * 
+   * @param criteria
+   *          the criteria that might contain a value for the provided property
+   * @param parentPropertyName
+   *          the property whose value might be contained in the criteria
+   * @return the value of the property in the criteria, or null if it is not found
+   */
+  protected final String getParentRecordIdFromCriteria(JSONArray criteria, String parentPropertyName) {
+    String parentRecordId = null;
+    for (int i = 0; i < criteria.length(); i++) {
+      try {
+        JSONObject criterion = (JSONObject) criteria.get(i);
+        if (criterion.has("criteria")) {
+          return getParentRecordIdFromCriteria(criterion.getJSONArray("criteria"),
+              parentPropertyName);
+        }
+        if (parentPropertyName.equals(criterion.getString("fieldName"))) {
+          parentRecordId = criterion.getString("value");
+          break;
+        }
+      } catch (JSONException e) {
+        log.error("Error while obtaining a property from a JSONObject", e);
+      }
+    }
+    return parentRecordId;
   }
 
 }

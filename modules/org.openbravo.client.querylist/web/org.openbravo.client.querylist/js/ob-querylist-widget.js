@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -58,7 +58,7 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
     if (this.fields) {
       for (i = 0; i < this.fields.length; i++) {
         field = this.fields[i];
-        if (field.isLink && !field.clientClass) {
+        if (!OB.User.isPortal && field.isLink && !field.clientClass) {
           field.clientClass = 'OBQLCanvasItem_Link';
         }
       }
@@ -131,6 +131,12 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
     if (this.viewMode === 'widget') {
       this.setWidgetHeight();
     }
+    if (this.viewMode === 'maximized') {
+      this.grid.data.useClientSorting = true;
+    } else {
+      // reload data in grid when not show all records
+      this.grid.data.useClientSorting = this.parameters.showAll ? true : false;
+    }
     // sometimes when removing the form, this gets called
     // at that point this.grid is not set anymore
     if (this.grid) {
@@ -182,19 +188,24 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
   },
 
   setTotalRows: function (totalRows) {
+    // totalRows is the total number of rows retrieved from backend, in order to
+    // improve performance count of actual number of records is not performed, so
+    // we can only give a hint about having more items in case it is equal to the
+    // rows num parameter
     this.totalRows = totalRows;
     if (this.viewMode === 'maximized') {
-      this.setTitle(this.widgetTitle + " (" + this.totalRows + ")");
       this.showAllLabel.hide();
       return;
     }
-    if (this.showAllLabel.getMembers()[0]) {
-      this.showAllLabel.getMembers()[0].setContents(
-      OB.I18N.getLabel('OBCQL_RowsNumber', [this.parameters.RowsNumber, this.totalRows]));
-    }
-    if (this.parameters.showAll || this.totalRows <= this.parameters.RowsNumber) {
+
+    if (this.parameters.showAll || this.totalRows < this.parameters.RowsNumber) {
+      // if showing pagination or all the records, hide the label
       this.showAllLabel.hide();
     } else {
+      if (this.showAllLabel.getMembers()[0]) {
+        this.showAllLabel.getMembers()[0].setContents(
+        OB.I18N.getLabel('OBCQL_RowsNumber', [this.parameters.RowsNumber]));
+      }
       this.showAllLabel.show();
     }
     this.setWidgetHeight();
@@ -219,6 +230,9 @@ isc.OBQueryListGrid.addProperties({
   autoFetchData: false,
   canAutoFitFields: false,
   showGridSummary: true,
+
+  // prevent multiple requests for 1st page
+  drawAllMaxCells: 0,
 
   summaryRowProperties: {
     showEmptyMessage: false
@@ -288,6 +302,9 @@ isc.OBQueryListGrid.addProperties({
     params.viewMode = this.widget.viewMode;
     params.showAll = this.widget.parameters.showAll;
     params.UTCOffsetMiliseconds = OB.Utilities.Date.getUTCOffsetInMiliseconds();
+
+    // prevent the count operation
+    params[isc.OBViewGrid.NO_COUNT_PARAMETER] = 'true';
     return params;
   },
 
@@ -337,10 +354,8 @@ isc.OBQueryListGrid.addProperties({
       requestProperties.params.showAll = true;
       // sometimes we get here before the datasource
       // is set
-      if (this.dataSource) {
-        this.dataSource.fetchData(criteria, function (dsResponse, data, dsRequest) {
-          dsResponse.clientContext.grid.widget.setTotalRows(dsResponse.totalRows);
-        }, requestProperties);
+      if (dsResponse) {
+        this.widget.setTotalRows(dsResponse.totalRows);
       }
     } else {
       this.widget.setTotalRows(dsResponse.totalRows);

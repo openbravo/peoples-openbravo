@@ -193,8 +193,6 @@ public class Translate extends DefaultHandler implements LexicalHandler {
   /**
    * Receives a list of directories and returns this list as an ArrayList
    * 
-   * @param s
-   * @return
    */
   private static ArrayList<String> getDirectories(String s) {
     final ArrayList<String> l = new ArrayList<String>();

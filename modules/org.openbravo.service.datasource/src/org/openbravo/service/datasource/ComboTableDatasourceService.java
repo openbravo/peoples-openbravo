@@ -160,8 +160,14 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
       if (!StringUtils.isEmpty(filterString)) {
         newParameters.put("FILTER_VALUE", filterString);
       }
-      fps = comboTableData.select(new DalConnectionProvider(false), newParameters, true, startRow,
-          endRow);
+
+      boolean optionalFieldNonFirstPage = !column.isMandatory() && startRow > 0
+          && StringUtils.isEmpty(filterString);
+      // non-mandatory fields add a blank record at the beginning of 1st page, this needs to be
+      // taken into account in subsequent pages
+
+      fps = comboTableData.select(new DalConnectionProvider(false), newParameters, true, startRow
+          - (optionalFieldNonFirstPage ? 1 : 0), endRow - (optionalFieldNonFirstPage ? 1 : 0));
 
       ArrayList<JSONObject> comboEntries = new ArrayList<JSONObject>();
       // If column is mandatory we add an initial blank value in the first page if not filtered

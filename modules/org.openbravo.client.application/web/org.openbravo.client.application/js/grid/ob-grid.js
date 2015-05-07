@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -35,6 +35,7 @@ isc.OBGrid.addProperties({
   poolComponentsPerColumn: true,
   showRecordComponents: true,
   escapeHTML: true,
+  canMultiSort: false,
   bodyProperties: {
     canSelectText: true,
 
@@ -271,7 +272,7 @@ isc.OBGrid.addProperties({
       return null;
     }
 
-    if (field.isLink && !field.clientClass && record[field.name]) {
+    if (!OB.User.isPortal && field.isLink && !field.clientClass && record[field.name]) {
       // To keep compatibility with < 3.0MP20 versions that didn't implement 'clientClass' and only have 'isLink' property
       field.clientClass = 'OBGridLinkCellClick';
     }
@@ -306,9 +307,15 @@ isc.OBGrid.addProperties({
   updateRecordComponent: function (record, colNum, component, recordChanged) {
     var field = this.getField(colNum),
         isSummary = record && (record[this.groupSummaryRecordProperty] || record[this.gridSummaryRecordProperty]),
-        rowNum = this.getRecordIndex(record);
+        rowNum = this.getRecordIndex(record),
+        isEditRecord = rowNum === this.getEditRow();
 
     if (isSummary) {
+      return null;
+    }
+
+    if (isEditRecord && !component.isShownInGridEdit) {
+      //TODO: In OBPickAndExecuteGrid this logic doesn't work very well
       return null;
     }
 
@@ -647,6 +654,19 @@ isc.OBGrid.addProperties({
           if (OB.Utilities.getCanvasProp(field.clientClass, 'canExpandRecord')) {
             this.fixedRecordHeights = false;
           }
+          // Manage the case the clientClass overwrites the 'canEdit'
+          // If it is not set in the javascript definition of the component, the value returned from the datasource will be used
+          // In case canEdit be true, in grid edition mode the 'editorType' of the component will be rendered.
+          // In case canEdit be false, nothing will be rendered
+          // NOTE: This applies to the editor specified in the component. By default the editor is 'OBClientClassCanvasItem', that means that the editor will be exactly the same
+          //       component than the defined Client Class. You can overwrite the 'editorType' to have a different one. In any case, when 'canEdit' be true, it is desiderable to set
+          //       'isShownInGridEdit' to false, to avoid view two components one above the other.
+          //       As just has been said, if you want to have a particular editor for the edition mode, set 'canEdit' to trie and 'isShownInGridEdit' to false
+          //       If you don't want to see anything in edition mode, just set both 'canEdit' and 'isShownInGridEdit' to false
+          //       If you want to see exactly the same in edition mode than in read mode (no edition capabilities), set 'canEdit' to false and 'isShownInGridEdit' to true
+          if (typeof OB.Utilities.getCanvasProp(field.clientClass, 'canEdit') !== 'undefined' || OB.Utilities.getCanvasProp(field.clientClass, 'canEdit') === null) {
+            field.canEdit = OB.Utilities.getCanvasProp(field.clientClass, 'canEdit');
+          }
           // Manage the case the clientClass overwrites the 'canSort'
           if (typeof OB.Utilities.getCanvasProp(field.clientClass, 'canSort') !== 'undefined' || OB.Utilities.getCanvasProp(field.clientClass, 'canSort') === null) {
             field.canSort = OB.Utilities.getCanvasProp(field.clientClass, 'canSort');
@@ -678,18 +698,21 @@ isc.OBGrid.addProperties({
           if (!this._iconEnabled) {
             return;
           }
-          if (grid.filterHasChanged) {
+          if (grid.filterHasChanged || grid.filterClauseJustRemoved) {
+            // the filter clause can only be removed once
+            delete grid.filterClauseJustRemoved;
             // Do not change the sorting after receiving the data from the datasource
             grid._filteringAndSortingManually = true;
             grid.filterEditor.performFilter(true, true);
             delete grid.filterHasChanged;
             delete grid.sortingHasChanged;
             delete grid._filteringAndSortingManually;
-          } else if (!isc.isA.ResultSet(grid.data)) {
+          } else if (!isc.isA.ResultSet(grid.data) || grid.serverDataNotLoaded) {
             // The initial data has not been loaded yet, refreshGrid
             // refreshGrid applies also the current sorting
             grid.refreshGrid();
             delete grid.sortingHasChanged;
+            delete grid.serverDataNotLoaded;
           } else if (grid.sortingHasChanged) {
             grid.setSort(grid.savedSortSpecifiers, true);
             delete grid.sortingHasChanged;
@@ -726,6 +749,7 @@ isc.OBGrid.addProperties({
       if (this.sorter) {
         this.filterHasChanged = true;
         this.sorter.enable();
+        this.filterImage.hide();
       }
     }
     if (!keepFilterClause) {
@@ -811,6 +835,71 @@ isc.OBGrid.addProperties({
   // show or hide the filter button
   filterEditorSubmit: function (criteria) {
     this.checkShowFilterFunnelIcon(criteria);
+  },
+
+  // overwrites setFields to store the list of fk columns filtered using its id
+  // this info is then used when the filter field is recreated
+  setFields: function (newFields) {
+    this.filterByIdFields = this.getFilterByIdFields();
+    if (this.filterByIdFields.length > 0) {
+      this.fkCacheCopy = this.getFKFilterAuxiliaryCache(this.getCriteria());
+    }
+    this.Super('setFields', arguments);
+    delete this.fkCacheCopy;
+    delete this.filterByIdFields;
+  },
+
+  // returns the list of fk fields that are currently being filtered using their id
+  getFilterByIdFields: function () {
+    var fields, i, filterByIdFields = [];
+    if (this.filterEditor && this.filterEditor.getEditForm()) {
+      fields = this.filterEditor.getEditForm().getFields();
+      for (i = 0; i < fields.length; i++) {
+        if (fields[i].filterType === 'id') {
+          filterByIdFields.push(fields[i].name);
+        }
+      }
+    }
+    return filterByIdFields;
+  },
+
+  // returns an object containing the foreign key filter cache of all the filter fields whose current filter type is 'id'
+  getFKFilterAuxiliaryCache: function (criteria) {
+    var filterField, criterion, filterLength = criteria.criteria.length,
+        fkFilterAuxCache = [],
+        innerCache = [],
+        filterEditForm, cacheElement, i;
+    if (!this.filterEditor || !this.filterEditor.getEditForm()) {
+      return fkFilterAuxCache;
+    }
+    filterEditForm = this.filterEditor.getEditForm();
+    for (i = 0; i < filterLength; i++) {
+      criterion = criteria.criteria[i];
+      filterField = filterEditForm.getField(criterion.fieldName);
+      innerCache = [];
+      if (filterField && filterField.filterType === 'id') {
+        if (criterion.criteria) {
+          for (i = 0; i < criterion.criteria.length; i++) {
+            cacheElement = {};
+            cacheElement.fieldName = criterion.criteria[i].fieldName;
+            cacheElement[OB.Constants.ID] = criterion.criteria[i].value;
+            cacheElement[OB.Constants.IDENTIFIER] = filterField.getRecordIdentifierFromId(criterion.criteria[i].value);
+            innerCache.add(cacheElement);
+          }
+        } else {
+          cacheElement = {};
+          cacheElement.fieldName = criterion.fieldName;
+          cacheElement[OB.Constants.ID] = criterion.value;
+          cacheElement[OB.Constants.IDENTIFIER] = filterField.getRecordIdentifierFromId(criterion.value);
+          innerCache.add(cacheElement);
+        }
+        fkFilterAuxCache.add({
+          fieldName: criterion.fieldName,
+          cache: innerCache
+        });
+      }
+    }
+    return fkFilterAuxCache;
   },
 
   setSingleRecordFilterMessage: function () {
@@ -1152,6 +1241,22 @@ isc.OBGrid.addProperties({
     return ret;
   },
 
+  selectionChanged: function (record, state) {
+    if (record._collapseOnRecordDeselection && !state) {
+      var me = this;
+      setTimeout(function () {
+        // Due to multiple 'record selection' calls due to multiple 'record selection' handlers
+        // There are sometimes where selectionChanged is called three times in a 'true' - 'false' - 'true' sequence
+        // or even more complex sequences, so a timeout is needed to ensure after a short time span that really
+        // the record has been deselected
+        if (!me.isSelected(record)) {
+          me.collapseRecord(record);
+        }
+      }, 100);
+    }
+    return this.Super('selectionChanged', arguments);
+  },
+
   //** {{{ openExpansionProcess }}} **
   //
   // Opens a process inside a grid row.
@@ -1161,13 +1266,14 @@ isc.OBGrid.addProperties({
   //  * {{{selectOnOpen}}} It indicates if the record will be selected when the process be opened (true by default)
   //  * {{{deselectAllOnOpen}}} It indicates if all other records will be unselected when the process be opened. It is applied before 'selectOnOpen' (true by default)
   //  * {{{collapseOthersOnOpen}}} It indicates if any other opened process should be closed (true by default)
+  //  * {{{collapseOnRecordDeselection}}} It indicates if the process should be closed once the record is deselected (true by default)
   //  * {{{width}}} The width of the opened process (100% by default)
   //  * {{{height}}} The height of the opened process (7 grid rows + 'bottom buttons layout' by default)
   //  * {{{topMargin}}} The top margin of the process. (10 by default)
   //  * {{{rightMargin}}} The right margin of the process. (30 by default)
   //  * {{{bottomMargin}}} The bottom margin of the process. (10 by default)
   //  * {{{leftMargin}}} The left margin of the process. (30 by default)
-  openExpansionProcess: function (process, record, selectOnOpen, deselectAllOnOpen, collapseOthersOnOpen, width, height, topMargin, rightMargin, bottomMargin, leftMargin) {
+  openExpansionProcess: function (process, record, selectOnOpen, deselectAllOnOpen, collapseOthersOnOpen, collapseOnRecordDeselection, width, height, topMargin, rightMargin, bottomMargin, leftMargin) {
     var defaultHeight;
 
     if (!process || !record) {
@@ -1191,6 +1297,9 @@ isc.OBGrid.addProperties({
     }
     if (typeof collapseOthersOnOpen === 'undefined' || collapseOthersOnOpen === null) {
       collapseOthersOnOpen = true;
+    }
+    if (typeof collapseOnRecordDeselection === 'undefined' || collapseOnRecordDeselection === null) {
+      collapseOnRecordDeselection = true;
     }
     if (typeof topMargin === 'undefined' || topMargin === null) {
       topMargin = (process.expandedTopMargin ? process.expandedTopMargin : 10);
@@ -1253,6 +1362,7 @@ isc.OBGrid.addProperties({
     };
 
     this.canExpandMultipleRecords = !collapseOthersOnOpen;
+    record._collapseOnRecordDeselection = collapseOnRecordDeselection;
 
     this.expandRecord(record);
 
@@ -1270,7 +1380,6 @@ isc.ClassFactory.defineClass('OBViewGridBody', 'GridBody');
 isc.OBViewGridBody.addProperties({
   redraw: function () {
     var newDrawArea, grid, drawArea, firstRecord, loading;
-
     this.Super('redraw', arguments);
 
     grid = this.grid;
@@ -1341,7 +1450,21 @@ isc.OBGridLinkButton.addProperties({
 });
 
 isc.ClassFactory.defineClass('OBGridFormButton', isc.OBFormButton);
-isc.OBGridFormButton.addProperties({});
+isc.OBGridFormButton.addProperties({
+  showValue: function (displayValue, dataValue, form, item) {
+    if (this.autoFit_orig) {
+      // Restore the autofit attribute if it was set in a first instance to avoid that if the button is
+      // shown as an editor in edition mode (canEdit: true) spans the row width.
+      this.setAutoFit(true);
+    }
+    return this.Super('showValue', arguments);
+  },
+
+  initWidget: function () {
+    this.autoFit_orig = this.autoFit;
+    return this.Super('initWidget', arguments);
+  }
+});
 
 
 isc.defineClass('OBGridLinkCellClick', isc.OBGridLinkItem);

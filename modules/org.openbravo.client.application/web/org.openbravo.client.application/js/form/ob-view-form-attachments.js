@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2014 Openbravo SLU
+ * All portions are Copyright (C) 2011-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -65,8 +65,8 @@ isc.OBAttachmentsSectionItem.addProperties({
     return this.attachmentCanvasItem.canvas;
   },
 
-  setRecordInfo: function (entity, id, tabId) {
-    this.getAttachmentPart().setRecordInfo(entity, id, tabId);
+  setRecordInfo: function (entity, id, tabId, attachmentForm) {
+    this.getAttachmentPart().setRecordInfo(entity, id, tabId, attachmentForm);
   },
 
   collapseSection: function () {
@@ -168,12 +168,13 @@ isc.OBAttachmentsLayout.addProperties({
     return this.canvasItem.form;
   },
 
-  setRecordInfo: function (entity, id, tabId) {
+  setRecordInfo: function (entity, id, tabId, attachmentForm) {
     this.entity = entity;
     // use recordId instead of id, as id is often used to keep
     // html ids
     this.recordId = id;
     this.tabId = tabId;
+    this.attachmentForm = attachmentForm;
     this.isInitialized = false;
   },
 
@@ -240,6 +241,7 @@ isc.OBAttachmentsLayout.addProperties({
   fillAttachments: function (attachments) {
     var id, i, length;
 
+    var docOrganization;
     this.savedAttachments = attachments;
     this.destroyAndRemoveMembers(this.getMembers());
     var hLayout = isc.HLayout.create();
@@ -250,6 +252,13 @@ isc.OBAttachmentsLayout.addProperties({
 
     this.addMember(hLayout);
     var me = this;
+    //Here we are checking if the entity is 'Organization' because the way of obtaining the
+    //id of the organization of the form is different depending on the entity
+    if (this.entity === 'Organization') {
+      docOrganization = this.recordId;
+    } else {
+      docOrganization = this.attachmentForm.values.organization;
+    }
     var addButton = isc.OBLinkButtonItem.create({
       title: '[ ' + OB.I18N.getLabel('OBUIAPP_AttachmentAdd') + ' ]',
       width: '30px',
@@ -282,6 +291,10 @@ isc.OBAttachmentsLayout.addProperties({
               name: 'inpTabId',
               type: 'hidden',
               value: this.canvas.tabId
+            }, {
+              name: 'inpDocumentOrg',
+              type: 'hidden',
+              value: docOrganization
             }, {
               name: 'inpwindowId',
               type: 'hidden',
@@ -494,6 +507,10 @@ isc.OBAttachmentsLayout.addProperties({
           name: 'inpTabId',
           type: 'hidden',
           value: this.canvas.tabId
+        }, {
+          name: 'inpDocumentOrg',
+          type: 'hidden',
+          value: docOrganization
         }, {
           name: 'inpwindowId',
           type: 'hidden',

@@ -66,8 +66,8 @@ public class DocMatchInv extends AcctServer {
     super(AD_Client_ID, AD_Org_ID, connectionProvider);
   }
 
-  public void loadObjectFieldProvider(ConnectionProvider conn,
-      @SuppressWarnings("hiding") String AD_Client_ID, String Id) throws ServletException {
+  public void loadObjectFieldProvider(ConnectionProvider conn, @SuppressWarnings("hiding")
+  String AD_Client_ID, String Id) throws ServletException {
     setObjectFieldProvider(DocMatchInvData.selectRegistro(conn, AD_Client_ID, Id));
   }
 
@@ -149,16 +149,19 @@ public class DocMatchInv extends AcctServer {
     }
     if (data == null || data.length == 0)
       return null;
-    for (int i = 0; i < data.length; i++) {
-      DocLine_Material docLine = new DocLine_Material(DocumentType, Record_ID, strInOutLineId);
-      docLine.loadAttributes(data[i], this);
-      OBContext.setAdminMode(false);
-      String strQty = data[i].movementqty;
-      docLine.setQty(strQty);
 
-      list.add(docLine);
-    }
-    // Return Array
+    try {
+      OBContext.setAdminMode(false);
+      for (int i = 0; i < data.length; i++) {
+        DocLine_Material docLine = new DocLine_Material(DocumentType, Record_ID, strInOutLineId);
+        docLine.loadAttributes(data[i], this);
+        String strQty = data[i].movementqty;
+        docLine.setQty(strQty);
+        list.add(docLine);
+      }
+    } finally {
+      OBContext.restorePreviousMode();
+    } // Return Array
     DocLine[] dl = new DocLine[list.size()];
     list.toArray(dl);
     return dl;
@@ -268,9 +271,11 @@ public class DocMatchInv extends AcctServer {
           throw new IllegalStateException();
 
         } else {
+          Currency currency = legalEntity.getCurrency() != null ? legalEntity.getCurrency()
+              : legalEntity.getClient().getCurrency();
           trxCost = CostingUtils.getStandardCost(inOutLine.getProduct(), legalEntity,
-              inOutLine.getShipmentReceipt().getAccountingDate(), costDimensions,
-              legalEntity.getCurrency()).multiply(new BigDecimal(data[0].getField("Qty")));
+              inOutLine.getShipmentReceipt().getAccountingDate(), costDimensions, currency)
+              .multiply(new BigDecimal(data[0].getField("Qty")));
         }
       } else {
         trxCost = transaction.getTransactionCost();
@@ -309,7 +314,9 @@ public class DocMatchInv extends AcctServer {
     String strIsSOTrx = invoiceData[0].issotrx;
     String strRecordId = invoiceData[0].cInvoiceId;
     String strReceiptDate = data[0].getField("ORDERDATEACCT");
-    BigDecimal bdExpenses = new BigDecimal(strExpenses);
+    BigDecimal bdExpenses = new BigDecimal(strExpenses).multiply(
+        new BigDecimal(data[0].getField("QTY"))).divide(
+        new BigDecimal(data[0].getField("QTYINVOICED")));
     if ((new BigDecimal(data[0].getField("QTYINVOICED")).signum() != (new BigDecimal(
         data[0].getField("MOVEMENTQTY"))).signum())
         && data[0].getField("InOutStatus").equals("VO")) {
@@ -366,18 +373,21 @@ public class DocMatchInv extends AcctServer {
     BigDecimal totalLines = BigDecimal.ZERO;
     for (int i = 0; i < p_lines.length; i++) {
       DocLine_Invoice line = (DocLine_Invoice) p_lines[i];
-      BigDecimal lineAmount = bdExpensesAcctCurrency.multiply(new BigDecimal(line.getAmount()))
-          .divide(
-              new BigDecimal(invoiceData[0].linenetamt),
-              OBDal.getInstance().get(Currency.class, strInvoiceCurrency).getStandardPrecision()
-                  .intValue(), BigDecimal.ROUND_HALF_UP);
-      if (i == p_lines.length - 1) {
-        lineAmount = bdExpensesAcctCurrency.subtract(totalLines);
+      BigDecimal lineAmount = BigDecimal.ZERO;
+      BigDecimal linenetamt = new BigDecimal(invoiceData[0].linenetamt);
+      if (!(linenetamt.compareTo(BigDecimal.ZERO) == 0)) {
+        lineAmount = bdExpensesAcctCurrency.multiply(new BigDecimal(line.getAmount())).divide(
+            linenetamt,
+            OBDal.getInstance().get(Currency.class, strInvoiceCurrency).getStandardPrecision()
+                .intValue(), BigDecimal.ROUND_HALF_UP);
+        if (i == p_lines.length - 1) {
+          lineAmount = bdExpensesAcctCurrency.subtract(totalLines);
+        }
+        cr = fact.createLine(line, p.getAccount(ProductInfo.ACCTTYPE_P_Expense, as, conn),
+            as.m_C_Currency_ID, "0", lineAmount.toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+            DocumentType, conn);
+        totalLines = totalLines.add(lineAmount);
       }
-      cr = fact.createLine(line, p.getAccount(ProductInfo.ACCTTYPE_P_Expense, as, conn),
-          as.m_C_Currency_ID, "0", lineAmount.toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-          DocumentType, conn);
-      totalLines = totalLines.add(lineAmount);
     }
     if (cr == null && ZERO.compareTo(bdExpenses) != 0) {
       log4j.warn("createFact - unable to calculate line with "
@@ -503,17 +513,16 @@ public class DocMatchInv extends AcctServer {
   } // updateProductInfo
 
   private MaterialTransaction getTransaction(String matchInvId) {
-    OBContext.setAdminMode(false);
     MaterialTransaction transaction;
-    if (OBDal.getInstance().get(ReceiptInvoiceMatch.class, matchInvId).getGoodsShipmentLine()
-        .getMaterialMgmtMaterialTransactionList().size() == 0) {
-      return null;
-    }
     try {
+      OBContext.setAdminMode(false);
+      if (OBDal.getInstance().get(ReceiptInvoiceMatch.class, matchInvId).getGoodsShipmentLine()
+          .getMaterialMgmtMaterialTransactionList().size() == 0) {
+        return null;
+      }
       transaction = OBDal.getInstance().get(ReceiptInvoiceMatch.class, matchInvId)
           .getGoodsShipmentLine().getMaterialMgmtMaterialTransactionList().get(0);
     } finally {
-
       OBContext.restorePreviousMode();
     }
     return transaction;

@@ -62,9 +62,9 @@
     <FIELD id="fieldNeedByDate">needbydate</FIELD>
     <FIELD id="fieldProduct" replaceCharacters="html">product</FIELD>
     <FIELD id="fieldAttribute" replaceCharacters="html">attribute</FIELD>
-    <FIELD id="fieldQuantity" format="euroEdition">qtytoorder</FIELD>
+    <FIELD id="fieldQuantity" format="qtyEdition">qtytoorder</FIELD>
     <FIELD id="fieldUnit" replaceCharacters="html">uomname</FIELD>
-    <FIELD id="fieldSecQuantity" format="euroEdition">quantityorder</FIELD>
+    <FIELD id="fieldSecQuantity" format="qtyEdition">quantityorder</FIELD>
     <FIELD id="fieldSecUnit" replaceCharacters="html">secuomname</FIELD>
     <FIELD id="fieldRequester" replaceCharacters="html">requester</FIELD>
     <FIELD id="fieldVendor" replaceCharacters="html">vendor</FIELD>
@@ -82,13 +82,13 @@
     <FIELD id="fieldSelProduct" replaceCharacters="html">product</FIELD>
     <FIELD id="fieldSelAttribute">attribute</FIELD>
     <FIELD id="fieldSelNeedByDate" replaceCharacters="html">needbydate</FIELD>
-    <FIELD id="fieldReqQty" format="euroEdition">reqqty</FIELD>
-    <FIELD id="fieldMatchedQty" format="euroEdition">matchedqty</FIELD>
-    <FIELD id="fieldSelQty" format="euroEdition" attribute="value">lockqty</FIELD>
+    <FIELD id="fieldReqQty" format="qtyEdition">reqqty</FIELD>
+    <FIELD id="fieldMatchedQty" format="qtyEdition">matchedqty</FIELD>
+    <FIELD id="fieldSelQty" format="qtyEdition" attribute="value">lockqty</FIELD>
     <FIELD id="fieldSelQty" attribute="name" replace="xx">mRequisitionlineId</FIELD>
     <FIELD id="fieldSelPrice" format="priceEdition" attribute="value">lockprice</FIELD>
     <FIELD id="fieldSelUnit" replaceCharacters="html">uomname</FIELD>
-    <FIELD id="fieldSelSecQuantity" format="euroEdition">quantityorder</FIELD>
+    <FIELD id="fieldSelSecQuantity" format="qtyEdition">quantityorder</FIELD>
     <FIELD id="fieldSelSecUnit" replaceCharacters="html">secuomname</FIELD>
     <FIELD id="fieldSelPrice" attribute="name" replace="xx">mRequisitionlineId</FIELD>
     <FIELD id="fieldPriceList" format="priceEdition" replaceCharacters="html">pricelist</FIELD>

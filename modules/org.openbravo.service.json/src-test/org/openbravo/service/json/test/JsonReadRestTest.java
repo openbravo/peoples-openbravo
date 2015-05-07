@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,10 +19,15 @@
 
 package org.openbravo.service.json.test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.net.URLEncoder;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
+import org.junit.Test;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.access.Role;
@@ -45,6 +50,7 @@ public class JsonReadRestTest extends JsonRestTest {
   /**
    * Queries for a few {@link Column} objects using a Json REST call with a whereclause.
    */
+  @Test
   public void testWhereClause() throws Exception {
     String whereClause = "(table.id='104' or table.id='105') and isKey='Y'";
     whereClause = URLEncoder.encode(whereClause, "UTF-8");
@@ -73,8 +79,10 @@ public class JsonReadRestTest extends JsonRestTest {
   /**
    * Query for one {@link Table}.
    */
+  @Test
   public void testRestOneObject() throws Exception {
-    final JSONObject jsonObject = doRequest(URL_PART + "/ADTable/104", JsonConstants.IDENTIFIER, "GET", 200);
+    final JSONObject jsonObject = doRequest(URL_PART + "/ADTable/104", JsonConstants.IDENTIFIER,
+        "GET", 200);
 
     setSystemAdministratorContext();
     final JsonToDataConverter converter = new JsonToDataConverter();
@@ -87,6 +95,7 @@ public class JsonReadRestTest extends JsonRestTest {
   /**
    * Test filter.
    */
+  @Test
   public void testFilter() throws Exception {
     String filterClause = "Reference List";
     filterClause = URLEncoder.encode(filterClause, "UTF-8");
@@ -110,6 +119,7 @@ public class JsonReadRestTest extends JsonRestTest {
    * Paged query.
    */
   @SuppressWarnings("deprecation")
+  @Test
   public void testPageRest() throws Exception {
     setSystemAdministratorContext();
     final OBCriteria<Column> colCriteria = OBDal.getInstance().createCriteria(Column.class);
@@ -143,6 +153,7 @@ public class JsonReadRestTest extends JsonRestTest {
   /**
    * Test sortby and filter.
    */
+  @Test
   public void testSortbyAndFilter() throws Exception {
     doTestSortByAndFilter(true);
     doTestSortByAndFilter(false);

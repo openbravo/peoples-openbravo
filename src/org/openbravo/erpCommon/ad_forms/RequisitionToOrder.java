@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -517,6 +517,8 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
       String strCOrderlineID = "";
       BigDecimal qty = new BigDecimal("0");
       BigDecimal qtyOrder = new BigDecimal("0");
+      BigDecimal quantity = new BigDecimal("0");
+      BigDecimal quantityOrder = new BigDecimal("0");
       boolean insertLine = false;
 
       RequisitionToOrderData[] lines = RequisitionToOrderData.linesToOrder(
@@ -545,6 +547,7 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
         if (i == lines.length - 1) {
           insertLine = true;
           qtyOrder = qty;
+          quantityOrder = quantity;
         } else if (!lines[i + 1].mProductId.equals(lines[i].mProductId)
             || !lines[i + 1].mAttributesetinstanceId.equals(lines[i].mAttributesetinstanceId)
             || !lines[i + 1].description.equals(lines[i].description)
@@ -552,8 +555,11 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
           insertLine = true;
           qtyOrder = qty;
           qty = new BigDecimal(0);
+          quantityOrder = quantity;
+          quantity = new BigDecimal(0);
         } else {
           qty = qty.add(new BigDecimal(lines[i].lockqty));
+          quantity = quantity.add(new BigDecimal(lines[i].quantityorder));
         }
         lines[i].cOrderlineId = strCOrderlineID;
         if (insertLine) {
@@ -561,6 +567,8 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
           line += 10;
           BigDecimal qtyAux = new BigDecimal(lines[i].lockqty);
           qtyOrder = qtyOrder.add(qtyAux);
+          BigDecimal quantityAux = new BigDecimal(lines[i].quantityorder);
+          quantityOrder = quantityOrder.add(quantityAux);
           if (log4j.isDebugEnabled())
             log4j.debug("Lockqty: " + lines[i].lockqty + " qtyorder: " + qtyOrder.toPlainString()
                 + " new BigDecimal: " + (new BigDecimal(lines[i].lockqty)).toString() + " qtyAux: "
@@ -572,9 +580,10 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
                 RequisitionToOrderData.cBPartnerLocationId(this, strVendor), strOrderDate,
                 lines[i].needbydate, lines[i].description, lines[i].mProductId,
                 lines[i].mAttributesetinstanceId, strWarehouse, lines[i].mProductUomId,
-                lines[i].cUomId, lines[i].quantityorder, qtyOrder.toPlainString(), cCurrencyId,
-                lines[i].pricelist, lines[i].priceactual, strPriceListId, lines[i].pricelimit,
-                lines[i].tax, "", lines[i].discount, lines[i].grossUnit, lines[i].grossAmt);
+                lines[i].cUomId, quantityOrder.toPlainString(), qtyOrder.toPlainString(),
+                cCurrencyId, lines[i].pricelist, lines[i].priceactual, strPriceListId,
+                lines[i].pricelimit, lines[i].tax, "", lines[i].discount, lines[i].grossUnit,
+                lines[i].grossAmt);
           } catch (ServletException ex) {
             myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
             releaseRollbackConnection(conn);

@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -829,4 +829,17 @@
     </Sql>
     <Parameter name="mProductUomId"/>
   </SqlMethod>
+  <SqlMethod name="countOrders" type="preparedStatement" connection="true" return="String">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT COUNT(DISTINCT OL.C_ORDER_ID) AS COUNT
+        FROM M_INOUTLINE MIOL
+            LEFT JOIN C_ORDERLINE OL ON OL.C_ORDERLINE_ID = MIOL.C_ORDERLINE_ID
+        WHERE MIOL.M_INOUT_ID = ?
+        ]]>
+    </Sql>
+    <Field name="rownum" value="count"/>
+    <Parameter name="mInoutId"/>
+    </SqlMethod>
 </SqlClass>

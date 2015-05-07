@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2008-2012 Openbravo SLU
+* All portions are Copyright (C) 2008-2015 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -245,6 +245,12 @@ BEGIN
       END IF;
 
       v_Tax_ID := C_GetTax(Cur_Lines.M_Product_ID, p_OrderDate, p_Org_ID, p_Warehouse_ID, v_BillTo_ID, v_BPartner_Location_ID, null, 'N');
+      IF (v_Tax_ID is NULL) THEN
+        v_Message := '@NoTaxDefinedForRequisitionLine@' || v_Line;
+        RAISE_APPLICATION_ERROR(-20000, v_Message);
+      END IF;
+      
+      
       SELECT STDPRECISION, PRICEPRECISION INTO v_stdPre, v_priPre FROM C_CURRENCY WHERE C_CURRENCY_ID = v_Currency_ID;
     
       v_ResultStr:='Insert order line';

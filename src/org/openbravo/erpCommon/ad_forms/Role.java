@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -182,7 +182,7 @@ public class Role extends HttpSecureAppServlet {
         strIsRTL, strRol, strClient, strOrg, strWarehouse);
     if (!result)
       return false;
-    readProperties(vars, globalParameters.getOpenbravoPropertiesPath());
+    readProperties(vars);
     readNumberFormat(vars, globalParameters.getFormatPath());
     return true;
   }

@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2010 Openbravo SLU
+* All portions are Copyright (C) 2010-2014 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -92,9 +92,7 @@ BEGIN
   from c_taxpayment
   where c_taxpayment_id=p_record_id;
 
-  SELECT NAME
-  INTO v_GLItemName 
-  FROM C_GLITEM WHERE C_GLITEM_ID=p_GLItem;
+ 
   
   IF (v_ispayment = 'Y' AND v_processed = 'N') THEN
     v_ResultStr:='Generating FIN_PAYMENT';
@@ -134,6 +132,10 @@ BEGIN
           RAISE_APPLICATION_ERROR(-20000, '@APRM_OUTMULTICURRENCYNOTSUPPORTED@' || ' ' || v_PaymentMethodName || ', ' || '@APRM_INFINANCIALACCOUNT@' || ' ' || v_FinancialAccountName || '.');
 	END IF;
     END IF;
+    
+    SELECT NAME
+    INTO v_GLItemName 
+    FROM C_GLITEM WHERE C_GLITEM_ID=p_GLItem;
 
     INSERT INTO fin_payment(
       fin_payment_id, ad_client_id, ad_org_id, created, createdby, 
@@ -209,7 +211,7 @@ BEGIN
   ELSIF (v_ispayment = 'Y' AND v_Processed = 'Y') THEN
     select posted into v_posted from FIN_PAYMENT where FIN_PAYMENT_ID = v_FIN_PAYMENT_ID;
     if v_posted = 'Y' then
-      RAISE_APPLICATION_ERROR(-20000, '@PostedDocument@') ;
+      RAISE_APPLICATION_ERROR(-20000, '@RelatedPaymentPosted@') ;
     end if;
     select count(*) INTO v_Count
     from fin_finacc_transaction

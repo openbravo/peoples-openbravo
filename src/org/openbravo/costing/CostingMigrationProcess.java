@@ -732,6 +732,7 @@ public class CostingMigrationProcess implements Process {
     insert.append(", " + TransactionCost.PROPERTY_COST);
     insert.append(", " + TransactionCost.PROPERTY_COSTDATE);
     insert.append(", " + TransactionCost.PROPERTY_CURRENCY);
+    insert.append(", " + TransactionCost.PROPERTY_ACCOUNTINGDATE);
     insert.append(" )\n select get_uuid()");
     insert.append(", t." + MaterialTransaction.PROPERTY_ACTIVE);
     insert.append(", t." + MaterialTransaction.PROPERTY_CLIENT);
@@ -744,6 +745,11 @@ public class CostingMigrationProcess implements Process {
     insert.append(", t." + MaterialTransaction.PROPERTY_TRANSACTIONCOST);
     insert.append(", t." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE);
     insert.append(", t." + MaterialTransaction.PROPERTY_CURRENCY);
+    insert.append(", case when t." + MaterialTransaction.PROPERTY_GOODSSHIPMENTLINE
+        + " is null then t." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " else t."
+        + MaterialTransaction.PROPERTY_GOODSSHIPMENTLINE + "."
+        + ShipmentInOutLine.PROPERTY_SHIPMENTRECEIPT + "." + ShipmentInOut.PROPERTY_ACCOUNTINGDATE
+        + " end");
     insert.append(" from  " + TransactionCost.ENTITY_NAME + " as tc ");
     insert.append("   right join tc." + TransactionCost.PROPERTY_INVENTORYTRANSACTION + " as t");
     insert.append(", " + User.ENTITY_NAME + " as u");

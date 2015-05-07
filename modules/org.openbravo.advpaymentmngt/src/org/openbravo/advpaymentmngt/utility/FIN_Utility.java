@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -229,15 +229,9 @@ public class FIN_Utility {
    *          List of OBObjects
    * @return Comma separated string of Id's
    */
+  @Deprecated
   public static <T extends BaseOBObject> String getInStrList(List<T> obObjectList) {
-    StringBuilder strInList = new StringBuilder();
-    for (T obObject : obObjectList) {
-      if (strInList.length() == 0)
-        strInList.append("'" + obObject.getId() + "'");
-      else
-        strInList.append(", '" + obObject.getId() + "'");
-    }
-    return strInList.toString();
+    return Utility.getInStrList(obObjectList);
   }
 
   /**
@@ -1091,7 +1085,7 @@ public class FIN_Utility {
     parameters.add(status);
     parameters.add((psd != null) ? psd.getId() : "");
     String result = (String) CallStoredProcedure.getInstance().call("APRM_ISPAYMENTCONFIRMED",
-        parameters, null);
+        parameters, null, false);
 
     return "Y".equals(result);
   }
@@ -1444,7 +1438,7 @@ public class FIN_Utility {
   }
 
   /**
-   * Returns the secuence number of payment status in reference list
+   * Returns the sequence number of payment status in reference list
    * 
    * 
    */
@@ -1452,7 +1446,7 @@ public class FIN_Utility {
     List<Object> parameters = new ArrayList<Object>();
     parameters.add(status);
     int result = Integer.parseInt((String) CallStoredProcedure.getInstance().call(
-        "aprm_seqnumberpaymentstatus", parameters, null));
+        "aprm_seqnumberpaymentstatus", parameters, null, false));
 
     return result;
   }

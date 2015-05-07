@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2014 Openbravo SLU
+ * All portions are Copyright (C) 2013-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -102,7 +102,6 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
       // Added as root node
       adTreeNode.setReportSet(ROOT_NODE_DB);
       OBDal.getInstance().save(adTreeNode);
-      OBDal.getInstance().flush(); // force flush in admin mode
     } catch (Exception e) {
       logger.error("Error while adding the tree node", e);
     }
@@ -124,6 +123,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
       }
       Tree tree = getTree(table, bobProperties);
       OBCriteria<TreeNode> adTreeNodeCriteria = OBDal.getInstance().createCriteria(TreeNode.class);
+      adTreeNodeCriteria.setFilterOnActive(false);
       adTreeNodeCriteria.add(Restrictions.eq(TreeNode.PROPERTY_TREE, tree));
       adTreeNodeCriteria.add(Restrictions.eq(TreeNode.PROPERTY_NODE, bobId));
       TreeNode treeNode = (TreeNode) adTreeNodeCriteria.uniqueResult();
@@ -131,7 +131,6 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
           treeNode.getNode());
       logger.info(nChildrenMoved + " children have been moved to another parent");
       OBDal.getInstance().remove(treeNode);
-      OBDal.getInstance().flush(); // force flush in admin mode
     } catch (Exception e) {
       logger.error("Error while deleting tree node: ", e);
       throw new OBException("The treenode could not be created");
@@ -263,6 +262,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     String selectClause = " tn.id as treeNodeId, tn.reportSet as parentId, tn.sequenceNumber as seqNo, tn.node as nodeId, e as entity";
     OBQuery<BaseOBObject> obq = OBDal.getInstance()
         .createQuery("ADTreeNode", joinClause.toString());
+    obq.setFilterOnActive(false);
     obq.setSelectClause(selectClause);
     obq.setFilterOnReadableOrganization(false);
     int nResults = obq.count();
@@ -317,26 +317,6 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     return responseData;
   }
 
-  private String getParentRecordIdFromCriteria(JSONArray criteria, String parentPropertyName) {
-    String parentRecordId = null;
-    for (int i = 0; i < criteria.length(); i++) {
-      try {
-        JSONObject criterion = (JSONObject) criteria.get(i);
-        if (criterion.has("criteria")) {
-          return getParentRecordIdFromCriteria(criterion.getJSONArray("criteria"),
-              parentPropertyName);
-        }
-        if (parentPropertyName.equals(criterion.getString("fieldName"))) {
-          parentRecordId = criterion.getString("value");
-          break;
-        }
-      } catch (JSONException e) {
-        logger.error("Error while obtaining a property from a JSONObject", e);
-      }
-    }
-    return parentRecordId;
-  }
-
   @Override
   /**
    * Check if a node has children
@@ -360,6 +340,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     joinClause.append(" and tn.reportSet = ? order by tn.sequenceNumber ");
     OBQuery<BaseOBObject> obq = OBDal.getInstance()
         .createQuery("ADTreeNode", joinClause.toString());
+    obq.setFilterOnActive(false);
     final List<Object> parameters = new ArrayList<Object>();
     parameters.add(nodeId);
     obq.setParameters(parameters);
@@ -392,6 +373,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
       // Last positioned child. Pick the highest sequence number of its brothers and add 10
       // No need to recompute sequence numbers
       OBCriteria<TreeNode> maxSeqNoCriteria = OBDal.getInstance().createCriteria(TreeNode.class);
+      maxSeqNoCriteria.setFilterOnActive(false);
       maxSeqNoCriteria.add(Restrictions.eq(TreeNode.PROPERTY_TREE, tree));
       maxSeqNoCriteria.add(Restrictions.eq(TreeNode.PROPERTY_REPORTSET, newParentId));
       maxSeqNoCriteria.setProjection(Projections.max(TreeNode.PROPERTY_SEQUENCENUMBER));
@@ -400,6 +382,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     } else {
       // Sequence numbers of the nodes that are positioned after the new one needs to be recomputed
       OBCriteria<TreeNode> nextNodeCriteria = OBDal.getInstance().createCriteria(TreeNode.class);
+      nextNodeCriteria.setFilterOnActive(false);
       nextNodeCriteria.add(Restrictions.eq(TreeNode.PROPERTY_TREE, tree));
       nextNodeCriteria.add(Restrictions.eq(TreeNode.PROPERTY_NODE, nextNodeId));
       TreeNode nextNode = (TreeNode) nextNodeCriteria.uniqueResult();
@@ -528,6 +511,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     Table referencedTable = OBDal.getInstance().get(Table.class, referencedTableId);
 
     OBCriteria<Tree> treeCriteria = OBDal.getInstance().createCriteria(Tree.class);
+    treeCriteria.setFilterOnActive(false);
     treeCriteria.add(Restrictions.eq(Tree.PROPERTY_TABLE, referencedTable));
     treeCriteria.add(Restrictions.eq(Tree.PROPERTY_CLIENT, OBContext.getOBContext()
         .getCurrentClient()));
@@ -546,6 +530,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
   private Tree getTree(Table table, JSONObject bobProperties) {
     Tree tree = null;
     OBCriteria<Tree> adTreeCriteria = OBDal.getInstance().createCriteria(Tree.class);
+    adTreeCriteria.setFilterOnActive(false);
     adTreeCriteria.add(Restrictions.eq(Tree.PROPERTY_TABLE, table));
     tree = (Tree) adTreeCriteria.uniqueResult();
     return tree;
@@ -618,6 +603,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     }
 
     OBCriteria<TreeNode> treeNodeCriteria = OBDal.getInstance().createCriteria(TreeNode.class);
+    treeNodeCriteria.setFilterOnActive(false);
     treeNodeCriteria.add(Restrictions.eq(TreeNode.PROPERTY_TREE, tree));
     treeNodeCriteria.add(Restrictions.eq(TreeNode.PROPERTY_NODE, nodeId));
     TreeNode treeNode = (TreeNode) treeNodeCriteria.uniqueResult();
@@ -669,6 +655,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     JSONObject json = null;
     try {
       OBCriteria<TreeNode> treeNodeCriteria = OBDal.getInstance().createCriteria(TreeNode.class);
+      treeNodeCriteria.setFilterOnActive(false);
       treeNodeCriteria.add(Restrictions.eq(TreeNode.PROPERTY_TREE, tree));
       treeNodeCriteria.add(Restrictions.eq(TreeNode.PROPERTY_NODE, bobId));
       TreeNode treeNode = (TreeNode) treeNodeCriteria.uniqueResult();
@@ -706,6 +693,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     joinClause.append(" and tn.node = ?");
     OBQuery<BaseOBObject> obq = OBDal.getInstance()
         .createQuery("ADTreeNode", joinClause.toString());
+    obq.setFilterOnActive(false);
 
     final List<Object> parameters = new ArrayList<Object>();
     parameters.add(nodeId);

@@ -125,6 +125,18 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
+      <column name="CHECKPRICEDIFFERENCE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
+      <column name="MANUALCOSTADJUSTMENT" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="ISCOSTPERMANENT" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
       <foreign-key foreignTable="M_INTERNAL_CONSUMPTIONLINE" name="M_INTL_CONSUMP_MTRANSACTION">
         <reference local="M_INTERNAL_CONSUMPTIONLINE_ID" foreign="M_INTERNAL_CONSUMPTIONLINE_ID"/>
       </foreign-key>
@@ -179,6 +191,9 @@
       <index name="M_TRANSACTION_LOCATOR_IDX" unique="false">
         <index-column name="M_LOCATOR_ID"/>
       </index>
+      <index name="M_TRANSACTION_MOVEMENTDATE" unique="false">
+        <index-column name="MOVEMENTDATE"/>
+      </index>
       <index name="M_TRANSACTION_MOVEMENTLINE" unique="false">
         <index-column name="M_MOVEMENTLINE_ID"/>
       </index>
@@ -189,6 +204,8 @@
         <index-column name="M_PRODUCT_ID"/>
       </index>
       <check name="M_TRANSACTION_CHECK1"><![CDATA[((QUANTITYORDER IS NULL) AND (M_PRODUCT_UOM_ID IS NULL)) OR ((QUANTITYORDER IS NOT NULL) AND (M_PRODUCT_UOM_ID IS NOT NULL))]]></check>
+      <check name="M_TRANSACTION_CHECKPRICEDIFF"><![CDATA[CHECKPRICEDIFFERENCE IN ('Y', 'N')]]></check>
+      <check name="M_TRANSACTION_COSTPERMANENT"><![CDATA[ISCOSTPERMANENT IN ('Y', 'N')]]></check>
       <check name="M_TRANSACTION_CURRENCY"><![CDATA[(TRANSACTIONCOST IS NULL) OR ((TRANSACTIONCOST IS NOT NULL) AND (C_CURRENCY_ID IS NOT NULL))]]></check>
       <check name="M_TRANSACTION_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="M_TRANSACTION_ISCOSTCALC_TRX"><![CDATA[ISCOSTCALCULATED IN ('Y', 'N')]]></check>

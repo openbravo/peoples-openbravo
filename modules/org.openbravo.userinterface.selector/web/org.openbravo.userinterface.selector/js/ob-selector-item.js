@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2014 Openbravo SLU
+ * All portions are Copyright (C) 2011-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -36,7 +36,7 @@ isc.OBSelectorPopupWindow.addProperties({
 
   initWidget: function () {
     var selectorWindow = this,
-        okButton, createNewButton, cancelButton, operator, i, hasIdentifier;
+        okButton, createNewButton, cancelButton, operator, i;
 
     this.setFilterEditorProperties(this.selectorGridFields);
 
@@ -87,17 +87,17 @@ isc.OBSelectorPopupWindow.addProperties({
       operator = 'iStartsWith';
     }
 
-    hasIdentifier = false;
     for (i = 0; i < this.selectorGridFields.length; i++) {
       this.selectorGridFields[i].canSort = (this.selectorGridFields[i].canSort === false ? false : true);
-      this.selectorGridFields[i].escapeHTML = (this.selectorGridFields[i].escapeHTML === false ? false : true);
+      if (this.selectorGridFields[i].name === OB.Constants.IDENTIFIER) {
+        this.selectorGridFields[i].escapeHTML = true;
+      } else {
+        this.selectorGridFields[i].escapeHTML = (this.selectorGridFields[i].escapeHTML === false ? false : true);
+      }
       if (this.selectorGridFields[i].disableFilter) {
         this.selectorGridFields[i].canFilter = false;
       } else {
         this.selectorGridFields[i].canFilter = true;
-      }
-      if (this.selectorGridFields[i].name === OB.Constants.IDENTIFIER) {
-        hasIdentifier = true;
       }
       // apply the proper operator for the filter of text fields
       if (isc.SimpleType.inheritsFrom(this.selectorGridFields[i].type, 'text')) {
@@ -112,12 +112,6 @@ isc.OBSelectorPopupWindow.addProperties({
       }
     }
     if (!this.dataSource.fields || !this.dataSource.fields.length || this.dataSource.fields.length === 0) {
-      if (!hasIdentifier && this.selectorGridFields) {
-        this.selectorGridFields.push({
-          name: OB.Constants.IDENTIFIER,
-          escapeHTML: true
-        });
-      }
       this.dataSource.fields = this.selectorGridFields;
       this.dataSource.init();
     }
@@ -392,6 +386,8 @@ isc.OBSelectorPopupWindow.addProperties({
     // on purpose not passing the third boolean param
     if (this.selector && this.selector.form && this.selector.form.view && this.selector.form.view.getContextInfo) {
       isc.addProperties(data, this.selector.form.view.getContextInfo(false, true));
+    } else if (this.view && this.view.getUnderLyingRecordContext) {
+      isc.addProperties(data, this.view.getUnderLyingRecordContext(false, true));
     } else if (this.view && this.view.sourceView && this.view.sourceView.getContextInfo) {
       isc.addProperties(data, this.view.sourceView.getContextInfo(false, true));
     }
@@ -431,7 +427,7 @@ isc.OBSelectorPopupWindow.addProperties({
 // 1) a combo box with a picker icon
 // 2) a popup window showing a search grid with data
 //
-isc.ClassFactory.defineClass('OBSelectorItem', isc.ComboBoxItem);
+isc.ClassFactory.defineClass('OBSelectorItem', isc.OBComboBoxItem);
 
 isc.ClassFactory.mixInInterface('OBSelectorItem', 'OBLinkTitleItem');
 
@@ -481,18 +477,6 @@ isc.OBSelectorItem.addProperties({
     }
   },
 
-  filterComplete: function () {
-    var ret;
-
-    // Prevents validation of this item while filtering because real value is
-    // not yet set. This also caused form item to be redrawn removing typed 
-    // text for filtering (see issue #26189)
-    this.preventValidation = true;
-    ret = this.Super('filterComplete', arguments);
-    delete this.preventValidation;
-    return ret;
-  },
-
   hidePickListOnBlur: function () {
     // when the form gets redrawn the focus may not be in
     // the item but it is still the item which gets the focus
@@ -502,6 +486,67 @@ isc.OBSelectorItem.addProperties({
     }
 
     this.Super('hidePickListOnBlur', arguments);
+  },
+
+  // adds a single entry to valueMap if it is not already present
+  addValueMapEntry: function (id, identifier) {
+    var i, entries = this.entries || [],
+        entry = {},
+        valueField = this.getValueFieldName(),
+        length = entries.length;
+    for (i = 0; i < length; i++) {
+      if (entries[i][valueField] === id) {
+        return;
+      }
+    }
+
+    // not found add/create a new one
+    entry[valueField] = id;
+
+    if (id && identifier) {
+      entry[OB.Constants.ID] = id;
+      entry[OB.Constants.IDENTIFIER] = identifier;
+    }
+
+    entries.push(entry);
+    this.setEntries(entries);
+  },
+
+  // all entries are set at once in client, this happens when a callout
+  // computes all possible values, from this point subsequent filtering
+  // requires to be done in local
+  setEntries: function (entries) {
+    var length = entries.length,
+        i, id, identifier, valueMap = {},
+        valueMapData = [];
+
+    if (!this.setValueMap) {
+      return;
+    }
+
+    for (i = 0; i < length; i++) {
+      id = entries[i][OB.Constants.ID] || '';
+      identifier = entries[i][OB.Constants.IDENTIFIER] || '';
+      valueMap[id] = identifier;
+
+      valueMapData.push({
+        _identifier: identifier,
+        id: id
+      });
+    }
+
+    this.wholeMapSet = true; // flag to use local filtering from now on
+    this.preventPickListRequest = true; // preventing 1st request triggered by setValueMap
+    this.setValueMap(valueMap);
+
+    if (this.pickList) {
+      // there is no a proper way of initializing local data, let's do it editing
+      // picklist.data properties
+      this.pickList.data.localData = valueMapData;
+      this.pickList.data.allRows = valueMapData;
+      this.pickList.data.allRowsCriteria = this.pickList.data.criteria;
+      this.pickList.data.cachedRows = valueMapData.length;
+    }
   },
 
   setUpPickList: function (show, queueFetches, request) {
@@ -598,12 +643,25 @@ isc.OBSelectorItem.addProperties({
 
   setPickListWidth: function () {
     var extraWidth = 0,
+        leftFieldsWidth = 0,
+        i = 0,
+        nameField = this.name,
         fieldWidth = this.getVisibleWidth();
+    // minimum width for smaller fields.
+    fieldWidth = (fieldWidth < 150 ? 150 : fieldWidth);
+    // Dropdown selector that shows more than one column.
     if (this.pickListFields.length > 1) {
-      extraWidth = 150 * (this.pickListFields.length - 1);
+      // calculate width of checkBox and first fields before selector field in viewGrid
+      if (this.form.view && !this.form.view.isShowingForm) {
+        while (i < this.grid.fields.size() && nameField.localeCompare(this.grid.fields.get(i).valueField) !== 0) {
+          leftFieldsWidth = leftFieldsWidth + this.grid.fields.get(i).width;
+          i++;
+        }
+        // prevents a pickListWidth longer than width of the grid.
+        extraWidth = Math.min(150 * (this.pickListFields.length - 1), this.grid.width - fieldWidth - this.grid.scrollbarSize - leftFieldsWidth);
+      }
     }
-
-    this.pickListWidth = (fieldWidth < 150 ? 150 : fieldWidth) + extraWidth;
+    this.pickListWidth = fieldWidth + extraWidth;
   },
 
   enableShortcuts: function () {
@@ -657,7 +715,9 @@ isc.OBSelectorItem.addProperties({
       click: function (form, item, icon) {
         var enteredValue = {};
         enteredValue[item.defaultPopupFilterField] = item.getEnteredValue();
-        item.openProcess([enteredValue]);
+        item.openProcess([enteredValue], {
+          processOwnerView: form.view
+        });
       }
     }];
 
@@ -692,7 +752,7 @@ isc.OBSelectorItem.addProperties({
     var currentValue = this.getValue(),
         identifierFieldName = this.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
         valueMapObj = {},
-        i;
+        displayFieldValue, i;
     this._notUpdatingManually = true;
     if (!record) {
       this.storeValue(null);
@@ -739,7 +799,12 @@ isc.OBSelectorItem.addProperties({
       }
 
       if (record[this.valueField]) { // it can be undefined in case of empty (null) entry
-        this.valueMap[record[this.valueField]] = record[this.displayField].replace(/[\n\r]/g, '');
+        if (this.displayField.indexOf(OB.Constants.FIELDSEPARATOR) !== -1) {
+          displayFieldValue = this.displayField.substring(this.displayField.indexOf(OB.Constants.FIELDSEPARATOR) + 1, this.displayField.length);
+        } else {
+          displayFieldValue = this.displayField;
+        }
+        this.valueMap[record[this.valueField]] = record[displayFieldValue].replace(/[\n\r]/g, '');
       }
 
       this.updateValueMap();
@@ -844,16 +909,34 @@ isc.OBSelectorItem.addProperties({
     this.selectorWindow.open();
   },
 
-  openProcess: function (enteredValues) {
-    var standardWindow = this.form.view.standardWindow;
-    standardWindow.openProcess({
+  openProcess: function (enteredValues, additionalProcessProperties) {
+    var params, view, standardWindow;
+    if (this.form && this.form.view) {
+      // If the selector is in a standard window
+      view = this.form.view;
+    } else if (this.form && this.form.paramWindow && this.form.paramWindow.parentWindow && this.form.paramWindow.parentWindow.view) {
+      // If the selector is in a parameter window
+      view = this.form.paramWindow.parentWindow.view;
+    }
+    params = {
       callerField: this,
       enteredValues: enteredValues,
       paramWindow: true,
       processId: this.processId,
-      windowId: this.form.view.windowId,
+      windowId: view.windowId,
       windowTitle: OB.I18N.getLabel('OBUISEL_AddNewRecord', [this.title])
-    });
+    };
+    // Avoid that windowId is null. WindowId in params is necessary
+    // to check access process of OBUISEL_Selector Reference.
+    if (!params.windowId) {
+      params.windowId = view && view.standardWindow && view.standardWindow.windowId;
+
+    }
+    if (additionalProcessProperties) {
+      isc.addProperties(params, additionalProcessProperties);
+    }
+    standardWindow = view.standardWindow;
+    standardWindow.openProcess(params);
   },
 
   keyPress: function (item, form, keyName, characterValue) {
@@ -1017,10 +1100,30 @@ isc.OBSelectorItem.addClassMethods({
     if (selector.form && selector.form.view && selector.form.view.getContextInfo) {
       // for table and table dir reference values needs to be transformed to classic (ex.: true -> Y)
       isc.addProperties(params, selector.form.view.getContextInfo(false, true, null, selector.isComboReference));
+    } else if (selector.view && selector.view.getUnderLyingRecordContext) {
+      isc.addProperties(params, selector.view.getUnderLyingRecordContext(false, true, null, selector.isComboReference));
+      if (selector.form && selector.form.paramWindow && selector.form.paramWindow.getContextInfo) {
+        isc.addProperties(params, selector.form.paramWindow.getContextInfo());
+      }
+      if (!params.inpadOrgId) {
+        // look for an ad_org_id parameter. If there is no such parameter or its value is empty, use the current user organization
+        params.inpadOrgId = params.ad_org_id || OB.User.organizationId;
+      }
     } else if (selector.view && selector.view.sourceView && selector.view.sourceView.getContextInfo) {
       isc.addProperties(params, selector.view.sourceView.getContextInfo(false, true, null, selector.isComboReference));
     } else if (selector.grid && selector.grid.contentView && selector.grid.contentView.getContextInfo) {
       isc.addProperties(params, selector.grid.contentView.getContextInfo(false, true, null, selector.isComboReference));
+    } else if (selector.form && selector.form.paramWindow && selector.form.paramWindow.getContextInfo) {
+      isc.addProperties(params, selector.form.paramWindow.getContextInfo());
+      if (!params.inpadOrgId) {
+        // look for an ad_org_id parameter. If there is no such parameter or its value is empty, use the current user organization
+        params.inpadOrgId = params.ad_org_id || OB.User.organizationId;
+      }
+    }
+
+    // if the selector belongs to a P&E grid, include the info of the record being edited
+    if (selector.grid && selector.grid.getClassName() === 'OBPickAndExecuteGrid') {
+      isc.addProperties(params, selector.grid.getContextInfo(selector.grid.getEditRow()));
     }
 
     if (selector.form && selector.form.view && selector.form.view.standardWindow) {

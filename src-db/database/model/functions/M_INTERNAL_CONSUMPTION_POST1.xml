@@ -230,6 +230,13 @@ BEGIN --BODY
           updatedby = v_user
       WHERE m_internal_consumption_id = v_voidintconsumption_id;
 
+      -- transactions related with original inout and with voided inout will be mark as is cost permanent
+      UPDATE M_TRANSACTION TRX
+      SET ISCOSTPERMANENT='Y'
+      WHERE TRX.M_INTERNAL_CONSUMPTIONLINE_ID IN (SELECT M_INTERNAL_CONSUMPTIONLINE_ID 
+                                   FROM M_INTERNAL_CONSUMPTIONLINE
+                                   WHERE (M_INTERNAL_CONSUMPTION_ID = record_id
+                                          OR M_INTERNAL_CONSUMPTION_ID =  v_voidintconsumption_id));
     END;
   END IF;
    v_ResultStr := 'UnLockingMovement';

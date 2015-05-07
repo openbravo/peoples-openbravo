@@ -59,7 +59,7 @@
       <foreign-key foreignTable="AD_ORG" name="AD_TREE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_TABLE" name="AD_TREE_AD_TABLE">
+      <foreign-key foreignTable="AD_TABLE" name="AD_TREE_AD_TABLE" onDelete="cascade">
         <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
       </foreign-key>
       <unique name="AD_TREE_NAME">

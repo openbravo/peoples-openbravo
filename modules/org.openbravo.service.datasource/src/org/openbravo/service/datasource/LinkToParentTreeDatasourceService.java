@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013 Openbravo SLU
+ * All portions are Copyright (C) 2013-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -37,6 +37,8 @@ import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.client.application.ApplicationUtils;
+import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
@@ -50,6 +52,7 @@ import org.openbravo.model.ad.utility.TableTree;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.DataResolvingMode;
 import org.openbravo.service.json.DataToJsonConverter;
+import org.openbravo.service.json.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -223,13 +226,14 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     whereClause.append(" as e where ");
     String actualParentId = new String(parentId);
     if (isMultiParentTree) {
-      // The ids of multi parent trees are formed by the concatenation of, beginning with its root
+      // The ids of multi parent trees are formed by the concatenation of the ids of its parents,
+      // beginning with its root
       // node
       if (parentId.contains(ID_SEPARATOR)) {
         actualParentId = parentId.substring(parentId.lastIndexOf(ID_SEPARATOR) + 1);
       }
     }
-
+    // check if we can avoid to apply the where clause when fetching the child nodes
     boolean allowNotApplyingWhereClauseToChildren = !tableTree.isApplyWhereClauseToChildNodes();
     if ((fetchRoot || !allowNotApplyingWhereClauseToChildren) && hqlWhereClause != null) {
       // Include the hql where clause for all root nodes and for child nodes only if it is required
@@ -249,6 +253,10 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
         }
         whereClause.append(" = ? ");
         queryParameters.add(actualParentId);
+      }
+      if (tab != null && tab.getTabLevel() > 0) {
+        // only try to add the parent tab criteria when the tab is not the header
+        addParentTabCriteria(whereClause, tab, parameters, queryParameters);
       }
     }
     final OBQuery<BaseOBObject> query = OBDal.getInstance().createQuery(entity.getName(),
@@ -318,6 +326,40 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
 
     }
     return responseData;
+  }
+
+  /**
+   * Adds to the where clause the criteria to filter the rows that belong with the record selected
+   * in the parent tab
+   * 
+   * @param whereClause
+   *          current hql where clase
+   * @param tab
+   *          the tab associated with the tree
+   * @param parameters
+   *          the parameters, including the criteria
+   * @param queryParameters
+   *          the parameters of the where clause, where the id of the record selected in the parent
+   *          tab will be included
+   */
+  private void addParentTabCriteria(StringBuilder whereClause, Tab tab,
+      Map<String, String> parameters, List<Object> queryParameters) {
+    Tab parentTab = KernelUtils.getInstance().getParentTab(tab);
+    if (parentTab != null) {
+      String parentPropertyName = ApplicationUtils.getParentProperty(tab, parentTab);
+      if (parentPropertyName != null) {
+        try {
+          JSONArray criteria = (JSONArray) JsonUtils.buildCriteria(parameters).get("criteria");
+          String parentRecordId = getParentRecordIdFromCriteria(criteria, parentPropertyName);
+          if (parentRecordId != null) {
+            whereClause.append(" and e." + parentPropertyName + ".id = ? ");
+            queryParameters.add(parentRecordId);
+          }
+        } catch (JSONException e) {
+          logger.error("Error while obtaining a property from a JSONObject", e);
+        }
+      }
+    }
   }
 
   @Override

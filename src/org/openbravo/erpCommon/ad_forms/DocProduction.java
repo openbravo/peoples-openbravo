@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2008-2014 Openbravo SLU
+ * All portions are Copyright (C) 2008-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -103,6 +103,7 @@ public class DocProduction extends AcctServer {
       // and
       // Storage
       // Qty
+      docLine.m_M_Locator_ID = data[i].getField("M_LOCATOR_ID");
       docLine.m_Productiontype = data[i].getField("PRODUCTIONTYPE");
       docLine.m_M_Warehouse_ID = data[i].getField("M_WAREHOUSE_ID");
       OBContext.setAdminMode(false);
@@ -163,13 +164,14 @@ public class DocProduction extends AcctServer {
     log4jDocProduction.debug("createFact - Inicio");
     // create Fact Header
     Fact fact = null;
+    FactLine factLine = null;
     String Fact_Acct_Group_ID = SequenceIdData.getUUID();
     log4jDocProduction.debug("createFact - object created");
     // Lines
     int countProductionlinesWithTrnCostZero = 0;
     for (int i = 0; i < p_lines.length; i++) {
       DocLine_Material line = (DocLine_Material) p_lines[i];
-      if (line.transaction.getTransactionCost() != null
+      if (line.transaction != null && line.transaction.getTransactionCost() != null
           && line.transaction.getTransactionCost().compareTo(ZERO) == 0) {
         countProductionlinesWithTrnCostZero++;
       }
@@ -205,19 +207,31 @@ public class DocProduction extends AcctServer {
       log4jDocProduction.debug("DocProduction - createFact - line.m_Productiontype - "
           + line.m_Productiontype);
       if (line.m_Productiontype.equals("+")) {
-        fact.createLine(line, line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
+        factLine = fact.createLine(line, line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
             costCurrency.getId(), costs, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
             conn);
-        fact.createLine(line, getAccountWarehouse(line.m_M_Warehouse_ID, as, conn),
+        if (factLine != null) {
+          factLine.setM_Locator_ID(line.m_M_Locator_ID);
+        }
+        factLine = fact.createLine(line, getAccountWarehouse(line.m_M_Warehouse_ID, as, conn),
             costCurrency.getId(), "", costs, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
             conn);
+        if (factLine != null) {
+          factLine.setM_Locator_ID(line.m_M_Locator_ID);
+        }
       } else {
-        fact.createLine(line, line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
+        factLine = fact.createLine(line, line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
             costCurrency.getId(), "", costs, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
             conn);
-        fact.createLine(line, getAccountWarehouse(line.m_M_Warehouse_ID, as, conn),
+        if (factLine != null) {
+          factLine.setM_Locator_ID(line.m_M_Locator_ID);
+        }
+        factLine = fact.createLine(line, getAccountWarehouse(line.m_M_Warehouse_ID, as, conn),
             costCurrency.getId(), costs, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
             conn);
+        if (factLine != null) {
+          factLine.setM_Locator_ID(line.m_M_Locator_ID);
+        }
       }
     }
     SeqNo = "0";

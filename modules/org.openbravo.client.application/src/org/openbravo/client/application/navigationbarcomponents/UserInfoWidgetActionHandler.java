@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -466,7 +466,7 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler implements Po
       if (!result) {
         throw new IllegalArgumentException("Error when saving default values");
       }
-      readProperties(vars, KernelServlet.getGlobalParameters().getOpenbravoPropertiesPath());
+      readProperties(vars);
       readNumberFormat(vars, KernelServlet.getGlobalParameters().getFormatPath());
     }
 

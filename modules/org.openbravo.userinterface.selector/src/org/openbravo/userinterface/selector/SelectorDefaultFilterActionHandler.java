@@ -41,6 +41,7 @@ import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.datamodel.Table;
 
 /**
  * 
@@ -66,7 +67,18 @@ public class SelectorDefaultFilterActionHandler extends BaseActionHandler {
       String selectorId = params.get("_selectorDefinitionId");
 
       Selector sel = OBDal.getInstance().get(Selector.class, selectorId);
-      final String entityName = sel.getTable().getName();
+      final Table table;
+      // Some selectors have a definition that do not use a table but a datasource
+      if (sel.getTable() != null) {
+        table = sel.getTable();
+      } else if (sel.getObserdsDatasource() != null
+          && sel.getObserdsDatasource().getTable() != null) {
+        table = sel.getObserdsDatasource().getTable();
+      } else {
+        // no table, don't do anything
+        return result;
+      }
+      final String entityName = table.getName();
       final Entity entity = ModelProvider.getInstance().getEntity(entityName);
 
       OBCriteria<SelectorField> obc = OBDal.getInstance().createCriteria(SelectorField.class);

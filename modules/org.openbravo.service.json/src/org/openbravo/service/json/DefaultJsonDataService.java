@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,6 +24,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -38,6 +42,7 @@ import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.util.Check;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -67,7 +72,8 @@ public class DefaultJsonDataService implements JsonDataService {
 
   private static final String ADD_FLAG = "_doingAdd";
 
-  private static DefaultJsonDataService instance = new DefaultJsonDataService();
+  private static DefaultJsonDataService instance = WeldUtils
+      .getInstanceFromStaticBeanManager(DefaultJsonDataService.class);
 
   public static DefaultJsonDataService getInstance() {
     return instance;
@@ -83,11 +89,16 @@ public class DefaultJsonDataService implements JsonDataService {
    * @see org.openbravo.service.json.JsonDataService#fetch(java.util.Map)
    */
   public String fetch(Map<String, String> parameters) {
+    return fetch(parameters, true);
+  }
+
+  public String fetch(Map<String, String> parameters, boolean filterOnReadableOrganizations) {
     try {
       final String entityName = parameters.get(JsonConstants.ENTITYNAME);
       Check.isNotNull(entityName, "The name of the service/entityname should not be null");
       Check.isNotNull(parameters, "The parameters should not be null");
 
+      doPreAction(parameters, "", DataSourceAction.FETCH);
       String selectedProperties = parameters.get(JsonConstants.SELECTEDPROPERTIES_PARAMETER);
       // The display property is present only for displaying table references in filter.
       // This parameter is used to set the identifier with the display column value.
@@ -165,7 +176,8 @@ public class DefaultJsonDataService implements JsonDataService {
           jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, count);
           return jsonResponse.toString();
         }
-        queryService = createSetQueryService(parameters, false);
+        queryService = createSetQueryService(parameters, false, false,
+            filterOnReadableOrganizations);
 
         if (parameters.containsKey(JsonConstants.SUMMARY_PARAMETER)) {
           final JSONObject singleResult = new JSONObject();
@@ -257,13 +269,18 @@ public class DefaultJsonDataService implements JsonDataService {
 
   public void fetch(Map<String, String> parameters, QueryResultWriter writer) {
     long t = System.currentTimeMillis();
-    final String entityName = parameters.get(JsonConstants.ENTITYNAME);
+
+    doPreAction(parameters, "", DataSourceAction.FETCH);
     final DataEntityQueryService queryService = createSetQueryService(parameters, false);
-    queryService.setEntityName(entityName);
+
+    String selectedProperties = parameters.get(JsonConstants.SELECTEDPROPERTIES_PARAMETER);
 
     final DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(
         DataToJsonConverter.class);
     toJsonConverter.setAdditionalProperties(JsonUtils.getAdditionalProperties(parameters));
+    // Convert to Json only the properties specified in the request. If no properties are specified,
+    // all of them will be converted to Json
+    toJsonConverter.setSelectedProperties(selectedProperties);
 
     final ScrollableResults scrollableResults = queryService.scroll();
     try {
@@ -296,11 +313,11 @@ public class DefaultJsonDataService implements JsonDataService {
 
   protected DataEntityQueryService createSetQueryService(Map<String, String> parameters,
       boolean forCountOperation) {
-    return createSetQueryService(parameters, forCountOperation, false);
+    return createSetQueryService(parameters, forCountOperation, false, true);
   }
 
   private DataEntityQueryService createSetQueryService(Map<String, String> parameters,
-      boolean forCountOperation, boolean forSubEntity) {
+      boolean forCountOperation, boolean forSubEntity, boolean filterOnReadableOrganizations) {
     boolean hasSubentity = false;
     String entityName = parameters.get(JsonConstants.ENTITYNAME);
     final DataEntityQueryService queryService = OBProvider.getInstance().get(
@@ -371,11 +388,13 @@ public class DefaultJsonDataService implements JsonDataService {
       queryService.setFilterOnActive(false);
 
       // create now subentity
-      queryService.setSubEntity(entityName,
-          createSetQueryService(paramSubCriteria, forCountOperation, true), distinctProperty,
-          distinctPropertyPath);
+      queryService.setSubEntity(
+          entityName,
+          createSetQueryService(paramSubCriteria, forCountOperation, true,
+              filterOnReadableOrganizations), distinctProperty, distinctPropertyPath);
     } else {
       queryService.setEntityName(entityName);
+      queryService.setFilterOnReadableOrganizations(filterOnReadableOrganizations);
       if (parameters.containsKey(JsonConstants.USE_ALIAS)) {
         queryService.setUseAlias();
       }
@@ -388,12 +407,8 @@ public class DefaultJsonDataService implements JsonDataService {
     if ((StringUtils.isEmpty(startRowStr) || StringUtils.isEmpty(endRowStr))
         && !isIDCriteria(criteria) && !parameters.containsKey("exportAs")) {
       // pagination is not set, this is most likely a bug
-      String paramMsg = "";
-      for (String paramKey : parameters.keySet()) {
-        paramMsg += paramKey + ":" + parameters.get(paramKey) + "\n";
-      }
       log.warn("Fetching data without pagination, this can cause perfomance issues. Parameters: "
-          + paramMsg);
+          + convertParameterToString(parameters));
 
       if (parameters.containsKey(JsonConstants.TAB_PARAMETER)
           || parameters.containsKey(SelectorConstants.DS_REQUEST_SELECTOR_ID_PARAMETER)) {
@@ -406,6 +421,14 @@ public class DefaultJsonDataService implements JsonDataService {
     boolean directNavigation = parameters.containsKey("_directNavigation")
         && "true".equals(parameters.get("_directNavigation"))
         && parameters.containsKey(JsonConstants.TARGETRECORDID_PARAMETER);
+
+    if (parameters.containsKey(JsonConstants.TARGETRECORDID_PARAMETER)
+        && parameters.get(JsonConstants.TARGETRECORDID_PARAMETER) != null
+        && !"null".equals(parameters.get(JsonConstants.TARGETRECORDID_PARAMETER))
+        && !"true".equals(parameters.get("_directNavigation"))) {
+      log.warn("Datasource request with targetRecordId but without directNavigation detected. This type of requests should be avoided because they result in a query that performs poorly. Parameters: "
+          + convertParameterToString(parameters));
+    }
 
     if (!directNavigation) {
       // set the where/org filter parameters and the @ parameters
@@ -499,6 +522,15 @@ public class DefaultJsonDataService implements JsonDataService {
     return queryService;
   }
 
+  // Given a map of parameters, returns a string with the pairs key:value
+  private String convertParameterToString(Map<String, String> parameters) {
+    String paramMsg = "";
+    for (String paramKey : parameters.keySet()) {
+      paramMsg += paramKey + ":" + parameters.get(paramKey) + "\n";
+    }
+    return paramMsg;
+  }
+
   private void addWritableAttribute(List<JSONObject> jsonObjects) throws JSONException {
     for (JSONObject jsonObject : jsonObjects) {
       if (!jsonObject.has("client") || !jsonObject.has("organization")) {
@@ -558,7 +590,7 @@ public class DefaultJsonDataService implements JsonDataService {
         jsonResult.put(JsonConstants.RESPONSE_RESPONSE, jsonResponse);
         OBDal.getInstance().commitAndClose();
 
-        doPreRemove(parameters, jsonObjects.get(0));
+        doPreAction(parameters, jsonObjects.toString(), DataSourceAction.REMOVE);
 
         // now do the real delete in a separate transaction
         // to prevent side effects that a child can not be deleted
@@ -672,6 +704,11 @@ public class DefaultJsonDataService implements JsonDataService {
         // refresh the objects from the db as they can have changed
         for (BaseOBObject bob : bobs) {
           OBDal.getInstance().getSession().refresh(bob);
+          // if object has computed columns refresh from the database too
+          if (bob.getEntity().hasComputedColumns()) {
+            OBDal.getInstance().getSession()
+                .refresh(bob.get(Entity.COMPUTED_COLUMNS_PROXY_PROPERTY));
+          }
         }
 
         // almost successfull, now create the response
@@ -758,9 +795,25 @@ public class DefaultJsonDataService implements JsonDataService {
     return bobs;
   }
 
+  /**
+   * Hooks executed at the end of doPreAction and doPostAction to modify or to validate DataService
+   * calls.
+   */
+  @Inject
+  @Any
+  private Instance<JsonDataServiceExtraActions> extraActions;
+
   protected String doPreAction(Map<String, String> parameters, String content,
       DataSourceAction action) {
     try {
+      if (action == DataSourceAction.FETCH) {
+        // In fetch operations there is no data. Just call doPreFetch and extraActions.
+        doPreFetch(parameters);
+        for (JsonDataServiceExtraActions extraAction : extraActions) {
+          extraAction.doPreAction(parameters, new JSONArray(), action);
+        }
+        return "";
+      }
       final Object contentObject = getContentAsJSON(content);
       final boolean isArray = contentObject instanceof JSONArray;
       final JSONArray data;
@@ -793,6 +846,9 @@ public class DefaultJsonDataService implements JsonDataService {
         // and set it in the new array
         newData.put(dataElement);
       }
+      for (JsonDataServiceExtraActions extraAction : extraActions) {
+        extraAction.doPreAction(parameters, newData, action);
+      }
 
       // return the array directly
       if (isArray) {
@@ -806,7 +862,10 @@ public class DefaultJsonDataService implements JsonDataService {
     } catch (JSONException e) {
       throw new OBException(e);
     } finally {
-      OBDal.getInstance().flush();
+      if (DataSourceAction.FETCH != action) {
+        // Only flush non fetch operations.
+        OBDal.getInstance().flush();
+      }
     }
   }
 
@@ -854,6 +913,11 @@ public class DefaultJsonDataService implements JsonDataService {
       // update the response with the changes, make it a string
       response.put(JsonConstants.RESPONSE_DATA, newData);
       json.put(JsonConstants.RESPONSE_RESPONSE, response);
+
+      for (JsonDataServiceExtraActions extraAction : extraActions) {
+        extraAction.doPostAction(parameters, json, action, originalObject);
+      }
+
       return json.toString();
     } catch (JSONException e) {
       throw new OBException(e);
@@ -876,6 +940,14 @@ public class DefaultJsonDataService implements JsonDataService {
    */
   protected void doPostRemove(Map<String, String> parameters, JSONObject removed)
       throws JSONException {
+
+  }
+
+  /**
+   * Is called before fetching an object. This method is called in the same transaction as the main
+   * fetch operation.
+   */
+  protected void doPreFetch(Map<String, String> parameters) throws JSONException {
 
   }
 
@@ -935,7 +1007,7 @@ public class DefaultJsonDataService implements JsonDataService {
       String originalToUpdate) throws JSONException {
   }
 
-  protected enum DataSourceAction {
+  public enum DataSourceAction {
     FETCH, ADD, UPDATE, REMOVE
   }
 

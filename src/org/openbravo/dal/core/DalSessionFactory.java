@@ -37,7 +37,9 @@ import org.hibernate.SessionFactory;
 import org.hibernate.StatelessSession;
 import org.hibernate.TypeHelper;
 import org.hibernate.classic.Session;
+import org.hibernate.connection.ConnectionProvider;
 import org.hibernate.engine.FilterDefinition;
+import org.hibernate.engine.SessionFactoryImplementor;
 import org.hibernate.engine.SessionImplementor;
 import org.hibernate.jdbc.BorrowedConnectionProxy;
 import org.hibernate.metadata.ClassMetadata;
@@ -303,5 +305,9 @@ public class DalSessionFactory implements SessionFactory {
 
   public TypeHelper getTypeHelper() {
     return delegateSessionFactory.getTypeHelper();
+  }
+
+  public ConnectionProvider getConnectionProvider() {
+    return ((SessionFactoryImplementor) delegateSessionFactory).getConnectionProvider();
   }
 }

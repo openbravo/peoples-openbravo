@@ -52,7 +52,7 @@ OB.DateItemProperties = {
 
     dateFormatUpper = this.dateFormat.toUpperCase();
     length = dateFormatUpper.length;
-    this.dateSeparator = this.dateFormat.toUpperCase().replace(/D/g, '').replace(/M/g, '').replace(/Y/g, '').substr(0, 1);
+    this.dateSeparator = OB.Utilities.Date.getDateSeparator(this.dateFormat);
 
     for (i = 0; i < length; i++) {
       if (this.isSeparator(dateFormatUpper, i)) {
@@ -224,7 +224,7 @@ OB.DateItemProperties = {
   },
 
   isSeparator: function (str, position) {
-    return str.charAt(position) === '-' || str.charAt(position) === '\\' || str.charAt(position) === '/';
+    return str.charAt(position) === '-' || str.charAt(position) === '\\' || str.charAt(position) === '/' || str.charAt(position) === OB.Utilities.Date.getDateSeparator(OB.Format.date);
   },
 
   hasSeparator: function (str) {
@@ -255,6 +255,12 @@ OB.DateItemProperties = {
       }
 
       this.form.focusInNextItem(this.name);
+    } else {
+      // See issue https://issues.openbravo.com/view.php?id=29544
+      // This is done to keep the focus when a date is selected from the picker in a parameter window
+      if (this.form.handleItemChange) {
+        this.form.handleItemChange(this);
+      }
     }
   }
 };
@@ -290,6 +296,15 @@ isc.OBDateItem.addProperties(OB.DateItemProperties, {
     ret = this.Super('setValue', newArguments);
 
     return ret;
+  },
+
+  setDateParameterValue: function (value) {
+    // See issue https://issues.openbravo.com/view.php?id=29544
+    // After setting the parameter value from an onchange function, the _textChanged was always true. This prevented the parameter value to be updated after the first change.
+    this.setValue(value);
+    if (this.textField) {
+      delete this.textField._textChanged;
+    }
   },
 
   expandValue: function () {

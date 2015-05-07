@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2013 Openbravo SLU
+ * All portions are Copyright (C) 2011-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -82,7 +82,10 @@ isc.OBPickAndExecuteView.addProperties({
       dataSource: OB.Datasource.create(this.dataSourceProperties),
       gridProperties: this.viewProperties.gridProperties,
       selectionAppearance: (this.viewProperties.showSelect ? 'checkbox' : 'rowStyle'),
-      selectionType: 'simple',
+      selectionType: (this.viewProperties.selectionType === 'M' ? 'simple' : (this.viewProperties.selectionType === 'S' ? 'single' : 'none')),
+      // In case 'Selection Type' be 'Multiple', we use 'simple' attribute in order to achieve:
+      //  * In case of 'selectionAppearance: "checkbox"' allow select each line by clicking in the checkbox (otherwise 'Ctrl' key + click in the checkbox would be needed)
+      //  * In case of 'selectionAppearance: "rowStyle"' allow select each line by clicking in any place of the line (otherwise 'Ctrl' key + click in the line would be needed)
       canRemoveRecords: (this.viewProperties.allowDelete ? true : false),
       saveLocally: (this.viewProperties.allowDelete || this.viewProperties.allowAdd ? true : false),
       autoSaveEdits: (this.viewProperties.allowDelete || this.viewProperties.allowAdd ? true : false),

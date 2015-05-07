@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -334,9 +334,8 @@ public class ReportShipmentDimensionalAnalyzeJR extends HttpSecureAppServlet {
     }
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-          "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-              "ReportShipmentDimensionalAnalyzeJR"), Utility.getContext(this, vars, "#User_Client",
-              "ReportShipmentDimensionalAnalyzeJR"), 0);
+          "", Utility.getContext(this, vars, "#User_Org", "ReportShipmentDimensionalAnalyzeJR"),
+          Utility.getContext(this, vars, "#User_Client", "ReportShipmentDimensionalAnalyzeJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData,
           "ReportShipmentDimensionalAnalyzeJR", strOrg);
       xmlDocument.setData("reportAD_ORGID", "liststructure", comboTableData.select(false));
@@ -594,10 +593,10 @@ public class ReportShipmentDimensionalAnalyzeJR extends HttpSecureAppServlet {
       strHaving = " HAVING (SUM(CONVAMOUNT) > " + strMayor + ")";
     } else if (strMayor.equals("") && !strMenor.equals("")) {
       strHaving = " HAVING (SUM(CONVAMOUNT) < " + strMenor + ")";
-    } 
-    /*else {
-      strHaving = " HAVING (SUM(CONVAMOUNT) <> 0 OR SUM(CONVAMOUNTREF) <> 0)";
-    }*/
+    }
+    /*
+     * else { strHaving = " HAVING (SUM(CONVAMOUNT) <> 0 OR SUM(CONVAMOUNTREF) <> 0)"; }
+     */
     strOrderby = strHaving + strOrderby;
 
     int limit = 0;

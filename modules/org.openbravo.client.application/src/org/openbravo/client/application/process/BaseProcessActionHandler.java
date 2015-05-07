@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,7 +22,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.util.Check;
@@ -77,11 +79,19 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
         return jsonRequest;
       }
 
+      JSONObject context = null;
+      if (StringUtils.isNotEmpty(content)) {
+        try {
+          context = new JSONObject(content);
+        } catch (JSONException e) {
+          log.error("Error getting context for process definition " + processDefinition, e);
+        }
+      }
       for (Parameter param : processDefinition.getOBUIAPPParameterList()) {
         if (param.isFixed()) {
           if (param.isEvaluateFixedValue()) {
             parameters.put(param.getDBColumnName(),
-                ParameterUtils.getParameterFixedValue(fixRequestMap(parameters), param));
+                ParameterUtils.getParameterFixedValue(fixRequestMap(parameters, context), param));
           } else {
             parameters.put(param.getDBColumnName(), param.getFixedValue());
           }
@@ -163,7 +173,7 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
    * previous conditions is satisfied.
    * 
    */
-  private boolean hasAccess(Process processDefinition, Map<String, Object> parameters) {
+  public static boolean hasAccess(Process processDefinition, Map<String, Object> parameters) {
     String windowId = (String) parameters.get("windowId");
     if (windowId != null && !"null".equals(windowId)) {
       Window window = OBDal.getInstance().get(Window.class, windowId);
@@ -200,11 +210,21 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
     return qAccess.count() > 0;
   }
 
-  /*
+  /**
    * The request map is <String, Object> because includes the HTTP request and HTTP session, is not
    * required to handle process parameters
+   * 
+   * @deprecated use {@link BaseProcessActionHandler#fixRequestMap(Map, JSONObject)}
    */
   protected Map<String, String> fixRequestMap(Map<String, Object> parameters) {
+    return fixRequestMap(parameters, null);
+  }
+
+  /**
+   * Fixes the request map adding an "context" key to include context info in order to make it
+   * available to be evaluated by FilterExpression
+   */
+  protected Map<String, String> fixRequestMap(Map<String, Object> parameters, JSONObject context) {
     final Map<String, String> retval = new HashMap<String, String>();
     for (Entry<String, Object> entries : parameters.entrySet()) {
       if (entries.getKey().equals(KernelConstants.HTTP_REQUEST)
@@ -212,6 +232,9 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
         continue;
       }
       retval.put(entries.getKey(), entries.getValue().toString());
+    }
+    if (context != null) {
+      retval.put("context", context.toString());
     }
     return retval;
   }

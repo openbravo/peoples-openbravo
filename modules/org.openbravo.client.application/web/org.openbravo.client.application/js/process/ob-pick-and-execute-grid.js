@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2014 Openbravo SLU
+ * All portions are Copyright (C) 2011-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -76,6 +76,7 @@ isc.OBPickAndExecuteGrid.addProperties({
 
     this.selectedIds = [];
     this.deselectedIds = [];
+    this.pneSelectedRecords = [];
     this.lastValidatedValues = [];
 
     // the getValuesAsCriteria function of the edit form of the filter editor should always be called with 
@@ -142,6 +143,7 @@ isc.OBPickAndExecuteGrid.addProperties({
 
     this.orderByClause = this.gridProperties.orderByClause;
     this.sqlOrderByClause = this.gridProperties.sqlOrderByClause;
+    this.alwaysFilterFksByIdentifier = this.gridProperties.alwaysFilterFksByIdentifier;
 
     this.checkboxFieldProperties = isc.addProperties({}, this.checkboxFieldProperties | {}, {
       canFilter: true,
@@ -166,9 +168,22 @@ isc.OBPickAndExecuteGrid.addProperties({
 
     this.dataSource.transformRequest = function (dsRequest) {
       dsRequest.params = dsRequest.params || {};
+      if (me.view && me.view.externalParams) {
+        // include in the request the external params of the view, if any
+        isc.addProperties(dsRequest.params, me.view.externalParams);
+      }
       if (me.view && me.view.theForm) {
         // include in the request the values of the parameters of the parameter window
         isc.addProperties(dsRequest.params, me.view.theForm.getValues());
+      }
+      dsRequest.params[OB.Constants.ORG_PARAMETER] = me.getOrgParameter();
+      // Add to the params the tabId of the P&E window
+      if (me.viewProperties && me.viewProperties.tabId) {
+        dsRequest.params.tabId = me.viewProperties.tabId;
+      }
+      // Add to the params the tabId owner of the button that opens the P&E window
+      if (me.view && me.view.buttonOwnerView && me.view.buttonOwnerView.tabId) {
+        dsRequest.params.buttonOwnerViewTabId = me.view.buttonOwnerView.tabId;
       }
       return this.Super('transformRequest', arguments);
     };
@@ -193,9 +208,26 @@ isc.OBPickAndExecuteGrid.addProperties({
     if (!canFilter) {
       this.filterEditorProperties.visibility = 'hidden';
     }
+
+    this.isExpandedRecordAutoFitRedrawAlreadyAplied = false;
+
     this.Super('initWidget', arguments);
 
     OB.TestRegistry.register('org.openbravo.client.application.ParameterWindow_Grid_' + this.parameterName + '_' + this.contentView.view.processId, this);
+  },
+
+  redraw: function () {
+    var ret = this.Super('redraw', arguments);
+    if (this.autoFitFieldWidths && this.view && this.view.isExpandedRecord && !this.isExpandedRecordAutoFitRedrawAlreadyAplied) {
+      // There is a problem with the grid calculating the auto fit field width if it is opened inside an expanded record.
+      // Also, the "_updateFieldWidths" ListGrid function cannot be overwritten.
+      // With this the re-calculation is forced once the grid has been already drawn in its place, so the auto fit field width can be properly calculated.
+      this.setAutoFitFieldWidths(false);
+      this.setAutoFitFieldWidths(true);
+      // Flag to ensure that this logic only is executed once and not each time the grid be resized.
+      this.isExpandedRecordAutoFitRedrawAlreadyAplied = true;
+    }
+    return ret;
   },
 
   evaluateDisplayLogicForGridColumns: function () {
@@ -277,23 +309,48 @@ isc.OBPickAndExecuteGrid.addProperties({
       this.discardEdits(recordIdx);
     }
 
-    this.selectionUpdated(record, this.getSelectedRecords());
+    this.pneSelectionUpdated(record, state);
 
     this.Super('selectionChanged', arguments);
     this.view.theForm.markForRedraw();
   },
 
-  selectionUpdated: function (record, recordList) {
-    var i, j, len = recordList.length,
-        prevSelectedLen = this.selectedIds.length,
-        recordId, found;
+  // overriding selectRecord function because super.selectRecord to maintain selectedIds
+  // as super.selectedRecord does not trigger selectionChanged
+  selectRecord: function (recordNo, state) {
+    // when invoking directly selectRecord, state can be undefined but it should be selected, 
+    // unselectRecord finally invokes this function with state === false
+    var selected = state !== false,
+        actualRecord;
 
-    // Look for deselected records (records in selectedIds not present in recordList)
-    for (i = 0; i < prevSelectedLen; i++) {
-      recordId = this.selectedIds[i];
+    actualRecord = isc.isA.Number(recordNo) ? this.getRecord(recordNo) : recordNo;
+
+    this.pneSelectionUpdated(actualRecord, selected);
+
+    this.Super('selectRecord', arguments);
+  },
+
+  // A new record has been selected/unselected: keep track of it.
+  // this.getSelectedRecords cannot be trusted because in case of several pages,
+  // selection only in latest received page is returned
+  pneSelectionUpdated: function (record, selected) {
+    var recordId = record.id,
+        found, i;
+
+    if (selected) {
+      if (!this.pneSelectedRecords.find('id', recordId)) {
+        // this method can be invoked more than once per selection, ensure we only 
+        // add the record once
+        this.selectedIds.push(recordId);
+        this.pneSelectedRecords.push(record);
+      }
+      this.deselectedIds.remove(recordId);
+    } else {
+      // this method can be invoked more than once per selection, ensure we only 
+      // add the record once: can't use find on a simple array, let's iterate over it
       found = false;
-      for (j = 0; j < len; j++) {
-        if (recordId === recordList[j].id) {
+      for (i = 0; i < this.deselectedIds.length; i++) {
+        if (recordId === this.deselectedIds[i]) {
           found = true;
           break;
         }
@@ -301,19 +358,12 @@ isc.OBPickAndExecuteGrid.addProperties({
       if (!found) {
         this.deselectedIds.push(recordId);
       }
+      this.selectedIds.remove(recordId);
+      this.pneSelectedRecords.remove(this.pneSelectedRecords.find('id', recordId));
     }
 
-    this.selectedIds = [];
-
-    for (i = 0; i < len; i++) {
-      this.selectedIds.push(recordList[i].id);
-      // Remove the record from deselectedIds
-      this.deselectedIds.remove(recordList[i].id);
-    }
     // refresh it all as multiple lines can be selected
     this.markForRedraw('Selection changed');
-
-    this.Super('selectionUpdated', arguments);
   },
 
   cellEditEnd: function (editCompletionEvent, newValue, ficCallDone, autoSaveDone) {
@@ -325,7 +375,7 @@ isc.OBPickAndExecuteGrid.addProperties({
     if (newValue === null || newValue === undefined) {
       newValue = this.getEditValue(rowNum, colNum);
     }
-    if (newValue === null || newValue === undefined) {
+    if ((newValue === null || newValue === undefined) && this.getRecord(rowNum)) {
       newValue = this.getRecord(rowNum)[editField.name];
     }
     // Execute onChangeFunctions if they exist
@@ -453,9 +503,15 @@ isc.OBPickAndExecuteGrid.addProperties({
     this.Super('handleFilterEditorSubmit', [crit, context]);
   },
 
+  isDataLoaded: function () {
+    // When the data is being loaded, every element in the localData array is set with the "loading" value
+    // So we just need to check the first position of the array
+    return this.data.localData && !Array.isLoading(this.data.localData[0]);
+  },
+
   dataArrived: function (startRow, endRow) {
     var record, i, rows, selectedLen = this.selectedIds.length,
-        len, savedRecord, index, j, fields;
+        len, savedRecord, index, j, fields, allRequiredSet;
     fields = this.getFields();
     for (i = 0; i < selectedLen; i++) {
       record = this.data.findByKey(this.selectedIds[i]);
@@ -463,6 +519,9 @@ isc.OBPickAndExecuteGrid.addProperties({
         record[this.selectionProperty] = true;
         if (this.data.savedData) {
           savedRecord = this.data.savedData.find('id', this.selectedIds[i]);
+          if (!savedRecord) {
+            continue;
+          }
           //Setting editable fields from saved Data to retain values.
           for (j = 0; j < fields.length; j++) {
             if (fields[j].canEdit !== false) {
@@ -488,14 +547,17 @@ isc.OBPickAndExecuteGrid.addProperties({
       for (i = 0; i < len; i++) {
         if (rows[i] && rows[i][this.selectionProperty]) {
           this.selectedIds.push(rows[i][OB.Constants.ID]);
+          this.pneSelectedRecords.push(rows[i]);
         }
       }
     }
 
     this.Super('dataArrived', arguments);
-    if (this.onGridLoadFunction) {
+    // See issue 29560: check if the local data is loaded to execute the on grid load function
+    // This prevents errors when a request is done and the load of a previous request has not finished
+    if (this.onGridLoadFunction && this.isDataLoaded()) {
       this.onGridLoadFunction(this);
-      this.view.okButton.setEnabled(this.view.allRequiredParametersSet());
+      this.view.handleButtonsStatus();
     }
   },
 
@@ -508,27 +570,48 @@ isc.OBPickAndExecuteGrid.addProperties({
   },
 
   getOrgParameter: function () {
-    var view = this.view && this.view.buttonOwnerView,
-        context, i;
-
-    if (view) {
-      context = view.getContextInfo(true, false);
-
+    var context, i;
+    // try to get the org from the parameters
+    if (this.view && this.view.getContextInfo) {
+      context = this.view.getContextInfo();
       for (i in context) {
-        if (context.hasOwnProperty(i) && i.indexOf('organization') !== -1) {
+        if (context.hasOwnProperty(i) && (i.indexOf('organization') !== -1 || i === ('ad_org_id'))) {
           return context[i];
         }
       }
     }
+    // if not in the parameter window, look in the view where the process is defined
+    if (this.view.buttonOwnerView) {
+      context = this.view.buttonOwnerView.getContextInfo(true, false);
+      for (i in context) {
+        if (context.hasOwnProperty(i) && (i.indexOf('organization') !== -1 || i === ('ad_org_id'))) {
+          return context[i];
+        }
+      }
+    }
+    // if not there, use the organization of the user
     return OB.User.organizationId;
   },
 
   onFetchData: function (criteria, requestProperties) {
     requestProperties = requestProperties || {};
     requestProperties.params = this.getFetchRequestParams(requestProperties.params);
+    this.setFechingData();
+  },
+
+  setFechingData: function () {
+    this.fetchingData = true;
+  },
+
+  isFetchingData: function () {
+    return this.fetchingData;
   },
 
   clearFilter: function () {
+    if (this.lazyFiltering && this.filterClause) {
+      // store that the filter has been removed to enable showing potential new records
+      this.filterClauseJustRemoved = true;
+    }
     this.filterClause = null;
     this._cleaningFilter = true;
     this.contentView.messageBar.hide();
@@ -617,17 +700,26 @@ isc.OBPickAndExecuteGrid.addProperties({
   },
 
   processColumnValue: function (rowNum, columnName, columnValue) {
-    var field;
+    var field, valueMap = [];
     if (!columnValue) {
       return;
     }
-
+    field = this.getFieldByColumnName(columnName);
+    if (!field) {
+      return;
+    }
     if (columnValue.entries) {
-      field = this.getFieldByColumnName(columnName);
-      if (!field) {
-        return;
-      }
       this.setValueMap(field.name, columnValue.entries);
+    } else if (field.fkField && columnValue.value && columnValue.identifier && field.canEdit !== false) {
+      // build the valueMap manually, set it and set the value of the
+      // fk combo item in the edit form if possible
+      valueMap[0] = {};
+      valueMap[0][OB.Constants.ID] = columnValue.value;
+      valueMap[0][OB.Constants.IDENTIFIER] = columnValue.identifier;
+      this.setValueMap(field.name, valueMap);
+      if (this.isEditing()) {
+        this.setEditValue(this.getEditRow(), field.name, columnValue.value);
+      }
     }
   },
 
@@ -833,6 +925,11 @@ isc.OBPickAndExecuteGrid.addProperties({
     } else {
       this.Super('getMinFieldWidth', arguments);
     }
+  },
+
+  refreshGrid: function () {
+    // fetch the data with the current criteria and context info
+    this.filterData(this.getCriteria(), null, this.getContextInfo());
   }
 
 });
