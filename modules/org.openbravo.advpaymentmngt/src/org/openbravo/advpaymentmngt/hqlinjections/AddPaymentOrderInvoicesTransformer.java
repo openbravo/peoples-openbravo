@@ -287,7 +287,9 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
     StringBuffer groupByClause = new StringBuffer();
     // Create GroupBy Clause
     if ("I".equals(transactionType)) {
+      groupByClause.append(" inv.id, ");
       groupByClause.append(" inv.documentNo, ");
+      groupByClause.append(" inv.documentType, ");
       groupByClause.append(" COALESCE(ips.finPaymentmethod.id, ops.finPaymentmethod.id), ");
       groupByClause.append(" COALESCE(ipsfp.name, opsfp.name), ");
       groupByClause.append(" COALESCE(ips.expectedDate, ops.expectedDate), ");
@@ -297,14 +299,20 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
       groupByClause.append(" oinfo.aPRMPaymentDescription, ");
       groupByClause.append(" inv.orderReference, ");
     } else if ("O".equals(transactionType)) {
+      groupByClause.append(" ord.id, ");
       groupByClause.append(" ord.documentNo, ");
+      groupByClause.append(" ord.documentType, ");
       groupByClause.append(" COALESCE(ops.finPaymentmethod.id, ips.finPaymentmethod.id), ");
       groupByClause.append(" COALESCE(opsfp.name, ipsfp.name), ");
       groupByClause.append(" COALESCE(ops.expectedDate, ips.expectedDate), ");
       groupByClause.append(" COALESCE(opriority.priority, ipriority.priority), ");
     } else {
+      groupByClause.append(" inv.id, ");
       groupByClause.append(" inv.documentNo, ");
+      groupByClause.append(" inv.documentType, ");
+      groupByClause.append(" ord.id, ");
       groupByClause.append(" ord.documentNo, ");
+      groupByClause.append(" ord.documentType, ");
       groupByClause.append(" COALESCE(ips.finPaymentmethod.id, ops.finPaymentmethod.id), ");
       groupByClause.append(" COALESCE(ipsfp.name, opsfp.name), ");
       groupByClause.append(" COALESCE(ips.expectedDate, ops.expectedDate), ");
