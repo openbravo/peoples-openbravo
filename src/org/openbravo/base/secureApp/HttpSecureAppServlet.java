@@ -1284,7 +1284,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         HttpServletRequest request = RequestContext.get().getRequest();
         String localAddress = HttpBaseUtils.getLocalAddress(request);
         exportParameters.put(JRHtmlExporterParameter.IMAGES_URI, localAddress
-            + "/servlets/image?image=");
+            + "/servlets/image?image={0}");
         ReportingUtils.exportJR(strReportName, expType, designParameters, os, false, this, data,
             exportParameters);
       } else if (strOutputType.equals("pdf") || strOutputType.equalsIgnoreCase("xls")) {

@@ -31,6 +31,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.http.HttpSession;
 
@@ -45,15 +46,22 @@ import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.design.JRDesignParameter;
 import net.sf.jasperreports.engine.design.JasperDesign;
-import net.sf.jasperreports.engine.export.JExcelApiExporter;
-import net.sf.jasperreports.engine.export.JExcelApiExporterParameter;
+import net.sf.jasperreports.engine.export.HtmlExporter;
 import net.sf.jasperreports.engine.export.JRCsvExporter;
-import net.sf.jasperreports.engine.export.JRHtmlExporter;
-import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
+import net.sf.jasperreports.engine.export.JRXlsExporter;
 import net.sf.jasperreports.engine.fill.JRSwapFileVirtualizer;
 import net.sf.jasperreports.engine.util.JRSwapFile;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
+import net.sf.jasperreports.export.SimpleCsvReportConfiguration;
+import net.sf.jasperreports.export.SimpleExporterInput;
+import net.sf.jasperreports.export.SimpleHtmlExporterOutput;
+import net.sf.jasperreports.export.SimpleHtmlReportConfiguration;
+import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
+import net.sf.jasperreports.export.SimpleWriterExporterOutput;
+import net.sf.jasperreports.export.SimpleXlsReportConfiguration;
+import net.sf.jasperreports.export.type.HtmlSizeUnitEnum;
 import net.sf.jasperreports.j2ee.servlets.ImageServlet;
+import net.sf.jasperreports.web.util.WebHtmlResourceHandler;
 
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
@@ -83,7 +91,7 @@ public class ReportingUtils {
 
   /**
    * Exports the report to a file in a temporary folder. This method adds automatically the
-   * parameters needed to print a report from a Process Definition
+   * parameters needed to print a report from a Process Definition.
    * 
    * @param jasperFilePath
    *          The path to the JR template of the report.
@@ -215,8 +223,8 @@ public class ReportingUtils {
    * @param additionalExportParameters
    *          Additional export parameters than can be added to configure the resulting report.
    * @throws OBException
-   *           In case there is any error generating the file an exception is thrown with the error
-   *           message.
+   *           In case there is any error generating the report an exception is thrown with the
+   *           error message.
    */
   public static void exportJR(String jasperFilePath, ExportType expType,
       Map<String, Object> parameters, OutputStream outputStream,
@@ -390,7 +398,7 @@ public class ReportingUtils {
       Map<Object, Object> exportParameters, File target) throws JRException {
     switch (expType) {
     case CSV:
-      saveCsvReportToFile(jasperPrint, exportParameters, target);
+      saveCsvReportToFile(jasperPrint, target);
       break;
     case HTML:
       if (log.isDebugEnabled())
@@ -428,7 +436,7 @@ public class ReportingUtils {
       Map<Object, Object> exportParameters, OutputStream outputStream) throws JRException {
     switch (expType) {
     case CSV:
-      saveCsvReportToOutputStream(jasperPrint, exportParameters, outputStream);
+      saveCsvReportToOutputStream(jasperPrint, outputStream);
       break;
     case HTML:
       if (log.isDebugEnabled())
@@ -462,16 +470,22 @@ public class ReportingUtils {
    */
   private static void saveHTMLReportToFile(JasperPrint jasperPrint,
       Map<Object, Object> exportParameters, File file) throws JRException {
-    final JRHtmlExporter htmlExporter = new JRHtmlExporter();
-    Map<Object, Object> params = new HashMap<Object, Object>();
+    final HtmlExporter htmlExporter = new HtmlExporter();
+    SimpleExporterInput exporterInput = new SimpleExporterInput(jasperPrint);
+    SimpleHtmlExporterOutput exporterOutput = new SimpleHtmlExporterOutput(file);
+
     if (exportParameters != null && exportParameters.size() > 0) {
-      params.putAll(exportParameters);
+      SimpleHtmlReportConfiguration exportConfiguration = new SimpleHtmlReportConfiguration();
+      setHtmlConfigurationFromExportParameters(exportParameters, exportConfiguration,
+          exporterOutput);
+      htmlExporter.setConfiguration(exportConfiguration);
+    } else {
+      SimpleHtmlReportConfiguration reportExportConfiguration = new SimpleHtmlReportConfiguration();
+      reportExportConfiguration.setSizeUnit(HtmlSizeUnitEnum.POINT);
+      htmlExporter.setConfiguration(reportExportConfiguration);
     }
-    params.put(JRHtmlExporterParameter.JASPER_PRINT, jasperPrint);
-    params.put(JRHtmlExporterParameter.OUTPUT_FILE_NAME, file.getAbsolutePath());
-    params.put(JRHtmlExporterParameter.IS_USING_IMAGES_TO_ALIGN, Boolean.FALSE);
-    params.put(JRHtmlExporterParameter.SIZE_UNIT, JRHtmlExporterParameter.SIZE_UNIT_POINT);
-    htmlExporter.setParameters(params);
+    htmlExporter.setExporterInput(exporterInput);
+    htmlExporter.setExporterOutput(exporterOutput);
     htmlExporter.exportReport();
   }
 
@@ -490,16 +504,46 @@ public class ReportingUtils {
    */
   private static void saveHTMLReportToOutputStream(JasperPrint jasperPrint,
       Map<Object, Object> exportParameters, OutputStream outputStream) throws JRException {
-    final JRHtmlExporter htmlExporter = new JRHtmlExporter();
-    Map<Object, Object> params = new HashMap<Object, Object>();
+    final HtmlExporter htmlExporter = new HtmlExporter();
+    SimpleExporterInput exporterInput = new SimpleExporterInput(jasperPrint);
+    SimpleHtmlExporterOutput exporterOutput = new SimpleHtmlExporterOutput(outputStream);
+
     if (exportParameters != null && exportParameters.size() > 0) {
-      params.putAll(exportParameters);
+      SimpleHtmlReportConfiguration exportConfiguration = new SimpleHtmlReportConfiguration();
+      setHtmlConfigurationFromExportParameters(exportParameters, exportConfiguration,
+          exporterOutput);
+      htmlExporter.setConfiguration(exportConfiguration);
+    } else {
+      SimpleHtmlReportConfiguration reportExportConfiguration = new SimpleHtmlReportConfiguration();
+      reportExportConfiguration.setSizeUnit(HtmlSizeUnitEnum.POINT);
+      htmlExporter.setConfiguration(reportExportConfiguration);
     }
-    params.put(JRHtmlExporterParameter.JASPER_PRINT, jasperPrint);
-    params.put(JRHtmlExporterParameter.OUTPUT_STREAM, outputStream);
-    params.put(JRHtmlExporterParameter.IS_USING_IMAGES_TO_ALIGN, Boolean.FALSE);
-    params.put(JRHtmlExporterParameter.SIZE_UNIT, JRHtmlExporterParameter.SIZE_UNIT_POINT);
-    htmlExporter.setParameters(params);
+    htmlExporter.setExporterInput(exporterInput);
+    htmlExporter.setExporterOutput(exporterOutput);
+    htmlExporter.exportReport();
+  }
+
+  /**
+   * Generates an HTML report using the SimpleExporterInput, SimpleHtmlExporterOutput and
+   * SimpleHtmlReportConfiguration received as parameters.
+   * 
+   * @param exporterInput
+   *          SimpleExporterInput object with the input data.
+   * @param exporterOutput
+   *          SimpleHtmlExporterOutput object with the output data.
+   * @param exportConfiguration
+   *          SimpleHtmlReportConfiguration with the configuration data.
+   * @throws JRException
+   *           In case there is any error generating the report an exception is thrown with the
+   *           error message.
+   */
+  public static void saveHTMLReport(SimpleExporterInput exporterInput,
+      SimpleHtmlExporterOutput exporterOutput, SimpleHtmlReportConfiguration exportConfiguration)
+      throws JRException {
+    final HtmlExporter htmlExporter = new HtmlExporter();
+    htmlExporter.setExporterInput(exporterInput);
+    htmlExporter.setExporterOutput(exporterOutput);
+    htmlExporter.setConfiguration(exportConfiguration);
     htmlExporter.exportReport();
   }
 
@@ -518,17 +562,22 @@ public class ReportingUtils {
    */
   private static void saveExcelReportToFile(JasperPrint jasperPrint,
       Map<Object, Object> exportParameters, File file) throws JRException {
-    JExcelApiExporter excelExporter = new JExcelApiExporter();
-    Map<Object, Object> params = new HashMap<Object, Object>();
+    final JRXlsExporter excelExporter = new JRXlsExporter();
+    SimpleExporterInput exporterInput = new SimpleExporterInput(jasperPrint);
+    SimpleOutputStreamExporterOutput exporterOutput = new SimpleOutputStreamExporterOutput(file);
+
     if (exportParameters != null && exportParameters.size() > 0) {
-      params.putAll(exportParameters);
+      SimpleXlsReportConfiguration exportConfiguration = getXlsConfigurationFromExportParameters(exportParameters);
+      excelExporter.setConfiguration(exportConfiguration);
+    } else {
+      SimpleXlsReportConfiguration reportExportConfiguration = new SimpleXlsReportConfiguration();
+      reportExportConfiguration.setOnePagePerSheet(false);
+      reportExportConfiguration.setRemoveEmptySpaceBetweenRows(true);
+      reportExportConfiguration.setDetectCellType(true);
+      excelExporter.setConfiguration(reportExportConfiguration);
     }
-    params.put(JRExporterParameter.JASPER_PRINT, jasperPrint);
-    params.put(JRExporterParameter.OUTPUT_FILE_NAME, file.getAbsolutePath());
-    params.put(JExcelApiExporterParameter.IS_ONE_PAGE_PER_SHEET, Boolean.FALSE);
-    params.put(JExcelApiExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_ROWS, Boolean.TRUE);
-    params.put(JExcelApiExporterParameter.IS_DETECT_CELL_TYPE, Boolean.TRUE);
-    excelExporter.setParameters(params);
+    excelExporter.setExporterInput(exporterInput);
+    excelExporter.setExporterOutput(exporterOutput);
     excelExporter.exportReport();
   }
 
@@ -547,17 +596,47 @@ public class ReportingUtils {
    */
   private static void saveExcelReportToOutputStream(JasperPrint jasperPrint,
       Map<Object, Object> exportParameters, OutputStream outputStream) throws JRException {
-    JExcelApiExporter excelExporter = new JExcelApiExporter();
-    Map<Object, Object> params = new HashMap<Object, Object>();
+    final JRXlsExporter excelExporter = new JRXlsExporter();
+    SimpleExporterInput exporterInput = new SimpleExporterInput(jasperPrint);
+    SimpleOutputStreamExporterOutput exporterOutput = new SimpleOutputStreamExporterOutput(
+        outputStream);
+
     if (exportParameters != null && exportParameters.size() > 0) {
-      params.putAll(exportParameters);
+      SimpleXlsReportConfiguration exportConfiguration = getXlsConfigurationFromExportParameters(exportParameters);
+      excelExporter.setConfiguration(exportConfiguration);
+    } else {
+      SimpleXlsReportConfiguration reportExportConfiguration = new SimpleXlsReportConfiguration();
+      reportExportConfiguration.setOnePagePerSheet(false);
+      reportExportConfiguration.setRemoveEmptySpaceBetweenRows(true);
+      reportExportConfiguration.setDetectCellType(true);
+      excelExporter.setConfiguration(reportExportConfiguration);
     }
-    params.put(JRExporterParameter.JASPER_PRINT, jasperPrint);
-    params.put(JRExporterParameter.OUTPUT_STREAM, outputStream);
-    params.put(JExcelApiExporterParameter.IS_ONE_PAGE_PER_SHEET, Boolean.FALSE);
-    params.put(JExcelApiExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_ROWS, Boolean.TRUE);
-    params.put(JExcelApiExporterParameter.IS_DETECT_CELL_TYPE, Boolean.TRUE);
-    excelExporter.setParameters(params);
+    excelExporter.setExporterInput(exporterInput);
+    excelExporter.setExporterOutput(exporterOutput);
+    excelExporter.exportReport();
+  }
+
+  /**
+   * Generates an XLS report using the SimpleExporterInput, SimpleOutputStreamExporterOutput and
+   * SimpleXlsReportConfiguration received as parameters.
+   * 
+   * @param exporterInput
+   *          SimpleExporterInput object with the input data.
+   * @param exporterOutput
+   *          SimpleOutputStreamExporterOutput object with the output data.
+   * @param exportConfiguration
+   *          SimpleXlsReportConfiguration with the configuration data.
+   * @throws JRException
+   *           In case there is any error generating the report an exception is thrown with the
+   *           error message.
+   */
+  public static void saveExcelReport(SimpleExporterInput exporterInput,
+      SimpleOutputStreamExporterOutput exporterOutput,
+      SimpleXlsReportConfiguration exportConfiguration) throws JRException {
+    final JRXlsExporter excelExporter = new JRXlsExporter();
+    excelExporter.setExporterInput(exporterInput);
+    excelExporter.setExporterOutput(exporterOutput);
+    excelExporter.setConfiguration(exportConfiguration);
     excelExporter.exportReport();
   }
 
@@ -566,24 +645,20 @@ public class ReportingUtils {
    * 
    * @param jasperPrint
    *          JasperPrint object which contains a compiled report.
-   * @param exportParameters
-   *          Export parameters than can be added to configure the resulting report.
    * @param file
    *          The file used to return the report.
    * @throws JRException
    *           In case there is any error generating the report an exception is thrown with the
    *           error message.
    */
-  private static void saveCsvReportToFile(JasperPrint jasperPrint,
-      Map<Object, Object> exportParameters, File file) throws JRException {
-    JRCsvExporter csvExporter = new JRCsvExporter();
-    Map<Object, Object> params = new HashMap<Object, Object>();
-    if (exportParameters != null && exportParameters.size() > 0) {
-      params.putAll(exportParameters);
-    }
-    params.put(JRExporterParameter.JASPER_PRINT, jasperPrint);
-    params.put(JRExporterParameter.OUTPUT_FILE_NAME, file.getAbsolutePath());
-    csvExporter.setParameters(params);
+  private static void saveCsvReportToFile(JasperPrint jasperPrint, File file) throws JRException {
+    final JRCsvExporter csvExporter = new JRCsvExporter();
+    SimpleExporterInput exporterInput = new SimpleExporterInput(jasperPrint);
+    SimpleWriterExporterOutput exporterOutput = new SimpleWriterExporterOutput(file);
+
+    csvExporter.setConfiguration(new SimpleCsvReportConfiguration());
+    csvExporter.setExporterInput(exporterInput);
+    csvExporter.setExporterOutput(exporterOutput);
     csvExporter.exportReport();
   }
 
@@ -592,25 +667,135 @@ public class ReportingUtils {
    * 
    * @param jasperPrint
    *          JasperPrint object which contains a compiled report.
-   * @param exportParameters
-   *          Export parameters than can be added to configure the resulting report.
    * @param outputStream
    *          The output stream used to return the report.
    * @throws JRException
    *           In case there is any error generating the report an exception is thrown with the
    *           error message.
    */
-  private static void saveCsvReportToOutputStream(JasperPrint jasperPrint,
-      Map<Object, Object> exportParameters, OutputStream outputStream) throws JRException {
-    JRCsvExporter csvExporter = new JRCsvExporter();
-    Map<Object, Object> params = new HashMap<Object, Object>();
-    if (exportParameters != null && exportParameters.size() > 0) {
-      params.putAll(exportParameters);
-    }
-    params.put(JRExporterParameter.JASPER_PRINT, jasperPrint);
-    params.put(JRExporterParameter.OUTPUT_STREAM, outputStream);
-    csvExporter.setParameters(params);
+  private static void saveCsvReportToOutputStream(JasperPrint jasperPrint, OutputStream outputStream)
+      throws JRException {
+    final JRCsvExporter csvExporter = new JRCsvExporter();
+    SimpleExporterInput exporterInput = new SimpleExporterInput(jasperPrint);
+    SimpleWriterExporterOutput exporterOutput = new SimpleWriterExporterOutput(outputStream);
+
+    csvExporter.setConfiguration(new SimpleCsvReportConfiguration());
+    csvExporter.setExporterInput(exporterInput);
+    csvExporter.setExporterOutput(exporterOutput);
     csvExporter.exportReport();
+  }
+
+  /**
+   * Generates a CSV report using the SimpleExporterInput, SimpleWriterExporterOutput and
+   * SimpleCsvReportConfiguration received as parameters.
+   * 
+   * @param exporterInput
+   *          SimpleExporterInput object with the input data.
+   * @param exporterOutput
+   *          SimpleWriterExporterOutput object with the output data.
+   * @param exportConfiguration
+   *          SimpleCsvReportConfiguration with the configuration data.
+   * @throws JRException
+   *           In case there is any error generating the report an exception is thrown with the
+   *           error message.
+   */
+  public static void saveCsvReport(SimpleExporterInput exporterInput,
+      SimpleWriterExporterOutput exporterOutput, SimpleCsvReportConfiguration exportConfiguration)
+      throws JRException {
+    final JRCsvExporter csvExporter = new JRCsvExporter();
+    csvExporter.setExporterInput(exporterInput);
+    csvExporter.setExporterOutput(exporterOutput);
+    csvExporter.setConfiguration(exportConfiguration);
+    csvExporter.exportReport();
+  }
+
+  /**
+   * Generates a SimpleXlsReportConfiguration from a parameter map.
+   * 
+   * @param params
+   *          A parameter map with the export parameters.
+   * @return A SimpleXlsReportConfiguration object with the resulting configuration.
+   * 
+   */
+  @SuppressWarnings("deprecation")
+  private static SimpleXlsReportConfiguration getXlsConfigurationFromExportParameters(
+      Map<Object, Object> params) {
+    SimpleXlsReportConfiguration configuration = new SimpleXlsReportConfiguration();
+    Iterator<Entry<Object, Object>> it = params.entrySet().iterator();
+    while (it.hasNext()) {
+      @SuppressWarnings("rawtypes")
+      Map.Entry pair = (Map.Entry) it.next();
+      String parameter = ((JRExporterParameter) pair.getKey()).toString();
+      if (parameter.equals("Is One Page per Sheet")) {
+        configuration.setOnePagePerSheet((Boolean) pair.getValue());
+      } else if (parameter.equals("Is Remove Empty Space Between Rows")) {
+        configuration.setRemoveEmptySpaceBetweenRows((Boolean) pair.getValue());
+      } else if (parameter.equals("Is Remove Empty Space Between Columns")) {
+        configuration.setRemoveEmptySpaceBetweenColumns((Boolean) pair.getValue());
+      } else if (parameter.equals("Is White Page Background")) {
+        configuration.setWhitePageBackground((Boolean) pair.getValue());
+      } else if (parameter.equals("Is Detect Cell Type")) {
+        configuration.setDetectCellType((Boolean) pair.getValue());
+      } else if (parameter.equals("Is Font Size Fix Enabled")) {
+        configuration.setFontSizeFixEnabled((Boolean) pair.getValue());
+      } else if (parameter.equals("Is Image Border Fix Enabled")) {
+        configuration.setImageBorderFixEnabled((Boolean) pair.getValue());
+      } else if (parameter.equals("Is Ignore Graphics")) {
+        configuration.setIgnoreGraphics((Boolean) pair.getValue());
+      } else if (parameter.equals("Is Collapse Row Span")) {
+        configuration.setCollapseRowSpan((Boolean) pair.getValue());
+      } else if (parameter.equals("Is Ignore Cell Border")) {
+        configuration.setIgnoreCellBorder((Boolean) pair.getValue());
+      } else if (parameter.equals("Is Ignore Cell Background")) {
+        configuration.setIgnoreCellBackground((Boolean) pair.getValue());
+      } else if (parameter.equals("Maximum Rows Per Sheet")) {
+        configuration.setMaxRowsPerSheet((Integer) pair.getValue());
+      } else if (parameter.equals("Ignore page margins")) {
+        configuration.setIgnorePageMargins((Boolean) pair.getValue());
+      }
+    }
+    return configuration;
+  }
+
+  /**
+   * Configures a SimpleHtmlReportConfiguration and a SimpleHtmlExporterOutput from a parameter map.
+   * 
+   * @param params
+   *          A parameter map with the export parameters.
+   * 
+   */
+  @SuppressWarnings("deprecation")
+  private static void setHtmlConfigurationFromExportParameters(Map<Object, Object> params,
+      SimpleHtmlReportConfiguration configuration, SimpleHtmlExporterOutput exporterOutput) {
+    // Add configuration defaults
+    // This is needed just in case the params map only contains the Images URI parameter
+    configuration.setSizeUnit(HtmlSizeUnitEnum.POINT);
+    Iterator<Entry<Object, Object>> it = params.entrySet().iterator();
+    while (it.hasNext()) {
+      @SuppressWarnings("rawtypes")
+      Map.Entry pair = (Map.Entry) it.next();
+      String parameter = ((JRExporterParameter) pair.getKey()).toString();
+      if (parameter.equals("Images URI")) {
+        exporterOutput.setImageHandler(new WebHtmlResourceHandler((String) pair.getValue()));
+      } else if (parameter.equals("Is Remove Empty Space Between Rows")) {
+        configuration.setRemoveEmptySpaceBetweenRows((Boolean) pair.getValue());
+      } else if (parameter.equals("Size Unit")) {
+        String sizeUnit = (String) pair.getValue();
+        if (HtmlSizeUnitEnum.POINT.getName().equals(sizeUnit)) {
+          configuration.setSizeUnit(HtmlSizeUnitEnum.POINT);
+        } else if (HtmlSizeUnitEnum.PIXEL.getName().equals(sizeUnit)) {
+          configuration.setSizeUnit(HtmlSizeUnitEnum.PIXEL);
+        }
+      } else if (parameter.equals("Ignore page margins")) {
+        configuration.setIgnorePageMargins((Boolean) pair.getValue());
+      } else if (parameter.equals("Is White Page Background")) {
+        configuration.setWhitePageBackground((Boolean) pair.getValue());
+      } else if (parameter.equals("Is Wrap Break Word")) {
+        configuration.setWrapBreakWord((Boolean) pair.getValue());
+      } else if (parameter.equals("Zoom Ratio")) {
+        configuration.setZoomRatio((Float) pair.getValue());
+      }
+    }
   }
 
   /**
