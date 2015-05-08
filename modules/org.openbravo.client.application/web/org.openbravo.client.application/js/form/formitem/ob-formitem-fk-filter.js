@@ -180,6 +180,9 @@ isc.OBFKFilterTextItem.addProperties({
     if (grid.Class === 'OBTreeGrid') {
       dataSource.requestProperties.params.tabId = grid.view.tabId;
     }
+    if (this.showFkDropdownUnfiltered) {
+        dataSource.requestProperties.params._showFkDropdownUnfiltered = true;
+    }
     this.setOptionDataSource(dataSource);
 
     this.Super('init', arguments);
