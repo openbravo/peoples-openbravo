@@ -68,6 +68,11 @@ public class ForeignKeyUIDefinition extends UIDefinition {
       append = append + ", allowFkFilterByIdentifier: " + allowFkFilterByIdentifier.toString();
     }
 
+    Boolean showFkDropdownUnfiltered = (Boolean) readGridConfigurationSetting("showFkDropdownUnfiltered");
+    if (Boolean.TRUE.equals(showFkDropdownUnfiltered)) {
+      append = append + ", showFkDropdownUnfiltered: " + showFkDropdownUnfiltered.toString();
+    }
+
     return super.getFilterEditorPropertiesProperty(field) + append;
   }
 
