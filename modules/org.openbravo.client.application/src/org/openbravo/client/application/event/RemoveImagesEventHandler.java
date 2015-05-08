@@ -60,14 +60,15 @@ public class RemoveImagesEventHandler extends EntityPersistenceEventObserver {
       if (event.getCurrentState(imageProperty) != null) {
 
         Image bob = (Image) event.getCurrentState(imageProperty);
-        String selectedProduct = event.getId();
-        Product product = checkImageUtilization(selectedProduct, bob);
-        if (bob != null && product == null) {
-          OBContext.setAdminMode(true);
-          try {
-            OBDal.getInstance().remove(bob);
-          } finally {
-            OBContext.restorePreviousMode();
+        if (bob != null) {
+          String selectedProduct = event.getId();
+          if (!checkImageUtilization(selectedProduct, bob)) {
+            OBContext.setAdminMode(true);
+            try {
+              OBDal.getInstance().remove(bob);
+            } finally {
+              OBContext.restorePreviousMode();
+            }
           }
         }
       }
@@ -89,14 +90,15 @@ public class RemoveImagesEventHandler extends EntityPersistenceEventObserver {
           && event.getCurrentState(imageProperty) != event.getPreviousState(imageProperty)) {
 
         Image bob = (Image) event.getPreviousState(imageProperty);
-        String selectedProduct = event.getId();
-        Product product = checkImageUtilization(selectedProduct, bob);
-        if (bob != null && product == null) {
-          OBContext.setAdminMode(true);
-          try {
-            OBDal.getInstance().remove(bob);
-          } finally {
-            OBContext.restorePreviousMode();
+        if (bob != null) {
+          String selectedProduct = event.getId();
+          if (!checkImageUtilization(selectedProduct, bob)) {
+            OBContext.setAdminMode(true);
+            try {
+              OBDal.getInstance().remove(bob);
+            } finally {
+              OBContext.restorePreviousMode();
+            }
           }
         }
       }
@@ -114,7 +116,7 @@ public class RemoveImagesEventHandler extends EntityPersistenceEventObserver {
   }
 
   // Check if this image is used by another product
-  private static Product checkImageUtilization(String productId, Image bob) {
+  private static boolean checkImageUtilization(String productId, Image bob) {
     final OBCriteria<Product> obCriteria = OBDal.getInstance().createCriteria(Product.class);
     obCriteria.add(Restrictions.eq(Product.PROPERTY_IMAGE, bob));
     obCriteria.add(Restrictions.ne(Product.PROPERTY_ID, productId));
@@ -124,7 +126,10 @@ public class RemoveImagesEventHandler extends EntityPersistenceEventObserver {
     obCriteria.setMaxResults(1);
     Product product = (Product) obCriteria.uniqueResult();
 
-    return product;
+    if (product != null) {
+      return true;
+    }
+    return false;
   }
 
   private static List<String> getImageProperties(Entity entity) {
