@@ -29,6 +29,7 @@ import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchronization;
+import org.openbravo.mobile.core.process.DataSynchronizationImportProcess;
 import org.openbravo.mobile.core.process.JSONPropertyToEntity;
 import org.openbravo.mobile.core.process.PropertyByType;
 import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
@@ -36,10 +37,15 @@ import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonToDataConverter;
 
 @DataSynchronization(entity = "OBPOS_App_Cashup")
-public class ProcessCashClose extends POSDataSynchronizationProcess {
+public class ProcessCashClose extends POSDataSynchronizationProcess implements
+    DataSynchronizationImportProcess {
 
   private static final Logger log = Logger.getLogger(ProcessCashClose.class);
   JSONObject jsonResponse = new JSONObject();
+
+  protected String getImportQualifier() {
+    return "OBPOS_App_Cashup";
+  }
 
   public JSONObject saveRecord(JSONObject jsonCashup) throws Exception {
     String cashUpId = jsonCashup.getString("id");

@@ -20,6 +20,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.mobile.core.process.DataSynchronizationImportProcess;
 import org.openbravo.mobile.core.process.JSONProcess;
 import org.openbravo.mobile.core.process.JSONRowConverter;
 import org.openbravo.mobile.core.process.ProcessProcedure;
@@ -153,7 +154,11 @@ public class TerminalServlet extends WebServiceAuthenticatedServlet {
       throws IOException, ServletException {
 
     JSONProcess proc = WeldUtils.getInstanceFromStaticBeanManager(process);
-    proc.exec(w, jsonsent);
+    if (proc instanceof DataSynchronizationImportProcess) {
+      ((DataSynchronizationImportProcess) proc).executeCreateImportEntry(w, jsonsent);
+    } else {
+      proc.exec(w, jsonsent);
+    }
   }
 
   private String[] checkSetParameters(HttpServletRequest request, HttpServletResponse response)
