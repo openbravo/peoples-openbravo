@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ReportProjectProfitabilityJR" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ReportProjectProfitabilityJR" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" uuid="f900737c-ab48-488b-88a7-ef101d1a9b29">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<import value="net.sf.jasperreports.engine.*"/>
@@ -278,7 +278,7 @@
 		<groupHeader>
 			<band height="30" splitType="Stretch">
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-					<reportElement key="textField" style="GroupHeader_DarkGray" x="109" y="0" width="426" height="24"/>
+					<reportElement key="textField" style="GroupHeader_DarkGray" x="109" y="0" width="426" height="24" uuid="ac584319-67c8-4560-8bf4-46965bddc9b1"/>
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -289,22 +289,22 @@
 					<textElement>
 						<font fontName="Bitstream Vera Sans" pdfFontName="Helvetica"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$F{ORGNAME}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{ORGNAME}]]></textFieldExpression>
 				</textField>
 				<line>
-					<reportElement key="line-2" stretchType="RelativeToBandHeight" x="0" y="24" width="1" height="6" forecolor="#555555"/>
+					<reportElement key="line-2" stretchType="RelativeToBandHeight" x="0" y="24" width="1" height="6" forecolor="#555555" uuid="7e798238-3b81-4a51-8c79-1b2f9e9632e9"/>
 					<graphicElement>
 						<pen lineWidth="1.0" lineStyle="Solid"/>
 					</graphicElement>
 				</line>
 				<line>
-					<reportElement key="line-3" stretchType="RelativeToBandHeight" x="535" y="0" width="1" height="30" forecolor="#555555"/>
+					<reportElement key="line-3" stretchType="RelativeToBandHeight" x="535" y="0" width="1" height="30" forecolor="#555555" uuid="39181401-c91c-4e6d-82a5-b2d612ee1f0f"/>
 					<graphicElement>
 						<pen lineWidth="1.0" lineStyle="Solid"/>
 					</graphicElement>
 				</line>
 				<staticText>
-					<reportElement key="staticText-54" style="GroupHeader_DarkGray" x="0" y="0" width="109" height="24"/>
+					<reportElement key="staticText-54" style="GroupHeader_DarkGray" x="0" y="0" width="109" height="24" uuid="e3bcc6d2-02b4-4f91-9532-d77a1ebd22e4"/>
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -322,19 +322,19 @@
 		<groupFooter>
 			<band height="17" splitType="Stretch">
 				<line>
-					<reportElement key="line-32" stretchType="RelativeToBandHeight" x="0" y="0" width="1" height="10" forecolor="#555555"/>
+					<reportElement key="line-32" stretchType="RelativeToBandHeight" x="0" y="0" width="1" height="10" forecolor="#555555" uuid="be73528c-4e3c-42ca-9484-136ff5c8f87d"/>
 					<graphicElement>
 						<pen lineWidth="1.0" lineStyle="Solid"/>
 					</graphicElement>
 				</line>
 				<line>
-					<reportElement key="line-33" stretchType="RelativeToBandHeight" x="535" y="0" width="1" height="11" forecolor="#555555"/>
+					<reportElement key="line-33" stretchType="RelativeToBandHeight" x="535" y="0" width="1" height="11" forecolor="#555555" uuid="bc155fb7-f53c-4fbf-b8c3-5f8c02d74608"/>
 					<graphicElement>
 						<pen lineWidth="1.0" lineStyle="Solid"/>
 					</graphicElement>
 				</line>
 				<line>
-					<reportElement key="line-34" x="0" y="10" width="535" height="1" forecolor="#555555"/>
+					<reportElement key="line-34" x="0" y="10" width="535" height="1" forecolor="#555555" uuid="9eea6e7e-bec0-4c79-b5f7-ac6217d037ad"/>
 					<graphicElement>
 						<pen lineWidth="1.0" lineStyle="Solid"/>
 					</graphicElement>
@@ -347,7 +347,7 @@
 		<groupHeader>
 			<band height="25" splitType="Stretch">
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-					<reportElement key="textField" style="GroupHeader_DarkGray" x="140" y="0" width="394" height="22"/>
+					<reportElement key="textField" style="GroupHeader_DarkGray" x="140" y="0" width="394" height="22" uuid="ca2ecb65-f725-42c7-9ea1-466fe2d22de6"/>
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -358,28 +358,28 @@
 					<textElement>
 						<font fontName="Bitstream Vera Sans" isBold="false" pdfFontName="Helvetica"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$F{PARTNER}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{PARTNER}]]></textFieldExpression>
 				</textField>
 				<line>
-					<reportElement key="line-4" stretchType="RelativeToBandHeight" x="10" y="22" width="1" height="3" forecolor="#555555"/>
+					<reportElement key="line-4" stretchType="RelativeToBandHeight" x="10" y="22" width="1" height="3" forecolor="#555555" uuid="6c2109b0-8674-46e9-b0a7-0f7ed6700e62"/>
 					<graphicElement>
 						<pen lineWidth="1.0" lineStyle="Solid"/>
 					</graphicElement>
 				</line>
 				<line>
-					<reportElement key="line-6" stretchType="RelativeToBandHeight" x="535" y="0" width="1" height="25" forecolor="#555555"/>
+					<reportElement key="line-6" stretchType="RelativeToBandHeight" x="535" y="0" width="1" height="25" forecolor="#555555" uuid="26dd7bd9-b5a7-43f7-954f-6ad6ef06c552"/>
 					<graphicElement>
 						<pen lineWidth="1.0" lineStyle="Solid"/>
 					</graphicElement>
 				</line>
 				<line>
-					<reportElement key="line-8" stretchType="RelativeToBandHeight" x="0" y="0" width="1" height="25" forecolor="#555555"/>
+					<reportElement key="line-8" stretchType="RelativeToBandHeight" x="0" y="0" width="1" height="25" forecolor="#555555" uuid="24157758-f99a-4515-aacc-d5d124003963"/>
 					<graphicElement>
 						<pen lineWidth="1.0" lineStyle="Solid"/>
 					</graphicElement>
 				</line>
 				<staticText>
-					<reportElement key="staticText-55" style="GroupHeader_DarkGray" x="10" y="0" width="130" height="22"/>
+					<reportElement key="staticText-55" style="GroupHeader_DarkGray" x="10" y="0" width="130" height="22" uuid="9f6e81ad-15d7-451c-a390-ccfb88825e6a"/>
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -397,25 +397,25 @@
 		<groupFooter>
 			<band height="20" splitType="Stretch">
 				<line>
-					<reportElement key="line-28" stretchType="RelativeToBandHeight" x="0" y="0" width="1" height="20" forecolor="#555555"/>
+					<reportElement key="line-28" stretchType="RelativeToBandHeight" x="0" y="0" width="1" height="20" forecolor="#555555" uuid="233ffb4f-97d7-41a2-89ad-a1e043b0017e"/>
 					<graphicElement>
 						<pen lineWidth="1.0" lineStyle="Solid"/>
 					</graphicElement>
 				</line>
 				<line>
-					<reportElement key="line-29" stretchType="RelativeToBandHeight" x="10" y="0" width="1" height="10" forecolor="#555555"/>
+					<reportElement key="line-29" stretchType="RelativeToBandHeight" x="10" y="0" width="1" height="10" forecolor="#555555" uuid="e69a4b27-467a-43b3-a95e-eb596f3f9d2a"/>
 					<graphicElement>
 						<pen lineWidth="1.0" lineStyle="Solid"/>
 					</graphicElement>
 				</line>
 				<line>
-					<reportElement key="line-30" stretchType="RelativeToBandHeight" x="535" y="0" width="1" height="20" forecolor="#555555"/>
+					<reportElement key="line-30" stretchType="RelativeToBandHeight" x="535" y="0" width="1" height="20" forecolor="#555555" uuid="f358f9da-c0ef-4b59-89da-bb5ca1fc7d39"/>
 					<graphicElement>
 						<pen lineWidth="1.0" lineStyle="Solid"/>
 					</graphicElement>
 				</line>
 				<line>
-					<reportElement key="line-31" x="10" y="10" width="525" height="1" forecolor="#555555"/>
+					<reportElement key="line-31" x="10" y="10" width="525" height="1" forecolor="#555555" uuid="9c071070-0f50-4bb5-9872-02ffd048147f"/>
 					<graphicElement>
 						<pen lineWidth="1.0" lineStyle="Solid"/>
 					</graphicElement>
@@ -432,7 +432,7 @@
 	<pageHeader>
 		<band height="30" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement key="textField" style="Report_Title" mode="Transparent" x="0" y="0" width="535" height="26"/>
+				<reportElement key="textField" style="Report_Title" mode="Transparent" x="0" y="0" width="535" height="26" uuid="dd75cfc7-705c-4fa9-a21b-009cf041eea2"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -443,10 +443,10 @@
 				<textElement>
 					<font fontName="Bitstream Vera Sans"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{REPORT_TITLE}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{REPORT_TITLE}]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement key="line-1" x="0" y="27" width="535" height="1"/>
+				<reportElement key="line-1" x="0" y="27" width="535" height="1" uuid="06d7f6f2-8ad1-4f15-8a1b-ca504a8738ef"/>
 				<graphicElement>
 					<pen lineWidth="2.0" lineStyle="Solid"/>
 				</graphicElement>
@@ -456,7 +456,7 @@
 	<columnHeader>
 		<band height="25" splitType="Stretch">
 			<staticText>
-				<reportElement key="staticText-56" x="5" y="5" width="123" height="16" isPrintWhenDetailOverflows="true"/>
+				<reportElement key="staticText-56" x="5" y="5" width="123" height="16" isPrintWhenDetailOverflows="true" uuid="20eb0449-4a91-41d4-8f9d-83e785ea8879"/>
 				<box leftPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -469,7 +469,7 @@
 				<text><![CDATA[Currency of the report:]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="false">
-				<reportElement key="textField-39" x="135" y="5" width="75" height="16" isPrintWhenDetailOverflows="true"/>
+				<reportElement key="textField-39" x="135" y="5" width="75" height="16" isPrintWhenDetailOverflows="true" uuid="d7f4016d-eeea-489b-9f24-8de4789cce94"/>
 				<box leftPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
@@ -479,32 +479,32 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Bitstream Vera Sans" size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{CONVISOSYM}!=null)?$F{CONVISOSYM}:new String(" ")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{CONVISOSYM}!=null)?$F{CONVISOSYM}:new String(" ")]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnHeader>
 	<detail>
 		<band height="131" splitType="Stretch">
 			<line>
-				<reportElement key="line-16" stretchType="RelativeToBandHeight" x="535" y="0" width="1" height="131" forecolor="#555555"/>
+				<reportElement key="line-16" stretchType="RelativeToBandHeight" x="535" y="0" width="1" height="131" forecolor="#555555" uuid="e97bebe9-89b0-4391-bd3f-ab91bd4eb18b"/>
 				<graphicElement>
 					<pen lineWidth="1.0" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement key="line-17" stretchType="RelativeToBandHeight" x="0" y="0" width="1" height="131" forecolor="#555555"/>
+				<reportElement key="line-17" stretchType="RelativeToBandHeight" x="0" y="0" width="1" height="131" forecolor="#555555" uuid="c776623d-2234-40f2-9e36-9811356cc4f5"/>
 				<graphicElement>
 					<pen lineWidth="1.0" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement key="line-18" stretchType="RelativeToBandHeight" x="10" y="0" width="1" height="131" forecolor="#555555"/>
+				<reportElement key="line-18" stretchType="RelativeToBandHeight" x="10" y="0" width="1" height="131" forecolor="#555555" uuid="8e4b5ac8-d9cc-425c-b329-fb8aee491e10"/>
 				<graphicElement>
 					<pen lineWidth="1.0" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="false">
-				<reportElement key="textField" x="108" y="6" width="153" height="16" isPrintWhenDetailOverflows="true"/>
+				<reportElement key="textField" x="108" y="6" width="153" height="16" isPrintWhenDetailOverflows="true" uuid="a9fbe738-d61d-4c48-af74-033b2bb21b66"/>
 				<box leftPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
@@ -514,10 +514,10 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Bitstream Vera Sans" size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{PROJECTNAME}!=null)?$F{PROJECTNAME}:new String(" ")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{PROJECTNAME}!=null)?$F{PROJECTNAME}:new String(" ")]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement key="textField" x="109" y="26" width="151" height="16" isPrintWhenDetailOverflows="true"/>
+				<reportElement key="textField" x="109" y="26" width="151" height="16" isPrintWhenDetailOverflows="true" uuid="c6385665-1fd2-4e79-9abf-8b392c5e52b3"/>
 				<box leftPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -527,10 +527,10 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Bitstream Vera Sans" size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{PROJECTTYPE}==null?"":$F{PROJECTTYPE}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{PROJECTTYPE}==null?"":$F{PROJECTTYPE}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement key="staticText-6" x="13" y="26" width="95" height="16" isPrintWhenDetailOverflows="true"/>
+				<reportElement key="staticText-6" x="13" y="26" width="95" height="16" isPrintWhenDetailOverflows="true" uuid="ec8f1d48-8264-4452-a579-f81e963d785f"/>
 				<box leftPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -543,7 +543,7 @@
 				<text><![CDATA[Project Type:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-7" x="262" y="26" width="107" height="16" isPrintWhenDetailOverflows="true"/>
+				<reportElement key="staticText-7" x="262" y="26" width="107" height="16" isPrintWhenDetailOverflows="true" uuid="ef56c57a-8fb3-42fd-9a62-c3d09f2ae40c"/>
 				<box leftPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -556,7 +556,7 @@
 				<text><![CDATA[Planned End Date:]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField" x="373" y="26" width="88" height="16" isPrintWhenDetailOverflows="true"/>
+				<reportElement key="textField" x="373" y="26" width="88" height="16" isPrintWhenDetailOverflows="true" uuid="e07fc5d2-e0bf-495b-826d-ee611cf439e9"/>
 				<box leftPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -566,10 +566,10 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Bitstream Vera Sans" size="8"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{INITDATE}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{INITDATE}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement key="staticText-8" x="263" y="6" width="106" height="16" isPrintWhenDetailOverflows="true"/>
+				<reportElement key="staticText-8" x="263" y="6" width="106" height="16" isPrintWhenDetailOverflows="true" uuid="be143462-b351-4a93-b5fb-fddf42f9d094"/>
 				<box leftPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -582,7 +582,7 @@
 				<text><![CDATA[Person in Charge:]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement key="textField" x="372" y="6" width="149" height="16" isPrintWhenDetailOverflows="true"/>
+				<reportElement key="textField" x="372" y="6" width="149" height="16" isPrintWhenDetailOverflows="true" uuid="ee1cab9f-873d-4df3-a200-190cd7c785d7"/>
 				<box leftPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -592,10 +592,10 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Bitstream Vera Sans" size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{RESPONSIBLE}==null?"":$F{RESPONSIBLE}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{RESPONSIBLE}==null?"":$F{RESPONSIBLE}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement key="staticText-10" style="Detail_Header" x="66" y="46" width="200" height="16"/>
+				<reportElement key="staticText-10" style="Detail_Header" x="66" y="46" width="200" height="16" uuid="2f2a1799-3c0c-458b-bd29-c4f7c112afed"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -609,7 +609,7 @@
 				<text><![CDATA[Services]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-11" style="Detail_Header" x="274" y="46" width="157" height="16"/>
+				<reportElement key="staticText-11" style="Detail_Header" x="274" y="46" width="157" height="16" uuid="2c3413e5-49d6-4173-a1e0-67e5b33b4e04"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -623,7 +623,7 @@
 				<text><![CDATA[Expenses]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-12" style="Detail_Header" x="14" y="79" width="52" height="16"/>
+				<reportElement key="staticText-12" style="Detail_Header" x="14" y="79" width="52" height="16" uuid="7b2813e3-f9c8-4aee-9712-c3993bef186b"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -637,7 +637,7 @@
 				<text><![CDATA[Planned]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-13" style="Detail_Header" x="14" y="95" width="52" height="16"/>
+				<reportElement key="staticText-13" style="Detail_Header" x="14" y="95" width="52" height="16" uuid="110da421-0f2d-43a3-8c72-3e5706034dd5"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -651,7 +651,7 @@
 				<text><![CDATA[Real]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-14" style="Detail_Header" x="14" y="111" width="52" height="16"/>
+				<reportElement key="staticText-14" style="Detail_Header" x="14" y="111" width="52" height="16" uuid="5cae877a-3b16-4ee7-8a96-5d61e19c326a"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -665,7 +665,7 @@
 				<text><![CDATA[Collected]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-15" style="Detail_Header" x="66" y="62" width="50" height="16"/>
+				<reportElement key="staticText-15" style="Detail_Header" x="66" y="62" width="50" height="16" uuid="d0fd2089-1058-4a8c-bee1-4146a75a6819"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -679,7 +679,7 @@
 				<text><![CDATA[Revenue]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-16" style="Detail_Header" x="116" y="62" width="50" height="16"/>
+				<reportElement key="staticText-16" style="Detail_Header" x="116" y="62" width="50" height="16" uuid="b4ed4c8f-c013-4d16-8201-3e3ad3666132"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -693,7 +693,7 @@
 				<text><![CDATA[Cost]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-17" style="Detail_Header" x="216" y="62" width="50" height="16"/>
+				<reportElement key="staticText-17" style="Detail_Header" x="216" y="62" width="50" height="16" uuid="68ae5577-35ed-4eb0-b603-c061764df9de"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -707,7 +707,7 @@
 				<text><![CDATA[Margin %]]></text>
 			</staticText>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField" x="66" y="79" width="50" height="16"/>
+				<reportElement key="textField" x="66" y="79" width="50" height="16" uuid="ac1a225b-ac47-47aa-80e6-90c4cd07bce5"/>
 				<box rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#555555"/>
@@ -717,10 +717,10 @@
 				<textElement textAlignment="Right">
 					<font fontName="Bitstream Vera Sans" size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{PLANREVENUE}!=null)?$P{NUMBERFORMAT}.format($F{PLANREVENUE}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{PLANREVENUE}!=null)?$P{NUMBERFORMAT}.format($F{PLANREVENUE}):new String(" ")]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField" x="116" y="79" width="50" height="16"/>
+				<reportElement key="textField" x="116" y="79" width="50" height="16" uuid="61c821cb-7c76-4714-9420-48aeedb66478"/>
 				<box rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#555555"/>
@@ -730,10 +730,10 @@
 				<textElement textAlignment="Right">
 					<font fontName="Bitstream Vera Sans" size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{PLANSERVICES}!=null)?$P{NUMBERFORMAT}.format($F{PLANSERVICES}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{PLANSERVICES}!=null)?$P{NUMBERFORMAT}.format($F{PLANSERVICES}):new String(" ")]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Transparent" x="216" y="79" width="50" height="16"/>
+				<reportElement key="textField" mode="Transparent" x="216" y="79" width="50" height="16" uuid="016a2a5b-b3d3-4107-96dc-58f26c1e675a"/>
 				<box rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#555555"/>
@@ -743,12 +743,12 @@
 				<textElement textAlignment="Right">
 					<font fontName="Bitstream Vera Sans" size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{PLANREVENUE}.intValue()==0)?
+				<textFieldExpression><![CDATA[($F{PLANREVENUE}.intValue()==0)?
 	$P{NUMBERFORMAT}.format(new BigDecimal(0.0)):
 	$P{NUMBERFORMAT}.format(($V{PlanSerNetMargin}.divide($F{PLANREVENUE},200,$V{PlanSerNetMargin}.ROUND_HALF_UP)).multiply(new BigDecimal(100.0)))]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField" x="274" y="79" width="58" height="16"/>
+				<reportElement key="textField" x="274" y="79" width="58" height="16" uuid="637e87d6-2275-4e4e-a617-26156a15b41d"/>
 				<box rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#555555"/>
@@ -758,10 +758,10 @@
 				<textElement textAlignment="Right">
 					<font fontName="Bitstream Vera Sans" size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{PLANREINVOICING}!=null)?$P{NUMBERFORMAT}.format($F{PLANREINVOICING}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{PLANREINVOICING}!=null)?$P{NUMBERFORMAT}.format($F{PLANREINVOICING}):new String(" ")]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField" x="333" y="79" width="49" height="16"/>
+				<reportElement key="textField" x="333" y="79" width="49" height="16" uuid="0da7275d-41be-48b0-8001-98c2c9e4d701"/>
 				<box rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#555555"/>
@@ -771,10 +771,10 @@
 				<textElement textAlignment="Right">
 					<font fontName="Bitstream Vera Sans" size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{PLANEXPENSES}!=null)?$P{NUMBERFORMAT}.format($F{PLANEXPENSES}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{PLANEXPENSES}!=null)?$P{NUMBERFORMAT}.format($F{PLANEXPENSES}):new String(" ")]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField-1" x="382" y="79" width="49" height="16"/>
+				<reportElement key="textField-1" x="382" y="79" width="49" height="16" uuid="d3a68a7a-0c54-4173-9227-dfa69d6bd0a1"/>
 				<box rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#555555"/>
@@ -784,10 +784,10 @@
 				<textElement textAlignment="Right">
 					<font fontName="Bitstream Vera Sans" size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{PLANREINVOICING}.intValue()==0)?$P{NUMBERFORMAT}.format(new BigDecimal(0.0)):$P{NUMBERFORMAT}.format(($V{PlanSerNetReinvoincing}.divide($F{PLANREINVOICING},200,$V{PlanSerNetReinvoincing}.ROUND_HALF_UP)).multiply(new BigDecimal(100.0)))]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{PLANREINVOICING}.intValue()==0)?$P{NUMBERFORMAT}.format(new BigDecimal(0.0)):$P{NUMBERFORMAT}.format(($V{PlanSerNetReinvoincing}.divide($F{PLANREINVOICING},200,$V{PlanSerNetReinvoincing}.ROUND_HALF_UP)).multiply(new BigDecimal(100.0)))]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement key="staticText-18" style="Detail_Header" x="274" y="62" width="59" height="16"/>
+				<reportElement key="staticText-18" style="Detail_Header" x="274" y="62" width="59" height="16" uuid="7a05a3e1-31c5-4f52-a617-d2c1592628cd"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -801,7 +801,7 @@
 				<text><![CDATA[Reinvoicing]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-19" style="Detail_Header" x="383" y="62" width="48" height="16"/>
+				<reportElement key="staticText-19" style="Detail_Header" x="383" y="62" width="48" height="16" uuid="f0cf3ba6-05bf-4da8-8053-e07c7d4b6b26"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -815,7 +815,7 @@
 				<text><![CDATA[Margin %]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-20" style="Detail_Header" x="333" y="62" width="49" height="16"/>
+				<reportElement key="staticText-20" style="Detail_Header" x="333" y="62" width="49" height="16" uuid="fead1356-d51a-47eb-b8f5-db233c73c884"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -829,7 +829,7 @@
 				<text><![CDATA[Expenses]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-21" style="Detail_Header" x="441" y="62" width="83" height="16"/>
+				<reportElement key="staticText-21" style="Detail_Header" x="441" y="62" width="83" height="16" uuid="c22f5e2b-044e-4d74-8c63-43daa936a10f"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -843,7 +843,7 @@
 				<text><![CDATA[Gross margin]]></text>
 			</staticText>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField-2" x="441" y="79" width="42" height="16"/>
+				<reportElement key="textField-2" x="441" y="79" width="42" height="16" uuid="f0993fe2-8611-47ef-9a04-7a4b2130d708"/>
 				<box rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#555555"/>
@@ -853,10 +853,10 @@
 				<textElement textAlignment="Right">
 					<font fontName="Bitstream Vera Sans" size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($V{PlanGrossMarginNet}!=null)?$P{NUMBERFORMAT}.format($V{PlanGrossMarginNet}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($V{PlanGrossMarginNet}!=null)?$P{NUMBERFORMAT}.format($V{PlanGrossMarginNet}):new String(" ")]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField" x="483" y="79" width="41" height="16"/>
+				<reportElement key="textField" x="483" y="79" width="41" height="16" uuid="3e881923-7e20-4bb7-b78b-76b08dd42391"/>
 				<box rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#555555"/>
@@ -866,12 +866,12 @@
 				<textElement textAlignment="Right">
 					<font fontName="Bitstream Vera Sans" size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$V{PlanTotalRevenue}.intValue()==0?
+				<textFieldExpression><![CDATA[$V{PlanTotalRevenue}.intValue()==0?
 	$P{NUMBERFORMAT}.format(new BigDecimal("0.00")):
 	$P{NUMBERFORMAT}.format($V{PlanGrossMarginNet}.divide($V{PlanTotalRevenue},200,$V{PlanTotalRevenue}.ROUND_HALF_UP).multiply(new BigDecimal(100.0)))]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField-3" style="Total_Field" x="66" y="95" width="50" height="16"/>
+				<reportElement key="textField-3" style="Total_Field" x="66" y="95" width="50" height="16" uuid="b4487f68-4b85-4d25-9e0d-e591ac8795a7"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -882,10 +882,10 @@
 				<textElement textAlignment="Right">
 					<font fontName="Bitstream Vera Sans" size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{REALREVENUE}!=null)?$P{NUMBERFORMAT}.format($F{REALREVENUE}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{REALREVENUE}!=null)?$P{NUMBERFORMAT}.format($F{REALREVENUE}):new String(" ")]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField-4" style="Total_Field" x="116" y="95" width="50" height="16"/>
+				<reportElement key="textField-4" style="Total_Field" x="116" y="95" width="50" height="16" uuid="3025f3e9-bd18-4af7-84ae-6996f150f6a9"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -896,10 +896,10 @@
 				<textElement textAlignment="Right">
 					<font fontName="Bitstream Vera Sans" size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{REALSERVICES}!=null)?$P{NUMBERFORMAT}.format($F{REALSERVICES}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{REALSERVICES}!=null)?$P{NUMBERFORMAT}.format($F{REALSERVICES}):new String(" ")]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField-5" style="Total_Field" x="216" y="95" width="50" height="16"/>
+				<reportElement key="textField-5" style="Total_Field" x="216" y="95" width="50" height="16" uuid="1f30cf46-9e5e-4624-a590-8f5ada6c5926"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -910,10 +910,10 @@
 				<textElement textAlignment="Right">
 					<font fontName="Bitstream Vera Sans" size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{REALREVENUE}.intValue()==0)?$P{NUMBERFORMAT}.format(new BigDecimal(0.0)):$P{NUMBERFORMAT}.format(($V{RealSerNetMargin}.divide($F{REALREVENUE},200,$V{RealSerNetMargin}.ROUND_HALF_UP)).multiply(new BigDecimal(100.0)))]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{REALREVENUE}.intValue()==0)?$P{NUMBERFORMAT}.format(new BigDecimal(0.0)):$P{NUMBERFORMAT}.format(($V{RealSerNetMargin}.divide($F{REALREVENUE},200,$V{RealSerNetMargin}.ROUND_HALF_UP)).multiply(new BigDecimal(100.0)))]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField-6" style="Total_Field" x="274" y="95" width="58" height="16"/>
+				<reportElement key="textField-6" style="Total_Field" x="274" y="95" width="58" height="16" uuid="d84f1bae-2e5a-4676-9cbb-6cad09560e84"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -924,10 +924,10 @@
 				<textElement textAlignment="Right">
 					<font fontName="Bitstream Vera Sans" size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{REALREINVOICED}!=null)?$P{NUMBERFORMAT}.format($F{REALREINVOICED}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{REALREINVOICED}!=null)?$P{NUMBERFORMAT}.format($F{REALREINVOICED}):new String(" ")]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField-7" style="Total_Field" x="333" y="95" width="49" height="16"/>
+				<reportElement key="textField-7" style="Total_Field" x="333" y="95" width="49" height="16" uuid="920e2a3c-d3d9-405c-bfbc-3c9a8b79f761"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -938,10 +938,10 @@
 				<textElement textAlignment="Right">
 					<font fontName="Bitstream Vera Sans" size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{REALEXPENSES}!=null)?$P{NUMBERFORMAT}.format($F{REALEXPENSES}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{REALEXPENSES}!=null)?$P{NUMBERFORMAT}.format($F{REALEXPENSES}):new String(" ")]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField-8" style="Total_Field" x="382" y="95" width="49" height="16"/>
+				<reportElement key="textField-8" style="Total_Field" x="382" y="95" width="49" height="16" uuid="5beb6142-c1e5-4058-b2b8-3278ed053ac0"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -952,10 +952,10 @@
 				<textElement textAlignment="Right">
 					<font fontName="Bitstream Vera Sans" size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{REALREINVOICED}.intValue()==0)?$P{NUMBERFORMAT}.format(new BigDecimal(0.0)):$P{NUMBERFORMAT}.format(($V{RealSerNetReinvoincing}.divide($F{REALREINVOICED},200,$V{RealSerNetReinvoincing}.ROUND_HALF_UP)).multiply(new BigDecimal(100.0)))]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{REALREINVOICED}.intValue()==0)?$P{NUMBERFORMAT}.format(new BigDecimal(0.0)):$P{NUMBERFORMAT}.format(($V{RealSerNetReinvoincing}.divide($F{REALREINVOICED},200,$V{RealSerNetReinvoincing}.ROUND_HALF_UP)).multiply(new BigDecimal(100.0)))]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField-9" style="Total_Field" x="441" y="95" width="42" height="16"/>
+				<reportElement key="textField-9" style="Total_Field" x="441" y="95" width="42" height="16" uuid="e0c2360d-a940-43f0-a622-3008a38ab693"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -966,10 +966,10 @@
 				<textElement textAlignment="Right">
 					<font fontName="Bitstream Vera Sans" size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($V{RealGrossMarginNet}!=null)?$P{NUMBERFORMAT}.format($V{RealGrossMarginNet}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($V{RealGrossMarginNet}!=null)?$P{NUMBERFORMAT}.format($V{RealGrossMarginNet}):new String(" ")]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField-10" style="Total_Field" x="483" y="95" width="41" height="16"/>
+				<reportElement key="textField-10" style="Total_Field" x="483" y="95" width="41" height="16" uuid="45f769c3-8f6b-4af3-a2ac-a67973b92600"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -980,12 +980,12 @@
 				<textElement textAlignment="Right">
 					<font fontName="Bitstream Vera Sans" size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($V{RealTotalRevenue}.intValue()==0)?
+				<textFieldExpression><![CDATA[($V{RealTotalRevenue}.intValue()==0)?
 $P{NUMBERFORMAT}.format(new BigDecimal("0.00")):
 $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$V{RealGrossMarginNet}.ROUND_HALF_UP).multiply(new BigDecimal(100.0)))]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField-11" x="66" y="111" width="50" height="16"/>
+				<reportElement key="textField-11" x="66" y="111" width="50" height="16" uuid="695db932-a173-4e19-96db-9f204490388b"/>
 				<box rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#555555"/>
@@ -995,10 +995,10 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$
 				<textElement textAlignment="Right">
 					<font fontName="Bitstream Vera Sans" size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{COLLECTED}!=null)?$P{NUMBERFORMAT}.format($F{COLLECTED}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{COLLECTED}!=null)?$P{NUMBERFORMAT}.format($F{COLLECTED}):new String(" ")]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement key="staticText-41" x="14" y="6" width="94" height="16" isPrintWhenDetailOverflows="true"/>
+				<reportElement key="staticText-41" x="14" y="6" width="94" height="16" isPrintWhenDetailOverflows="true" uuid="9a3fd030-706e-4e78-aa9f-1d80c9339439"/>
 				<box leftPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1011,7 +1011,7 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$
 				<text><![CDATA[Project:]]></text>
 			</staticText>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField-40" x="166" y="79" width="50" height="16"/>
+				<reportElement key="textField-40" x="166" y="79" width="50" height="16" uuid="dfadf72f-ecab-4f0f-ab31-f5b860448b0f"/>
 				<box rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#555555"/>
@@ -1021,10 +1021,10 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$
 				<textElement textAlignment="Right">
 					<font fontName="Bitstream Vera Sans" size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{PLANOUTSOURCED}!=null)?$P{NUMBERFORMAT}.format($F{PLANOUTSOURCED}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{PLANOUTSOURCED}!=null)?$P{NUMBERFORMAT}.format($F{PLANOUTSOURCED}):new String(" ")]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField-41" style="Total_Field" x="166" y="95" width="50" height="16"/>
+				<reportElement key="textField-41" style="Total_Field" x="166" y="95" width="50" height="16" uuid="7944633e-c399-4ac6-b875-6303af526e40"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1035,10 +1035,10 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$
 				<textElement textAlignment="Right">
 					<font fontName="Bitstream Vera Sans" size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{REALOUTSOURCED}!=null)?$P{NUMBERFORMAT}.format($F{REALOUTSOURCED}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{REALOUTSOURCED}!=null)?$P{NUMBERFORMAT}.format($F{REALOUTSOURCED}):new String(" ")]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement key="staticText-57" style="Detail_Header" x="166" y="62" width="50" height="16"/>
+				<reportElement key="staticText-57" style="Detail_Header" x="166" y="62" width="50" height="16" uuid="d7ac160c-79b1-4ee7-b517-61ec7f124270"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1059,20 +1059,21 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$
 	<pageFooter>
 		<band height="25" splitType="Stretch">
 			<textField evaluationTime="Report" pattern="" isBlankWhenNull="false">
-				<reportElement key="textField-36" x="486" y="5" width="36" height="19" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="textField-36" x="486" y="5" width="36" height="19" forecolor="#000000" backcolor="#FFFFFF" uuid="448466c2-eab7-48a5-913a-3e2a6b0db577"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None">
 					<font fontName="Helvetica" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["" + $V{PAGE_NUMBER}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["" + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField-37" x="387" y="5" width="95" height="19"/>
+				<reportElement key="textField-37" x="387" y="5" width="95" height="19" uuid="f803e102-c2f6-4ae1-bba2-05f9d583d968"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1082,10 +1083,10 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Helvetica" size="10"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["Page " + $V{PAGE_NUMBER} + " of "]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER} + " of "]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField-38" x="264" y="5" width="69" height="19"/>
+				<reportElement key="textField-38" x="264" y="5" width="69" height="19" uuid="09dac470-89b8-4e58-9955-8e4750840c09"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1095,10 +1096,10 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times-Roman" size="10"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[new Date()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[new Date()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement key="staticText-40" x="183" y="5" width="78" height="19"/>
+				<reportElement key="staticText-40" x="183" y="5" width="78" height="19" uuid="68115d45-792d-445a-be04-35db28f97ee3"/>
 				<box topPadding="2" leftPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1113,7 +1114,7 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$
 	<summary>
 		<band height="150" splitType="Stretch">
 			<staticText>
-				<reportElement key="staticText-23" style="GroupHeader_DarkGray" x="0" y="24" width="535" height="24"/>
+				<reportElement key="staticText-23" style="GroupHeader_DarkGray" x="0" y="24" width="535" height="24" uuid="80ac50f2-d480-445b-87d1-51a9ac6a0906"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1127,25 +1128,25 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$
 				<text><![CDATA[Totals]]></text>
 			</staticText>
 			<line>
-				<reportElement key="line-82" x="0" y="148" width="535" height="1" forecolor="#555555"/>
+				<reportElement key="line-82" x="0" y="148" width="535" height="1" forecolor="#555555" uuid="293a7af3-cd5e-4d88-8153-e7e95438f468"/>
 				<graphicElement>
 					<pen lineWidth="1.0" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement key="line-83" stretchType="RelativeToBandHeight" x="535" y="48" width="1" height="100" forecolor="#555555"/>
+				<reportElement key="line-83" stretchType="RelativeToBandHeight" x="535" y="48" width="1" height="100" forecolor="#555555" uuid="e2884bcd-7748-45d0-8ad0-4cf1e4fe4daf"/>
 				<graphicElement>
 					<pen lineWidth="1.0" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement key="line-85" stretchType="RelativeToBandHeight" x="0" y="48" width="1" height="100" forecolor="#555555"/>
+				<reportElement key="line-85" stretchType="RelativeToBandHeight" x="0" y="48" width="1" height="100" forecolor="#555555" uuid="6218dc7f-0d20-491e-b263-fc293163e03d"/>
 				<graphicElement>
 					<pen lineWidth="1.0" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField-19" x="66" y="87" width="50" height="16"/>
+				<reportElement key="textField-19" x="66" y="87" width="50" height="16" uuid="3e5832db-101f-4a14-93fe-62b0277e89a4"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1155,10 +1156,10 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Bitstream Vera Sans" size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($V{PLANREVENUETOTAL}!=null)?$P{NUMBERFORMAT}.format($V{PLANREVENUETOTAL}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($V{PLANREVENUETOTAL}!=null)?$P{NUMBERFORMAT}.format($V{PLANREVENUETOTAL}):new String(" ")]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField-20" x="116" y="87" width="50" height="16"/>
+				<reportElement key="textField-20" x="116" y="87" width="50" height="16" uuid="3ff8027e-8450-411b-a5a9-58f2015ffb1d"/>
 				<box rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1168,10 +1169,10 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Bitstream Vera Sans" size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($V{PLANSERVICESTOTAL}!=null)?$P{NUMBERFORMAT}.format($V{PLANSERVICESTOTAL}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($V{PLANSERVICESTOTAL}!=null)?$P{NUMBERFORMAT}.format($V{PLANSERVICESTOTAL}):new String(" ")]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField-21" x="216" y="87" width="50" height="16"/>
+				<reportElement key="textField-21" x="216" y="87" width="50" height="16" uuid="740219d8-cc5f-4a44-aa2a-3b54eb6b699a"/>
 				<box rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1181,12 +1182,12 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Bitstream Vera Sans" size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($V{PLANREVENUETOTAL}.intValue()==0)?
+				<textFieldExpression><![CDATA[($V{PLANREVENUETOTAL}.intValue()==0)?
    $P{NUMBERFORMAT}.format(new BigDecimal("0.00")):
    $P{NUMBERFORMAT}.format($V{PLANSERNETMARGINTOTAL}.divide($V{PLANREVENUETOTAL},200,$V{PLANSERNETMARGINTOTAL}.ROUND_HALF_UP).multiply(new BigDecimal(100.0)))]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField-22" x="274" y="87" width="59" height="16"/>
+				<reportElement key="textField-22" x="274" y="87" width="59" height="16" uuid="102c753f-347e-4d44-8cea-745fe4e4f54b"/>
 				<box rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#555555"/>
@@ -1196,10 +1197,10 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Bitstream Vera Sans" size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($V{PLANREINVOINCINGTOTAL}!=null)?$P{NUMBERFORMAT}.format($V{PLANREINVOINCINGTOTAL}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($V{PLANREINVOINCINGTOTAL}!=null)?$P{NUMBERFORMAT}.format($V{PLANREINVOINCINGTOTAL}):new String(" ")]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField-23" x="333" y="87" width="49" height="16"/>
+				<reportElement key="textField-23" x="333" y="87" width="49" height="16" uuid="0a499cc0-ab9b-451f-be4e-4085ef726f41"/>
 				<box rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1209,10 +1210,10 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Bitstream Vera Sans" size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($V{PLANEXPENSESTOTAL}!=null)?$P{NUMBERFORMAT}.format($V{PLANEXPENSESTOTAL}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($V{PLANEXPENSESTOTAL}!=null)?$P{NUMBERFORMAT}.format($V{PLANEXPENSESTOTAL}):new String(" ")]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField-24" x="383" y="87" width="49" height="16"/>
+				<reportElement key="textField-24" x="383" y="87" width="49" height="16" uuid="f3951fe2-4d75-4afb-8fca-b18606f3fcc0"/>
 				<box rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1222,12 +1223,12 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Bitstream Vera Sans" size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($V{PLANREINVOINCINGTOTAL}.intValue()==0)?
+				<textFieldExpression><![CDATA[($V{PLANREINVOINCINGTOTAL}.intValue()==0)?
    $P{NUMBERFORMAT}.format(new BigDecimal("0.00")):
    $P{NUMBERFORMAT}.format($V{PLANSERNETREINVOINCINGTOTAL}.divide($V{PLANREINVOINCINGTOTAL},200,$V{PLANSERNETREINVOINCINGTOTAL}.ROUND_HALF_UP).multiply(new BigDecimal(100.0)))]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField-25" x="441" y="87" width="42" height="16"/>
+				<reportElement key="textField-25" x="441" y="87" width="42" height="16" uuid="b965ad1f-e042-42ca-82a4-a1aca3550515"/>
 				<box rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#555555"/>
@@ -1237,18 +1238,18 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Bitstream Vera Sans" size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($V{PLANCROSSMARGINNETTOAL}!=null)?
+				<textFieldExpression><![CDATA[($V{PLANCROSSMARGINNETTOAL}!=null)?
 	$P{NUMBERFORMAT}.format($V{PLANCROSSMARGINNETTOAL}):
 	new String(" ")]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement key="line-108" x="452" y="70" width="1" height="14"/>
+				<reportElement key="line-108" x="452" y="70" width="1" height="14" uuid="5849977e-b72d-410f-84d8-d0e6ae62ab76"/>
 			</line>
 			<line>
-				<reportElement key="line-109" x="262" y="70" width="1" height="14"/>
+				<reportElement key="line-109" x="262" y="70" width="1" height="14" uuid="1d48d3e2-126d-434f-897a-392a45d9b1e9"/>
 			</line>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField-26" x="483" y="87" width="38" height="16"/>
+				<reportElement key="textField-26" x="483" y="87" width="38" height="16" uuid="6cc03b8a-114d-4775-bc75-05de8d9c3636"/>
 				<box rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1258,12 +1259,12 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Bitstream Vera Sans" size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($V{PLANTOTALREVENUETOTAL}.intValue()==0)?
+				<textFieldExpression><![CDATA[($V{PLANTOTALREVENUETOTAL}.intValue()==0)?
   $P{NUMBERFORMAT}.format(new BigDecimal("0.00")):
   $P{NUMBERFORMAT}.format($V{PLANCROSSMARGINNETTOAL}.divide($V{PLANTOTALREVENUETOTAL},200,$V{PLANCROSSMARGINNETTOAL}.ROUND_HALF_UP).multiply(new BigDecimal(100.0)))]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField-27" style="Total_Field" x="66" y="103" width="50" height="16"/>
+				<reportElement key="textField-27" style="Total_Field" x="66" y="103" width="50" height="16" uuid="c2977c41-dc94-437b-b0ea-05d108b4373d"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1274,10 +1275,10 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Bitstream Vera Sans" size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($V{REALREVENUETOTAL}!=null)?$P{NUMBERFORMAT}.format($V{REALREVENUETOTAL}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($V{REALREVENUETOTAL}!=null)?$P{NUMBERFORMAT}.format($V{REALREVENUETOTAL}):new String(" ")]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField-28" style="Total_Field" x="116" y="103" width="50" height="16"/>
+				<reportElement key="textField-28" style="Total_Field" x="116" y="103" width="50" height="16" uuid="c50efd7e-f809-48f9-bca3-fa838710d693"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1288,10 +1289,10 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Bitstream Vera Sans" size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($V{REALSERVICESTOTAL}!=null)?$P{NUMBERFORMAT}.format($V{REALSERVICESTOTAL}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($V{REALSERVICESTOTAL}!=null)?$P{NUMBERFORMAT}.format($V{REALSERVICESTOTAL}):new String(" ")]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField-29" style="Total_Field" x="216" y="103" width="50" height="16"/>
+				<reportElement key="textField-29" style="Total_Field" x="216" y="103" width="50" height="16" uuid="fd4823f1-2b6d-4296-90e8-53a7321639c7"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1302,12 +1303,12 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Bitstream Vera Sans" size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($V{REALREVENUETOTAL}.intValue()==0)?
+				<textFieldExpression><![CDATA[($V{REALREVENUETOTAL}.intValue()==0)?
   $P{NUMBERFORMAT}.format(new BigDecimal("0.00")):
   $P{NUMBERFORMAT}.format($V{REALSERNETMARGINTOTAL}.divide($V{REALREVENUETOTAL},200,$V{REALSERNETMARGINTOTAL}.ROUND_HALF_UP).multiply(new BigDecimal(100.0)))]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField-30" style="Total_Field" x="274" y="103" width="59" height="16"/>
+				<reportElement key="textField-30" style="Total_Field" x="274" y="103" width="59" height="16" uuid="3ed0bfbe-f860-4148-af78-b7c705a479d4"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1318,10 +1319,10 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Bitstream Vera Sans" size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($V{REALREINVOINCINGTOTAL}!=null)?$P{NUMBERFORMAT}.format($V{REALREINVOINCINGTOTAL}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($V{REALREINVOINCINGTOTAL}!=null)?$P{NUMBERFORMAT}.format($V{REALREINVOINCINGTOTAL}):new String(" ")]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField-31" style="Total_Field" x="333" y="103" width="49" height="16"/>
+				<reportElement key="textField-31" style="Total_Field" x="333" y="103" width="49" height="16" uuid="a930b918-c697-457c-9069-d49048fe0272"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1332,10 +1333,10 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Bitstream Vera Sans" size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($V{REALEXPENSESTOTAL}!=null)?$P{NUMBERFORMAT}.format($V{REALEXPENSESTOTAL}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($V{REALEXPENSESTOTAL}!=null)?$P{NUMBERFORMAT}.format($V{REALEXPENSESTOTAL}):new String(" ")]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField-32" style="Total_Field" x="383" y="103" width="49" height="16"/>
+				<reportElement key="textField-32" style="Total_Field" x="383" y="103" width="49" height="16" uuid="372b70e5-e9df-457a-8b9c-0e6bd1cdcb38"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1346,12 +1347,12 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Bitstream Vera Sans" size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($V{REALREINVOINCINGTOTAL}.intValue()==0)?
+				<textFieldExpression><![CDATA[($V{REALREINVOINCINGTOTAL}.intValue()==0)?
    $P{NUMBERFORMAT}.format(new BigDecimal("0.00")):
    $P{NUMBERFORMAT}.format($V{REALSERNETREINVOINCINGTOTAL}.divide($V{REALREINVOINCINGTOTAL},200,$V{REALSERNETREINVOINCINGTOTAL}.ROUND_HALF_UP).multiply(new BigDecimal(100.0)))]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField-33" style="Total_Field" x="441" y="103" width="42" height="16"/>
+				<reportElement key="textField-33" style="Total_Field" x="441" y="103" width="42" height="16" uuid="8cfe96e1-e99b-4cb1-ab4d-6867356db0c6"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1362,10 +1363,10 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Bitstream Vera Sans" size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($V{REALGROSSMARGINNETTOTAL}!=null)?$P{NUMBERFORMAT}.format($V{REALGROSSMARGINNETTOTAL}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($V{REALGROSSMARGINNETTOTAL}!=null)?$P{NUMBERFORMAT}.format($V{REALGROSSMARGINNETTOTAL}):new String(" ")]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField-34" style="Total_Field" x="483" y="103" width="38" height="16"/>
+				<reportElement key="textField-34" style="Total_Field" x="483" y="103" width="38" height="16" uuid="8cf6e323-3445-4262-8aa0-0e32bd97ef87"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1376,12 +1377,12 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Bitstream Vera Sans" size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($V{REALTOTALREVENUETOTAL}.intValue()==0)?
+				<textFieldExpression><![CDATA[($V{REALTOTALREVENUETOTAL}.intValue()==0)?
   	$P{NUMBERFORMAT}.format(new BigDecimal(0.0)):
 	$P{NUMBERFORMAT}.format($V{REALGROSSMARGINNETTOTAL}.divide($V{REALTOTALREVENUETOTAL},200,$V{REALGROSSMARGINNETTOTAL}.ROUND_HALF_UP).multiply(new BigDecimal(100.0)))]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField-35" x="66" y="119" width="50" height="16"/>
+				<reportElement key="textField-35" x="66" y="119" width="50" height="16" uuid="9f8ff730-d7aa-4af0-b121-a9d8afe8ce42"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1391,10 +1392,10 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Bitstream Vera Sans" size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($V{COLLECTEDTOTAL}!=null)?$P{NUMBERFORMAT}.format($V{COLLECTEDTOTAL}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($V{COLLECTEDTOTAL}!=null)?$P{NUMBERFORMAT}.format($V{COLLECTEDTOTAL}):new String(" ")]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement key="staticText-42" style="Detail_Header" x="10" y="119" width="56" height="16"/>
+				<reportElement key="staticText-42" style="Detail_Header" x="10" y="119" width="56" height="16" uuid="d16607cb-0d29-476f-a601-67879f430fc0"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1408,7 +1409,7 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$
 				<text><![CDATA[Collected]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-43" style="Detail_Header" x="10" y="103" width="56" height="16"/>
+				<reportElement key="staticText-43" style="Detail_Header" x="10" y="103" width="56" height="16" uuid="edd7d236-8cbc-427f-8d61-3f91fabfdb06"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1422,7 +1423,7 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$
 				<text><![CDATA[Real]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-44" style="Detail_Header" x="10" y="87" width="56" height="16"/>
+				<reportElement key="staticText-44" style="Detail_Header" x="10" y="87" width="56" height="16" uuid="0a5ea788-4df7-4f57-b6ab-315b5634a614"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1436,7 +1437,7 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$
 				<text><![CDATA[Planned]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-45" style="Detail_Header" x="66" y="70" width="50" height="16"/>
+				<reportElement key="staticText-45" style="Detail_Header" x="66" y="70" width="50" height="16" uuid="91ad3c29-f209-4757-bac8-6e1a4c19d847"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1450,7 +1451,7 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$
 				<text><![CDATA[Revenue]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-46" style="Detail_Header" x="66" y="54" width="200" height="16"/>
+				<reportElement key="staticText-46" style="Detail_Header" x="66" y="54" width="200" height="16" uuid="425e3ae2-2c29-47bd-8f74-f00193609034"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1464,7 +1465,7 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$
 				<text><![CDATA[Services]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-47" style="Detail_Header" x="116" y="70" width="50" height="16"/>
+				<reportElement key="staticText-47" style="Detail_Header" x="116" y="70" width="50" height="16" uuid="52305386-c503-4ff0-89ac-4e2df8b27bf3"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1478,7 +1479,7 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$
 				<text><![CDATA[Cost]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-48" style="Detail_Header" x="216" y="70" width="50" height="16"/>
+				<reportElement key="staticText-48" style="Detail_Header" x="216" y="70" width="50" height="16" uuid="342b8caa-7695-4e18-a061-fa1926cb3e04"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1492,7 +1493,7 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$
 				<text><![CDATA[Margin %]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-49" style="Detail_Header" x="274" y="70" width="59" height="16"/>
+				<reportElement key="staticText-49" style="Detail_Header" x="274" y="70" width="59" height="16" uuid="bfac438e-37da-46a3-8466-7b862e4d97b2"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1506,7 +1507,7 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$
 				<text><![CDATA[Reinvoicing]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-50" style="Detail_Header" x="274" y="54" width="157" height="16"/>
+				<reportElement key="staticText-50" style="Detail_Header" x="274" y="54" width="157" height="16" uuid="a15d0724-372a-4ddb-b974-34d13f8e5f33"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1520,7 +1521,7 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$
 				<text><![CDATA[Expenses]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-51" style="Detail_Header" x="333" y="70" width="48" height="16"/>
+				<reportElement key="staticText-51" style="Detail_Header" x="333" y="70" width="48" height="16" uuid="127ac6a4-5dc2-48ce-b576-adbe84d3baf0"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1534,7 +1535,7 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$
 				<text><![CDATA[Expenses]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-52" style="Detail_Header" x="382" y="70" width="49" height="16"/>
+				<reportElement key="staticText-52" style="Detail_Header" x="382" y="70" width="49" height="16" uuid="37d3511c-9b35-4bc4-ae2c-bf50d111fc1c"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1548,7 +1549,7 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$
 				<text><![CDATA[Margin %]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-53" style="Detail_Header" x="441" y="70" width="82" height="16"/>
+				<reportElement key="staticText-53" style="Detail_Header" x="441" y="70" width="82" height="16" uuid="d850f028-e1be-41b8-9f3a-d8e615e6da7f"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1562,7 +1563,7 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$
 				<text><![CDATA[Gross margin]]></text>
 			</staticText>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField-42" x="166" y="87" width="50" height="16"/>
+				<reportElement key="textField-42" x="166" y="87" width="50" height="16" uuid="1ff588c2-b8d2-4162-8631-e1f88e50f295"/>
 				<box rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1572,10 +1573,10 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Bitstream Vera Sans" size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($V{PLANOUTSOURCEDTOTAL}!=null)?$P{NUMBERFORMAT}.format($V{PLANOUTSOURCEDTOTAL}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($V{PLANOUTSOURCEDTOTAL}!=null)?$P{NUMBERFORMAT}.format($V{PLANOUTSOURCEDTOTAL}):new String(" ")]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField-43" style="Total_Field" x="166" y="103" width="50" height="16"/>
+				<reportElement key="textField-43" style="Total_Field" x="166" y="103" width="50" height="16" uuid="0c63631d-a777-4b44-b6ec-d682badb37f2"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1586,10 +1587,10 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Bitstream Vera Sans" size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($V{REALOUTSOURCEDTOTAL}!=null)?$P{NUMBERFORMAT}.format($V{REALOUTSOURCEDTOTAL}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($V{REALOUTSOURCEDTOTAL}!=null)?$P{NUMBERFORMAT}.format($V{REALOUTSOURCEDTOTAL}):new String(" ")]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement key="staticText-58" style="Detail_Header" x="166" y="70" width="50" height="16"/>
+				<reportElement key="staticText-58" style="Detail_Header" x="166" y="70" width="50" height="16" uuid="53367ec0-1280-492d-a572-e29c9bc5edaa"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
