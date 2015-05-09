@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.openbravo.base.HttpSessionWrapper;
 import org.openbravo.base.VariablesBase;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -78,6 +79,7 @@ public class VariablesSecureApp extends VariablesBase {
     this.jsDateFormat = "";
     this.sqlDateFormat = "";
     this.accessLevel = "";
+    this.setSession(new HttpSessionWrapper());
   }
 
   /**
@@ -137,6 +139,7 @@ public class VariablesSecureApp extends VariablesBase {
     this.jsDateFormat = "";
     this.sqlDateFormat = "";
     this.accessLevel = "";
+    this.setSession(new HttpSessionWrapper());
   }
 
   /**

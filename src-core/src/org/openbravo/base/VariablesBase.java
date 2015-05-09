@@ -103,6 +103,11 @@ public class VariablesBase {
     this.httpRequest = request;
   }
 
+  protected void setSession(HttpSession session) {
+    this.session = session;
+    this.isMultipart = false;
+  }
+
   /**
    * Utility function which checks a list of input values against the provided request filter. It
    * does return normally when all input are accepted, otherwise it throws an exception. If the

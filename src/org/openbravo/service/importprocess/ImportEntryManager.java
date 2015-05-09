@@ -380,6 +380,9 @@ public class ImportEntryManager {
 
             // do a try catch block here
             try {
+              // will be processing, so ignore any subsequent notifications
+              wasNotifiedInParallel = false;
+
               final List<ImportEntry> entries = entriesQry.list();
               dataPresent = !entries.isEmpty();
               log.debug("Found " + entries.size() + " import entries");

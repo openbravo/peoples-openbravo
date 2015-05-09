@@ -95,6 +95,15 @@ public class ImportEntryArchiveManager {
     @Override
     public void run() {
 
+      // don't start right away at startup, give the system time to
+      // really start
+      log.debug("Started, first sleep " + ARCHIVE_INTERVAL);
+      try {
+        Thread.sleep(ARCHIVE_INTERVAL);
+      } catch (Exception ignored) {
+      }
+      log.debug("Run loop started");
+
       // make ourselves an admin
       OBContext.setOBContext("0", "0", "0", "0");
       Date lastStored = null;
