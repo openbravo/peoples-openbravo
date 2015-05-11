@@ -47,6 +47,7 @@ public class CostingTransactionsHQLTransformer extends HqlQueryTransformer {
   public static final String propADListReference = org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE;
   public static final String propADListValue = org.openbravo.model.ad.domain.List.PROPERTY_SEARCHKEY;
   public static final String MovementTypeRefID = "189";
+  private static final String ORDERBY = " ORDER BY ";
   private static Set<String> orgs = null;
   HashMap<CostDimension, BaseOBObject> costDimensions = null;
 
@@ -365,7 +366,6 @@ public class CostingTransactionsHQLTransformer extends HqlQueryTransformer {
   }
 
   private StringBuffer addCumCost(StringBuffer cumQty, Costing costing, Costing prevCosting) {
-
     StringBuffer cumCost = new StringBuffer();
     cumCost.append(" case when trxcosting.id = trx.id ");
     cumCost.append("   then (");
@@ -387,7 +387,7 @@ public class CostingTransactionsHQLTransformer extends HqlQueryTransformer {
 
   protected String appendOrderByClause(String _hqlQuery, boolean justCount) {
     String hqlQuery = _hqlQuery;
-    if (!justCount) {
+    if (!justCount && hqlQuery.toUpperCase().contains(ORDERBY)) {
       StringBuffer orderByClause = new StringBuffer();
       orderByClause.append(" ORDER BY trx.movementDate, trx.transactionProcessDate");
       hqlQuery = hqlQuery.replace(hqlQuery.substring(hqlQuery.indexOf(" ORDER BY")),
