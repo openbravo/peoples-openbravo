@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2015 Openbravo SLU
+ * All portions are Copyright (C) 2008-2012 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -136,8 +136,6 @@ public class ImportModule {
   private boolean upgradePrecheckFail;
 
   private final static String V3_TEMPLATE_ID = "0138E7A89B5E4DC3932462252801FFBC";
-  private final static String PATH_CONNECTIONPOOL_PROPERTIES = "/WebContent/WEB-INF/connectionPool.properties";
-  private final static String PATH_OPENBRAVO_PROPERTIES = "/config/Openbravo.properties";
 
   /**
    * Initializes a new ImportModule object, it reads from obdir directory the database model to be
@@ -767,12 +765,8 @@ public class ImportModule {
       }
 
       if (module.getModuleID().equals("0")) {
-        Utility.mergeOpenbravoProperties(obDir + PATH_OPENBRAVO_PROPERTIES, obDir
-            + PATH_OPENBRAVO_PROPERTIES + ".template");
-        // necessary for merge connectionPool.properties in Inclusion apache jdbc connection pool
-        // into distribution project
-        Utility.mergeOpenbravoPropertiesConnectionPool(obDir + PATH_OPENBRAVO_PROPERTIES, obDir
-            + PATH_CONNECTIONPOOL_PROPERTIES);
+        Utility.mergeOpenbravoProperties(obDir + "/config/Openbravo.properties", obDir
+            + "/config/Openbravo.properties.template");
       }
       return true;
     } catch (final Exception e) {

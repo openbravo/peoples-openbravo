@@ -73,7 +73,6 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBConfigFileProvider;
 import org.openbravo.base.secureApp.OrgTree;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.configuration.ConfigurationApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
@@ -1931,62 +1930,6 @@ public class Utility {
     } catch (Exception e1) {
       log4j.error("Exception reading/writing file: ", e1);
     }
-  }
-
-  /**
-   * When updating core and it is include Apache JDBC Connection Pool into distribution in some
-   * cases is necessary to update Openbravo.properties taking into account
-   * connectionPool.properties.
-   *
-   * This connectionPool.properties file exists in instances with Apache JDBC Connection Pool
-   * module.
-   *
-   * @return false in case no changes were needed, true in case the merge includes some changes
-   */
-  public static boolean mergeOpenbravoPropertiesConnectionPool(String OpenbravoPropertiesPath,
-      String connectionPoolPath) {
-    Properties openbravoProperties = new Properties();
-    Properties connectionPoolProperties = new Properties();
-    try {
-      // load both files
-      openbravoProperties.load(new FileInputStream(OpenbravoPropertiesPath));
-      connectionPoolProperties.load(new FileInputStream(connectionPoolPath));
-
-      Enumeration<?> propertiesConnectionPool = connectionPoolProperties.propertyNames();
-      while (propertiesConnectionPool.hasMoreElements()) {
-        String propName = (String) propertiesConnectionPool.nextElement();
-        String origValue = openbravoProperties.getProperty(propName);
-        String connectionPoolValue = connectionPoolProperties.getProperty(propName);
-
-        // try to get original value for new property, if it does not exist add it to original
-        // properties with its default value
-        if (origValue == null) {
-          addNewProperty(OpenbravoPropertiesPath, propName, connectionPoolValue, false);
-          openbravoProperties.setProperty(propName, connectionPoolValue);
-        } else {
-          // replace value in Openbravo.properties by value in connectionPool.properties
-          try {
-            File fileW = new File(OpenbravoPropertiesPath);
-            if (!ConfigurationApp.searchProperty(fileW, propName).equals(connectionPoolValue)) {
-              ConfigurationApp.replaceProperty(fileW, OpenbravoPropertiesPath + "_aux", propName,
-                  "=" + connectionPoolValue);
-              try {
-                fileW.delete();
-                File fileAux = new File(OpenbravoPropertiesPath + "_aux");
-                fileAux.renameTo(new File(OpenbravoPropertiesPath));
-              } catch (Exception ex) {
-                log4j.error("Error renaming/deleting Openbravo.properties", ex);
-              }
-            }
-          } catch (Exception e) {
-            log4j.error("Error read/write Openbravo.properties", e);
-          }
-        }
-      }
-    } catch (IOException notFoundConnectionPoolProperties) {
-      return false;
-    }
-    return true;
   }
 
   /**
