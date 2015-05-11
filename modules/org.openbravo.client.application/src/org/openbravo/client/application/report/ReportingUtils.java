@@ -520,7 +520,16 @@ public class ReportingUtils {
     }
     htmlExporter.setExporterInput(exporterInput);
     htmlExporter.setExporterOutput(exporterOutput);
-    htmlExporter.exportReport();
+    try {
+      htmlExporter.exportReport();
+    } catch (Exception e) {
+      // Handle the exception to ignore the error thrown when the user closes the browser before
+      // getting the whole HTML report
+      Throwable t = e.getCause();
+      if (t != null && !(t.toString().contains("ClientAbortException"))) {
+        throw new JRException(e.getMessage(), e);
+      }
+    }
   }
 
   /**
