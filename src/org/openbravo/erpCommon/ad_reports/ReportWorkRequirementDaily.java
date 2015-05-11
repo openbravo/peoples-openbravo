@@ -31,6 +31,7 @@ import net.sf.jasperreports.engine.JasperReport;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.client.application.report.ReportingUtils;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
@@ -94,7 +95,7 @@ public class ReportWorkRequirementDaily extends HttpSecureAppServlet {
     String strBaseDesign = getBaseDesignPath(strLanguage);
     JasperReport jasperReportProducts;
     try {
-      jasperReportProducts = Utility.getTranslatedJasperReport(this, strBaseDesign
+      jasperReportProducts = ReportingUtils.getTranslatedJasperReport(this, strBaseDesign
           + "/org/openbravo/erpCommon/ad_reports/SubreportWorkRequirementDaily.jrxml",
           vars.getLanguage(), strBaseDesign);
     } catch (JRException e) {
@@ -104,7 +105,7 @@ public class ReportWorkRequirementDaily extends HttpSecureAppServlet {
 
     JasperReport jasperReportProducts2;
     try {
-      jasperReportProducts2 = Utility.getTranslatedJasperReport(this, strBaseDesign
+      jasperReportProducts2 = ReportingUtils.getTranslatedJasperReport(this, strBaseDesign
           + "/org/openbravo/erpCommon/ad_reports/SubreportWorkRequirementDaily2.jrxml",
           vars.getLanguage(), strBaseDesign);
     } catch (JRException e) {

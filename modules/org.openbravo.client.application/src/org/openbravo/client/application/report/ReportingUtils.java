@@ -76,9 +76,9 @@ import org.openbravo.erpCommon.utility.JRFieldProviderDataSource;
 import org.openbravo.erpCommon.utility.JRFormatFactory;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.ReportDesignBO;
-import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.utility.FileType;
 import org.openbravo.service.db.DalConnectionProvider;
+import org.openbravo.uiTranslation.TranslationHandler;
 import org.openbravo.utils.Replace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -849,7 +849,7 @@ public class ReportingUtils {
 
       if (jasperFilePath.endsWith("jrxml")) {
         String strBaseDesign = DalContextListener.getServletContext().getRealPath("");
-        JasperReport jReport = Utility.getTranslatedJasperReport(new DalConnectionProvider(false),
+        JasperReport jReport = getTranslatedJasperReport(new DalConnectionProvider(false),
             jasperFilePath, language, strBaseDesign);
         if (connectionProvider != null) {
           if (compileSubreports) {
@@ -966,13 +966,56 @@ public class ReportingUtils {
       String baseDesignPath, ConnectionProvider connectionProvider, String language) {
     JasperReport jasperReportLines = null;
     try {
-      jasperReportLines = Utility.getTranslatedJasperReport(connectionProvider, templateLocation
+      jasperReportLines = getTranslatedJasperReport(connectionProvider, templateLocation
           + subReportFileName, language, baseDesignPath);
     } catch (final JRException e1) {
       log.error(e1.getMessage());
       e1.printStackTrace();
     }
     return jasperReportLines;
+  }
+
+  /**
+   * Generates a compiled and translated report.
+   * 
+   * @param conn
+   *          The connection provider used to get the translations.
+   * @param reportName
+   *          The path to the JR template of the report.
+   * @param language
+   *          Language to be used when generating the report.
+   * @param baseDesignPath
+   *          Base design path.
+   * @return A JasperReport object with the compiled and translated report.
+   * @throws JRException
+   *           In case there is any error generating the translated report an exception is thrown
+   *           with the error message.
+   */
+  public static JasperReport getTranslatedJasperReport(ConnectionProvider conn, String reportName,
+      String language, String baseDesignPath) throws JRException {
+
+    log.debug("translate report: " + reportName + " for language: " + language);
+
+    File reportFile = new File(reportName);
+
+    InputStream reportInputStream = null;
+    if (reportFile.exists()) {
+      TranslationHandler handler = new TranslationHandler(conn);
+      handler.prepareFile(reportName, language, reportFile, baseDesignPath);
+      reportInputStream = handler.getInputStream();
+    }
+    JasperDesign jasperDesign;
+    if (reportInputStream != null) {
+      log.debug("Jasper report being created with inputStream.");
+      jasperDesign = JRXmlLoader.load(reportInputStream);
+    } else {
+      log.debug("Jasper report being created with strReportName.");
+      jasperDesign = JRXmlLoader.load(reportName);
+    }
+
+    JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
+
+    return jasperReport;
   }
 
   /**

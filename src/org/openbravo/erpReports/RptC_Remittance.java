@@ -31,6 +31,7 @@ import net.sf.jasperreports.engine.JasperReport;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.client.application.report.ReportingUtils;
 import org.openbravo.erpCommon.utility.Utility;
 
 public class RptC_Remittance extends HttpSecureAppServlet {
@@ -75,7 +76,7 @@ public class RptC_Remittance extends HttpSecureAppServlet {
 
     JasperReport jasperReportLines;
     try {
-      jasperReportLines = Utility.getTranslatedJasperReport(this, strBaseDesign
+      jasperReportLines = ReportingUtils.getTranslatedJasperReport(this, strBaseDesign
           + "/org/openbravo/erpReports/RptC_Remittance_Lines.jrxml", vars.getLanguage(),
           strBaseDesign);
     } catch (JRException e) {
