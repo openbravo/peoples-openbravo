@@ -412,10 +412,11 @@ public abstract class ImportEntryProcessor {
 
         // initialize
         obContext.getEntityAccessChecker().initialize();
-        setVariablesSecureApp(obContext);
-        // and start with a new clean session
-        OBDal.getInstance().getSession().clear();
       }
+      setVariablesSecureApp(obContext);
+
+      // and start with a new clean session
+      OBDal.getInstance().getSession().clear();
     }
 
     protected void setVariablesSecureApp(OBContext obContext) {
