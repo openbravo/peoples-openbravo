@@ -26,8 +26,8 @@ trx.movementDate,
 trx.transactionProcessDate as trxProcessDate,
 c.id as costingId,
 trx.movementQuantity, 
-case when trx.movementQuantity > 0 then (trx.transactionCost / trx.movementQuantity) else null end as price,
-case when trx.movementQuantity > 0 then trx.transactionCost else null end as transactionCost,
+case when trx.movementQuantity > 0 then (trx.transactionCost / trx.movementQuantity) else ((trx.transactionCost / trx.movementQuantity)*(-1)) end as price,
+case when trx.movementQuantity > 0 then trx.transactionCost else ((trx.transactionCost)*(-1)) end as transactionCost,
 @cumQty@ as cumQty,
 case when trxcosting.id = trx.id
          then c.cost 
