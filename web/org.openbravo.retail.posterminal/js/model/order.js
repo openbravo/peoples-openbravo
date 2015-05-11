@@ -1350,6 +1350,42 @@
           OB.Dal.saveHgvol(businessPartner, function () {}, function () {
             OB.error(arguments);
           }, true);
+          if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.discount.bp', true)) {
+            var oldbpfilter = {
+              columns: ['businessPartner'],
+              operator: 'equals',
+              value: oldbp.id
+            };
+            var oldHgVolCriteria = [oldbpfilter];
+            var criteria = {};
+            criteria.hgVolFilters = oldHgVolCriteria;
+            OB.Dal.find(OB.Model.DiscountFilterBusinessPartner, criteria, function (discountsBP) {
+              _.each(discountsBP.models, function (dsc) {
+                OB.Dal.removeHgvol(dsc, function () {}, function () {
+                  OB.error(arguments);
+                }, true);
+              });
+            }, function () {
+              OB.error(arguments);
+            });
+            var bp = {
+              columns: ['businessPartner'],
+              operator: 'equals',
+              value: businessPartner.id
+            };
+            var hgVolCriteria = [bp];
+            var criteriaFilter = {};
+            criteriaFilter.hgVolFilters = hgVolCriteria;
+            OB.Dal.find(OB.Model.DiscountFilterBusinessPartner, criteriaFilter, function (discountsBP) {
+              _.each(discountsBP.models, function (dsc) {
+                OB.Dal.saveHgvol(dsc, function () {}, function () {
+                  OB.error(arguments);
+                }, true);
+              });
+            }, function () {
+              OB.error(arguments);
+            });
+          }
 
           OB.Dal.get(OB.Model.BPLocation, businessPartner.get('locId'), function (location) {
 
@@ -2460,12 +2496,34 @@
     },
     addNewOrder: function () {
       var me = this;
-      OB.Dal.saveHgvol(OB.MobileApp.model.get('businessPartner'), function () {}, function () {
-        OB.error(arguments);
-      }, true);
-      OB.Dal.saveHgvol(OB.MobileApp.model.get('businessPartner').get('locationModel'), function () {}, function () {
-        OB.error(arguments);
-      }, true);
+      if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.customer', true)) {
+        OB.Dal.saveHgvol(OB.MobileApp.model.get('businessPartner'), function () {}, function () {
+          OB.error(arguments);
+        }, true);
+        OB.Dal.saveHgvol(OB.MobileApp.model.get('businessPartner').get('locationModel'), function () {}, function () {
+          OB.error(arguments);
+        }, true);
+        if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.discount.bp', true)) {
+          var bp = {
+            columns: ['businessPartner'],
+            operator: 'equals',
+            value: OB.MobileApp.model.get('businessPartner').id
+          };
+          var hgVolCriteria = [bp];
+          var criteria = {};
+          criteria.hgVolFilters = hgVolCriteria;
+          OB.Dal.find(OB.Model.DiscountFilterBusinessPartner, criteria, function (discountsBP) {
+            _.each(discountsBP.models, function (dsc) {
+              OB.Dal.saveHgvol(dsc, function () {}, function () {
+                OB.error(arguments);
+              }, true);
+            });
+          }, function () {
+            OB.error(arguments);
+          });
+        }
+      }
+
       this.saveCurrent();
       this.current = this.newOrder();
       this.add(this.current);
@@ -2555,8 +2613,44 @@
           OB.Dal.saveHgvol(OB.MobileApp.model.get('businessPartner').get('locationModel'), function () {}, function () {
             OB.error(arguments);
           }, true);
-        }
+          if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.discount.bp', true)) {
 
+            var oldbpfilter = {
+              columns: ['businessPartner'],
+              operator: 'equals',
+              value: this.current.get('bp').id
+            };
+            var oldHgVolCriteria = [oldbpfilter];
+            var criteria = {};
+            criteria.hgVolFilters = oldHgVolCriteria;
+            OB.Dal.find(OB.Model.DiscountFilterBusinessPartner, criteria, function (discountsBP) {
+              _.each(discountsBP.models, function (dsc) {
+                OB.Dal.removeHgvol(dsc, function () {}, function () {
+                  OB.error(arguments);
+                }, true);
+              });
+            }, function () {
+              OB.error(arguments);
+            });
+            var bp = {
+              columns: ['businessPartner'],
+              operator: 'equals',
+              value: OB.MobileApp.model.get('businessPartner').id
+            };
+            var hgVolCriteria = [bp];
+            var criteriaFilter = {};
+            criteriaFilter.hgVolFilters = hgVolCriteria;
+            OB.Dal.find(OB.Model.DiscountFilterBusinessPartner, criteriaFilter, function (discountsBP) {
+              _.each(discountsBP.models, function (dsc) {
+                OB.Dal.saveHgvol(dsc, function () {}, function () {
+                  OB.error(arguments);
+                }, true);
+              });
+            }, function () {
+              OB.error(arguments);
+            });
+          }
+        }
       }
       this.current = this.at(this.length - 1);
       this.loadCurrent(createNew);
