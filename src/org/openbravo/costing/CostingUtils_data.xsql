@@ -20,15 +20,43 @@
 
 <SqlClass name="CostingUtilsData" package="org.openbravo.costing">
   <SqlClassComment></SqlClassComment>
-    <SqlMethod name="select" type="preparedStatement" return="multiple">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
+   <SqlMethod name="selectTransactionsInClosedPeriod" type="preparedStatement" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
       <![CDATA[
-      SELECT '' as period, '' as minDateMovement
-      FROM DUAL
+        SELECT min(T.DATEMOVEMENT) AS minDateMovement, '' as period
+        FROM (
+            SELECT trunc(TRX.MOVEMENTDATE) AS DATEMOVEMENT
+            FROM M_TRANSACTION TRX
+            INNER JOIN M_PRODUCT P
+            ON TRX.M_PRODUCT_ID = P.M_PRODUCT_ID            
+            WHERE TRX.ISCOSTCALCULATED = 'N'
+            AND P.PRODUCTTYPE = 'I'
+            AND P.ISSTOCKED = 'Y'
+            AND P.AD_ORG_ID IN ('1')
+            AND TRX.MOVEMENTDATE >= ?
+            AND TRX.AD_ORG_ID IN ('1')
+            GROUP BY trunc(TRX.MOVEMENTDATE)
+        ) T
+        WHERE EXISTS (
+            SELECT 1
+            FROM C_PERIODCONTROL PC
+            INNER JOIN C_PERIOD PE
+            ON PC.C_PERIOD_ID = PE.C_PERIOD_ID
+            WHERE PC.PERIODSTATUS <> 'O'
+            AND PE.AD_CLIENT_ID = ?
+            AND PC.AD_ORG_ID = ?
+            AND T.DATEMOVEMENT >= PE.STARTDATE
+            AND T.DATEMOVEMENT < PE.ENDDATE + 1
+        )
       ]]>
-    </Sql>
-  </SqlMethod>
+      </Sql>
+      <Parameter name="Porgs" optional="true" type="replace" after="AND P.AD_ORG_ID IN (" text="'1'"/>      
+      <Parameter name="StartingDate"/>      
+      <Parameter name="ChildOrgs" optional="true" type="replace" after="AND TRX.AD_ORG_ID IN (" text="'1'"/>      
+      <Parameter name="Client"/>
+      <Parameter name="Org"/>
+   </SqlMethod>
     <SqlMethod name="periodClosed" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
@@ -72,41 +100,4 @@
       <Parameter name="AD_Client_ID"/>
       <Parameter name="DocumentType"/>
    </SqlMethod>  
-   <SqlMethod name="selectTransactionsInClosedPeriod" type="preparedStatement" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql>
-      <![CDATA[
-        SELECT min(T.DATEMOVEMENT) AS minDateMovement
-        FROM (
-            SELECT trunc(TRX.MOVEMENTDATE) AS DATEMOVEMENT
-            FROM M_TRANSACTION TRX
-            INNER JOIN M_PRODUCT P
-            ON TRX.M_PRODUCT_ID = P.M_PRODUCT_ID            
-            WHERE TRX.ISCOSTCALCULATED = 'N'
-            AND P.PRODUCTTYPE = 'I'
-            AND P.ISSTOCKED = 'Y'
-            AND P.AD_ORG_ID IN ('1')
-            AND TRX.MOVEMENTDATE >= ?
-            AND TRX.AD_ORG_ID IN ('1')
-            GROUP BY trunc(TRX.MOVEMENTDATE)
-        ) T
-        WHERE EXISTS (
-            SELECT 1
-            FROM C_PERIODCONTROL PC
-            INNER JOIN C_PERIOD PE
-            ON PC.C_PERIOD_ID = PE.C_PERIOD_ID
-            WHERE PC.PERIODSTATUS <> 'O'
-            AND PE.AD_CLIENT_ID = ?
-            AND PC.AD_ORG_ID = ?
-            AND T.DATEMOVEMENT >= PE.STARTDATE
-            AND T.DATEMOVEMENT < PE.ENDDATE + 1
-        )
-      ]]>
-      </Sql>
-      <Parameter name="Porgs" optional="true" type="replace" after="AND P.AD_ORG_ID IN (" text="'1'"/>      
-      <Parameter name="StartingDate"/>      
-      <Parameter name="ChildOrgs" optional="true" type="replace" after="AND TRX.AD_ORG_ID IN (" text="'1'"/>      
-      <Parameter name="Client"/>
-      <Parameter name="Org"/>
-   </SqlMethod>
   </SqlClass>

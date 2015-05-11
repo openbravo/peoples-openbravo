@@ -116,8 +116,8 @@ public class CostingRuleProcessOnProcessHandler extends BaseActionHandler {
       String strDateFrom = dateFormat.format(CostingUtils.getCostingRuleStartingDate(rule));
 
       data = CostingUtilsData.selectTransactionsInClosedPeriod(new DalConnectionProvider(false),
-          getOrgSetString(naturalOrgs), strDateFrom, getOrgSetString(childOrgs), rule.getClient()
-              .getId(), rule.getOrganization().getId());
+          Utility.getInStrSet(naturalOrgs), strDateFrom, Utility.getInStrSet(childOrgs), rule
+              .getClient().getId(), rule.getOrganization().getId());
 
       if (data != null && data.length > 0) {
         movementDateInPeriodClosed = OBDateUtils.getDate(data[0].mindatemovement);
@@ -160,21 +160,6 @@ public class CostingRuleProcessOnProcessHandler extends BaseActionHandler {
     pQry.setNamedParameter("porgs", naturalOrgs);
     pQry.setNamedParameter("childOrgs", childOrgs);
     return pQry.count() > 0;
-  }
-
-  private String getOrgSetString(Set<String> orgs) {
-    boolean bolFirstLine = true;
-    String strText = "";
-    for (String org : orgs) {
-      String strOrg = "'" + org + "'";
-      if (bolFirstLine) {
-        bolFirstLine = false;
-        strText = strOrg;
-      } else {
-        strText = strText + "," + strOrg;
-      }
-    }
-    return strText;
   }
 
 }
