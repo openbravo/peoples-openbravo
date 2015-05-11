@@ -49,6 +49,7 @@ import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.service.importprocess.ImportEntryManager.DaemonThreadFactory;
 
 /**
  * The {@link ImportEntryProcessor} is responsible for importing/processing {@link ImportEntry}
@@ -135,7 +136,8 @@ public abstract class ImportEntryProcessor {
     // TODO: make number of threads configurable through a preference
     // threads are created on demand, so if not needed then it is not
     // used
-    executorService = Executors.newFixedThreadPool(Math.max(1, getMaxNumberOfThreads()));
+    executorService = Executors.newFixedThreadPool(Math.max(1, getMaxNumberOfThreads()),
+        new DaemonThreadFactory());
 
     initialized = true;
   }

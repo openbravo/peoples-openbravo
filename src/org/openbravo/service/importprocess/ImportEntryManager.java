@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Any;
@@ -129,6 +130,8 @@ public class ImportEntryManager {
 
   private Map<String, ImportStatistics> stats = new HashMap<String, ImportEntryManager.ImportStatistics>();
 
+  private boolean threadsStarted = false;
+
   // TODO: make this a preference
   private long initialWaitTime = 10000;
   private long managerWaitTime = 60000;
@@ -137,9 +140,14 @@ public class ImportEntryManager {
     instance = this;
   }
 
-  public void start() {
+  public synchronized void start() {
+    if (threadsStarted) {
+      return;
+    }
+    threadsStarted = true;
     log.debug("Starting Import Entry Framework");
-    executorService = Executors.newSingleThreadExecutor();
+    executorService = Executors.newSingleThreadExecutor(new DaemonThreadFactory());
+
     // passing ourselves as we have the Weld injected code
     managerThread = new ImportEntryManagerThread(this);
     executorService.execute(managerThread);
@@ -151,7 +159,7 @@ public class ImportEntryManager {
    */
   public void shutdown() {
     log.debug("Shutting down Import Entry Framework");
-    executorService.shutdown();
+    executorService.shutdownNow();
     for (ImportEntryProcessor importEntryProcessor : importEntryProcessors.values()) {
       importEntryProcessor.shutdown();
     }
@@ -229,6 +237,11 @@ public class ImportEntryManager {
    * table, so it can go process it immediately.
    */
   public void notifyNewImportEntryCreated() {
+    // make sure that the threads have started
+    if (!threadsStarted) {
+      start();
+    }
+
     managerThread.doNotify();
   }
 
@@ -460,6 +473,18 @@ public class ImportEntryManager {
       log.info("Timings for " + typeOfData + " cnt: " + cnt + " avg millis: " + (totalTime / cnt));
       System.err.println("Timings for " + typeOfData + " cnt: " + cnt + " avg millis: "
           + (totalTime / cnt));
+    }
+  }
+
+  /**
+   * Creates threads which have deamon set to true.
+   */
+  public static class DaemonThreadFactory implements ThreadFactory {
+    @Override
+    public Thread newThread(Runnable runnable) {
+      Thread thread = Executors.defaultThreadFactory().newThread(runnable);
+      thread.setDaemon(true);
+      return thread;
     }
   }
 }
