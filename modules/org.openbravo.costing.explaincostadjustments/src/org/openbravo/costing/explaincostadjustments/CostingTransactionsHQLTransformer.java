@@ -102,7 +102,6 @@ public class CostingTransactionsHQLTransformer extends HqlQueryTransformer {
         StringBuffer cumCost = addCumCost(cumQty, costing, prevCosting);
         transformedHqlQuery = transformedHqlQuery.replace("@cumCost@", cumCost);
 
-        transformedHqlQuery = appendOrderByClause(transformedHqlQuery, justCount);
         return transformedHqlQuery;
       }
     }
@@ -383,16 +382,5 @@ public class CostingTransactionsHQLTransformer extends HqlQueryTransformer {
     }
     cumCost.append(" end ");
     return cumCost;
-  }
-
-  protected String appendOrderByClause(String _hqlQuery, boolean justCount) {
-    String hqlQuery = _hqlQuery;
-    if (!justCount && hqlQuery.toUpperCase().contains(ORDERBY)) {
-      StringBuffer orderByClause = new StringBuffer();
-      orderByClause.append(" ORDER BY trx.movementDate, trx.transactionProcessDate");
-      hqlQuery = hqlQuery.replace(hqlQuery.substring(hqlQuery.indexOf(" ORDER BY")),
-          orderByClause.toString());
-    }
-    return hqlQuery;
   }
 }
