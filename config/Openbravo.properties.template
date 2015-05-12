@@ -85,7 +85,7 @@ bbdd.sessionConfig=select update_dateFormat('DD-MM-YYYY')
 # DB connection pool #
 ######################
 
-externalPoolClassName=org.openbravo.apachejdbcconnectionpool.JdbcExternalConnectionPool
+db.externalPoolClassName=org.openbravo.apachejdbcconnectionpool.JdbcExternalConnectionPool
 
 # Documentation at http://www.tomcatexpert.com/blog/2010/04/01/configuring-jdbc-pool-high-concurrency
 initialSize=5
