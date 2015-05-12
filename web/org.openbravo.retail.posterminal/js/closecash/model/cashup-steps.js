@@ -75,7 +75,8 @@ enyo.kind({
     }, true);
   },
   getSubstepsLength: function (model) {
-    return 1;
+    // Do not show this step if there are no payments defined
+    return this.model.get('paymentList').length > 0 ? 1 : 0;
   },
   isSubstepAvailable: function (model, substep) {
     return true;

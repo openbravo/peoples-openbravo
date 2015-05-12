@@ -584,14 +584,17 @@ public class POSUtils {
                   + " from OBPOS_App_Payment as p left join p.financialAccount as f "
                   + "left join f.currency as c where p.obposApplications.id ='" + posTerminalId
                   + "'");
-      if (currencyRateQuery.list().size() > 0) {
-        return true;
-      }
+
+      currencyRateQuery.list(); // No need to get the result, just execute the query
+
+      // The query succeeded, then the check is valid.
+      return true;
     } catch (Exception e) {
       log.error("Error getting Currency Rate: " + e.getMessage(), e);
     } finally {
       OBContext.restorePreviousMode();
     }
+    // The query failed, then the check is not valid.
     return false;
   }
 
