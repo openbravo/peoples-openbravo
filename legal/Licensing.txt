@@ -136,15 +136,19 @@ http://opensource.org/licenses/afl-2.1.php)
 # Dynarch DHTML/Javascript calendar at web/js/jscalendar (Copyright Mihai
   Bazon, 2002, 2003 - http://dynarch.com/mishoo/)
 
-# itext-2.1.7.jar  
-# jasperreports-4.0.1.jar 
-# jasperreports-fonts-4.0.1.jar
+# itextpdf-5.5.0.jar
+# itext-pdfa-5.5.0.jar
+# jackson-core-2.1.4.jar
+# jackson-databind-2.1.4.jar
+# jasperreports-6.0.0.jar
+# jasperreports-fonts-6.0.0.jar
 # jcommon-1.0.15.jar 
 # jfreechart-1.0.12.jar
 # jxl-2.6.10.jar
+# poi-3.10.1.jar
 All files under the LGPL 2.1 (available at http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html)
 
-# jasperreports-fonts-4.0.1.jar
+# jasperreports-fonts-6.0.0.jar
 License is contained in the jar file itself (path: net/sf/jasperreports/fonts/dejavu/LICENSE)
 
 # hibernate3.jar
