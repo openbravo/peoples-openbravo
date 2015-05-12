@@ -102,7 +102,6 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
           var auxPay = payMthds.filter(function (payMthd) {
             return payMthd.get('paymentmethod_id') === payment.payment.id;
           })[0];
-          var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('cashup-model.init II');
           if (!auxPay) { //We cannot find this payment in local database, it must be a new payment method, we skip it.
             return;
           }
@@ -123,7 +122,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
             var cTotalReturns = auxPay.get('totalReturns');
             var cTotalSales = auxPay.get('totalSales');
             var cTotalDeposits = OB.DEC.sub(auxPay.get('totalDeposits'), OB.DEC.abs(auxPay.get('totalDrops')));
-            expected = OB.DEC.add(OB.DEC.add(cStartingCash, OB.DEC.sub(cTotalSales, OB.DEC.abs(cTotalReturns))), cTotalDeposits);
+          expected = OB.DEC.add(OB.DEC.add(cStartingCash, OB.DEC.sub(cTotalSales, cTotalReturns)), cTotalDeposits);
             var fromCurrencyId = auxPay.get('paymentMethod').currency;
             auxPay.set('expected', OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, expected));
             auxPay.set('foreignExpected', expected);
@@ -161,7 +160,6 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
             me.set('totalDifference', OB.DEC.sub(me.get('totalDifference'), me.get('totalExpected')));
             me.setIgnoreStep3();
           }
-          OB.UTIL.SynchronizationHelper.finished(synchId, 'cashup-model.init II');
         }, this);
         me.cashupStepsDefinition[me.stepIndex('OB.CashUp.CashPayments')].loaded = true;
         me.cashupStepsDefinition[me.stepIndex('OB.CashUp.PaymentMethods')].loaded = true;
@@ -259,8 +257,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
           var fromCurrencyId = auxPay.paymentMethod.currency,
               paymentShared = (OB.POS.modelterminal.get('terminal').ismaster || OB.POS.modelterminal.get('terminal').isslave) && OB.MobileApp.model.paymentnames[auxPay.payment.searchKey].paymentMethod.isshared,
               paymentSharedStr = paymentShared ? OB.I18N.getLabel('OBPOS_LblPaymentMethodShared') : "";
-
           cashUpReport.get('deposits').push(new Backbone.Model({
+            searchKey: p.get('searchKey'),
             origAmount: OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, OB.DEC.add(p.get('totalDeposits'), p.get('totalSales'))),
             amount: OB.DEC.add(0, OB.DEC.add(p.get('totalDeposits'), p.get('totalSales'))),
             searchKey: p.get('searchKey'),
@@ -269,8 +267,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
             isocode: auxPay.isocode,
             rate: p.get('rate')
           }));
-
           cashUpReport.get('drops').push(new Backbone.Model({
+            searchKey: p.get('searchKey'),
             origAmount: OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, OB.DEC.add(p.get('totalDrops'), p.get('totalReturns'))),
             amount: OB.DEC.add(0, OB.DEC.add(p.get('totalDrops'), p.get('totalReturns'))),
             searchKey: p.get('searchKey'),
@@ -280,6 +278,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
             rate: p.get('rate')
           }));
           startings.push(new Backbone.Model({
+            searchKey: p.get('searchKey'),
             origAmount: OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, p.get('startingCash')),
             amount: OB.DEC.add(0, p.get('startingCash')),
             searchKey: p.get('searchKey'),
@@ -321,6 +320,10 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
       // Detect empty orders and remove them from here
       emptyOrders = _.filter(pendingOrderList.models, function (pendingorder) {
         if (pendingorder && pendingorder.get('lines') && pendingorder.get('lines').length === 0) {
+          return true;
+        }
+        // Detect Layaway orders
+        if (pendingorder && pendingorder.get('isLayaway') === true) {
           return true;
         }
       });
@@ -574,6 +577,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
         model = sortedPays[i];
         if (!model.get(enumConcepts[counter])) {
           countCashSummary[enumSummarys[counter]].push(new Backbone.Model({
+            searchKey: model.get('searchKey'),
             name: model.get('name'),
             value: 0,
             second: 0,
@@ -607,6 +611,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
             second = model.get(enumSecondConcepts[counter]);
           }
           countCashSummary[enumSummarys[counter]].push(new Backbone.Model({
+            searchKey: model.get('searchKey'),
             name: model.get('name'),
             value: value,
             second: second,
@@ -629,6 +634,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
       OB.UTIL.composeCashupInfo(cashUp, currentMe, function (me) {
         var i, paymentMethodInfo, objToSend = JSON.parse(cashUp.at(0).get('objToSend'));
         objToSend.cashUpDate = me.get('cashUpReport').at(0).get('time');
+        objToSend.currentDate = OB.I18N.formatDate(new Date());
         for (i = 0; i < me.additionalProperties.length; i++) {
           objToSend[me.additionalProperties[i]] = me.propertyFunctions[i](OB.POS.modelterminal.get('terminal').id, cashUp.at(0));
         }
@@ -670,20 +676,22 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
           OB.Dal.save(cashUp.at(0), function () {
             var callbackFunc = function () {
                 OB.UTIL.initCashUp(function () {
+                  OB.MobileApp.model.runSyncProcess();
                   OB.UTIL.SynchronizationHelper.finished(synchId, 'processAndFinishCashUp');
                   OB.UTIL.calculateCurrentCash();
                   OB.UTIL.showLoading(false);
                   me.set('finished', true);
                 }, function () {
+                  OB.MobileApp.model.runSyncProcess();
                   OB.UTIL.showLoading(false);
                   me.set('finishedWrongly', true);
                   OB.UTIL.SynchronizationHelper.finished(synchId, 'processAndFinishCashUp');
-                });
+                }, true);
                 };
             if (OB.MobileApp.model.hasPermission('OBPOS_print.cashup')) {
               me.printCashUp.print(me.get('cashUpReport').at(0), me.getCountCashSummary());
             }
-            OB.MobileApp.model.runSyncProcess(callbackFunc, callbackFunc);
+            callbackFunc();
           }, null);
         }, null, this);
       });

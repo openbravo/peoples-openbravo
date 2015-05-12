@@ -28,6 +28,7 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.mobile.core.process.DataSynchronizationImportProcess;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchronization;
 import org.openbravo.mobile.core.process.JSONPropertyToEntity;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
@@ -35,7 +36,8 @@ import org.openbravo.model.common.businesspartner.Location;
 import org.openbravo.service.json.JsonConstants;
 
 @DataSynchronization(entity = "BusinessPartner")
-public class CustomerLoader extends POSDataSynchronizationProcess {
+public class CustomerLoader extends POSDataSynchronizationProcess implements
+    DataSynchronizationImportProcess {
 
   private static final Logger log = Logger.getLogger(CustomerLoader.class);
 
@@ -44,6 +46,10 @@ public class CustomerLoader extends POSDataSynchronizationProcess {
   @Inject
   @Any
   private Instance<CustomerLoaderHook> customerCreations;
+
+  protected String getImportQualifier() {
+    return "BusinessPartner";
+  }
 
   public JSONObject saveRecord(JSONObject jsoncustomer) throws Exception {
     BusinessPartner customer = null;
@@ -182,7 +188,7 @@ public class CustomerLoader extends POSDataSynchronizationProcess {
       if (name.length() > 60) {
         name = name.substring(0, 60);
       }
-      user.setFirstName(name);
+      user.setName(name);
 
       // Contact exist > modify it. The username is not modified
       OBDal.getInstance().save(user);
@@ -233,7 +239,7 @@ public class CustomerLoader extends POSDataSynchronizationProcess {
       if (name.length() > 60) {
         name = name.substring(0, 60);
       }
-      usr.setFirstName(name);
+      usr.setName(name);
 
       usr.setBusinessPartner(customer);
 

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2014 Openbravo S.L.U.
+ * Copyright (C) 2012-2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 
 import javax.servlet.ServletException;
 
+import org.apache.commons.codec.binary.Base64;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -43,8 +44,10 @@ public class Payments extends JSONProcessSimple {
           + "p.financialAccount.currency.iSOCode as isocode, "
           + "p.financialAccount.currency.symbol as symbol, p.financialAccount.currency.currencySymbolAtTheRight as currencySymbolAtTheRight, "
           + "p.financialAccount.currentBalance as currentBalance, "
-          + "p.financialAccount.currency.obposPosprecision as obposPosprecision "
-          + "from OBPOS_App_Payment as p where p.obposApplications.id=? "
+          + "p.financialAccount.currency.obposPosprecision as obposPosprecision, "
+          + "img.bindaryData as image, img.mimetype as mimetype "
+          + "from OBPOS_App_Payment as p left outer join p.paymentMethod as pm "
+          + "left outer join pm.image as img where p.obposApplications.id=? "
           + "and p.$readableSimpleCriteria and p.$activeCriteria order by p.line, p.commercialName";
 
       SimpleQueryBuilder querybuilder = new SimpleQueryBuilder(hqlPayments, OBContext
@@ -60,10 +63,25 @@ public class Payments extends JSONProcessSimple {
       for (Object objLine : paymentsquery.list()) {
         Object[] objPayment = (Object[]) objLine;
         JSONObject payment = new JSONObject();
-        payment.put("payment",
-            converter.toJsonObject((BaseOBObject) objPayment[0], DataResolvingMode.FULL));
-        payment.put("paymentMethod",
-            converter.toJsonObject((BaseOBObject) objPayment[1], DataResolvingMode.FULL));
+        JSONObject pay = converter.toJsonObject((BaseOBObject) objPayment[0],
+            DataResolvingMode.FULL);
+        JSONObject pMethod = converter.toJsonObject((BaseOBObject) objPayment[1],
+            DataResolvingMode.FULL);
+        if (pay.getBoolean("overrideconfiguration")) {
+          pMethod.put("cashDifferences", pay.get("cashDifferences"));
+          pMethod.put("cashDifferences$_identifier", pay.get("cashDifferences$_identifier"));
+          pMethod.put("glitemDropdep", pay.get("gLItemForCashDropDeposit"));
+          pMethod.put("glitemDropdep$_identifier", pay.get("gLItemForCashDropDeposit$_identifier"));
+          pMethod.put("automatemovementtoother", pay.get("automateMovementToOtherAccount"));
+          pMethod.put("keepfixedamount", pay.get("keepFixedAmount"));
+          pMethod.put("amount", pay.get("amount"));
+          pMethod.put("allowvariableamount", pay.get("allowVariableAmount"));
+          pMethod.put("allowdontmove", pay.get("allowNotToMove"));
+          pMethod.put("allowmoveeverything", pay.get("allowMoveEverything"));
+          pMethod.put("countcash", pay.get("countCash"));
+        }
+        payment.put("payment", pay);
+        payment.put("paymentMethod", pMethod);
 
         payment.put("rate", objPayment[2]);
         BigDecimal mulrate = BigDecimal.ZERO;
@@ -78,6 +96,15 @@ public class Payments extends JSONProcessSimple {
         payment.put("currencySymbolAtTheRight", objPayment[6]);
         payment.put("currentBalance", objPayment[7]);
         payment.put("obposPosprecision", objPayment[8]);
+        if (objPayment[9] != null && objPayment[10] != null) {
+          payment.put(
+              "image",
+              "data:" + objPayment[10] + ";base64,"
+                  + Base64.encodeBase64String((byte[]) objPayment[9]));
+        } else {
+          payment.put("image", objPayment[9]);
+        }
+
         respArray.put(payment);
 
       }

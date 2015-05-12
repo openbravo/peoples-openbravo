@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2014-2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -125,8 +125,13 @@ enyo.kind({
       }, 5000);
     }
   },
+  disableFilterText: function (value) {
+    this.$.filterText.setDisabled(value);
+  },
   clearAction: function () {
-    this.$.filterText.setValue('');
+    if (!this.$.filterText.disabled) {
+      this.$.filterText.setValue('');
+    }
     this.$.startDate.setValue('');
     this.$.endDate.setValue('');
     this.doClearAction();
@@ -206,7 +211,7 @@ enyo.kind({
 /*items of collection*/
 enyo.kind({
   name: 'OB.UI.ListPRsLine',
-  kind: 'OB.UI.SelectButton',
+  kind: 'OB.UI.listItemButton',
   allowHtml: true,
   events: {
     onHideThisPopup: ''
@@ -236,6 +241,13 @@ enyo.kind({
     }
     this.$.topLine.setContent(this.model.get('documentNo') + ' - ' + this.model.get('businessPartner') + returnLabel);
     this.$.bottonLine.setContent(this.model.get('totalamount') + ' (' + this.model.get('orderDate').substring(0, 10) + ') ');
+
+    OB.UTIL.HookManager.executeHooks('OBPOS_RenderPaidReceiptLine', {
+      paidReceiptLine: this
+    }, function (args) {
+      //All should be done in module side
+    });
+
     this.render();
   }
 });
@@ -289,9 +301,6 @@ enyo.kind({
       if (data) {
         _.each(data, function (iter) {
           me.model.get('orderList').newDynamicOrder(iter, function (order) {
-            if (me.filters.isReturn) {
-              order.set('forReturn', true);
-            }
             me.prsList.add(order);
 
           });
@@ -317,8 +326,7 @@ enyo.kind({
     this.prsList.on('click', function (model) {
       OB.UTIL.showLoading(true);
       process.exec({
-        orderid: model.get('id'),
-        forReturn: model.get('forReturn')
+        orderid: model.get('id')
       }, function (data) {
         OB.UTIL.showLoading(false);
         if (data) {
@@ -374,6 +382,7 @@ enyo.kind({
     return true;
   },
   executeOnShow: function () {
+    this.$.body.$.listPRs.$.prslistitemprinter.$.theader.$.modalPRScrollableHeader.disableFilterText(false);
     this.$.body.$.listPRs.$.prslistitemprinter.$.theader.$.modalPRScrollableHeader.clearAction();
     if (this.params.isQuotation) {
       this.$.header.setContent(OB.I18N.getLabel('OBPOS_Quotations'));
@@ -382,8 +391,15 @@ enyo.kind({
     } else {
       this.$.header.setContent(OB.I18N.getLabel('OBPOS_LblPaidReceipts'));
       if (this.params.isReturn && this.params.bpartner) {
-        this.$.body.$.listPRs.$.prslistitemprinter.$.theader.$.modalPRScrollableHeader.$.filterText.setValue(this.params.bpartner.get('name'));
-        this.$.body.$.listPRs.$.prslistitemprinter.$.theader.$.modalPRScrollableHeader.searchAction();
+        var me = this;
+        me.$.body.$.listPRs.$.prslistitemprinter.$.theader.$.modalPRScrollableHeader.$.filterText.setValue(this.params.bpartner.get('name'));
+        me.$.body.$.listPRs.$.prslistitemprinter.$.theader.$.modalPRScrollableHeader.searchAction();
+        enyo.forEach(this.model.get('orderList').current.get('lines').models, function (l) {
+          if (l.get('originalOrderLineId')) {
+            me.$.body.$.listPRs.$.prslistitemprinter.$.theader.$.modalPRScrollableHeader.disableFilterText(true);
+            return;
+          }
+        });
       }
     }
   },

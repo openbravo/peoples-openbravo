@@ -14,9 +14,15 @@ enyo.kind({
   published: {
     receipt: null
   },
+  events: {
+    onShowPopup: '',
+    onPaymentActionPay: ''
+  },
   handlers: {
     onButtonStatusChanged: 'buttonStatusChanged',
-    onMaxLimitAmountError: 'maxLimitAmountError'
+    onMaxLimitAmountError: 'maxLimitAmountError',
+    onButtonPaymentChanged: 'paymentChanged',
+    onClearPaymentMethodSelect: 'clearPaymentMethodSelect'
   },
   getSelectedPayment: function () {
     if (this.receipt && this.receipt.selectedPayment) {
@@ -24,53 +30,81 @@ enyo.kind({
     }
     return null;
   },
+  setTotalPending: function (pending, mulrate, symbol, currencySymbolAtTheRight, inSender, inEvent) {
+    this.$.totalpending.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(pending, mulrate), symbol, currencySymbolAtTheRight));
+  },
+  clearPaymentMethodSelect: function (inSender, inEvent) {
+    this.$.paymentMethodSelect.setContent('');
+  },
   buttonStatusChanged: function (inSender, inEvent) {
-    var payment, amt, change, pending, isMultiOrders, paymentstatus;
-    payment = inEvent.value.payment || OB.MobileApp.model.paymentnames[OB.MobileApp.model.get('paymentcash')];
-    if (_.isUndefined(payment)) {
-      return true;
-    }
-    // Clear limit amount error when click on PaymentMethod button
-    if (OB.POS.terminal.terminal.paymentnames[inEvent.value.status]) {
-      this.bubble('onMaxLimitAmountError', {
-        show: false,
-        maxLimitAmount: 0,
-        currency: ''
+    this.$.paymentMethodSelect.setContent('');
+    this.updateScrollArea();
+    if (inEvent.value.status && inEvent.value.status.indexOf('paymentMethodCategory.showitems.') === 0) {
+      this.doShowPopup({
+        popup: 'modalPaymentsSelect',
+        args: {
+          idCategory: inEvent.value.status.substring(inEvent.value.status.lastIndexOf('.') + 1)
+        }
       });
-    }
-    isMultiOrders = this.model.isValidMultiOrderState();
-    change = this.model.getChange();
-    pending = this.model.getPending();
-    if (!isMultiOrders) {
-      if (!_.isNull(this.receipt)) {
-        this.receipt.selectedPayment = payment.payment.searchKey;
-        paymentstatus = this.receipt.getPaymentStatus();
-      }
     } else {
-      this.model.get('multiOrders').set('selectedPayment', payment.payment.searchKey);
-      paymentstatus = this.model.get('multiOrders').getPaymentStatus();
-    }
+      var payment, change, pending, isMultiOrders, paymentstatus;
+      payment = inEvent.value.payment || OB.MobileApp.model.paymentnames[OB.MobileApp.model.get('paymentcash')];
+      if (_.isUndefined(payment)) {
+        return true;
+      }
+      // Clear limit amount error when click on PaymentMethod button
+      if (OB.POS.terminal.terminal.paymentnames[inEvent.value.status]) {
+        this.bubble('onMaxLimitAmountError', {
+          show: false,
+          maxLimitAmount: 0,
+          currency: ''
+        });
+      }
+      isMultiOrders = this.model.isValidMultiOrderState();
+      change = this.model.getChange();
+      pending = this.model.getPending();
+      if (!isMultiOrders) {
+        if (!_.isNull(this.receipt)) {
+          this.receipt.selectedPayment = payment.payment.searchKey;
+          paymentstatus = this.receipt.getPaymentStatus();
+        }
+      } else {
+        this.model.get('multiOrders').set('selectedPayment', payment.payment.searchKey);
+        paymentstatus = this.model.get('multiOrders').getPaymentStatus();
+      }
 
-    if (!_.isNull(change) && change) {
-      this.$.change.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(change, payment.mulrate), payment.symbol, payment.currencySymbolAtTheRight));
-      OB.MobileApp.model.set('changeReceipt', OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(change, payment.mulrate), payment.symbol, payment.currencySymbolAtTheRight));
-    } else if (!_.isNull(pending) && pending) {
-      this.$.totalpending.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(pending, payment.mulrate), payment.symbol, payment.currencySymbolAtTheRight));
-    }
-    this.checkEnoughCashAvailable(paymentstatus, payment);
-    if (!_.isNull(this.receipt) && this.receipt.get('isLayaway')) {
-      this.$.layawayaction.updateVisibility(true);
+      if (!_.isNull(change) && change) {
+        this.$.change.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(change, payment.mulrate), payment.symbol, payment.currencySymbolAtTheRight));
+        OB.MobileApp.model.set('changeReceipt', OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(change, payment.mulrate), payment.symbol, payment.currencySymbolAtTheRight));
+      } else if (!_.isNull(pending) && pending) {
+        this.setTotalPending(pending, payment.mulrate, payment.symbol, payment.currencySymbolAtTheRight, inSender, inEvent);
+      }
+      this.checkEnoughCashAvailable(paymentstatus, payment);
+      if (!_.isNull(this.receipt) && this.receipt.get('isLayaway') && this.receipt.get('orderType') !== 3) {
+        this.$.layawayaction.updateVisibility(true);
+      }
+      if (inEvent.value.amount) {
+        this.doPaymentActionPay({
+          amount: inEvent.value.amount,
+          key: payment.payment.searchKey,
+          name: payment.payment._identifier,
+          paymentMethod: payment.paymentMethod,
+          rate: payment.rate,
+          mulrate: payment.mulrate,
+          isocode: payment.isocode,
+          options: inEvent.value.options
+        });
+      }
     }
   },
-  maxLimitAmountError: function (inSender, inEvent) {
-    var maxHeight;
-    if (inEvent.show) {
-      maxHeight = 115;
-      this.$.errorMaxlimitamount.setContent(OB.I18N.getLabel('OBPOS_PaymentMaxLimitAmount', [inEvent.maxLimitAmount, inEvent.currency]));
-    } else {
-      maxHeight = 150;
-      this.$.errorMaxlimitamount.setContent('');
+  paymentChanged: function (inSender, inEvent) {
+    this.updateScrollArea();
+    if (!inEvent.amount) {
+      this.$.paymentMethodSelect.setContent(OB.I18N.getLabel('OBPOS_PaymentsSelectedMethod', [inEvent.payment.payment._identifier]));
     }
+  },
+  updateScrollArea: function () {
+    var maxHeight = 115;
     // Resize scroll area to fix parent panel
     var component = this.model.isValidMultiOrderState() ? this.$.multiPayments : this.$.payments;
     if (component.$.tempty.getShowing()) {
@@ -83,6 +117,16 @@ enyo.kind({
       height += line.getBounds().height;
     });
     component.$.scrollArea.setScrollTop(height - maxHeight);
+  },
+  maxLimitAmountError: function (inSender, inEvent) {
+    var maxHeight;
+    if (inEvent.show) {
+      this.$.errorMaxlimitamount.setContent(OB.I18N.getLabel('OBPOS_PaymentMaxLimitAmount', [inEvent.maxLimitAmount, inEvent.currency]));
+    } else {
+      this.$.errorMaxlimitamount.setContent('');
+    }
+    // Resize scroll area to fix parent panel
+    this.updateScrollArea();
   },
   components: [{
     style: 'background-color: #363636; color: white; height: 200px; margin: 5px; padding: 5px; position: relative;',
@@ -178,7 +222,12 @@ enyo.kind({
           showing: false
         }]
       }]
-
+    }, {
+      classes: 'span12',
+      components: [{
+        name: 'paymentMethodSelect',
+        style: 'color: orange; padding-left: 1em'
+      }]
     }, {
       classes: 'span12',
       components: [{
@@ -226,6 +275,25 @@ enyo.kind({
     }, this);
   },
 
+  updateCreditSalesAction: function () {
+
+    // The terminal allows to pay on credit
+    var visible = OB.MobileApp.model.get('terminal').allowpayoncredit;
+    // And is a loaded layaway or a regular order (no new layaway and no voided layaway)
+    // this.receipt.get('orderType') === 2 --> New layaway 
+    // this.receipt.get('isLayaway') --> Loaded layaway    
+    visible = visible && (this.receipt.get('isLayaway') || (this.receipt.get('orderType') !== 2 && this.receipt.get('orderType') !== 3));
+    // And receipt has not been paid
+    visible = visible && !this.receipt.getPaymentStatus().done;
+    // And Business Partner exists and is elegible to sell on credit.
+    visible = visible && this.receipt.get('bp') && (this.receipt.get('bp').get('creditLimit') > 0 || this.receipt.get('bp').get('creditUsed') < 0 || this.receipt.getGross() < 0);
+
+    if (visible) {
+      this.$.creditsalesaction.show();
+    } else {
+      this.$.creditsalesaction.hide();
+    }
+  },
 
   updatePending: function () {
     if (this.model.get('leftColumnViewManager').isMultiOrder()) {
@@ -275,7 +343,7 @@ enyo.kind({
       this.$.creditsalesaction.hide();
       this.$.layawayaction.hide();
     } else {
-      this.$.totalpending.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(this.receipt.getPending(), rate), symbol, symbolAtRight));
+      this.setTotalPending(this.receipt.getPending(), rate, symbol, symbolAtRight);
       this.$.totalpending.show();
       //      if (this.receipt.get('orderType') === 1 || this.receipt.get('orderType') === 3) {
       if (paymentstatus.isNegative || this.receipt.get('orderType') === 3) {
@@ -289,18 +357,10 @@ enyo.kind({
         this.$.doneButton.setContent(OB.I18N.getLabel('OBPOS_LblOpen'));
         this.$.doneButton.drawerOpened = false;
       }
-      if (OB.MobileApp.model.get('terminal').allowpayoncredit && this.receipt.get('bp')) {
-        if ((this.receipt.get('bp').get('creditLimit') > 0 || this.receipt.get('bp').get('creditUsed') < 0 || this.receipt.getGross() < 0) && !paymentstatus.isReturn) {
-          this.$.creditsalesaction.show();
-        } else {
-          this.$.creditsalesaction.hide();
-        }
-      }
     }
 
     if (paymentstatus.done || this.receipt.getGross() === 0) {
       this.$.exactaction.hide();
-      this.$.creditsalesaction.hide();
       this.$.layawayaction.hide();
     } else {
       if (!_.isEmpty(OB.MobileApp.model.paymentnames)) {
@@ -313,13 +373,6 @@ enyo.kind({
         }
       } else if (this.receipt.get('orderType') === 3) {
         this.$.layawayaction.hide();
-      }
-      if (OB.MobileApp.model.get('terminal').allowpayoncredit && this.receipt.get('bp')) {
-        if ((this.receipt.get('bp').get('creditLimit') > 0 || this.receipt.get('bp').get('creditUsed') < 0 || this.receipt.getGross() < 0) && !paymentstatus.isReturn) {
-          this.$.creditsalesaction.show();
-        } else {
-          this.$.creditsalesaction.hide();
-        }
       }
     }
     if (paymentstatus.done && !paymentstatus.change && !paymentstatus.overpayment) {
@@ -340,6 +393,8 @@ enyo.kind({
       this.$.exactlbl.hide();
       this.$.donezerolbl.hide();
     }
+
+    this.updateCreditSalesAction();
   },
   updatePendingMultiOrders: function () {
     var paymentstatus = this.model.get('multiOrders');
@@ -393,7 +448,7 @@ enyo.kind({
       this.$.creditsalesaction.hide();
       //            this.$.layawayaction.hide();
     } else {
-      this.$.totalpending.setContent(OB.I18N.formatCurrency(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(OB.DEC.sub(paymentstatus.get('total'), paymentstatus.get('payment')), rate), symbol, symbolAtRight)));
+      this.setTotalPending(OB.DEC.sub(paymentstatus.get('total'), paymentstatus.get('payment')), rate, symbol, symbolAtRight);
       this.$.totalpending.show();
       this.$.totalpendinglbl.show();
       this.$.doneaction.hide();
@@ -731,6 +786,7 @@ enyo.kind({
         maxLimitAmount: 0,
         currency: ''
       });
+      this.bubble('onClearPaymentSelect');
       this.doRemovePayment({
         payment: this.owner.model,
         removeCallback: function () {

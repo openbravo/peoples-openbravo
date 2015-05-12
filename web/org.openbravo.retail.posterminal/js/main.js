@@ -37,7 +37,7 @@
   // Add the current WebPOS version
   OB.UTIL.VersionManagement.current.posterminal = {
     year: 15,
-    major: 1,
+    major: 3,
     minor: 0
   };
   // Add the current WebSQL database version for WebPOS
@@ -53,27 +53,27 @@
    * Deprecations must be registered before calling the 'deprecated' method
    */
   OB.UTIL.VersionManagement.registerDeprecation(27366, {
-    year: '14',
-    major: '4',
-    minor: '0'
+    year: 14,
+    major: 4,
+    minor: 0
   }, "The use of 'OB.POS.terminal' is deprecated. Please use 'OB.MobileApp.view' instead.");
 
   OB.UTIL.VersionManagement.registerDeprecation(27367, {
-    year: '14',
-    major: '4',
-    minor: '0'
+    year: 14,
+    major: 4,
+    minor: 0
   }, "The use of 'OB.POS.terminal.terminal' is deprecated. Please use 'OB.MobileApp.model' instead.");
 
   OB.UTIL.VersionManagement.registerDeprecation(27646, {
-    year: '14',
-    major: '4',
-    minor: '0'
+    year: 14,
+    major: 4,
+    minor: 0
   }, "The use of 'OB.POS.modelterminal' is deprecated. Please use 'OB.MobileApp.model' instead.");
 
   OB.UTIL.VersionManagement.registerDeprecation(27911, {
-    year: '14',
-    major: '2',
-    minor: '5'
+    year: 14,
+    major: 2,
+    minor: 5
   }, "The use of OB.MobileApp.model.get('documentsequence'), OB.MobileApp.model.get('quotationDocumentSequence') and the 'seqNoReady' event are deprecated. Please use 'OB.MobileApp.model.getNextDocumentno()' and 'OB.MobileApp.model.getNextQuotationno()' instead.");
 
   /**

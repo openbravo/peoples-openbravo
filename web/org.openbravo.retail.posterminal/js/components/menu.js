@@ -490,7 +490,14 @@ enyo.kind({
       return;
     }
 
-    me.setDisabled(OB.UTIL.isDisableDiscount(this.receipt));
+    if (this.receipt.get('isEditable') === false) {
+      me.setDisabled(true);
+      return;
+    }
+
+    OB.UTIL.isDisableDiscount(this.receipt, function (disable) {
+      me.setDisabled(disable);
+    });
 
     me.adjustVisibilityBasedOnPermissions();
   },
@@ -511,6 +518,10 @@ enyo.kind({
 
     model.get('leftColumnViewManager').on('multiorder', function () {
       me.setDisabled(true);
+    }, this);
+
+    this.receipt.on('change', function () {
+      this.updateVisibility();
     }, this);
 
     this.receipt.get('lines').on('all', function () {

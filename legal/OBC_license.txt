@@ -1,0 +1,78 @@
+Openbravo Commercial Licence 1.0 
+
+0. Introduction
+
+This Openbravo Commercial License ("License") is a limited use license for the distribution of additional modules and packages containing modules, created for software distributed by Openbravo, S.L.U. ("Openbravo") to users with a valid Openbravo Professional Subscription Agreement. It grants access to source code and rights to use and modify the software for internal commercial purposes. 
+
+It is effective when you execute this License by selecting the "Accept" button at the end of the license when online, or via the Openbravo Central Repository download function, as the case may be.
+
+You confirm you have read, understood and agree to the terms and conditions and to the use of English as the language of this Agreement, which may be incorporated in other documents or executed via facsimile, electronic online communications, or via emailed PDF-format document (or other mutually agreeable document format). The person accepting this Agreement warrants that he/she has authority to do so on behalf of Licensee. 
+
+1. Definitions 
+
+Capitalized terms used in this License are defined in this Definitions section. In this Licence, the following terms have the following meaning: 
+
+Derivative Works: the works or software that could be created by the Licensee, based upon the Original Work or modifications thereof. 
+Distribution and/or Communication: any act of selling, giving, lending, renting, distributing, publically communicating, transmitting, or otherwise making available, on-line or off-line, copies of the Work at the disposal of any other natural or legal person. 
+Entitlement Key: as defined in the Openbravo Professional Subscription Agreement
+Executable Code: any code which has generally been compiled and which is meant to be interpreted by a computer as a program. 
+Licensee or You: any natural or legal person who makes any usage of the Software under the terms of the Licence. 
+Licensor: the individual or entity identified as the Licensor in the source code notice. 
+Openbravo Central Repository: repository of software for Openbravo ERP and other Openbravo software hosted at www.openbravo.com (or such other site determined by the Licensor) accessed via the Openbravo product Professional Subscription update interface, through which you may access and download the Work. 
+Openbravo Professional Subscription Agreement: agreement between you and Openbravo for the provision of certain services and warranties in relation to the Openbravo software products.
+Original Work or Software: (a) the computer software code which is distributed and/or communicated to You under this Licence to which it is attached, available as Source Code and/or as Executable Code as the case may be; and (b) upgrades, modified or subsequent versions and updates to the Software when included in the support agreement associated to the Original Work as set out in the Module Subscription Form.
+Source Code: the human-readable form of the Work which is the most convenient for people to study and modify. 
+Module Subscription Form: form setting out the term, fees and other details relating to use of the Software.
+Work: the Original Work and/or its Derivative Works. 
+
+2. Licence 
+2.1. License grant. In consideration for payment of the license fees set out in clause 3 and subject to compliance with the terms of this agreement, the Licensor hereby grants You: 
+a)a world-wide, non-exclusive, non-transferable licence to use, reproduce and modify the Original Work and make Derivative Works based on the Work, limited to use of the Work within your business for your own business purposes; and  
+b)The right to receive the support services and upgrades for the Work as set out in the Module Subscription Form.  
+
+2.2 License term. This license is for the term set out in the Module Subscription Form and, if not perpetual, will be automatically renewed provided you have a valid Openbravo Professional Subscription Agreement in force at the time of renewal. You may cancel any renewal at any time by informing Openbravo directly or via a means provided you by the Openbravo Central Repository but you will not be entitled to any refund for the then current period. If you do not renew your annual Professional Subscription Agreement, this License will terminate.  
+
+2.3 License limitations: 
+a)Entitlement key. You may only use the Software in an Openbravo software product for which you have received an Entitlement Key under your Openbravo Professional Subscription Agreement. 
+b)Users. When established by the Module Subscription Form, the License is granted for the number of concurrent users or Module Concurrent Users (as defined in the Openbravo Professional Subscription Agreement and/or Module Subscription Form) designated by you and for whom the corresponding license fee has been paid. On adding additional concurrent users for the Professional Subscription ("Additional Licensed Users"), you may be subject to a corresponding Additional Licensed User Fee and, on payment of this fee, may use the Work in relation to these new users.  
+
+2.4 Development/Testing license. If and while You have a valid Openbravo Partner Program Agreement signed with Openbravo, SLU in force, the Licensor grants Your a royalty-free world-wide, nonexclusive, non-transferable limited license to use the Software only for the purpose of developing, testing, prototyping and demonstrating an application of Yours that is executed together with Openbravo ERP software (including any extensions thereof) for distribution to third parties, and not for any other purpose. Such license includes the rights to reproduce and modify the Original Work and make Derivative Works based on the Work. The limitations set out in clause 2.2 and 2.3 do not apply to this development/testing license. 
+
+2.5 Non-permitted uses. All other uses of the Work not specifically permitted under clause 2.1 and 2.4 are prohibited including, for the avoidance of doubt, any Distribution or Communication of the Work without the specific prior written permission of the Licensor. As an exception to the above, You may distribute or communicate the Work to a third party for the sole purpose of having them make modifications exclusively for you or provide You with facilities for running the Work, provided they do so exclusively on your behalf, under your direction and control, on terms that prohibit them from making any copies of Your copyrighted and confidential material outside their relationship with You.
+
+2.6 Nothing in this Licence is intended to deprive the Licensee of the benefits from any exception or limitation to the exclusive rights of the rights owners in the Work, of the exhaustion of those rights or of other applicable limitations thereto. 
+
+3. Fees 
+3.1 In consideration for the license grant set out in clause 2.1, You undertake to pay Openbravo (for itself or on behalf of the Licensor) the amount/s specified in the Module Subscription Form (if any), or as indicated in your electronic check out cart within the Openbravo Central Repository ("License Fee") or other electronic means. Payment for the License Fee (if any) shall be due and payable upon or before checking out and downloading the Work. On renewal, any annual license fee will be credited to your account and payment will be due. All license fees are non-refundable once paid.
+3.2 Any failure to pay the License Fees (if any) or any renewal thereof will result in automatic revocation and termination of this Agreement and all rights and licenses granted hereunder. 
+3.3 Fees include applicable VAT and an invoice will be issued to You at the address set out in your Openbravo Professional Subscription. 
+3.4 Additional Licensed User Fee: when adding Additional Licensed Users in accordance with clause 2.3.b, You shall pay to Openbravo (for itself or on behalf of the Licensor) a fee for such additional users. This fee shall be assessed at the then current rate, and shall be due and payable upon you upon updating your Professional Subscription for the additional users.  
+
+4. Obligations of the Licensee 
+The grant of the rights in clause 2.1 above is subject to the following restrictions: 
+a)Attribution right: You shall keep intact all copyright, patent or trademarks notices and all notices that refer to the Licence/Licensor and to the disclaimer of warranties. You must cause any Derivative Work to carry prominent notices stating that the Work has been modified and the date of modification. 
+b)Legal Protection: This Licence does not grant permission to use the trade names, trademarks, service marks, or names of Openbravo or the Licensor, except as required for reasonable and customary use in describing the origin of the Work and reproducing the content of the copyright notice and branding obligation set out next. 
+
+5. Warranties and disclaimers
+
+5.1 Copyrights. The original Licensor warrants that the copyright in the Original Work granted hereunder is owned by the Licensor or licensed to the Licensor and that he/she has the power and authority to grant the Licence. 
+
+5.2 Disclaimer of Warranty. Except as otherwise indicated herein, in the Module Subscription Form or, when applicable, an Openbravo Professional Subscription Agreement, the Software is provided under this Licence on an "as is" basis and without warranties of any kind concerning the Work, including without limitation merchantability, fitness for a particular purpose, absence of defects or errors, accuracy, non-infringement of intellectual property rights. This disclaimer of warranty is an essential part of the Licence and a condition for the grant of any rights to the Software.
+
+5.3 Disclaimer of Liability. Except in the cases of wilful misconduct or damages directly caused to natural persons, the Licensor will in no event be liable for any direct or indirect, material or moral, damages of any kind, arising out of the Licence or of the use of the Software, including without limitation, damages for loss of goodwill, work stoppage, computer failure or malfunction, loss of data or any commercial damage, even if the Licensor has been advised of the possibility of such damage. However, the Licensor will be liable under statutory product liability laws as far such laws apply to the Software.
+
+6. Acceptance of the Licence 
+You irrevocably accept this Licence and all of its terms and conditions by selecting the "Accept" button at the end of the license when online, accepting the Software for download via the Openbravo Central Repository, or by exercising any rights granted to You by Article 2 of this Licence, such as the use of the Work or the creation by You of a Derivative Work. 
+
+7. Termination of the Licence 
+The Licence and the rights granted hereunder will terminate automatically upon any breach by You of the terms of the Licence or termination of Your Openbravo Professional Subscription Agreement. 
+
+8. Agreement 
+The Licence represents the complete agreement between the Parties in relation to the licensing of the Work. If any provision of the Licence is invalid or unenforceable under applicable law, this will not affect the validity or enforceability of the Licence as a whole. Such provision will be construed and/or reformed so as necessary to make it valid and enforceable. 
+
+9. Applicable Law and Jurisdiction
+9.1 This Licence shall be governed by the laws of the domicile of the Licensor.  
+9.2 Any litigation resulting from the interpretation or application of this License arising between the Licensor and You, will be subject to the jurisdiction of the Courts of the domicile of the Licensor. 
+
+NOTICE: Third party products
+Some third party (including open source) components included in the Software may be subject to other terms and conditions, which are typically found in a "Read Me" file or "About" file in the Software and the legal folder of the Module in which the Software is distributed. The license terms of this third party software are not modified by this License. Any provisions herein which differ from the terms of those licenses are offered by the Licensor alone and not by any other party. You may obtain the source code of this third party software by writing to the Licensor at the address set out in the Term Sheet. This offer is valid for three years from the Effective Date. The Licensor may charge you the bare cost of sending the source code to you.

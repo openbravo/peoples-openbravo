@@ -167,7 +167,10 @@ public class CashUpReport extends HttpSecureAppServlet {
       }
       Date cashUpDate = cashup.getCashUpDate();
       for (int i = 0; i < recons.size(); i++) {
-
+        if (recons.get(i).getReconciliation().getAccount().getOBPOSAppPaymentList().get(0)
+            .getFinancialAccount() == null) {
+          continue;
+        }
         expected = BigDecimal.ZERO;
 
         if (i != 0)
@@ -227,7 +230,7 @@ public class CashUpReport extends HttpSecureAppServlet {
             + "payment.financialAccount.currency.iSOCode as isocode, payment.paymentMethod.isshared "
             + "from org.openbravo.retail.posterminal.OBPOSAppPayment as payment, org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction as trans "
             + "where (trans.gLItem=payment.paymentMethod.gLItemForDrops or trans.gLItem=payment.paymentMethod.gLItemForDeposits) and trans.reconciliation=? "
-            + "and trans.account=payment.financialAccount and payment.obposApplications.masterterminal is null order by payment.commercialName";
+            + "and trans.account=payment.financialAccount and (payment.paymentMethod.isshared = 'N' or payment.obposApplications.masterterminal is null) order by payment.commercialName";
         Query dropsDepositsQuery = OBDal.getInstance().getSession().createQuery(hqlDropsDeposits);
 
         dropsDepositsQuery.setDate(0, cashUpDate);
@@ -292,7 +295,7 @@ public class CashUpReport extends HttpSecureAppServlet {
             + " from org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction as trans "
             + "inner join trans.finPayment as pay, "
             + "org.openbravo.retail.posterminal.OBPOSAppPayment as obpay "
-            + "where pay.account=obpay.financialAccount and trans.gLItem is null and obpay.obposApplications.masterterminal is null "
+            + "where pay.account=obpay.financialAccount and trans.gLItem is null and (obpay.paymentMethod.isshared = 'N' or obpay.obposApplications.masterterminal is null) "
             + "and trans.reconciliation=? "
             + "group by obpay.commercialName, obpay.financialAccount.currency, obpay.obposApplications.organization.currency, obpay.financialAccount.currency.iSOCode, obpay.obposApplications.client.id, obpay.obposApplications.organization.id, obpay.paymentMethod.isshared "
             + " order by obpay.commercialName";
@@ -442,7 +445,7 @@ public class CashUpReport extends HttpSecureAppServlet {
         String hqlDifferenceDeposit = "select trans.paymentAmount, trans.depositAmount  "
             + "from org.openbravo.retail.posterminal.OBPOSAppPayment as payment, org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction as trans "
             + "where trans.gLItem=payment.paymentMethod.cashDifferences and trans.reconciliation=? "
-            + "and trans.account=payment.financialAccount and payment.obposApplications.masterterminal is null ";
+            + "and trans.account=payment.financialAccount and (payment.paymentMethod.isshared = 'N' or payment.obposApplications.masterterminal is null) ";
         Query differenceDepositQuery = OBDal.getInstance().getSession()
             .createQuery(hqlDifferenceDeposit);
         differenceDepositQuery.setString(0, recons.get(i).getReconciliation().getId());
@@ -534,7 +537,7 @@ public class CashUpReport extends HttpSecureAppServlet {
         String hqlCashToDeposit = "select trans.paymentAmount  "
             + "from org.openbravo.retail.posterminal.OBPOSAppPayment as payment, org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction as trans "
             + "where trans.gLItem=payment.paymentMethod.glitemDropdep and trans.reconciliation=? "
-            + "and trans.account=payment.financialAccount and payment.obposApplications.masterterminal is null ";
+            + "and trans.account=payment.financialAccount and (payment.paymentMethod.isshared = 'N' or payment.obposApplications.masterterminal is null) ";
         Query cashToDepositQuery = OBDal.getInstance().getSession().createQuery(hqlCashToDeposit);
         cashToDepositQuery.setString(0, recons.get(i).getReconciliation().getId());
         @SuppressWarnings("unchecked")
@@ -606,20 +609,15 @@ public class CashUpReport extends HttpSecureAppServlet {
 
       /******************************* SALES ***************************************************************/
       String hqlSales = "select abs(sum(ordLine.lineNetAmount)) from OrderLine as ordLine"
-          + " where exists (select 1 from FIN_Payment_ScheduleDetail d"
-          + "              where d.orderPaymentSchedule.order = ordLine.salesOrder"
-          + "                 and exists (select 1 "
-          + "                               from FIN_Finacc_Transaction t"
-          + "                              where t.reconciliation.id in (" + reconIds + ")"
-          + "                                and t.finPayment = d.paymentDetails.finPayment))";
-      hqlWhere = "and ordLine.orderedQuantity > 0";
+          + " where ordLine.salesOrder.obposAppCashup = " + "'" + cashupId + "' ";
+      hqlWhere = "and ordLine.salesOrder.documentType.sOSubType = 'WR' and ordLine.orderedQuantity > 0";
       Query salesQuery = OBDal.getInstance().getSession().createQuery(hqlSales + hqlWhere);
       BigDecimal totalSalesAmount = (BigDecimal) salesQuery.list().get(0);
       if (totalSalesAmount != null)
         totalNetSalesAmount = totalNetSalesAmount.add(totalSalesAmount);
 
       /******************************* RETURNS ***************************************************************/
-      hqlWhere = "and ordLine.orderedQuantity < 0";
+      hqlWhere = "and (ordLine.salesOrder.documentType.sOSubType = 'SO' or ordLine.salesOrder.documentType.sOSubType = 'WR') and ordLine.orderedQuantity < 0";
       Query returnsQuery = OBDal.getInstance().getSession().createQuery(hqlSales + hqlWhere);
       BigDecimal totalReturnsAmount = (BigDecimal) returnsQuery.list().get(0);
       if (totalReturnsAmount != null)
@@ -640,16 +638,11 @@ public class CashUpReport extends HttpSecureAppServlet {
 
       // SALES TAXES
       String hqlTaxes = "select orderLineTax.tax.name ,str(abs(sum(orderLineTax.taxAmount))) from OrderLineTax as orderLineTax "
-          + " where exists (select 1 "
-          + "                 from FIN_Payment_ScheduleDetail d"
-          + "              where d.orderPaymentSchedule.order = orderLineTax.salesOrder"
-          + "                 and exists (select 1 "
-          + "                               from FIN_Finacc_Transaction t"
-          + "                              where t.reconciliation.id in ("
-          + reconIds
-          + ") "
-          + "                                and t.finPayment = d.paymentDetails.finPayment)) ";
-      hqlWhere = "and orderLineTax.salesOrderLine.orderedQuantity > 0 group by orderLineTax.tax.name order by orderLineTax.tax.name";
+          + " where orderLineTax.salesOrderLine.salesOrder.obposAppCashup = "
+          + "'"
+          + cashupId
+          + "' ";
+      hqlWhere = "and orderLineTax.salesOrderLine.salesOrder.documentType.sOSubType = 'WR' and orderLineTax.salesOrderLine.orderedQuantity > 0 group by orderLineTax.tax.name order by orderLineTax.tax.name";
       Query salesTaxesQuery = OBDal.getInstance().getSession().createQuery(hqlTaxes + hqlWhere);
       salesTaxList = salesTaxesQuery.list();
       totalGrossSalesAmount = totalNetSalesAmount;
@@ -662,7 +655,7 @@ public class CashUpReport extends HttpSecureAppServlet {
       parameters.put("SALES_TAXES", dataSource);
 
       // RETURNS TAXES
-      hqlWhere = "and orderLineTax.salesOrderLine.orderedQuantity < 0 group by orderLineTax.tax.name order by orderLineTax.tax.name";
+      hqlWhere = "and (orderLineTax.salesOrderLine.salesOrder.documentType.sOSubType = 'SO' or orderLineTax.salesOrderLine.salesOrder.documentType.sOSubType = 'WR') and orderLineTax.salesOrderLine.orderedQuantity < 0 group by orderLineTax.tax.name order by orderLineTax.tax.name";
       Query returnsTaxesQuery = OBDal.getInstance().getSession().createQuery(hqlTaxes + hqlWhere);
       returnsTaxList = returnsTaxesQuery.list();
       totalGrossReturnsAmount = totalNetReturnsAmount;

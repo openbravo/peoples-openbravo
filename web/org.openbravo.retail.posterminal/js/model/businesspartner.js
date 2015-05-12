@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2012-2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -80,12 +80,9 @@
       var me = this,
           undf;
       if (cusToLoad === null) {
-        this.set('id', null);
-        this.set('searchKey', null);
-        this.set('name', null);
-        this.set('description', null);
-        this.set('taxID', null);
-        this.set('taxCategory', null);
+
+        OB.UTIL.clone(new OB.Model.BusinessPartner(), this);
+
         this.set('paymentMethod', OB.MobileApp.model.get('terminal').defaultbp_paymentmethod);
         this.set('businessPartnerCategory', OB.MobileApp.model.get('terminal').defaultbp_bpcategory);
         this.set('businessPartnerCategory_name', OB.MobileApp.model.get('terminal').defaultbp_bpcategory_name);
@@ -96,34 +93,10 @@
         this.set('countryName', OB.MobileApp.model.get('terminal').defaultbp_bpcountry_name);
         this.set('client', OB.MobileApp.model.get('terminal').client);
         this.set('organization', OB.MobileApp.model.get('terminal').defaultbp_bporg);
-        this.set('locId', null);
-        this.set('locName', null);
         this.set('creditLimit', OB.DEC.Zero);
         this.set('creditUsed', OB.DEC.Zero);
-        this.set('_identifier', null);
-        this.set('postalCode', null);
-        this.set('contactId', null);
-        this.set('cityName', null);
-        this.set('phone', null);
-        this.set('email', null);
-        this.set('taxExempt', null);
       } else {
-        _.each(_.keys(cusToLoad.attributes), function (key) {
-          if (cusToLoad.get(key) !== undf) {
-            if (cusToLoad.get(key) === null) {
-              me.set(key, null);
-            } else if (cusToLoad.get(key).at) {
-              //collection
-              me.get(key).reset();
-              cusToLoad.get(key).forEach(function (elem) {
-                me.get(key).add(elem);
-              });
-            } else {
-              //property
-              me.set(key, cusToLoad.get(key));
-            }
-          }
-        });
+        OB.UTIL.clone(cusToLoad, this);
       }
     },
     loadByJSON: function (obj) {
@@ -165,6 +138,14 @@
   }, {
     name: 'name',
     column: 'name',
+    type: 'TEXT'
+  }, {
+    name: 'firstName',
+    column: 'first_name',
+    type: 'TEXT'
+  }, {
+    name: 'lastName',
+    column: 'last_name',
     type: 'TEXT'
   }, {
     name: 'description',
@@ -249,6 +230,14 @@
   }, {
     name: 'taxExempt',
     column: 'taxExempt',
+    type: 'TEXT'
+  }, {
+    name: 'customerBlocking',
+    column: 'customerBlocking',
+    type: 'TEXT'
+  }, {
+    name: 'salesOrderBlocking',
+    column: 'salesOrderBlocking',
     type: 'TEXT'
   }]);
 

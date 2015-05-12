@@ -11,11 +11,22 @@
 
 OB.UTIL = window.OB.UTIL || {};
 
-OB.UTIL.isDisableDiscount = function (receipt) {
+OB.UTIL.isDisableDiscount = function (receipt, callback) {
   if (receipt.get('lines').length > 0) {
-    return OB.MobileApp.model.get('isDisableDiscount');
+    // Set disable promotion discount property
+    OB.Dal.findUsingCache('ManualDiscountsExist', OB.Model.Discount, {
+      _whereClause: "where m_offer_type_id in (" + OB.Model.Discounts.getManualPromotions() + ")"
+    }, function (promos) {
+      if (promos.length === 0) {
+        callback(true);
+      } else {
+        callback(false);
+      }
+    }, function () {
+      callback(true);
+    });
   } else {
-    return true;
+    callback(true);
   }
 };
 
@@ -214,7 +225,7 @@ OB.UTIL.currency = {
    * @return {converter}                the converter to convert amounts from WebPOS default currency to toCurrencyId
    */
   getFromLocalConverter: function (toCurrencyId) {
-     // argument checks
+    // argument checks
     OB.UTIL.Debug.isDefined(toCurrencyId, "Missing required argument 'toCurrencyId' in OB.UTIL.currency.getFromLocalConverter");
 
     toCurrencyId = toCurrencyId.toString();
@@ -228,7 +239,7 @@ OB.UTIL.currency = {
    * @return {float}                        the converted amount
    */
   toDefaultCurrency: function (fromCurrencyId, amount) {
-     // argument checks
+    // argument checks
     OB.UTIL.Debug.isDefined(fromCurrencyId, "Missing required argument 'fromCurrencyId' in OB.UTIL.currency.toDefaultCurrency");
     OB.UTIL.Debug.isDefined(amount, "Missing required argument 'amount' in OB.UTIL.currency.toDefaultCurrency");
 
@@ -248,7 +259,7 @@ OB.UTIL.currency = {
    * @return {float}                        the converted amount
    */
   toForeignCurrency: function (toCurrencyId, amount) {
-     // argument checks
+    // argument checks
     OB.UTIL.Debug.isDefined(toCurrencyId, "Missing required argument 'toCurrencyId' in OB.UTIL.currency.toForeignCurrency");
     OB.UTIL.Debug.isDefined(amount, "Missing required argument 'amount' in OB.UTIL.currency.toForeignCurrency");
 

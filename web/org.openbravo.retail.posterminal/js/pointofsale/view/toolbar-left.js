@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2014 Openbravo S.L.U.
+ * Copyright (C) 2013-2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -197,34 +197,89 @@ enyo.kind({
     this.disabledChanged(false);
   },
   disabledChanged: function (isDisabled) {
-    // if the button is requested to be enabled, verify that the conditions are met
-    if (isDisabled === false) {
-      // by default, disabled
-      isDisabled = true;
-      if (OB.UTIL.SynchronizationHelper.isSynchronized()) {
-        if (this.model) {
-          var receipt = this.model.get('order');
-          if (receipt) {
-            if (receipt.get('id') && receipt.get('documentNo') && receipt.get('documentNo').length > 3 && receipt.get('bp') && receipt.get('bp').get('id')) {
-              if (receipt.get('lines') && receipt.get('lines').length > 0) {
-                if (receipt.get('hasbeenpaid') === 'N') {
-                  // enable it if all conditions are met
-                  isDisabled = false;
-                }
-              }
-            }
-          }
-        }
+    // logic decide if the button will be allowed to be enabled
+    // the decision to enable the button is made based on several requirements that must be met
+    var requirements;
+
+    function requirementsAreMet(model) {
+      requirements = {
+        isSynchronized: undefined,
+        isModel: undefined,
+        isReceipt: undefined,
+        receiptId: undefined,
+        receiptDocno: undefined,
+        isReceiptDocnoLengthGreaterThanThree: undefined,
+        isReceiptBp: undefined,
+        receiptBpId: undefined,
+        isReceiptLines: undefined,
+        isReceiptLinesLengthGreaterThanZero: undefined,
+        isReceiptHasbeenpaidEqualToN: undefined
+      };
+
+      // if any requirement is not met, return false
+      // checks are grouped as objects are known to exists
+      requirements.isSynchronized = OB.UTIL.SynchronizationHelper.isSynchronized();
+      if (!requirements.isSynchronized) {
+        return false;
       }
+      requirements.isModel = !OB.UTIL.isNullOrUndefined(model);
+      if (!requirements.isModel) {
+        return false;
+      }
+      var receipt = model.get('order');
+      requirements.isReceipt = !OB.UTIL.isNullOrUndefined(receipt);
+      if (!requirements.isReceipt) {
+        return false;
+      }
+      requirements.receiptId = receipt.get('id');
+      requirements.receiptDocno = receipt.get('documentNo');
+      requirements.isReceiptBp = !OB.UTIL.isNullOrUndefined(receipt.get('bp'));
+      requirements.isReceiptLines = !OB.UTIL.isNullOrUndefined(receipt.get('lines'));
+      if (OB.UTIL.isNullOrUndefined(requirements.receiptId) || OB.UTIL.isNullOrUndefined(requirements.receiptDocno) || !requirements.isReceiptBp || !requirements.isReceiptLines) {
+        return false;
+      }
+      requirements.receiptBpId = receipt.get('bp').get('id');
+      requirements.isReceiptDocnoLengthGreaterThanThree = receipt.get('documentNo').length > 3;
+      requirements.isReceiptLinesLengthGreaterThanZero = receipt.get('lines').length > 0;
+      requirements.isReceiptHasbeenpaidEqualToN = receipt.get('hasbeenpaid') === 'N';
+      if (OB.UTIL.isNullOrUndefined(requirements.receiptBpId) || !requirements.isReceiptDocnoLengthGreaterThanThree || !requirements.isReceiptLinesLengthGreaterThanZero || !requirements.isReceiptHasbeenpaidEqualToN) {
+        return false;
+      }
+      // all requirements are met
+      return true;
     }
-    this.disabled = isDisabled; // for getDisabled() to return the correct value
-    this.setAttribute('disabled', isDisabled); // to effectively turn the button enabled or disabled
+    var newIsDisabledState;
+    if (requirementsAreMet(this.model)) {
+      newIsDisabledState = false;
+    } else {
+      newIsDisabledState = true;
+    }
+
+    OB.UTIL.Debug.execute(function () {
+      if (!requirements) {
+        throw "The 'requirementsAreMet' function must have been called before this point";
+      }
+    });
+
+    // log the status and requirements of the pay button state
+    var msg = enyo.format("Pay button is %s", (newIsDisabledState ? 'disabled' : 'enabled'));
+    if (newIsDisabledState === true && requirements.isReceiptLinesLengthGreaterThanZero && requirements.isReceiptHasbeenpaidEqualToN) {
+      msg += " and should be enabled";
+      OB.error(msg, requirements);
+      OB.UTIL.Debug.execute(function () {
+        throw msg;
+      });
+    } else {
+      OB.debug(msg, requirements); // tweak this log level if the previous line is not enough
+    }
+
+    this.disabled = newIsDisabledState; // for getDisabled() to return the correct value
+    this.setAttribute('disabled', newIsDisabledState); // to effectively turn the button enabled or disabled
   },
   events: {
     onTabChange: '',
     onClearUserInput: ''
   },
-
   showPaymentTab: function () {
     var receipt = this.model.get('order'),
         me = this;
@@ -238,6 +293,7 @@ enyo.kind({
                 receipt.trigger('print');
               }
               receipt.trigger('scan');
+              OB.MobileApp.model.orderList.synchronizeCurrentOrder();
             }
           });
         });
@@ -249,8 +305,15 @@ enyo.kind({
       }
       return;
     }
-    if ((this.model.get('order').get('isEditable') === false && !this.model.get('order').get('isLayaway')) || this.model.get('order').get('orderType') === 3) {
+    if (this.model.get('order').get('isEditable') === false && !this.model.get('order').get('isLayaway')) {
       return true;
+    }
+    if (this.model.get('order').get('orderType') === 3) {
+      me.doTabChange({
+        tabPanel: me.tabPanel,
+        keyboard: 'toolbarpayment',
+        edit: false
+      });
     }
     OB.MobileApp.view.scanningFocus(false);
     if (this.model.get('leftColumnViewManager').isMultiOrder()) {
@@ -268,7 +331,6 @@ enyo.kind({
       colNum: 1
     });
   },
-
   tap: function () {
     if (this.disabled === false) {
       this.model.on('approvalChecked', function (event) {

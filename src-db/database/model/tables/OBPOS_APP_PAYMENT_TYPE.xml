@@ -81,7 +81,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="C_GLITEM_DIFF_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+      <column name="C_GLITEM_DIFF_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -153,11 +153,29 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
+      <column name="LEAVEASCREDIT" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+     <column name="AD_IMAGE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="OBPOS_PAY_METHOD_CATEGORY_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="OBPOS_APPPAYTYPE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="AD_IMAGE" name="OBPOS_APPPAYTYPE_AD_IMAGE_ID">
+        <reference local="AD_IMAGE_ID" foreign="AD_IMAGE_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="OBPOS_APPPAYTYPE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="OBPOS_PAY_METHOD_CATEGORY" name="OBPOS_APPPAYTYPE_CATEGORY_ID">
+        <reference local="OBPOS_PAY_METHOD_CATEGORY_ID" foreign="OBPOS_PAY_METHOD_CATEGORY_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_CURRENCY" name="OBPOS_APPPAYTYPE_CURR">
         <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
@@ -199,6 +217,7 @@
       <check name="OBPOS_APP_PAYTYPE_DEPGL_CHK"><![CDATA[(ALLOWDEPOSITS = 'N') OR (C_GLITEM_DEPOSITS_ID IS NOT NULL)]]></check>
       <check name="OBPOS_APP_PAYTYPE_DROPGL_CHK"><![CDATA[(ALLOWDROPS = 'N') OR (C_GLITEM_DROPS_ID IS NOT NULL)]]></check>
       <check name="OBPOS_APP_PAYTYPE_FIXEDAM_CHK"><![CDATA[(KEEPFIXEDAMOUNT = 'N') OR (AMOUNT IS NOT NULL)]]></check>
+      <check name="OBPOS_APPPAY_LEAVECREDIT_CHK"><![CDATA[LEAVEASCREDIT IN ('Y', 'N')]]></check>
       <check name="OBPOS_APPPAYTYPE_AUTO_CHK"><![CDATA[AUTOMATEMOVEMENTTOOTHER IN ('Y', 'N')]]></check>
       <check name="OBPOS_APPPAYTYPE_CASH_CHK"><![CDATA[ISCASH IN ('Y', 'N')]]></check>
       <check name="OBPOS_APPPAYTYPE_COUNTCASH_CHK"><![CDATA[COUNTCASH IN ('Y', 'N')]]></check>

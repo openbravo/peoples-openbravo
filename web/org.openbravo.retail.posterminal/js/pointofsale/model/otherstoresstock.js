@@ -7,11 +7,10 @@
  ************************************************************************************
  */
 
-/*global Backbone */
+/*global OB, Backbone */
 
 (function () {
 
-  OB = window.OB || {};
   OB.OBPOSPointOfSale = OB.OBPOSPointOfSale || {};
   OB.OBPOSPointOfSale.UsedModels = OB.OBPOSPointOfSale.UsedModels || {};
 

@@ -114,14 +114,18 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
       // checking supervisor users for sent approval type
       for (int i = 0; i < approvalType.length(); i++) {
         String iter = approvalType.getString(i);
-        hqlUser += "and exists (from ADPreference as p" + //
-            " where property = '" + iter + //
-            "'   and active = true" + //
-            "   and to_char(searchKey) = 'Y'" + //
-            "   and (userContact = user" + //
-            "        or exists (from ADUserRoles r" + //
-            "                  where r.role = p.visibleAtRole" + //
-            "                    and r.userContact = user))) ";
+        hqlUser += "and exists (from ADPreference as p"
+            + " where property = '"
+            + iter
+            + "'   and active = true"
+            + "   and to_char(searchKey) = 'Y'"
+            + "   and (userContact = user"
+            + "        or exists (from ADUserRoles r"
+            + "                  where r.role = p.visibleAtRole"
+            + "                    and r.userContact = user)) "
+            + "   and (p.visibleAtOrganization = terminal.organization "
+            + "   or ad_isorgincluded(terminal.organization, p.visibleAtOrganization, terminal.client.id) <> -1 "
+            + "   or p.visibleAtOrganization is null)) ";
       }
 
     }

@@ -37,7 +37,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="FIN_FINANCIAL_ACCOUNT_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+      <column name="FIN_FINANCIAL_ACCOUNT_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -61,6 +61,46 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="OVERRIDECONFIGURATION" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
+      <column name="C_GLITEM_DIFF_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="C_GLITEM_DROPDEP_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="AUTOMATEMOVEMENTTOOTHER" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
+      <column name="KEEPFIXEDAMOUNT" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
+      <column name="AMOUNT" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="ALLOWVARIABLEAMOUNT" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
+      <column name="ALLOWDONTMOVE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
+      <column name="ALLOWMOVEEVERYTHING" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
+      <column name="COUNTCASH" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
       <foreign-key foreignTable="OBPOS_APP_PAYMENT_TYPE" name="OBPOS_APP_PAYMENT_PAYTYPE">
         <reference local="OBPOS_APP_PAYMENT_TYPE_ID" foreign="OBPOS_APP_PAYMENT_TYPE_ID"/>
       </foreign-key>
@@ -75,6 +115,12 @@
       </foreign-key>
       <foreign-key foreignTable="OBPOS_APPLICATIONS" name="OBPOS_APPPAY_APPLICATIONS">
         <reference local="OBPOS_APPLICATIONS_ID" foreign="OBPOS_APPLICATIONS_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_GLITEM" name="OBPOS_APPPAY_GLITEM_DIFFS">
+        <reference local="C_GLITEM_DIFF_ID" foreign="C_GLITEM_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_GLITEM" name="OBPOS_APPPAY_GLITEM_DROPDE">
+        <reference local="C_GLITEM_DROPDEP_ID" foreign="C_GLITEM_ID"/>
       </foreign-key>
       <foreign-key foreignTable="OBRETCO_CMEVENTS" name="OBPOS_CMEVENTS_FK">
         <reference local="OBRETCO_CMEVENTS_ID" foreign="OBRETCO_CMEVENTS_ID"/>
@@ -93,6 +139,14 @@
         <unique-column name="OBPOS_APPLICATIONS_ID"/>
         <unique-column name="VALUE"/>
       </unique>
+      <check name="OBPOS_APPPAY_AUTO_CHK"><![CDATA[AUTOMATEMOVEMENTTOOTHER IN ('Y', 'N')]]></check>
+      <check name="OBPOS_APPPAY_CONFI_CHK"><![CDATA[(((OVERRIDECONFIGURATION = 'Y') AND (C_GLITEM_DIFF_ID IS NOT NULL)) AND (C_GLITEM_DROPDEP_ID IS NOT NULL)) OR (OVERRIDECONFIGURATION = 'N')]]></check>
+      <check name="OBPOS_APPPAY_COUNTCASH_CHK"><![CDATA[COUNTCASH IN ('Y', 'N')]]></check>
+      <check name="OBPOS_APPPAY_DONTMOVE_CHK"><![CDATA[ALLOWDONTMOVE IN ('Y', 'N')]]></check>
       <check name="OBPOS_APPPAY_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="OBPOS_APPPAY_MOVEEVRY_CHK"><![CDATA[ALLOWMOVEEVERYTHING IN ('Y', 'N')]]></check>
+      <check name="OBPOS_APPPAY_OVERRIDECONF_CH"><![CDATA[OVERRIDECONFIGURATION IN ('Y', 'N')]]></check>
+      <check name="OBPOS_APPPAY_PTYPE_FIXEDAM_CH"><![CDATA[KEEPFIXEDAMOUNT IN ('Y', 'N')]]></check>
+      <check name="OBPOS_APPPAY_VARAMT_CHK"><![CDATA[ALLOWVARIABLEAMOUNT IN ('Y', 'N')]]></check>
     </table>
   </database>

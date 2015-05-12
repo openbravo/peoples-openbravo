@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013 Openbravo S.L.U.
+ * Copyright (C) 2013-2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -62,6 +62,9 @@ enyo.kind({
     onSetDiscountQty: 'discountQtyChanged',
     onLineChecked: 'checkedLine',
     onStatusChanged: 'statusChanged',
+    onPaymentChanged: 'paymentChanged',
+    onPaymentActionPay: 'paymentActionPay',
+    onClearPaymentSelect: 'clearPaymentSelect',
     onLayaways: 'layaways',
     onChangeSalesRepresentative: 'changeSalesRepresentative',
     onMaxLimitAmountError: 'maxLimitAmountError',
@@ -191,7 +194,13 @@ enyo.kind({
     }, {
       kind: 'OB.UI.ModalSearchFilterBuilder',
       name: 'modalsearchfilterbuilder'
-    }]
+    }, {
+      kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalPaymentsSelect',
+      name: 'modalPaymentsSelect'
+    }, {
+        kind: 'OB.UI.ModalModulesInDev',
+        name: 'modalModulesInDev'
+      }]
   }, {
     name: 'mainSubWindow',
     isMainSubWindow: true,
@@ -314,8 +323,11 @@ enyo.kind({
   paidReceipts: function (inSender, inEvent) {
     var receipt = this.model.get('order');
     if (inEvent && inEvent.isReturn) {
-      if (receipt.get('bp').get('id') !== OB.MobileApp.model.get('businessPartner').get('id')) {
+      if (receipt && receipt.get('bp') && receipt.get('bp').get('id') !== OB.MobileApp.model.get('businessPartner').get('id')) {
         inEvent.bpartner = receipt.get('bp');
+      } else if (receipt && receipt.get('lines').length > 0) {
+        inEvent.bpartner = receipt.get('bp');
+        inEvent.defaultBP = true;
       }
     }
     this.$.modalPaidReceipts.setParams(inEvent);
@@ -382,7 +394,7 @@ enyo.kind({
     if (inEvent.ignoreStockTab) {
       this.showOrder(inSender, inEvent);
     } else {
-      if (inEvent.product.get('showstock') && !inEvent.product.get('ispack') && OB.MobileApp.model.get('connectedToERP')) {
+      if (!this.model.get('order').get('lines').isProductPresent(inEvent.product) && inEvent.product.get('showstock') && !inEvent.product.get('ispack') && OB.MobileApp.model.get('connectedToERP')) {
         inEvent.leftSubWindow = OB.OBPOSPointOfSale.UICustomization.stockLeftSubWindow;
         this.showLeftSubWindow(inSender, inEvent);
         if (enyo.Panels.isScreenNarrow()) {
@@ -836,6 +848,18 @@ enyo.kind({
       value: inEvent
     });
   },
+  paymentChanged: function (inSender, inEvent) {
+    // sending the event to the components bellow this one
+    this.waterfall('onButtonPaymentChanged', inEvent);
+  },
+  paymentActionPay: function (inSender, inEvent) {
+    // sending the event to the components bellow this one
+    this.waterfall('onActionPay', inEvent);
+  },
+  clearPaymentSelect: function (inSender, inEvent) {
+    // sending the event to the components bellow this one
+    this.waterfall('onClearPaymentMethodSelect', inEvent);
+  },
   layaways: function (inSender, inEvent) {
     this.$.modalPaidReceipts.setParams({
       isLayaway: true
@@ -1021,6 +1045,11 @@ enyo.kind({
   },
   initComponents: function () {
     this.inherited(arguments);
+    if (OB.UTIL.Debug.isDebug()) {
+      document.body.style.background = '';
+      document.body.className += ' indev-background';
+      this.waterfall('onInDevHeaderShow');
+    }
   }
 });
 

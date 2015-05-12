@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2014 Openbravo S.L.U.
+ * Copyright (C) 2012-2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -28,6 +28,18 @@ enyo.kind({
     this.setDisabled(inEvent.status);
   },
   tap: function () {
+    var qty = 0;
+    enyo.forEach(this.order.get('lines').models, function (l) {
+      if (l.get('originalOrderLineId')) {
+        qty = qty + 1;
+        return;
+      }
+    });
+    if (qty !== 0) {
+      OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_Cannot_Change_BPartner'));
+      return;
+    }
+
     if (!this.disabled) {
       this.doShowPopup({
         popup: 'modalcustomer'
@@ -253,9 +265,13 @@ enyo.kind({
     name: 'line',
     style: 'line-height: 23px;',
     components: [{
+      style: 'display: inline-block;',
       name: 'identifier'
     }, {
-      style: 'color: #888888',
+      style: 'display: inline-block; font-weight: bold; color: red; padding-left:5px;',
+      name: 'onHold'
+    }, {
+      style: 'clear: left; color: #888888',
       name: 'address'
     }, {
       style: 'clear: both;'
@@ -271,6 +287,9 @@ enyo.kind({
   create: function () {
     this.inherited(arguments);
     this.$.identifier.setContent(this.model.get('_identifier'));
+    if (this.model.get('customerBlocking') && this.model.get('salesOrderBlocking')) {
+      this.$.onHold.setContent('(' + OB.I18N.getLabel('OBPOS_OnHold') + ')');
+    }
     this.$.address.setContent(this.model.get('locName'));
   }
 });
@@ -300,6 +319,13 @@ enyo.kind({
           renderHeader: 'OB.UI.ModalBpScrollableHeader',
           renderLine: 'OB.UI.ListBpsLine',
           renderEmpty: 'OB.UI.RenderEmpty'
+        }, {
+          name: 'renderLoading',
+          style: 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight: bold; font-size: 30px; color: #cccccc',
+          showing: false,
+          initComponents: function () {
+            this.setContent(OB.I18N.getLabel('OBPOS_LblLoading'));
+          }
         }]
       }]
     }]
@@ -312,15 +338,22 @@ enyo.kind({
     var me = this,
         filter = inEvent.bpName;
 
+    this.$.stBPAssignToReceipt.$.tempty.hide();
+    this.$.stBPAssignToReceipt.$.tbody.hide();
+    this.$.renderLoading.show();
+
     function errorCallback(tx, error) {
       OB.UTIL.showError("OBDAL error: " + error);
     }
 
     function successCallbackBPs(dataBps) {
+      me.$.renderLoading.hide();
       if (dataBps && dataBps.length > 0) {
         me.bpsList.reset(dataBps.models);
+        me.$.stBPAssignToReceipt.$.tbody.show();
       } else {
         me.bpsList.reset();
+        me.$.stBPAssignToReceipt.$.tempty.show();
       }
     }
 
@@ -340,9 +373,13 @@ enyo.kind({
     this.bpsList = new Backbone.Collection();
     this.$.stBPAssignToReceipt.setCollection(this.bpsList);
     this.bpsList.on('click', function (model) {
-      this.doChangeBusinessPartner({
-        businessPartner: model
-      });
+      if (model.get('customerBlocking') && model.get('salesOrderBlocking')) {
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BPartnerOnHold', [model.get('_identifier')]));
+      } else {
+        this.doChangeBusinessPartner({
+          businessPartner: model
+        });
+      }
     }, this);
   }
 });

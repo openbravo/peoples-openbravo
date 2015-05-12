@@ -9,6 +9,9 @@
 package org.openbravo.retail.posterminal;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -23,12 +26,14 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.mobile.core.process.DataSynchronizationImportProcess;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchronization;
 import org.openbravo.mobile.core.process.JSONPropertyToEntity;
 import org.openbravo.mobile.core.process.PropertyByType;
@@ -37,44 +42,24 @@ import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonToDataConverter;
 
 @DataSynchronization(entity = "OBPOS_App_Cashup")
-public class ProcessCashClose extends POSDataSynchronizationProcess {
+public class ProcessCashClose extends POSDataSynchronizationProcess implements
+    DataSynchronizationImportProcess {
 
   private static final Logger log = Logger.getLogger(ProcessCashClose.class);
   JSONObject jsonResponse = new JSONObject();
 
-  public JSONObject saveRecord(JSONObject jsonCashup) throws Exception {
-    boolean isCashupProcessed = false;
-    try {
-      String cashUpId = jsonCashup.getString("id");
-      if (cashUpId != null) {
-        OBPOSAppCashup cashUpInitial = OBDal.getInstance().get(OBPOSAppCashup.class, cashUpId);
-        if (cashUpInitial != null && cashUpInitial.isProcessed()) {
-          isCashupProcessed = true;
-        }
-      }
-
-      return saveRecordCashUp(jsonCashup);
-    } catch (Exception e) {
-      // if the json cashup has processed=Y and the cashup in the backoffice has processed=N then we
-      // throw the exception, in other case, we ignore the error
-      if (jsonCashup.has("isprocessed") && jsonCashup.getString("isprocessed").equals("Y")) {
-        String cashUpId = jsonCashup.getString("id");
-        OBPOSAppCashup cashUp = OBDal.getInstance().get(OBPOSAppCashup.class, cashUpId);
-        if (cashUp == null || !isCashupProcessed) {
-          throw e;
-        }
-      }
-
-      JSONObject jsonData = new JSONObject();
-      jsonData.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
-      return jsonData;
-    }
+  protected String getImportQualifier() {
+    return "OBPOS_App_Cashup";
   }
 
-  public JSONObject saveRecordCashUp(JSONObject jsonCashup) throws Exception {
+  public JSONObject saveRecord(JSONObject jsonCashup) throws Exception {
     String cashUpId = jsonCashup.getString("id");
     JSONObject jsonData = new JSONObject();
     Date cashUpDate = new Date();
+    Date currentDate = new Date();
+    OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
+        jsonCashup.getString("posterminal"));
+
     try {
       if (jsonCashup.has("cashUpDate") && jsonCashup.get("cashUpDate") != null
           && StringUtils.isNotEmpty(jsonCashup.getString("cashUpDate"))) {
@@ -84,12 +69,24 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
       } else {
         log.debug("Error processing cash close: error retrieving cashUp date. Using current date");
       }
+      if (jsonCashup.has("currentDate") && jsonCashup.get("currentDate") != null
+          && StringUtils.isNotEmpty(jsonCashup.getString("currentDate"))) {
+        String strCurrentDate = (String) jsonCashup.getString("currentDate");
+        String dateFormatStr = posTerminal.getOrganization().getObposDateFormat();
+        if (dateFormatStr == null) {
+          dateFormatStr = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+              .getProperty("dateFormat.java");
+        }
+
+        DateFormat isodatefmt = new SimpleDateFormat(dateFormatStr);
+        currentDate = isodatefmt.parse(strCurrentDate);
+      } else {
+        log.debug("Error processing cash close: error retrieving current date. Using server current date");
+      }
     } catch (Exception e) {
       log.debug("Error processing cash close: error retrieving cashUp date. Using current date");
     }
 
-    OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
-        jsonCashup.getString("posterminal"));
     OBContext.setOBContext(jsonCashup.getString("userId"), OBContext.getOBContext().getRole()
         .getId(), OBContext.getOBContext().getCurrentClient().getId(), posTerminal
         .getOrganization().getId());
@@ -214,10 +211,13 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
   }
 
   private void doReconciliationAndInvoices(OBPOSApplications posTerminal, String cashUpId,
-      Date cashUpDate, JSONObject jsonCashup, JSONObject jsonData, boolean skipSlave,
+      Date currentDate, JSONObject jsonCashup, JSONObject jsonData, boolean skipSlave,
       List<String> slaveCashupIds) throws Exception {
     // check if there is a reconciliation in draft status
     for (OBPOSAppPayment payment : posTerminal.getOBPOSAppPaymentList()) {
+      if (payment.getFinancialAccount() == null) {
+        continue;
+      }
       if (skipSlave && posTerminal.getMasterterminal() != null
           && payment.getPaymentMethod().isShared()) {
         // Skip share payment method on slave terminals
@@ -249,15 +249,15 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
     // This cashup is a closed box
     TriggerHandler.getInstance().disable();
     try {
-      new OrderGroupingProcessor().groupOrders(posTerminal, cashUpId, cashUpDate);
+      getOrderGroupingProcessor().groupOrders(posTerminal, cashUpId, currentDate);
 
-      OBPOSApplications posTerm = OBDal.getInstance().get(OBPOSApplications.class,
+      posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
           jsonCashup.getString("posterminal"));
 
       CashCloseProcessor processor = getCashCloseProcessor();
       JSONArray cashMgmtIds = jsonCashup.getJSONArray("cashMgmtIds");
-      JSONObject result = processor.processCashClose(posTerm, jsonCashup, cashMgmtIds, cashUpDate,
-          slaveCashupIds);
+      JSONObject result = processor.processCashClose(posTerminal, jsonCashup, cashMgmtIds,
+          currentDate, slaveCashupIds);
       // add the messages returned by processCashClose...
       jsonData.put("messages", result.opt("messages"));
       jsonData.put("next", result.opt("next"));
@@ -270,6 +270,10 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
 
   protected CashCloseProcessor getCashCloseProcessor() {
     return WeldUtils.getInstanceFromStaticBeanManager(CashCloseProcessor.class);
+  }
+
+  protected OrderGroupingProcessor getOrderGroupingProcessor() {
+    return WeldUtils.getInstanceFromStaticBeanManager(OrderGroupingProcessor.class);
   }
 
   private synchronized void associateMasterSlave(OBPOSAppCashup cashUp,
@@ -348,7 +352,7 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
    * @throws JSONException
    */
   private OBPOSAppCashup getCashUp(String cashUpId, JSONObject jsonCashup, Date cashUpDate)
-      throws JSONException {
+      throws JSONException, SQLException {
     OBPOSAppCashup cashUp = OBDal.getInstance().get(OBPOSAppCashup.class, cashUpId);
     if (cashUp == null) {
       // create the cashup if no exists
@@ -364,21 +368,29 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
         cashUp.setBeingprocessed(jsonCashup.getString("isbeingprocessed").equalsIgnoreCase("Y"));
         cashUp.setNewOBObject(true);
         OBDal.getInstance().save(cashUp);
+        if (jsonCashup.has("creationDate")) {
+          String cashUpCreationDate = jsonCashup.getString("creationDate");
+          cashUp.set("creationDate", (Date) JsonToDataConverter.convertJsonToPropertyValue(
+              PropertyByType.DATETIME,
+              (cashUpCreationDate).subSequence(0, (cashUpCreationDate).lastIndexOf("."))));
+        }
       } catch (JSONException e) {
         e.printStackTrace();
       } catch (Exception e) {
         e.printStackTrace();
       }
     }
-    updateOrCreateCashupInfo(cashUpId, jsonCashup);
+    updateOrCreateCashupInfo(cashUpId, jsonCashup, cashUpDate);
+    OBDal.getInstance().flush();
+    OBDal.getInstance().getConnection().commit();
     return cashUp;
   }
 
-  private void updateOrCreateCashupInfo(String cashUpId, JSONObject jsonCashup)
-      throws JSONException {
+  private void updateOrCreateCashupInfo(String cashUpId, JSONObject jsonCashup, Date cashUpDate)
+      throws JSONException, OBException {
     OBPOSAppCashup cashup = OBDal.getInstance().get(OBPOSAppCashup.class, cashUpId);
     // Update cashup info
-    updateCashUpInfo(cashup, jsonCashup);
+    updateCashUpInfo(cashup, jsonCashup, cashUpDate);
 
     // Update taxes
     if (jsonCashup.has("cashTaxInfo")) {
@@ -419,8 +431,12 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
    * @param jsonCashup
    * @throws JSONException
    */
-  private void updateCashUpInfo(OBPOSAppCashup cashup, JSONObject jsonCashup) throws JSONException {
+  private void updateCashUpInfo(OBPOSAppCashup cashup, JSONObject jsonCashup, Date cashUpDate)
+      throws JSONException, OBException {
 
+    if (cashup.isProcessed() && jsonCashup.getString("isprocessed").equalsIgnoreCase("N")) {
+      throw new OBException("The cashup is processed, and it can not be set as unprocessed");
+    }
     cashup.setNetsales(new BigDecimal(jsonCashup.getString("netSales")));
     cashup.setGrosssales(new BigDecimal(jsonCashup.getString("grossSales")));
     cashup.setNetreturns(new BigDecimal(jsonCashup.getString("netReturns")));
@@ -428,6 +444,7 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
     cashup.setTotalretailtransactions(new BigDecimal(jsonCashup
         .getString("totalRetailTransactions")));
     cashup.setProcessed(jsonCashup.getString("isprocessed").equalsIgnoreCase("Y"));
+    cashup.setCashUpDate(cashUpDate);
     OBDal.getInstance().save(cashup);
   }
 

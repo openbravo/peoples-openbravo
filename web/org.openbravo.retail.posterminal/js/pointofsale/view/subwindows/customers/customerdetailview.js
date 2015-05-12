@@ -135,7 +135,7 @@ enyo.kind({
           classes: 'btnlink-orange btnlink btnlink-small',
           setCustomer: function (inSender, inEvent) {
             this.customer = inEvent.customer;
-            if (!OB.UTIL.isWritableOrganization(this.customer.get('organization')) || !OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers')) {
+            if (!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers')) {
               this.disabled = true;
               this.setAttribute("disabled", "disabled");
             } else {
@@ -191,8 +191,14 @@ enyo.kind({
   newAttributes: [{
     kind: 'OB.UI.CustomerTextProperty',
     name: 'customerName',
-    modelProperty: 'name',
+    modelProperty: 'firstName',
     i18nLabel: 'OBPOS_LblName',
+    readOnly: true
+  }, {
+    kind: 'OB.UI.CustomerTextProperty',
+    name: 'lastName',
+    modelProperty: 'lastName',
+    i18nLabel: 'OBPOS_LblLastName',
     readOnly: true
   }, {
     kind: 'OB.UI.CustomerTextProperty',

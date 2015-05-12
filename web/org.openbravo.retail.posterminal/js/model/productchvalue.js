@@ -15,8 +15,7 @@
     modelName: 'ProductChValue',
     tableName: 'm_ch_value',
     entityName: 'ProductChValue',
-    source: 'org.openbravo.retail.posterminal.master.ProductChValue',
-    dataLimit: 300
+    source: 'org.openbravo.retail.posterminal.master.ProductChValue'
   });
 
   ProductChValue.addProperties([{

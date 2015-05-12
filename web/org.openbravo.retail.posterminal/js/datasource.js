@@ -217,7 +217,19 @@ OB.DS.HWServer.prototype.print = function (template, params, callback) {
 };
 
 OB.DS.HWServer.prototype._print = function (templatedata, params, callback) {
-  this._send(this._template(templatedata, params), callback);
+  var computeddata;
+  try {
+    computeddata = this._template(templatedata, params);
+    this._send(computeddata, callback);
+  } catch (ex) {
+    OB.error('Error computing the template to print.', ex);
+    callback({
+      data: templatedata,
+      exception: {
+        message: OB.I18N.getLabel('OBPOS_MsgPrintError')
+      }
+    });
+  }
 };
 
 OB.DS.HWServer.prototype._template = function (templatedata, params) {

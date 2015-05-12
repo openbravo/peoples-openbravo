@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global enyo, $ */
+/*global OB, enyo*/
 
 enyo.kind({
   name: 'OB.UI.ModalReceipts',
@@ -108,6 +108,11 @@ enyo.kind({
     this.$.orderNo.setContent(this.model.get('documentNo'));
     this.$.bp.setContent(this.model.get('bp').get('_identifier'));
     this.$.total.setContent(this.model.printTotal());
+    OB.UTIL.HookManager.executeHooks('OBPOS_RenderListReceiptLine', {
+      listReceiptLine: this
+    }, function (args) {
+      //All should be done in module side
+    });
   }
 });
 

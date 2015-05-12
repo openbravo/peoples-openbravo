@@ -236,6 +236,12 @@ enyo.kind({
       stateless: true,
       permission: 'OBPOS_order.discount',
       action: function (keyboard, txt) {
+        if (keyboard.receipt.get('isEditable') === false) {
+          me.doShowPopup({
+            popup: 'modalNotEditableOrder'
+          });
+          return true;
+        }
         me.doDiscountsMode({
           tabPanel: 'edit',
           keyboard: 'toolbardiscounts',
@@ -465,27 +471,37 @@ enyo.kind({
   // Overwrite this component to customize the BarcodeActionHandler
   name: 'OB.UI.BarcodeActionHandler',
   kind: 'OB.UI.AbstractBarcodeActionHandler',
-  addWhereFilter: function (txt) {
-    return "where upper(product.upc) = upper('" + txt + "')";
+
+  errorCallback: function (tx, error) {
+    OB.UTIL.showError("OBDAL error: " + error);
   },
-  findProductByBarcode: function (txt, callback) {
-    var criteria;
 
-    function errorCallback(tx, error) {
-      OB.UTIL.showError("OBDAL error: " + error);
-    }
+  findProductByBarcode: function (code, callback) {
+    OB.debug('BarcodeActionHandler - id: ' + code);
+    this.searchProduct(code, callback);
+  },
 
-    function successCallbackProducts(dataProducts) {
-      if (dataProducts && dataProducts.length > 0) {
-        OB.debug('productfound');
-        callback(new Backbone.Model(dataProducts.at(0)));
-      } else {
-        // 'UPC/EAN code not found'
-        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_KbUPCEANCodeNotFound', [txt]));
-      }
+  searchProduct: function (code, callback) {
+    var me = this;
+    OB.Dal.find(OB.Model.Product, {
+      uPCEAN: code
+    }, function (data) {
+      me.searchProductCallback(data, code, callback);
+    }, me.errorCallback, this);
+  },
+
+  searchProductCallback: function (data, code, callback) {
+    this.successCallbackProducts(data, code, callback);
+  },
+
+  successCallbackProducts: function (dataProducts, code, callback) {
+    if (dataProducts && dataProducts.length > 0) {
+      OB.debug('productfound');
+      callback(new Backbone.Model(dataProducts.at(0)));
+    } else {
+      // 'UPC/EAN code not found'
+      OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_KbUPCEANCodeNotFound', [code]));
     }
-    OB.debug('BarcodeActionHandler - id: ' + txt);
-    OB.Dal.query(OB.Model.Product, 'select * from m_product as product ' + this.addWhereFilter(txt), null, successCallbackProducts, errorCallback, this);
   },
 
   addProductToReceipt: function (keyboard, product) {

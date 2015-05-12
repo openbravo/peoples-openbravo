@@ -1,13 +1,13 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2014 Openbravo S.L.U.
+ * Copyright (C) 2013-2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
 
-/*global OB, _ */
+/*global OB, _, enyo, console */
 
 (function () {
 
@@ -19,6 +19,49 @@
     this.ordersToSend = OB.DEC.Zero;
     this.hasInvLayaways = false;
 
+    // starting receipt verifications
+    this.receipt.on('closed', function () {
+      // is important to write all the errors with the same and unique header to find the records in the database
+      var errorHeader = "Receipt verification error";
+      var eventParams = 'closed';
+
+      // protect the application against verification exceptions
+      try {
+        var totalTaxes = 0;
+        _.each(this.get('taxes'), function (tax) {
+          totalTaxes += tax.amount;
+        }, this);
+        var gross = this.get('gross');
+        var net = this.get('net');
+
+        // 3. verify that the sum of the gross of each line equals the total gross
+        var difference;
+        var field = '';
+        if (this.get('priceIncludesTax')) {
+          difference = OB.DEC.sub(gross, totalTaxes);
+          field = 'discountedNet';
+        } else {
+          difference = gross;
+          field = 'discountedGross';
+        }
+        var isFieldUndefined = false;
+        _.each(this.get('lines').models, function (line) {
+          var fieldValue = line.get(field);
+          if (!fieldValue) {
+            isFieldUndefined = true;
+            return;
+          }
+          difference = OB.DEC.sub(difference, fieldValue);
+        });
+        if (!isFieldUndefined && difference !== 0) {
+          OB.error(enyo.format("%s: total gross does not equal the sum of the gross of each line. event: '%s', gross: %s, difference: %s", errorHeader, eventParams, gross, difference));
+        }
+
+      } catch (e) {
+        // do nothing, we do not want to generate another error
+      }
+    });
+    // finished receipt verifications
     this.receipt.on('closed', function (eventParams) {
       this.receipt = model.get('order');
       OB.info('Ticket closed', this.receipt.getOrderDescription());
@@ -27,20 +70,13 @@
           isLayaway = (this.receipt.get('orderType') === 2 || this.receipt.get('isLayaway')),
           json = this.receipt.serializeToJSON(),
           receiptId = this.receipt.get('id'),
-          creationDate = new Date(),
-          creationDateTransformed = new Date(creationDate.getUTCFullYear(), creationDate.getUTCMonth(), creationDate.getUTCDate(), creationDate.getUTCHours(), creationDate.getUTCMinutes(), creationDate.getUTCSeconds());
+          creationDate = this.receipt.get('creationDate') || new Date();
 
-      if (this.receipt.get('isQuotation')) {
-        // The receipt is a quotation, verify the creationDate exist
-        if (this.receipt.get('creationDate')) {
-          creationDate = this.receipt.get('creationDate');
-          creationDateTransformed = new Date(creationDate.getUTCFullYear(), creationDate.getUTCMonth(), creationDate.getUTCDate(), creationDate.getUTCHours(), creationDate.getUTCMinutes(), creationDate.getUTCSeconds());
-        }
-      }
       if (this.receipt.get('isbeingprocessed') === 'Y') {
         //The receipt has already been sent, it should not be sent again
         return;
       }
+
       this.receipt.set('hasbeenpaid', 'Y');
 
       OB.trace('Executing pre order save hook.');
@@ -52,6 +88,7 @@
       }, function (args) {
         if (args && args.cancellation && args.cancellation === true) {
           args.context.receipt.set('isbeingprocessed', 'N');
+          args.context.receipt.set('hasbeenpaid', 'N');
           args.context.receipt.trigger('paymentCancel');
           return true;
         }
@@ -61,12 +98,16 @@
 
         OB.trace('Execution of pre order save hook OK.');
 
-        OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(receipt.get('documentnoSuffix'), receipt.get('quotationnoSuffix'));
-
         delete receipt.attributes.json;
+        receipt.set('creationDate', creationDate);
         receipt.set('timezoneOffset', creationDate.getTimezoneOffset());
         receipt.set('created', creationDate.getTime());
         receipt.set('obposCreatedabsolute', OB.I18N.formatDateISO(creationDate));
+
+        // multiterminal support
+        // be sure that the active terminal is the one set as the order proprietary
+        receipt.set('posTerminal', OB.MobileApp.model.get('terminal').id);
+        receipt.set('posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.MobileApp.model.get('terminal')._identifier);
 
         receipt.get("approvals").forEach(function (approval) {
           if (typeof (approval.approvalType) === 'object') {
@@ -89,11 +130,17 @@
         OB.trace('Calculationg cashup information.');
 
         auxReceipt.clearWith(receipt);
-        OB.UTIL.cashUpReport(auxReceipt, OB.UTIL.calculateCurrentCash);
-
-        OB.trace('Saving receipt.');
-
-        OB.Dal.save(receipt, function () {
+        OB.Dal.transaction(function (tx) {
+          OB.UTIL.cashUpReport(auxReceipt, function () {
+            OB.UTIL.calculateCurrentCash(null, tx);
+            OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(receipt.get('documentnoSuffix'), receipt.get('quotationnoSuffix'), function () {
+              OB.trace('Saving receipt.');
+              OB.Dal.saveInTransaction(tx, receipt);
+            }, tx);
+          }, tx);
+        }, null, function () {
+          // success transaction...
+          OB.trace('Executing of post order save hook.');
 
           var successCallback = function (model) {
               OB.trace('Sync process success.');
@@ -116,8 +163,6 @@
 
               OB.trace('Order successfully removed.');
               };
-
-          OB.trace('Executing of post order save hook.');
 
           if (OB.UTIL.HookManager.get('OBPOS_PostSyncReceipt')) {
             //If there are elements in the hook, we are forced to execute the callback only after the synchronization process
@@ -154,9 +199,6 @@
               eventParams.callback();
             }
           }
-
-        }, function () {
-          //We do nothing: we don't need to alert the user, as the order is still present in the database, so it will be resent as soon as the user logs in again
         });
       });
     }, this);
@@ -173,9 +215,14 @@
           isLayaway = (this.receipt.get('orderType') === 2 || this.receipt.get('isLayaway')),
           json = this.receipt.serializeToJSON(),
           receiptId = this.receipt.get('id'),
-          creationDate = new Date(),
-          creationDateTransformed = new Date(creationDate.getUTCFullYear(), creationDate.getUTCMonth(), creationDate.getUTCDate(), creationDate.getUTCHours(), creationDate.getUTCMinutes(), creationDate.getUTCSeconds());
+          creationDate = this.receipt.get('creationDate') || new Date();
 
+      // issue 29164: sometimes, the quotations are sync without creation date
+      if (creationDate === "Invalid Date") {
+        creationDate = new Date();
+      }
+
+      this.receipt.set('creationDate', creationDate);
       this.receipt.set('hasbeenpaid', 'Y');
       this.context.get('multiOrders').trigger('integrityOk', this.receipt);
       OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(this.receipt.get('documentnoSuffix'), this.receipt.get('quotationnoSuffix'));
@@ -184,6 +231,11 @@
       this.receipt.set('timezoneOffset', creationDate.getTimezoneOffset());
       this.receipt.set('created', creationDate.getTime());
       this.receipt.set('obposCreatedabsolute', OB.I18N.formatDateISO(creationDate)); // Absolute date in ISO format
+      // multiterminal support
+      // be sure that the active terminal is the one set as the order proprietary
+      receipt.set('posTerminal', OB.MobileApp.model.get('terminal').id);
+      receipt.set('posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.MobileApp.model.get('terminal')._identifier);
+
       this.receipt.set('obposAppCashup', OB.MobileApp.model.get('terminal').cashUpId);
       this.receipt.set('json', JSON.stringify(this.receipt.toJSON()));
 

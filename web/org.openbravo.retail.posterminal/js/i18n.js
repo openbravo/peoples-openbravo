@@ -7,12 +7,11 @@
  ************************************************************************************
  */
 
-/*global B */
+/*global OB */
 
 (function () {
 
   // Mockup for OB.I18N
-  OB = window.OB || {};
   OB.I18N = window.OB.I18N || {};
 
   OB.I18N.formatCurrency = function (number) {

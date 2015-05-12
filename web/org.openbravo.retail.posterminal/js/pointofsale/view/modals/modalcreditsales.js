@@ -110,7 +110,7 @@ enyo.kind({
   isDefaultAction: true,
   executeOnShow: function () {
     if (this.args) {
-      this.$.bodyContent.$.popupmessage.setContent(OB.I18N.getLabel('OBPOS_notEnoughCreditBody', [this.args.bpName, this.args.actualCredit]));
+      this.$.bodyContent.$.popupmessage.setContent(OB.I18N.getLabel('OBPOS_notEnoughCreditBody', [this.args.bpName, OB.I18N.formatCurrency(this.args.actualCredit)]));
     }
   },
   bodyContent: {

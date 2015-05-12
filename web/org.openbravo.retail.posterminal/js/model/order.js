@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013 Openbravo S.L.U.
+ * Copyright (C) 2013-2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -85,9 +85,17 @@
     },
 
     calculateGross: function () {
+      // calculate the total amount depending on the tax plan
+      // setting the oposite variable to null, ensures that other logic is not using them in a wrong way
       if (this.get('priceIncludesTax')) {
+        this.set('net', null, {
+          silent: true
+        });
         this.set('gross', OB.DEC.mul(this.get('qty'), this.get('price')));
       } else {
+        this.set('gross', null, {
+          silent: true
+        });
         this.set('net', OB.DEC.mul(this.get('qty'), this.get('price')));
       }
     },
@@ -441,6 +449,58 @@
 
     calculateGross: function () {
       var me = this;
+      var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('calculateGross');
+
+      // reset some vital receipt values because, at this point, they are obsolete. do not fire the change event
+      me.set({
+        'net': OB.DEC.Zero,
+        'gross': OB.DEC.Zero,
+        'taxes': null,
+        'qty': OB.DEC.Zero
+      }, {
+        silent: true
+      });
+      var saveAndTriggerEvents = function (gross) {
+          var net = me.get('lines').reduce(function (memo, e) {
+            var netLine = e.get('discountedNet');
+            if (netLine) {
+              return OB.DEC.add(memo, netLine);
+            } else {
+              return memo;
+            }
+          }, OB.DEC.Zero);
+          //total qty
+          var qty = me.get('lines').reduce(function (memo, e) {
+            var net = me.get('lines').reduce(function (memo, e) {
+              var netLine = e.get('discountedNet');
+              if (netLine) {
+                return OB.DEC.add(memo, netLine);
+              } else {
+                return memo;
+              }
+            }, OB.DEC.Zero);
+            var qtyLine = e.getQty();
+            if (qtyLine > 0) {
+              return OB.DEC.add(memo, qtyLine, OB.I18N.qtyScale());
+            } else {
+              return memo;
+            }
+          }, OB.DEC.Zero);
+
+          // all attributes are set at once, preventing the change event of each attribute to be fired until all values are set
+          me.set({
+            'net': net,
+            'gross': gross,
+            'qty': qty
+          });
+
+          me.adjustPayment();
+          me.save();
+          me.trigger('calculategross');
+          me.trigger('saveCurrent');
+          OB.UTIL.SynchronizationHelper.finished(synchId, 'calculateGross');
+          };
+
       if (this.get('priceIncludesTax')) {
         this.calculateTaxes(function () {
           var gross = me.get('lines').reduce(function (memo, e) {
@@ -452,10 +512,7 @@
             }
             return OB.DEC.add(memo, grossLine);
           }, OB.DEC.Zero);
-          me.set('gross', gross);
-          me.adjustPayment();
-          me.trigger('calculategross');
-          me.trigger('saveCurrent');
+          saveAndTriggerEvents(gross);
         });
       } else {
         this.calculateTaxes(function () {
@@ -470,32 +527,10 @@
             } else {
               return memo;
             }
-          }, 0);
-          me.set('gross', gross);
-          var net = me.get('lines').reduce(function (memo, e) {
-            var netLine = e.get('discountedNet');
-            if (netLine) {
-              return OB.DEC.add(memo, netLine);
-            } else {
-              return memo;
-            }
           }, OB.DEC.Zero);
-          me.set('net', net);
-          me.adjustPayment();
-          me.trigger('calculategross');
-          me.trigger('saveCurrent');
+          saveAndTriggerEvents(gross);
         });
       }
-      //total qty
-      var qty = this.get('lines').reduce(function (memo, e) {
-        var qtyLine = e.getQty();
-        if (qtyLine > 0) {
-          return OB.DEC.add(memo, qtyLine, OB.I18N.qtyScale());
-        } else {
-          return memo;
-        }
-      }, OB.DEC.Zero);
-      this.set('qty', qty);
     },
 
     getQty: function () {
@@ -542,7 +577,7 @@
         'change': OB.DEC.compare(this.getChange()) > 0 ? OB.I18N.formatCurrency(this.getChange()) : null,
         'overpayment': OB.DEC.compare(OB.DEC.sub(pay, total)) > 0 ? OB.I18N.formatCurrency(OB.DEC.sub(pay, total)) : null,
         'isReturn': isReturn,
-        'isNegative': this.get('gross') < 0 ? true : false,
+        'isNegative': (this.get('gross') < 0 || (this.get('gross') > 0 && this.get('orderType') === 3)) ? true : false,
         'changeAmt': this.getChange(),
         'pendingAmt': OB.DEC.compare(OB.DEC.sub(pay, total)) >= 0 ? OB.DEC.Zero : OB.DEC.sub(total, pay),
         'payments': this.get('payments')
@@ -582,6 +617,7 @@
       this.set('posTerminal', null);
       this.set('posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, null);
       this.set('orderDate', new Date());
+      this.set('creationDate', null);
       this.set('documentnoPrefix', -1);
       this.set('quotationnoPrefix', -1);
       this.set('documentnoSuffix', -1);
@@ -639,7 +675,9 @@
         this.set('idExecution', idExecution);
       }
 
-      OB.UTIL.clone(_order, this);
+      OB.UTIL.clone(_order, this, {
+        silent: true
+      });
 
       if (!OB.UTIL.isNullOrUndefined(this.get('idExecution')) && this.get('idExecution') === idExecution) {
         _order.set('cloningReceipt', false);
@@ -669,9 +707,15 @@
     },
 
     setUnit: function (line, qty, text, doNotSave) {
+      var permission;
 
       if (OB.DEC.isNumber(qty) && qty !== 0) {
         var oldqty = line.get('qty');
+        permission = 'OBPOS_ReturnLine';
+        if (!OB.MobileApp.model.hasPermission(permission, true) && qty < 0 && oldqty > 0) {
+          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgCannotAddNegative'));
+          return;
+        }
         if (line.get('product').get('groupProduct') === false) {
           this.addProduct(line.get('product'));
           return true;
@@ -811,9 +855,9 @@
       if (p.get('obposScale')) {
         OB.POS.hwserver.getWeight(function (data) {
           if (data.exception) {
-            alert(data.exception.message);
+            OB.UTIL.showConfirmation.display('', data.exception.message);
           } else if (data.result === 0) {
-            alert(OB.I18N.getLabel('OBPOS_WeightZero'));
+            OB.UTIL.showConfirmation.display('', OB.I18N.getLabel('OBPOS_WeightZero'));
           } else {
             line = me.createLine(p, data.result, options, attrs);
           }
@@ -1065,13 +1109,15 @@
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationClosed'));
         return;
       }
-      if (this.get('isEditable') === false) {
-        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_modalNoEditableBody'));
-        return;
-      }
       var promotions = line.get('promotions') || [],
           disc = {},
-          i, replaced = false;
+          i, replaced = false,
+          discountRule = OB.Model.Discounts.discountRules[rule.attributes.discountType];
+      if (discountRule.getIdentifier) {
+        disc.identifier = discountRule.getIdentifier(rule, discount);
+      } else {
+        disc.identifier = discount.name || rule.get('printName') || rule.get('name');
+      }
       disc.name = discount.name || rule.get('printName') || rule.get('name');
       disc.ruleId = rule.id || rule.get('ruleId');
       disc.amt = discount.amt;
@@ -1440,6 +1486,7 @@
       this.set('isPaid', false);
       this.set('isEditable', true);
       this.set('orderDate', new Date());
+      this.set('creationDate', null);
       var nextDocumentno = OB.MobileApp.model.getNextDocumentno();
       this.set('documentnoPrefix', OB.MobileApp.model.get('terminal').docNoPrefix);
       this.set('documentnoSuffix', nextDocumentno.documentnoSuffix);
@@ -1474,13 +1521,16 @@
       this.set('hasbeenpaid', 'N');
       this.set('isEditable', true);
       this.set('createdBy', OB.MobileApp.model.get('orgUserId'));
-      this.set('oldId', this.get('id'));
+      //Sometimes the Id of Quotation is null.
+      if (this.get('id') && !_.isNull(this.get('id'))) {
+        this.set('oldId', this.get('id'));
+      }
       this.set('id', null);
       this.save();
     },
 
     rejectQuotation: function () {
-      alert('reject!!');
+      OB.UTIL.showWarning('reject!!');
     },
 
     resetOrderInvoice: function () {
@@ -1581,7 +1631,7 @@
       var i, max, p, order;
 
       if (!OB.DEC.isNumber(payment.get('amount'))) {
-        alert(OB.I18N.getLabel('OBPOS_MsgPaymentAmountError'));
+        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_MsgPaymentAmountError'));
         return;
       }
 
@@ -1681,24 +1731,6 @@
       this.save();
     },
 
-    hasIntegrity: function () {
-      // checks if the sum of the amount of every line is the same as the total gross
-      var gross = this.attributes.gross;
-      var grossOfSummedLines = 0;
-      var countOfLines = 1;
-      _.each(this.get('lines').models, function (line) {
-        var lineGross = line.attributes.gross;
-        grossOfSummedLines = OB.DEC.add(grossOfSummedLines, lineGross);
-        countOfLines += 1;
-      }, this);
-      // allow up to 2 cents of deviation per line
-      if (OB.DEC.abs(gross - grossOfSummedLines) <= (0.01 * countOfLines)) {
-        return true;
-      }
-      OB.error("Receipt " + this.attributes.documentNo + " failed in the integrity test; gross: " + gross + " <> lineGross: " + grossOfSummedLines);
-      return false;
-    },
-
     groupLinesByProduct: function () {
       var me = this,
           lineToMerge, lines = this.get('lines'),
@@ -1706,7 +1738,11 @@
           localSkipApplyPromotions;
 
       localSkipApplyPromotions = this.get('skipApplyPromotions');
-      this.set('skipApplyPromotions', true);
+      this.set({
+        'skipApplyPromotions': true
+      }, {
+        silent: true
+      });
       _.each(auxLines, function (l) {
         lineToMerge = _.find(lines.models, function (line) {
           if (l !== line && l.get('product').id === line.get('product').id && l.get('price') === line.get('price') && line.get('qty') > 0 && l.get('qty') > 0 && !_.find(line.get('promotions'), function (promo) {
@@ -1726,7 +1762,11 @@
           lines.remove(l);
         }
       });
-      this.set('skipApplyPromotions', localSkipApplyPromotions);
+      this.set({
+        'skipApplyPromotions': localSkipApplyPromotions
+      }, {
+        silent: true
+      });
     },
     fillPromotionsWith: function (groupedOrder, isFirstTime) {
       var me = this,
@@ -1735,7 +1775,11 @@
           localSkipApplyPromotions;
 
       localSkipApplyPromotions = this.get('skipApplyPromotions');
-      this.set('skipApplyPromotions', true);
+      this.set({
+        'skipApplyPromotions': true
+      }, {
+        silent: true
+      });
       //reset pendingQtyOffer value of each promotion
       groupedOrder.get('lines').forEach(function (l) {
         _.each(l.get('promotions'), function (promo) {
@@ -1765,6 +1809,10 @@
               }
             });
           }
+
+          lineToEdit.set('noDiscountCandidates', l.get('noDiscountCandidates'), {
+            silent: true
+          });
           //if promotion affects only to few quantities of the line, create a new line with quantities not affected by the promotion
           if (lineToEdit.get('qty') > l.get('qty')) {
             linesToCreate.push({
@@ -1851,6 +1899,10 @@
               line.set('promotionCandidates', l.get('promotionCandidates'));
               line.set('promotionMessages', me.showMessagesPromotions(line.get('promotionMessages'), l.get('promotionMessages')));
               line.set('qtyToApplyDiscount', l.get('qtyToApplyDiscount'));
+
+              line.set('noDiscountCandidates', l.get('noDiscountCandidates'), {
+                silent: true
+              });
               _.each(l.get('promotions'), function (promo) {
                 copiedPromo = JSON.parse(JSON.stringify(promo));
                 //when ditributing the promotion between different lines, we save accumulated amount
@@ -1954,7 +2006,11 @@
       });
       this.calculateGross();
       this.trigger('promotionsUpdated');
-      this.set('skipApplyPromotions', localSkipApplyPromotions);
+      this.set({
+        'skipApplyPromotions': localSkipApplyPromotions
+      }, {
+        silent: true
+      });
     },
 
 
@@ -2168,6 +2224,7 @@
       order.set('posTerminal', OB.MobileApp.model.get('terminal').id);
       order.set('posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.MobileApp.model.get('terminal')._identifier);
       order.set('orderDate', new Date());
+      order.set('creationDate', null);
       order.set('isPaid', false);
       order.set('paidOnCredit', false);
       order.set('isLayaway', false);
@@ -2189,7 +2246,8 @@
       var order = new Order(),
           lines, me = this,
           documentseq, documentseqstr, bp, newline, prod, payments, curPayment, taxes, bpId, bpLocId, numberOfLines = model.receiptLines.length,
-          orderQty = 0;
+          orderQty = 0,
+          NoFoundProduct = true;
 
       // Call orderLoader plugings to adjust remote model to local model first
       // ej: sales on credit: Add a new payment if total payment < total receipt
@@ -2209,12 +2267,18 @@
       order.set('hasbeenpaid', 'Y');
       order.set('isEditable', false);
       order.set('checked', model.checked); //TODO: what is this for, where it comes from?
+      order.set('orderDate', moment(model.orderDate.toString(), "YYYY-MM-DD").toDate());
+      order.set('creationDate', moment(model.creationDate.toString(), "YYYY-MM-DD hh:m:ss.s").toDate());
       order.set('paidOnCredit', false);
       if (model.isQuotation) {
         order.set('isQuotation', true);
         order.set('oldId', model.orderid);
         order.set('id', null);
         order.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentTypeForQuotations);
+        // TODO: this commented lines are kept just in case this issue happens again
+        // Set creationDate milliseconds to 0, if the date is with milisecond, the date with miliseconds is rounded to seconds:
+        // so, the second can change, and the creationDate in quotation should not be changed when quotation is reactivated
+        // order.set('creationDate', moment(model.creationDate.toString(), "YYYY-MM-DD hh:m:ss").toDate());
       }
       if (model.isLayaway) {
         order.set('isLayaway', true);
@@ -2233,7 +2297,6 @@
           order.set('orderType', 1);
         }
       }
-
       bpLocId = model.bpLocId;
       bpId = model.bp;
       OB.Dal.get(OB.Model.BusinessPartner, bpId, function (bp) {
@@ -2281,15 +2344,16 @@
                 order.set('json', JSON.stringify(order.toJSON()));
                 callback(order);
               }
+            }, null, function () {
+              if (NoFoundProduct) {
+                NoFoundProduct = false;
+                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_InformationTitle'), OB.I18N.getLabel('OBPOS_NoReceiptLoadedText'), [{
+                  label: OB.I18N.getLabel('OBPOS_LblOk'),
+                  isConfirmButton: true
+                }]);
+              }
             });
           });
-          order.set('orderDate', moment(model.orderDate.toString(), "YYYY-MM-DD").toDate());
-          order.set('creationDate', moment(model.creationDate.toString(), "YYYY-MM-DD hh:m:ss.s").toDate());
-          if (model.isQuotation) {
-            // isQuotation Set milliseconds to 0, if the date is with milisecond, the date with miliseconds is rounded to seconds:
-            // so, the second can change, and the creationDate in quotation should not be changed when quotation is reactivated
-            order.set('creationDate', moment(model.creationDate.toString(), "YYYY-MM-DD hh:m:ss").toDate());
-          }
           //order.set('payments', model.receiptPayments);
           payments = new PaymentLineList();
           _.each(model.receiptPayments, function (iter) {
@@ -2388,7 +2452,7 @@
       this.current.set('generateInvoice', false);
       this.current.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentTypeForQuotations);
       var nextQuotationno = OB.MobileApp.model.getNextQuotationno();
-      this.current.set('quotationDocNoPrefix', OB.MobileApp.model.get('terminal').quotationDocNoPrefix);
+      this.current.set('quotationnoPrefix', OB.MobileApp.model.get('terminal').quotationDocNoPrefix);
       this.current.set('quotationnoSuffix', nextQuotationno.quotationnoSuffix);
       this.current.set('documentNo', nextQuotationno.documentNo);
 
@@ -2403,19 +2467,16 @@
       });
     },
     deleteCurrent: function (forceCreateNew) {
-      var isNew = false;
-
-      if (this.current) {
-        this.remove(this.current);
-        if (this.length > 0 && !forceCreateNew) {
-          this.current = this.at(this.length - 1);
-        } else {
-          this.current = this.newOrder();
-          this.add(this.current);
-          isNew = true;
-        }
-        this.loadCurrent(isNew);
+      if (!this.current) {
+        return;
       }
+      this.remove(this.current);
+      var createNew = forceCreateNew || this.length === 0;
+      if (createNew) {
+        this.add(this.newOrder());
+      }
+      this.current = this.at(this.length - 1);
+      this.loadCurrent(createNew);
     },
 
     load: function (model) {
@@ -2444,6 +2505,21 @@
         }
         this.modelorder.clearWith(this.current);
         this.modelorder.set('isNewReceipt', false);
+      }
+    },
+    synchronizeCurrentOrder: function () {
+      // If for whatever reason the maxSuffix is not the current order suffix (most likely, the server returning a higher docno value)
+      // 1. if there are current orders
+      // 2. and have no lines (no product added, etc)
+      // 3. if the order suffix is lower than the minNumbers
+      // 4. delete the orders
+      var orderlist = this;
+      if (orderlist && orderlist.models.length === 1 && orderlist.current) {
+        if (orderlist.current.get('lines') && orderlist.current.get('lines').length === 0) {
+          if (orderlist.current.get('documentnoSuffix') <= OB.MobileApp.model.documentnoThreshold || OB.MobileApp.model.documentnoThreshold === 0) {
+            orderlist.deleteCurrent(true);
+          }
+        }
       }
     }
 
@@ -2572,7 +2648,7 @@
       var i, max, p, order;
 
       if (!OB.DEC.isNumber(payment.get('amount'))) {
-        alert(OB.I18N.getLabel('OBPOS_MsgPaymentAmountError'));
+        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_MsgPaymentAmountError'));
         return;
       }
 

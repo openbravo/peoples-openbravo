@@ -7,11 +7,10 @@
  ************************************************************************************
  */
 
-/*global B, _ , Backbone, localStorage */
+/*global OB, Backbone, _ */
 
 (function () {
 
-  OB = window.OB || {};
   OB.Model = window.OB.Model || {};
   OB.Collection = window.OB.Collection || {};
 

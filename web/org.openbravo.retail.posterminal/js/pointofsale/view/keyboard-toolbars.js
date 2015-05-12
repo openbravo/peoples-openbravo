@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013 Openbravo S.L.U.
+ * Copyright (C) 2013-2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -53,11 +53,14 @@ enyo.kind({
   },
   toolbarName: 'toolbarpayment',
   events: {
-    onShowPopup: ''
+    onShowPopup: '',
+    onClearPaymentSelect: ''
   },
   handlers: {
     onShowAllButtons: 'showAllButtons',
-    onCloseAllPopups: 'closeAllPopups'
+    onCloseAllPopups: 'closeAllPopups',
+    onButtonPaymentChanged: 'paymentChanged',
+    onActionPay: 'actionPay'
   },
   components: [{
     kind: 'OB.OBPOSPointOfSale.UI.PaymentMethods',
@@ -65,6 +68,10 @@ enyo.kind({
   }],
   init: function (model) {
     this.model = model;
+  },
+  actionPay: function (inSender, inEvent) {
+    this.bubble('onClearPaymentSelect');
+    this.pay(inEvent.amount, inEvent.key, inEvent.name, inEvent.paymentMethod, inEvent.rate, inEvent.mulrate, inEvent.isocode, inEvent.options);
   },
   pay: function (amount, key, name, paymentMethod, rate, mulrate, isocode, options) {
     if (options && options.percentaje) {
@@ -118,7 +125,7 @@ enyo.kind({
           this.bubble('onMaxLimitAmountError', {
             show: true,
             maxLimitAmount: paymentMethod.maxLimitAmount,
-            currency: paymentMethod.currency$_identifier === 'EUR' ? '€' : paymentMethod.currency$_identifier
+            currency: OB.MobileApp.model.paymentnames[key].symbol
           });
         } else {
           // Hide error and process payment
@@ -161,35 +168,61 @@ enyo.kind({
       }
     };
   },
+  addPaymentButton: function (btncomponent, countbuttons, paymentsbuttons, dialogbuttons, payment) {
+    if (btncomponent !== null) {
+      if (countbuttons < paymentsbuttons) {
+        this.createComponent(btncomponent);
+      } else {
+        OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons.push(btncomponent);
+        dialogbuttons[payment.payment.searchKey] = payment.payment._identifier;
+      }
+    }
+  },
 
   initComponents: function () {
     //TODO: modal payments
     var i, max, payments, paymentsdialog, paymentsbuttons, countbuttons, btncomponent, Btn, inst, cont, exactdefault, cashdefault, allpayments = {},
         me = this,
+        paymentCategories = [],
         dialogbuttons = {};
 
     this.inherited(arguments);
 
     payments = OB.MobileApp.model.get('payments');
 
+    // Count payment buttons checking payment method category  
+    countbuttons = 0;
+    enyo.forEach(payments, function (payment) {
+      if (payment.paymentMethod.paymentMethodCategory) {
+        var paymentCategory = null;
+        paymentCategories.every(function (category) {
+          if (category.id === payment.paymentMethod.paymentMethodCategory) {
+            paymentCategory = category;
+            return false;
+          }
+          return true;
+        });
+        if (paymentCategory === null) {
+          countbuttons++;
+          paymentCategories.push({
+            id: payment.paymentMethod.paymentMethodCategory,
+            name: payment.paymentMethod.paymentMethodCategory$_identifier
+          });
+        }
+      } else {
+        countbuttons++;
+      }
+    });
 
-    paymentsdialog = payments.length + this.sideButtons.length > 5;
+    paymentsdialog = countbuttons + this.sideButtons.length > 5;
     paymentsbuttons = paymentsdialog ? 4 : 5;
     countbuttons = 0;
 
-    enyo.forEach(payments, function (payment) {
-      if (payment.paymentMethod.id === OB.MobileApp.model.get('terminal').terminalType.paymentMethod) {
-        exactdefault = payment;
-      }
-      if (payment.payment.searchKey === OB.MobileApp.model.get('paymentcash')) {
-        cashdefault = payment;
-      }
-      allpayments[payment.payment.searchKey] = payment;
-
-      btncomponent = this.getButtonComponent({
-        command: payment.payment.searchKey,
-        label: payment.payment._identifier,
-        permission: payment.payment.searchKey,
+    // Add buttons for payment method categories
+    enyo.forEach(paymentCategories, function (category) {
+      btncomponent = me.getButtonComponent({
+        command: 'paymentMethodCategory.showitems.' + category.id,
+        label: category.name,
         stateless: false,
         action: function (keyboard, txt) {
           var options = {};
@@ -201,15 +234,64 @@ enyo.kind({
             OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NotValidNumber', [txt]));
             return;
           }
-          me.pay(amount, payment.payment.searchKey, payment.payment._identifier, payment.paymentMethod, payment.rate, payment.mulrate, payment.isocode, options);
+          var buttonClass = keyboard.buttons['paymentMethodCategory.showitems.' + category.id].attributes['class'];
+          if (me.currentPayment && buttonClass.indexOf('btnactive-green') > 0) {
+            me.pay(amount, me.currentPayment.payment.searchKey, me.currentPayment.payment._identifier, me.currentPayment.paymentMethod, me.currentPayment.rate, me.currentPayment.mulrate, me.currentPayment.isocode, options);
+          } else {
+            me.doShowPopup({
+              popup: 'modalPaymentsSelect',
+              args: {
+                idCategory: category.id,
+                amount: amount,
+                options: options
+              }
+            });
+          }
         }
       });
+      me.addPaymentButton(btncomponent, countbuttons++, paymentsbuttons, dialogbuttons, {
+        payment: {
+          searchKey: 'paymentMethodCategory.showitems.' + category.id,
+          _identifier: category.name
+        }
+      });
+    });
 
-      if (countbuttons++ < paymentsbuttons) {
-        this.createComponent(btncomponent);
+    enyo.forEach(payments, function (payment) {
+      if (payment.paymentMethod.id === OB.MobileApp.model.get('terminal').terminalType.paymentMethod) {
+        exactdefault = payment;
+      }
+      if (payment.payment.searchKey === OB.MobileApp.model.get('paymentcash')) {
+        cashdefault = payment;
+      }
+      allpayments[payment.payment.searchKey] = payment;
+
+      // Check for payment method category
+      if (payment.paymentMethod.paymentMethodCategory) {
+        btncomponent = null;
       } else {
-        OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons.push(btncomponent);
-        dialogbuttons[payment.payment.searchKey] = payment.payment._identifier;
+        btncomponent = this.getButtonComponent({
+          command: payment.payment.searchKey,
+          label: payment.payment._identifier + (payment.paymentMethod.paymentMethodCategory ? '*' : ''),
+          permission: payment.payment.searchKey,
+          stateless: false,
+          action: function (keyboard, txt) {
+            var options = {};
+            if (_.last(txt) === '%') {
+              options.percentaje = true;
+            }
+            var amount = OB.DEC.number(OB.I18N.parseNumber(txt));
+            if (_.isNaN(amount)) {
+              OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NotValidNumber', [txt]));
+              return;
+            }
+            me.pay(amount, payment.payment.searchKey, payment.payment._identifier, payment.paymentMethod, payment.rate, payment.mulrate, payment.isocode, options);
+          }
+        });
+      }
+
+      if (btncomponent !== null) {
+        me.addPaymentButton(btncomponent, countbuttons++, paymentsbuttons, dialogbuttons, payment);
       }
     }, this);
 
@@ -220,8 +302,10 @@ enyo.kind({
       btncomponent = this.getButtonComponent(sidebutton);
       if (countbuttons++ < paymentsbuttons) {
         this.createComponent(btncomponent);
-      } else {
+      } else if (this.sideButtons.length !== OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons.length) {
         OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons.push(btncomponent);
+        dialogbuttons[sidebutton.command] = sidebutton.label;
+      } else {
         dialogbuttons[sidebutton.command] = sidebutton.label;
       }
     }, this);
@@ -249,12 +333,14 @@ enyo.kind({
 
     this.owner.owner.addCommand('cashexact', {
       action: function (keyboard, txt) {
-        if (keyboard.status && !allpayments[keyboard.status]) {
+        var status = keyboard.status.indexOf('paymentMethodCategory.showitems.') === 0 && me.currentPayment ? me.currentPayment.payment.searchKey : keyboard.status;
+        if (status && !allpayments[status]) {
           // Is not a payment, so continue with the default path...
-          keyboard.execCommand(keyboard.status, null);
+          keyboard.execCommand(status, null);
         } else {
+          me.bubble('onClearPaymentSelect');
           // It is a payment...
-          var exactpayment = allpayments[keyboard.status] || exactdefault,
+          var exactpayment = allpayments[status] || exactdefault,
               amount = me.model.getPending();
           if (exactpayment.rate && exactpayment.rate !== '1') {
             amount = OB.DEC.div(me.model.getPending(), exactpayment.rate);
@@ -273,6 +359,10 @@ enyo.kind({
   closeAllPopups: function () {
     this.$.OBPOS_UI_PaymentMethods.hide();
   },
+  paymentChanged: function (inSender, inEvent) {
+    this.currentPayment = inEvent.payment;
+  },
+
   shown: function () {
     var me = this,
         i, max, p, keyboard = this.owner.owner;

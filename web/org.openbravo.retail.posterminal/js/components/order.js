@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013 Openbravo S.L.U.
+ * Copyright (C) 2013-2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -15,23 +15,66 @@ enyo.kind({
   published: {
     order: null
   },
-  style: 'border-bottom: 1px solid #cccccc;',
-  components: [{
+  newLabelComponents: [{
     kind: 'OB.UI.OrderDetails',
     name: 'orderdetails'
+  }],
+  newButtonComponents: [{
+    kind: 'OB.UI.BusinessPartner',
+    name: 'bpbutton'
   }, {
-    components: [{
-      kind: 'OB.UI.BusinessPartner',
-      name: 'bpbutton'
-    }, {
-      kind: 'OB.UI.BPLocation',
-      name: 'bplocbutton'
-    }]
+    kind: 'OB.UI.BPLocation',
+    name: 'bplocbutton'
+  }],
+  style: 'border-bottom: 1px solid #cccccc;',
+  components: [{
+    name: 'receiptLabels'
+  }, {
+    name: 'receiptButtons'
   }],
   orderChanged: function (oldValue) {
-    this.$.bpbutton.setOrder(this.order);
-    this.$.bplocbutton.setOrder(this.order);
-    this.$.orderdetails.setOrder(this.order);
+    _.each(this.$.receiptLabels.$, function (comp) {
+      if (comp.setOrder) {
+        comp.setOrder(this.order);
+      }
+    }, this);
+    _.each(this.$.receiptButtons.$, function (comp) {
+      if (comp.setOrder) {
+        comp.setOrder(this.order);
+      }
+    }, this);
+  },
+  initComponents: function () {
+    this.inherited(arguments);
+    enyo.forEach(this.newLabelComponents, function (comp) {
+      this.$.receiptLabels.createComponent(comp);
+    }, this);
+    enyo.forEach(this.newButtonComponents, function (comp) {
+      this.$.receiptButtons.createComponent(comp);
+    }, this);
+  }
+});
+
+enyo.kind({
+  name: 'OB.UI.OrderFooter',
+  classes: 'row-fluid span12',
+  published: {
+    order: null
+  },
+  style: 'border-bottom: 1px solid #cccccc;',
+  newComponents: [],
+  orderChanged: function () {
+    _.each(this.$, function (comp) {
+      if (comp.setOrder) {
+        comp.setOrder(this.order);
+      }
+    }, this);
+  },
+  initComponents: function () {
+    this.inherited(arguments);
+    enyo.forEach(this.newComponents, function (comp) {
+      this.createComponent(comp);
+    }, this);
   }
 });
 
@@ -81,7 +124,7 @@ enyo.kind({
   }],
   renderTotal: function (newTotal) {
     this.$.totalgross.setContent(OB.I18N.formatCurrency(newTotal));
-    OB.MobileApp.model.hookManager.executeHooks('OBPOS_UpdateTotalReceiptLine', {
+    OB.UTIL.HookManager.executeHooks('OBPOS_UpdateTotalReceiptLine', {
       totalline: this
     }, function (args) {
       //All should be done in module side
@@ -104,7 +147,7 @@ enyo.kind({
   initComponents: function () {
     this.inherited(arguments);
     this.$.lblTotal.setContent(OB.I18N.getLabel('OBPOS_LblTotal'));
-    OB.MobileApp.model.hookManager.executeHooks('OBPOS_RenderTotalReceiptLine', {
+    OB.UTIL.HookManager.executeHooks('OBPOS_RenderTotalReceiptLine', {
       totalline: this
     }, function (args) {
       //All should be done in module side
@@ -257,7 +300,13 @@ enyo.kind({
       renderEmpty: 'OB.UI.RenderTaxLineEmpty',
       //defined on redenderorderline.js
       listStyle: 'nonselectablelist',
-      columns: ['tax', 'base', 'totaltax']
+      columns: ['tax', 'base', 'totaltax'],
+      executeAfterRender: function () {
+        if (this.owner.$.listOrderLines.scrollToBottom) {
+          this.owner.$.listOrderLines.getScrollArea().scrollToBottom();
+        }
+        this.owner.$.listOrderLines.scrollToBottom = false;
+      }
     }, {
       tag: 'li',
       components: [{
@@ -329,11 +378,20 @@ enyo.kind({
     this.$.listTaxLines.setCollection(taxList);
   },
   orderChanged: function (oldValue) {
+    var me = this;
     this.$.totalReceiptLine.renderTotal(this.order.getTotal());
     this.$.totalReceiptLine.renderQty(this.order.getQty());
     this.$.totalTaxLine.renderTax(OB.DEC.sub(this.order.getTotal(), this.order.getNet()));
     this.$.totalTaxLine.renderBase('');
     this.$.listOrderLines.setCollection(this.order.get('lines'));
+    this.$.listOrderLines.collection.on('add change:qty change:promotions', function (model, list) {
+      me.$.listOrderLines.scrollToBottom = false;
+      if (me.$.listOrderLines.collection.models.length > 0 && me.$.listOrderLines.collection.models[me.$.listOrderLines.collection.models.length - 1]._changing) {
+        me.$.listOrderLines.scrollToBottom = true;
+      } else if (list && list.models && list.length > 0 && model.id === list.models[list.length - 1].id) {
+        me.$.listOrderLines.scrollToBottom = true;
+      }
+    });
     this.$.listPaymentLines.setCollection(this.order.get('payments'));
     this.setTaxes();
     this.order.on('change:gross change:net change:taxes', function (model) {

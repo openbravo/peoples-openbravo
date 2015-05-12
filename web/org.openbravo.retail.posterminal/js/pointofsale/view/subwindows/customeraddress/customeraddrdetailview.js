@@ -67,6 +67,9 @@ enyo.kind({
     var me = this;
     me.customer.set('locId', me.customerAddr.get('id'));
     me.customer.set('locName', me.customerAddr.get('name'));
+    me.customer.set('postalCode', me.customerAddr.get('postalCode'));
+    me.customer.set('cityName', me.customerAddr.get('cityName'));
+    me.customer.set('countryName', me.customerAddr.get('countryName'));
     me.doChangeBusinessPartner({
       businessPartner: me.customer
     });
@@ -106,7 +109,7 @@ enyo.kind({
           setCustomerAddr: function (inSender, inEvent) {
             this.customer = inEvent.customer;
             this.customerAddr = inEvent.customerAddr;
-            if (!OB.UTIL.isWritableOrganization(this.customer.get('organization')) || !OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers')) {
+            if (!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers')) {
               this.disabled = true;
               this.setAttribute("disabled", "disabled");
             } else {

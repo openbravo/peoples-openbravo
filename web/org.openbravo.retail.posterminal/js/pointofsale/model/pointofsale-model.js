@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2014 Openbravo S.L.U.
+ * Copyright (C) 2012-2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -71,11 +71,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           //  add an initial empty order
           orderlist.addFirstOrder();
         } else {
-          // Recalculate total properly for all  pendingorders.
-          args.ordersNotPaid.each(function (pendingorder) {
-            OB.DATA.OrderTaxes(pendingorder);
-            pendingorder.calculateGross();
-          });
           // The order object is stored in the json property of the row fetched from the database
           orderlist.reset(args.ordersNotPaid.models);
           // At this point it is sure that there exists at least one order
@@ -181,7 +176,21 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
     function searchCurrentBP() {
       var errorCallback = function (tx, error) {
-          OB.UTIL.showError("OBDAL error while getting BP info: " + error);
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_BPInfoErrorTitle'), OB.I18N.getLabel('OBPOS_BPInfoErrorMessage'), [{
+            label: OB.I18N.getLabel('OBPOS_Reload')
+          }], {
+            onShowFunction: function (popup) {
+              popup.$.headerCloseButton.hide();
+              window.localStorage.removeItem('POSLastTotalRefresh');
+              window.localStorage.removeItem('POSLastIncRefresh');
+            },
+            onHideFunction: function (popup) {
+              window.localStorage.removeItem('POSLastTotalRefresh');
+              window.localStorage.removeItem('POSLastIncRefresh');
+              window.location.reload();
+            },
+            autoDismiss: false
+          });
           };
 
       function successCallbackBPs(dataBps) {
@@ -197,14 +206,14 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               OB.MobileApp.model.set('businessPartner', dataBps);
               me.loadUnpaidOrders();
             };
-            OB.Dal.get(OB.Model.BPLocation, partnerAddressId, successCallbackBPLoc, errorCallback);
+            OB.Dal.get(OB.Model.BPLocation, partnerAddressId, successCallbackBPLoc, errorCallback, errorCallback);
           } else {
             OB.MobileApp.model.set('businessPartner', dataBps);
             me.loadUnpaidOrders();
           }
         }
       }
-      OB.Dal.get(OB.Model.BusinessPartner, OB.MobileApp.model.get('businesspartner'), successCallbackBPs, errorCallback);
+      OB.Dal.get(OB.Model.BusinessPartner, OB.MobileApp.model.get('businesspartner'), successCallbackBPs, errorCallback, errorCallback);
     }
 
     //Because in terminal we've the BP id and we want to have the BP model.
@@ -256,9 +265,15 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         return false;
       }
     });
-    this.set('order', receipt);
+
+    // expose the receipt
+    OB.MobileApp.model.receipt = receipt;
+
+    // create the orderList and expose it
     orderList = new OB.Collection.OrderList(receipt);
     OB.MobileApp.model.orderList = orderList;
+
+    this.set('order', receipt);
     this.set('orderList', orderList);
     this.set('customer', new OB.Model.BusinessPartner());
     this.set('customerAddr', new OB.Model.BPLocation());
@@ -307,6 +322,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         auxReceiptList.push(auxReceipt);
         if (auxReceiptList.length === me.get('multiOrders').get('multiOrdersList').length) {
           OB.UTIL.cashUpReport(auxReceiptList);
+          auxReceiptList = [];
         }
       }
 
@@ -398,11 +414,11 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     });
 
     receipt.on('paymentAccepted', function () {
-      OB.UTIL.showLoading(true);
       receipt.prepareToSend(function () {
         //Create the negative payment for change
-        var oldChange = receipt.get('change');
-        var clonedCollection = new Backbone.Collection();
+        var oldChange = receipt.get('change'),
+            clonedCollection = new Backbone.Collection(),
+            paymentKind, i;
         if (receipt.get('orderType') !== 2 && receipt.get('orderType') !== 3) {
           var negativeLines = _.filter(receipt.get('lines').models, function (line) {
             return line.get('qty') < 0;
@@ -442,6 +458,13 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             }));
           }
           receipt.set('change', oldChange);
+          for (i = 0; i < receipt.get('payments').length; i++) {
+            paymentKind = OB.MobileApp.model.paymentnames[receipt.get('payments').models[i].get('kind')];
+            if (paymentKind && paymentKind.paymentMethod && paymentKind.paymentMethod.leaveascredit) {
+              receipt.set('payment', OB.DEC.sub(receipt.get('payment'), receipt.get('payments').models[i].get('amount')));
+              receipt.set('paidOnCredit', true);
+            }
+          }
           receipt.trigger('closed', {
             callback: function () {
               receipt.get('payments').reset();
@@ -450,7 +473,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                   silent: true
                 });
               });
-              // receipt is cloned because the receipt is deleted in the next sentence (orderList.deleteCurrent(true);)
+              // receipt is cloned because the receipt is deleted in the next sentence (orderList.deleteCurrent();)
               // so, if exists a method no synchronous (for example, hook OBPOS_PrePrint) the "receipt" has changed
               receipt.set('cloningReceipt', true);
               var orderToPrint = OB.UTIL.clone(receipt);
@@ -459,11 +482,18 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               receipt.trigger('print', orderToPrint, {
                 offline: true
               });
-              orderList.deleteCurrent(true);
-              OB.UTIL.showLoading(false);
+              orderList.deleteCurrent();
+              orderList.synchronizeCurrentOrder();
             }
           });
         } else {
+          for (i = 0; i < receipt.get('payments').length; i++) {
+            paymentKind = OB.MobileApp.model.paymentnames[receipt.get('payments').models[i].get('kind')];
+            if (paymentKind && paymentKind.paymentMethod && paymentKind.paymentMethod.leaveascredit) {
+              receipt.set('payment', OB.DEC.sub(receipt.get('payment'), receipt.get('payments').models[i].get('amount')));
+              receipt.set('paidOnCredit', true);
+            }
+          }
           receipt.trigger('closed', {
             callback: function () {
               // receipt is cloned because the receipt is deleted when event "closed" is triggered
@@ -475,8 +505,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               receipt.trigger('print', orderToPrint, {
                 offline: true
               });
-              orderList.deleteCurrent(true);
-              OB.UTIL.showLoading(false);
+              orderList.deleteCurrent();
+              orderList.synchronizeCurrentOrder();
             }
           });
         }
@@ -563,7 +593,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         return;
       }
       //When we do not want to launch promotions process (Not apply or remove discounts)
-      if (receipt.get('skipApplyPromotions') || line.get('skipApplyPromotions')) {
+      if (receipt.get('cloningReceipt') || receipt.get('skipApplyPromotions') || line.get('skipApplyPromotions')) {
         return;
       }
       OB.Model.Discounts.applyPromotions(receipt, line);
@@ -580,6 +610,11 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       if (!receipt.get('isEditable') || receipt.get('lines').length === 0) {
         return;
       }
+      receipt.get('lines').forEach(function (l) {
+        l.unset('noDiscountCandidates', {
+          silent: true
+        });
+      });
       OB.Model.Discounts.applyPromotions(receipt);
     }, this);
     receipt.on('voidLayaway', function () {

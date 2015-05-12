@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+  <database name="TRIGGER OBPOS_APP_PAY_UNIQUEGL">
+    <trigger name="OBPOS_APP_PAY_UNIQUEGL" table="OBPOS_APP_PAYMENT" fires="before" insert="true" update="true" delete="false" foreach="row">
+      <body><![CDATA[
+
+
+
+
+
+/*
+ ************************************************************************************
+ * Copyright (C) 2015 Openbravo S.L.U.
+ * Licensed under the Openbravo Commercial License version 1.0
+ * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
+ * or in the legal folder of this module distribution.
+ ************************************************************************************
+ */
+
+BEGIN
+
+    IF AD_isTriggerEnabled()='N' THEN RETURN;
+    END IF;
+
+    IF (INSERTING OR UPDATING) THEN
+      IF (:NEW.c_glitem_diff_id = :NEW.c_glitem_dropdep_id) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@OBPOS_NON_UNIQUE_GLITEM_FOR_EVENT@');
+      END IF;
+    END IF;
+END OBPOS_APP_PAY_UNIQUEGL
+]]></body>
+    </trigger>
+  </database>
