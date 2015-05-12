@@ -337,6 +337,8 @@ public class DefaultJsonDataService implements JsonDataService {
             .getEntity(entityName), distinctPropertyPath);
         final Entity distinctEntity = distinctProperty.getTargetEntity();
         queryService.setEntityName(distinctEntity.getName());
+        queryService
+            .addFilterParameter(JsonConstants.SHOW_FK_DROPDOWN_UNFILTERED_PARAMETER, "true");
         queryService.setFilterOnReadableOrganizations(filterOnReadableOrganizations);
         if (parameters.containsKey(JsonConstants.USE_ALIAS)) {
           queryService.setUseAlias();
