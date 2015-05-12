@@ -1366,7 +1366,7 @@ Processes with "Requires Explicit Access Permission" flag set to true, do not in
 <!--287DDC4447C24C03BCE538328EC5BACE-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--287DDC4447C24C03BCE538328EC5BACE-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--287DDC4447C24C03BCE538328EC5BACE-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--287DDC4447C24C03BCE538328EC5BACE-->  <NAME><![CDATA[Disable Foreign Key Filter Combo]]></NAME>
+<!--287DDC4447C24C03BCE538328EC5BACE-->  <NAME><![CDATA[Disable Foreign Key Combo]]></NAME>
 <!--287DDC4447C24C03BCE538328EC5BACE-->  <DESCRIPTION><![CDATA[If this flag is checked, the foreign key combo will be disabled and the column will be filtered like a standard text column]]></DESCRIPTION>
 <!--287DDC4447C24C03BCE538328EC5BACE-->  <HELP><![CDATA[If this flag is checked, the foreign key combo will be disabled and the column will be filtered like a standard text column]]></HELP>
 <!--287DDC4447C24C03BCE538328EC5BACE-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
@@ -1487,7 +1487,7 @@ This will retrieve the session variable SESSIONVAR and use it as default value f
 <!--30F306CF2BCC4E11AFB3E6B8AD901289-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--30F306CF2BCC4E11AFB3E6B8AD901289-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--30F306CF2BCC4E11AFB3E6B8AD901289-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--30F306CF2BCC4E11AFB3E6B8AD901289-->  <NAME><![CDATA[Disable Foreign Key Filter Combo]]></NAME>
+<!--30F306CF2BCC4E11AFB3E6B8AD901289-->  <NAME><![CDATA[Disable Foreign Key Combo]]></NAME>
 <!--30F306CF2BCC4E11AFB3E6B8AD901289-->  <DESCRIPTION><![CDATA[If this flag is checked, the foreign key combo will be disabled and the column will be filtered like a standard text column]]></DESCRIPTION>
 <!--30F306CF2BCC4E11AFB3E6B8AD901289-->  <HELP><![CDATA[If this flag is checked, the foreign key combo will be disabled and the column will be filtered like a standard text column]]></HELP>
 <!--30F306CF2BCC4E11AFB3E6B8AD901289-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
@@ -3402,7 +3402,7 @@ The 'Compatibility with Legacy Grids' flag should only be checked if its handler
 <!--90A8FCE2F0674325863B3F793AB79601-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--90A8FCE2F0674325863B3F793AB79601-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--90A8FCE2F0674325863B3F793AB79601-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--90A8FCE2F0674325863B3F793AB79601-->  <NAME><![CDATA[Is FK Dropdown Unfiltered]]></NAME>
+<!--90A8FCE2F0674325863B3F793AB79601-->  <NAME><![CDATA[Unfiltered Foreign Key Combo]]></NAME>
 <!--90A8FCE2F0674325863B3F793AB79601-->  <DESCRIPTION><![CDATA[If this flag if checked, the filter drop down will show the rows from the referenced table unfiltered by specific rows being referenced in the referencing table.]]></DESCRIPTION>
 <!--90A8FCE2F0674325863B3F793AB79601-->  <HELP><![CDATA[If this flag if checked, the filter drop down will show the rows from the referenced table unfiltered by specific rows being referenced in the referencing table. The filters entered by the user in the grid filter editor will be applied.]]></HELP>
 <!--90A8FCE2F0674325863B3F793AB79601-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
@@ -4751,7 +4751,7 @@ The 'Compatibility with Legacy Grids' flag should only be checked if its handler
 <!--D8A9991BA87645D987BA8B8C9B1C956F-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--D8A9991BA87645D987BA8B8C9B1C956F-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--D8A9991BA87645D987BA8B8C9B1C956F-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--D8A9991BA87645D987BA8B8C9B1C956F-->  <NAME><![CDATA[Is FK Dropdown Unfiltered]]></NAME>
+<!--D8A9991BA87645D987BA8B8C9B1C956F-->  <NAME><![CDATA[Unfiltered Foreign Key Combo]]></NAME>
 <!--D8A9991BA87645D987BA8B8C9B1C956F-->  <DESCRIPTION><![CDATA[If this flag if checked, the filter drop down will show the rows from the referenced table unfiltered by specific rows being referenced in the referencing table.]]></DESCRIPTION>
 <!--D8A9991BA87645D987BA8B8C9B1C956F-->  <HELP><![CDATA[If this flag if checked, the filter drop down will show the rows from the referenced table unfiltered by specific rows being referenced in the referencing table. The filters entered by the user in the grid filter editor will be applied.]]></HELP>
 <!--D8A9991BA87645D987BA8B8C9B1C956F-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
@@ -5065,7 +5065,7 @@ Advanced features are only granted to the automatic roles defined as advanced.]]
 <!--E649C05D297F48C3B55C8F93991AE2C5-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--E649C05D297F48C3B55C8F93991AE2C5-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--E649C05D297F48C3B55C8F93991AE2C5-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--E649C05D297F48C3B55C8F93991AE2C5-->  <NAME><![CDATA[Disable Foreign Key Filter Combo]]></NAME>
+<!--E649C05D297F48C3B55C8F93991AE2C5-->  <NAME><![CDATA[Disable Foreign Key Combo]]></NAME>
 <!--E649C05D297F48C3B55C8F93991AE2C5-->  <DESCRIPTION><![CDATA[If this flag is checked, the foreign key combo will be disabled and the column will be filtered like a standard text column]]></DESCRIPTION>
 <!--E649C05D297F48C3B55C8F93991AE2C5-->  <HELP><![CDATA[If this flag is checked, the foreign key combo will be disabled and the column will be filtered like a standard text column]]></HELP>
 <!--E649C05D297F48C3B55C8F93991AE2C5-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
@@ -5324,7 +5324,7 @@ This process has to be capable of adding records to a selector.]]></HELP>
 <!--F71536CBC10F40BAAC048E466C2E8916-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--F71536CBC10F40BAAC048E466C2E8916-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--F71536CBC10F40BAAC048E466C2E8916-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--F71536CBC10F40BAAC048E466C2E8916-->  <NAME><![CDATA[Is FK Dropdown Unfiltered]]></NAME>
+<!--F71536CBC10F40BAAC048E466C2E8916-->  <NAME><![CDATA[Unfiltered Foreign Key Combo]]></NAME>
 <!--F71536CBC10F40BAAC048E466C2E8916-->  <DESCRIPTION><![CDATA[If this flag if checked, the filter drop down will show the rows from the referenced table unfiltered by specific rows being referenced in the referencing table.]]></DESCRIPTION>
 <!--F71536CBC10F40BAAC048E466C2E8916-->  <HELP><![CDATA[If this flag if checked, the filter drop down will show the rows from the referenced table unfiltered by specific rows being referenced in the referencing table. The filters entered by the user in the grid filter editor will be applied.]]></HELP>
 <!--F71536CBC10F40BAAC048E466C2E8916-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>

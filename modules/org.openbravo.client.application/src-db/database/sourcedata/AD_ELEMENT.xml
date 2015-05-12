@@ -100,7 +100,7 @@
 <!--1185A82966EA40ABA990B5DDBD9B8FBA-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1185A82966EA40ABA990B5DDBD9B8FBA-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1185A82966EA40ABA990B5DDBD9B8FBA-->  <COLUMNNAME><![CDATA[Disablefkcombo]]></COLUMNNAME>
-<!--1185A82966EA40ABA990B5DDBD9B8FBA-->  <NAME><![CDATA[Disable Foreign Key Filter Combo]]></NAME>
+<!--1185A82966EA40ABA990B5DDBD9B8FBA-->  <NAME><![CDATA[Disable Foreign Key Combo]]></NAME>
 <!--1185A82966EA40ABA990B5DDBD9B8FBA-->  <PRINTNAME><![CDATA[Disable Foreign Key Filter Combo]]></PRINTNAME>
 <!--1185A82966EA40ABA990B5DDBD9B8FBA-->  <DESCRIPTION><![CDATA[If this flag is checked, the foreign key combo will be disabled and the column will be filtered like a standard text column]]></DESCRIPTION>
 <!--1185A82966EA40ABA990B5DDBD9B8FBA-->  <HELP><![CDATA[If this flag is checked, the foreign key combo will be disabled and the column will be filtered like a standard text column]]></HELP>
@@ -153,7 +153,7 @@ The 'Compatibility with Legacy Grids' flag should only be checked if its handler
 <!--2D51BCE155184D34A5F38FFE515D5C23-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--2D51BCE155184D34A5F38FFE515D5C23-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--2D51BCE155184D34A5F38FFE515D5C23-->  <COLUMNNAME><![CDATA[IsFkDropDownUnfiltered]]></COLUMNNAME>
-<!--2D51BCE155184D34A5F38FFE515D5C23-->  <NAME><![CDATA[Is FK Dropdown Unfiltered]]></NAME>
+<!--2D51BCE155184D34A5F38FFE515D5C23-->  <NAME><![CDATA[Unfiltered Foreign Key Combo]]></NAME>
 <!--2D51BCE155184D34A5F38FFE515D5C23-->  <PRINTNAME><![CDATA[Is FK Dropdown Unfiltered]]></PRINTNAME>
 <!--2D51BCE155184D34A5F38FFE515D5C23-->  <DESCRIPTION><![CDATA[If this flag if checked, the filter drop down will show the rows from the referenced table unfiltered by specific rows being referenced in the referencing table.]]></DESCRIPTION>
 <!--2D51BCE155184D34A5F38FFE515D5C23-->  <HELP><![CDATA[If this flag if checked, the filter drop down will show the rows from the referenced table unfiltered by specific rows being referenced in the referencing table. The filters entered by the user in the grid filter editor will be applied.]]></HELP>
