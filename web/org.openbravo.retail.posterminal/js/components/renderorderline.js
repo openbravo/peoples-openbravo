@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013 Openbravo S.L.U.
+ * Copyright (C) 2013-2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -54,7 +54,7 @@ enyo.kind({
   initComponents: function () {
     this.inherited(arguments);
     this.$.checkBoxColumn.hide();
-    this.$.product.setContent(this.model.get('product').get('_identifier'));
+    this.$.product.setContent(this.setIdentifierContent());
     this.$.quantity.setContent(this.model.printQty());
     this.$.price.setContent(this.model.printPrice());
     if (this.model.get('priceIncludesTax')) {
@@ -84,7 +84,7 @@ enyo.kind({
         this.createComponent({
           style: 'display: block;',
           components: [{
-            content: '-- ' + d.name,
+            content: '-- ' + d.identifier,
             attributes: {
               style: 'float: left; width: 80%;'
             }
@@ -128,6 +128,9 @@ enyo.kind({
       this.$.checkBoxColumn.hide();
       this.changeEditMode(this, false);
     }
+  },
+  setIdentifierContent: function () {
+    return this.model.get('product').get('_identifier');
   }
 
 });

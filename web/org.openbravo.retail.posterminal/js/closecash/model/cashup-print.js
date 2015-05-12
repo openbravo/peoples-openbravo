@@ -12,7 +12,8 @@
 (function () {
 
   var PrintCashUp = function () {
-      this.templatecashup = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.CashUpTemplate);
+      var terminal = OB.MobileApp.model.get('terminal');
+      this.templatecashup = new OB.DS.HWResource(terminal.printCashUpTemplate || OB.OBPOSPointOfSale.Print.CashUpTemplate);
       };
 
   PrintCashUp.prototype.print = function (report, sumary) {

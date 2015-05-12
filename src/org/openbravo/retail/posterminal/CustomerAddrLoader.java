@@ -20,6 +20,7 @@ import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.mobile.core.process.DataSynchronizationImportProcess;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchronization;
 import org.openbravo.mobile.core.process.JSONPropertyToEntity;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
@@ -28,9 +29,14 @@ import org.openbravo.model.common.geography.Country;
 import org.openbravo.service.json.JsonConstants;
 
 @DataSynchronization(entity = "BusinessPartnerLocation")
-public class CustomerAddrLoader extends POSDataSynchronizationProcess {
+public class CustomerAddrLoader extends POSDataSynchronizationProcess implements
+    DataSynchronizationImportProcess {
 
   private static final Logger log = Logger.getLogger(CustomerAddrLoader.class);
+
+  protected String getImportQualifier() {
+    return "BusinessPartnerLocation";
+  }
 
   @Override
   public JSONObject saveRecord(JSONObject jsonCustomerAddr) throws Exception {

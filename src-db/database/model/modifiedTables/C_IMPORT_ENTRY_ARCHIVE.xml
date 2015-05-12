@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+  <database name="MODIFIED TABLE C_IMPORT_ENTRY_ARCHIVE">
+    <table name="C_IMPORT_ENTRY_ARCHIVE" primaryKey="C_IMPORT_EA_KEY">
+      <column name="EM_OBPOS_APPLICATIONS_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <foreign-key foreignTable="OBPOS_APPLICATIONS" name="EM_OBPOS_APP_IMPORT_EA">
+        <reference local="EM_OBPOS_APPLICATIONS_ID" foreign="OBPOS_APPLICATIONS_ID"/>
+      </foreign-key>
+      <index name="EM_OBPOS_APP_IMPORT_EA_FK" unique="false">
+        <index-column name="EM_OBPOS_APPLICATIONS_ID"/>
+      </index>
+    </table>
+  </database>

@@ -54,6 +54,7 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.materialmgmt.StockUtils;
+import org.openbravo.mobile.core.process.DataSynchronizationImportProcess;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchronization;
 import org.openbravo.mobile.core.process.JSONPropertyToEntity;
 import org.openbravo.mobile.core.process.PropertyByType;
@@ -95,7 +96,8 @@ import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonToDataConverter;
 
 @DataSynchronization(entity = "Order")
-public class OrderLoader extends POSDataSynchronizationProcess {
+public class OrderLoader extends POSDataSynchronizationProcess implements
+    DataSynchronizationImportProcess {
 
   private static final Logger log = Logger.getLogger(OrderLoader.class);
 
@@ -128,6 +130,10 @@ public class OrderLoader extends POSDataSynchronizationProcess {
   @Inject
   @Any
   private Instance<OrderLoaderPreProcessHook> orderPreProcesses;
+
+  protected String getImportQualifier() {
+    return "Order";
+  }
 
   @Override
   public JSONObject saveRecord(JSONObject jsonorder) throws Exception {

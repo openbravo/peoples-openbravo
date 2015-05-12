@@ -63,4 +63,13 @@ public class POSDataSynchronizationErrorHandler extends DataSynchronizationError
 
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.openbravo.mobile.core.process.DataSynchronizationErrorHandler#setImportStatusToError()
+   */
+  public boolean setImportEntryStatusToError() {
+    return false;
+  }
+
 }

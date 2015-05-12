@@ -17,6 +17,7 @@ import org.openbravo.advpaymentmngt.dao.TransactionsDao;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.mobile.core.process.DataSynchronizationImportProcess;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchronization;
 import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
@@ -25,9 +26,14 @@ import org.openbravo.retail.config.CashManagementEvents;
 import org.openbravo.service.json.JsonConstants;
 
 @DataSynchronization(entity = "FIN_Finacc_Transaction")
-public class ProcessCashMgmt extends POSDataSynchronizationProcess {
+public class ProcessCashMgmt extends POSDataSynchronizationProcess implements
+    DataSynchronizationImportProcess {
 
   private static final Logger log = Logger.getLogger(ProcessCashMgmt.class);
+
+  protected String getImportQualifier() {
+    return "FIN_Finacc_Transaction";
+  }
 
   public JSONObject saveRecord(JSONObject jsonsent) throws Exception {
 

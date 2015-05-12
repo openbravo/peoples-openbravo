@@ -495,6 +495,7 @@
           });
 
           me.adjustPayment();
+          me.save();
           me.trigger('calculategross');
           me.trigger('saveCurrent');
           OB.UTIL.SynchronizationHelper.finished(synchId, 'calculateGross');
@@ -674,7 +675,9 @@
         this.set('idExecution', idExecution);
       }
 
-      OB.UTIL.clone(_order, this, {silent: true});
+      OB.UTIL.clone(_order, this, {
+        silent: true
+      });
 
       if (!OB.UTIL.isNullOrUndefined(this.get('idExecution')) && this.get('idExecution') === idExecution) {
         _order.set('cloningReceipt', false);
@@ -1102,7 +1105,13 @@
       }
       var promotions = line.get('promotions') || [],
           disc = {},
-          i, replaced = false;
+          i, replaced = false,
+          discountRule = OB.Model.Discounts.discountRules[rule.attributes.discountType];
+      if (discountRule.getIdentifier) {
+        disc.identifier = discountRule.getIdentifier(rule, discount);
+      } else {
+        disc.identifier = discount.name || rule.get('printName') || rule.get('name');
+      }
       disc.name = discount.name || rule.get('printName') || rule.get('name');
       disc.ruleId = rule.id || rule.get('ruleId');
       disc.amt = discount.amt;
