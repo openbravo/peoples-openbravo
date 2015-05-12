@@ -47,7 +47,7 @@ import org.apache.log4j.Logger;
  */
 public class CheckUpdateConnectionPoolMerge extends BuildValidation {
   
-  private final static String PROPERTY_CONNECTION_POOL = "externalPoolClassName";
+  private final static String PROPERTY_CONNECTION_POOL = "db.externalPoolClassName";
   private final static String PATH_CONNECTIONPOOL_PROPERTIES = "/WebContent/WEB-INF/connectionPool.properties";
   private final static String PATH_OPENBRAVO_PROPERTIES = "/config/Openbravo.properties";
   
