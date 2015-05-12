@@ -33,6 +33,7 @@ import net.sf.jasperreports.engine.type.StretchTypeEnum;
 
 import org.apache.log4j.Logger;
 
+@Deprecated
 public class ReportDesignBO {
   public static Logger log4j = Logger.getLogger("org.openbravo.erpCommon.utility.GridBO");
   private int px = 0;
