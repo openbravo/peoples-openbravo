@@ -24,6 +24,7 @@ import java.util.Properties;
 
 import org.apache.tomcat.jdbc.pool.DataSource;
 import org.apache.tomcat.jdbc.pool.PoolProperties;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.database.ExternalConnectionPool;
 import org.openbravo.database.PoolInterceptorProvider;
@@ -60,6 +61,7 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
       connection.setAutoCommit(false);
     } catch (Exception e) {
       log.error("Error while retrieving connection: ", e);
+      throw new OBException(e);
     }
     return connection;
   }
