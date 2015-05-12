@@ -286,6 +286,22 @@ public class AdvancedQueryBuilder {
       }
 
       typedParameters.addAll(subEntityQueryBuilder.typedParameters);
+    } else if (filterParameters.containsKey(JsonConstants.SHOW_FK_DROPDOWN_UNFILTERED_PARAMETER)) {
+      // If the entity is Client or Organization, we need to add the readable Client or
+      // Organization filter manually, because the OBQuery will not be able to do it
+      // See issue https://issues.openbravo.com/view.php?id=29846
+      String subEntityClientOrg = "";
+      String whereClauseFirstWord = StringUtils.isEmpty(whereClause.trim()) ? "where" : "and";
+      if (entity.getMappingClass().isAssignableFrom(Organization.class)) {
+        subEntityClientOrg = " " + whereClauseFirstWord + " e.id "
+            + createInClause(OBContext.getOBContext().getReadableOrganizations());
+      } else if (entity.getMappingClass().isAssignableFrom(Client.class)) {
+        subEntityClientOrg = " " + whereClauseFirstWord + " e.id "
+            + createInClause(OBContext.getOBContext().getReadableClients());
+      }
+      if (!subEntityClientOrg.isEmpty()) {
+        whereClause += subEntityClientOrg;
+      }
     }
 
     return whereClause;
