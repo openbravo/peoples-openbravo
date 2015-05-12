@@ -91,8 +91,6 @@ public class OrderGroupingProcessor {
     // random string is created with currentTimeMillis(14 numbers)
     String strExecutionUUId = ((Long) System.currentTimeMillis()).toString();
 
-    System.out.println("Execution_id: " + strExecutionUUId);
-
     if (posTerminal.getObposTerminaltype().isGroupingOrders()) {
       OrderGroupingProcessorData.insertHeaderGrouping(conn, strUserId, strExecutionUUId,
           strCurrentDate, cashUpId);
