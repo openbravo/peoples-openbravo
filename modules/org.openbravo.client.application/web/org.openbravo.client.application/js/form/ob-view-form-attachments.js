@@ -412,7 +412,9 @@ isc.OBAttachmentsLayout.addProperties({
           //Calls Callback (INITIALIZE action) in order to create the form correctly and shows popup.
           OB.RemoteCallManager.call('org.openbravo.client.application.window.AttachmentsAH', {
             action: "INITIALIZE"
-          }, {}, callback);
+          }, {
+            tabId: form.getItem('inpTabId').value
+          }, callback);
 
         } else {
           isc.ask(OB.I18N.getLabel('OBUIAPP_OtherUploadInProgress'), function (clickOK) {
@@ -688,7 +690,9 @@ isc.OBAttachmentsLayout.addProperties({
       OB.RemoteCallManager.call('org.openbravo.client.application.window.AttachmentsAH', {
         action: "INITIALIZE_EDIT",
         attachId: form.getItem('inpAttachId').value
-      }, {}, callbackEdit);
+      }, {
+        tabId: form.getItem('inpTabId').value
+      }, callbackEdit);
     };
 
     length = attachments.length;

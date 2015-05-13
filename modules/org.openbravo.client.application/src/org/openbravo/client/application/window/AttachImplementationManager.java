@@ -32,13 +32,19 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
+import org.hibernate.ScrollMode;
+import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.OrganizationEnabled;
+import org.openbravo.client.application.Parameter;
+import org.openbravo.client.application.ParameterUtils;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
@@ -46,6 +52,7 @@ import org.openbravo.dal.security.SecurityChecker;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.system.Client;
@@ -58,6 +65,8 @@ import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.utils.FileUtility;
 
 public class AttachImplementationManager {
+
+  private Logger log = Logger.getLogger(AttachImplementationManager.class);
 
   @Inject
   @Any
@@ -96,6 +105,7 @@ public class AttachImplementationManager {
     String strName = file.getName();
 
     Attachment attachment = null;
+    boolean attachmentExists = true;
     try {
       OBContext.setAdminMode();
       attachment = getAttachment(tab.getTable(), strKey, strName);
@@ -106,6 +116,7 @@ public class AttachImplementationManager {
         attachment.setName(strName);
         attachment.setTable(tab.getTable());
         attachment.setRecord(strKey);
+        attachmentExists = false;
       }
       attachment.setAttachmentConf(attachConf);
       attachment.setOrganization(org);
@@ -120,6 +131,9 @@ public class AttachImplementationManager {
         throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoMethod"));
       }
       handler.uploadFile(attachment, strDataType, parameters, file, strTab);
+
+      ParameterUtils.saveMetadata(attachment, parameters, attachmentExists);
+
       OBDal.getInstance().flush();
     } finally {
       OBContext.restorePreviousMode();
@@ -178,6 +192,7 @@ public class AttachImplementationManager {
       }
       handler.updateFile(attachment, tabId, parameters);
       OBDal.getInstance().save(attachment);
+      ParameterUtils.saveMetadata(attachment, parameters, true);
       OBDal.getInstance().flush();
     } finally {
       OBContext.restorePreviousMode();
@@ -312,16 +327,31 @@ public class AttachImplementationManager {
    * 
    * @param attachmentMethodId
    *          The attachment Method ID to take metadata
+   * @param tabId
+   *          The Tab ID to take metadata
    * @return Returns a map with the metadata that belongs to attachmentMethodId
    */
 
-  public Map<String, Object> getMetadataList(String attachmentMethodId) {
-    AttachmentMethod attachMethod = OBDal.getInstance().get(AttachmentMethod.class,
-        attachmentMethodId);
+  public Map<String, Object> getMetadataList(String attachmentMethodId, String tabId) {
     Map<String, Object> metadataList = new HashMap<String, Object>();
-    for (AttachmentMetadata metadata : attachMethod.getCAttachmentMetadataList()) {
-      metadataList.put(metadata.getValue(), null);
+    final OBQuery<Parameter> paramQuery = OBDal.getInstance().createQuery(
+        Parameter.class,
+        "attachmentMethod.id='" + attachmentMethodId + "' and (tab is null or tab.id='" + tabId
+            + "')");
+    paramQuery.setFetchSize(1000);
+    final ScrollableResults paramScroller = paramQuery.scroll(ScrollMode.FORWARD_ONLY);
+    int i = 0;
+    while (paramScroller.next()) {
+      final Parameter metadata = (Parameter) paramScroller.get()[0];
+      metadataList.put(metadata.getDBColumnName(), null);
+      // clear the session every 100 records
+      if ((i % 100) == 0) {
+        OBDal.getInstance().getSession().clear();
+      }
+      i++;
     }
+    paramScroller.close();
+
     return metadataList;
   }
 
@@ -345,12 +375,51 @@ public class AttachImplementationManager {
   public void getMetadataValues(Attachment attachment, JSONArray metadataArray) {
     checkReadableAccess(attachment);
 
-    AttachImplementation handler = getHandler(attachment.getAttachmentConf().getAttachmentMethod() == null ? "Default"
-        : attachment.getAttachmentConf().getAttachmentMethod().getValue());
-    if (handler == null) {
-      throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoMethod"));
+    // AttachImplementation handler = getHandler(attachment.getAttachmentMethod() == null ?
+    // "Default"
+    // : attachment.getAttachmentMethod().getValue());
+    // if (handler == null) {
+    // throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoMethod"));
+    // }
+    // handler.getMetadataValues(attachment, metadataArray);
+
+    try {
+      OBCriteria<AttachmentMetadata> attachmentMetadataCriteria = OBDal.getInstance()
+          .createCriteria(AttachmentMetadata.class);
+      attachmentMetadataCriteria.add(Restrictions.eq(AttachmentMetadata.PROPERTY_FILE, attachment));
+      attachmentMetadataCriteria.setFetchSize(1000);
+      final ScrollableResults attacmenthMetadataScroller = attachmentMetadataCriteria
+          .scroll(ScrollMode.FORWARD_ONLY);
+      int i = 0;
+      while (attacmenthMetadataScroller.next()) {
+        final AttachmentMetadata attachmentMetadata = (AttachmentMetadata) attacmenthMetadataScroller
+            .get()[0];
+        for (int j = 0; j < metadataArray.length(); j++) {
+          if (metadataArray.getJSONObject(j).get("SearchKey")
+              .equals(attachmentMetadata.getObuiappParameter().getDBColumnName())) {
+            if (attachmentMetadata.getStringValue() != null
+                && !attachmentMetadata.getStringValue().equals("")) {
+              metadataArray.getJSONObject(j).put("value", attachmentMetadata.getStringValue());
+            } else if (attachmentMetadata.getNumericValue() != null) {
+              metadataArray.getJSONObject(j).put("value",
+                  attachmentMetadata.getNumericValue().toString());
+            } else if (attachmentMetadata.getValuationDate() != null) {
+              metadataArray.getJSONObject(j).put("value",
+                  attachmentMetadata.getValuationDate().toString());
+            }
+          }
+        }
+        // clear the session every 100 records
+        if ((i % 100) == 0) {
+          OBDal.getInstance().getSession().clear();
+        }
+        i++;
+      }
+      attacmenthMetadataScroller.close();
+    } catch (JSONException e) {
+      log.error("AlfrescoAttachImplementation - getMetadataAndValues. Error with the json");
+      throw new OBException("JSONError", e);
     }
-    handler.getMetadataValues(attachment, metadataArray);
 
   }
 

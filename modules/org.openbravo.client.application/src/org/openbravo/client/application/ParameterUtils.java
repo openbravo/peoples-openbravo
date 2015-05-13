@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,6 +29,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.criterion.Restrictions;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.domaintype.BigDecimalDomainType;
 import org.openbravo.base.model.domaintype.BooleanDomainType;
@@ -36,8 +38,15 @@ import org.openbravo.base.model.domaintype.DateDomainType;
 import org.openbravo.base.model.domaintype.DomainType;
 import org.openbravo.base.model.domaintype.LongDomainType;
 import org.openbravo.base.model.domaintype.StringDomainType;
+import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.util.Check;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.OBDateUtils;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.model.ad.utility.Attachment;
+import org.openbravo.model.ad.utility.AttachmentMetadata;
 
 /**
  * Utility class for Parameters handling
@@ -46,6 +55,13 @@ import org.openbravo.dal.core.OBContext;
  */
 public class ParameterUtils {
   private static Logger log = Logger.getLogger(ParameterUtils.class);
+
+  public static final String REFERENCE_INTEGER = "11";
+  public static final String REFERENCE_AMOUNT = "12";
+  public static final String REFERENCE_DATE = "15";
+  public static final String REFERENCE_DATETIME = "16";
+  public static final String REFERENCE_QUANTITY = "29";
+  public static final String REFERENCE_ABSOLUTEDATETIME = "478169542A1747BD942DD70C8B45089C";
 
   public static void setParameterValue(ParameterValue parameterValue, JSONObject requestValue) {
     try {
@@ -164,5 +180,65 @@ public class ParameterUtils {
       result = new JSONObject((Map) result);
     }
     return result;
+  }
+
+  /**
+   * Save metadata in C_File_Metadata records.
+   * 
+   * @param attachment
+   *          attachment is saving metadata to.
+   * @param metadata
+   *          metadata values to save.
+   * @param exists
+   *          true if the attachment already exists (if exists, metadata should exist too)
+   * @return
+   */
+  public static void saveMetadata(Attachment attachment, Map<String, String> metadata,
+      boolean exists) {
+    try {
+      for (Map.Entry<String, String> entry : metadata.entrySet()) {
+        Parameter parameter = OBDal.getInstance().get(Parameter.class, entry.getKey());
+        AttachmentMetadata attachmentMetadata;
+        if (exists) {
+          OBCriteria<AttachmentMetadata> attachmentMetadataCriteria = OBDal.getInstance()
+              .createCriteria(AttachmentMetadata.class);
+          attachmentMetadataCriteria.add(Restrictions.eq(AttachmentMetadata.PROPERTY_FILE,
+              attachment));
+          attachmentMetadataCriteria.add(Restrictions.eq(
+              AttachmentMetadata.PROPERTY_OBUIAPPPARAMETER, parameter));
+          if (attachmentMetadataCriteria.list().isEmpty()) {
+            attachmentMetadata = OBProvider.getInstance().get(AttachmentMetadata.class);
+          } else if (attachmentMetadataCriteria.list().size() == 1) {
+            attachmentMetadata = attachmentMetadataCriteria.list().get(0);
+          } else {
+            throw new OBException();
+          }
+        } else {
+          attachmentMetadata = OBProvider.getInstance().get(AttachmentMetadata.class);
+        }
+
+        attachmentMetadata.setFile(attachment);
+        attachmentMetadata.setObuiappParameter(parameter);
+        if (parameter.isUserEditable() && parameter.getPropertyPath() != null
+            && !parameter.getPropertyPath().equals("")) {
+          // if has a property path
+        } else {
+          if (parameter.getReference().getId().equals(REFERENCE_DATE)
+              || parameter.getReference().getId().equals(REFERENCE_DATETIME)
+              || parameter.getReference().getId().equals(REFERENCE_ABSOLUTEDATETIME)) {
+            attachmentMetadata.setValuationDate(OBDateUtils.getDate(entry.getValue()));
+          } else if (parameter.getReference().getId().equals(REFERENCE_INTEGER)
+              || parameter.getReference().getId().equals(REFERENCE_QUANTITY)
+              || parameter.getReference().getId().equals(REFERENCE_AMOUNT)) {
+            attachmentMetadata.setNumericValue(new BigDecimal(entry.getValue()));
+          } else {
+            attachmentMetadata.setStringValue(entry.getValue());
+          }
+        }
+        OBDal.getInstance().save(attachmentMetadata);
+      }
+    } catch (Exception e) {
+      throw new OBException(OBMessageUtils.getI18NMessage("OBUIAPP_ErrorInsertMetadata", null), e);
+    }
   }
 }

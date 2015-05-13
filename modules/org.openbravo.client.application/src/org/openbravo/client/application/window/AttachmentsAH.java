@@ -30,19 +30,22 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.ScrollMode;
+import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.client.application.Parameter;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.Attachment;
 import org.openbravo.model.ad.utility.AttachmentConfig;
-import org.openbravo.model.ad.utility.AttachmentMetadata;
 import org.openbravo.model.ad.utility.AttachmentMethod;
 
 public class AttachmentsAH extends BaseActionHandler {
@@ -74,24 +77,43 @@ public class AttachmentsAH extends BaseActionHandler {
         AttachmentConfig attConf = null;
         AttachmentMethod attMethod = null;
         Attachment attachment = null;
+        String attachId = "";
         if ("INITIALIZE".equals(action)) {
           attConf = aim.getAttachmenConfig(OBContext.getOBContext().getCurrentClient());
           attMethod = attConf.getAttachmentMethod();
         } else {
-          final String attachId = request.getString("attachId");
+          attachId = request.getString("attachId");
           attachment = OBDal.getInstance().get(Attachment.class, attachId);
           attConf = attachment.getAttachmentConf();
           attMethod = attConf.getAttachmentMethod();
         }
         JSONArray metadataArray = new JSONArray();
 
-        for (AttachmentMetadata am : attMethod.getCAttachmentMetadataList()) {
+        final OBQuery<Parameter> paramQuery = OBDal.getInstance().createQuery(
+            Parameter.class,
+            "attachmentMethod.id='" + attMethod.getId() + "' and (tab is null or tab.id='"
+                + tab.getId() + "')");
+        paramQuery.setFetchSize(1000);
+        final ScrollableResults paramScroller = paramQuery.scroll(ScrollMode.FORWARD_ONLY);
+        int i = 0;
+        while (paramScroller.next()) {
+          final Parameter param = (Parameter) paramScroller.get()[0];
           JSONObject metadata = new JSONObject();
-          metadata.put("Name", am.getName());
-          metadata.put("SearchKey", am.getValue());
+          metadata.put("Name", param.getName());
+          metadata.put("SearchKey", param.getDBColumnName());
           metadataArray.put(metadata);
-
+          // clear the session every 100 records
+          if ((i % 100) == 0) {
+            OBDal.getInstance().getSession().clear();
+          }
+          i++;
         }
+        paramScroller.close();
+
+        if (!attachId.equals("")) {
+          attachment = OBDal.getInstance().get(Attachment.class, attachId);
+        }
+
         response.put("attMetadataList", metadataArray);
         if ("INITIALIZE_EDIT".equals(action)) { // get MetadataValues
           aim.getMetadataValues(attachment, metadataArray);
@@ -130,10 +152,24 @@ public class AttachmentsAH extends BaseActionHandler {
         JSONObject metadataJson = new JSONObject(parameters.get("updatedMetadata").toString());
 
         Map<String, String> metadata = new HashMap<String, String>();
-        for (AttachmentMetadata met : attachMethod.getCAttachmentMetadataList()) {
-          metadata.put(met.getValue(),
-              URLDecoder.decode(metadataJson.get(met.getValue()).toString(), "UTF-8"));
+        final OBQuery<Parameter> paramQuery = OBDal.getInstance().createQuery(
+            Parameter.class,
+            "attachmentMethod.id='" + attachMethod.getId() + "' and (tab is null or tab.id='"
+                + tab.getId() + "')");
+        paramQuery.setFetchSize(1000);
+        final ScrollableResults paramScroller = paramQuery.scroll(ScrollMode.FORWARD_ONLY);
+        int i = 0;
+        while (paramScroller.next()) {
+          final Parameter param = (Parameter) paramScroller.get()[0];
+          metadata.put(param.getId(),
+              URLDecoder.decode(metadataJson.get(param.getDBColumnName()).toString(), "UTF-8"));
+          // clear the session every 100 records
+          if ((i % 100) == 0) {
+            OBDal.getInstance().getSession().clear();
+          }
+          i++;
         }
+        paramScroller.close();
 
         aim.update(attachmentId, tabId, metadata);
 

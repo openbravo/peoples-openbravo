@@ -36,16 +36,20 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.ScrollMode;
+import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.window.AttachImplementationManager;
 import org.openbravo.client.application.window.AttachmentsAH;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.PropertyException;
@@ -53,7 +57,6 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.Attachment;
-import org.openbravo.model.ad.utility.AttachmentMetadata;
 import org.openbravo.model.ad.utility.AttachmentMethod;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -126,9 +129,23 @@ public class TabAttachments extends HttpSecureAppServlet {
         Map<String, String> metadata = new HashMap<String, String>();
         AttachmentMethod attachMethod = aim.getAttachmenConfig(
             OBContext.getOBContext().getCurrentClient()).getAttachmentMethod();
-        for (AttachmentMetadata met : attachMethod.getCAttachmentMetadataList()) {
-          metadata.put(met.getValue(), vars.getStringParameter(met.getValue()).toString());
+        final OBQuery<Parameter> paramQuery = OBDal.getInstance().createQuery(
+            Parameter.class,
+            "attachmentMethod.id='" + attachMethod.getId() + "' and (tab is null or tab.id='"
+                + tab.getId() + "')");
+        paramQuery.setFetchSize(1000);
+        final ScrollableResults paramScroller = paramQuery.scroll(ScrollMode.FORWARD_ONLY);
+        int count = 0;
+        while (paramScroller.next()) {
+          final Parameter param = (Parameter) paramScroller.get()[0];
+          metadata.put(param.getId(), vars.getStringParameter(param.getDBColumnName()).toString());
+          // clear the session every 100 records
+          if ((count % 100) == 0) {
+            OBDal.getInstance().getSession().clear();
+          }
+          count++;
         }
+        paramScroller.close();
 
         aim.upload(strTab, key, strDataType, strDocumentOrganization, metadata, tempFile);
         obj = AttachmentsAH.getAttachmentJSONObject(tab, key);
