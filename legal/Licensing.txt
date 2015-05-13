@@ -236,6 +236,8 @@ Under the MIT license (available at http://www.slf4j.org/license.html)
 # httpmime-4.1.jar
 # guice-2.0.jar
 # openid4java-0.9.6.jar
+# tomcat-juli.jar
+# tomcat-jdbc.jar
 Under the Apache 2.0 license (included as Apache_license-2.0.txt in this folder)
 
 # jslint4java-1.4.7.jar
