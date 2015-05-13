@@ -493,7 +493,7 @@ enyo.kind({
         paymentstatus.payments.each(function (payment) {
           var paymentmethod;
           if (payment.get('kind') === selectedPayment.payment.searchKey) {
-            requiredCash = OB.DEC.add(requiredCash, payment.get('amount'));
+            requiredCash = OB.DEC.add(requiredCash, payment.get('origAmount'));
           } else {
             paymentmethod = OB.POS.terminal.terminal.paymentnames[payment.get('kind')];
             if (paymentmethod && payment.get('amount') > paymentmethod.currentCash) {
