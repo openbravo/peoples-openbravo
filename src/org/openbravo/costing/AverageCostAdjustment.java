@@ -357,7 +357,6 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
             curCosting.setPermanent(Boolean.TRUE);
             OBDal.getInstance().save(curCosting);
           }
-          curCosting.setTotalMovementQuantity(currentStock);
         } else if (cost != null && !isVoidedTrx(trx, currentTrxType)) {
           if (!trx.isCostPermanent()) {
             // Check current trx unit cost matches new expected cost
