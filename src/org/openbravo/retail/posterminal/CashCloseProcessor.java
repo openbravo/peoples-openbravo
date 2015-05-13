@@ -57,6 +57,7 @@ public class CashCloseProcessor {
     String cashUpId = jsonCashup.getString("id");
     JSONArray cashCloseInfo = jsonCashup.getJSONArray("cashCloseInfo");
     OBPOSAppCashup cashUp = OBDal.getInstance().get(OBPOSAppCashup.class, cashUpId);
+    ArrayList<FIN_Reconciliation> arrayReconciliations = new ArrayList<FIN_Reconciliation>();
 
     for (int i = 0; i < cashCloseInfo.length(); i++) {
 
@@ -78,6 +79,7 @@ public class CashCloseProcessor {
       FIN_Reconciliation reconciliation = createReconciliation(cashCloseObj, posTerminal,
           paymentType.getFinancialAccount(), currentDate);
 
+      arrayReconciliations.add(reconciliation);
       FIN_FinaccTransaction diffTransaction = null;
       if (!differenceToApply.equals(BigDecimal.ZERO)) {
         diffTransaction = createDifferenceTransaction(posTerminal, reconciliation, paymentType,
@@ -114,6 +116,11 @@ public class CashCloseProcessor {
         }
       }
       associateTransactions(paymentType, reconciliation, cashUpId, cashMgmtIds);
+    }
+
+    for (FIN_Reconciliation reconciliation : arrayReconciliations) {
+      reconciliation.setDocumentNo(getReconciliationDocumentNo(reconciliation.getDocumentType()));
+      OBDal.getInstance().save(reconciliation);
     }
 
     long t1 = System.currentTimeMillis();
@@ -208,7 +215,7 @@ public class CashCloseProcessor {
     reconciliation.setOrganization(posTerminal.getOrganization());
     reconciliation.setDocumentType(posTerminal.getObposTerminaltype()
         .getDocumentTypeForReconciliations());
-    reconciliation.setDocumentNo(getReconciliationDocumentNo(reconciliation.getDocumentType()));
+    reconciliation.setDocumentNo("99999999temp");
     reconciliation.setEndingDate(currentDate);
     reconciliation.setTransactionDate(currentDate);
     if (!cashCloseObj.getJSONObject("paymentMethod").isNull("amountToKeep")) {
