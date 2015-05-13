@@ -161,7 +161,7 @@ public class CheckUpdateConnectionPoolMerge extends BuildValidation {
     File fileW = new File(pathFile);
     try {
       BufferedWriter bw = new BufferedWriter(new FileWriter(fileW, true));
-      bw.write(propertyName + "=" + value + "\n");
+      bw.write("\n" + propertyName + "=" + value + "\n");
       bw.close();
     } catch (Exception e1) {
       log.error("Exception reading/writing file: ", e1);
