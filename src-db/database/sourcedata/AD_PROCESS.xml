@@ -437,7 +437,9 @@
 <!--119-->  <VALUE><![CDATA[C_Invoice_Create]]></VALUE>
 <!--119-->  <NAME><![CDATA[Generate Invoices]]></NAME>
 <!--119-->  <DESCRIPTION><![CDATA[Generate Invoices]]></DESCRIPTION>
-<!--119-->  <HELP><![CDATA[Generate Invoices]]></HELP>
+<!--119-->  <HELP><![CDATA[Generate Invoices executes automatic bulk generation of Sales Invoices for all Sales Orders pending to be invoiced that belongs to the selected Organization or, if the Include Child Organizations checkbox is checked, to the selected Organization and it's children.
+The Invoices generated are going to be created all of them against the selected Organization.
+]]></HELP>
 <!--119-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
 <!--119-->  <ISUSERSTARTABLE><![CDATA[Y]]></ISUSERSTARTABLE>
 <!--119-->  <PROCEDURENAME><![CDATA[C_Invoice_Create0]]></PROCEDURENAME>

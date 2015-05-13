@@ -283,7 +283,7 @@
 <!--145-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--145-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--145-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--145-->  <NAME><![CDATA[Organization]]></NAME>
+<!--145-->  <NAME><![CDATA[Invoice Organization]]></NAME>
 <!--145-->  <DESCRIPTION><![CDATA[Organizational entity within client]]></DESCRIPTION>
 <!--145-->  <HELP><![CDATA[An organization is a unit of your client or legal entity - examples are store, department. You can share data between organizations.]]></HELP>
 <!--145-->  <AD_PROCESS_ID><![CDATA[119]]></AD_PROCESS_ID>
