@@ -15,12 +15,17 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.PropertyException;
 
 public class PaidReceiptsHeader extends ProcessHQLQuery {
+  public static final Logger log = Logger.getLogger(PaidReceiptsHeader.class);
 
   @Inject
   @Any
@@ -37,6 +42,7 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
     // OBContext.setAdminMode(true);
     JSONObject json = jsonsent.getJSONObject("filters");
     String strIsLayaway = "false";
+    boolean isHgvol = false;
     if (json.getBoolean("isLayaway")) {
       strIsLayaway = "true";
     }
@@ -52,18 +58,34 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
 
     final String filterText = sanitizeString(json.getString("filterText"));
     if (!filterText.isEmpty()) {
-      String hqlFilter = "ord.documentNo like '%" + filterText
-          + "%' or REPLACE(ord.documentNo, '/', '') like '%" + filterText
-          + "%' or upper(ord.businessPartner.name) like upper('%" + filterText + "%')";
-      for (PaidReceiptsHeaderHook hook : paidReceiptHeaderHooks) {
-        try {
-          String hql = hook.exec(hqlFilter, filterText);
-          hqlFilter = hql;
-        } catch (Exception e) {
-          throw new OBException("An error happened when computing a filter in PaidReceipts", e);
-        }
+      String hqlFilter = "";
+      try {
+        isHgvol = "Y".equals(Preferences.getPreferenceValue("OBPOS_highVolume.order", true,
+            OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
+                .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
+                .getOBContext().getRole(), null));
+      } catch (PropertyException e1) {
+        log.error("Error getting high volume order preference: " + e1.getMessage(), e1);
       }
-      hqlPaidReceipts += " and (" + hqlFilter + ") ";
+      if (isHgvol) {
+        hqlFilter = "upper(ord.documentNo) like upper('" + filterText + "%')";
+        // FIXME:Filter by Business Partner???
+        hqlPaidReceipts += " and (" + hqlFilter + ") ";
+      } else {
+        hqlFilter = "upper(ord.documentNo) like upper('%" + filterText
+            + "%') or REPLACE(ord.documentNo, '/', '') like '%" + filterText
+            + "%' or upper(ord.businessPartner.name) like upper('%" + filterText + "%')";
+        for (PaidReceiptsHeaderHook hook : paidReceiptHeaderHooks) {
+          try {
+            String hql = hook.exec(hqlFilter, filterText);
+            hqlFilter = hql;
+          } catch (Exception e) {
+            throw new OBException("An error happened when computing a filter in PaidReceipts", e);
+          }
+        }
+        hqlPaidReceipts += " and (" + hqlFilter + ") ";
+      }
+
     }
     if (!json.isNull("documentType")) {
       JSONArray docTypes = json.getJSONArray("documentType");
