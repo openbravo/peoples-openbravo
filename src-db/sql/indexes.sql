@@ -15,3 +15,6 @@ CREATE INDEX c_order_documentno_upper ON c_order USING btree (upper(documentno) 
 
 --m_inout indexes
 CREATE INDEX m_inout_documentno_upper ON m_inout USING btree (upper(documentno) COLLATE pg_catalog."default" varchar_pattern_ops);
+
+--M_Offer_BPartner
+CREATE INDEX c_m_offerbp_bp_upper ON M_Offer_BPartner USING btree (upper(C_BPartner_ID::text) COLLATE pg_catalog."default" varchar_pattern_ops);
