@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2014 Openbravo SLU
+ * All portions are Copyright (C) 2011-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -216,19 +216,22 @@ isc.OBTimeItem.addProperties({
       }
       this.setValue(data[this.name]);
     }
-  },
-
-  setDisabled: function (disabled) {
-    // SC doesn't handle properly dynamically disabling timeItem, this temporary hack
-    // solves the problem by disabling/enabling inner textItem
-    //    see issue #27670
-    this.textField.setDisabled(disabled);
-    this.Super('setDisabled', arguments);
   }
 });
 
 isc.OBTimeItem.changeDefaults('textFieldDefaults', {
   getTextBoxStyle: function () {
+    // Changes in 'setDisable' in the parent item doesn't affect the text field (issue #29561)
+    // With this hack, each time the text box style should be retreived, we ensure also that
+    // the 'disable' state is in sync with the parent item.
+    // PS: It cannot be done by overwriting 'setDisable' in the parent item, because default
+    //     form states (and 'disabled: true'could be one of them), doesn't pass
+    //     through 'setDisabled' function.
+    if (this.parentItem.isDisabled() && !this.isDisabled()) {
+      this.setDisabled(true);
+    } else if (!this.parentItem.isDisabled() && this.isDisabled()) {
+      this.setDisabled(false);
+    }
     // SC does not handle properly styles for inner textItem representing the time,
     // this is a temporary hack till it is fixed in SC code
     //   see issue #27670
