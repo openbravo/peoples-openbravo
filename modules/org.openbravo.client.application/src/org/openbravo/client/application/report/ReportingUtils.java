@@ -976,7 +976,7 @@ public class ReportingUtils {
   }
 
   /**
-   * Generates a compiled and translated report.
+   * Generates a compiled and translated report to the language passed as parameter.
    * 
    * @param conn
    *          The connection provider used to get the translations.
