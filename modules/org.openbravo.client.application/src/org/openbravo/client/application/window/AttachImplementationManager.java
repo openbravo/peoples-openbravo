@@ -375,14 +375,6 @@ public class AttachImplementationManager {
   public void getMetadataValues(Attachment attachment, JSONArray metadataArray) {
     checkReadableAccess(attachment);
 
-    // AttachImplementation handler = getHandler(attachment.getAttachmentMethod() == null ?
-    // "Default"
-    // : attachment.getAttachmentMethod().getValue());
-    // if (handler == null) {
-    // throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoMethod"));
-    // }
-    // handler.getMetadataValues(attachment, metadataArray);
-
     try {
       OBCriteria<AttachmentMetadata> attachmentMetadataCriteria = OBDal.getInstance()
           .createCriteria(AttachmentMetadata.class);

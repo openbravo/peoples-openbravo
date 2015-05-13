@@ -24,8 +24,6 @@ import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
 
-import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONException;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.ComponentProvider;
@@ -118,20 +116,5 @@ public class CoreAttachImplementation extends AttachImplementation {
   @Override
   public boolean isTempFile() {
     return false;
-  }
-
-  @Override
-  public void getMetadataValues(Attachment attachment, JSONArray metadataArray) {
-    try {
-
-      for (int i = 0; i < metadataArray.length(); i++) {
-        if (METADATA_DESCRIPTION.equals(metadataArray.getJSONObject(i).get("SearchKey"))) {
-          metadataArray.getJSONObject(i).put("value", attachment.getText());
-        }
-      }
-    } catch (JSONException e) {
-      log.error("CoreAttachImplementation - getMetadataAndValues. Error with the json");
-      throw new OBException("JSONError", e);
-    }
   }
 }

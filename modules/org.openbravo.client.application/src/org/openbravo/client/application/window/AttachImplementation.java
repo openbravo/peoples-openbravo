@@ -22,7 +22,6 @@ package org.openbravo.client.application.window;
 import java.io.File;
 import java.util.Map;
 
-import org.codehaus.jettison.json.JSONArray;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.model.ad.utility.Attachment;
 
@@ -89,18 +88,5 @@ public abstract class AttachImplementation {
    *         does not create a temporary file
    */
   public abstract boolean isTempFile();
-
-  /**
-   * This methods completes the metadataArray with the values saved of each metadata in attachment
-   * 
-   * @param attachment
-   *          the attachment that is edited
-   * @param metadataArray
-   *          the metadata Array with JSONObject with the next estructure(Name, SearchKey, value):
-   *          Name: the Name of the metadata. SearchKey: the searchkey of the metadata. value: the
-   *          value that has this metadata in the c_file (attachment). This value, is the
-   *          information to be fulfilled by this method
-   */
-  public abstract void getMetadataValues(Attachment attachment, JSONArray metadataArray);
 
 }
