@@ -500,6 +500,14 @@ public class PrintController extends HttpSecureAppServlet {
         default:
           break;
         }
+        if (report.outputType.equals(OutputTypeEnum.ARCHIVE)) {
+          // Delete temporal reports generated for the returned report in case they have been
+          // attached also
+          File file = new File(report.getTargetLocation());
+          if (file.exists() && !file.isDirectory()) {
+            file.delete();
+          }
+        }
       }
     } catch (IOException e) {
       log4j.error(e.getMessage());
@@ -834,6 +842,13 @@ public class PrintController extends HttpSecureAppServlet {
       String exceptionString = "Problems while sending the email" + exception;
       exceptionString = exceptionString.replace(exceptionClass, "");
       throw new ServletException(exceptionString);
+    } finally {
+      // Delete the temporal files generated for the email attachments
+      for (File attachment : attachments) {
+        if (attachment.exists() && !attachment.isDirectory()) {
+          attachment.delete();
+        }
+      }
     }
 
     // Store the email in the database
