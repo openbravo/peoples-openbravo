@@ -198,22 +198,26 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
         OBDal.getInstance().flush();
       } else {
         Costing curCosting = basetrx.getMaterialMgmtCostingList().get(0);
-        if (curCosting.getCost().compareTo(cost) != 0) {
-          // Update existing costing
+
+        if (curCosting.getCost().compareTo(cost) != 0
+            || curCosting.getTotalMovementQuantity().compareTo(currentStock) != 0) {
           curCosting.setPermanent(Boolean.FALSE);
           OBDal.getInstance().save(curCosting);
           OBDal.getInstance().flush();
-          if (curCosting.getOriginalCost() == null) {
-            curCosting.setOriginalCost(curCosting.getCost());
+          // Update existing costing
+          if (curCosting.getCost().compareTo(cost) != 0) {
+            if (curCosting.getOriginalCost() == null) {
+              curCosting.setOriginalCost(curCosting.getCost());
+            }
+            curCosting.setCost(cost);
+            curCosting.setPrice(trxPrice);
           }
-          curCosting.setCost(cost);
-          curCosting.setPrice(trxPrice);
+          curCosting.setTotalMovementQuantity(currentStock);
           curCosting.setPermanent(Boolean.TRUE);
           OBDal.getInstance().flush();
           OBDal.getInstance().save(curCosting);
         }
       }
-
     }
 
     // Modify isManufacturingProduct flag in case it has changed at some point.
@@ -328,8 +332,10 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
                 negCorrAmt.toPlainString(), cost.toPlainString());
           }
 
-          if (curCosting.getCost().compareTo(cost) == 0 && StringUtils.isEmpty(bdCostingId)) {
-            // new cost hasn't changed, following transactions will have the same cost, so no more
+          if (curCosting.getCost().compareTo(cost) == 0 && StringUtils.isEmpty(bdCostingId)
+              && curCosting.getTotalMovementQuantity().compareTo(currentStock) == 0) {
+            // new cost hasn't changed and total movement qty is equal to current stock, following
+            // transactions will have the same cost, so no more
             // related transactions are needed to include.
             // If bdCosting is not empty it is needed to loop through the next related transaction
             // to set the new time ringe of the costing.
@@ -340,11 +346,14 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
             curCosting.setPermanent(Boolean.FALSE);
             OBDal.getInstance().save(curCosting);
             OBDal.getInstance().flush();
-            if (curCosting.getOriginalCost() == null) {
-              curCosting.setOriginalCost(curCosting.getCost());
+            if (curCosting.getCost().compareTo(cost) != 0) {
+              if (curCosting.getOriginalCost() == null) {
+                curCosting.setOriginalCost(curCosting.getCost());
+              }
+              curCosting.setPrice(trxPrice);
+              curCosting.setCost(cost);
             }
-            curCosting.setPrice(trxPrice);
-            curCosting.setCost(cost);
+            curCosting.setTotalMovementQuantity(currentStock);
             curCosting.setPermanent(Boolean.TRUE);
             OBDal.getInstance().save(curCosting);
           }
@@ -386,15 +395,19 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
               trxPrice = trxUnitCost.add(trxUnitCostAdjAmt).divide(trx.getMovementQuantity().abs(),
                   costCurPrecission, RoundingMode.HALF_UP);
             }
-            if (curCosting.getCost().compareTo(cost) != 0) {
+            if (curCosting.getCost().compareTo(cost) != 0
+                || curCosting.getTotalMovementQuantity().compareTo(currentStock) != 0) {
               curCosting.setPermanent(Boolean.FALSE);
               OBDal.getInstance().save(curCosting);
               OBDal.getInstance().flush();
-              if (curCosting.getOriginalCost() == null) {
-                curCosting.setOriginalCost(curCosting.getCost());
+              if (curCosting.getCost().compareTo(cost) != 0) {
+                if (curCosting.getOriginalCost() == null) {
+                  curCosting.setOriginalCost(curCosting.getCost());
+                }
+                curCosting.setPrice(trxPrice);
+                curCosting.setCost(cost);
               }
-              curCosting.setPrice(trxPrice);
-              curCosting.setCost(cost);
+              curCosting.setTotalMovementQuantity(currentStock);
               curCosting.setPermanent(Boolean.TRUE);
               OBDal.getInstance().save(curCosting);
             }
