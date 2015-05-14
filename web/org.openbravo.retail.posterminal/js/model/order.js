@@ -1676,12 +1676,21 @@
 
     removePayment: function (payment) {
       var payments = this.get('payments');
-      payments.remove(payment);
-      if (payment.get('openDrawer')) {
-        this.set('openDrawer', false);
-      }
-      this.adjustPayment();
-      this.save();
+      OB.UTIL.HookManager.executeHooks('OBPOS_preRemovePayment', {
+        paymentToRem: payment,
+        payments: payments,
+        receipt: this
+      }, function (args) {
+        if (args.cancellation) {
+          return true;
+        }
+        payments.remove(payment);
+        if (payment.get('openDrawer')) {
+          args.receipt.set('openDrawer', false);
+        }
+        args.receipt.adjustPayment();
+        args.receipt.save();
+      });
     },
 
     serializeToJSON: function () {
