@@ -1165,9 +1165,9 @@ public class TestCosting extends BaseDataSourceTestDal {
       List<MaterialTransaction> transactionList = getProductTransactions(product.getId());
       List<ProductCostingAssert> productCostingAssertList = new ArrayList<ProductCostingAssert>();
       productCostingAssertList.add(new ProductCostingAssert(transactionList.get(0), price1, price3,
-          price1, quantity1.add(quantity1)));
+          price1, quantity1));
       productCostingAssertList.add(new ProductCostingAssert(transactionList.get(4), price2, price2,
-          price2, quantity1));
+          price2, quantity1.subtract(quantity2)));
       assertProductCosting(product.getId(), productCostingAssertList);
 
       // Assert cost adjustment
@@ -1385,7 +1385,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       productCostingAssertList.add(new ProductCostingAssert(transactionList.get(0), price3, price1,
           price3, quantity1));
       productCostingAssertList.add(new ProductCostingAssert(transactionList.get(2), price2, price4,
-          price2, quantity1.add(quantity2.negate())));
+          price2, quantity1));
       assertProductCosting(product.getId(), productCostingAssertList);
 
       // Assert cost adjustment
@@ -2341,7 +2341,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       productCostingAssertList.add(new ProductCostingAssert(transactionList.get(0), price1, null,
           price1, quantity1));
       productCostingAssertList.add(new ProductCostingAssert(transactionList.get(3), price1, null,
-          price1, quantity3));
+          price1, quantity3.subtract(quantity1)));
       assertProductCosting(product.getId(), productCostingAssertList);
 
       // Assert cost adjustment
@@ -2429,7 +2429,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       productCostingAssertList.add(new ProductCostingAssert(transactionList.get(0), price1, null,
           price1, quantity1));
       productCostingAssertList.add(new ProductCostingAssert(transactionList.get(3), price2, price3,
-          price2, quantity3));
+          price2, quantity3.subtract(quantity1)));
       assertProductCosting(product.getId(), productCostingAssertList);
 
       // Assert cost adjustment
