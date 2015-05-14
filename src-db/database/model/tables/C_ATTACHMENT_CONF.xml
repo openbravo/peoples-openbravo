@@ -46,8 +46,9 @@
       <foreign-key foreignTable="AD_ORG" name="C_ATTACHMENT_CONF_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <unique name="C_ATTACH_CONF_ID_AD_CLIENT_ID">
+      <unique name="C_ATTACH_CONF_CLIENT_ATTACHMET">
         <unique-column name="AD_CLIENT_ID"/>
+        <unique-column name="C_ATTACHMENT_METHOD_ID"/>
       </unique>
       <check name="C_ATTACHMENT_CONF_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
