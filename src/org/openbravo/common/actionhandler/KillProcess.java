@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -71,11 +71,12 @@ public class KillProcess extends BaseProcessActionHandler {
               .getProcessInstance();
           if (process instanceof KillableProcess) {
             // Kill Process
-            ((KillableProcess) process).kill();
-            return buildResult("success", "OBUIAPP_Success", "ProcessKilled");
+            ((KillableProcess) process).kill(jobInstance.getBundle());
+            jobInstance.setKilled(true);
+            return buildResult("info", "Info", "ProcessKilled");
           } else {
             // KillableProcess not implemented
-            return buildResult("info", "Info", "KillableProcessNotImplemented");
+            return buildResult("warning", "Info", "KillableProcessNotImplemented");
           }
 
         }

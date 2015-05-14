@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -39,12 +39,14 @@ public class DefaultJob implements Job {
   static Logger log = Logger.getLogger(DefaultJob.class);
 
   private Process processInstance;
+  private ProcessBundle bundle;
+  private boolean killed = false;
 
   /**
    * See the execute method of the Quartz Job class.
    */
   public void execute(JobExecutionContext jec) throws JobExecutionException {
-    final ProcessBundle bundle = (ProcessBundle) jec.getMergedJobDataMap().get(ProcessBundle.KEY);
+    bundle = (ProcessBundle) jec.getMergedJobDataMap().get(ProcessBundle.KEY);
     try {
       processInstance = bundle.getProcessClass().newInstance();
       bundle.setConnection((ConnectionProvider) jec.get(ProcessBundle.CONNECTION));
@@ -72,5 +74,20 @@ public class DefaultJob implements Job {
    */
   public Process getProcessInstance() {
     return processInstance;
+  }
+
+  /** Returns the bundle associated to current execution */
+  public ProcessBundle getBundle() {
+    return bundle;
+  }
+
+  /** Returns whether kill signal has been sent to current execution */
+  public boolean isKilled() {
+    return killed;
+  }
+
+  /** Flags current execution as killed */
+  public void setKilled(boolean killed) {
+    this.killed = killed;
   }
 }
