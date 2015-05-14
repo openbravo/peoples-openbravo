@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -202,6 +202,7 @@ public class PriceDifferenceProcess {
       mTrxs.add(Restrictions.eq(MaterialTransaction.PROPERTY_PRODUCT, product));
     }
     mTrxs.add(Restrictions.eq(MaterialTransaction.PROPERTY_CHECKPRICEDIFFERENCE, true));
+    mTrxs.add(Restrictions.eq(MaterialTransaction.PROPERTY_ISCOSTCALCULATED, true));
     mTrxs.addOrderBy(MaterialTransaction.PROPERTY_MOVEMENTDATE, true);
     mTrxs.addOrderBy(MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE, true);
     ScrollableResults lines = mTrxs.scroll(ScrollMode.FORWARD_ONLY);
