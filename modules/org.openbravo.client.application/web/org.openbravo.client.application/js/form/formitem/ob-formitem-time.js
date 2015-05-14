@@ -227,10 +227,17 @@ isc.OBTimeItem.changeDefaults('textFieldDefaults', {
     // PS: It cannot be done by overwriting 'setDisable' in the parent item, because default
     //     form states (and 'disabled: true'could be one of them), doesn't pass
     //     through 'setDisabled' function.
+    var me = this;
     if (this.parentItem.isDisabled() && !this.isDisabled()) {
-      this.setDisabled(true);
+      // Timeout to avoid fireOnPause
+      setTimeout(function () {
+        me.setDisabled(true);
+      }, 10);
     } else if (!this.parentItem.isDisabled() && this.isDisabled()) {
-      this.setDisabled(false);
+      // Timeout to avoid fireOnPause
+      setTimeout(function () {
+        me.setDisabled(false);
+      }, 10);
     }
     // SC does not handle properly styles for inner textItem representing the time,
     // this is a temporary hack till it is fixed in SC code
