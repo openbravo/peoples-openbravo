@@ -22,7 +22,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2013 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2015 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -264,12 +264,11 @@
         END IF;
       END LOOP;
 
-      SELECT ad_org_id
+      SELECT gl_journalbatch.ad_org_id
       INTO v_BatchOrg_ID
-      FROM gl_journalbatch
-      WHERE gl_journalbatch_id = (select gl_journalbatch_id
-                                 from gl_journal
-                                 where gl_journal_id = v_Record_id);
+      FROM gl_journal LEFT JOIN gl_journalbatch
+      ON gl_journal.gl_journalbatch_id = gl_journalbatch.gl_journalbatch_id
+      WHERE gl_journal.gl_journal_id = v_Record_id;
       
       IF (v_BatchOrg_ID <> v_AD_Org_ID) THEN
         RAISE_APPLICATION_ERROR(-20000, '@BatchAndHeaderDifferentOrg@');
