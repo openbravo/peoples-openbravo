@@ -56,18 +56,15 @@ public class CostingTransactionsHQLTransformer extends HqlQueryTransformer {
     // Sets the named parameters
 
     final String costingId = requestParameters.get("@MaterialMgmtCosting.id@");
-
     String transformedHqlQuery = null;
 
     if (costingId != null && !costingId.equals("null")) {
-
       Costing costing = OBDal.getInstance().get(Costing.class, costingId);
       MaterialTransaction transaction = costing.getInventoryTransaction();
 
-      if (transaction != null) {
+      if ("AVA".equals(costing.getCostType()) && transaction != null) {
 
         // Get cost dimensions
-
         OrganizationStructureProvider osp = OBContext.getOBContext()
             .getOrganizationStructureProvider(transaction.getClient().getId());
 
@@ -89,22 +86,26 @@ public class CostingTransactionsHQLTransformer extends HqlQueryTransformer {
           }
         }
 
-        // Transform the query
-
         Costing prevCosting = getPreviousCosting(transaction);
-        String previousCostingCost = addCostOnQuery(prevCosting);
-        transformedHqlQuery = hqlQuery.replace("@previousCostingCost@", previousCostingCost);
 
-        StringBuffer whereClause = getWhereClause(costing, prevCosting, queryNamedParameters);
-        transformedHqlQuery = transformedHqlQuery.replace("@whereClause@", whereClause.toString());
+        if (prevCosting == null || (prevCosting != null && "AVA".equals(prevCosting.getCostType()))) {
 
-        StringBuffer cumQty = addCumQty(costing, queryNamedParameters);
-        transformedHqlQuery = transformedHqlQuery.replace("@cumQty@", cumQty.toString());
+          // Transform the query
+          String previousCostingCost = addCostOnQuery(prevCosting);
+          transformedHqlQuery = hqlQuery.replace("@previousCostingCost@", previousCostingCost);
 
-        StringBuffer cumCost = addCumCost(cumQty, costing, prevCosting);
-        transformedHqlQuery = transformedHqlQuery.replace("@cumCost@", cumCost);
+          StringBuffer whereClause = getWhereClause(costing, prevCosting, queryNamedParameters);
+          transformedHqlQuery = transformedHqlQuery
+              .replace("@whereClause@", whereClause.toString());
 
-        return transformedHqlQuery;
+          StringBuffer cumQty = addCumQty(costing, queryNamedParameters);
+          transformedHqlQuery = transformedHqlQuery.replace("@cumQty@", cumQty.toString());
+
+          StringBuffer cumCost = addCumCost(cumQty, costing, prevCosting);
+          transformedHqlQuery = transformedHqlQuery.replace("@cumCost@", cumCost);
+
+          return transformedHqlQuery;
+        }
       }
     }
 
@@ -164,7 +165,9 @@ public class CostingTransactionsHQLTransformer extends HqlQueryTransformer {
     query.append(" and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs) ");
     query.append(" and trx." + MaterialTransaction.PROPERTY_CLIENT + ".id = :clientId ");
     query.append(" order by trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " desc, trx."
-        + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " desc");
+        + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " desc, c."
+        + Costing.PROPERTY_ENDINGDATE + " desc, trx."
+        + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY);
 
     Query prevCostingQuery = OBDal.getInstance().getSession().createQuery(query.toString());
     prevCostingQuery.setParameter("productId", transaction.getProduct().getId());
@@ -214,35 +217,35 @@ public class CostingTransactionsHQLTransformer extends HqlQueryTransformer {
         + MaterialTransaction.PROPERTY_MOVEMENTTYPE);
     whereClause.append(" and c.id = :costingId ");
     whereClause.append(" and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
-    whereClause.append(" and ((( ");
-    whereClause.append("   trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " < trxcosting."
-        + MaterialTransaction.PROPERTY_MOVEMENTDATE);
-    // If there are more than one trx on the same movement date and trx process date filter out
-    // those types with less priority and / or higher quantity.
-    whereClause.append("   or (");
-    whereClause.append("     trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " = trxcosting."
-        + MaterialTransaction.PROPERTY_MOVEMENTDATE);
-    whereClause.append("     and ( ");
-    whereClause.append("       trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
-        + " < trxcosting." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE);
-    whereClause.append("       or (");
-    whereClause.append("         trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
-        + " = trxcosting." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE);
-    whereClause.append("         and ( ");
-    whereClause.append("         trxtype." + propADListPriority + " < :trxtypeprio");
-    whereClause.append("           or (");
-    whereClause.append("             trxtype." + propADListPriority + " = :trxtypeprio");
-    whereClause.append("             and ( ");
-    whereClause.append("               trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY
-        + " > :trxqty");
-    whereClause.append("                 or (");
-    whereClause.append("                   trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY
-        + " = :trxqty");
-    whereClause.append("                   and trx." + MaterialTransaction.PROPERTY_ID
-        + " <> :trxid");
-    whereClause.append(" )))))))) ");
-
+    whereClause.append(" and ((trx." + MaterialTransaction.PROPERTY_ID + " = :trxid) ");
     if (prevCosting != null) {
+      whereClause.append(" or ((( ");
+      whereClause.append("   trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " < trxcosting."
+          + MaterialTransaction.PROPERTY_MOVEMENTDATE);
+      // If there are more than one trx on the same movement date and trx process date filter out
+      // those types with less priority and / or higher quantity.
+      whereClause.append("   or (");
+      whereClause.append("     trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " = trxcosting."
+          + MaterialTransaction.PROPERTY_MOVEMENTDATE);
+      whereClause.append("     and ( ");
+      whereClause.append("       trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
+          + " < trxcosting." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE);
+      whereClause.append("       or (");
+      whereClause.append("         trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
+          + " = trxcosting." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE);
+      whereClause.append("         and ( ");
+      whereClause.append("         trxtype." + propADListPriority + " < :trxtypeprio");
+      whereClause.append("           or (");
+      whereClause.append("             trxtype." + propADListPriority + " = :trxtypeprio");
+      whereClause.append("             and ( ");
+      whereClause.append("               trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY
+          + " > :trxqty");
+      whereClause.append("                 or (");
+      whereClause.append("                   trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY
+          + " = :trxqty");
+      whereClause.append("                   and trx." + MaterialTransaction.PROPERTY_ID
+          + " <> :trxid");
+      whereClause.append(" )))))))) ");
 
       whereClause.append(" and ( ");
       whereClause.append("   trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE
@@ -270,16 +273,11 @@ public class CostingTransactionsHQLTransformer extends HqlQueryTransformer {
           + " = :prevtrxqty");
       whereClause.append("                 and trx." + MaterialTransaction.PROPERTY_ID
           + " <> :prevtrxid");
-      whereClause.append(" )))))))) ");
-
-    }
-    whereClause.append(" ) ");
-    whereClause.append(" or (trx." + MaterialTransaction.PROPERTY_ID + " = :trxid) ");
-    if (prevCosting != null) {
+      whereClause.append(" ))))))))) ");
       whereClause.append(" or (trx." + MaterialTransaction.PROPERTY_ID + " = :prevtrxid) ");
+      whereClause.append(" ) ");
     }
     whereClause.append(" ) ");
-
     whereClause.append(" and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs) ");
     whereClause.append(" and trx." + MaterialTransaction.PROPERTY_CLIENT + ".id = :clientId ");
     if (costDimensions.get(CostDimension.Warehouse) != null) {
