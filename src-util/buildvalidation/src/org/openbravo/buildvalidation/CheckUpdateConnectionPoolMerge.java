@@ -36,58 +36,90 @@ import org.openbravo.database.ConnectionProvider;
 import org.apache.log4j.Logger;
 
 /**
- * This build validation prevents a bad behaviour updating to PR15Q3 by taking into 
- * account the following scenarios:
- *         -  Upgrade from (3.0PR15Q1) to current pi (3.0PR15Q3) using defaults connection pools.
- *         -  Upgrade from (3.0PR15Q1) using Apache JDBC Connection Pool module (or another 
- *         external connection pool) to current pi (3.0PR15Q3).
+ * This build validation prevents a bad behaviour updating to PR15Q3 by taking into account the
+ * following scenarios:
+ *      - Update from < 3.0PR15Q1 to >= 3.0PR15Q3) using defaults connection pools.
+ *      - Update from < 3.0PR15Q1 using Apache JDBC Connection Pool module or another external
+ *      connection pool to >= 3.0PR15Q3.
  * 
+ * It must be ensured that if an enviroment did not use "Apache JDBC Connection Pool" module, it
+ * must continue without using the connection pool. On the other hand, environments that used the
+ * module continue to use the Apache JDBC Connection pool. It will try to retrieve the configuration
+ * of the module. The new instances will start using the new connection pool.
+ *
  * @author inigo.sanchez
  *
  */
 public class CheckUpdateConnectionPoolMerge extends BuildValidation {
-  
+
   private final static String PROPERTY_CONNECTION_POOL = "db.externalPoolClassName";
   private final static String PATH_CONNECTIONPOOL_PROPERTIES = "/WebContent/WEB-INF/connectionPool.properties";
   private final static String PATH_OPENBRAVO_PROPERTIES = "/config/Openbravo.properties";
-  
+  private final static String TARGET_VERSION = "1.0.26618";
+
   private static Logger log = Logger.getLogger(CheckUpdateConnectionPoolMerge.class);
   private Properties obProperties = null;
-  
+
   @Override
   public List<String> execute() {
     ConnectionProvider cp = getConnectionProvider();
     try {
-
-      String obDir = getSourcePathFromOBProperties();
-      String openbravoPropertiesPath = obDir + PATH_OPENBRAVO_PROPERTIES;
-      String connectionPoolPropertiesPath = obDir + PATH_CONNECTIONPOOL_PROPERTIES;
       String versionOfModule = CheckUpdateConnectionPoolMergeData.versionOfConnectionPoolModule(cp);
       
-      // checks if Apache JDBC Connection Pool module exists
-      if (versionOfModule == null) {
-        File fileW = new File(openbravoPropertiesPath);
-        // removes value of property that merge in Openbravo.properties
-        replaceProperty(fileW, openbravoPropertiesPath + "_aux", PROPERTY_CONNECTION_POOL,"=");
-        try {
-          fileW.delete();
-          File fileAux = new File(openbravoPropertiesPath + "_aux");
-          fileAux.renameTo(new File(openbravoPropertiesPath));
-        } catch (Exception ex) {
-          log.error("Error renaming/deleting Openbravo.properties", ex);
-        }        
-        
-      }else if(versionOfModule.equals("1.0.0") || versionOfModule.equals("1.0.1") ){
-        // necessary for merge connectionPool.properties in Inclusion apache jdbc connection pool
-        // into distribution project
-        mergeOpenbravoPropertiesConnectionPool(openbravoPropertiesPath, connectionPoolPropertiesPath);   
-      }     
+      if (versionOfModule == null || isNecessaryMerge(versionOfModule, TARGET_VERSION)) {
+        String obDir = getSourcePathFromOBProperties();
+        String openbravoPropertiesPath = obDir + PATH_OPENBRAVO_PROPERTIES;
+
+        // It must be ensured that if an enviroment did not use "Apache JDBC Connection Pool" module, it
+        // must continue without using the connection pool. In that case remove value of the property.
+        if (versionOfModule == null) {
+          File fileW = new File(openbravoPropertiesPath);
+          // removes value of property that merge in Openbravo.properties
+          replaceProperty(fileW, openbravoPropertiesPath + "_aux", PROPERTY_CONNECTION_POOL, "=");
+          try {
+            fileW.delete();
+            File fileAux = new File(openbravoPropertiesPath + "_aux");
+            fileAux.renameTo(new File(openbravoPropertiesPath));
+          } catch (Exception ex) {
+            log.error("Error renaming/deleting Openbravo.properties", ex);
+          }
+          log.info("Removed value of " + PROPERTY_CONNECTION_POOL + " property.");
+          
+        } else {
+          // Environments that previously used the connection pool module. It will try to retrieve
+          // the configuration of the module. It is necessary to merge connectionPool.properties
+          String connectionPoolPropertiesPath = obDir + PATH_CONNECTIONPOOL_PROPERTIES;
+          mergeOpenbravoPropertiesConnectionPool(openbravoPropertiesPath,
+              connectionPoolPropertiesPath);
+        }
+      }
     } catch (Exception e) {
       handleError(e);
     }
     return new ArrayList<String>();
   }
-  
+
+  /**
+   * Checks version of the module.
+   *
+   * @return true if it is necessary to merge.
+   */
+  private boolean isNecessaryMerge(String version, String targetVersion) {
+    String[] targetNumberVersion = targetVersion.split(".");
+    String[] numberVersion = version.split(".");
+
+    // if version is equal or lower than TARGET_VERSION, it must be merged
+    for (int i = 0; i < numberVersion.length; i++) {
+      if (Integer.parseInt(numberVersion[i]) > Integer.parseInt(targetNumberVersion[i])) {
+        return false;
+      } else if (Integer.parseInt(numberVersion[i]) < Integer.parseInt(targetNumberVersion[i])) {
+        return true;
+      }
+    }
+    // here it is same version than target version or at least smaller
+    return true;
+  }
+
   /**
    * When updating core and it is include Apache JDBC Connection Pool into distribution in some
    * cases is necessary to update Openbravo.properties taking into account
@@ -98,7 +130,7 @@ public class CheckUpdateConnectionPoolMerge extends BuildValidation {
    *
    * @return false in case no changes were needed, true in case the merge includes some changes
    */
-  public static boolean mergeOpenbravoPropertiesConnectionPool(String OpenbravoPropertiesPath,
+  private static boolean mergeOpenbravoPropertiesConnectionPool(String OpenbravoPropertiesPath,
       String connectionPoolPath) {
     Properties openbravoProperties = new Properties();
     Properties connectionPoolProperties = new Properties();
@@ -123,8 +155,8 @@ public class CheckUpdateConnectionPoolMerge extends BuildValidation {
           try {
             File fileW = new File(OpenbravoPropertiesPath);
             if (!searchProperty(fileW, propName).equals(connectionPoolValue)) {
-              replaceProperty(fileW, OpenbravoPropertiesPath + "_aux", propName,
-                  "=" + connectionPoolValue);
+              replaceProperty(fileW, OpenbravoPropertiesPath + "_aux", propName, "="
+                  + connectionPoolValue);
               try {
                 fileW.delete();
                 File fileAux = new File(OpenbravoPropertiesPath + "_aux");
@@ -141,14 +173,15 @@ public class CheckUpdateConnectionPoolMerge extends BuildValidation {
     } catch (Exception notFoundConnectionPoolProperties) {
       return false;
     }
+    log.info("Merged connection pool properties with Openbravo.properties file.");
     return true;
   }
-  
+
   /**
    * Adds a new property in a merge of properties file.
    * 
-   * Extract from original method in org.openbravo.erpCommon.utility.Utility.java. 
-   * It is necessary because build validations can not work with external methods.
+   * Extract from original method in org.openbravo.erpCommon.utility.Utility.java. It is necessary
+   * because build validations can not work with external methods.
    *
    * @param pathFile
    *          properties file path
@@ -167,13 +200,13 @@ public class CheckUpdateConnectionPoolMerge extends BuildValidation {
       log.error("Exception reading/writing file: ", e1);
     }
   }
-  
+
   /**
    * Replaces a value changeOption in addressFilePath. FileR is used to check that exists
    * searchOption with different value.
    * 
-   * Extract from original method in org.openbravo.configuration.ConfigurationApp.java. 
-   * It is necessary because build validations can not work with external methods.
+   * Extract from original method in org.openbravo.configuration.ConfigurationApp.java. It is
+   * necessary because build validations can not work with external methods.
    *
    * @param fileR
    *          old file to read
@@ -184,7 +217,7 @@ public class CheckUpdateConnectionPoolMerge extends BuildValidation {
    * @param changeOption
    *          Value to write in addressFilePath
    */
-  public static void replaceProperty(File fileR, String addressFilePath, String searchOption,
+  private static void replaceProperty(File fileR, String addressFilePath, String searchOption,
       String changeOption) throws Exception {
     boolean isFound = false;
     FileReader fr = new FileReader(fileR);
@@ -209,12 +242,12 @@ public class CheckUpdateConnectionPoolMerge extends BuildValidation {
     fw.close();
     br.close();
   }
-  
+
   /**
    * Searches an option in filePath file and returns the value of searchOption.
    * 
-   * Extract from original method in org.openbravo.configuration.ConfigurationApp.java. 
-   * It is necessary because build validations can not work with external methods.
+   * Extract from original method in org.openbravo.configuration.ConfigurationApp.java. It is
+   * necessary because build validations can not work with external methods.
    *
    * @param filePath
    *          Path of file
@@ -222,31 +255,31 @@ public class CheckUpdateConnectionPoolMerge extends BuildValidation {
    *          Prefix of property to search
    * @return valueFound Value found
    */
-  public static String searchProperty(File filePath, String searchOption){
+  private static String searchProperty(File filePath, String searchOption) {
     String valueFound = "";
-    try{
-    FileReader fr = new FileReader(filePath);
-    BufferedReader br = new BufferedReader(fr);
-    String line;
-    while ((line = br.readLine()) != null) {
-      if (line.indexOf(searchOption) == 0) {
-        valueFound = line.substring(searchOption.length() + 1);
-        break;
+    try {
+      FileReader fr = new FileReader(filePath);
+      BufferedReader br = new BufferedReader(fr);
+      String line;
+      while ((line = br.readLine()) != null) {
+        if (line.indexOf(searchOption) == 0) {
+          valueFound = line.substring(searchOption.length() + 1);
+          break;
+        }
       }
-    }
-    fr.close();
-    br.close();
-    }catch(Exception e){
+      fr.close();
+      br.close();
+    } catch (Exception e) {
       log.error("Exception searching a property: ", e);
     }
     return valueFound;
   }
-  
+
   /**
    * Gets source.path property from Openbravo.properties file
    * 
    */
-  public String getSourcePathFromOBProperties(){
+  private String getSourcePathFromOBProperties() {
     // get the location of the current class file
     final URL url = this.getClass().getResource(getClass().getSimpleName() + ".class");
     File f = new File(url.getPath());
@@ -262,6 +295,6 @@ public class CheckUpdateConnectionPoolMerge extends BuildValidation {
         }
       }
     }
-    return searchProperty(propertiesFile,"source.path");
+    return searchProperty(propertiesFile, "source.path");
   }
 }
