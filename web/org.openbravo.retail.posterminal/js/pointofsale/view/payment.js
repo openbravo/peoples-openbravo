@@ -193,6 +193,9 @@ enyo.kind({
               }),
               renderLine: 'OB.OBPOSPointOfSale.UI.RenderPaymentLine'
             }, {
+              style: 'position: absolute; bottom: 20px; height: 20px; font-weight: bold; color:DodgerBlue;',
+              name: 'extrainfo'
+            }, {
               style: 'position: absolute; bottom: 0px; height: 20px; color: #ff0000;',
               name: 'noenoughchangelbl',
               showing: false
@@ -278,6 +281,10 @@ enyo.kind({
       } else {
         this.$.layawayaction.hide();
       }
+    }, this);
+    this.$.extrainfo.setContent('');
+    this.receipt.on('extrainfo', function (info) {
+      this.$.extrainfo.setContent(info || '');
     }, this);
   },
 
