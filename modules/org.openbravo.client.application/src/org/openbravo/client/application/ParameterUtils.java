@@ -19,6 +19,7 @@
 package org.openbravo.client.application;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.Map;
 
@@ -239,6 +240,29 @@ public class ParameterUtils {
       }
     } catch (Exception e) {
       throw new OBException(OBMessageUtils.getI18NMessage("OBUIAPP_ErrorInsertMetadata", null), e);
+    }
+  }
+
+  /**
+   * Get parameter value converted to its original type
+   * 
+   * @param parameter
+   *          parameter which stores original type.
+   * @param value
+   *          value of the parameter converted to string.
+   * @return
+   */
+  public static Object getTypedParameter(Parameter parameter, String value) throws ParseException {
+    if (parameter.getReference().getId().equals(REFERENCE_DATE)
+        || parameter.getReference().getId().equals(REFERENCE_DATETIME)
+        || parameter.getReference().getId().equals(REFERENCE_ABSOLUTEDATETIME)) {
+      return OBDateUtils.getDate(value);
+    } else if (parameter.getReference().getId().equals(REFERENCE_INTEGER)
+        || parameter.getReference().getId().equals(REFERENCE_QUANTITY)
+        || parameter.getReference().getId().equals(REFERENCE_AMOUNT)) {
+      return new BigDecimal(value);
+    } else {
+      return value;
     }
   }
 }
