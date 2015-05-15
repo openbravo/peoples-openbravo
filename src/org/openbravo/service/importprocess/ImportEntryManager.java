@@ -47,61 +47,62 @@ import org.openbravo.dal.service.OBQuery;
 
 /**
  * This class is the main manager for performing multi-threaded and parallel import of data from the
- * {@link ImportEntry} entity/table. The {@link ImportEntryManager} is a
- * singleton/ApplicationScoped.
- * 
- * {@link ImportEntry} records are created by for example data synchronization processes. For
- * creating a new {@link ImportEntry} preferably the
- * {@link #createImportEntry(String, String, String)} method should be used. This method also takes
- * care of calling all the relevant {@link ImportEntryPreProcessor} instances. As the
- * {@link ImportEntryManager} is a singleton/applicationscoped class it should preferably be
- * obtained through Weld.
- * 
- * After creating a new {@link ImportEntry} and committing the transaction the creator of the
- * {@link ImportEntry} should preferably call the method {@link #notifyNewImportEntryCreated()}.
- * This to wake up the {@link ImportEntryManagerThread} to process the new entry.
- * 
- * The {@link ImportEntryManager} runs a thread (the {@link ImportEntryManagerThread}) which
- * periodically queries if there are {@link ImportEntry} records in state 'Initial'. Any
- * {@link ImportEntry} with status 'Initial' is to be processed. The
- * {@link ImportEntryManagerThread} is started when the application starts and is shutdown when the
- * Tomcat application stops, see the {@link #start()} and {@link #shutdown()} methods which are
- * called from the {@link ImportProcessContextListener}.
- * 
- * As mentioned above, the {@link ImportEntryManagerThread} periodically checks if there are
- * {@link ImportEntry} records in state 'Initial'. This thread is also notified when a new
- * {@link ImportEntry} is created. If there are no notifications or {@link ImportEntry} records in
- * state 'Initial', then the thread waits for a preset amount of time before querying the
- * {@link ImportEntry} table again. This notification and waiting is managed through the
- * {@link #notifyNewImportEntryCreated()} and {@link ImportEntryManagerThread#doNotify()} and
- * {@link ImportEntryManagerThread#doWait()} methods. This mechanism uses a monitor object. See here
- * for more information:
- * http://javarevisited.blogspot.nl/2011/05/wait-notify-and-notifyall-in-java.html
- * 
- * When the {@link ImportEntryManagerThread} retrieves an {@link ImportEntry} instance in state
- * 'Initial' then it tries to find an {@link ImportEntryProcessor} which can handle this instance.
- * The right {@link ImportEntryProcessor} is found by using the {@link ImportEntryQualifier} and
- * Weld selections.
- * 
- * The {@link ImportEntryProcessor#handleImportEntry(ImportEntry)} method gets the
- * {@link ImportEntry} and processes it.
- * 
- * As the {@link ImportEntryManagerThread} runs periodically and the processing of
- * {@link ImportEntry} instances can take a long it is possible that an ImportEntry is again
- * 'offered' to the {@link ImportEntryProcessor} for processing. The {@link ImportEntryProcessor}
- * should handle this case robustly.
- * 
- * For more information see the {@link ImportEntryProcessor}.
- * 
- * This class also provides methods for error handling and result processing:
- * {@link #setImportEntryProcessed(String)}, {@link #setImportEntryError(String, Throwable)},
- * {@link #setImportEntryErrorIndependent(String, Throwable)}.
+ * {@link ImportEntry} entity/table. The {@link ImportEntryManager} is a singleton/ApplicationScoped
+ * class.
  * 
  * @author mtaal
- *
  */
 @ApplicationScoped
 public class ImportEntryManager {
+
+  /*
+   * 
+   * {@link ImportEntry} records are created by for example data synchronization processes. For
+   * creating a new {@link ImportEntry} preferably the {@link #createImportEntry(String, String,
+   * String)} method should be used. This method also takes care of calling all the relevant {@link
+   * ImportEntryPreProcessor} instances. As the {@link ImportEntryManager} is a
+   * singleton/applicationscoped class it should preferably be obtained through Weld.
+   * 
+   * After creating a new {@link ImportEntry} and committing the transaction the creator of the
+   * {@link ImportEntry} should preferably call the method {@link #notifyNewImportEntryCreated()}.
+   * This to wake up the {@link ImportEntryManagerThread} to process the new entry.
+   * 
+   * The {@link ImportEntryManager} runs a thread (the {@link ImportEntryManagerThread}) which
+   * periodically queries if there are {@link ImportEntry} records in state 'Initial'. Any {@link
+   * ImportEntry} with status 'Initial' is to be processed. The {@link ImportEntryManagerThread} is
+   * started when the application starts and is shutdown when the Tomcat application stops, see the
+   * {@link #start()} and {@link #shutdown()} methods which are called from the {@link
+   * ImportProcessContextListener}.
+   * 
+   * As mentioned above, the {@link ImportEntryManagerThread} periodically checks if there are
+   * {@link ImportEntry} records in state 'Initial'. This thread is also notified when a new {@link
+   * ImportEntry} is created. If there are no notifications or {@link ImportEntry} records in state
+   * 'Initial', then the thread waits for a preset amount of time before querying the {@link
+   * ImportEntry} table again. This notification and waiting is managed through the {@link
+   * #notifyNewImportEntryCreated()} and {@link ImportEntryManagerThread#doNotify()} and {@link
+   * ImportEntryManagerThread#doWait()} methods. This mechanism uses a monitor object. See here for
+   * more information:
+   * http://javarevisited.blogspot.nl/2011/05/wait-notify-and-notifyall-in-java.html
+   * 
+   * When the {@link ImportEntryManagerThread} retrieves an {@link ImportEntry} instance in state
+   * 'Initial' then it tries to find an {@link ImportEntryProcessor} which can handle this instance.
+   * The right {@link ImportEntryProcessor} is found by using the {@link ImportEntryQualifier} and
+   * Weld selections.
+   * 
+   * The {@link ImportEntryProcessor#handleImportEntry(ImportEntry)} method gets the {@link
+   * ImportEntry} and processes it.
+   * 
+   * As the {@link ImportEntryManagerThread} runs periodically and the processing of {@link
+   * ImportEntry} instances can take a long it is possible that an ImportEntry is again 'offered' to
+   * the {@link ImportEntryProcessor} for processing. The {@link ImportEntryProcessor} should handle
+   * this case robustly.
+   * 
+   * For more information see the {@link ImportEntryProcessor}.
+   * 
+   * This class also provides methods for error handling and result processing: {@link
+   * #setImportEntryProcessed(String)}, {@link #setImportEntryError(String, Throwable)}, {@link
+   * #setImportEntryErrorIndependent(String, Throwable)}.
+   */
 
   private static final Logger log = Logger.getLogger(ImportEntryManager.class);
 
@@ -168,8 +169,8 @@ public class ImportEntryManager {
 
   /**
    * Creates and saves the import entry, calls the
-   * {@link ImportQueueEntryProcessor#beforeCreate(ImportEntry)} on the
-   * {@link ImportQueueEntryProcessor} instances.
+   * {@link ImportEntryPreProcessor#beforeCreate(ImportEntry)} on the
+   * {@link ImportEntryPreProcessor} instances.
    * 
    * Note will commit the session/connection using {@link OBDal#commitAndClose()}
    * 

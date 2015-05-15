@@ -42,9 +42,8 @@ import org.openbravo.service.importprocess.ImportEntryManager.DaemonThreadFactor
 /**
  * Class responsible for moving {@link ImportEntry} objects to the {@link ImportEntryArchive} table.
  * 
- * Every {@link #ARCHIVE_INTERVAL} the thread will check if there are Processed {@link ImportEntry}
- * records. If so then they are moved to the {@link ImportEntryArchive} table in batches of 1000
- * records.
+ * Works currently with a hard coded interval of 1 hour, so every hour processed import entries are
+ * moved to the archive .
  * 
  * @author mtaal
  */
@@ -54,7 +53,11 @@ public class ImportEntryArchiveManager {
   private static final Logger log = Logger.getLogger(ImportEntryArchiveManager.class);
 
   // TODO: make this a preference
-  // Archive hourly for now
+  /**
+   * Every {@link #ARCHIVE_INTERVAL} the thread will check if there are Processed
+   * {@link ImportEntry} records. If so then they are moved to the {@link ImportEntryArchive} table
+   * in batches of 1000 records.
+   */
   private static final long ARCHIVE_INTERVAL = 60 * 60000;
 
   private static ImportEntryArchiveManager instance;
