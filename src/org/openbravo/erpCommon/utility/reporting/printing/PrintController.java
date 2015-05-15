@@ -77,11 +77,6 @@ import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
-import com.itextpdf.text.Document;
-import com.itextpdf.text.pdf.PdfCopy;
-import com.itextpdf.text.pdf.PdfImportedPage;
-import com.itextpdf.text.pdf.PdfReader;
-
 @SuppressWarnings("serial")
 public class PrintController extends HttpSecureAppServlet {
   private final Map<String, TemplateData[]> differentDocTypes = new HashMap<String, TemplateData[]>();
@@ -241,6 +236,8 @@ public class PrintController extends HttpSecureAppServlet {
          */
         archivedReports = true;
         Report report = null;
+        JasperPrint jasperPrint = null;
+        Collection<JasperPrint> jrPrintReports = new ArrayList<JasperPrint>();
         final Collection<Report> savedReports = new ArrayList<Report>();
         for (int index = 0; index < documentIds.length; index++) {
           String documentId = documentIds[index];
@@ -248,14 +245,15 @@ public class PrintController extends HttpSecureAppServlet {
               OutputTypeEnum.ARCHIVE);
           buildReport(response, vars, documentId, reports, reportManager);
           try {
-            reportManager.processReport(report, vars);
+            jasperPrint = reportManager.processReport(report, vars);
+            jrPrintReports.add(jasperPrint);
           } catch (final ReportingException e) {
             log4j.error(e);
           }
           reportManager.saveTempReport(report, vars);
           savedReports.add(report);
         }
-        printReports(response, null, savedReports);
+        printReports(response, jrPrintReports, savedReports);
       } else {
         if (vars.commandIn("DEFAULT")) {
 
@@ -489,8 +487,7 @@ public class PrintController extends HttpSecureAppServlet {
           ReportingUtils.saveReport(jasperPrint, ExportType.PDF, null, os);
         }
       } else {
-        response.setContentType("application/pdf");
-        concatReport(reports.toArray(new Report[] {}), response);
+        concatReport(reports.toArray(new Report[] {}), jrPrintReports, response);
       }
       for (Iterator<Report> iterator = reports.iterator(); iterator.hasNext();) {
         Report report = iterator.next();
@@ -525,77 +522,25 @@ public class PrintController extends HttpSecureAppServlet {
     }
   }
 
-  /*
-   * This method is base on code originally created by Mark Thompson (Concatenate.java) and
-   * distributed under the following conditions.
-   * 
-   * $Id: Concatenate.java 3373 2008-05-12 16:21:24Z xlv $
-   * 
-   * This code is free software. It may only be copied or modified if you include the following
-   * copyright notice:
-   * 
-   * This class by Mark Thompson. Copyright (c) 2002 Mark Thompson.
-   * 
-   * This code is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
-   * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-   */
-  private void concatReport(Report[] reports, HttpServletResponse response) {
+  private void concatReport(Report[] reports, Collection<JasperPrint> jrPrintReports,
+      HttpServletResponse response) {
     try {
-      int pageOffset = 0;
-      // ArrayList master = new ArrayList();
-      int f = 0;
       String filename = "";
-      Report outFile = null;
-      if (reports.length == 1)
+      boolean createBookmarks = true;
+      if (reports.length == 1) {
         filename = reports[0].getFilename();
-      Document document = null;
-      PdfCopy writer = null;
-      while (f < reports.length) {
-        if (filename == null || filename.equals("")) {
-          outFile = reports[f];
-          if (multiReports) {
-            filename = outFile.getTemplateInfo().getReportFilename();
-            filename = filename.replaceAll("@our_ref@", "");
-            filename = filename.replaceAll("@cus_ref@", "");
-            filename = filename.replaceAll(" ", "_");
-            filename = filename.replaceAll("-", "");
-            filename = filename + ".pdf";
-          } else {
-            filename = outFile.getFilename();
-          }
-        }
-        response.setHeader("Content-disposition", "attachment" + "; filename=" + filename);
-        // we create a reader for a certain document
-        PdfReader reader = new PdfReader(reports[f].getTargetLocation());
-        reader.consolidateNamedDestinations();
-        // we retrieve the total number of pages
-        int n = reader.getNumberOfPages();
-        pageOffset += n;
-
-        if (f == 0) {
-          // step 1: creation of a document-object
-          document = new Document(reader.getPageSizeWithRotation(1));
-          // step 2: we create a writer that listens to the document
-          writer = new PdfCopy(document, response.getOutputStream());
-          // step 3: we open the document
-          document.open();
-        }
-        // step 4: we add content
-        PdfImportedPage page;
-        for (int i = 0; i < n;) {
-          ++i;
-          page = writer.getImportedPage(reader, i);
-          writer.addPage(page);
-        }
-        if (reports[f].isDeleteable()) {
-          File file = new File(reports[f].getTargetLocation());
-          if (file.exists() && !file.isDirectory()) {
-            file.delete();
-          }
-        }
-        f++;
+        createBookmarks = false;
+      } else if (reports.length > 1) {
+        filename = reports[0].getTemplateInfo().getReportFilename();
+        filename = filename.replaceAll("@our_ref@", "");
+        filename = filename.replaceAll("@cus_ref@", "");
+        filename = filename.replaceAll(" ", "_");
+        filename = filename.replaceAll("-", "");
+        filename = filename + ".pdf";
       }
-      document.close();
+      response.setHeader("Content-disposition", "attachment" + "; filename=" + filename);
+      ReportingUtils.concatPDFReport(new ArrayList<JasperPrint>(jrPrintReports), createBookmarks,
+          response.getOutputStream());
     } catch (Exception e) {
       log4j.error(e);
     }

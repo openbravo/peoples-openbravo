@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -48,6 +49,7 @@ import net.sf.jasperreports.engine.design.JRDesignParameter;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.export.HtmlExporter;
 import net.sf.jasperreports.engine.export.JRCsvExporter;
+import net.sf.jasperreports.engine.export.JRPdfExporter;
 import net.sf.jasperreports.engine.export.JRXlsExporter;
 import net.sf.jasperreports.engine.fill.JRSwapFileVirtualizer;
 import net.sf.jasperreports.engine.util.JRSwapFile;
@@ -57,6 +59,7 @@ import net.sf.jasperreports.export.SimpleExporterInput;
 import net.sf.jasperreports.export.SimpleHtmlExporterOutput;
 import net.sf.jasperreports.export.SimpleHtmlReportConfiguration;
 import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
+import net.sf.jasperreports.export.SimplePdfExporterConfiguration;
 import net.sf.jasperreports.export.SimpleWriterExporterOutput;
 import net.sf.jasperreports.export.SimpleXlsReportConfiguration;
 import net.sf.jasperreports.export.type.HtmlSizeUnitEnum;
@@ -1032,6 +1035,77 @@ public class ReportingUtils {
     JasperDesign jasperDesign = JRXmlLoader.load(jasperFilePath);
     JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
     return jasperReport;
+  }
+
+  /**
+   * Returns a PDF file into an output stream as result of the concatenation of the JasperPrint
+   * objects list passed as parameter.
+   * 
+   * @param jasperPrintList
+   *          A list of JasperPrint objects.
+   * @param createBoomkmarks
+   *          A flag to indicate if the document should contain bookmarks, to mark the beginning of
+   *          each individual document that was part of the initial document list.
+   * @param outputStream
+   *          The output stream used for returning the report.
+   * @throws JRException
+   *           In case there is any error compiling the report an exception is thrown with the error
+   *           message.
+   */
+  public static void concatPDFReport(List<JasperPrint> jasperPrintList, boolean createBookmarks,
+      OutputStream outputStream) throws JRException {
+
+    JRPdfExporter exporter = new JRPdfExporter();
+    SimpleOutputStreamExporterOutput exporterOutput = new SimpleOutputStreamExporterOutput(
+        outputStream);
+    SimplePdfExporterConfiguration reportConfiguration = new SimplePdfExporterConfiguration();
+
+    reportConfiguration.setCreatingBatchModeBookmarks(createBookmarks);
+    exporter.setConfiguration(reportConfiguration);
+    exporter.setExporterInput(SimpleExporterInput.getInstance(jasperPrintList));
+    exporter.setExporterOutput(exporterOutput);
+
+    exporter.exportReport();
+  }
+
+  /**
+   * Returns an encrypted PDF file into an output stream as result of the concatenation of the
+   * JasperPrint objects list passed as parameter.
+   * 
+   * @param jasperPrintList
+   *          A list of JasperPrint objects.
+   * @param createBoomkmarks
+   *          A flag to indicate if the document should contain bookmarks, to mark the beginning of
+   *          each individual document that was part of the initial document list.
+   * @param userPassword
+   *          A String that contains the user password of the resulting document.
+   * @param ownerPassword
+   *          A String that contains the owner password of the resulting document.
+   * @param outputStream
+   *          The output stream used for returning the report.
+   * @throws JRException
+   *           In case there is any error compiling the report an exception is thrown with the error
+   *           message.
+   */
+  public static void concatPDFReportEncrypted(List<JasperPrint> jasperPrintList,
+      boolean createBookmarks, String userPassword, String ownerPassword, OutputStream outputStream)
+      throws JRException {
+
+    JRPdfExporter exporter = new JRPdfExporter();
+    SimpleOutputStreamExporterOutput exporterOutput = new SimpleOutputStreamExporterOutput(
+        outputStream);
+    SimplePdfExporterConfiguration reportConfiguration = new SimplePdfExporterConfiguration();
+
+    reportConfiguration.setEncrypted(true);
+    reportConfiguration.set128BitKey(true);
+    reportConfiguration.setUserPassword(userPassword);
+    reportConfiguration.setOwnerPassword(ownerPassword);
+    reportConfiguration.setCreatingBatchModeBookmarks(createBookmarks);
+    exporter.setConfiguration(reportConfiguration);
+    exporter.setExporterInput(SimpleExporterInput.getInstance(jasperPrintList));
+    exporter.setExporterOutput(exporterOutput);
+
+    exporter.exportReport();
   }
 
   /**
