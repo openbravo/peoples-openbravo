@@ -152,10 +152,10 @@ public class AttachmentsAH extends BaseActionHandler {
         JSONObject metadataJson = new JSONObject(parameters.get("updatedMetadata").toString());
 
         Map<String, String> metadata = new HashMap<String, String>();
-        final OBQuery<Parameter> paramQuery = OBDal.getInstance().createQuery(
-            Parameter.class,
-            "attachmentMethod.id='" + attachMethod.getId() + "' and (tab is null or tab.id='"
-                + tab.getId() + "')");
+        final OBQuery<Parameter> paramQuery = OBDal.getInstance().createQuery(Parameter.class,
+            "attachmentMethod.id=:attachmentMethodId and (tab is null or tab.id=:tabId)");
+        paramQuery.setNamedParameter("attachmentMethodId", attachMethod.getId());
+        paramQuery.setNamedParameter("tabId", tab.getId());
         paramQuery.setFetchSize(1000);
         final ScrollableResults paramScroller = paramQuery.scroll(ScrollMode.FORWARD_ONLY);
         int i = 0;
