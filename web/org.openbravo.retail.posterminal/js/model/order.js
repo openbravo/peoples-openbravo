@@ -2481,7 +2481,7 @@
       });
     },
     newDynamicOrder: function (model, callback) {
-      var order = new Backbone.Model(),
+      var order = new OB.Model.Order(),
           undf;
       _.each(_.keys(model), function (key) {
         if (model[key] !== undf) {
@@ -2494,9 +2494,9 @@
       });
       callback(order);
     },
-    addNewOrder: function () {
+    addNewOrder: function (isFirstOrder) {
       var me = this;
-      if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.customer', true)) {
+      if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.customer', true) && (!isFirstOrder || (isFirstOrder && !localStorage.hgVolCustomers))) {
         OB.Dal.saveHgvol(OB.MobileApp.model.get('businessPartner'), function () {}, function () {
           OB.error(arguments);
         }, true);
@@ -2538,10 +2538,43 @@
     },
 
     addFirstOrder: function () {
-      this.addNewOrder();
+      this.addNewOrder(true);
     },
 
     addPaidReceipt: function (model) {
+
+      var me = this;
+      if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.customer', true)) {
+        OB.Dal.saveHgvol(model.get('bp'), function () {}, function () {
+          OB.error(arguments);
+        }, true);
+        OB.Dal.saveHgvol(model.get('bp').get('locationModel'), function () {}, function () {
+          OB.error(arguments);
+        }, true);
+        if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.discount.bp', true)) {
+          var bp = {
+            columns: ['businessPartner'],
+            operator: 'equals',
+            value: model.id
+          };
+          var hgVolCriteria = [bp];
+          var criteria = {};
+          criteria.hgVolFilters = hgVolCriteria;
+          OB.Dal.find(OB.Model.DiscountFilterBusinessPartner, criteria, function (discountsBP) {
+            _.each(discountsBP.models, function (dsc) {
+              OB.Dal.saveHgvol(dsc, function () {}, function () {
+                OB.error(arguments);
+              }, true);
+            });
+            OB.UTIL.showLoading(false);
+          }, function () {
+            OB.error(arguments);
+          });
+        }
+      } else {
+        OB.UTIL.showLoading(false);
+      }
+
       this.saveCurrent();
       this.current = model;
       this.add(this.current);
