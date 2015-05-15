@@ -334,10 +334,10 @@ public class AttachImplementationManager {
 
   public Map<String, Object> getMetadataList(String attachmentMethodId, String tabId) {
     Map<String, Object> metadataList = new HashMap<String, Object>();
-    final OBQuery<Parameter> paramQuery = OBDal.getInstance().createQuery(
-        Parameter.class,
-        "attachmentMethod.id='" + attachmentMethodId + "' and (tab is null or tab.id='" + tabId
-            + "')");
+    final OBQuery<Parameter> paramQuery = OBDal.getInstance().createQuery(Parameter.class,
+        "attachmentMethod.id=:attachmentMethodId and (tab is null or tab.id=:tabId)");
+    paramQuery.setNamedParameter("attachmentMethodId", attachmentMethodId);
+    paramQuery.setNamedParameter("tabId", tabId);
     paramQuery.setFetchSize(1000);
     final ScrollableResults paramScroller = paramQuery.scroll(ScrollMode.FORWARD_ONLY);
     int i = 0;

@@ -197,10 +197,10 @@ public class ParameterUtils {
       boolean exists) {
     try {
       for (Map.Entry<String, String> entry : metadata.entrySet()) {
-        Parameter parameter = OBDal.getInstance().get(Parameter.class, entry.getKey());
+        final Parameter parameter = OBDal.getInstance().get(Parameter.class, entry.getKey());
         AttachmentMetadata attachmentMetadata;
         if (exists) {
-          OBCriteria<AttachmentMetadata> attachmentMetadataCriteria = OBDal.getInstance()
+          final OBCriteria<AttachmentMetadata> attachmentMetadataCriteria = OBDal.getInstance()
               .createCriteria(AttachmentMetadata.class);
           attachmentMetadataCriteria.add(Restrictions.eq(AttachmentMetadata.PROPERTY_FILE,
               attachment));
