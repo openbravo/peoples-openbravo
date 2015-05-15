@@ -37,6 +37,7 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.service.importprocess.ImportEntryManager.DaemonThreadFactory;
 
 /**
  * Class responsible for moving {@link ImportEntry} objects to the {@link ImportEntryArchive} table.
@@ -74,14 +75,14 @@ public class ImportEntryArchiveManager {
   }
 
   public void start() {
-    executorService = Executors.newSingleThreadExecutor();
+    executorService = Executors.newSingleThreadExecutor(new DaemonThreadFactory());
     archiveThread = new ImportEntryArchiveThread(this);
     executorService.execute(archiveThread);
   }
 
   public void shutdown() {
     log.debug("Shutting down Import Entry Archive Framework");
-    executorService.shutdown();
+    executorService.shutdownNow();
   }
 
   private static class ImportEntryArchiveThread implements Runnable {
@@ -94,6 +95,15 @@ public class ImportEntryArchiveManager {
 
     @Override
     public void run() {
+
+      // don't start right away at startup, give the system time to
+      // really start
+      log.debug("Started, first sleep " + ARCHIVE_INTERVAL);
+      try {
+        Thread.sleep(ARCHIVE_INTERVAL);
+      } catch (Exception ignored) {
+      }
+      log.debug("Run loop started");
 
       // make ourselves an admin
       OBContext.setOBContext("0", "0", "0", "0");

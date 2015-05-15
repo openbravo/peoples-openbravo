@@ -45,6 +45,8 @@ public interface Process {
 
   public static final String SYSTEM_RESTART = "SYR";
 
+  public static final String KILLED = "KIL";
+
   public static final String PREVENT_CONCURRENT_EXECUTIONS = "PCE";
   public static final String PROCESS_NAME = "name";
   public static final String PROCESS_ID = "id";

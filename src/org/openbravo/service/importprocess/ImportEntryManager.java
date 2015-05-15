@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Any;
@@ -129,16 +130,24 @@ public class ImportEntryManager {
 
   private Map<String, ImportStatistics> stats = new HashMap<String, ImportEntryManager.ImportStatistics>();
 
+  private boolean threadsStarted = false;
+
   // TODO: make this a preference
+  private long initialWaitTime = 10000;
   private long managerWaitTime = 60000;
 
   public ImportEntryManager() {
     instance = this;
   }
 
-  public void start() {
+  public synchronized void start() {
+    if (threadsStarted) {
+      return;
+    }
+    threadsStarted = true;
     log.debug("Starting Import Entry Framework");
-    executorService = Executors.newSingleThreadExecutor();
+    executorService = Executors.newSingleThreadExecutor(new DaemonThreadFactory());
+
     // passing ourselves as we have the Weld injected code
     managerThread = new ImportEntryManagerThread(this);
     executorService.execute(managerThread);
@@ -150,7 +159,7 @@ public class ImportEntryManager {
    */
   public void shutdown() {
     log.debug("Shutting down Import Entry Framework");
-    executorService.shutdown();
+    executorService.shutdownNow();
     for (ImportEntryProcessor importEntryProcessor : importEntryProcessors.values()) {
       importEntryProcessor.shutdown();
     }
@@ -166,7 +175,7 @@ public class ImportEntryManager {
    * 
    * @param json
    */
-  public void createImportEntry(String id, String typeOfData, String data) {
+  public void createImportEntry(String id, String typeOfData, String json) {
     OBDal.getInstance().flush();
     OBContext.setAdminMode(false);
     try {
@@ -186,7 +195,7 @@ public class ImportEntryManager {
       importEntry.setStored(new Date());
       importEntry.setImported(null);
       importEntry.setTypeofdata(typeOfData);
-      importEntry.setData(data);
+      importEntry.setJsonInfo(json);
 
       for (Iterator<? extends Object> procIter = entryPreProcessors.iterator(); procIter.hasNext();) {
         ImportEntryPreProcessor processor = (ImportEntryPreProcessor) procIter.next();
@@ -228,6 +237,11 @@ public class ImportEntryManager {
    * table, so it can go process it immediately.
    */
   public void notifyNewImportEntryCreated() {
+    // make sure that the threads have started
+    if (!threadsStarted) {
+      start();
+    }
+
     managerThread.doNotify();
   }
 
@@ -237,8 +251,8 @@ public class ImportEntryManager {
       ImportEntryProcessor entryProcessor = getImportEntryProcessor(importEntry.getTypeofdata());
       if (entryProcessor == null) {
         log.warn("No import entry processor defined for type of data "
-            + importEntry.getTypeofdata() + " with json " + importEntry.getData() + " imported on "
-            + importEntry.getImported() + " by " + importEntry.getCreatedBy());
+            + importEntry.getTypeofdata() + " with json " + importEntry.getJsonInfo()
+            + " imported on " + importEntry.getImported() + " by " + importEntry.getCreatedBy());
       } else {
         entryProcessor.handleImportEntry(importEntry);
       }
@@ -357,9 +371,9 @@ public class ImportEntryManager {
 
       // don't start right away at startup, give the system time to
       // really start
-      log.debug("Started, first sleep " + manager.managerWaitTime);
+      log.debug("Started, first sleep " + manager.initialWaitTime);
       try {
-        Thread.sleep(manager.managerWaitTime);
+        Thread.sleep(manager.initialWaitTime);
       } catch (Exception ignored) {
       }
       log.debug("Run loop started");
@@ -379,6 +393,9 @@ public class ImportEntryManager {
 
             // do a try catch block here
             try {
+              // will be processing, so ignore any subsequent notifications
+              wasNotifiedInParallel = false;
+
               final List<ImportEntry> entries = entriesQry.list();
               dataPresent = !entries.isEmpty();
               log.debug("Found " + entries.size() + " import entries");
@@ -456,6 +473,18 @@ public class ImportEntryManager {
       log.info("Timings for " + typeOfData + " cnt: " + cnt + " avg millis: " + (totalTime / cnt));
       System.err.println("Timings for " + typeOfData + " cnt: " + cnt + " avg millis: "
           + (totalTime / cnt));
+    }
+  }
+
+  /**
+   * Creates threads which have deamon set to true.
+   */
+  public static class DaemonThreadFactory implements ThreadFactory {
+    @Override
+    public Thread newThread(Runnable runnable) {
+      Thread thread = Executors.defaultThreadFactory().newThread(runnable);
+      thread.setDaemon(true);
+      return thread;
     }
   }
 }

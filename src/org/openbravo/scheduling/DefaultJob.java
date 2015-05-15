@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -38,13 +38,17 @@ public class DefaultJob implements Job {
 
   static Logger log = Logger.getLogger(DefaultJob.class);
 
+  private Process processInstance;
+  private ProcessBundle bundle;
+  private boolean killed = false;
+
   /**
    * See the execute method of the Quartz Job class.
    */
   public void execute(JobExecutionContext jec) throws JobExecutionException {
-    final ProcessBundle bundle = (ProcessBundle) jec.getMergedJobDataMap().get(ProcessBundle.KEY);
+    bundle = (ProcessBundle) jec.getMergedJobDataMap().get(ProcessBundle.KEY);
     try {
-      final Process process = bundle.getProcessClass().newInstance();
+      processInstance = bundle.getProcessClass().newInstance();
       bundle.setConnection((ConnectionProvider) jec.get(ProcessBundle.CONNECTION));
       bundle.setConfig((ConfigParameters) jec.get(ProcessBundle.CONFIG_PARAMS));
       bundle.setLog(new ProcessLogger(bundle.getConnection()));
@@ -55,11 +59,35 @@ public class DefaultJob implements Job {
       SessionInfo.setProcessId(bundle.getProcessId());
       SessionInfo.setQueryProfile("scheduledProcess");
 
-      process.execute(bundle);
+      processInstance.execute(bundle);
 
     } catch (final Exception e) {
       log.error("Error executing process " + bundle.toString(), e);
       throw new JobExecutionException(e);
     }
+  }
+
+  /**
+   * Returns the process instance
+   * 
+   * @return process instance
+   */
+  public Process getProcessInstance() {
+    return processInstance;
+  }
+
+  /** Returns the bundle associated to current execution */
+  public ProcessBundle getBundle() {
+    return bundle;
+  }
+
+  /** Returns whether kill signal has been sent to current execution */
+  public boolean isKilled() {
+    return killed;
+  }
+
+  /** Flags current execution as killed */
+  public void setKilled(boolean killed) {
+    this.killed = killed;
   }
 }

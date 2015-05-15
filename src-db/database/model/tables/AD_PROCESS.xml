@@ -117,6 +117,10 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
+      <column name="ISKILLABLE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="AD_PROCESS_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -133,6 +137,7 @@
       <check name="AD_PROCESS_ISBACKGROUND_CHK"><![CDATA[ISBACKGROUND IN ('Y', 'N')]]></check>
       <check name="AD_PROCESS_ISDIRECTPRINT_CHK"><![CDATA[ISDIRECTPRINT IN ('Y', 'N')]]></check>
       <check name="AD_PROCESS_ISEXTERNALSERVI_CHK"><![CDATA[ISEXTERNALSERVICE IN ('Y', 'N')]]></check>
+      <check name="AD_PROCESS_ISKILLABLE_CHK"><![CDATA[ISKILLABLE IN ('Y', 'N')]]></check>
       <check name="AD_PROCESS_ISREPORT_CHK"><![CDATA[ISREPORT IN ('Y', 'N')]]></check>
       <check name="AD_PROCESS_ISUSERSTARTABLE_CHK"><![CDATA[ISUSERSTARTABLE IN ('Y', 'N')]]></check>
       <check name="AD_PROCESS_UIPATTERN_CHK"><![CDATA[UIPATTERN IN ('S', 'M')]]></check>

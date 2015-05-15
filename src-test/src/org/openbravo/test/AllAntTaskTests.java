@@ -22,6 +22,7 @@ package org.openbravo.test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.openbravo.erpCommon.info.ClassicSelectorTest;
+import org.openbravo.test.accounting.PostDocumentTest;
 import org.openbravo.test.accounting.RecordID2Test;
 import org.openbravo.test.dal.AdminContextTest;
 import org.openbravo.test.dal.ComputedColumnsTest;
@@ -152,6 +153,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     ClassicSelectorTest.class,
 
     // Accounting
-    RecordID2Test.class })
+    RecordID2Test.class, //
+    PostDocumentTest.class })
 public class AllAntTaskTests {
 }
