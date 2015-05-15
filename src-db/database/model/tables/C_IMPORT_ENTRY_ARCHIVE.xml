@@ -41,7 +41,7 @@
         <default><![CDATA[SYSDATE]]></default>
         <onCreateDefault/>
       </column>
-      <column name="JSONINFO" primaryKey="false" required="false" type="CLOB" size="4000" autoIncrement="false">
+      <column name="JSONINFO" primaryKey="false" required="false" type="CLOB" size="40000" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
