@@ -55,6 +55,7 @@
          WHERE t1.gl_journal_id = t2.record_id
          AND t1.gl_journalline_id = t2.line_id
          AND t1.c_validcombination_id IS NOT NULL
+         AND AD_Table_ID = '224'
          AND ((t1.amtsourcedr - t1.amtsourcecr) <> (t2.amtsourcedr - t2.amtsourcecr)
          OR  (t1.amtacctdr - t1.amtacctcr) <> (t2.amtacctdr - t2.amtacctcr))
       ]]>
@@ -111,6 +112,7 @@
       AND t1.gl_journalline_id = t2.line_id
       AND t1.c_validcombination_id IS NOT NULL
       AND t1.ad_client_id = ?
+      AND AD_Table_ID = '224'
       AND ((t1.amtsourcedr - t1.amtsourcecr) <> (t2.amtsourcedr - t2.amtsourcecr)
       OR  (t1.amtacctdr - t1.amtacctcr) <> (t2.amtacctdr - t2.amtacctcr))
       ]]>
