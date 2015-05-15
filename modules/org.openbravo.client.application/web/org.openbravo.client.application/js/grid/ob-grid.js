@@ -1400,17 +1400,7 @@ isc.OBViewGridBody.addProperties({
         this.grid.fetchingData = false;
       }
     }
-  },
-
-  scrollTo: function () {
-    if (this.grid.isFilteringExternally) {
-      // prevents scrolling the grid while in the middle of a filter datasource request
-      // this prevents a duplicated request, see issue https://issues.openbravo.com/view.php?id=29896
-      return;
-    }
-    this.Super('scrollTo', arguments);
   }
-
 });
 
 isc.ClassFactory.defineClass('OBGridSummary', isc.OBGrid);

@@ -206,13 +206,7 @@ isc.OBViewGrid.addProperties({
       // clone to prevent side effects
       var requestProperties = isc.clone(this.context);
       this.context.params = this.grid.getFetchRequestParams(requestProperties.params);
-      if (this.grid.isFilteringExternally) {
-        // requests triggered by filtering the grid should always load the first page
-        // if after that the user scrolls down, the isFilteringExternally flag will be false and
-        // the proper page will be loaded
-        startRow = 0;
-        endRow = this.grid.dataPageSize;
-      } else if (this.grid.refreshingWithSelectedRecord) {
+      if (this.grid.refreshingWithSelectedRecord) {
         // if the grid was refreshed with a record selected, use the range that contained that record 
         //  instead of using targetRecordId to improve the performance
         startRow = this.grid.selectedRecordInitInterval;
@@ -1970,7 +1964,6 @@ isc.OBViewGrid.addProperties({
   },
 
   handleFilterEditorSubmit: function (criteria, context, autoSaveDone) {
-    var callback, me = this;
     if (!autoSaveDone) {
       var actionObject = {
         target: this,
@@ -1980,15 +1973,8 @@ isc.OBViewGrid.addProperties({
       this.view.standardWindow.doActionAfterAutoSave(actionObject, true);
       return;
     }
-    callback = function () {
-      delete me.isFilteringExternally;
-    };
-    if (this.data.willFetchData(criteria)) {
-      // Use this flag when a filter editor submit results a datasource request
-      // This flag will be used to prevent unneeded datasource requests, see https://issues.openbravo.com/view.php?id=29896
-      this.isFilteringExternally = true;
-    }
-    this.Super('handleFilterEditorSubmit', [criteria, context, callback]);
+
+    this.Super('handleFilterEditorSubmit', arguments);
   },
 
   getInitialCriteria: function () {
@@ -3854,7 +3840,7 @@ isc.OBViewGrid.addProperties({
       rowNum = this.getEditSessionRowNum(rowNum);
       return this.Super('getRecord', [rowNum]);
     }
-    if (this.refreshingWithRecordSelected || this.refreshingWithScrolledGrid || this.isFilteringExternally) {
+    if (this.refreshingWithRecordSelected || this.refreshingWithScrolledGrid) {
       // if the grid if being refreshed do not try to return a record, just notify that is being loaded
       return Array.LOADING;
     }
