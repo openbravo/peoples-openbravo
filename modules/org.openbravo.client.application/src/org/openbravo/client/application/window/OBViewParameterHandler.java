@@ -44,6 +44,7 @@ public class OBViewParameterHandler {
   private static final String WINDOW_REFERENCE_ID = "FF80818132D8F0F30132D9BC395D0038";
   private Process process;
   private ParameterWindowComponent paramWindow;
+  private List<Parameter> parameters;
 
   public void setProcess(Process process) {
     this.process = process;

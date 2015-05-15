@@ -30,6 +30,7 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.util.OBClassLoader;
 import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.client.application.window.AttachmentWindowComponent;
 import org.openbravo.client.application.window.ParameterWindowComponent;
 import org.openbravo.client.application.window.StandardWindowComponent;
 import org.openbravo.client.kernel.BaseComponent;
@@ -57,6 +58,9 @@ public class ViewComponent extends BaseComponent {
 
   @Inject
   private ParameterWindowComponent parameterWindowComponent;
+
+  @Inject
+  private AttachmentWindowComponent attachmentWindowComponent;
 
   @Inject
   private WeldUtils weldUtils;
@@ -135,6 +139,12 @@ public class ViewComponent extends BaseComponent {
     parameterWindowComponent.setParameters(getParameters());
     parameterWindowComponent.setPoup(false);
     return parameterWindowComponent.generate();
+  }
+
+  protected String generateAttachment(Tab tab) {
+    attachmentWindowComponent.setTab(tab);
+    attachmentWindowComponent.setParameters(getParameters());
+    return attachmentWindowComponent.generate();
   }
 
   private OBUIAPPViewImplementation getView(String viewName) {
