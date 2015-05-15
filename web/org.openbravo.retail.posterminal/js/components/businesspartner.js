@@ -315,7 +315,7 @@ enyo.kind({
         components: [{
           name: 'stBPAssignToReceipt',
           kind: 'OB.UI.ScrollableTable',
-          scrollAreaMaxHeight: '400px',
+          scrollAreaMaxHeight: '350px',
           renderHeader: 'OB.UI.ModalBpScrollableHeader',
           renderLine: 'OB.UI.ListBpsLine',
           renderEmpty: 'OB.UI.RenderEmpty'
@@ -340,6 +340,7 @@ enyo.kind({
 
     this.$.stBPAssignToReceipt.$.tempty.hide();
     this.$.stBPAssignToReceipt.$.tbody.hide();
+    this.$.stBPAssignToReceipt.$.tlimit.hide();
     this.$.renderLoading.show();
 
     function errorCallback(tx, error) {
