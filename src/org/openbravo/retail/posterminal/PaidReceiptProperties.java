@@ -41,8 +41,12 @@ public class PaidReceiptProperties extends ModelExtension {
         add(new HQLProperty("ord.documentType.name", "documentType"));
         add(new HQLProperty("ord.warehouse.id", "warehouse"));
         add(new HQLProperty("ord.currency.iSOCode", "currency$_identifier"));
-        add(new HQLProperty("ord.obposApplications.id", "posTerminal"));
-        add(new HQLProperty("ord.obposApplications.name", "posTerminal$_identifier"));
+        add(new HQLProperty(
+            "coalesce((select obposApplications.id from Order o1 where o1.id = ord.id), null)",
+            "posTerminal"));
+        add(new HQLProperty(
+            "coalesce((select obposApplications.name from Order o2 where o2.id = ord.id), null)",
+            "posTerminal$_identifier"));
         add(new HQLProperty("ord.businessPartner.name", "businessPartner$_identifier"));
         add(new HQLProperty("ord.currency.id", "currency"));
         add(new HQLProperty("ord.priceList.id", "priceList"));
@@ -50,8 +54,7 @@ public class PaidReceiptProperties extends ModelExtension {
         add(new HQLProperty("ord.organization.id", "organization"));
         add(new HQLProperty("ord.client.id", "client"));
         add(new HQLProperty(
-            "(case when ord.documentType.id =  ord.obposApplications.obposTerminaltype.documentTypeForQuotations.id then true else false end)",
-            "isQuotation"));
+            "(case when ord.documentType.sOSubType = 'OB' then true else false end)", "isQuotation"));
         add(new HQLProperty("ord.summedLineAmount", "totalNetAmount"));
         add(new HQLProperty(
             "(case when (select sum(abs(deliveredQuantity)) from ord.orderLineList)=0 and ord.documentType.sOSubType<>'OB' then true else false end)",

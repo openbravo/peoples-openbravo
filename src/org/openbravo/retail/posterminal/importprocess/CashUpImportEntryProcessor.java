@@ -13,6 +13,7 @@ import javax.enterprise.context.ApplicationScoped;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.DalUtil;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess;
@@ -57,10 +58,17 @@ public class CashUpImportEntryProcessor extends ImportEntryProcessor {
       // check that there are no orders import entries for the terminal
       // which have not yet been processed
 
-      final JSONObject json = new JSONObject(importEntry.getData());
-      if (json.has("isprocessed") && "Y".equals(json.getString("isprocessed"))
-          && thereAreOrdersInImportQueue(importEntry)) {
-        return;
+      try {
+        OBContext.setAdminMode();
+
+        final JSONObject json = new JSONObject(importEntry.getJsonInfo());
+        if (json.has("isprocessed") && "Y".equals(json.getString("isprocessed"))
+            && thereAreOrdersInImportQueue(importEntry)) {
+          return;
+        }
+
+      } finally {
+        OBContext.restorePreviousMode();
       }
       super.processEntry(importEntry);
     }

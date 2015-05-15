@@ -31,7 +31,7 @@ public class POSImportEntryProcessor extends ImportEntryPreProcessor {
   public void beforeCreate(ImportEntry importEntry) {
     try {
       if (POStypeofdata(importEntry)) {
-        JSONObject jsonObject = new JSONObject(importEntry.getData());
+        JSONObject jsonObject = new JSONObject(importEntry.getJsonInfo());
 
         // TODO: using 2 different ways of writing posTerminal is just not nice...
         String posTerminalId = ImportProcessUtils.getJSONProperty(jsonObject, "posterminal");

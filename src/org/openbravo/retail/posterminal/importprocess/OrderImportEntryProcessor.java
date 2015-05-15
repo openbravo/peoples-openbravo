@@ -12,6 +12,7 @@ import javax.enterprise.context.ApplicationScoped;
 
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.DalUtil;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess;
@@ -60,19 +61,24 @@ public class OrderImportEntryProcessor extends ImportEntryProcessor {
     }
 
     private boolean thereAreCustomersInImportQueue(ImportEntry importEntry) {
-      final String whereClause = ImportEntry.PROPERTY_IMPORTSTATUS + "='Initial' and " + "("
-          + ImportEntry.PROPERTY_TYPEOFDATA + "='BusinessPartner' or "
-          + ImportEntry.PROPERTY_TYPEOFDATA + "='BusinessPartnerLocation') and "
-          + ImportEntry.PROPERTY_STORED + "<:storedDate and " + ImportEntry.PROPERTY_ORGANIZATION
-          + "=:org";
-      final OBQuery<ImportEntry> entries = OBDal.getInstance().createQuery(ImportEntry.class,
-          whereClause);
+      try {
+        OBContext.setAdminMode();
+        final String whereClause = ImportEntry.PROPERTY_IMPORTSTATUS + "='Initial' and " + "("
+            + ImportEntry.PROPERTY_TYPEOFDATA + "='BusinessPartner' or "
+            + ImportEntry.PROPERTY_TYPEOFDATA + "='BusinessPartnerLocation') and "
+            + ImportEntry.PROPERTY_STORED + "<:storedDate and " + ImportEntry.PROPERTY_ORGANIZATION
+            + "=:org";
+        final OBQuery<ImportEntry> entries = OBDal.getInstance().createQuery(ImportEntry.class,
+            whereClause);
 
-      entries.setFilterOnReadableClients(false);
-      entries.setFilterOnReadableOrganization(false);
-      entries.setNamedParameter("storedDate", importEntry.getStored());
-      entries.setNamedParameter("org", importEntry.getOrganization());
-      return 0 < entries.count();
+        entries.setFilterOnReadableClients(false);
+        entries.setFilterOnReadableOrganization(false);
+        entries.setNamedParameter("storedDate", importEntry.getStored());
+        entries.setNamedParameter("org", importEntry.getOrganization());
+        return 0 < entries.count();
+      } finally {
+        OBContext.restorePreviousMode();
+      }
     }
   }
 

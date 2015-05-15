@@ -1114,7 +1114,13 @@
       }
       var promotions = line.get('promotions') || [],
           disc = {},
-          i, replaced = false;
+          i, replaced = false,
+          discountRule = OB.Model.Discounts.discountRules[rule.attributes.discountType];
+      if (discountRule.getIdentifier) {
+        disc.identifier = discountRule.getIdentifier(rule, discount);
+      } else {
+        disc.identifier = discount.name || rule.get('printName') || rule.get('name');
+      }
       disc.name = discount.name || rule.get('printName') || rule.get('name');
       disc.ruleId = rule.id || rule.get('ruleId');
       disc.amt = discount.amt;
@@ -1754,12 +1760,21 @@
 
     removePayment: function (payment) {
       var payments = this.get('payments');
-      payments.remove(payment);
-      if (payment.get('openDrawer')) {
-        this.set('openDrawer', false);
-      }
-      this.adjustPayment();
-      this.save();
+      OB.UTIL.HookManager.executeHooks('OBPOS_preRemovePayment', {
+        paymentToRem: payment,
+        payments: payments,
+        receipt: this
+      }, function (args) {
+        if (args.cancellation) {
+          return true;
+        }
+        payments.remove(payment);
+        if (payment.get('openDrawer')) {
+          args.receipt.set('openDrawer', false);
+        }
+        args.receipt.adjustPayment();
+        args.receipt.save();
+      });
     },
 
     serializeToJSON: function () {
@@ -2273,7 +2288,7 @@
       order.set('createdBy', OB.MobileApp.model.get('orgUserId'));
       order.set('updatedBy', OB.MobileApp.model.get('orgUserId'));
       order.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentType);
-      order.set('orderType', 0); // 0: Sales order, 1: Return order, 2: Layaway, 3: Void Layaway
+      order.set('orderType', OB.MobileApp.model.get('terminal').terminalType.layawayorder ? 2 : 0); // 0: Sales order, 1: Return order, 2: Layaway, 3: Void Layaway
       order.set('generateInvoice', false);
       order.set('isQuotation', false);
       order.set('oldId', null);

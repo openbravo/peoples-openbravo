@@ -48,7 +48,8 @@ public class Brand extends ProcessHQLQuery {
         + "from Product product " //
         + "where exists (select 1 from OBRETCO_Prol_Product assort where obretcoProductlist= '"
         + productList.getId() + "' and assort.product = product) "
-        + "and $naturalOrgCriteria and $incrementalUpdateCriteria and product.active = true");
+        + "and $naturalOrgCriteria and $incrementalUpdateCriteria and product.active = true "
+        + "order by product.brand.name");
 
     return hqlQueries;
   }
