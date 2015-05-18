@@ -1582,17 +1582,15 @@ public class AdvancedQueryBuilder {
               + prefix.substring(0, prefix.lastIndexOf('.')) + " and t.language.language='"
               + OBContext.getOBContext().getLanguage().getLanguage() + "')), to_char("
               + replaceValueWithJoins(prefix + prop.getName()) + "), '')");
+        } else if (prop.isMandatory() && prop.isTextualType()) {
+          // if the property is mandatory there is no need to use coalesce to replace a possible
+          // null value with an empty string
+          // getting rid of the coalesce and to_char functions allow under certain circumstances
+          // to use indexes defined on that property
+          sb.append(replaceValueWithJoins(prefix + prop.getName()));
         } else {
-          if (prop.isMandatory()) {
-            // if the property is mandatory there is no need to use coalesce to replace a
-            // possible null value with an empty string
-            // getting rid of the coalesce and to_char functions allow under certain circumstances
-            // to use indexes defined on that property
-            sb.append(replaceValueWithJoins(prefix + prop.getName()));
-          } else {
-            sb.append("COALESCE(to_char(" + replaceValueWithJoins(prefix + prop.getName())
-                + "),'')");
-          }
+          sb.append("COALESCE(to_char(" + replaceValueWithJoins(prefix + prop.getName()) + "),'')");
+
         }
 
       } else {
