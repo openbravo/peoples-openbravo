@@ -63,19 +63,20 @@ public class ForeignKeyUIDefinition extends UIDefinition {
       }
     }
 
-    Boolean allowFkFilterByIdentifier = (Boolean) readGridConfigurationSetting("allowFkFilterByIdentifier");
-    if (Boolean.FALSE.equals(allowFkFilterByIdentifier)) {
-      append = append + ", allowFkFilterByIdentifier: " + allowFkFilterByIdentifier.toString();
-    }
-
-    Boolean showFkDropdownUnfiltered = (Boolean) readGridConfigurationSetting("showFkDropdownUnfiltered");
-    if (Boolean.TRUE.equals(showFkDropdownUnfiltered)) {
-      append = append + ", showFkDropdownUnfiltered: " + showFkDropdownUnfiltered.toString();
-    }
-
     Boolean disableFkDropdown = (Boolean) readGridConfigurationSetting("disableFkDropdown");
     if (Boolean.TRUE.equals(disableFkDropdown)) {
       append = append + ", disableFkDropdown: " + disableFkDropdown.toString();
+    } else {
+      // these configurations only apply if the fk filter combo is enabled
+      Boolean allowFkFilterByIdentifier = (Boolean) readGridConfigurationSetting("allowFkFilterByIdentifier");
+      if (Boolean.FALSE.equals(allowFkFilterByIdentifier)) {
+        append = append + ", allowFkFilterByIdentifier: " + allowFkFilterByIdentifier.toString();
+      }
+
+      Boolean showFkDropdownUnfiltered = (Boolean) readGridConfigurationSetting("showFkDropdownUnfiltered");
+      if (Boolean.TRUE.equals(showFkDropdownUnfiltered)) {
+        append = append + ", showFkDropdownUnfiltered: " + showFkDropdownUnfiltered.toString();
+      }
     }
 
     return super.getFilterEditorPropertiesProperty(field) + append;
