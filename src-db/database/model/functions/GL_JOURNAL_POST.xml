@@ -264,7 +264,7 @@
         END IF;
       END LOOP;
 
-      SELECT gl_journalbatch.ad_org_id
+      SELECT COALESCE(gl_journalbatch.ad_org_id, gl_journal.ad_org_id)
       INTO v_BatchOrg_ID
       FROM gl_journal LEFT JOIN gl_journalbatch
       ON gl_journal.gl_journalbatch_id = gl_journalbatch.gl_journalbatch_id
