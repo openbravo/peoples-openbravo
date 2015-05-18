@@ -67,7 +67,9 @@ QUnit.test('OB.Utilities.Date.* functions', function () {
       ['%d-%m-%Y HH:MM:SS', '%d-%m-%Y %H:%M:%S'],
       ['%d-%m-%Y HH24:MM:SS', '%d-%m-%Y %H:%M:%S'],
       ['%d-%m-%Y %H:%M:%S', '%d-%m-%Y %H:%M:%S'],
-      ['%d-%m-%Y %H.%M.%S', '%d-%m-%Y %H.%M.%S']
+      ['%d-%m-%Y %H.%M.%S', '%d-%m-%Y %H.%M.%S'],
+      ['%d-%m-%Y %H:%M:%S a', '%d-%m-%Y %H:%M:%S A'],
+      ['%d-%m-%Y %H.%M.%S a', '%d-%m-%Y %H.%M.%S A']
     ];
     for (i = 0; i < list.length; i++) {
       normalizedDisplayFormat = OB.Utilities.Date.normalizeDisplayFormat(list[i][0]);
@@ -116,7 +118,11 @@ QUnit.test('OB.Utilities.Date.* functions', function () {
       ['01-01-99', '%d-%m-%y', new Date(1999, 0, 1, 0, 0, 0, 0)],
       ['31-12-2010', '%d-%m-%Y', new Date(2010, 11, 31, 0, 0, 0, 0)],
       ['31-12-2010 23:59', '%d-%m-%Y %H:%M', new Date(2010, 11, 31, 23, 59, 0, 0)],
-      ['31-12-2010 23:59:58', '%d-%m-%Y %H:%M:%S', new Date(2010, 11, 31, 23, 59, 58, 0)]
+      ['31-12-2010 23:59:58', '%d-%m-%Y %H:%M:%S', new Date(2010, 11, 31, 23, 59, 58, 0)],
+      ['31-12-2010 12:59:58', '%d-%m-%Y %H:%M:%S', new Date(2010, 11, 31, 12, 59, 58, 0)],
+      ['31-12-2010 00:59:58', '%d-%m-%Y %H:%M:%S', new Date(2010, 11, 31, 0, 59, 58, 0)],
+      ['31-12-2010 12:59:58 PM', '%d-%m-%Y %H:%M:%S a', new Date(2010, 11, 31, 12, 59, 58, 0)],
+      ['31-12-2010 12:59:58 AM', '%d-%m-%Y %H:%M:%S a', new Date(2010, 11, 31, 0, 59, 58, 0)]
     ];
     for (i = 0; i < list.length; i++) {
       OBToJS = OB.Utilities.Date.OBToJS(list[i][0], list[i][1]);
@@ -170,7 +176,11 @@ QUnit.test('OB.Utilities.Date.* functions', function () {
       [new Date(1949, 0, 1, 0, 0, 0, 0), '%d-%m-%y', 'null'],
       [new Date(2010, 11, 31, 0, 0, 0, 0), '%d-%m-%Y', '31-12-2010'],
       [new Date(2010, 11, 31, 23, 59, 0, 0), '%d-%m-%Y %H:%M', '31-12-2010 23:59'],
-      [new Date(2010, 11, 31, 23, 59, 58, 0), '%d-%m-%Y %H:%M:%S', '31-12-2010 23:59:58']
+      [new Date(2010, 11, 31, 23, 59, 58, 0), '%d-%m-%Y %H:%M:%S', '31-12-2010 23:59:58'],
+      [new Date(2010, 11, 31, 12, 59, 58, 0), '%d-%m-%Y %H:%M:%S', '31-12-2010 12:59:58'],
+      [new Date(2010, 11, 31, 0, 59, 58, 0), '%d-%m-%Y %H:%M:%S', '31-12-2010 00:59:58'],
+      [new Date(2010, 11, 31, 12, 59, 58, 0), '%d-%m-%Y %H:%M:%S a', '31-12-2010 12:59:58 PM'],
+      [new Date(2010, 11, 31, 0, 59, 58, 0), '%d-%m-%Y %H:%M:%S a', '31-12-2010 12:59:58 AM']
     ];
     for (i = 0; i < list.length; i++) {
       JSToOB = OB.Utilities.Date.JSToOB(list[i][0], list[i][1]);

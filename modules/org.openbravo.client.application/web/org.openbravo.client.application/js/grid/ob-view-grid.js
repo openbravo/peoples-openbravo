@@ -238,8 +238,7 @@ isc.OBViewGrid.addProperties({
     },
 
     transformData: function (newData, dsResponse) {
-      var i, length, timeFields, responseToFilter, responseToSort = false,
-          newTotalRows;
+      var i, length, timeFields, responseToFilter, newTotalRows;
 
       // when the data is received from the datasource, time fields are formatted in UTC time. They have to be converted to local time
       if (dsResponse && dsResponse.context && (dsResponse.context.operationType === 'fetch' || dsResponse.context.operationType === 'update' || dsResponse.context.operationType === 'add')) {
@@ -260,10 +259,6 @@ isc.OBViewGrid.addProperties({
         responseToFilter = true;
       }
 
-      if (dsResponse.context && dsResponse.context._dsRequest && dsResponse.context._dsRequest.params && dsResponse.context._dsRequest.params.isSorting) {
-        responseToSort = true;
-      }
-
       if (this.localData && !responseToFilter) {
         length = this.localData.length;
         newTotalRows = dsResponse.totalRows;
@@ -282,11 +277,11 @@ isc.OBViewGrid.addProperties({
           // increase one to request additional page to backend
         }
 
-        // detects if the request was issued due to having scrolled up
-        // this does not apply when the grid has just been sorted, as the previous local data is discarded
-        if (!responseToSort && this.grid.body.lastScrollTop !== undefined && this.grid.body.lastScrollTop > this.grid.body.getScrollTop()) {
-          // in that case, set the totalRows of the response to the length of the localData, to avoid
-          // setting the totalRows of the grid to an invalid value
+        // detects if the request was issued due to having scrolled up.
+        // in that case, set the totalRows of the response to the length of the localData, to avoid
+        // setting the totalRows of the grid to an invalid value
+        // to confirm if this is the case, we check if there are rows loaded after the page that was just received
+        if (this.rowIsLoaded(dsResponse.endRow + 1)) {
           dsResponse.totalRows = this.localData.length;
         }
 

@@ -62,6 +62,9 @@
 	<parameter name="PAYDATETO_SHOW" class="java.lang.String"/>
 	<parameter name="EXPECTEDDATEFROM_SHOW" class="java.lang.String"/>
 	<parameter name="EXPECTEDDATETO_SHOW" class="java.lang.String"/>
+	<parameter name="NUMBERFORMAT" class="java.text.DecimalFormat">
+		<defaultValueExpression><![CDATA[new DecimalFormat()]]></defaultValueExpression>
+	</parameter>
 	<queryString>
 		<![CDATA[SELECT 'hello' AS BP_GROUP, 'hello' AS BPARTNER, 'hello' AS PROJECT, 'hello' AS PAYMENT, 'hello' AS SALES_PERSON, 1234 AS INVOICE_NUMBER, to_Date('01/01/2010') AS INVOICE_DATE,
        to_Date('01/03/2010') AS DUE_DATE, 1234 AS PLANNED_DSO, 1234 AS CURRENT_DSO, 1234 AS OVERDUE, 1234 AS DAYS_OVERDUE, 1234 AS AMOUNT,
@@ -364,18 +367,18 @@ FROM DUAL]]>
 					<text><![CDATA[Balance:]]></text>
 				</staticText>
 				<textField isBlankWhenNull="true">
-					<reportElement key="textField-19" style="Detail_Header" x="459" y="0" width="33" height="20"/>
+					<reportElement key="textField-19" style="Detail_Header" x="479" y="0" width="37" height="20"/>
 					<textElement textAlignment="Justified">
 						<font fontName="DejaVu Sans" size="10"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA[$F{BASE_CURRENCY}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="GroupingCriteria" isBlankWhenNull="true">
-					<reportElement key="textField-19" style="Detail_Header" x="407" y="0" width="52" height="20"/>
+					<reportElement key="textField-19" style="Detail_Header" x="407" y="0" width="72" height="20"/>
 					<textElement textAlignment="Right">
 						<font fontName="DejaVu Sans" size="10"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[($V{SUMBALANCE}!=null)?$V{SUMBALANCE}.toString():new String(" ")]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[($V{SUMBALANCE}!=null)?$P{NUMBERFORMAT}.format($V{SUMBALANCE}).toString():new String(" ")]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -576,7 +579,7 @@ FROM DUAL]]>
 					<textElement textAlignment="Right">
 						<font fontName="DejaVu Sans" size="10"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[($V{SUMSUBTOTALSTATUS}!=null)?$V{SUMSUBTOTALSTATUS}.toString():new String(" ")]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[($V{SUMSUBTOTALSTATUS}!=null)?$P{NUMBERFORMAT}.format($V{SUMSUBTOTALSTATUS}).toString():new String(" ")]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -828,7 +831,7 @@ FROM DUAL]]>
 				<textElement textAlignment="Right">
 					<font fontName="DejaVu Sans" size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{BASE_AMOUNT}== null ? " " : $F{BASE_AMOUNT}.toString())]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{BASE_AMOUNT}== null ? " " : $P{NUMBERFORMAT}.format($F{BASE_AMOUNT}).toString())]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-14" style="Report_Footer" x="730" y="0" width="50" height="25"/>
@@ -843,7 +846,7 @@ FROM DUAL]]>
 				<textElement textAlignment="Right">
 					<font fontName="DejaVu Sans" size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{TRANS_AMOUNT}.toString() + " "]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{NUMBERFORMAT}.format($F{TRANS_AMOUNT}).toString() + " "]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-16" style="Report_Footer" x="593" y="0" width="60" height="25"/>

@@ -229,15 +229,9 @@ public class FIN_Utility {
    *          List of OBObjects
    * @return Comma separated string of Id's
    */
+  @Deprecated
   public static <T extends BaseOBObject> String getInStrList(List<T> obObjectList) {
-    StringBuilder strInList = new StringBuilder();
-    for (T obObject : obObjectList) {
-      if (strInList.length() == 0)
-        strInList.append("'" + obObject.getId() + "'");
-      else
-        strInList.append(", '" + obObject.getId() + "'");
-    }
-    return strInList.toString();
+    return Utility.getInStrList(obObjectList);
   }
 
   /**

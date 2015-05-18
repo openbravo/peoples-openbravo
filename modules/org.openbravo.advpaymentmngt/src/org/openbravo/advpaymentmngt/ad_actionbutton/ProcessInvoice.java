@@ -485,7 +485,7 @@ public class ProcessInvoice extends HttpSecureAppServlet {
       vars.setSessionValue("ExecutePayments|Window_ID", strWindowId);
       vars.setSessionValue("ExecutePayments|Tab_ID", strTabId);
       vars.setSessionValue("ExecutePayments|Org_ID", strOrg);
-      vars.setSessionValue("ExecutePayments|payments", FIN_Utility.getInStrList(payments));
+      vars.setSessionValue("ExecutePayments|payments", Utility.getInStrList(payments));
       if (myMessage != null)
         vars.setMessage("ExecutePayments|message", myMessage);
       response.sendRedirect(strDireccion

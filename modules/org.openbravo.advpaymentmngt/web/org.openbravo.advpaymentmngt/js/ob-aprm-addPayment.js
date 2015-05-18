@@ -505,7 +505,7 @@ OB.APRM.AddPayment.updateDifference = function (form) {
     OB.APRM.AddPayment.updateDifferenceActions(form);
   }
   affectedParams.push(form.getField('overpayment_action_display_logic').paramId);
-  OB.APRM.AddPayment.recalcDisplayLogicOrReadOnlyLogic(form, null, affectedParams);
+  OB.APRM.AddPayment.recalcDisplayLogicOrReadOnlyLogic(form, form.paramWindow, affectedParams);
 };
 
 OB.APRM.AddPayment.updateDifferenceActions = function (form) {

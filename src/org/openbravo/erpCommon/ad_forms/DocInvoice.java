@@ -43,6 +43,7 @@ import org.openbravo.model.common.currency.ConversionRateDoc;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.invoice.InvoiceLine;
+import org.openbravo.model.common.invoice.InvoiceTax;
 import org.openbravo.model.financialmgmt.calendar.Period;
 
 public class DocInvoice extends AcctServer {
@@ -1411,6 +1412,11 @@ public class DocInvoice extends AcctServer {
       boolean zero = true;
       for (InvoiceLine invoiceline : invoice.getInvoiceLineList()) {
         if (ZERO.compareTo(invoiceline.getLineNetAmount()) != 0) {
+          zero = false;
+        }
+      }
+      for (InvoiceTax invoiceTax : invoice.getInvoiceTaxList()) {
+        if (ZERO.compareTo(invoiceTax.getTaxAmount()) != 0) {
           zero = false;
         }
       }

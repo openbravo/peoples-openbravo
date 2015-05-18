@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2013-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,6 +27,7 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
+import org.openbravo.client.kernel.event.EntityDeleteEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.dal.core.OBContext;
@@ -114,6 +115,19 @@ public class OrderEventHandler extends EntityPersistenceEventObserver {
           }
         } 
       }
+    }
+  }
+  
+  public void onDelete(@Observes
+  EntityDeleteEvent event) {
+    if (!isValidEvent(event)) {
+      return;
+    }
+    final Entity orderEntity = ModelProvider.getInstance().getEntity(Order.ENTITY_NAME);
+    final Property quotationProperty = orderEntity.getProperty(Order.PROPERTY_QUOTATION);
+    Order quotation = (Order) event.getCurrentState(quotationProperty);
+    if (quotation != null){
+      quotation.setDocumentStatus("UE");
     }
   }
 }

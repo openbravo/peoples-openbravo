@@ -34,7 +34,7 @@ QUnit.test('Set/Get Property', function () {
   var propName = 'CCU';
   var testValue = 'testValue';
   var propValue = OB.PropertyStore.get(propName);
-  QUnit.ok(!propValue, 'CCU is not present, value is ' + propValue);
+  QUnit.ok(propValue, 'CCU is present, value is ' + propValue);
 
   OB.PropertyStore.set(propName, testValue);
   propValue = OB.PropertyStore.get(propName);
@@ -43,7 +43,7 @@ QUnit.test('Set/Get Property', function () {
   // with a short delay to make sure that the previous set does not interfere
   // on the server
   isc.Timer.setTimeout(function () {
-    OB.PropertyStore.set(propName, null);
+    OB.PropertyStore.set(propName, 'Y');
   }, 1000);
 
 });
