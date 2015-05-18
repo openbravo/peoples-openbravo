@@ -20,7 +20,6 @@ package org.openbravo.erpCommon.security;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Iterator;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -337,7 +336,7 @@ public class Login extends HttpBaseServlet {
 
     if (showGSignInButtonDemo || !signInProvider.isUnsatisfied()) {
       String link = "<span class=\"LabelText Login_LabelText\">"
-          + Utility.messageBD(this, "OBUIAPP_SignIn", vars.getLanguage()) + "&nbsp;</span>";
+          + Utility.messageBD(this, "OBUIAPP_SignIn", vars.getLanguage()) + "</span>";
       if (signInProvider.isUnsatisfied()) {
         // if there is no external sign in provider, show Google Sign In icon with demo purposes
         String lang = OBDal.getInstance().get(Client.class, "0").getLanguage().getLanguage();
@@ -383,7 +382,7 @@ public class Login extends HttpBaseServlet {
             + "    vertical-align: middle;" //
             + "  }" //
             + "</style>" //
-            + "<div id=\"gSignInButtonDemo\" class=\"gSignInButtonDemo\" onclick='setLoginMessage(\"Error\", null, \""
+            + "&nbsp;&nbsp;<div id=\"gSignInButtonDemo\" class=\"gSignInButtonDemo\" onclick='setLoginMessage(\"Error\", null, \""
             + message
             + "\")'>" //
             + "  <span title=\""
@@ -392,12 +391,10 @@ public class Login extends HttpBaseServlet {
             + "</div>";
       } else {
         // a module is providing a different sign in: including its HTML code in Log In page
-        Iterator<SignInProvider> signInProviderIter = signInProvider.iterator();
-        while (signInProviderIter.hasNext()) {
-          SignInProvider nextSignInProvider = signInProviderIter.next();
-          link += nextSignInProvider.getLoginPageSignInHTMLCode();
+        for (SignInProvider cSignInProvider : signInProvider) {
+          link += "&nbsp;";
+          link += cSignInProvider.getLoginPageSignInHTMLCode();
         }
-        link += "&nbsp;";
       }
       xmlDocument.setParameter("sign-in", link);
     }
