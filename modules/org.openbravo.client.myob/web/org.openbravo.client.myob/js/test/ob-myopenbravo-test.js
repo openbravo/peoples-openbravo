@@ -67,7 +67,10 @@ QUnit.asyncTest('Add widget', function () {
   });
 });
 
-QUnit.asyncTest('Move widget', function () {
+// skipping this test because it is unstable depending on factors like
+// instance type (community/professional), number of executions, etc.
+// TODO: fix it properly to make it stable
+QUnit.skip('Move widget', function () {
 
   var post = isc.addProperties({}, d, {
     'eventType': 'WIDGET_MOVED',
