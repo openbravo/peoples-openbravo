@@ -941,7 +941,7 @@ enyo.kind({
   content: '',
   classes: 'btn-icon-small btnlink-green',
   style: 'width: 120px;float: right; margin: 10px 5px 5px 0px; height: 2.0em; display:block; clear: right;',
-  permission: 'OBPOS_receipt.layaway',
+  permission: 'OBPOS_receipt.layawayReceipt',
   init: function (model) {
     this.model = model;
     this.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
