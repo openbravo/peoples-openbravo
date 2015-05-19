@@ -138,18 +138,25 @@ http://opensource.org/licenses/afl-2.1.php)
 
 # itextpdf-5.5.0.jar
 # itext-pdfa-5.5.0.jar
+Both files under AGPL V3 license with LGPL Exception (included as iTextpdf_license.txt in this folder)
+
 # jackson-core-2.1.4.jar
 # jackson-databind-2.1.4.jar
+Both files under the Apache 2.0 license (included as Apache_license-2.0.txt in this folder)
+
 # jasperreports-6.0.0.jar
-# jasperreports-fonts-6.0.0.jar
-# jcommon-1.0.15.jar 
-# jfreechart-1.0.12.jar
-# jxl-2.6.10.jar
-# poi-3.10.1.jar
-All files under the LGPL 2.1 (available at http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html)
+Under the terms of the LGPL 3.0, available at http://www.gnu.org/licenses/lgpl-3.0.html
 
 # jasperreports-fonts-6.0.0.jar
 License is contained in the jar file itself (path: net/sf/jasperreports/fonts/dejavu/LICENSE)
+
+# jcommon-1.0.15.jar 
+# jfreechart-1.0.12.jar
+# jxl-2.6.10.jar
+All files under the LGPL 2.1 (available at http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html)
+
+# poi-3.10.1.jar
+Under the Apache 2.0 license (included as Apache_poi_license.txt in this folder)
 
 # hibernate3.jar
 All files under the LGPL 2.1 (available at www.gnu.org/licenses/lgpl.html)
@@ -173,9 +180,6 @@ ob-rhino-1.6R7.jar is the same code as js.jar repackaged to be available under o
 
 # javassist-3.14.0-GA.jar
 Under MPL License (included as MPL-1.1.txt in this folder)
-
-# iText-2.1.7.jar
-Under MPL/GPL License (included as MPL-1.1.txt in this folder)
 
 # slf4j-api-1.6.1.jar
 # slf4j-log4j12-1.6.1.jar
