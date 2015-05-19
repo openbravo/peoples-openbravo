@@ -341,9 +341,14 @@ enyo.kind({
           me.bubble('onClearPaymentSelect');
           // It is a payment...
           var exactpayment = allpayments[status] || exactdefault,
-              amount = me.model.getPending();
+              amount = me.model.getPending(),
+              altexactamount = me.receipt.get('exactpayment');
+          // check if alternate exact amount must be applied based on the payment method selected.
+          if (altexactamount && altexactamount[exactpayment.payment.searchKey]) {
+            amount = altexactamount[exactpayment.payment.searchKey];
+          }
           if (exactpayment.rate && exactpayment.rate !== '1') {
-            amount = OB.DEC.div(me.model.getPending(), exactpayment.rate);
+            amount = OB.DEC.div(amount, exactpayment.rate);
           }
 
           if (amount > 0 && exactpayment && OB.MobileApp.model.hasPermission(exactpayment.payment.searchKey)) {

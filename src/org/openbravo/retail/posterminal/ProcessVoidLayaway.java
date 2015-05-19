@@ -111,17 +111,6 @@ public class ProcessVoidLayaway extends JSONProcessSimple {
       paymentSchedule.setPaidAmount(BigDecimal.ZERO);
       paymentSchedule.setOutstandingAmount(BigDecimal.ZERO);
 
-      for (int i = 0; i < paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList()
-          .size(); i++) {
-        FIN_PaymentScheduleDetail paymentScheduleDetail = paymentSchedule
-            .getFINPaymentScheduleDetailOrderPaymentScheduleList().get(i);
-        if (paymentScheduleDetail.getPaymentDetails() != null) {
-          FIN_Payment payment = paymentScheduleDetail.getPaymentDetails().getFinPayment();
-          for (int j = 0; j < payment.getFINPaymentDetailList().size(); j++) {
-            payment.getFINPaymentDetailList().get(j).setAmount(BigDecimal.ZERO);
-          }
-        }
-      }
       OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
           jsonorder.getString("posTerminal"));
       int stdPrecision = order.getCurrency().getStandardPrecision().intValue();
@@ -175,9 +164,7 @@ public class ProcessVoidLayaway extends JSONProcessSimple {
         finPayment.setStatus("RDNC");
         finPayment.setProcessed(true);
         finPayment.setAPRMProcessPayment("RE");
-        for (int j = 0; j < finPayment.getFINPaymentDetailList().size(); j++) {
-          finPayment.getFINPaymentDetailList().get(j).setAmount(BigDecimal.ZERO);
-        }
+
         OBDal.getInstance().save(finPayment);
 
         FIN_FinancialAccount acc = paymentType.getFinancialAccount();
