@@ -3,7 +3,7 @@
 This license file applies to the Openbravo ERP software (the "Openbravo
 Software"), except as described below.
 
-This product is Copyright 2001-2011 Openbravo S.L.U.  For other detailed notice,
+This product is Copyright 2001-2015 Openbravo S.L.U.  For other detailed notice,
 see the "NOTICE" file with this distribution.
 
 This product is free software; you can redistribute it and/or modify
