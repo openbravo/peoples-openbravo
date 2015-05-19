@@ -165,7 +165,7 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
       } else if (jobInstance instanceof DefaultJob && ((DefaultJob) jobInstance).isKilled()) {
         executionStatus = KILLED;
       } else {
-        executionStatus = ERROR;
+        executionStatus = SUCCESS;
       }
 
       ProcessRunData.update(getConnection(), ctx.getUser(), executionStatus,
