@@ -44,6 +44,9 @@ public class ReportDesignBO {
 
   private GridReportVO gridReportVO;
 
+  /**
+   * @deprecated
+   */
   public ReportDesignBO(JasperDesign jasperDesign, GridReportVO gridReportVO) {
     super();
     this.jasperDesign = jasperDesign;

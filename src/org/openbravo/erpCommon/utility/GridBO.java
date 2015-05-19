@@ -30,6 +30,9 @@ import org.openbravo.client.application.report.ReportingUtils;
 import org.openbravo.client.application.report.ReportingUtils.ExportType;
 
 class GridBO {
+  /**
+   * @deprecated
+   */
   public static void createHTMLReport(InputStream reportFile, GridReportVO gridReportVO,
       String path, String fileName) throws JRException, IOException {
     gridReportVO.setPagination(false);
@@ -37,6 +40,9 @@ class GridBO {
     ReportingUtils.saveReport(jasperPrint, ExportType.HTML, null, new File(path + "/" + fileName));
   }
 
+  /**
+   * @deprecated
+   */
   public static void createPDFReport(InputStream reportFile, GridReportVO gridReportVO,
       String path, String fileName) throws JRException, IOException {
     gridReportVO.setPagination(false);
@@ -44,6 +50,9 @@ class GridBO {
     ReportingUtils.saveReport(jasperPrint, ExportType.PDF, null, new File(path + "/" + fileName));
   }
 
+  /**
+   * @deprecated
+   */
   public static void createXLSReport(InputStream reportFile, GridReportVO gridReportVO,
       String path, String fileName) throws JRException, IOException {
     gridReportVO.setPagination(true);
@@ -51,6 +60,9 @@ class GridBO {
     ReportingUtils.saveReport(jasperPrint, ExportType.XLS, null, new File(path + "/" + fileName));
   }
 
+  /**
+   * @deprecated
+   */
   public static void createCSVReport(InputStream reportFile, GridReportVO gridReportVO,
       String path, String fileName) throws JRException, IOException {
     gridReportVO.setPagination(true);
@@ -58,6 +70,9 @@ class GridBO {
     ReportingUtils.saveReport(jasperPrint, ExportType.CSV, null, new File(path + "/" + fileName));
   }
 
+  /**
+   * @deprecated
+   */
   public static void createXMLReport(InputStream reportFile, GridReportVO gridReportVO,
       OutputStream os) throws JRException, IOException {
     gridReportVO.setPagination(true);

@@ -38,7 +38,6 @@ import javax.servlet.http.HttpSession;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperExportManager;
@@ -74,11 +73,9 @@ import org.openbravo.dal.core.DalContextListener;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
-import org.openbravo.erpCommon.utility.GridReportVO;
 import org.openbravo.erpCommon.utility.JRFieldProviderDataSource;
 import org.openbravo.erpCommon.utility.JRFormatFactory;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
-import org.openbravo.erpCommon.utility.ReportDesignBO;
 import org.openbravo.model.ad.utility.FileType;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.uiTranslation.TranslationHandler;
@@ -737,7 +734,8 @@ public class ReportingUtils {
     while (it.hasNext()) {
       @SuppressWarnings("rawtypes")
       Map.Entry pair = (Map.Entry) it.next();
-      String parameter = ((JRExporterParameter) pair.getKey()).toString();
+      String parameter = ((net.sf.jasperreports.engine.JRExporterParameter) pair.getKey())
+          .toString();
       if (parameter.equals("Is One Page per Sheet")) {
         configuration.setOnePagePerSheet((Boolean) pair.getValue());
       } else if (parameter.equals("Is Remove Empty Space Between Rows")) {
@@ -786,7 +784,8 @@ public class ReportingUtils {
     while (it.hasNext()) {
       @SuppressWarnings("rawtypes")
       Map.Entry pair = (Map.Entry) it.next();
-      String parameter = ((JRExporterParameter) pair.getKey()).toString();
+      String parameter = ((net.sf.jasperreports.engine.JRExporterParameter) pair.getKey())
+          .toString();
       if (parameter.equals("Images URI")) {
         exporterOutput.setImageHandler(new WebHtmlResourceHandler((String) pair.getValue()));
       } else if (parameter.equals("Is Remove Empty Space Between Rows")) {
@@ -1180,6 +1179,8 @@ public class ReportingUtils {
   /**
    * Creates a JasperPrint from a grid report.
    * 
+   * @deprecated
+   * 
    * @param reportFile
    *          An input stream containing the report file.
    * @param gridReportVO
@@ -1192,12 +1193,13 @@ public class ReportingUtils {
    *           In case there is any error generating the JasperPrint an exception is thrown with the
    *           error message.
    */
-  public static JasperPrint createJasperPrint(InputStream reportFile, GridReportVO gridReportVO)
-      throws JRException, IOException {
+  public static JasperPrint createJasperPrint(InputStream reportFile,
+      org.openbravo.erpCommon.utility.GridReportVO gridReportVO) throws JRException, IOException {
     JasperDesign jasperDesign = JRXmlLoader.load(reportFile);
     if (log.isDebugEnabled())
       log.debug("Create JasperDesign");
-    ReportDesignBO designBO = new ReportDesignBO(jasperDesign, gridReportVO);
+    org.openbravo.erpCommon.utility.ReportDesignBO designBO = new org.openbravo.erpCommon.utility.ReportDesignBO(
+        jasperDesign, gridReportVO);
     designBO.define();
     if (log.isDebugEnabled())
       log.debug("JasperDesign created, pageWidth: " + jasperDesign.getPageWidth()
