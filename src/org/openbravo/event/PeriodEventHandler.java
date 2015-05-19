@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2015 Openbravo SLU
+ * All portions are Copyright (C) 2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -34,7 +34,6 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.financialmgmt.calendar.Period;
-import org.openbravo.model.financialmgmt.calendar.Year;
 import org.openbravo.service.db.DalConnectionProvider;
 
 public class PeriodEventHandler extends EntityPersistenceEventObserver {
@@ -46,8 +45,7 @@ public class PeriodEventHandler extends EntityPersistenceEventObserver {
     return entities;
   }
 
-  public void onUpdate(@Observes
-  EntityUpdateEvent event) {
+  public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -56,8 +54,7 @@ public class PeriodEventHandler extends EntityPersistenceEventObserver {
     }
   }
 
-  public void onSave(@Observes
-  EntityNewEvent event) {
+  public void onSave(@Observes EntityNewEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -84,8 +81,6 @@ public class PeriodEventHandler extends EntityPersistenceEventObserver {
     criteria.add(Restrictions.ge(Period.PROPERTY_ENDINGDATE, period.getStartingDate()));
     criteria.add(Restrictions.le(Period.PROPERTY_STARTINGDATE, period.getEndingDate()));
     criteria.add(Restrictions.eq(Period.PROPERTY_PERIODTYPE, "S"));
-    criteria.createAlias(Period.PROPERTY_YEAR, "y");
-    criteria.add(Restrictions.eq("y." + Year.PROPERTY_CALENDAR, period.getYear().getCalendar()));
     criteria.setMaxResults(1);
 
     if (criteria.uniqueResult() != null) {
