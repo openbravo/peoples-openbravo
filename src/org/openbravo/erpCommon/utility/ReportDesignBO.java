@@ -33,8 +33,7 @@ import net.sf.jasperreports.engine.type.StretchTypeEnum;
 
 import org.apache.log4j.Logger;
 
-@Deprecated
-public class ReportDesignBO {
+class ReportDesignBO {
   public static Logger log4j = Logger.getLogger("org.openbravo.erpCommon.utility.GridBO");
   private int px = 0;
 
@@ -44,9 +43,6 @@ public class ReportDesignBO {
 
   private GridReportVO gridReportVO;
 
-  /**
-   * @deprecated
-   */
   public ReportDesignBO(JasperDesign jasperDesign, GridReportVO gridReportVO) {
     super();
     this.jasperDesign = jasperDesign;
@@ -65,6 +61,7 @@ public class ReportDesignBO {
     px += columnVO.getWidth();
   }
 
+  @SuppressWarnings("deprecation")
   private void addFieldHeader(GridColumnVO columnVO) {
     JRDesignBand bHeader = (JRDesignBand) jasperDesign.getColumnHeader();
     JRDesignStaticText text = new JRDesignStaticText();
@@ -85,6 +82,7 @@ public class ReportDesignBO {
     bHeader.addElement(text);
   }
 
+  @SuppressWarnings("deprecation")
   private void addFieldValue(GridColumnVO columnVO) throws JRException {
     JRDesignBand bDetalle = (JRDesignBand) jasperDesign.getDetailSection().getBands()[0];
 

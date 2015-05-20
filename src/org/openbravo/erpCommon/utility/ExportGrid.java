@@ -43,9 +43,6 @@ public class ExportGrid extends HttpSecureAppServlet {
   // text length multiplied by a factor (character width)
   private static final int CHAR_WIDTH = 10;
 
-  /**
-   * @deprecated
-   */
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
@@ -106,9 +103,6 @@ public class ExportGrid extends HttpSecureAppServlet {
     }
   }
 
-  /**
-   * @deprecated
-   */
   private GridReportVO createGridReport(VariablesSecureApp vars, String strTabId,
       String strWindowId, String strAccessLevel, boolean useFieldLength) throws ServletException {
     if (log4j.isDebugEnabled())

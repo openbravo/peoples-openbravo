@@ -1225,7 +1225,6 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         exportParameters, false);
   }
 
-  @SuppressWarnings("deprecation")
   private void renderJR(VariablesSecureApp variables, HttpServletResponse response,
       String strReportName, String strFileName, String strOutputType,
       HashMap<String, Object> designParameters, JRDataSource data,
@@ -1283,8 +1282,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
             + strOutputType);
         HttpServletRequest request = RequestContext.get().getRequest();
         String localAddress = HttpBaseUtils.getLocalAddress(request);
-        exportParameters.put(net.sf.jasperreports.engine.export.JRHtmlExporterParameter.IMAGES_URI,
-            localAddress + "/servlets/image?image={0}");
+        exportParameters.put(ReportingUtils.IMAGES_URI, localAddress + "/servlets/image?image={0}");
         ReportingUtils.exportJR(strReportName, expType, designParameters, os, false, this, data,
             exportParameters);
       } else if (strOutputType.equals("pdf") || strOutputType.equalsIgnoreCase("xls")) {

@@ -19,7 +19,6 @@
 package org.openbravo.client.application.report;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.Connection;
@@ -73,7 +72,6 @@ import org.openbravo.dal.core.DalContextListener;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
-import org.openbravo.erpCommon.utility.JRFieldProviderDataSource;
 import org.openbravo.erpCommon.utility.JRFormatFactory;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.utility.FileType;
@@ -85,25 +83,25 @@ import org.slf4j.LoggerFactory;
 
 /** Utilities to generate jasper reports */
 public class ReportingUtils {
+  /**
+   * Used to set a report parameter with a org.openbravo.dal.core.OBContext which contains the
+   * OBContext that has launched the report.
+   */
   public static final String JASPER_PARAM_OBCONTEXT = "jasper_obContext";
+  /**
+   * Used to set a report parameter with an org.hibernate.Session object with the current hibernate.
+   * session.
+   */
   public static final String JASPER_PARAM_HBSESSION = "jasper_hbSession";
+  /**
+   * Used to set the parameter with the URI to retrieve images in HTML reports.
+   */
+  public static final String IMAGES_URI = "Images URI";
   private static final Logger log = LoggerFactory.getLogger(ReportingUtils.class);
 
   /**
-   * Exports the report to a file in a temporary folder. This method adds automatically the
-   * parameters needed to print a report from a Process Definition.
-   * 
-   * @param jasperFilePath
-   *          The path to the JR template of the report.
-   * @param expType
-   *          The desired output type of the report.
-   * @param parameters
-   *          The parameters to be sent to Jasper Report.
-   * @param strFileName
-   *          The name to be used on the generated file.
-   * @throws OBException
-   *           In case there is any error generating the file an exception is thrown with the error
-   *           message.
+   * @see ReportingUtils#exportJR(String, ExportType, Map, File, boolean, ConnectionProvider,
+   *      JRDataSource, Map)
    */
   public static void exportJR(String jasperFilePath, ExportType expType,
       Map<String, Object> parameters, String strFileName) throws OBException {
@@ -112,22 +110,8 @@ public class ReportingUtils {
   }
 
   /**
-   * Exports the report to a file in a temporary folder.
-   * 
-   * @param jasperFilePath
-   *          The path to the JR template of the report.
-   * @param expType
-   *          The desired output type of the report.
-   * @param parameters
-   *          The parameters to be sent to Jasper Report.
-   * @param strFileName
-   *          The name to be used on the generated file.
-   * @param addProcessDefinitionParameters
-   *          A flag to indicate if the parameters needed to print a report from a Process
-   *          Definition should be added.
-   * @throws OBException
-   *           In case there is any error generating the file an exception is thrown with the error
-   *           message.
+   * @see ReportingUtils#exportJR(String, ExportType, Map, File, boolean, ConnectionProvider,
+   *      JRDataSource, Map)
    */
   public static void exportJR(String jasperFilePath, ExportType expType,
       Map<String, Object> parameters, String strFileName, boolean addProcessDefinitionParameters)
@@ -138,28 +122,8 @@ public class ReportingUtils {
   }
 
   /**
-   * Exports the report to a file in a temporary folder.
-   * 
-   * @param jasperFilePath
-   *          The path to the JR template of the report.
-   * @param expType
-   *          The desired output type of the report.
-   * @param parameters
-   *          The parameters to be sent to Jasper Report.
-   * @param strFileName
-   *          The name to be used on the generated file.
-   * @param addProcessDefinitionParameters
-   *          A flag to indicate if the parameters needed to print a report from a Process
-   *          Definition should be added.
-   * @param connectionProvider
-   *          A connection provider in case the report needs it.
-   * @param data
-   *          The data to be used in the report, if required.
-   * @param additionalExportParameters
-   *          Additional export parameters than can be added to configure the resulting report.
-   * @throws OBException
-   *           In case there is any error generating the report an exception is thrown with the
-   *           error message.
+   * @see ReportingUtils#exportJR(String, ExportType, Map, File, boolean, ConnectionProvider,
+   *      JRDataSource, Map)
    */
   public static void exportJR(String jasperFilePath, ExportType expType,
       Map<String, Object> parameters, String strFileName, boolean addProcessDefinitionParameters,
@@ -171,28 +135,8 @@ public class ReportingUtils {
   }
 
   /**
-   * Exports the report to a file, without compiling any sub-report.
-   * 
-   * @param jasperFilePath
-   *          The path to the JR template of the report.
-   * @param expType
-   *          The desired output type of the report.
-   * @param parameters
-   *          The parameters to be sent to Jasper Report.
-   * @param target
-   *          The file used to return the report.
-   * @param addProcessDefinitionParameters
-   *          A flag to indicate if the parameters needed to print a report from a Process
-   *          Definition should be added.
-   * @param connectionProvider
-   *          A connection provider in case the report needs it.
-   * @param data
-   *          The data to be used in the report, if required.
-   * @param additionalExportParameters
-   *          Additional export parameters than can be added to configure the resulting report.
-   * @throws OBException
-   *           In case there is any error generating the file an exception is thrown with the error
-   *           message.
+   * @see ReportingUtils#exportJR(String, ExportType, Map, File, boolean, ConnectionProvider,
+   *      JRDataSource, Map, boolean)
    */
   public static void exportJR(String jasperFilePath, ExportType expType,
       Map<String, Object> parameters, File target, boolean addProcessDefinitionParameters,
@@ -203,28 +147,8 @@ public class ReportingUtils {
   }
 
   /**
-   * Exports the report to an output stream, without compiling any sub-report.
-   * 
-   * @param jasperFilePath
-   *          The path to the JR template of the report.
-   * @param expType
-   *          The desired output type of the report.
-   * @param parameters
-   *          The parameters to be sent to Jasper Report.
-   * @param outputStream
-   *          An output stream used to return the report.
-   * @param addProcessDefinitionParameters
-   *          A flag to indicate if the parameters needed to print a report from a Process
-   *          Definition should be added.
-   * @param connectionProvider
-   *          A connection provider in case the report needs it.
-   * @param data
-   *          The data to be used in the report, if required.
-   * @param additionalExportParameters
-   *          Additional export parameters than can be added to configure the resulting report.
-   * @throws OBException
-   *           In case there is any error generating the report an exception is thrown with the
-   *           error message.
+   * @see ReportingUtils#exportJR(String, ExportType, Map, OutputStream, boolean,
+   *      ConnectionProvider, JRDataSource, Map, boolean)
    */
   public static void exportJR(String jasperFilePath, ExportType expType,
       Map<String, Object> parameters, OutputStream outputStream,
@@ -721,6 +645,10 @@ public class ReportingUtils {
   /**
    * Generates a SimpleXlsReportConfiguration from a parameter map.
    * 
+   * This method allows backwards compatibility when generating XLS reports by using a parameter map
+   * to define the export configuration. The usage of this parameter map is deprecated in the Jasper
+   * Reports library to use the SimpleXlsReportConfiguration class instead.
+   * 
    * @param params
    *          A parameter map with the export parameters.
    * @return A SimpleXlsReportConfiguration object with the resulting configuration.
@@ -730,10 +658,7 @@ public class ReportingUtils {
   private static SimpleXlsReportConfiguration getXlsConfigurationFromExportParameters(
       Map<Object, Object> params) {
     SimpleXlsReportConfiguration configuration = new SimpleXlsReportConfiguration();
-    Iterator<Entry<Object, Object>> it = params.entrySet().iterator();
-    while (it.hasNext()) {
-      @SuppressWarnings("rawtypes")
-      Map.Entry pair = (Map.Entry) it.next();
+    for (Entry<Object, Object> pair : params.entrySet()) {
       String parameter = ((net.sf.jasperreports.engine.JRExporterParameter) pair.getKey())
           .toString();
       if (parameter.equals("Is One Page per Sheet")) {
@@ -762,6 +687,8 @@ public class ReportingUtils {
         configuration.setMaxRowsPerSheet((Integer) pair.getValue());
       } else if (parameter.equals("Ignore page margins")) {
         configuration.setIgnorePageMargins((Boolean) pair.getValue());
+      } else {
+        log.warn("Unknown XLS export configuration parameter: " + parameter);
       }
     }
     return configuration;
@@ -770,8 +697,17 @@ public class ReportingUtils {
   /**
    * Configures a SimpleHtmlReportConfiguration and a SimpleHtmlExporterOutput from a parameter map.
    * 
+   * This method allows backwards compatibility when generating HTML reports by using a parameter
+   * map to define the export configuration. The usage of this parameter map is deprecated in the
+   * Jasper Reports library to use the SimpleHtmlReportConfiguration and SimpleHtmlExporterOutput
+   * classes instead.
+   * 
    * @param params
    *          A parameter map with the export parameters.
+   * @param configuration
+   *          The SimpleHtmlReportConfiguration object generated based on the parameter map.
+   * @param exporterOutput
+   *          The SimpleHtmlExporterOutput object generated based on the parameter map.
    * 
    */
   @SuppressWarnings("deprecation")
@@ -780,10 +716,7 @@ public class ReportingUtils {
     // Add configuration defaults
     // This is needed just in case the params map only contains the Images URI parameter
     configuration.setSizeUnit(HtmlSizeUnitEnum.POINT);
-    Iterator<Entry<Object, Object>> it = params.entrySet().iterator();
-    while (it.hasNext()) {
-      @SuppressWarnings("rawtypes")
-      Map.Entry pair = (Map.Entry) it.next();
+    for (Entry<Object, Object> pair : params.entrySet()) {
       String parameter = ((net.sf.jasperreports.engine.JRExporterParameter) pair.getKey())
           .toString();
       if (parameter.equals("Images URI")) {
@@ -805,6 +738,8 @@ public class ReportingUtils {
         configuration.setWrapBreakWord((Boolean) pair.getValue());
       } else if (parameter.equals("Zoom Ratio")) {
         configuration.setZoomRatio((Float) pair.getValue());
+      } else {
+        log.warn("Unknown HTML export configuration parameter: " + parameter);
       }
     }
   }
@@ -942,10 +877,9 @@ public class ReportingUtils {
         }
       }
 
-    } catch (final JRException exception) {
-      log.error(exception.getMessage());
-      exception.printStackTrace();
-      throw new OBException(exception);
+    } catch (final JRException e) {
+      log.error("Error processing subreports for template: " + templateFile, e);
+      throw new OBException(e.getMessage(), e);
     }
   }
 
@@ -970,9 +904,8 @@ public class ReportingUtils {
     try {
       jasperReportLines = getTranslatedJasperReport(connectionProvider, templateLocation
           + subReportFileName, language, baseDesignPath);
-    } catch (final JRException e1) {
-      log.error(e1.getMessage());
-      e1.printStackTrace();
+    } catch (final JRException e) {
+      log.error("Error generating subreport: " + subReportFileName, e);
     }
     return jasperReportLines;
   }
@@ -1042,7 +975,7 @@ public class ReportingUtils {
    * 
    * @param jasperPrintList
    *          A list of JasperPrint objects.
-   * @param createBoomkmarks
+   * @param createBookmarks
    *          A flag to indicate if the document should contain bookmarks, to mark the beginning of
    *          each individual document that was part of the initial document list.
    * @param outputStream
@@ -1073,7 +1006,7 @@ public class ReportingUtils {
    * 
    * @param jasperPrintList
    *          A list of JasperPrint objects.
-   * @param createBoomkmarks
+   * @param createBookmarks
    *          A flag to indicate if the document should contain bookmarks, to mark the beginning of
    *          each individual document that was part of the initial document list.
    * @param userPassword
@@ -1177,57 +1110,14 @@ public class ReportingUtils {
   }
 
   /**
-   * Creates a JasperPrint from a grid report.
-   * 
-   * @deprecated
-   * 
-   * @param reportFile
-   *          An input stream containing the report file.
-   * @param gridReportVO
-   *          A grid report.
-   * @return A JasperPrint object with the compiled report.
-   * @throws JRException
-   *           In case there is any error generating the file an exception is thrown with the error
-   *           message.
-   * @throws IOException
-   *           In case there is any error generating the JasperPrint an exception is thrown with the
-   *           error message.
-   */
-  public static JasperPrint createJasperPrint(InputStream reportFile,
-      org.openbravo.erpCommon.utility.GridReportVO gridReportVO) throws JRException, IOException {
-    JasperDesign jasperDesign = JRXmlLoader.load(reportFile);
-    if (log.isDebugEnabled())
-      log.debug("Create JasperDesign");
-    org.openbravo.erpCommon.utility.ReportDesignBO designBO = new org.openbravo.erpCommon.utility.ReportDesignBO(
-        jasperDesign, gridReportVO);
-    designBO.define();
-    if (log.isDebugEnabled())
-      log.debug("JasperDesign created, pageWidth: " + jasperDesign.getPageWidth()
-          + " left margin: " + jasperDesign.getLeftMargin() + " right margin: "
-          + jasperDesign.getRightMargin());
-    JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
-    Map<String, Object> parameters = new HashMap<String, Object>();
-    parameters.put("BaseDir", gridReportVO.getContext());
-    parameters.put("IS_IGNORE_PAGINATION", gridReportVO.getPagination());
-
-    JasperPrint jasperPrint = JasperFillManager
-        .fillReport(
-            jasperReport,
-            parameters,
-            new JRFieldProviderDataSource(gridReportVO.getFieldProvider(), gridReportVO
-                .getDateFormat()));
-    return jasperPrint;
-  }
-
-  /**
    * Changes the mask to use "." as Decimal Symbol and "," as grouping symbol.
    * 
    * @param mask
-   *          the current mask
+   *          the current mask.
    * @param decimalSymbol
-   *          the current decimal symbol
+   *          the current decimal symbol.
    * @param groupingSymbol
-   *          the current grouping symbol
+   *          the current grouping symbol.
    * @return the mask with the updated decimal and grouping symbols.
    */
   private static String correctMaskForGrouping(String mask, String decimalSymbol,
@@ -1243,30 +1133,51 @@ public class ReportingUtils {
    * is generated.
    */
   public enum ExportType {
+    // When IS_IGNORE_PAGINATION is set to true, the report-filling engine will generate the
+    // document on a single, very long page. Running the generated report to any output format, a
+    // single page document will be visualized. This is the desired behavior for some document
+    // types, such as HTML, XML or XLS.
+    // This flag should be false for documents with page-oriented layout, like PDF, to allow the
+    // possibility to navigate between pages.
+    /**
+     * CSV export type
+     */
     @SuppressWarnings("serial")
     CSV("csv", "", new HashMap<String, Object>() {
       {
         put("IS_IGNORE_PAGINATION", true);
       }
     }), //
+    /**
+     * HTML export type
+     */
     @SuppressWarnings("serial")
     HTML("html", "", new HashMap<String, Object>() {
       {
         put("IS_IGNORE_PAGINATION", true);
       }
     }), //
+    /**
+     * PDF export type
+     */
     @SuppressWarnings("serial")
     PDF("pdf", "103", new HashMap<String, Object>() {
       {
         put("IS_IGNORE_PAGINATION", false);
       }
     }), //
+    /**
+     * XLS export type
+     */
     @SuppressWarnings("serial")
     XLS("xls", "101", new HashMap<String, Object>() {
       {
         put("IS_IGNORE_PAGINATION", true);
       }
     }), //
+    /**
+     * XML export type
+     */
     @SuppressWarnings("serial")
     XML("xml", "800004", new HashMap<String, Object>() {
       {
@@ -1297,14 +1208,23 @@ public class ReportingUtils {
       this.params = params;
     }
 
+    /**
+     * @return a String with the extension type.
+     */
     public String getExtension() {
       return this.extension;
     }
 
+    /**
+     * @return a String with the content type.
+     */
     public String getContentType() {
       return fileType;
     }
 
+    /**
+     * @return a map with the configuration parameters.
+     */
     public Map<String, Object> getExportParameters() {
       // An instance of the Map is done for making sure
       // that if this method is called, it is only accessing
@@ -1314,6 +1234,13 @@ public class ReportingUtils {
 
     /**
      * Returns the corresponding ExportType item based on the action.
+     * 
+     * @param action
+     *          a String that defines the export type.
+     * @return the ExportType associated to the input String parameter.
+     * @throws OBException
+     *           In case the input String parameter does not correspond with any valid ExportType,
+     *           an exception is thrown with the error message.
      */
     public static ExportType getExportType(String action) throws OBException {
       if ("CSV".equals(action)) {
@@ -1331,7 +1258,14 @@ public class ReportingUtils {
       }
     }
 
-    /** Checks if temporary file name is a valid one: has extension and the name is a uuid */
+    /**
+     * Checks if temporary file name is a valid one: has extension and the name is a uuid.
+     * 
+     * @param tmpFileName
+     *          a String with the file name.
+     * 
+     * @return true if the the temporary file name is valid, false otherwise.
+     */
     public boolean isValidTemporaryFileName(String tmpFileName) {
       if (!tmpFileName.endsWith("." + getExtension())) {
         // file name should end with the extension
@@ -1345,7 +1279,11 @@ public class ReportingUtils {
     }
   }
 
-  /** Returns temporary directory to save generated reports */
+  /**
+   * Returns temporary directory to save generated reports.
+   * 
+   * @return a String with the temporary directory location.
+   */
   public static String getTempFolder() {
     final String tmpFolder = System.getProperty("java.io.tmpdir");
 

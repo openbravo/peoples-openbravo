@@ -23,8 +23,7 @@ import java.util.List;
 
 import org.openbravo.data.FieldProvider;
 
-@Deprecated
-public class GridReportVO {
+class GridReportVO {
   private String jrxmlTemplate;
   private String sql;
   private String title;

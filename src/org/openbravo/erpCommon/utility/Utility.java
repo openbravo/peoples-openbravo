@@ -1786,6 +1786,11 @@ public class Utility {
     return OBDateUtils.isBiggerDate(strDate1, strDate2, DateFormatter);
   }
 
+  /**
+   * @deprecated Use
+   *             {@link org.openbravo.client.application.report.ReportingUtils#getTranslatedJasperReport(ConnectionProvider, String, String, String)}
+   *             instead.
+   */
   public static JasperReport getTranslatedJasperReport(ConnectionProvider conn, String reportName,
       String language, String baseDesignPath) throws JRException {
     return ReportingUtils.getTranslatedJasperReport(conn, reportName, language, baseDesignPath);

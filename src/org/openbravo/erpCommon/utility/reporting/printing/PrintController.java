@@ -497,14 +497,6 @@ public class PrintController extends HttpSecureAppServlet {
         default:
           break;
         }
-        if (report.outputType.equals(OutputTypeEnum.ARCHIVE)) {
-          // Delete temporal reports generated for the returned report in case they have been
-          // attached also
-          File file = new File(report.getTargetLocation());
-          if (file.exists() && !file.isDirectory()) {
-            file.delete();
-          }
-        }
       }
     } catch (IOException e) {
       log4j.error(e.getMessage());
@@ -514,6 +506,17 @@ public class PrintController extends HttpSecureAppServlet {
       e.printStackTrace();
     } finally {
       try {
+        for (Iterator<Report> iterator = reports.iterator(); iterator.hasNext();) {
+          Report report = iterator.next();
+          if (report.outputType.equals(OutputTypeEnum.ARCHIVE)) {
+            // Delete temporal reports generated for the returned report in case they have been
+            // attached also
+            File file = new File(report.getTargetLocation());
+            if (file.exists() && !file.isDirectory()) {
+              file.delete();
+            }
+          }
+        }
         os.close();
         response.flushBuffer();
       } catch (IOException e) {
