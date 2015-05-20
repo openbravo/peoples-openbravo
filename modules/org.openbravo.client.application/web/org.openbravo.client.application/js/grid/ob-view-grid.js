@@ -487,7 +487,7 @@ isc.OBViewGrid.addProperties({
 
     // only show summary rows if there are summary functions
     for (i = 0; i < this.getFields().length; i++) {
-      if (this.getFields()[i].summaryFunction) {
+      if (this.getFields()[i].summaryFunction && !this.lazyFiltering) {
         this.showGridSummary = true;
       }
     }
