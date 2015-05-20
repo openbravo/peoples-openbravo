@@ -142,7 +142,8 @@ Both files under AGPL V3 license with LGPL Exception (included as iTextpdf_licen
 
 # jackson-core-2.1.4.jar
 # jackson-databind-2.1.4.jar
-Both files under the Apache 2.0 license (included as Apache_license-2.0.txt in this folder)
+# jackson-annotations-2.1.4.jar
+All files under the Apache 2.0 license (included as Apache_license-2.0.txt in this folder)
 
 # jasperreports-6.0.0.jar
 Under the terms of the LGPL 3.0, available at http://www.gnu.org/licenses/lgpl-3.0.html
