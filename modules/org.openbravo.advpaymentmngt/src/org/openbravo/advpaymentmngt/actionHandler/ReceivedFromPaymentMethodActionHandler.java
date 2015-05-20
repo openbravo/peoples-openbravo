@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -48,7 +48,8 @@ public class ReceivedFromPaymentMethodActionHandler extends BaseActionHandler {
           BusinessPartner businessPartner = OBDal.getInstance().get(BusinessPartner.class,
               receivedFrom);
           if (jsonData.getString("isSOTrx").toString().equals("true")) {
-            paymentMethod = businessPartner.getPaymentMethod().getId();
+            paymentMethod = businessPartner.getPaymentMethod() != null ? businessPartner
+                .getPaymentMethod().getId() : "";
           } else {
             paymentMethod = businessPartner.getPOPaymentMethod() != null ? businessPartner
                 .getPOPaymentMethod().getId() : "";
