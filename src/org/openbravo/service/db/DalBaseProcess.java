@@ -11,13 +11,15 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 
 package org.openbravo.service.db;
+
+import java.sql.Connection;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -89,18 +91,24 @@ public abstract class DalBaseProcess implements Process {
         if (bundle.getCloseConnection()) {
           OBDal.getInstance().rollbackAndClose();
         } else {
-          bundle.getConnection().releaseRollbackConnection(bundle.getConnection().getConnection());
+          // connection shoulnd't be closed after process execution: do roll back but leave it open
+          Connection con = bundle.getConnection().getConnection();
+          if (con != null && !con.isClosed()) {
+            con.rollback();
+          }
         }
-
       } else {
         if (isDoCommit()) {
           if (bundle.getCloseConnection()) {
             OBDal.getInstance().commitAndClose();
           } else {
-            bundle.getConnection().releaseCommitConnection(bundle.getConnection().getConnection());
+            // connection shoulnd't be closed after process execution: do commit but leave it open
+            Connection con = bundle.getConnection().getConnection();
+            if (con != null && !con.isClosed()) {
+              con.commit();
+            }
           }
         }
-
       }
 
       // remove the context at the end, maybe the process scheduler
