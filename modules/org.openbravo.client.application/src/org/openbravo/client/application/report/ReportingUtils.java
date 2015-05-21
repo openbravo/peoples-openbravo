@@ -663,6 +663,8 @@ public class ReportingUtils {
       String parameter;
       if (key instanceof net.sf.jasperreports.engine.JRExporterParameter) {
         parameter = ((net.sf.jasperreports.engine.JRExporterParameter) key).toString();
+      } else if (key instanceof String) {
+        parameter = (String) key;
       } else {
         parameter = "";
       }
