@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2014 Openbravo S.L.U.
+ * Copyright (C) 2012-2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -39,9 +39,14 @@ enyo.kind({
       allowHtml: true
     }]
   }, {
-    name: 'price',
-    style: 'float: right; width: 27%; text-align: right; font-weight:bold;',
-    allowHtml: true
+    style: 'float: right; width: 27%;',
+    components: [{
+      style: 'width: 100%; text-align: right; font-weight:bold;',
+      name: 'price'
+    }, {
+      name: 'priceList',
+      style: 'width: 100%; text-align: right; font-weight:bold; color: grey; font-size: 14px;',
+    }]
   }, {
     style: 'clear:both;'
   }, {
@@ -74,11 +79,10 @@ enyo.kind({
       this.$.bottonLine.setContent(this.model.get('characteristicDescription'));
     }
     if (this.model.get('currentStandardPrice') && this.model.get('currentStandardPrice') !== "undefined") {
-      var price = OB.I18N.formatCurrency(this.model.get('currentStandardPrice'));
       if (OB.MobileApp.model.hasPermission('ShowStandardPriceOnSearchAndBrowse', true)) {
-        price += '<br><span style="color: grey; font-size: 14px;">' + OB.I18N.formatCurrency(this.model.get('standardPrice')) + '</span>';
+        this.$.priceList.setContent(OB.I18N.formatCurrency(this.model.get('currentStandardPrice')));
       }
-      this.$.price.setContent(price);
+      this.$.price.setContent(OB.I18N.formatCurrency(this.model.get('standardPrice')));
     } else {
       this.$.price.setContent(OB.I18N.formatCurrency(this.model.get('standardPrice')));
     }

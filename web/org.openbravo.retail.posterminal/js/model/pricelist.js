@@ -16,11 +16,7 @@
     tableName: 'm_pricelist',
     entityName: 'PriceList',
     source: 'org.openbravo.retail.posterminal.master.PriceList',
-    dataLimit: 300,
-    includeTerminalDate: true,
-    initialize: function () {
-
-    }
+    includeTerminalDate: true
   });
 
   PriceList.addProperties([{
@@ -40,6 +36,14 @@
     name: 'c_currency_id',
     column: 'c_currency_id',
     type: 'TEXT'
+  }]);
+
+  PriceList.addIndex([{
+    name: 'obpos_price_list',
+    columns: [{
+      name: 'name',
+      sort: 'asc'
+    }]
   }]);
 
   //Register the model in the application 

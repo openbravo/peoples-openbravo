@@ -973,7 +973,7 @@
             p = p.clone();
             p.set('standardPrice', productPrices.at(0).get('pricestd'));
             p.set('listPrice', productPrices.at(0).get('pricelist'));
-            me.addProduct2(p, qty, options, attrs);
+            me.addProductToOrder(p, qty, options, attrs);
           } else {
             OB.UTIL.showI18NWarning('OBPOS_ProductNotFoundInPriceList');
           }
@@ -981,11 +981,11 @@
           OB.UTIL.showI18NWarning('OBPOS_ProductNotFoundInPriceList');
         });
       } else {
-        me.addProduct2(p, qty, options, attrs);
+        me.addProductToOrder(p, qty, options, attrs);
       }
     },
 
-    addProduct2: function (p, qty, options, attrs) {
+    addProductToOrder: function (p, qty, options, attrs) {
       var me = this;
       OB.UTIL.HookManager.executeHooks('OBPOS_AddProductToOrder', {
         receipt: this,
@@ -1132,10 +1132,10 @@
         return;
       }
       if (this.get('autoDiscounts')) {
-        var d = _.find(this.get('autoDiscounts'), function (promo) {
+        var applyPromo = _.find(this.get('autoDiscounts'), function (promo) {
           return promo === rule.get('id');
         });
-        if (!d) {
+        if (!applyPromo) {
           return;
         }
       }
@@ -1401,7 +1401,6 @@
           callback();
         }
       }, function () {
-        // TODO: Show error
         me.set('autoDiscountsPriceList', null);
         me.set('autoDiscounts', []);
         if (callback) {
@@ -1435,6 +1434,8 @@
             }
             me.loadAutomaticDiscount(function () {
               me.removeAndInsertLines();
+            }, function () {
+            	OB.error(arguments);
             });
           });
         } else {

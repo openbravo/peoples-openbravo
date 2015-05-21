@@ -62,29 +62,6 @@ public class Discount extends ProcessHQLQuery {
       hql += "and (p.$incrementalUpdateCriteria) ";
     }
 
-    // TODO: Verify multi-price list conditions
-
-    // String plIds = org.openbravo.retail.posterminal.master.PriceList.getPriceListIds(orgId);
-    // if ("".equals(plIds)) {
-    // plIds = "'" + priceListId + "'";
-    // } else {
-    // plIds = "'" + priceListId + "', " + plIds;
-    // }
-    // price list
-    // hql += "and ((includePriceLists='Y' ";
-    // hql += "  and not exists (select 1 ";
-    // hql += "         from PricingAdjustmentPriceList pl";
-    // hql += "        where active = true";
-    // hql += "          and pl.priceAdjustment = p";
-    // hql += "          and pl.priceList.id in (" + plIds + "))) ";
-    // hql += "   or (includePriceLists='N' ";
-    // hql += "  and  exists (select 1 ";
-    // hql += "         from PricingAdjustmentPriceList pl";
-    // hql += "        where active = true";
-    // hql += "          and pl.priceAdjustment = p";
-    // hql += "          and pl.priceList.id in (" + plIds + "))) ";
-    // hql += "    ) ";
-
     // organization
     hql += "and ((includedOrganizations='Y' ";
     hql += "  and not exists (select 1 ";

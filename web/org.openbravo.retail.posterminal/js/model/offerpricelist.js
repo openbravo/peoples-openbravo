@@ -16,10 +16,7 @@
     tableName: 'm_offer_pricelist',
     entityName: 'OfferPriceList',
     source: 'org.openbravo.retail.posterminal.master.OfferPriceList',
-    includeTerminalDate: true,
-    initialize: function () {
-
-    }
+    includeTerminalDate: true
   });
 
   OfferPriceList.addProperties([{
@@ -38,13 +35,13 @@
   }]);
 
   OfferPriceList.addIndex([{
-    name: 'm_offer_pricelist',
+    name: 'm_offer_pricelist_indx',
     columns: [{
       name: 'm_offer_id',
-      sort: 'asc'
+      sort: 'desc'
     }, {
       name: 'm_pricelist_id',
-      sort: 'asc'
+      sort: 'desc'
     }]
   }]);
 

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2014 Openbravo S.L.U.
+ * Copyright (C) 2012-2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -17,6 +17,9 @@ enyo.kind({
   attributes: {
     style: 'padding: 13px 50px 15px 10px; font-weight: bold; color: #6CB33F;'
   },
+  events: {
+    onPricelistChanged: ''
+  },
   initComponents: function () {},
   renderData: function (docNo) {
     var content, orderDate = this.order.get('orderDate');
@@ -28,7 +31,7 @@ enyo.kind({
     } else {
       content = orderDate + ' - ' + docNo;
     }
-    this.setContentDetail(content, docNo);
+    this.setContentDetail(content, docNo, orderDate);
   },
   renderDataFromModel: function (order) {
     var content, me = this,
@@ -42,17 +45,18 @@ enyo.kind({
     } else {
       content = orderDate + ' - ' + docNo;
     }
-    this.setContentDetail(content, docNo);
+    this.setContentDetail(content, docNo, orderDate);
   },
-  setContentDetail: function (content, docNo) {
+  setContentDetail: function (content, docNo, orderDate) {
     var me = this;
     if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true)) {
-      OB.UTIL.getPriceListName(this.order.get('priceList'), this, function (priceListName) {
+      OB.UTIL.getPriceListName(this.order.get('priceList'), function (priceListName) {
         content += " - " + priceListName;
         OB.UTIL.HookManager.executeHooks('OBPOS_OrderDetailContentHook', {
           content: content,
           docNo: docNo,
-          order: me.order
+          order: me.order,
+          orderDate: orderDate
         }, function (args) {
           me.setContent(args.content);
         });
@@ -61,7 +65,8 @@ enyo.kind({
       OB.UTIL.HookManager.executeHooks('OBPOS_OrderDetailContentHook', {
         content: content,
         docNo: docNo,
-        order: me.order
+        order: me.order,
+        orderDate: orderDate
       }, function (args) {
         me.setContent(args.content);
       });
@@ -75,5 +80,14 @@ enyo.kind({
     this.order.on('change:creationDate', function (model) {
       this.renderDataFromModel(model);
     }, this);
+    if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true)) {
+      this.order.on('change:priceList', function (model) {
+        this.renderData(model.get('documentNo'));
+        this.doPricelistChanged({
+          priceList: model.get('priceList')
+        });
+      }, this);
+    }
   }
+
 });

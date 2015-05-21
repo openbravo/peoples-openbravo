@@ -16,10 +16,7 @@
     tableName: 'm_productprice',
     entityName: 'ProductPrice',
     source: 'org.openbravo.retail.posterminal.master.ProductPrice',
-    includeTerminalDate: true,
-    initialize: function () {
-
-    }
+    includeTerminalDate: true
   });
 
   ProductPrice.addProperties([{
@@ -53,10 +50,10 @@
     name: 'obpos_product_price_list',
     columns: [{
       name: 'm_pricelist_id',
-      sort: 'asc'
+      sort: 'desc'
     }, {
       name: 'm_product_id',
-      sort: 'asc'
+      sort: 'desc'
     }]
   }]);
 

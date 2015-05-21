@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2013 Openbravo S.L.U.
+ * Copyright (C) 2012-2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -286,17 +286,17 @@ OB.UTIL.Math.sign = function (x) {
   return x > 0 ? 1 : -1;
 };
 
-OB.UTIL.getPriceListName = function (priceListId, scope, callback) {
+OB.UTIL.getPriceListName = function (priceListId, callback) {
   if (priceListId) {
     if (OB.MobileApp.model.get('pricelist').id === priceListId) {
-      callback.call(scope, OB.MobileApp.model.get('pricelist').name);
+      callback(OB.MobileApp.model.get('pricelist').name);
     } else {
       OB.Dal.get(OB.Model.PriceList, priceListId, function (pList) {
-        callback.call(scope, pList.get('name'));
+        callback(pList.get('name'));
       });
     }
   } else {
-    callback.call(scope, "");
+    callback('');
   }
 
 };
