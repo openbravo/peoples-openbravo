@@ -11189,6 +11189,7 @@ public class TestCosting extends BaseDataSourceTestDal {
         setGeneralData(processInstance);
         processInstance.setProcess(OBDal.getInstance().get(Process.class, processId));
         processInstance.setRecordID(document.getId().toString());
+        processInstance.setClient(OBDal.getInstance().get(Client.class, CLIENT_ID));
         processInstance.setUserContact(OBDal.getInstance().get(User.class, USER_ID));
         OBDal.getInstance().save(processInstance);
         OBDal.getInstance().flush();
@@ -11292,6 +11293,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       processInstance.setProcess(OBDal.getInstance().get(Process.class,
           PROCESSPRODUCTION_PROCESS_ID));
       processInstance.setRecordID(billOfMaterialsProduction.getId());
+      processInstance.setClient(OBDal.getInstance().get(Client.class, CLIENT_ID));
       processInstance.setUserContact(OBDal.getInstance().get(User.class, USER_ID));
       OBDal.getInstance().save(processInstance);
       OBDal.getInstance().flush();
