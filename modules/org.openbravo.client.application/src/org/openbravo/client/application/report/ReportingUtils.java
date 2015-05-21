@@ -659,8 +659,13 @@ public class ReportingUtils {
       Map<Object, Object> params) {
     SimpleXlsReportConfiguration configuration = new SimpleXlsReportConfiguration();
     for (Entry<Object, Object> pair : params.entrySet()) {
-      String parameter = ((net.sf.jasperreports.engine.JRExporterParameter) pair.getKey())
-          .toString();
+      Object key = pair.getKey();
+      String parameter;
+      if (key instanceof net.sf.jasperreports.engine.JRExporterParameter) {
+        parameter = ((net.sf.jasperreports.engine.JRExporterParameter) key).toString();
+      } else {
+        parameter = "";
+      }
       if (parameter.equals("Is One Page per Sheet")) {
         configuration.setOnePagePerSheet((Boolean) pair.getValue());
       } else if (parameter.equals("Is Remove Empty Space Between Rows")) {
@@ -717,8 +722,15 @@ public class ReportingUtils {
     // This is needed just in case the params map only contains the Images URI parameter
     configuration.setSizeUnit(HtmlSizeUnitEnum.POINT);
     for (Entry<Object, Object> pair : params.entrySet()) {
-      String parameter = ((net.sf.jasperreports.engine.JRExporterParameter) pair.getKey())
-          .toString();
+      Object key = pair.getKey();
+      String parameter;
+      if (key instanceof net.sf.jasperreports.engine.JRExporterParameter) {
+        parameter = ((net.sf.jasperreports.engine.JRExporterParameter) key).toString();
+      } else if (key instanceof String) {
+        parameter = (String) key;
+      } else {
+        parameter = "";
+      }
       if (parameter.equals("Images URI")) {
         exporterOutput.setImageHandler(new WebHtmlResourceHandler((String) pair.getValue()));
       } else if (parameter.equals("Is Remove Empty Space Between Rows")) {
