@@ -477,8 +477,7 @@ public class PrintController extends HttpSecureAppServlet {
       response.setContentType("application/pdf");
 
       if (!multiReports && !archivedReports) {
-        for (Iterator<Report> iterator = reports.iterator(); iterator.hasNext();) {
-          Report report = iterator.next();
+        for (Report report : reports) {
           filename = report.getFilename();
         }
         response.setHeader("Content-disposition", "attachment" + "; filename=" + filename);
@@ -489,8 +488,7 @@ public class PrintController extends HttpSecureAppServlet {
       } else {
         concatReport(reports.toArray(new Report[] {}), jrPrintReports, response);
       }
-      for (Iterator<Report> iterator = reports.iterator(); iterator.hasNext();) {
-        Report report = iterator.next();
+      for (Report report : reports) {
         switch (report.getDocumentType()) {
         case SALESORDER:
           PrintControllerData.updateOrderDatePrinted(this, report.getDocumentId());
@@ -643,6 +641,8 @@ public class PrintController extends HttpSecureAppServlet {
       return PocData.getContactDetailsForOrders(this, strDocumentId);
     case PAYMENT:
       return PocData.getContactDetailsForPayments(this, strDocumentId);
+    case UNKNOWN:
+      return null;
     }
     return null;
   }
