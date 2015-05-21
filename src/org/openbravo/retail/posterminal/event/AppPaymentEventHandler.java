@@ -65,6 +65,7 @@ public class AppPaymentEventHandler extends EntityPersistenceEventObserver {
         OBPOSAppPayment.class);
     queryAppPayments.add(Restrictions.eq(OBPOSAppPayment.PROPERTY_FINANCIALACCOUNT,
         appPayment.getFinancialAccount()));
+    queryAppPayments.add(Restrictions.ne(OBPOSAppPayment.PROPERTY_ID, appPayment.getId()));
     if (!appPayment.getPaymentMethod().isShared()) {
       queryAppPayments.setMaxResults(1);
       if (queryAppPayments.list().size() > 0) {
