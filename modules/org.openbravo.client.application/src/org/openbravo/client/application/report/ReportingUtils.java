@@ -1266,7 +1266,8 @@ public class ReportingUtils {
       } else if ("XML".equals(action)) {
         return ExportType.XML;
       } else {
-        throw new OBException(OBMessageUtils.messageBD("OBUIAPP_UnsupportedAction"));
+        throw new OBException(OBMessageUtils.getI18NMessage("OBUIAPP_UnsupportedAction",
+            new String[] { action }));
       }
     }
 
