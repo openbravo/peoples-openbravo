@@ -685,10 +685,22 @@ isc.OBPickAndExecuteGrid.addProperties({
     return this.fieldsByColumnName[columnName];
   },
 
-  setValueMap: function (field, entries) {
+  // sets a valueMap in the edit form for the row that is currently being edited
+  // in case it exists
+  setValueMapInEditForm: function (field, entries) {
     var len = entries.length,
         map = {},
-        i, undef;
+        i, undef, form, editField;
+
+    form = this.getEditForm();
+    if (!form) {
+      return;
+    }
+
+    editField = form.getField(field);
+    if (!editField) {
+      return;
+    }
 
     for (i = 0; i < len; i++) {
       if (entries[i][OB.Constants.ID] !== undef) {
@@ -696,7 +708,7 @@ isc.OBPickAndExecuteGrid.addProperties({
       }
     }
 
-    this.Super('setValueMap', [field, map]);
+    editField.setValueMap(map);
   },
 
   processColumnValue: function (rowNum, columnName, columnValue) {
@@ -709,14 +721,14 @@ isc.OBPickAndExecuteGrid.addProperties({
       return;
     }
     if (columnValue.entries) {
-      this.setValueMap(field.name, columnValue.entries);
+      this.setValueMapInEditForm(field.name, columnValue.entries);
     } else if (field.fkField && columnValue.value && columnValue.identifier && field.canEdit !== false) {
       // build the valueMap manually, set it and set the value of the
       // fk combo item in the edit form if possible
       valueMap[0] = {};
       valueMap[0][OB.Constants.ID] = columnValue.value;
       valueMap[0][OB.Constants.IDENTIFIER] = columnValue.identifier;
-      this.setValueMap(field.name, valueMap);
+      this.setValueMapInEditForm(field.name, valueMap);
       if (this.isEditing()) {
         this.setEditValue(this.getEditRow(), field.name, columnValue.value);
       }
