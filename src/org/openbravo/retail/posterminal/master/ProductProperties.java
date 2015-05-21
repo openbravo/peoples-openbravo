@@ -83,7 +83,7 @@ public class ProductProperties extends ModelExtension {
         private static final long serialVersionUID = 1L;
         {
           String trlName;
-          boolean isHgvol = "Y".equals(Preferences.getPreferenceValue("OBPOS_highVolume.customer",
+          boolean isHgvol = "Y".equals(Preferences.getPreferenceValue("OBPOS_highVolume.product",
               true, OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
                   .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
                   .getOBContext().getRole(), null));
