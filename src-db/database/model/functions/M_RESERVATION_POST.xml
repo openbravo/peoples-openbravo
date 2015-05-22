@@ -381,17 +381,35 @@ BEGIN
     END IF;
     v_newstatus := 'CL';
     v_newaction := 'RE';
+    
+    -- Force to set reservation = CL here to avoid mutating table issues
+    -- when updating m_reservation_stock.quantity
+    UPDATE m_reservation
+    SET res_status = v_newstatus,
+      res_process = v_newaction,
+      updated = now(),
+      updatedby = v_user_id
+    WHERE m_reservation_id = v_reservation_id;
+    
+    UPDATE m_reservation_stock
+    SET quantity = releasedQty,
+    updated = now(),
+    updatedby = v_user_id
+    WHERE m_reservation_id = v_reservation_id;
 
   ELSE
     RAISE_APPLICATION_ERROR(-20000, '@UnsupportedResAction@');
   END IF;
 
-  UPDATE m_reservation
-  SET res_status = v_newstatus,
-      res_process = v_newaction,
-      updated = now(),
-      updatedby = v_user_id
-  WHERE m_reservation_id = v_reservation_id;
+  -- Close status already set
+  IF (v_newstatus <> 'CL') THEN
+    UPDATE m_reservation
+    SET res_status = v_newstatus,
+        res_process = v_newaction,
+        updated = now(),
+        updatedby = v_user_id
+    WHERE m_reservation_id = v_reservation_id;
+  END IF;
 
   IF (v_resaction = 'PR') THEN
     -- ADD RESERVED STOCK
