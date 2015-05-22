@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2012-2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -17,9 +17,8 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.retail.posterminal.POSUtils;
-import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
-public class PriceListVersion extends ProcessHQLQuery {
+public class PriceListVersion extends QueryTerminalProperty {
 
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
@@ -35,6 +34,16 @@ public class PriceListVersion extends ProcessHQLQuery {
 
   @Override
   protected boolean bypassPreferenceCheck() {
+    return true;
+  }
+
+  @Override
+  public String getProperty() {
+    return "pricelistversion";
+  }
+
+  @Override
+  public boolean returnList() {
     return true;
   }
 }

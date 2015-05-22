@@ -1,3 +1,11 @@
+/*
+ ************************************************************************************
+ * Copyright (C) 2015 Openbravo S.L.U.
+ * Licensed under the Openbravo Commercial License version 1.0
+ * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
+ * or in the legal folder of this module distribution.
+ ************************************************************************************
+ */
 package org.openbravo.retail.posterminal.term;
 
 import java.util.Set;
@@ -8,10 +16,9 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.retail.posterminal.JSONProcessSimple;
 import org.openbravo.service.json.JsonConstants;
 
-public class WritableOrganizations extends JSONProcessSimple {
+public class WritableOrganizations extends JSONTerminalProperty {
 
   @Override
   public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
@@ -32,5 +39,10 @@ public class WritableOrganizations extends JSONProcessSimple {
   @Override
   protected boolean bypassPreferenceCheck() {
     return true;
+  }
+
+  @Override
+  public String getProperty() {
+    return "writableorganizations";
   }
 }

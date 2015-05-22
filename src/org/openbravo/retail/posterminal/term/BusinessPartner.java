@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2012-2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -19,9 +19,8 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.retail.posterminal.OBPOSApplications;
 import org.openbravo.retail.posterminal.POSUtils;
-import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
-public class BusinessPartner extends ProcessHQLQuery {
+public class BusinessPartner extends QueryTerminalProperty {
 
   @Override
   protected boolean isAdminMode() {
@@ -50,6 +49,17 @@ public class BusinessPartner extends ProcessHQLQuery {
 
   @Override
   protected boolean bypassPreferenceCheck() {
+    return true;
+  }
+
+  @Override
+  public String getProperty() {
+    return "businesspartner";
+
+  }
+
+  @Override
+  public boolean returnList() {
     return true;
   }
 }
