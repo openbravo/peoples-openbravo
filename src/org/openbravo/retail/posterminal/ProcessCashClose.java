@@ -107,7 +107,14 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
         appCashupQuery.setNamedParameter("parantCashupId", cashUpId);
         List<OBPOSAppCashup> slaveCashupList = appCashupQuery.list();
         List<String> slaveCashupIds = new ArrayList<String>();
-        for (OBPOSAppCashup slaveCashup : slaveCashupList) {
+        List<OBPOSApplications> posTerminalList = new ArrayList<OBPOSApplications>();
+        for (int i = 0; i < slaveCashupList.size(); i++) {
+          OBPOSApplications posTerm = slaveCashupList.get(i).getPOSTerminal();
+          posTerm.getOBPOSAppPaymentList();
+          posTerminalList.add(posTerm);
+        }
+        for (int i = 0; i < slaveCashupList.size(); i++) {
+          OBPOSAppCashup slaveCashup = slaveCashupList.get(i);
           String dbJsoncashup = slaveCashup.getJsoncashup();
           if (StringUtils.isEmpty(dbJsoncashup)) {
             throw new OBException(
@@ -115,7 +122,7 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
                     + slaveCashup.getIdentifier());
           }
           JSONObject slaveJsonCashup = new JSONObject(dbJsoncashup);
-          doReconciliationAndInvoices(slaveCashup.getPOSTerminal(), slaveCashup.getId(),
+          doReconciliationAndInvoices(posTerminalList.get(i), slaveCashup.getId(),
               slaveCashup.getCashUpDate(), slaveJsonCashup, jsonData, false, null);
           slaveCashupIds.add(slaveCashup.getId());
         }
