@@ -16,9 +16,10 @@
       this.templatecashup = new OB.DS.HWResource(terminal.printCashUpTemplate || OB.OBPOSPointOfSale.Print.CashUpTemplate);
       };
 
-  PrintCashUp.prototype.print = function (report, sumary) {
+  PrintCashUp.prototype.print = function (report, sumary, closed) {
     OB.POS.hwserver.print(this.templatecashup, {
       cashup: {
+        closed: closed,
         report: report,
         summary: sumary
       }

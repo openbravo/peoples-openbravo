@@ -161,9 +161,9 @@ enyo.kind({
       // DEVELOPER: This two rules must be followed if you want this kind to keep data meaningfulness
       //            Each type is related to either convertedValues or valuestoConvert
       if (this.convertedValue && this.convertedValues.indexOf(this.type) === -1) {
-       OB.warn("DEVELOPER: the type '" + this.type + "' is being incorrectly implemented.");
+        OB.warn("DEVELOPER: the type '" + this.type + "' is being incorrectly implemented.");
       }
-      if (this.valueToConvert && this.valuestoConvert.indexOf(this.type) === -1){
+      if (this.valueToConvert && this.valuestoConvert.indexOf(this.type) === -1) {
         OB.warn("DEVELOPER: the type '" + this.type + "' is being incorrectly implemented.");
       }
     }
@@ -439,10 +439,8 @@ enyo.kind({
         components: [{
           classes: 'span12',
           components: [{
-            style: 'padding: 10px; border-bottom: 1px solid #cccccc; text-align:center;',
-            initComponents: function () {
-              this.setContent(OB.I18N.getLabel('OBPOS_LblStep4of4') + OB.OBPOSCashUp.UI.CashUp.getTitleExtensions());
-            }
+            name: 'reporttitle',
+            style: 'padding: 10px; border-bottom: 1px solid #cccccc; text-align:center;'
           }]
         }]
       }, {
@@ -456,7 +454,7 @@ enyo.kind({
               style: 'padding: 20px;',
               initComponents: function () {
                 if (OB.MobileApp.model.get('terminal').organizationImage) {
-                  this.setAttribute('src', 'data:'+OB.MobileApp.model.get('terminal').organizationImageMime+';base64,'+OB.MobileApp.model.get('terminal').organizationImage);
+                  this.setAttribute('src', 'data:' + OB.MobileApp.model.get('terminal').organizationImageMime + ';base64,' + OB.MobileApp.model.get('terminal').organizationImage);
                 }
               }
             }, {
@@ -559,6 +557,9 @@ enyo.kind({
   },
   init: function (model) {
     this.model = model;
+
+    this.$.reporttitle.setContent(OB.I18N.getLabel(model.reportTitleLabel) + OB.OBPOSCashUp.UI.CashUp.getTitleExtensions());
+
     this.model.get('cashUpReport').on('add', function (cashUpReport) {
 
       this.$.sales.setValue('netsales', cashUpReport.get('netSales'));

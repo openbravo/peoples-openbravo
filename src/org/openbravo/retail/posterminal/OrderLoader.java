@@ -1438,12 +1438,18 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
                 .setInvoicePaymentSchedule(paymentScheduleInvoice);
           }
         }
-        invoice.setTotalPaid(invoice.getGrandTotalAmount());
-        invoice.setOutstandingAmount(BigDecimal.ZERO);
-        invoice.setDueAmount(BigDecimal.ZERO);
-        invoice.setPaymentComplete(true);
-        paymentScheduleInvoice.setOutstandingAmount(BigDecimal.ZERO);
-        paymentScheduleInvoice.setPaidAmount(paymentScheduleInvoice.getAmount());
+
+        BigDecimal amountPaidWithCredit = (BigDecimal.valueOf(jsonorder.getDouble("gross"))
+            .subtract(BigDecimal.valueOf(jsonorder.getDouble("payment")))).setScale(stdPrecision,
+            RoundingMode.HALF_UP);
+
+        invoice.setTotalPaid(invoice.getGrandTotalAmount().subtract(amountPaidWithCredit));
+        invoice.setOutstandingAmount(amountPaidWithCredit);
+        invoice.setDueAmount(amountPaidWithCredit);
+        invoice.setPaymentComplete(amountPaidWithCredit.compareTo(BigDecimal.ZERO) == 0);
+        paymentScheduleInvoice.setOutstandingAmount(amountPaidWithCredit);
+        paymentScheduleInvoice.setPaidAmount(invoice.getGrandTotalAmount().subtract(
+            amountPaidWithCredit));
         invoice.getFINPaymentScheduleList().add(paymentScheduleInvoice);
         OBDal.getInstance().save(paymentScheduleInvoice);
         OBDal.getInstance().save(invoice);
