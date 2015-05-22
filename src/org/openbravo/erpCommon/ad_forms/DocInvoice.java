@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2014 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2015 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -421,8 +421,14 @@ public class DocInvoice extends AcctServer {
         final BigDecimal taxesAmountTotal = new BigDecimal(
             StringUtils.isBlank(m_taxes[i].m_amount) ? "0" : m_taxes[i].m_amount);
         BigDecimal taxToTransAccount = BigDecimal.ZERO;
-        final Currency currency = OBDal.getInstance().get(Currency.class, C_Currency_ID);
-        int precission = currency.getStandardPrecision().intValue();
+        int precission = 0;
+        OBContext.setAdminMode(true);
+        try {
+          Currency currency = OBDal.getInstance().get(Currency.class, C_Currency_ID);
+          precission = currency.getStandardPrecision().intValue();
+        } finally {
+          OBContext.restorePreviousMode();
+        }
         if (IsReversal.equals("Y")) {
           if (isCashVAT && m_taxes[i].m_isCashVAT) {
             if ((m_payments == null || m_payments.length == 0)
@@ -776,8 +782,14 @@ public class DocInvoice extends AcctServer {
         // New docLine created to assign C_Tax_ID value to the entry
         DocLine docLine = new DocLine(DocumentType, Record_ID, "");
         docLine.m_C_Tax_ID = m_taxes[i].m_C_Tax_ID;
-        final Currency currency = OBDal.getInstance().get(Currency.class, C_Currency_ID);
-        int precission = currency.getStandardPrecision().intValue();
+        OBContext.setAdminMode(true);
+        int precission = 0;
+        try {
+          Currency currency = OBDal.getInstance().get(Currency.class, C_Currency_ID);
+          precission = currency.getStandardPrecision().intValue();
+        } finally {
+          OBContext.restorePreviousMode();
+        }
         if (!m_taxes[i].m_isTaxUndeductable) {
           BigDecimal percentageFinalAccount = CashVATUtil._100;
           final BigDecimal taxesAmountTotal = new BigDecimal(StringUtils.isBlank(m_taxes[i]
