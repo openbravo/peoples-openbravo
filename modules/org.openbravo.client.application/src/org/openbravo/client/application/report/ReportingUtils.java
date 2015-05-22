@@ -733,7 +733,7 @@ public class ReportingUtils {
       } else {
         parameter = "";
       }
-      if (parameter.equals("Images URI")) {
+      if (parameter.equals(IMAGES_URI)) {
         exporterOutput.setImageHandler(new WebHtmlResourceHandler((String) pair.getValue()));
       } else if (parameter.equals("Is Remove Empty Space Between Rows")) {
         configuration.setRemoveEmptySpaceBetweenRows((Boolean) pair.getValue());
