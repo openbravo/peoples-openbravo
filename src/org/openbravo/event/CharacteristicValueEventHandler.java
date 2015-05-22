@@ -24,7 +24,8 @@ import javax.enterprise.event.Observes;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -35,12 +36,9 @@ import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.client.kernel.event.TransactionBeginEvent;
 import org.openbravo.client.kernel.event.TransactionCompletedEvent;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.materialmgmt.VariantChDescUpdateProcess;
 import org.openbravo.model.common.plm.CharacteristicValue;
-import org.openbravo.model.common.plm.ProductCharacteristic;
-import org.openbravo.model.common.plm.ProductCharacteristicConf;
 import org.openbravo.scheduling.OBScheduler;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -57,11 +55,13 @@ public class CharacteristicValueEventHandler extends EntityPersistenceEventObser
   }
 
   @SuppressWarnings("unused")
-  public void onTransactionBegin(@Observes TransactionBeginEvent event) {
+  public void onTransactionBegin(@Observes
+  TransactionBeginEvent event) {
     chvalueUpdated.set(null);
   }
 
-  public void onUpdate(@Observes EntityUpdateEvent event) {
+  public void onUpdate(@Observes
+  EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -73,33 +73,35 @@ public class CharacteristicValueEventHandler extends EntityPersistenceEventObser
         CharacteristicValue.ENTITY_NAME);
     final Property codeProperty = prodchValue.getProperty(CharacteristicValue.PROPERTY_CODE);
     if (event.getCurrentState(codeProperty) != event.getPreviousState(codeProperty)) {
-      OBCriteria<ProductCharacteristic> productCharateristic = OBDal.getInstance().createCriteria(
-          ProductCharacteristic.class);
-      productCharateristic.add(Restrictions
-          .isNull(ProductCharacteristic.PROPERTY_CHARACTERISTICSUBSET));
-      if (productCharateristic.count() > 0) {
-        for (ProductCharacteristic productch : productCharateristic.list()) {
-          OBCriteria<ProductCharacteristicConf> productCharateristicsConf = OBDal.getInstance()
-              .createCriteria(ProductCharacteristicConf.class);
-          productCharateristicsConf.add(Restrictions.eq(
-              ProductCharacteristicConf.PROPERTY_CHARACTERISTICOFPRODUCT, productch));
-          productCharateristicsConf.add(Restrictions.eq(
-              ProductCharacteristicConf.PROPERTY_CHARACTERISTICVALUE, chv));
-          productCharateristicsConf.setFilterOnActive(false);
-          if (productCharateristicsConf.count() > 0) {
-            for (ProductCharacteristicConf conf : productCharateristicsConf.list()) {
-              if (chv.getCode() != conf.getCode()) {
-                conf.setCode(chv.getCode());
-                OBDal.getInstance().save(conf);
-              }
-            }
-          }
-        }
+      StringBuffer where = new StringBuffer();
+      where.append("update ProductCharacteristicConf as pcc ");
+      where.append("set code = :code, updated = now(), updatedBy = :user ");
+      where.append("where exists ( ");
+      where.append("    select 1 ");
+      where.append("    from  ProductCharacteristic as pc ");
+      where.append("    where pcc.characteristicOfProduct = pc ");
+      where.append("    and pcc.characteristicValue = :characteristicValue ");
+      where.append("    and pc.characteristicSubset is null ");
+      where.append("    and pcc.code <> :code ");
+      where.append(")");
+      try {
+        final Session session = OBDal.getInstance().getSession();
+        final Query charConfQuery = session.createQuery(where.toString());
+        charConfQuery.setParameter("user", OBContext.getOBContext().getUser());
+        charConfQuery.setParameter("characteristicValue", chv);
+        charConfQuery.setParameter("code", chv.getCode());
+        charConfQuery.executeUpdate();
+      } catch (Exception e) {
+        logger
+            .error(
+                "Error on CharacteristicValueEventHandler. ProductCharacteristicConf could not be updated",
+                e);
       }
     }
   }
 
-  public void onTransactionCompleted(@Observes TransactionCompletedEvent event) {
+  public void onTransactionCompleted(@Observes
+  TransactionCompletedEvent event) {
     String strChValueId = chvalueUpdated.get();
     chvalueUpdated.set(null);
     if (StringUtils.isBlank(strChValueId) || event.getTransaction().wasRolledBack()) {

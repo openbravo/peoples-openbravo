@@ -487,7 +487,7 @@ isc.OBViewGrid.addProperties({
 
     // only show summary rows if there are summary functions
     for (i = 0; i < this.getFields().length; i++) {
-      if (this.getFields()[i].summaryFunction) {
+      if (this.getFields()[i].summaryFunction && !this.lazyFiltering) {
         this.showGridSummary = true;
       }
     }
@@ -1983,7 +1983,7 @@ isc.OBViewGrid.addProperties({
     callback = function () {
       delete me.isFilteringExternally;
     };
-    if (this.data.willFetchData(criteria)) {
+    if (this.data.willFetchData(this.convertCriteria(criteria))) {
       // Use this flag when a filter editor submit results a datasource request
       // This flag will be used to prevent unneeded datasource requests, see https://issues.openbravo.com/view.php?id=29896
       this.isFilteringExternally = true;

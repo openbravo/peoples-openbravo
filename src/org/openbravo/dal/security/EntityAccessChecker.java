@@ -32,13 +32,10 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBNotSingleton;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.model.ad.access.TableAccess;
-import org.openbravo.model.ad.access.WindowAccess;
 import org.openbravo.model.ad.ui.Tab;
-import org.openbravo.model.ad.ui.Window;
 
 /**
  * This class is responsible for determining the allowed read/write access for a combination of user
@@ -106,19 +103,18 @@ public class EntityAccessChecker implements OBNotSingleton {
       final String userLevel = obContext.getUserLevel();
 
       // Don't use dal because otherwise we can end up in infinite loops
-      String qryStr = "select t from " + Tab.class.getName() + " t"
-          + " join fetch t.window w join fetch w.aDWindowAccessList wa"
+      // there is always only one windowaccess per role due to unique constraints
+      final String qryStr = "select t.table.id, wa.editableField from " + Tab.class.getName()
+          + " t left join t.window w left join w.aDWindowAccessList wa"
           + " where wa.role.id= :roleId";
       final Query qry = SessionHandler.getInstance().createQuery(qryStr);
       qry.setParameter("roleId", getRoleId());
       @SuppressWarnings("unchecked")
-      final List<Tab> tabs = qry.list();
-      for (final Tab t : tabs) {
-        final Window w = t.getWindow();
-        // Guaranteed that there's only one record because of unique constraint
-        final WindowAccess wa = w.getADWindowAccessList().get(0);
-        final boolean writeAccess = wa.isEditableField();
-        String tableId = (String) DalUtil.getId(t.getTable());
+      final List<Object> tabData = qry.list();
+      for (final Object o : tabData) {
+        final Object[] os = (Object[]) o;
+
+        final String tableId = (String) os[0];
         final Entity e = mp.getEntityByTableId(tableId);
         if (e == null) { // happens for AD_Client_Info and views
           continue;
@@ -129,6 +125,7 @@ public class EntityAccessChecker implements OBNotSingleton {
           continue;
         }
 
+        final boolean writeAccess = (Boolean) os[1];
         if (writeAccess) {
           writableEntities.add(e);
           readableEntities.add(e);

@@ -149,7 +149,7 @@ public abstract class ImportEntryProcessor {
    * For high-load-volume data consider setting this equal to half or a quarter of the number of
    * cores/processors (this to leave 'room' for other threads and processes).
    * 
-   * @see Runtime#getRuntime()#availableProcessors();
+   * @see Runtime#availableProcessors()
    */
   // TODO: consider making the number of threads configurable through a preference
   protected int getMaxNumberOfThreads() {

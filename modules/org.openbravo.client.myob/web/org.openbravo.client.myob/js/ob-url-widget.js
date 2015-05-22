@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -32,10 +32,6 @@ isc.defineClass('OBUrlWidget', isc.OBWidget).addProperties({
       this.contentSource = document.location.protocol + this.contentSource.substring(this.contentSource.indexOf('//'));
     }
 
-    if (this.contentSource.indexOf('google.com/calendar') !== -1) {
-      this.contentSource = this.contentSource.replace("account", OB.User.email);
-    }
-
     return isc.HTMLFlow.create({
       contentsType: 'page',
       contentsURL: this.contentSource,
@@ -48,5 +44,11 @@ isc.defineClass('OBUrlWidget', isc.OBWidget).addProperties({
       this.contentSource = this.evaluateContents(this.parameters.src);
     }
     this.windowContents.setContentsURL(this.contentSource);
+  },
+  evaluateContents: function (str) {
+    if (str.indexOf('google.com/calendar') !== -1) {
+      str = str.replace("account", OB.User.email);
+    }
+    return this.Super('evaluateContents', arguments);
   }
 });
