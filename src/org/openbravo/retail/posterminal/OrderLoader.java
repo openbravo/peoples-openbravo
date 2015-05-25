@@ -1618,6 +1618,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       }
 
       // retrieve the transactions of this payment and set the cashupId to those transactions
+      OBDal.getInstance().refresh(finPayment);
       final List<FIN_FinaccTransaction> transactions = finPayment.getFINFinaccTransactionList();
       final String cashupId = jsonorder.getString("obposAppCashup");
       final OBPOSAppCashup cashup = OBDal.getInstance().get(OBPOSAppCashup.class, cashupId);
