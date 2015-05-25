@@ -182,8 +182,9 @@ OB.APRM.AddPayment.paymentMethodMulticurrency = function (view, form, recalcConv
       }
       form.getItem('c_currency_to_id').setValue(data.currencyToId);
       form.getItem('c_currency_to_id').valueMap[data.currencyToId] = data.currencyToIdentifier;
-      if (recalcConvRate && isc.isA.Number(data.conversionrate)) {
-        form.getItem('conversion_rate').setValue(Number(data.conversionrate));
+      if (recalcConvRate) {
+        form.getItem('conversion_rate').setValue(data.conversionrate);
+        form.getItem('converted_amount').setValue(data.convertedamount);
         OB.APRM.AddPayment.updateConvertedAmount(view, form, false);
       }
     }
@@ -853,8 +854,8 @@ OB.APRM.AddPayment.convertedAmountOnChange = function (item, view, form, grid) {
 };
 
 OB.APRM.AddPayment.updateConvertedAmount = function (view, form, recalcExchangeRate) {
-  var exchangeRate = new BigDecimal(String(form.getItem('conversion_rate').getValue() || 1)),
-      actualConverted = new BigDecimal(String(form.getItem('converted_amount').getValue() || 0)),
+  var exchangeRate = form.getItem('conversion_rate').getValue(),
+      actualConverted = form.getItem('converted_amount').getValue(),
       actualPayment = new BigDecimal(String(form.getItem('actual_payment').getValue() || 0)),
       actualConvertedItem = form.getItem('converted_amount'),
       exchangeRateItem = form.getItem('conversion_rate'),
@@ -862,6 +863,12 @@ OB.APRM.AddPayment.updateConvertedAmount = function (view, form, recalcExchangeR
       newExchangeRate = BigDecimal.prototype.ONE,
       currencyPrecision = form.getItem('StdPrecision').getValue();
 
+  if (!actualConverted && !exchangeRate) {
+    return;
+  }
+  
+  exchangeRate = new BigDecimal(String(exchangeRate || 1));
+  actualConverted = new BigDecimal(String(actualConverted || 0));
   if (!actualConverted || !exchangeRate) {
     return;
   }
@@ -872,7 +879,7 @@ OB.APRM.AddPayment.updateConvertedAmount = function (view, form, recalcExchangeR
         exchangeRateItem.setValue(Number(newExchangeRate.toString()));
       }
     } else {
-      exchangeRateItem.setValue(Number(newExchangeRate.toString));
+      exchangeRateItem.setValue(Number(newExchangeRate.toString()));
     }
   } else if (exchangeRate) {
     newConvertedAmount = actualPayment.multiply(exchangeRate).setScale(currencyPrecision, BigDecimal.prototype.ROUND_HALF_UP);
