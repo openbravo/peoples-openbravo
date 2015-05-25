@@ -89,7 +89,7 @@ public class OrderGroupingProcessor {
 
     // random string is created as random numeric between 0 and 1000000
     Random rnd = new Random();
-    String strExecutionId = String.valueOf(rnd.nextInt(1000000));
+    String strExecutionId = "WebPOS_CashUp_" + String.valueOf(rnd.nextInt(1000000));
 
     if (posTerminal.getObposTerminaltype().isGroupingOrders()) {
       // insert invoice headers
