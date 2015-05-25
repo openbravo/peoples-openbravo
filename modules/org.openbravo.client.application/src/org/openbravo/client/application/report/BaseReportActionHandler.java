@@ -71,7 +71,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Action Handler used as base for jasper reports generated from process defition. This handler can
  * be extended to customize its behavior.
- *
+ * 
  */
 public class BaseReportActionHandler extends BaseProcessActionHandler {
   private static final Logger log = LoggerFactory.getLogger(BaseReportActionHandler.class);
@@ -240,7 +240,8 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
       strJRPath = report.getPDFTemplate();
       break;
     default:
-      throw new OBException(OBMessageUtils.messageBD("OBUIAPP_UnsupportedAction"));
+      throw new OBException(OBMessageUtils.getI18NMessage("OBUIAPP_UnsupportedAction",
+          new String[] { expType.getExtension() }));
     }
     if (StringUtils.isEmpty(strJRPath)) {
       throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoJRTemplateFound"));

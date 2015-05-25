@@ -31,7 +31,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -60,10 +59,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
 import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.design.JasperDesign;
-import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
@@ -74,6 +70,7 @@ import org.openbravo.base.provider.OBConfigFileProvider;
 import org.openbravo.base.secureApp.OrgTree;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.client.application.report.ReportingUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
@@ -94,7 +91,6 @@ import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.OrganizationInformation;
 import org.openbravo.model.common.geography.Country;
 import org.openbravo.model.common.geography.Location;
-import org.openbravo.uiTranslation.TranslationHandler;
 import org.openbravo.utils.FileUtility;
 import org.openbravo.utils.FormatUtilities;
 
@@ -1790,31 +1786,14 @@ public class Utility {
     return OBDateUtils.isBiggerDate(strDate1, strDate2, DateFormatter);
   }
 
+  /**
+   * @deprecated Use
+   *             {@link org.openbravo.client.application.report.ReportingUtils#getTranslatedJasperReport(ConnectionProvider, String, String, String)}
+   *             instead.
+   */
   public static JasperReport getTranslatedJasperReport(ConnectionProvider conn, String reportName,
       String language, String baseDesignPath) throws JRException {
-
-    log4j.debug("translate report: " + reportName + " for language: " + language);
-
-    File reportFile = new File(reportName);
-
-    InputStream reportInputStream = null;
-    if (reportFile.exists()) {
-      TranslationHandler handler = new TranslationHandler(conn);
-      handler.prepareFile(reportName, language, reportFile, baseDesignPath);
-      reportInputStream = handler.getInputStream();
-    }
-    JasperDesign jasperDesign;
-    if (reportInputStream != null) {
-      log4j.debug("Jasper report being created with inputStream.");
-      jasperDesign = JRXmlLoader.load(reportInputStream);
-    } else {
-      log4j.debug("Jasper report being created with strReportName.");
-      jasperDesign = JRXmlLoader.load(reportName);
-    }
-
-    JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
-
-    return jasperReport;
+    return ReportingUtils.getTranslatedJasperReport(conn, reportName, language, baseDesignPath);
   }
 
   /**

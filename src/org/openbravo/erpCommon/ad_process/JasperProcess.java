@@ -1,6 +1,23 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SLU
+ * All portions are Copyright (C) 2008-2015 Openbravo SLU
+ * All Rights Reserved.
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+ */
 package org.openbravo.erpCommon.ad_process;
 
-import java.sql.Connection;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.HashMap;
@@ -9,42 +26,27 @@ import java.util.Locale;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JRExporterParameter;
-import net.sf.jasperreports.engine.JRParameter;
-import net.sf.jasperreports.engine.JasperExportManager;
-import net.sf.jasperreports.engine.JasperFillManager;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.export.JExcelApiExporter;
-import net.sf.jasperreports.engine.export.JExcelApiExporterParameter;
-import net.sf.jasperreports.engine.export.JRHtmlExporter;
-import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
-
 import org.apache.log4j.Logger;
 import org.openbravo.base.ConfigParameters;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.client.application.report.ReportingUtils;
+import org.openbravo.client.application.report.ReportingUtils.ExportType;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.JRFieldProviderDataSource;
-import org.openbravo.erpCommon.utility.JRFormatFactory;
 import org.openbravo.erpCommon.utility.PrintJRData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.scheduling.Process;
 import org.openbravo.scheduling.ProcessBundle;
-import org.openbravo.scheduling.ProcessLogger;
 import org.openbravo.utils.Replace;
 
 public class JasperProcess implements Process {
 
   static Logger log4j = Logger.getLogger(JasperProcess.class);
 
-  private ProcessLogger logger;
-
   private ConnectionProvider connection;
 
   public void initialize(ProcessBundle bundle) {
-    logger = bundle.getLogger();
     connection = bundle.getConnection();
   }
 
@@ -79,22 +81,13 @@ public class JasperProcess implements Process {
 
     strReportName = Replace.replace(Replace.replace(strReportName, "@basedesign@", strBaseDesign),
         "@attach@", strAttach);
-    String strFileName = strReportName.substring(strReportName.lastIndexOf("/") + 1);
 
     // FIXME: os is never assigned, but used leading to an NPE
     ServletOutputStream os = null;
     try {
-      JasperReport jasperReport = Utility.getTranslatedJasperReport(connection, strReportName,
-          strLanguage, strBaseDesign);
-
       if (designParameters == null)
         designParameters = new HashMap<String, Object>();
 
-      Boolean pagination = true;
-      if (strOutputType.equals("pdf"))
-        pagination = false;
-
-      designParameters.put("IS_IGNORE_PAGINATION", pagination);
       // designParameters.put("BASE_WEB", strReplaceWithFull);
       designParameters.put("BASE_DESIGN", strBaseDesign);
       designParameters.put("ATTACH", strAttach);
@@ -110,79 +103,15 @@ public class JasperProcess implements Process {
           vars.getSessionValue("#AD_ReportNumberFormat"), dfs);
       designParameters.put("NUMBERFORMAT", numberFormat);
 
-      if (log4j.isDebugEnabled())
-        log4j.debug("creating the format factory: " + vars.getJavaDateFormat());
-      JRFormatFactory jrFormatFactory = new JRFormatFactory();
-      jrFormatFactory.setDatePattern(vars.getJavaDateFormat());
-      designParameters.put(JRParameter.REPORT_FORMAT_FACTORY, jrFormatFactory);
-
-      JasperPrint jasperPrint;
-      Connection conn = null;
-      try {
-        conn = connection.getTransactionConnection();
-        if (data != null) {
-          designParameters.put("REPORT_CONNECTION", conn);
-          jasperPrint = JasperFillManager.fillReport(jasperReport, designParameters,
-              new JRFieldProviderDataSource(data, vars.getJavaDateFormat()));
-        } else {
-          jasperPrint = JasperFillManager.fillReport(jasperReport, designParameters, conn);
-        }
-      } catch (Exception e) {
-        throw new ServletException(e.getMessage());
-      } finally {
-        connection.releaseRollbackConnection(conn);
-      }
-
       if (exportParameters == null)
         exportParameters = new HashMap<Object, Object>();
       if (strOutputType == null || strOutputType.equals(""))
         strOutputType = "html";
-      if (strOutputType.equals("html")) {
-        if (log4j.isDebugEnabled())
-          log4j.debug("JR: Print HTML");
-        // response.setHeader( "Content-disposition", "inline" +
-        // "; filename=" + strFileName + "." +strOutputType);
-        JRHtmlExporter exporter = new JRHtmlExporter();
-        exportParameters.put(JRHtmlExporterParameter.JASPER_PRINT, jasperPrint);
-        exportParameters.put(JRHtmlExporterParameter.IS_USING_IMAGES_TO_ALIGN, Boolean.FALSE);
-        exportParameters.put(JRHtmlExporterParameter.SIZE_UNIT,
-            JRHtmlExporterParameter.SIZE_UNIT_POINT);
-        exportParameters.put(JRHtmlExporterParameter.OUTPUT_STREAM, os);
-        exporter.setParameters(exportParameters);
-        exporter.exportReport();
-
-      } else if (strOutputType.equals("pdf")) {
-        // response.setContentType("application/pdf");
-        // response.setHeader( "Content-disposition", "attachment" +
-        // "; filename=" + strFileName + "." +strOutputType);
-        JasperExportManager.exportReportToPdfStream(jasperPrint, os);
-
-      } else if (strOutputType.equals("xls")) {
-        // response.setContentType("application/vnd.ms-excel");
-        // response.setHeader( "Content-disposition", "attachment" +
-        // "; filename=" + strFileName + "." +strOutputType);
-        JExcelApiExporter exporter = new JExcelApiExporter();
-        exportParameters.put(JRExporterParameter.JASPER_PRINT, jasperPrint);
-        exportParameters.put(JRExporterParameter.OUTPUT_STREAM, os);
-        exportParameters.put(JExcelApiExporterParameter.IS_ONE_PAGE_PER_SHEET, Boolean.FALSE);
-        exportParameters.put(JExcelApiExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_ROWS,
-            Boolean.TRUE);
-
-        exporter.setParameters(exportParameters);
-        exporter.exportReport();
-
-      } else {
-        throw new ServletException("Output format no supported");
-      }
-    } catch (JRException e) {
-      if (log4j.isDebugEnabled())
-        log4j.debug("JR: Error: " + e);
-      e.printStackTrace();
-      throw new ServletException(e.getMessage());
-
+      final ExportType expType = ExportType.getExportType(strOutputType.toUpperCase());
+      ReportingUtils.exportJR(strReportName, expType, designParameters, os, false, connection,
+          new JRFieldProviderDataSource(data, vars.getJavaDateFormat()), exportParameters);
     } catch (Exception e) {
       throw new ServletException(e.getMessage());
-
     } finally {
       try {
         os.close();

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -39,10 +39,10 @@ import org.openbravo.advpaymentmngt.dao.MatchTransactionDao;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.client.application.report.ReportingUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.financialmgmt.payment.FIN_BankStatement;
 import org.openbravo.model.financialmgmt.payment.FIN_BankStatementLine;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
@@ -107,15 +107,15 @@ public class ReportReconciliation extends HttpSecureAppServlet {
     JasperReport subReportOutstandingDeposit;
     JasperReport subReportUnreconciledBankStatementLines;
     try {
-      subReportOutstandingPayment = Utility.getTranslatedJasperReport(this, strBaseDesign
+      subReportOutstandingPayment = ReportingUtils.getTranslatedJasperReport(this, strBaseDesign
           + "/org/openbravo/advpaymentmngt/ad_reports/OutstandingPayment.jrxml",
           vars.getLanguage(), strBaseDesign);
 
-      subReportOutstandingDeposit = Utility.getTranslatedJasperReport(this, strBaseDesign
+      subReportOutstandingDeposit = ReportingUtils.getTranslatedJasperReport(this, strBaseDesign
           + "/org/openbravo/advpaymentmngt/ad_reports/OutstandingDeposit.jrxml",
           vars.getLanguage(), strBaseDesign);
 
-      subReportUnreconciledBankStatementLines = Utility.getTranslatedJasperReport(this,
+      subReportUnreconciledBankStatementLines = ReportingUtils.getTranslatedJasperReport(this,
           strBaseDesign
               + "/org/openbravo/advpaymentmngt/ad_reports/UnreconciledBankStatement.jrxml",
           vars.getLanguage(), strBaseDesign);

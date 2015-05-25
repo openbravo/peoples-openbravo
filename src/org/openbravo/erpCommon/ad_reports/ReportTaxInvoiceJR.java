@@ -32,6 +32,7 @@ import net.sf.jasperreports.engine.JasperReport;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.client.application.report.ReportingUtils;
 import org.openbravo.erpCommon.businessUtility.Tree;
 import org.openbravo.erpCommon.businessUtility.TreeData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
@@ -173,16 +174,16 @@ public class ReportTaxInvoiceJR extends HttpSecureAppServlet {
     String strLanguage = vars.getLanguage();
     String strBaseDesign = getBaseDesignPath(strLanguage);
     try {
-      jasperSale = Utility.getTranslatedJasperReport(this, strBaseDesign
+      jasperSale = ReportingUtils.getTranslatedJasperReport(this, strBaseDesign
           + "/org/openbravo/erpCommon/ad_reports/ReportTaxInvoiceSale.jrxml", vars.getLanguage(),
           strBaseDesign);
-      jasperSaleForeign = Utility.getTranslatedJasperReport(this, strBaseDesign
+      jasperSaleForeign = ReportingUtils.getTranslatedJasperReport(this, strBaseDesign
           + "/org/openbravo/erpCommon/ad_reports/ReportTaxInvoiceSaleForeign.jrxml",
           vars.getLanguage(), strBaseDesign);
-      jasperPurchase = Utility.getTranslatedJasperReport(this, strBaseDesign
+      jasperPurchase = ReportingUtils.getTranslatedJasperReport(this, strBaseDesign
           + "/org/openbravo/erpCommon/ad_reports/ReportTaxInvoicePurchase.jrxml",
           vars.getLanguage(), strBaseDesign);
-      jasperPurchaseForeign = Utility.getTranslatedJasperReport(this, strBaseDesign
+      jasperPurchaseForeign = ReportingUtils.getTranslatedJasperReport(this, strBaseDesign
           + "/org/openbravo/erpCommon/ad_reports/ReportTaxInvoicePurchaseForeign.jrxml",
           vars.getLanguage(), strBaseDesign);
 

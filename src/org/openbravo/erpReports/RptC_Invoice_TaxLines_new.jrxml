@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="RptC_Invoice_TaxLines_new" pageWidth="482" pageHeight="842" columnWidth="482" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="RptC_Invoice_TaxLines_new" pageWidth="482" pageHeight="842" columnWidth="482" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="30435b90-1203-4280-bc9c-7050905cab87">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.5"/>
@@ -58,7 +58,7 @@
 			<band height="40">
 				<printWhenExpression><![CDATA[$P{ISTAXINCLUDED}.equals("N")]]></printWhenExpression>
 				<textField evaluationTime="Band" pattern="" isBlankWhenNull="true">
-					<reportElement key="textField" mode="Opaque" x="399" y="18" width="82" height="21" backcolor="#FFFFFF"/>
+					<reportElement key="textField" mode="Opaque" x="399" y="18" width="82" height="21" backcolor="#FFFFFF" uuid="efde9531-b570-4d98-85b0-00cba4acd9ab"/>
 					<box>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineWidth="0.0" lineColor="#000000"/>
@@ -66,20 +66,20 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[($P{TOTAL_LINENET}.add($V{TOTAL_TAXAMT})!=null)?$P{NUMBERFORMAT}.format($P{TOTAL_LINENET}.add($V{TOTAL_TAXAMT})):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($P{TOTAL_LINENET}.add($V{TOTAL_TAXAMT})!=null)?$P{NUMBERFORMAT}.format($P{TOTAL_LINENET}.add($V{TOTAL_TAXAMT})):new String(" ")]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement key="staticText-14" style="Report_Footer" x="355" y="18" width="44" height="21" forecolor="#7E7979"/>
+					<reportElement key="staticText-14" style="Report_Footer" x="355" y="18" width="44" height="21" forecolor="#7E7979" uuid="f8b8ec4c-d56c-4a76-8275-fe032145325d"/>
 					<textElement textAlignment="Right">
 						<font fontName="DejaVu Sans" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Total]]></text>
 				</staticText>
 				<line>
-					<reportElement key="line-39" style="Report_Footer" x="355" y="18" width="127" height="1" forecolor="#CCCCCC"/>
+					<reportElement key="line-39" style="Report_Footer" x="355" y="18" width="127" height="1" forecolor="#CCCCCC" uuid="1e401f76-2ceb-4859-9e4c-bc7a148dd807"/>
 				</line>
 				<line>
-					<reportElement key="line-40" style="Report_Footer" x="355" y="38" width="127" height="1" forecolor="#CCCCCC"/>
+					<reportElement key="line-40" style="Report_Footer" x="355" y="38" width="127" height="1" forecolor="#CCCCCC" uuid="34f523e9-ff52-4a82-b418-373701f030ef"/>
 				</line>
 			</band>
 		</groupFooter>
@@ -99,7 +99,7 @@
 	<detail>
 		<band height="25" splitType="Stretch">
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField" style="default" x="0" y="2" width="400" height="21" forecolor="#000000"/>
+				<reportElement key="textField" style="default" x="0" y="2" width="400" height="21" forecolor="#000000" uuid="8dd5151e-210d-492e-8d71-25ffd4185dfd"/>
 				<box>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
@@ -108,10 +108,10 @@
 				<textElement>
 					<font fontName="DejaVu Sans"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[" " + $F{NAME}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[" " + $F{NAME}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField" style="default" x="400" y="2" width="82" height="21" forecolor="#000000"/>
+				<reportElement key="textField" style="default" x="400" y="2" width="82" height="21" forecolor="#000000" uuid="24849b48-0240-4332-ab32-98f843de63c3"/>
 				<box>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
@@ -120,22 +120,22 @@
 				<textElement textAlignment="Right">
 					<font fontName="DejaVu Sans"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{TAXAMT}!=null)?$P{NUMBERFORMAT}.format($F{TAXAMT}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{TAXAMT}!=null)?$P{NUMBERFORMAT}.format($F{TAXAMT}):new String(" ")]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="310" y="2" width="82" height="21">
+				<reportElement x="310" y="2" width="82" height="21" uuid="cde860d4-59dc-4680-a831-b79da757f02b">
 					<printWhenExpression><![CDATA[$P{ISTAXINCLUDED}.equals("Y")]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Right">
 					<font fontName="DejaVu Sans" size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{TAXBASEAMT}!=null)?$P{NUMBERFORMAT}.format($F{TAXBASEAMT}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{TAXBASEAMT}!=null)?$P{NUMBERFORMAT}.format($F{TAXBASEAMT}):new String(" ")]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement key="line-1" x="0" y="21" width="481" height="1" forecolor="#CCCCCC"/>
+				<reportElement key="line-1" x="0" y="21" width="481" height="1" forecolor="#CCCCCC" uuid="a1f12390-4d9a-4e83-8b1b-9b612613ff6a"/>
 			</line>
 			<line>
-				<reportElement key="line-2" style="Report_Footer" x="0" y="0" width="481" height="1" forecolor="#CCCCCC"/>
+				<reportElement key="line-2" style="Report_Footer" x="0" y="0" width="481" height="1" forecolor="#CCCCCC" uuid="b080f40b-2b38-4721-ac4d-e957d0809dbe"/>
 			</line>
 		</band>
 	</detail>
