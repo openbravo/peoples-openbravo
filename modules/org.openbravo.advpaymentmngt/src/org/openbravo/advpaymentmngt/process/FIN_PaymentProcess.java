@@ -1330,7 +1330,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
    */
   private void processTransaction(String strAction, FIN_FinaccTransaction transaction)
       throws OBException {
-    FIN_TransactionProcess.doTransactionProcess(strAction, transaction, false);
+    FIN_TransactionProcess.doTransactionProcess(strAction, transaction);
   }
 
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {

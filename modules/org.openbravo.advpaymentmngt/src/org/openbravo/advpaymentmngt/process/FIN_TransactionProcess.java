@@ -90,13 +90,6 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
     ftp.transactionProcess(strAction, transaction);
   }
 
-  public static void doTransactionProcess(String strAction, FIN_FinaccTransaction transaction,
-      boolean doPeriodAvailableCheck) throws OBException {
-    FIN_TransactionProcess ftp = WeldUtils
-        .getInstanceFromStaticBeanManager(FIN_TransactionProcess.class);
-    ftp.transactionProcess(strAction, transaction);
-  }
-
   private void transactionProcess(String strAction, FIN_FinaccTransaction transaction)
       throws OBException {
     String msg = "";
