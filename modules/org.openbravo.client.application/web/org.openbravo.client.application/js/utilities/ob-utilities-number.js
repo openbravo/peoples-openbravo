@@ -424,7 +424,7 @@ OB.Utilities.Number.ScientificToDecimal = function (number, decSeparator) {
 
   number = number.toString();
   var coeficient, exponent, numberOfZeros, zeros = '',
-      i, split, index;
+      i, split, index, sign;
 
   // Look for 'e' or 'E' 
   if (number.indexOf('e') !== -1) {
@@ -453,7 +453,13 @@ OB.Utilities.Number.ScientificToDecimal = function (number, decSeparator) {
       zeros = zeros + '0';
     }
     //Create the final number
-    number = '0.' + zeros + coeficient;
+    if (coeficient.substring(0, 1) === '-') {
+      sign = '-';
+      coeficient = coeficient.substring(1, coeficient.length);
+      number = sign + '0.' + zeros + coeficient;
+    } else {
+      number = '0.' + zeros + coeficient;
+    }
   } else { // Case the number is bigger than 1
     numberOfZeros = exponent.indexOf('+') !== -1 ? exponent.substring(1, exponent.length) : exponent;
     if (split) {

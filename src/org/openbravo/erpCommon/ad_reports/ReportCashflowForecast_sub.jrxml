@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ReportCashflowForecast_sub" pageWidth="594" pageHeight="802" columnWidth="594" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ReportCashflowForecast_sub" pageWidth="594" pageHeight="802" columnWidth="594" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="bcc41716-ff64-4e71-986e-a637d1f0786d">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<import value="net.sf.jasperreports.engine.*"/>
@@ -137,7 +137,7 @@ WHERE C_SETTLEMENT_CANCEL_ID IS NULL
 	<detail>
 		<band height="16" splitType="Stretch">
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField" style="Detail_Line" x="0" y="0" width="156" height="16"/>
+				<reportElement key="textField" style="Detail_Line" x="0" y="0" width="156" height="16" uuid="953fbe46-c704-4642-bc14-21d4e2b7501f"/>
 				<box rightPadding="2">
 					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -147,10 +147,10 @@ WHERE C_SETTLEMENT_CANCEL_ID IS NULL
 				<textElement verticalAlignment="Middle">
 					<font size="6"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{BANKACCOUNT}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{BANKACCOUNT}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-1" style="Detail_Line" x="156" y="0" width="89" height="16"/>
+				<reportElement key="textField-1" style="Detail_Line" x="156" y="0" width="89" height="16" uuid="b0715211-0dfd-4a79-a3e2-6da5b2197b30"/>
 				<box rightPadding="2">
 					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -160,10 +160,10 @@ WHERE C_SETTLEMENT_CANCEL_ID IS NULL
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="6"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{INITIALBALANCE}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{INITIALBALANCE}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-2" style="Detail_Line" x="245" y="0" width="102" height="16"/>
+				<reportElement key="textField-2" style="Detail_Line" x="245" y="0" width="102" height="16" uuid="340e85b4-874f-49cf-9001-e159e94d7c6c"/>
 				<box rightPadding="2">
 					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -173,10 +173,10 @@ WHERE C_SETTLEMENT_CANCEL_ID IS NULL
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="6"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{INCOME}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{INCOME}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-3" style="Detail_Line" x="347" y="0" width="98" height="16"/>
+				<reportElement key="textField-3" style="Detail_Line" x="347" y="0" width="98" height="16" uuid="6f6f1318-876e-4945-9b4e-53ad17eedc96"/>
 				<box rightPadding="2">
 					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -186,10 +186,10 @@ WHERE C_SETTLEMENT_CANCEL_ID IS NULL
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="6"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{PAYMENT}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{PAYMENT}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-4" style="Detail_Line" x="445" y="0" width="89" height="16"/>
+				<reportElement key="textField-4" style="Detail_Line" x="445" y="0" width="89" height="16" uuid="9a5abe95-40e4-4ec2-81f9-b0c598e09f4c"/>
 				<box rightPadding="2">
 					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -199,7 +199,7 @@ WHERE C_SETTLEMENT_CANCEL_ID IS NULL
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="6"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{FINALSUMMARY}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{FINALSUMMARY}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

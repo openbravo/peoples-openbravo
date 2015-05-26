@@ -228,13 +228,19 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
 
     log4j.debug("Output: Expand subaccount details " + strAccountId);
 
-    data = ReportTrialBalanceData.selectAccountLines(this, strGroupBy, vars.getLanguage(),
-        strLevel, strOrgFamily,
-        Utility.getContext(this, vars, "#User_Client", "ReportTrialBalance"),
-        Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportTrialBalance"), null, null,
-        strDateFrom, strAccountId, strcBpartnerId, strmProductId, strcProjectId, strcAcctSchemaId,
-        (strNotInitialBalance.equals("Y") ? "O" : "P"),
-        DateTimeData.nDaysAfter(this, strDateTo, "1"));
+    data = ReportTrialBalanceData.selectLines(this, "BPartner".equals(strGroupBy) ? "C_BPARTNER"
+        : ("Product".equals(strGroupBy) ? "M_PRODUCT" : ("Project".equals(strGroupBy) ? "C_PROJECT"
+            : null)), vars.getLanguage(), strDateFrom, (strNotInitialBalance.equals("Y") ? "O"
+        : null), (strNotInitialBalance.equals("Y") ? null : "O"),
+        "BPartner".equals(strGroupBy) ? "f.c_bpartner_id"
+            : ("Product".equals(strGroupBy) ? "f.m_product_id"
+                : ("Project".equals(strGroupBy) ? "f.c_project_id" : "to_char('')")), strOrgFamily,
+        Utility.getContext(this, vars, "#User_Client", "ReportTrialBalance"), Utility.getContext(
+            this, vars, "#AccessibleOrgTree", "ReportTrialBalance"), DateTimeData.nDaysAfter(this,
+            strDateTo, "1"), strAccountId, strcBpartnerId, strmProductId, strcProjectId,
+        strcAcctSchemaId, strLevel, "BPartner".equals(strGroupBy) ? ", f.c_bpartner_id"
+            : ("Product".equals(strGroupBy) ? ", f.m_product_id"
+                : ("Project".equals(strGroupBy) ? ", f.c_project_id" : " ")), null, null);
 
     if (data == null) {
       data = ReportTrialBalanceData.set();
@@ -331,12 +337,13 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
       }
     } else {
       if (strLevel.equals("S")) { // SubAccount selected
-        data = ReportTrialBalanceData.selectAccountLines(this, "", vars.getLanguage(), strLevel,
-            strOrgFamily, Utility.getContext(this, vars, "#User_Client", "ReportTrialBalance"),
-            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportTrialBalance"),
-            strAccountFromValue, strAccountToValue, strDateFrom, null, strcBpartnerId,
-            strmProductId, strcProjectId, strcAcctSchemaId, (strNotInitialBalance.equals("Y") ? "O"
-                : "P"), DateTimeData.nDaysAfter(this, strDateTo, "1"));
+        data = ReportTrialBalanceData.selectLines(this, null, vars.getLanguage(), strDateFrom,
+            (strNotInitialBalance.equals("Y") ? "O" : null),
+            (strNotInitialBalance.equals("Y") ? null : "O"), "to_char('')", strOrgFamily, Utility
+                .getContext(this, vars, "#User_Client", "ReportTrialBalance"), Utility.getContext(
+                this, vars, "#AccessibleOrgTree", "ReportTrialBalance"), DateTimeData.nDaysAfter(
+                this, strDateTo, "1"), null, strcBpartnerId, strmProductId, strcProjectId,
+            strcAcctSchemaId, strLevel, " ", strAccountFromValue, strAccountToValue);
         if (strGroupBy.equals(""))
           discard[2] = "showExpand";
 
@@ -619,12 +626,32 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
         && !strcAcctSchemaId.equals("")) {
 
       if (strLevel.equals("S")) {
-        data = ReportTrialBalanceData.selectAccountLines(this, strGroupBy, vars.getLanguage(),
-            strLevel, strOrgFamily, Utility.getContext(this, vars, "#User_Client",
-                "ReportTrialBalance"), Utility.getContext(this, vars, "#AccessibleOrgTree",
-                "ReportTrialBalance"), strAccountFromValue, strAccountToValue, strDateFrom, null,
-            strcBpartnerId, strmProductId, strcProjectId, strcAcctSchemaId, (strNotInitialBalance
-                .equals("Y") ? "O" : "P"), DateTimeData.nDaysAfter(this, strDateTo, "1"));
+        data = ReportTrialBalanceData.selectLines(
+            this,
+            "BPartner".equals(strGroupBy) ? "C_BPARTNER"
+                : ("Product".equals(strGroupBy) ? "M_PRODUCT"
+                    : ("Project".equals(strGroupBy) ? "C_PROJECT" : null)),
+            vars.getLanguage(),
+            strDateFrom,
+            (strNotInitialBalance.equals("Y") ? "O" : null),
+            (strNotInitialBalance.equals("Y") ? null : "O"),
+            "BPartner".equals(strGroupBy) ? "f.c_bpartner_id"
+                : ("Product".equals(strGroupBy) ? "f.m_product_id"
+                    : ("Project".equals(strGroupBy) ? "f.c_project_id" : "to_char('')")),
+            strOrgFamily,
+            Utility.getContext(this, vars, "#User_Client", "ReportTrialBalance"),
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportTrialBalance"),
+            DateTimeData.nDaysAfter(this, strDateTo, "1"),
+            null,
+            strcBpartnerId,
+            strmProductId,
+            strcProjectId,
+            strcAcctSchemaId,
+            strLevel,
+            "BPartner".equals(strGroupBy) ? ", f.c_bpartner_id"
+                : ("Product".equals(strGroupBy) ? ", f.m_product_id" : ("Project"
+                    .equals(strGroupBy) ? ", f.c_project_id" : " ")), strAccountFromValue,
+            strAccountToValue);
         if (!strGroupBy.equals(""))
           strIsSubAccount = true;
 

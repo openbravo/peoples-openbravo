@@ -141,8 +141,8 @@ public class Reconciliation extends HttpSecureAppServlet {
             strSelectedTransId);
         String newStatus = "RPPC";
         if (!isChecked) {
-          newStatus = (trans.getPaymentAmount().compareTo(trans.getDepositAmount()) >= 0) ? "RDNC"
-              : "PWNC";
+          newStatus = (trans.getPaymentAmount().compareTo(trans.getDepositAmount()) >= 0) ? "PWNC"
+              : "RDNC";
           trans.setReconciliation(null);
           if (trans.getFinPayment() != null) {
             trans.getFinPayment().setStatus((trans.getFinPayment().isReceipt()) ? "RDNC" : "PWNC");

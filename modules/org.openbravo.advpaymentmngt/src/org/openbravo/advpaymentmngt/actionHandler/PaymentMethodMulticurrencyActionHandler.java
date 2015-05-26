@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -86,7 +86,8 @@ public class PaymentMethodMulticurrencyActionHandler extends BaseActionHandler {
           if (convRate != null) {
             result.put("conversionrate", convRate.getMultipleRateBy());
           } else {
-            result.put("conversionrate", 1);
+            result.put("conversionrate", "");
+            result.put("convertedamount", "");
           }
         }
         result.put("currencyToId", finAccPaymentMethod.getAccount().getCurrency().getId());

@@ -8,7 +8,7 @@
  * either express or implied. See the License for the specific language
  * governing rights and limitations under the License. The Original Code is
  * Openbravo ERP. The Initial Developer of the Original Code is Openbravo SLU All
- * portions are Copyright (C) 2008-2014 Openbravo SLU All Rights Reserved.
+ * portions are Copyright (C) 2008-2015 Openbravo SLU All Rights Reserved.
  * Contributor(s): ______________________________________.
  */
 package org.openbravo.erpCommon.utility.reporting.printing;
@@ -28,8 +28,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 import java.util.Map.Entry;
+import java.util.Vector;
 import java.util.regex.Matcher;
 
 import javax.servlet.ServletConfig;
@@ -39,7 +39,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperPrint;
 
 import org.apache.commons.fileupload.FileItem;
@@ -49,6 +48,8 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.client.application.report.ReportingUtils;
+import org.openbravo.client.application.report.ReportingUtils.ExportType;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -61,11 +62,11 @@ import org.openbravo.erpCommon.utility.poc.EmailManager;
 import org.openbravo.erpCommon.utility.poc.EmailType;
 import org.openbravo.erpCommon.utility.reporting.DocumentType;
 import org.openbravo.erpCommon.utility.reporting.Report;
+import org.openbravo.erpCommon.utility.reporting.Report.OutputTypeEnum;
 import org.openbravo.erpCommon.utility.reporting.ReportManager;
 import org.openbravo.erpCommon.utility.reporting.ReportingException;
 import org.openbravo.erpCommon.utility.reporting.TemplateData;
 import org.openbravo.erpCommon.utility.reporting.TemplateInfo;
-import org.openbravo.erpCommon.utility.reporting.Report.OutputTypeEnum;
 import org.openbravo.erpCommon.utility.reporting.TemplateInfo.EmailDefinition;
 import org.openbravo.exception.NoConnectionAvailableException;
 import org.openbravo.model.ad.system.Language;
@@ -75,11 +76,6 @@ import org.openbravo.model.common.enterprise.EmailTemplate;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
-
-import com.lowagie.text.Document;
-import com.lowagie.text.pdf.PdfCopy;
-import com.lowagie.text.pdf.PdfImportedPage;
-import com.lowagie.text.pdf.PdfReader;
 
 @SuppressWarnings("serial")
 public class PrintController extends HttpSecureAppServlet {
@@ -240,6 +236,8 @@ public class PrintController extends HttpSecureAppServlet {
          */
         archivedReports = true;
         Report report = null;
+        JasperPrint jasperPrint = null;
+        Collection<JasperPrint> jrPrintReports = new ArrayList<JasperPrint>();
         final Collection<Report> savedReports = new ArrayList<Report>();
         for (int index = 0; index < documentIds.length; index++) {
           String documentId = documentIds[index];
@@ -247,14 +245,15 @@ public class PrintController extends HttpSecureAppServlet {
               OutputTypeEnum.ARCHIVE);
           buildReport(response, vars, documentId, reports, reportManager);
           try {
-            reportManager.processReport(report, vars);
+            jasperPrint = reportManager.processReport(report, vars);
+            jrPrintReports.add(jasperPrint);
           } catch (final ReportingException e) {
             log4j.error(e);
           }
           reportManager.saveTempReport(report, vars);
           savedReports.add(report);
         }
-        printReports(response, null, savedReports);
+        printReports(response, jrPrintReports, savedReports);
       } else {
         if (vars.commandIn("DEFAULT")) {
 
@@ -361,9 +360,8 @@ public class PrintController extends HttpSecureAppServlet {
             }
 
             if (report == null)
-              throw new ServletException(Utility
-                  .messageBD(this, "NoDataReport", vars.getLanguage())
-                  + documentId);
+              throw new ServletException(
+                  Utility.messageBD(this, "NoDataReport", vars.getLanguage()) + documentId);
             // Check if the document is not in status 'draft'
             if (!report.isDraft()) {
               // Check if the report is already attached
@@ -390,8 +388,9 @@ public class PrintController extends HttpSecureAppServlet {
                   log4j.debug("Document is not attached.");
               }
               final String senderAddress = vars.getStringParameter("fromEmail");
-              sendDocumentEmail(report, vars, (Vector<Object>) request.getSession().getAttribute(
-                  "files"), documentData, senderAddress, checks, documentType);
+              sendDocumentEmail(report, vars,
+                  (Vector<Object>) request.getSession().getAttribute("files"), documentData,
+                  senderAddress, checks, documentType);
               nrOfEmailsSend++;
             }
           }
@@ -464,8 +463,8 @@ public class PrintController extends HttpSecureAppServlet {
       // Catching the exception here instead of throwing it to HSAS because this is used in multi
       // part request making the mechanism to detect popup not to work.
       log4j.error("Error captured: ", e);
-      bdErrorGeneralPopUp(request, response, "Error", Utility.translateError(this, vars,
-          vars.getLanguage(), e.getMessage()).getMessage());
+      bdErrorGeneralPopUp(request, response, "Error",
+          Utility.translateError(this, vars, vars.getLanguage(), e.getMessage()).getMessage());
     }
   }
 
@@ -478,21 +477,17 @@ public class PrintController extends HttpSecureAppServlet {
       response.setContentType("application/pdf");
 
       if (!multiReports && !archivedReports) {
-        for (Iterator<Report> iterator = reports.iterator(); iterator.hasNext();) {
-          Report report = iterator.next();
+        for (Report report : reports) {
           filename = report.getFilename();
         }
         response.setHeader("Content-disposition", "attachment" + "; filename=" + filename);
-        for (Iterator<JasperPrint> iterator = jrPrintReports.iterator(); iterator.hasNext();) {
-          JasperPrint jasperPrint = (JasperPrint) iterator.next();
-          JasperExportManager.exportReportToPdfStream(jasperPrint, os);
+        for (JasperPrint jasperPrint : jrPrintReports) {
+          ReportingUtils.saveReport(jasperPrint, ExportType.PDF, null, os);
         }
       } else {
-        response.setContentType("application/pdf");
-        concatReport(reports.toArray(new Report[] {}), response);
+        concatReport(reports.toArray(new Report[] {}), jrPrintReports, response);
       }
-      for (Iterator<Report> iterator = reports.iterator(); iterator.hasNext();) {
-        Report report = iterator.next();
+      for (Report report : reports) {
         switch (report.getDocumentType()) {
         case SALESORDER:
           PrintControllerData.updateOrderDatePrinted(this, report.getDocumentId());
@@ -512,81 +507,42 @@ public class PrintController extends HttpSecureAppServlet {
         response.flushBuffer();
       } catch (IOException e) {
         log4j.error(e.getMessage(), e);
+      } finally {
+        try {
+          for (Report report : reports) {
+            // Delete temporal reports generated for the returned report in case they have been
+            // attached also
+            File file = new File(report.getTargetLocation());
+            if (file.exists() && !file.isDirectory()) {
+              file.delete();
+            }
+          }
+        } catch (IOException e) {
+          log4j.error("Error deleting temporal reports", e);
+        }
       }
     }
   }
 
-  /*
-   * This method is base on code originally created by Mark Thompson (Concatenate.java) and
-   * distributed under the following conditions.
-   * 
-   * $Id: Concatenate.java 3373 2008-05-12 16:21:24Z xlv $
-   * 
-   * This code is free software. It may only be copied or modified if you include the following
-   * copyright notice:
-   * 
-   * This class by Mark Thompson. Copyright (c) 2002 Mark Thompson.
-   * 
-   * This code is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
-   * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-   */
-  private void concatReport(Report[] reports, HttpServletResponse response) {
+  private void concatReport(Report[] reports, Collection<JasperPrint> jrPrintReports,
+      HttpServletResponse response) {
     try {
-      int pageOffset = 0;
-      // ArrayList master = new ArrayList();
-      int f = 0;
       String filename = "";
-      Report outFile = null;
-      if (reports.length == 1)
+      boolean createBookmarks = true;
+      if (reports.length == 1) {
         filename = reports[0].getFilename();
-      Document document = null;
-      PdfCopy writer = null;
-      while (f < reports.length) {
-        if (filename == null || filename.equals("")) {
-          outFile = reports[f];
-          if (multiReports) {
-            filename = outFile.getTemplateInfo().getReportFilename();
-            filename = filename.replaceAll("@our_ref@", "");
-            filename = filename.replaceAll("@cus_ref@", "");
-            filename = filename.replaceAll(" ", "_");
-            filename = filename.replaceAll("-", "");
-            filename = filename + ".pdf";
-          } else {
-            filename = outFile.getFilename();
-          }
-        }
-        response.setHeader("Content-disposition", "attachment" + "; filename=" + filename);
-        // we create a reader for a certain document
-        PdfReader reader = new PdfReader(reports[f].getTargetLocation());
-        reader.consolidateNamedDestinations();
-        // we retrieve the total number of pages
-        int n = reader.getNumberOfPages();
-        pageOffset += n;
-
-        if (f == 0) {
-          // step 1: creation of a document-object
-          document = new Document(reader.getPageSizeWithRotation(1));
-          // step 2: we create a writer that listens to the document
-          writer = new PdfCopy(document, response.getOutputStream());
-          // step 3: we open the document
-          document.open();
-        }
-        // step 4: we add content
-        PdfImportedPage page;
-        for (int i = 0; i < n;) {
-          ++i;
-          page = writer.getImportedPage(reader, i);
-          writer.addPage(page);
-        }
-        if (reports[f].isDeleteable()) {
-          File file = new File(reports[f].getTargetLocation());
-          if (file.exists() && !file.isDirectory()) {
-            file.delete();
-          }
-        }
-        f++;
+        createBookmarks = false;
+      } else if (reports.length > 1) {
+        filename = reports[0].getTemplateInfo().getReportFilename();
+        filename = filename.replaceAll("@our_ref@", "");
+        filename = filename.replaceAll("@cus_ref@", "");
+        filename = filename.replaceAll(" ", "_");
+        filename = filename.replaceAll("-", "");
+        filename = filename + ".pdf";
       }
-      document.close();
+      response.setHeader("Content-disposition", "attachment" + "; filename=" + filename);
+      ReportingUtils.concatPDFReport(new ArrayList<JasperPrint>(jrPrintReports), createBookmarks,
+          response.getOutputStream());
     } catch (Exception e) {
       log4j.error(e);
     }
@@ -684,6 +640,8 @@ public class PrintController extends HttpSecureAppServlet {
       return PocData.getContactDetailsForOrders(this, strDocumentId);
     case PAYMENT:
       return PocData.getContactDetailsForPayments(this, strDocumentId);
+    case UNKNOWN:
+      return null;
     }
     return null;
   }
@@ -750,14 +708,14 @@ public class PrintController extends HttpSecureAppServlet {
     emailSubject = emailSubject.replaceAll("@sal_nam@", Matcher.quoteReplacement(replyToName));
     emailSubject = emailSubject
         .replaceAll("@bp_nam@", Matcher.quoteReplacement(report.getBPName()));
-    emailSubject = emailSubject.replaceAll("@doc_date@", Matcher.quoteReplacement(report
-        .getDocDate()));
-    emailSubject = emailSubject.replaceAll("@doc_nextduedate@", Matcher.quoteReplacement(report
-        .getMinDueDate()));
-    emailSubject = emailSubject.replaceAll("@doc_lastduedate@", Matcher.quoteReplacement(report
-        .getMaxDueDate()));
-    emailSubject = emailSubject.replaceAll("@doc_desc@", Matcher.quoteReplacement(report
-        .getDocDescription()));
+    emailSubject = emailSubject.replaceAll("@doc_date@",
+        Matcher.quoteReplacement(report.getDocDate()));
+    emailSubject = emailSubject.replaceAll("@doc_nextduedate@",
+        Matcher.quoteReplacement(report.getMinDueDate()));
+    emailSubject = emailSubject.replaceAll("@doc_lastduedate@",
+        Matcher.quoteReplacement(report.getMaxDueDate()));
+    emailSubject = emailSubject.replaceAll("@doc_desc@",
+        Matcher.quoteReplacement(report.getDocDescription()));
 
     emailBody = emailBody.replaceAll("@cus_ref@", Matcher.quoteReplacement(cusReference));
     emailBody = emailBody.replaceAll("@our_ref@", Matcher.quoteReplacement(ourReference));
@@ -765,12 +723,12 @@ public class PrintController extends HttpSecureAppServlet {
     emailBody = emailBody.replaceAll("@sal_nam@", Matcher.quoteReplacement(replyToName));
     emailBody = emailBody.replaceAll("@bp_nam@", Matcher.quoteReplacement(report.getBPName()));
     emailBody = emailBody.replaceAll("@doc_date@", Matcher.quoteReplacement(report.getDocDate()));
-    emailBody = emailBody.replaceAll("@doc_nextduedate@", Matcher.quoteReplacement(report
-        .getMinDueDate()));
-    emailBody = emailBody.replaceAll("@doc_lastduedate@", Matcher.quoteReplacement(report
-        .getMaxDueDate()));
-    emailBody = emailBody.replaceAll("@doc_desc@", Matcher.quoteReplacement(report
-        .getDocDescription()));
+    emailBody = emailBody.replaceAll("@doc_nextduedate@",
+        Matcher.quoteReplacement(report.getMinDueDate()));
+    emailBody = emailBody.replaceAll("@doc_lastduedate@",
+        Matcher.quoteReplacement(report.getMaxDueDate()));
+    emailBody = emailBody.replaceAll("@doc_desc@",
+        Matcher.quoteReplacement(report.getDocDescription()));
 
     String host = null;
     boolean auth = true;
@@ -833,6 +791,13 @@ public class PrintController extends HttpSecureAppServlet {
       String exceptionString = "Problems while sending the email" + exception;
       exceptionString = exceptionString.replace(exceptionClass, "");
       throw new ServletException(exceptionString);
+    } finally {
+      // Delete the temporary files generated for the email attachments
+      for (File attachment : attachments) {
+        if (attachment.exists() && !attachment.isDirectory()) {
+          attachment.delete();
+        }
+      }
     }
 
     // Store the email in the database
@@ -845,11 +810,12 @@ public class PrintController extends HttpSecureAppServlet {
       if (log4j.isDebugEnabled())
         log4j.debug("New email id: " + newEmailId);
 
-      EmailData.insertEmail(conn, this, newEmailId, vars.getClient(), report.getOrgId(), vars
-          .getUser(), EmailType.OUTGOING.getStringValue(), replyTo, recipientTO, recipientCC,
+      EmailData.insertEmail(conn, this, newEmailId, vars.getClient(), report.getOrgId(),
+          vars.getUser(), EmailType.OUTGOING.getStringValue(), replyTo, recipientTO, recipientCC,
           recipientBCC, Utility.formatDate(new Date(), "yyyyMMddHHmmss"), emailSubject, emailBody,
-          report.getBPartnerId(), ToolsData.getTableId(this, report.getDocumentType()
-              .getTableName()), documentData.documentId);
+          report.getBPartnerId(),
+          ToolsData.getTableId(this, report.getDocumentType().getTableName()),
+          documentData.documentId);
 
       releaseCommitConnection(conn);
     } catch (final NoConnectionAvailableException exception) {

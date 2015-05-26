@@ -40,6 +40,7 @@ import org.openbravo.test.security.AllowedOrganizationsTest;
 import org.openbravo.test.security.EntityAccessTest;
 import org.openbravo.test.security.WritableReadableOrganizationClientTest;
 import org.openbravo.test.system.ErrorTextParserTest;
+import org.openbravo.test.system.Issue29934Test;
 import org.openbravo.test.system.SystemServiceTest;
 import org.openbravo.test.system.SystemValidatorTest;
 import org.openbravo.test.system.TestInfrastructure;
@@ -91,6 +92,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     SystemValidatorTest.class, //
     ErrorTextParserTest.class, //
     TestInfrastructure.class, //
+    Issue29934Test.class, //
 
     // xml
     EntityXMLImportTestBusinessObject.class, //

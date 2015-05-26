@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Business Momentum b.v.
- * All portions are Copyright (C) 2007-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2007-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  Business Momentum b.v. (http://www.businessmomentum.eu).
  *************************************************************************
@@ -21,30 +21,21 @@ package org.openbravo.erpCommon.utility.reporting;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Locale;
 
 import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JRParameter;
-import net.sf.jasperreports.engine.JasperExportManager;
-import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.design.JRDesignParameter;
-import net.sf.jasperreports.engine.design.JasperDesign;
-import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.client.application.report.ReportingUtils;
+import org.openbravo.client.application.report.ReportingUtils.ExportType;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.TabAttachments;
 import org.openbravo.erpCommon.businessUtility.TabAttachmentsData;
-import org.openbravo.erpCommon.utility.JRFormatFactory;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.utils.Replace;
@@ -87,7 +78,6 @@ public class ReportManager {
     setTargetDirectory(report);
     language = variables.getLanguage();
     final String baseDesignPath = _prefix + "/" + _strBaseDesignPath + "/" + _strDefaultDesignPath;
-    final Locale locale = new Locale(language.substring(0, 2), language.substring(3, 5));
 
     String templateLocation = report.getTemplateInfo().getTemplateLocation();
     templateLocation = Replace.replace(
@@ -100,56 +90,21 @@ public class ReportManager {
     designParameters.put("TEMPLATE_LOCATION", templateLocation);
     JasperPrint jasperPrint = null;
 
+    String salesOrder = report.getCheckSalesOrder();
+    if (salesOrder != null && salesOrder.equals("Y")) {
+      designParameters.put(
+          "DOCUMENT_NAME",
+          Utility.messageBD(_connectionProvider, "Sales", language) + " "
+              + Utility.messageBD(_connectionProvider, "Invoice", language));
+    } else {
+      designParameters.put(
+          "DOCUMENT_NAME",
+          Utility.messageBD(_connectionProvider, "Purchase", language) + " "
+              + Utility.messageBD(_connectionProvider, "Invoice", language));
+    }
     try {
-      JasperDesign jasperDesign = JRXmlLoader.load(templateFile);
-
-      Object[] parameters = jasperDesign.getParametersList().toArray();
-      String parameterName = "";
-      String subReportName = "";
-      Collection<String> subreportList = new ArrayList<String>();
-
-      /*
-       * TODO: At present this process assumes the subreport is a .jrxml file. Need to handle the
-       * possibility that this subreport file could be a .jasper file.
-       */
-      for (int i = 0; i < parameters.length; i++) {
-        final JRDesignParameter parameter = (JRDesignParameter) parameters[i];
-        if (parameter.getName().startsWith("SUBREP_")) {
-          parameterName = parameter.getName();
-          subreportList.add(parameterName);
-          subReportName = Replace.replace(parameterName, "SUBREP_", "") + ".jrxml";
-          JasperReport jasperReportLines = createSubReport(templateLocation, subReportName,
-              baseDesignPath);
-          designParameters.put(parameterName, jasperReportLines);
-        }
-      }
-
-      JasperReport jasperReport = Utility.getTranslatedJasperReport(_connectionProvider,
-          templateFile, language, baseDesignPath);
-
-      if (log4j.isDebugEnabled())
-        log4j.debug("creating the format factory: " + variables.getJavaDateFormat());
-      JRFormatFactory jrFormatFactory = new JRFormatFactory();
-      jrFormatFactory.setDatePattern(variables.getJavaDateFormat());
-      designParameters.put(JRParameter.REPORT_FORMAT_FACTORY, jrFormatFactory);
-      String salesOrder = report.getCheckSalesOrder();
-      if (salesOrder != null && salesOrder.equals("Y")) {
-        designParameters.put(
-            "DOCUMENT_NAME",
-            Utility.messageBD(_connectionProvider, "Sales", language) + " "
-                + Utility.messageBD(_connectionProvider, "Invoice", language));
-      } else {
-        designParameters.put(
-            "DOCUMENT_NAME",
-            Utility.messageBD(_connectionProvider, "Purchase", language) + " "
-                + Utility.messageBD(_connectionProvider, "Invoice", language));
-      }
-      jasperPrint = fillReport(designParameters, jasperReport);
-
-    } catch (final JRException exception) {
-      log4j.error(exception.getMessage());
-      exception.printStackTrace();
-      throw new ReportingException(exception);
+      jasperPrint = ReportingUtils.generateJasperPrint(templateFile, designParameters, true,
+          _connectionProvider, null);
     } catch (final Exception exception) {
       log4j.error(exception.getMessage());
       exception.getStackTrace();
@@ -192,41 +147,10 @@ public class ReportManager {
     }
     final String target = report.getTargetDirectory() + separator + report.getFilename();
     try {
-      JasperExportManager.exportReportToPdfFile(jasperPrint, target);
+      ReportingUtils.saveReport(jasperPrint, ExportType.PDF, null, new File(target));
     } catch (final JRException e) {
       e.printStackTrace();
     }
-  }
-
-  private JasperPrint fillReport(HashMap<String, Object> designParameters, JasperReport jasperReport)
-      throws ReportingException, SQLException {
-    JasperPrint jasperPrint = null;
-
-    Connection con = null;
-    try {
-      con = _connectionProvider.getTransactionConnection();
-      jasperPrint = JasperFillManager.fillReport(jasperReport, designParameters, con);
-    } catch (final Exception e) {
-      log4j.error(e.getMessage());
-      e.printStackTrace();
-      throw new ReportingException(e.getMessage());
-    } finally {
-      _connectionProvider.releaseRollbackConnection(con);
-    }
-    return jasperPrint;
-  }
-
-  private JasperReport createSubReport(String templateLocation, String subReportFileName,
-      String baseDesignPath) {
-    JasperReport jasperReportLines = null;
-    try {
-      jasperReportLines = Utility.getTranslatedJasperReport(_connectionProvider, templateLocation
-          + subReportFileName, language, baseDesignPath);
-    } catch (final JRException e1) {
-      log4j.error(e1.getMessage());
-      e1.printStackTrace();
-    }
-    return jasperReportLines;
   }
 
   public File createAttachmentForReport(ConnectionProvider connectionProvider, Report report,
