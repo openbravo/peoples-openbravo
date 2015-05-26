@@ -137,6 +137,7 @@ public class AttachImplementationManager {
       }
       handler.uploadFile(attachment, strDataType, parameters, file, strTab);
 
+      saveAttachText(attachment, parameters);
       ParameterUtils.saveMetadata(attachment, parameters, attachmentExists);
 
       OBDal.getInstance().flush();
@@ -197,6 +198,7 @@ public class AttachImplementationManager {
       }
       handler.updateFile(attachment, tabId, parameters);
       OBDal.getInstance().save(attachment);
+      saveAttachText(attachment, parameters);
       ParameterUtils.saveMetadata(attachment, parameters, true);
       OBDal.getInstance().flush();
     } finally {
@@ -497,4 +499,15 @@ public class AttachImplementationManager {
     }
   }
 
+  private void saveAttachText(Attachment attachment, Map<String, String> parameters) {
+    // Add fixed parameters text to attachment Text value
+    String attachmentText = "";
+    for (Map.Entry<String, String> entry : parameters.entrySet()) {
+      final Parameter parameter = OBDal.getInstance().get(Parameter.class, entry.getKey());
+      if (parameter.isShowInDescription()) {
+        attachmentText += entry.getValue() + "   ";
+      }
+    }
+    attachment.setText(attachmentText.trim());
+  }
 }
