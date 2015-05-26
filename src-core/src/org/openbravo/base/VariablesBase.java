@@ -14,8 +14,10 @@ package org.openbravo.base;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -50,6 +52,8 @@ public class VariablesBase {
   private final String DEFAULT_FORMAT_NAME = "qtyEdition";
 
   static Logger log4j = Logger.getLogger(VariablesBase.class);
+
+  private Map<String, Object> sessionAttributes = new HashMap<String, Object>();
 
   /**
    * Default empty constructor
@@ -1328,7 +1332,11 @@ public class VariablesBase {
   public String getSessionValue(String sessionAttribute, String defaultValue) {
     String auxStr = null;
     try {
-      auxStr = (String) session.getAttribute(sessionAttribute.toUpperCase());
+      if (session != null) {
+        auxStr = (String) session.getAttribute(sessionAttribute.toUpperCase());
+      } else {
+        auxStr = (String) sessionAttributes.get(sessionAttribute.toUpperCase());
+      }
       if (auxStr == null || auxStr.trim().equals(""))
         auxStr = defaultValue;
     } catch (Exception e) {
@@ -1350,7 +1358,11 @@ public class VariablesBase {
    */
   public void setSessionValue(String attribute, String value) {
     try {
-      session.setAttribute(attribute.toUpperCase(), value);
+      if (session != null) {
+        session.setAttribute(attribute.toUpperCase(), value);
+      } else {
+        sessionAttributes.put(attribute.toUpperCase(), value);
+      }
       if (!attribute.equalsIgnoreCase("menuVertical"))
         if (log4j.isDebugEnabled())
           log4j.debug("Set session attribute: " + attribute + ":..." + value.toString());
@@ -1371,7 +1383,11 @@ public class VariablesBase {
     try {
       if (log4j.isDebugEnabled())
         log4j.debug("Remove session attribute: " + attribute + ":..." + getSessionValue(attribute));
-      session.removeAttribute(attribute.toUpperCase());
+      if (session != null) {
+        session.removeAttribute(attribute.toUpperCase());
+      } else {
+        sessionAttributes.remove(attribute.toUpperCase());
+      }
     } catch (Exception e) {
       log4j.error("removeSessionValue error: " + attribute);
     }
@@ -1387,7 +1403,11 @@ public class VariablesBase {
   public Object getSessionObject(String sessionAttribute) {
     Object auxStr = null;
     try {
-      auxStr = (Object) session.getAttribute(sessionAttribute.toUpperCase());
+      if (session != null) {
+        auxStr = (Object) session.getAttribute(sessionAttribute.toUpperCase());
+      } else {
+        auxStr = (Object) sessionAttributes.get(sessionAttribute.toUpperCase());
+      }
     } catch (Exception e) {
       auxStr = null;
     }
@@ -1404,7 +1424,11 @@ public class VariablesBase {
    */
   public void setSessionObject(String attribute, Object value) {
     try {
-      session.setAttribute(attribute.toUpperCase(), value);
+      if (session != null) {
+        session.setAttribute(attribute.toUpperCase(), value);
+      } else {
+        sessionAttributes.put(attribute.toUpperCase(), value);
+      }
     } catch (Exception e) {
       log4j.error("setSessionObject error: " + attribute + ":..." + e);
     }
@@ -1423,29 +1447,52 @@ public class VariablesBase {
     String target = "";
     String targetQueryString = null;
     try {
-      String sessionName;
-      Enumeration<?> e = session.getAttributeNames();
-      while (e.hasMoreElements()) {
-        sessionName = (String) e.nextElement();
-        if (log4j.isDebugEnabled())
-          log4j.debug("  session name: " + sessionName);
-        if (!all && sessionName.equalsIgnoreCase("target")) {
-          target = (String) session.getAttribute(sessionName);
+      if (session != null) {
+        String sessionName;
+        Enumeration<?> e = session.getAttributeNames();
+        while (e.hasMoreElements()) {
+          sessionName = (String) e.nextElement();
+          if (log4j.isDebugEnabled())
+            log4j.debug("  session name: " + sessionName);
+          if (!all && sessionName.equalsIgnoreCase("target")) {
+            target = (String) session.getAttribute(sessionName);
+          }
+          if (!all && sessionName.equalsIgnoreCase("targetQueryString")) {
+            targetQueryString = (String) session.getAttribute(sessionName);
+          }
+          session.removeAttribute(sessionName);
+          e = session.getAttributeNames();
         }
-        if (!all && sessionName.equalsIgnoreCase("targetQueryString")) {
-          targetQueryString = (String) session.getAttribute(sessionName);
+      } else {
+        for (String key : sessionAttributes.keySet()) {
+          if (log4j.isDebugEnabled())
+            log4j.debug("  session name: " + key);
+          if (!all && key.equalsIgnoreCase("target")) {
+            target = (String) sessionAttributes.get(key);
+          }
+          if (!all && key.equalsIgnoreCase("targetQueryString")) {
+            targetQueryString = (String) sessionAttributes.get(key);
+          }
         }
-        session.removeAttribute(sessionName);
-        e = session.getAttributeNames();
+        sessionAttributes.clear();
       }
     } catch (Exception e) {
       log4j.error("clearSession error " + e);
     }
-    if (!target.equals("")) {
-      session.setAttribute("TARGET", target);
-    }
-    if (targetQueryString != null) {
-      session.setAttribute("TARGETQUERYSTRING", targetQueryString);
+    if (session != null) {
+      if (!target.equals("")) {
+        session.setAttribute("TARGET", target);
+      }
+      if (targetQueryString != null) {
+        session.setAttribute("TARGETQUERYSTRING", targetQueryString);
+      }
+    } else {
+      if (!target.equals("")) {
+        sessionAttributes.put("TARGET", target);
+      }
+      if (targetQueryString != null) {
+        sessionAttributes.put("TARGETQUERYSTRING", targetQueryString);
+      }
     }
   }
 
