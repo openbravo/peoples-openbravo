@@ -71,10 +71,9 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
           });
         });
       }, null, this);
-    };
+    }
 
-
-    if (OB.POS.modelterminal.get('terminal').ismaster) {
+    function loadSlaveCashup(callback) {
       // Load current cashup info from slaves
       new OB.DS.Process('org.openbravo.retail.posterminal.ProcessCashMgmtMaster').exec({
         cashUpId: OB.POS.modelterminal.get('terminal').cashUpId,
@@ -83,11 +82,28 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
         if (data && data.exception) {
           // Error handler 
           OB.log('error', data.exception.message);
-          OB.UTIL.showAlert.display(data.exception.message, OB.I18N.getLabel('OBMOBC_LblError'), 'alert-error', false);
+          OB.UTIL.showConfirmation.display(
+          OB.I18N.getLabel('OBPOS_CashMgmtError'), OB.I18N.getLabel('OBPOS_ErrorServerGeneric') + data.exception.message, [{
+            label: OB.I18N.getLabel('OBPOS_LblRetry'),
+            action: function () {
+              loadSlaveCashup(callback);
+            }
+          }], {
+            autoDismiss: false,
+            onHideFunction: function () {
+              OB.POS.navigate('retail.pointofsale');
+            }
+          });
         } else {
-          slavePayments = data;
-          loadCashup();
+          callback(data);
         }
+      });
+    }
+
+    if (OB.POS.modelterminal.get('terminal').ismaster) {
+      loadSlaveCashup(function (data) {
+        slavePayments = data;
+        loadCashup();
       });
     } else {
       // Load terminal cashup info (without slaves info)

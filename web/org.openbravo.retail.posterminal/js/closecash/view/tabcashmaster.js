@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global enyo, $ */
+/*global enyo, Backbone, _ */
 
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.RenderCashMasterLine',
@@ -20,10 +20,10 @@ enyo.kind({
         style: 'float: left; display:table; width: 100%; ',
         components: [{
           style: 'padding: 10px 10px 10px 10px; display: table-cell; width: 70%;',
-          name: 'name',
+          name: 'name'
         }, {
           style: 'padding: 10px 10px 10px 0px; display: table-cell; width: 30%; ',
-          name: 'cashUp',
+          name: 'cashUp'
         }]
       }]
     }]
@@ -95,10 +95,8 @@ enyo.kind({
   }],
 
   displayStep: function (model) {
-    // this function is invoked when displayed.   
-    var me = this;
-    this.$.stepsheader.renderHeader(model.stepNumber('OB.CashUp.Master'), model.stepCount());
-    if (!model.get('slavesCashupCompleted')) {
+
+    function processCashCloseMaster(callback) {
       new OB.DS.Process('org.openbravo.retail.posterminal.ProcessCashCloseMaster').exec({
         masterterminal: OB.POS.modelterminal.get('terminal').id,
         cashUpId: OB.POS.modelterminal.get('terminal').cashUpId
@@ -106,16 +104,36 @@ enyo.kind({
         if (data && data.exception) {
           // Error handler 
           OB.log('error', data.exception.message);
-          OB.UTIL.showAlert.display(data.exception.message, OB.I18N.getLabel('OBMOBC_LblError'), 'alert-error', false);
+          OB.UTIL.showConfirmation.display(
+          OB.I18N.getLabel('OBPOS_CashMgmtError'), OB.I18N.getLabel('OBPOS_ErrorServerGeneric') + data.exception.message, [{
+            label: OB.I18N.getLabel('OBPOS_LblRetry'),
+            action: function () {
+              processCashCloseMaster(callback);
+            }
+          }], {
+            autoDismiss: false,
+            onHideFunction: function () {
+              OB.POS.navigate('retail.pointofsale');
+            }
+          });
         } else {
-          var col = new Backbone.Collection();
-          col.add(data.terminals);
-          me.$.slaveList.setCollection(col);
-          if (data.finishAll) {
-            me.updateCashUpModel(model, data.payments);
-          }
-          model.set('slavesCashupCompleted', data.finishAll);
+          callback(data);
         }
+      });
+    }
+
+    // this function is invoked when displayed.   
+    var me = this;
+    this.$.stepsheader.renderHeader(model.stepNumber('OB.CashUp.Master'), model.stepCount());
+    if (!model.get('slavesCashupCompleted')) {
+      processCashCloseMaster(function (data) {
+        var col = new Backbone.Collection();
+        col.add(data.terminals);
+        me.$.slaveList.setCollection(col);
+        if (data.finishAll) {
+          me.updateCashUpModel(model, data.payments);
+        }
+        model.set('slavesCashupCompleted', data.finishAll);
       });
     }
   },
@@ -131,8 +149,8 @@ enyo.kind({
           item.set('totalDrops', OB.DEC.add(item.get('totalDrops'), payment.totalDrops));
           item.set('totalReturns', OB.DEC.add(item.get('totalReturns'), payment.totalReturns));
           item.set('totalSales', OB.DEC.add(item.get('totalSales'), payment.totalSales));
-          var cTotalDeposits = OB.DEC.sub(item.get('totalDeposits'), OB.DEC.abs(item.get('totalDrops')));
-          expected = OB.DEC.add(OB.DEC.add(item.get('startingCash'), OB.DEC.sub(item.get('totalSales'), OB.DEC.abs(item.get('totalReturns')))), cTotalDeposits);
+          var cTotalDeposits = OB.DEC.sub(item.get('totalDeposits'), OB.DEC.abs(item.get('totalDrops'))),
+              expected = OB.DEC.add(OB.DEC.add(item.get('startingCash'), OB.DEC.sub(item.get('totalSales'), OB.DEC.abs(item.get('totalReturns')))), cTotalDeposits);
           var fromCurrencyId = item.get('paymentMethod').currency;
           item.set('expected', OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, expected));
           item.set('foreignExpected', expected);

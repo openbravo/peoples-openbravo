@@ -122,7 +122,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
             var cTotalReturns = auxPay.get('totalReturns');
             var cTotalSales = auxPay.get('totalSales');
             var cTotalDeposits = OB.DEC.sub(auxPay.get('totalDeposits'), OB.DEC.abs(auxPay.get('totalDrops')));
-          expected = OB.DEC.add(OB.DEC.add(cStartingCash, OB.DEC.sub(cTotalSales, cTotalReturns)), cTotalDeposits);
+            expected = OB.DEC.add(OB.DEC.add(cStartingCash, OB.DEC.sub(cTotalSales, cTotalReturns)), cTotalDeposits);
             var fromCurrencyId = auxPay.get('paymentMethod').currency;
             auxPay.set('expected', OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, expected));
             auxPay.set('foreignExpected', expected);
@@ -633,7 +633,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
     }, function (cashUp) {
       OB.UTIL.composeCashupInfo(cashUp, currentMe, function (me) {
         var i, paymentMethodInfo, objToSend = JSON.parse(cashUp.at(0).get('objToSend'));
-        objToSend.cashUpDate = me.get('cashUpReport').at(0).get('time');
+        objToSend.cashUpDate = new Date();
         objToSend.currentDate = OB.I18N.formatDate(new Date());
         for (i = 0; i < me.additionalProperties.length; i++) {
           objToSend[me.additionalProperties[i]] = me.propertyFunctions[i](OB.POS.modelterminal.get('terminal').id, cashUp.at(0));

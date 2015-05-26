@@ -8,6 +8,7 @@
  */
 package org.openbravo.retail.posterminal;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -56,13 +57,10 @@ public class ProcessCashCloseMaster extends JSONProcessSimple {
     if (finishAll) {
       JSONArray payments = new JSONArray();
       data.put("payments", payments);
-      String cashUpIds = "";
+      List<String> cashUpIds = new ArrayList<String>();
       for (int i = 0; i < terminals.length(); i++) {
         JSONObject terminal = terminals.getJSONObject(i);
-        if (i != 0) {
-          cashUpIds += ", ";
-        }
-        cashUpIds += "'" + terminal.getString("cashUpId") + "'";
+        cashUpIds.add(terminal.getString("cashUpId"));
       }
       addPaymentmethodCashup(payments, cashUpIds);
     }
@@ -99,7 +97,7 @@ public class ProcessCashCloseMaster extends JSONProcessSimple {
    *          Cash up ids. with IN format
    * @throws JSONException
    */
-  public static void addPaymentmethodCashup(JSONArray payments, String cashUpIds)
+  public static void addPaymentmethodCashup(JSONArray payments, List<String> cashUpIds)
       throws JSONException {
     String query = "select " + OBPOSPaymentMethodCashup.PROPERTY_SEARCHKEY + ", sum("
         + OBPOSPaymentMethodCashup.PROPERTY_STARTINGCASH + "), sum("
@@ -108,10 +106,11 @@ public class ProcessCashCloseMaster extends JSONProcessSimple {
         + OBPOSPaymentMethodCashup.PROPERTY_TOTALRETURNS + "), sum("
         + OBPOSPaymentMethodCashup.PROPERTY_TOTALSALES + "), sum( "
         + OBPOSPaymentMethodCashup.PROPERTY_AMOUNTTOKEEP + ") " + "from OBPOS_Paymentmethodcashup "
-        + "where cashUp.id in (" + cashUpIds + ") and paymentType.paymentMethod.isshared = 'Y'"
+        + "where cashUp.id in :cashUpIds and paymentType.paymentMethod.isshared = 'Y'"
         + "group by 1";
     final Session session = OBDal.getInstance().getSession();
     final Query paymentQuery = session.createQuery(query);
+    paymentQuery.setParameterList("cashUpIds", cashUpIds);
     List<?> paymentList = paymentQuery.list();
     for (int i = 0; i < paymentList.size(); i++) {
       Object[] item = (Object[]) paymentList.get(i);

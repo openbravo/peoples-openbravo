@@ -179,7 +179,6 @@ enyo.kind({
     return 'OBPOS_LblPostPrintClose';
   },
   allowNext: function () {
-    this.model.get('cashUpReport').at(0).set('time', new Date());
     return true;
   },
   getSubstepsLength: function (model) {

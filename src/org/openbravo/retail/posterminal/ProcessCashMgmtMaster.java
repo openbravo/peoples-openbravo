@@ -8,6 +8,7 @@
  */
 package org.openbravo.retail.posterminal;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -42,17 +43,17 @@ public class ProcessCashMgmtMaster extends JSONProcessSimple {
       }
       if (cashUpId != null) {
         List<OBPOSAppCashup> cashUpList = getCashUpList(cashUpId);
-        String cashUpIds = terminalSlave ? "'" + cashUpId + "'" : "";
+        List<String> cashUpIds = new ArrayList<String>();
+        if (terminalSlave) {
+          cashUpIds.add(cashUpId);
+        }
         for (OBPOSAppCashup cashUp : cashUpList) {
           if (terminalSlave && cashUp.getId().equals(jsonsent.getString("cashUpId"))) {
             continue;
           }
-          if (!"".equals(cashUpIds)) {
-            cashUpIds += ", ";
-          }
-          cashUpIds += "'" + cashUp.getId() + "'";
+          cashUpIds.add(cashUp.getId());
         }
-        if (!"".equals(cashUpIds)) {
+        if (!cashUpIds.isEmpty()) {
           ProcessCashCloseMaster.addPaymentmethodCashup(payments, cashUpIds);
         }
       }

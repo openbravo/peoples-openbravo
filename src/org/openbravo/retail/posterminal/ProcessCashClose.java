@@ -56,7 +56,6 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
     String cashUpId = jsonCashup.getString("id");
     JSONObject jsonData = new JSONObject();
     Date cashUpDate = new Date();
-    Date currentDate = new Date();
     OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
         jsonCashup.getString("posterminal"));
 
@@ -79,7 +78,7 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
         }
 
         DateFormat isodatefmt = new SimpleDateFormat(dateFormatStr);
-        currentDate = isodatefmt.parse(strCurrentDate);
+        Date currentDate = isodatefmt.parse(strCurrentDate);
       } else {
         log.debug("Error processing cash close: error retrieving current date. Using server current date");
       }
@@ -97,7 +96,6 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
       if (posTerminal.getMasterterminal() != null) {
         // On slave only mark as processed BO
         cashUp.setProcessedbo(Boolean.TRUE);
-        OBDal.getInstance().save(cashUp);
         jsonData.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
       } else if (posTerminal.isMaster()) {
         // Reconciliation and invoices of slaves
@@ -139,7 +137,10 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
       // This cashup is a cash order. Nothing needs to be done
       jsonData.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
       // Associate master/slave cashup
-      associateMasterSlave(cashUp, posTerminal);
+      if (posTerminal.isMaster()
+          || (posTerminal.getMasterterminal() != null && cashUp.getObposParentCashup() == null)) {
+        associateMasterSlave(cashUp, posTerminal);
+      }
     }
     return jsonData;
   }
@@ -151,22 +152,19 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
         .createCriteria(OBPOSAppCashup.class);
     obCriteria.add(Restrictions.eq(OBPOSAppCashup.PROPERTY_OBPOSPARENTCASHUP + ".id", cashUpId));
     List<OBPOSAppCashup> cashupList = obCriteria.list();
-    String cashUpIds = "";
+    List<String> cashUpIds = new ArrayList<String>();
     for (OBPOSAppCashup appCashup : cashupList) {
-      if (!"".equals(cashUpIds)) {
-        cashUpIds += ", ";
-      }
-      cashUpIds += "'" + appCashup.getId() + "'";
+      cashUpIds.add(appCashup.getId());
     }
 
     // Sum shared PaymentMethodCashup
     String query = "select searchkey, sum(startingcash), sum(totalDeposits), sum(totalDrops), sum(totalreturns), sum(totalsales) "
         + "from OBPOS_Paymentmethodcashup "
-        + "where cashUp.id in ("
-        + cashUpIds
-        + ") and paymentType.paymentMethod.isshared = 'Y'" + "group by 1";
+        + "where cashUp.id in :cashUpIds and paymentType.paymentMethod.isshared = 'Y'"
+        + "group by 1";
     final Session session = OBDal.getInstance().getSession();
     final Query paymentQuery = session.createQuery(query);
+    paymentQuery.setParameterList("cashUpIds", cashUpIds);
     List<?> paymentList = paymentQuery.list();
     for (int i = 0; i < paymentList.size(); i++) {
       Object[] item = (Object[]) paymentList.get(i);
@@ -187,23 +185,20 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
     }
 
     // Remove shared PaymentMethodCashup
-    String paymentMethodCashupIds = "";
+    List<String> paymentMethodCashupIds = new ArrayList<String>();
     for (OBPOSAppCashup appCashup : cashupList) {
       List<OBPOSPaymentMethodCashup> paymentMethodCashupList = appCashup
           .getOBPOSPaymentmethodcashupList();
       for (OBPOSPaymentMethodCashup paymentMethodCashup : paymentMethodCashupList) {
         if (paymentMethodCashup.getPaymentType().getPaymentMethod().isShared()) {
-          if (!"".equals(paymentMethodCashupIds)) {
-            paymentMethodCashupIds += ", ";
-          }
-          paymentMethodCashupIds += "'" + paymentMethodCashup.getId() + "'";
+          paymentMethodCashupIds.add(paymentMethodCashup.getId());
         }
       }
     }
-    if (!"".equals(paymentMethodCashupIds)) {
-      String delete = "delete from OBPOS_Paymentmethodcashup where id in ("
-          + paymentMethodCashupIds + ")";
+    if (!paymentMethodCashupIds.isEmpty()) {
+      String delete = "delete from OBPOS_Paymentmethodcashup where id in :paymentMethodCashupIds";
       final Query paymentDelete = session.createQuery(delete);
+      paymentDelete.setParameterList("paymentMethodCashupIds", paymentMethodCashupIds);
       paymentDelete.executeUpdate();
     }
   }
@@ -306,7 +301,6 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
             + OBPOSAppCashup.PROPERTY_OBPOSPARENTCASHUP + ".id = ?";
         if (countAppCashup(query, appCashup.getPOSTerminal().getId(), cashUp.getId()) == 0) {
           appCashup.setObposParentCashup(cashUp);
-          OBDal.getInstance().save(appCashup);
         }
       }
     } else if (posTerminal.getMasterterminal() != null && cashUp.getObposParentCashup() == null) {
@@ -330,7 +324,6 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
         List<OBPOSAppCashup> appCashupList = appCashupQuery.list();
         if (appCashupList.size() > 0 && cashUp.getObposParentCashup() == null) {
           cashUp.setObposParentCashup(appCashupList.get(0));
-          OBDal.getInstance().save(cashUp);
         }
       }
     }

@@ -118,6 +118,9 @@
       <index name="OBPOS_APP_TERTYPE" unique="false">
         <index-column name="OBPOS_TERMINALTYPE_ID"/>
       </index>
+      <index name="OBPOS_APPLICATIONS_MASTER_IDX" unique="false">
+        <index-column name="MASTERTERMINAL_ID"/>
+      </index>
       <index name="OBPOS_APPLICATIONS_NAME" unique="true">
         <index-column name="NAME"/>
       </index>

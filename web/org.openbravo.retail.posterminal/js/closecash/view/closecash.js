@@ -156,7 +156,7 @@ enyo.kind({
     onPaymentMethodKept: 'paymentMethodKept',
     onResetQtyToKeep: 'resetQtyToKeep',
     onHoldActiveCmd: 'holdActiveCmd',
-    onChangeCashupReport: 'changeCashupReport',
+    onChangeCashupReport: 'changeCashupReport'
   },
   published: {
     model: null
@@ -391,23 +391,40 @@ enyo.kind({
     }, this);
 
     this.model.on('change:loadFinished', function (model) {
-      if (model.get("loadFinished")) {
-        if (OB.POS.modelterminal.get('terminal').isslave) {
-          new OB.DS.Process('org.openbravo.retail.posterminal.ProcessCashCloseSlave').exec({
-            cashUpId: OB.POS.modelterminal.get('terminal').cashUpId
-          }, function (data) {
-            if (data && data.exception) {
-              // Error handler 
-              OB.log('error', data.exception.message);
-              OB.UTIL.showAlert.display(data.exception.message, OB.I18N.getLabel('OBMOBC_LblError'), 'alert-error', false);
-              OB.POS.navigate('retail.pointofsale');
-            } else {
-              if (data.hasMaster) {
-                me.moveStep(0);
-              } else {
-                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_CashUpWronglyHeader'), OB.I18N.getLabel('OBPOS_ErrCashupMasterNotOpen'));
+
+      function processCashCloseSlave(callback) {
+        new OB.DS.Process('org.openbravo.retail.posterminal.ProcessCashCloseSlave').exec({
+          cashUpId: OB.POS.modelterminal.get('terminal').cashUpId
+        }, function (data) {
+          if (data && data.exception) {
+            // Error handler 
+            OB.log('error', data.exception.message);
+            OB.UTIL.showConfirmation.display(
+            OB.I18N.getLabel('OBPOS_CashMgmtError'), OB.I18N.getLabel('OBPOS_ErrorServerGeneric') + data.exception.message, [{
+              label: OB.I18N.getLabel('OBPOS_LblRetry'),
+              action: function () {
+                processCashCloseSlave(callback);
+              }
+            }], {
+              autoDismiss: false,
+              onHideFunction: function () {
                 OB.POS.navigate('retail.pointofsale');
               }
+            });
+          } else {
+            callback(data);
+          }
+        });
+      }
+
+      if (model.get("loadFinished")) {
+        if (OB.POS.modelterminal.get('terminal').isslave) {
+          processCashCloseSlave(function (data) {
+            if (data.hasMaster) {
+              me.moveStep(0);
+            } else {
+              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_CashUpWronglyHeader'), OB.I18N.getLabel('OBPOS_ErrCashupMasterNotOpen'));
+              OB.POS.navigate('retail.pointofsale');
             }
           });
         } else {
@@ -506,7 +523,7 @@ enyo.kind({
       // move again
       this.model.set('step', nextstep);
       this.model.set('substep', nextsubstep);
-      this.moveStep(direction == 0 ? 1 : direction);
+      this.moveStep(direction === 0 ? 1 : direction);
     }
   },
   countAllOK: function (inSender, inEvent) {

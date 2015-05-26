@@ -524,12 +524,8 @@ enyo.kind({
   },
 
   checkSlaveCashAvailable: function (selectedPayment, scope, callback) {
-    var currentCash = OB.DEC.Zero;
-    if (selectedPayment && selectedPayment.paymentMethod.iscash) {
-      currentCash = selectedPayment.currentCash || OB.DEC.Zero;
-    }
-    if ((OB.POS.modelterminal.get('terminal').ismaster || OB.POS.modelterminal.get('terminal').isslave) && selectedPayment.paymentMethod.iscash && selectedPayment.paymentMethod.isshared) {
-      // Load current cashup info from slaves
+
+    function processCashMgmtMaster(cashMgntCallback) {
       new OB.DS.Process('org.openbravo.retail.posterminal.ProcessCashMgmtMaster').exec({
         cashUpId: OB.POS.modelterminal.get('terminal').cashUpId,
         terminalSlave: OB.POS.modelterminal.get('terminal').isslave
@@ -537,8 +533,32 @@ enyo.kind({
         if (data && data.exception) {
           // Error handler 
           OB.log('error', data.exception.message);
-          OB.UTIL.showAlert.display(data.exception.message, OB.I18N.getLabel('OBMOBC_LblError'), 'alert-error', false);
+          OB.UTIL.showConfirmation.display(
+          OB.I18N.getLabel('OBPOS_CashMgmtError'), OB.I18N.getLabel('OBPOS_ErrorServerGeneric') + data.exception.message, [{
+            label: OB.I18N.getLabel('OBPOS_LblRetry'),
+            action: function () {
+              processCashMgmtMaster(cashMgntCallback);
+            }
+          }], {
+            autoDismiss: false,
+            onHideFunction: function () {
+              cashMgntCallback(false, null);
+            }
+          });
         } else {
+          cashMgntCallback(true, data);
+        }
+      });
+    }
+
+    var currentCash = OB.DEC.Zero;
+    if (selectedPayment && selectedPayment.paymentMethod.iscash) {
+      currentCash = selectedPayment.currentCash || OB.DEC.Zero;
+    }
+    if ((OB.POS.modelterminal.get('terminal').ismaster || OB.POS.modelterminal.get('terminal').isslave) && selectedPayment.paymentMethod.iscash && selectedPayment.paymentMethod.isshared) {
+      // Load current cashup info from slaves
+      processCashMgmtMaster(function (success, data) {
+        if (success) {
           _.each(data, function (pay) {
             if (pay.searchKey === selectedPayment.payment.searchKey) {
               currentCash = OB.DEC.add(currentCash, pay.startingCash + pay.totalDeposits + pay.totalSales - pay.totalReturns - pay.totalDrops);
