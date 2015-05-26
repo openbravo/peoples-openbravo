@@ -34,9 +34,19 @@ isc.OBParameterWindowView.addProperties({
   gridFields: [],
 
   initWidget: function () {
+    var params, view = this;
     this.baseParams.processId = this.processId;
 
     this.Super('initWidget', arguments);
+
+    params = isc.shallowClone(this.baseParams);
+    if (this.sourceView) {
+      params.context = this.sourceView.getContextInfo(false, true, true, true);
+    }
+
+    OB.RemoteCallManager.call('org.openbravo.client.application.process.DefaultsProcessActionHandler', {}, params, function (rpcResponse, data, rpcRequest) {
+      view.handleDefaults(data);
+    });
 
   },
 

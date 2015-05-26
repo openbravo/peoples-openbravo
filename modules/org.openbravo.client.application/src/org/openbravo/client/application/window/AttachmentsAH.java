@@ -79,8 +79,12 @@ public class AttachmentsAH extends BaseActionHandler {
         Attachment attachment = null;
         String attachId = "";
         if ("INITIALIZE".equals(action)) {
-          attConf = aim.getAttachmenConfig(OBContext.getOBContext().getCurrentClient());
-          attMethod = attConf.getAttachmentMethod();
+          attConf = AttachmentUtils.getAttachmentConfig();
+          if (attConf == null) {
+            attMethod = AttachmentUtils.getDefaultAttachmentMethod();
+          } else {
+            attMethod = attConf.getAttachmentMethod();
+          }
         } else {
           attachId = request.getString("attachId");
           attachment = OBDal.getInstance().get(Attachment.class, attachId);

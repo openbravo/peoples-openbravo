@@ -20,14 +20,15 @@
 package org.openbravo.client.application.window;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
 
+import org.apache.commons.io.FileUtils;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.ComponentProvider;
-import org.openbravo.common.actionhandler.OrderCreatePOLines;
 import org.openbravo.erpCommon.businessUtility.TabAttachments;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.utility.Attachment;
@@ -37,7 +38,7 @@ import org.slf4j.LoggerFactory;
 @ApplicationScoped
 @ComponentProvider.Qualifier(CoreAttachImplementation.DEFAULT)
 public class CoreAttachImplementation extends AttachImplementation {
-  private Logger log = LoggerFactory.getLogger(OrderCreatePOLines.class);
+  private Logger log = LoggerFactory.getLogger(CoreAttachImplementation.class);
 
   public static final String DEFAULT = "Default";
   public static final String METADATA_DESCRIPTION = "Description";
@@ -55,19 +56,17 @@ public class CoreAttachImplementation extends AttachImplementation {
     // FIXME: Get the directory separator from Java runtime
     String attachmentFolder = OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .getProperty("attach.path");
-    final File uploadedDir = new File(attachmentFolder + "/" + strFileDir);
-    if (!uploadedDir.exists()) {
-      uploadedDir.mkdirs();
-    }
     String strName = "";
     File uploadedFile = null;
     strName = file.getName();
-    uploadedFile = new File(uploadedDir, strName);
+    uploadedFile = new File(attachmentFolder + "/" + strFileDir, strName);
     log.debug("Destination file before renaming: " + uploadedFile);
-    if (!file.renameTo(uploadedFile)) {
-      log.error("CoreAttachImplmentation: Error renaming the file. Unreachable destination: "
-          + uploadedDir);
-      throw new OBException(OBMessageUtils.messageBD("UnreachableDestination") + uploadedDir);
+    try {
+      FileUtils.moveFileToDirectory(file, uploadedFile, true);
+    } catch (IOException e) {
+      log.error("Error moving the file to: " + uploadedFile, e);
+      throw new OBException(
+          OBMessageUtils.messageBD("UnreachableDestination") + " " + uploadedFile, e);
     }
     if (parameters != null && parameters.get(METADATA_DESCRIPTION) != null) {
       attachment.setText(parameters.get(METADATA_DESCRIPTION).toString());

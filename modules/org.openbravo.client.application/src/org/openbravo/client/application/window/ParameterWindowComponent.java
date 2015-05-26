@@ -109,8 +109,7 @@ public class ParameterWindowComponent extends BaseTemplateComponent {
 
   public void setProcess(org.openbravo.client.application.Process process) {
     this.process = process;
-    paramHandler.setProcess(process);
-    paramHandler.setParameters(parameters);
+    paramHandler.setParameters(process.getOBUIAPPParameterList());
     paramHandler.setParamWindow(this);
   }
 

@@ -25,6 +25,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
@@ -92,6 +93,13 @@ public class ViewComponent extends BaseComponent {
           throw new IllegalArgumentException("Not found process definition with ID " + processId);
         }
         return generateProcess(process);
+      } else if (viewId.startsWith("attachment_")) {
+        String tabId = viewId.substring("attachment_".length());
+        Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+        if (tab == null) {
+          throw new IllegalArgumentException("Not found process definition with ID " + tabId);
+        }
+        return generateAttachment(tab);
       } else {
         return generateView(viewId);
       }
@@ -142,7 +150,12 @@ public class ViewComponent extends BaseComponent {
   }
 
   protected String generateAttachment(Tab tab) {
+    attachmentWindowComponent.setClient(getParameter("client"));
     attachmentWindowComponent.setTab(tab);
+    String timestamp = getParameter("timestamp");
+    if (StringUtils.isNotEmpty(timestamp)) {
+      attachmentWindowComponent.setUniqueString(timestamp);
+    }
     attachmentWindowComponent.setParameters(getParameters());
     return attachmentWindowComponent.generate();
   }
@@ -173,6 +186,13 @@ public class ViewComponent extends BaseComponent {
         throw new IllegalArgumentException("Not found process definition with ID " + processId);
       }
       return process.getModule();
+    } else if (id.startsWith("attachment_")) {
+      String tabId = id.substring("attachment_".length());
+      Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+      if (tab == null) {
+        throw new IllegalArgumentException("Not found tab with ID " + tabId);
+      }
+      return tab.getModule();
     } else {
       OBUIAPPViewImplementation view = getView(id);
       if (view != null) {

@@ -28,7 +28,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.openbravo.client.application.DynamicExpressionParser;
 import org.openbravo.client.application.Parameter;
-import org.openbravo.client.application.Process;
+import org.openbravo.client.kernel.BaseTemplateComponent;
 import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.dal.core.DalUtil;
@@ -42,12 +42,11 @@ import org.openbravo.model.ad.ui.Window;
 public class OBViewParameterHandler {
   private static final Logger log = Logger.getLogger(OBViewParameterHandler.class);
   private static final String WINDOW_REFERENCE_ID = "FF80818132D8F0F30132D9BC395D0038";
-  private Process process;
-  private ParameterWindowComponent paramWindow;
-  private List<Parameter> parameters;
+  private BaseTemplateComponent paramWindow;
+  private List<Parameter> parameters = new ArrayList<Parameter>();
 
-  public void setProcess(Process process) {
-    this.process = process;
+  public void setParameters(List<Parameter> parameters) {
+    this.parameters = parameters;
   }
 
   public List<OBViewParameter> getParameters() {
@@ -57,7 +56,7 @@ public class OBViewParameterHandler {
     // Computes the display logic of the parameters
     // It has to be done in advance in order to determine the dynamic parameters
     Map<Parameter, String> displayLogicMap = new HashMap<Parameter, String>();
-    for (Parameter param : process.getOBUIAPPParameterList()) {
+    for (Parameter param : parameters) {
       if (param.isActive() && param.getDisplayLogic() != null && !param.getDisplayLogic().isEmpty()) {
         final DynamicExpressionParser parser = new DynamicExpressionParser(param.getDisplayLogic(),
             param.getObuiappProcess(), true);
@@ -72,7 +71,7 @@ public class OBViewParameterHandler {
 
     // Computes read-only logic
     Map<Parameter, String> readOnlyLogicMap = new HashMap<Parameter, String>();
-    for (Parameter param : process.getOBUIAPPParameterList()) {
+    for (Parameter param : parameters) {
       if (param.isActive() && !param.isFixed() && param.getReadOnlyLogic() != null
           && !param.getReadOnlyLogic().isEmpty()) {
         final DynamicExpressionParser parser = new DynamicExpressionParser(
@@ -89,7 +88,7 @@ public class OBViewParameterHandler {
     List<OBViewParameter> params = new ArrayList<OBViewParameterHandler.OBViewParameter>();
     OBViewParamGroup currentGroup = null;
     FieldGroup currentADFieldGroup = null;
-    for (Parameter param : process.getOBUIAPPParameterList()) {
+    for (Parameter param : parameters) {
       if (!(param.isActive()
           && (!param.isFixed() || param.getReference().getId().equals(WINDOW_REFERENCE_ID)) && (!param
           .getReference().getId().equals(ParameterWindowComponent.BUTTON_LIST_REFERENCE_ID)))) {
@@ -361,7 +360,7 @@ public class OBViewParameterHandler {
     }
   }
 
-  public void setParamWindow(ParameterWindowComponent parameterWindowComponent) {
-    this.paramWindow = parameterWindowComponent;
+  public void setParamWindow(BaseTemplateComponent baseTemplateComponent) {
+    this.paramWindow = baseTemplateComponent;
   }
 }

@@ -170,6 +170,7 @@ isc.OBAttachmentsLayout.addProperties({
 
   width: '100%',
   align: 'left',
+  docOrganization: null,
 
   // never disable this item
   isDisabled: function () {
@@ -253,7 +254,6 @@ isc.OBAttachmentsLayout.addProperties({
   fillAttachments: function (attachments) {
     var id, i, length;
 
-    var docOrganization;
     this.savedAttachments = attachments;
     this.destroyAndRemoveMembers(this.getMembers());
     var hLayout = isc.HLayout.create();
@@ -267,20 +267,47 @@ isc.OBAttachmentsLayout.addProperties({
     //Here we are checking if the entity is 'Organization' because the way of obtaining the
     //id of the organization of the form is different depending on the entity
     if (this.entity === 'Organization') {
-      docOrganization = this.recordId;
+      this.docOrganization = this.recordId;
     } else {
-      docOrganization = this.attachmentForm.values.organization;
+      this.docOrganization = this.attachmentForm.values.organization;
     }
     var addButton = isc.OBLinkButtonItem.create({
       title: '[ ' + OB.I18N.getLabel('OBUIAPP_AttachmentAdd') + ' ]',
       width: '30px',
       canvas: me,
       action: function (forceUpload) {
-        var form, submitbutton;
+        var viewId = 'attachment_' + this.canvas.tabId,
+           ownerView = this.canvas.getForm().view,
+           standardWindow = ownerView.standardWindow,
+           parts = standardWindow.getPrototype().Class.split('_'),
+           clientContext = null,
+           record = this.canvas.getForm().values,
+           params = {},
+           callback;
         if (OB.Utilities.currentUploader === null || forceUpload) {
-          var attachmentFile = OB.I18N.getLabel('OBUIAPP_AttachmentFile');
+          callback = function () {
+            standardWindow.openProcess({
+              paramWindow: true,
+              processId: viewId,
+              ownerView: ownerView,
+              attachSection: me,
+              windowTitle: OB.I18N.getLabel('OBUIAPP_AttachFile'),
+              uiPattern: 'A'
+            });
+          };
+          params.tabTitle = record[OB.Constants.IDENTIFIER];
+          params.inpDocumentOrg = me.docOrganization;
+          params.client = me.attachmentForm.values.client;
+          if (parts.length === 3) {
+            // is in development. add the timestamp to the parameters.
+            params.timestamp = parts[2];
+          }
+
+          OB.Layout.ViewManager.fetchView(viewId, callback, clientContext, null, false, params);
+
           //Callback: creates metadata Fields, add them to form and executes popup.
-          var callback = function (rpcResponse, data, rpcRequest) {
+          /*
+            var callback = function (rpcResponse, data, rpcRequest) {
               var metadataFields = [],
                   j;
 
@@ -415,7 +442,7 @@ isc.OBAttachmentsLayout.addProperties({
           }, {
             tabId: form.getItem('inpTabId').value
           }, callback);
-
+*/
         } else {
           isc.ask(OB.I18N.getLabel('OBUIAPP_OtherUploadInProgress'), function (clickOK) {
             if (clickOK) {
@@ -593,7 +620,7 @@ isc.OBAttachmentsLayout.addProperties({
         }, {
           name: 'inpDocumentOrg',
           type: 'hidden',
-          value: docOrganization
+          value: this.docOrganization
         }, {
           name: 'inpwindowId',
           type: 'hidden',

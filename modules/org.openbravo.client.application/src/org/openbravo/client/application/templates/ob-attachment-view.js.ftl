@@ -20,15 +20,11 @@
 -->
 
 /*jslint*/
-<#if !data.popup>
-OB.Layout.ViewManager.loadedWindowClassName = 'attachment${data.windowClientClassName?js_string}';
-</#if>
-
-isc.ClassFactory.defineClass('<#if !data.popup>attachment</#if>${data.windowClientClassName?js_string}', isc.OBAttachmentWindowView).addProperties({
+isc.ClassFactory.defineClass('_attachment${data.windowClientClassName?js_string}', isc.OBAttachmentWindowView).addProperties({
     popup: true, 
     viewProperties: {
-      fields: [
-    <#list data.parameters as param>
+      additionalFields: [
+    <#list data.paramHandler.parameters as param>
       <@createParameter param/><#if param_has_next>,</#if>
     </#list>    
      ]

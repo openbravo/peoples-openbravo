@@ -45,6 +45,7 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.window.AttachImplementationManager;
+import org.openbravo.client.application.window.AttachmentUtils;
 import org.openbravo.client.application.window.AttachmentsAH;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -57,6 +58,7 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.Attachment;
+import org.openbravo.model.ad.utility.AttachmentConfig;
 import org.openbravo.model.ad.utility.AttachmentMethod;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -127,8 +129,13 @@ public class TabAttachments extends HttpSecureAppServlet {
         }
         //
         Map<String, String> metadata = new HashMap<String, String>();
-        AttachmentMethod attachMethod = aim.getAttachmenConfig(
-            OBContext.getOBContext().getCurrentClient()).getAttachmentMethod();
+        AttachmentConfig attConfig = AttachmentUtils.getAttachmentConfig();
+        AttachmentMethod attachMethod;
+        if (attConfig == null) {
+          attachMethod = AttachmentUtils.getDefaultAttachmentMethod();
+        } else {
+          attachMethod = attConfig.getAttachmentMethod();
+        }
         final OBQuery<Parameter> paramQuery = OBDal.getInstance().createQuery(Parameter.class,
             "attachmentMethod.id=:attachmentMethodId and (tab is null or tab.id=:tabId)");
         paramQuery.setNamedParameter("attachmentMethodId", attachMethod.getId());
@@ -158,6 +165,19 @@ public class TabAttachments extends HttpSecureAppServlet {
       } catch (OBException e) {
         OBDal.getInstance().rollbackAndClose();
         log.error(e.getMessage());
+
+        String viewId = vars.getStringParameter("viewId");
+        response.setContentType("text/html; charset=UTF-8");
+        Writer writer = response.getWriter();
+        writer.write("<HTML><BODY><script type=\"text/javascript\">");
+        writer.write("top.OB.Utilities.uploadFinished(\"" + buttonId + "\"," + obj.toString()
+            + ");");
+        writer.write("top.OB.Utilities.writeErrorMessage(\"" + viewId + "\",\"" + e.getMessage()
+            + "\");");
+        writer.write("</SCRIPT></BODY></HTML>");
+      } catch (Exception e) {
+        OBDal.getInstance().rollbackAndClose();
+        log.error(e.getMessage(), e);
 
         String viewId = vars.getStringParameter("viewId");
         response.setContentType("text/html; charset=UTF-8");

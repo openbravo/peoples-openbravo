@@ -74,7 +74,6 @@ isc.OBBaseParameterWindowView.addProperties({
     var i, field, items = [],
         buttonLayout = [],
         view = this,
-        params = isc.shallowClone(this.baseParams),
         newShowIf;
 
     buttonLayout = view.buildButtonLayout();
@@ -174,13 +173,6 @@ isc.OBBaseParameterWindowView.addProperties({
     this.members.push(this.loading);
     this.Super('initWidget', arguments);
 
-    if (this.sourceView) {
-      params.context = this.sourceView.getContextInfo(false, true, true, true);
-    }
-
-    OB.RemoteCallManager.call('org.openbravo.client.application.process.DefaultsProcessActionHandler', {}, params, function (rpcResponse, data, rpcRequest) {
-      view.handleDefaults(data);
-    });
   },
 
   /*

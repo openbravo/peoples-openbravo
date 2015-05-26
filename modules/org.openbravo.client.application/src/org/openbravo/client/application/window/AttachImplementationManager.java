@@ -99,8 +99,13 @@ public class AttachImplementationManager {
       throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoFileToAttach"));
     }
 
-    AttachmentConfig attachConf = getAttachmenConfig(OBContext.getOBContext().getCurrentClient());
-    AttachmentMethod attachMethod = attachConf.getAttachmentMethod();
+    AttachmentConfig attachConf = AttachmentUtils.getAttachmentConfig(org.getClient());
+    AttachmentMethod attachMethod;
+    if (attachConf == null) {
+      attachMethod = AttachmentUtils.getDefaultAttachmentMethod();
+    } else {
+      attachMethod = attachConf.getAttachmentMethod();
+    }
 
     String strName = file.getName();
 
@@ -363,8 +368,8 @@ public class AttachImplementationManager {
       return ((AttachmentConfig) obc.uniqueResult());
     }
     OBCriteria<AttachmentMethod> am = OBDal.getInstance().createCriteria(AttachmentMethod.class);
-    obc.add(Restrictions.eq(AttachmentMethod.PROPERTY_VALUE, "Default"));
-    obc.setMaxResults(1);
+    am.add(Restrictions.eq(AttachmentMethod.PROPERTY_VALUE, "Default"));
+    am.setMaxResults(1);
     if (am.uniqueResult() != null) {
       return (AttachmentConfig) am.uniqueResult();
     } else {

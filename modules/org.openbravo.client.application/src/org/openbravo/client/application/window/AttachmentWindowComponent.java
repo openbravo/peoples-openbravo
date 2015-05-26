@@ -29,24 +29,28 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.application.Parameter;
-import org.openbravo.client.application.window.OBViewParameterHandler.OBViewParameter;
+import org.openbravo.client.kernel.BaseTemplateComponent;
 import org.openbravo.client.kernel.KernelConstants;
 import org.openbravo.client.kernel.Template;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.domain.Validation;
+import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.ui.Tab;
+import org.openbravo.model.ad.utility.AttachmentConfig;
+import org.openbravo.model.ad.utility.AttachmentMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * The component which takes care of creating a class for a tab's Attachment popup.
  */
-public class AttachmentWindowComponent extends ParameterWindowComponent {
+public class AttachmentWindowComponent extends BaseTemplateComponent {
   private static final String DEFAULT_TEMPLATE_ID = "01E447F740584E02BA4612F6BDFB900D";
   private static final Logger log = LoggerFactory.getLogger(AttachmentWindowComponent.class);
 
   private Boolean inDevelopment = null;
   private String uniqueString = "" + System.currentTimeMillis();
+  private String clientId = null;
   private Tab tab;
 
   @Inject
@@ -69,6 +73,10 @@ public class AttachmentWindowComponent extends ParameterWindowComponent {
     this.uniqueString = uniqueString;
   }
 
+  public void setClient(String clientId) {
+    this.clientId = clientId;
+  }
+
   public boolean isIndevelopment() {
     if (inDevelopment != null) {
       return inDevelopment;
@@ -88,23 +96,14 @@ public class AttachmentWindowComponent extends ParameterWindowComponent {
     return jsCode;
   }
 
-  public String getThreadSafe() {
-    return "true";
-  }
-
   public void setTab(Tab tab) {
     this.tab = tab;
-    // TODO: Review whether the process is necessary or not
-    // paramHandler.setProcess(process);
+    paramHandler.setParameters(getTabMetadataFields());
     paramHandler.setParamWindow(this);
   }
 
   public OBViewParameterHandler getParamHandler() {
     return paramHandler;
-  }
-
-  public List<OBViewParameter> getParameters() {
-    return null;
   }
 
   public String getDynamicColumns() {
@@ -147,9 +146,17 @@ public class AttachmentWindowComponent extends ParameterWindowComponent {
   }
 
   private List<Parameter> getTabMetadataFields() {
+    AttachmentConfig attConf = AttachmentUtils.getAttachmentConfig((Client) OBDal.getInstance()
+        .getProxy(Client.ENTITY_NAME, clientId));
+    AttachmentMethod attachMethod;
+    if (attConf == null) {
+      attachMethod = AttachmentUtils.getDefaultAttachmentMethod();
+    } else {
+      attachMethod = attConf.getAttachmentMethod();
+    }
     // TODO Auto-generated method stub
     // Load attachment method in use
-    return null;
+    return AttachmentUtils.getMethodMetadataParameters(attachMethod, tab);
   }
 
   /**
