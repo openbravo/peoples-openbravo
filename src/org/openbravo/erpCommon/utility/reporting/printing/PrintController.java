@@ -792,7 +792,7 @@ public class PrintController extends HttpSecureAppServlet {
       exceptionString = exceptionString.replace(exceptionClass, "");
       throw new ServletException(exceptionString);
     } finally {
-      // Delete the temporal files generated for the email attachments
+      // Delete the temporary files generated for the email attachments
       for (File attachment : attachments) {
         if (attachment.exists() && !attachment.isDirectory()) {
           attachment.delete();
