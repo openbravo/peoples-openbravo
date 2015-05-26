@@ -50,7 +50,7 @@ isc.OBParameterWindowView.addProperties({
 
   },
 
-  buildButtonLayout: function() {
+  buildButtonLayout: function () {
     var view = this,
         buttonLayout = [],
         okButton, newButton, cancelButton, i;

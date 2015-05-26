@@ -77,7 +77,7 @@ isc.OBBaseParameterWindowView.addProperties({
         newShowIf;
 
     buttonLayout = view.buildButtonLayout();
-    
+
     if (!this.popup) {
       this.toolBarLayout = isc.OBToolbar.create({
         view: this,
@@ -177,7 +177,7 @@ isc.OBBaseParameterWindowView.addProperties({
 
   /*
    * Function that creates the layout with the buttons. Classes implementing OBBaseParameterWindowView
-   * have to override this function to add the needed buttons. 
+   * have to override this function to add the needed buttons.
    */
   buildButtonLayout: function () {
     return [];

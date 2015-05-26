@@ -23,7 +23,6 @@ isc.defineClass('OBAttachmentWindowView', isc.OBBaseParameterWindowView);
 //   OBPAttachmentWindowView is the view that represent the window to upload
 // edit the attachments of a tab. It includes the parameters defined on the 
 // Attachment method in use.
-
 isc.OBAttachmentWindowView.addProperties({
   // Set default properties for the OBPopup container
   showMinimizeButton: false,
@@ -100,16 +99,16 @@ isc.OBAttachmentWindowView.addProperties({
     this.Super('initWidget', arguments);
 
   },
-  
+
   buildButtonLayout: function () {
     var view = this,
         buttons = [],
         submitbutton, cancelButton;
 
-    function doClick () {
+    function doClick() {
       var view = this.view,
-       value = view.theForm.getItem('inpname').getElement().value,
-      lastChar, fileName;
+          value = view.theForm.getItem('inpname').getElement().value,
+          lastChar, fileName;
 
       if (!value) {
         isc.say(OB.I18N.getLabel('OBUIAPP_AttachmentsSpecifyFile'));
@@ -118,7 +117,7 @@ isc.OBAttachmentWindowView.addProperties({
 
       lastChar = value.lastIndexOf("\\") + 1;
       fileName = lastChar === -1 ? value : value.substring(lastChar);
-    
+
       if (view.attachSection.fileExists(fileName, view.attachSection.savedAttachments)) {
         isc.confirm(OB.I18N.getLabel('OBUIAPP_ConfirmUploadOverwrite'), function (clickedOK) {
           if (clickedOK !== true) {
@@ -131,7 +130,7 @@ isc.OBAttachmentWindowView.addProperties({
       }
 
     }
-    
+
     submitbutton = isc.OBFormButton.create({
       title: OB.I18N.getLabel('OBUIAPP_AttachmentSubmit'),
       click: doClick,
@@ -154,7 +153,7 @@ isc.OBAttachmentWindowView.addProperties({
 
     return buttons;
   },
-  
+
   submitFile: function (fileName) {
     var form = this.theForm;
     var hTempLayout = isc.HLayout.create();

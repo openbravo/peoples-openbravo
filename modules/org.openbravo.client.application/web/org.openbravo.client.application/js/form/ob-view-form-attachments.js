@@ -277,13 +277,13 @@ isc.OBAttachmentsLayout.addProperties({
       canvas: me,
       action: function (forceUpload) {
         var viewId = 'attachment_' + this.canvas.tabId,
-           ownerView = this.canvas.getForm().view,
-           standardWindow = ownerView.standardWindow,
-           parts = standardWindow.getPrototype().Class.split('_'),
-           clientContext = null,
-           record = this.canvas.getForm().values,
-           params = {},
-           callback;
+            ownerView = this.canvas.getForm().view,
+            standardWindow = ownerView.standardWindow,
+            parts = standardWindow.getPrototype().Class.split('_'),
+            clientContext = null,
+            record = this.canvas.getForm().values,
+            params = {},
+            callback;
         if (OB.Utilities.currentUploader === null || forceUpload) {
           callback = function () {
             standardWindow.openProcess({
@@ -306,7 +306,7 @@ isc.OBAttachmentsLayout.addProperties({
           OB.Layout.ViewManager.fetchView(viewId, callback, clientContext, null, false, params);
 
           //Callback: creates metadata Fields, add them to form and executes popup.
-          /*
+/*
             var callback = function (rpcResponse, data, rpcRequest) {
               var metadataFields = [],
                   j;
