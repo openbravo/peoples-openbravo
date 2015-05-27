@@ -171,6 +171,7 @@ isc.OBAttachmentsLayout.addProperties({
   width: '100%',
   align: 'left',
   docOrganization: null,
+  docClient: null,
 
   // never disable this item
   isDisabled: function () {
@@ -252,7 +253,8 @@ isc.OBAttachmentsLayout.addProperties({
   },
 
   fillAttachments: function (attachments) {
-    var id, i, length;
+    var me = this,
+        id, i, length;
 
     this.savedAttachments = attachments;
     this.destroyAndRemoveMembers(this.getMembers());
@@ -263,13 +265,17 @@ isc.OBAttachmentsLayout.addProperties({
     }
 
     this.addMember(hLayout);
-    var me = this;
     //Here we are checking if the entity is 'Organization' because the way of obtaining the
     //id of the organization of the form is different depending on the entity
     if (this.entity === 'Organization') {
       this.docOrganization = this.recordId;
     } else {
       this.docOrganization = this.attachmentForm.values.organization;
+    }
+    if (this.entity === 'Client') {
+      this.docClient = me.recordId;
+    } else {
+      this.docClient = me.attachmentForm.values.client;
     }
     var addButton = isc.OBLinkButtonItem.create({
       title: '[ ' + OB.I18N.getLabel('OBUIAPP_AttachmentAdd') + ' ]',
@@ -297,7 +303,7 @@ isc.OBAttachmentsLayout.addProperties({
           };
           params.tabTitle = record[OB.Constants.IDENTIFIER];
           params.inpDocumentOrg = me.docOrganization;
-          params.client = me.attachmentForm.values.client;
+          params.client = me.docClient;
           if (parts.length === 3) {
             // is in development. add the timestamp to the parameters.
             params.timestamp = parts[2];

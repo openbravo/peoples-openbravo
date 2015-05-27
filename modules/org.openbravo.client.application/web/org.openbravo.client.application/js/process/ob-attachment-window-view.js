@@ -39,6 +39,8 @@ isc.OBAttachmentWindowView.addProperties({
   overflow: 'auto',
   autoSize: false,
 
+  defaultsActionHandler: 'org.openbravo.client.application.process.DefaultsAttachmentActionHandler',
+
   members: [],
   attachSection: null,
   ownerView: null,
@@ -88,6 +90,8 @@ isc.OBAttachmentWindowView.addProperties({
       type: 'hidden',
       value: this.attachSection.windowId
     }];
+    this.baseParams.tabId = this.attachSection.tabId;
+    this.baseParams.clientId = this.attachSection.docClient;
 
     this.formProps = isc.addProperties({}, this.formProps, this.attachFormProps);
     this.viewProperties.fields = isc.shallowClone(attachFields);

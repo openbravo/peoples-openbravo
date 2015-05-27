@@ -29,23 +29,31 @@ import javax.script.ScriptException;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.domaintype.BigDecimalDomainType;
 import org.openbravo.base.model.domaintype.BooleanDomainType;
 import org.openbravo.base.model.domaintype.DateDomainType;
 import org.openbravo.base.model.domaintype.DomainType;
+import org.openbravo.base.model.domaintype.ForeignKeyDomainType;
 import org.openbravo.base.model.domaintype.LongDomainType;
 import org.openbravo.base.model.domaintype.StringDomainType;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.util.Check;
+import org.openbravo.client.kernel.reference.UIDefinition;
+import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.data.Sqlc;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.utility.Attachment;
 import org.openbravo.model.ad.utility.AttachmentMetadata;
 
@@ -149,6 +157,65 @@ public class ParameterUtils {
     } else {
       return parameter.getFixedValue();
     }
+  }
+
+  /**
+   * Returns the default value of the given parameter based on the request information.
+   * 
+   * @param parameters
+   *          the parameters passed in from the request
+   * @param parameter
+   *          the parameter to get the Default Value from
+   * @param session
+   *          the HttpSession of the request
+   * @param context
+   *          the JSONObject with the context information of the request.
+   * @return the DefaultValue of the Parameter.
+   */
+  public static Object getParameterDefaultValue(Map<String, String> parameters,
+      Parameter parameter, HttpSession session, JSONObject context) throws ScriptException,
+      JSONException {
+    Reference reference = parameter.getReferenceSearchKey();
+    if (reference == null) {
+      reference = parameter.getReference();
+    }
+
+    UIDefinition uiDefinition = UIDefinitionController.getInstance().getUIDefinition(reference);
+
+    String rawDefaultValue = parameter.getDefaultValue();
+
+    Object defaultValue = null;
+    if (isSessionDefaultValue(rawDefaultValue) && context != null) {
+      // Transforms the default value from @columnName@ to the column inp name
+      String inpName = "inp"
+          + Sqlc
+              .TransformaNombreColumna(rawDefaultValue.substring(1, rawDefaultValue.length() - 1));
+      defaultValue = context.get(inpName);
+    } else {
+      defaultValue = getJSExpressionResult(parameters, session, rawDefaultValue);
+    }
+
+    DomainType domainType = uiDefinition.getDomainType();
+    if (defaultValue != null && defaultValue instanceof String
+        && domainType instanceof ForeignKeyDomainType) {
+      // default value is ID of a FK, look for the identifier
+      Entity referencedEntity = ((ForeignKeyDomainType) domainType)
+          .getForeignKeyColumn(parameter.getDBColumnName()).getProperty().getEntity();
+
+      BaseOBObject record = OBDal.getInstance().get(referencedEntity.getName(), defaultValue);
+      if (record != null) {
+        String identifier = record.getIdentifier();
+        JSONObject def = new JSONObject();
+        def.put("value", defaultValue);
+        def.put("identifier", identifier);
+        return def;
+      }
+    } else {
+      if (domainType instanceof BooleanDomainType) {
+        defaultValue = ((BooleanDomainType) domainType).createFromString((String) defaultValue);
+      }
+    }
+    return defaultValue;
   }
 
   /**
@@ -263,6 +330,17 @@ public class ParameterUtils {
       return new BigDecimal(value);
     } else {
       return value;
+    }
+  }
+
+  // Returns true if the value of the parameter default value matches "@*@"
+  private static boolean isSessionDefaultValue(String rawDefaultValue) {
+    if ("@".equals(rawDefaultValue.substring(0, 1))
+        && "@".equals(rawDefaultValue.substring(rawDefaultValue.length() - 1))
+        && rawDefaultValue.length() > 2) {
+      return true;
+    } else {
+      return false;
     }
   }
 }

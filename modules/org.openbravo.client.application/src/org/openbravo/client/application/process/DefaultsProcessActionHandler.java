@@ -24,21 +24,12 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
-import org.openbravo.base.model.Entity;
-import org.openbravo.base.model.domaintype.BooleanDomainType;
-import org.openbravo.base.model.domaintype.DomainType;
-import org.openbravo.base.model.domaintype.ForeignKeyDomainType;
-import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.ParameterUtils;
 import org.openbravo.client.application.Process;
 import org.openbravo.client.kernel.KernelConstants;
-import org.openbravo.client.kernel.reference.UIDefinition;
-import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.data.Sqlc;
-import org.openbravo.model.ad.domain.Reference;
 
 /**
  * This ActionHandler is invoked when opening a Process Definition window. It is in charge of
@@ -56,6 +47,7 @@ public class DefaultsProcessActionHandler extends BaseProcessActionHandler {
       OBContext.setAdminMode(true);
 
       final String processId = (String) parameters.get("processId");
+      final Map<String, String> fixedParameters = fixRequestMap(parameters);
 
       JSONObject context = null;
       if (parameters.get("context") != null) {
@@ -66,51 +58,9 @@ public class DefaultsProcessActionHandler extends BaseProcessActionHandler {
 
       for (Parameter param : processDefinition.getOBUIAPPParameterList()) {
         if (param.getDefaultValue() != null) {
-
-          Reference reference = param.getReferenceSearchKey();
-          if (reference == null) {
-            reference = param.getReference();
-          }
-
-          UIDefinition uiDefinition = UIDefinitionController.getInstance().getUIDefinition(
-              reference);
-
-          String rawDefaultValue = param.getDefaultValue();
-
-          Object defaultValue;
-          if (isSessionDefaultValue(rawDefaultValue) && context != null) {
-            // Transforms the default value from @columnName@ to the column inp name
-            String inpName = "inp"
-                + Sqlc.TransformaNombreColumna(rawDefaultValue.substring(1,
-                    rawDefaultValue.length() - 1));
-            defaultValue = context.get(inpName);
-          } else {
-            defaultValue = ParameterUtils.getJSExpressionResult(fixRequestMap(parameters),
-                (HttpSession) parameters.get(KernelConstants.HTTP_SESSION), rawDefaultValue);
-          }
-
-          DomainType domainType = uiDefinition.getDomainType();
-          if (defaultValue != null && defaultValue instanceof String
-              && domainType instanceof ForeignKeyDomainType) {
-            // default value is ID of a FK, look for the identifier
-            Entity referencedEntity = ((ForeignKeyDomainType) domainType)
-                .getForeignKeyColumn(param.getDBColumnName()).getProperty().getEntity();
-
-            BaseOBObject record = OBDal.getInstance().get(referencedEntity.getName(), defaultValue);
-            if (record != null) {
-              String identifier = record.getIdentifier();
-              JSONObject def = new JSONObject();
-              def.put("value", defaultValue);
-              def.put("identifier", identifier);
-              defaults.put(param.getDBColumnName(), def);
-            }
-          } else {
-            if (domainType instanceof BooleanDomainType) {
-              defaultValue = ((BooleanDomainType) domainType)
-                  .createFromString((String) defaultValue);
-            }
-            defaults.put(param.getDBColumnName(), defaultValue);
-          }
+          Object defValue = ParameterUtils.getParameterDefaultValue(fixedParameters, param,
+              (HttpSession) parameters.get(KernelConstants.HTTP_SESSION), context);
+          defaults.put(param.getDBColumnName(), defValue);
         }
       }
       log.debug("Defaults for process " + processDefinition + "\n" + defaults.toString());
@@ -120,17 +70,6 @@ public class DefaultsProcessActionHandler extends BaseProcessActionHandler {
       return new JSONObject();
     } finally {
       OBContext.restorePreviousMode();
-    }
-  }
-
-  // Returns true if the value of the parameter default value matches "@*@"
-  private boolean isSessionDefaultValue(String rawDefaultValue) {
-    if ("@".equals(rawDefaultValue.substring(0, 1))
-        && "@".equals(rawDefaultValue.substring(rawDefaultValue.length() - 1))
-        && rawDefaultValue.length() > 2) {
-      return true;
-    } else {
-      return false;
     }
   }
 }

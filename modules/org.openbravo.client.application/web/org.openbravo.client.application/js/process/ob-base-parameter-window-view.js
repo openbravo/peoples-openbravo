@@ -30,6 +30,8 @@ isc.OBBaseParameterWindowView.addProperties({
   popupHeight: '90%',
   // Set later inside initWidget
   firstFocusedItem: null,
+  // Set later by implementations of this class
+  defaultsActionHandler: null,
 
   // Set now pure P&E layout properties
   width: '100%',
@@ -74,7 +76,7 @@ isc.OBBaseParameterWindowView.addProperties({
     var i, field, items = [],
         buttonLayout = [],
         view = this,
-        newShowIf;
+        newShowIf, params;
 
     buttonLayout = view.buildButtonLayout();
 
@@ -173,6 +175,14 @@ isc.OBBaseParameterWindowView.addProperties({
     this.members.push(this.loading);
     this.Super('initWidget', arguments);
 
+    params = isc.shallowClone(this.baseParams);
+    if (this.sourceView) {
+      params.context = this.sourceView.getContextInfo(false, true, true, true);
+    }
+
+    OB.RemoteCallManager.call(this.defaultsActionHandler, {}, params, function (rpcResponse, data, rpcRequest) {
+      view.handleDefaults(data);
+    });
   },
 
   /*
