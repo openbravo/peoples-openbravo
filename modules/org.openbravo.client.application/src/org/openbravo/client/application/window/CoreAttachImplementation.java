@@ -68,9 +68,6 @@ public class CoreAttachImplementation extends AttachImplementation {
       throw new OBException(
           OBMessageUtils.messageBD("UnreachableDestination") + " " + uploadedFile, e);
     }
-    if (parameters != null && parameters.get(METADATA_DESCRIPTION) != null) {
-      attachment.setText(parameters.get(METADATA_DESCRIPTION).toString());
-    }
 
     attachment.setPath(TabAttachments.getPath(strFileDir));
     attachment.setDataType(strDataType);
@@ -109,7 +106,6 @@ public class CoreAttachImplementation extends AttachImplementation {
   public void updateFile(Attachment attachment, String strTab, Map<String, String> parameters)
       throws OBException {
     log.debug("CoreAttachImplemententation - Updating files");
-    attachment.setText(parameters.get(METADATA_DESCRIPTION).toString());
   }
 
   @Override
