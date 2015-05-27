@@ -116,9 +116,7 @@ public class Product extends ProcessHQLQuery {
               .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
               .getOBContext().getRole(), null));
     } catch (PropertyException e) {
-      isHgvol = false;
-    } catch (Exception e) {
-      log.error("Error getting currency by id: " + e.getMessage(), e);
+      log.error("Error getting preference OBPOS_highVolume.customer " + e.getMessage(), e);
     } finally {
       OBContext.restorePreviousMode();
     }
