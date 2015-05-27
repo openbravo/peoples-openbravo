@@ -36,6 +36,7 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.Parameter;
+import org.openbravo.client.application.ParameterValue;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
@@ -156,17 +157,20 @@ public class AttachmentsAH extends BaseActionHandler {
         JSONObject metadataJson = new JSONObject(parameters.get("updatedMetadata").toString());
 
         Map<String, String> metadata = new HashMap<String, String>();
-        final OBQuery<Parameter> paramQuery = OBDal.getInstance().createQuery(Parameter.class,
-            "attachmentMethod.id=:attachmentMethodId and (tab is null or tab.id=:tabId)");
+        final OBQuery<ParameterValue> paramQuery = OBDal
+            .getInstance()
+            .createQuery(
+                ParameterValue.class,
+                "parameter.attachmentMethod.id=:attachmentMethodId and (parameter.tab is null or parameter.tab.id=:tabId)");
         paramQuery.setNamedParameter("attachmentMethodId", attachMethod.getId());
         paramQuery.setNamedParameter("tabId", tab.getId());
         paramQuery.setFetchSize(1000);
         final ScrollableResults paramScroller = paramQuery.scroll(ScrollMode.FORWARD_ONLY);
         int i = 0;
         while (paramScroller.next()) {
-          final Parameter param = (Parameter) paramScroller.get()[0];
-          metadata.put(param.getId(),
-              URLDecoder.decode(metadataJson.get(param.getDBColumnName()).toString(), "UTF-8"));
+          final ParameterValue paramValue = (ParameterValue) paramScroller.get()[0];
+          metadata.put(paramValue.getId(), URLDecoder.decode(
+              metadataJson.get(paramValue.getParameter().getDBColumnName()).toString(), "UTF-8"));
           // clear the session every 100 records
           if ((i % 100) == 0) {
             OBDal.getInstance().getSession().clear();
