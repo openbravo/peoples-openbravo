@@ -17,7 +17,7 @@
     * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
     * All Rights Reserved.
     * Contributor(s): Openbravo SLU
-    * Contributions are Copyright (C) 2001-2008 Openbravo, S.L.U.
+    * Contributions are Copyright (C) 2001-2015 Openbravo, S.L.U.
     *
     * Specifically, this derivative work is based upon the following Compiere
     * file and version.
@@ -78,7 +78,7 @@ BEGIN
     
       UPDATE M_LOCATOR SET AD_ORG_ID = :new.AD_ORG_ID
       WHERE M_WAREHOUSE_ID = :new.M_WAREHOUSE_ID;
-      END IF;
+    END IF;
   END IF;
 END M_WAREHOUSE_TRG
 ]]></body>
