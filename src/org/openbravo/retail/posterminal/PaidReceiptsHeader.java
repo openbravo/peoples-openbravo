@@ -65,7 +65,7 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
                 .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
                 .getOBContext().getRole(), null));
       } catch (PropertyException e1) {
-        log.error("Error getting high volume order preference: " + e1.getMessage(), e1);
+        isHgvol = false;
       }
       if (isHgvol) {
         hqlFilter = "upper(ord.documentNo) like upper('" + filterText + "%')";
