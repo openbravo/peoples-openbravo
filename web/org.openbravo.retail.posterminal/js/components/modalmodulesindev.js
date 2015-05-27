@@ -26,7 +26,7 @@ enyo.kind({
       } else if (OB.UTIL.Debug.getDebugCauses().isTestEnvironment) {
         i18nLabel = ifInTestEnvironment;
       }
-    	this.$.bodyContent.$.message.setContent(OB.I18N.getLabel(i18nLabel));
+      this.$.bodyContent.$.message.setContent(OB.I18N.getLabel(i18nLabel));
     }
   },
 });
