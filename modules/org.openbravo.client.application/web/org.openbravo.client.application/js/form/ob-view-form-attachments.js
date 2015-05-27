@@ -440,19 +440,19 @@ isc.OBAttachmentsLayout.addProperties({
           params = {},
           callback;
       callback = function () {
-          standardWindow.openProcess({
-            paramWindow: true,
-            processId: viewId,
-            ownerView: ownerView,
-            attachmentId: button.attachmentId,
-            attachmentName: button.attachmentName,
-            attachmentMethod: button.attachmentMethod,
-            uploadMode: false,
-            attachSection: me,
-            windowTitle: OB.I18N.getLabel('OBUIAPP_AttachFile'),
-            uiPattern: 'A'
-          });
-        };
+        standardWindow.openProcess({
+          paramWindow: true,
+          processId: viewId,
+          ownerView: ownerView,
+          attachmentId: button.attachmentId,
+          attachmentName: button.attachmentName,
+          attachmentMethod: button.attachmentMethod,
+          uploadMode: false,
+          attachSection: me,
+          windowTitle: OB.I18N.getLabel('OBUIAPP_AttachFile'),
+          uiPattern: 'A'
+        });
+      };
       params.tabTitle = record[OB.Constants.IDENTIFIER];
       params.inpDocumentOrg = me.docOrganization;
       params.client = me.docClient;
