@@ -248,7 +248,7 @@ isc.OBAttachmentWindowView.addProperties({
         attachmentName: this.attachmentName,
         attachmentMethod: this.attachmentMethod
         };
-    allProperties._params = form.getContextInfo();
+    allProperties._params = this.getContextInfo();
     allProperties.action = 'EDIT';
 
     OB.RemoteCallManager.call('org.openbravo.client.application.window.AttachmentsAH', allProperties, params, function (response, data, request) {
