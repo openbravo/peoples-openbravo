@@ -28,5 +28,5 @@ enyo.kind({
       }
       this.$.bodyContent.$.message.setContent(OB.I18N.getLabel(i18nLabel));
     }
-  },
+  }
 });
