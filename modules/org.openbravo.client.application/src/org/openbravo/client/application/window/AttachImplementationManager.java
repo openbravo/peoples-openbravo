@@ -45,6 +45,7 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.OrganizationEnabled;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.ParameterUtils;
+import org.openbravo.client.application.ParameterValue;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
@@ -59,7 +60,6 @@ import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.Attachment;
 import org.openbravo.model.ad.utility.AttachmentConfig;
-import org.openbravo.model.ad.utility.AttachmentMetadata;
 import org.openbravo.model.ad.utility.AttachmentMethod;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.utils.FileUtility;
@@ -383,28 +383,27 @@ public class AttachImplementationManager {
     checkReadableAccess(attachment);
 
     try {
-      OBCriteria<AttachmentMetadata> attachmentMetadataCriteria = OBDal.getInstance()
-          .createCriteria(AttachmentMetadata.class);
-      attachmentMetadataCriteria.add(Restrictions.eq(AttachmentMetadata.PROPERTY_FILE, attachment));
+      OBCriteria<ParameterValue> attachmentMetadataCriteria = OBDal.getInstance().createCriteria(
+          ParameterValue.class);
+      attachmentMetadataCriteria.add(Restrictions.eq(ParameterValue.PROPERTY_FILE, attachment));
       attachmentMetadataCriteria.setFetchSize(1000);
       final ScrollableResults attacmenthMetadataScroller = attachmentMetadataCriteria
           .scroll(ScrollMode.FORWARD_ONLY);
       int i = 0;
       while (attacmenthMetadataScroller.next()) {
-        final AttachmentMetadata attachmentMetadata = (AttachmentMetadata) attacmenthMetadataScroller
-            .get()[0];
+        final ParameterValue attachmentMetadata = (ParameterValue) attacmenthMetadataScroller.get()[0];
         for (int j = 0; j < metadataArray.length(); j++) {
           if (metadataArray.getJSONObject(j).get("SearchKey")
-              .equals(attachmentMetadata.getObuiappParameter().getDBColumnName())) {
-            if (attachmentMetadata.getStringValue() != null
-                && !attachmentMetadata.getStringValue().equals("")) {
-              metadataArray.getJSONObject(j).put("value", attachmentMetadata.getStringValue());
-            } else if (attachmentMetadata.getNumericValue() != null) {
+              .equals(attachmentMetadata.getParameter().getDBColumnName())) {
+            if (attachmentMetadata.getValueString() != null
+                && !attachmentMetadata.getValueString().equals("")) {
+              metadataArray.getJSONObject(j).put("value", attachmentMetadata.getValueString());
+            } else if (attachmentMetadata.getValueNumber() != null) {
               metadataArray.getJSONObject(j).put("value",
-                  attachmentMetadata.getNumericValue().toString());
-            } else if (attachmentMetadata.getValuationDate() != null) {
+                  attachmentMetadata.getValueNumber().toString());
+            } else if (attachmentMetadata.getValueDate() != null) {
               metadataArray.getJSONObject(j).put("value",
-                  attachmentMetadata.getValuationDate().toString());
+                  attachmentMetadata.getValueDate().toString());
             }
           }
         }

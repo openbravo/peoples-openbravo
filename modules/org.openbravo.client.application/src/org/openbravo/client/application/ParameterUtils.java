@@ -55,7 +55,6 @@ import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.utility.Attachment;
-import org.openbravo.model.ad.utility.AttachmentMetadata;
 
 /**
  * Utility class for Parameters handling
@@ -69,6 +68,9 @@ public class ParameterUtils {
   public static final String REFERENCE_AMOUNT = "12";
   public static final String REFERENCE_DATE = "15";
   public static final String REFERENCE_DATETIME = "16";
+  public static final String REFERENCE_LIST = "17";
+  public static final String REFERENCE_TABLE = "18";
+  public static final String REFERENCE_TABLEDIR = "19";
   public static final String REFERENCE_QUANTITY = "29";
   public static final String REFERENCE_ABSOLUTEDATETIME = "478169542A1747BD942DD70C8B45089C";
 
@@ -266,27 +268,26 @@ public class ParameterUtils {
     try {
       for (Map.Entry<String, String> entry : metadata.entrySet()) {
         final Parameter parameter = OBDal.getInstance().get(Parameter.class, entry.getKey());
-        AttachmentMetadata attachmentMetadata;
+        ParameterValue attachmentMetadata;
         if (exists) {
-          final OBCriteria<AttachmentMetadata> attachmentMetadataCriteria = OBDal.getInstance()
-              .createCriteria(AttachmentMetadata.class);
-          attachmentMetadataCriteria.add(Restrictions.eq(AttachmentMetadata.PROPERTY_FILE,
-              attachment));
-          attachmentMetadataCriteria.add(Restrictions.eq(
-              AttachmentMetadata.PROPERTY_OBUIAPPPARAMETER, parameter));
+          final OBCriteria<ParameterValue> attachmentMetadataCriteria = OBDal.getInstance()
+              .createCriteria(ParameterValue.class);
+          attachmentMetadataCriteria.add(Restrictions.eq(ParameterValue.PROPERTY_FILE, attachment));
+          attachmentMetadataCriteria.add(Restrictions.eq(ParameterValue.PROPERTY_PARAMETER,
+              parameter));
           if (attachmentMetadataCriteria.list().isEmpty()) {
-            attachmentMetadata = OBProvider.getInstance().get(AttachmentMetadata.class);
+            attachmentMetadata = OBProvider.getInstance().get(ParameterValue.class);
           } else if (attachmentMetadataCriteria.list().size() == 1) {
             attachmentMetadata = attachmentMetadataCriteria.list().get(0);
           } else {
             throw new OBException();
           }
         } else {
-          attachmentMetadata = OBProvider.getInstance().get(AttachmentMetadata.class);
+          attachmentMetadata = OBProvider.getInstance().get(ParameterValue.class);
         }
 
         attachmentMetadata.setFile(attachment);
-        attachmentMetadata.setObuiappParameter(parameter);
+        attachmentMetadata.setParameter(parameter);
         if (parameter.isUserEditable() && parameter.getPropertyPath() != null
             && !parameter.getPropertyPath().equals("")) {
           // if has a property path
@@ -294,13 +295,18 @@ public class ParameterUtils {
           if (parameter.getReference().getId().equals(REFERENCE_DATE)
               || parameter.getReference().getId().equals(REFERENCE_DATETIME)
               || parameter.getReference().getId().equals(REFERENCE_ABSOLUTEDATETIME)) {
-            attachmentMetadata.setValuationDate(OBDateUtils.getDate(entry.getValue()));
+            attachmentMetadata.setValueDate(OBDateUtils.getDate(entry.getValue()));
           } else if (parameter.getReference().getId().equals(REFERENCE_INTEGER)
               || parameter.getReference().getId().equals(REFERENCE_QUANTITY)
               || parameter.getReference().getId().equals(REFERENCE_AMOUNT)) {
-            attachmentMetadata.setNumericValue(new BigDecimal(entry.getValue()));
+            attachmentMetadata.setValueNumber(new BigDecimal(entry.getValue()));
+          } else if (parameter.getReference().getId().equals(REFERENCE_LIST)
+              || parameter.getReference().getId().equals(REFERENCE_TABLE)
+              || parameter.getReference().getId().equals(REFERENCE_TABLEDIR)) {
+            attachmentMetadata.setValueKey(parameter.getIdentifier());
+            attachmentMetadata.setValueString(parameter.getId());
           } else {
-            attachmentMetadata.setStringValue(entry.getValue());
+            attachmentMetadata.setValueString(entry.getValue());
           }
         }
         OBDal.getInstance().save(attachmentMetadata);
