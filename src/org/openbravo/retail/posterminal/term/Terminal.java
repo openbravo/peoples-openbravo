@@ -139,7 +139,7 @@ public class Terminal extends JSONProcessSimple {
       }
 
       String terminalhqlquery = "select " + "'" + pricesList.getId() + "' as priceList, " + "'"
-          + pricesList.getCurrency().getId() + "' as currencyid, " + "'"
+          + pricesList.getCurrency().getId() + "' as currency, " + "'"
           + pricesList.getCurrency().getIdentifier() + "' as " + getIdentifierAlias("currency")
           + ", " + "'" + pricesList.getCurrency().isCurrencySymbolAtTheRight()
           + "' as currencySymbolAtTheRight, " + "'" + pricesList.getCurrency().getSymbol()
