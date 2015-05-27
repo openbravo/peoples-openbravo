@@ -41,7 +41,6 @@ public class CoreAttachImplementation extends AttachImplementation {
   private Logger log = LoggerFactory.getLogger(CoreAttachImplementation.class);
 
   public static final String DEFAULT = "Default";
-  public static final String METADATA_DESCRIPTION = "Description";
 
   // final public String DEFAULT = "Default";
 

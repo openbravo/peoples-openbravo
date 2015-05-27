@@ -516,9 +516,7 @@ public class AttachImplementationManager {
   public void saveMetadata(Attachment attachment, Map<String, String> metadata, boolean exists) {
     try {
       for (Map.Entry<String, String> entry : metadata.entrySet()) {
-        final ParameterValue parameterValue = OBDal.getInstance().get(ParameterValue.class,
-            entry.getKey());
-        final Parameter parameter = parameterValue.getParameter();
+        final Parameter parameter = OBDal.getInstance().get(Parameter.class, entry.getKey());
         ParameterValue attachmentMetadata;
         if (exists) {
           final OBCriteria<ParameterValue> attachmentMetadataCriteria = OBDal.getInstance()
@@ -550,7 +548,7 @@ public class AttachImplementationManager {
           } else {
             JSONObject jsonValue = new JSONObject();
             jsonValue.put("value", entry.getValue());
-            ParameterUtils.setParameterValue(parameterValue, jsonValue);
+            ParameterUtils.setParameterValue(attachmentMetadata, jsonValue);
           }
 
         }
@@ -565,9 +563,8 @@ public class AttachImplementationManager {
     // Add fixed parameters text to attachment Text value
     String attachmentText = "";
     for (Map.Entry<String, String> entry : parameters.entrySet()) {
-      final ParameterValue parameterValue = OBDal.getInstance().get(ParameterValue.class,
-          entry.getKey());
-      if (parameterValue.getParameter().isShowInDescription()) {
+      final Parameter parameter = OBDal.getInstance().get(Parameter.class, entry.getKey());
+      if (parameter.isShowInDescription()) {
         attachmentText += entry.getValue() + "   ";
       }
     }
