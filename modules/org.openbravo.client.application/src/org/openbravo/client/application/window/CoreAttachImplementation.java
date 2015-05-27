@@ -58,14 +58,14 @@ public class CoreAttachImplementation extends AttachImplementation {
     String strName = "";
     File uploadedFile = null;
     strName = file.getName();
-    uploadedFile = new File(attachmentFolder + "/" + strFileDir, strName);
+    uploadedFile = new File(attachmentFolder + "/" + strFileDir);
     log.debug("Destination file before renaming: " + uploadedFile);
     try {
       FileUtils.moveFileToDirectory(file, uploadedFile, true);
     } catch (IOException e) {
       log.error("Error moving the file to: " + uploadedFile, e);
-      throw new OBException(
-          OBMessageUtils.messageBD("UnreachableDestination") + " " + uploadedFile, e);
+      throw new OBException(OBMessageUtils.messageBD("UnreachableDestination") + " "
+          + e.getMessage(), e);
     }
 
     attachment.setPath(TabAttachments.getPath(strFileDir));
