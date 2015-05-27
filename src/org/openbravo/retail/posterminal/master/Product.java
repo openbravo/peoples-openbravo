@@ -26,6 +26,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
@@ -114,8 +115,8 @@ public class Product extends ProcessHQLQuery {
           OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
               .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
               .getOBContext().getRole(), null));
-    } catch (Exception e) {
-      log.error("Error getting currency by id: " + e.getMessage(), e);
+    } catch (PropertyException e) {
+      log.error("Error getting preference OBPOS_highVolume.customer " + e.getMessage(), e);
     } finally {
       OBContext.restorePreviousMode();
     }
