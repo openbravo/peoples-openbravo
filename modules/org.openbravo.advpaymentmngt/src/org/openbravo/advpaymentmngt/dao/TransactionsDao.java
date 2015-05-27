@@ -131,6 +131,7 @@ public class TransactionsDao {
         newTransaction.setForeignConversionRate(payment.getFinancialTransactionConvertRate());
         newTransaction.setForeignAmount(payment.getAmount());
       }
+      payment.getFINFinaccTransactionList().add(newTransaction);
       OBDal.getInstance().save(newTransaction);
       OBDal.getInstance().flush();
     } finally {
