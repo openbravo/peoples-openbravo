@@ -369,16 +369,22 @@ public class FormInitializationComponent extends BaseActionHandler {
     String tableId = (String) DalUtil.getId(tab.getTable());
     List<JSONObject> attachmentList = new ArrayList<JSONObject>();
     Query q;
+    StringBuilder hql = new StringBuilder();
+    hql.append("select n.name, n.id, n.updated, n.updatedBy.name, n.text ");
+    hql.append(" , case when ac is not null then ac.attachmentMethod.id else null end");
+    hql.append(" from org.openbravo.model.ad.utility.Attachment n");
+    hql.append(" left join n.attachmentConf ac");
+    hql.append(" where n.table.id = :tableId");
     if (multipleRowIds == null) {
-      String hql = "select n.name, n.id, n.updated, n.updatedBy.name, n.text from org.openbravo.model.ad.utility.Attachment n where n.table.id=:tableId and n.record=:recordId";
-      q = OBDal.getInstance().getSession().createQuery(hql);
-      q.setParameter("tableId", tableId);
+      hql.append(" and n.record = :recordId");
+    } else {
+      hql.append(" and n.record in :recordId");
+    }
+    q = OBDal.getInstance().getSession().createQuery(hql.toString());
+    q.setParameter("tableId", tableId);
+    if (multipleRowIds == null) {
       q.setParameter("recordId", rowId);
     } else {
-
-      String hql = "select n.name, n.id, n.updated, n.updatedBy.name, n.text from org.openbravo.model.ad.utility.Attachment n where n.table.id=:tableId and n.record in :recordId";
-      q = OBDal.getInstance().getSession().createQuery(hql);
-      q.setParameter("tableId", tableId);
       q.setParameterList("recordId", multipleRowIds);
     }
     for (Object qobj : q.list()) {
@@ -390,6 +396,7 @@ public class FormInitializationComponent extends BaseActionHandler {
         obj.put("age", (new Date().getTime() - ((Date) array[2]).getTime()));
         obj.put("updatedby", (String) array[3]);
         obj.put("description", (String) array[4]);
+        obj.put("attmethod", (String) array[5]);
       } catch (JSONException e) {
         log.error("Error while reading attachments", e);
       }

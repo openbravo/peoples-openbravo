@@ -29,8 +29,6 @@ isc.OBAttachmentWindowView.addProperties({
   showMaximizeButton: true,
   popupWidth: '90%',
   popupHeight: '90%',
-  // Set later inside initWidget
-  firstFocusedItem: null,
   showsItself: true,
 
   // Set now pure P&E layout properties
@@ -42,8 +40,12 @@ isc.OBAttachmentWindowView.addProperties({
   defaultsActionHandler: 'org.openbravo.client.application.process.DefaultsAttachmentActionHandler',
 
   members: [],
+
   attachSection: null,
   ownerView: null,
+  uploadMode: null,
+  attachmentId: null,
+
   attachFormProps: {
     encoding: 'multipart',
     action: './businessUtility/TabAttachments_FS.html',
@@ -55,41 +57,86 @@ isc.OBAttachmentWindowView.addProperties({
   },
 
   initWidget: function () {
-    var i, attachFields = [{
-      name: 'inpname',
-      title: OB.I18N.getLabel('OBUIAPP_AttachmentFile'),
-      type: 'upload',
-      multiple: false,
-      canFocus: false
-    }, {
-      name: 'Command',
-      type: 'hidden',
-      value: 'SAVE_NEW_OB3'
-    }, {
-      name: 'buttonId',
-      type: 'hidden',
-      value: this.attachSection.ID
-    }, {
-      name: 'viewId',
-      type: 'hidden',
-      value: this.ownerView.ID
-    }, {
-      name: 'inpKey',
-      type: 'hidden',
-      value: this.attachSection.recordId
-    }, {
-      name: 'inpTabId',
-      type: 'hidden',
-      value: this.attachSection.tabId
-    }, {
-      name: 'inpDocumentOrg',
-      type: 'hidden',
-      value: this.attachSection.docOrganization
-    }, {
-      name: 'inpwindowId',
-      type: 'hidden',
-      value: this.attachSection.windowId
-    }];
+    var i, attachFields;
+    if (this.uploadMode) {
+      attachFields = [{
+        name: 'inpname',
+        title: OB.I18N.getLabel('OBUIAPP_AttachmentFile'),
+        type: 'upload',
+        multiple: false,
+        canFocus: false
+      }, {
+        name: 'Command',
+        type: 'hidden',
+        value: 'SAVE_NEW_OB3'
+      }, {
+        name: 'buttonId',
+        type: 'hidden',
+        value: this.attachSection.ID
+      }, {
+        name: 'viewId',
+        type: 'hidden',
+        value: this.ownerView.ID
+      }, {
+        name: 'viewId',
+        type: 'hidden',
+        value: this.ownerView.ID
+      }, {
+        name: 'inpKey',
+        type: 'hidden',
+        value: this.attachSection.recordId
+      }, {
+        name: 'inpTabId',
+        type: 'hidden',
+        value: this.attachSection.tabId
+      }, {
+        name: 'inpDocumentOrg',
+        type: 'hidden',
+        value: this.attachSection.docOrganization
+      }, {
+        name: 'inpwindowId',
+        type: 'hidden',
+        value: this.attachSection.windowId
+      }];
+    } else {
+      attachFields = [{
+        name: 'inpname',
+        type: 'hidden',
+        value: this.attachmentName
+      }, {
+        name: 'Command',
+        type: 'hidden',
+        value: 'EDIT'
+      }, {
+        name: 'buttonId',
+        type: 'hidden',
+        value: this.attachSection.ID
+      }, {
+        name: 'viewId',
+        type: 'hidden',
+        value: this.ownerView.ID
+      }, {
+        name: 'inpKey',
+        type: 'hidden',
+        value: this.attachSection.recordId
+      }, {
+        name: 'inpTabId',
+        type: 'hidden',
+        value: this.attachSection.tabId
+      }, {
+        name: 'inpDocumentOrg',
+        type: 'hidden',
+        value: this.attachSection.docOrganization
+      }, {
+        name: 'inpwindowId',
+        type: 'hidden',
+        value: this.attachSection.windowId
+      }, {
+        name: 'inpAttachId',
+        type: 'hidden',
+        value: this.attachmentId
+      }];
+    }
     this.baseParams.tabId = this.attachSection.tabId;
     this.baseParams.clientId = this.attachSection.docClient;
 
@@ -114,6 +161,10 @@ isc.OBAttachmentWindowView.addProperties({
           value = view.theForm.getItem('inpname').getElement().value,
           lastChar, fileName;
 
+      if (view.uploadMode === false) {
+        view.editFile();
+        return;
+      }
       if (!value) {
         isc.say(OB.I18N.getLabel('OBUIAPP_AttachmentsSpecifyFile'));
         return;
@@ -185,6 +236,27 @@ isc.OBAttachmentWindowView.addProperties({
     }
     OB.Utilities.currentUploader = this.attachSection.ID;
     form.submitForm();
+    this.closeClick();
+  },
+
+  editFile: function () {
+    var form = this.theForm,
+        allProperties = {},
+        params = {
+        tabId: this.attachSection.tabId,
+        attachmentId: this.attachmentId,
+        attachmentName: this.attachmentName,
+        attachmentMethod: this.attachmentMethod
+        };
+    allProperties._params = form.getContextInfo();
+    allProperties.action = 'EDIT';
+
+    OB.RemoteCallManager.call('org.openbravo.client.application.window.AttachmentsAH', allProperties, params, function (response, data, request) {
+      OB.Utilities.uploadFinished(data.buttonId, data);
+      if (data.status === -1) {
+        OB.Utilities.writeErrorMessage(data.viewId, data.errorMessage);
+      }
+    });
     this.closeClick();
   }
 

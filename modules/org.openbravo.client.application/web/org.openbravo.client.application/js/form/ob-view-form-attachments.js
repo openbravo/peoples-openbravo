@@ -254,7 +254,7 @@ isc.OBAttachmentsLayout.addProperties({
 
   fillAttachments: function (attachments) {
     var me = this,
-        id, i, length;
+        id, i, length, editDescActions;
 
     this.savedAttachments = attachments;
     this.destroyAndRemoveMembers(this.getMembers());
@@ -297,6 +297,7 @@ isc.OBAttachmentsLayout.addProperties({
               processId: viewId,
               ownerView: ownerView,
               attachSection: me,
+              uploadMode: true,
               windowTitle: OB.I18N.getLabel('OBUIAPP_AttachFile'),
               uiPattern: 'A'
             });
@@ -304,151 +305,13 @@ isc.OBAttachmentsLayout.addProperties({
           params.tabTitle = record[OB.Constants.IDENTIFIER];
           params.inpDocumentOrg = me.docOrganization;
           params.client = me.docClient;
+          params.uploadMode = true;
           if (parts.length === 3) {
             // is in development. add the timestamp to the parameters.
             params.timestamp = parts[2];
           }
 
           OB.Layout.ViewManager.fetchView(viewId, callback, clientContext, null, false, params);
-
-          //Callback: creates metadata Fields, add them to form and executes popup.
-/*
-            var callback = function (rpcResponse, data, rpcRequest) {
-              var metadataFields = [],
-                  j;
-
-              for (j = 0; j < data.attMetadataList.length; j++) {
-                metadataFields[j] = isc.DynamicForm.create({
-                  fields: [{
-                    name: data.attMetadataList[j].SearchKey,
-                    title: data.attMetadataList[j].Name,
-                    type: 'text'
-                  }]
-                });
-              }
-
-              for (i = 0; i < metadataFields.length; i++) {
-                form.addFields(metadataFields[i].fields[0]);
-              }
-
-              var popup = isc.OBAttachmentsSubmitPopup.create({
-                submitButton: submitbutton,
-                addForm: form
-              });
-              form.popup = popup;
-              popup.show();
-              };
-
-          form = isc.DynamicForm.create({
-            autoFocus: true,
-            fields: [{
-              name: 'inpname',
-              title: attachmentFile,
-              type: 'upload',
-              multiple: false,
-              canFocus: false
-            }, {
-              name: 'Command',
-              type: 'hidden',
-              value: 'SAVE_NEW_OB3'
-            }, {
-              name: 'buttonId',
-              type: 'hidden',
-              value: this.canvas.ID
-            }, {
-              name: 'inpKey',
-              type: 'hidden',
-              value: this.canvas.recordId
-            }, {
-              name: 'inpTabId',
-              type: 'hidden',
-              value: this.canvas.tabId
-            }, {
-              name: 'inpDocumentOrg',
-              type: 'hidden',
-              value: docOrganization
-            }, {
-              name: 'inpwindowId',
-              type: 'hidden',
-              value: this.canvas.windowId
-            }, {
-              name: 'viewId',
-              type: 'hidden',
-              value: this.canvas.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.view.ID
-            }],
-            encoding: 'multipart',
-            action: './businessUtility/TabAttachments_FS.html',
-            target: "background_target",
-            numCols: 2,
-            align: 'center',
-            height: '30px',
-            redraw: function () {},
-            theCanvas: this.canvas
-          });
-
-          submitbutton = isc.OBFormButton.create({
-            title: OB.I18N.getLabel('OBUIAPP_AttachmentSubmit'),
-            theForm: form,
-            canvas: me,
-            click: function () {
-              var fileName, form = this.theForm,
-                  addFunction;
-              addFunction = function (clickedOK) {
-                if (clickedOK) {
-                  var hTempLayout = isc.HLayout.create();
-                  form.theCanvas.addMember(hTempLayout, form.theCanvas.getMembers().size());
-                  var uploadingFile = isc.Label.create({
-                    contents: fileName
-                  });
-                  var uploading = isc.Label.create({
-                    className: 'OBLinkButtonItemFocused',
-                    contents: '    ' + OB.I18N.getLabel('OBUIAPP_AttachmentUploading')
-                  });
-                  hTempLayout.addMember(uploadingFile);
-                  hTempLayout.addMember(uploading);
-                  var button = form.theCanvas.getForm().view.toolBar.getLeftMember(isc.OBToolbar.TYPE_ATTACHMENTS);
-                  if (!button) {
-                    button = form.theCanvas.getForm().view.toolBar.getLeftMember("attachExists");
-                  }
-                  button.customState = 'Progress';
-                  button.resetBaseStyle();
-                  if (OB.Utilities.currentUploader !== null) {
-                    var origButton = window[OB.Utilities.currentUploader];
-                    if (origButton && origButton.resetToolbar) {
-                      origButton.resetToolbar();
-                    }
-                  }
-                  OB.Utilities.currentUploader = form.theCanvas.ID;
-                  form.submitForm();
-                  form.popup.hide();
-                }
-              };
-              var value = this.theForm.getItem('inpname').getElement().value;
-              if (!value) {
-                isc.say(OB.I18N.getLabel('OBUIAPP_AttachmentsSpecifyFile'));
-                return;
-              }
-              value = value ? value : '';
-
-              var lastChar = value.lastIndexOf("\\") + 1;
-
-              fileName = lastChar === -1 ? value : value.substring(lastChar);
-
-              if (this.theForm.theCanvas.fileExists(fileName, this.canvas.savedAttachments)) {
-                isc.confirm(OB.I18N.getLabel('OBUIAPP_ConfirmUploadOverwrite'), addFunction);
-              } else {
-                addFunction(true);
-              }
-            }
-          });
-
-          //Calls Callback (INITIALIZE action) in order to create the form correctly and shows popup.
-          OB.RemoteCallManager.call('org.openbravo.client.application.window.AttachmentsAH', {
-            action: "INITIALIZE"
-          }, {
-            tabId: form.getItem('inpTabId').value
-          }, callback);
-*/
         } else {
           isc.ask(OB.I18N.getLabel('OBUIAPP_OtherUploadInProgress'), function (clickOK) {
             if (clickOK) {
@@ -566,8 +429,59 @@ isc.OBAttachmentsLayout.addProperties({
       });
     };
 
-    var editDescActions;
     editDescActions = function (fileName) {
+      var button = this,
+          viewId = 'attachment_' + this.canvas.tabId,
+          ownerView = this.canvas.getForm().view,
+          standardWindow = ownerView.standardWindow,
+          parts = standardWindow.getPrototype().Class.split('_'),
+          clientContext = null,
+          record = this.canvas.getForm().values,
+          params = {},
+          callback;
+      callback = function () {
+          standardWindow.openProcess({
+            paramWindow: true,
+            processId: viewId,
+            ownerView: ownerView,
+            attachmentId: button.attachmentId,
+            attachmentName: button.attachmentName,
+            attachmentMethod: button.attachmentMethod,
+            uploadMode: false,
+            attachSection: me,
+            windowTitle: OB.I18N.getLabel('OBUIAPP_AttachFile'),
+            uiPattern: 'A'
+          });
+        };
+      params.tabTitle = record[OB.Constants.IDENTIFIER];
+      params.inpDocumentOrg = me.docOrganization;
+      params.client = me.docClient;
+      if (parts.length === 3) {
+        // is in development. add the timestamp to the parameters.
+        params.timestamp = parts[2];
+      }
+
+      OB.Layout.ViewManager.fetchView(viewId, callback, clientContext, null, false, params);
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      /*
+      
+      
+      
+      
+      
+      
+      
       var form, submitbutton, popup, canvas = this.canvas;
 
       //callbackEdit: give us metadata fields filled with their previous values.
@@ -725,7 +639,7 @@ isc.OBAttachmentsLayout.addProperties({
         attachId: form.getItem('inpAttachId').value
       }, {
         tabId: form.getItem('inpTabId').value
-      }, callbackEdit);
+      }, callbackEdit);*/
     };
 
     length = attachments.length;
@@ -751,6 +665,7 @@ isc.OBAttachmentsLayout.addProperties({
         width: '30px',
         attachmentName: attachment.name,
         attachId: attachment.id,
+        attachmentMethod: attachment.attmethod,
         action: downloadActions
       });
       downloadAttachment.height = 0;
@@ -768,6 +683,7 @@ isc.OBAttachmentsLayout.addProperties({
         width: '30px',
         attachmentName: attachment.name,
         attachmentId: attachment.id,
+        attachmentMethod: attachment.attmethod,
         canvas: this,
         action: editDescActions,
         hLayout: buttonLayout

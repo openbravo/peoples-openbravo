@@ -20,8 +20,6 @@ package org.openbravo.client.application.window;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -123,9 +121,25 @@ public class AttachmentsAH extends BaseActionHandler {
           aim.getMetadataValues(attachment, metadataArray);
         }
         return response;
-      }
+      } else if ("EDIT".equals(action)) {
+        JSONObject params = request.getJSONObject("_params");
+        recordIds = params.getString("inpKey");
+        final String attachmentId = (String) parameters.get("attachmentId");
+        final String strAttMethodId = (String) parameters.get("attachmentMethod");
+        AttachmentMethod attachMethod = OBDal.getInstance().get(AttachmentMethod.class,
+            strAttMethodId);
+        Map<String, String> metadata = new HashMap<String, String>();
+        for (Parameter param : AttachmentUtils.getMethodMetadataParameters(attachMethod, tab)) {
+          metadata.put(param.getId(),
+              URLDecoder.decode(params.get(param.getDBColumnName()).toString(), "UTF-8"));
+        }
 
-      else if (parameters.get("Command").equals("DELETE")) {
+        aim.update(attachmentId, tabId, metadata);
+
+        JSONObject obj = getAttachmentJSONObject(tab, recordIds);
+        obj.put("buttonId", params.getString("buttonId"));
+        return obj;
+      } else if (parameters.get("Command").equals("DELETE")) {
 
         recordIds = parameters.get("recordIds").toString();
         String attachmentId = (String) parameters.get("attachId");
@@ -145,38 +159,6 @@ public class AttachmentsAH extends BaseActionHandler {
           aim.delete(attachment);
 
         }
-        JSONObject obj = getAttachmentJSONObject(tab, recordIds);
-        obj.put("buttonId", parameters.get("buttonId"));
-        return obj;
-      } else if (parameters.get("Command").equals("EDIT")) {
-        recordIds = parameters.get("recordId").toString();
-        String attachmentId = (String) parameters.get("attachId");
-        AttachmentMethod attachMethod = OBDal.getInstance().get(Attachment.class, attachmentId)
-            .getAttachmentConf().getAttachmentMethod();
-        JSONObject metadataJson = new JSONObject(parameters.get("updatedMetadata").toString());
-
-        Map<String, String> metadata = new HashMap<String, String>();
-        final OBQuery<Parameter> paramQuery = OBDal.getInstance().createQuery(Parameter.class,
-            "attachmentMethod.id=:attachmentMethodId and (tab is null or tab.id=:tabId)");
-        paramQuery.setNamedParameter("attachmentMethodId", attachMethod.getId());
-        paramQuery.setNamedParameter("tabId", tab.getId());
-        paramQuery.setFetchSize(1000);
-        final ScrollableResults paramScroller = paramQuery.scroll(ScrollMode.FORWARD_ONLY);
-        int i = 0;
-        while (paramScroller.next()) {
-          final Parameter param = (Parameter) paramScroller.get()[0];
-          metadata.put(param.getId(),
-              URLDecoder.decode(metadataJson.get(param.getDBColumnName()).toString(), "UTF-8"));
-          // clear the session every 100 records
-          if ((i % 100) == 0) {
-            OBDal.getInstance().getSession().clear();
-          }
-          i++;
-        }
-        paramScroller.close();
-
-        aim.update(attachmentId, tabId, metadata);
-
         JSONObject obj = getAttachmentJSONObject(tab, recordIds);
         obj.put("buttonId", parameters.get("buttonId"));
         return obj;
@@ -209,28 +191,8 @@ public class AttachmentsAH extends BaseActionHandler {
   }
 
   public static JSONObject getAttachmentJSONObject(Tab tab, String recordIds) {
-    String tableId = (String) DalUtil.getId(tab.getTable());
-    OBCriteria<Attachment> attachmentFiles = OBDao.getFilteredCriteria(Attachment.class,
-        Restrictions.eq("table.id", tableId), Restrictions.in("record", recordIds.split(",")));
-    attachmentFiles.addOrderBy("creationDate", false);
-    List<JSONObject> attachments = new ArrayList<JSONObject>();
-    // do not filter by the attachment's organization
-    // if the user has access to the record where the file its attached, it has access to all its
-    // attachments
-    attachmentFiles.setFilterOnReadableOrganization(false);
-    for (Attachment attachment : attachmentFiles.list()) {
-      JSONObject attachmentobj = new JSONObject();
-      try {
-        attachmentobj.put("id", attachment.getId());
-        attachmentobj.put("name", attachment.getName());
-        attachmentobj.put("age", (new Date().getTime() - attachment.getUpdated().getTime()));
-        attachmentobj.put("updatedby", attachment.getUpdatedBy().getName());
-        attachmentobj.put("description", attachment.getText());
-      } catch (Exception e) {
-        throw new OBException("Error while reading attachments:", e);
-      }
-      attachments.add(attachmentobj);
-    }
+    List<JSONObject> attachments = AttachmentUtils.getTabAttachmentsForRows(tab,
+        recordIds.split(","));
     JSONObject jsonobj = new JSONObject();
     try {
       jsonobj.put("attachments", new JSONArray(attachments));
