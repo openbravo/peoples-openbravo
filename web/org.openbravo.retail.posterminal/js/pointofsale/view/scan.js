@@ -28,7 +28,7 @@ enyo.kind({
     components: [{
       name: 'headerText',
       kind: 'OB.UI.SmallButton',
-      classes:  'span12 ' + (OB.UTIL.Debug.isDebug() && OB.UTIL.Debug.getDebugCauses().isTestEnvironment ? 'btnlink-orange' : 'btnlink-red'),
+      classes: 'span12 ' + (OB.UTIL.Debug.isDebug() && OB.UTIL.Debug.getDebugCauses().isTestEnvironment ? 'btnlink-orange' : 'btnlink-red'),
       style: '  height: 50px; margin: 5px 5px 0px 0px; font-size: 20px; cursor: pointer; font-weight: bold',
       tap: function () {
         this.owner.doShowPopup({
