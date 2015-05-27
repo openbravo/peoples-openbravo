@@ -84,8 +84,11 @@ enyo.kind({
       }
     }
     var criteria = {
-        '_orderBy': [{'column' : 'name', 'asc' : true}]
-      };
+      '_orderBy': [{
+        'column': 'name',
+        'asc': true
+      }]
+    };
 
     OB.Dal.find(OB.Model.Brand, criteria, successCallbackBrands, errorCallback);
     return true;
