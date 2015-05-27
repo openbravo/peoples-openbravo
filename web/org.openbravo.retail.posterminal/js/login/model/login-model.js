@@ -177,7 +177,7 @@
           OB.info('[terminal] Loading... ' + this.properties);
           var me = this;
 
-          var ajaxRequest2 = new enyo.Ajax({
+          var rr, ajaxRequest2 = new enyo.Ajax({
             url: '../../org.openbravo.mobile.core.context',
             cacheBust: false,
             method: 'GET',
@@ -228,7 +228,10 @@
               }
             }
           });
-          ajaxRequest2.go(ajaxRequest2.data).response('success').error('fail');
+          rr = new OB.RR.Request({
+            ajaxRequest: ajaxRequest2
+          });
+          rr.exec(ajaxRequest2.url);
         }
       });
 

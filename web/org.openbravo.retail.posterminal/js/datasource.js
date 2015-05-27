@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2012-2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -33,7 +33,8 @@ OB.DS.HWServer = function (url, scaleurl) {
 
 OB.DS.HWServer.prototype.getWeight = function (callback) {
   if (this.scaleurl) {
-    var me = this;
+    var me = this,
+        rr;
     var ajaxRequest = new enyo.Ajax({
       url: me.scaleurl,
       cacheBust: false,
@@ -54,7 +55,10 @@ OB.DS.HWServer.prototype.getWeight = function (callback) {
         }
       }
     });
-    ajaxRequest.go().response('success').error('fail');
+    rr = new OB.RR.Request({
+      ajaxRequest: ajaxRequest
+    });
+    rr.exec(this.scaleurl);
   } else {
     callback({
       result: 1
@@ -238,7 +242,8 @@ OB.DS.HWServer.prototype._template = function (templatedata, params) {
 
 OB.DS.HWServer.prototype._send = function (data, callback) {
   if (this.url) {
-    var me = this;
+    var me = this,
+        rr;
     var ajaxRequest = new enyo.Ajax({
       url: me.url,
       cacheBust: false,
@@ -271,7 +276,10 @@ OB.DS.HWServer.prototype._send = function (data, callback) {
         }
       }
     });
-    ajaxRequest.go(ajaxRequest.data).response('success').error('fail');
+    rr = new OB.RR.Request({
+      ajaxRequest: ajaxRequest
+    });
+    rr.exec(this.url);
   }
 };
 
@@ -281,7 +289,8 @@ OB.DS.HWServer.prototype._printPDF = function (params, callback) {
 
 OB.DS.HWServer.prototype._sendPDF = function (data, callback) {
   if (this.url) {
-    var me = this;
+    var me = this,
+        rr;
     var ajaxRequest = new enyo.Ajax({
       url: me.url + 'pdf',
       cacheBust: false,
@@ -314,6 +323,9 @@ OB.DS.HWServer.prototype._sendPDF = function (data, callback) {
         }
       }
     });
-    ajaxRequest.go(ajaxRequest.data).response('success').error('fail');
+    rr = new OB.RR.Request({
+      ajaxRequest: ajaxRequest
+    });
+    rr.exec(this.url);
   }
 };
