@@ -36,6 +36,7 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
@@ -143,7 +144,7 @@ public class AttachImplementationManager {
         throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoMethod"));
       }
       saveAttachText(attachment, parameters);
-      Map<String, Object> typifiedParameters = saveMetadata(attachment, parameters,
+      Map<String, Object> typifiedParameters = saveMetadata(attachment, parameters, strTab, strKey,
           attachmentExists);
       handler.uploadFile(attachment, strDataType, typifiedParameters, file, strTab);
 
@@ -187,7 +188,7 @@ public class AttachImplementationManager {
    * @param parameters
    *          more metadata to be updated
    */
-  public void update(String attachID, String tabId, Map<String, String> parameters)
+  public void update(String attachID, String tabId, String recordId, Map<String, String> parameters)
       throws OBException {
     try {
       OBContext.setAdminMode(true);
@@ -207,7 +208,8 @@ public class AttachImplementationManager {
         throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoMethod"));
       }
       saveAttachText(attachment, parameters);
-      Map<String, Object> typifiedParameters = saveMetadata(attachment, parameters, true);
+      Map<String, Object> typifiedParameters = saveMetadata(attachment, parameters, tabId,
+          recordId, true);
       handler.updateFile(attachment, tabId, typifiedParameters);
       OBDal.getInstance().save(attachment);
       OBDal.getInstance().flush();
@@ -520,7 +522,7 @@ public class AttachImplementationManager {
    * @return
    */
   public Map<String, Object> saveMetadata(Attachment attachment, Map<String, String> metadata,
-      boolean exists) throws OBException {
+      String tabId, String recordId, boolean exists) throws OBException {
     try {
       Map<String, Object> typifiedMetadata = new HashMap<String, Object>();
       for (Map.Entry<String, String> entry : metadata.entrySet()) {
@@ -545,14 +547,28 @@ public class AttachImplementationManager {
 
         attachmentMetadata.setFile(attachment);
         attachmentMetadata.setParameter(parameter);
+
+        String value = null;
         if (parameter.isUserEditable() && parameter.getPropertyPath() != null
             && !parameter.getPropertyPath().equals("")) {
           // if has a property path
+
+          Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+          final String hql = "SELECT a." + parameter.getPropertyPath() + " FROM "
+              + tab.getTable().getName() + " AS a WHERE a.id='" + recordId + "'";
+          final Query query = OBDal.getInstance().getSession().createQuery(hql);
+          if (query.list().size() != 1) {
+            new OBException();
+          }
+          value = query.list().get(0).toString();
+        } else {
+          value = entry.getValue();
         }
+
         if (parameter.getReference().getId().equals(REFERENCE_LIST)) {
           org.openbravo.model.ad.domain.Reference reference = parameter.getReferenceSearchKey();
           for (List currentList : reference.getADListList()) {
-            if (currentList.getName().equals(entry.getValue())) {
+            if (currentList.getName().equals(value)) {
               attachmentMetadata.setValueKey(currentList.getId());
               attachmentMetadata.setValueString(currentList.getName());
               JSONObject jsonValue = new JSONObject();
@@ -571,7 +587,7 @@ public class AttachImplementationManager {
           // not implemented
         } else {
           JSONObject jsonValue = new JSONObject();
-          jsonValue.put("value", entry.getValue());
+          jsonValue.put("value", value);
           ParameterUtils.setParameterValue(attachmentMetadata, jsonValue);
           typifiedMetadata
               .put(entry.getKey(), ParameterUtils.getParameterValue(attachmentMetadata));
@@ -581,6 +597,8 @@ public class AttachImplementationManager {
       }
 
       return typifiedMetadata;
+    } catch (OBException obe) {
+      throw new OBException(OBMessageUtils.getI18NMessage("", null), obe);
     } catch (Exception e) {
       throw new OBException(OBMessageUtils.getI18NMessage("OBUIAPP_ErrorInsertMetadata", null), e);
     }

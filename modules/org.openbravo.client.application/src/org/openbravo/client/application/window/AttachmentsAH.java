@@ -134,7 +134,7 @@ public class AttachmentsAH extends BaseActionHandler {
               URLDecoder.decode(params.get(param.getDBColumnName()).toString(), "UTF-8"));
         }
 
-        aim.update(attachmentId, tabId, metadata);
+        aim.update(attachmentId, tabId, recordIds, metadata);
 
         JSONObject obj = getAttachmentJSONObject(tab, recordIds);
         obj.put("buttonId", params.getString("buttonId"));
