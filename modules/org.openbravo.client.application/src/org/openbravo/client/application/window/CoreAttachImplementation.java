@@ -21,6 +21,7 @@ package org.openbravo.client.application.window;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -28,6 +29,7 @@ import javax.enterprise.context.ApplicationScoped;
 import org.apache.commons.io.FileUtils;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.client.application.ParameterValue;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.erpCommon.businessUtility.TabAttachments;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
@@ -46,7 +48,7 @@ public class CoreAttachImplementation extends AttachImplementation {
 
   @Override
   public void uploadFile(Attachment attachment, String strDataType, Map<String, String> parameters,
-      File file, String strTab) throws OBException {
+      File file, String strTab, List<ParameterValue> parameterValues) throws OBException {
     log.debug("CoreAttachImplemententation - Uploading files");
     String tableId = attachment.getTable().getId();
     String strKey = attachment.getRecord();
@@ -102,8 +104,8 @@ public class CoreAttachImplementation extends AttachImplementation {
   }
 
   @Override
-  public void updateFile(Attachment attachment, String strTab, Map<String, String> parameters)
-      throws OBException {
+  public void updateFile(Attachment attachment, String strTab, Map<String, String> parameters,
+      List<ParameterValue> parameterValues) throws OBException {
     log.debug("CoreAttachImplemententation - Updating files");
   }
 

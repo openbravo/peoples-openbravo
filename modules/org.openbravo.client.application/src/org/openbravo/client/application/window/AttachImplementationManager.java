@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.ZipEntry;
@@ -57,6 +58,8 @@ import org.openbravo.dal.service.OBDao;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.datamodel.Table;
+import org.openbravo.model.ad.domain.List;
+import org.openbravo.model.ad.domain.ReferencedTable;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.Attachment;
@@ -141,8 +144,9 @@ public class AttachImplementationManager {
         throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoMethod"));
       }
       saveAttachText(attachment, parameters);
-      saveMetadata(attachment, parameters, attachmentExists);
-      handler.uploadFile(attachment, strDataType, parameters, file, strTab);
+      java.util.List<ParameterValue> parameterValues = saveMetadata(attachment, parameters,
+          attachmentExists);
+      handler.uploadFile(attachment, strDataType, parameters, file, strTab, parameterValues);
 
       OBDal.getInstance().flush();
     } finally {
@@ -201,8 +205,8 @@ public class AttachImplementationManager {
         throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoMethod"));
       }
       saveAttachText(attachment, parameters);
-      saveMetadata(attachment, parameters, true);
-      handler.updateFile(attachment, tabId, parameters);
+      java.util.List<ParameterValue> parameterValues = saveMetadata(attachment, parameters, true);
+      handler.updateFile(attachment, tabId, parameters, parameterValues);
       OBDal.getInstance().save(attachment);
       OBDal.getInstance().flush();
     } finally {
@@ -513,8 +517,10 @@ public class AttachImplementationManager {
    *          true if the attachment already exists (if exists, metadata should exist too)
    * @return
    */
-  public void saveMetadata(Attachment attachment, Map<String, String> metadata, boolean exists) {
+  public java.util.List<ParameterValue> saveMetadata(Attachment attachment,
+      Map<String, String> metadata, boolean exists) throws OBException {
     try {
+      java.util.List<ParameterValue> parameterValues = new ArrayList<ParameterValue>();
       for (Map.Entry<String, String> entry : metadata.entrySet()) {
         final Parameter parameter = OBDal.getInstance().get(Parameter.class, entry.getKey());
         ParameterValue attachmentMetadata;
@@ -540,20 +546,36 @@ public class AttachImplementationManager {
         if (parameter.isUserEditable() && parameter.getPropertyPath() != null
             && !parameter.getPropertyPath().equals("")) {
           // if has a property path
-        } else {
-          if (parameter.getReference().getId().equals(REFERENCE_LIST)
-              || parameter.getReference().getId().equals(REFERENCE_TABLE)
-              || parameter.getReference().getId().equals(REFERENCE_TABLEDIR)) {
-            // save id and name
-          } else {
-            JSONObject jsonValue = new JSONObject();
-            jsonValue.put("value", entry.getValue());
-            ParameterUtils.setParameterValue(attachmentMetadata, jsonValue);
-          }
-
         }
+        if (parameter.getReference().getId().equals(REFERENCE_LIST)) {
+          org.openbravo.model.ad.domain.Reference reference = parameter.getReferenceSearchKey();
+          List list = null;
+          for (List current : reference.getADListList()) {
+            if (current.getName().equals(entry.getValue())) {
+              list = current;
+              break;
+            }
+          }
+          attachmentMetadata.setValueKey(list.getId());
+          attachmentMetadata.setValueString(list.getName());
+        } else if (parameter.getReference().getId().equals(REFERENCE_TABLE)) {
+          org.openbravo.model.ad.domain.Reference reference = parameter.getReference();
+          java.util.List<ReferencedTable> referencedTableList = reference
+              .getADReferencedTableList();
+          // not implemented
+        } else if (parameter.getReference().getId().equals(REFERENCE_TABLEDIR)) {
+          // not implemented
+        } else {
+          JSONObject jsonValue = new JSONObject();
+          jsonValue.put("value", entry.getValue());
+          ParameterUtils.setParameterValue(attachmentMetadata, jsonValue);
+        }
+
         OBDal.getInstance().save(attachmentMetadata);
+        parameterValues.add(attachmentMetadata);
       }
+
+      return parameterValues;
     } catch (Exception e) {
       throw new OBException(OBMessageUtils.getI18NMessage("OBUIAPP_ErrorInsertMetadata", null), e);
     }

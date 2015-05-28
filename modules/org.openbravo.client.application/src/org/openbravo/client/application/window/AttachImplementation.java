@@ -20,9 +20,11 @@
 package org.openbravo.client.application.window;
 
 import java.io.File;
+import java.util.List;
 import java.util.Map;
 
 import org.openbravo.base.exception.OBException;
+import org.openbravo.client.application.ParameterValue;
 import org.openbravo.model.ad.utility.Attachment;
 
 /**
@@ -48,7 +50,8 @@ public abstract class AttachImplementation {
    *          The tabID where the file is attached
    */
   public abstract void uploadFile(Attachment attachment, String strDataType,
-      Map<String, String> parameters, File file, String strTab) throws OBException;
+      Map<String, String> parameters, File file, String strTab, List<ParameterValue> parameterValues)
+      throws OBException;
 
   /**
    * Abstract method to download a single file
@@ -77,7 +80,7 @@ public abstract class AttachImplementation {
    *          The metadata to be modified
    */
   public abstract void updateFile(Attachment attachment, String strTab,
-      Map<String, String> parameters) throws OBException;
+      Map<String, String> parameters, List<ParameterValue> parameterValues) throws OBException;
 
   /**
    * This method is used to know whether the attach method is creating a temporary file in the temp
