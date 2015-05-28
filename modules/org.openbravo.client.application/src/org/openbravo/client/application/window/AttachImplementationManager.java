@@ -539,7 +539,7 @@ public class AttachImplementationManager {
           } else if (attachmentMetadataCriteria.list().size() == 1) {
             attachmentMetadata = attachmentMetadataCriteria.list().get(0);
           } else {
-            throw new OBException();
+            throw new OBException(OBMessageUtils.getI18NMessage("OBUIAPP_MoreThanOneParam", null));
           }
         } else {
           attachmentMetadata = OBProvider.getInstance().get(ParameterValue.class);
@@ -558,7 +558,8 @@ public class AttachImplementationManager {
               + tab.getTable().getName() + " AS a WHERE a.id='" + recordId + "'";
           final Query query = OBDal.getInstance().getSession().createQuery(hql);
           if (query.list().size() != 1) {
-            new OBException();
+            throw new OBException(OBMessageUtils.getI18NMessage("OBUIAPP_PropPathNotOneRecord",
+                null));
           }
           value = query.list().get(0).toString();
         } else {
@@ -598,7 +599,7 @@ public class AttachImplementationManager {
 
       return typifiedMetadata;
     } catch (OBException obe) {
-      throw new OBException(OBMessageUtils.getI18NMessage("", null), obe);
+      throw new OBException(obe.getMessage(), obe);
     } catch (Exception e) {
       throw new OBException(OBMessageUtils.getI18NMessage("OBUIAPP_ErrorInsertMetadata", null), e);
     }
