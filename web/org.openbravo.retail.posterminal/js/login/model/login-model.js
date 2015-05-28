@@ -82,7 +82,7 @@
       });
 
       this.addPropertiesLoader({
-        properties: ['terminal'],
+        properties: ['terminal', 'payments', 'cashMgmtDepositEvents', 'cashMgmtDropEvents', 'businesspartner', 'location', 'pricelist', 'warehouses', 'writableOrganizations', 'pricelistversion', 'currency'],
         loadFunction: function (terminalModel) {
           OB.info('[terminal] Loading... ' + this.properties);
           var me = this,
@@ -153,9 +153,6 @@
                 OB.MobileApp.model.loadingErrorsActions("The terminal.usermodel should be loaded at this point");
               } else {
                 terminalModel.propertiesReady(me.properties);
-                for (i = 1, max = data.length; i < max; i++) {
-                  me.properties.push(Object.keys(data[i])[0]);
-                }
               }
               OB.UTIL.HookManager.executeHooks('OBPOS_TerminalLoadedFromBackend', {
                 data: data[0]
