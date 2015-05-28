@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -72,7 +72,8 @@ public class PaidStatusEventHandler extends EntityPersistenceEventObserver {
             for (FIN_PaymentScheduleDetail psd : pd.getFINPaymentScheduleDetailList()) {
               invoicePaidold = psd.isInvoicePaid();
               if (!invoicePaidold) {
-                if (newStatus.equals(transaction.getFinPayment().getStatus())) {
+                if (newStatus.equals(transaction.getFinPayment().getStatus())
+                    && psd.getInvoicePaymentSchedule() != null) {
                   psd.setInvoicePaid(true);
                 }
                 if (psd.isInvoicePaid()) {
