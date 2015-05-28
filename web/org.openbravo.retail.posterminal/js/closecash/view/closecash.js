@@ -50,17 +50,6 @@ enyo.kind({
 });
 
 enyo.kind({
-  name: 'OB.OBPOSCashUp.UI.RightToolbarImpl',
-  kind: 'OB.UI.MultiColumn.Toolbar',
-  buttons: [{
-    kind: 'OB.OBPOSCashUp.UI.Button',
-    name: 'btnCashUp',
-    span: 12,
-    i18nLabel: 'OBPOS_LblCloseCash'
-  }]
-});
-
-enyo.kind({
   name: 'OB.OBPOSCashUp.UI.LeftToolbarImpl',
   kind: 'OB.UI.MultiColumn.Toolbar',
   published: {
@@ -146,6 +135,9 @@ enyo.kind({
     }
   },
   windowmodel: OB.OBPOSCashUp.Model.CashUp,
+  titleLabel: 'OBPOS_LblCloseCash',
+  finishCloseDialogLabel: 'OBPOS_FinishCloseDialog',
+  cashupSentHook: 'OBPOS_AfterCashUpSent',
   handlers: {
     onButtonOk: 'buttonOk',
     onTapRadio: 'tapRadio',
@@ -177,10 +169,15 @@ enyo.kind({
       showWindowsMenu: false
     },
     rightToolbar: {
-      kind: 'OB.OBPOSCashUp.UI.RightToolbarImpl',
+      kind: 'OB.UI.MultiColumn.Toolbar',
       name: 'rightToolbar',
       showMenu: false,
-      showWindowsMenu: false
+      showWindowsMenu: false,
+      buttons: [{
+        kind: 'OB.OBPOSCashUp.UI.Button',
+        name: 'btnCashUp',
+        span: 12
+      }]
     },
     leftPanel: {
       name: 'cashupLeftPanel',
@@ -235,6 +232,8 @@ enyo.kind({
     this.synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes("cashup");
     var me = this;
     this.inherited(arguments);
+
+    this.$.cashupMultiColumn.$.rightToolbar.$.rightToolbar.$.toolbar.$.button.$.theButton.$.btnCashUp.setContent(OB.I18N.getLabel(this.titleLabel));
 
     this.$.cashupMultiColumn.$.rightPanel.$.cashUpInfo.setModel(this.model);
     this.$.cashupMultiColumn.$.leftToolbar.$.leftToolbar.setModel(this.model);
@@ -306,7 +305,7 @@ enyo.kind({
       // Build the content of the dialog.
       if (messages && messages.length) {
         content = [{
-          content: OB.I18N.getLabel('OBPOS_FinishCloseDialog')
+          content: OB.I18N.getLabel(me.finishCloseDialogLabel)
         }, {
           allowHtml: true,
           content: '&nbsp;'
@@ -317,10 +316,10 @@ enyo.kind({
           });
         }
       } else {
-        content = OB.I18N.getLabel('OBPOS_FinishCloseDialog');
+        content = OB.I18N.getLabel(me.finishCloseDialogLabel);
       }
 
-      OB.UTIL.HookManager.executeHooks('OBPOS_AfterCashUpSent', {}, function () {
+      OB.UTIL.HookManager.executeHooks(me.cashupSentHook, {}, function () {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblGoodjob'), content, [{
           label: OB.I18N.getLabel('OBMOBC_LblOk'),
           isConfirmButton: true,
@@ -332,7 +331,8 @@ enyo.kind({
           autoDismiss: false,
           onHideFunction: function () {
             me.finalAction();
-        }});
+          }
+        });
       });
 
     }, this);
@@ -360,7 +360,8 @@ enyo.kind({
           autoDismiss: false,
           onHideFunction: function () {
             me.waterfall('onEnableNextButton');
-        }});
+          }
+        });
       } else {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_CashUpWronglyHeader'), message, [{
           label: OB.I18N.getLabel('OBMOBC_LblOk'),
@@ -373,11 +374,12 @@ enyo.kind({
           autoDismiss: false,
           onHideFunction: function () {
             OB.POS.navigate('retail.pointofsale');
-        }});
+          }
+        });
       }
     }, this);
 
-    this.refreshButtons();
+    this.refresh();
   },
 
   rendered: function () {
@@ -435,6 +437,8 @@ enyo.kind({
       this.model.set('substep', -1);
       this.moveStep(1);
     } else if (this.model.isFinishedWizard(nextstep)) {
+      // Sets the time
+      this.model.get('cashUpReport').at(0).set('time', new Date());
       //send cash up to the server if it has not been sent yet
       if (this.model.get('cashUpSent')) {
         return true;
@@ -495,6 +499,8 @@ enyo.kind({
   }
 });
 
+
+
 OB.POS.registerWindow({
   windowClass: OB.OBPOSCashUp.UI.CashUp,
   route: 'retail.cashup',
@@ -503,4 +509,27 @@ OB.POS.registerWindow({
   menuI18NLabel: 'OBPOS_LblCloseCash',
   permission: 'OBPOS_retail.cashup',
   approvalType: 'OBPOS_approval.cashup'
+});
+
+
+enyo.kind({
+  name: 'OB.OBPOSCashUp.UI.CashUpPartial',
+  kind: 'OB.OBPOSCashUp.UI.CashUp',
+  windowmodel: OB.OBPOSCashUp.Model.CashUpPartial,
+  titleLabel: 'OBPOS_LblCloseCashPartial',
+  finishCloseDialogLabel: 'OBPOS_FinishPartialDialog',
+  cashupSentHook: 'OBPOS_AfterCashUpPartialSent',
+  finalAction: function () {
+    OB.POS.navigate('retail.pointofsale');
+  }
+});
+
+OB.POS.registerWindow({
+  windowClass: OB.OBPOSCashUp.UI.CashUpPartial,
+  route: 'retail.cashuppartial',
+  online: false,
+  menuPosition: 21,
+  menuI18NLabel: 'OBPOS_LblCloseCashPartial',
+  permission: 'OBPOS_retail.cashuppartial',
+  approvalType: 'OBPOS_approval.cashuppartial'
 });

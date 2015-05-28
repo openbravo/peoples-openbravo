@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global enyo */
+/*global OB, enyo */
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.InDevHeader',
@@ -28,7 +28,7 @@ enyo.kind({
     components: [{
       name: 'headerText',
       kind: 'OB.UI.SmallButton',
-      classes: 'span12 btnlink-red',
+      classes: 'span12 ' + (OB.UTIL.Debug.isDebug() && OB.UTIL.Debug.getDebugCauses().isTestEnvironment ? 'btnlink-orange' : 'btnlink-red'),
       style: '  height: 50px; margin: 5px 5px 0px 0px; font-size: 20px; cursor: pointer; font-weight: bold',
       tap: function () {
         this.owner.doShowPopup({
@@ -37,7 +37,17 @@ enyo.kind({
       },
       content: '',
       init: function () {
-        this.setContent(OB.I18N.getLabel('OBPOS_ModulesInDevelopment'));
+        if (OB.UTIL.Debug.isDebug()) {
+          var ifInDevelopment = 'OBPOS_ModulesInDevelopment';
+          var ifInTestEnvironment = 'OBPOS_ApplicationInTestEnvironment';
+          var i18nLabel = 'OBMOBC_Debug';
+          if (OB.UTIL.Debug.getDebugCauses().isInDevelopment) {
+            i18nLabel = ifInDevelopment;
+          } else if (OB.UTIL.Debug.getDebugCauses().isTestEnvironment) {
+            i18nLabel = ifInTestEnvironment;
+          }
+          this.setContent(OB.I18N.getLabel(i18nLabel));
+        }
       }
     }]
   }]

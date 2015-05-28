@@ -15,6 +15,9 @@ OB.OBPOSCashUp.UI = OB.OBPOSCashUp.UI || {};
 
 //Window model
 OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
+  initialStep: 1,
+  finishButtonLabel: 'OBPOS_LblPostPrintClose',
+  reportTitleLabel: 'OBPOS_LblStep4of4',
   models: [OB.Model.Order],
   defaults: {
     step: OB.DEC.Zero,
@@ -39,7 +42,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
         activePaymentsList = [];
 
     //steps
-    this.set('step', 1);
+    this.set('step', this.initialStep);
     this.set('substep', 0);
 
     // Create steps instances
@@ -264,7 +267,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
     return this.cashupsteps[this.get('step') - 1].allowNext();
   },
   allowPrevious: function () {
-    return this.get('step') > 1;
+    return this.get('step') > this.initialStep;
   },
   setIgnoreStep3: function () {
     var result = null;
@@ -301,7 +304,11 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
   },
   nextButtonI18NLabel: function () {
     var currentstep = this.get('step') - 1;
-    return this.cashupsteps[currentstep].nextButtonI18NLabel();
+    if (this.cashupsteps[currentstep].nextFinishButton()) {
+      return this.finishButtonLabel;
+    } else {
+      return 'OBPOS_LblNextStep';
+    }
   },
   isFinishedWizard: function (step) {
     return step > this.cashupsteps.length;
@@ -517,12 +524,24 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
                 }, true);
                 };
             if (OB.MobileApp.model.hasPermission('OBPOS_print.cashup')) {
-              me.printCashUp.print(me.get('cashUpReport').at(0), me.getCountCashSummary());
+              me.printCashUp.print(me.get('cashUpReport').at(0), me.getCountCashSummary(), true);
             }
             callbackFunc();
           }, null);
         }, null, this);
       });
     });
+  }
+});
+
+OB.OBPOSCashUp.Model.CashUpPartial = OB.OBPOSCashUp.Model.CashUp.extend({
+  initialStep: 5,
+  finishButtonLabel: 'OBPOS_LblPrintClose',
+  reportTitleLabel: 'OBPOS_LblPartialCashUpTitle',
+  processAndFinishCashUp: function () {
+    if (OB.MobileApp.model.hasPermission('OBPOS_print.cashup')) {
+      this.printCashUp.print(this.get('cashUpReport').at(0), this.getCountCashSummary(), false);
+    }
+    this.set('finished', true);
   }
 });

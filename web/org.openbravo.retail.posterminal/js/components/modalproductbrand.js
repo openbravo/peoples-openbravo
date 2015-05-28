@@ -83,7 +83,14 @@ enyo.kind({
         me.brandsList.reset();
       }
     }
-    OB.Dal.find(OB.Model.Brand, null, successCallbackBrands, errorCallback);
+    var criteria = {
+      '_orderBy': [{
+        'column': 'name',
+        'asc': true
+      }]
+    };
+
+    OB.Dal.find(OB.Model.Brand, criteria, successCallbackBrands, errorCallback);
     return true;
   },
   brandsList: null,
