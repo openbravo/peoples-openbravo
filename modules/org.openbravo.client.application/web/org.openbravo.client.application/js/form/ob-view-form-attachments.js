@@ -282,36 +282,8 @@ isc.OBAttachmentsLayout.addProperties({
       width: '30px',
       canvas: me,
       action: function (forceUpload) {
-        var viewId = 'attachment_' + this.canvas.tabId,
-            ownerView = this.canvas.getForm().view,
-            standardWindow = ownerView.standardWindow,
-            parts = standardWindow.getPrototype().Class.split('_'),
-            clientContext = null,
-            record = this.canvas.getForm().values,
-            params = {},
-            callback;
         if (OB.Utilities.currentUploader === null || forceUpload) {
-          callback = function () {
-            standardWindow.openProcess({
-              paramWindow: true,
-              processId: viewId,
-              ownerView: ownerView,
-              attachSection: me,
-              uploadMode: true,
-              windowTitle: OB.I18N.getLabel('OBUIAPP_AttachFile'),
-              uiPattern: 'A'
-            });
-          };
-          params.tabTitle = record[OB.Constants.IDENTIFIER];
-          params.inpDocumentOrg = me.docOrganization;
-          params.client = me.docClient;
-          params.uploadMode = true;
-          if (parts.length === 3) {
-            // is in development. add the timestamp to the parameters.
-            params.timestamp = parts[2];
-          }
-
-          OB.Layout.ViewManager.fetchView(viewId, callback, clientContext, null, false, params);
+          me.openAttachPopup(true);
         } else {
           isc.ask(OB.I18N.getLabel('OBUIAPP_OtherUploadInProgress'), function (clickOK) {
             if (clickOK) {
@@ -429,39 +401,8 @@ isc.OBAttachmentsLayout.addProperties({
       });
     };
 
-    editDescActions = function (fileName) {
-      var button = this,
-          viewId = 'attachment_' + this.canvas.tabId,
-          ownerView = this.canvas.getForm().view,
-          standardWindow = ownerView.standardWindow,
-          parts = standardWindow.getPrototype().Class.split('_'),
-          clientContext = null,
-          record = this.canvas.getForm().values,
-          params = {},
-          callback;
-      callback = function () {
-        standardWindow.openProcess({
-          paramWindow: true,
-          processId: viewId,
-          ownerView: ownerView,
-          attachmentId: button.attachmentId,
-          attachmentName: button.attachmentName,
-          attachmentMethod: button.attachmentMethod,
-          uploadMode: false,
-          attachSection: me,
-          windowTitle: OB.I18N.getLabel('OBUIAPP_AttachFile'),
-          uiPattern: 'A'
-        });
-      };
-      params.tabTitle = record[OB.Constants.IDENTIFIER];
-      params.inpDocumentOrg = me.docOrganization;
-      params.client = me.docClient;
-      if (parts.length === 3) {
-        // is in development. add the timestamp to the parameters.
-        params.timestamp = parts[2];
-      }
-
-      OB.Layout.ViewManager.fetchView(viewId, callback, clientContext, null, false, params);
+    editDescActions = function () {
+      me.openAttachPopup(false, this.attachment);
     };
 
     length = attachments.length;
@@ -503,12 +444,9 @@ isc.OBAttachmentsLayout.addProperties({
       var editDescription = isc.OBLinkButtonItem.create({
         title: '[ ' + OB.I18N.getLabel('OBUIAPP_AttachmentEditDesc') + ' ]',
         width: '30px',
-        attachmentName: attachment.name,
-        attachmentId: attachment.id,
-        attachmentMethod: attachment.attmethod,
+        attachment: attachment,
         canvas: this,
-        action: editDescActions,
-        hLayout: buttonLayout
+        action: editDescActions
       });
       var description = isc.DynamicForm.create({
         title: 'Description',
@@ -538,6 +476,51 @@ isc.OBAttachmentsLayout.addProperties({
       buttonLayout.addMember(description);
       this.addMember(buttonLayout);
     }
+  },
+  
+  openAttachPopup: function(uploadMode, attachment) {
+    var viewId = 'attachment_' + this.tabId,
+        ownerView = this.getForm().view,
+        standardWindow = ownerView.standardWindow,
+        clientContext = null,
+        windowTitle = OB.I18N.getLabel('OBUIAPP_AttachFile'),
+        params = {},
+        editParams = {},
+        attachSection = this,
+        callback;
+
+    if (uploadMode === false) {
+      viewId = viewId + '_' + attachment.attmethod;
+      editParams.attachmentId = attachment.id;
+      editParams.attachmentName = attachment.name;
+      editParams.attachmentMethod = attachment.attmethod;
+    }
+    callback = function (response, data, request) {
+      if (data.Class !== undefined) {
+        standardWindow.selectedState = ownerView.viewGrid && ownerView.viewGrid.getSelectedState();
+        
+        standardWindow.runningProcess = data.create(isc.addProperties({}, {
+          parentWindow: standardWindow,
+          sourceView: ownerView,
+          ownerView: ownerView,
+          attachSection: attachSection,
+          uploadMode: uploadMode
+        }, editParams));
+
+        standardWindow.openPopupInTab(standardWindow.runningProcess, windowTitle, standardWindow.runningProcess.popupWidth, standardWindow.runningProcess.popupHeight, standardWindow.runningProcess.showMinimizeButton, standardWindow.runningProcess.showMaximizeButton, true, true);
+
+      } else {
+        isc.warn(OB.I18N.getLabel('OBUIAPP_ProcessClassNotFound', [viewId]), function () {
+          return true;
+        }, {
+          icon: '[SKINIMG]Dialog/error.png',
+          title: OB.I18N.getLabel('OBUIAPP_Error')
+        });
+      }
+    };
+    params.inpDocumentOrg = this.docOrganization;
+
+    OB.Layout.ViewManager.fetchView(viewId, callback, clientContext, null, false, params);
   },
 
   // ensure that the view gets activated

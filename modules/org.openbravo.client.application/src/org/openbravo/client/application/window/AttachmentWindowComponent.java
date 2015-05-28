@@ -34,9 +34,7 @@ import org.openbravo.client.kernel.KernelConstants;
 import org.openbravo.client.kernel.Template;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.domain.Validation;
-import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.ui.Tab;
-import org.openbravo.model.ad.utility.AttachmentConfig;
 import org.openbravo.model.ad.utility.AttachmentMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,8 +48,8 @@ public class AttachmentWindowComponent extends BaseTemplateComponent {
 
   private Boolean inDevelopment = null;
   private String uniqueString = "" + System.currentTimeMillis();
-  private String clientId = null;
   private Tab tab;
+  private AttachmentMethod attMethod;
 
   @Inject
   private OBViewParameterHandler paramHandler;
@@ -63,18 +61,12 @@ public class AttachmentWindowComponent extends BaseTemplateComponent {
   public String getWindowClientClassName() {
     // see the ViewComponent#correctViewId
     // changes made in this if statement should also be done in that method
+    String baseClassName = KernelConstants.ID_PREFIX + tab.getId() + KernelConstants.ID_PREFIX
+        + attMethod.getId();
     if (isIndevelopment()) {
-      return KernelConstants.ID_PREFIX + tab.getId() + KernelConstants.ID_PREFIX + uniqueString;
+      return baseClassName + KernelConstants.ID_PREFIX + uniqueString;
     }
-    return KernelConstants.ID_PREFIX + tab.getId();
-  }
-
-  public void setUniqueString(String uniqueString) {
-    this.uniqueString = uniqueString;
-  }
-
-  public void setClient(String clientId) {
-    this.clientId = clientId;
+    return baseClassName;
   }
 
   public boolean isIndevelopment() {
@@ -94,6 +86,14 @@ public class AttachmentWindowComponent extends BaseTemplateComponent {
   public String generate() {
     final String jsCode = super.generate();
     return jsCode;
+  }
+
+  public void setAttachmentMethod(AttachmentMethod attMethod) {
+    this.attMethod = attMethod;
+  }
+
+  public String getAttachmentMethodId() {
+    return attMethod.getId();
   }
 
   public void setTab(Tab tab) {
@@ -146,17 +146,8 @@ public class AttachmentWindowComponent extends BaseTemplateComponent {
   }
 
   private List<Parameter> getTabMetadataFields() {
-    AttachmentConfig attConf = AttachmentUtils.getAttachmentConfig((Client) OBDal.getInstance()
-        .getProxy(Client.ENTITY_NAME, clientId));
-    AttachmentMethod attachMethod;
-    if (attConf == null) {
-      attachMethod = AttachmentUtils.getDefaultAttachmentMethod();
-    } else {
-      attachMethod = attConf.getAttachmentMethod();
-    }
-    // TODO Auto-generated method stub
     // Load attachment method in use
-    return AttachmentUtils.getMethodMetadataParameters(attachMethod, tab);
+    return AttachmentUtils.getMethodMetadataParameters(attMethod, tab);
   }
 
   /**

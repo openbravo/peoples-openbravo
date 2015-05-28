@@ -32,9 +32,7 @@ import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.client.kernel.KernelConstants;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.ui.Tab;
-import org.openbravo.model.ad.utility.AttachmentConfig;
 import org.openbravo.model.ad.utility.AttachmentMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,21 +51,14 @@ public class DefaultsAttachmentActionHandler extends BaseActionHandler {
       OBContext.setAdminMode(true);
       JSONObject defaults = new JSONObject();
 
+      final String strAttMethodID = (String) parameters.get("attachmentMethod");
       final String strTabId = (String) parameters.get("tabId");
-      final String strClientId = (String) parameters.get("clientId");
+      final Tab tab = OBDal.getInstance().get(Tab.class, strTabId);
+      AttachmentMethod attMethod = OBDal.getInstance().get(AttachmentMethod.class, strAttMethodID);
 
-      JSONObject context = null;
+      JSONObject context = new JSONObject();
       if (parameters.get("context") != null) {
         context = new JSONObject((String) parameters.get("context"));
-      }
-      final Tab tab = OBDal.getInstance().get(Tab.class, strTabId);
-      final Client client = OBDal.getInstance().get(Client.class, strClientId);
-      AttachmentConfig attConf = AttachmentUtils.getAttachmentConfig(client);
-      AttachmentMethod attMethod;
-      if (attConf == null) {
-        attMethod = AttachmentUtils.getDefaultAttachmentMethod();
-      } else {
-        attMethod = attConf.getAttachmentMethod();
       }
       final Map<String, String> fixedParameters = fixRequestMap(parameters);
 

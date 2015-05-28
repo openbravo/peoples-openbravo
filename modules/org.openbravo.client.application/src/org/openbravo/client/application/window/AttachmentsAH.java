@@ -24,15 +24,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import javax.inject.Inject;
+
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.ScrollMode;
-import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.core.DalUtil;
@@ -40,15 +38,18 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.Attachment;
-import org.openbravo.model.ad.utility.AttachmentConfig;
 import org.openbravo.model.ad.utility.AttachmentMethod;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AttachmentsAH extends BaseActionHandler {
 
-  private static final Logger log = Logger.getLogger(AttachmentsAH.class);
+  private static final Logger log = LoggerFactory.getLogger(AttachmentsAH.class);
+
+  @Inject
+  private AttachImplementationManager aim;
 
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) {
@@ -67,61 +68,8 @@ public class AttachmentsAH extends BaseActionHandler {
       if (!request.isNull("action")) {
         action = request.getString("action");
       }
-      AttachImplementationManager aim = WeldUtils
-          .getInstanceFromStaticBeanManager(AttachImplementationManager.class);
 
-      if ("INITIALIZE".equals(action) || "INITIALIZE_EDIT".equals(action)) {
-        JSONObject response = new JSONObject();
-        AttachmentConfig attConf = null;
-        AttachmentMethod attMethod = null;
-        Attachment attachment = null;
-        String attachId = "";
-        if ("INITIALIZE".equals(action)) {
-          attConf = AttachmentUtils.getAttachmentConfig();
-          if (attConf == null) {
-            attMethod = AttachmentUtils.getDefaultAttachmentMethod();
-          } else {
-            attMethod = attConf.getAttachmentMethod();
-          }
-        } else {
-          attachId = request.getString("attachId");
-          attachment = OBDal.getInstance().get(Attachment.class, attachId);
-          attConf = attachment.getAttachmentConf();
-          attMethod = attConf.getAttachmentMethod();
-        }
-        JSONArray metadataArray = new JSONArray();
-
-        final OBQuery<Parameter> paramQuery = OBDal.getInstance().createQuery(Parameter.class,
-            "attachmentMethod.id=:attachmentMethodId and (tab is null or tab.id=:tabId)");
-        paramQuery.setNamedParameter("attachmentMethodId", attMethod.getId());
-        paramQuery.setNamedParameter("tabId", tab.getId());
-        paramQuery.setFetchSize(1000);
-        final ScrollableResults paramScroller = paramQuery.scroll(ScrollMode.FORWARD_ONLY);
-        int i = 0;
-        while (paramScroller.next()) {
-          final Parameter param = (Parameter) paramScroller.get()[0];
-          JSONObject metadata = new JSONObject();
-          metadata.put("Name", param.getName());
-          metadata.put("SearchKey", param.getDBColumnName());
-          metadataArray.put(metadata);
-          // clear the session every 100 records
-          if ((i % 100) == 0) {
-            OBDal.getInstance().getSession().clear();
-          }
-          i++;
-        }
-        paramScroller.close();
-
-        if (!attachId.equals("")) {
-          attachment = OBDal.getInstance().get(Attachment.class, attachId);
-        }
-
-        response.put("attMetadataList", metadataArray);
-        if ("INITIALIZE_EDIT".equals(action)) { // get MetadataValues
-          aim.getMetadataValues(attachment, metadataArray);
-        }
-        return response;
-      } else if ("EDIT".equals(action)) {
+      if ("EDIT".equals(action)) {
         JSONObject params = request.getJSONObject("_params");
         recordIds = params.getString("inpKey");
         final String attachmentId = (String) parameters.get("attachmentId");
@@ -170,7 +118,6 @@ public class AttachmentsAH extends BaseActionHandler {
     } catch (UnsupportedEncodingException e) {
       throw new OBException("Error decoding parameter", e);
     } catch (OBException e) {
-      // throw new OBException(e.getMessage(), e);
       OBDal.getInstance().rollbackAndClose();
       log.error(e.getMessage());
       JSONObject obj = getAttachmentJSONObject(tab, recordIds);
@@ -184,7 +131,6 @@ public class AttachmentsAH extends BaseActionHandler {
       }
 
       return obj;
-      // // throw new OBException("", e);
     } finally {
       OBContext.restorePreviousMode();
     }

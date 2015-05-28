@@ -45,6 +45,8 @@ isc.OBAttachmentWindowView.addProperties({
   ownerView: null,
   uploadMode: null,
   attachmentId: null,
+  attachmentName: null,
+  attachmentMethod: null,
 
   attachFormProps: {
     encoding: 'multipart',
@@ -139,6 +141,7 @@ isc.OBAttachmentWindowView.addProperties({
     }
     this.baseParams.tabId = this.attachSection.tabId;
     this.baseParams.clientId = this.attachSection.docClient;
+    this.baseParams.attachmentMethod = this.attachmentMethod;
 
     this.formProps = isc.addProperties({}, this.formProps, this.attachFormProps);
     this.viewProperties.fields = isc.shallowClone(attachFields);

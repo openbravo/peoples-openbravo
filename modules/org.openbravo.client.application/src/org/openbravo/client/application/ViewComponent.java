@@ -25,12 +25,12 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.util.OBClassLoader;
 import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.client.application.window.AttachmentUtils;
 import org.openbravo.client.application.window.AttachmentWindowComponent;
 import org.openbravo.client.application.window.ParameterWindowComponent;
 import org.openbravo.client.application.window.StandardWindowComponent;
@@ -46,6 +46,8 @@ import org.openbravo.erpCommon.obps.ActivationKey.FeatureRestriction;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
+import org.openbravo.model.ad.utility.AttachmentConfig;
+import org.openbravo.model.ad.utility.AttachmentMethod;
 
 /**
  * Reads the view and generates it.
@@ -94,12 +96,7 @@ public class ViewComponent extends BaseComponent {
         }
         return generateProcess(process);
       } else if (viewId.startsWith("attachment_")) {
-        String tabId = viewId.substring("attachment_".length());
-        Tab tab = OBDal.getInstance().get(Tab.class, tabId);
-        if (tab == null) {
-          throw new IllegalArgumentException("Not found process definition with ID " + tabId);
-        }
-        return generateAttachment(tab);
+        return generateAttachment(viewId);
       } else {
         return generateView(viewId);
       }
@@ -149,13 +146,27 @@ public class ViewComponent extends BaseComponent {
     return parameterWindowComponent.generate();
   }
 
-  protected String generateAttachment(Tab tab) {
-    attachmentWindowComponent.setClient(getParameter("client"));
-    attachmentWindowComponent.setTab(tab);
-    String timestamp = getParameter("timestamp");
-    if (StringUtils.isNotEmpty(timestamp)) {
-      attachmentWindowComponent.setUniqueString(timestamp);
+  protected String generateAttachment(String viewId) {
+    String[] keys = viewId.split(KernelConstants.ID_PREFIX);
+    String tabId = keys[1];
+    Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+    if (tab == null) {
+      throw new IllegalArgumentException("Not found process definition with ID " + tabId);
     }
+    AttachmentMethod attMethod;
+    if (keys.length >= 3) {
+      String strAttMethodId = keys[2];
+      attMethod = OBDal.getInstance().get(AttachmentMethod.class, strAttMethodId);
+    } else {
+      AttachmentConfig attConf = AttachmentUtils.getAttachmentConfig();
+      if (attConf == null) {
+        attMethod = AttachmentUtils.getDefaultAttachmentMethod();
+      } else {
+        attMethod = attConf.getAttachmentMethod();
+      }
+    }
+    attachmentWindowComponent.setAttachmentMethod(attMethod);
+    attachmentWindowComponent.setTab(tab);
     attachmentWindowComponent.setParameters(getParameters());
     return attachmentWindowComponent.generate();
   }
@@ -187,7 +198,8 @@ public class ViewComponent extends BaseComponent {
       }
       return process.getModule();
     } else if (id.startsWith("attachment_")) {
-      String tabId = id.substring("attachment_".length());
+      String[] keys = id.split(KernelConstants.ID_PREFIX);
+      String tabId = keys[1];
       Tab tab = OBDal.getInstance().get(Tab.class, tabId);
       if (tab == null) {
         throw new IllegalArgumentException("Not found tab with ID " + tabId);

@@ -22,6 +22,7 @@
 /*jslint*/
 isc.ClassFactory.defineClass('_attachment${data.windowClientClassName?js_string}', isc.OBAttachmentWindowView).addProperties({
     popup: true, 
+    attachmentMethod: '${data.attachmentMethodId?js_string}',
     viewProperties: {
       additionalFields: [
     <#list data.paramHandler.parameters as param>
@@ -31,4 +32,3 @@ isc.ClassFactory.defineClass('_attachment${data.windowClientClassName?js_string}
     },
     dynamicColumns: ${data.dynamicColumns}
 });
-
