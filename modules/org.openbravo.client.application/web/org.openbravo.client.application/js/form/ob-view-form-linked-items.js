@@ -330,7 +330,7 @@ isc.OBLinkedItemLayout.addProperties({
         this.emptyMessage = this.emptyDataMessage;
       },
       dataArrived: function (startRow, endRow) {
-        if (startRow === 0 && endRow === -1) {
+        if (this.data && this.data.getLength && this.data.getLength() === 0) {
           this.showNoRowsMessage();
         }
         return this.Super('dataArrived', arguments);
