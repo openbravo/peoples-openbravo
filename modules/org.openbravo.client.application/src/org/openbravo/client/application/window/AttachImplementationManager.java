@@ -23,7 +23,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.ZipEntry;
@@ -144,9 +143,9 @@ public class AttachImplementationManager {
         throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoMethod"));
       }
       saveAttachText(attachment, parameters);
-      java.util.List<ParameterValue> parameterValues = saveMetadata(attachment, parameters,
+      Map<String, Object> typifiedParameters = saveMetadata(attachment, parameters,
           attachmentExists);
-      handler.uploadFile(attachment, strDataType, parameters, file, strTab, parameterValues);
+      handler.uploadFile(attachment, strDataType, typifiedParameters, file, strTab);
 
       OBDal.getInstance().flush();
     } finally {
@@ -169,6 +168,9 @@ public class AttachImplementationManager {
       throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoMethod"));
     }
     handler.deleteFile(attachment);
+    for (ParameterValue currentParameterValue : attachment.getOBUIAPPParameterValueFileList()) {
+      OBDal.getInstance().remove(currentParameterValue);
+    }
     OBDal.getInstance().remove(attachment);
     OBDal.getInstance().flush();
   }
@@ -205,8 +207,8 @@ public class AttachImplementationManager {
         throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoMethod"));
       }
       saveAttachText(attachment, parameters);
-      java.util.List<ParameterValue> parameterValues = saveMetadata(attachment, parameters, true);
-      handler.updateFile(attachment, tabId, parameters, parameterValues);
+      Map<String, Object> typifiedParameters = saveMetadata(attachment, parameters, true);
+      handler.updateFile(attachment, tabId, typifiedParameters);
       OBDal.getInstance().save(attachment);
       OBDal.getInstance().flush();
     } finally {
@@ -517,10 +519,10 @@ public class AttachImplementationManager {
    *          true if the attachment already exists (if exists, metadata should exist too)
    * @return
    */
-  public java.util.List<ParameterValue> saveMetadata(Attachment attachment,
-      Map<String, String> metadata, boolean exists) throws OBException {
+  public Map<String, Object> saveMetadata(Attachment attachment, Map<String, String> metadata,
+      boolean exists) throws OBException {
     try {
-      java.util.List<ParameterValue> parameterValues = new ArrayList<ParameterValue>();
+      Map<String, Object> typifiedMetadata = new HashMap<String, Object>();
       for (Map.Entry<String, String> entry : metadata.entrySet()) {
         final Parameter parameter = OBDal.getInstance().get(Parameter.class, entry.getKey());
         ParameterValue attachmentMetadata;
@@ -549,15 +551,17 @@ public class AttachImplementationManager {
         }
         if (parameter.getReference().getId().equals(REFERENCE_LIST)) {
           org.openbravo.model.ad.domain.Reference reference = parameter.getReferenceSearchKey();
-          List list = null;
-          for (List current : reference.getADListList()) {
-            if (current.getName().equals(entry.getValue())) {
-              list = current;
+          for (List currentList : reference.getADListList()) {
+            if (currentList.getName().equals(entry.getValue())) {
+              attachmentMetadata.setValueKey(currentList.getId());
+              attachmentMetadata.setValueString(currentList.getName());
+              JSONObject jsonValue = new JSONObject();
+              jsonValue.put("id", currentList.getId());
+              jsonValue.put("name", currentList.getName());
+              typifiedMetadata.put(entry.getKey(), jsonValue);
               break;
             }
           }
-          attachmentMetadata.setValueKey(list.getId());
-          attachmentMetadata.setValueString(list.getName());
         } else if (parameter.getReference().getId().equals(REFERENCE_TABLE)) {
           org.openbravo.model.ad.domain.Reference reference = parameter.getReference();
           java.util.List<ReferencedTable> referencedTableList = reference
@@ -569,13 +573,14 @@ public class AttachImplementationManager {
           JSONObject jsonValue = new JSONObject();
           jsonValue.put("value", entry.getValue());
           ParameterUtils.setParameterValue(attachmentMetadata, jsonValue);
+          typifiedMetadata
+              .put(entry.getKey(), ParameterUtils.getParameterValue(attachmentMetadata));
         }
 
         OBDal.getInstance().save(attachmentMetadata);
-        parameterValues.add(attachmentMetadata);
       }
 
-      return parameterValues;
+      return typifiedMetadata;
     } catch (Exception e) {
       throw new OBException(OBMessageUtils.getI18NMessage("OBUIAPP_ErrorInsertMetadata", null), e);
     }
