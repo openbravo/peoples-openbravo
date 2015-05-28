@@ -82,11 +82,11 @@
       });
 
       this.addPropertiesLoader({
-        properties: ['terminal'],
+        properties: ['terminal', 'payments', 'cashMgmtDepositEvents', 'cashMgmtDropEvents', 'businesspartner', 'location', 'pricelist', 'warehouses', 'writableOrganizations', 'pricelistversion', 'currency'],
         loadFunction: function (terminalModel) {
           OB.info('[terminal] Loading... ' + this.properties);
           var me = this,
-              handleError;
+              max, i, handleError;
           var params = {};
           var currentDate = new Date();
           params.terminalTime = currentDate;
