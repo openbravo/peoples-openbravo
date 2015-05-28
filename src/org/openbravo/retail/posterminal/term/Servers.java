@@ -39,7 +39,8 @@ public class Servers extends JSONTerminalProperty {
       OBQuery<MobileServerDefinition> servers = OBDal.getInstance().createQuery(
           MobileServerDefinition.class,
           MobileServerDefinition.PROPERTY_ALLORGS + "='Y' or :org in elements("
-              + MobileServerDefinition.PROPERTY_OBMOBCSERVERORGSLIST + ")");
+              + MobileServerDefinition.PROPERTY_OBMOBCSERVERORGSLIST + ") order by "
+              + MobileServerDefinition.PROPERTY_PRIORITY);
       servers.setNamedParameter("org", posTerminal.getOrganization().getId());
       for (MobileServerDefinition server : servers.list()) {
         respArray.put(createServerJSON(server));
