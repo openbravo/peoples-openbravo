@@ -477,8 +477,8 @@ isc.OBAttachmentsLayout.addProperties({
       this.addMember(buttonLayout);
     }
   },
-  
-  openAttachPopup: function(uploadMode, attachment) {
+
+  openAttachPopup: function (uploadMode, attachment) {
     var viewId = 'attachment_' + this.tabId,
         ownerView = this.getForm().view,
         standardWindow = ownerView.standardWindow,
@@ -498,7 +498,7 @@ isc.OBAttachmentsLayout.addProperties({
     callback = function (response, data, request) {
       if (data.Class !== undefined) {
         standardWindow.selectedState = ownerView.viewGrid && ownerView.viewGrid.getSelectedState();
-        
+
         standardWindow.runningProcess = data.create(isc.addProperties({}, {
           parentWindow: standardWindow,
           sourceView: ownerView,
