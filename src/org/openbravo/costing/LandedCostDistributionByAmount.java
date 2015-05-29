@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -137,6 +137,7 @@ public class LandedCostDistributionByAmount extends LandedCostDistributionAlgori
     qry.append("   join trx." + MaterialTransaction.PROPERTY_GOODSSHIPMENTLINE + " as iol");
     qry.append(" , " + LCReceipt.ENTITY_NAME + " as lcr");
     qry.append(" where tc." + CostAdjustmentLine.PROPERTY_UNITCOST + " = true");
+    qry.append(" and iol." + ShipmentInOutLine.PROPERTY_MOVEMENTQUANTITY + " >= 0");
     qry.append("   and ((lcr." + LCReceipt.PROPERTY_GOODSSHIPMENTLINE + " is not null");
     qry.append("        and lcr." + LCReceipt.PROPERTY_GOODSSHIPMENTLINE + " = iol)");
     qry.append("         or (lcr." + LCReceipt.PROPERTY_GOODSSHIPMENTLINE + " is null");
