@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2013 Openbravo SLU
+* All portions are Copyright (C) 2001-2015 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -80,13 +80,11 @@
           P.BILLTO_ID, P.C_CAMPAIGN_ID, P.C_PROJECT_ID, P.AD_USER_ID, P.DESCRIPTION, P.PROJECTSTATUS,
           PP.NAME AS PHASE_NAME, PP.AD_CLIENT_ID, PP.AD_ORG_ID, OI.C_LOCATION_ID AS ORGLOCATIONID,
           P.FIN_PAYMENTMETHOD_ID, P.POREFERENCE
-        FROM C_PROJECT P,
+        FROM C_PROJECT P LEFT JOIN M_PRICELIST PL ON P.M_PRICELIST_ID = PL.M_PRICELIST_ID,
           C_PROJECTPHASE PP,
-          M_PRICELIST PL,
           AD_ORGINFO OI
         WHERE P.C_PROJECT_ID=PP.C_PROJECT_ID
           AND PP.C_PROJECTPHASE_ID=v_Record_ID
-          AND P.M_PRICELIST_ID = PL.M_PRICELIST_ID
           AND PP.AD_ORG_ID = OI.AD_ORG_ID
         )
       LOOP

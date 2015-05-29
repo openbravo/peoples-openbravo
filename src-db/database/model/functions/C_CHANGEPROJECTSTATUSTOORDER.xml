@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2012 Openbravo SLU
+* All portions are Copyright (C) 2001-2015 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -118,6 +118,8 @@
             RAISE_APPLICATION_ERROR(-20000, '@ProjectWarehouseNotFound@');
           ELSIF Cur_SO.SALESREP_ID IS NULL THEN
             RAISE_APPLICATION_ERROR(-20000, '@ProjectSalesRepNotFound@');
+          ELSIF Cur_SO.M_PRICELIST_ID IS NULL AND Cur_SO.PROJECTCATEGORY='S' THEN
+              RAISE_APPLICATION_ERROR(-20000, '@ThebusinessPartner@'||' '||' @PricelistNotdefined@');
           END IF;
           /*Added in order to work with Multiphase Project*/
           IF (Cur_SO.PROJECTCATEGORY is null OR Cur_SO.PROJECTCATEGORY<>'S') THEN
