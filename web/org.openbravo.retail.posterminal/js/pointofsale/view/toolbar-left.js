@@ -201,6 +201,15 @@ enyo.kind({
     // the decision to enable the button is made based on several requirements that must be met
     var requirements;
 
+    // Two special cases
+    // 1. isDisabled is true: It is a request to disable the button, so no checks required to disable it
+    // 2. this.isEnabled is false: The toolbar has been disabled, so the button must be disabled
+    if (isDisabled || !this.isEnabled) {
+      this.disabled = true;
+      this.setAttribute('disabled', true);
+      return;
+    }
+
     function requirementsAreMet(model) {
       requirements = {
         isSynchronized: undefined,
