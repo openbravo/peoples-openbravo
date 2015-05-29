@@ -217,8 +217,8 @@ enyo.kind({
         }
       }
     }
-    this.disabled = isDisabled; // for getDisabled() to return the correct value
-    this.setAttribute('disabled', isDisabled); // to effectively turn the button enabled or disabled
+    this.disabled = isDisabled || !this.isEnabled; // for getDisabled() to return the correct value
+    this.setAttribute('disabled', this.disabled); // to effectively turn the button enabled or disabled
   },
   events: {
     onTabChange: '',
