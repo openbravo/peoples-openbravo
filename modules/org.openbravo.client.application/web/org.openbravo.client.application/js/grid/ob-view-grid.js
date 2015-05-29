@@ -1861,6 +1861,7 @@ isc.OBViewGrid.addProperties({
             recordIndexes.push(me.getRecordIndex(gridRecord));
           }
         }
+        me.singleRecordSelection = false;
         me.selectRecords(recordIndexes);
         if (me.selectedRecordsBeforeRefresh.length !== recordIndexes.length) {
           if (me.view.messageBar.isVisible()) {
