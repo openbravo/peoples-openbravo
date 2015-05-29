@@ -842,6 +842,11 @@
         url: '../../org.openbravo.retail.posterminal.service.loginutils'
       }).response(this, function (inSender, inResponse) {
         window.localStorage.setItem('terminalAuthentication', inResponse.terminalAuthentication);
+        //Save available servers and services and initialize Request Router layer
+        localStorage.servers = JSON.stringify(inResponse.servers);
+        localStorage.services = JSON.stringify(inResponse.services);
+        OB.RR.RequestRouter.initialize();
+
         me.setTerminalName(window.localStorage.getItem('terminalAuthentication') === 'Y' ? window.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"));
         callback();
       }).error(function (inSender, inResponse) {
