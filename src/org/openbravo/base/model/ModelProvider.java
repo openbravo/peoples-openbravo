@@ -204,7 +204,6 @@ public class ModelProvider implements OBSingleton {
         if (TABLEBASEDTABLE.equals(t.getDataOrigin())) {
           tablesByTableName.put(t.getTableName().toLowerCase(), t);
         } else {
-          String dataOrigin = t.getDataOrigin();
           dataSourceTablesByName.put(t.getName().toLowerCase(), t);
         }
       }

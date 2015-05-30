@@ -27,9 +27,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.provider.OBProvider;
-import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
-import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
@@ -70,7 +68,6 @@ public class RMInOutPickEditLines extends BaseProcessActionHandler {
 
     } catch (Exception e) {
       log.error(e.getMessage(), e);
-      VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
 
       try {
         jsonRequest = new JSONObject();

@@ -1070,8 +1070,6 @@ public class FormInitializationComponent extends BaseActionHandler {
     }
 
     Entity parentEntity = parentRecord.getEntity();
-    Entity entity = ModelProvider.getInstance().getEntityByTableId(
-        field.getTab().getTable().getId());
     Property property = KernelUtils.getProperty(field);
     Entity referencedEntity = property.getReferencedProperty().getEntity();
     return referencedEntity.equals(parentEntity);

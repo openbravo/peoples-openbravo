@@ -45,7 +45,6 @@ public class SL_Asset_Product extends HttpSecureAppServlet {
       ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
     if (vars.commandIn("DEFAULT")) {
-      String strChanged = vars.getStringParameter("inpLastFieldChanged");
       String strTabId = vars.getStringParameter("inpTabId");
 
       String strMProductID = vars.getStringParameter("inpmProductId");

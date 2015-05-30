@@ -315,7 +315,6 @@ public class PrintController extends HttpSecureAppServlet {
             createPrintOptionsPage(request, response, vars, documentType,
                 getComaSeparatedString(documentIds), reports);
           else {
-            final boolean showList = true;
             createEmailOptionsPage(request, response, vars, documentType,
                 getComaSeparatedString(documentIds), reports, checks, fullDocumentIdentifier);
           }
@@ -842,7 +841,6 @@ public class PrintController extends HttpSecureAppServlet {
     xmlDocument.setParameter("strDocumentId", strDocumentId);
 
     // Get additional document information
-    final String draftDocumentIds = "";
     String strIsDirectPDF = vars.getStringParameter("isDirectPDF");
     if (strIsDirectPDF == null || "".equals(strIsDirectPDF)) {
       strIsDirectPDF = "false";

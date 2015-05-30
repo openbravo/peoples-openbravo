@@ -158,7 +158,6 @@ public class FIN_ReconciliationProcess implements org.openbravo.scheduling.Proce
         reconciliation.setAPRMProcessReconciliationForce("P");
         OBDal.getInstance().save(reconciliation);
         OBDal.getInstance().flush();
-        Boolean invoicePaidold = false;
       }
       reconciliation.setProcessNow(false);
       OBDal.getInstance().save(reconciliation);

@@ -1288,7 +1288,6 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
     }
 
     for (Object o : query.list()) {
-      Map<String, Object> myMap = new HashMap<String, Object>();
       StorageDetail sd = (StorageDetail) o;
       if (selectedIds.size() > 0) {
         for (int i = 0; i < selectedIds.size(); i++) {

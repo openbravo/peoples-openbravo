@@ -1245,7 +1245,6 @@ public class FIN_Utility {
 
   public static boolean periodControlOpened(String tableName, String recordId, String idColumnName,
       String orgType) {
-    final Session session = OBDal.getInstance().getSession();
 
     List<Object> parameters = new ArrayList<Object>();
     parameters.add(tableName);

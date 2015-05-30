@@ -29,14 +29,11 @@ import org.openbravo.client.kernel.event.EntityDeleteEvent;
 import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
-import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
-import org.openbravo.service.db.DalConnectionProvider;
 
 public class MInOutLineEventHandler extends EntityPersistenceEventObserver {
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(
@@ -54,10 +51,11 @@ public class MInOutLineEventHandler extends EntityPersistenceEventObserver {
     }
     ShipmentInOutLine shipmentInOutLine = (ShipmentInOutLine) event.getTargetInstance();
 
-    if (shipmentInOutLine.getProduct() == null &&  (shipmentInOutLine.getMovementQuantity().doubleValue() != 0) ){
-          throw new OBException(OBMessageUtils.messageBD("ProductNullAndMovementQtyGreaterZero"));
+    if (shipmentInOutLine.getProduct() == null
+        && (shipmentInOutLine.getMovementQuantity().doubleValue() != 0)) {
+      throw new OBException(OBMessageUtils.messageBD("ProductNullAndMovementQtyGreaterZero"));
     }
- }
+  }
 
   public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
@@ -65,10 +63,12 @@ public class MInOutLineEventHandler extends EntityPersistenceEventObserver {
     }
     ShipmentInOutLine shipmentInOutLine = (ShipmentInOutLine) event.getTargetInstance();
 
-    if (shipmentInOutLine.getProduct()== null && (shipmentInOutLine.getMovementQuantity().doubleValue() != 0)){
-        throw new OBException(OBMessageUtils.messageBD("ProductNullAndMovementQtyGreaterZero"));
-     }
-}
+    if (shipmentInOutLine.getProduct() == null
+        && (shipmentInOutLine.getMovementQuantity().doubleValue() != 0)) {
+      throw new OBException(OBMessageUtils.messageBD("ProductNullAndMovementQtyGreaterZero"));
+    }
+  }
+
   public void onDelete(@Observes EntityDeleteEvent event) {
     if (!isValidEvent(event)) {
       return;
@@ -77,8 +77,6 @@ public class MInOutLineEventHandler extends EntityPersistenceEventObserver {
   }
 
   private void checkShipmentOrderRelation(ShipmentInOutLine shipmentInOutLine) {
-    ConnectionProvider conn = new DalConnectionProvider(false);
-    String language = OBContext.getOBContext().getLanguage().getLanguage();
     OBCriteria<ShipmentInOutLine> criteria = OBDal.getInstance().createCriteria(
         ShipmentInOutLine.class);
     criteria.add(Restrictions.eq(ShipmentInOutLine.PROPERTY_SHIPMENTRECEIPT,

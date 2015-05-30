@@ -995,7 +995,6 @@ public class Wad extends DefaultHandler {
       }
 
       int parentTabIndex = -1;
-      boolean sinParent = false;
       String grandfatherField = "";
       if (allTabs != null && allTabs.length > 0)
         parentTabIndex = parentTabId(allTabs, tabsData.tabid);
@@ -1012,7 +1011,6 @@ public class Wad extends DefaultHandler {
       if (parentTabIndex != -1 && (parentsFieldsData == null || parentsFieldsData.length == 0)) {
         parentsFieldsData = FieldsData.parentsColumnReal(pool, allTabs[parentTabIndex].tabid,
             tabsData.tabid);
-        sinParent = true;
         if (parentsFieldsData == null || parentsFieldsData.length == 0) {
           log4j.info("No key found in parent tab: " + allTabs[parentTabIndex].tabname);
         }

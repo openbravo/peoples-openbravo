@@ -27,7 +27,6 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.model.Entity;
-import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.model.domaintype.DateDomainType;
 import org.openbravo.base.model.domaintype.DatetimeDomainType;
@@ -252,7 +251,6 @@ public class DefaultDataSourceService extends BaseDataSourceService {
                   + "          and exists (from ADWindowAccess wa where f.tab.window = wa.window and wa.role.id = :roleId and wa.editableField = false and wa.active = true)))");
       fieldQuery.setNamedParameter("tabId", tab.getId());
       fieldQuery.setNamedParameter("roleId", roleId);
-      final Entity entity = ModelProvider.getInstance().getEntity(entityName);
       for (Field f : fieldQuery.list()) {
         String key = KernelUtils.getProperty(f).getName();
         if (data.has(key)) {
