@@ -23,7 +23,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
 import org.openbravo.client.application.FilterExpression;
 import org.openbravo.client.application.OBBindingsConstants;
 import org.openbravo.client.kernel.RequestContext;
@@ -31,7 +30,6 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 
 public class PaymentSelectorFilterExpression implements FilterExpression {
-  private Logger log = Logger.getLogger(PaymentSelectorFilterExpression.class);
   private Map<String, String> requestMap;
   private HttpSession httpSession;
   private String windowId;

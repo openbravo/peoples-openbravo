@@ -22,13 +22,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.utility.reporting.DocumentType;
 
 @SuppressWarnings("serial")
 public class PrintInvoices extends PrintController {
-  private static Logger log4j = Logger.getLogger(PrintInvoices.class);
 
   // TODO: Als een email in draft staat de velden voor de email adressen
   // weghalen en melden dat het document

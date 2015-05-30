@@ -22,7 +22,6 @@ import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
 
-import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.OBContext;
@@ -34,7 +33,6 @@ import org.openbravo.dal.core.OBContext;
  */
 @ApplicationScoped
 public class GetLabelActionHandler extends BaseActionHandler {
-  private static final Logger log = Logger.getLogger(GetLabelActionHandler.class);
 
   private static final String KEY_PARAMETER = "key";
   private static final String LABEL_PROPERTY = "label";

@@ -22,13 +22,10 @@ import java.sql.Connection;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.database.ConnectionProvider;
 
 public abstract class DocFINFinAccTransactionTemplate {
-  private static final Logger log4jDocFINFinAccTransactionTemplate = Logger
-      .getLogger(DocFINFinAccTransactionTemplate.class);
 
   /**
    * Constructor
