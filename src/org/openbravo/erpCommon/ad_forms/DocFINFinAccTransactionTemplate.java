@@ -27,7 +27,6 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.database.ConnectionProvider;
 
 public abstract class DocFINFinAccTransactionTemplate {
-  private static final long serialVersionUID = 1L;
   private static final Logger log4jDocFINFinAccTransactionTemplate = Logger
       .getLogger(DocFINFinAccTransactionTemplate.class);
 

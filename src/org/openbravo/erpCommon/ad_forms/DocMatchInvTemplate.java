@@ -25,7 +25,6 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.database.ConnectionProvider;
 
 public abstract class DocMatchInvTemplate {
-  private static final long serialVersionUID = 1L;
   static Logger log4jDocMatchInv = Logger.getLogger(DocInvoice.class);
 
   /**

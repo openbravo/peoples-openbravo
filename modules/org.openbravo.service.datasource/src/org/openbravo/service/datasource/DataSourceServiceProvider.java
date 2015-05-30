@@ -44,8 +44,6 @@ import org.openbravo.model.ad.datamodel.Table;
 @ApplicationScoped
 public class DataSourceServiceProvider {
 
-  private static final long serialVersionUID = 1L;
-
   private Map<String, DataSourceService> dataSources = new ConcurrentHashMap<String, DataSourceService>();
 
   @Inject

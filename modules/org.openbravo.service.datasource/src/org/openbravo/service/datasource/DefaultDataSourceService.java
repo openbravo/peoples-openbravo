@@ -57,7 +57,6 @@ import org.openbravo.service.json.JsonConstants;
  * @author mtaal
  */
 public class DefaultDataSourceService extends BaseDataSourceService {
-  private static final long serialVersionUID = 1L;
   private static final Logger log4j = Logger.getLogger(DefaultDataSourceService.class);
 
   /*

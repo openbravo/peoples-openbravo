@@ -71,8 +71,6 @@ import org.openbravo.service.web.WebServiceUtil;
 
 public class DalWebService implements WebService {
 
-  private static final long serialVersionUID = 1L;
-
   public static final String PARAMETER_WHERE = "where";
   public static final String PARAMETER_ORDERBY = "orderBy";
   public static final String PARAMETER_FIRSTRESULT = "firstResult";
