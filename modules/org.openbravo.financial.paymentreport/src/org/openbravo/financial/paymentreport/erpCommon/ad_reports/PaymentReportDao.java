@@ -1199,9 +1199,6 @@ public class PaymentReportDao {
    * This method combines the information from the transactions list and the last element inserted
    * into grouped data into total data.
    * 
-   * @param fieldProvider
-   * @param transactionsList
-   * @param totalData
    * @throws OBException
    */
   private boolean insertIntoTotal(FieldProvider data,
@@ -1223,8 +1220,6 @@ public class PaymentReportDao {
   /**
    * This method creates a field provider with the information of the transaction
    * 
-   * @param fin_FinaccTransaction
-   * @return
    * @throws OBException
    */
   private FieldProvider createFieldProviderForTransaction(FIN_FinaccTransaction transaction,
@@ -1471,11 +1466,6 @@ public class PaymentReportDao {
 
   /**
    * This method compares the status and the order criteria of the transactions and data
-   * 
-   * @param transaction
-   * @param data
-   * @param strOrdCrit
-   * @return
    */
   private boolean isBeforeStatusAndOrder(FIN_FinaccTransaction transaction, FieldProvider data,
       String strOrdCrit, String BPName, String BPCategory, String strProject) {
@@ -1495,11 +1485,6 @@ public class PaymentReportDao {
 
   /**
    * This method compares recursively the order criteria of the transactions and data
-   * 
-   * @param transaction
-   * @param data
-   * @param strOrdCrit
-   * @return
    */
   private boolean isBeforeOrder(FIN_FinaccTransaction transaction, FieldProvider data,
       String[] strOrdCritList, int i, String BPName, String BPCategory, String strProject) {
@@ -1646,10 +1631,6 @@ public class PaymentReportDao {
   /**
    * Compares two DIFFERENT payment status. If the first one goes before the second it returns true,
    * elsewise it returns false
-   * 
-   * @param firstValue
-   * @param secondValue
-   * @return
    */
   private boolean isBeforeStatus(String firstValue, String secondValue) {
     String[] strStatus = { firstValue, secondValue };
@@ -2209,9 +2190,6 @@ public class PaymentReportDao {
 
   /**
    * Given a String of organizations this method returns an array of organizations
-   * 
-   * @param strOrgFamily
-   * @return
    */
   private Organization[] getOrganizations(Set<String> strOrgFamily) {
     Iterator<String> orgChildTreeIter = strOrgFamily.iterator();

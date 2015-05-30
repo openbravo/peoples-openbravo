@@ -187,7 +187,6 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
    *          hql where clase of the tab/selector
    * @param hqlWhereClauseRootNodes
    *          hql where clause that define what nodes are roots
-   * @return
    * @throws JSONException
    * @throws TooManyTreeNodesException
    *           if the number of returned nodes were to be too high
@@ -404,7 +403,6 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
    *          bob with the node properties
    * @param hqlWhereClause
    *          where clause to be applied to the children
-   * @return
    */
   private boolean nodeHasChildren(Entity entity, Property linkToParentProperty,
       Property nodeIdProperty, BaseOBObject node, String hqlWhereClause) {
@@ -537,7 +535,6 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
    *          id of the node to be checked
    * @param hqlWhereClause
    *          hql where clause to be applied
-   * @return
    */
   @Override
   protected boolean nodeConformsToWhereClause(TableTree tableTree, String nodeId,
@@ -639,8 +636,6 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
   }
 
   /**
-   * @param parameters
-   * @param nodeId
    * @return returns a json object with the definition of a node give its record id
    */
   @Override

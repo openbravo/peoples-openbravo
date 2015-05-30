@@ -298,7 +298,9 @@ public class EmailManager {
   }
 
   /**
-   * Since Openbravo 3.0MP9 only {@link #sendEmail()} is used for the full email sending cycle
+   * Since Openbravo 3.0MP9 only
+   * {@link #sendEmail(String, boolean, String, String, String, int, String, String, String, String, String, String, String, String, List, Date, List)}
+   * is used for the full email sending cycle
    */
   @Deprecated
   private InternetAddress[] getAddressesFrom(String[] textualAddresses) {

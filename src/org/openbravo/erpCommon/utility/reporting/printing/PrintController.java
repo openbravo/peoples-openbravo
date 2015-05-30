@@ -1270,10 +1270,6 @@ public class PrintController extends HttpSecureAppServlet {
 
   /**
    * @author gmauleon
-   * @param pocData
-   * @param vars
-   * @param vector
-   * @return
    */
   private String[] getHiddenTags(PocData[] pocData, Vector<Object> vector, VariablesSecureApp vars,
       HashMap<String, Boolean> checks) {
@@ -1389,8 +1385,6 @@ public class PrintController extends HttpSecureAppServlet {
 
   /**
    * @author gmauleon
-   * @param content
-   * @return
    * @throws ServletException
    */
   private File prepareFile(AttachContent content, String documentId) throws ServletException {

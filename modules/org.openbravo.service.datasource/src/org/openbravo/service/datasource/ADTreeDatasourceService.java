@@ -485,9 +485,6 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
 
   /**
    * Checks if a tree is ordered
-   * 
-   * @param tree
-   * @return
    */
   private boolean isOrdered(Tree tree) {
     Table table = tree.getTable();
@@ -502,10 +499,6 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
 
   /**
    * Returns a Tree given the referencedTableId and the parentRecordId
-   * 
-   * @param referencedTableId
-   * @param parentRecordId
-   * @return
    */
   private Tree getTree(String referencedTableId) {
     Table referencedTable = OBDal.getInstance().get(Table.class, referencedTableId);
@@ -522,10 +515,6 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
    * Returns a Tree given the referencedTableId and a jsonobject that contains the node properties
    * This is called from the EventHandler, because the parentRecordId is not avaiable in the
    * parameters
-   * 
-   * @param referencedTableId
-   * @param parentRecordId
-   * @return
    */
   private Tree getTree(Table table, JSONObject bobProperties) {
     Tree tree = null;

@@ -191,9 +191,6 @@ public class FIN_PaymentMonitorProcess extends DalBaseProcess {
 
   /**
    * Returns the date in which last payment for this invoice took place
-   * 
-   * @param invoice
-   * @return
    */
   private static Date getFinalSettlementDate(Invoice invoice) {
     final OBCriteria<FIN_PaymentSchedInvV> obc = OBDal.getInstance().createCriteria(

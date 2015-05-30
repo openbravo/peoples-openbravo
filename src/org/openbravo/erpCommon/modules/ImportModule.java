@@ -362,9 +362,6 @@ public class ImportModule {
 
   /**
    * Obtains the text to show for merged modules about the module that is merged within.
-   * 
-   * @param moduleId
-   * @return
    */
   private String getMergedWith(String moduleId) {
     boolean found = false;
@@ -1259,8 +1256,6 @@ public class ImportModule {
   /**
    * Reads an ZipInputStream and returns it as a ByteArrayInputStream
    * 
-   * @param obxInputStream
-   * @return
    * @throws Exception
    */
   private ByteArrayInputStream getCurrentEntryStream(ZipInputStream obxInputStream)
@@ -1448,8 +1443,6 @@ public class ImportModule {
   /**
    * Reads a ZipInputStream and returns a Vector<DynaBean> with its modules
    * 
-   * @param obxInputStream
-   * @return
    * @throws Exception
    */
   private Vector<DynaBean> getEntryDynaBeans(byte[] obxEntryBytes) throws Exception {

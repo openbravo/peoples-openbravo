@@ -334,9 +334,6 @@ public class ModuleManagement extends HttpSecureAppServlet {
   /**
    * Returns an HTML with the available notifications which can be: *Unapplied changes: rebuild
    * system *Available updates: install them
-   * 
-   * @param lang
-   * @return
    */
   private JSONObject getNotificationsJSON(String lang) {
     String updatesRebuildHTML = "";
@@ -1839,12 +1836,6 @@ public class ModuleManagement extends HttpSecureAppServlet {
   /**
    * Executes a search query in the web service and returns a HTML with the list of modules
    * retrieved from the query. This list is HTML with styles.
-   * 
-   * @param request
-   * @param response
-   * @param vars
-   * @param text
-   * @return
    */
   private String getSearchResults(HttpServletRequest request, HttpServletResponse response,
       VariablesSecureApp vars, String text) {
@@ -1939,8 +1930,6 @@ public class ModuleManagement extends HttpSecureAppServlet {
   /**
    * Returns String[] with the installed modules, this is used for perform the search in the
    * webservice and not to obtain in the list the already installed ones.
-   * 
-   * @return
    */
   private String[] getInstalledModules() {
     try {

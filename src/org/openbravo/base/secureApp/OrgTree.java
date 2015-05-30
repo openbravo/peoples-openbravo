@@ -303,9 +303,6 @@ public class OrgTree implements Serializable {
 
   /**
    * Returns the node matching the id, in case it does not exists it returns null
-   * 
-   * @param id
-   * @return
    */
   private OrgTreeNode getNodeById(String id) {
     if (nodes == null)
@@ -318,9 +315,6 @@ public class OrgTree implements Serializable {
 
   /**
    * In case the node id is in the tree it returns true, if not false.
-   * 
-   * @param id
-   * @return
    */
   private boolean isNodeInTree(String id) {
     if (nodes == null)
@@ -333,9 +327,6 @@ public class OrgTree implements Serializable {
 
   /**
    * Returns the list of the nodes that have a determinate node.
-   * 
-   * @param parentId
-   * @return
    */
   private List<OrgTreeNode> getNodesWithParent(String parentId) {
     List<OrgTreeNode> vecNodes = new ArrayList<OrgTreeNode>();

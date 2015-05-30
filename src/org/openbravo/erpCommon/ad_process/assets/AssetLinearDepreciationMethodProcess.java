@@ -646,7 +646,7 @@ public class AssetLinearDepreciationMethodProcess extends DalBaseProcess {
    * 
    * @param startDate
    *          Start date.
-   * @param endDate
+   * @param _endDate
    *          End date.
    * @param isYearly
    *          Is yearly amortization.
