@@ -425,7 +425,7 @@ public abstract class FIN_BankStatementImport {
         if (!businessPartnersScroll.next()) {
           String strParnterId = "";
           if (resultObject.getClass().isArray()) {
-            final Object[] values = (Object[]) resultObject;
+            final Object[] values = resultObject;
             strParnterId = (String) values[0];
           }
           BusinessPartner bp = OBDal.getInstance().get(BusinessPartner.class, strParnterId);
@@ -454,7 +454,7 @@ public abstract class FIN_BankStatementImport {
 
       String targetBusinessPartnerName = "";
       if (resultObject.getClass().isArray()) {
-        final Object[] values = (Object[]) resultObject;
+        final Object[] values = resultObject;
         targetBusinessPartnerId = (String) values[0];
         targetBusinessPartnerName = (String) values[1];
       }
@@ -481,7 +481,7 @@ public abstract class FIN_BankStatementImport {
         String bpName = "";
         resultObject = (Object[]) businessPartners.get(0);
         if (resultObject.getClass().isArray()) {
-          final Object[] values = (Object[]) resultObject;
+          final Object[] values = resultObject;
           bpId = (String) values[0];
           bpName = (String) values[1];
         }

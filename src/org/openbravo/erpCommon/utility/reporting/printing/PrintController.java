@@ -773,7 +773,7 @@ public class PrintController extends HttpSecureAppServlet {
     attachments.add(new File(attachmentFileLocation));
 
     if (object != null) {
-      final Vector<Object> vector = (Vector<Object>) object;
+      final Vector<Object> vector = object;
       for (int i = 0; i < vector.size(); i++) {
         final AttachContent objContent = (AttachContent) vector.get(i);
         final File file = prepareFile(objContent, ourReference);

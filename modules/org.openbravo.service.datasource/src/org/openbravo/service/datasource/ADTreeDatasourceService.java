@@ -289,11 +289,11 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     int cont = 0;
     ScrollableResults scrollNodes = obq.createQuery().scroll(ScrollMode.FORWARD_ONLY);
     while (scrollNodes.next()) {
-      Object[] node = (Object[]) scrollNodes.get();
+      Object[] node = scrollNodes.get();
       JSONObject value = null;
       BaseOBObject bob = (BaseOBObject) node[ENTITY];
       try {
-        value = toJsonConverter.toJsonObject((BaseOBObject) bob, DataResolvingMode.FULL);
+        value = toJsonConverter.toJsonObject(bob, DataResolvingMode.FULL);
         value.put("nodeId", bob.getId().toString());
         if (fetchRoot) {
           value.put("parentId", ROOT_NODE_CLIENT);
@@ -649,7 +649,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
       treeNodeCriteria.add(Restrictions.eq(TreeNode.PROPERTY_NODE, bobId));
       TreeNode treeNode = (TreeNode) treeNodeCriteria.uniqueResult();
       BaseOBObject bob = OBDal.getInstance().get(entity.getName(), treeNode.getNode());
-      json = toJsonConverter.toJsonObject((BaseOBObject) bob, DataResolvingMode.FULL);
+      json = toJsonConverter.toJsonObject(bob, DataResolvingMode.FULL);
       json.put("nodeId", bobId);
       if (treeNode.getReportSet() == null) {
         json.put("parentId", ROOT_NODE_CLIENT);

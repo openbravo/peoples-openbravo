@@ -304,7 +304,7 @@ public class InitialClientSetup {
             log4j.debug("insertTrees() - Saved menu tree.");
           }
         } else {
-          String tableTreeName = (String) tableTree.getName();
+          String tableTreeName = tableTree.getName();
           String treeTypeName = null;
           if (tableTree.getTable().getTreeType() != null) {
             treeTypeName = tableTree.getTable().getTreeType();

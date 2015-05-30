@@ -532,8 +532,8 @@ public abstract class UIDefinition {
       if (!isListReference && "AD_ORG_ID".equals(field.getColumn().getDBColumnName().toUpperCase())
           && "".equals(columnValue) && vars.getStringParameter("CHANGED_COLUMN").equals(columnName)) {
         JSONObject entry = new JSONObject();
-        entry.put(JsonConstants.ID, (String) columnValue);
-        entry.put(JsonConstants.IDENTIFIER, (String) columnValue);
+        entry.put(JsonConstants.ID, columnValue);
+        entry.put(JsonConstants.IDENTIFIER, columnValue);
         return entry.toString();
       }
       boolean comboreload = rq.getRequestParameter("donotaddcurrentelement") != null

@@ -121,7 +121,7 @@ public class PaymentProposalPickEditLines extends BaseProcessActionHandler {
     int cont = 0;
     String differentPaymentMethod = "false";
     for (int i = 0; i < selectedLines.length(); i++) {
-      JSONObject selectedLine = selectedLines.getJSONObject((int) i);
+      JSONObject selectedLine = selectedLines.getJSONObject(i);
       log.debug(selectedLine);
       BigDecimal paidAmount = new BigDecimal(selectedLine.getString("payment"));
 

@@ -111,7 +111,7 @@ public class FIN_ReconciliationProcess implements org.openbravo.scheduling.Proce
           bundle.setResult(msg);
           return;
         }
-        final boolean isForceProcess = (Boolean) "6BF16EFC772843AC9A17552AE0B26AB7".equals(bundle
+        final boolean isForceProcess = "6BF16EFC772843AC9A17552AE0B26AB7".equals(bundle
             .getProcessId());
         // Transaction exists
         if (!isForceProcess && !MatchTransactionDao.islastreconciliation(reconciliation)) {

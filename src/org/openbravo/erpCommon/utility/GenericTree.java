@@ -226,11 +226,11 @@ public abstract class GenericTree {
     for (int i = 0; i < data.length; i++) {
       // endline: set the spotted right line with angles
       if (!isSubTree && i == 0) {
-        FieldProviderFactory.setField((FieldProvider) data[i], "endline", "Tree_FirstNode_Spots");
+        FieldProviderFactory.setField(data[i], "endline", "Tree_FirstNode_Spots");
       } else if (i == (data.length - 1)) {
-        FieldProviderFactory.setField((FieldProvider) data[i], "endline", "Tree_LastNode_Spots");
+        FieldProviderFactory.setField(data[i], "endline", "Tree_LastNode_Spots");
       } else {
-        FieldProviderFactory.setField((FieldProvider) data[i], "endline", "Tree_MiddleNode_Spots");
+        FieldProviderFactory.setField(data[i], "endline", "Tree_MiddleNode_Spots");
       }
 
       // Level tree: sets the spotted left lines

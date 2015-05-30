@@ -366,7 +366,7 @@ public class FormInitializationComponent extends BaseActionHandler {
     OBQuery<Note> obq = OBDal.getInstance().createQuery(Note.class,
         " table.id=:tableId and record=:recordId");
     obq.setFilterOnReadableOrganization(false);
-    obq.setNamedParameter("tableId", (String) DalUtil.getId(tab.getTable()));
+    obq.setNamedParameter("tableId", DalUtil.getId(tab.getTable()));
     obq.setNamedParameter("recordId", rowId);
     return obq.count();
   }
@@ -403,11 +403,11 @@ public class FormInitializationComponent extends BaseActionHandler {
       Object[] array = (Object[]) qobj;
       JSONObject obj = new JSONObject();
       try {
-        obj.put("name", (String) array[0]);
-        obj.put("id", (String) array[1]);
+        obj.put("name", array[0]);
+        obj.put("id", array[1]);
         obj.put("age", (new Date().getTime() - ((Date) array[2]).getTime()));
-        obj.put("updatedby", (String) array[3]);
-        obj.put("description", (String) array[4]);
+        obj.put("updatedby", array[3]);
+        obj.put("description", array[4]);
       } catch (JSONException e) {
         log.error("Error while reading attachments", e);
       }

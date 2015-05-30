@@ -1248,13 +1248,13 @@ public class ModuleManagement extends HttpSecureAppServlet {
         if (!islocal) {
           if (module != null
               && !Integer.toString(MaturityLevel.CS_MATURITY).equals(
-                  (String) module.getAdditionalInfo().get("maturity.level"))) {
+                  module.getAdditionalInfo().get("maturity.level"))) {
             discard[6] = "";
           } else {
             if (inst != null) {
               for (Module m : inst) {
                 if (!Integer.toString(MaturityLevel.CS_MATURITY).equals(
-                    (String) m.getAdditionalInfo().get("maturity.level"))) {
+                    m.getAdditionalInfo().get("maturity.level"))) {
                   discard[6] = "";
                 }
               }
@@ -1262,7 +1262,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
             if (upd != null) {
               for (Module m : upd) {
                 if (!Integer.toString(MaturityLevel.CS_MATURITY).equals(
-                    (String) m.getAdditionalInfo().get("maturity.level"))) {
+                    m.getAdditionalInfo().get("maturity.level"))) {
                   discard[6] = "";
                 }
               }
@@ -1384,7 +1384,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
 
       if (!check
           || Integer.toString(MaturityLevel.CS_MATURITY).equals(
-              (String) module.getAdditionalInfo().get("maturity.level"))) {
+              module.getAdditionalInfo().get("maturity.level"))) {
         xmlDocument.setParameter("maturityStyle", "none");
       } else {
         xmlDocument.setParameter("maturityStyle", "yes");
@@ -1456,7 +1456,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
 
       if (!islocal) {
         if (Integer.toString(MaturityLevel.CS_MATURITY).equals(
-            (String) module.getAdditionalInfo().get("maturity.level"))) {
+            module.getAdditionalInfo().get("maturity.level"))) {
           mod.put("maturityStyle", "none");
         } else {
           mod.put("maturityStyle", "yes");
@@ -2178,7 +2178,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
         // Save enforcement
         String warnMsg = "";
         for (Enumeration<String> e = request.getParameterNames(); e.hasMoreElements();) {
-          String parameter = (String) e.nextElement();
+          String parameter = e.nextElement();
           if (parameter.startsWith("inpEnforcement")) {
             String depId = parameter.replace("inpEnforcement", "");
             String value = vars.getStringParameter(parameter);

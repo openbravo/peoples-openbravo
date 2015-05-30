@@ -1404,9 +1404,9 @@ public class VariablesBase {
     Object auxStr = null;
     try {
       if (session != null) {
-        auxStr = (Object) session.getAttribute(sessionAttribute.toUpperCase());
+        auxStr = session.getAttribute(sessionAttribute.toUpperCase());
       } else {
-        auxStr = (Object) sessionAttributes.get(sessionAttribute.toUpperCase());
+        auxStr = sessionAttributes.get(sessionAttribute.toUpperCase());
       }
     } catch (Exception e) {
       auxStr = null;

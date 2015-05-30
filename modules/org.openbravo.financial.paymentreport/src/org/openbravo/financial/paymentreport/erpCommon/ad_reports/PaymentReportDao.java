@@ -1192,7 +1192,7 @@ public class PaymentReportDao {
       }
       OBContext.restorePreviousMode();
     }
-    return (FieldProvider[]) totalData.toArray(new FieldProvider[totalData.size()]);
+    return totalData.toArray(new FieldProvider[totalData.size()]);
   }
 
   /**
@@ -2102,7 +2102,7 @@ public class PaymentReportDao {
       final Session session = OBDal.getInstance().getSession();
       final Query query = session.createQuery(sql.toString());
       for (final Object o : query.list()) {
-        result.add(OBDal.getInstance().get(Invoice.class, (String) o));
+        result.add(OBDal.getInstance().get(Invoice.class, o));
       }
 
       return result;

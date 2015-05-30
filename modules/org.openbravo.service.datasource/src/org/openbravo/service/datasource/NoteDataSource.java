@@ -94,7 +94,7 @@ public class NoteDataSource extends DefaultDataSourceService {
     OBContext.setAdminMode(false);
     try {
       String noteId = parameters.get("id");
-      Note note = (Note) OBDal.getInstance().get(Note.class, noteId);
+      Note note = OBDal.getInstance().get(Note.class, noteId);
       Table table = note.getTable();
       String tableId = table.getId();
       String recordId = note.getRecord();

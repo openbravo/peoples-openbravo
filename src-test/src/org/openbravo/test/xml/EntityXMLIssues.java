@@ -68,7 +68,7 @@ public class EntityXMLIssues extends XMLBaseTest {
     addReadWriteAccess(Greeting.class);
 
     // only do one greeting
-    final Greeting greeting = (Greeting) OBProvider.getInstance().get(Greeting.class);
+    final Greeting greeting = OBProvider.getInstance().get(Greeting.class);
     final String id = "" + System.currentTimeMillis();
     greeting.setName("test" + id);
     greeting.setId(id);

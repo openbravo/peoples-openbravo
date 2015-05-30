@@ -1701,7 +1701,7 @@ public class ImportModule {
           HashMap<String, String> additionalInfo = updates[i].getAdditionalInfo();
           if (additionalInfo != null && additionalInfo.containsKey("upgrade")) {
             log4j.info("Upgrade found:" + additionalInfo.get("upgrade"));
-            JSONObject upgrade = new JSONObject((String) additionalInfo.get("upgrade"));
+            JSONObject upgrade = new JSONObject(additionalInfo.get("upgrade"));
             final String moduleId = upgrade.getString("moduleId");
             org.openbravo.model.ad.module.Module module = OBDal.getInstance().get(
                 org.openbravo.model.ad.module.Module.class, moduleId);

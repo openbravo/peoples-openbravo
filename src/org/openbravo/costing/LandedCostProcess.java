@@ -230,9 +230,9 @@ public class LandedCostProcess {
       log.debug("Process receipt amounts");
       Object[] receiptAmt = receiptamts.get();
       BigDecimal amt = (BigDecimal) receiptAmt[0];
-      Currency lcCostCurrency = OBDal.getInstance().get(Currency.class, (String) receiptAmt[1]);
+      Currency lcCostCurrency = OBDal.getInstance().get(Currency.class, receiptAmt[1]);
       ShipmentInOutLine receiptLine = OBDal.getInstance().get(ShipmentInOutLine.class,
-          (String) receiptAmt[2]);
+          receiptAmt[2]);
       // MaterialTransaction receiptLine = (MaterialTransaction) record[1];
       MaterialTransaction trx = receiptLine.getMaterialMgmtMaterialTransactionList().get(0);
       CostAdjustmentLine cal = CostAdjustmentUtils.insertCostAdjustmentLine(trx, ca, amt, true,

@@ -230,13 +230,13 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
             if (settingValue instanceof List) {
               for (Object callbackExtra : (List<?>) settingValue) {
                 if (callbackExtra instanceof String) {
-                  extraCallbacks.put((String) callbackExtra);
+                  extraCallbacks.put(callbackExtra);
                 } else {
                   log4j.warn("You are trying to set a wrong instance of extraCallbacks");
                 }
               }
             } else if (settingValue instanceof String) {
-              extraCallbacks.put((String) settingValue);
+              extraCallbacks.put(settingValue);
             } else {
               log4j.warn("You are trying to set a wrong instance of extraCallbacks");
             }

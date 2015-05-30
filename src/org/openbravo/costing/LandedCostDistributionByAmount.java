@@ -89,7 +89,7 @@ public class LandedCostDistributionByAmount extends LandedCostDistributionAlgori
     i = 0;
     while (receiptCosts.next()) {
       ShipmentInOutLine receiptline = OBDal.getInstance().get(ShipmentInOutLine.class,
-          (String) receiptCosts.get()[1]);
+          receiptCosts.get()[1]);
       String strTrxCurId = (String) receiptCosts.get()[2];
       BigDecimal trxAmt = (BigDecimal) receiptCosts.get()[3];
 
@@ -106,7 +106,7 @@ public class LandedCostDistributionByAmount extends LandedCostDistributionAlgori
       }
       pendingAmt = pendingAmt.subtract(receiptAmt);
       LCReceipt lcrl = (LCReceipt) OBDal.getInstance().getProxy(LCReceipt.ENTITY_NAME,
-          (String) receiptCosts.get()[0]);
+          receiptCosts.get()[0]);
       LCReceiptLineAmt lcrla = OBProvider.getInstance().get(LCReceiptLineAmt.class);
       lcrla.setLandedCostCost((LandedCostCost) OBDal.getInstance().getProxy(
           LandedCostCost.ENTITY_NAME, lcCost.getId()));

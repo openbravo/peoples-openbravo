@@ -465,7 +465,7 @@ public class ModelProvider implements OBSingleton {
       throw new OBException("No instances of " + clazz.getName()
           + " in the database, has the database been created and filled with data?");
     }
-    return (T) list.get(0);
+    return list.get(0);
 
   }
 

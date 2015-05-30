@@ -2374,9 +2374,9 @@ public class Utility {
       float oldRatio = (float) oldW / (float) oldH;
       float newRatio = (float) newW / (float) newH;
       if (oldRatio < newRatio) {
-        newW = (int) ((float) newH * oldRatio);
+        newW = (int) (newH * oldRatio);
       } else if (oldRatio > newRatio) {
-        newH = (int) ((float) newW / oldRatio);
+        newH = (int) (newW / oldRatio);
       }
     }
     BufferedImage dimg = new BufferedImage(newW, newH, rImage.getType());

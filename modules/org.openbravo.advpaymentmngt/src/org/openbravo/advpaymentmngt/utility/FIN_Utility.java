@@ -1059,7 +1059,7 @@ public class FIN_Utility {
       invoiceDocNo = invoice.getDocumentNo();
 
       final String paymentDescription = OBDal.getInstance()
-          .get(OrganizationInformation.class, ((String) DalUtil.getId(organization)))
+          .get(OrganizationInformation.class, (DalUtil.getId(organization)))
           .getAPRMPaymentDescription();
       // In case of a purchase invoice and the Supplier Reference is selected use Reference
       if (paymentDescription.equals("Supplier Reference") && !invoice.isSalesTransaction()) {
@@ -1255,7 +1255,7 @@ public class FIN_Utility {
     Object result = CallStoredProcedure.getInstance().call("ad_get_doc_le_bu", parameters, null,
         false, true);
 
-    Organization org = OBDal.getInstance().get(Organization.class, (String) result);
+    Organization org = OBDal.getInstance().get(Organization.class, result);
 
     return org.getOrganizationType().isLegalEntityWithAccounting();
   }

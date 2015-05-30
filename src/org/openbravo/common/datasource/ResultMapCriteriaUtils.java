@@ -235,7 +235,7 @@ class ResultMapCriteriaUtils {
 
     if ("id".equals(strField)) {
       // ID is always equals
-      returnVal = mapValue != JSONObject.NULL && ((String) localValue).equals((String) mapValue);
+      returnVal = mapValue != JSONObject.NULL && ((String) localValue).equals(mapValue);
     } else if (filterIdentifier) {
       BaseOBObject currentVal = (BaseOBObject) mapValue;
       String strCurrValIdentifier = currentVal.getIdentifier();

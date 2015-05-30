@@ -286,8 +286,7 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     final ScrollableResults scrollableResults = query.scroll(ScrollMode.FORWARD_ONLY);
     while (scrollableResults.next()) {
       BaseOBObject bob = (BaseOBObject) scrollableResults.get()[0];
-      final JSONObject json = toJsonConverter.toJsonObject((BaseOBObject) bob,
-          DataResolvingMode.FULL);
+      final JSONObject json = toJsonConverter.toJsonObject(bob, DataResolvingMode.FULL);
       if (fetchRoot) {
         json.put("parentId", ROOT_NODE_CLIENT);
       } else {
@@ -465,8 +464,7 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     OBDal.getInstance().flush();
     final DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(
         DataToJsonConverter.class);
-    JSONObject updatedData = toJsonConverter.toJsonObject((BaseOBObject) bob,
-        DataResolvingMode.FULL);
+    JSONObject updatedData = toJsonConverter.toJsonObject(bob, DataResolvingMode.FULL);
     addNodeCommonAttributes(entity, bob, updatedData);
     updatedData.put("parentId", newParentId);
     updatedData.put("_hasChildren", (this.nodeHasChildren(entity, linkToParentProperty,
@@ -601,7 +599,7 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
 
     try {
       BaseOBObject bob = OBDal.getInstance().get(entity.getName(), bobId);
-      json = toJsonConverter.toJsonObject((BaseOBObject) bob, DataResolvingMode.FULL);
+      json = toJsonConverter.toJsonObject(bob, DataResolvingMode.FULL);
       if (fillNodeIdAndParentId) {
         String parentId = null;
         if (linkToParentProperty.isPrimitive()) {
@@ -615,7 +613,7 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
         if (parentId != null) {
           json.put("parentId", parentId);
         } else {
-          json.put("parentId", (String) ROOT_NODE_CLIENT);
+          json.put("parentId", ROOT_NODE_CLIENT);
         }
         Object nodeId = bob.get(nodeIdProperty.getName());
         String nodeIdStr = null;
@@ -844,8 +842,7 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     final ScrollableResults scrollableResults = query.scroll(ScrollMode.FORWARD_ONLY);
     while (scrollableResults.next()) {
       BaseOBObject bob = (BaseOBObject) scrollableResults.get()[0];
-      final JSONObject json = toJsonConverter.toJsonObject((BaseOBObject) bob,
-          DataResolvingMode.FULL);
+      final JSONObject json = toJsonConverter.toJsonObject(bob, DataResolvingMode.FULL);
 
       Object nodeId = bob.get(nodeIdProperty.getName());
       String nodeIdStr = null;

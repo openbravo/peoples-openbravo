@@ -554,9 +554,9 @@ public class JsonToDataConverter {
       if (value == null) {
         value = (BaseOBObject) OBProvider.getInstance().get(entity.getName());
         // put it here, it must be imported later as a real object
-        newObjects.put(key, (BaseOBObject) value);
+        newObjects.put(key, value);
       }
-      keyToObject.put(key, (BaseOBObject) value);
+      keyToObject.put(key, value);
     } else {
       value = (BaseOBObject) OBProvider.getInstance().get(entity.getName());
     }
@@ -615,9 +615,9 @@ public class JsonToDataConverter {
       if (value == null) {
         value = (BaseOBObject) OBProvider.getInstance().get(entity.getName());
         // put it here, it must be imported later as a real object
-        newObjects.put(key, (BaseOBObject) value);
+        newObjects.put(key, value);
       }
-      keyToObject.put(key, (BaseOBObject) value);
+      keyToObject.put(key, value);
     } else {
       value = (BaseOBObject) OBProvider.getInstance().get(entity.getName());
     }

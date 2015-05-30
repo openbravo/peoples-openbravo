@@ -85,7 +85,7 @@ public class ImportProcessUtils {
       } else if (jsonData instanceof JSONArray) {
         final JSONArray jsonArray = (JSONArray) jsonData;
         if (jsonArray.length() > 0) {
-          jsonContent = (JSONObject) jsonArray.getJSONObject(0);
+          jsonContent = jsonArray.getJSONObject(0);
         }
       }
       if (jsonContent != null && jsonContent.has(property)) {
