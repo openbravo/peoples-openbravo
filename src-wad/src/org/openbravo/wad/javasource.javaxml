@@ -49,14 +49,11 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import java.util.*;
 import java.sql.Connection;
-import org.apache.log4j.Logger;
-import java.util.List;
-import java.util.Arrays;
 
+// Generated old code, not worth to make i.e. java imports perfect
+@SuppressWarnings("unused")
 public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
-  
-  private static Logger log4j = Logger.getLogger(<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>.class);
   
   private static final String windowId = "<PARAMETER_TMP id="windowId">Almacen</PARAMETER_TMP>";
   private static final String tabId = "<PARAMETER_TMP id="tabId">Almacen</PARAMETER_TMP>";
@@ -294,7 +291,6 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     } else if (vars.commandIn("EDIT")) {
 <PARAMETER_TMP id="parent">      String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = vars.getGlobalVariable("inp<PARENT_TMP id="keyParentINP">Almacen</PARENT_TMP>", windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>");
 </PARAMETER_TMP>
-      @SuppressWarnings("unused") // In Expense Invoice tab this variable is not used, to be fixed
       String str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP> = vars.getGlobalVariable("inp<KEY_TMP id="keyData">PosicionAlmacen</KEY_TMP>", windowId + "|<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>", "");
       vars.setSessionValue(tabId + "|<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>.view", "EDIT");
 <PARAMETERS_TMP id="NothasReference">
@@ -503,7 +499,6 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
 </FIELDS_TMP>
 <FIELDS_TMP id="sectionActionButtons3">    } else if (vars.commandIn("SAVE_BUTTON<FIELD_TMP id="ButtonRealName3">button</FIELD_TMP><FIELD_TMP id="ProcessID3">button</FIELD_TMP>")) {
         String str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP> = vars.getGlobalVariable("inpKey", windowId + "|<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>", "");
-        @SuppressWarnings("unused")
         String str<FIELD_TMP id="ButtonName3">name</FIELD_TMP> = vars.getStringParameter("inp<FIELD_TMP id="ButtonName3">name</FIELD_TMP>");
         String strProcessing = vars.getStringParameter("inpprocessing");
         OBError myMessage = null;
@@ -959,10 +954,13 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     out.close();
   }
 
-  private void printPageEdit(HttpServletResponse response, HttpServletRequest request, VariablesSecureApp vars,boolean boolNew, String str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP><PARAMETER_TMP id="parent">, String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, TableSQLData tableSQL)
+  private void printPageEdit(HttpServletResponse response, HttpServletRequest request, VariablesSecureApp vars,boolean _boolNew, String str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP><PARAMETER_TMP id="parent">, String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, TableSQLData tableSQL)
     throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: edit");
     
+    // copy param to variable as will be modified later
+    boolean boolNew = _boolNew;
+
     HashMap&#60;String, String&#62; usedButtonShortCuts;
   <PARAMETER_TMP id="buttonFixed">
     HashMap&#60;String, String&#62; reservedButtonShortCuts;
