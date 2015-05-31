@@ -148,7 +148,8 @@ public class WADImage extends WADControl {
     return texto.toString();
   }
 
-  public int addAdditionDefaulSQLFields(Vector<Object> v, FieldsData fieldsDef, int itable) {
+  public int addAdditionDefaulSQLFields(Vector<Object> v, FieldsData fieldsDef, int _itable) {
+    int itable = _itable;
     if (fieldsDef.isdisplayed.equals("Y")) { // Image
       final FieldsData fd = new FieldsData();
       fd.adcolumnid = fieldsDef.adcolumnid + "_" + (itable++);
@@ -179,7 +180,8 @@ public class WADImage extends WADControl {
   }
 
   public int addAdditionDefaulJavaFields(StringBuffer strDefaultValues, FieldsData fieldsDef,
-      String tabName, int itable) {
+      String tabName, int _itable) {
+    int itable = _itable;
     if (fieldsDef.isdisplayed.equals("Y")) {
       strDefaultValues.append(", " + tabName + "Data.selectDef" + fieldsDef.adcolumnid + "_"
           + (itable++) + "(this, " + fieldsDef.defaultvalue + ")");

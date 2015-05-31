@@ -270,7 +270,8 @@ public class WADSearch extends WADControl {
     return true;
   }
 
-  public int addAdditionDefaulSQLFields(Vector<Object> v, FieldsData fieldsDef, int itable) {
+  public int addAdditionDefaulSQLFields(Vector<Object> v, FieldsData fieldsDef, int _itable) {
+    int itable = _itable;
     if (fieldsDef.isdisplayed.equals("Y")) {
       final FieldsData fd = new FieldsData();
       fd.adcolumnid = fieldsDef.adcolumnid + "_" + (itable++);
@@ -393,7 +394,8 @@ public class WADSearch extends WADControl {
   }
 
   public int addAdditionDefaulJavaFields(StringBuffer strDefaultValues, FieldsData fieldsDef,
-      String tabName, int itable) {
+      String tabName, int _itable) {
+    int itable = _itable;
     if (fieldsDef.isdisplayed.equals("Y")) {
 
       HashMap<String, String> tableColumnName = getTableColumnName(fieldsDef);

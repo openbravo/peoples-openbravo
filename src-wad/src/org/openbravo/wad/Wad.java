@@ -1294,8 +1294,7 @@ public class Wad extends DefaultHandler {
       }
       for (int i = 0; i < vecAuxSelCol.size(); i++)
         vecSelCol.addElement(vecAuxSelCol.elementAt(i));
-      selCol = new EditionFieldsData[vecSelCol.size()];
-      vecSelCol.copyInto(selCol);
+      return vecSelCol.toArray(new EditionFieldsData[0]);
     }
     return selCol;
   }
@@ -2379,13 +2378,14 @@ public class Wad extends DefaultHandler {
    * Generates the where with the params as java vars, to put it in the java file to be used in all
    * the internal searchs, like gotoFirstRow...
    * 
-   * @param strWhere
+   * @param _strWhere
    *          The tab's where clause
    * @param vecParameters
    *          Vector with the parameters for the where clause.
    * @return String with the new static where clause.
    */
-  private String generateStaticWhere(String strWhere, Vector<Object> vecParameters) {
+  private String generateStaticWhere(String _strWhere, Vector<Object> vecParameters) {
+    String strWhere = _strWhere;
     final StringBuffer result = new StringBuffer();
     if (strWhere == null || strWhere.equals(""))
       return strWhere;
@@ -2434,16 +2434,17 @@ public class Wad extends DefaultHandler {
    * @param vecTableParametersTop
    *          Vector with the from clause parameters.
    * @param whereClause
-   * @param orderBy
+   * @param _orderBy
    * @throws ServletException
    * @throws IOException
    */
   private void processTabXSQLSortTab(FieldsData[] parentsFieldsData, File fileDir, String strTab,
       String tabName, String tableName, String windowName, String keyColumnName,
       String strColumnSortOrderId, String strColumnSortYNId, Vector<Object> vecParametersTop,
-      Vector<Object> vecTableParametersTop, String javaPackage, String whereClause, String orderBy)
+      Vector<Object> vecTableParametersTop, String javaPackage, String whereClause, String _orderBy)
       throws ServletException, IOException {
     log4j.debug("Processing Sort Tab xsql: " + strTab + ", " + tabName);
+    String orderBy = _orderBy;
     XmlDocument xmlDocumentXsql;
     final String[] discard = { "", "", "hasOrgKey" };
     if (parentsFieldsData == null || parentsFieldsData.length == 0)
@@ -2488,9 +2489,9 @@ public class Wad extends DefaultHandler {
       final Vector<Object> vecTable = new Vector<Object>();
       final Vector<Object> vecWhere = new Vector<Object>();
       final FieldsData[] data = FieldsData.identifierColumns(pool, tableName);
-      log4j.debug("Total Identifiers for " + tableName + ": " + data.length);
       if (data == null)
         strFields = "''";
+      log4j.debug("Total Identifiers for " + tableName + ": " + data.length);
       vecCounters.addElement("0");
       vecCounters.addElement("0");
       for (int i = 0; i < data.length; i++) {
@@ -3620,7 +3621,7 @@ public class Wad extends DefaultHandler {
    *          Id of the tab.
    * @param tabName
    *          Name of the tab.
-   * @param keyColumnName
+   * @param _keyColumnName
    *          Name of the tab's key column.
    * @param isreadonly
    *          Boolean that means if is a read only tab or not.
@@ -3638,11 +3639,12 @@ public class Wad extends DefaultHandler {
    * @throws IOException
    */
   private void processTabHtmlRelation(FieldsData[] parentsFieldsData, File fileDir, String strTab,
-      String tabName, String keyColumnName, boolean isreadonly, WADControl control,
+      String tabName, String _keyColumnName, boolean isreadonly, WADControl control,
       boolean isTranslated, String adLanguage, String tabNamePresentation, String strTable,
       String accessLevel) throws ServletException, IOException {
     log4j.debug("Procesig relation html" + (isTranslated ? " translated" : "") + ": " + strTab
         + ", " + tabName);
+    String keyColumnName = _keyColumnName;
     final String[] discard = new String[1];
     if (parentsFieldsData.length == 0)
       discard[0] = new String("parent");
@@ -3665,12 +3667,10 @@ public class Wad extends DefaultHandler {
           "inp" + Sqlc.TransformaNombreColumna(parentsFieldsData[0].name));
       xmlDocument.setParameter("parentKeyName", parentsFieldsData[0].name);
     }
-    xmlDocument.setParameter("importCSS",
-        getVectorElementsNotRepeated(control.getCSSImport(), new Vector<String>(), 1));
-    xmlDocument.setParameter("importJS",
-        getVectorElementsNotRepeated(control.getImport(), new Vector<String>(), 2));
+    xmlDocument.setParameter("importCSS", getVectorElementsNotRepeated(control.getCSSImport(), 1));
+    xmlDocument.setParameter("importJS", getVectorElementsNotRepeated(control.getImport(), 2));
     final StringBuffer script = new StringBuffer();
-    script.append(getVectorElementsNotRepeated(control.getJSCode(), new Vector<String>(), 0));
+    script.append(getVectorElementsNotRepeated(control.getJSCode(), 0));
     script.append("function validateClient(action, form, value) {\n");
     script.append("  var frm=document.frmMain;\n");
     script.append(control.getValidation()).append("\n");
@@ -3687,16 +3687,12 @@ public class Wad extends DefaultHandler {
    * 
    * @param data
    *          The main Vector.
-   * @param addedElements
-   *          Vector with the new values to add.
    * @param type
    *          Indicates the type of import (1=CSS, 2=JS).
    * @return String with the list of imports in html format.
    */
-  private String getVectorElementsNotRepeated(Vector<String[]> data, Vector<String> addedElements,
-      int type) {
-    if (addedElements == null)
-      addedElements = new Vector<String>();
+  private String getVectorElementsNotRepeated(Vector<String[]> data, int type) {
+    Vector<String> addedElements = new Vector<String>();
     if (data == null)
       return "";
     final StringBuffer text = new StringBuffer();
@@ -3866,7 +3862,7 @@ public class Wad extends DefaultHandler {
    *          Array of parent fields.
    * @param vecFields
    *          Vector with the select clause.
-   * @param isreadonly
+   * @param _isreadonly
    *          Boolean that indicates if the tab is read only or not.
    * @param isSOTrx
    *          Indicates if the tab is a sales tab or not (Y | N).
@@ -3882,13 +3878,14 @@ public class Wad extends DefaultHandler {
   private void processTabHtmlEdition(FieldProvider[] efd, FieldProvider[] efdauxiliar,
       File fileDir, String strTab, String tabName, String keyColumnName,
       String tabNamePresentation, String windowId, FieldsData[] parentsFieldsData,
-      Vector<Object> vecFields, boolean isreadonly, String isSOTrx, String strTable,
+      Vector<Object> vecFields, boolean _isreadonly, String isSOTrx, String strTable,
       double pixelSize, String strLanguage, boolean editable, boolean isSecondaryKey)
       throws ServletException, IOException {
     if (log4j.isDebugEnabled())
       log4j.debug("Procesig edition html" + (strLanguage.equals("") ? "" : " translated") + ": "
           + strTab + ", " + tabName);
 
+    boolean isreadonly = _isreadonly;
     final boolean isReadOnlyDefinedTab = (isreadonly && editable); // isReadOnlyDefinedTab:
     // the
     // tab is
@@ -4533,9 +4530,9 @@ public class Wad extends DefaultHandler {
    * @return The copy array of FieldsData objects.
    */
   private FieldsData[] copyarray(FieldsData[] from) {
-    log4j.debug("Starting copyarray: " + from.length);
     if (from == null)
       return null;
+    log4j.debug("Starting copyarray: " + from.length);
     final FieldsData[] to = new FieldsData[from.length];
     for (int i = 0; i < from.length; i++) {
       log4j.debug("For copyarray");

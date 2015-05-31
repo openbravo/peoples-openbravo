@@ -154,7 +154,8 @@ public class WADControl {
     return css;
   }
 
-  protected String replaceHTML(String text) {
+  protected String replaceHTML(String _text) {
+    String text = _text;
     text = text.replace("<HTML>", "");
     text = text.replace("<HEAD>", "");
     text = text.replace("<BODY>", "");
