@@ -85,8 +85,8 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
             .hasReadOnlyAccess(dalConnectionProvider, roleId, tab.getId());
         String uiPattern = readOnlyAccess ? "RO" : tab.getUIPattern();
         // window should be read only when is assigned with a table defined as a view
-        if (!"RO".equals(uiPattern)
-            && ("T".equals(windowType) || "M".equals(windowType) && tab.getTable().isView())) {
+        if (!"RO".equals(uiPattern) && ("T".equals(windowType) || "M".equals(windowType))
+            && tab.getTable().isView()) {
           log4j.warn("Tab \"" + tab.getName()
               + "\" is set to read only because is assigned with a table defined as a view.");
           uiPattern = "RO";
