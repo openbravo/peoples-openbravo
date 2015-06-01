@@ -183,6 +183,7 @@ enyo.kind({
     synchronizing: 'disableButton',
     synchronized: 'enableButton'
   },
+  isEnabled: true,
   disabledButton: function (inSender, inEvent) {
     if (inEvent.exceptionPanel === this.tabPanel) {
       return true;
@@ -199,9 +200,11 @@ enyo.kind({
   disabledChanged: function (isDisabled) {
     // logic decide if the button will be allowed to be enabled
     // the decision to enable the button is made based on several requirements that must be met
-    var requirements;
+    var requirements, me = this;
 
     function requirementsAreMet(model) {
+      // This function is in charge of managing all the requirements of the pay button to be enabled and disabled
+      // Any attribute or parameter used to change the state of the button MUST be managed here
       requirements = {
         isSynchronized: undefined,
         isModel: undefined,
@@ -213,11 +216,21 @@ enyo.kind({
         receiptBpId: undefined,
         isReceiptLines: undefined,
         isReceiptLinesLengthGreaterThanZero: undefined,
-        isReceiptHasbeenpaidEqualToN: undefined
+        isReceiptHasbeenpaidEqualToN: undefined,
+        isToolbarEnabled: undefined,
+        isDisabledRequest: undefined
       };
 
-      // if any requirement is not met, return false
-      // checks are grouped as objects are known to exists
+      // If any requirement is not met, return false
+      // Checks are grouped as objects are known to exist
+      requirements.isDisabledRequest = isDisabled;
+      if (requirements.isDisabledRequest) {
+        return false;
+      }
+      requirements.isToolbarEnabled = me.isEnabled;
+      if (!requirements.isToolbarEnabled) {
+        return false;
+      }
       requirements.isSynchronized = OB.UTIL.SynchronizationHelper.isSynchronized();
       if (!requirements.isSynchronized) {
         return false;
@@ -245,7 +258,7 @@ enyo.kind({
       if (OB.UTIL.isNullOrUndefined(requirements.receiptBpId) || !requirements.isReceiptDocnoLengthGreaterThanThree || !requirements.isReceiptLinesLengthGreaterThanZero || !requirements.isReceiptHasbeenpaidEqualToN) {
         return false;
       }
-      // all requirements are met
+      // All requirements are met
       return true;
     }
     var newIsDisabledState;
@@ -261,7 +274,10 @@ enyo.kind({
       }
     });
 
-    // log the status and requirements of the pay button state
+    // Log the status and requirements of the pay button state
+    // This log is used to keep control on the requests to enable and disable the button, and to have a quick
+    // view of which requirements haven't been met if the button is disabled.
+    // The enabling/disabling flow MUST go through this point to ensure that all requests are logged
     var msg = enyo.format("Pay button is %s", (newIsDisabledState ? 'disabled' : 'enabled'));
     if (newIsDisabledState === true && requirements.isReceiptLinesLengthGreaterThanZero && requirements.isReceiptHasbeenpaidEqualToN) {
       msg += " and should be enabled";
