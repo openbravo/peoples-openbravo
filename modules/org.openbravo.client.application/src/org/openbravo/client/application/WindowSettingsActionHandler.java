@@ -79,19 +79,17 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
       final String roleId = OBContext.getOBContext().getRole().getId();
       final DalConnectionProvider dalConnectionProvider = new DalConnectionProvider();
       final JSONObject jsonUIPattern = new JSONObject();
+      final String windowType = window.getWindowType();
       for (Tab tab : window.getADTabList()) {
         final boolean readOnlyAccess = org.openbravo.erpCommon.utility.WindowAccessData
             .hasReadOnlyAccess(dalConnectionProvider, roleId, tab.getId());
         String uiPattern = readOnlyAccess ? "RO" : tab.getUIPattern();
         // window should be read only when is assigned with a table defined as a view
-        if (tab.getTable().getWindow() != null) {
-          String windowType = tab.getTable().getWindow().getWindowType();
-          if (!"RO".equals(uiPattern) && tab.getTable().isView()
-              && ("T".equals(windowType) || "M".equals(windowType))) {
-            log4j.warn("Tab \"" + tab.getName()
-                + "\" is set to read only because is assigned with a table defined as a view.");
-            uiPattern = "RO";
-          }
+        if (!"RO".equals(uiPattern)
+            && ("T".equals(windowType) || "M".equals(windowType) && tab.getTable().isView())) {
+          log4j.warn("Tab \"" + tab.getName()
+              + "\" is set to read only because is assigned with a table defined as a view.");
+          uiPattern = "RO";
         }
         jsonUIPattern.put(tab.getId(), uiPattern);
       }
