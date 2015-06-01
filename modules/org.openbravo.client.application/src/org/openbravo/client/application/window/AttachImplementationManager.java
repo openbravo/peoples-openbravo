@@ -548,7 +548,7 @@ public class AttachImplementationManager {
         attachmentMetadata.setParameter(parameter);
 
         String value = null;
-        if (parameter.isUserEditable() && parameter.getPropertyPath() != null
+        if (!parameter.isUserEditable() && parameter.getPropertyPath() != null
             && !parameter.getPropertyPath().equals("")) {
           // if has a property path
 
