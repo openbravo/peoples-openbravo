@@ -82,7 +82,7 @@ public class AttachmentsAH extends BaseActionHandler {
         for (Parameter param : AttachmentUtils.getMethodMetadataParameters(attachMethod, tab)) {
           String value;
           if (param.isFixed()) {
-            if (!param.isUserEditable() && param.getPropertyPath() != null) {
+            if (param.getPropertyPath() != null) {
               // not relevant value
               value = "Property Path";
             } else if (param.isEvaluateFixedValue()) {

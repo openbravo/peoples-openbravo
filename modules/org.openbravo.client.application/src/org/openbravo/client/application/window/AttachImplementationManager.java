@@ -74,7 +74,6 @@ public class AttachImplementationManager {
 
   public static final String REFERENCE_LIST = "17";
   public static final String REFERENCE_TABLE = "18";
-  public static final String REFERENCE_TABLEDIR = "19";
 
   @Inject
   @Any
@@ -548,7 +547,7 @@ public class AttachImplementationManager {
         attachmentMetadata.setParameter(parameter);
 
         String value = null;
-        if (!parameter.isUserEditable() && parameter.getPropertyPath() != null) {
+        if (parameter.getPropertyPath() != null) {
           // if has a property path
           Tab tab = OBDal.getInstance().get(Tab.class, tabId);
           final String hql = "SELECT a." + parameter.getPropertyPath() + " FROM "

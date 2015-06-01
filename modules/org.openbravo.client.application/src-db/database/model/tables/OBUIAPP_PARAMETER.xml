@@ -133,10 +133,6 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <column name="ATT_ISUSEREDITABLE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[Y]]></default>
-        <onCreateDefault/>
-      </column>
       <column name="ATT_PROPERTYPATH" primaryKey="false" required="false" type="VARCHAR" size="255" autoIncrement="false">
         <default/>
         <onCreateDefault/>
@@ -180,7 +176,6 @@
       <check name="OBUIAPP_PARAMETER_CENTR_CHK"><![CDATA[ISCENTRALLYMAINTAINED IN ('Y', 'N')]]></check>
       <check name="OBUIAPP_PARAMETER_EVFIXVAL_CHK"><![CDATA[EVALUATEFIXEDVALUE IN ('Y', 'N')]]></check>
       <check name="OBUIAPP_PARAMETER_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="OBUIAPP_PARAMETER_ISEDITAB_CHK"><![CDATA[ATT_ISUSEREDITABLE IN ('Y', 'N')]]></check>
       <check name="OBUIAPP_PARAMETER_ISFIXED_CHK"><![CDATA[ISFIXED IN ('Y', 'N')]]></check>
       <check name="OBUIAPP_PARAMETER_MANDAT_CHK"><![CDATA[ISMANDATORY IN ('Y', 'N')]]></check>
       <check name="OBUIAPP_PARAMETER_NEWLINE_CHK"><![CDATA[STARTINNEWLINE IN ('Y', 'N')]]></check>
