@@ -6682,7 +6682,8 @@ There is no any kind of timezone conversion. The stored date-time does not have 
 <!--F784938E74564BCABF9517EB80DB15F5-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--F784938E74564BCABF9517EB80DB15F5-->  <NAME><![CDATA[Product Complete (Stocked only)]]></NAME>
 <!--F784938E74564BCABF9517EB80DB15F5-->  <DESCRIPTION><![CDATA[Based on Product Complete selector, but only for Stocked products]]></DESCRIPTION>
-<!--F784938E74564BCABF9517EB80DB15F5-->  <HELP><![CDATA[Based on Product Complete selector, but only for Stocked products]]></HELP>
+<!--F784938E74564BCABF9517EB80DB15F5-->  <HELP><![CDATA[Based on Product Complete selector, but only for Stocked products.
+It only shows products set as stocked = Y with or without stock.]]></HELP>
 <!--F784938E74564BCABF9517EB80DB15F5-->  <VALIDATIONTYPE><![CDATA[S]]></VALIDATIONTYPE>
 <!--F784938E74564BCABF9517EB80DB15F5-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--F784938E74564BCABF9517EB80DB15F5-->  <ISBASEREFERENCE><![CDATA[N]]></ISBASEREFERENCE>
