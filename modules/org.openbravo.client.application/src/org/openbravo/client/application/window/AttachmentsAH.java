@@ -78,13 +78,15 @@ public class AttachmentsAH extends BaseActionHandler {
         AttachmentMethod attachMethod = OBDal.getInstance().get(AttachmentMethod.class,
             strAttMethodId);
         Map<String, String> metadata = new HashMap<String, String>();
+        Map<String, String> fixedParameters = ParameterUtils.fixRequestMap(parameters);
         for (Parameter param : AttachmentUtils.getMethodMetadataParameters(attachMethod, tab)) {
           String value;
           if (param.isFixed()) {
             if (!param.isUserEditable() && param.getPropertyPath() != null) {
+              // not relevant value
               value = "Property Path";
             } else if (param.isEvaluateFixedValue()) {
-              value = ParameterUtils.getParameterFixedValue(metadata, param).toString();
+              value = ParameterUtils.getParameterFixedValue(fixedParameters, param).toString();
             } else {
               value = param.getFixedValue();
             }

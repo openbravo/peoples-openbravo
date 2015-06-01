@@ -133,13 +133,15 @@ public class TabAttachments extends HttpSecureAppServlet {
         } else {
           attachMethod = attConfig.getAttachmentMethod();
         }
+        Map<String, String> fixedParameters = ParameterUtils.fixRequestMap(request);
         for (Parameter param : AttachmentUtils.getMethodMetadataParameters(attachMethod, tab)) {
           String value;
           if (param.isFixed()) {
             if (!param.isUserEditable() && param.getPropertyPath() != null) {
+              // not relevant value
               value = "Property Path";
             } else if (param.isEvaluateFixedValue()) {
-              value = ParameterUtils.getParameterFixedValue(metadata, param).toString();
+              value = ParameterUtils.getParameterFixedValue(fixedParameters, param).toString();
             } else {
               value = param.getFixedValue();
             }

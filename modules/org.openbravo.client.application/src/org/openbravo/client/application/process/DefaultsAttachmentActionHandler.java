@@ -18,21 +18,23 @@
  */
 package org.openbravo.client.application.process;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.servlet.http.HttpSession;
 
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.ParameterUtils;
+import org.openbravo.client.application.ParameterValue;
 import org.openbravo.client.application.window.AttachmentUtils;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.client.kernel.KernelConstants;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.ui.Tab;
+import org.openbravo.model.ad.utility.Attachment;
 import org.openbravo.model.ad.utility.AttachmentMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,31 +55,51 @@ public class DefaultsAttachmentActionHandler extends BaseActionHandler {
 
       final String strAttMethodID = (String) parameters.get("attachmentMethod");
       final String strTabId = (String) parameters.get("tabId");
+      final String strAttachmentId = (String) parameters.get("attachmentId");
+      final String strAction = (String) parameters.get("action");
       final Tab tab = OBDal.getInstance().get(Tab.class, strTabId);
+      final Attachment attachment = OBDal.getInstance().get(Attachment.class, strAttachmentId);
       AttachmentMethod attMethod = OBDal.getInstance().get(AttachmentMethod.class, strAttMethodID);
 
       JSONObject context = new JSONObject();
       if (parameters.get("context") != null) {
         context = new JSONObject((String) parameters.get("context"));
       }
-      final Map<String, String> fixedParameters = fixRequestMap(parameters);
+      final Map<String, String> fixedParameters = ParameterUtils.fixRequestMap(parameters);
 
       for (Parameter param : AttachmentUtils.getMethodMetadataParameters(attMethod, tab)) {
-        Object defValue = null;
-        // FIXME: When edit is done retrieve first stored value
         if (param.isFixed()) {
-          if (param.isEvaluateFixedValue()) {
-            defValue = ParameterUtils.getParameterFixedValue(fixedParameters, param);
+          if (param.getPropertyPath() != null) {
+            parameters.put(param.getDBColumnName(), "Property Path");
+          } else if (param.isEvaluateFixedValue()) {
+            parameters.put(param.getDBColumnName(), ParameterUtils.getParameterFixedValue(
+                ParameterUtils.fixRequestMap(parameters), param));
           } else {
-            defValue = param.getFixedValue();
+            parameters.put(param.getDBColumnName(), param.getFixedValue());
           }
-          defaults.put(param.getDBColumnName(), defValue);
-        } else if (param.getDefaultValue() != null) {
-          defValue = ParameterUtils.getParameterDefaultValue(fixedParameters, param,
-              (HttpSession) parameters.get(KernelConstants.HTTP_SESSION), context);
-          defaults.put(param.getDBColumnName(), defValue);
         }
       }
+
+      if (strAction.equals("edit")) {
+        for (Parameter param : AttachmentUtils.getMethodMetadataParameters(attMethod, tab)) {
+          if (!param.isFixed()) {
+            if (param.getDefaultValue() != null) {
+              Object defValue = ParameterUtils.getParameterDefaultValue(fixedParameters, param,
+                  (HttpSession) parameters.get(KernelConstants.HTTP_SESSION), context);
+              defaults.put(param.getDBColumnName(), defValue);
+            } else {
+              OBCriteria<ParameterValue> parameterValueCriteria = OBDal.getInstance()
+                  .createCriteria(ParameterValue.class);
+              parameterValueCriteria.add(Restrictions.eq(ParameterValue.PROPERTY_FILE, attachment));
+              parameterValueCriteria.add(Restrictions.eq(ParameterValue.PROPERTY_PARAMETER, param));
+              ParameterValue parameterValue = parameterValueCriteria.list().get(0);
+              defaults.put(param.getDBColumnName(),
+                  ParameterUtils.getParameterValue(parameterValue));
+            }
+          }
+        }
+      }
+
       log.debug("Defaults for tab {} \n {}", tab, defaults.toString());
       return defaults;
     } catch (Exception e) {
@@ -86,17 +108,5 @@ public class DefaultsAttachmentActionHandler extends BaseActionHandler {
     } finally {
       OBContext.restorePreviousMode();
     }
-  }
-
-  private Map<String, String> fixRequestMap(Map<String, Object> parameters) {
-    final Map<String, String> retval = new HashMap<String, String>();
-    for (Entry<String, Object> entries : parameters.entrySet()) {
-      if (entries.getKey().equals(KernelConstants.HTTP_REQUEST)
-          || entries.getKey().equals(KernelConstants.HTTP_SESSION)) {
-        continue;
-      }
-      retval.put(entries.getKey(), entries.getValue().toString());
-    }
-    return retval;
   }
 }

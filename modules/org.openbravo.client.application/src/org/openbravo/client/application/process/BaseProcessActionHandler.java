@@ -18,9 +18,7 @@
  */
 package org.openbravo.client.application.process;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
@@ -31,7 +29,6 @@ import org.openbravo.client.application.ParameterUtils;
 import org.openbravo.client.application.Process;
 import org.openbravo.client.application.ProcessAccess;
 import org.openbravo.client.kernel.BaseActionHandler;
-import org.openbravo.client.kernel.KernelConstants;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -77,8 +74,8 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
       for (Parameter param : processDefinition.getOBUIAPPParameterList()) {
         if (param.isFixed()) {
           if (param.isEvaluateFixedValue()) {
-            parameters.put(param.getDBColumnName(),
-                ParameterUtils.getParameterFixedValue(fixRequestMap(parameters), param));
+            parameters.put(param.getDBColumnName(), ParameterUtils.getParameterFixedValue(
+                ParameterUtils.fixRequestMap(parameters), param));
           } else {
             parameters.put(param.getDBColumnName(), param.getFixedValue());
           }
@@ -149,22 +146,6 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
     qAccess.add(Restrictions.eq(ProcessAccess.PROPERTY_OBUIAPPPROCESS, processDefinition));
     qAccess.add(Restrictions.eq(ProcessAccess.PROPERTY_ROLE, OBContext.getOBContext().getRole()));
     return qAccess.count() > 0;
-  }
-
-  /*
-   * The request map is <String, Object> because includes the HTTP request and HTTP session, is not
-   * required to handle process parameters
-   */
-  protected Map<String, String> fixRequestMap(Map<String, Object> parameters) {
-    final Map<String, String> retval = new HashMap<String, String>();
-    for (Entry<String, Object> entries : parameters.entrySet()) {
-      if (entries.getKey().equals(KernelConstants.HTTP_REQUEST)
-          || entries.getKey().equals(KernelConstants.HTTP_SESSION)) {
-        continue;
-      }
-      retval.put(entries.getKey(), entries.getValue().toString());
-    }
-    return retval;
   }
 
   protected abstract JSONObject doExecute(Map<String, Object> parameters, String content);

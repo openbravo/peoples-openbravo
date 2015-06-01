@@ -142,6 +142,12 @@ isc.OBAttachmentWindowView.addProperties({
     this.baseParams.tabId = this.attachSection.tabId;
     this.baseParams.clientId = this.attachSection.docClient;
     this.baseParams.attachmentMethod = this.attachmentMethod;
+    this.baseParams.attachmentId = this.attachmentId;
+    if (this.uploadMode) {
+      this.baseParams.action = 'upload';
+    } else {
+      this.baseParams.action = 'edit';
+    }
 
     this.formProps = isc.addProperties({}, this.formProps, this.attachFormProps);
     this.viewProperties.fields = isc.shallowClone(attachFields);

@@ -20,11 +20,15 @@ package org.openbravo.client.application;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
@@ -41,6 +45,7 @@ import org.openbravo.base.model.domaintype.LongDomainType;
 import org.openbravo.base.model.domaintype.StringDomainType;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.util.Check;
+import org.openbravo.client.kernel.KernelConstants;
 import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.dal.core.OBContext;
@@ -244,4 +249,45 @@ public class ParameterUtils {
       return false;
     }
   }
+
+  /**
+   * Returns a Map<String, String> with all parameters in the servlet request.
+   * 
+   * @param request
+   *          request taken in the servlet.
+   * @return a Map with all parameters in request.
+   */
+  public static Map<String, String> fixRequestMap(HttpServletRequest request) {
+    final Map<String, String> parameterMap = new HashMap<String, String>();
+    for (Enumeration<?> keys = request.getParameterNames(); keys.hasMoreElements();) {
+      final String key = (String) keys.nextElement();
+      if (request.getParameterValues(key) != null && request.getParameterValues(key).length > 1) {
+        parameterMap.put(key, request.getParameterValues(key).toString());
+      } else {
+        parameterMap.put(key, request.getParameter(key).toString());
+      }
+    }
+    return parameterMap;
+  }
+
+  /**
+   * Returns the parameters map converting to Map<String, String> and removing HTTP_REQUEST and
+   * HTTP_SESSION parameters.
+   * 
+   * @param parameters
+   *          parameters map taken from request object.
+   * @return a Map with all parameters excpt HTTP_REQUEST and HTTP_SESSION.
+   */
+  public static Map<String, String> fixRequestMap(Map<String, Object> parameters) {
+    final Map<String, String> retval = new HashMap<String, String>();
+    for (Entry<String, Object> entries : parameters.entrySet()) {
+      if (entries.getKey().equals(KernelConstants.HTTP_REQUEST)
+          || entries.getKey().equals(KernelConstants.HTTP_SESSION)) {
+        continue;
+      }
+      retval.put(entries.getKey(), entries.getValue().toString());
+    }
+    return retval;
+  }
+
 }

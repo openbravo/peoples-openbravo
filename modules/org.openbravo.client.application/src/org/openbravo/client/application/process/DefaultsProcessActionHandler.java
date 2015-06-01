@@ -47,7 +47,7 @@ public class DefaultsProcessActionHandler extends BaseProcessActionHandler {
       OBContext.setAdminMode(true);
 
       final String processId = (String) parameters.get("processId");
-      final Map<String, String> fixedParameters = fixRequestMap(parameters);
+      final Map<String, String> fixedParameters = ParameterUtils.fixRequestMap(parameters);
 
       JSONObject context = null;
       if (parameters.get("context") != null) {
