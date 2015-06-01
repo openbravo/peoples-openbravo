@@ -407,8 +407,7 @@ public class AttachImplementationManager {
         for (int j = 0; j < metadataArray.length(); j++) {
           if (metadataArray.getJSONObject(j).get("SearchKey")
               .equals(attachmentMetadata.getParameter().getDBColumnName())) {
-            if (attachmentMetadata.getValueString() != null
-                && !attachmentMetadata.getValueString().equals("")) {
+            if (attachmentMetadata.getValueString() != null) {
               metadataArray.getJSONObject(j).put("value", attachmentMetadata.getValueString());
             } else if (attachmentMetadata.getValueNumber() != null) {
               metadataArray.getJSONObject(j).put("value",
@@ -555,8 +554,9 @@ public class AttachImplementationManager {
 
           Tab tab = OBDal.getInstance().get(Tab.class, tabId);
           final String hql = "SELECT a." + parameter.getPropertyPath() + " FROM "
-              + tab.getTable().getName() + " AS a WHERE a.id='" + recordId + "'";
+              + tab.getTable().getName() + " AS a WHERE a.id=:recordId";
           final Query query = OBDal.getInstance().getSession().createQuery(hql);
+          query.setString("recordId", recordId);
           if (query.list().size() != 1) {
             throw new OBException(OBMessageUtils.getI18NMessage("OBUIAPP_PropPathNotOneRecord",
                 null));
@@ -581,11 +581,16 @@ public class AttachImplementationManager {
           }
         } else if (parameter.getReference().getId().equals(REFERENCE_TABLE)) {
           org.openbravo.model.ad.domain.Reference reference = parameter.getReference();
-          java.util.List<ReferencedTable> referencedTableList = reference
-              .getADReferencedTableList();
-          // not implemented
-        } else if (parameter.getReference().getId().equals(REFERENCE_TABLEDIR)) {
-          // not implemented
+          if (reference.getADReferencedTableList().size() != 1) {
+            throw new OBException(OBMessageUtils.getI18NMessage("", null));
+          }
+          ReferencedTable referencedTable = reference.getADReferencedTableList().get(0);
+          final String hql = "SELECT a.id, a.identifier FROM "
+              + referencedTable.getTable().getName() + " AS a WHERE a.id=:recordId";
+          final Query query = OBDal.getInstance().getSession().createQuery(hql);
+          query.setString("recordId", recordId);
+          Object result = query.list().get(0);
+          // not finished
         } else {
           JSONObject jsonValue = new JSONObject();
           jsonValue.put("value", value);

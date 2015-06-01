@@ -36,21 +36,19 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.ScrollMode;
-import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.Parameter;
+import org.openbravo.client.application.ParameterUtils;
 import org.openbravo.client.application.window.AttachImplementationManager;
 import org.openbravo.client.application.window.AttachmentUtils;
 import org.openbravo.client.application.window.AttachmentsAH;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.PropertyException;
@@ -82,7 +80,6 @@ public class TabAttachments extends HttpSecureAppServlet {
 
   public void post(VariablesSecureApp vars, HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
-    OBError myMessage = null;
 
     AttachImplementationManager aim = WeldUtils
         .getInstanceFromStaticBeanManager(AttachImplementationManager.class);
@@ -136,23 +133,18 @@ public class TabAttachments extends HttpSecureAppServlet {
         } else {
           attachMethod = attConfig.getAttachmentMethod();
         }
-        final OBQuery<Parameter> paramQuery = OBDal.getInstance().createQuery(Parameter.class,
-            "attachmentMethod.id=:attachmentMethodId and (tab is null or tab.id=:tabId)");
-        paramQuery.setNamedParameter("attachmentMethodId", attachMethod.getId());
-        paramQuery.setNamedParameter("tabId", tab.getId());
-        paramQuery.setFetchSize(1000);
-        final ScrollableResults paramScroller = paramQuery.scroll(ScrollMode.FORWARD_ONLY);
-        int count = 0;
-        while (paramScroller.next()) {
-          final Parameter param = (Parameter) paramScroller.get()[0];
-          metadata.put(param.getId(), vars.getStringParameter(param.getDBColumnName()).toString());
-          // clear the session every 100 records
-          if ((count % 100) == 0) {
-            OBDal.getInstance().getSession().clear();
+        for (Parameter param : AttachmentUtils.getMethodMetadataParameters(attachMethod, tab)) {
+          String value;
+          if (param.isFixed() && !param.isUserEditable() && param.getPropertyPath() == null) {
+            value = ParameterUtils.getParameterFixedValue(metadata, param).toString();
+          } else if (param.isFixed() && !param.isUserEditable() && param.getPropertyPath() != null) {
+            // not relevant value
+            value = "Property Path";
+          } else {
+            value = vars.getStringParameter(param.getDBColumnName()).toString();
           }
-          count++;
+          metadata.put(param.getId(), value);
         }
-        paramScroller.close();
 
         aim.upload(strTab, key, strDataType, strDocumentOrganization, metadata, tempFile);
         obj = AttachmentsAH.getAttachmentJSONObject(tab, key);

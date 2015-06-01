@@ -32,6 +32,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.client.application.Parameter;
+import org.openbravo.client.application.ParameterUtils;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
@@ -78,8 +79,16 @@ public class AttachmentsAH extends BaseActionHandler {
             strAttMethodId);
         Map<String, String> metadata = new HashMap<String, String>();
         for (Parameter param : AttachmentUtils.getMethodMetadataParameters(attachMethod, tab)) {
-          metadata.put(param.getId(),
-              URLDecoder.decode(params.get(param.getDBColumnName()).toString(), "UTF-8"));
+          String value;
+          if (param.isFixed() && !param.isUserEditable() && param.getPropertyPath() == null) {
+            value = ParameterUtils.getParameterFixedValue(metadata, param).toString();
+          } else if (param.isFixed() && !param.isUserEditable() && param.getPropertyPath() != null) {
+            // not relevant value
+            value = "Property Path";
+          } else {
+            value = URLDecoder.decode(params.get(param.getDBColumnName()).toString(), "UTF-8");
+          }
+          metadata.put(param.getId(), value);
         }
 
         aim.update(attachmentId, tabId, recordIds, metadata);
