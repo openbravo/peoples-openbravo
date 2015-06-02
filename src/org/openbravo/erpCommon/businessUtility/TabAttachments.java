@@ -34,7 +34,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
-import org.apache.log4j.Logger;
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
@@ -49,7 +49,6 @@ import org.openbravo.client.application.window.AttachmentsAH;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.Utility;
@@ -58,11 +57,12 @@ import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.Attachment;
 import org.openbravo.model.ad.utility.AttachmentConfig;
 import org.openbravo.model.ad.utility.AttachmentMethod;
-import org.openbravo.xmlEngine.XmlDocument;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TabAttachments extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
-  private static Logger log = Logger.getLogger(TabAttachments.class);
+  private static Logger log = LoggerFactory.getLogger(TabAttachments.class);
 
   @Override
   public void init(ServletConfig config) {
@@ -86,42 +86,33 @@ public class TabAttachments extends HttpSecureAppServlet {
     if (vars.getCommand().startsWith("SAVE_NEW")) {
 
       final String strTab = vars.getStringParameter("inpTabId");
-      vars.setSessionValue("TabAttachments.tabId", strTab);
-      final String strWindow = vars.getStringParameter("inpwindowId");
-      vars.setSessionValue("TabAttachments.windowId", strWindow);
       final String key = vars.getStringParameter("inpKey");
-      vars.setSessionValue("TabAttachments.key", key);
       final String strDataType = vars.getStringParameter("inpadDatatypeId");
-
       final String strDocumentOrganization = vars.getStringParameter("inpDocumentOrg");
-      final String inpName = "inpname";
-      final FileItem file = vars.getMultiFile(inpName);
-      if (file == null)
+      final FileItem file = vars.getMultiFile("inpname");
+      if (file == null) {
         throw new ServletException("Empty file");
-      final String tmpFolder = System.getProperty("java.io.tmpdir");
-      final File targetDirectory = new File(tmpFolder);
-      if (!targetDirectory.exists()) {
-        targetDirectory.mkdirs();
       }
+      final String tmpFolder = System.getProperty("java.io.tmpdir");
+
       String strName = file.getName();
-      // FIXME: Get the directory separator from Java runtime
-      int i = strName.lastIndexOf("\\");
+      int i = strName.lastIndexOf(File.separator);
       if (i != -1) {
         strName = strName.substring(i + 1);
-        // FIXME: Get the directory separator from Java runtime
-      } else if ((i = strName.lastIndexOf("/")) != -1) {
-        strName = strName.substring(i + 1);
       }
-      File tempFile = new File(targetDirectory, strName);
-      OBContext.setAdminMode();
-      Tab tab = OBDal.getInstance().get(Tab.class, strTab);
-      JSONObject obj = AttachmentsAH.getAttachmentJSONObject(tab, key);
-      String buttonId = vars.getStringParameter("buttonId");
+      File tempFile = new File(tmpFolder, strName);
+      OBContext.setAdminMode(true);
+      Tab tab = null;
+      JSONObject obj = new JSONObject();
+      String strMessage = "";
+
       try {
+        tab = OBDal.getInstance().get(Tab.class, strTab);
+        obj = AttachmentsAH.getAttachmentJSONObject(tab, key);
         try {
           file.write(tempFile);
         } catch (Exception e) {
-          log.error("Error creating temp file");
+          log.error("Error creating temp file", e);
           throw new OBException(OBMessageUtils.messageBD("ErrorUploadingFile"), e);
         }
         //
@@ -153,49 +144,23 @@ public class TabAttachments extends HttpSecureAppServlet {
 
         aim.upload(strTab, key, strDataType, strDocumentOrganization, metadata, tempFile);
         obj = AttachmentsAH.getAttachmentJSONObject(tab, key);
-        response.setContentType("text/html; charset=UTF-8");
-        Writer writer = response.getWriter();
-        writer.write("<HTML><BODY><script type=\"text/javascript\">");
-        writer.write("top.OB.Utilities.uploadFinished(\"" + buttonId + "\"," + obj.toString()
-            + ");");
-        writer.write("</SCRIPT></BODY></HTML>");
       } catch (OBException e) {
         OBDal.getInstance().rollbackAndClose();
-        log.error(e.getMessage());
-
-        String viewId = vars.getStringParameter("viewId");
-        response.setContentType("text/html; charset=UTF-8");
-        Writer writer = response.getWriter();
-        writer.write("<HTML><BODY><script type=\"text/javascript\">");
-        writer.write("top.OB.Utilities.uploadFinished(\"" + buttonId + "\"," + obj.toString()
-            + ");");
-        writer.write("top.OB.Utilities.writeErrorMessage(\"" + viewId + "\",\"" + e.getMessage()
-            + "\");");
-        writer.write("</SCRIPT></BODY></HTML>");
-      } catch (Exception e) {
-        OBDal.getInstance().rollbackAndClose();
-        log.error(e.getMessage(), e);
-
-        String viewId = vars.getStringParameter("viewId");
-        response.setContentType("text/html; charset=UTF-8");
-        Writer writer = response.getWriter();
-        writer.write("<HTML><BODY><script type=\"text/javascript\">");
-        writer.write("top.OB.Utilities.uploadFinished(\"" + buttonId + "\"," + obj.toString()
-            + ");");
-        writer.write("top.OB.Utilities.writeErrorMessage(\"" + viewId + "\",\"" + e.getMessage()
-            + "\");");
-        writer.write("</SCRIPT></BODY></HTML>");
+        log.error("Error uploading the file", e);
+        strMessage = e.getMessage();
       } finally {
         OBContext.restorePreviousMode();
         if (tempFile.exists()) { // If tempFile still exists in attachments/tmp must be removed
           tempFile.delete();
         }
       }
-    } else if (vars.commandIn("DISPLAY_DATA")) {
-      final String strFileReference = vars.getStringParameter("inpcFileId");
+      printResponse(response, vars, obj, strMessage);
+
+    } else if (vars.commandIn("DOWNLOAD_FILE")) {
+      final String strFileReference = vars.getStringParameter("attachmentId");
       ByteArrayOutputStream os = null;
       try {
-        OBContext.setAdminMode();
+        OBContext.setAdminMode(true);
         os = new ByteArrayOutputStream();
         aim.download(strFileReference, os);
         Attachment attachment = OBDal.getInstance().get(Attachment.class, strFileReference);
@@ -226,21 +191,17 @@ public class TabAttachments extends HttpSecureAppServlet {
         response.getOutputStream().close();
 
       } catch (OBException e) {
-        log.error(e.getMessage());
-        String viewId = vars.getStringParameter("viewId");
-        response.setContentType("text/html; charset=UTF-8");
-        Writer writer = response.getWriter();
-        writer.write("<HTML><BODY><script type=\"text/javascript\">");
-        writer.write("top.OB.Utilities.writeErrorMessage(\"" + viewId + "\",\"" + e.getMessage()
-            + "\");");
-        writer.write("</SCRIPT></BODY></HTML>");
+        log.error("Error downloading file.", e);
+        printResponse(response, vars, null, e.getMessage());
 
       } finally {
-        os.close();
+        if (os != null) {
+          os.close();
+        }
         OBContext.restorePreviousMode();
       }
 
-    } else if (vars.getCommand().contains("GET_MULTIPLE_RECORDS_OB3")) {
+    } else if (vars.getCommand().contains("DOWNLOAD_ALL")) {
       String tabId = vars.getStringParameter("tabId");
       String recordIds = vars.getStringParameter("recordIds");
       ByteArrayOutputStream os = null;
@@ -253,36 +214,15 @@ public class TabAttachments extends HttpSecureAppServlet {
         response.getOutputStream().flush();
         response.getOutputStream().close();
       } catch (OBException e) {
-        log.error(e.getMessage());
-        String viewId = vars.getStringParameter("viewId");
-        response.setContentType("text/html; charset=UTF-8");
-        Writer writer = response.getWriter();
-        writer.write("<HTML><BODY><script type=\"text/javascript\">");
-        writer.write("top.OB.Utilities.writeErrorMessage(\"" + viewId + "\",\"" + e.getMessage()
-            + "\");");
-        writer.write("</SCRIPT></BODY></HTML>");
+        log.error("Error downloading all files.", e);
+        printResponse(response, vars, null, e.getMessage());
 
       } finally {
-        os.close();
+        if (os != null) {
+          os.close();
+        }
       }
 
-    } else if (vars.commandIn("DEFAULT")) {
-      vars.getGlobalVariable("inpTabId", "TabAttachments.tabId");
-      vars.getGlobalVariable("inpwindowId", "TabAttachments.windowId");
-      vars.getGlobalVariable("inpKey", "TabAttachments.key");
-      vars.getGlobalVariable("inpEditable", "TabAttachments.editable");
-      printPageFS(response, vars);
-      // This command is only for 2.50
-    } else if (vars.commandIn("FRAME1", "RELATION")) {
-      final String strTab = vars.getGlobalVariable("inpTabId", "TabAttachments.tabId");
-      final String strWindow = vars.getGlobalVariable("inpwindowId", "TabAttachments.windowId");
-      final String key = vars.getGlobalVariable("inpKey", "TabAttachments.key");
-      final boolean editable = vars.getGlobalVariable("inpEditable", "TabAttachments.editable")
-          .equals("Y");
-      printPage(response, vars, strTab, strWindow, key, editable);
-      // This command is only for 2.50
-    } else if (vars.commandIn("FRAME2")) {
-      whitePage(response);
       // This command is only for 2.50
     } else if (vars.commandIn("CHECK")) {
       final String tabId = vars.getStringParameter("inpTabId");
@@ -292,70 +232,22 @@ public class TabAttachments extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  private void printPageFS(HttpServletResponse response, VariablesSecureApp vars)
-      throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
-      log4j.debug("Output: Attachments relations frame set");
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/businessUtility/TabAttachments_FS").createXmlDocument();
-
+  private void printResponse(HttpServletResponse response, VariablesSecureApp vars, JSONObject obj,
+      String strMessage) throws IOException {
     response.setContentType("text/html; charset=UTF-8");
-    final PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-  }
-
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strTab,
-      String strWindow, String key, boolean editable) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
-      log4j.debug("Output: Frame 1 of the attachments relations");
-    final String[] discard = { "noData", "" };
-    if (!editable)
-      discard[1] = "editable";
-    final TabAttachmentsData[] data = TabAttachmentsData.selectTabInfo(this, strTab);
-    String tableId = "";
-    if (data == null || data.length == 0)
-      throw new ServletException("Tab not found: " + strTab);
-    else {
-      tableId = data[0].adTableId;
-      if (data[0].isreadonly.equals("Y"))
-        discard[0] = new String("selReadOnly");
+    Writer writer = response.getWriter();
+    writer.write("<HTML><BODY><script type=\"text/javascript\">");
+    if (obj != null) {
+      final String buttonId = vars.getStringParameter("buttonId");
+      writer.write("top.OB.Utilities.uploadFinished(\"" + buttonId + "\"," + obj.toString() + ");");
     }
-
-    final TabAttachmentsData[] files = TabAttachmentsData.select(this,
-        Utility.getContext(this, vars, "#User_Client", strWindow),
-        Utility.getContext(this, vars, "#AccessibleOrgTree", strWindow), tableId, key);
-
-    if ((files == null) || (files.length == 0))
-      discard[0] = "widthData";
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/businessUtility/TabAttachments_F1", discard).createXmlDocument();
-
-    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("theme", vars.getTheme());
-    xmlDocument.setParameter("tab", strTab);
-    xmlDocument.setParameter("window", strWindow);
-    xmlDocument.setParameter("key", key);
-    xmlDocument.setParameter("recordIdentifier",
-        TabAttachmentsData.selectRecordIdentifier(this, key, vars.getLanguage(), strTab));
-
-    {
-      final OBError myMessage = vars.getMessage("TabAttachments");
-      vars.removeMessage("TabAttachments");
-      if (myMessage != null) {
-        xmlDocument.setParameter("messageType", myMessage.getType());
-        xmlDocument.setParameter("messageTitle", myMessage.getTitle());
-        xmlDocument.setParameter("messageMessage", myMessage.getMessage());
-      }
+    if (StringUtils.isNotBlank(strMessage)) {
+      final String viewId = vars.getStringParameter("viewId");
+      writer
+          .write("top.OB.Utilities.writeErrorMessage(\"" + viewId + "\",\"" + strMessage + "\");");
     }
+    writer.write("</SCRIPT></BODY></HTML>");
 
-    xmlDocument.setData("structure1", files);
-
-    response.setContentType("text/html; charset=UTF-8");
-    final PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
   }
 
   private void printPageCheck(HttpServletResponse response, VariablesSecureApp vars, String strTab,

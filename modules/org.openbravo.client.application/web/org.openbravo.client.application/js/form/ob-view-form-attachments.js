@@ -323,7 +323,7 @@ isc.OBAttachmentsLayout.addProperties({
         isc.confirm(OB.I18N.getLabel('OBUIAPP_FormConfirmDownloadMultiple'), function (clickedOK) {
           if (clickedOK) {
             var d = {
-              Command: 'GET_MULTIPLE_RECORDS_OB3',
+              Command: 'DOWNLOAD_ALL',
               tabId: canvas.tabId,
               recordIds: canvas.recordId,
               viewId: canvas.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.view.ID
@@ -368,8 +368,8 @@ isc.OBAttachmentsLayout.addProperties({
     var downloadActions;
     downloadActions = function () {
       var d = {
-        Command: 'DISPLAY_DATA',
-        inpcFileId: this.attachId,
+        Command: 'DOWNLOAD_FILE',
+        attachmentId: this.attachId,
         viewId: this.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.ID
       };
       OB.Utilities.postThroughHiddenForm('./businessUtility/TabAttachments_FS.html', d);

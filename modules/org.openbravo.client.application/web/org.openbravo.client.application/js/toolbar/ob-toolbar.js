@@ -319,14 +319,16 @@ isc.OBToolbar.addClassProperties({
           recordIds = recordIds + selectedRows[i].id;
         }
         var vTabId = this.view.tabId;
+        var viewId = this.view.ID;
         var vbuttonId = this.ID;
         isc.confirm(OB.I18N.getLabel('OBUIAPP_ConfirmDownloadMultiple'), function (clickedOK) {
           if (clickedOK) {
             var d = {
-              Command: 'GET_MULTIPLE_RECORDS_OB3',
+              Command: 'DOWNLOAD_ALL',
               tabId: vTabId,
               buttonId: vbuttonId,
-              recordIds: recordIds
+              recordIds: recordIds,
+              viewId: viewId
             };
             OB.Utilities.postThroughHiddenForm('./businessUtility/TabAttachments_FS.html', d);
           }
