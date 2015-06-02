@@ -248,8 +248,7 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
           Table table = OBDal.getInstance().get(Table.class, tableId);
           Entity entity = ModelProvider.getInstance().getEntityByTableName(table.getDBTableName());
           String propertyName = entity.getPropertyByColumnName(columnName).getName();
-          BaseOBObject parentObject = (BaseOBObject) OBDal.getInstance().get(entity.getName(),
-              parentObjectId);
+          BaseOBObject parentObject = OBDal.getInstance().get(entity.getName(), parentObjectId);
           parentObject.set(propertyName, null);
           OBDal.getInstance().flush();
           OBDal.getInstance().remove(image);

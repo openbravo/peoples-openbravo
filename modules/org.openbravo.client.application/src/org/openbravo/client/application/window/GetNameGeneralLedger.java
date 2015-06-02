@@ -20,7 +20,6 @@ package org.openbravo.client.application.window;
 
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.client.kernel.BaseActionHandler;
@@ -29,8 +28,6 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.financialmgmt.accounting.coa.AcctSchema;
 
 public class GetNameGeneralLedger extends BaseActionHandler {
-
-  private static final Logger log = Logger.getLogger(GetNameGeneralLedger.class);
 
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) {

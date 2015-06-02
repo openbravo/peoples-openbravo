@@ -435,7 +435,7 @@ public class KernelUtils {
     }
     List<Tab> subTabList = new ArrayList<Tab>();
     for (int i = 0; i < tabIds.length; i++) {
-      String tabId = ((KernelUtilsData) tabIds[i]).adTabId;
+      String tabId = tabIds[i].adTabId;
       Tab subTab = OBDal.getInstance().get(Tab.class, tabId);
       subTabList.add(subTab);
     }

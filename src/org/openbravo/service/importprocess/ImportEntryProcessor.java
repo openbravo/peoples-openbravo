@@ -18,14 +18,15 @@
  */
 package org.openbravo.service.importprocess;
 
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Queue;
+import java.util.Set;
 import java.util.WeakHashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -35,9 +36,9 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.service.importprocess.ImportEntryManager.DaemonThreadFactory;
 
 /**
  * The {@link ImportEntryProcessor} is responsible for importing/processing {@link ImportEntry}
@@ -76,12 +77,12 @@ import org.openbravo.service.importprocess.ImportEntryManager.DaemonThreadFactor
  * The default/base implementation of the {@link ImportEntryProcessRunnable} provides standard
  * features related to caching of {@link OBContext}, error handling and transaction handling.
  * 
- * Note: this implementation uses the java {@link ExecutorService} to create a threadpool with a
- * fixed size. Threads are started by using the {@link ExecutorService#submit(Runnable)} method. Any
- * exceptions inside the {@link Runnable#run()} method are swallowed and won't directly show up in
- * the console. Therefore the default implementation in the {@link ImportEntryProcessRunnable#run()}
- * has different mechanisms to correctly log/record the error (in the
- * {@link ImportEntry#getErrorinfo()}).
+ * Note: this implementation uses the executorService in the {@link ImportEntryManager}. Threads are
+ * started by using the {@link ExecutorService#submit(Runnable)} method, see
+ * {@link ImportEntryManager#submitRunnable(Runnable)}. Any exceptions inside the
+ * {@link Runnable#run()} method are swallowed and won't directly show up in the console. Therefore
+ * the default implementation in the {@link ImportEntryProcessRunnable#run()} has different
+ * mechanisms to correctly log/record the error (in the {@link ImportEntry#getErrorinfo()}).
  * 
  * Note: the {@link ImportEntryProcessor} should be aware that the same {@link ImportEntry} can be
  * passed multiple times to it. Also after the {@link ImportEntryProcessor} has already processed
@@ -100,48 +101,21 @@ import org.openbravo.service.importprocess.ImportEntryManager.DaemonThreadFactor
 @ApplicationScoped
 public abstract class ImportEntryProcessor {
 
+  // a sufficient large number still preventing OOM and signaling strange situation
+  private static final int MAX_QUEUE_SIZE = 50000;
+
   // not static to create a Logger for each subclass
   private Logger log;
-
-  private boolean initialized = false;
 
   // multiple threads access this map, its access is handled through
   // synchronized methods
   private Map<String, ImportEntryProcessRunnable> runnables = new HashMap<String, ImportEntryProcessRunnable>();
-  private ExecutorService executorService;
 
   @Inject
   private ImportEntryManager importEntryManager;
 
-  // create executor service which manages the threads
-  private synchronized void initialize() {
-    if (initialized) {
-      return;
-    }
-
+  public ImportEntryProcessor() {
     log = Logger.getLogger(this.getClass());
-
-    // TODO: make number of threads configurable through a preference
-    // threads are created on demand, so if not needed then it is not
-    // used
-    executorService = Executors.newFixedThreadPool(Math.max(1, getMaxNumberOfThreads()),
-        new DaemonThreadFactory());
-
-    initialized = true;
-  }
-
-  /**
-   * The max number of threads to be started by the {@link ExecutorService} to process
-   * {@link ImportEntry} objects. Default is 2.
-   * 
-   * For high-load-volume data consider setting this equal to half or a quarter of the number of
-   * cores/processors (this to leave 'room' for other threads and processes).
-   * 
-   * @see Runtime#availableProcessors()
-   */
-  // TODO: consider making the number of threads configurable through a preference
-  protected int getMaxNumberOfThreads() {
-    return 2;
   }
 
   /**
@@ -149,9 +123,6 @@ public abstract class ImportEntryProcessor {
    * {@link ImportEntryManager#shutdown()}.
    */
   public void shutdown() {
-    if (executorService != null) {
-      executorService.shutdownNow();
-    }
   }
 
   /**
@@ -166,8 +137,6 @@ public abstract class ImportEntryProcessor {
    * it then.
    */
   public void handleImportEntry(ImportEntry importEntry) {
-
-    initialize();
 
     if (!canHandleImportEntry(importEntry)) {
       return;
@@ -219,7 +188,7 @@ public abstract class ImportEntryProcessor {
     runnables.put(key, runnable);
 
     // and give it to the executorServer to run
-    executorService.submit(runnable);
+    importEntryManager.submitRunnable(runnable);
   }
 
   /**
@@ -284,11 +253,13 @@ public abstract class ImportEntryProcessor {
    *
    */
   public static abstract class ImportEntryProcessRunnable implements Runnable {
-    private Queue<ImportEntry> importEntries = new ConcurrentLinkedQueue<ImportEntry>();
+    private Queue<QueuedEntry> importEntries = new ConcurrentLinkedQueue<QueuedEntry>();
 
     private Logger logger;
 
-    private HashSet<String> importEntryIds = new HashSet<String>();
+    // create concurrent hashset using util method
+    private Set<String> importEntryIds = Collections
+        .newSetFromMap(new ConcurrentHashMap<String, Boolean>());
 
     private ImportEntryManager importEntryManager;
     private ImportEntryProcessor importEntryProcessor;
@@ -299,28 +270,27 @@ public abstract class ImportEntryProcessor {
 
     @Override
     public void run() {
+
       logger = Logger.getLogger(this.getClass());
       try {
         int cnt = 0;
         long totalT = 0;
-        ImportEntry importEntry;
-        while ((importEntry = importEntries.poll()) != null) {
+        QueuedEntry queuedImportEntry;
+        while ((queuedImportEntry = importEntries.poll()) != null) {
           try {
             final long t0 = System.currentTimeMillis();
 
-            // start from scratch
-            OBDal.getInstance().rollbackAndClose();
-
             // set the same obcontext as was being used for the original
             // entry
-            setOBContext(importEntry);
+            setOBContext(queuedImportEntry);
 
             try {
               OBContext.setAdminMode();
               ImportEntry localImportEntry;
               try {
                 // reload the importEntry
-                localImportEntry = OBDal.getInstance().get(ImportEntry.class, importEntry.getId());
+                localImportEntry = OBDal.getInstance().get(ImportEntry.class,
+                    queuedImportEntry.importEntryId);
 
                 // check if already processed, if so skip it
                 if (localImportEntry == null
@@ -334,19 +304,31 @@ public abstract class ImportEntryProcessor {
               // not changed, process
               processEntry(localImportEntry);
 
+              // processed so can be removed
+              importEntryIds.remove(queuedImportEntry.importEntryId);
+
+              // keep some stats
+              cnt++;
+              final long timeForEntry = (System.currentTimeMillis() - t0);
+              totalT += timeForEntry;
+              importEntryManager.reportStats(localImportEntry.getTypeofdata(), timeForEntry);
+              if ((cnt % 100) == 0 && logger.isDebugEnabled()) {
+                logger.debug("Runnable: " + key + ", processed " + cnt + " import entries in "
+                    + totalT + " millis, " + (totalT / cnt)
+                    + " per import entry, current queue size: " + importEntries.size());
+              }
+
+              // the import entry processEntry calls should not leave an open active session
+              if (SessionHandler.isSessionHandlerPresent()) {
+                // change to warning if the code in the subclasses really works correctly
+                logger
+                    .debug("Session handler present after processing import entry, this indicates that the processing code "
+                        + "does not correctly clean/close the session after its last actions. This should be fixed.");
+                OBDal.getInstance().commitAndClose();
+              }
+
             } finally {
               cleanUpThreadForNextCycle();
-            }
-
-            // keep some stats
-            cnt++;
-            final long timeForEntry = (System.currentTimeMillis() - t0);
-            totalT += timeForEntry;
-            importEntryManager.reportStats(importEntry.getTypeofdata(), timeForEntry);
-            if ((cnt % 100) == 0 && logger.isDebugEnabled()) {
-              logger.debug("Runnable: " + key + ", processed " + cnt + " import entries in "
-                  + totalT + " millis, " + (totalT / cnt)
-                  + " per import entry, current queue size: " + importEntries.size());
             }
           } catch (Throwable t) {
             // bit rough but ensures that the connection is released/closed
@@ -356,7 +338,7 @@ public abstract class ImportEntryProcessor {
             }
 
             // store the error
-            importEntryManager.setImportEntryErrorIndependent(importEntry.getId(), t);
+            importEntryManager.setImportEntryErrorIndependent(queuedImportEntry.importEntryId, t);
           }
         }
         if (logger.isDebugEnabled()) {
@@ -383,20 +365,21 @@ public abstract class ImportEntryProcessor {
       }
     }
 
-    protected Queue<ImportEntry> getImportEntryQueue() {
+    protected Queue<QueuedEntry> getImportEntryQueue() {
       return importEntries;
     }
 
-    protected void setOBContext(ImportEntry importEntry) {
-      final String userId = (String) DalUtil.getId(importEntry.getCreatedBy());
-      final String orgId = (String) DalUtil.getId(importEntry.getOrganization());
-      final String cacheKey = userId + "_" + orgId;
+    protected void setOBContext(QueuedEntry queuedEntry) {
+      final String userId = queuedEntry.userId;
+      final String orgId = queuedEntry.orgId;
+      final String roleId = queuedEntry.roleId;
+      final String cacheKey = userId + "_" + orgId + "_" + roleId;
       OBContext obContext = cachedOBContexts.get(cacheKey);
       if (obContext != null) {
         OBContext.setOBContext(obContext);
       } else {
-        final String clientId = (String) DalUtil.getId(importEntry.getClient());
-        OBContext.setOBContext(userId, null, clientId, orgId);
+        final String clientId = queuedEntry.clientId;
+        OBContext.setOBContext(userId, roleId, clientId, orgId);
         cachedOBContexts.put(cacheKey, OBContext.getOBContext());
         obContext = OBContext.getOBContext();
 
@@ -410,7 +393,6 @@ public abstract class ImportEntryProcessor {
     }
 
     protected void setVariablesSecureApp(OBContext obContext) {
-
       OBContext.setAdminMode();
       try {
         final VariablesSecureApp variablesSecureApp = new VariablesSecureApp(obContext.getUser()
@@ -420,7 +402,6 @@ public abstract class ImportEntryProcessor {
       } finally {
         OBContext.restorePreviousMode();
       }
-
     }
 
     protected void cleanUpThreadForNextCycle() {
@@ -429,8 +410,12 @@ public abstract class ImportEntryProcessor {
     }
 
     /**
-     * Must be implemented by a subclass. Note subclass implementation must do its own commit of a
-     * transaction or setting admin mode.
+     * Must be implemented by a subclass. Note subclass implementation must perform a commit and
+     * close ({@link OBDal#commitAndClose()}) at the end of the processEntry, before it returns.
+     * 
+     * So that at the end of processing there should not an active Session anymore the implementor
+     * is responsible for correctly closing any open session/transaction. A warning will be logged
+     * if this is somehow forgotten.
      */
     protected abstract void processEntry(ImportEntry importEntry) throws Exception;
 
@@ -442,17 +427,23 @@ public abstract class ImportEntryProcessor {
       this.key = key;
     }
 
+    // is called by the processor in the main EntityManagerThread
     private void addEntry(ImportEntry importEntry) {
+
+      // ignore the entry, queue is too large
+      // prevents memory problems
+      if (importEntries.size() > MAX_QUEUE_SIZE) {
+        // set to level debug until other changes have been made in subclassing code
+        logger.debug("Ignoring import entry, will be reprocessed later, too many queue entries "
+            + importEntries.size());
+        return;
+      }
+
       if (!importEntryIds.contains(importEntry.getId())) {
-
-        // hardcoded way of not letting the mem usage to get out of hand
-        // duplicates are also handled above in the code
-        if (importEntryIds.size() > 10000) {
-          importEntryIds.clear();
-        }
-
         importEntryIds.add(importEntry.getId());
-        importEntries.add(importEntry);
+        // cache a queued entry as it has a much lower mem foot print than the import
+        // entry itself
+        importEntries.add(new QueuedEntry(importEntry));
       }
     }
 
@@ -462,6 +453,25 @@ public abstract class ImportEntryProcessor {
 
     public String getKey() {
       return key;
+    }
+
+    // Local cache to make sure that there is a much lower mem foot print in the queue
+    // of entries, so only keep the needed info to create an obcontext
+    private static class QueuedEntry {
+      final String importEntryId;
+      final String orgId;
+      final String userId;
+      final String clientId;
+      final String roleId;
+
+      QueuedEntry(ImportEntry importEntry) {
+        importEntryId = importEntry.getId();
+        userId = (String) DalUtil.getId(importEntry.getCreatedBy());
+        orgId = (String) DalUtil.getId(importEntry.getOrganization());
+        roleId = importEntry.getRole() == null ? null : (String) DalUtil.getId(importEntry
+            .getRole());
+        clientId = (String) DalUtil.getId(importEntry.getClient());
+      }
     }
   }
 

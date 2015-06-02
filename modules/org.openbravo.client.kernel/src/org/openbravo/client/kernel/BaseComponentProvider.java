@@ -48,7 +48,7 @@ public abstract class BaseComponentProvider implements ComponentProvider {
    * @return an instance of clz
    */
   protected <U extends Component> U getComponent(Class<U> clz) {
-    return (U) WeldUtils.getInstanceFromStaticBeanManager(clz);
+    return WeldUtils.getInstanceFromStaticBeanManager(clz);
   }
 
   public Module getModule() {

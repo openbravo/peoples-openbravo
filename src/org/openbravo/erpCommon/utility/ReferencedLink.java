@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -43,6 +43,7 @@ import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.system.Language;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.WindowTrl;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.project.Project;
 
 public class ReferencedLink extends HttpSecureAppServlet {
@@ -232,7 +233,44 @@ public class ReferencedLink extends HttpSecureAppServlet {
           OBContext.restorePreviousMode();
         }
 
-      } else {
+      }
+
+      else if (strTableReferenceId.equals("CE9AFF5F51B846AEAB0B6CBF829092CD")
+          && (strWindowId.equals("E547CE89D4C04429B6340FFA44E70716") || strWindowId
+              .equals("6F8F913FA60F4CBD93DC1D3AA696E76E"))) {
+        // Navigate to FIN_Payment_Schedule from Payment In or Payment Out: select destination
+        // window depending on the source window
+        try {
+          OBContext.setAdminMode();
+          FIN_PaymentSchedule paymentSchedule = OBDal.getInstance().get(FIN_PaymentSchedule.class,
+              strKeyReferenceId);
+          if (paymentSchedule.getOrder() != null) {
+            // Order Payment Schedule
+            strTableReferenceId = "70E57DEA195843729FF303C9A71EBCA3";
+            if (strWindowId.equals("E547CE89D4C04429B6340FFA44E70716")) {
+              // Payment In window -> Sales Order
+              strWindowId = "143";
+            } else if (strWindowId.equals("6F8F913FA60F4CBD93DC1D3AA696E76E")) {
+              // Payment Out window -> Purchase Order
+              strWindowId = "181";
+            }
+          } else if (paymentSchedule.getInvoice() != null) {
+            // Invoice Payment Schedule
+            if (strWindowId.equals("E547CE89D4C04429B6340FFA44E70716")) {
+              // Payment In window -> Sales Invoice
+              strWindowId = "167";
+            } else if (strWindowId.equals("6F8F913FA60F4CBD93DC1D3AA696E76E")) {
+              // Payment Out window -> Purchase Invoice
+              strWindowId = "183";
+            }
+          }
+        } finally {
+          OBContext.restorePreviousMode();
+        }
+
+      }
+
+      else {
         // Standard case, select window based on table definition and isSOTrx
         ReferencedLinkData[] data = ReferencedLinkData.selectWindows(this, strTableRealReference);
         if (data == null || data.length == 0)

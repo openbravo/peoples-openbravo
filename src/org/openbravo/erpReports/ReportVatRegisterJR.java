@@ -179,7 +179,7 @@ public class ReportVatRegisterJR extends HttpSecureAppServlet {
     JasperPrint jr1 = new JasperPrint();
     String scl = "";
     for (Iterator<Object> iterator = coll.iterator(); iterator.hasNext();) {
-      object = (Object) iterator.next();
+      object = iterator.next();
       scl = object.getClass().toString();
       if (scl.contains("JasperPrint")) {
         jr1 = (JasperPrint) object;

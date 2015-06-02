@@ -163,7 +163,8 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
    * These include a filter clause:
    * <ul>
    * <li>for the main entity's client by the context's client.</li>
-   * <li>for the main entity's organization by an organization list see {@link #getOrgs(String)}</li>
+   * <li>for the main entity's organization by an organization list see
+   * {@link DataSourceUtils#getOrgs(String)}</li>
    * <li>with Selector's default filter expression.</li>
    * <li>for each default expression defined on the selector fields.</li>
    * <li>for each selector field in case exists a value for it on the parameters param.</li>

@@ -38,7 +38,6 @@ public class RTLSkin {
   static int count = 0;
   private static String srcDirRTLSkin = "";
   private static String srcDirLTRSkin = "";
-  private static String srcDirOrig = "";
   private static Vector<String> vImagesToFlip;
 
   static Logger log4j = Logger.getLogger(Translate.class);
@@ -85,7 +84,6 @@ public class RTLSkin {
     File fileLTRSrcDeep, fileRTLSrcDeep;
 
     for (int i = 0; i < files.length; i++) {
-      String pathModule = "";
       log4j.info("Processing RTL skin " + files[i]);
       vImagesToFlip = new Vector<String>();
       fImagesToFlip = new File(srcDirRTLSkin + "/" + files[i] + "/RTLFlippedImages.txt");
@@ -96,7 +94,6 @@ public class RTLSkin {
         if (strDirModule.list().length == 1 && strDirModule.isDirectory()) {
           fImagesToFlip = new File(srcDirRTLSkin + "/" + files[i] + "/" + strDirModule.list()[0]
               + "/RTLFlippedImages.txt");
-          pathModule = srcDirRTLSkin + "/" + files[i] + "/" + strDirModule.list()[0];
         } else {
           log4j.error("Not Founded File with images to flip! " + srcDirRTLSkin + "/" + files[i]
               + "/RTLFlippedImages.txt");
@@ -143,13 +140,15 @@ public class RTLSkin {
    * @param strSkinFolderName
    *          Path to the folder that contains the original skin -where no change will be
    *          performed-.
-   * @param relativePath
+   * @param _relativePath
    *          Relative Path.
    * @param folderContentType
    *          whether skin or javascript folder is passed in srcDir
    */
-  public static void runFolders(File srcDir, String strSkinFolderName, String relativePath,
+  public static void runFolders(File srcDir, String strSkinFolderName, String _relativePath,
       String folderContentType) {
+
+    String relativePath = _relativePath;
 
     File[] list = srcDir.listFiles();
 

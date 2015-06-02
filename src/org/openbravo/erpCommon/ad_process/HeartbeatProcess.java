@@ -198,7 +198,6 @@ public class HeartbeatProcess implements Process {
 
   /**
    * @return the system info as properties
-   * @throws ServletException
    */
   private Properties getSystemInfo() {
     logger.logln(logger.messageDb("HB_GATHER", ctx.getLanguage()));
@@ -208,7 +207,6 @@ public class HeartbeatProcess implements Process {
   /**
    * Converts properties into a UTF-8 encoded query string.
    * 
-   * @param props
    * @return the UTF-8 encoded query string
    */
   private String createQueryStr(String beatType) {

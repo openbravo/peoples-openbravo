@@ -86,8 +86,8 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
         while (scrollLines.next()) {
           final InventoryAmountUpdateLine line = (InventoryAmountUpdateLine) scrollLines.get()[0];
           String lineId = line.getId();
-          CostingRule rule = CostingUtils.getCostDimensionRule((Organization) OBDal.getInstance()
-              .get(Organization.class, orgId), line.getReferenceDate());
+          CostingRule rule = CostingUtils.getCostDimensionRule(
+              OBDal.getInstance().get(Organization.class, orgId), line.getReferenceDate());
           String ruleId = rule.getId();
           OrganizationStructureProvider osp = OBContext.getOBContext()
               .getOrganizationStructureProvider(rule.getClient().getId());

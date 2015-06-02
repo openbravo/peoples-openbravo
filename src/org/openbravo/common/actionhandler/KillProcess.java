@@ -67,8 +67,7 @@ public class KillProcess extends BaseProcessActionHandler {
         if (jobProcessRunId.equals(strProcessRunId)) {
           // Job Found
           DefaultJob jobInstance = (DefaultJob) job.getJobInstance();
-          org.openbravo.scheduling.Process process = (org.openbravo.scheduling.Process) jobInstance
-              .getProcessInstance();
+          org.openbravo.scheduling.Process process = jobInstance.getProcessInstance();
           if (process instanceof KillableProcess) {
             // Kill Process
             ((KillableProcess) process).kill(jobInstance.getBundle());

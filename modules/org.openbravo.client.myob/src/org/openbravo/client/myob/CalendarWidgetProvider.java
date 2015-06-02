@@ -18,7 +18,6 @@
  */
 package org.openbravo.client.myob;
 
-import org.apache.log4j.Logger;
 import org.openbravo.client.kernel.KernelConstants;
 
 /**
@@ -29,8 +28,6 @@ import org.openbravo.client.kernel.KernelConstants;
 public class CalendarWidgetProvider extends WidgetProvider {
 
   public static final String WIDGETCLASS_PARAMETER = "WIDGET_CLASS";
-
-  private static final Logger log = Logger.getLogger(CalendarWidgetProvider.class);
 
   @Override
   public String generate() {

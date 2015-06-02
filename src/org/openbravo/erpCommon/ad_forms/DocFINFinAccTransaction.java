@@ -71,7 +71,6 @@ public class DocFINFinAccTransaction extends AcctServer {
   BigDecimal generatedCredit = ZERO;
   boolean exceptionPosting = false;
 
-  private static final long serialVersionUID = 1L;
   private static final Logger log4j = Logger.getLogger(DocFINFinAccTransaction.class);
 
   String SeqNo = "0";

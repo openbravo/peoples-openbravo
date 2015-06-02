@@ -385,7 +385,7 @@ public class Column extends ModelObject {
       return Collections.EMPTY_SET;
     }
     if (getDomainType() instanceof StringEnumerateDomainType) {
-      return (Set<String>) ((StringEnumerateDomainType) getDomainType()).getEnumerateValues();
+      return ((StringEnumerateDomainType) getDomainType()).getEnumerateValues();
     }
     return Collections.EMPTY_SET;
   }

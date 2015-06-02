@@ -289,11 +289,11 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     int cont = 0;
     ScrollableResults scrollNodes = obq.createQuery().scroll(ScrollMode.FORWARD_ONLY);
     while (scrollNodes.next()) {
-      Object[] node = (Object[]) scrollNodes.get();
+      Object[] node = scrollNodes.get();
       JSONObject value = null;
       BaseOBObject bob = (BaseOBObject) node[ENTITY];
       try {
-        value = toJsonConverter.toJsonObject((BaseOBObject) bob, DataResolvingMode.FULL);
+        value = toJsonConverter.toJsonObject(bob, DataResolvingMode.FULL);
         value.put("nodeId", bob.getId().toString());
         if (fetchRoot) {
           value.put("parentId", ROOT_NODE_CLIENT);
@@ -485,9 +485,6 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
 
   /**
    * Checks if a tree is ordered
-   * 
-   * @param tree
-   * @return
    */
   private boolean isOrdered(Tree tree) {
     Table table = tree.getTable();
@@ -502,10 +499,6 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
 
   /**
    * Returns a Tree given the referencedTableId and the parentRecordId
-   * 
-   * @param referencedTableId
-   * @param parentRecordId
-   * @return
    */
   private Tree getTree(String referencedTableId) {
     Table referencedTable = OBDal.getInstance().get(Table.class, referencedTableId);
@@ -522,10 +515,6 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
    * Returns a Tree given the referencedTableId and a jsonobject that contains the node properties
    * This is called from the EventHandler, because the parentRecordId is not avaiable in the
    * parameters
-   * 
-   * @param referencedTableId
-   * @param parentRecordId
-   * @return
    */
   private Tree getTree(Table table, JSONObject bobProperties) {
     Tree tree = null;
@@ -660,7 +649,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
       treeNodeCriteria.add(Restrictions.eq(TreeNode.PROPERTY_NODE, bobId));
       TreeNode treeNode = (TreeNode) treeNodeCriteria.uniqueResult();
       BaseOBObject bob = OBDal.getInstance().get(entity.getName(), treeNode.getNode());
-      json = toJsonConverter.toJsonObject((BaseOBObject) bob, DataResolvingMode.FULL);
+      json = toJsonConverter.toJsonObject(bob, DataResolvingMode.FULL);
       json.put("nodeId", bobId);
       if (treeNode.getReportSet() == null) {
         json.put("parentId", ROOT_NODE_CLIENT);

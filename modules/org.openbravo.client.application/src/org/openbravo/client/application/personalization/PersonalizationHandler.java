@@ -470,7 +470,7 @@ public class PersonalizationHandler {
       } else {
         jsonObject = new JSONObject();
       }
-      jsonObject.put(target, (Object) jsonValue);
+      jsonObject.put(target, jsonValue);
       uiPersonalization.setValue(jsonObject.toString());
       OBDal.getInstance().save(uiPersonalization);
       return uiPersonalization;

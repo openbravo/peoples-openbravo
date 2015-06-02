@@ -126,7 +126,7 @@ public class JSONWebServices extends BaseWSTest {
     assertThat("Row's entity", aRecord.getString("_entityName"), is(equalTo("Organization")));
   }
 
-  private String request(String entityName, String id, String queryPart, String method) {
+  protected String request(String entityName, String id, String queryPart, String method) {
     String wsPart = entityName + (id == null ? "" : "/" + id)
         + (queryPart == null ? "" : "?" + queryPart);
 

@@ -414,10 +414,7 @@ public class LoginUtils {
   /**
    * Validates if a selected default value is null or empty String
    * 
-   * @param strValue
-   * @param strKey
-   * @param strError
-   * @throws Exeption
+   * @throws DefaultValidationException
    * */
   private static void validateDefault(String strValue, String strKey, String strError)
       throws DefaultValidationException {

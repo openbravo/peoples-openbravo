@@ -27,12 +27,8 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.model.common.enterprise.Organization;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class MatchStatementOnLoadPreferenceActionHandler extends BaseActionHandler {
-  private static final Logger log = LoggerFactory
-      .getLogger(MatchStatementOnLoadPreferenceActionHandler.class);
 
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) {

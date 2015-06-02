@@ -61,7 +61,6 @@ class ReportDesignBO {
     px += columnVO.getWidth();
   }
 
-  @SuppressWarnings("deprecation")
   private void addFieldHeader(GridColumnVO columnVO) {
     JRDesignBand bHeader = (JRDesignBand) jasperDesign.getColumnHeader();
     JRDesignStaticText text = new JRDesignStaticText();
@@ -71,7 +70,7 @@ class ReportDesignBO {
     text.setX(px);
     // Set syle
     text.setFontName(gridReportVO.getHeaderBandStyle().getFontName());
-    text.setFontSize(gridReportVO.getHeaderBandStyle().getFontSize());
+    text.setFontSize(new Float(gridReportVO.getHeaderBandStyle().getFontSize()));
     text.setForecolor(gridReportVO.getHeaderBandStyle().getForeColor());
     text.setBold(gridReportVO.getHeaderBandStyle().isBold());
     text.setItalic(gridReportVO.getHeaderBandStyle().isItalic());
@@ -82,7 +81,6 @@ class ReportDesignBO {
     bHeader.addElement(text);
   }
 
-  @SuppressWarnings("deprecation")
   private void addFieldValue(GridColumnVO columnVO) throws JRException {
     JRDesignBand bDetalle = (JRDesignBand) jasperDesign.getDetailSection().getBands()[0];
 
@@ -96,7 +94,6 @@ class ReportDesignBO {
     chunk.setType(JRDesignExpressionChunk.TYPE_FIELD);
     JRDesignExpression expression = new JRDesignExpression();
     expression.addChunk(chunk);
-    expression.setValueClass(columnVO.getFieldClass());
     JRDesignTextField textField = new JRDesignTextField();
     textField.setWidth(columnVO.getWidth());
     textField.setHeight(bDetalle.getHeight());
@@ -104,7 +101,7 @@ class ReportDesignBO {
     textField.setExpression(expression);
     textField.setBlankWhenNull(true);
     textField.setFontName(gridReportVO.getDetailBandStyle().getFontName());
-    textField.setFontSize(gridReportVO.getDetailBandStyle().getFontSize());
+    textField.setFontSize(new Float(gridReportVO.getDetailBandStyle().getFontSize()));
     textField.setForecolor(gridReportVO.getDetailBandStyle().getForeColor());
     textField.setBold(gridReportVO.getDetailBandStyle().isBold());
     textField.setItalic(gridReportVO.getDetailBandStyle().isItalic());

@@ -222,9 +222,9 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
             // Not installed previously
             String strXml = Utility.fileToString(datasetFile.getPath());
             ImportResult myResult = myData.importDataFromXML(
-                (Client) OBDal.getInstance().get(Client.class, vars.getClient()),
-                (Organization) OBDal.getInstance().get(Organization.class, strOrganization),
-                strXml, (Module) OBDal.getInstance().get(Module.class, data[j].adModuleId), true);
+                OBDal.getInstance().get(Client.class, vars.getClient()),
+                OBDal.getInstance().get(Organization.class, strOrganization), strXml, OBDal
+                    .getInstance().get(Module.class, data[j].adModuleId), true);
             m_info.append(SALTO_LINEA).append("File: ").append(datasetFile.getName()).append(":")
                 .append(SALTO_LINEA);
             if (myResult.getLogMessages() != null && !myResult.getLogMessages().equals("")

@@ -1214,7 +1214,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
    * Render a jrxml based report using a {@link ScrollableFieldProvider} as its datasource.
    * 
    * @see #renderJR(VariablesSecureApp, HttpServletResponse, String, String, String, HashMap,
-   *      JRDatasource, HashMap)
+   *      JRDataSource, Map, boolean)
    */
   protected void renderJR(VariablesSecureApp variables, HttpServletResponse response,
       String strReportName, String strFileName, String strOutputType,

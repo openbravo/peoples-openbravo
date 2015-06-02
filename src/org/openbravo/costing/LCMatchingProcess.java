@@ -170,7 +170,7 @@ public class LCMatchingProcess {
       Object[] receiptAmt = receiptamts.get();
       BigDecimal amt = (BigDecimal) receiptAmt[0];
       ShipmentInOutLine receiptLine = OBDal.getInstance().get(ShipmentInOutLine.class,
-          (String) receiptAmt[1]);
+          receiptAmt[1]);
       MaterialTransaction trx = receiptLine.getMaterialMgmtMaterialTransactionList().get(0);
       CostAdjustmentLine cal = CostAdjustmentUtils.insertCostAdjustmentLine(trx, ca, amt, true,
           referenceDate);

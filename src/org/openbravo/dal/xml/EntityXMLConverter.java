@@ -455,7 +455,7 @@ public class EntityXMLConverter implements OBNotSingleton {
               // + treeNode.getId() + " is not valid, there is no " + referedEntity.getName()
               // + " with that id");
             } else {
-              addToExportList((BaseOBObject) obValue);
+              addToExportList(obValue);
             }
           }
         }

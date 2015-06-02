@@ -2277,9 +2277,6 @@ public class Utility {
    * @param logo
    *          The name of the logo to display This can be one of the following: yourcompanylogin,
    *          youritservicelogin, yourcompanymenu, yourcompanybig or yourcompanydoc
-   * @param org
-   *          The organization id used to get the logo In the case of requesting the yourcompanydoc
-   *          logo you can indicate the organization used to request the logo.
    * @return The image requested
    */
   private static String getDefaultImageLogo(String logo) {
@@ -2377,9 +2374,9 @@ public class Utility {
       float oldRatio = (float) oldW / (float) oldH;
       float newRatio = (float) newW / (float) newH;
       if (oldRatio < newRatio) {
-        newW = (int) ((float) newH * oldRatio);
+        newW = (int) (newH * oldRatio);
       } else if (oldRatio > newRatio) {
-        newH = (int) ((float) newW / oldRatio);
+        newH = (int) (newW / oldRatio);
       }
     }
     BufferedImage dimg = new BufferedImage(newW, newH, rImage.getType());

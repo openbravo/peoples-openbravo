@@ -1276,9 +1276,6 @@ public class FIN_AddPayment {
 
   /**
    * Returns the date in which last payment for this invoice took place
-   * 
-   * @param invoice
-   * @return
    */
   private static Date getFinalSettlementDate(Invoice invoice) {
     final OBCriteria<FIN_PaymentSchedInvV> obc = OBDal.getInstance().createCriteria(
@@ -1526,7 +1523,7 @@ public class FIN_AddPayment {
    *          Payment Schedule Detail amount.
    * @param paymentAmount
    *          Amount selected to be collected. Always less or equal than scheduleDetailAmount.
-   * @param doubtfulDebtAmount
+   * @param doubtfulDebtTotalAmount
    *          Payment Schedule Detail doubtFulDebt amount.
    * @return resultant doubtful debt amount. Zero if no doubtful debt amount was present.
    */

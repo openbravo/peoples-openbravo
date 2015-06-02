@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2014 Openbravo SLU
+ * All portions are Copyright (C) 2008-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -71,8 +71,6 @@ import org.openbravo.service.web.WebServiceUtil;
 
 public class DalWebService implements WebService {
 
-  private static final long serialVersionUID = 1L;
-
   public static final String PARAMETER_WHERE = "where";
   public static final String PARAMETER_ORDERBY = "orderBy";
   public static final String PARAMETER_FIRSTRESULT = "firstResult";
@@ -81,6 +79,7 @@ public class DalWebService implements WebService {
   public static final String PARAMETER_EXCEL = "excel";
   // Parameter to specify the list of properties to be returned
   public static final String PARAMETER_PROPERTIES = "_selectedProperties";
+  public static final String PARAMETER_NO_ACTIVE_FILTER = "_noActiveFilter";
 
   /**
    * Performs the GET REST operation. This service handles multiple types of request: the request
@@ -154,6 +153,11 @@ public class DalWebService implements WebService {
         SessionInfo.setQueryProfile("xmlWebService");
         final OBQuery<BaseOBObject> obq = OBDal.getInstance().createQuery(entityName,
             whereOrderByClause);
+
+        if (request.getParameter(PARAMETER_NO_ACTIVE_FILTER) != null
+            && request.getParameter(PARAMETER_NO_ACTIVE_FILTER).equals("true")) {
+          obq.setFilterOnActive(false);
+        }
 
         if (firstResult != null) {
           try {

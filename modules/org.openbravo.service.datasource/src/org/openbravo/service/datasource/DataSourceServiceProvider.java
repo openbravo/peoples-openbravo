@@ -44,8 +44,6 @@ import org.openbravo.model.ad.datamodel.Table;
 @ApplicationScoped
 public class DataSourceServiceProvider {
 
-  private static final long serialVersionUID = 1L;
-
   private Map<String, DataSourceService> dataSources = new ConcurrentHashMap<String, DataSourceService>();
 
   @Inject
@@ -122,7 +120,7 @@ public class DataSourceServiceProvider {
     final OBCriteria<Table> qTable = OBDal.getInstance().createCriteria(Table.class);
     qTable.add(Restrictions.eq(Table.PROPERTY_NAME, tableName));
     if (!qTable.list().isEmpty()) {
-      Table table = (Table) qTable.list().get(0);
+      Table table = qTable.list().get(0);
       if (ApplicationConstants.DATASOURCEBASEDTABLE.equals(table.getDataOriginType())) {
         // If the table is based on a manual datasource, return that particular datasource
         dataSource = table.getObserdsDatasource();

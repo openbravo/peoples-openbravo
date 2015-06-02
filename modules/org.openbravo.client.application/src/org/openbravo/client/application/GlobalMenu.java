@@ -120,7 +120,7 @@ public class GlobalMenu {
     final String menuHql = "select m from ADMenu m left join fetch m.aDMenuTrlList where m.module.enabled=true";
     final Query menuQry = OBDal.getInstance().getSession().createQuery(menuHql);
     @SuppressWarnings("unchecked")
-    List<Menu> menus = (List<Menu>) menuQry.list();
+    List<Menu> menus = menuQry.list();
 
     List<TreeNode> nodes = treeNodes.list();
 

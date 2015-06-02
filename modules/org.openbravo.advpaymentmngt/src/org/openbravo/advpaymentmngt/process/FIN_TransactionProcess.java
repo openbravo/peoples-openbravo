@@ -137,7 +137,8 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
             for (FIN_PaymentScheduleDetail psd : pd.getFINPaymentScheduleDetailList()) {
               invoicePaidold = psd.isInvoicePaid();
               if (!invoicePaidold) {
-                if ((FIN_Utility.invoicePaymentStatus(payment).equals(payment.getStatus()))) {
+                if (FIN_Utility.invoicePaymentStatus(payment).equals(payment.getStatus())
+                    && psd.getInvoicePaymentSchedule() != null) {
                   psd.setInvoicePaid(true);
                 }
                 if (psd.isInvoicePaid()) {

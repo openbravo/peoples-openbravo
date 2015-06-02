@@ -66,7 +66,7 @@ public class MultipleDeleteActionHandler extends BaseActionHandler {
       DataSourceService dataSourceService = getCustomDataSourceService(entityName);
       for (int i = 0; i < ids.length(); i++) {
         if (dataSourceService == null) {
-          final BaseOBObject object = OBDal.getInstance().get(entityName, (String) ids.get(i));
+          final BaseOBObject object = OBDal.getInstance().get(entityName, ids.get(i));
           if (object != null) {
             OBDal.getInstance().remove(object);
             // https://issues.openbravo.com/view.php?id=21229#c51631

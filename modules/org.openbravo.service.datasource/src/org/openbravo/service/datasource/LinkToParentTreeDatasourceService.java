@@ -187,7 +187,6 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
    *          hql where clase of the tab/selector
    * @param hqlWhereClauseRootNodes
    *          hql where clause that define what nodes are roots
-   * @return
    * @throws JSONException
    * @throws TooManyTreeNodesException
    *           if the number of returned nodes were to be too high
@@ -287,8 +286,7 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     final ScrollableResults scrollableResults = query.scroll(ScrollMode.FORWARD_ONLY);
     while (scrollableResults.next()) {
       BaseOBObject bob = (BaseOBObject) scrollableResults.get()[0];
-      final JSONObject json = toJsonConverter.toJsonObject((BaseOBObject) bob,
-          DataResolvingMode.FULL);
+      final JSONObject json = toJsonConverter.toJsonObject(bob, DataResolvingMode.FULL);
       if (fetchRoot) {
         json.put("parentId", ROOT_NODE_CLIENT);
       } else {
@@ -404,7 +402,6 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
    *          bob with the node properties
    * @param hqlWhereClause
    *          where clause to be applied to the children
-   * @return
    */
   private boolean nodeHasChildren(Entity entity, Property linkToParentProperty,
       Property nodeIdProperty, BaseOBObject node, String hqlWhereClause) {
@@ -467,8 +464,7 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     OBDal.getInstance().flush();
     final DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(
         DataToJsonConverter.class);
-    JSONObject updatedData = toJsonConverter.toJsonObject((BaseOBObject) bob,
-        DataResolvingMode.FULL);
+    JSONObject updatedData = toJsonConverter.toJsonObject(bob, DataResolvingMode.FULL);
     addNodeCommonAttributes(entity, bob, updatedData);
     updatedData.put("parentId", newParentId);
     updatedData.put("_hasChildren", (this.nodeHasChildren(entity, linkToParentProperty,
@@ -537,7 +533,6 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
    *          id of the node to be checked
    * @param hqlWhereClause
    *          hql where clause to be applied
-   * @return
    */
   @Override
   protected boolean nodeConformsToWhereClause(TableTree tableTree, String nodeId,
@@ -604,7 +599,7 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
 
     try {
       BaseOBObject bob = OBDal.getInstance().get(entity.getName(), bobId);
-      json = toJsonConverter.toJsonObject((BaseOBObject) bob, DataResolvingMode.FULL);
+      json = toJsonConverter.toJsonObject(bob, DataResolvingMode.FULL);
       if (fillNodeIdAndParentId) {
         String parentId = null;
         if (linkToParentProperty.isPrimitive()) {
@@ -618,7 +613,7 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
         if (parentId != null) {
           json.put("parentId", parentId);
         } else {
-          json.put("parentId", (String) ROOT_NODE_CLIENT);
+          json.put("parentId", ROOT_NODE_CLIENT);
         }
         Object nodeId = bob.get(nodeIdProperty.getName());
         String nodeIdStr = null;
@@ -639,8 +634,6 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
   }
 
   /**
-   * @param parameters
-   * @param nodeId
    * @return returns a json object with the definition of a node give its record id
    */
   @Override
@@ -849,8 +842,7 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     final ScrollableResults scrollableResults = query.scroll(ScrollMode.FORWARD_ONLY);
     while (scrollableResults.next()) {
       BaseOBObject bob = (BaseOBObject) scrollableResults.get()[0];
-      final JSONObject json = toJsonConverter.toJsonObject((BaseOBObject) bob,
-          DataResolvingMode.FULL);
+      final JSONObject json = toJsonConverter.toJsonObject(bob, DataResolvingMode.FULL);
 
       Object nodeId = bob.get(nodeIdProperty.getName());
       String nodeIdStr = null;

@@ -112,7 +112,7 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
       int endRow) {
     List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
     if (parameters.get(JsonConstants.DISTINCT_PARAMETER) != null) {
-      String distinct = (String) parameters.get(JsonConstants.DISTINCT_PARAMETER);
+      String distinct = parameters.get(JsonConstants.DISTINCT_PARAMETER);
       log4j.debug("Distinct param: " + distinct);
       if ("warehouse".equals(distinct)) {
         result = getWarehouseFilterData(parameters);
@@ -173,7 +173,7 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
     for (Map<String, Object> record : data) {
       if (contains != null && !"".equals(contains)) {
         OrderLine purchaseOrderLine = OBDal.getInstance().get(OrderLine.class,
-            (String) record.get("purchaseOrderLine"));
+            record.get("purchaseOrderLine"));
         if (purchaseOrderLine.getIdentifier().contains(contains)) {
           continue;
         }
@@ -226,8 +226,7 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
     ids.add("-");
     for (Map<String, Object> record : data) {
       if (contains != null && !"".equals(contains)) {
-        Warehouse warehouse = OBDal.getInstance().get(Warehouse.class,
-            (String) record.get("warehouse"));
+        Warehouse warehouse = OBDal.getInstance().get(Warehouse.class, record.get("warehouse"));
         if (warehouse.getIdentifier().contains(contains)) {
           continue;
         }
@@ -363,7 +362,7 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
     ids.add("-");
     for (Map<String, Object> record : data) {
       if (contains != null && !"".equals(contains)) {
-        Locator locator = OBDal.getInstance().get(Locator.class, (String) record.get("storageBin"));
+        Locator locator = OBDal.getInstance().get(Locator.class, record.get("storageBin"));
         if (locator != null && locator.getIdentifier().contains(contains)) {
           continue;
         }
@@ -1289,7 +1288,6 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
     }
 
     for (Object o : query.list()) {
-      Map<String, Object> myMap = new HashMap<String, Object>();
       StorageDetail sd = (StorageDetail) o;
       if (selectedIds.size() > 0) {
         for (int i = 0; i < selectedIds.size(); i++) {

@@ -231,11 +231,6 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
    * Returns a hibernate query object based on the hql query, if the justCount parameter is true,
    * the query will just return the number of records that fulfill the criteria. If justCount is
    * false, the query will return all the actual records that fulfill the criteria
-   * 
-   * @param table
-   * @param parameters
-   * @param justCount
-   * @return
    */
   private Query getQuery(Table table, Map<String, String> parameters, boolean justCount) {
     OBContext.setAdminMode(true);
@@ -561,7 +556,6 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
    *          filter created from the grid criteria
    * @param parameters
    *          parameters used for this request
-   * @return
    */
   private String addAdditionalFilters(Table table, String hqlQuery, String filterWhereClause,
       Map<String, String> parameters) {

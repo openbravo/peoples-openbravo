@@ -167,6 +167,6 @@ public class TreeTablesEventHandler extends EntityPersistenceEventObserver {
     for (Table treeTable : treeTableList) {
       entityArray.add(ModelProvider.getInstance().getEntityByTableId(treeTable.getId()));
     }
-    return (Entity[]) entityArray.toArray(new Entity[entityArray.size()]);
+    return entityArray.toArray(new Entity[entityArray.size()]);
   }
 }

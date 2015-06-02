@@ -566,8 +566,6 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
 
         HashMap<String, Object> parameters = new HashMap<String, Object>();
 
-        String strLanguage = vars.getLanguage();
-
         StringBuilder strSubTitle = new StringBuilder();
 
         strSubTitle.append(Utility.messageBD(this, "LegalEntity", vars.getLanguage()) + ": ");

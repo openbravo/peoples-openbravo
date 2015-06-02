@@ -73,10 +73,10 @@ OB.Utilities.Number.OBMaskedToOBPlain = function (number, decSeparator, groupSep
   var numberSign = '';
   if (plainNumber.substring(0, 1) === '+') {
     numberSign = '';
-    plainNumber = plainNumber.substring(1, number.length);
+    plainNumber = plainNumber.substring(1, plainNumber.length);
   } else if (plainNumber.substring(0, 1) === '-') {
     numberSign = '-';
-    plainNumber = plainNumber.substring(1, number.length);
+    plainNumber = plainNumber.substring(1, plainNumber.length);
   }
 
   // Remove ending decimal '0'

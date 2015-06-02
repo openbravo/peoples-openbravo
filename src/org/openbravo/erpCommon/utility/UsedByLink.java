@@ -423,8 +423,6 @@ public class UsedByLink extends HttpSecureAppServlet {
 
   /**
    * Gets the linked items for the given category.
-   * 
-   * @param tableId
    */
   private SearchResult getLinkedItems(VariablesSecureApp vars, UsedByLinkData[] data,
       String strWindow, String keyColumn, String keyId, String adTabId, String adTableName,

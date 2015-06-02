@@ -37,8 +37,6 @@ import org.openbravo.dal.service.OBDal;
 public abstract class BaseDataSourceService implements DataSourceService {
   private static final Logger log = Logger.getLogger(BaseDataSourceService.class);
 
-  private static final long serialVersionUID = 1L;
-
   private String name;
   private Template template;
 

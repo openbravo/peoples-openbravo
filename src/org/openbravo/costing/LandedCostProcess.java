@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -125,7 +125,7 @@ public class LandedCostProcess {
       throw new OBException(OBMessageUtils.messageBD("LandedCostNoReceipts"));
     }
 
-    // Check that all related receipt lines have their cost already calculated.
+    // Check that all related receipt lines with movementqty >=0 have their cost already calculated.
     StringBuffer where = new StringBuffer();
     where.append(" as lcr ");
     where.append("\n  left join lcr." + LCReceipt.PROPERTY_GOODSSHIPMENT + " lcrr");
@@ -135,6 +135,7 @@ public class LandedCostProcess {
     where.append("\n   from " + MaterialTransaction.ENTITY_NAME + " as trx");
     where.append("\n     join trx." + MaterialTransaction.PROPERTY_GOODSSHIPMENTLINE + " as iol");
     where.append("\n   where trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = false");
+    where.append("\n   and iol." + ShipmentInOutLine.PROPERTY_MOVEMENTQUANTITY + " >= 0");
     where.append("\n   and (lcrrl is null");
     where.append("\n        or iol = lcrrl)");
     where.append("\n   and (lcrr is null");
@@ -229,9 +230,9 @@ public class LandedCostProcess {
       log.debug("Process receipt amounts");
       Object[] receiptAmt = receiptamts.get();
       BigDecimal amt = (BigDecimal) receiptAmt[0];
-      Currency lcCostCurrency = OBDal.getInstance().get(Currency.class, (String) receiptAmt[1]);
+      Currency lcCostCurrency = OBDal.getInstance().get(Currency.class, receiptAmt[1]);
       ShipmentInOutLine receiptLine = OBDal.getInstance().get(ShipmentInOutLine.class,
-          (String) receiptAmt[2]);
+          receiptAmt[2]);
       // MaterialTransaction receiptLine = (MaterialTransaction) record[1];
       MaterialTransaction trx = receiptLine.getMaterialMgmtMaterialTransactionList().get(0);
       CostAdjustmentLine cal = CostAdjustmentUtils.insertCostAdjustmentLine(trx, ca, amt, true,

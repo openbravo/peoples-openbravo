@@ -333,8 +333,7 @@ public class DataImportService implements OBSingleton {
           final Entity entity = PrimitiveReferenceHandler.getInstance()
               .getPrimitiveReferencedEntity(objectToRepair, p);
 
-          final BaseOBObject referencedBob = (BaseOBObject) entityResolver.resolve(
-              entity.getName(), value, true);
+          final BaseOBObject referencedBob = entityResolver.resolve(entity.getName(), value, true);
 
           if (referencedBob == null || referencedBob.getId() == null) {
             if (ir.getErrorMessages() == null) {

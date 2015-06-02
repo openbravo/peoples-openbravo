@@ -1785,6 +1785,12 @@ isc.OBViewGrid.addProperties({
         this.selectedRecordEndInterval = this.selectedRecordInitInterval + this.data.resultSize;
       }
       this.notRemoveFilter = true;
+      if (this.getSelectedRecords().length > 1) {
+        this.selectedRecordsBeforeRefresh = [];
+        for (i = 0; i < this.getSelectedRecords().length; i++) {
+          this.selectedRecordsBeforeRefresh.push(this.getSelectedRecords()[i][OB.Constants.ID]);
+        }
+      }
     } else {
       visibleRows = this.getVisibleRows();
       if (visibleRows && visibleRows[0] > 0) {
@@ -1833,6 +1839,7 @@ isc.OBViewGrid.addProperties({
       criteria = originalCriteria;
     }
     filterDataCallback = function () {
+      var i, gridRecord, recordIndexes = [];
       if (me.refreshingWithScrolledGrid) {
         // move the scroll to part of the grid that contains the data that was just received to
         // prevent unneded requests (see https://issues.openbravo.com/view.php?id=25811)
@@ -1846,6 +1853,25 @@ isc.OBViewGrid.addProperties({
       delete me.selectedRecordInitInterval;
       delete me.selectedRecordEndInterval;
       delete me.selectedRecordId;
+
+      if (me.selectedRecordsBeforeRefresh) {
+        for (i = 0; i < me.selectedRecordsBeforeRefresh.length; i++) {
+          gridRecord = me.data.find(OB.Constants.ID, me.selectedRecordsBeforeRefresh[i]);
+          if (gridRecord !== null) {
+            recordIndexes.push(me.getRecordIndex(gridRecord));
+          }
+        }
+        me.singleRecordSelection = false;
+        me.selectRecords(recordIndexes);
+        if (me.selectedRecordsBeforeRefresh.length !== recordIndexes.length) {
+          if (me.view.messageBar.isVisible()) {
+            isc.warn(OB.I18N.getLabel('OBUIAPP_NumOfSeledtedItemsChange', [me.selectedRecordsBeforeRefresh.length, recordIndexes.length]));
+          } else {
+            me.view.messageBar.setMessage(isc.OBMessageBar.TYPE_WARNING, null, OB.I18N.getLabel('OBUIAPP_NumOfSeledtedItemsChange', [me.selectedRecordsBeforeRefresh.length, recordIndexes.length]));
+          }
+        }
+        delete me.selectedRecordsBeforeRefresh;
+      }
     };
     this.filterData(criteria, filterDataCallback, context);
     // Set the refreshingWithRecordSelected and refreshingWithScrolledGrid flags to true when needed after

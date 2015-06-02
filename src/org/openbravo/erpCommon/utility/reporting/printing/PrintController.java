@@ -315,7 +315,6 @@ public class PrintController extends HttpSecureAppServlet {
             createPrintOptionsPage(request, response, vars, documentType,
                 getComaSeparatedString(documentIds), reports);
           else {
-            final boolean showList = true;
             createEmailOptionsPage(request, response, vars, documentType,
                 getComaSeparatedString(documentIds), reports, checks, fullDocumentIdentifier);
           }
@@ -773,7 +772,7 @@ public class PrintController extends HttpSecureAppServlet {
     attachments.add(new File(attachmentFileLocation));
 
     if (object != null) {
-      final Vector<Object> vector = (Vector<Object>) object;
+      final Vector<Object> vector = object;
       for (int i = 0; i < vector.size(); i++) {
         final AttachContent objContent = (AttachContent) vector.get(i);
         final File file = prepareFile(objContent, ourReference);
@@ -842,7 +841,6 @@ public class PrintController extends HttpSecureAppServlet {
     xmlDocument.setParameter("strDocumentId", strDocumentId);
 
     // Get additional document information
-    final String draftDocumentIds = "";
     String strIsDirectPDF = vars.getStringParameter("isDirectPDF");
     if (strIsDirectPDF == null || "".equals(strIsDirectPDF)) {
       strIsDirectPDF = "false";
@@ -1270,10 +1268,6 @@ public class PrintController extends HttpSecureAppServlet {
 
   /**
    * @author gmauleon
-   * @param pocData
-   * @param vars
-   * @param vector
-   * @return
    */
   private String[] getHiddenTags(PocData[] pocData, Vector<Object> vector, VariablesSecureApp vars,
       HashMap<String, Boolean> checks) {
@@ -1389,8 +1383,6 @@ public class PrintController extends HttpSecureAppServlet {
 
   /**
    * @author gmauleon
-   * @param content
-   * @return
    * @throws ServletException
    */
   private File prepareFile(AttachContent content, String documentId) throws ServletException {

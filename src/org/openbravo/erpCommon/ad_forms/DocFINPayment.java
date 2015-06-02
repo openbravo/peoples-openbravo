@@ -59,7 +59,6 @@ import org.openbravo.model.financialmgmt.payment.FIN_Payment_Credit;
 import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
 
 public class DocFINPayment extends AcctServer {
-  private static final long serialVersionUID = 1L;
   static Logger log4j = Logger.getLogger(DocFINPayment.class);
 
   String SeqNo = "0";

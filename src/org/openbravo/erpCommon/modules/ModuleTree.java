@@ -241,9 +241,6 @@ public class ModuleTree extends GenericTree {
 
   /**
    * Returns true in case one of the descendant of the current node has an update available
-   * 
-   * @param node
-   * @return
    */
   private boolean hasChildUpdate(String node) {
     try {

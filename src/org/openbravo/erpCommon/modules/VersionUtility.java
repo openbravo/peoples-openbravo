@@ -666,7 +666,7 @@ public class VersionUtility {
       String[] moduleVersionToUpdateId, OBError obErrors, HashMap<String, String> maturityLevels)
       throws Exception {
     WebService3ImplServiceLocator loc = new WebService3ImplServiceLocator();
-    WebService3Impl ws = (WebService3Impl) loc.getWebService3();
+    WebService3Impl ws = loc.getWebService3();
     String[] errors = new String[0];
 
     ModuleInstallDetail mid = ws.checkConsistency(ImportModule.getInstalledModulesAndDeps(),

@@ -39,8 +39,6 @@ import org.openbravo.base.util.OBClassLoader;
 class OBProviderConfigReader {
   private static final Logger log = Logger.getLogger(OBProviderConfigReader.class);
 
-  private static final long serialVersionUID = 1L;
-
   void read(String prefix, InputStream is) {
     try {
       final SAXReader reader = new SAXReader();

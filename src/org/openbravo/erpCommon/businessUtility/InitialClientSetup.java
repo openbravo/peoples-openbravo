@@ -59,7 +59,6 @@ import org.openbravo.utils.FormatUtilities;
 
 public class InitialClientSetup {
   private static final Logger log4j = Logger.getLogger(InitialClientSetup.class);
-  private static final long serialVersionUID = 1L;
   private static final String NEW_LINE = "<br />\n";
   private static final String STRMESSAGEOK = "Success";
   private static final String STRMESSAGEERROR = "Error";
@@ -304,7 +303,7 @@ public class InitialClientSetup {
             log4j.debug("insertTrees() - Saved menu tree.");
           }
         } else {
-          String tableTreeName = (String) tableTree.getName();
+          String tableTreeName = tableTree.getName();
           String treeTypeName = null;
           if (tableTree.getTable().getTreeType() != null) {
             treeTypeName = tableTree.getTable().getTreeType();

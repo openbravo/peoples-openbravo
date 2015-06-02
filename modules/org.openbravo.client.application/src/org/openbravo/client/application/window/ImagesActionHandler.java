@@ -71,8 +71,7 @@ public class ImagesActionHandler extends BaseActionHandler implements PortalAcce
       String parentObjectId = (String) parameters.get("parentObjectId");
       Entity entity = ModelProvider.getInstance().getEntityByTableName(table.getDBTableName());
       String propertyName = entity.getPropertyByColumnName(columnName).getName();
-      BaseOBObject parentObject = (BaseOBObject) OBDal.getInstance().get(entity.getName(),
-          parentObjectId);
+      BaseOBObject parentObject = OBDal.getInstance().get(entity.getName(), parentObjectId);
       parentObject.set(propertyName, null);
       return new JSONObject();
     } else if (parameters.get("command").equals("GETSIZE")) {

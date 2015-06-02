@@ -685,7 +685,6 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
    *          hqlWhereClause that defines the root nodes
    * @param tableTree
    *          tableTree that defines the tree category that defines the tree
-   * @return
    */
   private boolean isRoot(JSONObject node, String hqlTreeWhereClauseRootNodes, TableTree tableTree) {
     try {
@@ -715,7 +714,6 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
    *          id of the node to be checked
    * @param hqlWhereClause
    *          hql where clause to be applied
-   * @return
    */
   protected abstract boolean nodeConformsToWhereClause(TableTree tableTree, String nodeId,
       String hqlWhereClause);
@@ -785,7 +783,6 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
    *          hql where clase of the tab/selector
    * @param hqlWhereClauseRootNodes
    *          hql where clause that define what nodes are roots
-   * @return
    * @throws JSONException
    * @throws TooManyTreeNodesException
    *           if the number of returned nodes were to be too high
@@ -848,8 +845,7 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
    *          previous values of the node, including its previous parent
    * @param prevNodeId
    * @param nextNodeId
-   *          new position of the node amont its peers
-   * @return
+   *          new position of the node amount its peers
    * @throws Exception
    */
   private String processNodeMovement(Map<String, String> parameters, JSONObject data,
