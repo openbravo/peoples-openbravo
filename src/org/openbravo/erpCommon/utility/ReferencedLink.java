@@ -245,7 +245,11 @@ public class ReferencedLink extends HttpSecureAppServlet {
           OBContext.setAdminMode();
           if (StringUtils.isEmpty(strKeyReferenceId)
               || StringUtils.equals(strKeyReferenceId, "null")) {
-            throw new ServletException("Record empty");
+            throw new ServletException(
+                String
+                    .format(
+                        "Empty Record: browse to referenced record not possible. strTableReferenceId = '%s',  strWindowId = '%s' ",
+                        strTableReferenceId, strWindowId));
           } else {
             FIN_PaymentSchedule paymentSchedule = OBDal.getInstance().get(
                 FIN_PaymentSchedule.class, strKeyReferenceId);
