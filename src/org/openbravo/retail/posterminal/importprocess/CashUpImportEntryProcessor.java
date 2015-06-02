@@ -11,11 +11,12 @@ package org.openbravo.retail.posterminal.importprocess;
 import javax.enterprise.context.ApplicationScoped;
 
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.Query;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess;
 import org.openbravo.mobile.core.process.MobileImportEntryProcessorRunnable;
 import org.openbravo.retail.posterminal.ProcessCashClose;
@@ -32,10 +33,6 @@ import org.openbravo.service.importprocess.ImportEntryProcessor;
 @ImportEntryQualifier(entity = "OBPOS_App_Cashup")
 @ApplicationScoped
 public class CashUpImportEntryProcessor extends ImportEntryProcessor {
-
-  protected int getMaxNumberOfThreads() {
-    return Runtime.getRuntime().availableProcessors() / 2;
-  }
 
   protected ImportEntryProcessRunnable createImportEntryProcessRunnable() {
     return WeldUtils.getInstanceFromStaticBeanManager(CashUpRunnable.class);
@@ -55,15 +52,18 @@ public class CashUpImportEntryProcessor extends ImportEntryProcessor {
     }
 
     protected void processEntry(ImportEntry importEntry) throws Exception {
-      // check that there are no orders import entries for the terminal
+      // check that there are no other import entries for the terminal
       // which have not yet been processed
 
       try {
         OBContext.setAdminMode();
 
-        final JSONObject json = new JSONObject(importEntry.getJsonInfo());
+        JSONObject json = new JSONObject(importEntry.getJsonInfo());
+        if (json.has("data") && json.getJSONArray("data").length() > 0) {
+          json = json.getJSONArray("data").getJSONObject(0);
+        }
         if (json.has("isprocessed") && "Y".equals(json.getString("isprocessed"))
-            && thereAreOrdersInImportQueue(importEntry)) {
+            && thereIsDataInImportQueue(importEntry)) {
           return;
         }
 
@@ -73,20 +73,37 @@ public class CashUpImportEntryProcessor extends ImportEntryProcessor {
       super.processEntry(importEntry);
     }
 
-    private boolean thereAreOrdersInImportQueue(ImportEntry importEntry) {
-      final String whereClause = ImportEntry.PROPERTY_IMPORTSTATUS + "='Initial' and "
-          + ImportEntry.PROPERTY_TYPEOFDATA + "='Order' and " + ImportEntry.PROPERTY_STORED
-          + "<:storedDate and " + ImportEntry.PROPERTY_ORGANIZATION + "=:org and "
-          + ImportEntry.PROPERTY_OBPOSPOSTERMINAL + "=:terminal";
-      final OBQuery<ImportEntry> entries = OBDal.getInstance().createQuery(ImportEntry.class,
-          whereClause);
+    private boolean thereIsDataInImportQueue(ImportEntry importEntry) {
+      try {
+        OBContext.setAdminMode();
 
-      entries.setFilterOnReadableClients(false);
-      entries.setFilterOnReadableOrganization(false);
-      entries.setNamedParameter("storedDate", importEntry.getStored());
-      entries.setNamedParameter("org", importEntry.getOrganization());
-      entries.setNamedParameter("terminal", importEntry.getOBPOSPOSTerminal());
-      return 0 < entries.count();
+        if (0 < countEntries("Error", importEntry)) {
+          // if there are related error entries before this one then this is an error
+          // throw an exception to move this entry also to error status
+          throw new OBException("There are error records before this record " + importEntry
+              + ", moving this entry also to error status.");
+        }
+
+        return 0 < countEntries("Initial", importEntry);
+      } finally {
+        OBContext.restorePreviousMode();
+      }
+    }
+
+    private int countEntries(String importStatus, ImportEntry importEntry) {
+      final String whereClause = ImportEntry.PROPERTY_IMPORTSTATUS + "='" + importStatus
+          + "' and (" + ImportEntry.PROPERTY_TYPEOFDATA + "='Order' or "
+          + ImportEntry.PROPERTY_TYPEOFDATA + "='FIN_Finacc_Transaction'  or "
+          + ImportEntry.PROPERTY_TYPEOFDATA + "='OBPOS_App_Cashup') and "
+          + ImportEntry.PROPERTY_CREATIONDATE + "<:creationDate and "
+          + ImportEntry.PROPERTY_OBPOSPOSTERMINAL + "=:terminal and id!=:id";
+      final Query qry = OBDal.getInstance().getSession()
+          .createQuery("select count(*) from " + ImportEntry.ENTITY_NAME + " where " + whereClause);
+      qry.setParameter("id", importEntry.getId());
+      qry.setTimestamp("creationDate", importEntry.getCreationDate());
+      qry.setParameter("terminal", importEntry.getOBPOSPOSTerminal());
+
+      return ((Number) qry.uniqueResult()).intValue();
     }
   }
 

@@ -10,11 +10,12 @@ package org.openbravo.retail.posterminal.importprocess;
 
 import javax.enterprise.context.ApplicationScoped;
 
+import org.hibernate.Query;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess;
 import org.openbravo.mobile.core.process.MobileImportEntryProcessorRunnable;
 import org.openbravo.retail.posterminal.OrderLoader;
@@ -30,10 +31,6 @@ import org.openbravo.service.importprocess.ImportEntryProcessor;
 @ImportEntryQualifier(entity = "Order")
 @ApplicationScoped
 public class OrderImportEntryProcessor extends ImportEntryProcessor {
-
-  protected int getMaxNumberOfThreads() {
-    return Runtime.getRuntime().availableProcessors() / 2;
-  }
 
   protected ImportEntryProcessRunnable createImportEntryProcessRunnable() {
     return WeldUtils.getInstanceFromStaticBeanManager(OrderLoaderRunnable.class);
@@ -63,22 +60,32 @@ public class OrderImportEntryProcessor extends ImportEntryProcessor {
     private boolean thereAreCustomersInImportQueue(ImportEntry importEntry) {
       try {
         OBContext.setAdminMode();
-        final String whereClause = ImportEntry.PROPERTY_IMPORTSTATUS + "='Initial' and " + "("
-            + ImportEntry.PROPERTY_TYPEOFDATA + "='BusinessPartner' or "
-            + ImportEntry.PROPERTY_TYPEOFDATA + "='BusinessPartnerLocation') and "
-            + ImportEntry.PROPERTY_STORED + "<:storedDate and " + ImportEntry.PROPERTY_ORGANIZATION
-            + "=:org";
-        final OBQuery<ImportEntry> entries = OBDal.getInstance().createQuery(ImportEntry.class,
-            whereClause);
 
-        entries.setFilterOnReadableClients(false);
-        entries.setFilterOnReadableOrganization(false);
-        entries.setNamedParameter("storedDate", importEntry.getStored());
-        entries.setNamedParameter("org", importEntry.getOrganization());
-        return 0 < entries.count();
+        if (0 < countEntries("Error", importEntry)) {
+          // if there are related error entries before this one then this is an error
+          // throw an exception to move this entry also to error status
+          throw new OBException("There are error records before this record " + importEntry
+              + ", moving this entry also to error status.");
+        }
+
+        return 0 < countEntries("Initial", importEntry);
       } finally {
         OBContext.restorePreviousMode();
       }
+    }
+
+    private int countEntries(String importStatus, ImportEntry importEntry) {
+      final String whereClause = ImportEntry.PROPERTY_IMPORTSTATUS + "='" + importStatus
+          + "' and (" + ImportEntry.PROPERTY_TYPEOFDATA + "='BusinessPartner' or "
+          + ImportEntry.PROPERTY_TYPEOFDATA + "='BusinessPartnerLocation') and "
+          + ImportEntry.PROPERTY_CREATIONDATE + "<:creationDate and "
+          + ImportEntry.PROPERTY_OBPOSPOSTERMINAL + "=:terminal";
+      final Query qry = OBDal.getInstance().getSession()
+          .createQuery("select count(*) from " + ImportEntry.ENTITY_NAME + " where " + whereClause);
+      qry.setTimestamp("creationDate", importEntry.getCreationDate());
+      qry.setParameter("terminal", importEntry.getOBPOSPOSTerminal());
+
+      return ((Number) qry.uniqueResult()).intValue();
     }
   }
 
