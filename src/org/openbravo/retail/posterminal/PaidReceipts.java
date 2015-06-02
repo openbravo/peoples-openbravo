@@ -64,7 +64,7 @@ public class PaidReceipts extends JSONProcessSimple {
       // get the orderId
       HQLPropertyList hqlProperties = ModelExtensionUtils.getPropertyExtensions(extensions);
       String hqlPaidReceipts = "select " + hqlProperties.getHqlSelect() + //
-          " from Order as ord" + //
+          " from Order as ord LEFT OUTER JOIN ord.obposApplications AS pos" + //
           " where ord.id = :orderId";
       Query paidReceiptsQuery = OBDal.getInstance().getSession().createQuery(hqlPaidReceipts);
       paidReceiptsQuery.setString("orderId", orderid);

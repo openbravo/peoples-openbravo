@@ -198,9 +198,9 @@ enyo.kind({
       kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalPaymentsSelect',
       name: 'modalPaymentsSelect'
     }, {
-        kind: 'OB.UI.ModalModulesInDev',
-        name: 'modalModulesInDev'
-      }]
+      kind: 'OB.UI.ModalModulesInDev',
+      name: 'modalModulesInDev'
+    }]
   }, {
     name: 'mainSubWindow',
     isMainSubWindow: true,

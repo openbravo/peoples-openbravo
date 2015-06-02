@@ -115,7 +115,7 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
       hqlPaidReceipts += " and ord.obposApplications is not null and (select sum(deliveredQuantity) from ord.orderLineList where orderedQuantity > 0)=0 and ord.documentStatus = 'CO' ";
     } else if (json.getBoolean("isReturn")) {
       // (It is not Layaway and It is not a Return)
-      hqlPaidReceipts += " and ord.obposApplications is not null and ((select count(deliveredQuantity) from ord.orderLineList where deliveredQuantity != 0) > 0 and (select count(orderedQuantity) from ord.orderLineList where orderedQuantity > 0) > 0) ";
+      hqlPaidReceipts += " and ord.obposApplications is not null and (exists( select 1 from ord.orderLineList where deliveredQuantity != 0) and exists( select 1 from ord.orderLineList where orderedQuantity > 0)) ";
     } else {
       // (It is not Layaway or it is a Return)
       hqlPaidReceipts += " and ord.obposApplications is not null and exists(select 1 from ord.orderLineList where deliveredQuantity != 0) ";
@@ -129,7 +129,7 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
     String result = oldString;
     // Cleaning '
     result = result.replace("'", "");
-    // Cleaing -
+    // Cleaning -
     result = result.replace("-", "");
     // Cleaning other characters here...
     return result;
