@@ -137,7 +137,8 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
       // This cashup is a cash order. Nothing needs to be done
       jsonData.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
       // Associate master/slave cashup
-      if (posTerminal.isMaster()
+      if ((posTerminal.isMaster() && posTerminal.getOBPOSApplicationsMasterterminalIDList().size() != cashUp
+          .getOBPOSAppCashupObposParentCashupIDList().size())
           || (posTerminal.getMasterterminal() != null && cashUp.getObposParentCashup() == null)) {
         associateMasterSlave(cashUp, posTerminal);
       }
