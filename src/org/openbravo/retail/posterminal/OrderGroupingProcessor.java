@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -86,61 +87,46 @@ public class OrderGroupingProcessor {
     final String strCurrentDate = dateFormatter.format(currentDate);
     final String strLang = RequestContext.get().getVariablesSecureApp().getLanguage();
 
-    // TODO: check if the audit should be retrieved from json or from session
-
-    // random string is created with currentTimeMillis(14 numbers)
-    String strExecutionUUId = ((Long) System.currentTimeMillis()).toString();
+    // random string is created as random numeric between 0 and 1000000
+    Random rnd = new Random();
+    String strExecutionId = "WebPOS_CashUp_" + String.valueOf(rnd.nextInt(1000000));
 
     if (posTerminal.getObposTerminaltype().isGroupingOrders()) {
-      OrderGroupingProcessorData.insertHeaderGrouping(conn, strUserId, strExecutionUUId,
+      // insert invoice headers
+      OrderGroupingProcessorData.insertHeaderGrouping(conn, strUserId, strExecutionId,
           strCurrentDate, cashUpId);
+      t1 = System.currentTimeMillis();
+      // insert invoice lines
+      OrderGroupingProcessorData.insertLinesGrouping(conn, cashUpId, strExecutionId);
+      t2 = System.currentTimeMillis();
+      OrderGroupingProcessorData.updateQtyOrderLinesGrouping(conn, strExecutionId);
+      // insert invoice lines Tax
+      OrderGroupingProcessorData.insertTaxLinesGrouping(conn, strExecutionId);
+      t3 = System.currentTimeMillis();
+      // insert offer lines
+      OrderGroupingProcessorData.insertOfferLinesGrouping(conn, strExecutionId);
+      t4 = System.currentTimeMillis();
+      // insert invoice tax
+      OrderGroupingProcessorData.insertInvoiceTaxGrouping(conn, strExecutionId);
     } else {
-      OrderGroupingProcessorData.insertHeaderNoGrouping(conn, strUserId, strExecutionUUId, strLang,
+      // insert invoice headers
+      OrderGroupingProcessorData.insertHeaderNoGrouping(conn, strUserId, strExecutionId, strLang,
           strCurrentDate, cashUpId);
+      t1 = System.currentTimeMillis();
+      // insert invoice lines
+      OrderGroupingProcessorData.insertLinesNoGrouping(conn, cashUpId, strExecutionId);
+      t2 = System.currentTimeMillis();
+      OrderGroupingProcessorData.updateQtyOrderLinesNoGrouping(conn, strExecutionId);
+      // insert invoice lines Tax
+      OrderGroupingProcessorData.insertTaxLinesNoGrouping(conn, strExecutionId);
+      t3 = System.currentTimeMillis();
+      // insert offer lines
+      OrderGroupingProcessorData.insertOfferLinesNoGrouping(conn, strExecutionId);
+      t4 = System.currentTimeMillis();
+      // insert invoice tax
+      OrderGroupingProcessorData.insertInvoiceTaxNoGrouping(conn, strExecutionId);
     }
 
-    t1 = System.currentTimeMillis();
-
-    // insert invoice lines
-    if (posTerminal.getObposTerminaltype().isGroupingOrders()) {
-      OrderGroupingProcessorData.insertLinesGrouping(conn, cashUpId, strExecutionUUId);
-    } else {
-      OrderGroupingProcessorData.insertLinesNoGrouping(conn, cashUpId, strExecutionUUId);
-    }
-
-    t2 = System.currentTimeMillis();
-
-    // update the invoiced quantity of order lines
-    if (posTerminal.getObposTerminaltype().isGroupingOrders()) {
-      OrderGroupingProcessorData.updateQtyOrderLinesGrouping(conn, strExecutionUUId);
-    } else {
-      OrderGroupingProcessorData.updateQtyOrderLinesNoGrouping(conn, strExecutionUUId);
-    }
-
-    // insert invoice lines Tax
-    if (posTerminal.getObposTerminaltype().isGroupingOrders()) {
-      OrderGroupingProcessorData.insertTaxLinesGrouping(conn, strExecutionUUId);
-    } else {
-      OrderGroupingProcessorData.insertTaxLinesNoGrouping(conn, strExecutionUUId);
-    }
-
-    t3 = System.currentTimeMillis();
-
-    // insert invoice lines Offer (discounts)
-    if (posTerminal.getObposTerminaltype().isGroupingOrders()) {
-      OrderGroupingProcessorData.insertOfferLinesGrouping(conn, strExecutionUUId);
-    } else {
-      OrderGroupingProcessorData.insertOfferLinesNoGrouping(conn, strExecutionUUId);
-    }
-
-    t4 = System.currentTimeMillis();
-
-    // insert invoice tax
-    if (posTerminal.getObposTerminaltype().isGroupingOrders()) {
-      OrderGroupingProcessorData.insertInvoiceTaxGrouping(conn, strExecutionUUId);
-    } else {
-      OrderGroupingProcessorData.insertInvoiceTaxNoGrouping(conn, strExecutionUUId);
-    }
     t5 = System.currentTimeMillis();
 
     // check if there are orderlines splitted by inoutlines
@@ -197,13 +183,13 @@ public class OrderGroupingProcessor {
     t6 = System.currentTimeMillis();
 
     // insert payment schedule
-    OrderGroupingProcessorData.insertPaymentSchedule(conn, strCurrentDate, strExecutionUUId);
+    OrderGroupingProcessorData.insertPaymentSchedule(conn, strCurrentDate, strExecutionId);
 
     t7 = System.currentTimeMillis();
 
     // update payment schedule of orders
     OrderGroupingProcessorData[] arrayOrderAndInvoiceId = OrderGroupingProcessorData
-        .selectOrderAndInvoiceId(conn, strExecutionUUId);
+        .selectOrderAndInvoiceId(conn, strExecutionId);
 
     for (OrderGroupingProcessorData orderAndInvoiceId : arrayOrderAndInvoiceId) {
       Order order = OBDal.getInstance().get(Order.class, orderAndInvoiceId.cOrderId);
@@ -224,20 +210,21 @@ public class OrderGroupingProcessor {
     t8 = System.currentTimeMillis();
 
     OrderGroupingProcessorData[] arrayInvoicesId = OrderGroupingProcessorData.selectInvoiceId(conn,
-        strExecutionUUId);
+        strExecutionId);
 
     Invoice invoice = null;
+    OBPOSAppCashup cashUp = OBDal.getInstance().get(OBPOSAppCashup.class, cashUpId);
     for (OrderGroupingProcessorData invoiceId : arrayInvoicesId) {
       invoice = OBDal.getInstance().get(Invoice.class, invoiceId.cInvoiceId);
       invoice.setDocumentNo(getInvoiceDocumentNo(invoice.getTransactionDocument(),
           invoice.getDocumentType()));
+      invoice.setDescription("Created by cash up " + cashUp.getIdentifier());
       finishInvoice(invoice, currentDate);
       executeHooks(invoice, cashUpId);
     }
 
     t9 = System.currentTimeMillis();
 
-    // OBDal.getInstance().rollbackAndClose();
     OBDal.getInstance().commitAndClose();
 
     t10 = System.currentTimeMillis();
@@ -253,6 +240,8 @@ public class OrderGroupingProcessor {
     log.debug("time execution documentNo: " + (t9 - t8));
     log.debug("time execution Commit : " + (t10 - t9));
     log.debug("time execution total: " + (t10 - t0));
+
+    log.info("Cash up " + cashUp.getIdentifier() + ": Invoice genarated. Total time: " + (t10 - t0));
 
     JSONObject jsonResponse = new JSONObject();
     jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);

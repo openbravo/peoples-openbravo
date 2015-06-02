@@ -16,6 +16,13 @@
     <line>
       <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_CashUpRpt_Title')) %></text>
     </line>
+    <line>    
+    <% if (cashup.closed) { %>
+      <text align="center" length="42" bold="true"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_CashUpRpt_Closed')) %></text>
+    <% } else { %>
+      <text align="center" length="42" bold="true"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_CashUpRpt_Partial')) %></text>        
+    <% } %>    
+    </line>
     <line></line>
     <line>
       <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblStore') + ': ' + OB.POS.modelterminal.get('terminal').organization$_identifier) %></text>

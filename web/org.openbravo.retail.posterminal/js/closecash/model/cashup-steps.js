@@ -18,8 +18,8 @@ enyo.kind({
   getToolbarName: function () {
     return 'toolbarempty';
   },
-  nextButtonI18NLabel: function () {
-    return 'OBPOS_LblNextStep';
+  nextFinishButton: function () {
+    return false;
   },
   allowNext: function () {
     return this.model.get('orderlist').length === 0 && !this.model.get('pendingOrdersToProcess');
@@ -41,8 +41,8 @@ enyo.kind({
   getToolbarName: function () {
     return 'toolbarempty';
   },
-  nextButtonI18NLabel: function () {
-    return 'OBPOS_LblNextStep';
+  nextFinishButton: function () {
+    return false;
   },
   allowNext: function () {
     return this.model.get('slavesCashupCompleted');
@@ -64,8 +64,8 @@ enyo.kind({
   getToolbarName: function () {
     return 'toolbarcashpayments';
   },
-  nextButtonI18NLabel: function () {
-    return 'OBPOS_LblNextStep';
+  nextFinishButton: function () {
+    return false;
   },
   allowNext: function () {
     return true;
@@ -89,8 +89,8 @@ enyo.kind({
   getToolbarName: function () {
     return 'toolbarcountcash';
   },
-  nextButtonI18NLabel: function () {
-    return 'OBPOS_LblNextStep';
+  nextFinishButton: function () {
+    return false;
   },
   allowNext: function () {
     return _.reduce(this.model.get('paymentList').models, function (allCounted, model) {
@@ -98,7 +98,8 @@ enyo.kind({
     }, true);
   },
   getSubstepsLength: function (model) {
-    return 1;
+    // Do not show this step if there are no payments defined
+    return this.model.get('paymentList').length > 0 ? 1 : 0;
   },
   isSubstepAvailable: function (model, substep) {
     return true;
@@ -118,8 +119,8 @@ enyo.kind({
       return 'toolbarempty';
     }
   },
-  nextButtonI18NLabel: function () {
-    return 'OBPOS_LblNextStep';
+  nextFinishButton: function () {
+    return false;
   },
   allowNext: function () {
     var qtyToKeep = this.model.get('paymentList').at(this.model.get('substep')).get('qtyToKeep');
@@ -175,8 +176,8 @@ enyo.kind({
   getToolbarName: function () {
     return 'toolbarempty';
   },
-  nextButtonI18NLabel: function () {
-    return 'OBPOS_LblPostPrintClose';
+  nextFinishButton: function () {
+    return true;
   },
   allowNext: function () {
     return true;

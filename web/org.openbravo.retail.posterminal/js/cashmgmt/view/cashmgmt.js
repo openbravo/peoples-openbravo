@@ -161,7 +161,8 @@ enyo.kind({
         autoDismiss: false,
         onHideFunction: function () {
           OB.POS.navigate('retail.pointofsale');
-      }});
+        }
+      });
     }, this);
     //finishedWrongly
     this.model.on('change:finishedWrongly', function () {
@@ -175,7 +176,8 @@ enyo.kind({
         autoDismiss: false,
         onHideFunction: function () {
           OB.POS.navigate('retail.pointofsale');
-      }});
+        }
+      });
     }, this);
   },
 

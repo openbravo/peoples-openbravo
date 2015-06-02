@@ -99,6 +99,7 @@ public class CashUpReport extends HttpSecureAppServlet {
   List<HashMap<String, String>> hashMapCashToKeepList;
   List<HashMap<String, String>> hashMapCashToDepositList;
 
+  @SuppressWarnings("unchecked")
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
     totalNetSalesAmount = BigDecimal.ZERO;
@@ -651,7 +652,8 @@ public class CashUpReport extends HttpSecureAppServlet {
         taxAmount = new BigDecimal(obja[1].toString());
         totalGrossSalesAmount = totalGrossSalesAmount.add(taxAmount);
       }
-      dataSource = new ListOfArrayDataSource(salesTaxList, new String[] { "LABEL", "VALUE" });
+      dataSource = new ListOfArrayDataSource((List<Object[]>) salesTaxList, new String[] { "LABEL",
+          "VALUE" });
       parameters.put("SALES_TAXES", dataSource);
 
       // RETURNS TAXES
@@ -664,7 +666,8 @@ public class CashUpReport extends HttpSecureAppServlet {
         taxAmount = new BigDecimal(obja[1].toString());
         totalGrossReturnsAmount = totalGrossReturnsAmount.add(taxAmount);
       }
-      dataSource = new ListOfArrayDataSource(returnsTaxList, new String[] { "LABEL", "VALUE" });
+      dataSource = new ListOfArrayDataSource((List<Object[]>) returnsTaxList, new String[] {
+          "LABEL", "VALUE" });
       parameters.put("RETURNS_TAXES", dataSource);
 
       totalRetailTransactions = totalGrossSalesAmount.subtract(totalGrossReturnsAmount);

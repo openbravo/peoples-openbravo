@@ -79,7 +79,7 @@ enyo.kind({
       } else if (!_.isNull(pending) && pending) {
         this.setTotalPending(pending, payment.mulrate, payment.symbol, payment.currencySymbolAtTheRight, inSender, inEvent);
       }
-      this.checkEnoughCashAvailable(paymentstatus, payment);
+      this.checkValidPayments(paymentstatus, payment);
       if (!_.isNull(this.receipt) && this.receipt.get('isLayaway') && this.receipt.get('orderType') !== 3) {
         this.$.layawayaction.updateVisibility(true);
       }
@@ -193,8 +193,19 @@ enyo.kind({
               }),
               renderLine: 'OB.OBPOSPointOfSale.UI.RenderPaymentLine'
             }, {
+              style: 'position: absolute; bottom: 20px; height: 20px; font-weight: bold; color:DodgerBlue;',
+              name: 'extrainfo'
+            }, {
               style: 'position: absolute; bottom: 0px; height: 20px; color: #ff0000;',
               name: 'noenoughchangelbl',
+              showing: false
+            }, {
+              style: 'position: absolute; bottom: 0px; height: 20px; color: #ff0000;',
+              name: 'overpaymentnotavailable',
+              showing: false
+            }, {
+              style: 'position: absolute; bottom: 0px; height: 20px; color: #ff0000;',
+              name: 'overpaymentexceedlimit',
               showing: false
             }]
           }]
@@ -273,6 +284,10 @@ enyo.kind({
         this.$.layawayaction.hide();
       }
     }, this);
+    this.$.extrainfo.setContent('');
+    this.receipt.on('extrainfo', function (info) {
+      this.$.extrainfo.setContent(info || '');
+    }, this);
   },
 
   updateCreditSalesAction: function () {
@@ -315,7 +330,7 @@ enyo.kind({
       symbolAtRight = OB.MobileApp.model.paymentnames[this.receipt.selectedPayment].currencySymbolAtTheRight;
       isCashType = OB.MobileApp.model.paymentnames[this.receipt.selectedPayment].paymentMethod.iscash;
     }
-    this.checkEnoughCashAvailable(paymentstatus, OB.MobileApp.model.paymentnames[this.receipt.selectedPayment || OB.MobileApp.model.get('paymentcash')]);
+    this.checkValidPayments(paymentstatus, OB.MobileApp.model.paymentnames[this.receipt.selectedPayment || OB.MobileApp.model.get('paymentcash')]);
     if (paymentstatus.change) {
       this.$.change.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(this.receipt.getChange(), rate), symbol, symbolAtRight));
       OB.MobileApp.model.set('changeReceipt', OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(this.receipt.getChange(), rate), symbol, symbolAtRight));
@@ -419,7 +434,7 @@ enyo.kind({
       symbolAtRight = selectedPayment.currencySymbolAtTheRight;
       isCashType = selectedPayment.paymentMethod.iscash;
     }
-    this.checkEnoughCashAvailable(paymentstatus.getPaymentStatus(), selectedPayment);
+    this.checkValidPayments(paymentstatus.getPaymentStatus(), selectedPayment);
     if (paymentstatus.get('change')) {
       this.$.change.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(paymentstatus.get('change'), rate), symbol, symbolAtRight));
       OB.MobileApp.model.set('changeReceipt', OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(paymentstatus.get('change'), rate), symbol, symbolAtRight));
@@ -482,7 +497,7 @@ enyo.kind({
     }
   },
 
-  checkEnoughCashAvailable: function (paymentstatus, selectedPayment) {
+  checkEnoughCashAvailable: function (paymentstatus, selectedPayment, scope, callback) {
     var requiredCash, hasEnoughCash, hasAllEnoughCash = true;
     // Check slave cash 
     this.checkSlaveCashAvailable(selectedPayment, this, function (currentCash) {
@@ -512,15 +527,76 @@ enyo.kind({
       }
 
       if (hasEnoughCash && hasAllEnoughCash) {
-        this.$.noenoughchangelbl.hide();
-        this.$.payments.scrollAreaMaxHeight = '150px';
-        this.$.doneButton.setDisabled(false);
+        return callback.call(scope, true);
       } else {
-        this.$.noenoughchangelbl.show();
-        this.$.payments.scrollAreaMaxHeight = '130px';
-        this.$.doneButton.setDisabled(true);
+        return callback.call(scope, false); // check failed.
       }
     });
+  },
+
+  checkValidCashOverpayment: function (paymentstatus, selectedPayment) {
+    var currentCash = OB.DEC.Zero,
+        requiredCash;
+
+    if (OB.UTIL.isNullOrUndefined(selectedPayment) || !selectedPayment.paymentMethod.iscash) {
+      return true;
+    }
+
+    if (paymentstatus.isNegative) {
+      requiredCash = paymentstatus.pendingAmt;
+      paymentstatus.payments.each(function (payment) {
+        if (payment.get('kind') === selectedPayment.payment.searchKey) {
+          requiredCash = OB.DEC.add(requiredCash, payment.get('amount'));
+        }
+      });
+    } else {
+      requiredCash = paymentstatus.changeAmt;
+    }
+
+    if (selectedPayment.paymentMethod.allowoverpayment && (requiredCash !== 0)) {
+      if (!OB.UTIL.isNullOrUndefined(selectedPayment.paymentMethod.overpaymentLimit) && (selectedPayment.paymentMethod.overpaymentLimit < requiredCash)) {
+        this.$.overpaymentexceedlimit.show();
+        return false;
+      } else {
+        return true;
+      }
+    } else if (requiredCash === 0) {
+      return true;
+    } else {
+      this.$.overpaymentnotavailable.show();
+      return false;
+    }
+  },
+
+  checkValidPayments: function (paymentstatus, selectedPayment) {
+    var resultOK;
+
+    // Hide all error labels. Error labels are shown by check... functions
+    this.$.overpaymentnotavailable.hide();
+    this.$.overpaymentexceedlimit.hide();
+    this.$.noenoughchangelbl.hide();
+
+    // Do the checkins
+    resultOK = this.checkValidCashOverpayment(paymentstatus, selectedPayment);
+    if (resultOK) {
+      resultOK = this.checkEnoughCashAvailable(paymentstatus, selectedPayment, this, function (success) {
+        this.setStatusButtons(success);
+      });
+    } else {
+      // Finally set status of buttons
+      this.setStatusButtons(resultOK);
+    }
+  },
+
+  setStatusButtons: function (resultOK) {
+    if (resultOK) {
+      this.$.payments.scrollAreaMaxHeight = '150px';
+      this.$.doneButton.setDisabled(false);
+    } else {
+      this.$.noenoughchangelbl.show();
+      this.$.payments.scrollAreaMaxHeight = '130px';
+      this.$.doneButton.setDisabled(true);
+    }
   },
 
   checkSlaveCashAvailable: function (selectedPayment, scope, callback) {
@@ -580,6 +656,8 @@ enyo.kind({
     this.$.exactlbl.setContent(OB.I18N.getLabel('OBPOS_PaymentsExact'));
     this.$.donezerolbl.setContent(OB.I18N.getLabel('OBPOS_MsgPaymentAmountZero'));
     this.$.noenoughchangelbl.setContent(OB.I18N.getLabel('OBPOS_NoEnoughCash'));
+    this.$.overpaymentnotavailable.setContent(OB.I18N.getLabel('OBPOS_OverpaymentNotAvailable'));
+    this.$.overpaymentexceedlimit.setContent(OB.I18N.getLabel('OBPOS_OverpaymentExcededLimit'));
   },
   init: function (model) {
     var me = this;
@@ -918,7 +996,7 @@ enyo.kind({
   content: '',
   classes: 'btn-icon-small btnlink-green',
   style: 'width: 120px;float: right; margin: 10px 5px 5px 0px; height: 2.0em; display:block; clear: right;',
-  permission: 'OBPOS_receipt.layaway',
+  permission: 'OBPOS_receipt.layawayReceipt',
   init: function (model) {
     this.model = model;
     this.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));

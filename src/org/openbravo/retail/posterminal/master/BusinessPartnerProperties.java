@@ -37,7 +37,7 @@ public class BusinessPartnerProperties extends ModelExtension {
         add(new HQLProperty("bpl.businessPartner.invoiceTerms", "invoiceTerms"));
         add(new HQLProperty("bpl.id", "locId"));
         add(new HQLProperty(
-            "max(COALESCE(bpl.locationAddress.addressLine1, bpl.locationAddress.addressLine2, bpl.locationAddress.postalCode, bpl.locationAddress.cityName))",
+            "COALESCE(bpl.locationAddress.addressLine1, bpl.locationAddress.addressLine2, bpl.locationAddress.postalCode, bpl.locationAddress.cityName)",
             "locName", false));
         add(new HQLProperty("ulist.email", "email"));
         add(new HQLProperty("ulist.id", "contactId"));

@@ -7,12 +7,26 @@
  ************************************************************************************
  */
 
-/*global OB, enyo, $, confirm */
+/*global OB, enyo */
 
 enyo.kind({
   name: 'OB.UI.ModalModulesInDev',
   kind: 'OB.UI.ModalInfo',
   bodyContent: {
-    i18nContent: 'OBPOS_modalModulesInDevBody'
+    name: 'message',
+    content: ''
+  },
+  executeOnShow: function () {
+    if (OB.UTIL.Debug.isDebug()) {
+      var ifInDevelopment = 'OBPOS_modalModulesInDevBody';
+      var ifInTestEnvironment = 'OBPOS_modalApplicationInTestEnvironmentBody';
+      var i18nLabel = 'OBMOBC_Debug';
+      if (OB.UTIL.Debug.getDebugCauses().isInDevelopment) {
+        i18nLabel = ifInDevelopment;
+      } else if (OB.UTIL.Debug.getDebugCauses().isTestEnvironment) {
+        i18nLabel = ifInTestEnvironment;
+      }
+      this.$.bodyContent.$.message.setContent(OB.I18N.getLabel(i18nLabel));
+    }
   }
 });

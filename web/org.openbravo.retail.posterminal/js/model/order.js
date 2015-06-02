@@ -275,7 +275,7 @@
         this.set('posTerminal', attributes.posTerminal);
         this.set('posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, attributes['posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER]);
         this.set('orderDate', new Date(attributes.orderDate));
-        this.set('creationDate', new Date(attributes.creationDate));
+        this.set('creationDate', (!OB.UTIL.isNullOrUndefined(attributes.creationDate) ? attributes.creationDate : null));
         this.set('documentnoPrefix', attributes.documentnoPrefix);
         this.set('quotationnoPrefix', attributes.quotationnoPrefix);
         this.set('documentnoSuffix', attributes.documentnoSuffix);
@@ -1676,12 +1676,21 @@
 
     removePayment: function (payment) {
       var payments = this.get('payments');
-      payments.remove(payment);
-      if (payment.get('openDrawer')) {
-        this.set('openDrawer', false);
-      }
-      this.adjustPayment();
-      this.save();
+      OB.UTIL.HookManager.executeHooks('OBPOS_preRemovePayment', {
+        paymentToRem: payment,
+        payments: payments,
+        receipt: this
+      }, function (args) {
+        if (args.cancellation) {
+          return true;
+        }
+        payments.remove(payment);
+        if (payment.get('openDrawer')) {
+          args.receipt.set('openDrawer', false);
+        }
+        args.receipt.adjustPayment();
+        args.receipt.save();
+      });
     },
 
     serializeToJSON: function () {
@@ -2195,7 +2204,7 @@
       order.set('createdBy', OB.MobileApp.model.get('orgUserId'));
       order.set('updatedBy', OB.MobileApp.model.get('orgUserId'));
       order.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentType);
-      order.set('orderType', 0); // 0: Sales order, 1: Return order, 2: Layaway, 3: Void Layaway
+      order.set('orderType', OB.MobileApp.model.get('terminal').terminalType.layawayorder ? 2 : 0); // 0: Sales order, 1: Return order, 2: Layaway, 3: Void Layaway
       order.set('generateInvoice', false);
       order.set('isQuotation', false);
       order.set('oldId', null);

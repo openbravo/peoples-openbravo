@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, enyo */
+/*global OB, enyo, _ */
 
 //Renders the summary of deposits/drops and contains a list (OB.OBPOSCasgMgmt.UI.RenderDepositsDrops)
 //with detailed information for each payment typ
@@ -445,7 +445,7 @@ enyo.kind({
         components: [{
           classes: 'span12',
           components: [{
-            name: 'stepsheader',
+            name: 'reporttitle',
             style: 'padding: 10px; border-bottom: 1px solid #cccccc; text-align:center;',
             renderHeader: function (step, count) {
               this.setContent(OB.I18N.getLabel('OBPOS_LblStepNumber', [step, count]) + " " + OB.I18N.getLabel('OBPOS_LblStepPostPrintAndClose') + OB.OBPOSCashUp.UI.CashUp.getTitleExtensions());
@@ -568,6 +568,9 @@ enyo.kind({
 
   init: function (model) {
     this.model = model;
+
+    this.$.reporttitle.setContent(OB.I18N.getLabel(model.reportTitleLabel) + OB.OBPOSCashUp.UI.CashUp.getTitleExtensions());
+
     this.model.get('cashUpReport').on('add', function (cashUpReport) {
       this.$.sales.setValue('netsales', cashUpReport.get('netSales'));
       this.$.sales.setCollection(cashUpReport.get('salesTaxes'));
@@ -644,7 +647,7 @@ enyo.kind({
 
   displayStep: function (model) {
     // this function is invoked when displayed.
-    this.$.stepsheader.renderHeader(model.stepNumber('OB.CashUp.PostPrintAndClose'), model.stepCount());
+    this.$.reporttitle.renderHeader(model.stepNumber('OB.CashUp.PostPrintAndClose'), model.stepCount());
     if (!model.cashupStepsDefinition[model.stepIndex('OB.CashUp.CashToKeep')].active) {
       _.each(model.get('paymentList').models, function (model) {
         if (OB.UTIL.isNullOrUndefined(model.get('qtyToKeep'))) {
