@@ -36,7 +36,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -46,13 +45,11 @@ import org.openbravo.client.application.ParameterUtils;
 import org.openbravo.client.application.window.AttachImplementationManager;
 import org.openbravo.client.application.window.AttachmentUtils;
 import org.openbravo.client.application.window.AttachmentsAH;
+import org.openbravo.client.application.window.CoreAttachImplementation;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
-import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.Attachment;
 import org.openbravo.model.ad.utility.AttachmentConfig;
@@ -271,26 +268,12 @@ public class TabAttachments extends HttpSecureAppServlet {
    *          UUID of the record
    * 
    * @return file directory to save the attachment
+   * @deprecated use {@link CoreAttachImplementation#getAttachmentDirectoryForNewAttachments}
+   *             instead
    */
+  @Deprecated
   public static String getAttachmentDirectoryForNewAttachments(String tableID, String recordID) {
-    String fileDir = tableID + "-" + recordID;
-    String saveAttachmentsOldWay = null;
-    try {
-      saveAttachmentsOldWay = Preferences.getPreferenceValue("SaveAttachmentsOldWay", true,
-          OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
-              .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
-              .getOBContext().getRole(), null);
-    } catch (PropertyException e) {
-      // if property not found, save attachments the new way
-      saveAttachmentsOldWay = "N";
-    }
-
-    if ("Y".equals(saveAttachmentsOldWay)) {
-      return fileDir;
-    } else {
-      fileDir = tableID + "/" + splitPath(recordID);
-    }
-    return fileDir;
+    return CoreAttachImplementation.getAttachmentDirectoryForNewAttachments(tableID, recordID);
   }
 
   /**
@@ -310,32 +293,11 @@ public class TabAttachments extends HttpSecureAppServlet {
    *          Name of the file
    * 
    * @return file directory in which the attachment is stored
+   * @deprecated use {@link CoreAttachImplementation#getAttachmentDirectory} instead
    */
+  @Deprecated
   public static String getAttachmentDirectory(String tableID, String recordID, String fileName) {
-    String fileDir = tableID + "-" + recordID;
-    Table attachmentTable = null;
-    try {
-      OBContext.setAdminMode();
-      attachmentTable = OBDal.getInstance().get(Table.class, tableID);
-      OBCriteria<Attachment> attachmentCriteria = OBDal.getInstance().createCriteria(
-          Attachment.class);
-      attachmentCriteria.add(Restrictions.eq(Attachment.PROPERTY_RECORD, recordID));
-      attachmentCriteria.add(Restrictions.eq(Attachment.PROPERTY_TABLE, attachmentTable));
-      attachmentCriteria.add(Restrictions.eq(Attachment.PROPERTY_NAME, fileName));
-
-      attachmentCriteria.setFilterOnReadableOrganization(false);
-      if (attachmentCriteria.count() > 0) {
-        Attachment attachment = attachmentCriteria.list().get(0);
-        if (attachment.getPath() != null) {
-          fileDir = attachment.getPath();
-        }
-      }
-    } catch (Exception e) {
-      log.error(e.getMessage(), e);
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-    return fileDir;
+    return CoreAttachImplementation.getAttachmentDirectory(tableID, recordID, fileName);
   }
 
   /**
@@ -347,13 +309,11 @@ public class TabAttachments extends HttpSecureAppServlet {
    *          the directory that is retrieved from getFileDirectory()
    * 
    * @return value to be saved in path in c_file
+   * @deprecated use {@link CoreAttachImplementation#getPath} instead
    */
+  @Deprecated
   public static String getPath(String fileDirectory) {
-    if (fileDirectory != null && fileDirectory.contains("-")) {
-      return null;
-    } else {
-      return fileDirectory;
-    }
+    return CoreAttachImplementation.getPath(fileDirectory);
   }
 
   /**
@@ -363,20 +323,10 @@ public class TabAttachments extends HttpSecureAppServlet {
    * @param origname
    *          Original name
    * @return splitted name.
+   * @deprecated use {@link CoreAttachImplementation#splitPath} instead
    */
+  @Deprecated
   public static String splitPath(final String origname) {
-    String newname = "";
-    for (int i = 0; i < origname.length(); i += 3) {
-      if (i != 0) {
-        newname += "/";
-      }
-      newname += origname.substring(i, Math.min(i + 3, origname.length()));
-    }
-    return newname;
+    return CoreAttachImplementation.splitPath(origname);
   }
-
-  @Override
-  public String getServletInfo() {
-    return "Servlet that presents the attachments";
-  } // end of getServletInfo() method
 }

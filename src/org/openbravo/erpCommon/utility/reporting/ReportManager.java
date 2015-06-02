@@ -43,8 +43,8 @@ import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.window.AttachImplementationManager;
+import org.openbravo.client.application.window.CoreAttachImplementation;
 import org.openbravo.database.ConnectionProvider;
-import org.openbravo.erpCommon.businessUtility.TabAttachments;
 import org.openbravo.erpCommon.utility.JRFormatFactory;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.utils.Replace;
@@ -235,8 +235,8 @@ public class ReportManager {
       throw new ReportingException(Utility.messageBD(connectionProvider, "AttachmentExists",
           vars.getLanguage()));
 
-    final String destination = TabAttachments.getAttachmentDirectoryForNewAttachments(tableId,
-        report.getDocumentId());
+    final String destination = CoreAttachImplementation.getAttachmentDirectoryForNewAttachments(
+        tableId, report.getDocumentId());
 
     // First move the file to the correct destination
     final File destinationFolder = new File(_strAttachmentPath + "/" + destination);
