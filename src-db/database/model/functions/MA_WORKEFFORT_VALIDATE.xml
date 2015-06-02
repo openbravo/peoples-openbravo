@@ -395,7 +395,8 @@
         (SELECT *  FROM M_PRODUCTIONPLAN pp  WHERE pp.M_PRODUCTION_ID=v_Record_ID)
       LOOP
         UPDATE MA_WRPHASE
-          SET DONEQUANTITY=DONEQUANTITY + Cur_ProductionPlan.PRODUCTIONQTY, RUNTIME=Cur_ProductionPlan.RUNTIME
+          SET DONEQUANTITY=DONEQUANTITY + Cur_ProductionPlan.PRODUCTIONQTY, RUNTIME=Cur_ProductionPlan.RUNTIME,
+          UPDATED=now()
         WHERE MA_WRPhase_ID=Cur_ProductionPlan.MA_WRPHASE_ID;
         -- Close Phase if its marked
 	IF (Cur_ProductionPlan.CLOSEPHASE='Y') THEN
