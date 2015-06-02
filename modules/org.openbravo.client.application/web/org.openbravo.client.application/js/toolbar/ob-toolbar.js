@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):   Sreedhar Sirigiri (TDS), Mallikarjun M (TDS)
  ************************************************************************
@@ -1257,9 +1257,9 @@ isc.OBToolbar.addProperties({
         currentContext = buttonContexts[iButtonContext];
 
         if (currentContext.isShowingTree) {
-            selectedRecords = currentContext.treeGrid.getSelectedRecords() || [];
+          selectedRecords = currentContext.treeGrid.getSelectedRecords() || [];
         } else {
-            selectedRecords = currentContext.viewGrid.getSelectedRecords() || [];	
+          selectedRecords = currentContext.viewGrid.getSelectedRecords() || [];
         }
         var numOfSelRecords = 0,
             theForm = this.view.isEditingGrid ? this.view.viewGrid.getEditForm() : this.view.viewForm,
