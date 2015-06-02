@@ -284,6 +284,7 @@ public class LandedCostProcess {
     lcm.setOrganization(lcc.getOrganization());
     lcm.setLandedCostCost(lcc);
     lcm.setAmount(lcc.getAmount());
+    lcm.setAmountInInvoiceCurrency(lcc.getAmount());
     lcm.setInvoiceLine(lcc.getInvoiceLine());
     OBDal.getInstance().save(lcm);
 
