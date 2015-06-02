@@ -27,6 +27,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.model.Entity;
@@ -235,33 +236,38 @@ public class ReferencedLink extends HttpSecureAppServlet {
 
       }
 
-      else if (strTableReferenceId.equals("CE9AFF5F51B846AEAB0B6CBF829092CD")
-          && (strWindowId.equals("E547CE89D4C04429B6340FFA44E70716") || strWindowId
-              .equals("6F8F913FA60F4CBD93DC1D3AA696E76E"))) {
+      else if (StringUtils.equals(strTableReferenceId, "CE9AFF5F51B846AEAB0B6CBF829092CD")
+          && (StringUtils.equals(strWindowId, "E547CE89D4C04429B6340FFA44E70716") || StringUtils
+              .equals(strWindowId, "6F8F913FA60F4CBD93DC1D3AA696E76E"))) {
         // Navigate to FIN_Payment_Schedule from Payment In or Payment Out: select destination
         // window depending on the source window
         try {
           OBContext.setAdminMode();
-          FIN_PaymentSchedule paymentSchedule = OBDal.getInstance().get(FIN_PaymentSchedule.class,
-              strKeyReferenceId);
-          if (paymentSchedule.getOrder() != null) {
-            // Order Payment Schedule
-            strTableReferenceId = "70E57DEA195843729FF303C9A71EBCA3";
-            if (strWindowId.equals("E547CE89D4C04429B6340FFA44E70716")) {
-              // Payment In window -> Sales Order
-              strWindowId = "143";
-            } else if (strWindowId.equals("6F8F913FA60F4CBD93DC1D3AA696E76E")) {
-              // Payment Out window -> Purchase Order
-              strWindowId = "181";
-            }
-          } else if (paymentSchedule.getInvoice() != null) {
-            // Invoice Payment Schedule
-            if (strWindowId.equals("E547CE89D4C04429B6340FFA44E70716")) {
-              // Payment In window -> Sales Invoice
-              strWindowId = "167";
-            } else if (strWindowId.equals("6F8F913FA60F4CBD93DC1D3AA696E76E")) {
-              // Payment Out window -> Purchase Invoice
-              strWindowId = "183";
+          if (StringUtils.isEmpty(strKeyReferenceId)
+              || StringUtils.equals(strKeyReferenceId, "null")) {
+            throw new ServletException("Record empty");
+          } else {
+            FIN_PaymentSchedule paymentSchedule = OBDal.getInstance().get(
+                FIN_PaymentSchedule.class, strKeyReferenceId);
+            if (paymentSchedule.getOrder() != null) {
+              // Order Payment Schedule
+              strTableReferenceId = "70E57DEA195843729FF303C9A71EBCA3";
+              if (strWindowId.equals("E547CE89D4C04429B6340FFA44E70716")) {
+                // Payment In window -> Sales Order
+                strWindowId = "143";
+              } else if (strWindowId.equals("6F8F913FA60F4CBD93DC1D3AA696E76E")) {
+                // Payment Out window -> Purchase Order
+                strWindowId = "181";
+              }
+            } else if (paymentSchedule.getInvoice() != null) {
+              // Invoice Payment Schedule
+              if (strWindowId.equals("E547CE89D4C04429B6340FFA44E70716")) {
+                // Payment In window -> Sales Invoice
+                strWindowId = "167";
+              } else if (strWindowId.equals("6F8F913FA60F4CBD93DC1D3AA696E76E")) {
+                // Payment Out window -> Purchase Invoice
+                strWindowId = "183";
+              }
             }
           }
         } finally {
