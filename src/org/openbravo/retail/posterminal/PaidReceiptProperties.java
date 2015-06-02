@@ -41,12 +41,8 @@ public class PaidReceiptProperties extends ModelExtension {
         add(new HQLProperty("ord.documentType.name", "documentType"));
         add(new HQLProperty("ord.warehouse.id", "warehouse"));
         add(new HQLProperty("ord.currency.iSOCode", "currency$_identifier"));
-        add(new HQLProperty(
-            "coalesce((select obposApplications.id from Order o1 where o1.id = ord.id), null)",
-            "posTerminal"));
-        add(new HQLProperty(
-            "coalesce((select obposApplications.name from Order o2 where o2.id = ord.id), null)",
-            "posTerminal$_identifier"));
+        add(new HQLProperty("pos.id", "posTerminal"));
+        add(new HQLProperty("pos.name", "posTerminal$_identifier"));
         add(new HQLProperty("ord.businessPartner.name", "businessPartner$_identifier"));
         add(new HQLProperty("ord.currency.id", "currency"));
         add(new HQLProperty("ord.priceList.id", "priceList"));
