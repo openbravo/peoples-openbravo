@@ -27,9 +27,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Any;
@@ -39,11 +42,14 @@ import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
+import org.hibernate.ScrollMode;
+import org.hibernate.ScrollableResults;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.model.ad.access.Role;
 
 /**
  * This class is the main manager for performing multi-threaded and parallel import of data from the
@@ -56,6 +62,10 @@ import org.openbravo.dal.service.OBQuery;
 public class ImportEntryManager {
 
   /*
+   * For an overview of the technical layer, first view this presentation:
+   * http://wiki.openbravo.com/
+   * wiki/Projects:Retail_Operations_Buffer#Presentation_on_Technical_Structure (note: hyperlink
+   * maybe cut by line-break)
    * 
    * {@link ImportEntry} records are created by for example data synchronization processes. For
    * creating a new {@link ImportEntry} preferably the {@link #createImportEntry(String, String,
@@ -125,7 +135,7 @@ public class ImportEntryManager {
   private ImportEntryArchiveManager importEntryArchiveManager;
 
   private ImportEntryManagerThread managerThread;
-  private ExecutorService executorService;
+  private ThreadPoolExecutor executorService;
 
   private Map<String, ImportEntryProcessor> importEntryProcessors = new HashMap<String, ImportEntryProcessor>();
 
@@ -137,8 +147,26 @@ public class ImportEntryManager {
   private long initialWaitTime = 10000;
   private long managerWaitTime = 60000;
 
+  // default to number of processors plus some additionals for the main threads
+  private int numberOfThreads = Runtime.getRuntime().availableProcessors() + 3;
+
+  // defines the batch size of reading and processing import entries by the
+  // main thread, for each type of data the batch size is being read
+  private int importBatchSize = 5000;
+
+  // task queue limit in the executorservice, sufficiently large
+  // to allow large sets of tasks but small enough to limit an implementing
+  // subclass of ImportEntryProcessor going wild
+  private int maxTaskQueueSize = 1000;
+
   public ImportEntryManager() {
     instance = this;
+    importBatchSize = ImportProcessUtils.getCheckIntProperty(log, "import.batch.size",
+        importBatchSize, 1000);
+    numberOfThreads = ImportProcessUtils.getCheckIntProperty(log, "import.number.of.threads",
+        numberOfThreads, 4);
+    maxTaskQueueSize = ImportProcessUtils.getCheckIntProperty(log, "import.max.task.queue.size",
+        maxTaskQueueSize, 1000);
   }
 
   public synchronized void start() {
@@ -147,16 +175,37 @@ public class ImportEntryManager {
     }
     threadsStarted = true;
     log.debug("Starting Import Entry Framework");
-    executorService = Executors.newSingleThreadExecutor(new DaemonThreadFactory());
 
-    // passing ourselves as we have the Weld injected code
+    // same as fixed threadpool, will only stop accepting new tasks (throw an exception)
+    // if there are maxTaskQueueSize in the queue, see the catch exception in submitRunnable.
+    // http://www.nurkiewicz.com/2014/11/executorservice-10-tips-and-tricks.html
+    final BlockingQueue<Runnable> queue = new ArrayBlockingQueue<Runnable>(maxTaskQueueSize);
+    executorService = new ThreadPoolExecutor(numberOfThreads, numberOfThreads, 0L,
+        TimeUnit.MILLISECONDS, queue, new DaemonThreadFactory());
+
+    // create, start the manager thread
     managerThread = new ImportEntryManagerThread(this);
-    executorService.execute(managerThread);
+    executorService.submit(managerThread);
     importEntryArchiveManager.start();
   }
 
   /**
-   * Shutdown all the threads being by the import framework
+   * Is called by the {@link ImportEntryProcessor} objects to submit a
+   * {@link ImportEntryProcessor.ImportEntryProcessRunnable}. for execution.
+   */
+  public void submitRunnable(Runnable runnable) {
+    try {
+      executorService.submit(runnable);
+    } catch (Exception e) {
+      // except for logging we can ignore the exception
+      // as the import entry will be offered again for reprocessing later anyway
+      log.warn("Exception while trying to add runnable " + runnable
+          + " to the list of tasks to run", e);
+    }
+  }
+
+  /**
+   * Shutdown all the threads being used by the import framework
    */
   public void shutdown() {
     log.debug("Shutting down Import Entry Framework");
@@ -173,27 +222,41 @@ public class ImportEntryManager {
    * {@link ImportEntryPreProcessor} instances.
    * 
    * Note will commit the session/connection using {@link OBDal#commitAndClose()}
-   * 
-   * @param json
    */
   public void createImportEntry(String id, String typeOfData, String json) {
     OBDal.getInstance().flush();
     OBContext.setAdminMode(false);
     try {
-      // check if it is not there already
-      final Query qry = SessionHandler.getInstance().getSession()
-          .createQuery("select id from " + ImportEntry.ENTITY_NAME + " where id=:id");
-      qry.setParameter("id", id);
-      if (!qry.list().isEmpty()) {
-        // already exists, ignore
-        return;
+      // check if it is not there already or already archived
+      {
+        final Query qry = SessionHandler.getInstance().getSession()
+            .createQuery("select count(*) from " + ImportEntry.ENTITY_NAME + " where id=:id");
+        qry.setParameter("id", id);
+        if (((Number) qry.uniqueResult()).intValue() > 0) {
+          log.debug("Entry already exists, ignoring it, id/typeofdata " + id + "/" + typeOfData
+              + " json " + json);
+          return;
+        }
+      }
+      {
+        final Query qry = SessionHandler
+            .getInstance()
+            .getSession()
+            .createQuery("select count(*) from " + ImportEntryArchive.ENTITY_NAME + " where id=:id");
+        qry.setParameter("id", id);
+        if (((Number) qry.uniqueResult()).intValue() > 0) {
+          log.debug("Entry already archived, ignoring it, id/typeofdata " + id + "/" + typeOfData
+              + " json " + json);
+          return;
+        }
       }
 
       ImportEntry importEntry = OBProvider.getInstance().get(ImportEntry.class);
       importEntry.setId(id);
+      importEntry.setRole(OBDal.getInstance().get(Role.class,
+          OBContext.getOBContext().getRole().getId()));
       importEntry.setNewOBObject(true);
       importEntry.setImportStatus("Initial");
-      importEntry.setStored(new Date());
       importEntry.setImported(null);
       importEntry.setTypeofdata(typeOfData);
       importEntry.setJsonInfo(json);
@@ -258,7 +321,10 @@ public class ImportEntryManager {
         entryProcessor.handleImportEntry(importEntry);
       }
     } catch (Throwable t) {
-      handleImportError(importEntry, t);
+      log.error(
+          "Error while saving import message " + importEntry + " " + importEntry.getJsonInfo()
+              + "  message: " + t.getMessage(), t);
+      setImportEntryErrorIndependent(importEntry.getId(), t);
     }
   }
 
@@ -316,6 +382,7 @@ public class ImportEntryManager {
    */
   public void setImportEntryErrorIndependent(String importEntryId, Throwable t) {
     OBDal.getInstance().rollbackAndClose();
+    final OBContext prevOBContext = OBContext.getOBContext();
     OBContext.setOBContext("0", "0", "0", "0");
     try {
       OBContext.setAdminMode();
@@ -328,7 +395,7 @@ public class ImportEntryManager {
       }
     } finally {
       OBContext.restorePreviousMode();
-      OBContext.setOBContext((OBContext) null);
+      OBContext.setOBContext(prevOBContext);
     }
   }
 
@@ -370,6 +437,8 @@ public class ImportEntryManager {
     @Override
     public void run() {
 
+      Thread.currentThread().setName("Import Entry Manager Main");
+
       // don't start right away at startup, give the system time to
       // really start
       log.debug("Started, first sleep " + manager.initialWaitTime);
@@ -379,47 +448,91 @@ public class ImportEntryManager {
       }
       log.debug("Run loop started");
 
-      // make ourselves an admin
-      OBContext.setOBContext("0", "0", "0", "0");
       while (true) {
+        // obcontext cleared or wrong obcontext, repair
+        if (OBContext.getOBContext() == null
+            || !"0".equals(OBContext.getOBContext().getUser().getId())) {
+          // make ourselves an admin
+          OBContext.setOBContext("0", "0", "0", "0");
+        }
         try {
-          boolean dataPresent = false;
+
+          // too busy, don't process, but wait
+          if (manager.executorService.getQueue().size() > (manager.maxTaskQueueSize - 1)) {
+            doWait();
+            // woken, re-start from beginning of loop
+            continue;
+          }
+
+          List<String> typesOfData = null;
+          if (typesOfData == null) {
+            typesOfData = ImportProcessUtils.getOrderedTypesOfData();
+          }
+
+          int entryCount = 0;
           try {
-            OBQuery<ImportEntry> entriesQry = OBDal.getInstance().createQuery(
-                ImportEntry.class,
-                ImportEntry.PROPERTY_IMPORTSTATUS + "='Initial' order by "
-                    + ImportEntry.PROPERTY_STORED);
-            entriesQry.setFilterOnReadableClients(false);
-            entriesQry.setFilterOnReadableOrganization(false);
 
-            // do a try catch block here
-            try {
-              // will be processing, so ignore any subsequent notifications
-              wasNotifiedInParallel = false;
+            // start processing, so ignore any notifications happening before
+            wasNotifiedInParallel = false;
 
-              final List<ImportEntry> entries = entriesQry.list();
-              dataPresent = !entries.isEmpty();
-              log.debug("Found " + entries.size() + " import entries");
-              for (ImportEntry importEntry : entries) {
-                manager.handleImportEntry(importEntry);
+            // read the types of data one by one in a specific order, so that they
+            // don't block eachother with the limited batch size
+            // being read
+            for (String typeOfData : typesOfData) {
+              OBQuery<ImportEntry> entriesQry = OBDal.getInstance().createQuery(
+                  ImportEntry.class,
+                  ImportEntry.PROPERTY_TYPEOFDATA + "='" + typeOfData + "' and "
+                      + ImportEntry.PROPERTY_IMPORTSTATUS + "='Initial' order by "
+                      + ImportEntry.PROPERTY_CREATIONDATE);
+              entriesQry.setFilterOnReadableClients(false);
+              entriesQry.setFilterOnReadableOrganization(false);
+              entriesQry.setMaxResult(manager.importBatchSize);
+
+              final ScrollableResults entries = entriesQry.scroll(ScrollMode.FORWARD_ONLY);
+              while (entries.next()) {
+                entryCount++;
+                final ImportEntry importEntry = (ImportEntry) entries.get()[0];
+                try {
+                  manager.handleImportEntry(importEntry);
+                } catch (Throwable t) {
+                  // ImportEntryProcessors are custom implementations which can cause
+                  // errors, so always catch them to prevent other import entries
+                  // from not getting processed
+                  manager.setImportEntryError(importEntry.getId(), t);
+                  OBDal.getInstance().flush();
+                }
+                // get rid of it to keep the session small
+                OBDal.getInstance().getSession().evict(importEntry);
               }
-            } catch (Throwable t) {
-              ImportProcessUtils.logError(log, t);
             }
+
+          } catch (Throwable t) {
+            ImportProcessUtils.logError(log, t);
           } finally {
             OBDal.getInstance().commitAndClose();
           }
 
-          // now wait for new ones to arrive or check after a certain
-          // amount of time
-          if (!dataPresent) {
+          if (entryCount > 0) {
+            // if there was data then just wait some time
+            // give the threads time to process it all before trying
+            // a next batch of entries
+            try {
+              // wait one second per 50 records, somewhat arbitrary
+              // but high enough for most cases
+              Thread.sleep(1000 * (entryCount / 50));
+            } catch (Exception ignored) {
+            }
+          } else {
+            // else wait for new ones to arrive or check after a certain
+            // amount of time
             doWait();
           }
 
         } catch (Throwable t) {
           ImportProcessUtils.logError(log, t);
 
-          // wait otherwise the loop goes wild
+          // wait otherwise the loop goes wild in case of really severe
+          // system errors like full disk
           try {
             Thread.sleep(5 * manager.managerWaitTime);
           } catch (Exception ignored) {
@@ -472,8 +585,6 @@ public class ImportEntryManager {
 
     public synchronized void log() {
       log.info("Timings for " + typeOfData + " cnt: " + cnt + " avg millis: " + (totalTime / cnt));
-      System.err.println("Timings for " + typeOfData + " cnt: " + cnt + " avg millis: "
-          + (totalTime / cnt));
     }
   }
 
@@ -481,11 +592,27 @@ public class ImportEntryManager {
    * Creates threads which have deamon set to true.
    */
   public static class DaemonThreadFactory implements ThreadFactory {
+    private AtomicInteger threadNumber = new AtomicInteger(0);
+    private final ThreadGroup group;
+
+    public DaemonThreadFactory() {
+      SecurityManager s = System.getSecurityManager();
+      group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
+    }
+
     @Override
     public Thread newThread(Runnable runnable) {
-      Thread thread = Executors.defaultThreadFactory().newThread(runnable);
+
+      final Thread thread = new Thread(group, runnable, "Import Entry - "
+          + threadNumber.getAndIncrement(), 0);
+
+      if (thread.getPriority() != Thread.NORM_PRIORITY) {
+        thread.setPriority(Thread.NORM_PRIORITY);
+      }
+
       thread.setDaemon(true);
       return thread;
     }
+
   }
 }

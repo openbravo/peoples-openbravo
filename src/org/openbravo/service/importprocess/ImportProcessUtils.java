@@ -21,12 +21,19 @@ package org.openbravo.service.importprocess;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.sql.BatchUpdateException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.domain.Reference;
 
 /**
  * Utility methods used in the import process.
@@ -34,6 +41,61 @@ import org.openbravo.base.exception.OBException;
  * @author mtaal
  */
 public class ImportProcessUtils {
+
+  public static List<String> getOrderedTypesOfData() {
+    final Reference reference = OBDal.getInstance().get(Reference.class,
+        "11F86B630ECB4A57B28927193F8AB99D");
+
+    List<org.openbravo.model.ad.domain.List> refList = new ArrayList<org.openbravo.model.ad.domain.List>(
+        reference.getADListList());
+    Collections.sort(refList, new Comparator<org.openbravo.model.ad.domain.List>() {
+
+      @Override
+      public int compare(org.openbravo.model.ad.domain.List o1,
+          org.openbravo.model.ad.domain.List o2) {
+        Long l1 = o1.getSequenceNumber();
+        Long l2 = o2.getSequenceNumber();
+        if (l1 == null) {
+          l1 = new Long(50);
+        }
+        if (l2 == null) {
+          l2 = new Long(50);
+        }
+        return l1.compareTo(l2);
+      }
+    });
+
+    final List<String> typesOfData = new ArrayList<String>();
+    for (org.openbravo.model.ad.domain.List ref : refList) {
+      typesOfData.add(ref.getSearchKey());
+    }
+
+    return typesOfData;
+  }
+
+  // get a property but prevent someone from putting a crazy value in properties
+  public static int getCheckIntProperty(Logger log, String property, int defaultValue, int minValue) {
+    final int value = ImportProcessUtils.getIntOpenbravoProperty(property, defaultValue);
+    if (value < minValue) {
+      log.warn("Value of property " + property + " is set too low (" + value
+          + "), using valid minValue instead " + minValue);
+      return minValue;
+    }
+    return value;
+  }
+
+  public static int getIntOpenbravoProperty(String propName, int defaultValue) {
+    final String val = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+        .getProperty(propName);
+    if (val == null) {
+      return defaultValue;
+    }
+    try {
+      return Integer.parseInt(val);
+    } catch (NumberFormatException ignore) {
+      return defaultValue;
+    }
+  }
 
   public static void logError(Logger log, Throwable t) {
     Throwable toReport = t;

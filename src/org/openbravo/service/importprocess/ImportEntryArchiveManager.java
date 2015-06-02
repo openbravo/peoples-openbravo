@@ -99,6 +99,8 @@ public class ImportEntryArchiveManager {
     @Override
     public void run() {
 
+      Thread.currentThread().setName("Import Entry Archiver");
+
       // don't start right away at startup, give the system time to
       // really start
       log.debug("Started, first sleep " + ARCHIVE_INTERVAL);
@@ -110,7 +112,7 @@ public class ImportEntryArchiveManager {
 
       // make ourselves an admin
       OBContext.setOBContext("0", "0", "0", "0");
-      Date lastStored = null;
+      Date lastCreated = null;
       while (true) {
         try {
           boolean dataProcessed = false;
@@ -119,17 +121,17 @@ public class ImportEntryArchiveManager {
             // processing next records if there is one failing or giving issues, so the failing
             // is skipped in the next cycle
             String additionalClause = "";
-            if (lastStored != null) {
-              additionalClause = " AND " + ImportEntry.PROPERTY_STORED + ">:stored";
+            if (lastCreated != null) {
+              additionalClause = " AND " + ImportEntry.PROPERTY_CREATIONDATE + ">:created";
             }
             OBQuery<ImportEntry> entriesQry = OBDal.getInstance().createQuery(
                 ImportEntry.class,
                 ImportEntry.PROPERTY_IMPORTSTATUS + "='Processed' " + additionalClause
-                    + " order by " + ImportEntry.PROPERTY_STORED);
+                    + " order by " + ImportEntry.PROPERTY_CREATIONDATE);
             entriesQry.setFilterOnReadableClients(false);
             entriesQry.setFilterOnReadableOrganization(false);
-            if (lastStored != null) {
-              entriesQry.setNamedParameter("stored", lastStored);
+            if (lastCreated != null) {
+              entriesQry.setNamedParameter("created", lastCreated);
             }
             entriesQry.setMaxResult(1000);
 
@@ -140,7 +142,7 @@ public class ImportEntryArchiveManager {
             log.debug("Found " + entries.size() + " import entries");
             for (ImportEntry importEntry : entries) {
               dataProcessed = true;
-              lastStored = importEntry.getStored();
+              lastCreated = importEntry.getCreationDate();
 
               ImportEntryArchive archiveEntry = createArchiveEntry(importEntry);
 
@@ -166,7 +168,7 @@ public class ImportEntryArchiveManager {
           // nothing to do in last cycle wait one hour
           if (!dataProcessed) {
             log.debug("waiting");
-            lastStored = null;
+            lastCreated = null;
             try {
               Thread.sleep(ARCHIVE_INTERVAL);
             } catch (Exception ignored) {
