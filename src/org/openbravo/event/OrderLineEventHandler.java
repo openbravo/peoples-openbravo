@@ -21,12 +21,12 @@ package org.openbravo.event;
 import javax.enterprise.event.Observes;
 
 import org.apache.log4j.Logger;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.Query;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.client.kernel.event.EntityDeleteEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
-import org.openbravo.dal.service.OBCriteria;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.order.OrderLine;
 
@@ -36,25 +36,34 @@ public class OrderLineEventHandler extends EntityPersistenceEventObserver {
 
   @Override
   protected Entity[] getObservedEntities() {
-    // TODO Auto-generated method stub
     return entities;
   }
 
-  public void onDelete(@Observes EntityDeleteEvent event) {
+  public void onDelete(@Observes
+  EntityDeleteEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
-    // Get cuStrrent orderline
-    OrderLine orderLine = (OrderLine) event.getTargetInstance();
-    OBCriteria<OrderLine> orderLineCriteria = OBDal.getInstance().createCriteria(OrderLine.class);
-    // Get all orderlines which have ref_orderline_id as the current orderline
-    orderLineCriteria.add(Restrictions.eq(OrderLine.PROPERTY_SOPOREFERENCE, orderLine));
-    if (orderLineCriteria.count() > 0) {
-      for (OrderLine orderlines : orderLineCriteria.list()) {
-        // Set ref_orderline_id = null for all such orderlines in the above criteria
-        orderlines.setSOPOReference(null);
-        OBDal.getInstance().save(orderlines);
-      }
+
+    removeSoPoReference(event);
+  }
+
+  private void removeSoPoReference(EntityDeleteEvent event) {
+    try {
+      OBContext.setAdminMode(true);
+      final OrderLine thisLine = (OrderLine) event.getTargetInstance();
+      final StringBuffer hql = new StringBuffer();
+      hql.append(" update from OrderLine ol ");
+      hql.append(" set ol.sOPOReference.id = null ");
+      hql.append(" where ol.sOPOReference.id = :thisLine ");
+      hql.append(" and ol.client.id = :clientId ");
+
+      Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
+      query.setString("thisLine", thisLine.getId());
+      query.setString("clientId", thisLine.getClient().getId());
+      query.executeUpdate();
+    } finally {
+      OBContext.restorePreviousMode();
     }
   }
 }
