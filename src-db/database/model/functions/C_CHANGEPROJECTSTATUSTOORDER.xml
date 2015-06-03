@@ -119,7 +119,7 @@
           ELSIF Cur_SO.SALESREP_ID IS NULL THEN
             RAISE_APPLICATION_ERROR(-20000, '@ProjectSalesRepNotFound@');
           ELSIF Cur_SO.M_PRICELIST_ID IS NULL AND Cur_SO.PROJECTCATEGORY='S' THEN
-              RAISE_APPLICATION_ERROR(-20000, '@ThebusinessPartner@'||' '||' @PricelistNotdefined@');
+            RAISE_APPLICATION_ERROR(-20000, '@NoDefaultPriceList@');
           END IF;
           /*Added in order to work with Multiphase Project*/
           IF (Cur_SO.PROJECTCATEGORY is null OR Cur_SO.PROJECTCATEGORY<>'S') THEN
