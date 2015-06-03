@@ -59,7 +59,8 @@ public class DefaultsAttachmentActionHandler extends BaseActionHandler {
       final String strAction = (String) parameters.get("action");
       final Tab tab = OBDal.getInstance().get(Tab.class, strTabId);
       final Attachment attachment = OBDal.getInstance().get(Attachment.class, strAttachmentId);
-      AttachmentMethod attMethod = OBDal.getInstance().get(AttachmentMethod.class, strAttMethodID);
+      final AttachmentMethod attMethod = OBDal.getInstance().get(AttachmentMethod.class,
+          strAttMethodID);
 
       JSONObject context = new JSONObject();
       if (parameters.get("context") != null) {

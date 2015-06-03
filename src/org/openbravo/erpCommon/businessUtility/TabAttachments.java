@@ -127,7 +127,7 @@ public class TabAttachments extends HttpSecureAppServlet {
           if (param.isFixed()) {
             if (param.getPropertyPath() != null) {
               // not relevant value
-              value = "Property Path";
+              value = AttachmentUtils.getPropertyPathValue(param, strTab, key);
             } else if (param.isEvaluateFixedValue()) {
               value = ParameterUtils.getParameterFixedValue(fixedParameters, param).toString();
             } else {

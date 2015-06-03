@@ -29,7 +29,6 @@ import org.openbravo.model.ad.utility.Attachment;
  * Public class to allow extend the functionality
  */
 
-// @RequestScoped
 public abstract class AttachImplementation {
 
   /**
@@ -48,6 +47,8 @@ public abstract class AttachImplementation {
    *          The tabID where the file is attached
    * @param parameterValues
    *          List of metadata saved in database
+   * @throws OBException
+   *           Thrown when any error occurs during the upload
    */
   public abstract void uploadFile(Attachment attachment, String strDataType,
       Map<String, Object> parameters, File file, String strTab) throws OBException;
@@ -57,6 +58,9 @@ public abstract class AttachImplementation {
    * 
    * @param attachment
    *          The attachment that will be downloaded
+   * @return The file being to download
+   * @throws OBException
+   *           Thrown when any error occurs during the download
    */
   public abstract File downloadFile(Attachment attachment) throws OBException;
 
@@ -65,6 +69,8 @@ public abstract class AttachImplementation {
    * 
    * @param attachment
    *          The attachment that want to be removed
+   * @throws OBException
+   *           Thrown when any error occurs when deleting the file
    */
   public abstract void deleteFile(Attachment attachment) throws OBException;
 
@@ -79,6 +85,8 @@ public abstract class AttachImplementation {
    *          The metadata to be modified
    * @param parameterValues
    *          List of metadata saved in database
+   * @throws OBException
+   *           Thrown when any error occurs when updating the file
    */
   public abstract void updateFile(Attachment attachment, String strTab,
       Map<String, Object> parameters) throws OBException;
@@ -88,8 +96,7 @@ public abstract class AttachImplementation {
    * directory of Openbravo server when downloading a file. If it is true, the process will remove
    * the temporary file. If it s false, the process will not remove the file
    * 
-   * @return true if the attachment method creates a temporary file in Openbravo server. False if it
-   *         does not create a temporary file
+   * @return true if the attachment method creates a temporary file in Openbravo server.
    */
   public abstract boolean isTempFile();
 

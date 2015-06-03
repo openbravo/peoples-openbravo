@@ -84,7 +84,7 @@ public class AttachmentsAH extends BaseActionHandler {
           if (param.isFixed()) {
             if (param.getPropertyPath() != null) {
               // not relevant value
-              value = "Property Path";
+              value = AttachmentUtils.getPropertyPathValue(param, tabId, recordIds);
             } else if (param.isEvaluateFixedValue()) {
               value = ParameterUtils.getParameterFixedValue(fixedParameters, param).toString();
             } else {
@@ -96,7 +96,7 @@ public class AttachmentsAH extends BaseActionHandler {
           metadata.put(param.getId(), value);
         }
 
-        aim.update(attachmentId, tabId, recordIds, metadata);
+        aim.update(attachmentId, tabId, metadata);
 
         JSONObject obj = getAttachmentJSONObject(tab, recordIds);
         obj.put("buttonId", params.getString("buttonId"));

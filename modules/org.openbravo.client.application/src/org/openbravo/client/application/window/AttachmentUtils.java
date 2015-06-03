@@ -1,3 +1,22 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SLU
+ * All portions are Copyright (C) 2015 Openbravo SLU
+ * All Rights Reserved.
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+ */
+
 package org.openbravo.client.application.window;
 
 import java.util.ArrayList;
@@ -6,7 +25,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.client.application.Parameter;
@@ -28,6 +49,13 @@ public class AttachmentUtils {
   public static final String DEFAULT_METHOD = "Default";
   public static final String DEFAULT_METHOD_ID = "D7B1319FC2B340799283BBF8E838DF9F";
 
+  /**
+   * Gets the Attachment Configuration associated to the active client
+   * 
+   * @param client
+   *          Client using openbravo
+   * @return Activated Attachment Configuration for this client
+   */
   public static AttachmentConfig getAttachmentConfig(Client client) {
     String strAttachmentConfigId = clientConfigs.get(DalUtil.getId(client));
     if (strAttachmentConfigId == null) {
@@ -48,11 +76,21 @@ public class AttachmentUtils {
     return OBDal.getInstance().get(AttachmentConfig.class, strAttachmentConfigId);
   }
 
+  /**
+   * Gets the Attachment Configuration associated to the context client
+   * 
+   * @return Activated Attachment Configuration for this context
+   */
   public static AttachmentConfig getAttachmentConfig() {
     Client client = OBContext.getOBContext().getCurrentClient();
     return getAttachmentConfig(client);
   }
 
+  /**
+   * Gets the default Attachment Method
+   * 
+   * @return Default Attachment Method
+   */
   public static AttachmentMethod getDefaultAttachmentMethod() {
     AttachmentMethod attMethod = OBDal.getInstance().get(AttachmentMethod.class, DEFAULT_METHOD_ID);
     if (attMethod != null) {
@@ -62,6 +100,15 @@ public class AttachmentUtils {
     }
   }
 
+  /**
+   * Gets the list of parameters associated to an Attachment Method ad a Tab
+   * 
+   * @param attachMethod
+   *          active attachment method
+   * @param tab
+   *          tab to take metadata
+   * @return List of parameters by attachment method and tab
+   */
   public static List<Parameter> getMethodMetadataParameters(AttachmentMethod attachMethod, Tab tab) {
     StringBuilder where = new StringBuilder();
     where.append(Parameter.PROPERTY_ATTACHMENTMETHOD + "= :attMethod");
@@ -74,6 +121,15 @@ public class AttachmentUtils {
     return qryParams.list();
   }
 
+  /**
+   * Get JSONObject list with data of the attachments in given tab and records
+   * 
+   * @param tab
+   *          tab to take attachments
+   * @param recordIds
+   *          list of record IDs where taken attachments
+   * @return List of JSONOject with attachments information values
+   */
   public static List<JSONObject> getTabAttachmentsForRows(Tab tab, String[] recordIds) {
     String tableId = (String) DalUtil.getId(tab.getTable());
     OBCriteria<Attachment> attachmentFiles = OBDao.getFilteredCriteria(Attachment.class,
@@ -98,12 +154,39 @@ public class AttachmentUtils {
               .getAttachmentMethod());
         }
         attachmentobj.put("attmethod", attachmentMethod);
-      } catch (Exception e) {
-        throw new OBException("Error while reading attachments:", e);
+      } catch (JSONException ignore) {
       }
       attachments.add(attachmentobj);
     }
     return attachments;
+  }
+
+  /**
+   * Get the String value of a parameter with a property path
+   * 
+   * @param parameter
+   *          parameter in which is defined the property path
+   * @param tabId
+   *          table which stores the record with the desired value
+   * @param recordId
+   *          record which has the column with the value to search
+   * @return the String value of the column indicated in the property path
+   * @throws OBException
+   *           generated if there is distinct than one record to search
+   */
+  public static String getPropertyPathValue(Parameter parameter, String tabId, String recordId)
+      throws OBException {
+    Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+    final String hql = "SELECT a." + parameter.getPropertyPath() + " FROM "
+        + tab.getTable().getName() + " AS a WHERE a.id=:recordId";
+    final Query query = OBDal.getInstance().getSession().createQuery(hql);
+    query.setString("recordId", recordId);
+    query.setMaxResults(1);
+    try {
+      return (String) query.uniqueResult();
+    } catch (Exception e) {
+      throw new OBException(OBMessageUtils.messageBD("OBUIAPP_PropPathNotOneRecord"));
+    }
   }
 
 }

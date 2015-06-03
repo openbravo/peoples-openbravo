@@ -160,10 +160,12 @@ public class ParameterUtils {
    * @param context
    *          the JSONObject with the context information of the request.
    * @return the DefaultValue of the Parameter.
+   * @throws ScriptException
+   *           Error occurred executing the script to calculate the defaultValue of the parameter
+   * @throws JSONException
    */
   public static Object getParameterDefaultValue(Map<String, String> parameters,
-      Parameter parameter, HttpSession session, JSONObject context) throws ScriptException,
-      JSONException {
+      Parameter parameter, HttpSession session, JSONObject context) throws ScriptException {
     Reference reference = parameter.getReferenceSearchKey();
     if (reference == null) {
       reference = parameter.getReference();
@@ -179,7 +181,11 @@ public class ParameterUtils {
       String inpName = "inp"
           + Sqlc
               .TransformaNombreColumna(rawDefaultValue.substring(1, rawDefaultValue.length() - 1));
-      defaultValue = context.get(inpName);
+      try {
+        defaultValue = context.get(inpName);
+      } catch (JSONException e) {
+        log.error("The value \"" + inpName + "\" does not exist in context", e);
+      }
     } else {
       defaultValue = getJSExpressionResult(parameters, session, rawDefaultValue);
     }
@@ -195,14 +201,15 @@ public class ParameterUtils {
       if (record != null) {
         String identifier = record.getIdentifier();
         JSONObject def = new JSONObject();
-        def.put("value", defaultValue);
-        def.put("identifier", identifier);
+        try {
+          def.put("value", defaultValue);
+          def.put("identifier", identifier);
+        } catch (JSONException ignore) {
+        }
         return def;
       }
-    } else {
-      if (domainType instanceof BooleanDomainType) {
-        defaultValue = ((BooleanDomainType) domainType).createFromString((String) defaultValue);
-      }
+    } else if (defaultValue != null && domainType instanceof BooleanDomainType) {
+      defaultValue = ((BooleanDomainType) domainType).createFromString((String) defaultValue);
     }
     return defaultValue;
   }
@@ -216,7 +223,8 @@ public class ParameterUtils {
    *          optional HttpSession object.
    * @param expression
    *          String with the JavaScript expression to be evaluated.
-   * @return an Object with the result of the expression evaluation.
+   * @return an Object with the result of the expression evaluation. Error occurred in the script
+   *         execution
    * @throws ScriptException
    */
   @SuppressWarnings("rawtypes")
@@ -239,7 +247,13 @@ public class ParameterUtils {
     return result;
   }
 
-  // Returns true if the value of the parameter default value matches "@*@"
+  /**
+   * Returns if a default value is a session value.
+   * 
+   * @param rawDefaultValue
+   *          value to check if is session value.
+   * @return Returns true if the value of the parameter default value matches "@*@"
+   */
   private static boolean isSessionDefaultValue(String rawDefaultValue) {
     if ("@".equals(rawDefaultValue.substring(0, 1))
         && "@".equals(rawDefaultValue.substring(rawDefaultValue.length() - 1))

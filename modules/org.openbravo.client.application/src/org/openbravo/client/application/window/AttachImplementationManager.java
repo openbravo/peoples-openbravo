@@ -32,18 +32,13 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
-import org.apache.log4j.Logger;
-import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
-import org.hibernate.ScrollMode;
-import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.OrganizationEnabled;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.ParameterUtils;
@@ -55,11 +50,10 @@ import org.openbravo.dal.security.SecurityChecker;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.domain.List;
-import org.openbravo.model.ad.domain.ReferencedTable;
+import org.openbravo.model.ad.domain.Selector;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.Attachment;
@@ -67,13 +61,15 @@ import org.openbravo.model.ad.utility.AttachmentConfig;
 import org.openbravo.model.ad.utility.AttachmentMethod;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.utils.FileUtility;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AttachImplementationManager {
 
-  private Logger log = Logger.getLogger(AttachImplementationManager.class);
+  final static private Logger log = LoggerFactory.getLogger(AttachImplementationManager.class);
 
   public static final String REFERENCE_LIST = "17";
-  public static final String REFERENCE_TABLE = "18";
+  public static final String REFERENCE_SELECTOR_REFERENCE = "95E2A8B50A254B2AAE6774B8C2F28120";
 
   @Inject
   @Any
@@ -96,6 +92,8 @@ public class AttachImplementationManager {
    *          more metadata that will be saved in the attachment
    * @param file
    *          The file to be uploaded
+   * @throws OBException
+   *           any exception thrown during the attachment uploading
    */
   public void upload(String strTab, String strKey, String strDataType,
       String strDocumentOrganization, Map<String, String> parameters, File file) throws OBException {
@@ -119,11 +117,10 @@ public class AttachImplementationManager {
     Attachment attachment = null;
     boolean attachmentExists = true;
     try {
-      OBContext.setAdminMode();
+      OBContext.setAdminMode(true);
       attachment = getAttachment(tab.getTable(), strKey, strName);
       if (attachment == null) {
         attachment = OBProvider.getInstance().get(Attachment.class);
-        attachment.setClient(OBContext.getOBContext().getCurrentClient());
         attachment.setSequenceNumber(getSequenceNumber(tab.getTable(), strKey));
         attachment.setName(strName);
         attachment.setTable(tab.getTable());
@@ -143,11 +140,9 @@ public class AttachImplementationManager {
         throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoMethod"));
       }
       saveAttachText(attachment, parameters);
-      Map<String, Object> typifiedParameters = saveMetadata(attachment, parameters, strTab, strKey,
+      Map<String, Object> typifiedParameters = saveMetadata(attachment, parameters, strTab,
           attachmentExists);
       handler.uploadFile(attachment, strDataType, typifiedParameters, file, strTab);
-
-      OBDal.getInstance().flush();
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -159,20 +154,25 @@ public class AttachImplementationManager {
    * 
    * @param attachment
    *          the attachment that will be removed
+   * @throws OBException
+   *           any exception thrown when deleting an attachment
    */
   public void delete(Attachment attachment) throws OBException {
-    checkReadableAccess(attachment);
-    AttachImplementation handler = getHandler(attachment.getAttachmentConf().getAttachmentMethod() == null ? "Default"
-        : attachment.getAttachmentConf().getAttachmentMethod().getValue());
-    if (handler == null) {
-      throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoMethod"));
+    try {
+      OBContext.setAdminMode(true);
+      checkReadableAccess(attachment);
+      AttachImplementation handler = getHandler(attachment.getAttachmentConf()
+          .getAttachmentMethod() == null ? "Default" : attachment.getAttachmentConf()
+          .getAttachmentMethod().getValue());
+      if (handler == null) {
+        throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoMethod"));
+      }
+      handler.deleteFile(attachment);
+      OBDal.getInstance().remove(attachment);
+      OBDal.getInstance().flush();
+    } finally {
+      OBContext.restorePreviousMode();
     }
-    handler.deleteFile(attachment);
-    for (ParameterValue currentParameterValue : attachment.getOBUIAPPParameterValueFileList()) {
-      OBDal.getInstance().remove(currentParameterValue);
-    }
-    OBDal.getInstance().remove(attachment);
-    OBDal.getInstance().flush();
   }
 
   /**
@@ -186,8 +186,10 @@ public class AttachImplementationManager {
    *          the new description to be updated
    * @param parameters
    *          more metadata to be updated
+   * @throws OBException
+   *           any exception thrown when updating the document
    */
-  public void update(String attachID, String tabId, String recordId, Map<String, String> parameters)
+  public void update(String attachID, String tabId, Map<String, String> parameters)
       throws OBException {
     try {
       OBContext.setAdminMode(true);
@@ -199,16 +201,14 @@ public class AttachImplementationManager {
 
       checkReadableAccess(attachment);
 
-      AttachImplementation handler = getHandler(attachment.getAttachmentConf()
-          .getAttachmentMethod() == null ? "Default" : attachment.getAttachmentConf()
-          .getAttachmentMethod().getValue());
+      AttachImplementation handler = getHandler(attachment.getAttachmentConf() == null ? "Default"
+          : attachment.getAttachmentConf().getAttachmentMethod().getValue());
 
       if (handler == null) {
         throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoMethod"));
       }
       saveAttachText(attachment, parameters);
-      Map<String, Object> typifiedParameters = saveMetadata(attachment, parameters, tabId,
-          recordId, true);
+      Map<String, Object> typifiedParameters = saveMetadata(attachment, parameters, tabId, true);
       handler.updateFile(attachment, tabId, typifiedParameters);
       OBDal.getInstance().save(attachment);
       OBDal.getInstance().flush();
@@ -224,10 +224,13 @@ public class AttachImplementationManager {
    *          the attachment Id that will be downloaded
    * @param os
    *          The output stream to dump the file
+   * @throws OBException
+   *           any exception thrown during the download
    */
   public void download(String attachmentId, OutputStream os) throws OBException {
-    OBContext.setAdminMode();
+
     try {
+      OBContext.setAdminMode(true);
       Attachment attachment = OBDal.getInstance().get(Attachment.class, attachmentId);
 
       if (attachment == null) {
@@ -236,9 +239,8 @@ public class AttachImplementationManager {
 
       checkReadableAccess(attachment);
 
-      AttachImplementation handler = getHandler(attachment.getAttachmentConf()
-          .getAttachmentMethod() == null ? "Default" : attachment.getAttachmentConf()
-          .getAttachmentMethod().getValue());
+      AttachImplementation handler = getHandler(attachment.getAttachmentConf() == null ? "Default"
+          : attachment.getAttachmentConf().getAttachmentMethod().getValue());
       if (handler == null) {
         throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoMethod"));
       }
@@ -270,16 +272,21 @@ public class AttachImplementationManager {
    * 
    * @param tabId
    *          The tab Id where the download process is being executed
+   * @param recordIds
+   *          All RecordIds from where are downloading the documents
+   * @param os
    * @param recordId
    *          All the attachment related to this recordID will be downloaded in a single .zip file
+   * @throws OBException
+   *           any exception thrown during the download of all documents
    */
 
   public void dowloadAll(String tabId, String recordIds, OutputStream os) throws OBException {
 
-    Tab tab = OBDal.getInstance().get(Tab.class, tabId);
-    String tableId = (String) DalUtil.getId(tab.getTable());
     try {
       OBContext.setAdminMode(true);
+      Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+      String tableId = (String) DalUtil.getId(tab.getTable());
       final ZipOutputStream dest = new ZipOutputStream(os);
       HashMap<String, Integer> writtenFiles = new HashMap<String, Integer>();
       OBCriteria<Attachment> attachmentFiles = OBDao.getFilteredCriteria(Attachment.class,
@@ -332,45 +339,10 @@ public class AttachImplementationManager {
 
     } catch (IOException e) {
       throw new OBException(OBMessageUtils.messageBD("OBUIAPP_ErrorWiththeFile"));
-    }
-
-    finally {
+    } finally {
       OBContext.restorePreviousMode();
     }
 
-  }
-
-  /**
-   * Method to obtain the metadata related to an attachmentMethod. The Values will be null
-   * 
-   * @param attachmentMethodId
-   *          The attachment Method ID to take metadata
-   * @param tabId
-   *          The Tab ID to take metadata
-   * @return Returns a map with the metadata that belongs to attachmentMethodId
-   */
-
-  public Map<String, Object> getMetadataList(String attachmentMethodId, String tabId) {
-    Map<String, Object> metadataList = new HashMap<String, Object>();
-    final OBQuery<Parameter> paramQuery = OBDal.getInstance().createQuery(Parameter.class,
-        "attachmentMethod.id=:attachmentMethodId and (tab is null or tab.id=:tabId)");
-    paramQuery.setNamedParameter("attachmentMethodId", attachmentMethodId);
-    paramQuery.setNamedParameter("tabId", tabId);
-    paramQuery.setFetchSize(1000);
-    final ScrollableResults paramScroller = paramQuery.scroll(ScrollMode.FORWARD_ONLY);
-    int i = 0;
-    while (paramScroller.next()) {
-      final Parameter metadata = (Parameter) paramScroller.get()[0];
-      metadataList.put(metadata.getDBColumnName(), null);
-      // clear the session every 100 records
-      if ((i % 100) == 0) {
-        OBDal.getInstance().getSession().clear();
-      }
-      i++;
-    }
-    paramScroller.close();
-
-    return metadataList;
   }
 
   public AttachmentConfig getAttachmenConfig(Client client) {
@@ -390,47 +362,6 @@ public class AttachImplementationManager {
     }
   }
 
-  public void getMetadataValues(Attachment attachment, JSONArray metadataArray) {
-    checkReadableAccess(attachment);
-
-    try {
-      OBCriteria<ParameterValue> attachmentMetadataCriteria = OBDal.getInstance().createCriteria(
-          ParameterValue.class);
-      attachmentMetadataCriteria.add(Restrictions.eq(ParameterValue.PROPERTY_FILE, attachment));
-      attachmentMetadataCriteria.setFetchSize(1000);
-      final ScrollableResults attacmenthMetadataScroller = attachmentMetadataCriteria
-          .scroll(ScrollMode.FORWARD_ONLY);
-      int i = 0;
-      while (attacmenthMetadataScroller.next()) {
-        final ParameterValue attachmentMetadata = (ParameterValue) attacmenthMetadataScroller.get()[0];
-        for (int j = 0; j < metadataArray.length(); j++) {
-          if (metadataArray.getJSONObject(j).get("SearchKey")
-              .equals(attachmentMetadata.getParameter().getDBColumnName())) {
-            if (attachmentMetadata.getValueString() != null) {
-              metadataArray.getJSONObject(j).put("value", attachmentMetadata.getValueString());
-            } else if (attachmentMetadata.getValueNumber() != null) {
-              metadataArray.getJSONObject(j).put("value",
-                  attachmentMetadata.getValueNumber().toString());
-            } else if (attachmentMetadata.getValueDate() != null) {
-              metadataArray.getJSONObject(j).put("value",
-                  attachmentMetadata.getValueDate().toString());
-            }
-          }
-        }
-        // clear the session every 100 records
-        if ((i % 100) == 0) {
-          OBDal.getInstance().getSession().clear();
-        }
-        i++;
-      }
-      attacmenthMetadataScroller.close();
-    } catch (JSONException e) {
-      log.error("AlfrescoAttachImplementation - getMetadataAndValues. Error with the json");
-      throw new OBException("JSONError", e);
-    }
-
-  }
-
   /**
    * It gets the sequence number for the attachment
    * 
@@ -438,7 +369,7 @@ public class AttachImplementationManager {
    *          the table of the attachment
    * @param recordId
    *          the recordId of the attachment
-   * @return
+   * @return returns the sequence number.
    */
   private Long getSequenceNumber(Table table, String recordId) {
     OBCriteria<Attachment> obc = OBDal.getInstance().createCriteria(Attachment.class);
@@ -456,7 +387,7 @@ public class AttachImplementationManager {
   }
 
   /**
-   * checks if the attachment already exists for given parameters.
+   * Gets the attachment for given parameters.
    * 
    * @param table
    *          the table where the attachment is done
@@ -481,9 +412,8 @@ public class AttachImplementationManager {
    * 
    * @param strAttachMethod
    *          attachmentMethod, that is the qualifier of the class.
-   * @return
+   * @return Class needed which extends from AttachImplementation
    */
-
   private AttachImplementation getHandler(String strAttachMethod) {
     AttachImplementation handler = null;
     for (AttachImplementation nextHandler : attachImplementationHandlers
@@ -491,14 +421,19 @@ public class AttachImplementationManager {
       if (handler == null) {
         handler = nextHandler;
       } else {
-        throw new OBException(OBMessageUtils.parseTranslation("@MoreThanOneImplementation@"));
+        throw new OBException(OBMessageUtils.messageBD("MoreThanOneImplementation"));
       }
     }
     return handler;
   }
 
+  /**
+   * Checks if the user has readable access to the record where the file is attached
+   * 
+   * @param attachment
+   *          attachment to check access.
+   */
   private void checkReadableAccess(Attachment attachment) {
-    // Checks if the user has readable access to the record where the file is attached
     Entity entity = ModelProvider.getInstance().getEntityByTableId(attachment.getTable().getId());
     if (entity != null) {
       Object object = OBDal.getInstance().get(entity.getMappingClass(), attachment.getRecord());
@@ -512,15 +447,19 @@ public class AttachImplementationManager {
    * Save metadata in C_File_Metadata records.
    * 
    * @param attachment
-   *          attachment is saving metadata to.
+   *          attachment for which is saving metadata.
    * @param metadata
    *          metadata values to save.
+   * @param recordId
+   *          RecordId where attachment is assigned to
    * @param exists
    *          true if the attachment already exists (if exists, metadata should exist too)
-   * @return
+   * @return Map of parameters with typified values
+   * @throws OBException
+   *           any exception thrown while saving metadata
    */
-  public Map<String, Object> saveMetadata(Attachment attachment, Map<String, String> metadata,
-      String tabId, String recordId, boolean exists) throws OBException {
+  private Map<String, Object> saveMetadata(Attachment attachment, Map<String, String> metadata,
+      String recordId, boolean exists) throws OBException {
     try {
       Map<String, Object> typifiedMetadata = new HashMap<String, Object>();
       for (Map.Entry<String, String> entry : metadata.entrySet()) {
@@ -532,41 +471,22 @@ public class AttachImplementationManager {
           attachmentMetadataCriteria.add(Restrictions.eq(ParameterValue.PROPERTY_FILE, attachment));
           attachmentMetadataCriteria.add(Restrictions.eq(ParameterValue.PROPERTY_PARAMETER,
               parameter));
-          if (attachmentMetadataCriteria.list().isEmpty()) {
-            attachmentMetadata = OBProvider.getInstance().get(ParameterValue.class);
-          } else if (attachmentMetadataCriteria.list().size() == 1) {
-            attachmentMetadata = attachmentMetadataCriteria.list().get(0);
-          } else {
-            throw new OBException(OBMessageUtils.getI18NMessage("OBUIAPP_MoreThanOneParam", null));
+          attachmentMetadataCriteria.setMaxResults(1);
+          try {
+            attachmentMetadata = (ParameterValue) attachmentMetadataCriteria.uniqueResult();
+          } catch (Exception e) {
+            throw new OBException(OBMessageUtils.messageBD("OBUIAPP_MoreThanOneParam"));
           }
         } else {
           attachmentMetadata = OBProvider.getInstance().get(ParameterValue.class);
-        }
-
-        attachmentMetadata.setFile(attachment);
-        attachmentMetadata.setParameter(parameter);
-
-        String value = null;
-        if (parameter.getPropertyPath() != null) {
-          // if has a property path
-          Tab tab = OBDal.getInstance().get(Tab.class, tabId);
-          final String hql = "SELECT a." + parameter.getPropertyPath() + " FROM "
-              + tab.getTable().getName() + " AS a WHERE a.id=:recordId";
-          final Query query = OBDal.getInstance().getSession().createQuery(hql);
-          query.setString("recordId", recordId);
-          if (query.list().size() != 1) {
-            throw new OBException(OBMessageUtils.getI18NMessage("OBUIAPP_PropPathNotOneRecord",
-                null));
-          }
-          value = query.list().get(0).toString();
-        } else {
-          value = entry.getValue();
+          attachmentMetadata.setFile(attachment);
+          attachmentMetadata.setParameter(parameter);
         }
 
         if (parameter.getReference().getId().equals(REFERENCE_LIST)) {
           org.openbravo.model.ad.domain.Reference reference = parameter.getReferenceSearchKey();
           for (List currentList : reference.getADListList()) {
-            if (currentList.getName().equals(value)) {
+            if (currentList.getName().equals(entry.getValue())) {
               attachmentMetadata.setValueKey(currentList.getId());
               attachmentMetadata.setValueString(currentList.getName());
               JSONObject jsonValue = new JSONObject();
@@ -576,21 +496,20 @@ public class AttachImplementationManager {
               break;
             }
           }
-        } else if (parameter.getReference().getId().equals(REFERENCE_TABLE)) {
-          org.openbravo.model.ad.domain.Reference reference = parameter.getReference();
-          if (reference.getADReferencedTableList().size() != 1) {
-            throw new OBException(OBMessageUtils.getI18NMessage("", null));
-          }
-          ReferencedTable referencedTable = reference.getADReferencedTableList().get(0);
-          final String hql = "SELECT a.id, a.identifier FROM "
-              + referencedTable.getTable().getName() + " AS a WHERE a.id=:recordId";
-          final Query query = OBDal.getInstance().getSession().createQuery(hql);
-          query.setString("recordId", recordId);
-          Object result = query.list().get(0);
-          // not finished
+        } else if (parameter.getReference().getId().equals(REFERENCE_SELECTOR_REFERENCE)) {
+          org.openbravo.model.ad.domain.Reference reference = parameter.getReferenceSearchKey();
+          Selector selector = reference.getADSelectorList().get(0);
+          BaseOBObject object = OBDal.getInstance().get(selector.getTable().getEntityName(),
+              recordId);
+          attachmentMetadata.setValueKey(object.getId().toString());
+          attachmentMetadata.setValueString(object.getIdentifier());
+          JSONObject jsonValue = new JSONObject();
+          jsonValue.put("id", object.getId().toString());
+          jsonValue.put("name", object.getIdentifier());
+          typifiedMetadata.put(entry.getKey(), jsonValue);
         } else {
           JSONObject jsonValue = new JSONObject();
-          jsonValue.put("value", value);
+          jsonValue.put("value", entry.getValue());
           ParameterUtils.setParameterValue(attachmentMetadata, jsonValue);
           typifiedMetadata
               .put(entry.getKey(), ParameterUtils.getParameterValue(attachmentMetadata));
@@ -601,9 +520,9 @@ public class AttachImplementationManager {
 
       return typifiedMetadata;
     } catch (OBException obe) {
-      throw new OBException(obe.getMessage(), obe);
+      throw obe;
     } catch (Exception e) {
-      throw new OBException(OBMessageUtils.getI18NMessage("OBUIAPP_ErrorInsertMetadata", null), e);
+      throw new OBException(OBMessageUtils.messageBD("OBUIAPP_ErrorInsertMetadata"), e);
     }
   }
 

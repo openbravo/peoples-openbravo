@@ -58,9 +58,12 @@ public class AttachmentWindowComponent extends BaseTemplateComponent {
     return OBDal.getInstance().get(Template.class, DEFAULT_TEMPLATE_ID);
   }
 
+  /**
+   * Gets a String composed by the tabId, attachmentId and if is in development, an unique sequence
+   * 
+   * @return String sequence generated for this attach
+   */
   public String getWindowClientClassName() {
-    // see the ViewComponent#correctViewId
-    // changes made in this if statement should also be done in that method
     String baseClassName = KernelConstants.ID_PREFIX + tab.getId() + KernelConstants.ID_PREFIX
         + attMethod.getId();
     if (isIndevelopment()) {
@@ -69,6 +72,11 @@ public class AttachmentWindowComponent extends BaseTemplateComponent {
     return baseClassName;
   }
 
+  /**
+   * Compares if the module of the class tab variable is in development
+   * 
+   * @return True if the module is in development
+   */
   public boolean isIndevelopment() {
     if (inDevelopment != null) {
       return inDevelopment;
@@ -83,29 +91,61 @@ public class AttachmentWindowComponent extends BaseTemplateComponent {
     return inDevelopment;
   }
 
+  /**
+   * Generates java-script code
+   * 
+   * @return generated code
+   */
   public String generate() {
     final String jsCode = super.generate();
     return jsCode;
   }
 
-  public void setAttachmentMethod(AttachmentMethod attMethod) {
+  /**
+   * Sets the Attachment Method and Tab. Actualizes metadata depending on this tab an attachment
+   * method
+   * 
+   * @param tab
+   *          Tab to set.
+   * @param attMethod
+   *          Method to set.
+   */
+  public void initialize(Tab tab, AttachmentMethod attMethod) {
     this.attMethod = attMethod;
-  }
-
-  public String getAttachmentMethodId() {
-    return attMethod.getId();
-  }
-
-  public void setTab(Tab tab) {
     this.tab = tab;
     paramHandler.setParameters(getTabMetadataFields());
     paramHandler.setParamWindow(this);
   }
 
+  /**
+   * Gets the Attachment Method
+   * 
+   * @return Attachment Method
+   */
+  public String getAttachmentMethodId() {
+    return attMethod.getId();
+  }
+
+  /**
+   * Gets the OBViewParameterHandler for this class
+   * 
+   * @return OBViewParameterHandler injected on this class
+   */
   public OBViewParameterHandler getParamHandler() {
     return paramHandler;
   }
 
+  /**
+   * Return a JSONObject with all dynamic columns parsed to String.
+   * 
+   * Dynamic columns is a list of columns that cause others to be modified, it includes the ones
+   * causing the modification as well as the affected ones.
+   * 
+   * Columns are identified as strings surrounded by quotes (" or ') matching one of the names of
+   * the parameters.
+   * 
+   * @return Dynamic columns parsed to string
+   */
   public String getDynamicColumns() {
     List<Parameter> paramsWithValidation = new ArrayList<Parameter>();
     List<String> allParams = new ArrayList<String>();
@@ -145,18 +185,15 @@ public class AttachmentWindowComponent extends BaseTemplateComponent {
     return jsonDynCols.toString();
   }
 
+  /**
+   * Gets the list of parameters associated to an Attachment Method ad a Tab
+   * 
+   * @return List of parameters by attachment method and tab
+   */
   private List<Parameter> getTabMetadataFields() {
-    // Load attachment method in use
     return AttachmentUtils.getMethodMetadataParameters(attMethod, tab);
   }
 
-  /**
-   * Dynamic columns is a list of columns that cause others to be modified, it includes the ones
-   * causing the modification as well as the affected ones.
-   * 
-   * Columns are identified as strings surrounded by quotes (" or ') matching one of the names of
-   * the parameters.
-   */
   private void parseValidation(Validation validation, Map<String, List<String>> dynCols,
       List<String> allParams, String paramName) {
     String token = validation.getValidationCode().replace("\"", "'");
