@@ -30,7 +30,7 @@ public class CashMgmtDepositEvents extends QueryTerminalProperty {
 
   @Override
   public String getProperty() {
-    return "cashmgmtdepositevents";
+    return "cashMgmtDepositEvents";
   }
 
   @Override
