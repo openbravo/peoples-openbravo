@@ -201,16 +201,16 @@ public class PostDocumentTest extends OBBaseTest {
       BigDecimal amtAcctDrObtained = fact.getDebit();
       BigDecimal amtSourceCrObtained = fact.getForeignCurrencyCredit();
       BigDecimal amtSourceDrObtained = fact.getForeignCurrencyDebit();
-      log.debug("****************  NEW ENTRY ***************");
-      log.debug("SeqNo: " + fact.getSequenceNumber());
-      log.debug("CurrencyId: " + fact.getCurrency().getId());
-      log.debug(OBDateUtils.formatDate(fact.getAccountingDate()));
-      log.debug(fact.getAccount().getIdentifier());
-      log.debug("AccountId: " + fact.getAccount().getId());
-      log.debug("Foreign Debit:" + fact.getForeignCurrencyDebit().toString());
-      log.debug("Foreign Credit:" + fact.getForeignCurrencyCredit().toString());
-      log.debug("Debit:" + fact.getDebit().toString());
-      log.debug("Credit:" + fact.getCredit().toString());
+      log.info("****************  NEW ENTRY ***************");
+      log.info("SeqNo: " + fact.getSequenceNumber());
+      log.info("CurrencyId: " + fact.getCurrency().getId());
+      log.info(OBDateUtils.formatDate(fact.getAccountingDate()));
+      log.info(fact.getAccount().getIdentifier());
+      log.info("AccountId: " + fact.getAccount().getId());
+      log.info("Foreign Debit:" + fact.getForeignCurrencyDebit().toString());
+      log.info("Foreign Credit:" + fact.getForeignCurrencyCredit().toString());
+      log.info("Debit:" + fact.getDebit().toString());
+      log.info("Credit:" + fact.getCredit().toString());
       assertThat("Wrong amtSourceDr", new BigDecimal(amtSourceDr),
           closeTo(amtSourceDrObtained, BigDecimal.ZERO));
       assertThat("Wrong amtSourceCr", new BigDecimal(amtSourceCr),

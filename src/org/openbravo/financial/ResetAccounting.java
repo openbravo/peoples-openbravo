@@ -289,7 +289,7 @@ public class ResetAccounting {
 
       String strUpdate = "update "
           + tableName
-          + " set posted='N', processNow=false where posted not in ('Y') and processed = 'Y' and organization.id in (:orgIds)  ";
+          + " set posted='N', processing='N' where posted not in ('Y') and processed = 'Y' and AD_Org_ID in (:orgIds)  ";
       if (!("".equals(datefrom))) {
         strUpdate = strUpdate + " and " + tableDate + " >= :dateFrom ";
       }

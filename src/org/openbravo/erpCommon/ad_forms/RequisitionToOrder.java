@@ -569,27 +569,38 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
           line += 10;
           BigDecimal qtyAux = new BigDecimal(lines[i].lockqty);
           qtyOrder = qtyOrder.add(qtyAux);
-          if (lines[i].quantityorder != null && !"".equals(lines[i].quantityorder)) {
-            BigDecimal quantityAux = new BigDecimal(lines[i].quantityorder);
-            quantityOrder = quantityOrder.add(quantityAux);
-          } else {
-            quantityOrder = null;
-          }
+          BigDecimal quantityAux = new BigDecimal(lines[i].quantityorder);
+          quantityOrder = quantityOrder.add(quantityAux);
           if (log4j.isDebugEnabled())
             log4j.debug("Lockqty: " + lines[i].lockqty + " qtyorder: " + qtyOrder.toPlainString()
                 + " new BigDecimal: " + (new BigDecimal(lines[i].lockqty)).toString() + " qtyAux: "
                 + qtyAux.toString());
 
           try {
-            RequisitionToOrderData.insertCOrderline(conn, this, strCOrderlineID, vars.getClient(),
-                strOrg, vars.getUser(), strCOrderId, Integer.toString(line), strVendor,
-                RequisitionToOrderData.cBPartnerLocationId(this, strVendor), strOrderDate,
-                lines[i].needbydate, lines[i].description, lines[i].mProductId,
-                lines[i].mAttributesetinstanceId, strWarehouse, lines[i].mProductUomId,
-                lines[i].cUomId, quantityOrder != null ? quantityOrder.toPlainString() : null,
-                qtyOrder.toPlainString(), cCurrencyId, lines[i].pricelist, lines[i].priceactual,
-                strPriceListId, lines[i].pricelimit, lines[i].tax, "", lines[i].discount,
-                lines[i].grossUnit, lines[i].grossAmt);
+            RequisitionToOrderData
+                .insertCOrderline(
+                    conn,
+                    this,
+                    strCOrderlineID,
+                    vars.getClient(),
+                    strOrg,
+                    vars.getUser(),
+                    strCOrderId,
+                    Integer.toString(line),
+                    strVendor,
+                    RequisitionToOrderData.cBPartnerLocationId(this, strVendor),
+                    strOrderDate,
+                    lines[i].needbydate,
+                    lines[i].description,
+                    lines[i].mProductId,
+                    lines[i].mAttributesetinstanceId,
+                    strWarehouse,
+                    lines[i].mProductUomId,
+                    lines[i].cUomId,
+                    quantityOrder != null && BigDecimal.ZERO.compareTo(quantityOrder) != 0 ? quantityOrder
+                        .toPlainString() : "", qtyOrder.toPlainString(), cCurrencyId,
+                    lines[i].pricelist, lines[i].priceactual, strPriceListId, lines[i].pricelimit,
+                    lines[i].tax, "", lines[i].discount, lines[i].grossUnit, lines[i].grossAmt);
           } catch (ServletException ex) {
             myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
             releaseRollbackConnection(conn);
