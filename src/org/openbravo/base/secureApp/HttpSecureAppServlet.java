@@ -1285,7 +1285,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         exportParameters.put(ReportingUtils.IMAGES_URI, localAddress + "/servlets/image?image={0}");
         ReportingUtils.exportJR(strReportName, expType, designParameters, os, false, this, data,
             exportParameters);
-      } else if (strOutputType.equals("pdf") || strOutputType.equalsIgnoreCase("xls")) {
+      } else if (strOutputType.equals("pdf") || strOutputType.equalsIgnoreCase("xls")
+          || strOutputType.equalsIgnoreCase("txt") || strOutputType.equalsIgnoreCase("csv")) {
         reportId = UUID.randomUUID();
         File outputFile = new File(globalParameters.strFTPDirectory + "/" + strFileName + "-"
             + (reportId) + "." + strOutputType);
