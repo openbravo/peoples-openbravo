@@ -167,8 +167,7 @@ public class ViewComponent extends BaseComponent {
         attMethod = attConf.getAttachmentMethod();
       }
     }
-    attachmentWindowComponent.setAttachmentMethod(attMethod);
-    attachmentWindowComponent.setTab(tab);
+    attachmentWindowComponent.initialize(tab, attMethod);
     attachmentWindowComponent.setParameters(getParameters());
     return attachmentWindowComponent.generate();
   }
