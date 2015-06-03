@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2012-2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -126,8 +126,8 @@ enyo.kind({
             components: [{
               name: 'cashtokeepheader',
               style: 'padding: 10px; border-bottom: 1px solid #cccccc; text-align:center;',
-              renderHeader: function (value) {
-                this.setContent(OB.I18N.getLabel('OBPOS_LblStep3of4', [value]) + OB.OBPOSCashUp.UI.CashUp.getTitleExtensions());
+              renderHeader: function (value, step, count) {
+                this.setContent(OB.I18N.getLabel('OBPOS_LblStepNumber', [step, count]) + " " + OB.I18N.getLabel('OBPOS_LblStepCashToKeep', [value]) + OB.OBPOSCashUp.UI.CashUp.getTitleExtensions());
               }
             }]
           }]
@@ -205,7 +205,7 @@ enyo.kind({
     }]
   }],
   paymentToKeepChanged: function (model) {
-    this.$.cashtokeepheader.renderHeader(this.paymentToKeep.get('name'));
+    this.$.cashtokeepheader.renderHeader(this.paymentToKeep.get('name'), this.model.stepNumber('OB.CashUp.CashToKeep'), this.model.stepCount());
     this.$.formkeep.renderBody(this.paymentToKeep);
 
     //If fixed quantity to keep is more than counted quantity,
@@ -217,6 +217,7 @@ enyo.kind({
     }
   },
   displayStep: function (model) {
+    this.model = model;
     // this function is invoked when displayed.        
     this.$.formkeep.disableControls();
     this.setPaymentToKeep(model.get('paymentList').at(model.get('substep')));

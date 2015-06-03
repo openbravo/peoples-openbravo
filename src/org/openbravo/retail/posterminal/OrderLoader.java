@@ -438,9 +438,14 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   }
 
   protected void deleteOldDocument(JSONObject jsonorder) throws JSONException {
+    /*
+     * Issue 0029953 Instead of remove old order, we set it as rejected (CJ). The new quotation will
+     * be linked to the rejected one
+     */
     Order oldOrder = OBDal.getInstance().get(Order.class, jsonorder.getString("oldId"));
-    OBDal.getInstance().remove(oldOrder);
-    OBDal.getInstance().flush();
+    oldOrder.setDocumentStatus("CJ");
+    // Order Loader will automatically store this field into c_order table based on Json
+    jsonorder.put("obposRejectedQuotation", jsonorder.getString("oldId"));
   }
 
   protected boolean verifyOrderExistance(JSONObject jsonorder) throws Exception {

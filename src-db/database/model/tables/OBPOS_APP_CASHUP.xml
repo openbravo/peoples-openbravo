@@ -81,6 +81,14 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="OBPOS_PARENT_CASHUP_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="JSONCASHUP" primaryKey="false" required="false" type="CLOB" size="4000" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="OBPOS_APPCASH_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -93,6 +101,12 @@
       <foreign-key foreignTable="OBPOS_APPLICATIONS" name="OBPOS_APPCASH_APPLICATIONS">
         <reference local="OBPOS_APPLICATIONS_ID" foreign="OBPOS_APPLICATIONS_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="OBPOS_APP_CASHUP" name="OBPOS_APPCASH_PARENT">
+        <reference local="OBPOS_PARENT_CASHUP_ID" foreign="OBPOS_APP_CASHUP_ID"/>
+      </foreign-key>
+      <index name="OBPOS_APP_CASHUP_PARENT_IDX" unique="false">
+        <index-column name="OBPOS_PARENT_CASHUP_ID"/>
+      </index>
       <index name="OBPOS_APP_CASHUP_TERMINAL_IDX" unique="false">
         <index-column name="OBPOS_APPLICATIONS_ID"/>
       </index>

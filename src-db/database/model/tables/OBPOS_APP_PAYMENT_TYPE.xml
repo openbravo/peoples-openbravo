@@ -149,6 +149,10 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
+      <column name="ISSHARED" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
       <column name="LEAVEASCREDIT" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
@@ -234,6 +238,7 @@
       <check name="OBPOS_APPPAYTYPE_MOVEEVRY_CHK"><![CDATA[ALLOWMOVEEVERYTHING IN ('Y', 'N')]]></check>
       <check name="OBPOS_APPPAYTYPE_OVERPAY_CHK"><![CDATA[ALLOWOVERPAYMENT IN ('Y', 'N')]]></check>
       <check name="OBPOS_APPPAYTYPE_PTWICE_CHK"><![CDATA[PRINTTWICE IN ('Y', 'N')]]></check>
+      <check name="OBPOS_APPPAYTYPE_SHARED_CHK"><![CDATA[ISSHARED IN ('Y', 'N')]]></check>
       <check name="OBPOS_APPPAYTYPE_VARAMT_CHK"><![CDATA[ALLOWVARIABLEAMOUNT IN ('Y', 'N')]]></check>
     </table>
   </database>
