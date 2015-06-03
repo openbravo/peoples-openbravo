@@ -1142,7 +1142,7 @@ OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall, clientSideVali
     return clientSideValidationFail();
   }
 
-  if (document !== null && document !== '' && actualPayment.compareTo(BigDecimal.prototype.ZERO) === 0 && view.parentWindow && view.parentWindow.windowId) {
+  if (document !== null && document !== '' && actualPayment.compareTo(BigDecimal.prototype.ZERO) === 0 && view.parentWindow && view.parentWindow.windowId && !overpaymentAction) {
     view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_ZEROAMOUNTPAYMENTTRANSACTION'));
     return clientSideValidationFail();
   }

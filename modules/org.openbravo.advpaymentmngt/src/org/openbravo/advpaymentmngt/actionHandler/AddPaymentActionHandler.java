@@ -19,6 +19,7 @@
 package org.openbravo.advpaymentmngt.actionHandler;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -239,7 +240,8 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
 
   private FIN_Payment createNewPayment(JSONObject jsonparams, boolean isReceipt, Organization org,
       BusinessPartner bPartner, Date paymentDate, Currency currency, BigDecimal conversionRate,
-      BigDecimal convertedAmt, String strActualPayment) throws OBException, JSONException {
+      BigDecimal convertedAmt, String strActualPayment) throws OBException, JSONException,
+      SQLException {
 
     String strPaymentDocumentNo = jsonparams.getString("payment_documentno");
     String strReferenceNo = "";
@@ -290,6 +292,7 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
     FIN_Payment payment = (new AdvPaymentMngtDao()).getNewPayment(isReceipt, org, documentType,
         strPaymentDocumentNo, bPartner, paymentMethod, finAccount, strPaymentAmount, paymentDate,
         strReferenceNo, currency, conversionRate, convertedAmt);
+    OBDal.getInstance().getConnection(true).commit();
     return payment;
   }
 
