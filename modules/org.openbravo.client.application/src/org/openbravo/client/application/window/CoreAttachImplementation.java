@@ -42,13 +42,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @ApplicationScoped
-@ComponentProvider.Qualifier(CoreAttachImplementation.DEFAULT)
+@ComponentProvider.Qualifier(AttachmentUtils.DEFAULT_METHOD)
 public class CoreAttachImplementation extends AttachImplementation {
   private static final Logger log = LoggerFactory.getLogger(CoreAttachImplementation.class);
-
-  public static final String DEFAULT = "Default";
-
-  // final public String DEFAULT = "Default";
 
   @Override
   public void uploadFile(Attachment attachment, String strDataType, Map<String, Object> parameters,
@@ -58,14 +54,11 @@ public class CoreAttachImplementation extends AttachImplementation {
     String strKey = attachment.getRecord();
     String strFileDir = getAttachmentDirectoryForNewAttachments(tableId, strKey);
 
-    // FIXME: Get the directory separator from Java runtime
     String attachmentFolder = OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .getProperty("attach.path");
-    String strName = "";
     File uploadedFile = null;
-    strName = file.getName();
-    uploadedFile = new File(attachmentFolder + "/" + strFileDir);
-    log.debug("Destination file before renaming: " + uploadedFile);
+    uploadedFile = new File(attachmentFolder + File.separator + strFileDir);
+    log.debug("Destination file before renaming: {}", uploadedFile);
     try {
       FileUtils.moveFileToDirectory(file, uploadedFile, true);
     } catch (IOException e) {
@@ -79,20 +72,18 @@ public class CoreAttachImplementation extends AttachImplementation {
   }
 
   @Override
-  public File downloadFile(Attachment attachment) throws OBException {
-    String fileDir = null;
+  public File downloadFile(Attachment attachment) {
     log.debug("CoreAttachImplemententation - download file");
-    fileDir = getAttachmentDirectory(attachment.getTable().getId(), attachment.getRecord(),
+    String fileDir = getAttachmentDirectory(attachment.getTable().getId(), attachment.getRecord(),
         attachment.getName());
-    // FIXME: Get the directory separator from Java runtime
     String attachmentFolder = OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .getProperty("attach.path");
-    final File file = new File(attachmentFolder + "/" + fileDir, attachment.getName());
+    final File file = new File(attachmentFolder + File.separator + fileDir, attachment.getName());
     return file;
   }
 
   @Override
-  public void deleteFile(Attachment attachment) throws OBException {
+  public void deleteFile(Attachment attachment) {
     log.debug("CoreAttachImplemententation - Removing files");
     String attachmentFolder = OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .getProperty("attach.path");
