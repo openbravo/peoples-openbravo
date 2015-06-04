@@ -58,6 +58,9 @@
       <foreign-key foreignTable="C_ATTACHMENT_METHOD" name="C_ATTMETHODTRL_ATTMETHOD">
         <reference local="C_ATTACHMENT_METHOD_ID" foreign="C_ATTACHMENT_METHOD_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="AD_LANGUAGE" name="C_ATTMETHODTRL_LANGUAGE">
+        <reference local="AD_LANGUAGE" foreign="AD_LANGUAGE"/>
+      </foreign-key>
       <check name="C_ATTMETHODTRL_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="C_ATTMETHODTRL_ISTRANSLATE_CHK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>
     </table>
