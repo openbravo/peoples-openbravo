@@ -217,6 +217,10 @@ isc.OBViewGrid.addProperties({
         //  instead of using targetRecordId to improve the performance
         startRow = this.grid.selectedRecordInitInterval;
         endRow = this.grid.selectedRecordEndInterval;
+        // the startRow and endRow are being modified, so the localData attribute also
+        // needs to be updated to wait for the proper records
+        this.localData = [];
+        this.setRangeLoading(startRow, endRow);
       }
       return this.Super('fetchRemoteData', arguments);
     },
