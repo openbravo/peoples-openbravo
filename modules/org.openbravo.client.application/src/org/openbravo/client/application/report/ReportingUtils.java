@@ -1291,7 +1291,7 @@ public class ReportingUtils {
     @SuppressWarnings("serial")
     TXT("txt", "100", new HashMap<String, Object>() {
       {
-        put("IS_IGNORE_PAGINATION", false);
+        put("IS_IGNORE_PAGINATION", true);
       }
     }), //
     /**
