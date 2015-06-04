@@ -124,41 +124,6 @@ isc.OBAttachmentCanvasItem.addProperties({
 
 });
 
-isc.ClassFactory.defineClass('OBAttachmentsSubmitPopup', isc.OBPopup);
-
-isc.OBAttachmentsSubmitPopup.addProperties({
-  submitButton: null,
-  addForm: null,
-  showMinimizeButton: false,
-  showMaximizeButton: false,
-  title: OB.I18N.getLabel('OBUIAPP_AttachFile'),
-  initWidget: function (args) {
-    this.addItem(
-    isc.VLayout.create({
-      defaultLayoutAlign: 'center',
-      align: 'center',
-      width: '100%',
-      height: 300,
-      overflow: 'auto',
-      layoutMargin: 10,
-      membersMargin: 6,
-      members: [
-      isc.VLayout.create({
-        defaultLayoutAlign: 'center',
-        align: 'center',
-        layoutMargin: 30,
-        members: this.addForm
-      }), isc.HLayout.create({
-        defaultLayoutAlign: 'center',
-        align: 'center',
-        membersMargin: 10,
-        members: [this.submitButton]
-      })]
-    }));
-    this.Super('initWidget', arguments);
-  }
-});
-
 isc.ClassFactory.defineClass('OBAttachmentsLayout', isc.VLayout);
 
 isc.OBAttachmentsLayout.addProperties({
@@ -170,6 +135,11 @@ isc.OBAttachmentsLayout.addProperties({
 
   width: '100%',
   align: 'left',
+  // Data initialized when the record info is set
+  attachmentForm: null,
+  tabId: null,
+  entity: null,
+  recordId: null,
   docOrganization: null,
   docClient: null,
 
@@ -189,9 +159,21 @@ isc.OBAttachmentsLayout.addProperties({
     this.recordId = id;
     this.tabId = tabId;
     this.attachmentForm = attachmentForm;
+    //Here we are checking if the entity is 'Organization' because the way of obtaining the
+    //id of the organization of the form is different depending on the entity
+    if (this.entity === 'Organization') {
+      this.docOrganization = this.recordId;
+    } else {
+      this.docOrganization = this.attachmentForm.values.organization;
+    }
+    if (this.entity === 'Client') {
+      this.docClient = this.recordId;
+    } else {
+      this.docClient = this.attachmentForm.values.client;
+    }
+
     this.isInitialized = false;
   },
-
 
   setExpanded: function (expanded) {
     if (expanded && !this.isInitialized) {
@@ -253,7 +235,7 @@ isc.OBAttachmentsLayout.addProperties({
   },
 
   fillAttachments: function (attachments) {
-    var me = this,
+    var attachLayout = this,
         id, i, length, editDescActions;
 
     this.savedAttachments = attachments;
@@ -265,25 +247,12 @@ isc.OBAttachmentsLayout.addProperties({
     }
 
     this.addMember(hLayout);
-    //Here we are checking if the entity is 'Organization' because the way of obtaining the
-    //id of the organization of the form is different depending on the entity
-    if (this.entity === 'Organization') {
-      this.docOrganization = this.recordId;
-    } else {
-      this.docOrganization = this.attachmentForm.values.organization;
-    }
-    if (this.entity === 'Client') {
-      this.docClient = me.recordId;
-    } else {
-      this.docClient = me.attachmentForm.values.client;
-    }
     var addButton = isc.OBLinkButtonItem.create({
       title: '[ ' + OB.I18N.getLabel('OBUIAPP_AttachmentAdd') + ' ]',
       width: '30px',
-      canvas: me,
       action: function (forceUpload) {
         if (OB.Utilities.currentUploader === null || forceUpload) {
-          me.openAttachPopup(true);
+          attachLayout.openAttachPopup(true);
         } else {
           isc.ask(OB.I18N.getLabel('OBUIAPP_OtherUploadInProgress'), function (clickOK) {
             if (clickOK) {
@@ -317,16 +286,14 @@ isc.OBAttachmentsLayout.addProperties({
     var downloadAllButton = isc.OBLinkButtonItem.create({
       title: '[ ' + OB.I18N.getLabel('OBUIAPP_AttachmentDownloadAll') + ' ]',
       width: '30px',
-      canvas: this,
       action: function () {
-        var canvas = this.canvas;
         isc.confirm(OB.I18N.getLabel('OBUIAPP_FormConfirmDownloadMultiple'), function (clickedOK) {
           if (clickedOK) {
             var d = {
               Command: 'DOWNLOAD_ALL',
-              tabId: canvas.tabId,
-              recordIds: canvas.recordId,
-              viewId: canvas.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.view.ID
+              tabId: attachLayout.tabId,
+              recordIds: attachLayout.recordId,
+              viewId: attachLayout.attachmentForm.view.ID
             };
             OB.Utilities.postThroughHiddenForm('./businessUtility/TabAttachments_FS.html', d);
           }
@@ -336,20 +303,18 @@ isc.OBAttachmentsLayout.addProperties({
     var removeAllButton = isc.OBLinkButtonItem.create({
       title: '[ ' + OB.I18N.getLabel('OBUIAPP_AttachmentRemoveAll') + ' ]',
       width: '30px',
-      canvas: me,
       action: function () {
         var d = {
           Command: 'DELETE',
-          tabId: this.canvas.tabId,
-          buttonId: this.canvas.ID,
-          recordIds: this.canvas.recordId,
-          viewId: this.canvas.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.ID
+          tabId: attachLayout.tabId,
+          buttonId: attachLayout.ID,
+          recordIds: attachLayout.recordId,
+          viewId: attachLayout.attachmentForm.view.ID
         };
-        var canvas = this.canvas;
         isc.confirm(OB.I18N.getLabel('OBUIAPP_ConfirmRemoveAll'), function (clickedOK) {
           if (clickedOK) {
             OB.RemoteCallManager.call('org.openbravo.client.application.window.AttachmentsAH', {}, d, function (response, data, request) {
-              canvas.fillAttachments(data.attachments);
+              attachLayout.fillAttachments(data.attachments);
               if (data.status === -1) {
                 OB.Utilities.writeErrorMessage(data.viewId, data.errorMessage);
               }
@@ -369,8 +334,8 @@ isc.OBAttachmentsLayout.addProperties({
     downloadActions = function () {
       var d = {
         Command: 'DOWNLOAD_FILE',
-        attachmentId: this.attachId,
-        viewId: this.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.ID
+        attachmentId: this.attachmentId,
+        viewId: attachLayout.attachmentForm.view.ID
       };
       OB.Utilities.postThroughHiddenForm('./businessUtility/TabAttachments_FS.html', d);
     };
@@ -379,18 +344,17 @@ isc.OBAttachmentsLayout.addProperties({
     removeActions = function () {
       var i, length, d = {
         Command: 'DELETE',
-        tabId: this.canvas.tabId,
-        buttonId: this.canvas.ID,
-        recordIds: this.canvas.recordId,
+        tabId: attachLayout.tabId,
+        buttonId: attachLayout.ID,
+        recordIds: attachLayout.recordId,
         attachId: this.attachmentId,
-        viewId: this.canvas.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.ID
-      },
-          canvas = this.canvas;
+        viewId: attachLayout.attachmentForm.view.ID
+      };
 
       isc.confirm(OB.I18N.getLabel('OBUIAPP_ConfirmRemove'), function (clickedOK) {
         if (clickedOK) {
           OB.RemoteCallManager.call('org.openbravo.client.application.window.AttachmentsAH', {}, d, function (response, data, request) {
-            canvas.fillAttachments(data.attachments);
+            attachLayout.fillAttachments(data.attachments);
             if (data.status === -1) {
               OB.Utilities.writeErrorMessage(data.viewId, data.errorMessage);
             }
@@ -402,7 +366,7 @@ isc.OBAttachmentsLayout.addProperties({
     };
 
     editDescActions = function () {
-      me.openAttachPopup(false, this.attachment);
+      attachLayout.openAttachPopup(false, this.attachment);
     };
 
     length = attachments.length;
@@ -427,7 +391,7 @@ isc.OBAttachmentsLayout.addProperties({
         title: '[ ' + OB.I18N.getLabel('OBUIAPP_AttachmentDownload') + ' ]',
         width: '30px',
         attachmentName: attachment.name,
-        attachId: attachment.id,
+        attachmentId: attachment.id,
         attachmentMethod: attachment.attmethod,
         action: downloadActions
       });
@@ -437,7 +401,6 @@ isc.OBAttachmentsLayout.addProperties({
         width: '30px',
         attachmentName: attachment.name,
         attachmentId: attachment.id,
-        canvas: this,
         action: removeActions
       });
 
@@ -445,14 +408,12 @@ isc.OBAttachmentsLayout.addProperties({
         title: '[ ' + OB.I18N.getLabel('OBUIAPP_AttachmentEditDesc') + ' ]',
         width: '30px',
         attachment: attachment,
-        canvas: this,
         action: editDescActions
       });
       var description = isc.DynamicForm.create({
         title: 'Description',
         numCols: 1,
         width: '100%',
-        canvas: this,
         fields: [{
           name: 'descriptionOBTextAreaItem',
           type: 'OBTextAreaItem',
