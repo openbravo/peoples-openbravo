@@ -26,6 +26,9 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.service.db.DalConnectionProvider;
 
 /**
  * Will trigger the import process.
@@ -43,12 +46,35 @@ public class ProcessImportEntriesProcessActionHandler extends BaseProcessActionH
 
       entryManager.notifyNewImportEntryCreated();
 
+      // do a 5 second wait to let the import entry manager time to start
+      try {
+        Thread.sleep(5000);
+      } catch (Exception ignored) {
+      }
+
       JSONObject result = new JSONObject();
       JSONObject msgTotal = new JSONObject();
       JSONArray actions = new JSONArray();
+
+      final DalConnectionProvider dalConnectionProvider = new DalConnectionProvider();
+
+      final String importProcessLbl = Utility.messageBD(dalConnectionProvider, "ImportProcess",
+          OBContext.getOBContext().getLanguage().getLanguage());
+
+      String importProcessRunningLbl = Utility.messageBD(dalConnectionProvider,
+          "ImportProcessRunning", OBContext.getOBContext().getLanguage().getLanguage());
+      importProcessRunningLbl = importProcessRunningLbl.replaceAll("%1",
+          "" + entryManager.getNumberOfActiveTasks());
+      importProcessRunningLbl = importProcessRunningLbl.replaceAll("%2",
+          "" + entryManager.getNumberOfQueuedTasks());
+
+      final String importProcessNotRunningLbl = Utility.messageBD(dalConnectionProvider,
+          "ImportProcessNotRunning", OBContext.getOBContext().getLanguage().getLanguage());
+
       msgTotal.put("msgType", "info");
-      msgTotal.put("msgTitle", "Import Process");
-      msgTotal.put("msgText", "Import process has been triggered");
+      msgTotal.put("msgTitle", importProcessLbl);
+      msgTotal.put("msgText", entryManager.isExecutorRunning() ? importProcessRunningLbl
+          : importProcessNotRunningLbl);
 
       JSONObject msgTotalAction = new JSONObject();
       msgTotalAction.put("showMsgInProcessView", msgTotal);
