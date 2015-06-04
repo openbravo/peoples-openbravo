@@ -281,7 +281,11 @@ isc.OBToolbar.addClassProperties({
             expandedInterval;
         expandedInterval = setInterval(function () {
           expandedCount += 1;
-          if (attachmentSection.isExpanded()) {
+          if (attachmentSection === null) {
+            // In case attachmenSection was not created try to load it again
+            attachmentSection = me.view.viewForm.getItem('_attachments_');
+          }
+          if (attachmentSection !== null && attachmentSection.isExpanded()) {
             me.view.viewForm.parentElement.scrollTo(null, attachmentSection.getTop());
             clearInterval(expandedInterval);
           }
@@ -291,7 +295,11 @@ isc.OBToolbar.addClassProperties({
         }, 100);
 
         if (!attachmentExists) {
-          if (attachmentSection.attachmentCanvasItem.canvas.getMember(0)) {
+          if (attachmentSection === null) {
+            // In case attachmenSection was not created try to load it again
+            attachmentSection = me.view.viewForm.getItem('_attachments_');
+          }
+          if (attachmentSection !== null && attachmentSection.attachmentCanvasItem.canvas.getMember(0)) {
             attachmentSection.attachmentCanvasItem.canvas.getMember(0).getMember(0).click();
           } else {
             // The first time the form view is loaded, the section is not already built and it could take a while to be.
@@ -300,7 +308,11 @@ isc.OBToolbar.addClassProperties({
                 clickInterval;
             clickInterval = setInterval(function () {
               clickCount += 1;
-              if (attachmentSection.attachmentCanvasItem.canvas.getMember(0)) {
+              if (attachmentSection === null) {
+                // In case attachmenSection was not created try to load it again
+                attachmentSection = me.view.viewForm.getItem('_attachments_');
+              }
+              if (attachmentSection !== null && attachmentSection.attachmentCanvasItem.canvas.getMember(0)) {
                 attachmentSection.attachmentCanvasItem.canvas.getMember(0).getMember(0).click();
                 clearInterval(clickInterval);
               }
