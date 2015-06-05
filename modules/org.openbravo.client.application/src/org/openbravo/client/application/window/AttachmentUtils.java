@@ -76,6 +76,14 @@ public class AttachmentUtils {
     return OBDal.getInstance().get(AttachmentConfig.class, strAttachmentConfigId);
   }
 
+  public static void setAttachmentConfig(String strClient, String strAttConfig) {
+    if (strAttConfig == null) {
+      clientConfigs.remove(strClient);
+    } else {
+      clientConfigs.put(strClient, strAttConfig);
+    }
+  }
+
   /**
    * Gets the Attachment Configuration associated to the context client
    * 
