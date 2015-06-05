@@ -14,13 +14,13 @@ import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.weld.WeldUtils;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess;
 import org.openbravo.mobile.core.process.MobileImportEntryProcessorRunnable;
 import org.openbravo.retail.posterminal.ProcessCashClose;
 import org.openbravo.service.importprocess.ImportEntry;
+import org.openbravo.service.importprocess.ImportEntryManager.ImportEntryInformation;
 import org.openbravo.service.importprocess.ImportEntryManager.ImportEntryQualifier;
 import org.openbravo.service.importprocess.ImportEntryProcessor;
 
@@ -38,12 +38,12 @@ public class CashUpImportEntryProcessor extends ImportEntryProcessor {
     return WeldUtils.getInstanceFromStaticBeanManager(CashUpRunnable.class);
   }
 
-  protected boolean canHandleImportEntry(ImportEntry importEntry) {
-    return "OBPOS_App_Cashup".equals(importEntry.getTypeofdata());
+  protected boolean canHandleImportEntry(ImportEntryInformation importEntryInformation) {
+    return "OBPOS_App_Cashup".equals(importEntryInformation.getTypeofdata());
   }
 
-  protected String getProcessSelectionKey(ImportEntry importEntry) {
-    return (String) DalUtil.getId(importEntry.getOrganization());
+  protected String getProcessSelectionKey(ImportEntryInformation importEntry) {
+    return importEntry.getOrgId();
   }
 
   private static class CashUpRunnable extends MobileImportEntryProcessorRunnable {

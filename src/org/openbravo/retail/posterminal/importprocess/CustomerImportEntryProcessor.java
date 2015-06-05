@@ -11,11 +11,10 @@ package org.openbravo.retail.posterminal.importprocess;
 import javax.enterprise.context.ApplicationScoped;
 
 import org.openbravo.base.weld.WeldUtils;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess;
 import org.openbravo.mobile.core.process.MobileImportEntryProcessorRunnable;
 import org.openbravo.retail.posterminal.CustomerLoader;
-import org.openbravo.service.importprocess.ImportEntry;
+import org.openbravo.service.importprocess.ImportEntryManager.ImportEntryInformation;
 import org.openbravo.service.importprocess.ImportEntryManager.ImportEntryQualifier;
 import org.openbravo.service.importprocess.ImportEntryProcessor;
 
@@ -32,12 +31,12 @@ public class CustomerImportEntryProcessor extends ImportEntryProcessor {
     return WeldUtils.getInstanceFromStaticBeanManager(BusinessPartnerRunnable.class);
   }
 
-  protected boolean canHandleImportEntry(ImportEntry importEntry) {
-    return "BusinessPartner".equals(importEntry.getTypeofdata());
+  protected boolean canHandleImportEntry(ImportEntryInformation importEntryInformation) {
+    return "BusinessPartner".equals(importEntryInformation.getTypeofdata());
   }
 
-  protected String getProcessSelectionKey(ImportEntry importEntry) {
-    return (String) DalUtil.getId(importEntry.getOrganization());
+  protected String getProcessSelectionKey(ImportEntryInformation importEntry) {
+    return importEntry.getOrgId();
   }
 
   private static class BusinessPartnerRunnable extends MobileImportEntryProcessorRunnable {
