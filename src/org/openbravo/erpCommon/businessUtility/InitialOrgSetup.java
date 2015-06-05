@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -34,7 +34,6 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.modules.ModuleUtiltiy;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.model.ad.access.Role;
-import org.openbravo.model.ad.access.RoleOrganization;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.access.UserRoles;
 import org.openbravo.model.ad.datamodel.Table;
@@ -624,18 +623,6 @@ public class InitialOrgSetup {
           "insertUser() - ERROR - Not able to insert the role" + strOrgUser, err);
     }
     log4j.debug("insertRoles() - Role inserted correctly");
-
-    log4j.debug("insertRoles() - Inserting role org access");
-    try {
-      RoleOrganization roleOrg = InitialSetupUtility.insertRoleOrganization(role, org, true);
-      if (roleOrg == null)
-        return logErrorAndRollback("@CreateOrgFailed@",
-            "insertUser() - Not able to insert the role organizations access" + strOrgUser, null);
-    } catch (final Exception err) {
-      return logErrorAndRollback("@CreateOrgFailed@",
-          "insertUser() - Not able to insert the role organizations access" + strOrgUser, err);
-    }
-    log4j.debug("insertUser() - Role organizations access inserted correctly");
 
     log4j.debug("insertRoles() - Inserting user role");
     try {
