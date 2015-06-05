@@ -513,23 +513,29 @@ public class ImportEntryManager {
 
                 final Query entriesQry = OBDal.getInstance().getSession()
                     .createQuery(importEntryQryStr);
+                entriesQry.setFirstResult(0);
+                entriesQry.setFetchSize(100);
                 entriesQry.setMaxResults(manager.importBatchSize);
 
                 final ScrollableResults entries = entriesQry.scroll(ScrollMode.FORWARD_ONLY);
-                while (entries.next()) {
-                  entryCount++;
-                  final Object[] values = (Object[]) entries.get();
-                  final ImportEntryInformation importEntryInformation = new ImportEntryInformation(
-                      importEntryProperties, values);
-                  try {
-                    manager.handleImportEntry(importEntryInformation);
-                  } catch (Throwable t) {
-                    // ImportEntryProcessors are custom implementations which can cause
-                    // errors, so always catch them to prevent other import entries
-                    // from not getting processed
-                    manager.setImportEntryError(importEntryInformation.getId(), t);
-                    OBDal.getInstance().flush();
+                try {
+                  while (entries.next()) {
+                    entryCount++;
+                    final Object[] values = (Object[]) entries.get();
+                    final ImportEntryInformation importEntryInformation = new ImportEntryInformation(
+                        importEntryProperties, values);
+                    try {
+                      manager.handleImportEntry(importEntryInformation);
+                    } catch (Throwable t) {
+                      // ImportEntryProcessors are custom implementations which can cause
+                      // errors, so always catch them to prevent other import entries
+                      // from not getting processed
+                      manager.setImportEntryError(importEntryInformation.getId(), t);
+                      OBDal.getInstance().flush();
+                    }
                   }
+                } finally {
+                  entries.close();
                 }
               }
 
