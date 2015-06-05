@@ -34,11 +34,11 @@ import javax.inject.Inject;
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.kernel.RequestContext;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.service.importprocess.ImportEntryManager.ImportEntryInformation;
 
 /**
  * The {@link ImportEntryProcessor} is responsible for importing/processing {@link ImportEntry}
@@ -50,9 +50,9 @@ import org.openbravo.model.common.enterprise.Organization;
  * 
  * It is important that a specific ImportEntry is assigned to the right processing thread to prevent
  * for example deadlocks in the database. To make this possible a concept of
- * {@link #getProcessSelectionKey(ImportEntry)} is used. The process selection key is a unique key
- * derived from the {@link ImportEntry} which can be used to create/identify the thread which should
- * process the {@link ImportEntry}. If no such thread exists a new
+ * {@link #getProcessSelectionKey(ImportEntryInformation)} is used. The process selection key is a
+ * unique key derived from the {@link ImportEntry} which can be used to create/identify the thread
+ * which should process the {@link ImportEntry}. If no such thread exists a new
  * {@link ImportEntryProcessRunnable} is created. The exact type of
  * {@link ImportEntryProcessRunnable} is determined by the extending subclass through the
  * {@link #createImportEntryProcessRunnable()} method.
@@ -60,19 +60,19 @@ import org.openbravo.model.common.enterprise.Organization;
  * For example if ImportEntry records of the same organization should be processed after each other
  * (so not in parallel) to prevent DB deadlocks, this means that the records of the same
  * organization should be assigned to the same thread object. So that they are indeed processed
- * sequential and not in parallel. The {@link #getProcessSelectionKey(ImportEntry)} should in this
- * case return the {@link Organization#getId()} so that {@link ImportEntryProcessRunnable} are
- * keyed/registered using the organization. Other {@link ImportEntry} records of the same
- * organization are then processed by the same thread, always sequential, not parallel, preventing
- * DB deadlocks.
+ * sequential and not in parallel. The {@link #getProcessSelectionKey(ImportEntryInformation)}
+ * should in this case return the {@link Organization#getId()} so that
+ * {@link ImportEntryProcessRunnable} are keyed/registered using the organization. Other
+ * {@link ImportEntry} records of the same organization are then processed by the same thread,
+ * always sequential, not parallel, preventing DB deadlocks.
  * 
  * The {@link ImportEntryManager} passes new {@link ImportEntry} records to the the
- * {@link ImportEntryProcessor} by calling its {@link #handleImportEntry(ImportEntry)}. The
- * {@link ImportEntryProcessor} then can decide how to handle this {@link ImportEntry}, create a new
- * thread or assign it to an existing thread (which is busy processing previous entries). This is
- * all done in this generic class. An implementing subclass needs to implement the
- * {@link #getProcessSelectionKey(ImportEntry)} method. This method determines which/how the correct
- * {@link ImportEntryProcessRunnable} is chosen.
+ * {@link ImportEntryProcessor} by calling its {@link #handleImportEntry(ImportEntryInformation)}.
+ * The {@link ImportEntryProcessor} then can decide how to handle this {@link ImportEntry}, create a
+ * new thread or assign it to an existing thread (which is busy processing previous entries). This
+ * is all done in this generic class. An implementing subclass needs to implement the
+ * {@link #getProcessSelectionKey(ImportEntryInformation)} method. This method determines which/how
+ * the correct {@link ImportEntryProcessRunnable} is chosen.
  * 
  * The default/base implementation of the {@link ImportEntryProcessRunnable} provides standard
  * features related to caching of {@link OBContext}, error handling and transaction handling.
@@ -136,7 +136,7 @@ public abstract class ImportEntryProcessor {
    * implementation should check if the {@link ImportEntry} was possibly already handled and ignore
    * it then.
    */
-  public void handleImportEntry(ImportEntry importEntry) {
+  public void handleImportEntry(ImportEntryInformation importEntry) {
 
     if (!canHandleImportEntry(importEntry)) {
       return;
@@ -152,7 +152,7 @@ public abstract class ImportEntryProcessor {
 
   // synchronized to handle the case that a thread tries to deregister
   // itself at the same time
-  protected synchronized void assignEntryToThread(String key, ImportEntry importEntry) {
+  protected synchronized void assignEntryToThread(String key, ImportEntryInformation importEntry) {
 
     // runnables is a concurrent hashmap
     ImportEntryProcessRunnable runnable = runnables.get(key);
@@ -220,14 +220,14 @@ public abstract class ImportEntryProcessor {
    * {@link ImportEntryManager} thread and then offered again to this {@link ImportEntryProcessor}
    * to be processed.
    */
-  protected abstract boolean canHandleImportEntry(ImportEntry importEntry);
+  protected abstract boolean canHandleImportEntry(ImportEntryInformation importEntryInformation);
 
   /**
    * Based on the {@link ImportEntry} returns a key which uniquely identifies the thread which
    * should process this {@link ImportEntry}. Can be used to place import entries which block/use
    * the same records in the same import thread, in this way preventing DB (dead)locks.
    */
-  protected abstract String getProcessSelectionKey(ImportEntry importEntry);
+  protected abstract String getProcessSelectionKey(ImportEntryInformation importEntry);
 
   /**
    * The default implementation of the ImportEntryProcessRunnable. It performs the following
@@ -302,7 +302,12 @@ public abstract class ImportEntryProcessor {
               }
 
               // not changed, process
+              final String typeOfData = localImportEntry.getTypeofdata();
               processEntry(localImportEntry);
+
+              // don't use the import entry anymore, touching methods on it
+              // may re-open a session
+              localImportEntry = null;
 
               // processed so can be removed
               importEntryIds.remove(queuedImportEntry.importEntryId);
@@ -311,7 +316,7 @@ public abstract class ImportEntryProcessor {
               cnt++;
               final long timeForEntry = (System.currentTimeMillis() - t0);
               totalT += timeForEntry;
-              importEntryManager.reportStats(localImportEntry.getTypeofdata(), timeForEntry);
+              importEntryManager.reportStats(typeOfData, timeForEntry);
               if ((cnt % 100) == 0 && logger.isDebugEnabled()) {
                 logger.debug("Runnable: " + key + ", processed " + cnt + " import entries in "
                     + totalT + " millis, " + (totalT / cnt)
@@ -322,7 +327,7 @@ public abstract class ImportEntryProcessor {
               if (SessionHandler.isSessionHandlerPresent()) {
                 // change to warning if the code in the subclasses really works correctly
                 logger
-                    .debug("Session handler present after processing import entry, this indicates that the processing code "
+                    .warn("Session handler present after processing import entry, this indicates that the processing code "
                         + "does not correctly clean/close the session after its last actions. This should be fixed.");
                 OBDal.getInstance().commitAndClose();
               }
@@ -428,7 +433,7 @@ public abstract class ImportEntryProcessor {
     }
 
     // is called by the processor in the main EntityManagerThread
-    private void addEntry(ImportEntry importEntry) {
+    private void addEntry(ImportEntryInformation importEntry) {
 
       // ignore the entry, queue is too large
       // prevents memory problems
@@ -464,13 +469,12 @@ public abstract class ImportEntryProcessor {
       final String clientId;
       final String roleId;
 
-      QueuedEntry(ImportEntry importEntry) {
+      QueuedEntry(ImportEntryInformation importEntry) {
         importEntryId = importEntry.getId();
-        userId = (String) DalUtil.getId(importEntry.getCreatedBy());
-        orgId = (String) DalUtil.getId(importEntry.getOrganization());
-        roleId = importEntry.getRole() == null ? null : (String) DalUtil.getId(importEntry
-            .getRole());
-        clientId = (String) DalUtil.getId(importEntry.getClient());
+        userId = importEntry.getCreatedBy();
+        orgId = importEntry.getOrgId();
+        roleId = importEntry.getRoleId();
+        clientId = importEntry.getClientId();
       }
     }
   }

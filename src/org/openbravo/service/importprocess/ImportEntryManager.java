@@ -22,6 +22,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -44,11 +45,13 @@ import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
+import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.ad.access.Role;
 
 /**
@@ -325,21 +328,19 @@ public class ImportEntryManager {
     managerThread.doNotify();
   }
 
-  private void handleImportEntry(ImportEntry importEntry) {
+  private void handleImportEntry(ImportEntryInformation importEntry) {
 
     try {
       ImportEntryProcessor entryProcessor = getImportEntryProcessor(importEntry.getTypeofdata());
       if (entryProcessor == null) {
-        log.warn("No import entry processor defined for type of data "
-            + importEntry.getTypeofdata() + " with json " + importEntry.getJsonInfo()
-            + " imported on " + importEntry.getImported() + " by " + importEntry.getCreatedBy());
+        log.warn("No import entry processor defined for type of data " + importEntry);
       } else {
         entryProcessor.handleImportEntry(importEntry);
       }
     } catch (Throwable t) {
       log.error(
-          "Error while saving import message " + importEntry + " " + importEntry.getJsonInfo()
-              + "  message: " + t.getMessage(), t);
+          "Error while saving import message " + importEntry + " " + "  message: " + t.getMessage(),
+          t);
       setImportEntryErrorIndependent(importEntry.getId(), t);
     }
   }
@@ -457,6 +458,14 @@ public class ImportEntryManager {
 
       Thread.currentThread().setName("Import Entry Manager Main");
 
+      // see ImportEntryInformation javadoc, we don't want to read the
+      // large json/error info columns, but want to have all the other
+      // normal columns, these are computed and stored in the 2 variables.
+      final List<Property> importEntryProperties = ImportEntryInformation
+          .getImportEntryProperties();
+      final String importEntrySelectClause = ImportEntryInformation
+          .getQuerySelectClause(importEntryProperties);
+
       // don't start right away at startup, give the system time to
       // really start
       log.debug("Started, first sleep " + manager.initialWaitTime);
@@ -466,6 +475,7 @@ public class ImportEntryManager {
       }
       log.debug("Run loop started");
       try {
+        List<String> typesOfData = null;
         while (true) {
           // obcontext cleared or wrong obcontext, repair
           if (OBContext.getOBContext() == null
@@ -482,7 +492,6 @@ public class ImportEntryManager {
               continue;
             }
 
-            List<String> typesOfData = null;
             if (typesOfData == null) {
               typesOfData = ImportProcessUtils.getOrderedTypesOfData();
             }
@@ -497,30 +506,30 @@ public class ImportEntryManager {
               // don't block eachother with the limited batch size
               // being read
               for (String typeOfData : typesOfData) {
-                OBQuery<ImportEntry> entriesQry = OBDal.getInstance().createQuery(
-                    ImportEntry.class,
-                    ImportEntry.PROPERTY_TYPEOFDATA + "='" + typeOfData + "' and "
-                        + ImportEntry.PROPERTY_IMPORTSTATUS + "='Initial' order by "
-                        + ImportEntry.PROPERTY_CREATIONDATE);
-                entriesQry.setFilterOnReadableClients(false);
-                entriesQry.setFilterOnReadableOrganization(false);
-                entriesQry.setMaxResult(manager.importBatchSize);
+                final String importEntryQryStr = "select " + importEntrySelectClause + " from "
+                    + ImportEntry.ENTITY_NAME + " where " + ImportEntry.PROPERTY_TYPEOFDATA + "='"
+                    + typeOfData + "' and " + ImportEntry.PROPERTY_IMPORTSTATUS
+                    + "='Initial' order by " + ImportEntry.PROPERTY_CREATIONDATE;
+
+                final Query entriesQry = OBDal.getInstance().getSession()
+                    .createQuery(importEntryQryStr);
+                entriesQry.setMaxResults(manager.importBatchSize);
 
                 final ScrollableResults entries = entriesQry.scroll(ScrollMode.FORWARD_ONLY);
                 while (entries.next()) {
                   entryCount++;
-                  final ImportEntry importEntry = (ImportEntry) entries.get()[0];
+                  final Object[] values = (Object[]) entries.get();
+                  final ImportEntryInformation importEntryInformation = new ImportEntryInformation(
+                      importEntryProperties, values);
                   try {
-                    manager.handleImportEntry(importEntry);
+                    manager.handleImportEntry(importEntryInformation);
                   } catch (Throwable t) {
                     // ImportEntryProcessors are custom implementations which can cause
                     // errors, so always catch them to prevent other import entries
                     // from not getting processed
-                    manager.setImportEntryError(importEntry.getId(), t);
+                    manager.setImportEntryError(importEntryInformation.getId(), t);
                     OBDal.getInstance().flush();
                   }
-                  // get rid of it to keep the session small
-                  OBDal.getInstance().getSession().evict(importEntry);
                 }
               }
 
@@ -638,6 +647,110 @@ public class ImportEntryManager {
       thread.setDaemon(true);
       return thread;
     }
+  }
 
+  /**
+   * A representation of the import entry with only the main fields. This is used when reading the
+   * import entries in the main loop. In this main thread/loop we don't want to read the large
+   * json/error info blobs therefore only the properties which are not soo large are read. For the
+   * foreign key properties only the id of the referenced record are read. So for example the
+   * {@link ImportEntryInformation} has a getOrgId method but not a getOrganization method.
+   * 
+   * The {@link ImportEntryInformation} has getters for the common properties defined in core for
+   * any properties/columns added by modules use the getValue method with the property name you are
+   * looking for.
+   * 
+   * The property names can be found in the {@link ImportEntry} class in the static property name
+   * strings, for example {@link ImportEntry#PROPERTY_ORGANIZATION}.
+   */
+  public static class ImportEntryInformation {
+    private Map<String, Object> values;
+
+    private static List<Property> getImportEntryProperties() {
+      final Entity importEntryEntity = ModelProvider.getInstance().getEntity(ImportEntry.class);
+      final List<Property> result = new ArrayList<Property>();
+      for (Property p : importEntryEntity.getProperties()) {
+        if (p.isOneToMany() || p.isInactive()) {
+          continue;
+        }
+        // skip the big ones!
+        if (p.getFieldLength() > 10000 || ImportEntry.PROPERTY_JSONINFO.equals(p.getName())
+            || ImportEntry.PROPERTY_ERRORINFO.equals(p.getName())) {
+          continue;
+        }
+        result.add(p);
+      }
+      return result;
+    }
+
+    private static String getQuerySelectClause(List<Property> props) {
+      final StringBuilder sb = new StringBuilder();
+      for (Property p : props) {
+        if (sb.length() > 0) {
+          sb.append(", ");
+        }
+        sb.append(p.getName());
+        if (!p.isPrimitive()) {
+          sb.append(".id");
+        }
+      }
+      return sb.toString();
+    }
+
+    private ImportEntryInformation(List<Property> props, Object[] objectValues) {
+      int i = 0;
+      values = new HashMap<String, Object>();
+      for (Property p : props) {
+        values.put(p.getName(), objectValues[i++]);
+      }
+    }
+
+    public String getOrgId() {
+      return (String) values.get(ImportEntry.PROPERTY_ORGANIZATION);
+    }
+
+    public String getClientId() {
+      return (String) values.get(ImportEntry.PROPERTY_CLIENT);
+    }
+
+    public Date getCreated() {
+      return (Date) values.get(ImportEntry.PROPERTY_CREATIONDATE);
+    }
+
+    public Date getUpdated() {
+      return (Date) values.get(ImportEntry.PROPERTY_UPDATED);
+    }
+
+    public String getCreatedBy() {
+      return (String) values.get(ImportEntry.PROPERTY_CREATEDBY);
+    }
+
+    public String getUpdatedBy() {
+      return (String) values.get(ImportEntry.PROPERTY_UPDATEDBY);
+    }
+
+    public String getImportStatus() {
+      return (String) values.get(ImportEntry.PROPERTY_IMPORTSTATUS);
+    }
+
+    public String getTypeofdata() {
+      return (String) values.get(ImportEntry.PROPERTY_TYPEOFDATA);
+    }
+
+    public String getId() {
+      return (String) values.get(ImportEntry.PROPERTY_ID);
+    }
+
+    public String getRoleId() {
+      return (String) values.get(ImportEntry.PROPERTY_ROLE);
+    }
+
+    public Object getValue(String field) {
+      return values.get(field);
+    }
+
+    public String toString() {
+      return values.toString();
+    }
   }
 }
