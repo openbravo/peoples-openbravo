@@ -327,7 +327,7 @@ public abstract class ImportEntryProcessor {
               if (SessionHandler.isSessionHandlerPresent()) {
                 // change to warning if the code in the subclasses really works correctly
                 logger
-                    .warn("Session handler present after processing import entry, this indicates that the processing code "
+                    .debug("Session handler present after processing import entry, this indicates that the processing code "
                         + "does not correctly clean/close the session after its last actions. This should be fixed.");
                 OBDal.getInstance().commitAndClose();
               }
