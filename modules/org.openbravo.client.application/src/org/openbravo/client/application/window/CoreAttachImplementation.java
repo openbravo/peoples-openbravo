@@ -69,6 +69,7 @@ public class CoreAttachImplementation extends AttachImplementation {
 
     attachment.setPath(getPath(strFileDir));
     attachment.setDataType(strDataType);
+    OBDal.getInstance().save(attachment);
   }
 
   @Override

@@ -143,6 +143,7 @@ public class AttachImplementationManager {
       Map<String, Object> typifiedParameters = saveMetadata(attachment, parameters, strTab,
           attachmentExists);
       handler.uploadFile(attachment, strDataType, typifiedParameters, file, strTab);
+      OBDal.getInstance().flush();
     } finally {
       OBContext.restorePreviousMode();
     }
