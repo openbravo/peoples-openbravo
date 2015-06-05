@@ -1522,6 +1522,7 @@
       this.set('hasbeenpaid', 'N');
       this.set('isEditable', true);
       this.set('createdBy', OB.MobileApp.model.get('orgUserId'));
+      this.set('orderDate', new Date());
       //Sometimes the Id of Quotation is null.
       if (this.get('id') && !_.isNull(this.get('id'))) {
         this.set('oldId', this.get('id'));
@@ -1529,6 +1530,10 @@
         this.set('quotationnoPrefix', OB.MobileApp.model.get('terminal').quotationDocNoPrefix);
         this.set('quotationnoSuffix', nextQuotationno.quotationnoSuffix);
         this.set('documentNo', nextQuotationno.documentNo);
+      } else {
+        //this shouldn't happen.
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_QuotationCannotBeReactivated_title'), OB.I18N.getLabel('OBPOS_QuotationCannotBeReactivated_body'));
+        return;
       }
       this.set('id', null);
       this.save();
