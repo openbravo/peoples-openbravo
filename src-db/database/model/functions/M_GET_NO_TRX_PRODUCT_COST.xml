@@ -34,7 +34,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2012 Openbravo SLU
+* All portions are Copyright (C) 2012-2015 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -68,16 +68,20 @@ BEGIN
     END IF;
   END IF;
 
-  SELECT COUNT(*) INTO v_Count
-  FROM m_costing
-  WHERE datefrom <= p_movementdate
-    AND dateto > p_movementdate
-    AND m_product_id = p_product_id
-    AND COALESCE(m_warehouse_id, p_warehouse_id, '-1') = COALESCE(p_warehouse_id, m_warehouse_id, '-1')
-    AND ad_org_id = v_legal_entity
-    AND cost IS NOT NULL
-    AND costtype IN ('STA', 'AVA')
-    AND costtype = COALESCE(v_CostType, costtype);
+
+  SELECT count(*) INTO v_Count
+  FROM DUAL 
+  WHERE EXISTS (SELECT 1
+                FROM m_costing
+                WHERE datefrom <= p_movementdate
+                  AND dateto > p_movementdate
+                  AND m_product_id = p_product_id
+                  AND COALESCE(m_warehouse_id, p_warehouse_id, '-1') = COALESCE(p_warehouse_id, m_warehouse_id, '-1')
+                  AND ad_org_id = v_legal_entity
+                  AND cost IS NOT NULL
+                  AND costtype IN ('STA', 'AVA')
+                  AND costtype = COALESCE(v_CostType, costtype)
+                );
   IF(v_Count = 0) THEN
     RETURN NULL;
   END IF;

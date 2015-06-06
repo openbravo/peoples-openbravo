@@ -220,7 +220,7 @@ public abstract class ImportEntryProcessor {
    * {@link ImportEntryManager} thread and then offered again to this {@link ImportEntryProcessor}
    * to be processed.
    */
-  protected abstract boolean canHandleImportEntry(ImportEntry importEntry);
+  protected abstract boolean canHandleImportEntry(ImportEntry importEntryInformation);
 
   /**
    * Based on the {@link ImportEntry} returns a key which uniquely identifies the thread which
@@ -302,7 +302,12 @@ public abstract class ImportEntryProcessor {
               }
 
               // not changed, process
+              final String typeOfData = localImportEntry.getTypeofdata();
               processEntry(localImportEntry);
+
+              // don't use the import entry anymore, touching methods on it
+              // may re-open a session
+              localImportEntry = null;
 
               // processed so can be removed
               importEntryIds.remove(queuedImportEntry.importEntryId);
@@ -311,7 +316,7 @@ public abstract class ImportEntryProcessor {
               cnt++;
               final long timeForEntry = (System.currentTimeMillis() - t0);
               totalT += timeForEntry;
-              importEntryManager.reportStats(localImportEntry.getTypeofdata(), timeForEntry);
+              importEntryManager.reportStats(typeOfData, timeForEntry);
               if ((cnt % 100) == 0 && logger.isDebugEnabled()) {
                 logger.debug("Runnable: " + key + ", processed " + cnt + " import entries in "
                     + totalT + " millis, " + (totalT / cnt)
@@ -468,8 +473,7 @@ public abstract class ImportEntryProcessor {
         importEntryId = importEntry.getId();
         userId = (String) DalUtil.getId(importEntry.getCreatedBy());
         orgId = (String) DalUtil.getId(importEntry.getOrganization());
-        roleId = importEntry.getRole() == null ? null : (String) DalUtil.getId(importEntry
-            .getRole());
+        roleId = (String) DalUtil.getId(importEntry.getRole());
         clientId = (String) DalUtil.getId(importEntry.getClient());
       }
     }

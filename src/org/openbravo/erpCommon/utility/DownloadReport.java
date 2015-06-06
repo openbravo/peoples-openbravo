@@ -57,6 +57,8 @@ public class DownloadReport extends HttpSecureAppServlet {
       response.setContentType("application/pdf");
     } else if (extension.equalsIgnoreCase(".csv")) {
       response.setContentType("text/csv");
+    } else if (extension.equalsIgnoreCase(".txt")) {
+      response.setContentType("text/plain");
     } else if (extension.equalsIgnoreCase(".xls")) {
       response.setContentType("application/vnd.ms-excel");
     } else {

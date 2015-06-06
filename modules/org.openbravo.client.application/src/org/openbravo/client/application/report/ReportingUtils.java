@@ -48,6 +48,7 @@ import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.export.HtmlExporter;
 import net.sf.jasperreports.engine.export.JRCsvExporter;
 import net.sf.jasperreports.engine.export.JRPdfExporter;
+import net.sf.jasperreports.engine.export.JRTextExporter;
 import net.sf.jasperreports.engine.export.JRXlsExporter;
 import net.sf.jasperreports.engine.fill.JRSwapFileVirtualizer;
 import net.sf.jasperreports.engine.util.JRSwapFile;
@@ -58,6 +59,8 @@ import net.sf.jasperreports.export.SimpleHtmlExporterOutput;
 import net.sf.jasperreports.export.SimpleHtmlReportConfiguration;
 import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
 import net.sf.jasperreports.export.SimplePdfExporterConfiguration;
+import net.sf.jasperreports.export.SimpleTextExporterConfiguration;
+import net.sf.jasperreports.export.SimpleTextReportConfiguration;
 import net.sf.jasperreports.export.SimpleWriterExporterOutput;
 import net.sf.jasperreports.export.SimpleXlsReportConfiguration;
 import net.sf.jasperreports.export.type.HtmlSizeUnitEnum;
@@ -97,6 +100,9 @@ public class ReportingUtils {
    * Used to set the parameter with the URI to retrieve images in HTML reports.
    */
   public static final String IMAGES_URI = "Images URI";
+
+  private static final double TEXT_CHAR_HEIGHT = 10;
+  private static final double TEXT_CHAR_WIDTH = 10;
   private static final Logger log = LoggerFactory.getLogger(ReportingUtils.class);
 
   /**
@@ -332,6 +338,9 @@ public class ReportingUtils {
     case PDF:
       JasperExportManager.exportReportToPdfFile(jasperPrint, target.getAbsolutePath());
       break;
+    case TXT:
+      saveTxtReportToFile(jasperPrint, target);
+      break;
     case XLS:
       saveExcelReportToFile(jasperPrint, exportParameters, target);
       break;
@@ -369,6 +378,9 @@ public class ReportingUtils {
       break;
     case PDF:
       JasperExportManager.exportReportToPdfStream(jasperPrint, outputStream);
+      break;
+    case TXT:
+      saveTxtReportToOutputStream(jasperPrint, outputStream);
       break;
     case XLS:
       saveExcelReportToOutputStream(jasperPrint, exportParameters, outputStream);
@@ -640,6 +652,99 @@ public class ReportingUtils {
     csvExporter.setExporterOutput(exporterOutput);
     csvExporter.setConfiguration(exportConfiguration);
     csvExporter.exportReport();
+  }
+
+  /**
+   * Generates a plain text report from a pre-compiled report and returns it into a file.
+   * 
+   * @param jasperPrint
+   *          JasperPrint object which contains a compiled report.
+   * @param file
+   *          The file used to return the report.
+   * @throws JRException
+   *           In case there is any error generating the report an exception is thrown with the
+   *           error message.
+   */
+  private static void saveTxtReportToFile(JasperPrint jasperPrint, File file) throws JRException {
+    final JRTextExporter textExporter = new JRTextExporter();
+    SimpleExporterInput exporterInput = new SimpleExporterInput(jasperPrint);
+    SimpleWriterExporterOutput exporterOutput = new SimpleWriterExporterOutput(file);
+
+    // Default text configuration that can be overridden in the .jrxml template itself
+    SimpleTextExporterConfiguration textExporterConfiguration = new SimpleTextExporterConfiguration();
+    textExporterConfiguration.setOverrideHints(false);
+    textExporter.setConfiguration(textExporterConfiguration);
+    // Default item text configuration that can be overridden in the .jrxml template itself
+    SimpleTextReportConfiguration textReportConfiguration = new SimpleTextReportConfiguration();
+    textReportConfiguration.setCharHeight(new Float(TEXT_CHAR_HEIGHT));
+    textReportConfiguration.setCharWidth(new Float(TEXT_CHAR_WIDTH));
+    textReportConfiguration.setOverrideHints(false);
+    textExporter.setConfiguration(textReportConfiguration);
+
+    textExporter.setExporterInput(exporterInput);
+    textExporter.setExporterOutput(exporterOutput);
+    textExporter.exportReport();
+  }
+
+  /**
+   * Generates a plain text report from a pre-compiled report and returns it into an output stream.
+   * 
+   * @param jasperPrint
+   *          JasperPrint object which contains a compiled report.
+   * @param outputStream
+   *          The output stream used to return the report.
+   * @throws JRException
+   *           In case there is any error generating the report an exception is thrown with the
+   *           error message.
+   */
+  private static void saveTxtReportToOutputStream(JasperPrint jasperPrint, OutputStream outputStream)
+      throws JRException {
+    final JRTextExporter textExporter = new JRTextExporter();
+    SimpleExporterInput exporterInput = new SimpleExporterInput(jasperPrint);
+    SimpleWriterExporterOutput exporterOutput = new SimpleWriterExporterOutput(outputStream);
+
+    // Default text configuration that can be overridden in the .jrxml template itself
+    SimpleTextExporterConfiguration textExporterConfiguration = new SimpleTextExporterConfiguration();
+    textExporterConfiguration.setOverrideHints(false);
+    textExporter.setConfiguration(textExporterConfiguration);
+    // Default item text configuration that can be overridden in the .jrxml template itself
+    SimpleTextReportConfiguration textReportConfiguration = new SimpleTextReportConfiguration();
+    textReportConfiguration.setCharHeight(new Float(TEXT_CHAR_HEIGHT));
+    textReportConfiguration.setCharWidth(new Float(TEXT_CHAR_WIDTH));
+    textReportConfiguration.setOverrideHints(false);
+    textExporter.setConfiguration(textReportConfiguration);
+
+    textExporter.setExporterInput(exporterInput);
+    textExporter.setExporterOutput(exporterOutput);
+    textExporter.exportReport();
+  }
+
+  /**
+   * Generates a plain text report using the SimpleExporterInput, SimpleWriterExporterOutput,
+   * SimpleTextExporterConfiguration and SimpleTextReportConfiguration received as parameters.
+   * 
+   * @param exporterInput
+   *          SimpleExporterInput object with the input data.
+   * @param exporterOutput
+   *          SimpleWriterExporterOutput object with the output data.
+   * @param textExporterConfiguration
+   *          SimpleTextExporterConfiguration with the configuration data.
+   * @param textReportConfiguration
+   *          SimpleTextReportConfiguration with the item configuration data.
+   * @throws JRException
+   *           In case there is any error generating the report an exception is thrown with the
+   *           error message.
+   */
+  public static void saveTxtReport(SimpleExporterInput exporterInput,
+      SimpleWriterExporterOutput exporterOutput,
+      SimpleTextExporterConfiguration textExporterConfiguration,
+      SimpleTextReportConfiguration textReportConfiguration) throws JRException {
+    final JRTextExporter textExporter = new JRTextExporter();
+    textExporter.setExporterInput(exporterInput);
+    textExporter.setExporterOutput(exporterOutput);
+    textExporter.setConfiguration(textExporterConfiguration);
+    textExporter.setConfiguration(textReportConfiguration);
+    textExporter.exportReport();
   }
 
   /**
@@ -1181,6 +1286,15 @@ public class ReportingUtils {
       }
     }), //
     /**
+     * TXT export type
+     */
+    @SuppressWarnings("serial")
+    TXT("txt", "100", new HashMap<String, Object>() {
+      {
+        put("IS_IGNORE_PAGINATION", true);
+      }
+    }), //
+    /**
      * XLS export type
      */
     @SuppressWarnings("serial")
@@ -1263,6 +1377,8 @@ public class ReportingUtils {
         return ExportType.HTML;
       } else if ("PDF".equals(action)) {
         return ExportType.PDF;
+      } else if ("TXT".equals(action)) {
+        return ExportType.TXT;
       } else if ("XLS".equals(action)) {
         return ExportType.XLS;
       } else if ("XML".equals(action)) {

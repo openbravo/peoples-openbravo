@@ -48,7 +48,6 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.ad.access.Role;
 
 /**
@@ -189,6 +188,19 @@ public class ImportEntryManager {
     importEntryArchiveManager.start();
   }
 
+  public long getNumberOfQueuedTasks() {
+    return executorService.getQueue().size();
+  }
+
+  public long getNumberOfActiveTasks() {
+    return executorService.getActiveCount();
+  }
+
+  public boolean isExecutorRunning() {
+    return executorService != null && !executorService.isShutdown()
+        && !executorService.isTerminated() && managerThread.isRunning();
+  }
+
   /**
    * Is called by the {@link ImportEntryProcessor} objects to submit a
    * {@link ImportEntryProcessor.ImportEntryProcessRunnable}. for execution.
@@ -214,6 +226,9 @@ public class ImportEntryManager {
       importEntryProcessor.shutdown();
     }
     importEntryArchiveManager.shutdown();
+    executorService = null;
+    threadsStarted = false;
+    managerThread = null;
   }
 
   /**
@@ -314,16 +329,14 @@ public class ImportEntryManager {
     try {
       ImportEntryProcessor entryProcessor = getImportEntryProcessor(importEntry.getTypeofdata());
       if (entryProcessor == null) {
-        log.warn("No import entry processor defined for type of data "
-            + importEntry.getTypeofdata() + " with json " + importEntry.getJsonInfo()
-            + " imported on " + importEntry.getImported() + " by " + importEntry.getCreatedBy());
+        log.warn("No import entry processor defined for type of data " + importEntry);
       } else {
         entryProcessor.handleImportEntry(importEntry);
       }
     } catch (Throwable t) {
       log.error(
-          "Error while saving import message " + importEntry + " " + importEntry.getJsonInfo()
-              + "  message: " + t.getMessage(), t);
+          "Error while saving import message " + importEntry + " " + "  message: " + t.getMessage(),
+          t);
       setImportEntryErrorIndependent(importEntry.getId(), t);
     }
   }
@@ -403,6 +416,7 @@ public class ImportEntryManager {
 
     private final ImportEntryManager manager;
 
+    private boolean isRunning = false;
     private Object monitorObject = new Object();
     private boolean wasNotifiedInParallel = false;
 
@@ -436,6 +450,7 @@ public class ImportEntryManager {
 
     @Override
     public void run() {
+      isRunning = true;
 
       Thread.currentThread().setName("Import Entry Manager Main");
 
@@ -447,98 +462,109 @@ public class ImportEntryManager {
       } catch (Exception ignored) {
       }
       log.debug("Run loop started");
-
-      while (true) {
-        // obcontext cleared or wrong obcontext, repair
-        if (OBContext.getOBContext() == null
-            || !"0".equals(OBContext.getOBContext().getUser().getId())) {
-          // make ourselves an admin
-          OBContext.setOBContext("0", "0", "0", "0");
-        }
-        try {
-
-          // too busy, don't process, but wait
-          if (manager.executorService.getQueue().size() > (manager.maxTaskQueueSize - 1)) {
-            doWait();
-            // woken, re-start from beginning of loop
-            continue;
+      try {
+        List<String> typesOfData = null;
+        while (true) {
+          // obcontext cleared or wrong obcontext, repair
+          if (OBContext.getOBContext() == null
+              || !"0".equals(OBContext.getOBContext().getUser().getId())) {
+            // make ourselves an admin
+            OBContext.setOBContext("0", "0", "0", "0");
           }
-
-          List<String> typesOfData = null;
-          if (typesOfData == null) {
-            typesOfData = ImportProcessUtils.getOrderedTypesOfData();
-          }
-
-          int entryCount = 0;
           try {
 
-            // start processing, so ignore any notifications happening before
-            wasNotifiedInParallel = false;
+            // too busy, don't process, but wait
+            if (manager.executorService.getQueue().size() > (manager.maxTaskQueueSize - 1)) {
+              doWait();
+              // woken, re-start from beginning of loop
+              continue;
+            }
 
-            // read the types of data one by one in a specific order, so that they
-            // don't block eachother with the limited batch size
-            // being read
-            for (String typeOfData : typesOfData) {
-              OBQuery<ImportEntry> entriesQry = OBDal.getInstance().createQuery(
-                  ImportEntry.class,
-                  ImportEntry.PROPERTY_TYPEOFDATA + "='" + typeOfData + "' and "
-                      + ImportEntry.PROPERTY_IMPORTSTATUS + "='Initial' order by "
-                      + ImportEntry.PROPERTY_CREATIONDATE);
-              entriesQry.setFilterOnReadableClients(false);
-              entriesQry.setFilterOnReadableOrganization(false);
-              entriesQry.setMaxResult(manager.importBatchSize);
+            if (typesOfData == null) {
+              typesOfData = ImportProcessUtils.getOrderedTypesOfData();
+            }
 
-              final ScrollableResults entries = entriesQry.scroll(ScrollMode.FORWARD_ONLY);
-              while (entries.next()) {
-                entryCount++;
-                final ImportEntry importEntry = (ImportEntry) entries.get()[0];
+            int entryCount = 0;
+            try {
+
+              // start processing, so ignore any notifications happening before
+              wasNotifiedInParallel = false;
+
+              // read the types of data one by one in a specific order, so that they
+              // don't block eachother with the limited batch size
+              // being read
+              for (String typeOfData : typesOfData) {
+                final String importEntryQryStr = "from " + ImportEntry.ENTITY_NAME + " where "
+                    + ImportEntry.PROPERTY_TYPEOFDATA + "='" + typeOfData + "' and "
+                    + ImportEntry.PROPERTY_IMPORTSTATUS + "='Initial' order by "
+                    + ImportEntry.PROPERTY_CREATIONDATE;
+
+                final Query entriesQry = OBDal.getInstance().getSession()
+                    .createQuery(importEntryQryStr);
+                entriesQry.setFirstResult(0);
+                entriesQry.setFetchSize(100);
+                entriesQry.setMaxResults(manager.importBatchSize);
+
+                final ScrollableResults entries = entriesQry.scroll(ScrollMode.FORWARD_ONLY);
                 try {
-                  manager.handleImportEntry(importEntry);
-                } catch (Throwable t) {
-                  // ImportEntryProcessors are custom implementations which can cause
-                  // errors, so always catch them to prevent other import entries
-                  // from not getting processed
-                  manager.setImportEntryError(importEntry.getId(), t);
-                  OBDal.getInstance().flush();
+                  while (entries.next()) {
+                    entryCount++;
+                    final ImportEntry entry = (ImportEntry) entries.get(0);
+                    try {
+                      manager.handleImportEntry(entry);
+                    } catch (Throwable t) {
+                      // ImportEntryProcessors are custom implementations which can cause
+                      // errors, so always catch them to prevent other import entries
+                      // from not getting processed
+                      manager.setImportEntryError(entry.getId(), t);
+                      OBDal.getInstance().flush();
+                    }
+                  }
+                } finally {
+                  entries.close();
                 }
-                // get rid of it to keep the session small
-                OBDal.getInstance().getSession().evict(importEntry);
               }
+
+            } catch (Throwable t) {
+              ImportProcessUtils.logError(log, t);
+            } finally {
+              OBDal.getInstance().commitAndClose();
+            }
+
+            if (entryCount > 0) {
+              // if there was data then just wait some time
+              // give the threads time to process it all before trying
+              // a next batch of entries
+              try {
+                // wait one second per 50 records, somewhat arbitrary
+                // but high enough for most cases
+                Thread.sleep(1000 * (entryCount / 50));
+              } catch (Exception ignored) {
+              }
+            } else {
+              // else wait for new ones to arrive or check after a certain
+              // amount of time
+              doWait();
             }
 
           } catch (Throwable t) {
             ImportProcessUtils.logError(log, t);
-          } finally {
-            OBDal.getInstance().commitAndClose();
-          }
 
-          if (entryCount > 0) {
-            // if there was data then just wait some time
-            // give the threads time to process it all before trying
-            // a next batch of entries
+            // wait otherwise the loop goes wild in case of really severe
+            // system errors like full disk
             try {
-              // wait one second per 50 records, somewhat arbitrary
-              // but high enough for most cases
-              Thread.sleep(1000 * (entryCount / 50));
+              Thread.sleep(5 * manager.managerWaitTime);
             } catch (Exception ignored) {
             }
-          } else {
-            // else wait for new ones to arrive or check after a certain
-            // amount of time
-            doWait();
-          }
-
-        } catch (Throwable t) {
-          ImportProcessUtils.logError(log, t);
-
-          // wait otherwise the loop goes wild in case of really severe
-          // system errors like full disk
-          try {
-            Thread.sleep(5 * manager.managerWaitTime);
-          } catch (Exception ignored) {
           }
         }
+      } finally {
+        isRunning = false;
       }
+    }
+
+    public boolean isRunning() {
+      return isRunning;
     }
   }
 
@@ -613,6 +639,5 @@ public class ImportEntryManager {
       thread.setDaemon(true);
       return thread;
     }
-
   }
 }

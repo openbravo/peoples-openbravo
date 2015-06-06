@@ -155,6 +155,12 @@
       <foreign-key foreignTable="AD_ORG" name="M_PRODUCTPO_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <index name="M_PROD_PO_BPARTNER_IDX" unique="false">
+        <index-column name="C_BPARTNER_ID"/>
+      </index>
+      <index name="M_PROD_PO_PRODUCT_IDX" unique="false">
+        <index-column name="M_PRODUCT_ID"/>
+      </index>
       <unique name="M_PRODUCT_PO_PRODUCT_BPARTN_UN">
         <unique-column name="M_PRODUCT_ID"/>
         <unique-column name="C_BPARTNER_ID"/>
