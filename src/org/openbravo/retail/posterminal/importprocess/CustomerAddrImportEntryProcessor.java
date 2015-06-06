@@ -13,13 +13,13 @@ import javax.enterprise.context.ApplicationScoped;
 import org.hibernate.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess;
 import org.openbravo.mobile.core.process.MobileImportEntryProcessorRunnable;
 import org.openbravo.retail.posterminal.CustomerAddrLoader;
 import org.openbravo.service.importprocess.ImportEntry;
-import org.openbravo.service.importprocess.ImportEntryManager.ImportEntryInformation;
 import org.openbravo.service.importprocess.ImportEntryManager.ImportEntryQualifier;
 import org.openbravo.service.importprocess.ImportEntryProcessor;
 
@@ -36,12 +36,12 @@ public class CustomerAddrImportEntryProcessor extends ImportEntryProcessor {
     return WeldUtils.getInstanceFromStaticBeanManager(BusinessPartnerLocationRunnable.class);
   }
 
-  protected boolean canHandleImportEntry(ImportEntryInformation importEntryInformation) {
+  protected boolean canHandleImportEntry(ImportEntry importEntryInformation) {
     return "BusinessPartnerLocation".equals(importEntryInformation.getTypeofdata());
   }
 
-  protected String getProcessSelectionKey(ImportEntryInformation importEntry) {
-    return importEntry.getOrgId();
+  protected String getProcessSelectionKey(ImportEntry importEntry) {
+    return (String) DalUtil.getId(importEntry.getOrganization());
   }
 
   private static class BusinessPartnerLocationRunnable extends MobileImportEntryProcessorRunnable {
