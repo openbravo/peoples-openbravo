@@ -36,8 +36,8 @@ public class OrderImportEntryProcessor extends ImportEntryProcessor {
     return WeldUtils.getInstanceFromStaticBeanManager(OrderLoaderRunnable.class);
   }
 
-  protected boolean canHandleImportEntry(ImportEntry importEntry) {
-    return "Order".equals(importEntry.getTypeofdata());
+  protected boolean canHandleImportEntry(ImportEntry importEntryInformation) {
+    return "Order".equals(importEntryInformation.getTypeofdata());
   }
 
   protected String getProcessSelectionKey(ImportEntry importEntry) {
