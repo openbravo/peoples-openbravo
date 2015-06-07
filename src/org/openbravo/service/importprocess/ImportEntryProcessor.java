@@ -285,7 +285,7 @@ public abstract class ImportEntryProcessor {
             setOBContext(queuedImportEntry);
 
             try {
-              OBContext.setAdminMode();
+              OBContext.setAdminMode(true);
               ImportEntry localImportEntry;
               try {
                 // reload the importEntry
@@ -398,7 +398,7 @@ public abstract class ImportEntryProcessor {
     }
 
     protected void setVariablesSecureApp(OBContext obContext) {
-      OBContext.setAdminMode();
+      OBContext.setAdminMode(true);
       try {
         final VariablesSecureApp variablesSecureApp = new VariablesSecureApp(obContext.getUser()
             .getId(), obContext.getCurrentClient().getId(), obContext.getCurrentOrganization()

@@ -40,7 +40,8 @@ public class ImportReprocessErrorEntries extends DalBaseProcess {
   protected void doExecute(ProcessBundle bundle) throws Exception {
     super.setDoCommit(false);
     logger = bundle.getLogger();
-    OBContext.setAdminMode();
+    // don't do client/org check on resetting import error status
+    OBContext.setAdminMode(false);
     try {
       final Query qry = OBDal
           .getInstance()
