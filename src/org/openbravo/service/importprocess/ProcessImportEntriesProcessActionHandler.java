@@ -56,7 +56,8 @@ public class ProcessImportEntriesProcessActionHandler extends BaseProcessActionH
       JSONObject msgTotal = new JSONObject();
       JSONArray actions = new JSONArray();
 
-      final DalConnectionProvider dalConnectionProvider = new DalConnectionProvider();
+      // no flush needed as only needed to get some messages
+      final DalConnectionProvider dalConnectionProvider = new DalConnectionProvider(false);
 
       final String importProcessLbl = Utility.messageBD(dalConnectionProvider, "ImportProcess",
           OBContext.getOBContext().getLanguage().getLanguage());

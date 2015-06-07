@@ -34,7 +34,7 @@
         <onCreateDefault/>
       </column>
       <column name="IMPORTED" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false">
-        <default><![CDATA[SYSDATE]]></default>
+        <default/>
         <onCreateDefault/>
       </column>
       <column name="JSONINFO" primaryKey="false" required="false" type="CLOB" size="4000" autoIncrement="false">
@@ -42,7 +42,7 @@
         <onCreateDefault/>
       </column>
       <column name="IMPORTSTATUS" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
-        <default/>
+        <default><![CDATA[Initial]]></default>
         <onCreateDefault/>
       </column>
       <column name="TYPEOFDATA" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">

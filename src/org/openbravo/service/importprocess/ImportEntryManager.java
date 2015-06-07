@@ -24,7 +24,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -239,8 +238,10 @@ public class ImportEntryManager {
    * Note will commit the session/connection using {@link OBDal#commitAndClose()}
    */
   public void createImportEntry(String id, String typeOfData, String json) {
+    // make sure that everything is flushed to the db before checking import entry
+    // content
     OBDal.getInstance().flush();
-    OBContext.setAdminMode(false);
+    OBContext.setAdminMode(true);
     try {
       // check if it is not there already or already archived
       {
@@ -276,8 +277,7 @@ public class ImportEntryManager {
       importEntry.setTypeofdata(typeOfData);
       importEntry.setJsonInfo(json);
 
-      for (Iterator<? extends Object> procIter = entryPreProcessors.iterator(); procIter.hasNext();) {
-        ImportEntryPreProcessor processor = (ImportEntryPreProcessor) procIter.next();
+      for (ImportEntryPreProcessor processor : entryPreProcessors) {
         processor.beforeCreate(importEntry);
       }
       OBDal.getInstance().save(importEntry);
@@ -398,7 +398,8 @@ public class ImportEntryManager {
     final OBContext prevOBContext = OBContext.getOBContext();
     OBContext.setOBContext("0", "0", "0", "0");
     try {
-      OBContext.setAdminMode();
+      // no need to do client/org checks on these actions, as in error, do the least possible
+      OBContext.setAdminMode(false);
       ImportEntry importEntry = OBDal.getInstance().get(ImportEntry.class, importEntryId);
       if (importEntry != null && !"Processed".equals(importEntry.getImportStatus())) {
         importEntry.setImportStatus("Error");
@@ -517,7 +518,6 @@ public class ImportEntryManager {
                       // errors, so always catch them to prevent other import entries
                       // from not getting processed
                       manager.setImportEntryError(entry.getId(), t);
-                      OBDal.getInstance().flush();
                     }
                   }
                 } finally {
