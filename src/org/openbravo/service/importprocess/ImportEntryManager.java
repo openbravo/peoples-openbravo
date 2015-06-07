@@ -513,6 +513,8 @@ public class ImportEntryManager {
                     final ImportEntry entry = (ImportEntry) entries.get(0);
                     try {
                       manager.handleImportEntry(entry);
+                      // remove it from the internal cache to keep it small
+                      OBDal.getInstance().getSession().evict(entry);
                     } catch (Throwable t) {
                       // ImportEntryProcessors are custom implementations which can cause
                       // errors, so always catch them to prevent other import entries
