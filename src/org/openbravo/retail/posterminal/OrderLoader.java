@@ -1627,9 +1627,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           (System.currentTimeMillis() - t1));
 
       VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
-      if (vars.hasSession()) {
-        vars.setSessionValue("POSOrder", "Y");
-      }
+      vars.setSessionValue("POSOrder", "Y");
 
       // retrieve the transactions of this payment and set the cashupId to those transactions
       OBDal.getInstance().refresh(finPayment);
