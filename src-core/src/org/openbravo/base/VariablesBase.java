@@ -172,10 +172,6 @@ public class VariablesBase {
     return postDataHash;
   }
 
-  public boolean hasSession() {
-    return session != null;
-  }
-
   /**
    * Sorts the list of parameters in the request
    * 
