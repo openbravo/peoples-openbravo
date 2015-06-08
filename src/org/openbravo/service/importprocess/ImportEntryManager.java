@@ -164,7 +164,7 @@ public class ImportEntryManager {
     numberOfThreads = ImportProcessUtils.getCheckIntProperty(log, "import.number.of.threads",
         numberOfThreads, 4);
     maxTaskQueueSize = ImportProcessUtils.getCheckIntProperty(log, "import.max.task.queue.size",
-        maxTaskQueueSize, 1000);
+        maxTaskQueueSize, 50);
   }
 
   public synchronized void start() {
