@@ -11,6 +11,7 @@ package org.openbravo.retail.posterminal.importprocess;
 import javax.enterprise.context.ApplicationScoped;
 
 import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess;
 import org.openbravo.mobile.core.process.MobileImportEntryProcessorRunnable;
 import org.openbravo.retail.posterminal.CustomerLoader;
@@ -31,13 +32,12 @@ public class CustomerImportEntryProcessor extends ImportEntryProcessor {
     return WeldUtils.getInstanceFromStaticBeanManager(BusinessPartnerRunnable.class);
   }
 
-  protected boolean canHandleImportEntry(ImportEntry importEntry) {
-    return "BusinessPartner".equals(importEntry.getTypeofdata());
+  protected boolean canHandleImportEntry(ImportEntry importEntryInformation) {
+    return "BusinessPartner".equals(importEntryInformation.getTypeofdata());
   }
 
   protected String getProcessSelectionKey(ImportEntry importEntry) {
-    // each customer gets its own process, completely parallel
-    return importEntry.getId();
+    return (String) DalUtil.getId(importEntry.getOrganization());
   }
 
   private static class BusinessPartnerRunnable extends MobileImportEntryProcessorRunnable {

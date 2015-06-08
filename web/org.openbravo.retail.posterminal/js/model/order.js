@@ -1501,6 +1501,7 @@
     },
 
     reactivateQuotation: function () {
+      var nextQuotationno;
       this.get('lines').each(function (line) {
         if (!this.get('priceIncludesTax')) {
           line.set('net', line.get('nondiscountednet'));
@@ -1518,6 +1519,10 @@
       //Sometimes the Id of Quotation is null.
       if (this.get('id') && !_.isNull(this.get('id'))) {
         this.set('oldId', this.get('id'));
+        nextQuotationno = OB.MobileApp.model.getNextQuotationno();
+        this.set('quotationnoPrefix', OB.MobileApp.model.get('terminal').quotationDocNoPrefix);
+        this.set('quotationnoSuffix', nextQuotationno.quotationnoSuffix);
+        this.set('documentNo', nextQuotationno.documentNo);
       }
       this.set('id', null);
       this.save();
