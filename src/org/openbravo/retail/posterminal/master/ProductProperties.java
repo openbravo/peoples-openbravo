@@ -30,6 +30,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.PropertyException;
+import org.openbravo.erpCommon.utility.PropertyNotFoundException;
 import org.openbravo.mobile.core.model.HQLProperty;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.model.pricing.pricelist.ProductPrice;
@@ -77,22 +78,34 @@ public class ProductProperties extends ModelExtension {
     // Date, shipfrom and shipto as null
     taxCategoryQry.append("', null, null, null)");
     final String strTaxCategoryQry = taxCategoryQry.toString();
-    ArrayList<HQLProperty> list;
+    ArrayList<HQLProperty> list = null;
+
     try {
       list = new ArrayList<HQLProperty>() {
         private static final long serialVersionUID = 1L;
         {
           String trlName;
-          boolean isHgvol = "Y".equals(Preferences.getPreferenceValue("OBPOS_highVolume.product",
-              true, OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
-                  .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
-                  .getOBContext().getRole(), null));
-          if (OBContext.hasTranslationInstalled() && !isHgvol) {
-            trlName = "coalesce((select pt.name from ProductTrl AS pt where pt.language='"
-                + OBContext.getOBContext().getLanguage().getLanguage()
-                + "'  and pt.product=product), product.name)";
-          } else {
-            trlName = "product.name";
+          try {
+            boolean isHgvol = "Y".equals(Preferences.getPreferenceValue("OBPOS_highVolume.product",
+                true, OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
+                    .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
+                    .getOBContext().getRole(), null));
+
+            if (OBContext.hasTranslationInstalled() && !isHgvol) {
+              trlName = "coalesce((select pt.name from ProductTrl AS pt where pt.language='"
+                  + OBContext.getOBContext().getLanguage().getLanguage()
+                  + "'  and pt.product=product), product.name)";
+            } else {
+              trlName = "product.name";
+            }
+          } catch (PropertyNotFoundException e) {
+            if (OBContext.hasTranslationInstalled()) {
+              trlName = "coalesce((select pt.name from ProductTrl AS pt where pt.language='"
+                  + OBContext.getOBContext().getLanguage().getLanguage()
+                  + "'  and pt.product=product), product.name)";
+            } else {
+              trlName = "product.name";
+            }
           }
 
           add(new HQLProperty("product.id", "id"));
@@ -146,10 +159,11 @@ public class ProductProperties extends ModelExtension {
           add(new HQLProperty("product.active", "active"));
         }
       };
-      return list;
     } catch (PropertyException e) {
       log.error("Error getting preference: " + e.getMessage(), e);
     }
-    return null;
+
+    return list;
+
   }
 }

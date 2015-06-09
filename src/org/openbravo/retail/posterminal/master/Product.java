@@ -111,12 +111,12 @@ public class Product extends ProcessHQLQuery {
       posPrecision = (priceList.getCurrency().getObposPosprecision() == null ? priceList
           .getCurrency().getPricePrecision() : priceList.getCurrency().getObposPosprecision())
           .toString();
-      isHgvol = "Y".equals(Preferences.getPreferenceValue("OBPOS_highVolume.customer", true,
+      isHgvol = "Y".equals(Preferences.getPreferenceValue("OBPOS_highVolume.product", true,
           OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
               .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
               .getOBContext().getRole(), null));
     } catch (PropertyException e) {
-      log.error("Error getting preference OBPOS_highVolume.customer " + e.getMessage(), e);
+      log.error("Error getting preference OBPOS_highVolume.product " + e.getMessage(), e);
     } finally {
       OBContext.restorePreviousMode();
     }
