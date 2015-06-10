@@ -265,7 +265,7 @@
           hasbeenpaid: 'Y'
         },
         getIdentifier: function (model) {
-          return model.get('documentNo');
+          return model.documentNo;
         }
       });
 
@@ -291,7 +291,7 @@
         timePerRecord: 10000,
         criteria: {},
         getIdentifier: function (model) {
-          return model.get('creationDate');
+          return model.creationDate;
         },
         changesPendingCriteria: {
           'isprocessed': 'Y'
