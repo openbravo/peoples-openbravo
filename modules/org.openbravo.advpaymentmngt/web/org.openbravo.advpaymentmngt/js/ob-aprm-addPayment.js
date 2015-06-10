@@ -866,7 +866,7 @@ OB.APRM.AddPayment.updateConvertedAmount = function (view, form, recalcExchangeR
   if (!actualConverted && !exchangeRate) {
     return;
   }
-  
+
   exchangeRate = new BigDecimal(String(exchangeRate || 1));
   actualConverted = new BigDecimal(String(actualConverted || 0));
   if (!actualConverted || !exchangeRate) {
