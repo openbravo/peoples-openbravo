@@ -1137,7 +1137,7 @@ OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall, clientSideVali
     return clientSideValidationFail();
   }
 
-  if ((total.compareTo(creditTotalItem) < 0) && (overpaymentField.isVisible() && overpaymentAction === 'CR')) {
+  if (creditTotalItem.compareTo(BigDecimal.prototype.ZERO) !== 0 && (total.compareTo(creditTotalItem) < 0) && (overpaymentField.isVisible() && overpaymentAction === 'CR')) {
     view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_MORECREDITAMOUNT'));
     return clientSideValidationFail();
   }
