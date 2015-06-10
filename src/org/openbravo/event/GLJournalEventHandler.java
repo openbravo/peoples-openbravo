@@ -58,8 +58,9 @@ public class GLJournalEventHandler extends EntityPersistenceEventObserver {
           GLJournalLine.class);
       gljournallineCriteria.add(Restrictions.eq(GLJournalLine.PROPERTY_JOURNALENTRY, glj));
       ScrollableResults scrollLines = gljournallineCriteria.scroll(ScrollMode.FORWARD_ONLY);
-      if (gljournallineCriteria.count() > 0) {
-        try {
+
+      try {
+        if (gljournallineCriteria.count() > 0) {
           int i = 0;
           while (scrollLines.next()) {
             final GLJournalLine journalLine = (GLJournalLine) scrollLines.get()[0];
@@ -77,9 +78,9 @@ public class GLJournalEventHandler extends EntityPersistenceEventObserver {
               OBDal.getInstance().getSession().clear();
             }
           }
-        } finally {
-          scrollLines.close();
         }
+      } finally {
+        scrollLines.close();
       }
     }
   }
