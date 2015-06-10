@@ -904,7 +904,7 @@ BEGIN
                   END IF;
                 END IF;
                 
-                  IF (cur_finaccpaymentmethod.ExecutionType<>'A') THEN
+                IF (cur_finaccpaymentmethod.ExecutionType<>'A') THEN
                   UPDATE FIN_PAYMENT_SCHEDULE
                   SET PAIDAMT = (SELECT COALESCE(sum(amount + COALESCE(writeoffamt, 0)), 0)
                                  FROM fin_payment_scheduledetail
@@ -924,7 +924,7 @@ BEGIN
                                                FROM fin_payment, fin_payment_detail
                                                WHERE fin_payment.fin_payment_id = fin_payment_detail.fin_payment_id
                                                       and fin_payment.processed='Y' 
-                                                      and fin_payment_scheduledetail.isinvoicepaid='Y'
+                                                      and fin_payment_scheduledetail.isinvoicepaid<>'Y'
                                                       and fin_payment_detail.fin_payment_detail_id = fin_payment_scheduledetail.fin_payment_detail_id)))
 
                   WHERE FIN_PAYMENT_SCHEDULE_ID = cur_PaymentScheduleOrder.FIN_PAYMENT_SCHEDULE_ORDER;
