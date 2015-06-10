@@ -93,7 +93,7 @@ public class StandardCostAdjustment extends CostingAlgorithmAdjustmentImp {
           MaterialTransaction relTrx = (MaterialTransaction) trxs.get()[0];
           BigDecimal currentCost = CostAdjustmentUtils.getTrxCost(relTrx, true, trx.getCurrency());
           BigDecimal expectedCost = relTrx.getMovementQuantity().abs().multiply(unitCost)
-            .setScale(stdCurPrecission, RoundingMode.HALF_UP);
+              .setScale(stdCurPrecission, RoundingMode.HALF_UP);
           if (expectedCost.compareTo(currentCost) != 0) {
             CostAdjustmentLine newCAL = insertCostAdjustmentLine(relTrx,
                 expectedCost.subtract(currentCost), null);

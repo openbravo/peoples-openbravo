@@ -43,7 +43,8 @@ public class GLJournalEventHandler extends EntityPersistenceEventObserver {
     return entities;
   }
 
-  public void onUpdate(@Observes EntityUpdateEvent event) {
+  public void onUpdate(@Observes
+  EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
