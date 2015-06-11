@@ -188,7 +188,7 @@ public class ImportEntryManager {
   }
 
   public long getNumberOfQueuedTasks() {
-    return executorService.getQueue().size();
+    return executorService.getQueue() == null ? 0 : executorService.getQueue().size();
   }
 
   public long getNumberOfActiveTasks() {
@@ -238,9 +238,6 @@ public class ImportEntryManager {
    * Note will commit the session/connection using {@link OBDal#commitAndClose()}
    */
   public void createImportEntry(String id, String typeOfData, String json) {
-    // make sure that everything is flushed to the db before checking import entry
-    // content
-    OBDal.getInstance().flush();
     OBContext.setAdminMode(true);
     try {
       // check if it is not there already or already archived
@@ -398,7 +395,9 @@ public class ImportEntryManager {
     final OBContext prevOBContext = OBContext.getOBContext();
     OBContext.setOBContext("0", "0", "0", "0");
     try {
-      // no need to do client/org checks on these actions, as in error, do the least possible
+      // do not do org/client check as the error can be related to org/client access
+      // so prevent this check to be done to even be able to save org/client access
+      // checks
       OBContext.setAdminMode(false);
       ImportEntry importEntry = OBDal.getInstance().get(ImportEntry.class, importEntryId);
       if (importEntry != null && !"Processed".equals(importEntry.getImportStatus())) {
@@ -475,7 +474,8 @@ public class ImportEntryManager {
           try {
 
             // too busy, don't process, but wait
-            if (manager.executorService.getQueue().size() > (manager.maxTaskQueueSize - 1)) {
+            if (manager.executorService.getQueue() != null
+                && manager.executorService.getQueue().size() > (manager.maxTaskQueueSize - 1)) {
               doWait();
               // woken, re-start from beginning of loop
               continue;
