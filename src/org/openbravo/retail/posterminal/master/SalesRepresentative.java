@@ -44,7 +44,7 @@ public class SalesRepresentative extends ProcessHQLQuery {
             + "from ADUser user "
             + "where "
             + " exists (select 1 from BusinessPartner bp where user.businessPartner = bp AND bp.isSalesRepresentative = true AND (bp.$naturalOrgCriteria)) "
-            + "and (user.$incrementalUpdateCriteria) AND (user.$naturalOrgCriteria) and (user.$readableSimpleClientCriteria) order by user.name asc");
+            + "AND ((user.$incrementalUpdateCriteria) OR (user.businessPartner.$incrementalUpdateCriteria)) AND (user.$naturalOrgCriteria) AND (user.$readableSimpleClientCriteria) order by user.name asc");
 
     return hqlQueries;
   }
