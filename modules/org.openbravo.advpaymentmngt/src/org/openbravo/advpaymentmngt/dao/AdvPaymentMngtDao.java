@@ -1895,8 +1895,19 @@ public class AdvPaymentMngtDao {
   }
 
   public BigDecimal getCustomerCredit(BusinessPartner bp, boolean isReceipt, Organization Org) {
+    return getCustomerCredit(bp, isReceipt, Org, null);
+  }
+
+  public BigDecimal getCustomerCredit(BusinessPartner bp, boolean isReceipt, Organization Org,
+      Currency currency) {
     BigDecimal creditAmount = BigDecimal.ZERO;
-    for (FIN_Payment payment : getCustomerPaymentsWithCredit(Org, bp, isReceipt))
+    List<FIN_Payment> paymentList = null;
+    if (currency == null) {
+      paymentList = getCustomerPaymentsWithCredit(Org, bp, isReceipt);
+    } else {
+      paymentList = getCustomerPaymentsWithCredit(Org, bp, isReceipt, currency);
+    }
+    for (FIN_Payment payment : paymentList)
       creditAmount = creditAmount.add(payment.getGeneratedCredit()).subtract(
           payment.getUsedCredit());
     return creditAmount;
@@ -1923,6 +1934,15 @@ public class AdvPaymentMngtDao {
    */
   public List<FIN_Payment> getCustomerPaymentsWithCredit(Organization org, BusinessPartner bp,
       boolean isReceipt) {
+    return getCustomerPaymentsWithCredit(org, bp, isReceipt, null);
+  }
+
+  /**
+   * Returns the list of credit payments for the selected business partner that belongs to the legal
+   * entity's natural tree of the given organization
+   */
+  public List<FIN_Payment> getCustomerPaymentsWithCredit(Organization org, BusinessPartner bp,
+      boolean isReceipt, Currency currency) {
 
     try {
       OBContext.setAdminMode(true);
@@ -1936,6 +1956,9 @@ public class AdvPaymentMngtDao {
       Set<String> orgIds = OBContext.getOBContext().getOrganizationStructureProvider()
           .getChildTree(legalEntity.getId(), true);
       obcPayment.add(Restrictions.in("organization.id", orgIds));
+      if (currency != null) {
+        obcPayment.add(Restrictions.eq(FIN_Payment.PROPERTY_CURRENCY, currency));
+      }
       obcPayment.addOrderBy(FIN_Payment.PROPERTY_PAYMENTDATE, true);
       obcPayment.addOrderBy(FIN_Payment.PROPERTY_DOCUMENTNO, true);
 
