@@ -28,8 +28,8 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchronization;
 import org.openbravo.mobile.core.process.DataSynchronizationImportProcess;
+import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchronization;
 import org.openbravo.mobile.core.process.JSONPropertyToEntity;
 import org.openbravo.mobile.core.process.PropertyByType;
 import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
@@ -128,13 +128,17 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
         JSONArray cashMgmtIds = jsonCashup.getJSONArray("cashMgmtIds");
         JSONObject result = processor.processCashClose(posTerminal, jsonCashup, cashMgmtIds,
             currentDate);
+
         // add the messages returned by processCashClose...
         jsonData.put("messages", result.opt("messages"));
         jsonData.put("next", result.opt("next"));
         jsonData.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
       } finally {
-        OBDal.getInstance().flush();
-        TriggerHandler.getInstance().enable();
+        try {
+          OBDal.getInstance().flush();
+          TriggerHandler.getInstance().enable();
+        } catch (Throwable ignored) {
+        }
       }
     } else {
       // This cashup is a cash order. Nothing needs to be done
