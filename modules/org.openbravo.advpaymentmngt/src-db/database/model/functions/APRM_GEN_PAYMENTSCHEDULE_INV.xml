@@ -919,13 +919,7 @@ BEGIN
                       OUTSTANDINGAMT = (SELECT COALESCE(sum(amount), 0)
                                         FROM fin_payment_scheduledetail
                                         WHERE fin_payment_schedule_order=cur_PaymentScheduleOrder.FIN_PAYMENT_SCHEDULE_ORDER AND
-                                              (fin_payment_detail_id is null OR
-                                       exists (SELECT 1
-                                               FROM fin_payment, fin_payment_detail
-                                               WHERE fin_payment.fin_payment_id = fin_payment_detail.fin_payment_id
-                                                      and fin_payment.processed='Y' 
-                                                      and fin_payment_scheduledetail.isinvoicepaid<>'Y'
-                                                      and fin_payment_detail.fin_payment_detail_id = fin_payment_scheduledetail.fin_payment_detail_id)))
+                                        (fin_payment_detail_id is null OR isinvoicepaid='N'))
 
                   WHERE FIN_PAYMENT_SCHEDULE_ID = cur_PaymentScheduleOrder.FIN_PAYMENT_SCHEDULE_ORDER;
                 END IF;
