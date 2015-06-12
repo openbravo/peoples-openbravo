@@ -71,11 +71,9 @@ enyo.kind({
           classes: 'btnlink-gray btnlink-cashup-edit',
           ontap: 'addUnit'
         }, {
-          style: 'display:inline-block; width: 10%'
-        }, {
           name: 'qtyminus',
           kind: 'OB.UI.SmallButton',
-          style: 'width: 40px;',
+          style: 'width: 8%;',
           classes: 'btnlink-gray btnlink-cashup-edit',
           content: '-',
           ontap: 'subUnit'
@@ -83,20 +81,18 @@ enyo.kind({
           name: 'numberOfCoins',
           kind: 'OB.UI.MediumButton',
           classes: 'btnlink-gray btnlink-cashup-edit',
-          style: 'background-color: white; border: 1px solid lightgray; border-radius: 3px;',
+          style: 'background-color: white; border: 1px solid lightgray; border-radius: 3px; width: 18%',
           ontap: 'lineEdit'
         }, {
           name: 'qtyplus',
           kind: 'OB.UI.SmallButton',
-          style: 'width: 40px;',
+          style: 'width: 8%',
           classes: 'btnlink-gray btnlink-cashup-edit',
           content: '+',
           ontap: 'addUnit'
         }, {
-          style: 'display:inline-block; width: 10%'
-        }, {
           name: 'total',
-          style: 'display:inline-block;padding: 10px 0px 10px 0px; width: 15%; text-align: center;'
+          style: 'margin-left: 2%; display:inline-block;padding: 10px 0px 10px 0px; width: 26%; text-align: center;'
         }]
       }]
     }]
@@ -104,9 +100,9 @@ enyo.kind({
   create: function () {
     this.inherited(arguments);
     this.$.coin.setContent(OB.I18N.formatCurrency(this.model.get('coinValue')));
-    var style = 'float: left; width: 15%; text-align: center;';
+    var style = 'float: left; width: 27%; text-align: center;';
     if (this.model.get('bordercolor')) {
-      style += ' border:10px solid ' + this.model.get('bordercolor') + ';';
+      style += ' border:6px solid ' + this.model.get('bordercolor') + ';';
     }
     style += ' background-color:' + this.model.get('backcolor') + ';';
     this.$.coin.addStyles(style);
