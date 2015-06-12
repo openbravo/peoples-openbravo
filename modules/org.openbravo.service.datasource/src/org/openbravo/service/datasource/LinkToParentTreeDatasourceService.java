@@ -284,44 +284,48 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     }
     int count = 0;
     final ScrollableResults scrollableResults = query.scroll(ScrollMode.FORWARD_ONLY);
-    while (scrollableResults.next()) {
-      BaseOBObject bob = (BaseOBObject) scrollableResults.get()[0];
-      final JSONObject json = toJsonConverter.toJsonObject(bob, DataResolvingMode.FULL);
-      if (fetchRoot) {
-        json.put("parentId", ROOT_NODE_CLIENT);
-      } else {
-        json.put("parentId", parentId);
-      }
-      Object nodeId = bob.get(nodeIdProperty.getName());
-      String nodeIdStr = null;
-      if (nodeId instanceof String) {
-        nodeIdStr = (String) nodeId;
-      } else if (nodeId instanceof BaseOBObject) {
-        nodeIdStr = ((BaseOBObject) nodeId).getId().toString();
-      }
+    try {
+      while (scrollableResults.next()) {
+        BaseOBObject bob = (BaseOBObject) scrollableResults.get()[0];
+        final JSONObject json = toJsonConverter.toJsonObject(bob, DataResolvingMode.FULL);
+        if (fetchRoot) {
+          json.put("parentId", ROOT_NODE_CLIENT);
+        } else {
+          json.put("parentId", parentId);
+        }
+        Object nodeId = bob.get(nodeIdProperty.getName());
+        String nodeIdStr = null;
+        if (nodeId instanceof String) {
+          nodeIdStr = (String) nodeId;
+        } else if (nodeId instanceof BaseOBObject) {
+          nodeIdStr = ((BaseOBObject) nodeId).getId().toString();
+        }
 
-      Object parentNodeId = bob.get(linkToParentProperty.getName());
-      String parentNodeIdStr = null;
-      if (parentNodeId instanceof String) {
-        parentNodeIdStr = (String) parentNodeId;
-      } else if (parentNodeId instanceof BaseOBObject) {
-        parentNodeIdStr = ((BaseOBObject) parentNodeId).getId().toString();
-      }
+        Object parentNodeId = bob.get(linkToParentProperty.getName());
+        String parentNodeIdStr = null;
+        if (parentNodeId instanceof String) {
+          parentNodeIdStr = (String) parentNodeId;
+        } else if (parentNodeId instanceof BaseOBObject) {
+          parentNodeIdStr = ((BaseOBObject) parentNodeId).getId().toString();
+        }
 
-      if (isMultiParentTree) {
-        json.put("nodeId", parentNodeIdStr + ID_SEPARATOR + nodeIdStr);
-      } else {
-        json.put("nodeId", nodeIdStr);
-      }
-      addNodeCommonAttributes(entity, bob, json);
-      json.put("_hasChildren", (this.nodeHasChildren(entity, linkToParentProperty, nodeIdProperty,
-          bob, hqlWhereClause)) ? true : false);
-      responseData.put(json);
-      count++;
-      if (count % 100 == 0) {
-        OBDal.getInstance().getSession().clear();
-      }
+        if (isMultiParentTree) {
+          json.put("nodeId", parentNodeIdStr + ID_SEPARATOR + nodeIdStr);
+        } else {
+          json.put("nodeId", nodeIdStr);
+        }
+        addNodeCommonAttributes(entity, bob, json);
+        json.put("_hasChildren", (this.nodeHasChildren(entity, linkToParentProperty,
+            nodeIdProperty, bob, hqlWhereClause)) ? true : false);
+        responseData.put(json);
+        count++;
+        if (count % 100 == 0) {
+          OBDal.getInstance().getSession().clear();
+        }
 
+      }
+    } finally {
+      scrollableResults.close();
     }
     return responseData;
   }
@@ -840,42 +844,46 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     }
     int count = 0;
     final ScrollableResults scrollableResults = query.scroll(ScrollMode.FORWARD_ONLY);
-    while (scrollableResults.next()) {
-      BaseOBObject bob = (BaseOBObject) scrollableResults.get()[0];
-      final JSONObject json = toJsonConverter.toJsonObject(bob, DataResolvingMode.FULL);
+    try {
+      while (scrollableResults.next()) {
+        BaseOBObject bob = (BaseOBObject) scrollableResults.get()[0];
+        final JSONObject json = toJsonConverter.toJsonObject(bob, DataResolvingMode.FULL);
 
-      Object nodeId = bob.get(nodeIdProperty.getName());
-      String nodeIdStr = null;
-      if (nodeId instanceof String) {
-        nodeIdStr = (String) nodeId;
-      } else if (nodeId instanceof BaseOBObject) {
-        nodeIdStr = ((BaseOBObject) nodeId).getId().toString();
-      }
-
-      Object parentNodeId = bob.get(linkToParentProperty.getName());
-      String parentNodeIdStr = null;
-      if (parentNodeId instanceof String) {
-        parentNodeIdStr = (String) parentNodeId;
-      } else if (parentNodeId instanceof BaseOBObject) {
-        parentNodeIdStr = ((BaseOBObject) parentNodeId).getId().toString();
-      }
-      try {
-        json.put("nodeId", nodeIdStr);
-        if (parentNodeIdStr == null) {
-          json.put("parentId", ROOT_NODE_CLIENT);
-        } else {
-          json.put("parentId", parentNodeIdStr);
+        Object nodeId = bob.get(nodeIdProperty.getName());
+        String nodeIdStr = null;
+        if (nodeId instanceof String) {
+          nodeIdStr = (String) nodeId;
+        } else if (nodeId instanceof BaseOBObject) {
+          nodeIdStr = ((BaseOBObject) nodeId).getId().toString();
         }
-      } catch (JSONException e) {
-        logger.error("Error on tree datasource", e);
-      }
 
-      parentList.add(json);
-      count++;
-      if (count % 100 == 0) {
-        OBDal.getInstance().getSession().clear();
-      }
+        Object parentNodeId = bob.get(linkToParentProperty.getName());
+        String parentNodeIdStr = null;
+        if (parentNodeId instanceof String) {
+          parentNodeIdStr = (String) parentNodeId;
+        } else if (parentNodeId instanceof BaseOBObject) {
+          parentNodeIdStr = ((BaseOBObject) parentNodeId).getId().toString();
+        }
+        try {
+          json.put("nodeId", nodeIdStr);
+          if (parentNodeIdStr == null) {
+            json.put("parentId", ROOT_NODE_CLIENT);
+          } else {
+            json.put("parentId", parentNodeIdStr);
+          }
+        } catch (JSONException e) {
+          logger.error("Error on tree datasource", e);
+        }
 
+        parentList.add(json);
+        count++;
+        if (count % 100 == 0) {
+          OBDal.getInstance().getSession().clear();
+        }
+
+      }
+    } finally {
+      scrollableResults.close();
     }
     return parentList;
   }

@@ -138,7 +138,7 @@ WHERE o.ad_org_id=$P{AD_Org_ID}
         ELSE TO_DATE($P{DateFrom}) END)
     AND trunc(f.dateacct) <= (CASE WHEN ($P{DateTo} IS NULL OR $P{DateTo}='') THEN TO_DATE('09-09-9999')
         ELSE TO_DATE($P{DateTo}) END)
-    AND f.ad_table_id IN ('318','D1A97202E832470285C9B1EB026D54E2','4D8C3B3C31D1410DA046140C9F024D17','B1B7075C46934F0A9FD4C4D0F1457B42')
+    AND f.ad_table_id not IN ('145')
 ORDER BY f.dateacct, f.created]]>
 	</queryString>
 	<field name="org_address" class="java.lang.String"/>

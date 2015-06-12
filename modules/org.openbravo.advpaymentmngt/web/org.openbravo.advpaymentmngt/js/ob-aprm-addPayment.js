@@ -866,7 +866,7 @@ OB.APRM.AddPayment.updateConvertedAmount = function (view, form, recalcExchangeR
   if (!actualConverted && !exchangeRate) {
     return;
   }
-  
+
   exchangeRate = new BigDecimal(String(exchangeRate || 1));
   actualConverted = new BigDecimal(String(actualConverted || 0));
   if (!actualConverted || !exchangeRate) {
@@ -1137,12 +1137,12 @@ OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall, clientSideVali
     return clientSideValidationFail();
   }
 
-  if ((total.compareTo(creditTotalItem) < 0) && (overpaymentField.isVisible() && overpaymentAction === 'CR')) {
+  if (creditTotalItem.compareTo(BigDecimal.prototype.ZERO) !== 0 && (total.compareTo(creditTotalItem) < 0) && (overpaymentField.isVisible() && overpaymentAction === 'CR')) {
     view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_MORECREDITAMOUNT'));
     return clientSideValidationFail();
   }
 
-  if (document !== null && document !== '' && actualPayment.compareTo(BigDecimal.prototype.ZERO) === 0 && view.parentWindow && view.parentWindow.windowId) {
+  if (document !== null && document !== '' && actualPayment.compareTo(BigDecimal.prototype.ZERO) === 0 && view.parentWindow && view.parentWindow.windowId && !overpaymentAction) {
     view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_ZEROAMOUNTPAYMENTTRANSACTION'));
     return clientSideValidationFail();
   }
