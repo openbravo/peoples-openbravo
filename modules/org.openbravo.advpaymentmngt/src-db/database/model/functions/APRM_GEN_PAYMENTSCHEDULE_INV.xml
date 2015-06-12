@@ -934,11 +934,11 @@ BEGIN
 	      FROM fin_payment_schedule fps
 	      WHERE exists(select 1
 			   from fin_payment_scheduledetail fpsd
-		           where (fps.fin_payment_schedule_id = fpsd.fin_payment_schedule_order OR fps.fin_payment_schedule_id = fpsd.fin_payment_schedule_invoice)
-		           and isinvoicepaid='Y')
-		AND FIN_PAYMENT_SCHEDULE_ID = cur_paymentschedule.FIN_PAYMENT_SCHEDULE_ID;
+		           where fps.fin_payment_schedule_id = fpsd.fin_payment_schedule_invoice
+		           and fpsd.isinvoicepaid='N')
+              AND FIN_PAYMENT_SCHEDULE_ID = cur_paymentschedule.FIN_PAYMENT_SCHEDULE_ID;
 
-              IF (cur_finaccpaymentmethod.ExecutionType<>'A' AND v_count > 0) THEN
+              IF (cur_finaccpaymentmethod.ExecutionType<>'A' AND v_count = 0) THEN
                 UPDATE FIN_PAYMENT_SCHEDULE
                 SET PAIDAMT = PAIDAMT + COALESCE(cur_paymentschedule.OUTSTANDINGAMT,0),
                     OUTSTANDINGAMT = OUTSTANDINGAMT - COALESCE(cur_paymentschedule.OUTSTANDINGAMT, 0)
