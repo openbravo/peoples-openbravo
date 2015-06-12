@@ -182,6 +182,9 @@
       <foreign-key foreignTable="M_PRODUCTIONLINE" name="M_TRANSACTION_M_PRODUCTIONLINE">
         <reference local="M_PRODUCTIONLINE_ID" foreign="M_PRODUCTIONLINE_ID"/>
       </foreign-key>
+      <index name="M_TRANSACTION_CALCULATED" unique="false">
+        <index-column name="ISCOSTCALCULATED"/>
+      </index>
       <index name="M_TRANSACTION_INOUTLINE" unique="false">
         <index-column name="M_INOUTLINE_ID"/>
       </index>
@@ -196,6 +199,9 @@
       </index>
       <index name="M_TRANSACTION_MOVEMENTLINE" unique="false">
         <index-column name="M_MOVEMENTLINE_ID"/>
+      </index>
+      <index name="M_TRANSACTION_PROCESSED" unique="false">
+        <index-column name="ISPROCESSED"/>
       </index>
       <index name="M_TRANSACTION_PRODUCTIONLINE" unique="false">
         <index-column name="M_PRODUCTIONLINE_ID"/>
