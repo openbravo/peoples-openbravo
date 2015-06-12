@@ -3443,7 +3443,7 @@ isc.OBViewGrid.addProperties({
     return ret;
   },
 
-  //used in Edit or Delete only UI pattern
+  //used in Edit or Delete only UI pattern and in Single Record UI pattern
   setListEndEditAction: function () {
     this.listEndEditAction = 'done';
   },

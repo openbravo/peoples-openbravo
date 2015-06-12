@@ -978,12 +978,19 @@ isc.OBStandardView.addProperties({
   setEditOrDeleteOnly: function (editOrDeleteOnly) {
     this.editOrDeleteOnly = editOrDeleteOnly;
     if (editOrDeleteOnly) {
-      this.viewGrid.setListEndEditAction();
+      this.dontCreateNewRowAutomatically();
     }
   },
 
   setSingleRecord: function (singleRecord) {
     this.singleRecord = singleRecord;
+    if (singleRecord) {
+      this.dontCreateNewRowAutomatically();
+    }
+  },
+
+  dontCreateNewRowAutomatically: function () {
+    this.viewGrid.setListEndEditAction();
   },
 
   allowNewRow: function () {
