@@ -37,6 +37,7 @@ import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
+import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.enterprise.Organization;
 
@@ -284,66 +285,78 @@ public abstract class ImportEntryProcessor {
             // entry
             setOBContext(queuedImportEntry);
 
+            OBContext.setAdminMode(true);
+            ImportEntry localImportEntry;
             try {
-              OBContext.setAdminMode(true);
-              ImportEntry localImportEntry;
-              try {
-                // reload the importEntry
-                localImportEntry = OBDal.getInstance().get(ImportEntry.class,
-                    queuedImportEntry.importEntryId);
+              // reload the importEntry
+              localImportEntry = OBDal.getInstance().get(ImportEntry.class,
+                  queuedImportEntry.importEntryId);
 
-                // check if already processed, if so skip it
-                if (localImportEntry == null
-                    || !"Initial".equals(localImportEntry.getImportStatus())) {
-                  continue;
-                }
-              } finally {
-                OBContext.restorePreviousMode();
+              // check if already processed, if so skip it
+              if (localImportEntry == null || !"Initial".equals(localImportEntry.getImportStatus())) {
+                continue;
               }
-
-              // not changed, process
-              final String typeOfData = localImportEntry.getTypeofdata();
-              processEntry(localImportEntry);
-
-              // don't use the import entry anymore, touching methods on it
-              // may re-open a session
-              localImportEntry = null;
-
-              // processed so can be removed
-              importEntryIds.remove(queuedImportEntry.importEntryId);
-
-              // keep some stats
-              cnt++;
-              final long timeForEntry = (System.currentTimeMillis() - t0);
-              totalT += timeForEntry;
-              importEntryManager.reportStats(typeOfData, timeForEntry);
-              if ((cnt % 100) == 0 && logger.isDebugEnabled()) {
-                logger.debug("Runnable: " + key + ", processed " + cnt + " import entries in "
-                    + totalT + " millis, " + (totalT / cnt)
-                    + " per import entry, current queue size: " + importEntries.size());
-              }
-
-              // the import entry processEntry calls should not leave an open active session
-              if (SessionHandler.isSessionHandlerPresent()) {
-                // change to warning if the code in the subclasses really works correctly
-                logger
-                    .debug("Session handler present after processing import entry, this indicates that the processing code "
-                        + "does not correctly clean/close the session after its last actions. This should be fixed.");
-                OBDal.getInstance().commitAndClose();
-              }
-
             } finally {
-              cleanUpThreadForNextCycle();
+              OBContext.restorePreviousMode();
             }
+
+            // not changed, process
+            final String typeOfData = localImportEntry.getTypeofdata();
+            processEntry(localImportEntry);
+
+            // don't use the import entry anymore, touching methods on it
+            // may re-open a session
+            localImportEntry = null;
+
+            // processed so can be removed
+            importEntryIds.remove(queuedImportEntry.importEntryId);
+
+            // keep some stats
+            cnt++;
+            final long timeForEntry = (System.currentTimeMillis() - t0);
+            totalT += timeForEntry;
+            importEntryManager.reportStats(typeOfData, timeForEntry);
+            if ((cnt % 100) == 0 && logger.isDebugEnabled()) {
+              logger.debug("Runnable: " + key + ", processed " + cnt + " import entries in "
+                  + totalT + " millis, " + (totalT / cnt)
+                  + " per import entry, current queue size: " + importEntries.size());
+            }
+
+            if (TriggerHandler.getInstance().isDisabled()) {
+              logger
+                  .error("Triggers disabled at end of processing an entry, this is a coding error, "
+                      + "call TriggerHandler.enable in your code. Triggers are enabled again for now!");
+              TriggerHandler.getInstance().enable();
+              OBDal.getInstance().commitAndClose();
+            }
+
+            // the import entry processEntry calls should not leave an open active session
+            if (SessionHandler.isSessionHandlerPresent()) {
+              // change to warning if the code in the subclasses really works correctly
+              logger
+                  .warn("Session handler present after processing import entry, this indicates that the processing code "
+                      + "does not correctly clean/close the session after its last actions. This should be fixed.");
+              OBDal.getInstance().commitAndClose();
+            }
+
           } catch (Throwable t) {
             // bit rough but ensures that the connection is released/closed
             try {
               OBDal.getInstance().rollbackAndClose();
             } catch (Exception ignored) {
             }
+            try {
+              if (TriggerHandler.getInstance().isDisabled()) {
+                TriggerHandler.getInstance().enable();
+              }
+              OBDal.getInstance().commitAndClose();
+            } catch (Exception ignored) {
+            }
 
             // store the error
             importEntryManager.setImportEntryErrorIndependent(queuedImportEntry.importEntryId, t);
+          } finally {
+            cleanUpThreadForNextCycle();
           }
         }
         if (logger.isDebugEnabled()) {
@@ -357,6 +370,14 @@ public abstract class ImportEntryProcessor {
         // bit rough but ensures that the connection is released/closed
         try {
           OBDal.getInstance().rollbackAndClose();
+        } catch (Exception ignored) {
+        }
+
+        try {
+          if (TriggerHandler.getInstance().isDisabled()) {
+            TriggerHandler.getInstance().enable();
+          }
+          OBDal.getInstance().commitAndClose();
         } catch (Exception ignored) {
         }
 

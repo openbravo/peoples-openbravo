@@ -43,6 +43,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
@@ -397,7 +398,7 @@ public class ImportEntryManager {
     try {
       // do not do org/client check as the error can be related to org/client access
       // so prevent this check to be done to even be able to save org/client access
-      // checks
+      // exceptions
       OBContext.setAdminMode(false);
       ImportEntry importEntry = OBDal.getInstance().get(ImportEntry.class, importEntryId);
       if (importEntry != null && !"Processed".equals(importEntry.getImportStatus())) {
@@ -406,6 +407,12 @@ public class ImportEntryManager {
         OBDal.getInstance().save(importEntry);
         OBDal.getInstance().commitAndClose();
       }
+    } catch (Throwable throwable) {
+      try {
+        OBDal.getInstance().rollbackAndClose();
+      } catch (Throwable ignored) {
+      }
+      throw new OBException(throwable);
     } finally {
       OBContext.restorePreviousMode();
       OBContext.setOBContext(prevOBContext);
