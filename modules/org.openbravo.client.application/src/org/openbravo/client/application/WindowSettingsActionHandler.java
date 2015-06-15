@@ -35,6 +35,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.model.Property;
 import org.openbravo.client.application.personalization.PersonalizationHandler;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.client.kernel.KernelUtils;
@@ -132,15 +133,21 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
               final Set<String> fields = new TreeSet<String>();
               for (Field field : tabAccess.getTab().getADFieldList()) {
                 if (!field.isReadOnly() && !field.isShownInStatusBar()) {
-                  fields.add(KernelUtils.getProperty(entity, field).getName());
+                  final Property property = KernelUtils.getProperty(entity, field);
+                  if (property != null) {
+                    fields.add(property.getName());
+                  }
                 }
               }
               for (FieldAccess fieldAccess : tabAccess.getADFieldAccessList()) {
                 if (fieldAccess.isActive()) {
-                  final String name = KernelUtils.getProperty(entity, fieldAccess.getField())
-                      .getName();
-                  jFields.put(name, fieldAccess.isEditableField());
-                  fields.remove(name);
+                  final Property property = KernelUtils.getProperty(entity, fieldAccess.getField());
+                  if (property != null) {
+                    final String name = KernelUtils.getProperty(entity, fieldAccess.getField())
+                        .getName();
+                    jFields.put(name, fieldAccess.isEditableField());
+                    fields.remove(name);
+                  }
                 }
               }
               for (String name : fields) {
