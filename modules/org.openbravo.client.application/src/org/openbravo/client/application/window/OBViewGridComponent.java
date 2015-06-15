@@ -414,9 +414,12 @@ public class OBViewGridComponent extends BaseTemplateComponent {
       return null;
     }
     String parentProperty = null;
-    // If the parentTab uses the same table, we don't do nothing because the id is the parent
-    // property and it is always included
-    if (!tab.getTable().getId().equals(parentTab.getTable().getId())) {
+    if (tab.getTable().getId().equals(parentTab.getTable().getId())
+        && ("RO".equals(tab.getUIPattern()) || "SR".equals(tab.getUIPattern()))) {
+      if (entity.getIdProperties().size() > 0) {
+        parentProperty = entity.getIdProperties().get(0).getName();
+      }
+    } else {
       parentProperty = ApplicationUtils.getParentProperty(tab, parentTab);
     }
     return parentProperty;
