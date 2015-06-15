@@ -40,15 +40,15 @@ public class Payments extends JSONProcessSimple {
       JSONArray respArray = new JSONArray();
       String posId = RequestContext.get().getSessionAttribute("POSTerminal").toString();
       String hqlPayments = "select p as payment, p.paymentMethod as paymentMethod, "
-          + "c_currency_rate(p.financialAccount.currency, p.obposApplications.organization.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as rate, c_currency_rate(p.obposApplications.organization.currency, p.financialAccount.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as mulrate, "
-          + "p.financialAccount.currency.iSOCode as isocode, "
-          + "p.financialAccount.currency.symbol as symbol, p.financialAccount.currency.currencySymbolAtTheRight as currencySymbolAtTheRight, "
-          + "p.financialAccount.currentBalance as currentBalance, "
-          + "p.financialAccount.currency.obposPosprecision as obposPosprecision, "
+          + "c_currency_rate(coalesce(c, p.paymentMethod.currency), p.obposApplications.organization.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as rate, c_currency_rate(p.obposApplications.organization.currency, coalesce(c, p.paymentMethod.currency), null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as mulrate, "
+          + "coalesce(c.iSOCode, p.paymentMethod.currency.iSOCode) as isocode, "
+          + "coalesce(c.symbol, p.paymentMethod.currency.symbol) as symbol, coalesce(c.currencySymbolAtTheRight, p.paymentMethod.currency.currencySymbolAtTheRight) as currencySymbolAtTheRight, "
+          + "coalesce(f.currentBalance, 0) as currentBalance, "
+          + "coalesce(c.obposPosprecision, null) as obposPosprecision, "
           + "img.bindaryData as image, img.mimetype as mimetype "
-          + "from OBPOS_App_Payment as p left outer join p.paymentMethod as pm "
-          + "left outer join pm.image as img where p.obposApplications.id=? "
-          + "and p.$readableSimpleCriteria and p.$activeCriteria order by p.line, p.commercialName";
+          + "from OBPOS_App_Payment as p left join p.financialAccount as f left join f.currency as c "
+          + "left outer join p.paymentMethod as pm left outer join pm.image as img "
+          + "where p.obposApplications.id=? and p.$readableSimpleCriteria and p.$activeCriteria order by p.line, p.commercialName";
 
       SimpleQueryBuilder querybuilder = new SimpleQueryBuilder(hqlPayments, OBContext
           .getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
