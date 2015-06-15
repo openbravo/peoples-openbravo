@@ -705,7 +705,7 @@ isc.OBPickAndExecuteGrid.addProperties({
         this.setEditValue(this.getEditRow(), field.name, columnValue.value);
         // see issue https://issues.openbravo.com/view.php?id=30060
         // explicitly set the display value
-        if (field.displayField && columnValue.identifier) {
+        if (field.displayField) {
           this.setEditValue(this.getEditRow(), field.displayField, columnValue.identifier);
         }
       }
