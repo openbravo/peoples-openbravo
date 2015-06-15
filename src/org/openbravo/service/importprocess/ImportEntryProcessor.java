@@ -158,8 +158,7 @@ public abstract class ImportEntryProcessor {
     // runnables is a concurrent hashmap
     ImportEntryProcessRunnable runnable = runnables.get(key);
 
-    // note: don't if here on an isProcessing flag on the runnable
-    // this can result in 2 runnables for the same key
+    // note: the runnable maybe is not running yet
     // as runnable can already be in a queue of the executorservice
     // waiting to be processed, but not yet started
     if (runnable != null) {
@@ -273,120 +272,122 @@ public abstract class ImportEntryProcessor {
     public void run() {
 
       logger = Logger.getLogger(this.getClass());
-      try {
-        int cnt = 0;
-        long totalT = 0;
-        QueuedEntry queuedImportEntry;
-        while ((queuedImportEntry = importEntries.poll()) != null) {
-          try {
-            final long t0 = System.currentTimeMillis();
-
-            // set the same obcontext as was being used for the original
-            // entry
-            setOBContext(queuedImportEntry);
-
-            OBContext.setAdminMode(true);
-            ImportEntry localImportEntry;
+      while (true) {
+        try {
+          int cnt = 0;
+          long totalT = 0;
+          QueuedEntry queuedImportEntry;
+          while ((queuedImportEntry = importEntries.poll()) != null) {
             try {
-              // reload the importEntry
-              localImportEntry = OBDal.getInstance().get(ImportEntry.class,
-                  queuedImportEntry.importEntryId);
+              final long t0 = System.currentTimeMillis();
 
-              // check if already processed, if so skip it
-              if (localImportEntry == null || !"Initial".equals(localImportEntry.getImportStatus())) {
-                continue;
+              // set the same obcontext as was being used for the original
+              // entry
+              setOBContext(queuedImportEntry);
+
+              OBContext.setAdminMode(true);
+              ImportEntry localImportEntry;
+              try {
+                // reload the importEntry
+                localImportEntry = OBDal.getInstance().get(ImportEntry.class,
+                    queuedImportEntry.importEntryId);
+
+                // check if already processed, if so skip it
+                if (localImportEntry == null
+                    || !"Initial".equals(localImportEntry.getImportStatus())) {
+                  continue;
+                }
+              } finally {
+                OBContext.restorePreviousMode();
               }
-            } finally {
-              OBContext.restorePreviousMode();
-            }
 
-            // not changed, process
-            final String typeOfData = localImportEntry.getTypeofdata();
-            processEntry(localImportEntry);
+              // not changed, process
+              final String typeOfData = localImportEntry.getTypeofdata();
+              processEntry(localImportEntry);
 
-            // don't use the import entry anymore, touching methods on it
-            // may re-open a session
-            localImportEntry = null;
+              // don't use the import entry anymore, touching methods on it
+              // may re-open a session
+              localImportEntry = null;
 
-            // processed so can be removed
-            importEntryIds.remove(queuedImportEntry.importEntryId);
+              // processed so can be removed
+              importEntryIds.remove(queuedImportEntry.importEntryId);
 
-            // keep some stats
-            cnt++;
-            final long timeForEntry = (System.currentTimeMillis() - t0);
-            totalT += timeForEntry;
-            importEntryManager.reportStats(typeOfData, timeForEntry);
-            if ((cnt % 100) == 0 && logger.isDebugEnabled()) {
-              logger.debug("Runnable: " + key + ", processed " + cnt + " import entries in "
-                  + totalT + " millis, " + (totalT / cnt)
-                  + " per import entry, current queue size: " + importEntries.size());
-            }
+              // keep some stats
+              cnt++;
+              final long timeForEntry = (System.currentTimeMillis() - t0);
+              totalT += timeForEntry;
+              importEntryManager.reportStats(typeOfData, timeForEntry);
+              if ((cnt % 100) == 0 && logger.isDebugEnabled()) {
+                logger.debug("Runnable: " + key + ", processed " + cnt + " import entries in "
+                    + totalT + " millis, " + (totalT / cnt)
+                    + " per import entry, current queue size: " + importEntries.size());
+              }
 
-            if (TriggerHandler.getInstance().isDisabled()) {
-              logger
-                  .error("Triggers disabled at end of processing an entry, this is a coding error, "
-                      + "call TriggerHandler.enable in your code. Triggers are enabled again for now!");
-              TriggerHandler.getInstance().enable();
-              OBDal.getInstance().commitAndClose();
-            }
-
-            // the import entry processEntry calls should not leave an open active session
-            if (SessionHandler.isSessionHandlerPresent()) {
-              // change to warning if the code in the subclasses really works correctly
-              logger
-                  .warn("Session handler present after processing import entry, this indicates that the processing code "
-                      + "does not correctly clean/close the session after its last actions. This should be fixed.");
-              OBDal.getInstance().commitAndClose();
-            }
-
-          } catch (Throwable t) {
-            // bit rough but ensures that the connection is released/closed
-            try {
-              OBDal.getInstance().rollbackAndClose();
-            } catch (Exception ignored) {
-            }
-            try {
               if (TriggerHandler.getInstance().isDisabled()) {
+                logger
+                    .error("Triggers disabled at end of processing an entry, this is a coding error, "
+                        + "call TriggerHandler.enable in your code. Triggers are enabled again for now!");
                 TriggerHandler.getInstance().enable();
+                OBDal.getInstance().commitAndClose();
               }
-              OBDal.getInstance().commitAndClose();
-            } catch (Exception ignored) {
+
+              // the import entry processEntry calls should not leave an open active session
+              if (SessionHandler.isSessionHandlerPresent()) {
+                // change to warning if the code in the subclasses really works correctly
+                logger
+                    .warn("Session handler present after processing import entry, this indicates that the processing code "
+                        + "does not correctly clean/close the session after its last actions. This should be fixed.");
+                OBDal.getInstance().commitAndClose();
+              }
+
+            } catch (Throwable t) {
+              // bit rough but ensures that the connection is released/closed
+              try {
+                OBDal.getInstance().rollbackAndClose();
+              } catch (Exception ignored) {
+              }
+              try {
+                if (TriggerHandler.getInstance().isDisabled()) {
+                  TriggerHandler.getInstance().enable();
+                }
+                OBDal.getInstance().commitAndClose();
+              } catch (Exception ignored) {
+              }
+
+              // store the error
+              importEntryManager.setImportEntryErrorIndependent(queuedImportEntry.importEntryId, t);
+            } finally {
+              cleanUpThreadForNextCycle();
             }
-
-            // store the error
-            importEntryManager.setImportEntryErrorIndependent(queuedImportEntry.importEntryId, t);
-          } finally {
-            cleanUpThreadForNextCycle();
           }
-        }
-        if (logger.isDebugEnabled()) {
-          logger.debug("Runnable: " + key + ", processed " + cnt + " import entries in " + totalT
-              + " millis, " + (totalT / cnt) + " per import entry, current queue size: "
-              + importEntries.size());
+          if (logger.isDebugEnabled()) {
+            logger.debug("Runnable: " + key + ", processed " + cnt + " import entries in " + totalT
+                + " millis, " + (totalT / cnt) + " per import entry, current queue size: "
+                + importEntries.size());
 
-        }
-      } finally {
-
-        // bit rough but ensures that the connection is released/closed
-        try {
-          OBDal.getInstance().rollbackAndClose();
-        } catch (Exception ignored) {
-        }
-
-        try {
-          if (TriggerHandler.getInstance().isDisabled()) {
-            TriggerHandler.getInstance().enable();
           }
-          OBDal.getInstance().commitAndClose();
-        } catch (Exception ignored) {
-        }
+        } finally {
 
-        if (!importEntryProcessor.deregisterProcessThread(this)) {
-          // a new entry was added when we tried to deregister, restart ourselves
-          run();
-        } else {
-          importEntryIds.clear();
-          cachedOBContexts.clear();
+          // bit rough but ensures that the connection is released/closed
+          try {
+            OBDal.getInstance().rollbackAndClose();
+          } catch (Exception ignored) {
+          }
+
+          try {
+            if (TriggerHandler.getInstance().isDisabled()) {
+              TriggerHandler.getInstance().enable();
+            }
+            OBDal.getInstance().commitAndClose();
+          } catch (Exception ignored) {
+          }
+
+          // no more entries and deregistered
+          if (importEntryProcessor.deregisterProcessThread(this)) {
+            importEntryIds.clear();
+            cachedOBContexts.clear();
+            return;
+          }
         }
       }
     }
