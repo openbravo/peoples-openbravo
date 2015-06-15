@@ -307,8 +307,11 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       } finally {
         // flush and enable triggers, the rest of this method needs enabled
         // triggers
-        OBDal.getInstance().flush();
-        TriggerHandler.getInstance().enable();
+        try {
+          OBDal.getInstance().flush();
+          TriggerHandler.getInstance().enable();
+        } catch (Throwable ignored) {
+        }
       }
 
       long t4 = System.currentTimeMillis();
@@ -1225,8 +1228,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       cs.execute();
       cs.close();
     } catch (Exception e) {
-      System.out.println("Error calling to M_UPDATE_INVENTORY");
-      throw new OBException(e.getMessage());
+      throw new OBException(e.getMessage(), e);
     }
   }
 
