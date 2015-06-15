@@ -1228,8 +1228,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       cs.execute();
       cs.close();
     } catch (Exception e) {
-      System.out.println("Error calling to M_UPDATE_INVENTORY");
-      throw new OBException(e.getMessage());
+      throw new OBException(e.getMessage(), e);
     }
   }
 
