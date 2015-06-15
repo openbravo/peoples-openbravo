@@ -329,7 +329,7 @@
     },
 
     calculateTaxes: function (callback, doNotSave) {
-      var tmp = new OB.DATA.OrderTaxes(this);
+      OB.DATA.OrderTaxes(this);
       this.calculateTaxes(callback);
     },
 

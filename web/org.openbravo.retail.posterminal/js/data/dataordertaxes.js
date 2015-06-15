@@ -770,44 +770,19 @@
       };
       };
 
-  // Taxes logic calculation: 'DEBUG', 'OLDLOGIC', 'NEWLOGIC' (default)
-  window.TAXESLOGIC = 'NEWLOGIC';
-
   OB = window.OB || {};
   OB.DATA = window.OB.DATA || {};
   OB.DATA.OrderTaxes = function (modelOrder) {
-    this._id = 'logicOrderTaxes';
-    this.receipt = modelOrder;
-
-    this.receipt.calculateTaxes = function (callback) {
+    modelOrder.calculateTaxes = function (callback) {
       var me = this;
       var mytaxes, mytaxesold;
       var synchId;
-      if (window.TAXESLOGIC === 'DEBUG') {
-        OB.DATA.legacyCalculateTaxes.call(me, function () {
-          mytaxesold = JSON.stringify(getTaxesInfo(me));
-          window.console.log(mytaxesold);
-
-          calcTaxes(me).then(function () {
-            mytaxes = JSON.stringify(getTaxesInfo(me));
-            window.console.log(mytaxes);
-
-            if (mytaxes !== mytaxesold) {
-              window.console.error('Wrong taxes calculation');
-            }
-            callback();
-          });
-        });
-      } else if (window.TAXESLOGIC === 'OLDLOGIC') {
-        OB.DATA.legacyCalculateTaxes.call(me, callback);
-      } else { // 'NEWLOGIC' (default)
-        synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('taxescalculation');
-        calcTaxes(me).then(function () {
-          me.trigger('paintTaxes');
-          callback();
-          OB.UTIL.SynchronizationHelper.finished(synchId, 'taxescalculation');
-        });
-      }
+      synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('taxescalculation');
+      calcTaxes(me).then(function () {
+        me.trigger('paintTaxes');
+        callback();
+        OB.UTIL.SynchronizationHelper.finished(synchId, 'taxescalculation');
+      });
     };
   };
 }());

@@ -163,7 +163,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         i, j, k, amtAux, amountToPay, ordersLength, multiOrders = new OB.Model.MultiOrders(),
         me = this,
         iter, isNew = false,
-        discounts, ordersave, customersave, customeraddrsave, taxes, orderList, hwManager, ViewManager, LeftColumnViewManager, LeftColumnCurrentView, SyncReadyToSendFunction, auxReceiptList = [];
+        discounts, ordersave, customersave, customeraddrsave, orderList, hwManager, ViewManager, LeftColumnViewManager, LeftColumnCurrentView, SyncReadyToSendFunction, auxReceiptList = [];
 
 
     function success() {
@@ -407,7 +407,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     this.set('subWindowManager', new ViewManager());
     discounts = new OB.DATA.OrderDiscount(receipt);
     ordersave = new OB.DATA.OrderSave(this);
-    taxes = new OB.DATA.OrderTaxes(receipt);
+    OB.DATA.OrderTaxes(receipt);
 
     OB.MobileApp.model.runSyncProcess(function () {
       me.loadCheckedMultiorders();
