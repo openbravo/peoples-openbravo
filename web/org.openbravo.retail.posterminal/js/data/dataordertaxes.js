@@ -34,11 +34,53 @@
       return new Promise(function (fulfill) {
         OB.Dal.findUsingCache('taxProductBOM', OB.Model.ProductBOM, {
           'product': product
-        }, fulfill);
+        }, function (data) {
+
+          // Group data by product category
+          // Calculate the ratio by product category
+          // Finally sort by ratio
+          var groupeddata = data.chain().groupBy(function (productbom) {
+            return productbom.get('bomtaxcategory');
+          }).map(function (productboms, bomtaxcategory) {
+            var ratio = _.reduce(productboms, function (memo, productbom) {
+              return memo + OB.DEC.mul(productbom.get('bomprice'), productbom.get('bomquantity'));
+            }, 0);
+            return {
+              'bomtaxcategory': bomtaxcategory,
+              'ratio': ratio
+            };
+          }).sortBy(function (groupedbom) {
+            return groupedbom.ratio;
+          }).value();
+
+          // Assign total ratio
+          groupeddata.totalratio = _.reduce(groupeddata, function (s, productbom) {
+            return OB.DEC.add(s, productbom.ratio);
+          }, OB.DEC.Zero);
+
+          // Fulfill promise
+          fulfill(groupeddata);
+        });
       });
       };
 
-  var findTaxesCollection = function (receipt, line, product) {
+
+  var distributeBOM = function (data, property, amount) {
+
+      var accamount = amount;
+
+      // calculate ratio for each product bom line
+      _.forEach(data, function (productbom) {
+        var bomamount = OB.DEC.div(OB.DEC.mul(productbom.ratio, amount), data.totalratio);
+        accamount = OB.DEC.sub(accamount, bomamount);
+        productbom[property] = bomamount;
+      });
+      // Adjust rounding in the first item of the bom
+      var lastitem = data[data.length - 1];
+      lastitem[property] = OB.DEC.add(lastitem[property], accamount);
+      };
+
+  var findTaxesCollection = function (receipt, line, taxCategory) {
       return new Promise(function (fulfill, reject) {
         // sql parameters 
         var fromRegionOrg = OB.MobileApp.model.get('terminal').organizationRegionId,
@@ -56,7 +98,7 @@
         if (bpIsExempt) {
           sql = sql + " and c_tax.istaxexempt = 'true'";
         } else {
-          sql = sql + " and c_tax.c_taxCategory_id = '" + product.get('taxCategory') + "'";
+          sql = sql + " and c_tax.c_taxCategory_id = '" + taxCategory + "'";
           if (bpTaxCategory) {
             sql = sql + " and c_tax.c_bp_taxcategory_id = '" + bpTaxCategory + "'";
           } else {
@@ -77,18 +119,18 @@
             if (coll && coll.length > 0) {
               fulfill(coll);
             } else {
-              reject(OB.I18N.getLabel('OBPOS_TaxNotFound_Message', [args.get('_identifier')]));
+              reject(OB.I18N.getLabel('OBPOS_TaxNotFound_Message', [taxCategory]));
             }
           }, function (tx, error) { // error
             reject(OB.I18N.getLabel('OBPOS_TaxCalculationError_Message'));
-          }, product);
+          });
         });
       });
       };
 
-  var calcProductTaxesIncPrice = function (receipt, line, product, orggross, discountedGross) {
+  var calcProductTaxesIncPrice = function (receipt, line, taxCategory, orggross, discountedGross) {
 
-      return findTaxesCollection(receipt, line, product).then(function (coll) {
+      return findTaxesCollection(receipt, line, taxCategory).then(function (coll) {
 
         // First calculate the line rate.
         var linerate = BigDecimal.prototype.ONE;
@@ -378,7 +420,7 @@
       return isTaxCategoryBOM(product.get('taxCategory')).then(function (isbom) {
         if (isbom) {
           // Find the taxid
-          return findTaxesCollection(receipt, line, product).then(function (coll) {
+          return findTaxesCollection(receipt, line, product.get('taxCategory')).then(function (coll) {
             // complete the taxid
             line.set('tax', coll.at(0).get('id'), {
               silent: true
@@ -386,46 +428,20 @@
 
             // BOM, calculate taxes based on the products list
             return getProductBOM(product.get('id')).then(function (data) {
-
-              // Calculate the total BOM
-              var totalbom = data.reduce(function (s, productbom) {
-                return OB.DEC.add(s, OB.DEC.mul(productbom.get('bomprice'), productbom.get('bomquantity')));
-              }, OB.DEC.Zero);
-
-              // Calculate the corresponding gross and discounted gross for each product in BOM
-              var accorggross = orggross;
-              var accdiscountedgross = discountedGross;
-              data.forEach(function (productbom) {
-                var ratebom = OB.DEC.mul(productbom.get('bomprice'), productbom.get('bomquantity'));
-
-                var orggrossbom = OB.DEC.div(OB.DEC.mul(ratebom, orggross), totalbom);
-                accorggross = OB.DEC.sub(accorggross, orggrossbom);
-                productbom.set('bomgross', orggrossbom);
-                if (!_.isNull(discountedGross)) {
-                  var discountedgrossbom = OB.DEC.div(OB.DEC.mul(ratebom, discountedGross), totalbom);
-                  accdiscountedgross = OB.DEC.sub(accdiscountedgross, discountedgrossbom);
-                  productbom.set('bomdiscountedgross', discountedgrossbom);
-                }
-              });
-              // Adjust rounding in the first item of the bom
-              var lastproductbom = data.at(0);
-              lastproductbom.set('bomgross', OB.DEC.add(lastproductbom.get('bomgross'), accorggross));
+              distributeBOM(data, 'bomgross', orggross);
               if (!_.isNull(discountedGross)) {
-                lastproductbom.set('bomdiscountedgross', OB.DEC.add(lastproductbom.get('bomdiscountedgross'), accdiscountedgross));
+                distributeBOM(data, 'bomdiscountedgross', discountedGross);
               }
 
               // return calcProductTaxesIncPrice(receipt, line, product, orggross, discountedGross);      
-              return Promise.all(data.map(function (productbom) {
-                return calcProductTaxesIncPrice(receipt, line, new Backbone.Model({
-                  id: productbom.get('bomproduct'),
-                  taxCategory: productbom.get('bomtaxcategory')
-                }), productbom.get('bomgross'), productbom.get('bomdiscountedgross'));
+              return Promise.all(_.map(data, function (productbom) {
+                return calcProductTaxesIncPrice(receipt, line, productbom.bomtaxcategory, productbom.bomgross, productbom.bomdiscountedgross);
               }));
             });
           });
         } else {
           // Not BOM, calculate taxes based on the line product
-          return calcProductTaxesIncPrice(receipt, line, product, orggross, discountedGross);
+          return calcProductTaxesIncPrice(receipt, line, product.get('taxCategory'), orggross, discountedGross);
         }
       }).then(function () {
         // Calculate linerate
@@ -460,9 +476,9 @@
       }));
       };
 
-  var calcProductTaxesExcPrice = function (receipt, line, product, linepricenet, linenet, discountedprice, discountedNet) {
+  var calcProductTaxesExcPrice = function (receipt, line, taxCategory, linepricenet, linenet, discountedprice, discountedNet) {
 
-      return findTaxesCollection(receipt, line, product).then(function (coll) {
+      return findTaxesCollection(receipt, line, taxCategory).then(function (coll) {
 
         // First calculate the line rate.
         var linetaxid = coll.at(0).get('id');
@@ -655,7 +671,7 @@
         resultpromise = isTaxCategoryBOM(product.get('taxCategory')).then(function (isbom) {
           if (isbom) {
             // Find the taxid
-            return findTaxesCollection(receipt, line, product).then(function (coll) {
+            return findTaxesCollection(receipt, line, product.get('taxCategory')).then(function (coll) {
               // complete the taxid
               line.set('tax', coll.at(0).get('id'), {
                 silent: true
@@ -664,48 +680,18 @@
               // BOM, calculate taxes based on the products list
               return getProductBOM(product.get('id')).then(function (data) {
 
-                // Calculate the total BOM
-                var totalbom = data.reduce(function (s, productbom) {
-                  return OB.DEC.add(s, OB.DEC.mul(productbom.get('bomprice'), productbom.get('bomquantity')));
-                }, OB.DEC.Zero);
+                distributeBOM(data, 'bomnet', linenet);
+                distributeBOM(data, 'bomdiscountednet', discountedNet);
+                distributeBOM(data, 'bomlinepricenet', linepricenet);
 
-                // Calculate the corresponding gross and discounted gross for each product in BOM
-                var acclinenet = linenet;
-                var accdiscountedNet = discountedNet;
-                var acclinepricenet = linepricenet;
-
-                data.forEach(function (productbom) {
-                  var ratebom = OB.DEC.mul(productbom.get('bomprice'), productbom.get('bomquantity'));
-
-                  var linenetbom = OB.DEC.div(OB.DEC.mul(ratebom, linenet), totalbom);
-                  acclinenet = OB.DEC.sub(acclinenet, linenetbom);
-                  productbom.set('bomnet', linenetbom);
-
-                  var discountedNetbom = OB.DEC.div(OB.DEC.mul(ratebom, discountedNet), totalbom);
-                  accdiscountedNet = OB.DEC.sub(accdiscountedNet, discountedNetbom);
-                  productbom.set('bomdiscountednet', discountedNetbom);
-
-                  var linepricenetbom = OB.DEC.div(OB.DEC.mul(ratebom, linepricenet), totalbom);
-                  acclinepricenet = OB.DEC.sub(acclinepricenet, linepricenetbom);
-                  productbom.set('bomlinepricenet', linepricenetbom);
-                });
-                // Adjust rounding in the first item of the bom
-                var lastproductbom = data.at(0);
-                lastproductbom.set('bomnet', OB.DEC.add(lastproductbom.get('bomnet'), acclinenet));
-                lastproductbom.set('bomdiscountednet', OB.DEC.add(lastproductbom.get('bomdiscountednet'), accdiscountedNet));
-                lastproductbom.set('bomlinepricenet', OB.DEC.add(lastproductbom.get('bomlinepricenet'), acclinepricenet));
-
-                return Promise.all(data.map(function (productbom) {
-                  return calcProductTaxesExcPrice(receipt, line, new Backbone.Model({
-                    id: productbom.get('bomproduct'),
-                    taxCategory: productbom.get('bomtaxcategory')
-                  }), productbom.get('bomlinepricenet'), productbom.get('bomnet'), new BigDecimal(String(productbom.get('bomdiscountednet'))).divide(new BigDecimal(String(line.get('qty'))), 20, BigDecimal.prototype.ROUND_HALF_UP), productbom.get('bomdiscountednet'));
+                return Promise.all(_.map(data, function (productbom) {
+                  return calcProductTaxesExcPrice(receipt, line, productbom.bomtaxcategory, productbom.bomlinepricenet, productbom.bomnet, new BigDecimal(String(productbom.bomdiscountednet)).divide(new BigDecimal(String(line.get('qty'))), 20, BigDecimal.prototype.ROUND_HALF_UP), productbom.bomdiscountednet);
                 }));
               });
             });
           } else {
             // Not BOM, calculate taxes based on the line product
-            return calcProductTaxesExcPrice(receipt, line, product, linepricenet, linenet, discountedprice, discountedNet);
+            return calcProductTaxesExcPrice(receipt, line, product.get('taxCategory'), linepricenet, linenet, discountedprice, discountedNet);
           }
         });
       }
