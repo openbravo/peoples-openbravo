@@ -32,6 +32,7 @@
   </path>
 
   <path id="test.class.path">
+    <path refid="test-src-dirs"/>
     <pathelement path="${build.test}" />
   	<pathelement path="${build}" />
     <fileset dir="${base.lib}">
@@ -57,7 +58,7 @@
     </fileset>
   </path>
 
-  <target name="compile.test" depends="compileSqlc,generate.entities.quick">
+  <target name="compile.test" depends="sqlc,generate.entities.quick">
   	 <mkdir dir="${build.test}"/>
      <javac destdir="${build.test}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" nowarn="${friendlyWarnings}" includeantruntime="false">
       <src refid="test-src-dirs"/>
