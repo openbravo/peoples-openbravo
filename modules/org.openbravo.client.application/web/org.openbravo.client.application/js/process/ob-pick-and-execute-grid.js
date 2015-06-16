@@ -784,7 +784,7 @@ isc.OBPickAndExecuteGrid.addProperties({
       MODE: (newRecord ? 'NEW' : 'EDIT'),
       PARENT_ID: null,
       TAB_ID: this.viewProperties.tabId,
-      ROW_ID: (!newRow && record ? record[OB.Constants.ID] : null)
+      ROW_ID: null //ROW_ID is null to avoid edited values be overriden by the FIC
     };
 
     OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', allProperties, requestParams, this.processFICReturn, {
