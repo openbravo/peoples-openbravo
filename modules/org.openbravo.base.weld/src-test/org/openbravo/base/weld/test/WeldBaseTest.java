@@ -35,6 +35,8 @@ import org.junit.runner.RunWith;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.test.base.OBBaseTest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Base test for weld, provides access to the weld container.
@@ -43,6 +45,7 @@ import org.openbravo.test.base.OBBaseTest;
  */
 @RunWith(Arquillian.class)
 public class WeldBaseTest extends OBBaseTest {
+  private static final Logger log = LoggerFactory.getLogger(WeldBaseTest.class);
 
   @Deployment
   public static JavaArchive createTestArchive() {
@@ -62,7 +65,7 @@ public class WeldBaseTest extends OBBaseTest {
     // include all libraries deployed in webapp container
     archive.addAsDirectory(sourcePath + "/WebContent/WEB-INF/lib");
 
-    System.out.println(archive.toString(true));
+    log.debug(archive.toString(true));
     return archive;
   }
 
