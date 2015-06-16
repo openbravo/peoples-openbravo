@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,13 +24,12 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 
-import org.jboss.arquillian.api.Deployment;
+import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.importer.ExplodedImporter;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.test.base.OBBaseTest;
@@ -47,9 +46,21 @@ public class WeldBaseTest extends OBBaseTest {
   public static JavaArchive createTestArchive() {
     final String sourcePath = OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .getProperty("source.path");
-    final JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "test.jar");
-    archive.as(ExplodedImporter.class).importDirectory(sourcePath + "/build/classes");
-    archive.addDirectory(sourcePath + "/WebContent/WEB-INF/lib");
+    final JavaArchive archive = ShrinkWrap.create(JavaArchive.class);
+
+    // add all beans without exclusions so cdi can also be used for *test* packages
+    archive.addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+
+    // include all classes deployed in webapp container
+    archive.as(ExplodedImporter.class).importDirectory(sourcePath + "/build/classes/");
+
+    // ...and all the jUnit ones
+    archive.as(ExplodedImporter.class).importDirectory(sourcePath + "/src-test/build/classes/");
+
+    // include all libraries deployed in webapp container
+    archive.addAsDirectory(sourcePath + "/WebContent/WEB-INF/lib");
+
+    System.out.println(archive.toString(true));
     return archive;
   }
 
