@@ -14,4 +14,26 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>client.application-src-test</name>
+			<type>2</type>
+			<locationURI>WORKSPACE_LOC/openbravo/modules/org.openbravo.client.application/src-test</locationURI>
+		</link>
+		<link>
+			<name>client.kernel-test</name>
+			<type>2</type>
+			<location>/home/alostale/ws/projects/cdi-test/openbravo/modules/org.openbravo.client.kernel/src-test</location>
+		</link>
+		<link>
+			<name>test-lib</name>
+			<type>2</type>
+			<locationURI>WORKSPACE_LOC/openbravo/modules/org.openbravo.base.weld/lib/test</locationURI>
+		</link>
+		<link>
+			<name>weld-src-test</name>
+			<type>2</type>
+			<locationURI>WORKSPACE_LOC/openbravo/modules/org.openbravo.base.weld/src-test</locationURI>
+		</link>
+	</linkedResources>
 </projectDescription>
