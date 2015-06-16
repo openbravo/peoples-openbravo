@@ -1037,8 +1037,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     shipment
         .setDocumentType(getShipmentDocumentType((String) DalUtil.getId(order.getDocumentType())));
 
-    shipment.setDocumentNo(getDummyDocumentNo());
-    addDocumentNoHandler(shipment, shpEntity, null, shipment.getDocumentType());
+    shipment.setDocumentNo(order.getDocumentNo());
 
     shipment.setAccountingDate(order.getOrderDate());
     shipment.setMovementDate(order.getOrderDate());
