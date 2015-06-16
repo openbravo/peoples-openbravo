@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -88,22 +88,26 @@ public class StandardCostAdjustment extends CostingAlgorithmAdjustmentImp {
       ScrollableResults trxs = getRelatedTransactions(newCosting.getStartingDate(),
           newCosting.getEndingDate());
       int i = 1;
-      while (trxs.next()) {
-        MaterialTransaction relTrx = (MaterialTransaction) trxs.get()[0];
-        BigDecimal currentCost = CostAdjustmentUtils.getTrxCost(relTrx, true, trx.getCurrency());
-        BigDecimal expectedCost = relTrx.getMovementQuantity().abs().multiply(unitCost)
-            .setScale(stdCurPrecission, RoundingMode.HALF_UP);
-        if (expectedCost.compareTo(currentCost) != 0) {
-          CostAdjustmentLine newCAL = insertCostAdjustmentLine(relTrx,
-              expectedCost.subtract(currentCost), null);
-          newCAL.setRelatedTransactionAdjusted(true);
-        }
+      try {
+        while (trxs.next()) {
+          MaterialTransaction relTrx = (MaterialTransaction) trxs.get()[0];
+          BigDecimal currentCost = CostAdjustmentUtils.getTrxCost(relTrx, true, trx.getCurrency());
+          BigDecimal expectedCost = relTrx.getMovementQuantity().abs().multiply(unitCost)
+              .setScale(stdCurPrecission, RoundingMode.HALF_UP);
+          if (expectedCost.compareTo(currentCost) != 0) {
+            CostAdjustmentLine newCAL = insertCostAdjustmentLine(relTrx,
+                expectedCost.subtract(currentCost), null);
+            newCAL.setRelatedTransactionAdjusted(true);
+          }
 
-        if (i % 100 == 0) {
-          OBDal.getInstance().flush();
-          OBDal.getInstance().getSession().clear();
+          if (i % 100 == 0) {
+            OBDal.getInstance().flush();
+            OBDal.getInstance().getSession().clear();
+          }
+          i++;
         }
-        i++;
+      } finally {
+        trxs.close();
       }
     }
   }

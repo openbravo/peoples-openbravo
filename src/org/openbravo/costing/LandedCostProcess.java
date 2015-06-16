@@ -226,29 +226,33 @@ public class LandedCostProcess {
 
     ScrollableResults receiptamts = qryLCRLA.scroll(ScrollMode.FORWARD_ONLY);
     int i = 0;
-    while (receiptamts.next()) {
-      log.debug("Process receipt amounts");
-      Object[] receiptAmt = receiptamts.get();
-      BigDecimal amt = (BigDecimal) receiptAmt[0];
-      Currency lcCostCurrency = OBDal.getInstance().get(Currency.class, receiptAmt[1]);
-      ShipmentInOutLine receiptLine = OBDal.getInstance().get(ShipmentInOutLine.class,
-          receiptAmt[2]);
-      // MaterialTransaction receiptLine = (MaterialTransaction) record[1];
-      MaterialTransaction trx = receiptLine.getMaterialMgmtMaterialTransactionList().get(0);
-      CostAdjustmentLine cal = CostAdjustmentUtils.insertCostAdjustmentLine(trx, ca, amt, true,
-          referenceDate);
-      cal.setNeedsPosting(Boolean.FALSE);
-      cal.setUnitCost(Boolean.FALSE);
-      cal.setCurrency(lcCostCurrency);
-      cal.setLineNo((i + 1) * 10L);
-      OBDal.getInstance().save(cal);
+    try {
+      while (receiptamts.next()) {
+        log.debug("Process receipt amounts");
+        Object[] receiptAmt = receiptamts.get();
+        BigDecimal amt = (BigDecimal) receiptAmt[0];
+        Currency lcCostCurrency = OBDal.getInstance().get(Currency.class, receiptAmt[1]);
+        ShipmentInOutLine receiptLine = OBDal.getInstance().get(ShipmentInOutLine.class,
+            receiptAmt[2]);
+        // MaterialTransaction receiptLine = (MaterialTransaction) record[1];
+        MaterialTransaction trx = receiptLine.getMaterialMgmtMaterialTransactionList().get(0);
+        CostAdjustmentLine cal = CostAdjustmentUtils.insertCostAdjustmentLine(trx, ca, amt, true,
+            referenceDate);
+        cal.setNeedsPosting(Boolean.FALSE);
+        cal.setUnitCost(Boolean.FALSE);
+        cal.setCurrency(lcCostCurrency);
+        cal.setLineNo((i + 1) * 10L);
+        OBDal.getInstance().save(cal);
 
-      if (i % 100 == 0) {
-        OBDal.getInstance().flush();
-        OBDal.getInstance().getSession().clear();
-        ca = OBDal.getInstance().get(CostAdjustment.class, ca.getId());
+        if (i % 100 == 0) {
+          OBDal.getInstance().flush();
+          OBDal.getInstance().getSession().clear();
+          ca = OBDal.getInstance().get(CostAdjustment.class, ca.getId());
+        }
+        i++;
       }
-      i++;
+    } finally {
+      receiptamts.close();
     }
 
     CostAdjustmentProcess.doProcessCostAdjustment(ca);

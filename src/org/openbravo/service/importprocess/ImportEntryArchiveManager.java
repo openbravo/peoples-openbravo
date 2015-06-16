@@ -19,7 +19,6 @@
 package org.openbravo.service.importprocess;
 
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -146,12 +145,8 @@ public class ImportEntryArchiveManager {
 
               ImportEntryArchive archiveEntry = createArchiveEntry(importEntry);
 
-              for (Iterator<? extends Object> procIter = manager.archiveEntryPreProcessors
-                  .iterator(); procIter.hasNext();) {
-                ImportEntryArchivePreProcessor processor = (ImportEntryArchivePreProcessor) procIter
-                    .next();
+              for (ImportEntryArchivePreProcessor processor : manager.archiveEntryPreProcessors) {
                 processor.beforeArchive(importEntry, archiveEntry);
-
               }
 
               log.debug("Processed one entry");

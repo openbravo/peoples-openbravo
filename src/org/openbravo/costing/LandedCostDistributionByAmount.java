@@ -67,20 +67,24 @@ public class LandedCostDistributionByAmount extends LandedCostDistributionAlgori
     critLCRL.add(Restrictions.eq(LCReceipt.PROPERTY_LANDEDCOST, landedCost));
     ScrollableResults receiptCosts = getReceiptCosts(landedCost, false);
     int i = 0;
-    while (receiptCosts.next()) {
-      String strTrxCur = (String) receiptCosts.get()[2];
-      BigDecimal trxAmt = (BigDecimal) receiptCosts.get()[3];
-      if (!strTrxCur.equals(strCurId)) {
-        trxAmt = getConvertedAmount(trxAmt, strTrxCur, strCurId, dateReference, strOrgId);
-      }
+    try {
+      while (receiptCosts.next()) {
+        String strTrxCur = (String) receiptCosts.get()[2];
+        BigDecimal trxAmt = (BigDecimal) receiptCosts.get()[3];
+        if (!strTrxCur.equals(strCurId)) {
+          trxAmt = getConvertedAmount(trxAmt, strTrxCur, strCurId, dateReference, strOrgId);
+        }
 
-      totalAmt = totalAmt.add(trxAmt);
+        totalAmt = totalAmt.add(trxAmt);
 
-      if (i % 100 == 0) {
-        OBDal.getInstance().flush();
-        OBDal.getInstance().getSession().clear();
+        if (i % 100 == 0) {
+          OBDal.getInstance().flush();
+          OBDal.getInstance().getSession().clear();
+        }
+        i++;
       }
-      i++;
+    } finally {
+      receiptCosts.close();
     }
 
     BigDecimal pendingAmt = baseAmt;

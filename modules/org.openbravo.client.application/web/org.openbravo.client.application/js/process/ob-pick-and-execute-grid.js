@@ -731,6 +731,11 @@ isc.OBPickAndExecuteGrid.addProperties({
       this.setValueMapInEditForm(field.name, valueMap);
       if (this.isEditing()) {
         this.setEditValue(this.getEditRow(), field.name, columnValue.value);
+        // see issue https://issues.openbravo.com/view.php?id=30060
+        // explicitly set the display value
+        if (field.displayField) {
+          this.setEditValue(this.getEditRow(), field.displayField, columnValue.identifier);
+        }
       }
     }
   },
@@ -793,13 +798,17 @@ isc.OBPickAndExecuteGrid.addProperties({
   },
 
   retrieveInitialValues: function (rowNum, colNum, newCell, newRow, suppressFocus) {
-    var requestParams, allProperties, i, record;
+    var requestParams, allProperties, i, record, newRecord;
 
     allProperties = this.getContextInfo(rowNum);
     record = this.getRecord(rowNum);
 
+    // we can't rely on newRow value to know if we're inserting a new record,
+    // a new record is being created if record has no value
+    newRecord = !record;
+
     requestParams = {
-      MODE: (newRow ? 'NEW' : 'EDIT'),
+      MODE: (newRecord ? 'NEW' : 'EDIT'),
       PARENT_ID: null,
       TAB_ID: this.viewProperties.tabId,
       ROW_ID: (!newRow && record ? record[OB.Constants.ID] : null)

@@ -24,7 +24,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -44,11 +43,11 @@ import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.ad.access.Role;
 
 /**
@@ -166,7 +165,7 @@ public class ImportEntryManager {
     numberOfThreads = ImportProcessUtils.getCheckIntProperty(log, "import.number.of.threads",
         numberOfThreads, 4);
     maxTaskQueueSize = ImportProcessUtils.getCheckIntProperty(log, "import.max.task.queue.size",
-        maxTaskQueueSize, 1000);
+        maxTaskQueueSize, 50);
   }
 
   public synchronized void start() {
@@ -190,7 +189,7 @@ public class ImportEntryManager {
   }
 
   public long getNumberOfQueuedTasks() {
-    return executorService.getQueue().size();
+    return executorService.getQueue() == null ? 0 : executorService.getQueue().size();
   }
 
   public long getNumberOfActiveTasks() {
@@ -240,8 +239,7 @@ public class ImportEntryManager {
    * Note will commit the session/connection using {@link OBDal#commitAndClose()}
    */
   public void createImportEntry(String id, String typeOfData, String json) {
-    OBDal.getInstance().flush();
-    OBContext.setAdminMode(false);
+    OBContext.setAdminMode(true);
     try {
       // check if it is not there already or already archived
       {
@@ -277,8 +275,7 @@ public class ImportEntryManager {
       importEntry.setTypeofdata(typeOfData);
       importEntry.setJsonInfo(json);
 
-      for (Iterator<? extends Object> procIter = entryPreProcessors.iterator(); procIter.hasNext();) {
-        ImportEntryPreProcessor processor = (ImportEntryPreProcessor) procIter.next();
+      for (ImportEntryPreProcessor processor : entryPreProcessors) {
         processor.beforeCreate(importEntry);
       }
       OBDal.getInstance().save(importEntry);
@@ -330,16 +327,14 @@ public class ImportEntryManager {
     try {
       ImportEntryProcessor entryProcessor = getImportEntryProcessor(importEntry.getTypeofdata());
       if (entryProcessor == null) {
-        log.warn("No import entry processor defined for type of data "
-            + importEntry.getTypeofdata() + " with json " + importEntry.getJsonInfo()
-            + " imported on " + importEntry.getImported() + " by " + importEntry.getCreatedBy());
+        log.warn("No import entry processor defined for type of data " + importEntry);
       } else {
         entryProcessor.handleImportEntry(importEntry);
       }
     } catch (Throwable t) {
       log.error(
-          "Error while saving import message " + importEntry + " " + importEntry.getJsonInfo()
-              + "  message: " + t.getMessage(), t);
+          "Error while saving import message " + importEntry + " " + "  message: " + t.getMessage(),
+          t);
       setImportEntryErrorIndependent(importEntry.getId(), t);
     }
   }
@@ -401,7 +396,10 @@ public class ImportEntryManager {
     final OBContext prevOBContext = OBContext.getOBContext();
     OBContext.setOBContext("0", "0", "0", "0");
     try {
-      OBContext.setAdminMode();
+      // do not do org/client check as the error can be related to org/client access
+      // so prevent this check to be done to even be able to save org/client access
+      // exceptions
+      OBContext.setAdminMode(false);
       ImportEntry importEntry = OBDal.getInstance().get(ImportEntry.class, importEntryId);
       if (importEntry != null && !"Processed".equals(importEntry.getImportStatus())) {
         importEntry.setImportStatus("Error");
@@ -409,6 +407,12 @@ public class ImportEntryManager {
         OBDal.getInstance().save(importEntry);
         OBDal.getInstance().commitAndClose();
       }
+    } catch (Throwable throwable) {
+      try {
+        OBDal.getInstance().rollbackAndClose();
+      } catch (Throwable ignored) {
+      }
+      throw new OBException(throwable);
     } finally {
       OBContext.restorePreviousMode();
       OBContext.setOBContext(prevOBContext);
@@ -466,6 +470,7 @@ public class ImportEntryManager {
       }
       log.debug("Run loop started");
       try {
+        List<String> typesOfData = null;
         while (true) {
           // obcontext cleared or wrong obcontext, repair
           if (OBContext.getOBContext() == null
@@ -476,13 +481,13 @@ public class ImportEntryManager {
           try {
 
             // too busy, don't process, but wait
-            if (manager.executorService.getQueue().size() > (manager.maxTaskQueueSize - 1)) {
+            if (manager.executorService.getQueue() != null
+                && manager.executorService.getQueue().size() > (manager.maxTaskQueueSize - 1)) {
               doWait();
               // woken, re-start from beginning of loop
               continue;
             }
 
-            List<String> typesOfData = null;
             if (typesOfData == null) {
               typesOfData = ImportProcessUtils.getOrderedTypesOfData();
             }
@@ -497,30 +502,35 @@ public class ImportEntryManager {
               // don't block eachother with the limited batch size
               // being read
               for (String typeOfData : typesOfData) {
-                OBQuery<ImportEntry> entriesQry = OBDal.getInstance().createQuery(
-                    ImportEntry.class,
-                    ImportEntry.PROPERTY_TYPEOFDATA + "='" + typeOfData + "' and "
-                        + ImportEntry.PROPERTY_IMPORTSTATUS + "='Initial' order by "
-                        + ImportEntry.PROPERTY_CREATIONDATE);
-                entriesQry.setFilterOnReadableClients(false);
-                entriesQry.setFilterOnReadableOrganization(false);
-                entriesQry.setMaxResult(manager.importBatchSize);
+                final String importEntryQryStr = "from " + ImportEntry.ENTITY_NAME + " where "
+                    + ImportEntry.PROPERTY_TYPEOFDATA + "='" + typeOfData + "' and "
+                    + ImportEntry.PROPERTY_IMPORTSTATUS + "='Initial' order by "
+                    + ImportEntry.PROPERTY_CREATIONDATE;
+
+                final Query entriesQry = OBDal.getInstance().getSession()
+                    .createQuery(importEntryQryStr);
+                entriesQry.setFirstResult(0);
+                entriesQry.setFetchSize(100);
+                entriesQry.setMaxResults(manager.importBatchSize);
 
                 final ScrollableResults entries = entriesQry.scroll(ScrollMode.FORWARD_ONLY);
-                while (entries.next()) {
-                  entryCount++;
-                  final ImportEntry importEntry = (ImportEntry) entries.get()[0];
-                  try {
-                    manager.handleImportEntry(importEntry);
-                  } catch (Throwable t) {
-                    // ImportEntryProcessors are custom implementations which can cause
-                    // errors, so always catch them to prevent other import entries
-                    // from not getting processed
-                    manager.setImportEntryError(importEntry.getId(), t);
-                    OBDal.getInstance().flush();
+                try {
+                  while (entries.next()) {
+                    entryCount++;
+                    final ImportEntry entry = (ImportEntry) entries.get(0);
+                    try {
+                      manager.handleImportEntry(entry);
+                      // remove it from the internal cache to keep it small
+                      OBDal.getInstance().getSession().evict(entry);
+                    } catch (Throwable t) {
+                      // ImportEntryProcessors are custom implementations which can cause
+                      // errors, so always catch them to prevent other import entries
+                      // from not getting processed
+                      manager.setImportEntryError(entry.getId(), t);
+                    }
                   }
-                  // get rid of it to keep the session small
-                  OBDal.getInstance().getSession().evict(importEntry);
+                } finally {
+                  entries.close();
                 }
               }
 
@@ -638,6 +648,5 @@ public class ImportEntryManager {
       thread.setDaemon(true);
       return thread;
     }
-
   }
 }

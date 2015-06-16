@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2015 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,6 +23,7 @@
 		Note if the namespace of openbravo changes then the namespace
 		declaration above has to be changed
 	--> 
+    <xsl:param name="hasId"></xsl:param>
 	<xsl:template match="ob:Openbravo">
 		<xsl:for-each select="*">
 			<xsl:call-template name="handleEntity" />
@@ -113,12 +114,25 @@
 			/
 			<xsl:value-of select="@id" />
 		</xsl:variable>
-		<a href="../{$href}?template=bo.xslt">
-			<xsl:value-of select="@identifier" />
-			(
-			<xsl:value-of select="@id" />
-			)
-		</a>
-		<a href="../{$href}"> (xml)</a>
+        <xsl:choose>
+            <xsl:when test="$hasId = 'true'">
+                <a href="../{$href}?template=bo.xslt">
+                    <xsl:value-of select="@identifier" />
+                    (
+                    <xsl:value-of select="@id" />
+                    )
+                </a>
+                <a href="../{$href}"> (xml)</a>
+            </xsl:when>
+            <xsl:otherwise>
+                <a href="{$href}?template=bo.xslt">
+                    <xsl:value-of select="@identifier" />
+                    (
+                    <xsl:value-of select="@id" />
+                    )
+                </a>
+                <a href="{$href}"> (xml)</a>
+            </xsl:otherwise>
+        </xsl:choose>
 	</xsl:template>
 </xsl:stylesheet>

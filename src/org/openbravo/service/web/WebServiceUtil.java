@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2015 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -230,11 +230,22 @@ public class WebServiceUtil implements OBSingleton {
    */
   public String applyTemplate(String xml, InputStream template, String url) {
     try {
+      boolean hasId;
+      // This regular expression has been created to find out if there is an id after
+      // the entity name in the url. For example:
+      // https://livebuilds.openbravo.com/erp_main_pgsql/ws/dal/ADUser/100
+      String regExp = "^(.*)[dal]+[\\/][A-Za-z0-9]+[\\/][A-Za-z0-9]+";
       final TransformerFactory factory = TransformerFactory.newInstance();
       final Transformer transformer = factory.newTransformer(new StreamSource(template));
       final DocumentSource source = new DocumentSource(DocumentHelper.parseText(xml));
       final StringWriter sw = new StringWriter();
       final StreamResult response = new StreamResult(sw);
+      if (url.matches(regExp)) {
+        hasId = true;
+      } else {
+        hasId = false;
+      }
+      transformer.setParameter("hasId", hasId);
       transformer.setParameter("url", url);
       transformer.transform(source, response);
 

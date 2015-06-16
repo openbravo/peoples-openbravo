@@ -15,7 +15,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2009-2012 Openbravo SLU
+* All portions are Copyright (C) 2009-2015 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -40,11 +40,10 @@ BEGIN
       INTO v_Aux
     FROM AD_MODULE M
    WHERE M.AD_MODULE_ID = :new.AD_MODULE_ID
-      AND instr(upper(:new.javapackage), upper(M.javapackage)) = 1
       AND instr(upper(:new.javapackage), upper(M.javapackage)) = 1;
 
      IF v_Aux = 0 THEN
-       RAISE_APPLICATION_ERROR(-20000, '@20102@') ;
+       RAISE_APPLICATION_ERROR(-20000, '@DataPackageError@') ;
      END IF;
   END AD_PACKAGE_JP_TRG
 ]]></body>
