@@ -723,6 +723,11 @@ isc.OBPickAndExecuteGrid.addProperties({
       this.setValueMapInEditForm(field.name, valueMap);
       if (this.isEditing()) {
         this.setEditValue(this.getEditRow(), field.name, columnValue.value);
+        // see issue https://issues.openbravo.com/view.php?id=30060
+        // explicitly set the display value
+        if (field.displayField) {
+          this.setEditValue(this.getEditRow(), field.displayField, columnValue.identifier);
+        }
       }
     }
   },
@@ -798,7 +803,7 @@ isc.OBPickAndExecuteGrid.addProperties({
       MODE: (newRecord ? 'NEW' : 'EDIT'),
       PARENT_ID: null,
       TAB_ID: this.viewProperties.tabId,
-      ROW_ID: (!newRow && record ? record[OB.Constants.ID] : null)
+      ROW_ID: null //ROW_ID is null to avoid edited values be overriden by the FIC
     };
 
     OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', allProperties, requestParams, this.processFICReturn, {
