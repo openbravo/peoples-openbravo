@@ -30,8 +30,10 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.importer.ExplodedImporter;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.test.base.OBBaseTest;
 
 /**
@@ -70,6 +72,12 @@ public class WeldBaseTest extends OBBaseTest {
 
   @Inject
   private BeanManager beanManager;
+
+  /** sets static instance bean manager in WeldUtils so it is globally accessible */
+  @Before
+  public void setManager() {
+    WeldUtils.setStaticInstanceBeanManager(beanManager);
+  }
 
   @SuppressWarnings("unchecked")
   protected <U extends Object> U getWeldComponent(Class<U> clz) {
