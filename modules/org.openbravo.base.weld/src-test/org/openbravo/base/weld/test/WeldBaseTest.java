@@ -49,6 +49,7 @@ public class WeldBaseTest extends OBBaseTest {
 
   @Deployment
   public static JavaArchive createTestArchive() {
+    log.info("Creating cdi archive...");
     final String sourcePath = OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .getProperty("source.path");
     final JavaArchive archive = ShrinkWrap.create(JavaArchive.class);
@@ -66,6 +67,7 @@ public class WeldBaseTest extends OBBaseTest {
     archive.addAsDirectory(sourcePath + "/WebContent/WEB-INF/lib");
 
     log.debug(archive.toString(true));
+    log.info("... cdi archive created");
     return archive;
   }
 
