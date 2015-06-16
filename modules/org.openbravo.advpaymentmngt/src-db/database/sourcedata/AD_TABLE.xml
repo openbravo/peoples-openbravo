@@ -115,7 +115,8 @@ group by @groupByClause@
 from FIN_Payment f 
 @joinClause@ 
 where f.generatedCredit != '0' 
-and f.generatedCredit != f.usedCredit
+and f.generatedCredit != f.usedCredit 
+and aprm_seqnumberpaymentstatus(f.status) >= aprm_seqnoinvpaidstatus(f.paymentMethod, f.account, f.receipt) 
 @whereClause@ 
 and @additional_filters@ 
 and @insertion_point_0@ ]]></HQLQUERY>

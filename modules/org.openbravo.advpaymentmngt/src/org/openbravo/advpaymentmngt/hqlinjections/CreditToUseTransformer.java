@@ -41,9 +41,6 @@ public class CreditToUseTransformer extends HqlQueryTransformer {
 
   private CharSequence getWhereClause(Map<String, String> requestParameters,
       Map<String, Object> queryNamedParameters) {
-    StringBuffer whereClause = new StringBuffer();
-    whereClause
-        .append(" and aprm_seqnumberpaymentstatus(f.status) >= aprm_seqnoinvpaidstatus(f.paymentMethod, f.account, f.receipt) ");
-    return whereClause;
+    return " ";
   }
 }

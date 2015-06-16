@@ -26,7 +26,7 @@
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
-  v_invoicepaidstatus VARCHAR2(32);
+  v_invoicepaidstatus fin_finacc_paymentmethod.payin_invoicepaidstatus%TYPE;
 
 BEGIN
 
