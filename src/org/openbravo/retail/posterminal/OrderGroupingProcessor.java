@@ -225,7 +225,7 @@ public class OrderGroupingProcessor {
 
     t9 = System.currentTimeMillis();
 
-    OBDal.getInstance().commitAndClose();
+    OBDal.getInstance().flush();
 
     t10 = System.currentTimeMillis();
 
@@ -238,7 +238,7 @@ public class OrderGroupingProcessor {
     log.debug("time execution query Paym Sched: " + (t7 - t6));
     log.debug("time execution query Upd PS: " + (t8 - t7));
     log.debug("time execution documentNo: " + (t9 - t8));
-    log.debug("time execution Commit : " + (t10 - t9));
+    log.debug("time execution flush : " + (t10 - t9));
     log.debug("time execution total: " + (t10 - t0));
 
     log.info("Cash up " + cashUp.getIdentifier() + ": Invoice genarated. Total time: " + (t10 - t0));
