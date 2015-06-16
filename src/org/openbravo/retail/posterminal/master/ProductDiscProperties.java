@@ -81,6 +81,7 @@ public class ProductDiscProperties extends ModelExtension {
         add(new HQLProperty("'true'", "ispack"));
         add(new HQLProperty("'false'", "isGeneric"));
         add(new HQLProperty("'false'", "stocked"));
+        add(new HQLProperty("p.discountType.id", "productCategory"));
       }
     };
     return list;
