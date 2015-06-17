@@ -353,6 +353,54 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
+      <column name="SEQUENCENO" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="PROD_CAT_SELECTION" primaryKey="false" required="false" type="NVARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="PRODUCT_SELECTION" primaryKey="false" required="false" type="NVARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="PRINT_DESCRIPTION" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
+      <column name="ALLOW_ANONYMOUS_SALE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
+      <column name="OVERDUE_AVAILABLE_DAYS" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="RETURNABLE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
+      <column name="OVERDUE_RETURN_DAYS" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="EDITABLE_PRICE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
+      <column name="ISPRICERULEBASED" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
+      <column name="UNIQUE_PER_DOCUMENT" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
+      <column name="PRIORITY" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MPRODUCT">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
@@ -453,8 +501,10 @@
         <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="VALUE"/>
       </unique>
+      <check name="M_PRODUCT_ANONYMOUS_SALE_CHECK"><![CDATA[ALLOW_ANONYMOUS_SALE IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ATSETVALTYPE_CHK"><![CDATA[(M_ATTRIBUTESETINSTANCE_ID IS NULL) OR (ATTRSETVALUETYPE IS NOT NULL)]]></check>
       <check name="M_PRODUCT_DISCONTINUED_CHECK"><![CDATA[DISCONTINUED IN ('Y', 'N')]]></check>
+      <check name="M_PRODUCT_EDITABLE_PRICE_CHECK"><![CDATA[EDITABLE_PRICE IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ENFORCE_ATTRIBUT_CHK"><![CDATA[ENFORCE_ATTRIBUTE IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ISBOM_CHECK"><![CDATA[ISBOM IN ('Y', 'N')]]></check>
@@ -472,5 +522,9 @@
       <check name="M_PRODUCT_ISVERIFIED_CHECK"><![CDATA[ISVERIFIED IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_PERIODNUMBER_CHK"><![CDATA[((ISDEFERREDREVENUE = 'Y') AND (PERIODNUMBER > 0)) OR (ISDEFERREDREVENUE = 'N')]]></check>
       <check name="M_PRODUCT_PERIODNUMEXP_CHK"><![CDATA[((ISDEFERREDEXPENSE = 'Y') AND (PERIODNUMBER_EXP > 0)) OR (ISDEFERREDEXPENSE = 'N')]]></check>
+      <check name="M_PRODUCT_PRICERULEBASED_CHECK"><![CDATA[ISPRICERULEBASED IN ('Y', 'N')]]></check>
+      <check name="M_PRODUCT_PRINT_DESCRIP_CHECK"><![CDATA[PRINT_DESCRIPTION IN ('Y', 'N')]]></check>
+      <check name="M_PRODUCT_RETURNABLE_CHECK"><![CDATA[RETURNABLE IN ('Y', 'N')]]></check>
+      <check name="M_PRODUCT_UN_PERDOCUMENT_CHECK"><![CDATA[UNIQUE_PER_DOCUMENT IN ('Y', 'N')]]></check>
     </table>
   </database>
