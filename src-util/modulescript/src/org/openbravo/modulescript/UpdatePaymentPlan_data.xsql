@@ -54,7 +54,7 @@
         SELECT count(*) as exist
         FROM DUAL
         WHERE EXISTS (SELECT 1 FROM ad_preference
-                      WHERE attribute = 'PaymentPlanUpdatedV2')
+                      WHERE attribute = 'PaymentPlanUpdatedV4')
       ]]>
     </Sql>
   </SqlMethod>
@@ -66,7 +66,7 @@
            ad_preference_id, ad_client_id, ad_org_id, isactive,
            createdby, created, updatedby, updated,attribute
            ) VALUES (
-           get_uuid(), '0', '0', 'Y', '0', NOW(), '0', NOW(),'PaymentPlanUpdatedV2')
+           get_uuid(), '0', '0', 'Y', '0', NOW(), '0', NOW(),'PaymentPlanUpdatedV4')
          ]]>
         </Sql>
    </SqlMethod>
