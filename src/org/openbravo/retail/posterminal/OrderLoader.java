@@ -1186,7 +1186,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     order.setObposSendemail((jsonorder.has("sendEmail") && jsonorder.getBoolean("sendEmail")));
 
     long documentno = (long) Integer.parseInt(order.getDocumentNo().substring(
-        order.getDocumentNo().indexOf("/") + 1));
+        order.getDocumentNo().lastIndexOf("/") + 1));
     if (order.getObposApplications().getLastassignednum() == null
         || documentno > order.getObposApplications().getLastassignednum()) {
       OBPOSApplications terminal = order.getObposApplications();
