@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,13 +27,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.design.JasperDesign;
-import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.client.application.report.ReportingUtils;
 import org.openbravo.erpCommon.utility.DateTimeData;
 
 public class RptC_Invoice extends HttpSecureAppServlet {
@@ -97,9 +95,8 @@ public class RptC_Invoice extends HttpSecureAppServlet {
 
     JasperReport jasperReportLines;
     try {
-      JasperDesign jasperDesignLines = JRXmlLoader.load(strBaseDesign
+      jasperReportLines = ReportingUtils.compileReport(strBaseDesign
           + "/org/openbravo/erpReports/RptC_Invoice_Lines.jrxml");
-      jasperReportLines = JasperCompileManager.compileReport(jasperDesignLines);
     } catch (JRException e) {
       e.printStackTrace();
       throw new ServletException(e.getMessage());
@@ -107,9 +104,8 @@ public class RptC_Invoice extends HttpSecureAppServlet {
     parameters.put("SR_LINES_1", jasperReportLines);
 
     try {
-      JasperDesign jasperDesignLines = JRXmlLoader.load(strBaseDesign
+      jasperReportLines = ReportingUtils.compileReport(strBaseDesign
           + "/org/openbravo/erpReports/RptC_Invoice_TaxLines.jrxml");
-      jasperReportLines = JasperCompileManager.compileReport(jasperDesignLines);
     } catch (JRException e) {
       e.printStackTrace();
       throw new ServletException(e.getMessage());

@@ -318,9 +318,9 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
    * fields. If the HQL query already contains order by fields, the new fields are appended for the
    * existing fields.
    * 
-   * @param hQL
+   * @param hql
    *          original HQL query
-   * @param sortByParametersString
+   * @param sortBy
    *          parameter that contains sortBy field values
    * @return an updated HQL query that will set the order by fields
    */

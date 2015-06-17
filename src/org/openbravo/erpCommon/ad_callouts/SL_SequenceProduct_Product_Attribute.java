@@ -117,7 +117,7 @@ public class SL_SequenceProduct_Product_Attribute extends SimpleCallout {
         org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE, specialAttList));
     specialAttListValuesCriteria.add(Restrictions.eq(
         org.openbravo.model.ad.domain.List.PROPERTY_SEARCHKEY, Value));
-    java.util.List<org.openbravo.model.ad.domain.List> specialAttListValues = (java.util.List<List>) specialAttListValuesCriteria
+    java.util.List<org.openbravo.model.ad.domain.List> specialAttListValues = specialAttListValuesCriteria
         .list();
     if (specialAttListValues.isEmpty()) {
       return null;

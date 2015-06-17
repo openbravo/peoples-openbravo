@@ -362,9 +362,6 @@ public class ImportModule {
 
   /**
    * Obtains the text to show for merged modules about the module that is merged within.
-   * 
-   * @param moduleId
-   * @return
    */
   private String getMergedWith(String moduleId) {
     boolean found = false;
@@ -1259,8 +1256,6 @@ public class ImportModule {
   /**
    * Reads an ZipInputStream and returns it as a ByteArrayInputStream
    * 
-   * @param obxInputStream
-   * @return
    * @throws Exception
    */
   private ByteArrayInputStream getCurrentEntryStream(ZipInputStream obxInputStream)
@@ -1448,8 +1443,6 @@ public class ImportModule {
   /**
    * Reads a ZipInputStream and returns a Vector<DynaBean> with its modules
    * 
-   * @param obxInputStream
-   * @return
    * @throws Exception
    */
   private Vector<DynaBean> getEntryDynaBeans(byte[] obxEntryBytes) throws Exception {
@@ -1708,7 +1701,7 @@ public class ImportModule {
           HashMap<String, String> additionalInfo = updates[i].getAdditionalInfo();
           if (additionalInfo != null && additionalInfo.containsKey("upgrade")) {
             log4j.info("Upgrade found:" + additionalInfo.get("upgrade"));
-            JSONObject upgrade = new JSONObject((String) additionalInfo.get("upgrade"));
+            JSONObject upgrade = new JSONObject(additionalInfo.get("upgrade"));
             final String moduleId = upgrade.getString("moduleId");
             org.openbravo.model.ad.module.Module module = OBDal.getInstance().get(
                 org.openbravo.model.ad.module.Module.class, moduleId);

@@ -184,7 +184,7 @@ public class EntityExcelXMLConverter implements OBNotSingleton {
             if (obValue == null) {
               txt = null;
             } else {
-              txt = ((BaseOBObject) obValue).getIdentifier();
+              txt = obValue.getIdentifier();
             }
           } else {
             txt = null;

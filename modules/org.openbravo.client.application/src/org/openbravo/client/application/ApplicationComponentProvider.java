@@ -479,6 +479,7 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
     testResources.add("web/org.openbravo.client.application/js/test/ob-property-store-test.js");
     testResources.add("web/org.openbravo.client.application/js/test/ob-utilities-date-test.js");
     testResources.add("web/org.openbravo.client.application/js/test/ob-navbar-test.js");
+    testResources.add("web/org.openbravo.client.application/js/test/ob-utilities-number-test.js");
     return testResources;
   }
 }

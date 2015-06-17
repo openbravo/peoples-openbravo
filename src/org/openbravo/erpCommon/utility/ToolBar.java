@@ -21,7 +21,6 @@ package org.openbravo.erpCommon.utility;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
@@ -29,7 +28,6 @@ import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.model.ad.ui.Tab;
 
 public class ToolBar {
-  private static Logger log4j = Logger.getLogger(ToolBar.class);
   private ConnectionProvider conn;
   private String language = "en_US";
   private String servlet_action = "";

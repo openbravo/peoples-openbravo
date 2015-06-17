@@ -35,6 +35,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.model.Property;
 import org.openbravo.client.application.personalization.PersonalizationHandler;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.client.kernel.KernelUtils;
@@ -79,10 +80,18 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
       final String roleId = OBContext.getOBContext().getRole().getId();
       final DalConnectionProvider dalConnectionProvider = new DalConnectionProvider();
       final JSONObject jsonUIPattern = new JSONObject();
+      final String windowType = window.getWindowType();
       for (Tab tab : window.getADTabList()) {
         final boolean readOnlyAccess = org.openbravo.erpCommon.utility.WindowAccessData
             .hasReadOnlyAccess(dalConnectionProvider, roleId, tab.getId());
         String uiPattern = readOnlyAccess ? "RO" : tab.getUIPattern();
+        // window should be read only when is assigned with a table defined as a view
+        if (!"RO".equals(uiPattern) && ("T".equals(windowType) || "M".equals(windowType))
+            && tab.getTable().isView()) {
+          log4j.warn("Tab \"" + tab.getName()
+              + "\" is set to read only because is assigned with a table defined as a view.");
+          uiPattern = "RO";
+        }
         jsonUIPattern.put(tab.getId(), uiPattern);
       }
       final JSONObject json = new JSONObject();
@@ -124,15 +133,21 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
               final Set<String> fields = new TreeSet<String>();
               for (Field field : tabAccess.getTab().getADFieldList()) {
                 if (!field.isReadOnly() && !field.isShownInStatusBar()) {
-                  fields.add(KernelUtils.getProperty(entity, field).getName());
+                  final Property property = KernelUtils.getProperty(entity, field);
+                  if (property != null) {
+                    fields.add(property.getName());
+                  }
                 }
               }
               for (FieldAccess fieldAccess : tabAccess.getADFieldAccessList()) {
                 if (fieldAccess.isActive()) {
-                  final String name = KernelUtils.getProperty(entity, fieldAccess.getField())
-                      .getName();
-                  jFields.put(name, fieldAccess.isEditableField());
-                  fields.remove(name);
+                  final Property property = KernelUtils.getProperty(entity, fieldAccess.getField());
+                  if (property != null) {
+                    final String name = KernelUtils.getProperty(entity, fieldAccess.getField())
+                        .getName();
+                    jFields.put(name, fieldAccess.isEditableField());
+                    fields.remove(name);
+                  }
                 }
               }
               for (String name : fields) {
@@ -220,13 +235,13 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
             if (settingValue instanceof List) {
               for (Object callbackExtra : (List<?>) settingValue) {
                 if (callbackExtra instanceof String) {
-                  extraCallbacks.put((String) callbackExtra);
+                  extraCallbacks.put(callbackExtra);
                 } else {
                   log4j.warn("You are trying to set a wrong instance of extraCallbacks");
                 }
               }
             } else if (settingValue instanceof String) {
-              extraCallbacks.put((String) settingValue);
+              extraCallbacks.put(settingValue);
             } else {
               log4j.warn("You are trying to set a wrong instance of extraCallbacks");
             }

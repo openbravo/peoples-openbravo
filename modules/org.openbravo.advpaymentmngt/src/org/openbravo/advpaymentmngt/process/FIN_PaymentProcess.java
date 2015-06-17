@@ -21,6 +21,8 @@ package org.openbravo.advpaymentmngt.process;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -155,14 +157,14 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
         }
       }
 
-      OBDal.getInstance().flush();
       if (strAction.equals("P") || strAction.equals("D")) {
         // Guess if this is a refund payment
         boolean isRefund = false;
         OBContext.setAdminMode(false);
         try {
-          if (payment.getFINPaymentDetailList().size() > 0) {
-            for (FIN_PaymentDetail det : payment.getFINPaymentDetailList()) {
+          List<FIN_PaymentDetail> paymentDetailList = payment.getFINPaymentDetailList();
+          if (paymentDetailList.size() > 0) {
+            for (FIN_PaymentDetail det : paymentDetailList) {
               if (det.isRefund()) {
                 isRefund = true;
                 break;
@@ -178,13 +180,14 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
           OBDal.getInstance().save(payment);
         }
 
-        boolean orgLegalWithAccounting = FIN_Utility.periodControlOpened(FIN_Payment.TABLE_NAME,
-            payment.getId(), FIN_Payment.TABLE_NAME + "_ID", "LE");
         boolean documentEnabled = getDocumentConfirmation(null, payment.getId());
-        if (documentEnabled
+        boolean periodNotAvailable = documentEnabled
             && !FIN_Utility.isPeriodOpen(payment.getClient().getId(), payment.getDocumentType()
                 .getDocumentCategory(), payment.getOrganization().getId(), OBDateUtils
-                .formatDate(payment.getPaymentDate())) && orgLegalWithAccounting) {
+                .formatDate(payment.getPaymentDate()))
+            && FIN_Utility.periodControlOpened(FIN_Payment.TABLE_NAME, payment.getId(),
+                FIN_Payment.TABLE_NAME + "_ID", "LE");
+        if (periodNotAvailable) {
           msg = OBMessageUtils.messageBD("PeriodNotAvailable");
           throw new OBException(msg);
         }
@@ -204,6 +207,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
         // FIXME: added to access the FIN_PaymentSchedule and FIN_PaymentScheduleDetail tables to be
         // removed when new security implementation is done
         OBContext.setAdminMode();
+        boolean flushDone = false;
         try {
           String strRefundCredit = "";
           // update payment schedule amount
@@ -313,8 +317,9 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
             }
           }
           // Execution Process
-          if (dao.isAutomatedExecutionPayment(payment.getAccount(), payment.getPaymentMethod(),
-              payment.isReceipt())) {
+          if (!isPosOrder
+              && dao.isAutomatedExecutionPayment(payment.getAccount(), payment.getPaymentMethod(),
+                  payment.isReceipt())) {
             try {
               payment.setStatus("RPAE");
 
@@ -359,16 +364,26 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                 decreaseCustomerCredit(businessPartner, payment.getUsedCredit());
               }
             }
+
             for (FIN_PaymentDetail paymentDetail : payment.getFINPaymentDetailList()) {
+
+              List<FIN_PaymentScheduleDetail> orderPaymentScheduleDetails = new ArrayList<FIN_PaymentScheduleDetail>(
+                  paymentDetail.getFINPaymentScheduleDetailList());
+
               // Get payment schedule detail list ordered by amount asc.
               // First negative if they exist and then positives
-              OBCriteria<FIN_PaymentScheduleDetail> obcPSD = OBDal.getInstance().createCriteria(
-                  FIN_PaymentScheduleDetail.class);
-              obcPSD.add(Restrictions.eq(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS,
-                  paymentDetail));
-              obcPSD.addOrderBy(FIN_PaymentScheduleDetail.PROPERTY_AMOUNT, true);
+              if (orderPaymentScheduleDetails.size() > 1) {
+                Collections.sort(orderPaymentScheduleDetails,
+                    new Comparator<FIN_PaymentScheduleDetail>() {
+                      @Override
+                      public int compare(FIN_PaymentScheduleDetail o1, FIN_PaymentScheduleDetail o2) {
+                        // TODO Auto-generated method stub
+                        return o1.getAmount().compareTo(o2.getAmount());
+                      }
+                    });
+              }
 
-              for (FIN_PaymentScheduleDetail paymentScheduleDetail : obcPSD.list()) {
+              for (FIN_PaymentScheduleDetail paymentScheduleDetail : orderPaymentScheduleDetails) {
                 BigDecimal amount = paymentScheduleDetail.getAmount().add(
                     paymentScheduleDetail.getWriteoffAmount());
                 // Do not restore paid amounts if the payment is awaiting execution.
@@ -377,8 +392,11 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                     .invoicePaymentStatus(payment)));
                 paymentScheduleDetail.setInvoicePaid(false);
                 // Payment = 0 when the payment is generated by a invoice that consume credit
-                if (invoicePaidAmounts
-                    | (payment.getAmount().compareTo(new BigDecimal("0.00")) == 0)) {
+                if ((invoicePaidAmounts && paymentScheduleDetail.getInvoicePaymentSchedule() != null)
+                    || (paymentScheduleDetail.getOrderPaymentSchedule() != null)
+                    || (paymentScheduleDetail.getInvoicePaymentSchedule() == null && paymentScheduleDetail
+                        .getOrderPaymentSchedule() == null)
+                    || (payment.getAmount().compareTo(new BigDecimal("0.00")) == 0)) {
                   if (paymentScheduleDetail.getInvoicePaymentSchedule() != null) {
                     // BP SO_CreditUsed
                     businessPartner = paymentScheduleDetail.getInvoicePaymentSchedule()
@@ -458,14 +476,18 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                 && payment.getAmount().compareTo(BigDecimal.ZERO) != 0
                 && !"TRANSACTION".equals(comingFrom)) {
               triggerAutomaticFinancialAccountTransaction(payment);
+              flushDone = true;
             }
           }
           if (!payment.getAccount().getCurrency().equals(payment.getCurrency())
               && getConversionRateDocument(payment).size() == 0) {
             insertConversionRateDocument(payment);
+            flushDone = true;
           }
         } finally {
-          OBDal.getInstance().flush();
+          if (!flushDone) {
+            OBDal.getInstance().flush();
+          }
           OBContext.restorePreviousMode();
         }
 
@@ -1320,14 +1342,8 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
     OBContext.setAdminMode();
     try {
       FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, strRecordId);
-      OBCriteria<FinAccPaymentMethod> obCriteria = OBDal.getInstance().createCriteria(
-          FinAccPaymentMethod.class);
-      obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
-      obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD,
-          payment.getPaymentMethod()));
-      obCriteria.setFilterOnReadableClients(false);
-      obCriteria.setFilterOnReadableOrganization(false);
-      List<FinAccPaymentMethod> lines = obCriteria.list();
+      List<FinAccPaymentMethod> lines = payment.getPaymentMethod()
+          .getFinancialMgmtFinAccPaymentMethodList();
       List<FIN_FinancialAccountAccounting> accounts = payment.getAccount()
           .getFINFinancialAccountAcctList();
       for (FIN_FinancialAccountAccounting account : accounts) {
@@ -1360,6 +1376,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
         }
       }
     } catch (Exception e) {
+      // TODO no logging... ??
       return confirmation;
     } finally {
       OBContext.restorePreviousMode();

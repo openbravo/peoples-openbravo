@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ReportTaxInvoicePurchaseForeign" pageWidth="535" pageHeight="842" columnWidth="535" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ReportTaxInvoicePurchaseForeign" pageWidth="535" pageHeight="842" columnWidth="535" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="ca5c867b-f5e6-4ea7-a416-fb91ed037816">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.0"/>
@@ -125,7 +125,7 @@
 		<groupHeader>
 			<band height="43" splitType="Stretch">
 				<staticText>
-					<reportElement key="staticText" style="GroupHeader_DarkGray" x="1" y="0" width="100" height="20"/>
+					<reportElement key="staticText" style="GroupHeader_DarkGray" x="1" y="0" width="100" height="20" uuid="e26b249a-5dca-4709-a093-03e22d98bea3"/>
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -139,7 +139,7 @@
 					<text><![CDATA[Tax type]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-					<reportElement key="textField" style="GroupHeader_DarkGray" x="101" y="0" width="433" height="20"/>
+					<reportElement key="textField" style="GroupHeader_DarkGray" x="101" y="0" width="433" height="20" uuid="9e9fa3eb-5e99-438c-b6b0-c35b6889c5cc"/>
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -150,22 +150,22 @@
 					<textElement>
 						<font pdfFontName="Helvetica"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$F{TAXNAME}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{TAXNAME}]]></textFieldExpression>
 				</textField>
 				<line>
-					<reportElement key="line-2" stretchType="RelativeToBandHeight" x="0" y="1" width="1" height="42" forecolor="#555555"/>
+					<reportElement key="line-2" stretchType="RelativeToBandHeight" x="0" y="1" width="1" height="42" forecolor="#555555" uuid="1506911f-7c0f-44ce-bacd-c993a86cdb9f"/>
 					<graphicElement>
 						<pen lineWidth="2.0" lineStyle="Solid"/>
 					</graphicElement>
 				</line>
 				<line>
-					<reportElement key="line-3" stretchType="RelativeToBandHeight" x="534" y="1" width="1" height="42" forecolor="#555555"/>
+					<reportElement key="line-3" stretchType="RelativeToBandHeight" x="534" y="1" width="1" height="42" forecolor="#555555" uuid="6dffc841-3d8f-4079-9db4-2b3ca093b19b"/>
 					<graphicElement>
 						<pen lineWidth="2.0" lineStyle="Solid"/>
 					</graphicElement>
 				</line>
 				<staticText>
-					<reportElement key="element-90" style="Detail_Header" x="10" y="27" width="90" height="16">
+					<reportElement key="element-90" style="Detail_Header" x="10" y="27" width="90" height="16" uuid="2122db8a-fdf4-40e2-9e1b-45c56fd3aee0">
 						<printWhenExpression><![CDATA[new Boolean($P{DETAIL}.equals("Y"))]]></printWhenExpression>
 					</reportElement>
 					<box leftPadding="5">
@@ -175,11 +175,10 @@
 						<bottomPen lineWidth="0.0" lineColor="#000000"/>
 						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 					</box>
-					<textElement/>
 					<text><![CDATA[Invoice]]></text>
 				</staticText>
 				<staticText>
-					<reportElement key="element-90" style="Detail_Header" x="100" y="27" width="70" height="16">
+					<reportElement key="element-90" style="Detail_Header" x="100" y="27" width="70" height="16" uuid="c14cdc48-387f-4125-8fb9-642a2bd84a55">
 						<printWhenExpression><![CDATA[new Boolean($P{DETAIL}.equals("Y"))]]></printWhenExpression>
 					</reportElement>
 					<box leftPadding="5">
@@ -189,11 +188,10 @@
 						<bottomPen lineWidth="0.0" lineColor="#000000"/>
 						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 					</box>
-					<textElement/>
 					<text><![CDATA[Date]]></text>
 				</staticText>
 				<staticText>
-					<reportElement key="element-90" style="Detail_Header" x="170" y="27" width="170" height="16">
+					<reportElement key="element-90" style="Detail_Header" x="170" y="27" width="170" height="16" uuid="275428a5-ca6f-4f23-a7f3-35b9ccbdb9bc">
 						<printWhenExpression><![CDATA[new Boolean($P{DETAIL}.equals("Y"))]]></printWhenExpression>
 					</reportElement>
 					<box leftPadding="5">
@@ -203,11 +201,10 @@
 						<bottomPen lineWidth="0.0" lineColor="#000000"/>
 						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 					</box>
-					<textElement/>
 					<text><![CDATA[Business Partner]]></text>
 				</staticText>
 				<staticText>
-					<reportElement key="element-90" style="Detail_Header" x="340" y="27" width="90" height="16"/>
+					<reportElement key="element-90" style="Detail_Header" x="340" y="27" width="90" height="16" uuid="b793792c-4bbb-4d2e-96e0-ec94150d7765"/>
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -219,7 +216,7 @@
 					<text><![CDATA[Taxable base]]></text>
 				</staticText>
 				<staticText>
-					<reportElement key="element-90" style="Detail_Header" x="430" y="27" width="90" height="16"/>
+					<reportElement key="element-90" style="Detail_Header" x="430" y="27" width="90" height="16" uuid="3fa39a1c-4bf4-4a80-97af-3d82ba9d7b69"/>
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -235,25 +232,25 @@
 		<groupFooter>
 			<band height="27" splitType="Stretch">
 				<line>
-					<reportElement key="line-32" stretchType="RelativeToBandHeight" x="0" y="0" width="1" height="22" forecolor="#555555"/>
+					<reportElement key="line-32" stretchType="RelativeToBandHeight" x="0" y="0" width="1" height="22" forecolor="#555555" uuid="f9811817-3980-4ce9-b595-58e7e30e229b"/>
 					<graphicElement>
 						<pen lineWidth="2.0" lineStyle="Solid"/>
 					</graphicElement>
 				</line>
 				<line>
-					<reportElement key="line-33" stretchType="RelativeToBandHeight" x="534" y="0" width="1" height="22" forecolor="#555555"/>
+					<reportElement key="line-33" stretchType="RelativeToBandHeight" x="534" y="0" width="1" height="22" forecolor="#555555" uuid="843b480d-173e-4a68-97e6-f9cf47f39c61"/>
 					<graphicElement>
 						<pen lineWidth="2.0" lineStyle="Solid"/>
 					</graphicElement>
 				</line>
 				<line>
-					<reportElement key="line-34" x="0" y="22" width="535" height="1" forecolor="#555555"/>
+					<reportElement key="line-34" x="0" y="22" width="535" height="1" forecolor="#555555" uuid="42d89b54-a689-4d2c-97ce-a43e04bbe2c0"/>
 					<graphicElement>
 						<pen lineWidth="2.0" lineStyle="Solid"/>
 					</graphicElement>
 				</line>
 				<staticText>
-					<reportElement key="staticText-4" style="default" x="10" y="1" width="90" height="16"/>
+					<reportElement key="staticText-4" style="default" x="10" y="1" width="90" height="16" uuid="b632f6c9-8f83-4743-bdb2-7bed07d5c25d"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -266,13 +263,13 @@
 					<text><![CDATA[Total:]]></text>
 				</staticText>
 				<line>
-					<reportElement key="line-37" x="10" y="0" width="510" height="1" forecolor="#666666"/>
+					<reportElement key="line-37" x="10" y="0" width="510" height="1" forecolor="#666666" uuid="49d0bbe2-29fb-4742-94ea-4b76f414cf41"/>
 					<graphicElement>
 						<pen lineWidth="0.25" lineStyle="Solid"/>
 					</graphicElement>
 				</line>
 				<textField isBlankWhenNull="false">
-					<reportElement key="textField-14" style="Total_Field" x="100" y="1" width="240" height="16"/>
+					<reportElement key="textField-14" style="Total_Field" x="100" y="1" width="240" height="16" uuid="aa2971fc-673e-450a-a828-2fe59754f2a3"/>
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -283,10 +280,10 @@
 					<textElement verticalAlignment="Middle">
 						<font fontName="Bitstream Vera Sans" size="10"/>
 					</textElement>
-					<textFieldExpression class="java.lang.Integer"><![CDATA[$V{TAXNAME_COUNT}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{TAXNAME_COUNT}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="false">
-					<reportElement key="textField-17" style="Total_Field" x="430" y="1" width="90" height="16"/>
+					<reportElement key="textField-17" style="Total_Field" x="430" y="1" width="90" height="16" uuid="2dadab0f-45f5-46f5-99b1-47cc4e76d50e"/>
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
 						<topPen lineWidth="0.0"/>
@@ -295,10 +292,10 @@
 						<rightPen lineWidth="0.0"/>
 					</box>
 					<textElement textAlignment="Right"/>
-					<textFieldExpression class="java.lang.String"><![CDATA[($V{sumImport}!=null)?$P{NUMBERFORMAT}.format($V{sumImport})+$F{CURRENCY}:new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{sumImport}!=null)?$P{NUMBERFORMAT}.format($V{sumImport})+$F{CURRENCY}:new String(" ")]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="false">
-					<reportElement key="textField-18" style="Total_Field" x="340" y="1" width="90" height="16"/>
+					<reportElement key="textField-18" style="Total_Field" x="340" y="1" width="90" height="16" uuid="a28b91e1-2806-45b6-80ff-b608329a7c0b"/>
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
 						<topPen lineWidth="0.0"/>
@@ -307,7 +304,7 @@
 						<rightPen lineWidth="0.0"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle"/>
-					<textFieldExpression class="java.lang.String"><![CDATA[($V{sumTaxBaseAmt}!=null)?$P{NUMBERFORMAT}.format($V{sumTaxBaseAmt})+$F{CURRENCY}:new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{sumTaxBaseAmt}!=null)?$P{NUMBERFORMAT}.format($V{sumTaxBaseAmt})+$F{CURRENCY}:new String(" ")]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -321,7 +318,7 @@
 	<pageHeader>
 		<band height="20" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement key="textField" style="Report_Subtitle" x="2" y="0" width="533" height="20"/>
+				<reportElement key="textField" style="Report_Subtitle" x="2" y="0" width="533" height="20" uuid="dabf7bb4-4ce2-4aa8-ab97-8fba55aaee57"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -329,8 +326,7 @@
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{PURCHASE}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{PURCHASE}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -341,19 +337,19 @@
 		<band height="14" splitType="Stretch">
 			<printWhenExpression><![CDATA[new Boolean($P{DETAIL}.equals("Y"))]]></printWhenExpression>
 			<line>
-				<reportElement key="line-16" stretchType="RelativeToBandHeight" x="534" y="0" width="1" height="14" forecolor="#555555"/>
+				<reportElement key="line-16" stretchType="RelativeToBandHeight" x="534" y="0" width="1" height="14" forecolor="#555555" uuid="97edf324-b7ea-4f83-8df3-dab57db465d2"/>
 				<graphicElement>
 					<pen lineWidth="2.0" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement key="line-17" stretchType="RelativeToBandHeight" x="0" y="0" width="1" height="14" forecolor="#555555"/>
+				<reportElement key="line-17" stretchType="RelativeToBandHeight" x="0" y="0" width="1" height="14" forecolor="#555555" uuid="c4b6b0dd-e5de-43d2-96ec-c7c9586ab49f"/>
 				<graphicElement>
 					<pen lineWidth="2.0" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement key="textField-9" style="Detail_Line" stretchType="RelativeToBandHeight" x="10" y="0" width="90" height="14"/>
+				<reportElement key="textField-9" style="Detail_Line" stretchType="RelativeToBandHeight" x="10" y="0" width="90" height="14" uuid="7cdba18e-9fff-462e-a680-98495b172192"/>
 				<box leftPadding="5" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#666666"/>
@@ -361,10 +357,10 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{REFERENCE}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{REFERENCE}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-10" style="Detail_Line" stretchType="RelativeToBandHeight" x="100" y="0" width="70" height="14"/>
+				<reportElement key="textField-10" style="Detail_Line" stretchType="RelativeToBandHeight" x="100" y="0" width="70" height="14" uuid="19711e69-9b59-4d6e-87e9-9cbb93e00e93"/>
 				<box leftPadding="5" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#666666"/>
@@ -372,10 +368,10 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle"/>
-				<textFieldExpression class="java.sql.Timestamp"><![CDATA[$F{DATEINVOICED}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{DATEINVOICED}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement key="textField-11" style="Detail_Line" stretchType="RelativeToBandHeight" x="170" y="0" width="170" height="14"/>
+				<reportElement key="textField-11" style="Detail_Line" stretchType="RelativeToBandHeight" x="170" y="0" width="170" height="14" uuid="a1b2c98f-196c-4b9e-9060-0c569aef9214"/>
 				<box leftPadding="5" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#666666"/>
@@ -383,10 +379,10 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{BPARTNER}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{BPARTNER}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField-12" style="Detail_Line" stretchType="RelativeToBandHeight" x="340" y="0" width="90" height="14"/>
+				<reportElement key="textField-12" style="Detail_Line" stretchType="RelativeToBandHeight" x="340" y="0" width="90" height="14" uuid="b6d2cb13-154a-4f1d-ac5d-f199862988f5"/>
 				<box leftPadding="5" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#666666"/>
@@ -394,10 +390,10 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{TAXBASEAMT}!=null)?$P{NUMBERFORMAT}.format($F{TAXBASEAMT})+$F{CURRENCY}:new String(" ")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{TAXBASEAMT}!=null)?$P{NUMBERFORMAT}.format($F{TAXBASEAMT})+$F{CURRENCY}:new String(" ")]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField-13" style="Detail_Line" stretchType="RelativeToBandHeight" x="430" y="0" width="90" height="14"/>
+				<reportElement key="textField-13" style="Detail_Line" stretchType="RelativeToBandHeight" x="430" y="0" width="90" height="14" uuid="0a93250c-66e7-4afa-ade0-4b07bcf02e9b"/>
 				<box leftPadding="5" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#666666"/>
@@ -405,7 +401,7 @@
 					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#666666"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{TAXAMT}!=null)?$P{NUMBERFORMAT}.format($F{TAXAMT})+$F{CURRENCY}:new String(" ")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{TAXAMT}!=null)?$P{NUMBERFORMAT}.format($F{TAXAMT})+$F{CURRENCY}:new String(" ")]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

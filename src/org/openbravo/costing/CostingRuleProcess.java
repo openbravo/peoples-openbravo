@@ -182,7 +182,7 @@ public class CostingRuleProcess implements Process {
     crQry.setFilterOnReadableOrganization(false);
     crQry.setNamedParameter("ruleOrg", rule.getOrganization());
     crQry.setMaxResult(1);
-    return (CostingRule) crQry.uniqueResult();
+    return crQry.uniqueResult();
   }
 
   private boolean existsTransactions(Set<String> naturalOrgs, Set<String> childOrgs) {

@@ -39,7 +39,6 @@ import org.openbravo.model.financialmgmt.accounting.coa.AcctSchemaTable;
 import org.openbravo.model.financialmgmt.payment.DoubtfulDebt;
 
 public class DocDoubtfulDebt extends AcctServer {
-  private static final long serialVersionUID = 1L;
   private String SeqNo = "0";
 
   public DocDoubtfulDebt() {

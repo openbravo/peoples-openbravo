@@ -243,9 +243,9 @@ public class StaticResourceComponent extends BaseComponent {
        * 
        * TODO: don't load the ob-debug.js file if not in use
        */
-      if (isInDevelopment()
-          || OBPropertiesProvider.getInstance().getBooleanProperty("test.environment")) {
-        sb.insert(0, "var isDebug = true;\n\n");
+      if (isInDevelopment() || OBPropertiesProvider.getInstance().getBooleanProperty("test.environment")) {
+        // append a global isDebug var and the causes that provoked the application to enter Debug mode
+        sb.insert(0, String.format("var isDebug = true;\nvar debugCauses = {\n  isInDevelopment: %s,\n  isTestEnvironment: %s\n};\n\n", isInDevelopment(), OBPropertiesProvider.getInstance().getBooleanProperty("test.environment")));
       }
       sb.append("if (window.onerror && window.onerror.name === '"
           + KernelConstants.BOOTSTRAP_ERROR_HANDLER_NAME + "') { window.onerror = null; }");

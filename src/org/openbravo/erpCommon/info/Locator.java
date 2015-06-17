@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -75,7 +75,7 @@ public class Locator extends HttpSecureAppServlet {
       vars.setSessionValue("Locator.name", strName);
       vars.setSessionValue("Locator.warehousename", strWarehouse);
       String strOrg = vars.getGlobalVariable("inpadOrgId", "Locator.adorgid", "");
-
+      vars.setSessionValue("Locator.adorgid", strOrg);
       if ("".equals(strOrg) || strOrg == null) {
         if ("184".equals(windowId) || "169".equals(windowId) || "800013".equals(windowId)
             || "800014".equals(windowId)) {
@@ -105,6 +105,7 @@ public class Locator extends HttpSecureAppServlet {
       vars.setSessionValue("Locator.name", strKeyValue);
       vars.setSessionValue("Locator.warehousename", LocatorData.selectname(this, strWarehouse));
       String strOrg = vars.getStringParameter("inpadOrgId");
+      vars.setSessionValue("Locator.adorgid", strOrg);
       if ("".equals(strOrg) || strOrg == null) {
         strOrg = vars.getStringParameter("paramOrgTree");
       }

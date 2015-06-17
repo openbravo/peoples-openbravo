@@ -71,7 +71,6 @@ public class DocFINReconciliation extends AcctServer {
   public static final String TRXTYPE_BPWithdrawal = "BPW";
   public static final String TRXTYPE_BankFee = "BF";
 
-  private static final long serialVersionUID = 1L;
   private static final Logger log4j = Logger.getLogger(DocFINReconciliation.class);
 
   String SeqNo = "0";

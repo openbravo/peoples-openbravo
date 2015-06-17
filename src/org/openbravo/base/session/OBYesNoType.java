@@ -74,9 +74,9 @@ public class OBYesNoType extends AbstractSingleColumnStandardBasicType<Boolean> 
         return true;
       }
       if (x == null && y != null && y instanceof Boolean) {
-        return ((Boolean) y).booleanValue() == false;
+        return y.booleanValue() == false;
       } else if (y == null && x != null && x instanceof Boolean) {
-        return ((Boolean) x).booleanValue() == false;
+        return x.booleanValue() == false;
       }
 
       return super.areEqual(x, y);

@@ -4,7 +4,6 @@ import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
 
-import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -17,8 +16,6 @@ import org.openbravo.model.ad.ui.Tab;
 
 @ApplicationScoped
 public class SetContextInfoActionHandler extends BaseActionHandler {
-
-  private static final Logger log = Logger.getLogger(SetContextInfoActionHandler.class);
 
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) {

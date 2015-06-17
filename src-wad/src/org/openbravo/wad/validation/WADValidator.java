@@ -31,6 +31,8 @@ class WADValidator {
   private String modules;
   private ConnectionProvider conn;
   private String checkAll;
+  @SuppressWarnings("unused")
+  // maybe planned some day, so lets keep
   private boolean friendlyWarnings;
 
   /**

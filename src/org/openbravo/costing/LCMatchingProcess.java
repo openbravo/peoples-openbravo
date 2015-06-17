@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -166,25 +166,29 @@ public class LCMatchingProcess {
 
     ScrollableResults receiptamts = qryLCRLA.scroll(ScrollMode.FORWARD_ONLY);
     int i = 0;
-    while (receiptamts.next()) {
-      Object[] receiptAmt = receiptamts.get();
-      BigDecimal amt = (BigDecimal) receiptAmt[0];
-      ShipmentInOutLine receiptLine = OBDal.getInstance().get(ShipmentInOutLine.class,
-          (String) receiptAmt[1]);
-      MaterialTransaction trx = receiptLine.getMaterialMgmtMaterialTransactionList().get(0);
-      CostAdjustmentLine cal = CostAdjustmentUtils.insertCostAdjustmentLine(trx, ca, amt, true,
-          referenceDate);
-      cal.setNeedsPosting(Boolean.FALSE);
-      cal.setUnitCost(Boolean.FALSE);
-      cal.setCurrency(lcCost.getCurrency());
-      OBDal.getInstance().save(cal);
+    try {
+      while (receiptamts.next()) {
+        Object[] receiptAmt = receiptamts.get();
+        BigDecimal amt = (BigDecimal) receiptAmt[0];
+        ShipmentInOutLine receiptLine = OBDal.getInstance().get(ShipmentInOutLine.class,
+            receiptAmt[1]);
+        MaterialTransaction trx = receiptLine.getMaterialMgmtMaterialTransactionList().get(0);
+        CostAdjustmentLine cal = CostAdjustmentUtils.insertCostAdjustmentLine(trx, ca, amt, true,
+            referenceDate);
+        cal.setNeedsPosting(Boolean.FALSE);
+        cal.setUnitCost(Boolean.FALSE);
+        cal.setCurrency(lcCost.getCurrency());
+        OBDal.getInstance().save(cal);
 
-      if (i % 100 == 0) {
-        OBDal.getInstance().flush();
-        OBDal.getInstance().getSession().clear();
-        ca = OBDal.getInstance().get(CostAdjustment.class, ca.getId());
+        if (i % 100 == 0) {
+          OBDal.getInstance().flush();
+          OBDal.getInstance().getSession().clear();
+          ca = OBDal.getInstance().get(CostAdjustment.class, ca.getId());
+        }
+        i++;
       }
-      i++;
+    } finally {
+      receiptamts.close();
     }
     ca = OBDal.getInstance().get(CostAdjustment.class, ca.getId());
     CostAdjustmentProcess.doProcessCostAdjustment(ca);

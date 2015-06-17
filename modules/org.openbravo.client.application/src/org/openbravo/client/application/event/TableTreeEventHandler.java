@@ -37,8 +37,6 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.utility.TableTree;
 import org.openbravo.service.db.DalConnectionProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This event handler listen to events that are fired in the TableTree table. This table is used to
@@ -50,7 +48,6 @@ import org.slf4j.LoggerFactory;
 public class TableTreeEventHandler extends EntityPersistenceEventObserver {
 
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(TableTree.ENTITY_NAME) };
-  private static Logger logger = LoggerFactory.getLogger(TableTreeEventHandler.class);
   private static final String ADTREE_STRUCTURE = "ADTree";
 
   @Override
@@ -82,10 +79,15 @@ public class TableTreeEventHandler extends EntityPersistenceEventObserver {
   }
 
   /**
-   * Checks that no other ADTree structured tree exists for this table, throws an exception if this occurs
-   * @param table table being checked
-   * @param treeStructure treestructure of the added/updated tree
-   * @param recordId null if a new record is being created or id of the record being modified
+   * Checks that no other ADTree structured tree exists for this table, throws an exception if this
+   * occurs
+   * 
+   * @param table
+   *          table being checked
+   * @param treeStructure
+   *          treestructure of the added/updated tree
+   * @param recordId
+   *          null if a new record is being created or id of the record being modified
    */
   private void checkTreeStructure(Table table, String treeStructure, String recordId) {
     if (ADTREE_STRUCTURE.equals(treeStructure)) {
@@ -94,7 +96,7 @@ public class TableTreeEventHandler extends EntityPersistenceEventObserver {
       obq.add(Restrictions.eq(TableTree.PROPERTY_TABLE, table));
       obq.add(Restrictions.eq(TableTree.PROPERTY_TREESTRUCTURE, treeStructure));
       if (recordId != null) {
-          obq.add(Restrictions.ne(TableTree.PROPERTY_ID, recordId));
+        obq.add(Restrictions.ne(TableTree.PROPERTY_ID, recordId));
       }
       if (obq.count() > 0) {
         String language = OBContext.getOBContext().getLanguage().getLanguage();

@@ -114,8 +114,6 @@ public class About extends HttpSecureAppServlet {
 
   /**
    * Obtains a list of all modules installed in the instance.
-   * 
-   * @return
    */
   private FieldProvider[] getInstalledModules() {
     List<HashMap<String, String>> installedModules = new ArrayList<HashMap<String, String>>();

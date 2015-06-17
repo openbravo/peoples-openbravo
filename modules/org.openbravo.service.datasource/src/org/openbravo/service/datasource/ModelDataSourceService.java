@@ -47,7 +47,6 @@ public class ModelDataSourceService extends BaseDataSourceService {
   private static final String DATASOURCE_FIELD = "property";
   private static final String FORM_FIELD = "inpadTableId";
 
-  private static final long serialVersionUID = 1L;
   private static final Logger log = Logger.getLogger(ModelDataSourceService.class);
   private static final Property identifier = new Property();
 

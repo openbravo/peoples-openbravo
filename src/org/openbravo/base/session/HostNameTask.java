@@ -36,7 +36,7 @@ import org.apache.tools.ant.Task;
  * It can be executed by <code>ant host.name</code> command.
  * </p>
  * 
- * @See ConfigParameters.overrideProperties
+ * @see org.openbravo.base.ConfigParameters#overrideProperties
  * 
  * @author alostale
  *

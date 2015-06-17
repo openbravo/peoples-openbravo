@@ -3,7 +3,7 @@
 This license file applies to the Openbravo ERP software (the "Openbravo
 Software"), except as described below.
 
-This product is Copyright 2001-2015 Openbravo S.L.U.  For other detailed notice,
+This product is Copyright 2001-2011 Openbravo S.L.U.  For other detailed notice,
 see the "NOTICE" file with this distribution.
 
 This product is free software; you can redistribute it and/or modify
@@ -35,7 +35,7 @@ src-core/src/org/openbravo/database
 src-core/src/org/openbravo/exception
 src-core/src/org/openbravo/utils
 src-core/src/org/openbravo/XmlEngine
-All these files are copyright © 2001-2015 Openbravo SLU
+All these files are copyright © 2001-2011 Openbravo SLU
 
 
 C) Third party code
@@ -123,7 +123,7 @@ Copyright (c) 2007, Yahoo! Inc. All rights reserved. Code licensed under the BSD
 All files under Apache Software License 2.0, available at
 http://www.apache.org/licenses/LICENSE-2.0
 
-# postgresql-9.4-1201.jdbc4.jar
+# postgresql-9.0-801.jdbc4.jar
 Under the BSD license, also available at http://jdbc.postgresql.org/license.html  
 
 # xstream-1.3.1.jar
@@ -136,16 +136,28 @@ http://opensource.org/licenses/afl-2.1.php)
 # Dynarch DHTML/Javascript calendar at web/js/jscalendar (Copyright Mihai
   Bazon, 2002, 2003 - http://dynarch.com/mishoo/)
 
-# itext-2.1.7.jar  
-# jasperreports-4.0.1.jar 
-# jasperreports-fonts-4.0.1.jar
+# itextpdf-5.5.0.jar
+# itext-pdfa-5.5.0.jar
+Both files under AGPL V3 license with LGPL Exception (included as iTextpdf_license.txt in this folder)
+
+# jackson-core-2.1.4.jar
+# jackson-databind-2.1.4.jar
+# jackson-annotations-2.1.4.jar
+All files under the Apache 2.0 license (included as Apache_license-2.0.txt in this folder)
+
+# jasperreports-6.0.0.jar
+Under the terms of the LGPL 3.0, available at http://www.gnu.org/licenses/lgpl-3.0.html
+
+# jasperreports-fonts-6.0.0.jar
+License is contained in the jar file itself (path: net/sf/jasperreports/fonts/dejavu/LICENSE)
+
 # jcommon-1.0.15.jar 
 # jfreechart-1.0.12.jar
 # jxl-2.6.10.jar
 All files under the LGPL 2.1 (available at http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html)
 
-# jasperreports-fonts-4.0.1.jar
-License is contained in the jar file itself (path: net/sf/jasperreports/fonts/dejavu/LICENSE)
+# poi-3.10.1.jar
+Under the Apache 2.0 license (included as Apache_poi_license.txt in this folder)
 
 # hibernate3.jar
 All files under the LGPL 2.1 (available at www.gnu.org/licenses/lgpl.html)
@@ -235,9 +247,6 @@ Under the MIT license (available at http://www.slf4j.org/license.html)
 # httpclient-4.0.jar
 # httpmime-4.1.jar
 # guice-2.0.jar
-# openid4java-0.9.6.jar
-# tomcat-juli.jar
-# tomcat-jdbc.jar
 Under the Apache 2.0 license (included as Apache_license-2.0.txt in this folder)
 
 # jslint4java-1.4.7.jar

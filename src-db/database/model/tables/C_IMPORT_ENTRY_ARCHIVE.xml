@@ -33,10 +33,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="STORED" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false">
-        <default><![CDATA[SYSDATE]]></default>
-        <onCreateDefault/>
-      </column>
       <column name="IMPORTED" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false">
         <default><![CDATA[SYSDATE]]></default>
         <onCreateDefault/>
@@ -57,6 +53,13 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="AD_ROLE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <foreign-key foreignTable="AD_ROLE" name="C_IMPORT_EA_AD_ROLE">
+        <reference local="AD_ROLE_ID" foreign="AD_ROLE_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="C_IMPORT_EA_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
