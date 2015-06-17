@@ -486,13 +486,16 @@ enyo.kind({
         criteria = {
         uPCEAN: code
         };
-    var uPCEAN = {
-      columns: ['uPCEAN'],
-      operator: 'equals',
-      value: code
-    };
-    var hgVolCriteria = [uPCEAN];
-    criteria.hgVolFilters = hgVolCriteria;
+    if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.product', true)) {
+      var uPCEAN = {
+        columns: ['uPCEAN'],
+        operator: 'equals',
+        value: code
+      };
+      var hgVolCriteria = [uPCEAN];
+      criteria.hgVolFilters = hgVolCriteria;
+    }
+
     OB.Dal.find(OB.Model.Product, criteria, function (data) {
       me.searchProductCallback(data, code, callback);
     }, me.errorCallback, this);

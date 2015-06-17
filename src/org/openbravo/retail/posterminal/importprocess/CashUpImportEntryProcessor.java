@@ -38,8 +38,8 @@ public class CashUpImportEntryProcessor extends ImportEntryProcessor {
     return WeldUtils.getInstanceFromStaticBeanManager(CashUpRunnable.class);
   }
 
-  protected boolean canHandleImportEntry(ImportEntry importEntry) {
-    return "OBPOS_App_Cashup".equals(importEntry.getTypeofdata());
+  protected boolean canHandleImportEntry(ImportEntry importEntryInformation) {
+    return "OBPOS_App_Cashup".equals(importEntryInformation.getTypeofdata());
   }
 
   protected String getProcessSelectionKey(ImportEntry importEntry) {

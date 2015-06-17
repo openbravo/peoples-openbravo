@@ -296,8 +296,9 @@ enyo.kind({
     var visible = OB.MobileApp.model.get('terminal').allowpayoncredit;
     // And is a loaded layaway or a regular order (no new layaway and no voided layaway)
     // this.receipt.get('orderType') === 2 --> New layaway 
+    // this.receipt.get('orderType') === 3 --> Voided layaway 
     // this.receipt.get('isLayaway') --> Loaded layaway    
-    visible = visible && (this.receipt.get('isLayaway') || (this.receipt.get('orderType') !== 2 && this.receipt.get('orderType') !== 3));
+    visible = visible && ((this.receipt.get('isLayaway') || this.receipt.get('orderType') !== 2) && this.receipt.get('orderType') !== 3);
     // And receipt has not been paid
     visible = visible && !this.receipt.getPaymentStatus().done;
     // And Business Partner exists and is elegible to sell on credit.

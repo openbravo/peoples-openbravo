@@ -23,6 +23,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.LockOptions;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
@@ -261,13 +262,17 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
       JSONArray cashMgmtIds = jsonCashup.getJSONArray("cashMgmtIds");
       JSONObject result = processor.processCashClose(posTerminal, jsonCashup, cashMgmtIds,
           currentDate, slaveCashupIds);
+
       // add the messages returned by processCashClose...
       jsonData.put("messages", result.opt("messages"));
       jsonData.put("next", result.opt("next"));
       jsonData.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
     } finally {
-      OBDal.getInstance().flush();
-      TriggerHandler.getInstance().enable();
+        try {
+          OBDal.getInstance().flush();
+          TriggerHandler.getInstance().enable();
+        } catch (Throwable ignored) {
+        }
     }
   }
 
@@ -354,7 +359,19 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
    */
   private OBPOSAppCashup getCashUp(String cashUpId, JSONObject jsonCashup, Date cashUpDate)
       throws JSONException, SQLException {
-    OBPOSAppCashup cashUp = OBDal.getInstance().get(OBPOSAppCashup.class, cashUpId);
+    // CashUp record will be read from the database with a "for update" clause to force the process
+    // to get the lock on the record. The reason for this is to prevent the same cash up from being
+    // processed twice in case of very quick duplicated requests.
+    // These shouldn't happen in general but may happen specifically in case of unreliable networks
+    OBPOSAppCashup cashUp = null;
+    Query cashUpQuery = OBDal.getInstance().getSession()
+        .createQuery("from OBPOS_App_Cashup where id=?");
+    cashUpQuery.setString(0, cashUpId);
+    // The record will be locked to this process until it ends. Other requests to process this cash
+    // up will be locked until this one finishes
+    cashUpQuery.setLockOptions(LockOptions.UPGRADE);
+    cashUp = (OBPOSAppCashup) cashUpQuery.uniqueResult();
+
     if (cashUp == null) {
       // create the cashup if no exists
       try {

@@ -329,8 +329,11 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       } finally {
         // flush and enable triggers, the rest of this method needs enabled
         // triggers
-        OBDal.getInstance().flush();
-        TriggerHandler.getInstance().enable();
+        try {
+          OBDal.getInstance().flush();
+          TriggerHandler.getInstance().enable();
+        } catch (Throwable ignored) {
+        }
       }
 
       if (log.isDebugEnabled()) {
@@ -1037,8 +1040,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     shipment
         .setDocumentType(getShipmentDocumentType((String) DalUtil.getId(order.getDocumentType())));
 
-    shipment.setDocumentNo(getDummyDocumentNo());
-    addDocumentNoHandler(shipment, shpEntity, null, shipment.getDocumentType());
+    shipment.setDocumentNo(order.getDocumentNo());
 
     shipment.setAccountingDate(order.getOrderDate());
     shipment.setMovementDate(order.getOrderDate());
@@ -1279,8 +1281,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       updateStockStatement.execute();
 
     } catch (Exception e) {
-      System.out.println("Error calling to M_UPDATE_INVENTORY");
-      throw new OBException(e.getMessage());
+      throw new OBException(e.getMessage(), e);
     }
   }
 
@@ -1627,9 +1628,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           (System.currentTimeMillis() - t1));
 
       VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
-      if (vars.hasSession()) {
-        vars.setSessionValue("POSOrder", "Y");
-      }
+      vars.setSessionValue("POSOrder", "Y");
 
       // retrieve the transactions of this payment and set the cashupId to those transactions
       OBDal.getInstance().refresh(finPayment);

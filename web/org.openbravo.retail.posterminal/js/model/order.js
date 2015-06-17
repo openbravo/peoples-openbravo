@@ -1422,6 +1422,8 @@
             OB.error(arguments);
           }, true);
         }
+      } else {
+        this.set('bp', businessPartner);
       }
       // set the undo action
       if (showNotif === undef || showNotif === true) {
