@@ -436,6 +436,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                         paymentScheduleDetail.getOrderPaymentSchedule(),
                         paymentScheduleDetail.getAmount(),
                         paymentScheduleDetail.getWriteoffAmount());
+                    paymentScheduleDetail.setInvoicePaid(true);
                   }
                   // when generating credit for a BP SO_CreditUsed is also updated
                   if (paymentScheduleDetail.getInvoicePaymentSchedule() == null

@@ -19,7 +19,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2011-2014 Openbravo SLU
+* All portions are Copyright (C) 2011-2015 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -33,6 +33,7 @@
   TYPE RECORD IS REF CURSOR;
   Cur_Dbprefix RECORD;
   v_invoicepaidstatus  VARCHAR2(32);
+  v_fin_payment_schedule_order VARCHAR(32);
   v_fin_payment_schedule_invoice VARCHAR(32);
   v_p_fin_psd_id VARCHAR(32);
 BEGIN
@@ -52,13 +53,13 @@ BEGIN
   END IF;
   
   IF (v_p_fin_psd_id is not null ) THEN
-  select isinvoicepaid , fin_payment_schedule_invoice
-  into v_isinvoicepaid , v_fin_payment_schedule_invoice
+  select isinvoicepaid, fin_payment_schedule_order, fin_payment_schedule_invoice
+  into v_isinvoicepaid, v_fin_payment_schedule_order, v_fin_payment_schedule_invoice
   from fin_payment_scheduledetail
   where fin_payment_scheduledetail_id=v_p_fin_psd_id;
   END IF;
 
-  IF (v_fin_payment_schedule_invoice is not null)THEN
+  IF (v_fin_payment_schedule_order is not null OR v_fin_payment_schedule_invoice is not null) THEN
     IF(v_isinvoicepaid='Y')THEN
     -- core intermediate statuses
     v_isPaymentConfirmed := 'Y';
