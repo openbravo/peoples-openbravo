@@ -1339,8 +1339,14 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
     OBContext.setAdminMode();
     try {
       FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, strRecordId);
-      List<FinAccPaymentMethod> lines = payment.getPaymentMethod()
-          .getFinancialMgmtFinAccPaymentMethodList();
+      OBCriteria<FinAccPaymentMethod> obCriteria = OBDal.getInstance().createCriteria(
+          FinAccPaymentMethod.class);
+      obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
+      obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD,
+          payment.getPaymentMethod()));
+      obCriteria.setFilterOnReadableClients(false);
+      obCriteria.setFilterOnReadableOrganization(false);
+      List<FinAccPaymentMethod> lines = obCriteria.list();
       List<FIN_FinancialAccountAccounting> accounts = payment.getAccount()
           .getFINFinancialAccountAcctList();
       for (FIN_FinancialAccountAccounting account : accounts) {
