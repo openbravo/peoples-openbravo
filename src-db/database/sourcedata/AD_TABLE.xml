@@ -9497,10 +9497,12 @@ You can also select if transactions are allowed or not for this organization typ
 <!--3099A57126F24DC6BAFF15EDBF2B969D-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--3099A57126F24DC6BAFF15EDBF2B969D-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--3099A57126F24DC6BAFF15EDBF2B969D-->  <NAME><![CDATA[OrderlineServiceRelation]]></NAME>
+<!--3099A57126F24DC6BAFF15EDBF2B969D-->  <DESCRIPTION><![CDATA[In this table the Order Lines related to an Order Line of 'Service' type are added]]></DESCRIPTION>
+<!--3099A57126F24DC6BAFF15EDBF2B969D-->  <HELP><![CDATA[In this table the Order Lines related to an Order Line of 'Service' type are added]]></HELP>
 <!--3099A57126F24DC6BAFF15EDBF2B969D-->  <TABLENAME><![CDATA[C_Orderline_Servicerelation]]></TABLENAME>
 <!--3099A57126F24DC6BAFF15EDBF2B969D-->  <CLASSNAME><![CDATA[OrderlineServiceRelation]]></CLASSNAME>
 <!--3099A57126F24DC6BAFF15EDBF2B969D-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--3099A57126F24DC6BAFF15EDBF2B969D-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
+<!--3099A57126F24DC6BAFF15EDBF2B969D-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
 <!--3099A57126F24DC6BAFF15EDBF2B969D-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
 <!--3099A57126F24DC6BAFF15EDBF2B969D-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
 <!--3099A57126F24DC6BAFF15EDBF2B969D-->  <ISHIGHVOLUME><![CDATA[Y]]></ISHIGHVOLUME>
@@ -10359,6 +10361,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--63FA2782CDF34716A6443706038ECE8B-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--63FA2782CDF34716A6443706038ECE8B-->  <NAME><![CDATA[ServiceProduct]]></NAME>
 <!--63FA2782CDF34716A6443706038ECE8B-->  <DESCRIPTION><![CDATA[Products included/excluded in a Service Product]]></DESCRIPTION>
+<!--63FA2782CDF34716A6443706038ECE8B-->  <HELP><![CDATA[The user can define if a product can be related to a product of 'Service' type by creating a relation between an Order Line of the Service product and another Sales Order Line of the product included/excluded.]]></HELP>
 <!--63FA2782CDF34716A6443706038ECE8B-->  <TABLENAME><![CDATA[M_Product_Service]]></TABLENAME>
 <!--63FA2782CDF34716A6443706038ECE8B-->  <CLASSNAME><![CDATA[ServiceProduct]]></CLASSNAME>
 <!--63FA2782CDF34716A6443706038ECE8B-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -12476,6 +12479,7 @@ and  ol.salesOrder.id = :salesOrderId]]></HQLQUERY>
 <!--F27592C9833B4F58919199CCB7742EDC-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--F27592C9833B4F58919199CCB7742EDC-->  <NAME><![CDATA[ServiceProductCategory]]></NAME>
 <!--F27592C9833B4F58919199CCB7742EDC-->  <DESCRIPTION><![CDATA[Product Categories included/excluded in a Service Product]]></DESCRIPTION>
+<!--F27592C9833B4F58919199CCB7742EDC-->  <HELP><![CDATA[The user can define if a product of a certain product category can be related to a product of 'Service' type by creating a relation between an Order Line of the Service product and another Sales Order Line of the product belonging to included/excluded product categories.]]></HELP>
 <!--F27592C9833B4F58919199CCB7742EDC-->  <TABLENAME><![CDATA[M_Product_Category_Service]]></TABLENAME>
 <!--F27592C9833B4F58919199CCB7742EDC-->  <CLASSNAME><![CDATA[ServiceProductCategory]]></CLASSNAME>
 <!--F27592C9833B4F58919199CCB7742EDC-->  <ISVIEW><![CDATA[N]]></ISVIEW>

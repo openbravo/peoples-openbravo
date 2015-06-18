@@ -21589,6 +21589,8 @@ Advanced features are only granted to the automatic roles defined as advanced.]]
 <!--18BC3D4E70A7443282B25AB4C12CF43E-->  <COLUMNNAME><![CDATA[Ispricerulebased]]></COLUMNNAME>
 <!--18BC3D4E70A7443282B25AB4C12CF43E-->  <NAME><![CDATA[Is Price Rule Based]]></NAME>
 <!--18BC3D4E70A7443282B25AB4C12CF43E-->  <PRINTNAME><![CDATA[Is Price Rule Based]]></PRINTNAME>
+<!--18BC3D4E70A7443282B25AB4C12CF43E-->  <DESCRIPTION><![CDATA[Indicates if the Service has a fixed price or it obtains the price based on a Service Price Rule ]]></DESCRIPTION>
+<!--18BC3D4E70A7443282B25AB4C12CF43E-->  <HELP><![CDATA[Indicates if the Service has a fixed price or it obtains the price based on a Service Price Rule.]]></HELP>
 <!--18BC3D4E70A7443282B25AB4C12CF43E-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--18BC3D4E70A7443282B25AB4C12CF43E-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--18BC3D4E70A7443282B25AB4C12CF43E--></AD_ELEMENT>
@@ -22309,6 +22311,8 @@ Glossary orphan elements are preserved when running Synchronize Terminology proc
 <!--3CB911FAA1D54CABB7A38AF0CC989151-->  <COLUMNNAME><![CDATA[Returnable]]></COLUMNNAME>
 <!--3CB911FAA1D54CABB7A38AF0CC989151-->  <NAME><![CDATA[Returnable]]></NAME>
 <!--3CB911FAA1D54CABB7A38AF0CC989151-->  <PRINTNAME><![CDATA[Returnable]]></PRINTNAME>
+<!--3CB911FAA1D54CABB7A38AF0CC989151-->  <DESCRIPTION><![CDATA[Indicates is the Service is Returnable or not]]></DESCRIPTION>
+<!--3CB911FAA1D54CABB7A38AF0CC989151-->  <HELP><![CDATA[Indicates is the Service is Returnable or not]]></HELP>
 <!--3CB911FAA1D54CABB7A38AF0CC989151-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--3CB911FAA1D54CABB7A38AF0CC989151-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--3CB911FAA1D54CABB7A38AF0CC989151--></AD_ELEMENT>
@@ -22602,6 +22606,8 @@ Glossary orphan elements are preserved when running Synchronize Terminology proc
 <!--40C07969C9DD485BBEAEDA4B70886C2E-->  <COLUMNNAME><![CDATA[Unique_Per_Document]]></COLUMNNAME>
 <!--40C07969C9DD485BBEAEDA4B70886C2E-->  <NAME><![CDATA[Unique Per Document]]></NAME>
 <!--40C07969C9DD485BBEAEDA4B70886C2E-->  <PRINTNAME><![CDATA[Unique Per Document]]></PRINTNAME>
+<!--40C07969C9DD485BBEAEDA4B70886C2E-->  <DESCRIPTION><![CDATA[This flag indicates if the Service can only be added once in a ticket. This Service could be related to zero, one or more than one lines of the ticket.]]></DESCRIPTION>
+<!--40C07969C9DD485BBEAEDA4B70886C2E-->  <HELP><![CDATA[This flag indicates if the Service can only be added once in a ticket. This Service could be related to zero, one or more than one lines of the ticket.]]></HELP>
 <!--40C07969C9DD485BBEAEDA4B70886C2E-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--40C07969C9DD485BBEAEDA4B70886C2E-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--40C07969C9DD485BBEAEDA4B70886C2E--></AD_ELEMENT>
@@ -22964,6 +22970,8 @@ Glossary orphan elements are preserved when running Synchronize Terminology proc
 <!--4D48DD5576E44640A8ABBC97917807AA-->  <COLUMNNAME><![CDATA[Sequenceno]]></COLUMNNAME>
 <!--4D48DD5576E44640A8ABBC97917807AA-->  <NAME><![CDATA[Sequence Number]]></NAME>
 <!--4D48DD5576E44640A8ABBC97917807AA-->  <PRINTNAME><![CDATA[Sequence Number]]></PRINTNAME>
+<!--4D48DD5576E44640A8ABBC97917807AA-->  <DESCRIPTION><![CDATA[Sequence number to decide in which order will be proposed the service]]></DESCRIPTION>
+<!--4D48DD5576E44640A8ABBC97917807AA-->  <HELP><![CDATA[Sequence number to decide in which order will be proposed the service]]></HELP>
 <!--4D48DD5576E44640A8ABBC97917807AA-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--4D48DD5576E44640A8ABBC97917807AA-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--4D48DD5576E44640A8ABBC97917807AA--></AD_ELEMENT>
@@ -25477,6 +25485,20 @@ Glossary orphan elements are preserved when running Synchronize Terminology proc
 <!--5D272070F3EE4507BE9C0F3549E043D6-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--5D272070F3EE4507BE9C0F3549E043D6--></AD_ELEMENT>
 
+<!--5D63B1C5CAB442248A2CE6A4D8B9A943--><AD_ELEMENT>
+<!--5D63B1C5CAB442248A2CE6A4D8B9A943-->  <AD_ELEMENT_ID><![CDATA[5D63B1C5CAB442248A2CE6A4D8B9A943]]></AD_ELEMENT_ID>
+<!--5D63B1C5CAB442248A2CE6A4D8B9A943-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--5D63B1C5CAB442248A2CE6A4D8B9A943-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--5D63B1C5CAB442248A2CE6A4D8B9A943-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--5D63B1C5CAB442248A2CE6A4D8B9A943-->  <COLUMNNAME><![CDATA[Priority]]></COLUMNNAME>
+<!--5D63B1C5CAB442248A2CE6A4D8B9A943-->  <NAME><![CDATA[Priority]]></NAME>
+<!--5D63B1C5CAB442248A2CE6A4D8B9A943-->  <PRINTNAME><![CDATA[Priority]]></PRINTNAME>
+<!--5D63B1C5CAB442248A2CE6A4D8B9A943-->  <DESCRIPTION><![CDATA[Priority assigned to a service. This priority takes over the sequence of the Service.]]></DESCRIPTION>
+<!--5D63B1C5CAB442248A2CE6A4D8B9A943-->  <HELP><![CDATA[Priority assigned to a service. This priority takes over the sequence of the Service.]]></HELP>
+<!--5D63B1C5CAB442248A2CE6A4D8B9A943-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--5D63B1C5CAB442248A2CE6A4D8B9A943-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
+<!--5D63B1C5CAB442248A2CE6A4D8B9A943--></AD_ELEMENT>
+
 <!--5D731A0A4A2E45119649A5F2A6928D8C--><AD_ELEMENT>
 <!--5D731A0A4A2E45119649A5F2A6928D8C-->  <AD_ELEMENT_ID><![CDATA[5D731A0A4A2E45119649A5F2A6928D8C]]></AD_ELEMENT_ID>
 <!--5D731A0A4A2E45119649A5F2A6928D8C-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -26274,6 +26296,8 @@ The distribution algorithm will be driven by this priority. The pending payments
 <!--6EF9DF87AFBD4FEFA87CEFB51092FB2A-->  <COLUMNNAME><![CDATA[Editable_Price]]></COLUMNNAME>
 <!--6EF9DF87AFBD4FEFA87CEFB51092FB2A-->  <NAME><![CDATA[Editable Price]]></NAME>
 <!--6EF9DF87AFBD4FEFA87CEFB51092FB2A-->  <PRINTNAME><![CDATA[Editable Price]]></PRINTNAME>
+<!--6EF9DF87AFBD4FEFA87CEFB51092FB2A-->  <DESCRIPTION><![CDATA[Indicated if he price on which the service is returned if it is returnable is 'Automatic' or 'Editable']]></DESCRIPTION>
+<!--6EF9DF87AFBD4FEFA87CEFB51092FB2A-->  <HELP><![CDATA[Indicated if he price on which the service is returned if it is returnable is 'Automatic' or 'Editable']]></HELP>
 <!--6EF9DF87AFBD4FEFA87CEFB51092FB2A-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--6EF9DF87AFBD4FEFA87CEFB51092FB2A-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--6EF9DF87AFBD4FEFA87CEFB51092FB2A--></AD_ELEMENT>
@@ -28149,6 +28173,10 @@ Do not forget to generate Audit infrastructure after selecting or deselecting a 
 <!--8314CC6B5DC24C788A78A8A4473B8B9E-->  <COLUMNNAME><![CDATA[C_Orderline_Related_ID]]></COLUMNNAME>
 <!--8314CC6B5DC24C788A78A8A4473B8B9E-->  <NAME><![CDATA[Sales Order Line]]></NAME>
 <!--8314CC6B5DC24C788A78A8A4473B8B9E-->  <PRINTNAME><![CDATA[Sales Order Line]]></PRINTNAME>
+<!--8314CC6B5DC24C788A78A8A4473B8B9E-->  <DESCRIPTION><![CDATA[Sales Order Line related a another Sales Order Line of 'Service' Type]]></DESCRIPTION>
+<!--8314CC6B5DC24C788A78A8A4473B8B9E-->  <HELP><![CDATA[Sales Order Line related a another Sales Order Line of 'Service' Type.
+
+Service Type means that the Order Line has a product of Service Type.]]></HELP>
 <!--8314CC6B5DC24C788A78A8A4473B8B9E-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--8314CC6B5DC24C788A78A8A4473B8B9E-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--8314CC6B5DC24C788A78A8A4473B8B9E--></AD_ELEMENT>
@@ -29953,6 +29981,8 @@ By disabling this option standard beats will be sent to HeartBeat server, but no
 <!--A11314C983E0497AA506DACC73FFB0C6-->  <COLUMNNAME><![CDATA[Overdue_Return_Days]]></COLUMNNAME>
 <!--A11314C983E0497AA506DACC73FFB0C6-->  <NAME><![CDATA[Overdue Return Days]]></NAME>
 <!--A11314C983E0497AA506DACC73FFB0C6-->  <PRINTNAME><![CDATA[Overdue Return Days]]></PRINTNAME>
+<!--A11314C983E0497AA506DACC73FFB0C6-->  <DESCRIPTION><![CDATA[Indicates if a Service is Returnable how many days has the customer to return it after buying]]></DESCRIPTION>
+<!--A11314C983E0497AA506DACC73FFB0C6-->  <HELP><![CDATA[Indicates if a Service is Returnable how many days has the customer to return it after buying]]></HELP>
 <!--A11314C983E0497AA506DACC73FFB0C6-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--A11314C983E0497AA506DACC73FFB0C6-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--A11314C983E0497AA506DACC73FFB0C6--></AD_ELEMENT>
@@ -31635,6 +31665,10 @@ If this flag is checked the creation and deletion of tree nodes will be handled 
 <!--C6D894D4286B4FB2B71762AE11924C16-->  <COLUMNNAME><![CDATA[Allow_Anonymous_Sale]]></COLUMNNAME>
 <!--C6D894D4286B4FB2B71762AE11924C16-->  <NAME><![CDATA[Allow Anonymous Sale]]></NAME>
 <!--C6D894D4286B4FB2B71762AE11924C16-->  <PRINTNAME><![CDATA[Allow Anonymous Sale]]></PRINTNAME>
+<!--C6D894D4286B4FB2B71762AE11924C16-->  <DESCRIPTION><![CDATA[This flag indicates if an identification of the customer is needed or not to sell the service.]]></DESCRIPTION>
+<!--C6D894D4286B4FB2B71762AE11924C16-->  <HELP><![CDATA[This flag indicates if an identification of the customer is needed or not to sell the service.
+
+If selected, there is no need of identification of the customer (i.e. Information Service)]]></HELP>
 <!--C6D894D4286B4FB2B71762AE11924C16-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--C6D894D4286B4FB2B71762AE11924C16-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--C6D894D4286B4FB2B71762AE11924C16--></AD_ELEMENT>
@@ -31647,6 +31681,8 @@ If this flag is checked the creation and deletion of tree nodes will be handled 
 <!--C72EB82CAFEE4CE7943691138A0D9B25-->  <COLUMNNAME><![CDATA[Print_Description]]></COLUMNNAME>
 <!--C72EB82CAFEE4CE7943691138A0D9B25-->  <NAME><![CDATA[Print Description]]></NAME>
 <!--C72EB82CAFEE4CE7943691138A0D9B25-->  <PRINTNAME><![CDATA[Print Description]]></PRINTNAME>
+<!--C72EB82CAFEE4CE7943691138A0D9B25-->  <DESCRIPTION><![CDATA[If selected, the ticket footer printing should add the description of the Service]]></DESCRIPTION>
+<!--C72EB82CAFEE4CE7943691138A0D9B25-->  <HELP><![CDATA[If selected, the ticket footer printing should add the description of the Service]]></HELP>
 <!--C72EB82CAFEE4CE7943691138A0D9B25-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--C72EB82CAFEE4CE7943691138A0D9B25-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--C72EB82CAFEE4CE7943691138A0D9B25--></AD_ELEMENT>
@@ -33409,6 +33445,8 @@ Processes with "Requires Explicit Access Permission" flag set to true, do not in
 <!--E9535BCD08AD43B1B29876CB1EF76A93-->  <COLUMNNAME><![CDATA[Overdue_Available_Days]]></COLUMNNAME>
 <!--E9535BCD08AD43B1B29876CB1EF76A93-->  <NAME><![CDATA[Overdue Available Days]]></NAME>
 <!--E9535BCD08AD43B1B29876CB1EF76A93-->  <PRINTNAME><![CDATA[Overdue Available Days]]></PRINTNAME>
+<!--E9535BCD08AD43B1B29876CB1EF76A93-->  <DESCRIPTION><![CDATA[Indicates if a Service is Returnable how many days has the customer to buy the Service related to a product after buying this last one]]></DESCRIPTION>
+<!--E9535BCD08AD43B1B29876CB1EF76A93-->  <HELP><![CDATA[Indicates if a Service is Returnable how many days has the customer to buy the Service related to a product after buying this last one]]></HELP>
 <!--E9535BCD08AD43B1B29876CB1EF76A93-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--E9535BCD08AD43B1B29876CB1EF76A93-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--E9535BCD08AD43B1B29876CB1EF76A93--></AD_ELEMENT>

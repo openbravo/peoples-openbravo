@@ -357,11 +357,11 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="PROD_CAT_SELECTION" primaryKey="false" required="false" type="NVARCHAR" size="60" autoIncrement="false">
+      <column name="PROD_CAT_SELECTION" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="PRODUCT_SELECTION" primaryKey="false" required="false" type="NVARCHAR" size="60" autoIncrement="false">
+      <column name="PRODUCT_SELECTION" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
