@@ -204,6 +204,10 @@
 <!--24448C9C5D1348B1A48F580A8BE55E11-->  <COLUMNNAME><![CDATA[EM_Obpos_Printrelatedattachm]]></COLUMNNAME>
 <!--24448C9C5D1348B1A48F580A8BE55E11-->  <NAME><![CDATA[Print Related Attachments]]></NAME>
 <!--24448C9C5D1348B1A48F580A8BE55E11-->  <PRINTNAME><![CDATA[Print Related Attachments]]></PRINTNAME>
+<!--24448C9C5D1348B1A48F580A8BE55E11-->  <DESCRIPTION><![CDATA[This flag indicates if any attached document to the Service in the backend should be automatically printed while including it in ticket in th Web POS]]></DESCRIPTION>
+<!--24448C9C5D1348B1A48F580A8BE55E11-->  <HELP><![CDATA[This flag indicates if any attached document to the Service in the backend should be automatically printed while including it in ticket in th Web POS.
+
+I.E: "When the seller sells a TV with the extended warranty, before the customer goes to the cashier and pays the ticket, the seller from the front office prints the warranty documents for the customer." ]]></HELP>
 <!--24448C9C5D1348B1A48F580A8BE55E11-->  <AD_MODULE_ID><![CDATA[FF808181326CC34901326D53DBCF0018]]></AD_MODULE_ID>
 <!--24448C9C5D1348B1A48F580A8BE55E11-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--24448C9C5D1348B1A48F580A8BE55E11--></AD_ELEMENT>
@@ -336,6 +340,8 @@ Document Types determine document sequence and processing rules.]]></HELP>
 <!--2E4A7AEE6D8742C288CD834DD7E63489-->  <COLUMNNAME><![CDATA[EM_Obpos_Number_Of_Copies]]></COLUMNNAME>
 <!--2E4A7AEE6D8742C288CD834DD7E63489-->  <NAME><![CDATA[Number of copies]]></NAME>
 <!--2E4A7AEE6D8742C288CD834DD7E63489-->  <PRINTNAME><![CDATA[Number of copies]]></PRINTNAME>
+<!--2E4A7AEE6D8742C288CD834DD7E63489-->  <DESCRIPTION><![CDATA[In this field the user can define how many copies of the Service Documentation has to be printed while paying the ticket.]]></DESCRIPTION>
+<!--2E4A7AEE6D8742C288CD834DD7E63489-->  <HELP><![CDATA[In this field the user can define how many copies of the Service Documentation has to be printed while paying the ticket.]]></HELP>
 <!--2E4A7AEE6D8742C288CD834DD7E63489-->  <AD_MODULE_ID><![CDATA[FF808181326CC34901326D53DBCF0018]]></AD_MODULE_ID>
 <!--2E4A7AEE6D8742C288CD834DD7E63489-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--2E4A7AEE6D8742C288CD834DD7E63489--></AD_ELEMENT>
@@ -863,6 +869,12 @@ This path should be relative to web/org.openbravo.retail.posterminal]]></HELP>
 <!--73576CEBD0244D03A982C0902E5C37A5-->  <COLUMNNAME><![CDATA[EM_Obpos_Proposal_Type]]></COLUMNNAME>
 <!--73576CEBD0244D03A982C0902E5C37A5-->  <NAME><![CDATA[Proposal type]]></NAME>
 <!--73576CEBD0244D03A982C0902E5C37A5-->  <PRINTNAME><![CDATA[Proposal type]]></PRINTNAME>
+<!--73576CEBD0244D03A982C0902E5C37A5-->  <DESCRIPTION><![CDATA[Proposal Type of the Service. It indicates how the Service is proposed to the customer while doing a sale of a related product]]></DESCRIPTION>
+<!--73576CEBD0244D03A982C0902E5C37A5-->  <HELP><![CDATA[Proposal Type of the Service. It indicates how the Service is proposed to the customer while doing a sale of a related product.
+ * Mandatory Proposal
+ * Mandatory Acceptance
+ * Optional Proposal
+ * Final Mandatory Proposal]]></HELP>
 <!--73576CEBD0244D03A982C0902E5C37A5-->  <AD_MODULE_ID><![CDATA[FF808181326CC34901326D53DBCF0018]]></AD_MODULE_ID>
 <!--73576CEBD0244D03A982C0902E5C37A5-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--73576CEBD0244D03A982C0902E5C37A5--></AD_ELEMENT>
@@ -1410,6 +1422,10 @@ In case this value is not set, it will be defaulted to the one defined in Openbr
 <!--BBC2C1E63F154119ABFDFD60C395D915-->  <COLUMNNAME><![CDATA[EM_Obpos_Service_Proposed]]></COLUMNNAME>
 <!--BBC2C1E63F154119ABFDFD60C395D915-->  <NAME><![CDATA[Service Proposed]]></NAME>
 <!--BBC2C1E63F154119ABFDFD60C395D915-->  <PRINTNAME><![CDATA[Service Proposed]]></PRINTNAME>
+<!--BBC2C1E63F154119ABFDFD60C395D915-->  <DESCRIPTION><![CDATA[This flag indicates if the Service has been proposed in the Web POS while creating the ticket for the related products]]></DESCRIPTION>
+<!--BBC2C1E63F154119ABFDFD60C395D915-->  <HELP><![CDATA[This flag indicates if the Service has been proposed in the Web POS while creating the ticket for the related products.
+
+This flag is automatically filled when the sales order line is created from Web POS.]]></HELP>
 <!--BBC2C1E63F154119ABFDFD60C395D915-->  <AD_MODULE_ID><![CDATA[FF808181326CC34901326D53DBCF0018]]></AD_MODULE_ID>
 <!--BBC2C1E63F154119ABFDFD60C395D915-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--BBC2C1E63F154119ABFDFD60C395D915--></AD_ELEMENT>
@@ -1501,6 +1517,8 @@ The types flagged in this way, are required to implement a js method that will b
 <!--C996DB2070214BA4B67C990CDDB22B05-->  <COLUMNNAME><![CDATA[EM_Obpos_Ismultiselectable]]></COLUMNNAME>
 <!--C996DB2070214BA4B67C990CDDB22B05-->  <NAME><![CDATA[Available in multiline selection]]></NAME>
 <!--C996DB2070214BA4B67C990CDDB22B05-->  <PRINTNAME><![CDATA[Available in multiline selection]]></PRINTNAME>
+<!--C996DB2070214BA4B67C990CDDB22B05-->  <DESCRIPTION><![CDATA[This flag indicates if the Service can be related to several different product at the same time.]]></DESCRIPTION>
+<!--C996DB2070214BA4B67C990CDDB22B05-->  <HELP><![CDATA[This flag indicates if the Service can be related to several different product at the same time.]]></HELP>
 <!--C996DB2070214BA4B67C990CDDB22B05-->  <AD_MODULE_ID><![CDATA[FF808181326CC34901326D53DBCF0018]]></AD_MODULE_ID>
 <!--C996DB2070214BA4B67C990CDDB22B05-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--C996DB2070214BA4B67C990CDDB22B05--></AD_ELEMENT>

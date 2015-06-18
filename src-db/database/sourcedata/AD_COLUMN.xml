@@ -2265,6 +2265,12 @@ If checked, different options on how to do this movement can be defined by setti
 <!--28B5FC5FEB9E42B4AE17ECBDB1119924-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--28B5FC5FEB9E42B4AE17ECBDB1119924-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--28B5FC5FEB9E42B4AE17ECBDB1119924-->  <NAME><![CDATA[EM_Obpos_Proposal_Type]]></NAME>
+<!--28B5FC5FEB9E42B4AE17ECBDB1119924-->  <DESCRIPTION><![CDATA[Proposal Type of the Service. It indicates how the Service is proposed to the customer while doing a sale of a related product]]></DESCRIPTION>
+<!--28B5FC5FEB9E42B4AE17ECBDB1119924-->  <HELP><![CDATA[Proposal Type of the Service. It indicates how the Service is proposed to the customer while doing a sale of a related product.
+ * Mandatory Proposal
+ * Mandatory Acceptance
+ * Optional Proposal
+ * Final Mandatory Proposal]]></HELP>
 <!--28B5FC5FEB9E42B4AE17ECBDB1119924-->  <COLUMNNAME><![CDATA[EM_Obpos_Proposal_Type]]></COLUMNNAME>
 <!--28B5FC5FEB9E42B4AE17ECBDB1119924-->  <AD_TABLE_ID><![CDATA[208]]></AD_TABLE_ID>
 <!--28B5FC5FEB9E42B4AE17ECBDB1119924-->  <AD_REFERENCE_ID><![CDATA[17]]></AD_REFERENCE_ID>
@@ -3010,6 +3016,10 @@ The types flagged in this way, are required to implement a js method that will b
 <!--411AE6EE9CE3424AAFC5D1786456C865-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--411AE6EE9CE3424AAFC5D1786456C865-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--411AE6EE9CE3424AAFC5D1786456C865-->  <NAME><![CDATA[EM_Obpos_Service_Proposed]]></NAME>
+<!--411AE6EE9CE3424AAFC5D1786456C865-->  <DESCRIPTION><![CDATA[This flag indicates if the Service has been proposed in the Web POS while creating the ticket for the related products]]></DESCRIPTION>
+<!--411AE6EE9CE3424AAFC5D1786456C865-->  <HELP><![CDATA[This flag indicates if the Service has been proposed in the Web POS while creating the ticket for the related products.
+
+This flag is automatically filled when the sales order line is created from Web POS.]]></HELP>
 <!--411AE6EE9CE3424AAFC5D1786456C865-->  <COLUMNNAME><![CDATA[EM_Obpos_Service_Proposed]]></COLUMNNAME>
 <!--411AE6EE9CE3424AAFC5D1786456C865-->  <AD_TABLE_ID><![CDATA[260]]></AD_TABLE_ID>
 <!--411AE6EE9CE3424AAFC5D1786456C865-->  <AD_REFERENCE_ID><![CDATA[20]]></AD_REFERENCE_ID>
@@ -3019,6 +3029,7 @@ The types flagged in this way, are required to implement a js method that will b
 <!--411AE6EE9CE3424AAFC5D1786456C865-->  <ISPARENT><![CDATA[N]]></ISPARENT>
 <!--411AE6EE9CE3424AAFC5D1786456C865-->  <ISMANDATORY><![CDATA[Y]]></ISMANDATORY>
 <!--411AE6EE9CE3424AAFC5D1786456C865-->  <ISUPDATEABLE><![CDATA[Y]]></ISUPDATEABLE>
+<!--411AE6EE9CE3424AAFC5D1786456C865-->  <READONLYLOGIC><![CDATA[true]]></READONLYLOGIC>
 <!--411AE6EE9CE3424AAFC5D1786456C865-->  <ISIDENTIFIER><![CDATA[N]]></ISIDENTIFIER>
 <!--411AE6EE9CE3424AAFC5D1786456C865-->  <SEQNO><![CDATA[234]]></SEQNO>
 <!--411AE6EE9CE3424AAFC5D1786456C865-->  <ISTRANSLATED><![CDATA[N]]></ISTRANSLATED>
@@ -3674,6 +3685,8 @@ This path should be relative to web/org.openbravo.retail.posterminal]]></HELP>
 <!--569A02B13FD04CE0965210AFE8AEFDCB-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--569A02B13FD04CE0965210AFE8AEFDCB-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--569A02B13FD04CE0965210AFE8AEFDCB-->  <NAME><![CDATA[EM_Obpos_Ismultiselectable]]></NAME>
+<!--569A02B13FD04CE0965210AFE8AEFDCB-->  <DESCRIPTION><![CDATA[This flag indicates if the Service can be related to several different product at the same time.]]></DESCRIPTION>
+<!--569A02B13FD04CE0965210AFE8AEFDCB-->  <HELP><![CDATA[This flag indicates if the Service can be related to several different product at the same time.]]></HELP>
 <!--569A02B13FD04CE0965210AFE8AEFDCB-->  <COLUMNNAME><![CDATA[EM_Obpos_Ismultiselectable]]></COLUMNNAME>
 <!--569A02B13FD04CE0965210AFE8AEFDCB-->  <AD_TABLE_ID><![CDATA[208]]></AD_TABLE_ID>
 <!--569A02B13FD04CE0965210AFE8AEFDCB-->  <AD_REFERENCE_ID><![CDATA[20]]></AD_REFERENCE_ID>
@@ -6401,6 +6414,10 @@ In case this value is not set, it will be defaulted to the one defined in Openbr
 <!--A185350E81954145BE785E8906799C7E-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--A185350E81954145BE785E8906799C7E-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--A185350E81954145BE785E8906799C7E-->  <NAME><![CDATA[EM_Obpos_Printrelatedattachm]]></NAME>
+<!--A185350E81954145BE785E8906799C7E-->  <DESCRIPTION><![CDATA[This flag indicates if any attached document to the Service in the backend should be automatically printed while including it in ticket in th Web POS]]></DESCRIPTION>
+<!--A185350E81954145BE785E8906799C7E-->  <HELP><![CDATA[This flag indicates if any attached document to the Service in the backend should be automatically printed while including it in ticket in th Web POS.
+
+I.E: "When the seller sells a TV with the extended warranty, before the customer goes to the cashier and pays the ticket, the seller from the front office prints the warranty documents for the customer." ]]></HELP>
 <!--A185350E81954145BE785E8906799C7E-->  <COLUMNNAME><![CDATA[EM_Obpos_Printrelatedattachm]]></COLUMNNAME>
 <!--A185350E81954145BE785E8906799C7E-->  <AD_TABLE_ID><![CDATA[208]]></AD_TABLE_ID>
 <!--A185350E81954145BE785E8906799C7E-->  <AD_REFERENCE_ID><![CDATA[20]]></AD_REFERENCE_ID>
@@ -7532,6 +7549,8 @@ In case this value is not set, it will be defaulted to the one defined in Openbr
 <!--B8DEB8C51DF2472DB3213A1895B38D41-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--B8DEB8C51DF2472DB3213A1895B38D41-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--B8DEB8C51DF2472DB3213A1895B38D41-->  <NAME><![CDATA[EM_Obpos_Number_Of_Copies]]></NAME>
+<!--B8DEB8C51DF2472DB3213A1895B38D41-->  <DESCRIPTION><![CDATA[In this field the user can define how many copies of the Service Documentation has to be printed while paying the ticket.]]></DESCRIPTION>
+<!--B8DEB8C51DF2472DB3213A1895B38D41-->  <HELP><![CDATA[In this field the user can define how many copies of the Service Documentation has to be printed while paying the ticket.]]></HELP>
 <!--B8DEB8C51DF2472DB3213A1895B38D41-->  <COLUMNNAME><![CDATA[EM_Obpos_Number_Of_Copies]]></COLUMNNAME>
 <!--B8DEB8C51DF2472DB3213A1895B38D41-->  <AD_TABLE_ID><![CDATA[208]]></AD_TABLE_ID>
 <!--B8DEB8C51DF2472DB3213A1895B38D41-->  <AD_REFERENCE_ID><![CDATA[11]]></AD_REFERENCE_ID>
