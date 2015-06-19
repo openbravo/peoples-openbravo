@@ -41,8 +41,8 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="AMOUNTUPTO" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false">
-        <default><![CDATA[0]]></default>
+      <column name="AMOUNTUPTO" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
+        <default/>
         <onCreateDefault/>
       </column>
       <column name="RULETYPE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">

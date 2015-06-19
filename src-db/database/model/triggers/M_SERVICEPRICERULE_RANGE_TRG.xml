@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
-  <database name="FUNCTION M_SERVICEPRICERULE_RANGE_TRG">
-    <function name="M_SERVICEPRICERULE_RANGE_TRG" type="VARCHAR">
-      <body><![CDATA[/*************************************************************************
+  <database name="TRIGGER M_SERVICEPRICERULE_RANGE_TRG">
+    <trigger name="M_SERVICEPRICERULE_RANGE_TRG" table="M_SERVICEPRICERULE_RANGE" fires="before" insert="true" update="true" delete="true" foreach="row">
+      <body><![CDATA[
+
+/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -19,16 +21,15 @@
 ************************************************************************/
 BEGIN
   IF (AD_isTriggerEnabled()='N') THEN
-    IF TG_OP = 'DELETE' THEN RETURN OLD; ELSE RETURN NEW; END IF; 
+    RETURN;
   END IF;
   
-  IF (TG_OP = 'INSERT' OR TG_OP = 'UPDATE') THEN
-    IF (NEW.ruletype <> 'P') THEN
-      NEW.percentage := 0;
+  IF (INSERTING OR UPDATING) THEN
+    IF (:NEW.ruletype <> 'P') THEN
+      :NEW.percentage := 0;
     END IF;
   END IF;
-IF TG_OP = 'DELETE' THEN RETURN OLD; ELSE RETURN NEW; END IF;
 END M_SERVICEPRICERULE_RANGE_TRG
 ]]></body>
-    </function>
+    </trigger>
   </database>
