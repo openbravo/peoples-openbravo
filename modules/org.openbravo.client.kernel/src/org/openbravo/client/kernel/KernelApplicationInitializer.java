@@ -18,11 +18,17 @@
  */
 package org.openbravo.client.kernel;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import javax.enterprise.context.ApplicationScoped;
 
+import org.apache.log4j.Logger;
 import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.type.StringType;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.DateTimeData;
+import org.openbravo.service.db.DalConnectionProvider;
 
 /**
  * An example {@link ApplicationInitializer}.
@@ -31,13 +37,51 @@ import org.openbravo.dal.service.OBDal;
  */
 @ApplicationScoped
 public class KernelApplicationInitializer implements ApplicationInitializer {
+  private static Logger log4j = Logger.getLogger(KernelApplicationInitializer.class);
+  private static final String sqlDateTimeFormat = "DD-MM-YYYY HH24:MI:SS";
+  private static final String javaDateTimeFormat = "dd-MM-yyyy HH:mm:ss";
+  private static final long THRESHOLD = 5000; // 5 seconds
 
   public void initialize() {
+    registerSQLFunctions();
+    checkDatabaseAndTomcatDateTime();
+  }
+
+  private void registerSQLFunctions() {
     OBDal.getInstance().registerSQLFunction("ad_org_getcalendarowner",
         new StandardSQLFunction("ad_org_getcalendarowner", new StringType()));
     OBDal.getInstance().registerSQLFunction("ad_org_getperiodcontrolallow",
         new StandardSQLFunction("ad_org_getperiodcontrolallow", new StringType()));
     OBDal.getInstance().registerSQLFunction("m_isparent_ch_value",
         new StandardSQLFunction("m_isparent_ch_value", new StringType()));
+  }
+
+  private void checkDatabaseAndTomcatDateTime() {
+    // This method checks if both Tomcat and DB are configured to use the same time zone. If there
+    // is a difference bigger than a few seconds, it logs a warning.
+    try {
+      Date tomcatDate = new Date(); // Tomcat time
+      Date dbDate = getDatabaseDateTime(); // Database time
+      log4j.info("Tomcat Time: " + tomcatDate + ", Database Time: " + dbDate);
+      if (dbDate != null) {
+        long difference = Math.abs(tomcatDate.getTime() - dbDate.getTime());
+        if (difference > THRESHOLD) {
+          log4j.warn("Tomcat and Database are in different timezones.");
+        }
+      }
+    } catch (Exception ex) {
+    }
+  }
+
+  private Date getDatabaseDateTime() {
+    Date date = null;
+    try {
+      // We retrieve the time from the database, without considering the time zone information
+      String now = DateTimeData.now(new DalConnectionProvider(), sqlDateTimeFormat);
+      SimpleDateFormat formatter = new SimpleDateFormat(javaDateTimeFormat);
+      date = formatter.parse(now);
+    } catch (Exception ex) {
+    }
+    return date;
   }
 }
