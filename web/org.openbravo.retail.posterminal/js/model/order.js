@@ -675,7 +675,7 @@
         this.set('idExecution', idExecution);
       }
 
-      OB.UTIL.clone(_order, this);
+      OB.UTIL.clone(_order, this, {silent: true});
 
       if (!OB.UTIL.isNullOrUndefined(this.get('idExecution')) && this.get('idExecution') === idExecution) {
         _order.set('cloningReceipt', false);
@@ -2593,16 +2593,19 @@
       });
     },
     deleteCurrent: function (forceCreateNew) {
-      if (!this.current) {
-        return;
+      var isNew = false;
+
+      if (this.current) {
+        this.remove(this.current);
+        if (this.length > 0 && !forceCreateNew) {
+          this.current = this.at(this.length - 1);
+        } else {
+          this.current = this.newOrder();
+          this.add(this.current);
+          isNew = true;
+        }
+        this.loadCurrent(isNew);
       }
-      this.remove(this.current);
-      var createNew = forceCreateNew || this.length === 0;
-      if (createNew) {
-        this.add(this.newOrder());
-      }
-      this.current = this.at(this.length - 1);
-      this.loadCurrent(createNew);
     },
 
     load: function (model) {
@@ -2640,10 +2643,10 @@
       // 3. if the order suffix is lower than the minNumbers
       // 4. delete the orders
       var orderlist = this;
-      if (orderlist && orderlist.models.length === 1 && orderlist.current) {
+      if (orderlist && orderlist.models.length > 0 && orderlist.current) {
         if (orderlist.current.get('lines') && orderlist.current.get('lines').length === 0) {
           if (orderlist.current.get('documentnoSuffix') <= OB.MobileApp.model.documentnoThreshold || OB.MobileApp.model.documentnoThreshold === 0) {
-            orderlist.deleteCurrent(true);
+            orderlist.deleteCurrent();
           }
         }
       }
