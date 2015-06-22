@@ -76,7 +76,7 @@
         <unique-column name="M_SERVICEPRICERULE_ID"/>
         <unique-column name="AMOUNTUPTO"/>
       </unique>
-      <check name="M_SERVPRRUL_AFTERDISCOUNTS_CHK"><![CDATA[AFTERDISCOUNTS IN ('Y', 'N')]]></check>
-      <check name="M_SERVPRRUL_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="M_SERVPRRULRANGE_AFTERDISC_CHK"><![CDATA[AFTERDISCOUNTS IN ('Y', 'N')]]></check>
+      <check name="M_SERVPRRULRANGE_ISACTIV_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>
