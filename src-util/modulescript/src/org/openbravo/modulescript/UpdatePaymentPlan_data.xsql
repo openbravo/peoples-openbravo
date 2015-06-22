@@ -23,29 +23,39 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-      SELECT '' AS finpaymentscheduleid, '' AS paidamt FROM DUAL
+      SELECT '' AS id, '' AS amount FROM DUAL
       ]]>
     </Sql>
     <Field name="rownum" value="count"/>
+  </SqlMethod>
+  <SqlMethod name="getWrongRecords" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT t1.fin_payment_schedule_id as id, t2.linesamount as amount
+        FROM fin_payment_schedule t1 JOIN (
+            SELECT psd.fin_payment_schedule_order, sum(psd.amount) AS linesamount
+            FROM fin_payment_scheduledetail psd
+            WHERE psd.isinvoicepaid='Y'
+            GROUP BY psd.fin_payment_schedule_order
+        ) t2
+        ON t1.fin_payment_schedule_id = t2.fin_payment_schedule_order
+        WHERE t1.paidamt/2 = t2.linesamount
+      ]]>
+    </Sql>
   </SqlMethod>
   <SqlMethod name="update" type="preparedStatement" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-     update fin_payment_schedule set outstandingamt = amount - (select sum(psd.amount)
-                                                                from fin_payment_scheduledetail psd
-                                                                where isinvoicepaid='Y'
-                                                                and psd.fin_payment_schedule_order = fin_payment_schedule.fin_payment_schedule_id),
-                                                     paidamt = (select sum(psd.amount)
-                                                                from fin_payment_scheduledetail psd
-                                                                where isinvoicepaid='Y'
-                                                                and psd.fin_payment_schedule_order = fin_payment_schedule.fin_payment_schedule_id)
-     WHERE fin_payment_schedule.paidamt/2 = (select sum(psd.amount)
-     from fin_payment_scheduledetail psd
-     where isinvoicepaid='Y'
-     and psd.fin_payment_schedule_order = fin_payment_schedule.fin_payment_schedule_id)
+        UPDATE fin_payment_schedule 
+        SET paidamt = to_number(?), outstandingamt = amount - to_number(?)
+        WHERE fin_payment_schedule_id = ?
       ]]>
-    </Sql>
+    </Sql>    
+    <Parameter name="amount1"/>
+    <Parameter name="amount2"/>
+    <Parameter name="id"/>
   </SqlMethod>
   <SqlMethod name="isExecuted" type="preparedStatement" return="boolean">
     <SqlMethodComment></SqlMethodComment>
