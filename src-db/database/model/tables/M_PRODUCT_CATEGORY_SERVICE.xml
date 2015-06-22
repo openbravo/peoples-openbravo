@@ -59,6 +59,10 @@
       <index name="M_PROD_CAT_SERV_M_PRODUCT_ID" unique="false">
         <index-column name="M_PRODUCT_ID"/>
       </index>
+      <unique name="M_PRODUCT_SERVICE_PROD_CAT">
+        <unique-column name="M_PRODUCT_CATEGORY_ID"/>
+        <unique-column name="M_PRODUCT_ID"/>
+      </unique>
       <check name="M_PROD_CAT_SERV_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>
