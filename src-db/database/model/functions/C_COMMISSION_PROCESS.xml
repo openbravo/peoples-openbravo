@@ -249,7 +249,7 @@
           IF(v_ListDetails='Y' OR v_IsCascade='Y') THEN
             IF(v_BasisAmt='N') THEN
               IF(v_BasisStatus='F') THEN
-                v_Cmd:='SELECT DISTINCT h.C_Currency_ID, CASE WHEN dt.docbasetype IN (''ARC'',''APC'') THEN -1 ELSE 1 END * l.LineNetAmt * (psv.expected / h.grandtotal),'
+                v_Cmd:='SELECT h.C_Currency_ID, CASE WHEN dt.docbasetype IN (''ARC'',''APC'') THEN -1 ELSE 1 END * l.LineNetAmt * (psv.expected / h.grandtotal),'
                 || 'CASE WHEN dt.docbasetype IN (''ARC'',''APC'') THEN -1 ELSE 1 END * l.QtyInvoiced, '
                 || 'NULL, l.C_InvoiceLine_ID, h.DocumentNo, substr(COALESCE(prd.Name,l.Description),1,60), ''Y'' '
                 || 'FROM C_Invoice h JOIN C_InvoiceLine l ON h.C_Invoice_ID = l.C_Invoice_ID'

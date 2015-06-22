@@ -44,6 +44,13 @@
       <Parameter name="fecha"/>
       <Parameter name="dias"/>
    </SqlMethod>
+   <SqlMethod name="now" type="preparedStatement" return="String">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        SELECT TO_CHAR(now(),?) AS now FROM DUAL
+      </Sql>
+      <Parameter name="formatPattern"/>
+   </SqlMethod>
    <SqlMethod name="compare" type="preparedStatement" return="String">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
