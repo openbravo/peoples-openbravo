@@ -69,7 +69,8 @@ BEGIN
       END IF;
       
       -- Close reservations if QtyDelivered >= qtyordered
-      IF (COALESCE(:new.QtyDelivered, 0) > 0 AND COALESCE(:new.QtyDelivered, 0) >= COALESCE(:new.qtyordered, 0)) THEN
+      IF (:new.QtyDelivered IS NOT NULL AND :new.QtyDelivered <> COALESCE(:old.QtyDelivered, 0) 
+        AND :new.QtyDelivered > 0 AND :new.QtyDelivered >= COALESCE(:new.qtyordered, 0)) THEN
          DECLARE
            TYPE RECORD IS REF CURSOR;
            cur_reservations RECORD;
