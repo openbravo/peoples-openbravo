@@ -409,6 +409,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="ISLINKEDTOPRODUCT" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MPRODUCT">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
@@ -509,6 +513,8 @@
         <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="VALUE"/>
       </unique>
+      <check name="M_PROD_LINKEDTOPROD_SEL_CHECK"><![CDATA[((ISLINKEDTOPRODUCT = 'Y') AND ((PROD_CAT_SELECTION IS NOT NULL) OR (PRODUCT_SELECTION IS NOT NULL))) OR (ISLINKEDTOPRODUCT = 'N')]]></check>
+      <check name="M_PROD_LINKEDTOPRODUCT_CHECK"><![CDATA[ISLINKEDTOPRODUCT IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ANONYMOUS_SALE_CHECK"><![CDATA[ALLOW_ANONYMOUS_SALE IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ATSETVALTYPE_CHK"><![CDATA[(M_ATTRIBUTESETINSTANCE_ID IS NULL) OR (ATTRSETVALUETYPE IS NOT NULL)]]></check>
       <check name="M_PRODUCT_DISCONTINUED_CHECK"><![CDATA[DISCONTINUED IN ('Y', 'N')]]></check>

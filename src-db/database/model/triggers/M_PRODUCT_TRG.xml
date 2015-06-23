@@ -131,7 +131,10 @@ BEGIN
       RAISE_APPLICATION_ERROR(-20000, '@CannotSetAsGenericProduct@');
     END IF;
   END IF;
-
+  IF (:new.Islinkedtoproduct='N' AND :old.Islinkedtoproduct='Y') THEN
+    DELETE FROM M_PRODUCT_SERVICE WHERE M_PRODUCT_ID = :NEW.M_PRODUCT_ID;
+    DELETE FROM M_PRODUCT_CATEGORY_SERVICE WHERE M_PRODUCT_ID = :NEW.M_PRODUCT_ID;
+  END IF;
  ELSIF (INSERTING) THEN
  
   -- Insert into M_Stock_Valuation
