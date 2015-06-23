@@ -206,9 +206,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               dataBps.set('locationModel', bpLoc);
               OB.MobileApp.model.set('businessPartner', dataBps);
               me.loadUnpaidOrders();
-              if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.customer', true)) {
-                OB.UTIL.showLoading(false, 'OBPOS_highVolume.customer');
-              }
             };
             OB.Dal.get(OB.Model.BPLocation, partnerAddressId, successCallbackBPLoc, errorCallback, errorCallback);
           } else {
@@ -220,17 +217,11 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                 dataBps.set('locationModel', bpLoc);
                 OB.MobileApp.model.set('businessPartner', dataBps);
                 me.loadUnpaidOrders();
-                if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.customer', true)) {
-                  OB.UTIL.showLoading(false, 'OBPOS_highVolume.customer');
-                }
               };
               OB.Dal.get(OB.Model.BPLocation, dataBps.get('locId'), successCallbackBPLoc, errorCallback, errorCallback);
             }
           }
         }
-      }
-      if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.customer', true)) {
-        OB.UTIL.showLoading(true, 'OBPOS_highVolume.customer');
       }
       OB.Dal.get(OB.Model.BusinessPartner, OB.MobileApp.model.get('businesspartner'), successCallbackBPs, errorCallback, errorCallback);
     }
