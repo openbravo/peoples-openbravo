@@ -79,6 +79,9 @@ isc.OBFKFilterTextItem.addProperties({
     if (this.disableFkDropdown) {
       this.showPickerIcon = false;
       this.showPickListOnKeypress = false;
+      if (this.filterOnChange) {
+        this.actOnKeypress = true;
+      }
     } else {
       this.pickListProperties = {
         // 'showOverAsSelected' and 'bodyKeyPress' defined here until issue 28475 be fixed.
@@ -529,9 +532,18 @@ isc.OBFKFilterTextItem.addProperties({
           value = identifier;
         }
       }
-      if (criterion.operator !== "iContains" && criterion.operator !== "contains" && criterion.operator !== "regexp") {
-        if (operators[criterion.operator] && (operators[criterion.operator].ID === criterion.operator) && operators[criterion.operator].symbol && value && (value.indexOf(operators[criterion.operator].symbol) === -1)) {
+      if (this.disableFkDropdown) {
+        // if the fk dropdown is disabled then the filter must behave like a text filter
+        // that means that the symbol of the default operator is not shown
+        if (criterion.operator !== this.getOperator()) {
           value = operators[criterion.operator].symbol + value;
+        }
+
+      } else {
+        if (criterion.operator !== "iContains" && criterion.operator !== "contains" && criterion.operator !== "regexp") {
+          if (operators[criterion.operator] && (operators[criterion.operator].ID === criterion.operator) && operators[criterion.operator].symbol && value && (value.indexOf(operators[criterion.operator].symbol) === -1)) {
+            value = operators[criterion.operator].symbol + value;
+          }
         }
       }
       this.setValue(value);
