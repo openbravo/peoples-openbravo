@@ -132,6 +132,74 @@
     column: '_identifier',
     filter: true,
     type: 'TEXT'
+  }, {
+    name: 'productType',
+    column: 'productType',
+    type: 'TEXT'
+  }, {
+    name: 'priority',
+    column: 'priority',
+    type: 'NUMBER'
+  }, {
+    name: 'sequenceno',
+    column: 'sequenceno',
+    type: 'TEXT'
+  }, {
+    name: 'includeProductCategories',
+    column: 'includeProductCategories',
+    type: 'TEXT'
+  }, {
+    name: 'includeProducts',
+    column: 'includeProducts',
+    type: 'TEXT'
+  }, {
+    name: 'printDescription',
+    column: 'printDescription',
+    type: 'BOOL'
+  }, {
+    name: 'allowAnonymousSale',
+    column: 'allowAnonymousSale',
+    type: 'BOOL'
+  }, {
+    name: 'overdueAvailableDays',
+    column: 'overdueAvailableDays',
+    type: 'NUMBER'
+  }, {
+    name: 'returnable',
+    column: 'returnable',
+    type: 'BOOL'
+  }, {
+    name: 'overdueReturnDays',
+    column: 'overdueReturnDays',
+    type: 'NUMBER'
+  }, {
+    name: 'editablePrice',
+    column: 'editablePrice',
+    type: 'BOOL'
+  }, {
+    name: 'isPriceRuleBased',
+    column: 'isPriceRuleBased',
+    type: 'BOOL'
+  }, {
+    name: 'uniquePerDocument',
+    column: 'uniquePerDocument',
+    type: 'BOOL'
+  }, {
+    name: 'proposalType',
+    column: 'proposalType',
+    type: 'TEXT'
+  }, {
+    name: 'availableForMultiline',
+    column: 'availableForMultiline',
+    type: 'TEXT'
+  }, {
+    name: 'printRelatedAttachments',
+    column: 'printRelatedAttachments',
+    type: 'TEXT'
+  }, {
+    name: 'numberOfCopies',
+    column: 'numberOfCopies',
+    type: 'TEXT'
   }]);
 
   Product.addIndex([{
@@ -150,6 +218,12 @@
     name: 'obpos_in_upc',
     columns: [{
       name: 'upc',
+      sort: 'asc'
+    }]
+  }, {
+    name: 'obpos_in_productType',
+    columns: [{
+      name: 'productType',
       sort: 'asc'
     }]
   }]);

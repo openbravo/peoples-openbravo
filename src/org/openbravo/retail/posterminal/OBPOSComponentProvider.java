@@ -160,6 +160,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         // Point of sale models
         "model/product-category",
         "model/product",
+        "model/service-product",
+        "model/service-category",
         "model/businesspartner",
         "model/document-sequence",
         "model/taxRate",
