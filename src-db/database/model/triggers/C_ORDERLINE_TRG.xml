@@ -37,6 +37,7 @@
   v_UOM_ID    VARCHAR2(32);
   v_IsSOTrx CHAR(1);
   v_Count NUMBER;
+  v_CountRelations NUMBER;
   v_taxBaseAmt NUMBER;
   v_rate NUMBER;
   v_isSummary CHAR(1);
@@ -100,6 +101,11 @@ IF (UPDATING) THEN
     FROM m_reservation 
     WHERE c_orderline_id = :OLD.c_orderline_id;
    IF (:old.M_Product_ID <> :NEW.M_Product_ID) THEN
+     SELECT COUNT(1) into v_CountRelations FROM DUAL 
+     WHERE EXISTS (SELECT 1 FROM C_ORDERLINE_SERVICERELATION WHERE C_ORDERLINE_ID = :NEW.C_ORDERLINE_ID);
+     IF(v_CountRelations <> 0) THEN
+       RAISE_APPLICATION_ERROR(-20000, '@RelationsExist@');
+     END IF;
      IF (:old.QtyReserved <> 0) THEN
        RAISE_APPLICATION_ERROR(-20000, '@20203@' || ' ' || :old.QtyReserved);
      ELSIF (:old.QtyDelivered <> 0) THEN
