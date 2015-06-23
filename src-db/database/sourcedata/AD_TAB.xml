@@ -15300,7 +15300,7 @@ The corresponding tables have then the following setting:
 <!--52B21E690E024445A9F3B9F0A880AE8F-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--52B21E690E024445A9F3B9F0A880AE8F-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--52B21E690E024445A9F3B9F0A880AE8F-->  <NAME><![CDATA[Order Lines]]></NAME>
-<!--52B21E690E024445A9F3B9F0A880AE8F-->  <AD_TABLE_ID><![CDATA[260]]></AD_TABLE_ID>
+<!--52B21E690E024445A9F3B9F0A880AE8F-->  <AD_TABLE_ID><![CDATA[213FE8C4AC5E4C95AFC09C80D5C3B663]]></AD_TABLE_ID>
 <!--52B21E690E024445A9F3B9F0A880AE8F-->  <AD_WINDOW_ID><![CDATA[8F104213DDF44D62B75D133C956F74CF]]></AD_WINDOW_ID>
 <!--52B21E690E024445A9F3B9F0A880AE8F-->  <SEQNO><![CDATA[10]]></SEQNO>
 <!--52B21E690E024445A9F3B9F0A880AE8F-->  <TABLEVEL><![CDATA[0]]></TABLEVEL>
@@ -15313,9 +15313,8 @@ The corresponding tables have then the following setting:
 <!--52B21E690E024445A9F3B9F0A880AE8F-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--52B21E690E024445A9F3B9F0A880AE8F-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--52B21E690E024445A9F3B9F0A880AE8F-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--52B21E690E024445A9F3B9F0A880AE8F-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
-<!--52B21E690E024445A9F3B9F0A880AE8F-->  <HQLWHERECLAUSE><![CDATA[e.salesOrder.salesTransaction = true and (e.salesOrder.processed = true or e.salesOrder.id = @Order.id@) and e.salesOrder.businessPartner.id = @Order.businessPartner@ and e.id <> @OrderLine.id@ and ((select p.includedProductCategories from Product p where p.id = @OrderLine.product@) = 'N' and exists ( select 1 from ServiceProductCategory spc where spc.productCategory = e.product.productCategory) or ((select p.includedProductCategories from Product p where p.id = @OrderLine.product@) = 'Y' and not exists ( select 1 from ServiceProductCategory spc where spc.productCategory = e.product.productCategory) )) and ((select p.includedProducts from Product p where p.id = @OrderLine.product@) = 'N' and exists (select 1 from ServiceProduct p where p.relatedProduct.id = e.product.id and p.product.id = @OrderLine.product@) or ((select p.includedProducts from Product p where p.id = @OrderLine.product@) = 'Y' and not exists (select 1 from ServiceProduct p where p.relatedProduct.id = e.product.id and p.product.id = @OrderLine.product@)))]]></HQLWHERECLAUSE>
-<!--52B21E690E024445A9F3B9F0A880AE8F-->  <HQLORDERBYCLAUSE><![CDATA[salesOrder.documentno desc, lineNo, product]]></HQLORDERBYCLAUSE>
+<!--52B21E690E024445A9F3B9F0A880AE8F-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
+<!--52B21E690E024445A9F3B9F0A880AE8F-->  <HQLORDERBYCLAUSE><![CDATA[o.documentNo desc, e.lineNo, e.product]]></HQLORDERBYCLAUSE>
 <!--52B21E690E024445A9F3B9F0A880AE8F-->  <HQLFILTERCLAUSE><![CDATA[e.salesOrder.id = @Order.id@]]></HQLFILTERCLAUSE>
 <!--52B21E690E024445A9F3B9F0A880AE8F-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--52B21E690E024445A9F3B9F0A880AE8F-->  <DISABLE_PARENT_KEY_PROPERTY><![CDATA[N]]></DISABLE_PARENT_KEY_PROPERTY>
