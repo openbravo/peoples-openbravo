@@ -68,19 +68,24 @@ public class KernelApplicationInitializer implements ApplicationInitializer {
         if (difference > THRESHOLD) {
           log4j.warn("Tomcat and Database are in different timezones.");
         }
+      } else {
+        log4j
+            .error("Received null as Database time. Not possible to check timezone differences with Tomcat.");
       }
     } catch (Exception ex) {
+      log4j.error("Could not check if Tomcat and Database are in different timezones.");
     }
   }
 
   private Date getDatabaseDateTime() {
     Date date = null;
     try {
-      // We retrieve the time from the database, without considering the time zone information
+      // We retrieve the time from the database, using the predefined sql date-time format
       String now = DateTimeData.now(new DalConnectionProvider(), sqlDateTimeFormat);
       SimpleDateFormat formatter = new SimpleDateFormat(javaDateTimeFormat);
       date = formatter.parse(now);
     } catch (Exception ex) {
+      log4j.error("Could not get the Database time.");
     }
     return date;
   }
