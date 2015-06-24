@@ -73,7 +73,7 @@ public class KernelApplicationInitializer implements ApplicationInitializer {
             .error("Received null as Database time. Not possible to check timezone differences with Tomcat.");
       }
     } catch (Exception ex) {
-      log4j.error("Could not check if Tomcat and Database are in different timezones.");
+      log4j.error("Could not check if Tomcat and Database are in different timezones.", ex);
     }
   }
 
@@ -85,7 +85,7 @@ public class KernelApplicationInitializer implements ApplicationInitializer {
       SimpleDateFormat formatter = new SimpleDateFormat(javaDateTimeFormat);
       date = formatter.parse(now);
     } catch (Exception ex) {
-      log4j.error("Could not get the Database time.");
+      log4j.error("Could not get the Database time.", ex);
     }
     return date;
   }
