@@ -32,52 +32,56 @@ public class OrderLinePickEditTransformer extends HqlQueryTransformer {
 
   @Override
   public String transformHqlQuery(String _hqlQuery, Map<String, String> requestParameters,
-	      Map<String, Object> queryNamedParameters) {
+      Map<String, Object> queryNamedParameters) {
     final String strOrderId = requestParameters.get("@Order.id@");
     final String strBusinessPartnerId = requestParameters.get("@Order.businessPartner@");
     final String strOrderLineId = requestParameters.get("@OrderLine.id@");
     final String strProductId = requestParameters.get("@OrderLine.product@");
-    
+
     Check.isTrue(IsIDFilter.instance.accept(strOrderId), "Value " + strOrderId
         + " is not a valid id.");
     Check.isTrue(IsIDFilter.instance.accept(strBusinessPartnerId), "Value " + strBusinessPartnerId
-            + " is not a valid id.");
+        + " is not a valid id.");
     Check.isTrue(IsIDFilter.instance.accept(strOrderLineId), "Value " + strOrderLineId
-            + " is not a valid id.");
+        + " is not a valid id.");
     Check.isTrue(IsIDFilter.instance.accept(strProductId), "Value " + strProductId
-            + " is not a valid id.");
-    
+        + " is not a valid id.");
+
     final Product product = OBDal.getInstance().get(Product.class, strProductId);
     String includedCategories = product.getIncludedProductCategories();
     String includedProducts = product.getIncludedProducts();
-    
+
     StringBuffer whereClause = new StringBuffer();
-    
+
     whereClause.append(" o.salesTransaction = true ");
     whereClause.append(" and (o.processed = true or o.id = :orderId) ");
     whereClause.append(" and o.businessPartner.id = :businessPartnerId ");
     whereClause.append(" and e.id <> :orderLineId ");
-    
+
     if ("N".equals(includedCategories)) {
-    	whereClause.append(" and exists ( select 1 from ServiceProductCategory spc where spc.productCategory = e.product.productCategory and spc.product.id = :productId) ");
-    } else if ("Y".equals(includedCategories)){
-    	whereClause.append(" and not exists ( select 1 from ServiceProductCategory spc where spc.productCategory = e.product.productCategory and spc.product.id = :productId) ");
+      whereClause
+          .append(" and exists ( select 1 from ServiceProductCategory spc where spc.productCategory = e.product.productCategory and spc.product.id = :productId) ");
+    } else if ("Y".equals(includedCategories)) {
+      whereClause
+          .append(" and not exists ( select 1 from ServiceProductCategory spc where spc.productCategory = e.product.productCategory and spc.product.id = :productId) ");
     }
     if ("N".equals(includedProducts)) {
-    	whereClause.append(" and exists (select 1 from ServiceProduct p where p.relatedProduct.id = e.product.id and p.product.id = :productId) ");
-    } else if ("Y".equals(includedProducts)){
-    	whereClause.append(" and not exists (select 1 from ServiceProduct p where p.relatedProduct.id = e.product.id and p.product.id = :productId) ");
+      whereClause
+          .append(" and exists (select 1 from ServiceProduct p where p.relatedProduct.id = e.product.id and p.product.id = :productId) ");
+    } else if ("Y".equals(includedProducts)) {
+      whereClause
+          .append(" and not exists (select 1 from ServiceProduct p where p.relatedProduct.id = e.product.id and p.product.id = :productId) ");
     }
-    
+
     queryNamedParameters.put("orderId", strOrderId);
     queryNamedParameters.put("businessPartnerId", strBusinessPartnerId);
     queryNamedParameters.put("orderLineId", strOrderLineId);
     queryNamedParameters.put("productId", strProductId);
-    
+
     String transformedHql = _hqlQuery.replace("@whereClause@", whereClause.toString());
     // Replace filter clause, not working automatically due to a bug
     transformedHql = transformedHql.replace("@Order.id@ ", "'" + strOrderId + "' ");
-    
+
     return transformedHql;
   }
 }

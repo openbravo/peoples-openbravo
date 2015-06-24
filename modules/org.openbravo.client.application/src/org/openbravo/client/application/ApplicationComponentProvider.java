@@ -469,6 +469,9 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
     globalResources.add(createStaticResource("web/js/productCharacteristicsProcess.js", true));
     globalResources.add(createStaticResource("web/js/validateCostingRuleProcess.js", true));
 
+    // Product Services
+    globalResources.add(createStaticResource("web/js/productServices.js", true));
+    
     return globalResources;
   }
 
