@@ -103,7 +103,11 @@ public class ServiceRelatedLinePriceActionHandler extends BaseActionHandler {
             + product.getIdentifier() + ", @Date@: " + OBDateUtils.formatDate(orderDate));
       }
 
-      amount = relatedOrderLine.getLineNetAmount();
+      if (relatedOrderLine.getSalesOrder().isPriceIncludesTax()) {
+        amount = relatedOrderLine.getLineGrossAmount();
+      } else {
+        amount = relatedOrderLine.getLineNetAmount();
+      }
 
       if ("P".equals(spr.getRuletype())) {
         BigDecimal percentage = new BigDecimal(spr.getPercentage());

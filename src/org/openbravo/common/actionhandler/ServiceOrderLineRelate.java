@@ -19,6 +19,7 @@
 
 package org.openbravo.common.actionhandler;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
 import org.codehaus.jettison.json.JSONArray;
@@ -76,13 +77,14 @@ public class ServiceOrderLineRelate extends BaseProcessActionHandler {
 
         final OrderLine orderLine = (OrderLine) OBDal.getInstance().getProxy(OrderLine.ENTITY_NAME,
             selectedLine.getString(OrderLine.PROPERTY_ID));
-
+        BigDecimal amount = new BigDecimal(selectedLine.getLong("amount"));
         OrderlineServiceRelation olsr = OBProvider.getInstance()
             .get(OrderlineServiceRelation.class);
         olsr.setClient(serviceProductClient);
         olsr.setOrganization(serviceProductOrg);
         olsr.setOrderlineRelated(orderLine);
         olsr.setSalesOrderLine(mainOrderLine);
+        olsr.setAmount(amount);
         OBDal.getInstance().save(olsr);
         if ((i % 100) == 0) {
           OBDal.getInstance().flush();
