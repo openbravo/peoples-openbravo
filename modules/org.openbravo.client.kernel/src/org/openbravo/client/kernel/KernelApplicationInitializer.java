@@ -62,7 +62,7 @@ public class KernelApplicationInitializer implements ApplicationInitializer {
     try {
       Date tomcatDate = new Date(); // Tomcat time
       Date dbDate = getDatabaseDateTime(); // Database time
-      log4j.info("Tomcat Time: " + tomcatDate + ", Database Time: " + dbDate);
+      log4j.debug("Tomcat Time: " + tomcatDate + ", Database Time: " + dbDate);
       if (dbDate != null) {
         long difference = Math.abs(tomcatDate.getTime() - dbDate.getTime());
         if (difference > THRESHOLD) {
