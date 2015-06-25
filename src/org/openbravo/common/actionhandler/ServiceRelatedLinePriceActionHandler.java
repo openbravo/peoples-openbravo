@@ -51,10 +51,6 @@ public class ServiceRelatedLinePriceActionHandler extends BaseActionHandler {
   private static final Logger log = LoggerFactory
       .getLogger(ServiceRelatedLinePriceActionHandler.class);
 
-  private static int currencyPrecission;
-  private static String strServiceProductId;
-  private static Product product;
-
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) {
     JSONObject jsonRequest = null;
@@ -69,8 +65,8 @@ public class ServiceRelatedLinePriceActionHandler extends BaseActionHandler {
       final String strOrderLineId = record.getString("id");
       final String strDateOrdered = record.getString("orderDate");
       Date orderDate = JsonUtils.createDateFormat().parse(strDateOrdered);
-      strServiceProductId = jsonRequest.getString("serviceProductId");
-      product = OBDal.getInstance().get(Product.class, strServiceProductId);
+      final String strServiceProductId = jsonRequest.getString("serviceProductId");
+      final Product product = OBDal.getInstance().get(Product.class, strServiceProductId);
 
       BigDecimal amount = BigDecimal.ZERO;
 
@@ -80,7 +76,7 @@ public class ServiceRelatedLinePriceActionHandler extends BaseActionHandler {
       }
 
       final OrderLine relatedOrderLine = OBDal.getInstance().get(OrderLine.class, strOrderLineId);
-      currencyPrecission = relatedOrderLine.getCurrency().getPricePrecision().intValue();
+      final int currencyPrecission = relatedOrderLine.getCurrency().getPricePrecision().intValue();
 
       // Get Service Price Rule Version of the Service Product for given date
       StringBuffer where = new StringBuffer();
@@ -118,7 +114,8 @@ public class ServiceRelatedLinePriceActionHandler extends BaseActionHandler {
               RoundingMode.HALF_UP);
         }
       } else {
-        amount = getServiceRuleRangeAmount(spr.getId(), amount, orderDate);
+        amount = getServiceRuleRangeAmount(spr.getId(), amount, orderDate, product,
+            currencyPrecission);
       }
 
       result.put("amount", amount);
@@ -155,9 +152,13 @@ public class ServiceRelatedLinePriceActionHandler extends BaseActionHandler {
    *          Line Net Amount of the related Order Line
    * @param orderDate
    *          Order Date of the Sales Order
+   * @param product
+   *          Service Product
+   * @param currencyPrecission
    * @return
    */
-  private BigDecimal getServiceRuleRangeAmount(String sprId, BigDecimal lineamount, Date orderDate) {
+  private BigDecimal getServiceRuleRangeAmount(String sprId, BigDecimal lineamount, Date orderDate,
+      Product product, int currencyPrecission) {
 
     BigDecimal amount = BigDecimal.ZERO;
     StringBuffer where = new StringBuffer();
@@ -190,7 +191,7 @@ public class ServiceRelatedLinePriceActionHandler extends BaseActionHandler {
             RoundingMode.HALF_UP);
       }
     } else {
-      amount = getProductPrice(orderDate, sprr.getPriceList());
+      amount = getProductPrice(orderDate, sprr.getPriceList(), product);
     }
     return amount;
   }
@@ -202,9 +203,12 @@ public class ServiceRelatedLinePriceActionHandler extends BaseActionHandler {
    *          Order Date of the Sales Order
    * @param priceList
    *          Price List assigned in the Service Price Rule Range
+   * @param product
+   *          Product to search in Price List
    * @return
    */
-  private BigDecimal getProductPrice(Date date, PriceList priceList) throws OBException {
+  private BigDecimal getProductPrice(Date date, PriceList priceList, Product product)
+      throws OBException {
 
     StringBuffer where = new StringBuffer();
     where.append(" select pp." + ProductPrice.PROPERTY_LISTPRICE + " as listPrice");
@@ -218,7 +222,7 @@ public class ServiceRelatedLinePriceActionHandler extends BaseActionHandler {
         + PriceListVersion.PROPERTY_VALIDFROMDATE + " desc");
 
     Query ppQry = OBDal.getInstance().getSession().createQuery(where.toString());
-    ppQry.setParameter("productId", strServiceProductId);
+    ppQry.setParameter("productId", product.getId());
     ppQry.setParameter("date", date);
     ppQry.setParameter("pricelist", priceList);
 
