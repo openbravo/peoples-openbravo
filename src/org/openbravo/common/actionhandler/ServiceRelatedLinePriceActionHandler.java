@@ -80,7 +80,7 @@ public class ServiceRelatedLinePriceActionHandler extends BaseActionHandler {
       }
 
       final OrderLine relatedOrderLine = OBDal.getInstance().get(OrderLine.class, strOrderLineId);
-      currencyPrecission = relatedOrderLine.getCurrency().getStandardPrecision().intValue();
+      currencyPrecission = relatedOrderLine.getCurrency().getPricePrecision().intValue();
 
       // Get Service Price Rule Version of the Service Product for given date
       StringBuffer where = new StringBuffer();
