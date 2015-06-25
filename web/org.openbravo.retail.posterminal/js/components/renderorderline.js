@@ -29,10 +29,16 @@ enyo.kind({
     },
     style: 'float: left; width: 10%;'
   }, {
+    name: 'serviceIcon',
+    kind: 'Image',
+    src: 'img/iconService_ticketline.png',
+    sizing: "cover",
+    width: 36,
+    height: 26,
+    style: 'float: left;'
+  }, {
     name: 'product',
-    attributes: {
-      style: 'float: left; width: 40%;'
-    }
+    style: 'float: left; '
   }, {
     name: 'quantity',
     attributes: {
@@ -52,7 +58,15 @@ enyo.kind({
     style: 'clear: both;'
   }],
   initComponents: function () {
+    var me = this;
     this.inherited(arguments);
+    if (this.model.get('product').get('productType') === 'S') {
+      this.$.serviceIcon.show();
+      this.$.product.addStyles('width: 36%');
+    } else {
+      this.$.serviceIcon.hide();
+      this.$.product.addStyles('width: 40%');
+    }
     this.$.checkBoxColumn.hide();
     this.$.product.setContent(this.setIdentifierContent());
     this.$.quantity.setContent(this.model.printQty());
@@ -64,7 +78,7 @@ enyo.kind({
     }
     if (this.model.get('product').get('characteristicDescription')) {
       this.createComponent({
-        style: 'display: block;',
+        style: 'display: block; float: left; ',
         components: [{
           content: OB.UTIL.getCharacteristicValues(this.model.get('product').get('characteristicDescription')),
           attributes: {
@@ -100,6 +114,21 @@ enyo.kind({
       }, this);
 
     }
+    if (this.model.get('relatedProducts')) {
+      enyo.forEach(this.model.get('relatedProducts'), function (prod) {
+        this.createComponent({
+          style: 'display: block;',
+          components: [{
+            content: 'for ' + (prod.get ? prod.get('_identifier') : prod._identifier),
+            attributes: {
+              style: 'float: left; width: 80%; font-size: 14px; font-style: italic'
+            }
+          }, {
+            style: 'clear: both;'
+          }]
+        });
+      }, this);
+    }
     OB.UTIL.HookManager.executeHooks('OBPOS_RenderOrderLine', {
       orderline: this
     }, function (args) {
@@ -117,14 +146,22 @@ enyo.kind({
       this.$.gross.hasNode().style.width = '18%';
       this.$.quantity.hasNode().style.width = '16%';
       this.$.price.hasNode().style.width = '18%';
-      this.$.product.hasNode().style.width = '38%';
+      if (this.model.get('product').get('productType') === 'S') {
+        this.$.product.hasNode().style.width = '34%';
+      } else {
+        this.$.product.hasNode().style.width = '38%';
+      }
       this.$.checkBoxColumn.show();
       this.changeEditMode(this, inEvent.status);
     } else {
       this.$.gross.hasNode().style.width = '20%';
       this.$.quantity.hasNode().style.width = '20%';
       this.$.price.hasNode().style.width = '20%';
-      this.$.product.hasNode().style.width = '40%';
+      if (this.model.get('product').get('productType') === 'S') {
+        this.$.product.hasNode().style.width = '36%';
+      } else {
+        this.$.product.hasNode().style.width = '40%';
+      }
       this.$.checkBoxColumn.hide();
       this.changeEditMode(this, false);
     }
@@ -151,6 +188,41 @@ enyo.kind({
   }
 });
 
+enyo.kind({
+  name: 'OB.UI.ShowServicesButton',
+  style: 'float: right; display: block;',
+  tap: function (inSender, inEvent) {
+    var product = this.owner.model.get('product');
+    if (product) {
+      // OB.UI.SearchProductCharacteristic.prototype.filtersCustomClear();
+      // OB.UI.SearchProductCharacteristic.prototype.filtersCustomAdd(new OB_UI_SearchServicesFilter({
+      //   text: product.get("_identifier"),
+      //   productId: product.id,
+      //   orderline: this.owner.model
+      // }));
+      var me = this;
+      setTimeout(function () {
+        me.bubble('onTabChange', {
+          tabPanel: 'searchCharacteristic'
+        });
+        //me.bubble('onSelectFilter', {});
+        me.owner.model.set("obposServiceProposed", true, {
+          silent: true
+        });
+      }, 1);
+    }
+  },
+  initComponents: function () {
+    this.inherited(arguments);
+    if (this.owner.model.get('obposServiceProposed')) {
+      this.addRemoveClass('iconServices_unreviewed', false);
+      this.addRemoveClass('iconServices_reviewed', true);
+    } else {
+      this.addRemoveClass('iconServices_unreviewed', true);
+      this.addRemoveClass('iconServices_reviewed', false);
+    }
+  }
+});
 
 enyo.kind({
   kind: 'OB.UI.listItemButton',

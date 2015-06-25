@@ -1996,11 +1996,12 @@
           });
           if (linesToMerge.length > 0) {
             _.each(linesToMerge, function (line) {
-              line.set('promotionCandidates', l.get('promotionCandidates'));
-              line.set('promotionMessages', me.showMessagesPromotions(line.get('promotionMessages'), l.get('promotionMessages')));
-              line.set('qtyToApplyDiscount', l.get('qtyToApplyDiscount'));
-
-              line.set('noDiscountCandidates', l.get('noDiscountCandidates'), {
+              line.set({
+                promotionCandidates: l.get('promotionCandidates'),
+                promotionMessages: me.showMessagesPromotions(line.get('promotionMessages'), l.get('promotionMessages')),
+                qtyToApplyDiscount: l.get('qtyToApplyDiscount'),
+                noDiscountCandidates: l.get('noDiscountCandidates')
+              }, {
                 silent: true
               });
               _.each(l.get('promotions'), function (promo) {
