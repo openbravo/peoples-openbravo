@@ -114,7 +114,8 @@ public class ServiceRelatedLinePriceActionHandler extends BaseActionHandler {
         if (percentage.compareTo(BigDecimal.ZERO) == 0) {
           amount = BigDecimal.ZERO;
         } else {
-          amount = amount.divide(percentage, currencyPrecission, RoundingMode.HALF_UP);
+          amount = amount.multiply(percentage).divide(new BigDecimal(100), currencyPrecission,
+              RoundingMode.HALF_UP);
         }
       } else {
         amount = getServiceRuleRangeAmount(spr.getId(), amount, orderDate);
@@ -185,7 +186,8 @@ public class ServiceRelatedLinePriceActionHandler extends BaseActionHandler {
       if (percentage.compareTo(BigDecimal.ZERO) == 0) {
         amount = BigDecimal.ZERO;
       } else {
-        amount = lineamount.divide(percentage, currencyPrecission, RoundingMode.HALF_UP);
+        amount = lineamount.multiply(percentage).divide(new BigDecimal(100), currencyPrecission,
+            RoundingMode.HALF_UP);
       }
     } else {
       amount = getProductPrice(orderDate, sprr.getPriceList());
