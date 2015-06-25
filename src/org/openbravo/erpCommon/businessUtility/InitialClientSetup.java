@@ -37,6 +37,7 @@ import org.openbravo.erpCommon.modules.ModuleUtiltiy;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.Role;
+import org.openbravo.model.ad.access.RoleOrganization;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.module.ADClientModule;
 import org.openbravo.model.ad.module.Module;
@@ -470,6 +471,20 @@ public class InitialClientSetup {
           "insertRoles() - ERROR - Not able to insert the role" + strRoleName, e);
     }
     log4j.debug("insertRoles() - Role inserted correctly");
+    logEvent("@AD_Role_ID@=" + strRoleName);
+
+    log4j.debug("insertRoles() - Inserting role org access");
+    try {
+      RoleOrganization roleOrg = InitialSetupUtility.insertRoleOrganization(role, null);
+      if (roleOrg == null)
+        return logErrorAndRollback("@CreateClientFailed@",
+            "insertRoles() - Not able to insert the role organizations access" + strRoleName);
+    } catch (Exception e) {
+      return logErrorAndRollback("@CreateClientFailed@",
+          "insertRoles() - Not able to insert the role organizations access" + strRoleName, e);
+    }
+    log4j.debug("insertRoles() - Role organizations access inserted correctly");
+
     logEvent("@AD_Role_ID@=" + strRoleName);
 
     return obeResult;

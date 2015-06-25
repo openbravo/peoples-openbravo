@@ -33,7 +33,6 @@ import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
-import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.access.Role;
@@ -43,6 +42,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RoleEventHandler extends EntityPersistenceEventObserver {
+  private static final String InitialOrgSetup_CLASSNAME = "org.openbravo.erpCommon.businessUtility.InitialOrgSetup";
+  private static final String InitialClientSetup_CLASSNAME = "org.openbravo.erpCommon.businessUtility.InitialClientSetup";
+
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(Role.ENTITY_NAME) };
 
   protected Logger logger = LoggerFactory.getLogger(RoleEventHandler.class);
@@ -62,9 +64,17 @@ public class RoleEventHandler extends EntityPersistenceEventObserver {
     final Property roleProperty = roleEntity.getProperty(Role.PROPERTY_ADROLEORGANIZATIONLIST);
     final Role role = (Role) event.getTargetInstance();
 
+    populateOrgAccess(event, role, roleProperty);
+  }
+
+  /**
+   * Creates the necessary Org Access records only when the role is set Manual=N and when we don't
+   * come from the Initial Client/Organization setup
+   */
+  private void populateOrgAccess(EntityNewEvent event, Role role, Property roleProperty) {
     // Create org access for new automatic role
     try {
-      if (role.isManual().booleanValue() == false) {
+      if (!role.isManual() && !isComingFromInitialClientOrganizationSetup()) {
         List<RoleOrganization> roleOrganizationList = getRoleOrganizationList(role);
         @SuppressWarnings("unchecked")
         final List<Object> roleOrganizations = (List<Object>) event.getCurrentState(roleProperty);
@@ -78,55 +88,49 @@ public class RoleEventHandler extends EntityPersistenceEventObserver {
 
   // Get org access list
   private List<RoleOrganization> getRoleOrganizationList(Role role) throws Exception {
-
     List<RoleOrganization> roleOrganizationList = new ArrayList<RoleOrganization>();
 
-    // System level
-    if (StringUtils.equals(role.getUserLevel(), "S")) {
+    // Client or System level: Only * [isOrgAdmin=N]
+    if (StringUtils.equals(role.getUserLevel(), " C")
+        || StringUtils.equals(role.getUserLevel(), "S")) {
       roleOrganizationList.add(getRoleOrganization(role,
           OBDal.getInstance().get(Organization.class, "0"), false));
+      logger.debug("Added organization * to role " + role.getName());
     }
 
-    // Client or Client/Organization level
-    else if (StringUtils.equals(role.getUserLevel(), " C")
-        || StringUtils.equals(role.getUserLevel(), " CO")) {
+    // Client/Organization level: * [isOrgAdmin=N], other Orgs (but *) [isOrgAdmin=Y]
+    else if (StringUtils.equals(role.getUserLevel(), " CO")) {
       roleOrganizationList.add(getRoleOrganization(role,
           OBDal.getInstance().get(Organization.class, "0"), false));
+      logger.debug("Added organization * to role " + role.getName());
+
       OBCriteria<Organization> criteria = OBDal.getInstance().createCriteria(Organization.class);
       criteria.add(Restrictions.eq(Organization.PROPERTY_CLIENT, role.getClient()));
       criteria.add(Restrictions.ne(Organization.PROPERTY_ID, "0"));
       ScrollableResults scroll = criteria.scroll(ScrollMode.FORWARD_ONLY);
       try {
-        int i = 0;
         while (scroll.next()) {
           final Organization organization = (Organization) scroll.get()[0];
           roleOrganizationList.add(getRoleOrganization(role, organization, true));
-          i++;
-          if (i % 100 == 0) {
-            OBDal.getInstance().flush();
-            OBDal.getInstance().getSession().clear();
-          }
+          logger.debug("Added organization " + organization.getName() + " to role "
+              + role.getName());
         }
       } finally {
         scroll.close();
       }
     }
 
-    // Organization level
+    // Organization level: Orgs (but *) [isOrgAdmin=Y]
     else if (StringUtils.equals(role.getUserLevel(), "  O")) {
       OBCriteria<Organization> criteria = OBDal.getInstance().createCriteria(Organization.class);
       criteria.add(Restrictions.eq(Organization.PROPERTY_CLIENT, role.getClient()));
       ScrollableResults scroll = criteria.scroll(ScrollMode.FORWARD_ONLY);
       try {
-        int i = 0;
         while (scroll.next()) {
           final Organization organization = (Organization) scroll.get()[0];
           roleOrganizationList.add(getRoleOrganization(role, organization, true));
-          i++;
-          if (i % 100 == 0) {
-            OBDal.getInstance().flush();
-            OBDal.getInstance().getSession().clear();
-          }
+          logger.debug("Added organization " + organization.getName() + " to role "
+              + role.getName());
         }
       } finally {
         scroll.close();
@@ -139,18 +143,31 @@ public class RoleEventHandler extends EntityPersistenceEventObserver {
   // Get org access
   private RoleOrganization getRoleOrganization(Role role, Organization orgProvided,
       boolean isOrgAdmin) throws Exception {
-    OBContext.setAdminMode();
-    try {
-      final RoleOrganization newRoleOrganization = OBProvider.getInstance().get(
-          RoleOrganization.class);
-      newRoleOrganization.setClient(role.getClient());
-      newRoleOrganization.setOrganization(orgProvided);
-      newRoleOrganization.setRole(role);
-      newRoleOrganization.setOrgAdmin(isOrgAdmin);
-      return newRoleOrganization;
-    } finally {
-      OBContext.restorePreviousMode();
+    final RoleOrganization newRoleOrganization = OBProvider.getInstance().get(
+        RoleOrganization.class);
+    newRoleOrganization.setClient(role.getClient());
+    newRoleOrganization.setOrganization(orgProvided);
+    newRoleOrganization.setRole(role);
+    newRoleOrganization.setOrgAdmin(isOrgAdmin);
+    return newRoleOrganization;
+  }
+
+  /**
+   * Returns true if the Initial Client/Organization Setup is in the stack trace
+   */
+  private boolean isComingFromInitialClientOrganizationSetup() {
+    boolean comeFrom_ICS_IOS = false;
+    for (final StackTraceElement ste : Thread.currentThread().getStackTrace()) {
+      final String clazz = ste.getClassName();
+      if (StringUtils.equals(clazz, InitialOrgSetup_CLASSNAME)
+          || StringUtils.equals(clazz, InitialClientSetup_CLASSNAME)) {
+        comeFrom_ICS_IOS = true;
+        logger
+            .debug("Coming from Initial Client/Organization Setup. RoleEventHandler will not insert Org Access records");
+        break;
+      }
     }
+    return comeFrom_ICS_IOS;
   }
 
 }
