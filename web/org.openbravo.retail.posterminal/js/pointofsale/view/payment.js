@@ -633,6 +633,27 @@ enyo.kind({
         return;
       }
     }, this);
+    this.model.get('order').on('checkaddpayment', function (order, paymentMethod) {
+      var paymentstatus, payment;
+      if (!_.isUndefined(order) && !_.isUndefined(paymentMethod)) {
+        if (paymentMethod.get('isCash')) {
+          paymentstatus = order.getPaymentStatus();
+          payment = OB.MobileApp.model.paymentnames[OB.MobileApp.model.get('paymentcash')];
+          if (!this.checkEnoughCashAvailable(paymentstatus, payment)) {
+            var payments = order.get('payments');
+            var i = 0;
+            OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_notEnoughCashForReturn'));
+            for (i; i < payments.length; i++) {
+              var p = payments.at(i);
+              if (p.get('isCash')) {
+                order.removePayment(p);
+                return;
+              }
+            }
+          }
+        }
+      }
+    }, this);
     //    this.model.get('multiOrders').on('change:isMultiOrders', function () {
     //      if (!this.model.get('multiOrders').get('isMultiOrders')) {
     //        this.$.multiPayments.hide();

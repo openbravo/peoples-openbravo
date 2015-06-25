@@ -1678,6 +1678,7 @@
         order.trigger('displayTotal');
         order.save();
       }); // call with callback, no args
+      order.trigger('checkaddpayment', order, payment);
     },
 
     overpaymentExists: function () {
