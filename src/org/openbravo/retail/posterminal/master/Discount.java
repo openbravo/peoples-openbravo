@@ -17,6 +17,8 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.model.pricing.priceadjustment.PriceAdjustment;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.retail.posterminal.POSUtils;
@@ -61,7 +63,31 @@ public class Discount extends ProcessHQLQuery {
     if (addIncrementalUpdateFilter) {
       hql += "and (p.$incrementalUpdateCriteria) ";
     }
-
+    boolean multiPrices = false;
+    try {
+      multiPrices = "Y".equals(Preferences.getPreferenceValue("OBPOS_EnableMultiPriceList", true,
+          OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
+              .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
+              .getOBContext().getRole(), null));
+    } catch (PropertyException e1) {
+      log.error("Error getting Preference: " + e1.getMessage(), e1);
+    }
+    if (!multiPrices) {
+      // price list
+      hql += "and ((includePriceLists='Y' ";
+      hql += "  and not exists (select 1 ";
+      hql += "         from PricingAdjustmentPriceList pl";
+      hql += "        where active = true";
+      hql += "          and pl.priceAdjustment = p";
+      hql += "          and pl.priceList.id ='" + priceListId + "')) ";
+      hql += "   or (includePriceLists='N' ";
+      hql += "  and  exists (select 1 ";
+      hql += "         from PricingAdjustmentPriceList pl";
+      hql += "        where active = true";
+      hql += "          and pl.priceAdjustment = p";
+      hql += "          and pl.priceList.id ='" + priceListId + "')) ";
+      hql += "    ) ";
+    }
     // organization
     hql += "and ((includedOrganizations='Y' ";
     hql += "  and not exists (select 1 ";

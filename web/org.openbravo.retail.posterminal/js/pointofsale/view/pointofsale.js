@@ -418,8 +418,9 @@ enyo.kind({
       if (args.cancelOperation && args.cancelOperation === true) {
         return true;
       }
-      args.context.model.get('order').addProduct(args.productToAdd, args.qtyToAdd, args.options, args.attrs);
-      args.context.model.get('orderList').saveCurrent();
+      args.context.model.get('order').addProduct(args.productToAdd, args.qtyToAdd, args.options, args.attrs, function (success) {
+        args.context.model.get('orderList').saveCurrent();
+      });
     });
     return true;
   },

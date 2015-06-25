@@ -8,6 +8,7 @@
  */
 package org.openbravo.retail.posterminal.master;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -18,15 +19,11 @@ import javax.inject.Inject;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBDal;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
-import org.openbravo.model.pricing.pricelist.PriceListVersion;
-import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
 public class PriceList extends ProcessHQLQuery {
@@ -44,57 +41,31 @@ public class PriceList extends ProcessHQLQuery {
 
     HQLPropertyList priceListHQLProperties = ModelExtensionUtils.getPropertyExtensions(extensions);
 
-    hqlQueries.add("select " + priceListHQLProperties.getHqlSelect() + getPriceListSelect(orgId));
+    hqlQueries
+        .add("select "
+            + priceListHQLProperties.getHqlSelect()
+            + " from PricingPriceList pl "
+            + "where pl.id in (select distinct priceList.id from BusinessPartner where customer = 'Y') "
+            + "and pl.id <> (select obretcoPricelist.id from Organization where id = '"
+            + orgId
+            + "') "
+            + "and $naturalOrgCriteria and $readableClientCriteria and ($incrementalUpdateCriteria)");
 
     return hqlQueries;
   }
 
-  public static String getPriceListSelect(String orgId) {
-    return " from PricingPriceList pl "
-        + "where pl.id in (select distinct priceList.id from BusinessPartner where customer = 'Y') "
-        + "and pl.id <> (select obretcoPricelist.id from Organization where id = '" + orgId + "') "
-        + "and $naturalOrgCriteria and $readableClientCriteria and ($incrementalUpdateCriteria)";
+  public static String getSelectPriceListVersionIds(String orgId, Date terminalDate) {
+    SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
+    return "select plv.id from PricingPriceListVersion AS plv "
+        + "where plv.active = true"
+        + " and plv.validFromDate = ("
+        + "  select max(pplv.validFromDate) from PricingPriceListVersion as pplv "
+        + "  where pplv.active=true and pplv.priceList.id = plv.priceList.id "
+        + "    and to_char(pplv.validFromDate, 'yyyy-mm-dd') <= '"
+        + format.format(terminalDate)
+        + " ') and (plv.priceList.id in (select distinct priceList.id from BusinessPartner where customer = 'Y') "
+        + " and plv.priceList.id <> (select obretcoPricelist.id from Organization where id = '"
+        + orgId + "'))";
   }
 
-  public static String getPriceListVersionIds(String orgId, Date terminalDate) {
-    Query priceListQuery = OBDal
-        .getInstance()
-        .getSession()
-        .createQuery(
-            "from PricingPriceList pl "
-                + "where pl.id in (select distinct priceList.id from BusinessPartner where customer = 'Y') "
-                + "and pl.id <> (select obretcoPricelist.id from Organization where id = '" + orgId
-                + "')");
-    String plvIds = "";
-    for (Object pl : priceListQuery.list()) {
-      PriceListVersion plv = POSUtils.getPriceListVersionForPriceList(
-          ((org.openbravo.model.pricing.pricelist.PriceList) pl).getId(), terminalDate);
-      if (plv != null) {
-        if (!plvIds.equals("")) {
-          plvIds += ", ";
-        }
-        plvIds += "'" + plv.getId() + "'";
-      }
-    }
-    return plvIds;
-  }
-
-  public static String getPriceListIds(String orgId) {
-    Query priceListQuery = OBDal
-        .getInstance()
-        .getSession()
-        .createQuery(
-            "from PricingPriceList pl "
-                + "where pl.id in (select distinct priceList.id from BusinessPartner where customer = 'Y') "
-                + "and pl.id <> (select obretcoPricelist.id from Organization where id = '" + orgId
-                + "')");
-    String plIds = "";
-    for (Object pl : priceListQuery.list()) {
-      if (!plIds.equals("")) {
-        plIds += ", ";
-      }
-      plIds += "'" + ((org.openbravo.model.pricing.pricelist.PriceList) pl).getId() + "'";
-    }
-    return plIds;
-  }
 }

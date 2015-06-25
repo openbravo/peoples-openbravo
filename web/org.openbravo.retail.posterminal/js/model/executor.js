@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2014 Openbravo S.L.U.
+ * Copyright (C) 2012-2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -136,7 +136,7 @@ OB.Model.Executor = Backbone.Model.extend({
 OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
   // parameters that will be used in the SQL to get promotions, in case this SQL is extended,
   // these parameters might be required to be extended too
-  criteriaParams: ['bpId', 'bpId', 'bpId', 'bpId', 'productId', 'productId', 'productId', 'productId', 'productId', 'productId'],
+  criteriaParams: ['bpId', 'bpId', 'bpId', 'bpId', 'productId', 'productId', 'productId', 'productId', 'productId', 'productId', 'priceListId', 'priceListId'],
 
   // defines the property each of the parameters in criteriaParams is translated to, in case of
   // different parameters than standard ones this should be extended
@@ -148,6 +148,10 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
     productId: {
       model: 'line',
       property: 'product'
+    },
+    priceListId: {
+      model: 'receipt',
+      property: 'priceList'
     }
   },
 
@@ -170,7 +174,7 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
         model = evt.get(paraTrl.model);
       }
 
-      translatedParams.push(model.get(paraTrl.property).id);
+      translatedParams.push(model.get(paraTrl.property).id ? model.get(paraTrl.property).id : model.get(paraTrl.property));
     });
     return translatedParams;
   },
@@ -183,7 +187,11 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
         actionQueue = this.get('actionQueue'),
         me = this,
         criteria, t0 = new Date().getTime(),
-        whereClause = OB.Model.Discounts.computeStandardFilter(receipt) + " AND M_OFFER_TYPE_ID NOT IN (" + OB.Model.Discounts.getManualPromotions() + ")";
+        whereClause = OB.Model.Discounts.computeStandardFilter(receipt) // 
+         + " AND M_OFFER_TYPE_ID NOT IN (" + OB.Model.Discounts.getManualPromotions() + ")" //
+         + " AND ((EM_OBDISC_ROLE_SELECTION = 'Y' AND NOT EXISTS (SELECT 1 FROM OBDISC_OFFER_ROLE WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID " + " AND AD_ROLE_ID = '" + OB.MobileApp.model.get('context').role.id + "')) OR (EM_OBDISC_ROLE_SELECTION = 'N' " //
+         + " AND EXISTS (SELECT 1 FROM OBDISC_OFFER_ROLE WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID " //
+         + " AND AD_ROLE_ID = '" + OB.MobileApp.model.get('context').role.id + "')))";
 
     if (!receipt.shouldApplyPromotions() || line.get('product').get('ignorePromotions')) {
       // Cannot apply promotions, leave actions empty

@@ -48,10 +48,6 @@ public class ProductPrice extends ProcessHQLQuery {
     Date terminalDate = OBMOBCUtils.calculateServerDate(jsonsent.getJSONObject("parameters")
         .getString("terminalTime"),
         jsonsent.getJSONObject("parameters").getJSONObject("terminalTimeOffset").getLong("value"));
-    String plvIds = PriceList.getPriceListVersionIds(orgId, terminalDate);
-    if (plvIds.equals("")) {
-      plvIds = "'-1'";
-    }
 
     List<String> hqlQueries = new ArrayList<String>();
 
@@ -64,7 +60,7 @@ public class ProductPrice extends ProcessHQLQuery {
             + "where pli.product.id = ppp.product.id and pli.obretcoProductlist = '"
             + productList.getId()
             + "' and ppp.priceListVersion.id in ("
-            + plvIds
+            + PriceList.getSelectPriceListVersionIds(orgId, terminalDate)
             + ") "
             + "and pli.$naturalOrgCriteria and pli.$readableClientCriteria and (ppp.$incrementalUpdateCriteria)");
 
