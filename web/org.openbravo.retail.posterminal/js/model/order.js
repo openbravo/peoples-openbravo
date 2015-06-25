@@ -1360,7 +1360,8 @@
             var oldbpfilter = {
               columns: ['businessPartner'],
               operator: 'equals',
-              value: oldbp.id
+              value: oldbp.id,
+              isId: true
             };
             var oldHgVolCriteria = [oldbpfilter];
             var criteria = {};
@@ -1377,7 +1378,8 @@
             var bp = {
               columns: ['businessPartner'],
               operator: 'equals',
-              value: businessPartner.id
+              value: businessPartner.id,
+              isId: true
             };
             var hgVolCriteria = [bp];
             var criteriaFilter = {};
@@ -2529,7 +2531,8 @@
           var bp = {
             columns: ['businessPartner'],
             operator: 'equals',
-            value: OB.MobileApp.model.get('businessPartner').id
+            value: OB.MobileApp.model.get('businessPartner').id,
+            isId: true
           };
           var hgVolCriteria = [bp];
           var criteria = {};
@@ -2577,7 +2580,8 @@
           var bp = {
             columns: ['businessPartner'],
             operator: 'equals',
-            value: model.id
+            value: model.id,
+            isId: true
           };
           var hgVolCriteria = [bp];
           var criteria = {};
@@ -2673,7 +2677,8 @@
             var oldbpfilter = {
               columns: ['businessPartner'],
               operator: 'equals',
-              value: this.current.get('bp').id
+              value: this.current.get('bp').id,
+              isId: true
             };
             var oldHgVolCriteria = [oldbpfilter];
             var criteria = {};
@@ -2690,7 +2695,8 @@
             var bp = {
               columns: ['businessPartner'],
               operator: 'equals',
-              value: OB.MobileApp.model.get('businessPartner').id
+              value: OB.MobileApp.model.get('businessPartner').id,
+              isId: true
             };
             var hgVolCriteria = [bp];
             var criteriaFilter = {};

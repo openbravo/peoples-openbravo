@@ -332,7 +332,8 @@ enyo.kind({
           bPartnerId = {
           columns: ['bpartner'],
           operator: 'equals',
-          value: this.bPartnerId
+          value: this.bPartnerId,
+          isId: true
           };
       var hgVolCriteria = [filterIdentifier, bPartnerId];
       criteria.hgVolFilters = hgVolCriteria;
