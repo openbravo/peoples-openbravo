@@ -471,7 +471,7 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
 
     // Product Services
     globalResources.add(createStaticResource("web/js/productServices.js", true));
-    
+
     return globalResources;
   }
 
@@ -483,6 +483,7 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
     testResources.add("web/org.openbravo.client.application/js/test/ob-utilities-date-test.js");
     testResources.add("web/org.openbravo.client.application/js/test/ob-navbar-test.js");
     testResources.add("web/org.openbravo.client.application/js/test/ob-utilities-number-test.js");
+    testResources.add("web/js/test/ob-product-services-test.js");
     return testResources;
   }
 }
