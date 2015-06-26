@@ -446,6 +446,14 @@ public abstract class CostingAlgorithmAdjustmentImp {
     BigDecimal adjAmt = BigDecimal.ZERO;
     TrxType calTrxType = TrxType.getTrxType(costAdjLine.getInventoryTransaction());
 
+    if (costAdjLine.getInventoryTransaction().isCostPermanent() && costAdjLine.isUnitCost()) {
+      costAdjLine.setCurrency((Currency) OBDal.getInstance().getProxy(Currency.ENTITY_NAME,
+          strCostCurrencyId));
+      costAdjLine.setAdjustmentAmount(BigDecimal.ZERO);
+      OBDal.getInstance().save(costAdjLine);
+      return;
+    }
+
     // Incoming transactions does not modify the calculated cost
     switch (calTrxType) {
     case ShipmentVoid:
