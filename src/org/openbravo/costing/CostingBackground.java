@@ -112,6 +112,7 @@ public class CostingBackground extends DalBaseProcess {
               trxId);
           if ("S".equals(transaction.getCostingStatus())) {
             // Do not calculate trx in skip status.
+            transaction.setProcessed(true);
             continue;
           }
           log4j.debug("Start transaction process: " + transaction.getId());
@@ -211,7 +212,7 @@ public class CostingBackground extends DalBaseProcess {
     where.append(" join trx." + MaterialTransaction.PROPERTY_PRODUCT + " as p");
     where.append("\n , " + org.openbravo.model.ad.domain.List.ENTITY_NAME + " as trxtype");
     where.append("\n where trx." + MaterialTransaction.PROPERTY_ISPROCESSED + " = false");
-    where.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = false");
+    where.append("   and trx." + MaterialTransaction.PROPERTY_COSTINGSTATUS + " <> 'S'");
     where.append("   and p." + Product.PROPERTY_PRODUCTTYPE + " = 'I'");
     where.append("   and p." + Product.PROPERTY_STOCKED + " = true");
     where.append("   and trxtype." + CostAdjustmentUtils.propADListReference + ".id = :refid");
@@ -246,7 +247,7 @@ public class CostingBackground extends DalBaseProcess {
     where.append(" join trx." + MaterialTransaction.PROPERTY_PRODUCT + " as p");
     where.append("\n , " + org.openbravo.model.ad.domain.List.ENTITY_NAME + " as trxtype");
     where.append("\n where trx." + MaterialTransaction.PROPERTY_ISPROCESSED + " = false");
-    where.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = false");
+    where.append("   and trx." + MaterialTransaction.PROPERTY_COSTINGSTATUS + " <> 'S'");
     where.append("   and p." + Product.PROPERTY_PRODUCTTYPE + " = 'I'");
     where.append("   and p." + Product.PROPERTY_STOCKED + " = true");
     where.append("   and trxtype." + CostAdjustmentUtils.propADListReference + ".id = :refid");
