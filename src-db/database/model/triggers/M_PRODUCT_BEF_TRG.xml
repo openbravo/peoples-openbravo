@@ -30,6 +30,7 @@ BEGIN
   IF (:new.Islinkedtoproduct='N' AND :old.Islinkedtoproduct='Y') THEN
     :NEW.PROD_CAT_SELECTION := NULL;
     :NEW.PRODUCT_SELECTION := NULL;
+    :NEW.ISPRICERULEBASED := 'N';
   END IF;
  END IF;
 EXCEPTION
