@@ -20,7 +20,6 @@ package org.openbravo.client.application.window;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,6 +30,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.util.Check;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.ParameterUtils;
 import org.openbravo.client.kernel.BaseActionHandler;
@@ -39,6 +39,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.Attachment;
 import org.openbravo.model.ad.utility.AttachmentMethod;
@@ -55,12 +56,9 @@ public class AttachmentsAH extends BaseActionHandler {
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) {
     OBContext.setAdminMode();
-    String tabId = "";
-    Tab tab = null;
-    if (parameters.get("tabId") != null) {
-      tabId = parameters.get("tabId").toString();
-      tab = OBDal.getInstance().get(Tab.class, tabId);
-    }
+    String tabId = (String) parameters.get("tabId");
+    Check.isNotNull(tabId, OBMessageUtils.messageBD("OBUIAPP_Attachment_Tab_Mandatory"));
+    Tab tab = OBDal.getInstance().get(Tab.class, tabId);
 
     String recordIds = "";
     try {
@@ -77,26 +75,23 @@ public class AttachmentsAH extends BaseActionHandler {
         final String strAttMethodId = (String) parameters.get("attachmentMethod");
         AttachmentMethod attachMethod = OBDal.getInstance().get(AttachmentMethod.class,
             strAttMethodId);
-        Map<String, String> metadata = new HashMap<String, String>();
-        Map<String, String> fixedParameters = ParameterUtils.fixRequestMap(parameters);
+        Map<String, String> requestParams = ParameterUtils.fixRequestMap(parameters);
         for (Parameter param : AttachmentUtils.getMethodMetadataParameters(attachMethod, tab)) {
-          String value;
           if (param.isFixed()) {
-            if (param.getPropertyPath() != null) {
-              // not relevant value
-              value = AttachmentUtils.getPropertyPathValue(param, tabId, recordIds);
-            } else if (param.isEvaluateFixedValue()) {
-              value = ParameterUtils.getParameterFixedValue(fixedParameters, param).toString();
-            } else {
-              value = param.getFixedValue();
-            }
-          } else {
-            value = URLDecoder.decode(params.get(param.getDBColumnName()).toString(), "UTF-8");
+            continue;
           }
-          metadata.put(param.getId(), value);
+          String value;
+          if (params.has(param.getDBColumnName())
+              && params.get(param.getDBColumnName()) != JSONObject.NULL) {
+            value = URLDecoder.decode(params.getString(param.getDBColumnName()), "UTF-8");
+          } else {
+            value = null;
+          }
+
+          requestParams.put(param.getId(), value);
         }
 
-        aim.update(attachmentId, tabId, metadata);
+        aim.update(requestParams, attachmentId, tabId);
 
         JSONObject obj = getAttachmentJSONObject(tab, recordIds);
         obj.put("buttonId", params.getString("buttonId"));

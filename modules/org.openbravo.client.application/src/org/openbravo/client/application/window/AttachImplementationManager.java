@@ -23,6 +23,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.ZipEntry;
@@ -53,6 +55,7 @@ import org.openbravo.dal.service.OBDao;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.domain.List;
+import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.domain.Selector;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.ui.Tab;
@@ -60,13 +63,14 @@ import org.openbravo.model.ad.utility.Attachment;
 import org.openbravo.model.ad.utility.AttachmentConfig;
 import org.openbravo.model.ad.utility.AttachmentMethod;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.service.json.JsonUtils;
 import org.openbravo.utils.FileUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class AttachImplementationManager {
 
-  final static private Logger log = LoggerFactory.getLogger(AttachImplementationManager.class);
+  private static final Logger log = LoggerFactory.getLogger(AttachImplementationManager.class);
 
   public static final String REFERENCE_LIST = "17";
   public static final String REFERENCE_SELECTOR_REFERENCE = "95E2A8B50A254B2AAE6774B8C2F28120";
@@ -78,6 +82,8 @@ public class AttachImplementationManager {
   /**
    * Method to upload files. This method calls needed handler class
    * 
+   * @param requestParams
+   * 
    * @param strTab
    *          the tab Id where the attachment is done
    * @param strKey
@@ -86,17 +92,13 @@ public class AttachImplementationManager {
    *          the datatype of the document that is attached
    * @param strDocumentOrganization
    *          the organization ID of the record where the attachment is done
-   * @param strText
-   *          the description of the attachment
-   * @param parameters
-   *          more metadata that will be saved in the attachment
    * @param file
    *          The file to be uploaded
    * @throws OBException
    *           any exception thrown during the attachment uploading
    */
-  public void upload(String strTab, String strKey, String strDataType,
-      String strDocumentOrganization, Map<String, String> parameters, File file) throws OBException {
+  public void upload(Map<String, String> requestParams, String strTab, String strKey,
+      String strDataType, String strDocumentOrganization, File file) throws OBException {
     Organization org = OBDal.getInstance().get(Organization.class, strDocumentOrganization);
 
     Tab tab = OBDal.getInstance().get(Tab.class, strTab);
@@ -115,7 +117,6 @@ public class AttachImplementationManager {
     String strName = file.getName();
 
     Attachment attachment = null;
-    boolean attachmentExists = true;
     try {
       OBContext.setAdminMode(true);
       attachment = getAttachment(tab.getTable(), strKey, strName);
@@ -125,7 +126,6 @@ public class AttachImplementationManager {
         attachment.setName(strName);
         attachment.setTable(tab.getTable());
         attachment.setRecord(strKey);
-        attachmentExists = false;
       }
       attachment.setAttachmentConf(attachConf);
       attachment.setOrganization(org);
@@ -139,9 +139,8 @@ public class AttachImplementationManager {
       if (handler == null) {
         throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoMethod"));
       }
-      saveAttachText(attachment, parameters);
-      Map<String, Object> typifiedParameters = saveMetadata(attachment, parameters, strTab,
-          attachmentExists);
+      Map<String, Object> typifiedParameters = saveMetadata(requestParams, attachment, strTab,
+          strKey, attachMethod);
       handler.uploadFile(attachment, strDataType, typifiedParameters, file, strTab);
       OBDal.getInstance().flush();
     } finally {
@@ -151,46 +150,18 @@ public class AttachImplementationManager {
   }
 
   /**
-   * Method to delete files. This method calls needed handler class
-   * 
-   * @param attachment
-   *          the attachment that will be removed
-   * @throws OBException
-   *           any exception thrown when deleting an attachment
-   */
-  public void delete(Attachment attachment) throws OBException {
-    try {
-      OBContext.setAdminMode(true);
-      checkReadableAccess(attachment);
-      AttachImplementation handler = getHandler(attachment.getAttachmentConf()
-          .getAttachmentMethod() == null ? "Default" : attachment.getAttachmentConf()
-          .getAttachmentMethod().getValue());
-      if (handler == null) {
-        throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoMethod"));
-      }
-      handler.deleteFile(attachment);
-      OBDal.getInstance().remove(attachment);
-      OBDal.getInstance().flush();
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-  }
-
-  /**
    * Method to update file's metadata. This method calls needed handler class
+   * 
+   * @param requestParams
    * 
    * @param attachID
    *          the attachmentID that will be updated
    * @param tabId
    *          the TabId where the attachment is being modified
-   * @param description
-   *          the new description to be updated
-   * @param parameters
-   *          more metadata to be updated
    * @throws OBException
    *           any exception thrown when updating the document
    */
-  public void update(String attachID, String tabId, Map<String, String> parameters)
+  public void update(Map<String, String> requestParams, String attachID, String tabId)
       throws OBException {
     try {
       OBContext.setAdminMode(true);
@@ -208,8 +179,8 @@ public class AttachImplementationManager {
       if (handler == null) {
         throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoMethod"));
       }
-      saveAttachText(attachment, parameters);
-      Map<String, Object> typifiedParameters = saveMetadata(attachment, parameters, tabId, true);
+      Map<String, Object> typifiedParameters = saveMetadata(requestParams, attachment, tabId,
+          attachment.getRecord(), attachment.getAttachmentConf().getAttachmentMethod());
       handler.updateFile(attachment, tabId, typifiedParameters);
       OBDal.getInstance().save(attachment);
       OBDal.getInstance().flush();
@@ -276,8 +247,6 @@ public class AttachImplementationManager {
    * @param recordIds
    *          All RecordIds from where are downloading the documents
    * @param os
-   * @param recordId
-   *          All the attachment related to this recordID will be downloaded in a single .zip file
    * @throws OBException
    *           any exception thrown during the download of all documents
    */
@@ -344,6 +313,32 @@ public class AttachImplementationManager {
       OBContext.restorePreviousMode();
     }
 
+  }
+
+  /**
+   * Method to delete files. This method calls needed handler class
+   * 
+   * @param attachment
+   *          the attachment that will be removed
+   * @throws OBException
+   *           any exception thrown when deleting an attachment
+   */
+  public void delete(Attachment attachment) throws OBException {
+    try {
+      OBContext.setAdminMode(true);
+      checkReadableAccess(attachment);
+      AttachImplementation handler = getHandler(attachment.getAttachmentConf()
+          .getAttachmentMethod() == null ? "Default" : attachment.getAttachmentConf()
+          .getAttachmentMethod().getValue());
+      if (handler == null) {
+        throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoMethod"));
+      }
+      handler.deleteFile(attachment);
+      OBDal.getInstance().remove(attachment);
+      OBDal.getInstance().flush();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   public AttachmentConfig getAttachmenConfig(Client client) {
@@ -445,97 +440,142 @@ public class AttachImplementationManager {
   }
 
   /**
-   * Save metadata in C_File_Metadata records.
+   * Save metadata in OBUIAPP_Parameter_Value records. It also updates the description of the
+   * attachment based on the new metadata values.
    * 
+   * @param requestParams
+   *          Map with all the request parameters including the new values of the metadata as
+   *          Strings.
    * @param attachment
    *          attachment for which is saving metadata.
-   * @param metadata
-   *          metadata values to save.
-   * @param recordId
-   *          RecordId where attachment is assigned to
-   * @param exists
-   *          true if the attachment already exists (if exists, metadata should exist too)
+   * @param tabId
+   *          The tab id where the attachment is being done.
+   * @param strKey
+   *          The record id owner of the attachment.
+   * @param attachMethod
    * @return Map of parameters with typified values
    * @throws OBException
    *           any exception thrown while saving metadata
    */
-  private Map<String, Object> saveMetadata(Attachment attachment, Map<String, String> metadata,
-      String recordId, boolean exists) throws OBException {
+  private Map<String, Object> saveMetadata(Map<String, String> requestParams,
+      Attachment attachment, String tabId, String strKey, AttachmentMethod attachMethod)
+      throws OBException {
     try {
-      Map<String, Object> typifiedMetadata = new HashMap<String, Object>();
-      for (Map.Entry<String, String> entry : metadata.entrySet()) {
-        final Parameter parameter = OBDal.getInstance().get(Parameter.class, entry.getKey());
-        ParameterValue attachmentMetadata;
-        if (exists) {
-          final OBCriteria<ParameterValue> attachmentMetadataCriteria = OBDal.getInstance()
-              .createCriteria(ParameterValue.class);
-          attachmentMetadataCriteria.add(Restrictions.eq(ParameterValue.PROPERTY_FILE, attachment));
-          attachmentMetadataCriteria.add(Restrictions.eq(ParameterValue.PROPERTY_PARAMETER,
-              parameter));
-          attachmentMetadataCriteria.setMaxResults(1);
-          try {
-            attachmentMetadata = (ParameterValue) attachmentMetadataCriteria.uniqueResult();
-          } catch (Exception e) {
-            throw new OBException(OBMessageUtils.messageBD("OBUIAPP_MoreThanOneParam"));
-          }
-        } else {
-          attachmentMetadata = OBProvider.getInstance().get(ParameterValue.class);
-          attachmentMetadata.setFile(attachment);
-          attachmentMetadata.setParameter(parameter);
+      String attachmentText = "";
+      boolean isfirst = true;
+      final String delimiter = OBMessageUtils.messageBD("OBUIAPP_Attach_Description_Delimiter");
+      final String paramDesc = OBMessageUtils.messageBD("OBUIAPP_Attach_Description");
+
+      Map<String, Object> metadataValues = new HashMap<String, Object>();
+      for (Parameter parameter : AttachmentUtils.getMethodMetadataParameters(attachMethod, OBDal
+          .getInstance().get(Tab.class, tabId))) {
+        final String strMetadataId = parameter.getId();
+
+        ParameterValue metadataStoredValue = null;
+        final OBCriteria<ParameterValue> critStoredMetadata = OBDal.getInstance().createCriteria(
+            ParameterValue.class);
+        critStoredMetadata.add(Restrictions.eq(ParameterValue.PROPERTY_FILE, attachment));
+        critStoredMetadata.add(Restrictions.eq(ParameterValue.PROPERTY_PARAMETER, parameter));
+        critStoredMetadata.setMaxResults(1);
+        metadataStoredValue = (ParameterValue) critStoredMetadata.uniqueResult();
+        if (metadataStoredValue == null) {
+          metadataStoredValue = OBProvider.getInstance().get(ParameterValue.class);
+          metadataStoredValue.setFile(attachment);
+          metadataStoredValue.setParameter(parameter);
         }
 
-        if (parameter.getReference().getId().equals(REFERENCE_LIST)) {
-          org.openbravo.model.ad.domain.Reference reference = parameter.getReferenceSearchKey();
-          for (List currentList : reference.getADListList()) {
-            if (currentList.getName().equals(entry.getValue())) {
-              attachmentMetadata.setValueKey(currentList.getId());
-              attachmentMetadata.setValueString(currentList.getName());
-              JSONObject jsonValue = new JSONObject();
-              jsonValue.put("id", currentList.getId());
-              jsonValue.put("name", currentList.getName());
-              typifiedMetadata.put(entry.getKey(), jsonValue);
-              break;
+        Object value = "";
+        // Load the value. If the parameter is fixed calculate it, if not retrieve from the request
+        // parameters.
+        if (parameter.isFixed()) {
+          if (parameter.getPropertyPath() != null) {
+            // not relevant value
+            value = AttachmentUtils.getPropertyPathValue(parameter, tabId, strKey);
+          } else if (parameter.isEvaluateFixedValue()) {
+            value = ParameterUtils.getParameterFixedValue(requestParams, parameter);
+          } else {
+            value = parameter.getFixedValue();
+          }
+        } else {
+          value = requestParams.get(strMetadataId);
+        }
+
+        String strValue = "";
+        if (value == null) {
+          // There is no value for this parameter. Reset all values and continue with next metadata.
+          metadataValues.put(strMetadataId, null);
+          metadataStoredValue.setValueDate(null);
+          metadataStoredValue.setValueKey(null);
+          metadataStoredValue.setValueNumber(null);
+          metadataStoredValue.setValueString(null);
+        } else {
+          String strReferenceId = (String) DalUtil.getId(parameter.getReference());
+          if (REFERENCE_LIST.equals(strReferenceId)) {
+            strValue = (String) value;
+            Reference reference = parameter.getReferenceSearchKey();
+            for (List currentList : reference.getADListList()) {
+              // TODO: Check if the compare must be done against the search key
+              if (currentList.getName().equals(strValue)) {
+                metadataStoredValue.setValueKey(currentList.getId());
+                metadataStoredValue.setValueString(currentList.getName());
+                JSONObject jsonValue = new JSONObject();
+                jsonValue.put("id", currentList.getId());
+                jsonValue.put("name", currentList.getName());
+                metadataValues.put(strMetadataId, jsonValue);
+                break;
+              }
             }
+          } else if (REFERENCE_SELECTOR_REFERENCE.equals(strReferenceId)) {
+            strValue = (String) value;
+            Reference reference = parameter.getReferenceSearchKey();
+            Selector selector = reference.getADSelectorList().get(0);
+            BaseOBObject object = OBDal.getInstance().get(selector.getTable().getEntityName(),
+                strValue);
+            metadataStoredValue.setValueKey(object.getId().toString());
+            metadataStoredValue.setValueString(object.getIdentifier());
+            JSONObject jsonValue = new JSONObject();
+            jsonValue.put("id", object.getId().toString());
+            jsonValue.put("name", object.getIdentifier());
+            metadataValues.put(strMetadataId, jsonValue);
+          } else {
+            JSONObject jsonValue = new JSONObject();
+            if (value instanceof Date) {
+              strValue = JsonUtils.createDateFormat().format((Date) value);
+            } else if (value instanceof BigDecimal) {
+              strValue = ((BigDecimal) value).toPlainString();
+              // TODO: Check what happens with boolean parameters.
+            } else {
+              strValue = value.toString();
+            }
+            jsonValue.put("value", strValue);
+            ParameterUtils.setParameterValue(metadataStoredValue, jsonValue);
+            metadataValues
+                .put(strMetadataId, ParameterUtils.getParameterValue(metadataStoredValue));
           }
-        } else if (parameter.getReference().getId().equals(REFERENCE_SELECTOR_REFERENCE)) {
-          org.openbravo.model.ad.domain.Reference reference = parameter.getReferenceSearchKey();
-          Selector selector = reference.getADSelectorList().get(0);
-          BaseOBObject object = OBDal.getInstance().get(selector.getTable().getEntityName(),
-              recordId);
-          attachmentMetadata.setValueKey(object.getId().toString());
-          attachmentMetadata.setValueString(object.getIdentifier());
-          JSONObject jsonValue = new JSONObject();
-          jsonValue.put("id", object.getId().toString());
-          jsonValue.put("name", object.getIdentifier());
-          typifiedMetadata.put(entry.getKey(), jsonValue);
-        } else {
-          JSONObject jsonValue = new JSONObject();
-          jsonValue.put("value", entry.getValue());
-          ParameterUtils.setParameterValue(attachmentMetadata, jsonValue);
-          typifiedMetadata
-              .put(entry.getKey(), ParameterUtils.getParameterValue(attachmentMetadata));
         }
-
-        OBDal.getInstance().save(attachmentMetadata);
+        if (parameter.isShowInDescription()) {
+          if (isfirst) {
+            isfirst = false;
+          } else {
+            attachmentText += delimiter;
+          }
+          Map<String, String> paramValues = new HashMap<String, String>();
+          paramValues.put("paramName", (String) parameter.get(Parameter.PROPERTY_NAME, OBContext
+              .getOBContext().getLanguage()));
+          paramValues.put("paramValue", strValue);
+          attachmentText += OBMessageUtils.parseTranslation(paramDesc, paramValues);
+        }
+        OBDal.getInstance().save(metadataStoredValue);
       }
+      if (attachmentText.length() > 2000) {
+        attachmentText = attachmentText.substring(0, 1997) + "...";
+      }
+      attachment.setText(attachmentText.trim());
 
-      return typifiedMetadata;
-    } catch (OBException obe) {
-      throw obe;
+      return metadataValues;
     } catch (Exception e) {
+      log.error("Error saving the metadata value." + e.getMessage(), e);
       throw new OBException(OBMessageUtils.messageBD("OBUIAPP_ErrorInsertMetadata"), e);
     }
-  }
-
-  private void saveAttachText(Attachment attachment, Map<String, String> parameters) {
-    // Add fixed parameters text to attachment Text value
-    String attachmentText = "";
-    for (Map.Entry<String, String> entry : parameters.entrySet()) {
-      final Parameter parameter = OBDal.getInstance().get(Parameter.class, entry.getKey());
-      if (parameter.isShowInDescription()) {
-        attachmentText += entry.getValue() + "   ";
-      }
-    }
-    attachment.setText(attachmentText.trim());
   }
 }

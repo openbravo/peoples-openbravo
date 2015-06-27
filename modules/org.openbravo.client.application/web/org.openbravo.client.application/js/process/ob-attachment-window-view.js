@@ -80,10 +80,6 @@ isc.OBAttachmentWindowView.addProperties({
         type: 'hidden',
         value: this.ownerView.ID
       }, {
-        name: 'viewId',
-        type: 'hidden',
-        value: this.ownerView.ID
-      }, {
         name: 'inpKey',
         type: 'hidden',
         value: this.attachSection.recordId

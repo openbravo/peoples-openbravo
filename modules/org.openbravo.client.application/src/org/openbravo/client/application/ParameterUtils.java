@@ -63,7 +63,11 @@ public class ParameterUtils {
 
   public static void setParameterValue(ParameterValue parameterValue, JSONObject requestValue) {
     try {
-      setValue(parameterValue, requestValue.getString("value"));
+      String value = null;
+      if (!requestValue.isNull("value")) {
+        value = requestValue.getString("value");
+      }
+      setValue(parameterValue, value);
     } catch (Exception e) {
       log.error("Error trying to set value for paramter: "
           + parameterValue.getParameter().getName(), e);
@@ -76,6 +80,12 @@ public class ParameterUtils {
   }
 
   private static void setValue(ParameterValue parameterValue, String stringValue) {
+    if (stringValue == null) {
+      parameterValue.setValueString(null);
+      parameterValue.setValueDate(null);
+      parameterValue.setValueNumber(null);
+      return;
+    }
     DomainType domainType = getParameterDomainType(parameterValue.getParameter());
     try {
       if (domainType.getClass().equals(StringDomainType.class)) {
@@ -103,7 +113,7 @@ public class ParameterUtils {
 
   /**
    * Returns an Object with the Value of the Parameter Value. This object can be a String, a
-   * java.util.Data, boolean or a BigDecimal.
+   * java.util.Date, boolean or a BigDecimal.
    * 
    * @param parameterValue
    *          the Parameter Value we want to get the Value from.
@@ -115,9 +125,11 @@ public class ParameterUtils {
       return parameterValue.getValueString();
     } else if (domainType.getClass().equals(DateDomainType.class)) {
       return parameterValue.getValueDate();
-    } else if (domainType.getClass().getSuperclass().equals(BigDecimalDomainType.class)
-        || domainType.getClass().equals(LongDomainType.class)) {
+    } else if (domainType.getClass().getSuperclass().equals(BigDecimalDomainType.class)) {
       return parameterValue.getValueNumber();
+    } else if (domainType.getClass().equals(LongDomainType.class)) {
+      return parameterValue.getValueNumber() != null ? parameterValue.getValueNumber().longValue()
+          : null;
     } else if (domainType.getClass().equals(BooleanDomainType.class)) {
       return "true".equals(parameterValue.getValueString());
     } else { // default
@@ -162,7 +174,6 @@ public class ParameterUtils {
    * @return the DefaultValue of the Parameter.
    * @throws ScriptException
    *           Error occurred executing the script to calculate the defaultValue of the parameter
-   * @throws JSONException
    */
   public static Object getParameterDefaultValue(Map<String, String> parameters,
       Parameter parameter, HttpSession session, JSONObject context) throws ScriptException {
@@ -271,7 +282,7 @@ public class ParameterUtils {
    *          request taken in the servlet.
    * @return a Map with all parameters in request.
    */
-  public static Map<String, String> fixRequestMap(HttpServletRequest request) {
+  public static Map<String, String> buildRequestMap(HttpServletRequest request) {
     final Map<String, String> parameterMap = new HashMap<String, String>();
     for (Enumeration<?> keys = request.getParameterNames(); keys.hasMoreElements();) {
       final String key = (String) keys.nextElement();

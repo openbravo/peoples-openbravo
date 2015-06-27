@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.net.URLEncoder;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.mail.internet.MimeUtility;
@@ -113,7 +112,6 @@ public class TabAttachments extends HttpSecureAppServlet {
           throw new OBException(OBMessageUtils.messageBD("ErrorUploadingFile"), e);
         }
         //
-        Map<String, String> metadata = new HashMap<String, String>();
         AttachmentConfig attConfig = AttachmentUtils.getAttachmentConfig();
         AttachmentMethod attachMethod;
         if (attConfig == null) {
@@ -121,25 +119,23 @@ public class TabAttachments extends HttpSecureAppServlet {
         } else {
           attachMethod = attConfig.getAttachmentMethod();
         }
-        Map<String, String> fixedParameters = ParameterUtils.fixRequestMap(request);
+        Map<String, String> requestParams = ParameterUtils.buildRequestMap(request);
         for (Parameter param : AttachmentUtils.getMethodMetadataParameters(attachMethod, tab)) {
-          String value;
+          String value = null;
           if (param.isFixed()) {
-            if (param.getPropertyPath() != null) {
-              // not relevant value
-              value = AttachmentUtils.getPropertyPathValue(param, strTab, key);
-            } else if (param.isEvaluateFixedValue()) {
-              value = ParameterUtils.getParameterFixedValue(fixedParameters, param).toString();
-            } else {
-              value = param.getFixedValue();
-            }
-          } else {
-            value = vars.getStringParameter(param.getDBColumnName()).toString();
+            continue;
           }
-          metadata.put(param.getId(), value);
+          value = vars.getStringParameter(param.getDBColumnName()).toString();
+          if (value != null && value.startsWith("$$DATE$$:")) {
+            value = value.substring(9);
+          } else if ("undefined".equals(value)) {
+            value = "";
+
+          }
+          requestParams.put(param.getId(), value);
         }
 
-        aim.upload(strTab, key, strDataType, strDocumentOrganization, metadata, tempFile);
+        aim.upload(requestParams, strTab, key, strDataType, strDocumentOrganization, tempFile);
         obj = AttachmentsAH.getAttachmentJSONObject(tab, key);
       } catch (OBException e) {
         OBDal.getInstance().rollbackAndClose();

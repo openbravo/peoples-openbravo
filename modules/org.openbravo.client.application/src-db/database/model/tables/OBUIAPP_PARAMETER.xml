@@ -178,6 +178,7 @@
       <check name="OBUIAPP_PARAMETER_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="OBUIAPP_PARAMETER_ISFIXED_CHK"><![CDATA[ISFIXED IN ('Y', 'N')]]></check>
       <check name="OBUIAPP_PARAMETER_MANDAT_CHK"><![CDATA[ISMANDATORY IN ('Y', 'N')]]></check>
+      <check name="OBUIAPP_PARAMETER_METADATA_CHK"><![CDATA[(AD_TAB_ID IS NULL) OR ((AD_TAB_ID IS NOT NULL) AND (C_ATTACHMENT_METHOD_ID IS NOT NULL))]]></check>
       <check name="OBUIAPP_PARAMETER_NEWLINE_CHK"><![CDATA[STARTINNEWLINE IN ('Y', 'N')]]></check>
       <check name="OBUIAPP_PARAMETER_SHOWDESC_CHK"><![CDATA[ATT_SHOWINDESCRIPTION IN ('Y', 'N')]]></check>
     </table>

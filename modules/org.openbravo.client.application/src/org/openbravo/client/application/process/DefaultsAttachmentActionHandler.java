@@ -18,6 +18,8 @@
  */
 package org.openbravo.client.application.process;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
@@ -33,6 +35,7 @@ import org.openbravo.client.kernel.KernelConstants;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.Attachment;
 import org.openbravo.model.ad.utility.AttachmentMethod;
@@ -68,6 +71,8 @@ public class DefaultsAttachmentActionHandler extends BaseActionHandler {
       }
       final Map<String, String> fixedParameters = ParameterUtils.fixRequestMap(parameters);
 
+      // The parameter list is sorted so the fixed parameters are evaluated before. This is needed
+      // to be able to define parameters with default values based on the fixed parameters.
       for (Parameter param : AttachmentUtils.getMethodMetadataParameters(attMethod, tab)) {
         if (param.isFixed()) {
           if (param.getPropertyPath() != null) {
@@ -78,27 +83,43 @@ public class DefaultsAttachmentActionHandler extends BaseActionHandler {
           } else {
             parameters.put(param.getDBColumnName(), param.getFixedValue());
           }
+          continue;
         }
-      }
 
-      if (strAction.equals("edit")) {
-        for (Parameter param : AttachmentUtils.getMethodMetadataParameters(attMethod, tab)) {
-          if (!param.isFixed()) {
-            if (param.getDefaultValue() != null) {
-              Object defValue = ParameterUtils.getParameterDefaultValue(fixedParameters, param,
-                  (HttpSession) parameters.get(KernelConstants.HTTP_SESSION), context);
-              defaults.put(param.getDBColumnName(), defValue);
+        if ("edit".equals(strAction)) {
+          // Calculate stored value.
+          OBCriteria<ParameterValue> parameterValueCriteria = OBDal.getInstance().createCriteria(
+              ParameterValue.class);
+          parameterValueCriteria.add(Restrictions.eq(ParameterValue.PROPERTY_FILE, attachment));
+          parameterValueCriteria.add(Restrictions.eq(ParameterValue.PROPERTY_PARAMETER, param));
+          ParameterValue parameterValue = (ParameterValue) parameterValueCriteria.uniqueResult();
+          if (parameterValue != null) {
+            // If the parameter has a previous value set it on the defaults map and continue with
+            // next parameter.
+            Object objValue = ParameterUtils.getParameterValue(parameterValue);
+            Object parsedValue = "";
+            if (objValue == null) {
+              parsedValue = "";
+            } else if (objValue instanceof Date) {
+              parsedValue = OBDateUtils.formatDate((Date) objValue);
+            } else if (objValue instanceof BigDecimal) {
+              parsedValue = ((BigDecimal) objValue).toPlainString();
+            } else if (objValue instanceof Boolean) {
+              parsedValue = ((Boolean) objValue);
             } else {
-              OBCriteria<ParameterValue> parameterValueCriteria = OBDal.getInstance()
-                  .createCriteria(ParameterValue.class);
-              parameterValueCriteria.add(Restrictions.eq(ParameterValue.PROPERTY_FILE, attachment));
-              parameterValueCriteria.add(Restrictions.eq(ParameterValue.PROPERTY_PARAMETER, param));
-              ParameterValue parameterValue = parameterValueCriteria.list().get(0);
-              defaults.put(param.getDBColumnName(),
-                  ParameterUtils.getParameterValue(parameterValue));
+              parsedValue = objValue.toString();
             }
+
+            defaults.put(param.getDBColumnName(), parsedValue);
+            continue;
           }
         }
+        if (param.getDefaultValue() != null) {
+          Object defValue = ParameterUtils.getParameterDefaultValue(fixedParameters, param,
+              (HttpSession) parameters.get(KernelConstants.HTTP_SESSION), context);
+          defaults.put(param.getDBColumnName(), defValue);
+        }
+
       }
 
       log.debug("Defaults for tab {} \n {}", tab, defaults.toString());

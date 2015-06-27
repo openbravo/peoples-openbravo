@@ -30,6 +30,8 @@ import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.ModelProvider;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
@@ -109,19 +111,22 @@ public class AttachmentUtils {
   }
 
   /**
-   * Gets the list of parameters associated to an Attachment Method ad a Tab
+   * Gets the list of parameters associated to an Attachment Method ad a Tab. The list is sorted so
+   * the fixed parameters are returned first.
    * 
    * @param attachMethod
    *          active attachment method
    * @param tab
    *          tab to take metadata
-   * @return List of parameters by attachment method and tab
+   * @return List of parameters by attachment method and tab sorted by Fixed where fixed paremeters
+   *         are first.
    */
   public static List<Parameter> getMethodMetadataParameters(AttachmentMethod attachMethod, Tab tab) {
     StringBuilder where = new StringBuilder();
     where.append(Parameter.PROPERTY_ATTACHMENTMETHOD + "= :attMethod");
     where.append(" and (" + Parameter.PROPERTY_TAB + " is null or " + Parameter.PROPERTY_TAB
         + " = :tab)");
+    where.append(" order by CASE WHEN " + Parameter.PROPERTY_FIXED + " is true THEN 1 ELSE 2 END");
     final OBQuery<Parameter> qryParams = OBDal.getInstance().createQuery(Parameter.class,
         where.toString());
     qryParams.setNamedParameter("attMethod", attachMethod);
@@ -182,18 +187,20 @@ public class AttachmentUtils {
    * @throws OBException
    *           generated if there is distinct than one record to search
    */
-  public static String getPropertyPathValue(Parameter parameter, String tabId, String recordId)
+  public static Object getPropertyPathValue(Parameter parameter, String tabId, String recordId)
       throws OBException {
     Tab tab = OBDal.getInstance().get(Tab.class, tabId);
-    final String hql = "SELECT a." + parameter.getPropertyPath() + " FROM "
-        + tab.getTable().getName() + " AS a WHERE a.id=:recordId";
+    Entity entity = ModelProvider.getInstance().getEntityByTableId(
+        (String) DalUtil.getId(tab.getTable()));
+    final String hql = "SELECT a." + parameter.getPropertyPath() + " FROM " + entity.getName()
+        + " AS a WHERE a.id=:recordId";
     final Query query = OBDal.getInstance().getSession().createQuery(hql);
     query.setString("recordId", recordId);
     query.setMaxResults(1);
     try {
-      return (String) query.uniqueResult();
+      return query.uniqueResult();
     } catch (Exception e) {
-      throw new OBException(OBMessageUtils.messageBD("OBUIAPP_PropPathNotOneRecord"));
+      throw new OBException(OBMessageUtils.messageBD("OBUIAPP_PropPathNotOneRecord"), e);
     }
   }
 

@@ -43,7 +43,7 @@ isc.OBBaseParameterWindowView.addProperties({
   members: [],
   baseParams: {},
   formProps: {
-    paramWindow: this,
+    paramWindow: null,
     width: '99%',
     titleSuffix: '',
     requiredTitleSuffix: '',
@@ -140,6 +140,7 @@ isc.OBBaseParameterWindowView.addProperties({
         this.theForm = isc.DynamicForm.create(this.formProps);
 
         this.theForm.setItems(items);
+        this.theForm.paramWindow = this;
         this.members.push(this.theForm);
       }
     }
