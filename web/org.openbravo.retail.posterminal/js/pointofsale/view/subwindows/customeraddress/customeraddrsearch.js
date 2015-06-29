@@ -233,19 +233,21 @@ enyo.kind({
       };
     }
     criteria.bpartner = this.bPartnerId;
-    var filterIdentifier = {
-      columns: ['_identifier'],
-      operator: 'startsWith',
-      value: filter
-    },
-        bPartnerId = {
-        columns: ['bpartner'],
-        operator: 'equals',
-        value: this.bPartnerId,
-        isId: true
-        };
-    var hgVolCriteria = [filterIdentifier, bPartnerId];
-    criteria.hgVolFilters = hgVolCriteria;
+    if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.customer', true)) {
+      var filterIdentifier = {
+        columns: ['_identifier'],
+        operator: 'startsWith',
+        value: filter
+      },
+          bPartnerId = {
+          columns: ['bpartner'],
+          operator: 'equals',
+          value: this.bPartnerId,
+          isId: true
+          };
+      var hgVolCriteria = [filterIdentifier, bPartnerId];
+      criteria.hgVolFilters = hgVolCriteria;
+    }
     OB.Dal.find(OB.Model.BPLocation, criteria, successCallbackBPsLoc, errorCallback);
     return true;
   },
