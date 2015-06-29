@@ -212,7 +212,6 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
     }
     updateOrCreateCashupInfo(cashUpId, jsonCashup, cashUpDate);
     OBDal.getInstance().flush();
-    OBDal.getInstance().getConnection().commit();
     return cashUp;
   }
 
