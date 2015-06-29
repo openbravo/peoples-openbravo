@@ -38,6 +38,7 @@
         this.set('net', attributes.net);
         this.set('promotions', attributes.promotions);
         this.set('priceIncludesTax', attributes.priceIncludesTax);
+        this.set('description', attributes.description);
         if (!attributes.grossListPrice && attributes.product && _.isNumber(attributes.priceList)) {
           this.set('grossListPrice', attributes.priceList);
         }
@@ -2344,6 +2345,7 @@
                 price: price,
                 priceList: prod.get('listPrice'),
                 promotions: iter.promotions,
+                description: iter.description,
                 priceIncludesTax: order.get('priceIncludesTax'),
                 warehouse: {
                   id: iter.warehouse,

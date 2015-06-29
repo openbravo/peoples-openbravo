@@ -515,6 +515,9 @@ enyo.kind({
   reactivateQuotation: function () {
     this.model.get('order').reactivateQuotation();
     this.model.get('orderList').saveCurrent();
+    if (this.model.get('order').get('isEditable') && this.model.get('order').get('isQuotation')) {
+      this.$.multiColumn.$.rightPanel.$.toolbarpane.$.edit.$.editTabContent.$.actionButtonsContainer.$.smallButton.show();
+    }
     return true;
   },
   rejectQuotation: function () {
