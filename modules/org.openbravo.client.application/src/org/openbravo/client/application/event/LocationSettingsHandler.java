@@ -49,8 +49,7 @@ public class LocationSettingsHandler extends EntityPersistenceEventObserver {
     return entities;
   }
 
-  public void onUpdate(@Observes
-  EntityUpdateEvent event) {
+  public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -59,8 +58,7 @@ public class LocationSettingsHandler extends EntityPersistenceEventObserver {
         instanceCountry.getDateformat());
   }
 
-  public void onSave(@Observes
-  EntityNewEvent event) {
+  public void onSave(@Observes EntityNewEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -69,13 +67,13 @@ public class LocationSettingsHandler extends EntityPersistenceEventObserver {
         instanceCountry.getDateformat());
   }
 
-  public void onDelete(@Observes
-  EntityDeleteEvent event) {
+  public void onDelete(@Observes EntityDeleteEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
   }
 
+  @SuppressWarnings("unused")
   private void checkCorrectValues(String numericmask, String datetimeformat, String dateformat) {
     if (numericmask != null) {
       if (checkNumericMask(numericmask)) {
