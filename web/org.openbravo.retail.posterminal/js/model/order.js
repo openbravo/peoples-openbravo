@@ -2021,16 +2021,16 @@
         });
         linesCreated = true;
       }
-      this.set({
-        'skipApplyPromotions': localSkipApplyPromotions
-      }, {
-        silent: true
-      });
       this.get('lines').forEach(function (l) {
         l.calculateGross();
       });
       this.calculateGross();
       this.trigger('promotionsUpdated');
+      this.set({
+        'skipApplyPromotions': localSkipApplyPromotions
+      }, {
+        silent: true
+      });
     },
 
 
