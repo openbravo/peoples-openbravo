@@ -92,6 +92,8 @@
 <!--2700A962BC484D4C9B3E30B1C3C66BFB-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--2700A962BC484D4C9B3E30B1C3C66BFB-->  <HQLWHERECLAUSE><![CDATA[e.status in ('RPR', 'PPM') and e.amount <>0 and exists ( select 1 from FinancialMgmtFinAccPaymentMethod as  fapm join fapm.account as fa where fapm.paymentMethod = e.paymentMethod and fa.id = @FIN_Financial_Account.id@ and (case when e.receipt = true then fapm.payinAllow else fapm.payoutAllow end) = true and fa.currency = e.account.currency) and not exists (select 1 from FIN_Finacc_Transaction as ft where e = ft.finPayment) and AD_ISORGINCLUDED(e.organization.id, @FIN_Financial_Account.organization@, e.client.id)<>-1]]></HQLWHERECLAUSE>
 <!--2700A962BC484D4C9B3E30B1C3C66BFB-->  <HQLORDERBYCLAUSE><![CDATA[paymentDate, documentNo]]></HQLORDERBYCLAUSE>
+<!--2700A962BC484D4C9B3E30B1C3C66BFB-->  <HQLFILTERCLAUSE><![CDATA[e.account.id = @FIN_Financial_Account.id@]]></HQLFILTERCLAUSE>
+<!--2700A962BC484D4C9B3E30B1C3C66BFB-->  <FILTERNAME><![CDATA[Payments are filtered by the selected Financial Account]]></FILTERNAME>
 <!--2700A962BC484D4C9B3E30B1C3C66BFB-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--2700A962BC484D4C9B3E30B1C3C66BFB-->  <DISABLE_PARENT_KEY_PROPERTY><![CDATA[N]]></DISABLE_PARENT_KEY_PROPERTY>
 <!--2700A962BC484D4C9B3E30B1C3C66BFB-->  <ISREADONLYTREE><![CDATA[N]]></ISREADONLYTREE>

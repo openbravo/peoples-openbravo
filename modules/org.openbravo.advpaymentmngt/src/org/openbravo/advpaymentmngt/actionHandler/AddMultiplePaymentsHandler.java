@@ -33,6 +33,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
+import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.service.db.DbUtility;
 import org.openbravo.service.json.JsonUtils;
@@ -51,20 +52,21 @@ public class AddMultiplePaymentsHandler extends BaseProcessActionHandler {
       final JSONArray selectedPayments = jsonparams.getJSONObject("payments").getJSONArray(
           "_selection");
       final Date statementDate = jsDateFormat.parse(jsonparams.getString("statementDate"));
+      final String strAccountId = jsonData.getString("Fin_Financial_Account_ID");
 
-      int selectedInvoiceLinesLength = selectedPayments.length();
-      if (selectedInvoiceLinesLength == 0) {
+      int selectedPaymentsLength = selectedPayments.length();
+      if (selectedPaymentsLength == 0) {
         // Validation error: No lines selected
         return getErrorMessage(OBMessageUtils.messageBD("APRM_NO_PAYMENTS_SELECTED"));
       }
 
-      for (int i = 0; i < selectedInvoiceLinesLength; i++) {
+      for (int i = 0; i < selectedPaymentsLength; i++) {
         final JSONObject paymentJS = selectedPayments.getJSONObject(i);
-        createAndProcessTransactionFromPayment(paymentJS, statementDate);
+        createAndProcessTransactionFromPayment(paymentJS, statementDate, strAccountId);
       }
       // Success Message
       return getSuccessMessage(String.format(
-          OBMessageUtils.messageBD("APRM_MULTIPLE_TRANSACTIONS_ADDED"), selectedInvoiceLinesLength));
+          OBMessageUtils.messageBD("APRM_MULTIPLE_TRANSACTIONS_ADDED"), selectedPaymentsLength));
 
     } catch (Exception e) {
       OBDal.getInstance().rollbackAndClose();
@@ -85,15 +87,20 @@ public class AddMultiplePaymentsHandler extends BaseProcessActionHandler {
    * Creates a new transaction from the payment and then it processes the transaction
    */
   private void createAndProcessTransactionFromPayment(final JSONObject paymentJS,
-      final Date transactionDate) throws JSONException {
+      final Date transactionDate, String strAccountId) throws JSONException {
+
     try {
       OBContext.setAdminMode(true);
       final String paymentId = paymentJS.getString("id");
       log.debug("Creating transaction for FIN_Payment_ID: " + paymentId);
       final FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, paymentId);
+      FIN_FinancialAccount account = OBDal.getInstance().get(FIN_FinancialAccount.class,
+          strAccountId);
+
       if (payment != null) {
         final FIN_FinaccTransaction transaction = TransactionsDao.createFinAccTransaction(payment);
         transaction.setTransactionDate(transactionDate);
+        transaction.setAccount(account);
         FIN_TransactionProcess.doTransactionProcess(ACTION_PROCESS_TRANSACTION, transaction);
       }
     } finally {
