@@ -346,10 +346,15 @@ enyo.kind({
   i18nLabel: 'OBPOS_LblEdit',
   events: {
     onTabChange: '',
-    onRightToolbarDisabled: ''
+    onRightToolbarDisabled: '',
+    onDisableUserInterface: '',
+    onEnableUserInterface: '',
+    onFinishServiceProposal: '',
+    onToggleLineSelection: ''
   },
   handlers: {
-    onRightToolbarDisabled: 'disabledButton'
+    onRightToolbarDisabled: 'disabledButton',
+    onManageServiceProposal: 'manageServiceProposal'
   },
   init: function (model) {
     this.model = model;
@@ -363,15 +368,40 @@ enyo.kind({
   disabledButton: function (inSender, inEvent) {
     this.setDisabled(inEvent.status);
   },
+  manageServiceProposal: function (inSender, inEvent) {
+    OB.MobileApp.model.set('serviceSearchMode', inEvent.proposalType);
+    this.previousStatus = inEvent.previousStatus;
+    this.$.lbl.setContent('CONTINUE');
+    this.doDisableUserInterface();
+    this.setDisabled(false);
+  },
   tap: function () {
-    OB.MobileApp.view.scanningFocus(false);
-    if (!this.disabled) {
-      this.doTabChange({
-        tabPanel: this.tabPanel,
-        keyboard: 'toolbarscan',
-        edit: true
-      });
+    if (OB.MobileApp.model.get('serviceSearchMode') === 'mandatory') {
+      OB.MobileApp.model.unset('serviceSearchMode');
+      this.$.lbl.setContent('EDIT');
+      this.doEnableUserInterface();
+      this.doToggleLineSelection({
+          status: false
+        });
+      this.restoreStatus();
+    } else {
+      OB.MobileApp.view.scanningFocus(false);
+      if (!this.disabled) {
+        this.doTabChange({
+          tabPanel: this.tabPanel,
+          keyboard: 'toolbarscan',
+          edit: true
+        });
+      }
     }
+  },
+  restoreStatus: function () {
+    this.doTabChange({
+      tabPanel: this.previousStatus.tab
+    });
+    this.doFinishServiceProposal({
+      status: this.previousStatus
+    });
   }
 });
 

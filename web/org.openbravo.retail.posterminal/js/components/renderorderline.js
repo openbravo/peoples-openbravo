@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, moment, enyo */
+/*global OB, moment, enyo, OB_UI_SearchServicesFilter */
 
 enyo.kind({
   kind: 'OB.UI.listItemButton',
@@ -78,7 +78,7 @@ enyo.kind({
     }
     if (this.model.get('product').get('characteristicDescription')) {
       this.createComponent({
-        style: 'display: block; float: left; ',
+        style: 'display: block; ',
         components: [{
           content: OB.UTIL.getCharacteristicValues(this.model.get('product').get('characteristicDescription')),
           attributes: {
@@ -114,12 +114,12 @@ enyo.kind({
       }, this);
 
     }
-    if (this.model.get('relatedProducts')) {
-      enyo.forEach(this.model.get('relatedProducts'), function (prod) {
+    if (this.model.get('relatedLines')) {
+      enyo.forEach(this.model.get('relatedLines'), function (line) {
         this.createComponent({
           style: 'display: block;',
           components: [{
-            content: 'for ' + (prod.get ? prod.get('_identifier') : prod._identifier),
+            content: 'for ' + (line.get ? line.get('product').get('_identifier') : line.product._identifier),
             attributes: {
               style: 'float: left; width: 80%; font-size: 14px; font-style: italic'
             }
@@ -128,6 +128,20 @@ enyo.kind({
           }]
         });
       }, this);
+    }
+    if (this.model.get('hasRelatedServices')) {
+      me.createComponent({
+        kind: 'OB.UI.ShowServicesButton',
+        name: 'showServicesButton'
+      });
+    } else if (!this.model.has('hasRelatedServices')) {
+      this.model.on('showServicesButton', function () {
+        me.model.off('showServicesButton');
+        me.createComponent({
+          kind: 'OB.UI.ShowServicesButton',
+          name: 'showServicesButton'
+        }).render();
+      });
     }
     OB.UTIL.HookManager.executeHooks('OBPOS_RenderOrderLine', {
       orderline: this
@@ -191,25 +205,36 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ShowServicesButton',
   style: 'float: right; display: block;',
+  handlers: {
+    onRightToolbarDisabled: 'toggleVisibility'
+  },
   tap: function (inSender, inEvent) {
     var product = this.owner.model.get('product');
     if (product) {
-      // OB.UI.SearchProductCharacteristic.prototype.filtersCustomClear();
-      // OB.UI.SearchProductCharacteristic.prototype.filtersCustomAdd(new OB_UI_SearchServicesFilter({
-      //   text: product.get("_identifier"),
-      //   productId: product.id,
-      //   orderline: this.owner.model
-      // }));
+      OB.UI.SearchProductCharacteristic.prototype.filtersCustomClear();
+      OB.UI.SearchProductCharacteristic.prototype.filtersCustomAdd(new OB_UI_SearchServicesFilter({
+        text: product.get("_identifier"),
+        productId: product.id,
+        productList: null,
+        orderline: this.owner.model,
+        orderlineList: null
+      }));
       var me = this;
       setTimeout(function () {
         me.bubble('onTabChange', {
           tabPanel: 'searchCharacteristic'
         });
-        //me.bubble('onSelectFilter', {});
-        me.owner.model.set("obposServiceProposed", true, {
-          silent: true
-        });
+        me.bubble('onSelectFilter', {});
+        me.owner.model.set("obposServiceProposed", true);
       }, 1);
+    }
+  },
+  toggleVisibility: function (inSender, inEvent) {
+    this.isVisible = !inEvent.status;
+    if (this.isVisible) {
+      this.show();
+    } else {
+      this.hide();
     }
   },
   initComponents: function () {
@@ -220,6 +245,9 @@ enyo.kind({
     } else {
       this.addRemoveClass('iconServices_unreviewed', true);
       this.addRemoveClass('iconServices_reviewed', false);
+    }
+    if (OB.MobileApp.model.get('serviceSearchMode') === 'mandatory') {
+      this.hide();
     }
   }
 });

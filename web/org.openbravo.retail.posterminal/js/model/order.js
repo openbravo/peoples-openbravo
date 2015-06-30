@@ -928,7 +928,52 @@
         qtyToAdd: qty,
         options: options,
         newLine: newLine
-      }, function (args) {});
+      }, function (args) {
+        if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.product', true)) {
+          var process = new OB.DS.Process('org.openbravo.retail.posterminal.process.HasServices');
+          var params = {},
+              date = new Date(),
+              i, coll;
+          params.terminalTime = date;
+          params.terminalTimeOffset = date.getTimezoneOffset();
+          process.exec({
+            product: args.productToAdd.get('id'),
+            productCategory: args.productToAdd.get('productCategory'),
+            parameters: params
+          }, function (data, message) {
+            if (data && data.exception) {
+              //ERROR or no connection
+              OB.error(OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices'));
+            } else if (data) {
+              if (data.hasservices) {
+                args.orderline.set('hasRelatedServices', true);
+                args.orderline.trigger('showServicesButton');
+              } else {
+                args.orderline.set('hasRelatedServices', false);
+              }
+              if (data.mandatoryservices) {
+                //preprocess mandatory services to transform them into Product models
+                coll = new Backbone.Collection();
+                for (i = 0; i < data.mandatoryservices.length; i++) {
+                  coll.add(OB.Dal.transform(OB.Model.Product, data.mandatoryservices[i]));
+                }
+                //open the search tab with the returned products
+                args.receipt.trigger('showProductList', coll, args.orderline, 'mandatory');
+              }
+            }
+          });
+        } //else {
+          //non-high volumes: websql
+          //          OB.Dal.find(OB.Model.Product, criteria, function (data) {
+          //            if (data && data.length > 0) {
+          //              args.orderline.set('hasRelatedServices', true);
+          //              args.orderline.trigger('showServicesButton')
+          //            } else {
+          //              args.orderline.set('hasRelatedServices', false);
+          //            }
+          //          });
+        //}
+      });
     },
 
     _drawLinesDistribution: function (data) {

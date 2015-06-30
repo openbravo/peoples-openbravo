@@ -19,6 +19,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -73,6 +74,7 @@ import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.order.OrderLineOffer;
 import org.openbravo.model.common.order.OrderTax;
+import org.openbravo.model.common.order.OrderlineServiceRelation;
 import org.openbravo.model.common.plm.AttributeSetInstance;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
@@ -114,6 +116,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   HashMap<String, DocumentType> paymentDocTypes = new HashMap<String, DocumentType>();
   HashMap<String, DocumentType> invoiceDocTypes = new HashMap<String, DocumentType>();
   HashMap<String, DocumentType> shipmentDocTypes = new HashMap<String, DocumentType>();
+  HashMap<String, JSONArray> orderLineServiceList = new HashMap<String, JSONArray>();
   String paymentDescription = null;
   boolean newLayaway = false;
   boolean notpaidLayaway = false;
@@ -228,6 +231,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           OBDal.getInstance().save(order);
           lineReferences = new ArrayList<OrderLine>();
           createOrderLines(order, jsonorder, orderlines, lineReferences);
+          if (orderLineServiceList.size() > 0) {
+            createLinesForServiceProduct();
+          }
         }
         if (log.isDebugEnabled()) {
           t112 = System.currentTimeMillis();
@@ -1073,6 +1079,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
       OrderLine orderline = OBProvider.getInstance().get(OrderLine.class);
       JSONObject jsonOrderLine = orderlines.getJSONObject(i);
+      if (!jsonOrderLine.has("preserveId") || jsonOrderLine.getBoolean("preserveId")) {
+        orderline.setId(jsonOrderLine.getString("id"));
+        orderline.setNewOBObject(true);
+      }
 
       JSONPropertyToEntity.fillBobFromJSON(ModelProvider.getInstance().getEntity(OrderLine.class),
           orderline, jsonorder, jsonorder.getLong("timezoneOffset"));
@@ -1093,6 +1103,15 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       orderline.setLineNo((long) ((i + 1) * 10));
       order.getOrderLineList().add(orderline);
       OBDal.getInstance().save(orderline);
+
+      if ("S".equals(orderline.getProduct().getProductType())) {
+        // related can be null
+        if (jsonOrderLine.has("relatedLines")) {
+          orderLineServiceList.put(orderline.getId(), jsonOrderLine.getJSONArray("relatedLines"));
+        } else {
+          orderLineServiceList.put(orderline.getId(), null);
+        }
+      }
 
       JSONObject taxes = jsonOrderLine.getJSONObject("taxLines");
       @SuppressWarnings("unchecked")
@@ -1144,6 +1163,35 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           promotion.setLineNo((long) ((p + 1) * 10));
           promotion.setSalesOrderLine(orderline);
           orderline.getOrderLineOfferList().add(promotion);
+        }
+      }
+    }
+  }
+
+  protected void createLinesForServiceProduct() throws JSONException {
+    Iterator<Entry<String, JSONArray>> orderLineIterator = orderLineServiceList.entrySet()
+        .iterator();
+    while (orderLineIterator.hasNext()) {
+      Entry<String, JSONArray> olservice = orderLineIterator.next();
+      OrderLine orderLine = OBDal.getInstance().get(OrderLine.class, olservice.getKey());
+      JSONArray relatedLines = olservice.getValue();
+      if (relatedLines != null) {
+        for (int i = 0; i < relatedLines.length(); i++) {
+          OrderlineServiceRelation olServiceRelation = OBProvider.getInstance().get(
+              OrderlineServiceRelation.class);
+          JSONObject relatedJsonOrderLine = relatedLines.getJSONObject(i);
+
+          olServiceRelation.setActive(true);
+          olServiceRelation.setOrganization(orderLine.getOrganization());
+          olServiceRelation.setCreatedBy(orderLine.getCreatedBy());
+          olServiceRelation.setCreationDate(orderLine.getCreationDate());
+          olServiceRelation.setAmount(BigDecimal.ZERO);
+          olServiceRelation.setUpdated(orderLine.getUpdated());
+          olServiceRelation.setUpdatedBy(orderLine.getUpdatedBy());
+          olServiceRelation.setSalesOrderLine(orderLine);
+          olServiceRelation.setOrderlineRelated(OBDal.getInstance().get(OrderLine.class,
+              relatedJsonOrderLine.get("id")));
+          OBDal.getInstance().save(olServiceRelation);
         }
       }
     }

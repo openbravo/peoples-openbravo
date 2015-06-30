@@ -53,6 +53,7 @@ enyo.kind({
     onDiscountsModeFinished: 'discountsModeFinished',
     onDisableLeftToolbar: 'leftToolbarDisabled',
     onDisableBPSelection: 'BPSelectionDisabled',
+    onDisableBPLocSelection: 'BPLocSelectionDisabled',
     onDisableNewBP: 'newBPDisabled',
     onDisableNewBPLoc: 'newBPLocDisabled',
     onDisableOrderSelection: 'orderSelectionDisabled',
@@ -77,7 +78,12 @@ enyo.kind({
     onSelectFilter: 'selectFilter',
     onShowLeftHeader: 'doShowLeftHeader',
     onWarehouseSelected: 'warehouseSelected',
-    onClearUserInput: 'clearUserInput'
+    onClearUserInput: 'clearUserInput',
+    onManageServiceProposal: 'manageServiceProposal',
+    onDisableUserInterface: 'disableUserInterface',
+    onEnableUserInterface: 'enableUserInterface',
+    onToggleLineSelection: 'toggleLineSelection',
+    onFinishServiceProposal: 'finishServiceProposal'
   },
   events: {
     onShowPopup: '',
@@ -582,6 +588,9 @@ enyo.kind({
   BPSelectionDisabled: function (inSender, inEvent) {
     this.waterfall('onBPSelectionDisabled', inEvent);
   },
+  BPLocSelectionDisabled: function (inSender, inEvent) {
+    this.waterfall('onBPLocSelectionDisabled', inEvent);
+  },
   newBPDisabled: function (inSender, inEvent) {
     this.waterfall('onNewBPDisabled', inEvent);
   },
@@ -601,6 +610,9 @@ enyo.kind({
     this.BPSelectionDisabled(inSender, {
       status: true
     });
+    this.BPLocSelectionDisabled(inSender, {
+      status: true
+    });
     this.orderSelectionDisabled(inSender, {
       status: true
     });
@@ -611,6 +623,40 @@ enyo.kind({
       status: true
     });
     this.tabChange(inSender, inEvent);
+  },
+  disableUserInterface: function (inSender, inEvent) {
+    this.leftToolbarDisabled(inSender, {
+      status: true
+    });
+    this.rightToolbarDisabled(inSender, {
+      status: true
+    });
+    this.BPSelectionDisabled(inSender, {
+      status: true
+    });
+    this.BPLocSelectionDisabled(inSender, {
+      status: true
+    });
+    this.orderSelectionDisabled(inSender, {
+      status: true
+    });
+  },
+  enableUserInterface: function (inSender, inEvent) {
+    this.leftToolbarDisabled(inSender, {
+      status: false
+    });
+    this.rightToolbarDisabled(inSender, {
+      status: false
+    });
+    this.BPSelectionDisabled(inSender, {
+      status: false
+    });
+    this.BPLocSelectionDisabled(inSender, {
+      status: false
+    });
+    this.orderSelectionDisabled(inSender, {
+      status: false
+    });
   },
   tabChange: function (inSender, inEvent) {
 
@@ -646,6 +692,10 @@ enyo.kind({
     });
 
     this.BPSelectionDisabled(inSender, {
+      status: false
+    });
+
+    this.BPLocSelectionDisabled(inSender, {
       status: false
     });
 
@@ -934,6 +984,15 @@ enyo.kind({
   },
   clearUserInput: function (inSender, inEvent) {
     this.waterfall('onClearEditBox', inEvent);
+  },
+  manageServiceProposal: function (inSender, inEvent) {
+    this.waterfallDown('onManageServiceProposal', inEvent);
+  },
+  toggleLineSelection: function (inSender, inEvent) {
+    this.waterfall('onToggledLineSelection', inEvent);
+  },
+  finishServiceProposal: function (inSender, inEvent) {
+    this.waterfallDown('onFinishServiceProposal', inEvent);
   },
   init: function () {
     var receipt, receiptList, LeftColumnCurrentView;
