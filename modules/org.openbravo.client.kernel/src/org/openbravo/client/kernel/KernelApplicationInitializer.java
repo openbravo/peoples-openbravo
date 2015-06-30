@@ -57,7 +57,7 @@ public class KernelApplicationInitializer implements ApplicationInitializer {
   }
 
   private void checkDatabaseAndTomcatDateTime() {
-    // This method checks if both Tomcat and DB are configured to use the same time zone. If there
+    // This method checks if both Tomcat and DB are configured to use the same time. If there
     // is a difference bigger than a few seconds, it logs a warning.
     try {
       Date tomcatDate = new Date(); // Tomcat time
