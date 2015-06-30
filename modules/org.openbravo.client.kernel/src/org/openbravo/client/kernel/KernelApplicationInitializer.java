@@ -66,14 +66,15 @@ public class KernelApplicationInitializer implements ApplicationInitializer {
       if (dbDate != null) {
         long difference = Math.abs(tomcatDate.getTime() - dbDate.getTime());
         if (difference > THRESHOLD) {
-          log4j.warn("Tomcat and Database are in different timezones.");
+          log4j.warn("Tomcat and Database do not have the same time. Tomcat Time: " + tomcatDate
+              + ", Database Time: " + dbDate);
         }
       } else {
         log4j
-            .error("Received null as Database time. Not possible to check timezone differences with Tomcat.");
+            .error("Received null as Database time. Not possible to check time differences with Tomcat.");
       }
     } catch (Exception ex) {
-      log4j.error("Could not check if Tomcat and Database are in different timezones.", ex);
+      log4j.error("Could not check if Tomcat and Database have the same time.", ex);
     }
   }
 
