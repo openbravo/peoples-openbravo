@@ -49,6 +49,6 @@ OB.ProductServices.doRelateOrderLinesSelectionChanged = function (record, state,
       serviceProductId: serviceProductId
     }, {}, callback);
   } else {
-    orderLinesGrid.setEditValue(orderLinesGrid.getRecordIndex(record), 'amount', Number('0'));
+    orderLinesGrid.setEditValue(orderLinesGrid.getRecordIndex(record), 'amount', null);
   }
 };

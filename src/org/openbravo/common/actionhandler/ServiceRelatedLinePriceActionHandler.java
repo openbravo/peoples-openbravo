@@ -66,17 +66,18 @@ public class ServiceRelatedLinePriceActionHandler extends BaseActionHandler {
       final String strDateOrdered = record.getString("orderDate");
       Date orderDate = JsonUtils.createDateFormat().parse(strDateOrdered);
       final String strServiceProductId = jsonRequest.getString("serviceProductId");
-      final Product product = OBDal.getInstance().get(Product.class, strServiceProductId);
+      final Product serviceProduct = OBDal.getInstance().get(Product.class, strServiceProductId);
 
       BigDecimal amount = BigDecimal.ZERO;
 
-      if (!product.isPricerulebased()) {
+      if (!serviceProduct.isPricerulebased()) {
         result.put("amount", amount);
         return result;
       }
 
       final OrderLine relatedOrderLine = OBDal.getInstance().get(OrderLine.class, strOrderLineId);
       final int currencyPrecission = relatedOrderLine.getCurrency().getPricePrecision().intValue();
+      final Product product = relatedOrderLine.getProduct();
 
       // Get Service Price Rule Version of the Service Product for given date
       StringBuffer where = new StringBuffer();
@@ -95,8 +96,9 @@ public class ServiceRelatedLinePriceActionHandler extends BaseActionHandler {
       ServicePriceRule spr = (ServicePriceRule) sprvQry.uniqueResult();
 
       if (spr == null) {
-        throw new OBException("@ServicePriceRuleVersionNotFound@. @Product@: "
-            + product.getIdentifier() + ", @Date@: " + OBDateUtils.formatDate(orderDate));
+        throw new OBException("@ServicePriceRuleVersionNotFound@ " + serviceProduct.getIdentifier()
+            + ". @Product@: " + product.getIdentifier() + ", @Date@: "
+            + OBDateUtils.formatDate(orderDate));
       }
 
       if (relatedOrderLine.getSalesOrder().isPriceIncludesTax()) {
@@ -114,7 +116,7 @@ public class ServiceRelatedLinePriceActionHandler extends BaseActionHandler {
               RoundingMode.HALF_UP);
         }
       } else {
-        amount = getServiceRuleRangeAmount(spr.getId(), amount, orderDate, product,
+        amount = getServiceRuleRangeAmount(spr.getId(), amount, orderDate, serviceProduct, product,
             currencyPrecission);
       }
 
@@ -158,7 +160,7 @@ public class ServiceRelatedLinePriceActionHandler extends BaseActionHandler {
    * @return
    */
   private BigDecimal getServiceRuleRangeAmount(String sprId, BigDecimal lineamount, Date orderDate,
-      Product product, int currencyPrecission) {
+      Product serviceProduct, Product product, int currencyPrecission) {
 
     BigDecimal amount = BigDecimal.ZERO;
     StringBuffer where = new StringBuffer();
@@ -191,7 +193,7 @@ public class ServiceRelatedLinePriceActionHandler extends BaseActionHandler {
             RoundingMode.HALF_UP);
       }
     } else {
-      amount = getProductPrice(orderDate, sprr.getPriceList(), product);
+      amount = getProductPrice(orderDate, sprr.getPriceList(), serviceProduct, product);
     }
     return amount;
   }
@@ -207,8 +209,8 @@ public class ServiceRelatedLinePriceActionHandler extends BaseActionHandler {
    *          Product to search in Price List
    * @return
    */
-  private BigDecimal getProductPrice(Date date, PriceList priceList, Product product)
-      throws OBException {
+  private BigDecimal getProductPrice(Date date, PriceList priceList, Product serviceProduct,
+      Product product) throws OBException {
 
     StringBuffer where = new StringBuffer();
     where.append(" select pp." + ProductPrice.PROPERTY_LISTPRICE + " as listPrice");
@@ -222,14 +224,15 @@ public class ServiceRelatedLinePriceActionHandler extends BaseActionHandler {
         + PriceListVersion.PROPERTY_VALIDFROMDATE + " desc");
 
     Query ppQry = OBDal.getInstance().getSession().createQuery(where.toString());
-    ppQry.setParameter("productId", product.getId());
+    ppQry.setParameter("productId", serviceProduct.getId());
     ppQry.setParameter("date", date);
     ppQry.setParameter("pricelist", priceList);
 
     ppQry.setMaxResults(1);
     BigDecimal listPrice = (BigDecimal) ppQry.uniqueResult();
     if (listPrice == null) {
-      throw new OBException("@PriceListVersionNotFound@. @Product@: " + product.getIdentifier()
+      throw new OBException("@ServiceProductPriceListVersionNotFound@ "
+          + serviceProduct.getIdentifier() + ". @Product@: " + product.getIdentifier()
           + ", @Date@: " + OBDateUtils.formatDate(date));
     }
     return listPrice;

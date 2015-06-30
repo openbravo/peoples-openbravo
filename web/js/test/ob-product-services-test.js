@@ -162,7 +162,7 @@ QUnit.test('Services missing configuration data', function (assert) {
     record: record1,
     serviceProductId: serviceProductId1
   }, {}, function (response, data, request) {
-    QUnit.strictEqual(data.message.text, 'No active and valid service price rule version found. Product: Insurance, Date: 25-05-2015', 'No active and valid service price rule version found. Product: Insurance, Date: 25-05-2015');
+    QUnit.strictEqual(data.message.text, 'No active and valid service price rule version found for Service Product: Insurance. Product: Final good A, Date: 25-05-2015', 'No active and valid service price rule version found for Service Product: Insurance. Product: Final good A, Date: 25-05-2015');
     done();
   });
 
@@ -190,7 +190,7 @@ QUnit.test('Services missing configuration data', function (assert) {
     record: record3,
     serviceProductId: serviceProductId2
   }, {}, function (response, data, request) {
-    QUnit.strictEqual(data.message.text, 'No active and valid price list version found. Product: Warranty, Date: 25-05-2015', 'No active and valid price list version found. Product: Warranty, Date: 25-05-2015');
+    QUnit.strictEqual(data.message.text, 'No active and valid price list version found for Service Product: Warranty. Product: Final good B, Date: 25-05-2015', 'No active and valid price list version found for Service Product: Warranty. Product: Final good B, Date: 25-05-2015');
     done3();
   });
 });

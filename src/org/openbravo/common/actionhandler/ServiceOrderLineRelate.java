@@ -52,12 +52,6 @@ public class ServiceOrderLineRelate extends BaseProcessActionHandler {
 
       JSONArray selectedLines = jsonRequest.getJSONObject("_params").getJSONObject("grid")
           .getJSONArray("_selection");
-      if (selectedLines.length() == 0) {
-        errorMessage.put("severity", "error");
-        errorMessage.put("title", OBMessageUtils.messageBD("NotSelected"));
-        jsonRequest.put("message", errorMessage);
-        return jsonRequest;
-      }
 
       final Client serviceProductClient = (Client) OBDal.getInstance().getProxy(Client.ENTITY_NAME,
           jsonRequest.getString("inpadClientId"));
