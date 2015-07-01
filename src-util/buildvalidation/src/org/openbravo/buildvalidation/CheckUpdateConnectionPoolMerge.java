@@ -53,7 +53,6 @@ import org.openbravo.database.ConnectionProvider;
 public class CheckUpdateConnectionPoolMerge extends BuildValidation {
 
   private final static String PROPERTY_CONNECTION_POOL = "db.externalPoolClassName";
-  private final static String NEW_PROPERTY_CONNECTION_POOL = "db.pool.externalPoolClassName";
   private final static String PATH_CONNECTIONPOOL_PROPERTIES = "/WebContent/WEB-INF/connectionPool.properties";
   private final static String PATH_OPENBRAVO_PROPERTIES = "/config/Openbravo.properties";
   private final static String TARGET_VERSION = "1.0.26618";
@@ -79,8 +78,7 @@ public class CheckUpdateConnectionPoolMerge extends BuildValidation {
         if (versionOfModule == null) {
           File fileW = new File(openbravoPropertiesPath);
           // removes value of property that merge in Openbravo.properties
-          replaceProperty(fileW, openbravoPropertiesPath + SUFFIX_AUX,
-              NEW_PROPERTY_CONNECTION_POOL, "=");
+          replaceProperty(fileW, openbravoPropertiesPath + SUFFIX_AUX, PROPERTY_CONNECTION_POOL, "=");
           try {
             fileW.delete();
             File fileAux = new File(openbravoPropertiesPath + SUFFIX_AUX);
@@ -88,7 +86,7 @@ public class CheckUpdateConnectionPoolMerge extends BuildValidation {
           } catch (Exception ex) {
             log.error("Error renaming/deleting Openbravo.properties", ex);
           }
-          log.info("Removed value of " + NEW_PROPERTY_CONNECTION_POOL + " property.");
+          log.info("Removed value of " + PROPERTY_CONNECTION_POOL + " property.");
 
         } else {
           // Environments that previously used the connection pool module. It will try to retrieve
@@ -140,15 +138,10 @@ public class CheckUpdateConnectionPoolMerge extends BuildValidation {
     Properties openbravoProperties = new Properties();
     Properties connectionPoolProperties = new Properties();
     try {
-      // load openbravo.properties file
+      // load both files
       openbravoProperties.load(new FileInputStream(OpenbravoPropertiesPath));
-      File fileW = new File(OpenbravoPropertiesPath);
-
-      // Update new external pool name and delete old ones
-      updateNewPrefixOfProperty(openbravoProperties, OpenbravoPropertiesPath, fileW);
-
       connectionPoolProperties.load(new FileInputStream(connectionPoolPath));
-      // Then try to get original value for new properties from connection pool properties file
+
       Enumeration<?> propertiesConnectionPool = connectionPoolProperties.propertyNames();
       while (propertiesConnectionPool.hasMoreElements()) {
         String propName = (String) propertiesConnectionPool.nextElement();
@@ -164,6 +157,8 @@ public class CheckUpdateConnectionPoolMerge extends BuildValidation {
         } else {
           // replace value in Openbravo.properties by value in connectionPool.properties
           try {
+            File fileW = new File(OpenbravoPropertiesPath);
+
             if (!(origValue.equals(connectionPoolValue))) {
               replaceProperty(fileW, OpenbravoPropertiesPath + SUFFIX_AUX, PREFIX_POOL_PROPERTIES
                   + propName, "=" + connectionPoolValue);
@@ -185,52 +180,6 @@ public class CheckUpdateConnectionPoolMerge extends BuildValidation {
     }
     log.info("Merged connection pool properties with Openbravo.properties file.");
     return true;
-  }
-
-  /**
-   * Updates new external pool name and delete old one. New external pool name has the following
-   * prefix: db.pool.* and old ones has the following prefix: db.*
-   * 
-   * @param openbravoProperties
-   *          Full list of Openbravo.properties.
-   * @param OpenbravoPropertiesPath
-   *          Path of Openbravo.properties file.
-   * @param fileW
-   *          Openbravo.properties file.
-   */
-  private static void updateNewPrefixOfProperty(Properties openbravoProperties,
-      String OpenbravoPropertiesPath, File fileW) {
-    try {
-      String oldExternalPoolNameValue = openbravoProperties.getProperty(PROPERTY_CONNECTION_POOL) == null ? ""
-          : openbravoProperties.getProperty(PROPERTY_CONNECTION_POOL);
-      String newExternalPoolNameValue = openbravoProperties
-          .getProperty(NEW_PROPERTY_CONNECTION_POOL);
-
-      // select old external pool name if the new one is different
-      if (!(oldExternalPoolNameValue.equals(newExternalPoolNameValue))) {
-        replaceProperty(fileW, OpenbravoPropertiesPath + SUFFIX_AUX, NEW_PROPERTY_CONNECTION_POOL,
-            "=" + oldExternalPoolNameValue);
-        try {
-          fileW.delete();
-          File fileAux = new File(OpenbravoPropertiesPath + SUFFIX_AUX);
-          fileAux.renameTo(new File(OpenbravoPropertiesPath));
-        } catch (Exception ex) {
-          log.error("Error renaming/deleting Openbravo.properties", ex);
-        }
-      }
-
-      // now delete old external pool name because new one must be the only one
-      deleteProperty(fileW, OpenbravoPropertiesPath + SUFFIX_AUX, PROPERTY_CONNECTION_POOL);
-      try {
-        fileW.delete();
-        File fileAux = new File(OpenbravoPropertiesPath + SUFFIX_AUX);
-        fileAux.renameTo(new File(OpenbravoPropertiesPath));
-      } catch (Exception ex) {
-        log.error("Error renaming/deleting Openbravo.properties", ex);
-      }
-    } catch (Exception e1) {
-      log.error("Exception: ", e1);
-    }
   }
 
   /**
@@ -300,39 +249,7 @@ public class CheckUpdateConnectionPoolMerge extends BuildValidation {
   }
 
   /**
-   * This function deletes a property in a property file. FileR is used like auxiliary file to create
-   * new file.
-   *
-   * @param fileR
-   *          Property file to read property
-   * @param addressFilePath
-   *          Auxiliary file to delete property
-   * @param propertyName
-   *          Name of the property to search
-   */
-  private static void deleteProperty(File fileR, String addressFilePath, String propertyName)
-      throws Exception {
-    FileReader fr = new FileReader(fileR);
-    BufferedReader br = new BufferedReader(fr);
-    // auxiliary file to rewrite
-    File fileW = new File(addressFilePath);
-    FileWriter fw = new FileWriter(fileW);
-    // data for restore
-    String line;
-    while ((line = br.readLine()) != null) {
-      if (line.indexOf(propertyName) == 0) {
-        // delete new option
-        line = " ";
-      }
-      fw.write(line + "\n");
-    }
-    fr.close();
-    fw.close();
-    br.close();
-  }
-
-  /**
-   * This function searches an option in filePath file and returns the value of searchOption.
+   * Searches an option in filePath file and returns the value of searchOption.
    * 
    * Extract from original method in org.openbravo.configuration.ConfigurationApp.java. It is
    * necessary because build validations can not work with external methods.
