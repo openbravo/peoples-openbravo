@@ -868,7 +868,7 @@ isc.OBGrid.addProperties({
     var filterField, criterion, filterLength = criteria.criteria.length,
         fkFilterAuxCache = [],
         innerCache = [],
-        filterEditForm, cacheElement, i;
+        filterEditForm, cacheElement, i, j;
     if (!this.filterEditor || !this.filterEditor.getEditForm()) {
       return fkFilterAuxCache;
     }
@@ -879,11 +879,11 @@ isc.OBGrid.addProperties({
       innerCache = [];
       if (filterField && filterField.filterType === 'id') {
         if (criterion.criteria) {
-          for (i = 0; i < criterion.criteria.length; i++) {
+          for (j = 0; j < criterion.criteria.length; j++) {
             cacheElement = {};
-            cacheElement.fieldName = criterion.criteria[i].fieldName;
-            cacheElement[OB.Constants.ID] = criterion.criteria[i].value;
-            cacheElement[OB.Constants.IDENTIFIER] = filterField.getRecordIdentifierFromId(criterion.criteria[i].value);
+            cacheElement.fieldName = criterion.criteria[j].fieldName;
+            cacheElement[OB.Constants.ID] = criterion.criteria[j].value;
+            cacheElement[OB.Constants.IDENTIFIER] = filterField.getRecordIdentifierFromId(criterion.criteria[j].value);
             innerCache.add(cacheElement);
           }
         } else {
