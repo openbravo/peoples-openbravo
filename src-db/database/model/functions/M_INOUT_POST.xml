@@ -70,7 +70,6 @@
     Cur_OrderLine RECORD;
     Cur_Lines RECORD;
     Cur_Reservation RECORD;
-    Cur_ReservationStock RECORD;
     --
     v_Result NUMBER:=1;
     v_AD_Org_ID VARCHAR2(32);
@@ -1160,7 +1159,7 @@
 	    LOOP
 	      IF (Cur_Reservation.Res_Status = 'CL') THEN
 
-		-- Get the ordered quantity from de order line
+		-- Get the ordered quantity from the order line
 	        SELECT qtyordered
 	        INTO v_qtyordered
 	        FROM C_ORDERLINE
@@ -1170,44 +1169,39 @@
 	        INSERT INTO M_RESERVATION (
 		  m_reservation_id, ad_client_id, ad_org_id, isactive,
 		  created, createdby, updated, updatedby,
-		  m_product_id, quantity, c_uom_id, c_orderline_id, 
+		  m_product_id, quantity, c_uom_id, c_orderline_id,
 		  ad_user_id, c_bpartner_id, m_warehouse_id, m_attributesetinstance_id, m_locator_id,
 		  res_status, res_process, managereservation_pe, reservedgoodmnt_pe
 	        ) VALUES (
 		  v_uuid, Cur_Reservation.ad_client_id, Cur_Reservation.ad_org_id, 'Y',
 		  now(), v_user, now(), v_user,
-		  Cur_Reservation.m_product_id, v_qtyordered, Cur_Reservation.c_uom_id, Cur_Reservation.c_orderline_id, 
-		  Cur_Reservation.ad_user_id, Cur_Reservation.c_bpartner_id, Cur_Reservation.m_warehouse_id, 
-		  Cur_Reservation.m_attributesetinstance_id, Cur_Reservation.m_locator_id, 'DR', 'PR', 
+		  Cur_Reservation.m_product_id, v_qtyordered, Cur_Reservation.c_uom_id, Cur_Reservation.c_orderline_id,
+		  Cur_Reservation.ad_user_id, Cur_Reservation.c_bpartner_id, Cur_Reservation.m_warehouse_id,
+		  Cur_Reservation.m_attributesetinstance_id, Cur_Reservation.m_locator_id, 'DR', 'PR',
 		  Cur_Reservation.managereservation_pe, Cur_Reservation.reservedgoodmnt_pe
 	        );
 
-		-- Add a reservation stock with the ordered quantity
-  	        FOR Cur_ReservationStock IN
-                  (SELECT *
-                  FROM M_RESERVATION_STOCK
-                  WHERE M_RESERVATION_STOCK.M_Reservation_ID=Cur_Reservation.M_Reservation_ID
-                  AND IsActive='Y')
-	        LOOP
-	          INSERT INTO M_RESERVATION_STOCK (
-  	            m_reservation_stock_id, ad_client_id, ad_org_id, isactive,
-		    created, createdby, updated, updatedby,
-		    m_reservation_id, c_orderline_id, quantity, isallocated,
-		    m_locator_id, m_attributesetinstance_id
-	          ) VALUES (
-  		    get_uuid(), Cur_ReservationStock.ad_client_id, Cur_ReservationStock.ad_org_id, 'Y',
-		    now(), v_user, now(), v_user,
-		    v_uuid, Cur_ReservationStock.c_orderline_id, v_qtyordered, Cur_ReservationStock.isallocated, 
-		    Cur_ReservationStock.m_locator_id, Cur_ReservationStock.m_attributesetinstance_id
-	          );
-	        END LOOP;	
-	        
-	        -- Process the reservation    	        
+           -- Add a reservation stock with the ordered quantity
+      	   INSERT INTO M_RESERVATION_STOCK (
+     	      m_reservation_stock_id, ad_client_id, ad_org_id, isactive,
+   	        created, createdby, updated, updatedby,
+		        m_reservation_id, c_orderline_id, quantity, isallocated,
+		        m_locator_id, m_attributesetinstance_id
+	        )
+          SELECT get_uuid(), ad_client_id, ad_org_id, 'Y',
+            now(), v_user, now(), v_user,
+            v_uuid, c_orderline_id, v_qtyordered, isallocated,
+            m_locator_id, m_attributesetinstance_id
+          FROM M_RESERVATION_STOCK
+          WHERE M_RESERVATION_STOCK.M_Reservation_ID=Cur_Reservation.M_Reservation_ID
+          AND IsActive='Y';
+
+	        -- Process the reservation
 	        M_RESERVATION_POST(null, v_uuid, 'PR', v_user);
-	        
+
 	      END IF;
 	    END LOOP;
-	    
+
           END LOOP;
           
           -- Post Reversal
