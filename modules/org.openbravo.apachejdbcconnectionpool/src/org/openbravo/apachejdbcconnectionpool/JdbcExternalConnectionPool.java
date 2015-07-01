@@ -97,31 +97,33 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
 
     Properties poolPropertiesConfig = new Properties();
     poolPropertiesConfig = OBPropertiesProvider.getInstance().getOpenbravoProperties();
-    poolProperties.setInitialSize(getIntProperty(poolPropertiesConfig, "initialSize", "5"));
-    poolProperties.setMaxActive(getIntProperty(poolPropertiesConfig, "maxActive", "30"));
-    poolProperties.setMaxIdle(getIntProperty(poolPropertiesConfig, "maxIdle", "30"));
-    poolProperties.setMinIdle(getIntProperty(poolPropertiesConfig, "minIdle", "5"));
-    poolProperties.setMaxWait(getIntProperty(poolPropertiesConfig, "maxWait", "30"));
+    poolProperties
+        .setInitialSize(getIntProperty(poolPropertiesConfig, "db.pool.initialSize", "10"));
+    poolProperties.setMaxActive(getIntProperty(poolPropertiesConfig, "db.pool.maxActive", "100"));
+    poolProperties.setMaxIdle(getIntProperty(poolPropertiesConfig, "db.pool.maxIdle", "30"));
+    poolProperties.setMinIdle(getIntProperty(poolPropertiesConfig, "db.pool.minIdle", "10"));
+    poolProperties.setMaxWait(getIntProperty(poolPropertiesConfig, "db.pool.maxWait", "30000"));
     poolProperties.setTimeBetweenEvictionRunsMillis(getIntProperty(poolPropertiesConfig,
-        "timeBetweenEvictionRunsMillis", "30000"));
+        "db.pool.timeBetweenEvictionRunsMillis", "30000"));
     poolProperties.setMinEvictableIdleTimeMillis(getIntProperty(poolPropertiesConfig,
-        "minEvictableIdleTimeMillis", "30000"));
-    poolProperties.setRemoveAbandoned(getBooleanProperty(poolPropertiesConfig, "removeAbandoned",
-        "true"));
+        "db.pool.minEvictableIdleTimeMillis", "60000"));
+    poolProperties.setRemoveAbandoned(getBooleanProperty(poolPropertiesConfig,
+        "db.pool.removeAbandoned", "false"));
     poolProperties.setRemoveAbandonedTimeout(getIntProperty(poolPropertiesConfig,
-        "removeAbandonedTimeout", "60"));
-    poolProperties
-        .setLogAbandoned(getBooleanProperty(poolPropertiesConfig, "logAbandoned", "false"));
-    poolProperties.setJmxEnabled(getBooleanProperty(poolPropertiesConfig, "jmxEnabled", "true"));
-    poolProperties.setTestWhileIdle(getBooleanProperty(poolPropertiesConfig, "testWhileIdle",
+        "db.pool.removeAbandonedTimeout", "60"));
+    poolProperties.setLogAbandoned(getBooleanProperty(poolPropertiesConfig, "db.pool.logAbandoned",
         "false"));
-    poolProperties
-        .setTestOnBorrow(getBooleanProperty(poolPropertiesConfig, "testOnBorrow", "true"));
-    poolProperties
-        .setTestOnReturn(getBooleanProperty(poolPropertiesConfig, "testOnReturn", "false"));
-    poolProperties.setValidationInterval(getIntProperty(poolPropertiesConfig, "validationInterval",
-        "30000"));
-    poolProperties.setValidationQuery(poolPropertiesConfig.getProperty("validationQuery",
+    poolProperties.setJmxEnabled(getBooleanProperty(poolPropertiesConfig, "db.pool.jmxEnabled",
+        "true"));
+    poolProperties.setTestWhileIdle(getBooleanProperty(poolPropertiesConfig,
+        "db.pool.testWhileIdle", "false"));
+    poolProperties.setTestOnBorrow(getBooleanProperty(poolPropertiesConfig, "db.pool.testOnBorrow",
+        "true"));
+    poolProperties.setTestOnReturn(getBooleanProperty(poolPropertiesConfig, "db.pool.testOnReturn",
+        "false"));
+    poolProperties.setValidationInterval(getIntProperty(poolPropertiesConfig,
+        "db.pool.validationInterval", "30000"));
+    poolProperties.setValidationQuery(poolPropertiesConfig.getProperty("db.pool.validationQuery",
         "SELECT 1 FROM DUAL"));
     poolProperties.setJdbcInterceptors("org.apache.tomcat.jdbc.pool.interceptor.ConnectionState;"
         + "org.apache.tomcat.jdbc.pool.interceptor.StatementFinalizer;"
