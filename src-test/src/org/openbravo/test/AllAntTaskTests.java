@@ -22,6 +22,7 @@ package org.openbravo.test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.openbravo.base.weld.test.testinfrastructure.CdiInfrastructure;
+import org.openbravo.base.weld.test.testinfrastructure.ParameterizedCdi;
 import org.openbravo.erpCommon.info.ClassicSelectorTest;
 import org.openbravo.test.accounting.PostDocumentTest;
 import org.openbravo.test.accounting.RecordID2Test;
@@ -166,7 +167,8 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     ProcessSchedulingTest.class, //
 
     // cdi
-    CdiInfrastructure.class,
+    CdiInfrastructure.class, //
+    ParameterizedCdi.class,
 
 })
 public class AllAntTaskTests {
