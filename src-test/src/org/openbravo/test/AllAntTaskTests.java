@@ -22,6 +22,7 @@ package org.openbravo.test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.openbravo.base.weld.test.testinfrastructure.CdiInfrastructure;
+import org.openbravo.base.weld.test.testinfrastructure.DalPersistanceEventTest;
 import org.openbravo.base.weld.test.testinfrastructure.ParameterizedCdi;
 import org.openbravo.client.application.DynamicExpressionParser;
 import org.openbravo.client.application.test.ApplicationTest;
@@ -175,7 +176,8 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
 
     // cdi
     CdiInfrastructure.class, //
-    ParameterizedCdi.class,
+    ParameterizedCdi.class, //
+    DalPersistanceEventTest.class, //
 
     // client application
     ApplicationTest.class, //
