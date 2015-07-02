@@ -115,16 +115,19 @@ enyo.kind({
 
     }
     if (this.model.get('relatedLines')) {
-      enyo.forEach(this.model.get('relatedLines'), function (line) {
+      if (!this.$.relatedLinesContainer) {
         this.createComponent({
-          style: 'display: block;',
+          name: 'relatedLinesContainer',
+          style: 'display: block; float: left; width: 80%;'
+        });
+      }
+      enyo.forEach(this.model.get('relatedLines'), function (line) {
+        this.$.relatedLinesContainer.createComponent({
           components: [{
-            content: 'for ' + (line.get ? line.get('product').get('_identifier') : line.product._identifier),
+            content: 'for ' + line.productName,
             attributes: {
-              style: 'float: left; width: 80%; font-size: 14px; font-style: italic'
+              style: 'font-size: 14px; font-style: italic'
             }
-          }, {
-            style: 'clear: both;'
           }]
         });
       }, this);
@@ -213,6 +216,7 @@ enyo.kind({
     if (product) {
       OB.UI.SearchProductCharacteristic.prototype.filtersCustomClear();
       OB.UI.SearchProductCharacteristic.prototype.filtersCustomAdd(new OB_UI_SearchServicesFilter({
+        filterName: 'Services_Filter',
         text: product.get("_identifier"),
         productId: product.id,
         productList: null,

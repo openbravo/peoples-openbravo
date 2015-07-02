@@ -62,7 +62,10 @@ enyo.kind({
 
     if (this.orderline) {
       this.orderline.set('preserveId', true);
-      productList.push(this.orderline);
+      productList.push({
+        orderlineId: this.orderline.get('id'),
+        productName: this.orderline.get('product').get('_identifier')
+      });
     }
 
     return {

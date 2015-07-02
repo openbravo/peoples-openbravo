@@ -200,6 +200,10 @@
     name: 'numberOfCopies',
     column: 'numberOfCopies',
     type: 'TEXT'
+  }, {
+    name: 'isLinkedToProduct',
+    column: 'isLinkedToProduct',
+    type: 'BOOL'
   }]);
 
   Product.addIndex([{

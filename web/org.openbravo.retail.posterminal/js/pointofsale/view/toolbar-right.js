@@ -381,8 +381,8 @@ enyo.kind({
       this.$.lbl.setContent('EDIT');
       this.doEnableUserInterface();
       this.doToggleLineSelection({
-          status: false
-        });
+        status: false
+      });
       this.restoreStatus();
     } else {
       OB.MobileApp.view.scanningFocus(false);
@@ -396,12 +396,19 @@ enyo.kind({
     }
   },
   restoreStatus: function () {
-    this.doTabChange({
-      tabPanel: this.previousStatus.tab
-    });
-    this.doFinishServiceProposal({
-      status: this.previousStatus
-    });
+    if (this.previousStatus.tab === 'scan') {
+      this.doTabChange({
+        tabPanel: this.previousStatus.tab,
+        keyboard: 'toolbarscan'
+      });
+    } else {
+      this.doTabChange({
+        tabPanel: this.previousStatus.tab
+      });
+      this.doFinishServiceProposal({
+        status: this.previousStatus
+      });
+    }
   }
 });
 

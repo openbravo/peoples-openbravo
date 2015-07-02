@@ -891,14 +891,28 @@
             options: options,
             attrs: attrs
           }, function (args) {
+            var mergeArrays;
             if (args && args.cancelOperation) {
               return;
             }
             if (args.line) {
               args.receipt.addUnit(args.line, args.qty);
               if (!_.isUndefined(args.attrs)) {
+                mergeArrays = function (arr1, arr2) {
+                  var i, res = [].concat(arr1);
+                  for (i = 0; i < arr2.length; i++) {
+                    if (!OB.UTIL.isObjectInArray(arr2[i], res)) {
+                      res.push(arr2[i]);
+                    }
+                  }
+                  return res;
+                };
                 _.each(_.keys(args.attrs), function (key) {
-                  args.line.set(key, attrs[key]);
+                  if (args.p.get('productType') === 'S' && key === 'relatedLines' && args.line.get('relatedLines')) {
+                    args.line.set('relatedLines', mergeArrays(args.line.get('relatedLines'), attrs[key]));
+                  } else {
+                    args.line.set(key, attrs[key]);
+                  }
                 });
               }
               args.line.trigger('selected', args.line);
@@ -929,40 +943,44 @@
         options: options,
         newLine: newLine
       }, function (args) {
-        if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.product', true)) {
-          var process = new OB.DS.Process('org.openbravo.retail.posterminal.process.HasServices');
-          var params = {},
-              date = new Date(),
-              i, coll;
-          params.terminalTime = date;
-          params.terminalTimeOffset = date.getTimezoneOffset();
-          process.exec({
-            product: args.productToAdd.get('id'),
-            productCategory: args.productToAdd.get('productCategory'),
-            parameters: params
-          }, function (data, message) {
-            if (data && data.exception) {
-              //ERROR or no connection
-              OB.error(OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices'));
-            } else if (data) {
-              if (data.hasservices) {
-                args.orderline.set('hasRelatedServices', true);
-                args.orderline.trigger('showServicesButton');
-              } else {
-                args.orderline.set('hasRelatedServices', false);
-              }
-              if (data.mandatoryservices) {
-                //preprocess mandatory services to transform them into Product models
-                coll = new Backbone.Collection();
-                for (i = 0; i < data.mandatoryservices.length; i++) {
-                  coll.add(OB.Dal.transform(OB.Model.Product, data.mandatoryservices[i]));
+        if (args.productToAdd.get('productType') !== 'S' && Math.sign(args.qtyToAdd * args.orderline.attributes.qty) !== -1) {
+          if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.product', true)) {
+            var process = new OB.DS.Process('org.openbravo.retail.posterminal.process.HasServices');
+            var params = {},
+                date = new Date(),
+                i, coll, prod;
+            params.terminalTime = date;
+            params.terminalTimeOffset = date.getTimezoneOffset();
+            process.exec({
+              product: args.productToAdd.get('id'),
+              productCategory: args.productToAdd.get('productCategory'),
+              parameters: params
+            }, function (data, message) {
+              if (data && data.exception) {
+                //ERROR or no connection
+                OB.error(OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices'));
+              } else if (data) {
+                if (data.hasservices) {
+                  args.orderline.set('hasRelatedServices', true);
+                  args.orderline.trigger('showServicesButton');
+                } else {
+                  args.orderline.set('hasRelatedServices', false);
                 }
-                //open the search tab with the returned products
-                args.receipt.trigger('showProductList', coll, args.orderline, 'mandatory');
+                if (data.mandatoryservices) {
+                  //preprocess mandatory services to transform them into Product models
+                  coll = new Backbone.Collection();
+                  for (i = 0; i < data.mandatoryservices.length; i++) {
+                    prod = OB.Dal.transform(OB.Model.Product, data.mandatoryservices[i]);
+                    if (prod.get('proposalType') === 'MP') {
+                      coll.add(OB.Dal.transform(OB.Model.Product, data.mandatoryservices[i]));
+                    }
+                  }
+                  //open the search tab with the returned products
+                  args.receipt.trigger('showProductList', coll, args.orderline, 'mandatory');
+                }
               }
-            }
-          });
-        } //else {
+            });
+          } //else {
           //non-high volumes: websql
           //          OB.Dal.find(OB.Model.Product, criteria, function (data) {
           //            if (data && data.length > 0) {
@@ -972,7 +990,8 @@
           //              args.orderline.set('hasRelatedServices', false);
           //            }
           //          });
-        //}
+          //}
+        }
       });
     },
 

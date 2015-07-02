@@ -155,6 +155,7 @@ public class ProductProperties extends ModelExtension {
           add(new HQLProperty("product.obposPrintrelatedattachm", "printRelatedAttachments"));
           add(new HQLProperty("product.obposNumberOfCopies", "numberOfCopies"));
           add(new HQLProperty("pli.bestseller", "bestseller"));
+          add(new HQLProperty("product.linkedToProduct", "isLinkedToProduct"));
           add(new HQLProperty("'false'", "ispack"));
           if (posPrecision != null && !"".equals(posPrecision)) {
             add(new HQLProperty("round(ppp.listPrice, " + posPrecision + ")", "listPrice"));

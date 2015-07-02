@@ -1190,7 +1190,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           olServiceRelation.setUpdatedBy(orderLine.getUpdatedBy());
           olServiceRelation.setSalesOrderLine(orderLine);
           olServiceRelation.setOrderlineRelated(OBDal.getInstance().get(OrderLine.class,
-              relatedJsonOrderLine.get("id")));
+              relatedJsonOrderLine.get("orderlineId")));
           OBDal.getInstance().save(olServiceRelation);
         }
       }
