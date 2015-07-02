@@ -23,6 +23,13 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.openbravo.base.weld.test.testinfrastructure.CdiInfrastructure;
 import org.openbravo.base.weld.test.testinfrastructure.ParameterizedCdi;
+import org.openbravo.client.application.DynamicExpressionParser;
+import org.openbravo.client.application.test.ApplicationTest;
+import org.openbravo.client.application.test.GenerateTypesJSTest;
+import org.openbravo.client.application.test.MenuTest;
+import org.openbravo.client.kernel.freemarker.test.FreemarkerTemplateProcessorTest;
+import org.openbravo.client.kernel.freemarker.test.GenerateComponentTest;
+import org.openbravo.client.kernel.freemarker.test.LabelTest;
 import org.openbravo.erpCommon.info.ClassicSelectorTest;
 import org.openbravo.test.accounting.PostDocumentTest;
 import org.openbravo.test.accounting.RecordID2Test;
@@ -169,6 +176,17 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     // cdi
     CdiInfrastructure.class, //
     ParameterizedCdi.class,
+
+    // client application
+    ApplicationTest.class, //
+    DynamicExpressionParser.class, //
+    GenerateTypesJSTest.class, //
+    MenuTest.class, //
+
+    // client kernel
+    FreemarkerTemplateProcessorTest.class, //
+    GenerateComponentTest.class, //
+    LabelTest.class
 
 })
 public class AllAntTaskTests {

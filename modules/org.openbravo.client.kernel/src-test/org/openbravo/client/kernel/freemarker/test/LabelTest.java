@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -67,6 +67,7 @@ public class LabelTest extends WeldBaseTest {
     final Module module = OBDal.getInstance().get(Module.class,
         kernelComponentProvider.getModule().getId());
     module.setInDevelopment(true);
+    OBDal.getInstance().flush();
 
     final String msgKeyWithTranslation = "OBCLKER_MSG_WITH_TRANSLATION";
     final String msgTextWithTranslation = "WITH TRANSLATION";
@@ -84,8 +85,8 @@ public class LabelTest extends WeldBaseTest {
     messageTrl.setMessage(messageWithTrl);
     messageTrl.setMessageText(msgTextTranslated);
     messageTrl.setTranslation(true);
-    messageTrl.setLanguage(OBDal.getInstance().get(Language.class,
-        OBContext.getOBContext().getLanguage().getId()));
+    messageTrl.setLanguage(
+        OBDal.getInstance().get(Language.class, OBContext.getOBContext().getLanguage().getId()));
     messageWithTrl.getADMessageTrlList().add(messageTrl);
     OBDal.getInstance().save(messageWithTrl);
 
@@ -98,8 +99,8 @@ public class LabelTest extends WeldBaseTest {
     OBDal.getInstance().flush();
 
     // generate the javascript and check if the above strings are present
-    final Component component = kernelComponentProvider.getComponent(
-        KernelConstants.LABELS_COMPONENT_ID, new HashMap<String, Object>());
+    final Component component = kernelComponentProvider
+        .getComponent(KernelConstants.LABELS_COMPONENT_ID, new HashMap<String, Object>());
 
     final String output = ComponentGenerator.getInstance().generate(component);
     System.err.println(output);
