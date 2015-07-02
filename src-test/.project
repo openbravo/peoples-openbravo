@@ -23,7 +23,7 @@
 		<link>
 			<name>client.kernel-test</name>
 			<type>2</type>
-			<location>/home/alostale/ws/projects/cdi-test/openbravo/modules/org.openbravo.client.kernel/src-test</location>
+			<location>WORKSPACE_LOC/openbravo/modules/org.openbravo.client.kernel/src-test</location>
 		</link>
 		<link>
 			<name>test-lib</name>
