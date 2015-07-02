@@ -797,7 +797,7 @@ public class DocFINFinAccTransaction extends AcctServer {
     if (payment != null) {
       if (!payment.getAccount().getCurrency().getId()
           .equalsIgnoreCase(payment.getCurrency().getId())) {
-        retValue = payment.getAmount();
+        retValue = payment.isReceipt() ? payment.getAmount() : payment.getAmount().negate();
       }
     }
     if (payment != null) {
@@ -816,7 +816,7 @@ public class DocFINFinAccTransaction extends AcctServer {
               ((DocLine_FINFinAccTransaction) p_lines[i]).DepositAmount);
           lineBalance = lineBalance.subtract(new BigDecimal(
               ((DocLine_FINFinAccTransaction) p_lines[i]).PaymentAmount));
-          retValue = retValue.add(lineBalance);
+          retValue = retValue.subtract(lineBalance);
         } else {
           BigDecimal lineBalance = payment.isReceipt() ? new BigDecimal(
               ((DocLine_FINFinAccTransaction) p_lines[i]).getAmount()) : new BigDecimal(
@@ -824,7 +824,7 @@ public class DocFINFinAccTransaction extends AcctServer {
           BigDecimal lineWriteoff = payment.isReceipt() ? new BigDecimal(
               ((DocLine_FINFinAccTransaction) p_lines[i]).getWriteOffAmt()) : new BigDecimal(
               ((DocLine_FINFinAccTransaction) p_lines[i]).getWriteOffAmt()).negate();
-          retValue = retValue.add(lineBalance).add(lineWriteoff);
+          retValue = retValue.subtract(lineBalance).subtract(lineWriteoff);
         }
       }
     } finally {
