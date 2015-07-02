@@ -34,6 +34,7 @@ import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.client.kernel.KernelInitializer;
 import org.openbravo.test.base.OBBaseTest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,10 +79,14 @@ public class WeldBaseTest extends OBBaseTest {
   @Inject
   private BeanManager beanManager;
 
-  /** sets static instance bean manager in WeldUtils so it is globally accessible */
+  /**
+   * sets static instance bean manager in WeldUtils so it is globally accessible and initializes
+   * kernel
+   */
   @Before
   public void setManager() {
     WeldUtils.setStaticInstanceBeanManager(beanManager);
+    WeldUtils.getInstanceFromStaticBeanManager(KernelInitializer.class).initialize();
   }
 
   @SuppressWarnings("unchecked")
