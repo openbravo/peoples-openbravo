@@ -23,6 +23,7 @@ public class NumberFilter implements RequestFilter {
 
   public static final NumberFilter instance = new NumberFilter();
 
+  @SuppressWarnings("unused")
   @Override
   public boolean accept(String value) {
     try {

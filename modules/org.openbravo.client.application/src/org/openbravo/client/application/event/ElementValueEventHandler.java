@@ -54,8 +54,8 @@ public class ElementValueEventHandler extends EntityPersistenceEventObserver {
     return entities;
   }
 
-  public void onSave(@Observes
-  EntityNewEvent event) {
+  @SuppressWarnings("unused")
+  public void onSave(@Observes EntityNewEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -84,8 +84,7 @@ public class ElementValueEventHandler extends EntityPersistenceEventObserver {
     doIt(account);
   }
 
-  public void onUpdate(@Observes
-  EntityUpdateEvent event) {
+  public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -97,6 +96,7 @@ public class ElementValueEventHandler extends EntityPersistenceEventObserver {
     doIt(account);
   }
 
+  @SuppressWarnings("unused")
   private void doIt(ElementValue account) {
     boolean isNumber = true;
     try {

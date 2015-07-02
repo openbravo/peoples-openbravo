@@ -31,7 +31,9 @@ public class UpdatePaymentPlan extends ModuleScript {
       ConnectionProvider cp = getConnectionProvider();
       boolean isExecuted = UpdatePaymentPlanData.isExecuted(cp);
       if (!isExecuted) {
-        UpdatePaymentPlanData.update(cp);
+        for (UpdatePaymentPlanData record : UpdatePaymentPlanData.getWrongRecords(cp)) {
+          UpdatePaymentPlanData.update(cp, record.amount, record.amount, record.id);
+        }        
         UpdatePaymentPlanData.createPreference(cp);
       }
     } catch (Exception e) {
