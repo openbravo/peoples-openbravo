@@ -24,8 +24,8 @@ import org.junit.runners.Suite;
 import org.openbravo.base.weld.test.testinfrastructure.CdiInfrastructure;
 import org.openbravo.base.weld.test.testinfrastructure.DalPersistanceEventTest;
 import org.openbravo.base.weld.test.testinfrastructure.ParameterizedCdi;
-import org.openbravo.client.application.DynamicExpressionParser;
 import org.openbravo.client.application.test.ApplicationTest;
+import org.openbravo.client.application.test.DynamicExpressionParserTest;
 import org.openbravo.client.application.test.GenerateTypesJSTest;
 import org.openbravo.client.application.test.MenuTest;
 import org.openbravo.client.kernel.freemarker.test.FreemarkerTemplateProcessorTest;
@@ -181,7 +181,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
 
     // client application
     ApplicationTest.class, //
-    DynamicExpressionParser.class, //
+    DynamicExpressionParserTest.class, //
     GenerateTypesJSTest.class, //
     MenuTest.class, //
 
