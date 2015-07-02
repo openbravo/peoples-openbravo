@@ -366,7 +366,7 @@
                   popup: 'OB_UI_MessageDialog',
                   args: {
                     header: OB.I18N.getLabel('OBPOS_TaxNotFound_Header'),
-                    message: OB.I18N.getLabel('OBPOS_TaxNotFound_Message', [args.get('_identifier')])
+                    message: OB.I18N.getLabel('OBPOS_TaxNotFound_Message', [((args && args.get('_identifier')) ? args.get('_identifier') : 'unknown')])
                   }
                 });
               }
@@ -616,7 +616,7 @@
                     popup: 'OB_UI_MessageDialog',
                     args: {
                       header: OB.I18N.getLabel('OBPOS_TaxNotFound_Header'),
-                      message: OB.I18N.getLabel('OBPOS_TaxNotFound_Message', [args.get('_identifier')])
+                      message: OB.I18N.getLabel('OBPOS_TaxNotFound_Message', [((args && args.get('_identifier')) ? args.get('_identifier') : 'unknown')])
                     }
                   });
                 }
