@@ -164,7 +164,7 @@ OB.APRM.addNew = function (grid) {
   returnObject.received = 0;
   returnObject.expected = 0;
   returnObject.awaitingExecutionAmount = 0;
-  returnObject.id = '';
+  delete returnObject.id;
   returnObject.paymentMethod = selectedRecord.paymentMethod;
   returnObject['paymentMethod' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER] = selectedRecord['paymentMethod' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER];
   returnObject.currency = selectedRecord.currency;

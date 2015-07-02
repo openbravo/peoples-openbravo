@@ -1872,6 +1872,7 @@ public class Utility {
    *          a String
    * @return true if the string can be parsed
    */
+  @SuppressWarnings("unused")
   public static boolean isBigDecimal(String str) {
     try {
       new BigDecimal(str.trim());

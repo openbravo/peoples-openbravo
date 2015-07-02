@@ -93,6 +93,7 @@ public class FreemarkerTemplateProcessor extends
    * @see
    * org.openbravo.client.kernel.TemplateProcessor#validate(org.openbravo.client.kernel.Template)
    */
+  @SuppressWarnings("unused")
   public void validate(Template template) throws ValidationException {
     try {
       final String source = createTemplateSource(template);

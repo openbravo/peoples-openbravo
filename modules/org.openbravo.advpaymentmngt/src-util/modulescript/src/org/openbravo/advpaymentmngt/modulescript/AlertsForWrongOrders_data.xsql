@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!--
  ************************************************************************************
- * Copyright (C) 2014 Openbravo S.L.U.
+ * Copyright (C) 2014-2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -18,7 +18,7 @@
       from c_order, fin_payment_schedule, fin_payment_scheduledetail 
       where c_order.c_order_id = fin_payment_schedule.c_order_id
       and fin_payment_schedule.fin_payment_schedule_id = fin_payment_scheduledetail.fin_payment_schedule_order 
-      and fin_payment_scheduledetail.iscanceled = 'N' 
+      and fin_payment_scheduledetail.isinvoicepaid = 'Y'
       and fin_payment_scheduledetail.fin_payment_detail_id IS NOT NULL 
       group by fin_payment_schedule.ad_org_id, fin_payment_schedule.ad_client_id, c_order.issotrx, fin_payment_schedule.fin_payment_schedule_id, 
       fin_payment_schedule.c_order_id, fin_payment_schedule.paidamt 

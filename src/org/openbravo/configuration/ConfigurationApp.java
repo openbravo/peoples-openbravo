@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Scanner;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.SystemUtils;
 import org.apache.tools.ant.Project;
 
 /**
@@ -48,7 +49,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
   private static List<ConfigureOption> optionForOpenbravo = new ArrayList<ConfigureOption>();
   private static Map<String, String> replaceProperties = new HashMap<String, String>();
 
-  private final static String BASEDIR = System.getProperty("user.dir");
+  private final static String BASEDIR = getUserDir();
   private final static String BASEDIR_CONFIG = BASEDIR + "/config/";
   private final static String SUFFIX_AUX = ".aux";
   private final static String OPENBRAVO_PROPERTIES = BASEDIR_CONFIG + "Openbravo.properties";
@@ -781,7 +782,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         replaceProperties.put(PREFIX_CONTEXT_URL, optionFirstForReplace.getChosenOption());
       }
     }
-    replaceProperties.put(PREFIX_SOURCE_PATH, System.getProperty("user.dir"));
+    replaceProperties.put(PREFIX_SOURCE_PATH, getUserDir());
 
     if (dateFormat.substring(0, 1).equals("D")) {
       replaceProperties.put(PREFIX_DATE_FORMAT_JAVA, "dd" + dateSeparator + "MM" + dateSeparator
@@ -943,7 +944,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
 
   /**
    * This method delete a File:filePath and rename File:fileAuxPath to File:filePath
-   *
+   * 
    * @param filePath
    *          file to delete
    * @param fileAuxPath
@@ -963,7 +964,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
   /**
    * This method replace a value changeOption in addressFilePath. FileR is used to check that exists
    * searchOption with different value.
-   *
+   * 
    * @param fileR
    *          old file to read
    * @param addressFilePath
@@ -1007,14 +1008,14 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
    * This method replaceGeneralProperty(...) replaces in addressFilePath the value in any option
    * searchOption with value changeOption. Concatenated searchOption+changeOption. For example:
    * "bbdd.user=" + "admin".
-   *
+   * 
    * @param addressFilePath
    *          Replace in this file
    * @param searchOption
    *          Prefix to search
    * @param changeOption
    *          Value to write in addressFilePath
-   *
+   * 
    */
   private static void replaceGeneralProperty(String addressFilePath, String searchOption,
       String changeOption, Project p) {
@@ -1510,5 +1511,18 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         e2.printStackTrace();
       }
     }
+  }
+
+  /**
+   * This function returns the user.dir directory replacing backslashes for the case of Windows
+   * operative systems.
+   * 
+   */
+  private static String getUserDir() {
+    String userDir = System.getProperty("user.dir");
+    if (SystemUtils.IS_OS_WINDOWS) {
+      userDir = userDir.replace("\\", "/");
+    }
+    return userDir;
   }
 }
