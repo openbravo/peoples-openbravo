@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2014 Openbravo SLU
+ * All portions are Copyright (C) 2012-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -23,6 +23,7 @@ import java.math.RoundingMode;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -133,6 +134,13 @@ public class CostingServer {
   private void checkCostAdjustments() {
     TrxType trxType = TrxType.getTrxType(transaction);
     boolean adjustmentAlreadyCreated = false;
+
+    // With Standard Algorithm, no cost adjustment is needed
+    if (StringUtils.equals(transaction.getCostingAlgorithm().getJavaClassName(),
+        "org.openbravo.costing.StandardAlgorithm")) {
+      return;
+    }
+
     if (trxType == TrxType.InventoryClosing) {
       OBDal.getInstance().refresh(transaction.getPhysicalInventoryLine().getPhysInventory());
       if (transaction.getPhysicalInventoryLine().getPhysInventory()
