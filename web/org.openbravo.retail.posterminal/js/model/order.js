@@ -943,7 +943,7 @@
         options: options,
         newLine: newLine
       }, function (args) {
-        if (args.productToAdd.get('productType') !== 'S' && Math.sign(args.qtyToAdd * args.orderline.attributes.qty) !== -1) {
+        if (args.productToAdd.get('productType') !== 'S' && args.newLine) {
           if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.product', true)) {
             var process = new OB.DS.Process('org.openbravo.retail.posterminal.process.HasServices');
             var params = {},
