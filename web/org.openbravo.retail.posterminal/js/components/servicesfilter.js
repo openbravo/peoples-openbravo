@@ -12,6 +12,7 @@
 enyo.kind({
   kind: 'OB.UI.SearchProductCharacteristicFilter',
   name: 'OB_UI_SearchServicesFilter',
+  filterName: 'ServicesFilter',
   published: {
     type: 'PANEL',
     productId: null,

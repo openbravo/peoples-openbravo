@@ -246,7 +246,6 @@ enyo.kind({
       if (product) {
         OB.UI.SearchProductCharacteristic.prototype.filtersCustomClear();
         OB.UI.SearchProductCharacteristic.prototype.filtersCustomAdd(new OB_UI_SearchServicesFilter({
-          filterName: 'Services_Filter',
           text: product.get("_identifier"),
           productId: product.id,
           productList: null,
