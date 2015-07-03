@@ -20,6 +20,7 @@
 package org.openbravo.common.actionhandler;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Map;
 
 import org.codehaus.jettison.json.JSONArray;
@@ -27,6 +28,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
+import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
@@ -34,7 +36,7 @@ import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.order.OrderlineServiceRelation;
-import org.openbravo.service.db.DbUtility;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,33 +55,47 @@ public class ServiceOrderLineRelate extends BaseProcessActionHandler {
       JSONArray selectedLines = jsonRequest.getJSONObject("_params").getJSONObject("grid")
           .getJSONArray("_selection");
 
+      BigDecimal linesTotalAmount = new BigDecimal(jsonRequest.getJSONObject("_params").getDouble(
+          "totallinesamount"));
+      BigDecimal serviceAmount = new BigDecimal(jsonRequest.getJSONObject("_params").getDouble(
+          "totalserviceamount"));
+
       final Client serviceProductClient = (Client) OBDal.getInstance().getProxy(Client.ENTITY_NAME,
           jsonRequest.getString("inpadClientId"));
       final Organization serviceProductOrg = (Organization) OBDal.getInstance().getProxy(
           Organization.ENTITY_NAME, jsonRequest.getString("inpadOrgId"));
       final OrderLine mainOrderLine = (OrderLine) OBDal.getInstance().getProxy(
           OrderLine.ENTITY_NAME, jsonRequest.getString("inpcOrderlineId"));
+
+      final int currencyPrecission = mainOrderLine.getCurrency().getPricePrecision().intValue();
+
       // Remove existing rows
       String strDelete = "delete from OrderlineServiceRelation where salesOrderLine.id=:orderLineId";
       Query query = OBDal.getInstance().getSession().createQuery(strDelete);
       query.setParameter("orderLineId", mainOrderLine.getId());
       query.executeUpdate();
+
       // Adding new rows
       for (int i = 0; i < selectedLines.length(); i++) {
         JSONObject selectedLine = selectedLines.getJSONObject(i);
         log.debug("{}", selectedLine);
-
         final OrderLine orderLine = (OrderLine) OBDal.getInstance().getProxy(OrderLine.ENTITY_NAME,
             selectedLine.getString(OrderLine.PROPERTY_ID));
-        BigDecimal amount = new BigDecimal(selectedLine.getDouble("amount"));
+
+        BigDecimal lineAmount = new BigDecimal(selectedLine.getDouble("amount"));
+        BigDecimal lineQuantity = new BigDecimal(selectedLine.getDouble("orderedQuantity"));
+        BigDecimal amount = BigDecimal.ZERO;
+        amount = lineAmount.multiply(serviceAmount).divide(linesTotalAmount, currencyPrecission,
+            RoundingMode.HALF_UP);
+
         OrderlineServiceRelation olsr = OBProvider.getInstance()
             .get(OrderlineServiceRelation.class);
         olsr.setClient(serviceProductClient);
         olsr.setOrganization(serviceProductOrg);
         olsr.setOrderlineRelated(orderLine);
         olsr.setSalesOrderLine(mainOrderLine);
-        olsr.setAmount(amount.setScale(orderLine.getSalesOrder().getCurrency().getPricePrecision()
-            .intValue(), BigDecimal.ROUND_HALF_UP));
+        olsr.setAmount(amount);
+        olsr.setQuantity(lineQuantity);
         OBDal.getInstance().save(olsr);
         if ((i % 100) == 0) {
           OBDal.getInstance().flush();
@@ -95,8 +111,9 @@ public class ServiceOrderLineRelate extends BaseProcessActionHandler {
       OBDal.getInstance().rollbackAndClose();
       try {
         jsonRequest = new JSONObject();
-        Throwable ex = DbUtility.getUnderlyingSQLException(e);
-        String message = OBMessageUtils.translateError(ex.getMessage()).getMessage();
+        String message = OBMessageUtils.parseTranslation(new DalConnectionProvider(false),
+            RequestContext.get().getVariablesSecureApp(), OBContext.getOBContext().getLanguage()
+                .getLanguage(), e.getMessage());
         errorMessage = new JSONObject();
         errorMessage.put("severity", "error");
         errorMessage.put("text", message);

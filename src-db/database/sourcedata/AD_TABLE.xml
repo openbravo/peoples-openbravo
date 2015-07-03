@@ -9315,10 +9315,11 @@ from OrderlineServiceRelation olpr join olpr.salesOrderLine as sol]]></HQLQUERY>
 <!--213FE8C4AC5E4C95AFC09C80D5C3B663-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1FA4B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--213FE8C4AC5E4C95AFC09C80D5C3B663-->  <DATAORIGINTYPE><![CDATA[HQL]]></DATAORIGINTYPE>
 <!--213FE8C4AC5E4C95AFC09C80D5C3B663-->  <ISTREE><![CDATA[N]]></ISTREE>
-<!--213FE8C4AC5E4C95AFC09C80D5C3B663-->  <HQLQUERY><![CDATA[select e.id, o as salesOrder, o.documentNo, o.orderDate, e.lineNo, e.product, at as attributeSetValue, (select osr.amount from OrderlineServiceRelation osr where osr.salesOrderLine.id = :orderLineId and osr.orderlineRelated.id = e.id)  as amount, case when exists (select 1 from OrderlineServiceRelation osr where osr.salesOrderLine.id = :orderLineId and osr.orderlineRelated.id = e.id) then true else false end as obSelected
+<!--213FE8C4AC5E4C95AFC09C80D5C3B663-->  <HQLQUERY><![CDATA[select e.id, o as salesOrder, o.documentNo, o.orderDate, e.lineNo, e.product, at as attributeSetValue, case when pl.priceIncludesTax = false then e.unitPrice else e.grossUnitPrice end as price, case when pl.priceIncludesTax = false then e.lineNetAmount else e.lineGrossAmount end as amount, e.orderedQuantity as orderedQuantity, case when exists (select 1 from OrderlineServiceRelation osr where osr.salesOrderLine.id = :orderLineId and osr.orderlineRelated.id = e.id) then true else false end as obSelected
 from OrderLine as e
 join e.salesOrder as o
 left join e.attributeSetValue as at 
+join o.priceList as pl
 where @additional_filters@
 and @whereClause@]]></HQLQUERY>
 <!--213FE8C4AC5E4C95AFC09C80D5C3B663-->  <ENTITY_ALIAS><![CDATA[e]]></ENTITY_ALIAS>

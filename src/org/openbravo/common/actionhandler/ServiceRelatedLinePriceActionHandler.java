@@ -43,7 +43,6 @@ import org.openbravo.model.pricing.pricelist.ProductPrice;
 import org.openbravo.model.pricing.pricelist.ServicePriceRule;
 import org.openbravo.model.pricing.pricelist.ServicePriceRuleRange;
 import org.openbravo.service.db.DalConnectionProvider;
-import org.openbravo.service.json.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,21 +60,18 @@ public class ServiceRelatedLinePriceActionHandler extends BaseActionHandler {
       jsonRequest = new JSONObject(content);
       log.debug("{}", jsonRequest);
 
-      final JSONObject record = jsonRequest.getJSONObject("record");
-      final String strOrderLineId = record.getString("id");
-      final String strDateOrdered = record.getString("orderDate");
-      Date orderDate = JsonUtils.createDateFormat().parse(strDateOrdered);
+      final String strOrderLineId = jsonRequest.getString("id");
       final String strServiceProductId = jsonRequest.getString("serviceProductId");
+      BigDecimal amount = new BigDecimal(jsonRequest.getString("amount"));
       final Product serviceProduct = OBDal.getInstance().get(Product.class, strServiceProductId);
 
-      BigDecimal amount = BigDecimal.ZERO;
-
-      if (!serviceProduct.isPricerulebased()) {
-        result.put("amount", amount);
+      if (!serviceProduct.isPricerulebased() || amount.compareTo(BigDecimal.ZERO) == 0) {
+        result.put("amount", "0");
         return result;
       }
 
       final OrderLine relatedOrderLine = OBDal.getInstance().get(OrderLine.class, strOrderLineId);
+      Date orderDate = relatedOrderLine.getSalesOrder().getOrderDate();
       final int currencyPrecission = relatedOrderLine.getCurrency().getPricePrecision().intValue();
       final Product product = relatedOrderLine.getProduct();
 
@@ -99,12 +95,6 @@ public class ServiceRelatedLinePriceActionHandler extends BaseActionHandler {
         throw new OBException("@ServicePriceRuleVersionNotFound@ " + serviceProduct.getIdentifier()
             + ". @Product@: " + product.getIdentifier() + ", @Date@: "
             + OBDateUtils.formatDate(orderDate));
-      }
-
-      if (relatedOrderLine.getSalesOrder().isPriceIncludesTax()) {
-        amount = relatedOrderLine.getLineGrossAmount();
-      } else {
-        amount = relatedOrderLine.getLineNetAmount();
       }
 
       if ("P".equals(spr.getRuletype())) {
