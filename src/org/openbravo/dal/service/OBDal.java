@@ -289,7 +289,9 @@ public class OBDal implements OBSingleton {
    * 
    * @param bob
    *          the BaseOBObject to refresh
-   * @return the BaseOBObject, or null if none found
+   * @param useCache
+   *          a flag to indicate if the refresh is done from cache (true) or from db (false)
+   * @return the refreshed BaseOBObject, or null if none found
    */
   public BaseOBObject refresh(BaseOBObject bob, boolean useCache) {
     if (!useCache) {
