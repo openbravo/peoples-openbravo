@@ -26,12 +26,19 @@ OB.CheckAvailableCredit.onLoad = function (view) {
 
   callback = function (response, data, request) {
     if (data.availableCredit) {
-      view.messageBar.setMessage(isc.OBMessageBar.TYPE_INFO, null, OB.I18N.getLabel('BPCurrencyChange'));
+      view.messageBar.setMessage(isc.OBMessageBar.TYPE_WARNING, null, OB.I18N.getLabel('BPCurrencyChange'));
       form.getItem('c_glitem_id').visible = true;
+      form.getItem('c_glitem_id').setRequired(true);
+      if (form.getItem('c_glitem_id').textBoxStyle.indexOf('Required') == -1) {
+        form.getItem('c_glitem_id').textBoxStyle += 'Required';
+      }
     } else {
       form.getItem('c_glitem_id').visible = false;
     }
     form.redraw();
+    if (view) {
+      view.handleButtonsStatus();
+    }
   };
 
   OB.RemoteCallManager.call('org.openbravo.common.actionhandler.CheckAvailableCreditActionHandler', {

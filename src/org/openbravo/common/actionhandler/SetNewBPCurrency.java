@@ -114,7 +114,9 @@ public class SetNewBPCurrency extends BaseProcessActionHandler {
         if (!strSetAmount) {
           creditRate = rate;
         } else if (creditUsed.compareTo(BigDecimal.ZERO) != 0) {
-          creditRate = BigDecimal.valueOf(amount).divide(creditUsed);
+          creditRate = BigDecimal.valueOf(amount).divide(creditUsed,
+              FIN_Utility.getConversionRatePrecision(RequestContext.get().getVariablesSecureApp()),
+              RoundingMode.HALF_UP);
         }
 
         // Loop through all payment documents which generate credit
@@ -136,7 +138,7 @@ public class SetNewBPCurrency extends BaseProcessActionHandler {
                 .getDocumentType().getDocumentCategory(), "DocumentNo_FIN_Payment"));
             payment1.setProcessed(false);
             payment1.setPosted("N");
-            payment1.setDescription("GL Item: " + glItem.getName());
+            payment1.setDescription(null);
             payment1.setGeneratedCredit(BigDecimal.ZERO);
             payment1.setUsedCredit(BigDecimal.ZERO);
 
@@ -167,6 +169,14 @@ public class SetNewBPCurrency extends BaseProcessActionHandler {
             OBDal.getInstance().save(paymentScheduleDetail1);
             FIN_PaymentProcess.doProcessPayment(payment1, "D", false, null, null);
 
+            // Modify description of original credit payment
+            String paymentCreditDesc = paymentCredit.getDescription()
+                + "\n"
+                + String.format(OBMessageUtils.messageBD("APRM_CreditUsedPayment"),
+                    payment1.getDocumentNo());
+            paymentCredit.setDescription((paymentCreditDesc.length() > 255) ? paymentCreditDesc
+                .substring(0, 251).concat("...").toString() : paymentCreditDesc.toString());
+
             // Create a payment to refund the credit
             FIN_Payment payment2 = (FIN_Payment) DalUtil.copy(paymentCredit, false);
             payment2.setPaymentDate(new Date());
@@ -175,7 +185,8 @@ public class SetNewBPCurrency extends BaseProcessActionHandler {
                 .getDocumentType().getDocumentCategory(), "DocumentNo_FIN_Payment"));
             payment2.setProcessed(false);
             payment2.setPosted("N");
-            payment2.setDescription("Refunded payment: " + payment1.getDocumentNo());
+            payment2.setDescription(OBMessageUtils.messageBD("APRM_RefundPayment") + ": "
+                + payment1.getDocumentNo());
             payment2.setGeneratedCredit(BigDecimal.ZERO);
             payment2.setUsedCredit(creditAmount);
 
@@ -246,8 +257,10 @@ public class SetNewBPCurrency extends BaseProcessActionHandler {
                 .getDocumentType().getDocumentCategory(), "DocumentNo_FIN_Payment"));
             payment3.setProcessed(false);
             payment3.setPosted("N");
-            payment3.setDescription("GL Item: " + glItem.getName());
-            payment3.setGeneratedCredit(creditAmount.multiply(creditRate));
+            payment3.setDescription(null);
+            final BigDecimal generatedCredit = creditAmount.multiply(creditRate).setScale(
+                currency.getStandardPrecision().intValue(), RoundingMode.HALF_UP);
+            payment3.setGeneratedCredit(generatedCredit);
             payment3.setUsedCredit(BigDecimal.ZERO);
 
             // Create a payment detail to create the credit with a glitem
@@ -256,7 +269,7 @@ public class SetNewBPCurrency extends BaseProcessActionHandler {
             paymentDetail3.setClient(paymentCredit.getClient());
             paymentDetail3.setOrganization(paymentCredit.getOrganization());
             paymentDetail3.setFinPayment(payment3);
-            paymentDetail3.setAmount(creditAmount.multiply(creditRate));
+            paymentDetail3.setAmount(generatedCredit);
             paymentDetail3.setRefund(false);
             paymentDetail3.setPrepayment(true);
 
@@ -266,7 +279,7 @@ public class SetNewBPCurrency extends BaseProcessActionHandler {
             paymentDetail4.setClient(paymentCredit.getClient());
             paymentDetail4.setOrganization(paymentCredit.getOrganization());
             paymentDetail4.setFinPayment(payment3);
-            paymentDetail4.setAmount(creditAmount.multiply(creditRate).negate());
+            paymentDetail4.setAmount(generatedCredit.negate());
             paymentDetail4.setGLItem(glItem);
             paymentDetail4.setRefund(false);
             paymentDetail4.setPrepayment(false);
@@ -277,7 +290,7 @@ public class SetNewBPCurrency extends BaseProcessActionHandler {
             paymentScheduleDetail3.setClient(paymentCredit.getClient());
             paymentScheduleDetail3.setOrganization(paymentCredit.getOrganization());
             paymentScheduleDetail3.setPaymentDetails(paymentDetail3);
-            paymentScheduleDetail3.setAmount(creditAmount.multiply(creditRate));
+            paymentScheduleDetail3.setAmount(generatedCredit);
 
             // Create a payment schedule detail to create the credit with a glitem
             FIN_PaymentScheduleDetail paymentScheduleDetail4 = OBProvider.getInstance().get(
@@ -285,7 +298,7 @@ public class SetNewBPCurrency extends BaseProcessActionHandler {
             paymentScheduleDetail4.setClient(paymentCredit.getClient());
             paymentScheduleDetail4.setOrganization(paymentCredit.getOrganization());
             paymentScheduleDetail4.setPaymentDetails(paymentDetail4);
-            paymentScheduleDetail4.setAmount(creditAmount.multiply(creditRate).negate());
+            paymentScheduleDetail4.setAmount(generatedCredit.negate());
 
             // Process the payment
             paymentDetail3.getFINPaymentScheduleDetailList().add(paymentScheduleDetail3);
@@ -297,6 +310,7 @@ public class SetNewBPCurrency extends BaseProcessActionHandler {
             OBDal.getInstance().save(paymentDetail4);
             OBDal.getInstance().save(paymentScheduleDetail3);
             OBDal.getInstance().save(paymentScheduleDetail4);
+            OBDal.getInstance().save(paymentCredit);
             FIN_PaymentProcess.doProcessPayment(payment3, "D", false, null, null);
 
             i++;

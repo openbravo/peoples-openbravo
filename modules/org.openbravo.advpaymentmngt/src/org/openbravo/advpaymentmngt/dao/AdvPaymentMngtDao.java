@@ -1901,12 +1901,7 @@ public class AdvPaymentMngtDao {
   public BigDecimal getCustomerCredit(BusinessPartner bp, boolean isReceipt, Organization Org,
       Currency currency) {
     BigDecimal creditAmount = BigDecimal.ZERO;
-    List<FIN_Payment> paymentList = null;
-    if (currency == null) {
-      paymentList = getCustomerPaymentsWithCredit(Org, bp, isReceipt);
-    } else {
-      paymentList = getCustomerPaymentsWithCredit(Org, bp, isReceipt, currency);
-    }
+    List<FIN_Payment> paymentList = getCustomerPaymentsWithCredit(Org, bp, isReceipt, currency);
     for (FIN_Payment payment : paymentList)
       creditAmount = creditAmount.add(payment.getGeneratedCredit()).subtract(
           payment.getUsedCredit());
