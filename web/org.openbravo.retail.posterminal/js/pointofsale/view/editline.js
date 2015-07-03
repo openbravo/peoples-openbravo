@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, enyo, _ */
+/*global OB, enyo, _, OB_UI_SearchServicesFilter */
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.LineProperty',
   components: [{
@@ -237,6 +237,36 @@ enyo.kind({
     }
   }, {
     kind: 'OB.UI.SmallButton',
+    name: 'showRelatedServices',
+    classes: 'btnlink-orange',
+    style: 'width: 45px; background-repeat: no-repeat; background-position: center; color: rgba(0, 0, 0, 0)',
+    content: '-',
+    tap: function (inSender, inEvent) {
+      var product = this.owner.owner.line.get('product');
+      if (product) {
+        OB.UI.SearchProductCharacteristic.prototype.filtersCustomClear();
+        OB.UI.SearchProductCharacteristic.prototype.filtersCustomAdd(new OB_UI_SearchServicesFilter({
+          filterName: 'Services_Filter',
+          text: product.get("_identifier"),
+          productId: product.id,
+          productList: null,
+          orderline: this.owner.owner.line,
+          orderlineList: null
+        }));
+        var me = this;
+        setTimeout(function () {
+          me.bubble('onTabChange', {
+            tabPanel: 'searchCharacteristic'
+          });
+          me.bubble('onSelectFilter', {});
+          me.owner.owner.line.set("obposServiceProposed", true);
+        }, 1);
+        this.addRemoveClass('iconServices_unreviewed', false);
+        this.addRemoveClass('iconServices_reviewed', true);
+      }
+    }
+  }, {
+    kind: 'OB.UI.SmallButton',
     name: 'removeDiscountButton',
     i18nContent: 'OBPOS_LblRemoveDiscount',
     showing: false,
@@ -445,6 +475,18 @@ enyo.kind({
       this.$.actionButtonsContainer.$.returnLine.hide();
     } else if (OB.MobileApp.model.get('permissions')[this.$.actionButtonsContainer.$.returnLine.permission] && !(this.model.get('order').get('isPaid') === true || this.model.get('order').get('isLayaway') === true || this.model.get('order').get('isQuotation') === true)) {
       this.$.actionButtonsContainer.$.returnLine.show();
+    }
+    if (this.line && this.line.get('hasRelatedServices')) {
+      this.$.actionButtonsContainer.$.showRelatedServices.show();
+      if (this.line.get('obposServiceProposed')) {
+        this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('iconServices_unreviewed', false);
+        this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('iconServices_reviewed', true);
+      } else {
+        this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('iconServices_unreviewed', true);
+        this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('iconServices_reviewed', false);
+      }
+    } else {
+      this.$.actionButtonsContainer.$.showRelatedServices.hide();
     }
     this.render();
   },
