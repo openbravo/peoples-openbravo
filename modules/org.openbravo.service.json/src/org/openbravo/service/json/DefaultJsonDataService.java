@@ -704,13 +704,12 @@ public class DefaultJsonDataService implements JsonDataService {
         // refresh the objects from the db as they can have changed
         // put the refreshed objects into a new array as we are going to retrieve them using
         // OBDal.getInstance().get as performs better than OBDal.getInstance().getSession().refresh
+        // We use OBDal.getInstance().get inside OBDal.getInstance().refresh method after removing
+        // the bob from the session cache
         // See issue https://issues.openbravo.com/view.php?id=30308
         final List<BaseOBObject> refreshedBobs = new ArrayList<BaseOBObject>();
         for (BaseOBObject bob : bobs) {
-          // Remove the bob instance from the session cache with evict
-          OBDal.getInstance().getSession().evict(bob);
-          // With get() we retrieve the object from db as we have cleared it from cache with evict()
-          BaseOBObject refreshedBob = OBDal.getInstance().get(bob.getEntityName(), bob.getId());
+          BaseOBObject refreshedBob = OBDal.getInstance().refresh(bob, false);
           // if object has computed columns refresh from the database too
           if (refreshedBob.getEntity().hasComputedColumns()) {
             OBDal.getInstance().getSession()
