@@ -23,38 +23,36 @@ OB.CheckAvailableCredit.onLoad = function (view) {
   var callback, form = view.theForm,
       businessPartnerId = view.parentWindow.view.getContextInfo().C_BPartner_ID,
       currencyId = form.getItem('C_Currency_ID').getValue();
-  
-  callback = function (response, data, request) {    
+
+  callback = function (response, data, request) {
     if (data.availableCredit) {
       view.messageBar.setMessage(isc.OBMessageBar.TYPE_INFO, null, OB.I18N.getLabel('BPCurrencyChange'));
       form.getItem('c_glitem_id').visible = true;
-    }
-    else {
+    } else {
       form.getItem('c_glitem_id').visible = false;
     }
     form.redraw();
   };
 
   OB.RemoteCallManager.call('org.openbravo.common.actionhandler.CheckAvailableCreditActionHandler', {
-	businessPartnerId: businessPartnerId,
-	currencyId: currencyId
-  }, {}, callback);  
+    businessPartnerId: businessPartnerId,
+    currencyId: currencyId
+  }, {}, callback);
 };
 
 OB.CheckAvailableCredit.onProcess = function (view, actionHandlerCall, clientSideValidationFail) {
-  var form = view.theForm,                    
+  var form = view.theForm,
       currencyFromId = view.parentWindow.view.getContextInfo().inpbpCurrencyId,
       currencyToId = form.getItem('C_Currency_ID').getValue(),
       glItemId = form.getItem('c_glitem_id').getValue(),
       setAmount = form.getItem("Amount").getValue(),
       currentBalance = view.parentWindow.view.getContextInfo().inpsoCreditused,
       foreignAmount = form.getItem('Foreign_Amount').getValue();
-      
+
   if (currencyFromId !== currencyToId && glItemId && setAmount === true && currentBalance === 0 && foreignAmount !== 0) {
-	view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('BPCurrencyChangeRate'));
+    view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('BPCurrencyChangeRate'));
     return clientSideValidationFail();
-  }
-  else {
+  } else {
     actionHandlerCall();
   }
 };
