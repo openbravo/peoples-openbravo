@@ -484,6 +484,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               });
               orderList.deleteCurrent();
               orderList.synchronizeCurrentOrder();
+              enyo.$.scrim.hide();
             }
           });
         } else {
@@ -507,6 +508,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               });
               orderList.deleteCurrent();
               orderList.synchronizeCurrentOrder();
+              enyo.$.scrim.hide();
             }
           });
         }
