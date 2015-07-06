@@ -49,7 +49,9 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.ad_forms.AcctServer;
+import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.materialmgmt.StockUtils;
@@ -131,6 +133,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   @Any
   private Instance<OrderLoaderPreProcessHook> orderPreProcesses;
 
+  private boolean useOrderDocumentNoForRelatedDocs = false;
+
   protected String getImportQualifier() {
     return "Order";
   }
@@ -138,6 +142,16 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   @Override
   public JSONObject saveRecord(JSONObject jsonorder) throws Exception {
     long t0 = 0, t1 = 0, t11 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0, t111 = 0, t112 = 0, t113 = 0, t115 = 0, t116 = 0;
+
+    try {
+      useOrderDocumentNoForRelatedDocs = "Y".equals(Preferences.getPreferenceValue(
+          "OBPOS_UseOrderDocumentNoForRelatedDocs", true, OBContext.getOBContext()
+              .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
+              .getOBContext().getUser(), OBContext.getOBContext().getRole(), null));
+    } catch (PropertyException e1) {
+      log.error(
+          "Error getting OBPOS_UseOrderDocumentNoForRelatedDocs preference: " + e1.getMessage(), e1);
+    }
 
     documentNoHandlers.set(new ArrayList<OrderLoader.DocumentNoHandler>());
     try {
@@ -1033,7 +1047,11 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     shipment
         .setDocumentType(getShipmentDocumentType((String) DalUtil.getId(order.getDocumentType())));
 
-    shipment.setDocumentNo(order.getDocumentNo());
+    if (useOrderDocumentNoForRelatedDocs) {
+      shipment.setDocumentNo(order.getDocumentNo());
+    } else {
+      addDocumentNoHandler(shipment, shpEntity, null, shipment.getDocumentType());
+    }
 
     shipment.setAccountingDate(order.getOrderDate());
     shipment.setMovementDate(order.getOrderDate());
@@ -1579,8 +1597,12 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       DocumentType paymentDocType = getPaymentDocumentType(order.getOrganization());
       Entity paymentEntity = ModelProvider.getInstance().getEntity(FIN_Payment.class);
 
-      // String paymentDocNo = getDocumentNo(paymentEntity, null, paymentDocType);
-      String paymentDocNo = order.getDocumentNo();
+      String paymentDocNo;
+      if (useOrderDocumentNoForRelatedDocs) {
+        paymentDocNo = order.getDocumentNo();
+      } else {
+        paymentDocNo = getDocumentNo(paymentEntity, null, paymentDocType);
+      }
 
       // get date
       Date calculatedDate = (payment.has("date") && !payment.isNull("date")) ? OBMOBCUtils
