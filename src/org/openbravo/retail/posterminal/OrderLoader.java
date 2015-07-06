@@ -159,7 +159,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       OrderLine orderLine = null;
       ShipmentInOut shipment = null;
       Invoice invoice = null;
-      boolean sendEmail, createInvoice = false;
+      boolean createInvoice = false;
       TriggerHandler.getInstance().disable();
       newLayaway = jsonorder.has("orderType") && jsonorder.getLong("orderType") == 2;
       notpaidLayaway = (jsonorder.getBoolean("isLayaway") || jsonorder.optLong("orderType") == 2)
@@ -204,7 +204,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           createShipment &= jsonorder.getBoolean("generateShipment");
           createInvoice &= jsonorder.getBoolean("generateShipment");
         }
-        sendEmail = (jsonorder.has("sendEmail") && jsonorder.getBoolean("sendEmail"));
         // Order header
         if (log.isDebugEnabled()) {
           t111 = System.currentTimeMillis();
@@ -255,15 +254,11 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
                 "OBPOS_WarehouseNotStorageBin", OBContext.getOBContext().getLanguage()
                     .getLanguage()));
           }
-          // Shipment header
+
           shipment = OBProvider.getInstance().get(ShipmentInOut.class);
           createShipment(shipment, order, jsonorder);
-          if (shipment != null) {
-            OBDal.getInstance().save(shipment);
-          }
-          // Shipment lines
+          OBDal.getInstance().save(shipment);
           createShipmentLines(shipment, order, jsonorder, orderlines, lineReferences);
-
         }
         if (log.isDebugEnabled()) {
           t115 = System.currentTimeMillis();
@@ -346,9 +341,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         JSONObject paymentResponse = handlePayments(jsonorder, order, invoice, wasPaidOnCredit);
         if (paymentResponse != null) {
           return paymentResponse;
-        }
-        if (sendEmail) {
-          EmailSender emailSender = new EmailSender(order.getId(), jsonorder);
         }
 
         // Call all OrderProcess injected.
@@ -1055,17 +1047,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     shipment.setProcessed(true);
     shipment.setSalesOrder(order);
     shipment.setProcessGoodsJava("--");
-
   }
 
   protected void createOrderLines(Order order, JSONObject jsonorder, JSONArray orderlines,
       ArrayList<OrderLine> lineReferences) throws JSONException {
-    boolean isQuotation = false;
-    try {
-      isQuotation = jsonorder.has("isQuotation") && jsonorder.getBoolean("isQuotation");
-    } catch (Exception ex) {
-      isQuotation = false;
-    }
     Entity orderLineEntity = ModelProvider.getInstance().getEntity(OrderLine.class);
     Entity promotionLineEntity = ModelProvider.getInstance().getEntity(OrderLineOffer.class);
     int stdPrecision = order.getCurrency().getStandardPrecision().intValue();
@@ -1593,7 +1578,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
       DocumentType paymentDocType = getPaymentDocumentType(order.getOrganization());
       Entity paymentEntity = ModelProvider.getInstance().getEntity(FIN_Payment.class);
-      String paymentDocNo = getDocumentNo(paymentEntity, null, paymentDocType);
+
+      // String paymentDocNo = getDocumentNo(paymentEntity, null, paymentDocType);
+      String paymentDocNo = order.getDocumentNo();
 
       // get date
       Date calculatedDate = (payment.has("date") && !payment.isNull("date")) ? OBMOBCUtils
@@ -1819,11 +1806,12 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       OBDal.getInstance().save(bob);
     }
 
-    private String getDocumentNumber(Entity entity, DocumentType doctypeTarget, DocumentType doctype) {
+    private String getDocumentNumber(Entity localEntity, DocumentType localDoctypeTarget,
+        DocumentType localDoctype) {
       return Utility.getDocumentNo(OBDal.getInstance().getConnection(false),
           new DalConnectionProvider(false), RequestContext.get().getVariablesSecureApp(), "",
-          entity.getTableName(), doctypeTarget == null ? "" : doctypeTarget.getId(),
-          doctype == null ? "" : doctype.getId(), false, true);
+          localEntity.getTableName(), localDoctypeTarget == null ? "" : localDoctypeTarget.getId(),
+          localDoctype == null ? "" : localDoctype.getId(), false, true);
     }
 
   }
