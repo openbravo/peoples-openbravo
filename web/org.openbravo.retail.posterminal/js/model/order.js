@@ -38,6 +38,7 @@
         this.set('net', attributes.net);
         this.set('promotions', attributes.promotions);
         this.set('priceIncludesTax', attributes.priceIncludesTax);
+        this.set('description', attributes.description);
         if (!attributes.grossListPrice && attributes.product && _.isNumber(attributes.priceList)) {
           this.set('grossListPrice', attributes.priceList);
         }
@@ -1610,6 +1611,7 @@
       this.set('hasbeenpaid', 'N');
       this.set('isEditable', true);
       this.set('createdBy', OB.MobileApp.model.get('orgUserId'));
+      this.set('orderDate', new Date());
       //Sometimes the Id of Quotation is null.
       if (this.get('id') && !_.isNull(this.get('id'))) {
         this.set('oldId', this.get('id'));
@@ -1617,6 +1619,10 @@
         this.set('quotationnoPrefix', OB.MobileApp.model.get('terminal').quotationDocNoPrefix);
         this.set('quotationnoSuffix', nextQuotationno.quotationnoSuffix);
         this.set('documentNo', nextQuotationno.documentNo);
+      } else {
+        //this shouldn't happen.
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_QuotationCannotBeReactivated_title'), OB.I18N.getLabel('OBPOS_QuotationCannotBeReactivated_body'));
+        return;
       }
       this.set('id', null);
       this.save();
@@ -2103,16 +2109,16 @@
         });
         linesCreated = true;
       }
-      this.get('lines').forEach(function (l) {
-        l.calculateGross();
-      });
-      this.calculateGross();
-      this.trigger('promotionsUpdated');
       this.set({
         'skipApplyPromotions': localSkipApplyPromotions
       }, {
         silent: true
       });
+      this.get('lines').forEach(function (l) {
+        l.calculateGross();
+      });
+      this.calculateGross();
+      this.trigger('promotionsUpdated');
     },
 
 
@@ -2432,6 +2438,7 @@
                 price: price,
                 priceList: prod.get('listPrice'),
                 promotions: iter.promotions,
+                description: iter.description,
                 priceIncludesTax: order.get('priceIncludesTax'),
                 warehouse: {
                   id: iter.warehouse,
