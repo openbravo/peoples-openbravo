@@ -58,7 +58,9 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
     Connection connection = null;
     try {
       connection = dataSource.getConnection();
-      connection.setAutoCommit(false);
+      // All connections are setting autoCommit to true. DAL is taking into account his logical and
+      // DAL is setting autoCommint to false to maintain transactional way of working.
+      connection.setAutoCommit(true);
     } catch (Exception e) {
       log.error("Error while retrieving connection: ", e);
       throw new OBException(e);
