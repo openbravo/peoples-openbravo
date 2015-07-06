@@ -18,6 +18,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLClientInfoException;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
@@ -224,7 +225,7 @@ public class ConnectionProviderImpl implements ConnectionProvider {
       if (externalConnectionPool != null) {
         conn = externalConnectionPool.getConnection();
       } else {
-        conn = getNewConnection(poolName);
+        conn = getCommonsDbcpPoolConnection(poolName);
       }
       SessionInfo.setSessionConnection(conn);
     } else {
@@ -234,14 +235,11 @@ public class ConnectionProviderImpl implements ConnectionProvider {
     return conn;
   }
 
-  private Connection getNewConnection() throws NoConnectionAvailableException {
-    return getNewConnection(defaultPoolName);
-  }
-
   /**
    * Gets a new connection without trying to obtain the sessions's one
    */
-  private Connection getNewConnection(String poolName) throws NoConnectionAvailableException {
+  private Connection getCommonsDbcpPoolConnection(String poolName)
+      throws NoConnectionAvailableException {
     if (poolName == null || poolName.equals(""))
       throw new NoConnectionAvailableException("Couldn´t get a connection for an unnamed pool");
     Connection conn = null;
@@ -303,7 +301,7 @@ public class ConnectionProviderImpl implements ConnectionProvider {
   }
 
   public Connection getTransactionConnection() throws NoConnectionAvailableException, SQLException {
-    Connection conn = getNewConnection();
+    Connection conn = getConnection(defaultPoolName);
     if (conn == null)
       throw new NoConnectionAvailableException("Couldn´t get an available connection");
     conn.setAutoCommit(false);
