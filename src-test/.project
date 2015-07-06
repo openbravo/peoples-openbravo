@@ -18,22 +18,28 @@
 		<link>
 			<name>client.application-src-test</name>
 			<type>2</type>
-			<locationURI>WORKSPACE_LOC/openbravo/modules/org.openbravo.client.application/src-test</locationURI>
+			<locationURI>MODULES/org.openbravo.client.application/src-test</locationURI>
 		</link>
 		<link>
 			<name>client.kernel-test</name>
 			<type>2</type>
-			<location>WORKSPACE_LOC/openbravo/modules/org.openbravo.client.kernel/src-test</location>
+			<locationURI>MODULES/org.openbravo.client.kernel/src-test</locationURI>
 		</link>
 		<link>
 			<name>test-lib</name>
 			<type>2</type>
-			<locationURI>WORKSPACE_LOC/openbravo/modules/org.openbravo.base.weld/lib/test</locationURI>
+			<locationURI>MODULES/org.openbravo.base.weld/lib/test</locationURI>
 		</link>
 		<link>
 			<name>weld-src-test</name>
 			<type>2</type>
-			<locationURI>WORKSPACE_LOC/openbravo/modules/org.openbravo.base.weld/src-test</locationURI>
+			<locationURI>MODULES/org.openbravo.base.weld/src-test</locationURI>
 		</link>
 	</linkedResources>
+	<variableList>
+		<variable>
+			<name>MODULES</name>
+			<value>$%7BPARENT-1-PROJECT_LOC%7D/modules</value>
+		</variable>
+	</variableList>
 </projectDescription>
