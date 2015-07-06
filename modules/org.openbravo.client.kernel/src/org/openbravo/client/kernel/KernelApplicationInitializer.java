@@ -57,30 +57,36 @@ public class KernelApplicationInitializer implements ApplicationInitializer {
   }
 
   private void checkDatabaseAndTomcatDateTime() {
-    // This method checks if both Tomcat and DB are configured to use the same time zone. If there
+    // This method checks if both Tomcat and DB are configured to use the same time. If there
     // is a difference bigger than a few seconds, it logs a warning.
     try {
       Date tomcatDate = new Date(); // Tomcat time
       Date dbDate = getDatabaseDateTime(); // Database time
-      log4j.info("Tomcat Time: " + tomcatDate + ", Database Time: " + dbDate);
+      log4j.debug("Tomcat Time: " + tomcatDate + ", Database Time: " + dbDate);
       if (dbDate != null) {
         long difference = Math.abs(tomcatDate.getTime() - dbDate.getTime());
         if (difference > THRESHOLD) {
-          log4j.warn("Tomcat and Database are in different timezones.");
+          log4j.warn("Tomcat and Database do not have the same time. Tomcat Time: " + tomcatDate
+              + ", Database Time: " + dbDate);
         }
+      } else {
+        log4j
+            .error("Received null as Database time. Not possible to check time differences with Tomcat.");
       }
     } catch (Exception ex) {
+      log4j.error("Could not check if Tomcat and Database have the same time.", ex);
     }
   }
 
   private Date getDatabaseDateTime() {
     Date date = null;
     try {
-      // We retrieve the time from the database, without considering the time zone information
+      // We retrieve the time from the database, using the predefined sql date-time format
       String now = DateTimeData.now(new DalConnectionProvider(), sqlDateTimeFormat);
       SimpleDateFormat formatter = new SimpleDateFormat(javaDateTimeFormat);
       date = formatter.parse(now);
     } catch (Exception ex) {
+      log4j.error("Could not get the Database time.", ex);
     }
     return date;
   }

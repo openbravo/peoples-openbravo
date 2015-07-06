@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="TRIGGER AD_ACCOUNTINGRPT_ELEMENT_TRG">
-    <trigger name="AD_ACCOUNTINGRPT_ELEMENT_TRG" table="AD_ACCOUNTINGRPT_ELEMENT" fires="after" insert="true" update="true" delete="true" foreach="row">
+    <trigger name="AD_ACCOUNTINGRPT_ELEMENT_TRG" table="AD_ACCOUNTINGRPT_ELEMENT" fires="after" insert="true" update="true" delete="false" foreach="row">
       <body><![CDATA[
 
 
@@ -18,13 +18,12 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2015 Openbravo SLU
+* All portions are Copyright (C) 2001-2012 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
   v_xTree_ID VARCHAR2(32);
   v_xParent_ID VARCHAR2(32);
-  v_count NUMBER;
     
 BEGIN
     
@@ -91,28 +90,6 @@ BEGIN
 WHEN NO_DATA_FOUND THEN
   RAISE_APPLICATION_ERROR(-20000, '@20002@') ;
   */
-  IF (DELETING) THEN
-    --  Delete TreeNode --
-    --  get AD_Tree_ID
-    SELECT t.AD_Tree_ID
-    INTO v_xTree_ID
-    FROM AD_Tree t
-    WHERE t.AD_Client_ID=:old.AD_Client_ID
-    AND t.treetype = 'AR';
-    select COUNT(*) INTO v_count
-    from AD_TREENODE
-    INNER JOIN AD_Accountingrpt_Element ON AD_Accountingrpt_Element.AD_Accountingrpt_Element_ID = AD_TREENODE.NODE_ID
-    where parent_id=:old.AD_Accountingrpt_Element_ID
-    and AD_TREE_ID=v_xTree_ID;
-    IF(v_count>0) THEN
-        RAISE_APPLICATION_ERROR(-20000, '@ChildAccountingRptElementCheck@') ;
-    END IF;
-    DELETE
-    FROM AD_TREENODE
-    WHERE AD_CLIENT_ID=:old.AD_Client_ID
-      AND AD_Tree_ID=v_xTree_ID
-      AND Node_ID=:old.AD_Accountingrpt_Element_ID;
-  END IF;
 END AD_ACCOUNTINGRPT_ELEMENT_TRG
 ]]></body>
     </trigger>

@@ -1115,6 +1115,8 @@ public abstract class AcctServer {
         setMessageResult(OBMessageUtils.translateError(strMessageError));
         if ("@NotConvertible@".equals(strMessageError)) {
           return STATUS_NotConvertible;
+        } else if (StringUtils.equals(strMessageError, "@PeriodNotAvailable@")) {
+          return STATUS_PeriodClosed;
         }
       }
       return STATUS_Error;

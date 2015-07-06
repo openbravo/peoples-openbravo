@@ -66,6 +66,11 @@ public class ForeignKeyUIDefinition extends UIDefinition {
     Boolean disableFkDropdown = (Boolean) readGridConfigurationSetting("disableFkDropdown");
     if (Boolean.TRUE.equals(disableFkDropdown)) {
       append = append + ", disableFkDropdown: " + disableFkDropdown.toString();
+      // if the fk drop down is disabled then the filter should behave like a text filter
+      // that means the filter could be trigger on editor change, if that configuration is enabled
+      if (Boolean.TRUE.equals(filterOnChange)) {
+        append = append + ", filterOnChange: " + filterOnChange.toString();
+      }
     } else {
       // these configurations only apply if the fk filter combo is enabled
       Boolean allowFkFilterByIdentifier = (Boolean) readGridConfigurationSetting("allowFkFilterByIdentifier");
