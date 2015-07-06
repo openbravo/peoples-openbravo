@@ -45,7 +45,8 @@ import org.openbravo.model.common.order.OrderTax;
  * following deletion fails as the record is not longer present. This class works around that by
  * explicitely deleting c_ordertax entries on delete of c_order. (Same for c_invoicetax)
  * 
- * @link https://issues.openbravo.com/view.php?id=17199
+ * {@link "https://issues.openbravo.com/view.php?id=17199"}
+ * 
  * @author shuehner
  */
 public class ReorderCascadingChildDeletionsHandler extends EntityPersistenceEventObserver {

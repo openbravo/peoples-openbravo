@@ -494,6 +494,9 @@ public class ModifyPaymentPlanActionHandler extends BaseProcessActionHandler {
   private List<JSONObject> getNewRows(JSONArray gridRows) throws JSONException {
     List<JSONObject> lResult = new ArrayList<JSONObject>();
     for (int ind = 0; ind < gridRows.length(); ind++) {
+      if (!gridRows.getJSONObject(ind).has("id")) {
+        gridRows.getJSONObject(ind).put("id", "");
+      }
       String id = gridRows.getJSONObject(ind).getString("id");
       if (StringUtils.isEmpty(id) || id.equals("NEW")) {
         lResult.add(gridRows.getJSONObject(ind));

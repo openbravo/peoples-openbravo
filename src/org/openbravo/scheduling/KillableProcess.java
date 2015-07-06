@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,9 +24,12 @@ package org.openbravo.scheduling;
  */
 public interface KillableProcess {
 
-  /*
-   * Method to implement on background processes for execute the kill action
+  /**
+   * Method to implement on background processes to execute the kill action
+   * 
+   * @param processBundle
+   *          bundle of the current execution, can be used to add log
    */
-  public void kill() throws Exception;
+  public void kill(ProcessBundle processBundle) throws Exception;
 
 }

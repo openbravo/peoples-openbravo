@@ -249,6 +249,10 @@ public class SessionHandler implements OBNotSingleton {
   public void commitAndClose() {
     boolean err = true;
     try {
+      Check.isFalse(TriggerHandler.getInstance().isDisabled(),
+          "Triggers disabled, commit is not allowed when in triggers-disabled mode, "
+              + "call TriggerHandler.enable() before committing");
+
       checkInvariant();
       flushRemainingChanges();
       if (connection == null || (connection != null && !connection.isClosed())) {
@@ -288,6 +292,10 @@ public class SessionHandler implements OBNotSingleton {
    * Commits the transaction and starts a new transaction.
    */
   public void commitAndStart() {
+    Check.isFalse(TriggerHandler.getInstance().isDisabled(),
+        "Triggers disabled, commit is not allowed when in triggers-disabled mode, "
+            + "call TriggerHandler.enable() before committing");
+
     checkInvariant();
     flushRemainingChanges();
     tx.commit();

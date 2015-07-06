@@ -33,12 +33,8 @@ import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class FIN_FinaccTransactionEventListener extends EntityPersistenceEventObserver {
-  private static final Logger logger = LoggerFactory
-      .getLogger(FIN_FinaccTransactionEventListener.class);
 
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(
       FIN_FinaccTransaction.ENTITY_NAME) };

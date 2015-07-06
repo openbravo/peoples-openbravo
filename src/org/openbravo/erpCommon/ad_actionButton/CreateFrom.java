@@ -1739,7 +1739,6 @@ public class CreateFrom extends HttpSecureAppServlet {
             String strLocator = vars.getStringParameter("inpmLocatorId" + strLineId);
             final String strmAttributesetinstanceId = vars
                 .getStringParameter("inpmAttributesetinstanceId" + strLineId);
-            final String strcUomIdConversion = "";
             String strbreakdown = "";
             CreateFromShipmentData[] dataUomIdConversion = null;
 

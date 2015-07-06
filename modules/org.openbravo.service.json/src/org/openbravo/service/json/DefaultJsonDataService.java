@@ -753,13 +753,20 @@ public class DefaultJsonDataService implements JsonDataService {
         }
 
         // refresh the objects from the db as they can have changed
+        // put the refreshed objects into a new array as we are going to retrieve them using
+        // OBDal.getInstance().get as performs better than OBDal.getInstance().getSession().refresh
+        // We use OBDal.getInstance().get inside OBDal.getInstance().refresh method after removing
+        // the bob from the session cache
+        // See issue https://issues.openbravo.com/view.php?id=30308
+        final List<BaseOBObject> refreshedBobs = new ArrayList<BaseOBObject>();
         for (BaseOBObject bob : bobs) {
-          OBDal.getInstance().getSession().refresh(bob);
+          BaseOBObject refreshedBob = OBDal.getInstance().refresh(bob, false);
           // if object has computed columns refresh from the database too
-          if (bob.getEntity().hasComputedColumns()) {
+          if (refreshedBob.getEntity().hasComputedColumns()) {
             OBDal.getInstance().getSession()
-                .refresh(bob.get(Entity.COMPUTED_COLUMNS_PROXY_PROPERTY));
+                .refresh(refreshedBob.get(Entity.COMPUTED_COLUMNS_PROXY_PROPERTY));
           }
+          refreshedBobs.add(refreshedBob);
         }
 
         // almost successfull, now create the response
@@ -767,7 +774,7 @@ public class DefaultJsonDataService implements JsonDataService {
         final DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(
             DataToJsonConverter.class);
         toJsonConverter.setAdditionalProperties(JsonUtils.getAdditionalProperties(parameters));
-        final List<JSONObject> jsonObjects = toJsonConverter.toJsonObjects(bobs);
+        final List<JSONObject> jsonObjects = toJsonConverter.toJsonObjects(refreshedBobs);
 
         if (sendOriginalIdBack) {
           // now it is assumed that the jsonObjects are the same size and the same location

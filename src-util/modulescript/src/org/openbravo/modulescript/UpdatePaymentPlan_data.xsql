@@ -23,29 +23,41 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-      SELECT '' AS finpaymentscheduleid, '' AS paidamt FROM DUAL
+      SELECT '' AS id, '' AS amount FROM DUAL
       ]]>
     </Sql>
     <Field name="rownum" value="count"/>
+  </SqlMethod>
+  <SqlMethod name="getWrongRecords" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT ps.fin_payment_schedule_id as id, sum(psd.amount + COALESCE(psd.writeoffamt, 0)) as amount
+        FROM fin_payment_scheduledetail psd
+        INNER JOIN fin_payment_schedule ps 
+        ON (ps.fin_payment_schedule_id = psd.fin_payment_schedule_order 
+        OR ps.fin_payment_schedule_id = psd.fin_payment_schedule_invoice)
+        WHERE psd.isinvoicepaid = 'Y'
+        AND psd.iscanceled = 'N' 
+        AND psd.fin_payment_detail_id IS NOT NULL
+        GROUP BY ps.fin_payment_schedule_id, ps.paidamt, ps.outstandingamt, ps.amount
+        HAVING (ps.paidamt <> sum(psd.amount + COALESCE(psd.writeoffamt, 0))
+        OR (ps.outstandingamt <> ps.amount - sum(psd.amount + COALESCE(psd.writeoffamt, 0))))
+      ]]>
+    </Sql>
   </SqlMethod>
   <SqlMethod name="update" type="preparedStatement" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-     update fin_payment_schedule set outstandingamt = amount - (select sum(psd.amount)
-                                                                from fin_payment_scheduledetail psd
-                                                                where isinvoicepaid='Y'
-                                                                and psd.fin_payment_schedule_order = fin_payment_schedule.fin_payment_schedule_id),
-                                                     paidamt = (select sum(psd.amount)
-                                                                from fin_payment_scheduledetail psd
-                                                                where isinvoicepaid='Y'
-                                                                and psd.fin_payment_schedule_order = fin_payment_schedule.fin_payment_schedule_id)
-     WHERE fin_payment_schedule.paidamt/2 = (select sum(psd.amount)
-     from fin_payment_scheduledetail psd
-     where isinvoicepaid='Y'
-     and psd.fin_payment_schedule_order = fin_payment_schedule.fin_payment_schedule_id)
+        UPDATE fin_payment_schedule 
+        SET paidamt = to_number(?), outstandingamt = amount - to_number(?)
+        WHERE fin_payment_schedule_id = ?
       ]]>
-    </Sql>
+    </Sql>    
+    <Parameter name="amount1"/>
+    <Parameter name="amount2"/>
+    <Parameter name="id"/>
   </SqlMethod>
   <SqlMethod name="isExecuted" type="preparedStatement" return="boolean">
     <SqlMethodComment></SqlMethodComment>
@@ -54,7 +66,7 @@
         SELECT count(*) as exist
         FROM DUAL
         WHERE EXISTS (SELECT 1 FROM ad_preference
-                      WHERE attribute = 'PaymentPlanUpdatedV2')
+                      WHERE attribute = 'PaymentPlanUpdatedV4')
       ]]>
     </Sql>
   </SqlMethod>
@@ -66,7 +78,7 @@
            ad_preference_id, ad_client_id, ad_org_id, isactive,
            createdby, created, updatedby, updated,attribute
            ) VALUES (
-           get_uuid(), '0', '0', 'Y', '0', NOW(), '0', NOW(),'PaymentPlanUpdatedV2')
+           get_uuid(), '0', '0', 'Y', '0', NOW(), '0', NOW(),'PaymentPlanUpdatedV4')
          ]]>
         </Sql>
    </SqlMethod>

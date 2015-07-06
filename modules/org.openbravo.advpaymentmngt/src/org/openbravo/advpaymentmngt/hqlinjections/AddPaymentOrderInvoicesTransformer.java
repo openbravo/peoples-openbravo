@@ -329,10 +329,6 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
 
   /**
    * Order by selectedPSDs, scheduled date and document number
-   * 
-   * @param selectedPSDs
-   * @param transactionType
-   * @return
    */
   protected StringBuffer getOrderByClause(String transactionType, List<String> selectedPSDs,
       Map<String, String> requestParameters) {
@@ -391,13 +387,6 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
     return hqlQuery;
   }
 
-  /**
-   * @param _hqlQuery
-   * @param transactionType
-   * @param criteria
-   * @param queryNamedParameters
-   * @return
-   */
   protected String calculateHavingClause(String _hqlQuery, String transactionType,
       JSONObject criteria, Map<String, Object> queryNamedParameters) {
     String hqlQuery = _hqlQuery;
@@ -527,13 +516,6 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
     return hqlQuery;
   }
 
-  /**
-   * @param _hqlQuery
-   * @param transactionType
-   * @param selectedPSDs
-   * @param orderByClause
-   * @return
-   */
   protected String appendOrderByClause(String _hqlQuery, StringBuffer orderByClause,
       boolean justCount) {
     String hqlQuery = _hqlQuery;
@@ -570,10 +552,6 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
     buildCriteria.put("criteria", newCriteriaArray);
   }
 
-  /**
-   * @param expression
-   * @return
-   */
   protected String getAggregatorFunction(String expression) {
     return " hqlagg(" + expression + ")";
   }

@@ -111,7 +111,7 @@ public class FIN_ReconciliationProcess implements org.openbravo.scheduling.Proce
           bundle.setResult(msg);
           return;
         }
-        final boolean isForceProcess = (Boolean) "6BF16EFC772843AC9A17552AE0B26AB7".equals(bundle
+        final boolean isForceProcess = "6BF16EFC772843AC9A17552AE0B26AB7".equals(bundle
             .getProcessId());
         // Transaction exists
         if (!isForceProcess && !MatchTransactionDao.islastreconciliation(reconciliation)) {
@@ -158,7 +158,6 @@ public class FIN_ReconciliationProcess implements org.openbravo.scheduling.Proce
         reconciliation.setAPRMProcessReconciliationForce("P");
         OBDal.getInstance().save(reconciliation);
         OBDal.getInstance().flush();
-        Boolean invoicePaidold = false;
       }
       reconciliation.setProcessNow(false);
       OBDal.getInstance().save(reconciliation);

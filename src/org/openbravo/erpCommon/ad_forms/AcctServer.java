@@ -875,7 +875,7 @@ public abstract class AcctServer {
   /**
    * Save to Disk - set posted flag
    * 
-   * @param con
+   * @param conn
    *          connection
    * @param strUser
    *          AD_User_ID
@@ -1115,6 +1115,8 @@ public abstract class AcctServer {
         setMessageResult(OBMessageUtils.translateError(strMessageError));
         if ("@NotConvertible@".equals(strMessageError)) {
           return STATUS_NotConvertible;
+        } else if (StringUtils.equals(strMessageError, "@PeriodNotAvailable@")) {
+          return STATUS_PeriodClosed;
         }
       }
       return STATUS_Error;
@@ -2797,8 +2799,6 @@ public abstract class AcctServer {
   /**
    * If there is any template active for current document in any accounting schema, it returns true
    * to skip this step as getDocumentConfirmation can lock template
-   * 
-   * @return
    */
   boolean disableDocumentConfirmation() {
     C_DocType_ID = objectFieldProvider[0].getField("cDoctypeId");

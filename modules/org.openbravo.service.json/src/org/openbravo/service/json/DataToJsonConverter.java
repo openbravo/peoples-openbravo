@@ -141,7 +141,7 @@ public class DataToJsonConverter {
   public List<JSONObject> toJsonObjects(List<BaseOBObject> bobs) {
     final List<JSONObject> jsonObjects = new ArrayList<JSONObject>();
     for (BaseOBObject bob : bobs) {
-      jsonObjects.add(toJsonObject((BaseOBObject) bob, DataResolvingMode.FULL));
+      jsonObjects.add(toJsonObject(bob, DataResolvingMode.FULL));
     }
     return jsonObjects;
   }

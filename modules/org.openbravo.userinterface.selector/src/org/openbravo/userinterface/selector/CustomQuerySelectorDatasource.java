@@ -11,13 +11,14 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2014 Openbravo SLU
+ * All portions are Copyright (C) 2011-2015 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.userinterface.selector;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -64,6 +65,7 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
   private static final String ADDITIONAL_FILTERS = "@additional_filters@";
   private static final String NEW_FILTER_CLAUSE = "\n AND ";
   private static final String NEW_OR_FILTER_CLAUSE = "\n OR ";
+  private static final String ALIAS_PREFIX = "alias_";
 
   @Override
   protected int getCount(Map<String, String> parameters) {
@@ -78,6 +80,7 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
     final SimpleDateFormat xmlDateFormat = JsonUtils.createDateFormat();
     final SimpleDateFormat xmlDateTimeFormat = JsonUtils.createDateTimeFormat();
     final List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+    final List<Object> typedParameters = new ArrayList<Object>();
     // Defaulted to endRow + 2 to check for more records while scrolling.
     int totalRows = endRow + 2, rowCount = 0;
 
@@ -99,12 +102,15 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
       Hibernate.initialize(fields);
 
       // Parse the HQL in case that optional filters are required
-      String HQL = parseOptionalFilters(parameters, sel, xmlDateFormat);
+      String HQL = parseOptionalFilters(parameters, sel, xmlDateFormat, typedParameters);
 
       String sortBy = parameters.get("_sortBy");
       HQL += getSortClause(sortBy, sel);
 
       Query selQuery = OBDal.getInstance().getSession().createQuery(HQL);
+      for (int i = 0; i < typedParameters.size(); i++) {
+        selQuery.setParameter(ALIAS_PREFIX + Integer.toString(i), typedParameters.get(i));
+      }
       String[] queryAliases = selQuery.getReturnAliases();
 
       if (startRow > 0) {
@@ -163,7 +169,8 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
    * These include a filter clause:
    * <ul>
    * <li>for the main entity's client by the context's client.</li>
-   * <li>for the main entity's organization by an organization list see {@link #getOrgs(String)}</li>
+   * <li>for the main entity's organization by an organization list see
+   * {@link DataSourceUtils#getOrgs(String)}</li>
    * <li>with Selector's default filter expression.</li>
    * <li>for each default expression defined on the selector fields.</li>
    * <li>for each selector field in case exists a value for it on the parameters param.</li>
@@ -179,7 +186,7 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
    */
 
   private String parseOptionalFilters(Map<String, String> parameters, Selector sel,
-      SimpleDateFormat xmlDateFormat) {
+      SimpleDateFormat xmlDateFormat, List<Object> typedParameters) {
     String HQL = sel.getHQL();
     if (!HQL.contains(ADDITIONAL_FILTERS)) {
       return HQL;
@@ -237,14 +244,15 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
           if (StringUtils.isNotEmpty(defaultValue)) {
             defaultExpressionsFilter.append(NEW_FILTER_CLAUSE);
             defaultExpressionsFilter.append(getWhereClause(operator, defaultValue, field,
-                xmlDateFormat, operatorvalue));
+                xmlDateFormat, operatorvalue, typedParameters));
           }
         } catch (Exception e) {
           log.error("Error evaluating filter expression: " + e.getMessage(), e);
         }
       }
       if (field.isFilterable() && StringUtils.isNotEmpty(value)) {
-        String whereClause = getWhereClause(operator, value, field, xmlDateFormat, operatorvalue);
+        String whereClause = getWhereClause(operator, value, field, xmlDateFormat, operatorvalue,
+            typedParameters);
         if (!hasFilter) {
           additionalFilter.append(NEW_FILTER_CLAUSE);
           additionalFilter.append(" (");
@@ -295,7 +303,7 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
    * @return a String with the HQL where clause to filter the field by the given value.
    */
   private String getWhereClause(String operator, String value, SelectorField field,
-      SimpleDateFormat xmlDateFormat, String[] operatorvalue) {
+      SimpleDateFormat xmlDateFormat, String[] operatorvalue, List<Object> typedParameters) {
     String whereClause = "";
 
     if (operator != null && operator.equals(AdvancedQueryBuilder.EXISTS_QUERY_KEY)) {
@@ -311,28 +319,33 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
         .getDomainType();
     if (domainType.getClass().getSuperclass().equals(BigDecimalDomainType.class)
         || domainType.getClass().equals(LongDomainType.class)) {
-      whereClause = field.getClauseLeftPart() + " = " + value;
+      whereClause = field.getClauseLeftPart() + " = "
+          + getTypedParameterAlias(typedParameters, new BigDecimal(value));
     } else if (domainType.getClass().equals(DateDomainType.class)) {
       try {
         final Calendar cal = Calendar.getInstance();
         cal.setTime(xmlDateFormat.parse(value));
-        whereClause = " (day(" + field.getClauseLeftPart() + ") = " + cal.get(Calendar.DATE);
+        whereClause = " (day(" + field.getClauseLeftPart() + ") = "
+            + getTypedParameterAlias(typedParameters, cal.get(Calendar.DATE));
         whereClause += "\n and month(" + field.getClauseLeftPart() + ") = "
-            + (cal.get(Calendar.MONTH) + 1);
-        whereClause += "\n and year(" + field.getClauseLeftPart() + ") = " + cal.get(Calendar.YEAR)
-            + ") ";
+            + getTypedParameterAlias(typedParameters, cal.get(Calendar.MONTH) + 1);
+        whereClause += "\n and year(" + field.getClauseLeftPart() + ") = "
+            + getTypedParameterAlias(typedParameters, cal.get(Calendar.YEAR)) + ") ";
       } catch (Exception e) {
         // ignore these errors, just don't filter then
         // add a dummy whereclause to make the query format correct
         whereClause = "1 = 1";
       }
     } else if (domainType instanceof BooleanDomainType) {
-      whereClause = field.getClauseLeftPart() + " = " + value;
+      whereClause = field.getClauseLeftPart() + " = "
+          + getTypedParameterAlias(typedParameters, new Boolean(value));
     } else if (domainType instanceof UniqueIdDomainType) {
-      whereClause = field.getClauseLeftPart() + " = '" + value + "'";
+      whereClause = field.getClauseLeftPart() + " = "
+          + getTypedParameterAlias(typedParameters, value);
     } else if (domainType instanceof ForeignKeyDomainType) {
       // Assume left part definition is full object reference from HQL select
-      whereClause = field.getClauseLeftPart() + ".id = '" + value + "'";
+      whereClause = field.getClauseLeftPart() + ".id = "
+          + getTypedParameterAlias(typedParameters, value);
     } else if (domainType instanceof StringEnumerateDomainType) {
       // For enumerations value can be in two formats:
       // 1- VAL: in this case the expression should be property='VAL'
@@ -348,7 +361,8 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
 
       if (values == null) {
         // format 1
-        whereClause = field.getClauseLeftPart() + " = '" + value + "'";
+        whereClause = field.getClauseLeftPart() + " = "
+            + getTypedParameterAlias(typedParameters, value);
       } else {
         // format 2
         whereClause = field.getClauseLeftPart() + " IN (";
@@ -357,7 +371,7 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
             whereClause += ", ";
           }
           try {
-            whereClause += "'" + values.getString(i) + "'";
+            whereClause += getTypedParameterAlias(typedParameters, values.getString(i));
           } catch (JSONException e) {
             log.error("Error parsing values as JSONArray:" + value, e);
           }
@@ -366,11 +380,17 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
       }
     } else {
       if ("iStartsWith".equals(operator)) {
-        whereClause = "lower(" + field.getClauseLeftPart() + ") LIKE '"
-            + value.toLowerCase().replaceAll(" ", "%") + "%'";
+        whereClause = "lower("
+            + field.getClauseLeftPart()
+            + ") LIKE "
+            + getTypedParameterAlias(typedParameters, value.toLowerCase().replaceAll(" ", "%")
+                + "%");
       } else {
-        whereClause = "lower(" + field.getClauseLeftPart() + ") LIKE '%"
-            + value.toLowerCase().replaceAll(" ", "%") + "%'";
+        whereClause = "lower("
+            + field.getClauseLeftPart()
+            + ") LIKE "
+            + getTypedParameterAlias(typedParameters, "%"
+                + value.toLowerCase().replaceAll(" ", "%") + "%");
       }
     }
     return whereClause;
@@ -571,5 +591,11 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
     } catch (JSONException e) {
       return null;
     }
+  }
+
+  private String getTypedParameterAlias(List<Object> typedParameters, Object value) {
+    String alias = ":" + ALIAS_PREFIX + (typedParameters.size());
+    typedParameters.add(value);
+    return alias;
   }
 }

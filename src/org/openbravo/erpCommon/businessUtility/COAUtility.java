@@ -645,7 +645,6 @@ public class COAUtility {
    * @param strClientName
    * @param strAccountString
    *          Translated name of the column Account_ID
-   * @return
    */
   private OBError insertElement(String strClientName, String strAccountString) {
 

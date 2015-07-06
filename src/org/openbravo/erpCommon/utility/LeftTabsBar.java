@@ -18,11 +18,9 @@
  */
 package org.openbravo.erpCommon.utility;
 
-import org.apache.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 
 public class LeftTabsBar {
-  private static Logger log4j = Logger.getLogger(LeftTabsBar.class);
   private ConnectionProvider conn;
   private String language = "en_US";
   private String servlet_action = "";

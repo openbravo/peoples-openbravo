@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2009-2014 Openbravo SLU
+ * All portions are Copyright (C) 2009-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -306,7 +306,7 @@ public class AccountElementValue extends HttpSecureAppServlet {
           strNumRows = AccountElementValueData.countRows(this, rownum, strAcctSchema, strValue,
               strName, strOrganization, strAccountElementValue,
               Utility.getContext(this, vars, "#User_Client", "AccountElementValue"),
-              Utility.getContext(this, vars, "#User_Org", "AccountElementValue"), pgLimit,
+              Utility.getContext(this, vars, "#AccessibleOrgTree", "AccountElementValue"), pgLimit,
               oraLimit1, oraLimit2);
           vars.setSessionValue("AccountElementValueInfo.numrows", strNumRows);
         } else {
@@ -319,14 +319,14 @@ public class AccountElementValue extends HttpSecureAppServlet {
           data = AccountElementValueData.select(this, "ROWNUM", strAcctSchema, strValue, strName,
               strOrganization, strAccountElementValue,
               Utility.getContext(this, vars, "#User_Client", "AccountElementValue"),
-              Utility.getContext(this, vars, "#User_Org", "AccountElementValue"), strOrderBy,
+              Utility.getContext(this, vars, "#AccessibleOrgTree", "AccountElementValue"), strOrderBy,
               oraLimit, "");
         } else {
           String pgLimit = pageSize + " OFFSET " + offset;
           data = AccountElementValueData.select(this, "1", strAcctSchema, strValue, strName,
               strOrganization, strAccountElementValue,
               Utility.getContext(this, vars, "#User_Client", "AccountElementValue"),
-              Utility.getContext(this, vars, "#User_Org", "AccountElementValue"), strOrderBy, "",
+              Utility.getContext(this, vars, "#AccessibleOrgTree", "AccountElementValue"), strOrderBy, "",
               pgLimit);
         }
       } catch (ServletException e) {

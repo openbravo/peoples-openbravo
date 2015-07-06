@@ -138,21 +138,21 @@ public class OBBindings {
     if (!checkRequestMap()) {
       return null;
     }
-    return (String) requestMap.get(OBBindingsConstants.WINDOW_ID_PARAM);
+    return requestMap.get(OBBindingsConstants.WINDOW_ID_PARAM);
   }
 
   public String getTabId() {
     if (!checkRequestMap()) {
       return null;
     }
-    return (String) requestMap.get(OBBindingsConstants.TAB_ID_PARAM);
+    return requestMap.get(OBBindingsConstants.TAB_ID_PARAM);
   }
 
   public String getCommandType() {
     if (!checkRequestMap()) {
       return null;
     }
-    return (String) requestMap.get(OBBindingsConstants.COMMAND_TYPE_PARAM);
+    return requestMap.get(OBBindingsConstants.COMMAND_TYPE_PARAM);
   }
 
   public Boolean isPosted() {

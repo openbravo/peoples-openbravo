@@ -549,7 +549,7 @@ public abstract class CostingAlgorithm {
     try {
       List<Object> params = new ArrayList<Object>();
       params.add(production.getId());
-      params.add((String) DalUtil.getId(OBContext.getOBContext().getUser()));
+      params.add(DalUtil.getId(OBContext.getOBContext().getUser()));
       CallStoredProcedure.getInstance().call("MA_PRODUCTION_COST", params, null, true, false);
 
     } catch (Exception e) {

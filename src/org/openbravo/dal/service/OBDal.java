@@ -285,6 +285,24 @@ public class OBDal implements OBSingleton {
   }
 
   /**
+   * Refresh the given BaseOBObject.
+   * 
+   * @param bob
+   *          the BaseOBObject to refresh
+   * @param useCache
+   *          a flag to indicate if the refresh is done from cache (true) or from db (false)
+   * @return the refreshed BaseOBObject, or null if none found
+   */
+  public BaseOBObject refresh(BaseOBObject bob, boolean useCache) {
+    if (!useCache) {
+      // Remove the bob instance from the session cache with evict
+      // Now with get() we will retrieve the object from database
+      SessionHandler.getInstance().getSession().evict(bob);
+    }
+    return get(bob.getEntityName(), bob.getId());
+  }
+
+  /**
    * Retrieves an object from the database using the class and id.
    * 
    * @param clazz

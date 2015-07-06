@@ -544,7 +544,6 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       ServletException {
     log4j.debug("Output: PDF");
     response.setContentType("text/html; charset=UTF-8");
-    ReportGeneralLedgerData[] subreport = null;
     String strTreeOrg = TreeData.getTreeOrg(this, vars.getClient());
     String strOrgFamily = getFamily(strTreeOrg, strOrg);
     String toDatePlusOne = DateTimeData.nDaysAfter(this, strDateTo, "1");

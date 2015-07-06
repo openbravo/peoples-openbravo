@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,6 +21,7 @@ package org.openbravo.scheduling;
 import static org.openbravo.scheduling.Process.COMPLETE;
 import static org.openbravo.scheduling.Process.ERROR;
 import static org.openbravo.scheduling.Process.EXECUTION_ID;
+import static org.openbravo.scheduling.Process.KILLED;
 import static org.openbravo.scheduling.Process.PROCESSING;
 import static org.openbravo.scheduling.Process.SCHEDULED;
 import static org.openbravo.scheduling.Process.SUCCESS;
@@ -37,6 +38,7 @@ import org.openbravo.base.ConnectionProviderContextListener;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.utility.SequenceIdData;
+import org.quartz.Job;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -152,15 +154,22 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
     final ProcessContext ctx = bundle.getContext();
     try {
       final String executionId = (String) jec.get(EXECUTION_ID);
+      Job jobInstance = jec.getJobInstance();
+
       final String executionLog = bundle.getLog().length() >= 4000 ? bundle.getLog().substring(0,
           3999) : bundle.getLog();
-      if (jee == null) {
-        ProcessRunData.update(getConnection(), ctx.getUser(), SUCCESS,
-            getDuration(jec.getJobRunTime()), executionLog, executionId);
+      String executionStatus;
+
+      if (jee != null) {
+        executionStatus = ERROR;
+      } else if (jobInstance instanceof DefaultJob && ((DefaultJob) jobInstance).isKilled()) {
+        executionStatus = KILLED;
       } else {
-        ProcessRunData.update(getConnection(), ctx.getUser(), ERROR,
-            getDuration(jec.getJobRunTime()), executionLog, executionId);
+        executionStatus = SUCCESS;
       }
+
+      ProcessRunData.update(getConnection(), ctx.getUser(), executionStatus,
+          getDuration(jec.getJobRunTime()), executionLog, executionId);
 
       if (bundle.getGroupInfo() != null) {
         // Manage Process Group

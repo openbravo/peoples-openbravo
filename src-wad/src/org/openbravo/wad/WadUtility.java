@@ -62,8 +62,7 @@ public class WadUtility {
     else if (reference.equals("16"))
       return "TO_CHAR(" + text + ", '" + sqlDateFormat + " HH24:MM:SS')";
     else
-      text = "TO_CHAR(COALESCE(TO_CHAR(" + text + "), ''))";
-    return text;
+      return "TO_CHAR(COALESCE(TO_CHAR(" + text + "), ''))";
   }
 
   public static String columnIdentifier(ConnectionProvider conn, String tableName,
@@ -575,9 +574,10 @@ public class WadUtility {
     return getComboReloadText(token, vecFields, parentsFieldsData, vecComboReload, prefix, "");
   }
 
-  public static String getComboReloadText(String token, Vector<Object> vecFields,
+  public static String getComboReloadText(String _token, Vector<Object> vecFields,
       FieldsData[] parentsFieldsData, Vector<Object> vecComboReload, String prefix,
       String columnname) {
+    String token = _token;
     StringBuffer strOut = new StringBuffer();
     int i = token.indexOf("@");
     while (i != -1) {
@@ -622,9 +622,10 @@ public class WadUtility {
         + Sqlc.TransformaNombreColumna(token) + "\""));
   }
 
-  public static String getDisplayLogicText(String token, Vector<Object> vecFields,
+  public static String getDisplayLogicText(String _token, Vector<Object> vecFields,
       FieldsData[] parentsFieldsData, Vector<Object> vecAuxiliar, Vector<Object> vecDisplayLogic,
       String windowId, Vector<Object> vecContext, boolean save) {
+    String token = _token;
     StringBuffer strOut = new StringBuffer();
     int i = token.indexOf("@");
     while (i != -1) {

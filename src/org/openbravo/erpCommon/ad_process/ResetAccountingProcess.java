@@ -25,16 +25,12 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.financial.ResetAccounting;
 import org.openbravo.scheduling.ProcessBundle;
-import org.openbravo.scheduling.ProcessLogger;
 import org.openbravo.service.db.DalBaseProcess;
 import org.quartz.JobExecutionException;
 
 public class ResetAccountingProcess extends DalBaseProcess {
 
-  private ProcessLogger logger;
-
   public void doExecute(ProcessBundle bundle) throws Exception {
-    logger = bundle.getLogger();
     try {
       String adClientId = (String) bundle.getParams().get("adClientId");
       String adOrgId = (String) bundle.getParams().get("adOrgId");

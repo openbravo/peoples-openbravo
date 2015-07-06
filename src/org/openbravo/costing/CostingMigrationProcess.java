@@ -655,7 +655,7 @@ public class CostingMigrationProcess implements Process {
     try {
       while (trxs.next()) {
         MaterialTransaction trx = (MaterialTransaction) trxs.get(0);
-        if (!orgId.equals((String) DalUtil.getId(trx.getOrganization()))) {
+        if (!orgId.equals(DalUtil.getId(trx.getOrganization()))) {
           orgId = (String) DalUtil.getId(trx.getOrganization());
           Currency cur = FinancialUtils.getLegalEntityCurrency(trx.getOrganization());
           curId = cur.getId();

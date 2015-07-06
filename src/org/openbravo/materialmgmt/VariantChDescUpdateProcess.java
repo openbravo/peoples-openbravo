@@ -61,7 +61,7 @@ public class VariantChDescUpdateProcess extends DalBaseProcess {
       msg.setType("Error");
       msg.setTitle(OBMessageUtils.messageBD(bundle.getConnection(), "Error", bundle.getContext()
           .getLanguage()));
-      msg.setMessage(((GenericJDBCException) ge).getSQLException().getMessage());
+      msg.setMessage(ge.getSQLException().getMessage());
       bundle.setResult(msg);
       OBDal.getInstance().rollbackAndClose();
       // Oracle wraps the exception into a QueryTimeoutException
@@ -70,7 +70,7 @@ public class VariantChDescUpdateProcess extends DalBaseProcess {
       msg.setType("Error");
       msg.setTitle(OBMessageUtils.messageBD(bundle.getConnection(), "Error", bundle.getContext()
           .getLanguage()));
-      msg.setMessage(((QueryTimeoutException) qte).getSQLException().getMessage().split("\n")[0]);
+      msg.setMessage(qte.getSQLException().getMessage().split("\n")[0]);
       bundle.setResult(msg);
       OBDal.getInstance().rollbackAndClose();
     } catch (final Exception e) {

@@ -12,7 +12,7 @@
 	* under the License. 
 	* The Original Code is Openbravo ERP. 
 	* The Initial Developer of the Original Code is Openbravo SLU 
-	* All portions are Copyright (C) 2008 Openbravo SLU 
+	* All portions are Copyright (C) 2008-2015 Openbravo SLU 
 	* All Rights Reserved. 
 	* Contributor(s):  ______________________________________.
 	************************************************************************
@@ -28,11 +28,17 @@
          select C_invoice.C_invoice_ID, C_invoice.DocumentNo, 
          C_InvoiceTax.C_InvoiceTax_ID, coalesce(C_invoice.TaxDate, C_invoice.DateAcct) as TaxDate, 
          case when C_Invoice.C_Currency_ID = (select c_currency_id from c_taxpayment where c_taxpayment_id = ? ) then C_InvoiceTax.TaxAmt else
+         case when (select rate from c_conversion_rate_document WHERE c_invoice_id = C_invoice.C_invoice_ID AND c_currency_id = C_Invoice.C_Currency_ID AND c_currency_id_to = (select c_currency_id from c_taxpayment where c_taxpayment_id = ? )) IS NOT NULL
+         then ROUND (C_InvoiceTax.TaxAmt * (select rate from c_conversion_rate_document WHERE c_invoice_id = C_invoice.C_invoice_ID AND c_currency_id = C_Invoice.C_Currency_ID AND c_currency_id_to = (select c_currency_id from c_taxpayment where c_taxpayment_id = ? )) , 
+         C_get_currency_precision ((select c_currency_id from c_taxpayment where c_taxpayment_id = ? ), 'A')) else
          C_Currency_Convert(C_InvoiceTax.TaxAmt ,C_Invoice.C_Currency_ID, (select c_currency_id from c_taxpayment where c_taxpayment_id = ? ),
-         coalesce(C_invoice.TaxDate, C_invoice.DateAcct), 'S', c_invoice.ad_client_id, c_invoice.ad_org_id) end as TaxAmt,
+         coalesce(C_invoice.TaxDate, C_invoice.DateAcct), 'S', c_invoice.ad_client_id, c_invoice.ad_org_id) end end as TaxAmt,
          case when C_Invoice.C_Currency_ID = (select c_currency_id from c_taxpayment where c_taxpayment_id = ? ) then C_InvoiceTax.TaxBaseAmt else
+         case when (select rate from c_conversion_rate_document WHERE c_invoice_id = C_invoice.C_invoice_ID AND c_currency_id = C_Invoice.C_Currency_ID AND c_currency_id_to = (select c_currency_id from c_taxpayment where c_taxpayment_id = ? )) IS NOT NULL
+         then ROUND (C_InvoiceTax.TaxBaseAmt * (select rate from c_conversion_rate_document WHERE c_invoice_id = C_invoice.C_invoice_ID AND c_currency_id = C_Invoice.C_Currency_ID AND c_currency_id_to = (select c_currency_id from c_taxpayment where c_taxpayment_id = ? )) , 
+         C_get_currency_precision ((select c_currency_id from c_taxpayment where c_taxpayment_id = ? ), 'A')) else
          C_Currency_Convert(C_InvoiceTax.TaxBaseAmt ,C_Invoice.C_Currency_ID, (select c_currency_id from c_taxpayment where c_taxpayment_id = ? ),
-         coalesce(C_invoice.TaxDate, C_invoice.DateAcct), 'S', c_invoice.ad_client_id, c_invoice.ad_org_id) end as TaxBaseAmt,
+         coalesce(C_invoice.TaxDate, C_invoice.DateAcct), 'S', c_invoice.ad_client_id, c_invoice.ad_org_id) end end as TaxBaseAmt,
          C_Tax.C_Tax_ID, C_Tax.IsTaxExempt ,C_Tax.IsTaxUndeductable, C_Tax.IsNoVat, C_DocType.DocBaseType, C_DocType.isreversal
          from C_Invoice,
          C_TaxRegister_Type_Lines,
@@ -54,6 +60,12 @@
          and C_Invoice.AD_Org_ID IN ('1') 
               ]]>
 	</Sql>
+        <Parameter name="taxPaymentID"/>
+        <Parameter name="taxPaymentID"/>
+        <Parameter name="taxPaymentID"/>
+        <Parameter name="taxPaymentID"/>
+        <Parameter name="taxPaymentID"/>
+        <Parameter name="taxPaymentID"/>
         <Parameter name="taxPaymentID"/>
         <Parameter name="taxPaymentID"/>
         <Parameter name="taxPaymentID"/>

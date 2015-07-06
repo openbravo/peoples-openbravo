@@ -42,7 +42,7 @@ public class FIN_BankStatementProcess implements org.openbravo.scheduling.Proces
       final VariablesSecureApp vars = bundle.getContext().toVars();
       final ConnectionProvider conProvider = bundle.getConnection();
       final String language = bundle.getContext().getLanguage();
-      final boolean isForceProcess = (Boolean) "2DDE7D3618034C38A4462B7F3456C28D".equals(bundle
+      final boolean isForceProcess = "2DDE7D3618034C38A4462B7F3456C28D".equals(bundle
           .getProcessId());
 
       bankStatement.setProcessNow(true);

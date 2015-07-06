@@ -22,7 +22,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2014 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2015 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -176,6 +176,7 @@
   v_invoiceline_qtysum NUMBER;
   v_PriceList_ID varchar2(32);
   v_prepaymentamt NUMBER;
+  v_hasTaxes NUMBER;
    
 BEGIN
   IF (p_PInstance_ID IS NOT NULL) THEN
@@ -1503,8 +1504,7 @@ IF (NOT FINISH_PROCESS) THEN
         FROM C_INVOICELINE IL 
           JOIN M_MATCHINV MI ON IL.C_INVOICELINE_ID = MI.C_INVOICELINE_ID
           JOIN M_TRANSACTION TRX ON MI.M_INOUTLINE_ID = TRX.M_INOUTLINE_ID
-        WHERE TRX.ISCOSTCALCULATED = 'Y' 
-        AND IL.C_INVOICE_ID = v_record_id);
+        WHERE IL.C_INVOICE_ID = v_record_id);
 
         v_ResultStr:='MatchInv-PO';
         FOR Cur_ILines_PO IN
@@ -1959,7 +1959,15 @@ IF (NOT FINISH_PROCESS) THEN
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished - ' || v_Message) ;
    
     IF(v_totalqty = 0 AND v_DocAction <> 'RE') THEN
-	v_Message := v_Message || '@NoAccountingEntryInvoice@';
+      SELECT COUNT(1)
+      INTO v_hasTaxes
+      FROM DUAL
+      WHERE EXISTS (SELECT 1
+                    FROM C_INVOICETAX
+                    WHERE C_Invoice_ID = v_Record_ID);
+      IF(v_hasTaxes=0) THEN
+	      v_Message := v_Message || '@NoAccountingEntryInvoice@';
+	    END IF;
     END IF;
     AD_UPDATE_PINSTANCE(p_PInstance_ID, v_UpdatedBy, 'N', v_Result, v_Message) ;
   ELSE

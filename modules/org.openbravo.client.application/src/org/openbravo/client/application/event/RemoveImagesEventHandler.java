@@ -112,7 +112,7 @@ public class RemoveImagesEventHandler extends EntityPersistenceEventObserver {
     for (Entity entity : ModelProvider.getInstance().getEntityWithImage().keySet()) {
       entityArray.add(entity);
     }
-    return (Entity[]) entityArray.toArray(new Entity[entityArray.size()]);
+    return entityArray.toArray(new Entity[entityArray.size()]);
   }
 
   // Check if this image is used by another product

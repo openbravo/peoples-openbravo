@@ -80,7 +80,7 @@ public class RegisterModule extends HttpSecureAppServlet {
         if (!error) {
           // retrieve the module details from the webservice
           WebService3ImplServiceLocator loc = new WebService3ImplServiceLocator();
-          ws = (WebService3Impl) loc.getWebService3();
+          ws = loc.getWebService3();
         }
       } catch (Exception e) {
         error = true;

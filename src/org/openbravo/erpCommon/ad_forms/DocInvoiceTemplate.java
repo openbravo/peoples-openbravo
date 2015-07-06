@@ -26,7 +26,6 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.database.ConnectionProvider;
 
 public abstract class DocInvoiceTemplate {
-  private static final long serialVersionUID = 1L;
 
   /**
    * Constructor

@@ -52,7 +52,6 @@ class XmlVectorValue extends Vector<Object> {
         if (xmlComponentValue.print() != null && !xmlComponentValue.print().startsWith("<")
             && !xmlComponentValue.print().equals("")) {
 
-          boolean isTranslated = false;
           result = xmlComponentValue.print().replace(String.valueOf((char) 160), " ").trim();
           log4jXmlVectorValue.debug("printStringBuffer(HashMap<String, String> textMap) - result: "
               + result);

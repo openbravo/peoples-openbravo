@@ -30,9 +30,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
-import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
-import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
@@ -49,7 +47,6 @@ public class PaymentProposalPickEditLines extends BaseProcessActionHandler {
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
     JSONObject jsonRequest = null;
     OBContext.setAdminMode();
-    VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
     try {
       jsonRequest = new JSONObject(content);
       log.debug(jsonRequest);
@@ -121,7 +118,7 @@ public class PaymentProposalPickEditLines extends BaseProcessActionHandler {
     int cont = 0;
     String differentPaymentMethod = "false";
     for (int i = 0; i < selectedLines.length(); i++) {
-      JSONObject selectedLine = selectedLines.getJSONObject((int) i);
+      JSONObject selectedLine = selectedLines.getJSONObject(i);
       log.debug(selectedLine);
       BigDecimal paidAmount = new BigDecimal(selectedLine.getString("payment"));
 

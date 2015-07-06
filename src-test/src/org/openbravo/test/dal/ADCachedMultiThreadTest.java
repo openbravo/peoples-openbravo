@@ -178,7 +178,7 @@ public class ADCachedMultiThreadTest extends OBBaseTest {
     ArrayList<Callable<Long>> threads = new ArrayList<Callable<Long>>();
 
     @SuppressWarnings("unchecked")
-    List<String> tabIds = (List<String>) qTabs.list();
+    List<String> tabIds = qTabs.list();
     for (String tabId : tabIds) {
       threads.add(new TabLoader(adcs, tabId, false));
     }

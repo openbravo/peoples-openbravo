@@ -269,8 +269,8 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler implements Po
     final JSONArray jsonArray = new JSONArray();
     for (BaseOBObject bob : objects) {
       final JSONObject jsonArrayItem = new JSONObject();
-      jsonArrayItem.put(JsonConstants.ID, (String) bob.getId());
-      jsonArrayItem.put(JsonConstants.IDENTIFIER, (String) bob.getIdentifier());
+      jsonArrayItem.put(JsonConstants.ID, bob.getId());
+      jsonArrayItem.put(JsonConstants.IDENTIFIER, bob.getIdentifier());
       jsonArray.put(jsonArrayItem);
     }
     return jsonArray;

@@ -833,8 +833,8 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
    * 
    * @param vars
    *          VariablseSecureApp with the session data.
-   * @param selectedPaymentScheduleDetails
-   *          List of FIN_PaymentScheduleDetails that need to be included in the HashMap.
+   * @param _strSelectedScheduledPaymentDetailIds
+   *          List of id's of FIN_PaymentScheduleDetails that need to be included in the HashMap.
    * @return A HashMap mapping the FIN_PaymentScheduleDetail's Id with the corresponding amount.
    */
   private HashMap<String, BigDecimal> getSelectedPaymentDetailsAndAmount(VariablesSecureApp vars,
@@ -876,7 +876,6 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
    *          : amount to split among the set
    * @param psdSet
    *          : set of payment schedule details where to allocate the amount
-   * @return
    */
   private HashMap<String, BigDecimal> calculateAmounts(BigDecimal recordAmount, Set<String> psdSet) {
     BigDecimal remainingAmount = recordAmount;

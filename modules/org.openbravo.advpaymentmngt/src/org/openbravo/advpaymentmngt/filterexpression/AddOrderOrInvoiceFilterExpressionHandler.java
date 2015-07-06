@@ -83,7 +83,7 @@ abstract class AddOrderOrInvoiceFilterExpressionHandler {
     AddPaymentDefaultValuesHandler handler = getDefaultsHandler(strWindowId);
     String paymentMethodId = handler.getDefaultPaymentMethod(requestMap);
     if (context.has("inpfinPaymentId") && context.get("inpfinPaymentId") != JSONObject.NULL
-        && StringUtils.isNotBlank((String) context.getString("inpfinPaymentId"))) {
+        && StringUtils.isNotBlank(context.getString("inpfinPaymentId"))) {
       if (hasDetailsWithDifferentPaymentMethods((String) context.get("inpfinPaymentId"))) {
         return "";
       } else {
@@ -111,7 +111,7 @@ abstract class AddOrderOrInvoiceFilterExpressionHandler {
     query.setParameter("paymentId", paymentId);
     FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, paymentId);
     for (Object pmId : query.list()) {
-      if (!payment.getPaymentMethod().getId().equals((String) pmId)) {
+      if (!payment.getPaymentMethod().getId().equals(pmId)) {
         return true;
       }
     }

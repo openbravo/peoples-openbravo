@@ -22,7 +22,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2011 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2015 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -147,11 +147,11 @@
       END IF;
       v_DefaultValue:=v_varchar2;
       IF(UPPER(Cur_Column.Column_Name)=UPPER(Cur_Column.Table_Name) ||'_ID') THEN --ID column
-        v_AD_Reference_ID:=13;
+        v_AD_Reference_ID:='13';
         v_IsKey:='Y';
         v_IsUpdateable:='N';
       ELSIF(UPPER(Cur_Column.Column_Name) IN('AD_CLIENT_ID', 'AD_ORG_ID')) THEN
-        v_AD_Reference_ID:=19;
+        v_AD_Reference_ID:='19';
         v_DefaultValue:='@'||Cur_Column.Column_Name||'@';
         v_IsUpdateable:='N';
         v_IsSessionAttr:='Y';

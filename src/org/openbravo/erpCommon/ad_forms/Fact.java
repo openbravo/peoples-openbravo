@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2014 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2015 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -24,6 +24,7 @@ import java.util.Iterator;
 
 import javax.servlet.ServletException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.database.ConnectionProvider;
@@ -194,24 +195,35 @@ public class Fact {
       return null;
     }
     if (strNegate.equals("N") && (DebitAmt.compareTo(ZERO) < 0 || CreditAmt.compareTo(ZERO) < 0)) {
+      BigDecimal convertedDebitAmt = StringUtils.isBlank(docLine.m_AmtAcctDr) ? ZERO
+          : new BigDecimal(docLine.m_AmtAcctDr);
+      BigDecimal convertedCreditAmt = StringUtils.isBlank(docLine.m_AmtAcctCr) ? ZERO
+          : new BigDecimal(docLine.m_AmtAcctCr);
+
       if (DebitAmt.compareTo(ZERO) < 0) {
         CreditAmt = CreditAmt.add(DebitAmt.abs());
         creditAmt = CreditAmt.toString();
         DebitAmt = BigDecimal.ZERO;
         debitAmt = DebitAmt.toString();
+        convertedCreditAmt = convertedCreditAmt.add(convertedDebitAmt.abs());
+        convertedDebitAmt = BigDecimal.ZERO;
       }
       if (CreditAmt.compareTo(ZERO) < 0) {
         DebitAmt = DebitAmt.add(CreditAmt.abs());
         debitAmt = DebitAmt.toString();
         CreditAmt = BigDecimal.ZERO;
         creditAmt = CreditAmt.toString();
+        convertedDebitAmt = convertedDebitAmt.add(convertedCreditAmt.abs());
+        convertedCreditAmt = BigDecimal.ZERO;
       }
+
       // If this is a manual entry then we need to recompute Amounts which were set in loadLines for
       // GL Journal Document
       if ("GLJ".equals(DocBaseType)) {
-        docLine.setConvertedAmt(docLine.m_C_AcctSchema_ID, DebitAmt.toString(), CreditAmt
-            .toString());
+        docLine.setConvertedAmt(docLine.m_C_AcctSchema_ID, convertedDebitAmt.toString(),
+            convertedCreditAmt.toString());
       }
+
       if (strNegate.equals("N") && (DebitAmt.compareTo(ZERO) < 0 || CreditAmt.compareTo(ZERO) < 0)) {
         return createLine(docLine, account, C_Currency_ID, CreditAmt.abs().toString(), DebitAmt
             .abs().toString(), Fact_Acct_Group_ID, SeqNo, DocBaseType, conn);

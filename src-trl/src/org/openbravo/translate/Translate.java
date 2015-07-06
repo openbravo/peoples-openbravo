@@ -211,11 +211,12 @@ public class Translate extends DefaultHandler implements LexicalHandler {
    *          If is filtered.
    * @param dirFilter
    *          Filter to apply.
-   * @param relativePath
+   * @param _relativePath
    *          The relative path.
    */
   private static void listDir(File file, boolean boolFilter, DirFilter dirFilter,
-      String relativePath, boolean parse, String parent, int level, String module) {
+      String _relativePath, boolean parse, String parent, int level, String module) {
+    String relativePath = _relativePath;
     File[] list;
     if (boolFilter)
       list = file.listFiles(dirFilter);
@@ -293,12 +294,13 @@ public class Translate extends DefaultHandler implements LexicalHandler {
    * 
    * @param fileParsing
    *          File to parse.
-   * @param relativePath
+   * @param _relativePath
    *          The relative path.
    */
-  private static void parseFile(File fileParsing, String relativePath, String parent, String module) {
+  private static void parseFile(File fileParsing, String _relativePath, String parent, String module) {
     if (!translateModule)
       return;
+    String relativePath = _relativePath;
     final String strFileName = fileParsing.getName();
     if (log4j.isDebugEnabled())
       log4j.debug("Parsing of " + strFileName);
@@ -530,15 +532,16 @@ public class Translate extends DefaultHandler implements LexicalHandler {
   /**
    * This method is the one in charge of the translation of the found text.
    * 
-   * @param ini
+   * @param input
    *          String with the text to translate.
    * @param isPartial
    *          Indicates if the text passed is partial text or the complete one found in the element
    *          content.
    */
-  private void translate(String ini, boolean isPartial) {
+  private void translate(String input, boolean isPartial) {
     if (!translateModule)
       return;
+    String ini = input;
     ini = replace(replace(ini.trim(), "\r", ""), "\n", " ");
     ini = ini.trim();
     ini = delSp(ini);
@@ -559,10 +562,9 @@ public class Translate extends DefaultHandler implements LexicalHandler {
     final Vector<String> translated = new Vector<String>(0);
     boolean aux = true;
     translated.addElement("Y");
-    String resultado = ini;
     if (!ini.equals("") && !ini.toLowerCase().startsWith("xx") && !isNumeric(ini)) {
       log4j.debug("Translating " + ini + " for file" + actualFile + " moduleLang:" + moduleLang);
-      resultado = tokenize(ini, 0, translated);
+      tokenize(ini, 0, translated);
       try {
         aux = translated.elementAt(0).equals("Y");
         if (moduleLang == null || moduleLang.equals("")) {

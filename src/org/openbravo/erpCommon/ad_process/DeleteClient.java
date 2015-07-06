@@ -34,7 +34,6 @@ import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
-import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.system.Client;
@@ -66,7 +65,6 @@ public class DeleteClient extends HttpSecureAppServlet {
   }
 
   private void processButton(VariablesSecureApp vars, String strClient) throws ServletException {
-    String pinstance = SequenceIdData.getUUID();
     OBError myMessage = null;
     try {
       if (strClient.equals("")) {

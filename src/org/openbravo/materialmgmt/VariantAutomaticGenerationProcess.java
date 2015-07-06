@@ -132,8 +132,8 @@ public class VariantAutomaticGenerationProcess implements Process {
       int productNo = 0;
       int k = 0;
       Long start = System.currentTimeMillis();
-      boolean multilingualDocs = ((Client) OBDal.getInstance().get(Client.class,
-          bundle.getContext().getClient())).isMultilingualDocuments();
+      boolean multilingualDocs = OBDal.getInstance()
+          .get(Client.class, bundle.getContext().getClient()).isMultilingualDocuments();
       do {
         k = k + 1;
         // Create variant product
@@ -242,7 +242,7 @@ public class VariantAutomaticGenerationProcess implements Process {
       msg.setType("Error");
       msg.setTitle(OBMessageUtils.messageBD(bundle.getConnection(), "Error", bundle.getContext()
           .getLanguage()));
-      msg.setMessage(((GenericJDBCException) ge).getSQLException().getMessage());
+      msg.setMessage(ge.getSQLException().getMessage());
       bundle.setResult(msg);
       OBDal.getInstance().rollbackAndClose();
       // Oracle wraps the exception into a QueryTimeoutException
@@ -251,7 +251,7 @@ public class VariantAutomaticGenerationProcess implements Process {
       msg.setType("Error");
       msg.setTitle(OBMessageUtils.messageBD(bundle.getConnection(), "Error", bundle.getContext()
           .getLanguage()));
-      msg.setMessage(((QueryTimeoutException) qte).getSQLException().getMessage().split("\n")[0]);
+      msg.setMessage(qte.getSQLException().getMessage().split("\n")[0]);
       bundle.setResult(msg);
       OBDal.getInstance().rollbackAndClose();
     } catch (final Exception e) {

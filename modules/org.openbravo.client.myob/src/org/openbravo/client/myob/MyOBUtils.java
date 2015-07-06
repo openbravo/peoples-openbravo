@@ -68,12 +68,12 @@ public class MyOBUtils {
    * Computes the widget title using the user's language, if no translation is available then the
    * {@link WidgetClass#getWidgetTitle()} is used.
    * 
-   * @param widgetInstance
+   * @param widgetClass
    *          the widget class of this instance is used to read the title
    * @return the title of the widget read from the widgetclass
-   * @see WidgetInstance#getOBKMOWidgetClass()
+   * @see WidgetInstance#getWidgetClass()
    * @see WidgetClassTrl
-   * @see WidgetClass#getTitle()
+   * @see WidgetClass#getWidgetTitle()
    */
   static String getWidgetTitle(WidgetClass widgetClass) {
     final String userLanguageId = OBContext.getOBContext().getLanguage().getId();

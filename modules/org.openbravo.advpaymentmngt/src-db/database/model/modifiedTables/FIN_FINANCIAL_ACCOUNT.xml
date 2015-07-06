@@ -29,5 +29,9 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="EM_APRM_ADDMULTIPLEPAYMENTS" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
     </table>
   </database>

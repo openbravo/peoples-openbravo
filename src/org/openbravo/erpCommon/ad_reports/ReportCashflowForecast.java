@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2015 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,13 +29,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.design.JasperDesign;
-import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.client.application.report.ReportingUtils;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
@@ -104,9 +102,8 @@ public class ReportCashflowForecast extends HttpSecureAppServlet {
       String strBaseDesign = getBaseDesignPath(strLanguage);
       JasperReport jasperReportLines;
       try {
-        JasperDesign jasperDesignLines = (JRXmlLoader.load(strBaseDesign
-            + "/org/openbravo/erpCommon/ad_reports/ReportCashflowForecast_sub.jrxml"));
-        jasperReportLines = JasperCompileManager.compileReport(jasperDesignLines);
+        jasperReportLines = ReportingUtils.compileReport(strBaseDesign
+            + "/org/openbravo/erpCommon/ad_reports/ReportCashflowForecast_sub.jrxml");
       } catch (JRException e) {
         log4j.error("Error Compiling report ", e);
         throw new ServletException(e.getMessage());

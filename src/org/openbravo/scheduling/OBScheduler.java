@@ -301,7 +301,6 @@ public class OBScheduler {
      *          The Openbravo process bundle.
      * @param jobClass
      *          The class to be executed when Job.execute is called.
-     * @return
      * @throws SchedulerException
      */
     private static JobDetail newInstance(String name, ProcessBundle bundle,
@@ -366,8 +365,6 @@ public class OBScheduler {
     /**
      * Loads the trigger details from AD_PROCESS_REQUEST and converts them into a schedulable Quartz
      * Trigger instance.
-     * 
-     * @return
      */
     private static Trigger newInstance(String name, ProcessBundle bundle, ConnectionProvider conn)
         throws ServletException {
@@ -571,9 +568,6 @@ public class OBScheduler {
      * 
      * Expected format for dates: 'dd-MM-yyyy' Expected format for times: 'HH24:MI:SS'
      * 
-     * @param date
-     * @param time
-     * @return
      * @throws ParseException
      */
     private static Calendar timestamp(String date, String time) throws ParseException {

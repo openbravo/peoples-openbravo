@@ -112,8 +112,7 @@ public class IdentifierProvider implements OBSingleton {
           value = ((BaseOBObject) referencedObject.get(property.getDisplayPropertyName()))
               .getIdentifier();
         } else {
-          value = ((BaseOBObject) referencedObject)
-              .get(property.getDisplayPropertyName(), language);
+          value = referencedObject.get(property.getDisplayPropertyName(), language);
         }
 
         // Assign displayColumnProperty to apply formatting if needed

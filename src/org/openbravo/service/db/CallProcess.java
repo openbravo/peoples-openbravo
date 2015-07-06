@@ -114,7 +114,7 @@ public class CallProcess {
    */
   public ProcessInstance call(org.openbravo.model.ad.ui.Process process, String recordID,
       Map<String, String> parameters, Boolean doCommit) {
-    return callProcess(process, recordID, (Map<String, ?>) parameters, doCommit);
+    return callProcess(process, recordID, parameters, doCommit);
   }
 
   /**

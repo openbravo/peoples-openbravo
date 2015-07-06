@@ -27,7 +27,6 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.database.ConnectionProvider;
 
 public abstract class DocLCCostTemplate {
-  private static final long serialVersionUID = 1L;
   static Logger log4jDocLCCost = Logger.getLogger(DocLCCost.class);
 
   /**

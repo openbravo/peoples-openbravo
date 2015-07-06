@@ -137,7 +137,7 @@ function onloadFunctions() {
 		if(listInputs[i].id == 'M_Locator_ID'){
 			var name  = listInputs[i].name;
 			var id = name.substring(13, name.length);
-			keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/Locator.html', 'LOCATOR_SELECTOR', false, 'frmMain', 'inpmLocatorId"+id+"', 'inpmLocatorId_D"+id+"', document.frmMain.inpmLocatorId_D"+id+".value, 'Command', 'KEY');", "inpmLocatorId_D"+id+"", "null");
+			keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/Locator.html', 'LOCATOR_SELECTOR', false, 'frmMain', 'inpmLocatorId"+id+"', 'inpmLocatorId_D"+id+"', document.frmMain.inpmLocatorId_D"+id+".value, 'inpadOrgId', document.frmMain.inpadOrgId"+id+".value, 'Command', 'KEY');", "inpmLocatorId_D"+id+"", "null");
 		}
 	}
 }

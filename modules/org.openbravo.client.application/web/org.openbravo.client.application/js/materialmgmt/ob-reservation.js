@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2012-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -33,6 +33,7 @@ OB.Reservation.QuantityValidate = function (item, validator, value, record) {
       selectedRecords = item.grid.getSelectedRecords(),
       selectedRecordsLength = selectedRecords.length,
       editedRecord = null,
+      isQtyVariable = item.grid.view.sourceView.getContextInfo(false, true, true, true).isQuantityVariable,
       i;
 
   if (!isc.isA.Number(value)) {
@@ -56,7 +57,7 @@ OB.Reservation.QuantityValidate = function (item, validator, value, record) {
       reservedQty = reservedQty.add(new BigDecimal(String(editedRecord.quantity)));
     }
   }
-  if (reservedQty.compareTo(totalQty) > 0) {
+  if (reservedQty.compareTo(totalQty) > 0 && isQtyVariable !== 'Y') {
     isc.warn(OB.I18N.getLabel('OBUIAPP_Res_MoreThanReservationQty', [totalQty.toString()]));
     return false;
   }

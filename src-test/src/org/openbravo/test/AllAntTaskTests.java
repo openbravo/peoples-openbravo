@@ -22,6 +22,7 @@ package org.openbravo.test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.openbravo.erpCommon.info.ClassicSelectorTest;
+import org.openbravo.test.accounting.PostDocumentTest;
 import org.openbravo.test.accounting.RecordID2Test;
 import org.openbravo.test.dal.AdminContextTest;
 import org.openbravo.test.dal.ComputedColumnsTest;
@@ -56,11 +57,14 @@ import org.openbravo.test.modularity.DatasetServiceTest;
 import org.openbravo.test.modularity.MergePropertiesTest;
 import org.openbravo.test.modularity.TableNameTest;
 import org.openbravo.test.preference.PreferenceTest;
+import org.openbravo.test.scheduling.ProcessSchedulingTest;
 import org.openbravo.test.security.AccessLevelTest;
 import org.openbravo.test.security.AllowedOrganizationsTest;
 import org.openbravo.test.security.EntityAccessTest;
 import org.openbravo.test.security.WritableReadableOrganizationClientTest;
 import org.openbravo.test.system.ErrorTextParserTest;
+import org.openbravo.test.system.ImportEntrySizeTest;
+import org.openbravo.test.system.Issue29934Test;
 import org.openbravo.test.system.SystemServiceTest;
 import org.openbravo.test.system.SystemValidatorTest;
 import org.openbravo.test.system.TestInfrastructure;
@@ -135,6 +139,8 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     SystemValidatorTest.class, //
     ErrorTextParserTest.class, //
     TestInfrastructure.class, //
+    Issue29934Test.class, //
+    ImportEntrySizeTest.class, //
 
     // xml
     ClientExportImportTest.class, //
@@ -152,6 +158,11 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     ClassicSelectorTest.class,
 
     // Accounting
-    RecordID2Test.class })
+    RecordID2Test.class, //
+    PostDocumentTest.class, //
+
+    // scheduling
+    ProcessSchedulingTest.class //
+})
 public class AllAntTaskTests {
 }
