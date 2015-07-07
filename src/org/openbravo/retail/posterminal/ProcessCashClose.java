@@ -21,6 +21,7 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.LockOptions;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
@@ -56,6 +57,7 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
     String cashUpId = jsonCashup.getString("id");
     JSONObject jsonData = new JSONObject();
     Date cashUpDate = new Date();
+    Date currentDate = new Date();
     OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
         jsonCashup.getString("posterminal"));
 
@@ -78,7 +80,7 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
         }
 
         DateFormat isodatefmt = new SimpleDateFormat(dateFormatStr);
-        Date currentDate = isodatefmt.parse(strCurrentDate);
+        currentDate = isodatefmt.parse(strCurrentDate);
       } else {
         log.debug("Error processing cash close: error retrieving current date. Using server current date");
       }
@@ -132,6 +134,40 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
       } else {
         doReconciliationAndInvoices(posTerminal, cashUpId, cashUpDate, jsonCashup, jsonData, true,
             null);
+      }
+
+      OBCriteria<OBPOSErrors> errorsQuery = OBDal.getInstance().createCriteria(OBPOSErrors.class);
+      errorsQuery.add(Restrictions.ne(OBPOSErrors.PROPERTY_TYPEOFDATA, "OBPOS_App_Cashup"));
+      errorsQuery.add(Restrictions.eq(OBPOSErrors.PROPERTY_ORDERSTATUS, "N"));
+      errorsQuery.add(Restrictions.eq(OBPOSErrors.PROPERTY_OBPOSAPPLICATIONS, posTerminal));
+      if (errorsQuery.count() > 0) {
+        throw new OBException(
+            "There are errors related to non-created customers, orders, or cash management movements pending to be processed. Process them before processing the cash ups");
+      }
+
+      // This cashup is a closed box
+      TriggerHandler.getInstance().disable();
+      try {
+        getOrderGroupingProcessor().groupOrders(posTerminal, cashUpId, currentDate);
+
+        posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
+            jsonCashup.getString("posterminal"));
+
+        CashCloseProcessor processor = getCashCloseProcessor();
+        JSONArray cashMgmtIds = jsonCashup.getJSONArray("cashMgmtIds");
+        JSONObject result = processor.processCashClose(posTerminal, jsonCashup, cashMgmtIds,
+            currentDate);
+
+        // add the messages returned by processCashClose...
+        jsonData.put("messages", result.opt("messages"));
+        jsonData.put("next", result.opt("next"));
+        jsonData.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
+      } finally {
+        try {
+          OBDal.getInstance().flush();
+          TriggerHandler.getInstance().enable();
+        } catch (Throwable ignored) {
+        }
       }
     } else {
       // This cashup is a cash order. Nothing needs to be done
@@ -254,13 +290,11 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
     try {
       getOrderGroupingProcessor().groupOrders(posTerminal, cashUpId, currentDate);
 
-      posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
-          jsonCashup.getString("posterminal"));
-
       CashCloseProcessor processor = getCashCloseProcessor();
       JSONArray cashMgmtIds = jsonCashup.getJSONArray("cashMgmtIds");
-      JSONObject result = processor.processCashClose(posTerminal, jsonCashup, cashMgmtIds,
-          currentDate, slaveCashupIds);
+      JSONObject result = processor.processCashClose(
+          OBDal.getInstance().get(OBPOSApplications.class, jsonCashup.getString("posterminal")),
+          jsonCashup, cashMgmtIds, currentDate, slaveCashupIds);
       // add the messages returned by processCashClose...
       jsonData.put("messages", result.opt("messages"));
       jsonData.put("next", result.opt("next"));
@@ -354,7 +388,19 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
    */
   private OBPOSAppCashup getCashUp(String cashUpId, JSONObject jsonCashup, Date cashUpDate)
       throws JSONException, SQLException {
-    OBPOSAppCashup cashUp = OBDal.getInstance().get(OBPOSAppCashup.class, cashUpId);
+    // CashUp record will be read from the database with a "for update" clause to force the process
+    // to get the lock on the record. The reason for this is to prevent the same cash up from being
+    // processed twice in case of very quick duplicated requests.
+    // These shouldn't happen in general but may happen specifically in case of unreliable networks
+    OBPOSAppCashup cashUp = null;
+    Query cashUpQuery = OBDal.getInstance().getSession()
+        .createQuery("from OBPOS_App_Cashup where id=?");
+    cashUpQuery.setString(0, cashUpId);
+    // The record will be locked to this process until it ends. Other requests to process this cash
+    // up will be locked until this one finishes
+    cashUpQuery.setLockOptions(LockOptions.UPGRADE);
+    cashUp = (OBPOSAppCashup) cashUpQuery.uniqueResult();
+
     if (cashUp == null) {
       // create the cashup if no exists
       try {
@@ -383,7 +429,6 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
     }
     updateOrCreateCashupInfo(cashUpId, jsonCashup, cashUpDate);
     OBDal.getInstance().flush();
-    OBDal.getInstance().getConnection().commit();
     return cashUp;
   }
 

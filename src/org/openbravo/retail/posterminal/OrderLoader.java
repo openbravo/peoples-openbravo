@@ -79,6 +79,7 @@ import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_OrigPaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
@@ -307,8 +308,11 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       } finally {
         // flush and enable triggers, the rest of this method needs enabled
         // triggers
-        OBDal.getInstance().flush();
-        TriggerHandler.getInstance().enable();
+        try {
+          OBDal.getInstance().flush();
+          TriggerHandler.getInstance().enable();
+        } catch (Throwable ignored) {
+        }
       }
 
       long t4 = System.currentTimeMillis();
@@ -1225,8 +1229,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       cs.execute();
       cs.close();
     } catch (Exception e) {
-      System.out.println("Error calling to M_UPDATE_INVENTORY");
-      throw new OBException(e.getMessage());
+      throw new OBException(e.getMessage(), e);
     }
   }
 
@@ -1564,6 +1567,17 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         // Update Payment In amount after adding GLItem
         finPayment.setAmount(origAmount.setScale(stdPrecision, RoundingMode.HALF_UP));
       }
+
+      if (checkPaidOnCreditChecked) {
+        List<FIN_PaymentDetail> paymentDetailList = finPayment.getFINPaymentDetailList();
+        if (paymentDetailList.size() > 0) {
+          for (FIN_PaymentDetail paymentDetail : paymentDetailList) {
+            paymentDetail.setPrepayment(true);
+          }
+          OBDal.getInstance().flush();
+        }
+      }
+
       OBDal.getInstance().save(finPayment);
 
       String description = getPaymentDescription();
@@ -1599,9 +1613,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       final List<FIN_FinaccTransaction> transactions = transactionsCriteria.list();
       final String cashupId = jsonorder.getString("obposAppCashup");
       final OBPOSAppCashup cashup = OBDal.getInstance().get(OBPOSAppCashup.class, cashupId);
-      if (transactions.size() == 0) {
-        throw new OBException("The payment didn't create any transaction");
-      }
       for (FIN_FinaccTransaction transaction : transactions) {
         transaction.setObposAppCashup(cashup);
       }

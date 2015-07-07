@@ -32,8 +32,8 @@ public class CustomerImportEntryProcessor extends ImportEntryProcessor {
     return WeldUtils.getInstanceFromStaticBeanManager(BusinessPartnerRunnable.class);
   }
 
-  protected boolean canHandleImportEntry(ImportEntry importEntry) {
-    return "BusinessPartner".equals(importEntry.getTypeofdata());
+  protected boolean canHandleImportEntry(ImportEntry importEntryInformation) {
+    return "BusinessPartner".equals(importEntryInformation.getTypeofdata());
   }
 
   protected String getProcessSelectionKey(ImportEntry importEntry) {

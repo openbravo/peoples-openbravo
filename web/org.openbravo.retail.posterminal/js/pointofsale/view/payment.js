@@ -207,6 +207,10 @@ enyo.kind({
               style: 'position: absolute; bottom: 0px; height: 20px; color: #ff0000;',
               name: 'overpaymentexceedlimit',
               showing: false
+            }, {
+              style: 'position: absolute; bottom: 0px; height: 20px; color: #ff0000;',
+              name: 'onlycashpaymentmethod',
+              showing: false
             }]
           }]
         }]
@@ -296,8 +300,9 @@ enyo.kind({
     var visible = OB.MobileApp.model.get('terminal').allowpayoncredit;
     // And is a loaded layaway or a regular order (no new layaway and no voided layaway)
     // this.receipt.get('orderType') === 2 --> New layaway 
+    // this.receipt.get('orderType') === 3 --> Voided layaway 
     // this.receipt.get('isLayaway') --> Loaded layaway    
-    visible = visible && (this.receipt.get('isLayaway') || (this.receipt.get('orderType') !== 2 && this.receipt.get('orderType') !== 3));
+    visible = visible && ((this.receipt.get('isLayaway') || this.receipt.get('orderType') !== 2) && this.receipt.get('orderType') !== 3);
     // And receipt has not been paid
     visible = visible && !this.receipt.getPaymentStatus().done;
     // And Business Partner exists and is elegible to sell on credit.
@@ -568,6 +573,24 @@ enyo.kind({
     }
   },
 
+  checkValidPaymentMethod: function (paymentstatus, payment) {
+    var change = this.model.getChange();
+    var check = true;
+    var currentcash = payment.currentCash;
+    if (change && change > 0) {
+      if (!payment.paymentMethod.iscash) {
+        check = false;
+        this.$.onlycashpaymentmethod.show();
+      } else {
+        if (currentcash < change) {
+          check = false;
+          this.$.noenoughchangelbl.show();
+        }
+      }
+    }
+    return check;
+  },
+
   checkValidPayments: function (paymentstatus, selectedPayment) {
     var resultOK;
 
@@ -575,12 +598,17 @@ enyo.kind({
     this.$.overpaymentnotavailable.hide();
     this.$.overpaymentexceedlimit.hide();
     this.$.noenoughchangelbl.hide();
+    this.$.onlycashpaymentmethod.hide();
 
     // Do the checkins
     resultOK = this.checkValidCashOverpayment(paymentstatus, selectedPayment);
     if (resultOK) {
       resultOK = this.checkEnoughCashAvailable(paymentstatus, selectedPayment, this, function (success) {
-        this.setStatusButtons(success);
+        var lsuccess = success;
+        if (lsuccess) {
+          lsuccess = this.checkValidPaymentMethod(paymentstatus, selectedPayment);
+        }
+        this.setStatusButtons(lsuccess);
       });
     } else {
       // Finally set status of buttons
@@ -658,6 +686,7 @@ enyo.kind({
     this.$.noenoughchangelbl.setContent(OB.I18N.getLabel('OBPOS_NoEnoughCash'));
     this.$.overpaymentnotavailable.setContent(OB.I18N.getLabel('OBPOS_OverpaymentNotAvailable'));
     this.$.overpaymentexceedlimit.setContent(OB.I18N.getLabel('OBPOS_OverpaymentExcededLimit'));
+    this.$.onlycashpaymentmethod.setContent(OB.I18N.getLabel('OBPOS_OnlyCashPaymentMethod'));
   },
   init: function (model) {
     var me = this;
@@ -759,7 +788,8 @@ enyo.kind({
             this.owner.receipt.trigger('voidLayaway');
           } else {
             this.setDisabled(true);
-            this.owner.model.get('order').trigger('paymentDone', false);
+            enyo.$.scrim.show();
+            me.owner.model.get('order').trigger('paymentDone', false);
           }
           this.drawerOpened = false;
           this.setContent(OB.I18N.getLabel('OBPOS_LblOpen'));
@@ -777,12 +807,14 @@ enyo.kind({
           this.owner.receipt.trigger('voidLayaway');
         } else {
           this.setDisabled(true);
-          this.owner.receipt.trigger('paymentDone', this.allowOpenDrawer);
+          enyo.$.scrim.show();
+          me.owner.receipt.trigger('paymentDone', this.allowOpenDrawer);
         }
       }
     } else {
       if (this.drawerpreference && this.allowOpenDrawer) {
         if (this.drawerOpened) {
+          enyo.$.scrim.show();
           this.owner.model.get('multiOrders').trigger('paymentDone', false);
           this.owner.model.get('multiOrders').set('openDrawer', false);
           this.drawerOpened = false;
@@ -796,6 +828,7 @@ enyo.kind({
           this.setContent(OB.I18N.getLabel('OBPOS_LblDone'));
         }
       } else {
+        enyo.$.scrim.show();
         this.owner.model.get('multiOrders').trigger('paymentDone', this.allowOpenDrawer);
         this.owner.model.get('multiOrders').set('openDrawer', false);
       }

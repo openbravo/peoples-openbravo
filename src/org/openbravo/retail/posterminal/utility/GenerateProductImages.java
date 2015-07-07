@@ -62,27 +62,31 @@ public class GenerateProductImages extends DalBaseProcess {
       prolProductCrit.add(Restrictions.eq(OBRETCOProlProduct.PROPERTY_OBRETCOPRODUCTLIST,
           assortment));
       ScrollableResults prolProductScroll = prolProductCrit.scroll();
-      while (prolProductScroll.next()) {
-        OBRETCOProlProduct prolProduct = (OBRETCOProlProduct) prolProductScroll.get(0);
-        if (prolProduct.getProduct().getImage() != null) {
-          try {
-            generateImageFile(prolProduct.getProduct().getId(), prolProduct.getProduct().getImage()
-                .getId(), imagesDir);
-          } catch (Exception ex) {
-            if (errorCounter < 30) {
-              String error = OBMessageUtils.getI18NMessage("OBPOS_ProductCanNotBeResized",
-                  new String[] { prolProduct.getProduct().getIdentifier() })
-                  + " - "
-                  + ex.getMessage();
-              errors.append(error + "<br/>");
-              log4j.error(error, ex);
-            } else if (errorCounter == 30) {
-              errors.append(OBMessageUtils.getI18NMessage("OBPOS_AndMore", null));
+      try {
+        while (prolProductScroll.next()) {
+          OBRETCOProlProduct prolProduct = (OBRETCOProlProduct) prolProductScroll.get(0);
+          if (prolProduct.getProduct().getImage() != null) {
+            try {
+              generateImageFile(prolProduct.getProduct().getId(), prolProduct.getProduct()
+                  .getImage().getId(), imagesDir);
+            } catch (Exception ex) {
+              if (errorCounter < 30) {
+                String error = OBMessageUtils.getI18NMessage("OBPOS_ProductCanNotBeResized",
+                    new String[] { prolProduct.getProduct().getIdentifier() })
+                    + " - "
+                    + ex.getMessage();
+                errors.append(error + "<br/>");
+                log4j.error(error, ex);
+              } else if (errorCounter == 30) {
+                errors.append(OBMessageUtils.getI18NMessage("OBPOS_AndMore", null));
+              }
+              errorCounter++;
             }
-            errorCounter++;
           }
+          OBDal.getInstance().getSession().clear();
         }
-        OBDal.getInstance().getSession().clear();
+      } finally {
+        prolProductScroll.close();
       }
 
       OBCriteria<PriceAdjustment> packs = OBDal.getInstance().createCriteria(PriceAdjustment.class);
