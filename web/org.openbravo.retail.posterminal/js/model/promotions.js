@@ -64,7 +64,8 @@
     modelName: 'ProductCharacteristicValue',
     generatedStructure: true,
     entityName: 'ProductCharacteristicValue',
-    source: 'org.openbravo.retail.posterminal.master.ProductProductChValue'
+    source: 'org.openbravo.retail.posterminal.master.ProductProductChValue',
+    hgvol: 'OBPOS_highVolume.product'
   });
 
   OB.Data.Registry.registerModel(promotions);
