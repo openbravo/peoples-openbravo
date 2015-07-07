@@ -1619,15 +1619,22 @@ public class CreateFrom extends HttpSecureAppServlet {
                 startingPeriodId = "";
               }
 
+              // Alternate Tax Base Amount pro-rating
               BigDecimal taxBaseAmt = lineNetAmt;
-
-              if (!data[i].cOrderlineId.isEmpty()) {
-                OrderLine ol = OBDal.getInstance().get(OrderLine.class, data[i].cOrderlineId);
-                BigDecimal qtyOrdered = ol.getOrderedQuantity();
-                taxBaseAmt = ol.getTaxableAmount();
-                if (qtyOrdered.compareTo(ZERO) != 0) {
-                  taxBaseAmt = (taxBaseAmt.multiply(qty)).divide(qtyOrdered, curPrecision,
-                      BigDecimal.ROUND_HALF_UP);
+              if (data[i].cOrderlineId != null && !data[i].cOrderlineId.isEmpty()) {
+                try {
+                  OBContext.setAdminMode(true);
+                  OrderLine ol = OBDal.getInstance().get(OrderLine.class, data[i].cOrderlineId);
+                  if (ol != null) {
+                    BigDecimal qtyOrdered = ol.getOrderedQuantity();
+                    taxBaseAmt = ol.getTaxableAmount();
+                    if (qtyOrdered.compareTo(ZERO) != 0) {
+                      taxBaseAmt = (taxBaseAmt.multiply(qty)).divide(qtyOrdered, curPrecision,
+                          BigDecimal.ROUND_HALF_UP);
+                    }
+                  }
+                } finally {
+                  OBContext.restorePreviousMode();
                 }
               }
 

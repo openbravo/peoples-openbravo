@@ -139,7 +139,8 @@
           ol.A_Asset_ID,
           ol.C_Costcenter_ID,
           ol.User1_ID, 
-          ol.User2_ID
+          ol.User2_ID,
+          ol.QtyOrdered
         FROM M_INOUT s, M_INOUTLINE sl
         RIGHT JOIN C_ORDERLINE ol
           ON sl.C_OrderLine_ID=ol.C_OrderLine_ID
@@ -731,7 +732,8 @@
                         ChargeAmt, C_UOM_ID,
                         C_Tax_ID,  --MODIFIED BY F.IRIAZABAL
                         QuantityOrder, M_Product_Uom_ID, PriceStd,
-                        m_attributesetinstance_id, taxbaseamt,
+                        m_attributesetinstance_id, 
+                        taxbaseamt,
                         gross_unit_price, line_gross_amount,
                         grosspricestd, grosspricelist,
                         isdeferred, defplantype, periodnumber, c_period_id, 
@@ -749,7 +751,8 @@
                         ptr_sl.ChargeAmt, ptr_sl.C_UOM_ID,
                         ptr_sl.C_Tax_ID,  --MODIFIED BY F.IRIAZABAL
                         ptr_sl.QuantityOrder, ptr_sl.M_Product_Uom_ID, ptr_sl.PriceStd,
-                        ptr_sl.m_attributesetinstance_id, ptr_sl.taxbaseamt,
+                        ptr_sl.m_attributesetinstance_id,
+                        CASE WHEN ptr_sl.QtyOrdered != 0 THEN C_Currency_Round(ptr_sl.taxbaseamt*ptr_sl.MovementQty/ptr_sl.QtyOrdered, Cur_Order.C_Currency_ID, NULL) ELSE ptr_sl.taxbaseamt END,
                         ptr_sl.gross_unit_price, C_Currency_Round(ptr_sl.MovementQty*ptr_sl.gross_unit_price, Cur_Order.C_Currency_ID, NULL),
                         COALESCE(ptr_sl.grosspricestd,0), COALESCE(ptr_sl.grosspricelist,0),
                         v_isdeferred_inv, v_defplantype_inv, v_periodnumber_inv, v_period_inv,
@@ -1283,7 +1286,8 @@
                     ChargeAmt, C_UOM_ID,
                     C_Tax_ID,  --MODIFIED BY F.IRIAZABAL
                     QuantityOrder, M_Product_Uom_ID, PriceStd,
-                    m_attributesetinstance_id, taxbaseamt,
+                    m_attributesetinstance_id, 
+                    taxbaseamt,
                     gross_unit_price, line_gross_amount,
                     grosspricestd, grosspricelist,
                     isdeferred, defplantype, periodnumber, c_period_id,
@@ -1301,7 +1305,8 @@
                     Cur_InvoiceSchedule.Line_ChargeAmt, Cur_InvoiceSchedule.C_UOM_ID,
                     Cur_InvoiceSchedule.C_Tax_ID,  --MODIFIED BY F.IRIAZABAL
                     Cur_InvoiceSchedule.QuantityOrder, Cur_InvoiceSchedule.M_Product_Uom_ID, Cur_InvoiceSchedule.PriceStd,
-                    Cur_InvoiceSchedule.m_attributesetinstance_id, CASE WHEN Cur_InvoiceSchedule.QtyOrdered != 0 THEN Cur_InvoiceSchedule.taxbaseamt*Cur_InvoiceSchedule.MovementQty/Cur_InvoiceSchedule.QtyOrdered ELSE Cur_InvoiceSchedule.taxbaseamt END,
+                    Cur_InvoiceSchedule.m_attributesetinstance_id, 
+                    CASE WHEN Cur_InvoiceSchedule.QtyOrdered != 0 THEN C_Currency_Round(Cur_InvoiceSchedule.taxbaseamt*Cur_InvoiceSchedule.MovementQty/Cur_InvoiceSchedule.QtyOrdered, Cur_InvoiceSchedule.C_Currency_ID, NULL) ELSE Cur_InvoiceSchedule.taxbaseamt END,
                     Cur_InvoiceSchedule.gross_unit_price, C_Currency_Round(Cur_InvoiceSchedule.MovementQty*Cur_InvoiceSchedule.gross_unit_price, Cur_InvoiceSchedule.C_Currency_ID, NULL),
                     COALESCE(Cur_InvoiceSchedule.grosspricestd,0), COALESCE(Cur_InvoiceSchedule.grosspricelist,0),
                     v_isdeferred_inv, v_defplantype_inv, v_periodnumber_inv, v_period_inv,
