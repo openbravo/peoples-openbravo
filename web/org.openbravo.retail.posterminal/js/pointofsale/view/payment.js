@@ -207,6 +207,10 @@ enyo.kind({
               style: 'position: absolute; bottom: 0px; height: 20px; color: #ff0000;',
               name: 'overpaymentexceedlimit',
               showing: false
+            }, {
+              style: 'position: absolute; bottom: 0px; height: 20px; color: #ff0000;',
+              name: 'onlycashpaymentmethod',
+              showing: false
             }]
           }]
         }]
@@ -568,6 +572,24 @@ enyo.kind({
     }
   },
 
+  checkValidPaymentMethod: function (paymentstatus, payment) {
+    var change = this.model.getChange();
+    var check = true;
+    var currentcash = payment.currentCash;
+    if (change && change > 0) {
+      if (!payment.paymentMethod.iscash) {
+        check = false;
+        this.$.onlycashpaymentmethod.show();
+      } else {
+        if (currentcash < change) {
+          check = false;
+          this.$.noenoughchangelbl.show();
+        }
+      }
+    }
+    return check;
+  },
+
   checkValidPayments: function (paymentstatus, selectedPayment) {
     var resultOK;
 
@@ -575,11 +597,15 @@ enyo.kind({
     this.$.overpaymentnotavailable.hide();
     this.$.overpaymentexceedlimit.hide();
     this.$.noenoughchangelbl.hide();
+    this.$.onlycashpaymentmethod.hide();
 
     // Do the checkins
     resultOK = this.checkValidCashOverpayment(paymentstatus, selectedPayment);
     if (resultOK) {
       resultOK = this.checkEnoughCashAvailable(paymentstatus, selectedPayment);
+      if (resultOK) {
+        resultOK = this.checkValidPaymentMethod(paymentstatus, selectedPayment);
+      }
     }
 
     // Finally set status of buttons
@@ -604,6 +630,7 @@ enyo.kind({
     this.$.noenoughchangelbl.setContent(OB.I18N.getLabel('OBPOS_NoEnoughCash'));
     this.$.overpaymentnotavailable.setContent(OB.I18N.getLabel('OBPOS_OverpaymentNotAvailable'));
     this.$.overpaymentexceedlimit.setContent(OB.I18N.getLabel('OBPOS_OverpaymentExcededLimit'));
+    this.$.onlycashpaymentmethod.setContent(OB.I18N.getLabel('OBPOS_OnlyCashPaymentMethod'));
   },
   init: function (model) {
     var me = this;
@@ -726,7 +753,8 @@ enyo.kind({
             this.owner.receipt.trigger('voidLayaway');
           } else {
             this.setDisabled(true);
-            this.owner.model.get('order').trigger('paymentDone', false);
+            enyo.$.scrim.show();
+            me.owner.model.get('order').trigger('paymentDone', false);
           }
           this.drawerOpened = false;
           this.setContent(OB.I18N.getLabel('OBPOS_LblOpen'));
@@ -744,12 +772,14 @@ enyo.kind({
           this.owner.receipt.trigger('voidLayaway');
         } else {
           this.setDisabled(true);
-          this.owner.receipt.trigger('paymentDone', this.allowOpenDrawer);
+          enyo.$.scrim.show();
+          me.owner.receipt.trigger('paymentDone', this.allowOpenDrawer);
         }
       }
     } else {
       if (this.drawerpreference && this.allowOpenDrawer) {
         if (this.drawerOpened) {
+          enyo.$.scrim.show();
           this.owner.model.get('multiOrders').trigger('paymentDone', false);
           this.owner.model.get('multiOrders').set('openDrawer', false);
           this.drawerOpened = false;
@@ -763,6 +793,7 @@ enyo.kind({
           this.setContent(OB.I18N.getLabel('OBPOS_LblDone'));
         }
       } else {
+        enyo.$.scrim.show();
         this.owner.model.get('multiOrders').trigger('paymentDone', this.allowOpenDrawer);
         this.owner.model.get('multiOrders').set('openDrawer', false);
       }

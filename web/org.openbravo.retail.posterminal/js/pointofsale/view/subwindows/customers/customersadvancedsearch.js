@@ -203,7 +203,7 @@ enyo.kind({
       return;
     } else {
       this.disabled = true;
-      this.setDisabled();
+      this.setDisabled(true);
       this.addClass('disabled');
     }
   },
