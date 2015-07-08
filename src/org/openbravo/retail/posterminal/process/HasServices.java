@@ -41,7 +41,7 @@ public class HasServices extends JSONProcessSimple {
     JSONObject data = new JSONObject();
 
     try {
-      JSONObject request = createRequestForProduct(jsonData, "Services_Filter");
+      JSONObject request = createRequestForProduct(jsonData);
       String productId = request.getString("product");
       String productCategoryId = request.getString("productCategory");
       StringWriter queryWriter = new StringWriter();
@@ -129,7 +129,7 @@ public class HasServices extends JSONProcessSimple {
     return result;
   }
 
-  private JSONObject createRequestForProduct(JSONObject requesObject, String filterName) {
+  private JSONObject createRequestForProduct(JSONObject requesObject) {
     try {
       JSONArray arrayParams = new JSONArray();
       arrayParams.put(requesObject.getString("product"));
@@ -143,14 +143,21 @@ public class HasServices extends JSONProcessSimple {
       timeParameters.put("terminalTimeOffset", terminalTimeOffset);
       requesObject.put("parameters", timeParameters);
 
-      JSONObject filter = new JSONObject();
-      filter.put("columns", new JSONArray());
-      filter.put("operator", "filter");
-      filter.put("value", filterName);
-      filter.put("params", arrayParams);
+      JSONObject filterServices = new JSONObject();
+      filterServices.put("columns", new JSONArray());
+      filterServices.put("operator", "filter");
+      filterServices.put("value", "Services_Filter");
+      filterServices.put("params", arrayParams);
+
+      JSONObject filterMandatory = new JSONObject();
+      filterMandatory.put("columns", new JSONArray());
+      filterMandatory.put("operator", "filter");
+      filterMandatory.put("value", "Mandatory_Services");
+      filterMandatory.put("params", new JSONArray());
 
       JSONArray hgVolFilters = new JSONArray();
-      hgVolFilters.put(filter);
+      hgVolFilters.put(filterServices);
+      hgVolFilters.put(filterMandatory);
       requesObject.put("hgVolFilters", hgVolFilters);
 
       requesObject.put("_limit", 101);
