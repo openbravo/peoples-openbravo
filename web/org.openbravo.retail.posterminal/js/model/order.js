@@ -117,6 +117,10 @@
       return OB.I18N.formatCurrency(this.get('nondiscountednet') || this.getNet());
     },
 
+    printTotalLine: function () {
+      return OB.I18N.formatCurrency(this.get('_gross') - this.printDiscount() || this.getGross() - this.printDiscount());
+    },
+
     getTotalAmountOfPromotions: function () {
       var memo = 0;
       if (this.get('promotions') && this.get('promotions').length > 0) {
