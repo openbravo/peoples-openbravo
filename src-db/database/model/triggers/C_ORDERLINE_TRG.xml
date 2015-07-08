@@ -48,6 +48,7 @@
   v_IsCashVAT_Tax C_Tax.IsCashVAT%TYPE;
   v_IsCashVAT_Order C_Order.IsCashVAT%TYPE;
   v_Rate_Tax C_Tax.Rate%TYPE;
+  v_istaxincluded C_ORDER.ISTAXINCLUDED%TYPE;
 BEGIN
     
     IF AD_isTriggerEnabled()='N' THEN RETURN;
@@ -94,12 +95,40 @@ IF (UPDATING) THEN
     WHERE c_orderline_id = :OLD.c_orderline_id;
   END IF;
  ELSIF (UPDATING) THEN
-   SELECT issotrx INTO v_IsSOTrx
+   SELECT issotrx, istaxincluded INTO v_IsSOTrx, v_istaxincluded
    FROM c_order
    WHERE c_order_id = :old.c_order_id;
    SELECT count(*) INTO v_count
     FROM m_reservation 
     WHERE c_orderline_id = :OLD.c_orderline_id;
+    
+   IF (:old.QtyOrdered <> :new.QtyOrdered) THEN
+     SELECT COUNT(1) into v_CountRelations FROM DUAL 
+     WHERE EXISTS (SELECT 1 FROM C_ORDERLINE_SERVICERELATION WHERE c_orderline_related_id = :NEW.C_ORDERLINE_ID);
+     IF(v_CountRelations <> 0) THEN
+       UPDATE C_ORDERLINE_SERVICERELATION SET QUANTITY = CASE WHEN QUANTITY > :new.QtyOrdered THEN :new.QtyOrdered ELSE QUANTITY END 
+       WHERE c_orderline_related_id = :NEW.C_ORDERLINE_ID;
+     END IF;   
+   END IF;
+   
+   IF (v_istaxincluded = 'N' AND :old.lineNetAmt <> :new.lineNetAmt) THEN
+     SELECT COUNT(1) into v_CountRelations FROM DUAL 
+     WHERE EXISTS (SELECT 1 FROM C_ORDERLINE_SERVICERELATION WHERE c_orderline_related_id = :NEW.C_ORDERLINE_ID);
+     IF(v_CountRelations <> 0) THEN
+       UPDATE C_ORDERLINE_SERVICERELATION SET Amount = :new.lineNetAmt * quantity / :new.qtyordered
+       WHERE c_orderline_related_id = :NEW.C_ORDERLINE_ID;
+     END IF;   
+   END IF;
+   IF (v_istaxincluded = 'Y' AND :old.line_gross_amount <> :new.line_gross_amount) THEN
+     SELECT COUNT(1) into v_CountRelations FROM DUAL 
+     WHERE EXISTS (SELECT 1 FROM C_ORDERLINE_SERVICERELATION WHERE c_orderline_related_id = :NEW.C_ORDERLINE_ID);
+     IF(v_CountRelations <> 0) THEN
+       UPDATE C_ORDERLINE_SERVICERELATION SET Amount = :new.line_gross_amount * quantity / :new.qtyordered
+       WHERE c_orderline_related_id = :NEW.C_ORDERLINE_ID;
+     END IF;   
+   END IF;
+   
+
    IF (:old.M_Product_ID <> :NEW.M_Product_ID) THEN
      SELECT COUNT(1) into v_CountRelations FROM DUAL 
      WHERE EXISTS (SELECT 1 FROM C_ORDERLINE_SERVICERELATION WHERE C_ORDERLINE_ID = :NEW.C_ORDERLINE_ID);

@@ -57,8 +57,9 @@ public class ServiceOrderLineRelate extends BaseProcessActionHandler {
 
       BigDecimal linesTotalAmount = new BigDecimal(jsonRequest.getJSONObject("_params").getDouble(
           "totallinesamount"));
-      BigDecimal serviceAmount = new BigDecimal(jsonRequest.getJSONObject("_params").getDouble(
-          "totalserviceamount"));
+
+      BigDecimal serviceAmount = jsonRequest.getJSONObject("_params").isNull("totalserviceamount") ? BigDecimal.ZERO
+          : new BigDecimal(jsonRequest.getJSONObject("_params").getDouble("totalserviceamount"));
 
       final Client serviceProductClient = (Client) OBDal.getInstance().getProxy(Client.ENTITY_NAME,
           jsonRequest.getString("inpadClientId"));
@@ -94,7 +95,7 @@ public class ServiceOrderLineRelate extends BaseProcessActionHandler {
         olsr.setOrganization(serviceProductOrg);
         olsr.setOrderlineRelated(orderLine);
         olsr.setSalesOrderLine(mainOrderLine);
-        olsr.setAmount(amount);
+        olsr.setAmount(lineAmount);
         olsr.setQuantity(lineQuantity);
         OBDal.getInstance().save(olsr);
         if ((i % 100) == 0) {
