@@ -18,7 +18,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLClientInfoException;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
@@ -210,7 +209,7 @@ public class ConnectionProviderImpl implements ConnectionProvider {
     return getConnection(defaultPoolName);
   }
 
-  /*
+  /**
    * Optimization, try to get the connection associated with the current thread, to always get the
    * same connection for all getConnection() calls inside a request.
    */
@@ -221,12 +220,7 @@ public class ConnectionProviderImpl implements ConnectionProvider {
     // try to get the connection from the session to use a single connection for the whole request
     Connection conn = SessionInfo.getSessionConnection();
     if (conn == null) {
-      // No connection in the session, take a new one and attach it to the session
-      if (externalConnectionPool != null) {
-        conn = externalConnectionPool.getConnection();
-      } else {
-        conn = getCommonsDbcpPoolConnection(poolName);
-      }
+      conn = getNewConnection(poolName);
       SessionInfo.setSessionConnection(conn);
     } else {
       // Update session info if needed
@@ -236,7 +230,23 @@ public class ConnectionProviderImpl implements ConnectionProvider {
   }
 
   /**
-   * Gets a new connection without trying to obtain the sessions's one
+   * Gets a new connection without trying to obtain the sessions's one from available pool
+   */
+  private Connection getNewConnection(String poolName) throws NoConnectionAvailableException {
+    if (poolName == null || poolName.equals(""))
+      throw new NoConnectionAvailableException("Couldn´t get a connection for an unnamed pool");
+    Connection conn;
+    if (externalConnectionPool != null) {
+      conn = externalConnectionPool.getConnection();
+    } else {
+      conn = getCommonsDbcpPoolConnection(poolName);
+    }
+
+    return conn;
+  }
+
+  /**
+   * Gets a new connection without trying to obtain the sessions's one from DBCP pool
    */
   private Connection getCommonsDbcpPoolConnection(String poolName)
       throws NoConnectionAvailableException {
@@ -301,7 +311,7 @@ public class ConnectionProviderImpl implements ConnectionProvider {
   }
 
   public Connection getTransactionConnection() throws NoConnectionAvailableException, SQLException {
-    Connection conn = getConnection(defaultPoolName);
+    Connection conn = getNewConnection(defaultPoolName);
     if (conn == null)
       throw new NoConnectionAvailableException("Couldn´t get an available connection");
     conn.setAutoCommit(false);
