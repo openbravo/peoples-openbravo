@@ -32,16 +32,33 @@
   </path>
 
   <path id="test.class.path">
-    <path refid="project.class.path"/>
+    <path refid="test-src-dirs"/>
+    <pathelement path="${build.test}" />
+  	<pathelement path="${build}" />
     <fileset dir="${base.lib}">
-      <include name="**/test/*.jar" />
+      <include name="**/*.jar" />
+    </fileset>
+    <fileset dir="${build.core.lib}">
+      <include name="openbravo-core.jar" />
+    </fileset>
+    <fileset dir="${build.trl.lib}">
+      <include name="openbravo-trl.jar" />
+    </fileset>
+    <fileset dir="${build.wad.lib}">
+      <include name="openbravo-wad.jar" />
+    </fileset>
+    <fileset dir="${base.lib}">
+      <include name="**/*.jar" />
+    </fileset>
+    <fileset dir="${base.db}/lib/">
+      <include name="**/*.jar" />
     </fileset>
     <fileset dir="${base.modules}">
-      <include name="**/test/*.jar" />
-    </fileset> 
+      <include name="*/lib/**" />
+    </fileset>
   </path>
 
-  <target name="compile.test" depends="compileSqlc,generate.entities.quick">
+  <target name="compile.test" depends="sqlc,generate.entities.quick">
   	 <mkdir dir="${build.test}"/>
      <javac destdir="${build.test}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" nowarn="${friendlyWarnings}" includeantruntime="false">
       <src refid="test-src-dirs"/>
@@ -57,7 +74,7 @@
 
   <target name="run.tests" depends="compile.test, copy.xml">
     <junit printsummary="yes" haltonfailure="yes">
-      <classpath refid="project.class.path" />
+      <classpath refid="test.class.path" />
       <formatter type="plain" usefile="no"/>
       <test name="org.openbravo.test.AntTaskTests" haltonfailure="no"/>
     </junit>
@@ -65,7 +82,7 @@
 
   <target name="run.all.tests" depends="compile.test, copy.xml">
     <junit printsummary="yes" haltonfailure="yes">
-      <classpath refid="project.class.path" />
+      <classpath refid="test.class.path" />
       <formatter type="plain" usefile="no"/>
       <test name="org.openbravo.test.AllAntTaskTests" haltonfailure="no" outfile="../src/result">
       <formatter type="xml" />
@@ -75,15 +92,23 @@
 
   <target name="run.quick.tests" depends="compile.test, copy.xml">
     <junit printsummary="yes" haltonfailure="yes">
-      <classpath refid="project.class.path" />
+      <classpath refid="test.class.path" />
       <formatter type="plain" usefile="no"/>
       <test name="org.openbravo.test.AllQuickAntTaskTests" haltonfailure="no"/>
     </junit>
   </target>
 
+  <target name="run.test" depends="compile.test, copy.xml">
+    <junit printsummary="yes" haltonfailure="yes">
+      <classpath refid="test.class.path" />
+      <formatter type="plain" usefile="no"/>
+      <test name="${test}" haltonfailure="no"/>
+    </junit>
+  </target>
+
   <target name="run.webservice.tests" depends="compile.test, copy.xml">
     <junit printsummary="yes" haltonfailure="yes">
-      <classpath refid="project.class.path" />
+      <classpath refid="test.class.path" />
       <formatter type="plain" usefile="no"/>
       <test name="org.openbravo.test.AllWebserviceTests" haltonfailure="no" outfile="../src/resultws">
         <formatter type="xml" />
