@@ -27,6 +27,7 @@ import org.openbravo.base.weld.test.testinfrastructure.ParameterizedCdi;
 import org.openbravo.client.application.test.ApplicationTest;
 import org.openbravo.client.application.test.DynamicExpressionParserTest;
 import org.openbravo.client.application.test.GenerateTypesJSTest;
+import org.openbravo.client.application.test.MenuTemplateTest;
 import org.openbravo.client.application.test.MenuTest;
 import org.openbravo.client.kernel.freemarker.test.FreemarkerTemplateProcessorTest;
 import org.openbravo.client.kernel.freemarker.test.GenerateComponentTest;
@@ -184,6 +185,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     DynamicExpressionParserTest.class, //
     GenerateTypesJSTest.class, //
     MenuTest.class, //
+    MenuTemplateTest.class, //
 
     // client kernel
     FreemarkerTemplateProcessorTest.class, //
