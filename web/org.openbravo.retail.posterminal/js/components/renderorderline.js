@@ -208,6 +208,9 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ShowServicesButton',
   style: 'float: right; display: block;',
+  published: {
+    disabled: false
+  },
   handlers: {
     onRightToolbarDisabled: 'toggleVisibility'
   },
