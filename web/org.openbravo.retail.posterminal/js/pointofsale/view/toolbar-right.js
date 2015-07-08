@@ -396,7 +396,7 @@ enyo.kind({
     }
   },
   restoreStatus: function () {
-    if (this.previousStatus.tab === 'scan') {
+    if (this.previousStatus.tab === 'scan' || this.previousStatus.tab === 'edit') {
       this.doTabChange({
         tabPanel: this.previousStatus.tab,
         keyboard: 'toolbarscan'
