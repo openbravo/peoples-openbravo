@@ -28,6 +28,7 @@ import org.hibernate.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.plm.ServicePriceRuleVersion;
@@ -43,9 +44,19 @@ public class ServicePriceUtils {
   private static final Logger log = LoggerFactory.getLogger(ServicePriceUtils.class);
   private static final String PERCENTAGE = "P";
 
-  public BigDecimal getServiceAmount(OrderLine orderline) {
+  public static BigDecimal getServiceAmount(OrderLine orderline) {
+    BigDecimal servicePrice = getServiceAmount(orderline, null);
+    return servicePrice;
+  }
+
+  public static BigDecimal getServiceAmount(OrderLine orderline, BigDecimal linesTotalAmount) {
     BigDecimal serviceBasePrice = getProductPrice(orderline.getOrderDate(), orderline
         .getSalesOrder().getPriceList(), orderline.getProduct());
+    if (serviceBasePrice == null) {
+      throw new OBException("@ServiceProductPriceListVersionNotFound@ "
+          + orderline.getProduct().getIdentifier() + ", @Date@: "
+          + OBDateUtils.formatDate(orderline.getOrderDate()));
+    }
     BigDecimal serviceRelatedPrice = BigDecimal.ZERO;
     boolean isPriceRuleBased = orderline.getProduct().isPricerulebased();
     if (!isPriceRuleBased) {
@@ -53,30 +64,61 @@ public class ServicePriceUtils {
     } else {
       ServicePriceRule servicePriceRule = getServicePriceRule(orderline.getProduct(),
           orderline.getOrderDate());
-      HashMap<String, BigDecimal> relatedAmountAndQuatity = getRelatedAmountAndQty(orderline);
-      BigDecimal relatedAmount = relatedAmountAndQuatity.get("amount");
-      // TODO: APPLY quantities
-      BigDecimal relatedQty = relatedAmountAndQuatity.get("quantity");
+      if (servicePriceRule == null) {
+        throw new OBException("@ServicePriceRuleVersionNotFound@ "
+            + orderline.getProduct().getIdentifier() + ", @Date@: "
+            + OBDateUtils.formatDate(orderline.getOrderDate()));
+      }
+      BigDecimal relatedAmount = BigDecimal.ZERO;
+      BigDecimal relatedQty = BigDecimal.ZERO;
+      if (linesTotalAmount != null) {
+        relatedAmount = linesTotalAmount;
+      } else {
+        HashMap<String, BigDecimal> relatedAmountAndQuatity = getRelatedAmountAndQty(orderline);
+        relatedAmount = relatedAmountAndQuatity.get("amount");
+        // TODO: APPLY quantities
+        relatedQty = relatedAmountAndQuatity.get("quantity");
+      }
+
       if (PERCENTAGE.equals(servicePriceRule.getRuletype())) {
         serviceRelatedPrice = relatedAmount.multiply(new BigDecimal(servicePriceRule
             .getPercentage()).divide(new BigDecimal("100.00"), orderline.getCurrency()
             .getStandardPrecision().intValue(), RoundingMode.HALF_UP));
       } else {
         ServicePriceRuleRange range = getRange(servicePriceRule, relatedAmount);
+        if (range == null) {
+          throw new OBException("@ServicePriceRuleRangeNotFound@. @ServicePriceRule@: "
+              + servicePriceRule.getIdentifier() + ", @AmountUpTo@: " + linesTotalAmount);
+        }
         if (PERCENTAGE.equals(range.getRuleType())) {
           serviceRelatedPrice = relatedAmount.multiply(new BigDecimal(range.getPercentage())
               .divide(new BigDecimal("100.00"), orderline.getCurrency().getStandardPrecision()
                   .intValue(), RoundingMode.HALF_UP));
         } else {
-          serviceRelatedPrice = getProductPrice(orderline.getOrderDate(), orderline.getSalesOrder()
-              .getPriceList(), orderline.getProduct());
+          serviceRelatedPrice = getProductPrice(orderline.getOrderDate(), range.getPriceList(),
+              orderline.getProduct());
+          if (serviceRelatedPrice == null) {
+            throw new OBException("@ServiceProductPriceListVersionNotFound@ "
+                + orderline.getProduct().getIdentifier() + ", @Date@: "
+                + OBDateUtils.formatDate(orderline.getOrderDate()));
+          }
         }
       }
       return serviceBasePrice.add(serviceRelatedPrice);
     }
   }
 
-  private ServicePriceRuleRange getRange(ServicePriceRule servicePriceRule, BigDecimal relatedAmount) {
+  /**
+   * Method that returns a range for a certain Service Price Rule for the given amount
+   * 
+   * @param servicePriceRule
+   *          Service Price Rule
+   * @param relatedAmount
+   *          Amount
+   * @return
+   */
+  private static ServicePriceRuleRange getRange(ServicePriceRule servicePriceRule,
+      BigDecimal relatedAmount) {
     StringBuffer where = new StringBuffer();
     where.append("  as sprr");
     where.append(" where " + ServicePriceRuleRange.PROPERTY_SERVICEPRICERULE
@@ -93,7 +135,7 @@ public class ServicePriceUtils {
     return sprrQry.uniqueResult();
   }
 
-  HashMap<String, BigDecimal> getRelatedAmountAndQty(OrderLine orderLine) {
+  private static HashMap<String, BigDecimal> getRelatedAmountAndQty(OrderLine orderLine) {
     StringBuffer strQuery = new StringBuffer();
     strQuery.append("select coalesce(sum(e.amount),0), coalesce(sum(e.quantity),0)");
     strQuery.append(" from OrderlineServiceRelation as e");
@@ -119,7 +161,7 @@ public class ServicePriceUtils {
    *          Product to search in Price List
    * @return
    */
-  public BigDecimal getProductPrice(Date date, PriceList priceList, Product product)
+  public static BigDecimal getProductPrice(Date date, PriceList priceList, Product product)
       throws OBException {
 
     StringBuffer where = new StringBuffer();
@@ -130,6 +172,9 @@ public class ServicePriceUtils {
     where.append(" where pp." + ProductPrice.PROPERTY_PRODUCT + ".id = :productId");
     where.append("   and plv." + PriceListVersion.PROPERTY_VALIDFROMDATE + " <= :date");
     where.append("   and pl.id = :pricelistId");
+    where.append("   and pl." + PriceList.PROPERTY_ACTIVE + " = true");
+    where.append("   and pp." + ProductPrice.PROPERTY_ACTIVE + " = true");
+    where.append("   and plv." + PriceListVersion.PROPERTY_ACTIVE + " = true");
     where.append(" order by pl." + PriceList.PROPERTY_DEFAULT + " desc, plv."
         + PriceListVersion.PROPERTY_VALIDFROMDATE + " desc");
 
@@ -142,14 +187,25 @@ public class ServicePriceUtils {
     return (BigDecimal) ppQry.uniqueResult();
   }
 
-  public ServicePriceRule getServicePriceRule(Product serviceProduct, Date orderDate) {
-    // Get Service Price Rule Version of the Service Product for given date
+  /**
+   * Method that returns for a "Price Rule Based" Service product the Service Price Rule on the
+   * given date
+   * 
+   * @param serviceProduct
+   *          Service Product
+   * @param orderDate
+   *          Order Date of the Sales Order
+   * @return
+   */
+  public static ServicePriceRule getServicePriceRule(Product serviceProduct, Date orderDate) {
+    
     StringBuffer where = new StringBuffer();
     where.append(" select " + ServicePriceRuleVersion.PROPERTY_SERVICEPRICERULE);
     where.append(" from " + ServicePriceRuleVersion.ENTITY_NAME + " as sprv");
     where.append(" where sprv." + ServicePriceRuleVersion.PROPERTY_PRODUCT
         + ".id = :serviceProductId");
     where.append(" and sprv." + ServicePriceRuleVersion.PROPERTY_VALIDFROMDATE + " <= :orderDate");
+    where.append("   and sprv." + ServicePriceRuleVersion.PROPERTY_ACTIVE + " = true");
     where.append(" order by sprv." + ServicePriceRuleVersion.PROPERTY_VALIDFROMDATE
         + " desc, sprv." + ServicePriceRuleVersion.PROPERTY_CREATIONDATE + " desc");
     Query sprvQry = OBDal.getInstance().getSession().createQuery(where.toString());

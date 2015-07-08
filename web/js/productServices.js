@@ -28,6 +28,7 @@ OB.ProductServices.onLoad = function (view) {
 
 OB.ProductServices.onLoadGrid = function (grid) {
   OB.ProductServices.updateTotalLinesAmount(this.view.theForm);
+  OB.ProductServices.updateServicePrice(this.view);
 };
 
 OB.ProductServices.userSelectAllRecords = function () {
@@ -64,7 +65,7 @@ OB.ProductServices.orderLinesGridQtyOnChange = function (item, view, form, grid)
     amount = new BigDecimal(String(item.getValue())).multiply(new BigDecimal(String(item.record.price)));
     orderLinesGrid.setEditValue(orderLinesGrid.getRecordIndex(item.record), 'amount', String(amount));
     OB.ProductServices.updateTotalLinesAmount(form);
-    OB.ProductServices.setServicePrice(view, item.record.id);
+    OB.ProductServices.updateServicePrice(view);
   }
 };
 
@@ -112,12 +113,11 @@ OB.ProductServices.doRelateOrderLinesSelectionChanged = function (record, state,
       }
       totalLinesAmount.setValue(Number(totalLinesAmountValue.toString()));
     }
-    OB.ProductServices.setServicePrice(view, record.id);
-
+    OB.ProductServices.updateServicePrice(view);
   }
 };
 
-OB.ProductServices.setServicePrice = function (view, id) {
+OB.ProductServices.updateServicePrice = function (view) {
   var callback, totalServiceAmount = view.theForm.getItem('totalserviceamount'),
       orderLinesGrid = view.theForm.getItem('grid').canvas.viewGrid;
 
@@ -131,8 +131,7 @@ OB.ProductServices.setServicePrice = function (view, id) {
   };
 
   OB.RemoteCallManager.call('org.openbravo.common.actionhandler.ServiceRelatedLinePriceActionHandler', {
-    id: id,
-    serviceProductId: view.theForm.getItem('serviceProductId').getValue(),
+    orderlineId: view.theForm.getItem('orderlineId').getValue(),
     amount: view.theForm.getItem('totallinesamount').getValue()
   }, {}, callback);
 }
