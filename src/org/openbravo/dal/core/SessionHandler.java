@@ -139,6 +139,11 @@ public class SessionHandler implements OBNotSingleton {
     // Checks if the session connection has to be obtained using an external connection pool
     if (externalConnectionPool != null && this.getConnection() == null) {
       Connection externalConnection = externalConnectionPool.getConnection();
+      try {
+        externalConnection.setAutoCommit(false);
+      } catch (SQLException e) {
+        log.error("Error setting this connection's to auto-commit mode", e);
+      }
       this.setConnection(externalConnection);
     }
     if (this.connection != null) {
