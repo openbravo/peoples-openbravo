@@ -232,6 +232,7 @@ enyo.kind({
         });
         me.bubble('onSelectFilter', {});
         me.owner.model.set("obposServiceProposed", true);
+        OB.MobileApp.model.receipt.save();
       }, 1);
     }
   },

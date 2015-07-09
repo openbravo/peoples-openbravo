@@ -966,6 +966,7 @@
                 } else {
                   args.orderline.set('hasRelatedServices', false);
                 }
+                args.receipt.save();
                 if (data.mandatoryservices) {
                   //preprocess mandatory services to transform them into Product models
                   coll = new Backbone.Collection();
