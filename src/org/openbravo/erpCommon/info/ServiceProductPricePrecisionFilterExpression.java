@@ -22,6 +22,8 @@ package org.openbravo.erpCommon.info;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.application.FilterExpression;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.order.OrderLine;
@@ -31,11 +33,17 @@ public class ServiceProductPricePrecisionFilterExpression implements FilterExpre
 
   @Override
   public String getExpression(Map<String, String> requestMap) {
-    if (requestMap.containsKey("inpcOrderlineId")) {
+    String strCurrentParam = "";
+    try {
+      JSONObject context = new JSONObject(requestMap.get("context"));
+      strCurrentParam = requestMap.get("currentParam");
       final OrderLine orderLine = OBDal.getInstance().get(OrderLine.class,
-          requestMap.get("inpcOrderlineId"));
+          context.getString("inpcOrderlineId"));
       return orderLine.getSalesOrder().getCurrency().getPricePrecision().toString();
+    } catch (JSONException e) {
+      // TODO Auto-generated catch block
+      log.error("Error trying to get default value of " + strCurrentParam + " " + e.getMessage(), e);
+      return null;
     }
-    return "2";
   }
 }
