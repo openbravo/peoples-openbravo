@@ -25,7 +25,6 @@ import java.util.Map;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.client.kernel.RequestContext;
@@ -65,17 +64,16 @@ public class ServiceOrderLineRelate extends BaseProcessActionHandler {
           jsonRequest.getString("inpadClientId"));
       final Organization serviceProductOrg = (Organization) OBDal.getInstance().getProxy(
           Organization.ENTITY_NAME, jsonRequest.getString("inpadOrgId"));
-      final OrderLine mainOrderLine = (OrderLine) OBDal.getInstance().getProxy(
-          OrderLine.ENTITY_NAME, jsonRequest.getString("inpcOrderlineId"));
+      OrderLine mainOrderLine = (OrderLine) OBDal.getInstance().getProxy(OrderLine.ENTITY_NAME,
+          jsonRequest.getString("inpcOrderlineId"));
 
       final int currencyPrecission = mainOrderLine.getCurrency().getPricePrecision().intValue();
-
-      // Remove existing rows
-      String strDelete = "delete from OrderlineServiceRelation where salesOrderLine.id=:orderLineId";
-      Query query = OBDal.getInstance().getSession().createQuery(strDelete);
-      query.setParameter("orderLineId", mainOrderLine.getId());
-      query.executeUpdate();
-
+      mainOrderLine.getOrderlineServiceRelationList().removeAll(
+          mainOrderLine.getOrderlineServiceRelationList());
+      OBDal.getInstance().save(mainOrderLine);
+      OBDal.getInstance().flush();
+      mainOrderLine = (OrderLine) OBDal.getInstance().getProxy(OrderLine.ENTITY_NAME,
+          jsonRequest.getString("inpcOrderlineId"));
       // Adding new rows
       for (int i = 0; i < selectedLines.length(); i++) {
         JSONObject selectedLine = selectedLines.getJSONObject(i);

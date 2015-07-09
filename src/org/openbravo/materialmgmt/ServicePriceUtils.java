@@ -135,18 +135,18 @@ public class ServicePriceUtils {
     return sprrQry.uniqueResult();
   }
 
-  private static HashMap<String, BigDecimal> getRelatedAmountAndQty(OrderLine orderLine) {
+  public static HashMap<String, BigDecimal> getRelatedAmountAndQty(OrderLine orderLine) {
     StringBuffer strQuery = new StringBuffer();
     strQuery.append("select coalesce(sum(e.amount),0), coalesce(sum(e.quantity),0)");
     strQuery.append(" from OrderlineServiceRelation as e");
     strQuery.append(" where e.salesOrderLine.id = :orderLineId");
     Query query = OBDal.getInstance().getSession().createQuery(strQuery.toString());
-    query.setParameter("orerLineId", orderLine.getId());
+    query.setParameter("orderLineId", orderLine.getId());
     query.setMaxResults(1);
     HashMap<String, BigDecimal> result = new HashMap<String, BigDecimal>();
-    BigDecimal[] values = (BigDecimal[]) query.uniqueResult();
-    result.put("amount", values[0]);
-    result.put("quantity", values[1]);
+    Object[] values = (Object[]) query.uniqueResult();
+    result.put("amount", (BigDecimal) values[0]);
+    result.put("quantity", (BigDecimal) values[1]);
     return result;
   }
 
@@ -198,7 +198,7 @@ public class ServicePriceUtils {
    * @return
    */
   public static ServicePriceRule getServicePriceRule(Product serviceProduct, Date orderDate) {
-    
+
     StringBuffer where = new StringBuffer();
     where.append(" select " + ServicePriceRuleVersion.PROPERTY_SERVICEPRICERULE);
     where.append(" from " + ServicePriceRuleVersion.ENTITY_NAME + " as sprv");
