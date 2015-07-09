@@ -970,10 +970,7 @@
                   //preprocess mandatory services to transform them into Product models
                   coll = new Backbone.Collection();
                   for (i = 0; i < data.mandatoryservices.length; i++) {
-                    prod = OB.Dal.transform(OB.Model.Product, data.mandatoryservices[i]);
-                    if (prod.get('proposalType') === 'MP') {
-                      coll.add(OB.Dal.transform(OB.Model.Product, data.mandatoryservices[i]));
-                    }
+                    coll.add(OB.Dal.transform(OB.Model.Product, data.mandatoryservices[i]));
                   }
                   //open the search tab with the returned products
                   args.receipt.trigger('showProductList', coll, args.orderline, 'mandatory');
