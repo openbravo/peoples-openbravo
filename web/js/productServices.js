@@ -58,12 +58,17 @@ OB.ProductServices.updateTotalLinesAmount = function (form) {
 };
 
 OB.ProductServices.orderLinesGridQtyOnChange = function (item, view, form, grid) {
-  var orderLinesGrid = view.theForm.getItem('grid').canvas.viewGrid,
-      amount;
-
-  if (item.getValue() !== item.record.orderedQuantity) {
-    amount = new BigDecimal(String(item.getValue())).multiply(new BigDecimal(String(item.record.price)));
-    orderLinesGrid.setEditValue(orderLinesGrid.getRecordIndex(item.record), 'amount', String(amount));
+  var amount, newAmount = new BigDecimal(String(item.getValue())).multiply(new BigDecimal(String(item.record.price))).setScale(new BigDecimal(String(form.getItem('pricePrecision').getValue())), BigDecimal.prototype.ROUND_HALF_UP),
+      oldAmount = grid.getEditValues(grid.getRecordIndex(item.record)).amount,
+      originalQty = new BigDecimal(String(item.record.originalOrderedQuantity)),
+      newQty = new BigDecimal(String(item.getValue()));
+  if (!oldAmount) {
+    oldAmount = new BigDecimal(String(item.record.amount));
+  } else {
+    oldAmount = new BigDecimal(String(grid.getEditValues(grid.getRecordIndex(item.record)).amount));
+  }
+  if (newAmount.compareTo(oldAmount) !== 0 && newQty.compareTo(originalQty) <= 0) {
+    grid.setEditValue(grid.getRecordIndex(item.record), 'amount', Number(newAmount));
     OB.ProductServices.updateTotalLinesAmount(form);
     OB.ProductServices.updateServicePrice(view);
   }
@@ -80,7 +85,7 @@ OB.ProductServices.QuantityValidate = function (item, validator, value, record) 
     return false;
   }
   quantity = new BigDecimal(String(value));
-  recordQty = new BigDecimal(String(item.grid.getRecord(item.grid.getRecordIndex(record)).orderedQuantity));
+  recordQty = new BigDecimal(String(record.originalOrderedQuantity));
   if (quantity.compareTo(recordQty) > 0) {
     isc.warn(OB.I18N.getLabel('ServiceQuantityMoreThanOrdered', [quantity, recordQty]));
     return false;
