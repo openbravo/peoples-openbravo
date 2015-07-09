@@ -536,7 +536,9 @@ enyo.kind({
     if (inEvent.orderType === 3) {
       this.$.multiColumn.$.rightPanel.$.keyboard.setStatus('');
     }
-    this.model.get('order').setOrderType(inEvent.permission, inEvent.orderType);
+    this.model.get('order').setOrderType(inEvent.permission, inEvent.orderType, {
+      applyPromotions: false
+    });
     this.model.get('orderList').saveCurrent();
     return true;
   },

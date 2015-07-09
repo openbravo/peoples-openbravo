@@ -23,6 +23,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     modelName: 'TaxZone'
   },
   OB.Model.Product, OB.Model.ProductCategory, OB.Model.BusinessPartner, OB.Model.BPCategory, OB.Model.BPLocation, OB.Model.Order, OB.Model.DocumentSequence, OB.Model.ChangedBusinessPartners, OB.Model.ChangedBPlocation,
+  OB.Model.ProductBOM,
+  OB.Model.TaxCategoryBOM,
   {
     generatedModel: true,
     modelName: 'Discount'
@@ -161,7 +163,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         i, j, k, amtAux, amountToPay, ordersLength, multiOrders = new OB.Model.MultiOrders(),
         me = this,
         iter, isNew = false,
-        discounts, ordersave, customersave, customeraddrsave, taxes, orderList, hwManager, ViewManager, LeftColumnViewManager, LeftColumnCurrentView, SyncReadyToSendFunction, auxReceiptList = [];
+        discounts, ordersave, customersave, customeraddrsave, orderList, hwManager, ViewManager, LeftColumnViewManager, LeftColumnCurrentView, SyncReadyToSendFunction, auxReceiptList = [];
 
 
     function success() {
@@ -324,6 +326,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           }
         }
         me.get('multiOrders').trigger('closed', order);
+        enyo.$.scrim.hide();
         me.get('multiOrders').trigger('print', order, {
           offline: true
         }); // to guaranty execution order
@@ -415,7 +418,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     this.set('subWindowManager', new ViewManager());
     discounts = new OB.DATA.OrderDiscount(receipt);
     ordersave = new OB.DATA.OrderSave(this);
-    taxes = new OB.DATA.OrderTaxes(receipt);
+    OB.DATA.OrderTaxes(receipt);
 
     OB.MobileApp.model.runSyncProcess(function () {
       me.loadCheckedMultiorders();
@@ -494,6 +497,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               });
               orderList.deleteCurrent();
               orderList.synchronizeCurrentOrder();
+              enyo.$.scrim.hide();
             }
           });
         } else {
@@ -517,6 +521,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               });
               orderList.deleteCurrent();
               orderList.synchronizeCurrentOrder();
+              enyo.$.scrim.hide();
             }
           });
         }

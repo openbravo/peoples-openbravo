@@ -611,11 +611,11 @@ enyo.kind({
     // Finally set status of buttons
     if (resultOK) {
       this.$.payments.scrollAreaMaxHeight = '150px';
-      this.$.doneButton.setDisabled(false);
+      this.$.doneButton.setLocalDisabled(false);
       this.$.exactButton.setDisabled(false);
     } else {
       this.$.payments.scrollAreaMaxHeight = '130px';
-      this.$.doneButton.setDisabled(true);
+      this.$.doneButton.setLocalDisabled(true);
       this.$.exactButton.setDisabled(true);
     }
   },
@@ -673,8 +673,29 @@ enyo.kind({
 });
 
 enyo.kind({
-  name: 'OB.OBPOSPointOfSale.UI.DoneButton',
+  name: 'OB.OBPOSPointOfSale.UI.ProcessButton',
   kind: 'OB.UI.RegularButton',
+  processdisabled: false,
+  localdisabled: false,
+  setLocalDisabled: function(value) {
+    this.localdisabled = value;
+    this.setDisabled(this.processdisabled || this.localdisabled);
+  },
+  initComponents: function () {
+    var me = this;
+    this.inherited(arguments);
+    OB.POS.EventBus.on('UI_Enabled', function (state) {
+      me.processdisabled = !state;
+      me.setDisabled(me.processdisabled || me.localdisabled);
+    });
+    me.processdisabled = !OB.POS.EventBus.isProcessEnabled();
+    me.setDisabled(me.processdisabled || me.localdisabled);
+  }
+});
+
+enyo.kind({
+  name: 'OB.OBPOSPointOfSale.UI.DoneButton',
+  kind: 'OB.OBPOSPointOfSale.UI.ProcessButton',
   drawerOpened: true,
   style: 'width: 120px; float: right; margin: 5px 5px 15px 0px; height: 2.5em; display:block; clear: right',
   init: function (model) {
@@ -732,7 +753,8 @@ enyo.kind({
             this.owner.receipt.trigger('voidLayaway');
           } else {
             this.setDisabled(true);
-            this.owner.model.get('order').trigger('paymentDone', false);
+            enyo.$.scrim.show();
+            me.owner.model.get('order').trigger('paymentDone', false);
           }
           this.drawerOpened = false;
           this.setContent(OB.I18N.getLabel('OBPOS_LblOpen'));
@@ -750,12 +772,14 @@ enyo.kind({
           this.owner.receipt.trigger('voidLayaway');
         } else {
           this.setDisabled(true);
-          this.owner.receipt.trigger('paymentDone', this.allowOpenDrawer);
+          enyo.$.scrim.show();
+          me.owner.receipt.trigger('paymentDone', this.allowOpenDrawer);
         }
       }
     } else {
       if (this.drawerpreference && this.allowOpenDrawer) {
         if (this.drawerOpened) {
+          enyo.$.scrim.show();
           this.owner.model.get('multiOrders').trigger('paymentDone', false);
           this.owner.model.get('multiOrders').set('openDrawer', false);
           this.drawerOpened = false;
@@ -769,6 +793,7 @@ enyo.kind({
           this.setContent(OB.I18N.getLabel('OBPOS_LblDone'));
         }
       } else {
+        enyo.$.scrim.show();
         this.owner.model.get('multiOrders').trigger('paymentDone', this.allowOpenDrawer);
         this.owner.model.get('multiOrders').set('openDrawer', false);
       }
@@ -781,7 +806,7 @@ enyo.kind({
   events: {
     onExactPayment: ''
   },
-  kind: 'OB.UI.RegularButton',
+  kind: 'OB.OBPOSPointOfSale.UI.ProcessButton',
   classes: 'btn-icon-adaptative btn-icon-check btnlink-green',
   style: 'width: 120px; float: right; margin: 5px 5px 15px 0px; height: 2.5em; display:block; clear: right',
   tap: function () {

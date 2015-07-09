@@ -124,7 +124,7 @@ enyo.kind({
     render: function (line) {
       if (line) {
         if (line.get('priceIncludesTax')) {
-          this.$.propertyValue.setContent(line.printGross());
+          this.$.propertyValue.setContent(line.printTotalLine());
         } else {
           this.$.propertyValue.setContent(line.printNet());
         }

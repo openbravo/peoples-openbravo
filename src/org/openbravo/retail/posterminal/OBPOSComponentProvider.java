@@ -112,6 +112,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "model/taxcashup",
         "model/returnreasons",
         "model/offlineprinter",
+        "model/productbom",
+        "model/taxcategorybom",
         "components/modalcancel",
         "components/subwindow",
         "components/leftsubwindow",
@@ -121,6 +123,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/modalnoteditableline",
         "components/modalmodulesindev",
         // Web POS window
+        "utils/eventbus",
         "utils/cashUpReportUtils",
         "components/keypadcoins",
         "data/dataordersave",
