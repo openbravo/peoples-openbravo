@@ -86,11 +86,6 @@ public class FIN_AddPaymentFromJournal extends DalBaseProcess {
           }
         }
       }
-      if (!"".equals(relatedPayments)) {
-        relatedPayments = relatedPayments.substring(0, relatedPayments.length() - 2);
-        throw new OBException("@FIN_JournalLineRelatedPayments@: " + relatedPayments);
-      }
-
       try {
         // Call GL_Journal_Post method from the database.
         final List<Object> parameters = new ArrayList<Object>();
@@ -145,6 +140,13 @@ public class FIN_AddPaymentFromJournal extends DalBaseProcess {
       msg.setTitle("@Success@");
       if (cont > 0) {
         msg.setMessage(" @FIN_NumberOfPayments@: " + cont);
+      }
+      if (!"".equals(relatedPayments) && "RE".equals(docAction)) {
+        relatedPayments = relatedPayments.substring(0, relatedPayments.length() - 2);
+        msg.setType("Warning");
+        msg.setTitle("@Warning@");
+        msg.setMessage("@FIN_JournalLineRelatedPayments@: " + relatedPayments
+            + ". @ModifyGLJournalLine@");
       }
       bundle.setResult(msg);
       OBDal.getInstance().commitAndClose();
