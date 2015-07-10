@@ -45,7 +45,7 @@ public class DatabaseVersionCheck extends BuildValidation {
     ConnectionProvider cp = getConnectionProvider();
     try {
       if (cp.getRDBMS().equalsIgnoreCase("POSTGRE")) {
-        String postgresVersion = DatabaseVersionCheckData.getPostgresVersion(cp);
+        String postgresVersion = getVersion(DatabaseVersionCheckData.getPostgresVersion(cp));
         return checkDatabaseVersion(postgresVersion, MIN_PG_VERSION, WARNING_PG_VERSIONS, POSTGRES);
       } else if (cp.getRDBMS().equalsIgnoreCase("ORACLE")) {
         String oracleVersion = getVersion(DatabaseVersionCheckData.getOracleVersion(cp));
