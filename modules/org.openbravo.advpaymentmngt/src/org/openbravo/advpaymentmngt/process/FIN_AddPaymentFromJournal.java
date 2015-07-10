@@ -19,9 +19,7 @@
 
 package org.openbravo.advpaymentmngt.process;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -29,7 +27,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -47,10 +44,6 @@ public class FIN_AddPaymentFromJournal extends DalBaseProcess {
   @Override
   protected void doExecute(ProcessBundle bundle) throws Exception {
     int cont = 0;
-
-    String dateFormatString = OBPropertiesProvider.getInstance().getOpenbravoProperties()
-        .getProperty("dateFormat.java");
-    SimpleDateFormat dateFormat = new SimpleDateFormat(dateFormatString);
 
     // Recover context and variables
     ConnectionProvider conn = bundle.getConnection();
@@ -102,7 +95,6 @@ public class FIN_AddPaymentFromJournal extends DalBaseProcess {
       }
 
       OBDal.getInstance().refresh(journal);
-      Date date = journal.getDocumentDate();
 
       // Complete the Journal
       if ("CO".equals(docAction)) {
@@ -144,8 +136,8 @@ public class FIN_AddPaymentFromJournal extends DalBaseProcess {
       if (!"".equals(relatedPayments) && "RE".equals(docAction)) {
         relatedPayments = relatedPayments.substring(0, relatedPayments.length() - 2);
         msg.setType("Warning");
-        msg.setTitle("@Warning@");
-        msg.setMessage("@FIN_JournalLineRelatedPayments@: " + relatedPayments
+        msg.setTitle("@Success@");
+        msg.setMessage("@Warning@: @FIN_JournalLineRelatedPayments@: " + relatedPayments
             + ". @ModifyGLJournalLine@");
       }
       bundle.setResult(msg);

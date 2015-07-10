@@ -18,6 +18,8 @@
  */
 package org.openbravo.event;
 
+import java.math.BigDecimal;
+
 import javax.enterprise.event.Observes;
 
 import org.apache.log4j.Logger;
@@ -36,7 +38,6 @@ public class GLJournalLineEventHandler extends EntityPersistenceEventObserver {
 
   @Override
   protected Entity[] getObservedEntities() {
-    // TODO Auto-generated method stub
     return entities;
   }
 
@@ -44,20 +45,35 @@ public class GLJournalLineEventHandler extends EntityPersistenceEventObserver {
     if (!isValidEvent(event)) {
       return;
     }
+
     final GLJournalLine journalLine = (GLJournalLine) event.getTargetInstance();
+    checkAllowModification(event, journalLine);
+  }
+
+  // After reactivating the GL Journal, if you want to modify the Credit/Debit/Financial
+  // Account/Payment Method/GL Item/Payment Date of any of these lines, you must first reactivate
+  // and delete its related payments (if any)
+  private void checkAllowModification(final EntityUpdateEvent event, final GLJournalLine journalLine) {
     final Entity gljournalLine = ModelProvider.getInstance().getEntity(GLJournalLine.ENTITY_NAME);
     if (!journalLine.getJournalEntry().isProcessed() && journalLine.getRelatedPayment() != null) {
-      // If you want to modify the Credit/Debit/Financial Account/Payment Method/GL Item/Payment
-      // Date of any of these lines, you must first reactivate and delete its related payments.
       final Property credit = gljournalLine.getProperty(GLJournalLine.PROPERTY_CREDIT);
       final Property debit = gljournalLine.getProperty(GLJournalLine.PROPERTY_DEBIT);
       final Property openItems = gljournalLine.getProperty(GLJournalLine.PROPERTY_OPENITEMS);
-      if (!event.getCurrentState(credit).equals(event.getPreviousState(credit))
-          || !event.getCurrentState(debit).equals(event.getPreviousState(debit))
-          || !event.getCurrentState(openItems).equals(event.getPreviousState(openItems))) {
-        logger.info(event.getCurrentState(credit) + "...." + event.getPreviousState(credit));
+      if (((BigDecimal) event.getCurrentState(credit)).compareTo((BigDecimal) event
+          .getPreviousState(credit)) != 0
+          || ((BigDecimal) event.getCurrentState(debit)).compareTo((BigDecimal) event
+              .getPreviousState(debit)) != 0
+          || !((Boolean) event.getCurrentState(openItems)).equals((Boolean) event
+              .getPreviousState(openItems))) {
+        logger.info("Current credit: " + (BigDecimal) event.getCurrentState(credit)
+            + ". Previous Credit: " + (BigDecimal) event.getPreviousState(credit));
+        logger.info("Current debit: " + (BigDecimal) event.getCurrentState(debit)
+            + ". Previous Debit: " + (BigDecimal) event.getPreviousState(debit));
+        logger.info("Current Open items: " + (Boolean) event.getCurrentState(openItems)
+            + ". Previous Open items: " + (Boolean) event.getPreviousState(openItems));
         throw new OBException("@ModifyGLJournalLine@");
       }
     }
   }
+
 }
