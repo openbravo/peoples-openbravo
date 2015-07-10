@@ -19,9 +19,12 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.LockOptions;
+import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.TriggerHandler;
@@ -45,6 +48,9 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
     JSONObject jsonData = new JSONObject();
     Date cashUpDate = new Date();
     Date currentDate = new Date();
+    OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
+        jsonCashup.getString("posterminal"));
+
     try {
       if (jsonCashup.has("cashUpDate") && jsonCashup.get("cashUpDate") != null
           && StringUtils.isNotEmpty(jsonCashup.getString("cashUpDate"))) {
@@ -57,7 +63,13 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
       if (jsonCashup.has("currentDate") && jsonCashup.get("currentDate") != null
           && StringUtils.isNotEmpty(jsonCashup.getString("currentDate"))) {
         String strCurrentDate = (String) jsonCashup.getString("currentDate");
-        DateFormat isodatefmt = new SimpleDateFormat("dd-MM-yyyy");
+        String dateFormatStr = posTerminal.getOrganization().getObposDateFormat();
+        if (dateFormatStr == null) {
+          dateFormatStr = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+              .getProperty("dateFormat.java");
+        }
+
+        DateFormat isodatefmt = new SimpleDateFormat(dateFormatStr);
         currentDate = isodatefmt.parse(strCurrentDate);
       } else {
         log.debug("Error processing cash close: error retrieving current date. Using server current date");
@@ -66,8 +78,6 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
       log.debug("Error processing cash close: error retrieving cashUp date. Using current date");
     }
 
-    OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
-        jsonCashup.getString("posterminal"));
     OBContext.setOBContext(jsonCashup.getString("userId"), OBContext.getOBContext().getRole()
         .getId(), OBContext.getOBContext().getCurrentClient().getId(), posTerminal
         .getOrganization().getId());
@@ -151,7 +161,19 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
    */
   private OBPOSAppCashup getCashUp(String cashUpId, JSONObject jsonCashup, Date cashUpDate)
       throws JSONException, SQLException {
-    OBPOSAppCashup cashUp = OBDal.getInstance().get(OBPOSAppCashup.class, cashUpId);
+    // CashUp record will be read from the database with a "for update" clause to force the process
+    // to get the lock on the record. The reason for this is to prevent the same cash up from being
+    // processed twice in case of very quick duplicated requests.
+    // These shouldn't happen in general but may happen specifically in case of unreliable networks
+    OBPOSAppCashup cashUp = null;
+    Query cashUpQuery = OBDal.getInstance().getSession()
+        .createQuery("from OBPOS_App_Cashup where id=?");
+    cashUpQuery.setString(0, cashUpId);
+    // The record will be locked to this process until it ends. Other requests to process this cash
+    // up will be locked until this one finishes
+    cashUpQuery.setLockOptions(LockOptions.UPGRADE);
+    cashUp = (OBPOSAppCashup) cashUpQuery.uniqueResult();
+
     if (cashUp == null) {
       // create the cashup if no exists
       try {
