@@ -283,10 +283,6 @@ public class FIN_Utility {
     DocumentType outDocType = null;
     Client client = null;
 
-    OBCriteria<DocumentType> obcDoc = OBDal.getInstance().createCriteria(DocumentType.class);
-    obcDoc.setFilterOnReadableClients(false);
-    obcDoc.setFilterOnReadableOrganization(false);
-
     if ("0".equals(org.getId())) {
       client = OBContext.getOBContext().getCurrentClient();
       if ("0".equals(client.getId())) {
@@ -295,18 +291,27 @@ public class FIN_Utility {
     } else {
       client = org.getClient();
     }
-    obcDoc.add(Restrictions.eq(DocumentType.PROPERTY_CLIENT, client));
 
-    obcDoc
-        .add(Restrictions.in("organization.id",
-            OBContext.getOBContext().getOrganizationStructureProvider(org.getClient().getId())
-                .getParentTree(org.getId(), true)));
-    obcDoc.add(Restrictions.eq(DocumentType.PROPERTY_DOCUMENTCATEGORY, docCategory));
-    obcDoc.addOrderBy(DocumentType.PROPERTY_DEFAULT, false);
-    obcDoc.addOrderBy(DocumentType.PROPERTY_ID, false);
-    List<DocumentType> docTypeList = obcDoc.list();
-    if (docTypeList != null && docTypeList.size() > 0) {
-      outDocType = docTypeList.get(0);
+    OBContext.setAdminMode();
+    try {
+      StringBuilder whereOrderByClause = new StringBuilder();
+      whereOrderByClause.append(" as dt where dt.organization.id in (");
+      whereOrderByClause.append(Utility.getInStrSet(new OrganizationStructureProvider()
+          .getParentTree(org.getId(), true)));
+      whereOrderByClause.append(") and dt.client.id = '" + client.getId()
+          + "' and dt.documentCategory = '" + docCategory + "' order by ad_isorgincluded('"
+          + org.getId() + "', dt.organization.id, '" + client.getId() + "') , dt.default, dt.id");
+      OBQuery<DocumentType> dt = OBDal.getInstance().createQuery(DocumentType.class,
+          whereOrderByClause.toString());
+      dt.setFilterOnReadableClients(false);
+      dt.setFilterOnReadableOrganization(false);
+
+      List<DocumentType> dtList = dt.list();
+      if (dtList != null && dtList.size() > 0) {
+        outDocType = dtList.get(0);
+      }
+    } finally {
+      OBContext.restorePreviousMode();
     }
     return outDocType;
   }
