@@ -18,6 +18,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLClientInfoException;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
@@ -151,6 +152,17 @@ public class ConnectionProviderImpl implements ConnectionProvider {
   public void addNewPool(String dbDriver, String dbServer, String dbLogin, String dbPassword,
       int minConns, int maxConns, double maxConnTime, String dbSessionConfig, String rdbms,
       String name) throws Exception {
+
+    if (this.defaultPoolName == null || this.defaultPoolName.equals("")) {
+      this.defaultPoolName = name;
+      this.bbdd = dbServer;
+      this.rdbms = rdbms;
+    }
+    if (externalConnectionPool != null) {
+      // No need to create and add a new pool
+      return;
+    }
+
     log4j.debug("Loading underlying JDBC driver.");
     try {
       Class.forName(dbDriver);
@@ -178,11 +190,6 @@ public class ConnectionProviderImpl implements ConnectionProvider {
     PoolingDriver driver = (PoolingDriver) DriverManager.getDriver("jdbc:apache:commons:dbcp:");
     driver.registerPool(contextName + "_" + name, connectionPool);
 
-    if (this.defaultPoolName == null || this.defaultPoolName.equals("")) {
-      this.defaultPoolName = name;
-      this.bbdd = dbServer;
-      this.rdbms = rdbms;
-    }
   }
 
   public ObjectPool getPool(String poolName) throws PoolNotFoundException {
