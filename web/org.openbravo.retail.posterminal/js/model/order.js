@@ -105,6 +105,10 @@
       return this.get('gross');
     },
 
+    getGrossListPrice: function () {
+      return this.get('grossListPrice');
+    },
+
     getNet: function () {
       return this.get('net');
     },
@@ -118,7 +122,7 @@
     },
 
     printTotalLine: function () {
-      return OB.I18N.formatCurrency(this.get('_gross') - this.printDiscount() || this.getGross() - this.printDiscount());
+      return OB.I18N.formatCurrency(this.get('_gross') - this.printDiscount() || this.getGrossListPrice() - this.printDiscount());
     },
 
     getTotalAmountOfPromotions: function () {
