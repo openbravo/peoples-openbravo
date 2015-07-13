@@ -117,6 +117,10 @@
       return OB.I18N.formatCurrency(this.get('nondiscountednet') || this.getNet());
     },
 
+    printTotalLine: function () {
+      return OB.I18N.formatCurrency(this.get('_gross') - this.printDiscount() || this.getGrossListPrice() - this.printDiscount());
+    },
+
     getTotalAmountOfPromotions: function () {
       var memo = 0;
       if (this.get('promotions') && this.get('promotions').length > 0) {
@@ -333,7 +337,7 @@
     },
 
     calculateTaxes: function (callback, doNotSave) {
-      var tmp = new OB.DATA.OrderTaxes(this);
+      OB.DATA.OrderTaxes(this);
       this.calculateTaxes(callback);
     },
 
@@ -636,7 +640,7 @@
       this.set('qty', OB.DEC.Zero);
       this.set('gross', OB.DEC.Zero);
       this.set('net', OB.DEC.Zero);
-      this.set('taxes', null);
+      this.set('taxes', {});
       this.trigger('calculategross');
       this.set('hasbeenpaid', 'N');
       this.set('isbeingprocessed', 'N');
@@ -691,7 +695,6 @@
       }
 
       this.set('isEditable', _order.get('isEditable'));
-      this.trigger('calculategross');
       this.trigger('change');
       this.trigger('clear');
     },
@@ -727,7 +730,6 @@
           var me = this;
           // sets the new quantity
           line.set('qty', qty);
-          line.calculateGross();
           // sets the undo action
           this.set('undo', {
             text: text || OB.I18N.getLabel('OBPOS_SetUnits', [line.get('qty'), line.get('product').get('_identifier')]),
@@ -735,7 +737,6 @@
             line: line,
             undo: function () {
               line.set('qty', oldqty);
-              line.calculateGross();
               me.set('undo', null);
             }
           });
@@ -765,7 +766,6 @@
           var me = this;
           // sets the new price
           line.set('price', price);
-          line.calculateGross();
           // sets the undo action
           if (options.setUndo) {
             this.set('undo', {
@@ -774,7 +774,6 @@
               line: line,
               undo: function () {
                 line.set('price', oldprice);
-                line.calculateGross();
                 me.set('undo', null);
               }
             });
@@ -832,7 +831,6 @@
       this.adjustPayment();
       if (!doNotSave) {
         this.save();
-        this.calculateGross();
       }
     },
     //Attrs is an object of attributes that will be set in order
@@ -1325,7 +1323,6 @@
         line.get('product').set('ignorePromotions', false);
       }
       line.set('qty', -line.get('qty'));
-      line.calculateGross();
 
       // set the undo action
       this.set('undo', {
@@ -1340,7 +1337,6 @@
       if (line.get('promotions')) {
         line.unset('promotions');
       }
-      me.calculateGross();
       this.save();
 
     },
@@ -2336,7 +2332,7 @@
       order.set('isPaid', false);
       order.set('paidOnCredit', false);
       order.set('isLayaway', false);
-      order.set('taxes', null);
+      order.set('taxes', {});
 
       var nextDocumentno = OB.MobileApp.model.getNextDocumentno();
       order.set('documentnoPrefix', OB.MobileApp.model.get('terminal').docNoPrefix);
