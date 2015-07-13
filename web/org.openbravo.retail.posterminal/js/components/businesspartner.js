@@ -13,7 +13,7 @@
 enyo.kind({
   kind: 'OB.UI.SmallButton',
   name: 'OB.UI.BusinessPartner',
-  classes: 'btnlink btnlink-small btnlink-gray',
+  classes: 'btnlink-gray',
   style: 'float: left; text-overflow:ellipsis; white-space: nowrap; overflow: hidden;',
   published: {
     order: null
@@ -25,7 +25,15 @@ enyo.kind({
     onBPSelectionDisabled: 'buttonDisabled'
   },
   buttonDisabled: function (inSender, inEvent) {
+    this.isEnabled = !inEvent.status;
     this.setDisabled(inEvent.status);
+    if (!this.isEnabled) {
+      this.removeClass('btnlink');
+      this.addClass('btnbp');
+    } else {
+      this.removeClass('btnbp');
+      this.addClass('btnlink');
+    }
   },
   tap: function () {
     var qty = 0;

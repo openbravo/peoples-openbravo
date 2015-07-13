@@ -105,6 +105,10 @@
       return this.get('gross');
     },
 
+    getGrossListPrice: function () {
+      return this.get('grossListPrice');
+    },
+
     getNet: function () {
       return this.get('net');
     },
