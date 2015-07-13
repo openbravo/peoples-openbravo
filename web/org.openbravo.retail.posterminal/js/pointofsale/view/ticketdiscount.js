@@ -265,8 +265,10 @@ enyo.kind({
     this.checkedLines = inEvent.checkedLines;
     if (this.checkedLines.length > 0 && this.discounts.length !== 0) {
       this.$.btnApply.setDisabled(false);
+      this.$.btnApply.addStyles('color: orange;');
     } else {
       this.$.btnApply.setDisabled(true);
+      this.$.btnApply.addStyles('color: #4C4949;');
     }
   },
   discountChanged: function (inSender, inEvent) {
@@ -283,8 +285,9 @@ enyo.kind({
     }
   },
   closingDiscounts: function (inSender, inEvent) {
-    OB.MobileApp.view.scanningFocus(true);
+    OB.MobileApp.view.scanningFocus(true);    
     this.$.checkSelectAll.unCheck();
+    this.setShowing(false);    
     this.doDiscountsModeFinished({
       tabPanel: 'scan',
       keyboard: 'toolbarscan',
