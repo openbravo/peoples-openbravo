@@ -37,6 +37,7 @@ import org.hibernate.Transaction;
 import org.hibernate.classic.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.base.ConnectionProviderContextListener;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.domaintype.BaseDomainType;
 import org.openbravo.base.model.domaintype.ForeignKeyDomainType;
@@ -354,7 +355,11 @@ public class ModelProvider implements OBSingleton {
     ConnectionProviderImpl con = null;
     Connection connection = null;
     try {
-      con = new ConnectionProviderImpl(OBPropertiesProvider.getInstance().getOpenbravoProperties());
+      con = (ConnectionProviderImpl) ConnectionProviderContextListener.getPool();
+      if (con == null) {
+        con = new ConnectionProviderImpl(OBPropertiesProvider.getInstance()
+            .getOpenbravoProperties());
+      }
       connection = con.getConnection();
       PreparedStatement ps = null;
       try {

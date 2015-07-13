@@ -35,13 +35,14 @@ import org.openbravo.exception.PoolNotFoundException;
 public class ConnectionProviderContextListener implements ServletContextListener {
   public static final String POOL_ATTRIBUTE = "openbravoPool";
   private static Logger log4j = Logger.getLogger(ConnectionProviderContextListener.class);
+  private static ConnectionProvider pool;
 
   public void contextInitialized(ServletContextEvent event) {
     ServletContext context = event.getServletContext();
     ConfigParameters configParameters = ConfigParameters.retrieveFrom(context);
 
     try {
-      ConnectionProvider pool = createPool(configParameters);
+      pool = createPool(configParameters);
       context.setAttribute(POOL_ATTRIBUTE, pool);
     } catch (PoolNotFoundException e) {
       log4j.error("Unable to create a connection pool", e);
@@ -57,6 +58,10 @@ public class ConnectionProviderContextListener implements ServletContextListener
 
   public static ConnectionProvider getPool(ServletContext context) {
     return (ConnectionProvider) context.getAttribute(POOL_ATTRIBUTE);
+  }
+
+  public static ConnectionProvider getPool() {
+    return pool;
   }
 
   public static void reloadPool(ServletContext context) throws Exception {
