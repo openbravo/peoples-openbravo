@@ -948,7 +948,7 @@
             var process = new OB.DS.Process('org.openbravo.retail.posterminal.process.HasServices');
             var params = {},
                 date = new Date(),
-                i, coll, prod;
+                i, prod;
             params.terminalTime = date;
             params.terminalTimeOffset = date.getTimezoneOffset();
             process.exec({
@@ -968,27 +968,47 @@
                 }
                 args.receipt.save();
                 if (data.mandatoryservices) {
-                  //preprocess mandatory services to transform them into Product models
-                  coll = new Backbone.Collection();
-                  for (i = 0; i < data.mandatoryservices.length; i++) {
-                    coll.add(OB.Dal.transform(OB.Model.Product, data.mandatoryservices[i]));
-                  }
                   //open the search tab with the returned products
-                  args.receipt.trigger('showProductList', coll, args.orderline, 'mandatory');
+                  args.receipt.trigger('showProductList', args.orderline, 'mandatory');
                 }
               }
             });
-          } //else {
-          //non-high volumes: websql
-          //          OB.Dal.find(OB.Model.Product, criteria, function (data) {
-          //            if (data && data.length > 0) {
-          //              args.orderline.set('hasRelatedServices', true);
-          //              args.orderline.trigger('showServicesButton')
-          //            } else {
-          //              args.orderline.set('hasRelatedServices', false);
-          //            }
-          //          });
-          //}
+          } else {
+            //non-high volumes: websql
+            var criteria = {};
+
+            criteria._whereClause = '';
+            criteria.params = [];
+
+            criteria._whereClause = " as product where product.productType = 'S' and (product.isLinkedToProduct = 'true' and ";
+
+            //including/excluding products
+            criteria._whereClause += "((product.includeProducts = 'Y' and not exists (select 1 from m_product_service sp where product.m_product_id = sp.m_product_id and sp.m_related_product_id = ? ))";
+            criteria._whereClause += "or (product.includeProducts = 'N' and exists (select 1 from m_product_service sp where product.m_product_id = sp.m_product_id and sp.m_related_product_id = ? ))";
+            criteria._whereClause += "or product.includeProducts is null) ";
+
+            //including/excluding product categories
+            criteria._whereClause += "and ((product.includeProductCategories = 'Y' and not exists (select 1 from m_product_category_service spc where product.m_product_id = spc.m_product_id and spc.m_product_category_id =  ? )) ";
+            criteria._whereClause += "or (product.includeProductCategories = 'N' and exists (select 1 from m_product_category_service spc where product.m_product_id = spc.m_product_id and spc.m_product_category_id  = ? )) ";
+            criteria._whereClause += "or product.includeProductCategories is null)) ";
+
+            criteria.params.push(args.orderline.get('product').get('id'));
+            criteria.params.push(args.orderline.get('product').get('id'));
+            criteria.params.push(args.orderline.get('product').get('productCategory'));
+            criteria.params.push(args.orderline.get('product').get('productCategory'));
+            OB.Dal.find(OB.Model.Product, criteria, function (data) {
+              if (data && data.length > 0) {
+                args.orderline.set('hasRelatedServices', true);
+                args.orderline.trigger('showServicesButton');
+              } else {
+                args.orderline.set('hasRelatedServices', false);
+              }
+              args.receipt.save();
+              args.receipt.trigger('showProductList', args.orderline, 'mandatory');
+            }, function (trx, error) {
+              OB.error(OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices'));
+            });
+          }
         }
       });
     },

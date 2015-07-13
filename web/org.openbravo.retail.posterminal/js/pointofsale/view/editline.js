@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, enyo, _, OB_UI_SearchServicesFilter */
+/*global OB, enyo, _ */
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.LineProperty',
   components: [{
@@ -245,7 +245,7 @@ enyo.kind({
       var product = this.owner.owner.line.get('product');
       if (product) {
         OB.UI.SearchProductCharacteristic.prototype.filtersCustomClear();
-        OB.UI.SearchProductCharacteristic.prototype.filtersCustomAdd(new OB_UI_SearchServicesFilter({
+        OB.UI.SearchProductCharacteristic.prototype.filtersCustomAdd(new OB.UI.SearchServicesFilter({
           text: product.get("_identifier"),
           productId: product.id,
           productList: null,

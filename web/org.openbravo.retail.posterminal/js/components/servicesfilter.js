@@ -11,7 +11,7 @@
 
 enyo.kind({
   kind: 'OB.UI.SearchProductCharacteristicFilter',
-  name: 'OB_UI_SearchServicesFilter',
+  name: 'OB.UI.SearchServicesFilter',
   filterName: 'ServicesFilter',
   published: {
     type: 'PANEL',
@@ -24,29 +24,33 @@ enyo.kind({
     onAddProduct: 'addProduct'
   },
   sqlFilter: function () {
-    var result = {
-      where: null,
-      filters: []
-    };
-    //TODO: missing websql filter
-    //    if (this.productId) {
-    //      // Only one product
-    //      result.where = where + "= ?)";
-    //      result.filters = [this.productId];
-    //    } else if (this.productList) {
-    //      // List of products
-    //      var params = "",
-    //          filters = [];
-    //      this.productList.forEach(function (p) {
-    //        if (params !== "") {
-    //          params = params + ",";
-    //        }
-    //        params = params + "?";
-    //        filters.push(p);
-    //      });
-    //      result.where = where + "in (" + params + "))";
-    //      result.filters = filters;
-    //    }
+    var result = {},
+        where = '',
+        filters = [];
+
+    // Only one product
+    if (this.productId) {
+      where = " and product.productType = 'S' and (product.isLinkedToProduct = 'true' and ";
+
+      //including/excluding products
+      where += "((product.includeProducts = 'Y' and not exists (select 1 from m_product_service sp where product.m_product_id = sp.m_product_id and sp.m_related_product_id = ? ))";
+      where += "or (product.includeProducts = 'N' and exists (select 1 from m_product_service sp where product.m_product_id = sp.m_product_id and sp.m_related_product_id = ? ))";
+      where += "or product.includeProducts is null) ";
+
+      //including/excluding product categories
+      where += "and ((product.includeProductCategories = 'Y' and not exists (select 1 from m_product_category_service spc where product.m_product_id = spc.m_product_id and spc.m_product_category_id =  ? )) ";
+      where += "or (product.includeProductCategories = 'N' and exists (select 1 from m_product_category_service spc where product.m_product_id = spc.m_product_id and spc.m_product_category_id  = ? )) ";
+      where += "or product.includeProductCategories is null)) ";
+
+      filters.push(this.orderline.get('product').get('id'));
+      filters.push(this.orderline.get('product').get('id'));
+      filters.push(this.orderline.get('product').get('productCategory'));
+      filters.push(this.orderline.get('product').get('productCategory'));
+    }
+
+    result.where = where;
+    result.filters = filters;
+
     return result;
   },
   hqlCriteria: function () {
@@ -76,5 +80,30 @@ enyo.kind({
   initComponents: function () {
     this.inherited(arguments);
     this.caption = "Services for"; //TODO: use i18n labels
+  }
+});
+
+enyo.kind({
+  kind: 'OB.UI.SearchProductCharacteristicFilter',
+  name: 'OB.UI.MandatoryServicesFilter',
+  filterName: 'MandatoryServicesFilter',
+  published: {
+    type: 'HIDDEN'
+  },
+  sqlFilter: function () {
+    var result = {};
+
+    result.where = " and product.proposalType = 'MP'";
+    result.filters = [];
+
+    return result;
+  },
+  hqlCriteria: function () {
+    return [{
+      columns: [],
+      operator: OB.Dal.FILTER,
+      value: 'Mandatory_Services',
+      params: []
+    }];
   }
 });

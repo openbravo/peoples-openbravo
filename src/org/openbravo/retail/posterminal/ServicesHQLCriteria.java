@@ -19,15 +19,12 @@ import org.openbravo.mobile.core.process.HQLCriteriaProcess;
 public class ServicesHQLCriteria extends HQLCriteriaProcess {
 
   public String getHQLFilter() {
-    return " (product.productType = 'S' and "
+    return " (product.productType = 'S' and product.linkedToProduct = 'Y' and "
         + "((product.includedProducts = 'Y' and not exists (select 1 from ServiceProduct sp where product.id = sp.product.id and sp.relatedProduct.id = '$1' )) "
         + "or (product.includedProducts = 'N' and exists (select 1 from ServiceProduct sp where product.id = sp.product.id and sp.relatedProduct.id = '$1' )) "
         + "or product.includedProducts is null) "
         + "and ((product.includedProductCategories = 'Y' and not exists (select 1 from ServiceProductCategory spc where product.id = spc.product.id and spc.productCategory.id =  '$2' )) "
         + "or (product.includedProductCategories = 'N' and exists (select 1 from ServiceProductCategory spc where product.id = spc.product.id and spc.productCategory.id = '$2' )) "
-        + "or product.includedProductCategories is null) "
-        + "and ((product.includedProductCategories is null and product.includedProducts is not null) "
-        + "or (product.includedProductCategories is not null and product.includedProducts is null) "
-        + "or (product.includedProductCategories is not null and product.includedProducts is not null)))";
+        + "or product.includedProductCategories is null))";
   }
 }

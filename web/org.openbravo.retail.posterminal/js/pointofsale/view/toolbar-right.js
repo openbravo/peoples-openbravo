@@ -401,6 +401,10 @@ enyo.kind({
         tabPanel: this.previousStatus.tab,
         keyboard: 'toolbarscan'
       });
+    } else if (this.previousStatus.tab === 'catalog') {
+      this.doTabChange({
+        tabPanel: this.previousStatus.tab
+      });
     } else {
       this.doTabChange({
         tabPanel: this.previousStatus.tab
