@@ -292,7 +292,7 @@ public class FIN_Utility {
       client = org.getClient();
     }
 
-    OBContext.setAdminMode();
+    OBContext.setAdminMode(false);
     try {
       StringBuilder whereOrderByClause = new StringBuilder();
       whereOrderByClause.append(" as dt where dt.organization.id in (");
@@ -300,14 +300,16 @@ public class FIN_Utility {
           .getParentTree(org.getId(), true)));
       whereOrderByClause.append(") and dt.client.id = '" + client.getId()
           + "' and dt.documentCategory = '" + docCategory + "' order by ad_isorgincluded('"
-          + org.getId() + "', dt.organization.id, '" + client.getId() + "') , dt.default, dt.id");
+          + org.getId() + "', dt.organization.id, '" + client.getId()
+          + "') , dt.default desc, dt.id desc");
       OBQuery<DocumentType> dt = OBDal.getInstance().createQuery(DocumentType.class,
           whereOrderByClause.toString());
       dt.setFilterOnReadableClients(false);
       dt.setFilterOnReadableOrganization(false);
+      dt.setMaxResult(1);
 
       List<DocumentType> dtList = dt.list();
-      if (dtList != null && dtList.size() > 0) {
+      if (dtList != null && !dtList.isEmpty()) {
         outDocType = dtList.get(0);
       }
     } finally {
