@@ -70,6 +70,10 @@
       this.templatequotation = new OB.DS.HWResource(terminal.printQuotationTemplate || OB.OBPOSPointOfSale.Print.QuotationTemplate);
       extendHWResource(this.templatequotation, "printQuotationTemplate");
 
+      this.templatetotal = new OB.DS.HWResource(terminal.printDisplayTotalTemplate || OB.OBPOSPointOfSale.Print.DisplayTotal);
+      extendHWResource(this.templatetotal, "printDisplayTotalTemplate");
+      this.templateline = new OB.DS.HWResource(terminal.printReceiptLineTemplate || OB.OBPOSPointOfSale.Print.ReceiptLineTemplate);
+      extendHWResource(this.templateline, "printReceiptLineTemplate");
 
       this.templategoodbye = new OB.DS.HWResource(terminal.printGoodByeTemplate || OB.OBPOSPointOfSale.Print.GoodByeTemplate);
       extendHWResource(this.templategoodbye, "printGoodByeTemplate");
@@ -281,8 +285,7 @@
     // Clone the receipt
     var receipt = new OB.Model.Order();
     receipt.clearWith(this.receipt);
-    this.template = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.DisplayTotal);
-    OB.POS.hwserver.print(this.template, {
+    OB.POS.hwserver.print(this.templatetotal, {
       order: receipt
     });
   };
@@ -291,8 +294,7 @@
     // Clone the receipt
     var multiOrders;
     multiOrders = this.multiOrders;
-    this.template = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.DisplayTotal);
-    OB.POS.hwserver.print(this.template, {
+    OB.POS.hwserver.print(this.templatetotal, {
       order: multiOrders
     });
   };
@@ -314,8 +316,6 @@
         }
         this.print();
       }, this);
-
-      this.templateline = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.ReceiptLineTemplate);
       };
 
   PrintReceiptLine.prototype.print = function () {
