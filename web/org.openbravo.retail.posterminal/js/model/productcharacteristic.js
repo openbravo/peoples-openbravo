@@ -17,7 +17,7 @@
     entityName: 'ProductCharacteristic',
     source: 'org.openbravo.retail.posterminal.master.ProductCharacteristic',
     hgvol: 'OBPOS_highVolume.product',
-    dataLimit: 100
+    dataLimit: OB.Dal.DATALIMIT
   });
 
   ProductCharacteristic.addProperties([{

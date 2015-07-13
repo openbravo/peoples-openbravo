@@ -117,10 +117,6 @@
       return OB.I18N.formatCurrency(this.get('nondiscountednet') || this.getNet());
     },
 
-    printTotalLine: function () {
-      return OB.I18N.formatCurrency(this.get('_gross') - this.printDiscount() || this.getGross() - this.printDiscount());
-    },
-
     getTotalAmountOfPromotions: function () {
       var memo = 0;
       if (this.get('promotions') && this.get('promotions').length > 0) {
@@ -228,7 +224,7 @@
     tableName: 'c_order',
     entityName: 'Order',
     source: '',
-    dataLimit: 100,
+    dataLimit: OB.Dal.DATALIMIT,
     properties: ['id', 'json', 'session', 'hasbeenpaid', 'isbeingprocessed'],
     propertyMap: {
       'id': 'c_order_id',
@@ -337,7 +333,7 @@
     },
 
     calculateTaxes: function (callback, doNotSave) {
-      OB.DATA.OrderTaxes(this);
+      var tmp = new OB.DATA.OrderTaxes(this);
       this.calculateTaxes(callback);
     },
 
@@ -640,7 +636,7 @@
       this.set('qty', OB.DEC.Zero);
       this.set('gross', OB.DEC.Zero);
       this.set('net', OB.DEC.Zero);
-      this.set('taxes', {});
+      this.set('taxes', null);
       this.trigger('calculategross');
       this.set('hasbeenpaid', 'N');
       this.set('isbeingprocessed', 'N');
@@ -695,6 +691,7 @@
       }
 
       this.set('isEditable', _order.get('isEditable'));
+      this.trigger('calculategross');
       this.trigger('change');
       this.trigger('clear');
     },
@@ -730,6 +727,7 @@
           var me = this;
           // sets the new quantity
           line.set('qty', qty);
+          line.calculateGross();
           // sets the undo action
           this.set('undo', {
             text: text || OB.I18N.getLabel('OBPOS_SetUnits', [line.get('qty'), line.get('product').get('_identifier')]),
@@ -737,6 +735,7 @@
             line: line,
             undo: function () {
               line.set('qty', oldqty);
+              line.calculateGross();
               me.set('undo', null);
             }
           });
@@ -766,6 +765,7 @@
           var me = this;
           // sets the new price
           line.set('price', price);
+          line.calculateGross();
           // sets the undo action
           if (options.setUndo) {
             this.set('undo', {
@@ -774,6 +774,7 @@
               line: line,
               undo: function () {
                 line.set('price', oldprice);
+                line.calculateGross();
                 me.set('undo', null);
               }
             });
@@ -831,6 +832,7 @@
       this.adjustPayment();
       if (!doNotSave) {
         this.save();
+        this.calculateGross();
       }
     },
     //Attrs is an object of attributes that will be set in order
@@ -1323,6 +1325,7 @@
         line.get('product').set('ignorePromotions', false);
       }
       line.set('qty', -line.get('qty'));
+      line.calculateGross();
 
       // set the undo action
       this.set('undo', {
@@ -1337,6 +1340,7 @@
       if (line.get('promotions')) {
         line.unset('promotions');
       }
+      me.calculateGross();
       this.save();
 
     },
@@ -2332,7 +2336,7 @@
       order.set('isPaid', false);
       order.set('paidOnCredit', false);
       order.set('isLayaway', false);
-      order.set('taxes', {});
+      order.set('taxes', null);
 
       var nextDocumentno = OB.MobileApp.model.getNextDocumentno();
       order.set('documentnoPrefix', OB.MobileApp.model.get('terminal').docNoPrefix);
@@ -2521,35 +2525,11 @@
       });
       callback(order);
     },
+
     addNewOrder: function (isFirstOrder) {
       var me = this;
       if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.customer', true) && (!isFirstOrder || (isFirstOrder && !localStorage.hgVolCustomers))) {
-        OB.Dal.saveHgvol(OB.MobileApp.model.get('businessPartner'), function () {}, function () {
-          OB.error(arguments);
-        }, true);
-        OB.Dal.saveHgvol(OB.MobileApp.model.get('businessPartner').get('locationModel'), function () {}, function () {
-          OB.error(arguments);
-        }, true);
-        if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.discount.bp', true)) {
-          var bp = {
-            columns: ['businessPartner'],
-            operator: 'equals',
-            value: OB.MobileApp.model.get('businessPartner').id,
-            isId: true
-          };
-          var hgVolCriteria = [bp];
-          var criteria = {};
-          criteria.hgVolFilters = hgVolCriteria;
-          OB.Dal.find(OB.Model.DiscountFilterBusinessPartner, criteria, function (discountsBP) {
-            _.each(discountsBP.models, function (dsc) {
-              OB.Dal.saveHgvol(dsc, function () {}, function () {
-                OB.error(arguments);
-              }, true);
-            });
-          }, function () {
-            OB.error(arguments);
-          });
-        }
+        this.doHighVolBPSettings(OB.MobileApp.model.get('businessPartner'));
       }
 
       this.saveCurrent();
@@ -2573,33 +2553,7 @@
 
       var me = this;
       if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.customer', true)) {
-        OB.Dal.saveHgvol(model.get('bp'), function () {}, function () {
-          OB.error(arguments);
-        }, true);
-        OB.Dal.saveHgvol(model.get('bp').get('locationModel'), function () {}, function () {
-          OB.error(arguments);
-        }, true);
-        if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.discount.bp', true)) {
-          var bp = {
-            columns: ['businessPartner'],
-            operator: 'equals',
-            value: model.id,
-            isId: true
-          };
-          var hgVolCriteria = [bp];
-          var criteria = {};
-          criteria.hgVolFilters = hgVolCriteria;
-          OB.Dal.find(OB.Model.DiscountFilterBusinessPartner, criteria, function (discountsBP) {
-            _.each(discountsBP.models, function (dsc) {
-              OB.Dal.saveHgvol(dsc, function () {}, function () {
-                OB.error(arguments);
-              }, true);
-            });
-            OB.UTIL.showLoading(false);
-          }, function () {
-            OB.error(arguments);
-          });
-        }
+        this.doHighVolBPSettings(model.get('bp'));
       } else {
         OB.UTIL.showLoading(false);
       }
@@ -2617,6 +2571,36 @@
       OB.Dal.save(model, function () {}, function () {
         OB.error(arguments);
       }, model.get('isLayaway'));
+    },
+
+    doHighVolBPSettings: function (businessPartner) {
+      OB.Dal.saveHgvol(businessPartner, function () {}, function () {
+        OB.error(arguments);
+      }, true);
+      OB.Dal.saveHgvol(businessPartner.get('locationModel'), function () {}, function () {
+        OB.error(arguments);
+      }, true);
+      if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.discount.bp', true)) {
+        var bp = {
+          columns: ['businessPartner'],
+          operator: 'equals',
+          value: businessPartner.id,
+          isId: true
+        };
+        var hgVolCriteria = [bp];
+        var criteria = {};
+        criteria.hgVolFilters = hgVolCriteria;
+        OB.Dal.find(OB.Model.DiscountFilterBusinessPartner, criteria, function (discountsBP) {
+          _.each(discountsBP.models, function (dsc) {
+            OB.Dal.saveHgvol(dsc, function () {}, function () {
+              OB.error(arguments);
+            }, true);
+          });
+          OB.UTIL.showLoading(false);
+        }, function () {
+          OB.error(arguments);
+        });
+      }
     },
 
     addNewQuotation: function () {
@@ -2651,6 +2635,7 @@
       if (!this.current) {
         return;
       }
+
       if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.product', true)) {
         for (i = 0, max = this.current.get('lines').length; i < this.current.get('lines').length; i++) {
           var p = this.current.get('lines').models[i].get('product');
@@ -2664,56 +2649,33 @@
         }
       }
 
+      if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.discount.bp', true)) {
+        var oldbpfilter = {
+          columns: ['businessPartner'],
+          operator: 'equals',
+          value: this.current.get('bp').id,
+          isId: true
+        };
+        var oldHgVolCriteria = [oldbpfilter];
+        var criteria = {};
+        criteria.hgVolFilters = oldHgVolCriteria;
+        OB.Dal.find(OB.Model.DiscountFilterBusinessPartner, criteria, function (discountsBP) {
+          _.each(discountsBP.models, function (dsc) {
+            OB.Dal.removeHgvol(dsc, function () {}, function () {
+              OB.error(arguments);
+            }, true);
+          });
+        }, function () {
+          OB.error(arguments);
+        });
+      }
+
       this.remove(this.current);
       var createNew = forceCreateNew || this.length === 0;
       if (createNew) {
         this.add(this.newOrder());
         if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.customer', true)) {
-          OB.Dal.saveHgvol(OB.MobileApp.model.get('businessPartner'), function () {}, function () {
-            OB.error(arguments);
-          }, true);
-          OB.Dal.saveHgvol(OB.MobileApp.model.get('businessPartner').get('locationModel'), function () {}, function () {
-            OB.error(arguments);
-          }, true);
-          if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.discount.bp', true)) {
-
-            var oldbpfilter = {
-              columns: ['businessPartner'],
-              operator: 'equals',
-              value: this.current.get('bp').id,
-              isId: true
-            };
-            var oldHgVolCriteria = [oldbpfilter];
-            var criteria = {};
-            criteria.hgVolFilters = oldHgVolCriteria;
-            OB.Dal.find(OB.Model.DiscountFilterBusinessPartner, criteria, function (discountsBP) {
-              _.each(discountsBP.models, function (dsc) {
-                OB.Dal.removeHgvol(dsc, function () {}, function () {
-                  OB.error(arguments);
-                }, true);
-              });
-            }, function () {
-              OB.error(arguments);
-            });
-            var bp = {
-              columns: ['businessPartner'],
-              operator: 'equals',
-              value: OB.MobileApp.model.get('businessPartner').id,
-              isId: true
-            };
-            var hgVolCriteria = [bp];
-            var criteriaFilter = {};
-            criteriaFilter.hgVolFilters = hgVolCriteria;
-            OB.Dal.find(OB.Model.DiscountFilterBusinessPartner, criteriaFilter, function (discountsBP) {
-              _.each(discountsBP.models, function (dsc) {
-                OB.Dal.saveHgvol(dsc, function () {}, function () {
-                  OB.error(arguments);
-                }, true);
-              });
-            }, function () {
-              OB.error(arguments);
-            });
-          }
+          this.doHighVolBPSettings(OB.MobileApp.model.get('businessPartner'));
         }
       }
       this.current = this.at(this.length - 1);
@@ -2746,7 +2708,6 @@
         }
         this.modelorder.clearWith(this.current);
         this.modelorder.set('isNewReceipt', false);
-        this.modelorder.trigger('paintTaxes');
       }
     },
     synchronizeCurrentOrder: function () {

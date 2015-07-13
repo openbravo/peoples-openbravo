@@ -17,7 +17,7 @@
     entityName: 'Brand',
     source: 'org.openbravo.retail.posterminal.master.Brand',
     hgvol: 'OBPOS_highVolume.product',
-    dataLimit: 100
+    dataLimit: OB.Dal.DATALIMIT
   });
 
   Brand.addProperties([{

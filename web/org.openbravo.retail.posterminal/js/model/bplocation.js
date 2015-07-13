@@ -18,7 +18,7 @@
     tableName: 'c_bpartner_location',
     entityName: 'BPLocation',
     source: 'org.openbravo.retail.posterminal.master.BPLocation',
-    dataLimit: 100,
+    dataLimit: OB.Dal.DATALIMIT,
     local: false,
     hgvol: 'OBPOS_highVolume.customer',
     saveCustomerAddr: function (silent) {
