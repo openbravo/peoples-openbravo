@@ -614,16 +614,21 @@ enyo.kind({
       // Finally set status of buttons
       this.setStatusButtons(resultOK);
     }
+    if (!resultOK && !selectedPayment.paymentMethod.iscash) {
+      this.$.noenoughchangelbl.hide();
+    }
   },
 
   setStatusButtons: function (resultOK) {
     if (resultOK) {
       this.$.payments.scrollAreaMaxHeight = '150px';
       this.$.doneButton.setDisabled(false);
+      this.$.exactButton.setDisabled(false);
     } else {
       this.$.noenoughchangelbl.show();
       this.$.payments.scrollAreaMaxHeight = '130px';
       this.$.doneButton.setDisabled(true);
+      this.$.exactButton.setDisabled(true);
     }
   },
 

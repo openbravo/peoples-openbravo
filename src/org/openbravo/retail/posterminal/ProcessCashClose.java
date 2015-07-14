@@ -135,40 +135,6 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
         doReconciliationAndInvoices(posTerminal, cashUpId, cashUpDate, jsonCashup, jsonData, true,
             null);
       }
-
-      OBCriteria<OBPOSErrors> errorsQuery = OBDal.getInstance().createCriteria(OBPOSErrors.class);
-      errorsQuery.add(Restrictions.ne(OBPOSErrors.PROPERTY_TYPEOFDATA, "OBPOS_App_Cashup"));
-      errorsQuery.add(Restrictions.eq(OBPOSErrors.PROPERTY_ORDERSTATUS, "N"));
-      errorsQuery.add(Restrictions.eq(OBPOSErrors.PROPERTY_OBPOSAPPLICATIONS, posTerminal));
-      if (errorsQuery.count() > 0) {
-        throw new OBException(
-            "There are errors related to non-created customers, orders, or cash management movements pending to be processed. Process them before processing the cash ups");
-      }
-
-      // This cashup is a closed box
-      TriggerHandler.getInstance().disable();
-      try {
-        getOrderGroupingProcessor().groupOrders(posTerminal, cashUpId, currentDate);
-
-        posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
-            jsonCashup.getString("posterminal"));
-
-        CashCloseProcessor processor = getCashCloseProcessor();
-        JSONArray cashMgmtIds = jsonCashup.getJSONArray("cashMgmtIds");
-        JSONObject result = processor.processCashClose(posTerminal, jsonCashup, cashMgmtIds,
-            currentDate);
-
-        // add the messages returned by processCashClose...
-        jsonData.put("messages", result.opt("messages"));
-        jsonData.put("next", result.opt("next"));
-        jsonData.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
-      } finally {
-        try {
-          OBDal.getInstance().flush();
-          TriggerHandler.getInstance().enable();
-        } catch (Throwable ignored) {
-        }
-      }
     } else {
       // This cashup is a cash order. Nothing needs to be done
       jsonData.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
