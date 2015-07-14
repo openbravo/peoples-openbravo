@@ -20,6 +20,7 @@ package org.openbravo.event;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.HashMap;
 
 import javax.enterprise.event.Observes;
 
@@ -109,30 +110,44 @@ public class ServiceRelationEventHandler extends EntityPersistenceEventObserver 
   private void updateOrderLine(OrderLine orderLine, BigDecimal currentAmount,
       BigDecimal currentqty, BigDecimal oldAmount, BigDecimal oldQuantity) {
     BigDecimal serviceQty = BigDecimal.ONE;
-    BigDecimal dbAmount = ServicePriceUtils.getRelatedAmountAndQty(orderLine).get("amount");
-    BigDecimal serviceAmount = ServicePriceUtils.getServiceAmount(orderLine,
-        dbAmount.add(currentAmount.subtract(oldAmount)));
-    Product service = orderLine.getProduct();
     Currency currency = orderLine.getCurrency();
-    if (UNIQUE_QUANTITY.equals(service.getQuantityRule())) {
+    HashMap<String, BigDecimal> dbValues = ServicePriceUtils.getRelatedAmountAndQty(orderLine);
+    BigDecimal dbAmount = dbValues.get("amount");
+    BigDecimal dbQuantity = dbValues.get("quantity");
+    if (orderLine.getOrderedQuantity().compareTo(currentqty) != 0) {
+      BigDecimal baseProductPrice = ServicePriceUtils.getProductPrice(orderLine.getSalesOrder()
+          .getOrderDate(), orderLine.getSalesOrder().getPriceList(), orderLine.getProduct());
+      BigDecimal serviceAmount = ServicePriceUtils.getServiceAmount(
+          orderLine,
+          dbAmount.add(currentAmount.subtract(oldAmount)).setScale(
+              currency.getPricePrecision().intValue(), RoundingMode.HALF_UP));
+      Product service = orderLine.getProduct();
+      if (UNIQUE_QUANTITY.equals(service.getQuantityRule())) {
+        serviceQty = BigDecimal.ONE;
+      } else {
+        serviceQty = orderLine.getOrderedQuantity().add(currentqty).subtract(oldQuantity);
+        if (dbQuantity.compareTo(BigDecimal.ZERO) == 0) {
+          serviceQty = serviceQty.subtract(BigDecimal.ONE);
+        }
+        serviceQty = serviceQty.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ONE : serviceQty;
+      }
+      orderLine.setOrderedQuantity(serviceQty);
+      if (BigDecimal.ZERO.compareTo(serviceQty) == 0) {
+        throw new OBException("ZeroQuantityService");
+      }
 
-      orderLine.setOrderedQuantity(BigDecimal.ONE);
-    } else {
-      orderLine.setOrderedQuantity(orderLine.getOrderedQuantity().add(currentqty)
-          .subtract(oldQuantity));
+      BigDecimal servicePrice = baseProductPrice.add(serviceAmount.divide(serviceQty, currency
+          .getPricePrecision().intValue(), RoundingMode.HALF_UP));
+      serviceAmount = serviceAmount.add(baseProductPrice.multiply(serviceQty)).setScale(
+          currency.getPricePrecision().intValue(), RoundingMode.HALF_UP);
+      if (orderLine.getSalesOrder().isPriceIncludesTax()) {
+        orderLine.setGrossUnitPrice(servicePrice);
+        orderLine.setLineGrossAmount(serviceAmount);
+      } else {
+        orderLine.setUnitPrice(servicePrice);
+        orderLine.setLineNetAmount(serviceAmount);
+      }
+      OBDal.getInstance().save(orderLine);
     }
-    if (BigDecimal.ZERO.compareTo(serviceQty) == 0) {
-      throw new OBException("ZeroQuantityService");
-    }
-    BigDecimal servicePrice = serviceAmount.divide(serviceQty, currency.getPricePrecision()
-        .intValue(), RoundingMode.HALF_UP);
-    if (orderLine.getSalesOrder().isPriceIncludesTax()) {
-      orderLine.setGrossUnitPrice(servicePrice);
-      orderLine.setLineGrossAmount(serviceAmount);
-    } else {
-      orderLine.setUnitPrice(servicePrice);
-      orderLine.setLineNetAmount(serviceAmount);
-    }
-    OBDal.getInstance().save(orderLine);
   }
 }

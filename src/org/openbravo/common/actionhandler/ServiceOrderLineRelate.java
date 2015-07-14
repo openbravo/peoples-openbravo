@@ -20,7 +20,6 @@
 package org.openbravo.common.actionhandler;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Map;
 
 import org.codehaus.jettison.json.JSONArray;
@@ -54,12 +53,6 @@ public class ServiceOrderLineRelate extends BaseProcessActionHandler {
       JSONArray selectedLines = jsonRequest.getJSONObject("_params").getJSONObject("grid")
           .getJSONArray("_selection");
 
-      BigDecimal linesTotalAmount = new BigDecimal(jsonRequest.getJSONObject("_params").getDouble(
-          "totallinesamount"));
-
-      BigDecimal serviceAmount = jsonRequest.getJSONObject("_params").isNull("totalserviceamount") ? BigDecimal.ZERO
-          : new BigDecimal(jsonRequest.getJSONObject("_params").getDouble("totalserviceamount"));
-
       final Client serviceProductClient = (Client) OBDal.getInstance().getProxy(Client.ENTITY_NAME,
           jsonRequest.getString("inpadClientId"));
       final Organization serviceProductOrg = (Organization) OBDal.getInstance().getProxy(
@@ -67,7 +60,6 @@ public class ServiceOrderLineRelate extends BaseProcessActionHandler {
       OrderLine mainOrderLine = (OrderLine) OBDal.getInstance().getProxy(OrderLine.ENTITY_NAME,
           jsonRequest.getString("inpcOrderlineId"));
 
-      final int currencyPrecission = mainOrderLine.getCurrency().getPricePrecision().intValue();
       mainOrderLine.getOrderlineServiceRelationList().removeAll(
           mainOrderLine.getOrderlineServiceRelationList());
       OBDal.getInstance().save(mainOrderLine);
@@ -83,9 +75,6 @@ public class ServiceOrderLineRelate extends BaseProcessActionHandler {
 
         BigDecimal lineAmount = new BigDecimal(selectedLine.getDouble("amount"));
         BigDecimal lineQuantity = new BigDecimal(selectedLine.getDouble("orderedQuantity"));
-        BigDecimal amount = BigDecimal.ZERO;
-        amount = lineAmount.multiply(serviceAmount).divide(linesTotalAmount, currencyPrecission,
-            RoundingMode.HALF_UP);
 
         OrderlineServiceRelation olsr = OBProvider.getInstance()
             .get(OrderlineServiceRelation.class);

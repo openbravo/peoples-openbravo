@@ -50,6 +50,9 @@ public class ServicePriceUtils {
   }
 
   public static BigDecimal getServiceAmount(OrderLine orderline, BigDecimal linesTotalAmount) {
+    if (linesTotalAmount != null && linesTotalAmount.compareTo(BigDecimal.ZERO) == 0) {
+      return BigDecimal.ZERO;
+    }
     BigDecimal serviceBasePrice = getProductPrice(orderline.getOrderDate(), orderline
         .getSalesOrder().getPriceList(), orderline.getProduct());
     if (serviceBasePrice == null) {
@@ -60,7 +63,7 @@ public class ServicePriceUtils {
     BigDecimal serviceRelatedPrice = BigDecimal.ZERO;
     boolean isPriceRuleBased = orderline.getProduct().isPricerulebased();
     if (!isPriceRuleBased) {
-      return serviceBasePrice;
+      return BigDecimal.ZERO;
     } else {
       ServicePriceRule servicePriceRule = getServicePriceRule(orderline.getProduct(),
           orderline.getOrderDate());
@@ -104,7 +107,7 @@ public class ServicePriceUtils {
           }
         }
       }
-      return serviceBasePrice.add(serviceRelatedPrice);
+      return serviceRelatedPrice;
     }
   }
 

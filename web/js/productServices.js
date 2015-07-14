@@ -58,10 +58,12 @@ OB.ProductServices.updateTotalLinesAmount = function (form) {
 };
 
 OB.ProductServices.orderLinesGridQtyOnChange = function (item, view, form, grid) {
-  var amount, newAmount = new BigDecimal(String(item.getValue())).multiply(new BigDecimal(String(item.record.price))).setScale(new BigDecimal(String(form.getItem('pricePrecision').getValue())), BigDecimal.prototype.ROUND_HALF_UP),
+  var amount, newAmount = new BigDecimal(String(item.getValue())).multiply(new BigDecimal(String(item.record.price))),
       oldAmount = grid.getEditValues(grid.getRecordIndex(item.record)).amount,
       originalQty = new BigDecimal(String(item.record.originalOrderedQuantity)),
-      newQty = new BigDecimal(String(item.getValue()));
+      newQty = new BigDecimal(String(item.getValue())),
+      precision = form.getItem('pricePrecision').getValue();
+      newAmount = newAmount.setScale(precision, BigDecimal.prototype.ROUND_HALF_UP);
   if (!oldAmount) {
     oldAmount = new BigDecimal(String(item.record.amount));
   } else {
@@ -103,7 +105,8 @@ OB.ProductServices.relateOrderLinesSelectionChanged = function (record, state) {
 OB.ProductServices.doRelateOrderLinesSelectionChanged = function (record, state, view) {
   var totalLinesAmount = view.theForm.getItem('totallinesamount'),
       totalLinesAmountValue = new BigDecimal(String(view.theForm.getItem('totallinesamount').getValue() || 0)),
-      orderLinesGrid = view.theForm.getItem('grid').canvas.viewGrid;
+      orderLinesGrid = view.theForm.getItem('grid').canvas.viewGrid,
+      totalServiceAmount = view.theForm.getItem('totalserviceamount');
 
   if (!orderLinesGrid.obaprmAllRecordsSelectedByUser || (orderLinesGrid.obaprmAllRecordsSelectedByUser && (orderLinesGrid.getRecordIndex(record) === orderLinesGrid.getTotalRows() - 1))) {
 
@@ -118,7 +121,12 @@ OB.ProductServices.doRelateOrderLinesSelectionChanged = function (record, state,
       }
       totalLinesAmount.setValue(Number(totalLinesAmountValue.toString()));
     }
-    OB.ProductServices.updateServicePrice(view);
+    totalLinesAmountValue = new BigDecimal(String(view.theForm.getItem('totallinesamount').getValue() || 0));
+    if (totalLinesAmountValue.compareTo(BigDecimal.prototype.ZERO) !== 0) {
+      OB.ProductServices.updateServicePrice(view);
+    } else {
+      totalServiceAmount.setValue(Number("0"));
+    }
   }
 };
 
@@ -127,7 +135,7 @@ OB.ProductServices.updateServicePrice = function (view) {
       orderLinesGrid = view.theForm.getItem('grid').canvas.viewGrid;
 
   callback = function (response, data, request) {
-    if (data.amount) {
+    if (data.amount || data.amount === 0) {
       totalServiceAmount.setValue(Number(data.amount));
     } else {
       orderLinesGrid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, data.message.title, data.message.text);
