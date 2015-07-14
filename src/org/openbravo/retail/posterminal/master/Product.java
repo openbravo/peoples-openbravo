@@ -137,10 +137,10 @@ public class Product extends ProcessHQLQuery {
         + regularProductsHQLProperties.getHqlSelect()
         + "FROM OBRETCO_Prol_Product as pli left outer join pli.product.image img inner join pli.product as product, "
         + "PricingProductPrice ppp, " + "PricingPriceListVersion pplv "
-        + "WHERE  $filtersCriteria AND (pli.obretcoProductlist = '" + productList.getId() + "') "
-        + "AND (" + "pplv.id='" + priceListVersion.getId() + "'" + ") AND ("
-        + "ppp.priceListVersion.id = pplv.id" + ") AND (" + "pli.product.id = ppp.product.id"
-        + ") ";
+        + "WHERE  $filtersCriteria AND $hqlCriteria AND (pli.obretcoProductlist = '"
+        + productList.getId() + "') " + "AND (" + "pplv.id='" + priceListVersion.getId() + "'"
+        + ") AND (" + "ppp.priceListVersion.id = pplv.id" + ") AND ("
+        + "pli.product.id = ppp.product.id" + ") ";
 
     if (lastUpdated != null) {
       hql += "AND ((pli.product.$incrementalUpdateCriteria) OR (pli.$incrementalUpdateCriteria) OR (ppp.$incrementalUpdateCriteria)) ";
