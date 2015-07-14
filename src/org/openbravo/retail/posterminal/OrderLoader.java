@@ -1180,18 +1180,20 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           OrderlineServiceRelation olServiceRelation = OBProvider.getInstance().get(
               OrderlineServiceRelation.class);
           JSONObject relatedJsonOrderLine = relatedLines.getJSONObject(i);
-
-          olServiceRelation.setActive(true);
-          olServiceRelation.setOrganization(orderLine.getOrganization());
-          olServiceRelation.setCreatedBy(orderLine.getCreatedBy());
-          olServiceRelation.setCreationDate(orderLine.getCreationDate());
-          olServiceRelation.setAmount(BigDecimal.ZERO);
-          olServiceRelation.setUpdated(orderLine.getUpdated());
-          olServiceRelation.setUpdatedBy(orderLine.getUpdatedBy());
-          olServiceRelation.setSalesOrderLine(orderLine);
-          olServiceRelation.setOrderlineRelated(OBDal.getInstance().get(OrderLine.class,
-              relatedJsonOrderLine.get("orderlineId")));
-          OBDal.getInstance().save(olServiceRelation);
+          OrderLine rol = OBDal.getInstance().get(OrderLine.class,
+              relatedJsonOrderLine.get("orderlineId"));
+          if (rol != null) {
+            olServiceRelation.setActive(true);
+            olServiceRelation.setOrganization(orderLine.getOrganization());
+            olServiceRelation.setCreatedBy(orderLine.getCreatedBy());
+            olServiceRelation.setCreationDate(orderLine.getCreationDate());
+            olServiceRelation.setAmount(BigDecimal.ZERO);
+            olServiceRelation.setUpdated(orderLine.getUpdated());
+            olServiceRelation.setUpdatedBy(orderLine.getUpdatedBy());
+            olServiceRelation.setSalesOrderLine(orderLine);
+            olServiceRelation.setOrderlineRelated(rol);
+            OBDal.getInstance().save(olServiceRelation);
+          }
         }
       }
     }
