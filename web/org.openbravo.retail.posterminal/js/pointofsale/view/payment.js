@@ -636,7 +636,8 @@ enyo.kind({
             this.owner.receipt.trigger('voidLayaway');
           } else {
             this.setDisabled(true);
-            this.owner.model.get('order').trigger('paymentDone', false);
+            enyo.$.scrim.show();
+            me.owner.model.get('order').trigger('paymentDone', false);
           }
           this.drawerOpened = false;
           this.setContent(OB.I18N.getLabel('OBPOS_LblOpen'));
@@ -654,12 +655,14 @@ enyo.kind({
           this.owner.receipt.trigger('voidLayaway');
         } else {
           this.setDisabled(true);
-          this.owner.receipt.trigger('paymentDone', this.allowOpenDrawer);
+          enyo.$.scrim.show();
+          me.owner.receipt.trigger('paymentDone', this.allowOpenDrawer);
         }
       }
     } else {
       if (this.drawerpreference && this.allowOpenDrawer) {
         if (this.drawerOpened) {
+          enyo.$.scrim.show();
           this.owner.model.get('multiOrders').trigger('paymentDone', false);
           this.owner.model.get('multiOrders').set('openDrawer', false);
           this.drawerOpened = false;
@@ -673,6 +676,7 @@ enyo.kind({
           this.setContent(OB.I18N.getLabel('OBPOS_LblDone'));
         }
       } else {
+        enyo.$.scrim.show();
         this.owner.model.get('multiOrders').trigger('paymentDone', this.allowOpenDrawer);
         this.owner.model.get('multiOrders').set('openDrawer', false);
       }
