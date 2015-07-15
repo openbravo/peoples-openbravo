@@ -417,6 +417,14 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="ALLOW_DEFERRED_SELL" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="DEFERRED_SELL_MAX_DAYS" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MPRODUCT">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
@@ -517,7 +525,6 @@
         <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="VALUE"/>
       </unique>
-      <check name="M_PROD_LINKEDTOPROD_QRUL_CHECK"><![CDATA[(ISLINKEDTOPRODUCT = 'Y' AND QUANTITY_RULE IS NOT NULL) OR (ISLINKEDTOPRODUCT = 'N')]]></check>
       <check name="M_PROD_LINKEDTOPROD_SEL_CHECK"><![CDATA[((ISLINKEDTOPRODUCT = 'Y') AND ((PROD_CAT_SELECTION IS NOT NULL) OR (PRODUCT_SELECTION IS NOT NULL))) OR (ISLINKEDTOPRODUCT = 'N')]]></check>
       <check name="M_PROD_LINKEDTOPRODUCT_CHECK"><![CDATA[ISLINKEDTOPRODUCT IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ANONYMOUS_SALE_CHECK"><![CDATA[ALLOW_ANONYMOUS_SALE IN ('Y', 'N')]]></check>
