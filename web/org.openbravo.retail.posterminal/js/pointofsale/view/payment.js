@@ -121,7 +121,11 @@ enyo.kind({
   maxLimitAmountError: function (inSender, inEvent) {
     var maxHeight;
     if (inEvent.show) {
-      this.$.errorMaxlimitamount.setContent(OB.I18N.getLabel('OBPOS_PaymentMaxLimitAmount', [inEvent.maxLimitAmount, inEvent.currency]));
+      if (inEvent.currency !== '$') {
+        this.$.errorMaxlimitamount.setContent(OB.I18N.getLabel('OBPOS_PaymentMaxLimitAmount', [inEvent.maxLimitAmount, inEvent.currency]));
+      } else {
+        this.$.errorMaxlimitamount.setContent(OB.I18N.getLabel('OBPOS_PaymentMaxLimitAmount', [inEvent.currency, inEvent.maxLimitAmount]));
+      }
     } else {
       this.$.errorMaxlimitamount.setContent('');
     }
@@ -677,7 +681,7 @@ enyo.kind({
   kind: 'OB.UI.RegularButton',
   processdisabled: false,
   localdisabled: false,
-  setLocalDisabled: function(value) {
+  setLocalDisabled: function (value) {
     this.localdisabled = value;
     this.setDisabled(this.processdisabled || this.localdisabled);
   },
