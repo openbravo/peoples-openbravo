@@ -1577,9 +1577,6 @@ public class OrderLoader extends POSDataSynchronizationProcess {
       final List<FIN_FinaccTransaction> transactions = transactionsCriteria.list();
       final String cashupId = jsonorder.getString("obposAppCashup");
       final OBPOSAppCashup cashup = OBDal.getInstance().get(OBPOSAppCashup.class, cashupId);
-      if (transactions.size() == 0) {
-        throw new OBException("The payment didn't create any transaction");
-      }
       for (FIN_FinaccTransaction transaction : transactions) {
         transaction.setObposAppCashup(cashup);
       }
