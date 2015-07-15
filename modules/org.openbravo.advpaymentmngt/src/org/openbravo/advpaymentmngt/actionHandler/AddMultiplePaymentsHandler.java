@@ -52,6 +52,7 @@ public class AddMultiplePaymentsHandler extends BaseProcessActionHandler {
       final JSONArray selectedPayments = jsonparams.getJSONObject("payments").getJSONArray(
           "_selection");
       final Date statementDate = jsDateFormat.parse(jsonparams.getString("statementDate"));
+      final Date dateAcct = jsDateFormat.parse(jsonparams.getString("dateAcct"));
       final String strAccountId = jsonData.getString("Fin_Financial_Account_ID");
 
       int selectedPaymentsLength = selectedPayments.length();
@@ -62,7 +63,7 @@ public class AddMultiplePaymentsHandler extends BaseProcessActionHandler {
 
       for (int i = 0; i < selectedPaymentsLength; i++) {
         final JSONObject paymentJS = selectedPayments.getJSONObject(i);
-        createAndProcessTransactionFromPayment(paymentJS, statementDate, strAccountId);
+        createAndProcessTransactionFromPayment(paymentJS, statementDate, dateAcct, strAccountId);
       }
       // Success Message
       return getSuccessMessage(String.format(
@@ -87,7 +88,7 @@ public class AddMultiplePaymentsHandler extends BaseProcessActionHandler {
    * Creates a new transaction from the payment and then it processes the transaction
    */
   private void createAndProcessTransactionFromPayment(final JSONObject paymentJS,
-      final Date transactionDate, String strAccountId) throws JSONException {
+      final Date transactionDate, final Date acctDate, String strAccountId) throws JSONException {
 
     try {
       OBContext.setAdminMode(true);
@@ -100,6 +101,7 @@ public class AddMultiplePaymentsHandler extends BaseProcessActionHandler {
       if (payment != null) {
         final FIN_FinaccTransaction transaction = TransactionsDao.createFinAccTransaction(payment);
         transaction.setTransactionDate(transactionDate);
+        transaction.setDateAcct(acctDate);
         transaction.setAccount(account);
         FIN_TransactionProcess.doTransactionProcess(ACTION_PROCESS_TRANSACTION, transaction);
       }
