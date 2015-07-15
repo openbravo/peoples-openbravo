@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2014 Openbravo SLU
+ * All portions are Copyright (C) 2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -55,13 +55,13 @@ public class ServiceRelationEventHandler extends EntityPersistenceEventObserver 
     if (!isValidEvent(event)) {
       return;
     }
-    final Entity productEntity = ModelProvider.getInstance().getEntity(
+    final Entity orderLineRelationEntity = ModelProvider.getInstance().getEntity(
         OrderlineServiceRelation.ENTITY_NAME);
-    final Property solProperty = productEntity
+    final Property solProperty = orderLineRelationEntity
         .getProperty(OrderlineServiceRelation.PROPERTY_SALESORDERLINE);
-    final Property amountProperty = productEntity
+    final Property amountProperty = orderLineRelationEntity
         .getProperty(OrderlineServiceRelation.PROPERTY_AMOUNT);
-    final Property quantityProperty = productEntity
+    final Property quantityProperty = orderLineRelationEntity
         .getProperty(OrderlineServiceRelation.PROPERTY_QUANTITY);
     BigDecimal amount = (BigDecimal) event.getCurrentState(amountProperty);
     BigDecimal quantity = (BigDecimal) event.getCurrentState(quantityProperty);
@@ -73,13 +73,13 @@ public class ServiceRelationEventHandler extends EntityPersistenceEventObserver 
     if (!isValidEvent(event)) {
       return;
     }
-    final Entity productEntity = ModelProvider.getInstance().getEntity(
+    final Entity orderLineRelationEntity = ModelProvider.getInstance().getEntity(
         OrderlineServiceRelation.ENTITY_NAME);
-    final Property solProperty = productEntity
+    final Property solProperty = orderLineRelationEntity
         .getProperty(OrderlineServiceRelation.PROPERTY_SALESORDERLINE);
-    final Property amountProperty = productEntity
+    final Property amountProperty = orderLineRelationEntity
         .getProperty(OrderlineServiceRelation.PROPERTY_AMOUNT);
-    final Property quantityProperty = productEntity
+    final Property quantityProperty = orderLineRelationEntity
         .getProperty(OrderlineServiceRelation.PROPERTY_QUANTITY);
     BigDecimal currentAmount = (BigDecimal) event.getCurrentState(amountProperty);
     BigDecimal currentQuantity = (BigDecimal) event.getCurrentState(quantityProperty);
@@ -93,13 +93,13 @@ public class ServiceRelationEventHandler extends EntityPersistenceEventObserver 
     if (!isValidEvent(event)) {
       return;
     }
-    final Entity productEntity = ModelProvider.getInstance().getEntity(
+    final Entity orderLineRelationEntity = ModelProvider.getInstance().getEntity(
         OrderlineServiceRelation.ENTITY_NAME);
-    final Property solProperty = productEntity
+    final Property solProperty = orderLineRelationEntity
         .getProperty(OrderlineServiceRelation.PROPERTY_SALESORDERLINE);
-    final Property amountProperty = productEntity
+    final Property amountProperty = orderLineRelationEntity
         .getProperty(OrderlineServiceRelation.PROPERTY_AMOUNT);
-    final Property quantityProperty = productEntity
+    final Property quantityProperty = orderLineRelationEntity
         .getProperty(OrderlineServiceRelation.PROPERTY_QUANTITY);
     BigDecimal oldAmount = (BigDecimal) event.getCurrentState(amountProperty);
     BigDecimal oldQuantity = (BigDecimal) event.getCurrentState(quantityProperty);
@@ -109,45 +109,47 @@ public class ServiceRelationEventHandler extends EntityPersistenceEventObserver 
 
   private void updateOrderLine(OrderLine orderLine, BigDecimal currentAmount,
       BigDecimal currentqty, BigDecimal oldAmount, BigDecimal oldQuantity) {
-    BigDecimal serviceQty = BigDecimal.ONE;
+    BigDecimal serviceQty = orderLine.getOrderedQuantity();
     Currency currency = orderLine.getCurrency();
     HashMap<String, BigDecimal> dbValues = ServicePriceUtils.getRelatedAmountAndQty(orderLine);
     BigDecimal dbAmount = dbValues.get("amount");
     BigDecimal dbQuantity = dbValues.get("quantity");
-    if (orderLine.getOrderedQuantity().compareTo(currentqty) != 0) {
-      BigDecimal baseProductPrice = ServicePriceUtils.getProductPrice(orderLine.getSalesOrder()
-          .getOrderDate(), orderLine.getSalesOrder().getPriceList(), orderLine.getProduct());
-      BigDecimal serviceAmount = ServicePriceUtils.getServiceAmount(
-          orderLine,
-          dbAmount.add(currentAmount.subtract(oldAmount)).setScale(
-              currency.getPricePrecision().intValue(), RoundingMode.HALF_UP));
-      Product service = orderLine.getProduct();
-      if (UNIQUE_QUANTITY.equals(service.getQuantityRule())) {
-        serviceQty = BigDecimal.ONE;
-      } else {
+    BigDecimal baseProductPrice = ServicePriceUtils.getProductPrice(orderLine.getSalesOrder()
+        .getOrderDate(), orderLine.getSalesOrder().getPriceList(), orderLine.getProduct());
+    BigDecimal serviceAmount = ServicePriceUtils.getServiceAmount(
+        orderLine,
+        dbAmount.add(currentAmount.subtract(oldAmount)).setScale(
+            currency.getPricePrecision().intValue(), RoundingMode.HALF_UP));
+    Product service = orderLine.getProduct();
+
+    if (UNIQUE_QUANTITY.equals(service.getQuantityRule())) {
+      serviceQty = BigDecimal.ONE;
+    } else {
+      if (orderLine.getOrderedQuantity().add(oldQuantity.subtract(currentqty))
+          .compareTo(dbQuantity) != 0) {
         serviceQty = orderLine.getOrderedQuantity().add(currentqty).subtract(oldQuantity);
         if (dbQuantity.compareTo(BigDecimal.ZERO) == 0) {
           serviceQty = serviceQty.subtract(BigDecimal.ONE);
         }
         serviceQty = serviceQty.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ONE : serviceQty;
       }
-      orderLine.setOrderedQuantity(serviceQty);
-      if (BigDecimal.ZERO.compareTo(serviceQty) == 0) {
-        throw new OBException("ZeroQuantityService");
-      }
-
-      BigDecimal servicePrice = baseProductPrice.add(serviceAmount.divide(serviceQty, currency
-          .getPricePrecision().intValue(), RoundingMode.HALF_UP));
-      serviceAmount = serviceAmount.add(baseProductPrice.multiply(serviceQty)).setScale(
-          currency.getPricePrecision().intValue(), RoundingMode.HALF_UP);
-      if (orderLine.getSalesOrder().isPriceIncludesTax()) {
-        orderLine.setGrossUnitPrice(servicePrice);
-        orderLine.setLineGrossAmount(serviceAmount);
-      } else {
-        orderLine.setUnitPrice(servicePrice);
-        orderLine.setLineNetAmount(serviceAmount);
-      }
-      OBDal.getInstance().save(orderLine);
     }
+    orderLine.setOrderedQuantity(serviceQty);
+    if (BigDecimal.ZERO.compareTo(serviceQty) == 0) {
+      throw new OBException("ZeroQuantityService");
+    }
+
+    BigDecimal servicePrice = baseProductPrice.add(serviceAmount.divide(serviceQty, currency
+        .getPricePrecision().intValue(), RoundingMode.HALF_UP));
+    serviceAmount = serviceAmount.add(baseProductPrice.multiply(serviceQty)).setScale(
+        currency.getPricePrecision().intValue(), RoundingMode.HALF_UP);
+    if (orderLine.getSalesOrder().isPriceIncludesTax()) {
+      orderLine.setGrossUnitPrice(servicePrice);
+      orderLine.setLineGrossAmount(serviceAmount);
+    } else {
+      orderLine.setUnitPrice(servicePrice);
+      orderLine.setLineNetAmount(serviceAmount);
+    }
+    OBDal.getInstance().save(orderLine);
   }
 }
