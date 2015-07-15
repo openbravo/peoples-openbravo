@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2014 Openbravo SLU
+ * All portions are Copyright (C) 2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -77,24 +77,35 @@ public class ServiceOrderLineEventHandler extends EntityPersistenceEventObserver
       BigDecimal currentOrderedQty = (BigDecimal) event.getCurrentState(orderedQtyProperty);
       BigDecimal oldOrderedQty = (BigDecimal) event.getPreviousState(orderedQtyProperty);
 
-      if (currentOrderedQty.compareTo(oldOrderedQty) != 0) {
+      BigDecimal currentAmount = null;
+      BigDecimal oldAmount = null;
+
+      if (thisLine.getSalesOrder().isPriceIncludesTax()) {
+        currentAmount = currentLineGrossAmount;
+        oldAmount = oldLineGrossAmount;
+      } else {
+        currentAmount = currentLineNetAmount;
+        oldAmount = oldLineNetAmount;
+      }
+
+      if (currentOrderedQty.compareTo(oldOrderedQty) != 0
+          || currentAmount.compareTo(oldAmount) != 0) {
         rol = OBDal.getInstance().createQuery(OrderlineServiceRelation.class, where.toString());
         rol.setNamedParameter("orderLineId", thisLine.getId());
         rol.setMaxResult(1000);
         final ScrollableResults scroller = rol.scroll(ScrollMode.FORWARD_ONLY);
         while (scroller.next()) {
+          boolean changed = false;
           final OrderlineServiceRelation or = (OrderlineServiceRelation) scroller.get()[0];
           if (or.getQuantity().compareTo(currentOrderedQty) > 0) {
             or.setQuantity(currentOrderedQty);
-            if (thisLine.getSalesOrder().isPriceIncludesTax()) {
-              if (currentLineGrossAmount.compareTo(oldLineGrossAmount) != 0) {
-                or.setAmount(currentLineGrossAmount);
-              }
-            } else {
-              if (currentLineNetAmount.compareTo(oldLineNetAmount) != 0) {
-                or.setAmount(currentLineNetAmount);
-              }
-            }
+            changed = true;
+          }
+          if (currentAmount.compareTo(oldAmount) != 0) {
+            or.setAmount(currentAmount);
+            changed = true;
+          }
+          if (changed) {
             OBDal.getInstance().save(or);
           }
         }
