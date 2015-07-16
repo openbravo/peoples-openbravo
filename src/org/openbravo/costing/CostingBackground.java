@@ -112,6 +112,7 @@ public class CostingBackground extends DalBaseProcess {
               trxId);
           if ("S".equals(transaction.getCostingStatus())) {
             // Do not calculate trx in skip status.
+            transaction.setProcessed(true);
             continue;
           }
           log4j.debug("Start transaction process: " + transaction.getId());
@@ -153,6 +154,10 @@ public class CostingBackground extends DalBaseProcess {
       bundle.setResult(result);
       return;
     } finally {
+      // Set the processed flag to true to those transactions whose cost has been calculated.
+      if (!orgsWithRule.isEmpty()) {
+        setCalculatedTransactionsAsProcessed(orgsWithRule);
+      }
       OBContext.restorePreviousMode();
     }
   }
@@ -178,6 +183,27 @@ public class CostingBackground extends DalBaseProcess {
     OBDal.getInstance().flush();
   }
 
+  /**
+   * Get Transactions with Processed flag = 'N' and it's cost is Calculated and set Processed flag =
+   * 'Y'
+   */
+  private void setCalculatedTransactionsAsProcessed(List<String> orgsWithRule) {
+    final StringBuilder hqlTransactions = new StringBuilder();
+    hqlTransactions.append(" update " + MaterialTransaction.ENTITY_NAME + " as trx set trx."
+        + MaterialTransaction.PROPERTY_ISPROCESSED + " = true ");
+    hqlTransactions.append(" where trx." + MaterialTransaction.PROPERTY_ISPROCESSED + " = false");
+    hqlTransactions.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED
+        + " = true");
+    hqlTransactions.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION
+        + ".id in (:orgs)");
+    Query updateTransactions = OBDal.getInstance().getSession()
+        .createQuery(hqlTransactions.toString());
+    updateTransactions.setParameterList("orgs", orgsWithRule);
+    updateTransactions.executeUpdate();
+
+    OBDal.getInstance().flush();
+  }
+
   @SuppressWarnings("unchecked")
   private List<String> getTransactionsBatch(List<String> orgsWithRule) {
     StringBuffer where = new StringBuffer();
@@ -186,6 +212,7 @@ public class CostingBackground extends DalBaseProcess {
     where.append(" join trx." + MaterialTransaction.PROPERTY_PRODUCT + " as p");
     where.append("\n , " + org.openbravo.model.ad.domain.List.ENTITY_NAME + " as trxtype");
     where.append("\n where trx." + MaterialTransaction.PROPERTY_ISPROCESSED + " = false");
+    where.append("   and trx." + MaterialTransaction.PROPERTY_COSTINGSTATUS + " <> 'S'");
     where.append("   and p." + Product.PROPERTY_PRODUCTTYPE + " = 'I'");
     where.append("   and p." + Product.PROPERTY_STOCKED + " = true");
     where.append("   and trxtype." + CostAdjustmentUtils.propADListReference + ".id = :refid");
@@ -220,6 +247,7 @@ public class CostingBackground extends DalBaseProcess {
     where.append(" join trx." + MaterialTransaction.PROPERTY_PRODUCT + " as p");
     where.append("\n , " + org.openbravo.model.ad.domain.List.ENTITY_NAME + " as trxtype");
     where.append("\n where trx." + MaterialTransaction.PROPERTY_ISPROCESSED + " = false");
+    where.append("   and trx." + MaterialTransaction.PROPERTY_COSTINGSTATUS + " <> 'S'");
     where.append("   and p." + Product.PROPERTY_PRODUCTTYPE + " = 'I'");
     where.append("   and p." + Product.PROPERTY_STOCKED + " = true");
     where.append("   and trxtype." + CostAdjustmentUtils.propADListReference + ".id = :refid");
