@@ -20,6 +20,7 @@
 package org.openbravo.common.actionhandler;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Map;
 
 import org.codehaus.jettison.json.JSONArray;
@@ -30,16 +31,20 @@ import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.materialmgmt.ServicePriceUtils;
 import org.openbravo.model.ad.system.Client;
+import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.order.OrderlineServiceRelation;
+import org.openbravo.model.common.plm.Product;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ServiceOrderLineRelate extends BaseProcessActionHandler {
   private static final Logger log = LoggerFactory.getLogger(ServiceOrderLineRelate.class);
+  private static final Object UNIQUE_QUANTITY = "UQ";
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
@@ -53,12 +58,19 @@ public class ServiceOrderLineRelate extends BaseProcessActionHandler {
       JSONArray selectedLines = jsonRequest.getJSONObject("_params").getJSONObject("grid")
           .getJSONArray("_selection");
 
+      BigDecimal serviceAmount = jsonRequest.getJSONObject("_params").isNull("totalserviceamount") ? BigDecimal.ZERO
+          : new BigDecimal(jsonRequest.getJSONObject("_params").getDouble("totalserviceamount"));
+
+      BigDecimal totalQuantity = BigDecimal.ZERO;
+
       final Client serviceProductClient = (Client) OBDal.getInstance().getProxy(Client.ENTITY_NAME,
           jsonRequest.getString("inpadClientId"));
       final Organization serviceProductOrg = (Organization) OBDal.getInstance().getProxy(
           Organization.ENTITY_NAME, jsonRequest.getString("inpadOrgId"));
       OrderLine mainOrderLine = (OrderLine) OBDal.getInstance().getProxy(OrderLine.ENTITY_NAME,
           jsonRequest.getString("inpcOrderlineId"));
+      final Product serviceProduct = mainOrderLine.getProduct();
+      Currency currency = mainOrderLine.getCurrency();
 
       mainOrderLine.getOrderlineServiceRelationList().removeAll(
           mainOrderLine.getOrderlineServiceRelationList());
@@ -85,11 +97,38 @@ public class ServiceOrderLineRelate extends BaseProcessActionHandler {
         olsr.setAmount(lineAmount);
         olsr.setQuantity(lineQuantity);
         OBDal.getInstance().save(olsr);
+        totalQuantity = totalQuantity.add(lineQuantity);
         if ((i % 100) == 0) {
           OBDal.getInstance().flush();
           OBDal.getInstance().getSession().clear();
         }
       }
+
+      // Update main orderline
+
+      BigDecimal baseProductPrice = ServicePriceUtils.getProductPrice(mainOrderLine.getSalesOrder()
+          .getOrderDate(), mainOrderLine.getSalesOrder().getPriceList(), serviceProduct);
+
+      if (UNIQUE_QUANTITY.equals(serviceProduct.getQuantityRule())
+          || totalQuantity.compareTo(BigDecimal.ZERO) == 0) {
+        totalQuantity = BigDecimal.ONE;
+      }
+      mainOrderLine.setOrderedQuantity(totalQuantity);
+
+      BigDecimal servicePrice = baseProductPrice.add(serviceAmount.divide(totalQuantity, currency
+          .getPricePrecision().intValue(), RoundingMode.HALF_UP));
+      serviceAmount = serviceAmount.add(baseProductPrice.multiply(totalQuantity)).setScale(
+          currency.getPricePrecision().intValue(), RoundingMode.HALF_UP);
+
+      if (mainOrderLine.getSalesOrder().isPriceIncludesTax()) {
+        mainOrderLine.setGrossUnitPrice(servicePrice);
+        mainOrderLine.setLineGrossAmount(serviceAmount);
+      } else {
+        mainOrderLine.setUnitPrice(servicePrice);
+        mainOrderLine.setLineNetAmount(serviceAmount);
+      }
+      OBDal.getInstance().save(mainOrderLine);
+      OBDal.getInstance().flush();
 
       errorMessage.put("severity", "success");
       errorMessage.put("title", OBMessageUtils.messageBD("Success"));
