@@ -231,6 +231,11 @@ enyo.kind({
   disabledButton: function (inSender, inEvent) {
     this.isEnabled = !inEvent.status;
     this.setDisabled(inEvent.status);
+    if (!this.isEnabled) {
+      this.$.lbl.hide();
+    } else {
+      this.$.lbl.show();
+    }
   },
   tap: function (options) {
     if (!this.disabled) {
@@ -270,6 +275,12 @@ enyo.kind({
   disabledButton: function (inSender, inEvent) {
     this.isEnabled = !inEvent.status;
     this.setDisabled(inEvent.status);
+    if (!this.isEnabled) {
+      this.$.lbl.hide();
+    } else {
+      this.$.lbl.show();
+    }
+
   },
   tabPanel: 'catalog',
   i18nLabel: 'OBMOBC_LblBrowse',
@@ -315,6 +326,11 @@ enyo.kind({
   disabledButton: function (inSender, inEvent) {
     this.isEnabled = !inEvent.status;
     this.setDisabled(inEvent.status);
+    if (!this.isEnabled && !OB.MobileApp.model.get('serviceSearchMode')) {
+      this.$.lbl.hide();
+    } else {
+      this.$.lbl.show();
+    }
   },
   tap: function () {
     OB.MobileApp.view.scanningFocus(false);

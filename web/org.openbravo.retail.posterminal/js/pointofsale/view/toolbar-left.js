@@ -58,6 +58,11 @@ enyo.kind({
   disabledButton: function (inSender, inEvent) {
     this.isEnabled = !inEvent.status;
     this.setDisabled(inEvent.status);
+    if (!this.isEnabled) {
+      this.removeClass('btn-icon-new');
+    } else {
+      this.addClass('btn-icon-new');
+    }
   },
   init: function (model) {
     this.model = model;
@@ -103,6 +108,11 @@ enyo.kind({
   disabledButton: function (inSender, inEvent) {
     this.isEnabled = !inEvent.status;
     this.setDisabled(inEvent.status);
+    if (!this.isEnabled) {
+      this.removeClass('btn-icon-delete');
+    } else {
+      this.addClass('btn-icon-delete');
+    }
   },
   tap: function () {
     var i, me = this;
@@ -262,10 +272,18 @@ enyo.kind({
       return true;
     }
     var newIsDisabledState;
+    var discountEdit = this.owner.owner.owner.owner.owner.owner.$.rightPanel.$.toolbarpane ? this.owner.owner.owner.owner.owner.owner.$.rightPanel.$.toolbarpane.$.edit.$.editTabContent.$.discountsEdit.showing : false;
     if (requirementsAreMet(this.model)) {
       newIsDisabledState = false;
+      this.$.totalPrinter.show();
+      this.$.totalPrinter.addStyles('color: white!important;');
     } else {
       newIsDisabledState = true;
+      if (discountEdit) {
+        this.$.totalPrinter.hide();
+      } else if (OB.MobileApp.model.get('serviceSearchMode')) {
+        this.$.totalPrinter.addStyles('color: black!important;');
+      }
     }
 
     OB.UTIL.Debug.execute(function () {

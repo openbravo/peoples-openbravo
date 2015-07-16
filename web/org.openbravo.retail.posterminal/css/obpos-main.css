@@ -69,3 +69,10 @@
   height: 26px;
   background-image: url('./../img/iconServices_reviewed.png');
 }
+
+button.btnbp:disabled {
+  text-decoration: none;
+  background-color: white;
+  color: #000;
+  min-width: 115px;
+}
