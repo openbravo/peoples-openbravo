@@ -275,7 +275,7 @@
         this.set('posTerminal', attributes.posTerminal);
         this.set('posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, attributes['posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER]);
         this.set('orderDate', new Date(attributes.orderDate));
-        this.set('creationDate', (!OB.UTIL.isNullOrUndefined(attributes.creationDate)?attributes.creationDate:null));
+        this.set('creationDate', (!OB.UTIL.isNullOrUndefined(attributes.creationDate) ? attributes.creationDate : null));
         this.set('documentnoPrefix', attributes.documentnoPrefix);
         this.set('quotationnoPrefix', attributes.quotationnoPrefix);
         this.set('documentnoSuffix', attributes.documentnoSuffix);
@@ -1383,29 +1383,19 @@
       }
       if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true) && oldbp.get('priceList') !== businessPartner.get('priceList')) {
         me.set('priceList', businessPartner.get('priceList'));
-        if (me.get('priceList') !== OB.MobileApp.model.get('terminal').priceList) {
-          OB.Dal.get(OB.Model.PriceList, me.get('priceList'), function (priceList) {
-            me.set('priceIncludesTax', priceList.get('priceIncludesTax'));
-            me.removeAndInsertLines(function () {
-              if (saveChange) {
-                me.save();
-              }
-              if (callback) {
-                callback();
-              }
-            });
-          });
-        } else {
-          me.set('priceIncludesTax', OB.MobileApp.model.get('pricelist').priceIncludesTax);
-          me.removeAndInsertLines(function () {
-            if (saveChange) {
-              me.save();
-            }
-            if (callback) {
-              callback();
-            }
-          });
+        var priceIncludesTax = businessPartner.get('priceIncludesTax');
+        if (OB.UTIL.isNullOrUndefined(priceIncludesTax)) {
+          priceIncludesTax = OB.MobileApp.model.get('pricelist').priceIncludesTax;
         }
+        me.set('priceIncludesTax', priceIncludesTax);
+        me.removeAndInsertLines(function () {
+          if (saveChange) {
+            me.save();
+          }
+          if (callback) {
+            callback();
+          }
+        });
       } else {
         if (saveChange) {
           this.save();
@@ -2288,15 +2278,13 @@
       order.set('oldId', null);
       order.set('session', OB.MobileApp.model.get('session'));
       order.set('bp', OB.MobileApp.model.get('businessPartner'));
-      order.set('priceList', OB.MobileApp.model.get('businessPartner').get('priceList'));
       // Set price list for order
-      if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true) && order.get('priceList') !== OB.MobileApp.model.get('terminal').priceList) {
-        OB.Dal.get(OB.Model.PriceList, OB.MobileApp.model.get('businessPartner').get('priceList'), function (priceList) {
-          order.set('priceIncludesTax', priceList.get('priceIncludesTax'));
-        });
-      } else {
-        order.set('priceIncludesTax', OB.MobileApp.model.get('pricelist').priceIncludesTax);
+      order.set('priceList', OB.MobileApp.model.get('businessPartner').get('priceList'));
+      var priceIncludesTax = OB.MobileApp.model.get('businessPartner').get('priceIncludesTax');
+      if (OB.UTIL.isNullOrUndefined(priceIncludesTax)) {
+        priceIncludesTax = OB.MobileApp.model.get('pricelist').priceIncludesTax;
       }
+      order.set('priceIncludesTax', priceIncludesTax);
       if (OB.MobileApp.model.hasPermission('OBPOS_receipt.invoice')) {
         if (OB.MobileApp.model.hasPermission('OBPOS_retail.restricttaxidinvoice', true) && !OB.MobileApp.model.get('businessPartner').get('taxID')) {
           if (OB.MobileApp.model.get('terminal').terminalType.generateInvoice) {

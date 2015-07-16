@@ -231,6 +231,10 @@
     name: 'salesOrderBlocking',
     column: 'salesOrderBlocking',
     type: 'TEXT'
+  }, {
+    name: 'priceIncludesTax',
+    column: 'priceIncludesTax',
+    type: 'TEXT'
   }]);
 
   BusinessPartner.addIndex([{
