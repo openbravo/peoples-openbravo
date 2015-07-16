@@ -292,6 +292,12 @@ enyo.kind({
         edit: false
       });
     }
+  },
+  initComponents: function () {
+    this.inherited(arguments);
+    if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
+      this.hide();
+    }
   }
 });
 
@@ -338,6 +344,9 @@ enyo.kind({
   },
   initComponents: function () {
     this.inherited(arguments);
+    if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
+      this.owner.owner.setStyle('width: 50% !important;');
+    }
   }
 });
 

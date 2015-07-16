@@ -26,6 +26,9 @@ enyo.kind({
         executeLastCriteria: true
       });
     }
+    if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+      this.$.subWindowBody.$.casbody.$.listcustomers.$.leftbar.$.searchByLetter.hide();
+    }
     this.$.subWindowBody.$.casbody.$.listcustomers.$.leftbar.$.newAction.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers'));
     return true;
   },
@@ -67,7 +70,7 @@ enyo.kind({
         style: 'display: table-cell; width: 100%;',
         components: [{
           kind: 'OB.UI.SearchInputAutoFilter',
-          name: 'filterText',
+          name: 'customerFilterText',
           style: 'width: 100%',
           isFirstFocus: true
         }]
@@ -91,12 +94,12 @@ enyo.kind({
     }]
   }],
   clearAction: function () {
-    this.$.filterText.setValue('');
+    this.$.customerFilterText.setValue('');
     this.doClearAction();
   },
   searchAction: function () {
     this.doSearchAction({
-      bpName: this.$.filterText.getValue(),
+      bpName: this.$.customerFilterText.getValue(),
       operator: OB.Dal.CONTAINS
     });
     return true;
@@ -221,77 +224,80 @@ enyo.kind({
     i18nLabel: 'OBPOS_LblNew',
     name: 'newAction'
   }, {
-    kind: 'OB.OBPOSPointOfSale.UI.customers.SearchCustomerButton',
-    i18nLabel: 'OBPOS_LblAC',
-    tap: function () {
-      this.searchAction({
-        initial: 'A,B,C',
-        operator: OB.Dal.STARTSWITH
-      });
-    }
-  }, {
-    kind: 'OB.OBPOSPointOfSale.UI.customers.SearchCustomerButton',
-    i18nLabel: 'OBPOS_LblDF',
-    tap: function () {
-      this.searchAction({
-        initial: 'D,E,F',
-        operator: OB.Dal.STARTSWITH
-      });
-    }
-  }, {
-    kind: 'OB.OBPOSPointOfSale.UI.customers.SearchCustomerButton',
-    i18nLabel: 'OBPOS_LblGI',
-    tap: function () {
-      this.searchAction({
-        initial: 'G,H,I',
-        operator: OB.Dal.STARTSWITH
-      });
-    }
-  }, {
-    kind: 'OB.OBPOSPointOfSale.UI.customers.SearchCustomerButton',
-    i18nLabel: 'OBPOS_LblJL',
-    tap: function () {
-      this.searchAction({
-        initial: 'J,K,L',
-        operator: OB.Dal.STARTSWITH
-      });
-    }
-  }, {
-    kind: 'OB.OBPOSPointOfSale.UI.customers.SearchCustomerButton',
-    i18nLabel: 'OBPOS_LblMO',
-    tap: function () {
-      this.searchAction({
-        initial: 'M,N,O',
-        operator: OB.Dal.STARTSWITH
-      });
-    }
-  }, {
-    kind: 'OB.OBPOSPointOfSale.UI.customers.SearchCustomerButton',
-    i18nLabel: 'OBPOS_LblPR',
-    tap: function () {
-      this.searchAction({
-        initial: 'P,Q,R',
-        operator: OB.Dal.STARTSWITH
-      });
-    }
-  }, {
-    kind: 'OB.OBPOSPointOfSale.UI.customers.SearchCustomerButton',
-    i18nLabel: 'OBPOS_LblSV',
-    tap: function () {
-      this.searchAction({
-        initial: 'S,T,U,V',
-        operator: OB.Dal.STARTSWITH
-      });
-    }
-  }, {
-    kind: 'OB.OBPOSPointOfSale.UI.customers.SearchCustomerButton',
-    i18nLabel: 'OBPOS_LblWZ',
-    tap: function () {
-      this.searchAction({
-        initial: 'W,X,Y,Z',
-        operator: OB.Dal.STARTSWITH
-      });
-    }
+    name: 'searchByLetter',
+    components: [{
+      kind: 'OB.OBPOSPointOfSale.UI.customers.SearchCustomerButton',
+      i18nLabel: 'OBPOS_LblAC',
+      tap: function () {
+        this.searchAction({
+          initial: 'A,B,C',
+          operator: OB.Dal.STARTSWITH
+        });
+      }
+    }, {
+      kind: 'OB.OBPOSPointOfSale.UI.customers.SearchCustomerButton',
+      i18nLabel: 'OBPOS_LblDF',
+      tap: function () {
+        this.searchAction({
+          initial: 'D,E,F',
+          operator: OB.Dal.STARTSWITH
+        });
+      }
+    }, {
+      kind: 'OB.OBPOSPointOfSale.UI.customers.SearchCustomerButton',
+      i18nLabel: 'OBPOS_LblGI',
+      tap: function () {
+        this.searchAction({
+          initial: 'G,H,I',
+          operator: OB.Dal.STARTSWITH
+        });
+      }
+    }, {
+      kind: 'OB.OBPOSPointOfSale.UI.customers.SearchCustomerButton',
+      i18nLabel: 'OBPOS_LblJL',
+      tap: function () {
+        this.searchAction({
+          initial: 'J,K,L',
+          operator: OB.Dal.STARTSWITH
+        });
+      }
+    }, {
+      kind: 'OB.OBPOSPointOfSale.UI.customers.SearchCustomerButton',
+      i18nLabel: 'OBPOS_LblMO',
+      tap: function () {
+        this.searchAction({
+          initial: 'M,N,O',
+          operator: OB.Dal.STARTSWITH
+        });
+      }
+    }, {
+      kind: 'OB.OBPOSPointOfSale.UI.customers.SearchCustomerButton',
+      i18nLabel: 'OBPOS_LblPR',
+      tap: function () {
+        this.searchAction({
+          initial: 'P,Q,R',
+          operator: OB.Dal.STARTSWITH
+        });
+      }
+    }, {
+      kind: 'OB.OBPOSPointOfSale.UI.customers.SearchCustomerButton',
+      i18nLabel: 'OBPOS_LblSV',
+      tap: function () {
+        this.searchAction({
+          initial: 'S,T,U,V',
+          operator: OB.Dal.STARTSWITH
+        });
+      }
+    }, {
+      kind: 'OB.OBPOSPointOfSale.UI.customers.SearchCustomerButton',
+      i18nLabel: 'OBPOS_LblWZ',
+      tap: function () {
+        this.searchAction({
+          initial: 'W,X,Y,Z',
+          operator: OB.Dal.STARTSWITH
+        });
+      }
+    }]
   }]
 });
 
@@ -402,6 +408,15 @@ enyo.kind({
           operator: _operator,
           value: splitFilter[i]
         };
+        if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+          var filterIdentifier = {
+            columns: ['_identifier'],
+            operator: 'startsWith',
+            value: splitFilter[i]
+          };
+          var remoteCriteria = [filterIdentifier];
+          criteria.remoteFilters = remoteCriteria;
+        }
         OB.Dal.find(OB.Model.BusinessPartner, criteria, successCallbackBPs, errorCallback, i);
         lastCriteria.push(enyo.clone(criteria));
       }

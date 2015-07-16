@@ -276,10 +276,17 @@ enyo.kind({
         components: [{
           name: 'prslistitemprinter',
           kind: 'OB.UI.ScrollableTable',
-          scrollAreaMaxHeight: '400px',
+          scrollAreaMaxHeight: '350px',
           renderHeader: 'OB.UI.ModalPRScrollableHeader',
           renderLine: 'OB.UI.ListPRsLine',
           renderEmpty: 'OB.UI.RenderEmpty'
+        }, {
+          name: 'renderLoading',
+          style: 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight: bold; font-size: 30px; color: #cccccc',
+          showing: false,
+          initComponents: function () {
+            this.setContent(OB.I18N.getLabel('OBPOS_LblLoading'));
+          }
         }]
       }]
     }]
@@ -290,22 +297,37 @@ enyo.kind({
   },
   searchAction: function (inSender, inEvent) {
     var me = this,
+        ordersLoaded = [],
         process = new OB.DS.Process('org.openbravo.retail.posterminal.PaidReceiptsHeader');
     me.filters = inEvent.filters;
     this.clearAction();
+    this.$.prslistitemprinter.$.tempty.hide();
+    this.$.prslistitemprinter.$.tbody.hide();
+    this.$.prslistitemprinter.$.tlimit.hide();
+    this.$.renderLoading.show();
     process.exec({
       filters: me.filters,
       _limit: OB.Model.Order.prototype.dataLimit,
       _dateFormat: OB.Format.date
     }, function (data) {
       if (data) {
+        ordersLoaded = [];
         _.each(data, function (iter) {
           me.model.get('orderList').newDynamicOrder(iter, function (order) {
-            me.prsList.add(order);
+            ordersLoaded.push(order);
 
           });
         });
+        me.prsList.reset(ordersLoaded);
+        me.$.renderLoading.hide();
+        if (data && data.length > 0) {
+          me.$.prslistitemprinter.$.tbody.show();
+        } else {
+          me.$.prslistitemprinter.$.tempty.show();
+        }
         me.$.prslistitemprinter.getScrollArea().scrollToTop();
+
+
       } else {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
       }
@@ -328,7 +350,6 @@ enyo.kind({
       process.exec({
         orderid: model.get('id')
       }, function (data) {
-        OB.UTIL.showLoading(false);
         if (data) {
           if (me.model.get('leftColumnViewManager').isMultiOrder()) {
             if (me.model.get('multiorders')) {

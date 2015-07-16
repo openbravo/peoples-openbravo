@@ -331,6 +331,21 @@ enyo.kind({
       value: filter
     };
     criteria.bpartner = this.bPartnerId;
+    if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+      var filterIdentifier = {
+        columns: ['_identifier'],
+        operator: 'startsWith',
+        value: filter
+      },
+          bPartnerId = {
+          columns: ['bpartner'],
+          operator: 'equals',
+          value: this.bPartnerId,
+          isId: true
+          };
+      var remoteCriteria = [filterIdentifier, bPartnerId];
+      criteria.remoteFilters = remoteCriteria;
+    }
     OB.Dal.find(OB.Model.BPLocation, criteria, successCallbackBPsLoc, errorCallback);
     return true;
   },
@@ -347,6 +362,7 @@ enyo.kind({
       }
 
       function successCallbackBPs(dataBps) {
+        dataBps.set('locationModel', model);
         dataBps.set('locId', model.get('id'));
         dataBps.set('locName', model.get('name'));
         dataBps.set('postalCode', model.get('postalCode'));

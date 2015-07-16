@@ -23,12 +23,11 @@ import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.mobile.core.process.SimpleQueryBuilder;
-import org.openbravo.retail.posterminal.JSONProcessSimple;
 import org.openbravo.service.json.DataResolvingMode;
 import org.openbravo.service.json.DataToJsonConverter;
 import org.openbravo.service.json.JsonConstants;
 
-public class Payments extends JSONProcessSimple {
+public class Payments extends JSONTerminalProperty {
 
   @Override
   public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
@@ -52,7 +51,7 @@ public class Payments extends JSONProcessSimple {
 
       SimpleQueryBuilder querybuilder = new SimpleQueryBuilder(hqlPayments, OBContext
           .getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
-          .getCurrentOrganization().getId(), null);
+          .getCurrentOrganization().getId(), null, null, null);
 
       final Session session = OBDal.getInstance().getSession();
       final Query paymentsquery = session.createQuery(querybuilder.getHQLQuery());
@@ -117,6 +116,11 @@ public class Payments extends JSONProcessSimple {
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  @Override
+  public String getProperty() {
+    return "payments";
   }
 
 }

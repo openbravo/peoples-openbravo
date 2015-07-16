@@ -61,7 +61,7 @@ public class Cashup extends JSONProcessSimple {
 
       SimpleQueryBuilder querybuilder = new SimpleQueryBuilder(hqlCashup, OBContext.getOBContext()
           .getCurrentClient().getId(), OBContext.getOBContext().getCurrentOrganization().getId(),
-          null);
+          null, null, null);
 
       final Session session = OBDal.getInstance().getSession();
       final Query cashupquery = session.createQuery(querybuilder.getHQLQuery());

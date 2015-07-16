@@ -21,7 +21,8 @@
     modelName: 'DiscountFilterBusinessPartner',
     generatedStructure: true,
     entityName: 'PricingAdjustmentBusinessPartner',
-    source: 'org.openbravo.retail.posterminal.master.DiscountFilterBusinessPartner'
+    source: 'org.openbravo.retail.posterminal.master.DiscountFilterBusinessPartner',
+    remote: 'OBPOS_remote.discount.bp'
   });
 
   var promotionsBPCategory = Backbone.Model.extend({
@@ -63,7 +64,8 @@
     modelName: 'ProductCharacteristicValue',
     generatedStructure: true,
     entityName: 'ProductCharacteristicValue',
-    source: 'org.openbravo.retail.posterminal.master.ProductProductChValue'
+    source: 'org.openbravo.retail.posterminal.master.ProductProductChValue',
+    remote: 'OBPOS_remote.product'
   });
 
   OB.Data.Registry.registerModel(promotions);

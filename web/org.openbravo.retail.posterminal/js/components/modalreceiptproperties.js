@@ -44,6 +44,9 @@ enyo.kind({
         }
       }
     },
+    // override to not load things upfront
+    loadValue: function (inSender, inEvent) {
+    },
     fetchDataFunction: function (args) {
       var me = this,
           actualUser;

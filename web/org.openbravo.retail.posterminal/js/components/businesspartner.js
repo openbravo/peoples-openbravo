@@ -213,7 +213,7 @@ enyo.kind({
         style: 'display: table-cell; width: 100%;',
         components: [{
           kind: 'OB.UI.SearchInputAutoFilter',
-          name: 'filterText',
+          name: 'customerFilterText',
           style: 'width: 100%'
         }]
       }, {
@@ -254,12 +254,12 @@ enyo.kind({
     }]
   }],
   clearAction: function () {
-    this.$.filterText.setValue('');
+    this.$.customerFilterText.setValue('');
     this.doClearAction();
   },
   searchAction: function () {
     this.doSearchAction({
-      bpName: this.$.filterText.getValue()
+      bpName: this.$.customerFilterText.getValue()
     });
     return true;
   }
@@ -323,7 +323,7 @@ enyo.kind({
         components: [{
           name: 'stBPAssignToReceipt',
           kind: 'OB.UI.ScrollableTable',
-          scrollAreaMaxHeight: '400px',
+          scrollAreaMaxHeight: '350px',
           renderHeader: 'OB.UI.ModalBpScrollableHeader',
           renderLine: 'OB.UI.ListBpsLine',
           renderEmpty: 'OB.UI.RenderEmpty'
@@ -348,6 +348,7 @@ enyo.kind({
 
     this.$.stBPAssignToReceipt.$.tempty.hide();
     this.$.stBPAssignToReceipt.$.tbody.hide();
+    this.$.stBPAssignToReceipt.$.tlimit.hide();
     this.$.renderLoading.show();
 
     function errorCallback(tx, error) {
@@ -372,7 +373,15 @@ enyo.kind({
         value: filter
       };
     }
-
+    if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+      var filterIdentifier = {
+        columns: ['_identifier'],
+        operator: 'startsWith',
+        value: filter
+      };
+      var remoteCriteria = [filterIdentifier];
+      criteria.remoteFilters = remoteCriteria;
+    }
     OB.Dal.find(OB.Model.BusinessPartner, criteria, successCallbackBPs, errorCallback);
     return true;
   },

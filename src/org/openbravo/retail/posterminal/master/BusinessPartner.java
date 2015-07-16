@@ -8,6 +8,7 @@
  */
 package org.openbravo.retail.posterminal.master;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -32,6 +33,18 @@ public class BusinessPartner extends ProcessHQLQuery {
   private Instance<ModelExtension> extensions;
 
   @Override
+  protected List<HQLPropertyList> getHqlProperties() {
+    List<HQLPropertyList> propertiesList = new ArrayList<HQLPropertyList>();
+    HQLPropertyList regularBusinessPartnerHQLProperties = ModelExtensionUtils
+        .getPropertyExtensions(extensions);
+
+    propertiesList.add(regularBusinessPartnerHQLProperties);
+    propertiesList.add(regularBusinessPartnerHQLProperties);
+
+    return propertiesList;
+  }
+
+  @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
     Long lastUpdated = (jsonsent.has("lastUpdated") && jsonsent.get("lastUpdated") != null && !jsonsent
         .get("lastUpdated").equals("undefined")) ? jsonsent.getLong("lastUpdated") : null;
@@ -43,7 +56,7 @@ public class BusinessPartner extends ProcessHQLQuery {
     String hql = "SELECT "
         + regularBusinessPartnerHQLProperties.getHqlSelect() //
         + "FROM BusinessPartnerLocation AS bpl left outer join bpl.businessPartner.aDUserList AS ulist "
-        + "WHERE "
+        + "WHERE $filtersCriteria AND "
         + "bpl.invoiceToAddress = true AND "
         + "bpl.businessPartner.customer = true AND "
         + "bpl.businessPartner.priceList IS NOT NULL AND "
@@ -59,7 +72,7 @@ public class BusinessPartner extends ProcessHQLQuery {
     String hql2 = "SELECT"
         + regularBusinessPartnerHQLProperties.getHqlSelect() //
         + "FROM BusinessPartnerLocation AS bpl left outer join bpl.businessPartner.aDUserList AS ulist "
-        + "WHERE "
+        + "WHERE $filtersCriteria AND "
         + "bpl.invoiceToAddress = true AND "
         + "bpl.businessPartner.customer = true AND "
         + "bpl.businessPartner.priceList IS NOT NULL AND "
@@ -70,7 +83,7 @@ public class BusinessPartner extends ProcessHQLQuery {
         + "bpl.businessPartner.$incrementalUpdateCriteria) "
         + " and bpl.id in (select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls where bpls.businessPartner.id=bpl.businessPartner.id and bpls.invoiceToAddress = true and bpls.$readableSimpleClientCriteria AND "
         + " bpls.$naturalOrgCriteria group by bpls.businessPartner.id)"
-        + " and (ulist.id in (select max(ulist2.id) from ADUser as ulist2 where ulist2.businessPartner is not null group by ulist2.businessPartner))"
+        + " and (ulist.id in (select max(ulist2.id) from ADUser as ulist2 where ulist2.businessPartner=bpl.businessPartner  group by ulist2.businessPartner))"
         + " ORDER BY bpl.businessPartner.name";
     return Arrays.asList(new String[] { hql, hql2 });
   }

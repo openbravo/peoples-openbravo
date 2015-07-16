@@ -82,11 +82,16 @@
       });
 
       this.addPropertiesLoader({
-        properties: ['terminal'],
+        properties: ['terminal', 'payments', 'cashMgmtDepositEvents', 'cashMgmtDropEvents', 'businesspartner', 'location', 'pricelist', 'warehouses', 'writableOrganizations', 'pricelistversion', 'currency'],
         loadFunction: function (terminalModel) {
           OB.info('[terminal] Loading... ' + this.properties);
           var me = this,
-              handleError;
+              max, i, handleError;
+          var params = {};
+          var currentDate = new Date();
+          params.terminalTime = currentDate;
+          params.terminalTimeOffset = currentDate.getTimezoneOffset();
+
           handleError = function (data) {
             if (data && data.exception && data.exception.message && OB.I18N.hasLabel(data.exception.message)) {
               //Common error (not a random caught exception).
@@ -121,12 +126,18 @@
               });
             }
           };
-          new OB.DS.Request('org.openbravo.retail.posterminal.term.Terminal').exec(null, function (data) {
+          new OB.DS.Request('org.openbravo.retail.posterminal.term.Terminal').exec(params, function (data) {
             if (data.exception) {
               handleError(data);
             } else if (data[0]) {
-              // load the OB.MobileApp.model.get('terminal') attributes
-              terminalModel.set(me.properties[0], data[0]);
+              // load the OB.MobileApp.model              
+              for (i = 0, max = data.length; i < max; i++) {
+                if (Object.keys(data[i])[0] === "businesspartner") {
+                  terminalModel.set(Object.keys(data[i])[0], data[i][Object.keys(data[i])[0]].id);
+                } else {
+                  terminalModel.set(Object.keys(data[i])[0], data[i][Object.keys(data[i])[0]]);
+                }
+              }
 
               // update the local database with the document sequence received
               OB.MobileApp.model.saveDocumentSequence(OB.MobileApp.model.get('terminal').lastDocumentNumber, OB.MobileApp.model.get('terminal').lastQuotationDocumentNumber, function () {
@@ -166,7 +177,7 @@
           OB.info('[terminal] Loading... ' + this.properties);
           var me = this;
 
-          var ajaxRequest2 = new enyo.Ajax({
+          var rr, ajaxRequest2 = new enyo.Ajax({
             url: '../../org.openbravo.mobile.core.context',
             cacheBust: false,
             method: 'GET',
@@ -217,157 +228,10 @@
               }
             }
           });
-          ajaxRequest2.go(ajaxRequest2.data).response('success').error('fail');
-        }
-      });
-
-      this.addPropertiesLoader({
-        properties: ['payments'],
-        loadFunction: function (terminalModel) {
-          OB.info('[terminal] Loading... ' + this.properties);
-          var me = this;
-          OB.MobileApp.model.handlePropertiesLoader(this.properties, 'org.openbravo.retail.posterminal.term.Payments', null, function (data) {
-            if (data) {
-              var i, max, paymentlegacy, paymentcash, paymentcashcurrency;
-              terminalModel.set(me.properties[0], data);
-              terminalModel.propertiesReady(me.properties);
-            }
+          rr = new OB.RR.Request({
+            ajaxRequest: ajaxRequest2
           });
-        }
-      });
-
-      this.addPropertiesLoader({
-        properties: ['cashMgmtDepositEvents'],
-        loadFunction: function (terminalModel) {
-          OB.info('[terminal] Loading... ' + this.properties);
-          var me = this;
-          OB.MobileApp.model.handlePropertiesLoader(this.properties, 'org.openbravo.retail.posterminal.term.CashMgmtDepositEvents', null, function (data) {
-            if (data) {
-              terminalModel.set(me.properties[0], data);
-              terminalModel.propertiesReady(me.properties);
-            }
-          });
-        }
-      });
-
-      this.addPropertiesLoader({
-        properties: ['cashMgmtDropEvents'],
-        loadFunction: function (terminalModel) {
-          OB.info('[terminal] Loading... ' + this.properties);
-          var me = this;
-          OB.MobileApp.model.handlePropertiesLoader(this.properties, 'org.openbravo.retail.posterminal.term.CashMgmtDropEvents', null, function (data) {
-            if (data) {
-              terminalModel.set(me.properties[0], data);
-              terminalModel.propertiesReady(me.properties);
-            }
-          });
-        }
-      });
-
-      this.addPropertiesLoader({
-        properties: ['businesspartner'],
-        loadFunction: function (terminalModel) {
-          OB.info('[terminal] Loading... ' + this.properties);
-          var me = this;
-          OB.MobileApp.model.handlePropertiesLoader(this.properties, 'org.openbravo.retail.posterminal.term.BusinessPartner', null, function (data) {
-            if (data[0]) {
-              //TODO set backbone model
-              terminalModel.set(me.properties[0], data[0].id);
-              terminalModel.propertiesReady(me.properties);
-            }
-          });
-        }
-      });
-
-      this.addPropertiesLoader({
-        properties: ['location'],
-        loadFunction: function (terminalModel) {
-          OB.info('[terminal] Loading... ' + this.properties);
-          var me = this;
-          OB.MobileApp.model.handlePropertiesLoader(this.properties, 'org.openbravo.retail.posterminal.term.Location', null, function (data) {
-            if (data[0]) {
-              terminalModel.set(me.properties[0], data[0]);
-              terminalModel.propertiesReady(me.properties);
-            }
-          });
-        }
-      });
-
-      this.addPropertiesLoader({
-        properties: ['pricelist'],
-        loadFunction: function (terminalModel) {
-          OB.info('[terminal] Loading... ' + this.properties);
-          var me = this;
-          OB.MobileApp.model.handlePropertiesLoader(this.properties, 'org.openbravo.retail.posterminal.term.PriceList', null, function (data) {
-            if (data[0]) {
-              terminalModel.set(me.properties[0], data[0]);
-              terminalModel.propertiesReady(me.properties);
-            }
-          });
-        }
-      });
-
-      this.addPropertiesLoader({
-        properties: ['warehouses'],
-        loadFunction: function (terminalModel) {
-          OB.info('[terminal] Loading... ' + this.properties);
-          var me = this;
-          OB.MobileApp.model.handlePropertiesLoader(this.properties, 'org.openbravo.retail.posterminal.term.Warehouses', null, function (data) {
-            if (data && data.exception) {
-              //MP17
-              terminalModel.set(me.properties[0], []);
-            } else {
-              terminalModel.set(me.properties[0], data);
-            }
-            terminalModel.propertiesReady(me.properties);
-          });
-        }
-      });
-
-      this.addPropertiesLoader({
-        properties: ['writableOrganizations'],
-        loadFunction: function (terminalModel) {
-          OB.info('[terminal] Loading... ' + this.properties);
-          var me = this;
-          OB.MobileApp.model.handlePropertiesLoader(this.properties, 'org.openbravo.retail.posterminal.term.WritableOrganizations', null, function (data) {
-            if (data.length > 0) {
-              terminalModel.set(me.properties[0], data);
-              terminalModel.propertiesReady(me.properties);
-            }
-          });
-        }
-      });
-
-      this.addPropertiesLoader({
-        properties: ['pricelistversion'],
-        loadFunction: function (terminalModel) {
-          OB.info('[terminal] Loading... ' + this.properties);
-          var me = this;
-          var params = {};
-          var currentDate = new Date();
-          params.terminalTime = currentDate;
-          params.terminalTimeOffset = currentDate.getTimezoneOffset();
-          OB.MobileApp.model.handlePropertiesLoader(this.properties, 'org.openbravo.retail.posterminal.term.PriceListVersion', params, function (data) {
-            if (data[0]) {
-              terminalModel.set(me.properties[0], data[0]);
-              terminalModel.propertiesReady(me.properties);
-            }
-          });
-        }
-      });
-
-      this.addPropertiesLoader({
-        properties: ['currency'],
-        loadFunction: function (terminalModel) {
-          OB.info('[terminal] Loading... ' + this.properties);
-          var me = this;
-          OB.MobileApp.model.handlePropertiesLoader(this.properties, 'org.openbravo.retail.posterminal.term.Currency', null, function (data) {
-            if (data[0]) {
-              terminalModel.set(me.properties[0], data[0]);
-              //Precision used by arithmetics operations is set using the currency
-              terminalModel.propertiesReady(me.properties);
-            }
-          });
+          rr.exec(ajaxRequest2.url);
         }
       });
 
@@ -401,7 +265,7 @@
           hasbeenpaid: 'Y'
         },
         getIdentifier: function (model) {
-          return model.get('documentNo');
+          return model.documentNo;
         }
       });
 
@@ -427,7 +291,7 @@
         timePerRecord: 10000,
         criteria: {},
         getIdentifier: function (model) {
-          return model.get('creationDate');
+          return model.creationDate;
         },
         changesPendingCriteria: {
           'isprocessed': 'Y'
@@ -978,6 +842,13 @@
         url: '../../org.openbravo.retail.posterminal.service.loginutils'
       }).response(this, function (inSender, inResponse) {
         window.localStorage.setItem('terminalAuthentication', inResponse.terminalAuthentication);
+        //Save available servers and services and initialize Request Router layer
+        if (inResponse.servers && inResponse.services) {
+          localStorage.servers = JSON.stringify(inResponse.servers);
+          localStorage.services = JSON.stringify(inResponse.services);
+        }
+        OB.RR.RequestRouter.initialize();
+        
         me.setTerminalName(window.localStorage.getItem('terminalAuthentication') === 'Y' ? window.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"));
         callback();
       }).error(function (inSender, inResponse) {

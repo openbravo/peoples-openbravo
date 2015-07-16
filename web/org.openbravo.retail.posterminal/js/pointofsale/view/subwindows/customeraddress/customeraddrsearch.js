@@ -233,6 +233,21 @@ enyo.kind({
       };
     }
     criteria.bpartner = this.bPartnerId;
+    if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+      var filterIdentifier = {
+        columns: ['_identifier'],
+        operator: 'startsWith',
+        value: filter
+      },
+          bPartnerId = {
+          columns: ['bpartner'],
+          operator: 'equals',
+          value: this.bPartnerId,
+          isId: true
+          };
+      var remoteCriteria = [filterIdentifier, bPartnerId];
+      criteria.remoteFilters = remoteCriteria;
+    }
     OB.Dal.find(OB.Model.BPLocation, criteria, successCallbackBPsLoc, errorCallback);
     return true;
   },

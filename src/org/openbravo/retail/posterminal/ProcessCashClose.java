@@ -88,9 +88,6 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
       log.debug("Error processing cash close: error retrieving cashUp date. Using current date");
     }
 
-    OBContext.setOBContext(jsonCashup.getString("userId"), OBContext.getOBContext().getRole()
-        .getId(), OBContext.getOBContext().getCurrentClient().getId(), posTerminal
-        .getOrganization().getId());
     OBPOSAppCashup cashUp = getCashUp(cashUpId, jsonCashup, cashUpDate);
 
     if (cashUp.isProcessed() && !cashUp.isProcessedbo()) {

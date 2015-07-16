@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, _, moment, Backbone, enyo, BigDecimal, alert */
+/*global OB, _, moment, Backbone, enyo, BigDecimal, alert, localStorage */
 
 (function () {
 
@@ -232,7 +232,7 @@
     tableName: 'c_order',
     entityName: 'Order',
     source: '',
-    dataLimit: 300,
+    dataLimit: OB.Dal.DATALIMIT,
     properties: ['id', 'json', 'session', 'hasbeenpaid', 'isbeingprocessed'],
     propertyMap: {
       'id': 'c_order_id',
@@ -261,7 +261,8 @@
         attributes = JSON.parse(attributes.json);
         attributes.id = orderId;
       }
-
+      var me = this,
+          bpModel;
       if (attributes && attributes.documentNo) {
         this.set('id', attributes.id);
         this.set('client', attributes.client);
@@ -291,7 +292,9 @@
         this.set('quotationnoSuffix', attributes.quotationnoSuffix);
         this.set('documentNo', attributes.documentNo);
         this.set('undo', attributes.undo);
-        this.set('bp', new Backbone.Model(attributes.bp));
+        bpModel = new Backbone.Model(attributes.bp);
+        bpModel.set('locationModel', new OB.Model.BPLocation(attributes.bp.locationModel));
+        this.set('bp', bpModel);
         this.set('lines', new OrderLineList().reset(attributes.lines));
         this.set('payments', new PaymentLineList().reset(attributes.payments));
         this.set('payment', attributes.payment);
@@ -1235,6 +1238,12 @@
     //Attrs is an object of attributes that will be set in order line
     createLine: function (p, units, options, attrs) {
       var me = this;
+
+      if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
+        OB.Dal.saveRemote(p, function () {}, function () {
+          OB.error(arguments);
+        }, true);
+      }
       if (OB.MobileApp.model.get('permissions').OBPOS_NotAllowSalesWithReturn) {
         var negativeLines = _.filter(this.get('lines').models, function (line) {
           return line.get('qty') < 0;
@@ -1339,7 +1348,86 @@
       var me = this,
           undef;
       var oldbp = this.get('bp');
-      this.set('bp', businessPartner);
+      if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+        if (oldbp.id !== businessPartner.id) { //Business Partner have changed
+          OB.Dal.removeRemote(new OB.Model.BusinessPartner(oldbp), function () {}, function () {
+            OB.UTIL.showError('Error removing');
+          });
+
+          OB.Dal.saveRemote(businessPartner, function () {}, function () {
+            OB.error(arguments);
+          }, true);
+          if (OB.MobileApp.model.hasPermission('OBPOS_remote.discount.bp', true)) {
+            var oldbpfilter = {
+              columns: ['businessPartner'],
+              operator: 'equals',
+              value: oldbp.id,
+              isId: true
+            };
+            var oldRemoteCriteria = [oldbpfilter];
+            var criteria = {};
+            criteria.remoteFilters = oldRemoteCriteria;
+            OB.Dal.find(OB.Model.DiscountFilterBusinessPartner, criteria, function (discountsBP) {
+              _.each(discountsBP.models, function (dsc) {
+                OB.Dal.removeRemote(dsc, function () {}, function () {
+                  OB.error(arguments);
+                }, true);
+              });
+            }, function () {
+              OB.error(arguments);
+            });
+            var bp = {
+              columns: ['businessPartner'],
+              operator: 'equals',
+              value: businessPartner.id,
+              isId: true
+            };
+            var remoteCriteria = [bp];
+            var criteriaFilter = {};
+            criteriaFilter.remoteFilters = remoteCriteria;
+            OB.Dal.find(OB.Model.DiscountFilterBusinessPartner, criteriaFilter, function (discountsBP) {
+              _.each(discountsBP.models, function (dsc) {
+                OB.Dal.saveRemote(dsc, function () {}, function () {
+                  OB.error(arguments);
+                }, true);
+              });
+            }, function () {
+              OB.error(arguments);
+            });
+          }
+
+          OB.Dal.get(OB.Model.BPLocation, businessPartner.get('locId'), function (location) {
+
+            var loc = oldbp.get('locationModel');
+            OB.Dal.removeRemote(loc, function () {}, function () {
+              OB.UTIL.showError('Error removing');
+            });
+
+            OB.Dal.saveRemote(location, function () {
+              businessPartner.set('locationModel', location);
+              me.set('bp', businessPartner);
+            }, function () {
+              OB.error(arguments);
+            }, true);
+
+          }, function () {
+            OB.error(arguments);
+          }, true);
+
+        } else { //Location have changed
+          var location = oldbp.get('locationModel');
+          OB.Dal.removeRemote(location, function () {}, function () {
+            OB.UTIL.showError('Error removing');
+          });
+          OB.Dal.saveRemote(businessPartner.get('locationModel'), function () {
+            me.set('bp', businessPartner);
+          }, function () {
+            OB.error(arguments);
+          }, true);
+        }
+      } else {
+        this.set('bp', businessPartner);
+      }
       // set the undo action
       if (showNotif === undef || showNotif === true) {
         this.set('undo', {
@@ -2323,6 +2411,7 @@
         OB.Dal.get(OB.Model.BPLocation, bpLocId, function (bpLoc) {
           bp.set('locName', bpLoc.get('name'));
           bp.set('locId', bpLoc.get('id'));
+          bp.set('locationModel', bpLoc);
           order.set('bp', bp);
           order.set('gross', model.totalamount);
           order.set('net', model.totalNetAmount);
@@ -2337,6 +2426,11 @@
             }
 
             OB.Dal.get(OB.Model.Product, iter.id, function (prod) {
+              if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
+                OB.Dal.saveRemote(prod, function () {}, function () {
+                  OB.error(arguments);
+                }, true);
+              }
               newline = new OrderLine({
                 product: prod,
                 uOM: iter.uOM,
@@ -2418,7 +2512,7 @@
       });
     },
     newDynamicOrder: function (model, callback) {
-      var order = new Backbone.Model(),
+      var order = new OB.Model.Order(),
           undf;
       _.each(_.keys(model), function (key) {
         if (model[key] !== undf) {
@@ -2431,7 +2525,13 @@
       });
       callback(order);
     },
-    addNewOrder: function () {
+
+    addNewOrder: function (isFirstOrder) {
+      var me = this;
+      if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true) && (!isFirstOrder || (isFirstOrder && !localStorage.remoteCustomers))) {
+        this.doRemoteBPSettings(OB.MobileApp.model.get('businessPartner'));
+      }
+
       this.saveCurrent();
       this.current = this.newOrder();
       this.add(this.current);
@@ -2446,10 +2546,18 @@
     },
 
     addFirstOrder: function () {
-      this.addNewOrder();
+      this.addNewOrder(true);
     },
 
     addPaidReceipt: function (model) {
+
+      var me = this;
+      if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+        this.doRemoteBPSettings(model.get('bp'));
+      } else {
+        OB.UTIL.showLoading(false);
+      }
+
       this.saveCurrent();
       this.current = model;
       this.add(this.current);
@@ -2463,6 +2571,36 @@
       OB.Dal.save(model, function () {}, function () {
         OB.error(arguments);
       }, model.get('isLayaway'));
+    },
+
+    doRemoteBPSettings: function (businessPartner) {
+      OB.Dal.saveRemote(businessPartner, function () {}, function () {
+        OB.error(arguments);
+      }, true);
+      OB.Dal.saveRemote(businessPartner.get('locationModel'), function () {}, function () {
+        OB.error(arguments);
+      }, true);
+      if (OB.MobileApp.model.hasPermission('OBPOS_remote.discount.bp', true)) {
+        var bp = {
+          columns: ['businessPartner'],
+          operator: 'equals',
+          value: businessPartner.id,
+          isId: true
+        };
+        var remoteCriteria = [bp];
+        var criteria = {};
+        criteria.remoteFilters = remoteCriteria;
+        OB.Dal.find(OB.Model.DiscountFilterBusinessPartner, criteria, function (discountsBP) {
+          _.each(discountsBP.models, function (dsc) {
+            OB.Dal.saveRemote(dsc, function () {}, function () {
+              OB.error(arguments);
+            }, true);
+          });
+          OB.UTIL.showLoading(false);
+        }, function () {
+          OB.error(arguments);
+        });
+      }
     },
 
     addNewQuotation: function () {
@@ -2488,13 +2626,57 @@
       });
     },
     deleteCurrent: function (forceCreateNew) {
+      var i, max, successCallback = function () {
+          return true;
+          },
+          errorCallback = function () {
+          OB.UTIL.showError('Error removing');
+          };
       if (!this.current) {
         return;
       }
+
+      if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
+        for (i = 0, max = this.current.get('lines').length; i < this.current.get('lines').length; i++) {
+          var p = this.current.get('lines').models[i].get('product');
+          OB.Dal.removeRemote(p, successCallback, errorCallback);
+        }
+      }
+      if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+        OB.Dal.removeRemote(new OB.Model.BusinessPartner(this.current.get('bp')), successCallback, errorCallback);
+        if (this.current.get('bp').get('locationModel')) {
+          OB.Dal.removeRemote(this.current.get('bp').get('locationModel'), successCallback, errorCallback);
+        }
+      }
+
+      if (OB.MobileApp.model.hasPermission('OBPOS_remote.discount.bp', true)) {
+        var oldbpfilter = {
+          columns: ['businessPartner'],
+          operator: 'equals',
+          value: this.current.get('bp').id,
+          isId: true
+        };
+        var oldRemoteCriteria = [oldbpfilter];
+        var criteria = {};
+        criteria.remoteFilters = oldRemoteCriteria;
+        OB.Dal.find(OB.Model.DiscountFilterBusinessPartner, criteria, function (discountsBP) {
+          _.each(discountsBP.models, function (dsc) {
+            OB.Dal.removeRemote(dsc, function () {}, function () {
+              OB.error(arguments);
+            }, true);
+          });
+        }, function () {
+          OB.error(arguments);
+        });
+      }
+
       this.remove(this.current);
       var createNew = forceCreateNew || this.length === 0;
       if (createNew) {
         this.add(this.newOrder());
+        if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+          this.doRemoteBPSettings(OB.MobileApp.model.get('businessPartner'));
+        }
       }
       this.current = this.at(this.length - 1);
       this.loadCurrent(createNew);
@@ -2526,7 +2708,6 @@
         }
         this.modelorder.clearWith(this.current);
         this.modelorder.set('isNewReceipt', false);
-        this.modelorder.trigger('paintTaxes');
       }
     },
     synchronizeCurrentOrder: function () {

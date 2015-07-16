@@ -17,12 +17,17 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.PropertyException;
 
 public class PaidReceiptsHeader extends ProcessHQLQuery {
+  public static final Logger log = Logger.getLogger(PaidReceiptsHeader.class);
 
   @Inject
   @Any
@@ -51,6 +56,7 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
     // OBContext.setAdminMode(true);
     JSONObject json = jsonsent.getJSONObject("filters");
     String strIsLayaway = "false";
+    boolean isRemote = false;
     if (json.getBoolean("isLayaway")) {
       strIsLayaway = "true";
     }

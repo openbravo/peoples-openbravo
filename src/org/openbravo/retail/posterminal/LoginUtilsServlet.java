@@ -270,8 +270,10 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
           result.put("terminalKeyIdentifier", terminal.getTerminalKey());
           result.put("appCaption", terminal.getIdentifier() + " - "
               + terminal.getOrganization().getIdentifier());
-
+          result.put("servers", getServers(terminal));
+          result.put("services", getServices(terminal));
           terminal.setLinked(true);
+
           OBDal.getInstance().save(terminal);
           try {
             OBDal.getInstance().getConnection().commit();

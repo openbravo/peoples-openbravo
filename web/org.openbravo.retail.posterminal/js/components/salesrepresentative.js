@@ -196,6 +196,16 @@ enyo.kind({
       };
     }
 
+    if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+      var filterIdentifier = {
+        columns: ['_identifier'],
+        operator: 'startsWith',
+        value: filter
+      };
+      var remoteCriteria = [filterIdentifier];
+      criteria.remoteFilters = remoteCriteria;
+    }
+
     OB.Dal.find(OB.Model.SalesRepresentative, criteria, successCallbackBPs, errorCallback);
     return true;
   },

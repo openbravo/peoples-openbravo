@@ -8,6 +8,7 @@
  */
 package org.openbravo.retail.posterminal.master;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -30,11 +31,23 @@ public class DiscountFilterBusinessPartner extends Discount {
   private Instance<ModelExtension> extensions;
 
   @Override
+  protected List<HQLPropertyList> getHqlProperties() {
+    List<HQLPropertyList> propertiesList = new ArrayList<HQLPropertyList>();
+    HQLPropertyList regularDiscountFilterBPHQLProperties = ModelExtensionUtils
+        .getPropertyExtensions(extensions);
+
+    propertiesList.add(regularDiscountFilterBPHQLProperties);
+
+    return propertiesList;
+  }
+
+  @Override
   protected List<String> prepareQuery(JSONObject jsonsent) throws JSONException {
     HQLPropertyList regularDiscFilBPPropertyExtensionHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions);
-    String hql = "select" + regularDiscFilBPPropertyExtensionHQLProperties.getHqlSelect()
-        + "from PricingAdjustmentBusinessPartner bp where ((bp.$incrementalUpdateCriteria) "
+    String hql = "select"
+        + regularDiscFilBPPropertyExtensionHQLProperties.getHqlSelect()
+        + "from PricingAdjustmentBusinessPartner bp where  $filtersCriteria AND ((bp.$incrementalUpdateCriteria) "
         + jsonsent.get("operator") + " (bp.priceAdjustment.$incrementalUpdateCriteria)) ";
 
     hql += " and exists (select 1 " + getPromotionsHQL(jsonsent, false);

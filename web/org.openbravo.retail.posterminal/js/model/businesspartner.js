@@ -16,7 +16,8 @@
     tableName: 'c_bpartner',
     entityName: 'BusinessPartner',
     source: 'org.openbravo.retail.posterminal.master.BusinessPartner',
-    dataLimit: 300,
+    dataLimit: OB.Dal.DATALIMIT,
+    remote: 'OBPOS_remote.customer',
     saveCustomer: function (silent) {
       var nameLength, newSk;
 
@@ -51,18 +52,17 @@
     },
     loadById: function (CusId, userCallback) {
       //search data in local DB and load it to this
-      var me = this,
-          criteria = {
-          id: CusId
-          };
-      OB.Dal.find(OB.Model.BusinessPartner, criteria, function (customerCol) { //OB.Dal.find success
-        var successCallback, errorCallback;
+      var me = this;
+      OB.Dal.get(OB.Model.BusinessPartner, CusId, function (customerCol) { //OB.Dal.get success
         if (!customerCol || customerCol.length === 0) {
           me.clearModelWith(null);
           userCallback(me);
         } else {
-          me.clearModelWith(customerCol.at(0));
-          userCallback(me);
+          OB.Dal.get(OB.Model.BPLocation, customerCol.get('locId'), function (location) { //OB.Dal.find success
+            customerCol.set('locationModel', location);
+            me.clearModelWith(customerCol);
+            userCallback(me);
+          });
         }
       });
     },
