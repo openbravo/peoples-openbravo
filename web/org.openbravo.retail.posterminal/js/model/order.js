@@ -1004,7 +1004,11 @@
                 args.orderline.set('hasRelatedServices', false);
               }
               args.receipt.save();
-              args.receipt.trigger('showProductList', args.orderline, 'mandatory');
+              if (_.find(data.models, function (model) {
+                return model.get('proposalType') === 'MP';
+              })) {
+                args.receipt.trigger('showProductList', args.orderline, 'mandatory');
+              }
             }, function (trx, error) {
               OB.error(OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices'));
             });
