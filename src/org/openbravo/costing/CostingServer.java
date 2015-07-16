@@ -106,6 +106,8 @@ public class CostingServer {
         throw new OBException("@NoCostCalculated@: " + transaction.getIdentifier());
       }
       if (transaction.getCostingStatus().equals("P")) {
+        transaction.setProcessed(true);
+        OBDal.getInstance().flush();
         return;
       }
 
@@ -119,6 +121,7 @@ public class CostingServer {
       transaction.setCostingStatus("CC");
       // insert on m_transaction_cost
       createTransactionCost();
+      transaction.setProcessed(true);
       OBDal.getInstance().save(transaction);
       OBDal.getInstance().flush();
 
