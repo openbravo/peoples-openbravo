@@ -2708,6 +2708,7 @@
         }
         this.modelorder.clearWith(this.current);
         this.modelorder.set('isNewReceipt', false);
+        this.modelorder.trigger('paintTaxes');
       }
     },
     synchronizeCurrentOrder: function () {
