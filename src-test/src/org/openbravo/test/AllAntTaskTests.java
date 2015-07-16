@@ -79,6 +79,7 @@ import org.openbravo.test.system.Issue29934Test;
 import org.openbravo.test.system.SystemServiceTest;
 import org.openbravo.test.system.SystemValidatorTest;
 import org.openbravo.test.system.TestInfrastructure;
+import org.openbravo.test.taxes.TaxesTest;
 import org.openbravo.test.xml.ClientExportImportTest;
 import org.openbravo.test.xml.DatasetExportTest;
 import org.openbravo.test.xml.DefaultsDataset;
@@ -171,6 +172,8 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     // Accounting
     RecordID2Test.class, //
     PostDocumentTest.class, //
+    // Taxes
+    TaxesTest.class, //
 
     // scheduling
     ProcessSchedulingTest.class, //

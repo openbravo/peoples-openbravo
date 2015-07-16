@@ -51,7 +51,7 @@ BEGIN --BODY
       FROM c_invoicetax
       WHERE c_invoice_id = p_invoice_id
         AND recalculate = 'Y'
-      ORDER BY taxamt desc
+      ORDER BY ABS(taxamt) desc
     ) LOOP
       UPDATE c_invoicetax
       SET taxamt = taxamt - (v_current_gross_amt - COALESCE(p_grandtotal, 0))

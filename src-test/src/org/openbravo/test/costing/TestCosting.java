@@ -9903,8 +9903,8 @@ public class TestCosting extends BaseDataSourceTestDal {
           .setDocumentNo(getDocumentNo(order.getDocumentType().getDocumentSequence().getId()));
       orderClone.setOrderDate(DateUtils.addDays(today, day));
       orderClone.setScheduledDeliveryDate(DateUtils.addDays(today, day));
-      orderClone.setSummedLineAmount(quantity.multiply(price));
-      orderClone.setGrandTotalAmount(quantity.multiply(price));
+      orderClone.setSummedLineAmount(BigDecimal.ZERO);
+      orderClone.setGrandTotalAmount(BigDecimal.ZERO);
 
       // Get the first line associated with the order and clone it to the new order
       OrderLine orderLine = order.getOrderLineList().get(0);
@@ -10002,8 +10002,6 @@ public class TestCosting extends BaseDataSourceTestDal {
       orderLine.setStandardPrice(price);
       orderLine.setLineNetAmount(orderLine.getOrderedQuantity().multiply(price));
       orderLine.setTaxableAmount(orderLine.getOrderedQuantity().multiply(price));
-      order.setSummedLineAmount(orderLine.getOrderedQuantity().multiply(price));
-      order.setGrandTotalAmount(orderLine.getOrderedQuantity().multiply(price));
 
       OBDal.getInstance().save(order);
       OBDal.getInstance().flush();
@@ -10043,8 +10041,8 @@ public class TestCosting extends BaseDataSourceTestDal {
 
       invoiceClone.setInvoiceDate(DateUtils.addDays(today, day));
       invoiceClone.setAccountingDate(DateUtils.addDays(today, day));
-      invoiceClone.setSummedLineAmount(quantity.multiply(price));
-      invoiceClone.setGrandTotalAmount(quantity.multiply(price));
+      invoiceClone.setSummedLineAmount(BigDecimal.ZERO);
+      invoiceClone.setGrandTotalAmount(BigDecimal.ZERO);
       invoiceClone.setPriceList(OBDal.getInstance().get(Product.class, productId)
           .getPricingProductPriceList().get(0).getPriceListVersion().getPriceList());
       if (bpartnerId != null) {
@@ -10414,8 +10412,6 @@ public class TestCosting extends BaseDataSourceTestDal {
       invoiceLine.setUnitPrice(price);
       invoiceLine.setStandardPrice(price);
       invoiceLine.setLineNetAmount(invoiceLine.getInvoicedQuantity().multiply(price));
-      invoice.setSummedLineAmount(invoiceLine.getInvoicedQuantity().multiply(price));
-      invoice.setGrandTotalAmount(invoiceLine.getInvoicedQuantity().multiply(price));
 
       OBDal.getInstance().save(invoice);
       OBDal.getInstance().flush();
