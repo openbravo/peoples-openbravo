@@ -160,61 +160,6 @@
       HAVING COUNT(*)>1
       )
       ;
-    -- Commented by cromero 19102006 COMMIT;
-    /**
-    * Make sure that we have only one active product
-    */
-    v_ResultStr:='CorrectingDuplicates';
-    DBMS_OUTPUT.PUT_LINE(v_ResultStr) ;
-    DECLARE
-      -- All duplicate products
-      Cur_Duplicates RECORD;
-      -- All vendors of Product - expensive first
-      CURSOR Cur_Vendors (Product_ID VARCHAR) IS
-        SELECT M_Product_ID,
-          C_BPartner_ID
-        FROM M_Product_PO
-        WHERE IsCurrentVendor='Y'
-          AND IsActive='Y'
-          AND M_Product_ID=Product_ID
-        ORDER BY PriceList DESC;
-        --
-        Product_ID VARCHAR2(32);
-        BPartner_ID VARCHAR2(32);
-      BEGIN
-        FOR Cur_Duplicates IN
-          (SELECT DISTINCT M_Product_ID
-          FROM M_Product_PO po
-          WHERE IsCurrentVendor='Y'
-            AND IsActive='Y'
-            AND EXISTS
-            (SELECT M_Product_ID
-            FROM M_Product_PO x
-            WHERE x.M_Product_ID=po.M_Product_ID
-            GROUP BY M_Product_ID
-            HAVING COUNT(*)>1
-            )
-          ORDER BY 1
-          )
-        LOOP
-          OPEN Cur_Vendors(Cur_Duplicates.M_Product_ID) ;
-          FETCH Cur_Vendors INTO Product_ID,
-          BPartner_ID; -- Leave First
-          LOOP
-            FETCH Cur_Vendors INTO Product_ID,
-            BPartner_ID; -- Get Record ID
-            EXIT WHEN Cur_Vendors%NOTFOUND;
-            --
-            DBMS_OUTPUT.PUT_LINE('  Record: ' || Product_ID || ' / ' || BPartner_ID) ;
-            UPDATE M_Product_PO
-              SET IsCurrentVendor='N'
-            WHERE M_Product_ID=Product_ID
-              AND C_BPartner_ID=BPartner_ID;
-          END LOOP;
-          CLOSE Cur_Vendors;
-        END LOOP;
-        -- Commented by cromero 19102006 COMMIT;
-      END;
       /** Delete Old Data */
       v_ResultStr:='DeletingOld';
       IF(v_DeleteOld='Y') THEN
