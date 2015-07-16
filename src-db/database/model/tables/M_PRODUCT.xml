@@ -353,10 +353,6 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <column name="SEQUENCENO" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="PROD_CAT_SELECTION" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
@@ -396,10 +392,6 @@
       <column name="UNIQUE_PER_DOCUMENT" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
         <onCreateDefault><![CDATA['N']]></onCreateDefault>
-      </column>
-      <column name="PRIORITY" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
       </column>
       <column name="RELATEPRODCATTOSERVICE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
         <default/>
