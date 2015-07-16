@@ -11047,7 +11047,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       String type = "application/json;charset=UTF-8";
       String response = doRequest(url, content, 200, "POST", type);
       if (error == null) {
-        assertFalse(response.contains("success"));
+        assertTrue(response.contains("success"));
         assertFalse(response.contains("error"));
       } else {
         assertTrue(response.contains(error));
