@@ -319,6 +319,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           }
         }
         me.get('multiOrders').trigger('closed', order);
+        enyo.$.scrim.hide();
         me.get('multiOrders').trigger('print', order, {
           offline: true
         }); // to guaranty execution order
@@ -488,6 +489,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               });
               orderList.deleteCurrent(true);
               orderList.synchronizeCurrentOrder();
+              enyo.$.scrim.hide();
             }
           });
         } else {
@@ -511,6 +513,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               });
               orderList.deleteCurrent(true);
               orderList.synchronizeCurrentOrder();
+              enyo.$.scrim.hide();
             }
           });
         }
