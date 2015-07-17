@@ -110,10 +110,6 @@ public class CostingBackground extends DalBaseProcess {
           counter++;
           MaterialTransaction transaction = OBDal.getInstance().get(MaterialTransaction.class,
               trxId);
-          if ("S".equals(transaction.getCostingStatus())) {
-            // Do not calculate trx in skip status.
-            continue;
-          }
           log4j.debug("Start transaction process: " + transaction.getId());
           CostingServer transactionCost = new CostingServer(transaction);
           transactionCost.process();
@@ -168,6 +164,7 @@ public class CostingBackground extends DalBaseProcess {
     hqlTransactions.append(" where trx." + MaterialTransaction.PROPERTY_ISPROCESSED + " = true");
     hqlTransactions.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED
         + " = false");
+    hqlTransactions.append("   and trx." + MaterialTransaction.PROPERTY_COSTINGSTATUS + " <> 'S'");
     hqlTransactions.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION
         + ".id in (:orgs)");
     Query updateTransactions = OBDal.getInstance().getSession()
@@ -186,6 +183,7 @@ public class CostingBackground extends DalBaseProcess {
     where.append(" join trx." + MaterialTransaction.PROPERTY_PRODUCT + " as p");
     where.append("\n , " + org.openbravo.model.ad.domain.List.ENTITY_NAME + " as trxtype");
     where.append("\n where trx." + MaterialTransaction.PROPERTY_ISPROCESSED + " = false");
+    where.append("   and trx." + MaterialTransaction.PROPERTY_COSTINGSTATUS + " <> 'S'");
     where.append("   and p." + Product.PROPERTY_PRODUCTTYPE + " = 'I'");
     where.append("   and p." + Product.PROPERTY_STOCKED + " = true");
     where.append("   and trxtype." + CostAdjustmentUtils.propADListReference + ".id = :refid");
@@ -220,6 +218,7 @@ public class CostingBackground extends DalBaseProcess {
     where.append(" join trx." + MaterialTransaction.PROPERTY_PRODUCT + " as p");
     where.append("\n , " + org.openbravo.model.ad.domain.List.ENTITY_NAME + " as trxtype");
     where.append("\n where trx." + MaterialTransaction.PROPERTY_ISPROCESSED + " = false");
+    where.append("   and trx." + MaterialTransaction.PROPERTY_COSTINGSTATUS + " <> 'S'");
     where.append("   and p." + Product.PROPERTY_PRODUCTTYPE + " = 'I'");
     where.append("   and p." + Product.PROPERTY_STOCKED + " = true");
     where.append("   and trxtype." + CostAdjustmentUtils.propADListReference + ".id = :refid");
@@ -246,10 +245,6 @@ public class CostingBackground extends DalBaseProcess {
         }
         MaterialTransaction transaction = OBDal.getInstance().get(MaterialTransaction.class, trxId);
         counter++;
-        if ("S".equals(transaction.getCostingStatus())) {
-          // Do not calculate trx in skip status.
-          continue;
-        }
         CostingServer transactionCost = new CostingServer(transaction);
         transactionCost.process();
       }
