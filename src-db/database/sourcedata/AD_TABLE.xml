@@ -9150,8 +9150,11 @@ This tab is used to indicate the different toolsets used in the selected process
 <!--15EAF61631484A11B6921AB05A342E8B-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1D94B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--15EAF61631484A11B6921AB05A342E8B-->  <DATAORIGINTYPE><![CDATA[HQL]]></DATAORIGINTYPE>
 <!--15EAF61631484A11B6921AB05A342E8B-->  <ISTREE><![CDATA[N]]></ISTREE>
-<!--15EAF61631484A11B6921AB05A342E8B-->  <HQLQUERY><![CDATA[select olpr.id, olpr.salesOrderLine, olpr.orderlineRelated, olpr.amount, sol.product
-from OrderlineServiceRelation olpr join olpr.salesOrderLine as sol]]></HQLQUERY>
+<!--15EAF61631484A11B6921AB05A342E8B-->  <HQLQUERY><![CDATA[select olpr.id, olpr.salesOrderLine, olpr.orderlineRelated, so.documentNo, sol.lineNo, sol.product, at as attributeSetValue, olpr.amount, olpr.quantity
+    from OrderlineServiceRelation olpr 
+join olpr.salesOrderLine as sol
+join sol.salesOrder as so
+left join sol.attributeSetValue as at]]></HQLQUERY>
 <!--15EAF61631484A11B6921AB05A342E8B-->  <ENTITY_ALIAS><![CDATA[olpr]]></ENTITY_ALIAS>
 <!--15EAF61631484A11B6921AB05A342E8B--></AD_TABLE>
 
