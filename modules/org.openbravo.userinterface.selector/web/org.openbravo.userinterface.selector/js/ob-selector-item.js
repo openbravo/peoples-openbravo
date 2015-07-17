@@ -752,7 +752,7 @@ isc.OBSelectorItem.addProperties({
     var currentValue = this.getValue(),
         identifierFieldName = this.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
         valueMapObj = {},
-        displayFieldValue, i;
+        valueToDisplay, i;
     this._notUpdatingManually = true;
     if (!record) {
       this.storeValue(null);
@@ -799,12 +799,11 @@ isc.OBSelectorItem.addProperties({
       }
 
       if (record[this.valueField]) { // it can be undefined in case of empty (null) entry
-        if (this.displayField.indexOf(OB.Constants.FIELDSEPARATOR) !== -1) {
-          displayFieldValue = this.displayField.substring(this.displayField.indexOf(OB.Constants.FIELDSEPARATOR) + 1, this.displayField.length);
-        } else {
-          displayFieldValue = this.displayField;
+        valueToDisplay = record[this.displayField];
+        if (valueToDisplay) {
+          valueToDisplay = valueToDisplay.replace(/[\n\r]/g, '');
         }
-        this.valueMap[record[this.valueField]] = record[displayFieldValue].replace(/[\n\r]/g, '');
+        this.valueMap[record[this.valueField]] = valueToDisplay;
       }
 
       this.updateValueMap();

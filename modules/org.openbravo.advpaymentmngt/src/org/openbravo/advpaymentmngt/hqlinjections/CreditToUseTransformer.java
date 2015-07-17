@@ -36,11 +36,16 @@ public class CreditToUseTransformer extends HqlQueryTransformer {
     transformedHQL = transformedHQL.replace("@whereClause@",
         getWhereClause(requestParameters, queryNamedParameters));
 
+    // Sets parameters
+    queryNamedParameters.put("currencyId", requestParameters.get("c_currency_id"));
+
     return transformedHQL;
   }
 
   private CharSequence getWhereClause(Map<String, String> requestParameters,
       Map<String, Object> queryNamedParameters) {
-    return " ";
+    StringBuffer whereClause = new StringBuffer();
+    whereClause.append(" and f.currency.id = :currencyId ");
+    return whereClause;
   }
 }
