@@ -224,9 +224,9 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "closecash/model/cashup-steps", "closecash/model/cashup-print",
         "closecash/model/cashup-model", "closecash/view/closecash", "closecash/view/closekeyboard",
         "closecash/view/closeinfo", "closecash/view/tabpendingreceipts",
-        "closecash/view/tabcashpayments", "closecash/view/tabcountcash",
-        "closecash/view/tabcashtokeep", "closecash/view/tabpostprintclose",
-        "closecash/components/cashup-modals",
+        "closecash/view/tabcashmaster", "closecash/view/tabcashpayments",
+        "closecash/view/tabcountcash", "closecash/view/tabcashtokeep",
+        "closecash/view/tabpostprintclose", "closecash/components/cashup-modals",
 
         "closecash/model/daycash",
         // Core resources

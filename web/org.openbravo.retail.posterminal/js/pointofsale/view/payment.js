@@ -121,7 +121,11 @@ enyo.kind({
   maxLimitAmountError: function (inSender, inEvent) {
     var maxHeight;
     if (inEvent.show) {
-      this.$.errorMaxlimitamount.setContent(OB.I18N.getLabel('OBPOS_PaymentMaxLimitAmount', [inEvent.maxLimitAmount, inEvent.currency]));
+      if (inEvent.currency !== '$') {
+        this.$.errorMaxlimitamount.setContent(OB.I18N.getLabel('OBPOS_PaymentMaxLimitAmount', [inEvent.maxLimitAmount, inEvent.currency]));
+      } else {
+        this.$.errorMaxlimitamount.setContent(OB.I18N.getLabel('OBPOS_PaymentMaxLimitAmount', [inEvent.currency, inEvent.maxLimitAmount]));
+      }
     } else {
       this.$.errorMaxlimitamount.setContent('');
     }
@@ -278,9 +282,11 @@ enyo.kind({
       }
       var payment = OB.MobileApp.model.paymentnames[OB.MobileApp.model.get('paymentcash')];
       if ((model.get('orderType') === 2 || (model.get('isLayaway'))) && model.get('orderType') !== 3 && !model.getPaymentStatus().done) {
+        this.$.creditsalesaction.show();
         this.$.layawayaction.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
         this.$.layawayaction.show();
       } else if (model.get('orderType') === 3) {
+        this.$.creditsalesaction.hide();
         this.$.layawayaction.hide();
       } else {
         this.$.layawayaction.hide();
@@ -358,6 +364,7 @@ enyo.kind({
       if (!_.isEmpty(OB.MobileApp.model.paymentnames)) {
         this.$.doneaction.show();
       }
+      this.$.creditsalesaction.hide();
       this.$.layawayaction.hide();
     } else {
       this.setTotalPending(this.receipt.getPending(), rate, symbol, symbolAtRight);
@@ -462,6 +469,7 @@ enyo.kind({
       if (!_.isEmpty(OB.MobileApp.model.paymentnames)) {
         this.$.doneaction.show();
       }
+      this.$.creditsalesaction.hide();
       //            this.$.layawayaction.hide();
     } else {
       this.setTotalPending(OB.DEC.sub(paymentstatus.get('total'), paymentstatus.get('payment')), rate, symbol, symbolAtRight);
@@ -498,44 +506,41 @@ enyo.kind({
     }
   },
 
-  checkEnoughCashAvailable: function (paymentstatus, selectedPayment) {
-    var currentCash = OB.DEC.Zero,
-        requiredCash, hasEnoughCash, hasAllEnoughCash = true;
-    if (selectedPayment && selectedPayment.paymentMethod.iscash) {
-      currentCash = selectedPayment.currentCash || OB.DEC.Zero;
-    }
-
-    if (OB.UTIL.isNullOrUndefined(selectedPayment) || !selectedPayment.paymentMethod.iscash) {
-      requiredCash = OB.DEC.Zero;
-    } else if (!_.isUndefined(paymentstatus) && paymentstatus.isNegative) {
-      requiredCash = paymentstatus.pendingAmt;
-      paymentstatus.payments.each(function (payment) {
-        var paymentmethod;
-        if (payment.get('kind') === selectedPayment.payment.searchKey && payment.get('isCash')) {
-          requiredCash = OB.DEC.add(requiredCash, payment.get('amount'));
-        } else {
-          paymentmethod = OB.POS.terminal.terminal.paymentnames[payment.get('kind')];
-          if (paymentmethod && payment.get('amount') > paymentmethod.currentCash && payment.get('isCash')) {
-            hasAllEnoughCash = false;
+  checkEnoughCashAvailable: function (paymentstatus, selectedPayment, scope, callback) {
+    var requiredCash, hasEnoughCash, hasAllEnoughCash = true;
+    // Check slave cash 
+    this.checkSlaveCashAvailable(selectedPayment, this, function (currentCash) {
+      if (OB.UTIL.isNullOrUndefined(selectedPayment) || !selectedPayment.paymentMethod.iscash) {
+        requiredCash = OB.DEC.Zero;
+      } else if (!_.isUndefined(paymentstatus) && paymentstatus.isNegative) {
+        requiredCash = paymentstatus.pendingAmt;
+        paymentstatus.payments.each(function (payment) {
+          var paymentmethod;
+          if (payment.get('kind') === selectedPayment.payment.searchKey) {
+            requiredCash = OB.DEC.add(requiredCash, payment.get('origAmount'));
+          } else {
+            paymentmethod = OB.POS.terminal.terminal.paymentnames[payment.get('kind')];
+            if (paymentmethod && payment.get('amount') > paymentmethod.currentCash) {
+              hasAllEnoughCash = false;
+            }
           }
-        }
-      });
-    } else if (!_.isUndefined(paymentstatus)) {
-      requiredCash = paymentstatus.changeAmt;
-    }
+        });
+      } else if (!_.isUndefined(paymentstatus)) {
+        requiredCash = paymentstatus.changeAmt;
+      }
 
-    if (!_.isUndefined(requiredCash) && requiredCash === 0) {
-      hasEnoughCash = true;
-    } else if (!_.isUndefined(requiredCash)) {
-      hasEnoughCash = OB.DEC.compare(OB.DEC.sub(currentCash, requiredCash)) >= 0;
-    }
+      if (!_.isUndefined(requiredCash) && requiredCash === 0) {
+        hasEnoughCash = true;
+      } else if (!_.isUndefined(requiredCash)) {
+        hasEnoughCash = OB.DEC.compare(OB.DEC.sub(currentCash, requiredCash)) >= 0;
+      }
 
-    if (hasEnoughCash && hasAllEnoughCash) {
-      return true;
-    } else {
-      this.$.noenoughchangelbl.show();
-      return false; // check failed.
-    }
+      if (hasEnoughCash && hasAllEnoughCash) {
+        return callback.call(scope, true);
+      } else {
+        return callback.call(scope, false); // check failed.
+      }
+    });
   },
 
   checkValidCashOverpayment: function (paymentstatus, selectedPayment) {
@@ -602,21 +607,81 @@ enyo.kind({
     // Do the checkins
     resultOK = this.checkValidCashOverpayment(paymentstatus, selectedPayment);
     if (resultOK) {
-      resultOK = this.checkEnoughCashAvailable(paymentstatus, selectedPayment);
-      if (resultOK) {
-        resultOK = this.checkValidPaymentMethod(paymentstatus, selectedPayment);
-      }
+      resultOK = this.checkEnoughCashAvailable(paymentstatus, selectedPayment, this, function (success) {
+        var lsuccess = success;
+        if (lsuccess) {
+          lsuccess = this.checkValidPaymentMethod(paymentstatus, selectedPayment);
+        }
+        this.setStatusButtons(lsuccess);
+      });
+    } else {
+      // Finally set status of buttons
+      this.setStatusButtons(resultOK);
     }
+    if (!resultOK && !selectedPayment.paymentMethod.iscash) {
+      this.$.noenoughchangelbl.hide();
+    }
+  },
 
-    // Finally set status of buttons
+  setStatusButtons: function (resultOK) {
     if (resultOK) {
       this.$.payments.scrollAreaMaxHeight = '150px';
       this.$.doneButton.setLocalDisabled(false);
       this.$.exactButton.setDisabled(false);
     } else {
+      this.$.noenoughchangelbl.show();
       this.$.payments.scrollAreaMaxHeight = '130px';
       this.$.doneButton.setLocalDisabled(true);
       this.$.exactButton.setDisabled(true);
+    }
+  },
+
+  checkSlaveCashAvailable: function (selectedPayment, scope, callback) {
+
+    function processCashMgmtMaster(cashMgntCallback) {
+      new OB.DS.Process('org.openbravo.retail.posterminal.ProcessCashMgmtMaster').exec({
+        cashUpId: OB.POS.modelterminal.get('terminal').cashUpId,
+        terminalSlave: OB.POS.modelterminal.get('terminal').isslave
+      }, function (data) {
+        if (data && data.exception) {
+          // Error handler 
+          OB.log('error', data.exception.message);
+          OB.UTIL.showConfirmation.display(
+          OB.I18N.getLabel('OBPOS_CashMgmtError'), OB.I18N.getLabel('OBPOS_ErrorServerGeneric') + data.exception.message, [{
+            label: OB.I18N.getLabel('OBPOS_LblRetry'),
+            action: function () {
+              processCashMgmtMaster(cashMgntCallback);
+            }
+          }], {
+            autoDismiss: false,
+            onHideFunction: function () {
+              cashMgntCallback(false, null);
+            }
+          });
+        } else {
+          cashMgntCallback(true, data);
+        }
+      });
+    }
+
+    var currentCash = OB.DEC.Zero;
+    if (selectedPayment && selectedPayment.paymentMethod.iscash) {
+      currentCash = selectedPayment.currentCash || OB.DEC.Zero;
+    }
+    if ((OB.POS.modelterminal.get('terminal').ismaster || OB.POS.modelterminal.get('terminal').isslave) && selectedPayment.paymentMethod.iscash && selectedPayment.paymentMethod.isshared) {
+      // Load current cashup info from slaves
+      processCashMgmtMaster(function (success, data) {
+        if (success) {
+          _.each(data, function (pay) {
+            if (pay.searchKey === selectedPayment.payment.searchKey) {
+              currentCash = OB.DEC.add(currentCash, pay.startingCash + pay.totalDeposits + pay.totalSales - pay.totalReturns - pay.totalDrops);
+            }
+          });
+        }
+        callback.call(scope, currentCash);
+      });
+    } else {
+      callback.call(scope, currentCash);
     }
   },
 
@@ -677,7 +742,7 @@ enyo.kind({
   kind: 'OB.UI.RegularButton',
   processdisabled: false,
   localdisabled: false,
-  setLocalDisabled: function(value) {
+  setLocalDisabled: function (value) {
     this.localdisabled = value;
     this.setDisabled(this.processdisabled || this.localdisabled);
   },

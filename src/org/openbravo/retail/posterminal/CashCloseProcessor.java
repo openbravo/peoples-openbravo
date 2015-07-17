@@ -50,7 +50,12 @@ public class CashCloseProcessor {
   private Instance<CashupHook> cashupHooks;
 
   public JSONObject processCashClose(OBPOSApplications posTerminal, JSONObject jsonCashup,
-      JSONArray cashMgmtIds, Date currentDate) throws Exception {
+      JSONArray cashMgmtIds, Date cashUpDate) throws Exception {
+    return processCashClose(posTerminal, jsonCashup, cashMgmtIds, cashUpDate, null);
+  }
+
+  public JSONObject processCashClose(OBPOSApplications posTerminal, JSONObject jsonCashup,
+      JSONArray cashMgmtIds, Date currentDate, List<String> slaveCashupIds) throws Exception {
 
     long t0 = System.currentTimeMillis();
 
@@ -115,7 +120,7 @@ public class CashCloseProcessor {
           OBDal.getInstance().save(depositTransaction);
         }
       }
-      associateTransactions(paymentType, reconciliation, cashUpId, cashMgmtIds);
+      associateTransactions(paymentType, reconciliation, cashUpId, cashMgmtIds, slaveCashupIds);
     }
 
     for (FIN_Reconciliation reconciliation : arrayReconciliations) {
@@ -166,10 +171,16 @@ public class CashCloseProcessor {
   }
 
   protected void associateTransactions(OBPOSAppPayment paymentType,
-      FIN_Reconciliation reconciliation, String cashUpId, JSONArray cashMgmtIds) {
+      FIN_Reconciliation reconciliation, String cashUpId, JSONArray cashMgmtIds,
+      List<String> slaveCashupIds) {
+    if (slaveCashupIds == null) {
+      slaveCashupIds = new ArrayList<String>();
+    }
+    slaveCashupIds.add(cashUpId);
     OBQuery<FIN_FinaccTransaction> transactionsQuery = OBDal.getInstance().createQuery(
-        FIN_FinaccTransaction.class, "where obposAppCashup.id=:cashupId and account.id=:account");
-    transactionsQuery.setNamedParameter("cashupId", cashUpId);
+        FIN_FinaccTransaction.class,
+        "where obposAppCashup.id in :slaveCashupIds and account.id=:account");
+    transactionsQuery.setNamedParameter("slaveCashupIds", slaveCashupIds);
     transactionsQuery.setNamedParameter("account", paymentType.getFinancialAccount().getId());
     associateTransactionsFromQuery(transactionsQuery, reconciliation);
   }

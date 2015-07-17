@@ -8,6 +8,8 @@
  */
 package org.openbravo.retail.posterminal;
 
+import java.util.List;
+
 import org.codehaus.jettison.json.JSONException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -53,6 +55,10 @@ public class InitialValidations {
       throw new JSONException("OBPOS_OrgDesynchronization");
     }
 
+    if (posTerminal.isMaster() && posTerminal.getMasterterminal() != null) {
+      throw new JSONException("OBPOS_NotAllowSlaveAndMaster");
+    }
+
     String whereclausePM = " as e where e.obposApplications=:terminal and e.financialAccount is not null "
         + "and not exists (select 1 from FinancialMgmtFinAccPaymentMethod as pmacc where "
         + "pmacc.paymentMethod = e.paymentMethod.paymentMethod and pmacc.account = e.financialAccount"
@@ -82,5 +88,32 @@ public class InitialValidations {
     if (queryLeaveAsCredit.list().size() > 0) {
       throw new JSONException("OBPOS_LeaveAsCreditNotConfigured");
     }
+
+    if (posTerminal.getMasterterminal() != null) {
+      String whereclauseAppPayment = " as e where e.obposApplications=:terminal and "
+          + " e.paymentMethod.isshared = 'Y' ";
+      OBQuery<OBPOSAppPayment> queryAppPayment = OBDal.getInstance().createQuery(
+          OBPOSAppPayment.class, whereclauseAppPayment);
+      queryAppPayment.setNamedParameter("terminal", posTerminal.getMasterterminal());
+      List<OBPOSAppPayment> sharedPayments = queryAppPayment.list();
+      for (int i = 0; i < posTerminal.getOBPOSAppPaymentList().size(); i++) {
+        OBPOSAppPayment appPayment = posTerminal.getOBPOSAppPaymentList().get(i);
+        if (appPayment.getPaymentMethod().isShared()) {
+          boolean validation = false;
+          for (int j = 0; j < sharedPayments.size(); j++) {
+            OBPOSAppPayment sharedPayment = sharedPayments.get(j);
+            if (sharedPayment.getPaymentMethod() == appPayment.getPaymentMethod()
+                && appPayment.getFinancialAccount() == sharedPayment.getFinancialAccount()) {
+              validation = true;
+              break;
+            }
+          }
+          if (!validation) {
+            throw new JSONException("OBPOS_FinAccSharedPayment");
+          }
+        }
+      }
+    }
+
   }
 }

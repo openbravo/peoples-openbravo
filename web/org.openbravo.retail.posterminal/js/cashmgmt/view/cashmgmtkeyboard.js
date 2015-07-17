@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2012-2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -68,6 +68,9 @@ enyo.kind({
     });
     _.bind(this.getPayment, this);
     _.each(OB.MobileApp.model.get('payments'), function (paymentMethod) {
+      if (OB.POS.modelterminal.get('terminal').isslave && paymentMethod.paymentMethod.isshared) {
+        return true;
+      }
       var payment = paymentMethod.payment;
       if (paymentMethod.paymentMethod.allowdeposits) {
         buttons.push({

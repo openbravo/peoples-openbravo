@@ -1,13 +1,13 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2012-2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
 
-/*global OB, enyo */
+/*global OB, enyo, _ */
 
 //Renders the summary of deposits/drops and contains a list (OB.OBPOSCasgMgmt.UI.RenderDepositsDrops)
 //with detailed information for each payment typ
@@ -66,10 +66,10 @@ enyo.kind({
     this.render();
   },
   render: function () {
-    if (this.i18nLabel) {
-      this.$.totalLbl.setContent(OB.I18N.getLabel(this.i18nLabel));
-    } else {
+    if (this.label) {
       this.$.totalLbl.setContent(this.label);
+    } else {
+      this.$.totalLbl.setContent(OB.I18N.getLabel(this.i18nLabel));
     }
     this.$.totalQty.setContent(OB.I18N.formatCurrency(OB.DEC.add(0, this.value)));
   },
@@ -104,6 +104,7 @@ enyo.kind({
       }]
     }, {
       name: 'itemLbl',
+      allowHtml: true,
       style: 'padding: 5px 0px 0px 5px;  border-top: 1px solid #cccccc; float: left; width: 35%'
     }, {
       name: 'foreignItemQty',
@@ -240,7 +241,12 @@ enyo.kind({
   components: [{
     kind: 'OB.OBPOSCashUp.UI.ppc_totalsLine',
     name: 'totaltransactionsline',
-    i18nLabel: 'OBPOS_LblTotalRetailTrans'
+    i18nLabel: 'OBPOS_LblTotalRetailTrans',
+    init: function () {
+      if (OB.POS.modelterminal.get('terminal').ismaster || OB.POS.modelterminal.get('terminal').isslave) {
+        this.label = OB.I18N.getLabel('OBPOS_LblTotalRetailTransLocal');
+      }
+    }
   }, {
     kind: 'OB.OBPOSCashUp.UI.ppc_lineSeparator',
     name: 'separator'
@@ -440,7 +446,10 @@ enyo.kind({
           classes: 'span12',
           components: [{
             name: 'reporttitle',
-            style: 'padding: 10px; border-bottom: 1px solid #cccccc; text-align:center;'
+            style: 'padding: 10px; border-bottom: 1px solid #cccccc; text-align:center;',
+            renderHeader: function (step, count) {
+              this.setContent(OB.I18N.getLabel('OBPOS_LblStepNumber', [step, count]) + " " + OB.I18N.getLabel('OBPOS_LblStepPostPrintAndClose') + OB.OBPOSCashUp.UI.CashUp.getTitleExtensions());
+            }
           }]
         }]
       }, {
@@ -548,6 +557,7 @@ enyo.kind({
       }]
     }]
   }],
+
   create: function () {
     this.inherited(arguments);
     this.$.store.setContent(OB.I18N.getLabel('OBPOS_LblStore') + ': ' + OB.MobileApp.model.get('terminal').organization$_identifier);
@@ -555,13 +565,13 @@ enyo.kind({
     this.$.user.setContent(OB.I18N.getLabel('OBPOS_LblUser') + ': ' + OB.MobileApp.model.get('context').user._identifier);
     this.$.time.setContent(OB.I18N.getLabel('OBPOS_LblTime') + ': ' + OB.I18N.formatDate(new Date()) + ' - ' + OB.I18N.formatHour(new Date()));
   },
+
   init: function (model) {
     this.model = model;
 
     this.$.reporttitle.setContent(OB.I18N.getLabel(model.reportTitleLabel) + OB.OBPOSCashUp.UI.CashUp.getTitleExtensions());
 
     this.model.get('cashUpReport').on('add', function (cashUpReport) {
-
       this.$.sales.setValue('netsales', cashUpReport.get('netSales'));
       this.$.sales.setCollection(cashUpReport.get('salesTaxes'));
       this.$.sales.setValue('totalsales', cashUpReport.get('grossSales'));
@@ -572,20 +582,27 @@ enyo.kind({
 
       this.$.totaltransactions.setValue('totaltransactionsline', cashUpReport.get('totalRetailTransactions'));
 
-      this.$.startingsTable.setCollection(cashUpReport.get('startings'));
-      this.$.startingsTable.setValue('totalstartings', cashUpReport.get('totalStartings'));
-
-      this.$.dropsTable.setCollection(cashUpReport.get('drops'));
-      this.$.dropsTable.setValue('totaldrops', cashUpReport.get('totalDrops'));
-
-      this.$.depositsTable.setCollection(cashUpReport.get('deposits'));
-      this.$.depositsTable.setValue('totaldeposits', cashUpReport.get('totalDeposits'));
+      if (!OB.POS.modelterminal.get('terminal').ismaster) {
+        this.cashUpReportChanged(cashUpReport);
+      }
     }, this);
 
     this.model.on('change:time', function () {
       this.$.time.setContent(OB.I18N.getLabel('OBPOS_LblTime') + ': ' + OB.I18N.formatDate(this.model.get('time')) + ' - ' + OB.I18N.formatHour(this.model.get('time')));
     }, this);
   },
+
+  cashUpReportChanged: function (cashUpReport) {
+    this.$.startingsTable.setCollection(cashUpReport.get('startings'));
+    this.$.startingsTable.setValue('totalstartings', cashUpReport.get('totalStartings'));
+
+    this.$.dropsTable.setCollection(cashUpReport.get('drops'));
+    this.$.dropsTable.setValue('totaldrops', cashUpReport.get('totalDrops'));
+
+    this.$.depositsTable.setCollection(cashUpReport.get('deposits'));
+    this.$.depositsTable.setValue('totaldeposits', cashUpReport.get('totalDeposits'));
+  },
+
   summaryChanged: function () {
     this.$.expectedTable.setCollection(this.summary.expectedSummary);
     this.$.expectedTable.setValue('totalexpected', this.summary.totalExpected);
@@ -602,8 +619,8 @@ enyo.kind({
     this.$.qtyToDepoTable.setCollection(this.summary.qtyToDepoSummary);
     this.$.qtyToDepoTable.setValue('totalqtyToDepo', this.summary.totalQtyToDepo);
   },
-  modelChanged: function () {
 
+  modelChanged: function () {
     this.$.sales.setValue('netsales', this.model.get('netSales'));
     this.$.sales.setCollection(this.model.get('salesTaxes'));
     this.$.sales.setValue('totalsales', this.model.get('grossSales'));
@@ -627,8 +644,20 @@ enyo.kind({
       this.$.time.setContent(OB.I18N.getLabel('OBPOS_LblTime') + ': ' + OB.I18N.formatDate(this.model.get('time')) + ' - ' + OB.I18N.formatHour(this.model.get('time')));
     }, this);
   },
+
   displayStep: function (model) {
     // this function is invoked when displayed.
+    this.$.reporttitle.renderHeader(model.stepNumber('OB.CashUp.PostPrintAndClose'), model.stepCount());
+    if (!model.cashupStepsDefinition[model.stepIndex('OB.CashUp.CashToKeep')].active) {
+      _.each(model.get('paymentList').models, function (model) {
+        if (OB.UTIL.isNullOrUndefined(model.get('qtyToKeep'))) {
+          model.set('qtyToKeep', 0);
+        }
+      }, this);
+    }
+    if (OB.POS.modelterminal.get('terminal').ismaster) {
+      this.cashUpReportChanged(model.get('cashUpReport').at(0));
+    }
     this.setSummary(model.getCountCashSummary());
     this.$.time.setContent(OB.I18N.getLabel('OBPOS_LblTime') + ': ' + OB.I18N.formatDate(new Date()) + ' - ' + OB.I18N.formatHour(new Date()));
   }

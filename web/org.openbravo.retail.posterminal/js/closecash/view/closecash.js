@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2014 Openbravo S.L.U.
+ * Copyright (C) 2012-2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -147,7 +147,8 @@ enyo.kind({
     onLineEditCount: 'lineEditCount',
     onPaymentMethodKept: 'paymentMethodKept',
     onResetQtyToKeep: 'resetQtyToKeep',
-    onHoldActiveCmd: 'holdActiveCmd'
+    onHoldActiveCmd: 'holdActiveCmd',
+    onChangeCashupReport: 'changeCashupReport'
   },
   published: {
     model: null
@@ -184,7 +185,13 @@ enyo.kind({
       components: [{
         classes: 'span12',
         kind: 'OB.OBPOSCashUp.UI.ListPendingReceipts',
-        name: 'listPendingReceipts'
+        name: 'listPendingReceipts',
+        showing: false
+      }, {
+        classes: 'span12',
+        kind: 'OB.OBPOSCashUp.UI.CashMaster',
+        name: 'cashMaster',
+        showing: false
       }, {
         classes: 'span12',
         kind: 'OB.OBPOSCashUp.UI.CashPayments',
@@ -275,9 +282,12 @@ enyo.kind({
     }, this);
     //FIXME:It is triggered only once, but it is not the best way to do it
     this.model.get('paymentList').on('reset', function () {
-      this.model.get('paymentList').at(this.model.get('substep')).on('change:foreignCounted', function () {
-        this.$.cashupMultiColumn.$.leftPanel.$.cashToKeep.$.formkeep.renderBody(this.model.get('paymentList').at(this.model.get('substep')));
-      }, this);
+      var paymentList = this.model.get('paymentList').at(this.model.get('substep'));
+      if (paymentList) {
+        paymentList.on('change:foreignCounted', function () {
+          this.$.cashupMultiColumn.$.leftPanel.$.cashToKeep.$.formkeep.renderBody(this.model.get('paymentList').at(this.model.get('substep')));
+        }, this);
+      }
     }, this);
 
     // Cash Up Report - Step 4
@@ -379,7 +389,55 @@ enyo.kind({
       }
     }, this);
 
-    this.refresh();
+    this.refreshButtons();
+
+    this.model.on('change:loadFinished', function (model) {
+
+      function processCashCloseSlave(callback) {
+        new OB.DS.Process('org.openbravo.retail.posterminal.ProcessCashCloseSlave').exec({
+          cashUpId: OB.POS.modelterminal.get('terminal').cashUpId
+        }, function (data) {
+          if (data && data.exception) {
+            // Error handler 
+            OB.log('error', data.exception.message);
+            OB.UTIL.showConfirmation.display(
+            OB.I18N.getLabel('OBPOS_CashMgmtError'), OB.I18N.getLabel('OBPOS_ErrorServerGeneric') + data.exception.message, [{
+              label: OB.I18N.getLabel('OBPOS_LblRetry'),
+              action: function () {
+                processCashCloseSlave(callback);
+              }
+            }], {
+              autoDismiss: false,
+              onHideFunction: function () {
+                OB.POS.navigate('retail.pointofsale');
+              }
+            });
+          } else {
+            callback(data);
+          }
+        });
+      }
+
+      if (model.get("loadFinished")) {
+        if (OB.POS.modelterminal.get('terminal').isslave) {
+          processCashCloseSlave(function (data) {
+            if (data.hasMaster) {
+              me.moveStep(0);
+            } else {
+              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_CashUpWronglyHeader'), OB.I18N.getLabel('OBPOS_ErrCashupMasterNotOpen'));
+              OB.POS.navigate('retail.pointofsale');
+            }
+          });
+        } else {
+          me.moveStep(0);
+        }
+      }
+    });
+
+    this.model.on('change:slavesCashupCompleted', function (model) {
+      me.refreshButtons();
+    });
+
   },
 
   rendered: function () {
@@ -426,16 +484,17 @@ enyo.kind({
   cancelCashup: function (inSender, inEvent) {
     OB.POS.navigate('retail.pointofsale');
   },
-  moveStep: function (direction) { // direction can be -1 or +1
+  moveStep: function (direction) { // direction can be -1, 0 or +1
     // allways moving substep by substep
     var nextstep = this.model.get('step');
     var nextsubstep = this.model.get('substep') + direction;
 
     if (nextstep <= 0) {
       // error. go to the begining
-      this.model.set('step', 1);
+      var step = this.model.getFirstStep();
+      this.model.set('step', step);
       this.model.set('substep', -1);
-      this.moveStep(1);
+      this.moveStep(step);
     } else if (this.model.isFinishedWizard(nextstep)) {
       // Sets the time
       this.model.get('cashUpReport').at(0).set('time', new Date());
@@ -448,12 +507,14 @@ enyo.kind({
       this.model.processAndFinishCashUp();
     } else if (nextsubstep < 0) {
       // jump to previous step
-      this.model.set('step', nextstep - 1);
-      this.model.set('substep', this.model.getSubstepsLength(nextstep - 1));
+      var previous = this.model.getPreviousStep();
+      this.model.set('step', previous);
+      this.model.set('substep', this.model.getSubstepsLength(previous));
       this.moveStep(-1);
     } else if (nextsubstep >= this.model.getSubstepsLength(nextstep)) {
       // jump to next step
-      this.model.set('step', nextstep + 1);
+      var next = this.model.getNextStep();
+      this.model.set('step', next ? next : nextstep + 1);
       this.model.set('substep', -1);
       this.moveStep(1);
     } else if (this.model.isSubstepAvailable(nextstep, nextsubstep)) {
@@ -465,7 +526,7 @@ enyo.kind({
       // move again
       this.model.set('step', nextstep);
       this.model.set('substep', nextsubstep);
-      this.moveStep(direction);
+      this.moveStep(direction === 0 ? 1 : direction);
     }
   },
   countAllOK: function (inSender, inEvent) {
@@ -496,6 +557,9 @@ enyo.kind({
     this.waterfall('onChangeOption', {
       cmd: inEvent.cmd
     });
+  },
+  changeCashupReport: function () {
+    this.$.cashupMultiColumn.$.leftPanel.$.postPrintClose.setModel(this.model.get('cashUpReport').at(0));
   }
 });
 
