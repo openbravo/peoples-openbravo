@@ -282,35 +282,8 @@
         IF(v_PriceList_Version_Base_ID=v_PriceList_Version_ID) THEN
           -- We have Prices already
           NULL;
-        ELSIF(v_costbased='N'AND v_PriceList_Version_Base_ID IS NULL) THEN
-          -- Copy and Convert from Product_PO
-          v_ResultStr:=v_ResultStr || ',Copy_PO';
-          INSERT
-          INTO M_ProductPrice
-            (
-              M_ProductPrice_ID, M_PriceList_Version_ID, M_Product_ID, AD_Client_ID, AD_Org_ID,
-              IsActive, Created, CreatedBy, Updated,
-              UpdatedBy,
-              PriceList,
-              PriceStd,
-              PriceLimit
-            )
-          SELECT  get_uuid(), v_PriceList_Version_ID,
-            po.M_Product_ID, v_Client_ID, v_Org_ID, 'Y',
-            now(), v_UpdatedBy, now(), v_UpdatedBy,
-            -- Price List
-            COALESCE(C_Currency_Convert(po.PriceList, po.C_Currency_ID, v_Currency_ID, Cur_DiscountLine.ConversionDate, Cur_DiscountLine.ConversionRateType, v_Client_ID, v_Org_ID), 0),
-            -- Price Std
-            COALESCE(C_Currency_Convert(po.PriceList, po.C_Currency_ID, v_Currency_ID, Cur_DiscountLine.ConversionDate, Cur_DiscountLine.ConversionRateType, v_Client_ID, v_Org_ID), 0),
-            -- Price Limit
-            COALESCE(C_Currency_Convert(po.PricePO, po.C_Currency_ID, v_Currency_ID, Cur_DiscountLine.ConversionDate, Cur_DiscountLine.ConversionRateType, v_Client_ID, v_Org_ID), 0)
-          FROM M_Product_PO po
-          WHERE EXISTS
-            (SELECT 1 FROM C_TEMP_Selection s WHERE po.M_Product_ID=s.C_TEMP_Selection_ID)
-            AND po.IsCurrentVendor='Y'
-            AND po.IsActive='Y';      
-         ELSIF(v_costbased='Y')THEN   
-           v_ResultStr:=v_ResultStr || ',costbased';
+        ELSIF(v_costbased='Y')THEN   
+          v_ResultStr:=v_ResultStr || ',costbased';
           INSERT
           INTO M_ProductPrice
             (
@@ -333,7 +306,7 @@
             where EXISTS (SELECT 1 FROM C_TEMP_Selection s WHERE mp.M_Product_ID=s.C_TEMP_Selection_ID)
             AND mp.IsActive='Y'; 
             
-         ELSE
+        ELSE
           -- Copy and Convert from other PriceList_Version
           v_ResultStr:=v_ResultStr || ',Copy_PL';
           INSERT
