@@ -125,6 +125,9 @@ public class ServiceRelationEventHandler extends EntityPersistenceEventObserver 
     if (UNIQUE_QUANTITY.equals(service.getQuantityRule())) {
       serviceQty = BigDecimal.ONE;
     } else {
+      // TODO
+      // Remove this if condition when the issue of calling this event handler twice when modifying
+      // OrderlineServiceRelation from ServiceOrderLineEventHandler is fixed
       if (orderLine.getOrderedQuantity().add(oldQuantity.subtract(currentqty))
           .compareTo(dbQuantity) != 0) {
         serviceQty = orderLine.getOrderedQuantity().add(currentqty).subtract(oldQuantity);
