@@ -27,6 +27,7 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
@@ -41,6 +42,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.materialmgmt.cost.CostAdjustment;
 import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
 import org.openbravo.model.materialmgmt.cost.LCDistributionAlgorithm;
@@ -93,9 +95,17 @@ public class LCMatchingProcess {
 
       if (lcCost.isMatchingAdjusted() && lcCost.getAmount().compareTo(matchedAmt) != 0) {
         distributeAmounts(lcCost);
-        String strMatchCAId = generateCostAdjustment(lcCost.getId(), message);
-        lcCost.setMatchingCostAdjustment((CostAdjustment) OBDal.getInstance().getProxy(
-            CostAdjustment.ENTITY_NAME, strMatchCAId));
+        lcCost = OBDal.getInstance().get(LandedCostCost.class, lcCost.getId());
+        // If active costing rule uses Standard Algorithm, cost adjustment will not be created
+        Organization org = OBContext.getOBContext()
+            .getOrganizationStructureProvider(lcCost.getClient().getId())
+            .getLegalEntity(lcCost.getOrganization());
+        if (!StringUtils.equals(CostingUtils.getCostDimensionRule(org, new Date())
+            .getCostingAlgorithm().getJavaClassName(), "org.openbravo.costing.StandardAlgorithm")) {
+          String strMatchCAId = generateCostAdjustment(lcCost.getId(), message);
+          lcCost.setMatchingCostAdjustment((CostAdjustment) OBDal.getInstance().getProxy(
+              CostAdjustment.ENTITY_NAME, strMatchCAId));
+        }
         OBDal.getInstance().save(lcCost);
       }
 

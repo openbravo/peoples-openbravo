@@ -1035,7 +1035,7 @@ where @additional_filters@
 <!--F3CDEE79343F4746A2FEE8C60EBEC0BF-->  <NAME><![CDATA[Receipts]]></NAME>
 <!--F3CDEE79343F4746A2FEE8C60EBEC0BF-->  <AD_REFERENCE_ID><![CDATA[E68CCF4495A34ED7902293A930386B93]]></AD_REFERENCE_ID>
 <!--F3CDEE79343F4746A2FEE8C60EBEC0BF-->  <AD_TABLE_ID><![CDATA[319]]></AD_TABLE_ID>
-<!--F3CDEE79343F4746A2FEE8C60EBEC0BF-->  <WHERECLAUSE><![CDATA[e.salesTransaction = false AND e.documentStatus = 'CO' AND exists ( select 1 from MaterialMgmtShipmentInOutLine m where m.shipmentReceipt.id=e.id and m.movementQuantity >= 0 )]]></WHERECLAUSE>
+<!--F3CDEE79343F4746A2FEE8C60EBEC0BF-->  <WHERECLAUSE><![CDATA[e.salesTransaction = false AND e.documentStatus = 'CO' AND exists ( select 1 from MaterialMgmtShipmentInOutLine m where m.shipmentReceipt.id=e.id and m.movementQuantity >= 0 ) AND ( select distinct r.id from MaterialMgmtMaterialTransaction t, CostingRule r where t.goodsShipmentLine.shipmentReceipt.id=e.id and r.validated = 'Y' and ad_org_isinnaturaltree(r.organization.id, t.organization.id, t.client.id) = 'Y' and r.startingDate <= t.transactionProcessDate and r.endingDate is null ) = ( select r.id from CostingRule r where r.validated = 'Y' and ad_org_isinnaturaltree(r.organization.id, e.organization.id, e.client.id) = 'Y' and r.startingDate <= now() and r.endingDate is null )]]></WHERECLAUSE>
 <!--F3CDEE79343F4746A2FEE8C60EBEC0BF-->  <OBCLKER_TEMPLATE_ID><![CDATA[9314DE8599AD44E7BFC4CC50699042AB]]></OBCLKER_TEMPLATE_ID>
 <!--F3CDEE79343F4746A2FEE8C60EBEC0BF-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--F3CDEE79343F4746A2FEE8C60EBEC0BF-->  <SUGGESTIONTEXTMATCHSTYLE><![CDATA[startsWith]]></SUGGESTIONTEXTMATCHSTYLE>

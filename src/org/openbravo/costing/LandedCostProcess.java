@@ -28,6 +28,7 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
@@ -48,6 +49,7 @@ import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.common.currency.ConversionRate;
 import org.openbravo.model.common.currency.ConversionRateDoc;
 import org.openbravo.model.common.currency.Currency;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.materialmgmt.cost.CostAdjustment;
 import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
 import org.openbravo.model.materialmgmt.cost.LCDistributionAlgorithm;
@@ -94,14 +96,23 @@ public class LandedCostProcess {
       log.debug("Start Distribute Amounts");
       distributeAmounts(landedCost);
       log.debug("Start generateCostAdjustment");
-      CostAdjustment ca = generateCostAdjustment(landedCost.getId(), message);
 
       landedCost = OBDal.getInstance().get(LandedCost.class, landedCost.getId());
-      landedCost.setCostAdjustment(ca);
+
+      // If active costing rule uses Standard Algorithm, cost adjustment will not be created
+      Organization org = OBContext.getOBContext()
+          .getOrganizationStructureProvider(landedCost.getClient().getId())
+          .getLegalEntity(landedCost.getOrganization());
+      if (!StringUtils.equals(CostingUtils.getCostDimensionRule(org, new Date())
+          .getCostingAlgorithm().getJavaClassName(), "org.openbravo.costing.StandardAlgorithm")) {
+        CostAdjustment ca = generateCostAdjustment(landedCost.getId(), message);
+        landedCost.setCostAdjustment(ca);
+        message.put("documentNo", ca.getDocumentNo());
+      }
+
       landedCost.setDocumentStatus("CO");
       landedCost.setProcessed(Boolean.TRUE);
       OBDal.getInstance().save(landedCost);
-      message.put("documentNo", ca.getDocumentNo());
     } catch (JSONException ignore) {
     } finally {
       OBContext.restorePreviousMode();
