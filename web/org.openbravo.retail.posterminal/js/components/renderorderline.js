@@ -124,9 +124,9 @@ enyo.kind({
       enyo.forEach(this.model.get('relatedLines'), function (line) {
         this.$.relatedLinesContainer.createComponent({
           components: [{
-            content: 'for ' + line.productName,
+            content: line.otherTicket ? OB.I18N.getLabel('OBPOS_lblRelatedLinesOtherTicket', [line.productName, line.orderDocumentNo]) : OB.I18N.getLabel('OBPOS_lblRelatedLines', [line.productName]),
             attributes: {
-              style: 'font-size: 14px; font-style: italic'
+              style: 'font-size: 14px; font-style: italic; padding-left: 5px'
             }
           }]
         });

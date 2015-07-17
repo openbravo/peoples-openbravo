@@ -391,9 +391,23 @@ enyo.kind({
   },
   addProductToOrder: function (inSender, inEvent) {
     if (this.model.get('order').get('isEditable') === false) {
-      this.doShowPopup({
-        popup: 'modalNotEditableOrder'
-      });
+      this.model.get('order').canAddAsServices(this.model, inEvent.product, function (addAsServices) {
+        if (addAsServices !== 'ABORT') {
+          if (addAsServices === 'OK') {
+            // TODO: La aprobación (si fue necesaria debe ser copiada a la nueva orden o a la orden seleccionada)
+            var deferedSellApproval = _.find(this.model.get('order').get('approvals'), function (approval) {
+              return approval.approvalType.approval === 'OBPOS_approval.deferred_sell_max_days';
+            });
+            // TODO: Show select open ticket dialog
+            OB.UTIL.showConfirmation.display('Services selection', 'OK');
+
+          }
+        } else {
+          this.doShowPopup({
+            popup: 'modalNotEditableOrder'
+          });
+        }
+      }, this);
       return true;
     }
 

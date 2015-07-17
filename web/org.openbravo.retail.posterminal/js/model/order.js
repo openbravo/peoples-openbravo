@@ -41,6 +41,12 @@
         if (!attributes.grossListPrice && attributes.product && _.isNumber(attributes.priceList)) {
           this.set('grossListPrice', attributes.priceList);
         }
+        if (attributes.relatedLines && _.isArray(attributes.relatedLines)) {
+          this.set('relatedLines', attributes.relatedLines);
+        }
+        if (!OB.UTIL.isNullOrUndefined(attributes.hasRelatedServices)) {
+          this.set('hasRelatedServices', attributes.hasRelatedServices);
+        }
       }
     },
 
@@ -943,55 +949,78 @@
         options: options,
         newLine: newLine
       }, function (args) {
-        if (args.productToAdd.get('productType') !== 'S' && args.newLine) {
-          if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.product', true)) {
-            var process = new OB.DS.Process('org.openbravo.retail.posterminal.process.HasServices');
-            var params = {},
-                date = new Date(),
-                i, prod;
-            params.terminalTime = date;
-            params.terminalTimeOffset = date.getTimezoneOffset();
-            process.exec({
-              product: args.productToAdd.get('id'),
-              productCategory: args.productToAdd.get('productCategory'),
-              parameters: params
-            }, function (data, message) {
-              if (data && data.exception) {
-                //ERROR or no connection
-                OB.error(OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices'));
-              } else if (data) {
-                if (data.hasservices) {
-                  args.orderline.set('hasRelatedServices', true);
-                  args.orderline.trigger('showServicesButton');
-                } else {
-                  args.orderline.set('hasRelatedServices', false);
-                }
-                args.receipt.save();
-                if (data.mandatoryservices) {
-                  //open the search tab with the returned products
-                  args.receipt.trigger('showProductList', args.orderline, 'mandatory');
-                }
+        if (args.newLine) {
+          args.receipt._loadRelatedServices(args.productToAdd.get('productType'), args.productToAdd.get('id'), args.productToAdd.get('productCategory'), function (data) {
+            if (data) {
+              if (data.hasservices) {
+                args.orderline.set('hasRelatedServices', true);
+                args.orderline.trigger('showServicesButton');
+              } else {
+                args.orderline.set('hasRelatedServices', false);
               }
+              args.receipt.save();
+              if (data.mandatoryservices) {
+                //open the search tab with the returned products
+                args.receipt.trigger('showProductList', args.orderline, 'mandatory');
+              }
+            }
+          });
+        }
+      });
+    },
+
+    _loadRelatedServices: function (productType, productId, productCategory, callback) {
+      if (productType !== 'S') {
+        if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.product', true)) {
+          var process = new OB.DS.Process('org.openbravo.retail.posterminal.process.HasServices');
+          var params = {},
+              date = new Date(),
+              i, prod;
+          params.terminalTime = date;
+          params.terminalTimeOffset = date.getTimezoneOffset();
+          process.exec({
+            product: productId,
+            productCategory: productCategory,
+            parameters: params
+          }, function (data, message) {
+            if (data && data.exception) {
+              //ERROR or no connection
+              OB.error(OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices'));
+              callback(null);
+            } else if (data) {
+              callback(data);
+            } else {
+              callback(null);
+            }
+          });
+        } else {
+          //non-high volumes: websql
+          var criteria = {};
+
+          criteria._whereClause = '';
+          criteria.params = [];
+
+          criteria._whereClause = " as product where product.productType = 'S' and (product.isLinkedToProduct = 'true' and ";
+
+          //including/excluding products
+          criteria._whereClause += "((product.includeProducts = 'Y' and not exists (select 1 from m_product_service sp where product.m_product_id = sp.m_product_id and sp.m_related_product_id = ? ))";
+          criteria._whereClause += "or (product.includeProducts = 'N' and exists (select 1 from m_product_service sp where product.m_product_id = sp.m_product_id and sp.m_related_product_id = ? ))";
+          criteria._whereClause += "or product.includeProducts is null) ";
+
+          //including/excluding product categories
+          criteria._whereClause += "and ((product.includeProductCategories = 'Y' and not exists (select 1 from m_product_category_service spc where product.m_product_id = spc.m_product_id and spc.m_product_category_id =  ? )) ";
+          criteria._whereClause += "or (product.includeProductCategories = 'N' and exists (select 1 from m_product_category_service spc where product.m_product_id = spc.m_product_id and spc.m_product_category_id  = ? )) ";
+          criteria._whereClause += "or product.includeProductCategories is null)) ";
+
+          criteria.params.push(productId);
+          criteria.params.push(productId);
+          criteria.params.push(productCategory);
+          criteria.params.push(productCategory);
+          OB.Dal.find(OB.Model.Product, criteria, function (data) {
+            callback({
+              mandatoryservices: true,
+              hasservices: data && data.length > 0
             });
-          } else {
-            //non-high volumes: websql
-            var criteria = {};
-
-            criteria._whereClause = '';
-            criteria.params = [];
-
-            criteria._whereClause = " as product where product.productType = 'S' and (product.isLinkedToProduct = 'true' and ";
-
-            //including/excluding products
-            criteria._whereClause += "((product.includeProducts = 'Y' and not exists (select 1 from m_product_service sp where product.m_product_id = sp.m_product_id and sp.m_related_product_id = ? ))";
-            criteria._whereClause += "or (product.includeProducts = 'N' and exists (select 1 from m_product_service sp where product.m_product_id = sp.m_product_id and sp.m_related_product_id = ? ))";
-            criteria._whereClause += "or product.includeProducts is null) ";
-
-            //including/excluding product categories
-            criteria._whereClause += "and ((product.includeProductCategories = 'Y' and not exists (select 1 from m_product_category_service spc where product.m_product_id = spc.m_product_id and spc.m_product_category_id =  ? )) ";
-            criteria._whereClause += "or (product.includeProductCategories = 'N' and exists (select 1 from m_product_category_service spc where product.m_product_id = spc.m_product_id and spc.m_product_category_id  = ? )) ";
-            criteria._whereClause += "or product.includeProductCategories is null)) ";
-
             criteria.params.push(args.orderline.get('product').get('id'));
             criteria.params.push(args.orderline.get('product').get('id'));
             criteria.params.push(args.orderline.get('product').get('productCategory'));
@@ -1009,6 +1038,14 @@
               })) {
                 args.receipt.trigger('showProductList', args.orderline, 'mandatory');
               }
+          }, function (trx, error) {
+            OB.error(OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices'));
+            callback(null);
+          });
+        }
+      } else {
+        callback(null);
+      }
             }, function (trx, error) {
               OB.error(OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices'));
             });
@@ -2332,6 +2369,45 @@
       });
       desc += ']';
       return desc;
+    },
+
+    canAddAsServices: function (model, product, callback, scope) {
+      if (product.get('productType') === 'S') {
+        if (!OB.UTIL.isNullOrUndefined(product.get('allowDeferredSell')) && product.get('allowDeferredSell')) {
+          if (!OB.UTIL.isNullOrUndefined(product.get('deferredSellMaxDays'))) {
+            var oneDay = 24 * 60 * 60 * 1000,
+                today = new Date(),
+                orderDate = this.get('orderDate');
+            today.setHours(0, 0, 0, 0);
+            orderDate.setHours(0, 0, 0, 0);
+            var diffDays = Math.round(OB.DEC.abs(today.getTime() - orderDate.getTime()) / oneDay);
+            if (diffDays > product.get('deferredSellMaxDays')) {
+              // Need approval exceeds max days
+              OB.UTIL.Approval.requestApproval(
+              model, [{
+                approval: 'OBPOS_approval.deferred_sell_max_days',
+                message: 'OBPOS_approval.deferred_sell_max_days',
+                params: [product.get('deferredSellMaxDays')]
+              }], function (approved, supervisor, approvalType) {
+                callback.call(scope, approved ? 'OK' : 'NOT_ALLOW_MAX_DAYS');
+              });
+            } else {
+              callback.call(scope, 'OK');
+            }
+          } else {
+            callback.call(scope, 'OK');
+          }
+        } else {
+          // Not allow deferred sell
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_msgDeferredSellCaption'), OB.I18N.getLabel('OBPOS_msgNotDeferredSell'), [{
+            label: OB.I18N.getLabel('OBMOBC_LblOk')
+          }]);
+          callback.call(scope, 'NOT_ALLOW');
+        }
+      } else {
+        // Not is a service
+        callback.call(scope, 'ABORT');
+      }
     }
 
   });
@@ -2510,33 +2586,42 @@
                   OB.error(arguments);
                 }, true);
               }
-              newline = new OrderLine({
-                product: prod,
-                uOM: iter.uOM,
-                qty: OB.DEC.number(iter.quantity),
-                price: price,
-                priceList: prod.get('listPrice'),
-                promotions: iter.promotions,
-                priceIncludesTax: order.get('priceIncludesTax'),
-                warehouse: {
-                  id: iter.warehouse,
-                  warehousename: iter.warehousename
+              // Set product services
+              order._loadRelatedServices(prod.get('productType'), prod.get('id'), prod.get('productCategory'), function (data) {
+                var hasservices = undefined;
+                if (!OB.UTIL.isNullOrUndefined(data) && OB.DEC.number(iter.quantity) > 0) {
+                  hasservices = data.hasservices;
+                }
+                newline = new OrderLine({
+                  product: prod,
+                  uOM: iter.uOM,
+                  qty: OB.DEC.number(iter.quantity),
+                  price: price,
+                  priceList: prod.get('listPrice'),
+                  promotions: iter.promotions,
+                  priceIncludesTax: order.get('priceIncludesTax'),
+                  hasRelatedServices: hasservices,
+                  warehouse: {
+                    id: iter.warehouse,
+                    warehousename: iter.warehousename
+                  },
+                  relatedLines: iter.relatedLines
+                });
+                newline.calculateGross();
+                // add the created line
+                lines.add(newline);
+                numberOfLines--;
+                orderQty = OB.DEC.add(iter.quantity, orderQty);
+                if (numberOfLines === 0) {
+                  order.set('lines', lines);
+                  order.set('qty', orderQty);
+                  if (order.get('orderType') === 1) {
+                    order.changeSignToShowReturns();
+                  }
+                  order.set('json', JSON.stringify(order.toJSON()));
+                  callback(order);
                 }
               });
-              newline.calculateGross();
-              // add the created line
-              lines.add(newline);
-              numberOfLines--;
-              orderQty = OB.DEC.add(iter.quantity, orderQty);
-              if (numberOfLines === 0) {
-                order.set('lines', lines);
-                order.set('qty', orderQty);
-                if (order.get('orderType') === 1) {
-                  order.changeSignToShowReturns();
-                }
-                order.set('json', JSON.stringify(order.toJSON()));
-                callback(order);
-              }
             }, null, function () {
               if (NoFoundProduct) {
                 NoFoundProduct = false;

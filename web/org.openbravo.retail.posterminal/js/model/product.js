@@ -204,6 +204,14 @@
     name: 'isLinkedToProduct',
     column: 'isLinkedToProduct',
     type: 'BOOL'
+  }, {
+    name: 'allowDeferredSell',
+    column: 'allowDeferredSell',
+    type: 'BOOL'
+  }, {
+    name: 'deferredSellMaxDays',
+    column: 'deferredSellMaxDays',
+    type: 'NUMBER'
   }]);
 
   Product.addIndex([{
