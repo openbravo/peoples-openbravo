@@ -9,7 +9,9 @@
 package org.openbravo.retail.posterminal;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -32,6 +34,18 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
   }
 
   @Override
+  protected Map<String, Object> getParameterValues(JSONObject jsonsent) throws JSONException {
+    if (!jsonsent.getJSONObject("filters").getString("filterText").isEmpty()) {
+      Map<String, Object> paramValues = new HashMap<String, Object>();
+      paramValues.put("filterT1", ("%"
+          + jsonsent.getJSONObject("filters").getString("filterText").trim() + "%"));
+      return paramValues;
+    } else {
+      return null;
+    }
+  }
+
+  @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
 
     // OBContext.setAdminMode(true);
@@ -50,14 +64,11 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
         + json.getString("organization")
         + "' and ord.obposApplications is not null";
 
-    final String filterText = sanitizeString(json.getString("filterText"));
-    if (!filterText.isEmpty()) {
-      String hqlFilter = "ord.documentNo like '%" + filterText
-          + "%' or REPLACE(ord.documentNo, '/', '') like '%" + filterText
-          + "%' or upper(ord.businessPartner.name) like upper('%" + filterText + "%')";
+    if (!json.getString("filterText").isEmpty()) {
+      String hqlFilter = "ord.documentNo like :filterT1 or REPLACE(ord.documentNo, '/', '') like :filterT1 or upper(ord.businessPartner.name) like upper(:filterT1)";
       for (PaidReceiptsHeaderHook hook : paidReceiptHeaderHooks) {
         try {
-          String hql = hook.exec(hqlFilter, filterText);
+          String hql = hook.exec(hqlFilter, json.getString("filterText"));
           hqlFilter = hql;
         } catch (Exception e) {
           throw new OBException("An error happened when computing a filter in PaidReceipts", e);
