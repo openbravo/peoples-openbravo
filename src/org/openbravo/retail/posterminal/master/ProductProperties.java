@@ -138,8 +138,6 @@ public class ProductProperties extends ModelExtension {
           add(new HQLProperty("product.characteristicDescription", "characteristicDescription"));
           add(new HQLProperty("product.obposShowChDesc", "showchdesc"));
           add(new HQLProperty("product.productType", "productType"));
-          add(new HQLProperty("product.priority", "priority"));
-          add(new HQLProperty("product.sequenceno", "sequenceno"));
           add(new HQLProperty("product.includedProductCategories", "includeProductCategories"));
           add(new HQLProperty("product.includedProducts", "includeProducts"));
           add(new HQLProperty("product.printDescription", "printDescription"));

@@ -959,8 +959,9 @@
                 args.orderline.set('hasRelatedServices', false);
               }
               args.receipt.save();
-              if (data.mandatoryservices) {
-                //open the search tab with the returned products
+              if (_.find(data.models, function (model) {
+                return model.get('proposalType') === 'MP';
+              })) {
                 args.receipt.trigger('showProductList', args.orderline, 'mandatory');
               }
             }
@@ -1017,41 +1018,19 @@
           criteria.params.push(productCategory);
           criteria.params.push(productCategory);
           OB.Dal.find(OB.Model.Product, criteria, function (data) {
-            callback({
-              mandatoryservices: true,
-              hasservices: data && data.length > 0
-            });
-            criteria.params.push(args.orderline.get('product').get('id'));
-            criteria.params.push(args.orderline.get('product').get('id'));
-            criteria.params.push(args.orderline.get('product').get('productCategory'));
-            criteria.params.push(args.orderline.get('product').get('productCategory'));
-            OB.Dal.find(OB.Model.Product, criteria, function (data) {
-              if (data && data.length > 0) {
-                args.orderline.set('hasRelatedServices', true);
-                args.orderline.trigger('showServicesButton');
-              } else {
-                args.orderline.set('hasRelatedServices', false);
-              }
-              args.receipt.save();
-              if (_.find(data.models, function (model) {
-                return model.get('proposalType') === 'MP';
-              })) {
-                args.receipt.trigger('showProductList', args.orderline, 'mandatory');
-              }
+            if (data) {
+              data.hasservices = data.length > 0;
+              callback(data);
+            } else {
+              callback(null);
+            }
           }, function (trx, error) {
             OB.error(OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices'));
-            callback(null);
           });
         }
       } else {
         callback(null);
       }
-            }, function (trx, error) {
-              OB.error(OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices'));
-            });
-          }
-        }
-      });
     },
 
     _drawLinesDistribution: function (data) {
@@ -1087,6 +1066,7 @@
         }, this);
       }
     },
+
     //Attrs is an object of attributes that will be set in order
     addProduct: function (p, qty, options, attrs) {
       OB.debug('_addProduct');
@@ -1110,11 +1090,13 @@
       });
     },
 
+
     /**
      * Splits a line from the ticket keeping in the line the qtyToKeep quantity,
      * the rest is moved to another line with the same product and no packs, or
      * to a new one if there's no other line. In case a new is created it is returned.
      */
+
     splitLine: function (line, qtyToKeep) {
       var originalQty = line.get('qty'),
           newLine, p, qtyToMove;
@@ -1147,9 +1129,11 @@
       }
     },
 
+
     /**
      * Checks other lines with the same product to be merged in a single one
      */
+
     mergeLines: function (line) {
       var p = line.get('product'),
           lines = this.get('lines'),
@@ -1175,10 +1159,12 @@
       }
     },
 
+
     /**
      *  It looks for different lines for same product with exactly the same promotions
      *  to merge them in a single line
      */
+
     mergeLinesWithSamePromotions: function () {
       var lines = this.get('lines'),
           l, line, i, j, k, p, otherLine, toRemove = [],
@@ -1355,6 +1341,7 @@
         }, this);
       }
     },
+
     //Attrs is an object of attributes that will be set in order line
     createLine: function (p, units, options, attrs) {
       var me = this;
@@ -1592,6 +1579,8 @@
         OB.Model.Discounts.applyPromotions(this);
       }
     },
+
+
 
     // returns the ordertype: 0: Sales order, 1: Return order, 2: Layaway, 3: Void Layaway
     getOrderType: function () {
@@ -2238,6 +2227,8 @@
     },
 
 
+
+
     // for each line, decrease the qtyOffer of promotions and remove the lines with qty 0
     removeQtyOffer: function () {
       var linesPending = new Backbone.Collection();
@@ -2315,6 +2306,8 @@
         return false;
       }
     },
+
+
 
     // if there is a promtion of type "applyNext" that it has been applied previously in the line, then It is replaced
     // by the first promotion applied. Ex:
@@ -2409,6 +2402,7 @@
         callback.call(scope, 'ABORT');
       }
     }
+
 
   });
 

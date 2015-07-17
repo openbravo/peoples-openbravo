@@ -137,14 +137,6 @@
     column: 'productType',
     type: 'TEXT'
   }, {
-    name: 'priority',
-    column: 'priority',
-    type: 'NUMBER'
-  }, {
-    name: 'sequenceno',
-    column: 'sequenceno',
-    type: 'TEXT'
-  }, {
     name: 'includeProductCategories',
     column: 'includeProductCategories',
     type: 'TEXT'
