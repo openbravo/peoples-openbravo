@@ -36,7 +36,6 @@
   v_IsCashVAT_Tax C_Tax.IsCashVAT%TYPE;
   v_IsCashVAT_Order C_Order.IsCashVAT%TYPE;
   v_Rate_Tax C_Tax.Rate%TYPE;
-
   v_istaxincluded CHAR(1);
   v_PriceActual NUMBER;
   
