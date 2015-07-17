@@ -148,18 +148,6 @@
       OR PricePO=0)
       AND PriceLastPO<>0;
     UPDATE M_Product_PO  SET PricePO=0  WHERE PricePO IS NULL;
-    -- Set default current vendor
-    UPDATE M_Product_PO
-      SET IsCurrentVendor='Y'
-    WHERE IsCurrentVendor='N'
-      AND NOT EXISTS
-      (SELECT pp.M_Product_ID
-      FROM M_Product_PO pp
-      WHERE pp.M_Product_ID=M_Product_PO.M_Product_ID
-      GROUP BY pp.M_Product_ID
-      HAVING COUNT(*)>1
-      )
-      ;
       /** Delete Old Data */
       v_ResultStr:='DeletingOld';
       IF(v_DeleteOld='Y') THEN
