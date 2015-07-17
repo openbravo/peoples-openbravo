@@ -394,13 +394,25 @@ enyo.kind({
       this.model.get('order').canAddAsServices(this.model, inEvent.product, function (addAsServices) {
         if (addAsServices !== 'ABORT') {
           if (addAsServices === 'OK') {
-            // TODO: La aprobación (si fue necesaria debe ser copiada a la nueva orden o a la orden seleccionada)
+            // Get approval
             var deferedSellApproval = _.find(this.model.get('order').get('approvals'), function (approval) {
               return approval.approvalType.approval === 'OBPOS_approval.deferred_sell_max_days';
             });
-            // TODO: Show select open ticket dialog
-            OB.UTIL.showConfirmation.display('Services selection', 'OK');
-
+            // Select open ticket or create a new one
+            this.doShowPopup({
+              popup: 'OBPOS_modalSelectOpenReceipts',
+              args: {
+                product: inEvent.product,
+                approval: deferedSellApproval
+              }
+            });
+            // Remove approval from not editable ticket
+            if (deferedSellApproval) {
+              var index = _.indexOf(this.model.get('order').get('approvals'), deferedSellApproval);
+              if (index >= 0) {
+                this.model.get('order').get('approvals').splice(index, 1);
+              }
+            }
           }
         } else {
           this.doShowPopup({
@@ -1169,4 +1181,9 @@ OB.POS.registerWindow({
   permission: 'OBPOS_retail.pointofsale',
   // Not to display it in the menu
   menuLabel: 'POS'
+});
+
+OB.UI.WindowView.registerPopup('OB.OBPOSPointOfSale.UI.PointOfSale', {
+  kind: 'OB.UI.ModalSelectOpenReceipts',
+  name: 'OBPOS_modalSelectOpenReceipts'
 });
