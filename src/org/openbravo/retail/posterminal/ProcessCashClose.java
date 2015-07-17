@@ -21,9 +21,9 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.LockOptions;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.LockOptions;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
@@ -258,7 +258,6 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
       JSONArray cashMgmtIds = jsonCashup.getJSONArray("cashMgmtIds");
       JSONObject result = processor.processCashClose(posTerminal, jsonCashup, cashMgmtIds,
           currentDate, slaveCashupIds);
-          jsonCashup, cashMgmtIds, currentDate, slaveCashupIds);
       // add the messages returned by processCashClose...
       jsonData.put("messages", result.opt("messages"));
       jsonData.put("next", result.opt("next"));
