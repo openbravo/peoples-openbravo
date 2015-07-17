@@ -16,7 +16,7 @@
     tableName: 'm_product',
     entityName: 'Product',
     source: 'org.openbravo.retail.posterminal.master.Product',
-    dataLimit: 100,
+    dataLimit: OB.Dal.DATALIMIT,
     includeTerminalDate: true,
     hgvol: 'OBPOS_highVolume.product',
     initialize: function () {

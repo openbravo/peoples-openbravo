@@ -50,7 +50,9 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.ad_forms.AcctServer;
+import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.materialmgmt.StockUtils;
@@ -80,6 +82,7 @@ import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_OrigPaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
@@ -133,6 +136,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   @Any
   private Instance<OrderLoaderPreProcessHook> orderPreProcesses;
 
+  private boolean useOrderDocumentNoForRelatedDocs = false;
+
   protected String getImportQualifier() {
     return "Order";
   }
@@ -140,6 +145,16 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   @Override
   public JSONObject saveRecord(JSONObject jsonorder) throws Exception {
     long t0 = 0, t1 = 0, t11 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0, t111 = 0, t112 = 0, t113 = 0, t115 = 0, t116 = 0;
+
+    try {
+      useOrderDocumentNoForRelatedDocs = "Y".equals(Preferences.getPreferenceValue(
+          "OBPOS_UseOrderDocumentNoForRelatedDocs", true, OBContext.getOBContext()
+              .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
+              .getOBContext().getUser(), OBContext.getOBContext().getRole(), null));
+    } catch (PropertyException e1) {
+      log.error(
+          "Error getting OBPOS_UseOrderDocumentNoForRelatedDocs preference: " + e1.getMessage(), e1);
+    }
 
     documentNoHandlers.set(new ArrayList<OrderLoader.DocumentNoHandler>());
     try {
@@ -161,7 +176,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       OrderLine orderLine = null;
       ShipmentInOut shipment = null;
       Invoice invoice = null;
-      boolean sendEmail, createInvoice = false;
+      boolean createInvoice = false;
       TriggerHandler.getInstance().disable();
       newLayaway = jsonorder.has("orderType") && jsonorder.getLong("orderType") == 2;
       notpaidLayaway = (jsonorder.getBoolean("isLayaway") || jsonorder.optLong("orderType") == 2)
@@ -206,7 +221,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           createShipment &= jsonorder.getBoolean("generateShipment");
           createInvoice &= jsonorder.getBoolean("generateShipment");
         }
-        sendEmail = (jsonorder.has("sendEmail") && jsonorder.getBoolean("sendEmail"));
         // Order header
         if (log.isDebugEnabled()) {
           t111 = System.currentTimeMillis();
@@ -260,15 +274,11 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
                 "OBPOS_WarehouseNotStorageBin", OBContext.getOBContext().getLanguage()
                     .getLanguage()));
           }
-          // Shipment header
+
           shipment = OBProvider.getInstance().get(ShipmentInOut.class);
           createShipment(shipment, order, jsonorder);
-          if (shipment != null) {
-            OBDal.getInstance().save(shipment);
-          }
-          // Shipment lines
+          OBDal.getInstance().save(shipment);
           createShipmentLines(shipment, order, jsonorder, orderlines, lineReferences);
-
         }
         if (log.isDebugEnabled()) {
           t115 = System.currentTimeMillis();
@@ -351,9 +361,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         JSONObject paymentResponse = handlePayments(jsonorder, order, invoice, wasPaidOnCredit);
         if (paymentResponse != null) {
           return paymentResponse;
-        }
-        if (sendEmail) {
-          EmailSender emailSender = new EmailSender(order.getId(), jsonorder);
         }
 
         // Call all OrderProcess injected.
@@ -1046,7 +1053,11 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     shipment
         .setDocumentType(getShipmentDocumentType((String) DalUtil.getId(order.getDocumentType())));
 
-    shipment.setDocumentNo(order.getDocumentNo());
+    if (useOrderDocumentNoForRelatedDocs) {
+      shipment.setDocumentNo(order.getDocumentNo());
+    } else {
+      addDocumentNoHandler(shipment, shpEntity, null, shipment.getDocumentType());
+    }
 
     shipment.setAccountingDate(order.getOrderDate());
     shipment.setMovementDate(order.getOrderDate());
@@ -1060,17 +1071,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     shipment.setProcessed(true);
     shipment.setSalesOrder(order);
     shipment.setProcessGoodsJava("--");
-
   }
 
   protected void createOrderLines(Order order, JSONObject jsonorder, JSONArray orderlines,
       ArrayList<OrderLine> lineReferences) throws JSONException {
-    boolean isQuotation = false;
-    try {
-      isQuotation = jsonorder.has("isQuotation") && jsonorder.getBoolean("isQuotation");
-    } catch (Exception ex) {
-      isQuotation = false;
-    }
     Entity orderLineEntity = ModelProvider.getInstance().getEntity(OrderLine.class);
     Entity promotionLineEntity = ModelProvider.getInstance().getEntity(OrderLineOffer.class);
     int stdPrecision = order.getCurrency().getStandardPrecision().intValue();
@@ -1236,7 +1240,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     order.setObposSendemail((jsonorder.has("sendEmail") && jsonorder.getBoolean("sendEmail")));
 
     long documentno = (long) Integer.parseInt(order.getDocumentNo().substring(
-        order.getDocumentNo().indexOf("/") + 1));
+        order.getDocumentNo().lastIndexOf("/") + 1));
     if (order.getObposApplications().getLastassignednum() == null
         || documentno > order.getObposApplications().getLastassignednum()) {
       OBPOSApplications terminal = order.getObposApplications();
@@ -1642,7 +1646,13 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
       DocumentType paymentDocType = getPaymentDocumentType(order.getOrganization());
       Entity paymentEntity = ModelProvider.getInstance().getEntity(FIN_Payment.class);
-      String paymentDocNo = getDocumentNo(paymentEntity, null, paymentDocType);
+
+      String paymentDocNo;
+      if (useOrderDocumentNoForRelatedDocs) {
+        paymentDocNo = order.getDocumentNo();
+      } else {
+        paymentDocNo = getDocumentNo(paymentEntity, null, paymentDocType);
+      }
 
       // get date
       Date calculatedDate = (payment.has("date") && !payment.isNull("date")) ? OBMOBCUtils
@@ -1666,6 +1676,17 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         // Update Payment In amount after adding GLItem
         finPayment.setAmount(origAmount.setScale(stdPrecision, RoundingMode.HALF_UP));
       }
+
+      if (checkPaidOnCreditChecked) {
+        List<FIN_PaymentDetail> paymentDetailList = finPayment.getFINPaymentDetailList();
+        if (paymentDetailList.size() > 0) {
+          for (FIN_PaymentDetail paymentDetail : paymentDetailList) {
+            paymentDetail.setPrepayment(true);
+          }
+          OBDal.getInstance().flush();
+        }
+      }
+
       OBDal.getInstance().save(finPayment);
 
       String description = getPaymentDescription();
@@ -1685,9 +1706,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       final List<FIN_FinaccTransaction> transactions = finPayment.getFINFinaccTransactionList();
       final String cashupId = jsonorder.getString("obposAppCashup");
       final OBPOSAppCashup cashup = OBDal.getInstance().get(OBPOSAppCashup.class, cashupId);
-      if (transactions.size() == 0) {
-        throw new OBException("The payment didn't create any transaction");
-      }
       for (FIN_FinaccTransaction transaction : transactions) {
         transaction.setObposAppCashup(cashup);
       }
@@ -1860,11 +1878,12 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       OBDal.getInstance().save(bob);
     }
 
-    private String getDocumentNumber(Entity entity, DocumentType doctypeTarget, DocumentType doctype) {
+    private String getDocumentNumber(Entity localEntity, DocumentType localDoctypeTarget,
+        DocumentType localDoctype) {
       return Utility.getDocumentNo(OBDal.getInstance().getConnection(false),
           new DalConnectionProvider(false), RequestContext.get().getVariablesSecureApp(), "",
-          entity.getTableName(), doctypeTarget == null ? "" : doctypeTarget.getId(),
-          doctype == null ? "" : doctype.getId(), false, true);
+          localEntity.getTableName(), localDoctypeTarget == null ? "" : localDoctypeTarget.getId(),
+          localDoctype == null ? "" : localDoctype.getId(), false, true);
     }
 
   }

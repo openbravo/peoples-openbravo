@@ -149,29 +149,27 @@ public class Product extends ProcessHQLQuery {
     }
     hql += "order by pli.product.name";
     products.add(hql);
-    if (!isHgvol) {// TODO:Discounts like packs or combos are not supported yet
-      products.add("select "
-          + regularProductsDiscHQLProperties.getHqlSelect()
-          + " from PricingAdjustment as p left outer join p.obdiscImage img" //
-          + " where $filtersCriteria AND p.discountType.obposIsCategory = true "//
-          + "   and p.discountType.active = true " //
-          + "   and p.$readableSimpleClientCriteria"//
-          + "   and (p.endingDate is null or p.endingDate >= TO_DATE('"
-          + format.format(now.getTime())
-          + "', 'yyyy/MM/dd'))" //
-          + "   and p.startingDate <= TO_DATE('"
-          + format.format(now.getTime())
-          + "', 'yyyy/MM/dd')"
-          + "   and (p.$incrementalUpdateCriteria) "//
-          // organization
-          + "and ((p.includedOrganizations='Y' " + "  and not exists (select 1 "
-          + "         from PricingAdjustmentOrganization o" + "        where active = true"
-          + "          and o.priceAdjustment = p" + "          and o.organization.id ='" + orgId
-          + "')) " + "   or (p.includedOrganizations='N' " + "  and  exists (select 1 "
-          + "         from PricingAdjustmentOrganization o" + "        where active = true"
-          + "          and o.priceAdjustment = p" + "          and o.organization.id ='" + orgId
-          + "')) " + "    ) ");
-    }
+    products.add("select "
+        + regularProductsDiscHQLProperties.getHqlSelect()
+        + " from PricingAdjustment as p left outer join p.obdiscImage img" //
+        + " where $filtersCriteria AND p.discountType.obposIsCategory = true "//
+        + "   and p.discountType.active = true " //
+        + "   and p.$readableSimpleClientCriteria"//
+        + "   and (p.endingDate is null or p.endingDate >= TO_DATE('"
+        + format.format(now.getTime())
+        + "', 'yyyy/MM/dd'))" //
+        + "   and p.startingDate <= TO_DATE('"
+        + format.format(now.getTime())
+        + "', 'yyyy/MM/dd')"
+        + "   and (p.$incrementalUpdateCriteria) "//
+        // organization
+        + "and ((p.includedOrganizations='Y' " + "  and not exists (select 1 "
+        + "         from PricingAdjustmentOrganization o" + "        where active = true"
+        + "          and o.priceAdjustment = p" + "          and o.organization.id ='" + orgId
+        + "')) " + "   or (p.includedOrganizations='N' " + "  and  exists (select 1 "
+        + "         from PricingAdjustmentOrganization o" + "        where active = true"
+        + "          and o.priceAdjustment = p" + "          and o.organization.id ='" + orgId
+        + "')) " + "    ) ");
 
     // generic products
     if (!isHgvol) {// BROWSE tab is hidden, we do not need to send generic products

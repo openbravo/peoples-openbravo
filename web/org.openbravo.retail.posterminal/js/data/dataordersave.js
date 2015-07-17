@@ -148,8 +148,9 @@
               //In case the processed document is a quotation, we remove its id so it can be reactivated
               if (model && !_.isNull(model)) {
                 if (model.get('order') && model.get('order').get('isQuotation')) {
-                  model.get('order').set('oldId', model.get('order').get('id'));
-                  model.get('order').set('id', null);
+                  if (!(model.get('order').get('oldId') && model.get('order').get('oldId').length > 0)) {
+                    model.get('order').set('oldId', model.get('order').get('id'));
+                  }
                   model.get('order').set('isbeingprocessed', 'N');
                   OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationSaved', [currentDocNo]));
                 } else {

@@ -16,7 +16,7 @@
     tableName: 'c_bp_group',
     entityName: 'BPCategory',
     source: 'org.openbravo.retail.posterminal.master.BPCategory',
-    dataLimit: 100
+    dataLimit: OB.Dal.DATALIMIT
   });
 
   BPCategory.addProperties([{

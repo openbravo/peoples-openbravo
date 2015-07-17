@@ -99,7 +99,7 @@ enyo.kind({
     I18NLabel: 'OBPOS_LinePrice',
     render: function (line) {
       if (line) {
-        this.$.propertyValue.setContent(line.printPrice());
+        this.$.propertyValue.setContent(OB.I18N.formatCurrency(line.get('priceList')));
       } else {
         this.$.propertyValue.setContent('');
       }
@@ -124,7 +124,7 @@ enyo.kind({
     render: function (line) {
       if (line) {
         if (line.get('priceIncludesTax')) {
-          this.$.propertyValue.setContent(line.printGross());
+          this.$.propertyValue.setContent(line.printTotalLine());
         } else {
           this.$.propertyValue.setContent(line.printNet());
         }

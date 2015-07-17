@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2014 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -23,34 +23,26 @@ import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
 import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
-public class SalesRepresentative extends ProcessHQLQuery {
-  public static final String salesRepresentativePropertyExtension = "OBPOS_SalesRepresentativeExtension";
+public class ProductBOM extends ProcessHQLQuery {
+
+  public static final String ProductBOMPropertyExtension = "OBPOS_ProductBOMExtension";
 
   @Inject
   @Any
-  @Qualifier(salesRepresentativePropertyExtension)
+  @Qualifier(ProductBOMPropertyExtension)
   private Instance<ModelExtension> extensions;
 
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
-    Long lastUpdated = jsonsent.has("lastUpdated")
-        && !jsonsent.get("lastUpdated").equals("undefined") ? jsonsent.getLong("lastUpdated")
-        : null;
-    List<String> hqlQueries = new ArrayList<String>();
-    HQLPropertyList regularSalesRepresentativeHQLProperties = ModelExtensionUtils
-        .getPropertyExtensions(extensions);
 
-    String operator = lastUpdated == null ? " AND " : " OR ";
+    List<String> hqlQueries = new ArrayList<String>();
+    HQLPropertyList productBOMProperties = ModelExtensionUtils.getPropertyExtensions(extensions);
 
     hqlQueries
         .add("select"
-            + regularSalesRepresentativeHQLProperties.getHqlSelect() //
-            + "from ADUser user "
-            + "where "
-            + " exists (select 1 from BusinessPartner bp where user.businessPartner = bp AND bp.isSalesRepresentative = true AND (bp.$naturalOrgCriteria)) "
-            + "AND ((user.$incrementalUpdateCriteria) "
-            + operator
-            + " (user.businessPartner.$incrementalUpdateCriteria)) AND (user.$naturalOrgCriteria) AND (user.$readableSimpleClientCriteria) order by user.name asc");
+            + productBOMProperties.getHqlSelect() //
+            + "from ProductBOM bom "
+            + "where (bom.$incrementalUpdateCriteria) AND ($naturalOrgCriteria) and $readableClientCriteria AND bom.active=true");
 
     return hqlQueries;
   }

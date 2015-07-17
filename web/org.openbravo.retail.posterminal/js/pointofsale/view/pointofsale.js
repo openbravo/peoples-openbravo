@@ -547,6 +547,9 @@ enyo.kind({
   reactivateQuotation: function () {
     this.model.get('order').reactivateQuotation();
     this.model.get('orderList').saveCurrent();
+    if (this.model.get('order').get('isEditable') && this.model.get('order').get('isQuotation')) {
+      this.$.multiColumn.$.rightPanel.$.toolbarpane.$.edit.$.editTabContent.$.actionButtonsContainer.$.smallButton.show();
+    }
     return true;
   },
   rejectQuotation: function () {
@@ -565,7 +568,9 @@ enyo.kind({
     if (inEvent.orderType === 3) {
       this.$.multiColumn.$.rightPanel.$.keyboard.setStatus('');
     }
-    this.model.get('order').setOrderType(inEvent.permission, inEvent.orderType);
+    this.model.get('order').setOrderType(inEvent.permission, inEvent.orderType, {
+      applyPromotions: false
+    });
     this.model.get('orderList').saveCurrent();
     return true;
   },
