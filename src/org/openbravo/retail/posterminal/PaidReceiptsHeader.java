@@ -114,16 +114,6 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
     return Arrays.asList(new String[] { hqlPaidReceipts });
   }
 
-  protected String sanitizeString(String oldString) {
-    String result = oldString;
-    // Cleaning '
-    result = result.replace("'", "");
-    // Cleaing -
-    result = result.replace("-", "");
-    // Cleaning other characters here...
-    return result;
-  }
-
   @Override
   protected boolean bypassPreferenceCheck() {
     return true;
