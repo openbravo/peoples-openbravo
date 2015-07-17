@@ -28,6 +28,7 @@ import org.openbravo.advpaymentmngt.utility.APRMConstants;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
+import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 
@@ -67,8 +68,9 @@ public class TransactionAddPaymentDisplayLogics extends AddPaymentDisplayLogicsH
         BusinessPartner bpartner = OBDal.getInstance().get(BusinessPartner.class,
             strBusinessPartner);
         Organization org = OBDal.getInstance().get(Organization.class, context.get("ad_org_id"));
+        Currency currency = OBDal.getInstance().get(Currency.class, context.get("c_currency_id"));
         BigDecimal customerCredit = new AdvPaymentMngtDao().getCustomerCredit(bpartner,
-            "RCIN".equals(document), org);
+            "RCIN".equals(document), org, currency);
         return customerCredit.signum() > 0;
       } else {
         return false;

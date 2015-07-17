@@ -63,7 +63,7 @@ static Logger log4j = Logger.getLogger(AlertsForWrongOrdersData.class);
       "      from c_order, fin_payment_schedule, fin_payment_scheduledetail " +
       "      where c_order.c_order_id = fin_payment_schedule.c_order_id" +
       "      and fin_payment_schedule.fin_payment_schedule_id = fin_payment_scheduledetail.fin_payment_schedule_order " +
-      "      and fin_payment_scheduledetail.iscanceled = 'N' " +
+      "      and fin_payment_scheduledetail.isinvoicepaid = 'Y'" +
       "      and fin_payment_scheduledetail.fin_payment_detail_id IS NOT NULL " +
       "      group by fin_payment_schedule.ad_org_id, fin_payment_schedule.ad_client_id, c_order.issotrx, fin_payment_schedule.fin_payment_schedule_id, " +
       "      fin_payment_schedule.c_order_id, fin_payment_schedule.paidamt " +

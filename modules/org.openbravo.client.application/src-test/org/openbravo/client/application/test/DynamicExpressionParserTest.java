@@ -21,12 +21,12 @@ package org.openbravo.client.application.test;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.client.application.DynamicExpressionParser;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.ui.Tab;
-import org.openbravo.test.base.OBBaseTest;
 
-public class DynamicExpressionParserTest extends OBBaseTest {
+public class DynamicExpressionParserTest extends WeldBaseTest {
 
   @Test
   public void testRegularExpression() {

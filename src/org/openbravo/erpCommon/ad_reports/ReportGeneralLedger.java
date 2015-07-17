@@ -585,7 +585,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       }
 
       // augment data with totals
-      AddTotals dataWithTotals = new AddTotals(data, strGroupByText, strcBpartnerId, strmProductId,
+      AddTotals dataWithTotals = new AddTotals(data, strGroupBy, strcBpartnerId, strmProductId,
           strcProjectId, strcAcctSchemaId, strDateFrom, strOrgFamily, this);
 
       String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportGeneralLedger.jrxml";

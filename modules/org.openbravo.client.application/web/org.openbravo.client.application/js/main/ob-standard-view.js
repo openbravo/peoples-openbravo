@@ -2195,7 +2195,7 @@ isc.OBStandardView.addProperties({
                 });
               }
               view.viewGrid.data.handleUpdate('remove', recordInfos, false, req);
-              if (view.treeGrid) {
+              if (view.treeGrid && view.treeGrid.data && view.treeGrid.data.handleUpdate) {
                 view.treeGrid.data.handleUpdate('remove', recordInfos, false, req);
               }
               if (updateTotalRows) {

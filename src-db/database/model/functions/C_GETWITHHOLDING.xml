@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2006 Openbravo SLU
+* All portions are Copyright (C) 2001-2015 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  _Francesco Finamore_______________________.
 ************************************************************************/
@@ -44,7 +44,7 @@ IsWithHoldingTax char(1);
 
 TotCompensi NUMBER;
 base_amount NUMBER;
-Withholding varchar(32);
+Withholding NUMBER;
 TaxInps NUMBER;
 TaxAmount NUMBER;
 

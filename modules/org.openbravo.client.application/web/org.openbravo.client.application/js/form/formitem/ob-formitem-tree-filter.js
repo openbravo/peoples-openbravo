@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2014 Openbravo SLU
+ * All portions are Copyright (C) 2013-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -75,24 +75,36 @@ isc.OBTreeItemPopupFilterWindow.addProperties({
       sortField: this.displayField,
 
       init: function () {
+        var theGrid;
         OB.Datasource.get(this.dataSourceId, this, null, true);
-        this.copyFunctionsFromViewGrid();
+        if (this.view.paramWindow) {
+          // the checkShowFilterFunnelIcon implementation of OBPickAndExecuteGrid requires the contentView to be defined
+          theGrid = this.view.theForm.getField(this.treePopup.filterItem.containerWidget.grid.parentElement.parameterName).canvas.viewGrid;
+          this.contentView = theGrid.contentView;
+          this.copyFunctionsFromGrid(theGrid);
+        } else {
+          this.copyFunctionsFromViewGrid();
+        }
         this.Super('init', arguments);
         this.filterNoRecordsEmptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUIAPP_GridFilterNoResults') + '</span>' + '<span onclick="window[\'' + this.ID + '\'].clearFilter();" class="' + this.emptyMessageLinkStyle + '">' + OB.I18N.getLabel('OBUIAPP_GridClearFilter') + '</span>';
       },
 
       copyFunctionsFromViewGrid: function () {
-        this.filterEditorProperties = this.view.viewGrid.filterEditorProperties;
-        this.checkShowFilterFunnelIcon = this.view.viewGrid.checkShowFilterFunnelIcon;
-        this.isGridFiltered = this.view.viewGrid.isGridFiltered;
-        this.isGridFilteredWithCriteria = this.view.viewGrid.isGridFilteredWithCriteria;
-        this.isValidFilterField = this.view.viewGrid.isValidFilterField;
-        this.convertCriteria = this.view.viewGrid.convertCriteria;
-        this.resetEmptyMessage = this.view.viewGrid.resetEmptyMessage;
-        this.filterData = this.view.viewGrid.filterData;
-        this.loadingDataMessage = this.view.viewGrid.loadingDataMessage;
-        this.emptyMessage = this.view.viewGrid.emptyMessage;
-        this.noDataEmptyMessage = this.view.viewGrid.noDataEmptyMessage;
+        this.copyFunctionsFromGrid(this.view.viewGrid);
+      },
+
+      copyFunctionsFromGrid: function (grid) {
+        this.filterEditorProperties = grid.filterEditorProperties;
+        this.checkShowFilterFunnelIcon = grid.checkShowFilterFunnelIcon;
+        this.isGridFiltered = grid.isGridFiltered;
+        this.isGridFilteredWithCriteria = grid.isGridFilteredWithCriteria;
+        this.isValidFilterField = grid.isValidFilterField;
+        this.convertCriteria = grid.convertCriteria;
+        this.resetEmptyMessage = grid.resetEmptyMessage;
+        this.filterData = grid.filterData;
+        this.loadingDataMessage = grid.loadingDataMessage;
+        this.emptyMessage = grid.emptyMessage;
+        this.noDataEmptyMessage = grid.noDataEmptyMessage;
       },
 
       onFetchData: function (criteria, requestProperties) {
@@ -274,6 +286,7 @@ isc.OBTreeFilterItem.addProperties({
   filterDialogConstructor: isc.OBTreeItemPopupFilterWindow,
   lastValueFromPopup: null,
   pickerConstructor: 'ImgButton',
+  allowExpressions: true,
   pickerIconDefaults: {
     name: 'showDateRange',
     width: 21,

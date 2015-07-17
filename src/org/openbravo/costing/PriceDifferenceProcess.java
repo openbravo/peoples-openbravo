@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-15 Openbravo SLU
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.ScrollMode;
@@ -50,6 +51,13 @@ public class PriceDifferenceProcess {
   private static boolean calculateTransactionPriceDifference(MaterialTransaction materialTransaction)
       throws OBException {
     boolean costAdjCreated = false;
+
+    // With Standard Algorithm, no cost adjustment is needed
+    if (StringUtils.equals(materialTransaction.getCostingAlgorithm().getJavaClassName(),
+        "org.openbravo.costing.StandardAlgorithm")) {
+      return false;
+    }
+
     if (materialTransaction.isCostPermanent()) {
       // Permanently adjusted transaction costs are not checked for price differences.
       return false;

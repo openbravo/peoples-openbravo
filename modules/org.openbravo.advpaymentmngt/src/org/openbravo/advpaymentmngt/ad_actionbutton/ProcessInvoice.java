@@ -296,14 +296,20 @@ public class ProcessInvoice extends HttpSecureAppServlet {
             // If the invoice grand total is ZERO or already has payments (due to
             // payment method automation) or the business partner does not have a default financial
             // account defined or invoice's payment method is not inside BP's financial
-            // account do not cancel credit
+            // account or the business partner's currency is not equal to the invoice's currency do
+            // not cancel credit
             if (BigDecimal.ZERO.compareTo(invoice.getGrandTotalAmount()) != 0
                 && isPaymentMethodConfigured(invoice)
                 && !isInvoiceWithPayments(invoice)
                 && (AcctServer.DOCTYPE_ARInvoice.equals(invoiceDocCategory) || AcctServer.DOCTYPE_APInvoice
-                    .equals(invoiceDocCategory))) {
-              creditPayments = dao.getCustomerPaymentsWithCredit(invoice.getOrganization(),
-                  invoice.getBusinessPartner(), invoice.isSalesTransaction());
+                    .equals(invoiceDocCategory))
+                && (invoice.getBusinessPartner().getCurrency() != null && StringUtils.equals(
+                    invoice.getCurrency().getId(), invoice.getBusinessPartner().getCurrency()
+                        .getId()))) {
+              creditPayments = dao
+                  .getCustomerPaymentsWithCredit(invoice.getOrganization(),
+                      invoice.getBusinessPartner(), invoice.isSalesTransaction(),
+                      invoice.getCurrency());
               if (creditPayments != null && !creditPayments.isEmpty()) {
                 printPageCreditPaymentGrid(response, vars, strC_Invoice_ID, strdocaction, strTabId,
                     strC_Invoice_ID, strdocaction, strWindowId, strTabId, invoice.getInvoiceDate(),
