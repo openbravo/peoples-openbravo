@@ -14,7 +14,7 @@
 enyo.kind({
   kind: 'OB.UI.SmallButton',
   name: 'OB.UI.BPLocation',
-  classes: 'btnlink btnlink-small btnlink-gray',
+  classes: 'btnlink-gray',
   style: 'float: right; text-overflow:ellipsis; white-space: nowrap; overflow: hidden;',
   published: {
     order: null
@@ -26,7 +26,15 @@ enyo.kind({
     onBPLocSelectionDisabled: 'buttonDisabled'
   },
   buttonDisabled: function (inSender, inEvent) {
+    this.isEnabled = !inEvent.status;
     this.setDisabled(inEvent.status);
+    if (!this.isEnabled) {
+      this.removeClass('btnlink');
+      this.addClass('btnbp');
+    } else {
+      this.removeClass('btnbp');
+      this.addClass('btnlink');
+    }
   },
   tap: function () {
     if (!this.disabled) {

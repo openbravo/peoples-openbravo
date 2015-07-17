@@ -53,6 +53,7 @@ enyo.kind({
     onDiscountsModeFinished: 'discountsModeFinished',
     onDisableLeftToolbar: 'leftToolbarDisabled',
     onDisableBPSelection: 'BPSelectionDisabled',
+    onDisableBPLocSelection: 'BPLocSelectionDisabled',
     onDisableNewBP: 'newBPDisabled',
     onDisableNewBPLoc: 'newBPLocDisabled',
     onDisableOrderSelection: 'orderSelectionDisabled',
@@ -536,7 +537,9 @@ enyo.kind({
     if (inEvent.orderType === 3) {
       this.$.multiColumn.$.rightPanel.$.keyboard.setStatus('');
     }
-    this.model.get('order').setOrderType(inEvent.permission, inEvent.orderType);
+    this.model.get('order').setOrderType(inEvent.permission, inEvent.orderType, {
+      applyPromotions: false
+    });
     this.model.get('orderList').saveCurrent();
     return true;
   },
@@ -585,6 +588,9 @@ enyo.kind({
   BPSelectionDisabled: function (inSender, inEvent) {
     this.waterfall('onBPSelectionDisabled', inEvent);
   },
+  BPLocSelectionDisabled: function (inSender, inEvent) {
+    this.waterfall('onBPLocSelectionDisabled', inEvent);
+  },
   newBPDisabled: function (inSender, inEvent) {
     this.waterfall('onNewBPDisabled', inEvent);
   },
@@ -602,6 +608,9 @@ enyo.kind({
       status: true
     });
     this.BPSelectionDisabled(inSender, {
+      status: true
+    });
+    this.BPLocSelectionDisabled(inSender, {
       status: true
     });
     this.orderSelectionDisabled(inSender, {
@@ -649,6 +658,10 @@ enyo.kind({
     });
 
     this.BPSelectionDisabled(inSender, {
+      status: false
+    });
+
+    this.BPLocSelectionDisabled(inSender, {
       status: false
     });
 

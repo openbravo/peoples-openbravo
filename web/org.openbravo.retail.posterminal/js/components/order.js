@@ -394,10 +394,14 @@ enyo.kind({
     });
     this.$.listPaymentLines.setCollection(this.order.get('payments'));
     this.setTaxes();
-    this.order.on('change:gross change:net change:taxes', function (model) {
+    this.order.on('change:gross change:net', function (model) {
       if (model.get('orderType') !== 3) {
         this.$.totalReceiptLine.renderTotal(model.getTotal());
         this.$.totalTaxLine.renderTax(OB.DEC.sub(model.getTotal(), model.getNet()));
+      }
+    }, this);
+    this.order.on('paintTaxes', function () {
+      if (this.order.get('orderType') !== 3) {
         this.setTaxes();
       }
     }, this);
