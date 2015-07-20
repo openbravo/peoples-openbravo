@@ -156,11 +156,17 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           "Error getting OBPOS_UseOrderDocumentNoForRelatedDocs preference: " + e1.getMessage(), e1);
     }
 
+    boolean isDeleted = false;
     documentNoHandlers.set(new ArrayList<OrderLoader.DocumentNoHandler>());
     try {
       executeHooks(orderPreProcesses, jsonorder, null, null, null);
       boolean wasPaidOnCredit = false;
       boolean isQuotation = jsonorder.has("isQuotation") && jsonorder.getBoolean("isQuotation");
+
+      if (jsonorder.has("deletedLines")) {
+        mergeDeletedLines(jsonorder);
+      }
+
       if (jsonorder.getLong("orderType") != 2 && !jsonorder.getBoolean("isLayaway") && !isQuotation
           && verifyOrderExistance(jsonorder)
           && (!jsonorder.has("preserveId") || jsonorder.getBoolean("preserveId"))) {
@@ -200,11 +206,14 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         if (log.isDebugEnabled()) {
           t1 = System.currentTimeMillis();
         }
+        // Getting if the order is deleted or not
+        isDeleted = jsonorder.has("obposIsDeleted") && jsonorder.getBoolean("obposIsDeleted");
         // An invoice will be automatically created if:
         // - The order is not a layaway and is not completely paid (ie. it's paid on credit)
         // - Or, the order is a normal order or a fully paid layaway, and has the "generateInvoice"
         // flag
         wasPaidOnCredit = !isQuotation
+            && !isDeleted
             && !notpaidLayaway
             && Math.abs(jsonorder.getDouble("payment")) < Math.abs(new Double(jsonorder
                 .getDouble("gross")));
@@ -216,7 +225,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
               || (!isQuotation && !notpaidLayaway && (jsonorder.has("generateInvoice") && jsonorder
                   .getBoolean("generateInvoice")));
         }
-        createShipment = !isQuotation && !notpaidLayaway;
+
+        createShipment = !isQuotation && !notpaidLayaway && !isDeleted;
         if (jsonorder.has("generateShipment")) {
           createShipment &= jsonorder.getBoolean("generateShipment");
           createInvoice &= jsonorder.getBoolean("generateShipment");
@@ -356,7 +366,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         t5 = System.currentTimeMillis();
       }
 
-      if (!isQuotation) {
+      if (!isQuotation && !isDeleted) {
         // Payment
         JSONObject paymentResponse = handlePayments(jsonorder, order, invoice, wasPaidOnCredit);
         if (paymentResponse != null) {
@@ -384,6 +394,20 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       return successMessage(jsonorder);
     } finally {
       documentNoHandlers.set(null);
+    }
+  }
+
+  private void mergeDeletedLines(JSONObject jsonorder) {
+    try {
+      JSONArray deletedLines = jsonorder.getJSONArray("deletedLines");
+      JSONArray lines = jsonorder.getJSONArray("lines");
+      for (int i = 0; i < deletedLines.length(); i++) {
+        lines.put(deletedLines.get(i));
+      }
+      jsonorder.put("lines", lines);
+    } catch (JSONException e) {
+      log.error("JSON information couldn't be read when merging deleted lines", e);
+      return;
     }
   }
 
@@ -1095,6 +1119,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
       orderline.setActive(true);
       orderline.setSalesOrder(order);
+      if (jsonOrderLine.has("obposIsDeleted") && jsonOrderLine.getBoolean("obposIsDeleted")) {
+        orderline.setObposQtyDeleted(orderline.getOrderedQuantity());
+        orderline.setOrderedQuantity(BigDecimal.ZERO);
+      }
       orderline.setLineNetAmount(BigDecimal.valueOf(jsonOrderLine.getDouble("net")).setScale(
           stdPrecision, RoundingMode.HALF_UP));
 
@@ -1231,6 +1259,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     order.setSalesTransaction(true);
     if (jsonorder.getBoolean("isQuotation")) {
       order.setDocumentStatus("UE");
+    } else if (jsonorder.has("obposIsDeleted") && jsonorder.getBoolean("obposIsDeleted")) {
+      order.setDocumentStatus("CL");
+      order.setGrandTotalAmount(BigDecimal.ZERO);
+      order.setSummedLineAmount(BigDecimal.ZERO);
     } else {
       order.setDocumentStatus("CO");
     }

@@ -662,6 +662,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
           cashCloseInfo.paymentMethod = paymentMethodInfo;
           objToSend.cashCloseInfo.push(cashCloseInfo);
         }, me);
+        objToSend.approvals = me.get('approvals');
         var cashMgmtIds = [];
         objToSend.cashMgmtIds = cashMgmtIds;
         OB.Dal.find(OB.Model.CashManagement, {

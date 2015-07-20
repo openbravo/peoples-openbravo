@@ -82,6 +82,9 @@ enyo.kind({
     onManageServiceProposal: 'manageServiceProposal',
     onDisableUserInterface: 'disableUserInterface',
     onEnableUserInterface: 'enableUserInterface',
+    onSetMultiSelection: 'setMultiSelection',
+    onShowMultiSelection: 'showMultiSelection',
+    onSetMultiSelectionItems: 'setMultiSelectionItems',
     onToggleLineSelection: 'toggleLineSelection',
     onFinishServiceProposal: 'finishServiceProposal'
   },
@@ -367,11 +370,44 @@ enyo.kind({
   deleteCurrentOrder: function (inSender, inEvent) {
     function removeOrder(context) {
       var isPaidQuotation = (context.model.get('order').has('isQuotation') && context.model.get('order').get('isQuotation') && context.model.get('order').has('hasbeenpaid') && context.model.get('order').get('hasbeenpaid') === 'Y');
-      if (context.model.get('order').get('id') && !isPaidQuotation) {
-        context.model.get('orderList').saveCurrent();
-        OB.Dal.remove(context.model.get('orderList').current, null, null);
+      var receipt = context.model.get('order');
+      if (receipt.get('id') && !isPaidQuotation && receipt.get('lines') && receipt.get('lines').length > 0) {
+        if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
+          receipt.set('obposIsDeleted', true);
+          var i;
+          for (i = 0; i < receipt.get('lines').length; i++) {
+            receipt.get('lines').at(i).set('obposIsDeleted', true);
+          }
+          receipt.calculateGross();
+          receipt.save();
+          receipt.trigger('closed', {
+            callback: function () {
+              context.model.get('orderList').deleteCurrent();
+              context.model.get('orderList').synchronizeCurrentOrder();
+            }
+          });
+        } else {
+          context.model.get('orderList').saveCurrent();
+          OB.Dal.remove(context.model.get('orderList').current, null, null);
+          context.model.get('orderList').deleteCurrent();
+        }
+      } else if (receipt.has('deletedLines')) {
+        if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
+          receipt.set('obposIsDeleted', true);
+          receipt.calculateGross();
+          receipt.save();
+          receipt.trigger('closed', {
+            callback: function () {
+              context.model.get('orderList').deleteCurrent();
+              context.model.get('orderList').synchronizeCurrentOrder();
+            }
+          });
+        } else {
+          context.model.get('orderList').deleteCurrent();
+        }
+      } else {
+        context.model.get('orderList').deleteCurrent();
       }
-      context.model.get('orderList').deleteCurrent();
     }
 
     if (inEvent && inEvent.notSavedOrder === true) {
@@ -1024,6 +1060,15 @@ enyo.kind({
   },
   finishServiceProposal: function (inSender, inEvent) {
     this.waterfallDown('onFinishServiceProposal', inEvent);
+  },
+  setMultiSelection: function (inSender, inEvent) {
+    this.waterfall('onSetMultiSelected', inEvent);
+  },
+  showMultiSelection: function (inSender, inEvent) {
+    this.waterfall('onShowMultiSelected', inEvent);
+  },
+  setMultiSelectionItems: function (inSender, inEvent) {
+    this.waterfall('onTableMultiSelectedItems', inEvent);
   },
   init: function () {
     var receipt, receiptList, LeftColumnCurrentView;

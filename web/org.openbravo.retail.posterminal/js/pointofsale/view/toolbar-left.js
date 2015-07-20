@@ -152,16 +152,23 @@ enyo.kind({
     if (me.hasClass('paidticket')) {
       me.doDeleteOrder();
     } else {
-      OB.UTIL.Approval.requestApproval(
-      this.model, 'OBPOS_approval.removereceipts', function (approved, supervisor, approvalType) {
-        if (approved) {
-          me.doShowPopup({
-            popup: 'modalConfirmReceiptDelete'
-          });
-        }
-      });
+      if (OB.MobileApp.model.hasPermission('OBPOS_approval.removereceipts', true)) {
+        //Show the pop up to delete or not
+        me.doShowPopup({
+          popup: 'modalConfirmReceiptDelete'
+        });
+      } else {
+        OB.UTIL.Approval.requestApproval(
+        this.model, 'OBPOS_approval.removereceipts', function (approved, supervisor, approvalType) {
+          if (approved) {
+            //Delete the order without the popup
+            me.doDeleteOrder({
+              notSavedOrder: true
+            });
+          }
+        });
+      }
     }
-
   },
   init: function (model) {
     this.model = model;

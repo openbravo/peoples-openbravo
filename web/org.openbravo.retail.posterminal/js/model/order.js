@@ -329,7 +329,7 @@
       }
     },
 
-    save: function () {
+    save: function (callback) {
       var undoCopy;
 
       if (this.attributes.json) {
@@ -338,8 +338,11 @@
       undoCopy = this.get('undo');
       this.unset('undo');
       this.set('json', JSON.stringify(this.toJSON()));
+      if (callback === undefined || !callback instanceof Function) {
+        callback = function () {};
+      }
       if (!OB.MobileApp.model.get('preventOrderSave')) {
-        OB.Dal.save(this, function () {}, function () {
+        OB.Dal.save(this, callback, function () {
           OB.error(arguments);
         });
       }
@@ -724,7 +727,7 @@
     },
 
     setUnit: function (line, qty, text, doNotSave) {
-      var permission;
+      var permission, me = this;
 
       if (OB.DEC.isNumber(qty) && qty !== 0) {
         var oldqty = line.get('qty');
@@ -733,30 +736,75 @@
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgCannotAddNegative'));
           return;
         }
+        if (qty > 0 && oldqty < 0 && this.get('orderType') === 1) {
+          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgCannotAddPostiveToReturn'));
+          return;
+        }
         if (line.get('product').get('groupProduct') === false) {
           this.addProduct(line.get('product'));
           return true;
         } else {
-          var me = this;
           // sets the new quantity
           line.set('qty', qty);
           // sets the undo action
-          this.set('undo', {
-            text: text || OB.I18N.getLabel('OBPOS_SetUnits', [line.get('qty'), line.get('product').get('_identifier')]),
-            oldqty: oldqty,
-            line: line,
-            undo: function () {
-              line.set('qty', oldqty);
-              me.set('undo', null);
+          if (this.get('multipleUndo')) {
+            var undoText = '',
+                oldqtys = [],
+                lines = [],
+                undo = this.get('undo');
+            if (undo && undo.oldqtys) {
+              undoText = undo.text + ', ';
+              oldqtys = undo.oldqtys;
+              lines = undo.lines;
             }
-          });
+            undoText += text || OB.I18N.getLabel('OBPOS_SetUnits', [line.get('qty'), line.get('product').get('_identifier')]);
+            oldqtys.push(oldqty);
+            lines.push(line);
+            this.set('undo', {
+              text: undoText,
+              oldqtys: oldqtys,
+              lines: lines,
+              undo: function () {
+                var i;
+                for (i = 0; i < me.get('undo').lines.length; i++) {
+                  me.get('undo').lines[i].set('qty', me.get('undo').oldqtys[i]);
+                  me.get('undo').lines[i].calculateGross();
+                }
+                me.calculateGross();
+                me.set('undo', null);
+              }
+            });
+          } else {
+            this.set('undo', {
+              text: text || OB.I18N.getLabel('OBPOS_SetUnits', [line.get('qty'), line.get('product').get('_identifier')]),
+              oldqty: oldqty,
+              line: line,
+              undo: function () {
+                line.set('qty', oldqty);
+                line.calculateGross();
+                me.calculateGross();
+                me.set('undo', null);
+              }
+            });
+          }
         }
         this.adjustPayment();
         if (!doNotSave) {
           this.save();
         }
       } else {
-        this.deleteLine(line);
+        if (line.get('deleteApproved')) {
+          // The approval to delete the line has already been granted
+          line.unset('deleteApproved');
+          this.deleteLine(line);
+        } else {
+          // We don't have the approval to delete the line yet; request it
+          OB.UTIL.Approval.requestApproval(OB.MobileApp.view.$.containerWindow.$.pointOfSale.model, 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
+            if (approved) {
+              me.deleteLine(line);
+            }
+          });
+        }
       }
     },
 
@@ -778,15 +826,46 @@
           line.set('price', price);
           // sets the undo action
           if (options.setUndo) {
-            this.set('undo', {
-              text: OB.I18N.getLabel('OBPOS_SetPrice', [line.printPrice(), line.get('product').get('_identifier')]),
-              oldprice: oldprice,
-              line: line,
-              undo: function () {
-                line.set('price', oldprice);
-                me.set('undo', null);
+            if (this.get('multipleUndo')) {
+              var text = '',
+                  oldprices = [],
+                  lines = [],
+                  undo = this.get('undo');
+              if (undo && undo.oldprices) {
+                text = undo.text + ', ';
+                oldprices = undo.oldprices;
+                lines = undo.lines;
               }
-            });
+              text += OB.I18N.getLabel('OBPOS_SetPrice', [line.printPrice(), line.get('product').get('_identifier')]);
+              oldprices.push(oldprice);
+              lines.push(line);
+              this.set('undo', {
+                text: text,
+                oldprices: oldprices,
+                lines: lines,
+                undo: function () {
+                  var i;
+                  for (i = 0; i < me.get('undo').lines.length; i++) {
+                    me.get('undo').lines[i].set('price', me.get('undo').oldprices[i]);
+                    me.get('undo').lines[i].calculateGross();
+                  }
+                  me.calculateGross();
+                  me.set('undo', null);
+                }
+              });
+            } else {
+              this.set('undo', {
+                text: OB.I18N.getLabel('OBPOS_SetPrice', [line.printPrice(), line.get('product').get('_identifier')]),
+                oldprice: oldprice,
+                line: line,
+                undo: function () {
+                  line.set('price', oldprice);
+                  line.calculateGross();
+                  me.calculateGross();
+                  me.set('undo', null);
+                }
+              });
+            }
           }
         }
         this.adjustPayment();
@@ -800,7 +879,22 @@
       this.get('lines').at(index).set(property, value);
     },
 
-    deleteLine: function (line, doNotSave) {
+    deleteLines: function (lines, doNotSave) {
+      var me = this,
+          lineDeleted = 0;
+      me.set('undo', null);
+      me.set('multipleUndo', true);
+      _.each(lines, function (line) {
+        me.deleteLine(line, false, function () {
+          lineDeleted++;
+          if (lineDeleted === lines.length) {
+            me.set('multipleUndo', null);
+          }
+        });
+      });
+    },
+
+    deleteLine: function (line, doNotSave, callback) {
       var me = this;
       var index = this.get('lines').indexOf(line);
       var pack = line.isAffectedByPack(),
@@ -824,23 +918,69 @@
       // trigger
       line.trigger('removed', line);
 
-      // remove the line
-      this.get('lines').remove(line);
-      // set the undo action
-      this.set('undo', {
-        text: OB.I18N.getLabel('OBPOS_DeleteLine', [line.get('qty'), line.get('product').get('_identifier')]),
-        line: line,
-        undo: function () {
-          me.get('lines').add(line, {
-            at: index
+      function finishDelete() {
+        me.get('lines').remove(line);
+        // set the undo action
+        if (me.get('multipleUndo')) {
+          var text = '',
+              lines = [],
+              undo = me.get('undo');
+          if (undo && undo.lines) {
+            text = undo.text + ', ';
+            lines = undo.lines;
+          }
+          text += OB.I18N.getLabel('OBPOS_DeleteLine', [line.get('qty'), line.get('product').get('_identifier')]);
+          lines.push(line);
+          me.set('undo', {
+            text: text,
+            lines: lines,
+            undo: function () {
+              var i;
+              for (i = 0; i < me.get('undo').lines.length; i++) {
+                me.get('lines').add(me.get('undo').lines[i], {
+                  at: index + i
+                });
+              }
+              me.calculateGross();
+              me.set('undo', null);
+            }
           });
-          me.calculateGross();
-          me.set('undo', null);
+        } else {
+          me.set('undo', {
+            text: OB.I18N.getLabel('OBPOS_DeleteLine', [line.get('qty'), line.get('product').get('_identifier')]),
+            line: line,
+            undo: function () {
+              line.unset('obposIsDeleted');
+              me.get('lines').add(line, {
+                at: index
+              });
+              me.calculateGross();
+              me.set('undo', null);
+            }
+          });
         }
-      });
-      this.adjustPayment();
-      if (!doNotSave) {
-        this.save();
+        me.adjustPayment();
+        if (!doNotSave) {
+          me.save(callback);
+          me.calculateGross();
+        } else {
+          if (callback) {
+            callback();
+          }
+        }
+      }
+
+      // If the OBPOS_remove_ticket preference is active then mark the line as deleted
+      if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
+        if (!this.get('deletedLines')) {
+          this.set('deletedLines', []);
+        }
+        line.set('obposIsDeleted', true);
+        this.get('deletedLines').push(new OrderLine(line.attributes));
+        this.save(finishDelete);
+      } else {
+        // remove the line
+        finishDelete();
       }
     },
     //Attrs is an object of attributes that will be set in order
@@ -1406,11 +1546,32 @@
         text: OB.I18N.getLabel('OBPOS_AddLine', [newline.get('qty'), newline.get('product').get('_identifier')]),
         line: newline,
         undo: function () {
-          me.get('lines').remove(newline);
-          me.calculateGross();
-          me.set('undo', null);
+          OB.UTIL.Approval.requestApproval(
+          this.model, 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
+            if (approved) {
+              // If the OBPOS_remove_ticket preference is active then mark the line as deleted
+              if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
+                if (!me.get('deletedLines')) {
+                  me.set('deletedLines', []);
+                }
+                newline.set('obposIsDeleted', true);
+                me.get('deletedLines').push(new OrderLine(newline.attributes));
+                me.save(function () {
+                  me.get('lines').remove(newline);
+                  me.calculateGross();
+                  me.set('undo', null);
+                });
+              } else {
+                // remove the line
+                me.get('lines').remove(newline);
+                me.calculateGross();
+                me.set('undo', null);
+              }
+            }
+          });
         }
       });
+      this.calculateGross();
       this.adjustPayment();
       return newline;
     },
@@ -1439,14 +1600,38 @@
       line.set('qty', -line.get('qty'));
 
       // set the undo action
-      this.set('undo', {
-        text: OB.I18N.getLabel('OBPOS_ReturnLine', [line.get('product').get('_identifier')]),
-        line: line,
-        undo: function () {
-          line.set('qty', -line.get('qty'));
-          me.set('undo', null);
+      if (me.get('multipleUndo')) {
+        var text = '',
+            lines = [],
+            undo = me.get('undo');
+        if (undo && undo.lines) {
+          text = undo.text + ', ';
+          lines = undo.lines;
         }
-      });
+        text += OB.I18N.getLabel('OBPOS_ReturnLine', [line.get('qty'), line.get('product').get('_identifier')]);
+        lines.push(line);
+        me.set('undo', {
+          text: text,
+          lines: lines,
+          undo: function () {
+            _.each(lines, function (line) {
+              line.set('qty', -line.get('qty'));
+              line.calculateGross();
+            });
+            me.calculateGross();
+            me.set('undo', null);
+          }
+        });
+      } else {
+        this.set('undo', {
+          text: OB.I18N.getLabel('OBPOS_ReturnLine', [line.get('product').get('_identifier')]),
+          line: line,
+          undo: function () {
+            line.set('qty', -line.get('qty'));
+            me.set('undo', null);
+          }
+        });
+      }
       this.adjustPayment();
       if (line.get('promotions')) {
         line.unset('promotions');
@@ -2601,7 +2786,7 @@
                   price: price,
                   priceList: prod.get('listPrice'),
                   promotions: iter.promotions,
-                description: iter.description,
+                  description: iter.description,
                   priceIncludesTax: order.get('priceIncludesTax'),
                   hasRelatedServices: hasservices,
                   warehouse: {

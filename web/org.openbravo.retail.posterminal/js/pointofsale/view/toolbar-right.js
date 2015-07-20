@@ -71,12 +71,28 @@ enyo.kind({
   published: {
     receipt: null
   },
+  events: {
+    onShowMultiSelection: ''
+  },
   handlers: {
     onTabButtonTap: 'tabButtonTapHandler'
   },
+  lastSelectedTabPanel: '',
   tabButtonTapHandler: function (inSender, inEvent) {
     if (inEvent.tabPanel) {
       this.setTabButtonActive(inEvent.tabPanel);
+      if (this.lastSelectedTabPanel !== inEvent.tabPanel) {
+        this.lastSelectedTabPanel = inEvent.tabPanel;
+        if (inEvent.tabPanel === 'edit') {
+          this.doShowMultiSelection({
+            show: true
+          });
+        } else {
+          this.doShowMultiSelection({
+            show: false
+          });
+        }
+      }
     }
   },
   setTabButtonActive: function (tabName) {

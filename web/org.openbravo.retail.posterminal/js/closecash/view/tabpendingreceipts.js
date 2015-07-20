@@ -164,12 +164,33 @@ enyo.kind({
     OB.UTIL.Approval.requestApproval(
     this.model, 'OBPOS_approval.cashupremovereceipts', function (approved, supervisor, approvalType) {
       if (approved) {
-        // approved so remove the entry
-        OB.Dal.remove(model, function () {
-          me.collection.remove(model);
-        }, OB.UTIL.showError);
+        if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
+          me.markOrderAsDeleted(model);
+        } else {
+          // approved so remove the entry
+          OB.Dal.remove(model, function () {
+            me.collection.remove(model);
+          }, OB.UTIL.showError);
+        }
       }
     });
+  },
+  markOrderAsDeleted: function (model) {
+    var i, me = this,
+        creationDate = model.get('creationDate') || new Date();
+    model.set('creationDate', creationDate);
+    model.set('timezoneOffset', creationDate.getTimezoneOffset());
+    model.set('created', creationDate.getTime());
+    model.set('obposCreatedabsolute', OB.I18N.formatDateISO(creationDate));
+    model.set('obposIsDeleted', true);
+    for (i = 0; i < model.get('lines').length; i++) {
+      model.get('lines').at(i).set('obposIsDeleted', true);
+    }
+    model.calculateGross();
+    model.set('hasbeenpaid', 'Y');
+    model.save();
+    OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(model.get('documentnoSuffix'), model.get('quotationnoSuffix'));
+    me.collection.remove(model);
   },
   voidAllPendingReceipts: function (inSender, inEvent) {
     var me = this;
@@ -187,9 +208,13 @@ enyo.kind({
     var me = this;
 
     function removeOneModel(collection, model) {
-      OB.Dal.remove(model, function () {
-        collection.remove(model);
-      }, OB.UTIL.showError);
+      if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
+        me.markOrderAsDeleted(model);
+      } else {
+        OB.Dal.remove(model, function () {
+          collection.remove(model);
+        }, OB.UTIL.showError);
+      }
     }
 
     OB.UTIL.Approval.requestApproval(

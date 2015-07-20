@@ -10,14 +10,93 @@
 /*global OB, enyo, Backbone, _ */
 
 enyo.kind({
+  name: 'OB.UI.OrderMultiSelect',
+  kind: 'Image',
+  src: '../org.openbravo.retail.posterminal/img/iconPinSelected.png',
+  sizing: "cover",
+  width: 28,
+  height: 28,
+  style: 'float: right; cursor: pointer; margin-top: 10px;',
+  showing: false,
+  events: {
+    onToggleSelection: ''
+  },
+  published: {
+    disabled: false
+  },
+  tap: function () {
+    this.doToggleSelection({
+      multiselection: false
+    });
+  }
+});
+
+enyo.kind({
+  name: 'OB.UI.OrderSingleSelect',
+  kind: 'Image',
+  src: '../org.openbravo.retail.posterminal/img/iconPinUnselected.png',
+  sizing: "cover",
+  width: 28,
+  height: 28,
+  style: 'float: right; cursor: pointer; margin-top: 10px;',
+  events: {
+    onToggleSelection: ''
+  },
+  published: {
+    disabled: false
+  },
+  tap: function () {
+    this.doToggleSelection({
+      multiselection: true
+    });
+  }
+});
+
+enyo.kind({
+  kind: 'OB.UI.SmallButton',
+  name: 'OB.UI.OrderMultiSelectAll',
+  i18nContent: 'OBPOS_lblSelectAll',
+  classes: 'btnlink-orange',
+  style: 'float: right;',
+  showing: false,
+  events: {
+    onMultiSelectAll: ''
+  },
+  published: {
+    disabled: false
+  },
+  tap: function () {
+    this.doMultiSelectAll();
+  }
+});
+
+enyo.kind({
   name: 'OB.UI.OrderHeader',
   classes: 'row-fluid span12',
   published: {
     order: null
   },
+  events: {
+    onToggleSelectionMode: '',
+    onTableMultiSelectAll: ''
+  },
+  handlers: {
+    onShowMultiSelected: 'showMultiSelected',
+    onToggleSelection: 'toggleSelection',
+    onMultiSelectAll: 'multiSelectAll'
+  },
   newLabelComponents: [{
     kind: 'OB.UI.OrderDetails',
     name: 'orderdetails'
+  }, {
+    kind: 'OB.UI.OrderMultiSelect',
+    name: 'btnMultiSelection'
+  }, {
+    kind: 'OB.UI.OrderMultiSelectAll',
+    name: 'btnMultiSelectAll'
+  }, {
+    kind: 'OB.UI.OrderSingleSelect',
+    name: 'btnSingleSelection'
   }],
   newButtonComponents: [{
     kind: 'OB.UI.BusinessPartner',
@@ -30,7 +109,8 @@ enyo.kind({
   components: [{
     name: 'receiptLabels'
   }, {
-    name: 'receiptButtons'
+    name: 'receiptButtons',
+    style: 'clear: both; '
   }],
   orderChanged: function (oldValue) {
     _.each(this.$.receiptLabels.$, function (comp) {
@@ -43,6 +123,33 @@ enyo.kind({
         comp.setOrder(this.order);
       }
     }, this);
+  },
+  showMultiSelected: function (inSender, inEvent) {
+    if (inEvent.show) {
+      this.$.receiptLabels.$.btnSingleSelection.setShowing(true);
+    } else {
+      this.$.receiptLabels.$.btnSingleSelection.setShowing(false);
+    }
+    this.$.receiptLabels.$.btnMultiSelection.setShowing(false);
+    this.$.receiptLabels.$.btnMultiSelectAll.setShowing(false);
+    this.doToggleSelectionMode({
+      multiselection: false
+    });
+  },
+  toggleSelection: function (inSender, inEvent) {
+    if (inEvent.multiselection) {
+      this.$.receiptLabels.$.btnSingleSelection.setShowing(false);
+      this.$.receiptLabels.$.btnMultiSelection.setShowing(true);
+      this.$.receiptLabels.$.btnMultiSelectAll.setShowing(true);
+    } else {
+      this.$.receiptLabels.$.btnSingleSelection.setShowing(true);
+      this.$.receiptLabels.$.btnMultiSelection.setShowing(false);
+      this.$.receiptLabels.$.btnMultiSelectAll.setShowing(false);
+    }
+    this.doToggleSelectionMode(inEvent);
+  },
+  multiSelectAll: function (inSender, inEvent) {
+    this.doTableMultiSelectAll();
   },
   initComponents: function () {
     this.inherited(arguments);
@@ -237,7 +344,10 @@ enyo.kind({
   },
   handlers: {
     onCheckBoxBehaviorForTicketLine: 'checkBoxBehavior',
-    onAllTicketLinesChecked: 'allTicketLinesChecked'
+    onAllTicketLinesChecked: 'allTicketLinesChecked',
+    onToggleSelectionTable: 'toggleSelectionTable',
+    onMultiSelectAllTable: 'multiSelectAllTable',
+    onTableMultiSelectedItems: 'tableMultiSelectedItems'
   },
   components: [{
     kind: 'OB.UI.ScrollableTable',
@@ -376,6 +486,15 @@ enyo.kind({
     });
 
     this.$.listTaxLines.setCollection(taxList);
+  },
+  toggleSelectionTable: function (inSender, inEvent) {
+    this.$.listOrderLines.setSelectionMode(inEvent.multiselection ? 'multiple' : 'single');
+  },
+  multiSelectAllTable: function () {
+    this.$.listOrderLines.selectAll();
+  },
+  tableMultiSelectedItems: function (inSender, inEvent) {
+    this.$.listOrderLines.setSelectedModels(inEvent.selection);
   },
   orderChanged: function (oldValue) {
     var me = this;
