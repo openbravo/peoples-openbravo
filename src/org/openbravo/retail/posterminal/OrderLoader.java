@@ -1219,7 +1219,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
             olServiceRelation.setOrganization(orderLine.getOrganization());
             olServiceRelation.setCreatedBy(orderLine.getCreatedBy());
             olServiceRelation.setCreationDate(orderLine.getCreationDate());
-            olServiceRelation.setAmount(BigDecimal.ZERO);
+            olServiceRelation.setAmount(orderLine.getGrossUnitPrice().multiply(
+                rol.getOrderedQuantity()));
+            olServiceRelation.setQuantity(rol.getOrderedQuantity());
             olServiceRelation.setUpdated(orderLine.getUpdated());
             olServiceRelation.setUpdatedBy(orderLine.getUpdatedBy());
             olServiceRelation.setSalesOrderLine(orderLine);
