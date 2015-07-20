@@ -59,7 +59,7 @@ public class Product extends ProcessHQLQuery {
     final PriceList priceList = POSUtils.getPriceListByOrgId(orgId);
     String posPrecision = "";
     try {
-      OBContext.setAdminMode();
+      OBContext.setAdminMode(true);
       posPrecision = (priceList.getCurrency().getObposPosprecision() == null ? priceList
           .getCurrency().getPricePrecision() : priceList.getCurrency().getObposPosprecision())
           .toString();
@@ -111,10 +111,9 @@ public class Product extends ProcessHQLQuery {
       posPrecision = (priceList.getCurrency().getObposPosprecision() == null ? priceList
           .getCurrency().getPricePrecision() : priceList.getCurrency().getObposPosprecision())
           .toString();
-      isRemote = "Y".equals(Preferences.getPreferenceValue("OBPOS_remote.product", true,
-          OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
-              .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
-              .getOBContext().getRole(), null));
+      isRemote = "Y".equals(Preferences.getPreferenceValue("OBPOS_remote.product", true, OBContext
+          .getOBContext().getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(),
+          OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null));
     } catch (PropertyException e) {
       log.error("Error getting preference OBPOS_remote.product " + e.getMessage(), e);
     } finally {
