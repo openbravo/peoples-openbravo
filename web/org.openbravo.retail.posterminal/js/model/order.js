@@ -1102,9 +1102,7 @@
                 args.orderline.set('hasRelatedServices', false);
               }
               args.receipt.save();
-              if (_.find(data.models, function (model) {
-                return model.get('proposalType') === 'MP';
-              })) {
+              if (data.hasmandatoryservices) {
                 args.receipt.trigger('showProductList', args.orderline, 'mandatory');
               }
             }
@@ -1163,6 +1161,9 @@
           OB.Dal.find(OB.Model.Product, criteria, function (data) {
             if (data) {
               data.hasservices = data.length > 0;
+              data.hasmandatoryservices = _.find(data.models, function (model) {
+                return model.get('proposalType') === 'MP';
+              });
               callback(data);
             } else {
               callback(null);
