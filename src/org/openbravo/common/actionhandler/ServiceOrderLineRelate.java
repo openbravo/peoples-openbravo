@@ -62,6 +62,7 @@ public class ServiceOrderLineRelate extends BaseProcessActionHandler {
           : new BigDecimal(jsonRequest.getJSONObject("_params").getDouble("totalserviceamount"));
 
       BigDecimal totalQuantity = BigDecimal.ZERO;
+      BigDecimal listPrice = BigDecimal.ZERO;
 
       final Client serviceProductClient = (Client) OBDal.getInstance().getProxy(Client.ENTITY_NAME,
           jsonRequest.getString("inpadClientId"));
@@ -123,10 +124,20 @@ public class ServiceOrderLineRelate extends BaseProcessActionHandler {
       if (mainOrderLine.getSalesOrder().isPriceIncludesTax()) {
         mainOrderLine.setGrossUnitPrice(servicePrice);
         mainOrderLine.setLineGrossAmount(serviceAmount);
+        mainOrderLine.setBaseGrossUnitPrice(servicePrice);
+        listPrice = mainOrderLine.getGrossListPrice();
       } else {
         mainOrderLine.setUnitPrice(servicePrice);
         mainOrderLine.setLineNetAmount(serviceAmount);
+        mainOrderLine.setStandardPrice(servicePrice);
+        listPrice = mainOrderLine.getListPrice();
       }
+      mainOrderLine.setTaxableAmount(serviceAmount);
+
+      // Calculate discount
+      BigDecimal discount = listPrice.subtract(servicePrice).multiply(new BigDecimal("100"))
+          .divide(listPrice, currency.getPricePrecision().intValue(), BigDecimal.ROUND_HALF_EVEN);
+      mainOrderLine.setDiscount(discount);
       OBDal.getInstance().save(mainOrderLine);
       OBDal.getInstance().flush();
 

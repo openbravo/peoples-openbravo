@@ -110,6 +110,7 @@ public class ServiceRelationEventHandler extends EntityPersistenceEventObserver 
   private void updateOrderLine(OrderLine orderLine, BigDecimal currentAmount,
       BigDecimal currentqty, BigDecimal oldAmount, BigDecimal oldQuantity) {
     BigDecimal serviceQty = orderLine.getOrderedQuantity();
+    BigDecimal listPrice = BigDecimal.ZERO;
     Currency currency = orderLine.getCurrency();
     HashMap<String, BigDecimal> dbValues = ServicePriceUtils.getRelatedAmountAndQty(orderLine);
     BigDecimal dbAmount = dbValues.get("amount");
@@ -149,10 +150,20 @@ public class ServiceRelationEventHandler extends EntityPersistenceEventObserver 
     if (orderLine.getSalesOrder().isPriceIncludesTax()) {
       orderLine.setGrossUnitPrice(servicePrice);
       orderLine.setLineGrossAmount(serviceAmount);
+      orderLine.setBaseGrossUnitPrice(servicePrice);
+      listPrice = orderLine.getGrossListPrice();
     } else {
       orderLine.setUnitPrice(servicePrice);
       orderLine.setLineNetAmount(serviceAmount);
+      orderLine.setStandardPrice(servicePrice);
+      listPrice = orderLine.getListPrice();
     }
+    orderLine.setTaxableAmount(serviceAmount);
+
+    // Calculate discount
+    BigDecimal discount = listPrice.subtract(servicePrice).multiply(new BigDecimal("100"))
+        .divide(listPrice, currency.getPricePrecision().intValue(), BigDecimal.ROUND_HALF_EVEN);
+    orderLine.setDiscount(discount);
     OBDal.getInstance().save(orderLine);
   }
 }
