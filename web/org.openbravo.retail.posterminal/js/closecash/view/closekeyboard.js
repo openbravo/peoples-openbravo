@@ -121,6 +121,10 @@ enyo.kind({
             definition: {
               action: function (keyboard, amt) {
                 var convAmt = OB.I18N.parseNumber(amt);
+                if (_.isNaN(convAmt)) {
+                  OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NotValidNumber', [amt]));
+                  return;
+                }
                 payment.set('foreignCounted', OB.DEC.add(0, convAmt));
                 payment.set('counted', OB.DEC.mul(convAmt, payment.get('rate')));
               }
