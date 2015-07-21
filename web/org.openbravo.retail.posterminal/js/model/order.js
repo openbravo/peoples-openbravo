@@ -1240,7 +1240,7 @@
       var me = this;
 
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
-        OB.Dal.saveRemote(p, function () {}, function () {
+        OB.Dal.saveTemporally(p, function () {}, function () {
           OB.error(arguments);
         }, true);
       }
@@ -1350,11 +1350,11 @@
       var oldbp = this.get('bp');
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
         if (oldbp.id !== businessPartner.id) { //Business Partner have changed
-          OB.Dal.removeRemote(new OB.Model.BusinessPartner(oldbp), function () {}, function () {
+          OB.Dal.removeTemporally(new OB.Model.BusinessPartner(oldbp), function () {}, function () {
             OB.UTIL.showError('Error removing');
           });
 
-          OB.Dal.saveRemote(businessPartner, function () {}, function () {
+          OB.Dal.saveTemporally(businessPartner, function () {}, function () {
             OB.error(arguments);
           }, true);
           if (OB.MobileApp.model.hasPermission('OBPOS_remote.discount.bp', true)) {
@@ -1369,7 +1369,7 @@
             criteria.remoteFilters = oldRemoteCriteria;
             OB.Dal.find(OB.Model.DiscountFilterBusinessPartner, criteria, function (discountsBP) {
               _.each(discountsBP.models, function (dsc) {
-                OB.Dal.removeRemote(dsc, function () {}, function () {
+                OB.Dal.removeTemporally(dsc, function () {}, function () {
                   OB.error(arguments);
                 }, true);
               });
@@ -1387,7 +1387,7 @@
             criteriaFilter.remoteFilters = remoteCriteria;
             OB.Dal.find(OB.Model.DiscountFilterBusinessPartner, criteriaFilter, function (discountsBP) {
               _.each(discountsBP.models, function (dsc) {
-                OB.Dal.saveRemote(dsc, function () {}, function () {
+                OB.Dal.saveTemporally(dsc, function () {}, function () {
                   OB.error(arguments);
                 }, true);
               });
@@ -1399,11 +1399,11 @@
           OB.Dal.get(OB.Model.BPLocation, businessPartner.get('locId'), function (location) {
 
             var loc = oldbp.get('locationModel');
-            OB.Dal.removeRemote(loc, function () {}, function () {
+            OB.Dal.removeTemporally(loc, function () {}, function () {
               OB.UTIL.showError('Error removing');
             });
 
-            OB.Dal.saveRemote(location, function () {
+            OB.Dal.saveTemporally(location, function () {
               businessPartner.set('locationModel', location);
               me.set('bp', businessPartner);
             }, function () {
@@ -1416,10 +1416,10 @@
 
         } else { //Location have changed
           var location = oldbp.get('locationModel');
-          OB.Dal.removeRemote(location, function () {}, function () {
+          OB.Dal.removeTemporally(location, function () {}, function () {
             OB.UTIL.showError('Error removing');
           });
-          OB.Dal.saveRemote(businessPartner.get('locationModel'), function () {
+          OB.Dal.saveTemporally(businessPartner.get('locationModel'), function () {
             me.set('bp', businessPartner);
           }, function () {
             OB.error(arguments);
@@ -2427,7 +2427,7 @@
 
             OB.Dal.get(OB.Model.Product, iter.id, function (prod) {
               if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
-                OB.Dal.saveRemote(prod, function () {}, function () {
+                OB.Dal.saveTemporally(prod, function () {}, function () {
                   OB.error(arguments);
                 }, true);
               }
@@ -2574,10 +2574,10 @@
     },
 
     doRemoteBPSettings: function (businessPartner) {
-      OB.Dal.saveRemote(businessPartner, function () {}, function () {
+      OB.Dal.saveTemporally(businessPartner, function () {}, function () {
         OB.error(arguments);
       }, true);
-      OB.Dal.saveRemote(businessPartner.get('locationModel'), function () {}, function () {
+      OB.Dal.saveTemporally(businessPartner.get('locationModel'), function () {}, function () {
         OB.error(arguments);
       }, true);
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.discount.bp', true)) {
@@ -2592,7 +2592,7 @@
         criteria.remoteFilters = remoteCriteria;
         OB.Dal.find(OB.Model.DiscountFilterBusinessPartner, criteria, function (discountsBP) {
           _.each(discountsBP.models, function (dsc) {
-            OB.Dal.saveRemote(dsc, function () {}, function () {
+            OB.Dal.saveTemporally(dsc, function () {}, function () {
               OB.error(arguments);
             }, true);
           });
@@ -2639,13 +2639,13 @@
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
         for (i = 0, max = this.current.get('lines').length; i < this.current.get('lines').length; i++) {
           var p = this.current.get('lines').models[i].get('product');
-          OB.Dal.removeRemote(p, successCallback, errorCallback);
+          OB.Dal.removeTemporally(p, successCallback, errorCallback);
         }
       }
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
-        OB.Dal.removeRemote(new OB.Model.BusinessPartner(this.current.get('bp')), successCallback, errorCallback);
+        OB.Dal.removeTemporally(new OB.Model.BusinessPartner(this.current.get('bp')), successCallback, errorCallback);
         if (this.current.get('bp').get('locationModel')) {
-          OB.Dal.removeRemote(this.current.get('bp').get('locationModel'), successCallback, errorCallback);
+          OB.Dal.removeTemporally(this.current.get('bp').get('locationModel'), successCallback, errorCallback);
         }
       }
 
@@ -2661,7 +2661,7 @@
         criteria.remoteFilters = oldRemoteCriteria;
         OB.Dal.find(OB.Model.DiscountFilterBusinessPartner, criteria, function (discountsBP) {
           _.each(discountsBP.models, function (dsc) {
-            OB.Dal.removeRemote(dsc, function () {}, function () {
+            OB.Dal.removeTemporally(dsc, function () {}, function () {
               OB.error(arguments);
             }, true);
           });
