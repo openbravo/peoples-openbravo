@@ -967,7 +967,7 @@
                   args.orderline.set('hasRelatedServices', false);
                 }
                 args.receipt.save();
-                if (data.mandatoryservices) {
+                if (data.hasmandatoryservices) {
                   //open the search tab with the returned products
                   args.receipt.trigger('showProductList', args.orderline, 'mandatory');
                 }

@@ -59,6 +59,11 @@ enyo.kind({
       operator: OB.Dal.FILTER,
       value: 'Services_Filter',
       params: [this.orderline.get('product').get('id'), this.orderline.get('product').get('productCategory')]
+    }, {
+      columns: ['ispack'],
+      operator: 'equals',
+      value: false,
+      isId: true
     }];
   },
   lineAttributes: function () {
