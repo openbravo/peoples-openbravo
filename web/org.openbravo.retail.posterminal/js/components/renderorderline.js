@@ -33,9 +33,7 @@ enyo.kind({
     kind: 'Image',
     src: 'img/iconService_ticketline.png',
     sizing: "cover",
-    width: 36,
-    height: 26,
-    style: 'float: left;'
+    style: 'float: left; width: 4%;'
   }, {
     name: 'product',
     style: 'float: left; '
