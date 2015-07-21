@@ -59,7 +59,7 @@ public class CustomerAddrImportEntryProcessor extends ImportEntryProcessor {
 
     private boolean thereAreCustomersInImportQueue(ImportEntry importEntry) {
       try {
-        OBContext.setAdminMode();
+        OBContext.setAdminMode(false);
 
         if (0 < countEntries("Error", importEntry)) {
           // if there are related error entries before this one then this is an error

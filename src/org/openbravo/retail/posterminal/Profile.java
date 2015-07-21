@@ -25,7 +25,7 @@ public class Profile extends JSONProcessSimple {
   public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
     JSONObject result = new JSONObject();
     JSONObject respArray = new JSONObject();
-    OBContext.setAdminMode();
+    OBContext.setAdminMode(false);
     try {
       final String userId = OBContext.getOBContext().getUser().getId();
       final String roleId = jsonsent.getString("role");

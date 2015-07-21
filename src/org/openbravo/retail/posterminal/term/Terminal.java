@@ -68,7 +68,7 @@ public class Terminal extends JSONProcessSimple {
     String posId = RequestContext.get().getSessionAttribute("POSTerminal").toString();
     OBPOSApplications pOSTerminal = POSUtils.getTerminalById(posId);
     try {
-      OBContext.setAdminMode();
+      OBContext.setAdminMode(false);
       // INITIAL VALIDATIONS
       InitialValidations.validateTerminal(pOSTerminal);
 

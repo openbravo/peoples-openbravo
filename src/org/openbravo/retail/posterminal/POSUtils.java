@@ -59,7 +59,7 @@ public class POSUtils {
   public static OBPOSApplications getTerminal(String searchKey) {
 
     try {
-      OBContext.setAdminMode();
+      OBContext.setAdminMode(false);
 
       OBQuery<OBPOSApplications> obq = OBDal.getInstance().createQuery(OBPOSApplications.class,
           "searchKey = :value");
@@ -83,7 +83,7 @@ public class POSUtils {
 
   public static OBPOSApplications getTerminalById(String posTerminalId) {
     try {
-      OBContext.setAdminMode();
+      OBContext.setAdminMode(false);
 
       OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
           posTerminalId);
@@ -100,7 +100,7 @@ public class POSUtils {
 
   public static Organization getOrganization(String orgId) {
     try {
-      OBContext.setAdminMode();
+      OBContext.setAdminMode(false);
 
       Organization org = OBDal.getInstance().get(Organization.class, orgId);
 
@@ -116,7 +116,7 @@ public class POSUtils {
 
   public static List<String> getOrgList(String searchKey) {
     try {
-      OBContext.setAdminMode();
+      OBContext.setAdminMode(false);
 
       OBPOSApplications terminal = getTerminal(searchKey);
 
@@ -137,7 +137,7 @@ public class POSUtils {
 
   public static List<String> getOrgListByTerminalId(String terminalId) {
     try {
-      OBContext.setAdminMode();
+      OBContext.setAdminMode(false);
 
       OBPOSApplications terminal = getTerminalById(terminalId);
 
@@ -162,7 +162,7 @@ public class POSUtils {
 
   public static PriceList getPriceListByOrgId(String orgId) {
     try {
-      OBContext.setAdminMode();
+      OBContext.setAdminMode(false);
 
       final List<String> orgList = getStoreList(orgId);
 
@@ -183,7 +183,7 @@ public class POSUtils {
 
   public static PriceList getPriceListByTerminal(String searchKey) {
     try {
-      OBContext.setAdminMode();
+      OBContext.setAdminMode(false);
 
       final List<String> orgList = getOrgList(searchKey);
 
@@ -204,7 +204,7 @@ public class POSUtils {
 
   public static PriceList getPriceListByTerminalId(String terminalId) {
     try {
-      OBContext.setAdminMode();
+      OBContext.setAdminMode(false);
 
       final List<String> orgList = getOrgListByTerminalId(terminalId);
 
@@ -277,7 +277,7 @@ public class POSUtils {
 
   public static OBRETCOProductList getProductListByOrgId(String orgId) {
     try {
-      OBContext.setAdminMode();
+      OBContext.setAdminMode(false);
 
       final List<String> orgList = getStoreList(orgId);
 

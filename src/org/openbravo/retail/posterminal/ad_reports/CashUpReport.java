@@ -132,7 +132,7 @@ public class CashUpReport extends HttpSecureAppServlet {
     cashupId = vars.getStringParameter("inpobposAppCashupId");
     parameters = new HashMap<String, Object>();
 
-    OBContext.setAdminMode();
+    OBContext.setAdminMode(false);
     try {
       cashup = OBDal.getInstance().get(OBPOSAppCashup.class, cashupId);
       boolean isMaster = cashup.getPOSTerminal().isMaster();

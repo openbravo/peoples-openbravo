@@ -35,7 +35,7 @@ public class CashCloseReport extends JSONProcessSimple {
     String posTerminalId = jsonsent.getString("pos");
 
     OBPOSApplications terminal;
-    OBContext.setAdminMode();
+    OBContext.setAdminMode(false);
     try {
       terminal = OBDal.getInstance().get(OBPOSApplications.class, posTerminalId);
     } finally {

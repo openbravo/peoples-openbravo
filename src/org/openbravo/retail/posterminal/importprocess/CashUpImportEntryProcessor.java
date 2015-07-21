@@ -56,7 +56,7 @@ public class CashUpImportEntryProcessor extends ImportEntryProcessor {
       // which have not yet been processed
 
       try {
-        OBContext.setAdminMode();
+        OBContext.setAdminMode(false);
 
         JSONObject json = new JSONObject(importEntry.getJsonInfo());
         if (json.has("data") && json.getJSONArray("data").length() > 0) {
@@ -75,7 +75,7 @@ public class CashUpImportEntryProcessor extends ImportEntryProcessor {
 
     private boolean thereIsDataInImportQueue(ImportEntry importEntry) {
       try {
-        OBContext.setAdminMode();
+        OBContext.setAdminMode(false);
 
         if (0 < countEntries("Error", importEntry)) {
           // if there are related error entries before this one then this is an error

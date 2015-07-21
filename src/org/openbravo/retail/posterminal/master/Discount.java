@@ -46,7 +46,7 @@ public class Discount extends ProcessHQLQuery {
     String posPrecision = "";
 
     try {
-      OBContext.setAdminMode();
+      OBContext.setAdminMode(false);
       posPrecision = (priceList.getCurrency().getObposPosprecision() == null ? priceList
           .getCurrency().getPricePrecision() : priceList.getCurrency().getObposPosprecision())
           .toString();

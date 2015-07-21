@@ -59,7 +59,7 @@ public class Product extends ProcessHQLQuery {
     final PriceList priceList = POSUtils.getPriceListByOrgId(orgId);
     String posPrecision = "";
     try {
-      OBContext.setAdminMode(true);
+      OBContext.setAdminMode(false);
       posPrecision = (priceList.getCurrency().getObposPosprecision() == null ? priceList
           .getCurrency().getPricePrecision() : priceList.getCurrency().getObposPosprecision())
           .toString();
@@ -107,7 +107,7 @@ public class Product extends ProcessHQLQuery {
     String posPrecision = "";
     boolean isRemote = false;
     try {
-      OBContext.setAdminMode();
+      OBContext.setAdminMode(false);
       posPrecision = (priceList.getCurrency().getObposPosprecision() == null ? priceList
           .getCurrency().getPricePrecision() : priceList.getCurrency().getObposPosprecision())
           .toString();

@@ -99,7 +99,7 @@ public class TerminalProperties extends ModelExtension {
 
   protected void addTemplateProperty(String propertyName, String alias, List<HQLProperty> list) {
     try {
-      OBContext.setAdminMode();
+      OBContext.setAdminMode(false);
       PrintTemplate value = (PrintTemplate) POSUtils.getPropertyInOrgTree(OBContext.getOBContext()
           .getCurrentOrganization(), propertyName);
       if (value != null) {

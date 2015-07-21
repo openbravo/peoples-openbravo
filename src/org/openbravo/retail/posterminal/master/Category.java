@@ -71,7 +71,7 @@ public class Category extends ProcessHQLQuery {
     // TODO: Sandra, replace the hgvol with productcategory reading from separate table
     boolean isRemote = false;
     try {
-      OBContext.setAdminMode(true);
+      OBContext.setAdminMode(false);
       isRemote = "Y".equals(Preferences.getPreferenceValue("OBPOS_remote.product", true, OBContext
           .getOBContext().getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(),
           OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null));
