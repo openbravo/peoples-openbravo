@@ -60,10 +60,10 @@ enyo.kind({
     this.inherited(arguments);
     if (this.model.get('product').get('productType') === 'S') {
       this.$.serviceIcon.show();
-      this.$.product.addStyles('width: 36%');
+      this.$.product.addStyles('width: 36%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;');
     } else {
       this.$.serviceIcon.hide();
-      this.$.product.addStyles('width: 40%');
+      this.$.product.addStyles('width: 40%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;');
     }
     this.$.checkBoxColumn.hide();
     this.$.product.setContent(this.setIdentifierContent());
@@ -80,7 +80,7 @@ enyo.kind({
         components: [{
           content: OB.UTIL.getCharacteristicValues(this.model.get('product').get('characteristicDescription')),
           attributes: {
-            style: 'float: left; width: 60%; color:grey'
+            style: 'float: left; width: 60.1%; color:grey'
           }
         }, {
           style: 'clear: both;'
