@@ -594,6 +594,9 @@ enyo.kind({
       this.$.payments.scrollAreaMaxHeight = '150px';
       this.$.doneButton.setDisabled(false);
     } else {
+      if (this.$.overpaymentnotavailable.showing) {
+        this.$.noenoughchangelbl.setStyle("position: absolute; bottom: 20px; height: 20px; color: #ff0000;");
+      }
       this.$.noenoughchangelbl.show();
       this.$.payments.scrollAreaMaxHeight = '130px';
       this.$.doneButton.setDisabled(true);
