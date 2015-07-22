@@ -128,6 +128,8 @@ OB.APRM.AddPayment.onLoad = function (view) {
   orderInvoiceGrid.dataProperties.transformData = OB.APRM.AddPayment.ordInvTransformData;
   glitemGrid.removeRecordClick = OB.APRM.AddPayment.removeRecordClick;
   creditUseGrid.selectionChanged = OB.APRM.AddPayment.selectionChangedCredit;
+  creditUseGrid.userSelectAllRecords = OB.APRM.AddPayment.userSelectAllRecords;
+  creditUseGrid.deselectAllRecords = OB.APRM.AddPayment.deselectAllRecords;
   orderInvoiceGrid.dataArrived = OB.APRM.AddPayment.ordInvDataArrived;
 
   form.isCreditAllowed = form.getItem('received_from').getValue() !== undefined && form.getItem('received_from').getValue() !== null;
@@ -336,6 +338,9 @@ OB.APRM.AddPayment.glitemsOnLoadGrid = function (grid) {
 
 OB.APRM.AddPayment.creditOnLoadGrid = function (grid) {
   grid.isReady = true;
+  if (grid.obaprmAllRecordsSelectedByUser) {
+	delete grid.obaprmAllRecordsSelectedByUser;
+  }
   OB.APRM.AddPayment.updateCreditTotal(this.view.theForm);
   OB.APRM.AddPayment.tryToUpdateActualExpected(this.view.theForm);
 };
@@ -843,10 +848,12 @@ OB.APRM.AddPayment.doSelectionChangedCredit = function (record, state, view) {
   } else {
     grid.setEditValue(grid.getRecordIndex(record), amountField, '0');
   }
-  OB.APRM.AddPayment.updateCreditTotal(view.theForm);
-  OB.APRM.AddPayment.updateActualExpected(view.theForm);
-  if (issotrx) {
-    OB.APRM.AddPayment.distributeAmount(view, view.theForm, true);
+  if (!grid.obaprmAllRecordsSelectedByUser || (grid.obaprmAllRecordsSelectedByUser && (grid.getRecordIndex(record) === grid.getTotalRows() - 1))) {
+    OB.APRM.AddPayment.updateCreditTotal(view.theForm);
+    OB.APRM.AddPayment.updateActualExpected(view.theForm);
+    if (issotrx) {
+      OB.APRM.AddPayment.distributeAmount(view, view.theForm, true);
+    }
   }
 };
 
