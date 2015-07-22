@@ -36,10 +36,10 @@ enyo.kind({
       name: 'serviceIcon',
       kind: 'Image',
       src: 'img/iconService_ticketline.png',
-      style: 'float: left; padding-right: 5px;'
+      style: 'float: left; padding-right: 5px; '
     }, {
       name: 'product',
-      style: 'float: left; '
+//      style: 'float: left;'
     }]
   }, {
     name: 'quantity',
@@ -64,8 +64,10 @@ enyo.kind({
     this.inherited(arguments);
     if (this.model.get('product').get('productType') === 'S') {
       this.$.serviceIcon.show();
+      this.$.product.addStyles('margin-left: 24px;');
     } else {
       this.$.serviceIcon.hide();
+      this.$.product.addStyles('float: left;');
     }
     this.$.checkBoxColumn.hide();
     this.$.product.setContent(this.setIdentifierContent());
@@ -119,7 +121,7 @@ enyo.kind({
       if (!this.$.relatedLinesContainer) {
         this.createComponent({
           name: 'relatedLinesContainer',
-          style: 'display: block; float: left; width: 80%;'
+          style: 'clear:both; float: left; width: 80%;'
         });
       }
       enyo.forEach(this.model.get('relatedLines'), function (line) {
@@ -170,7 +172,7 @@ enyo.kind({
         this.$.characteristicsDescription.addStyles('padding-left: 10%; clear: both; width: 50.1%; color:grey');
       }
       if (this.$.relatedLinesContainer) {
-        this.$.relatedLinesContainer.addStyles('padding-left: 10%; display: block; float: left; width: 80%;');
+        this.$.relatedLinesContainer.addStyles('padding-left: 10%; clear: both; float: left; width: 80%;');
       }
       this.$.checkBoxColumn.show();
       this.changeEditMode(this, inEvent.status);
@@ -183,7 +185,7 @@ enyo.kind({
         this.$.characteristicsDescription.addStyles('padding-left: 0%; clear: both; width: 60.1%; color:grey');
       }
       if (this.$.relatedLinesContainer) {
-        this.$.relatedLinesContainer.addStyles('padding-left: 0%; display: block; float: left; width: 80%;');
+        this.$.relatedLinesContainer.addStyles('padding-left: 0%; clear: both; float: left; width: 80%;');
       }
       this.$.checkBoxColumn.hide();
       this.changeEditMode(this, false);
