@@ -408,14 +408,18 @@ enyo.kind({
     this.setDisabled(false);
   },
   tap: function () {
-    if (OB.MobileApp.model.get('serviceSearchMode') === 'mandatory') {
-      OB.MobileApp.model.unset('serviceSearchMode');
-      this.$.lbl.setContent('EDIT');
+    if (OB.MobileApp.model.get('serviceSearchMode')) {
+      this.$.lbl.setContent(OB.I18N.getLabel('OBPOS_LblEdit'));
       this.doEnableUserInterface();
       this.doToggleLineSelection({
         status: false
       });
-      this.restoreStatus();
+      if (OB.MobileApp.model.get('serviceSearchMode') === 'mandatory') {
+        this.restoreStatus();
+      } else if (OB.MobileApp.model.get('serviceSearchMode') === 'final') {
+        this.previousStatus.callback();
+      }
+      OB.MobileApp.model.unset('serviceSearchMode');
     } else {
       OB.MobileApp.view.scanningFocus(false);
       if (!this.disabled) {

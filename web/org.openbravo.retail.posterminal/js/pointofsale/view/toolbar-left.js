@@ -387,6 +387,7 @@ enyo.kind({
     });
   },
   tap: function () {
+    var me = this;
     if (this.disabled === false) {
       this.model.on('approvalChecked', function (event) {
         this.model.off('approvalChecked');
@@ -394,8 +395,10 @@ enyo.kind({
           this.showPaymentTab();
         }
       }, this);
-      this.model.completePayment();
-      this.doClearUserInput();
+      this.model.get('order').trigger('showProductList', null, 'final', function () {
+        me.model.completePayment();
+        me.doClearUserInput();
+      });
     }
   },
   attributes: {

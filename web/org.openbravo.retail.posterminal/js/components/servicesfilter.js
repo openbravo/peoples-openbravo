@@ -112,3 +112,33 @@ enyo.kind({
     }];
   }
 });
+
+enyo.kind({
+  kind: 'OB.UI.SearchProductCharacteristicFilter',
+  name: 'OB.UI.FinalMandatoryServicesFilter',
+  filterName: 'FinalMandatoryServicesFilter',
+  published: {
+    type: 'HIDDEN'
+  },
+  sqlFilter: function () {
+    var result = {};
+
+    result.where = " and product.productType = 'S' and product.proposalType = 'FMA'";
+    result.filters = [];
+
+    return result;
+  },
+  hqlCriteria: function () {
+    return [{
+      columns: [],
+      operator: OB.Dal.FILTER,
+      value: 'Final_Services',
+      params: []
+    }, {
+      columns: ['ispack'],
+      operator: 'equals',
+      value: false,
+      isId: true
+    }];
+  }
+});
