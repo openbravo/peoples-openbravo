@@ -38,8 +38,7 @@ enyo.kind({
       src: 'img/iconService_ticketline.png',
       style: 'float: left; padding-right: 5px; '
     }, {
-      name: 'product',
-//      style: 'float: left;'
+      name: 'product'
     }]
   }, {
     name: 'quantity',
@@ -261,7 +260,7 @@ enyo.kind({
       this.addRemoveClass('iconServices_unreviewed', true);
       this.addRemoveClass('iconServices_reviewed', false);
     }
-    if (OB.MobileApp.model.get('serviceSearchMode') === 'mandatory') {
+    if (OB.MobileApp.model.get('serviceSearchMode')) {
       this.hide();
     }
   }
