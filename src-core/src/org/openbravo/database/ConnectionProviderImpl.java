@@ -18,7 +18,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLClientInfoException;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
@@ -136,8 +135,12 @@ public class ConnectionProviderImpl implements ConnectionProvider {
   }
 
   public void destroy(String name) throws Exception {
-    PoolingDriver driver = (PoolingDriver) DriverManager.getDriver("jdbc:apache:commons:dbcp:");
-    driver.closePool(name);
+    if (externalConnectionPool != null) {
+      externalConnectionPool.closePool();
+    } else {
+      PoolingDriver driver = (PoolingDriver) DriverManager.getDriver("jdbc:apache:commons:dbcp:");
+      driver.closePool(name);
+    }
   }
 
   public void reload(String file, boolean isRelative, String _context) throws Exception {

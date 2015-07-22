@@ -140,4 +140,15 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
   private int getIntProperty(Properties properties, String propertyName, String defaultValue) {
     return Integer.parseInt(properties.getProperty(propertyName, defaultValue));
   }
+
+  @Override
+  public void closePool() {
+    DataSource ds = getDataSource();
+    if (ds != null) {
+      // Closes the pool and all idle connections. true parameter is for close the active
+      // connections too.
+      ds.close(true);
+    }
+    super.closePool();
+  }
 }
