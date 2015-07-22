@@ -333,6 +333,7 @@ enyo.kind({
   },
   handlers: {
     onCheckBoxBehaviorForTicketLine: 'checkBoxBehavior',
+    onToggledLineSelection: 'toggleLineSelection',
     onSetMultiSelected: 'setMultiSelected'
   },
   checkBoxBehavior: function (inSender, inEvent) {
@@ -348,6 +349,23 @@ enyo.kind({
       //WARN! recover the callbacks for the selected events
       this.receipt.get('lines')._callbacks.selected = this.selectedCallbacks;
 
+      if (this.receipt.get('lines').length > 0) {
+        var line = this.receipt.get('lines').at(0);
+        line.trigger('selected', line);
+      }
+    }
+  },
+  toggleLineSelection: function (inSender, inEvent) {
+    if (inEvent.status) {
+      this.line = null;
+      this.selectedCallbacks = this.receipt.get('lines')._callbacks.selected;
+      this.clickCallbacks = this.receipt.get('lines')._callbacks.click;
+      this.receipt.get('lines').off('selected');
+      this.receipt.get('lines').off('click');
+      this.render();
+    } else {
+      this.receipt.get('lines')._callbacks.selected = this.selectedCallbacks;
+      this.receipt.get('lines')._callbacks.click = this.clickCallbacks;
       if (this.receipt.get('lines').length > 0) {
         var line = this.receipt.get('lines').at(0);
         line.trigger('selected', line);
