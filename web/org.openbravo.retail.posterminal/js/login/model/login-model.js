@@ -146,7 +146,7 @@
                 }
               });
 
-              window.localStorage.setItem('terminalId', data[0].id);
+              window.localStorage.setItem('terminalId', data[0].terminal.id);
               terminalModel.set('useBarcode', terminalModel.get('terminal').terminalType.usebarcodescanner);
               OB.MobileApp.view.scanningFocus(true);
               if (!terminalModel.usermodel) {
@@ -155,7 +155,7 @@
                 terminalModel.propertiesReady(me.properties);
               }
               OB.UTIL.HookManager.executeHooks('OBPOS_TerminalLoadedFromBackend', {
-                data: data[0]
+                data: data[0].terminal.id
               });
             } else {
               OB.UTIL.showError("Terminal does not exists: " + 'params.terminal');
@@ -848,7 +848,7 @@
           localStorage.services = JSON.stringify(inResponse.services);
         }
         OB.RR.RequestRouter.initialize();
-        
+
         me.setTerminalName(window.localStorage.getItem('terminalAuthentication') === 'Y' ? window.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"));
         callback();
       }).error(function (inSender, inResponse) {
