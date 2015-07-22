@@ -39,6 +39,7 @@ public class ConnectionProviderImpl implements ConnectionProvider {
   String bbdd = "";
   String rdbms = "";
   String contextName = "openbravo";
+  private String externalPoolClassName;
 
   private static ExternalConnectionPool externalConnectionPool;
 
@@ -78,7 +79,6 @@ public class ConnectionProviderImpl implements ConnectionProvider {
       contextName = _context;
 
     String poolName = null;
-    String externalPoolClassName;
     String dbDriver = null;
     String dbServer = null;
     String dbLogin = null;
@@ -122,6 +122,7 @@ public class ConnectionProviderImpl implements ConnectionProvider {
         externalConnectionPool = ExternalConnectionPool.getInstance(externalPoolClassName);
       } catch (Throwable e) {
         externalConnectionPool = null;
+        externalPoolClassName = null;
       }
     }
 
@@ -137,6 +138,7 @@ public class ConnectionProviderImpl implements ConnectionProvider {
   public void destroy(String name) throws Exception {
     if (externalConnectionPool != null) {
       externalConnectionPool.closePool();
+      externalConnectionPool = null;
     } else {
       PoolingDriver driver = (PoolingDriver) DriverManager.getDriver("jdbc:apache:commons:dbcp:");
       driver.closePool(name);
@@ -246,7 +248,15 @@ public class ConnectionProviderImpl implements ConnectionProvider {
     if (poolName == null || poolName.equals(""))
       throw new NoConnectionAvailableException("Couldn´t get a connection for an unnamed pool");
     Connection conn;
-    if (externalConnectionPool != null) {
+    if (externalPoolClassName != null) {
+      if (externalConnectionPool == null) {
+        try {
+          externalConnectionPool = ExternalConnectionPool.getInstance(externalPoolClassName);
+        } catch (Throwable e) {
+          externalConnectionPool = null;
+          externalPoolClassName = null;
+        }
+      }
       conn = externalConnectionPool.getConnection();
     } else {
       conn = getCommonsDbcpPoolConnection(poolName);

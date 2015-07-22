@@ -354,11 +354,13 @@ public class ModelProvider implements OBSingleton {
   private void initializeReferenceClasses(ModelSessionFactoryController sessionFactoryController) {
     ConnectionProviderImpl con = null;
     Connection connection = null;
+    boolean createdNewPool = false;
     try {
       con = (ConnectionProviderImpl) ConnectionProviderContextListener.getPool();
       if (con == null) {
         con = new ConnectionProviderImpl(OBPropertiesProvider.getInstance()
             .getOpenbravoProperties());
+        createdNewPool = true;
       }
       connection = con.getConnection();
       PreparedStatement ps = null;
@@ -392,7 +394,7 @@ public class ModelProvider implements OBSingleton {
         // do nothing
       }
       try {
-        if (con != null) {
+        if (con != null && createdNewPool) {
           con.destroy();
         }
       } catch (Exception e) {
