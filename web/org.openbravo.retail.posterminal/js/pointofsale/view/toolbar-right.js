@@ -403,7 +403,7 @@ enyo.kind({
   manageServiceProposal: function (inSender, inEvent) {
     OB.MobileApp.model.set('serviceSearchMode', inEvent.proposalType);
     this.previousStatus = inEvent.previousStatus;
-    this.$.lbl.setContent('CONTINUE');
+    this.$.lbl.setContent(OB.I18N.getLabel('OBPOS_LblContinue'));
     this.doDisableUserInterface();
     this.setDisabled(false);
   },

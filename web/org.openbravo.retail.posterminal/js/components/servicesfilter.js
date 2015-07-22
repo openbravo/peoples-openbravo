@@ -84,7 +84,7 @@ enyo.kind({
   },
   initComponents: function () {
     this.inherited(arguments);
-    this.caption = "Services for"; //TODO: use i18n labels
+    this.caption = OB.I18N.getLabel('OBPOS_ServicesFor');
   }
 });
 
