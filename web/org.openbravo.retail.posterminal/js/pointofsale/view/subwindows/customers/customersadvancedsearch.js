@@ -397,7 +397,7 @@ enyo.kind({
       return reset(this);
     }
 
-    filter = inEvent.bpName;
+    filter = OB.UTIL.unAccent(inEvent.bpName);
     splitFilter = filter.split(",");
     splitFilterLength = splitFilter.length;
     _operator = inEvent.operator;
