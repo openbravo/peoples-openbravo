@@ -13,8 +13,11 @@ public abstract class ServiceTestData {
   public final String PRODUCT_DISTRIBUTION_GOOD_B = "4028E6C72959682B01295ADC21C90239";
   public final String PRODUCT_DISTRIBUTION_GOOD_C = "4028E6C72959682B01295ADC2285023B";
   public final String PRICELIST_SALES = "4028E6C72959682B01295ADC1D55022B";
+  public final String PRICELIST_CUSTOMER_A = "4028E6C72959682B01295B03CE480243";
   public final String PRICELIST_CUSTOMER_A_INCL_TAX = "6C69F63AE6C34DD48329368AFE29C91D";
 
+  private String testNumber;
+  private String testDescription;
   private String serviceId;
   private String[][] products;
   private BigDecimal quantity;
@@ -90,6 +93,22 @@ public abstract class ServiceTestData {
 
   public void setProducts(String[][] products) {
     this.products = products;
+  }
+
+  public String getTestDescription() {
+    return testDescription;
+  }
+
+  public void setTestDescription(String testDescription) {
+    this.testDescription = testDescription;
+  }
+
+  public String getTestNumber() {
+    return testNumber;
+  }
+
+  public void setTestNumber(String testNumber) {
+    this.testNumber = testNumber;
   }
 
   public abstract void initialize();
