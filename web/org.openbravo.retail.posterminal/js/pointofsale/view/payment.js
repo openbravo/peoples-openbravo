@@ -629,8 +629,10 @@ enyo.kind({
       this.$.doneButton.setLocalDisabled(false);
       this.$.exactButton.setDisabled(false);
     } else {
-      if (this.$.overpaymentnotavailable.showing) {
+      if (this.$.overpaymentnotavailable.showing || this.$.overpaymentexceedlimit.showing) {
         this.$.noenoughchangelbl.setStyle("position: absolute; bottom: 20px; height: 20px; color: #ff0000;");
+      } else {
+        this.$.noenoughchangelbl.setStyle("position: absolute; bottom: 0px; height: 20px; color: #ff0000;");
       }
       this.$.noenoughchangelbl.show();
       this.$.payments.scrollAreaMaxHeight = '130px';
