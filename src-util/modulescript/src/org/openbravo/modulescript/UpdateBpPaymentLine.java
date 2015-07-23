@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -74,6 +74,13 @@ public class UpdateBpPaymentLine extends ModuleScript {
       handleError(e);
     }
   }
+  
+  @Override
+  protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
+    return new ModuleScriptExecutionLimits("0", null, 
+        new OpenbravoVersion(3,0,25828));
+  }
+  
   private static boolean invoiceIndexExists(ConnectionProvider connectionProvider)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
