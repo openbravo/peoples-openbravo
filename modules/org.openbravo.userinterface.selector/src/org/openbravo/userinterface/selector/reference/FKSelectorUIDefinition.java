@@ -113,15 +113,6 @@ public class FKSelectorUIDefinition extends ForeignKeyUIDefinition {
     }
   }
 
-  private String getFirstProperty(String displayFieldName) {
-    int dotPosition = displayFieldName.indexOf(DalUtil.DOT);
-    if (dotPosition == -1) {
-      return displayFieldName;
-    } else {
-      return displayFieldName.substring(0, dotPosition);
-    }
-  }
-
   public String getFieldProperties(Field field) {
     if (field == null) {
       return super.getFieldProperties(field);
