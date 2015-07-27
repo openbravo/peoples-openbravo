@@ -203,7 +203,7 @@ enyo.kind({
   events: {
     onCancelReceiptToInvoice: ''
   },
-  style: 'width: 50px;',
+  style: 'width: 40px;',
   classes: 'btnlink-white btnlink-payment-clear btn-icon-small btn-icon-check',
   tap: function () {
     this.doCancelReceiptToInvoice();
@@ -213,7 +213,7 @@ enyo.kind({
 enyo.kind({
   name: 'btninvoice',
   showing: false,
-  style: 'float: left; width: 50%;',
+  style: 'float: left; width: 40%;',
   components: [{
     kind: 'OB.UI.BtnReceiptToInvoice'
   }, {
@@ -421,7 +421,7 @@ enyo.kind({
         this.$.divText.setContent(OB.I18N.getLabel('OBPOS_ToBeReturned'));
         this.$.divText.show();
       } else if (model.get('orderType') === 2) {
-        this.$.divText.addStyles('width: 50%; color: lightblue;');
+        this.$.divText.addStyles('width: 60%; color: lightblue;');
         this.$.divText.setContent(OB.I18N.getLabel('OBPOS_ToBeLaidaway'));
         this.$.divText.show();
         //We have to ensure that there is not another handler showing this div
