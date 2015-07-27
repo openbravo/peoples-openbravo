@@ -217,4 +217,25 @@ public class ServicePriceUtils {
     sprvQry.setMaxResults(1);
     return (ServicePriceRule) sprvQry.uniqueResult();
   }
+
+  /**
+   * 
+   * Method that returns the next Line Number of a Sales Order
+   * 
+   * @param order
+   *          Order
+   */
+  public static Long getNewLineNo(String orderId) {
+    StringBuffer where = new StringBuffer();
+    where.append(" as ol");
+    where.append(" where ol." + OrderLine.PROPERTY_SALESORDER + ".id = :orderId");
+    where.append(" order by ol." + OrderLine.PROPERTY_LINENO + " desc");
+    OBQuery<OrderLine> olQry = OBDal.getInstance().createQuery(OrderLine.class, where.toString());
+    olQry.setNamedParameter("orderId", orderId);
+    if (olQry.count() > 0) {
+      OrderLine ol = olQry.list().get(0);
+      return ol.getLineNo() + 10L;
+    }
+    return 10L;
+  }
 }

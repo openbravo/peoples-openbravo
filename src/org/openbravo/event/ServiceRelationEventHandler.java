@@ -25,7 +25,6 @@ import java.util.HashMap;
 import javax.enterprise.event.Observes;
 
 import org.apache.log4j.Logger;
-import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -51,7 +50,8 @@ public class ServiceRelationEventHandler extends EntityPersistenceEventObserver 
     return entities;
   }
 
-  public void onSave(@Observes EntityNewEvent event) {
+  public void onSave(@Observes
+  EntityNewEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -69,7 +69,8 @@ public class ServiceRelationEventHandler extends EntityPersistenceEventObserver 
     updateOrderLine(orderLine, amount, quantity, BigDecimal.ZERO, BigDecimal.ZERO);
   }
 
-  public void onUpdate(@Observes EntityUpdateEvent event) {
+  public void onUpdate(@Observes
+  EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -85,11 +86,12 @@ public class ServiceRelationEventHandler extends EntityPersistenceEventObserver 
     BigDecimal currentQuantity = (BigDecimal) event.getCurrentState(quantityProperty);
     BigDecimal oldAmount = (BigDecimal) event.getPreviousState(amountProperty);
     BigDecimal oldQuantity = (BigDecimal) event.getPreviousState(quantityProperty);
-    OrderLine orderLine = (OrderLine) event.getCurrentState(solProperty);
-    updateOrderLine(orderLine, currentAmount, currentQuantity, oldAmount, oldQuantity);
+    OrderLine currentOrderLine = (OrderLine) event.getCurrentState(solProperty);
+    updateOrderLine(currentOrderLine, currentAmount, currentQuantity, oldAmount, oldQuantity);
   }
 
-  public void onDelete(@Observes EntityDeleteEvent event) {
+  public void onDelete(@Observes
+  EntityDeleteEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -107,63 +109,66 @@ public class ServiceRelationEventHandler extends EntityPersistenceEventObserver 
     updateOrderLine(orderLine, BigDecimal.ZERO, BigDecimal.ZERO, oldAmount, oldQuantity);
   }
 
-  private void updateOrderLine(OrderLine orderLine, BigDecimal currentAmount,
+  private void updateOrderLine(OrderLine currentOrderLine, BigDecimal currentAmount,
       BigDecimal currentqty, BigDecimal oldAmount, BigDecimal oldQuantity) {
-    BigDecimal serviceQty = orderLine.getOrderedQuantity();
+    BigDecimal serviceQty = currentOrderLine.getOrderedQuantity();
     BigDecimal listPrice = BigDecimal.ZERO;
-    Currency currency = orderLine.getCurrency();
-    HashMap<String, BigDecimal> dbValues = ServicePriceUtils.getRelatedAmountAndQty(orderLine);
+    Currency currency = currentOrderLine.getCurrency();
+    HashMap<String, BigDecimal> dbValues = ServicePriceUtils
+        .getRelatedAmountAndQty(currentOrderLine);
     BigDecimal dbAmount = dbValues.get("amount");
     BigDecimal dbQuantity = dbValues.get("quantity");
-    BigDecimal baseProductPrice = ServicePriceUtils.getProductPrice(orderLine.getSalesOrder()
-        .getOrderDate(), orderLine.getSalesOrder().getPriceList(), orderLine.getProduct());
+    BigDecimal baseProductPrice = ServicePriceUtils.getProductPrice(currentOrderLine
+        .getSalesOrder().getOrderDate(), currentOrderLine.getSalesOrder().getPriceList(),
+        currentOrderLine.getProduct());
     BigDecimal serviceAmount = ServicePriceUtils.getServiceAmount(
-        orderLine,
+        currentOrderLine,
         dbAmount.add(currentAmount.subtract(oldAmount)).setScale(
             currency.getPricePrecision().intValue(), RoundingMode.HALF_UP));
-    Product service = orderLine.getProduct();
+    Product service = currentOrderLine.getProduct();
 
     if (UNIQUE_QUANTITY.equals(service.getQuantityRule())) {
-      serviceQty = BigDecimal.ONE;
+      if (currentqty.compareTo(BigDecimal.ZERO) > 0) {
+        serviceQty = BigDecimal.ONE;
+      } else if (currentqty.compareTo(BigDecimal.ZERO) < 0) {
+        serviceQty = new BigDecimal("-1");
+      } else {
+        if (oldQuantity.compareTo(BigDecimal.ZERO) >= 0) {
+          serviceQty = BigDecimal.ONE;
+        } else {
+          serviceQty = new BigDecimal("-1");
+        }
+      }
     } else {
       // TODO
-      // Remove this if condition when the issue of calling this event handler twice when modifying
-      // OrderlineServiceRelation from ServiceOrderLineEventHandler is fixed
-      if (orderLine.getOrderedQuantity().add(oldQuantity.subtract(currentqty))
-          .compareTo(dbQuantity) != 0) {
-        serviceQty = orderLine.getOrderedQuantity().add(currentqty).subtract(oldQuantity);
-        if (dbQuantity.compareTo(BigDecimal.ZERO) == 0) {
-          serviceQty = serviceQty.subtract(BigDecimal.ONE);
-        }
-        serviceQty = serviceQty.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ONE : serviceQty;
-      }
+      // Fix the issue of calling this event handler twice when modifying
+      // OrderlineServiceRelation from ServiceOrderLineEventHandler. Investigate why it happens
+      serviceQty = dbQuantity.add(currentqty).subtract(oldQuantity);
+      serviceQty = serviceQty.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ONE : serviceQty;
     }
-    orderLine.setOrderedQuantity(serviceQty);
-    if (BigDecimal.ZERO.compareTo(serviceQty) == 0) {
-      throw new OBException("ZeroQuantityService");
-    }
+    currentOrderLine.setOrderedQuantity(serviceQty);
 
     BigDecimal servicePrice = baseProductPrice.add(serviceAmount.divide(serviceQty, currency
         .getPricePrecision().intValue(), RoundingMode.HALF_UP));
     serviceAmount = serviceAmount.add(baseProductPrice.multiply(serviceQty)).setScale(
         currency.getPricePrecision().intValue(), RoundingMode.HALF_UP);
-    if (orderLine.getSalesOrder().isPriceIncludesTax()) {
-      orderLine.setGrossUnitPrice(servicePrice);
-      orderLine.setLineGrossAmount(serviceAmount);
-      orderLine.setBaseGrossUnitPrice(servicePrice);
-      listPrice = orderLine.getGrossListPrice();
+    if (currentOrderLine.getSalesOrder().isPriceIncludesTax()) {
+      currentOrderLine.setGrossUnitPrice(servicePrice);
+      currentOrderLine.setLineGrossAmount(serviceAmount);
+      currentOrderLine.setBaseGrossUnitPrice(servicePrice);
+      listPrice = currentOrderLine.getGrossListPrice();
     } else {
-      orderLine.setUnitPrice(servicePrice);
-      orderLine.setLineNetAmount(serviceAmount);
-      orderLine.setStandardPrice(servicePrice);
-      listPrice = orderLine.getListPrice();
+      currentOrderLine.setUnitPrice(servicePrice);
+      currentOrderLine.setLineNetAmount(serviceAmount);
+      currentOrderLine.setStandardPrice(servicePrice);
+      listPrice = currentOrderLine.getListPrice();
     }
-    orderLine.setTaxableAmount(serviceAmount);
+    currentOrderLine.setTaxableAmount(serviceAmount);
 
     // Calculate discount
     BigDecimal discount = listPrice.subtract(servicePrice).multiply(new BigDecimal("100"))
         .divide(listPrice, currency.getPricePrecision().intValue(), BigDecimal.ROUND_HALF_EVEN);
-    orderLine.setDiscount(discount);
-    OBDal.getInstance().save(orderLine);
+    currentOrderLine.setDiscount(discount);
+    OBDal.getInstance().save(currentOrderLine);
   }
 }
