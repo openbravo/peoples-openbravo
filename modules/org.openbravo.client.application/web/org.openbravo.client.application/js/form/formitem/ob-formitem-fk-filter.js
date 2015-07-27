@@ -76,97 +76,105 @@ isc.OBFKFilterTextItem.addProperties({
 
     }
 
-    this.pickListProperties = {
-      // 'showOverAsSelected' and 'bodyKeyPress' defined here until issue 28475 be fixed.
-      // After the fix the following two lines must be removed, since it will be inherited from
-      // OBListFilterItem  as usual
-      showOverAsSelected: this.pickListProperties.showOverAsSelected,
-      bodyKeyPress: this.pickListProperties.bodyKeyPress,
-
-      // make sure that we send the same parameters as the grid
-      onFetchData: function (criteria, requestProperties) {
-        var gridView = grid.view;
-        requestProperties = requestProperties || {};
-        requestProperties.params = grid.getFetchRequestParams(requestProperties.params) || {};
-        if (gridView) {
-          requestProperties.params.tabId = gridView.tabId || (grid.viewProperties && grid.viewProperties.tabId) || (gridView.sourceView && gridView.sourceView.tabId);
-          if (gridView.buttonOwnerView && gridView.buttonOwnerView.tabId) {
-            requestProperties.params.buttonOwnerViewTabId = gridView.buttonOwnerView.tabId;
-          }
-        }
-        // send the display field in request params to add it to the list of fields to be fetched in DefaultJsonDataService.
-        // used for displaying table references properly. Refer issue https://issues.openbravo.com/view.php?id=26696
-        if (this.formItem && this.formItem.displayProperty) {
-          requestProperties.params.displayProperty = this.formItem.displayProperty;
-        }
-        delete me.forceReload;
-      },
-
-      // drawAllMaxCells is set to 0 to prevent extra reads of data
-      // Smartclient will try to read until drawAllMaxCells has been reached
-      drawAllMaxCells: 0,
-
-      fetchDelay: 400,
-      // prevent aggressive local filtering by smartclient
-      filterLocally: false,
-      multipleValueSeparator: ' or ',
-      dataProperties: {
-        useClientFiltering: false
-      },
-
-      isSelected: function (record) {
-        var i, values = this.formItem.getValue();
-        if (values.length) {
-          for (i = 0; i < values.length; i++) {
-            if (record[me.displayField] === values[i]) {
-              return true;
-            }
-          }
-        }
-        return record[me.displayField] === values;
-      },
-
-      // override data arrived to prevent the first entry from being
-      // selected
-      // this to handle the picklist in foreign key filter item. When a user
-      // types a partial value maybe he/she wants to filter by this partial
-      // value
-      // auto-selecting the first value makes this impossible.
-      // Therefore this option to prevent this.
-      // There are maybe nicer points to do this overriding but this was the
-      // place after the first item was selected.
-      // This first selection happens in ScrollingMenu.dataChanged
-      dataArrived: function (startRow, endRow) {
-        var record, rowNum, i, values = this.formItem.getValue(),
-            fixedValues = [],
-            value;
-        this.Super('dataArrived', arguments);
-        if (values) {
-          if (!isc.isA.Array(values)) {
-            values = [values];
-          }
-
-          // fix selected values before checking them in the data to re-select them
-          for (i = 0; i < values.length; i++) {
-            value = values[i];
-            if (isc.isAn.Array(value)) {
-              value = value[0];
-            }
-            fixedValues.push(value.startsWith('==') ? value.substring(2) : value);
-          }
-
-          for (rowNum = startRow; rowNum < (endRow + 1); rowNum++) {
-            record = this.getRecord(rowNum);
-            if (record && fixedValues.contains(record[me.displayField])) {
-              // selectRecord asynchronously invokes handleChanged, this should be
-              // managed as when the value is picked from the list by pickValue
-              this.formItem._pickingArrivedValue = true;
-              this.selectRecord(record, true);
-            }
-          }
-        }
+    if (this.disableFkDropdown) {
+      this.showPickerIcon = false;
+      this.showPickListOnKeypress = false;
+      if (this.filterOnChange) {
+        this.actOnKeypress = true;
       }
-    };
+    } else {
+      this.pickListProperties = {
+        // 'showOverAsSelected' and 'bodyKeyPress' defined here until issue 28475 be fixed.
+        // After the fix the following two lines must be removed, since it will be inherited from
+        // OBListFilterItem  as usual
+        showOverAsSelected: this.pickListProperties.showOverAsSelected,
+        bodyKeyPress: this.pickListProperties.bodyKeyPress,
+
+        // make sure that we send the same parameters as the grid
+        onFetchData: function (criteria, requestProperties) {
+          var gridView = grid.view;
+          requestProperties = requestProperties || {};
+          requestProperties.params = grid.getFetchRequestParams(requestProperties.params) || {};
+          if (gridView) {
+            requestProperties.params.tabId = gridView.tabId || (grid.viewProperties && grid.viewProperties.tabId) || (gridView.sourceView && gridView.sourceView.tabId);
+            if (gridView.buttonOwnerView && gridView.buttonOwnerView.tabId) {
+              requestProperties.params.buttonOwnerViewTabId = gridView.buttonOwnerView.tabId;
+            }
+          }
+          // send the display field in request params to add it to the list of fields to be fetched in DefaultJsonDataService.
+          // used for displaying table references properly. Refer issue https://issues.openbravo.com/view.php?id=26696
+          if (this.formItem && this.formItem.displayProperty) {
+            requestProperties.params.displayProperty = this.formItem.displayProperty;
+          }
+          delete me.forceReload;
+        },
+
+        // drawAllMaxCells is set to 0 to prevent extra reads of data
+        // Smartclient will try to read until drawAllMaxCells has been reached
+        drawAllMaxCells: 0,
+
+        fetchDelay: 400,
+        // prevent aggressive local filtering by smartclient
+        filterLocally: false,
+        multipleValueSeparator: ' or ',
+        dataProperties: {
+          useClientFiltering: false
+        },
+
+        isSelected: function (record) {
+          var i, values = this.formItem.getValue();
+          if (values.length) {
+            for (i = 0; i < values.length; i++) {
+              if (record[me.displayField] === values[i]) {
+                return true;
+              }
+            }
+          }
+          return record[me.displayField] === values;
+        },
+
+        // override data arrived to prevent the first entry from being
+        // selected
+        // this to handle the picklist in foreign key filter item. When a user
+        // types a partial value maybe he/she wants to filter by this partial
+        // value
+        // auto-selecting the first value makes this impossible.
+        // Therefore this option to prevent this.
+        // There are maybe nicer points to do this overriding but this was the
+        // place after the first item was selected.
+        // This first selection happens in ScrollingMenu.dataChanged
+        dataArrived: function (startRow, endRow) {
+          var record, rowNum, i, values = this.formItem.getValue(),
+              fixedValues = [],
+              value;
+          this.Super('dataArrived', arguments);
+          if (values) {
+            if (!isc.isA.Array(values)) {
+              values = [values];
+            }
+
+            // fix selected values before checking them in the data to re-select them
+            for (i = 0; i < values.length; i++) {
+              value = values[i];
+              if (isc.isAn.Array(value)) {
+                value = value[0];
+              }
+              fixedValues.push(value.startsWith('==') ? value.substring(2) : value);
+            }
+
+            for (rowNum = startRow; rowNum < (endRow + 1); rowNum++) {
+              record = this.getRecord(rowNum);
+              if (record && fixedValues.contains(record[me.displayField])) {
+                // selectRecord asynchronously invokes handleChanged, this should be
+                // managed as when the value is picked from the list by pickValue
+                this.formItem._pickingArrivedValue = true;
+                this.selectRecord(record, true);
+              }
+            }
+          }
+        }
+      };
+    }
     dataSource = OB.Datasource.create({
       dataURL: grid.getDataSource().dataURL,
       requestProperties: {
@@ -179,6 +187,9 @@ isc.OBFKFilterTextItem.addProperties({
     });
     if (grid.Class === 'OBTreeGrid') {
       dataSource.requestProperties.params.tabId = grid.view.tabId;
+    }
+    if (this.showFkDropdownUnfiltered) {
+      dataSource.requestProperties.params._showFkDropdownUnfiltered = true;
     }
     this.setOptionDataSource(dataSource);
 
@@ -521,9 +532,18 @@ isc.OBFKFilterTextItem.addProperties({
           value = identifier;
         }
       }
-      if (criterion.operator !== "iContains" && criterion.operator !== "contains" && criterion.operator !== "regexp") {
-        if (operators[criterion.operator] && (operators[criterion.operator].ID === criterion.operator) && operators[criterion.operator].symbol && value && (value.indexOf(operators[criterion.operator].symbol) === -1)) {
+      if (this.disableFkDropdown) {
+        // if the fk dropdown is disabled then the filter must behave like a text filter
+        // that means that the symbol of the default operator is not shown
+        if (criterion.operator !== this.getOperator()) {
           value = operators[criterion.operator].symbol + value;
+        }
+
+      } else {
+        if (criterion.operator !== "iContains" && criterion.operator !== "contains" && criterion.operator !== "regexp") {
+          if (operators[criterion.operator] && (operators[criterion.operator].ID === criterion.operator) && operators[criterion.operator].symbol && value && (value.indexOf(operators[criterion.operator].symbol) === -1)) {
+            value = operators[criterion.operator].symbol + value;
+          }
         }
       }
       this.setValue(value);
@@ -557,6 +577,9 @@ isc.OBFKFilterTextItem.addProperties({
   },
 
   refreshPickList: function () {
+    if (this.disableFkDropdown) {
+      return;
+    }
     if (this.valueIsExpression()) {
       return;
     }
@@ -690,5 +713,12 @@ isc.OBFKFilterTextItem.addProperties({
       recordIdentifier = this.filterAuxCache.find(OB.Constants.ID, id)[OB.Constants.IDENTIFIER];
     }
     return recordIdentifier;
+  },
+
+  showPickList: function () {
+    if (this.disableFkDropdown) {
+      return;
+    }
+    this.Super('showPickList', arguments);
   }
 });

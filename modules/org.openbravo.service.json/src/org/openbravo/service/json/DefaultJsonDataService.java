@@ -327,71 +327,116 @@ public class DefaultJsonDataService implements JsonDataService {
       // this is the main entity of a 'contains' (used in FK drop down lists), it will create also
       // info for subentity
 
-      final String distinctPropertyPath = parameters.get(JsonConstants.DISTINCT_PARAMETER);
-      final Property distinctProperty = DalUtil.getPropertyFromPath(ModelProvider.getInstance()
-          .getEntity(entityName), distinctPropertyPath);
-      final Entity distinctEntity = distinctProperty.getTargetEntity();
+      if ("true".equals(parameters.get(JsonConstants.SHOW_FK_DROPDOWN_UNFILTERED_PARAMETER))) {
+        // Do not filter out the rows of the referenced tables if
+        // they are not referenced from the referencing tables
+        // Showing the records unfiltered improves the performance if the referenced table has just
+        // a few records and the referencing table has lots
+        final String distinctPropertyPath = parameters.get(JsonConstants.DISTINCT_PARAMETER);
+        final Property distinctProperty = DalUtil.getPropertyFromPath(ModelProvider.getInstance()
+            .getEntity(entityName), distinctPropertyPath);
+        final Entity distinctEntity = distinctProperty.getTargetEntity();
+        queryService.setEntityName(distinctEntity.getName());
+        queryService
+            .addFilterParameter(JsonConstants.SHOW_FK_DROPDOWN_UNFILTERED_PARAMETER, "true");
+        queryService.setFilterOnReadableOrganizations(filterOnReadableOrganizations);
+        if (parameters.containsKey(JsonConstants.USE_ALIAS)) {
+          queryService.setUseAlias();
+        }
 
-      // criteria needs to be split in two parts:
-      // -One for main entity (the one directly queried for)
-      // -Another one for subentity
-      String baseCriteria = "";
-      String subCriteria = "";
-      hasSubentity = true;
-      if (!StringUtils.isEmpty(parameters.get("criteria"))) {
-        String criteria = parameters.get("criteria");
-        for (String criterion : criteria.split(JsonConstants.IN_PARAMETER_SEPARATOR)) {
-          try {
-            JSONObject jsonCriterion = new JSONObject(criterion);
-            if (jsonCriterion.getString("fieldName").equals(
-                distinctPropertyPath + "$" + JsonConstants.IDENTIFIER)) {
-              jsonCriterion.put("fieldName", JsonConstants.IDENTIFIER);
-              baseCriteria = jsonCriterion.toString();
-            } else {
-              subCriteria += subCriteria.length() > 0 ? JsonConstants.IN_PARAMETER_SEPARATOR : "";
-              subCriteria += criterion;
+        String baseCriteria = "";
+        // The main entity is now the referenced table, so each criterion that references it must be
+        // updated
+        // The criteria that does not apply to the referenced table can be ignored
+        if (!StringUtils.isEmpty(parameters.get("criteria"))) {
+          String criteria = parameters.get("criteria");
+          for (String criterion : criteria.split(JsonConstants.IN_PARAMETER_SEPARATOR)) {
+            try {
+              JSONObject jsonCriterion = new JSONObject(criterion);
+              if (jsonCriterion.getString("fieldName").equals(
+                  distinctPropertyPath + "$" + JsonConstants.IDENTIFIER)) {
+                jsonCriterion.put("fieldName", JsonConstants.IDENTIFIER);
+                baseCriteria = jsonCriterion.toString();
+              }
+            } catch (JSONException e) {
+              log.error("Error obtaining 'distint' criterion for " + criterion, e);
             }
-          } catch (JSONException e) {
-            log.error("Error obtaining 'distint' criterion for " + criterion, e);
           }
         }
-      }
-
-      // params for subentity are based on main entity ones
-      @SuppressWarnings("unchecked")
-      Map<String, String> paramSubCriteria = (Map<String, String>) ((HashMap<String, String>) parameters)
-          .clone();
-
-      // set proper criteria for each case
-      if (StringUtils.isEmpty(subCriteria)) {
-        paramSubCriteria.remove("criteria");
+        if (StringUtils.isEmpty(baseCriteria)) {
+          parameters.remove("criteria");
+        } else {
+          parameters.put("criteria", baseCriteria);
+        }
+        // The where clause of the referencing table no longer needs to be applied, as the query
+        // will be done on the referenced table
+        removeWhereParameter(parameters);
       } else {
-        paramSubCriteria.put("criteria", subCriteria);
+
+        final String distinctPropertyPath = parameters.get(JsonConstants.DISTINCT_PARAMETER);
+        final Property distinctProperty = DalUtil.getPropertyFromPath(ModelProvider.getInstance()
+            .getEntity(entityName), distinctPropertyPath);
+        final Entity distinctEntity = distinctProperty.getTargetEntity();
+
+        // criteria needs to be split in two parts:
+        // -One for main entity (the one directly queried for)
+        // -Another one for subentity
+        String baseCriteria = "";
+        String subCriteria = "";
+        hasSubentity = true;
+        if (!StringUtils.isEmpty(parameters.get("criteria"))) {
+          String criteria = parameters.get("criteria");
+          for (String criterion : criteria.split(JsonConstants.IN_PARAMETER_SEPARATOR)) {
+            try {
+              JSONObject jsonCriterion = new JSONObject(criterion);
+              if (jsonCriterion.getString("fieldName").equals(
+                  distinctPropertyPath + "$" + JsonConstants.IDENTIFIER)) {
+                jsonCriterion.put("fieldName", JsonConstants.IDENTIFIER);
+                baseCriteria = jsonCriterion.toString();
+              } else {
+                subCriteria += subCriteria.length() > 0 ? JsonConstants.IN_PARAMETER_SEPARATOR : "";
+                subCriteria += criterion;
+              }
+            } catch (JSONException e) {
+              log.error("Error obtaining 'distint' criterion for " + criterion, e);
+            }
+          }
+        }
+
+        // params for subentity are based on main entity ones
+        @SuppressWarnings("unchecked")
+        Map<String, String> paramSubCriteria = (Map<String, String>) ((HashMap<String, String>) parameters)
+            .clone();
+
+        // set proper criteria for each case
+        if (StringUtils.isEmpty(subCriteria)) {
+          paramSubCriteria.remove("criteria");
+        } else {
+          paramSubCriteria.put("criteria", subCriteria);
+        }
+        if (StringUtils.isEmpty(baseCriteria)) {
+          parameters.remove("criteria");
+        } else {
+          parameters.put("criteria", baseCriteria);
+        }
+
+        // where parameter is only applied in subentity, remove it from main entity
+        removeWhereParameter(parameters);
+
+        // main entity ("me") settings
+        queryService.getQueryBuilder().setMainAlias("me");
+        queryService.setEntityName(distinctEntity.getName());
+
+        queryService.setFilterOnReadableClients(false);
+        queryService.setFilterOnReadableOrganizations(false);
+        queryService.setFilterOnActive(false);
+
+        // create now subentity
+        queryService.setSubEntity(
+            entityName,
+            createSetQueryService(paramSubCriteria, forCountOperation, true,
+                filterOnReadableOrganizations), distinctProperty, distinctPropertyPath);
       }
-      if (StringUtils.isEmpty(baseCriteria)) {
-        parameters.remove("criteria");
-      } else {
-        parameters.put("criteria", baseCriteria);
-      }
-
-      // where parameter is only applied in subentity, remove it from main entity
-      if (parameters.containsKey(JsonConstants.WHERE_PARAMETER)) {
-        parameters.remove(JsonConstants.WHERE_PARAMETER);
-      }
-
-      // main entity ("me") settings
-      queryService.getQueryBuilder().setMainAlias("me");
-      queryService.setEntityName(distinctEntity.getName());
-
-      queryService.setFilterOnReadableClients(false);
-      queryService.setFilterOnReadableOrganizations(false);
-      queryService.setFilterOnActive(false);
-
-      // create now subentity
-      queryService.setSubEntity(
-          entityName,
-          createSetQueryService(paramSubCriteria, forCountOperation, true,
-              filterOnReadableOrganizations), distinctProperty, distinctPropertyPath);
     } else {
       queryService.setEntityName(entityName);
       queryService.setFilterOnReadableOrganizations(filterOnReadableOrganizations);
@@ -520,6 +565,12 @@ public class DefaultJsonDataService implements JsonDataService {
       // queryService.setJoinAssociatedEntities(true);
     }
     return queryService;
+  }
+
+  private void removeWhereParameter(Map<String, String> parameters) {
+    if (parameters.containsKey(JsonConstants.WHERE_PARAMETER)) {
+      parameters.remove(JsonConstants.WHERE_PARAMETER);
+    }
   }
 
   // Given a map of parameters, returns a string with the pairs key:value
@@ -702,13 +753,22 @@ public class DefaultJsonDataService implements JsonDataService {
         }
 
         // refresh the objects from the db as they can have changed
+        // put the refreshed objects into a new array as we are going to retrieve them using
+        // OBDal.getInstance().get as performs better than OBDal.getInstance().getSession().refresh
+        // See issue https://issues.openbravo.com/view.php?id=30308
+        final List<BaseOBObject> refreshedBobs = new ArrayList<BaseOBObject>();
         for (BaseOBObject bob : bobs) {
-          OBDal.getInstance().getSession().refresh(bob);
+          // Remove the bob instance from the session cache with evict
+          OBDal.getInstance().getSession().evict(bob);
+          // With get() we retrieve the object from db as we have cleared it from cache with evict()
+          BaseOBObject refreshedBob = OBDal.getInstance().get(bob.getEntityName(),
+              DalUtil.getId(bob));
           // if object has computed columns refresh from the database too
-          if (bob.getEntity().hasComputedColumns()) {
+          if (refreshedBob.getEntity().hasComputedColumns()) {
             OBDal.getInstance().getSession()
-                .refresh(bob.get(Entity.COMPUTED_COLUMNS_PROXY_PROPERTY));
+                .refresh(refreshedBob.get(Entity.COMPUTED_COLUMNS_PROXY_PROPERTY));
           }
+          refreshedBobs.add(refreshedBob);
         }
 
         // almost successfull, now create the response
@@ -716,7 +776,7 @@ public class DefaultJsonDataService implements JsonDataService {
         final DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(
             DataToJsonConverter.class);
         toJsonConverter.setAdditionalProperties(JsonUtils.getAdditionalProperties(parameters));
-        final List<JSONObject> jsonObjects = toJsonConverter.toJsonObjects(bobs);
+        final List<JSONObject> jsonObjects = toJsonConverter.toJsonObjects(refreshedBobs);
 
         if (sendOriginalIdBack) {
           // now it is assumed that the jsonObjects are the same size and the same location

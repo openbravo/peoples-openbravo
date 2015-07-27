@@ -61,7 +61,13 @@ import org.slf4j.LoggerFactory;
 @ComponentProvider.Qualifier("org.openbravo.costing.AverageAlgorithm")
 public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
   private static final Logger log = LoggerFactory.getLogger(CostAdjustmentProcess.class);
-  private String bdCostingId = "";
+  private String bdCostingId;
+
+  @Override
+  protected void init(CostAdjustmentLine costAdjLine) {
+    super.init(costAdjLine);
+    bdCostingId = "";
+  }
 
   @Override
   protected void getRelatedTransactionsByAlgorithm() {
@@ -431,35 +437,20 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
             + OBDateUtils.formatDate(new Date()));
       }
       if (currentCosting.getCost().compareTo(cost) != 0) {
-        basetrx = getTransaction();
-        Date newDate = new Date();
-        Date dateTo = currentCosting.getEndingDate();
-        currentCosting.setEndingDate(newDate);
+        // Update existing costing
+        currentCosting.setPermanent(Boolean.FALSE);
         OBDal.getInstance().save(currentCosting);
-        Costing newCosting = OBProvider.getInstance().get(Costing.class);
-        newCosting.setCost(cost);
-        newCosting.setCurrency((Currency) OBDal.getInstance().getProxy(Currency.ENTITY_NAME,
-            strCurrentCurId));
-        newCosting.setStartingDate(newDate);
-        newCosting.setEndingDate(dateTo);
-        newCosting.setInventoryTransaction(null);
-        newCosting.setProduct(basetrx.getProduct());
-        if (isManufacturingProduct) {
-          newCosting.setOrganization((Organization) OBDal.getInstance().getProxy(
-              Organization.ENTITY_NAME, "0"));
-        } else {
-          newCosting.setOrganization((Organization) OBDal.getInstance().getProxy(
-              Organization.ENTITY_NAME, strCostOrgId));
+        OBDal.getInstance().flush();
+
+        if (currentCosting.getOriginalCost() == null) {
+          currentCosting.setOriginalCost(currentCosting.getCost());
         }
-        newCosting.setQuantity(null);
-        newCosting.setTotalMovementQuantity(currentStock);
-        newCosting.setPrice(cost);
-        newCosting.setCostType("AVA");
-        newCosting.setManual(Boolean.FALSE);
-        newCosting.setPermanent(Boolean.TRUE);
-        newCosting.setProduction(trxType == TrxType.ManufacturingProduced);
-        newCosting.setWarehouse((Warehouse) getCostDimensions().get(CostDimension.Warehouse));
-        OBDal.getInstance().save(newCosting);
+        currentCosting.setPrice(cost);
+        currentCosting.setCost(cost);
+        currentCosting.setTotalMovementQuantity(currentStock);
+        currentCosting.setManual(Boolean.FALSE);
+        currentCosting.setPermanent(Boolean.TRUE);
+        OBDal.getInstance().save(currentCosting);
       }
     }
   }
@@ -617,9 +608,8 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
       wh.append("          trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " = :trxqty");
       wh.append("          and trx." + MaterialTransaction.PROPERTY_ID + " > :trxid");
       wh.append("    )))))");
-      wh.append(" )))");
+      wh.append(" ))))");
     }
-    wh.append(")");
     wh.append("  and org.id in (:orgs)");
     if (warehouse != null) {
       wh.append("  and loc." + Locator.PROPERTY_WAREHOUSE + " = :warehouse");

@@ -597,6 +597,10 @@ export.database: exports database structure and data to xml files.
     <ant dir="${base.src.test}" target="run.quick.tests" inheritAll="true" inheritRefs="true" />
   </target>
 
+  <target name="run.test" depends="init">
+    <ant dir="${base.src.test}" target="run.test" inheritAll="true" inheritRefs="true" />
+  </target>
+
   <target name="run.api.test.javascript">
     <ant dir="${base.src.test}" target="run.api.test.javascript" inheritAll="true" inheritRefs="true" />
   </target>

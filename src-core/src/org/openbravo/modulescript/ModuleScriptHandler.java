@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2010-2014 Openbravo S.L.U.
+ * Copyright (C) 2010-2015 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -15,7 +15,9 @@ import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
@@ -27,6 +29,7 @@ public class ModuleScriptHandler extends Task {
 
   private File basedir;
   private String moduleJavaPackage;
+  private Map<String, OpenbravoVersion> modulesVersionMap;
 
   @Override
   public void execute() {
@@ -60,12 +63,11 @@ public class ModuleScriptHandler extends Task {
         if (myClass.getGenericSuperclass().equals(
             Class.forName("org.openbravo.modulescript.ModuleScript"))) {
           Object instance = myClass.newInstance();
-          log4j.info("Executing moduleScript: " + s);
           callExecute(myClass, instance);
         }
       } catch (Exception e) {
         log4j.error("Error executing moduleScript: " + s, e);
-        throw new BuildException("Execution of moduleScript " + s + "failed.");
+        throw new BuildException("Execution of moduleScript " + s + " failed.");
       }
     }
   }
@@ -73,24 +75,72 @@ public class ModuleScriptHandler extends Task {
   @SuppressWarnings("unchecked")
   private ArrayList<String> callExecute(Class<?> myClass, Object instance)
       throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-    return (ArrayList<String>) myClass.getMethod("execute", new Class[0]).invoke(instance,
-        new Object[0]);
+    return (ArrayList<String>) myClass.getMethod("preExecute", new Class[] { Map.class }).invoke(
+        instance, new Object[] { getModulesVersionMap() });
   }
 
+  /**
+   * Returns a File with the base directory
+   * 
+   * @return a File with the base directory
+   */
   public File getBasedir() {
     return basedir;
   }
 
+  /**
+   * Sets the base directory
+   * 
+   * @param basedir
+   *          File used to set the base directory
+   */
   public void setBasedir(File basedir) {
     this.basedir = basedir;
   }
 
+  /**
+   * Returns the java package
+   * 
+   * @return a String with the module java package
+   */
   public String getModuleJavaPackage() {
     return moduleJavaPackage;
   }
 
+  /**
+   * Sets the java package
+   * 
+   * @param moduleJavaPackage
+   *          String to set the java package
+   */
   public void setModuleJavaPackage(String moduleJavaPackage) {
     this.moduleJavaPackage = moduleJavaPackage;
   }
 
+  /**
+   * Creates the OpenbravoVersion map from a map of version strings
+   * 
+   * @param currentVersionsMap
+   *          A data structure that contains Strings with module versions mapped by module id
+   */
+  public void setModulesVersionMap(Map<String, String> currentVersionsMap) {
+    modulesVersionMap = new HashMap<String, OpenbravoVersion>();
+    for (Map.Entry<String, String> entry : currentVersionsMap.entrySet()) {
+      try {
+        modulesVersionMap.put(entry.getKey(), new OpenbravoVersion(entry.getValue()));
+      } catch (Exception ex) {
+        log4j.error(
+            "Not possible to recover the current version of module with id: " + entry.getKey(), ex);
+      }
+    }
+  }
+
+  /**
+   * Returns a map with the current module versions
+   * 
+   * @return A data structure that contains module versions mapped by module id
+   */
+  public Map<String, OpenbravoVersion> getModulesVersionMap() {
+    return this.modulesVersionMap;
+  }
 }

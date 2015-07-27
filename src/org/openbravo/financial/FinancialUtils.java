@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2012-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -27,6 +27,9 @@ import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.Query;
+import org.hibernate.ScrollMode;
+import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.util.Check;
@@ -43,6 +46,7 @@ import org.openbravo.model.common.currency.ConversionRateDoc;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.Product;
+import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.model.pricing.pricelist.PriceListVersion;
 import org.openbravo.model.pricing.pricelist.ProductPrice;
@@ -340,5 +344,28 @@ public class FinancialUtils {
     final BigDecimal lineNetAmount = (BigDecimal) CallStoredProcedure.getInstance().call(
         procedureName, parameters, null);
     return lineNetAmount;
+  }
+
+  /**
+   * Get all the payment details with available credit
+   * 
+   * @param businessPartner
+   * @param currency
+   * @return
+   */
+  public static ScrollableResults getPaymentsWithCredit(String businessPartnerId, String currencyId) {
+    StringBuilder hql = new StringBuilder();
+    hql.append(" SELECT t1." + FIN_Payment.PROPERTY_ID);
+    hql.append(" FROM " + FIN_Payment.ENTITY_NAME + " as t1");
+    hql.append(" WHERE t1." + FIN_Payment.PROPERTY_BUSINESSPARTNER + ".id = :businessPartnerId");
+    hql.append(" AND t1." + FIN_Payment.PROPERTY_CURRENCY + ".id = :currencyId");
+    hql.append(" AND t1." + FIN_Payment.PROPERTY_GENERATEDCREDIT + " <> 0");
+    hql.append(" AND t1." + FIN_Payment.PROPERTY_GENERATEDCREDIT + " <> t1."
+        + FIN_Payment.PROPERTY_USEDCREDIT);
+    final Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
+    query.setParameter("businessPartnerId", businessPartnerId);
+    query.setParameter("currencyId", currencyId);
+    ScrollableResults scroll = query.scroll(ScrollMode.SCROLL_SENSITIVE);
+    return scroll;
   }
 }

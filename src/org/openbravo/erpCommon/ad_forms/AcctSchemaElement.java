@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2010 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2015 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -90,7 +90,7 @@ public final class AcctSchemaElement implements Serializable {
         log4jAcctSchemaElement.debug(seqNo + " " + name + " " + segmentType + "=" + defaultValue);
         if (mandatory.equals("Y") && defaultValue.equals(""))
           log4jAcctSchemaElement
-              .warn("AcctSchameElement.getAcctSchemaElementList - No default value for " + name
+              .debug("AcctSchameElement.getAcctSchemaElementList - No default value for " + name
                   + " for AccountingSchema: " + C_AcctSchema_ID);
         e = new AcctSchemaElement(id, seqNo, name, segmentType, C_Element_ID, defaultValue,
             mandatory, balanced);

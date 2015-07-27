@@ -215,6 +215,7 @@ way.
 # ejb-api-3.0.jar
 # jboss-interceptor-api-3.1.0-CR3.jar
 # jboss-ejb3-api-3.1.0.jar
+# jboss-el-api_2.2_spec-1.0.0.Final.jar
 Under the LGPL license (included as LGPL-2.1.txt in this folder)
 
 # cal10n-api-0.7.4.jar
@@ -230,17 +231,28 @@ Under the MIT license (available at http://www.slf4j.org/license.html)
 # weld-core-1.1.24.Final.jar
 # weld-servlet-core-1.1.24.Final.jar
 # weld-spi.jar
-# arquillian-api-1.0.0.Alpha4.jar
-# arquillian-impl-base-1.0.0.Alpha4.jar
-# arquillian-junit-1.0.0.Alpha4.jar
-# arquillian-protocol-local-1.0.0.Alpha4.jar
-# arquillian-spi-1.0.0.Alpha4.jar
-# arquillian-testenricher-cdi-1.0.0.Alpha4.jar
-# arquillian-weld-ee-embedded-1.1-1.0.0.Alpha4.jar
-# shrinkwrap-api-1.0.0-alpha-11.jar
-# shrinkwrap-extension-classloader-1.0.0-alpha-11.jar
-# shrinkwrap-impl-base-1.0.0-alpha-11.jar
-# shrinkwrap-spi-1.0.0-alpha-11.jar
+# arquillian-config-api-1.1.8.Final.jar
+# arquillian-config-impl-base-1.1.8.Final.jar
+# arquillian-container-impl-base-1.1.8.Final.jar
+# arquillian-container-spi-1.1.8.Final.jar
+# arquillian-container-test-api-1.1.8.Final.jar
+# arquillian-container-test-impl-base-1.1.8.Final.jar
+# arquillian-container-test-spi-1.1.8.Final.jar
+# arquillian-core-api-1.1.8.Final.jar
+# arquillian-core-impl-base-1.1.8.Final.jar
+# arquillian-core-spi-1.1.8.Final.jar
+# arquillian-junit-container-1.1.8.Final.jar
+# arquillian-junit-core-1.1.8.Final.jar
+# arquillian-test-api-1.1.8.Final.jar
+# arquillian-testenricher-cdi-1.0.2.Final.jar
+# arquillian-test-impl-base-1.1.8.Final.jar
+# arquillian-test-spi-1.1.8.Final.jar
+# arquillian-weld-ee-embedded-1.1-1.0.0.CR8.jar
+# shrinkwrap-api-1.2.2.jar
+# shrinkwrap-descriptors-api-base-2.0.0-alpha-7.jar
+# shrinkwrap-descriptors-spi-2.0.0-alpha-7.jar
+# shrinkwrap-impl-base-1.2.2.jar
+# shrinkwrap-spi-1.2.2.jar
 # validation-api-1.0.0.GA.jar
 # jsmin.0.2.4.jar
 # httpcore-4.0.1.jar

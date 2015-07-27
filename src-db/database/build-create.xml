@@ -196,8 +196,6 @@ create.database: creates the database from scratch.
         CREATE ROLE ${bbdd.user} LOGIN PASSWORD '${bbdd.password}'
                SUPERUSER CREATEDB CREATEROLE
                VALID UNTIL 'infinity';
-        
-        UPDATE pg_authid SET rolcatupdate=true WHERE rolname='${bbdd.user}';
       </transaction>
     </sql>
     <sql driver="${bbdd.driver}" url="${bbdd.url}/postgres" userid="${bbdd.systemUser}" password="${bbdd.systemPassword}" autocommit="true">

@@ -21,6 +21,7 @@ package org.openbravo.test;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
+import org.openbravo.base.weld.test.testinfrastructure.CdiInfrastructure;
 import org.openbravo.erpCommon.info.ClassicSelectorTest;
 import org.openbravo.test.dal.ComputedColumnsTest;
 import org.openbravo.test.dal.DalComplexQueryRequisitionTest;
@@ -138,6 +139,11 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     UniqueConstraintImportTest.class, //
     DatasetExportTest.class, //
     DefaultsDataset.class, //
-    ClassicSelectorTest.class, })
+    ClassicSelectorTest.class,
+
+    // cdi
+    CdiInfrastructure.class,
+
+})
 public class AntTaskTests {
 }

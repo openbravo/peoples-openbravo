@@ -110,11 +110,6 @@ public class CostingBackground extends DalBaseProcess {
           counter++;
           MaterialTransaction transaction = OBDal.getInstance().get(MaterialTransaction.class,
               trxId);
-          if ("S".equals(transaction.getCostingStatus())) {
-            // Do not calculate trx in skip status.
-            transaction.setProcessed(true);
-            continue;
-          }
           log4j.debug("Start transaction process: " + transaction.getId());
           CostingServer transactionCost = new CostingServer(transaction);
           transactionCost.process();
@@ -154,10 +149,6 @@ public class CostingBackground extends DalBaseProcess {
       bundle.setResult(result);
       return;
     } finally {
-      // Set the processed flag to true to those transactions whose cost has been calculated.
-      if (!orgsWithRule.isEmpty()) {
-        setCalculatedTransactionsAsProcessed(orgsWithRule);
-      }
       OBContext.restorePreviousMode();
     }
   }
@@ -173,27 +164,7 @@ public class CostingBackground extends DalBaseProcess {
     hqlTransactions.append(" where trx." + MaterialTransaction.PROPERTY_ISPROCESSED + " = true");
     hqlTransactions.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED
         + " = false");
-    hqlTransactions.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION
-        + ".id in (:orgs)");
-    Query updateTransactions = OBDal.getInstance().getSession()
-        .createQuery(hqlTransactions.toString());
-    updateTransactions.setParameterList("orgs", orgsWithRule);
-    updateTransactions.executeUpdate();
-
-    OBDal.getInstance().flush();
-  }
-
-  /**
-   * Get Transactions with Processed flag = 'N' and it's cost is Calculated and set Processed flag =
-   * 'Y'
-   */
-  private void setCalculatedTransactionsAsProcessed(List<String> orgsWithRule) {
-    final StringBuilder hqlTransactions = new StringBuilder();
-    hqlTransactions.append(" update " + MaterialTransaction.ENTITY_NAME + " as trx set trx."
-        + MaterialTransaction.PROPERTY_ISPROCESSED + " = true ");
-    hqlTransactions.append(" where trx." + MaterialTransaction.PROPERTY_ISPROCESSED + " = false");
-    hqlTransactions.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED
-        + " = true");
+    hqlTransactions.append("   and trx." + MaterialTransaction.PROPERTY_COSTINGSTATUS + " <> 'S'");
     hqlTransactions.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION
         + ".id in (:orgs)");
     Query updateTransactions = OBDal.getInstance().getSession()
@@ -274,10 +245,6 @@ public class CostingBackground extends DalBaseProcess {
         }
         MaterialTransaction transaction = OBDal.getInstance().get(MaterialTransaction.class, trxId);
         counter++;
-        if ("S".equals(transaction.getCostingStatus())) {
-          // Do not calculate trx in skip status.
-          continue;
-        }
         CostingServer transactionCost = new CostingServer(transaction);
         transactionCost.process();
       }

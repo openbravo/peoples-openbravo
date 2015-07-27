@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -63,9 +63,25 @@ public class ForeignKeyUIDefinition extends UIDefinition {
       }
     }
 
-    Boolean allowFkFilterByIdentifier = (Boolean) readGridConfigurationSetting("allowFkFilterByIdentifier");
-    if (Boolean.FALSE.equals(allowFkFilterByIdentifier)) {
-      append = append + ", allowFkFilterByIdentifier: " + allowFkFilterByIdentifier.toString();
+    Boolean disableFkDropdown = (Boolean) readGridConfigurationSetting("disableFkDropdown");
+    if (Boolean.TRUE.equals(disableFkDropdown)) {
+      append = append + ", disableFkDropdown: " + disableFkDropdown.toString();
+      // if the fk drop down is disabled then the filter should behave like a text filter
+      // that means the filter could be trigger on editor change, if that configuration is enabled
+      if (Boolean.TRUE.equals(filterOnChange)) {
+        append = append + ", filterOnChange: " + filterOnChange.toString();
+      }
+    } else {
+      // these configurations only apply if the fk filter combo is enabled
+      Boolean allowFkFilterByIdentifier = (Boolean) readGridConfigurationSetting("allowFkFilterByIdentifier");
+      if (Boolean.FALSE.equals(allowFkFilterByIdentifier)) {
+        append = append + ", allowFkFilterByIdentifier: " + allowFkFilterByIdentifier.toString();
+      }
+
+      Boolean showFkDropdownUnfiltered = (Boolean) readGridConfigurationSetting("showFkDropdownUnfiltered");
+      if (Boolean.TRUE.equals(showFkDropdownUnfiltered)) {
+        append = append + ", showFkDropdownUnfiltered: " + showFkDropdownUnfiltered.toString();
+      }
     }
 
     return super.getFilterEditorPropertiesProperty(field) + append;

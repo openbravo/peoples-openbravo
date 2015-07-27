@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2014 Openbravo SLU
+ * All portions are Copyright (C) 2001-2015 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -33,10 +33,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Tree;
@@ -48,6 +50,7 @@ import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
@@ -343,6 +346,23 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
                   + MaterialReceiptPendingData.bPartnerDescription(this, data[0].cBpartnerId));
               return myMessage;
             }
+
+            OrganizationStructureProvider osp = OBContext.getOBContext()
+                .getOrganizationStructureProvider(vars.getClient());
+            boolean orgLegalWithAccounting = osp
+                .getLegalEntityOrBusinessUnit(
+                    OBDal.getInstance().get(Organization.class, data[0].adOrgId))
+                .getOrganizationType().isLegalEntityWithAccounting();
+            org.openbravo.model.common.enterprise.DocumentType dt = OBDal.getInstance().get(
+                org.openbravo.model.common.enterprise.DocumentType.class, docTargetType);
+            if (!FIN_Utility.isPeriodOpen(vars.getClient(), dt.getDocumentCategory(),
+                data[0].adOrgId, strDateReceipt) && orgLegalWithAccounting) {
+              myMessage.setType("Error");
+              myMessage.setTitle(OBMessageUtils.messageBD("Error"));
+              myMessage.setMessage(OBMessageUtils.messageBD("PeriodNotAvailable"));
+              return myMessage;
+            }
+
             try {
               MaterialReceiptPendingData.insert(conn, this, strmInoutId, vars.getClient(),
                   data[0].adOrgId, "Y", vars.getUser(), vars.getUser(), "N", strDocumentno, "CO",

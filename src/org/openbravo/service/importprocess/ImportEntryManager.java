@@ -221,7 +221,11 @@ public class ImportEntryManager {
    */
   public void shutdown() {
     log.debug("Shutting down Import Entry Framework");
-    executorService.shutdownNow();
+
+    if (executorService != null) {
+      executorService.shutdownNow();
+    }
+
     for (ImportEntryProcessor importEntryProcessor : importEntryProcessors.values()) {
       importEntryProcessor.shutdown();
     }

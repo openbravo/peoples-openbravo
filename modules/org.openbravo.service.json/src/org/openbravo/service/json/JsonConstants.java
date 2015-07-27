@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -56,6 +56,7 @@ public class JsonConstants {
   public static final String WHERE_PARAMETER = "_where";
   public static final String SELECTEDPROPERTIES_PARAMETER = "_selectedProperties";
   public static final String DISTINCT_PARAMETER = "_distinct";
+  public static final String SHOW_FK_DROPDOWN_UNFILTERED_PARAMETER = "_showFkDropdownUnfiltered";
   public static final String SUMMARY_PARAMETER = "_summary";
   public static final String ORDERBY_PARAMETER = "_orderBy";
   public static final String FILTER_PARAMETER = "_filter";
