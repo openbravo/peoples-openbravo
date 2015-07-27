@@ -57,6 +57,7 @@ public class OrderLinePickEditTransformer extends HqlQueryTransformer {
     whereClause.append(" and (o.processed = true or o.id = :orderId) ");
     whereClause.append(" and o.businessPartner.id = :businessPartnerId ");
     whereClause.append(" and e.id <> :orderLineId ");
+    whereClause.append(" and e.product.productType <> 'S' ");
 
     if ("N".equals(includedCategories)) {
       whereClause
