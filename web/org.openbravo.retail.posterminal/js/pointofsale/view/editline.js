@@ -359,7 +359,7 @@ enyo.kind({
           maxHeight: '134px',
           thumb: true,
           horizontal: 'hidden',
-          style: 'padding: 8px 0px 4px 25px; line-height: 120%;'
+          style: 'padding: 8px 0px 4px 10px; line-height: 120%;'
         }, {
           classes: 'span4',
           sytle: 'text-align: right',
