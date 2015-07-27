@@ -369,10 +369,6 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
-      <column name="OVERDUE_AVAILABLE_DAYS" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="RETURNABLE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
         <onCreateDefault><![CDATA['N']]></onCreateDefault>
