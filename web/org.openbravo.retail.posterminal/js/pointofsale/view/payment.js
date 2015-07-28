@@ -880,6 +880,9 @@ enyo.kind({
   classes: 'btn-icon-adaptative btn-icon-check btnlink-green',
   style: 'width: 120px; float: right; margin: 5px 5px 15px 0px; height: 2.5em; display:block; clear: right',
   tap: function () {
+    if (this.disabled) {
+      return true;
+    }
     this.doExactPayment();
   }
 });
