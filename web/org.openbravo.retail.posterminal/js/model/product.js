@@ -153,10 +153,6 @@
     column: 'allowAnonymousSale',
     type: 'BOOL'
   }, {
-    name: 'overdueAvailableDays',
-    column: 'overdueAvailableDays',
-    type: 'NUMBER'
-  }, {
     name: 'returnable',
     column: 'returnable',
     type: 'BOOL'

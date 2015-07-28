@@ -142,7 +142,6 @@ public class ProductProperties extends ModelExtension {
           add(new HQLProperty("product.includedProducts", "includeProducts"));
           add(new HQLProperty("product.printDescription", "printDescription"));
           add(new HQLProperty("product.allowAnonymousSale", "allowAnonymousSale"));
-          add(new HQLProperty("product.overdueAvailableDays", "overdueAvailableDays"));
           add(new HQLProperty("product.returnable", "returnable"));
           add(new HQLProperty("product.overdueReturnDays", "overdueReturnDays"));
           add(new HQLProperty("product.editablePrice", "editablePrice"));
