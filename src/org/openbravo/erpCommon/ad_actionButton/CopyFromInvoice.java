@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -33,6 +33,7 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Tax;
@@ -92,6 +93,7 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
     OBError myError = null;
     Connection conn = null;
     try {
+      OBContext.setAdminMode(true);
       conn = getTransactionConnection();
       CopyFromInvoiceData[] data = CopyFromInvoiceData.select(conn, this, strInvoice,
           Utility.getContext(this, vars, "#User_Client", windowId),
@@ -239,6 +241,8 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
       myError.setTitle(OBMessageUtils.messageBD("Error"));
       myError.setMessage(OBMessageUtils.messageBD("ProcessRunError"));
       return myError;
+    } finally {
+      OBContext.restorePreviousMode();
     }
     myError = new OBError();
     myError.setType("Success");
