@@ -678,6 +678,9 @@
       //we need this data when IsPaid, IsLayaway changes are triggered
       this.set('documentType', _order.get('documentType'));
 
+      //Prevent recalculating service relations during executions of clearWith
+      this.set('preventServicesUpdate', true);
+
       this.set('isPaid', _order.get('isPaid'));
       this.set('paidOnCredit', _order.get('paidOnCredit'));
       this.set('isLayaway', _order.get('isLayaway'));
@@ -706,6 +709,9 @@
         _order.unset('idExecution');
         this.unset('idExecution');
       }
+
+      //Enable recalculating service relations after cloning
+      this.unset('preventServicesUpdate');
 
       this.set('isEditable', _order.get('isEditable'));
       this.trigger('change');
@@ -765,10 +771,11 @@
               oldqtys: oldqtys,
               lines: lines,
               undo: function () {
-                var i;
-                for (i = 0; i < me.get('undo').lines.length; i++) {
-                  me.get('undo').lines[i].set('qty', me.get('undo').oldqtys[i]);
-                  me.get('undo').lines[i].calculateGross();
+                var i, thisUndo = me.get('undo');
+                for (i = 0; i < thisUndo.lines.length; i++) {
+                  //Changing the qty of a line modifies the undo attribute, so we need a copy
+                  thisUndo.lines[i].set('qty', thisUndo.oldqtys[i]);
+                  thisUndo.lines[i].calculateGross();
                 }
                 me.calculateGross();
                 me.set('undo', null);
@@ -884,13 +891,26 @@
           lineDeleted = 0;
       me.set('undo', null);
       me.set('multipleUndo', true);
+      me.set('lineIndexes', {});
+      me.get('lines').forEach(function (line, idx) {
+        me.get('lineIndexes')[line.get('id')] = idx;
+      });
       _.each(lines, function (line) {
-        me.deleteLine(line, false, function () {
+        if (me.get('lines').get(line)) {
+          me.deleteLine(line, false, function () {
+            lineDeleted++;
+            if (lineDeleted === lines.length) {
+              me.set('multipleUndo', null);
+              me.unset('lineIndexes');
+            }
+          });
+        } else {
           lineDeleted++;
           if (lineDeleted === lines.length) {
             me.set('multipleUndo', null);
+            me.unset('lineIndexes');
           }
-        });
+        }
       });
     },
 
@@ -915,39 +935,108 @@
         }, this);
       }
 
+      me.set('currentLineIndexes', {});
+      me.get('lines').forEach(function (line, idx) {
+        me.get('currentLineIndexes')[line.get('id')] = idx;
+      });
+
       // trigger
       line.trigger('removed', line);
 
       function finishDelete() {
+        var text, lines, indexes, relations, rl, rls;
+
+        me.set('preventServicesUpdate', true);
         me.get('lines').remove(line);
-        // set the undo action
         if (me.get('multipleUndo')) {
-          var text = '',
-              lines = [],
-              undo = me.get('undo');
+          var undo = me.get('undo');
+
           if (undo && undo.lines) {
             text = undo.text + ', ';
             lines = undo.lines;
+            indexes = undo.indexes || indexes;
+            relations = undo.relations || relations;
+          } else {
+            text = '';
+            lines = [];
+            indexes = [];
+            relations = [];
           }
           text += OB.I18N.getLabel('OBPOS_DeleteLine', [line.get('qty'), line.get('product').get('_identifier')]);
           lines.push(line);
+          indexes.push(me.get('lineIndexes')[line.get('id')]);
+        } else {
+          text = OB.I18N.getLabel('OBPOS_DeleteLine', [line.get('qty'), line.get('product').get('_identifier')]);
+          lines = [line];
+          indexes = [index];
+          relations = [];
+        }
+        if (me.get('multipleUndo') || me.get('changedServices')) {
+          if (me.get('changedServices')) {
+            me.get('changedServices').forEach(function (changedService) {
+
+              //Mark the service line relation to be restored on Undo	
+              rl = _.filter(changedService.get('relatedLines'), function (rl) {
+                return rl.orderlineId === line.get('id');
+              });
+              relations.push([changedService, rl[0]]);
+
+              //Effectively remove the relation from the service line
+              rls = changedService.get('relatedLines').slice();
+              rls.splice(changedService.get('relatedLines').indexOf(rl[0]), 1);
+              changedService.set('relatedLines', rls);
+            });
+            me.get('deletedServices').forEach(function (deletedService, idx) {
+              text += ', ' + OB.I18N.getLabel('OBPOS_DeleteLine', [deletedService.get('qty'), deletedService.get('product').get('_identifier')]);
+              lines.push(deletedService);
+              if (me.get('multipleUndo')) {
+                indexes.push(me.get('lineIndexes')[deletedService.get('id')]);
+              } else {
+                indexes.push(me.get('currentLineIndexes')[deletedService.get('id')]);
+              }
+              me.get('lines').remove(deletedService);
+              if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
+                deletedService.set('obposIsDeleted', true);
+                me.get('deletedLines').push(new OrderLine(deletedService.attributes));
+              }
+            });
+          }
           me.set('undo', {
             text: text,
             lines: lines,
+            indexes: indexes,
+            relations: relations,
             undo: function () {
-              var i;
-              for (i = 0; i < me.get('undo').lines.length; i++) {
-                me.get('lines').add(me.get('undo').lines[i], {
-                  at: index + i
+              var sortedLines;
+              me.set('preventServicesUpdate', true);
+
+              sortedLines = _.sortBy(me.get('undo').lines, function (line, i) {
+                return me.get('undo').indexes[i];
+              });
+              me.get('undo').indexes.sort(function (a, b) {
+                return a - b;
+              });
+
+              sortedLines.forEach(function (line, idx) {
+                line.unset('obposIsDeleted');
+                me.get('lines').add(line, {
+                  at: me.get('undo').indexes[idx]
                 });
-              }
+              });
+              me.get('undo').relations.forEach(function (rel, idx) {
+                var rls = rel[0].get('relatedLines').slice();
+                rls.push(rel[1]);
+                rel[0].set('relatedLines', rls);
+              });
               me.calculateGross();
               me.set('undo', null);
+              me.unset('preventServicesUpdate');
+              me.get('lines').trigger('updateRelations');
             }
           });
         } else {
           me.set('undo', {
-            text: OB.I18N.getLabel('OBPOS_DeleteLine', [line.get('qty'), line.get('product').get('_identifier')]),
+            text: text,
             line: line,
             undo: function () {
               line.unset('obposIsDeleted');
@@ -959,6 +1048,9 @@
             }
           });
         }
+        me.unset('preventServicesUpdate');
+        me.unset('currentLineIndexes');
+        me.get('lines').trigger('updateRelations');
         me.adjustPayment();
         if (!doNotSave) {
           me.save(callback);
@@ -983,6 +1075,7 @@
         finishDelete();
       }
     },
+
     //Attrs is an object of attributes that will be set in order
     _addProduct: function (p, qty, options, attrs) {
       var newLine = true,
@@ -1234,13 +1327,11 @@
       });
     },
 
-
     /**
      * Splits a line from the ticket keeping in the line the qtyToKeep quantity,
      * the rest is moved to another line with the same product and no packs, or
      * to a new one if there's no other line. In case a new is created it is returned.
      */
-
     splitLine: function (line, qtyToKeep) {
       var originalQty = line.get('qty'),
           newLine, p, qtyToMove;
@@ -1273,11 +1364,9 @@
       }
     },
 
-
     /**
      * Checks other lines with the same product to be merged in a single one
      */
-
     mergeLines: function (line) {
       var p = line.get('product'),
           lines = this.get('lines'),
@@ -1303,12 +1392,10 @@
       }
     },
 
-
     /**
      *  It looks for different lines for same product with exactly the same promotions
      *  to merge them in a single line
      */
-
     mergeLinesWithSamePromotions: function () {
       var lines = this.get('lines'),
           l, line, i, j, k, p, otherLine, toRemove = [],
@@ -1768,8 +1855,6 @@
         OB.Model.Discounts.applyPromotions(this);
       }
     },
-
-
 
     // returns the ordertype: 0: Sales order, 1: Return order, 2: Layaway, 3: Void Layaway
     getOrderType: function () {
@@ -2420,9 +2505,6 @@
       this.trigger('promotionsUpdated');
     },
 
-
-
-
     // for each line, decrease the qtyOffer of promotions and remove the lines with qty 0
     removeQtyOffer: function () {
       var linesPending = new Backbone.Collection();
@@ -2500,8 +2582,6 @@
         return false;
       }
     },
-
-
 
     // if there is a promtion of type "applyNext" that it has been applied previously in the line, then It is replaced
     // by the first promotion applied. Ex:
@@ -2596,8 +2676,6 @@
         callback.call(scope, 'ABORT');
       }
     }
-
-
   });
 
   var OrderList = Backbone.Collection.extend({
@@ -3060,6 +3138,7 @@
         }
         this.modelorder.clearWith(this.current);
         this.modelorder.set('isNewReceipt', false);
+        this.modelorder.trigger('paintTaxes');
       }
     },
     synchronizeCurrentOrder: function () {

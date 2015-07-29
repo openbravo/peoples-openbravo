@@ -161,16 +161,8 @@
     column: 'overdueReturnDays',
     type: 'NUMBER'
   }, {
-    name: 'editablePrice',
-    column: 'editablePrice',
-    type: 'BOOL'
-  }, {
     name: 'isPriceRuleBased',
     column: 'isPriceRuleBased',
-    type: 'BOOL'
-  }, {
-    name: 'uniquePerDocument',
-    column: 'uniquePerDocument',
     type: 'BOOL'
   }, {
     name: 'proposalType',
@@ -200,6 +192,10 @@
     name: 'deferredSellMaxDays',
     column: 'deferredSellMaxDays',
     type: 'NUMBER'
+  }, {
+    name: 'quantityRule',
+    column: 'quantityRule',
+    type: 'TEXT'
   }]);
 
   Product.addIndex([{

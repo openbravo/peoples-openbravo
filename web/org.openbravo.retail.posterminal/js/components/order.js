@@ -625,6 +625,148 @@ enyo.kind({
         this.$.paymentBreakdown.hide();
       }
     }, this);
+    this.order.get('lines').on('add change:qty change:relatedLines updateRelations', function () {
+      var me = this;
+
+      if (this.updating || this.order.get('preventServicesUpdate')) {
+        return;
+      } else {
+        this.updating = true;
+      }
+
+      function getServiceLines(service) {
+        var serviceLines;
+        if (service.get('product').get('groupProduct')) {
+          serviceLines = _.filter(me.order.get('lines').models, function (l) {
+            return l.get('product').get('id') === service.get('product').get('id');
+          });
+        } else {
+          serviceLines = [service];
+          if (service.get('mirrorLine')) {
+            serviceLines.push(service.get('mirrorLine'));
+          }
+        }
+        return serviceLines;
+      }
+
+      this.order.get('lines').forEach(function (line) {
+        var prod = line.get('product'),
+            newLine, i, j, l, rlp, rln, newqtyplus = 0,
+            newqtyminus = 0,
+            serviceLines = [],
+            positiveLines = [],
+            negativeLines = [],
+            newRelatedLines = [];
+
+        if (line.has('relatedLines') && line.get('relatedLines').length > 0) {
+
+          serviceLines = getServiceLines(line);
+
+          for (i = 0; i < serviceLines.length; i++) {
+            newRelatedLines = newRelatedLines.concat(serviceLines[i].get('relatedLines'));
+            for (j = 0; j < serviceLines[i].get('relatedLines').length; j++) {
+              l = me.order.get('lines').get(serviceLines[i].get('relatedLines')[j].orderlineId);
+              if (l && l.get('qty') > 0) {
+                newqtyplus += l.get('qty');
+                positiveLines.push(l);
+              } else if (l && l.get('qty') < 0) {
+                newqtyminus += l.get('qty');
+                negativeLines.push(l);
+              }
+            }
+          }
+          rlp = _.filter(newRelatedLines, function (rl) {
+            return _.indexOf(_.pluck(positiveLines, 'id'), rl.orderlineId) !== -1;
+          });
+
+          rln = _.filter(newRelatedLines, function (rl) {
+            return _.indexOf(_.pluck(negativeLines, 'id'), rl.orderlineId) !== -1;
+          });
+
+          if (prod.get('quantityRule') === 'UQ') {
+            newqtyplus = (newqtyplus ? 1 : 0);
+            newqtyminus = (newqtyminus ? -1 : 0);
+          }
+
+          serviceLines.forEach(function (l) {
+            if (l.get('qty') > 0) {
+              if (serviceLines.length === 1 && newqtyminus && newqtyplus) {
+                newLine = me.order.createLine(prod, newqtyminus);
+                newLine.set('relatedLines', rln);
+                l.set('relatedLines', rlp);
+                l.set('qty', newqtyplus);
+              } else if (serviceLines.length === 1 && newqtyminus) {
+                l.set('relatedLines', rln);
+                l.set('qty', newqtyminus);
+              } else if (newqtyplus) {
+                l.set('relatedLines', rlp);
+                l.set('qty', newqtyplus);
+              } else {
+                me.order.get('lines').remove(l);
+              }
+              if (!prod.get('groupProduct')) {
+                newLine.set('mirrorLine', line);
+                line.set('mirrorLine', newLine);
+              }
+            } else {
+              if (serviceLines.length === 1 && newqtyminus && newqtyplus) {
+                newLine = me.order.createLine(prod, newqtyplus);
+                newLine.set('relatedLines', rlp);
+                l.set('relatedLines', rln);
+                l.set('qty', newqtyminus);
+              } else if (serviceLines.length === 1 && newqtyplus) {
+                l.set('relatedLines', rlp);
+                l.set('qty', newqtyplus);
+              } else if (newqtyminus) {
+                l.set('relatedLines', rln);
+                l.set('qty', newqtyminus);
+              } else {
+                me.order.get('lines').remove(l);
+              }
+              if (!prod.get('groupProduct')) {
+                newLine.set('mirrorLine', line);
+                line.set('mirrorLine', newLine);
+              }
+            }
+          });
+        }
+      });
+      this.updating = false;
+    }, this);
+    this.order.get('lines').on('remove', function (model, list, index) {
+      var removedId = model.get('id'),
+          removedIndex = index.index,
+          serviceLinesToCheck = [],
+          deletedServices = [],
+          changedServices = [];
+
+      this.order.unset('changedServices');
+      this.order.unset('deletedServices');
+
+      this.order.get('lines').forEach(function (line, idx) {
+        var prod = line.get('product');
+        if (line.has('relatedLines') && line.get('relatedLines').length > 0) {
+          var i, l = 0,
+              relationIds = _.pluck(line.get('relatedLines'), 'orderlineId');
+          if (_.indexOf(relationIds, removedId) !== -1) {
+            serviceLinesToCheck.push([line, idx]);
+          }
+        }
+      });
+      if (serviceLinesToCheck.length > 0) {
+        serviceLinesToCheck.forEach(function (lineToCheck) {
+          if (lineToCheck[0].get('relatedLines').length > 1) {
+            changedServices.push(lineToCheck[0]);
+          } else {
+            deletedServices.push(lineToCheck[0]);
+          }
+        });
+        this.order.set({
+          changedServices: changedServices,
+          deletedServices: deletedServices
+        });
+      }
+    }, this);
   }
 });
 enyo.kind({

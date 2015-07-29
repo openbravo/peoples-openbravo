@@ -144,9 +144,7 @@ public class ProductProperties extends ModelExtension {
           add(new HQLProperty("product.allowAnonymousSale", "allowAnonymousSale"));
           add(new HQLProperty("product.returnable", "returnable"));
           add(new HQLProperty("product.overdueReturnDays", "overdueReturnDays"));
-          add(new HQLProperty("product.editablePrice", "editablePrice"));
           add(new HQLProperty("product.ispricerulebased", "isPriceRuleBased"));
-          add(new HQLProperty("product.uniquePerDocument", "uniquePerDocument"));
           add(new HQLProperty("product.obposProposalType", "proposalType"));
           add(new HQLProperty("product.obposIsmultiselectable", "availableForMultiline"));
           add(new HQLProperty("product.obposPrintrelatedattachm", "printRelatedAttachments"));
@@ -155,6 +153,7 @@ public class ProductProperties extends ModelExtension {
           add(new HQLProperty("product.linkedToProduct", "isLinkedToProduct"));
           add(new HQLProperty("product.allowDeferredSell", "allowDeferredSell"));
           add(new HQLProperty("product.deferredSellMaxDays", "deferredSellMaxDays"));
+          add(new HQLProperty("product.quantityRule", "quantityRule"));
           add(new HQLProperty("'false'", "ispack"));
           if (posPrecision != null && !"".equals(posPrecision)) {
             add(new HQLProperty("round(ppp.listPrice, " + posPrecision + ")", "listPrice"));
