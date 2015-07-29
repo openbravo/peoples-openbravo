@@ -285,9 +285,9 @@ enyo.kind({
     }
   },
   closingDiscounts: function (inSender, inEvent) {
-    OB.MobileApp.view.scanningFocus(true);    
+    OB.MobileApp.view.scanningFocus(true);
     this.$.checkSelectAll.unCheck();
-    this.setShowing(false);    
+    this.setShowing(false);
     this.doDiscountsModeFinished({
       tabPanel: 'scan',
       keyboard: 'toolbarscan',
