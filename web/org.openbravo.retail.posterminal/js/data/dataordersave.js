@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, _, enyo, console */
+/*global OB, _, enyo */
 
 (function () {
 
@@ -32,7 +32,6 @@
           totalTaxes += tax.amount;
         }, this);
         var gross = this.get('gross');
-        var net = this.get('net');
 
         // 3. verify that the sum of the gross of each line equals the total gross
         var difference;
@@ -61,15 +60,13 @@
         // do nothing, we do not want to generate another error
       }
     });
+
     // finished receipt verifications
     this.receipt.on('closed', function (eventParams) {
       this.receipt = model.get('order');
       OB.info('Ticket closed', this.receipt.getOrderDescription());
-      var me = this,
-          docno = this.receipt.get('documentNo'),
+      var docno = this.receipt.get('documentNo'),
           isLayaway = (this.receipt.get('orderType') === 2 || this.receipt.get('isLayaway')),
-          json = this.receipt.serializeToJSON(),
-          receiptId = this.receipt.get('id'),
           creationDate = this.receipt.get('creationDate') || new Date();
 
       if (this.receipt.get('isbeingprocessed') === 'Y') {
@@ -173,7 +170,7 @@
             OB.MobileApp.model.runSyncProcess(function () {
               OB.UTIL.HookManager.executeHooks('OBPOS_PostSyncReceipt', {
                 receipt: auxReceipt
-              }, function (args) {
+              }, function () {
                 successCallback();
                 if (eventParams && eventParams.callback) {
                   eventParams.callback();
@@ -182,16 +179,14 @@
             }, function () {
               OB.UTIL.HookManager.executeHooks('OBPOS_PostSyncReceipt', {
                 receipt: auxReceipt
-              }, function (args) {
+              }, function () {
                 if (eventParams && eventParams.callback) {
                   eventParams.callback();
                 }
               });
             });
           } else {
-
             OB.trace('Execution Sync process.');
-
             //If there are no elements in the hook, we can execute the callback asynchronusly with the synchronization process
             OB.MobileApp.model.runSyncProcess(function () {
               successCallback(model);
@@ -201,6 +196,7 @@
             }
           }
         });
+
       });
     }, this);
 
@@ -212,9 +208,6 @@
         this.receipt = receipt;
       }
       var me = this,
-          docno = this.receipt.get('documentNo'),
-          isLayaway = (this.receipt.get('orderType') === 2 || this.receipt.get('isLayaway')),
-          json = this.receipt.serializeToJSON(),
           receiptId = this.receipt.get('id'),
           creationDate = this.receipt.get('creationDate') || new Date();
 
