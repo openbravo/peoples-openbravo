@@ -104,9 +104,8 @@
           args.context.receipt.trigger('paymentCancel');
           return true;
         }
-        var receipt = args.context.receipt,
-            auxReceipt = new OB.Model.Order(),
-            currentDocNo = receipt.get('documentNo') || docno;
+        var receipt = args.context.receipt;
+        var currentDocNo = receipt.get('documentNo') || docno;
 
         OB.trace('Execution of pre order save hook OK.');
 
@@ -141,13 +140,25 @@
 
         OB.trace('Calculationg cashup information.');
 
-        auxReceipt.clearWith(receipt);
+        // Important: at this point, the receipt is considered final. Nothing must alter it
+        // a copy of the receipt object protects the closed global available receipt to be changed
+        // this frozen receipt should be used to create the working copies
+        // creating clones of this frozen receipt inside the asynchronous processes, does not affect the user experience
+        var frozenReceipt = new OB.Model.Order();
+        OB.UTIL.clone(receipt, frozenReceipt);
+
         OB.Dal.transaction(function (tx) {
-          OB.UTIL.cashUpReport(auxReceipt, function () {
+          // create a clone to be used for the cashup report
+          var frozenReceiptForCashupReport = new OB.Model.Order();
+          OB.UTIL.clone(frozenReceipt, frozenReceiptForCashupReport);
+          OB.UTIL.cashUpReport(frozenReceiptForCashupReport, function () {
             OB.UTIL.calculateCurrentCash(null, tx);
-            OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(receipt.get('documentnoSuffix'), receipt.get('quotationnoSuffix'), function () {
+            OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(frozenReceipt.get('documentnoSuffix'), frozenReceipt.get('quotationnoSuffix'), function () {
               OB.trace('Saving receipt.');
-              OB.Dal.saveInTransaction(tx, receipt);
+              // create a clone to be used by the save process
+              var frozenReceiptToBeSaved = new OB.Model.Order();
+              OB.UTIL.clone(frozenReceipt, frozenReceiptToBeSaved);
+              OB.Dal.saveInTransaction(tx, frozenReceiptToBeSaved);
               receipt.trigger('integrityOk'); // Is important for module print last receipt. This module listen trigger.   
             }, tx);
           }, tx);
@@ -179,13 +190,16 @@
               };
 
           if (OB.UTIL.HookManager.get('OBPOS_PostSyncReceipt')) {
+            // create a clone of the receipt to be used within the hook
+            var frozenReceiptForPostSyncReceipt = new OB.Model.Order();
+            OB.UTIL.clone(frozenReceipt, frozenReceiptForPostSyncReceipt);
             //If there are elements in the hook, we are forced to execute the callback only after the synchronization process
             //has been executed, to prevent race conditions with the callback processes (printing and deleting the receipt)
             OB.trace('Execution Sync process.');
 
             OB.MobileApp.model.runSyncProcess(function () {
               OB.UTIL.HookManager.executeHooks('OBPOS_PostSyncReceipt', {
-                receipt: auxReceipt
+                receipt: frozenReceiptForPostSyncReceipt
               }, function () {
                 successCallback();
                 if (eventParams && eventParams.callback) {
@@ -194,7 +208,7 @@
               });
             }, function () {
               OB.UTIL.HookManager.executeHooks('OBPOS_PostSyncReceipt', {
-                receipt: auxReceipt
+                receipt: frozenReceiptForPostSyncReceipt
               }, function () {
                 if (eventParams && eventParams.callback) {
                   eventParams.callback();
