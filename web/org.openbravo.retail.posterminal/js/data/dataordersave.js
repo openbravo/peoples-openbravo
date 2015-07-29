@@ -56,6 +56,12 @@
           OB.error(enyo.format("%s: total gross does not equal the sum of the gross of each line. event: '%s', gross: %s, difference: %s", errorHeader, eventParams, gross, difference));
         }
 
+        // 4. verify that a cashupId is available
+        var cashupId = OB.MobileApp.model.get('terminal').cashUpId;
+        if (!cashupId) {
+          OB.error("The receipt has been closed with empty cashUpId (current value: " + cashupId + ")");
+        }
+
       } catch (e) {
         // do nothing, we do not want to generate another error
       }
