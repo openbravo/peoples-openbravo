@@ -21,7 +21,7 @@
         <index-column name="C_ORDER_ID"/>
         <index-column name="QTYORDERED"/>
       </index>
-      <check name="EM_OBPOS_ISDELETED_CHECK"><![CDATA[EM_OBPOS_ISDELETED IN ('Y', 'N')]]></check>
+      <check name="EM_OBPOS_ISDELETED_OL_CHECK"><![CDATA[EM_OBPOS_ISDELETED IN ('Y', 'N')]]></check>
       <check name="EM_OBPOS_SERVICE_PROPOSED_CHK"><![CDATA[EM_OBPOS_SERVICE_PROPOSED IN ('Y', 'N')]]></check>
     </table>
   </database>
