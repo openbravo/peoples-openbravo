@@ -143,8 +143,8 @@ public abstract class ModuleScript {
   }
 
   protected void handleError(Throwable t) {
-    log4j
-        .error("Error executing moduleScript " + this.getClass().getName() + ": " + t.getMessage());
+    log4j.error(
+        "Error executing moduleScript " + this.getClass().getName() + ": " + t.getMessage(), t);
     throw new BuildException("Execution of moduleScript " + this.getClass().getName() + "failed.");
   }
 }
