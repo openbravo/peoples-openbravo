@@ -54,9 +54,16 @@ public abstract class ModuleScript {
    *          A data structure that contains module versions mapped by module id
    */
   public final void preExecute(Map<String, OpenbravoVersion> modulesVersionMap) {
+    if (modulesVersionMap == null || modulesVersionMap.size() == 0) {
+      // if we do not have module versions to compare with (install.source) then execute depending
+      // on the value of the executeOnInstall() method
+      if (executeOnInstall()) {
+        doExecute();
+      }
+      return;
+    }
     ModuleScriptExecutionLimits executionLimits = getModuleScriptExecutionLimits();
-    if (executionLimits == null || executionLimits.getModuleId() == null
-        || modulesVersionMap == null || modulesVersionMap.size() == 0) {
+    if (executionLimits == null || executionLimits.getModuleId() == null) {
       doExecute();
       return;
     }
