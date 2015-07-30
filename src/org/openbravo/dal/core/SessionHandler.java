@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2015 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -56,7 +56,7 @@ public class SessionHandler implements OBNotSingleton {
   {
     String poolClassName = OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .getProperty("db.externalPoolClassName");
-    if (poolClassName != null) {
+    if (poolClassName != null && !"".equals(poolClassName)) {
       try {
         externalConnectionPool = ExternalConnectionPool.getInstance(poolClassName);
       } catch (Throwable e) {
@@ -139,6 +139,11 @@ public class SessionHandler implements OBNotSingleton {
     // Checks if the session connection has to be obtained using an external connection pool
     if (externalConnectionPool != null && this.getConnection() == null) {
       Connection externalConnection = externalConnectionPool.getConnection();
+      try {
+        externalConnection.setAutoCommit(false);
+      } catch (SQLException e) {
+        log.error("Error setting this connection's to auto-commit mode", e);
+      }
       this.setConnection(externalConnection);
     }
     if (this.connection != null) {

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2011 Openbravo S.L.U.
+ * Copyright (C) 2001-2015 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -39,6 +39,7 @@ public class ConnectionProviderImpl implements ConnectionProvider {
   String bbdd = "";
   String rdbms = "";
   String contextName = "openbravo";
+  private String externalPoolClassName;
 
   private static ExternalConnectionPool externalConnectionPool;
 
@@ -78,7 +79,6 @@ public class ConnectionProviderImpl implements ConnectionProvider {
       contextName = _context;
 
     String poolName = null;
-    String externalPoolClassName;
     String dbDriver = null;
     String dbServer = null;
     String dbLogin = null;
@@ -117,11 +117,12 @@ public class ConnectionProviderImpl implements ConnectionProvider {
       log4j.debug("rdbms: " + rdbms);
     }
 
-    if (externalPoolClassName != null) {
+    if (externalPoolClassName != null && !"".equals(externalPoolClassName)) {
       try {
         externalConnectionPool = ExternalConnectionPool.getInstance(externalPoolClassName);
       } catch (Throwable e) {
         externalConnectionPool = null;
+        externalPoolClassName = null;
       }
     }
 
@@ -135,8 +136,13 @@ public class ConnectionProviderImpl implements ConnectionProvider {
   }
 
   public void destroy(String name) throws Exception {
-    PoolingDriver driver = (PoolingDriver) DriverManager.getDriver("jdbc:apache:commons:dbcp:");
-    driver.closePool(name);
+    if (externalConnectionPool != null) {
+      externalConnectionPool.closePool();
+      externalConnectionPool = null;
+    } else {
+      PoolingDriver driver = (PoolingDriver) DriverManager.getDriver("jdbc:apache:commons:dbcp:");
+      driver.closePool(name);
+    }
   }
 
   public void reload(String file, boolean isRelative, String _context) throws Exception {
@@ -151,6 +157,17 @@ public class ConnectionProviderImpl implements ConnectionProvider {
   public void addNewPool(String dbDriver, String dbServer, String dbLogin, String dbPassword,
       int minConns, int maxConns, double maxConnTime, String dbSessionConfig, String rdbms,
       String name) throws Exception {
+
+    if (this.defaultPoolName == null || this.defaultPoolName.equals("")) {
+      this.defaultPoolName = name;
+      this.bbdd = dbServer;
+      this.rdbms = rdbms;
+    }
+    if (externalConnectionPool != null) {
+      // No need to create and add a new pool
+      return;
+    }
+
     log4j.debug("Loading underlying JDBC driver.");
     try {
       Class.forName(dbDriver);
@@ -178,11 +195,6 @@ public class ConnectionProviderImpl implements ConnectionProvider {
     PoolingDriver driver = (PoolingDriver) DriverManager.getDriver("jdbc:apache:commons:dbcp:");
     driver.registerPool(contextName + "_" + name, connectionPool);
 
-    if (this.defaultPoolName == null || this.defaultPoolName.equals("")) {
-      this.defaultPoolName = name;
-      this.bbdd = dbServer;
-      this.rdbms = rdbms;
-    }
   }
 
   public ObjectPool getPool(String poolName) throws PoolNotFoundException {
@@ -209,7 +221,7 @@ public class ConnectionProviderImpl implements ConnectionProvider {
     return getConnection(defaultPoolName);
   }
 
-  /*
+  /**
    * Optimization, try to get the connection associated with the current thread, to always get the
    * same connection for all getConnection() calls inside a request.
    */
@@ -220,12 +232,7 @@ public class ConnectionProviderImpl implements ConnectionProvider {
     // try to get the connection from the session to use a single connection for the whole request
     Connection conn = SessionInfo.getSessionConnection();
     if (conn == null) {
-      // No connection in the session, take a new one and attach it to the session
-      if (externalConnectionPool != null) {
-        conn = externalConnectionPool.getConnection();
-      } else {
-        conn = getNewConnection(poolName);
-      }
+      conn = getNewConnection(poolName);
       SessionInfo.setSessionConnection(conn);
     } else {
       // Update session info if needed
@@ -234,14 +241,35 @@ public class ConnectionProviderImpl implements ConnectionProvider {
     return conn;
   }
 
-  private Connection getNewConnection() throws NoConnectionAvailableException {
-    return getNewConnection(defaultPoolName);
+  /**
+   * Gets a new connection without trying to obtain the sessions's one from available pool
+   */
+  private Connection getNewConnection(String poolName) throws NoConnectionAvailableException {
+    if (poolName == null || poolName.equals(""))
+      throw new NoConnectionAvailableException("Couldn´t get a connection for an unnamed pool");
+    Connection conn;
+    if (externalPoolClassName != null) {
+      if (externalConnectionPool == null) {
+        try {
+          externalConnectionPool = ExternalConnectionPool.getInstance(externalPoolClassName);
+        } catch (Throwable e) {
+          externalConnectionPool = null;
+          externalPoolClassName = null;
+        }
+      }
+      conn = externalConnectionPool.getConnection();
+    } else {
+      conn = getCommonsDbcpPoolConnection(poolName);
+    }
+
+    return conn;
   }
 
   /**
-   * Gets a new connection without trying to obtain the sessions's one
+   * Gets a new connection without trying to obtain the sessions's one from DBCP pool
    */
-  private Connection getNewConnection(String poolName) throws NoConnectionAvailableException {
+  private Connection getCommonsDbcpPoolConnection(String poolName)
+      throws NoConnectionAvailableException {
     if (poolName == null || poolName.equals(""))
       throw new NoConnectionAvailableException("Couldn´t get a connection for an unnamed pool");
     Connection conn = null;
@@ -303,7 +331,7 @@ public class ConnectionProviderImpl implements ConnectionProvider {
   }
 
   public Connection getTransactionConnection() throws NoConnectionAvailableException, SQLException {
-    Connection conn = getNewConnection();
+    Connection conn = getNewConnection(defaultPoolName);
     if (conn == null)
       throw new NoConnectionAvailableException("Couldn´t get an available connection");
     conn.setAutoCommit(false);

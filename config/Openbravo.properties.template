@@ -10,7 +10,7 @@
 # * under the License. 
 # * The Original Code is Openbravo ERP. 
 # * The Initial Developer of the Original Code is Openbravo SLU 
-# * All portions are Copyright (C) 2007-2012 Openbravo SLU 
+# * All portions are Copyright (C) 2007-2015 Openbravo SLU 
 # * All Rights Reserved. 
 # * Contributor(s):  ______________________________________.
 # ************************************************************************
@@ -80,6 +80,28 @@ bbdd.systemPassword=syspass
 bbdd.user=tad
 bbdd.password=tad
 bbdd.sessionConfig=select update_dateFormat('DD-MM-YYYY')
+
+######################
+# DB connection pool #
+######################
+
+db.externalPoolClassName=org.openbravo.apachejdbcconnectionpool.JdbcExternalConnectionPool
+
+# Documentation at http://www.tomcatexpert.com/blog/2010/04/01/configuring-jdbc-pool-high-concurrency
+db.pool.initialSize=10
+db.pool.maxActive=100
+db.pool.maxIdle=30
+db.pool.minIdle=10
+db.pool.maxWait=30000
+db.pool.timeBetweenEvictionRunsMillis=30000
+db.pool.minEvictableIdleTimeMillis=60000
+db.pool.removeAbandoned=false
+db.pool.jmxEnabled=true
+db.pool.testWhileIdle=false
+db.pool.testOnBorrow=true
+db.pool.validationQuery=SELECT 1 FROM DUAL
+db.pool.validationInterval=30000
+db.pool.testOnReturn=false
 
 ##################
 # Tomcat manager #

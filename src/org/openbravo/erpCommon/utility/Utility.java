@@ -1911,17 +1911,44 @@ public class Utility {
       // properties with its default value
       if (origValue == null) {
         String newValue = newOBProperties.getProperty(propName);
+        addNewProperty(originalFile, propName, newValue, !modified);
         origOBProperties.setProperty(propName, newValue);
         modified = true;
       }
     }
 
-    // save original file only in case it has modifications
-    if (modified) {
-      origOBProperties
-          .store(new FileOutputStream(originalFile), "Automatically updated properties");
-    }
     return modified;
+  }
+
+  /**
+   * Adds a new property in a merge of properties file
+   *
+   * @param pathFile
+   *          properties file path
+   * @param propertyName
+   *          new property to add
+   * @param value
+   *          new value to add
+   * @param firstUpdate
+   *          true in case that this new property is the first to change. In this case add a header
+   *          with the date
+   */
+  private static void addNewProperty(String pathFile, String propertyName, String value,
+      boolean firstUpdate) {
+    File fileW = new File(pathFile);
+    try {
+      BufferedWriter bw = new BufferedWriter(new FileWriter(fileW, true));
+      if (firstUpdate) {
+        bw.write("\n#################################\n");
+        bw.write("# Merge properties              #\n");
+        bw.write("# " + new Date().toString() + " #\n");
+        bw.write("#################################\n");
+      }
+      bw.write(propertyName + "=" + value + "\n");
+      bw.close();
+    } catch (Exception e1) {
+      log4j.error("Exception reading/writing file: ", e1);
+    }
   }
 
   /**

@@ -52,6 +52,13 @@ public abstract class ExternalConnectionPool {
   }
 
   /**
+   * If the external connection pool should be closed this method should be overwritten
+   */
+  public void closePool() {
+    instance = null;
+  }
+
+  /**
    * If the external connection pool supports interceptors this method should be overwritten
    * 
    * @param interceptors
