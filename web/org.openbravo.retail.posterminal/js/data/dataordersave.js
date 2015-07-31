@@ -70,14 +70,23 @@
     // finished receipt verifications
     this.receipt.on('closed', function (eventParams) {
       this.receipt = model.get('order');
-      OB.info('Ticket closed', this.receipt.getOrderDescription());
-      var docno = this.receipt.get('documentNo'),
-          isLayaway = (this.receipt.get('orderType') === 2 || this.receipt.get('isLayaway')),
-          creationDate = this.receipt.get('creationDate') || new Date();
 
       if (this.receipt.get('isbeingprocessed') === 'Y') {
         //The receipt has already been sent, it should not be sent again
         return;
+      }
+
+      OB.error('Ticket closed: ', OB.UTIL.argumentsToStringifyed(this.receipt.getOrderDescription()), "caller: " + OB.UTIL.getStackTrace('Backbone.Events.trigger', true));
+
+      var docno = this.receipt.get('documentNo');
+      var isLayaway = (this.receipt.get('orderType') === 2 || this.receipt.get('isLayaway'));
+      var creationDate = this.receipt.get('creationDate');
+
+      if (!creationDate || !creationDate.getTimezoneOffset) {
+        if ( !! creationDate) {
+          OB.error("Ticket closed: 'creationDate' set to '" + new Date() + "' (was '" + creationDate + "')");
+        }
+        creationDate = new Date();
       }
 
       this.receipt.set('hasbeenpaid', 'Y');
@@ -209,17 +218,19 @@
 
     this.context.get('multiOrders').on('closed', function (receipt) {
 
-      OB.info('Multiorders ticket closed.');
+      OB.info('Multiorders ticket closed', receipt, "caller: " + OB.UTIL.getStackTrace('Backbone.Events.trigger', true));
 
+      var me = this;
       if (!_.isUndefined(receipt)) {
         this.receipt = receipt;
       }
-      var me = this,
-          receiptId = this.receipt.get('id'),
-          creationDate = this.receipt.get('creationDate') || new Date();
+      var receiptId = this.receipt.get('id');
+      var creationDate = this.receipt.get('creationDate');
 
-      // issue 29164: sometimes, the quotations are sync without creation date
-      if (creationDate === "Invalid Date") {
+      if (!creationDate || !creationDate.getTimezoneOffset) {
+        if ( !! creationDate) {
+          OB.error("Multiorders ticket closed: 'creationDate' set to '" + new Date() + "' (was '" + creationDate + "')");
+        }
         creationDate = new Date();
       }
 
