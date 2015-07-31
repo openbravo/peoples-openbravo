@@ -121,4 +121,6 @@ public class JsonConstants {
   public static final String QUERY_PARAM_USER = "@user@";
   public static final String QUERY_PARAM_TRANSACTIONAL_RANGE = "@transactionalRange@";
 
+  public static final String IS_WS_CALL = "_isWsCall";
+
 }

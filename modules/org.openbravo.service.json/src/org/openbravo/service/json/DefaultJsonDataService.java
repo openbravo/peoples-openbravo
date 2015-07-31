@@ -72,6 +72,9 @@ public class DefaultJsonDataService implements JsonDataService {
 
   private static final String ADD_FLAG = "_doingAdd";
 
+  @Inject
+  private UnpagedRequestCachedPreference unpagedRequestPreference;
+
   private static DefaultJsonDataService instance = WeldUtils
       .getInstanceFromStaticBeanManager(DefaultJsonDataService.class);
 
@@ -142,6 +145,8 @@ public class DefaultJsonDataService implements JsonDataService {
         @SuppressWarnings("unchecked")
         Map<String, String> paramsCount = (Map<String, String>) ((HashMap<String, String>) parameters)
             .clone();
+        // _isWsCall can not be used as an URL parameter, we prevent its usage by removing it
+        paramsCount.remove(JsonConstants.IS_WS_CALL);
         DataEntityQueryService queryService = createSetQueryService(paramsCount, true);
         queryService.setEntityName(entityName);
 
@@ -455,11 +460,16 @@ public class DefaultJsonDataService implements JsonDataService {
       log.warn("Fetching data without pagination, this can cause perfomance issues. Parameters: "
           + convertParameterToString(parameters));
 
+      boolean isWsCall = parameters.containsKey(JsonConstants.IS_WS_CALL)
+          && "true".equals(parameters.get(JsonConstants.IS_WS_CALL));
+
       if (parameters.containsKey(JsonConstants.TAB_PARAMETER)
           || parameters.containsKey(SelectorConstants.DS_REQUEST_SELECTOR_ID_PARAMETER)) {
 
         // for standard tab and selector datasources pagination is mandatory
-        throw new OBException(OBMessageUtils.messageBD("OBJSON_NoPagedFetch"));
+        throw new OBException(OBMessageUtils.messageBD("@OBJSON_NoPagedFetch@"));
+      } else if (!"Y".equals(unpagedRequestPreference.getPreferenceValue()) && !isWsCall) {
+        throw new OBException(OBMessageUtils.messageBD("@OBJSON_NoPagedFetchManual@"));
       }
     }
 

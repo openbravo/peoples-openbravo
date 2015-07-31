@@ -25,6 +25,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
@@ -116,11 +117,11 @@ public class Preferences {
     try {
       OBContext.setAdminMode();
       Preference preference;
-      String clientId = client == null ? null : client.getId();
-      String orgId = org == null ? null : org.getId();
-      String userId = user == null ? null : user.getId();
-      String roleId = role == null ? null : role.getId();
-      String windowId = window == null ? null : window.getId();
+      String clientId = client == null ? null : (String) DalUtil.getId(client);
+      String orgId = org == null ? null : (String) DalUtil.getId(org);
+      String userId = user == null ? null : (String) DalUtil.getId(user);
+      String roleId = role == null ? null : (String) DalUtil.getId(role);
+      String windowId = window == null ? null : (String) DalUtil.getId(window);
 
       List<Preference> prefs = getPreferences(property, isListProperty, clientId, orgId, userId,
           roleId, windowId, true, true);
@@ -176,11 +177,11 @@ public class Preferences {
       Organization org, User user, Role role, Window window) throws PropertyException {
     try {
       OBContext.setAdminMode();
-      String clientId = client == null ? null : client.getId();
-      String orgId = org == null ? null : org.getId();
-      String userId = user == null ? null : user.getId();
-      String roleId = role == null ? null : role.getId();
-      String windowId = window == null ? null : window.getId();
+      String clientId = client == null ? null : (String) DalUtil.getId(client);
+      String orgId = org == null ? null : (String) DalUtil.getId(org);
+      String userId = user == null ? null : (String) DalUtil.getId(user);
+      String roleId = role == null ? null : (String) DalUtil.getId(role);
+      String windowId = window == null ? null : (String) DalUtil.getId(window);
 
       List<Preference> prefs = getPreferences(property, isListProperty, clientId, orgId, userId,
           roleId, windowId, false, true);
