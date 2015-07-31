@@ -487,14 +487,6 @@
           }, OB.DEC.Zero);
           //total qty
           var qty = me.get('lines').reduce(function (memo, e) {
-            var net = me.get('lines').reduce(function (memo, e) {
-              var netLine = e.get('discountedNet');
-              if (netLine) {
-                return OB.DEC.add(memo, netLine);
-              } else {
-                return memo;
-              }
-            }, OB.DEC.Zero);
             var qtyLine = e.getQty();
             if (qtyLine > 0) {
               return OB.DEC.add(memo, qtyLine, OB.I18N.qtyScale());
