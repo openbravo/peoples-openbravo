@@ -46,7 +46,7 @@ enyo.kind({
         name: 'chkSelectOpenedReceiptModal',
         kind: 'OB.UI.CheckboxButton',
         style: 'float: left; width: 44px; height: 44px; background-position: center center; border: 1px solid white; cursor: pointer;',
-        classes: 'btn-check-white'
+        classes: 'btn-check-alt'
       }, {
         name: 'lblSelectOpenedReceiptModalChk',
         style: 'float: left; padding: 6px 0px 0px 14px;',
@@ -178,7 +178,7 @@ enyo.kind({
               tag: "img",
               style: 'float: left; width: 19px; height: 19px; color: black; margin-left: 10px;',
               attributes: {
-                src: '../org.openbravo.mobile.core/assets/img/iconCreateNew-black.png'
+                src: '../org.openbravo.mobile.core/assets/img/iconCreateNew-alt.png'
               }
             }]
           }, {
