@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2015 Openbravo SLU
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -89,7 +89,6 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
       String strDatereportFrom, String strDatereportTo, String strDateInvoiced) {
     if (expenseAPInvoiceLog4j.isDebugEnabled())
       expenseAPInvoiceLog4j.debug("Save: Expense AP Invoice");
-    int line = 0;
 
     String strcInvoiceId = "";
     String strCCurrencyId = "";
@@ -311,9 +310,6 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
           qty = new BigDecimal(data[i].qty);
           String strLine = ExpenseAPInvoiceData.selectLine(OBDal.getInstance().getConnection(),
               this, strcInvoiceId);
-          if (strLine.equals(""))
-            strLine = "10";
-          line += Integer.valueOf(strLine);
 
           if (expenseAPInvoiceLog4j.isDebugEnabled())
             expenseAPInvoiceLog4j.debug("*****************+client: "
@@ -337,7 +333,7 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
           try {
             int stdPrecision = Integer.parseInt(strStdPrecision);
             ExpenseAPInvoiceData.insertLine(OBDal.getInstance().getConnection(), this,
-                data[i].adClientId, data[i].adOrgId, strcInvoiceId, "", String.valueOf(line), "",
+                data[i].adClientId, data[i].adOrgId, strcInvoiceId, "", strLine, "",
                 data[i].mProductId, "", data[i].description, "", strmProductUomId, String
                     .valueOf(qty), data[i].cUomId, strPricestd, strPricelist, strcTaxID,
                 ((new BigDecimal(strPricestd).setScale(stdPrecision, BigDecimal.ROUND_HALF_UP))
