@@ -209,6 +209,9 @@ enyo.kind({
     }, {
       kind: 'OB.UI.ModalModulesInDev',
       name: 'modalModulesInDev'
+    }, {
+      kind: 'OB.UI.ModalSelectOpenedReceipt',
+      name: 'OBPOS_modalSelectOpenedReceipt'
     }]
   }, {
     name: 'mainSubWindow',
@@ -426,17 +429,23 @@ enyo.kind({
     return true;
   },
   addProductToOrder: function (inSender, inEvent) {
-    if (this.model.get('order').get('isEditable') === false) {
-      this.model.get('order').canAddAsServices(this.model, inEvent.product, function (addAsServices) {
+    var targetOrder;
+    if (inEvent && inEvent.targetOrder) {
+      targetOrder = inEvent.targetOrder;
+    } else {
+      targetOrder = this.model.get('order');
+    }
+    if (targetOrder.get('isEditable') === false) {
+      targetOrder.canAddAsServices(this.model, inEvent.product, function (addAsServices) {
         if (addAsServices !== 'ABORT') {
           if (addAsServices === 'OK') {
             // Get approval
-            var deferedSellApproval = _.find(this.model.get('order').get('approvals'), function (approval) {
+            var deferedSellApproval = _.find(targetOrder.get('approvals'), function (approval) {
               return approval.approvalType.approval === 'OBPOS_approval.deferred_sell_max_days';
             });
             // Select open ticket or create a new one
             this.doShowPopup({
-              popup: 'OBPOS_modalSelectOpenReceipts',
+              popup: 'OBPOS_modalSelectOpenedReceipt',
               args: {
                 product: inEvent.product,
                 approval: deferedSellApproval
@@ -444,9 +453,9 @@ enyo.kind({
             });
             // Remove approval from not editable ticket
             if (deferedSellApproval) {
-              var index = _.indexOf(this.model.get('order').get('approvals'), deferedSellApproval);
+              var index = _.indexOf(targetOrder.get('approvals'), deferedSellApproval);
               if (index >= 0) {
-                this.model.get('order').get('approvals').splice(index, 1);
+                targetOrder.get('approvals').splice(index, 1);
               }
             }
           }
@@ -462,7 +471,7 @@ enyo.kind({
     if (inEvent.ignoreStockTab) {
       this.showOrder(inSender, inEvent);
     } else {
-      if (!this.model.get('order').get('lines').isProductPresent(inEvent.product) && inEvent.product.get('showstock') && !inEvent.product.get('ispack') && OB.MobileApp.model.get('connectedToERP')) {
+      if (!targetOrder.get('lines').isProductPresent(inEvent.product) && inEvent.product.get('showstock') && !inEvent.product.get('ispack') && OB.MobileApp.model.get('connectedToERP')) {
         inEvent.leftSubWindow = OB.OBPOSPointOfSale.UICustomization.stockLeftSubWindow;
         this.showLeftSubWindow(inSender, inEvent);
         if (enyo.Panels.isScreenNarrow()) {
@@ -476,7 +485,7 @@ enyo.kind({
 
     OB.UTIL.HookManager.executeHooks('OBPOS_PreAddProductToOrder', {
       context: this,
-      receipt: this.model.get('order'),
+      receipt: targetOrder,
       productToAdd: inEvent.product,
       qtyToAdd: inEvent.qty,
       options: inEvent.options,
@@ -485,7 +494,7 @@ enyo.kind({
       if (args.cancelOperation && args.cancelOperation === true) {
         return true;
       }
-      args.context.model.get('order').addProduct(args.productToAdd, args.qtyToAdd, args.options, args.attrs);
+      args.receipt.addProduct(args.productToAdd, args.qtyToAdd, args.options, args.attrs);
       args.context.model.get('orderList').saveCurrent();
     });
     return true;
@@ -920,6 +929,7 @@ enyo.kind({
   },
   setReceiptsList: function (inSender, inEvent) {
     this.$.modalreceipts.setReceiptsList(inEvent.orderList);
+    this.$.OBPOS_modalSelectOpenedReceipt.setReceiptsList(inEvent.orderList);
   },
   showModalReceiptProperties: function (inSender, inEvent) {
     this.doShowPopup({
@@ -1231,9 +1241,4 @@ OB.POS.registerWindow({
   permission: 'OBPOS_retail.pointofsale',
   // Not to display it in the menu
   menuLabel: 'POS'
-});
-
-OB.UI.WindowView.registerPopup('OB.OBPOSPointOfSale.UI.PointOfSale', {
-  kind: 'OB.UI.ModalSelectOpenReceipts',
-  name: 'OBPOS_modalSelectOpenReceipts'
 });
