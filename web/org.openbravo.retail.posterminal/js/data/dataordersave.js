@@ -139,6 +139,7 @@
             OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(receipt.get('documentnoSuffix'), receipt.get('quotationnoSuffix'), function () {
               OB.trace('Saving receipt.');
               OB.Dal.saveInTransaction(tx, receipt);
+              receipt.trigger('integrityOk'); // Is important for module print last receipt. This module listen trigger.   
             }, tx);
           }, tx);
         }, null, function () {
