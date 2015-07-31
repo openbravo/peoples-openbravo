@@ -57,7 +57,7 @@
       return OB.I18N.formatCurrency(this.get('_price') || this.get('nondiscountedprice') || this.get('price'));
     },
 
-    printDiscount: function () {
+    getDiscount: function () {
       var disc = OB.DEC.mul(OB.DEC.sub(this.get('product').get('standardPrice'), this.get('price')), this.get('qty'));
       var prom = this.getTotalAmountOfPromotions();
       // if there is a discount no promotion then only discount no promotion is shown
@@ -66,11 +66,15 @@
         if (OB.DEC.compare(prom) === 0) {
           return '';
         } else {
-          return OB.I18N.formatCurrency(prom);
+          return prom;
         }
       } else {
-        return OB.I18N.formatCurrency(disc);
+        return disc;
       }
+    },
+
+    printDiscount: function () {
+      return OB.I18N.formatCurrency(this.getDiscount());
     },
 
     // returns the discount to substract in total
@@ -105,8 +109,8 @@
       return this.get('gross');
     },
 
-    getGrossListPrice: function () {
-      return this.get('grossListPrice');
+    getTotalLine: function () {
+      return (OB.DEC.mul(this.get('grossListPrice'), this.get('qty'))) - this.getDiscount();
     },
 
     getNet: function () {
@@ -122,7 +126,7 @@
     },
 
     printTotalLine: function () {
-      return OB.I18N.formatCurrency(this.get('_gross') - this.printDiscount() || this.getGrossListPrice() - this.printDiscount());
+      return OB.I18N.formatCurrency(this.getTotalLine());
     },
 
     getTotalAmountOfPromotions: function () {
