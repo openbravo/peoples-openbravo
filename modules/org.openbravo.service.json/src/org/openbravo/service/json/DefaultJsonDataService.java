@@ -467,9 +467,9 @@ public class DefaultJsonDataService implements JsonDataService {
           || parameters.containsKey(SelectorConstants.DS_REQUEST_SELECTOR_ID_PARAMETER)) {
 
         // for standard tab and selector datasources pagination is mandatory
-        throw new OBException(OBMessageUtils.messageBD("@OBJSON_NoPagedFetch@"));
+        throw new OBException(OBMessageUtils.messageBD("OBJSON_NoPagedFetch"));
       } else if (!"Y".equals(unpagedRequestPreference.getPreferenceValue()) && !isWsCall) {
-        throw new OBException(OBMessageUtils.messageBD("@OBJSON_NoPagedFetchManual@"));
+        throw new OBException(OBMessageUtils.messageBD("OBJSON_NoPagedFetchManual"));
       }
     }
 
