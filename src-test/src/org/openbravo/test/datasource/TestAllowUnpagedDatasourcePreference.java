@@ -50,9 +50,10 @@ public class TestAllowUnpagedDatasourcePreference extends BaseDataSourceTestDal 
 
   @Test
   public void testErrorThrown() throws Exception {
-    Preference preference = null;
     OBContext.setAdminMode();
     try {
+      // Get the 'Allow Unpaged Datasource In Manual Request' preference value
+      Preference preference = getPreference();
       // Create a manual request to the datasource
       String response = "";
       Map<String, String> params = new HashMap<String, String>();
@@ -60,31 +61,20 @@ public class TestAllowUnpagedDatasourcePreference extends BaseDataSourceTestDal 
       try {
         response = doRequest("/org.openbravo.service.datasource/UOM", params, 200, "POST");
       } catch (OBException ex) {
-        logger.debug("Exception in first request:" + ex.getMessage());
+        logger.debug("Exception in request:" + ex.getMessage());
       }
-      // By default the request should not be performed
-      assertThat(
-          "Manual datasource request not performed",
-          OBMessageUtils.messageBD("OBJSON_NoPagedFetchManual").equals(
-              getResponseErrorMessage(response)), is(true));
-      // Get the 'Allow Unpaged Datasource In Manual Request' preference value
-      preference = getPreference();
-      preference.setSearchKey("Y");
-      OBDal.getInstance().commitAndClose();
-      // Request to the datasource once again
-      try {
-        response = doRequest("/org.openbravo.service.datasource/UOM", params, 200, "POST");
-      } catch (OBException ex) {
-        logger.debug("Exception in second request:" + ex.getMessage());
+      if (preference != null && "Y".equals(preference.getSearchKey())) {
+        // Manual request should be completed without errors
+        assertThat("Manual datasource request done without errors",
+            StringUtils.isEmpty(getResponseErrorMessage(response)), is(true));
+      } else {
+        // Manual request should not be performed
+        assertThat(
+            "Manual datasource request not performed",
+            OBMessageUtils.messageBD("OBJSON_NoPagedFetchManual").equals(
+                getResponseErrorMessage(response)), is(true));
       }
-      // Manual request should be completed without errors
-      assertThat("Manual datasource request done without errors",
-          StringUtils.isEmpty(getResponseErrorMessage(response)), is(true));
     } finally {
-      // set preference to its default value
-      preference = getPreference();
-      preference.setSearchKey("N");
-      OBDal.getInstance().commitAndClose();
       OBContext.restorePreviousMode();
     }
   }
