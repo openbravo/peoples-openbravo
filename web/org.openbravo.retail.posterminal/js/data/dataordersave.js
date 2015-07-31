@@ -76,7 +76,7 @@
         return;
       }
 
-      OB.error('Ticket closed: ', OB.UTIL.argumentsToStringifyed(this.receipt.getOrderDescription()), "caller: " + OB.UTIL.getStackTrace('Backbone.Events.trigger', true));
+      OB.info('Ticket closed: ', OB.UTIL.argumentsToStringifyed(this.receipt.getOrderDescription()), "caller: " + OB.UTIL.getStackTrace('Backbone.Events.trigger', true));
 
       var docno = this.receipt.get('documentNo');
       var isLayaway = (this.receipt.get('orderType') === 2 || this.receipt.get('isLayaway'));
