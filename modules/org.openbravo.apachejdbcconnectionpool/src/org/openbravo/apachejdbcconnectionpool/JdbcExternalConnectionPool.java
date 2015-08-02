@@ -99,24 +99,16 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
 
     Properties poolPropertiesConfig = new Properties();
     poolPropertiesConfig = OBPropertiesProvider.getInstance().getOpenbravoProperties();
-    poolProperties
-        .setInitialSize(getIntProperty(poolPropertiesConfig, "db.pool.initialSize", "10"));
-    poolProperties.setMaxActive(getIntProperty(poolPropertiesConfig, "db.pool.maxActive", "100"));
-    poolProperties.setMaxIdle(getIntProperty(poolPropertiesConfig, "db.pool.maxIdle", "30"));
-    poolProperties.setMinIdle(getIntProperty(poolPropertiesConfig, "db.pool.minIdle", "10"));
-    poolProperties.setMaxWait(getIntProperty(poolPropertiesConfig, "db.pool.maxWait", "30000"));
+    poolProperties.setInitialSize(getIntProperty(poolPropertiesConfig, "db.pool.initialSize", "1"));
+    poolProperties.setMaxActive(getIntProperty(poolPropertiesConfig, "db.pool.maxActive", "10000"));
+    poolProperties.setMinIdle(getIntProperty(poolPropertiesConfig, "db.pool.minIdle", "5"));
     poolProperties.setTimeBetweenEvictionRunsMillis(getIntProperty(poolPropertiesConfig,
-        "db.pool.timeBetweenEvictionRunsMillis", "30000"));
+        "db.pool.timeBetweenEvictionRunsMillis", "60000"));
     poolProperties.setMinEvictableIdleTimeMillis(getIntProperty(poolPropertiesConfig,
-        "db.pool.minEvictableIdleTimeMillis", "60000"));
+        "db.pool.minEvictableIdleTimeMillis", "120000"));
     poolProperties.setRemoveAbandoned(getBooleanProperty(poolPropertiesConfig,
         "db.pool.removeAbandoned", "false"));
-    poolProperties.setRemoveAbandonedTimeout(getIntProperty(poolPropertiesConfig,
-        "db.pool.removeAbandonedTimeout", "60"));
-    poolProperties.setLogAbandoned(getBooleanProperty(poolPropertiesConfig, "db.pool.logAbandoned",
-        "false"));
-    poolProperties.setJmxEnabled(getBooleanProperty(poolPropertiesConfig, "db.pool.jmxEnabled",
-        "true"));
+
     poolProperties.setTestWhileIdle(getBooleanProperty(poolPropertiesConfig,
         "db.pool.testWhileIdle", "false"));
     poolProperties.setTestOnBorrow(getBooleanProperty(poolPropertiesConfig, "db.pool.testOnBorrow",
