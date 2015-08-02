@@ -248,15 +248,17 @@ public class ConnectionProviderImpl implements ConnectionProvider {
     if (poolName == null || poolName.equals(""))
       throw new NoConnectionAvailableException("Couldn´t get a connection for an unnamed pool");
     Connection conn;
-    if (externalPoolClassName != null) {
-      if (externalConnectionPool == null) {
-        try {
-          externalConnectionPool = ExternalConnectionPool.getInstance(externalPoolClassName);
-        } catch (Throwable e) {
-          externalConnectionPool = null;
-          externalPoolClassName = null;
-        }
+    if (externalConnectionPool == null && externalPoolClassName != null
+        && !"".equals(externalPoolClassName)) {
+      try {
+        externalConnectionPool = ExternalConnectionPool.getInstance(externalPoolClassName);
+      } catch (Throwable e) {
+        externalConnectionPool = null;
+        externalPoolClassName = null;
       }
+    }
+
+    if (externalConnectionPool != null) {
       conn = externalConnectionPool.getConnection();
     } else {
       conn = getCommonsDbcpPoolConnection(poolName);
