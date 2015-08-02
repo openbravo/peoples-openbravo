@@ -87,21 +87,18 @@ bbdd.sessionConfig=select update_dateFormat('DD-MM-YYYY')
 
 db.externalPoolClassName=org.openbravo.apachejdbcconnectionpool.JdbcExternalConnectionPool
 
-# Documentation at http://www.tomcatexpert.com/blog/2010/04/01/configuring-jdbc-pool-high-concurrency
-db.pool.initialSize=10
-db.pool.maxActive=100
-db.pool.maxIdle=30
-db.pool.minIdle=10
-db.pool.maxWait=30000
-db.pool.timeBetweenEvictionRunsMillis=30000
-db.pool.minEvictableIdleTimeMillis=60000
+# Documentation at http://wiki.openbravo.com/wiki/Modules:Apache_JDBC_Connection_Pool#Pool_Configuration
+db.pool.initialSize=1
+db.pool.minIdle=5
+db.pool.maxActive=10000
+db.pool.timeBetweenEvictionRunsMillis=60000
+db.pool.minEvictableIdleTimeMillis=120000
 db.pool.removeAbandoned=false
-db.pool.jmxEnabled=true
-db.pool.testWhileIdle=false
 db.pool.testOnBorrow=true
+db.pool.testWhileIdle=false
+db.pool.testOnReturn=false
 db.pool.validationQuery=SELECT 1 FROM DUAL
 db.pool.validationInterval=30000
-db.pool.testOnReturn=false
 
 ##################
 # Tomcat manager #
