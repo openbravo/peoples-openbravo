@@ -130,7 +130,7 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
   }
 
   private int getIntProperty(Properties properties, String propertyName, String defaultValue) {
-    return Integer.parseInt(properties.getProperty(propertyName, defaultValue));
+    return Integer.parseInt(properties.getProperty(propertyName, defaultValue).trim());
   }
 
   @Override
