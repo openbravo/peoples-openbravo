@@ -11788,14 +11788,9 @@ group by  coalesce(lcm.id, lcc.id), lcc, lct.name, lcc.amount, lcc.currency.iSOC
 iol.uOM as uOM, iol.id as goodsShipmentLine, iol.movementQuantity as movementQuantity,
 iol.shipmentReceipt.businessPartner as businessPartner, iol.shipmentReceipt.documentNo as shipmentNumber,
 iol.shipmentReceipt.movementDate as movementDate,  attributeSetValue as attributeSetValue,
-coalesce((select sum(ol.orderedQuantity)
-from OrderLine as ol
-left join ol.salesOrder as o
-where ol.goodsShipmentLine = iol
-and o.processed = true
-and o.documentStatus <> 'VO'), 0) as returnQtyOtherRM,
+(@returnedOthersLeftClause@)*(-1) as returnQtyOtherRM,
 (case when (select ('Y') from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol) is null then false else true end) as obSelected,
-coalesce((select ol.orderedQuantity from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol),0)*(-1) as returned,
+(@returnedLeftClause@)*(-1) as returned,
 (select ol.returnReason from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol) as returnReason,
 coalesce((select ol.tax from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol) ,
 @taxSubQuery@) as tax,
@@ -11813,6 +11808,7 @@ join iol.shipmentReceipt as io
 where io.businessPartner.id = :businessPartnerId 
 and io.processed = true and io.documentStatus <> 'VO' 
 and io.salesTransaction = @isSalesTransaction@ 
+and (iol.movementQuantity+(@returnedOthersLeftClause@) <> 0) 
 and @insertion_point_0@
 and @additional_filters@]]></HQLQUERY>
 <!--CDB9DC9655F24DF8AB41AA0ADBD04390-->  <ENTITY_ALIAS><![CDATA[iol]]></ENTITY_ALIAS>
