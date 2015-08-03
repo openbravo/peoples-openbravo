@@ -20,6 +20,9 @@ package org.openbravo.advpaymentmngt.modulescript;
 
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.modulescript.ModuleScript;
+import org.openbravo.modulescript.ModuleScriptExecutionLimits;
+import org.openbravo.modulescript.OpenbravoVersion;
+
 import java.math.BigDecimal;
 
 public class Issue28591UpdatePSD extends ModuleScript {
@@ -47,4 +50,10 @@ public class Issue28591UpdatePSD extends ModuleScript {
       handleError(e);
     }
  }
+  
+  @Override
+  protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
+    return new ModuleScriptExecutionLimits("A918E3331C404B889D69AA9BFAFB23AC", new OpenbravoVersion(3,0,22941), 
+        new OpenbravoVersion(3,0,25949));
+  }
 }
