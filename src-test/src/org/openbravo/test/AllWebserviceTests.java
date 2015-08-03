@@ -27,6 +27,7 @@ import org.openbravo.test.datasource.FKDropDownDatasource;
 import org.openbravo.test.datasource.HQLDataSourceTest;
 import org.openbravo.test.datasource.ProductSelectorDataSourceTest;
 import org.openbravo.test.datasource.SelectorFieldPropertySelectorDSTest;
+import org.openbravo.test.datasource.TestAllowUnpagedDatasourcePreference;
 import org.openbravo.test.datasource.TestCSVEncoding;
 import org.openbravo.test.datasource.TestComboDatasource;
 import org.openbravo.test.datasource.TestNoteDatasource;
@@ -58,6 +59,7 @@ WSReadTest.class, //
     JSONWebServices.class, //
     FICTest.class, //
     HQLDataSourceTest.class, //
+    TestAllowUnpagedDatasourcePreference.class, //
     TestNoteDatasource.class,//
     TestCosting.class,//
     WebServicesWithNoActiveFilterTest.class })
