@@ -140,9 +140,9 @@ public class TestAllowUnpagedDatasourcePreference extends BaseDataSourceTestDal 
 
   private String setPreferenceValue(String preferenceId, String preferenceValue) {
     User user = OBDal.getInstance().get(User.class, "100"); // Openbravo user;
-    String defaultClient = (String) DalUtil.getId(user.getDefaultClient());
-    String defaultOrg = (String) DalUtil.getId(user.getDefaultOrganization());
-    String defaultRole = (String) DalUtil.getId(user.getDefaultRole());
+    String defaultClient = user.getDefaultClient().getId();
+    String defaultOrg = user.getDefaultOrganization().getId();
+    String defaultRole = user.getDefaultRole().getId();
 
     // Execute ws with system administrator credentials
     user.setDefaultClient(OBDal.getInstance().get(Client.class, "0"));
