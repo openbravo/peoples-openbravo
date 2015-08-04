@@ -1047,6 +1047,10 @@
             text: text,
             line: line,
             undo: function () {
+              if(!line.get('product').get('oBPOSAllowAnonymousSale') && OB.MobileApp.model.get('terminal').businessPartner == me.get('bp').get('id')){
+            	OB.UTIL.showI18NWarning('OBPOS_AnonymousSaleNotAllowed');
+            	return;
+              }
               line.unset('obposIsDeleted');
               me.get('lines').add(line, {
                 at: index
@@ -1325,6 +1329,10 @@
         // do not allow generic products to be added to the receipt
         if (args && args.productToAdd && args.productToAdd.get('isGeneric')) {
           OB.UTIL.showI18NWarning('OBPOS_GenericNotAllowed');
+          return;
+        }
+        if (OB.MobileApp.model.get('terminal').businessPartner == me.get('bp').get('id') && args && args.productToAdd && !args.productToAdd.get('oBPOSAllowAnonymousSale')) {
+	      OB.UTIL.showI18NWarning('OBPOS_AnonymousSaleNotAllowed');
           return;
         }
         if (args && args.useLines) {
@@ -1739,6 +1747,14 @@
       var me = this,
           undef;
       var oldbp = this.get('bp');
+      if(OB.MobileApp.model.get('terminal').businessPartner == businessPartner.id){
+      	for(var i = 0; i< me.get('lines').models.length; i++){
+          if(!me.get('lines').models[i].get('product').get('oBPOSAllowAnonymousSale')){
+          	OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_AnonymousSaleForProductNotAllowed', [me.get('lines').models[i].get('product').get('_identifier')]));
+          	return;
+          }
+      	}
+      }
       if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.customer', true)) {
         if (oldbp.id !== businessPartner.id) { //Business Partner have changed
           OB.Dal.removeHgvol(new OB.Model.BusinessPartner(oldbp), function () {}, function () {

@@ -71,6 +71,7 @@ public class Category extends ProcessHQLQuery {
     // TODO: Sandra, replace the hgvol with productcategory reading from separate table
     boolean isHgVol = false;
     try {
+      OBContext.setAdminMode(true);
       isHgVol = "Y".equals(Preferences.getPreferenceValue("OBPOS_highVolume.product", true,
           OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
               .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext

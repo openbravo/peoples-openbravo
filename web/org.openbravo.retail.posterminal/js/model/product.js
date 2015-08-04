@@ -149,8 +149,8 @@
     column: 'printDescription',
     type: 'BOOL'
   }, {
-    name: 'allowAnonymousSale',
-    column: 'allowAnonymousSale',
+    name: 'oBPOSAllowAnonymousSale',
+    column: 'oBPOSAllowAnonymousSale',
     type: 'BOOL'
   }, {
     name: 'returnable',
