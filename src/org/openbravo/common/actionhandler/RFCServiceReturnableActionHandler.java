@@ -19,7 +19,7 @@
 
 package org.openbravo.common.actionhandler;
 
-import java.math.BigDecimal;
+import java.util.Date;
 import java.util.Map;
 
 import org.codehaus.jettison.json.JSONObject;
@@ -27,17 +27,18 @@ import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.materialmgmt.ServicePriceUtils;
-import org.openbravo.model.common.order.OrderLine;
+import org.openbravo.model.common.plm.Product;
+import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ServiceRelatedLinePriceActionHandler extends BaseActionHandler {
+public class RFCServiceReturnableActionHandler extends BaseActionHandler {
   private static final Logger log = LoggerFactory
-      .getLogger(ServiceRelatedLinePriceActionHandler.class);
-  private static final String RFC_ORDERLINE_TAB_ID = "AF4090093D471431E040007F010048A5";
+      .getLogger(RFCServiceReturnableActionHandler.class);
 
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) {
@@ -49,24 +50,17 @@ public class ServiceRelatedLinePriceActionHandler extends BaseActionHandler {
       jsonRequest = new JSONObject(content);
       log.debug("{}", jsonRequest);
 
-      final OrderLine serviceOrderline = OBDal.getInstance().get(OrderLine.class,
-          jsonRequest.getString("orderlineId"));
-      BigDecimal amount = new BigDecimal(jsonRequest.getString("amount"));
-      String tabId = jsonRequest.getString("tabId");
-      JSONObject deferredSale = null;
-      BigDecimal serviceTotalAmount = BigDecimal.ZERO;
-      serviceTotalAmount = ServicePriceUtils.getServiceAmount(serviceOrderline, amount);
-      if (jsonRequest.has("orderLineToRelateId")
-          && jsonRequest.get("orderLineToRelateId") != JSONObject.NULL
-          && !RFC_ORDERLINE_TAB_ID.equals(tabId)) {
-        final OrderLine orderLineToRelate = OBDal.getInstance().get(OrderLine.class,
-            jsonRequest.getString("orderLineToRelateId"));
-        deferredSale = ServicePriceUtils.deferredSaleAllowed(serviceOrderline, orderLineToRelate);
-      }
-      result.put("amount", serviceTotalAmount);
-      result.put("message", deferredSale);
+      final String strRFCOrderDate = jsonRequest.getString("rfcOrderDate");
+      final Date rfcOrderDate = OBDateUtils.getDate(strRFCOrderDate);
+      final ShipmentInOutLine shipmentLine = OBDal.getInstance().get(ShipmentInOutLine.class,
+          jsonRequest.getString("goodsShipmentId"));
+      final Product serviceProduct = OBDal.getInstance().get(Product.class,
+          jsonRequest.getString("productId"));
+      JSONObject returnAllowedRFC = ServicePriceUtils.serviceReturnAllowedRFC(shipmentLine,
+          serviceProduct, rfcOrderDate);
+      result.put("message", returnAllowedRFC);
     } catch (Exception e) {
-      log.error("Error in ServiceRelatedLinePriceActionHandler Action Handler", e);
+      log.error("Error in RFCServiceReturnableActionHandler Action Handler", e);
       try {
         result = new JSONObject();
         String message = OBMessageUtils.parseTranslation(new DalConnectionProvider(false),
@@ -77,7 +71,6 @@ public class ServiceRelatedLinePriceActionHandler extends BaseActionHandler {
         errorMessage.put("title", "Error");
         errorMessage.put("text", message);
         result.put("message", errorMessage);
-
       } catch (Exception e2) {
         log.error(e.getMessage(), e2);
       }

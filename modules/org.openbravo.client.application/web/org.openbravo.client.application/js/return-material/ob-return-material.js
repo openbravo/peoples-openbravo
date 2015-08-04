@@ -48,9 +48,26 @@ OB.RM.RMOrderSelectionChange = function (grid, record, state) {
   var contextInfo = null;
   if (state) {
     contextInfo = grid.view.parentWindow.activeView.getContextInfo(false, true, true, true);
+    if (!contextInfo.inpdateordered) {
+      contextInfo = grid.view.parentWindow.activeView.parentView.getContextInfo(false, true, true, true);
+    }
     if (!record.returnReason) {
       record.returnReason = contextInfo.inpcReturnReasonId;
     }
+    OB.RemoteCallManager.call('org.openbravo.common.actionhandler.RFCServiceReturnableActionHandler', {
+      rfcOrderDate: contextInfo.inpdateordered,
+      goodsShipmentId: record.id,
+      productId: record.product
+    }, {}, function (response, data, request) {
+      if (data.message) {
+        if (data.message.severity === isc.OBMessageBar.TYPE_ERROR) {
+          grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, data.message.title, data.message.text);
+          grid.deselectRecord(record);
+        } else {
+          grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_WARNING, data.message.title, data.message.text);
+        }
+      }
+    });
   }
 };
 /**

@@ -55,10 +55,10 @@
       <foreign-key foreignTable="AD_ORG" name="C_ORDERLINE_SERVICEREL_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ORDERLINE" name="C_ORDERLINE_SERVICEREL_ORD" onDelete="cascade">
+      <foreign-key foreignTable="C_ORDERLINE" name="C_ORDERLINE_SERVICEREL_ORD">
         <reference local="C_ORDERLINE_ID" foreign="C_ORDERLINE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ORDERLINE" name="C_ORDERLINE_SERVICEREL_REL_ORD" onDelete="cascade">
+      <foreign-key foreignTable="C_ORDERLINE" name="C_ORDERLINE_SERVICEREL_REL_ORD">
         <reference local="C_ORDERLINE_RELATED_ID" foreign="C_ORDERLINE_ID"/>
       </foreign-key>
       <index name="C_ORDERLINE_SERVICEREL_ORD_IDX" unique="false">
