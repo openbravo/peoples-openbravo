@@ -19,22 +19,37 @@
 
 package org.openbravo.test.datasource;
 
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.Authenticator;
+import java.net.HttpURLConnection;
+import java.net.PasswordAuthentication;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.model.ad.access.Role;
+import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
@@ -44,42 +59,64 @@ import org.openbravo.model.common.enterprise.Organization;
  * 
  * See issue http://issues.openbravo.com/view.php?id=30204
  */
+@RunWith(Parameterized.class)
 public class TestAllowUnpagedDatasourcePreference extends BaseDataSourceTestDal {
 
   protected Logger logger = Logger.getLogger(this.getClass());
+  private String preferenceValue;
+
+  /**
+   * @param preferenceValue
+   *          value to be assigned to the preference
+   * @param description
+   *          description for the test case
+   */
+  public TestAllowUnpagedDatasourcePreference(String preferenceValue, String description) {
+    this.preferenceValue = preferenceValue;
+  }
+
+  @Parameters(name = "{index}: ''{1}'' -- preference value: {0}")
+  public static Collection<Object[]> data() {
+    return Arrays.asList(new Object[][] { { "N", "Manual request should not be performed" },
+        { "Y", "Manual request should be performed" } });
+  }
 
   @Test
-  public void testErrorThrown() throws Exception {
+  public void testDatasourceRequest() {
     OBContext.setAdminMode();
+    String preferenceId = getPreferenceId();
     try {
-      // Get the 'Allow Unpaged Datasource In Manual Request' preference value
-      Preference preference = getPreference();
+      // Set the 'Allow Unpaged Datasource In Manual Request' preference value
+      String wsResponse = setPreferenceValue(preferenceId, preferenceValue);
+      logger.debug("Web Service response: " + wsResponse);
       // Create a manual request to the datasource
       String response = "";
       Map<String, String> params = new HashMap<String, String>();
+      params = new HashMap<String, String>();
       params.put("_operationType", "fetch");
       try {
         response = doRequest("/org.openbravo.service.datasource/UOM", params, 200, "POST");
-      } catch (OBException ex) {
-        logger.debug("Exception in request:" + ex.getMessage());
+      } catch (Exception ignore) {
+        // Expected exception when preference value is "N"
+        logger.debug("Exception in datasource request:" + ignore.getMessage());
       }
-      if (preference != null && "Y".equals(preference.getSearchKey())) {
-        // Manual request should be completed without errors
-        assertThat("Manual datasource request done without errors",
-            StringUtils.isEmpty(getResponseErrorMessage(response)), is(true));
-      } else {
-        // Manual request should not be performed
-        assertThat(
-            "Manual datasource request not performed",
-            OBMessageUtils.messageBD("OBJSON_NoPagedFetchManual").equals(
-                getResponseErrorMessage(response)), is(true));
+      // Compare the error message in response, if any
+      String errorMsg = "";
+      if ("N".equals(preferenceValue)) {
+        errorMsg = OBMessageUtils.messageBD("OBJSON_NoPagedFetchManual");
       }
+      assertThat("Datasource returned error message", getResponseErrorMessage(response),
+          equalTo(errorMsg));
     } finally {
+      // Set default value for the preference
+      if ("Y".equals(preferenceValue)) {
+        setPreferenceValue(preferenceId, "N");
+      }
       OBContext.restorePreviousMode();
     }
   }
 
-  private Preference getPreference() {
+  private String getPreferenceId() {
     Preference preference;
     OBCriteria<Preference> obCriteria = OBDal.getInstance().createCriteria(Preference.class);
     obCriteria.add(Restrictions.eq(Preference.PROPERTY_PROPERTY,
@@ -98,7 +135,77 @@ public class TestAllowUnpagedDatasourcePreference extends BaseDataSourceTestDal 
     obCriteria.setMaxResults(1);
     preference = (Preference) obCriteria.uniqueResult();
 
-    return preference;
+    return (String) DalUtil.getId(preference);
+  }
+
+  private String setPreferenceValue(String preferenceId, String preferenceValue) {
+    User user = OBDal.getInstance().get(User.class, "100"); // Openbravo user;
+    String defaultClient = (String) DalUtil.getId(user.getDefaultClient());
+    String defaultOrg = (String) DalUtil.getId(user.getDefaultOrganization());
+    String defaultRole = (String) DalUtil.getId(user.getDefaultRole());
+
+    // Execute ws with system administrator credentials
+    user.setDefaultClient(OBDal.getInstance().get(Client.class, "0"));
+    user.setDefaultOrganization(OBDal.getInstance().get(Organization.class, "0"));
+    user.setDefaultRole(OBDal.getInstance().get(Role.class, "0"));
+    OBDal.getInstance().commitAndClose();
+
+    try {
+      String content = "{" //
+          + "  \"data\": {" //
+          + "    \"entityName\": \"ADPreference\"," //
+          + "    \"id\": \"" + preferenceId + "\"," //
+          + "    \"searchKey\": \"" + preferenceValue + "\"," //
+          + "  }" //
+          + "}";
+      final HttpURLConnection hc = createConnection(
+          "/org.openbravo.service.json.jsonrest/ADPreference", "PUT");
+      hc.connect();
+      final OutputStream os = hc.getOutputStream();
+      os.write(content.getBytes("UTF-8"));
+      os.flush();
+      os.close();
+      hc.connect();
+      // Get ws response
+      StringBuilder sb = new StringBuilder();
+      final InputStream is = hc.getInputStream();
+      BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+      String line;
+      while ((line = reader.readLine()) != null) {
+        sb.append(line).append("\n");
+      }
+      return sb.toString();
+
+    } catch (Exception e) {
+      throw new OBException("Exception when updating preference value: ", e);
+    } finally {
+      // restore user defaults
+      user = OBDal.getInstance().get(User.class, "100");
+      user.setDefaultClient(OBDal.getInstance().get(Client.class, defaultClient));
+      user.setDefaultOrganization(OBDal.getInstance().get(Organization.class, defaultOrg));
+      user.setDefaultRole(OBDal.getInstance().get(Role.class, defaultRole));
+      OBDal.getInstance().commitAndClose();
+    }
+  }
+
+  private HttpURLConnection createConnection(String wsPart, String method) throws Exception {
+    Authenticator.setDefault(new Authenticator() {
+      @Override
+      protected PasswordAuthentication getPasswordAuthentication() {
+        return new PasswordAuthentication(LOGIN, PWD.toCharArray());
+      }
+    });
+    final URL url = new URL(getOpenbravoURL() + wsPart);
+    final HttpURLConnection hc = (HttpURLConnection) url.openConnection();
+    hc.setRequestMethod(method);
+    hc.setAllowUserInteraction(false);
+    hc.setDefaultUseCaches(false);
+    hc.setDoOutput(true);
+    hc.setDoInput(true);
+    hc.setInstanceFollowRedirects(true);
+    hc.setUseCaches(false);
+    hc.setRequestProperty("Content-Type", "text/xml");
+    return hc;
   }
 
   private String getResponseErrorMessage(String response) {
