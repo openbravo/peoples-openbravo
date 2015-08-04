@@ -35,9 +35,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.criterion.Restrictions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -45,12 +45,10 @@ import org.junit.runners.Parameterized.Parameters;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.User;
-import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
 
@@ -84,11 +82,27 @@ public class TestAllowUnpagedDatasourcePreference extends BaseDataSourceTestDal 
   @Test
   public void testDatasourceRequest() {
     OBContext.setAdminMode();
-    String preferenceId = getPreferenceId();
+    User user = null;
+    String defaultClient = null;
+    String defaultOrg = null;
+    String defaultRole = null;
+    String preferenceId = "";
     try {
-      // Set the 'Allow Unpaged Datasource In Manual Request' preference value
-      String wsResponse = setPreferenceValue(preferenceId, preferenceValue);
-      logger.debug("Web Service response: " + wsResponse);
+      user = OBDal.getInstance().get(User.class, "100"); // Openbravo user;
+      defaultClient = user.getDefaultClient() != null ? (String) DalUtil.getId(user
+          .getDefaultClient()) : null;
+      defaultOrg = user.getDefaultOrganization() != null ? (String) DalUtil.getId(user
+          .getDefaultOrganization()) : null;
+      defaultRole = (String) DalUtil.getId(user.getDefaultRole());
+
+      // Execute ws with system administrator credentials
+      user.setDefaultClient(OBDal.getInstance().get(Client.class, "0"));
+      user.setDefaultOrganization(OBDal.getInstance().get(Organization.class, "0"));
+      user.setDefaultRole(OBDal.getInstance().get(Role.class, "0"));
+      OBDal.getInstance().commitAndClose();
+
+      // Create the 'Allow Unpaged Datasource In Manual Request' preference
+      preferenceId = createPreference(preferenceValue);
       // Create a manual request to the datasource
       String response = "";
       Map<String, String> params = new HashMap<String, String>();
@@ -98,7 +112,7 @@ public class TestAllowUnpagedDatasourcePreference extends BaseDataSourceTestDal 
         response = doRequest("/org.openbravo.service.datasource/UOM", params, 200, "POST");
       } catch (Exception ignore) {
         // Expected exception when preference value is "N"
-        logger.debug("Exception in datasource request:" + ignore.getMessage());
+        logger.debug("Exception in datasource request:" + ignore.getMessage(), ignore);
       }
       // Compare the error message in response, if any
       String errorMsg = "";
@@ -108,61 +122,37 @@ public class TestAllowUnpagedDatasourcePreference extends BaseDataSourceTestDal 
       assertThat("Datasource returned error message", getResponseErrorMessage(response),
           equalTo(errorMsg));
     } finally {
-      // Set default value for the preference
-      if ("Y".equals(preferenceValue)) {
-        setPreferenceValue(preferenceId, "N");
+      if (!StringUtils.isEmpty(preferenceId)) {
+        deletePreference(preferenceId);
       }
+      // restore user defaults
+      Client client = defaultClient != null ? OBDal.getInstance().get(Client.class, defaultClient)
+          : null;
+      Organization org = defaultOrg != null ? OBDal.getInstance().get(Organization.class,
+          defaultOrg) : null;
+      user = OBDal.getInstance().get(User.class, "100");
+      user.setDefaultClient(client);
+      user.setDefaultOrganization(org);
+      user.setDefaultRole(OBDal.getInstance().get(Role.class, defaultRole));
+      OBDal.getInstance().commitAndClose();
       OBContext.restorePreviousMode();
     }
   }
 
-  private String getPreferenceId() {
-    Preference preference;
-    OBCriteria<Preference> obCriteria = OBDal.getInstance().createCriteria(Preference.class);
-    obCriteria.add(Restrictions.eq(Preference.PROPERTY_PROPERTY,
-        "OBJSON_AllowUnpagedDatasourceManualRequest"));
-    obCriteria.add(Restrictions.eq(Preference.PROPERTY_PROPERTYLIST, true));
-    obCriteria.add(Restrictions.eq(Preference.PROPERTY_ACTIVE, true));
-    obCriteria.add(Restrictions.eq(Preference.PROPERTY_VISIBLEATCLIENT,
-        OBDal.getInstance().get(Client.class, "0")));
-    obCriteria.add(Restrictions.eq(Preference.PROPERTY_VISIBLEATORGANIZATION, OBDal.getInstance()
-        .get(Organization.class, "0")));
-    obCriteria.add(Restrictions.isNull(Preference.PROPERTY_VISIBLEATROLE));
-    obCriteria.add(Restrictions.isNull(Preference.PROPERTY_USERCONTACT));
-    obCriteria.add(Restrictions.isNull(Preference.PROPERTY_WINDOW));
-    obCriteria.setFilterOnReadableClients(false);
-    obCriteria.setFilterOnReadableOrganization(false);
-    obCriteria.setMaxResults(1);
-    preference = (Preference) obCriteria.uniqueResult();
-
-    return (String) DalUtil.getId(preference);
-  }
-
-  private String setPreferenceValue(String preferenceId, String preferenceValue) {
-    User user = OBDal.getInstance().get(User.class, "100"); // Openbravo user;
-    String defaultClient = user.getDefaultClient() != null ? (String) DalUtil.getId(user
-        .getDefaultClient()) : null;
-    String defaultOrg = user.getDefaultOrganization() != null ? (String) DalUtil.getId(user
-        .getDefaultOrganization()) : null;
-    String defaultRole = (String) DalUtil.getId(user.getDefaultRole());
-
-    // Execute ws with system administrator credentials
-    user.setDefaultClient(OBDal.getInstance().get(Client.class, "0"));
-    user.setDefaultOrganization(OBDal.getInstance().get(Organization.class, "0"));
-    user.setDefaultRole(OBDal.getInstance().get(Role.class, "0"));
-    OBDal.getInstance().commitAndClose();
-
+  private String createPreference(String value) {
     try {
       String content = "{" //
           + "  \"data\": {" //
           + "    \"entityName\": \"ADPreference\"," //
-          + "    \"id\": \"" + preferenceId + "\"," //
-          + "    \"searchKey\": \"" + preferenceValue + "\"," //
+          + "    \"property\": \"OBJSON_AllowUnpagedDatasourceManualRequest\"," //
+          + "    \"propertyList\": true," //
+          + "    \"visibleAtClient\": \"0\"," //
+          + "    \"visibleAtOrganization\": \"0\"," //
+          + "    \"searchKey\": \"" + value + "\"" //
           + "  }" //
           + "}";
       final HttpURLConnection hc = createConnection(
-          "/org.openbravo.service.json.jsonrest/ADPreference", "PUT");
-      hc.connect();
+          "/org.openbravo.service.json.jsonrest/ADPreference", "POST");
       final OutputStream os = hc.getOutputStream();
       os.write(content.getBytes("UTF-8"));
       os.flush();
@@ -176,21 +166,31 @@ public class TestAllowUnpagedDatasourcePreference extends BaseDataSourceTestDal 
       while ((line = reader.readLine()) != null) {
         sb.append(line).append("\n");
       }
+      return getIdFromResponse(sb.toString());
+
+    } catch (Exception e) {
+      throw new OBException("Exception on create preference: ", e);
+    }
+  }
+
+  private String deletePreference(String preferenceId) {
+    try {
+      // String content = "";
+      final HttpURLConnection hc = createConnection(
+          "/org.openbravo.service.json.jsonrest/ADPreference/" + preferenceId, "DELETE");
+      hc.connect();
+      // Get ws response
+      StringBuilder sb = new StringBuilder();
+      final InputStream is = hc.getInputStream();
+      BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+      String line;
+      while ((line = reader.readLine()) != null) {
+        sb.append(line).append("\n");
+      }
       return sb.toString();
 
     } catch (Exception e) {
-      throw new OBException("Exception when updating preference value: ", e);
-    } finally {
-      // restore user defaults
-      Client client = defaultClient != null ? OBDal.getInstance().get(Client.class, defaultClient)
-          : null;
-      Organization org = defaultOrg != null ? OBDal.getInstance().get(Organization.class,
-          defaultOrg) : null;
-      user = OBDal.getInstance().get(User.class, "100");
-      user.setDefaultClient(client);
-      user.setDefaultOrganization(org);
-      user.setDefaultRole(OBDal.getInstance().get(Role.class, defaultRole));
-      OBDal.getInstance().commitAndClose();
+      throw new OBException("Exception on delete preference: ", e);
     }
   }
 
@@ -220,6 +220,19 @@ public class TestAllowUnpagedDatasourcePreference extends BaseDataSourceTestDal 
       if (jsonResponse.has("error")) {
         JSONObject error = jsonResponse.getJSONObject("error");
         return error.getString("message");
+      }
+      return "";
+    } catch (Exception ex) {
+      return "";
+    }
+  }
+
+  private String getIdFromResponse(String response) {
+    try {
+      JSONObject jsonResponse = new JSONObject(response).getJSONObject("response");
+      if (jsonResponse.has("data")) {
+        JSONObject data = jsonResponse.getJSONArray("data").getJSONObject(0);
+        return data.getString("id");
       }
       return "";
     } catch (Exception ex) {
