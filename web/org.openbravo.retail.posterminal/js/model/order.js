@@ -180,6 +180,14 @@
         }
       }
       return null;
+    },
+
+    isReturnable: function () {
+      if (this.get('product').get('returnable')) {
+        return true;
+      } else {
+        return false;
+      }
     }
   });
 
@@ -1829,30 +1837,61 @@
 
     setOrderType: function (permission, orderType, options) {
       var me = this;
+
+      function finishSetOrderType() {
+        me.set('orderType', orderType); // 0: Sales order, 1: Return order, 2: Layaway, 3: Void Layaway
+        if (orderType !== 3) { //Void this Layaway, do not need to save
+          if (!(options && !OB.UTIL.isNullOrUndefined(options.saveOrder) && options.saveOrder === false)) {
+            me.save();
+          }
+        } else {
+          me.set('layawayGross', me.getGross());
+          me.set('gross', me.get('payment'));
+          me.set('payment', OB.DEC.Zero);
+          me.get('payments').reset();
+        }
+        // remove promotions
+        if (!(options && !OB.UTIL.isNullOrUndefined(options.applyPromotions) && options.applyPromotions === false)) {
+          OB.Model.Discounts.applyPromotions(me);
+        }
+      }
       if (orderType === OB.DEC.One) {
         this.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentTypeForReturns);
-        _.each(this.get('lines').models, function (line) {
-          if (line.get('qty') > 0) {
-            me.returnLine(line, null, true);
+        var approvalNeeded = false;
+        for (var i = 0; i < this.get('lines').models.length; i++) {
+          var line = this.get('lines').models[i];
+          if (line.get('product').get('productType') === 'S' && !line.isReturnable()) {
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_UnreturnableProduct'), OB.I18N.getLabel('OBPOS_UnreturnableProductMessage', [line.get('product').get('_identifier')]));
+            return;
+          } else if (!approvalNeeded) {
+            if (line.get('product').get('productType') === 'S') {
+              approvalNeeded = true;
+            }
           }
-        }, this);
-      } else {
-        this.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentType);
-      }
-      this.set('orderType', orderType); // 0: Sales order, 1: Return order, 2: Layaway, 3: Void Layaway
-      if (orderType !== 3) { //Void this Layaway, do not need to save
-        if (!(options && !OB.UTIL.isNullOrUndefined(options.saveOrder) && options.saveOrder === false)) {
-          this.save();
+        }
+        if (approvalNeeded) {
+          OB.UTIL.Approval.requestApproval(
+          OB.MobileApp.view.$.containerWindow.$.pointOfSale.model, 'OBPOS_approval.returnService', function (approved, supervisor, approvalType) {
+            if (approved) {
+              _.each(me.get('lines').models, function (line) {
+                if (line.get('qty') > 0) {
+                  me.returnLine(line, null, true);
+                }
+              }, me);
+              finishSetOrderType();
+            }
+          });
+        } else {
+          _.each(this.get('lines').models, function (line) {
+            if (line.get('qty') > 0) {
+              me.returnLine(line, null, true);
+            }
+          }, this);
+          finishSetOrderType();
         }
       } else {
-        this.set('layawayGross', this.getGross());
-        this.set('gross', this.get('payment'));
-        this.set('payment', OB.DEC.Zero);
-        this.get('payments').reset();
-      }
-      // remove promotions
-      if (!(options && !OB.UTIL.isNullOrUndefined(options.applyPromotions) && options.applyPromotions === false)) {
-        OB.Model.Discounts.applyPromotions(this);
+        this.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentType);
+        finishSetOrderType();
       }
     },
 

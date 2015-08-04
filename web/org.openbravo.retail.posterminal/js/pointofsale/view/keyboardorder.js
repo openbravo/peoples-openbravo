@@ -376,11 +376,38 @@ enyo.kind({
             }
           });
         } else {
-          if (me.selectedModels.length > 1) {
-            actionAddMultiProduct(keyboard, -qty);
+          var approvalNeeded = false;
+          if (value < 0) {
+            for (var i = 0; i < me.selectedModels.length; i++) {
+              var line = me.selectedModels[i];
+              if (line.get('product').get('productType') === 'S' && !line.isReturnable()) {
+                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_UnreturnableProduct'), OB.I18N.getLabel('OBPOS_UnreturnableProductMessage', [line.get('product').get('_identifier')]));
+                return;
+              } else if (!approvalNeeded) {
+                if (line.get('product').get('productType') === 'S') {
+                  approvalNeeded = true;
+                }
+              }
+            }
+          }
+
+          function actionAddProducts() {
+            if (me.selectedModels.length > 1) {
+              actionAddMultiProduct(keyboard, -qty, true);
+            } else {
+              keyboard.receipt.set('multipleUndo', null);
+              actionAddProduct(keyboard, -qty);
+            }
+          }
+          if (approvalNeeded) {
+            OB.UTIL.Approval.requestApproval(
+            me.model, 'OBPOS_approval.returnService', function (approved, supervisor, approvalType) {
+              if (approved) {
+                actionAddProducts();
+              }
+            });
           } else {
-            keyboard.receipt.set('multipleUndo', null);
-            actionAddProduct(keyboard, -qty);
+            actionAddProducts();
           }
         }
       }
@@ -405,6 +432,7 @@ enyo.kind({
     this.addToolbar(OB.OBPOSPointOfSale.UI.ToolbarScan);
     this.addToolbar(OB.OBPOSPointOfSale.UI.ToolbarDiscounts);
   },
+
 
   init: function (model) {
     this.model = model;

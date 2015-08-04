@@ -47,6 +47,9 @@ public class PaidReceiptLinesProperties extends ModelExtension {
         add(new HQLProperty(
             "(ordLine.deliveredQuantity - (select coalesce(abs(sum(deliveredQuantity)),0) from OrderLine where goodsShipmentLine.salesOrderLine.id =ordLine.id))",
             "remainingQuantity"));
+        add(new HQLProperty("coalesce(ordLine.product.guaranteedDays, -1)", "guaranteedDays"));
+        add(new HQLProperty("ordLine.product.productType", "productType"));
+        add(new HQLProperty("ordLine.product.returnable", "returnable"));
       }
     };
 

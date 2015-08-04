@@ -236,14 +236,46 @@ enyo.kind({
     classes: 'btnlink-orange',
     showing: false,
     tap: function () {
-      this.owner.owner.receipt.set('undo', null);
-      this.owner.owner.receipt.set('multipleUndo', true);
-      _.each(this.owner.owner.selectedModels, function (line) {
-        this.owner.owner.doReturnLine({
+      var me = this,
+          approvalNeeded = false;
+      for (var i = 0; i < this.owner.owner.selectedModels.length; i++) {
+        var line = this.owner.owner.selectedModels[i];
+        if (line.get('product').get('productType') === 'S' && !line.isReturnable()) {
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_UnreturnableProduct'), OB.I18N.getLabel('OBPOS_UnreturnableProductMessage', [line.get('product').get('_identifier')]));
+          return;
+        } else if (!approvalNeeded) {
+          if (line.get('product').get('productType') === 'S') {
+            approvalNeeded = true;
+          }
+        }
+      }
+
+      function returnCurrentLine(index, selectedModels) {
+        if (index == selectedModels.length) {
+          return;
+        }
+        line = selectedModels[index];
+        me.owner.owner.doReturnLine({
           line: line
         });
-      }, this);
-      this.owner.owner.receipt.set('multipleUndo', null);
+        returnCurrentLine(index + 1, selectedModels);
+      }
+      if (approvalNeeded) {
+        OB.UTIL.Approval.requestApproval(
+        me.model, 'OBPOS_approval.returnService', function (approved, supervisor, approvalType) {
+          if (approved) {
+            me.owner.owner.receipt.set('undo', null);
+            me.owner.owner.receipt.set('multipleUndo', true);
+            returnCurrentLine(0, me.owner.owner.selectedModels);
+            me.owner.owner.receipt.set('multipleUndo', null);
+          }
+        });
+      } else {
+        me.owner.owner.receipt.set('undo', null);
+        me.owner.owner.receipt.set('multipleUndo', true);
+        returnCurrentLine(0, me.owner.owner.selectedModels);
+        me.owner.owner.receipt.set('multipleUndo', null);
+      }
     },
     init: function (model) {
       this.model = model;
