@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -59,7 +59,6 @@ import org.openbravo.model.financialmgmt.payment.FIN_Payment_Credit;
 import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
 
 public class DocFINPayment extends AcctServer {
-  private static final long serialVersionUID = 1L;
   static Logger log4j = Logger.getLogger(DocFINPayment.class);
 
   String SeqNo = "0";
@@ -118,7 +117,7 @@ public class DocFINPayment extends AcctServer {
         // into one.
         // https://issues.openbravo.com/view.php?id=19567
         HashMap<String, BigDecimal> amountAndWriteOff = getPaymentDetailWriteOffAndAmount(
-            paymentDetails, ps, psi, pso, i);
+            paymentDetails, ps, psi, pso, i, data[i]);
         BigDecimal amount = amountAndWriteOff.get("amount");
         BigDecimal writeOff = amountAndWriteOff.get("writeoff");
         if (amount == null) {
@@ -302,6 +301,7 @@ public class DocFINPayment extends AcctServer {
                 : null);
         docLine.m_Record_Id2 = data[i].getField("recordId2");
         docLine.setInvoiceTaxCashVAT_V(Line_ID);
+        docLine.setInvoiceTaxCashVAT_V(data[i].getField("MergedPaymentDetailId"));
         list.add(docLine);
       } finally {
         OBContext.restorePreviousMode();
@@ -397,6 +397,9 @@ public class DocFINPayment extends AcctServer {
             bpAmountConverted = convertAmount(new BigDecimal(bpAmount), !isReceipt, DateAcct,
                 TABLEID_Invoice, invoice.getId(), C_Currency_ID, as.m_C_Currency_ID, line, as,
                 fact, Fact_Acct_Group_ID, nextSeqNo(SeqNo), conn).toString();
+            // Cash VAT
+            SeqNo = CashVATUtil.createFactCashVAT(as, conn, fact, Fact_Acct_Group_ID, line,
+                invoice, DocumentType, C_Currency_ID, SeqNo);
             if (!isPrepayment) {
               if (line.getDoubtFulDebtAmount().signum() != 0) {
                 BigDecimal doubtFulDebtAmount = convertAmount(line.getDoubtFulDebtAmount(),
@@ -445,10 +448,6 @@ public class DocFINPayment extends AcctServer {
                   assignedAmount = assignedAmount.add(lineAmount);
                 }
               }
-
-              // Cash VAT
-              SeqNo = CashVATUtil.createFactCashVAT(as, conn, fact, Fact_Acct_Group_ID, line,
-                  invoice, DocumentType, C_Currency_ID, SeqNo);
             }
           }
           fact.createLine(line, getAccountBPartner(bpartnerId, as, isReceipt, isPrepayment, conn),

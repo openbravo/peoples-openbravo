@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,6 +19,7 @@
 package org.openbravo.advpaymentmngt.actionHandler;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -179,7 +180,7 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
           convertedAmount);
       OBDal.getInstance().save(payment);
 
-      addCredit(payment, jsonparams);
+      addCredit(payment, jsonparams, differenceAmount, strDifferenceAction);
       addSelectedPSDs(payment, jsonparams, pdToRemove);
       addGLItems(payment, jsonparams);
 
@@ -239,7 +240,8 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
 
   private FIN_Payment createNewPayment(JSONObject jsonparams, boolean isReceipt, Organization org,
       BusinessPartner bPartner, Date paymentDate, Currency currency, BigDecimal conversionRate,
-      BigDecimal convertedAmt, String strActualPayment) throws OBException, JSONException {
+      BigDecimal convertedAmt, String strActualPayment) throws OBException, JSONException,
+      SQLException {
 
     String strPaymentDocumentNo = jsonparams.getString("payment_documentno");
     String strReferenceNo = "";
@@ -290,6 +292,7 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
     FIN_Payment payment = (new AdvPaymentMngtDao()).getNewPayment(isReceipt, org, documentType,
         strPaymentDocumentNo, bPartner, paymentMethod, finAccount, strPaymentAmount, paymentDate,
         strReferenceNo, currency, conversionRate, convertedAmt);
+    OBDal.getInstance().getConnection(true).commit();
     return payment;
   }
 
@@ -340,10 +343,12 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
     }
   }
 
-  private void addCredit(FIN_Payment payment, JSONObject jsonparams) throws JSONException {
+  private void addCredit(FIN_Payment payment, JSONObject jsonparams, BigDecimal differenceAmount,
+      String strDifferenceAction) throws JSONException {
     // Credit to Use Grid
     JSONObject creditToUseGrid = jsonparams.getJSONObject("credit_to_use");
     JSONArray selectedCreditLines = creditToUseGrid.getJSONArray("_selection");
+    BigDecimal remainingRefundAmt = differenceAmount;
     String strSelectedCreditLinesIds = null;
     if (selectedCreditLines.length() > 0) {
       strSelectedCreditLinesIds = getSelectedCreditLinesIds(selectedCreditLines);
@@ -353,7 +358,16 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
           selectedCreditLines, selectedCreditPayment);
 
       for (final FIN_Payment creditPayment : selectedCreditPayment) {
-        final BigDecimal usedCreditAmt = selectedCreditPaymentAmounts.get(creditPayment.getId());
+        BigDecimal usedCreditAmt = selectedCreditPaymentAmounts.get(creditPayment.getId());
+        if (strDifferenceAction.equals("refund")) {
+          if (remainingRefundAmt.compareTo(usedCreditAmt) > 0) {
+            remainingRefundAmt = remainingRefundAmt.subtract(usedCreditAmt);
+            usedCreditAmt = BigDecimal.ZERO;
+          } else {
+            usedCreditAmt = usedCreditAmt.subtract(remainingRefundAmt);
+            remainingRefundAmt = BigDecimal.ZERO;
+          }
+        }
         final StringBuffer description = new StringBuffer();
         if (creditPayment.getDescription() != null && !creditPayment.getDescription().equals("")) {
           description.append(creditPayment.getDescription()).append("\n");
@@ -365,8 +379,10 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
         creditPayment.setDescription(truncateDescription);
         // Set Used Credit = Amount + Previous used credit introduced by the user
         creditPayment.setUsedCredit(usedCreditAmt.add(creditPayment.getUsedCredit()));
-        ;
-        FIN_PaymentProcess.linkCreditPayment(payment, usedCreditAmt, creditPayment);
+
+        if (usedCreditAmt.compareTo(BigDecimal.ZERO) > 0) {
+          FIN_PaymentProcess.linkCreditPayment(payment, usedCreditAmt, creditPayment);
+        }
         OBDal.getInstance().save(creditPayment);
       }
     }
@@ -535,17 +551,23 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
       conn = new DalConnectionProvider(true);
       OBDal.getInstance().getSession().clear();
       payment = OBDal.getInstance().get(FIN_Payment.class, payment.getId());
-      addCredit(payment, jsonparams);
+      addCredit(payment, jsonparams, refundAmount, strDifferenceAction);
     }
     if (!strDifferenceAction.equals("refund")) {
       return message;
     }
     boolean newPayment = !payment.getFINPaymentDetailList().isEmpty();
+    JSONObject creditToUseGrid = jsonparams.getJSONObject("credit_to_use");
+    JSONArray selectedCreditLines = creditToUseGrid.getJSONArray("_selection");
+    String strSelectedCreditLinesIds = null;
+    if (selectedCreditLines.length() > 0) {
+      strSelectedCreditLinesIds = getSelectedCreditLinesIds(selectedCreditLines);
+    }
     FIN_Payment refundPayment = FIN_AddPayment.createRefundPayment(conn, vars, payment,
         refundAmount.negate(), exchangeRate);
-    OBError auxMessage = FIN_AddPayment
-        .processPayment(vars, conn, (strAction.equals("PRP") || strAction.equals("PPP")) ? "P"
-            : "D", refundPayment, comingFrom);
+    OBError auxMessage = FIN_AddPayment.processPayment(vars, conn,
+        (strAction.equals("PRP") || strAction.equals("PPP")) ? "P" : "D", refundPayment,
+        comingFrom, strSelectedCreditLinesIds);
     if (newPayment && !"Error".equalsIgnoreCase(auxMessage.getType())) {
       final String strNewRefundPaymentMessage = OBMessageUtils
           .parseTranslation("@APRM_RefundPayment@" + ": " + refundPayment.getDocumentNo()) + ".";

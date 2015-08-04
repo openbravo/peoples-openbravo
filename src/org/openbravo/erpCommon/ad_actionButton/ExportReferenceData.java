@@ -82,7 +82,7 @@ public class ExportReferenceData extends HttpSecureAppServlet {
   private OBError processButton(VariablesSecureApp vars, String strKey) {
     OBError myError = null;
     try {
-      DataSet myDataset = (DataSet) OBDal.getInstance().get(DataSet.class, strKey);
+      DataSet myDataset = OBDal.getInstance().get(DataSet.class, strKey);
       if (!myDataset.getModule().isInDevelopment()) {
         myError = new OBError();
         myError.setType("Error");

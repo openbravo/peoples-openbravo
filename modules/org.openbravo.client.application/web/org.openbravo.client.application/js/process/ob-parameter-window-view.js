@@ -64,6 +64,7 @@ isc.OBParameterWindowView.addProperties({
     // Buttons
 
     function actionClick() {
+      view.setAllButtonEnabled(false);
       view.messageBar.hide();
       if (view.theForm) {
         view.theForm.errorMessage = '';
@@ -80,6 +81,7 @@ isc.OBParameterWindowView.addProperties({
             view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_ErrorInFields'));
           }
         }
+        view.setAllButtonEnabled(view.allRequiredParametersSet());
       }
     }
 
@@ -158,7 +160,7 @@ isc.OBParameterWindowView.addProperties({
     }
 
     if (this.popup) {
-      cancelButton = isc.OBFormButton.create({
+      this.cancelButton = isc.OBFormButton.create({
         process: this,
         title: OB.I18N.getLabel('OBUISC_Dialog.CANCEL_BUTTON_TITLE'),
         realTitle: '',
@@ -170,11 +172,11 @@ isc.OBParameterWindowView.addProperties({
           }
         }
       });
-      buttonLayout.push(cancelButton);
+      buttonLayout.push(this.cancelButton);
       buttonLayout.push(isc.LayoutSpacer.create({}));
-      OB.TestRegistry.register('org.openbravo.client.application.ParameterWindow_Cancel_Button_' + this.processId, cancelButton);
+      OB.TestRegistry.register('org.openbravo.client.application.ParameterWindow_Cancel_Button_' + this.processId, this.cancelButton);
       // TODO: check if this is used, and remove as it is already registered
-      OB.TestRegistry.register('org.openbravo.client.application.process.pickandexecute.button.cancel', cancelButton);
+      OB.TestRegistry.register('org.openbravo.client.application.process.pickandexecute.button.cancel', this.cancelButton);
     }
 
     if (!this.popup) {
@@ -402,6 +404,7 @@ isc.OBParameterWindowView.addProperties({
       }
     }
 
+    this.setAllButtonEnabled(this.allRequiredParametersSet());
     this.showProcessing(false);
     if (message) {
       if (this.popup) {
@@ -452,6 +455,7 @@ isc.OBParameterWindowView.addProperties({
         if (me.buttonOwnerView && isc.isA.Function(me.buttonOwnerView.refreshParentRecord) && isc.isA.Function(me.buttonOwnerView.refreshChildViews)) {
           me.buttonOwnerView.refreshParentRecord();
           me.buttonOwnerView.refreshChildViews();
+          me.buttonOwnerView.toolBar.updateButtonState();
         }
       };
       if (refreshParent) {
@@ -531,7 +535,7 @@ isc.OBParameterWindowView.addProperties({
   doProcess: function (btnValue) {
     var i, tmp, view = this,
         grid, allProperties = this.getUnderLyingRecordContext(false, true, false, true),
-        selection, len, allRows, params, tab, actionHandlerCall;
+        selection, len, allRows, params, tab, actionHandlerCall, clientSideValidationFail;
     // activeView = view.parentWindow && view.parentWindow.activeView,  ???.
     if (this.resultLayout && this.resultLayout.destroy) {
       this.resultLayout.destroy();
@@ -550,21 +554,24 @@ isc.OBParameterWindowView.addProperties({
     // allow to add external parameters
     isc.addProperties(allProperties._params, this.externalParams);
 
-    actionHandlerCall = function (me) {
-      me.showProcessing(true);
-      OB.RemoteCallManager.call(me.actionHandler, allProperties, {
-        processId: me.processId,
-        reportId: me.reportId,
-        windowId: me.windowId
+    actionHandlerCall = function () {
+      view.showProcessing(true);
+      OB.RemoteCallManager.call(view.actionHandler, allProperties, {
+        processId: view.processId,
+        reportId: view.reportId,
+        windowId: view.windowId
       }, function (rpcResponse, data, rpcRequest) {
         view.handleResponse(!(data && data.refreshParent === false), (data && data.message), (data && data.responseActions), (data && data.retryExecution), data);
       });
     };
 
     if (this.clientSideValidation) {
-      this.clientSideValidation(this, actionHandlerCall);
+      clientSideValidationFail = function () {
+        view.setAllButtonEnabled(view.allRequiredParametersSet());
+      };
+      this.clientSideValidation(this, actionHandlerCall, clientSideValidationFail);
     } else {
-      actionHandlerCall(this);
+      actionHandlerCall();
     }
   },
 
@@ -634,21 +641,23 @@ isc.OBParameterWindowView.addProperties({
   },
 
   /**
-   * Given a string value, it returns the proper value according to the provided type
+   * Given a value, it returns the proper value according to the provided type
    */
-  getTypeSafeValue: function (type, stringValue) {
+  getTypeSafeValue: function (type, value) {
     var isNumber;
     if (!type) {
-      return stringValue;
+      return value;
     }
     isNumber = isc.SimpleType.inheritsFrom(type, 'integer') || isc.SimpleType.inheritsFrom(type, 'float');
-    if (isNumber && OB.Utilities.Number.IsValidValueString(type, stringValue)) {
-      return OB.Utilities.Number.OBMaskedToJS(stringValue, type.decSeparator, type.groupSeparator);
-    } else if (isNumber && isc.isA.Number(OB.Utilities.Number.OBMaskedToJS(stringValue, '.', ','))) {
+    if (isNumber && isc.isA.Number(value)) {
+      return value;
+    } else if (isNumber && OB.Utilities.Number.IsValidValueString(type, value)) {
+      return OB.Utilities.Number.OBMaskedToJS(value, type.decSeparator, type.groupSeparator);
+    } else if (isNumber && isc.isA.Number(OB.Utilities.Number.OBMaskedToJS(value, '.', ','))) {
       // it might happen that default value uses the default '.' and ',' as decimal and group separator
-      return OB.Utilities.Number.OBMaskedToJS(stringValue, '.', ',');
+      return OB.Utilities.Number.OBMaskedToJS(value, '.', ',');
     } else {
-      return stringValue;
+      return value;
     }
   },
 
@@ -715,25 +724,30 @@ isc.OBParameterWindowView.addProperties({
     return (this.buttonOwnerView && this.buttonOwnerView.getContextInfo(onlySessionProperties, classicMode, forceSettingContextVars, convertToClassicFormat)) || {};
   },
 
-  handleButtonsStatus: function () {
-    var allRequiredSet = this.allRequiredParametersSet();
+
+  setAllButtonEnabled: function (enabled) {
     if (this.isReport) {
       if (this.pdfExport) {
-        this.pdfButton.setEnabled(allRequiredSet);
+        this.pdfButton.setEnabled(enabled);
       }
       if (this.xlsExport) {
-        this.xlsButton.setEnabled(allRequiredSet);
+        this.xlsButton.setEnabled(enabled);
       }
     } else {
       if (this.okButton) {
-        this.okButton.setEnabled(allRequiredSet);
+        this.okButton.setEnabled(enabled);
       }
     }
   },
 
+  handleButtonsStatus: function () {
+    var allRequiredSet = this.allRequiredParametersSet();
+    this.setAllButtonEnabled(allRequiredSet);
+  },
+
   // returns true if any non-grid required parameter does not have a value
   allRequiredParametersSet: function () {
-    var i, item, length = this.theForm.getItems().length,
+    var i, item, length = this.theForm && this.theForm.getItems().length,
         value, undef, nullValue = null;
     for (i = 0; i < length; i++) {
       item = this.theForm.getItems()[i];

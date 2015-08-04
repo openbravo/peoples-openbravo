@@ -156,8 +156,6 @@ public class ModuleUtiltiy {
 
   /**
    * Returns all directories and files that are part of core
-   * 
-   * @return
    */
   static List<File> getCore(String obDir) {
     List<File> core = new ArrayList<File>();

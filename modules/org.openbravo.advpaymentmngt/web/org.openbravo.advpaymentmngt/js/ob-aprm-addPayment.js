@@ -161,7 +161,8 @@ OB.APRM.AddPayment.paymentMethodMulticurrency = function (view, form, recalcConv
       isSOTrx = form.getItem('issotrx').getValue(),
       currencyId = form.getItem('c_currency_id').getValue(),
       paymentDate = form.getItem('payment_date').getValue(),
-      orgId = form.getItem('ad_org_id').getValue();
+      orgId = form.getItem('ad_org_id').getValue(),
+      trxtype = (form.getItem('trxtype')) ? form.getItem('trxtype').getValue() : "";
 
   callback = function (response, data, request) {
     var isShown = false;
@@ -173,16 +174,17 @@ OB.APRM.AddPayment.paymentMethodMulticurrency = function (view, form, recalcConv
       form.getItem('c_currency_id').valueMap[data.currencyId] = data.currencyIdIdentifier;
     }
     isShown = data.isPayIsMulticurrency && currencyId !== data.currencyToId && currencyId !== undefined;
-    if (data.isWrongFinancialAccount) {
+    if (data.isWrongFinancialAccount && trxtype === "") {
       form.getItem('fin_financial_account_id').setValue('');
-    } else {
+    } else if (!data.isWrongFinancialAccount) {
       if (!form.getItem('c_currency_to_id').valueMap) {
         form.getItem('c_currency_to_id').valueMap = {};
       }
       form.getItem('c_currency_to_id').setValue(data.currencyToId);
       form.getItem('c_currency_to_id').valueMap[data.currencyToId] = data.currencyToIdentifier;
-      if (recalcConvRate && isc.isA.Number(data.conversionrate)) {
-        form.getItem('conversion_rate').setValue(Number(data.conversionrate));
+      if (recalcConvRate) {
+        form.getItem('conversion_rate').setValue(data.conversionrate);
+        form.getItem('converted_amount').setValue(data.convertedamount);
         OB.APRM.AddPayment.updateConvertedAmount(view, form, false);
       }
     }
@@ -301,6 +303,9 @@ OB.APRM.AddPayment.orderInvoiceOnLoadGrid = function (grid) {
   var issotrx = this.view.theForm.getItem('issotrx').getValue(),
       payment = this.view.theForm.getItem('fin_payment_id').getValue();
   grid.isReady = true;
+  if (grid.obaprmAllRecordsSelectedByUser) {
+    delete grid.obaprmAllRecordsSelectedByUser;
+  }
   if ((issotrx || !payment) && (grid.selectedIds.length === 0)) {
     OB.APRM.AddPayment.distributeAmount(this.view, this.view.theForm, false);
   } else {
@@ -501,7 +506,7 @@ OB.APRM.AddPayment.updateDifference = function (form) {
     OB.APRM.AddPayment.updateDifferenceActions(form);
   }
   affectedParams.push(form.getField('overpayment_action_display_logic').paramId);
-  OB.APRM.AddPayment.recalcDisplayLogicOrReadOnlyLogic(form, null, affectedParams);
+  OB.APRM.AddPayment.recalcDisplayLogicOrReadOnlyLogic(form, form.paramWindow, affectedParams);
 };
 
 OB.APRM.AddPayment.updateDifferenceActions = function (form) {
@@ -563,6 +568,7 @@ OB.APRM.AddPayment.doSelectionChanged = function (record, state, view) {
       selectedIds = orderInvoice.selectedIds,
       glitem = new BigDecimal(String(view.theForm.getItem('amount_gl_items').getValue() || 0)),
       credit = new BigDecimal(String(view.theForm.getItem('used_credit').getValue() || 0)),
+      bslamount = new BigDecimal(String(view.theForm.getItem('bslamount').getValue() || 0)),
       i;
 
   amount = amount.subtract(distributedAmount);
@@ -592,7 +598,16 @@ OB.APRM.AddPayment.doSelectionChanged = function (record, state, view) {
   } else {
     for (i = 0; i < selectedIds.length; i++) {
       if (selectedIds[i] === record.id) {
-        orderInvoice.setEditValue(orderInvoice.getRecordIndex(record), 'amount', Number(outstandingAmount.toString()));
+        if (bslamount.compareTo(BigDecimal.prototype.ZERO) !== 0) {
+          if (outstandingAmount.compareTo(amount) > 0) {
+            orderInvoice.setEditValue(orderInvoice.getRecordIndex(record), 'amount', Number(amount.toString()));
+          } else {
+            orderInvoice.setEditValue(orderInvoice.getRecordIndex(record), 'amount', Number(outstandingAmount.toString()));
+          }
+        } else {
+          orderInvoice.setEditValue(orderInvoice.getRecordIndex(record), 'amount', Number(outstandingAmount.toString()));
+        }
+
       }
     }
   }
@@ -813,8 +828,21 @@ OB.APRM.AddPayment.creditValidation = function (item, validator, value, record) 
 };
 
 OB.APRM.AddPayment.doSelectionChangedCredit = function (record, state, view) {
+  var issotrx = view.theForm.getItem('issotrx'),
+      grid = view.theForm.getItem('credit_to_use').canvas.viewGrid,
+      amountField = grid.getFieldByColumnName('paymentAmount'),
+      outstanding = new BigDecimal(String(record.outstandingAmount));
+
+  if (state) {
+    grid.setEditValue(grid.getRecordIndex(record), amountField, Number(outstanding));
+  } else {
+    grid.setEditValue(grid.getRecordIndex(record), amountField, '0');
+  }
   OB.APRM.AddPayment.updateCreditTotal(view.theForm);
   OB.APRM.AddPayment.updateActualExpected(view.theForm);
+  if (issotrx) {
+    OB.APRM.AddPayment.distributeAmount(view, view.theForm, true);
+  }
 };
 
 OB.APRM.AddPayment.conversionRateOnChange = function (item, view, form, grid) {
@@ -826,8 +854,8 @@ OB.APRM.AddPayment.convertedAmountOnChange = function (item, view, form, grid) {
 };
 
 OB.APRM.AddPayment.updateConvertedAmount = function (view, form, recalcExchangeRate) {
-  var exchangeRate = new BigDecimal(String(form.getItem('conversion_rate').getValue() || 1)),
-      actualConverted = new BigDecimal(String(form.getItem('converted_amount').getValue() || 0)),
+  var exchangeRate = form.getItem('conversion_rate').getValue(),
+      actualConverted = form.getItem('converted_amount').getValue(),
       actualPayment = new BigDecimal(String(form.getItem('actual_payment').getValue() || 0)),
       actualConvertedItem = form.getItem('converted_amount'),
       exchangeRateItem = form.getItem('conversion_rate'),
@@ -835,6 +863,12 @@ OB.APRM.AddPayment.updateConvertedAmount = function (view, form, recalcExchangeR
       newExchangeRate = BigDecimal.prototype.ONE,
       currencyPrecision = form.getItem('StdPrecision').getValue();
 
+  if (!actualConverted && !exchangeRate) {
+    return;
+  }
+
+  exchangeRate = new BigDecimal(String(exchangeRate || 1));
+  actualConverted = new BigDecimal(String(actualConverted || 0));
   if (!actualConverted || !exchangeRate) {
     return;
   }
@@ -845,7 +879,7 @@ OB.APRM.AddPayment.updateConvertedAmount = function (view, form, recalcExchangeR
         exchangeRateItem.setValue(Number(newExchangeRate.toString()));
       }
     } else {
-      exchangeRateItem.setValue(Number(newExchangeRate.toString));
+      exchangeRateItem.setValue(Number(newExchangeRate.toString()));
     }
   } else if (exchangeRate) {
     newConvertedAmount = actualPayment.multiply(exchangeRate).setScale(currencyPrecision, BigDecimal.prototype.ROUND_HALF_UP);
@@ -1045,7 +1079,7 @@ OB.APRM.AddPayment.reloadLabels = function (form) {
   OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.AddPaymentReloadLabelsActionHandler', {}, params, callbackReloadLabelsActionHandler);
 };
 
-OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall) {
+OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall, clientSideValidationFail) {
   var orderInvoiceGrid = view.theForm.getItem('order_invoice').canvas.viewGrid,
       receivedFrom = view.theForm.getItem('received_from').getValue(),
       issotrx = view.theForm.getItem('issotrx').getValue(),
@@ -1053,7 +1087,8 @@ OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall) {
       amountInvOrds = new BigDecimal(String(view.theForm.getItem('amount_inv_ords').getValue() || 0)),
       total = new BigDecimal(String(view.theForm.getItem('total').getValue() || 0)),
       actualPayment = new BigDecimal(String(view.theForm.getItem('actual_payment').getValue() || 0)),
-      overpaymentAction = view.theForm.getItem('overpayment_action').getValue(),
+      overpaymentField = view.theForm.getItem('overpayment_action'),
+      overpaymentAction = overpaymentField.getValue(),
       creditTotalItem = new BigDecimal(String(view.theForm.getItem('used_credit').getValue() || 0)),
       document = (view.theForm.getItem('trxtype')) ? view.theForm.getItem('trxtype').getValue() : "",
       amountField = orderInvoiceGrid.getFieldByColumnName('amount'),
@@ -1085,27 +1120,31 @@ OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall) {
   // If there is Overpayment check it exists a business partner
   if (overpaymentAction && receivedFrom === null) {
     view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_CreditWithoutBPartner'));
-    return false;
+    return clientSideValidationFail();
   }
   //If Actual Payment amount is negative, it is not necessary to use credit.
   if ((total.compareTo(BigDecimal.prototype.ZERO) < 0) && (creditTotalItem.signum() !== 0)) {
     view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_CreditWithNegativeAmt'));
-    return false;
+    return clientSideValidationFail();
   }
-
-  if (actualPayment.compareTo(total) > 0 && totalOustandingAmount.compareTo(amountInvOrds.add(totalWriteOffAmount)) > 0) {
+  if (actualPayment.compareTo(total.subtract(creditTotalItem)) > 0 && totalOustandingAmount.compareTo(amountInvOrds.add(totalWriteOffAmount)) > 0) {
     // Not all the payment amount has been allocated
     view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_JSNOTALLAMOUTALLOCATED'));
-    return false;
+    return clientSideValidationFail();
   } else if (total.compareTo(actualPayment.add(creditTotalItem)) > 0) {
     // More than available amount has been distributed
     view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_JSMOREAMOUTALLOCATED'));
-    return false;
+    return clientSideValidationFail();
   }
 
-  if (document !== null && document !== '' && actualPayment.compareTo(BigDecimal.prototype.ZERO) === 0 && view.parentWindow && view.parentWindow.windowId) {
+  if (creditTotalItem.compareTo(BigDecimal.prototype.ZERO) !== 0 && (total.compareTo(creditTotalItem) < 0) && (overpaymentField.isVisible() && overpaymentAction === 'CR')) {
+    view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_MORECREDITAMOUNT'));
+    return clientSideValidationFail();
+  }
+
+  if (document !== null && document !== '' && actualPayment.compareTo(BigDecimal.prototype.ZERO) === 0 && view.parentWindow && view.parentWindow.windowId && !overpaymentAction) {
     view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_ZEROAMOUNTPAYMENTTRANSACTION'));
-    return false;
+    return clientSideValidationFail();
   }
 
   //It is not possible to add a glitem with both amounts equal to 0
@@ -1117,7 +1156,7 @@ OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall) {
     paidOutAmt = new BigDecimal(String(glitemGrid.getEditedCell(i, paidOutField) || 0));
     if (receivedInAmt.signum() === 0 && paidOutAmt.signum() === 0) {
       view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_GLITEMSDIFFERENTZERO'));
-      return false;
+      return clientSideValidationFail();
     }
 
   }
@@ -1125,16 +1164,16 @@ OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall) {
     //Check if there are blocked Business Partners
     if (data.message.severity === 'error') {
       view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, data.message.title, data.message.text);
-      return false;
+      return clientSideValidationFail();
     }
     // Check if the write off limit has been exceeded
     if (writeOffLimitPreference === 'Y') {
       if (totalWriteOffAmount > data.writeofflimit) {
         view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_NotAllowWriteOff'));
-        return false;
+        return clientSideValidationFail();
       }
     }
-    actionHandlerCall(view);
+    actionHandlerCall();
   };
 
   OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.AddPaymentOnProcessActionHandler', {

@@ -38,7 +38,7 @@
       AND ic.C_DocType_ID=dt.C_DocType_ID
       AND l.value = ic.term
       AND ord.C_ORDER_ID=ic.C_ORDER_ID
-      AND ((ic.term ='D' AND ic.qtydelivered <>0) OR (ic.term = 'I' AND exists (SELECT 1 FROM C_ORDERLINE ol WHERE ol.C_ORDER_ID = ord.C_ORDER_ID AND ol.QTYORDERED-ol.QTYINVOICED <> 0)) OR (ic.term <> 'N' AND (ic.term IN ('O') AND (ic.qtyordered = ic.qtydelivered) )) OR (ic.term = 'S' AND exists (SELECT 1 FROM C_ORDERLINE ol WHERE ol.C_ORDER_ID = ord.C_ORDER_ID AND ol.QTYDELIVERED <> 0 AND ol.QTYDELIVERED <> ol.QTYINVOICED)))
+      AND ((ic.term ='D' AND ic.qtydelivered <>0  AND exists (SELECT 1 FROM C_ORDERLINE ol WHERE ol.C_ORDER_ID = ord.C_ORDER_ID AND ol.QTYDELIVERED-ol.QTYINVOICED <> 0)) OR (ic.term = 'I' AND exists (SELECT 1 FROM C_ORDERLINE ol WHERE ol.C_ORDER_ID = ord.C_ORDER_ID AND ol.QTYORDERED-ol.QTYINVOICED <> 0)) OR (ic.term <> 'N' AND (ic.term IN ('O') AND (ic.qtyordered = ic.qtydelivered) )) OR (ic.term = 'S' AND exists (SELECT 1 FROM C_ORDERLINE ol WHERE ol.C_ORDER_ID = ord.C_ORDER_ID AND ol.QTYDELIVERED <> 0 AND ol.QTYDELIVERED <> ol.QTYINVOICED)))
       AND AD_Reference_ID='150'
       AND ic.ad_client_id in ('1')
       AND ic.ad_org_id in ('1')

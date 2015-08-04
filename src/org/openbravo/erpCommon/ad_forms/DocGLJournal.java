@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2010 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2015 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -36,6 +36,7 @@ public class DocGLJournal extends AcctServer {
   static Logger log4jDocGLJournal = Logger.getLogger(DocGLJournal.class);
 
   private String SeqNo = "0";
+  private String C_AcctSchema_ID;
 
   /**
    * Constructor
@@ -72,7 +73,12 @@ public class DocGLJournal extends AcctServer {
     loadDocumentType(); // lines require doc type
     m_PostingType = data[0].getField("PostingType");
     m_IsOpening = data[0].getField("isopening");
-    C_Period_ID = isperiodOpen(conn, data[0].getField("period"));
+    C_Currency_ID = data[0].getField("c_currency_id");
+    try {
+      C_AcctSchema_ID = DocGLJournalData.selectAcctSchema(conn, AD_Client_ID, Record_ID);
+    } catch (ServletException e) {
+      log4j.error("Error retrieving the accounting schema (general ledger)", e);
+    }
     // Contained Objects
     p_lines = loadLines(conn);
     log4jDocGLJournal.debug("Lines=" + p_lines.length);
@@ -96,8 +102,10 @@ public class DocGLJournal extends AcctServer {
         docLine.m_Record_Id2 = data[i].cDebtPaymentId;
         // -- Source Amounts
         docLine.setAmount(data[i].amtsourcedr, data[i].amtsourcecr);
-        // -- Converted Amounts
-        docLine.setConvertedAmt(null, data[i].amtacctdr, data[i].amtacctcr);
+        // -- Converted Amounts (only in non multi-general ledger)
+        if (!"".equals(C_AcctSchema_ID)) {
+          docLine.setConvertedAmt(null, data[i].amtacctdr, data[i].amtacctcr);
+        }
         docLine.m_DateAcct = this.DateAcct;
         // -- Account
         String C_ValidCombination_ID = data[i].cValidcombinationId;
@@ -182,17 +190,8 @@ public class DocGLJournal extends AcctServer {
           } else {
             account = ((DocLine_GLJournal) p_lines[i]).getAccount("2", as, conn);
           }
-          fact.createLine(
-              p_lines[i],
-              account,
-              as.getC_Currency_ID(),
-              getConvertedAmt(p_lines[i].getAmtSourceDr(), C_Currency_ID, as.getC_Currency_ID(),
-                  DateAcct, "", AD_Client_ID, AD_Org_ID, conn),
-              getConvertedAmt(p_lines[i].getAmtSourceCr(), C_Currency_ID, as.getC_Currency_ID(),
-                  DateAcct, "", AD_Client_ID, AD_Org_ID, conn), Fact_Acct_Group_ID,
-              nextSeqNo(SeqNo), DocumentType, conn);
-          fact.getLines()[i].setAmtAcct(fact.getLines()[i].getM_AmtSourceDr(),
-              fact.getLines()[i].getM_AmtSourceCr());
+          fact.createLine(p_lines[i], account, C_Currency_ID, p_lines[i].getAmtSourceDr(),
+              p_lines[i].getAmtSourceCr(), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
         }
       } finally {
         OBContext.restorePreviousMode();

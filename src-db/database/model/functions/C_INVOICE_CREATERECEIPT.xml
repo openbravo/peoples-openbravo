@@ -19,7 +19,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2008 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2015 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -96,9 +96,6 @@
           RAISE_APPLICATION_ERROR(-20000, v_Message);
           EXIT;
         END LOOP;
-      EXCEPTION
-      WHEN OTHERS THEN
-        NULL;
       END;
     END IF;--FINISH_PROCESS
     IF(NOT FINISH_PROCESS) THEN

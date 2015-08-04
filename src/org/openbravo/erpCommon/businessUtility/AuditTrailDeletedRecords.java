@@ -36,7 +36,7 @@ class AuditTrailDeletedRecords {
 
   /**
    * Same as
-   * {@link AuditTrailDeletedRecords#getDeletedRecords(ConnectionProvider, VariablesSecureApp, String, String, String, int, int)}
+   * {@link #getDeletedRecords(ConnectionProvider, VariablesSecureApp, String, String, String, int, int, boolean, String, String, String)}
    * without parent filtering.
    * 
    */

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2014 Openbravo SLU
+ * All portions are Copyright (C) 2012-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -21,8 +21,10 @@ package org.openbravo.costing;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.materialmgmt.cost.Costing;
@@ -60,6 +62,12 @@ public class StandardAlgorithm extends CostingAlgorithm {
     Costing stdCost = CostingUtils.getStandardCostDefinition(transaction.getProduct(), costOrg,
         transaction.getTransactionProcessDate(), costDimensions);
 
+    if (stdCost == null) {
+      // If no standard cost is found throw an exception.
+      throw new OBException("@NoStandardCostDefined@ @Organization@:" + costOrg.getName()
+          + ", @Product@: " + transaction.getProduct().getName() + ", @Date@: "
+          + OBDateUtils.formatDate(transaction.getTransactionProcessDate()));
+    }
     BigDecimal currentCost = stdCost.getCost();
     if (stdCost.getCurrency().getId().equals(costCurrency.getId())) {
       currentCost = FinancialUtils.getConvertedAmount(currentCost, stdCost.getCurrency(),
@@ -88,9 +96,6 @@ public class StandardAlgorithm extends CostingAlgorithm {
   }
 
   private void insertCost(Costing currentCosting, BigDecimal newCost) {
-    currentCosting.setEndingDate(transaction.getTransactionProcessDate());
-    OBDal.getInstance().save(currentCosting);
-
     Costing costing = (Costing) DalUtil.copy(currentCosting, false);
     costing.setCost(newCost);
     costing.setStartingDate(transaction.getTransactionProcessDate());
@@ -104,8 +109,10 @@ public class StandardAlgorithm extends CostingAlgorithm {
     costing.setCostType("STA");
     costing.setManual(false);
     costing.setPermanent(true);
-
     OBDal.getInstance().save(costing);
+
+    currentCosting.setEndingDate(transaction.getTransactionProcessDate());
+    OBDal.getInstance().save(currentCosting);
   }
 
 }

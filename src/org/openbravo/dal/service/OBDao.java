@@ -99,7 +99,7 @@ public class OBDao {
       StringTokenizer st = new StringTokenizer(strBaseOBOBjectIDs, ",", false);
       while (st.hasMoreTokens()) {
         String strBaseOBObjectID = st.nextToken().trim();
-        baseOBObjectList.add((T) OBDal.getInstance().get(t, strBaseOBObjectID));
+        baseOBObjectList.add(OBDal.getInstance().get(t, strBaseOBObjectID));
       }
     }
     return baseOBObjectList;

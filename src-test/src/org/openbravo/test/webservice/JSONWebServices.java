@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,6 +20,7 @@
 package org.openbravo.test.webservice;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -90,7 +91,42 @@ public class JSONWebServices extends BaseWSTest {
     assertThat("Properties received in JSON", receivedProperties, is(equalTo(expectedProperties)));
   }
 
-  private String request(String entityName, String id, String queryPart, String method) {
+  /**
+   * Asserts JSON REST web services support distinct parameter.
+   * 
+   * See https://issues.openbravo.com/view.php?id=29385
+   */
+  @Test
+  public void distinctParameterShouldWork() throws JSONException {
+    JSONObject resp = new JSONObject(request("ADPreference", null, "_distinct=module", "GET"))
+        .getJSONObject("response");
+
+    assertThat("Sucess status", resp.getInt("status"), is(0));
+    assertThat("Total Rows", resp.getInt("totalRows"), is(greaterThan(0)));
+
+    JSONObject aRecord = resp.getJSONArray("data").getJSONObject(0);
+    assertThat("Row's entity", aRecord.getString("_entityName"), is(equalTo("ADModule")));
+  }
+
+  /**
+   * Asserts JSON REST web services support distinct parameter for Organization, this case is
+   * internally managed differently.
+   * 
+   * See https://issues.openbravo.com/view.php?id=29385
+   */
+  @Test
+  public void distinctOrgParameterShouldWork() throws JSONException {
+    JSONObject resp = new JSONObject(request("ADPreference", null, "_distinct=organization", "GET"))
+        .getJSONObject("response");
+
+    assertThat("Sucess status", resp.getInt("status"), is(0));
+    assertThat("Total Rows", resp.getInt("totalRows"), is(greaterThan(0)));
+
+    JSONObject aRecord = resp.getJSONArray("data").getJSONObject(0);
+    assertThat("Row's entity", aRecord.getString("_entityName"), is(equalTo("Organization")));
+  }
+
+  protected String request(String entityName, String id, String queryPart, String method) {
     String wsPart = entityName + (id == null ? "" : "/" + id)
         + (queryPart == null ? "" : "?" + queryPart);
 

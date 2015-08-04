@@ -27,6 +27,7 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
+import org.openbravo.client.application.ApplicationUtils;
 import org.openbravo.client.application.GCSystem;
 import org.openbravo.client.application.GCTab;
 import org.openbravo.client.application.window.OBViewFieldHandler.OBViewField;
@@ -297,10 +298,19 @@ public class OBViewGridComponent extends BaseTemplateComponent {
       requiredGridProperties.add(propertyName);
     }
 
-    // Always include the propertyt that links to the parent tab
+    // Always include the property that links to the parent tab
     String linkToParentPropertyName = this.getLinkToParentPropertyName();
     if (linkToParentPropertyName != null && !linkToParentPropertyName.isEmpty()) {
       requiredGridProperties.add(linkToParentPropertyName);
+    } else {
+      // See issue https://issues.openbravo.com/view.php?id=30132
+      // If the child tab does not have a property marked as link to parent, look for the property
+      // in the entity of the tab pointing to the parent tab
+      String parentPropertyName = this.getParentPropertyName();
+      if (parentPropertyName != null && !parentPropertyName.isEmpty()
+          && !requiredGridProperties.contains(parentPropertyName)) {
+        requiredGridProperties.add(parentPropertyName);
+      }
     }
 
     // Include the Stored in Session properties
@@ -396,6 +406,23 @@ public class OBViewGridComponent extends BaseTemplateComponent {
       }
     }
     return null;
+  }
+
+  private String getParentPropertyName() {
+    Tab parentTab = KernelUtils.getInstance().getParentTab(tab);
+    if (parentTab == null) {
+      return null;
+    }
+    String parentProperty = null;
+    if (tab.getTable().getId().equals(parentTab.getTable().getId())
+        && ("RO".equals(tab.getUIPattern()) || "SR".equals(tab.getUIPattern()))) {
+      if (entity.getIdProperties().size() > 0) {
+        parentProperty = entity.getIdProperties().get(0).getName();
+      }
+    } else {
+      parentProperty = ApplicationUtils.getParentProperty(tab, parentTab);
+    }
+    return parentProperty;
   }
 
   /**

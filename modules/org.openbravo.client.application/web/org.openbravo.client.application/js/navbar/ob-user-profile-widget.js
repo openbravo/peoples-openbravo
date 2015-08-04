@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -287,7 +287,7 @@ isc.OBUserProfile.addProperties({
           }
         }
         this.setWarehouseValueMap();
-        if (item.name !== 'warehouse' && item.name !== 'default') {
+        if (item.name !== 'warehouse' && item.name !== 'default' && item.name !== 'language') {
           if (this.getItem('warehouse').getClientPickListData().length > 0) {
             this.getItem('warehouse').moveToFirstValue();
           }

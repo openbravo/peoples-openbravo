@@ -11,25 +11,28 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-module('org.openbravo.client.application');
 
-test('Basic requirements', function () {
-  expect(2);
-  ok(isc, 'isc object is present');
-  ok(document.getElementById, 'getElementById');
+/*global QUnit */
+
+QUnit.module('org.openbravo.client.application');
+
+QUnit.test('Basic requirements', function () {
+  QUnit.expect(2);
+  QUnit.ok(isc, 'isc object is present');
+  QUnit.ok(document.getElementById, 'getElementById');
 });
 
-test('Create Canvas', function () {
-
-  expect(3);
-
+QUnit.test('Create Canvas', function () {
   var canvasID = 'myCanvas',
       canvas, createCanvas;
+
+  QUnit.expect(3);
+
   createCanvas = function (isc) {
     var c = isc.Canvas.newInstance({
       ID: canvasID,
@@ -42,11 +45,11 @@ test('Create Canvas', function () {
   canvas = createCanvas(isc);
   canvas.setBackgroundColor('blue');
 
-  ok(typeof canvas !== 'undefined', 'Canvas created');
+  QUnit.ok(typeof canvas !== 'undefined', 'Canvas created');
 
-  ok((function (c) {
+  QUnit.ok((function (c) {
     return c.height !== 0 && c.width !== 0;
   }(canvas)), 'Canvas height and width are not zero');
 
-  ok(isc.Log.getStackTrace() !== undefined, 'getStackTrace()');
+  QUnit.ok(isc.Log.getStackTrace() !== undefined, 'getStackTrace()');
 });

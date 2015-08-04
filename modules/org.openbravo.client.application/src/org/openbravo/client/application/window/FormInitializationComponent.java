@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,6 +29,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
@@ -104,6 +106,10 @@ public class FormInitializationComponent extends BaseActionHandler {
 
   @Inject
   private ApplicationDictionaryCachedStructures cachedStructures;
+
+  @Inject
+  @Any
+  private Instance<FICExtension> ficExtensions;
 
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) {
@@ -286,16 +292,23 @@ public class FormInitializationComponent extends BaseActionHandler {
       long t8 = System.currentTimeMillis();
       int noteCount = computeNoteCount(tab, rowId);
 
-      // Construction of the final JSONObject
+      // Execute hooks implementing FICExtension.
       long t9 = System.currentTimeMillis();
+      for (FICExtension ficExtension : ficExtensions) {
+        ficExtension.execute(mode, tab, columnValues, row, changeEventCols, calloutMessages,
+            attachments, jsExcuteCode, hiddenInputs, noteCount, overwrittenAuxiliaryInputs);
+      }
+
+      // Construction of the final JSONObject
+      long t10 = System.currentTimeMillis();
       JSONObject finalObject = buildJSONObject(mode, tab, columnValues, row, changeEventCols,
           calloutMessages, attachments, jsExcuteCode, hiddenInputs, noteCount,
           overwrittenAuxiliaryInputs);
       analyzeResponse(tab, columnValues);
-      long t10 = System.currentTimeMillis();
+      long t11 = System.currentTimeMillis();
       log.debug("Elapsed time: " + (System.currentTimeMillis() - iniTime) + "(" + (t2 - t1) + ","
           + (t3 - t2) + "," + (t4 - t3) + "," + (t5 - t4) + "," + (t6 - t5) + "," + (t7 - t6) + ","
-          + (t8 - t7) + "," + (t9 - t8) + "," + (t10 - t9) + ")");
+          + (t8 - t7) + "," + (t9 - t8) + "," + (t10 - t9) + "," + (t11 - t10) + ")");
       log.debug("Attachment exists: " + finalObject.getBoolean("attachmentExists"));
       return finalObject;
     } catch (Throwable t) {
@@ -352,7 +365,8 @@ public class FormInitializationComponent extends BaseActionHandler {
   private int computeNoteCount(Tab tab, String rowId) {
     OBQuery<Note> obq = OBDal.getInstance().createQuery(Note.class,
         " table.id=:tableId and record=:recordId");
-    obq.setNamedParameter("tableId", (String) DalUtil.getId(tab.getTable()));
+    obq.setFilterOnReadableOrganization(false);
+    obq.setNamedParameter("tableId", DalUtil.getId(tab.getTable()));
     obq.setNamedParameter("recordId", rowId);
     return obq.count();
   }
@@ -389,11 +403,11 @@ public class FormInitializationComponent extends BaseActionHandler {
       Object[] array = (Object[]) qobj;
       JSONObject obj = new JSONObject();
       try {
-        obj.put("name", (String) array[0]);
-        obj.put("id", (String) array[1]);
+        obj.put("name", array[0]);
+        obj.put("id", array[1]);
         obj.put("age", (new Date().getTime() - ((Date) array[2]).getTime()));
-        obj.put("updatedby", (String) array[3]);
-        obj.put("description", (String) array[4]);
+        obj.put("updatedby", array[3]);
+        obj.put("description", array[4]);
       } catch (JSONException e) {
         log.error("Error while reading attachments", e);
       }
@@ -933,7 +947,11 @@ public class FormInitializationComponent extends BaseActionHandler {
       parentRecord = KernelUtils.getInstance().getParentRecord(row, tab);
     }
     Tab parentTab = KernelUtils.getInstance().getParentTab(tab);
-    if (parentId != null && parentTab != null) {
+    // If the parent table is not based in a db table, don't try to retrieve the record
+    // Because tables not based on db tables do not have BaseOBObjects
+    // See issue https://issues.openbravo.com/view.php?id=29667
+    if (parentId != null && parentTab != null
+        && ApplicationConstants.TABLEBASEDTABLE.equals(parentTab.getTable().getDataOriginType())) {
       parentRecord = OBDal.getInstance().get(
           ModelProvider.getInstance().getEntityByTableName(parentTab.getTable().getDBTableName())
               .getName(), parentId);
@@ -1052,8 +1070,6 @@ public class FormInitializationComponent extends BaseActionHandler {
     }
 
     Entity parentEntity = parentRecord.getEntity();
-    Entity entity = ModelProvider.getInstance().getEntityByTableId(
-        field.getTab().getTable().getId());
     Property property = KernelUtils.getProperty(field);
     Entity referencedEntity = property.getReferencedProperty().getEntity();
     return referencedEntity.equals(parentEntity);
@@ -1315,7 +1331,14 @@ public class FormInitializationComponent extends BaseActionHandler {
     }
 
     try {
-      String fieldId = "inp" + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName());
+      String fieldId = null;
+      if (field.getProperty() != null && !field.getProperty().isEmpty()) {
+        fieldId = "inp" + "_propertyField_"
+            + Sqlc.TransformaNombreColumna(field.getName()).replace(" ", "") + "_"
+            + field.getColumn().getDBColumnName();
+      } else {
+        fieldId = "inp" + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName());
+      }
       RequestContext.get().setRequestParameter(
           fieldId,
           jsonObj.has("classicValue") && jsonObj.get("classicValue") != null

@@ -270,16 +270,17 @@ public class TabAttachments extends HttpSecureAppServlet {
     try {
       String tabId = vars.getStringParameter("tabId");
       String recordIds = vars.getStringParameter("recordIds");
-      String buttonId = vars.getStringParameter("buttonId");
       Tab tab = OBDal.getInstance().get(Tab.class, tabId);
       String tableId = (String) DalUtil.getId(tab.getTable());
 
       // Checks if the user has readable access to the record where the file is attached
       Entity entity = ModelProvider.getInstance().getEntityByTableId(tableId);
       if (entity != null) {
-        Object object = OBDal.getInstance().get(entity.getMappingClass(), recordIds);
-        if (object instanceof OrganizationEnabled) {
-          SecurityChecker.getInstance().checkReadableAccess((OrganizationEnabled) object);
+        for (String recordId : recordIds.split(",")) {
+          Object object = OBDal.getInstance().get(entity.getMappingClass(), recordId);
+          if (object instanceof OrganizationEnabled) {
+            SecurityChecker.getInstance().checkReadableAccess((OrganizationEnabled) object);
+          }
         }
       }
 
@@ -290,11 +291,10 @@ public class TabAttachments extends HttpSecureAppServlet {
       response.setContentType("application/zip");
       response.setHeader("Content-Disposition", "attachment; filename=attachments.zip");
       final ZipOutputStream dest = new ZipOutputStream(response.getOutputStream());
-      attachmentFiles.list().toArray();
       HashMap<String, Integer> writtenFiles = new HashMap<String, Integer>();
       for (Attachment attachmentFile : attachmentFiles.list()) {
-        String attachmentDirectory = TabAttachments.getAttachmentDirectory(tableId, recordIds,
-            attachmentFile.getName());
+        String attachmentDirectory = TabAttachments.getAttachmentDirectory(tableId,
+            attachmentFile.getRecord(), attachmentFile.getName());
         final File file = new File(globalParameters.strFTPDirectory + "/" + attachmentDirectory,
             attachmentFile.getName());
         String zipName = "";
@@ -304,6 +304,10 @@ public class TabAttachments extends HttpSecureAppServlet {
         } else {
           int num = writtenFiles.get(file.getName()) + 1;
           int indDot = file.getName().lastIndexOf(".");
+          if (indDot == -1) {
+            // file has no extension
+            indDot = file.getName().length();
+          }
           zipName = file.getName().substring(0, indDot) + " (" + num + ")"
               + file.getName().substring(indDot);
           writtenFiles.put(file.getName(), new Integer(num));

@@ -68,12 +68,12 @@ public class MyOBUtils {
    * Computes the widget title using the user's language, if no translation is available then the
    * {@link WidgetClass#getWidgetTitle()} is used.
    * 
-   * @param widgetInstance
+   * @param widgetClass
    *          the widget class of this instance is used to read the title
    * @return the title of the widget read from the widgetclass
-   * @see WidgetInstance#getOBKMOWidgetClass()
+   * @see WidgetInstance#getWidgetClass()
    * @see WidgetClassTrl
-   * @see WidgetClass#getTitle()
+   * @see WidgetClass#getWidgetTitle()
    */
   static String getWidgetTitle(WidgetClass widgetClass) {
     final String userLanguageId = OBContext.getOBContext().getLanguage().getId();
@@ -117,8 +117,11 @@ public class MyOBUtils {
     OBCriteria<WidgetClassMenu> obcMenuItems = OBDal.getInstance().createCriteria(
         WidgetClassMenu.class);
     if (widgetClass.getWidgetSuperclass() != null) {
-      obcMenuItems.add(Restrictions.eq(WidgetClassMenu.PROPERTY_WIDGETCLASS,
-          widgetClass.getWidgetSuperclass()));
+      obcMenuItems
+          .add(Restrictions.or(
+              Restrictions.eq(WidgetClassMenu.PROPERTY_WIDGETCLASS, widgetClass),
+              Restrictions.eq(WidgetClassMenu.PROPERTY_WIDGETCLASS,
+                  widgetClass.getWidgetSuperclass())));
     } else {
       obcMenuItems.add(Restrictions.eq(WidgetClassMenu.PROPERTY_WIDGETCLASS, widgetClass));
     }

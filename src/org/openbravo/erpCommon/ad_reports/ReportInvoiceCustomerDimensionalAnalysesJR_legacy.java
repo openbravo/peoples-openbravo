@@ -518,14 +518,12 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR_legacy extends HttpSecur
     levelsconcat.append("''");
     String[] strLevelLabel = { "", "", "", "", "", "", "", "", "", "" };
     String[] strTextShow = { "", "", "", "", "", "", "", "", "", "" };
-    int intDiscard = 0;
     int intOrder = 0;
     int intProductLevel = 11;
     int intAuxDiscard = -1;
     for (int i = 0; i < 10; i++) {
       if (strShownArray[i].equals("1")) {
         strTextShow[i] = "C_BP_GROUP.NAME";
-        intDiscard++;
         intOrder++;
         strLevelLabel[i] = dimensionLabel[0].name;
         levelsconcat.append(" || ");
@@ -533,14 +531,12 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR_legacy extends HttpSecur
       } else if (strShownArray[i].equals("2")) {
         strTextShow[i] = "AD_COLUMN_IDENTIFIER(to_char('C_Bpartner'), to_char( C_BPARTNER.C_BPARTNER_ID), to_char( '"
             + vars.getLanguage() + "'))";
-        intDiscard++;
         intOrder++;
         strLevelLabel[i] = dimensionLabel[1].name;
         levelsconcat.append(" || ");
         levelsconcat.append("C_BPARTNER.C_BPARTNER_ID");
       } else if (strShownArray[i].equals("3")) {
         strTextShow[i] = "M_PRODUCT_CATEGORY.NAME";
-        intDiscard++;
         intOrder++;
         strLevelLabel[i] = dimensionLabel[2].name;
         levelsconcat.append(" || ");
@@ -557,21 +553,18 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR_legacy extends HttpSecur
         levelsconcat.append("M_PRODUCT.M_PRODUCT_ID");
       } else if (strShownArray[i].equals("5")) {
         strTextShow[i] = "C_INVOICE.DOCUMENTNO";
-        intDiscard++;
         intOrder++;
         strLevelLabel[i] = dimensionLabel[4].name;
         levelsconcat.append(" || ");
         levelsconcat.append("C_INVOICE.C_INVOICE_ID");
       } else if (strShownArray[i].equals("6")) {
         strTextShow[i] = "AD_USER.FIRSTNAME||' '||' '||AD_USER.LASTNAME";
-        intDiscard++;
         intOrder++;
         strLevelLabel[i] = dimensionLabel[5].name;
         levelsconcat.append(" || ");
         levelsconcat.append("AD_USER.AD_USER_ID");
       } else if (strShownArray[i].equals("8")) {
         strTextShow[i] = "AD_ORG.NAME";
-        intDiscard++;
         intOrder++;
         strLevelLabel[i] = dimensionLabel[6].name;
         levelsconcat.append(" || ");
@@ -579,14 +572,12 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR_legacy extends HttpSecur
       } else if (strShownArray[i].equals("9")) {
         strTextShow[i] = "CASE WHEN AD_USER.AD_USER_ID IS NOT NULL THEN AD_COLUMN_IDENTIFIER(to_char('Ad_User'), to_char( AD_USER.AD_USER_ID), to_char( '"
             + vars.getLanguage() + "')) ELSE '' END";
-        intDiscard++;
         intOrder++;
         strLevelLabel[i] = dimensionLabel[7].name;
         levelsconcat.append(" || ");
         levelsconcat.append("AD_USER.AD_USER_ID");
       } else if (strShownArray[i].equals("10")) {
         strTextShow[i] = "C_PROJECT.NAME";
-        intDiscard++;
         intOrder++;
         strLevelLabel[i] = dimensionLabel[8].name;
         levelsconcat.append(" || ");
@@ -594,7 +585,6 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR_legacy extends HttpSecur
       } else if (strShownArray[i].equals("11")) {
         strTextShow[i] = "AD_COLUMN_IDENTIFIER(to_char('C_Bpartner_Location'), to_char( M_INOUT.C_BPARTNER_LOCATION_ID), to_char( '"
             + vars.getLanguage() + "'))";
-        intDiscard++;
         intOrder++;
         strLevelLabel[i] = dimensionLabel[9].name;
         levelsconcat.append(" || ");

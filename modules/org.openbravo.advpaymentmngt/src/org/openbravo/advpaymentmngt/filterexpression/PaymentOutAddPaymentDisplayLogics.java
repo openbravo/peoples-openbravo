@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,6 +28,7 @@ import org.openbravo.advpaymentmngt.utility.APRMConstants;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
+import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 
@@ -59,7 +60,9 @@ public class PaymentOutAddPaymentDisplayLogics extends AddPaymentDisplayLogicsHa
       BusinessPartner bpartner = paymentOut.getBusinessPartner();
       if (bpartner != null) {
         Organization org = paymentOut.getOrganization();
-        BigDecimal customerCredit = new AdvPaymentMngtDao().getCustomerCredit(bpartner, false, org);
+        Currency currency = paymentOut.getCurrency();
+        BigDecimal customerCredit = new AdvPaymentMngtDao().getCustomerCredit(bpartner, false, org,
+            currency);
         return customerCredit.signum() > 0;
       } else {
         return false;

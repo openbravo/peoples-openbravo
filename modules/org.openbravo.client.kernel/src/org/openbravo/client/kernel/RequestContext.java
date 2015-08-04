@@ -216,6 +216,14 @@ public class RequestContext {
       if (delegate == null) {
         return attributes.get(arg0);
       }
+
+      if (arg0 != null && arg0.startsWith("org.apache.catalina.core") && getRequest() != null) {
+        // Retrieving internal Tomcat attributes, manage it as special case. Ie. dispatcher type is
+        // treated internally in a different manner and requires to be obtained from the request
+        // rather than from the delegate.
+        return getRequest().getAttribute(arg0);
+      }
+
       return delegate.getAttribute(arg0);
     }
 

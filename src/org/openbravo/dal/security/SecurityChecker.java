@@ -219,8 +219,7 @@ public class SecurityChecker implements OBSingleton {
     final Entity entity = ((BaseOBObject) organizationEnabledObject).getEntity();
 
     obContext.getEntityAccessChecker().checkReadable(entity);
-    String orgId = (String) DalUtil.getId(((OrganizationEnabled) organizationEnabledObject)
-        .getOrganization());
+    String orgId = (String) DalUtil.getId(organizationEnabledObject.getOrganization());
     String readableOrganizations[] = obContext.getReadableOrganizations();
     List<String> organizations = Arrays.asList(readableOrganizations);
     if (!organizations.contains(orgId)) {

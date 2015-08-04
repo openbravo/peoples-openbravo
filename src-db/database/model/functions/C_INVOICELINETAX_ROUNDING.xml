@@ -10,6 +10,9 @@
       <parameter name="p_netamount" type="NUMERIC" mode="in">
         <default/>
       </parameter>
+      <parameter name="p_linefrom" type="NUMERIC" mode="in">
+        <default><![CDATA[0]]></default>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
@@ -22,7 +25,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2012 Openbravo SLU
+* All portions are Copyright (C) 2012-2015 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -38,17 +41,18 @@ BEGIN --BODY
   v_expected_tax_amt := p_grossamount - p_netamount;
   SELECT SUM(taxamt) INTO v_current_tax_amt
   FROM c_invoicelinetax
-  WHERE c_invoiceline_id = p_invoiceline_id;
+  WHERE c_invoiceline_id = p_invoiceline_id and line > p_linefrom;
   IF (v_expected_tax_amt <> v_current_tax_amt) THEN
     FOR cur_invoicelinetax IN (
-      SELECT c_invoicelinetax_id
+      SELECT c_invoicelinetax_id, c_tax_id
       FROM c_invoicelinetax
-      WHERE c_invoiceline_id = p_invoiceline_id
-      ORDER BY taxamt desc
+      WHERE c_invoiceline_id = p_invoiceline_id and line > p_linefrom
+      ORDER BY ABS(taxamt) desc
     ) LOOP
       UPDATE c_invoicelinetax
       SET taxamt = taxamt - (v_current_tax_amt - v_expected_tax_amt)
       WHERE c_invoicelinetax_id  = cur_invoicelinetax.c_invoicelinetax_id ;
+      C_INVOICELINETAX_ROUNDING_AMT(p_invoiceline_id, cur_invoicelinetax.c_tax_id, v_expected_tax_amt - v_current_tax_amt, p_linefrom);
       EXIT;
     END LOOP;
   END IF;

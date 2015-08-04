@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2014 Openbravo SLU
+ * All portions are Copyright (C) 2011-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,6 +27,11 @@ isc.OBToolbarActionButton.addProperties({
   modal: true,
   contextView: null,
   labelValue: {},
+
+  initWidget: function () {
+    this.originalTitle = this.title;
+    this.Super('initWidget', arguments);
+  },
 
   action: function () {
     this.runProcess();
@@ -246,7 +251,7 @@ isc.OBToolbarActionButton.addProperties({
 
   updateState: function (record, hide, context, keepNonAutosave) {
     var currentValues = isc.shallowClone(record || this.contextView.getCurrentValues() || {}),
-        grid;
+        grid, buttonValue, label, buttonValues = [];
     // do not hide non autosave buttons when hidding the rest if keepNonAutosave === true
     var hideButton = hide && (!keepNonAutosave || this.autosave);
 
@@ -273,13 +278,12 @@ isc.OBToolbarActionButton.addProperties({
       this.visible = !this.displayIf || (context && this.displayIf(this.contextView.viewForm, currentValues, context));
       readonly = this.readOnlyIf && context && this.readOnlyIf(this.contextView.viewForm, currentValues, context);
 
-      var buttonValue = record[this.property];
+      buttonValue = record[this.property];
       if (buttonValue === '--') {
         buttonValue = 'CL';
       }
 
-      // Changing button name associated with a list is not allowed in multi record buttons.
-      var label = this.labelValue[buttonValue];
+      label = this.labelValue[buttonValue];
       if (!label) {
         if (this.realTitle) {
           label = this.realTitle;
@@ -302,8 +306,31 @@ isc.OBToolbarActionButton.addProperties({
         OB.Utilities.fixNull250(currentValues);
         this.visible = this.visible && (!this.displayIf || (context && this.displayIf(this.contextView.viewForm, currentValues, context)));
         readonly = readonly || (this.readOnlyIf && context && this.readOnlyIf(this.contextView.viewForm, currentValues, context));
+        buttonValue = selection[i][this.property];
+        if (buttonValue === '--') {
+          buttonValue = 'CL';
+        }
+        if (buttonValues.indexOf(buttonValue) === -1) {
+          buttonValues.add(buttonValue);
+        }
       }
 
+      if (buttonValues.length === 1) {
+        label = this.labelValue[buttonValues[0]];
+        if (!label) {
+          if (this.realTitle) {
+            label = this.realTitle;
+          } else {
+            label = this.title;
+          }
+        }
+        this.realTitle = label;
+        this.setTitle(label);
+      } else {
+        label = this.originalTitle;
+        this.realTitle = label;
+        this.setTitle(label);
+      }
     }
 
     // Even visible is correctly set, it is necessary to execute show() or hide()
@@ -317,7 +344,5 @@ isc.OBToolbarActionButton.addProperties({
     } else {
       this.enable();
     }
-
-
   }
 });

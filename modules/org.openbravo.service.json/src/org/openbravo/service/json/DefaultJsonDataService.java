@@ -25,6 +25,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
@@ -38,6 +42,7 @@ import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.util.Check;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -67,7 +72,11 @@ public class DefaultJsonDataService implements JsonDataService {
 
   private static final String ADD_FLAG = "_doingAdd";
 
-  private static DefaultJsonDataService instance = new DefaultJsonDataService();
+  @Inject
+  private UnpagedRequestCachedPreference unpagedRequestPreference;
+
+  private static DefaultJsonDataService instance = WeldUtils
+      .getInstanceFromStaticBeanManager(DefaultJsonDataService.class);
 
   public static DefaultJsonDataService getInstance() {
     return instance;
@@ -83,11 +92,16 @@ public class DefaultJsonDataService implements JsonDataService {
    * @see org.openbravo.service.json.JsonDataService#fetch(java.util.Map)
    */
   public String fetch(Map<String, String> parameters) {
+    return fetch(parameters, true);
+  }
+
+  public String fetch(Map<String, String> parameters, boolean filterOnReadableOrganizations) {
     try {
       final String entityName = parameters.get(JsonConstants.ENTITYNAME);
       Check.isNotNull(entityName, "The name of the service/entityname should not be null");
       Check.isNotNull(parameters, "The parameters should not be null");
 
+      doPreAction(parameters, "", DataSourceAction.FETCH);
       String selectedProperties = parameters.get(JsonConstants.SELECTEDPROPERTIES_PARAMETER);
       // The display property is present only for displaying table references in filter.
       // This parameter is used to set the identifier with the display column value.
@@ -131,6 +145,8 @@ public class DefaultJsonDataService implements JsonDataService {
         @SuppressWarnings("unchecked")
         Map<String, String> paramsCount = (Map<String, String>) ((HashMap<String, String>) parameters)
             .clone();
+        // _isWsCall can not be used as an URL parameter, we prevent its usage by removing it
+        paramsCount.remove(JsonConstants.IS_WS_CALL);
         DataEntityQueryService queryService = createSetQueryService(paramsCount, true);
         queryService.setEntityName(entityName);
 
@@ -165,7 +181,8 @@ public class DefaultJsonDataService implements JsonDataService {
           jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, count);
           return jsonResponse.toString();
         }
-        queryService = createSetQueryService(parameters, false);
+        queryService = createSetQueryService(parameters, false, false,
+            filterOnReadableOrganizations);
 
         if (parameters.containsKey(JsonConstants.SUMMARY_PARAMETER)) {
           final JSONObject singleResult = new JSONObject();
@@ -257,9 +274,9 @@ public class DefaultJsonDataService implements JsonDataService {
 
   public void fetch(Map<String, String> parameters, QueryResultWriter writer) {
     long t = System.currentTimeMillis();
-    final String entityName = parameters.get(JsonConstants.ENTITYNAME);
+
+    doPreAction(parameters, "", DataSourceAction.FETCH);
     final DataEntityQueryService queryService = createSetQueryService(parameters, false);
-    queryService.setEntityName(entityName);
 
     String selectedProperties = parameters.get(JsonConstants.SELECTEDPROPERTIES_PARAMETER);
 
@@ -301,11 +318,11 @@ public class DefaultJsonDataService implements JsonDataService {
 
   protected DataEntityQueryService createSetQueryService(Map<String, String> parameters,
       boolean forCountOperation) {
-    return createSetQueryService(parameters, forCountOperation, false);
+    return createSetQueryService(parameters, forCountOperation, false, true);
   }
 
   private DataEntityQueryService createSetQueryService(Map<String, String> parameters,
-      boolean forCountOperation, boolean forSubEntity) {
+      boolean forCountOperation, boolean forSubEntity, boolean filterOnReadableOrganizations) {
     boolean hasSubentity = false;
     String entityName = parameters.get(JsonConstants.ENTITYNAME);
     final DataEntityQueryService queryService = OBProvider.getInstance().get(
@@ -315,72 +332,119 @@ public class DefaultJsonDataService implements JsonDataService {
       // this is the main entity of a 'contains' (used in FK drop down lists), it will create also
       // info for subentity
 
-      final String distinctPropertyPath = parameters.get(JsonConstants.DISTINCT_PARAMETER);
-      final Property distinctProperty = DalUtil.getPropertyFromPath(ModelProvider.getInstance()
-          .getEntity(entityName), distinctPropertyPath);
-      final Entity distinctEntity = distinctProperty.getTargetEntity();
+      if ("true".equals(parameters.get(JsonConstants.SHOW_FK_DROPDOWN_UNFILTERED_PARAMETER))) {
+        // Do not filter out the rows of the referenced tables if
+        // they are not referenced from the referencing tables
+        // Showing the records unfiltered improves the performance if the referenced table has just
+        // a few records and the referencing table has lots
+        final String distinctPropertyPath = parameters.get(JsonConstants.DISTINCT_PARAMETER);
+        final Property distinctProperty = DalUtil.getPropertyFromPath(ModelProvider.getInstance()
+            .getEntity(entityName), distinctPropertyPath);
+        final Entity distinctEntity = distinctProperty.getTargetEntity();
+        queryService.setEntityName(distinctEntity.getName());
+        queryService
+            .addFilterParameter(JsonConstants.SHOW_FK_DROPDOWN_UNFILTERED_PARAMETER, "true");
+        queryService.setFilterOnReadableOrganizations(filterOnReadableOrganizations);
+        if (parameters.containsKey(JsonConstants.USE_ALIAS)) {
+          queryService.setUseAlias();
+        }
 
-      // criteria needs to be split in two parts:
-      // -One for main entity (the one directly queried for)
-      // -Another one for subentity
-      String baseCriteria = "";
-      String subCriteria = "";
-      hasSubentity = true;
-      if (!StringUtils.isEmpty(parameters.get("criteria"))) {
-        String criteria = parameters.get("criteria");
-        for (String criterion : criteria.split(JsonConstants.IN_PARAMETER_SEPARATOR)) {
-          try {
-            JSONObject jsonCriterion = new JSONObject(criterion);
-            if (jsonCriterion.getString("fieldName").equals(
-                distinctPropertyPath + "$" + JsonConstants.IDENTIFIER)) {
-              jsonCriterion.put("fieldName", JsonConstants.IDENTIFIER);
-              baseCriteria = jsonCriterion.toString();
-            } else {
-              subCriteria += subCriteria.length() > 0 ? JsonConstants.IN_PARAMETER_SEPARATOR : "";
-              subCriteria += criterion;
+        String baseCriteria = "";
+        // The main entity is now the referenced table, so each criterion that references it must be
+        // updated
+        // The criteria that does not apply to the referenced table can be ignored
+        if (!StringUtils.isEmpty(parameters.get("criteria"))) {
+          String criteria = parameters.get("criteria");
+          for (String criterion : criteria.split(JsonConstants.IN_PARAMETER_SEPARATOR)) {
+            try {
+              JSONObject jsonCriterion = new JSONObject(criterion);
+              if (jsonCriterion.getString("fieldName").equals(
+                  distinctPropertyPath + "$" + JsonConstants.IDENTIFIER)) {
+                jsonCriterion.put("fieldName", JsonConstants.IDENTIFIER);
+                baseCriteria = jsonCriterion.toString();
+              }
+            } catch (JSONException e) {
+              log.error("Error obtaining 'distint' criterion for " + criterion, e);
             }
-          } catch (JSONException e) {
-            log.error("Error obtaining 'distint' criterion for " + criterion, e);
           }
         }
-      }
-
-      // params for subentity are based on main entity ones
-      @SuppressWarnings("unchecked")
-      Map<String, String> paramSubCriteria = (Map<String, String>) ((HashMap<String, String>) parameters)
-          .clone();
-
-      // set proper criteria for each case
-      if (StringUtils.isEmpty(subCriteria)) {
-        paramSubCriteria.remove("criteria");
+        if (StringUtils.isEmpty(baseCriteria)) {
+          parameters.remove("criteria");
+        } else {
+          parameters.put("criteria", baseCriteria);
+        }
+        // The where clause of the referencing table no longer needs to be applied, as the query
+        // will be done on the referenced table
+        removeWhereParameter(parameters);
       } else {
-        paramSubCriteria.put("criteria", subCriteria);
+
+        final String distinctPropertyPath = parameters.get(JsonConstants.DISTINCT_PARAMETER);
+        final Property distinctProperty = DalUtil.getPropertyFromPath(ModelProvider.getInstance()
+            .getEntity(entityName), distinctPropertyPath);
+        final Entity distinctEntity = distinctProperty.getTargetEntity();
+
+        // criteria needs to be split in two parts:
+        // -One for main entity (the one directly queried for)
+        // -Another one for subentity
+        String baseCriteria = "";
+        String subCriteria = "";
+        hasSubentity = true;
+        if (!StringUtils.isEmpty(parameters.get("criteria"))) {
+          String criteria = parameters.get("criteria");
+          for (String criterion : criteria.split(JsonConstants.IN_PARAMETER_SEPARATOR)) {
+            try {
+              JSONObject jsonCriterion = new JSONObject(criterion);
+              if (jsonCriterion.getString("fieldName").equals(
+                  distinctPropertyPath + "$" + JsonConstants.IDENTIFIER)) {
+                jsonCriterion.put("fieldName", JsonConstants.IDENTIFIER);
+                baseCriteria = jsonCriterion.toString();
+              } else {
+                subCriteria += subCriteria.length() > 0 ? JsonConstants.IN_PARAMETER_SEPARATOR : "";
+                subCriteria += criterion;
+              }
+            } catch (JSONException e) {
+              log.error("Error obtaining 'distint' criterion for " + criterion, e);
+            }
+          }
+        }
+
+        // params for subentity are based on main entity ones
+        @SuppressWarnings("unchecked")
+        Map<String, String> paramSubCriteria = (Map<String, String>) ((HashMap<String, String>) parameters)
+            .clone();
+
+        // set proper criteria for each case
+        if (StringUtils.isEmpty(subCriteria)) {
+          paramSubCriteria.remove("criteria");
+        } else {
+          paramSubCriteria.put("criteria", subCriteria);
+        }
+        if (StringUtils.isEmpty(baseCriteria)) {
+          parameters.remove("criteria");
+        } else {
+          parameters.put("criteria", baseCriteria);
+        }
+
+        // where parameter is only applied in subentity, remove it from main entity
+        removeWhereParameter(parameters);
+
+        // main entity ("me") settings
+        queryService.getQueryBuilder().setMainAlias("me");
+        queryService.setEntityName(distinctEntity.getName());
+
+        queryService.setFilterOnReadableClients(false);
+        queryService.setFilterOnReadableOrganizations(false);
+        queryService.setFilterOnActive(false);
+
+        // create now subentity
+        queryService.setSubEntity(
+            entityName,
+            createSetQueryService(paramSubCriteria, forCountOperation, true,
+                filterOnReadableOrganizations), distinctProperty, distinctPropertyPath);
       }
-      if (StringUtils.isEmpty(baseCriteria)) {
-        parameters.remove("criteria");
-      } else {
-        parameters.put("criteria", baseCriteria);
-      }
-
-      // where parameter is only applied in subentity, remove it from main entity
-      if (parameters.containsKey(JsonConstants.WHERE_PARAMETER)) {
-        parameters.remove(JsonConstants.WHERE_PARAMETER);
-      }
-
-      // main entity ("me") settings
-      queryService.getQueryBuilder().setMainAlias("me");
-      queryService.setEntityName(distinctEntity.getName());
-
-      queryService.setFilterOnReadableClients(false);
-      queryService.setFilterOnReadableOrganizations(false);
-      queryService.setFilterOnActive(false);
-
-      // create now subentity
-      queryService.setSubEntity(entityName,
-          createSetQueryService(paramSubCriteria, forCountOperation, true), distinctProperty,
-          distinctPropertyPath);
     } else {
       queryService.setEntityName(entityName);
+      queryService.setFilterOnReadableOrganizations(filterOnReadableOrganizations);
       if (parameters.containsKey(JsonConstants.USE_ALIAS)) {
         queryService.setUseAlias();
       }
@@ -396,11 +460,16 @@ public class DefaultJsonDataService implements JsonDataService {
       log.warn("Fetching data without pagination, this can cause perfomance issues. Parameters: "
           + convertParameterToString(parameters));
 
+      boolean isWsCall = parameters.containsKey(JsonConstants.IS_WS_CALL)
+          && "true".equals(parameters.get(JsonConstants.IS_WS_CALL));
+
       if (parameters.containsKey(JsonConstants.TAB_PARAMETER)
           || parameters.containsKey(SelectorConstants.DS_REQUEST_SELECTOR_ID_PARAMETER)) {
 
         // for standard tab and selector datasources pagination is mandatory
         throw new OBException(OBMessageUtils.messageBD("OBJSON_NoPagedFetch"));
+      } else if (!"Y".equals(unpagedRequestPreference.getPreferenceValue()) && !isWsCall) {
+        throw new OBException(OBMessageUtils.messageBD("OBJSON_NoPagedFetchManual"));
       }
     }
 
@@ -508,6 +577,12 @@ public class DefaultJsonDataService implements JsonDataService {
     return queryService;
   }
 
+  private void removeWhereParameter(Map<String, String> parameters) {
+    if (parameters.containsKey(JsonConstants.WHERE_PARAMETER)) {
+      parameters.remove(JsonConstants.WHERE_PARAMETER);
+    }
+  }
+
   // Given a map of parameters, returns a string with the pairs key:value
   private String convertParameterToString(Map<String, String> parameters) {
     String paramMsg = "";
@@ -576,7 +651,7 @@ public class DefaultJsonDataService implements JsonDataService {
         jsonResult.put(JsonConstants.RESPONSE_RESPONSE, jsonResponse);
         OBDal.getInstance().commitAndClose();
 
-        doPreRemove(parameters, jsonObjects.get(0));
+        doPreAction(parameters, jsonObjects.toString(), DataSourceAction.REMOVE);
 
         // now do the real delete in a separate transaction
         // to prevent side effects that a child can not be deleted
@@ -688,13 +763,22 @@ public class DefaultJsonDataService implements JsonDataService {
         }
 
         // refresh the objects from the db as they can have changed
+        // put the refreshed objects into a new array as we are going to retrieve them using
+        // OBDal.getInstance().get as performs better than OBDal.getInstance().getSession().refresh
+        // See issue https://issues.openbravo.com/view.php?id=30308
+        final List<BaseOBObject> refreshedBobs = new ArrayList<BaseOBObject>();
         for (BaseOBObject bob : bobs) {
-          OBDal.getInstance().getSession().refresh(bob);
+          // Remove the bob instance from the session cache with evict
+          OBDal.getInstance().getSession().evict(bob);
+          // With get() we retrieve the object from db as we have cleared it from cache with evict()
+          BaseOBObject refreshedBob = OBDal.getInstance().get(bob.getEntityName(),
+              DalUtil.getId(bob));
           // if object has computed columns refresh from the database too
-          if (bob.getEntity().hasComputedColumns()) {
+          if (refreshedBob.getEntity().hasComputedColumns()) {
             OBDal.getInstance().getSession()
-                .refresh(bob.get(Entity.COMPUTED_COLUMNS_PROXY_PROPERTY));
+                .refresh(refreshedBob.get(Entity.COMPUTED_COLUMNS_PROXY_PROPERTY));
           }
+          refreshedBobs.add(refreshedBob);
         }
 
         // almost successfull, now create the response
@@ -702,7 +786,7 @@ public class DefaultJsonDataService implements JsonDataService {
         final DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(
             DataToJsonConverter.class);
         toJsonConverter.setAdditionalProperties(JsonUtils.getAdditionalProperties(parameters));
-        final List<JSONObject> jsonObjects = toJsonConverter.toJsonObjects(bobs);
+        final List<JSONObject> jsonObjects = toJsonConverter.toJsonObjects(refreshedBobs);
 
         if (sendOriginalIdBack) {
           // now it is assumed that the jsonObjects are the same size and the same location
@@ -781,9 +865,25 @@ public class DefaultJsonDataService implements JsonDataService {
     return bobs;
   }
 
+  /**
+   * Hooks executed at the end of doPreAction and doPostAction to modify or to validate DataService
+   * calls.
+   */
+  @Inject
+  @Any
+  private Instance<JsonDataServiceExtraActions> extraActions;
+
   protected String doPreAction(Map<String, String> parameters, String content,
       DataSourceAction action) {
     try {
+      if (action == DataSourceAction.FETCH) {
+        // In fetch operations there is no data. Just call doPreFetch and extraActions.
+        doPreFetch(parameters);
+        for (JsonDataServiceExtraActions extraAction : extraActions) {
+          extraAction.doPreAction(parameters, new JSONArray(), action);
+        }
+        return "";
+      }
       final Object contentObject = getContentAsJSON(content);
       final boolean isArray = contentObject instanceof JSONArray;
       final JSONArray data;
@@ -816,6 +916,9 @@ public class DefaultJsonDataService implements JsonDataService {
         // and set it in the new array
         newData.put(dataElement);
       }
+      for (JsonDataServiceExtraActions extraAction : extraActions) {
+        extraAction.doPreAction(parameters, newData, action);
+      }
 
       // return the array directly
       if (isArray) {
@@ -829,7 +932,10 @@ public class DefaultJsonDataService implements JsonDataService {
     } catch (JSONException e) {
       throw new OBException(e);
     } finally {
-      OBDal.getInstance().flush();
+      if (DataSourceAction.FETCH != action) {
+        // Only flush non fetch operations.
+        OBDal.getInstance().flush();
+      }
     }
   }
 
@@ -877,6 +983,11 @@ public class DefaultJsonDataService implements JsonDataService {
       // update the response with the changes, make it a string
       response.put(JsonConstants.RESPONSE_DATA, newData);
       json.put(JsonConstants.RESPONSE_RESPONSE, response);
+
+      for (JsonDataServiceExtraActions extraAction : extraActions) {
+        extraAction.doPostAction(parameters, json, action, originalObject);
+      }
+
       return json.toString();
     } catch (JSONException e) {
       throw new OBException(e);
@@ -899,6 +1010,14 @@ public class DefaultJsonDataService implements JsonDataService {
    */
   protected void doPostRemove(Map<String, String> parameters, JSONObject removed)
       throws JSONException {
+
+  }
+
+  /**
+   * Is called before fetching an object. This method is called in the same transaction as the main
+   * fetch operation.
+   */
+  protected void doPreFetch(Map<String, String> parameters) throws JSONException {
 
   }
 
@@ -958,7 +1077,7 @@ public class DefaultJsonDataService implements JsonDataService {
       String originalToUpdate) throws JSONException {
   }
 
-  protected enum DataSourceAction {
+  public enum DataSourceAction {
     FETCH, ADD, UPDATE, REMOVE
   }
 

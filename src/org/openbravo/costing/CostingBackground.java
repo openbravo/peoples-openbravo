@@ -18,8 +18,6 @@
  */
 package org.openbravo.costing;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -27,8 +25,7 @@ import java.util.List;
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
-import org.hibernate.ScrollMode;
-import org.hibernate.ScrollableResults;
+import org.hibernate.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
@@ -68,6 +65,8 @@ public class CostingBackground extends DalBaseProcess {
     logger = bundle.getLogger();
     OBError result = new OBError();
     List<String> orgsWithRule = new ArrayList<String>();
+    List<String> trxs = null;
+    int counter = 0, total = 0, batch = 0;
     try {
       OBContext.setAdminMode(false);
       result.setType("Success");
@@ -103,31 +102,25 @@ public class CostingBackground extends DalBaseProcess {
       // Fix the Not Processed flag for those Transactions with Cost Not Calculated
       setNotProcessedWhenNotCalculatedTransactions(orgsWithRule);
 
-      ScrollableResults trxs = getTransactions(orgsWithRule);
-      int counter = 0;
-      try {
-        while (trxs.next()) {
-          MaterialTransaction transaction = (MaterialTransaction) trxs.get()[0];
+      trxs = getTransactionsBatch(orgsWithRule);
+      total = trxs.size();
+      while (counter < maxTransactions) {
+        batch++;
+        for (String trxId : trxs) {
           counter++;
-          if ("S".equals(transaction.getCostingStatus())) {
-            // Do not calculate trx in skip status.
-            continue;
-          }
+          MaterialTransaction transaction = OBDal.getInstance().get(MaterialTransaction.class,
+              trxId);
           log4j.debug("Start transaction process: " + transaction.getId());
-          OBDal.getInstance().refresh(transaction);
           CostingServer transactionCost = new CostingServer(transaction);
           transactionCost.process();
-          log4j.debug("Transaction processed: " + counter + "/" + maxTransactions);
-          // If cost has been calculated successfully do a commit.
-          OBDal.getInstance().getConnection(true).commit();
-          if (counter % 1 == 0) {
-            OBDal.getInstance().getSession().clear();
-          }
+          log4j.debug("Transaction processed: " + counter + "/" + maxTransactions + " batch: "
+              + batch);
         }
-      } finally {
-        try {
-          trxs.close();
-        } catch (Exception ignore) {
+        OBDal.getInstance().getConnection(true).commit();
+        OBDal.getInstance().getSession().clear();
+        if (counter < maxTransactions) {
+          trxs = getTransactionsBatch(orgsWithRule);
+          total += trxs.size();
         }
       }
 
@@ -135,6 +128,7 @@ public class CostingBackground extends DalBaseProcess {
       bundle.setResult(result);
     } catch (OBException e) {
       OBDal.getInstance().rollbackAndClose();
+      calculateCorrectTrxWhileRollback(trxs, counter, total);
       String message = OBMessageUtils.parseTranslation(bundle.getConnection(), bundle.getContext()
           .toVars(), OBContext.getOBContext().getLanguage().getLanguage(), e.getMessage());
       result.setMessage(message);
@@ -145,6 +139,7 @@ public class CostingBackground extends DalBaseProcess {
       return;
     } catch (Exception e) {
       OBDal.getInstance().rollbackAndClose();
+      calculateCorrectTrxWhileRollback(trxs, counter, total);
       result = OBMessageUtils.translateError(bundle.getConnection(), bundle.getContext().toVars(),
           OBContext.getOBContext().getLanguage().getLanguage(), e.getMessage());
       result.setType("Error");
@@ -154,40 +149,41 @@ public class CostingBackground extends DalBaseProcess {
       bundle.setResult(result);
       return;
     } finally {
-      // Set the processed flag to true to those transactions whose cost has been calculated.
-      if (!orgsWithRule.isEmpty()) {
-        setCalculatedTransactionsAsProcessed(orgsWithRule);
-      }
       OBContext.restorePreviousMode();
     }
   }
 
+  /**
+   * Get Transactions with Processed flag = 'Y' and it's cost is Not Calculated and set Processed
+   * flag = 'N'
+   */
   private void setNotProcessedWhenNotCalculatedTransactions(List<String> orgsWithRule) {
-    ScrollableResults trxs = getTransactionsNotCalculated(orgsWithRule);
-    while (trxs.next()) {
-      MaterialTransaction transaction = (MaterialTransaction) trxs.get(0);
-      transaction.setProcessed(Boolean.FALSE);
-      OBDal.getInstance().save(transaction);
-    }
+    final StringBuilder hqlTransactions = new StringBuilder();
+    hqlTransactions.append(" update " + MaterialTransaction.ENTITY_NAME + " as trx set trx."
+        + MaterialTransaction.PROPERTY_ISPROCESSED + " = false ");
+    hqlTransactions.append(" where trx." + MaterialTransaction.PROPERTY_ISPROCESSED + " = true");
+    hqlTransactions.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED
+        + " = false");
+    hqlTransactions.append("   and trx." + MaterialTransaction.PROPERTY_COSTINGSTATUS + " <> 'S'");
+    hqlTransactions.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION
+        + ".id in (:orgs)");
+    Query updateTransactions = OBDal.getInstance().getSession()
+        .createQuery(hqlTransactions.toString());
+    updateTransactions.setParameterList("orgs", orgsWithRule);
+    updateTransactions.executeUpdate();
+
     OBDal.getInstance().flush();
   }
 
-  private void setCalculatedTransactionsAsProcessed(List<String> orgsWithRule) {
-    ScrollableResults trxs = getTransactionsCalculated(orgsWithRule);
-    while (trxs.next()) {
-      MaterialTransaction transaction = (MaterialTransaction) trxs.get(0);
-      transaction.setProcessed(Boolean.TRUE);
-      OBDal.getInstance().save(transaction);
-    }
-    OBDal.getInstance().flush();
-  }
-
-  private ScrollableResults getTransactions(List<String> orgsWithRule) {
+  @SuppressWarnings("unchecked")
+  private List<String> getTransactionsBatch(List<String> orgsWithRule) {
     StringBuffer where = new StringBuffer();
-    where.append(" as trx");
+    where.append(" select trx." + MaterialTransaction.PROPERTY_ID + " as id ");
+    where.append(" from " + MaterialTransaction.ENTITY_NAME + " as trx");
     where.append(" join trx." + MaterialTransaction.PROPERTY_PRODUCT + " as p");
     where.append("\n , " + org.openbravo.model.ad.domain.List.ENTITY_NAME + " as trxtype");
     where.append("\n where trx." + MaterialTransaction.PROPERTY_ISPROCESSED + " = false");
+    where.append("   and trx." + MaterialTransaction.PROPERTY_COSTINGSTATUS + " <> 'S'");
     where.append("   and p." + Product.PROPERTY_PRODUCTTYPE + " = 'I'");
     where.append("   and p." + Product.PROPERTY_STOCKED + " = true");
     where.append("   and trxtype." + CostAdjustmentUtils.propADListReference + ".id = :refid");
@@ -199,59 +195,66 @@ public class CostingBackground extends DalBaseProcess {
     where.append(" , trxtype." + CostAdjustmentUtils.propADListPriority);
     where.append(" , trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " desc");
     where.append(" , trx." + MaterialTransaction.PROPERTY_ID);
-    OBQuery<MaterialTransaction> trxQry = OBDal.getInstance().createQuery(
-        MaterialTransaction.class, where.toString());
+    Query trxQry = OBDal.getInstance().getSession().createQuery(where.toString());
 
-    trxQry.setNamedParameter("refid", CostAdjustmentUtils.MovementTypeRefID);
-    trxQry.setNamedParameter("now", new Date());
-    trxQry.setFilterOnReadableOrganization(false);
-    trxQry.setNamedParameter("orgs", orgsWithRule);
+    trxQry.setParameter("refid", CostAdjustmentUtils.MovementTypeRefID);
+    trxQry.setParameter("now", new Date());
+    trxQry.setParameterList("orgs", orgsWithRule);
 
     if (maxTransactions == 0) {
-      maxTransactions = trxQry.count();
+      maxTransactions = count(orgsWithRule);
     }
+    trxQry.setMaxResults(1000);
+    return trxQry.list();
+  }
+
+  /**
+   * Return count of transactions to be calculated
+   */
+  private int count(List<String> orgsWithRule) {
+    StringBuffer where = new StringBuffer();
+    where.append(" select count(*) ");
+    where.append(" from " + MaterialTransaction.ENTITY_NAME + " as trx");
+    where.append(" join trx." + MaterialTransaction.PROPERTY_PRODUCT + " as p");
+    where.append("\n , " + org.openbravo.model.ad.domain.List.ENTITY_NAME + " as trxtype");
+    where.append("\n where trx." + MaterialTransaction.PROPERTY_ISPROCESSED + " = false");
+    where.append("   and trx." + MaterialTransaction.PROPERTY_COSTINGSTATUS + " <> 'S'");
+    where.append("   and p." + Product.PROPERTY_PRODUCTTYPE + " = 'I'");
+    where.append("   and p." + Product.PROPERTY_STOCKED + " = true");
+    where.append("   and trxtype." + CostAdjustmentUtils.propADListReference + ".id = :refid");
+    where.append("   and trxtype." + CostAdjustmentUtils.propADListValue + " = trx."
+        + MaterialTransaction.PROPERTY_MOVEMENTTYPE);
+    where.append("   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " <= :now");
+    where.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
+    Query trxQry = OBDal.getInstance().getSession().createQuery(where.toString());
+
+    trxQry.setParameter("refid", CostAdjustmentUtils.MovementTypeRefID);
+    trxQry.setParameter("now", new Date());
+    trxQry.setParameterList("orgs", orgsWithRule);
+
+    return ((Number) trxQry.uniqueResult()).intValue();
+  }
+
+  private void calculateCorrectTrxWhileRollback(List<String> trxs, int _counter, int total) {
+    int correctTrx = _counter - 1;
+    int counter = total - 1000;
     try {
-      OBDal.getInstance().getConnection().setHoldability(ResultSet.HOLD_CURSORS_OVER_COMMIT);
-    } catch (SQLException e) {
-      log4j.error("error: " + e.getMessage(), e);
-      throw new OBException(e.getMessage());
+      for (String trxId : trxs) {
+        if (counter == correctTrx) {
+          break;
+        }
+        MaterialTransaction transaction = OBDal.getInstance().get(MaterialTransaction.class, trxId);
+        counter++;
+        CostingServer transactionCost = new CostingServer(transaction);
+        transactionCost.process();
+      }
+      OBDal.getInstance().getConnection(true).commit();
+      OBDal.getInstance().getSession().clear();
+    } catch (OBException e1) {
+      OBDal.getInstance().rollbackAndClose();
+    } catch (Exception e1) {
+      OBDal.getInstance().rollbackAndClose();
     }
-
-    return trxQry.scroll(ScrollMode.FORWARD_ONLY);
-  }
-
-  /**
-   * Get Transactions with Processed flag = 'Y' but it's cost is Not Calculated
-   */
-  private ScrollableResults getTransactionsNotCalculated(List<String> orgsWithRule) {
-    StringBuffer where = new StringBuffer();
-    where.append(" as trx");
-    where.append(" where trx." + MaterialTransaction.PROPERTY_ISPROCESSED + " = true");
-    where.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = false");
-    where.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
-    OBQuery<MaterialTransaction> trxQry = OBDal.getInstance().createQuery(
-        MaterialTransaction.class, where.toString());
-    trxQry.setFilterOnReadableOrganization(false);
-    trxQry.setNamedParameter("orgs", orgsWithRule);
-
-    return trxQry.scroll(ScrollMode.FORWARD_ONLY);
-  }
-
-  /**
-   * Get Transactions with Processed flag = 'N' but it's cost is Calculated
-   */
-  private ScrollableResults getTransactionsCalculated(List<String> orgsWithRule) {
-    StringBuffer where = new StringBuffer();
-    where.append(" as trx");
-    where.append(" where trx." + MaterialTransaction.PROPERTY_ISPROCESSED + " = false");
-    where.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
-    where.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
-    OBQuery<MaterialTransaction> trxQry = OBDal.getInstance().createQuery(
-        MaterialTransaction.class, where.toString());
-    trxQry.setFilterOnReadableOrganization(false);
-    trxQry.setNamedParameter("orgs", orgsWithRule);
-
-    return trxQry.scroll(ScrollMode.FORWARD_ONLY);
   }
 
   private void initializeMtransCostDateAcct() throws Exception {
@@ -300,6 +303,7 @@ public class CostingBackground extends DalBaseProcess {
       transactionCostDateacctInitializedPreference.setPropertyList(false);
       OBDal.getInstance().save(transactionCostDateacctInitializedPreference);
       OBDal.getInstance().flush();
+      OBDal.getInstance().getConnection(true).commit();
     }
   }
 }

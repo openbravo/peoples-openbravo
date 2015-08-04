@@ -37,6 +37,9 @@ import org.openbravo.base.provider.OBConfigFileProvider;
  * This class implements a central location where the Openbravo.properties are read and made
  * available for the rest of the application.
  * 
+ * IMPORTANT NOTE: while properties are being set only DEBUG level messages can be logged to prevent
+ * recursive invocations due to OBRebuildAppender. See issue #29608
+ * 
  * @author mtaal
  */
 public class OBPropertiesProvider {
@@ -98,7 +101,7 @@ public class OBPropertiesProvider {
 
   public void setProperties(InputStream is) {
     if (obProperties != null) {
-      log.info("Openbravo properties have already been set, setting them again");
+      log.debug("Openbravo properties have already been set, setting them again");
     }
     log.debug("Setting Openbravo.properties through input stream");
     obProperties = new Properties();
@@ -121,7 +124,7 @@ public class OBPropertiesProvider {
 
   public void setProperties(Properties props) {
     if (obProperties != null) {
-      log.info("Openbravo properties have already been set, setting them again");
+      log.debug("Openbravo properties have already been set, setting them again");
     }
     log.debug("Setting openbravo.properties through properties");
     obProperties = new Properties();
@@ -129,7 +132,7 @@ public class OBPropertiesProvider {
   }
 
   public void setProperties(String fileLocation) {
-    log.info("Setting Openbravo.properties through file: " + fileLocation);
+    log.debug("Setting Openbravo.properties through file: " + fileLocation);
     obProperties = new Properties();
     try {
       final FileInputStream fis = new FileInputStream(fileLocation);

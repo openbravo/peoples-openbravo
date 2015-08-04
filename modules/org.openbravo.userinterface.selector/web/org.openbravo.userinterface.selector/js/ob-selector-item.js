@@ -427,7 +427,7 @@ isc.OBSelectorPopupWindow.addProperties({
 // 1) a combo box with a picker icon
 // 2) a popup window showing a search grid with data
 //
-isc.ClassFactory.defineClass('OBSelectorItem', isc.ComboBoxItem);
+isc.ClassFactory.defineClass('OBSelectorItem', isc.OBComboBoxItem);
 
 isc.ClassFactory.mixInInterface('OBSelectorItem', 'OBLinkTitleItem');
 
@@ -475,18 +475,6 @@ isc.OBSelectorItem.addProperties({
     dataProperties: {
       useClientFiltering: false
     }
-  },
-
-  filterComplete: function () {
-    var ret;
-
-    // Prevents validation of this item while filtering because real value is
-    // not yet set. This also caused form item to be redrawn removing typed 
-    // text for filtering (see issue #26189)
-    this.preventValidation = true;
-    ret = this.Super('filterComplete', arguments);
-    delete this.preventValidation;
-    return ret;
   },
 
   hidePickListOnBlur: function () {
@@ -764,7 +752,7 @@ isc.OBSelectorItem.addProperties({
     var currentValue = this.getValue(),
         identifierFieldName = this.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
         valueMapObj = {},
-        displayFieldValue, i;
+        valueToDisplay, i;
     this._notUpdatingManually = true;
     if (!record) {
       this.storeValue(null);
@@ -811,12 +799,11 @@ isc.OBSelectorItem.addProperties({
       }
 
       if (record[this.valueField]) { // it can be undefined in case of empty (null) entry
-        if (this.displayField.indexOf(OB.Constants.FIELDSEPARATOR) !== -1) {
-          displayFieldValue = this.displayField.substring(this.displayField.indexOf(OB.Constants.FIELDSEPARATOR) + 1, this.displayField.length);
-        } else {
-          displayFieldValue = this.displayField;
+        valueToDisplay = record[this.displayField];
+        if (valueToDisplay) {
+          valueToDisplay = valueToDisplay.replace(/[\n\r]/g, '');
         }
-        this.valueMap[record[this.valueField]] = record[displayFieldValue].replace(/[\n\r]/g, '');
+        this.valueMap[record[this.valueField]] = valueToDisplay;
       }
 
       this.updateValueMap();
@@ -938,6 +925,12 @@ isc.OBSelectorItem.addProperties({
       windowId: view.windowId,
       windowTitle: OB.I18N.getLabel('OBUISEL_AddNewRecord', [this.title])
     };
+    // Avoid that windowId is null. WindowId in params is necessary
+    // to check access process of OBUISEL_Selector Reference.
+    if (!params.windowId) {
+      params.windowId = view && view.standardWindow && view.standardWindow.windowId;
+
+    }
     if (additionalProcessProperties) {
       isc.addProperties(params, additionalProcessProperties);
     }

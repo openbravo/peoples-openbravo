@@ -203,6 +203,10 @@
       END LOOP; -- Create New Lines
     END LOOP; -- Replace Lines
     UPDATE c_orderline set explode='Y' where c_orderline_id = v_Record_ID;
+
+    IF (v_orderline_ID IS NOT NULL) THEN
+      M_EXPLODEBOMNOTSTOCK(null, v_orderline_ID); 
+    END IF;
     
     IF (p_PInstance_ID IS NOT NULL) THEN
       DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ');

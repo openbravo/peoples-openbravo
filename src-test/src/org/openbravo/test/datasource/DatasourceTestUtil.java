@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -89,10 +89,12 @@ class DatasourceTestUtil {
     if (contentType != null) {
       hc.setRequestProperty("Content-Type", contentType);
     }
-    final OutputStream os = hc.getOutputStream();
-    os.write(content.getBytes("UTF-8"));
-    os.flush();
-    os.close();
+    if (!"DELETE".equals(method)) {
+      final OutputStream os = hc.getOutputStream();
+      os.write(content.getBytes("UTF-8"));
+      os.flush();
+      os.close();
+    }
     hc.connect();
     TestCase.assertEquals(expectedResponse, hc.getResponseCode());
 

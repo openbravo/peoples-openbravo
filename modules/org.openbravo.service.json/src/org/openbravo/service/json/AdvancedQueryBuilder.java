@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -286,6 +286,22 @@ public class AdvancedQueryBuilder {
       }
 
       typedParameters.addAll(subEntityQueryBuilder.typedParameters);
+    } else if (filterParameters.containsKey(JsonConstants.SHOW_FK_DROPDOWN_UNFILTERED_PARAMETER)) {
+      // If the entity is Client or Organization, we need to add the readable Client or
+      // Organization filter manually, because the OBQuery will not be able to do it
+      // See issue https://issues.openbravo.com/view.php?id=29846
+      String subEntityClientOrg = "";
+      String whereClauseFirstWord = StringUtils.isEmpty(whereClause.trim()) ? "where" : "and";
+      if (entity.getMappingClass().isAssignableFrom(Organization.class)) {
+        subEntityClientOrg = " " + whereClauseFirstWord + " e.id "
+            + createInClause(OBContext.getOBContext().getReadableOrganizations());
+      } else if (entity.getMappingClass().isAssignableFrom(Client.class)) {
+        subEntityClientOrg = " " + whereClauseFirstWord + " e.id "
+            + createInClause(OBContext.getOBContext().getReadableClients());
+      }
+      if (!subEntityClientOrg.isEmpty()) {
+        whereClause += subEntityClientOrg;
+      }
     }
 
     return whereClause;
@@ -1566,8 +1582,15 @@ public class AdvancedQueryBuilder {
               + prefix.substring(0, prefix.lastIndexOf('.')) + " and t.language.language='"
               + OBContext.getOBContext().getLanguage().getLanguage() + "')), to_char("
               + replaceValueWithJoins(prefix + prop.getName()) + "), '')");
+        } else if (prop.isMandatory() && prop.isTextualType()) {
+          // if the property is mandatory there is no need to use coalesce to replace a possible
+          // null value with an empty string
+          // getting rid of the coalesce and to_char functions allow under certain circumstances
+          // to use indexes defined on that property
+          sb.append(replaceValueWithJoins(prefix + prop.getName()));
         } else {
           sb.append("COALESCE(to_char(" + replaceValueWithJoins(prefix + prop.getName()) + "),'')");
+
         }
 
       } else {

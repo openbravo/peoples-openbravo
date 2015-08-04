@@ -63,13 +63,12 @@ public class CostAdjustmentProcess {
   /**
    * Method to process a cost adjustment.
    * 
-   * @param costAdj
+   * @param _costAdjustment
    *          the cost adjustment to be processed.
    * @return the message to be shown to the user properly formatted and translated to the user
    *         language.
    * @throws OBException
    *           when there is an error that prevents the cost adjustment to be processed.
-   * @throws JSONException
    */
   private JSONObject processCostAdjustment(CostAdjustment _costAdjustment) throws OBException {
     CostAdjustment costAdjustment = _costAdjustment;

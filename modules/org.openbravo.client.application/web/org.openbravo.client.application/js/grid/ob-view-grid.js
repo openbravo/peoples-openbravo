@@ -206,11 +206,21 @@ isc.OBViewGrid.addProperties({
       // clone to prevent side effects
       var requestProperties = isc.clone(this.context);
       this.context.params = this.grid.getFetchRequestParams(requestProperties.params);
-      if (this.grid.refreshingWithSelectedRecord) {
+      if (this.grid.isFilteringExternally) {
+        // requests triggered by filtering the grid should always load the first page
+        // if after that the user scrolls down, the isFilteringExternally flag will be false and
+        // the proper page will be loaded
+        startRow = 0;
+        endRow = this.grid.dataPageSize;
+      } else if (this.grid.refreshingWithSelectedRecord) {
         // if the grid was refreshed with a record selected, use the range that contained that record 
         //  instead of using targetRecordId to improve the performance
         startRow = this.grid.selectedRecordInitInterval;
         endRow = this.grid.selectedRecordEndInterval;
+        // the startRow and endRow are being modified, so the localData attribute also
+        // needs to be updated to wait for the proper records
+        this.localData = [];
+        this.setRangeLoading(startRow, endRow);
       }
       return this.Super('fetchRemoteData', arguments);
     },
@@ -238,8 +248,7 @@ isc.OBViewGrid.addProperties({
     },
 
     transformData: function (newData, dsResponse) {
-      var i, length, timeFields, responseToFilter, responseToSort = false,
-          newTotalRows;
+      var i, length, timeFields, responseToFilter, newTotalRows;
 
       // when the data is received from the datasource, time fields are formatted in UTC time. They have to be converted to local time
       if (dsResponse && dsResponse.context && (dsResponse.context.operationType === 'fetch' || dsResponse.context.operationType === 'update' || dsResponse.context.operationType === 'add')) {
@@ -260,10 +269,6 @@ isc.OBViewGrid.addProperties({
         responseToFilter = true;
       }
 
-      if (dsResponse.context && dsResponse.context._dsRequest && dsResponse.context._dsRequest.params && dsResponse.context._dsRequest.params.isSorting) {
-        responseToSort = true;
-      }
-
       if (this.localData && !responseToFilter) {
         length = this.localData.length;
         newTotalRows = dsResponse.totalRows;
@@ -282,11 +287,11 @@ isc.OBViewGrid.addProperties({
           // increase one to request additional page to backend
         }
 
-        // detects if the request was issued due to having scrolled up
-        // this does not apply when the grid has just been sorted, as the previous local data is discarded
-        if (!responseToSort && this.grid.body.lastScrollTop !== undefined && this.grid.body.lastScrollTop > this.grid.body.getScrollTop()) {
-          // in that case, set the totalRows of the response to the length of the localData, to avoid
-          // setting the totalRows of the grid to an invalid value
+        // detects if the request was issued due to having scrolled up.
+        // in that case, set the totalRows of the response to the length of the localData, to avoid
+        // setting the totalRows of the grid to an invalid value
+        // to confirm if this is the case, we check if there are rows loaded after the page that was just received
+        if (this.rowIsLoaded(dsResponse.endRow + 1)) {
           dsResponse.totalRows = this.localData.length;
         }
 
@@ -486,7 +491,7 @@ isc.OBViewGrid.addProperties({
 
     // only show summary rows if there are summary functions
     for (i = 0; i < this.getFields().length; i++) {
-      if (this.getFields()[i].summaryFunction) {
+      if (this.getFields()[i].summaryFunction && !this.lazyFiltering) {
         this.showGridSummary = true;
       }
     }
@@ -1599,7 +1604,11 @@ isc.OBViewGrid.addProperties({
 
     // do not refresh if the parent is not selected and we have no data
     // anyway
-    if (this.view.parentProperty && (!this.data || !this.data.getLength || this.data.getLength() === 0)) {
+    // we use this.view.parentView to identify if we are on a child tab
+    // this.view.parentProperty was used before but this value could be
+    // undefined under some circumstances
+    // See issue https://issues.openbravo.com/view.php?id=29665
+    if (this.view.parentView && (!this.data || !this.data.getLength || this.data.getLength() === 0)) {
       if (this.view.parentView.isShowingTree) {
         selectedValues = this.view.parentView.treeGrid.getSelectedRecords();
       } else {
@@ -1780,6 +1789,12 @@ isc.OBViewGrid.addProperties({
         this.selectedRecordEndInterval = this.selectedRecordInitInterval + this.data.resultSize;
       }
       this.notRemoveFilter = true;
+      if (this.getSelectedRecords().length > 1) {
+        this.selectedRecordsBeforeRefresh = [];
+        for (i = 0; i < this.getSelectedRecords().length; i++) {
+          this.selectedRecordsBeforeRefresh.push(this.getSelectedRecords()[i][OB.Constants.ID]);
+        }
+      }
     } else {
       visibleRows = this.getVisibleRows();
       if (visibleRows && visibleRows[0] > 0) {
@@ -1828,6 +1843,7 @@ isc.OBViewGrid.addProperties({
       criteria = originalCriteria;
     }
     filterDataCallback = function () {
+      var i, gridRecord, recordIndexes = [];
       if (me.refreshingWithScrolledGrid) {
         // move the scroll to part of the grid that contains the data that was just received to
         // prevent unneded requests (see https://issues.openbravo.com/view.php?id=25811)
@@ -1841,6 +1857,25 @@ isc.OBViewGrid.addProperties({
       delete me.selectedRecordInitInterval;
       delete me.selectedRecordEndInterval;
       delete me.selectedRecordId;
+
+      if (me.selectedRecordsBeforeRefresh) {
+        for (i = 0; i < me.selectedRecordsBeforeRefresh.length; i++) {
+          gridRecord = me.data.find(OB.Constants.ID, me.selectedRecordsBeforeRefresh[i]);
+          if (gridRecord !== null) {
+            recordIndexes.push(me.getRecordIndex(gridRecord));
+          }
+        }
+        me.singleRecordSelection = false;
+        me.selectRecords(recordIndexes);
+        if (me.selectedRecordsBeforeRefresh.length !== recordIndexes.length) {
+          if (me.view.messageBar.isVisible()) {
+            isc.warn(OB.I18N.getLabel('OBUIAPP_NumOfSeledtedItemsChange', [me.selectedRecordsBeforeRefresh.length, recordIndexes.length]));
+          } else {
+            me.view.messageBar.setMessage(isc.OBMessageBar.TYPE_WARNING, null, OB.I18N.getLabel('OBUIAPP_NumOfSeledtedItemsChange', [me.selectedRecordsBeforeRefresh.length, recordIndexes.length]));
+          }
+        }
+        delete me.selectedRecordsBeforeRefresh;
+      }
     };
     this.filterData(criteria, filterDataCallback, context);
     // Set the refreshingWithRecordSelected and refreshingWithScrolledGrid flags to true when needed after
@@ -1965,6 +2000,7 @@ isc.OBViewGrid.addProperties({
   },
 
   handleFilterEditorSubmit: function (criteria, context, autoSaveDone) {
+    var callback, me = this;
     if (!autoSaveDone) {
       var actionObject = {
         target: this,
@@ -1974,8 +2010,15 @@ isc.OBViewGrid.addProperties({
       this.view.standardWindow.doActionAfterAutoSave(actionObject, true);
       return;
     }
-
-    this.Super('handleFilterEditorSubmit', arguments);
+    callback = function () {
+      delete me.isFilteringExternally;
+    };
+    if (this.data.willFetchData(this.convertCriteria(criteria))) {
+      // Use this flag when a filter editor submit results a datasource request
+      // This flag will be used to prevent unneeded datasource requests, see https://issues.openbravo.com/view.php?id=29896
+      this.isFilteringExternally = true;
+    }
+    this.Super('handleFilterEditorSubmit', [criteria, context, callback]);
   },
 
   getInitialCriteria: function () {
@@ -3400,7 +3443,7 @@ isc.OBViewGrid.addProperties({
     return ret;
   },
 
-  //used in Edit or Delete only UI pattern
+  //used in Edit or Delete only UI pattern and in Single Record UI pattern
   setListEndEditAction: function () {
     this.listEndEditAction = 'done';
   },
@@ -3841,7 +3884,7 @@ isc.OBViewGrid.addProperties({
       rowNum = this.getEditSessionRowNum(rowNum);
       return this.Super('getRecord', [rowNum]);
     }
-    if (this.refreshingWithRecordSelected || this.refreshingWithScrolledGrid) {
+    if (this.refreshingWithRecordSelected || this.refreshingWithScrolledGrid || this.isFilteringExternally) {
       // if the grid if being refreshed do not try to return a record, just notify that is being loaded
       return Array.LOADING;
     }

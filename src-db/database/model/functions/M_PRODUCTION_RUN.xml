@@ -56,10 +56,12 @@
   v_Processed VARCHAR2(60) ;
   v_Client_ID VARCHAR2(32);
   v_Org_ID VARCHAR2(32);
+  v_Locator_ID VARCHAR2(32);
   --
   v_Line NUMBER;
   v_Count NUMBER;
   p_User VARCHAR2(32);
+  v_allownegativestock CHAR(1);
   v_Product_Name m_product.name%TYPE;
   -- Stocked BOMs
   -- Proposed stock from given warehouse is priorized.
@@ -88,14 +90,15 @@ BEGIN --BODY
   v_ResultStr:='ReadingParameters';
   FOR Cur_Parameter IN (
       SELECT i.Record_ID, i.AD_User_ID, p.ParameterName,
-          p.P_String, p.P_Number, p.P_Date
-      FROM AD_PInstance i
+          p.P_String, p.P_Number, p.P_Date, ci.allownegativestock
+      FROM AD_ClientInfo ci JOIN AD_PInstance i ON ci.ad_client_id=i.ad_client_id
             LEFT JOIN AD_PInstance_Para p ON i.AD_PInstance_ID=p.AD_PInstance_ID
       WHERE i.AD_PInstance_ID=PInstance_ID
       ORDER BY p.SeqNo
   ) LOOP
     v_Record_ID := Cur_Parameter.Record_ID;
     p_User := Cur_Parameter.AD_User_ID;
+    v_allownegativestock := Cur_Parameter.allownegativestock;
     IF (Cur_Parameter.ParameterName = 'MustBeStocked') THEN
       MustBeStocked:=Cur_Parameter.P_String;
       DBMS_OUTPUT.PUT_LINE('  MustBeStocked=' || MustBeStocked) ;
@@ -213,6 +216,8 @@ BEGIN --BODY
       v_QtyStorage NUMBER:=0;
       v_QtyAcumulated NUMBER;
       v_QtyOrder NUMBER;
+      v_QtyOrderRate NUMBER;
+      v_ProductionLineCount NUMBER;
       v_pinstance_id VARCHAR2(32);
       CUR_BOM RECORD;
     BEGIN
@@ -324,9 +329,68 @@ BEGIN --BODY
           );
         END IF;
         v_Line:=v_Line;
-        IF (v_QtyAcumulated < CUR_BOM.BOMQTY*CUR_BOM.ProductionQty) AND MustBeStocked='Y' THEN
-          v_Message := '@NotEnoughStocked@: ' || CUR_BOM.pname || ' ' || v_QtyAcumulated || ' / '|| CUR_BOM.BOMQTY*CUR_BOM.ProductionQty;
-          RAISE_APPLICATION_ERROR(-20000, v_Message);
+        IF (v_QtyAcumulated < CUR_BOM.BOMQTY*CUR_BOM.ProductionQty) THEN
+          IF (MustBeStocked='Y') THEN
+            v_Message := '@NotEnoughStocked@: ' || CUR_BOM.pname || ' ' || v_QtyAcumulated || ' / '|| CUR_BOM.BOMQTY*CUR_BOM.ProductionQty;
+            RAISE_APPLICATION_ERROR(-20000, v_Message);
+          ELSE
+            -- If AllowNegativeStock is enabled and MustBeStocked is disabled and there is not enough stock,
+            -- pending quantity will be created for the same locator as production plan product, keeping a negative stock
+            IF (v_allownegativestock='Y') THEN   
+            
+              -- Get the locator of the production plan
+              SELECT M_Locator_ID
+              INTO v_Locator_ID
+              FROM M_PRODUCTIONPLAN
+              WHERE M_ProductionPlan_ID=CUR_BOM.M_ProductionPlan_ID;
+            
+              -- Check if exists a production line for this product with the same locator
+              SELECT count(M_ProductionLine_ID)
+              INTO v_ProductionLineCount
+              FROM M_PRODUCTIONLINE
+              WHERE M_ProductionPlan_ID=CUR_BOM.M_ProductionPlan_ID
+              AND M_Product_ID=CUR_BOM.M_ProductBOM_ID
+              AND M_Locator_ID=v_Locator_ID;
+
+              -- If exists update it            
+              IF (v_ProductionLineCount <> 0) THEN
+                
+                SELECT QuantityOrder / CASE WHEN (MovementQty <> 0) THEN MovementQty ELSE 1 END
+                INTO v_QtyOrderRate
+                FROM M_PRODUCTIONLINE
+                WHERE M_ProductionPlan_ID=CUR_BOM.M_ProductionPlan_ID
+                AND M_Product_ID=CUR_BOM.M_ProductBOM_ID
+                AND M_Locator_ID=v_Locator_ID;               
+                
+                UPDATE M_PRODUCTIONLINE
+                SET MovementQty = MovementQty - (CUR_BOM.BOMQTY*CUR_BOM.ProductionQty - v_QtyAcumulated),
+                QuantityOrder = v_QtyOrderRate * (MovementQty - (CUR_BOM.BOMQTY*CUR_BOM.ProductionQty - v_QtyAcumulated))
+                WHERE M_ProductionPlan_ID=CUR_BOM.M_ProductionPlan_ID
+                AND M_Product_ID=CUR_BOM.M_ProductBOM_ID
+                AND M_Locator_ID=v_Locator_ID;
+
+              -- If not exists, insert a new production line
+              ELSE
+                    
+                SELECT COALESCE(MAX(Line), 0) + 10 INTO v_Line
+                FROM M_PRODUCTIONLINE
+                WHERE M_ProductionPlan_ID=CUR_BOM.M_ProductionPlan_ID;         
+                
+                INSERT INTO M_PRODUCTIONLINE (
+                  M_ProductionLine_ID, M_ProductionPlan_ID, Line, AD_Client_ID,
+                  AD_Org_ID, IsActive, Created, CreatedBy,
+                  Updated, UpdatedBy, M_Product_ID, C_UOM_ID,
+                  MovementQty, M_Locator_ID
+              ) VALUES (
+                  get_uuid(), CUR_BOM.M_ProductionPlan_ID, v_Line, CUR_BOM.Client_ID,
+                  CUR_BOM.Org_ID, 'Y', now(), p_User,
+                  now(), p_User, CUR_BOM.M_ProductBOM_ID, CUR_BOM.C_UOM_ID,
+                  - (CUR_BOM.BOMQTY*CUR_BOM.ProductionQty - v_QtyAcumulated), v_Locator_ID                  
+              );
+              
+              END IF;          
+            END IF;
+          END IF;   
         END IF;
         IF (CUR_BOM.ProductionQty <= 0) THEN
           v_Message := '@NegativeBOMProductionQty@';

@@ -19,7 +19,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2012 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2015 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -130,12 +130,14 @@
         --          DBMS_OUTPUT.PUT_LINE('Adding Period ID: '||v_NextNo);
 
         SELECT COUNT(*) INTO V_COUNT 
-	FROM C_PERIOD 
-	WHERE C_PERIOD_ID <> v_NextNo
-	AND AD_ORG_ID = v_Org_ID
-	AND AD_CLIENT_ID = v_Client_ID
-	AND TO_DATE(ADD_MONTHS(v_StartDate, v_MonthNo-1)) <= ENDDATE 
-	AND ADD_MONTHS(TRUNC(TO_DATE(ADD_MONTHS(v_StartDate, v_MonthNo-1)), 'MM'), 1) -1 >= STARTDATE;
+	FROM C_PERIOD P
+	INNER JOIN C_YEAR Y ON (P.C_YEAR_ID = Y.C_YEAR_ID)
+	WHERE P.C_PERIOD_ID <> v_NextNo
+	AND P.AD_ORG_ID = v_Org_ID
+	AND P.AD_CLIENT_ID = v_Client_ID
+	AND Y.C_CALENDAR_ID = v_Calendar_ID
+	AND TO_DATE(ADD_MONTHS(v_StartDate, v_MonthNo-1)) <= P.ENDDATE 
+	AND ADD_MONTHS(TRUNC(TO_DATE(ADD_MONTHS(v_StartDate, v_MonthNo-1)), 'MM'), 1) -1 >= P.STARTDATE;
 	
 	IF (V_COUNT > 0) THEN
 		RAISE_APPLICATION_ERROR(-20000, '@DatesOverlapped@');

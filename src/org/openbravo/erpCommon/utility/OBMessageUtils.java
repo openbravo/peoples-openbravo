@@ -43,6 +43,10 @@ import org.openbravo.utils.Replace;
 public class OBMessageUtils {
   static Logger log4j = Logger.getLogger(OBMessageUtils.class);
 
+  public static String messageBD(String strCode, boolean escape) {
+    return messageBD(strCode, true, escape);
+  }
+
   /**
    * Translate the given code into some message from the application dictionary. It searches first
    * in AD_Message table and if there are not matchings then in AD_Element table.
@@ -53,10 +57,20 @@ public class OBMessageUtils {
    */
 
   public static String messageBD(String strCode) {
-    return messageBD(strCode, true);
+    return messageBD(strCode, true, true);
   }
 
-  public static String messageBD(String strCode, boolean ignoreCase) {
+  /**
+   * @param strCode
+   *          String with the search key to search.
+   * @param ignoreCase
+   *          Ignore Case while finding message.
+   * @param escape
+   *          Escape \n and " characters
+   * @return String with the translated message.
+   */
+
+  public static String messageBD(String strCode, boolean ignoreCase, boolean escape) {
     String strMessage = "";
     final String strLanguageId = OBContext.getOBContext().getLanguage().getId();
     // Search strCode in AD_Message table.
@@ -113,7 +127,9 @@ public class OBMessageUtils {
     if ("".equals(strMessage)) {
       strMessage = strCode;
     }
-    strMessage = Replace.replace(Replace.replace(strMessage, "\n", "\\n"), "\"", "&quot;");
+    if (escape) {
+      strMessage = Replace.replace(Replace.replace(strMessage, "\n", "\\n"), "\"", "&quot;");
+    }
     return strMessage;
   }
 

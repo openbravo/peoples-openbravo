@@ -30,12 +30,14 @@ OB.APRM.AddTransaction.onLoad = function (view) {
 };
 
 
-OB.APRM.AddTransaction.onProcess = function (view, actionHandlerCall) {
+OB.APRM.AddTransaction.onProcess = function (view, actionHandlerCall, clientSideValidationFail) {
   var execute;
 
   execute = function (ok) {
     if (ok) {
-      actionHandlerCall(view);
+      actionHandlerCall();
+    } else {
+      clientSideValidationFail();
     }
   };
 
@@ -52,20 +54,21 @@ OB.APRM.AddTransaction.onProcess = function (view, actionHandlerCall) {
 
     if (("BPD" === trxType || "BPW" === trxType) && !glitemId && !paymentId) {
       view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_INVALID_TRANSACTION'));
+      clientSideValidationFail();
     } else if (trxAmt !== blineAmt) {
       // Split required
       if (hideSplitConfirmation === 'Y') {
         // Continue with the match
-        actionHandlerCall(view);
+        actionHandlerCall();
       } else {
         isc.confirm(OB.I18N.getLabel('APRM_SplitBankStatementLineConfirm'), execute);
       }
     } else {
       // Continue with the match
-      actionHandlerCall(view);
+      actionHandlerCall();
     }
   } else {
-    actionHandlerCall(view);
+    actionHandlerCall();
   }
 };
 
@@ -80,8 +83,6 @@ OB.APRM.AddTransaction.trxTypeOnChangeFunction = function (item, view, form, gri
     form.getItem('depositamt').setDisabled(false);
     form.getItem('withdrawalamt').setDisabled(false);
     form.getItem('description').setValue('');
-    form.getItem('c_glitem_id').setValue(null);
-    form.getItem('fin_payment_id').setValue(null);
   }
 };
 
@@ -110,4 +111,8 @@ OB.APRM.AddTransaction.glitemOnChangeFunction = function (item, view, form, grid
   OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.GLItemTransactionActionHandler', {
     strGLItemId: strGLItemId
   }, {}, callback);
+};
+
+OB.APRM.AddTransaction.trxDateOnChangeFunction = function (item, view, form, grid) {
+  form.getItem('dateacct').setDateParameterValue(new Date(item.getValue()));
 };

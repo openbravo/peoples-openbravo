@@ -24,8 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
-
 /**
  * This class validates several aspects of the application dictionary. The application dictionary
  * itself is validated as well as the match between the application dictionary and the database.
@@ -33,7 +31,6 @@ import org.apache.log4j.Logger;
  * @author mtaal
  */
 public class ApplicationDictionaryValidator {
-  private static final Logger log = Logger.getLogger(ApplicationDictionaryValidator.class);
 
   private List<SystemValidator> validators = new ArrayList<SystemValidator>();
 

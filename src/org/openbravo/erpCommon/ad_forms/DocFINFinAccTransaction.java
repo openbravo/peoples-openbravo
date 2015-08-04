@@ -71,7 +71,6 @@ public class DocFINFinAccTransaction extends AcctServer {
   BigDecimal generatedCredit = ZERO;
   boolean exceptionPosting = false;
 
-  private static final long serialVersionUID = 1L;
   private static final Logger log4j = Logger.getLogger(DocFINFinAccTransaction.class);
 
   String SeqNo = "0";
@@ -146,7 +145,7 @@ public class DocFINFinAccTransaction extends AcctServer {
         // into one.
         // https://issues.openbravo.com/view.php?id=19567
         HashMap<String, BigDecimal> amountAndWriteOff = getPaymentDetailWriteOffAndAmount(
-            paymentDetails, ps, psi, pso, i);
+            paymentDetails, ps, psi, pso, i, data[i]);
         BigDecimal amount = amountAndWriteOff.get("amount");
         BigDecimal writeOff = amountAndWriteOff.get("writeoff");
         if (amount == null) {
@@ -387,7 +386,9 @@ public class DocFINFinAccTransaction extends AcctServer {
                   .getInvoice()
                   : null);
           docLine.setDoubtFulDebtAmount(new BigDecimal(data[i].getField("DoubtFulDebtAmount")));
+
           docLine.setInvoiceTaxCashVAT_V(paymentDetail_ID);
+          docLine.setInvoiceTaxCashVAT_V(data[i].getField("MergedPaymentDetailId"));
         }
         docLine.setIsPrepayment(data[i].getField("isprepayment"));
         docLine.setCGlItemId(data[i].getField("cGlItemId"));
@@ -797,7 +798,7 @@ public class DocFINFinAccTransaction extends AcctServer {
     if (payment != null) {
       if (!payment.getAccount().getCurrency().getId()
           .equalsIgnoreCase(payment.getCurrency().getId())) {
-        retValue = payment.getAmount();
+        retValue = payment.isReceipt() ? payment.getAmount() : payment.getAmount().negate();
       }
     }
     if (payment != null) {
@@ -816,7 +817,7 @@ public class DocFINFinAccTransaction extends AcctServer {
               ((DocLine_FINFinAccTransaction) p_lines[i]).DepositAmount);
           lineBalance = lineBalance.subtract(new BigDecimal(
               ((DocLine_FINFinAccTransaction) p_lines[i]).PaymentAmount));
-          retValue = retValue.add(lineBalance);
+          retValue = retValue.subtract(lineBalance);
         } else {
           BigDecimal lineBalance = payment.isReceipt() ? new BigDecimal(
               ((DocLine_FINFinAccTransaction) p_lines[i]).getAmount()) : new BigDecimal(
@@ -824,7 +825,7 @@ public class DocFINFinAccTransaction extends AcctServer {
           BigDecimal lineWriteoff = payment.isReceipt() ? new BigDecimal(
               ((DocLine_FINFinAccTransaction) p_lines[i]).getWriteOffAmt()) : new BigDecimal(
               ((DocLine_FINFinAccTransaction) p_lines[i]).getWriteOffAmt()).negate();
-          retValue = retValue.add(lineBalance).add(lineWriteoff);
+          retValue = retValue.subtract(lineBalance).subtract(lineWriteoff);
         }
       }
     } finally {

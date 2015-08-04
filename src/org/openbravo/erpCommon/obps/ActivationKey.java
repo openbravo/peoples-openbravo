@@ -1196,9 +1196,6 @@ public class ActivationKey {
    * Same as {@link ActivationKey#getSubscribedModules()} with the includeDisabled parameter. When
    * this parameter is true, disabled modules are returned with the DISABLED status, other way they
    * are returned with the status they would have if they were not disabled.
-   * 
-   * @param includeDisabled
-   * @return
    */
   private HashMap<String, CommercialModuleStatus> getSubscribedModules(boolean includeDisabled) {
     HashMap<String, CommercialModuleStatus> moduleList = new HashMap<String, CommercialModuleStatus>();

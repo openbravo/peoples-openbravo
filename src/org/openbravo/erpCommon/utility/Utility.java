@@ -31,7 +31,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -60,10 +59,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
 import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.design.JasperDesign;
-import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
@@ -73,6 +69,8 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBConfigFileProvider;
 import org.openbravo.base.secureApp.OrgTree;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.client.application.report.ReportingUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
@@ -93,7 +91,6 @@ import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.OrganizationInformation;
 import org.openbravo.model.common.geography.Country;
 import org.openbravo.model.common.geography.Location;
-import org.openbravo.uiTranslation.TranslationHandler;
 import org.openbravo.utils.FileUtility;
 import org.openbravo.utils.FormatUtilities;
 
@@ -1432,6 +1429,44 @@ public class Utility {
   }
 
   /**
+   * Creates a comma separated string with the Id's of the OBObjects included in the List.
+   * 
+   * @param <T>
+   * @param obObjectList
+   *          List of OBObjects
+   * @return Comma separated string of Id's
+   */
+  public static <T extends BaseOBObject> String getInStrList(List<T> obObjectList) {
+    return getInStrList(obObjectList, false);
+  }
+
+  /**
+   * Creates a comma separated string with the Id's of the OBObjects included in the List.
+   * 
+   * @param <T>
+   * @param obObjectList
+   *          List of OBObjects
+   * @param addParentheses
+   *          String will be surrounded with parentheses
+   * @return Comma separated string of Id's
+   */
+  public static <T extends BaseOBObject> String getInStrList(List<T> obObjectList,
+      boolean addParentheses) {
+    StringBuilder strInList = new StringBuilder();
+    for (T obObject : obObjectList) {
+      if (strInList.length() == 0)
+        strInList.append("'" + obObject.getId() + "'");
+      else
+        strInList.append(", '" + obObject.getId() + "'");
+    }
+    if (addParentheses) {
+      return "(" + strInList.toString() + ")";
+    } else {
+      return strInList.toString();
+    }
+  }
+
+  /**
    * Determines if a string of characters is an Openbravo UUID (Universal Unique Identifier), i.e.,
    * if it is a 32 length hexadecimal string.
    * 
@@ -1751,31 +1786,14 @@ public class Utility {
     return OBDateUtils.isBiggerDate(strDate1, strDate2, DateFormatter);
   }
 
+  /**
+   * @deprecated Use
+   *             {@link org.openbravo.client.application.report.ReportingUtils#getTranslatedJasperReport(ConnectionProvider, String, String, String)}
+   *             instead.
+   */
   public static JasperReport getTranslatedJasperReport(ConnectionProvider conn, String reportName,
       String language, String baseDesignPath) throws JRException {
-
-    log4j.debug("translate report: " + reportName + " for language: " + language);
-
-    File reportFile = new File(reportName);
-
-    InputStream reportInputStream = null;
-    if (reportFile.exists()) {
-      TranslationHandler handler = new TranslationHandler(conn);
-      handler.prepareFile(reportName, language, reportFile, baseDesignPath);
-      reportInputStream = handler.getInputStream();
-    }
-    JasperDesign jasperDesign;
-    if (reportInputStream != null) {
-      log4j.debug("Jasper report being created with inputStream.");
-      jasperDesign = JRXmlLoader.load(reportInputStream);
-    } else {
-      log4j.debug("Jasper report being created with strReportName.");
-      jasperDesign = JRXmlLoader.load(reportName);
-    }
-
-    JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
-
-    return jasperReport;
+    return ReportingUtils.getTranslatedJasperReport(conn, reportName, language, baseDesignPath);
   }
 
   /**
@@ -1854,6 +1872,7 @@ public class Utility {
    *          a String
    * @return true if the string can be parsed
    */
+  @SuppressWarnings("unused")
   public static boolean isBigDecimal(String str) {
     try {
       new BigDecimal(str.trim());
@@ -2259,9 +2278,6 @@ public class Utility {
    * @param logo
    *          The name of the logo to display This can be one of the following: yourcompanylogin,
    *          youritservicelogin, yourcompanymenu, yourcompanybig or yourcompanydoc
-   * @param org
-   *          The organization id used to get the logo In the case of requesting the yourcompanydoc
-   *          logo you can indicate the organization used to request the logo.
    * @return The image requested
    */
   private static String getDefaultImageLogo(String logo) {
@@ -2359,9 +2375,9 @@ public class Utility {
       float oldRatio = (float) oldW / (float) oldH;
       float newRatio = (float) newW / (float) newH;
       if (oldRatio < newRatio) {
-        newW = (int) ((float) newH * oldRatio);
+        newW = (int) (newH * oldRatio);
       } else if (oldRatio > newRatio) {
-        newH = (int) ((float) newW / oldRatio);
+        newH = (int) (newW / oldRatio);
       }
     }
     BufferedImage dimg = new BufferedImage(newW, newH, rImage.getType());

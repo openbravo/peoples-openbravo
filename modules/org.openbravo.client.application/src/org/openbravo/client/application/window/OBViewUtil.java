@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -177,13 +177,16 @@ public class OBViewUtil {
     Boolean filterOnChange = null;
     Boolean lazyFiltering = null;
     Boolean allowFkFilterByIdentifier = null;
+    Boolean showFkDropdownUnfiltered = null;
+    Boolean disableFkDropdown = null;
     String operator = null;
     Long thresholdToFilter = null;
     JSONObject result = new JSONObject();
 
     if (field != null && field.getId() != null) {
       if (canSort == null || canFilter == null || operator == null || filterOnChange == null
-          || thresholdToFilter == null || allowFkFilterByIdentifier == null) {
+          || thresholdToFilter == null || allowFkFilterByIdentifier == null
+          || showFkDropdownUnfiltered == null || disableFkDropdown == null) {
         List<Object> fieldParams = new ArrayList<Object>();
         String fieldConfsHql = " as p where p.field.id = ? ";
         fieldParams.add(field.getId());
@@ -225,6 +228,20 @@ public class OBViewUtil {
               allowFkFilterByIdentifier = false;
             }
           }
+          if (showFkDropdownUnfiltered == null) {
+            if ("Y".equals(fieldConfs.get(0).getIsFkDropdownUnfiltered())) {
+              showFkDropdownUnfiltered = true;
+            } else if ("N".equals(fieldConfs.get(0).getIsFkDropdownUnfiltered())) {
+              showFkDropdownUnfiltered = false;
+            }
+          }
+          if (disableFkDropdown == null) {
+            if ("Y".equals(fieldConfs.get(0).getDisableFkCombo())) {
+              disableFkDropdown = true;
+            } else if ("N".equals(fieldConfs.get(0).getDisableFkCombo())) {
+              disableFkDropdown = false;
+            }
+          }
           if (thresholdToFilter == null) {
             thresholdToFilter = fieldConfs.get(0).getThresholdToFilter();
           }
@@ -233,7 +250,8 @@ public class OBViewUtil {
     }
 
     if (canSort == null || canFilter == null || operator == null || filterOnChange == null
-        || thresholdToFilter == null || allowFkFilterByIdentifier == null) {
+        || thresholdToFilter == null || allowFkFilterByIdentifier == null
+        || showFkDropdownUnfiltered == null) {
       List<Object> tabParams = new ArrayList<Object>();
       String tabConfsHql = " as p where p.tab.id = ? ";
       tabParams.add(tab.getId());
@@ -282,7 +300,20 @@ public class OBViewUtil {
             allowFkFilterByIdentifier = false;
           }
         }
-
+        if (showFkDropdownUnfiltered == null) {
+          if ("Y".equals(tabConfs.get(0).getIsFkDropDownUnfiltered())) {
+            showFkDropdownUnfiltered = true;
+          } else if ("N".equals(tabConfs.get(0).getIsFkDropDownUnfiltered())) {
+            showFkDropdownUnfiltered = false;
+          }
+        }
+        if (disableFkDropdown == null) {
+          if ("Y".equals(tabConfs.get(0).getDisableFkCombo())) {
+            disableFkDropdown = true;
+          } else if ("N".equals(tabConfs.get(0).getDisableFkCombo())) {
+            disableFkDropdown = false;
+          }
+        }
         if (thresholdToFilter == null) {
           thresholdToFilter = tabConfs.get(0).getThresholdToFilter();
         }
@@ -290,7 +321,7 @@ public class OBViewUtil {
     }
 
     if (canSort == null || canFilter == null || operator == null || filterOnChange == null
-        || thresholdToFilter == null) {
+        || thresholdToFilter == null || showFkDropdownUnfiltered == null) {
       // Trying to get parameters from "Grid Configuration (System)" window
       List<GCSystem> sysConfs = OBDal.getInstance().createQuery(GCSystem.class, "").list();
       if (!sysConfs.isEmpty()) {
@@ -314,6 +345,12 @@ public class OBViewUtil {
         }
         if (allowFkFilterByIdentifier == null) {
           allowFkFilterByIdentifier = sysConfs.get(0).isAllowFilterByIdentifier();
+        }
+        if (showFkDropdownUnfiltered == null) {
+          showFkDropdownUnfiltered = sysConfs.get(0).isFkDropDownUnfiltered();
+        }
+        if (disableFkDropdown == null) {
+          disableFkDropdown = sysConfs.get(0).isDisableFkCombo();
         }
       }
     }
@@ -356,6 +393,12 @@ public class OBViewUtil {
       }
       if (allowFkFilterByIdentifier != null) {
         result.put("allowFkFilterByIdentifier", allowFkFilterByIdentifier);
+      }
+      if (showFkDropdownUnfiltered != null) {
+        result.put("showFkDropdownUnfiltered", showFkDropdownUnfiltered);
+      }
+      if (disableFkDropdown != null) {
+        result.put("disableFkDropdown", disableFkDropdown);
       }
     } catch (JSONException e) {
       log.error("Couldn't get field property value");

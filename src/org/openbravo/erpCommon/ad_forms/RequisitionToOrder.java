@@ -28,6 +28,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -551,7 +552,8 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
         } else if (!lines[i + 1].mProductId.equals(lines[i].mProductId)
             || !lines[i + 1].mAttributesetinstanceId.equals(lines[i].mAttributesetinstanceId)
             || !lines[i + 1].description.equals(lines[i].description)
-            || !lines[i + 1].priceactual.equals(lines[i].priceactual)) {
+            || !lines[i + 1].priceactual.equals(lines[i].priceactual)
+            || !StringUtils.equals(lines[i + 1].mProductUomId, lines[i].mProductUomId)) {
           insertLine = true;
           qtyOrder = qty;
           qty = new BigDecimal(0);
@@ -575,15 +577,30 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
                 + qtyAux.toString());
 
           try {
-            RequisitionToOrderData.insertCOrderline(conn, this, strCOrderlineID, vars.getClient(),
-                strOrg, vars.getUser(), strCOrderId, Integer.toString(line), strVendor,
-                RequisitionToOrderData.cBPartnerLocationId(this, strVendor), strOrderDate,
-                lines[i].needbydate, lines[i].description, lines[i].mProductId,
-                lines[i].mAttributesetinstanceId, strWarehouse, lines[i].mProductUomId,
-                lines[i].cUomId, quantityOrder.toPlainString(), qtyOrder.toPlainString(),
-                cCurrencyId, lines[i].pricelist, lines[i].priceactual, strPriceListId,
-                lines[i].pricelimit, lines[i].tax, "", lines[i].discount, lines[i].grossUnit,
-                lines[i].grossAmt);
+            RequisitionToOrderData
+                .insertCOrderline(
+                    conn,
+                    this,
+                    strCOrderlineID,
+                    vars.getClient(),
+                    strOrg,
+                    vars.getUser(),
+                    strCOrderId,
+                    Integer.toString(line),
+                    strVendor,
+                    RequisitionToOrderData.cBPartnerLocationId(this, strVendor),
+                    strOrderDate,
+                    lines[i].needbydate,
+                    lines[i].description,
+                    lines[i].mProductId,
+                    lines[i].mAttributesetinstanceId,
+                    strWarehouse,
+                    lines[i].mProductUomId,
+                    lines[i].cUomId,
+                    quantityOrder != null && BigDecimal.ZERO.compareTo(quantityOrder) != 0 ? quantityOrder
+                        .toPlainString() : "", qtyOrder.toPlainString(), cCurrencyId,
+                    lines[i].pricelist, lines[i].priceactual, strPriceListId, lines[i].pricelimit,
+                    lines[i].tax, "", lines[i].discount, lines[i].grossUnit, lines[i].grossAmt);
           } catch (ServletException ex) {
             myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
             releaseRollbackConnection(conn);

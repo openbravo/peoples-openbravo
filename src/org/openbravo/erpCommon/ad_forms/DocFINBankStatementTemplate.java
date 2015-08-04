@@ -27,7 +27,6 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.database.ConnectionProvider;
 
 public abstract class DocFINBankStatementTemplate {
-  private static final long serialVersionUID = 1L;
   static Logger log4jDocFINReconciliation = Logger.getLogger(DocFINReconciliationTemplate.class);
 
   /**

@@ -287,7 +287,9 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
     StringBuffer groupByClause = new StringBuffer();
     // Create GroupBy Clause
     if ("I".equals(transactionType)) {
+      groupByClause.append(" inv.id, ");
       groupByClause.append(" inv.documentNo, ");
+      groupByClause.append(" inv.documentType, ");
       groupByClause.append(" COALESCE(ips.finPaymentmethod.id, ops.finPaymentmethod.id), ");
       groupByClause.append(" COALESCE(ipsfp.name, opsfp.name), ");
       groupByClause.append(" COALESCE(ips.expectedDate, ops.expectedDate), ");
@@ -297,14 +299,20 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
       groupByClause.append(" oinfo.aPRMPaymentDescription, ");
       groupByClause.append(" inv.orderReference, ");
     } else if ("O".equals(transactionType)) {
+      groupByClause.append(" ord.id, ");
       groupByClause.append(" ord.documentNo, ");
+      groupByClause.append(" ord.documentType, ");
       groupByClause.append(" COALESCE(ops.finPaymentmethod.id, ips.finPaymentmethod.id), ");
       groupByClause.append(" COALESCE(opsfp.name, ipsfp.name), ");
       groupByClause.append(" COALESCE(ops.expectedDate, ips.expectedDate), ");
       groupByClause.append(" COALESCE(opriority.priority, ipriority.priority), ");
     } else {
+      groupByClause.append(" inv.id, ");
       groupByClause.append(" inv.documentNo, ");
+      groupByClause.append(" inv.documentType, ");
+      groupByClause.append(" ord.id, ");
       groupByClause.append(" ord.documentNo, ");
+      groupByClause.append(" ord.documentType, ");
       groupByClause.append(" COALESCE(ips.finPaymentmethod.id, ops.finPaymentmethod.id), ");
       groupByClause.append(" COALESCE(ipsfp.name, opsfp.name), ");
       groupByClause.append(" COALESCE(ips.expectedDate, ops.expectedDate), ");
@@ -321,10 +329,6 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
 
   /**
    * Order by selectedPSDs, scheduled date and document number
-   * 
-   * @param selectedPSDs
-   * @param transactionType
-   * @return
    */
   protected StringBuffer getOrderByClause(String transactionType, List<String> selectedPSDs,
       Map<String, String> requestParameters) {
@@ -383,13 +387,6 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
     return hqlQuery;
   }
 
-  /**
-   * @param _hqlQuery
-   * @param transactionType
-   * @param criteria
-   * @param queryNamedParameters
-   * @return
-   */
   protected String calculateHavingClause(String _hqlQuery, String transactionType,
       JSONObject criteria, Map<String, Object> queryNamedParameters) {
     String hqlQuery = _hqlQuery;
@@ -419,7 +416,10 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
             getAggregatorFunction("ord.documentNo"));
       }
       if (havingGridFilters.contains("@invoiceNo@")) {
-        havingGridFilters = havingGridFilters.replaceAll("@invoiceNo@", "inv.documentNo");
+        havingGridFilters = havingGridFilters.replaceAll("@invoiceNo@",
+            " case when (inv.salesTransaction = false and oinfo is not null"
+                + " and oinfo.aPRMPaymentDescription like 'Supplier Reference')"
+                + " then inv.orderReference else inv.documentNo end");
       }
       if (havingGridFilters.contains("@paymentMethod@")) {
         havingGridFilters = havingGridFilters.replaceAll("@paymentMethod@",
@@ -446,8 +446,11 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
         havingGridFilters = havingGridFilters.replaceAll("@salesOrderNo@", "ord.documentNo");
       }
       if (havingGridFilters.contains("@invoiceNo@")) {
+        getAggregatorFunction("inv.documentNo");
         havingGridFilters = havingGridFilters.replaceAll("@invoiceNo@",
-            getAggregatorFunction("inv.documentNo"));
+            " hqlagg(case when (inv.salesTransaction = false and oinfo is not null"
+                + " and oinfo.aPRMPaymentDescription like 'Supplier Reference')"
+                + " then inv.orderReference else inv.documentNo end)");
       }
       if (havingGridFilters.contains("@paymentMethod@")) {
         havingGridFilters = havingGridFilters.replaceAll("@paymentMethod@",
@@ -474,7 +477,10 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
         havingGridFilters = havingGridFilters.replaceAll("@salesOrderNo@", "ord.documentNo");
       }
       if (havingGridFilters.contains("@invoiceNo@")) {
-        havingGridFilters = havingGridFilters.replaceAll("@invoiceNo@", "inv.documentNo");
+        havingGridFilters = havingGridFilters.replaceAll("@invoiceNo@",
+            " case when (inv.salesTransaction = false and oinfo is not null"
+                + " and oinfo.aPRMPaymentDescription like 'Supplier Reference')"
+                + " then inv.orderReference else inv.documentNo end");
       }
       if (havingGridFilters.contains("@paymentMethod@")) {
         havingGridFilters = havingGridFilters.replaceAll("@paymentMethod@",
@@ -510,13 +516,6 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
     return hqlQuery;
   }
 
-  /**
-   * @param _hqlQuery
-   * @param transactionType
-   * @param selectedPSDs
-   * @param orderByClause
-   * @return
-   */
   protected String appendOrderByClause(String _hqlQuery, StringBuffer orderByClause,
       boolean justCount) {
     String hqlQuery = _hqlQuery;
@@ -553,10 +552,6 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
     buildCriteria.put("criteria", newCriteriaArray);
   }
 
-  /**
-   * @param expression
-   * @return
-   */
   protected String getAggregatorFunction(String expression) {
     return " hqlagg(" + expression + ")";
   }

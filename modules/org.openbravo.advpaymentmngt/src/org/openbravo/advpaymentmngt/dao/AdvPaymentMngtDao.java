@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  Enterprise Intelligence Systems (http://www.eintel.com.au).
  *************************************************************************
@@ -256,8 +256,7 @@ public class AdvPaymentMngtDao {
 
       // remove selected payments
       if (selectedScheduledPaymentDetails != null && selectedScheduledPaymentDetails.size() > 0) {
-        String strSelectedPaymentDetails = FIN_Utility
-            .getInStrList(selectedScheduledPaymentDetails);
+        String strSelectedPaymentDetails = Utility.getInStrList(selectedScheduledPaymentDetails);
         whereClause.append(" and psd not in (");
         whereClause.append(strSelectedPaymentDetails);
         whereClause.append(")");
@@ -272,7 +271,7 @@ public class AdvPaymentMngtDao {
         for (FIN_PaymentPropDetail ppd : obc.list()) {
           aux.add(ppd.getFINPaymentScheduledetail());
         }
-        whereClause.append(" and psd.id not in (" + FIN_Utility.getInStrList(aux) + ")");
+        whereClause.append(" and psd.id not in (" + Utility.getInStrList(aux) + ")");
       }
       if (!StringUtils.isEmpty(strAmountFrom)) {
         whereClause.append(" and psd.");
@@ -554,10 +553,20 @@ public class AdvPaymentMngtDao {
       paymentScheduleDetails.add(paymentScheduleDetail);
       newPaymentDetail.setFINPaymentScheduleDetailList(paymentScheduleDetails);
 
+      if (payment.getDocumentType().getDocumentSequence() != null) {
+        OBContext.getOBContext().addWritableOrganization(
+            payment.getDocumentType().getDocumentSequence().getOrganization().getId());
+      }
+
       OBDal.getInstance().save(payment);
       OBDal.getInstance().save(newPaymentDetail);
       OBDal.getInstance().save(paymentScheduleDetail);
       OBDal.getInstance().flush();
+
+      if (payment.getDocumentType().getDocumentSequence() != null) {
+        OBContext.getOBContext().removeWritableOrganization(
+            payment.getDocumentType().getDocumentSequence().getOrganization().getId());
+      }
 
       return newPaymentDetail;
     } finally {
@@ -1886,8 +1895,14 @@ public class AdvPaymentMngtDao {
   }
 
   public BigDecimal getCustomerCredit(BusinessPartner bp, boolean isReceipt, Organization Org) {
+    return getCustomerCredit(bp, isReceipt, Org, null);
+  }
+
+  public BigDecimal getCustomerCredit(BusinessPartner bp, boolean isReceipt, Organization Org,
+      Currency currency) {
     BigDecimal creditAmount = BigDecimal.ZERO;
-    for (FIN_Payment payment : getCustomerPaymentsWithCredit(Org, bp, isReceipt))
+    List<FIN_Payment> paymentList = getCustomerPaymentsWithCredit(Org, bp, isReceipt, currency);
+    for (FIN_Payment payment : paymentList)
       creditAmount = creditAmount.add(payment.getGeneratedCredit()).subtract(
           payment.getUsedCredit());
     return creditAmount;
@@ -1914,6 +1929,15 @@ public class AdvPaymentMngtDao {
    */
   public List<FIN_Payment> getCustomerPaymentsWithCredit(Organization org, BusinessPartner bp,
       boolean isReceipt) {
+    return getCustomerPaymentsWithCredit(org, bp, isReceipt, null);
+  }
+
+  /**
+   * Returns the list of credit payments for the selected business partner that belongs to the legal
+   * entity's natural tree of the given organization
+   */
+  public List<FIN_Payment> getCustomerPaymentsWithCredit(Organization org, BusinessPartner bp,
+      boolean isReceipt, Currency currency) {
 
     try {
       OBContext.setAdminMode(true);
@@ -1927,6 +1951,9 @@ public class AdvPaymentMngtDao {
       Set<String> orgIds = OBContext.getOBContext().getOrganizationStructureProvider()
           .getChildTree(legalEntity.getId(), true);
       obcPayment.add(Restrictions.in("organization.id", orgIds));
+      if (currency != null) {
+        obcPayment.add(Restrictions.eq(FIN_Payment.PROPERTY_CURRENCY, currency));
+      }
       obcPayment.addOrderBy(FIN_Payment.PROPERTY_PAYMENTDATE, true);
       obcPayment.addOrderBy(FIN_Payment.PROPERTY_DOCUMENTNO, true);
 

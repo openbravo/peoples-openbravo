@@ -262,7 +262,7 @@ public class DynamicExpressionParser {
    * 
    * If the value is enclosed between brackets, it is extracted, translated and enclosed again
    * 
-   * @see DynamicExpressionParserTest
+   * There is a junit test in the class: DynamicExpressionParserTest
    * 
    * @param value
    *          A string expression like <b>'Y'</b>

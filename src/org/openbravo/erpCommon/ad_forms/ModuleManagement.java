@@ -334,9 +334,6 @@ public class ModuleManagement extends HttpSecureAppServlet {
   /**
    * Returns an HTML with the available notifications which can be: *Unapplied changes: rebuild
    * system *Available updates: install them
-   * 
-   * @param lang
-   * @return
    */
   private JSONObject getNotificationsJSON(String lang) {
     String updatesRebuildHTML = "";
@@ -1251,13 +1248,13 @@ public class ModuleManagement extends HttpSecureAppServlet {
         if (!islocal) {
           if (module != null
               && !Integer.toString(MaturityLevel.CS_MATURITY).equals(
-                  (String) module.getAdditionalInfo().get("maturity.level"))) {
+                  module.getAdditionalInfo().get("maturity.level"))) {
             discard[6] = "";
           } else {
             if (inst != null) {
               for (Module m : inst) {
                 if (!Integer.toString(MaturityLevel.CS_MATURITY).equals(
-                    (String) m.getAdditionalInfo().get("maturity.level"))) {
+                    m.getAdditionalInfo().get("maturity.level"))) {
                   discard[6] = "";
                 }
               }
@@ -1265,7 +1262,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
             if (upd != null) {
               for (Module m : upd) {
                 if (!Integer.toString(MaturityLevel.CS_MATURITY).equals(
-                    (String) m.getAdditionalInfo().get("maturity.level"))) {
+                    m.getAdditionalInfo().get("maturity.level"))) {
                   discard[6] = "";
                 }
               }
@@ -1387,7 +1384,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
 
       if (!check
           || Integer.toString(MaturityLevel.CS_MATURITY).equals(
-              (String) module.getAdditionalInfo().get("maturity.level"))) {
+              module.getAdditionalInfo().get("maturity.level"))) {
         xmlDocument.setParameter("maturityStyle", "none");
       } else {
         xmlDocument.setParameter("maturityStyle", "yes");
@@ -1459,7 +1456,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
 
       if (!islocal) {
         if (Integer.toString(MaturityLevel.CS_MATURITY).equals(
-            (String) module.getAdditionalInfo().get("maturity.level"))) {
+            module.getAdditionalInfo().get("maturity.level"))) {
           mod.put("maturityStyle", "none");
         } else {
           mod.put("maturityStyle", "yes");
@@ -1839,12 +1836,6 @@ public class ModuleManagement extends HttpSecureAppServlet {
   /**
    * Executes a search query in the web service and returns a HTML with the list of modules
    * retrieved from the query. This list is HTML with styles.
-   * 
-   * @param request
-   * @param response
-   * @param vars
-   * @param text
-   * @return
    */
   private String getSearchResults(HttpServletRequest request, HttpServletResponse response,
       VariablesSecureApp vars, String text) {
@@ -1939,8 +1930,6 @@ public class ModuleManagement extends HttpSecureAppServlet {
   /**
    * Returns String[] with the installed modules, this is used for perform the search in the
    * webservice and not to obtain in the list the already installed ones.
-   * 
-   * @return
    */
   private String[] getInstalledModules() {
     try {
@@ -2189,7 +2178,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
         // Save enforcement
         String warnMsg = "";
         for (Enumeration<String> e = request.getParameterNames(); e.hasMoreElements();) {
-          String parameter = (String) e.nextElement();
+          String parameter = e.nextElement();
           if (parameter.startsWith("inpEnforcement")) {
             String depId = parameter.replace("inpEnforcement", "");
             String value = vars.getStringParameter(parameter);

@@ -229,15 +229,9 @@ public class FIN_Utility {
    *          List of OBObjects
    * @return Comma separated string of Id's
    */
+  @Deprecated
   public static <T extends BaseOBObject> String getInStrList(List<T> obObjectList) {
-    StringBuilder strInList = new StringBuilder();
-    for (T obObject : obObjectList) {
-      if (strInList.length() == 0)
-        strInList.append("'" + obObject.getId() + "'");
-      else
-        strInList.append(", '" + obObject.getId() + "'");
-    }
-    return strInList.toString();
+    return Utility.getInStrList(obObjectList);
   }
 
   /**
@@ -289,10 +283,6 @@ public class FIN_Utility {
     DocumentType outDocType = null;
     Client client = null;
 
-    OBCriteria<DocumentType> obcDoc = OBDal.getInstance().createCriteria(DocumentType.class);
-    obcDoc.setFilterOnReadableClients(false);
-    obcDoc.setFilterOnReadableOrganization(false);
-
     if ("0".equals(org.getId())) {
       client = OBContext.getOBContext().getCurrentClient();
       if ("0".equals(client.getId())) {
@@ -301,18 +291,29 @@ public class FIN_Utility {
     } else {
       client = org.getClient();
     }
-    obcDoc.add(Restrictions.eq(DocumentType.PROPERTY_CLIENT, client));
 
-    obcDoc
-        .add(Restrictions.in("organization.id",
-            OBContext.getOBContext().getOrganizationStructureProvider(org.getClient().getId())
-                .getParentTree(org.getId(), true)));
-    obcDoc.add(Restrictions.eq(DocumentType.PROPERTY_DOCUMENTCATEGORY, docCategory));
-    obcDoc.addOrderBy(DocumentType.PROPERTY_DEFAULT, false);
-    obcDoc.addOrderBy(DocumentType.PROPERTY_ID, false);
-    List<DocumentType> docTypeList = obcDoc.list();
-    if (docTypeList != null && docTypeList.size() > 0) {
-      outDocType = docTypeList.get(0);
+    OBContext.setAdminMode(false);
+    try {
+      StringBuilder whereOrderByClause = new StringBuilder();
+      whereOrderByClause.append(" as dt where dt.organization.id in (");
+      whereOrderByClause.append(Utility.getInStrSet(new OrganizationStructureProvider()
+          .getParentTree(org.getId(), true)));
+      whereOrderByClause.append(") and dt.client.id = '" + client.getId()
+          + "' and dt.documentCategory = '" + docCategory + "' order by ad_isorgincluded('"
+          + org.getId() + "', dt.organization.id, '" + client.getId()
+          + "') , dt.default desc, dt.id desc");
+      OBQuery<DocumentType> dt = OBDal.getInstance().createQuery(DocumentType.class,
+          whereOrderByClause.toString());
+      dt.setFilterOnReadableClients(false);
+      dt.setFilterOnReadableOrganization(false);
+      dt.setMaxResult(1);
+
+      List<DocumentType> dtList = dt.list();
+      if (dtList != null && !dtList.isEmpty()) {
+        outDocType = dtList.get(0);
+      }
+    } finally {
+      OBContext.restorePreviousMode();
     }
     return outDocType;
   }
@@ -1065,7 +1066,7 @@ public class FIN_Utility {
       invoiceDocNo = invoice.getDocumentNo();
 
       final String paymentDescription = OBDal.getInstance()
-          .get(OrganizationInformation.class, ((String) DalUtil.getId(organization)))
+          .get(OrganizationInformation.class, (DalUtil.getId(organization)))
           .getAPRMPaymentDescription();
       // In case of a purchase invoice and the Supplier Reference is selected use Reference
       if (paymentDescription.equals("Supplier Reference") && !invoice.isSalesTransaction()) {
@@ -1251,7 +1252,6 @@ public class FIN_Utility {
 
   public static boolean periodControlOpened(String tableName, String recordId, String idColumnName,
       String orgType) {
-    final Session session = OBDal.getInstance().getSession();
 
     List<Object> parameters = new ArrayList<Object>();
     parameters.add(tableName);
@@ -1261,7 +1261,7 @@ public class FIN_Utility {
     Object result = CallStoredProcedure.getInstance().call("ad_get_doc_le_bu", parameters, null,
         false, true);
 
-    Organization org = OBDal.getInstance().get(Organization.class, (String) result);
+    Organization org = OBDal.getInstance().get(Organization.class, result);
 
     return org.getOrganizationType().isLegalEntityWithAccounting();
   }

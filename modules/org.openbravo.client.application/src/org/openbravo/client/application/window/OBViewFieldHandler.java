@@ -895,7 +895,6 @@ public class OBViewFieldHandler {
     private String displaylogicgrid = "";
 
     private int gridSort = 0;
-    private String id;
 
     public String getOnChangeFunction() {
       return field.getOnChangeFunction();

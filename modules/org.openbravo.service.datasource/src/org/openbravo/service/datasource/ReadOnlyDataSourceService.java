@@ -45,8 +45,6 @@ import org.openbravo.service.json.JsonUtils;
 public abstract class ReadOnlyDataSourceService extends DefaultDataSourceService {
   private static final Logger log = Logger.getLogger(ReadOnlyDataSourceService.class);
 
-  private static final long serialVersionUID = 1L;
-
   /*
    * (non-Javadoc)
    * 

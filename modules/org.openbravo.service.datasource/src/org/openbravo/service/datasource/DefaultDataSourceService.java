@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,7 +27,6 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.model.Entity;
-import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.model.domaintype.DateDomainType;
 import org.openbravo.base.model.domaintype.DatetimeDomainType;
@@ -57,7 +56,6 @@ import org.openbravo.service.json.JsonConstants;
  * @author mtaal
  */
 public class DefaultDataSourceService extends BaseDataSourceService {
-  private static final long serialVersionUID = 1L;
   private static final Logger log4j = Logger.getLogger(DefaultDataSourceService.class);
 
   /*
@@ -66,10 +64,15 @@ public class DefaultDataSourceService extends BaseDataSourceService {
    * @see org.openbravo.service.datasource.DataSource#fetch(java.util.Map)
    */
   public String fetch(Map<String, String> parameters) {
-    OBContext.setAdminMode(true);
+    return fetch(parameters, true);
+  }
+
+  protected String fetch(Map<String, String> parameters, boolean shouldFilterOnRedeableOrganizations) {
+    OBContext.setAdminMode(shouldFilterOnRedeableOrganizations);
     try {
       addFetchParameters(parameters);
-      return DefaultJsonDataService.getInstance().fetch(parameters);
+      return DefaultJsonDataService.getInstance().fetch(parameters,
+          shouldFilterOnRedeableOrganizations);
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -107,7 +110,7 @@ public class DefaultDataSourceService extends BaseDataSourceService {
         && parameters.containsKey(JsonConstants.TARGETRECORDID_PARAMETER)) {
       final String parentProperty = parameters.get(JsonConstants.FILTERBYPARENTPROPERTY_PARAMETER);
       final BaseOBObject bob = OBDal.getInstance().get(getEntity().getName(),
-          (String) parameters.get(JsonConstants.TARGETRECORDID_PARAMETER));
+          parameters.get(JsonConstants.TARGETRECORDID_PARAMETER));
 
       // a special case, a child tab actually displays the parent record
       // but a different set of information of that record
@@ -115,7 +118,7 @@ public class DefaultDataSourceService extends BaseDataSourceService {
       if (bob.getId().equals(bob.get(parentProperty))) {
         parentId = (String) bob.getId();
       } else {
-        parentId = (String) DalUtil.getId((BaseOBObject) bob.get(parentProperty));
+        parentId = (String) DalUtil.getId(bob.get(parentProperty));
       }
 
       final String whereClause;
@@ -139,7 +142,12 @@ public class DefaultDataSourceService extends BaseDataSourceService {
    */
   @Override
   public String remove(Map<String, String> parameters) {
-    OBContext.setAdminMode(true);
+    return remove(parameters, true);
+  }
+
+  protected String remove(Map<String, String> parameters,
+      boolean shouldFilterOnRedeableOrganizations) {
+    OBContext.setAdminMode(shouldFilterOnRedeableOrganizations);
     try {
       parameters.put(JsonConstants.ENTITYNAME, getEntity().getName());
       return DefaultJsonDataService.getInstance().remove(parameters);
@@ -155,7 +163,12 @@ public class DefaultDataSourceService extends BaseDataSourceService {
    */
   @Override
   public String add(Map<String, String> parameters, String content) {
-    OBContext.setAdminMode(true);
+    return add(parameters, content, true);
+  }
+
+  protected String add(Map<String, String> parameters, String content,
+      boolean shouldFilterOnRedeableOrganizations) {
+    OBContext.setAdminMode(shouldFilterOnRedeableOrganizations);
     try {
       parameters.put(JsonConstants.ENTITYNAME, getEntity().getName());
       testAccessPermissions(parameters, content);
@@ -238,7 +251,6 @@ public class DefaultDataSourceService extends BaseDataSourceService {
                   + "          and exists (from ADWindowAccess wa where f.tab.window = wa.window and wa.role.id = :roleId and wa.editableField = false and wa.active = true)))");
       fieldQuery.setNamedParameter("tabId", tab.getId());
       fieldQuery.setNamedParameter("roleId", roleId);
-      final Entity entity = ModelProvider.getInstance().getEntity(entityName);
       for (Field f : fieldQuery.list()) {
         String key = KernelUtils.getProperty(f).getName();
         if (data.has(key)) {

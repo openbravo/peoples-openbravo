@@ -60,7 +60,6 @@ import org.xml.sax.InputSource;
  * 
  */
 public class TranslationManager {
-  private static final long serialVersionUID = 1L;
 
   /** XML Element Tag */
   static final String XML_TAG = "compiereTrl";

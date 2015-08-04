@@ -28,13 +28,16 @@ import org.openbravo.test.datasource.FKDropDownDatasource;
 import org.openbravo.test.datasource.HQLDataSourceTest;
 import org.openbravo.test.datasource.ProductSelectorDataSourceTest;
 import org.openbravo.test.datasource.SelectorFieldPropertySelectorDSTest;
+import org.openbravo.test.datasource.TestAllowUnpagedDatasourcePreference;
 import org.openbravo.test.datasource.TestCSVEncoding;
 import org.openbravo.test.datasource.TestComboDatasource;
+import org.openbravo.test.datasource.TestNoteDatasource;
 import org.openbravo.test.webservice.JSONWebServices;
 import org.openbravo.test.webservice.PerformanceTest;
 import org.openbravo.test.webservice.WSAddRecordWithComputedColumns;
 import org.openbravo.test.webservice.WSReadTest;
 import org.openbravo.test.webservice.WSUpdateTest;
+import org.openbravo.test.webservice.WebServicesWithNoActiveFilterTest;
 
 /**
  * This test suite should only contain test cases which are to run the webservices included in core.
@@ -57,7 +60,10 @@ WSReadTest.class, //
     JSONWebServices.class, //
     FICTest.class, //
     HQLDataSourceTest.class, //
+    TestAllowUnpagedDatasourcePreference.class, //
+    TestNoteDatasource.class, //
     TestCosting.class, //
+    WebServicesWithNoActiveFilterTest.class, //
     ExtendedNavigationModelTest.class })
 public class AllWebserviceTests {
 }

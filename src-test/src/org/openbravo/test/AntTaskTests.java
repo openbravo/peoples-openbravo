@@ -21,6 +21,7 @@ package org.openbravo.test;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
+import org.openbravo.base.weld.test.testinfrastructure.CdiInfrastructure;
 import org.openbravo.erpCommon.info.ClassicSelectorTest;
 import org.openbravo.test.dal.ComputedColumnsTest;
 import org.openbravo.test.dal.DalComplexQueryRequisitionTest;
@@ -54,6 +55,8 @@ import org.openbravo.test.security.AllowedOrganizationsTest;
 import org.openbravo.test.security.EntityAccessTest;
 import org.openbravo.test.security.WritableReadableOrganizationClientTest;
 import org.openbravo.test.system.ErrorTextParserTest;
+import org.openbravo.test.system.ImportEntrySizeTest;
+import org.openbravo.test.system.Issue29934Test;
 import org.openbravo.test.system.SystemServiceTest;
 import org.openbravo.test.system.SystemValidatorTest;
 import org.openbravo.test.system.TestInfrastructure;
@@ -124,6 +127,8 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     SystemValidatorTest.class, //
     ErrorTextParserTest.class, //
     TestInfrastructure.class, //
+    Issue29934Test.class, //
+    ImportEntrySizeTest.class, //
 
     // xml
     EntityXMLImportTestBusinessObject.class, //
@@ -134,6 +139,11 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     UniqueConstraintImportTest.class, //
     DatasetExportTest.class, //
     DefaultsDataset.class, //
-    ClassicSelectorTest.class, })
+    ClassicSelectorTest.class,
+
+    // cdi
+    CdiInfrastructure.class,
+
+})
 public class AntTaskTests {
 }

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,7 +22,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.log4j.Logger;
@@ -30,8 +32,10 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.ad_forms.UpdateReferenceDataData;
 import org.openbravo.erpCommon.modules.ModuleUtiltiy;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.RoleOrganization;
 import org.openbravo.model.ad.access.User;
@@ -43,6 +47,7 @@ import org.openbravo.model.ad.utility.DataSet;
 import org.openbravo.model.ad.utility.TableTree;
 import org.openbravo.model.ad.utility.Tree;
 import org.openbravo.model.common.currency.Currency;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.db.ImportResult;
 import org.openbravo.utils.FormatUtilities;
 
@@ -54,7 +59,6 @@ import org.openbravo.utils.FormatUtilities;
 
 public class InitialClientSetup {
   private static final Logger log4j = Logger.getLogger(InitialClientSetup.class);
-  private static final long serialVersionUID = 1L;
   private static final String NEW_LINE = "<br />\n";
   private static final String STRMESSAGEOK = "Success";
   private static final String STRMESSAGEERROR = "Error";
@@ -299,7 +303,7 @@ public class InitialClientSetup {
             log4j.debug("insertTrees() - Saved menu tree.");
           }
         } else {
-          String tableTreeName = (String) tableTree.getName();
+          String tableTreeName = tableTree.getName();
           String treeTypeName = null;
           if (tableTree.getTable().getTreeType() != null) {
             treeTypeName = tableTree.getTable().getTreeType();
@@ -650,21 +654,27 @@ public class InitialClientSetup {
     log4j.debug("insertReferenceDataModules() - Starting client creation.");
     OBError obeResult = new OBError();
     obeResult.setType(STRMESSAGEOK);
-    ArrayList<String> strModules = new ArrayList<String>();
 
-    for (Module module : refDataModules)
-      strModules.add(module.getId());
-
+    UpdateReferenceDataData[] data;
     try {
-      strModules = new ArrayList<String>(ModuleUtiltiy.orderByDependency(strModules));
+      final String strModules = Utility.getInStrList(refDataModules, true);
+
+      data = UpdateReferenceDataData.selectModules(new DalConnectionProvider(false), strModules,
+          "0");
+      ModuleUtiltiy.orderModuleByDependency(data);
     } catch (Exception e) {
       return logErrorAndRollback("@CreateReferenceDataFailed@",
           "insertReferenceDataModules() - Exception ocurred while "
               + "sorting reference data modules by dependencies", e);
     }
 
-    for (int i = 0; i < strModules.size(); i++) {
-      String strModuleId = strModules.get(i);
+    final Set<String> alreadyAppliedModules = new HashSet<String>();
+    for (int i = 0; i < data.length; i++) {
+      String strModuleId = data[i].adModuleId;
+      if (alreadyAppliedModules.contains(strModuleId)) {
+        continue;
+      }
+
       Module module = null;
       for (int j = 0; j < refDataModules.size(); j++)
         if (refDataModules.get(j).getId().equals(strModuleId))
@@ -731,6 +741,7 @@ public class InitialClientSetup {
         elements = iResult.getUpdatedObjects();
         logEvent(elements.size() + " @RowsUpdated@");
       }
+      alreadyAppliedModules.add(strModuleId);
     }
     return obeResult;
   }

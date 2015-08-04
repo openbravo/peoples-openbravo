@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -67,20 +67,24 @@ public class LandedCostDistributionByAmount extends LandedCostDistributionAlgori
     critLCRL.add(Restrictions.eq(LCReceipt.PROPERTY_LANDEDCOST, landedCost));
     ScrollableResults receiptCosts = getReceiptCosts(landedCost, false);
     int i = 0;
-    while (receiptCosts.next()) {
-      String strTrxCur = (String) receiptCosts.get()[2];
-      BigDecimal trxAmt = (BigDecimal) receiptCosts.get()[3];
-      if (!strTrxCur.equals(strCurId)) {
-        trxAmt = getConvertedAmount(trxAmt, strTrxCur, strCurId, dateReference, strOrgId);
-      }
+    try {
+      while (receiptCosts.next()) {
+        String strTrxCur = (String) receiptCosts.get()[2];
+        BigDecimal trxAmt = (BigDecimal) receiptCosts.get()[3];
+        if (!strTrxCur.equals(strCurId)) {
+          trxAmt = getConvertedAmount(trxAmt, strTrxCur, strCurId, dateReference, strOrgId);
+        }
 
-      totalAmt = totalAmt.add(trxAmt);
+        totalAmt = totalAmt.add(trxAmt);
 
-      if (i % 100 == 0) {
-        OBDal.getInstance().flush();
-        OBDal.getInstance().getSession().clear();
+        if (i % 100 == 0) {
+          OBDal.getInstance().flush();
+          OBDal.getInstance().getSession().clear();
+        }
+        i++;
       }
-      i++;
+    } finally {
+      receiptCosts.close();
     }
 
     BigDecimal pendingAmt = baseAmt;
@@ -89,7 +93,7 @@ public class LandedCostDistributionByAmount extends LandedCostDistributionAlgori
     i = 0;
     while (receiptCosts.next()) {
       ShipmentInOutLine receiptline = OBDal.getInstance().get(ShipmentInOutLine.class,
-          (String) receiptCosts.get()[1]);
+          receiptCosts.get()[1]);
       String strTrxCurId = (String) receiptCosts.get()[2];
       BigDecimal trxAmt = (BigDecimal) receiptCosts.get()[3];
 
@@ -106,7 +110,7 @@ public class LandedCostDistributionByAmount extends LandedCostDistributionAlgori
       }
       pendingAmt = pendingAmt.subtract(receiptAmt);
       LCReceipt lcrl = (LCReceipt) OBDal.getInstance().getProxy(LCReceipt.ENTITY_NAME,
-          (String) receiptCosts.get()[0]);
+          receiptCosts.get()[0]);
       LCReceiptLineAmt lcrla = OBProvider.getInstance().get(LCReceiptLineAmt.class);
       lcrla.setLandedCostCost((LandedCostCost) OBDal.getInstance().getProxy(
           LandedCostCost.ENTITY_NAME, lcCost.getId()));
@@ -137,6 +141,7 @@ public class LandedCostDistributionByAmount extends LandedCostDistributionAlgori
     qry.append("   join trx." + MaterialTransaction.PROPERTY_GOODSSHIPMENTLINE + " as iol");
     qry.append(" , " + LCReceipt.ENTITY_NAME + " as lcr");
     qry.append(" where tc." + CostAdjustmentLine.PROPERTY_UNITCOST + " = true");
+    qry.append(" and iol." + ShipmentInOutLine.PROPERTY_MOVEMENTQUANTITY + " >= 0");
     qry.append("   and ((lcr." + LCReceipt.PROPERTY_GOODSSHIPMENTLINE + " is not null");
     qry.append("        and lcr." + LCReceipt.PROPERTY_GOODSSHIPMENTLINE + " = iol)");
     qry.append("         or (lcr." + LCReceipt.PROPERTY_GOODSSHIPMENTLINE + " is null");

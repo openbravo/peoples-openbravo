@@ -90,8 +90,6 @@ class ConfigureOption {
 
   /**
    * This function setChosenString() set a choose string option.
-   * 
-   * @param String
    */
   void setChosenString(String line) {
     chosenString = line;

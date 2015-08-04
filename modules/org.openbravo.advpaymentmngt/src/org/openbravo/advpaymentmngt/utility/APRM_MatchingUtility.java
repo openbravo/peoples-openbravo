@@ -40,6 +40,7 @@ import org.openbravo.advpaymentmngt.dao.MatchTransactionDao;
 import org.openbravo.advpaymentmngt.dao.TransactionsDao;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
 import org.openbravo.advpaymentmngt.process.FIN_ReconciliationProcess;
+import org.openbravo.advpaymentmngt.process.FIN_TransactionProcess;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -76,7 +77,6 @@ import org.openbravo.model.marketing.Campaign;
 import org.openbravo.model.materialmgmt.cost.ABCActivity;
 import org.openbravo.model.project.Project;
 import org.openbravo.model.sales.SalesRegion;
-import org.openbravo.scheduling.OBScheduler;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -525,7 +525,7 @@ public class APRM_MatchingUtility {
     parameters.put("Fin_FinAcc_Transaction_ID", transaction.getId());
     pb.setParams(parameters);
     OBError myMessage = null;
-    OBScheduler.getInstance().schedule(pb);
+    new FIN_TransactionProcess().execute(pb);
     myMessage = (OBError) pb.getResult();
     return myMessage;
   }

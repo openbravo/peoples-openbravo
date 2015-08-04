@@ -47,8 +47,6 @@ import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 
 public class DocFINBankStatement extends AcctServer {
 
-  private static final long serialVersionUID = 1L;
-
   String SeqNo = "0";
   BigDecimal totalAmount = BigDecimal.ZERO;
 

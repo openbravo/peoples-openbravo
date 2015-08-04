@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -435,7 +435,7 @@ public class KernelUtils {
     }
     List<Tab> subTabList = new ArrayList<Tab>();
     for (int i = 0; i < tabIds.length; i++) {
-      String tabId = ((KernelUtilsData) tabIds[i]).adTabId;
+      String tabId = tabIds[i].adTabId;
       Tab subTab = OBDal.getInstance().get(Tab.class, tabId);
       subTabList.add(subTab);
     }
@@ -453,9 +453,15 @@ public class KernelUtils {
 
   /**
    * Compute the property from the field, assuming that the field is defined on the basis of entity.
+   *
+   * @return The property associated to this field, <code>null</code> if the field is not associated
+   *         to any property or column
    */
   public static Property getProperty(Entity entity, org.openbravo.model.ad.ui.Field field) {
     if (field.getProperty() == null) {
+      if (field.getColumn() == null) {
+        return null;
+      }
       return entity.getPropertyByColumnName(field.getColumn().getDBColumnName());
     }
     return DalUtil.getPropertyFromPath(entity, field.getProperty());

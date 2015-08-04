@@ -61,6 +61,14 @@
         <default><![CDATA[Y]]></default>
         <onCreateDefault><![CDATA['Y']]></onCreateDefault>
       </column>
+      <column name="ISFKDROPDOWNUNFILTERED" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="DISABLEFKCOMBO" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="OBUIAPP_GC_SYSTEM_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -70,9 +78,11 @@
       <unique name="OBUIAPP_GC_SYS_UNIQUE_CLIENT">
         <unique-column name="AD_CLIENT_ID"/>
       </unique>
+      <check name="OBUIAPP_GC_SYS_DISCOMBO_CHK"><![CDATA[DISABLEFKCOMBO IN ('Y', 'N')]]></check>
       <check name="OBUIAPP_GC_SYS_ISFILT_CHK"><![CDATA[ISFILTERABLE IN ('Y', 'N')]]></check>
       <check name="OBUIAPP_GC_SYS_ISLAZY_CHK"><![CDATA[ISLAZYFILTERING IN ('Y', 'N')]]></check>
       <check name="OBUIAPP_GC_SYS_ISSORT_CHK"><![CDATA[ISSORTABLE IN ('Y', 'N')]]></check>
       <check name="OBUIAPP_GC_SYS_ONCHNG_CHK"><![CDATA[FILTERONCHANGE IN ('Y', 'N')]]></check>
+      <check name="OBUIAPP_GC_SYS_UNFILTDD_CHK"><![CDATA[ISFKDROPDOWNUNFILTERED IN ('Y', 'N')]]></check>
     </table>
   </database>

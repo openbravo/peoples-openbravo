@@ -205,32 +205,32 @@ public class WADNumber extends WADControl {
     }
   }
 
-  private boolean isDecimalNumber(String reference) {
+  private static boolean isDecimalNumber(String reference) {
     if (reference == null || reference.equals(""))
       return false;
     return (reference.equals("12") || reference.equals("22"));
   }
 
-  private boolean isGeneralNumber(String reference) {
+  private static boolean isGeneralNumber(String reference) {
     if (reference == null || reference.equals(""))
       return false;
     return reference.equals("800019");
   }
 
-  private boolean isQtyNumber(String reference) {
+  private static boolean isQtyNumber(String reference) {
     if (reference == null || reference.equals(""))
       return false;
     return reference.equals("29");
   }
 
-  private boolean isPriceNumber(String reference) {
+  private static boolean isPriceNumber(String reference) {
     if (reference == null || reference.equals(""))
       return false;
     return reference.equals("800008");
 
   }
 
-  private boolean isIntegerNumber(String reference) {
+  private static boolean isIntegerNumber(String reference) {
     if (reference == null || reference.equals(""))
       return false;
     return reference.equals("11");

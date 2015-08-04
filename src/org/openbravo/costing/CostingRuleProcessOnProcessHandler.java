@@ -11,23 +11,22 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
  */
 package org.openbravo.costing;
 
-import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
-import org.hibernate.Session;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
@@ -38,8 +37,6 @@ import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.plm.Product;
-import org.openbravo.model.financialmgmt.calendar.Period;
-import org.openbravo.model.financialmgmt.calendar.PeriodControl;
 import org.openbravo.model.materialmgmt.cost.CostingRule;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -110,44 +107,22 @@ public class CostingRuleProcessOnProcessHandler extends BaseActionHandler {
 
   private Date checkTransactionsWithMovDateInClosedPeriod(Set<String> naturalOrgs,
       Set<String> childOrgs, CostingRule rule) {
-    StringBuilder hql = new StringBuilder();
-    final Session session = OBDal.getInstance().getSession();
-    hql.append(" select min(trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + ")");
-    hql.append(" from " + MaterialTransaction.ENTITY_NAME + " as trx");
-    hql.append(" join trx." + MaterialTransaction.PROPERTY_PRODUCT + " as p");
-    hql.append("\n where trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = false");
-    hql.append("   and p." + Product.PROPERTY_PRODUCTTYPE + " = 'I'");
-    hql.append("   and p." + Product.PROPERTY_STOCKED + " = true");
-    hql.append("  and p." + Product.PROPERTY_ORGANIZATION + ".id in (:porgs)");
-    hql.append("   and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " >= :startingDate");
-    hql.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:childOrgs)");
-    hql.append("   and exists");
-    hql.append("     (select 1 from " + PeriodControl.ENTITY_NAME + " pc");
-    hql.append("       inner join  pc." + PeriodControl.PROPERTY_PERIOD + " p");
-    hql.append("       where " + PeriodControl.PROPERTY_PERIODSTATUS + " <>'O'");
-    hql.append("       and p." + Period.PROPERTY_CLIENT + "= :client");
-    hql.append("       and pc." + PeriodControl.PROPERTY_ORGANIZATION + "= :org");
-    hql.append("       and to_date(trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE
-        + ") >= p.startingDate");
-    hql.append("       and to_date(trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE
-        + ") < p.endingDate + 1)");
-
-    final Query query = session.createQuery(hql.toString());
-
-    query.setParameterList("porgs", naturalOrgs);
-    query.setParameter("startingDate", CostingUtils.getCostingRuleStartingDate(rule));
-    query.setParameterList("childOrgs", childOrgs);
-    query.setParameter("client", rule.getClient());
-    query.setParameter("org", rule.getOrganization());
-
+    CostingUtilsData[] data = null;
     Date movementDateInPeriodClosed = null;
     try {
-      movementDateInPeriodClosed = (Date) query.uniqueResult();
-      if (movementDateInPeriodClosed != null) {
-        movementDateInPeriodClosed = OBDateUtils.getDate(OBDateUtils
-            .formatDate(movementDateInPeriodClosed));
+      String strDateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+          .getProperty("dateFormat.java");
+      final SimpleDateFormat dateFormat = new SimpleDateFormat(strDateFormat);
+      String strDateFrom = dateFormat.format(CostingUtils.getCostingRuleStartingDate(rule));
+
+      data = CostingUtilsData.selectTransactionsInClosedPeriod(new DalConnectionProvider(false),
+          Utility.getInStrSet(naturalOrgs), strDateFrom, Utility.getInStrSet(childOrgs), rule
+              .getClient().getId(), rule.getOrganization().getId());
+
+      if (data != null && data.length > 0) {
+        movementDateInPeriodClosed = OBDateUtils.getDate(data[0].mindatemovement);
       }
-    } catch (ParseException e) {
+    } catch (Exception e) {
       log4j.error("Error executing process", e);
     }
 
@@ -166,7 +141,7 @@ public class CostingRuleProcessOnProcessHandler extends BaseActionHandler {
     crQry.setFilterOnReadableOrganization(false);
     crQry.setNamedParameter("ruleOrg", rule.getOrganization());
     crQry.setMaxResult(1);
-    return (CostingRule) crQry.uniqueResult();
+    return crQry.uniqueResult();
   }
 
   private boolean existsTransactions(Set<String> naturalOrgs, Set<String> childOrgs) {
@@ -186,4 +161,5 @@ public class CostingRuleProcessOnProcessHandler extends BaseActionHandler {
     pQry.setNamedParameter("childOrgs", childOrgs);
     return pQry.count() > 0;
   }
+
 }

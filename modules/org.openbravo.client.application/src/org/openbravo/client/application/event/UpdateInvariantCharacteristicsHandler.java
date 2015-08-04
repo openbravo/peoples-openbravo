@@ -69,7 +69,7 @@ public class UpdateInvariantCharacteristicsHandler extends BaseActionHandler {
       final String action = request.getString("action");
 
       if ("INITIALIZE".equals(action)) {
-        String productId = (String) request.getString("productId");
+        String productId = request.getString("productId");
         Product product = OBDal.getInstance().get(Product.class, productId);
 
         // Retrieves all the product invariant characteristics
@@ -120,7 +120,7 @@ public class UpdateInvariantCharacteristicsHandler extends BaseActionHandler {
         response.put("productId", productId);
         return response;
       } else {
-        String productId = (String) request.getString("productId");
+        String productId = request.getString("productId");
         Product product = OBDal.getInstance().get(Product.class, productId);
         final JSONObject updatedValues = request.getJSONObject("updatedValues");
         final JSONObject existingProdChValues = request.getJSONObject("existingProdChValues");

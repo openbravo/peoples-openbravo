@@ -21,7 +21,19 @@ package org.openbravo.test;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
+import org.openbravo.base.weld.test.testinfrastructure.CdiInfrastructure;
+import org.openbravo.base.weld.test.testinfrastructure.DalPersistanceEventTest;
+import org.openbravo.base.weld.test.testinfrastructure.ParameterizedCdi;
+import org.openbravo.client.application.test.ApplicationTest;
+import org.openbravo.client.application.test.DynamicExpressionParserTest;
+import org.openbravo.client.application.test.GenerateTypesJSTest;
+import org.openbravo.client.application.test.MenuTemplateTest;
+import org.openbravo.client.application.test.MenuTest;
+import org.openbravo.client.kernel.freemarker.test.FreemarkerTemplateProcessorTest;
+import org.openbravo.client.kernel.freemarker.test.GenerateComponentTest;
+import org.openbravo.client.kernel.freemarker.test.LabelTest;
 import org.openbravo.erpCommon.info.ClassicSelectorTest;
+import org.openbravo.test.accounting.PostDocumentTest;
 import org.openbravo.test.accounting.RecordID2Test;
 import org.openbravo.test.dal.AdminContextTest;
 import org.openbravo.test.dal.ComputedColumnsTest;
@@ -54,16 +66,21 @@ import org.openbravo.test.model.UniqueConstraintTest;
 import org.openbravo.test.modularity.DBPrefixTest;
 import org.openbravo.test.modularity.DatasetServiceTest;
 import org.openbravo.test.modularity.MergePropertiesTest;
+import org.openbravo.test.modularity.ModuleScriptsVersions;
 import org.openbravo.test.modularity.TableNameTest;
 import org.openbravo.test.preference.PreferenceTest;
+import org.openbravo.test.scheduling.ProcessSchedulingTest;
 import org.openbravo.test.security.AccessLevelTest;
 import org.openbravo.test.security.AllowedOrganizationsTest;
 import org.openbravo.test.security.EntityAccessTest;
 import org.openbravo.test.security.WritableReadableOrganizationClientTest;
 import org.openbravo.test.system.ErrorTextParserTest;
+import org.openbravo.test.system.ImportEntrySizeTest;
+import org.openbravo.test.system.Issue29934Test;
 import org.openbravo.test.system.SystemServiceTest;
 import org.openbravo.test.system.SystemValidatorTest;
 import org.openbravo.test.system.TestInfrastructure;
+import org.openbravo.test.taxes.TaxesTest;
 import org.openbravo.test.xml.ClientExportImportTest;
 import org.openbravo.test.xml.DatasetExportTest;
 import org.openbravo.test.xml.DefaultsDataset;
@@ -84,16 +101,16 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 
-// dal
-    DalComplexQueryRequisitionTest.class,//
-    DalComplexQueryTestOrderLine.class,//
-    DalPerformanceInventoryLineTest.class,//
+    // dal
+    DalComplexQueryRequisitionTest.class, //
+    DalComplexQueryTestOrderLine.class, //
+    DalPerformanceInventoryLineTest.class, //
     DalPerformanceProductTest.class, //
     DalPerformanceProxyTest.class, //
-    DalQueryTest.class,//
-    DalFilterTest.class,//
-    DalTest.class,//
-    DalUtilTest.class,//
+    DalQueryTest.class, //
+    DalFilterTest.class, //
+    DalTest.class, //
+    DalUtilTest.class, //
     IssuesTest.class, //
     DalConnectionProviderTest.class, //
     DynamicEntityTest.class, //
@@ -135,6 +152,8 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     SystemValidatorTest.class, //
     ErrorTextParserTest.class, //
     TestInfrastructure.class, //
+    Issue29934Test.class, //
+    ImportEntrySizeTest.class, //
 
     // xml
     ClientExportImportTest.class, //
@@ -152,6 +171,34 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     ClassicSelectorTest.class,
 
     // Accounting
-    RecordID2Test.class })
+    RecordID2Test.class, //
+    PostDocumentTest.class, //
+    // Taxes
+    TaxesTest.class, //
+
+    // scheduling
+    ProcessSchedulingTest.class, //
+
+    // cdi
+    CdiInfrastructure.class, //
+    ParameterizedCdi.class, //
+    DalPersistanceEventTest.class, //
+
+    // client application
+    ApplicationTest.class, //
+    DynamicExpressionParserTest.class, //
+    GenerateTypesJSTest.class, //
+    MenuTest.class, //
+    MenuTemplateTest.class, //
+
+    // client kernel
+    FreemarkerTemplateProcessorTest.class, //
+    GenerateComponentTest.class, //
+    LabelTest.class, //
+
+    // moduleScripts
+    ModuleScriptsVersions.class
+
+})
 public class AllAntTaskTests {
 }

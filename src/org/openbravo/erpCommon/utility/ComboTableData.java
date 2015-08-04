@@ -840,8 +840,6 @@ public class ComboTableData {
    *          end index of the records.
    * @param conn
    *          Connection provider
-   * @param filterByValue
-   *          Keyword to be filtered
    * @return String with the query.
    */
   private String getQuery(boolean onlyId, String[] discard, String recordId, Integer startRow,

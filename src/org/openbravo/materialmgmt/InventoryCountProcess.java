@@ -104,7 +104,7 @@ public class InventoryCountProcess implements Process {
       msg.setType("Error");
       msg.setTitle(OBMessageUtils.messageBD(bundle.getConnection(), "Error", bundle.getContext()
           .getLanguage()));
-      msg.setMessage(((GenericJDBCException) ge).getSQLException().getMessage());
+      msg.setMessage(ge.getSQLException().getMessage());
       bundle.setResult(msg);
       OBDal.getInstance().rollbackAndClose();
       final String recordID = (String) bundle.getParams().get("M_Inventory_ID");
@@ -117,7 +117,7 @@ public class InventoryCountProcess implements Process {
       msg.setType("Error");
       msg.setTitle(OBMessageUtils.messageBD(bundle.getConnection(), "Error", bundle.getContext()
           .getLanguage()));
-      msg.setMessage(((QueryTimeoutException) qte).getSQLException().getMessage().split("\n")[0]);
+      msg.setMessage(qte.getSQLException().getMessage().split("\n")[0]);
       bundle.setResult(msg);
       OBDal.getInstance().rollbackAndClose();
       final String recordID = (String) bundle.getParams().get("M_Inventory_ID");
@@ -422,12 +422,12 @@ public class InventoryCountProcess implements Process {
       attribute = (!storageDetail.getAttributeSetValue().getIdentifier().isEmpty()) ? " @PCS_ATTRIBUTE@ '"
           + storageDetail.getAttributeSetValue().getIdentifier() + "', "
           : "";
-      throw new OBException(String.format(Utility
+      throw new OBException(Utility
           .messageBD(new DalConnectionProvider(), "insuffient_stock",
               OBContext.getOBContext().getLanguage().getLanguage())
           .replaceAll("%1", storageDetail.getProduct().getIdentifier()).replaceAll("%2", attribute)
           .replaceAll("%3", storageDetail.getUOM().getIdentifier())
-          .replaceAll("%4", storageDetail.getStorageBin().getIdentifier())));
+          .replaceAll("%4", storageDetail.getStorageBin().getIdentifier()));
     }
   }
 

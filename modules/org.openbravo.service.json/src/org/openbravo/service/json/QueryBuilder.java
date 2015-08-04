@@ -58,8 +58,6 @@ public class QueryBuilder {
 
   private static final Logger log = Logger.getLogger(QueryBuilder.class);
 
-  private static final long serialVersionUID = 1L;
-
   private Map<String, String> filterParameters = new HashMap<String, String>();
   private List<Object> typedParameters = new ArrayList<Object>();
   private Entity entity;

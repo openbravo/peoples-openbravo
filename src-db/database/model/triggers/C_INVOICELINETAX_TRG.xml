@@ -17,7 +17,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2010-2012 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2010-2015 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -112,14 +112,7 @@ BEGIN
     AND C_TAX_ID = :OLD.C_TAX_ID
     AND TAXAMT=0 AND TAXBASEAMT=0;
     
- 		IF (v_istaxincluded = 'Y') THEN
-      SELECT totallines, grandtotal INTO v_totallines, v_grandtotal
-      FROM C_invoice
-      WHERE c_invoice_id = v_C_Invoice_ID;
-      C_INVOICETAX_ROUNDING(v_C_Invoice_ID, v_grandtotal, v_totallines);
-    END IF;
-    
-	END IF;
+  END IF;
 END IF;
 END C_INVOICELINETAX_TRG
 ]]></body>

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,6 +28,7 @@ import org.openbravo.advpaymentmngt.utility.APRMConstants;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
+import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 
@@ -55,16 +56,21 @@ public class TransactionAddPaymentDisplayLogics extends AddPaymentDisplayLogicsH
   @Override
   public boolean getCreditToUseDisplayLogic(Map<String, String> requestMap) throws JSONException {
     JSONObject context = new JSONObject(requestMap.get("context"));
-    if (context.has("received_from") && !context.isNull("received_from")
-        && !"".equals(context.getString("received_from"))) {
-      String document = context.getString("trxtype");
-      String strBusinessPartner = context.getString("received_from");
+    if ((context.has("received_from") && !context.isNull("received_from") && !"".equals(context
+        .getString("received_from")))
+        || (context.has("inpreceivedFrom") && !context.isNull("inpreceivedFrom") && !""
+            .equals(context.getString("inpreceivedFrom")))) {
+      String document = !context.isNull("received_from") ? context.getString("trxtype") : context
+          .getString("inptrxtype");
+      String strBusinessPartner = !context.isNull("received_from") ? context
+          .getString("received_from") : context.getString("inpreceivedFrom");
       if (getDefaultGeneratedCredit(requestMap).signum() == 0 || "RCIN".equals(document)) {
         BusinessPartner bpartner = OBDal.getInstance().get(BusinessPartner.class,
             strBusinessPartner);
         Organization org = OBDal.getInstance().get(Organization.class, context.get("ad_org_id"));
+        Currency currency = OBDal.getInstance().get(Currency.class, context.get("c_currency_id"));
         BigDecimal customerCredit = new AdvPaymentMngtDao().getCustomerCredit(bpartner,
-            "RCIN".equals(document), org);
+            "RCIN".equals(document), org, currency);
         return customerCredit.signum() > 0;
       } else {
         return false;

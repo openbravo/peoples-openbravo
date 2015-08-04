@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -473,6 +473,18 @@ public class Property {
       return false;
     }
     return Number.class.isAssignableFrom(typeClass);
+  }
+
+  /**
+   * @return true if the class of the primitive type ({@link #getPrimitiveObjectType()}) is a
+   *         textual type (extends {@link Number}).
+   */
+  public boolean isTextualType() {
+    final Class<?> typeClass = getPrimitiveObjectType();
+    if (typeClass == null) {
+      return false;
+    }
+    return String.class.isAssignableFrom(typeClass);
   }
 
   /**

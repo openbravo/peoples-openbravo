@@ -65,6 +65,14 @@
         <default><![CDATA[D]]></default>
         <onCreateDefault><![CDATA['D']]></onCreateDefault>
       </column>
+      <column name="ISFKDROPDOWNUNFILTERED" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
+        <default><![CDATA[D]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="DISABLEFKCOMBO" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
+        <default><![CDATA[D]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="OBUIAPP_GC_TAB_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>

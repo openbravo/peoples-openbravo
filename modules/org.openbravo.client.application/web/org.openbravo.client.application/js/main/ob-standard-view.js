@@ -762,7 +762,7 @@ isc.OBStandardView.addProperties({
   // this
   // parent.
   addChildView: function (childView) {
-    if ((childView.isTrlTab && OB.PropertyStore.get('ShowTrl', this.windowId) !== 'Y') || (childView.isAcctTab && OB.PropertyStore.get('ShowAcct', this.windowId) !== 'Y')) {
+    if ((childView.isTrlTab && OB.PropertyStore.get('ShowTrl', this.standardWindow.windowId) !== 'Y') || (childView.isAcctTab && OB.PropertyStore.get('ShowAcct', this.standardWindow.windowId) !== 'Y')) {
       return;
     }
 
@@ -869,7 +869,7 @@ isc.OBStandardView.addProperties({
   // It adds a tab with the whole view content based on the provided 'childView'.
   // If 'tab' parameter is provided, the 'childView' content is loaded inside the provided tab.
   prepareFullChildView: function (childView, tab) {
-    var length, i, actionButton, lastCalledSizeFunction;
+    var length, i, actionButton, toolBarButton, lastCalledSizeFunction;
 
     // Add buttons in parent to child. Note that currently it is only added one level.
     if (this.actionToolbarButtons && this.actionToolbarButtons.length > 0 && childView.showParentButtons) {
@@ -881,6 +881,12 @@ isc.OBStandardView.addProperties({
         actionButton.contextView = this; // Context is still parent view
         actionButton.toolBar = childView.toolBar;
         actionButton.view = childView;
+        if (this.toolBar && this.toolBar.rightMembers) {
+          toolBarButton = this.toolBar.rightMembers.find('property', actionButton.property);
+          if (toolBarButton && toolBarButton.readOnlyIf) {
+            actionButton.readOnlyIf = toolBarButton.readOnlyIf;
+          }
+        }
 
         childView.toolBar.rightMembers.push(actionButton);
 
@@ -972,12 +978,19 @@ isc.OBStandardView.addProperties({
   setEditOrDeleteOnly: function (editOrDeleteOnly) {
     this.editOrDeleteOnly = editOrDeleteOnly;
     if (editOrDeleteOnly) {
-      this.viewGrid.setListEndEditAction();
+      this.dontCreateNewRowAutomatically();
     }
   },
 
   setSingleRecord: function (singleRecord) {
     this.singleRecord = singleRecord;
+    if (singleRecord) {
+      this.dontCreateNewRowAutomatically();
+    }
+  },
+
+  dontCreateNewRowAutomatically: function () {
+    this.viewGrid.setListEndEditAction();
   },
 
   allowNewRow: function () {
@@ -2182,7 +2195,7 @@ isc.OBStandardView.addProperties({
                 });
               }
               view.viewGrid.data.handleUpdate('remove', recordInfos, false, req);
-              if (view.treeGrid) {
+              if (view.treeGrid && view.treeGrid.data && view.treeGrid.data.handleUpdate) {
                 view.treeGrid.data.handleUpdate('remove', recordInfos, false, req);
               }
               if (updateTotalRows) {

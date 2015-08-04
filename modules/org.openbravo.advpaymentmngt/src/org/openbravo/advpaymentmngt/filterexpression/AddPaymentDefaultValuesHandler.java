@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,17 +27,21 @@ import javax.enterprise.context.RequestScoped;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
+import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
 
 @RequestScoped
 // Public class to allow extend the functionality, for example Add Payment popup opening from menu
@@ -316,6 +320,8 @@ public abstract class AddPaymentDefaultValuesHandler {
    */
   public String getDefaultPaymentMethod(Map<String, String> requestMap) throws JSONException {
     String strContext = requestMap.get("context");
+    String strFinPaymentMethodId = null;
+    String strFinancialAccountId = null;
     if (strContext == null) {
       return "";
     }
@@ -323,16 +329,28 @@ public abstract class AddPaymentDefaultValuesHandler {
     if (context.has("inpfinPaymentmethodId")
         && context.get("inpfinPaymentmethodId") != JSONObject.NULL
         && StringUtils.isNotEmpty(context.getString("inpfinPaymentmethodId"))) {
-      return context.getString("inpfinPaymentmethodId");
+      strFinPaymentMethodId = context.getString("inpfinPaymentmethodId");
+    }
+    strFinancialAccountId = getDefaultFinancialAccount(requestMap);
+    if (strFinPaymentMethodId != null && strFinancialAccountId != null) {
+      if (getFinancialAccountPaymentMethod(strFinPaymentMethodId, strFinancialAccountId) != null) {
+        return strFinPaymentMethodId;
+      }
     }
     String strBPartnerId = getDefaultReceivedFrom(requestMap);
     if (StringUtils.isNotEmpty(strBPartnerId)) {
       BusinessPartner businessPartner = OBDal.getInstance().get(BusinessPartner.class,
           strBPartnerId);
       boolean isSOTrx = "Y".equals(getDefaultIsSOTrx(requestMap));
-      if (isSOTrx && businessPartner.getPaymentMethod() != null) {
+      if (isSOTrx
+          && businessPartner.getPaymentMethod() != null
+          && getFinancialAccountPaymentMethod(businessPartner.getPaymentMethod().getId(),
+              strFinancialAccountId) != null) {
         return businessPartner.getPaymentMethod().getId();
-      } else if (!isSOTrx && businessPartner.getPOPaymentMethod() != null) {
+      } else if (!isSOTrx
+          && businessPartner.getPOPaymentMethod() != null
+          && getFinancialAccountPaymentMethod(businessPartner.getPOPaymentMethod().getId(),
+              strFinancialAccountId) != null) {
         return businessPartner.getPOPaymentMethod().getId();
       }
     }
@@ -402,6 +420,19 @@ public abstract class AddPaymentDefaultValuesHandler {
     } else {
       return null;
     }
+  }
+
+  private FinAccPaymentMethod getFinancialAccountPaymentMethod(String paymentMethodId,
+      String financialAccountId) {
+    OBCriteria<FinAccPaymentMethod> obc = OBDal.getInstance().createCriteria(
+        FinAccPaymentMethod.class);
+    obc.setFilterOnReadableOrganization(false);
+    obc.setMaxResults(1);
+    obc.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT,
+        OBDal.getInstance().get(FIN_FinancialAccount.class, financialAccountId)));
+    obc.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD,
+        OBDal.getInstance().get(FIN_PaymentMethod.class, paymentMethodId)));
+    return (FinAccPaymentMethod) obc.uniqueResult();
   }
 
 }

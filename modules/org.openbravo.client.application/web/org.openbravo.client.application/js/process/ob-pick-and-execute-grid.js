@@ -503,6 +503,12 @@ isc.OBPickAndExecuteGrid.addProperties({
     this.Super('handleFilterEditorSubmit', [crit, context]);
   },
 
+  isDataLoaded: function () {
+    // When the data is being loaded, every element in the localData array is set with the "loading" value
+    // So we just need to check the first position of the array
+    return this.data.localData && !Array.isLoading(this.data.localData[0]);
+  },
+
   dataArrived: function (startRow, endRow) {
     var record, i, rows, selectedLen = this.selectedIds.length,
         len, savedRecord, index, j, fields, allRequiredSet;
@@ -547,7 +553,9 @@ isc.OBPickAndExecuteGrid.addProperties({
     }
 
     this.Super('dataArrived', arguments);
-    if (this.onGridLoadFunction) {
+    // See issue 29560: check if the local data is loaded to execute the on grid load function
+    // This prevents errors when a request is done and the load of a previous request has not finished
+    if (this.onGridLoadFunction && this.isDataLoaded()) {
       this.onGridLoadFunction(this);
       this.view.handleButtonsStatus();
     }
@@ -677,10 +685,22 @@ isc.OBPickAndExecuteGrid.addProperties({
     return this.fieldsByColumnName[columnName];
   },
 
-  setValueMap: function (field, entries) {
+  // sets a valueMap in the edit form for the row that is currently being edited
+  // in case it exists
+  setValueMapInEditForm: function (field, entries) {
     var len = entries.length,
         map = {},
-        i, undef;
+        i, undef, form, editField;
+
+    form = this.getEditForm();
+    if (!form) {
+      return;
+    }
+
+    editField = form.getField(field);
+    if (!editField) {
+      return;
+    }
 
     for (i = 0; i < len; i++) {
       if (entries[i][OB.Constants.ID] !== undef) {
@@ -688,7 +708,7 @@ isc.OBPickAndExecuteGrid.addProperties({
       }
     }
 
-    this.Super('setValueMap', [field, map]);
+    editField.setValueMap(map);
   },
 
   processColumnValue: function (rowNum, columnName, columnValue) {
@@ -701,16 +721,21 @@ isc.OBPickAndExecuteGrid.addProperties({
       return;
     }
     if (columnValue.entries) {
-      this.setValueMap(field.name, columnValue.entries);
-    } else if (field.fkField && columnValue.value && columnValue.identifier) {
+      this.setValueMapInEditForm(field.name, columnValue.entries);
+    } else if (field.fkField && columnValue.value && columnValue.identifier && field.canEdit !== false) {
       // build the valueMap manually, set it and set the value of the
       // fk combo item in the edit form if possible
       valueMap[0] = {};
       valueMap[0][OB.Constants.ID] = columnValue.value;
       valueMap[0][OB.Constants.IDENTIFIER] = columnValue.identifier;
-      this.setValueMap(field.name, valueMap);
+      this.setValueMapInEditForm(field.name, valueMap);
       if (this.isEditing()) {
-          this.setEditValue(this.getEditRow(), field.name, columnValue.value);  
+        this.setEditValue(this.getEditRow(), field.name, columnValue.value);
+        // see issue https://issues.openbravo.com/view.php?id=30060
+        // explicitly set the display value
+        if (field.displayField) {
+          this.setEditValue(this.getEditRow(), field.displayField, columnValue.identifier);
+        }
       }
     }
   },
@@ -773,16 +798,20 @@ isc.OBPickAndExecuteGrid.addProperties({
   },
 
   retrieveInitialValues: function (rowNum, colNum, newCell, newRow, suppressFocus) {
-    var requestParams, allProperties, i, record;
+    var requestParams, allProperties, i, record, newRecord;
 
     allProperties = this.getContextInfo(rowNum);
     record = this.getRecord(rowNum);
 
+    // we can't rely on newRow value to know if we're inserting a new record,
+    // a new record is being created if record has no value
+    newRecord = !record;
+
     requestParams = {
-      MODE: (newRow ? 'NEW' : 'EDIT'),
+      MODE: (newRecord ? 'NEW' : 'EDIT'),
       PARENT_ID: null,
       TAB_ID: this.viewProperties.tabId,
-      ROW_ID: (!newRow && record ? record[OB.Constants.ID] : null)
+      ROW_ID: null //ROW_ID is null to avoid edited values be overriden by the FIC
     };
 
     OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', allProperties, requestParams, this.processFICReturn, {

@@ -11,36 +11,39 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-module('org.openbravo.client.application');
 
-test('Property Store Exists', function () {
-  expect(2);
-  ok(OB.PropertyStore, 'PropertyStore is present');
-  ok(!OB.PropertyStore.get('abc'), 'Test property is not present (okay)');
+/*global QUnit */
+
+QUnit.module('org.openbravo.client.application');
+
+QUnit.test('Property Store Exists', function () {
+  QUnit.expect(2);
+  QUnit.ok(OB.PropertyStore, 'PropertyStore is present');
+  QUnit.ok(!OB.PropertyStore.get('abc'), 'Test property is not present (okay)');
 });
 
-test('Set/Get Property', function () {
+QUnit.test('Set/Get Property', function () {
 
-  expect(2);
+  QUnit.expect(2);
 
   var propName = 'CCU';
   var testValue = 'testValue';
   var propValue = OB.PropertyStore.get(propName);
-  ok(!propValue, 'CCU is not present, value is ' + propValue);
+  QUnit.ok(propValue, 'CCU is present, value is ' + propValue);
 
   OB.PropertyStore.set(propName, testValue);
   propValue = OB.PropertyStore.get(propName);
-  same(propValue, testValue, 'Equal values');
+  QUnit.equal(propValue, testValue, 'Equal values');
   // clear the test property
   // with a short delay to make sure that the previous set does not interfere
   // on the server
   isc.Timer.setTimeout(function () {
-    OB.PropertyStore.set(propName, null);
+    OB.PropertyStore.set(propName, 'Y');
   }, 1000);
 
 });

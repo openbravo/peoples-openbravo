@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014 Openbravo SLU 
+ * All portions are Copyright (C) 2014 - 2015 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Scanner;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.SystemUtils;
 import org.apache.tools.ant.Project;
 
 /**
@@ -48,11 +49,12 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
   private static List<ConfigureOption> optionForOpenbravo = new ArrayList<ConfigureOption>();
   private static Map<String, String> replaceProperties = new HashMap<String, String>();
 
-  private final static String BASEDIR = System.getProperty("user.dir");
+  private final static String BASEDIR = getUserDir();
   private final static String BASEDIR_CONFIG = BASEDIR + "/config/";
+  private final static String SUFFIX_AUX = ".aux";
   private final static String OPENBRAVO_PROPERTIES = BASEDIR_CONFIG + "Openbravo.properties";
-  private final static String OPENBRAVO_PROPERTIES_AUX = BASEDIR_CONFIG
-      + "Openbravo.properties.aux";
+  private final static String OPENBRAVO_PROPERTIES_AUX = BASEDIR_CONFIG + "Openbravo.properties"
+      + SUFFIX_AUX;
   private final static String FORMAT_XML = BASEDIR_CONFIG + "Format.xml";
   private final static String LOG4J_LCF = BASEDIR_CONFIG + "log4j.lcf";
   private final static String USERCONFIG_XML = BASEDIR_CONFIG + "userconfig.xml";
@@ -119,6 +121,11 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
   private static final String PREFIX_DB_RDBMS = "bbdd.rdbms";
   private static final String PREFIX_DB_DRIVER = "bbdd.driver";
   private static final String PREFIX_DB_URL = "bbdd.url";
+  private static final String PREFIX_COMMON_COMPONENT_DEPLOY = "<wb-module deploy-name=\"";
+  private static final String PREFIX_COMMON_COMPONENT_CONTEXT = "<property name=\"context-root\" value=\"";
+
+  private static final String SUFFIX_COMMON_COMPONENT_DEPLOY = "\">";
+  private static final String SUFFIX_COMMON_COMPONENT_CONTEXT = "\"/>";
 
   // Number of the option that the user wants to change.
   private int optionForModify = 0;
@@ -181,6 +188,8 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       case WRITE_PROPERTIES:
         // All options have been selected... configure Openbravo.properties file.
         setValuesInOpenbravoProperties(p);
+        // Configure common.component file.
+        setValuesInCommonComponent(p);
         break;
       case FINISH_CONFIGURATION:
         finishConfigurationProcess(p);
@@ -190,6 +199,26 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       }
     }
     closeExitProgram(p);
+  }
+
+  /**
+   * This method replaces old values in org.eclipse.wst.common.component by the new requested
+   * values.
+   */
+  private void setValuesInCommonComponent(Project p) {
+    fileCopyTemplate(COMMON_COMPONENT + ".template", COMMON_COMPONENT, p);
+    File file = new File(COMMON_COMPONENT);
+    // Get new context name to replace.
+    String contextDeploy = replaceProperties.get(PREFIX_CONTEXT_NAME);
+    if (!(searchOptionsProperties(file, PREFIX_COMMON_COMPONENT_DEPLOY, p).equals(
+        contextDeploy + SUFFIX_COMMON_COMPONENT_DEPLOY) && searchOptionsProperties(file,
+        PREFIX_COMMON_COMPONENT_CONTEXT, p).equals(contextDeploy + SUFFIX_COMMON_COMPONENT_CONTEXT))) {
+      // Update new contextDeploy in common_component file: context-root and deploy-name
+      replaceGeneralProperty(COMMON_COMPONENT, PREFIX_COMMON_COMPONENT_DEPLOY, contextDeploy
+          + SUFFIX_COMMON_COMPONENT_DEPLOY, p);
+      replaceGeneralProperty(COMMON_COMPONENT, PREFIX_COMMON_COMPONENT_CONTEXT, contextDeploy
+          + SUFFIX_COMMON_COMPONENT_CONTEXT, p);
+    }
   }
 
   /**
@@ -710,7 +739,6 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     fileCopyTemplate(FORMAT_XML + ".template", FORMAT_XML, p);
     fileCopyTemplate(LOG4J_LCF + ".template", LOG4J_LCF, p);
     fileCopyTemplate(USERCONFIG_XML + ".template", USERCONFIG_XML, p);
-    fileCopyTemplate(COMMON_COMPONENT + ".template", COMMON_COMPONENT, p);
     fileCopyTemplate(CLASSPATH + ".template", CLASSPATH, p);
   }
 
@@ -754,7 +782,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         replaceProperties.put(PREFIX_CONTEXT_URL, optionFirstForReplace.getChosenOption());
       }
     }
-    replaceProperties.put(PREFIX_SOURCE_PATH, System.getProperty("user.dir"));
+    replaceProperties.put(PREFIX_SOURCE_PATH, getUserDir());
 
     if (dateFormat.substring(0, 1).equals("D")) {
       replaceProperties.put(PREFIX_DATE_FORMAT_JAVA, "dd" + dateSeparator + "MM" + dateSeparator
@@ -893,7 +921,6 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
    */
   private static void replaceOptionsProperties(String searchOption, String changeOption, Project p) {
     try {
-      boolean isFound = false;
       File fileR = new File(OPENBRAVO_PROPERTIES);
       if (!fileR.exists()) {
         // Copy if not exists Openbravo.properties
@@ -905,11 +932,56 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
           replaceProperties.get(PREFIX_DB_RDBMS))) {
         changeOraclePostgresql(p);
       }
+      // write new changeOption in OPENBRAVO_PROPERTIES_AUX
+      replaceAProperty(fileR, OPENBRAVO_PROPERTIES_AUX, searchOption, changeOption, p);
+    } catch (Exception e1) {
+      p.log("Exception reading/writing file: " + e1);
+    }
+    // Second part: Delete Openbravo.properties and rename Openbravo.properties.aux to
+    // Openbravo.properties
+    deleteAndRenameFiles(OPENBRAVO_PROPERTIES, OPENBRAVO_PROPERTIES_AUX, p);
+  }
 
+  /**
+   * This method delete a File:filePath and rename File:fileAuxPath to File:filePath
+   * 
+   * @param filePath
+   *          file to delete
+   * @param fileAuxPath
+   *          file to rename to filePath
+   */
+  private static void deleteAndRenameFiles(String filePath, String fileAuxPath, Project p) {
+    try {
+      File fileR = new File(filePath);
+      fileR.delete();
+      File fileW = new File(fileAuxPath);
+      fileW.renameTo(new File(filePath));
+    } catch (Exception e2) {
+      p.log("Exception deleting/renaming file: " + e2);
+    }
+  }
+
+  /**
+   * This method replace a value changeOption in addressFilePath. FileR is used to check that exists
+   * searchOption with different value.
+   * 
+   * @param fileR
+   *          old file to read
+   * @param addressFilePath
+   *          file to write new property
+   * @param searchOption
+   *          Prefix to search
+   * @param changeOption
+   *          Value to write in addressFilePath
+   */
+  private static void replaceAProperty(File fileR, String addressFilePath, String searchOption,
+      String changeOption, Project p) {
+    boolean isFound = false;
+    try {
       FileReader fr = new FileReader(fileR);
       BufferedReader br = new BufferedReader(fr);
       // auxiliary file to rewrite
-      File fileW = new File(OPENBRAVO_PROPERTIES_AUX);
+      File fileW = new File(addressFilePath);
       FileWriter fw = new FileWriter(fileW);
       // data for restore
       String line;
@@ -930,16 +1002,32 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     } catch (Exception e1) {
       p.log("Exception reading/writing file: " + e1);
     }
-    // Second part: Delete Openbravo.properties and rename Openbravo.properties.aux to
-    // Openbravo.properties
+  }
+
+  /**
+   * This method replaceGeneralProperty(...) replaces in addressFilePath the value in any option
+   * searchOption with value changeOption. Concatenated searchOption+changeOption. For example:
+   * "bbdd.user=" + "admin".
+   * 
+   * @param addressFilePath
+   *          Replace in this file
+   * @param searchOption
+   *          Prefix to search
+   * @param changeOption
+   *          Value to write in addressFilePath
+   * 
+   */
+  private static void replaceGeneralProperty(String addressFilePath, String searchOption,
+      String changeOption, Project p) {
     try {
-      File fileR = new File(OPENBRAVO_PROPERTIES);
-      fileR.delete();
-      File fileW = new File(OPENBRAVO_PROPERTIES_AUX);
-      fileW.renameTo(new File(OPENBRAVO_PROPERTIES));
-    } catch (Exception e2) {
-      p.log("Exception deleting/renaming file: " + e2);
+      File fileR = new File(addressFilePath);
+      replaceAProperty(fileR, addressFilePath + SUFFIX_AUX, searchOption, changeOption, p);
+    } catch (Exception e1) {
+      p.log("Exception reading/writing file: " + e1);
     }
+    // Second part: Delete file:addressFilePath and rename file:addressFilePath.aux to
+    // file:addressFilePath.
+    deleteAndRenameFiles(addressFilePath, addressFilePath + SUFFIX_AUX, p);
   }
 
   /**
@@ -1360,16 +1448,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     }
     // Second part: Delete Openbravo.properties and rename Openbravo.properties.aux to
     // Openbravo.properties
-    try {
-      File fileR = new File(OPENBRAVO_PROPERTIES);
-      if (fileR.exists()) {
-        fileR.delete();
-        File fileW = new File(OPENBRAVO_PROPERTIES_AUX);
-        fileW.renameTo(new File(OPENBRAVO_PROPERTIES));
-      }
-    } catch (Exception e2) {
-      p.log("Excetion deleting/rename file: " + e2);
-    }
+    deleteAndRenameFiles(OPENBRAVO_PROPERTIES, OPENBRAVO_PROPERTIES_AUX, p);
   }
 
   /**
@@ -1432,5 +1511,18 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         e2.printStackTrace();
       }
     }
+  }
+
+  /**
+   * This function returns the user.dir directory replacing backslashes for the case of Windows
+   * operative systems.
+   * 
+   */
+  private static String getUserDir() {
+    String userDir = System.getProperty("user.dir");
+    if (SystemUtils.IS_OS_WINDOWS) {
+      userDir = userDir.replace("\\", "/");
+    }
+    return userDir;
   }
 }

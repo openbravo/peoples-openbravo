@@ -22,7 +22,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2012 Openbravo SLU
+* All portions are Copyright (C) 2012-2015 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -54,7 +54,7 @@ BEGIN --BODY
       SELECT c_ordertax_id
       FROM c_ordertax
       WHERE c_order_id = p_order_id
-      ORDER BY taxamt desc
+      ORDER BY ABS(taxamt) desc
     ) LOOP
       UPDATE c_ordertax
       SET taxamt = taxamt - (v_current_gross_amt - COALESCE(p_grandtotal, 0))

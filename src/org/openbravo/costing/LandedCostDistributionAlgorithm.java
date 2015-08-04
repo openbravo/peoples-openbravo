@@ -44,6 +44,7 @@ public abstract class LandedCostDistributionAlgorithm {
       messageResponse.put("severity", "success");
       int i = 0;
       List<String> idList = OBDao.getIDListFromOBObject(lcCost.getLandedCostReceiptLineAmtList());
+      OBDal.getInstance().save(lcCost);
 
       for (String id : idList) {
         i++;
@@ -51,13 +52,10 @@ public abstract class LandedCostDistributionAlgorithm {
         lcCost.getLandedCostReceiptLineAmtList().remove(lcrla);
         OBDal.getInstance().remove(lcrla);
         if (i % 100 == 0) {
-          OBDal.getInstance().save(lcCost);
           OBDal.getInstance().flush();
           OBDal.getInstance().getSession().clear();
         }
       }
-
-      OBDal.getInstance().save(lcCost);
       OBDal.getInstance().flush();
     } catch (Exception e) {
       OBDal.getInstance().rollbackAndClose();

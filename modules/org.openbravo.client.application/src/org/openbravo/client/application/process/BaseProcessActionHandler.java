@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -173,7 +173,7 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
    * previous conditions is satisfied.
    * 
    */
-  private boolean hasAccess(Process processDefinition, Map<String, Object> parameters) {
+  public static boolean hasAccess(Process processDefinition, Map<String, Object> parameters) {
     String windowId = (String) parameters.get("windowId");
     if (windowId != null && !"null".equals(windowId)) {
       Window window = OBDal.getInstance().get(Window.class, windowId);

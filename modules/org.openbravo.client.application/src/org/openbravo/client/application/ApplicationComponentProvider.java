@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -117,6 +117,8 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
         "web/org.openbravo.client.application/js/form/formitem/ob-formitem-link.js", true));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/form/formitem/ob-formitem-linkbutton.js", true));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/form/formitem/ob-formitem-combo.js", true));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/form/formitem/ob-formitem-list.js", true));
     globalResources.add(createStaticResource(
@@ -466,6 +468,7 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
     globalResources.add(createStaticResource("web/js/periodControlStatus.js", true));
     globalResources.add(createStaticResource("web/js/productCharacteristicsProcess.js", true));
     globalResources.add(createStaticResource("web/js/validateCostingRuleProcess.js", true));
+    globalResources.add(createStaticResource("web/js/checkAvailableCredit.js", true));
 
     return globalResources;
   }
@@ -477,6 +480,7 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
     testResources.add("web/org.openbravo.client.application/js/test/ob-property-store-test.js");
     testResources.add("web/org.openbravo.client.application/js/test/ob-utilities-date-test.js");
     testResources.add("web/org.openbravo.client.application/js/test/ob-navbar-test.js");
+    testResources.add("web/org.openbravo.client.application/js/test/ob-utilities-number-test.js");
     return testResources;
   }
 }

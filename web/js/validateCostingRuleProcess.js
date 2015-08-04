@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,12 +25,12 @@ OB.ValidateCostingRule.onLoad = function (view) {
 };
 
 
-OB.ValidateCostingRule.onProcess = function (view, actionHandlerCall) {
+OB.ValidateCostingRule.onProcess = function (view, actionHandlerCall, clientSideValidationFail) {
   var callbackOnProcessActionHandler, execute;
   callbackOnProcessActionHandler = function (response, data, request) {
     execute = function (ok) {
       if (ok) {
-        actionHandlerCall(view);
+        actionHandlerCall();
       } else {
         view.parentElement.parentElement.closeClick();
       }
@@ -38,7 +38,7 @@ OB.ValidateCostingRule.onProcess = function (view, actionHandlerCall) {
     if (data.message.text) {
       isc.confirm(data.message.text, execute);
     } else {
-      actionHandlerCall(view);
+      actionHandlerCall();
     }
   };
   view.messageBar.setMessage(isc.OBMessageBar.TYPE_INFO, null, OB.I18N.getLabel('CostingRuleHelp'));
