@@ -140,9 +140,11 @@ public class TestAllowUnpagedDatasourcePreference extends BaseDataSourceTestDal 
 
   private String setPreferenceValue(String preferenceId, String preferenceValue) {
     User user = OBDal.getInstance().get(User.class, "100"); // Openbravo user;
-    String defaultClient = user.getDefaultClient().getId();
-    String defaultOrg = user.getDefaultOrganization().getId();
-    String defaultRole = user.getDefaultRole().getId();
+    String defaultClient = user.getDefaultClient() != null ? (String) DalUtil.getId(user
+        .getDefaultClient()) : null;
+    String defaultOrg = user.getDefaultOrganization() != null ? (String) DalUtil.getId(user
+        .getDefaultOrganization()) : null;
+    String defaultRole = (String) DalUtil.getId(user.getDefaultRole());
 
     // Execute ws with system administrator credentials
     user.setDefaultClient(OBDal.getInstance().get(Client.class, "0"));
@@ -180,9 +182,13 @@ public class TestAllowUnpagedDatasourcePreference extends BaseDataSourceTestDal 
       throw new OBException("Exception when updating preference value: ", e);
     } finally {
       // restore user defaults
+      Client client = defaultClient != null ? OBDal.getInstance().get(Client.class, defaultClient)
+          : null;
+      Organization org = defaultOrg != null ? OBDal.getInstance().get(Organization.class,
+          defaultOrg) : null;
       user = OBDal.getInstance().get(User.class, "100");
-      user.setDefaultClient(OBDal.getInstance().get(Client.class, defaultClient));
-      user.setDefaultOrganization(OBDal.getInstance().get(Organization.class, defaultOrg));
+      user.setDefaultClient(client);
+      user.setDefaultOrganization(org);
       user.setDefaultRole(OBDal.getInstance().get(Role.class, defaultRole));
       OBDal.getInstance().commitAndClose();
     }
