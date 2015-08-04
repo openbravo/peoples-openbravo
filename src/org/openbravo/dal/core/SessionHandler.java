@@ -142,6 +142,8 @@ public class SessionHandler implements OBNotSingleton {
     if (externalConnectionPool != null && this.getConnection() == null) {
       Connection externalConnection = externalConnectionPool.getConnection();
       try {
+        // Autocommit is disabled because DAL is taking into account his logical and DAL is setting
+        // autoCommint to false to maintain transactional way of working.
         externalConnection.setAutoCommit(false);
       } catch (SQLException e) {
         log.error("Error setting this connection's to auto-commit mode", e);

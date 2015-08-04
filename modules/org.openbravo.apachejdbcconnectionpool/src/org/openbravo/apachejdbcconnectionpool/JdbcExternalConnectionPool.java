@@ -31,12 +31,19 @@ import org.openbravo.database.PoolInterceptorProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * JdbcExternalConnectionPool manages all the functionality of the Apache JDBC Connection Pool. This
+ * class provides convenience methods to get a connection, close the pool and other actions.
+ */
 public class JdbcExternalConnectionPool extends ExternalConnectionPool {
 
   final static private Logger log = LoggerFactory.getLogger(JdbcExternalConnectionPool.class);
 
   private DataSource dataSource = null;
 
+  /**
+   * This method loads all the interceptors of apache jdbc connection pool injected with weld.
+   */
   @Override
   public void loadInterceptors(List<PoolInterceptorProvider> interceptors) {
     String currentInterceptors = this.getDataSource().getJdbcInterceptors();
@@ -46,10 +53,17 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
     this.getDataSource().setJdbcInterceptors(currentInterceptors);
   }
 
+  /**
+   * Gets the data source of apache jdbc connection pool.
+   */
   public DataSource getDataSource() {
     return dataSource;
   }
 
+  /**
+   * This method provided a connection of apache jdbc connection pool. Apache jdbc connection pool
+   * is initialized in the first call to this method.
+   */
   @Override
   public Connection getConnection() {
     if (dataSource == null) {
@@ -133,6 +147,9 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
     return Integer.parseInt(properties.getProperty(propertyName, defaultValue).trim());
   }
 
+  /**
+   * This method closes apache jdbc connection pool.
+   */
   @Override
   public void closePool() {
     DataSource ds = getDataSource();

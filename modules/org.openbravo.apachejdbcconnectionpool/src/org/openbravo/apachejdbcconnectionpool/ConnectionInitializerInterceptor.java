@@ -30,16 +30,22 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.database.PoolInterceptorProvider;
 import org.openbravo.database.SessionInfo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+/**
+ * This interceptor allows to act whenever a connection is requested from the pool and whenever any
+ * operation is invoked on a connection provided by Apache JDBC Connection Pool.
+ */
 public class ConnectionInitializerInterceptor extends JdbcInterceptor implements
     PoolInterceptorProvider {
-  private static Logger log = LoggerFactory.getLogger(ConnectionInitializerInterceptor.class);
 
   String rbdms = (String) OBPropertiesProvider.getInstance().getOpenbravoProperties()
       .get("bbdd.rdbms");
 
+  /**
+   * This method is called each time the connection is borrowed from the pool and it is used to
+   * initialize prepareStatement.
+   */
+  @Override
   public void reset(ConnectionPool parent, PooledConnection con) {
     if (con != null) {
       HashMap<Object, Object> attributes = con.getAttributes();
