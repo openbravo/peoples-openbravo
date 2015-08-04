@@ -173,6 +173,11 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "model/taxZone",
         "model/promotions",
 
+        "model/servicepricerule",
+        "model/servicepricerulerange",
+        "model/servicepricerulerangeprices",
+        "model/servicepriceruleversion",
+
         "model/obpos-supervisor-model",
 
         // Point of sale

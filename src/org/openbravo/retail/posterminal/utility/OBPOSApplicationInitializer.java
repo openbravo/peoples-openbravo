@@ -19,10 +19,12 @@
 
 package org.openbravo.retail.posterminal.utility;
 
+import org.hibernate.dialect.function.SQLFunctionTemplate;
 import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.type.StandardBasicTypes;
 import org.openbravo.client.kernel.ApplicationInitializer;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.service.db.DalConnectionProvider;
 
 public class OBPOSApplicationInitializer implements ApplicationInitializer {
 
@@ -30,6 +32,26 @@ public class OBPOSApplicationInitializer implements ApplicationInitializer {
   public void initialize() {
     OBDal.getInstance().registerSQLFunction("c_currency_rate",
         new StandardSQLFunction("c_currency_rate", StandardBasicTypes.STRING));
+    OBDal.getInstance().registerSQLFunction("get_pricelist_version",
+        new SQLFunctionTemplate(StandardBasicTypes.STRING, getPriceFunction()));
   }
 
+  private String getPriceFunction() {
+
+    final String RDBMS = new DalConnectionProvider(false).getRDBMS();
+
+    String func = " (select m_pricelist_version_id"
+        + " from m_pricelist_version plv "
+        + " where plv.m_pricelist_id = ?1"
+        + " and plv.isactive = 'Y' and validfrom in (select max(pplv.validfrom)"
+        + "     from m_pricelist_version pplv" //
+        + "     where pplv.isactive = 'Y'" + "     and pplv.m_pricelist_id = ?1"
+        + "     and to_char(pplv.validfrom,'yyyy-mm-dd') <= ?2)";
+    if ("ORACLE".equals(RDBMS)) {
+      func = func + " and rownum <= 1)";
+    } else {
+      func = func + " limit 1)";
+    }
+    return func;
+  }
 }

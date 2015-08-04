@@ -733,6 +733,115 @@ enyo.kind({
       });
       this.updating = false;
     }, this);
+    this.order.on('change:net change:gross', function () {
+      var me = this,
+          handleError;
+
+      handleError = function (line, message) {
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_ErrorGettingServicePrice'), OB.I18N.getLabel(message, [line.get('product').get('_identifier')]), [{
+          label: OB.I18N.getLabel('OBMOBC_LblOk'),
+          isConfirmButton: true
+        }], {
+          onHideFunction: function () {
+            me.order.get('lines').remove(line);
+            me.order.set('undo', null);
+          }
+        });
+      };
+
+      this.order.get('lines').forEach(function (line) {
+        var prod = line.get('product'),
+            amountBeforeDiscounts = 0,
+            amountAfterDiscounts = 0;
+        if (prod.get('productType') === 'S' && prod.get('isPriceRuleBased')) {
+          var criteria = {};
+          line.get('relatedLines').forEach(function (rl) {
+            var l = me.order.get('lines').get(rl.orderlineId);
+            if (me.order.get('priceIncludesTax')) {
+              amountBeforeDiscounts += l.get('gross');
+              amountAfterDiscounts += (l.get('discountedLinePrice') ? l.get('discountedLinePrice') : l.get('gross'));
+            } else {
+              amountBeforeDiscounts += l.get('net');
+              amountAfterDiscounts += (l.get('discountedNet') ? l.get('discountedNet') : l.get('net'));
+            }
+          });
+          criteria._whereClause = "where product = '" + line.get('product').get('id') + "' and validFromDate <= date('now')";
+          criteria._orderByClause = 'validFromDate desc';
+          criteria._limit = 1;
+          OB.Dal.find(OB.Model.ServicePriceRuleVersion, criteria, function (sprvs) {
+            var priceruleVersion;
+            if (sprvs && sprvs.length > 0) {
+              priceruleVersion = sprvs.at(0);
+              OB.Dal.get(OB.Model.ServicePriceRule, priceruleVersion.get('servicePriceRule'), function (spr) {
+                if (spr.get('ruletype') === 'P') {
+                  var amount, newprice, oldprice = line.get('priceList');
+                  if (spr.get('afterdiscounts')) {
+                    amount = amountAfterDiscounts * spr.get('percentage') / 100;
+                  } else {
+                    amount = amountBeforeDiscounts * spr.get('percentage') / 100;
+                  }
+                  newprice = OB.Utilities.Number.roundJSNumber(oldprice + amount / line.get('qty'), 2);
+                  me.order.setPrice(line, newprice, {
+                    setUndo: false
+                  });
+                } else { //ruletype = 'R'
+                  var rangeCriteria = {};
+                  rangeCriteria._whereClause = "where servicepricerule = '" + spr.get('id') + "' and ((afterdiscounts = 'false' and amountUpTo >= " + amountBeforeDiscounts + ") or (afterdiscounts = 'true' and amountUpTo >= " + amountAfterDiscounts + ") or (amountUpTo is null))";
+                  rangeCriteria._orderByClause = 'amountUpTo is null, amountUpTo';
+                  rangeCriteria._limit = 1;
+                  OB.Dal.find(OB.Model.ServicePriceRuleRange, rangeCriteria, function (sppr) {
+                    var range;
+                    if (sppr && sppr.length > 0) {
+                      range = sppr.at(0);
+                      if (range.get('ruleType') === 'P') {
+                        var amount, newprice, oldprice = line.get('priceList');
+                        if (range.get('afterdiscounts')) {
+                          amount = amountAfterDiscounts * range.get('percentage') / 100;
+                        } else {
+                          amount = amountBeforeDiscounts * range.get('percentage') / 100;
+                        }
+                        newprice = OB.Utilities.Number.roundJSNumber(oldprice + amount / line.get('qty'), 2);
+                        me.order.setPrice(line, newprice, {
+                          setUndo: false
+                        });
+                      } else { //ruleType = 'F'
+                        OB.Dal.find(OB.Model.ServicePriceRuleRangePrices, {
+                          product: prod.get('id'),
+                          priceList: range.get('priceList')
+                        }, function (price) {
+                          var oldprice = line.get('priceList'),
+                              newprice;
+                          if (price && price.length > 0) {
+                            newprice = OB.Utilities.Number.roundJSNumber(oldprice + price.at(0).get('listPrice'), 2);
+                            me.order.setPrice(line, newprice, {
+                              setUndo: false
+                            });
+                          } else {
+                            handleError(line, 'OBPOS_ErrorPriceRuleRangePriceNotFound');
+                          }
+                        }, function () {
+                          handleError(line, 'OBPOS_ErrorGettingPriceRuleRangePrice');
+                        });
+                      }
+                    } else {
+                      handleError(line, 'OBPOS_ErrorPriceRuleRangeNotFound');
+                    }
+                  }, function () {
+                    handleError(line, 'OBPOS_ErrorGettingPriceRuleRange');
+                  });
+                }
+              }, function () {
+                handleError(line, 'OBPOS_ErrorGettingPriceRule');
+              });
+            } else {
+              handleError(line, 'OBPOS_ErrorPriceRuleVersionNotFound');
+            }
+          }, function () {
+            handleError(line, 'OBPOS_ErrorGettingPriceRuleVersion');
+          });
+        }
+      });
+    }, this);
     this.order.get('lines').on('remove', function (model, list, index) {
       var removedId = model.get('id'),
           removedIndex = index.index,
