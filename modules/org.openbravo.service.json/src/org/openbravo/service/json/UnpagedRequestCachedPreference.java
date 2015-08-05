@@ -59,10 +59,11 @@ public class UnpagedRequestCachedPreference {
         OBContext.setAdminMode(false);
         Client systemClient = OBDal.getInstance().get(Client.class, "0");
         Organization asterisk = OBDal.getInstance().get(Organization.class, "0");
-        preferenceValue = Preferences.getPreferenceValue(property, true, systemClient, asterisk,
-            null, null, null);
-      } catch (PropertyException e) {
-        return null;
+        setPreferenceValue(Preferences.getPreferenceValue(property, true, systemClient, asterisk,
+            null, null, null));
+      } catch (PropertyException ignore) {
+        // Ignore the exception, caused because the preference was not found
+        setPreferenceValue("N");
       } finally {
         OBContext.restorePreviousMode();
       }

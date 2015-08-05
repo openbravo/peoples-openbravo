@@ -26,15 +26,16 @@ import org.apache.log4j.Logger;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.client.kernel.event.EntityDeleteEvent;
+import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.service.json.UnpagedRequestCachedPreference;
 
 /**
- * Listens to delete and update events for the {@link Preference} entity. If it detects a change in
- * the 'OBJSON_AllowUnpagedDatasourceManualRequest' preference it invalidates its cached value by
- * setting it to null.
+ * Listens to delete, update and save events for the {@link Preference} entity. If it detects a
+ * change in the 'OBJSON_AllowUnpagedDatasourceManualRequest' preference it invalidates its cached
+ * value by setting it to null.
  * 
  * {@link "https://issues.openbravo.com/view.php?id=30204"}
  * 
@@ -50,6 +51,16 @@ public class PreferenceEventHandler extends EntityPersistenceEventObserver {
   @Override
   protected Entity[] getObservedEntities() {
     return entities;
+  }
+
+  public void onSave(@Observes EntityNewEvent event) {
+    if (!isValidEvent(event)) {
+      return;
+    }
+    final Preference preference = (Preference) event.getTargetInstance();
+    if (unpagedRequestPreference.getProperty().equals(preference.getProperty())) {
+      unpagedRequestPreference.setPreferenceValue(null);
+    }
   }
 
   public void onUpdate(@Observes EntityUpdateEvent event) {

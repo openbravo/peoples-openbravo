@@ -142,12 +142,6 @@ public class CostingServer {
     TrxType trxType = TrxType.getTrxType(transaction);
     boolean adjustmentAlreadyCreated = false;
 
-    // With Standard Algorithm, no cost adjustment is needed
-    if (StringUtils.equals(transaction.getCostingAlgorithm().getJavaClassName(),
-        "org.openbravo.costing.StandardAlgorithm")) {
-      return;
-    }
-
     if (trxType == TrxType.InventoryClosing) {
       OBDal.getInstance().refresh(transaction.getPhysicalInventoryLine().getPhysInventory());
       if (transaction.getPhysicalInventoryLine().getPhysInventory()
@@ -168,7 +162,10 @@ public class CostingServer {
     } catch (PropertyException e1) {
       checkPriceCorrectionTrxs = false;
     }
-    if (checkPriceCorrectionTrxs && transaction.isCheckpricedifference()) {
+    if (checkPriceCorrectionTrxs
+        && transaction.isCheckpricedifference()
+        && !StringUtils.equals(transaction.getCostingAlgorithm().getJavaClassName(),
+            "org.openbravo.costing.StandardAlgorithm")) {
       JSONObject message = PriceDifferenceProcess.processPriceDifferenceTransaction(transaction);
       if (message.has("documentNo")) {
         adjustmentAlreadyCreated = true;
@@ -241,6 +238,12 @@ public class CostingServer {
       } finally {
         lcLines.close();
       }
+    }
+
+    // With Standard Algorithm, no cost adjustment is needed
+    if (StringUtils.equals(transaction.getCostingAlgorithm().getJavaClassName(),
+        "org.openbravo.costing.StandardAlgorithm")) {
+      return;
     }
 
     if (getCostingRule().isBackdatedTransactionsFixed()
