@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,12 +22,12 @@ import java.util.Properties;
 
 import org.openbravo.xmlEngine.XmlDocument;
 
-public class WADDocumentBLOB extends WADControl {
+public class WADFileBLOB extends WADControl {
 
-  public WADDocumentBLOB() {
+  public WADFileBLOB() {
   }
 
-  public WADDocumentBLOB(Properties prop) {
+  public WADFileBLOB(Properties prop) {
     setInfo(prop);
     initialize();
   }
