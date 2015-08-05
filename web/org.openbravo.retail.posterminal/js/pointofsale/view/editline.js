@@ -249,6 +249,23 @@ enyo.kind({
           }
         }
       }
+      for (var i = 0; i < OB.MobileApp.model.receipt.get('lines').length; i++) {
+        var line = OB.MobileApp.model.receipt.get('lines').models[i];
+        if (line.get('product').get('productType') === 'S' && !line.isReturnable()) {
+          if (line.get('relatedLines')) {
+            for (var j = 0; j < line.get('relatedLines').length; j++) {
+              var relatedLine = line.get('relatedLines')[j];
+              for (var k = 0; k < this.owner.owner.selectedModels.length; k++) {
+                var lineFromSelected = this.owner.owner.selectedModels[k];
+                if (lineFromSelected.id === relatedLine.orderlineId) {
+                  OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_UnreturnableRelatedService'), OB.I18N.getLabel('OBPOS_UnreturnableRelatedServiceMessage', [line.get('product').get('_identifier'), relatedLine.productName]));
+                  return;
+                }
+              }
+            }
+          }
+        }
+      }
 
       function returnCurrentLine(index, selectedModels) {
         if (index == selectedModels.length) {
