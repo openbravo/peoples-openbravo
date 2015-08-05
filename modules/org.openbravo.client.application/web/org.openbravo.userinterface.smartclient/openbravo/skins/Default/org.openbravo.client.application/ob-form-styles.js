@@ -580,6 +580,74 @@ isc.OBImageItemButton.addProperties({
 });
 
 /* =====================================================================
+ * OBDocumentItem
+ =======================================================================*/
+
+isc.OBDocumentItem.addProperties({
+  cellStyle: 'OBFormField',
+  titleStyle: 'OBFormFieldLabel'
+});
+
+isc.OBDocumentCanvas.addProperties({
+  height: '0px',
+  // Hack to avoid second line be desplaced in Firefox and IE
+  zoomInCursorSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/system/zoomIn.cur',
+  zoomOutCursorSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/system/zoomOut.cur',
+  imageNotAvailableSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/imageNotAvailable.png',
+  imageNotAvailableHeight: 49,
+  imageNotAvailableWidth: 57
+});
+
+isc.OBDocumentItemSmallImageContainer.addProperties({
+  styleName: 'OBFormFieldImageInput',
+  height: 21,
+  width: '100%',
+  align: 'center',
+  defaultLayoutAlign: 'center',
+  initWidgetStyle: function () {
+    //To adapt the height this code is used because the automatic height doesn't fill empty rows.
+    var rowSpan = 1;
+    var singleRowHeight = this.getHeight();
+    var multipleRowHeight = singleRowHeight + 24; // 24px = title height + form item padding defined in CSS
+    if (this.imageItem.rowSpan) {
+      rowSpan = this.imageItem.rowSpan;
+    }
+    var newHeight = singleRowHeight + (rowSpan - 1) * multipleRowHeight;
+    this.setHeight(newHeight);
+  }
+});
+
+isc.OBDocumentItemSmallImage.addProperties({
+  styleName: 'OBImageItemSmallImage',
+  imageType: 'stretch'
+});
+
+isc.OBDocumentItemBigImage.addProperties({
+  styleName: 'OBImageItemBigImage',
+  zoomInCursorSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/system/zoomIn.cur',
+  zoomOutCursorSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/system/zoomOut.cur',
+  align: 'center'
+});
+
+isc.OBDocumentItemButton.addProperties({
+  showRollOver: true,
+  showDisabled: true,
+  showDown: true,
+  showFocusedAsOver: true,
+  width: 21,
+  height: 21,
+  uploadIconSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/upload_icon.png',
+  eraseIconSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/erase_icon.png',
+  initWidgetStyle: function () {
+    if (this.buttonType === 'upload') {
+      this.setSrc(this.uploadIconSrc);
+    } else if (this.buttonType === 'erase') {
+      this.setSrc(this.eraseIconSrc);
+    }
+  }
+});
+
+/* =====================================================================
  * SectionItem Button Styles
  =======================================================================*/
 
