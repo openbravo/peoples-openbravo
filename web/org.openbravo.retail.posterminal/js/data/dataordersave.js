@@ -158,8 +158,10 @@
               // create a clone to be used by the save process
               var frozenReceiptToBeSaved = new OB.Model.Order();
               OB.UTIL.clone(frozenReceipt, frozenReceiptToBeSaved);
-              OB.Dal.saveInTransaction(tx, frozenReceiptToBeSaved);
-              receipt.trigger('integrityOk'); // Is important for module print last receipt. This module listen trigger.   
+              OB.Dal.saveInTransaction(tx, frozenReceiptToBeSaved, function () {
+                // the trigger is fired on the receipt object, as there is only 1 that is being updated
+                receipt.trigger('integrityOk'); // Is important for module print last receipt. This module listen trigger.   
+              });
             }, tx);
           }, tx);
         }, null, function () {
@@ -189,6 +191,10 @@
               OB.trace('Order successfully removed.');
               };
 
+          // create a clone of the receipt to be used when executing the final callback
+          var frozenReceiptForCallback = new OB.Model.Order();
+          OB.UTIL.clone(frozenReceipt, frozenReceiptForCallback);
+
           if (OB.UTIL.HookManager.get('OBPOS_PostSyncReceipt')) {
             // create a clone of the receipt to be used within the hook
             var frozenReceiptForPostSyncReceipt = new OB.Model.Order();
@@ -203,7 +209,7 @@
               }, function () {
                 successCallback();
                 if (eventParams && eventParams.callback) {
-                  eventParams.callback();
+                  eventParams.callback(frozenReceiptForCallback);
                 }
               });
             }, function () {
@@ -211,19 +217,20 @@
                 receipt: frozenReceiptForPostSyncReceipt
               }, function () {
                 if (eventParams && eventParams.callback) {
-                  eventParams.callback();
+                  eventParams.callback(frozenReceiptForCallback);
                 }
               });
             });
           } else {
             OB.trace('Execution Sync process.');
             //If there are no elements in the hook, we can execute the callback asynchronusly with the synchronization process
-            OB.MobileApp.model.runSyncProcess(function () {
-              successCallback(model);
-            });
+            successCallback(model);
             if (eventParams && eventParams.callback) {
-              eventParams.callback();
+              eventParams.callback(frozenReceiptForCallback);
             }
+            OB.MobileApp.model.runSyncProcess(function () {
+              OB.debug("Ticket closed: runSyncProcess executed");
+            });
           }
         });
 
