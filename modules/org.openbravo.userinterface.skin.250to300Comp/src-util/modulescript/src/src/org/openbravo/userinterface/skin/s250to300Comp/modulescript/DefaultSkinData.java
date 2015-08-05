@@ -29,41 +29,6 @@ static Logger log4j = Logger.getLogger(DefaultSkinData.class);
    }
  }
 
-  public static boolean isUpdating(ConnectionProvider connectionProvider)    throws ServletException {
-    String strSql = "";
-    strSql = strSql + 
-      "      select count(*) as t" +
-      "        from ad_module_dependency" +
-      "       where ad_module_id = '96998CBC42744B3DBEE28AC8095C9335'";
-
-    ResultSet result;
-    boolean boolReturn = false;
-    PreparedStatement st = null;
-
-    try {
-    st = connectionProvider.getPreparedStatement(strSql);
-
-      result = st.executeQuery();
-      if(result.next()) {
-        boolReturn = !UtilSql.getValue(result, "t").equals("0");
-      }
-      result.close();
-    } catch(SQLException e){
-      log4j.error("SQL error in query: " + strSql + "Exception:"+ e);
-      throw new ServletException("@CODE=" + Integer.toString(e.getErrorCode()) + "@" + e.getMessage());
-    } catch(Exception ex){
-      log4j.error("Exception in query: " + strSql + "Exception:"+ ex);
-      throw new ServletException("@CODE=@" + ex.getMessage());
-    } finally {
-      try {
-        connectionProvider.releasePreparedStatement(st);
-      } catch(Exception ignore){
-        ignore.printStackTrace();
-      }
-    }
-    return(boolReturn);
-  }
-
   public static String selectCurrentSkin(ConnectionProvider connectionProvider)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
