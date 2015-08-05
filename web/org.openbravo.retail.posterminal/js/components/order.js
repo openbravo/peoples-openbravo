@@ -696,8 +696,26 @@ enyo.kind({
                 l.set('relatedLines', rlp);
                 l.set('qty', newqtyplus);
               } else if (serviceLines.length === 1 && newqtyminus) {
-                l.set('relatedLines', rln);
-                l.set('qty', newqtyminus);
+                if (!l.get('product').get('returnable')) { // Cannot add not returnable service to a negative product
+                  me.order.get('lines').remove(l);
+                  OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_UnreturnableProduct'), OB.I18N.getLabel('OBPOS_UnreturnableProductMessage', [l.get('product').get('_identifier')]));
+                  return;
+                }
+                if (l.get('previouslyApproved')) { // A service needs an approval to return
+                  l.set('relatedLines', rln);
+                  l.set('qty', newqtyminus);
+                } else {
+                  OB.UTIL.Approval.requestApproval(
+                  OB.MobileApp.view.$.containerWindow.$.pointOfSale.model, 'OBPOS_approval.returnService', function (approved, supervisor, approvalType) {
+                    if (approved) {
+                      l.set('previouslyApproved', true);
+                      l.set('relatedLines', rln);
+                      l.set('qty', newqtyminus);
+                    } else {
+                      me.order.get('lines').remove(l);
+                    }
+                  });
+                }
               } else if (newqtyplus) {
                 l.set('relatedLines', rlp);
                 l.set('qty', newqtyplus);
