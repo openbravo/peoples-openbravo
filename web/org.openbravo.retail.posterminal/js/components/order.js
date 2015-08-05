@@ -750,8 +750,9 @@ enyo.kind({
         }
       });
       this.updating = false;
+      this.order.get('lines').trigger('updateServicePrices');
     }, this);
-    this.order.on('change:net change:gross', function () {
+    this.order.on('change:net change:gross updateServicePrices', function () {
       var me = this,
           handleError;
 
@@ -766,6 +767,10 @@ enyo.kind({
           }
         });
       };
+
+      if (this.updating || this.order.get('preventServicesUpdate')) {
+        return;
+      }
 
       this.order.get('lines').forEach(function (line) {
         var prod = line.get('product'),
