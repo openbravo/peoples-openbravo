@@ -27,6 +27,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.FlushMode;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.provider.OBNotSingleton;
@@ -136,6 +137,7 @@ public class SessionHandler implements OBNotSingleton {
   }
 
   protected Session createSession() {
+    SessionFactory sf = SessionFactoryController.getInstance().getSessionFactory();
     // Checks if the session connection has to be obtained using an external connection pool
     if (externalConnectionPool != null && this.getConnection() == null) {
       Connection externalConnection = externalConnectionPool.getConnection();
@@ -150,10 +152,9 @@ public class SessionHandler implements OBNotSingleton {
       // If the connection has been obtained using an external connection pool it is passed to
       // openSession, to prevent a new connection to be created using the Hibernate default
       // connection pool
-      return SessionFactoryController.getInstance().getSessionFactory()
-          .openSession(this.connection);
+      return sf.openSession(this.connection);
     } else {
-      return SessionFactoryController.getInstance().getSessionFactory().openSession();
+      return sf.openSession();
     }
   }
 
