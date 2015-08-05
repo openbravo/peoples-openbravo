@@ -11,21 +11,21 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2014 Openbravo SLU
+ * All portions are Copyright (C) 2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 
-//== OBDocumentItemSmallImage ==
-//This class is used for the small image shown within the OBDocumentItemSmallImageContainer
-isc.ClassFactory.defineClass('OBDocumentItemSmallImage', isc.Img);
+//== OBFileItemSmallImage ==
+//This class is used for the small image shown within the OBFileItemSmallImageContainer
+isc.ClassFactory.defineClass('OBFileItemSmallImage', isc.Img);
 
-//== OBDocumentItemSmallImageContainer ==
+//== OBFileItemSmallImageContainer ==
 //This class is used for the small image container box
-isc.ClassFactory.defineClass('OBDocumentItemSmallImageContainer', isc.HLayout);
+isc.ClassFactory.defineClass('OBFileItemSmallImageContainer', isc.HLayout);
 
-isc.OBDocumentItemSmallImageContainer.addProperties({
+isc.OBFileItemSmallImageContainer.addProperties({
   imageItem: null,
   initWidget: function () {
     if (this.initWidgetStyle) {
@@ -42,7 +42,7 @@ isc.OBDocumentItemSmallImageContainer.addProperties({
       inpimageId: imageId,
       command: 'GETSIZE'
     };
-    OB.RemoteCallManager.call('org.openbravo.client.application.window.DocumentsActionHandler', {}, d, function (response, data, request) {
+    OB.RemoteCallManager.call('org.openbravo.client.application.window.FileActionHandler', {}, d, function (response, data, request) {
       var pageHeight = isc.Page.getHeight() - 100;
       var pageWidth = isc.Page.getWidth() - 100;
       var height;
@@ -61,7 +61,7 @@ isc.OBDocumentItemSmallImageContainer.addProperties({
         showMinimizeButton: false,
         showMaximizeButton: false
       });
-      var image = isc.OBDocumentItemBigImage.create({
+      var image = isc.OBFileItemBigImage.create({
         popupContainer: imagePopup,
         height: height,
         width: width,
@@ -77,37 +77,37 @@ isc.OBDocumentItemSmallImageContainer.addProperties({
   }
 });
 
-//== OBDocumentItemBigImage ==
+//== OBFileItemBigImage ==
 //This class is used for the big image shown within the popup
-isc.ClassFactory.defineClass('OBDocumentItemBigImage', isc.Img);
+isc.ClassFactory.defineClass('OBFileItemBigImage', isc.Img);
 
-isc.OBDocumentItemBigImage.addProperties({
+isc.OBFileItemBigImage.addProperties({
   initWidget: function () {
     this.setCursor('url("' + this.zoomOutCursorSrc + '"), pointer');
     return this.Super('initWidget', arguments);
   }
 });
 
-//== OBDocumentItemButton ==
-//This class is used for the buttons shown in the OBDocumentItem
-isc.ClassFactory.defineClass('OBDocumentItemButton', isc.ImgButton);
+//== OBFileItemButton ==
+//This class is used for the buttons shown in the OBFileItem
+isc.ClassFactory.defineClass('OBFileItemButton', isc.ImgButton);
 
-isc.OBDocumentItemButton.addProperties({
+isc.OBFileItemButton.addProperties({
   initWidget: function () {
     this.initWidgetStyle();
     return this.Super('initWidget', arguments);
   }
 });
 
-//== OBDocumentCanvas ==
-//This canvas contains the image shown in the OBDocumentItem, and the two buttons
+//== OBFileCanvas ==
+//This canvas contains the image shown in the OBFileItem, and the two buttons
 //which are used to upload and delete images.
-isc.ClassFactory.defineClass('OBDocumentCanvas', isc.HLayout);
+isc.ClassFactory.defineClass('OBFileCanvas', isc.HLayout);
 
-isc.OBDocumentCanvas.addProperties({
+isc.OBFileCanvas.addProperties({
   initWidget: function () {
     this.Super('initWidget', arguments);
-    this.imageLayout = isc.OBDocumentItemSmallImageContainer.create({
+    this.imageLayout = isc.OBFileItemSmallImageContainer.create({
       imageItem: this.creator
     });
     if (this.creator.required) {
@@ -120,7 +120,7 @@ isc.OBDocumentCanvas.addProperties({
       this.imageLayout.setStyleName(this.imageLayout.styleName + 'Disabled');
     }
     this.addMember(this.imageLayout);
-    this.image = isc.OBDocumentItemSmallImage.create({
+    this.image = isc.OBFileItemSmallImage.create({
       width: '100%'
     });
     this.imageLayout.addMember(this.image);
@@ -130,11 +130,11 @@ isc.OBDocumentCanvas.addProperties({
     var buttonLayout = isc.VLayout.create({
       width: '1%'
     });
-    var selectorButton = isc.OBDocumentItemButton.create({
+    var selectorButton = isc.OBFileItemButton.create({
       buttonType: 'upload',
       imageItem: this.creator,
       action: function () {
-        var selector = isc.OBDocumentSelector.create({
+        var selector = isc.OBFileSelector.create({
           columnName: this.imageItem.columnName,
           form: this.imageItem.form,
           imageItem: this.imageItem
@@ -166,7 +166,7 @@ isc.OBDocumentCanvas.addProperties({
         }
       }
     });
-    var deleteButton = isc.OBDocumentItemButton.create({
+    var deleteButton = isc.OBFileItemButton.create({
       buttonType: 'erase',
       imageItem: this.creator,
       deleteFunction: function () {
@@ -177,7 +177,7 @@ isc.OBDocumentCanvas.addProperties({
 
         // If the record is new and the image is deleted, remove it from the database
         if (isNewRecord) {
-          OB.RemoteCallManager.call('org.openbravo.client.application.window.DocumentsDeleteActionHandler', {
+          OB.RemoteCallManager.call('org.openbravo.client.application.window.FileDeleteActionHandler', {
             'img': imageId
           });
         }
@@ -220,13 +220,13 @@ isc.OBDocumentCanvas.addProperties({
   }
 });
 
-// == OBDocumentItem ==
+// == OBFileItem ==
 // Item used for Openbravo ImageBLOB images.
-isc.ClassFactory.defineClass('OBDocumentItem', isc.CanvasItem);
+isc.ClassFactory.defineClass('OBFileItem', isc.CanvasItem);
 
-isc.OBDocumentItem.addProperties({
+isc.OBFileItem.addProperties({
   shouldSaveValue: true,
-  canvasConstructor: 'OBDocumentCanvas',
+  canvasConstructor: 'OBFileCanvas',
   init: function () {
     this.canvasProperties = this.canvasProperties || {};
     this.canvasProperties.parentItem = this;
@@ -247,7 +247,7 @@ isc.OBDocumentItem.addProperties({
       };
       var image = this.canvas.image;
       var imageLayout = this.canvas.imageLayout;
-      OB.RemoteCallManager.call('org.openbravo.client.application.window.DocumentsActionHandler', {}, d, function (response, data, request) {
+      OB.RemoteCallManager.call('org.openbravo.client.application.window.FileActionHandler', {}, d, function (response, data, request) {
         var maxHeight = imageLayout.getHeight() - 12;
         var maxWidth = imageLayout.getWidth() - 12;
         var maxRatio = maxWidth / maxHeight;
@@ -297,11 +297,11 @@ isc.OBDocumentItem.addProperties({
   }
 });
 
-//== OBDocumentSelector ==
+//== OBFileSelector ==
 //This class displays a selector in a popup which can be used to upload images
-isc.defineClass('OBDocumentSelector', isc.VLayout);
+isc.defineClass('OBFileSelector', isc.VLayout);
 
-isc.OBDocumentSelector.addProperties({
+isc.OBFileSelector.addProperties({
   submitButton: null,
   addForm: null,
   initWidget: function (args) {
