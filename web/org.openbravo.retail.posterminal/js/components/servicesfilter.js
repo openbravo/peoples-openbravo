@@ -118,7 +118,7 @@ enyo.kind({
   name: 'OB.UI.FinalMandatoryServicesFilter',
   filterName: 'FinalMandatoryServicesFilter',
   published: {
-    type: 'HIDDEN'
+    type: 'PANEL'
   },
   sqlFilter: function () {
     var result = {};
@@ -140,5 +140,11 @@ enyo.kind({
       value: false,
       isId: true
     }];
+  },
+  renderInfo: function () {
+    var content = {
+      content: OB.I18N.getLabel('OBPOS_FinalServices')
+    };
+    return content;
   }
 });

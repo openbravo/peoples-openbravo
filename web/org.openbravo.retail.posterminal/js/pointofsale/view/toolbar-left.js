@@ -387,7 +387,8 @@ enyo.kind({
     });
   },
   tap: function () {
-    var me = this;
+    var me = this,
+        criteria = {};
     if (this.disabled === false) {
       this.model.on('approvalChecked', function (event) {
         this.model.off('approvalChecked');
@@ -395,7 +396,35 @@ enyo.kind({
           this.showPaymentTab();
         }
       }, this);
-      this.model.get('order').trigger('showProductList', null, 'final', function () {
+
+      if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.product', true)) {
+        criteria.hgVolFilters = [];
+        criteria.hgVolFilters.push({
+          columns: ['productType'],
+          operator: 'equals',
+          value: 'S'
+        });
+
+        criteria.hgVolFilters.push({
+          columns: ['proposalType'],
+          operator: 'equals',
+          value: 'FMA'
+        });
+      } else {
+        criteria.productType = 'S';
+        criteria.proposalType = 'FMA';
+      }
+      OB.Dal.find(OB.Model.Product, criteria, function (data) {
+        if (data && data.length > 0) {
+          me.model.get('order').trigger('showProductList', null, 'final', function () {
+            me.model.completePayment();
+            me.doClearUserInput();
+          });
+        } else {
+          me.model.completePayment();
+          me.doClearUserInput();
+        }
+      }, function (trx, error) {
         me.model.completePayment();
         me.doClearUserInput();
       });
