@@ -113,38 +113,114 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
 
     Properties poolPropertiesConfig = new Properties();
     poolPropertiesConfig = OBPropertiesProvider.getInstance().getOpenbravoProperties();
-    poolProperties.setInitialSize(getIntProperty(poolPropertiesConfig, "db.pool.initialSize", "1"));
-    poolProperties.setMaxActive(getIntProperty(poolPropertiesConfig, "db.pool.maxActive", "10000"));
-    poolProperties.setMinIdle(getIntProperty(poolPropertiesConfig, "db.pool.minIdle", "5"));
-    poolProperties.setTimeBetweenEvictionRunsMillis(getIntProperty(poolPropertiesConfig,
-        "db.pool.timeBetweenEvictionRunsMillis", "60000"));
-    poolProperties.setMinEvictableIdleTimeMillis(getIntProperty(poolPropertiesConfig,
-        "db.pool.minEvictableIdleTimeMillis", "120000"));
-    poolProperties.setRemoveAbandoned(getBooleanProperty(poolPropertiesConfig,
-        "db.pool.removeAbandoned", "false"));
-
-    poolProperties.setTestWhileIdle(getBooleanProperty(poolPropertiesConfig,
-        "db.pool.testWhileIdle", "false"));
-    poolProperties.setTestOnBorrow(getBooleanProperty(poolPropertiesConfig, "db.pool.testOnBorrow",
-        "true"));
-    poolProperties.setTestOnReturn(getBooleanProperty(poolPropertiesConfig, "db.pool.testOnReturn",
-        "false"));
-    poolProperties.setValidationInterval(getIntProperty(poolPropertiesConfig,
-        "db.pool.validationInterval", "30000"));
-    poolProperties.setValidationQuery(poolPropertiesConfig.getProperty("db.pool.validationQuery",
-        "SELECT 1 FROM DUAL"));
+    if (poolPropertiesConfig.getProperty("db.pool.initialSize") != null) {
+      poolProperties.setInitialSize(getIntProperty(poolPropertiesConfig, "db.pool.initialSize"));
+    }
+    if (poolPropertiesConfig.getProperty("db.pool.maxActive") != null) {
+      poolProperties.setMaxActive(getIntProperty(poolPropertiesConfig, "db.pool.maxActive"));
+    }
+    if (poolPropertiesConfig.getProperty("db.pool.minIdle") != null) {
+      poolProperties.setMinIdle(getIntProperty(poolPropertiesConfig, "db.pool.minIdle"));
+    }
+    if (poolPropertiesConfig.getProperty("db.pool.timeBetweenEvictionRunsMillis") != null) {
+      poolProperties.setTimeBetweenEvictionRunsMillis(getIntProperty(poolPropertiesConfig,
+          "db.pool.timeBetweenEvictionRunsMillis"));
+    }
+    if (poolPropertiesConfig.getProperty("db.pool.minEvictableIdleTimeMillis") != null) {
+      poolProperties.setMinEvictableIdleTimeMillis(getIntProperty(poolPropertiesConfig,
+          "db.pool.minEvictableIdleTimeMillis"));
+    }
+    if (poolPropertiesConfig.getProperty("db.pool.removeAbandoned") != null) {
+      poolProperties.setRemoveAbandoned(getBooleanProperty(poolPropertiesConfig,
+          "db.pool.removeAbandoned"));
+    }
+    if (poolPropertiesConfig.getProperty("db.pool.testWhileIdle") != null) {
+      poolProperties.setTestWhileIdle(getBooleanProperty(poolPropertiesConfig,
+          "db.pool.testWhileIdle"));
+    }
+    if (poolPropertiesConfig.getProperty("db.pool.testOnBorrow") != null) {
+      poolProperties.setTestOnBorrow(getBooleanProperty(poolPropertiesConfig,
+          "db.pool.testOnBorrow"));
+    }
+    if (poolPropertiesConfig.getProperty("db.pool.testOnReturn") != null) {
+      poolProperties.setTestOnReturn(getBooleanProperty(poolPropertiesConfig,
+          "db.pool.testOnReturn"));
+    }
+    if (poolPropertiesConfig.getProperty("db.pool.validationInterval") != null) {
+      poolProperties.setValidationInterval(getIntProperty(poolPropertiesConfig,
+          "db.pool.validationInterval"));
+    }
+    if (poolPropertiesConfig.getProperty("db.pool.validationQuery") != null) {
+      poolProperties
+          .setValidationQuery(poolPropertiesConfig.getProperty("db.pool.validationQuery"));
+    }
+    if (poolPropertiesConfig.getProperty("db.pool.defaultTransactionIsolation") != null) {
+      poolProperties.setDefaultTransactionIsolation(getIntProperty(poolPropertiesConfig,
+          "db.pool.defaultTransactionIsolation"));
+    }
+    if (poolPropertiesConfig.getProperty("db.pool.maxIdle") != null) {
+      poolProperties.setMaxIdle(getIntProperty(poolPropertiesConfig, "db.pool.maxIdle"));
+    }
+    if (poolPropertiesConfig.getProperty("db.pool.maxWait") != null) {
+      poolProperties.setMaxWait(getIntProperty(poolPropertiesConfig, "db.pool.maxWait"));
+    }
+    if (poolPropertiesConfig.getProperty("db.pool.numTestsPerEvictionRun") != null) {
+      poolProperties.setNumTestsPerEvictionRun(getIntProperty(poolPropertiesConfig,
+          "db.pool.numTestsPerEvictionRun"));
+    }
+    if (poolPropertiesConfig.getProperty("db.pool.removeAbandonedTimeout") != null) {
+      poolProperties.setRemoveAbandonedTimeout(getIntProperty(poolPropertiesConfig,
+          "db.pool.removeAbandonedTimeout"));
+    }
+    if (poolPropertiesConfig.getProperty("db.pool.accessToUnderlyingConnectionAllowed") != null) {
+      poolProperties.setAccessToUnderlyingConnectionAllowed(getBooleanProperty(
+          poolPropertiesConfig, "db.pool.accessToUnderlyingConnectionAllowed"));
+    }
+    if (poolPropertiesConfig.getProperty("db.pool.defaultAutoCommit") != null) {
+      poolProperties.setDefaultAutoCommit(getBooleanProperty(poolPropertiesConfig,
+          "db.pool.defaultAutoCommit"));
+    }
+    if (poolPropertiesConfig.getProperty("db.pool.defaultReadOnly") != null) {
+      poolProperties.setDefaultReadOnly(getBooleanProperty(poolPropertiesConfig,
+          "db.pool.defaultReadOnly"));
+    }
+    if (poolPropertiesConfig.getProperty("db.pool.logAbandoned") != null) {
+      poolProperties.setLogAbandoned(getBooleanProperty(poolPropertiesConfig,
+          "db.pool.logAbandoned"));
+    }
+    if (poolPropertiesConfig.getProperty("db.pool.testOnConnect") != null) {
+      poolProperties.setTestOnConnect(getBooleanProperty(poolPropertiesConfig,
+          "db.pool.testOnConnect"));
+    }
+    if (poolPropertiesConfig.getProperty("db.pool.connectionProperties") != null) {
+      poolProperties.setConnectionProperties(poolPropertiesConfig
+          .getProperty("db.pool.connectionProperties"));
+    }
+    if (poolPropertiesConfig.getProperty("db.pool.defaultCatalog") != null) {
+      poolProperties.setDefaultCatalog(poolPropertiesConfig.getProperty("db.pool.defaultCatalog"));
+    }
+    if (poolPropertiesConfig.getProperty("db.pool.validatorClassName") != null) {
+      poolProperties.setValidatorClassName(poolPropertiesConfig
+          .getProperty("db.pool.validatorClassName"));
+    }
+    if (poolPropertiesConfig.getProperty("db.pool.initSQL") != null) {
+      poolProperties.setInitSQL(poolPropertiesConfig.getProperty("db.pool.initSQL"));
+    }
+    if (poolPropertiesConfig.getProperty("db.pool.name") != null) {
+      poolProperties.setName(poolPropertiesConfig.getProperty("db.pool.name"));
+    }
     poolProperties.setJdbcInterceptors("org.apache.tomcat.jdbc.pool.interceptor.ConnectionState;"
         + "org.apache.tomcat.jdbc.pool.interceptor.StatementFinalizer;"
         + "org.openbravo.apachejdbcconnectionpool.ConnectionInitializerInterceptor;");
     return poolProperties;
   }
 
-  private boolean getBooleanProperty(Properties properties, String propertyName, String defaultValue) {
-    return ("true".equals(properties.getProperty(propertyName, defaultValue)));
+  private boolean getBooleanProperty(Properties properties, String propertyName) {
+    return ("true".equals(properties.getProperty(propertyName)));
   }
 
-  private int getIntProperty(Properties properties, String propertyName, String defaultValue) {
-    return Integer.parseInt(properties.getProperty(propertyName, defaultValue).trim());
+  private int getIntProperty(Properties properties, String propertyName) {
+    return Integer.parseInt(properties.getProperty(propertyName).trim());
   }
 
   /**
