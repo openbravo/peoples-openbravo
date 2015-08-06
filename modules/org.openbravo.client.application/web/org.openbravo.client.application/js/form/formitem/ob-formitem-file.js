@@ -369,7 +369,7 @@ isc.OBFileSelector.addProperties({
       }],
       height: '20px',
       encoding: 'multipart',
-      action: 'utility/ImageInfoBLOB',
+      action: 'utility/FileInfoBLOB',
       target: "background_target",
       redraw: function () {}
     });
@@ -390,7 +390,7 @@ isc.OBFileSelector.addProperties({
       height: '1px',
       width: '1px',
       encoding: 'normal',
-      action: 'utility/ImageInfoBLOB',
+      action: 'utility/FileInfoBLOB',
       target: "background_target",
       redraw: function () {}
     });
@@ -436,30 +436,16 @@ isc.OBFileSelector.addProperties({
     })]);
     this.Super('initWidget', arguments);
   },
-  getMessageText: function (type, imageSizeAction, XXX, YYY, AAA, BBB, msgInfo) {
+  getMessageText: function (type, imageSizeAction, size, msgInfo) {
     var message = '';
     if (imageSizeAction === 'N') {
       return message;
+    } else {
+      message = OB.I18N.getLabel('OBUIAPP_Image_' + type + '_' + imageSizeAction, [msgInfo]);
+      // message = message.replace('XXX', XXX).replace('YYY', YYY).replace('AAA', AAA).replace('BBB', BBB);
+      message = message.replace(/\n/g, '<br />');
+      return message;
     }
-    if (imageSizeAction.indexOf('RESIZE') !== -1 && type === 'Confirm') {
-      imageSizeAction = 'RESIZE';
-    }
-    if (!XXX) {
-      XXX = 'ANY';
-    }
-    if (!YYY) {
-      YYY = 'ANY';
-    }
-    if (!AAA) {
-      AAA = 'ANY';
-    }
-    if (!BBB) {
-      BBB = 'ANY';
-    }
-    message = OB.I18N.getLabel('OBUIAPP_Image_' + type + '_' + imageSizeAction, [msgInfo]);
-    message = message.replace('XXX', XXX).replace('YYY', YYY).replace('AAA', AAA).replace('BBB', BBB);
-    message = message.replace(/\n/g, '<br />');
-    return message;
   },
   deleteTempImage: function (imageId) {
     if (imageId) {
@@ -467,72 +453,15 @@ isc.OBFileSelector.addProperties({
       this.formDeleteImage.submitForm();
     }
   },
-  callback: function (imageId, imageSizeAction, oldWidth, oldHeight, newWidth, newHeight, msgInfo) {
-    oldWidth = parseInt(oldWidth, 10);
-    oldHeight = parseInt(oldHeight, 10);
-    newWidth = parseInt(newWidth, 10);
-    newHeight = parseInt(newHeight, 10);
+  callback: function (imageId, imageSizeAction, size, msgInfo) {
+    size = parseInt(size, 10);
     var selector = this;
     if (imageSizeAction === 'WRONGFORMAT' || imageSizeAction === 'ERROR_UPLOADING') {
-      isc.warn(this.getMessageText('Error', imageSizeAction, null, null, null, null, msgInfo), function () {
+      isc.warn(this.getMessageText('Error', imageSizeAction, size, msgInfo), function () {
         return true;
       }, {
         icon: '[SKINIMG]Dialog/error.png',
         title: OB.I18N.getLabel('OBUIAPP_Error')
-      });
-    } else if (imageSizeAction === 'ALLOWED' && ((oldWidth !== 0 && oldWidth !== newWidth) || (oldHeight !== 0 && oldHeight !== newHeight))) {
-      isc.warn(this.getMessageText('Error', imageSizeAction, oldWidth, oldHeight, newWidth, newHeight), function () {
-        selector.deleteTempImage(imageId);
-      }, {
-        icon: '[SKINIMG]Dialog/error.png',
-        title: OB.I18N.getLabel('OBUIAPP_Error')
-      });
-    } else if (imageSizeAction === 'ALLOWED_MINIMUM' && ((oldWidth !== 0 && oldWidth > newWidth) || (oldHeight !== 0 && oldHeight > newHeight))) {
-      isc.warn(this.getMessageText('Error', imageSizeAction, oldWidth, oldHeight, newWidth, newHeight), function () {
-        selector.deleteTempImage(imageId);
-      }, {
-        icon: '[SKINIMG]Dialog/error.png',
-        title: OB.I18N.getLabel('OBUIAPP_Error')
-      });
-    } else if (imageSizeAction === 'ALLOWED_MAXIMUM' && ((oldWidth !== 0 && oldWidth < newWidth) || (oldHeight !== 0 && oldHeight < newHeight))) {
-      isc.warn(this.getMessageText('Error', imageSizeAction, oldWidth, oldHeight, newWidth, newHeight), function () {
-        selector.deleteTempImage(imageId);
-      }, {
-        icon: '[SKINIMG]Dialog/error.png',
-        title: OB.I18N.getLabel('OBUIAPP_Error')
-      });
-
-    } else if (imageSizeAction === 'RECOMMENDED' && ((oldWidth !== 0 && oldWidth !== newWidth) || (oldHeight !== 0 && oldHeight !== newHeight))) {
-      isc.confirm(this.getMessageText('Confirm', imageSizeAction, oldWidth, oldHeight, newWidth, newHeight), function (clickedOK) {
-        if (clickedOK) {
-          selector.refreshImage(imageId);
-        } else {
-          selector.deleteTempImage(imageId);
-        }
-      });
-    } else if (imageSizeAction === 'RECOMMENDED_MINIMUM' && ((oldWidth !== 0 && oldWidth > newWidth) || (oldHeight !== 0 && oldHeight > newHeight))) {
-      isc.confirm(this.getMessageText('Confirm', imageSizeAction, oldWidth, oldHeight, newWidth, newHeight), function (clickedOK) {
-        if (clickedOK) {
-          selector.refreshImage(imageId);
-        } else {
-          selector.deleteTempImage(imageId);
-        }
-      });
-    } else if (imageSizeAction === 'RECOMMENDED_MAXIMUM' && ((oldWidth !== 0 && oldWidth < newWidth) || (oldHeight !== 0 && oldHeight < newHeight))) {
-      isc.confirm(this.getMessageText('Confirm', imageSizeAction, oldWidth, oldHeight, newWidth, newHeight), function (clickedOK) {
-        if (clickedOK) {
-          selector.refreshImage(imageId);
-        } else {
-          selector.deleteTempImage(imageId);
-        }
-      });
-    } else if (imageSizeAction.indexOf('RESIZE') !== -1 && (oldWidth !== newWidth || oldHeight !== newHeight)) {
-      isc.confirm(this.getMessageText('Confirm', imageSizeAction, newWidth, newHeight, oldWidth, oldHeight), function (clickedOK) {
-        if (clickedOK) {
-          selector.refreshImage(imageId);
-        } else {
-          selector.deleteTempImage(imageId);
-        }
       });
     } else {
       this.refreshImage(imageId);
