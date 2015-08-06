@@ -36,11 +36,11 @@ import org.openbravo.buildvalidation.BuildValidation;
 import org.openbravo.database.ConnectionProvider;
 
 /**
- * This build validation prevents a bad behaviour updating to PR15Q3 by taking into account the
+ * This build validation prevents a bad behaviour updating to PR15Q4 by taking into account the
  * following scenarios: 
- *      - Update from < 3.0PR15Q1 to >= 3.0PR15Q3) using defaults connection pools.
- *      - Update from < 3.0PR15Q1 using Apache JDBC Connection Pool module or another external 
- *      connection pool to >= 3.0PR15Q3.
+ *      - Update from < 3.0PR15Q4 using defaults connection pools.
+ *      - Update from < 3.0PR15Q4 using Apache JDBC Connection Pool module or another external
+ *      connection pool.
  * 
  * It must be ensured that if an enviroment did not use "Apache JDBC Connection Pool" module, it
  * must continue without using the connection pool. On the other hand, environments that used the
@@ -55,7 +55,7 @@ public class CheckUpdateConnectionPoolMerge extends BuildValidation {
   private final static String PROPERTY_CONNECTION_POOL = "db.externalPoolClassName";
   private final static String PATH_CONNECTIONPOOL_PROPERTIES = "/WebContent/WEB-INF/connectionPool.properties";
   private final static String PATH_OPENBRAVO_PROPERTIES = "/config/Openbravo.properties";
-  private final static String TARGET_VERSION = "1.0.26618";
+  private final static String TARGET_VERSION = "1.0.27056";
   private final static String PREFIX_POOL_PROPERTIES = "db.pool.";
   private final static String SUFFIX_AUX = "_aux";
 
