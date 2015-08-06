@@ -1879,7 +1879,7 @@
           OB.Model.Discounts.applyPromotions(me);
         }
       }
-      if (orderType === OB.DEC.One) {
+      if (orderType === OB.DEC.One && options.saveOrder !== false) {
         this.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentTypeForReturns);
         var approvalNeeded = false;
         for (i = 0; i < this.get('lines').models.length; i++) {
@@ -1897,20 +1897,24 @@
           OB.UTIL.Approval.requestApproval(
           OB.MobileApp.view.$.containerWindow.$.pointOfSale.model, 'OBPOS_approval.returnService', function (approved, supervisor, approvalType) {
             if (approved) {
+              me.set('preventServicesUpdate', true);
               _.each(me.get('lines').models, function (line) {
                 if (line.get('qty') > 0) {
                   me.returnLine(line, null, true);
                 }
               }, me);
+              me.unset('preventServicesUpdate');
               finishSetOrderType();
             }
           });
         } else {
+          me.set('preventServicesUpdate', true);
           _.each(this.get('lines').models, function (line) {
             if (line.get('qty') > 0) {
               me.returnLine(line, null, true);
             }
           }, this);
+          me.unset('preventServicesUpdate');
           finishSetOrderType();
         }
       } else {

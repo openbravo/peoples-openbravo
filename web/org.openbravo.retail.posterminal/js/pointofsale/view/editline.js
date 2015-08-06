@@ -265,18 +265,6 @@ enyo.kind({
               }
             }
           }
-        } else if (!approvalNeeded && line.get('product').get('productType') === 'S') {
-          if (line.get('relatedLines')) {
-            for (j = 0; j < line.get('relatedLines').length; j++) {
-              relatedLine = line.get('relatedLines')[j];
-              for (k = 0; k < this.owner.owner.selectedModels.length; k++) {
-                lineFromSelected = this.owner.owner.selectedModels[k];
-                if (lineFromSelected.id === relatedLine.orderlineId) {
-                  approvalNeeded = true;
-                }
-              }
-            }
-          }
         }
       }
 
