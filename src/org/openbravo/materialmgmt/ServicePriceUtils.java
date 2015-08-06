@@ -264,7 +264,7 @@ public class ServicePriceUtils {
     JSONObject result = null;
     final Product serviceProduct = orderline.getProduct();
     if (orderLineToRelate != null
-        && !orderline.getSalesOrder().equals(orderLineToRelate.getSalesOrder())) {
+        && !orderline.getSalesOrder().getId().equals(orderLineToRelate.getSalesOrder().getId())) {
       if (!serviceProduct.isAllowDeferredSell()) {
         throw new OBException("@DeferredSaleNotAllowed@: " + serviceProduct.getIdentifier());
       } else {
