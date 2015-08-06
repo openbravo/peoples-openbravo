@@ -237,9 +237,10 @@ enyo.kind({
     showing: false,
     tap: function () {
       var me = this,
-          approvalNeeded = false;
-      for (var i = 0; i < this.owner.owner.selectedModels.length; i++) {
-        var line = this.owner.owner.selectedModels[i];
+          approvalNeeded = false,
+          i, j, k, line, relatedLine, lineFromSelected;
+      for (i = 0; i < this.owner.owner.selectedModels.length; i++) {
+        line = this.owner.owner.selectedModels[i];
         if (line.get('product').get('productType') === 'S' && !line.isReturnable()) {
           OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_UnreturnableProduct'), OB.I18N.getLabel('OBPOS_UnreturnableProductMessage', [line.get('product').get('_identifier')]));
           return;
@@ -249,14 +250,14 @@ enyo.kind({
           }
         }
       }
-      for (var i = 0; i < OB.MobileApp.model.receipt.get('lines').length; i++) { // Check if there is any not returnable related product to a selected line
-        var line = OB.MobileApp.model.receipt.get('lines').models[i];
+      for (i = 0; i < OB.MobileApp.model.receipt.get('lines').length; i++) { // Check if there is any not returnable related product to a selected line
+        line = OB.MobileApp.model.receipt.get('lines').models[i];
         if (line.get('product').get('productType') === 'S' && !line.isReturnable()) {
           if (line.get('relatedLines')) {
-            for (var j = 0; j < line.get('relatedLines').length; j++) {
-              var relatedLine = line.get('relatedLines')[j];
-              for (var k = 0; k < this.owner.owner.selectedModels.length; k++) {
-                var lineFromSelected = this.owner.owner.selectedModels[k];
+            for (j = 0; j < line.get('relatedLines').length; j++) {
+              relatedLine = line.get('relatedLines')[j];
+              for (k = 0; k < this.owner.owner.selectedModels.length; k++) {
+                lineFromSelected = this.owner.owner.selectedModels[k];
                 if (lineFromSelected.id === relatedLine.orderlineId) {
                   OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_UnreturnableRelatedService'), OB.I18N.getLabel('OBPOS_UnreturnableRelatedServiceMessage', [line.get('product').get('_identifier'), relatedLine.productName]));
                   return;
@@ -266,10 +267,10 @@ enyo.kind({
           }
         } else if (!approvalNeeded && line.get('product').get('productType') === 'S') {
           if (line.get('relatedLines')) {
-            for (var j = 0; j < line.get('relatedLines').length; j++) {
-              var relatedLine = line.get('relatedLines')[j];
-              for (var k = 0; k < this.owner.owner.selectedModels.length; k++) {
-                var lineFromSelected = this.owner.owner.selectedModels[k];
+            for (j = 0; j < line.get('relatedLines').length; j++) {
+              relatedLine = line.get('relatedLines')[j];
+              for (k = 0; k < this.owner.owner.selectedModels.length; k++) {
+                lineFromSelected = this.owner.owner.selectedModels[k];
                 if (lineFromSelected.id === relatedLine.orderlineId) {
                   approvalNeeded = true;
                 }
@@ -280,7 +281,7 @@ enyo.kind({
       }
 
       function returnCurrentLine(index, selectedModels) {
-        if (index == selectedModels.length) {
+        if (index === selectedModels.length) {
           return;
         }
         line = selectedModels[index];

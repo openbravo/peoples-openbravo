@@ -356,7 +356,16 @@ enyo.kind({
       stateless: true,
       action: function (keyboard, txt) {
         var qty = 1,
-            value;
+            value, i, j, k, line, relatedLine, lineFromSelected;
+
+        function actionAddProducts() {
+          if (me.selectedModels.length > 1) {
+            actionAddMultiProduct(keyboard, -qty, true);
+          } else {
+            keyboard.receipt.set('multipleUndo', null);
+            actionAddProduct(keyboard, -qty);
+          }
+        }
         if ((!_.isNull(txt) || !_.isUndefined(txt)) && !_.isNaN(OB.I18N.parseNumber(txt))) {
           qty = OB.I18N.parseNumber(txt);
         }
@@ -378,8 +387,8 @@ enyo.kind({
         } else {
           var approvalNeeded = false;
           if (value < 0) {
-            for (var i = 0; i < me.selectedModels.length; i++) {
-              var line = me.selectedModels[i];
+            for (i = 0; i < me.selectedModels.length; i++) {
+              line = me.selectedModels[i];
               if (line.get('product').get('productType') === 'S' && !line.isReturnable()) {
                 OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_UnreturnableProduct'), OB.I18N.getLabel('OBPOS_UnreturnableProductMessage', [line.get('product').get('_identifier')]));
                 return;
@@ -390,14 +399,14 @@ enyo.kind({
               }
             }
           }
-          for (var i = 0; i < OB.MobileApp.model.receipt.get('lines').length; i++) { // Check if there is any not returnable related product to a selected line
-            var line = OB.MobileApp.model.receipt.get('lines').models[i];
+          for (i = 0; i < OB.MobileApp.model.receipt.get('lines').length; i++) { // Check if there is any not returnable related product to a selected line
+            line = OB.MobileApp.model.receipt.get('lines').models[i];
             if (line.get('product').get('productType') === 'S' && !line.isReturnable()) {
               if (line.get('relatedLines')) {
-                for (var j = 0; j < line.get('relatedLines').length; j++) {
-                  var relatedLine = line.get('relatedLines')[j];
-                  for (var k = 0; k < me.selectedModels.length; k++) {
-                    var lineFromSelected = me.selectedModels[k];
+                for (j = 0; j < line.get('relatedLines').length; j++) {
+                  relatedLine = line.get('relatedLines')[j];
+                  for (k = 0; k < me.selectedModels.length; k++) {
+                    lineFromSelected = me.selectedModels[k];
                     if (lineFromSelected.id === relatedLine.orderlineId) {
                       OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_UnreturnableRelatedService'), OB.I18N.getLabel('OBPOS_UnreturnableRelatedServiceMessage', [line.get('product').get('_identifier'), relatedLine.productName]));
                       return;
@@ -407,25 +416,16 @@ enyo.kind({
               }
             } else if (!approvalNeeded && line.get('product').get('productType') === 'S') {
               if (line.get('relatedLines')) {
-                for (var j = 0; j < line.get('relatedLines').length; j++) {
-                  var relatedLine = line.get('relatedLines')[j];
-                  for (var k = 0; k < me.selectedModels.length; k++) {
-                    var lineFromSelected = me.selectedModels[k];
+                for (j = 0; j < line.get('relatedLines').length; j++) {
+                  relatedLine = line.get('relatedLines')[j];
+                  for (k = 0; k < me.selectedModels.length; k++) {
+                    lineFromSelected = me.selectedModels[k];
                     if (lineFromSelected.id === relatedLine.orderlineId) {
                       approvalNeeded = true;
                     }
                   }
                 }
               }
-            }
-          }
-
-          function actionAddProducts() {
-            if (me.selectedModels.length > 1) {
-              actionAddMultiProduct(keyboard, -qty, true);
-            } else {
-              keyboard.receipt.set('multipleUndo', null);
-              actionAddProduct(keyboard, -qty);
             }
           }
           if (approvalNeeded) {
