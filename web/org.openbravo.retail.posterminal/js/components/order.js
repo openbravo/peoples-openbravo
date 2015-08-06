@@ -716,9 +716,14 @@ enyo.kind({
                     }
                   });
                 }
-              } else if (newqtyplus) {
+              } else if (newqtyplus && !me.positiveLineUpdated) {
+                me.positiveLineUpdated = true;
                 l.set('relatedLines', rlp);
                 l.set('qty', newqtyplus);
+              } else if (newqtyplus && newqtyminus && me.positiveLineUpdated) {
+                newLine = me.order.createLine(prod, newqtyminus);
+                newLine.set('relatedLines', rln);
+                me.order.get('lines').remove(l);
               } else {
                 me.order.get('lines').remove(l);
               }
@@ -735,9 +740,14 @@ enyo.kind({
               } else if (serviceLines.length === 1 && newqtyplus) {
                 l.set('relatedLines', rlp);
                 l.set('qty', newqtyplus);
-              } else if (newqtyminus) {
+              } else if (newqtyminus && !me.negativeLineUpdated) {
+                me.negativeLineUpdated = true;
                 l.set('relatedLines', rln);
                 l.set('qty', newqtyminus);
+              } else if (newqtyplus && newqtyminus && me.negativeLineUpdated) {
+                newLine = me.order.createLine(prod, newqtyplus);
+                newLine.set('relatedLines', rlp);
+                me.order.get('lines').remove(l);
               } else {
                 me.order.get('lines').remove(l);
               }
@@ -747,6 +757,8 @@ enyo.kind({
               }
             }
           });
+          me.positiveLineUpdated = false;
+          me.negativeLineUpdated = false;
         }
       });
       this.updating = false;
