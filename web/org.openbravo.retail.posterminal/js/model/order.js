@@ -1047,9 +1047,9 @@
             text: text,
             line: line,
             undo: function () {
-              if(!line.get('product').get('oBPOSAllowAnonymousSale') && OB.MobileApp.model.get('terminal').businessPartner == me.get('bp').get('id')){
-            	OB.UTIL.showI18NWarning('OBPOS_AnonymousSaleNotAllowed');
-            	return;
+              if (!line.get('product').get('oBPOSAllowAnonymousSale') && OB.MobileApp.model.get('terminal').businessPartner == me.get('bp').get('id')) {
+                OB.UTIL.showI18NWarning('OBPOS_AnonymousSaleNotAllowed');
+                return;
               }
               line.unset('obposIsDeleted');
               me.get('lines').add(line, {
@@ -1105,115 +1105,132 @@
       } else {
         qty = qty || 1;
       }
-      if (this.get('isQuotation') && this.get('hasbeenpaid') === 'Y') {
-        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationClosed'));
+      if (qty == -1 && p.get('productType') === 'S' && !p.get('returnable')) {
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_UnreturnableProduct'), OB.I18N.getLabel('OBPOS_UnreturnableProductMessage', [p.get('_identifier')]));
         return;
       }
-      if (p.get('obposScale')) {
-        OB.POS.hwserver.getWeight(function (data) {
-          if (data.exception) {
-            OB.UTIL.showConfirmation.display('', data.exception.message);
-          } else if (data.result === 0) {
-            OB.UTIL.showConfirmation.display('', OB.I18N.getLabel('OBPOS_WeightZero'));
+
+      function addProductToOrder() {
+        if (me.get('isQuotation') && me.get('hasbeenpaid') === 'Y') {
+          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationClosed'));
+          return;
+        }
+        if (p.get('obposScale')) {
+          OB.POS.hwserver.getWeight(function (data) {
+            if (data.exception) {
+              OB.UTIL.showConfirmation.display('', data.exception.message);
+            } else if (data.result === 0) {
+              OB.UTIL.showConfirmation.display('', OB.I18N.getLabel('OBPOS_WeightZero'));
+            } else {
+              line = me.createLine(p, data.result, options, attrs);
+            }
+          });
+        } else {
+          if (p.get('groupProduct') || (options && options.packId)) {
+            var affectedByPack;
+            if (options && options.line) {
+              line = options.line;
+            } else {
+              line = me.get('lines').find(function (l) {
+                if (l.get('product').id === p.id && l.get('qty') > 0) {
+                  affectedByPack = l.isAffectedByPack();
+                  if (!affectedByPack) {
+                    return true;
+                  } else if ((options && options.packId === affectedByPack.ruleId) || !(options && options.packId)) {
+                    return true;
+                  }
+                }
+              });
+            }
+            OB.UTIL.HookManager.executeHooks('OBPOS_GroupedProductPreCreateLine', {
+              receipt: me,
+              line: line,
+              allLines: me.get('lines'),
+              p: p,
+              qty: qty,
+              options: options,
+              attrs: attrs
+            }, function (args) {
+              var mergeArrays;
+              if (args && args.cancelOperation) {
+                return;
+              }
+              if (args.line) {
+                args.receipt.addUnit(args.line, args.qty);
+                if (!_.isUndefined(args.attrs)) {
+                  mergeArrays = function (arr1, arr2) {
+                    var i, res = [].concat(arr1);
+                    for (i = 0; i < arr2.length; i++) {
+                      if (!OB.UTIL.isObjectInArray(arr2[i], res)) {
+                        res.push(arr2[i]);
+                      }
+                    }
+                    return res;
+                  };
+                  _.each(_.keys(args.attrs), function (key) {
+                    if (args.p.get('productType') === 'S' && key === 'relatedLines' && args.line.get('relatedLines')) {
+                      args.line.set('relatedLines', mergeArrays(args.line.get('relatedLines'), attrs[key]));
+                    } else {
+                      args.line.set(key, attrs[key]);
+                    }
+                  });
+                }
+                args.line.trigger('selected', args.line);
+                line = args.line;
+                newLine = false;
+              } else {
+                line = args.receipt.createLine(args.p, args.qty, args.options, args.attrs);
+              }
+            });
+
           } else {
-            line = me.createLine(p, data.result, options, attrs);
+            //remove line even it is a grouped line
+            if (options && options.line && qty === -1) {
+              me.addUnit(options.line, qty);
+              line = options.line;
+              newLine = false;
+            } else {
+              line = this.createLine(p, qty, options, attrs);
+            }
           }
-        });
-      } else {
-        if (p.get('groupProduct') || (options && options.packId)) {
-          var affectedByPack;
-          if (options && options.line) {
-            line = options.line;
-          } else {
-            line = this.get('lines').find(function (l) {
-              if (l.get('product').id === p.id && l.get('qty') > 0) {
-                affectedByPack = l.isAffectedByPack();
-                if (!affectedByPack) {
-                  return true;
-                } else if ((options && options.packId === affectedByPack.ruleId) || !(options && options.packId)) {
-                  return true;
+        }
+        me.save();
+        OB.UTIL.HookManager.executeHooks('OBPOS_PostAddProductToOrder', {
+          receipt: me,
+          productToAdd: p,
+          orderline: line,
+          qtyToAdd: qty,
+          options: options,
+          newLine: newLine
+        }, function (args) {
+          if (args.newLine) {
+            args.receipt._loadRelatedServices(args.productToAdd.get('productType'), args.productToAdd.get('id'), args.productToAdd.get('productCategory'), function (data) {
+              if (data) {
+                if (data.hasservices) {
+                  args.orderline.set('hasRelatedServices', true);
+                  args.orderline.trigger('showServicesButton');
+                } else {
+                  args.orderline.set('hasRelatedServices', false);
+                }
+                args.receipt.save();
+                if (data.hasmandatoryservices) {
+                  args.receipt.trigger('showProductList', args.orderline, 'mandatory');
                 }
               }
             });
           }
-          OB.UTIL.HookManager.executeHooks('OBPOS_GroupedProductPreCreateLine', {
-            receipt: this,
-            line: line,
-            allLines: this.get('lines'),
-            p: p,
-            qty: qty,
-            options: options,
-            attrs: attrs
-          }, function (args) {
-            var mergeArrays;
-            if (args && args.cancelOperation) {
-              return;
-            }
-            if (args.line) {
-              args.receipt.addUnit(args.line, args.qty);
-              if (!_.isUndefined(args.attrs)) {
-                mergeArrays = function (arr1, arr2) {
-                  var i, res = [].concat(arr1);
-                  for (i = 0; i < arr2.length; i++) {
-                    if (!OB.UTIL.isObjectInArray(arr2[i], res)) {
-                      res.push(arr2[i]);
-                    }
-                  }
-                  return res;
-                };
-                _.each(_.keys(args.attrs), function (key) {
-                  if (args.p.get('productType') === 'S' && key === 'relatedLines' && args.line.get('relatedLines')) {
-                    args.line.set('relatedLines', mergeArrays(args.line.get('relatedLines'), attrs[key]));
-                  } else {
-                    args.line.set(key, attrs[key]);
-                  }
-                });
-              }
-              args.line.trigger('selected', args.line);
-              line = args.line;
-              newLine = false;
-            } else {
-              line = args.receipt.createLine(args.p, args.qty, args.options, args.attrs);
-            }
-          });
-
-        } else {
-          //remove line even it is a grouped line
-          if (options && options.line && qty === -1) {
-            this.addUnit(options.line, qty);
-            line = options.line;
-            newLine = false;
-          } else {
-            line = this.createLine(p, qty, options, attrs);
-          }
-        }
+        });
       }
-      this.save();
-      OB.UTIL.HookManager.executeHooks('OBPOS_PostAddProductToOrder', {
-        receipt: this,
-        productToAdd: p,
-        orderline: line,
-        qtyToAdd: qty,
-        options: options,
-        newLine: newLine
-      }, function (args) {
-        if (args.newLine) {
-          args.receipt._loadRelatedServices(args.productToAdd.get('productType'), args.productToAdd.get('id'), args.productToAdd.get('productCategory'), function (data) {
-            if (data) {
-              if (data.hasservices) {
-                args.orderline.set('hasRelatedServices', true);
-                args.orderline.trigger('showServicesButton');
-              } else {
-                args.orderline.set('hasRelatedServices', false);
-              }
-              args.receipt.save();
-              if (data.hasmandatoryservices) {
-                args.receipt.trigger('showProductList', args.orderline, 'mandatory');
-              }
-            }
-          });
-        }
-      });
+      if (qty == -1 && p.get('productType') === 'S') {
+        OB.UTIL.Approval.requestApproval(
+        OB.MobileApp.view.$.containerWindow.$.pointOfSale.model, 'OBPOS_approval.returnService', function (approved, supervisor, approvalType) {
+          if (approved) {
+            addProductToOrder();
+          }
+        });
+      } else {
+        addProductToOrder();
+      }
     },
 
     _loadRelatedServices: function (productType, productId, productCategory, callback) {
@@ -1332,7 +1349,7 @@
           return;
         }
         if (OB.MobileApp.model.get('terminal').businessPartner == me.get('bp').get('id') && args && args.productToAdd && !args.productToAdd.get('oBPOSAllowAnonymousSale')) {
-	      OB.UTIL.showI18NWarning('OBPOS_AnonymousSaleNotAllowed');
+          OB.UTIL.showI18NWarning('OBPOS_AnonymousSaleNotAllowed');
           return;
         }
         if (args && args.useLines) {
@@ -1747,13 +1764,13 @@
       var me = this,
           undef;
       var oldbp = this.get('bp');
-      if(OB.MobileApp.model.get('terminal').businessPartner == businessPartner.id){
-      	for(var i = 0; i< me.get('lines').models.length; i++){
-          if(!me.get('lines').models[i].get('product').get('oBPOSAllowAnonymousSale')){
-          	OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_AnonymousSaleForProductNotAllowed', [me.get('lines').models[i].get('product').get('_identifier')]));
-          	return;
+      if (OB.MobileApp.model.get('terminal').businessPartner == businessPartner.id) {
+        for (var i = 0; i < me.get('lines').models.length; i++) {
+          if (!me.get('lines').models[i].get('product').get('oBPOSAllowAnonymousSale')) {
+            OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_AnonymousSaleForProductNotAllowed', [me.get('lines').models[i].get('product').get('_identifier')]));
+            return;
           }
-      	}
+        }
       }
       if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.customer', true)) {
         if (oldbp.id !== businessPartner.id) { //Business Partner have changed
@@ -1852,7 +1869,8 @@
     },
 
     setOrderType: function (permission, orderType, options) {
-      var me = this;
+      var me = this,
+          i;
 
       function finishSetOrderType() {
         me.set('orderType', orderType); // 0: Sales order, 1: Return order, 2: Layaway, 3: Void Layaway
@@ -1874,7 +1892,7 @@
       if (orderType === OB.DEC.One) {
         this.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentTypeForReturns);
         var approvalNeeded = false;
-        for (var i = 0; i < this.get('lines').models.length; i++) {
+        for (i = 0; i < this.get('lines').models.length; i++) {
           var line = this.get('lines').models[i];
           if (line.get('product').get('productType') === 'S' && !line.isReturnable()) {
             OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_UnreturnableProduct'), OB.I18N.getLabel('OBPOS_UnreturnableProductMessage', [line.get('product').get('_identifier')]));
