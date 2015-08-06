@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2015 Openbravo SLU
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,7 +24,6 @@
  * 3) SectionItem Button Styles
  * 3) Attachments Styles
  * 4) Image Popup Styles
- * 5) OBFileItem
  =======================================================================*/
 
 /* =====================================================================
@@ -581,15 +580,15 @@ isc.OBImageItemButton.addProperties({
 });
 
 /* =====================================================================
- * OBFileItem
+ * OBDocumentItem
  =======================================================================*/
 
-isc.OBFileItem.addProperties({
+isc.OBDocumentItem.addProperties({
   cellStyle: 'OBFormField',
   titleStyle: 'OBFormFieldLabel'
 });
 
-isc.OBFileCanvas.addProperties({
+isc.OBDocumentCanvas.addProperties({
   height: '0px',
   // Hack to avoid second line be desplaced in Firefox and IE
   zoomInCursorSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/system/zoomIn.cur',
@@ -599,7 +598,7 @@ isc.OBFileCanvas.addProperties({
   imageNotAvailableWidth: 57
 });
 
-isc.OBFileItemSmallImageContainer.addProperties({
+isc.OBDocumentItemSmallImageContainer.addProperties({
   styleName: 'OBFormFieldImageInput',
   height: 21,
   width: '100%',
@@ -618,19 +617,19 @@ isc.OBFileItemSmallImageContainer.addProperties({
   }
 });
 
-isc.OBFileItemSmallImage.addProperties({
-  styleName: 'OBFileItemSmallImage',
+isc.OBDocumentItemSmallImage.addProperties({
+  styleName: 'OBImageItemSmallImage',
   imageType: 'stretch'
 });
 
-isc.OBFileItemBigImage.addProperties({
-  styleName: 'OBFileItemBigImage',
+isc.OBDocumentItemBigImage.addProperties({
+  styleName: 'OBImageItemBigImage',
   zoomInCursorSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/system/zoomIn.cur',
   zoomOutCursorSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/system/zoomOut.cur',
   align: 'center'
 });
 
-isc.OBFileItemButton.addProperties({
+isc.OBDocumentItemButton.addProperties({
   showRollOver: true,
   showDisabled: true,
   showDown: true,
