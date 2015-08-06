@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,8 +19,8 @@
 package org.openbravo.reference.ui;
 
 
-public class UIDocumentBLOB extends UIReference {
-  public UIDocumentBLOB(String reference, String subreference) {
+public class UIFileBLOB extends UIReference {
+  public UIFileBLOB(String reference, String subreference) {
     super(reference, subreference);
   }
   //
