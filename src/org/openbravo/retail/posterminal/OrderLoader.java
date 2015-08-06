@@ -1220,13 +1220,18 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
             olServiceRelation.setCreatedBy(orderLine.getCreatedBy());
             olServiceRelation.setCreationDate(orderLine.getCreationDate());
             if ("UQ".equals(orderLine.getProduct().getQuantityRule())) {
-              if (rol.getOrderedQuantity().compareTo(BigDecimal.ZERO) > 0) {
+              if (orderLine.getOrderedQuantity().compareTo(BigDecimal.ZERO) > 0) {
                 olServiceRelation.setQuantity(BigDecimal.ONE);
               } else {
                 olServiceRelation.setQuantity(new BigDecimal(-1));
               }
             } else {
-              olServiceRelation.setQuantity(rol.getOrderedQuantity());
+              if (rol.getOrderedQuantity().signum() != orderLine.getOrderedQuantity().signum()) {
+                olServiceRelation.setQuantity(rol.getOrderedQuantity().negate());
+              } else {
+                olServiceRelation.setQuantity(rol.getOrderedQuantity());
+              }
+
             }
             olServiceRelation.setAmount(rol.getBaseGrossUnitPrice().multiply(
                 olServiceRelation.getQuantity()));
