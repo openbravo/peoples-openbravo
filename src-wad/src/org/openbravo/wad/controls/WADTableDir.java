@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -76,6 +76,16 @@ public class WADTableDir extends WADList {
         new String(strOrder + (field.name.equalsIgnoreCase("DocumentNo") ? " DESC" : "")) };
     vecOrder.addElement(aux);
 
+  }
+
+  @Override
+  public String columnIdentifier(String tableName, FieldsData fields, Vector<Object> vecCounters,
+      Vector<Object> vecFields, Vector<Object> vecTable, Vector<Object> vecWhere,
+      Vector<Object> vecParameters, Vector<Object> vecTableParameters) throws ServletException {
+
+    // XXX: Not implemented. See issue #30505
+    vecFields.addElement("'xxxx'");
+    return "'xxxx'";
   }
 
   public boolean isLink() {
