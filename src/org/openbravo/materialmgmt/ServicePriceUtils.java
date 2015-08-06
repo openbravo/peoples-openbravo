@@ -323,7 +323,7 @@ public class ServicePriceUtils {
               : null;
           Date returnDate = null;
           String message = null;
-          if (orderDate != null) {
+          if (orderDate != null && serviceProduct.getOverdueReturnDays() != null) {
             returnDate = DateUtils.addDays(orderDate, serviceProduct.getOverdueReturnDays()
                 .intValue());
           }
