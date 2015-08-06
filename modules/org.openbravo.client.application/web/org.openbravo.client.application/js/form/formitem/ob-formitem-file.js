@@ -17,74 +17,50 @@
  ************************************************************************
  */
 
-//== OBFileItemSmallImage ==
-//This class is used for the small image shown within the OBFileItemSmallImageContainer
-isc.ClassFactory.defineClass('OBFileItemSmallImage', isc.Img);
+//== OBFileItemLink ==
+//This class is used for the link shown within the OBFileItemContainer
+isc.ClassFactory.defineClass('OBFileItemLink', isc.HTMLFlow);
 
-//== OBFileItemSmallImageContainer ==
-//This class is used for the small image container box
-isc.ClassFactory.defineClass('OBFileItemSmallImageContainer', isc.HLayout);
+isc.OBFileItemLink.addProperties({
+  setLink: function (text, url) {
+    this.setContents('<a class="' + this.linkStyleName + '" href="' + url + '" id="' + this.randomId + '">' + text + '</a>');
+  }
+});
 
-isc.OBFileItemSmallImageContainer.addProperties({
-  imageItem: null,
+//== OBFileItemSize ==
+//This class is used for the size label shown within the OBFileItemContainer
+isc.ClassFactory.defineClass('OBFileItemSize', isc.Label);
+
+//== OBFileItemExt ==
+//This class is used for the extension shown within the OBFileItemContainer
+isc.ClassFactory.defineClass('OBFileItemExt', isc.Label);
+
+isc.OBFileItemExt.addProperties({
+  setContents: function (ext) {
+    var baseStyle;
+    if (typeof this.baseStyle === 'string') {
+      baseStyle = this.baseStyle.substring(0, (this.baseStyle.indexOf(' ') !== -1 ? this.baseStyle.indexOf(' ') : this.baseStyle.length));
+    }
+    if (!ext) {
+      ext = '';
+    }
+    ext = ext.substring(0, 3).toUpperCase();
+    this.baseStyle = baseStyle + ' ' + baseStyle + '_' + ext;
+    return this.Super('setContents', arguments);
+  }
+});
+
+//== OBFileItemContainer ==
+//This class is used for the file name + file size + file extension container box
+isc.ClassFactory.defineClass('OBFileItemContainer', isc.HLayout);
+
+isc.OBFileItemContainer.addProperties({
+  fileItem: null,
   initWidget: function () {
     if (this.initWidgetStyle) {
       this.initWidgetStyle();
     }
     this.Super('initWidget', arguments);
-  },
-  click: function () {
-    var imageId = this.imageItem.getValue();
-    if (!imageId) {
-      return;
-    }
-    var d = {
-      inpimageId: imageId,
-      command: 'GETSIZE'
-    };
-    OB.RemoteCallManager.call('org.openbravo.client.application.window.FileActionHandler', {}, d, function (response, data, request) {
-      var pageHeight = isc.Page.getHeight() - 100;
-      var pageWidth = isc.Page.getWidth() - 100;
-      var height;
-      var width;
-      var ratio = data.width / data.height;
-      if (ratio > pageWidth / pageHeight) {
-        width = data.width > pageWidth ? pageWidth : data.width;
-        height = width / ratio;
-      } else {
-        height = data.height > pageHeight ? pageHeight : data.height;
-        width = height * ratio;
-      }
-      var imagePopup = isc.OBPopup.create({
-        height: height,
-        width: width,
-        showMinimizeButton: false,
-        showMaximizeButton: false
-      });
-      var image = isc.OBFileItemBigImage.create({
-        popupContainer: imagePopup,
-        height: height,
-        width: width,
-        click: function () {
-          this.popupContainer.closeClick();
-        },
-        src: "../utility/ShowImage?id=" + imageId + '&nocache=' + Math.random()
-      });
-      image.setImageType('stretch');
-      imagePopup.addItem(image);
-      imagePopup.show();
-    });
-  }
-});
-
-//== OBFileItemBigImage ==
-//This class is used for the big image shown within the popup
-isc.ClassFactory.defineClass('OBFileItemBigImage', isc.Img);
-
-isc.OBFileItemBigImage.addProperties({
-  initWidget: function () {
-    this.setCursor('url("' + this.zoomOutCursorSrc + '"), pointer');
-    return this.Super('initWidget', arguments);
   }
 });
 
@@ -100,52 +76,69 @@ isc.OBFileItemButton.addProperties({
 });
 
 //== OBFileCanvas ==
-//This canvas contains the image shown in the OBFileItem, and the two buttons
-//which are used to upload and delete images.
+//This canvas contains the OBFileItemContainer shown in the OBFileItem, and the two buttons
+//which are used to upload and delete files.
 isc.ClassFactory.defineClass('OBFileCanvas', isc.HLayout);
 
 isc.OBFileCanvas.addProperties({
   initWidget: function () {
+    var me = this;
     this.Super('initWidget', arguments);
-    this.imageLayout = isc.OBFileItemSmallImageContainer.create({
-      imageItem: this.creator
+    this.containerLayout = isc.OBFileItemContainer.create({
+      fileItem: this.creator
     });
     if (this.creator.required) {
-      this.imageLayout.setStyleName(this.imageLayout.styleName + 'Required');
+      this.containerLayout.setStyleName(this.containerLayout.styleName + 'Required');
     }
     if (this.creator.disabled) {
-      this.imageLayout.setStyleName(this.imageLayout.styleName + 'Disabled');
+      this.containerLayout.setStyleName(this.containerLayout.styleName + 'Disabled');
     }
     if (this.creator.readOnly) {
-      this.imageLayout.setStyleName(this.imageLayout.styleName + 'Disabled');
+      this.containerLayout.setStyleName(this.containerLayout.styleName + 'Disabled');
     }
-    this.addMember(this.imageLayout);
-    this.image = isc.OBFileItemSmallImage.create({
-      width: '100%'
+
+    this.size = isc.OBFileItemSize.create({});
+    this.ext = isc.OBFileItemExt.create({});
+    this.link = isc.OBFileItemLink.create({
+      randomId: OB.Utilities.generateRandomString(8, true, true, false, false),
+      mouseOver: function () {
+        if (document.getElementById(this.randomId).offsetWidth < document.getElementById(this.randomId).scrollWidth) {
+          me.size.hide();
+        }
+        return this.Super('mouseOver', arguments);
+      },
+      mouseOut: function () {
+        me.size.show();
+        return this.Super('mouseOut', arguments);
+      }
     });
-    this.imageLayout.addMember(this.image);
-    this.image.setSrc(this.imageNotAvailableSrc);
-    this.image.setHeight(this.imageNotAvailableHeight);
-    this.image.setWidth(this.imageNotAvailableWidth);
-    var buttonLayout = isc.VLayout.create({
+
+    this.containerLayout.addMember(this.link);
+    this.containerLayout.addMember(this.size);
+    this.containerLayout.addMember(this.ext);
+    this.containerLayout.addMember(isc.HLayout.create({
+      width: 4
+    }));
+    this.addMember(this.containerLayout);
+    var buttonLayout = isc.HLayout.create({
       width: '1%'
     });
     var selectorButton = isc.OBFileItemButton.create({
       buttonType: 'upload',
-      imageItem: this.creator,
+      fileItem: this.creator,
       action: function () {
         var selector = isc.OBFileSelector.create({
-          columnName: this.imageItem.columnName,
-          form: this.imageItem.form,
-          imageItem: this.imageItem
+          columnName: this.fileItem.columnName,
+          form: this.fileItem.form,
+          fileItem: this.fileItem
         });
-        var title = OB.I18N.getLabel('OBUIAPP_ImageSelectorTitle'),
+        var title = OB.I18N.getLabel('OBUIAPP_FileSelectorTitle'),
             height = selector.height,
             width = selector.width,
             showMinimizeButton = false,
             showMaximizeButton = false;
-        if (this.imageItem && this.imageItem.form && this.imageItem.form.view && this.imageItem.form.view.standardWindow && this.imageItem.form.view.standardWindow.openPopupInTab) {
-          this.imageItem.form.view.standardWindow.openPopupInTab(selector, title, width, height, showMaximizeButton, showMaximizeButton, true, true, this.imageItem.form);
+        if (this.fileItem && this.fileItem.form && this.fileItem.form.view && this.fileItem.form.view.standardWindow && this.fileItem.form.view.standardWindow.openPopupInTab) {
+          this.fileItem.form.view.standardWindow.openPopupInTab(selector, title, width, height, showMaximizeButton, showMaximizeButton, true, true, this.fileItem.form);
         } else {
           var selectorContainer = isc.OBPopup.create({
             showMinimizeButton: showMinimizeButton,
@@ -168,17 +161,18 @@ isc.OBFileCanvas.addProperties({
     });
     var deleteButton = isc.OBFileItemButton.create({
       buttonType: 'erase',
-      imageItem: this.creator,
+      fileItem: this.creator,
       deleteFunction: function () {
-        var imageItem = this.imageItem,
-            imageId = this.imageItem._value,
-            isNewRecord = this.imageItem.form.isNewRecord();
-        imageItem.refreshImage();
+        var fileItem = this.fileItem,
+            fileId = this.fileItem._value,
+            isNewRecord = this.fileItem.form.isNewRecord();
+        fileItem.refreshFile();
 
-        // If the record is new and the image is deleted, remove it from the database
+        // If the record is new and the file is deleted, remove it from the database
         if (isNewRecord) {
+          //TODO: The 'FileDeleteActionHandler' should exist and work
           OB.RemoteCallManager.call('org.openbravo.client.application.window.FileDeleteActionHandler', {
-            'img': imageId
+            'file': fileId
           });
         }
       },
@@ -188,8 +182,10 @@ isc.OBFileCanvas.addProperties({
       updateState: function (value) {
         if (value) {
           this.setDisabled(false);
+          this.show();
         } else {
           this.setDisabled(true);
+          this.hide();
         }
       }
     });
@@ -205,23 +201,27 @@ isc.OBFileCanvas.addProperties({
     buttonLayout.addMember(deleteButton);
     this.addMember(buttonLayout);
   },
-  setImage: function (url) {
+  setFileInfo: function (name, url, size, ext) {
     if (!url) {
-      this.image.setSrc(this.imageNotAvailableSrc);
-      this.image.setHeight(this.imageNotAvailableHeight);
-      this.image.setWidth(this.imageNotAvailableWidth);
-      this.image.setCursor('default');
-      this.imageLayout.setCursor('default');
+      this.link.setLink('', '');
+      this.size.setContents('');
+      this.ext.setContents('');
+      this.link.hide();
+      this.size.hide();
+      this.ext.hide();
     } else {
-      this.image.setSrc(url);
-      this.image.setCursor('url("' + this.zoomInCursorSrc + '"), pointer');
-      this.imageLayout.setCursor('url("' + this.zoomInCursorSrc + '"), pointer');
+      this.link.setLink(name, url);
+      this.size.setContents(size);
+      this.ext.setContents(ext);
+      this.link.show();
+      this.size.show();
+      this.ext.show();
     }
   }
 });
 
 // == OBFileItem ==
-// Item used for Openbravo ImageBLOB images.
+// Item used for Openbravo FileBLOB reference.
 isc.ClassFactory.defineClass('OBFileItem', isc.CanvasItem);
 
 isc.OBFileItem.addProperties({
@@ -237,49 +237,41 @@ isc.OBFileItem.addProperties({
     return false;
   },
   setValue: function (newValue) {
+    var canvas = this.canvas;
     if (!newValue || newValue === '') {
-      this.canvas.setImage('');
+      canvas.setFileInfo();
     } else {
-      this.canvas.setImage("../utility/ShowImage?id=" + newValue + '&nocache=' + Math.random());
       var d = {
-        inpimageId: newValue,
-        command: 'GETSIZE'
+        inpfileId: newValue,
+        command: 'GETFILEINFO'
       };
-      var image = this.canvas.image;
-      var imageLayout = this.canvas.imageLayout;
+
       OB.RemoteCallManager.call('org.openbravo.client.application.window.FileActionHandler', {}, d, function (response, data, request) {
-        var maxHeight = imageLayout.getHeight() - 12;
-        var maxWidth = imageLayout.getWidth() - 12;
-        var maxRatio = maxWidth / maxHeight;
+        var fileName = data.name;
+        var fileSize = data.size;
+        var fileExt = data.ext;
 
-        var imgHeight = data.height;
-        var imgWidth = data.width;
-        var imgRatio = imgWidth / imgHeight;
+        //TODO: 'FileActionHandler' should exist, answer to 'GETFILEINFO', and should provide data.name, data.size and data.ext
+        //The following values are dummy data just to show that the UI works:
+        fileName = 'This is my dummy filename';
+        fileSize = '512,8 KB';
+        fileExt = 'DOC';
 
-        if (imgHeight < maxHeight && imgWidth < maxWidth) {
-          image.setHeight(imgHeight);
-          image.setWidth(imgWidth);
-        } else if (imgRatio < maxRatio) {
-          image.setHeight(maxHeight);
-          image.setWidth(maxHeight * imgRatio);
-        } else {
-          image.setHeight(maxWidth / imgRatio);
-          image.setWidth(maxWidth);
-        }
+        canvas.setFileInfo(fileName, "../utility/GetFile?id=" + newValue + '&nocache=' + Math.random(), fileSize, fileExt);
       });
     }
     //Buttons will not be shown if the form is readonly
-    this.canvas.deleteButton.updateState(newValue && (this.form && !this.form.readOnly) && !this.disabled);
-    this.canvas.selectorButton.updateState((this.form && !this.form.readOnly) && !this.disabled);
+    canvas.deleteButton.updateState(newValue && (this.form && !this.form.readOnly) && !this.disabled);
+    canvas.selectorButton.updateState((this.form && !this.form.readOnly) && !this.disabled);
     return this.Super('setValue', arguments);
   },
-  refreshImage: function (imageId) {
-    //If creating/replacing an image, the form is marked as modified
-    //and the image id is set as the value of the item
-    if (typeof imageId === 'undefined') {
-      imageId = '';
+  refreshFile: function (fileId) {
+    //If creating/replacing a file, the form is marked as modified
+    //and the file id is set as the value of the item
+    if (typeof fileId === 'undefined') {
+      fileId = '';
     }
-    this.setValue(imageId);
+    this.setValue(fileId);
     this.form.itemChangeActions();
   },
   //This function has been overwritten because this class needs to do specific things if the object is
@@ -298,22 +290,22 @@ isc.OBFileItem.addProperties({
 });
 
 //== OBFileSelector ==
-//This class displays a selector in a popup which can be used to upload images
+//This class displays a selector in a popup which can be used to upload files
 isc.defineClass('OBFileSelector', isc.VLayout);
 
 isc.OBFileSelector.addProperties({
   submitButton: null,
   addForm: null,
   initWidget: function (args) {
-    var imageId = this.imageItem.getValue();
+    var fileId = this.fileItem.getValue();
     var view = args.form.view;
-    var imageSizeAction = this.imageItem.imageSizeValuesAction;
-    var imageWidthValue = this.imageItem.imageWidth;
+    var imageSizeAction = this.fileItem.imageSizeValuesAction;
+    var imageWidthValue = this.fileItem.imageWidth;
     imageWidthValue = parseInt(imageWidthValue, 10);
     if (!imageWidthValue) {
       imageWidthValue = 0;
     }
-    var imageHeightValue = this.imageItem.imageHeight;
+    var imageHeightValue = this.fileItem.imageHeight;
     imageHeightValue = parseInt(imageHeightValue, 10);
     if (!imageHeightValue) {
       imageHeightValue = 0;
@@ -322,7 +314,7 @@ isc.OBFileSelector.addProperties({
       autoFocus: true,
       fields: [{
         name: 'inpFile',
-        title: OB.I18N.getLabel('OBUIAPP_ImageFile'),
+        title: OB.I18N.getLabel('OBUIAPP_FileFile'),
         type: 'upload',
         canFocus: false,
         align: 'right'
@@ -347,9 +339,9 @@ isc.OBFileSelector.addProperties({
         type: 'hidden',
         value: args.form.values.id
       }, {
-        name: 'imageId',
+        name: 'fileId',
         type: 'hidden',
-        value: imageId
+        value: fileId
       }, {
         name: 'imageSizeAction',
         type: 'hidden',
@@ -373,7 +365,7 @@ isc.OBFileSelector.addProperties({
       target: "background_target",
       redraw: function () {}
     });
-    this.formDeleteImage = isc.DynamicForm.create({
+    this.formDeleteFile = isc.DynamicForm.create({
       fields: [{
         name: 'Command',
         type: 'hidden',
@@ -383,9 +375,9 @@ isc.OBFileSelector.addProperties({
         type: 'hidden',
         value: view.tabId
       }, {
-        name: 'imageId',
+        name: 'fileId',
         type: 'hidden',
-        value: imageId
+        value: fileId
       }],
       height: '1px',
       width: '1px',
@@ -406,6 +398,7 @@ isc.OBFileSelector.addProperties({
         form.submitForm();
       }
     });
+    //TODO: The message (if apply) should notify the proper restrictions.
     var messageBarText = this.getMessageText('Warn', imageSizeAction, imageWidthValue, imageHeightValue);
 
     var messageBar = isc.OBMessageBar.create({
@@ -432,7 +425,7 @@ isc.OBFileSelector.addProperties({
       layoutBottomMargin: this.hlayoutBottomMargin,
       align: 'center',
       members: [
-      form, uploadbutton, this.formDeleteImage]
+      form, uploadbutton, this.formDeleteFile]
     })]);
     this.Super('initWidget', arguments);
   },
@@ -447,13 +440,13 @@ isc.OBFileSelector.addProperties({
       return message;
     }
   },
-  deleteTempImage: function (imageId) {
-    if (imageId) {
-      this.formDeleteImage.getField('imageId').setValue(imageId);
-      this.formDeleteImage.submitForm();
+  deleteTempFile: function (fileId) {
+    if (fileId) {
+      this.formDeleteFile.getField('fileId').setValue(fileId);
+      this.formDeleteFile.submitForm();
     }
   },
-  callback: function (imageId, imageSizeAction, size, msgInfo) {
+  callback: function (fileId, imageSizeAction, size, msgInfo) {
     size = parseInt(size, 10);
     var selector = this;
     if (imageSizeAction === 'WRONGFORMAT' || imageSizeAction === 'ERROR_UPLOADING') {
@@ -464,11 +457,11 @@ isc.OBFileSelector.addProperties({
         title: OB.I18N.getLabel('OBUIAPP_Error')
       });
     } else {
-      this.refreshImage(imageId);
+      this.refreshFile(fileId);
     }
   },
-  refreshImage: function (imageId) {
-    this.imageItem.refreshImage(imageId);
+  refreshFile: function (fileId) {
+    this.fileItem.refreshFile(fileId);
     this.parentElement.parentElement.closeClick();
   }
 });

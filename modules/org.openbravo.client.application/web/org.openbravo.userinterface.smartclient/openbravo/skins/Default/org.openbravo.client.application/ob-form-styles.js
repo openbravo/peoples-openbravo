@@ -21,10 +21,10 @@
  * Styling properties for:
  * 1) OB Form items
  * 2) OBImageItem
- * 3) SectionItem Button Styles
- * 3) Attachments Styles
- * 4) Image Popup Styles
- * 5) OBFileItem
+ * 3) OBFileItem
+ * 4) SectionItem Button Styles
+ * 5) Attachments Styles
+ * 6) Image Popup Styles
  =======================================================================*/
 
 /* =====================================================================
@@ -590,16 +590,11 @@ isc.OBFileItem.addProperties({
 });
 
 isc.OBFileCanvas.addProperties({
-  height: '0px',
+  height: '0px'
   // Hack to avoid second line be desplaced in Firefox and IE
-  zoomInCursorSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/system/zoomIn.cur',
-  zoomOutCursorSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/system/zoomOut.cur',
-  imageNotAvailableSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/imageNotAvailable.png',
-  imageNotAvailableHeight: 49,
-  imageNotAvailableWidth: 57
 });
 
-isc.OBFileItemSmallImageContainer.addProperties({
+isc.OBFileItemContainer.addProperties({
   styleName: 'OBFormFieldImageInput',
   height: 21,
   width: '100%',
@@ -610,24 +605,36 @@ isc.OBFileItemSmallImageContainer.addProperties({
     var rowSpan = 1;
     var singleRowHeight = this.getHeight();
     var multipleRowHeight = singleRowHeight + 24; // 24px = title height + form item padding defined in CSS
-    if (this.imageItem.rowSpan) {
-      rowSpan = this.imageItem.rowSpan;
+    if (this.fileItem.rowSpan) {
+      rowSpan = this.fileItem.rowSpan;
     }
     var newHeight = singleRowHeight + (rowSpan - 1) * multipleRowHeight;
     this.setHeight(newHeight);
   }
 });
 
-isc.OBFileItemSmallImage.addProperties({
-  styleName: 'OBFileItemSmallImage',
-  imageType: 'stretch'
+isc.OBFileItemLink.addProperties({
+  width: '100%',
+  linkStyleName: 'OBFileItemLink'
 });
 
-isc.OBFileItemBigImage.addProperties({
-  styleName: 'OBFileItemBigImage',
-  zoomInCursorSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/system/zoomIn.cur',
-  zoomOutCursorSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/system/zoomOut.cur',
-  align: 'center'
+isc.OBFileItemSize.addProperties({
+  width: 1,
+  //To allow button be just text width
+  align: 'left',
+  baseStyle: 'OBFileItemSize',
+  autoFit: true,
+  overflow: 'visible'
+});
+
+isc.OBFileItemExt.addProperties({
+  width: 1,
+  height: 12,
+  //To allow button be just text width
+  align: 'left',
+  baseStyle: 'OBFileItemExt',
+  autoFit: true,
+  overflow: 'visible'
 });
 
 isc.OBFileItemButton.addProperties({
@@ -646,6 +653,14 @@ isc.OBFileItemButton.addProperties({
       this.setSrc(this.eraseIconSrc);
     }
   }
+});
+
+isc.OBFileSelector.addProperties({
+  hlayoutTopMargin: 10,
+  hlayoutBottomMargin: 10,
+  height: 50,
+  width: 450,
+  align: 'center'
 });
 
 /* =====================================================================
