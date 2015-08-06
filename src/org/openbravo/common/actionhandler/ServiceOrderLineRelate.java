@@ -176,9 +176,7 @@ public class ServiceOrderLineRelate extends BaseProcessActionHandler {
         } else {
           olsr.setSalesOrderLine(mainOrderLine);
         }
-        olsr.setAmount(lineAmount);
-        // olsr.setQuantity(lineQuantity);
-        // olsr.setAmount(lineAmount.multiply(signum));
+        olsr.setAmount(lineAmount.multiply(signum));
         olsr.setQuantity(lineQuantity.multiply(signum));
         OBDal.getInstance().save(olsr);
         totalQuantity = totalQuantity.add(lineQuantity);
