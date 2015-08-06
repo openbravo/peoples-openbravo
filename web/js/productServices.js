@@ -54,7 +54,7 @@ OB.ProductServices.orderLinesGridQtyOnChange = function (item, view, form, grid)
       newQty = new BigDecimal(String(item.getValue())),
       precision = form.getItem('pricePrecision').getValue();
   newAmount = newAmount.setScale(precision, BigDecimal.prototype.ROUND_HALF_UP);
-  if (!oldAmount) {
+  if (!oldAmount && oldAmount !== 0) {
     oldAmount = new BigDecimal(String(item.record.amount));
   } else {
     oldAmount = new BigDecimal(String(grid.getEditValues(grid.getRecordIndex(item.record)).amount));
