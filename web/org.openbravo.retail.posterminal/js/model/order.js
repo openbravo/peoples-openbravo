@@ -63,6 +63,15 @@
       return OB.I18N.formatCurrency(this.get('_price') || this.get('nondiscountedprice') || this.get('price'));
     },
 
+    isPrintableService: function () {
+      var product = this.get('product');
+      if (product.get('productType') === 'S' && !product.get('isPrintServices')) {
+        return false;
+      }
+      
+      return true;
+    },
+    
     printDiscount: function () {
       var disc = OB.DEC.mul(OB.DEC.sub(this.get('product').get('standardPrice'), this.get('price')), this.get('qty'));
       var prom = this.getTotalAmountOfPromotions();

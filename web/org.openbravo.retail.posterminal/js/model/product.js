@@ -196,6 +196,10 @@
     name: 'quantityRule',
     column: 'quantityRule',
     type: 'TEXT'
+  }, {
+    name: 'isPrintServices',
+    column: 'isPrintServices',
+    type: 'BOOL'
   }]);
 
   Product.addIndex([{
