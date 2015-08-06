@@ -5,10 +5,11 @@
 <!--E724C5BF755B4794B28232CD981F15ED-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--E724C5BF755B4794B28232CD981F15ED-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--E724C5BF755B4794B28232CD981F15ED-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--E724C5BF755B4794B28232CD981F15ED-->  <NAME><![CDATA[Inventory Average Cost transactions]]></NAME>
-<!--E724C5BF755B4794B28232CD981F15ED-->  <VERSION><![CDATA[1.0.3]]></VERSION>
+<!--E724C5BF755B4794B28232CD981F15ED-->  <NAME><![CDATA[Inventory Average Cost Transactions]]></NAME>
+<!--E724C5BF755B4794B28232CD981F15ED-->  <VERSION><![CDATA[1.0.27055]]></VERSION>
 <!--E724C5BF755B4794B28232CD981F15ED-->  <DESCRIPTION><![CDATA[Module to help explaining cost adjustments]]></DESCRIPTION>
-<!--E724C5BF755B4794B28232CD981F15ED-->  <HELP><![CDATA[This module adds a new tab under Costing tab in Product window. This new tab will show how a Costing record cost has changed to the next Costing records cost.]]></HELP>
+<!--E724C5BF755B4794B28232CD981F15ED-->  <HELP><![CDATA[This module adds a new tab under Costing tab in Product window. This new tab shows how a Costing record cost has changed to the next Costing records cost.]]></HELP>
+<!--E724C5BF755B4794B28232CD981F15ED-->  <URL><![CDATA[http://forge.openbravo.com/projects/InventoryAverageCostingTransactions]]></URL>
 <!--E724C5BF755B4794B28232CD981F15ED-->  <TYPE><![CDATA[M]]></TYPE>
 <!--E724C5BF755B4794B28232CD981F15ED-->  <LICENSE><![CDATA[Licensed under the Openbravo Public License Version 1.1.
 You may obtain a copy of the License at http://www.openbravo.com/legal/license.html or in the legal folder of the Openbravo ERP core distribution.]]></LICENSE>
@@ -20,6 +21,7 @@ You may obtain a copy of the License at http://www.openbravo.com/legal/license.h
 <!--E724C5BF755B4794B28232CD981F15ED-->  <HASCHARTOFACCOUNTS><![CDATA[N]]></HASCHARTOFACCOUNTS>
 <!--E724C5BF755B4794B28232CD981F15ED-->  <ISTRANSLATIONMODULE><![CDATA[N]]></ISTRANSLATIONMODULE>
 <!--E724C5BF755B4794B28232CD981F15ED-->  <HASREFERENCEDATA><![CDATA[Y]]></HASREFERENCEDATA>
+<!--E724C5BF755B4794B28232CD981F15ED-->  <VERSION_LABEL><![CDATA[CI]]></VERSION_LABEL>
 <!--E724C5BF755B4794B28232CD981F15ED-->  <ISCOMMERCIAL><![CDATA[N]]></ISCOMMERCIAL>
 <!--E724C5BF755B4794B28232CD981F15ED-->  <ISTRIALALLOWED><![CDATA[N]]></ISTRIALALLOWED>
 <!--E724C5BF755B4794B28232CD981F15ED--></AD_MODULE>
