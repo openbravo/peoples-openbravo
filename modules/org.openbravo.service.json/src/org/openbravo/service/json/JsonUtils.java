@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -44,6 +44,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.service.db.DalConnectionProvider;
+import org.postgresql.util.PSQLException;
 
 /**
  * Contains utility methods used in this module.
@@ -52,6 +53,9 @@ import org.openbravo.service.db.DalConnectionProvider;
  */
 public class JsonUtils {
   private static final Logger log = Logger.getLogger(JsonUtils.class);
+
+  /** PG returns this SQL state when query time out occurs */
+  private static final String PG_QUERY_CANCELED = "57014";
 
   /**
    * A utility method which retrieves the properties used for identifying an entity and its first
@@ -225,7 +229,9 @@ public class JsonUtils {
         error.put("type", "user");
         jsonResponse.put(JsonConstants.RESPONSE_ERROR, error);
       } else if (localThrowable instanceof SQLTimeoutException
-          || localThrowable instanceof QueryTimeoutException) {
+          || localThrowable instanceof QueryTimeoutException
+          || (localThrowable.getCause() instanceof PSQLException && PG_QUERY_CANCELED
+              .equals(((PSQLException) localThrowable.getCause()).getSQLState()))) {
         final JSONObject error = new JSONObject();
         error.put(
             "message",
