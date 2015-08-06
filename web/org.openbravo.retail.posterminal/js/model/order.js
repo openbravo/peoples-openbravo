@@ -1015,6 +1015,14 @@
             indexes: indexes,
             relations: relations,
             undo: function () {
+            if(OB.MobileApp.model.get('terminal').businessPartner == me.get('bp').get('id')){
+              	for(var i = 0; i< me.get('undo').lines.length; i++){
+                  if(!me.get('undo').lines[i].get('product').get('oBPOSAllowAnonymousSale')){
+                  	OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_AnonymousSaleForProductNotAllowed', [me.get('undo').lines[i].get('product').get('_identifier')]));
+                  	return;
+                  }
+              	}
+              }
               var sortedLines;
               me.set('preventServicesUpdate', true);
 
