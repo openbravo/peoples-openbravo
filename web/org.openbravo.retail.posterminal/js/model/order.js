@@ -289,7 +289,7 @@
         this.set('posTerminal', attributes.posTerminal);
         this.set('posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, attributes['posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER]);
         this.set('orderDate', new Date(attributes.orderDate));
-        this.set('creationDate', (!OB.UTIL.isNullOrUndefined(attributes.creationDate) ? attributes.creationDate : null));
+        this.set('creationDate', OB.I18N.normalizeDate(attributes.creationDate));
         this.set('documentnoPrefix', attributes.documentnoPrefix);
         this.set('quotationnoPrefix', attributes.quotationnoPrefix);
         this.set('documentnoSuffix', attributes.documentnoSuffix);
@@ -2372,7 +2372,7 @@
       order.set('isEditable', false);
       order.set('checked', model.checked); //TODO: what is this for, where it comes from?
       order.set('orderDate', moment(model.orderDate.toString(), "YYYY-MM-DD").toDate());
-      order.set('creationDate', moment(model.creationDate.toString(), "YYYY-MM-DD hh:m:ss.s").toDate());
+      order.set('creationDate', OB.I18N.normalizeDate(model.creationDate));
       order.set('paidOnCredit', false);
       if (model.isQuotation) {
         order.set('isQuotation', true);

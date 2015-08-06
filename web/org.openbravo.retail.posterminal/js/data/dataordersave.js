@@ -80,13 +80,14 @@
 
       var docno = this.receipt.get('documentNo');
       var isLayaway = (this.receipt.get('orderType') === 2 || this.receipt.get('isLayaway'));
-      var creationDate = this.receipt.get('creationDate');
 
-      if (!creationDate || !creationDate.getTimezoneOffset) {
-        if ( !! creationDate) {
-          OB.error("Ticket closed: 'creationDate' set to '" + new Date() + "' (was '" + creationDate + "')");
-        }
+      var normalizedCreationDate = OB.I18N.normalizeDate(this.receipt.get('creationDate'));
+      var creationDate;
+      if (normalizedCreationDate === null) {
         creationDate = new Date();
+        normalizedCreationDate = OB.I18N.normalizeDate(creationDate);
+      } else {
+        creationDate = new Date(normalizedCreationDate);
       }
 
       this.receipt.set('hasbeenpaid', 'Y');
@@ -110,7 +111,7 @@
         OB.trace('Execution of pre order save hook OK.');
 
         delete receipt.attributes.json;
-        receipt.set('creationDate', creationDate);
+        receipt.set('creationDate', normalizedCreationDate);
         receipt.set('timezoneOffset', creationDate.getTimezoneOffset());
         receipt.set('created', creationDate.getTime());
         receipt.set('obposCreatedabsolute', OB.I18N.formatDateISO(creationDate));
@@ -246,16 +247,17 @@
         this.receipt = receipt;
       }
       var receiptId = this.receipt.get('id');
-      var creationDate = this.receipt.get('creationDate');
 
-      if (!creationDate || !creationDate.getTimezoneOffset) {
-        if ( !! creationDate) {
-          OB.error("Multiorders ticket closed: 'creationDate' set to '" + new Date() + "' (was '" + creationDate + "')");
-        }
+      var normalizedCreationDate = OB.I18N.normalizeDate(this.receipt.get('creationDate'));
+      var creationDate;
+      if (normalizedCreationDate === null) {
         creationDate = new Date();
+        normalizedCreationDate = OB.I18N.normalizeDate(creationDate);
+      } else {
+        creationDate = new Date(normalizedCreationDate);
       }
 
-      this.receipt.set('creationDate', creationDate);
+      this.receipt.set('creationDate', normalizedCreationDate);
       this.receipt.set('hasbeenpaid', 'Y');
       this.context.get('multiOrders').trigger('integrityOk', this.receipt);
       OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(this.receipt.get('documentnoSuffix'), this.receipt.get('quotationnoSuffix'));
