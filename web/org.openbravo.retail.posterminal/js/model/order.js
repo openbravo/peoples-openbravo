@@ -1047,7 +1047,7 @@
             text: text,
             line: line,
             undo: function () {
-              if (!line.get('product').get('oBPOSAllowAnonymousSale') && OB.MobileApp.model.get('terminal').businessPartner == me.get('bp').get('id')) {
+              if (!line.get('product').get('oBPOSAllowAnonymousSale') && OB.MobileApp.model.get('terminal').businessPartner === me.get('bp').get('id')) {
                 OB.UTIL.showI18NWarning('OBPOS_AnonymousSaleNotAllowed');
                 return;
               }
@@ -1105,7 +1105,7 @@
       } else {
         qty = qty || 1;
       }
-      if (qty == -1 && p.get('productType') === 'S' && !p.get('returnable')) {
+      if (qty === -1 && p.get('productType') === 'S' && !p.get('returnable')) {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_UnreturnableProduct'), OB.I18N.getLabel('OBPOS_UnreturnableProductMessage', [p.get('_identifier')]));
         return;
       }
@@ -1151,25 +1151,15 @@
               options: options,
               attrs: attrs
             }, function (args) {
-              var mergeArrays;
               if (args && args.cancelOperation) {
                 return;
               }
-              if (args.line) {
+              if (args.line && (qty !== 1 || args.line.get('qty') !== -1)) {
                 args.receipt.addUnit(args.line, args.qty);
                 if (!_.isUndefined(args.attrs)) {
-                  mergeArrays = function (arr1, arr2) {
-                    var i, res = [].concat(arr1);
-                    for (i = 0; i < arr2.length; i++) {
-                      if (!OB.UTIL.isObjectInArray(arr2[i], res)) {
-                        res.push(arr2[i]);
-                      }
-                    }
-                    return res;
-                  };
                   _.each(_.keys(args.attrs), function (key) {
                     if (args.p.get('productType') === 'S' && key === 'relatedLines' && args.line.get('relatedLines')) {
-                      args.line.set('relatedLines', mergeArrays(args.line.get('relatedLines'), attrs[key]));
+                      args.line.set('relatedLines', OB.UTIL.mergeArrays(args.line.get('relatedLines'), attrs[key]));
                     } else {
                       args.line.set(key, attrs[key]);
                     }
@@ -1221,7 +1211,7 @@
           }
         });
       }
-      if (qty == -1 && p.get('productType') === 'S') {
+      if (qty === -1 && p.get('productType') === 'S') {
         OB.UTIL.Approval.requestApproval(
         OB.MobileApp.view.$.containerWindow.$.pointOfSale.model, 'OBPOS_approval.returnService', function (approved, supervisor, approvalType) {
           if (approved) {
@@ -1348,7 +1338,7 @@
           OB.UTIL.showI18NWarning('OBPOS_GenericNotAllowed');
           return;
         }
-        if (OB.MobileApp.model.get('terminal').businessPartner == me.get('bp').get('id') && args && args.productToAdd && !args.productToAdd.get('oBPOSAllowAnonymousSale')) {
+        if (OB.MobileApp.model.get('terminal').businessPartner === me.get('bp').get('id') && args && args.productToAdd && !args.productToAdd.get('oBPOSAllowAnonymousSale')) {
           OB.UTIL.showI18NWarning('OBPOS_AnonymousSaleNotAllowed');
           return;
         }
@@ -1763,9 +1753,9 @@
     setBPandBPLoc: function (businessPartner, showNotif, saveChange) {
       var me = this,
           undef;
-      var oldbp = this.get('bp');
-      if (OB.MobileApp.model.get('terminal').businessPartner == businessPartner.id) {
-        for (var i = 0; i < me.get('lines').models.length; i++) {
+      var i, oldbp = this.get('bp');
+      if (OB.MobileApp.model.get('terminal').businessPartner === businessPartner.id) {
+        for (i = 0; i < me.get('lines').models.length; i++) {
           if (!me.get('lines').models[i].get('product').get('oBPOSAllowAnonymousSale')) {
             OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_AnonymousSaleForProductNotAllowed', [me.get('lines').models[i].get('product').get('_identifier')]));
             return;

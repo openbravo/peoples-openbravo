@@ -663,16 +663,16 @@ enyo.kind({
           serviceLines = getServiceLines(line);
 
           for (i = 0; i < serviceLines.length; i++) {
-            newRelatedLines = newRelatedLines.concat(serviceLines[i].get('relatedLines'));
-            for (j = 0; j < serviceLines[i].get('relatedLines').length; j++) {
-              l = me.order.get('lines').get(serviceLines[i].get('relatedLines')[j].orderlineId);
-              if (l && l.get('qty') > 0) {
-                newqtyplus += l.get('qty');
-                positiveLines.push(l);
-              } else if (l && l.get('qty') < 0) {
-                newqtyminus += l.get('qty');
-                negativeLines.push(l);
-              }
+            newRelatedLines = OB.UTIL.mergeArrays(newRelatedLines, serviceLines[i].get('relatedLines'));
+          }
+          for (j = 0; j < newRelatedLines.length; j++) {
+            l = me.order.get('lines').get(newRelatedLines[j].orderlineId);
+            if (l && l.get('qty') > 0) {
+              newqtyplus += l.get('qty');
+              positiveLines.push(l);
+            } else if (l && l.get('qty') < 0) {
+              newqtyminus += l.get('qty');
+              negativeLines.push(l);
             }
           }
           rlp = _.filter(newRelatedLines, function (rl) {
