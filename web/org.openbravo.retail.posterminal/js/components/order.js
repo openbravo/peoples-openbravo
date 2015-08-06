@@ -638,7 +638,7 @@ enyo.kind({
         var serviceLines;
         if (service.get('product').get('groupProduct')) {
           serviceLines = _.filter(me.order.get('lines').models, function (l) {
-            return l.get('product').get('id') === service.get('product').get('id');
+            return (l.get('product').get('id') === service.get('product').get('id')) && !service.get('originalOrderLineId');
           });
         } else {
           serviceLines = [service];
@@ -658,7 +658,7 @@ enyo.kind({
             negativeLines = [],
             newRelatedLines = [];
 
-        if (line.has('relatedLines') && line.get('relatedLines').length > 0) {
+        if (line.has('relatedLines') && line.get('relatedLines').length > 0 && !line.get('originalOrderLineId')) {
 
           serviceLines = getServiceLines(line);
 
@@ -788,7 +788,7 @@ enyo.kind({
         var prod = line.get('product'),
             amountBeforeDiscounts = 0,
             amountAfterDiscounts = 0;
-        if (prod.get('productType') === 'S' && prod.get('isPriceRuleBased')) {
+        if (prod.get('productType') === 'S' && prod.get('isPriceRuleBased') && !line.get('originalOrderLineId')) {
           var criteria = {};
           line.get('relatedLines').forEach(function (rl) {
             var l = me.order.get('lines').get(rl.orderlineId);
