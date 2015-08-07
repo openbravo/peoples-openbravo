@@ -41,7 +41,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="SIZE" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="FILESIZE" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
