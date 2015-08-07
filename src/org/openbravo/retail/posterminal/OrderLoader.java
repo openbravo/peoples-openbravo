@@ -61,6 +61,7 @@ import org.openbravo.mobile.core.process.PropertyByType;
 import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.ad.access.InvoiceLineTax;
 import org.openbravo.model.ad.access.OrderLineTax;
+import org.openbravo.model.ad.access.User;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.businesspartner.Location;
 import org.openbravo.model.common.enterprise.DocumentType;
@@ -1139,7 +1140,18 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     order.setObposSendemail((jsonorder.has("sendEmail") && jsonorder.getBoolean("sendEmail")));
 
     if (!bp.getADUserList().isEmpty()) {
-      order.setUserContact(bp.getADUserList().get(0));
+      String userHqlWhereClause = " usr where usr.businessPartner = :bp and usr.organization.id in (:orgs) order by username";
+      OBQuery<User> queryUser = OBDal.getInstance().createQuery(User.class, userHqlWhereClause);
+      queryUser.setNamedParameter("bp", order.getBusinessPartner());
+      queryUser.setNamedParameter("orgs", OBContext.getOBContext()
+          .getOrganizationStructureProvider().getNaturalTree(order.getOrganization().getId()));
+      // already filtered
+      queryUser.setFilterOnReadableOrganization(false);
+      queryUser.setMaxResult(1);
+      List<User> lstResultUsers = queryUser.list();
+      if (lstResultUsers != null && lstResultUsers.size() > 0) {
+        order.setUserContact(lstResultUsers.get(0));
+      }
     }
 
     JSONObject taxes = jsonorder.getJSONObject("taxes");
