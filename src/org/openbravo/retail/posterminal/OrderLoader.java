@@ -1097,6 +1097,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           }
           promotion.setLineNo((long) ((p + 1) * 10));
           promotion.setSalesOrderLine(orderline);
+          if (jsonPromotion.has("identifier") && !jsonPromotion.isNull("identifier")) {
+            promotion.setObdiscIdentifier(jsonPromotion.getString("identifier"));
+          }
           orderline.getOrderLineOfferList().add(promotion);
         }
       }
