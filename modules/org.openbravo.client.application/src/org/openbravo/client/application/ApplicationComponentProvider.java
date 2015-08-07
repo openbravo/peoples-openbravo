@@ -473,6 +473,9 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
 
     globalResources.add(createStaticResource("web/js/checkAvailableCredit.js", true));
 
+    // Product Services
+    globalResources.add(createStaticResource("web/js/productServices.js", true));
+
     return globalResources;
   }
 
