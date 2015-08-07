@@ -398,18 +398,18 @@ enyo.kind({
                 }
               }
             }
-          }
-          for (i = 0; i < OB.MobileApp.model.receipt.get('lines').length; i++) { // Check if there is any not returnable related product to a selected line
-            line = OB.MobileApp.model.receipt.get('lines').models[i];
-            if (line.get('product').get('productType') === 'S' && !line.isReturnable()) {
-              if (line.get('relatedLines')) {
-                for (j = 0; j < line.get('relatedLines').length; j++) {
-                  relatedLine = line.get('relatedLines')[j];
-                  for (k = 0; k < me.selectedModels.length; k++) {
-                    lineFromSelected = me.selectedModels[k];
-                    if (lineFromSelected.id === relatedLine.orderlineId) {
-                      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_UnreturnableRelatedService'), OB.I18N.getLabel('OBPOS_UnreturnableRelatedServiceMessage', [line.get('product').get('_identifier'), relatedLine.productName]));
-                      return;
+            for (i = 0; i < OB.MobileApp.model.receipt.get('lines').length; i++) { // Check if there is any not returnable related product to a selected line
+              line = OB.MobileApp.model.receipt.get('lines').models[i];
+              if (line.get('product').get('productType') === 'S' && !line.isReturnable()) {
+                if (line.get('relatedLines')) {
+                  for (j = 0; j < line.get('relatedLines').length; j++) {
+                    relatedLine = line.get('relatedLines')[j];
+                    for (k = 0; k < me.selectedModels.length; k++) {
+                      lineFromSelected = me.selectedModels[k];
+                      if (lineFromSelected.id === relatedLine.orderlineId) {
+                        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_UnreturnableRelatedService'), OB.I18N.getLabel('OBPOS_UnreturnableRelatedServiceMessage', [line.get('product').get('_identifier'), relatedLine.productName]));
+                        return;
+                      }
                     }
                   }
                 }
