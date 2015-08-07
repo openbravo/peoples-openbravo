@@ -794,10 +794,14 @@ enyo.kind({
             var l = me.order.get('lines').get(rl.orderlineId);
             if (me.order.get('priceIncludesTax')) {
               amountBeforeDiscounts += l.get('gross');
-              amountAfterDiscounts += (l.get('discountedLinePrice') ? l.get('discountedLinePrice') : l.get('gross'));
+              amountAfterDiscounts += l.get('gross') - _.reduce(l.get('promotions'), function (memo, promo) {
+                return memo + promo.amt;
+              }, 0);
             } else {
               amountBeforeDiscounts += l.get('net');
-              amountAfterDiscounts += (l.get('discountedNet') ? l.get('discountedNet') : l.get('net'));
+              amountAfterDiscounts += l.get('net') - _.reduce(l.get('promotions'), function (memo, promo) {
+                return memo + promo.amt;
+              }, 0);;
             }
           });
           criteria._whereClause = "where product = '" + line.get('product').get('id') + "' and validFromDate <= date('now')";
