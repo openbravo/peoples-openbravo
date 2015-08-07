@@ -375,11 +375,10 @@ OB.APRM.AddPayment.distributeAmount = function (view, form, onActualPaymentChang
       glitemamt = new BigDecimal(String(form.getItem('amount_gl_items').getValue() || 0)),
       orderInvoiceData = orderInvoice.data.localData,
       total = orderInvoice.data.totalRows,
-      writeoff, amt, outstandingAmount, i, showMessageProperty, showMessage, message, autoDistributeAmt;
+      autoDistributeAmt = OB.PropertyStore.get("APRM_AutoDistributeAmt"),
+      writeoff, amt, outstandingAmount, i, showMessageProperty, showMessage, message;
 
-  autoDistributeAmt = OB.PropertyStore.get("APRM_AutoDistributeAmt");
-  if (autoDistributeAmt === null || autoDistributeAmt === 'Y') {
-
+  if (autoDistributeAmt !== 'N' && autoDistributeAmt !== '"N"') {
     if (orderInvoice.data.cachedRows < (orderInvoice.data.totalRows)) {
       showMessageProperty = OB.PropertyStore.get('APRM_ShowNoDistributeMsg');
       showMessage = (showMessageProperty !== 'N' && showMessageProperty !== '"N"');
