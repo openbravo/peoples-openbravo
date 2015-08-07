@@ -111,12 +111,12 @@ public class FileInfoBLOB extends HttpSecureAppServlet {
     if (vars.commandIn("DEFAULT")) {
 
       printPageFrame(response, vars, imageID, tableId, columnName, parentObjectId, orgId);
-
     } else if (vars.getCommand().startsWith("SAVE_OB3")) {
       OBContext.setAdminMode(true);
       try {
         final FileItem fi = vars.getMultiFile("inpFile");
         byte[] bytea = fi.get();
+        String fileName = fi.getName();
         String mimeType = MimeTypeUtil.getInstance().getMimeTypeName(bytea);
         String fileSizeAction = vars.getStringParameter("imageSizeAction");
         int size = bytea.length;
@@ -127,7 +127,7 @@ public class FileInfoBLOB extends HttpSecureAppServlet {
         file.setOrganization(OBDal.getInstance().get(Organization.class, orgId));
         file.setBindaryData(bytea);
         file.setActive(true);
-        file.setName("File"); // TODO: Save here the filename...
+        file.setName(fileName);
         file.setMimetype(mimeType);
         file.setFilesize((long) size);
         OBDal.getInstance().save(file);
@@ -138,13 +138,13 @@ public class FileInfoBLOB extends HttpSecureAppServlet {
         response.setContentType("text/html; charset=UTF-8");
         PrintWriter writer = response.getWriter();
         String selectorId = orgId = vars.getStringParameter("inpSelectorId");
-        writeRedirectOB3(writer, selectorId, fileid, fileSizeAction, size, null);
+        writeRedirectOB3(writer, selectorId, fileid, fileSizeAction, fileName, size, null);
       } catch (Throwable t) {
         log4j.error("Error uploading file", t);
         response.setContentType("text/html; charset=UTF-8");
         PrintWriter writer = response.getWriter();
         String selectorId = orgId = vars.getStringParameter("inpSelectorId");
-        writeRedirectOB3(writer, selectorId, "", "ERROR_UPLOADING", 0, t.getMessage());
+        writeRedirectOB3(writer, selectorId, "", "ERROR_UPLOADING", null, 0, t.getMessage());
       } finally {
         OBContext.restorePreviousMode();
       }
@@ -167,10 +167,10 @@ public class FileInfoBLOB extends HttpSecureAppServlet {
   }
 
   private void writeRedirectOB3(PrintWriter writer, String selectorId, String fileid,
-      String fileSizeAction, int size, String msg) {
+      String fileSizeAction, String fileName, int size, String msg) {
     writer.write("<HTML><BODY><script type=\"text/javascript\">");
     writer.write("top." + selectorId + ".callback('" + fileid + "', '" + fileSizeAction + "', '"
-        + size + "'");
+        + fileName + "', '" + size + "'");
 
     if (StringUtils.isNotEmpty(msg)) {
       writer.write(", '" + StringEscapeUtils.escapeJavaScript(msg) + "'");

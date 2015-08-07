@@ -18,21 +18,16 @@
  */
 package org.openbravo.client.application.window;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.openbravo.base.model.Entity;
-import org.openbravo.base.model.ModelProvider;
-import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.client.kernel.BaseActionHandler;
-import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.erpCommon.utility.MimeTypeUtil;
-import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.model.ad.datamodel.Table;
-import org.openbravo.model.ad.ui.Tab;
-import org.openbravo.model.ad.utility.Image;
+import org.openbravo.model.ad.utility.ADFile;
 import org.openbravo.portal.PortalAccessible;
 
 /**
@@ -49,70 +44,62 @@ import org.openbravo.portal.PortalAccessible;
  */
 public class FileActionHandler extends BaseActionHandler implements PortalAccessible {
 
-  private static final Logger log = Logger.getLogger(FileDeleteActionHandler.class);
-
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) {
-    if (parameters.get("command").equals("DELETE")) {
-      OBContext.setAdminMode(true);
-      String imageID = (String) parameters.get("inpimageId");
-      String tabId = (String) parameters.get("inpTabId");
-      Table table = null;
+
+    Object command = parameters.get("command");
+    if ("GETFILEINFO".equals(command)) {
+      String fileID = (String) parameters.get("inpfileId");
+      JSONObject result = new JSONObject();
+
       try {
-        Tab tab = OBDal.getInstance().get(Tab.class, tabId);
-        table = tab.getTable();
-        Image image = OBDal.getInstance().get(Image.class, imageID);
-        OBDal.getInstance().flush();
-        OBDal.getInstance().remove(image);
-      } finally {
-        OBContext.restorePreviousMode();
-      }
-      String columnName = (String) parameters.get("inpColumnName");
-      String parentObjectId = (String) parameters.get("parentObjectId");
-      Entity entity = ModelProvider.getInstance().getEntityByTableName(table.getDBTableName());
-      String propertyName = entity.getPropertyByColumnName(columnName).getName();
-      BaseOBObject parentObject = OBDal.getInstance().get(entity.getName(), parentObjectId);
-      parentObject.set(propertyName, null);
-      return new JSONObject();
-    } else if (parameters.get("command").equals("GETSIZE")) {
-      try {
-        OBContext.setAdminMode(true);
-        String imageID = (String) parameters.get("inpimageId");
-        Image image = OBDal.getInstance().get(Image.class, imageID);
-        Long width;
-        Long height;
-        if (image != null) {
-          if (image.getHeight() == null || image.getWidth() == null) {
-            Long[] size = Utility.computeImageSize(image.getBindaryData());
-            width = size[0];
-            height = size[1];
-            image.setWidth(width);
-            image.setHeight(height);
-            OBDal.getInstance().save(image);
-            OBDal.getInstance().flush();
-          } else {
-            width = image.getWidth();
-            height = image.getHeight();
-          }
-          if (image.getMimetype() == null) {
-            image.setMimetype(MimeTypeUtil.getInstance().getMimeTypeName(image.getBindaryData()));
-            OBDal.getInstance().save(image);
-            OBDal.getInstance().flush();
-          }
-          JSONObject obj = new JSONObject();
-          obj.put("width", width);
-          obj.put("height", height);
-          return obj;
+
+        // Check file null or invalid
+        ADFile file = OBDal.getInstance().get(ADFile.class, fileID);
+        if (file != null) {
+          result.put("name", file.getName());
+          result.put("ext", getExtension(file.getName()));
+          result.put("mimetype", file.getMimetype());
+          result.put("size", file.getFilesize());
+          result.put("displaysize", formatFileSize(file.getFilesize().intValue()));
+
         }
-        return new JSONObject();
-      } catch (Exception e) {
-        log.error("Error while calculating image size", e);
-        return new JSONObject();
-      } finally {
-        OBContext.restorePreviousMode();
+      } catch (JSONException e) {
+        throw new OBException(e);
       }
+
+      return result;
     } else {
-      return new JSONObject();
+      throw new OBException("Command not found : " + command);
+    }
+  }
+
+  private String getExtension(String filename) {
+
+    if (filename == null) {
+      return "";
+    }
+
+    int i = filename.lastIndexOf(".");
+    if (i < 0) {
+      return "";
+    }
+
+    return filename.substring(i + 1);
+  }
+
+  private String formatFileSize(int size) {
+
+    NumberFormat f = new DecimalFormat("#,##0.#");
+
+    if (size < 1024) {
+      return f.format(size) + " B";
+    } else if (size < 1048576) {
+      return f.format(size / 1024.0) + " KB";
+    } else if (size < 1073741824) {
+      return f.format(size / 1048576.0) + " MB";
+    } else {
+      return f.format(size / 1073741824.0) + " GB";
     }
   }
 }
