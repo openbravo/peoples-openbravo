@@ -23,6 +23,10 @@ isc.ClassFactory.defineClass('OBFileItemLink', isc.HTMLFlow);
 
 isc.OBFileItemLink.addProperties({
   setLink: function (text, url) {
+    if (typeof text === 'string') {
+      // Remove the extension of the link text because it is already shown in the OBFileItemExt
+      text = text.substring(0, (text.lastIndexOf('.') !== -1 ? text.lastIndexOf('.') : text.length));
+    }
     this.setContents('<a class="' + this.linkStyleName + '" href="' + url + '" id="' + this.randomId + '" target="_blank">' + text + '</a>');
   }
 });
@@ -214,7 +218,11 @@ isc.OBFileCanvas.addProperties({
       this.ext.setContents(ext);
       this.link.show();
       this.size.show();
-      this.ext.show();
+      if (ext) {
+        this.ext.show();
+      } else {
+        this.ext.hide();
+      }
     }
   }
 });
