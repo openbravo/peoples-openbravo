@@ -81,10 +81,11 @@ enyo.kind({
           // continue
           return;
         }
+        var identifierName = d.identifier ? d.identifier : d.name;
         this.createComponent({
           style: 'display: block;',
           components: [{
-            content: '-- ' + d.identifier,
+            content: '-- ' + identifierName,
             attributes: {
               style: 'float: left; width: 80%;'
             }
