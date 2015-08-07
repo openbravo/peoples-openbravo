@@ -952,7 +952,7 @@
       line.trigger('removed', line);
 
       function finishDelete() {
-        var text, lines, indexes, relations, rl, rls;
+        var text, lines, indexes, relations, rl, rls, i;
 
         me.set('preventServicesUpdate', true);
         me.get('lines').remove(line);
@@ -1015,13 +1015,13 @@
             indexes: indexes,
             relations: relations,
             undo: function () {
-            if(OB.MobileApp.model.get('terminal').businessPartner == me.get('bp').get('id')){
-              	for(var i = 0; i< me.get('undo').lines.length; i++){
-                  if(!me.get('undo').lines[i].get('product').get('oBPOSAllowAnonymousSale')){
-                  	OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_AnonymousSaleForProductNotAllowed', [me.get('undo').lines[i].get('product').get('_identifier')]));
-                  	return;
+              if (OB.MobileApp.model.get('terminal').businessPartner === me.get('bp').get('id')) {
+                for (i = 0; i < me.get('undo').lines.length; i++) {
+                  if (!me.get('undo').lines[i].get('product').get('oBPOSAllowAnonymousSale')) {
+                    OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_AnonymousSaleForProductNotAllowed', [me.get('undo').lines[i].get('product').get('_identifier')]));
+                    return;
                   }
-              	}
+                }
               }
               var sortedLines;
               me.set('preventServicesUpdate', true);
@@ -1113,7 +1113,7 @@
       } else {
         qty = qty || 1;
       }
-      if (qty === -1 && p.get('productType') === 'S' && !p.get('returnable')) {
+      if (((options && options.line) ? options.line.get('qty') + qty : qty) < 0 && p.get('productType') === 'S' && !p.get('returnable')) {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_UnreturnableProduct'), OB.I18N.getLabel('OBPOS_UnreturnableProductMessage', [p.get('_identifier')]));
         return;
       }
@@ -1219,7 +1219,7 @@
           }
         });
       }
-      if (qty === -1 && p.get('productType') === 'S') {
+      if (((options && options.line) ? options.line.get('qty') + qty : qty) < 0 && p.get('productType') === 'S') {
         OB.UTIL.Approval.requestApproval(
         OB.MobileApp.view.$.containerWindow.$.pointOfSale.model, 'OBPOS_approval.returnService', function (approved, supervisor, approvalType) {
           if (approved) {
