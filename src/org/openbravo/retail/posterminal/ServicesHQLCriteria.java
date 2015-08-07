@@ -25,6 +25,6 @@ public class ServicesHQLCriteria extends HQLCriteriaProcess {
         + "or product.includedProducts is null) "
         + "and ((product.includedProductCategories = 'Y' and not exists (select 1 from ServiceProductCategory spc where product.id = spc.product.id and spc.productCategory.id =  '$2' )) "
         + "or (product.includedProductCategories = 'N' and exists (select 1 from ServiceProductCategory spc where product.id = spc.product.id and spc.productCategory.id = '$2' )) "
-        + "or product.includedProductCategories is null))";
+        + "or product.includedProductCategories is null) " + "and product.id not in ('$4'))";
   }
 }

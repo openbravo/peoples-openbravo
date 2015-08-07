@@ -323,11 +323,19 @@ enyo.kind({
       if (product) {
         OB.UI.SearchProductCharacteristic.prototype.filtersCustomClear();
         OB.UI.SearchProductCharacteristic.prototype.filtersCustomAdd(new OB.UI.SearchServicesFilter({
-          text: product.get("_identifier"),
-          productId: product.id,
-          productList: null,
-          orderline: this.owner.owner.line,
-          orderlineList: null
+          text: this.owner.owner.selectedModels.filter(function (line) {
+            return line.get('hasRelatedServices');
+          }).map(function (line) {
+            return line.get('product').get('_identifier');
+          }).join(', '),
+          productList: this.owner.owner.selectedModels.filter(function (line) {
+            return line.get('hasRelatedServices');
+          }).map(function (line) {
+            return line.get('product').get('id');
+          }),
+          orderlineList: this.owner.owner.selectedModels.filter(function (line) {
+            return line.get('hasRelatedServices');
+          })
         }));
         var me = this;
         setTimeout(function () {
@@ -598,7 +606,27 @@ enyo.kind({
     } else if (OB.MobileApp.model.get('permissions')[this.$.actionButtonsContainer.$.returnLine.permission] && !(this.model.get('order').get('isPaid') === true || this.model.get('order').get('isLayaway') === true || this.model.get('order').get('isQuotation') === true)) {
       this.$.actionButtonsContainer.$.returnLine.show();
     }
-    if (this.line && this.line.get('hasRelatedServices')) {
+    if (this.selectedModels && this.selectedModels.length > 0) {
+      var proposedServices, existRelatedServices;
+      existRelatedServices = this.selectedModels.filter(function (line) {
+        return line.get('hasRelatedServices');
+      }).length > 0;
+      proposedServices = this.selectedModels.filter(function (line) {
+        return !line.get('hasRelatedServices') || line.get('obposServiceProposed');
+      }).length === this.selectedModels.length;
+      if (existRelatedServices) {
+        this.$.actionButtonsContainer.$.showRelatedServices.show();
+        if (proposedServices) {
+          this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('iconServices_unreviewed', false);
+          this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('iconServices_reviewed', true);
+        } else {
+          this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('iconServices_unreviewed', true);
+          this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('iconServices_reviewed', false);
+        }
+      } else {
+        this.$.actionButtonsContainer.$.showRelatedServices.hide();
+      }
+    } else if (this.line && this.line.get('hasRelatedServices')) {
       this.$.actionButtonsContainer.$.showRelatedServices.show();
       if (this.line.get('obposServiceProposed')) {
         this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('iconServices_unreviewed', false);
