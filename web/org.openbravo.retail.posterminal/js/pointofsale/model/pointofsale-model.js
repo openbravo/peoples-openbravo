@@ -500,10 +500,21 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                 throw "A clone of the receipt must be provided because it is possible that some rogue process could have changed it";
               }
             });
+
             var orderToPrint = OB.UTIL.clone(frozenReceipt);
             receipt.trigger('print', orderToPrint, {
               offline: true
             });
+
+            // Verify that the receipt has not been changed while the ticket has being closed
+            // We create a copy of the living receipt because the cloning process sort the properties in a different way and could lead to false positives
+            // Verify that the returned frozen receipt (that is a copy of the receipt when the creationDate, etc was set) equals the information of the current live receipt (that should have not been modified)
+            var receiptCopyForVerification = new OB.Model.Order();
+            OB.UTIL.clone(receipt, receiptCopyForVerification);
+            if (JSON.stringify(receiptCopyForVerification.serializeToJSON()) !== JSON.stringify(frozenReceipt.serializeToJSON())) {
+              OB.error("The receipt has been modified while it was being closed:\n" + JSON.stringify(receiptCopyForVerification.serializeToJSON()) +"\n\n" + JSON.stringify(frozenReceipt.serializeToJSON()) + "\n");
+            }
+
             orderList.deleteCurrent();
             orderList.synchronizeCurrentOrder();
             enyo.$.scrim.hide();
