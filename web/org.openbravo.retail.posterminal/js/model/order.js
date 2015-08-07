@@ -1192,7 +1192,7 @@
               line = options.line;
               newLine = false;
             } else {
-              line = this.createLine(p, qty, options, attrs);
+              line = me.createLine(p, qty, options, attrs);
             }
           }
         }
@@ -1651,6 +1651,10 @@
       }
 
       newline.calculateGross();
+
+      if (newline.get('relatedLines')) {
+        newline.set('groupService', newline.get('product').get('groupProduct'));
+      }
 
       //issue 25655: ungroup feature is just needed when the line is created. Then lines work as grouped lines.
       newline.get('product').set("groupProduct", true);

@@ -636,7 +636,7 @@ enyo.kind({
 
       function getServiceLines(service) {
         var serviceLines;
-        if (service.get('product').get('groupProduct')) {
+        if (service.get('groupService')) {
           serviceLines = _.filter(me.order.get('lines').models, function (l) {
             return (l.get('product').get('id') === service.get('product').get('id')) && !service.get('originalOrderLineId');
           });
@@ -727,7 +727,7 @@ enyo.kind({
               } else {
                 me.order.get('lines').remove(l);
               }
-              if (!prod.get('groupProduct')) {
+              if (!line.get('groupService') && newLine) {
                 newLine.set('mirrorLine', line);
                 line.set('mirrorLine', newLine);
               }
@@ -751,7 +751,7 @@ enyo.kind({
               } else {
                 me.order.get('lines').remove(l);
               }
-              if (!prod.get('groupProduct')) {
+              if (!line.get('groupService') && newLine) {
                 newLine.set('mirrorLine', line);
                 line.set('mirrorLine', newLine);
               }
@@ -759,6 +759,15 @@ enyo.kind({
           });
           me.positiveLineUpdated = false;
           me.negativeLineUpdated = false;
+
+          if (!line.get('groupService') && line.get('relatedLines').length > 1) {
+            line.get('relatedLines').forEach(function (rl) {
+              newLine = me.order.createLine(prod, me.order.get('lines').get(rl.orderlineId).get('qty'));
+              newLine.set('relatedLines', [rl]);
+              newLine.set('groupService', false);
+            });
+            me.order.get('lines').remove(line);
+          }
         }
       });
       this.updating = false;
@@ -801,7 +810,7 @@ enyo.kind({
               amountBeforeDiscounts += l.get('net');
               amountAfterDiscounts += l.get('net') - _.reduce(l.get('promotions'), function (memo, promo) {
                 return memo + promo.amt;
-              }, 0);;
+              }, 0);
             }
           });
           criteria._whereClause = "where product = '" + line.get('product').get('id') + "' and validFromDate <= date('now')";
