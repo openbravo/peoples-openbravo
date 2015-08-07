@@ -23,7 +23,7 @@ isc.ClassFactory.defineClass('OBFileItemLink', isc.HTMLFlow);
 
 isc.OBFileItemLink.addProperties({
   setLink: function (text, url) {
-    this.setContents('<a class="' + this.linkStyleName + '" href="' + url + '" id="' + this.randomId + '">' + text + '</a>');
+    this.setContents('<a class="' + this.linkStyleName + '" href="' + url + '" id="' + this.randomId + '" target="_blank">' + text + '</a>');
   }
 });
 
@@ -170,9 +170,8 @@ isc.OBFileCanvas.addProperties({
 
         // If the record is new and the file is deleted, remove it from the database
         if (isNewRecord) {
-          //TODO: The 'FileDeleteActionHandler' should exist and work
           OB.RemoteCallManager.call('org.openbravo.client.application.window.FileDeleteActionHandler', {
-            'file': fileId
+            'id': fileId
           });
         }
       },
@@ -248,16 +247,13 @@ isc.OBFileItem.addProperties({
 
       OB.RemoteCallManager.call('org.openbravo.client.application.window.FileActionHandler', {}, d, function (response, data, request) {
         var fileName = data.name;
-        var fileSize = data.size;
+        var fileSize = data.displaysize;
         var fileExt = data.ext;
-
-        //TODO: 'FileActionHandler' should exist, answer to 'GETFILEINFO', and should provide data.name, data.size and data.ext
-        //The following values are dummy data just to show that the UI works:
-        fileName = 'This is my dummy filename';
-        fileSize = '512,8 KB';
-        fileExt = 'DOC';
-
-        canvas.setFileInfo(fileName, "../utility/GetFile?id=" + newValue + '&nocache=' + Math.random(), fileSize, fileExt);
+        if (fileName) {
+          canvas.setFileInfo(fileName, "utility/GetFile?id=" + newValue + '&nocache=' + Math.random(), fileSize, fileExt);
+        } else {
+          canvas.setFileInfo();
+        }
       });
     }
     //Buttons will not be shown if the form is readonly
@@ -429,7 +425,7 @@ isc.OBFileSelector.addProperties({
     })]);
     this.Super('initWidget', arguments);
   },
-  getMessageText: function (type, imageSizeAction, size, msgInfo) {
+  getMessageText: function (type, imageSizeAction, fileName, size, msgInfo) {
     var message = '';
     if (imageSizeAction === 'N') {
       return message;
@@ -446,11 +442,11 @@ isc.OBFileSelector.addProperties({
       this.formDeleteFile.submitForm();
     }
   },
-  callback: function (fileId, imageSizeAction, size, msgInfo) {
+  callback: function (fileId, imageSizeAction, fileName, size, msgInfo) {
     size = parseInt(size, 10);
     var selector = this;
     if (imageSizeAction === 'WRONGFORMAT' || imageSizeAction === 'ERROR_UPLOADING') {
-      isc.warn(this.getMessageText('Error', imageSizeAction, size, msgInfo), function () {
+      isc.warn(this.getMessageText('Error', imageSizeAction, fileName, size, msgInfo), function () {
         return true;
       }, {
         icon: '[SKINIMG]Dialog/error.png',
