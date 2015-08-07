@@ -129,7 +129,7 @@ public class FileInfoBLOB extends HttpSecureAppServlet {
         file.setActive(true);
         file.setName("File"); // TODO: Save here the filename...
         file.setMimetype(mimeType);
-        file.setSize((long) size);
+        file.setFilesize((long) size);
         OBDal.getInstance().save(file);
         OBDal.getInstance().flush();
 
