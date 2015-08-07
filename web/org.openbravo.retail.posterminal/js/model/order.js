@@ -972,7 +972,11 @@
           }
           text += OB.I18N.getLabel('OBPOS_DeleteLine', [line.get('qty'), line.get('product').get('_identifier')]);
           lines.push(line);
-          indexes.push(me.get('lineIndexes')[line.get('id')]);
+          if (me.get('lineIndexes')) {
+            indexes.push(me.get('lineIndexes')[line.get('id')]);
+          } else {
+            indexes.push(me.get('currentLineIndexes')[line.get('id')]);
+          }
         } else {
           text = OB.I18N.getLabel('OBPOS_DeleteLine', [line.get('qty'), line.get('product').get('_identifier')]);
           lines = [line];
@@ -997,7 +1001,7 @@
             me.get('deletedServices').forEach(function (deletedService, idx) {
               text += ', ' + OB.I18N.getLabel('OBPOS_DeleteLine', [deletedService.get('qty'), deletedService.get('product').get('_identifier')]);
               lines.push(deletedService);
-              if (me.get('multipleUndo')) {
+              if (me.get('multipleUndo') && me.get('lineIndexes')) {
                 indexes.push(me.get('lineIndexes')[deletedService.get('id')]);
               } else {
                 indexes.push(me.get('currentLineIndexes')[deletedService.get('id')]);
@@ -1113,7 +1117,7 @@
       } else {
         qty = qty || 1;
       }
-      if (((options && options.line) ? options.line.get('qty') + qty : qty) < 0 && p.get('productType') === 'S' && !p.get('returnable')) {
+      if (qty === -1 && p.get('productType') === 'S' && !p.get('returnable')) {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_UnreturnableProduct'), OB.I18N.getLabel('OBPOS_UnreturnableProductMessage', [p.get('_identifier')]));
         return;
       }
@@ -1219,7 +1223,7 @@
           }
         });
       }
-      if (((options && options.line) ? options.line.get('qty') + qty : qty) < 0 && p.get('productType') === 'S') {
+      if (qty === -1 && p.get('productType') === 'S') {
         OB.UTIL.Approval.requestApproval(
         OB.MobileApp.view.$.containerWindow.$.pointOfSale.model, 'OBPOS_approval.returnService', function (approved, supervisor, approvalType) {
           if (approved) {
