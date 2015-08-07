@@ -138,23 +138,20 @@ public class LandedCostProcess {
 
     // Check that all related receipt lines with movementqty >=0 have their cost already calculated.
     StringBuffer where = new StringBuffer();
-    where.append(" as lcr ");
+    where.append("\n  as lcr ");
     where.append("\n  left join lcr." + LCReceipt.PROPERTY_GOODSSHIPMENT + " lcrr");
     where.append("\n  left join lcr." + LCReceipt.PROPERTY_GOODSSHIPMENTLINE + " lcrrl");
-    where.append("\n where exists (");
-    where.append("\n  select 1");
-    where.append("\n   from " + MaterialTransaction.ENTITY_NAME + " as trx");
-    where.append("\n     join trx." + MaterialTransaction.PROPERTY_GOODSSHIPMENTLINE + " as iol");
-    where.append("\n   where trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = false");
-    where.append("\n   and iol." + ShipmentInOutLine.PROPERTY_MOVEMENTQUANTITY + " >= 0");
-    where.append("\n   and (lcrrl is null");
-    where.append("\n        or iol = lcrrl)");
-    where.append("\n   and (lcrr is null");
-    where.append("\n        or (lcrrl is null ");
-    where.append("\n            and iol." + ShipmentInOutLine.PROPERTY_SHIPMENTRECEIPT + " = lcrr");
-    where.append("\n          ))");
-    where.append("\n   )");
-    where.append("\n   and lcr." + LCReceipt.PROPERTY_LANDEDCOST + " = :landedcost");
+    where.append("\n  where exists (");
+    where.append("\n    select 1");
+    where.append("\n    from " + MaterialTransaction.ENTITY_NAME + " as trx");
+    where.append("\n    join trx." + MaterialTransaction.PROPERTY_GOODSSHIPMENTLINE + " as iol");
+    where.append("\n    join iol." + ShipmentInOutLine.PROPERTY_SHIPMENTRECEIPT + " as io");
+    where.append("\n    where trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = false");
+    where.append("\n    and iol." + ShipmentInOutLine.PROPERTY_MOVEMENTQUANTITY + " >= 0");
+    where.append("\n    and ((lcrrl is not null and lcrrl = iol)");
+    where.append("\n    or (lcrrl is null and lcrr = io))");
+    where.append("\n  )");
+    where.append("\n  and lcr." + LCReceipt.PROPERTY_LANDEDCOST + " = :landedcost");
     OBQuery<LCReceipt> qryTrx = OBDal.getInstance().createQuery(LCReceipt.class, where.toString());
     qryTrx.setNamedParameter("landedcost", landedCost);
     if (qryTrx.count() > 0) {
