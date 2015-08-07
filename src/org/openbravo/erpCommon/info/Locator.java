@@ -60,21 +60,38 @@ public class Locator extends HttpSecureAppServlet {
       removePageSessionVariables(vars);
       String strName = vars.getRequestGlobalVariable("inpNameValue", "Locator.warehousename");
       String strWarehouse = "";
+      String strWarehouseId = "";
       String windowId = vars.getRequestGlobalVariable("WindowID", "Locator.windowId");
 
       if (!windowId.equals("") && windowId != null) {
         strWarehouse = LocatorData.selectname(this,
             Utility.getContext(this, vars, "M_Warehouse_ID", windowId));
+        strWarehouseId = Utility.getContext(this, vars, "M_Warehouse_ID", windowId);
       }
       if ("168".equals(windowId)) {
         strWarehouse = LocatorData.selectname(this,
             vars.getGlobalVariable("inpmWarehouseId", "168|m_warehouse_id", ""));
+        strWarehouseId = Utility.getContext(this, vars, "M_Warehouse_ID", windowId);
       }
-      strName = strName + "%";
-      strWarehouse = strWarehouse + "%";
+      String strOrg = vars.getGlobalVariable("inpadOrgId", "Locator.adorgid", "");
+      // Fetch transaction Organization if window is Goods Movements as its id = 170
+      if ("170".equals(windowId)) {
+        strOrg = vars.getGlobalVariable("inpadOrgId", "170|ad_org_id", "");
+      }
+      /**
+       * Check whether the login profile warehouse belongs to transaction organization selected
+       */
+      String warehouseBelongsToOrg = LocatorData
+          .warehouseBelongsToOrg(this, strOrg, strWarehouseId);
+      if (!"-1".equals(warehouseBelongsToOrg)) {
+        strName = strName + "%";
+        strWarehouse = strWarehouse + "%";
+      } else {
+        strName = "%";
+        strWarehouse = "%";
+      }
       vars.setSessionValue("Locator.name", strName);
       vars.setSessionValue("Locator.warehousename", strWarehouse);
-      String strOrg = vars.getGlobalVariable("inpadOrgId", "Locator.adorgid", "");
       vars.setSessionValue("Locator.adorgid", strOrg);
       if ("".equals(strOrg) || strOrg == null) {
         if ("184".equals(windowId) || "169".equals(windowId) || "800013".equals(windowId)

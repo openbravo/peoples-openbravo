@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -115,6 +115,18 @@
         WHERE mw.M_WAREHOUSE_ID = ?
       ]]>
       </Sql>
+        <Parameter name="mWarehouseId"/>
+   </SqlMethod>
+   <SqlMethod name="warehouseBelongsToOrg" type="preparedStatement" return="string" default="">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+      <![CDATA[
+        SELECT ad_isorgincluded(mw.ad_org_id, ? ,mw.ad_client_id)
+        FROM M_Warehouse mw
+        WHERE mw.m_warehouse_id = ?
+      ]]>
+      </Sql>
+        <Parameter name="adOrgId"/>
         <Parameter name="mWarehouseId"/>
    </SqlMethod>
 </SqlClass>
