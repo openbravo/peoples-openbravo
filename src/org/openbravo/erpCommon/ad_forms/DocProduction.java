@@ -26,6 +26,7 @@ import java.util.Map;
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.costing.CostingStatus;
 import org.openbravo.dal.core.OBContext;
@@ -193,7 +194,7 @@ public class DocProduction extends AcctServer {
           && !line.transaction.isCostCalculated()) {
         Map<String, String> parameters = getNotCalculatedCostParameters(line.transaction);
         setMessageResult(conn, STATUS_NotCalculatedCost, "error", parameters);
-        throw new IllegalStateException();
+        throw new OBException("@NotCalculatedCost@");
       }
       String costs = line.getProductCosts(DateAcct, as, conn, con);
       BigDecimal dCosts = new BigDecimal(costs);

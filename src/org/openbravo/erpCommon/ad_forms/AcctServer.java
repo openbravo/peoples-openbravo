@@ -1117,6 +1117,8 @@ public abstract class AcctServer {
           return STATUS_NotConvertible;
         } else if (StringUtils.equals(strMessageError, "@PeriodNotAvailable@")) {
           return STATUS_PeriodClosed;
+        } else if (StringUtils.equals(strMessageError, "@NotCalculatedCost@")) {
+          return STATUS_NotCalculatedCost;
         }
       }
       return STATUS_Error;
