@@ -27,7 +27,7 @@ public class POSFilesProperties extends ModelExtension {
         add(new HQLProperty("files.id", "id"));
         add(new HQLProperty("files.name", "name"));
         add(new HQLProperty("files.active", "active"));
-        add(new HQLProperty("files.binaryData", "binaryData"));
+        add(new HQLProperty("files.file.bindaryData", "binaryData"));
       }
     };
     return list;
