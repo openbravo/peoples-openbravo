@@ -96,7 +96,6 @@ BEGIN
 				group by rs.m_locator_id, rs.m_attributesetinstance_id
       )
       LOOP
-      select count (*) into v_count from c_orderline;
 			  UPDATE m_storage_detail
 			  SET reservedqty = reservedqty + cur_reservationstock.reservedqty,
 			      allocatedqty = allocatedqty + cur_reservationstock.allocatedqty
