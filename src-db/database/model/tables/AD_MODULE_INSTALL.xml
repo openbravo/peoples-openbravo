@@ -174,6 +174,6 @@
       <check name="AD_MODULE_INS_ISREGISTERED_CHK"><![CDATA[ISREGISTERED IN ('Y', 'N')]]></check>
       <check name="AD_MODULE_INS_TYPE_CHK"><![CDATA[TYPE IN ('M', 'P', 'T')]]></check>
       <check name="AD_MODULE_INSTALL_FFT_CHK"><![CDATA[ISTRIALALLOWED IN ('Y', 'N')]]></check>
-      <check name="AD_MODULE_INSTALL_ISDEFAUL_CHK"><![CDATA[(ISDEFAULT = 'N') OR ((ISDEFAULT = 'Y') AND (ISINDEVELOPMENT = 'Y'))]]></check>
+      <check name="AD_MODULE_INSTALL_ISDEFAUL_CHK"><![CDATA[ISDEFAULT = 'N' OR ISDEFAULT = 'Y' AND ISINDEVELOPMENT = 'Y']]></check>
     </table>
   </database>

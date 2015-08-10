@@ -85,6 +85,6 @@
       <index name="AD_TABLE_NAVIGATION_TABLE_IDX" unique="false">
         <index-column name="AD_TABLE_ID"/>
       </index>
-      <check name="AD_TABLE_NAVIGATION_CHECK"><![CDATA[((DIRECTNAVIGATION = 'N') AND (HQLLOGIC IS NOT NULL)) OR (DIRECTNAVIGATION = 'Y')]]></check>
+      <check name="AD_TABLE_NAVIGATION_CHECK"><![CDATA[DIRECTNAVIGATION = 'N' AND HQLLOGIC IS NOT NULL OR DIRECTNAVIGATION = 'Y']]></check>
     </table>
   </database>
