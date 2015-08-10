@@ -111,33 +111,37 @@ enyo.kind({
     var me = this;
 
     var actionAddProduct = function (keyboard, value) {
-        if (keyboard.receipt.get('isEditable') === false) {
-          me.doShowPopup({
-            popup: 'modalNotEditableOrder'
-          });
-          return true;
-        }
-        if (keyboard.line && keyboard.line.get('product').get('isEditableQty') === false) {
-          me.doShowPopup({
-            popup: 'modalNotEditableLine'
-          });
-          return true;
-        }
-        if (keyboard.line) {
-          if ((_.isNaN(value) || value > 0) && keyboard.line.get('product').get('groupProduct') === false) {
+        if (!keyboard.line.get('notReturnThisLine')) {
+          if (keyboard.receipt.get('isEditable') === false) {
             me.doShowPopup({
-              popup: 'modalProductCannotBeGroup'
+              popup: 'modalNotEditableOrder'
             });
             return true;
           }
-          me.doAddProduct({
-            product: keyboard.line.get('product'),
-            qty: value,
-            options: {
-              line: keyboard.line
+          if (keyboard.line && keyboard.line.get('product').get('isEditableQty') === false) {
+            me.doShowPopup({
+              popup: 'modalNotEditableLine'
+            });
+            return true;
+          }
+          if (keyboard.line) {
+            if ((_.isNaN(value) || value > 0) && keyboard.line.get('product').get('groupProduct') === false) {
+              me.doShowPopup({
+                popup: 'modalProductCannotBeGroup'
+              });
+              return true;
             }
-          });
-          keyboard.receipt.trigger('scan');
+            me.doAddProduct({
+              product: keyboard.line.get('product'),
+              qty: value,
+              options: {
+                line: keyboard.line
+              }
+            });
+            keyboard.receipt.trigger('scan');
+          }
+        } else {
+          keyboard.line.unset('notReturnThisLine');
         }
         };
 
@@ -385,7 +389,8 @@ enyo.kind({
             }
           });
         } else {
-          var approvalNeeded = false;
+          var approvalNeeded = false,
+              lineToApproval;
           if (value < 0) {
             for (i = 0; i < me.selectedModels.length; i++) {
               line = me.selectedModels[i];
@@ -393,8 +398,29 @@ enyo.kind({
                 OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_UnreturnableProduct'), OB.I18N.getLabel('OBPOS_UnreturnableProductMessage', [line.get('product').get('_identifier')]));
                 return;
               } else if (!approvalNeeded) {
+                // A service with its related product selected doesn't need to be returned, because later it will be modified to retourned status depending in the product status
+                // In any other case it would requiere two approvals
                 if (line.get('product').get('productType') === 'S') {
-                  approvalNeeded = true;
+                  lineToApproval = true;
+                  if (line.get('relatedLines')) {
+                    for (j = 0; j < line.get('relatedLines').length; j++) {
+                      relatedLine = line.get('relatedLines')[j];
+                      for (k = 0; k < this.owner.owner.selectedModels.length; k++) {
+                        lineFromSelected = this.owner.owner.selectedModels[k];
+                        if (lineFromSelected.id === relatedLine.orderlineId) {
+                          line.set('notReturnThisLine', true);
+                          lineToApproval = false;
+                          break;
+                        }
+                      }
+                      if (!lineToApproval) {
+                        break;
+                      }
+                    }
+                  }
+                  if (lineToApproval) {
+                    approvalNeeded = true;
+                  }
                 }
               }
             }

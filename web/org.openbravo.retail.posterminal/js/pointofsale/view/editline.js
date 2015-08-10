@@ -238,15 +238,36 @@ enyo.kind({
     tap: function () {
       var me = this,
           approvalNeeded = false,
-          i, j, k, line, relatedLine, lineFromSelected;
+          i, j, k, line, relatedLine, lineFromSelected, lineToApproval;
       for (i = 0; i < this.owner.owner.selectedModels.length; i++) {
         line = this.owner.owner.selectedModels[i];
         if (line.get('product').get('productType') === 'S' && !line.isReturnable()) {
           OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_UnreturnableProduct'), OB.I18N.getLabel('OBPOS_UnreturnableProductMessage', [line.get('product').get('_identifier')]));
           return;
         } else if (!approvalNeeded) {
+          // A service with its related product selected doesn't need to be returned, because later it will be modified to retourned status depending in the product status
+          // In any other case it would requiere two approvals
           if (line.get('product').get('productType') === 'S') {
-            approvalNeeded = true;
+            lineToApproval = true;
+            if (line.get('relatedLines')) {
+              for (j = 0; j < line.get('relatedLines').length; j++) {
+                relatedLine = line.get('relatedLines')[j];
+                for (k = 0; k < this.owner.owner.selectedModels.length; k++) {
+                  lineFromSelected = this.owner.owner.selectedModels[k];
+                  if (lineFromSelected.id === relatedLine.orderlineId) {
+                    line.set('notReturnThisLine', true);
+                    lineToApproval = false;
+                    break;
+                  }
+                }
+                if (!lineToApproval) {
+                  break;
+                }
+              }
+            }
+            if (lineToApproval) {
+              approvalNeeded = true;
+            }
           }
         }
       }
@@ -273,9 +294,13 @@ enyo.kind({
           return;
         }
         line = selectedModels[index];
-        me.owner.owner.doReturnLine({
-          line: line
-        });
+        if (!line.get('notReturnThisLine')) {
+          me.owner.owner.doReturnLine({
+            line: line
+          });
+        } else {
+          line.unset('notReturnThisLine');
+        }
         returnCurrentLine(index + 1, selectedModels);
       }
       if (approvalNeeded) {

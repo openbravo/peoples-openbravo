@@ -626,7 +626,8 @@ enyo.kind({
       }
     }, this);
     this.order.get('lines').on('add change:qty change:relatedLines updateRelations', function () {
-      var me = this;
+      var approvalNeeded = false,
+          line, k;
 
       if (this.updating || this.order.get('preventServicesUpdate')) {
         return;
@@ -649,7 +650,15 @@ enyo.kind({
         return serviceLines;
       }
 
-      this.order.get('lines').forEach(function (line) {
+      function filterLines(newRelatedLines, lines) {
+        return _.filter(newRelatedLines, function (rl) {
+          return _.indexOf(_.pluck(lines, 'id'), rl.orderlineId) !== -1;
+        });
+      }
+
+      // First check if there is any service modified to negative quantity amount in order to know if approval will be required
+      for (k = 0; k < this.order.get('lines').length; k++) {
+        line = this.order.get('lines').models[k];
         var prod = line.get('product'),
             newLine, i, j, l, rlp, rln, newqtyplus = 0,
             newqtyminus = 0,
@@ -675,103 +684,158 @@ enyo.kind({
               negativeLines.push(l);
             }
           }
-          rlp = _.filter(newRelatedLines, function (rl) {
-            return _.indexOf(_.pluck(positiveLines, 'id'), rl.orderlineId) !== -1;
-          });
+          rlp = filterLines(newRelatedLines, positiveLines);
 
-          rln = _.filter(newRelatedLines, function (rl) {
-            return _.indexOf(_.pluck(negativeLines, 'id'), rl.orderlineId) !== -1;
-          });
+          rln = filterLines(newRelatedLines, negativeLines);
 
           if (prod.get('quantityRule') === 'UQ') {
             newqtyplus = (newqtyplus ? 1 : 0);
             newqtyminus = (newqtyminus ? -1 : 0);
           }
 
-          serviceLines.forEach(function (l) {
-            if (l.get('qty') > 0) {
-              if (serviceLines.length === 1 && newqtyminus && newqtyplus) {
-                newLine = me.order.createLine(prod, newqtyminus);
-                newLine.set('relatedLines', rln);
-                l.set('relatedLines', rlp);
-                l.set('qty', newqtyplus);
-              } else if (serviceLines.length === 1 && newqtyminus) {
-                if (!l.get('product').get('returnable')) { // Cannot add not returnable service to a negative product
-                  me.order.get('lines').remove(l);
-                  OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_UnreturnableProduct'), OB.I18N.getLabel('OBPOS_UnreturnableProductMessage', [l.get('product').get('_identifier')]));
-                  return;
-                }
-                if (l.get('previouslyApproved')) { // A service needs an approval to return
-                  l.set('relatedLines', rln);
-                  l.set('qty', newqtyminus);
-                } else {
-                  OB.UTIL.Approval.requestApproval(
-                  OB.MobileApp.view.$.containerWindow.$.pointOfSale.model, 'OBPOS_approval.returnService', function (approved, supervisor, approvalType) {
-                    if (approved) {
-                      l.set('previouslyApproved', true);
-                      l.set('relatedLines', rln);
-                      l.set('qty', newqtyminus);
-                    } else {
-                      me.order.get('lines').remove(l);
-                    }
-                  });
-                }
-              } else if (newqtyplus && !me.positiveLineUpdated) {
-                me.positiveLineUpdated = true;
-                l.set('relatedLines', rlp);
-                l.set('qty', newqtyplus);
-              } else if (newqtyplus && newqtyminus && me.positiveLineUpdated) {
-                newLine = me.order.createLine(prod, newqtyminus);
-                newLine.set('relatedLines', rln);
+          for (i = 0; i < serviceLines.length; i++) {
+            l = serviceLines[i];
+            if (l.get('qty') > 0 && serviceLines.length === 1 && newqtyminus && !newqtyplus) {
+              if (!l.get('product').get('returnable')) { // Cannot add not returnable service to a negative product
                 me.order.get('lines').remove(l);
+                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_UnreturnableProduct'), OB.I18N.getLabel('OBPOS_UnreturnableProductMessage', [l.get('product').get('_identifier')]));
+                return;
               } else {
-                me.order.get('lines').remove(l);
-              }
-              if (!line.get('groupService') && newLine) {
-                newLine.set('mirrorLine', line);
-                line.set('mirrorLine', newLine);
-              }
-            } else {
-              if (serviceLines.length === 1 && newqtyminus && newqtyplus) {
-                newLine = me.order.createLine(prod, newqtyplus);
-                newLine.set('relatedLines', rlp);
-                l.set('relatedLines', rln);
-                l.set('qty', newqtyminus);
-              } else if (serviceLines.length === 1 && newqtyplus) {
-                l.set('relatedLines', rlp);
-                l.set('qty', newqtyplus);
-              } else if (newqtyminus && !me.negativeLineUpdated) {
-                me.negativeLineUpdated = true;
-                l.set('relatedLines', rln);
-                l.set('qty', newqtyminus);
-              } else if (newqtyplus && newqtyminus && me.negativeLineUpdated) {
-                newLine = me.order.createLine(prod, newqtyplus);
-                newLine.set('relatedLines', rlp);
-                me.order.get('lines').remove(l);
-              } else {
-                me.order.get('lines').remove(l);
-              }
-              if (!line.get('groupService') && newLine) {
-                newLine.set('mirrorLine', line);
-                line.set('mirrorLine', newLine);
+                approvalNeeded = true;
+                break;
               }
             }
-          });
-          me.positiveLineUpdated = false;
-          me.negativeLineUpdated = false;
-
-          if (!line.get('groupService') && line.get('relatedLines').length > 1) {
-            line.get('relatedLines').forEach(function (rl) {
-              newLine = me.order.createLine(prod, me.order.get('lines').get(rl.orderlineId).get('qty'));
-              newLine.set('relatedLines', [rl]);
-              newLine.set('groupService', false);
-            });
-            me.order.get('lines').remove(line);
+          }
+          if (approvalNeeded) {
+            break;
           }
         }
-      });
-      this.updating = false;
-      this.order.get('lines').trigger('updateServicePrices');
+      }
+
+      function fixServiceOrderLines(approved) {
+        var linesToRemove = [];
+        me.order.get('lines').forEach(function (line) {
+          var prod = line.get('product'),
+              newLine, i, j, l, rlp, rln, newqtyplus = 0,
+              newqtyminus = 0,
+              serviceLines = [],
+              positiveLines = [],
+              negativeLines = [],
+              newRelatedLines = [];
+
+          if (line.has('relatedLines') && line.get('relatedLines').length > 0 && !line.get('originalOrderLineId')) {
+
+            serviceLines = getServiceLines(line);
+
+            for (i = 0; i < serviceLines.length; i++) {
+              newRelatedLines = OB.UTIL.mergeArrays(newRelatedLines, serviceLines[i].get('relatedLines'));
+            }
+            for (j = 0; j < newRelatedLines.length; j++) {
+              l = me.order.get('lines').get(newRelatedLines[j].orderlineId);
+              if (l && l.get('qty') > 0) {
+                newqtyplus += l.get('qty');
+                positiveLines.push(l);
+              } else if (l && l.get('qty') < 0) {
+                newqtyminus += l.get('qty');
+                negativeLines.push(l);
+              }
+            }
+            rlp = filterLines(newRelatedLines, positiveLines);
+
+            rln = filterLines(newRelatedLines, negativeLines);
+
+            if (prod.get('quantityRule') === 'UQ') {
+              newqtyplus = (newqtyplus ? 1 : 0);
+              newqtyminus = (newqtyminus ? -1 : 0);
+            }
+
+            serviceLines.forEach(function (l) {
+              if (l.get('qty') > 0) {
+                if (serviceLines.length === 1 && newqtyminus && newqtyplus) {
+                  newLine = me.order.createLine(prod, newqtyminus);
+                  newLine.set('relatedLines', rln);
+                  l.set('relatedLines', rlp);
+                  l.set('qty', newqtyplus);
+                } else if (serviceLines.length === 1 && newqtyminus) {
+                  if (approved) {
+                    l.set('relatedLines', rln);
+                    l.set('qty', newqtyminus);
+                  } else {
+                    linesToRemove.push(l);
+                  }
+                } else if (newqtyplus && !me.positiveLineUpdated) {
+                  me.positiveLineUpdated = true;
+                  l.set('relatedLines', rlp);
+                  l.set('qty', newqtyplus);
+                } else if (newqtyplus && newqtyminus && me.positiveLineUpdated) {
+                  newLine = me.order.createLine(prod, newqtyminus);
+                  newLine.set('relatedLines', rln);
+                  me.order.get('lines').remove(l);
+                } else {
+                  me.order.get('lines').remove(l);
+                }
+                if (!line.get('groupService') && newLine) {
+                  newLine.set('mirrorLine', line);
+                  line.set('mirrorLine', newLine);
+                }
+              } else {
+                if (serviceLines.length === 1 && newqtyminus && newqtyplus) {
+                  newLine = me.order.createLine(prod, newqtyplus);
+                  newLine.set('relatedLines', rlp);
+                  l.set('relatedLines', rln);
+                  l.set('qty', newqtyminus);
+                } else if (serviceLines.length === 1 && newqtyplus) {
+                  l.set('relatedLines', rlp);
+                  l.set('qty', newqtyplus);
+                } else if (newqtyminus && !me.negativeLineUpdated) {
+                  me.negativeLineUpdated = true;
+                  l.set('relatedLines', rln);
+                  l.set('qty', newqtyminus);
+                } else if (newqtyplus && newqtyminus && me.negativeLineUpdated) {
+                  newLine = me.order.createLine(prod, newqtyplus);
+                  newLine.set('relatedLines', rlp);
+                  me.order.get('lines').remove(l);
+                } else {
+                  me.order.get('lines').remove(l);
+                }
+                if (!line.get('groupService') && newLine) {
+                  newLine.set('mirrorLine', line);
+                  line.set('mirrorLine', newLine);
+                }
+              }
+            });
+            me.positiveLineUpdated = false;
+            me.negativeLineUpdated = false;
+
+            if (!line.get('groupService') && line.get('relatedLines').length > 1) {
+              line.get('relatedLines').forEach(function (rl) {
+                newLine = me.order.createLine(prod, me.order.get('lines').get(rl.orderlineId).get('qty'));
+                newLine.set('relatedLines', [rl]);
+                newLine.set('groupService', false);
+              });
+              me.order.get('lines').remove(line);
+            }
+          }
+        });
+        linesToRemove.forEach(function (l) {
+          me.order.get('lines').remove(l);
+        });
+        me.updating = false;
+        me.order.get('lines').trigger('updateServicePrices');
+      }
+
+      if (approvalNeeded) {
+        OB.UTIL.Approval.requestApproval(
+        OB.MobileApp.view.$.containerWindow.$.pointOfSale.model, 'OBPOS_approval.returnService', function (approved, supervisor, approvalType) {
+          if (approved) {
+            fixServiceOrderLines(true);
+          } else {
+            fixServiceOrderLines(false);
+          }
+        });
+      } else {
+        fixServiceOrderLines(true);
+      }
     }, this);
     this.order.on('change:net change:gross updateServicePrices', function () {
       var me = this,
