@@ -24,7 +24,7 @@ import org.openbravo.model.ad.ui.Field;
 /**
  * Implementation of the image ui definition.
  * 
- * @author mtaal
+ * @author aro
  */
 public class FileUIDefinition extends UIDefinition {
 
@@ -59,12 +59,12 @@ public class FileUIDefinition extends UIDefinition {
       } else {
         obj = new JSONObject(fieldProperties);
       }
-      obj.put("imageSizeValuesAction", field.getColumn().getImageSizeValuesAction());
-      obj.put("imageWidth", field.getColumn().getImageWidth());
-      obj.put("imageHeight", field.getColumn().getImageHeight());
+      obj.put("fileExtensions", field.getColumn().getFileextensions());
+      obj.put("fileMaxSize", field.getColumn().getFilemaxsize());
+      obj.put("fileMaxSizeUnit", field.getColumn().getFilemaxsizeunit());
       return obj.toString();
     } catch (Exception e) { // ignore
-      log.error("There was an error when calculating the properties of an Image field", e);
+      log.error("There was an error when calculating the properties of an File BLOB field", e);
       return fieldProperties;
     }
   }

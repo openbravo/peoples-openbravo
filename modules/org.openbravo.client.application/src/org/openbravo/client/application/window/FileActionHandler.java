@@ -53,7 +53,6 @@ public class FileActionHandler extends BaseActionHandler implements PortalAccess
       JSONObject result = new JSONObject();
 
       try {
-
         // Check file null or invalid
         ADFile file = OBDal.getInstance().get(ADFile.class, fileID);
         if (file != null) {
@@ -68,6 +67,22 @@ public class FileActionHandler extends BaseActionHandler implements PortalAccess
         throw new OBException(e);
       }
 
+      return result;
+    } else if ("DELETE".equals(command)) {
+      String fileID = (String) parameters.get("inpfileId");
+      JSONObject result = new JSONObject();
+
+      try {
+        // Check file null or invalid
+        ADFile file = OBDal.getInstance().get(ADFile.class, fileID);
+        if (file != null) {
+          result.put("deleted", file.getName());
+          OBDal.getInstance().remove(file);
+          OBDal.getInstance().flush();
+        }
+      } catch (JSONException e) {
+        throw new OBException(e);
+      }
       return result;
     } else {
       throw new OBException("Command not found : " + command);

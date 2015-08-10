@@ -174,9 +174,11 @@ isc.OBFileCanvas.addProperties({
 
         // If the record is new and the file is deleted, remove it from the database
         if (isNewRecord) {
-          OB.RemoteCallManager.call('org.openbravo.client.application.window.FileDeleteActionHandler', {
-            'id': fileId
-          });
+          var d = {
+            inpfileId: fileId,
+            command: 'DELETE'
+          };
+          OB.RemoteCallManager.call('org.openbravo.client.application.window.FileActionHandler', {}, d);
         }
       },
       click: function (form, item) {
@@ -302,18 +304,11 @@ isc.OBFileSelector.addProperties({
   addForm: null,
   initWidget: function (args) {
     var fileId = this.fileItem.getValue();
+    var fileExtensions = this.fileItem.fileExtensions;
+    var fileMaxSize = this.fileItem.fileMaxSize;
+    var fileMaxSizeUnit = this.fileItem.fileMaxSizeUnit;
+
     var view = args.form.view;
-    var imageSizeAction = this.fileItem.imageSizeValuesAction;
-    var imageWidthValue = this.fileItem.imageWidth;
-    imageWidthValue = parseInt(imageWidthValue, 10);
-    if (!imageWidthValue) {
-      imageWidthValue = 0;
-    }
-    var imageHeightValue = this.fileItem.imageHeight;
-    imageHeightValue = parseInt(imageHeightValue, 10);
-    if (!imageHeightValue) {
-      imageHeightValue = 0;
-    }
     var form = isc.DynamicForm.create({
       autoFocus: true,
       fields: [{
@@ -347,17 +342,17 @@ isc.OBFileSelector.addProperties({
         type: 'hidden',
         value: fileId
       }, {
-        name: 'imageSizeAction',
+        name: 'fileExtensions',
         type: 'hidden',
-        value: imageSizeAction
+        value: fileExtensions
       }, {
-        name: 'imageWidthValue',
+        name: 'fileMaxSize',
         type: 'hidden',
-        value: imageWidthValue
+        value: fileMaxSize
       }, {
-        name: 'imageHeightValue',
+        name: 'fileMaxSizeUnit',
         type: 'hidden',
-        value: imageHeightValue
+        value: fileMaxSizeUnit
       }, {
         name: 'inpSelectorId',
         type: 'hidden',
@@ -402,16 +397,14 @@ isc.OBFileSelector.addProperties({
         form.submitForm();
       }
     });
-    //TODO: The message (if apply) should notify the proper restrictions.
-    var messageBarText = this.getMessageText('Warn', imageSizeAction, imageWidthValue, imageHeightValue);
-
+    var messageBarText = this.getWarningText(fileExtensions, fileMaxSize, fileMaxSizeUnit);
     var messageBar = isc.OBMessageBar.create({
       visibility: 'hidden'
     });
     messageBar.setType(isc.OBMessageBar.TYPE_WARNING);
     messageBar.setText(null, messageBarText);
     messageBar.hideCloseIcon();
-    if (messageBarText && (imageWidthValue || imageHeightValue)) {
+    if (messageBarText) {
       messageBar.show();
     }
 
@@ -433,15 +426,21 @@ isc.OBFileSelector.addProperties({
     })]);
     this.Super('initWidget', arguments);
   },
-  getMessageText: function (type, imageSizeAction, fileName, size, msgInfo) {
+  getWarningText: function (fileExtensions, fileMaxSize, fileMaxSizeUnit) {
     var message = '';
-    if (imageSizeAction === 'N') {
-      return message;
+    if (fileExtensions) {
+      message = message + OB.I18N.getLabel('OBUIAPP_FILE_WARN_EXTENSIONS', [fileExtensions]) + '<br/>';
+    }
+    if (fileMaxSize) {
+      message = message + OB.I18N.getLabel('OBUIAPP_FILE_WARN_SIZE', [fileMaxSize, fileMaxSizeUnit]) + '<br/>';
+    }
+    return message;
+  },
+  getErrorText: function (fileAction, fileName) {
+    if (fileAction === 'SUCESS') {
+      return '';
     } else {
-      message = OB.I18N.getLabel('OBUIAPP_Image_' + type + '_' + imageSizeAction, [msgInfo]);
-      // message = message.replace('XXX', XXX).replace('YYY', YYY).replace('AAA', AAA).replace('BBB', BBB);
-      message = message.replace(/\n/g, '<br />');
-      return message;
+      return OB.I18N.getLabel('OBUIAPP_FILE_ERROR_' + fileAction, [fileName]);
     }
   },
   deleteTempFile: function (fileId) {
@@ -450,11 +449,10 @@ isc.OBFileSelector.addProperties({
       this.formDeleteFile.submitForm();
     }
   },
-  callback: function (fileId, imageSizeAction, fileName, size, msgInfo) {
-    size = parseInt(size, 10);
+  callback: function (fileId, fileAction, fileName) {
     var selector = this;
-    if (imageSizeAction === 'WRONGFORMAT' || imageSizeAction === 'ERROR_UPLOADING') {
-      isc.warn(this.getMessageText('Error', imageSizeAction, fileName, size, msgInfo), function () {
+    if (fileAction !== 'SUCCESS') {
+      isc.warn(this.getErrorText(fileAction, fileName), function () {
         return true;
       }, {
         icon: '[SKINIMG]Dialog/error.png',

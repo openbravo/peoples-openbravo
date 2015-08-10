@@ -28,8 +28,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -41,9 +39,7 @@ import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.ADFile;
-import org.openbravo.model.ad.utility.Image;
 import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.xmlEngine.XmlDocument;
 
 public class FileInfoBLOB extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
@@ -108,21 +104,29 @@ public class FileInfoBLOB extends HttpSecureAppServlet {
       }
 
     }
-    if (vars.commandIn("DEFAULT")) {
 
-      printPageFrame(response, vars, imageID, tableId, columnName, parentObjectId, orgId);
-    } else if (vars.getCommand().startsWith("SAVE_OB3")) {
+    if (vars.getCommand().startsWith("SAVE_OB3")) {
       OBContext.setAdminMode(true);
       try {
         final FileItem fi = vars.getMultiFile("inpFile");
         byte[] bytea = fi.get();
         String fileName = fi.getName();
         String mimeType = MimeTypeUtil.getInstance().getMimeTypeName(bytea);
-        String fileSizeAction = vars.getStringParameter("imageSizeAction");
         int size = bytea.length;
 
-        // TODO: Check filesize action
+        String fileAction = null;
 
+        // Check file constraints.
+        if (!validateExtension(fileName, vars.getStringParameter("fileExtensions"))) {
+          fileAction = "WRONG_EXTENSION";
+        } else if (!validateSize(size, vars.getStringParameter("fileMaxSize"),
+            vars.getStringParameter("fileMaxSizeUnit"))) {
+          fileAction = "WRONG_SIZE";
+        } else {
+          fileAction = "SUCCESS";
+        }
+
+        // Now save the file
         ADFile file = OBProvider.getInstance().get(ADFile.class);
         file.setOrganization(OBDal.getInstance().get(Organization.class, orgId));
         file.setBindaryData(bytea);
@@ -138,28 +142,15 @@ public class FileInfoBLOB extends HttpSecureAppServlet {
         response.setContentType("text/html; charset=UTF-8");
         PrintWriter writer = response.getWriter();
         String selectorId = orgId = vars.getStringParameter("inpSelectorId");
-        writeRedirectOB3(writer, selectorId, fileid, fileSizeAction, fileName, size, null);
+        writeRedirectOB3(writer, selectorId, fileid, fileAction, fileName);
       } catch (Throwable t) {
         log4j.error("Error uploading file", t);
         response.setContentType("text/html; charset=UTF-8");
         PrintWriter writer = response.getWriter();
         String selectorId = orgId = vars.getStringParameter("inpSelectorId");
-        writeRedirectOB3(writer, selectorId, "", "ERROR_UPLOADING", null, 0, t.getMessage());
+        writeRedirectOB3(writer, selectorId, "", "ERROR_UPLOADING", t.getMessage());
       } finally {
         OBContext.restorePreviousMode();
-      }
-    } else if (vars.getCommand().startsWith("DELETE_OB3")) {
-      if (imageID != null && !imageID.equals("")) {
-        OBContext.setAdminMode(true);
-        try {
-          Image image = OBDal.getInstance().get(Image.class, imageID);
-          OBDal.getInstance().flush();
-          OBDal.getInstance().remove(image);
-        } finally {
-          OBContext.restorePreviousMode();
-        }
-      } else {
-        printPageFrame(response, vars, imageID, tableId, columnName, parentObjectId, orgId);
       }
     } else {
       pageError(response);
@@ -167,43 +158,54 @@ public class FileInfoBLOB extends HttpSecureAppServlet {
   }
 
   private void writeRedirectOB3(PrintWriter writer, String selectorId, String fileid,
-      String fileSizeAction, String fileName, int size, String msg) {
+      String fileAction, String fileName) {
     writer.write("<HTML><BODY><script type=\"text/javascript\">");
-    writer.write("top." + selectorId + ".callback('" + fileid + "', '" + fileSizeAction + "', '"
-        + fileName + "', '" + size + "'");
+    writer.write("top." + selectorId + ".callback('" + fileid + "', '" + fileAction + "', '"
+        + fileName + "');");
 
-    if (StringUtils.isNotEmpty(msg)) {
-      writer.write(", '" + StringEscapeUtils.escapeJavaScript(msg) + "'");
-    }
-
-    writer.write(");");
+    // if (StringUtils.isNotEmpty(msg)) {
+    // writer.write(", '" + StringEscapeUtils.escapeJavaScript(msg) + "'");
+    // }
+    //
+    // writer.write(");");
     writer.write("</SCRIPT></BODY></HTML>");
   }
 
-  private void printPageFrame(HttpServletResponse response, VariablesSecureApp vars,
-      String imageID, String tableId, String columnName, String parentObjectId, String orgId)
-      throws IOException, ServletException {
-    String[] discard;
-    if (imageID.equals("")) {
-      discard = new String[1];
-      discard[0] = "divDelete";
-    } else
-      discard = new String[0];
+  private boolean validateExtension(String filename, String extensions) {
+    if (extensions == null || extensions.equals("")) {
+      return true; // extensions is not defined, then filename extension is valid
+    }
 
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/info/ImageInfoBLOB", discard).createXmlDocument();
+    String filenameupper = filename.toUpperCase();
+    String[] extensionslist = extensions.split(",");
 
-    xmlDocument.setParameter("parentObjectId", parentObjectId);
-    xmlDocument.setParameter("imageId", imageID);
-    xmlDocument.setParameter("inpColumnName", columnName);
-    xmlDocument.setParameter("inpOrgId", orgId);
-    xmlDocument.setParameter("tableId", tableId);
-    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("theme", vars.getTheme());
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
+    for (int j = 0; j < extensionslist.length; j++) {
+      if (filenameupper.endsWith(extensionslist[j].trim().toUpperCase())) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private boolean validateSize(int size, String maxSize, String maxSizeUnit) {
+    if (maxSize == null || maxSize.equals("")) {
+      return true; // Max size is not defined, then size is valid
+    }
+
+    double readMaxSize = Double.parseDouble(maxSize);
+    double calcMaxSize;
+    if ("B".equals(maxSizeUnit)) {
+      calcMaxSize = readMaxSize;
+    } else if ("KB".equals(maxSizeUnit)) {
+      calcMaxSize = readMaxSize * 1024.0;
+    } else if ("MB".equals(maxSizeUnit)) {
+      calcMaxSize = readMaxSize * 1048576.0;
+    } else if ("GB".equals(maxSizeUnit)) {
+      calcMaxSize = readMaxSize * 1073741824.0;
+    } else {
+      calcMaxSize = readMaxSize * 1024.0; // KB by default
+    }
+
+    return size <= (int) calcMaxSize;
   }
 }
