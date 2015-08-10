@@ -1112,7 +1112,10 @@ public abstract class AcctServer {
           "Accounting process failed. RecordID: " + Record_ID + " - TableId: " + AD_Table_ID, e);
       String strMessageError = e.getMessage();
       if (strMessageError.indexOf("") != -1) {
-        setMessageResult(OBMessageUtils.translateError(strMessageError));
+        if (messageResult == null
+            || (messageResult != null && StringUtils.isBlank(messageResult.getMessage()))) {
+          setMessageResult(OBMessageUtils.translateError(strMessageError));
+        }
         if ("@NotConvertible@".equals(strMessageError)) {
           return STATUS_NotConvertible;
         } else if (StringUtils.equals(strMessageError, "@PeriodNotAvailable@")) {
