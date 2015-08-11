@@ -18,7 +18,6 @@
  */
 package org.openbravo.client.application.window;
 
-import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Map;
 
@@ -26,7 +25,9 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.client.kernel.BaseActionHandler;
+import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.utility.ADFile;
 import org.openbravo.portal.PortalAccessible;
 
@@ -105,7 +106,8 @@ public class FileActionHandler extends BaseActionHandler implements PortalAccess
 
   private String formatFileSize(int size) {
 
-    NumberFormat f = new DecimalFormat("#,##0.#");
+    NumberFormat f = Utility
+        .getFormat(RequestContext.get().getVariablesSecureApp(), "amountInform");
 
     if (size < 1024) {
       return f.format(size) + " B";

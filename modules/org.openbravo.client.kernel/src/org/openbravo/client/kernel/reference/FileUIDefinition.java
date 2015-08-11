@@ -18,7 +18,12 @@
  */
 package org.openbravo.client.kernel.reference;
 
+import java.math.BigDecimal;
+import java.text.NumberFormat;
+
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.ui.Field;
 
 /**
@@ -53,14 +58,22 @@ public class FileUIDefinition extends UIDefinition {
   public String getFieldProperties(Field field) {
     String fieldProperties = super.getFieldProperties(field);
     try {
+
+      NumberFormat f = Utility.getFormat(RequestContext.get().getVariablesSecureApp(),
+          "amountInform");
+      BigDecimal maxsize = field.getColumn().getFilemaxsize();
+      String maxsizeformat = maxsize == null ? null : f.format(maxsize);
+
       JSONObject obj;
       if (fieldProperties.equals("")) {
         obj = new JSONObject();
       } else {
         obj = new JSONObject(fieldProperties);
       }
+
       obj.put("fileExtensions", field.getColumn().getFileextensions());
-      obj.put("fileMaxSize", field.getColumn().getFilemaxsize());
+      obj.put("fileMaxSize", maxsize);
+      obj.put("fileMaxSizeFormat", maxsizeformat);
       obj.put("fileMaxSizeUnit", field.getColumn().getFilemaxsizeunit());
       return obj.toString();
     } catch (Exception e) { // ignore

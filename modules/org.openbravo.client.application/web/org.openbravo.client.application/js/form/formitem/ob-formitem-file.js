@@ -306,6 +306,7 @@ isc.OBFileSelector.addProperties({
     var fileId = this.fileItem.getValue();
     var fileExtensions = this.fileItem.fileExtensions;
     var fileMaxSize = this.fileItem.fileMaxSize;
+    var fileMaxSizeFormat = this.fileItem.fileMaxSizeFormat;
     var fileMaxSizeUnit = this.fileItem.fileMaxSizeUnit;
 
     var view = args.form.view;
@@ -397,7 +398,7 @@ isc.OBFileSelector.addProperties({
         form.submitForm();
       }
     });
-    var messageBarText = this.getWarningText(fileExtensions, fileMaxSize, fileMaxSizeUnit);
+    var messageBarText = this.getWarningText(fileExtensions, fileMaxSizeFormat, fileMaxSizeUnit);
     var messageBar = isc.OBMessageBar.create({
       visibility: 'hidden'
     });
@@ -426,13 +427,13 @@ isc.OBFileSelector.addProperties({
     })]);
     this.Super('initWidget', arguments);
   },
-  getWarningText: function (fileExtensions, fileMaxSize, fileMaxSizeUnit) {
+  getWarningText: function (fileExtensions, fileMaxSizeFormat, fileMaxSizeUnit) {
     var message = '';
     if (fileExtensions) {
       message = message + OB.I18N.getLabel('OBUIAPP_FILE_WARN_EXTENSIONS', [fileExtensions]) + '<br/>';
     }
-    if (fileMaxSize) {
-      message = message + OB.I18N.getLabel('OBUIAPP_FILE_WARN_SIZE', [fileMaxSize, fileMaxSizeUnit]) + '<br/>';
+    if (fileMaxSizeFormat) {
+      message = message + OB.I18N.getLabel('OBUIAPP_FILE_WARN_SIZE', [fileMaxSizeFormat, fileMaxSizeUnit]) + '<br/>';
     }
     return message;
   },
