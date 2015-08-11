@@ -444,10 +444,12 @@
           return calcProductTaxesIncPrice(receipt, line, product.get('taxCategory'), orggross, discountedGross);
         }
       }).then(function () {
-        // Calculate linerate
-        line.set('linerate', OB.DEC.div(orggross, line.get('net')), {
-          silent: true
-        });
+        if (line.get('net')) {
+          // Calculate linerate
+          line.set('linerate', OB.DEC.div(orggross, line.get('net')), {
+            silent: true
+          });
+        }
       })['catch'](function (reason) {
         receipt.deleteLine(line);
         OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
