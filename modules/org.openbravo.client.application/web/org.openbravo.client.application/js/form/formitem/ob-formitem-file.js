@@ -137,7 +137,7 @@ isc.OBFileCanvas.addProperties({
           fileItem: this.fileItem
         });
         var title = OB.I18N.getLabel('OBUIAPP_FileSelectorTitle'),
-            height = selector.height,
+            height = selector.height + 50,
             width = selector.width,
             showMinimizeButton = false,
             showMaximizeButton = false;
