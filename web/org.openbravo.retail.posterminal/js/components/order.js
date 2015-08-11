@@ -672,7 +672,7 @@ enyo.kind({
           serviceLines = getServiceLines(line);
 
           for (i = 0; i < serviceLines.length; i++) {
-            newRelatedLines = OB.UTIL.mergeArrays(newRelatedLines, serviceLines[i].get('relatedLines'));
+            newRelatedLines = OB.UTIL.mergeArrays(newRelatedLines, (serviceLines[i].get('relatedLines') || []));
           }
           for (j = 0; j < newRelatedLines.length; j++) {
             l = me.order.get('lines').get(newRelatedLines[j].orderlineId);
@@ -866,20 +866,37 @@ enyo.kind({
           line.get('relatedLines').forEach(function (rl) {
             var l = me.order.get('lines').get(rl.orderlineId);
             if (me.order.get('priceIncludesTax')) {
-              amountBeforeDiscounts += l.get('gross');
-              amountAfterDiscounts += l.get('gross') - _.reduce(l.get('promotions'), function (memo, promo) {
+              amountBeforeDiscounts += Math.abs(l.get('gross'));
+              amountAfterDiscounts += Math.abs(l.get('gross') - _.reduce(l.get('promotions'), function (memo, promo) {
                 return memo + promo.amt;
-              }, 0);
+              }, 0));
             } else {
-              amountBeforeDiscounts += l.get('net');
-              amountAfterDiscounts += l.get('net') - _.reduce(l.get('promotions'), function (memo, promo) {
+              amountBeforeDiscounts += Math.abs(l.get('net'));
+              amountAfterDiscounts += Math.abs(l.get('net') - _.reduce(l.get('promotions'), function (memo, promo) {
                 return memo + promo.amt;
-              }, 0);
+              }, 0));
             }
           });
-          criteria._whereClause = "where product = '" + line.get('product').get('id') + "' and validFromDate <= date('now')";
-          criteria._orderByClause = 'validFromDate desc';
-          criteria._limit = 1;
+          if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.product', true)) {
+            criteria.hgVolFilters = [];
+            criteria.hgVolFilters.push({
+              columns: ['product'],
+              operator: 'equals',
+              value: line.get('product').get('id'),
+              isId: true
+            });
+            criteria.hgVolFilters.push({
+              columns: [],
+              operator: 'filter',
+              value: 'ServicePriceRuleVersion_DateFilter',
+              params: []
+              //TODO: _limit -1
+            });
+          } else {
+            criteria._whereClause = "where product = '" + line.get('product').get('id') + "' and validFromDate <= date('now')";
+            criteria._orderByClause = 'validFromDate desc';
+            criteria._limit = 1;
+          }
           OB.Dal.find(OB.Model.ServicePriceRuleVersion, criteria, function (sprvs) {
             var priceruleVersion;
             if (sprvs && sprvs.length > 0) {
@@ -898,11 +915,28 @@ enyo.kind({
                   });
                 } else { //ruletype = 'R'
                   var rangeCriteria = {};
-                  rangeCriteria._whereClause = "where servicepricerule = '" + spr.get('id') + "' and ((afterdiscounts = 'false' and amountUpTo >= " + amountBeforeDiscounts + ") or (afterdiscounts = 'true' and amountUpTo >= " + amountAfterDiscounts + ") or (amountUpTo is null))";
-                  rangeCriteria._orderByClause = 'amountUpTo is null, amountUpTo';
-                  rangeCriteria._limit = 1;
+                  if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.product', true)) {
+                    rangeCriteria.hgVolFilters = [];
+                    rangeCriteria.hgVolFilters.push({
+                      columns: ['servicepricerule'],
+                      operator: 'equals',
+                      value: spr.get('id'),
+                      isId: true
+                    });
+                    rangeCriteria.hgVolFilters.push({
+                      columns: [],
+                      operator: 'filter',
+                      value: 'ServicePriceRuleRange_AmountFilter',
+                      params: [amountBeforeDiscounts, amountAfterDiscounts]
+                      //TODO: _limit -1
+                    });
+                  } else {
+                    rangeCriteria._whereClause = "where servicepricerule = '" + spr.get('id') + "' and ((afterdiscounts = 'false' and amountUpTo >= " + amountBeforeDiscounts + ") or (afterdiscounts = 'true' and amountUpTo >= " + amountAfterDiscounts + ") or (amountUpTo is null))";
+                    rangeCriteria._orderByClause = 'amountUpTo is null, amountUpTo';
+                    rangeCriteria._limit = 1;
+                  }
                   OB.Dal.find(OB.Model.ServicePriceRuleRange, rangeCriteria, function (sppr) {
-                    var range;
+                    var range, priceCriteria = {};
                     if (sppr && sppr.length > 0) {
                       range = sppr.at(0);
                       if (range.get('ruleType') === 'P') {
@@ -917,10 +951,25 @@ enyo.kind({
                           setUndo: false
                         });
                       } else { //ruleType = 'F'
-                        OB.Dal.find(OB.Model.ServicePriceRuleRangePrices, {
-                          product: prod.get('id'),
-                          priceList: range.get('priceList')
-                        }, function (price) {
+                        if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.product', true)) {
+                          priceCriteria.hgVolFilters = [];
+                          priceCriteria.hgVolFilters.push({
+                            columns: ['product'],
+                            operator: 'equals',
+                            value: prod.get('id'),
+                            isId: true
+                          });
+                          priceCriteria.hgVolFilters.push({
+                            columns: ['priceList'],
+                            operator: 'equals',
+                            value: range.get('priceList'),
+                            isId: true
+                          });
+                        } else {
+                          priceCriteria.product = prod.get('id');
+                          priceCriteria.priceList = range.get('priceList');
+                        }
+                        OB.Dal.find(OB.Model.ServicePriceRuleRangePrices, priceCriteria, function (price) {
                           var oldprice = line.get('priceList'),
                               newprice;
                           if (price && price.length > 0) {

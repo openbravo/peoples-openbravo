@@ -58,12 +58,14 @@ public class ServicePriceRuleRangePrices extends ProcessHQLQuery {
         .getString("terminalTime"),
         jsonsent.getJSONObject("parameters").getJSONObject("terminalTimeOffset").getLong("value"));
 
-    hqlQueries.add("select" + regularPriceRuleRangePricesHQLProperties.getHqlSelect()
-        + "from PricingPriceList ppl join ppl.pricingPriceListVersionList pplv "
-        + "join ppl.servicePriceRuleRangeList sppr join pplv.pricingProductPriceList ppp "
-        + "where pplv.id = get_pricelist_version(pplv.priceList.id, '"
-        + format.format(terminalDate) + "') and ppp.product.productType = 'S' "
-        + "and sppr.$naturalOrgCriteria and sppr.$incrementalUpdateCriteria ");
+    hqlQueries
+        .add("select"
+            + regularPriceRuleRangePricesHQLProperties.getHqlSelect()
+            + "from PricingPriceList ppl join ppl.pricingPriceListVersionList pplv "
+            + "join ppl.servicePriceRuleRangeList sppr join pplv.pricingProductPriceList ppp "
+            + "where $filtersCriteria and $hqlCriteria and pplv.id = get_pricelist_version(pplv.priceList.id, '"
+            + format.format(terminalDate) + "') and ppp.product.productType = 'S' "
+            + "and sppr.$naturalOrgCriteria and sppr.$incrementalUpdateCriteria ");
 
     return hqlQueries;
   }

@@ -49,9 +49,11 @@ public class ServicePriceRule extends ProcessHQLQuery {
     HQLPropertyList regularPriceRuleHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions);
 
-    hqlQueries.add("select" + regularPriceRuleHQLProperties.getHqlSelect()
-        + "from ServicePriceRule spr "
-        + "where spr.$naturalOrgCriteria and spr.$incrementalUpdateCriteria ");
+    hqlQueries
+        .add("select"
+            + regularPriceRuleHQLProperties.getHqlSelect()
+            + "from ServicePriceRule spr "
+            + "where $filtersCriteria and $hqlCriteria and spr.$naturalOrgCriteria and spr.$incrementalUpdateCriteria ");
 
     return hqlQueries;
   }
