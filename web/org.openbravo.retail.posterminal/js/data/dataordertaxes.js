@@ -445,9 +445,15 @@
         }
       }).then(function () {
         // Calculate linerate
-        line.set('linerate', OB.DEC.div(orggross, line.get('net')), {
-          silent: true
-        });
+        if (orggross === 0 && line.get('net') === 0) {
+          line.set('linerate', BigDecimal.prototype.ZERO, {
+            silent: true
+          });
+        } else {
+          line.set('linerate', OB.DEC.div(orggross, line.get('net')), {
+            silent: true
+          });
+        }
       })['catch'](function (reason) {
         receipt.deleteLine(line);
         OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
@@ -698,9 +704,15 @@
 
       return resultpromise.then(function () {
         // Calculate linerate and taxamount
-        line.set('linerate', OB.DEC.div(line.get('gross'), line.get('net')), {
-          silent: true
-        });
+        if (line.get('gross') === 0 && line.get('net') === 0) {
+          line.set('linerate', BigDecimal.prototype.ZERO, {
+            silent: true
+          });
+        } else {
+          line.set('linerate', OB.DEC.div(line.get('gross'), line.get('net')), {
+            silent: true
+          });
+        }
         line.set('taxAmount', OB.DEC.sub(line.get('discountedGross'), line.get('discountedNet')), {
           silent: true
         });
