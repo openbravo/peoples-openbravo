@@ -245,8 +245,8 @@ enyo.kind({
           OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_UnreturnableProduct'), OB.I18N.getLabel('OBPOS_UnreturnableProductMessage', [line.get('product').get('_identifier')]));
           return;
         } else if (!approvalNeeded) {
-          // A service with its related product selected doesn't need to be returned, because later it will be modified to retourned status depending in the product status
-          // In any other case it would requiere two approvals
+          // A service with its related product selected doesn't need to be returned, because later it will be modified to returned status depending in the product status
+          // In any other case it would require two approvals
           if (line.get('product').get('productType') === 'S') {
             lineToApproval = true;
             if (line.get('relatedLines')) {
@@ -289,35 +289,29 @@ enyo.kind({
         }
       }
 
-      function returnCurrentLine(index, selectedModels) {
-        if (index === selectedModels.length) {
-          return;
-        }
-        line = selectedModels[index];
-        if (!line.get('notReturnThisLine')) {
-          me.owner.owner.doReturnLine({
-            line: line
-          });
-        } else {
-          line.unset('notReturnThisLine');
-        }
-        returnCurrentLine(index + 1, selectedModels);
+      function returnLines() {
+        me.owner.owner.receipt.set('undo', null);
+        me.owner.owner.receipt.set('multipleUndo', true);
+        _.each(me.owner.owner.selectedModels, function (line) {
+          if (!line.get('notReturnThisLine')) {
+            me.owner.owner.doReturnLine({
+              line: line
+            });
+          } else {
+            line.unset('notReturnThisLine');
+          }
+        });
+        me.owner.owner.receipt.set('multipleUndo', null);
       }
       if (approvalNeeded) {
         OB.UTIL.Approval.requestApproval(
         me.model, 'OBPOS_approval.returnService', function (approved, supervisor, approvalType) {
           if (approved) {
-            me.owner.owner.receipt.set('undo', null);
-            me.owner.owner.receipt.set('multipleUndo', true);
-            returnCurrentLine(0, me.owner.owner.selectedModels);
-            me.owner.owner.receipt.set('multipleUndo', null);
+            returnLines();
           }
         });
       } else {
-        me.owner.owner.receipt.set('undo', null);
-        me.owner.owner.receipt.set('multipleUndo', true);
-        returnCurrentLine(0, me.owner.owner.selectedModels);
-        me.owner.owner.receipt.set('multipleUndo', null);
+        returnLines();
       }
     },
     init: function (model) {
