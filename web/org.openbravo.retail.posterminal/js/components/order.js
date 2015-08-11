@@ -695,10 +695,11 @@ enyo.kind({
 
           for (i = 0; i < serviceLines.length; i++) {
             l = serviceLines[i];
-            if (l.get('qty') > 0 && serviceLines.length === 1 && newqtyminus && !newqtyplus) {
+            if (l.get('qty') > 0 && serviceLines.length === 1 && newqtyminus) {
               if (!l.get('product').get('returnable')) { // Cannot add not returnable service to a negative product
                 me.order.get('lines').remove(l);
                 OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_UnreturnableProduct'), OB.I18N.getLabel('OBPOS_UnreturnableProductMessage', [l.get('product').get('_identifier')]));
+                this.updating = false;
                 return;
               } else {
                 approvalNeeded = true;
