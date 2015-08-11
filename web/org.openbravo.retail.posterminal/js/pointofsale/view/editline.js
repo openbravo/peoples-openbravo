@@ -771,9 +771,11 @@ enyo.kind({
       this.$.linePropertiesContainer.$.descLine.render(orderLine);
       this.$.linePropertiesContainer.$.qtyLine.render(orderLine);
       this.$.linePropertiesContainer.$.priceLine.render(orderLine);
-      this.$.linePropertiesContainer.$.grossLine.render(orderLine);
       this.$.linePropertiesContainer.$.discountedAmountLine.render(orderLine);
       this.$.linePropertiesContainer.$.warehouseLine.render(orderLine);
+      orderLine.get('product').set('standardPrice', priceTotal);
+      orderLine.set('price', priceTotal);
+      this.$.linePropertiesContainer.$.grossLine.render(orderLine);
     } else {
       enyo.forEach(this.$.linePropertiesContainer.getComponents(), function (compToRender) {
         if (compToRender.kindName.indexOf("enyo.") !== 0) {

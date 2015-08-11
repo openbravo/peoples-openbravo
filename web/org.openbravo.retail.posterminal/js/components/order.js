@@ -16,7 +16,7 @@ enyo.kind({
   sizing: "cover",
   width: 28,
   height: 28,
-  style: 'float: right; cursor: pointer; margin-top: 10px;',
+  style: 'float: right; cursor: pointer; margin-top: 8px;',
   showing: false,
   events: {
     onToggleSelection: ''
@@ -38,7 +38,7 @@ enyo.kind({
   sizing: "cover",
   width: 28,
   height: 28,
-  style: 'float: right; cursor: pointer; margin-top: 10px;',
+  style: 'float: right; cursor: pointer; margin-top: 8px;',
   events: {
     onToggleSelection: ''
   },
@@ -57,7 +57,7 @@ enyo.kind({
   name: 'OB.UI.OrderMultiSelectAll',
   i18nContent: 'OBPOS_lblSelectAll',
   classes: 'btnlink-orange',
-  style: 'float: right;',
+  style: 'float: right; margin-top: 6px;',
   showing: false,
   events: {
     onMultiSelectAll: ''
@@ -97,6 +97,8 @@ enyo.kind({
   }, {
     kind: 'OB.UI.OrderSingleSelect',
     name: 'btnSingleSelection'
+  }, {
+    style: 'clear: both;'
   }],
   newButtonComponents: [{
     kind: 'OB.UI.BusinessPartner',
@@ -107,7 +109,8 @@ enyo.kind({
   }],
   style: 'border-bottom: 1px solid #cccccc;',
   components: [{
-    name: 'receiptLabels'
+    name: 'receiptLabels',
+    style: 'padding-right: 50px;'
   }, {
     name: 'receiptButtons',
     style: 'clear: both; '
@@ -124,6 +127,16 @@ enyo.kind({
       }
     }, this);
   },
+  setOrderDetailWidth: function (pin, selectAll) {
+    var w = $("#" + this.$.receiptLabels.id).width() - 25;
+    if (pin) {
+      w = w - $("#" + this.$.receiptLabels.$.btnSingleSelection.id).width() - 20;
+    }
+    if (selectAll) {
+      w = w - $("#" + this.$.receiptLabels.$.btnMultiSelectAll.id).width() - 20;
+    }
+    $("#" + this.$.receiptLabels.$.orderdetails.id).width(w + 'px');
+  },
   showMultiSelected: function (inSender, inEvent) {
     if (inEvent.show) {
       this.$.receiptLabels.$.btnSingleSelection.setShowing(true);
@@ -132,6 +145,7 @@ enyo.kind({
     }
     this.$.receiptLabels.$.btnMultiSelection.setShowing(false);
     this.$.receiptLabels.$.btnMultiSelectAll.setShowing(false);
+    this.setOrderDetailWidth(inEvent.show, false);
     this.doToggleSelectionMode({
       multiselection: false
     });
@@ -146,6 +160,7 @@ enyo.kind({
       this.$.receiptLabels.$.btnMultiSelection.setShowing(false);
       this.$.receiptLabels.$.btnMultiSelectAll.setShowing(false);
     }
+    this.setOrderDetailWidth(true, inEvent.multiselection);
     this.doToggleSelectionMode(inEvent);
   },
   multiSelectAll: function (inSender, inEvent) {
