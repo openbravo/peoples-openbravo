@@ -217,7 +217,7 @@
     },
     printAmount: function () {
       if (this.get('rate')) {
-        return OB.I18N.formatCurrency(OB.DEC.mul(this.get('amount'), this.get('rate')));
+        return OB.I18N.formatCurrency(OB.DEC.mul(this.get('amount') < 0 ? OB.DEC.mul(this.get('amount'), -1) : this.get('amount'), this.get('rate')));
       } else {
         return OB.I18N.formatCurrency(this.get('amount'));
       }
