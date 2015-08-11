@@ -1498,7 +1498,6 @@
         this.updatePrices(function (order) {
           OB.Model.Discounts.applyPromotions(order);
           OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationCreatedOrder'));
-          order.trigger('orderCreatedFromQuotation');
         });
       } else {
         OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationCreatedOrder'));
