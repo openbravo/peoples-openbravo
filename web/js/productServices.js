@@ -33,27 +33,47 @@ OB.ProductServices.onLoadGrid = function (grid) {
 
 OB.ProductServices.updateTotalLinesAmount = function (form) {
   var totalLinesAmt = BigDecimal.prototype.ZERO,
+      totalLinesDiscountAmt = BigDecimal.prototype.ZERO,
       grid = form.getItem('grid').canvas.viewGrid,
       amountField = grid.getFieldByColumnName('amount'),
+      discountField = grid.getFieldByColumnName('discountsAmt'),
       selectedRecords = grid.getSelectedRecords(),
       totalLinesAmountlItem = form.getItem('totallinesamount'),
+      totalDiscountsAmountItem = form.getItem('totaldiscountsamount'),
       i, lineAmt;
 
   for (i = 0; i < selectedRecords.length; i++) {
     lineAmt = new BigDecimal(String(grid.getEditedCell(grid.getRecordIndex(selectedRecords[i]), amountField)));
+    lineDiscountAmt = new BigDecimal(String(grid.getEditedCell(grid.getRecordIndex(selectedRecords[i]), discountField)));
     totalLinesAmt = totalLinesAmt.add(lineAmt);
+    totalLinesDiscountAmt = totalLinesDiscountAmt.add(lineDiscountAmt);
   }
   totalLinesAmountlItem.setValue(Number(totalLinesAmt.toString()));
+  totalDiscountsAmountItem.setValue(Number(totalLinesDiscountAmt.toString()));
   return true;
 };
 
 OB.ProductServices.orderLinesGridQtyOnChange = function (item, view, form, grid) {
-  var newAmount = new BigDecimal(String(item.getValue())).multiply(new BigDecimal(String(item.record.price))),
-      oldAmount = grid.getEditValues(grid.getRecordIndex(item.record)).amount,
+  var oldAmount = grid.getEditValues(grid.getRecordIndex(item.record)).amount,
+      newAmount = new BigDecimal(String(item.getValue())).multiply(new BigDecimal(String(item.record.price))),
       originalQty = new BigDecimal(String(item.record.originalOrderedQuantity)),
       newQty = new BigDecimal(String(item.getValue())),
-      precision = form.getItem('pricePrecision').getValue();
+      oldDiscount = grid.getEditValues(grid.getRecordIndex(item.record)).discountsAmount,
+      precision = form.getItem('pricePrecision').getValue(),
+      newDiscount;
   newAmount = newAmount.setScale(precision, BigDecimal.prototype.ROUND_HALF_UP);
+  if (item.getValue() !== 0) {
+    if (!oldDiscount && oldDiscount !== 0) {
+      oldDiscount = new BigDecimal(String(item.record.discountsAmount));
+    } else {
+      oldDiscount = new BigDecimal(String(grid.getEditValues(grid.getRecordIndex(item.record)).discountsAmount));
+    }
+    newDiscount = oldDiscount.divide(originalQty).multiply(newQty);
+    newDiscount = newDiscount.setScale(precision, BigDecimal.prototype.ROUND_HALF_UP);
+  } else {
+    newDiscount = BigDecimal.prototype.ZERO;
+  }
+
   if (!oldAmount && oldAmount !== 0) {
     oldAmount = new BigDecimal(String(item.record.amount));
   } else {
@@ -61,6 +81,7 @@ OB.ProductServices.orderLinesGridQtyOnChange = function (item, view, form, grid)
   }
   if (newAmount.compareTo(oldAmount) !== 0) {
     grid.setEditValue(grid.getRecordIndex(item.record), 'amount', Number(newAmount));
+    grid.setEditValue(grid.getRecordIndex(item.record), 'discountsAmount', Number(newDiscount));
     OB.ProductServices.updateTotalLinesAmount(form);
     OB.ProductServices.updateServicePrice(view, item.record);
   }
@@ -126,6 +147,7 @@ OB.ProductServices.doRelateOrderLinesSelectionChanged = function (record, state,
 
 OB.ProductServices.updateServicePrice = function (view, record) {
   var callback, totalServiceAmount = view.theForm.getItem('totalserviceamount'),
+      totalDiscountsAmount = view.theForm.getItem('totaldiscountsamount'),
       orderLinesGrid = view.theForm.getItem('grid').canvas.viewGrid,
       totalLinesAmountValue = new BigDecimal(String(view.theForm.getItem('totallinesamount').getValue() || 0)),
       recordId, contextInfo;
@@ -134,7 +156,7 @@ OB.ProductServices.updateServicePrice = function (view, record) {
   } else {
     recordId = null;
   }
-  
+
   contextInfo = orderLinesGrid.view.parentWindow.activeView.getContextInfo(false, true, true, true);
   if (!contextInfo.inpTabId) {
     contextInfo = orderLinesGrid.view.parentWindow.activeView.parentView.getContextInfo(false, true, true, true);
@@ -157,6 +179,7 @@ OB.ProductServices.updateServicePrice = function (view, record) {
   OB.RemoteCallManager.call('org.openbravo.common.actionhandler.ServiceRelatedLinePriceActionHandler', {
     orderlineId: view.theForm.getItem('orderlineId').getValue(),
     amount: view.theForm.getItem('totallinesamount').getValue(),
+    discounts: view.theForm.getItem('totaldiscountsamount').getValue(),
     orderLineToRelateId: recordId,
     tabId: contextInfo.inpTabId
   }, {}, callback);

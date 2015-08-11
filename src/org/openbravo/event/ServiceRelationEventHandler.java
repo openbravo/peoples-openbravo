@@ -50,8 +50,7 @@ public class ServiceRelationEventHandler extends EntityPersistenceEventObserver 
     return entities;
   }
 
-  public void onSave(@Observes
-  EntityNewEvent event) {
+  public void onSave(@Observes EntityNewEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -69,8 +68,7 @@ public class ServiceRelationEventHandler extends EntityPersistenceEventObserver 
     updateOrderLine(orderLine, amount, quantity, BigDecimal.ZERO, BigDecimal.ZERO);
   }
 
-  public void onUpdate(@Observes
-  EntityUpdateEvent event) {
+  public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -90,8 +88,7 @@ public class ServiceRelationEventHandler extends EntityPersistenceEventObserver 
     updateOrderLine(currentOrderLine, currentAmount, currentQuantity, oldAmount, oldQuantity);
   }
 
-  public void onDelete(@Observes
-  EntityDeleteEvent event) {
+  public void onDelete(@Observes EntityDeleteEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -124,7 +121,7 @@ public class ServiceRelationEventHandler extends EntityPersistenceEventObserver 
     BigDecimal serviceAmount = ServicePriceUtils.getServiceAmount(
         currentOrderLine,
         dbAmount.add(currentAmount.subtract(oldAmount)).setScale(
-            currency.getPricePrecision().intValue(), RoundingMode.HALF_UP));
+            currency.getPricePrecision().intValue(), RoundingMode.HALF_UP), null);
     Product service = currentOrderLine.getProduct();
 
     if (UNIQUE_QUANTITY.equals(service.getQuantityRule())) {
