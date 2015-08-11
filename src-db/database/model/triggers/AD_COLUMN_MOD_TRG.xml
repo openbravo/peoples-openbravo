@@ -111,6 +111,9 @@ BEGIN
         COALESCE(:NEW.imagewidth , 1) != COALESCE(:OLD.imagewidth , 1) OR
         COALESCE(:NEW.imageheight , 1) != COALESCE(:OLD.imageheight , 1) OR
         COALESCE(:NEW.isusedsequence , '.') != COALESCE(:OLD.isusedsequence , '.') OR
+        COALESCE(:NEW.fileextensions , '.') != COALESCE(:OLD.fileextensions , '.') OR
+        COALESCE(:NEW.filemaxsize , 0) != COALESCE(:OLD.filemaxsize , 0) OR
+        COALESCE(:NEW.filemaxsizeunit , '.') != COALESCE(:OLD.filemaxsizeunit , '.') OR
         1=2) THEN
       RAISE_APPLICATION_ERROR(-20000, '@20532@');
     END IF;
@@ -177,7 +180,10 @@ BEGIN
         COALESCE(:NEW.imagewidth                 , 1 ) = COALESCE(:OLD.imagewidth                 , 1 )AND
         COALESCE(:NEW.imageheight                , 1 ) = COALESCE(:OLD.imageheight                , 1 )AND
         COALESCE(:NEW.isusedsequence             ,'.') = COALESCE(:OLD.isusedsequence             ,'.')AND
-	COALESCE(:OLD.ISEXCLUDEAUDIT		,'.') != COALESCE(:NEW.ISEXCLUDEAUDIT		,'.')) THEN
+        COALESCE(:NEW.fileextensions, '.') = COALESCE(:OLD.fileextensions, '.') AND
+        COALESCE(:NEW.filemaxsize, 0) = COALESCE(:OLD.filemaxsize, 0) AND
+        COALESCE(:NEW.filemaxsizeunit, '.') = COALESCE(:OLD.filemaxsizeunit, '.') AND
+        COALESCE(:OLD.ISEXCLUDEAUDIT		,'.') != COALESCE(:NEW.ISEXCLUDEAUDIT		,'.')) THEN
       
 		:NEW.UPDATED := :OLD.UPDATED;
      END IF;
