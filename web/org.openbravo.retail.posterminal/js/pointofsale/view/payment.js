@@ -745,7 +745,7 @@ enyo.kind({
           this.setContent(OB.I18N.getLabel('OBPOS_LblDone'));
         }
       } else {
-    	enyo.$.scrim.show();
+        enyo.$.scrim.show();
         this.owner.model.get('multiOrders').trigger('paymentDone', this.allowOpenDrawer);
         this.owner.model.get('multiOrders').set('openDrawer', false);
       }
