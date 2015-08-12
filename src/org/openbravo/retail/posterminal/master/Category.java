@@ -68,7 +68,6 @@ public class Category extends ProcessHQLQuery {
     HQLPropertyList regularProductsCategoriesHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions);
 
-    // TODO: Sandra, replace the hgvol with productcategory reading from separate table
     boolean isRemote = false;
     try {
       OBContext.setAdminMode(false);
@@ -80,12 +79,13 @@ public class Category extends ProcessHQLQuery {
     } finally {
       OBContext.restorePreviousMode();
     }
-
     if (isRemote) {
-      hqlQueries.add("select"
-          + regularProductsCategoriesHQLProperties.getHqlSelect() //
-          + "from ProductCategory as pCat left outer join pCat.image as img  "
-          + " where pCat.$incrementalUpdateCriteria order by pCat.name");
+      hqlQueries
+          .add("select"
+              + regularProductsCategoriesHQLProperties.getHqlSelect() //
+              + "from OBRETCO_Productcategory aCat  left outer join aCat.productCategory as pCat left outer join pCat.image as img"
+              + " where ( aCat.obretcoProductlist.id = '" + productList.getId() + "') "
+              + " order by pCat.name");
     } else {
       hqlQueries.add("select"
           + regularProductsCategoriesHQLProperties.getHqlSelect() //
