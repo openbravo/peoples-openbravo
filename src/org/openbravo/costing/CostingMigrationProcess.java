@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2013 Openbravo SLU
+ * All portions are Copyright (C) 2012-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -62,11 +62,14 @@ import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.OrganizationType;
 import org.openbravo.model.common.plm.Product;
+import org.openbravo.model.financialmgmt.calendar.Period;
+import org.openbravo.model.financialmgmt.calendar.PeriodControl;
 import org.openbravo.model.materialmgmt.cost.Costing;
 import org.openbravo.model.materialmgmt.cost.CostingAlgorithm;
 import org.openbravo.model.materialmgmt.cost.CostingRule;
 import org.openbravo.model.materialmgmt.cost.CostingRuleInit;
 import org.openbravo.model.materialmgmt.cost.TransactionCost;
+import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 import org.openbravo.model.materialmgmt.transaction.InventoryCount;
 import org.openbravo.model.materialmgmt.transaction.InventoryCountLine;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
@@ -242,6 +245,121 @@ public class CostingMigrationProcess implements Process {
         throw new OBException("@TrxWithNoCost@");
       }
     }
+
+    // Check current period is opened for Material Physical Inventory document
+    OBCriteria<Organization> ohql = OBDal.getInstance().createCriteria(Organization.class);
+    ohql.add(Restrictions.eq(Organization.PROPERTY_ALLOWPERIODCONTROL, true));
+    ohql.setFilterOnReadableClients(false);
+    ohql.setFilterOnReadableOrganization(false);
+    ScrollableResults orgList = ohql.scroll(ScrollMode.FORWARD_ONLY);
+    int i = 0;
+    try {
+      while (orgList.next()) {
+        Organization organization = (Organization) orgList.get()[0];
+        StringBuffer phqlWhere = new StringBuffer();
+        phqlWhere.append(" as pc");
+        phqlWhere.append(" join pc." + PeriodControl.PROPERTY_PERIOD + " as p");
+        phqlWhere.append(" where p." + Period.PROPERTY_STARTINGDATE + " <= :date");
+        phqlWhere.append(" and p." + Period.PROPERTY_ENDINGDATE + " >= :date");
+        phqlWhere.append(" and pc." + PeriodControl.PROPERTY_ORGANIZATION + " = :org");
+        phqlWhere.append(" and pc." + PeriodControl.PROPERTY_DOCUMENTCATEGORY + " = 'MMI'");
+        phqlWhere.append(" and pc." + PeriodControl.PROPERTY_PERIODSTATUS + " = 'O'");
+        final OBQuery<PeriodControl> phql = OBDal.getInstance().createQuery(PeriodControl.class,
+            phqlWhere.toString());
+        phql.setFilterOnReadableClients(false);
+        phql.setFilterOnReadableOrganization(false);
+        phql.setNamedParameter("date", new Date());
+        phql.setNamedParameter("org", organization);
+        phql.setMaxResult(1);
+        PeriodControl period = (PeriodControl) phql.uniqueResult();
+        if (period == null) {
+          throw new OBException(String.format(OBMessageUtils.messageBD("PeriodClosedForMMI"),
+              organization.getName()));
+        }
+
+        i++;
+        if (i % 100 == 0) {
+          OBDal.getInstance().flush();
+          OBDal.getInstance().getSession().clear();
+        }
+      }
+    } finally {
+      orgList.close();
+    }
+
+    // Check there is not negative stock without allowing it
+    for (Client client : getClients()) {
+      if (!client.getClientInformationList().get(0).isAllowNegativeStock()) {
+        final OBCriteria<StorageDetail> sdhql = OBDal.getInstance().createCriteria(
+            StorageDetail.class);
+        sdhql.add(Restrictions.eq(StorageDetail.PROPERTY_CLIENT, client));
+        sdhql.add(Restrictions.or(
+            Restrictions.lt(StorageDetail.PROPERTY_QUANTITYONHAND, BigDecimal.ZERO),
+            Restrictions.lt(StorageDetail.PROPERTY_ONHANDORDERQUANITY, BigDecimal.ZERO)));
+        sdhql.setFilterOnReadableClients(false);
+        sdhql.setFilterOnReadableOrganization(false);
+        sdhql.setMaxResults(1);
+        StorageDetail storageDetail = (StorageDetail) sdhql.uniqueResult();
+        if (storageDetail != null) {
+          throw new OBException(String.format(
+              OBMessageUtils.messageBD("NegativeStockWithoutAllowing"), client.getName()));
+        }
+      }
+    }
+
+    // Check there is not stock of a product in a UOM different from the one defined for it
+    StringBuffer sdphqlWhere = new StringBuffer();
+    sdphqlWhere.append(" as sd");
+    sdphqlWhere.append(" join sd." + StorageDetail.PROPERTY_PRODUCT + " as p");
+    sdphqlWhere.append(" where p." + Product.PROPERTY_UOM + " <> sd." + StorageDetail.PROPERTY_UOM);
+    sdphqlWhere.append(" and (coalesce(sd." + StorageDetail.PROPERTY_QUANTITYONHAND + ",0) > 0");
+    sdphqlWhere.append(" or coalesce(sd." + StorageDetail.PROPERTY_ONHANDORDERQUANITY + ",0) > 0)");
+    final OBQuery<StorageDetail> sdphql = OBDal.getInstance().createQuery(StorageDetail.class,
+        sdphqlWhere.toString());
+    sdphql.setFilterOnReadableClients(false);
+    sdphql.setFilterOnReadableOrganization(false);
+    sdphql.setMaxResult(1);
+    StorageDetail storageDetailProduct = (StorageDetail) sdphql.uniqueResult();
+    if (storageDetailProduct != null) {
+      throw new OBException("@ProductStockInDifferentUOM@");
+    }
+
+    // Check there are not inconsistencies between M_TRANSACTION and M_STORAGE_DETAIL tables
+    StringBuffer tsdhqlWhere = new StringBuffer();
+    tsdhqlWhere.append(" select 1");
+    tsdhqlWhere.append(" from " + MaterialTransaction.ENTITY_NAME + " as t");
+    tsdhqlWhere.append(", " + StorageDetail.ENTITY_NAME + " as sd");
+    tsdhqlWhere.append(" where t." + MaterialTransaction.PROPERTY_PRODUCT + " = sd."
+        + StorageDetail.PROPERTY_PRODUCT);
+    tsdhqlWhere.append(" and t." + MaterialTransaction.PROPERTY_STORAGEBIN + " = sd."
+        + StorageDetail.PROPERTY_STORAGEBIN);
+    tsdhqlWhere.append(" and t." + MaterialTransaction.PROPERTY_ATTRIBUTESETVALUE + " = sd."
+        + StorageDetail.PROPERTY_ATTRIBUTESETVALUE);
+    tsdhqlWhere.append(" and t." + MaterialTransaction.PROPERTY_UOM + " = sd."
+        + StorageDetail.PROPERTY_UOM);
+    tsdhqlWhere.append(" and coalesce(t." + MaterialTransaction.PROPERTY_ORDERUOM
+        + ", '0') = coalesce(sd." + StorageDetail.PROPERTY_ORDERUOM + ", '0')");
+    tsdhqlWhere.append(" group by t." + MaterialTransaction.PROPERTY_PRODUCT);
+    tsdhqlWhere.append(" , t." + MaterialTransaction.PROPERTY_STORAGEBIN);
+    tsdhqlWhere.append(" , t." + MaterialTransaction.PROPERTY_ATTRIBUTESETVALUE);
+    tsdhqlWhere.append(" , t." + MaterialTransaction.PROPERTY_UOM);
+    tsdhqlWhere.append(" , t." + MaterialTransaction.PROPERTY_ORDERUOM);
+    tsdhqlWhere.append(" , sd." + StorageDetail.PROPERTY_PRODUCT);
+    tsdhqlWhere.append(" , sd." + StorageDetail.PROPERTY_STORAGEBIN);
+    tsdhqlWhere.append(" , sd." + StorageDetail.PROPERTY_ATTRIBUTESETVALUE);
+    tsdhqlWhere.append(" , sd." + StorageDetail.PROPERTY_UOM);
+    tsdhqlWhere.append(" , sd." + StorageDetail.PROPERTY_ORDERUOM);
+    tsdhqlWhere.append(" having (coalesce(sum(t." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY
+        + "), 0) <> coalesce(max(sd." + StorageDetail.PROPERTY_QUANTITYONHAND + "), 0)");
+    tsdhqlWhere.append(" or coalesce(sum(t." + MaterialTransaction.PROPERTY_ORDERQUANTITY
+        + "), 0) <> coalesce(max(sd." + StorageDetail.PROPERTY_ONHANDORDERQUANITY + "), 0))");
+    final Query tsdhql = OBDal.getInstance().getSession().createQuery(tsdhqlWhere.toString());
+    tsdhql.setMaxResults(1);
+    Object transactionStorageDetail = tsdhql.uniqueResult();
+    if (transactionStorageDetail != null) {
+      throw new OBException("@InconsistenciesInStock@");
+    }
+
   }
 
   private void updateLegacyCosts() {
