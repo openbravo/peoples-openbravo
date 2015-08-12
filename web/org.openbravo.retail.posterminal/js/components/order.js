@@ -654,7 +654,7 @@ enyo.kind({
         var serviceLines;
         if (service.get('groupService')) {
           serviceLines = _.filter(me.order.get('lines').models, function (l) {
-            return (l.get('product').get('id') === service.get('product').get('id')) && !service.get('originalOrderLineId');
+            return (l.get('product').get('id') === service.get('product').get('id')) && !l.get('originalOrderLineId');
           });
         } else {
           serviceLines = [service];
