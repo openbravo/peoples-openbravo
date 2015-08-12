@@ -54,12 +54,17 @@ public class ServicePriceUtils {
   private static final String PERCENTAGE = "P";
   private static String SERVICEPRODUCT = "S";
 
-  public static BigDecimal getServiceAmount(OrderLine orderline) {
-    BigDecimal servicePrice = getServiceAmount(orderline, null);
-    return servicePrice;
-  }
-
-  public static BigDecimal getServiceAmount(OrderLine orderline, BigDecimal linesTotalAmount) {
+  /**
+   * Method to obtain Service Amount to be added for a certain service order line based on selected
+   * product lines amount
+   * 
+   * @param orderline
+   * @param linesTotalAmount
+   * @param totalDiscounts
+   * @return
+   */
+  public static BigDecimal getServiceAmount(OrderLine orderline, BigDecimal linesTotalAmount,
+      BigDecimal totalDiscounts) {
     final Product serviceProduct = orderline.getProduct();
     if (linesTotalAmount != null && linesTotalAmount.compareTo(BigDecimal.ZERO) == 0) {
       return BigDecimal.ZERO;
@@ -95,6 +100,9 @@ public class ServicePriceUtils {
       }
 
       if (PERCENTAGE.equals(servicePriceRule.getRuletype())) {
+        if (!servicePriceRule.isAfterdiscounts() && totalDiscounts != null) {
+          relatedAmount = relatedAmount.add(totalDiscounts);
+        }
         serviceRelatedPrice = relatedAmount.multiply(new BigDecimal(servicePriceRule
             .getPercentage()).divide(new BigDecimal("100.00"), orderline.getCurrency()
             .getStandardPrecision().intValue(), RoundingMode.HALF_UP));
@@ -105,6 +113,9 @@ public class ServicePriceUtils {
               + servicePriceRule.getIdentifier() + ", @AmountUpTo@: " + linesTotalAmount);
         }
         if (PERCENTAGE.equals(range.getRuleType())) {
+          if (!servicePriceRule.isAfterdiscounts() && totalDiscounts != null) {
+            relatedAmount = relatedAmount.add(totalDiscounts);
+          }
           serviceRelatedPrice = relatedAmount.multiply(new BigDecimal(range.getPercentage())
               .divide(new BigDecimal("100.00"), orderline.getCurrency().getStandardPrecision()
                   .intValue(), RoundingMode.HALF_UP));
@@ -353,5 +364,75 @@ public class ServicePriceUtils {
       }
     }
     return result;
+  }
+
+  /**
+   * Check if certain Service Price Range for certain amount is 'After Discounts' or not
+   * 
+   * @param orderline
+   *          OrderLine
+   * @param linesTotalAmount
+   * @return
+   */
+  public static boolean servicePriceRuleIsAfterDiscounts(OrderLine orderline,
+      BigDecimal linesTotalAmount) {
+
+    final Product serviceProduct = orderline.getProduct();
+    if (linesTotalAmount != null && linesTotalAmount.compareTo(BigDecimal.ZERO) == 0) {
+      return true;
+    }
+    BigDecimal serviceBasePrice = getProductPrice(orderline.getOrderDate(), orderline
+        .getSalesOrder().getPriceList(), serviceProduct);
+    if (serviceBasePrice == null) {
+      throw new OBException("@ServiceProductPriceListVersionNotFound@ "
+          + serviceProduct.getIdentifier() + ", @Date@: "
+          + OBDateUtils.formatDate(orderline.getOrderDate()));
+    }
+    BigDecimal serviceRelatedPrice = BigDecimal.ZERO;
+    boolean isPriceRuleBased = serviceProduct.isPricerulebased();
+    if (!isPriceRuleBased) {
+      return true;
+    } else {
+      ServicePriceRule servicePriceRule = getServicePriceRule(serviceProduct,
+          orderline.getOrderDate());
+      if (servicePriceRule == null) {
+        throw new OBException("@ServicePriceRuleVersionNotFound@ "
+            + orderline.getProduct().getIdentifier() + ", @Date@: "
+            + OBDateUtils.formatDate(orderline.getOrderDate()));
+      }
+      BigDecimal relatedAmount = BigDecimal.ZERO;
+      if (linesTotalAmount != null) {
+        relatedAmount = linesTotalAmount;
+      } else {
+        HashMap<String, BigDecimal> relatedAmountAndQuatity = getRelatedAmountAndQty(orderline);
+        relatedAmount = relatedAmountAndQuatity.get("amount");
+      }
+
+      if (PERCENTAGE.equals(servicePriceRule.getRuletype())) {
+        if (servicePriceRule.isAfterdiscounts()) {
+          return true;
+        }
+      } else {
+        ServicePriceRuleRange range = getRange(servicePriceRule, relatedAmount);
+        if (range == null) {
+          throw new OBException("@ServicePriceRuleRangeNotFound@. @ServicePriceRule@: "
+              + servicePriceRule.getIdentifier() + ", @AmountUpTo@: " + linesTotalAmount);
+        }
+        if (PERCENTAGE.equals(range.getRuleType())) {
+          if (servicePriceRule.isAfterdiscounts()) {
+            return true;
+          }
+        } else {
+          serviceRelatedPrice = getProductPrice(orderline.getOrderDate(), range.getPriceList(),
+              serviceProduct);
+          if (serviceRelatedPrice == null) {
+            throw new OBException("@ServiceProductPriceListVersionNotFound@ "
+                + serviceProduct.getIdentifier() + ", @Date@: "
+                + OBDateUtils.formatDate(orderline.getOrderDate()));
+          }
+        }
+      }
+      return false;
+    }
   }
 }
