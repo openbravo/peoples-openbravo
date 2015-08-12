@@ -110,9 +110,7 @@
     },
 
     getTotalLine: function () {
-      if (!OB.UTIL.isNullOrUndefined(this.get('grossListPrice'))) {
-        return (OB.DEC.mul(this.get('grossListPrice'), this.get('qty'))) - this.getDiscount();
-      }
+      return (OB.DEC.mul(this.get('grossListPrice'), this.get('qty'))) - this.getDiscount();
     },
 
     getNet: function () {
