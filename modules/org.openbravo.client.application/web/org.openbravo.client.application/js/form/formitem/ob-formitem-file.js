@@ -137,7 +137,7 @@ isc.OBFileCanvas.addProperties({
           fileItem: this.fileItem
         });
         var title = OB.I18N.getLabel('OBUIAPP_FileSelectorTitle'),
-            height = selector.height + 50,
+            height = selector.height + (selector.messageBarText ? 40 : 0),
             width = selector.width,
             showMinimizeButton = false,
             showMaximizeButton = false;
@@ -398,14 +398,14 @@ isc.OBFileSelector.addProperties({
         form.submitForm();
       }
     });
-    var messageBarText = this.getWarningText(fileExtensions, fileMaxSizeFormat, fileMaxSizeUnit);
+    this.messageBarText = this.getWarningText(fileExtensions, fileMaxSizeFormat, fileMaxSizeUnit);
     var messageBar = isc.OBMessageBar.create({
       visibility: 'hidden'
     });
     messageBar.setType(isc.OBMessageBar.TYPE_WARNING);
-    messageBar.setText(null, messageBarText);
+    messageBar.setText(null, this.messageBarText);
     messageBar.hideCloseIcon();
-    if (messageBarText) {
+    if (this.messageBarText) {
       messageBar.show();
     }
 
