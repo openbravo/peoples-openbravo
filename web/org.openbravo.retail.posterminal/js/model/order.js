@@ -68,10 +68,10 @@
       if (product.get('productType') === 'S' && !product.get('isPrintServices')) {
         return false;
       }
-      
+
       return true;
     },
-    
+
     printDiscount: function () {
       var disc = OB.DEC.mul(OB.DEC.sub(this.get('product').get('standardPrice'), this.get('price')), this.get('qty'));
       var prom = this.getTotalAmountOfPromotions();
@@ -1175,7 +1175,7 @@
               if (args && args.cancelOperation) {
                 return;
               }
-              if (args.line && (qty !== 1 || args.line.get('qty') !== -1)) {
+              if (args.line && (qty !== 1 || args.line.get('qty') !== -1 || args.p.get('productType') !== 'S' || (args.p.get('productType') === 'S' && !args.p.get('isLinkedToProduct')))) {
                 args.receipt.addUnit(args.line, args.qty);
                 if (!_.isUndefined(args.attrs)) {
                   _.each(_.keys(args.attrs), function (key) {

@@ -642,7 +642,7 @@ enyo.kind({
     }, this);
     this.order.get('lines').on('add change:qty change:relatedLines updateRelations', function () {
       var approvalNeeded = false,
-          line, k;
+          line, k, oldUndo = this.order.get('undo');
 
       if (this.updating || this.order.get('preventServicesUpdate')) {
         return;
@@ -744,7 +744,7 @@ enyo.kind({
             serviceLines = getServiceLines(line);
 
             for (i = 0; i < serviceLines.length; i++) {
-              newRelatedLines = OB.UTIL.mergeArrays(newRelatedLines, serviceLines[i].get('relatedLines'));
+              newRelatedLines = OB.UTIL.mergeArrays(newRelatedLines, (serviceLines[i].get('relatedLines') || []));
             }
             for (j = 0; j < newRelatedLines.length; j++) {
               l = me.order.get('lines').get(newRelatedLines[j].orderlineId);
@@ -836,6 +836,7 @@ enyo.kind({
         linesToRemove.forEach(function (l) {
           me.order.get('lines').remove(l);
         });
+        me.order.set('undo', oldUndo);
         me.updating = false;
         me.order.get('lines').trigger('updateServicePrices');
       }
