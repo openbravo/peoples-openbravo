@@ -35,6 +35,7 @@ import org.openbravo.client.kernel.freemarker.test.LabelTest;
 import org.openbravo.erpCommon.info.ClassicSelectorTest;
 import org.openbravo.test.accounting.PostDocumentTest;
 import org.openbravo.test.accounting.RecordID2Test;
+import org.openbravo.test.costing.TestCosting;
 import org.openbravo.test.dal.AdminContextTest;
 import org.openbravo.test.dal.ComputedColumnsTest;
 import org.openbravo.test.dal.DalComplexQueryRequisitionTest;
@@ -175,6 +176,9 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     PostDocumentTest.class, //
     // Taxes
     TaxesTest.class, //
+
+    // costing
+    TestCosting.class, //
 
     // scheduling
     ProcessSchedulingTest.class, //
