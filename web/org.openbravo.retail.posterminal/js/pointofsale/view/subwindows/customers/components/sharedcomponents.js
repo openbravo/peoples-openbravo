@@ -170,7 +170,8 @@ enyo.kind({
   components: [{
     name: 'bodyheader'
   }, {
-    name: 'customerAttributes'
+    name: 'customerAttributes',
+    style: 'overflow-x:hidden; overflow-y:auto; max-height:622px;'
   }],
   setCustomer: function (inSender, inEvent) {
     this.customer = inEvent.customer;

@@ -99,7 +99,8 @@ enyo.kind({
   components: [{
     name: 'bodyheader'
   }, {
-    name: 'customerAddrAttributes'
+    name: 'customerAddrAttributes',
+    style: 'overflow-x:hidden; overflow-y:auto; max-height:622px;'
   }],
   setCustomerAddr: function (inSender, inEvent) {
     this.customer = inEvent.customer;
