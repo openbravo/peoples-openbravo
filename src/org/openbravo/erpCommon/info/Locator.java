@@ -46,6 +46,7 @@ public class Locator extends HttpSecureAppServlet {
       "priorityno", "isdefault", "rowkey" };
   private static final RequestFilter columnFilter = new ValueListFilter(colNames);
   private static final RequestFilter directionFilter = new ValueListFilter("asc", "desc");
+  private static final String WINDOWID_GOODSMOVEMENT = "170";
 
   public void init(ServletConfig config) {
     super.init(config);
@@ -62,21 +63,18 @@ public class Locator extends HttpSecureAppServlet {
       String strWarehouse = "";
       String strWarehouseId = "";
       String windowId = vars.getRequestGlobalVariable("WindowID", "Locator.windowId");
+      String strOrg = vars.getGlobalVariable("inpadOrgId", "Locator.adorgid", "");
 
-      if (!windowId.equals("") && windowId != null) {
-        strWarehouse = LocatorData.selectname(this,
-            Utility.getContext(this, vars, "M_Warehouse_ID", windowId));
+      if (windowId != null && !windowId.equals("")) {
         strWarehouseId = Utility.getContext(this, vars, "M_Warehouse_ID", windowId);
+        strWarehouse = LocatorData.selectname(this, strWarehouseId);
       }
       if ("168".equals(windowId)) {
         strWarehouse = LocatorData.selectname(this,
             vars.getGlobalVariable("inpmWarehouseId", "168|m_warehouse_id", ""));
-        strWarehouseId = Utility.getContext(this, vars, "M_Warehouse_ID", windowId);
-      }
-      String strOrg = vars.getGlobalVariable("inpadOrgId", "Locator.adorgid", "");
-      // Fetch transaction Organization if window is Goods Movements as its id = 170
-      if ("170".equals(windowId)) {
-        strOrg = vars.getGlobalVariable("inpadOrgId", "170|ad_org_id", "");
+      } else if (WINDOWID_GOODSMOVEMENT.equals(windowId)) {
+        // Fetch transaction Organization if window is Goods Movements
+        strOrg = vars.getGlobalVariable("inpadOrgId", WINDOWID_GOODSMOVEMENT + "|ad_org_id", "");
       }
       /**
        * Check whether the login profile warehouse belongs to transaction organization selected
