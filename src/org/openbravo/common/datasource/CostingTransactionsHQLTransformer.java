@@ -46,8 +46,8 @@ public class CostingTransactionsHQLTransformer extends HqlQueryTransformer {
   private static final String propADListReference = org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE;
   private static final String propADListValue = org.openbravo.model.ad.domain.List.PROPERTY_SEARCHKEY;
   private static final String MovementTypeRefID = "189";
-  private static Set<String> orgs = null;
-  Map<CostDimension, BaseOBObject> costDimensions = null;
+  private Set<String> orgs = null;
+  private Map<CostDimension, BaseOBObject> costDimensions = null;
 
   @Override
   public String transformHqlQuery(String hqlQuery, Map<String, String> requestParameters,
