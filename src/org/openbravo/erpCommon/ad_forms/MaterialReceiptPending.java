@@ -376,6 +376,7 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
             conversion.add(Restrictions.eq(UOMConversion.PROPERTY_TOUOM,
                 OBDal.getInstance().get(ProductUOM.class, dataLine[0].mProductUomId).getUOM()));
 
+            Boolean useDivideRateBy = false;
             // Inverting search of UOM conversion if conversion list is empty
             if (conversion.list().size() == 0) {
               conversion = OBDal.getInstance().createCriteria(UOMConversion.class);
@@ -383,11 +384,17 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
                   OBDal.getInstance().get(ProductUOM.class, dataLine[0].mProductUomId).getUOM()));
               conversion.add(Restrictions.eq(UOMConversion.PROPERTY_TOUOM,
                   OBDal.getInstance().get(UOM.class, dataLine[0].cUomId)));
+              useDivideRateBy = true;
             }
 
             for (UOMConversion conv : conversion.list()) {
-              qtyorder = new BigDecimal(strQtyordered).multiply(conv.getMultipleRateBy())
-                  .toString();
+              if (!useDivideRateBy) {
+                qtyorder = new BigDecimal(strQtyordered).multiply(conv.getMultipleRateBy())
+                    .toString();
+              } else {
+                qtyorder = new BigDecimal(strQtyordered).multiply(conv.getDivideRateBy())
+                    .toString();
+              }
             }
 
           }
