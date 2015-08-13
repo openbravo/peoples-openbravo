@@ -31,7 +31,7 @@ public class OBPOS_APP_PriceList extends SimpleCallout {
 
   @Override
   protected void execute(CalloutInfo info) throws ServletException {
-    
+
     String pricelistid = info.getStringParameter("inpmPricelistId", null);
     PriceList pricelist = OBDal.getInstance().get(PriceList.class, pricelistid);
     info.addResult("inpcCurrencyId", pricelist.getCurrency().getId());

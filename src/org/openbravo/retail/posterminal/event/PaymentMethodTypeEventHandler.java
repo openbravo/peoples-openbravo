@@ -38,8 +38,7 @@ public class PaymentMethodTypeEventHandler extends EntityPersistenceEventObserve
     return entities;
   }
 
-  public void onUpdate(@Observes
-  EntityUpdateEvent event) {
+  public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -66,8 +65,7 @@ public class PaymentMethodTypeEventHandler extends EntityPersistenceEventObserve
 
   }
 
-  public void onSave(@Observes
-  EntityNewEvent event) {
+  public void onSave(@Observes EntityNewEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
