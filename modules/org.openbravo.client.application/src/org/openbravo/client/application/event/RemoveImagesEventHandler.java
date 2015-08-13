@@ -28,6 +28,7 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
+import org.openbravo.base.provider.OBProvider;
 import org.openbravo.client.kernel.event.EntityDeleteEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
@@ -40,6 +41,7 @@ import org.openbravo.model.common.plm.Product;
 public class RemoveImagesEventHandler extends EntityPersistenceEventObserver {
 
   private static Entity[] entities = getImageEntities();
+  private static final String DUMMY_IMAGE_NAME = "DummyImageForDeletedRows";
 
   @Override
   protected Entity[] getObservedEntities() {
@@ -50,7 +52,7 @@ public class RemoveImagesEventHandler extends EntityPersistenceEventObserver {
     if (!isValidEvent(event)) {
       return;
     }
-
+    Image dummyImage = getDummyImage();
     // Iterate image properties of the entity
     for (String property : getImageProperties(event.getTargetInstance().getEntity())) {
 
@@ -60,6 +62,9 @@ public class RemoveImagesEventHandler extends EntityPersistenceEventObserver {
       if (event.getCurrentState(imageProperty) != null) {
 
         Image bob = (Image) event.getCurrentState(imageProperty);
+        // Replace the current image with a dummy one, just in case the image column is mandatory
+        // See issue https://issues.openbravo.com/view.php?id=30571
+        event.setCurrentState(imageProperty, dummyImage);
         if (bob != null) {
           String selectedProduct = event.getId();
           if (!checkImageUtilization(selectedProduct, bob)) {
@@ -73,6 +78,36 @@ public class RemoveImagesEventHandler extends EntityPersistenceEventObserver {
         }
       }
     }
+  }
+
+  /**
+   * Returns a dummy image (AD_Image instance) that will be named DUMMY_IMAGE_NAME and will not have
+   * binary data
+   * 
+   * @return a dummy image
+   */
+  private Image getDummyImage() {
+    OBCriteria<Image> dummyImageCriteria = OBDal.getInstance().createCriteria(Image.class);
+    dummyImageCriteria.add(Restrictions.eq(Image.PROPERTY_NAME, DUMMY_IMAGE_NAME));
+    dummyImageCriteria.add(Restrictions.isNull(Image.PROPERTY_BINDARYDATA));
+    Image dummyImage = (Image) dummyImageCriteria.uniqueResult();
+    // If it is not already created, do it
+    if (dummyImage == null) {
+      dummyImage = createDummyImage();
+    }
+    return dummyImage;
+  }
+
+  /**
+   * Creates a dummy image, that will be called DUMMY_IMAGE_NAME and will not have binary data
+   * 
+   * @return the dummy image
+   */
+  private Image createDummyImage() {
+    Image dummyImage = OBProvider.getInstance().get(Image.class);
+    dummyImage.setName(DUMMY_IMAGE_NAME);
+    OBDal.getInstance().save(dummyImage);
+    return dummyImage;
   }
 
   public void onUpdate(@Observes EntityUpdateEvent event) {
