@@ -41,7 +41,8 @@ import org.openbravo.model.common.plm.Product;
 public class RemoveImagesEventHandler extends EntityPersistenceEventObserver {
 
   private static Entity[] entities = getImageEntities();
-  private static final String DUMMY_IMAGE_NAME = "DummyImageForDeletedRows";
+  private static final String DUMMY_IMAGE_ID = "2FA7212E426F11E5A151FEFF819CDC9F";
+  private Image dummyImage = null;
 
   @Override
   protected Entity[] getObservedEntities() {
@@ -52,7 +53,6 @@ public class RemoveImagesEventHandler extends EntityPersistenceEventObserver {
     if (!isValidEvent(event)) {
       return;
     }
-    Image dummyImage = getDummyImage();
     // Iterate image properties of the entity
     for (String property : getImageProperties(event.getTargetInstance().getEntity())) {
 
@@ -62,9 +62,12 @@ public class RemoveImagesEventHandler extends EntityPersistenceEventObserver {
       if (event.getCurrentState(imageProperty) != null) {
 
         Image bob = (Image) event.getCurrentState(imageProperty);
-        // Replace the current image with a dummy one, just in case the image column is mandatory
-        // See issue https://issues.openbravo.com/view.php?id=30571
-        event.setCurrentState(imageProperty, dummyImage);
+        if (imageProperty.isMandatory()) {
+          // If the property is mandatory replace the current image with a dummy one to prevent
+          // breaking the not null constraint
+          // See issue https://issues.openbravo.com/view.php?id=30571
+          event.setCurrentState(imageProperty, getDummyImage());
+        }
         if (bob != null) {
           String selectedProduct = event.getId();
           if (!checkImageUtilization(selectedProduct, bob)) {
@@ -87,13 +90,15 @@ public class RemoveImagesEventHandler extends EntityPersistenceEventObserver {
    * @return a dummy image
    */
   private Image getDummyImage() {
-    OBCriteria<Image> dummyImageCriteria = OBDal.getInstance().createCriteria(Image.class);
-    dummyImageCriteria.add(Restrictions.eq(Image.PROPERTY_NAME, DUMMY_IMAGE_NAME));
-    dummyImageCriteria.add(Restrictions.isNull(Image.PROPERTY_BINDARYDATA));
-    Image dummyImage = (Image) dummyImageCriteria.uniqueResult();
-    // If it is not already created, do it
+    // If not chached yet, obtain it, otherwise just return the cached one
     if (dummyImage == null) {
-      dummyImage = createDummyImage();
+      OBCriteria<Image> dummyImageCriteria = OBDal.getInstance().createCriteria(Image.class);
+      dummyImageCriteria.add(Restrictions.eq(Image.PROPERTY_ID, DUMMY_IMAGE_ID));
+      dummyImage = (Image) dummyImageCriteria.uniqueResult();
+      // If it is not already created, do it
+      if (dummyImage == null) {
+        dummyImage = createDummyImage();
+      }
     }
     return dummyImage;
   }
@@ -104,10 +109,12 @@ public class RemoveImagesEventHandler extends EntityPersistenceEventObserver {
    * @return the dummy image
    */
   private Image createDummyImage() {
-    Image dummyImage = OBProvider.getInstance().get(Image.class);
-    dummyImage.setName(DUMMY_IMAGE_NAME);
-    OBDal.getInstance().save(dummyImage);
-    return dummyImage;
+    Image dummy = OBProvider.getInstance().get(Image.class);
+    dummy.setId(DUMMY_IMAGE_ID);
+    dummy.setName("DummyImageForDeletedRows");
+    dummy.setNewOBObject(true);
+    OBDal.getInstance().save(dummy);
+    return dummy;
   }
 
   public void onUpdate(@Observes EntityUpdateEvent event) {
