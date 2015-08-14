@@ -345,6 +345,5 @@ public class LandedCostProcess {
       matchedAmt = lcc.getAmount();
     }
     lcc.setMatchingAmount(matchedAmt);
-    OBDal.getInstance().save(lcc);
   }
 }
