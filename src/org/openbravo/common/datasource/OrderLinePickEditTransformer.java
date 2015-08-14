@@ -33,6 +33,8 @@ public class OrderLinePickEditTransformer extends HqlQueryTransformer {
 
   private static final String SALES_ORDERLINE_TAB_ID = "187";
   private static final String RFC_ORDERLINE_TAB_ID = "AF4090093D471431E040007F010048A5";
+  private static final String rfc_amountAbs_leftClause = " (coalesce((select abs(amount) from OrderlineServiceRelation osr where osr.salesOrderLine.id = :orderLineId and osr.orderlineRelated.id = e.id), case when pl.priceIncludesTax = false then e.lineNetAmount else e.lineGrossAmount end)) ";
+  private static final String sol_amountAbs_leftClause = " abs(coalesce((select abs(amount) from OrderlineServiceRelation osr where osr.salesOrderLine.id = :orderLineId and osr.orderlineRelated.id = e.id), case when pl.priceIncludesTax = false then e.lineNetAmount else e.lineGrossAmount end)) ";
   private static final String rfc_relatedQuantity_leftClause = " coalesce((select quantity from OrderlineServiceRelation osr where osr.salesOrderLine.id = :orderLineId and osr.orderlineRelated.id = e.id), 0)*(-1) ";
   private static final String sol_relatedQuantity_leftClause = " coalesce((select quantity from OrderlineServiceRelation osr where osr.salesOrderLine.id = :orderLineId and osr.orderlineRelated.id = e.id), 0)*1";
   private static final String rfc_returnQtyOtherRM_leftClause = " coalesce((select sum(osr.quantity) from OrderlineServiceRelation as osr left join osr.orderlineRelated as relol left join osr.salesOrderLine as ol left join ol.salesOrder as o where relol.id = e.id and o.processed = true and osr.quantity < 0 and o.documentStatus <> 'VO'), 0)*(-1) ";
@@ -61,6 +63,7 @@ public class OrderLinePickEditTransformer extends HqlQueryTransformer {
     String includedProducts = product.getIncludedProducts();
 
     StringBuffer whereClause = new StringBuffer();
+    StringBuffer amountAbs = new StringBuffer();
     StringBuffer returnQtyOtherRM = new StringBuffer();
     StringBuffer relatedQuantity = new StringBuffer();
 
@@ -111,24 +114,28 @@ public class OrderLinePickEditTransformer extends HqlQueryTransformer {
         queryNamedParameters.put("orderLineId", strOrderLineId);
       }
 
+      amountAbs.append("abs");
       returnQtyOtherRM.append("*(-1)");
       relatedQuantity.append("*(-1)");
     }
 
     String transformedHql = _hqlQuery.replace("@whereClause@", whereClause.toString());
+    transformedHql = transformedHql.replace("@amountAbs@", amountAbs.toString());
     transformedHql = transformedHql.replace("@returnQtyOtherRM@ ", returnQtyOtherRM.toString());
     transformedHql = transformedHql.replace("@relatedQuantity@ ", relatedQuantity.toString());
     if (SALES_ORDERLINE_TAB_ID.equals(strTabId)) {
-      transformedHql = transformedHql.replace("@relatedQuantityLeftClause@",
-          rfc_relatedQuantity_leftClause);
-      transformedHql = transformedHql.replace("@returnQtyOtherRMLeftClause@",
-          rfc_returnQtyOtherRM_leftClause);
-
-    } else {
+      transformedHql = transformedHql.replace("@amountLeftClause@", sol_amountAbs_leftClause);
       transformedHql = transformedHql.replace("@relatedQuantityLeftClause@",
           sol_relatedQuantity_leftClause);
       transformedHql = transformedHql.replace("@returnQtyOtherRMLeftClause@",
           sol_returnQtyOtherRM_leftClause);
+
+    } else {
+      transformedHql = transformedHql.replace("@amountLeftClause@", rfc_amountAbs_leftClause);
+      transformedHql = transformedHql.replace("@relatedQuantityLeftClause@",
+          rfc_relatedQuantity_leftClause);
+      transformedHql = transformedHql.replace("@returnQtyOtherRMLeftClause@",
+          rfc_returnQtyOtherRM_leftClause);
     }
     // Replace filter clause, not working automatically due to a bug
     transformedHql = transformedHql.replace("@Order.id@ ", "'" + strOrderId + "' ");
