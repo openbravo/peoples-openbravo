@@ -362,7 +362,11 @@ enyo.kind({
             tabPanel: 'searchCharacteristic'
           });
           me.bubble('onSelectFilter', {});
-          me.owner.owner.line.set("obposServiceProposed", true);
+          me.owner.owner.selectedModels.filter(function (line) {
+            return line.get('hasRelatedServices');
+          }).forEach(function (l) {
+            l.set("obposServiceProposed", true);
+          });
         }, 1);
         this.addRemoveClass('iconServices_unreviewed', false);
         this.addRemoveClass('iconServices_reviewed', true);
