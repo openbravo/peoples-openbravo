@@ -24,18 +24,22 @@ import java.util.List;
 
 import javax.enterprise.event.Observes;
 
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
+import org.openbravo.base.provider.OBProvider;
 import org.openbravo.client.kernel.event.EntityDeleteEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.utility.ADFile;
 
 public class RemoveFilesEventHandler extends EntityPersistenceEventObserver {
 
   private static Entity[] entities = getFileEntities();
+  private static final String DUMMY_FILE_NAME = "DummyFileForDeletedRows";
 
   @Override
   protected Entity[] getObservedEntities() {
@@ -47,6 +51,7 @@ public class RemoveFilesEventHandler extends EntityPersistenceEventObserver {
       return;
     }
 
+    ADFile dummyFile = getDummyFile();
     // Iterate file properties of the entity
     for (String property : getFileProperties(event.getTargetInstance().getEntity())) {
 
@@ -56,6 +61,10 @@ public class RemoveFilesEventHandler extends EntityPersistenceEventObserver {
       if (event.getCurrentState(fileProperty) != null) {
 
         ADFile bob = (ADFile) event.getCurrentState(fileProperty);
+        // Replace the current file with a dummy one, just in case the file column is mandatory
+        // See issue https://issues.openbravo.com/view.php?id=30571 that describes the same
+        // situation for Image BLOB references
+        event.setCurrentState(fileProperty, dummyFile);
         if (bob != null) {
           OBDal.getInstance().remove(bob);
         }
@@ -83,6 +92,36 @@ public class RemoveFilesEventHandler extends EntityPersistenceEventObserver {
         }
       }
     }
+  }
+
+  /**
+   * Returns a dummy File (ADFile instance) that will be named DUMMY_FILE_NAME and will not have
+   * binary data
+   *
+   * @return a dummy image
+   */
+  private ADFile getDummyFile() {
+    OBCriteria<ADFile> dummyImageCriteria = OBDal.getInstance().createCriteria(ADFile.class);
+    dummyImageCriteria.add(Restrictions.eq(ADFile.PROPERTY_NAME, DUMMY_FILE_NAME));
+    dummyImageCriteria.add(Restrictions.isNull(ADFile.PROPERTY_BINDARYDATA));
+    ADFile dummyImage = (ADFile) dummyImageCriteria.uniqueResult();
+    // If it is not already created, do it
+    if (dummyImage == null) {
+      dummyImage = createDummyFile();
+    }
+    return dummyImage;
+  }
+
+  /**
+   * Creates a dummy image, that will be called DUMMY_FILE_NAME and will not have binary data
+   * 
+   * @return the dummy file
+   */
+  private ADFile createDummyFile() {
+    ADFile dummyFile = OBProvider.getInstance().get(ADFile.class);
+    dummyFile.setName(DUMMY_FILE_NAME);
+    OBDal.getInstance().save(dummyFile);
+    return dummyFile;
   }
 
   private static Entity[] getFileEntities() {
