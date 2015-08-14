@@ -9,6 +9,8 @@ public abstract class ServiceTestData {
    */
   public final String BP_CUSTOMER_A = "4028E6C72959682B01295F40C3CB02EC";
   public final String SERVICE_WARRANTY = "D67EF9E66FF447E88176DF0C054A9D3F";
+  public final String SERVICE_INSURANCE = "DE0F34D6A6F64E23BB03144CC5E0A4C0";
+  public final String SERVICE_TRANSPORTATION = "73AADD53EBA94C1EAC8B472A261F02AA";
   public final String PRODUCT_DISTRIBUTION_GOOD_A = "4028E6C72959682B01295ADC211E0237";
   public final String PRODUCT_DISTRIBUTION_GOOD_B = "4028E6C72959682B01295ADC21C90239";
   public final String PRODUCT_DISTRIBUTION_GOOD_C = "4028E6C72959682B01295ADC2285023B";
@@ -19,6 +21,8 @@ public abstract class ServiceTestData {
   private String testNumber;
   private String testDescription;
   private String serviceId;
+  private String productId;
+  private String[][] services;
   private String[][] products;
   private BigDecimal quantity;
   private BigDecimal price;
@@ -26,6 +30,11 @@ public abstract class ServiceTestData {
   private String pricelistId;
   private BigDecimal servicePriceResult;
   private BigDecimal serviceAmountResult;
+  private BigDecimal serviceQtyResult;
+  private String[][] servicesResults;
+  private BigDecimal productChangedQty;
+  private String orderDate;
+  private String errorMessage;
 
   public BigDecimal getServiceAmountResult() {
     return serviceAmountResult;
@@ -75,6 +84,14 @@ public abstract class ServiceTestData {
     return this.serviceId;
   }
 
+  public String getProductId() {
+    return this.productId;
+  }
+
+  public String[][] getServices() {
+    return this.services;
+  }
+
   public String[][] getProducts() {
     return this.products;
   }
@@ -89,6 +106,14 @@ public abstract class ServiceTestData {
 
   public void setServiceId(String serviceId) {
     this.serviceId = serviceId;
+  }
+
+  public void setProductId(String productId) {
+    this.productId = productId;
+  }
+
+  public void setServices(String[][] services) {
+    this.services = services;
   }
 
   public void setProducts(String[][] products) {
@@ -109,6 +134,46 @@ public abstract class ServiceTestData {
 
   public void setTestNumber(String testNumber) {
     this.testNumber = testNumber;
+  }
+
+  public BigDecimal getServiceQtyResult() {
+    return serviceQtyResult;
+  }
+
+  public void setServiceQtyResult(BigDecimal serviceQtyResult) {
+    this.serviceQtyResult = serviceQtyResult;
+  }
+
+  public String[][] getServicesResults() {
+    return this.servicesResults;
+  }
+
+  public void setServicesResults(String[][] servicesResults) {
+    this.servicesResults = servicesResults;
+  }
+
+  public BigDecimal getProductChangedQty() {
+    return productChangedQty;
+  }
+
+  public void setProductChangedQty(BigDecimal productChangedQty) {
+    this.productChangedQty = productChangedQty;
+  }
+
+  public String getOrderDate() {
+    return orderDate;
+  }
+
+  public void setOrderDate(String orderDate) {
+    this.orderDate = orderDate;
+  }
+
+  public String getErrorMessage() {
+    return errorMessage;
+  }
+
+  public void setErrorMessage(String errorMessage) {
+    this.errorMessage = errorMessage;
   }
 
   public abstract void initialize();

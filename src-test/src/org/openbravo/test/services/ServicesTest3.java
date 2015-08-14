@@ -19,51 +19,47 @@
 
 package org.openbravo.test.services;
 
-import static org.hamcrest.Matchers.closeTo;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
-import org.hibernate.ScrollMode;
-import org.hibernate.ScrollableResults;
 import org.junit.Rule;
 import org.junit.Test;
-import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.weld.test.ParameterCdiTest;
 import org.openbravo.base.weld.test.ParameterCdiTestRule;
 import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
+import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.SequenceIdData;
+import org.openbravo.materialmgmt.ServicePriceUtils;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
-import org.openbravo.model.common.order.OrderlineServiceRelation;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.financialmgmt.tax.TaxRate;
 import org.openbravo.model.pricing.pricelist.PriceList;
+import org.openbravo.model.pricing.pricelist.ServicePriceRuleRange;
 import org.openbravo.test.services.data.ServiceTestData;
-import org.openbravo.test.services.data.ServiceTestData1;
-import org.openbravo.test.services.data.ServiceTestData2;
-import org.openbravo.test.services.data.ServiceTestData3;
-import org.openbravo.test.services.data.ServiceTestData4;
-import org.openbravo.test.services.data.ServiceTestData5;
-import org.openbravo.test.services.data.ServiceTestData6;
+import org.openbravo.test.services.data.ServiceTestData10;
+import org.openbravo.test.services.data.ServiceTestData11;
+import org.openbravo.test.services.data.ServiceTestData9;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Tests cases to check service Price computation
- * 
+ * Tests cases to check ServicePriceUtils.getServiceAmount method. All possible errors are properly
+ * handled.
  * 
  */
-public class ServicesTest extends WeldBaseTest {
-  final static private Logger log = LoggerFactory.getLogger(ServicesTest.class);
+public class ServicesTest3 extends WeldBaseTest {
+  final static private Logger log = LoggerFactory.getLogger(ServicesTest3.class);
   // User Openbravo
   private final String USER_ID = "100";
   // Client QA Testing
@@ -76,15 +72,16 @@ public class ServicesTest extends WeldBaseTest {
   private final String SALESORDER_ID = "3C7982B8D15D4650B6BFC32A5200DBB4";
   // Tax Exempt
   private static final String TAX_EXEMPT = "BA7059430C0A43A9B86A21C4EECF3A21";
+  // Amount Up To Blank Range of "Range" Service Price Rule
+  private static final String SERVICEPRICERULE_RANGE_UP_TO_BLANK = "6B485CFB092A48919C6B4459F8ED45BA";
 
   private boolean isPriceIncludingTaxes;
 
-  public ServicesTest() {
+  public ServicesTest3() {
   }
 
-  public static final List<ServiceTestData> PARAMS = Arrays.asList(new ServiceTestData1(),
-      new ServiceTestData2(), new ServiceTestData3(), new ServiceTestData4(),
-      new ServiceTestData5(), new ServiceTestData6());
+  public static final List<ServiceTestData> PARAMS = Arrays.asList(new ServiceTestData9(),
+      new ServiceTestData10(), new ServiceTestData11());
 
   /** defines the values the parameter will take. */
   @Rule
@@ -98,15 +95,22 @@ public class ServicesTest extends WeldBaseTest {
   private static int counterTest = 0;
 
   /**
-   * Verifies price computation for services. Add a relation line, update it and delete it. Review
-   * price computation for the service is correct
+   * Tests cases to check ServicePriceUtils.getServiceAmount method. All possible errors are
+   * properly handled. Creates and order, it adds a product line and one service line. Then, it
+   * executes ServicePriceUtils .getServiceAmount method preparing scenarios on which certain type
+   * of error is obtained.
    */
   @Test
-  public void ServiceTest() {
+  public void ServiceTest3() {
     // Set QA context
     OBContext.setOBContext(USER_ID, ROLE_ID, CLIENT_ID, ORGANIZATION_ID);
     String testOrderId = null;
     try {
+      if (parameter.getTestNumber().equals("BACK-501")) {
+        ServicePriceRuleRange range = OBDal.getInstance().get(ServicePriceRuleRange.class,
+            SERVICEPRICERULE_RANGE_UP_TO_BLANK);
+        range.setActive(false);
+      }
       Order order;
       order = OBDal.getInstance().get(Order.class, SALESORDER_ID);
       Order testOrder = (Order) DalUtil.copy(order, false);
@@ -114,6 +118,7 @@ public class ServicesTest extends WeldBaseTest {
       testOrder.setDocumentNo("Service Test " + parameter.getTestNumber());
       testOrder.setBusinessPartner(OBDal.getInstance().get(BusinessPartner.class,
           parameter.getBpartnerId()));
+      testOrder.setOrderDate(OBDateUtils.getDate(parameter.getOrderDate()));
       PriceList priceList = OBDal.getInstance().get(PriceList.class, parameter.getPricelistId());
       testOrder.setPriceList(priceList);
       isPriceIncludingTaxes = priceList.isPriceIncludesTax();
@@ -128,69 +133,30 @@ public class ServicesTest extends WeldBaseTest {
       log.debug(parameter.getTestDescription());
       OBDal.getInstance().refresh(testOrder);
       testOrderId = testOrder.getId();
+
+      boolean error = false;
+
       // Insert Service Line
       OrderLine serviceOrderLine = insertLine(order, testOrder, parameter.getServiceId(),
           parameter.getQuantity(), parameter.getPrice());
       for (String[] product : parameter.getProducts()) {
         OrderLine orderLine = insertLine(order, testOrder, product[0], new BigDecimal(product[1]),
             new BigDecimal(product[2]));
-        insertRelation(serviceOrderLine, orderLine, new BigDecimal(product[1]), new BigDecimal(
-            product[3]));
-      }
-      OBDal.getInstance().flush();
-      OBDal.getInstance().refresh(testOrder);
-      OBDal.getInstance().refresh(serviceOrderLine);
 
-      if (isPriceIncludingTaxes) {
-        assertThat("Wrong Service Gross Price", serviceOrderLine.getGrossUnitPrice(),
-            closeTo(parameter.getServicePriceResult(), BigDecimal.ZERO));
-        assertThat("Wrong Line Gross amount for service", serviceOrderLine.getLineGrossAmount(),
-            closeTo(parameter.getServiceAmountResult(), BigDecimal.ZERO));
-      } else {
-        assertThat("Wrong Service Price", serviceOrderLine.getUnitPrice(),
-            closeTo(parameter.getServicePriceResult(), BigDecimal.ZERO));
-        assertThat("Wrong Line Net amount for service", serviceOrderLine.getLineNetAmount(),
-            closeTo(parameter.getServiceAmountResult(), BigDecimal.ZERO));
+        try {
+          ServicePriceUtils
+              .getServiceAmount(
+                  serviceOrderLine,
+                  isPriceIncludingTaxes ? orderLine.getLineGrossAmount() : orderLine
+                      .getLineNetAmount(), null);
+        } catch (OBException e) {
+          assertEquals("ServicePriceUtils.getServiceAmount not properly handled error",
+              e.getMessage(), parameter.getErrorMessage());
+          error = true;
+        }
       }
-      assertThat("Wrong Quantity for Service", serviceOrderLine.getOrderedQuantity(),
-          closeTo(parameter.getServiceQtyResult(), BigDecimal.ZERO));
-      updateServiceRelationAmounts(serviceOrderLine, BigDecimal.ZERO, BigDecimal.ZERO);
-      if (isPriceIncludingTaxes) {
-        assertThat("Wrong Service Gross Price", serviceOrderLine.getGrossUnitPrice(),
-            closeTo(parameter.getPrice(), BigDecimal.ZERO));
-        assertThat("Wrong Line Gross amount for service", serviceOrderLine.getLineGrossAmount(),
-            closeTo(parameter.getPrice().multiply(parameter.getQuantity()), BigDecimal.ZERO));
-      } else {
-        assertThat("Wrong Service Price", serviceOrderLine.getUnitPrice(),
-            closeTo(parameter.getPrice(), BigDecimal.ZERO));
-        assertThat("Wrong Line Net amount for service", serviceOrderLine.getLineNetAmount(),
-            closeTo(parameter.getPrice().multiply(parameter.getQuantity()), BigDecimal.ZERO));
-      }
-      assertThat("Wrong Quantity for Service", serviceOrderLine.getOrderedQuantity(),
-          closeTo(parameter.getQuantity(), BigDecimal.ZERO));
-      OBDal.getInstance().flush();
-      OBDal.getInstance().refresh(testOrder);
-      OBDal.getInstance().refresh(serviceOrderLine);
-      updateServiceRelationAmounts(serviceOrderLine, BigDecimal.ONE, BigDecimal.ONE);
-      removeServiceRelations(serviceOrderLine);
-      serviceOrderLine = OBDal.getInstance().get(OrderLine.class, serviceOrderLine.getId());
-      if (isPriceIncludingTaxes) {
-        assertThat("Wrong Service Price", serviceOrderLine.getGrossUnitPrice(),
-            closeTo(parameter.getPrice(), BigDecimal.ZERO));
-        assertThat("Wrong Line Net amount for service", serviceOrderLine.getLineGrossAmount(),
-            closeTo(parameter.getPrice().multiply(parameter.getQuantity()), BigDecimal.ZERO));
-      } else {
-        assertThat("Wrong Service Gross Price", serviceOrderLine.getUnitPrice(),
-            closeTo(parameter.getPrice(), BigDecimal.ZERO));
-        assertThat("Wrong Line Gross amount for service", serviceOrderLine.getLineNetAmount(),
-            closeTo(parameter.getPrice().multiply(parameter.getQuantity()), BigDecimal.ZERO));
-      }
-      assertThat("Wrong Quantity for Service", serviceOrderLine.getOrderedQuantity(),
-          closeTo(parameter.getQuantity(), BigDecimal.ZERO));
-      assertThat("Wrong Service Relations", new BigDecimal(serviceOrderLine
-          .getOrderlineServiceRelationCOrderlineRelatedIDList().size()),
-          closeTo(BigDecimal.ZERO, BigDecimal.ZERO));
 
+      assertTrue("Not properly handled error obtained", error);
       counterTest++;
     } catch (Exception e) {
       log.error("Error when executing: " + parameter.getTestDescription(), e);
@@ -198,49 +164,16 @@ public class ServicesTest extends WeldBaseTest {
     } finally {
       if (testOrderId != null) {
         System.out.println(testOrderId);
+        if (parameter.getTestNumber().equals("BACK-501")) {
+          ServicePriceRuleRange range = OBDal.getInstance().get(ServicePriceRuleRange.class,
+              SERVICEPRICERULE_RANGE_UP_TO_BLANK);
+          range.setActive(true);
+        }
         OBDal.getInstance().flush();
         OBDal.getInstance().getSession().clear();
         // OBDal.getInstance().remove(OBDal.getInstance().get(Order.class, testOrderId));
         OBDal.getInstance().flush();
       }
-    }
-  }
-
-  private void removeServiceRelations(OrderLine serviceOrderLine) {
-    StringBuffer where = new StringBuffer();
-    where.append(" as olsr");
-    where.append(" where olsr." + OrderlineServiceRelation.PROPERTY_SALESORDERLINE
-        + " = :salesorderline");
-    OBQuery<OrderlineServiceRelation> olsrQry = OBDal.getInstance().createQuery(
-        OrderlineServiceRelation.class, where.toString());
-    olsrQry.setNamedParameter("salesorderline", serviceOrderLine);
-
-    ScrollableResults olsrScroller = olsrQry.scroll(ScrollMode.FORWARD_ONLY);
-    while (olsrScroller.next()) {
-      OrderlineServiceRelation orls = (OrderlineServiceRelation) olsrScroller.get(0);
-      serviceOrderLine.getOrderlineServiceRelationList().remove(orls);
-      OBDal.getInstance().remove(orls);
-      OBDal.getInstance().flush();
-    }
-  }
-
-  private void updateServiceRelationAmounts(OrderLine serviceOrderLine, BigDecimal amount,
-      BigDecimal quantity) {
-    StringBuffer where = new StringBuffer();
-    where.append(" as olsr");
-    where.append(" where olsr." + OrderlineServiceRelation.PROPERTY_SALESORDERLINE
-        + " = :salesorderline");
-    OBQuery<OrderlineServiceRelation> olsrQry = OBDal.getInstance().createQuery(
-        OrderlineServiceRelation.class, where.toString());
-    olsrQry.setNamedParameter("salesorderline", serviceOrderLine);
-
-    ScrollableResults olsrScroller = olsrQry.scroll(ScrollMode.FORWARD_ONLY);
-    while (olsrScroller.next()) {
-      OrderlineServiceRelation orls = (OrderlineServiceRelation) olsrScroller.get(0);
-      orls.setAmount(amount);
-      orls.setQuantity(quantity);
-      OBDal.getInstance().save(orls);
-      OBDal.getInstance().flush();
     }
   }
 
@@ -278,6 +211,7 @@ public class ServicesTest extends WeldBaseTest {
           parameter.getBpartnerId()));
     }
     testOrderLine.setSalesOrder(testOrder);
+    testOrderLine.setOrderDate(testOrder.getOrderDate());
     testOrder.getOrderLineList().add(testOrderLine);
     testOrderLine.setId(SequenceIdData.getUUID());
     testOrderLine.setNewOBObject(true);
@@ -287,15 +221,5 @@ public class ServicesTest extends WeldBaseTest {
     OBDal.getInstance().refresh(testOrder);
     OBDal.getInstance().refresh(testOrderLine);
     return testOrderLine;
-  }
-
-  private void insertRelation(OrderLine serviceOrderLine, OrderLine orderLine, BigDecimal quantity,
-      BigDecimal amount) {
-    OrderlineServiceRelation osr = OBProvider.getInstance().get(OrderlineServiceRelation.class);
-    osr.setAmount(amount);
-    osr.setQuantity(quantity);
-    osr.setOrderlineRelated(orderLine);
-    osr.setSalesOrderLine(serviceOrderLine);
-    OBDal.getInstance().save(osr);
   }
 }

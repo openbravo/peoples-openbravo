@@ -6,7 +6,7 @@ public class ServiceTestData4 extends ServiceTestData {
 
   @Override
   public void initialize() {
-    setTestNumber("04");
+    setTestNumber("BACK-204");
     setTestDescription("Service with three related products and price including taxes");
     setBpartnerId(BP_CUSTOMER_A);
     setServiceId(SERVICE_WARRANTY);
@@ -20,6 +20,7 @@ public class ServiceTestData4 extends ServiceTestData {
     setPrice(new BigDecimal("250.00"));
     setServicePriceResult(new BigDecimal("251.47"));
     setServiceAmountResult(new BigDecimal("754.41"));
+    setServiceQtyResult(new BigDecimal("3"));
     setPricelistId(PRICELIST_CUSTOMER_A_INCL_TAX);
   }
 }
