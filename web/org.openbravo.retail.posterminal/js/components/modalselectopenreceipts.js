@@ -75,12 +75,21 @@ enyo.kind({
         }
         this.owner.owner.doAddProduct({
           targetOrder: orderModel,
-          product: this.owner.owner.args.product
+          product: this.owner.owner.args.product,
+          attrs: this.owner.owner.args.attrs
         });
         if (this.owner.owner.$.bodyContent.$.chkSelectOpenedReceiptModal.checked) {
-          this.owner.owner.doChangeCurrentOrder({
-            newCurrentOrder: orderModel
-          });
+          orderModel.calculateGross();
+          var me = this;
+
+          function onCalculategross() {
+            orderModel.off('calculategross', onCalculategross);
+            me.owner.owner.doChangeCurrentOrder({
+              newCurrentOrder: orderModel
+            });
+          }
+
+          orderModel.on('calculategross', onCalculategross);
         }
         this.owner.owner.doHideThisPopup();
       }

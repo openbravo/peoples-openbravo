@@ -2951,6 +2951,7 @@
                   hasservices = data.hasservices;
                 }
                 newline = new OrderLine({
+                  id: iter.lineId,
                   product: prod,
                   uOM: iter.uOM,
                   qty: OB.DEC.number(iter.quantity),

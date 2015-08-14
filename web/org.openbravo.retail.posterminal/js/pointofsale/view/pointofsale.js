@@ -448,7 +448,8 @@ enyo.kind({
               popup: 'OBPOS_modalSelectOpenedReceipt',
               args: {
                 product: inEvent.product,
-                approval: deferedSellApproval
+                approval: deferedSellApproval,
+                attrs: inEvent.attrs
               }
             });
             // Remove approval from not editable ticket
