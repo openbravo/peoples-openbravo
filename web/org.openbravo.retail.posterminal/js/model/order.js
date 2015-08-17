@@ -486,6 +486,14 @@
     },
 
     calculateGross: function () {
+
+      // This avoid several synchronous calls to this function to make it fail
+      // because of the asynchronous nature of calculateGross()
+      // See example use in setOrderType() method in this file
+      if (this.get('ignoreCalculateGross')) {
+        return;
+      }
+
       var me = this;
       var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('calculateGross');
 
@@ -1922,6 +1930,7 @@
           OB.UTIL.Approval.requestApproval(
           OB.MobileApp.view.$.containerWindow.$.pointOfSale.model, 'OBPOS_approval.returnService', function (approved, supervisor, approvalType) {
             if (approved) {
+              me.set('ignoreCalculateGross', true);
               me.set('preventServicesUpdate', true);
               _.each(me.get('lines').models, function (line) {
                 if (line.get('qty') > 0) {
@@ -1929,10 +1938,13 @@
                 }
               }, me);
               me.unset('preventServicesUpdate');
+              me.unset('ignoreCalculateGross');
+              me.calculateGross(); // Calculate Gross only once              
               finishSetOrderType();
             }
           });
         } else {
+          me.set('ignoreCalculateGross', true);
           me.set('preventServicesUpdate', true);
           _.each(this.get('lines').models, function (line) {
             if (line.get('qty') > 0) {
@@ -1940,6 +1952,8 @@
             }
           }, this);
           me.unset('preventServicesUpdate');
+          me.unset('ignoreCalculateGross');
+          me.calculateGross(); // Calculate Gross only once             
           finishSetOrderType();
         }
       } else {
