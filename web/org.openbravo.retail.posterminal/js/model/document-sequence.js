@@ -29,7 +29,7 @@
       quotationDocumentSequence: 0
     },
 
-    createStatement: 'CREATE TABLE IF NOT EXISTS c_document_sequence (c_document_sequence_id TEXT PRIMARY KEY, pos_search_key TEXT, document_sequence NUMBER, quotation_document_sequence NUMBER)',
+    createStatement: 'CREATE TABLE IF NOT EXISTS c_document_sequence (c_document_sequence_id TEXT PRIMARY KEY, pos_search_key TEXT NOT NULL UNIQUE, document_sequence NUMBER, quotation_document_sequence NUMBER)',
     dropStatement: 'DROP TABLE IF EXISTS c_document_sequence',
     insertStatement: 'INSERT INTO c_document_sequence(c_document_sequence_id, pos_search_key, document_sequence, quotation_document_sequence) VALUES (?,?,?,?)'
   });
