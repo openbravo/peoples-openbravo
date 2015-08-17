@@ -317,12 +317,8 @@ public class POSUtils {
 
     int maxDocNo;
 
-    sqlToExecute = "select max (ap.lastassignednum) from obpos_applications ap where ap.value = ?";
-    SQLQuery querynum = OBDal.getInstance().getSession().createSQLQuery(sqlToExecute);
-    querynum.setString(0, searchKey);
-
-    Object queryresult = querynum.uniqueResult();
-    if (queryresult == null) {
+    Long lastDocNum = terminal.getLastassignednum();
+    if (lastDocNum == null) {
       if (curDbms.equals("POSTGRE")) {
         sqlToExecute = "select max(a.docno) from (select to_number(substring(documentno, '/([0-9]+)$')) docno from c_order where em_obpos_applications_id= (select obpos_applications_id from obpos_applications where value = ?) and c_doctype_id in ("
             + doctypeIds
@@ -352,7 +348,7 @@ public class POSUtils {
         maxDocNo = 0;
       }
     } else {
-      maxDocNo = ((Number) queryresult).intValue();
+      maxDocNo = lastDocNum.intValue();
     }
 
     // This number will be compared against the maximum number of the failed orders
