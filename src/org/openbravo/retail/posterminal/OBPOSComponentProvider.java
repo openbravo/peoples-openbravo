@@ -16,6 +16,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
+
 package org.openbravo.retail.posterminal;
 
 import java.util.ArrayList;
@@ -161,8 +162,11 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/modalproductbrand",
 
         // Point of sale models
+        "model/pricelist",
         "model/product-category",
         "model/product",
+        "model/productprice",
+        "model/offerpricelist",
         "model/businesspartner",
         "model/document-sequence",
         "model/taxRate",

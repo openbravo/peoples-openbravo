@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2012-2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -244,5 +244,26 @@ enyo.kind({
     modelProperty: 'email',
     i18nLabel: 'OBPOS_LblEmail',
     readOnly: true
+  }, {
+    kind: 'OB.UI.CustomerTextProperty',
+    name: 'customerPriceList',
+    modelProperty: 'priceList',
+    i18nLabel: 'OBPOS_PriceList',
+    readOnly: true,
+    loadValue: function (inSender, inEvent) {
+      if (inEvent.customer !== undefined) {
+        if (inEvent.customer.get(this.modelProperty) !== undefined) {
+          var me = this;
+          OB.UTIL.getPriceListName(inEvent.customer.get(this.modelProperty), function (name) {
+            me.setValue(name);
+          });
+        }
+      } else {
+        this.setValue('');
+      }
+    },
+    displayLogic: function () {
+      return OB.MobileApp.model.hasPermission('EnableMultiPriceList', true);
+    }
   }]
 });

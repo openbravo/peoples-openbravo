@@ -56,6 +56,7 @@ public class BusinessPartner extends ProcessHQLQuery {
     String hql = "SELECT "
         + regularBusinessPartnerHQLProperties.getHqlSelect() //
         + "FROM BusinessPartnerLocation AS bpl left outer join bpl.businessPartner.aDUserList AS ulist "
+        + "left outer join bpl.businessPartner.priceList AS plist "
         + "WHERE $filtersCriteria AND "
         + "bpl.invoiceToAddress = true AND "
         + "bpl.businessPartner.customer = true AND "
@@ -72,6 +73,7 @@ public class BusinessPartner extends ProcessHQLQuery {
     String hql2 = "SELECT"
         + regularBusinessPartnerHQLProperties.getHqlSelect() //
         + "FROM BusinessPartnerLocation AS bpl left outer join bpl.businessPartner.aDUserList AS ulist "
+        + "left outer join bpl.businessPartner.priceList AS plist "
         + "WHERE $filtersCriteria AND "
         + "bpl.invoiceToAddress = true AND "
         + "bpl.businessPartner.customer = true AND "

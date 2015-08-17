@@ -169,7 +169,7 @@
     column: 'c_paymentterm_id',
     type: 'TEXT'
   }, {
-    name: 'priceList ',
+    name: 'priceList',
     column: 'm_pricelist_id',
     type: 'TEXT '
   }, {
@@ -238,6 +238,10 @@
   }, {
     name: 'salesOrderBlocking',
     column: 'salesOrderBlocking',
+    type: 'TEXT'
+  }, {
+    name: 'priceIncludesTax',
+    column: 'priceIncludesTax',
     type: 'TEXT'
   }]);
 

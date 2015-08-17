@@ -964,8 +964,43 @@
       }
     },
     //Attrs is an object of attributes that will be set in order
-    addProduct: function (p, qty, options, attrs) {
+    addProduct: function (p, qty, options, attrs, callback) {
       OB.debug('_addProduct');
+      var me = this;
+      if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true) && this.get('priceList') !== OB.MobileApp.model.get('terminal').priceList) {
+        OB.Dal.find(OB.Model.ProductPrice, {
+          m_pricelist_id: this.get('priceList'),
+          m_product_id: p.id
+        }, function (productPrices) {
+          if (productPrices.length > 0) {
+            p = p.clone();
+            p.set('standardPrice', productPrices.at(0).get('pricestd'));
+            p.set('listPrice', productPrices.at(0).get('pricelist'));
+            me.addProductToOrder(p, qty, options, attrs);
+            if (callback) {
+              callback(true);
+            }
+          } else {
+            OB.UTIL.showI18NWarning('OBPOS_ProductNotFoundInPriceList');
+            if (callback) {
+              callback(false);
+            }
+          }
+        }, function () {
+          OB.UTIL.showI18NWarning('OBPOS_ProductNotFoundInPriceList');
+          if (callback) {
+            callback(false);
+          }
+        });
+      } else {
+        me.addProductToOrder(p, qty, options, attrs);
+        if (callback) {
+          callback(true);
+        }
+      }
+    },
+
+    addProductToOrder: function (p, qty, options, attrs) {
       var me = this;
       OB.UTIL.HookManager.executeHooks('OBPOS_AddProductToOrder', {
         receipt: this,
@@ -1252,6 +1287,7 @@
           }
         }
       }
+      // Get prices from BP pricelist 
       var newline = new OrderLine({
         id: OB.Dal.get_uuid(),
         product: p,
@@ -1298,6 +1334,7 @@
       this.adjustPayment();
       return newline;
     },
+
     returnLine: function (line, options, skipValidaton) {
       var me = this;
       if (OB.MobileApp.model.get('permissions').OBPOS_NotAllowSalesWithReturn && !skipValidaton) {
@@ -1338,7 +1375,8 @@
       this.save();
 
     },
-    setBPandBPLoc: function (businessPartner, showNotif, saveChange) {
+
+    setBPandBPLoc: function (businessPartner, showNotif, saveChange, callback) {
       var me = this,
           undef;
       var oldbp = this.get('bp');
@@ -1433,9 +1471,55 @@
           }
         });
       }
-      if (saveChange) {
-        this.save();
+      if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true) && oldbp.get('priceList') !== businessPartner.get('priceList')) {
+        me.set('priceList', businessPartner.get('priceList'));
+        var priceIncludesTax = businessPartner.get('priceIncludesTax');
+        if (OB.UTIL.isNullOrUndefined(priceIncludesTax)) {
+          priceIncludesTax = OB.MobileApp.model.get('pricelist').priceIncludesTax;
+        }
+        me.set('priceIncludesTax', priceIncludesTax);
+        me.removeAndInsertLines(function () {
+          if (saveChange) {
+            me.save();
+          }
+          if (callback) {
+            callback();
+          }
+        });
+      } else {
+        if (saveChange) {
+          this.save();
+        }
+        if (callback) {
+          callback();
+        }
       }
+    },
+
+    removeAndInsertLines: function (callback) {
+      var me = this;
+      // Remove all lines and insert again with new prices
+      var orderlines = [];
+      _.each(me.get('lines').models, function (line) {
+        orderlines.push(line);
+      });
+      _.each(orderlines, function (line) {
+        me.deleteLine(line, true);
+      });
+      var productAdded = 0;
+      _.each(orderlines, function (line) {
+        // TODO: Lost options and attributes, maybe has problems with other modules (like Complementary Products)
+        OB.Dal.get(OB.Model.Product, line.get('product').id, function (product) {
+          me.addProduct(product, line.get('qty'), undefined, undefined, function () {
+            productAdded++;
+            if (productAdded === orderlines.length) {
+              if (callback) {
+                callback();
+              }
+            }
+          });
+        });
+      });
     },
 
     setOrderType: function (permission, orderType, options) {
@@ -2301,8 +2385,14 @@
       order.set('isQuotation', false);
       order.set('oldId', null);
       order.set('session', OB.MobileApp.model.get('session'));
-      order.set('priceList', OB.MobileApp.model.get('terminal').priceList);
-      order.set('priceIncludesTax', OB.MobileApp.model.get('pricelist').priceIncludesTax);
+      order.set('bp', OB.MobileApp.model.get('businessPartner'));
+      // Set price list for order
+      order.set('priceList', OB.MobileApp.model.get('businessPartner').get('priceList'));
+      var priceIncludesTax = OB.MobileApp.model.get('businessPartner').get('priceIncludesTax');
+      if (OB.UTIL.isNullOrUndefined(priceIncludesTax)) {
+        priceIncludesTax = OB.MobileApp.model.get('pricelist').priceIncludesTax;
+      }
+      order.set('priceIncludesTax', priceIncludesTax);
       if (OB.MobileApp.model.hasPermission('OBPOS_receipt.invoice')) {
         if (OB.MobileApp.model.hasPermission('OBPOS_retail.restricttaxidinvoice', true) && !OB.MobileApp.model.get('businessPartner').get('taxID')) {
           if (OB.MobileApp.model.get('terminal').terminalType.generateInvoice) {
@@ -2336,7 +2426,6 @@
       order.set('documentnoSuffix', nextDocumentno.documentnoSuffix);
       order.set('documentNo', nextDocumentno.documentNo);
 
-      order.set('bp', OB.MobileApp.model.get('businessPartner'));
       order.set('print', true);
       order.set('sendEmail', false);
       order.set('openDrawer', false);

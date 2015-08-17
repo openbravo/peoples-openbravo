@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2014 Openbravo S.L.U.
+ * Copyright (C) 2012-2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -39,8 +39,14 @@ enyo.kind({
       allowHtml: true
     }]
   }, {
-    name: 'price',
-    style: 'float: right; width: 27%; text-align: right; font-weight:bold;'
+    style: 'float: right; width: 27%;',
+    components: [{
+      style: 'width: 100%; text-align: right; font-weight:bold;',
+      name: 'price'
+    }, {
+      name: 'priceList',
+      style: 'width: 100%; text-align: right; font-weight:bold; color: grey; font-size: 14px;',
+    }]
   }, {
     style: 'clear:both;'
   }, {
@@ -72,7 +78,14 @@ enyo.kind({
     if (this.model.get('showchdesc')) {
       this.$.bottonLine.setContent(this.model.get('characteristicDescription'));
     }
-    this.$.price.setContent(OB.I18N.formatCurrency(this.model.get('standardPrice')));
+    if (this.model.get('currentStandardPrice') && this.model.get('currentStandardPrice') !== "undefined") {
+      if (OB.MobileApp.model.hasPermission('ShowStandardPriceOnSearchAndBrowse', true)) {
+        this.$.priceList.setContent(OB.I18N.formatCurrency(this.model.get('currentStandardPrice')));
+      }
+      this.$.price.setContent(OB.I18N.formatCurrency(this.model.get('standardPrice')));
+    } else {
+      this.$.price.setContent(OB.I18N.formatCurrency(this.model.get('standardPrice')));
+    }
 
     if (OB.MobileApp.model.get('permissions')["OBPOS_retail.productImages"]) {
       this.$.icon.applyStyle('background-image', 'url(' + OB.UTIL.getImageURL(this.model.get('id')) + '), url(' + "../org.openbravo.mobile.core/assets/img/box.png" + ')');

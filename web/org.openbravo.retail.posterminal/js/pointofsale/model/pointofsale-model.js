@@ -22,7 +22,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     generatedModel: true,
     modelName: 'TaxZone'
   },
-  OB.Model.Product, OB.Model.ProductCategory, OB.Model.BusinessPartner, OB.Model.BPCategory, OB.Model.BPLocation, OB.Model.Order, OB.Model.DocumentSequence, OB.Model.ChangedBusinessPartners, OB.Model.ChangedBPlocation, OB.Model.ProductBOM, OB.Model.TaxCategoryBOM,
+  OB.Model.Product, OB.Model.ProductCategory, OB.Model.PriceList, OB.Model.ProductPrice, OB.Model.OfferPriceList, OB.Model.BusinessPartner, OB.Model.BPCategory, OB.Model.BPLocation, OB.Model.Order, OB.Model.DocumentSequence, OB.Model.ChangedBusinessPartners, OB.Model.ChangedBPlocation, OB.Model.ProductBOM, OB.Model.TaxCategoryBOM,
+
   {
     generatedModel: true,
     modelName: 'Discount'
@@ -512,7 +513,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             var receiptCopyForVerification = new OB.Model.Order();
             OB.UTIL.clone(receipt, receiptCopyForVerification);
             if (JSON.stringify(receiptCopyForVerification.serializeToJSON()) !== JSON.stringify(frozenReceipt.serializeToJSON())) {
-              OB.error("The receipt has been modified while it was being closed:\n" + JSON.stringify(receiptCopyForVerification.serializeToJSON()) +"\n\n" + JSON.stringify(frozenReceipt.serializeToJSON()) + "\n");
+              OB.error("The receipt has been modified while it was being closed:\n" + JSON.stringify(receiptCopyForVerification.serializeToJSON()) + "\n\n" + JSON.stringify(frozenReceipt.serializeToJSON()) + "\n");
             }
 
             orderList.deleteCurrent();

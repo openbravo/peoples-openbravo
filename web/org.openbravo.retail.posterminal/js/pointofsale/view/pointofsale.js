@@ -78,7 +78,8 @@ enyo.kind({
     onSelectFilter: 'selectFilter',
     onShowLeftHeader: 'doShowLeftHeader',
     onWarehouseSelected: 'warehouseSelected',
-    onClearUserInput: 'clearUserInput'
+    onClearUserInput: 'clearUserInput',
+    onPricelistChanged: 'pricelistChanged'
   },
   events: {
     onShowPopup: '',
@@ -418,8 +419,9 @@ enyo.kind({
       if (args.cancelOperation && args.cancelOperation === true) {
         return true;
       }
-      args.context.model.get('order').addProduct(args.productToAdd, args.qtyToAdd, args.options, args.attrs);
-      args.context.model.get('orderList').saveCurrent();
+      args.context.model.get('order').addProduct(args.productToAdd, args.qtyToAdd, args.options, args.attrs, function (success) {
+        args.context.model.get('orderList').saveCurrent();
+      });
     });
     return true;
   },
@@ -950,6 +952,9 @@ enyo.kind({
   },
   clearUserInput: function (inSender, inEvent) {
     this.waterfall('onClearEditBox', inEvent);
+  },
+  pricelistChanged: function (inSender, inEvent) {
+    this.waterfall('onChangePricelist', inEvent);
   },
   init: function () {
     var receipt, receiptList, LeftColumnCurrentView;
