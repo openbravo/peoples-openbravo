@@ -165,6 +165,10 @@
             OB.UTIL.Debug.execute(function () {
               OB.error("Error while retrieving the terminal info ", data);
             });
+
+            // force the initialization of the document sequence info
+            OB.MobileApp.model.saveDocumentSequence();
+
             handleError(data);
           });
         }
@@ -512,9 +516,6 @@
         }
 
       });
-
-      // force the initialization of the document sequence info
-      this.saveDocumentSequence();
 
       this.trigger('ready');
     },
