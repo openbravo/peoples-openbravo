@@ -414,7 +414,8 @@ enyo.kind({
     onDeleteLine: '',
     onEditLine: '',
     onReturnLine: '',
-    onShowPopup: ''
+    onShowPopup: '',
+    onShowMultiSelection: ''
   },
   handlers: {
     onCheckBoxBehaviorForTicketLine: 'checkBoxBehavior',
@@ -478,6 +479,9 @@ enyo.kind({
     if (args && args.discounts) {
       this.$.defaultEdit.hide();
       this.$.discountsEdit.show();
+      this.doShowMultiSelection({
+        show: false
+      });
       return;
     }
     this.$.defaultEdit.show();
