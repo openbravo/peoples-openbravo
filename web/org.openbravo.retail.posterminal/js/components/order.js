@@ -835,6 +835,7 @@ enyo.kind({
         });
         linesToRemove.forEach(function (l) {
           me.order.get('lines').remove(l);
+          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_DeletedService', [l.get('product').get('_identifier')]));
         });
         me.order.set('undo', oldUndo);
         me.updating = false;
