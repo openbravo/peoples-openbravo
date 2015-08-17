@@ -466,14 +466,6 @@
     },
 
     calculateGross: function () {
-
-      // This avoid several synchronous calls to this function to make it fail
-      // because of the asynchronous nature of calculateGross()
-      // See example use in setOrderType() method in this file
-      if (this.get('ignoreCalculateGross')) {
-        return;
-      }
-
       var me = this;
       var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('calculateGross');
 
@@ -1451,15 +1443,12 @@
     setOrderType: function (permission, orderType, options) {
       var me = this;
       if (orderType === OB.DEC.One) {
-        this.set('ignoreCalculateGross', true);
         this.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentTypeForReturns);
         _.each(this.get('lines').models, function (line) {
           if (line.get('qty') > 0) {
             me.returnLine(line, null, true);
           }
         }, this);
-        this.unset('ignoreCalculateGross');
-        this.calculateGross(); // Calculate Gross only once
       } else {
         this.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentType);
       }
