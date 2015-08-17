@@ -413,6 +413,10 @@ enyo.kind({
                           break;
                         }
                       }
+                      if (k === me.selectedModels.length) {
+                        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NotProductSelectedToReturn', [line.get('product').get('_identifier')]));
+                        return;
+                      }
                       if (!lineToApproval) {
                         break;
                       }
