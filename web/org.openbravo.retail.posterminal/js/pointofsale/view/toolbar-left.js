@@ -540,6 +540,10 @@ enyo.kind({
     });
 
     this.menuEntries.push({
+      kind: 'OB.UI.MenuRejectQuotation'
+    });
+
+    this.menuEntries.push({
       kind: 'OB.UI.MenuCreateOrderFromQuotation'
     });
 

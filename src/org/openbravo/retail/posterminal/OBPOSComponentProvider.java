@@ -157,6 +157,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         // Quotations
         "components/modalcreateorderfromquotation",
         "components/modalreactivatequotation",
+        "components/modalrejectquotation",
         // Detection of change in context
         "components/modalcontextchanged",
         "components/modalproductcharacteristic",
