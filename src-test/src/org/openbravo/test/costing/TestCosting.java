@@ -405,7 +405,7 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingAAA", price1);
 
       // Create purchase order and book it
       Order purchaseOrder1 = createPurchaseOrder(product, price1, quantity1, day0);
@@ -497,7 +497,7 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingCC", price1);
 
       // Create purchase order and book it
       Order purchaseOrder = createPurchaseOrder(product, price1, quantity1, day0);
@@ -593,7 +593,7 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingC1", price1);
 
       // Create purchase order and book it
       Order purchaseOrder = createPurchaseOrder(product, price1, quantity1, day0);
@@ -688,7 +688,7 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingDDD", price1);
 
       // Create purchase order and book it
       Order purchaseOrder = createPurchaseOrder(product, price1, quantity1, day0);
@@ -799,7 +799,7 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1, price2, costType);
+      Product product = createProduct("testCostingV911", price1, price2, costType);
 
       // Create purchase invoice, post it and assert it
       Invoice purchaseInvoice = createPurchaseInvoice(product, price1, quantity1, day0);
@@ -915,7 +915,7 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingV10", price1);
 
       // Create purchase order and book it
       Order purchaseOrder = createPurchaseOrder(product, price1, quantity1, day0);
@@ -1111,7 +1111,7 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingBD3", price1);
 
       // Create purchase order and book it
       Order purchaseOrder1 = createPurchaseOrder(product, price1, quantity1, day0);
@@ -1262,7 +1262,7 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingE1", price1);
 
       // Create purchase order and book it
       Order purchaseOrder = createPurchaseOrder(product, price1, quantity1, day0);
@@ -1343,7 +1343,7 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingF2", price1);
 
       // Create purchase order and book it
       Order purchaseOrder = createPurchaseOrder(product, price1, quantity1, day0);
@@ -1469,7 +1469,7 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingGG", price1);
 
       // Create purchase order and book it
       Order purchaseOrder1 = createPurchaseOrder(product, price1, quantity1, day0);
@@ -1571,7 +1571,7 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingH1", price1);
 
       // Create purchase order and book it
       Order purchaseOrder1 = createPurchaseOrder(product, price1, quantity1, day0);
@@ -1680,7 +1680,7 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1, price2, costType, year);
+      Product product = createProduct("testCostingII", price1, price2, costType, year);
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt = createGoodsReceipt(product, price2, quantity1, day0);
@@ -1771,7 +1771,7 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1, price2, costType, year);
+      Product product = createProduct("testCostingJJ", price1, price2, costType, year);
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt = createGoodsReceipt(product, price1, quantity1, day0);
@@ -1864,7 +1864,7 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1, price2, costType, year);
+      Product product = createProduct("testCostingJJJ", price1, price2, costType, year);
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt = createGoodsReceipt(product, price1, quantity1, day0);
@@ -1965,7 +1965,7 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1, price2, costType, year);
+      Product product = createProduct("testCostingK2", price1, price2, costType, year);
 
       // Create purchase order and book it
       createPurchaseOrder(product, price3, quantity1, day0);
@@ -2129,7 +2129,7 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingN0", price1);
 
       // Create purchase order and book it
       Order purchaseOrder1 = createPurchaseOrder(product, price1, quantity1, day0);
@@ -2226,7 +2226,7 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1, price1, costType, year);
+      Product product = createProduct("testCostingN0", price1, price1, costType, year);
 
       // Create goods shipment, run costing background, post it and assert it
       ShipmentInOut goodsShipment = createGoodsShipment(product, price1, quantity1, day0);
@@ -2306,7 +2306,7 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingN2", price1);
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt1 = createGoodsReceipt(product, price1, quantity1, day0);
@@ -2388,7 +2388,7 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingN5", price1);
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt1 = createGoodsReceipt(product, price1, quantity1, day0);
@@ -2497,7 +2497,7 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingV11", price1);
 
       // Create purchase order and book it
       Order purchaseOrder1 = createPurchaseOrder(product, price1, quantity1, day0);
@@ -2634,7 +2634,7 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingV221", price1);
 
       // Create purchase order and book it
       Order purchaseOrder1 = createPurchaseOrder(product, price1, quantity1, day0);
@@ -2772,7 +2772,7 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingGM11", price1);
 
       // Create purchase order and book it
       Order purchaseOrder = createPurchaseOrder(product, price1, quantity1, day0);
@@ -2896,7 +2896,7 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingGM12", price1);
 
       // Create purchase order and book it
       Order purchaseOrder = createPurchaseOrder(product, price1, quantity1, day0);
@@ -3030,7 +3030,7 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingGM13", price1);
 
       // Create purchase order and book it
       Order purchaseOrder = createPurchaseOrder(product, price1, quantity1, day0);
@@ -3176,7 +3176,7 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingGM5", price1);
 
       // Create purchase order and book it
       Order purchaseOrder1 = createPurchaseOrder(product, price1, quantity1, day0);
@@ -3377,7 +3377,7 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingIC4", price1);
 
       // Create purchase order and book it
       Order purchaseOrder = createPurchaseOrder(product, price1, quantity1, day0);
@@ -3562,7 +3562,7 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1, price2);
+      Product product = createProduct("testCostingR10", price1, price2);
 
       // Create purchase order and book it
       Order purchaseOrder = createPurchaseOrder(product, price1, quantity1, day0);
@@ -3672,7 +3672,7 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingIC3", price1);
 
       // Create purchase order and book it
       Order purchaseOrder = createPurchaseOrder(product, price1, quantity1, day0);
@@ -3743,7 +3743,7 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingR2", price1);
 
       // Create purchase order and book it
       Order purchaseOrder = createPurchaseOrder(product, price1, quantity1, day0);
@@ -3841,7 +3841,7 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingR22", price1);
 
       // Create purchase order and book it
       Order purchaseOrder = createPurchaseOrder(product, price1, quantity1, day0);
@@ -3930,7 +3930,7 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingR3", price1);
 
       // Create purchase order and book it
       Order purchaseOrder = createPurchaseOrder(product, price1, quantity1, day0);
@@ -4023,7 +4023,7 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingMCC1", price1);
 
       // Create purchase order and book it
       Order purchaseOrder = createPurchaseOrder(product, price1, quantity1, day1);
@@ -4145,10 +4145,10 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product1 = createProduct(price1);
+      Product product1 = createProduct("testCostingBOMA", price1);
 
       // Create a new product for the test
-      Product product2 = createProduct(price2);
+      Product product2 = createProduct("testCostingBOMB", price2);
 
       // Create a new product for the test
       List<Product> productList = new ArrayList<Product>();
@@ -4157,7 +4157,7 @@ public class TestCosting extends WeldBaseTest {
       List<BigDecimal> quantityList = new ArrayList<BigDecimal>();
       quantityList.add(quantity1);
       quantityList.add(quantity2);
-      Product product3 = createProduct(productList, quantityList);
+      Product product3 = createProduct("testCostingBOMC", productList, quantityList);
 
       // Create purchase order and book it
       Order purchaseOrder1 = createPurchaseOrder(product1, price1, quantity3, day0);
@@ -4354,7 +4354,7 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingLC1", price1);
 
       // Create purchase order and book it
       Order purchaseOrder = createPurchaseOrder(product, price1, quantity1, day0);
@@ -4459,7 +4459,7 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingLC2", price1);
 
       // Create purchase order and book it
       Order purchaseOrder = createPurchaseOrder(product, price1, quantity1, day0);
@@ -4685,10 +4685,10 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product1 = createProduct(price1, price1, costType);
+      Product product1 = createProduct("testCostingLC3LC4A", price1, price1, costType);
 
       // Create a new product for the test
-      Product product2 = createProduct(price2, price2, costType);
+      Product product2 = createProduct("testCostingLC3LC4B", price2, price2, costType);
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt11 = createGoodsReceipt(product1, price1, quantity1, day1);
@@ -4900,10 +4900,10 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product1 = createProduct(price1);
+      Product product1 = createProduct("testCostingLC100LC200A", price1);
 
       // Create a new product for the test
-      Product product2 = createProduct(price2);
+      Product product2 = createProduct("testCostingLC100LC200B", price2);
 
       // Create purchase order and book it
       Order purchaseOrder1 = createPurchaseOrder(product1, price1, quantity1, day0);
@@ -5022,10 +5022,10 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product1 = createProduct(price1);
+      Product product1 = createProduct("testCostingLC101LC201A", price1);
 
       // Create a new product for the test
-      Product product2 = createProduct(price2);
+      Product product2 = createProduct("testCostingLC101LC201B", price2);
 
       // Create purchase order and book it
       Order purchaseOrder1 = createPurchaseOrder(product1, price1, quantity1, day0);
@@ -5171,10 +5171,10 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product1 = createProduct(price1, CURRENCY1_ID);
+      Product product1 = createProduct("testCostingLC400A", price1, CURRENCY1_ID);
 
       // Create a new product for the test
-      Product product2 = createProduct(price2, CURRENCY2_ID);
+      Product product2 = createProduct("testCostingLC400B", price2, CURRENCY2_ID);
 
       // Create purchase order and book it
       Order purchaseOrder = createPurchaseOrder(product2, price2, quantity1, day0);
@@ -5361,7 +5361,7 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingLC300", price1);
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt = createGoodsReceipt(product, price1, quantity1, day0);
@@ -5456,7 +5456,7 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingLC500", price1);
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt = createGoodsReceipt(product, price1, quantity1, day0);
@@ -5533,7 +5533,7 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingLC600", price1);
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt = createGoodsReceipt(product, price1, quantity1, day0);
@@ -5630,7 +5630,7 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingLC701", price1);
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt = createGoodsReceipt(product, price1, quantity1, day0);
@@ -5730,7 +5730,7 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingLC801", price1);
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt = createGoodsReceipt(product, price1, quantity1, day0);
@@ -5835,7 +5835,7 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingLC900", price1);
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt = createGoodsReceipt(product, price1, quantity1, day0);
@@ -5923,10 +5923,11 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product1 = createProduct(price1);
+      Product product1 = createProduct("testCostingLC1000A", price1);
 
       // Create a new product for the test
-      Product product2 = createProduct(productType, price2, price3, costType, year);
+      Product product2 = createProduct("testCostingLC1000B", productType, price2, price3, costType,
+          year);
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt1 = createGoodsReceipt(product1, price1, quantity1, day0);
@@ -6015,7 +6016,7 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingLC802", price1);
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt = createGoodsReceipt(product, price1, quantity1, day0);
@@ -6187,7 +6188,7 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingLC702", price1);
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt = createGoodsReceipt(product, price1, quantity1, day0);
@@ -6360,13 +6361,13 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product1 = createProduct(price1);
+      Product product1 = createProduct("testCostingLC1111A", price1);
 
       // Create a new product for the test
-      Product product2 = createProduct(price2);
+      Product product2 = createProduct("testCostingLC1111B", price2);
 
       // Create a new product for the test
-      Product product3 = createProduct(price3);
+      Product product3 = createProduct("testCostingLC1111C", price3);
 
       // Create purchase order and book it
       Order purchaseOrder1 = createPurchaseOrder(product1, price1, quantity1, day0);
@@ -6542,13 +6543,13 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product1 = createProduct(price1);
+      Product product1 = createProduct("testCostingLC1112A", price1);
 
       // Create a new product for the test
-      Product product2 = createProduct(price2);
+      Product product2 = createProduct("testCostingLC1112B", price2);
 
       // Create a new product for the test
-      Product product3 = createProduct(price3);
+      Product product3 = createProduct("testCostingLC1112C", price3);
 
       // Create purchase order and book it
       Order purchaseOrder1 = createPurchaseOrder(product1, price1, quantity1, day0);
@@ -6727,13 +6728,13 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product1 = createProduct(price1);
+      Product product1 = createProduct("testCostingLC1113A", price1);
 
       // Create a new product for the test
-      Product product2 = createProduct(price2);
+      Product product2 = createProduct("testCostingLC1113B", price2);
 
       // Create a new product for the test
-      Product product3 = createProduct(price3);
+      Product product3 = createProduct("testCostingLC1113C", price3);
 
       // Create purchase order and book it
       Order purchaseOrder1 = createPurchaseOrder(product1, price1, quantity1, day0);
@@ -6916,13 +6917,13 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product1 = createProduct(price1);
+      Product product1 = createProduct("testCostingLC1114A", price1);
 
       // Create a new product for the test
-      Product product2 = createProduct(price2);
+      Product product2 = createProduct("testCostingLC1114B", price2);
 
       // Create a new product for the test
-      Product product3 = createProduct(price3);
+      Product product3 = createProduct("testCostingLC1114C", price3);
 
       // Create purchase order and book it
       Order purchaseOrder1 = createPurchaseOrder(product1, price1, quantity1, day0);
@@ -7109,13 +7110,13 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product1 = createProduct(price1);
+      Product product1 = createProduct("testCostingLC1115A", price1);
 
       // Create a new product for the test
-      Product product2 = createProduct(price2);
+      Product product2 = createProduct("testCostingLC1115B", price2);
 
       // Create a new product for the test
-      Product product3 = createProduct(price3);
+      Product product3 = createProduct("testCostingLC1115C", price3);
 
       // Create purchase order and book it
       Order purchaseOrder1 = createPurchaseOrder(product1, price1, quantity1, day0);
@@ -7326,13 +7327,13 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product1 = createProduct(price1);
+      Product product1 = createProduct("testCostingLC1116A", price1);
 
       // Create a new product for the test
-      Product product2 = createProduct(price2);
+      Product product2 = createProduct("testCostingLC1116B", price2);
 
       // Create a new product for the test
-      Product product3 = createProduct(price3);
+      Product product3 = createProduct("testCostingLC1116C", price3);
 
       // Create purchase order and book it
       Order purchaseOrder1 = createPurchaseOrder(product1, price1, quantity1, day0);
@@ -7529,7 +7530,7 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingLC5551", price1);
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt = createGoodsReceipt(product, price1, quantity1, day0);
@@ -7614,7 +7615,7 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingLC5552", price1);
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt = createGoodsReceipt(product, price1, quantity1, day0);
@@ -7688,7 +7689,7 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingLC5553", price1);
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt = createGoodsReceipt(product, price1, quantity1, day0);
@@ -7773,7 +7774,7 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingLC5554", price1);
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt = createGoodsReceipt(product, price1, quantity1, day0);
@@ -7857,7 +7858,7 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingLC9", price1);
 
       // Create purchase order and book it
       Order purchaseOrder = createPurchaseOrder(product, price1, quantity1, day0);
@@ -8013,7 +8014,7 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1, CURRENCY2_ID);
+      Product product = createProduct("testCostingMC444", price1, CURRENCY2_ID);
 
       // Create purchase order and book it
       Order purchaseOrder = createPurchaseOrder(product, price1, quantity1, day0);
@@ -8096,7 +8097,7 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingMC445", price1);
 
       // Create purchase order and book it
       Order purchaseOrder1 = createPurchaseOrder(product, price1, quantity1, day0);
@@ -8180,53 +8181,59 @@ public class TestCosting extends WeldBaseTest {
   /********************************************** General methods for tests **********************************************/
 
   // Create a Product cloning a created one
-  private Product createProduct(BigDecimal purchasePrice) {
-    return createProduct(purchasePrice, purchasePrice);
+  private Product createProduct(String name, BigDecimal purchasePrice) {
+    return createProduct(name, purchasePrice, purchasePrice);
   }
 
   // Create a Product cloning a created one
-  private Product createProduct(BigDecimal purchasePrice, String currencyId) {
-    return createProduct("I", purchasePrice, purchasePrice, null, null, 0, currencyId, null, null);
+  private Product createProduct(String name, BigDecimal purchasePrice, String currencyId) {
+    return createProduct(name, "I", purchasePrice, purchasePrice, null, null, 0, currencyId, null,
+        null);
   }
 
   // Create a Product cloning a created one
-  private Product createProduct(BigDecimal purchasePrice, BigDecimal salesPrice) {
-    return createProduct("I", purchasePrice, salesPrice, null, null, 0, CURRENCY1_ID, null, null);
+  private Product createProduct(String name, BigDecimal purchasePrice, BigDecimal salesPrice) {
+    return createProduct(name, "I", purchasePrice, salesPrice, null, null, 0, CURRENCY1_ID, null,
+        null);
   }
 
   // Create a Product cloning a created one
-  private Product createProduct(BigDecimal purchasePrice, BigDecimal cost, String costType) {
-    return createProduct(purchasePrice, cost, costType, 0);
+  private Product createProduct(String name, BigDecimal purchasePrice, BigDecimal cost,
+      String costType) {
+    return createProduct(name, purchasePrice, cost, costType, 0);
   }
 
   // Create a Product cloning a created one
-  private Product createProduct(BigDecimal purchasePrice, BigDecimal cost, String costType, int year) {
-    return createProduct("I", purchasePrice, purchasePrice, cost, costType, year, CURRENCY1_ID,
-        null, null);
-  }
-
-  // Create a Product cloning a created one
-  private Product createProduct(String productType, BigDecimal purchasePrice, BigDecimal cost,
+  private Product createProduct(String name, BigDecimal purchasePrice, BigDecimal cost,
       String costType, int year) {
-    return createProduct(productType, purchasePrice, purchasePrice, cost, costType, year,
+    return createProduct(name, "I", purchasePrice, purchasePrice, cost, costType, year,
         CURRENCY1_ID, null, null);
   }
 
   // Create a Product cloning a created one
-  private Product createProduct(List<Product> productList, List<BigDecimal> quantityList) {
-    return createProduct(null, null, null, null, null, 0, CURRENCY1_ID, productList, quantityList);
+  private Product createProduct(String name, String productType, BigDecimal purchasePrice,
+      BigDecimal cost, String costType, int year) {
+    return createProduct(name, productType, purchasePrice, purchasePrice, cost, costType, year,
+        CURRENCY1_ID, null, null);
   }
 
   // Create a Product cloning a created one
-  private Product createProduct(String productType, BigDecimal purchasePrice,
+  private Product createProduct(String name, List<Product> productList,
+      List<BigDecimal> quantityList) {
+    return createProduct(name, null, null, null, null, null, 0, CURRENCY1_ID, productList,
+        quantityList);
+  }
+
+  // Create a Product cloning a created one
+  private Product createProduct(String name, String productType, BigDecimal purchasePrice,
       BigDecimal salesPrice, BigDecimal cost, String costType, int year, String currencyId,
       List<Product> productList, List<BigDecimal> quantityList) {
     List<String> productIdList = new ArrayList<String>();
     if (productList != null)
       for (Product product : productList)
         productIdList.add(product.getId());
-    return cloneProduct(getNumberOfCostingProducts() + 1, productType, purchasePrice, salesPrice,
-        cost, costType, year, currencyId, productIdList, quantityList);
+    return cloneProduct(name, getNumberOfCostingProducts(name) + 1, productType, purchasePrice,
+        salesPrice, cost, costType, year, currencyId, productIdList, quantityList);
   }
 
   // Create a Purchase Order cloning a created one and book it
@@ -9773,7 +9780,7 @@ public class TestCosting extends WeldBaseTest {
   /********************************************** Specific methods for tests **********************************************/
 
   // Create a new product cloning costing Product 1
-  private Product cloneProduct(int num, String productType, BigDecimal purchasePrice,
+  private Product cloneProduct(String name, int num, String productType, BigDecimal purchasePrice,
       BigDecimal salesPrice, BigDecimal cost, String costType, int year, String currencyId,
       List<String> productIdList, List<BigDecimal> quantityList) {
     try {
@@ -9781,8 +9788,8 @@ public class TestCosting extends WeldBaseTest {
       Product productClone = (Product) DalUtil.copy(product, false);
       setGeneralData(productClone);
 
-      productClone.setSearchKey("costingProduct" + num);
-      productClone.setName("costing Product " + num);
+      productClone.setSearchKey(name + "-" + num);
+      productClone.setName(name + "-" + num);
       productClone.setMaterialMgmtMaterialTransactionList(null);
       productClone.setProductType(productType);
       OBDal.getInstance().save(productClone);
@@ -9879,10 +9886,10 @@ public class TestCosting extends WeldBaseTest {
   }
 
   // Returns the number of products with name costing Product
-  private int getNumberOfCostingProducts() {
+  private int getNumberOfCostingProducts(String name) {
     try {
       final OBCriteria<Product> criteria = OBDal.getInstance().createCriteria(Product.class);
-      criteria.add(Restrictions.like(Product.PROPERTY_NAME, "costing Product%"));
+      criteria.add(Restrictions.like(Product.PROPERTY_NAME, name + "-%"));
       return criteria.list().size();
     } catch (Exception e) {
       throw new OBException(e);
