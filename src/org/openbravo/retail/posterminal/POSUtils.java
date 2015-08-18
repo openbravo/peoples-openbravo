@@ -397,35 +397,39 @@ public class POSUtils {
       }
       doctypeIds += "'" + doctypeId + "'";
     }
-
-    if (curDbms.equals("POSTGRE")) {
-      sqlToExecute = "select max(a.docno) from (select to_number(substring(documentno, '/([0-9]+)$')) docno from c_order where em_obpos_applications_id= (select obpos_applications_id from obpos_applications where value = ?) and c_doctype_id in ("
-          + doctypeIds
-          + ") and documentno like (select quotationdocno_prefix from obpos_applications where value = ?)||'%') a";
-    } else if (curDbms.equals("ORACLE")) {
-      sqlToExecute = "select max(a.docno) from (select to_number(substr(REGEXP_SUBSTR(documentno, '/([0-9]+)$'), 2)) docno from c_order where em_obpos_applications_id= (select obpos_applications_id from obpos_applications where value = ?) and c_doctype_id in ("
-          + doctypeIds
-          + ") and documentno like (select quotationdocno_prefix from obpos_applications where value = ?)||'%' ) a";
-    } else {
-      // unknow DBMS
-      // shouldn't happen
-      log.error("Error getting max documentNo because the DBMS is unknown.");
-      return 0;
-    }
-
-    SQLQuery query = OBDal.getInstance().getSession().createSQLQuery(sqlToExecute);
-    query.setString(0, searchKey);
-    query.setString(1, searchKey);
     int maxDocNo;
-    Object result = query.uniqueResult();
-    if (result == null) {
-      maxDocNo = 0;
-    } else if (curDbms.equals("POSTGRE")) {
-      maxDocNo = ((BigDecimal) result).intValue();
-    } else if (curDbms.equals("ORACLE")) {
-      maxDocNo = ((Long) result).intValue();
+    Long quotationlastDocNum = terminal.getQuotationslastassignednum();
+    if (quotationlastDocNum == null) {
+      if (curDbms.equals("POSTGRE")) {
+        sqlToExecute = "select max(a.docno) from (select to_number(substring(documentno, '/([0-9]+)$')) docno from c_order where em_obpos_applications_id= (select obpos_applications_id from obpos_applications where value = ?) and c_doctype_id in ("
+            + doctypeIds
+            + ") and documentno like (select quotationdocno_prefix from obpos_applications where value = ?)||'%') a";
+      } else if (curDbms.equals("ORACLE")) {
+        sqlToExecute = "select max(a.docno) from (select to_number(substr(REGEXP_SUBSTR(documentno, '/([0-9]+)$'), 2)) docno from c_order where em_obpos_applications_id= (select obpos_applications_id from obpos_applications where value = ?) and c_doctype_id in ("
+            + doctypeIds
+            + ") and documentno like (select quotationdocno_prefix from obpos_applications where value = ?)||'%' ) a";
+      } else {
+        // unknow DBMS
+        // shouldn't happen
+        log.error("Error getting max documentNo because the DBMS is unknown.");
+        return 0;
+      }
+      SQLQuery query = OBDal.getInstance().getSession().createSQLQuery(sqlToExecute);
+      query.setString(0, searchKey);
+      query.setString(1, searchKey);
+
+      Object result = query.uniqueResult();
+      if (result == null) {
+        maxDocNo = 0;
+      } else if (curDbms.equals("POSTGRE")) {
+        maxDocNo = ((BigDecimal) result).intValue();
+      } else if (curDbms.equals("ORACLE")) {
+        maxDocNo = ((Long) result).intValue();
+      } else {
+        maxDocNo = 0;
+      }
     } else {
-      maxDocNo = 0;
+      maxDocNo = quotationlastDocNum.intValue();
     }
 
     // This number will be compared against the maximum number of the failed orders

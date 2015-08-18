@@ -1226,7 +1226,11 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     if (order.getObposApplications().getLastassignednum() == null
         || documentno > order.getObposApplications().getLastassignednum()) {
       OBPOSApplications terminal = order.getObposApplications();
-      terminal.setLastassignednum(documentno);
+      if (jsonorder.getBoolean("isQuotation")) {
+        terminal.setQuotationslastassignednum(documentno);
+      } else {
+        terminal.setLastassignednum(documentno);
+      }
       OBDal.getInstance().save(terminal);
     }
 
