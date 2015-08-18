@@ -451,6 +451,12 @@ enyo.kind({
             me.model, 'OBPOS_approval.returnService', function (approved, supervisor, approvalType) {
               if (approved) {
                 actionAddProducts();
+              } else {
+                _.each(me.selectedModels, function (line) {
+                  if (line.get('notReturnThisLine')) {
+                    line.unset('notReturnThisLine');
+                  }
+                });
               }
             });
           } else {

@@ -1912,6 +1912,20 @@
           OB.Model.Discounts.applyPromotions(me);
         }
       }
+
+      function returnLines() {
+        me.set('ignoreCalculateGross', true);
+        me.set('preventServicesUpdate', true);
+        _.each(me.get('lines').models, function (line) {
+          if (line.get('qty') > 0) {
+            me.returnLine(line, null, true);
+          }
+        }, me);
+        me.unset('preventServicesUpdate');
+        me.unset('ignoreCalculateGross');
+        me.calculateGross(); // Calculate Gross only once 
+        finishSetOrderType();
+      }
       if (orderType === OB.DEC.One && options.saveOrder !== false) {
         this.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentTypeForReturns);
         var approvalNeeded = false;
@@ -1930,31 +1944,11 @@
           OB.UTIL.Approval.requestApproval(
           OB.MobileApp.view.$.containerWindow.$.pointOfSale.model, 'OBPOS_approval.returnService', function (approved, supervisor, approvalType) {
             if (approved) {
-              me.set('ignoreCalculateGross', true);
-              me.set('preventServicesUpdate', true);
-              _.each(me.get('lines').models, function (line) {
-                if (line.get('qty') > 0) {
-                  me.returnLine(line, null, true);
-                }
-              }, me);
-              me.unset('preventServicesUpdate');
-              me.unset('ignoreCalculateGross');
-              me.calculateGross(); // Calculate Gross only once              
-              finishSetOrderType();
+              returnLines();
             }
           });
         } else {
-          me.set('ignoreCalculateGross', true);
-          me.set('preventServicesUpdate', true);
-          _.each(this.get('lines').models, function (line) {
-            if (line.get('qty') > 0) {
-              me.returnLine(line, null, true);
-            }
-          }, this);
-          me.unset('preventServicesUpdate');
-          me.unset('ignoreCalculateGross');
-          me.calculateGross(); // Calculate Gross only once             
-          finishSetOrderType();
+          returnLines();
         }
       } else {
         this.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentType);
