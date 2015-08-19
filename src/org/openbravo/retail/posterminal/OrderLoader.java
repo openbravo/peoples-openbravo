@@ -1221,19 +1221,24 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     order.setProcessNow(false);
     order.setObposSendemail((jsonorder.has("sendEmail") && jsonorder.getBoolean("sendEmail")));
 
-    long documentno = (long) Integer.parseInt(order.getDocumentNo().substring(
+    long documentno = Long.parseLong(order.getDocumentNo().substring(
         order.getDocumentNo().lastIndexOf("/") + 1));
-    if (order.getObposApplications().getLastassignednum() == null
-        || documentno > order.getObposApplications().getLastassignednum()) {
-      OBPOSApplications terminal = order.getObposApplications();
-      if (jsonorder.getBoolean("isQuotation")) {
-        terminal.setQuotationslastassignednum(documentno);
-      } else {
-        terminal.setLastassignednum(documentno);
-      }
-      OBDal.getInstance().save(terminal);
-    }
 
+    if (jsonorder.getBoolean("isQuotation")) {
+      if (order.getObposApplications().getQuotationslastassignednum() == null
+          || documentno > order.getObposApplications().getQuotationslastassignednum()) {
+        OBPOSApplications terminal = order.getObposApplications();
+        terminal.setQuotationslastassignednum(documentno);
+        OBDal.getInstance().save(terminal);
+      }
+    } else {
+      if (order.getObposApplications().getLastassignednum() == null
+          || documentno > order.getObposApplications().getLastassignednum()) {
+        OBPOSApplications terminal = order.getObposApplications();
+        terminal.setLastassignednum(documentno);
+        OBDal.getInstance().save(terminal);
+      }
+    }
     if (!bp.getADUserList().isEmpty()) {
       order.setUserContact(bp.getADUserList().get(0));
     }
