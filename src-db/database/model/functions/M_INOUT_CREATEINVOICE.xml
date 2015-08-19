@@ -19,7 +19,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2014 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2015 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -107,6 +107,8 @@
       v_PriceLimit NUMBER;
       v_gross_unit_price NUMBER;
       v_line_gross_amount NUMBER;
+      v_grosspricestd NUMBER;
+      v_grosspricelist NUMBER;
       v_priceprecision NUMBER;
       v_stdprecision NUMBER;
       --
@@ -278,6 +280,8 @@
                 COALESCE(MAX(CUR_ShipmentLines.movementqty*priceactual),0),
                 COALESCE(MAX(gross_unit_price), 0),
                 COALESCE(MAX(line_gross_amount), 0),
+                COALESCE(MAX(grosspricestd), 0),
+                COALESCE(MAX(grosspricelist), 0),
                 MAX(c_tax_id)
               INTO v_PriceList,
                 v_PriceActual,
@@ -285,6 +289,8 @@
                 v_LineNetAmt,
                 v_gross_unit_price,
                 v_line_gross_amount,
+                v_grosspricestd,
+                v_grosspricelist,
                 v_c_Tax_ID
               FROM C_ORDERLINE
               WHERE C_OrderLine_ID=CUR_ShipmentLines.C_OrderLine_ID;
@@ -351,6 +357,7 @@
                 C_Tax_ID,  --MODIFIED BY F.IRIAZABAL
                 QuantityOrder, M_Product_Uom_ID, PriceStd, taxbaseamt,
                 gross_unit_price, line_gross_amount,
+                grosspricestd, grosspricelist,
                 isdeferred, defplantype, periodnumber, c_period_id,
                 c_project_id, user1_id, user2_id, c_costcenter_id, a_asset_id
               )
@@ -365,6 +372,7 @@
                 v_C_Tax_ID,  --MODIFIED BY F.IRIAZABAL
                 CUR_ShipmentLines.QuantityOrder, CUR_ShipmentLines.M_Product_Uom_ID, v_PriceActual,v_taxBaseAmt,
                 v_gross_unit_price, v_line_gross_amount,
+                v_grosspricestd, v_grosspricelist,
                 v_isdeferred_inv, v_defplantype_inv, v_periodnumber_inv, v_period_inv,
                 coalesce(CUR_ShipmentLines.c_project_id, CUR_Shipment.c_project_id),
                 coalesce(CUR_ShipmentLines.user1_id, CUR_Shipment.user1_id),
