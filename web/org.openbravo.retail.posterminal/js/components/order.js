@@ -739,7 +739,7 @@ enyo.kind({
               negativeLines = [],
               newRelatedLines = [];
 
-          if (line.has('relatedLines') && line.get('relatedLines').length > 0 && !line.get('originalOrderLineId')) {
+          if (line.has('relatedLines') && line.get('relatedLines').length > 0 && !line.get('relatedLines').deferred && !line.get('originalOrderLineId')) {
 
             serviceLines = getServiceLines(line);
 

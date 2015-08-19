@@ -447,6 +447,12 @@ enyo.kind({
             var deferedSellApproval = _.find(targetOrder.get('approvals'), function (approval) {
               return approval.approvalType.approval === 'OBPOS_approval.deferred_sell_max_days';
             });
+
+            // identify the related lines are referred
+            if (inEvent.attrs.relatedLines) {
+              inEvent.attrs.relatedLines.deferred = true;
+            }
+
             // Select open ticket or create a new one
             this.doShowPopup({
               popup: 'OBPOS_modalSelectOpenedReceipt',
