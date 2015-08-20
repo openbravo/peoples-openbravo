@@ -10,7 +10,12 @@ package org.openbravo.retail.posterminal;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
+import org.hibernate.Query;
+import org.hibernate.ScrollMode;
+import org.hibernate.ScrollableResults;
+import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -24,15 +29,15 @@ import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.ProductCategory;
 import org.openbravo.retail.config.OBRETCOProductList;
 import org.openbravo.retail.config.OBRETCOProductcategory;
-import org.openbravo.retail.config.OBRETCOProlProduct;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.scheduling.ProcessLogger;
 import org.openbravo.service.db.DalBaseProcess;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ProductCategoryBackground extends DalBaseProcess {
-  private static final Logger log = LoggerFactory.getLogger(ProductCategoryBackground.class);
+public class UpdateProductCategoryByAssortmentBackground extends DalBaseProcess {
+  private static final Logger log = LoggerFactory
+      .getLogger(UpdateProductCategoryByAssortmentBackground.class);
 
   @Override
   protected void doExecute(ProcessBundle bundle) throws Exception {
@@ -52,57 +57,73 @@ public class ProductCategoryBackground extends DalBaseProcess {
     if (isRemote) {
       Client client = OBDal.getInstance().get(Client.class, vars.getClient());
       Organization org = OBDal.getInstance().get(Organization.class, vars.getOrg());
+
+      Set<String> orgtree = OBContext.getOBContext()
+          .getOrganizationStructureProvider(client.getId()).getChildTree(org.getId(), true);
+
       OBContext.setAdminMode(true);
       try {
         OBCriteria<OBRETCOProductList> assormentList = OBDal.getInstance().createCriteria(
             OBRETCOProductList.class);
         assormentList.add(Restrictions.eq(OBRETCOProductList.PROPERTY_CLIENT, client));
-        assormentList.add(Restrictions.eq(OBRETCOProductList.PROPERTY_ORGANIZATION, org));
-
+        if (!org.getId().equals("0")) {
+          assormentList.add(Restrictions.in(OBRETCOProductList.PROPERTY_ORGANIZATION, orgtree));
+        }
         for (OBRETCOProductList assortment : assormentList.list()) {
-          List<ProductCategory> productCategoryList = new ArrayList<ProductCategory>();
-          List<OBRETCOProductcategory> productCategoryElementList = new ArrayList<OBRETCOProductcategory>();
-
-          OBCriteria<OBRETCOProlProduct> productList = OBDal.getInstance().createCriteria(
-              OBRETCOProlProduct.class);
-          productList.add(Restrictions.eq(OBRETCOProlProduct.PROPERTY_OBRETCOPRODUCTLIST,
-              assortment));
           assortment.getOBRETCOProductcategoryList().clear();
           OBDal.getInstance().save(assortment);
           OBDal.getInstance().flush();
-          String logMsg = "Product category list cleared for assortment: " + assortment.getName();
+          String logMsg = "Product category by assortment list cleared: " + assortment.getName();
           bgLogger.log(logMsg + "\n\n");
           log.debug(logMsg);
+          List<OBRETCOProductcategory> productCategoryElementList = new ArrayList<OBRETCOProductcategory>();
 
-          for (OBRETCOProlProduct assortmentProduct : productList.list()) {
-            if (!productCategoryList.contains(assortmentProduct.getProduct().getProductCategory())
-                && assortmentProduct.getProduct().isActive() == true) {
-              productCategoryList.add(assortmentProduct.getProduct().getProductCategory());
+          final StringBuilder hql = new StringBuilder();
+          hql.append("select distinct(mpc.id) ");
+          hql.append(" from OBRETCO_ProductList obpl ");
+          hql.append(" left join obpl.oBRETCOProlProductList obpp  ");
+          hql.append(" left join obpp.product mp  ");
+          hql.append(" left join mp.productCategory mpc ");
+          hql.append(" where obpl.id= :assortmentid ");
+          hql.append(" and mp.active='Y'");
 
-              final OBRETCOProductcategory productCategoryElement = OBProvider.getInstance().get(
-                  OBRETCOProductcategory.class);
-              productCategoryElement.setClient(assortment.getClient());
-              productCategoryElement.setOrganization(assortment.getOrganization());
-              productCategoryElement.setProductCategory(assortmentProduct.getProduct()
-                  .getProductCategory());
-              productCategoryElement.setObretcoProductlist(assortment);
-              OBDal.getInstance().save(productCategoryElement);
-              productCategoryElementList.add(productCategoryElement);
-              assortment.getOBRETCOProductcategoryList().add(productCategoryElement);
+          final Session session = OBDal.getInstance().getSession();
+          final Query query = session.createQuery(hql.toString());
+          query.setParameter("assortmentid", assortment.getId());
+          ScrollableResults scroll = query.scroll(ScrollMode.SCROLL_SENSITIVE);
+          while (scroll.next()) {
+            final String productCategoryId = (String) scroll.get()[0];
+            final ProductCategory productCategory = OBDal.getInstance().get(ProductCategory.class,
+                productCategoryId);
 
-              logMsg = "Product category: "
-                  + assortmentProduct.getProduct().getProductCategory().getName()
-                  + " created for assortment: " + assortment.getName();
-              bgLogger.log(logMsg + "\n\n");
-              log.debug(logMsg);
-            }
+            final OBRETCOProductcategory productCategoryElement = OBProvider.getInstance().get(
+                OBRETCOProductcategory.class);
+            productCategoryElement.setClient(assortment.getClient());
+            productCategoryElement.setOrganization(assortment.getOrganization());
+            productCategoryElement.setProductCategory(productCategory);
+            productCategoryElement.setObretcoProductlist(assortment);
+            OBDal.getInstance().save(productCategoryElement);
+            productCategoryElementList.add(productCategoryElement);
+            assortment.getOBRETCOProductcategoryList().add(productCategoryElement);
+
+            logMsg = "Product category: " + productCategory.getName() + " created for assortment: "
+                + assortment.getName();
+            bgLogger.log(logMsg + "\n\n");
+            log.debug(logMsg);
           }
+
         }
       } catch (Exception e) {
-        log.error("Error executing product category background ", e);
+        String logMsg = "Error executing product category background ";
+        bgLogger.log(logMsg);
+        log.error(logMsg, e);
       } finally {
         OBContext.restorePreviousMode();
       }
+    } else {
+      String logMsg = "Remote product preference is not set";
+      bgLogger.log(logMsg);
+      log.debug(logMsg);
     }
   }
 }
