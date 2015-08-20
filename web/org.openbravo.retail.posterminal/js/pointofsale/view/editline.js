@@ -271,7 +271,7 @@ enyo.kind({
               servicesToApprove += '<br>· ' + line.get('product').get('_identifier');
               servicesList.push(line.get('product'));
             }
-            if (!approvalNeeded) {
+            if (!approvalNeeded && line.get('net') > 0) {
               approvalNeeded = true;
             }
           }
@@ -307,7 +307,7 @@ enyo.kind({
                   if (h === servicesList.length) {
                     servicesToApprove += '<br>· ' + line.get('product').get('_identifier');
                     servicesList.push(line.get('product'));
-                    if (!approvalNeeded) {
+                    if (!approvalNeeded && line.get('net') > 0) {
                       approvalNeeded = true;
                     }
                   }
