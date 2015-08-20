@@ -645,8 +645,6 @@ enyo.kind({
           servicesToApprove = '',
           line, k, oldUndo = this.order.get('undo');
 
-      me.order.set('ignoreCalculateGross', true);
-
       if (this.updating || this.order.get('preventServicesUpdate')) {
         return;
       } else {
@@ -734,6 +732,7 @@ enyo.kind({
 
       function fixServiceOrderLines(approved) {
         var linesToRemove = [];
+        me.order.set('ignoreCalculateGross', true);
         me.order.get('lines').forEach(function (line) {
           var prod = line.get('product'),
               newLine, i, j, l, rlp, rln, newqtyplus = 0,
