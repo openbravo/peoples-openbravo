@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.utility.ADFile;
 
@@ -61,19 +62,24 @@ public class GetFile extends HttpSecureAppServlet {
       return;
     }
 
-    // Check file null or invalid
-    ADFile file = OBDal.getInstance().get(ADFile.class, fileID);
-    if (file == null) {
-      response.sendError(HttpServletResponse.SC_NOT_FOUND);
-      return;
-    }
+    OBContext.setAdminMode(true);
+    try {
+      // Check file null or invalid
+      ADFile file = OBDal.getInstance().get(ADFile.class, fileID);
+      if (file == null) {
+        response.sendError(HttpServletResponse.SC_NOT_FOUND);
+        return;
+      }
 
-    // enforce cache validation/checks every time
-    response.addHeader(RESPONSE_HEADER_CACHE_CONTROL, RESPONSE_NO_CACHE);
-    response.setHeader("Content-Disposition", "attachment; filename=\"" + file.getName() + "\"");
-    response.setContentType(file.getMimetype());
-    OutputStream out = response.getOutputStream();
-    out.write(file.getBindaryData());
-    out.close();
+      // enforce cache validation/checks every time
+      response.addHeader(RESPONSE_HEADER_CACHE_CONTROL, RESPONSE_NO_CACHE);
+      response.setHeader("Content-Disposition", "attachment; filename=\"" + file.getName() + "\"");
+      response.setContentType(file.getMimetype());
+      OutputStream out = response.getOutputStream();
+      out.write(file.getBindaryData());
+      out.close();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 }

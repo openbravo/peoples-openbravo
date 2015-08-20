@@ -309,6 +309,54 @@ isc.OBFileSelector.addProperties({
     var fileMaxSizeFormat = this.fileItem.fileMaxSizeFormat;
     var fileMaxSizeUnit = this.fileItem.fileMaxSizeUnit;
 
+    var validateExtension;
+    validateExtension = function (filename, extensions) {
+      if (!extensions) {
+        return true; // extensions is not defined, then filename extension is valid
+      }
+
+      var filenameUpper = filename.toUpperCase(),
+          extensionsList = extensions.split(","),
+          tmp, i;
+
+      for (i = 0; i < extensionsList.length; i++) {
+        tmp = extensionsList[i].trim().toUpperCase();
+        if (filenameUpper.indexOf(tmp, filenameUpper.length - tmp.length) !== -1) {
+          return true;
+        }
+      }
+      return false;
+    };
+
+    var fileExtensionsAcceptChk = '';
+    if (fileExtensions) {
+      fileExtensionsAcceptChk = fileExtensions.toLowerCase();
+    }
+
+    if (isc.Browser.isFirefox && fileExtensionsAcceptChk.indexOf(',') !== -1) {
+      // Firefox has problems handling several extensions if all of them share the same string base (fex: '.xls,.xlsx')
+      // so adding a dummy extension at the end to avoid the potential problem
+      var extensionsList = fileExtensionsAcceptChk.split(","),
+          extA, extB, match, i, j;
+      for (i = 0; i < extensionsList.length; i++) {
+        match = true;
+        extA = extensionsList[i].trim();
+        for (j = 0; j < extensionsList.length; j++) {
+          extB = extensionsList[j].trim();
+          if (extA.indexOf(extB) === -1) {
+            match = false;
+            break;
+          }
+        }
+        if (match) {
+          break;
+        }
+      }
+      if (match) {
+        fileExtensionsAcceptChk += ',.ffhk';
+      }
+    }
+
     var view = args.form.view;
     var form = isc.DynamicForm.create({
       autoFocus: true,
@@ -316,6 +364,27 @@ isc.OBFileSelector.addProperties({
         name: 'inpFile',
         title: OB.I18N.getLabel('OBUIAPP_FileFile'),
         type: 'upload',
+        accept: fileExtensionsAcceptChk,
+        changed: function (form, item, value) {
+          var message;
+          if (!validateExtension(value, fileExtensions)) {
+            item.setValue('');
+
+            if (fileExtensions.indexOf(',') !== -1) {
+              message = OB.I18N.getLabel('OBUIAPP_FILE_WARN_EXTENSIONS', [fileExtensions]) + '<br/>';
+            } else {
+              message = OB.I18N.getLabel('OBUIAPP_FILE_WARN_EXTENSION', [fileExtensions]) + '<br/>';
+            }
+
+            isc.warn(message, function () {
+              return true;
+            }, {
+              icon: '[SKINIMG]Dialog/error.png',
+              title: OB.I18N.getLabel('OBUIAPP_Error')
+            });
+          }
+          return this.Super('changed', arguments);
+        },
         canFocus: false,
         align: 'right'
       }, {
@@ -430,7 +499,11 @@ isc.OBFileSelector.addProperties({
   getWarningText: function (fileExtensions, fileMaxSizeFormat, fileMaxSizeUnit) {
     var message = '';
     if (fileExtensions) {
-      message = message + OB.I18N.getLabel('OBUIAPP_FILE_WARN_EXTENSIONS', [fileExtensions]) + '<br/>';
+      if (fileExtensions.indexOf(',') !== -1) {
+        message = message + OB.I18N.getLabel('OBUIAPP_FILE_WARN_EXTENSIONS', [fileExtensions]) + '<br/>';
+      } else {
+        message = message + OB.I18N.getLabel('OBUIAPP_FILE_WARN_EXTENSION', [fileExtensions]) + '<br/>';
+      }
     }
     if (fileMaxSizeFormat) {
       message = message + OB.I18N.getLabel('OBUIAPP_FILE_WARN_SIZE', [fileMaxSizeFormat, fileMaxSizeUnit]) + '<br/>';

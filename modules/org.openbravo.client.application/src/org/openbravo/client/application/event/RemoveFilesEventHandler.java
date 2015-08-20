@@ -32,6 +32,7 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.client.kernel.event.EntityDeleteEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.utility.ADFile;
@@ -66,7 +67,12 @@ public class RemoveFilesEventHandler extends EntityPersistenceEventObserver {
         // situation for Image BLOB references
         event.setCurrentState(fileProperty, dummyFile);
         if (bob != null) {
-          OBDal.getInstance().remove(bob);
+          OBContext.setAdminMode(true);
+          try {
+            OBDal.getInstance().remove(bob);
+          } finally {
+            OBContext.restorePreviousMode();
+          }
         }
       }
     }
@@ -88,7 +94,12 @@ public class RemoveFilesEventHandler extends EntityPersistenceEventObserver {
 
         ADFile bob = (ADFile) event.getPreviousState(fileProperty);
         if (bob != null) {
-          OBDal.getInstance().remove(bob);
+          OBContext.setAdminMode(true);
+          try {
+            OBDal.getInstance().remove(bob);
+          } finally {
+            OBContext.restorePreviousMode();
+          }
         }
       }
     }

@@ -26,6 +26,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.utility.ADFile;
@@ -53,6 +54,7 @@ public class FileActionHandler extends BaseActionHandler implements PortalAccess
       String fileID = (String) parameters.get("inpfileId");
       JSONObject result = new JSONObject();
 
+      OBContext.setAdminMode(true);
       try {
         // Check file null or invalid
         ADFile file = OBDal.getInstance().get(ADFile.class, fileID);
@@ -66,6 +68,8 @@ public class FileActionHandler extends BaseActionHandler implements PortalAccess
         }
       } catch (JSONException e) {
         throw new OBException(e);
+      } finally {
+        OBContext.restorePreviousMode();
       }
 
       return result;
@@ -73,6 +77,7 @@ public class FileActionHandler extends BaseActionHandler implements PortalAccess
       String fileID = (String) parameters.get("inpfileId");
       JSONObject result = new JSONObject();
 
+      OBContext.setAdminMode(true);
       try {
         // Check file null or invalid
         ADFile file = OBDal.getInstance().get(ADFile.class, fileID);
@@ -83,6 +88,8 @@ public class FileActionHandler extends BaseActionHandler implements PortalAccess
         }
       } catch (JSONException e) {
         throw new OBException(e);
+      } finally {
+        OBContext.restorePreviousMode();
       }
       return result;
     } else {
