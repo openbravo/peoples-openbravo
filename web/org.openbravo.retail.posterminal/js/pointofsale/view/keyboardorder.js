@@ -363,12 +363,16 @@ enyo.kind({
             value, i, j, k, h, line, relatedLine, lineFromSelected;
 
         function actionAddProducts() {
+          var order = me.getReceipt();
+          order.set('ignoreCalculateGross', true);
           if (me.selectedModels.length > 1) {
             actionAddMultiProduct(keyboard, -qty, true);
           } else {
             keyboard.receipt.set('multipleUndo', null);
             actionAddProduct(keyboard, -qty);
           }
+          order.unset('ignoreCalculateGross');
+          order.calculateGross(); // Calculate Gross only once
         }
         if ((!_.isNull(txt) || !_.isUndefined(txt)) && !_.isNaN(OB.I18N.parseNumber(txt))) {
           qty = OB.I18N.parseNumber(txt);
@@ -429,7 +433,7 @@ enyo.kind({
                 }
               }
             }
-            for (i = 0; i < OB.MobileApp.model.receipt.get('lines').length; i++) { // Check if there is any not returnable related product to a selected line
+            for (i = 0; i < me.getReceipt().get('lines').length; i++) { // Check if there is any not returnable related product to a selected line
               line = OB.MobileApp.model.receipt.get('lines').models[i];
               if (line.get('product').get('productType') === 'S' && !line.isReturnable()) {
                 if (line.get('relatedLines')) {

@@ -239,7 +239,8 @@ enyo.kind({
       var me = this,
           approvalNeeded = false,
           i, j, k, h, line, relatedLine, lineFromSelected, servicesToApprove = '',
-          servicesList = [];
+          servicesList = [],
+          order = this.owner.owner.receipt;
       for (i = 0; i < this.owner.owner.selectedModels.length; i++) {
         line = this.owner.owner.selectedModels[i];
         if (line.get('product').get('productType') === 'S' && !line.isReturnable()) {
@@ -276,7 +277,7 @@ enyo.kind({
           }
         }
       }
-      for (i = 0; i < OB.MobileApp.model.receipt.get('lines').length; i++) { // Check if there is any not returnable related product to a selected line
+      for (i = 0; i < order.get('lines').length; i++) { // Check if there is any not returnable related product to a selected line
         line = OB.MobileApp.model.receipt.get('lines').models[i];
         if (line.get('product').get('productType') === 'S' && !line.isReturnable()) {
           if (line.get('relatedLines')) {
@@ -318,8 +319,9 @@ enyo.kind({
       }
 
       function returnLines() {
-        me.owner.owner.receipt.set('undo', null);
-        me.owner.owner.receipt.set('multipleUndo', true);
+        order.set('ignoreCalculateGross', true);
+        order.set('undo', null);
+        order.set('multipleUndo', true);
         _.each(me.owner.owner.selectedModels, function (line) {
           if (!line.get('notReturnThisLine')) {
             me.owner.owner.doReturnLine({
@@ -329,7 +331,9 @@ enyo.kind({
             line.unset('notReturnThisLine');
           }
         });
-        me.owner.owner.receipt.set('multipleUndo', null);
+        order.set('multipleUndo', null);
+        order.unset('ignoreCalculateGross');
+        order.calculateGross(); // Calculate Gross only once
       }
       if (approvalNeeded) {
         OB.UTIL.Approval.requestApproval(
