@@ -658,7 +658,7 @@ isc.OBFileItemButton.addProperties({
 isc.OBFileSelector.addProperties({
   hlayoutTopMargin: 10,
   hlayoutBottomMargin: 10,
-  height: 50,
+  height: 55,
   width: 450,
   align: 'center'
 });
