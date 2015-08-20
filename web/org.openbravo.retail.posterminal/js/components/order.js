@@ -645,6 +645,8 @@ enyo.kind({
           servicesToApprove = '',
           line, k, oldUndo = this.order.get('undo');
 
+      me.order.set('ignoreCalculateGross', true);
+
       if (this.updating || this.order.get('preventServicesUpdate')) {
         return;
       } else {
@@ -842,6 +844,8 @@ enyo.kind({
         if (OB.MobileApp.model.receipt.get('notApprove')) {
           OB.MobileApp.model.receipt.unset('notApprove');
         }
+        me.order.unset('ignoreCalculateGross');
+        me.order.calculateGross(); // Calculate Gross only once
         me.order.set('undo', oldUndo);
         me.updating = false;
         me.order.get('lines').trigger('updateServicePrices');
