@@ -642,6 +642,7 @@ enyo.kind({
     }, this);
     this.order.get('lines').on('add change:qty change:relatedLines updateRelations', function () {
       var approvalNeeded = false,
+          servicesToApprove = '',
           line, k, oldUndo = this.order.get('undo');
 
       if (this.updating || this.order.get('preventServicesUpdate')) {
@@ -671,59 +672,60 @@ enyo.kind({
         });
       }
 
-      // First check if there is any service modified to negative quantity amount in order to know if approval will be required
-      for (k = 0; k < this.order.get('lines').length; k++) {
-        line = this.order.get('lines').models[k];
-        var prod = line.get('product'),
-            newLine, i, j, l, rlp, rln, newqtyplus = 0,
-            newqtyminus = 0,
-            serviceLines = [],
-            positiveLines = [],
-            negativeLines = [],
-            newRelatedLines = [];
+      if (!OB.MobileApp.model.receipt.get('notApprove')) {
+        // First check if there is any service modified to negative quantity amount in order to know if approval will be required
+        for (k = 0; k < this.order.get('lines').length; k++) {
+          line = this.order.get('lines').models[k];
+          var prod = line.get('product'),
+              newLine, i, j, l, rlp, rln, newqtyplus = 0,
+              newqtyminus = 0,
+              serviceLines = [],
+              positiveLines = [],
+              negativeLines = [],
+              newRelatedLines = [];
 
-        if (line.has('relatedLines') && line.get('relatedLines').length > 0 && !line.get('originalOrderLineId')) {
+          if (line.has('relatedLines') && line.get('relatedLines').length > 0 && !line.get('originalOrderLineId')) {
 
-          serviceLines = getServiceLines(line);
+            serviceLines = getServiceLines(line);
 
-          for (i = 0; i < serviceLines.length; i++) {
-            newRelatedLines = OB.UTIL.mergeArrays(newRelatedLines, (serviceLines[i].get('relatedLines') || []));
-          }
-          for (j = 0; j < newRelatedLines.length; j++) {
-            l = me.order.get('lines').get(newRelatedLines[j].orderlineId);
-            if (l && l.get('qty') > 0) {
-              newqtyplus += l.get('qty');
-              positiveLines.push(l);
-            } else if (l && l.get('qty') < 0) {
-              newqtyminus += l.get('qty');
-              negativeLines.push(l);
+            for (i = 0; i < serviceLines.length; i++) {
+              newRelatedLines = OB.UTIL.mergeArrays(newRelatedLines, (serviceLines[i].get('relatedLines') || []));
             }
-          }
-          rlp = filterLines(newRelatedLines, positiveLines);
-
-          rln = filterLines(newRelatedLines, negativeLines);
-
-          if (prod.get('quantityRule') === 'UQ') {
-            newqtyplus = (newqtyplus ? 1 : 0);
-            newqtyminus = (newqtyminus ? -1 : 0);
-          }
-
-          for (i = 0; i < serviceLines.length; i++) {
-            l = serviceLines[i];
-            if (l.get('qty') > 0 && serviceLines.length === 1 && newqtyminus) {
-              if (!l.get('product').get('returnable')) { // Cannot add not returnable service to a negative product
-                me.order.get('lines').remove(l);
-                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_UnreturnableProduct'), OB.I18N.getLabel('OBPOS_UnreturnableProductMessage', [l.get('product').get('_identifier')]));
-                this.updating = false;
-                return;
-              } else {
-                approvalNeeded = true;
-                break;
+            for (j = 0; j < newRelatedLines.length; j++) {
+              l = me.order.get('lines').get(newRelatedLines[j].orderlineId);
+              if (l && l.get('qty') > 0) {
+                newqtyplus += l.get('qty');
+                positiveLines.push(l);
+              } else if (l && l.get('qty') < 0) {
+                newqtyminus += l.get('qty');
+                negativeLines.push(l);
               }
             }
-          }
-          if (approvalNeeded) {
-            break;
+            rlp = filterLines(newRelatedLines, positiveLines);
+
+            rln = filterLines(newRelatedLines, negativeLines);
+
+            if (prod.get('quantityRule') === 'UQ') {
+              newqtyplus = (newqtyplus ? 1 : 0);
+              newqtyminus = (newqtyminus ? -1 : 0);
+            }
+
+            for (i = 0; i < serviceLines.length; i++) {
+              l = serviceLines[i];
+              if (l.get('qty') > 0 && serviceLines.length === 1 && newqtyminus) {
+                if (!l.get('product').get('returnable')) { // Cannot add not returnable service to a negative product
+                  me.order.get('lines').remove(l);
+                  OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_UnreturnableProduct'), OB.I18N.getLabel('OBPOS_UnreturnableProductMessage', [l.get('product').get('_identifier')]));
+                  this.updating = false;
+                  return;
+                } else {
+                  if (!approvalNeeded) {
+                    approvalNeeded = true;
+                  }
+                  servicesToApprove += '<br>· ' + line.get('product').get('_identifier');
+                }
+              }
+            }
           }
         }
       }
@@ -837,6 +839,9 @@ enyo.kind({
           me.order.get('lines').remove(l);
           OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_DeletedService', [l.get('product').get('_identifier')]));
         });
+        if (OB.MobileApp.model.receipt.get('notApprove')) {
+          OB.MobileApp.model.receipt.unset('notApprove');
+        }
         me.order.set('undo', oldUndo);
         me.updating = false;
         me.order.get('lines').trigger('updateServicePrices');
@@ -844,7 +849,11 @@ enyo.kind({
 
       if (approvalNeeded) {
         OB.UTIL.Approval.requestApproval(
-        OB.MobileApp.view.$.containerWindow.$.pointOfSale.model, 'OBPOS_approval.returnService', function (approved, supervisor, approvalType) {
+        OB.MobileApp.view.$.containerWindow.$.pointOfSale.model, [{
+          approval: 'OBPOS_approval.returnService',
+          message: 'OBPOS_approval.returnService',
+          params: [servicesToApprove]
+        }], function (approved, supervisor, approvalType) {
           if (approved) {
             fixServiceOrderLines(true);
           } else {

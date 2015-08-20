@@ -360,7 +360,7 @@ enyo.kind({
       stateless: true,
       action: function (keyboard, txt) {
         var qty = 1,
-            value, i, j, k, line, relatedLine, lineFromSelected;
+            value, i, j, k, h, line, relatedLine, lineFromSelected;
 
         function actionAddProducts() {
           if (me.selectedModels.length > 1) {
@@ -390,7 +390,8 @@ enyo.kind({
           });
         } else {
           var approvalNeeded = false,
-              lineToApproval;
+              servicesToApprove = '',
+              servicesList = [];
           if (value < 0) {
             for (i = 0; i < me.selectedModels.length; i++) {
               line = me.selectedModels[i];
@@ -401,7 +402,6 @@ enyo.kind({
                 // A service with its related product selected doesn't need to be returned, because later it will be modified to returned status depending in the product status
                 // In any other case it would require two approvals
                 if (line.get('product').get('productType') === 'S') {
-                  lineToApproval = true;
                   if (line.get('relatedLines')) {
                     for (j = 0; j < line.get('relatedLines').length; j++) {
                       relatedLine = line.get('relatedLines')[j];
@@ -409,7 +409,8 @@ enyo.kind({
                         lineFromSelected = me.selectedModels[k];
                         if (lineFromSelected.id === relatedLine.orderlineId) {
                           line.set('notReturnThisLine', true);
-                          lineToApproval = false;
+                          servicesToApprove += '<br>· ' + line.get('product').get('_identifier');
+                          servicesList.push(line.get('product'));
                           break;
                         }
                       }
@@ -417,12 +418,12 @@ enyo.kind({
                         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NotProductSelectedToReturn', [line.get('product').get('_identifier')]));
                         return;
                       }
-                      if (!lineToApproval) {
-                        break;
-                      }
                     }
+                  } else {
+                    servicesToApprove += '<br>· ' + line.get('product').get('_identifier');
+                    servicesList.push(line.get('product'));
                   }
-                  if (lineToApproval) {
+                  if (!approvalNeeded) {
                     approvalNeeded = true;
                   }
                 }
@@ -443,13 +444,41 @@ enyo.kind({
                     }
                   }
                 }
+              } else if (line.get('product').get('productType') === 'S' && line.isReturnable()) { // Ask for approval for non selected services, related to selected products
+                if (line.get('relatedLines')) {
+                  for (j = 0; j < line.get('relatedLines').length; j++) {
+                    relatedLine = line.get('relatedLines')[j];
+                    for (k = 0; k < me.selectedModels.length; k++) {
+                      lineFromSelected = me.selectedModels[k];
+                      if (lineFromSelected.id === relatedLine.orderlineId) {
+                        for (h = 0; h < servicesList.length; h++) {
+                          if (servicesList[h].id === line.get('product').id) {
+                            break;
+                          }
+                        }
+                        if (h === servicesList.length) {
+                          servicesToApprove += '<br>· ' + line.get('product').get('_identifier');
+                          servicesList.push(line.get('product'));
+                          if (!approvalNeeded) {
+                            approvalNeeded = true;
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
               }
             }
           }
           if (approvalNeeded) {
             OB.UTIL.Approval.requestApproval(
-            me.model, 'OBPOS_approval.returnService', function (approved, supervisor, approvalType) {
+            me.model, [{
+              approval: 'OBPOS_approval.returnService',
+              message: 'OBPOS_approval.returnService',
+              params: [servicesToApprove]
+            }], function (approved, supervisor, approvalType) {
               if (approved) {
+                OB.MobileApp.model.receipt.set('notApprove', true);
                 actionAddProducts();
               } else {
                 _.each(me.selectedModels, function (line) {

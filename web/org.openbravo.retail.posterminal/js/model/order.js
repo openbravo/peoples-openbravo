@@ -1893,7 +1893,7 @@
 
     setOrderType: function (permission, orderType, options) {
       var me = this,
-          i;
+          i, approvalNeeded, servicesToApprove;
 
       function finishSetOrderType() {
         me.set('orderType', orderType); // 0: Sales order, 1: Return order, 2: Layaway, 3: Void Layaway
@@ -1928,21 +1928,29 @@
       }
       if (orderType === OB.DEC.One && options.saveOrder !== false) {
         this.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentTypeForReturns);
-        var approvalNeeded = false;
+        approvalNeeded = false;
+        servicesToApprove = '';
         for (i = 0; i < this.get('lines').models.length; i++) {
           var line = this.get('lines').models[i];
           if (line.get('product').get('productType') === 'S' && !line.isReturnable()) {
             OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_UnreturnableProduct'), OB.I18N.getLabel('OBPOS_UnreturnableProductMessage', [line.get('product').get('_identifier')]));
             return;
-          } else if (!approvalNeeded) {
+          } else {
             if (line.get('product').get('productType') === 'S') {
-              approvalNeeded = true;
+              if (!approvalNeeded) {
+                approvalNeeded = true;
+              }
+              servicesToApprove += '<br>· ' + line.get('product').get('_identifier');
             }
           }
         }
         if (approvalNeeded) {
           OB.UTIL.Approval.requestApproval(
-          OB.MobileApp.view.$.containerWindow.$.pointOfSale.model, 'OBPOS_approval.returnService', function (approved, supervisor, approvalType) {
+          OB.MobileApp.view.$.containerWindow.$.pointOfSale.model, [{
+            approval: 'OBPOS_approval.returnService',
+            message: 'OBPOS_approval.returnService',
+            params: [servicesToApprove]
+          }], function (approved, supervisor, approvalType) {
             if (approved) {
               returnLines();
             }
