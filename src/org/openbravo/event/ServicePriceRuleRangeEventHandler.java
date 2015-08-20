@@ -27,6 +27,7 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.client.kernel.event.EntityDeleteEvent;
 import org.openbravo.client.kernel.event.EntityNewEvent;
+import org.openbravo.client.kernel.event.EntityPersistenceEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.dal.core.OBContext;
@@ -50,14 +51,7 @@ public class ServicePriceRuleRangeEventHandler extends EntityPersistenceEventObs
     if (!isValidEvent(event)) {
       return;
     }
-    final ServicePriceRuleRange servicePriceRuleRange = (ServicePriceRuleRange) event
-        .getTargetInstance();
-    if (servicePriceRuleRange.getRuleType().equals("F")
-        && servicePriceRuleRange.getPriceList() == null) {
-      String language = OBContext.getOBContext().getLanguage().getLanguage();
-      ConnectionProvider conn = new DalConnectionProvider(false);
-      throw new OBException(Utility.messageBD(conn, "FixedPriceRuleNullPriceList", language));
-    }
+    ruleTypePriceListValidation(event);
   }
 
   public void onSave(@Observes
@@ -65,6 +59,25 @@ public class ServicePriceRuleRangeEventHandler extends EntityPersistenceEventObs
     if (!isValidEvent(event)) {
       return;
     }
+    ruleTypePriceListValidation(event);
+  }
+
+  public void onDelete(@Observes
+  EntityDeleteEvent event) {
+    if (!isValidEvent(event)) {
+      return;
+    }
+  }
+
+  /**
+   * Checks if a Service Price Rule Range has Rule Type = 'Fixed' and Price List = null
+   * 
+   * @param event
+   *          Event from the record is taken.
+   * @throws OBException
+   *           Throws exception if the Rule Type is fixed and the Price List is null
+   */
+  private void ruleTypePriceListValidation(EntityPersistenceEvent event) {
     final ServicePriceRuleRange servicePriceRuleRange = (ServicePriceRuleRange) event
         .getTargetInstance();
     if (servicePriceRuleRange.getRuleType().equals("F")
@@ -72,13 +85,6 @@ public class ServicePriceRuleRangeEventHandler extends EntityPersistenceEventObs
       String language = OBContext.getOBContext().getLanguage().getLanguage();
       ConnectionProvider conn = new DalConnectionProvider(false);
       throw new OBException(Utility.messageBD(conn, "FixedPriceRuleNullPriceList", language));
-    }
-  }
-
-  public void onDelete(@Observes
-  EntityDeleteEvent event) {
-    if (!isValidEvent(event)) {
-      return;
     }
   }
 }
