@@ -216,6 +216,9 @@
       <index name="GL_JOURNAL_JOURNALBATCH_IDX" unique="false">
         <index-column name="GL_JOURNALBATCH_ID"/>
       </index>
+      <index name="GL_JOURNAL_POSTED" unique="false">
+        <index-column name="POSTED"/>
+      </index>
       <unique name="GL_JOURNAL_DOCNO">
         <unique-column name="AD_ORG_ID"/>
         <unique-column name="C_PERIOD_ID"/>

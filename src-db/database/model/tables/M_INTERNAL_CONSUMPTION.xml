@@ -116,6 +116,9 @@
       <foreign-key foreignTable="USER2" name="USER2_M_INTERNALCONSUMPTION">
         <reference local="USER2_ID" foreign="USER2_ID"/>
       </foreign-key>
+      <index name="M_INTERNAL_CONSUMPTION_POSTED" unique="false">
+        <index-column name="POSTED"/>
+      </index>
       <check name="M_INTERNAL_CONSUMPTION_ISA_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="M_INTERNAL_PROCESSED_CHECK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
     </table>

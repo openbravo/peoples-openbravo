@@ -90,6 +90,9 @@
       <foreign-key foreignTable="C_BANKACCOUNT" name="C_BANKSTATEMENT_C_BANKACCOUNT">
         <reference local="C_BANKACCOUNT_ID" foreign="C_BANKACCOUNT_ID"/>
       </foreign-key>
+      <index name="C_BANKSTATEMENT_POSTED" unique="false">
+        <index-column name="POSTED"/>
+      </index>
       <index name="C_BANKSTMT_UPDATED" unique="false">
         <index-column name="UPDATED"/>
       </index>
