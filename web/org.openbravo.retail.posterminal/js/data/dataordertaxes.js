@@ -375,13 +375,17 @@
 
               if (taxes[taxId]) {
                 taxes[taxId].net = OB.DEC.add(taxes[taxId].net, taxLines[taxId].net);
-                taxes[taxId].amount = OB.DEC.add(taxes[taxId].amount, taxLines[taxId].amount);
+                taxes[taxId].amount = (taxRate.get('docTaxAmount') === 'D') //
+                ? OB.DEC.mul(taxes[taxId].net, getTaxRateNumber(taxRate)) // Calculate taxes At Document Level
+                : OB.DEC.add(taxes[taxId].amount, taxLines[taxId].amount); // Calculate taxes At Line Level
               } else {
                 taxes[taxId] = {};
                 taxes[taxId].name = taxRate.get('name');
                 taxes[taxId].rate = taxRate.get('rate');
                 taxes[taxId].net = taxLines[taxId].net;
-                taxes[taxId].amount = taxLines[taxId].amount;
+                taxes[taxId].amount = (taxRate.get('docTaxAmount') === 'D') //
+                ? OB.DEC.mul(taxes[taxId].net, getTaxRateNumber(taxRate)) // Initialize taxes At Document Level
+                : taxLines[taxId].amount; // Initialize taxes At Line Level
               }
             }
           });
@@ -472,7 +476,40 @@
       // Calculate
       return Promise.all(_.map(receipt.get('lines').models, function (line, index, list) {
         return calcLineTaxesIncPrice(receipt, line);
-      }));
+      })).then(function () {
+        // Ajust receipt taxes if net + taxes !== gross
+        var totalNet = OB.DEC.Zero;
+        var totalGross = OB.DEC.Zero;
+        var totalTaxAmount = OB.DEC.Zero;
+        var taxToAdjust = null;
+        var taxToAdjustMax = OB.DEC.Zero;
+        var discountedGross;
+        var adjustment;
+
+        // Calculate taxes
+        _.forEach(receipt.get('taxes'), function (tax, taxid) {
+          totalTaxAmount = OB.DEC.add(totalTaxAmount, tax.amount);
+          if (OB.DEC.abs(tax.amount) > taxToAdjustMax) {
+            taxToAdjust = tax;
+            taxToAdjustMax = tax.amount;
+          }
+        });
+
+        if (taxToAdjust) {
+          // Adjust can be performed
+          // Calculate receipt net and gross
+          receipt.get('lines').forEach(function (line) {
+            totalNet = OB.DEC.add(totalNet, line.get('net'));
+            discountedGross = calculateDiscountedGross(line);
+            totalGross = OB.DEC.add(totalGross, _.isNull(discountedGross) ? line.get('gross') : discountedGross);
+          });
+
+          adjustment = OB.DEC.sub(totalGross, OB.DEC.add(totalNet, totalTaxAmount));
+          if (adjustment !== OB.DEC.Zero) {
+            taxToAdjust.amount = OB.DEC.add(taxToAdjust.amount, adjustment);
+          }
+        }
+      });
       };
 
   var calcProductTaxesExcPrice = function (receipt, line, taxCategory, linepricenet, linenet, discountedprice, discountedNet) {
@@ -545,7 +582,9 @@
                     taxes[taxId].net = OB.DEC.add(taxes[taxId].net, roundingLoses);
                   }
                 }
-                taxes[taxId].amount = OB.DEC.add(taxes[taxId].amount, amount);
+                taxes[taxId].amount = (taxRate.get('docTaxAmount') === 'D') //
+                ? OB.DEC.mul(taxes[taxId].net, getTaxRateNumber(taxRate)) // Calculate taxes At Document Level
+                : OB.DEC.add(taxes[taxId].amount, amount); // Calculate taxes At Line Level
               } else {
                 taxes[taxId] = {};
                 taxes[taxId].name = taxRate.get('name');
@@ -560,7 +599,9 @@
                     taxes[taxId].net = OB.DEC.add(taxes[taxId].net, roundingLoses);
                   }
                 }
-                taxes[taxId].amount = amount;
+                taxes[taxId].amount = (taxRate.get('docTaxAmount') === 'D') //
+                ? OB.DEC.mul(taxes[taxId].net, getTaxRateNumber(taxRate)) // Calculate taxes At Document Level
+                : amount; // Calculate taxes At Line Level
               }
             } else {
               linetaxid = taxRate.get('id');
