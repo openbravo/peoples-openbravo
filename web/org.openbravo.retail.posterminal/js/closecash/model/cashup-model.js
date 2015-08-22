@@ -359,12 +359,6 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
         pendingOrderList.remove(orderToRemove);
       });
 
-      // Recalculate total properly for all  pendingorders.
-      pendingOrderList.each(function (pendingorder) {
-        OB.DATA.OrderTaxes(pendingorder);
-        pendingorder.calculateGross();
-      });
-
       me.get('orderlist').reset(pendingOrderList.models);
       var indexStepPendingOrders = me.stepIndex('OB.CashUp.StepPendingOrders');
       me.cashupStepsDefinition[indexStepPendingOrders].active = pendingOrderList.length > 0;
