@@ -512,7 +512,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             var receiptCopyForVerification = new OB.Model.Order();
             OB.UTIL.clone(receipt, receiptCopyForVerification);
             if (JSON.stringify(receiptCopyForVerification.serializeToJSON()) !== JSON.stringify(frozenReceipt.serializeToJSON())) {
-              OB.error("The receipt has been modified while it was being closed:\n" + JSON.stringify(receiptCopyForVerification.serializeToJSON()) +"\n\n" + JSON.stringify(frozenReceipt.serializeToJSON()) + "\n");
+              OB.error("The receipt has been modified while it was being closed\nExpected:\n" + JSON.stringify(receiptCopyForVerification.serializeToJSON()) +"\n\nbut was:" + JSON.stringify(frozenReceipt.serializeToJSON()) + "\n");
             }
 
             orderList.deleteCurrent();
