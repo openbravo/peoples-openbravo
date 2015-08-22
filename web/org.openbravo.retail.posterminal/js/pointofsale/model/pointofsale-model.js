@@ -166,7 +166,12 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     
     // create and expose the receipt
     var receipt = new OB.Model.Order();
+    // fire events if the receipt model is the target of the OB.UTIL.clone method
+    receipt.triggerEventsIfTargetOfSourceWhenCloning = function () {
+      return true;      
+    };
     OB.MobileApp.model.receipt = receipt;
+
     // create the multiOrders
     var multiOrders = new OB.Model.MultiOrders();
     // create the orderList and expose it
