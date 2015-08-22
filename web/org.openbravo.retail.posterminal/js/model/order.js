@@ -329,7 +329,7 @@
       }
     },
 
-    save: function () {
+    save: function (callback) {
       var undoCopy;
 
       if (this.attributes.json) {
@@ -339,7 +339,11 @@
       this.unset('undo');
       this.set('json', JSON.stringify(this.toJSON()));
       if (!OB.MobileApp.model.get('preventOrderSave')) {
-        OB.Dal.save(this, function () {}, function () {
+        OB.Dal.save(this, function () {
+          if (callback) {
+            callback();
+          }
+        }, function () {
           OB.error(arguments);
         });
       }
@@ -513,10 +517,11 @@
           });
 
           me.adjustPayment();
-          me.save();
-          me.trigger('calculategross');
-          me.trigger('saveCurrent');
-          OB.UTIL.SynchronizationHelper.finished(synchId, 'calculateGross');
+          me.save(function () {
+            me.trigger('calculategross');
+            me.trigger('saveCurrent');
+            OB.UTIL.SynchronizationHelper.finished(synchId, 'calculateGross');
+          });
           };
 
       if (this.get('priceIncludesTax')) {
