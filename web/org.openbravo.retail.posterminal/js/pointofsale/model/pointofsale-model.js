@@ -156,25 +156,13 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     modelToIncludePayment.addPayment(payment);
   },
   init: function () {
-    var receipt = new OB.Model.Order(),
-        i, j, k, amtAux, amountToPay, ordersLength, multiOrders = new OB.Model.MultiOrders(),
-        me = this,
-        iter, isNew = false,
-        discounts, ordersave, customersave, customeraddrsave, orderList, hwManager, ViewManager, LeftColumnViewManager, LeftColumnCurrentView, SyncReadyToSendFunction, auxReceiptList = [];
+    var me = this;
 
-
-    function success() {
-      return true;
-    }
-
-    function error() {
-      OB.UTIL.showError('Error removing');
-    }
     this.set('filter', []);
     this.set('brandFilter', []);
 
     function searchCurrentBP() {
-      var errorCallback = function (tx, error) {
+      var errorCallback = function () {
           OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_BPInfoErrorTitle'), OB.I18N.getLabel('OBPOS_BPInfoErrorMessage'), [{
             label: OB.I18N.getLabel('OBPOS_Reload')
           }], {
@@ -183,7 +171,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               window.localStorage.removeItem('POSLastTotalRefresh');
               window.localStorage.removeItem('POSLastIncRefresh');
             },
-            onHideFunction: function (popup) {
+            onHideFunction: function () {
               window.localStorage.removeItem('POSLastTotalRefresh');
               window.localStorage.removeItem('POSLastIncRefresh');
               window.location.reload();
@@ -229,7 +217,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     //In this moment we can ensure data is already loaded in the local database
     searchCurrentBP();
 
-    ViewManager = Backbone.Model.extend({
+    var ViewManager = Backbone.Model.extend({
       defaults: {
         currentWindow: {
           name: 'mainSubWindow',
@@ -238,7 +226,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       },
       initialize: function () {}
     });
-    LeftColumnViewManager = Backbone.Model.extend({
+    var LeftColumnViewManager = Backbone.Model.extend({
       defaults: {
         currentView: {}
       },
@@ -275,12 +263,15 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       }
     });
 
-    // expose the receipt
+    // create and expose the receipt
+    var receipt = new OB.Model.Order();
     OB.MobileApp.model.receipt = receipt;
-
+    // create the multiOrders
+    var multiOrders = new OB.Model.MultiOrders();
     // create the orderList and expose it
-    orderList = new OB.Collection.OrderList(receipt);
+    var orderList = new OB.Collection.OrderList(receipt);
     OB.MobileApp.model.orderList = orderList;
+    var auxReceiptList = [];
 
     this.set('order', receipt);
     this.set('orderList', orderList);
@@ -290,7 +281,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
     this.get('multiOrders').on('paymentAccepted', function () {
       OB.UTIL.showLoading(true);
-      ordersLength = this.get('multiOrders').get('multiOrdersList').length;
+      var ordersLength = this.get('multiOrders').get('multiOrdersList').length;
 
       function readyToSendFunction() {
         //this function is executed when all orders are ready to be sent
@@ -301,6 +292,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           me.get('orderList').addNewOrder();
         }
       }
+
+      // this var is a function (copy of the above one) which is called by every items, but it is just executed once (when ALL items has called to it)
+      var SyncReadyToSendFunction = _.after(this.get('multiOrders').get('multiOrdersList').length, readyToSendFunction);
 
       function prepareToSendCallback(order) {
         var auxReceipt = new OB.Model.Order();
@@ -335,14 +329,11 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           auxReceiptList = [];
         }
       }
-
-      //this var is a function (copy of the above one) which is called by every items, but it is just executed once (when ALL items has called to it)
-      SyncReadyToSendFunction = _.after(this.get('multiOrders').get('multiOrdersList').length, readyToSendFunction);
-
+      var i, j;
       for (j = 0; j < ordersLength; j++) {
         //Create the negative payment for change
-        iter = this.get('multiOrders').get('multiOrdersList').at(j);
-        amountToPay = !_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway')) ? iter.get('amountToLayaway') : OB.DEC.sub(iter.get('gross'), iter.get('payment'));
+        var iter = this.get('multiOrders').get('multiOrdersList').at(j);
+        var amountToPay = !_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway')) ? iter.get('amountToLayaway') : OB.DEC.sub(iter.get('gross'), iter.get('payment'));
         while (((_.isUndefined(iter.get('amountToLayaway')) || iter.get('amountToLayaway') > 0) && iter.get('gross') > iter.get('payment')) || (iter.get('amountToLayaway') > 0)) {
           for (i = 0; i < this.get('multiOrders').get('payments').length; i++) {
             var payment = this.get('multiOrders').get('payments').at(i),
@@ -372,7 +363,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               this.get('multiOrders').get('payments').remove(this.get('multiOrders').get('payments').at(i));
               amountToPay = !_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway')) ? iter.get('amountToLayaway') : OB.DEC.sub(iter.get('gross'), iter.get('payment'));
             } else {
-              var bigDecAmountAux;
+              var bigDecAmountAux, amtAux;
               if (j === this.get('multiOrders').get('multiOrdersList').length - 1 && !paymentMethod.paymentMethod.iscash) {
                 bigDecAmountAux = new BigDecimal(String(payment.get('origAmount')));
                 amtAux = OB.DEC.toNumber(bigDecAmountAux);
@@ -408,13 +399,13 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
     }, this);
 
-    customersave = new OB.DATA.CustomerSave(this);
-    customeraddrsave = new OB.DATA.CustomerAddrSave(this);
+    new OB.DATA.CustomerSave(this);
+    new OB.DATA.CustomerAddrSave(this);
 
     this.set('leftColumnViewManager', new LeftColumnViewManager());
     this.set('subWindowManager', new ViewManager());
-    discounts = new OB.DATA.OrderDiscount(receipt);
-    ordersave = new OB.DATA.OrderSave(this);
+    new OB.DATA.OrderDiscount(receipt);
+    new OB.DATA.OrderSave(this);
     OB.DATA.OrderTaxes(receipt);
 
     OB.MobileApp.model.runSyncProcess(function () {
@@ -624,7 +615,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       OB.Model.Discounts.applyPromotions(receipt);
     });
 
-    receipt.on('change:bp', function (line) {
+    receipt.on('change:bp', function () {
       if (!receipt.get('isEditable') || receipt.get('lines').length === 0) {
         return;
       }
@@ -641,7 +632,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       OB.UTIL.clone(receipt, auxReceipt);
       process.exec({
         order: receipt
-      }, function (data, message) {
+      }, function (data) {
         if (data && data.exception) {
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorVoidLayaway'));
         } else {
@@ -707,7 +698,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       }
       if (args.approvals.length > 0) {
         OB.UTIL.Approval.requestApproval(
-        me, args.approvals, function (approved, supervisor, approvalType) {
+        me, args.approvals, function (approved) {
           if (approved) {
             me.trigger('approvalChecked', {
               approved: (args.approved !== undefined) ? args.approved : true
