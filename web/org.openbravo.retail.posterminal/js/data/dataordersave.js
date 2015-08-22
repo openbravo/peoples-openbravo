@@ -147,7 +147,8 @@
         // creating clones of this frozen receipt inside the asynchronous processes, does not affect the user experience
         var frozenReceipt = new OB.Model.Order();
         OB.UTIL.clone(receipt, frozenReceipt);
-
+        
+        OB.info("[receipt.closed] Starting transaction. ReceiptId: " + receipt.get('id'));
         OB.Dal.transaction(function (tx) {
           // create a clone to be used for the cashup report
           var frozenReceiptForCashupReport = new OB.Model.Order();
@@ -165,9 +166,14 @@
               });
             }, tx);
           }, tx);
-        }, null, function () {
+        }, function () {
+          // the transaction failed
+          OB.error("[receipt.closed] The transaction failed to be commited. ReceiptId: " + receipt.get('id'));
+          // rollback other changes
+          // ...
+        }, function () {
           // success transaction...
-          OB.trace('Executing of post order save hook.');
+          OB.info("[receipt.closed] Transaction success. ReceiptId: " + receipt.get('id'));
 
           var successCallback = function (model) {
               OB.trace('Sync process success.');
