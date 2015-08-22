@@ -467,6 +467,14 @@
 
     calculateGross: function () {
       var me = this;
+      // verify that the ui receipt is the only one in which calculateGross is executed
+      OB.UTIL.Debug.execute(function () {
+        var isTheUIReceipt = this.cid === OB.MobileApp.model.receipt.cid;
+        if (!isTheUIReceipt) {
+          OB.error("calculateGross should only be called by the UI receipt");
+        }
+      }, this);
+
       var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('calculateGross');
 
       // reset some vital receipt values because, at this point, they are obsolete. do not fire the change event
