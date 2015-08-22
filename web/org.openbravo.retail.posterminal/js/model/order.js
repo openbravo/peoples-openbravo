@@ -330,14 +330,8 @@
     },
 
     save: function (callback) {
-      var undoCopy;
-
-      if (this.attributes.json) {
-        delete this.attributes.json; // Needed to avoid recursive inclusions of itself !!!
-      }
-      undoCopy = this.get('undo');
-      this.unset('undo');
-      this.set('json', JSON.stringify(this.toJSON()));
+      var undoCopy = this.get('undo');
+      this.set('json', JSON.stringify(this.serializeToJSON()));
       if (!OB.MobileApp.model.get('preventOrderSave')) {
         OB.Dal.save(this, function () {
           if (callback) {
@@ -346,6 +340,10 @@
         }, function () {
           OB.error(arguments);
         });
+      } else {
+        if (callback) {
+          callback();
+        }
       }
       this.set('undo', undoCopy);
     },
