@@ -672,8 +672,15 @@
     },
 
     clearWith: function (_order) {
-      var me = this,
-          undf, localSkipApplyPromotions, idExecution;
+      // verify that the clearWith is not used for any other purpose than to update and fire the events of the UI receipt
+      OB.UTIL.Debug.execute(function () {
+        var isTheUIReceipt = this.cid === OB.MobileApp.model.receipt.cid;
+        if (!isTheUIReceipt) {
+          OB.error("The target of the clearWith should only be the UI receipt. Use OB.UTIL.clone instead");
+        }
+      }, this);
+
+      var idExecution;
 
       // we set first this property to avoid that the apply promotions is triggered
       this.set('isNewReceipt', _order.get('isNewReceipt'));

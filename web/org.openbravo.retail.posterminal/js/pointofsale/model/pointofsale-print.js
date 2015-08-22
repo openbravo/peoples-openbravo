@@ -143,9 +143,9 @@
         return true;
       }
       if (!_.isUndefined(args.order) && !_.isNull(args.order)) {
-        receipt.clearWith(args.order);
+        OB.UTIL.clone(args.order, receipt);
       } else {
-        receipt.clearWith(me.receipt);
+        OB.UTIL.clone(me.receipt, receipt);
       }
       if (args.forcedtemplate) {
         args.template = args.forcedtemplate;
@@ -284,7 +284,7 @@
   PrintReceipt.prototype.displayTotal = function () {
     // Clone the receipt
     var receipt = new OB.Model.Order();
-    receipt.clearWith(this.receipt);
+    OB.UTIL.clone(this.receipt, receipt);
     OB.POS.hwserver.print(this.templatetotal, {
       order: receipt
     });

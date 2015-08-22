@@ -157,7 +157,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
   },
   init: function () {
     var receipt = new OB.Model.Order(),
-        auxReceipt = new OB.Model.Order(),
         i, j, k, amtAux, amountToPay, ordersLength, multiOrders = new OB.Model.MultiOrders(),
         me = this,
         iter, isNew = false,
@@ -304,8 +303,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       }
 
       function prepareToSendCallback(order) {
-        auxReceipt = new OB.Model.Order();
-        auxReceipt.clearWith(order);
+        var auxReceipt = new OB.Model.Order();
+        OB.UTIL.clone(order, auxReceipt);
 
         if (order.get('orderType') !== 2 && order.get('orderType') !== 3) {
           var negativeLines = _.filter(order.get('lines').models, function (line) {
@@ -629,9 +628,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       OB.Model.Discounts.applyPromotions(receipt);
     }, this);
     receipt.on('voidLayaway', function () {
-      var process = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessVoidLayaway'),
-          auxReceipt = new OB.Model.Order();
-      auxReceipt.clearWith(receipt);
+      var process = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessVoidLayaway');
+      var auxReceipt = new OB.Model.Order();
+      OB.UTIL.clone(receipt, auxReceipt);
       process.exec({
         order: receipt
       }, function (data, message) {
