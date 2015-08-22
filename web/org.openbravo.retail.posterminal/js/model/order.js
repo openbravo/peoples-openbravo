@@ -466,8 +466,15 @@
       return affectedLines ? affectedLines : null;
     },
 
+    isCalculateGrossLocked: null,
+
+    setIsCalculateGrossLockState: function (state) {
+      this.isCalculateGrossLocked = state;
+    },
+
     calculateGross: function () {
       var me = this;
+
       // verify that the ui receipt is the only one in which calculateGross is executed
       OB.UTIL.Debug.execute(function () {
         var isTheUIReceipt = this.cid === OB.MobileApp.model.receipt.cid;
@@ -475,6 +482,13 @@
           OB.error("calculateGross should only be called by the UI receipt");
         }
       }, this);
+
+      // verify that the calculateGross is not locked
+      if (this.isCalculateGrossLocked === true) {
+        OB.error("calculateGross execution is forbidden right now");
+      } else if (this.isCalculateGrossLocked !== false) {
+        OB.error("setting the isCalculateGrossLocked state is mandatory before executing it the first time");
+      }
 
       var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('calculateGross');
 
@@ -2716,6 +2730,7 @@
         this.modelorder.clearWith(this.current);
         this.modelorder.set('isNewReceipt', false);
         this.modelorder.trigger('paintTaxes');
+        this.modelorder.setIsCalculateGrossLockState(false);
       }
     },
     synchronizeCurrentOrder: function () {
