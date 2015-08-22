@@ -90,8 +90,6 @@
         creationDate = new Date(normalizedCreationDate);
       }
 
-      this.receipt.set('hasbeenpaid', 'Y');
-
       OB.trace('Executing pre order save hook.');
 
       OB.UTIL.HookManager.executeHooks('OBPOS_PreOrderSave', {
@@ -147,7 +145,8 @@
         // creating clones of this frozen receipt inside the asynchronous processes, does not affect the user experience
         var frozenReceipt = new OB.Model.Order();
         OB.UTIL.clone(receipt, frozenReceipt);
-        
+        frozenReceipt.set('hasbeenpaid', 'Y');
+
         OB.info("[receipt.closed] Starting transaction. ReceiptId: " + receipt.get('id'));
         OB.Dal.transaction(function (tx) {
           // create a clone to be used for the cashup report
@@ -160,6 +159,7 @@
               // create a clone to be used by the save process
               var frozenReceiptToBeSaved = new OB.Model.Order();
               OB.UTIL.clone(frozenReceipt, frozenReceiptToBeSaved);
+              receipt.set('hasbeenpaid', 'Y');
               OB.Dal.saveInTransaction(tx, frozenReceiptToBeSaved, function () {
                 // the trigger is fired on the receipt object, as there is only 1 that is being updated
                 receipt.trigger('integrityOk'); // Is important for module print last receipt. This module listen trigger.   
@@ -170,7 +170,7 @@
           // the transaction failed
           OB.error("[receipt.closed] The transaction failed to be commited. ReceiptId: " + receipt.get('id'));
           // rollback other changes
-          // ...
+          receipt.set('hasbeenpaid', 'N');
         }, function () {
           // success transaction...
           OB.info("[receipt.closed] Transaction success. ReceiptId: " + receipt.get('id'));
