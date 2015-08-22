@@ -326,7 +326,6 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
           cashUpReport: cashUpReport
         }, function (args) {
           me.get('cashUpReport').add(args.cashUpReport);
-          me.finishLoad();
           initModelsCallback();
           OB.UTIL.SynchronizationHelper.finished(synchId2, 'cashup-model.init2');
         });
@@ -369,14 +368,12 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
       var indexStepPendingOrders = me.stepIndex('OB.CashUp.StepPendingOrders');
       me.cashupStepsDefinition[indexStepPendingOrders].active = pendingOrderList.length > 0;
       me.cashupStepsDefinition[indexStepPendingOrders].loaded = true;
-      me.finishLoad();
     }, function (tx, error) {
       OB.UTIL.showError("OBDAL error: " + error);
     }, this);
 
     this.printCashUp = new OB.OBPOSCashUp.Print.CashUp();
 
-    this.finishLoad();
   },
   loadModels: function (loadModelsCallback) {
     loadModelsCallback();
