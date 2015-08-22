@@ -560,12 +560,16 @@
   };
 
   OB.UTIL.saveComposeInfo = function (me, callback, objToSend, cashUp, tx) {
-
     cashUp.at(0).set('userId', OB.MobileApp.model.get('context').user.id);
     objToSend.set('userId', OB.MobileApp.model.get('context').user.id);
     cashUp.at(0).set('objToSend', JSON.stringify(objToSend));
-    OB.Dal.saveInTransaction(tx, cashUp.at(0), callback ? callback(me) : null, null);
+    OB.Dal.saveInTransaction(tx, cashUp.at(0), function () {
+      if (callback)  {
+        callback(me);
+      }
+    }, null);
   };
+
   OB.UTIL.getTaxCashUp = function (taxcashups, objToSend, cashUp) {
     _.each(taxcashups.models, function (currentTax) {
       var cashTaxInfo = {
