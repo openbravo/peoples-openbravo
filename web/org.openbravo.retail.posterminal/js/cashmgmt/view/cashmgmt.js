@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, enyo, $ */
+/*global OB, enyo */
 
 enyo.kind({
   name: 'OB.OBPOSCashMgmt.UI.LeftToolbarImpl',
@@ -133,7 +133,6 @@ enyo.kind({
   }],
 
   init: function () {
-    this.synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes("cashmanagement");
     this.inherited(arguments);
 
     // cashMgmtDepositEvents or cashMgmtDropEvents Collection is shown by OB.UI.Table, when selecting an option 'click' event
@@ -179,10 +178,6 @@ enyo.kind({
         }
       });
     }, this);
-  },
-
-  rendered: function () {
-    OB.UTIL.SynchronizationHelper.finished(this.synchId, "cashmanagement");
   }
 });
 
