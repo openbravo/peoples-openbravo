@@ -2700,7 +2700,7 @@
     },
     saveCurrent: function () {
       if (this.current) {
-        this.current.clearWith(this.modelorder);
+        OB.UTIL.clone(this.modelorder, this.current);
       }
     },
     loadCurrent: function (isNew) {
