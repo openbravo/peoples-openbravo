@@ -514,6 +514,14 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               OB.error("The receipt has been modified while it was being closed\nExpected:\n" + JSON.stringify(receiptCopyForVerification.serializeToJSON()) +"\n\nbut was:" + JSON.stringify(frozenReceipt.serializeToJSON()) + "\n");
             }
 
+            //In case the processed document is a quotation, we remove its id so it can be reactivated
+            if (receipt.get('isQuotation')) {
+              if (!(receipt.get('oldId') && receipt.get('oldId').length > 0)) {
+                receipt.set('oldId', receipt.get('id'));
+              }
+              receipt.set('isbeingprocessed', 'N');
+            }
+
             orderList.deleteCurrent();
             orderList.synchronizeCurrentOrder();
             enyo.$.scrim.hide();
