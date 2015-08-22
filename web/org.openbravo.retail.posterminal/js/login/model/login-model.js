@@ -152,10 +152,6 @@
             OB.UTIL.Debug.execute(function () {
               OB.error("Error while retrieving the terminal info ", data);
             });
-
-            // force the initialization of the document sequence info
-            OB.MobileApp.model.saveDocumentSequence();
-
           });
         }
       });
@@ -616,8 +612,9 @@
         }
 
       });
-
+      
       this.trigger('ready');
+
     },
 
     postLoginActions: function () {
@@ -703,17 +700,28 @@
     documentnoThreshold: -1,
     quotationnoThreshold: -1,
     isSeqNoReadyEventSent: false,
-    // deprecation 27911
     /**
      * Save the new values if are higher than the last known values
      * - the minimum sequence number can only grow
      */
     saveDocumentSequence: function (documentnoSuffix, quotationnoSuffix, callback, tx) {
-      var me = this,
-          processDocumentSequenceList;
+      var me = this;
+
       if (me.restartingDocNo === true) {
+        if (callback) {
+          callback();
+        }
         return;
       }
+
+      // if the document sequence is trying to be initialized but it has already been initialized, do nothing
+      if (documentnoSuffix === -1 && quotationnoSuffix === -1 && this.documentnoThreshold >= 0 && this.quotationnoThreshold >= 0) {
+        if (callback) {
+          callback();
+        }
+        return;
+      }
+
       //If documentnoSuffix === 0 || quotationnoSuffix === 0, it means that we have restarted documentNo prefix, so we block this method while we save the new documentNo in localStorage
       if (documentnoSuffix === 0 || quotationnoSuffix === 0) {
         me.restartingDocNo = true;
@@ -727,7 +735,7 @@
         this.quotationnoThreshold = quotationnoSuffix;
       }
 
-      processDocumentSequenceList = function (documentSequenceList) {
+      var processDocumentSequenceList = function (documentSequenceList) {
 
         var docSeq;
         if (documentSequenceList && documentSequenceList.length > 0) {
