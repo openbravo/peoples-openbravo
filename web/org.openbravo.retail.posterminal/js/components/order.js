@@ -840,11 +840,13 @@ enyo.kind({
           me.order.get('lines').remove(l);
           OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_DeletedService', [l.get('product').get('_identifier')]));
         });
-        if (OB.MobileApp.model.receipt.get('notApprove')) {
-          OB.MobileApp.model.receipt.unset('notApprove');
+        if (me.order.get('notApprove')) {
+          me.order.unset('notApprove');
         }
-        me.order.unset('ignoreCalculateGross');
-        me.order.calculateGross(); // Calculate Gross only once
+        if (!me.order.get('notAllowCalculateGross')) {
+          me.order.unset('ignoreCalculateGross');
+          me.order.calculateGross(); // Calculate Gross only once
+        }
         me.order.set('undo', oldUndo);
         me.updating = false;
         me.order.get('lines').trigger('updateServicePrices');

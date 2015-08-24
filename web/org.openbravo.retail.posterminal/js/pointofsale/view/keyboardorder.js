@@ -110,7 +110,7 @@ enyo.kind({
   initComponents: function () {
     var me = this;
 
-    var actionAddProduct = function (keyboard, value) {
+    var actionAddProduct = function (keyboard, value, linesNotToReturn, linesReturned) {
         if (!keyboard.line.get('notReturnThisLine')) {
           if (keyboard.receipt.get('isEditable') === false) {
             me.doShowPopup({
@@ -131,6 +131,9 @@ enyo.kind({
               });
               return true;
             }
+            if (linesReturned === (me.selectedModels.length - linesNotToReturn)) {
+              me.getReceipt().unset('notAllowCalculateGross');
+            }
             me.doAddProduct({
               product: keyboard.line.get('product'),
               qty: value,
@@ -145,15 +148,19 @@ enyo.kind({
         }
         };
 
-    var actionAddMultiProduct = function (keyboard, qty) {
+    var actionAddMultiProduct = function (keyboard, qty, linesNotToReturn) {
         if (me.selectedModelsSameQty) {
           keyboard.receipt.set('undo', null);
           keyboard.receipt.set('multipleUndo', true);
-          var selection = [];
+          var selection = [],
+              linesReturned = 0;
           _.each(me.selectedModels, function (model) {
             selection.push(model);
             keyboard.line = model;
-            actionAddProduct(keyboard, qty);
+            if (!keyboard.line.get('notReturnThisLine')) {
+              linesReturned++;
+            }
+            actionAddProduct(keyboard, qty, linesNotToReturn, linesReturned);
           });
           keyboard.receipt.set('multipleUndo', null);
           me.doSetMultiSelectionItems({
@@ -343,15 +350,23 @@ enyo.kind({
     this.addCommand('+', {
       stateless: true,
       action: function (keyboard, txt) {
-        var qty = 1;
+        var qty = 1,
+            linesNotToReturn = 0;
+        _.each(me.selectedModels, function (line) {
+          if (line.get('product').get('productType') === 'S' && line.get('relatedLines')) {
+            linesNotToReturn++;
+          }
+        });
         if ((!_.isNull(txt) || !_.isUndefined(txt)) && !_.isNaN(OB.I18N.parseNumber(txt))) {
           qty = OB.I18N.parseNumber(txt);
         }
+        me.getReceipt().set('ignoreCalculateGross', true);
+        me.getReceipt().set('notAllowCalculateGross', true);
         if (me.selectedModels.length > 1) {
-          actionAddMultiProduct(keyboard, qty);
+          actionAddMultiProduct(keyboard, qty, linesNotToReturn);
         } else {
           keyboard.receipt.set('multipleUndo', null);
-          actionAddProduct(keyboard, qty);
+          actionAddProduct(keyboard, qty, linesNotToReturn, 1);
         }
       }
     });
@@ -360,19 +375,17 @@ enyo.kind({
       stateless: true,
       action: function (keyboard, txt) {
         var qty = 1,
-            value, i, j, k, h, line, relatedLine, lineFromSelected;
+            value, i, j, k, h, line, relatedLine, lineFromSelected, linesNotToReturn = 0;
 
         function actionAddProducts() {
-          var order = me.getReceipt();
-          order.set('ignoreCalculateGross', true);
+          me.getReceipt().set('ignoreCalculateGross', true);
+          me.getReceipt().set('notAllowCalculateGross', true);
           if (me.selectedModels.length > 1) {
-            actionAddMultiProduct(keyboard, -qty, true);
+            actionAddMultiProduct(keyboard, -qty, linesNotToReturn);
           } else {
             keyboard.receipt.set('multipleUndo', null);
-            actionAddProduct(keyboard, -qty);
+            actionAddProduct(keyboard, -qty, linesNotToReturn, 1);
           }
-          order.unset('ignoreCalculateGross');
-          order.calculateGross(); // Calculate Gross only once
         }
         if ((!_.isNull(txt) || !_.isUndefined(txt)) && !_.isNaN(OB.I18N.parseNumber(txt))) {
           qty = OB.I18N.parseNumber(txt);
@@ -413,6 +426,7 @@ enyo.kind({
                         lineFromSelected = me.selectedModels[k];
                         if (lineFromSelected.id === relatedLine.orderlineId) {
                           line.set('notReturnThisLine', true);
+                          linesNotToReturn++;
                           servicesToApprove += '<br>· ' + line.get('product').get('_identifier');
                           servicesList.push(line.get('product'));
                           break;
@@ -482,7 +496,7 @@ enyo.kind({
               params: [servicesToApprove]
             }], function (approved, supervisor, approvalType) {
               if (approved) {
-                OB.MobileApp.model.receipt.set('notApprove', true);
+                me.getReceipt().set('notApprove', true);
                 actionAddProducts();
               } else {
                 _.each(me.selectedModels, function (line) {
