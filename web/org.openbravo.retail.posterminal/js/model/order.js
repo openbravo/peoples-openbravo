@@ -2415,13 +2415,18 @@
       order.set('oldId', null);
       order.set('session', OB.MobileApp.model.get('session'));
       order.set('bp', OB.MobileApp.model.get('businessPartner'));
-      // Set price list for order
-      order.set('priceList', OB.MobileApp.model.get('businessPartner').get('priceList'));
-      var priceIncludesTax = OB.MobileApp.model.get('businessPartner').get('priceIncludesTax');
-      if (OB.UTIL.isNullOrUndefined(priceIncludesTax)) {
-        priceIncludesTax = OB.MobileApp.model.get('pricelist').priceIncludesTax;
+      if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true)) {
+        // Set price list for order
+        order.set('priceList', OB.MobileApp.model.get('businessPartner').get('priceList'));
+        var priceIncludesTax = OB.MobileApp.model.get('businessPartner').get('priceIncludesTax');
+        if (OB.UTIL.isNullOrUndefined(priceIncludesTax)) {
+          priceIncludesTax = OB.MobileApp.model.get('pricelist').priceIncludesTax;
+        }
+        order.set('priceIncludesTax', priceIncludesTax);
+      } else {
+        order.set('priceList', OB.MobileApp.model.get('terminal').priceList);
+        order.set('priceIncludesTax', OB.MobileApp.model.get('pricelist').priceIncludesTax);
       }
-      order.set('priceIncludesTax', priceIncludesTax);
       if (OB.MobileApp.model.hasPermission('OBPOS_receipt.invoice')) {
         if (OB.MobileApp.model.hasPermission('OBPOS_retail.restricttaxidinvoice', true) && !OB.MobileApp.model.get('businessPartner').get('taxID')) {
           if (OB.MobileApp.model.get('terminal').terminalType.generateInvoice) {
