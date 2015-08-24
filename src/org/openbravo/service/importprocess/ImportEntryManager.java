@@ -158,6 +158,8 @@ public class ImportEntryManager {
   // subclass of ImportEntryProcessor going wild
   private int maxTaskQueueSize = 1000;
 
+  private boolean isShutDown = false;
+
   public ImportEntryManager() {
     instance = this;
     importBatchSize = ImportProcessUtils.getCheckIntProperty(log, "import.batch.size",
@@ -221,6 +223,8 @@ public class ImportEntryManager {
    */
   public void shutdown() {
     log.debug("Shutting down Import Entry Framework");
+
+    isShutDown = true;
 
     if (executorService != null) {
       executorService.shutdownNow();
@@ -483,6 +487,11 @@ public class ImportEntryManager {
             OBContext.setOBContext("0", "0", "0", "0");
           }
           try {
+
+            // system is shutting down, bail out
+            if (manager.isShutDown) {
+              return;
+            }
 
             // too busy, don't process, but wait
             if (manager.executorService.getQueue() != null
