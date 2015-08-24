@@ -45,7 +45,7 @@ enyo.kind({
       name: 'price'
     }, {
       name: 'priceList',
-      style: 'width: 100%; text-align: right; font-weight:bold; color: grey; font-size: 14px;',
+      style: 'width: 100%; text-align: right; font-weight:bold; color: grey; font-size: 14px;'
     }]
   }, {
     style: 'clear:both;'
