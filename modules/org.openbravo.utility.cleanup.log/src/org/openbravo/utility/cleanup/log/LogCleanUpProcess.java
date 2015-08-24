@@ -89,6 +89,8 @@ public class LogCleanUpProcess extends DalBaseProcess {
       Set<String> tablesToTruncate = new LinkedHashSet<String>();
       for (LogCleanUpConfig config : qConfig.list()) {
         long t = System.currentTimeMillis();
+        // force reload of log clean up configuration to prevent LazyInitializationException
+        config = OBDal.getInstance().get(LogCleanUpConfig.class, config.getId());
         Entity entity = ModelProvider.getInstance().getEntityByTableId(
             (String) DalUtil.getId(config.getTable()));
 
