@@ -78,9 +78,6 @@
 
       OB.info('Ticket closed: ', OB.UTIL.argumentsToStringifyed(this.receipt.getOrderDescription()), "caller: " + OB.UTIL.getStackTrace('Backbone.Events.trigger', true));
 
-      var docno = this.receipt.get('documentNo');
-      var isLayaway = (this.receipt.get('orderType') === 2 || this.receipt.get('isLayaway'));
-
       var normalizedCreationDate = OB.I18N.normalizeDate(this.receipt.get('creationDate'));
       var creationDate;
       if (normalizedCreationDate === null) {
@@ -89,8 +86,6 @@
       } else {
         creationDate = new Date(normalizedCreationDate);
       }
-
-      this.receipt.set('hasbeenpaid', 'Y');
 
       OB.trace('Executing pre order save hook.');
 
@@ -106,7 +101,6 @@
           return true;
         }
         var receipt = args.context.receipt;
-        var currentDocNo = receipt.get('documentNo') || docno;
 
         OB.trace('Execution of pre order save hook OK.');
 
@@ -147,7 +141,9 @@
         // creating clones of this frozen receipt inside the asynchronous processes, does not affect the user experience
         var frozenReceipt = new OB.Model.Order();
         OB.UTIL.clone(receipt, frozenReceipt);
+        frozenReceipt.set('hasbeenpaid', 'Y');
 
+        OB.info("[receipt.closed] Starting transaction. ReceiptId: " + receipt.get('id'));
         OB.Dal.transaction(function (tx) {
           // create a clone to be used for the cashup report
           var frozenReceiptForCashupReport = new OB.Model.Order();
@@ -159,38 +155,37 @@
               // create a clone to be used by the save process
               var frozenReceiptToBeSaved = new OB.Model.Order();
               OB.UTIL.clone(frozenReceipt, frozenReceiptToBeSaved);
+              receipt.set('hasbeenpaid', 'Y');
               OB.Dal.saveInTransaction(tx, frozenReceiptToBeSaved, function () {
                 // the trigger is fired on the receipt object, as there is only 1 that is being updated
                 receipt.trigger('integrityOk'); // Is important for module print last receipt. This module listen trigger.   
               });
             }, tx);
           }, tx);
-        }, null, function () {
+        }, function () {
+          // the transaction failed
+          OB.error("[receipt.closed] The transaction failed to be commited. ReceiptId: " + receipt.get('id'));
+          // rollback other changes
+          receipt.set('hasbeenpaid', 'N');
+        }, function () {
           // success transaction...
-          OB.trace('Executing of post order save hook.');
+          OB.info("[receipt.closed] Transaction success. ReceiptId: " + receipt.get('id'));
 
-          var successCallback = function (model) {
-              OB.trace('Sync process success.');
-
-              //In case the processed document is a quotation, we remove its id so it can be reactivated
-              if (model && !_.isNull(model)) {
-                if (model.get('order') && model.get('order').get('isQuotation')) {
-                  if (!(model.get('order').get('oldId') && model.get('order').get('oldId').length > 0)) {
-                    model.get('order').set('oldId', model.get('order').get('id'));
-                  }
-                  model.get('order').set('isbeingprocessed', 'N');
-                  OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationSaved', [currentDocNo]));
+          function serverMessageForQuotation(frozenReceipt) {
+              var isLayaway = (frozenReceipt.get('orderType') === 2 || frozenReceipt.get('isLayaway'));
+              var currentDocNo = frozenReceipt.get('documentNo');
+              if (frozenReceipt && frozenReceipt.get('isQuotation')) {
+                OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationSaved', [currentDocNo]));
+              } else {
+                if (isLayaway) {
+                  OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgLayawaySaved', [currentDocNo]));
                 } else {
-                  if (isLayaway) {
-                    OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgLayawaySaved', [currentDocNo]));
-                  } else {
-                    OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgReceiptSaved', [currentDocNo]));
-                  }
+                  OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgReceiptSaved', [currentDocNo]));
                 }
               }
 
-              OB.trace('Order successfully removed.');
-              };
+            OB.trace('Order successfully removed.');
+          }
 
           // create a clone of the receipt to be used when executing the final callback
           var frozenReceiptForCallback = new OB.Model.Order();
@@ -208,7 +203,7 @@
               OB.UTIL.HookManager.executeHooks('OBPOS_PostSyncReceipt', {
                 receipt: frozenReceiptForPostSyncReceipt
               }, function () {
-                successCallback();
+                serverMessageForQuotation(frozenReceipt);
                 if (eventParams && eventParams.callback) {
                   eventParams.callback(frozenReceiptForCallback);
                 }
@@ -225,11 +220,11 @@
           } else {
             OB.trace('Execution Sync process.');
             //If there are no elements in the hook, we can execute the callback asynchronusly with the synchronization process
-            successCallback(model);
             if (eventParams && eventParams.callback) {
               eventParams.callback(frozenReceiptForCallback);
             }
             OB.MobileApp.model.runSyncProcess(function () {
+              serverMessageForQuotation(frozenReceipt);
               OB.debug("Ticket closed: runSyncProcess executed");
             });
           }

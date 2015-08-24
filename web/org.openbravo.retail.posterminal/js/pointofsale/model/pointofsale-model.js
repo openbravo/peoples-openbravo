@@ -51,7 +51,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
   },
   OB.Model.CurrencyPanel, OB.Model.SalesRepresentative, OB.Model.ProductCharacteristic, OB.Model.Brand, OB.Model.ProductChValue, OB.Model.ReturnReason, OB.Model.CashUp, OB.Model.OfflinePrinter, OB.Model.PaymentMethodCashUp, OB.Model.TaxCashUp],
 
-  loadUnpaidOrders: function () {
+  loadUnpaidOrders: function (loadUnpaidOrdersCallback) {
     // Shows a modal window with the orders pending to be paid
     var orderlist = this.get('orderList'),
         model = this,
@@ -81,6 +81,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           loadOrderStr = OB.I18N.getLabel('OBPOS_Order') + currentOrder.get('documentNo') + OB.I18N.getLabel('OBPOS_Loaded');
           OB.UTIL.showAlert.display(loadOrderStr, OB.I18N.getLabel('OBPOS_Info'));
         }
+        loadUnpaidOrdersCallback();
       });
     }, function () { //OB.Dal.find error
       // If there is an error fetching the pending orders,
@@ -157,81 +158,44 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     modelToIncludePayment.addPayment(payment);
   },
   init: function () {
-    var receipt = new OB.Model.Order(),
-        auxReceipt = new OB.Model.Order(),
-        i, j, k, amtAux, amountToPay, ordersLength, multiOrders = new OB.Model.MultiOrders(),
-        me = this,
-        iter, isNew = false,
-        discounts, ordersave, customersave, customeraddrsave, orderList, hwManager, ViewManager, LeftColumnViewManager, LeftColumnCurrentView, SyncReadyToSendFunction, auxReceiptList = [];
+    OB.error("This init method should never be called for this model. Call initModels and loadModels instead");
+    this.initModels(function () {});
+    this.loadModels(function () {});
+  },
+  initModels: function (callback) {
+    var me = this;
+    
+    // create and expose the receipt
+    var receipt = new OB.Model.Order();
+    // fire events if the receipt model is the target of the OB.UTIL.clone method
+    receipt.triggerEventsIfTargetOfSourceWhenCloning = function () {
+      return true;      
+    };
+    OB.MobileApp.model.receipt = receipt;
 
+    // create the multiOrders
+    var multiOrders = new OB.Model.MultiOrders();
+    // create the orderList and expose it
+    var orderList = new OB.Collection.OrderList(receipt);
+    OB.MobileApp.model.orderList = orderList;
+    var auxReceiptList = [];
 
-    function success() {
-      return true;
-    }
+    // changing this initialization order may break the loading
+    this.set('order', receipt);
+    this.set('orderList', orderList);
+    this.set('customer', new OB.Model.BusinessPartner());
+    this.set('customerAddr', new OB.Model.BPLocation());
+    this.set('multiOrders', multiOrders);
+    OB.DATA.CustomerSave(this);
+    OB.DATA.CustomerAddrSave(this);
+    OB.DATA.OrderDiscount(receipt);
+    OB.DATA.OrderSave(this);
+    OB.DATA.OrderTaxes(receipt);
 
-    function error() {
-      OB.UTIL.showError('Error removing');
-    }
-    this.set('filter', []);
-    this.set('brandFilter', []);
+    this.printReceipt = new OB.OBPOSPointOfSale.Print.Receipt(this);
+    this.printLine = new OB.OBPOSPointOfSale.Print.ReceiptLine(receipt);
 
-    function searchCurrentBP() {
-      var errorCallback = function (tx, error) {
-          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_BPInfoErrorTitle'), OB.I18N.getLabel('OBPOS_BPInfoErrorMessage'), [{
-            label: OB.I18N.getLabel('OBPOS_Reload')
-          }], {
-            onShowFunction: function (popup) {
-              popup.$.headerCloseButton.hide();
-              window.localStorage.removeItem('POSLastTotalRefresh');
-              window.localStorage.removeItem('POSLastIncRefresh');
-            },
-            onHideFunction: function (popup) {
-              window.localStorage.removeItem('POSLastTotalRefresh');
-              window.localStorage.removeItem('POSLastIncRefresh');
-              window.location.reload();
-            },
-            autoDismiss: false
-          });
-          };
-
-      function successCallbackBPs(dataBps) {
-        var partnerAddressId = OB.MobileApp.model.get('terminal').partnerAddress,
-            successCallbackBPLoc;
-
-        if (dataBps) {
-          if (partnerAddressId && dataBps.get('locId') !== partnerAddressId) {
-            // Set default location
-            successCallbackBPLoc = function (bpLoc) {
-              dataBps.set('locId', bpLoc.get('id'));
-              dataBps.set('locName', bpLoc.get('name'));
-              dataBps.set('locationModel', bpLoc);
-              OB.MobileApp.model.set('businessPartner', dataBps);
-              me.loadUnpaidOrders();
-            };
-            OB.Dal.get(OB.Model.BPLocation, partnerAddressId, successCallbackBPLoc, errorCallback, errorCallback);
-          } else {
-            // set locationModel
-            if (dataBps.get('locId')) {
-              successCallbackBPLoc = function (bpLoc) {
-                dataBps.set('locId', bpLoc.get('id'));
-                dataBps.set('locName', bpLoc.get('name'));
-                dataBps.set('locationModel', bpLoc);
-                OB.MobileApp.model.set('businessPartner', dataBps);
-                me.loadUnpaidOrders();
-              };
-              OB.Dal.get(OB.Model.BPLocation, dataBps.get('locId'), successCallbackBPLoc, errorCallback, errorCallback);
-            }
-          }
-        }
-      }
-      OB.Dal.get(OB.Model.BusinessPartner, OB.MobileApp.model.get('businesspartner'), successCallbackBPs, errorCallback, errorCallback);
-    }
-
-    //Because in terminal we've the BP id and we want to have the BP model.
-    //In this moment we can ensure data is already loaded in the local database
-    searchCurrentBP();
-
-    ViewManager = Backbone.Model.extend({
+    var ViewManager = Backbone.Model.extend({
       defaults: {
         currentWindow: {
           name: 'mainSubWindow',
@@ -240,7 +204,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       },
       initialize: function () {}
     });
-    LeftColumnViewManager = Backbone.Model.extend({
+
+    var LeftColumnViewManager = Backbone.Model.extend({
       defaults: {
         currentView: {}
       },
@@ -277,147 +242,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       }
     });
 
-    // expose the receipt
-    OB.MobileApp.model.receipt = receipt;
-
-    // create the orderList and expose it
-    orderList = new OB.Collection.OrderList(receipt);
-    OB.MobileApp.model.orderList = orderList;
-
-    this.set('order', receipt);
-    this.set('orderList', orderList);
-    this.set('customer', new OB.Model.BusinessPartner());
-    this.set('customerAddr', new OB.Model.BPLocation());
-    this.set('multiOrders', multiOrders);
-
-    this.get('multiOrders').on('paymentAccepted', function () {
-      OB.UTIL.showLoading(true);
-      ordersLength = this.get('multiOrders').get('multiOrdersList').length;
-
-      function readyToSendFunction() {
-        //this function is executed when all orders are ready to be sent
-        me.get('leftColumnViewManager').setOrderMode();
-        if (me.get('orderList').length > _.filter(me.get('multiOrders').get('multiOrdersList').models, function (order) {
-          return !order.get('isLayaway');
-        }).length) {
-          me.get('orderList').addNewOrder();
-        }
-      }
-
-      function prepareToSendCallback(order) {
-        auxReceipt = new OB.Model.Order();
-        auxReceipt.clearWith(order);
-
-        if (order.get('orderType') !== 2 && order.get('orderType') !== 3) {
-          var negativeLines = _.filter(order.get('lines').models, function (line) {
-            return line.get('qty') < 0;
-          }).length;
-          if (negativeLines === order.get('lines').models.length) {
-            order.setOrderType('OBPOS_receipt.return', OB.DEC.One, {
-              applyPromotions: false,
-              saveOrder: false
-            });
-          } else {
-            order.setOrderType('', OB.DEC.Zero, {
-              applyPromotions: false,
-              saveOrder: false
-            });
-          }
-        }
-        me.get('multiOrders').trigger('closed', order);
-        enyo.$.scrim.hide();
-        me.get('multiOrders').trigger('print', order, {
-          offline: true
-        }); // to guaranty execution order
-        SyncReadyToSendFunction();
-
-        auxReceiptList.push(auxReceipt);
-        if (auxReceiptList.length === me.get('multiOrders').get('multiOrdersList').length) {
-          OB.UTIL.cashUpReport(auxReceiptList);
-          auxReceiptList = [];
-        }
-      }
-
-      //this var is a function (copy of the above one) which is called by every items, but it is just executed once (when ALL items has called to it)
-      SyncReadyToSendFunction = _.after(this.get('multiOrders').get('multiOrdersList').length, readyToSendFunction);
-
-      for (j = 0; j < ordersLength; j++) {
-        //Create the negative payment for change
-        iter = this.get('multiOrders').get('multiOrdersList').at(j);
-        amountToPay = !_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway')) ? iter.get('amountToLayaway') : OB.DEC.sub(iter.get('gross'), iter.get('payment'));
-        while (((_.isUndefined(iter.get('amountToLayaway')) || iter.get('amountToLayaway') > 0) && iter.get('gross') > iter.get('payment')) || (iter.get('amountToLayaway') > 0)) {
-          for (i = 0; i < this.get('multiOrders').get('payments').length; i++) {
-            var payment = this.get('multiOrders').get('payments').at(i),
-                paymentMethod = OB.MobileApp.model.paymentnames[payment.get('kind')];
-            //FIXME:Change is always given back in store currency
-            if (this.get('multiOrders').get('change') > 0 && paymentMethod.paymentMethod.iscash) {
-              payment.set('origAmount', OB.DEC.sub(payment.get('origAmount'), this.get('multiOrders').get('change')));
-              this.get('multiOrders').set('change', OB.DEC.Zero);
-            }
-            if (payment.get('origAmount') <= amountToPay) {
-              var bigDecAmount = new BigDecimal(String(OB.DEC.mul(payment.get('origAmount'), paymentMethod.mulrate)));
-              iter.addPayment(new OB.Model.PaymentLine({
-                'kind': payment.get('kind'),
-                'name': payment.get('name'),
-                'amount': OB.DEC.toNumber(bigDecAmount),
-                'rate': paymentMethod.rate,
-                'mulrate': paymentMethod.mulrate,
-                'isocode': paymentMethod.isocode,
-                'allowOpenDrawer': payment.get('allowopendrawer'),
-                'isCash': payment.get('iscash'),
-                'openDrawer': payment.get('openDrawer'),
-                'printtwice': payment.get('printtwice')
-              }));
-              if (!_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway'))) {
-                iter.set('amountToLayaway', OB.DEC.sub(iter.get('amountToLayaway'), payment.get('origAmount')));
-              }
-              this.get('multiOrders').get('payments').remove(this.get('multiOrders').get('payments').at(i));
-              amountToPay = !_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway')) ? iter.get('amountToLayaway') : OB.DEC.sub(iter.get('gross'), iter.get('payment'));
-            } else {
-              var bigDecAmountAux;
-              if (j === this.get('multiOrders').get('multiOrdersList').length - 1 && !paymentMethod.paymentMethod.iscash) {
-                bigDecAmountAux = new BigDecimal(String(payment.get('origAmount')));
-                amtAux = OB.DEC.toNumber(bigDecAmountAux);
-                this.get('multiOrders').get('payments').at(i).set('origAmount', OB.DEC.sub(this.get('multiOrders').get('payments').at(i).get('origAmount'), payment.get('origAmount')));
-              } else {
-                bigDecAmountAux = new BigDecimal(String(OB.DEC.mul(amountToPay, paymentMethod.mulrate)));
-                amtAux = OB.DEC.toNumber(bigDecAmountAux);
-                this.get('multiOrders').get('payments').at(i).set('origAmount', OB.DEC.sub(this.get('multiOrders').get('payments').at(i).get('origAmount'), amountToPay));
-              }
-
-              iter.addPayment(new OB.Model.PaymentLine({
-                'kind': payment.get('kind'),
-                'name': payment.get('name'),
-                'amount': amtAux,
-                'rate': paymentMethod.rate,
-                'mulrate': paymentMethod.mulrate,
-                'isocode': paymentMethod.isocode,
-                'allowOpenDrawer': payment.get('allowopendrawer'),
-                'isCash': payment.get('iscash'),
-                'openDrawer': payment.get('openDrawer'),
-                'printtwice': payment.get('printtwice')
-              }));
-              if (!_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway'))) {
-                iter.set('amountToLayaway', OB.DEC.sub(iter.get('amountToLayaway'), amtAux));
-              }
-              amountToPay = !_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway')) ? iter.get('amountToLayaway') : OB.DEC.sub(iter.get('gross'), iter.get('payment'));
-              break;
-            }
-          }
-        }
-        iter.prepareToSend(prepareToSendCallback);
-      }
-
-    }, this);
-
-    customersave = new OB.DATA.CustomerSave(this);
-    customeraddrsave = new OB.DATA.CustomerAddrSave(this);
-
     this.set('leftColumnViewManager', new LeftColumnViewManager());
     this.set('subWindowManager', new ViewManager());
-    discounts = new OB.DATA.OrderDiscount(receipt);
-    ordersave = new OB.DATA.OrderSave(this);
-    OB.DATA.OrderTaxes(receipt);
 
     OB.MobileApp.model.runSyncProcess(function () {
       me.loadCheckedMultiorders();
@@ -426,6 +252,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     });
 
     receipt.on('paymentAccepted', function () {
+      receipt.setIsCalculateGrossLockState(true);
       receipt.prepareToSend(function () {
         //Create the negative payment for change
         var oldChange = receipt.get('change'),
@@ -513,11 +340,19 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             var receiptCopyForVerification = new OB.Model.Order();
             OB.UTIL.clone(receipt, receiptCopyForVerification);
             if (JSON.stringify(receiptCopyForVerification.serializeToJSON()) !== JSON.stringify(frozenReceipt.serializeToJSON())) {
-              OB.error("The receipt has been modified while it was being closed:\n" + JSON.stringify(receiptCopyForVerification.serializeToJSON()) + "\n\n" + JSON.stringify(frozenReceipt.serializeToJSON()) + "\n");
+              OB.error("The receipt has been modified while it was being closed\nExpected:\n" + JSON.stringify(receiptCopyForVerification.serializeToJSON()) + "\n\nbut was:" + JSON.stringify(frozenReceipt.serializeToJSON()) + "\n");
             }
 
+            //In case the processed document is a quotation, we remove its id so it can be reactivated
+            if (receipt.get('isQuotation')) {
+              if (!(receipt.get('oldId') && receipt.get('oldId').length > 0)) {
+                receipt.set('oldId', receipt.get('id'));
+              }
+              receipt.set('isbeingprocessed', 'N');
+            }
             orderList.deleteCurrent();
             orderList.synchronizeCurrentOrder();
+            receipt.setIsCalculateGrossLockState(false);
             enyo.$.scrim.hide();
           }
         });
@@ -526,43 +361,167 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     }, this);
 
     receipt.on('paymentDone', function (openDrawer) {
-      if (receipt.overpaymentExists()) {
-        var symbol = OB.MobileApp.model.get('terminal').symbol;
-        var symbolAtRight = OB.MobileApp.model.get('terminal').currencySymbolAtTheRight;
-        var amount = receipt.getPaymentStatus().overpayment;
-        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_OverpaymentWarningTitle'), OB.I18N.getLabel('OBPOS_OverpaymentWarningBody', [OB.I18N.formatCurrencyWithSymbol(amount, symbol, symbolAtRight)]), [{
-          label: OB.I18N.getLabel('OBMOBC_LblOk'),
-          isConfirmButton: true,
-          action: function () {
-            if (openDrawer) {
-              OB.POS.hwserver.openDrawer({
-                openFirst: false,
-                receipt: receipt
-              }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
+      OB.UTIL.SynchronizationHelper.executeWhenSynchronized({
+        makeSynchronous: true
+      }, function (args, callback) {
+        if (receipt.overpaymentExists()) {
+          var symbol = OB.MobileApp.model.get('terminal').symbol;
+          var symbolAtRight = OB.MobileApp.model.get('terminal').currencySymbolAtTheRight;
+          var amount = receipt.getPaymentStatus().overpayment;
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_OverpaymentWarningTitle'), OB.I18N.getLabel('OBPOS_OverpaymentWarningBody', [OB.I18N.formatCurrencyWithSymbol(amount, symbol, symbolAtRight)]), [{
+            label: OB.I18N.getLabel('OBMOBC_LblOk'),
+            isConfirmButton: true,
+            action: function () {
+              if (openDrawer) {
+                OB.POS.hwserver.openDrawer({
+                  openFirst: false,
+                  receipt: receipt
+                }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
+              }
+              receipt.trigger('paymentAccepted');
             }
-            receipt.trigger('paymentAccepted');
+          }, {
+            label: OB.I18N.getLabel('OBMOBC_LblCancel')
+          }]);
+        } else if ((OB.DEC.abs(receipt.getPayment()) !== OB.DEC.abs(receipt.getGross())) && (!receipt.isLayaway() && !receipt.get('paidOnCredit'))) {
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_PaymentAmountDistinctThanReceiptAmountTitle'), OB.I18N.getLabel('OBPOS_PaymentAmountDistinctThanReceiptAmountBody'), [{
+            label: OB.I18N.getLabel('OBMOBC_LblOk'),
+            isConfirmButton: true,
+            action: function () {
+              receipt.trigger('paymentAccepted');
+            }
+          }, {
+            label: OB.I18N.getLabel('OBMOBC_LblCancel')
+          }]);
+        } else {
+          if (openDrawer) {
+            OB.POS.hwserver.openDrawer({
+              openFirst: true,
+              receipt: receipt
+            }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
           }
-        }, {
-          label: OB.I18N.getLabel('OBMOBC_LblCancel')
-        }]);
-      } else if ((OB.DEC.abs(receipt.getPayment()) !== OB.DEC.abs(receipt.getGross())) && (!receipt.isLayaway() && !receipt.get('paidOnCredit'))) {
-        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_PaymentAmountDistinctThanReceiptAmountTitle'), OB.I18N.getLabel('OBPOS_PaymentAmountDistinctThanReceiptAmountBody'), [{
-          label: OB.I18N.getLabel('OBMOBC_LblOk'),
-          isConfirmButton: true,
-          action: function () {
-            receipt.trigger('paymentAccepted');
-          }
-        }, {
-          label: OB.I18N.getLabel('OBMOBC_LblCancel')
-        }]);
-      } else {
-        if (openDrawer) {
-          OB.POS.hwserver.openDrawer({
-            openFirst: true,
-            receipt: receipt
-          }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
+          receipt.trigger('paymentAccepted');
         }
-        receipt.trigger('paymentAccepted');
+        callback();
+      }, {});
+    }, this);
+
+    this.get('multiOrders').on('paymentAccepted', function () {
+      OB.UTIL.showLoading(true);
+      var ordersLength = this.get('multiOrders').get('multiOrdersList').length;
+
+      function readyToSendFunction() {
+        //this function is executed when all orders are ready to be sent
+        me.get('leftColumnViewManager').setOrderMode();
+        if (me.get('orderList').length > _.filter(me.get('multiOrders').get('multiOrdersList').models, function (order) {
+          return !order.get('isLayaway');
+        }).length) {
+          me.get('orderList').addNewOrder();
+        }
+      }
+
+      // this var is a function (copy of the above one) which is called by every items, but it is just executed once (when ALL items has called to it)
+      var SyncReadyToSendFunction = _.after(this.get('multiOrders').get('multiOrdersList').length, readyToSendFunction);
+
+      function prepareToSendCallback(order) {
+        var auxReceipt = new OB.Model.Order();
+        OB.UTIL.clone(order, auxReceipt);
+
+        if (order.get('orderType') !== 2 && order.get('orderType') !== 3) {
+          var negativeLines = _.filter(order.get('lines').models, function (line) {
+            return line.get('qty') < 0;
+          }).length;
+          if (negativeLines === order.get('lines').models.length) {
+            order.setOrderType('OBPOS_receipt.return', OB.DEC.One, {
+              applyPromotions: false,
+              saveOrder: false
+            });
+          } else {
+            order.setOrderType('', OB.DEC.Zero, {
+              applyPromotions: false,
+              saveOrder: false
+            });
+          }
+        }
+        me.get('multiOrders').trigger('closed', order);
+        enyo.$.scrim.hide();
+        me.get('multiOrders').trigger('print', order, {
+          offline: true
+        }); // to guaranty execution order
+        SyncReadyToSendFunction();
+
+        auxReceiptList.push(auxReceipt);
+        if (auxReceiptList.length === me.get('multiOrders').get('multiOrdersList').length) {
+          OB.UTIL.cashUpReport(auxReceiptList);
+          auxReceiptList = [];
+        }
+      }
+      var i, j;
+      for (j = 0; j < ordersLength; j++) {
+        //Create the negative payment for change
+        var iter = this.get('multiOrders').get('multiOrdersList').at(j);
+        var amountToPay = !_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway')) ? iter.get('amountToLayaway') : OB.DEC.sub(iter.get('gross'), iter.get('payment'));
+        while (((_.isUndefined(iter.get('amountToLayaway')) || iter.get('amountToLayaway') > 0) && iter.get('gross') > iter.get('payment')) || (iter.get('amountToLayaway') > 0)) {
+          for (i = 0; i < this.get('multiOrders').get('payments').length; i++) {
+            var payment = this.get('multiOrders').get('payments').at(i),
+                paymentMethod = OB.MobileApp.model.paymentnames[payment.get('kind')];
+            //FIXME:Change is always given back in store currency
+            if (this.get('multiOrders').get('change') > 0 && paymentMethod.paymentMethod.iscash) {
+              payment.set('origAmount', OB.DEC.sub(payment.get('origAmount'), this.get('multiOrders').get('change')));
+              this.get('multiOrders').set('change', OB.DEC.Zero);
+            }
+            if (payment.get('origAmount') <= amountToPay) {
+              var bigDecAmount = new BigDecimal(String(OB.DEC.mul(payment.get('origAmount'), paymentMethod.mulrate)));
+              iter.addPayment(new OB.Model.PaymentLine({
+                'kind': payment.get('kind'),
+                'name': payment.get('name'),
+                'amount': OB.DEC.toNumber(bigDecAmount),
+                'rate': paymentMethod.rate,
+                'mulrate': paymentMethod.mulrate,
+                'isocode': paymentMethod.isocode,
+                'allowOpenDrawer': payment.get('allowopendrawer'),
+                'isCash': payment.get('iscash'),
+                'openDrawer': payment.get('openDrawer'),
+                'printtwice': payment.get('printtwice')
+              }));
+              if (!_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway'))) {
+                iter.set('amountToLayaway', OB.DEC.sub(iter.get('amountToLayaway'), payment.get('origAmount')));
+              }
+              this.get('multiOrders').get('payments').remove(this.get('multiOrders').get('payments').at(i));
+              amountToPay = !_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway')) ? iter.get('amountToLayaway') : OB.DEC.sub(iter.get('gross'), iter.get('payment'));
+            } else {
+              var bigDecAmountAux, amtAux;
+              if (j === this.get('multiOrders').get('multiOrdersList').length - 1 && !paymentMethod.paymentMethod.iscash) {
+                bigDecAmountAux = new BigDecimal(String(payment.get('origAmount')));
+                amtAux = OB.DEC.toNumber(bigDecAmountAux);
+                this.get('multiOrders').get('payments').at(i).set('origAmount', OB.DEC.sub(this.get('multiOrders').get('payments').at(i).get('origAmount'), payment.get('origAmount')));
+              } else {
+                bigDecAmountAux = new BigDecimal(String(OB.DEC.mul(amountToPay, paymentMethod.mulrate)));
+                amtAux = OB.DEC.toNumber(bigDecAmountAux);
+                this.get('multiOrders').get('payments').at(i).set('origAmount', OB.DEC.sub(this.get('multiOrders').get('payments').at(i).get('origAmount'), amountToPay));
+              }
+
+              iter.addPayment(new OB.Model.PaymentLine({
+                'kind': payment.get('kind'),
+                'name': payment.get('name'),
+                'amount': amtAux,
+                'rate': paymentMethod.rate,
+                'mulrate': paymentMethod.mulrate,
+                'isocode': paymentMethod.isocode,
+                'allowOpenDrawer': payment.get('allowopendrawer'),
+                'isCash': payment.get('iscash'),
+                'openDrawer': payment.get('openDrawer'),
+                'printtwice': payment.get('printtwice')
+              }));
+              if (!_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway'))) {
+                iter.set('amountToLayaway', OB.DEC.sub(iter.get('amountToLayaway'), amtAux));
+              }
+              amountToPay = !_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway')) ? iter.get('amountToLayaway') : OB.DEC.sub(iter.get('gross'), iter.get('payment'));
+              break;
+            }
+          }
+        }
+        iter.prepareToSend(prepareToSendCallback);
       }
     }, this);
 
@@ -596,9 +555,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       }
     }, this);
 
-    this.printReceipt = new OB.OBPOSPointOfSale.Print.Receipt(this);
-    this.printLine = new OB.OBPOSPointOfSale.Print.ReceiptLine(receipt);
-
     // Listening events that cause a discount recalculation
     receipt.get('lines').on('add change:qty change:price', function (line) {
       if (!receipt.get('isEditable')) {
@@ -618,7 +574,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       OB.Model.Discounts.applyPromotions(receipt);
     });
 
-    receipt.on('change:bp', function (line) {
+    receipt.on('change:bp', function () {
       if (!receipt.get('isEditable') || receipt.get('lines').length === 0) {
         return;
       }
@@ -629,13 +585,14 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       });
       OB.Model.Discounts.applyPromotions(receipt);
     }, this);
+
     receipt.on('voidLayaway', function () {
-      var process = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessVoidLayaway'),
-          auxReceipt = new OB.Model.Order();
-      auxReceipt.clearWith(receipt);
+      var process = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessVoidLayaway');
+      var auxReceipt = new OB.Model.Order();
+      OB.UTIL.clone(receipt, auxReceipt);
       process.exec({
         order: receipt
-      }, function (data, message) {
+      }, function (data) {
         if (data && data.exception) {
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorVoidLayaway'));
         } else {
@@ -660,6 +617,75 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
       });
     }, this);
+
+    callback();
+  },
+  loadModels: function (loadModelsCallback) {
+    var me = this;
+
+    this.set('filter', []);
+    this.set('brandFilter', []);
+
+    function searchCurrentBP(callback) {
+      var errorCallback = function () {
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_BPInfoErrorTitle'), OB.I18N.getLabel('OBPOS_BPInfoErrorMessage'), [{
+            label: OB.I18N.getLabel('OBPOS_Reload')
+          }], {
+            onShowFunction: function (popup) {
+              popup.$.headerCloseButton.hide();
+              window.localStorage.removeItem('POSLastTotalRefresh');
+              window.localStorage.removeItem('POSLastIncRefresh');
+            },
+            onHideFunction: function () {
+              window.localStorage.removeItem('POSLastTotalRefresh');
+              window.localStorage.removeItem('POSLastIncRefresh');
+              window.location.reload();
+            },
+            autoDismiss: false
+          });
+          };
+
+      function successCallbackBPs(dataBps) {
+        var partnerAddressId = OB.MobileApp.model.get('terminal').partnerAddress,
+            successCallbackBPLoc;
+
+        if (dataBps) {
+          if (partnerAddressId && dataBps.get('locId') !== partnerAddressId) {
+            // Set default location
+            successCallbackBPLoc = function (bpLoc) {
+              dataBps.set('locId', bpLoc.get('id'));
+              dataBps.set('locName', bpLoc.get('name'));
+              dataBps.set('locationModel', bpLoc);
+              OB.MobileApp.model.set('businessPartner', dataBps);
+              me.loadUnpaidOrders(callback);
+            };
+            OB.Dal.get(OB.Model.BPLocation, partnerAddressId, successCallbackBPLoc, errorCallback, errorCallback);
+          } else {
+            // set locationModel
+            if (dataBps.get('locId')) {
+              successCallbackBPLoc = function (bpLoc) {
+                dataBps.set('locId', bpLoc.get('id'));
+                dataBps.set('locName', bpLoc.get('name'));
+                dataBps.set('locationModel', bpLoc);
+                OB.MobileApp.model.set('businessPartner', dataBps);
+                me.loadUnpaidOrders(callback);
+              };
+              OB.Dal.get(OB.Model.BPLocation, dataBps.get('locId'), successCallbackBPLoc, errorCallback, errorCallback);
+            }
+          }
+        }
+      }
+      OB.Dal.get(OB.Model.BusinessPartner, OB.MobileApp.model.get('businesspartner'), successCallbackBPs, errorCallback, errorCallback);
+    }
+
+
+    // force the initialization of the document sequence info and wait until is set
+    OB.MobileApp.model.saveDocumentSequence(-1, -1, function () {
+      //Because in terminal we've the BP id and we want to have the BP model.
+      //In this moment we can ensure data is already loaded in the local database
+      searchCurrentBP(loadModelsCallback);
+    });
+
   },
 
   /**
@@ -701,7 +727,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       }
       if (args.approvals.length > 0) {
         OB.UTIL.Approval.requestApproval(
-        me, args.approvals, function (approved, supervisor, approvalType) {
+        me, args.approvals, function (approved) {
           if (approved) {
             me.trigger('approvalChecked', {
               approved: (args.approved !== undefined) ? args.approved : true

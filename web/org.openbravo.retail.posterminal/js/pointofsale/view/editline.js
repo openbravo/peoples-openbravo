@@ -314,7 +314,8 @@ enyo.kind({
         maxHeight: '50px',
         thumb: true,
         horizontal: 'hidden',
-        classes: 'span12'
+        classes: 'span12',
+        style: 'padding: 0px 0px 1px 0px; line-height: 50%;'
       }, {
         kind: 'OB.UI.List',
         name: 'returnreason',

@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, enyo, Backbone */
+/*global OB, enyo */
 
 enyo.kind({
   name: 'OB.UI.ModalReceiptPropertiesImpl',
@@ -45,7 +45,7 @@ enyo.kind({
       }
     },
     // override to not load things upfront
-    loadValue: function (inSender, inEvent) {},
+    loadValue: function () {},
     fetchDataFunction: function (args) {
       var me = this,
           actualUser;
@@ -63,7 +63,7 @@ enyo.kind({
           me.dataReadyFunction(data, args);
         }
 
-      }, function (error) {
+      }, function () {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_ErrorGettingSalesRepresentative'));
         me.dataReadyFunction(null, args);
       }, args);
@@ -93,7 +93,7 @@ enyo.kind({
     this.setHeader(OB.I18N.getLabel('OBPOS_ReceiptPropertiesDialogTitle'));
 
     this.model = model.get('order');
-    this.model.bind('change', function () {
+    this.model.on('change', function () {
       var diff = this.model.changedAttributes(),
           att;
       for (att in diff) {
@@ -103,7 +103,7 @@ enyo.kind({
       }
     }, this);
 
-    this.model.bind('paymentAccepted', function () {
+    this.model.on('paymentAccepted', function () {
       this.resetProperties();
     }, this);
   }

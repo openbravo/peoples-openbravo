@@ -110,7 +110,9 @@
     },
 
     getTotalLine: function () {
-      return (OB.DEC.mul(this.get('grossListPrice'), this.get('qty'))) - this.getDiscount();
+      if (!OB.UTIL.isNullOrUndefined(this.get('grossListPrice'))) {
+        return (OB.DEC.mul(this.get('grossListPrice'), this.get('qty'))) - this.getDiscount();
+      }
     },
 
     getNet: function () {
@@ -305,7 +307,6 @@
         this.set('change', attributes.change);
         this.set('qty', attributes.qty);
         this.set('gross', attributes.gross);
-        this.trigger('calculategross');
         this.set('net', attributes.net);
         this.set('taxes', attributes.taxes);
         this.set('hasbeenpaid', attributes.hasbeenpaid);
@@ -327,19 +328,21 @@
       }
     },
 
-    save: function () {
-      var undoCopy;
-
-      if (this.attributes.json) {
-        delete this.attributes.json; // Needed to avoid recursive inclusions of itself !!!
-      }
-      undoCopy = this.get('undo');
-      this.unset('undo');
-      this.set('json', JSON.stringify(this.toJSON()));
+    save: function (callback) {
+      var undoCopy = this.get('undo');
+      this.set('json', JSON.stringify(this.serializeToJSON()));
       if (!OB.MobileApp.model.get('preventOrderSave')) {
-        OB.Dal.save(this, function () {}, function () {
+        OB.Dal.save(this, function () {
+          if (callback) {
+            callback();
+          }
+        }, function () {
           OB.error(arguments);
         });
+      } else {
+        if (callback) {
+          callback();
+        }
       }
       this.set('undo', undoCopy);
     },
@@ -463,8 +466,30 @@
       return affectedLines ? affectedLines : null;
     },
 
+    isCalculateGrossLocked: null,
+
+    setIsCalculateGrossLockState: function (state) {
+      this.isCalculateGrossLocked = state;
+    },
+
     calculateGross: function () {
       var me = this;
+
+      // verify that the ui receipt is the only one in which calculateGross is executed
+      OB.UTIL.Debug.execute(function () {
+        var isTheUIReceipt = this.cid === OB.MobileApp.model.receipt.cid;
+        if (!isTheUIReceipt) {
+          OB.error("calculateGross should only be called by the UI receipt");
+        }
+      }, this);
+
+      // verify that the calculateGross is not locked
+      if (this.isCalculateGrossLocked === true) {
+        OB.error("calculateGross execution is forbidden right now");
+      } else if (this.isCalculateGrossLocked !== false) {
+        OB.error("setting the isCalculateGrossLocked state is mandatory before executing it the first time");
+      }
+
       var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('calculateGross');
 
       // reset some vital receipt values because, at this point, they are obsolete. do not fire the change event
@@ -503,10 +528,10 @@
           });
 
           me.adjustPayment();
-          me.save();
-          me.trigger('calculategross');
-          me.trigger('saveCurrent');
-          OB.UTIL.SynchronizationHelper.finished(synchId, 'calculateGross');
+          me.save(function () {
+            me.trigger('saveCurrent');
+            OB.UTIL.SynchronizationHelper.finished(synchId, 'calculateGross');
+          });
           };
 
       if (this.get('priceIncludesTax')) {
@@ -641,7 +666,6 @@
       this.set('gross', OB.DEC.Zero);
       this.set('net', OB.DEC.Zero);
       this.set('taxes', {});
-      this.trigger('calculategross');
       this.set('hasbeenpaid', 'N');
       this.set('isbeingprocessed', 'N');
       this.set('description', '');
@@ -657,8 +681,15 @@
     },
 
     clearWith: function (_order) {
-      var me = this,
-          undf, localSkipApplyPromotions, idExecution;
+      // verify that the clearWith is not used for any other purpose than to update and fire the events of the UI receipt
+      OB.UTIL.Debug.execute(function () {
+        var isTheUIReceipt = this.cid === OB.MobileApp.model.receipt.cid;
+        if (!isTheUIReceipt) {
+          OB.error("The target of the clearWith should only be the UI receipt. Use OB.UTIL.clone instead");
+        }
+      }, this);
+
+      var idExecution;
 
       // we set first this property to avoid that the apply promotions is triggered
       this.set('isNewReceipt', _order.get('isNewReceipt'));
@@ -683,9 +714,7 @@
         this.set('idExecution', idExecution);
       }
 
-      OB.UTIL.clone(_order, this, {
-        silent: true
-      });
+      OB.UTIL.clone(_order, this);
 
       if (!OB.UTIL.isNullOrUndefined(this.get('idExecution')) && this.get('idExecution') === idExecution) {
         _order.set('cloningReceipt', false);
@@ -2497,7 +2526,6 @@
           order.set('bp', bp);
           order.set('gross', model.totalamount);
           order.set('net', model.totalNetAmount);
-          order.trigger('calculategross');
 
           _.each(model.receiptLines, function (iter) {
             var price;
@@ -2776,7 +2804,7 @@
     },
     saveCurrent: function () {
       if (this.current) {
-        this.current.clearWith(this.modelorder);
+        OB.UTIL.clone(this.modelorder, this.current);
       }
     },
     loadCurrent: function (isNew) {
@@ -2791,6 +2819,7 @@
         this.modelorder.clearWith(this.current);
         this.modelorder.set('isNewReceipt', false);
         this.modelorder.trigger('paintTaxes');
+        this.modelorder.setIsCalculateGrossLockState(false);
       }
     },
     synchronizeCurrentOrder: function () {

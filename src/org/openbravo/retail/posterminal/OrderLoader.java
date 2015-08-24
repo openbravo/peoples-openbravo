@@ -76,6 +76,7 @@ import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.order.OrderLineOffer;
 import org.openbravo.model.common.order.OrderTax;
 import org.openbravo.model.common.plm.AttributeSetInstance;
+import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_OrigPaymentScheduleDetail;
@@ -237,7 +238,13 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
             orderLine.setDeliveredQuantity(orderLine.getOrderedQuantity());
           }
         } else {
-          order = OBProvider.getInstance().get(Order.class);
+          OBCriteria<Order> ordercrit = OBDal.getInstance().createCriteria(Order.class);
+          ordercrit.add(Restrictions.eq(Order.PROPERTY_ID, jsonorder.getString("id")));
+          if (ordercrit.count() > 0) {
+            order = (Order) ordercrit.uniqueResult();
+          } else {
+            order = OBProvider.getInstance().get(Order.class);
+          }
           createOrder(order, jsonorder);
           OBDal.getInstance().save(order);
           lineReferences = new ArrayList<OrderLine>();
@@ -1075,8 +1082,20 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
     for (int i = 0; i < orderlines.length(); i++) {
 
-      OrderLine orderline = OBProvider.getInstance().get(OrderLine.class);
       JSONObject jsonOrderLine = orderlines.getJSONObject(i);
+      OrderLine orderline = null;
+      JSONObject jsonproduct = jsonOrderLine.getJSONObject("product");
+      OBCriteria<Product> prodcrit = OBDal.getInstance().createCriteria(Product.class);
+      prodcrit.add(Restrictions.idEq(jsonproduct.get("id")));
+      Product product = (Product) prodcrit.uniqueResult();
+      OBCriteria<OrderLine> ordlincrit = OBDal.getInstance().createCriteria(OrderLine.class);
+      ordlincrit.add(Restrictions.eq(OrderLine.PROPERTY_PRODUCT, product));
+      ordlincrit.add(Restrictions.eq(OrderLine.PROPERTY_SALESORDER, order));
+      if (ordlincrit.count() > 0) {
+        orderline = (OrderLine) ordlincrit.uniqueResult();
+      } else {
+        orderline = OBProvider.getInstance().get(OrderLine.class);
+      }
 
       JSONPropertyToEntity.fillBobFromJSON(ModelProvider.getInstance().getEntity(OrderLine.class),
           orderline, jsonorder, jsonorder.getLong("timezoneOffset"));
@@ -1105,9 +1124,19 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       while (itKeys.hasNext()) {
         String taxId = itKeys.next();
         JSONObject jsonOrderTax = taxes.getJSONObject(taxId);
-        OrderLineTax orderlinetax = OBProvider.getInstance().get(OrderLineTax.class);
+        OrderLineTax orderlinetax = null;
         TaxRate tax = (TaxRate) OBDal.getInstance().getProxy(
             ModelProvider.getInstance().getEntity(TaxRate.class).getName(), taxId);
+        OBCriteria<OrderLineTax> lintaxcrit = OBDal.getInstance()
+            .createCriteria(OrderLineTax.class);
+        lintaxcrit.add(Restrictions.eq(OrderLineTax.PROPERTY_SALESORDERLINE, orderline));
+        lintaxcrit.add(Restrictions.eq(OrderLineTax.PROPERTY_TAX, tax));
+        lintaxcrit.add(Restrictions.eq(OrderLineTax.PROPERTY_SALESORDER, order));
+        if (lintaxcrit.count() > 0) {
+          orderlinetax = (OrderLineTax) lintaxcrit.uniqueResult();
+        } else {
+          orderlinetax = OBProvider.getInstance().get(OrderLineTax.class);
+        }
         orderlinetax.setTax(tax);
         orderlinetax.setTaxableAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("net")).setScale(
             stdPrecision, RoundingMode.HALF_UP));
@@ -1192,18 +1221,29 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     order.setProcessNow(false);
     order.setObposSendemail((jsonorder.has("sendEmail") && jsonorder.getBoolean("sendEmail")));
 
-    long documentno = (long) Integer.parseInt(order.getDocumentNo().substring(
+    long documentno = Long.parseLong(order.getDocumentNo().substring(
         order.getDocumentNo().lastIndexOf("/") + 1));
-    if (order.getObposApplications().getLastassignednum() == null
-        || documentno > order.getObposApplications().getLastassignednum()) {
-      OBPOSApplications terminal = order.getObposApplications();
-      terminal.setLastassignednum(documentno);
-      OBDal.getInstance().save(terminal);
-    }
 
+    if (jsonorder.getBoolean("isQuotation")) {
+      if (order.getObposApplications().getQuotationslastassignednum() == null
+          || documentno > order.getObposApplications().getQuotationslastassignednum()) {
+        OBPOSApplications terminal = order.getObposApplications();
+        terminal.setQuotationslastassignednum(documentno);
+        OBDal.getInstance().save(terminal);
+      }
+    } else {
+      if (order.getObposApplications().getLastassignednum() == null
+          || documentno > order.getObposApplications().getLastassignednum()) {
+        OBPOSApplications terminal = order.getObposApplications();
+        terminal.setLastassignednum(documentno);
+        OBDal.getInstance().save(terminal);
+      }
+    }
     if (!bp.getADUserList().isEmpty()) {
       order.setUserContact(bp.getADUserList().get(0));
     }
+
+    OBDal.getInstance().save(order);
 
     JSONObject taxes = jsonorder.getJSONObject("taxes");
     @SuppressWarnings("unchecked")
@@ -1211,10 +1251,18 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     int i = 0;
     while (itKeys.hasNext()) {
       String taxId = itKeys.next();
+      OrderTax orderTax = null;
       JSONObject jsonOrderTax = taxes.getJSONObject(taxId);
-      OrderTax orderTax = OBProvider.getInstance().get(OrderTax.class);
       TaxRate tax = (TaxRate) OBDal.getInstance().getProxy(
           ModelProvider.getInstance().getEntity(TaxRate.class).getName(), taxId);
+      OBCriteria<OrderTax> ordtaxcrit = OBDal.getInstance().createCriteria(OrderTax.class);
+      ordtaxcrit.add(Restrictions.eq(OrderTax.PROPERTY_TAX, tax)).add(
+          Restrictions.eq(OrderTax.PROPERTY_SALESORDER, order));
+      if (ordtaxcrit.list().size() > 0) {
+        orderTax = (OrderTax) ordtaxcrit.uniqueResult();
+      } else {
+        orderTax = OBProvider.getInstance().get(OrderTax.class);
+      }
       orderTax.setTax(tax);
       orderTax.setTaxableAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("net")).setScale(
           stdPrecision, RoundingMode.HALF_UP));
@@ -1344,13 +1392,22 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
       // Create a unique payment schedule for all payments
       BigDecimal amt = BigDecimal.valueOf(jsonorder.getDouble("payment"));
-      FIN_PaymentSchedule paymentSchedule = OBProvider.getInstance().get(FIN_PaymentSchedule.class);
+      FIN_PaymentSchedule paymentSchedule = null;
+      OBCriteria<FIN_PaymentSchedule> paymschecrit = OBDal.getInstance().createCriteria(
+          FIN_PaymentSchedule.class);
+      paymschecrit.add(Restrictions.eq(FIN_PaymentSchedule.PROPERTY_ORDER, order));
+      paymschecrit.add(Restrictions.eq(FIN_PaymentSchedule.PROPERTY_FINPAYMENTMETHOD,
+          order.getPaymentMethod()));
+      if (paymschecrit.count() > 0) {
+        paymentSchedule = (FIN_PaymentSchedule) paymschecrit.uniqueResult();
+      } else {
+        paymentSchedule = OBProvider.getInstance().get(FIN_PaymentSchedule.class);
+      }
       int stdPrecision = order.getCurrency().getStandardPrecision().intValue();
       if (!newLayaway && (notpaidLayaway || creditpaidLayaway || fullypaidLayaway)) {
         paymentSchedule = order.getFINPaymentScheduleList().get(0);
         stdPrecision = order.getCurrency().getStandardPrecision().intValue();
       } else {
-        paymentSchedule = OBProvider.getInstance().get(FIN_PaymentSchedule.class);
         paymentSchedule.setCurrency(order.getCurrency());
         paymentSchedule.setOrder(order);
         paymentSchedule.setFinPaymentmethod(order.getBusinessPartner().getPaymentMethod());

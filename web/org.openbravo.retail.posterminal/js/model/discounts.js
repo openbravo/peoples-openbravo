@@ -36,7 +36,7 @@
       if (OB.MobileApp.model.hasPermission('OBPOS_discount.newFlow', true)) {
         var auxReceipt = new OB.Model.Order(),
             auxLine, hasPromotions, oldLines, oldLines2, actualLines, auxReceipt2, isFirstExecution = true;
-        auxReceipt.clearWith(receipt);
+        OB.UTIL.clone(receipt, auxReceipt);
         auxReceipt.groupLinesByProduct();
         me.auxReceiptInExecution = auxReceipt;
         auxReceipt.on('discountsApplied', function () {

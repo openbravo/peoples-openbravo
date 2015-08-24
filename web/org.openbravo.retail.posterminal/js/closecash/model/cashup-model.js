@@ -53,15 +53,15 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
     loaded: true,
     active: true
   }],
-  init: function () {
-    var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('cashup-model.init');
+  init: function () {},
+  initModels: function (initModelsCallback) {
+    var synchId1 = OB.UTIL.SynchronizationHelper.busyUntilFinishes('cashup-model.init1');
     //Check for orders which are being processed in this moment.
     //cancel -> back to point of sale
     //Ok -> Continue closing without these orders
     var undf, me = this,
         terminalSlave = !OB.POS.modelterminal.get('terminal').ismaster && OB.POS.modelterminal.get('terminal').isslave,
         newstep, expected = 0,
-        totalStartings = 0,
         startings = [],
         cashUpReport, tempList = new Backbone.Collection(),
         activePaymentsList = [];
@@ -93,7 +93,6 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
         'cashup_id': cashUp.at(0).get('id'),
         '_orderByClause': 'name asc'
       }, function (payMthds) { //OB.Dal.find success
-        OB.UTIL.SynchronizationHelper.finished(synchId, 'cashup-model.init');
         // Get list of active payments
         _.each(OB.MobileApp.model.get('payments'), function (payment) {
           if (payment.payment.active === true) {
@@ -167,19 +166,51 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
         me.cashupStepsDefinition[me.stepIndex('OB.CashUp.CashPayments')].loaded = true;
         me.cashupStepsDefinition[me.stepIndex('OB.CashUp.PaymentMethods')].loaded = true;
         me.finishLoad();
+        OB.UTIL.SynchronizationHelper.finished(synchId1, 'cashup-model.init1');
       }, function () {
-        OB.UTIL.SynchronizationHelper.finished(synchId, 'cashup-model.init');
+        OB.UTIL.SynchronizationHelper.finished(synchId1, 'cashup-model.init1');
       });
     }, this);
 
+    var synchId2 = OB.UTIL.SynchronizationHelper.busyUntilFinishes('cashup-model.init2');
     this.set('cashUpReport', new Backbone.Collection());
     OB.Dal.find(OB.Model.CashUp, {
       'isprocessed': 'N'
     }, function (cashUp) {
       cashUpReport = cashUp.at(0);
+
+      initModelsCallback();
+
       cashUpReport.set('deposits', []);
       cashUpReport.set('drops', []);
-
+      OB.Dal.find(OB.Model.CashManagement, {
+        'cashup_id': cashUpReport.get('id'),
+        'type': 'deposit'
+      }, function (cashMgmts) {
+        _.forEach(cashMgmts.models, function (cashMgmt) {
+          cashMgmt.set('searchKey', 'cashMgmtDeposit' + (_.filter(OB.MobileApp.model.get('payments'), function (pay) {
+            return pay.payment.id === cashMgmt.get('paymentMethodId');
+          }))[0].payment.searchKey.replace('_', '') + cashMgmt.get('amount'));
+        });
+        cashUpReport.set('deposits', cashMgmts.models);
+        cashUpReport.set('totalDeposits', _.reduce(cashMgmts.models, function (accum, trx) {
+          return OB.DEC.add(accum, trx.get('origAmount'));
+        }, 0));
+      }, this);
+      OB.Dal.find(OB.Model.CashManagement, {
+        'cashup_id': cashUpReport.get('id'),
+        'type': 'drop'
+      }, function (cashMgmts) {
+        _.forEach(cashMgmts.models, function (cashMgmt) {
+          cashMgmt.set('searchKey', 'cashMgmtDrop' + (_.filter(OB.MobileApp.model.get('payments'), function (pay) {
+            return pay.payment.id === cashMgmt.get('paymentMethodId');
+          }))[0].payment.searchKey.replace('_', '') + cashMgmt.get('amount'));
+        });
+        cashUpReport.set('drops', cashMgmts.models);
+        cashUpReport.set('totalDrops', _.reduce(cashMgmts.models, function (accum, trx) {
+          return OB.DEC.add(accum, trx.get('origAmount'));
+        }, 0));
+      }, this);
       OB.Dal.find(OB.Model.TaxCashUp, {
         'cashup_id': cashUpReport.get('id'),
         'orderType': {
@@ -245,7 +276,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
           }
         }, 0));
 
-        _.each(payMthds.models, function (p, index) {
+        _.each(payMthds.models, function (p) {
           var auxPay = OB.MobileApp.model.get('payments').filter(function (pay) {
             return pay.payment.id === p.get('paymentmethod_id');
           })[0];
@@ -295,7 +326,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
           cashUpReport: cashUpReport
         }, function (args) {
           me.get('cashUpReport').add(args.cashUpReport);
-          me.finishLoad();
+          initModelsCallback();
+          OB.UTIL.SynchronizationHelper.finished(synchId2, 'cashup-model.init2');
         });
       }, this);
     }, this);
@@ -332,24 +364,19 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
         pendingOrderList.remove(orderToRemove);
       });
 
-      // Recalculate total properly for all  pendingorders.
-      pendingOrderList.each(function (pendingorder) {
-        OB.DATA.OrderTaxes(pendingorder);
-        pendingorder.calculateGross();
-      });
-
       me.get('orderlist').reset(pendingOrderList.models);
       var indexStepPendingOrders = me.stepIndex('OB.CashUp.StepPendingOrders');
       me.cashupStepsDefinition[indexStepPendingOrders].active = pendingOrderList.length > 0;
       me.cashupStepsDefinition[indexStepPendingOrders].loaded = true;
-      me.finishLoad();
     }, function (tx, error) {
       OB.UTIL.showError("OBDAL error: " + error);
     }, this);
 
     this.printCashUp = new OB.OBPOSCashUp.Print.CashUp();
 
-    this.finishLoad();
+  },
+  loadModels: function (loadModelsCallback) {
+    loadModelsCallback();
   },
   finishLoad: function () {
     var finish = true;
