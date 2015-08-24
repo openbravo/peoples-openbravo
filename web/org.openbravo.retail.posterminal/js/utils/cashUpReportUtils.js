@@ -564,7 +564,7 @@
     objToSend.set('userId', OB.MobileApp.model.get('context').user.id);
     cashUp.at(0).set('objToSend', JSON.stringify(objToSend));
     OB.Dal.saveInTransaction(tx, cashUp.at(0), function () {
-      if (callback)  {
+      if (callback) {
         callback(me);
       }
     }, null);

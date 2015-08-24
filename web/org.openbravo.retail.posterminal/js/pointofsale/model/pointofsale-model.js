@@ -163,12 +163,12 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
   },
   initModels: function (callback) {
     var me = this;
-    
+
     // create and expose the receipt
     var receipt = new OB.Model.Order();
     // fire events if the receipt model is the target of the OB.UTIL.clone method
     receipt.triggerEventsIfTargetOfSourceWhenCloning = function () {
-      return true;      
+      return true;
     };
     OB.MobileApp.model.receipt = receipt;
 

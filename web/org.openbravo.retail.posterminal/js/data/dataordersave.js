@@ -172,17 +172,17 @@
           OB.info("[receipt.closed] Transaction success. ReceiptId: " + receipt.get('id'));
 
           function serverMessageForQuotation(frozenReceipt) {
-              var isLayaway = (frozenReceipt.get('orderType') === 2 || frozenReceipt.get('isLayaway'));
-              var currentDocNo = frozenReceipt.get('documentNo');
-              if (frozenReceipt && frozenReceipt.get('isQuotation')) {
-                OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationSaved', [currentDocNo]));
+            var isLayaway = (frozenReceipt.get('orderType') === 2 || frozenReceipt.get('isLayaway'));
+            var currentDocNo = frozenReceipt.get('documentNo');
+            if (frozenReceipt && frozenReceipt.get('isQuotation')) {
+              OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationSaved', [currentDocNo]));
+            } else {
+              if (isLayaway) {
+                OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgLayawaySaved', [currentDocNo]));
               } else {
-                if (isLayaway) {
-                  OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgLayawaySaved', [currentDocNo]));
-                } else {
-                  OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgReceiptSaved', [currentDocNo]));
-                }
+                OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgReceiptSaved', [currentDocNo]));
               }
+            }
 
             OB.trace('Order successfully removed.');
           }
