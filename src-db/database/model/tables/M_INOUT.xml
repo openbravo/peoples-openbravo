@@ -338,6 +338,9 @@
       <index name="M_INOUT_ORDER" unique="false">
         <index-column name="C_ORDER_ID"/>
       </index>
+      <index name="M_INOUT_POSTED" unique="false">
+        <index-column name="POSTED"/>
+      </index>
       <index name="M_INOUT_UPDATED" unique="false">
         <index-column name="UPDATED"/>
       </index>

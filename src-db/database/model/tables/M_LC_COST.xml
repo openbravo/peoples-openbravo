@@ -152,6 +152,9 @@
       <index name="M_LC_COST_LANDEDCOST" unique="false">
         <index-column name="M_LANDEDCOST_ID"/>
       </index>
+      <index name="M_LC_COST_POSTED" unique="false">
+        <index-column name="POSTED"/>
+      </index>
       <check name="M_LC_COST_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="M_LC_COST_MATCHADJ"><![CDATA[ISMATCHINGADJUSTED IN ('Y', 'N')]]></check>
       <check name="M_LC_COST_MATCHED"><![CDATA[ISMATCHED IN ('Y', 'N')]]></check>

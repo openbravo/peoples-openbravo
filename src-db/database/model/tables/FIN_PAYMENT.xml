@@ -187,6 +187,9 @@
       <foreign-key foreignTable="USER2" name="FIN_PAYMENT_USER2">
         <reference local="USER2_ID" foreign="USER2_ID"/>
       </foreign-key>
+      <index name="FIN_PAYMENT_POSTED" unique="false">
+        <index-column name="POSTED"/>
+      </index>
       <check name="FIN_PAYMENT_BP_CREDIT_CHECK"><![CDATA[C_BPARTNER_ID IS NULL AND COALESCE(GENERATED_CREDIT, 0) = 0 OR C_BPARTNER_ID IS NOT NULL]]></check>
       <check name="FIN_PAYMENT_CREATE_ALGORIT_CHK"><![CDATA[CREATEDBYALGORITHM IN ('Y', 'N')]]></check>
       <check name="FIN_PAYMENT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>

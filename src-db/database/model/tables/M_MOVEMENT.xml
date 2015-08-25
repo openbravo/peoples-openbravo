@@ -127,6 +127,9 @@
       <foreign-key foreignTable="USER2" name="M_MOVEMENT_USER2">
         <reference local="USER2_ID" foreign="USER2_ID"/>
       </foreign-key>
+      <index name="M_MOVEMENT_POSTED" unique="false">
+        <index-column name="POSTED"/>
+      </index>
       <check name="M_MOVEMENT_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="M_MOVEMENT_MOVE_FROMTO_LOC_CHK"><![CDATA[MOVE_FROMTO_LOCATOR IN ('Y', 'N')]]></check>
       <check name="M_MOVEMENT_PROCESSED_CHK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>

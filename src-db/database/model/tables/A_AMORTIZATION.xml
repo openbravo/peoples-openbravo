@@ -117,6 +117,9 @@
       <foreign-key foreignTable="USER2" name="A_AMORTIZATION_USER2">
         <reference local="USER2_ID" foreign="USER2_ID"/>
       </foreign-key>
+      <index name="A_AMORTIZATION_POSTED" unique="false">
+        <index-column name="POSTED"/>
+      </index>
       <check name="A_AMORTIZATION_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>
