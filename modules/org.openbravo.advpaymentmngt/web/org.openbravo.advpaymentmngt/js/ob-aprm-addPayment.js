@@ -978,13 +978,17 @@ OB.APRM.AddPayment.receivedFromOnChange = function (item, view, form, grid) {
       isSOTrx = form.getItem('issotrx').getValue(),
       financialAccount = form.getItem('fin_financial_account_id').getValue(),
       ordinvgrid = form.getItem('order_invoice').canvas.viewGrid,
+      paymentMethodItem = form.getItem('fin_paymentmethod_id'),
       newCriteria = {};
   affectedParams.push(form.getField('credit_to_use_display_logic').paramId);
   OB.APRM.AddPayment.recalcDisplayLogicOrReadOnlyLogic(form, view, affectedParams);
 
   callback = function (response, data, request) {
     if (data.paymentMethodId !== '') {
-      form.getItem('fin_paymentmethod_id').setValue(data.paymentMethodId);
+      paymentMethodItem.setValue(data.paymentMethodId);
+      paymentMethodItem.valueMap[data.paymentMethodId] = data.paymentMethodName;
+      form.redraw();
+      OB.APRM.AddPayment.paymentMethodOnChange(paymentMethodItem, view, form, grid);
     }
   };
 
