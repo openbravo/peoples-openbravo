@@ -641,6 +641,12 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           auxReceipt.calculateTaxes(function () {
             auxReceipt.adjustPrices();
             OB.UTIL.cashUpReport(auxReceipt);
+    // force the initialization of the document sequence info and wait until is set
+    OB.MobileApp.model.saveDocumentSequence(-1, -1, function () {
+      //Because in terminal we've the BP id and we want to have the BP model.
+      //In this moment we can ensure data is already loaded in the local database
+      searchCurrentBP(loadModelsCallback);
+    });
           });
           OB.Dal.remove(receipt, null, function (tx, err) {
             OB.UTIL.showError(err);
@@ -658,13 +664,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
       });
     }, this);
-
-    // force the initialization of the document sequence info and wait until is set
-    OB.MobileApp.model.saveDocumentSequence(-1, -1, function () {
-      //Because in terminal we've the BP id and we want to have the BP model.
-      //In this moment we can ensure data is already loaded in the local database
-      searchCurrentBP();
-    });
   },
 
   /**
