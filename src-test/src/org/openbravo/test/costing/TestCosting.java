@@ -5087,11 +5087,11 @@ public class TestCosting extends BaseDataSourceTestDal {
       costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList1.get(0),
           CURRENCY2_ID, "LC", quantity1.multiply(price1).add(quantity1.multiply(price8).negate()),
           day0, true, false));
-      costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList2.get(0),
-          CURRENCY2_ID, "LC", quantity2.multiply(price2).add(quantity2.multiply(price9).negate()),
-          day0, true, false));
       costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList1.get(0),
           CURRENCY1_ID, "LC", quantity1.multiply(price1).add(quantity1.multiply(price10).negate()),
+          day0, true, false));
+      costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList2.get(0),
+          CURRENCY2_ID, "LC", quantity2.multiply(price2).add(quantity2.multiply(price9).negate()),
           day0, true, false));
       costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList2.get(0),
           CURRENCY1_ID, "LC", quantity2.multiply(price2).add(quantity2.multiply(price11).negate()),
@@ -5106,11 +5106,11 @@ public class TestCosting extends BaseDataSourceTestDal {
       costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList1.get(0),
           CURRENCY2_ID, "LC", quantity1.multiply(price1).add(quantity1.multiply(price8).negate()),
           day0, true, false));
-      costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList2.get(0),
-          CURRENCY2_ID, "LC", quantity2.multiply(price2).add(quantity2.multiply(price9).negate()),
-          day0, true, false));
       costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList1.get(0),
           CURRENCY1_ID, "LC", quantity1.multiply(price1).add(quantity1.multiply(price10).negate()),
+          day0, true, false));
+      costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList2.get(0),
+          CURRENCY2_ID, "LC", quantity2.multiply(price2).add(quantity2.multiply(price9).negate()),
           day0, true, false));
       costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList2.get(0),
           CURRENCY1_ID, "LC", quantity2.multiply(price2).add(quantity2.multiply(price11).negate()),
