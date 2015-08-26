@@ -323,7 +323,8 @@ enyo.kind({
   },
   events: {
     onTabChange: '',
-    onClearUserInput: ''
+    onClearUserInput: '',
+    onShowPopup: ''
   },
   showPaymentTab: function () {
     var receipt = this.model.get('order'),
@@ -384,7 +385,7 @@ enyo.kind({
           this.showPaymentTab();
         }
       }, this);
-      this.model.completePayment();
+      this.model.completePayment(this);
       this.doClearUserInput();
     }
   },
