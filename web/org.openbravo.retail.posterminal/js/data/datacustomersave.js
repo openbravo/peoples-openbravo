@@ -47,13 +47,17 @@
           bpToSave.set('id', me.customer.get('id'));
         }
         bpToSave.set('isbeingprocessed', 'Y');
-        OB.Dal.save(bpToSave, function () {
-          bpToSave.set('json', me.customer.serializeToJSON());
-          var successCallback, errorCallback, List;
-          successCallback = function () {
-            OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_customerSaved', [me.customer.get('_identifier')]));
-          };
-          OB.MobileApp.model.runSyncProcess(successCallback);
+        OB.UTIL.HookManager.executeHooks('OBPOS_PostCustomerSave', {
+          customer: me.customer,
+          bpToSave: bpToSave
+        }, function (args) {
+          OB.Dal.save(bpToSave, function () {
+            bpToSave.set('json', me.customer.serializeToJSON());
+            var successCallback = function () {
+                OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_customerSaved', [me.customer.get('_identifier')]));
+                };
+            OB.MobileApp.model.runSyncProcess(successCallback);
+          });
         }, function () {
           //error saving BP changes with changes in changedbusinesspartners
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorSavingCustomerChanges', [me.customer.get('_identifier')]));
