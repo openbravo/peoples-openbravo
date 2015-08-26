@@ -21,6 +21,7 @@ package org.openbravo.advpaymentmngt.actionHandler;
 
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.client.kernel.BaseActionHandler;
@@ -41,6 +42,7 @@ public class ReceivedFromPaymentMethodActionHandler extends BaseActionHandler {
           jsonData.getString("financialAccount"));
       boolean contains = false;
       String paymentMethod = null;
+      String paymentMethodName = null;
 
       if (financialAccount != null) {
         if (jsonData.has("receivedFrom") && jsonData.get("receivedFrom") != JSONObject.NULL) {
@@ -56,9 +58,9 @@ public class ReceivedFromPaymentMethodActionHandler extends BaseActionHandler {
           }
           for (FinAccPaymentMethod finAccPaymentMethod : financialAccount
               .getFinancialMgmtFinAccPaymentMethodList()) {
-            if (finAccPaymentMethod.getPaymentMethod().equals(
-                OBDal.getInstance().get(FIN_PaymentMethod.class, paymentMethod))) {
+            if (StringUtils.equals(finAccPaymentMethod.getPaymentMethod().getId(), paymentMethod)) {
               contains = true;
+              break;
             } else {
               contains = false;
             }
@@ -67,10 +69,17 @@ public class ReceivedFromPaymentMethodActionHandler extends BaseActionHandler {
       } else {
         contains = false;
       }
+
       if (!contains) {
         paymentMethod = "";
+        paymentMethodName = "";
+      } else {
+        paymentMethodName = OBDal.getInstance().get(FIN_PaymentMethod.class, paymentMethod)
+            .getName();
       }
+
       result.put("paymentMethodId", paymentMethod);
+      result.put("paymentMethodName", paymentMethodName);
       return result;
     } catch (Exception e) {
       throw new OBException(e);
