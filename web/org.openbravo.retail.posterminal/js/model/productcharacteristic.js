@@ -49,6 +49,10 @@
     name: '_identifier',
     column: '_identifier',
     type: 'TEXT'
+  }, {
+    name: 'obposFilteronwebpos',
+    column: 'obposFilteronwebpos',
+    type: 'TEXT'
   }]);
 
   OB.Data.Registry.registerModel(ProductCharacteristic);

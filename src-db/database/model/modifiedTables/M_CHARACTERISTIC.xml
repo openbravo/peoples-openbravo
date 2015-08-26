@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+  <database name="MODIFIED TABLE M_CHARACTERISTIC">
+    <table name="M_CHARACTERISTIC" primaryKey="M_CHARACTERISTIC_KEY">
+      <column name="EM_OBPOS_FILTERONWEBPOS" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault><![CDATA['Y']]></onCreateDefault>
+      </column>
+      <check name="EM_OBPOS_FILTERONWEBPOS_CHECK"><![CDATA[EM_OBPOS_FILTERONWEBPOS IN ('Y', 'N')]]></check>
+    </table>
+  </database>
