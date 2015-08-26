@@ -182,7 +182,6 @@ public class Product extends ProcessHQLQuery {
     }
 
     return products;
-
   }
 
   @Override
