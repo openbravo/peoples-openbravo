@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2012-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2012-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -340,11 +340,13 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
       bdPriceStd = BigDecimal.ZERO;
     }
     BigDecimal discount = BigDecimal.ZERO;
-    discount = bdPriceList
-        .subtract(bdPriceStd)
-        .multiply(new BigDecimal("100"))
-        .divide(bdPriceList, objCloneOrder.getCurrency().getStandardPrecision().intValue(),
-            BigDecimal.ROUND_HALF_EVEN);
+    if (bdPriceList.compareTo(BigDecimal.ZERO) != 0) {
+      discount = bdPriceList
+          .subtract(bdPriceStd)
+          .multiply(new BigDecimal("100"))
+          .divide(bdPriceList, objCloneOrder.getCurrency().getStandardPrecision().intValue(),
+              BigDecimal.ROUND_HALF_EVEN);
+    }
     objCloneOrdLine.setDiscount(discount);
     // Line Price
     if (objOrder.getPriceList().isPriceIncludesTax()) {

@@ -156,6 +156,7 @@ public class JsonRestServlet extends BaseWebServiceServlet {
       } else {
         JSONStreamWriter writer = new JSONStreamWriter(response, parameters);
         parameters.put(JsonConstants.USE_ALIAS, "true");
+        parameters.put(JsonConstants.IS_WS_CALL, "true");
         DefaultJsonDataService.getInstance().fetch(parameters, writer);
         writer.close();
       }
@@ -405,5 +406,4 @@ public class JsonRestServlet extends BaseWebServiceServlet {
       writer.close();
     }
   }
-
 }

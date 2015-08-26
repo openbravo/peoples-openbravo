@@ -101,7 +101,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '23952';
+  var number = '27290';
   return number;
 }
 
@@ -128,7 +128,11 @@ function getBrowserInfo(param) {
   var browserVersion = "";
   var browserMajorVersion = "";
   var i=0
-  if (navUserAgent.indexOf("MSIE") >= 0) {
+  if (navUserAgent.indexOf("EDGE") >= 0) {
+    browserName = "Microsoft Edge";
+    i=navUserAgent.indexOf("EDGE")+5;
+  }
+  else if (navUserAgent.indexOf("MSIE") >= 0) {
     browserName = "Microsoft Internet Explorer";
     i=navUserAgent.indexOf("MSIE")+5;
   } else if (navUserAgent.indexOf("TRIDENT") >= 0 && navUserAgent.indexOf("RV:") >= 0) {

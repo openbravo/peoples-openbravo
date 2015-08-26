@@ -216,6 +216,9 @@
       <index name="GL_JOURNAL_JOURNALBATCH_IDX" unique="false">
         <index-column name="GL_JOURNALBATCH_ID"/>
       </index>
+      <index name="GL_JOURNAL_POSTED" unique="false">
+        <index-column name="POSTED"/>
+      </index>
       <unique name="GL_JOURNAL_DOCNO">
         <unique-column name="AD_ORG_ID"/>
         <unique-column name="C_PERIOD_ID"/>
@@ -225,7 +228,7 @@
       <check name="GL_JOURNAL_ISAPPROVED_CHECK"><![CDATA[ISAPPROVED IN ('Y', 'N')]]></check>
       <check name="GL_JOURNAL_ISPRINTED_CHECK"><![CDATA[ISPRINTED IN ('Y', 'N')]]></check>
       <check name="GL_JOURNAL_MULTI_GL_CHECK"><![CDATA[MULTI_GL IN ('Y', 'N')]]></check>
-      <check name="GL_JOURNAL_MULTIACCT_CHECK"><![CDATA[((MULTI_GL = 'Y') AND (C_ACCTSCHEMA_ID IS NULL)) OR ((MULTI_GL = 'N') AND (C_ACCTSCHEMA_ID IS NOT NULL))]]></check>
+      <check name="GL_JOURNAL_MULTIACCT_CHECK"><![CDATA[MULTI_GL = 'Y' AND C_ACCTSCHEMA_ID IS NULL OR MULTI_GL = 'N' AND C_ACCTSCHEMA_ID IS NOT NULL]]></check>
       <check name="GL_JOURNAL_PROCESSED_CHECK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
     </table>
   </database>

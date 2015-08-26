@@ -120,5 +120,8 @@
       <foreign-key foreignTable="USER2" name="C_DP_MANAGEMENT_USER2">
         <reference local="USER2_ID" foreign="USER2_ID"/>
       </foreign-key>
+      <index name="C_DP_MANAGEMENT_POSTED" unique="false">
+        <index-column name="POSTED"/>
+      </index>
     </table>
   </database>

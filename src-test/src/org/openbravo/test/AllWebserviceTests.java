@@ -22,11 +22,13 @@ package org.openbravo.test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.openbravo.test.costing.TestCosting;
+import org.openbravo.test.datasource.ExtendedNavigationModelTest;
 import org.openbravo.test.datasource.FICTest;
 import org.openbravo.test.datasource.FKDropDownDatasource;
 import org.openbravo.test.datasource.HQLDataSourceTest;
 import org.openbravo.test.datasource.ProductSelectorDataSourceTest;
 import org.openbravo.test.datasource.SelectorFieldPropertySelectorDSTest;
+import org.openbravo.test.datasource.TestAllowUnpagedDatasourcePreference;
 import org.openbravo.test.datasource.TestCSVEncoding;
 import org.openbravo.test.datasource.TestComboDatasource;
 import org.openbravo.test.datasource.TestNoteDatasource;
@@ -58,8 +60,10 @@ WSReadTest.class, //
     JSONWebServices.class, //
     FICTest.class, //
     HQLDataSourceTest.class, //
-    TestNoteDatasource.class,//
-    TestCosting.class,//
-    WebServicesWithNoActiveFilterTest.class })
+    TestAllowUnpagedDatasourcePreference.class, //
+    TestNoteDatasource.class, //
+    TestCosting.class, //
+    WebServicesWithNoActiveFilterTest.class, //
+    ExtendedNavigationModelTest.class })
 public class AllWebserviceTests {
 }

@@ -614,7 +614,7 @@ public class CostAdjustmentUtils {
     select.append("    trxtype." + propADListPriority + " < :trxtypeprio");
     select.append("    or (");
     select.append("     trxtype." + propADListPriority + " = :trxtypeprio");
-    select.append("     and trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " = :trxqty");
+    select.append("     and trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " > :trxqty");
     select.append("        or (");
     select.append("         trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " = :trxqty");
     select.append("         and trx." + MaterialTransaction.PROPERTY_ID + " <= :trxid");

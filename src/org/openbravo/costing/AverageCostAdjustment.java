@@ -61,7 +61,13 @@ import org.slf4j.LoggerFactory;
 @ComponentProvider.Qualifier("org.openbravo.costing.AverageAlgorithm")
 public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
   private static final Logger log = LoggerFactory.getLogger(CostAdjustmentProcess.class);
-  private String bdCostingId = "";
+  private String bdCostingId;
+
+  @Override
+  protected void init(CostAdjustmentLine costAdjLine) {
+    super.init(costAdjLine);
+    bdCostingId = "";
+  }
 
   @Override
   protected void getRelatedTransactionsByAlgorithm() {

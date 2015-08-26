@@ -21,31 +21,35 @@ package org.openbravo.erpCommon.utility;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collections;
+import java.util.List;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.criterion.Restrictions;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
-import org.openbravo.data.Sqlc;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.model.ad.datamodel.Table;
+import org.openbravo.model.ad.domain.TableNavigation;
 import org.openbravo.model.ad.system.Language;
+import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
+import org.openbravo.model.ad.ui.Window;
 import org.openbravo.model.ad.ui.WindowTrl;
-import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
-import org.openbravo.model.project.Project;
 
 public class ReferencedLink extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
@@ -55,46 +59,48 @@ public class ReferencedLink extends HttpSecureAppServlet {
     boolHist = false;
   }
 
+  /**
+   * Method called from js during the click on a link
+   * 
+   * @param request
+   *          HTTP request object to handle parameters and session attributes
+   * @param response
+   *          HTTP response object to handle possible redirects
+   */
+
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
+    try {
+      OBContext.setAdminMode(true);
+      VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    if (vars.commandIn("DEFAULT")) {
-
-      StringBuffer servletURL = new StringBuffer();
-      String tabId = getTabId(vars);
-      String strKeyReferenceId = vars.getStringParameter("inpKeyReferenceId");
-
-      servletURL.append(Utility.getTabURL(tabId, "E", true));
-      servletURL.append("?Command=").append((strKeyReferenceId.equals("") ? "DEFAULT" : "DIRECT"))
-          .append("&");
-      servletURL.append("inpDirectKey").append("=").append(strKeyReferenceId);
-
-      if (log4j.isDebugEnabled()) {
-        log4j.debug(servletURL.toString());
-      }
-
-      response.sendRedirect(servletURL.toString());
-
-    } else if (vars.commandIn("JSON")) {
-      response.setCharacterEncoding("UTF-8");
-      response.setContentType("application/json");
-      PrintWriter out = response.getWriter();
-      out.print(getJSON(vars));
-      out.close();
-    } else
-      throw new ServletException();
+      if (vars.commandIn("JSON")) {
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json");
+        PrintWriter out = response.getWriter();
+        out.print(getJSON(vars).toString());
+        out.close();
+      } else
+        throw new ServletException();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
-  private String getJSON(VariablesSecureApp vars) throws ServletException {
+  /**
+   * Get the JSON with the destination window, tab and row
+   * 
+   * @param vars
+   *          VariablesSecureApp with the session data.
+   * @return A JSON Object with the destination window, tab and row
+   */
+
+  private JSONObject getJSON(VariablesSecureApp vars) throws ServletException {
     String tabId = getTabId(vars);
     String recordId = vars.getStringParameter("inpKeyReferenceId");
-    JSONObject json = null;
+    JSONObject json = new JSONObject();
 
     try {
-      OBContext.setAdminMode();
-
-      json = new JSONObject();
 
       Tab tab = OBDal.getInstance().get(Tab.class, tabId);
 
@@ -103,7 +109,7 @@ public class ReferencedLink extends HttpSecureAppServlet {
 
       final Entity entity = ModelProvider.getInstance().getEntity(tab.getTable().getName());
 
-      // special case, find the real recordId for the language case
+      // Special case, find the real recordId for the language case
       if (entity.getName().equals(Language.ENTITY_NAME)) {
         final OBQuery<Language> languages = OBDal.getInstance().createQuery(Language.class,
             Language.PROPERTY_LANGUAGE + "=?");
@@ -125,190 +131,203 @@ public class ReferencedLink extends HttpSecureAppServlet {
         tabTitle = tab.getWindow().getName();
       }
 
-      json.put("keyParameter",
-          "inp" + Sqlc.TransformaNombreColumna(entity.getIdProperties().get(0).getColumnName()));
       json.put("tabTitle", tabTitle);
-
-      // find the model object mapping
-      json.put("mappingName", Utility.getTabURL(tabId, "E", false));
     } catch (Exception e) {
       try {
         json.put("error", e.getMessage());
       } catch (JSONException jex) {
         log4j.error("Error trying to generate message: " + jex.getMessage(), jex);
       }
-    } finally {
-      OBContext.restorePreviousMode();
     }
 
-    return json.toString();
+    return json;
   }
+
+  /**
+   * Get the destination tab id
+   * 
+   * @param vars
+   *          VariablesSecureApp with the session data
+   * @return destination tab id
+   */
 
   private String getTabId(VariablesSecureApp vars) throws ServletException {
     String strKeyReferenceColumnName = vars.getRequiredStringParameter("inpKeyReferenceColumnName");
-    // String strKeyReferenceName =
-    // vars.getRequiredStringParameter("inpKeyReferenceName");
-    // String strTableId =
-    // vars.getRequiredStringParameter("inpTableId");
     String strTableReferenceId;
+    Entity obEntity;
     if (vars.hasParameter("inpEntityName")) {
       String entityName = vars.getStringParameter("inpEntityName");
-      strTableReferenceId = ModelProvider.getInstance().getEntity(entityName).getTableId();
+      obEntity = ModelProvider.getInstance().getEntity(entityName);
+      strTableReferenceId = obEntity.getTableId();
     } else {
       strTableReferenceId = vars.getRequiredStringParameter("inpTableReferenceId");
+      obEntity = ModelProvider.getInstance().getEntityByTableId(strTableReferenceId);
     }
+    String fieldId = vars.getStringParameter("inpFieldId");
     String strKeyReferenceId = vars.getStringParameter("inpKeyReferenceId");
-    // String strTabId = vars.getStringParameter("inpTabId");
     String strWindowId = vars.getStringParameter("inpwindowId");
     String strTableName = ReferencedLinkData.selectTableName(this, strTableReferenceId);
-    boolean isSOTrx = true;
+    log4j.debug("strKeyReferenceColumnName:" + strKeyReferenceColumnName + " strTableReferenceId:"
+        + strTableReferenceId + " strKeyReferenceId:" + strKeyReferenceId + " strWindowId:"
+        + strWindowId + " strTableName:" + strTableName);
 
-    if (log4j.isDebugEnabled())
-      log4j.debug("strKeyReferenceColumnName:" + strKeyReferenceColumnName
-          + " strTableReferenceId:" + strTableReferenceId + " strKeyReferenceId:"
-          + strKeyReferenceId + " strWindowId:" + strWindowId + " strTableName:" + strTableName);
-    {
-      ReferencedTables ref = new ReferencedTables(this, strTableReferenceId,
-          strKeyReferenceColumnName, strKeyReferenceId);
-      if (!ref.hasSOTrx())
-        isSOTrx = (Utility.getContext(this, vars, "IsSOTrx", strWindowId).equals("N") ? false
-            : true);
-      else
-        isSOTrx = ref.isSOTrx();
-      ref = null;
-    }
-
-    // Fixes issue #15723 while the complete implementation defined in #15379 is not ready
-    boolean forcedLink;
+    boolean hasKeyReferenceId = !"null".equals(strKeyReferenceId);
+    // 1st Check - Forced Links - Rules defined as a preference
     try {
       strWindowId = Preferences.getPreferenceValue("ForcedLinkWindow" + strTableName, false,
           vars.getClient(), vars.getOrg(), vars.getUser(), vars.getRole(), strWindowId);
-      forcedLink = true;
-    } catch (PropertyException e) {
-      // Property is not set, follow standard flow
-      forcedLink = false;
+      return getTabIdFromWindow(strWindowId, strTableReferenceId, hasKeyReferenceId);
+    } catch (PropertyException ignore) {
+      // The normal flow throws a propertyException because there are not any forced link, this
+      // exception will be ignored
+    }
+    try {
+      // 2nd Check - NavigationTab - Rules defined at field level
+      // If the field from which navigates is empty, no id is sent, so hasKeyReferenceId is false
+      String returnTabId = applyRules(fieldId, strTableReferenceId, obEntity, strKeyReferenceId,
+          true, hasKeyReferenceId);
+      if (returnTabId != null) {
+        return returnTabId;
+      }
+      // 3rd Check - Navigation Rules - Rules defined at table level
+      returnTabId = applyRules(fieldId, strTableReferenceId, obEntity, strKeyReferenceId, false,
+          hasKeyReferenceId);
+      if (returnTabId != null) {
+        return returnTabId;
+      }
+    } catch (Exception e2) {
+      throw new OBException("Error retrieving destination tab: ", e2);
     }
 
-    if (!forcedLink) {
-      String strTableRealReference = strTableReferenceId;
-      if (strTableReferenceId.equals("800018")) { // DP
-        if (ReferencedTablesData.selectKeyId(this, "C_INVOICE_ID", strTableName,
-            strKeyReferenceColumnName, strKeyReferenceId).equals("")) {
-          if (!ReferencedTablesData.selectKeyId(this, "C_ORDER_ID", strTableName,
-              strKeyReferenceColumnName, strKeyReferenceId).equals("")) {
-            strTableRealReference = ReferencedTablesData.selectTableId(this, "C_Order");
-          } else {
-            strTableRealReference = ReferencedTablesData.selectTableId(this, "C_Settlement");
-            strTableReferenceId = "800021";
-          }
-        }
-      }
-      if (strTableReferenceId.equals("203")) {
-        // Project: select window depending on the project type
-        try {
-          OBContext.setAdminMode();
-          Project referencedProject = OBDal.getInstance().get(Project.class, strKeyReferenceId);
-          Table table = OBDal.getInstance().get(Table.class, strTableReferenceId);
+    // 4th Check - Standard case, select window based on table definition and isSOTrx
+    Table table = OBDal.getInstance().get(Table.class, strTableReferenceId);
+    Window window = table.getWindow();
+    if (window == null) {
+      throw new ServletException("Window not found");
+    }
+    // Only in case an adWindowId is returned
+    strWindowId = DalUtil.getId(window).toString();
 
-          if (table.getWindow() == null) {
-            // If there is no Window defined in Application Dictionary
-            if (referencedProject == null) {
-              // Service project
-              strWindowId = "800001";
-            } else if (referencedProject != null && referencedProject.getProjectCategory() != null
-                && referencedProject.getProjectCategory().equals("S")) {
-              // Multiphase project
-              strWindowId = "130";
-            }
-          } else {
-            // Window defined in Application Dictionary
-            strWindowId = table.getWindow().getId();
-            if (referencedProject != null && referencedProject.getProjectCategory() != null
-                && referencedProject.getProjectCategory().equals("S")) {
-              // Multiphase project
-              strWindowId = "130";
-            }
-          }
-
-        } finally {
-          OBContext.restorePreviousMode();
-        }
-
-      }
-
-      else if (StringUtils.equals(strTableReferenceId, "CE9AFF5F51B846AEAB0B6CBF829092CD")
-          && (StringUtils.equals(strWindowId, "E547CE89D4C04429B6340FFA44E70716") || StringUtils
-              .equals(strWindowId, "6F8F913FA60F4CBD93DC1D3AA696E76E"))) {
-        // Navigate to FIN_Payment_Schedule from Payment In or Payment Out: select destination
-        // window depending on the source window
-        try {
-          OBContext.setAdminMode();
-          if (StringUtils.isEmpty(strKeyReferenceId)
-              || StringUtils.equals(strKeyReferenceId, "null")) {
-            throw new ServletException(
-                String
-                    .format(
-                        "Empty Record: browse to referenced record not possible. strTableReferenceId = '%s',  strWindowId = '%s' ",
-                        strTableReferenceId, strWindowId));
-          } else {
-            FIN_PaymentSchedule paymentSchedule = OBDal.getInstance().get(
-                FIN_PaymentSchedule.class, strKeyReferenceId);
-            if (paymentSchedule.getOrder() != null) {
-              // Order Payment Schedule
-              strTableReferenceId = "70E57DEA195843729FF303C9A71EBCA3";
-              if (strWindowId.equals("E547CE89D4C04429B6340FFA44E70716")) {
-                // Payment In window -> Sales Order
-                strWindowId = "143";
-              } else if (strWindowId.equals("6F8F913FA60F4CBD93DC1D3AA696E76E")) {
-                // Payment Out window -> Purchase Order
-                strWindowId = "181";
-              }
-            } else if (paymentSchedule.getInvoice() != null) {
-              // Invoice Payment Schedule
-              if (strWindowId.equals("E547CE89D4C04429B6340FFA44E70716")) {
-                // Payment In window -> Sales Invoice
-                strWindowId = "167";
-              } else if (strWindowId.equals("6F8F913FA60F4CBD93DC1D3AA696E76E")) {
-                // Payment Out window -> Purchase Invoice
-                strWindowId = "183";
-              }
-            }
-          }
-        } finally {
-          OBContext.restorePreviousMode();
-        }
-
-      }
-
-      else {
-        // Standard case, select window based on table definition and isSOTrx
-        ReferencedLinkData[] data = ReferencedLinkData.selectWindows(this, strTableRealReference);
-        if (data == null || data.length == 0)
-          throw new ServletException("Window not found");
-
-        // only in case an adWindowId is returned
-        if (!data[0].adWindowId.equals("")) {
-          strWindowId = data[0].adWindowId;
-        }
-        if (!isSOTrx && !data[0].poWindowId.equals("")) {
-          strWindowId = data[0].poWindowId;
-        }
+    boolean isSOTrx = isSOTrx(strTableReferenceId, strKeyReferenceColumnName, strKeyReferenceId,
+        vars, strWindowId);
+    if (!isSOTrx) {
+      Window poWindow = table.getPOWindow();
+      if (poWindow != null) {
+        strWindowId = DalUtil.getId(poWindow).toString();
       }
     }
-    ReferencedLinkData[] data = ReferencedLinkData.select(this, strWindowId, strTableReferenceId);
-    if (data == null || data.length == 0)
-      throw new ServletException("Window not found: " + strWindowId);
-    String tabId = data[0].adTabId;
-    if (strKeyReferenceId.equals("")) {
-      data = ReferencedLinkData.selectParent(this, strWindowId);
-      if (data == null || data.length == 0)
-        throw new ServletException("Window parent not found: " + strWindowId);
-      tabId = data[0].adTabId;
-    }
-    return tabId;
+
+    return getTabIdFromWindow(strWindowId, strTableReferenceId, !hasKeyReferenceId);
   }
 
-  public String getServletInfo() {
-    return "Servlet that presents the referenced links";
-  } // end of getServletInfo() method
+  /**
+   * Get the destination tab id
+   * 
+   * @param strWindowId
+   *          Source window id
+   * @param strTableReferenceId
+   *          Destination table id
+   * @param returnParent
+   *          boolean that determines if the parent tab needs to be returned
+   * @return destination tab id
+   */
+
+  private String getTabIdFromWindow(String strWindowId, String strTableReferenceId,
+      boolean returnParent) throws ServletException {
+    ReferencedLinkData[] data = ReferencedLinkData.select(this, strWindowId, strTableReferenceId);
+    if (data == null || data.length == 0) {
+      throw new ServletException("Window not found: " + strWindowId);
+    }
+    if (returnParent) {
+      data = ReferencedLinkData.selectParent(this, strWindowId);
+      if (data == null || data.length == 0) {
+        throw new ServletException("Window parent not found: " + strWindowId);
+      }
+      return data[0].adTabId;
+    }
+    return data[0].adTabId;
+  }
+
+  /**
+   * Get if is a sales order transaction
+   * 
+   * @param strTableReferenceId
+   *          Destination table id
+   * @param strKeyReferenceColumnName
+   *          Column name
+   * @param strKeyReferenceId
+   *          Destination row id
+   * @param vars
+   *          VariablesSecureApp with the session data
+   * @param strWindowId
+   *          Source window id
+   * @return is sales order transaction
+   */
+
+  private boolean isSOTrx(String strTableReferenceId, String strKeyReferenceColumnName,
+      String strKeyReferenceId, VariablesSecureApp vars, String strWindowId)
+      throws ServletException {
+    boolean isSOTrx;
+    ReferencedTables ref = new ReferencedTables(this, strTableReferenceId,
+        strKeyReferenceColumnName, strKeyReferenceId);
+    if (!ref.hasSOTrx()) {
+      isSOTrx = (Utility.getContext(this, vars, "IsSOTrx", strWindowId).equals("N") ? false : true);
+    } else {
+      isSOTrx = ref.isSOTrx();
+    }
+    return isSOTrx;
+  }
+
+  /**
+   * Apply navigation rules
+   * 
+   * @param fieldId
+   *          Source field id
+   * @param strTableReferenceId
+   *          Destination table id
+   * @param obEntity
+   *          Table entity
+   * @param strKeyReferenceId
+   *          Destination row id
+   * @param fieldRules
+   *          boolean that determines if the rules to be applied are the field level ones or the
+   *          table level ones
+   * @return destination tab id or null if no rule is met
+   */
+
+  private String applyRules(String fieldId, String strTableReferenceId, Entity obEntity,
+      String strKeyReferenceId, boolean fieldRules, boolean hasKeyReferenceId) {
+    OBCriteria<TableNavigation> tableNavigationCriteria = OBDal.getInstance().createCriteria(
+        TableNavigation.class);
+    tableNavigationCriteria.add(Restrictions.eq("table.id", strTableReferenceId));
+    if (fieldRules) {
+      Field field = OBDal.getInstance().get(Field.class, fieldId);
+      tableNavigationCriteria.add(Restrictions.eq(TableNavigation.PROPERTY_FIELD, field));
+    } else {
+      tableNavigationCriteria.add(Restrictions.isNull(TableNavigation.PROPERTY_FIELD));
+    }
+    tableNavigationCriteria.addOrderBy(TableNavigation.PROPERTY_SEQUENCENUMBER, true);
+    List<TableNavigation> tableNavigationList = tableNavigationCriteria.list();
+    // Iterate the navigation rules with a field
+    for (TableNavigation tableNavigation : tableNavigationList) {
+      if (tableNavigation.isDirectNavigation()) {
+        return tableNavigation.getTab().getId();
+      }
+      if (hasKeyReferenceId) {
+        String hqlWhere = "AS e WHERE e.id = :strKeyReferenceId AND ( "
+            + tableNavigation.getHQLLogic() + " )";
+
+        final OBQuery<BaseOBObject> query = OBDal.getInstance().createQuery(obEntity.getName(),
+            hqlWhere);
+        query.setNamedParameter("strKeyReferenceId", strKeyReferenceId);
+
+        query.setMaxResult(1);
+        // If the query returns at least 1 result the rule has to be applied
+        if (query.uniqueResult() != null) {
+          return tableNavigation.getTab().getId();
+        }
+      }
+    }
+    return null;
+  }
 }

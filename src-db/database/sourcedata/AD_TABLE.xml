@@ -1207,7 +1207,7 @@ The Window Access Tab defines the Windows and type of access that this Role is g
 <!--203-->  <CLASSNAME><![CDATA[Project]]></CLASSNAME>
 <!--203-->  <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--203-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
-<!--203-->  <AD_WINDOW_ID><![CDATA[130]]></AD_WINDOW_ID>
+<!--203-->  <AD_WINDOW_ID><![CDATA[800001]]></AD_WINDOW_ID>
 <!--203-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
 <!--203-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
 <!--203-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
@@ -11835,14 +11835,9 @@ group by  coalesce(lcm.id, lcc.id), lcc, lct.name, lcc.amount, lcc.currency.iSOC
 iol.uOM as uOM, iol.id as goodsShipmentLine, iol.movementQuantity as movementQuantity,
 iol.shipmentReceipt.businessPartner as businessPartner, iol.shipmentReceipt.documentNo as shipmentNumber,
 iol.shipmentReceipt.movementDate as movementDate,  attributeSetValue as attributeSetValue,
-coalesce((select sum(ol.orderedQuantity)
-from OrderLine as ol
-left join ol.salesOrder as o
-where ol.goodsShipmentLine = iol
-and o.processed = true
-and o.documentStatus <> 'VO'), 0) as returnQtyOtherRM,
+(@returnedOthersLeftClause@)*(-1) as returnQtyOtherRM,
 (case when (select ('Y') from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol) is null then false else true end) as obSelected,
-coalesce((select ol.orderedQuantity from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol),0)*(-1) as returned,
+(@returnedLeftClause@)*(-1) as returned,
 (select ol.returnReason from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol) as returnReason,
 coalesce((select ol.tax from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol) ,
 @taxSubQuery@) as tax,
@@ -11860,6 +11855,7 @@ join iol.shipmentReceipt as io
 where io.businessPartner.id = :businessPartnerId 
 and io.processed = true and io.documentStatus <> 'VO' 
 and io.salesTransaction = @isSalesTransaction@ 
+and (iol.movementQuantity+(@returnedOthersLeftClause@) <> 0) 
 and @insertion_point_0@
 and @additional_filters@]]></HQLQUERY>
 <!--CDB9DC9655F24DF8AB41AA0ADBD04390-->  <ENTITY_ALIAS><![CDATA[iol]]></ENTITY_ALIAS>
@@ -12236,6 +12232,51 @@ and  ol.salesOrder.id = :salesOrderId]]></HQLQUERY>
 <!--DE2121FA9DC34B2BB1264BB9F7406850-->  <ISTREE><![CDATA[N]]></ISTREE>
 <!--DE2121FA9DC34B2BB1264BB9F7406850--></AD_TABLE>
 
+<!--DFF0A9F7C26C457FA8735A09ACFD5971--><AD_TABLE>
+<!--DFF0A9F7C26C457FA8735A09ACFD5971-->  <AD_TABLE_ID><![CDATA[DFF0A9F7C26C457FA8735A09ACFD5971]]></AD_TABLE_ID>
+<!--DFF0A9F7C26C457FA8735A09ACFD5971-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--DFF0A9F7C26C457FA8735A09ACFD5971-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--DFF0A9F7C26C457FA8735A09ACFD5971-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--DFF0A9F7C26C457FA8735A09ACFD5971-->  <NAME><![CDATA[M_Costing_Transactions_HQL]]></NAME>
+<!--DFF0A9F7C26C457FA8735A09ACFD5971-->  <TABLENAME><![CDATA[M_Costing_Transactions_HQL]]></TABLENAME>
+<!--DFF0A9F7C26C457FA8735A09ACFD5971-->  <ISVIEW><![CDATA[N]]></ISVIEW>
+<!--DFF0A9F7C26C457FA8735A09ACFD5971-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
+<!--DFF0A9F7C26C457FA8735A09ACFD5971-->  <AD_WINDOW_ID><![CDATA[140]]></AD_WINDOW_ID>
+<!--DFF0A9F7C26C457FA8735A09ACFD5971-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
+<!--DFF0A9F7C26C457FA8735A09ACFD5971-->  <ISDELETEABLE><![CDATA[N]]></ISDELETEABLE>
+<!--DFF0A9F7C26C457FA8735A09ACFD5971-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
+<!--DFF0A9F7C26C457FA8735A09ACFD5971-->  <IMPORTTABLE><![CDATA[N]]></IMPORTTABLE>
+<!--DFF0A9F7C26C457FA8735A09ACFD5971-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
+<!--DFF0A9F7C26C457FA8735A09ACFD5971-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
+<!--DFF0A9F7C26C457FA8735A09ACFD5971-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
+<!--DFF0A9F7C26C457FA8735A09ACFD5971-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1EF4B84E040007F01006125]]></AD_PACKAGE_ID>
+<!--DFF0A9F7C26C457FA8735A09ACFD5971-->  <DATAORIGINTYPE><![CDATA[HQL]]></DATAORIGINTYPE>
+<!--DFF0A9F7C26C457FA8735A09ACFD5971-->  <ISTREE><![CDATA[N]]></ISTREE>
+<!--DFF0A9F7C26C457FA8735A09ACFD5971-->  <HQLQUERY><![CDATA[select trx.id, 
+trx.movementType, 
+trx as transaction,
+trx.movementDate,
+trx.transactionProcessDate as trxProcessDate,
+c.id as costingId,
+trx.movementQuantity, 
+case when trx.movementQuantity > 0 then (trx.transactionCost / trx.movementQuantity) else ((trx.transactionCost / trx.movementQuantity)*(-1)) end as price,
+case when trx.movementQuantity > 0 then trx.transactionCost else ((trx.transactionCost)*(-1)) end as transactionCost,
+@cumQty@ as cumQty,
+case when trxcosting.id = trx.id
+         then c.cost 
+         else @previousCostingCost@
+end as cost,
+@cumCost@ as cumCost,
+coalesce((select sum(cost) from TransactionCost where inventoryTransaction.id = trx.id and costAdjustmentLine !=null), 0) as adjustmentAmt
+from MaterialMgmtCosting as c
+join c.inventoryTransaction as trxcosting,
+MaterialMgmtMaterialTransaction trx
+join trx.storageBin as locator,
+ADList as trxtype
+where @whereClause@]]></HQLQUERY>
+<!--DFF0A9F7C26C457FA8735A09ACFD5971-->  <ENTITY_ALIAS><![CDATA[c]]></ENTITY_ALIAS>
+<!--DFF0A9F7C26C457FA8735A09ACFD5971--></AD_TABLE>
+
 <!--E0B03BC2225F4BCB8734D65B73CCE8DB--><AD_TABLE>
 <!--E0B03BC2225F4BCB8734D65B73CCE8DB-->  <AD_TABLE_ID><![CDATA[E0B03BC2225F4BCB8734D65B73CCE8DB]]></AD_TABLE_ID>
 <!--E0B03BC2225F4BCB8734D65B73CCE8DB-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -12423,6 +12464,29 @@ and  ol.salesOrder.id = :salesOrderId]]></HQLQUERY>
 <!--F26CC88DB04946F1A19DF05749C4381F-->  <DATAORIGINTYPE><![CDATA[Table]]></DATAORIGINTYPE>
 <!--F26CC88DB04946F1A19DF05749C4381F-->  <ISTREE><![CDATA[N]]></ISTREE>
 <!--F26CC88DB04946F1A19DF05749C4381F--></AD_TABLE>
+
+<!--F405303D868347EE8F594739FC4D13ED--><AD_TABLE>
+<!--F405303D868347EE8F594739FC4D13ED-->  <AD_TABLE_ID><![CDATA[F405303D868347EE8F594739FC4D13ED]]></AD_TABLE_ID>
+<!--F405303D868347EE8F594739FC4D13ED-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--F405303D868347EE8F594739FC4D13ED-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--F405303D868347EE8F594739FC4D13ED-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--F405303D868347EE8F594739FC4D13ED-->  <NAME><![CDATA[TableNavigation]]></NAME>
+<!--F405303D868347EE8F594739FC4D13ED-->  <DESCRIPTION><![CDATA[Destination tab link rules]]></DESCRIPTION>
+<!--F405303D868347EE8F594739FC4D13ED-->  <TABLENAME><![CDATA[AD_Table_Navigation]]></TABLENAME>
+<!--F405303D868347EE8F594739FC4D13ED-->  <CLASSNAME><![CDATA[TableNavigation]]></CLASSNAME>
+<!--F405303D868347EE8F594739FC4D13ED-->  <ISVIEW><![CDATA[N]]></ISVIEW>
+<!--F405303D868347EE8F594739FC4D13ED-->  <ACCESSLEVEL><![CDATA[4]]></ACCESSLEVEL>
+<!--F405303D868347EE8F594739FC4D13ED-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
+<!--F405303D868347EE8F594739FC4D13ED-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
+<!--F405303D868347EE8F594739FC4D13ED-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
+<!--F405303D868347EE8F594739FC4D13ED-->  <IMPORTTABLE><![CDATA[N]]></IMPORTTABLE>
+<!--F405303D868347EE8F594739FC4D13ED-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
+<!--F405303D868347EE8F594739FC4D13ED-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
+<!--F405303D868347EE8F594739FC4D13ED-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
+<!--F405303D868347EE8F594739FC4D13ED-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1CB4B84E040007F01006125]]></AD_PACKAGE_ID>
+<!--F405303D868347EE8F594739FC4D13ED-->  <DATAORIGINTYPE><![CDATA[Table]]></DATAORIGINTYPE>
+<!--F405303D868347EE8F594739FC4D13ED-->  <ISTREE><![CDATA[N]]></ISTREE>
+<!--F405303D868347EE8F594739FC4D13ED--></AD_TABLE>
 
 <!--F6B6AD5679FF4A798D2A3D44B232C52C--><AD_TABLE>
 <!--F6B6AD5679FF4A798D2A3D44B232C52C-->  <AD_TABLE_ID><![CDATA[F6B6AD5679FF4A798D2A3D44B232C52C]]></AD_TABLE_ID>

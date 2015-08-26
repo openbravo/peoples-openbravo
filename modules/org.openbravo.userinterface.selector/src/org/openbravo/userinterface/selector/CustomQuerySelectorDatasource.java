@@ -289,7 +289,7 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
    * <li>Boolean Domain Type: Returns an equals clause <i>field.clauseLeftPart = value</i></li>
    * <li>Foreign Key Domain Type: Returns an equals clause <i>field.clauseLeftPart.id = value</i></li>
    * <li>Unique Id Domain Type: Returns an equals clause <i>field.clauseLeftPart = value</i></li>
-   * <li>String Domain Type: Compares the clause left part with the value using the lower database
+   * <li>String Domain Type: Compares the clause left part with the value using the upper database
    * function which to make comparison case insensitive.
    * </ul>
    * 
@@ -380,17 +380,17 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
       }
     } else {
       if ("iStartsWith".equals(operator)) {
-        whereClause = "lower("
+        whereClause = "upper("
             + field.getClauseLeftPart()
-            + ") LIKE "
+            + ") LIKE upper("
             + getTypedParameterAlias(typedParameters, value.toLowerCase().replaceAll(" ", "%")
-                + "%");
+                + "%") + ")";
       } else {
-        whereClause = "lower("
+        whereClause = "upper("
             + field.getClauseLeftPart()
-            + ") LIKE "
+            + ") LIKE upper("
             + getTypedParameterAlias(typedParameters, "%"
-                + value.toLowerCase().replaceAll(" ", "%") + "%");
+                + value.toLowerCase().replaceAll(" ", "%") + "%") + ")";
       }
     }
     return whereClause;

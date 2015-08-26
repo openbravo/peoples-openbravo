@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -74,12 +74,18 @@ public class ReactivateLandedCost extends BaseActionHandler {
   public static JSONObject doReactivateLandedCost(LandedCost landedCost) throws OBException,
       JSONException {
     String strLCostId = landedCost.getId();
+    JSONObject message = null;
 
-    JSONObject message = CancelCostAdjustment
-        .doCancelCostAdjustment(landedCost.getCostAdjustment());
-
-    if (!"success".equals(message.get("severity"))) {
-      return message;
+    // Cancel cost adjustment only if exists
+    if (landedCost.getCostAdjustment() != null) {
+      message = CancelCostAdjustment.doCancelCostAdjustment(landedCost.getCostAdjustment());
+      if (!"success".equals(message.get("severity"))) {
+        return message;
+      }
+    } else {
+      message = new JSONObject();
+      message.put("severity", "success");
+      message.put("title", OBMessageUtils.messageBD("Success"));
     }
 
     String strPartialMessage = "";

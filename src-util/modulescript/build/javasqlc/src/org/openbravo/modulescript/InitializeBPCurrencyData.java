@@ -126,15 +126,21 @@ static Logger log4j = Logger.getLogger(InitializeBPCurrencyData.class);
     String strSql = "";
     strSql = strSql + 
       "        UPDATE C_Bpartner bp" +
-      " 		SET BP_Currency_ID = (" +
-      " 		                     SELECT DISTINCT i.C_Currency_ID" +
-      " 		                     FROM C_INVOICE i" +
-      " 		                     WHERE i.C_Bpartner_ID = bp.C_Bpartner_ID " +
-      " 		                     AND i.docstatus = 'CO'" +
-      " 		                     AND ((SELECT COUNT(DISTINCT i.C_CURRENCY_ID) FROM C_INVOICE i " +
-      " 		                     WHERE i.docstatus='CO' AND i.C_Bpartner_ID = bp.C_Bpartner_ID) = 1) " +
-      " 		                     )" +
-      " 		WHERE bp.BP_Currency_ID IS NULL";
+      "        SET BP_Currency_ID = (" +
+      "            SELECT max(i.c_currency_id)" +
+      "            FROM C_INVOICE i" +
+      "            WHERE i.c_bpartner_id = bp.c_bpartner_id" +
+      "            AND i.docstatus = 'CO'" +
+      "            GROUP BY i.c_bpartner_id" +
+      "            HAVING count(distinct i.c_currency_id) = 1 " +
+      "        )" +
+      "        WHERE bp.BP_Currency_ID IS NULL" +
+      "        AND exists (" +
+      "            SELECT 1 " +
+      "            FROM c_invoice ie " +
+      "            WHERE ie.c_bpartner_id = bp.c_bpartner_id " +
+      "            AND ie.docstatus  = 'CO'" +
+      "        )";
 
     int updateCount = 0;
     PreparedStatement st = null;

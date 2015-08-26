@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -24,14 +24,18 @@ import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.costing.CostingUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.model.common.currency.Currency;
+import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.materialmgmt.cost.LandedCostCost;
 
 public class DocLCCost extends AcctServer {
 
@@ -55,8 +59,8 @@ public class DocLCCost extends AcctServer {
     super(AD_Client_ID, AD_Org_ID, connectionProvider);
   }
 
-  public void loadObjectFieldProvider(ConnectionProvider conn,
-      @SuppressWarnings("hiding") String AD_Client_ID, String Id) throws ServletException {
+  public void loadObjectFieldProvider(ConnectionProvider conn, @SuppressWarnings("hiding")
+  String AD_Client_ID, String Id) throws ServletException {
     setObjectFieldProvider(DocLCCostData.selectRegistro(conn, AD_Client_ID, Id));
   }
 
@@ -258,9 +262,24 @@ public class DocLCCost extends AcctServer {
 
           ProductInfo p = new ProductInfo(line4.m_M_Product_ID, conn);
 
-          fact.createLine(line4, p.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
-              line4.m_C_Currency_ID, amtCredit, amtDebit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-              DocumentType, line4.m_DateAcct, null, conn);
+          // If transaction uses Standard Algorithm IPD account will be used, else Asset account
+          LandedCostCost landedCostCost = OBDal.getInstance().get(LandedCostCost.class,
+              line.m_TrxHeader_ID);
+          Organization org = OBContext.getOBContext()
+              .getOrganizationStructureProvider(landedCostCost.getClient().getId())
+              .getLegalEntity(landedCostCost.getOrganization());
+          Account account = null;
+          if (StringUtils.equals(
+              CostingUtils.getCostDimensionRule(org, landedCostCost.getCreationDate())
+                  .getCostingAlgorithm().getJavaClassName(),
+              "org.openbravo.costing.StandardAlgorithm")) {
+            account = p.getAccount(ProductInfo.ACCTTYPE_P_IPV, as, conn);
+          } else {
+            account = p.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn);
+          }
+
+          fact.createLine(line4, account, line4.m_C_Currency_ID, amtCredit, amtDebit,
+              Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, line4.m_DateAcct, null, conn);
 
         }
 

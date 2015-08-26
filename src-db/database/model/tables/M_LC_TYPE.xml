@@ -69,6 +69,6 @@
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <check name="M_LC_TYPE_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="M_LC_TYPE_CHECK1"><![CDATA[(ACCOUNT_ID IS NULL) OR (M_PRODUCT_ID IS NULL)]]></check>
+      <check name="M_LC_TYPE_CHECK1"><![CDATA[ACCOUNT_ID IS NULL OR M_PRODUCT_ID IS NULL]]></check>
     </table>
   </database>

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -482,7 +482,7 @@ public class WadUtility {
         if (vecFields != null && findField(vecFields, token)) {
           return (dataMultiple ? "((dataField!=null)?dataField.getField(\"" + aux
               + "\"):((data==null || data.length==0)?\"\":data[0]." : "((data==null)?\"\":data.")
-              + aux + "))";
+              + "getField(\"" + aux + "\")))";
         } else if (vecAuxiliarFields != null && findField(vecAuxiliarFields, token)) {
           return "str" + token;
         }

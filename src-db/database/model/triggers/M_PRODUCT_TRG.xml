@@ -17,7 +17,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2014 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2015 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -61,6 +61,26 @@ BEGIN
  IF (UPDATING) THEN
   UPDATE M_PRODUCT_ACCT SET AD_ORG_ID = :new.AD_ORG_ID
   WHERE M_PRODUCT_ID = :new.M_PRODUCT_ID;
+
+ -- Do not allow to set the product as stocked if it appears in
+ -- processed documents which generate inventory transactions
+  IF (:old.isStocked = 'N' AND :new.isStocked = 'Y') THEN
+    SELECT count(*) 
+    INTO v_Count
+    FROM dual
+    WHERE EXISTS ( SELECT 1 FROM M_Inventory iv JOIN M_InventoryLine ivl ON iv.m_inventory_id = ivl.m_inventory_id 
+	 	   WHERE ivl.m_product_id = :new.m_product_id AND iv.processed = 'Y' )
+       OR EXISTS ( SELECT 1 FROM M_Movement mv JOIN M_MovementLine mvl ON mv.m_movement_id = mvl.m_movement_id 
+		   WHERE mvl.m_product_id = :new.m_product_id AND mv.processed = 'Y' )
+       OR EXISTS ( SELECT 1 FROM M_Inout io JOIN M_InoutLine iol ON io.m_inout_id = iol.m_inout_id 
+		   WHERE iol.m_product_id = :new.m_product_id AND io.docstatus = 'CO' )
+       OR EXISTS ( SELECT 1 FROM M_Production pr JOIN M_ProductionPlan pp ON pr.m_production_id = pp.m_production_id 
+		   JOIN M_ProductionLine prl ON pp.m_productionplan_id = prl.m_productionplan_id 
+		   WHERE prl.m_product_id = :new.m_product_id AND pr.processed = 'Y' );
+    IF (v_count > 0) THEN
+      RAISE_APPLICATION_ERROR(-20000, '@NonStockedProductWithTransactions@');
+    END IF;
+  END IF;
   
  -- Do not allow to de-activate products with OnHand Qty
  -- or Change the attribute set

@@ -477,8 +477,8 @@
         <unique-column name="VALUE"/>
       </unique>
       <check name="C_BPARTNER_CBLOCKING_CHK"><![CDATA[CUSTOMER_BLOCKING IN ('Y', 'N')]]></check>
-      <check name="C_BPARTNER_CUSBLOCKING_CHK"><![CDATA[(CUSTOMER_BLOCKING = 'N') OR ((((SO_ORDER_BLOCKING = 'Y') OR (SO_GOODS_BLOCKING = 'Y')) OR (SO_INVOICE_BLOCKING = 'Y')) OR (SO_PAYMENT_BLOCKING = 'Y'))]]></check>
-      <check name="C_BPARTNER_INVOICERULE_CHK"><![CDATA[((INVOICERULE) <> 'S') OR (C_INVOICESCHEDULE_ID IS NOT NULL)]]></check>
+      <check name="C_BPARTNER_CUSBLOCKING_CHK"><![CDATA[CUSTOMER_BLOCKING = 'N' OR SO_ORDER_BLOCKING = 'Y' OR SO_GOODS_BLOCKING = 'Y' OR SO_INVOICE_BLOCKING = 'Y' OR SO_PAYMENT_BLOCKING = 'Y']]></check>
+      <check name="C_BPARTNER_INVOICERULE_CHK"><![CDATA[INVOICERULE <> 'S' OR C_INVOICESCHEDULE_ID IS NOT NULL]]></check>
       <check name="C_BPARTNER_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="C_BPARTNER_ISCASHVAT_CH"><![CDATA[ISCASHVAT IN ('Y', 'N')]]></check>
       <check name="C_BPARTNER_ISCUSTOMER_CHK"><![CDATA[ISCUSTOMER IN ('Y', 'N')]]></check>
@@ -500,6 +500,6 @@
       <check name="C_BPARTNER_SOBLOCKING_CHK"><![CDATA[SO_ORDER_BLOCKING IN ('Y', 'N')]]></check>
       <check name="C_BPARTNER_SPBLOCKING_CHK"><![CDATA[SO_PAYMENT_BLOCKING IN ('Y', 'N')]]></check>
       <check name="C_BPARTNER_VBLOCKING_CHK"><![CDATA[VENDOR_BLOCKING IN ('Y', 'N')]]></check>
-      <check name="C_BPARTNER_VENBLOCKING_CHK"><![CDATA[(VENDOR_BLOCKING = 'N') OR ((((PO_ORDER_BLOCKING = 'Y') OR (PO_GOODS_BLOCKING = 'Y')) OR (PO_INVOICE_BLOCKING = 'Y')) OR (PO_PAYMENT_BLOCKING = 'Y'))]]></check>
+      <check name="C_BPARTNER_VENBLOCKING_CHK"><![CDATA[VENDOR_BLOCKING = 'N' OR PO_ORDER_BLOCKING = 'Y' OR PO_GOODS_BLOCKING = 'Y' OR PO_INVOICE_BLOCKING = 'Y' OR PO_PAYMENT_BLOCKING = 'Y']]></check>
     </table>
   </database>

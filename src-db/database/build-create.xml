@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -48,10 +48,8 @@ create.database: creates the database from scratch.
 
   <target name="create.database">
     <antcall target="clean.database.${bbdd.rdbms}" />
-    <antcall target="prepare.database" />
+    <antcall target="${bbdd.rdbms}.structure" />
     <antcall target="create.database.all" />
-    <antcall target="database.preimport.${bbdd.rdbms}" />
-    <antcall target="database.postimport.${bbdd.rdbms}" />
     <antcall target="database.postcreate.${bbdd.rdbms}" />
     <antcall target="update.dbupdate.timestamp" />
   </target>
@@ -94,31 +92,6 @@ create.database: creates the database from scratch.
       </classpath>
       <transaction>
         DROP ROLE ${bbdd.user};
-      </transaction>
-    </sql>
-  </target>
-
-  <target name="clean.database.DB2">
-    <sql driver="${bbdd.driver}" url="${bbdd.url}" userid="${bbdd.systemUser}" password="${bbdd.systemPassword}" onerror="continue" autocommit="true">
-      <classpath>
-        <fileset dir="${base.lib}">
-          <include name="**/*.jar">
-          </include>
-        </fileset>
-      </classpath>
-      <transaction>
-        DROP TABLE ERRORSCH.ERRORTB;
-      </transaction>
-    </sql>
-    <sql driver="${bbdd.driver}" url="${bbdd.url}" userid="${bbdd.systemUser}" password="${bbdd.systemPassword}" onerror="continue" autocommit="true">
-      <classpath>
-        <fileset dir="${base.lib}">
-          <include name="**/*.jar">
-          </include>
-        </fileset>
-      </classpath>
-      <transaction>
-        CALL SYSPROC.ADMIN_DROP_SCHEMA('${bbdd.user}', NULL, 'ERRORSCH', 'ERRORTB');
       </transaction>
     </sql>
   </target>
@@ -214,14 +187,6 @@ create.database: creates the database from scratch.
     </sql>
   </target>
 
-  <target name="DB2.structure">
-  </target>
-  
-  <target name="prepare.database">
-    <antcall target="${bbdd.rdbms}.structure" />
-  </target>
-
-
   <target name="create.database.all">
     <createdatabase driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" model="model" object="${bbdd.object}" dropfirst="false" failonerror="false" verbosity="${bbdd.verbosity}" basedir="${base.db}/../.." modulesDir="${base.modules}/" dirFilter="*/src-db/database/model" filter="com.openbravo.db.OpenbravoMetadataFilter" input="src-db/database/sourcedata,modules/*/src-db/database/sourcedata">
     </createdatabase>
@@ -311,21 +276,6 @@ create.database: creates the database from scratch.
     </sql>
   </target>
 
-  <target name="database.postcreate.DB2">
-  </target>
-  
-  <target name="database.preimport.ORACLE">
-  </target>
-  <target name="database.postimport.ORACLE">
-  </target>
-  <target name="database.preimport.POSTGRE">
-  </target>
-  <target name="database.postimport.POSTGRE">
-  </target>
-  <target name="database.preimport.DB2">
-  </target>
-  <target name="database.postimport.DB2">
-  </target>
   <target name="database.poststructure.ORACLE">
     <sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}" onerror="continue" autocommit="true">
       <classpath>
@@ -340,8 +290,6 @@ create.database: creates the database from scratch.
     </sql>
   </target>
   <target name="database.poststructure.POSTGRE">
-  </target>
-  <target name="database.poststructure.DB2">
   </target>
 
   <target name="update.dbupdate.timestamp">
