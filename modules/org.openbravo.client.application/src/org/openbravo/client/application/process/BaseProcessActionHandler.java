@@ -18,9 +18,7 @@
  */
 package org.openbravo.client.application.process;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -33,7 +31,6 @@ import org.openbravo.client.application.ParameterUtils;
 import org.openbravo.client.application.Process;
 import org.openbravo.client.application.ProcessAccess;
 import org.openbravo.client.kernel.BaseActionHandler;
-import org.openbravo.client.kernel.KernelConstants;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -223,20 +220,11 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
   /**
    * Fixes the request map adding an "context" key to include context info in order to make it
    * available to be evaluated by FilterExpression
+   * 
+   * @use {@link BaseProcessActionHandler#fixRequestMap(Map, JSONObject)}
    */
   protected Map<String, String> fixRequestMap(Map<String, Object> parameters, JSONObject context) {
-    final Map<String, String> retval = new HashMap<String, String>();
-    for (Entry<String, Object> entries : parameters.entrySet()) {
-      if (entries.getKey().equals(KernelConstants.HTTP_REQUEST)
-          || entries.getKey().equals(KernelConstants.HTTP_SESSION)) {
-        continue;
-      }
-      retval.put(entries.getKey(), entries.getValue().toString());
-    }
-    if (context != null) {
-      retval.put("context", context.toString());
-    }
-    return retval;
+    return super.fixRequestMap(parameters, context);
   }
 
   protected abstract JSONObject doExecute(Map<String, Object> parameters, String content);

@@ -23,6 +23,7 @@ import java.io.InputStreamReader;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -76,6 +77,25 @@ public abstract class BaseActionHandler implements ActionHandler {
     } catch (Exception e) {
       throw new IllegalStateException(e);
     }
+  }
+
+  /**
+   * Fixes the request map adding an "context" key to include context info in order to make it
+   * available to be evaluated by FilterExpression
+   */
+  protected Map<String, String> fixRequestMap(Map<String, Object> parameters, JSONObject context) {
+    final Map<String, String> retval = new HashMap<String, String>();
+    for (Entry<String, Object> entries : parameters.entrySet()) {
+      if (entries.getKey().equals(KernelConstants.HTTP_REQUEST)
+          || entries.getKey().equals(KernelConstants.HTTP_SESSION)) {
+        continue;
+      }
+      retval.put(entries.getKey(), entries.getValue().toString());
+    }
+    if (context != null) {
+      retval.put("context", context.toString());
+    }
+    return retval;
   }
 
   /**
