@@ -240,8 +240,7 @@ enyo.kind({
           approvalNeeded = false,
           i, j, k, h, line, relatedLine, lineFromSelected, servicesToApprove = '',
           servicesList = [],
-          order = this.owner.owner.receipt,
-          linesNotToReturn = 0;
+          order = this.owner.owner.receipt;
       for (i = 0; i < this.owner.owner.selectedModels.length; i++) {
         line = this.owner.owner.selectedModels[i];
         if (line.get('product').get('productType') === 'S' && !line.isReturnable()) {
@@ -258,7 +257,6 @@ enyo.kind({
                   lineFromSelected = this.owner.owner.selectedModels[k];
                   if (lineFromSelected.id === relatedLine.orderlineId) {
                     line.set('notReturnThisLine', true);
-                    linesNotToReturn++;
                     servicesToApprove += '<br>· ' + line.get('product').get('_identifier');
                     servicesList.push(line.get('product'));
                     break;
@@ -321,17 +319,10 @@ enyo.kind({
       }
 
       function returnLines() {
-        var linesReturned = 0;
-        order.set('ignoreCalculateGross', true);
-        order.set('notAllowCalculateGross', true);
         order.set('undo', null);
         order.set('multipleUndo', true);
         _.each(me.owner.owner.selectedModels, function (line) {
           if (!line.get('notReturnThisLine')) {
-            linesReturned++;
-            if (linesReturned === (me.owner.owner.selectedModels.length - linesNotToReturn)) {
-              order.unset('notAllowCalculateGross');
-            }
             me.owner.owner.doReturnLine({
               line: line
             });
@@ -351,6 +342,7 @@ enyo.kind({
           if (approved) {
             order.set('notApprove', true);
             returnLines();
+            order.unset('notApprove');
           } else {
             _.each(me.owner.owner.selectedModels, function (line) {
               if (line.get('notReturnThisLine')) {

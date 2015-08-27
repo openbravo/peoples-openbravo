@@ -732,7 +732,6 @@ enyo.kind({
 
       function fixServiceOrderLines(approved) {
         var linesToRemove = [];
-        me.order.set('ignoreCalculateGross', true);
         me.order.get('lines').forEach(function (line) {
           var prod = line.get('product'),
               newLine, i, j, l, rlp, rln, newqtyplus = 0,
@@ -840,13 +839,6 @@ enyo.kind({
           me.order.get('lines').remove(l);
           OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_DeletedService', [l.get('product').get('_identifier')]));
         });
-        if (me.order.get('notApprove')) {
-          me.order.unset('notApprove');
-        }
-        if (!me.order.get('notAllowCalculateGross')) {
-          me.order.unset('ignoreCalculateGross');
-          me.order.calculateGross(); // Calculate Gross only once
-        }
         me.order.set('undo', oldUndo);
         me.updating = false;
         me.order.get('lines').trigger('updateServicePrices');
