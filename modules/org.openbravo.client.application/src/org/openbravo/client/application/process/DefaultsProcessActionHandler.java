@@ -151,7 +151,6 @@ public class DefaultsProcessActionHandler extends BaseProcessActionHandler {
         results.put("defaults", defaults);
         results.put("filterExpressions", filterExpressions);
         return results;
-
       } else {
         return new JSONObject();
       }
@@ -162,7 +161,6 @@ public class DefaultsProcessActionHandler extends BaseProcessActionHandler {
     } finally {
       OBContext.restorePreviousMode();
     }
-
   }
 
   // Returns true if the value of the parameter default value matches "@*@"

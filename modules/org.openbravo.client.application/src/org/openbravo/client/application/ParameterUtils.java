@@ -227,6 +227,8 @@ public class ParameterUtils {
         } catch (JSONException ignore) {
         }
         return def;
+      } else {
+        return null;
       }
     } else if (defaultValue != null && domainType instanceof BooleanDomainType) {
       defaultValue = ((BooleanDomainType) domainType).createFromString((String) defaultValue);
