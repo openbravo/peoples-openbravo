@@ -10,7 +10,6 @@
 /*global OB, _, moment, Backbone, enyo, BigDecimal, alert, localStorage */
 
 (function () {
-
   // Sales.OrderLine Model
   var OrderLine = Backbone.Model.extend({
     modelName: 'OrderLine',
@@ -49,6 +48,7 @@
           this.set('hasRelatedServices', attributes.hasRelatedServices);
         }
       }
+
     },
 
     getQty: function () {
@@ -487,6 +487,12 @@
 
     calculateGross: function () {
 
+      if (OB.MobileApp.calculatingGross) {
+        this.pendingCalculateGross = true;
+        return;
+      }
+      OB.MobileApp.calculatingGross = true;
+
       var me = this;
       var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('calculateGross');
 
@@ -498,6 +504,10 @@
         'qty': OB.DEC.Zero
       }, {
         silent: true
+      });
+
+      this.get('lines').forEach(function (l) {
+        l.calculateGross();
       });
       var saveAndTriggerEvents = function (gross) {
           var net = me.get('lines').reduce(function (memo, e) {
@@ -534,10 +544,22 @@
           });
 
           me.adjustPayment();
-          me.save();
-          me.trigger('calculategross');
-          me.trigger('saveCurrent');
-          OB.UTIL.SynchronizationHelper.finished(synchId, 'calculateGross');
+          me.save(function () {
+
+            OB.UTIL.SynchronizationHelper.finished(synchId, 'calculateGross');
+            // Reset the flag that protects reentrant invocations to calculateGross().
+            // And if there is pending any execution of calculateGross(), do it and do not continue.
+            OB.MobileApp.calculatingGross = false;
+            if (me.pendingCalculateGross) {
+              me.pendingCalculateGross = false;
+              me.calculateGross();
+              return;
+            }
+
+            me.trigger('calculategross');
+            me.trigger('saveCurrent');
+          });
+
           };
 
       if (this.get('priceIncludesTax')) {
@@ -688,6 +710,7 @@
     },
 
     clearWith: function (_order) {
+
       var me = this,
           undf, localSkipApplyPromotions, idExecution;
 
@@ -1708,7 +1731,7 @@
           });
         }
       });
-      this.calculateGross();
+      //      this.calculateGross();
       this.adjustPayment();
       return newline;
     },
@@ -2608,9 +2631,6 @@
         'skipApplyPromotions': localSkipApplyPromotions
       }, {
         silent: true
-      });
-      this.get('lines').forEach(function (l) {
-        l.calculateGross();
       });
       this.calculateGross();
       this.trigger('promotionsUpdated');
