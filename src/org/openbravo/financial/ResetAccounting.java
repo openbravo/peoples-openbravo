@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2014 Openbravo SLU
+ * All portions are Copyright (C) 2013-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -188,10 +188,17 @@ public class ResetAccounting {
           if (obc.list().size() == 0) {
             String tableName = table.getDBTableName();
             String tableIdName = table.getDBTableName() + "_Id";
-            String strUpdate = "update "
-                + tableName
-                + " set posted='N', processing='N' where (posted<>'N' or posted is null or processing='N') and "
-                + tableIdName + " = :recordID ";
+            String strUpdate = "";
+            if (hasProcessingColumn(table.getId())) {
+              strUpdate = "update "
+                  + tableName
+                  + " set posted='N', processing='N' where (posted<>'N' or posted is null or processing='N') and "
+                  + tableIdName + " = :recordID ";
+            } else {
+              strUpdate = "update " + tableName
+                  + " set posted='N' where (posted<>'N' or posted is null) and " + tableIdName
+                  + " = :recordID ";
+            }
             final Query update = OBDal.getInstance().getSession().createSQLQuery(strUpdate);
             update.setParameter("recordID", recordId);
             updated = update.executeUpdate();
@@ -230,25 +237,34 @@ public class ResetAccounting {
       updateBalanced.setString("clientId", client);
       int balancedUpdated = updateBalanced.executeUpdate();
       Table table = OBDal.getInstance().get(Table.class, tableId);
-      tableName = table.getDBTableName();
-      tableIdName = table.getDBTableName() + "_Id";
-      String strUpdate = "update "
-          + tableName
-          + " set posted='N', processing='N' where (posted<>'N' or posted is null or processing='N') and "
-          + tableIdName + " in (:transactions) ";
-      String strDelete = "delete from FinancialMgmtAccountingFact where table.id = :tableId and recordID in (:transactions) and client.id=:clientId";
-      final Query update = OBDal.getInstance().getSession().createSQLQuery(strUpdate);
-      update.setParameterList("transactions", transactions);
-      int updated = update.executeUpdate();
-      final Query delete = OBDal.getInstance().getSession().createQuery(strDelete);
-      delete.setString("tableId", tableId);
-      delete.setParameterList("transactions", transactions);
-      delete.setString("clientId", client);
-      int deleted = delete.executeUpdate();
-      result.put("deleted", deleted);
-      result.put("updated", updated);
-      OBDal.getInstance().getConnection().commit();
-      OBDal.getInstance().getSession().clear();
+      if (!table.isView()) {
+        tableName = table.getDBTableName();
+        tableIdName = table.getDBTableName() + "_Id";
+        String strUpdate = "";
+        if (hasProcessingColumn(table.getId())) {
+          strUpdate = "update "
+              + tableName
+              + " set posted='N', processing='N' where (posted<>'N' or posted is null or processing='N') and "
+              + tableIdName + " in (:transactions) ";
+        } else {
+          strUpdate = "update " + tableName
+              + " set posted='N' where (posted<>'N' or posted is null) and " + tableIdName
+              + " in (:transactions) ";
+        }
+        String strDelete = "delete from FinancialMgmtAccountingFact where table.id = :tableId and recordID in (:transactions) and client.id=:clientId";
+        final Query update = OBDal.getInstance().getSession().createSQLQuery(strUpdate);
+        update.setParameterList("transactions", transactions);
+        int updated = update.executeUpdate();
+        final Query delete = OBDal.getInstance().getSession().createQuery(strDelete);
+        delete.setString("tableId", tableId);
+        delete.setParameterList("transactions", transactions);
+        delete.setString("clientId", client);
+        int deleted = delete.executeUpdate();
+        result.put("deleted", deleted);
+        result.put("updated", updated);
+        OBDal.getInstance().getConnection().commit();
+        OBDal.getInstance().getSession().clear();
+      }
       return result;
     } catch (Exception e) {
       OBDal.getInstance().rollbackAndClose();
@@ -283,38 +299,47 @@ public class ResetAccounting {
     OBContext.setAdminMode(false);
     try {
       Table table = OBDal.getInstance().get(Table.class, tableId);
-      tableName = table.getDBTableName();
-      tableDate = ModelProvider.getInstance().getEntityByTableName(table.getDBTableName())
-          .getPropertyByColumnName(table.getAcctdateColumn().getDBColumnName()).getColumnName();
+      if (!table.isView()) {
+        tableName = table.getDBTableName();
+        tableDate = ModelProvider.getInstance().getEntityByTableName(table.getDBTableName())
+            .getPropertyByColumnName(table.getAcctdateColumn().getDBColumnName()).getColumnName();
 
-      String strUpdate = "update "
-          + tableName
-          + " set posted='N', processing='N' where posted not in ('Y') and processed = 'Y' and AD_Org_ID in (:orgIds)  ";
-      if (!("".equals(datefrom))) {
-        strUpdate = strUpdate + " and " + tableDate + " >= :dateFrom ";
-      }
-      if (!("".equals(dateto))) {
-        strUpdate = strUpdate + " and " + tableDate + " <= :dateTo ";
-      }
-
-      Query update = OBDal.getInstance().getSession().createSQLQuery(strUpdate);
-      update
-          .setParameterList("orgIds", new OrganizationStructureProvider().getNaturalTree(adOrgId));
-      try {
+        String strUpdate = "";
+        if (hasProcessingColumn(table.getId())) {
+          strUpdate = "update "
+              + tableName
+              + " set posted='N', processing='N' where posted not in ('Y') and processed = 'Y' and AD_Org_ID in (:orgIds)  ";
+        } else {
+          strUpdate = "update "
+              + tableName
+              + " set posted='N' where posted not in ('Y') and processed = 'Y' and AD_Org_ID in (:orgIds)  ";
+        }
         if (!("".equals(datefrom))) {
-          update.setDate("dateFrom", OBDateUtils.getDate(datefrom));
+          strUpdate = strUpdate + " and " + tableDate + " >= :dateFrom ";
         }
         if (!("".equals(dateto))) {
-          update.setDate("dateTo", OBDateUtils.getDate(dateto));
+          strUpdate = strUpdate + " and " + tableDate + " <= :dateTo ";
         }
-      } catch (ParseException e) {
-        log4j.error("Restore - Error parsisng dates", e);
-      }
 
-      int updated = update.executeUpdate();
-      results.put("updated", updated);
-      OBDal.getInstance().getConnection().commit();
-      OBDal.getInstance().getSession().clear();
+        Query update = OBDal.getInstance().getSession().createSQLQuery(strUpdate);
+        update.setParameterList("orgIds",
+            new OrganizationStructureProvider().getNaturalTree(adOrgId));
+        try {
+          if (!("".equals(datefrom))) {
+            update.setDate("dateFrom", OBDateUtils.getDate(datefrom));
+          }
+          if (!("".equals(dateto))) {
+            update.setDate("dateTo", OBDateUtils.getDate(dateto));
+          }
+        } catch (ParseException e) {
+          log4j.error("Restore - Error parsisng dates", e);
+        }
+
+        int updated = update.executeUpdate();
+        results.put("updated", updated);
+        OBDal.getInstance().getConnection().commit();
+        OBDal.getInstance().getSession().clear();
+      }
       return results;
     } catch (Exception e) {
       OBDal.getInstance().rollbackAndClose();
@@ -547,4 +572,12 @@ public class ResetAccounting {
     return exceptionDates.size() == validDates;
   }
 
+  private static boolean hasProcessingColumn(String strTableId) {
+    int count = 0;
+    String hql = " select count(*) from ADColumn where table.id = '" + strTableId + "' "
+        + " and lower(dBColumnName) = 'processing'";
+    Query query = OBDal.getInstance().getSession().createQuery(hql);
+    count = ((Long) query.list().get(0)).intValue();
+    return (count == 1);
+  }
 }
