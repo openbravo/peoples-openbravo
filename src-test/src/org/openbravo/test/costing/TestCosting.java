@@ -1330,6 +1330,7 @@ public class TestCosting extends WeldBaseTest {
     final int day1 = 5;
     final int day2 = 10;
     final int day3 = 15;
+    final int day4 = 20;
     final BigDecimal price1 = new BigDecimal("1230.00");
     final BigDecimal price2 = new BigDecimal("1200.00");
     final BigDecimal price3 = new BigDecimal("1500.00");
@@ -1352,14 +1353,14 @@ public class TestCosting extends WeldBaseTest {
       ShipmentInOut goodsReceipt = createGoodsReceipt(purchaseOrder, price1, quantity1, day1);
 
       // Create goods shipment, run costing background, post it and assert it
-      ShipmentInOut goodsShipment = createGoodsShipment(product, price1, quantity2, day3);
+      ShipmentInOut goodsShipment = createGoodsShipment(product, price1, quantity2, day4);
 
       // Create inventory amount update and run costing background
       InventoryAmountUpdate inventoryAmountUpdate = createInventoryAmountUpdate(product, price1,
           price2, quantity1, day2);
 
       // Create purchase invoice, post it and assert it
-      createPurchaseInvoice(goodsReceipt, price3, quantity1, day2);
+      createPurchaseInvoice(goodsReceipt, price3, quantity1, day3);
 
       // Run price correction background
       runPriceBackground();
@@ -1400,13 +1401,13 @@ public class TestCosting extends WeldBaseTest {
       costAdjustmentAssertLineList2.add(new CostAdjustmentAssert(transactionList.get(2), "BDT",
           amount0, day2, true));
       costAdjustmentAssertLineList2.add(new CostAdjustmentAssert(transactionList.get(3), "PDC",
-          quantity2.multiply(price2).add(quantity2.multiply(price1).negate()), day3, false));
+          quantity2.multiply(price2).add(quantity2.multiply(price1).negate()), day4, false));
       costAdjustmentAssertList.add(costAdjustmentAssertLineList2);
       List<CostAdjustmentAssert> costAdjustmentAssertLineList3 = new ArrayList<CostAdjustmentAssert>();
       costAdjustmentAssertLineList3.add(new CostAdjustmentAssert(transactionList.get(0), "PDC",
-          quantity1.multiply(price3).add(quantity1.multiply(price1).negate()), day2, true));
+          quantity1.multiply(price3).add(quantity1.multiply(price1).negate()), day3, true));
       costAdjustmentAssertLineList3.add(new CostAdjustmentAssert(transactionList.get(1), "PDC",
-          quantity1.multiply(price3).add(quantity1.multiply(price1).negate()), day2, false));
+          quantity1.multiply(price3).add(quantity1.multiply(price1).negate()), day3, false));
       costAdjustmentAssertList.add(costAdjustmentAssertLineList3);
       assertCostAdjustment(costAdjustmentList, costAdjustmentAssertList);
 
@@ -2812,10 +2813,10 @@ public class TestCosting extends WeldBaseTest {
       List<ProductCostingAssert> productCostingAssertList = new ArrayList<ProductCostingAssert>();
       productCostingAssertList.add(new ProductCostingAssert(transactionList.get(0), WAREHOUSE1_ID,
           price3, price1, price3, quantity1));
-      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(2), WAREHOUSE2_ID,
-          price2, price1, price2, quantity2));
       productCostingAssertList.add(new ProductCostingAssert(transactionList.get(1), WAREHOUSE1_ID,
           price2, price5, price4, quantity3));
+      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(2), WAREHOUSE2_ID,
+          price2, price1, price2, quantity2));
       assertProductCosting(product.getId(), productCostingAssertList);
 
       // Assert cost adjustment
@@ -2936,10 +2937,10 @@ public class TestCosting extends WeldBaseTest {
       List<ProductCostingAssert> productCostingAssertList = new ArrayList<ProductCostingAssert>();
       productCostingAssertList.add(new ProductCostingAssert(transactionList.get(0), WAREHOUSE1_ID,
           price3, price1, price3, quantity1));
-      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(2), WAREHOUSE2_ID,
-          price4, price1, price4, quantity2));
       productCostingAssertList.add(new ProductCostingAssert(transactionList.get(1), WAREHOUSE1_ID,
           price3, price6, price5, quantity3));
+      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(2), WAREHOUSE2_ID,
+          price4, price1, price4, quantity2));
       assertProductCosting(product.getId(), productCostingAssertList);
 
       // Assert cost adjustment
@@ -3070,10 +3071,10 @@ public class TestCosting extends WeldBaseTest {
       List<ProductCostingAssert> productCostingAssertList = new ArrayList<ProductCostingAssert>();
       productCostingAssertList.add(new ProductCostingAssert(transactionList.get(0), WAREHOUSE1_ID,
           price3, price1, price3, quantity1));
-      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(2), WAREHOUSE2_ID,
-          price3, price1, price3, quantity2));
       productCostingAssertList.add(new ProductCostingAssert(transactionList.get(1), WAREHOUSE1_ID,
           price3, price4, price3, quantity3));
+      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(2), WAREHOUSE2_ID,
+          price3, price1, price3, quantity2));
       assertProductCosting(product.getId(), productCostingAssertList);
 
       // Assert cost adjustment
@@ -3153,6 +3154,7 @@ public class TestCosting extends WeldBaseTest {
     final int day6 = 30;
     final int day7 = 35;
     final int day8 = 40;
+    final int day9 = 45;
     final BigDecimal price1 = new BigDecimal("120.00");
     final BigDecimal price2 = new BigDecimal("150.00");
     final BigDecimal price3 = new BigDecimal("100.00");
@@ -3182,11 +3184,11 @@ public class TestCosting extends WeldBaseTest {
       Order purchaseOrder1 = createPurchaseOrder(product, price1, quantity1, day0);
 
       // Create purchase order and book it
-      Order purchaseOrder2 = createPurchaseOrder(product, price2, quantity1, day1);
+      Order purchaseOrder2 = createPurchaseOrder(product, price2, quantity1, day0);
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt1 = createGoodsReceipt(purchaseOrder1, price1, quantity1,
-          LOCATOR1_ID, day2);
+          LOCATOR1_ID, day1);
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt2 = createGoodsReceipt(purchaseOrder2, price2, quantity1,
@@ -3198,7 +3200,7 @@ public class TestCosting extends WeldBaseTest {
 
       // Create goods shipment, run costing background, post it and assert it
       ShipmentInOut goodsShipment2 = createGoodsShipment(product, price2, quantity3, LOCATOR2_ID,
-          day3);
+          day4);
 
       // Create purchase invoice, post it and assert it
       List<ShipmentInOut> goodsReceiptList = new ArrayList<ShipmentInOut>();
@@ -3207,28 +3209,28 @@ public class TestCosting extends WeldBaseTest {
       List<BigDecimal> priceList = new ArrayList<BigDecimal>();
       priceList.add(price3);
       priceList.add(price3);
-      createPurchaseInvoice(goodsReceiptList, priceList, quantity1.add(quantity1), day4);
+      createPurchaseInvoice(goodsReceiptList, priceList, quantity1.add(quantity1), day5);
 
       // Run price correction background
       runPriceBackground();
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt3 = createGoodsReceipt(product, price3, quantity4, LOCATOR1_ID,
-          day5);
+          day6);
 
       // Create purchase invoice, post it and assert it
-      createPurchaseInvoice(goodsReceipt3, price4, quantity4, day6);
+      createPurchaseInvoice(goodsReceipt3, price4, quantity4, day7);
 
       // Run price correction background
       runPriceBackground();
 
       // Create goods movement, run costing background, post it and assert it
       InternalMovement goodsMovement = createGoodsMovement(product, price3, quantity5, LOCATOR2_ID,
-          LOCATOR1_ID, day7);
+          LOCATOR1_ID, day8);
 
       // Update transaction total cost amount
       manualCostAdjustment(getProductTransactions(product.getId()).get(5),
-          quantity5.multiply(price5), false, day8);
+          quantity5.multiply(price5), false, day9);
 
       // Assert product transactions
       List<ProductTransactionAssert> productTransactionAssertList = new ArrayList<ProductTransactionAssert>();
@@ -3260,12 +3262,12 @@ public class TestCosting extends WeldBaseTest {
       List<ProductCostingAssert> productCostingAssertList = new ArrayList<ProductCostingAssert>();
       productCostingAssertList.add(new ProductCostingAssert(transactionList.get(0), WAREHOUSE1_ID,
           price3, price1, price3, quantity1));
-      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(1), WAREHOUSE2_ID,
-          price3, price2, price3, quantity1));
       productCostingAssertList.add(new ProductCostingAssert(transactionList.get(4), WAREHOUSE1_ID,
           price4, price3, price6, quantity6));
       productCostingAssertList.add(new ProductCostingAssert(transactionList.get(6), WAREHOUSE1_ID,
           price5, price8, price7, quantity7));
+      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(1), WAREHOUSE2_ID,
+          price3, price2, price3, quantity1));
       productCostingAssertList.add(new ProductCostingAssert(transactionList.get(5), WAREHOUSE2_ID,
           price9, null, price9, quantity2));
       assertProductCosting(product.getId(), productCostingAssertList);
@@ -3275,23 +3277,23 @@ public class TestCosting extends WeldBaseTest {
       List<List<CostAdjustmentAssert>> costAdjustmentAssertList = new ArrayList<List<CostAdjustmentAssert>>();
       List<CostAdjustmentAssert> costAdjustmentAssertLineList1 = new ArrayList<CostAdjustmentAssert>();
       costAdjustmentAssertLineList1.add(new CostAdjustmentAssert(transactionList.get(0), "PDC",
-          quantity1.multiply(price3).add(quantity1.multiply(price1).negate()), day4, true));
+          quantity1.multiply(price3).add(quantity1.multiply(price1).negate()), day5, true));
       costAdjustmentAssertLineList1.add(new CostAdjustmentAssert(transactionList.get(1), "PDC",
-          quantity1.multiply(price3).add(quantity1.multiply(price2).negate()), day4, true));
+          quantity1.multiply(price3).add(quantity1.multiply(price2).negate()), day5, true));
       costAdjustmentAssertLineList1.add(new CostAdjustmentAssert(transactionList.get(2), "PDC",
-          quantity2.multiply(price3).add(quantity2.multiply(price1).negate()), day4, false));
+          quantity2.multiply(price3).add(quantity2.multiply(price1).negate()), day5, false));
       costAdjustmentAssertLineList1.add(new CostAdjustmentAssert(transactionList.get(3), "PDC",
-          quantity3.multiply(price3).add(quantity3.multiply(price2).negate()), day4, false));
+          quantity3.multiply(price3).add(quantity3.multiply(price2).negate()), day5, false));
       costAdjustmentAssertList.add(costAdjustmentAssertLineList1);
       List<CostAdjustmentAssert> costAdjustmentAssertLineList2 = new ArrayList<CostAdjustmentAssert>();
       costAdjustmentAssertLineList2.add(new CostAdjustmentAssert(transactionList.get(4), "PDC",
-          quantity4.multiply(price4).add(quantity4.multiply(price3).negate()), day6, true));
+          quantity4.multiply(price4).add(quantity4.multiply(price3).negate()), day7, true));
       costAdjustmentAssertList.add(costAdjustmentAssertLineList2);
       List<CostAdjustmentAssert> costAdjustmentAssertLineList3 = new ArrayList<CostAdjustmentAssert>();
       costAdjustmentAssertLineList3.add(new CostAdjustmentAssert(transactionList.get(5), "MCC",
-          quantity5.multiply(price5).add(quantity5.multiply(price3).negate()), day8, true));
+          quantity5.multiply(price5).add(quantity5.multiply(price3).negate()), day9, true));
       costAdjustmentAssertLineList3.add(new CostAdjustmentAssert(transactionList.get(6), "MCC",
-          quantity5.multiply(price5).add(quantity5.multiply(price3).negate()), day8, false));
+          quantity5.multiply(price5).add(quantity5.multiply(price3).negate()), day9, false));
       costAdjustmentAssertList.add(costAdjustmentAssertLineList3);
       assertCostAdjustment(costAdjustmentList, costAdjustmentAssertList);
 
@@ -3950,19 +3952,19 @@ public class TestCosting extends WeldBaseTest {
       // Assert product transactions
       List<ProductTransactionAssert> productTransactionAssertList = new ArrayList<ProductTransactionAssert>();
       productTransactionAssertList.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt1.getId()).getMaterialMgmtShipmentInOutLineList()
-          .get(0), price1, price2, true));
-      productTransactionAssertList.add(new ProductTransactionAssert(OBDal.getInstance()
           .get(ShipmentInOut.class, goodsReceipt2.getId()).getMaterialMgmtShipmentInOutLineList()
           .get(0), price2, price2, true));
+      productTransactionAssertList.add(new ProductTransactionAssert(OBDal.getInstance()
+          .get(ShipmentInOut.class, goodsReceipt1.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(0), price1, price2, true));
       assertProductTransaction(product.getId(), productTransactionAssertList);
 
       // Assert product costing
       List<MaterialTransaction> transactionList = getProductTransactions(product.getId());
       List<ProductCostingAssert> productCostingAssertList = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(0), price2, price1,
+      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(1), price2, price1,
           price2, quantity1));
-      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(1), price2, null,
+      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(0), price2, null,
           price2, amount0));
       assertProductCosting(product.getId(), productCostingAssertList);
 
@@ -3970,7 +3972,7 @@ public class TestCosting extends WeldBaseTest {
       List<CostAdjustment> costAdjustmentList = getCostAdjustment(product.getId());
       List<List<CostAdjustmentAssert>> costAdjustmentAssertList = new ArrayList<List<CostAdjustmentAssert>>();
       List<CostAdjustmentAssert> costAdjustmentAssertLineList = new ArrayList<CostAdjustmentAssert>();
-      costAdjustmentAssertLineList.add(new CostAdjustmentAssert(transactionList.get(0), "PDC",
+      costAdjustmentAssertLineList.add(new CostAdjustmentAssert(transactionList.get(1), "PDC",
           quantity1.multiply(price2).add(quantity1.multiply(price1).negate()), day1, true));
       costAdjustmentAssertList.add(costAdjustmentAssertLineList);
       assertCostAdjustment(costAdjustmentList, costAdjustmentAssertList);
@@ -4127,6 +4129,7 @@ public class TestCosting extends WeldBaseTest {
     final int day1 = 5;
     final int day2 = 10;
     final int day3 = 15;
+    final int day4 = 20;
     final BigDecimal price1 = new BigDecimal("15.00");
     final BigDecimal price2 = new BigDecimal("25.00");
     final BigDecimal price3 = new BigDecimal("17.50");
@@ -4171,11 +4174,11 @@ public class TestCosting extends WeldBaseTest {
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt2 = createGoodsReceipt(purchaseOrder2, price2, quantity4,
-          LOCATOR2_ID, day1);
+          LOCATOR2_ID, day2);
 
       // Create bill of materials production, run costing background, post it and assert it
       ProductionTransaction billOfMaterialsProduction = createBillOfMaterialsProduction(product3,
-          quantity5, LOCATOR1_ID, day2);
+          quantity5, LOCATOR1_ID, day3);
 
       // Create purchase invoice, post it and assert it
       List<ShipmentInOut> goodsReceiptList = new ArrayList<ShipmentInOut>();
@@ -4184,7 +4187,7 @@ public class TestCosting extends WeldBaseTest {
       List<BigDecimal> priceList = new ArrayList<BigDecimal>();
       priceList.add(price3);
       priceList.add(price4);
-      createPurchaseInvoice(goodsReceiptList, priceList, quantity3.add(quantity4), day3);
+      createPurchaseInvoice(goodsReceiptList, priceList, quantity3.add(quantity4), day4);
 
       // Run price correction background
       runPriceBackground();
@@ -4239,17 +4242,17 @@ public class TestCosting extends WeldBaseTest {
       List<List<CostAdjustmentAssert>> costAdjustmentAssertList1 = new ArrayList<List<CostAdjustmentAssert>>();
       List<CostAdjustmentAssert> costAdjustmentAssertLineList11 = new ArrayList<CostAdjustmentAssert>();
       costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList1.get(0), "PDC",
-          quantity3.multiply(price3).add(quantity3.multiply(price1).negate()), day3, true));
+          quantity3.multiply(price3).add(quantity3.multiply(price1).negate()), day4, true));
       costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList2.get(0), "PDC",
-          quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), day3, true));
+          quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), day4, true));
       costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList1.get(1), "PDC",
-          quantity3.multiply(price3).add(quantity3.multiply(price1).negate()), day3, false));
+          quantity3.multiply(price3).add(quantity3.multiply(price1).negate()), day4, false));
       costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList3.get(0), "PDC",
-          quantity3.multiply(price3).add(quantity3.multiply(price1).negate()), day3, false));
+          quantity3.multiply(price3).add(quantity3.multiply(price1).negate()), day4, false));
       costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList2.get(1), "PDC",
-          quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), day3, false));
+          quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), day4, false));
       costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList3.get(0), "PDC",
-          quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), day3, false));
+          quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), day4, false));
       costAdjustmentAssertList1.add(costAdjustmentAssertLineList11);
       assertCostAdjustment(costAdjustmentList1, costAdjustmentAssertList1);
 
@@ -4258,17 +4261,17 @@ public class TestCosting extends WeldBaseTest {
       List<List<CostAdjustmentAssert>> costAdjustmentAssertList2 = new ArrayList<List<CostAdjustmentAssert>>();
       List<CostAdjustmentAssert> costAdjustmentAssertLineList21 = new ArrayList<CostAdjustmentAssert>();
       costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList1.get(0), "PDC",
-          quantity3.multiply(price3).add(quantity3.multiply(price1).negate()), day3, true));
+          quantity3.multiply(price3).add(quantity3.multiply(price1).negate()), day4, true));
       costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList2.get(0), "PDC",
-          quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), day3, true));
+          quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), day4, true));
       costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList1.get(1), "PDC",
-          quantity3.multiply(price3).add(quantity3.multiply(price1).negate()), day3, false));
+          quantity3.multiply(price3).add(quantity3.multiply(price1).negate()), day4, false));
       costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList3.get(0), "PDC",
-          quantity3.multiply(price3).add(quantity3.multiply(price1).negate()), day3, false));
+          quantity3.multiply(price3).add(quantity3.multiply(price1).negate()), day4, false));
       costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList2.get(1), "PDC",
-          quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), day3, false));
+          quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), day4, false));
       costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList3.get(0), "PDC",
-          quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), day3, false));
+          quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), day4, false));
       costAdjustmentAssertList2.add(costAdjustmentAssertLineList21);
       assertCostAdjustment(costAdjustmentList2, costAdjustmentAssertList2);
 
@@ -4277,17 +4280,17 @@ public class TestCosting extends WeldBaseTest {
       List<List<CostAdjustmentAssert>> costAdjustmentAssertList3 = new ArrayList<List<CostAdjustmentAssert>>();
       List<CostAdjustmentAssert> costAdjustmentAssertLineList31 = new ArrayList<CostAdjustmentAssert>();
       costAdjustmentAssertLineList31.add(new CostAdjustmentAssert(transactionList1.get(0), "PDC",
-          quantity3.multiply(price3).add(quantity3.multiply(price1).negate()), day3, true));
+          quantity3.multiply(price3).add(quantity3.multiply(price1).negate()), day4, true));
       costAdjustmentAssertLineList31.add(new CostAdjustmentAssert(transactionList2.get(0), "PDC",
-          quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), day3, true));
+          quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), day4, true));
       costAdjustmentAssertLineList31.add(new CostAdjustmentAssert(transactionList1.get(1), "PDC",
-          quantity3.multiply(price3).add(quantity3.multiply(price1).negate()), day3, false));
+          quantity3.multiply(price3).add(quantity3.multiply(price1).negate()), day4, false));
       costAdjustmentAssertLineList31.add(new CostAdjustmentAssert(transactionList3.get(0), "PDC",
-          quantity3.multiply(price3).add(quantity3.multiply(price1).negate()), day3, false));
+          quantity3.multiply(price3).add(quantity3.multiply(price1).negate()), day4, false));
       costAdjustmentAssertLineList31.add(new CostAdjustmentAssert(transactionList2.get(1), "PDC",
-          quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), day3, false));
+          quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), day4, false));
       costAdjustmentAssertLineList31.add(new CostAdjustmentAssert(transactionList3.get(0), "PDC",
-          quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), day3, false));
+          quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), day4, false));
       costAdjustmentAssertList3.add(costAdjustmentAssertLineList31);
       assertCostAdjustment(costAdjustmentList3, costAdjustmentAssertList3);
 
@@ -11544,7 +11547,6 @@ public class TestCosting extends WeldBaseTest {
       criteria.add(Restrictions.eq(MaterialTransaction.PROPERTY_PRODUCT,
           OBDal.getInstance().get(Product.class, productId)));
       criteria.addOrderBy(MaterialTransaction.PROPERTY_MOVEMENTDATE, true);
-      criteria.addOrderBy(MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE, true);
       criteria.addOrderBy(MaterialTransaction.PROPERTY_MOVEMENTQUANTITY, true);
       return criteria.list();
     } catch (Exception e) {
@@ -11576,13 +11578,19 @@ public class TestCosting extends WeldBaseTest {
   // Get Product Costing list
   private List<Costing> getProductCostings(String productId) {
     try {
-      OBCriteria<Costing> criteria = OBDal.getInstance().createCriteria(Costing.class);
-      criteria.add(Restrictions.eq(Costing.PROPERTY_PRODUCT,
-          OBDal.getInstance().get(Product.class, productId)));
-      criteria.addOrderBy(Costing.PROPERTY_STARTINGDATE, true);
-      criteria.addOrderBy(Costing.PROPERTY_ENDINGDATE, true);
-      criteria.addOrderBy(Costing.PROPERTY_CREATIONDATE, true);
-      return criteria.list();
+      // Ordenar por la inventory transaction también
+      StringBuffer where = new StringBuffer();
+      where.append(" as t1 ");
+      where.append("\n join t1." + Costing.PROPERTY_WAREHOUSE + " t2");
+      where.append("\n where t1." + Costing.PROPERTY_PRODUCT + " = :product");
+      where.append("\n order by t1." + Costing.PROPERTY_MANUAL + " desc");
+      where.append("\n , t1." + Costing.PROPERTY_COSTTYPE + " desc");
+      where.append("\n , t2." + Warehouse.PROPERTY_NAME + " desc");
+      where.append("\n , t1." + Costing.PROPERTY_ENDINGDATE);
+      where.append("\n , t1." + Costing.PROPERTY_TOTALMOVEMENTQUANTITY);
+      OBQuery<Costing> hql = OBDal.getInstance().createQuery(Costing.class, where.toString());
+      hql.setNamedParameter("product", OBDal.getInstance().get(Product.class, productId));
+      return hql.list();
     } catch (Exception e) {
       throw new OBException(e);
     }
