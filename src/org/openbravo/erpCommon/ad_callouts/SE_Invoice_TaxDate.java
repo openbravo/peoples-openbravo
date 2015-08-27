@@ -20,6 +20,7 @@ package org.openbravo.erpCommon.ad_callouts;
 
 import javax.servlet.ServletException;
 
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.utils.FormatUtilities;
 
@@ -33,8 +34,9 @@ public class SE_Invoice_TaxDate extends SimpleCallout {
     String strDateAcct = vars.getStringParameter("inpdateacct");
     String strTaxDate = vars.getStringParameter("inptaxdate");
     try {
-      if ((strTaxDate != null || !strTaxDate.equals("")) && !strDateAcct.equals(strTaxDate))
+      if (StringUtils.isNotEmpty(strTaxDate) && !StringUtils.equals(strDateAcct, strTaxDate)) {
         info.addResult("inptaxdate", FormatUtilities.replaceJS(strDateAcct));
+      }
     } catch (Exception e) {
       log4j.info("Process failed populating tax date from accounting date");
     }
