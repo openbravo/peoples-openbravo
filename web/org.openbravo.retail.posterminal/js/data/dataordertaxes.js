@@ -455,11 +455,13 @@
           });
         }
       })['catch'](function (reason) {
+        var title = OB.I18N.getLabel('OBPOS_TaxNotFound_Header');
+        OB.error(title + ":" + reason);
         receipt.deleteLine(line);
         OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
           popup: 'OB_UI_MessageDialog',
           args: {
-            header: OB.I18N.getLabel('OBPOS_TaxNotFound_Header'),
+            header: title,
             message: reason
           }
         });
@@ -717,11 +719,13 @@
           silent: true
         });
       })['catch'](function (reason) {
+        var title = OB.I18N.getLabel('OBPOS_TaxNotFound_Header');
+        OB.error(title + ":" + reason);
         receipt.deleteLine(line);
         OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
           popup: 'OB_UI_MessageDialog',
           args: {
-            header: OB.I18N.getLabel('OBPOS_TaxNotFound_Header'),
+            header: title,
             message: reason
           }
         });

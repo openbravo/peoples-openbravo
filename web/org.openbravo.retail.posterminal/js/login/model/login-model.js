@@ -513,7 +513,7 @@
         }
 
       });
-      
+
       this.trigger('ready');
 
     },
@@ -638,43 +638,43 @@
 
       var processDocumentSequenceList = function (documentSequenceList) {
 
-        var docSeq;
-        if (documentSequenceList && documentSequenceList.length > 0) {
-          // There can only be one documentSequence model in the list (posSearchKey is unique)
-          docSeq = documentSequenceList.models[0];
-          // verify if the new values are higher and if it is not undefined or 0
-          if (docSeq.get('documentSequence') > me.documentnoThreshold && documentnoSuffix !== 0) {
-            me.documentnoThreshold = docSeq.get('documentSequence');
+          var docSeq;
+          if (documentSequenceList && documentSequenceList.length > 0) {
+            // There can only be one documentSequence model in the list (posSearchKey is unique)
+            docSeq = documentSequenceList.models[0];
+            // verify if the new values are higher and if it is not undefined or 0
+            if (docSeq.get('documentSequence') > me.documentnoThreshold && documentnoSuffix !== 0) {
+              me.documentnoThreshold = docSeq.get('documentSequence');
+            }
+            if (docSeq.get('quotationDocumentSequence') > me.quotationnoThreshold && quotationnoSuffix !== 0) {
+              me.quotationnoThreshold = docSeq.get('quotationDocumentSequence');
+            }
+          } else {
+            // There is not a document sequence for the pos, create it
+            docSeq = new OB.Model.DocumentSequence();
+            docSeq.set('posSearchKey', me.get('terminal').searchKey);
           }
-          if (docSeq.get('quotationDocumentSequence') > me.quotationnoThreshold && quotationnoSuffix !== 0) {
-            me.quotationnoThreshold = docSeq.get('quotationDocumentSequence');
-          }
-        } else {
-          // There is not a document sequence for the pos, create it
-          docSeq = new OB.Model.DocumentSequence();
-          docSeq.set('posSearchKey', me.get('terminal').searchKey);
-        }
 
-        // deprecation 27911 starts
-        OB.MobileApp.model.set('documentsequence', me.getLastDocumentnoSuffixInOrderlist());
-        OB.MobileApp.model.set('quotationDocumentSequence', me.getLastQuotationnoSuffixInOrderlist());
-        if (!me.isSeqNoReadyEventSent) {
-          me.isSeqNoReadyEventSent = true;
-          me.trigger('seqNoReady');
-        }
-        // deprecation 27911 ends
-        // update the database
-        docSeq.set('documentSequence', me.documentnoThreshold);
-        docSeq.set('quotationDocumentSequence', me.quotationnoThreshold);
-        OB.Dal.saveInTransaction(tx, docSeq, function () {
-          if (callback) {
-            callback();
+          // deprecation 27911 starts
+          OB.MobileApp.model.set('documentsequence', me.getLastDocumentnoSuffixInOrderlist());
+          OB.MobileApp.model.set('quotationDocumentSequence', me.getLastQuotationnoSuffixInOrderlist());
+          if (!me.isSeqNoReadyEventSent) {
+            me.isSeqNoReadyEventSent = true;
+            me.trigger('seqNoReady');
           }
-          me.restartingDocNo = false;
-        }, function () {
-          me.restartingDocNo = false;
-        });
-      };
+          // deprecation 27911 ends
+          // update the database
+          docSeq.set('documentSequence', me.documentnoThreshold);
+          docSeq.set('quotationDocumentSequence', me.quotationnoThreshold);
+          OB.Dal.saveInTransaction(tx, docSeq, function () {
+            if (callback) {
+              callback();
+            }
+            me.restartingDocNo = false;
+          }, function () {
+            me.restartingDocNo = false;
+          });
+          };
 
       // verify the database values
       OB.Dal.findInTransaction(tx, OB.Model.DocumentSequence, {

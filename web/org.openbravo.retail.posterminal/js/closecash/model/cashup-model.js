@@ -53,7 +53,11 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
     loaded: true,
     active: true
   }],
-  init: function () {},
+  init: function () {
+    OB.error("This init method should never be called for this model. Call initModels and loadModels instead");
+    this.initModels(function () {});
+    this.loadModels(function () {});
+  },
   initModels: function (initModelsCallback) {
     var synchId1 = OB.UTIL.SynchronizationHelper.busyUntilFinishes('cashup-model.init1');
     //Check for orders which are being processed in this moment.

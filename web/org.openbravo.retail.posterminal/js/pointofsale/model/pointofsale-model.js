@@ -164,12 +164,12 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
   },
   initModels: function (callback) {
     var me = this;
-    
+
     // create and expose the receipt
     var receipt = new OB.Model.Order();
     // fire events if the receipt model is the target of the OB.UTIL.clone method
     receipt.triggerEventsIfTargetOfSourceWhenCloning = function () {
-      return true;      
+      return true;
     };
     OB.MobileApp.model.receipt = receipt;
 
@@ -695,15 +695,17 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
    * OBPOS_PrePaymentApproval can be used to ensure certain order within the
    * same hook
    */
-  completePayment: function () {
+  completePayment: function (caller) {
     var me = this;
     OB.UTIL.HookManager.executeHooks('OBPOS_PrePaymentHook', {
-      context: this
+      context: this,
+      caller: caller
     }, function () {
       OB.UTIL.HookManager.executeHooks('OBPOS_PrePaymentApproval', {
-        context: me
+        context: me,
+        caller: caller
       }, function () {
-        me.checkPaymentApproval();
+        me.checkPaymentApproval(caller);
       });
     });
   },
@@ -713,11 +715,12 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
    * payment is approved. In case value is true the process will continue, if not
    * it is aborted
    */
-  checkPaymentApproval: function () {
+  checkPaymentApproval: function (caller) {
     var me = this;
     OB.UTIL.HookManager.executeHooks('OBPOS_CheckPaymentApproval', {
       approvals: [],
-      context: this
+      context: this,
+      caller: caller
     }, function (args) {
       var negativeLines = _.filter(me.get('order').get('lines').models, function (line) {
         return line.get('qty') < 0;

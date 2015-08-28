@@ -129,6 +129,7 @@
   }, {
     name: 'searchKey',
     column: 'value',
+    filter: true,
     type: 'TEXT'
   }, {
     name: '_identifier',
