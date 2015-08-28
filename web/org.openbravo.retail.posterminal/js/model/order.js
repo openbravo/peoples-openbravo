@@ -816,7 +816,6 @@
                 for (i = 0; i < thisUndo.lines.length; i++) {
                   //Changing the qty of a line modifies the undo attribute, so we need a copy
                   thisUndo.lines[i].set('qty', thisUndo.oldqtys[i]);
-                  thisUndo.lines[i].calculateGross();
                 }
                 me.calculateGross();
                 me.set('undo', null);
@@ -829,7 +828,6 @@
               line: line,
               undo: function () {
                 line.set('qty', oldqty);
-                line.calculateGross();
                 me.calculateGross();
                 me.set('undo', null);
               }
@@ -895,7 +893,6 @@
                   var i;
                   for (i = 0; i < me.get('undo').lines.length; i++) {
                     me.get('undo').lines[i].set('price', me.get('undo').oldprices[i]);
-                    me.get('undo').lines[i].calculateGross();
                   }
                   me.calculateGross();
                   me.set('undo', null);
@@ -908,7 +905,6 @@
                 line: line,
                 undo: function () {
                   line.set('price', oldprice);
-                  line.calculateGross();
                   me.calculateGross();
                   me.set('undo', null);
                 }
@@ -1731,7 +1727,6 @@
           });
         }
       });
-      //      this.calculateGross();
       this.adjustPayment();
       return newline;
     },
@@ -1776,7 +1771,6 @@
           undo: function () {
             _.each(lines, function (line) {
               line.set('qty', -line.get('qty'));
-              line.calculateGross();
             });
             me.calculateGross();
             me.set('undo', null);
