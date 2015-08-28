@@ -28,6 +28,7 @@ import java.util.Map.Entry;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.service.json.JsonConstants;
 
@@ -90,7 +91,9 @@ public abstract class BaseActionHandler implements ActionHandler {
           || entries.getKey().equals(KernelConstants.HTTP_SESSION)) {
         continue;
       }
-      retval.put(entries.getKey(), entries.getValue().toString());
+      // TODO: ObjectUtils.toString is deprecated in latest versions. Substitute by
+      // newer Objects.toString() method when Java 6 support is deprecated.
+      retval.put(entries.getKey(), ObjectUtils.toString(entries.getValue(), null));
     }
     if (context != null) {
       retval.put("context", context.toString());
