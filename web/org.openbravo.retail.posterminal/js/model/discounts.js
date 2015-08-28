@@ -22,10 +22,26 @@
     preventApplyPromotions: false,
     applyPromotionsTimeout: {},
     applyPromotions: function (receipt, line) {
-      // if the discount algorithm already started, stop pending computations...
-      this.executor.removeGroup('discounts');
-      // ... and start over
-      this.applyPromotionsLat(receipt, line);
+      if (!receipt.get('isBeingDiscounted')) {
+        receipt.set('isBeingDiscounted', true);
+        // if the discount algorithm already started, stop pending computations...
+        this.executor.removeGroup('discounts');
+        // ... and start over
+        this.applyPromotionsLat(receipt, line);
+      } else {
+        receipt.set('reApplyDiscounts', true);
+      }
+    },
+    finishPromotions: function (receipt, line) {
+      if (receipt.get('reApplyDiscounts') === true) {
+        receipt.set('isBeingDiscounted', false);
+        receipt.set('reApplyDiscounts', false);
+        OB.Model.Discounts.applyPromotions(receipt, line);
+      } else {
+        receipt.set('isBeingDiscounted', false);
+        receipt.set('reApplyDiscounts', false);
+        receipt.trigger('applyPromotionsFinished');
+      }
     },
     applyPromotionsLat: function (receipt, line) {
       var me = this;
@@ -87,14 +103,13 @@
                 });
                 me.applyPromotionsImp(auxReceipt, undefined, true);
               } else {
-                receipt.trigger('applyPromotionsFinished');
+                OB.Model.Discounts.finishPromotions(receipt, line);
               }
             } else {
-              receipt.trigger('applyPromotionsFinished');
+              OB.Model.Discounts.finishPromotions(receipt, line);
             }
-
           } else {
-            receipt.trigger('applyPromotionsFinished');
+            OB.Model.Discounts.finishPromotions(receipt, line);
           }
         });
 

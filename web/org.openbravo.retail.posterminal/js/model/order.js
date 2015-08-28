@@ -318,6 +318,8 @@
         this.set('isLayaway', attributes.isLayaway);
         this.set('isEditable', attributes.isEditable);
         this.set('openDrawer', attributes.openDrawer);
+        this.set('isBeingDiscounted', false);
+        this.set('reApplyDiscounts', false);
         _.each(_.keys(attributes), function (key) {
           if (!this.has(key)) {
             this.set(key, attributes[key]);
