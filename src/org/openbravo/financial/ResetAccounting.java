@@ -185,7 +185,8 @@ public class ResetAccounting {
           obc.setFilterOnActive(false);
           obc.add(Restrictions.eq(AccountingFact.PROPERTY_RECORDID, recordId));
           obc.add(Restrictions.eq(AccountingFact.PROPERTY_TABLE, table));
-          if (obc.list().size() == 0) {
+          obc.setMaxResults(1);
+          if (obc.list().isEmpty() && !table.isView()) {
             String tableName = table.getDBTableName();
             String tableIdName = table.getDBTableName() + "_Id";
             String strUpdate = "";
