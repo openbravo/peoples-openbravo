@@ -2061,6 +2061,7 @@
         line.unset('grossListPrice');
         line.unset('grossUnitPrice');
         line.unset('lineGrossAmount');
+        line.set('id', OB.Dal.get_uuid());
       }, this);
 
       this.set('id', null);
