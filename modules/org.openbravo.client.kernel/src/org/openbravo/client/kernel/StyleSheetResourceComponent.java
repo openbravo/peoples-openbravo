@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -140,6 +140,10 @@ public class StyleSheetResourceComponent extends BaseComponent {
               // Skin version handling
               if (resourcePath.contains(KernelConstants.SKIN_PARAMETER)) {
                 resourcePath = resourcePath.replaceAll(KernelConstants.SKIN_PARAMETER, skinParam);
+              }
+              if (!resourcePath.startsWith("/")) {
+                // Tomcat 8 forces getRealPath to start with a slash
+                resourcePath = "/" + resourcePath;
               }
 
               try {

@@ -273,7 +273,7 @@ public class ConfigParameters {
   }
 
   public String getFormatPath() {
-    return prefix + strBaseConfigPath + "/Format.xml";
+    return prefix + "/" + strBaseConfigPath + "/Format.xml";
   }
 
   public Log4JLogger getFopLogger() {
