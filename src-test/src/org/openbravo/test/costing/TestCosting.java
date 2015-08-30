@@ -226,8 +226,6 @@ public class TestCosting extends WeldBaseTest {
   // Goods Shipment with documentNo: 500014
   private static String MOVEMENTOUT_ID = "2BCCC64DA82A48C3976B4D007315C2C9";
 
-  // Today's date
-  static final Date today = new Date();
   // Amount 0
   final BigDecimal amount0 = BigDecimal.ZERO;
 
@@ -9833,7 +9831,7 @@ public class TestCosting extends WeldBaseTest {
             productCosting.setStartingDate(DateUtils.addYears(product.getPricingProductPriceList()
                 .get(0).getPriceListVersion().getValidFromDate(), year));
           else
-            productCosting.setStartingDate(today);
+            productCosting.setStartingDate(new Date());
           Calendar calendar = Calendar.getInstance();
           calendar.set(9999, 11, 31);
           productCosting.setEndingDate(calendar.getTime());
@@ -9916,8 +9914,8 @@ public class TestCosting extends WeldBaseTest {
 
       orderClone
           .setDocumentNo(getDocumentNo(order.getDocumentType().getDocumentSequence().getId()));
-      orderClone.setOrderDate(DateUtils.addDays(today, day));
-      orderClone.setScheduledDeliveryDate(DateUtils.addDays(today, day));
+      orderClone.setOrderDate(DateUtils.addDays(new Date(), day));
+      orderClone.setScheduledDeliveryDate(DateUtils.addDays(new Date(), day));
       orderClone.setSummedLineAmount(BigDecimal.ZERO);
       orderClone.setGrandTotalAmount(BigDecimal.ZERO);
 
@@ -9926,8 +9924,8 @@ public class TestCosting extends WeldBaseTest {
       OrderLine orderCloneLine = (OrderLine) DalUtil.copy(orderLine, false);
 
       setGeneralData(orderCloneLine);
-      orderCloneLine.setOrderDate(DateUtils.addDays(today, day));
-      orderCloneLine.setScheduledDeliveryDate(DateUtils.addDays(today, day));
+      orderCloneLine.setOrderDate(DateUtils.addDays(new Date(), day));
+      orderCloneLine.setScheduledDeliveryDate(DateUtils.addDays(new Date(), day));
 
       orderCloneLine.setProduct(product);
       orderCloneLine.setOrderedQuantity(quantity);
@@ -10011,7 +10009,7 @@ public class TestCosting extends WeldBaseTest {
     try {
       OrderLine orderLine = order.getOrderLineList().get(0);
 
-      orderLine.setUpdated(today);
+      orderLine.setUpdated(new Date());
       orderLine.setUnitPrice(price);
       orderLine.setListPrice(price);
       orderLine.setStandardPrice(price);
@@ -10054,8 +10052,8 @@ public class TestCosting extends WeldBaseTest {
       else
         invoiceClone.setDocumentNo(getDocumentNo(INVOICEIN_SEQUENCE_ID));
 
-      invoiceClone.setInvoiceDate(DateUtils.addDays(today, day));
-      invoiceClone.setAccountingDate(DateUtils.addDays(today, day));
+      invoiceClone.setInvoiceDate(DateUtils.addDays(new Date(), day));
+      invoiceClone.setAccountingDate(DateUtils.addDays(new Date(), day));
       invoiceClone.setSummedLineAmount(BigDecimal.ZERO);
       invoiceClone.setGrandTotalAmount(BigDecimal.ZERO);
       invoiceClone.setPriceList(OBDal.getInstance().get(Product.class, productId)
@@ -10423,7 +10421,7 @@ public class TestCosting extends WeldBaseTest {
     try {
       InvoiceLine invoiceLine = invoice.getInvoiceLineList().get(0);
 
-      invoiceLine.setUpdated(today);
+      invoiceLine.setUpdated(new Date());
       invoiceLine.setUnitPrice(price);
       invoiceLine.setStandardPrice(price);
       invoiceLine.setLineNetAmount(invoiceLine.getInvoicedQuantity().multiply(price));
@@ -10466,8 +10464,8 @@ public class TestCosting extends WeldBaseTest {
       else
         movementClone.setDocumentNo(getDocumentNo(SHIPMENTIN_SEQUENCE_ID));
 
-      movementClone.setMovementDate(DateUtils.addDays(today, day));
-      movementClone.setAccountingDate(DateUtils.addDays(today, day));
+      movementClone.setMovementDate(DateUtils.addDays(new Date(), day));
+      movementClone.setAccountingDate(DateUtils.addDays(new Date(), day));
       movementClone.setWarehouse(OBDal.getInstance().get(Locator.class, locatorId).getWarehouse());
       if (bpartnerId != null) {
         movementClone
@@ -10509,8 +10507,8 @@ public class TestCosting extends WeldBaseTest {
       InternalMovement movement = OBProvider.getInstance().get(InternalMovement.class);
       setGeneralData(movement);
       movement.setName(OBDal.getInstance().get(Product.class, productId).getName() + " - "
-          + formatDate(DateUtils.addDays(today, day)));
-      movement.setMovementDate(DateUtils.addDays(today, day));
+          + formatDate(DateUtils.addDays(new Date(), day)));
+      movement.setMovementDate(DateUtils.addDays(new Date(), day));
       movement.setPosted("N");
       movement.setDocumentNo(getDocumentNo(MOVEMENT_SEQUENCE_ID));
 
@@ -10542,8 +10540,8 @@ public class TestCosting extends WeldBaseTest {
       InternalConsumption consumption = OBProvider.getInstance().get(InternalConsumption.class);
       setGeneralData(consumption);
       consumption.setName(OBDal.getInstance().get(Product.class, productId).getName() + " - "
-          + formatDate(DateUtils.addDays(today, day)));
-      consumption.setMovementDate(DateUtils.addDays(today, day));
+          + formatDate(DateUtils.addDays(new Date(), day)));
+      consumption.setMovementDate(DateUtils.addDays(new Date(), day));
 
       InternalConsumptionLine consumptionLine = OBProvider.getInstance().get(
           InternalConsumptionLine.class);
@@ -10712,13 +10710,13 @@ public class TestCosting extends WeldBaseTest {
       inventoryAmountUpdate.setDocumentType(documentType);
       inventoryAmountUpdate.setDocumentNo(getDocumentNo(inventoryAmountUpdate.getDocumentType()
           .getDocumentSequence().getId()));
-      inventoryAmountUpdate.setDocumentDate(DateUtils.addDays(today, day));
+      inventoryAmountUpdate.setDocumentDate(DateUtils.addDays(new Date(), day));
       OBDal.getInstance().save(inventoryAmountUpdate);
 
       InventoryAmountUpdateLine inventoryAmountUpdateLine = OBProvider.getInstance().get(
           InventoryAmountUpdateLine.class);
       setGeneralData(inventoryAmountUpdateLine);
-      inventoryAmountUpdateLine.setReferenceDate(DateUtils.addDays(today, day));
+      inventoryAmountUpdateLine.setReferenceDate(DateUtils.addDays(new Date(), day));
       inventoryAmountUpdateLine.setProduct(OBDal.getInstance().get(Product.class, productId));
       inventoryAmountUpdateLine.setWarehouse(OBDal.getInstance()
           .get(Warehouse.class, WAREHOUSE1_ID));
@@ -10751,7 +10749,7 @@ public class TestCosting extends WeldBaseTest {
 
       billOfMaterialsProduction.setName("BOM - "
           + OBDal.getInstance().get(Product.class, productId).getName());
-      billOfMaterialsProduction.setMovementDate(DateUtils.addDays(today, day));
+      billOfMaterialsProduction.setMovementDate(DateUtils.addDays(new Date(), day));
       billOfMaterialsProduction.setDocumentNo(getDocumentNo(PRODUCTION_DOCUMENTSEQUENCE_ID));
       billOfMaterialsProduction.setSalesTransaction(true);
 
@@ -10889,7 +10887,7 @@ public class TestCosting extends WeldBaseTest {
     try {
       LandedCost landedCost = OBProvider.getInstance().get(LandedCost.class);
       setGeneralData(landedCost);
-      landedCost.setReferenceDate(DateUtils.addDays(today, day));
+      landedCost.setReferenceDate(DateUtils.addDays(new Date(), day));
       landedCost.setDocumentType(OBDal.getInstance().get(DocumentType.class,
           LANDEDCOST_DOCUMENTTYPE_ID));
       landedCost.setDocumentNo(getDocumentNo(landedCost.getDocumentType().getDocumentSequence()
@@ -10938,7 +10936,7 @@ public class TestCosting extends WeldBaseTest {
 
         landedCostCost.setLandedCostDistributionAlgorithm(OBDal.getInstance().get(
             LCDistributionAlgorithm.class, LANDEDCOSTCOST_ALGORITHM_ID));
-        landedCostCost.setAccountingDate(DateUtils.addDays(today, day));
+        landedCostCost.setAccountingDate(DateUtils.addDays(new Date(), day));
         landedCostCost.setLineNo(new Long((i + 1) * 10));
         landedCostCost.setDocumentType(OBDal.getInstance().get(DocumentType.class,
             LANDEDCOSTCOST_DOCUMENTTYPE_ID));
@@ -11000,7 +10998,7 @@ public class TestCosting extends WeldBaseTest {
         landedCostCost.setLandedCostDistributionAlgorithm(OBDal.getInstance().get(
             LCDistributionAlgorithm.class, LANDEDCOSTCOST_ALGORITHM_ID));
         landedCostCost.setCurrency(invoiceLine.getInvoice().getCurrency());
-        landedCostCost.setAccountingDate(today);
+        landedCostCost.setAccountingDate(new Date());
         landedCostCost.setLineNo(new Long((i + 1) * 10));
 
         landedCostCostList.add(landedCostCost);
@@ -11345,7 +11343,7 @@ public class TestCosting extends WeldBaseTest {
       HashMap<String, Object> parameters = new HashMap<String, Object>();
       String content = "{\r    'M_Transaction_ID':'" + materialTransactionId
           + "', \r    '_params':{\r        'Cost':" + amount.toString()
-          + ", \r        'DateAcct':'" + formatDate(DateUtils.addDays(today, day))
+          + ", \r        'DateAcct':'" + formatDate(DateUtils.addDays(new Date(), day))
           + "', \r        'IsIncremental':" + incremental + ", \r        'IsUnitCost':" + unitCost
           + "\r    }\r}";
       Object object = new ManualCostAdjustmentProcessHandler();
@@ -11647,9 +11645,7 @@ public class TestCosting extends WeldBaseTest {
       assertEquals(((Client) document.get("client")).getId(), CLIENT_ID);
       assertEquals(((Organization) document.get("organization")).getName(), "Spain");
       assertTrue(((Boolean) document.get("active")));
-      assertEquals(formatDate((Date) document.get("creationDate")), formatDate(new Date()));
       assertEquals(((User) document.get("createdBy")).getId(), USER_ID);
-      assertEquals(formatDate((Date) document.get("updated")), formatDate(new Date()));
       assertEquals(((User) document.get("updatedBy")).getId(), USER_ID);
     } catch (Exception e) {
       throw new OBException(e);
@@ -11667,8 +11663,8 @@ public class TestCosting extends WeldBaseTest {
       assertEquals(receiptInvoiceMatch.getProduct(), matchedInvoicesAssert.getInvoiceLine()
           .getProduct());
 
-      assertEquals(receiptInvoiceMatch.getTransactionDate(), matchedInvoicesAssert.getInvoiceLine()
-          .getInvoice().getInvoiceDate());
+      assertEquals(formatDate(receiptInvoiceMatch.getTransactionDate()),
+          formatDate(matchedInvoicesAssert.getInvoiceLine().getInvoice().getInvoiceDate()));
       assertEquals(receiptInvoiceMatch.getQuantity(), matchedInvoicesAssert.getMovementLine()
           .getMovementQuantity());
 
@@ -11720,7 +11716,7 @@ public class TestCosting extends WeldBaseTest {
         assertEquals(physicalInventory.getWarehouse(),
             OBDal.getInstance().get(Warehouse.class, WAREHOUSE1_ID));
         assertEquals(formatDate(physicalInventory.getMovementDate()),
-            formatDate(DateUtils.addDays(today, physicalInventoryAssert.getDay())));
+            formatDate(DateUtils.addDays(new Date(), physicalInventoryAssert.getDay())));
         assertTrue(physicalInventory.isProcessed());
         assertFalse(physicalInventory.isUpdateQuantities());
         assertFalse(physicalInventory.isGenerateList());
@@ -11913,7 +11909,8 @@ public class TestCosting extends WeldBaseTest {
         assertEquals(materialTransaction.getOrderUOM(), null);
         assertEquals(materialTransaction.getOrderQuantity(), null);
 
-        assertEquals(formatDate(materialTransaction.getTransactionProcessDate()), formatDate(today));
+        assertEquals(formatDate(materialTransaction.getTransactionProcessDate()),
+            formatDate(new Date()));
         assertFalse(materialTransaction.isManualcostadjustment());
         assertEquals(materialTransaction.isCheckpricedifference(),
             productTransactionAssert.isPriceDifference());
@@ -12002,8 +11999,9 @@ public class TestCosting extends WeldBaseTest {
               .getShipmentReceiptLine().getStorageBin());
           assertEquals(materialTransaction.getProduct(), productTransactionAssert
               .getShipmentReceiptLine().getProduct());
-          assertEquals(materialTransaction.getMovementDate(), productTransactionAssert
-              .getShipmentReceiptLine().getShipmentReceipt().getMovementDate());
+          assertEquals(formatDate(materialTransaction.getMovementDate()),
+              formatDate(productTransactionAssert.getShipmentReceiptLine().getShipmentReceipt()
+                  .getMovementDate()));
           assertEquals(materialTransaction.getUOM(), productTransactionAssert
               .getShipmentReceiptLine().getUOM());
           assertTrue(materialTransaction.isCheckReservedQuantity());
@@ -12067,8 +12065,9 @@ public class TestCosting extends WeldBaseTest {
               .getCloseInventory().getMaterialMgmtInventoryCountLineList().get(0).getStorageBin());
           assertEquals(materialTransaction.getProduct(), productTransactionAssert
               .getInventoryLine().getProduct());
-          assertEquals(materialTransaction.getMovementDate(), productTransactionAssert
-              .getInventoryLine().getCaInventoryamt().getDocumentDate());
+          assertEquals(formatDate(materialTransaction.getMovementDate()),
+              formatDate(productTransactionAssert.getInventoryLine().getCaInventoryamt()
+                  .getDocumentDate()));
           assertEquals(materialTransaction.getUOM(), productTransactionAssert.getInventoryLine()
               .getInventoryAmountUpdateLineInventoriesList().get(0).getCloseInventory()
               .getMaterialMgmtInventoryCountLineList().get(0).getUOM());
@@ -12130,8 +12129,9 @@ public class TestCosting extends WeldBaseTest {
               productTransactionAssert.getProductionLine());
           assertEquals(materialTransaction.getProduct(), productTransactionAssert.getMovementLine()
               .getProduct());
-          assertEquals(materialTransaction.getMovementDate(), productTransactionAssert
-              .getMovementLine().getMovement().getMovementDate());
+          assertEquals(
+              formatDate(materialTransaction.getMovementDate()),
+              formatDate(productTransactionAssert.getMovementLine().getMovement().getMovementDate()));
           assertEquals(materialTransaction.getUOM(), productTransactionAssert.getMovementLine()
               .getUOM());
           assertTrue(materialTransaction.isCheckReservedQuantity());
@@ -12170,8 +12170,9 @@ public class TestCosting extends WeldBaseTest {
               productTransactionAssert.getConsumptionLine());
           assertEquals(materialTransaction.getProduct(), productTransactionAssert
               .getProductionLine().getProduct());
-          assertEquals(materialTransaction.getMovementDate(), productTransactionAssert
-              .getProductionLine().getProductionPlan().getProduction().getMovementDate());
+          assertEquals(formatDate(materialTransaction.getMovementDate()),
+              formatDate(productTransactionAssert.getProductionLine().getProductionPlan()
+                  .getProduction().getMovementDate()));
           assertEquals(materialTransaction.getUOM(), productTransactionAssert.getProductionLine()
               .getUOM());
           assertTrue(materialTransaction.isCheckReservedQuantity());
@@ -12231,8 +12232,9 @@ public class TestCosting extends WeldBaseTest {
               .getConsumptionLine().getStorageBin());
           assertEquals(materialTransaction.getProduct(), productTransactionAssert
               .getConsumptionLine().getProduct());
-          assertEquals(materialTransaction.getMovementDate(), productTransactionAssert
-              .getConsumptionLine().getInternalConsumption().getMovementDate());
+          assertEquals(formatDate(materialTransaction.getMovementDate()),
+              formatDate(productTransactionAssert.getConsumptionLine().getInternalConsumption()
+                  .getMovementDate()));
           assertEquals(materialTransaction.getUOM(), productTransactionAssert.getConsumptionLine()
               .getUOM());
 
@@ -12272,8 +12274,8 @@ public class TestCosting extends WeldBaseTest {
             assertEquals(materialTransactionCost.getCost(),
                 materialTransaction.getTransactionCost());
             assertEquals(materialTransactionCost.getCostAdjustmentLine(), null);
-            assertEquals(materialTransactionCost.getAccountingDate(),
-                materialTransaction.getMovementDate());
+            assertEquals(formatDate(materialTransactionCost.getAccountingDate()),
+                formatDate(materialTransaction.getMovementDate()));
             assertTrue(materialTransactionCost.isUnitCost());
           }
 
@@ -12305,8 +12307,8 @@ public class TestCosting extends WeldBaseTest {
 
             assertEquals(materialTransactionCost.getCostAdjustmentLine(),
                 costAdjustmentLineList.get(k - 1));
-            assertEquals(materialTransactionCost.getAccountingDate(),
-                costAdjustmentLineList.get(k - 1).getAccountingDate());
+            assertEquals(formatDate(materialTransactionCost.getAccountingDate()),
+                formatDate(costAdjustmentLineList.get(k - 1).getAccountingDate()));
             assertEquals(materialTransactionCost.isUnitCost(), costAdjustmentLineList.get(k - 1)
                 .isUnitCost());
           }
@@ -12400,7 +12402,7 @@ public class TestCosting extends WeldBaseTest {
                   .getPriceListVersion().getValidFromDate(), productCostingAssert.getYear())));
 
         else
-          assertEquals(formatDate(productCosting.getStartingDate()), formatDate(today));
+          assertEquals(formatDate(productCosting.getStartingDate()), formatDate(new Date()));
 
         if (productCostingAssert.getType().equals("STA") || i == indexWarehouse1
             || i == indexWarehouse2) {
@@ -12432,7 +12434,7 @@ public class TestCosting extends WeldBaseTest {
         List<CostAdjustmentAssert> costAdjustmentAssertLineList = costAdjustmentAssertList.get(i);
         assertGeneralData(costAdjustment);
         assertEquals(costAdjustment.getDocumentType().getName(), "Cost Adjustment");
-        assertEquals(formatDate(costAdjustment.getReferenceDate()), formatDate(today));
+        assertEquals(formatDate(costAdjustment.getReferenceDate()), formatDate(new Date()));
         assertEquals(costAdjustment.getSourceProcess(), costAdjustmentAssertLineList.get(0)
             .getType());
         assertTrue(costAdjustment.isProcessed());
@@ -12475,7 +12477,7 @@ public class TestCosting extends WeldBaseTest {
           assertEquals(costAdjustmentLine.isSource(), costAdjustmentAssertLine.isSource());
           assertEquals(costAdjustmentLine.isUnitCost(), costAdjustmentAssertLine.isUnit());
           assertEquals(formatDate(costAdjustmentLine.getAccountingDate()),
-              formatDate(DateUtils.addDays(today, costAdjustmentAssertLine.getDay())));
+              formatDate(DateUtils.addDays(new Date(), costAdjustmentAssertLine.getDay())));
           assertTrue(costAdjustmentLine.isRelatedTransactionAdjusted());
           assertEquals(costAdjustmentLine.getCurrency(), costAdjustmentAssertLine.getCurrency());
 
@@ -12844,7 +12846,7 @@ public class TestCosting extends WeldBaseTest {
         assertEquals(accountingFact.getPeriod(), criteria3.list().get(0));
 
         if (document.getEntityName().equals(CostAdjustment.ENTITY_NAME)) {
-          assertEquals(formatDate(accountingFact.getTransactionDate()), formatDate(today));
+          assertEquals(formatDate(accountingFact.getTransactionDate()), formatDate(new Date()));
           assertEquals(formatDate(accountingFact.getAccountingDate()),
               formatDate(((CostAdjustmentLine) line).getAccountingDate()));
           if (((CostAdjustmentLine) line).getInventoryTransaction().getGoodsShipmentLine() != null) {
