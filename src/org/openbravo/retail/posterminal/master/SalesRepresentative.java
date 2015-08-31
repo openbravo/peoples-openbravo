@@ -33,18 +33,24 @@ public class SalesRepresentative extends ProcessHQLQuery {
 
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
-
+    Long lastUpdated = jsonsent.has("lastUpdated")
+        && !jsonsent.get("lastUpdated").equals("undefined") ? jsonsent.getLong("lastUpdated")
+        : null;
     List<String> hqlQueries = new ArrayList<String>();
     HQLPropertyList regularSalesRepresentativeHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions);
+
+    String operator = lastUpdated == null ? " AND " : " OR ";
 
     hqlQueries
         .add("select"
             + regularSalesRepresentativeHQLProperties.getHqlSelect() //
             + "from ADUser user "
             + "where "
-            + " exists (select 1 from BusinessPartner bp where user.businessPartner = bp AND bp.isSalesRepresentative = true) "
-            + "and (user.$incrementalUpdateCriteria) AND ($naturalOrgCriteria) and $readableSimpleClientCriteria order by user.name asc");
+            + " exists (select 1 from BusinessPartner bp where user.businessPartner = bp AND bp.isSalesRepresentative = true AND (bp.$naturalOrgCriteria)) "
+            + "AND ((user.$incrementalUpdateCriteria) "
+            + operator
+            + " (user.businessPartner.$incrementalUpdateCriteria)) AND (user.$naturalOrgCriteria) AND (user.$readableSimpleClientCriteria) order by user.name asc");
 
     return hqlQueries;
   }

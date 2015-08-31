@@ -659,5 +659,6 @@ enyo.kind({
       this.cashUpReportChanged(model.get('cashUpReport').at(0));
     }
     this.setSummary(model.getCountCashSummary());
+    this.$.time.setContent(OB.I18N.getLabel('OBPOS_LblTime') + ': ' + OB.I18N.formatDate(new Date()) + ' - ' + OB.I18N.formatHour(new Date()));
   }
 });

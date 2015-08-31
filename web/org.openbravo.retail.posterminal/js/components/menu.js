@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2012-2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -598,6 +598,53 @@ enyo.kind({
   },
   updateVisibility: function (model) {
     if (OB.MobileApp.model.hasPermission(this.permission) && model.get('isQuotation') && model.get('hasbeenpaid') === 'Y') {
+      this.show();
+    } else {
+      this.hide();
+    }
+  },
+  init: function (model) {
+    var receipt = model.get('order'),
+        me = this;
+    me.hide();
+
+    model.get('leftColumnViewManager').on('order', function () {
+      this.updateVisibility(receipt);
+      this.adjustVisibilityBasedOnPermissions();
+    }, this);
+
+    model.get('leftColumnViewManager').on('multiorder', function () {
+      me.hide();
+    }, this);
+
+    receipt.on('change:isQuotation', function (model) {
+      this.updateVisibility(model);
+    }, this);
+    receipt.on('change:hasbeenpaid', function (model) {
+      this.updateVisibility(model);
+    }, this);
+  }
+});
+
+enyo.kind({
+  name: 'OB.UI.MenuRejectQuotation',
+  kind: 'OB.UI.MenuAction',
+  permission: 'OBPOS_quotation.rejections',
+  events: {
+    onShowRejectQuotation: ''
+  },
+  i18nLabel: 'OBPOS_RejectQuotation',
+  tap: function () {
+    if (this.disabled) {
+      return true;
+    }
+    this.inherited(arguments); // Manual dropdown menu closure
+    if (OB.MobileApp.model.hasPermission(this.permission, true)) {
+      this.doShowRejectQuotation();
+    }
+  },
+  updateVisibility: function (model) {
+    if (OB.MobileApp.model.hasPermission(this.permission, true) && model.get('isQuotation') && model.get('hasbeenpaid') === 'Y') {
       this.show();
     } else {
       this.hide();

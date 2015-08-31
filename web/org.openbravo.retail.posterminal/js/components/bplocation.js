@@ -118,7 +118,7 @@ enyo.kind({
       return;
     } else {
       this.disabled = true;
-      this.setDisabled();
+      this.setDisabled(true);
       this.addClass('disabled');
     }
   }
@@ -165,7 +165,7 @@ enyo.kind({
       return;
     } else {
       this.disabled = true;
-      this.setDisabled();
+      this.setDisabled(true);
       this.addClass('disabled');
     }
   },
@@ -340,7 +340,8 @@ enyo.kind({
           bPartnerId = {
           columns: ['bpartner'],
           operator: 'equals',
-          value: this.bPartnerId
+          value: this.bPartnerId,
+          isId: true
           };
       var hgVolCriteria = [filterIdentifier, bPartnerId];
       criteria.hgVolFilters = hgVolCriteria;

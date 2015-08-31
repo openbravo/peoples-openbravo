@@ -68,29 +68,43 @@ enyo.kind({
     this.model = model;
   },
   tap: function () {
-    var i;
-    if (this.model.get('leftColumnViewManager').isMultiOrder()) {
-      for (i = 0; this.model.get('multiOrders').get('multiOrdersList').length > i; i++) {
-        if (!this.model.get('multiOrders').get('multiOrdersList').at(i).get('isLayaway')) { //if it is not true, means that iti is a new order (not a loaded layaway)
-          this.model.get('multiOrders').get('multiOrdersList').at(i).unset('amountToLayaway');
-          this.model.get('multiOrders').get('multiOrdersList').at(i).set('orderType', 0);
-          continue;
+    var me = this;
+    OB.MobileApp.model.hookManager.executeHooks('OBPOS_PreCreateNewReceipt', {
+      model: this.model,
+      context: this
+    }, function (args) {
+      if (!args.cancelOperation) {
+        var i;
+        if (me.model.get('leftColumnViewManager').isMultiOrder()) {
+          for (i = 0; me.model.get('multiOrders').get('multiOrdersList').length > i; i++) {
+            if (!me.model.get('multiOrders').get('multiOrdersList').at(i).get('isLayaway')) { //if it is not true, means that iti is a new order (not a loaded layaway)
+              me.model.get('multiOrders').get('multiOrdersList').at(i).unset('amountToLayaway');
+              me.model.get('multiOrders').get('multiOrdersList').at(i).set('orderType', 0);
+              continue;
+            }
+            me.model.get('orderList').current = me.model.get('multiOrders').get('multiOrdersList').at(i);
+            me.model.get('orderList').deleteCurrent();
+            if (!_.isNull(this.model.get('multiOrders').get('multiOrdersList').at(i).id)) {
+              me.model.get('orderList').deleteCurrentFromDatabase(me.model.get('multiOrders').get('multiOrdersList').at(i));
+            }
+          }
+          me.model.get('multiOrders').resetValues();
+          me.model.get('leftColumnViewManager').setOrderMode();
+        } else {
+          if (OB.MobileApp.model.get('permissions')['OBPOS_print.suspended'] && this.model.get('order').get('lines').length !== 0) {
+            me.model.get('order').trigger('print');
+          }
         }
-        this.model.get('orderList').current = this.model.get('multiOrders').get('multiOrdersList').at(i);
-        this.model.get('orderList').deleteCurrent();
-        if (!_.isNull(this.model.get('multiOrders').get('multiOrdersList').at(i).id)) {
-          this.model.get('orderList').deleteCurrentFromDatabase(this.model.get('multiOrders').get('multiOrdersList').at(i));
-        }
+        me.doAddNewOrder();
+        OB.MobileApp.model.hookManager.executeHooks('OBPOS_PostAddNewReceipt', {
+          model: me.model,
+          context: me
+        }, function (args2) {
+          //Nothing to do
+        });
+        return true;
       }
-      this.model.get('multiOrders').resetValues();
-      this.model.get('leftColumnViewManager').setOrderMode();
-    } else {
-      if (OB.MobileApp.model.get('permissions')['OBPOS_print.suspended'] && this.model.get('order').get('lines').length !== 0) {
-        this.model.get('order').trigger('print');
-      }
-    }
-    this.doAddNewOrder();
-    return true;
+    });
   }
 });
 
@@ -138,16 +152,23 @@ enyo.kind({
     if (me.hasClass('paidticket')) {
       me.doDeleteOrder();
     } else {
-      OB.UTIL.Approval.requestApproval(
-      this.model, 'OBPOS_approval.removereceipts', function (approved, supervisor, approvalType) {
-        if (approved) {
-          me.doShowPopup({
-            popup: 'modalConfirmReceiptDelete'
-          });
-        }
-      });
+      if (OB.MobileApp.model.hasPermission('OBPOS_approval.removereceipts', true)) {
+        //Show the pop up to delete or not
+        me.doShowPopup({
+          popup: 'modalConfirmReceiptDelete'
+        });
+      } else {
+        OB.UTIL.Approval.requestApproval(
+        this.model, 'OBPOS_approval.removereceipts', function (approved, supervisor, approvalType) {
+          if (approved) {
+            //Delete the order without the popup
+            me.doDeleteOrder({
+              notSavedOrder: true
+            });
+          }
+        });
+      }
     }
-
   },
   init: function (model) {
     this.model = model;
@@ -366,6 +387,8 @@ enyo.kind({
     });
   },
   tap: function () {
+    var me = this,
+        criteria = {};
     if (this.disabled === false) {
       this.model.on('approvalChecked', function (event) {
         this.model.off('approvalChecked');
@@ -373,8 +396,38 @@ enyo.kind({
           this.showPaymentTab();
         }
       }, this);
-      this.model.completePayment();
-      this.doClearUserInput();
+
+      if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.product', true)) {
+        criteria.hgVolFilters = [];
+        criteria.hgVolFilters.push({
+          columns: ['productType'],
+          operator: 'equals',
+          value: 'S'
+        });
+
+        criteria.hgVolFilters.push({
+          columns: ['proposalType'],
+          operator: 'equals',
+          value: 'FMA'
+        });
+      } else {
+        criteria.productType = 'S';
+        criteria.proposalType = 'FMA';
+      }
+      OB.Dal.find(OB.Model.Product, criteria, function (data) {
+        if (data && data.length > 0) {
+          me.model.get('order').trigger('showProductList', null, 'final', function () {
+            me.model.completePayment();
+            me.doClearUserInput();
+          });
+        } else {
+          me.model.completePayment();
+          me.doClearUserInput();
+        }
+      }, function (trx, error) {
+        me.model.completePayment();
+        me.doClearUserInput();
+      });
     }
   },
   attributes: {
@@ -484,6 +537,10 @@ enyo.kind({
 
     this.menuEntries.push({
       kind: 'OB.UI.MenuReactivateQuotation'
+    });
+
+    this.menuEntries.push({
+      kind: 'OB.UI.MenuRejectQuotation'
     });
 
     this.menuEntries.push({

@@ -118,8 +118,8 @@ public class Discount extends ProcessHQLQuery {
     today.put("today", value);
     jsonsent.put("parameters", today);
     Long lastUpdated = jsonsent.has("lastUpdated")
-        && !jsonsent.get("lastUpdated").equals("undefined") ? jsonsent.getLong("lastUpdated")
-        : null;
+        && !jsonsent.get("lastUpdated").equals("undefined")
+        && !jsonsent.get("lastUpdated").equals("null") ? jsonsent.getLong("lastUpdated") : null;
     // if it is a total refresh we need to ensure that all(AND) entities are active. In a
     // incremental refresh, we need to retrieve it if some (OR) ot the entities have changed
     jsonsent.put("operator", lastUpdated == null ? " AND " : " OR ");

@@ -141,19 +141,20 @@ public class ProductProperties extends ModelExtension {
           add(new HQLProperty("product.includedProductCategories", "includeProductCategories"));
           add(new HQLProperty("product.includedProducts", "includeProducts"));
           add(new HQLProperty("product.printDescription", "printDescription"));
-          add(new HQLProperty("product.allowAnonymousSale", "allowAnonymousSale"));
-          add(new HQLProperty("product.overdueAvailableDays", "overdueAvailableDays"));
+          add(new HQLProperty("product.oBPOSAllowAnonymousSale", "oBPOSAllowAnonymousSale"));
           add(new HQLProperty("product.returnable", "returnable"));
           add(new HQLProperty("product.overdueReturnDays", "overdueReturnDays"));
-          add(new HQLProperty("product.editablePrice", "editablePrice"));
           add(new HQLProperty("product.ispricerulebased", "isPriceRuleBased"));
-          add(new HQLProperty("product.uniquePerDocument", "uniquePerDocument"));
           add(new HQLProperty("product.obposProposalType", "proposalType"));
           add(new HQLProperty("product.obposIsmultiselectable", "availableForMultiline"));
           add(new HQLProperty("product.obposPrintrelatedattachm", "printRelatedAttachments"));
           add(new HQLProperty("product.obposNumberOfCopies", "numberOfCopies"));
           add(new HQLProperty("pli.bestseller", "bestseller"));
           add(new HQLProperty("product.linkedToProduct", "isLinkedToProduct"));
+          add(new HQLProperty("product.allowDeferredSell", "allowDeferredSell"));
+          add(new HQLProperty("product.deferredSellMaxDays", "deferredSellMaxDays"));
+          add(new HQLProperty("product.quantityRule", "quantityRule"));
+          add(new HQLProperty("product.obposPrintservices", "isPrintServices"));
           add(new HQLProperty("'false'", "ispack"));
           if (posPrecision != null && !"".equals(posPrecision)) {
             add(new HQLProperty("round(ppp.listPrice, " + posPrecision + ")", "listPrice"));

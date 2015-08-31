@@ -42,10 +42,15 @@ public class PaidReceiptLinesProperties extends ModelExtension {
         add(new HQLProperty("ordLine.salesOrder.currency.pricePrecision", "pricePrecision"));
         add(new HQLProperty("ordLine.warehouse.id", "warehouse"));
         add(new HQLProperty("ordLine.warehouse.name", "warehousename"));
+        add(new HQLProperty("ordLine.description", "description"));
         // Only used for returns
         add(new HQLProperty(
             "(ordLine.deliveredQuantity - (select coalesce(abs(sum(deliveredQuantity)),0) from OrderLine where goodsShipmentLine.salesOrderLine.id =ordLine.id))",
             "remainingQuantity"));
+        add(new HQLProperty("coalesce(ordLine.product.overdueReturnDays, 999999999999)",
+            "overdueReturnDays"));
+        add(new HQLProperty("ordLine.product.productType", "productType"));
+        add(new HQLProperty("ordLine.product.returnable", "returnable"));
       }
     };
 

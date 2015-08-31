@@ -112,6 +112,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "model/taxcashup",
         "model/returnreasons",
         "model/offlineprinter",
+        "model/productbom",
+        "model/taxcategorybom",
         "components/modalcancel",
         "components/subwindow",
         "components/leftsubwindow",
@@ -121,6 +123,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/modalnoteditableline",
         "components/modalmodulesindev",
         // Web POS window
+        "utils/eventbus",
         "utils/cashUpReportUtils",
         "components/keypadcoins",
         "data/dataordersave",
@@ -147,12 +150,14 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/modalselectterminal",
         "components/popupdraweropened",
         "components/servicesfilter",
+        "components/modalselectopenreceipts",
         // Old Tickets
         "components/modalpaidreceipts",
         "components/modalmultiorders",
         // Quotations
         "components/modalcreateorderfromquotation",
         "components/modalreactivatequotation",
+        "components/modalrejectquotation",
         // Detection of change in context
         "components/modalcontextchanged",
         "components/modalproductcharacteristic",
@@ -169,7 +174,15 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "model/taxZone",
         "model/promotions",
 
+        "model/servicepricerule",
+        "model/servicepricerulerange",
+        "model/servicepricerulerangeprices",
+        "model/servicepriceruleversion",
+
         "model/obpos-supervisor-model",
+
+        "model/obposfiles",
+        "model/obposprodfiles",
 
         // Point of sale
         "pointofsale/model/pointofsale-print",
@@ -210,7 +223,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "pointofsale/view/modals/modalmessage",
 
         // Cash Management window
-        "cashmgmt/model/cashmgmt-print", "cashmgmt/model/cashmgmt-model",
+        "cashmgmt/model/cashmgmt-print",
+        "cashmgmt/model/cashmgmt-model",
 
         "cashmgmt/view/cashmgmtkeyboard",
         "cashmgmt/view/listevents",
@@ -227,6 +241,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "closecash/view/tabcashmaster", "closecash/view/tabcashpayments",
         "closecash/view/tabcountcash", "closecash/view/tabcashtokeep",
         "closecash/view/tabpostprintclose", "closecash/components/cashup-modals",
+        "closecash/components/approvalreason-modal",
 
         "closecash/model/daycash",
         // Core resources

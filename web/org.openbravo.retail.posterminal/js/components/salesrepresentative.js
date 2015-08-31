@@ -196,6 +196,16 @@ enyo.kind({
       };
     }
 
+    if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.customer', true)) {
+      var filterIdentifier = {
+        columns: ['_identifier'],
+        operator: 'startsWith',
+        value: filter
+      };
+      var hgVolCriteria = [filterIdentifier];
+      criteria.hgVolFilters = hgVolCriteria;
+    }
+
     OB.Dal.find(OB.Model.SalesRepresentative, criteria, successCallbackBPs, errorCallback);
     return true;
   },

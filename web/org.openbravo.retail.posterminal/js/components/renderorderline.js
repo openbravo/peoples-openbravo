@@ -29,16 +29,17 @@ enyo.kind({
     },
     style: 'float: left; width: 10%;'
   }, {
-    name: 'serviceIcon',
-    kind: 'Image',
-    src: 'img/iconService_ticketline.png',
-    sizing: "cover",
-    width: 36,
-    height: 26,
-    style: 'float: left;'
-  }, {
-    name: 'product',
-    style: 'float: left; '
+    name: 'nameContainner',
+    tag: 'div',
+    style: 'float: left;width: 40%; padding: 0px;',
+    components: [{
+      name: 'serviceIcon',
+      kind: 'Image',
+      src: 'img/iconService_ticketline.png',
+      style: 'float: left; padding-right: 5px; '
+    }, {
+      name: 'product'
+    }]
   }, {
     name: 'quantity',
     attributes: {
@@ -62,10 +63,10 @@ enyo.kind({
     this.inherited(arguments);
     if (this.model.get('product').get('productType') === 'S') {
       this.$.serviceIcon.show();
-      this.$.product.addStyles('width: 36%');
+      this.$.product.addStyles('margin-left: 24px;');
     } else {
       this.$.serviceIcon.hide();
-      this.$.product.addStyles('width: 40%');
+      this.$.product.addStyles('float: left;');
     }
     this.$.checkBoxColumn.hide();
     this.$.product.setContent(this.setIdentifierContent());
@@ -80,9 +81,10 @@ enyo.kind({
       this.createComponent({
         style: 'display: block; ',
         components: [{
+          name: 'characteristicsDescription',
           content: OB.UTIL.getCharacteristicValues(this.model.get('product').get('characteristicDescription')),
           attributes: {
-            style: 'float: left; width: 60%; color:grey'
+            style: 'width: 60.1%; color:grey; padding-left: 0%; clear: both; '
           }
         }, {
           style: 'clear: both;'
@@ -100,7 +102,7 @@ enyo.kind({
           components: [{
             content: '-- ' + d.identifier,
             attributes: {
-              style: 'float: left; width: 80%;'
+              style: 'float: left; width: 80%; clear: left;'
             }
           }, {
             content: OB.I18N.formatCurrency(-d.amt),
@@ -118,15 +120,15 @@ enyo.kind({
       if (!this.$.relatedLinesContainer) {
         this.createComponent({
           name: 'relatedLinesContainer',
-          style: 'display: block; float: left; width: 80%;'
+          style: 'clear:both; float: left; width: 80%;'
         });
       }
       enyo.forEach(this.model.get('relatedLines'), function (line) {
         this.$.relatedLinesContainer.createComponent({
           components: [{
-            content: OB.I18N.getLabel('OBPOS_lblRelatedLines', [line.productName]),
+            content: line.otherTicket ? OB.I18N.getLabel('OBPOS_lblRelatedLinesOtherTicket', [line.productName, line.orderDocumentNo]) : OB.I18N.getLabel('OBPOS_lblRelatedLines', [line.productName]),
             attributes: {
-              style: 'font-size: 14px; font-style: italic'
+              style: 'font-size: 14px; font-style: italic; text-align: left; padding-left: 25px'
             }
           }]
         });
@@ -163,10 +165,13 @@ enyo.kind({
       this.$.gross.hasNode().style.width = '18%';
       this.$.quantity.hasNode().style.width = '16%';
       this.$.price.hasNode().style.width = '18%';
-      if (this.model.get('product').get('productType') === 'S') {
-        this.$.product.hasNode().style.width = '34%';
-      } else {
-        this.$.product.hasNode().style.width = '38%';
+
+      this.$.nameContainner.hasNode().style.width = '38%';
+      if (this.$.characteristicsDescription) {
+        this.$.characteristicsDescription.addStyles('padding-left: 10%; clear: both; width: 50.1%; color:grey');
+      }
+      if (this.$.relatedLinesContainer) {
+        this.$.relatedLinesContainer.addStyles('padding-left: 10%; clear: both; float: left; width: 80%;');
       }
       this.$.checkBoxColumn.show();
       this.changeEditMode(this, inEvent.status);
@@ -174,10 +179,12 @@ enyo.kind({
       this.$.gross.hasNode().style.width = '20%';
       this.$.quantity.hasNode().style.width = '20%';
       this.$.price.hasNode().style.width = '20%';
-      if (this.model.get('product').get('productType') === 'S') {
-        this.$.product.hasNode().style.width = '36%';
-      } else {
-        this.$.product.hasNode().style.width = '40%';
+      this.$.nameContainner.hasNode().style.width = '40%';
+      if (this.$.characteristicsDescription) {
+        this.$.characteristicsDescription.addStyles('padding-left: 0%; clear: both; width: 60.1%; color:grey');
+      }
+      if (this.$.relatedLinesContainer) {
+        this.$.relatedLinesContainer.addStyles('padding-left: 0%; clear: both; float: left; width: 80%;');
       }
       this.$.checkBoxColumn.hide();
       this.changeEditMode(this, false);
@@ -253,7 +260,7 @@ enyo.kind({
       this.addRemoveClass('iconServices_unreviewed', true);
       this.addRemoveClass('iconServices_reviewed', false);
     }
-    if (OB.MobileApp.model.get('serviceSearchMode') === 'mandatory') {
+    if (OB.MobileApp.model.get('serviceSearchMode')) {
       this.hide();
     }
   }

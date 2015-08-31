@@ -83,7 +83,7 @@ public class BusinessPartner extends ProcessHQLQuery {
         + "bpl.businessPartner.$incrementalUpdateCriteria) "
         + " and bpl.id in (select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls where bpls.businessPartner.id=bpl.businessPartner.id and bpls.invoiceToAddress = true and bpls.$readableSimpleClientCriteria AND "
         + " bpls.$naturalOrgCriteria group by bpls.businessPartner.id)"
-        + " and (ulist.id in (select max(ulist2.id) from ADUser as ulist2 where ulist2.businessPartner is not null group by ulist2.businessPartner))"
+        + " and (ulist.id in (select max(ulist2.id) from ADUser as ulist2 where ulist2.businessPartner=bpl.businessPartner  group by ulist2.businessPartner))"
         + " ORDER BY bpl.businessPartner.name";
     return Arrays.asList(new String[] { hql, hql2 });
   }

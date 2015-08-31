@@ -22,7 +22,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     generatedModel: true,
     modelName: 'TaxZone'
   },
-  OB.Model.Product, OB.Model.ServiceProduct, OB.Model.ServiceProductCategory, OB.Model.ProductCategory, OB.Model.BusinessPartner, OB.Model.BPCategory, OB.Model.BPLocation, OB.Model.Order, OB.Model.DocumentSequence, OB.Model.ChangedBusinessPartners, OB.Model.ChangedBPlocation,
+  OB.Model.Product, OB.Model.ServiceProduct, OB.Model.ServiceProductCategory, OB.Model.ServicePriceRule, OB.Model.ServicePriceRuleRange, OB.Model.ServicePriceRuleRangePrices, OB.Model.ServicePriceRuleVersion, OB.Model.ProductCategory, OB.Model.BusinessPartner, OB.Model.BPCategory, OB.Model.BPLocation, OB.Model.Order, OB.Model.DocumentSequence, OB.Model.ChangedBusinessPartners, OB.Model.ChangedBPlocation, OB.Model.ProductBOM, OB.Model.TaxCategoryBOM,
   {
     generatedModel: true,
     modelName: 'Discount'
@@ -48,7 +48,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     generatedModel: true,
     modelName: 'ProductCharacteristicValue'
   },
-  OB.Model.CurrencyPanel, OB.Model.SalesRepresentative, OB.Model.ProductCharacteristic, OB.Model.Brand, OB.Model.ProductChValue, OB.Model.ReturnReason, OB.Model.CashUp, OB.Model.OfflinePrinter, OB.Model.PaymentMethodCashUp, OB.Model.TaxCashUp],
+  OB.Model.CurrencyPanel, OB.Model.SalesRepresentative, OB.Model.ProductCharacteristic, OB.Model.Brand, OB.Model.ProductChValue, OB.Model.ReturnReason, OB.Model.CashUp, OB.Model.OfflinePrinter, OB.Model.PaymentMethodCashUp, OB.Model.TaxCashUp,
+  OB.Model.OBPOSFiles, OB.Model.OBPOSProdFiles],
 
   loadUnpaidOrders: function () {
     // Shows a modal window with the orders pending to be paid
@@ -161,7 +162,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         i, j, k, amtAux, amountToPay, ordersLength, multiOrders = new OB.Model.MultiOrders(),
         me = this,
         iter, isNew = false,
-        discounts, ordersave, customersave, customeraddrsave, taxes, orderList, hwManager, ViewManager, LeftColumnViewManager, LeftColumnCurrentView, SyncReadyToSendFunction, auxReceiptList = [];
+        discounts, ordersave, customersave, customeraddrsave, orderList, hwManager, ViewManager, LeftColumnViewManager, LeftColumnCurrentView, SyncReadyToSendFunction, auxReceiptList = [];
 
 
     function success() {
@@ -206,9 +207,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               dataBps.set('locationModel', bpLoc);
               OB.MobileApp.model.set('businessPartner', dataBps);
               me.loadUnpaidOrders();
-              if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.customer', true)) {
-                OB.UTIL.showLoading(false, 'OBPOS_highVolume.customer');
-              }
             };
             OB.Dal.get(OB.Model.BPLocation, partnerAddressId, successCallbackBPLoc, errorCallback, errorCallback);
           } else {
@@ -220,17 +218,11 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                 dataBps.set('locationModel', bpLoc);
                 OB.MobileApp.model.set('businessPartner', dataBps);
                 me.loadUnpaidOrders();
-                if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.customer', true)) {
-                  OB.UTIL.showLoading(false, 'OBPOS_highVolume.customer');
-                }
               };
               OB.Dal.get(OB.Model.BPLocation, dataBps.get('locId'), successCallbackBPLoc, errorCallback, errorCallback);
             }
           }
         }
-      }
-      if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.customer', true)) {
-        OB.UTIL.showLoading(true, 'OBPOS_highVolume.customer');
       }
       OB.Dal.get(OB.Model.BusinessPartner, OB.MobileApp.model.get('businesspartner'), successCallbackBPs, errorCallback, errorCallback);
     }
@@ -333,6 +325,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           }
         }
         me.get('multiOrders').trigger('closed', order);
+        enyo.$.scrim.hide();
         me.get('multiOrders').trigger('print', order, {
           offline: true
         }); // to guaranty execution order
@@ -424,7 +417,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     this.set('subWindowManager', new ViewManager());
     discounts = new OB.DATA.OrderDiscount(receipt);
     ordersave = new OB.DATA.OrderSave(this);
-    taxes = new OB.DATA.OrderTaxes(receipt);
+    OB.DATA.OrderTaxes(receipt);
 
     OB.MobileApp.model.runSyncProcess(function () {
       me.loadCheckedMultiorders();
@@ -503,6 +496,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               });
               orderList.deleteCurrent();
               orderList.synchronizeCurrentOrder();
+              enyo.$.scrim.hide();
             }
           });
         } else {
@@ -526,6 +520,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               });
               orderList.deleteCurrent();
               orderList.synchronizeCurrentOrder();
+              enyo.$.scrim.hide();
             }
           });
         }

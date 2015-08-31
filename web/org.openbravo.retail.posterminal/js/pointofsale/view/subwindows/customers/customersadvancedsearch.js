@@ -206,7 +206,7 @@ enyo.kind({
       return;
     } else {
       this.disabled = true;
-      this.setDisabled();
+      this.setDisabled(true);
       this.addClass('disabled');
     }
   },
@@ -408,13 +408,15 @@ enyo.kind({
           operator: _operator,
           value: splitFilter[i]
         };
-        var filterIdentifier = {
-          columns: ['_identifier'],
-          operator: 'startsWith',
-          value: splitFilter[i]
-        };
-        var hgVolCriteria = [filterIdentifier];
-        criteria.hgVolFilters = hgVolCriteria;
+        if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.customer', true)) {
+          var filterIdentifier = {
+            columns: ['_identifier'],
+            operator: 'startsWith',
+            value: splitFilter[i]
+          };
+          var hgVolCriteria = [filterIdentifier];
+          criteria.hgVolFilters = hgVolCriteria;
+        }
         OB.Dal.find(OB.Model.BusinessPartner, criteria, successCallbackBPs, errorCallback, i);
         lastCriteria.push(enyo.clone(criteria));
       }

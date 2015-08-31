@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2012-2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -21,13 +21,36 @@ enyo.kind({
     onShowPopup: '',
     onAddProduct: '',
     onSetDiscountQty: '',
-    onDiscountsMode: ''
+    onDiscountsMode: '',
+    onSetMultiSelectionItems: ''
   },
   discountsMode: false,
   handlers: {
+    onSetMultiSelected: 'setMultiSelected',
     onKeyboardOnDiscountsMode: 'keyboardOnDiscountsMode'
   },
-
+  setMultiSelected: function (inSender, inEvent) {
+    if (inEvent.models && inEvent.models.length > 0 && !(inEvent.models[0] instanceof OB.Model.OrderLine)) {
+      return;
+    }
+    this.selectedModels = inEvent.models;
+    this.selectedModelsSameQty = true;
+    if (this.selectedModels.length > 1) {
+      var i, qty = this.selectedModels[0].get('qty');
+      for (i = 1; i < this.selectedModels.length; i++) {
+        if (qty !== this.selectedModels[i].get('qty')) {
+          this.selectedModelsSameQty = false;
+          break;
+        }
+      }
+    }
+    this.$.minusBtn.waterfall('onDisableButton', {
+      disabled: !this.selectedModelsSameQty
+    });
+    this.$.plusBtn.waterfall('onDisableButton', {
+      disabled: !this.selectedModelsSameQty
+    });
+  },
   keyboardOnDiscountsMode: function (inSender, inEvent) {
     if (inEvent.status) {
       this.showSidepad('ticketDiscountsToolbar');
@@ -88,33 +111,54 @@ enyo.kind({
     var me = this;
 
     var actionAddProduct = function (keyboard, value) {
-        if (keyboard.receipt.get('isEditable') === false) {
-          me.doShowPopup({
-            popup: 'modalNotEditableOrder'
-          });
-          return true;
-        }
-        if (keyboard.line && keyboard.line.get('product').get('isEditableQty') === false) {
-          me.doShowPopup({
-            popup: 'modalNotEditableLine'
-          });
-          return true;
-        }
-        if (keyboard.line) {
-          if ((_.isNaN(value) || value > 0) && keyboard.line.get('product').get('groupProduct') === false) {
+        if (!keyboard.line.get('notReturnThisLine')) {
+          if (keyboard.receipt.get('isEditable') === false) {
             me.doShowPopup({
-              popup: 'modalProductCannotBeGroup'
+              popup: 'modalNotEditableOrder'
             });
             return true;
           }
-          me.doAddProduct({
-            product: keyboard.line.get('product'),
-            qty: value,
-            options: {
-              line: keyboard.line
+          if (keyboard.line && keyboard.line.get('product').get('isEditableQty') === false) {
+            me.doShowPopup({
+              popup: 'modalNotEditableLine'
+            });
+            return true;
+          }
+          if (keyboard.line) {
+            if ((_.isNaN(value) || value > 0) && keyboard.line.get('product').get('groupProduct') === false) {
+              me.doShowPopup({
+                popup: 'modalProductCannotBeGroup'
+              });
+              return true;
             }
+            me.doAddProduct({
+              product: keyboard.line.get('product'),
+              qty: value,
+              options: {
+                line: keyboard.line
+              }
+            });
+            keyboard.receipt.trigger('scan');
+          }
+        } else {
+          keyboard.line.unset('notReturnThisLine');
+        }
+        };
+
+    var actionAddMultiProduct = function (keyboard, qty) {
+        if (me.selectedModelsSameQty) {
+          keyboard.receipt.set('undo', null);
+          keyboard.receipt.set('multipleUndo', true);
+          var selection = [];
+          _.each(me.selectedModels, function (model) {
+            selection.push(model);
+            keyboard.line = model;
+            actionAddProduct(keyboard, qty);
           });
-          keyboard.receipt.trigger('scan');
+          keyboard.receipt.set('multipleUndo', null);
+          me.doSetMultiSelectionItems({
+            selection: selection
+          });
         }
         };
 
@@ -152,7 +196,11 @@ enyo.kind({
           return true;
         }
         if (keyboard.line) {
-          keyboard.receipt.deleteLine(keyboard.line);
+          if (me.selectedModels.length > 1) {
+            keyboard.receipt.deleteLines(me.selectedModels);
+          } else {
+            keyboard.receipt.deleteLine(keyboard.line);
+          }
           keyboard.receipt.trigger('scan');
         }
         };
@@ -165,20 +213,29 @@ enyo.kind({
           return true;
         }
         if (value || value === 0) {
-          toadd = value - keyboard.line.get('qty');
-          if (toadd === 0) { // If nothing to add then return
-            return;
-          }
-
-          if (value === 0) { // If final quantity will be 0 then request approval
-            OB.UTIL.Approval.requestApproval(me.model, 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
-              if (approved) {
+          keyboard.receipt.set('undo', null);
+          keyboard.receipt.set('multipleUndo', true);
+          var selection = [];
+          _.each(me.selectedModels, function (model) {
+            selection.push(model);
+            keyboard.line = model;
+            toadd = value - keyboard.line.get('qty');
+            if (toadd !== 0) {
+              if (value === 0) { // If final quantity will be 0 then request approval
+                OB.UTIL.Approval.requestApproval(me.model, 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
+                  if (approved) {
+                    actionAddProduct(keyboard, toadd);
+                  }
+                });
+              } else {
                 actionAddProduct(keyboard, toadd);
               }
-            });
-          } else {
-            actionAddProduct(keyboard, toadd);
-          }
+            }
+          });
+          keyboard.receipt.set('multipleUndo', null);
+          me.doSetMultiSelectionItems({
+            selection: selection
+          });
         }
       }
     });
@@ -205,7 +262,18 @@ enyo.kind({
           OB.UTIL.Approval.requestApproval(
           me.model, 'OBPOS_approval.setPrice', function (approved, supervisor, approvalType) {
             if (approved) {
-              keyboard.receipt.setPrice(keyboard.line, OB.I18N.parseNumber(txt));
+              var price = OB.I18N.parseNumber(txt);
+              if (me.selectedModels.length > 1) {
+                keyboard.receipt.set('undo', null);
+                keyboard.receipt.set('multipleUndo', true);
+                _.each(me.selectedModels, function (model) {
+                  keyboard.receipt.setPrice(model, price);
+                });
+                keyboard.receipt.set('multipleUndo', null);
+              } else {
+                keyboard.receipt.setPrice(keyboard.line, price);
+              }
+              keyboard.receipt.calculateGross();
               keyboard.receipt.trigger('scan');
             }
           });
@@ -226,9 +294,13 @@ enyo.kind({
           OB.UTIL.showWarning(OB.I18N.getLabel('OBMOBC_LineCanNotBeSelected'));
           return true;
         }
-        if (keyboard.line) {
-          keyboard.receipt.trigger('discount', keyboard.line, OB.I18N.parseNumber(txt));
-        }
+        keyboard.receipt.set('undo', null);
+        keyboard.receipt.set('multipleUndo', true);
+        var discount = OB.I18N.parseNumber(txt);
+        _.each(me.selectedModels, function (model) {
+          keyboard.receipt.trigger('discount', model, discount);
+        });
+        keyboard.receipt.set('multipleUndo', null);
       }
     });
 
@@ -275,14 +347,29 @@ enyo.kind({
         if ((!_.isNull(txt) || !_.isUndefined(txt)) && !_.isNaN(OB.I18N.parseNumber(txt))) {
           qty = OB.I18N.parseNumber(txt);
         }
-        actionAddProduct(keyboard, qty);
+        if (me.selectedModels.length > 1) {
+          actionAddMultiProduct(keyboard, qty);
+        } else {
+          keyboard.receipt.set('multipleUndo', null);
+          actionAddProduct(keyboard, qty);
+        }
       }
     });
+
     this.addCommand('-', {
       stateless: true,
       action: function (keyboard, txt) {
         var qty = 1,
-            value;
+            value, i, j, k, h, line, relatedLine, lineFromSelected;
+
+        function actionAddProducts() {
+          if (me.selectedModels.length > 1) {
+            actionAddMultiProduct(keyboard, -qty);
+          } else {
+            keyboard.receipt.set('multipleUndo', null);
+            actionAddProduct(keyboard, -qty);
+          }
+        }
         if ((!_.isNull(txt) || !_.isUndefined(txt)) && !_.isNaN(OB.I18N.parseNumber(txt))) {
           qty = OB.I18N.parseNumber(txt);
         }
@@ -292,14 +379,123 @@ enyo.kind({
         if (value === 0) { // If final quantity will be 0 then request approval
           OB.UTIL.Approval.requestApproval(me.model, 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
             if (approved) {
-              actionAddProduct(keyboard, -qty);
+              if (me.selectedModels.length > 1) {
+                keyboard.receipt.deleteLines(me.selectedModels);
+                keyboard.receipt.trigger('scan');
+              } else {
+                keyboard.receipt.set('multipleUndo', null);
+                actionAddProduct(keyboard, -qty);
+              }
             }
           });
         } else {
-          actionAddProduct(keyboard, -qty);
+          var approvalNeeded = false,
+              servicesToApprove = '',
+              servicesList = [];
+          if (value < 0) {
+            for (i = 0; i < me.selectedModels.length; i++) {
+              line = me.selectedModels[i];
+              if (line.get('product').get('productType') === 'S' && !line.isReturnable()) {
+                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_UnreturnableProduct'), OB.I18N.getLabel('OBPOS_UnreturnableProductMessage', [line.get('product').get('_identifier')]));
+                return;
+              } else if (!approvalNeeded) {
+                // A service with its related product selected doesn't need to be returned, because later it will be modified to returned status depending in the product status
+                // In any other case it would require two approvals
+                if (line.get('product').get('productType') === 'S') {
+                  if (line.get('relatedLines')) {
+                    for (j = 0; j < line.get('relatedLines').length; j++) {
+                      relatedLine = line.get('relatedLines')[j];
+                      for (k = 0; k < me.selectedModels.length; k++) {
+                        lineFromSelected = me.selectedModels[k];
+                        if (lineFromSelected.id === relatedLine.orderlineId) {
+                          line.set('notReturnThisLine', true);
+                          servicesToApprove += '<br>· ' + line.get('product').get('_identifier');
+                          servicesList.push(line.get('product'));
+                          break;
+                        }
+                      }
+                      if (k === me.selectedModels.length) {
+                        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NotProductSelectedToReturn', [line.get('product').get('_identifier')]));
+                        return;
+                      }
+                    }
+                  } else {
+                    servicesToApprove += '<br>· ' + line.get('product').get('_identifier');
+                    servicesList.push(line.get('product'));
+                  }
+                  if (!approvalNeeded) {
+                    approvalNeeded = true;
+                  }
+                }
+              }
+            }
+            for (i = 0; i < me.getReceipt().get('lines').length; i++) { // Check if there is any not returnable related product to a selected line
+              line = OB.MobileApp.model.receipt.get('lines').models[i];
+              if (line.get('product').get('productType') === 'S' && !line.isReturnable()) {
+                if (line.get('relatedLines')) {
+                  for (j = 0; j < line.get('relatedLines').length; j++) {
+                    relatedLine = line.get('relatedLines')[j];
+                    for (k = 0; k < me.selectedModels.length; k++) {
+                      lineFromSelected = me.selectedModels[k];
+                      if (lineFromSelected.id === relatedLine.orderlineId) {
+                        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_UnreturnableRelatedService'), OB.I18N.getLabel('OBPOS_UnreturnableRelatedServiceMessage', [line.get('product').get('_identifier'), relatedLine.productName]));
+                        return;
+                      }
+                    }
+                  }
+                }
+              } else if (line.get('product').get('productType') === 'S' && line.isReturnable()) { // Ask for approval for non selected services, related to selected products
+                if (line.get('relatedLines')) {
+                  for (j = 0; j < line.get('relatedLines').length; j++) {
+                    relatedLine = line.get('relatedLines')[j];
+                    for (k = 0; k < me.selectedModels.length; k++) {
+                      lineFromSelected = me.selectedModels[k];
+                      if (lineFromSelected.id === relatedLine.orderlineId) {
+                        for (h = 0; h < servicesList.length; h++) {
+                          if (servicesList[h].id === line.get('product').id) {
+                            break;
+                          }
+                        }
+                        if (h === servicesList.length) {
+                          servicesToApprove += '<br>· ' + line.get('product').get('_identifier');
+                          servicesList.push(line.get('product'));
+                          if (!approvalNeeded) {
+                            approvalNeeded = true;
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+          if (approvalNeeded) {
+            OB.UTIL.Approval.requestApproval(
+            me.model, [{
+              approval: 'OBPOS_approval.returnService',
+              message: 'OBPOS_approval.returnService',
+              params: [servicesToApprove]
+            }], function (approved, supervisor, approvalType) {
+              if (approved) {
+                me.getReceipt().set('notApprove', true);
+                actionAddProducts();
+                me.getReceipt().unset('notApprove');
+              } else {
+                _.each(me.selectedModels, function (line) {
+                  if (line.get('notReturnThisLine')) {
+                    line.unset('notReturnThisLine');
+                  }
+                });
+              }
+            });
+          } else {
+            actionAddProducts();
+          }
         }
       }
     });
+
     // add a command that will handle the DELETE keyboard key
     this.addCommand('line:delete', {
       stateless: true,
@@ -315,11 +511,11 @@ enyo.kind({
     // calling super after setting keyboard properties
     this.inherited(arguments);
 
-
     this.addToolbarComponent('OB.OBPOSPointOfSale.UI.ToolbarPayment');
     this.addToolbar(OB.OBPOSPointOfSale.UI.ToolbarScan);
     this.addToolbar(OB.OBPOSPointOfSale.UI.ToolbarDiscounts);
   },
+
 
   init: function (model) {
     this.model = model;

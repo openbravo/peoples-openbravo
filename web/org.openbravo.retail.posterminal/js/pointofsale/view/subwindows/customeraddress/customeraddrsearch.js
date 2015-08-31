@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2012-2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -156,7 +156,7 @@ enyo.kind({
       return;
     } else {
       this.disabled = true;
-      this.setDisabled();
+      this.setDisabled(true);
       this.addClass('disabled');
     }
   },
@@ -233,18 +233,21 @@ enyo.kind({
       };
     }
     criteria.bpartner = this.bPartnerId;
-    var filterIdentifier = {
-      columns: ['_identifier'],
-      operator: 'startsWith',
-      value: filter
-    },
-        bPartnerId = {
-        columns: ['bpartner'],
-        operator: 'equals',
-        value: this.bPartnerId
-        };
-    var hgVolCriteria = [filterIdentifier, bPartnerId];
-    criteria.hgVolFilters = hgVolCriteria;
+    if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.customer', true)) {
+      var filterIdentifier = {
+        columns: ['_identifier'],
+        operator: 'startsWith',
+        value: filter
+      },
+          bPartnerId = {
+          columns: ['bpartner'],
+          operator: 'equals',
+          value: this.bPartnerId,
+          isId: true
+          };
+      var hgVolCriteria = [filterIdentifier, bPartnerId];
+      criteria.hgVolFilters = hgVolCriteria;
+    }
     OB.Dal.find(OB.Model.BPLocation, criteria, successCallbackBPsLoc, errorCallback);
     return true;
   },

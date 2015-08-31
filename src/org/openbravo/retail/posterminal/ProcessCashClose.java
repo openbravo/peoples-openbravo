@@ -21,9 +21,9 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.LockOptions;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.LockOptions;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
@@ -38,6 +38,7 @@ import org.openbravo.mobile.core.process.DataSynchronizationImportProcess;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchronization;
 import org.openbravo.mobile.core.process.JSONPropertyToEntity;
 import org.openbravo.mobile.core.process.PropertyByType;
+import org.openbravo.model.ad.access.User;
 import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonToDataConverter;
@@ -45,6 +46,8 @@ import org.openbravo.service.json.JsonToDataConverter;
 @DataSynchronization(entity = "OBPOS_App_Cashup")
 public class ProcessCashClose extends POSDataSynchronizationProcess implements
     DataSynchronizationImportProcess {
+
+  public static final String CASHUP_COUNT_DIFF = "CASHUP_COUNT_DIFF";
 
   private static final Logger log = Logger.getLogger(ProcessCashClose.class);
   JSONObject jsonResponse = new JSONObject();
@@ -87,11 +90,23 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
       log.debug("Error processing cash close: error retrieving cashUp date. Using current date");
     }
 
-    OBContext.setOBContext(jsonCashup.getString("userId"), OBContext.getOBContext().getRole()
-        .getId(), OBContext.getOBContext().getCurrentClient().getId(), posTerminal
-        .getOrganization().getId());
     OBPOSAppCashup cashUp = getCashUp(cashUpId, jsonCashup, cashUpDate);
 
+    if (jsonCashup.has("approvals")) {
+      JSONObject jsonApprovals = jsonCashup.getJSONObject("approvals");
+      OBPOSCashupApproval cashupApproval = OBProvider.getInstance().get(OBPOSCashupApproval.class);
+      cashupApproval.setCashUp(cashUp);
+      cashupApproval.setActive(true);
+      cashupApproval.setApprovalType(CASHUP_COUNT_DIFF);
+      cashupApproval.setApprovalMessage(jsonApprovals.getString("message"));
+      if (jsonApprovals.has("approvalReason")) {
+        cashupApproval.setApprovalReason(OBDal.getInstance().get(OBPOSApprovalReason.class,
+            jsonApprovals.getString("approvalReason")));
+      }
+      cashupApproval.setSupervisor(OBDal.getInstance().get(User.class,
+          jsonApprovals.getString("supervisor")));
+      OBDal.getInstance().save(cashupApproval);
+    }
     if (cashUp.isProcessed() && !cashUp.isProcessedbo()) {
       cashUp.setJsoncashup(jsonCashup.toString());
       if (posTerminal.getMasterterminal() != null) {
@@ -257,22 +272,17 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
 
       posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
           jsonCashup.getString("posterminal"));
-
       CashCloseProcessor processor = getCashCloseProcessor();
       JSONArray cashMgmtIds = jsonCashup.getJSONArray("cashMgmtIds");
       JSONObject result = processor.processCashClose(posTerminal, jsonCashup, cashMgmtIds,
           currentDate, slaveCashupIds);
-
       // add the messages returned by processCashClose...
       jsonData.put("messages", result.opt("messages"));
       jsonData.put("next", result.opt("next"));
       jsonData.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
     } finally {
-        try {
-          OBDal.getInstance().flush();
-          TriggerHandler.getInstance().enable();
-        } catch (Throwable ignored) {
-        }
+      OBDal.getInstance().flush();
+      TriggerHandler.getInstance().enable();
     }
   }
 
@@ -400,7 +410,6 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
     }
     updateOrCreateCashupInfo(cashUpId, jsonCashup, cashUpDate);
     OBDal.getInstance().flush();
-    OBDal.getInstance().getConnection().commit();
     return cashUp;
   }
 

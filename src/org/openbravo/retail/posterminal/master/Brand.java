@@ -15,10 +15,13 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
@@ -28,6 +31,7 @@ import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
 public class Brand extends ProcessHQLQuery {
   public static final String brandPropertyExtension = "OBPOS_BrandExtension";
+  public static final Logger log = Logger.getLogger(Brand.class);
 
   @Inject
   @Any
@@ -43,13 +47,35 @@ public class Brand extends ProcessHQLQuery {
     HQLPropertyList regularBrandsHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions);
 
-    hqlQueries.add("select"
-        + regularBrandsHQLProperties.getHqlSelect() //
-        + "from Product product " //
-        + "where exists (select 1 from OBRETCO_Prol_Product assort where obretcoProductlist= '"
-        + productList.getId() + "' and assort.product = product) "
-        + "and $naturalOrgCriteria and $incrementalUpdateCriteria and product.active = true "
-        + "order by product.brand.name");
+    // TODO: Sandra replace the hgvol with brand reading from separate table
+    boolean isHgVol = false;
+    try {
+      OBContext.setAdminMode(true);
+      isHgVol = "Y".equals(Preferences.getPreferenceValue("OBPOS_highVolume.product", true,
+          OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
+              .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
+              .getOBContext().getRole(), null));
+    } catch (PropertyException e) {
+      log.error("Error getting preference OBPOS_highVolume.product " + e.getMessage(), e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+
+    if (isHgVol) {
+      hqlQueries.add("select"
+          + regularBrandsHQLProperties.getHqlSelect() //
+          + "from Brand brand " //
+          + "where $naturalOrgCriteria and $incrementalUpdateCriteria and brand.active = true "
+          + "order by brand.name");
+    } else {
+      hqlQueries.add("select"
+          + regularBrandsHQLProperties.getHqlSelect() //
+          + "from Product product " //
+          + "where exists (select 1 from OBRETCO_Prol_Product assort where obretcoProductlist= '"
+          + productList.getId() + "' and assort.product = product) "
+          + "and $naturalOrgCriteria and $incrementalUpdateCriteria and product.active = true "
+          + "order by product.brand.name");
+    }
 
     return hqlQueries;
   }

@@ -637,7 +637,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
     }, function (cashUp) {
       OB.UTIL.composeCashupInfo(cashUp, currentMe, function (me) {
         var i, paymentMethodInfo, objToSend = JSON.parse(cashUp.at(0).get('objToSend'));
-        objToSend.cashUpDate = new Date();
+        objToSend.cashUpDate = OB.I18N.formatDate(new Date());
         objToSend.currentDate = OB.I18N.formatDate(new Date());
         for (i = 0; i < me.additionalProperties.length; i++) {
           objToSend[me.additionalProperties[i]] = me.propertyFunctions[i](OB.POS.modelterminal.get('terminal').id, cashUp.at(0));
@@ -662,6 +662,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
           cashCloseInfo.paymentMethod = paymentMethodInfo;
           objToSend.cashCloseInfo.push(cashCloseInfo);
         }, me);
+        objToSend.approvals = me.get('approvals');
         var cashMgmtIds = [];
         objToSend.cashMgmtIds = cashMgmtIds;
         OB.Dal.find(OB.Model.CashManagement, {

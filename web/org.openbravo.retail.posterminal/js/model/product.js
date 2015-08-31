@@ -16,7 +16,7 @@
     tableName: 'm_product',
     entityName: 'Product',
     source: 'org.openbravo.retail.posterminal.master.Product',
-    dataLimit: 100,
+    dataLimit: OB.Dal.DATALIMIT,
     includeTerminalDate: true,
     hgvol: 'OBPOS_highVolume.product',
     initialize: function () {
@@ -149,13 +149,9 @@
     column: 'printDescription',
     type: 'BOOL'
   }, {
-    name: 'allowAnonymousSale',
-    column: 'allowAnonymousSale',
+    name: 'oBPOSAllowAnonymousSale',
+    column: 'oBPOSAllowAnonymousSale',
     type: 'BOOL'
-  }, {
-    name: 'overdueAvailableDays',
-    column: 'overdueAvailableDays',
-    type: 'NUMBER'
   }, {
     name: 'returnable',
     column: 'returnable',
@@ -165,16 +161,8 @@
     column: 'overdueReturnDays',
     type: 'NUMBER'
   }, {
-    name: 'editablePrice',
-    column: 'editablePrice',
-    type: 'BOOL'
-  }, {
     name: 'isPriceRuleBased',
     column: 'isPriceRuleBased',
-    type: 'BOOL'
-  }, {
-    name: 'uniquePerDocument',
-    column: 'uniquePerDocument',
     type: 'BOOL'
   }, {
     name: 'proposalType',
@@ -195,6 +183,22 @@
   }, {
     name: 'isLinkedToProduct',
     column: 'isLinkedToProduct',
+    type: 'BOOL'
+  }, {
+    name: 'allowDeferredSell',
+    column: 'allowDeferredSell',
+    type: 'BOOL'
+  }, {
+    name: 'deferredSellMaxDays',
+    column: 'deferredSellMaxDays',
+    type: 'NUMBER'
+  }, {
+    name: 'quantityRule',
+    column: 'quantityRule',
+    type: 'TEXT'
+  }, {
+    name: 'isPrintServices',
+    column: 'isPrintServices',
     type: 'BOOL'
   }]);
 
