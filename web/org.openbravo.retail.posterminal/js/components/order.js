@@ -734,14 +734,14 @@ enyo.kind({
         var linesToRemove = [];
         me.order.get('lines').forEach(function (line) {
           var prod = line.get('product'),
-              newLine, i, j, l, rlp, rln, newqtyplus = 0,
+              newLine, i, j, l, rlp, rln, deferredLines, deferredQty, notDeferredRelatedLines, positiveLine, newqtyplus = 0,
               newqtyminus = 0,
               serviceLines = [],
               positiveLines = [],
               negativeLines = [],
               newRelatedLines = [];
 
-          if (line.has('relatedLines') && line.get('relatedLines').length > 0 && !line.get('relatedLines').deferred && !line.get('originalOrderLineId')) {
+          if (line.has('relatedLines') && line.get('relatedLines').length > 0 && !line.get('originalOrderLineId')) {
 
             serviceLines = getServiceLines(line);
 
@@ -770,12 +770,42 @@ enyo.kind({
             serviceLines.forEach(function (l) {
               if (l.get('qty') > 0) {
                 if (serviceLines.length === 1 && newqtyminus && newqtyplus) {
+                  deferredLines = l.get('relatedLines').filter(function getDeferredServices(relatedLine) {
+                    return relatedLine.deferred === true;
+                  });
+                  if (deferredLines) {
+                    deferredQty = 0;
+                    if (line.get('product').get('quantityRule') === 'PP') {
+                      _.each(deferredLines, function (deferredLine) {
+                        deferredQty += deferredLine.qty;
+                      });
+                    }
+                    rlp = OB.UTIL.mergeArrays(rlp, (deferredLines || []));
+                    newqtyplus += deferredQty;
+                  }
                   newLine = me.order.createLine(prod, newqtyminus);
                   newLine.set('relatedLines', rln);
+                  newLine.set('groupService', newLine.get('product').get('groupProduct'));
                   l.set('relatedLines', rlp);
                   l.set('qty', newqtyplus);
                 } else if (serviceLines.length === 1 && newqtyminus) {
                   if (approved) {
+                    deferredLines = l.get('relatedLines').filter(function getDeferredServices(relatedLine) {
+                      return relatedLine.deferred === true;
+                    });
+                    if (deferredLines.length) {
+                      deferredQty = 0;
+                      if (line.get('product').get('quantityRule') === 'PP') {
+                        _.each(deferredLines, function (deferredLine) {
+                          deferredQty += deferredLine.qty;
+                        });
+                      } else {
+                        deferredQty = 1;
+                      }
+                      newLine = me.order.createLine(prod, deferredQty);
+                      newLine.set('relatedLines', deferredLines);
+                      newLine.set('qty', deferredQty);
+                    }
                     l.set('relatedLines', rln);
                     l.set('qty', newqtyminus);
                   } else {
@@ -783,14 +813,40 @@ enyo.kind({
                   }
                 } else if (newqtyplus && !me.positiveLineUpdated) {
                   me.positiveLineUpdated = true;
+                  deferredLines = l.get('relatedLines').filter(function getDeferredServices(relatedLine) {
+                    return relatedLine.deferred === true;
+                  });
+                  rlp = OB.UTIL.mergeArrays(rlp, (deferredLines || []));
                   l.set('relatedLines', rlp);
+                  if (line.get('product').get('quantityRule') === 'PP') {
+                    _.each(deferredLines, function (deferredLine) {
+                      newqtyplus += deferredLine.qty;
+                    });
+                  }
                   l.set('qty', newqtyplus);
                 } else if (newqtyplus && newqtyminus && me.positiveLineUpdated) {
                   newLine = me.order.createLine(prod, newqtyminus);
                   newLine.set('relatedLines', rln);
+                  newLine.set('groupService', newLine.get('product').get('groupProduct'));
                   me.order.get('lines').remove(l);
                 } else {
-                  me.order.get('lines').remove(l);
+                  deferredLines = l.get('relatedLines').filter(function getDeferredServices(relatedLine) {
+                    return relatedLine.deferred === true;
+                  });
+                  if (!deferredLines.length) {
+                    me.order.get('lines').remove(l);
+                  } else {
+                    deferredQty = 0;
+                    if (line.get('product').get('quantityRule') === 'PP') {
+                      _.each(deferredLines, function (deferredLine) {
+                        deferredQty += deferredLine.qty;
+                      });
+                    } else {
+                      deferredQty = 1;
+                    }
+                    l.set('relatedLines', deferredLines);
+                    l.set('qty', deferredQty);
+                  }
                 }
                 if (!line.get('groupService') && newLine) {
                   newLine.set('mirrorLine', line);
@@ -810,11 +866,28 @@ enyo.kind({
                   l.set('relatedLines', rln);
                   l.set('qty', newqtyminus);
                 } else if (newqtyplus && newqtyminus && me.negativeLineUpdated) {
-                  newLine = me.order.createLine(prod, newqtyplus);
-                  newLine.set('relatedLines', rlp);
+                  positiveLine = me.order.get('lines').filter(function getLine(currentLine) {
+                    return currentLine.get('product').id === l.get('product').id && currentLine.get('qty') > 0;
+                  });
+                  if (positiveLine) {
+                    deferredLines = l.get('relatedLines').filter(function getDeferredServices(relatedLine) {
+                      return relatedLine.deferred === true;
+                    });
+                    rlp = OB.UTIL.mergeArrays(rlp, (deferredLines || []));
+                    positiveLine.set('relatedLines', rlp);
+                    positiveLine.set('qty', newqtyplus);
+                  } else {
+                    newLine = me.order.createLine(prod, newqtyplus);
+                    newLine.set('relatedLines', rlp);
+                  }
                   me.order.get('lines').remove(l);
                 } else {
-                  me.order.get('lines').remove(l);
+                  deferredLines = l.get('relatedLines').filter(function getDeferredServices(relatedLine) {
+                    return relatedLine.deferred === true;
+                  });
+                  if (!deferredLines.length) {
+                    me.order.get('lines').remove(l);
+                  }
                 }
                 if (!line.get('groupService') && newLine) {
                   newLine.set('mirrorLine', line);
@@ -825,8 +898,11 @@ enyo.kind({
             me.positiveLineUpdated = false;
             me.negativeLineUpdated = false;
 
-            if (!line.get('groupService') && line.get('relatedLines').length > 1) {
-              line.get('relatedLines').forEach(function (rl) {
+            notDeferredRelatedLines = line.get('relatedLines').filter(function getNotDeferredLines(rl) {
+              return !rl.deferred;
+            });
+            if (!line.get('groupService') && notDeferredRelatedLines.length > 1) {
+              notDeferredRelatedLines.forEach(function (rl) {
                 newLine = me.order.createLine(prod, me.order.get('lines').get(rl.orderlineId).get('qty'));
                 newLine.set('relatedLines', [rl]);
                 newLine.set('groupService', false);

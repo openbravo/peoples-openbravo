@@ -1211,7 +1211,11 @@
                 line = args.line;
                 newLine = false;
               } else {
-                line = args.receipt.createLine(args.p, args.qty, args.options, args.attrs);
+                if (args.attrs && args.attrs.relatedLines && args.attrs.relatedLines[0].deferred && args.p.get('quantityRule') === 'PP') {
+                  line = args.receipt.createLine(args.p, args.attrs.relatedLines[0].qty, args.options, args.attrs);
+                } else {
+                  line = args.receipt.createLine(args.p, args.qty, args.options, args.attrs);
+                }
               }
             });
 

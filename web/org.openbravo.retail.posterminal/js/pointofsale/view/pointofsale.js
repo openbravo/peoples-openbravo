@@ -448,10 +448,15 @@ enyo.kind({
               return approval.approvalType.approval === 'OBPOS_approval.deferred_sell_max_days';
             });
 
-            // identify the related lines are referred
-            if (inEvent.attrs.relatedLines) {
-              inEvent.attrs.relatedLines.deferred = true;
-            }
+            _.each(inEvent.attrs.relatedLines, function (relatedLine) {
+              relatedLine.orderDocumentNo = targetOrder.get('documentNo');
+              relatedLine.otherTicket = OB.UTIL.isNullOrUndefined(inEvent.targetOrder);
+              relatedLine.deferred = true;
+              var currentLine = targetOrder.get('lines').models.filter(function getCurrentLine(line) {
+                return line.id === relatedLine.orderlineId;
+              });
+              relatedLine.qty = currentLine[0].get('qty');
+            });
 
             // Select open ticket or create a new one
             this.doShowPopup({
@@ -477,6 +482,11 @@ enyo.kind({
         }
       }, this);
       return true;
+    }
+
+    // If a deferred service has 'As per product' quantity rule, the product quantity must be set to the quantity of the line
+    if (inEvent.attrs && inEvent.attrs.relatedLines && inEvent.attrs.relatedLines[0].deferred && inEvent.product.get('quantityRule') === 'PP') {
+      inEvent.qty = inEvent.attrs.relatedLines[0].qty;
     }
 
     if (inEvent.ignoreStockTab) {
