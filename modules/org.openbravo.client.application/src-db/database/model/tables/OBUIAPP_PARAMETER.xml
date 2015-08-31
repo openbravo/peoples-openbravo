@@ -190,8 +190,14 @@
       <foreign-key foreignTable="AD_REFERENCE" name="OBUIAPP_PARAMETER_REFERENCE_V">
         <reference local="AD_REFERENCE_VALUE_ID" foreign="AD_REFERENCE_ID"/>
       </foreign-key>
+      <index name="OBUIAPP_PARAMETER_ATTMET_IDX" unique="false">
+        <index-column name="C_ATTACHMENT_METHOD_ID"/>
+      </index>
       <index name="OBUIAPP_PARAMETER_PROCESS" unique="false">
         <index-column name="OBUIAPP_PROCESS_ID"/>
+      </index>
+      <index name="OBUIAPP_PARAMETER_TAB_IDX" unique="false">
+        <index-column name="AD_TAB_ID"/>
       </index>
       <check name="OBUIAPP_PARAM_SHOWTITLE_CHK"><![CDATA[DISPLAYTITLE IN ('Y', 'N')]]></check>
       <check name="OBUIAPP_PARAMETER_CENTR_CHK"><![CDATA[ISCENTRALLYMAINTAINED IN ('Y', 'N')]]></check>
