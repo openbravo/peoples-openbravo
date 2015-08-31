@@ -1352,8 +1352,14 @@ public class TestCosting extends WeldBaseTest {
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt = createGoodsReceipt(purchaseOrder, price1, quantity1, day1);
 
+      // Add sleep to avoid assert errors
+      Thread.sleep(1000);
+
       // Create goods shipment, run costing background, post it and assert it
       ShipmentInOut goodsShipment = createGoodsShipment(product, price1, quantity2, day4);
+
+      // Add sleep to avoid assert errors
+      Thread.sleep(1000);
 
       // Create inventory amount update and run costing background
       InventoryAmountUpdate inventoryAmountUpdate = createInventoryAmountUpdate(product, price1,
@@ -3853,6 +3859,9 @@ public class TestCosting extends WeldBaseTest {
 
       // Create goods shipment, run costing background, post it and assert it
       ShipmentInOut goodsShipment1 = createGoodsShipment(product, price1, quantity2, day3);
+
+      // Add sleep to avoid assert errors
+      Thread.sleep(1000);
 
       // Cancel goods shipment
       ShipmentInOut goodsShipment2 = cancelGoodsShipment(goodsShipment1, price1);
