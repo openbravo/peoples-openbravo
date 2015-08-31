@@ -69,3 +69,16 @@
 .product_category button.btnselect {
   padding: 8px 0px 8px 10px !important;
 }
+
+.product_category_title {
+  line-height: 27px; 
+  font-size: 18px; 
+  font-weight: bold; 
+  border-top: 1px solid #cccccc; 
+  padding-left: 10px;
+}
+
+.product_category_search li.selected>button.btnselect-browse {
+  background-color: #f8e859;
+  color: #000000;
+}
