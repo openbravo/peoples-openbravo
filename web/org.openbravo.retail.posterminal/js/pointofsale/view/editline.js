@@ -769,7 +769,7 @@ enyo.kind({
     if (this.selectedModels && this.selectedModels.length > 1) {
       var i, quantity = this.selectedModels[0].get('qty'),
           price = this.selectedModels[0].get('price'),
-          priceTotal = price,
+          priceTotal = OB.DEC.mul(price, quantity),
           hasPrice = true,
           hasDiscount = true,
           disc = OB.DEC.mul(OB.DEC.sub(this.selectedModels[0].get('product').get('standardPrice'), this.selectedModels[0].get('price')), this.selectedModels[0].get('qty')),

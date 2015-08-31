@@ -108,6 +108,7 @@
           silent: true
         });
         this.set('gross', OB.DEC.mul(this.get('qty'), this.get('price')));
+        this.set('_gross', OB.DEC.mul(this.get('qty'), this.get('price')));
       } else {
         this.set('gross', null, {
           silent: true
@@ -1673,6 +1674,7 @@
           warehousename: OB.MobileApp.model.get('warehouses')[0].warehousename
         }
       });
+
       if (!_.isUndefined(attrs)) {
         _.each(_.keys(attrs), function (key) {
           newline.set(key, attrs[key]);
