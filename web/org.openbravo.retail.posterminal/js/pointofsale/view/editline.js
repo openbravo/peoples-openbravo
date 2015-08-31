@@ -634,7 +634,9 @@ enyo.kind({
       this.line.on('change', this.render, this);
     }
     if (!this.selectedModels || this.selectedModels.length <= 1) {
-      this.$.actionButtonsContainer.$.descriptionButton.show();
+      if (this.model.get('order').get('isEditable')) {
+        this.$.actionButtonsContainer.$.descriptionButton.show();
+      }
       if (this.line) {
         if ((this.line.get('product').get('showstock') || this.line.get('product').get('_showstock')) && !this.line.get('product').get('ispack') && OB.MobileApp.model.get('connectedToERP')) {
           this.$.actionButtonsContainer.$.checkStockButton.show();

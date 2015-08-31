@@ -370,10 +370,13 @@ enyo.kind({
             actionAddProduct(keyboard, -qty);
           }
         }
+
         if ((!_.isNull(txt) || !_.isUndefined(txt)) && !_.isNaN(OB.I18N.parseNumber(txt))) {
           qty = OB.I18N.parseNumber(txt);
         }
-        if (!_.isUndefined(keyboard.line)) {
+        if (me.selectedModels.length > 0) {
+          value = me.selectedModels[0].get('qty') - qty;
+        } else if (!_.isUndefined(keyboard.line)) {
           value = keyboard.line.get('qty') - qty;
         }
         if (value === 0) { // If final quantity will be 0 then request approval
