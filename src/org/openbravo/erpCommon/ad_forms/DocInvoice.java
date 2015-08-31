@@ -28,6 +28,7 @@ import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
@@ -1194,7 +1195,7 @@ public class DocInvoice extends AcctServer {
             DocumentType, AD_Org_ID, OBDateUtils.formatDate(period.getEndingDate()));
         if ("".equals(data[0].period)) {
           setStatus(STATUS_PeriodClosed);
-          throw new IllegalStateException("DocInvoice - Error getting next year period");
+          throw new OBException("@PeriodNotAvailable@");
         }
       } catch (ServletException e) {
         log4j.warn("DocInvoice - Error checking period open.", e);

@@ -83,6 +83,7 @@ public class ModelProvider implements OBSingleton {
   // a list because for small numbers a list is faster than a hashmap
   private List<Entity> entitiesWithTreeType = null;
   private HashMap<Entity, List<String>> entitiesWithImage = null;
+  private HashMap<Entity, List<String>> entitiesWithFile = null;
   private List<Module> modules;
   private Session initsession;
 
@@ -228,6 +229,7 @@ public class ModelProvider implements OBSingleton {
       entitiesByTableId = new HashMap<String, Entity>();
       entitiesWithTreeType = new ArrayList<Entity>();
       entitiesWithImage = new HashMap<Entity, List<String>>();
+      entitiesWithFile = new HashMap<Entity, List<String>>();
       for (final Table t : tables) {
         log.debug("Building model for table " + t.getName());
 
@@ -846,6 +848,16 @@ public class ModelProvider implements OBSingleton {
         entitiesWithImage.put(childProperty.getEntity(), propertyList);
       }
     }
+    // If the Entity is ADFile, add its entity to entitiesWithFile
+    if (parentEntity.getName().equals("AD_FILE")) {
+      if (entitiesWithFile.containsKey(childProperty.getEntity())) {
+        entitiesWithFile.get(childProperty.getEntity()).add(childProperty.getName());
+      } else {
+        List<String> propertyList = new ArrayList<String>();
+        propertyList.add(childProperty.getName());
+        entitiesWithFile.put(childProperty.getEntity(), propertyList);
+      }
+    }
   }
 
   @SuppressWarnings("unchecked")
@@ -1111,6 +1123,15 @@ public class ModelProvider implements OBSingleton {
    */
   public HashMap<Entity, List<String>> getEntityWithImage() {
     return entitiesWithImage;
+  }
+
+  /**
+   * Returns the entities that have images
+   * 
+   * @return Entity list
+   */
+  public HashMap<Entity, List<String>> getEntityWithFile() {
+    return entitiesWithFile;
   }
 
   /**

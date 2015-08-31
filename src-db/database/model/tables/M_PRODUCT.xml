@@ -365,17 +365,9 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
-      <column name="ALLOW_ANONYMOUS_SALE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[N]]></default>
-        <onCreateDefault><![CDATA['N']]></onCreateDefault>
-      </column>
-      <column name="OVERDUE_AVAILABLE_DAYS" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="RETURNABLE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[N]]></default>
-        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault><![CDATA['Y']]></onCreateDefault>
       </column>
       <column name="OVERDUE_RETURN_DAYS" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
         <default/>
@@ -403,9 +395,17 @@
       </column>
       <column name="ISLINKEDTOPRODUCT" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
-        <onCreateDefault/>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
       <column name="QUANTITY_RULE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="ALLOW_DEFERRED_SELL" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
+      <column name="DEFERRED_SELL_MAX_DAYS" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -475,6 +475,9 @@
       <index name="M_PRODUCT_BPARTNER" unique="false">
         <index-column name="C_BPARTNER_ID"/>
       </index>
+      <index name="M_PRODUCT_BRAND_ID" unique="false">
+        <index-column name="M_BRAND_ID"/>
+      </index>
       <index name="M_PRODUCT_GEN_PROD" unique="false">
         <index-column name="GENERIC_PRODUCT_ID"/>
       </index>
@@ -512,7 +515,6 @@
       <check name="M_PROD_LINKEDTOPROD_QRUL_CHECK"><![CDATA[((ISLINKEDTOPRODUCT = 'Y') AND (QUANTITY_RULE IS NOT NULL)) OR (ISLINKEDTOPRODUCT = 'N')]]></check>
       <check name="M_PROD_LINKEDTOPROD_SEL_CHECK"><![CDATA[((ISLINKEDTOPRODUCT = 'Y') AND ((PROD_CAT_SELECTION IS NOT NULL) OR (PRODUCT_SELECTION IS NOT NULL))) OR (ISLINKEDTOPRODUCT = 'N')]]></check>
       <check name="M_PROD_LINKEDTOPRODUCT_CHECK"><![CDATA[ISLINKEDTOPRODUCT IN ('Y', 'N')]]></check>
-      <check name="M_PRODUCT_ANONYMOUS_SALE_CHECK"><![CDATA[ALLOW_ANONYMOUS_SALE IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ATSETVALTYPE_CHK"><![CDATA[(M_ATTRIBUTESETINSTANCE_ID IS NULL) OR (ATTRSETVALUETYPE IS NOT NULL)]]></check>
       <check name="M_PRODUCT_DISCONTINUED_CHECK"><![CDATA[DISCONTINUED IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_EDITABLE_PRICE_CHECK"><![CDATA[EDITABLE_PRICE IN ('Y', 'N')]]></check>

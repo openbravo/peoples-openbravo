@@ -641,21 +641,23 @@ isc.OBParameterWindowView.addProperties({
   },
 
   /**
-   * Given a string value, it returns the proper value according to the provided type
+   * Given a value, it returns the proper value according to the provided type
    */
-  getTypeSafeValue: function (type, stringValue) {
+  getTypeSafeValue: function (type, value) {
     var isNumber;
     if (!type) {
-      return stringValue;
+      return value;
     }
     isNumber = isc.SimpleType.inheritsFrom(type, 'integer') || isc.SimpleType.inheritsFrom(type, 'float');
-    if (isNumber && OB.Utilities.Number.IsValidValueString(type, stringValue)) {
-      return OB.Utilities.Number.OBMaskedToJS(stringValue, type.decSeparator, type.groupSeparator);
-    } else if (isNumber && isc.isA.Number(OB.Utilities.Number.OBMaskedToJS(stringValue, '.', ','))) {
+    if (isNumber && isc.isA.Number(value)) {
+      return value;
+    } else if (isNumber && OB.Utilities.Number.IsValidValueString(type, value)) {
+      return OB.Utilities.Number.OBMaskedToJS(value, type.decSeparator, type.groupSeparator);
+    } else if (isNumber && isc.isA.Number(OB.Utilities.Number.OBMaskedToJS(value, '.', ','))) {
       // it might happen that default value uses the default '.' and ',' as decimal and group separator
-      return OB.Utilities.Number.OBMaskedToJS(stringValue, '.', ',');
+      return OB.Utilities.Number.OBMaskedToJS(value, '.', ',');
     } else {
-      return stringValue;
+      return value;
     }
   },
 

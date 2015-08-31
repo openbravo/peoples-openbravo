@@ -28,10 +28,15 @@ import org.hibernate.ScrollableResults;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
+import org.openbravo.base.provider.OBProvider;
+import org.openbravo.client.kernel.event.EntityDeleteEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.erpCommon.utility.SequenceIdData;
+import org.openbravo.materialmgmt.ServicePriceUtils;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.order.OrderlineServiceRelation;
 
@@ -44,7 +49,8 @@ public class ServiceOrderLineEventHandler extends EntityPersistenceEventObserver
     return entities;
   }
 
-  public void onUpdate(@Observes EntityUpdateEvent event) {
+  public void onUpdate(@Observes
+  EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -52,16 +58,7 @@ public class ServiceOrderLineEventHandler extends EntityPersistenceEventObserver
     final Entity orderLineEntity = ModelProvider.getInstance().getEntity(OrderLine.ENTITY_NAME);
     final OrderLine thisLine = (OrderLine) event.getTargetInstance();
 
-    StringBuffer where = new StringBuffer();
-    where.append(" as rol");
-    where.append(" where " + OrderlineServiceRelation.PROPERTY_ORDERLINERELATED
-        + ".id = :orderLineId");
-    OBQuery<OrderlineServiceRelation> rol = OBDal.getInstance().createQuery(
-        OrderlineServiceRelation.class, where.toString());
-
-    rol.setNamedParameter("orderLineId", thisLine.getId());
-    rol.setMaxResult(1);
-    if (rol.uniqueResult() != null) {
+    if (hasRelatedServices(thisLine)) {
       final Property lineNetAmountProperty = orderLineEntity
           .getProperty(OrderLine.PROPERTY_LINENETAMOUNT);
       final Property lineGrossAmountProperty = orderLineEntity
@@ -90,26 +87,126 @@ public class ServiceOrderLineEventHandler extends EntityPersistenceEventObserver
 
       if (currentOrderedQty.compareTo(oldOrderedQty) != 0
           || currentAmount.compareTo(oldAmount) != 0) {
-        rol = OBDal.getInstance().createQuery(OrderlineServiceRelation.class, where.toString());
-        rol.setNamedParameter("orderLineId", thisLine.getId());
+        Long lineNo = null;
+        OBQuery<OrderlineServiceRelation> rol = relatedServices(thisLine);
         rol.setMaxResult(1000);
         final ScrollableResults scroller = rol.scroll(ScrollMode.FORWARD_ONLY);
         while (scroller.next()) {
           boolean changed = false;
           final OrderlineServiceRelation or = (OrderlineServiceRelation) scroller.get()[0];
-          if (or.getQuantity().compareTo(currentOrderedQty) > 0) {
-            or.setQuantity(currentOrderedQty);
-            changed = true;
-          }
-          if (currentAmount.compareTo(oldAmount) != 0) {
-            or.setAmount(currentAmount);
-            changed = true;
-          }
-          if (changed) {
-            OBDal.getInstance().save(or);
+          // Order Quantity has changed from positive to negative or backwards
+          if (currentOrderedQty.signum() != 0 && oldOrderedQty.signum() != 0
+              && currentOrderedQty.signum() != oldOrderedQty.signum()) {
+            // Create new order line
+            if (lineNo == null) {
+              lineNo = ServicePriceUtils.getNewLineNo(thisLine.getSalesOrder().getId());
+            } else {
+              lineNo = lineNo + 10L;
+            }
+            OrderLine secondOrderline = (OrderLine) DalUtil.copy(or.getSalesOrderLine(), false);
+            secondOrderline.setLineNo(lineNo);
+            secondOrderline.setId(SequenceIdData.getUUID());
+            secondOrderline.setNewOBObject(true);
+            OBDal.getInstance().save(secondOrderline);
+
+            // Delete relation line
+            OBDal.getInstance().remove(or);
+
+            // Create new relation line and relate to the new orderline
+            OrderlineServiceRelation olsr = OBProvider.getInstance().get(
+                OrderlineServiceRelation.class);
+            olsr.setClient(thisLine.getClient());
+            olsr.setOrganization(thisLine.getOrganization());
+            olsr.setOrderlineRelated(thisLine);
+            olsr.setSalesOrderLine(secondOrderline);
+            olsr.setAmount(currentAmount);
+            olsr.setQuantity(currentOrderedQty);
+            OBDal.getInstance().save(olsr);
+          } else {
+            if (or.getQuantity().compareTo(currentOrderedQty) != 0) {
+              or.setQuantity(currentOrderedQty);
+              changed = true;
+            }
+            if (currentAmount.compareTo(oldAmount) != 0) {
+              or.setAmount(currentAmount);
+              changed = true;
+            }
+            if (changed) {
+              OBDal.getInstance().save(or);
+            }
           }
         }
       }
     }
+  }
+
+  public void onDelete(@Observes
+  EntityDeleteEvent event) {
+    if (!isValidEvent(event)) {
+      return;
+    }
+
+    final OrderLine thisLine = (OrderLine) event.getTargetInstance();
+
+    if (hasRelatedServices(thisLine)) {
+      OBQuery<OrderlineServiceRelation> rol = relatedServices(thisLine);
+      rol.setMaxResult(1000);
+      final ScrollableResults scroller = rol.scroll(ScrollMode.FORWARD_ONLY);
+      while (scroller.next()) {
+        final OrderlineServiceRelation or = (OrderlineServiceRelation) scroller.get()[0];
+        OBDal.getInstance().remove(or);
+      }
+    }
+    if (hasRelatedProducts(thisLine)) {
+      OBQuery<OrderlineServiceRelation> rol = relatedProducts(thisLine);
+      rol.setMaxResult(1000);
+      final ScrollableResults scroller = rol.scroll(ScrollMode.FORWARD_ONLY);
+      while (scroller.next()) {
+        final OrderlineServiceRelation or = (OrderlineServiceRelation) scroller.get()[0];
+        OBDal.getInstance().remove(or);
+      }
+    }
+  }
+
+  private boolean hasRelatedServices(OrderLine thisLine) {
+    OBQuery<OrderlineServiceRelation> rol = relatedServices(thisLine);
+    rol.setMaxResult(1);
+    if (rol.uniqueResult() != null) {
+      return true;
+    }
+    return false;
+  }
+
+  private OBQuery<OrderlineServiceRelation> relatedServices(OrderLine thisLine) {
+    StringBuffer where = new StringBuffer();
+    where.append(" as rol");
+    where.append(" where " + OrderlineServiceRelation.PROPERTY_ORDERLINERELATED
+        + ".id = :orderLineId");
+    OBQuery<OrderlineServiceRelation> rol = OBDal.getInstance().createQuery(
+        OrderlineServiceRelation.class, where.toString());
+
+    rol.setNamedParameter("orderLineId", thisLine.getId());
+    return rol;
+  }
+
+  private boolean hasRelatedProducts(OrderLine thisLine) {
+    OBQuery<OrderlineServiceRelation> rol = relatedProducts(thisLine);
+    rol.setMaxResult(1);
+    if (rol.uniqueResult() != null) {
+      return true;
+    }
+    return false;
+  }
+
+  private OBQuery<OrderlineServiceRelation> relatedProducts(OrderLine thisLine) {
+    StringBuffer where = new StringBuffer();
+    where.append(" as rol");
+    where.append(" where " + OrderlineServiceRelation.PROPERTY_SALESORDERLINE
+        + ".id = :orderLineId");
+    OBQuery<OrderlineServiceRelation> rol = OBDal.getInstance().createQuery(
+        OrderlineServiceRelation.class, where.toString());
+
+    rol.setNamedParameter("orderLineId", thisLine.getId());
+    return rol;
   }
 }

@@ -184,6 +184,8 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
         "web/org.openbravo.client.application/js/form/formitem/ob-formitem-tree-filter.js", true));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/navbar/ob-quickrun-widget.js", false));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/form/formitem/ob-formitem-file.js", true));
 
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/utilities/ob-property-store.js", false));
@@ -468,6 +470,7 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
     globalResources.add(createStaticResource("web/js/periodControlStatus.js", true));
     globalResources.add(createStaticResource("web/js/productCharacteristicsProcess.js", true));
     globalResources.add(createStaticResource("web/js/validateCostingRuleProcess.js", true));
+    globalResources.add(createStaticResource("web/js/checkAvailableCredit.js", true));
 
     // Product Services
     globalResources.add(createStaticResource("web/js/productServices.js", true));
@@ -483,7 +486,6 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
     testResources.add("web/org.openbravo.client.application/js/test/ob-utilities-date-test.js");
     testResources.add("web/org.openbravo.client.application/js/test/ob-navbar-test.js");
     testResources.add("web/org.openbravo.client.application/js/test/ob-utilities-number-test.js");
-    testResources.add("web/js/test/ob-product-services-test.js");
     return testResources;
   }
 }

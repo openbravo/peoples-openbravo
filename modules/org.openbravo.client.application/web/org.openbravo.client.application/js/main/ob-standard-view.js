@@ -558,7 +558,7 @@ isc.OBStandardView.addProperties({
   // Creates the main layout components of this view.
   createMainParts: function () {
     var me = this,
-        completeFieldsWithoutImages, fieldsWithoutImages;
+        completeFieldsWithoutBLOBs, fieldsWithoutBLOBs;
     if (this.tabId && this.tabId.length > 0) {
       this.messageBar = isc.OBMessageBar.create({
         visibility: 'hidden',
@@ -593,10 +593,10 @@ isc.OBStandardView.addProperties({
       if (this.viewGrid) {
         // the grid should not show the image fields
         // see issue 20049 (https://issues.openbravo.com/view.php?id=20049)
-        completeFieldsWithoutImages = this.removeImageFields(this.viewGrid.completeFields);
-        fieldsWithoutImages = this.removeImageFields(this.viewGrid.fields);
+        completeFieldsWithoutBLOBs = this.removeBLOBFields(this.viewGrid.completeFields);
+        fieldsWithoutBLOBs = this.removeBLOBFields(this.viewGrid.fields);
 
-        this.viewGrid.setDataSource(this.dataSource, completeFieldsWithoutImages || fieldsWithoutImages);
+        this.viewGrid.setDataSource(this.dataSource, completeFieldsWithoutBLOBs || fieldsWithoutBLOBs);
         this.viewGrid.setWidth('100%');
         this.viewGrid.setView(this);
         this.formGridLayout.addMember(this.viewGrid);
@@ -679,29 +679,30 @@ isc.OBStandardView.addProperties({
     }
   },
 
-  // returns a copy of fields after deleting the image fields
+  // returns a copy of fields after deleting the image fields and file fields
   // see issue 20049 (https://issues.openbravo.com/view.php?id=20049)
-  removeImageFields: function (fields) {
-    var indexesToDelete, i, length, fieldsWithoutImages;
+  // Added also file fields that cannot be displayed in grid view.
+  removeBLOBFields: function (fields) {
+    var indexesToDelete, i, length, fieldsWithoutBLOBs;
     indexesToDelete = [];
     if (fields) {
-      fieldsWithoutImages = fields.duplicate();
-      length = fieldsWithoutImages.length;
+      fieldsWithoutBLOBs = fields.duplicate();
+      length = fieldsWithoutBLOBs.length;
       // gets the index of the image fields
       for (i = 0; i < length; i++) {
-        if (fieldsWithoutImages[i].targetEntity === 'ADImage') {
+        if (fieldsWithoutBLOBs[i].targetEntity === 'ADImage' || fieldsWithoutBLOBs[i].targetEntity === 'AD_FILE') {
           indexesToDelete.push(i);
         }
       }
       // removes the image fields
       length = indexesToDelete.length;
       for (i = 0; i < length; i++) {
-        fieldsWithoutImages.splice(indexesToDelete[i] - i, 1);
+        fieldsWithoutBLOBs.splice(indexesToDelete[i] - i, 1);
       }
     } else {
-      fieldsWithoutImages = fields;
+      fieldsWithoutBLOBs = fields;
     }
-    return fieldsWithoutImages;
+    return fieldsWithoutBLOBs;
   },
 
   getDirectLinkUrl: function () {
@@ -2195,7 +2196,7 @@ isc.OBStandardView.addProperties({
                 });
               }
               view.viewGrid.data.handleUpdate('remove', recordInfos, false, req);
-              if (view.treeGrid) {
+              if (view.treeGrid && view.treeGrid.data && view.treeGrid.data.handleUpdate) {
                 view.treeGrid.data.handleUpdate('remove', recordInfos, false, req);
               }
               if (updateTotalRows) {

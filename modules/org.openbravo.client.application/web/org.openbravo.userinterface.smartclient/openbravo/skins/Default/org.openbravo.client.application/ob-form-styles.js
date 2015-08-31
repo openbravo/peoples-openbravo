@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,9 +21,10 @@
  * Styling properties for:
  * 1) OB Form items
  * 2) OBImageItem
- * 3) SectionItem Button Styles
- * 3) Attachments Styles
- * 4) Image Popup Styles
+ * 3) OBFileItem
+ * 4) SectionItem Button Styles
+ * 5) Attachments Styles
+ * 6) Image Popup Styles
  =======================================================================*/
 
 /* =====================================================================
@@ -577,6 +578,89 @@ isc.OBImageItemButton.addProperties({
       this.setSrc(this.eraseIconSrc);
     }
   }
+});
+
+/* =====================================================================
+ * OBFileItem
+ =======================================================================*/
+
+isc.OBFileItem.addProperties({
+  cellStyle: 'OBFormField',
+  titleStyle: 'OBFormFieldLabel'
+});
+
+isc.OBFileCanvas.addProperties({
+  height: '0px'
+  // Hack to avoid second line be desplaced in Firefox and IE
+});
+
+isc.OBFileItemContainer.addProperties({
+  styleName: 'OBFormFieldImageInput',
+  height: 21,
+  width: '100%',
+  align: 'center',
+  defaultLayoutAlign: 'center',
+  initWidgetStyle: function () {
+    //To adapt the height this code is used because the automatic height doesn't fill empty rows.
+    var rowSpan = 1;
+    var singleRowHeight = this.getHeight();
+    var multipleRowHeight = singleRowHeight + 24; // 24px = title height + form item padding defined in CSS
+    if (this.fileItem.rowSpan) {
+      rowSpan = this.fileItem.rowSpan;
+    }
+    var newHeight = singleRowHeight + (rowSpan - 1) * multipleRowHeight;
+    this.setHeight(newHeight);
+  }
+});
+
+isc.OBFileItemLink.addProperties({
+  width: '100%',
+  linkStyleName: 'OBFileItemLink'
+});
+
+isc.OBFileItemSize.addProperties({
+  width: 1,
+  //To allow button be just text width
+  align: 'left',
+  baseStyle: 'OBFileItemSize',
+  autoFit: true,
+  overflow: 'visible'
+});
+
+isc.OBFileItemExt.addProperties({
+  width: 1,
+  height: 12,
+  //To allow button be just text width
+  align: 'left',
+  baseStyle: 'OBFileItemExt',
+  autoFit: true,
+  overflow: 'visible'
+});
+
+isc.OBFileItemButton.addProperties({
+  showRollOver: true,
+  showDisabled: true,
+  showDown: true,
+  showFocusedAsOver: true,
+  width: 21,
+  height: 21,
+  uploadIconSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/upload_icon.png',
+  eraseIconSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/erase_icon.png',
+  initWidgetStyle: function () {
+    if (this.buttonType === 'upload') {
+      this.setSrc(this.uploadIconSrc);
+    } else if (this.buttonType === 'erase') {
+      this.setSrc(this.eraseIconSrc);
+    }
+  }
+});
+
+isc.OBFileSelector.addProperties({
+  hlayoutTopMargin: 10,
+  hlayoutBottomMargin: 10,
+  height: 55,
+  width: 450,
+  align: 'center'
 });
 
 /* =====================================================================

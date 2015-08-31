@@ -21,51 +21,67 @@ package org.openbravo.materialmgmt;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.HashMap;
 
+import org.apache.commons.lang.time.DateUtils;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBDateUtils;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.plm.ServicePriceRuleVersion;
+import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.model.pricing.pricelist.PriceListVersion;
 import org.openbravo.model.pricing.pricelist.ProductPrice;
 import org.openbravo.model.pricing.pricelist.ServicePriceRule;
 import org.openbravo.model.pricing.pricelist.ServicePriceRuleRange;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ServicePriceUtils {
   private static final Logger log = LoggerFactory.getLogger(ServicePriceUtils.class);
   private static final String PERCENTAGE = "P";
+  private static String SERVICEPRODUCT = "S";
 
-  public static BigDecimal getServiceAmount(OrderLine orderline) {
-    BigDecimal servicePrice = getServiceAmount(orderline, null);
-    return servicePrice;
-  }
-
-  public static BigDecimal getServiceAmount(OrderLine orderline, BigDecimal linesTotalAmount) {
+  /**
+   * Method to obtain Service Amount to be added for a certain service order line based on selected
+   * product lines amount
+   * 
+   * @param orderline
+   * @param linesTotalAmount
+   * @param totalDiscounts
+   * @return
+   */
+  public static BigDecimal getServiceAmount(OrderLine orderline, BigDecimal linesTotalAmount,
+      BigDecimal totalDiscounts) {
+    final Product serviceProduct = orderline.getProduct();
     if (linesTotalAmount != null && linesTotalAmount.compareTo(BigDecimal.ZERO) == 0) {
       return BigDecimal.ZERO;
     }
     BigDecimal serviceBasePrice = getProductPrice(orderline.getOrderDate(), orderline
-        .getSalesOrder().getPriceList(), orderline.getProduct());
+        .getSalesOrder().getPriceList(), serviceProduct);
     if (serviceBasePrice == null) {
       throw new OBException("@ServiceProductPriceListVersionNotFound@ "
-          + orderline.getProduct().getIdentifier() + ", @Date@: "
+          + serviceProduct.getIdentifier() + ", @Date@: "
           + OBDateUtils.formatDate(orderline.getOrderDate()));
     }
     BigDecimal serviceRelatedPrice = BigDecimal.ZERO;
-    boolean isPriceRuleBased = orderline.getProduct().isPricerulebased();
+    boolean isPriceRuleBased = serviceProduct.isPricerulebased();
     if (!isPriceRuleBased) {
       return BigDecimal.ZERO;
     } else {
-      ServicePriceRule servicePriceRule = getServicePriceRule(orderline.getProduct(),
+      ServicePriceRule servicePriceRule = getServicePriceRule(serviceProduct,
           orderline.getOrderDate());
       if (servicePriceRule == null) {
         throw new OBException("@ServicePriceRuleVersionNotFound@ "
@@ -84,6 +100,9 @@ public class ServicePriceUtils {
       }
 
       if (PERCENTAGE.equals(servicePriceRule.getRuletype())) {
+        if (!servicePriceRule.isAfterdiscounts() && totalDiscounts != null) {
+          relatedAmount = relatedAmount.add(totalDiscounts);
+        }
         serviceRelatedPrice = relatedAmount.multiply(new BigDecimal(servicePriceRule
             .getPercentage()).divide(new BigDecimal("100.00"), orderline.getCurrency()
             .getStandardPrecision().intValue(), RoundingMode.HALF_UP));
@@ -94,15 +113,18 @@ public class ServicePriceUtils {
               + servicePriceRule.getIdentifier() + ", @AmountUpTo@: " + linesTotalAmount);
         }
         if (PERCENTAGE.equals(range.getRuleType())) {
+          if (!servicePriceRule.isAfterdiscounts() && totalDiscounts != null) {
+            relatedAmount = relatedAmount.add(totalDiscounts);
+          }
           serviceRelatedPrice = relatedAmount.multiply(new BigDecimal(range.getPercentage())
               .divide(new BigDecimal("100.00"), orderline.getCurrency().getStandardPrecision()
                   .intValue(), RoundingMode.HALF_UP));
         } else {
           serviceRelatedPrice = getProductPrice(orderline.getOrderDate(), range.getPriceList(),
-              orderline.getProduct());
+              serviceProduct);
           if (serviceRelatedPrice == null) {
             throw new OBException("@ServiceProductPriceListVersionNotFound@ "
-                + orderline.getProduct().getIdentifier() + ", @Date@: "
+                + serviceProduct.getIdentifier() + ", @Date@: "
                 + OBDateUtils.formatDate(orderline.getOrderDate()));
           }
         }
@@ -216,5 +238,201 @@ public class ServicePriceUtils {
     sprvQry.setParameter("orderDate", orderDate);
     sprvQry.setMaxResults(1);
     return (ServicePriceRule) sprvQry.uniqueResult();
+  }
+
+  /**
+   * Method that returns the next Line Number of a Sales Order
+   * 
+   * @param order
+   *          Order
+   */
+  public static Long getNewLineNo(String orderId) {
+    StringBuffer where = new StringBuffer();
+    where.append(" as ol");
+    where.append(" where ol." + OrderLine.PROPERTY_SALESORDER + ".id = :orderId");
+    where.append(" order by ol." + OrderLine.PROPERTY_LINENO + " desc");
+    OBQuery<OrderLine> olQry = OBDal.getInstance().createQuery(OrderLine.class, where.toString());
+    olQry.setNamedParameter("orderId", orderId);
+    if (olQry.count() > 0) {
+      OrderLine ol = olQry.list().get(0);
+      return ol.getLineNo() + 10L;
+    }
+    return 10L;
+  }
+
+  /**
+   * This method returns null json object if a deferred sale of a service can be done in orderline
+   * related to orderLineToRelate. If it is not possible it will return the json object with the
+   * error obtained.
+   * 
+   * @param orderline
+   *          Order Line in which the service deferred it is wanted to be added
+   * @param orderLineToRelate
+   *          Order Line to which the service is related
+   * @return
+   */
+  public static JSONObject deferredSaleAllowed(OrderLine orderline, OrderLine orderLineToRelate) {
+    JSONObject result = null;
+    final Product serviceProduct = orderline.getProduct();
+    if (orderLineToRelate != null
+        && !orderline.getSalesOrder().getId().equals(orderLineToRelate.getSalesOrder().getId())) {
+      if (!serviceProduct.isAllowDeferredSell()) {
+        throw new OBException("@DeferredSaleNotAllowed@: " + serviceProduct.getIdentifier());
+      } else {
+        try {
+          Date deferredSaleDate = OBDateUtils.getDate(OBDateUtils.formatDate(orderLineToRelate
+              .getSalesOrder().getOrderDate()));
+          Date orderDate = OBDateUtils.getDate(OBDateUtils.formatDate(orderline.getSalesOrder()
+              .getOrderDate()));
+          if (orderline.getProduct().getDeferredSellMaxDays() != null) {
+            deferredSaleDate = DateUtils.addDays(deferredSaleDate, serviceProduct
+                .getDeferredSellMaxDays().intValue());
+            if (orderDate.after(deferredSaleDate)) {
+              String message = OBMessageUtils.parseTranslation(new DalConnectionProvider(false),
+                  RequestContext.get().getVariablesSecureApp(), OBContext.getOBContext()
+                      .getLanguage().getLanguage(),
+                  "@DeferredSaleExpired@: (" + OBDateUtils.formatDate(deferredSaleDate)
+                      + ") @ForService@ '" + serviceProduct.getIdentifier()
+                      + "' @relatingTo@ @line@ " + orderLineToRelate.getLineNo()
+                      + " @of@ @SalesOrderDocumentno@ "
+                      + orderLineToRelate.getSalesOrder().getDocumentNo());
+              result = new JSONObject();
+              result.put("severity", "warning");
+              result.put("title", "Warning");
+              result.put("text", message);
+            }
+          }
+        } catch (ParseException e) {
+          // TODO Auto-generated catch block
+          log.error(e.getMessage(), e);
+        } catch (JSONException e) {
+          // TODO Auto-generated catch block
+          log.error(e.getMessage(), e);
+        }
+      }
+    }
+    return result;
+  }
+
+  /**
+   * @param shipmentLine
+   * @param serviceProduct
+   * @param rfcOrderDate
+   * @return
+   */
+  public static JSONObject serviceReturnAllowedRFC(ShipmentInOutLine shipmentLine,
+      Product serviceProduct, Date rfcOrderDate) {
+    JSONObject result = null;
+    if (SERVICEPRODUCT.equals(serviceProduct.getProductType())) {
+      if (!serviceProduct.isReturnable()) {
+        throw new OBException("@Service@ '" + serviceProduct.getIdentifier()
+            + "' @ServiceIsNotReturnable@");
+      } else {
+        try {
+          final Date orderDate = shipmentLine != null && shipmentLine.getSalesOrderLine() != null ? OBDateUtils
+              .getDate(OBDateUtils.formatDate(shipmentLine.getSalesOrderLine().getOrderDate()))
+              : null;
+          Date returnDate = null;
+          String message = null;
+          if (orderDate != null && serviceProduct.getOverdueReturnDays() != null) {
+            returnDate = DateUtils.addDays(orderDate, serviceProduct.getOverdueReturnDays()
+                .intValue());
+          }
+          if (serviceProduct.getOverdueReturnDays() != null && returnDate != null
+              && rfcOrderDate.after(returnDate)) {
+            message = "@Service@ '" + serviceProduct.getIdentifier() + "' @ServiceReturnExpired@: "
+                + OBDateUtils.formatDate(returnDate);
+          }
+          if (serviceProduct.getOverdueReturnDays() != null && returnDate == null) {
+            message = "@Service@ '" + serviceProduct.getIdentifier()
+                + "' @ServiceMissingReturnDate@";
+          }
+          if (message != null) {
+            message = OBMessageUtils.parseTranslation(new DalConnectionProvider(false),
+                RequestContext.get().getVariablesSecureApp(), OBContext.getOBContext()
+                    .getLanguage().getLanguage(), message);
+            result = new JSONObject();
+            result.put("severity", "warning");
+            result.put("title", "Warning");
+            result.put("text", message);
+          }
+        } catch (ParseException e) {
+          log.error(e.getMessage(), e);
+        } catch (JSONException e) {
+          log.error(e.getMessage(), e);
+        }
+      }
+    }
+    return result;
+  }
+
+  /**
+   * Check if certain Service Price Range for certain amount is 'After Discounts' or not
+   * 
+   * @param orderline
+   *          OrderLine
+   * @param linesTotalAmount
+   * @return
+   */
+  public static boolean servicePriceRuleIsAfterDiscounts(OrderLine orderline,
+      BigDecimal linesTotalAmount) {
+
+    final Product serviceProduct = orderline.getProduct();
+    if (linesTotalAmount != null && linesTotalAmount.compareTo(BigDecimal.ZERO) == 0) {
+      return true;
+    }
+    BigDecimal serviceBasePrice = getProductPrice(orderline.getOrderDate(), orderline
+        .getSalesOrder().getPriceList(), serviceProduct);
+    if (serviceBasePrice == null) {
+      throw new OBException("@ServiceProductPriceListVersionNotFound@ "
+          + serviceProduct.getIdentifier() + ", @Date@: "
+          + OBDateUtils.formatDate(orderline.getOrderDate()));
+    }
+    BigDecimal serviceRelatedPrice = BigDecimal.ZERO;
+    boolean isPriceRuleBased = serviceProduct.isPricerulebased();
+    if (!isPriceRuleBased) {
+      return true;
+    } else {
+      ServicePriceRule servicePriceRule = getServicePriceRule(serviceProduct,
+          orderline.getOrderDate());
+      if (servicePriceRule == null) {
+        throw new OBException("@ServicePriceRuleVersionNotFound@ "
+            + orderline.getProduct().getIdentifier() + ", @Date@: "
+            + OBDateUtils.formatDate(orderline.getOrderDate()));
+      }
+      BigDecimal relatedAmount = BigDecimal.ZERO;
+      if (linesTotalAmount != null) {
+        relatedAmount = linesTotalAmount;
+      } else {
+        HashMap<String, BigDecimal> relatedAmountAndQuatity = getRelatedAmountAndQty(orderline);
+        relatedAmount = relatedAmountAndQuatity.get("amount");
+      }
+
+      if (PERCENTAGE.equals(servicePriceRule.getRuletype())) {
+        if (servicePriceRule.isAfterdiscounts()) {
+          return true;
+        }
+      } else {
+        ServicePriceRuleRange range = getRange(servicePriceRule, relatedAmount);
+        if (range == null) {
+          throw new OBException("@ServicePriceRuleRangeNotFound@. @ServicePriceRule@: "
+              + servicePriceRule.getIdentifier() + ", @AmountUpTo@: " + linesTotalAmount);
+        }
+        if (PERCENTAGE.equals(range.getRuleType())) {
+          if (servicePriceRule.isAfterdiscounts()) {
+            return true;
+          }
+        } else {
+          serviceRelatedPrice = getProductPrice(orderline.getOrderDate(), range.getPriceList(),
+              serviceProduct);
+          if (serviceRelatedPrice == null) {
+            throw new OBException("@ServiceProductPriceListVersionNotFound@ "
+                + serviceProduct.getIdentifier() + ", @Date@: "
+                + OBDateUtils.formatDate(orderline.getOrderDate()));
+          }
+        }
+      }
+      return false;
+    }
   }
 }

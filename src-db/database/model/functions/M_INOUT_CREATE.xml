@@ -147,6 +147,9 @@
   v_AllowPartialShipment VARCHAR2(2000);
   v_ForceDelivery CHAR(1);
   v_DeliveryRule CHAR(1);
+  v_isreturn C_Doctype.IsReturn%TYPE;
+  v_returnbin M_Warehouse.M_ReturnLocator_ID%TYPE;
+
 BEGIN
   -- Process Parameters
   IF (p_pinstance_id IS NOT NULL) THEN
@@ -401,6 +404,14 @@ BEGIN --BODY
             'N', Cur_Order.SALESREP_ID,Cur_Order.A_Asset_ID, Cur_Order.C_CostCenter_ID,
             Cur_Order.DELIVERY_LOCATION_ID -- Added by Rafa Roda to include delivery location
         );
+        SELECT IsReturn INTO v_IsReturn
+          FROM C_DocType where C_DocType_ID  = Cur_Order.C_DocType_ID;
+        IF(v_IsReturn = 'Y' AND Cur_Order.Issotrx = 'Y') THEN
+          SELECT M_ReturnLocator_ID INTO v_ReturnBin
+            FROM M_Warehouse WHERE M_Warehouse_ID = Cur_Order.M_Warehouse_ID;
+        ELSE
+          v_ReturnBin:=NULL;
+        END IF;
 
         /**
         * Create InOut Lines
@@ -551,7 +562,7 @@ BEGIN --BODY
                         (v_NextNo, v_lines, p_InOut_ID, ol.C_OrderLine_ID,
                         ol.AD_Client_ID, ol.AD_Org_ID, 'Y', now(),
                         v_User_ID, now(), v_User_ID, ol.M_Product_ID,
-                        v_storage.C_UOM_ID, v_storage.M_Locator_ID, v_LocatorQty, ol.Description,
+                        v_storage.C_UOM_ID, COALESCE(v_ReturnBin, v_storage.M_Locator_ID), v_LocatorQty, ol.Description,
                         'N',
                         --MODIFIED BY F.IRIAZABAL
                         v_ActualQty, v_storage.M_PRODUCT_UOM_ID, v_storage.M_AttributeSetInstance_ID,

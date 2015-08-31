@@ -47,6 +47,7 @@ import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.common.invoice.Invoice;
+import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.utils.Replace;
@@ -1618,12 +1619,31 @@ public class CreateFrom extends HttpSecureAppServlet {
                 startingPeriodId = "";
               }
 
+              // Alternate Tax Base Amount pro-rating
+              BigDecimal taxBaseAmt = lineNetAmt;
+              if (data[i].cOrderlineId != null && !data[i].cOrderlineId.isEmpty()) {
+                try {
+                  OBContext.setAdminMode(true);
+                  OrderLine ol = OBDal.getInstance().get(OrderLine.class, data[i].cOrderlineId);
+                  if (ol != null) {
+                    BigDecimal qtyOrdered = ol.getOrderedQuantity();
+                    taxBaseAmt = ol.getTaxableAmount();
+                    if (qtyOrdered.compareTo(ZERO) != 0) {
+                      taxBaseAmt = (taxBaseAmt.multiply(qty)).divide(qtyOrdered, curPrecision,
+                          BigDecimal.ROUND_HALF_UP);
+                    }
+                  }
+                } finally {
+                  OBContext.restorePreviousMode();
+                }
+              }
+
               CreateFromInvoiceData.insert(conn, this, strSequence, strKey, vars.getClient(),
                   data[i].adOrgId, vars.getUser(), data[i].cOrderlineId, data[i].mInoutlineId,
                   data[i].description, data[i].mProductId, data[i].cUomId, data[i].id, priceList,
                   priceActual, priceLimit, lineNetAmt.toString(), C_Tax_ID, taxAmt.toPlainString(),
                   data[i].quantityorder, data[i].mProductUomId, data[i].mAttributesetinstanceId,
-                  priceStd, lineNetAmt.toString(), priceGross, grossAmt.toString(), priceListGross
+                  priceStd, taxBaseAmt.toString(), priceGross, grossAmt.toString(), priceListGross
                       .toString(), priceStdGross.toString(), isDeferred, planType, periodNumber,
                   startingPeriodId, data[i].aAssetId, data[i].cProjectId, data[i].cCostcenterId,
                   data[i].user1Id, data[i].user2Id, data[i].explode,

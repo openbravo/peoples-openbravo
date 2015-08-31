@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 public class ServiceRelatedLinePriceActionHandler extends BaseActionHandler {
   private static final Logger log = LoggerFactory
       .getLogger(ServiceRelatedLinePriceActionHandler.class);
+  private static final String RFC_ORDERLINE_TAB_ID = "AF4090093D471431E040007F010048A5";
 
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) {
@@ -51,9 +52,20 @@ public class ServiceRelatedLinePriceActionHandler extends BaseActionHandler {
       final OrderLine serviceOrderline = OBDal.getInstance().get(OrderLine.class,
           jsonRequest.getString("orderlineId"));
       BigDecimal amount = new BigDecimal(jsonRequest.getString("amount"));
-      BigDecimal serviceTotalAmount = ServicePriceUtils.getServiceAmount(serviceOrderline, amount);
-
+      BigDecimal discounts = new BigDecimal(jsonRequest.getString("discounts"));
+      final OrderLine orderLineToRelate = OBDal.getInstance().get(OrderLine.class,
+          jsonRequest.getString("orderLineToRelateId"));
+      String tabId = jsonRequest.getString("tabId");
+      JSONObject deferredSale = null;
+      BigDecimal serviceTotalAmount = ServicePriceUtils.getServiceAmount(serviceOrderline, amount,
+          discounts);
+      if (jsonRequest.has("orderLineToRelateId")
+          && jsonRequest.get("orderLineToRelateId") != JSONObject.NULL
+          && !RFC_ORDERLINE_TAB_ID.equals(tabId)) {
+        deferredSale = ServicePriceUtils.deferredSaleAllowed(serviceOrderline, orderLineToRelate);
+      }
       result.put("amount", serviceTotalAmount);
+      result.put("message", deferredSale);
     } catch (Exception e) {
       log.error("Error in ServiceRelatedLinePriceActionHandler Action Handler", e);
       try {
