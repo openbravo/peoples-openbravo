@@ -447,7 +447,11 @@ enyo.kind({
             var deferedSellApproval = _.find(targetOrder.get('approvals'), function (approval) {
               return approval.approvalType.approval === 'OBPOS_approval.deferred_sell_max_days';
             });
-
+            if (deferedSellApproval) {
+              deferedSellApproval.approvalType.message = 'OBPOS_approval.deferred_sell_max_days_erp';
+              deferedSellApproval.approvalType.params.push(inEvent.attrs.relatedLines[0].productName);
+              deferedSellApproval.approvalType.params.push(targetOrder.get('documentNo'));
+            }
             _.each(inEvent.attrs.relatedLines, function (relatedLine) {
               relatedLine.orderDocumentNo = targetOrder.get('documentNo');
               relatedLine.otherTicket = OB.UTIL.isNullOrUndefined(inEvent.targetOrder);
