@@ -113,6 +113,9 @@
         this.set('gross', null, {
           silent: true
         });
+        this.set('_gross', null, {
+          silent: true
+        });
         this.set('net', OB.DEC.mul(this.get('qty'), this.get('price')));
       }
     },

@@ -824,6 +824,9 @@ enyo.kind({
       this.$.linePropertiesContainer.$.warehouseLine.render(orderLine);
       orderLine.get('product').set('standardPrice', priceTotal);
       orderLine.set('price', priceTotal);
+      if (!orderLine.get('priceIncludesTax')) {
+        orderLine.set('net', priceTotal);
+      }
       this.$.linePropertiesContainer.$.grossLine.render(orderLine);
     } else {
       enyo.forEach(this.$.linePropertiesContainer.getComponents(), function (compToRender) {
