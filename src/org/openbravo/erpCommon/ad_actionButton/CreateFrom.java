@@ -1625,7 +1625,7 @@ public class CreateFrom extends HttpSecureAppServlet {
                 try {
                   OBContext.setAdminMode(true);
                   OrderLine ol = OBDal.getInstance().get(OrderLine.class, data[i].cOrderlineId);
-                  if (ol != null) {
+                  if (ol != null && ol.getTaxableAmount() != null) {
                     BigDecimal qtyOrdered = ol.getOrderedQuantity();
                     taxBaseAmt = ol.getTaxableAmount();
                     if (qtyOrdered.compareTo(ZERO) != 0) {
