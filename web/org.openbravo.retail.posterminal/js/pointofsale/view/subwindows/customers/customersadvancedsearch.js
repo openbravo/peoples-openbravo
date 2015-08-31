@@ -362,8 +362,8 @@ enyo.kind({
 
     function successCallbackBPs(dataBps, args) {
       me.$.renderLoading.hide();
+      me.bpsList.reset();
       if (args === 0) {
-        me.bpsList.reset();
         me.$.stBPAdvSearch.$.tempty.show();
       }
       if (dataBps && dataBps.length > 0) {
@@ -410,7 +410,7 @@ enyo.kind({
         };
         if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
           var filterIdentifier = {
-            columns: ['_identifier'],
+            columns: ['_identifier', 'searchKey'],
             operator: 'startsWith',
             value: splitFilter[i]
           };
