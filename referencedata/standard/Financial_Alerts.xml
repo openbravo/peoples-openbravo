@@ -2,7 +2,7 @@
 <ob:Openbravo xmlns:ob="http://www.openbravo.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <ADAlertRule id="7D7B5AECABB34298BF5B6E47A86FD0DC" identifier="Wrong Purchase Order Payment Plan">
     <id>7D7B5AECABB34298BF5B6E47A86FD0DC</id>
-    <active>true</active>
+    <active>false</active>
     <name>Wrong Purchase Order Payment Plan</name>
     <tab id="294" entity-name="ADTab" identifier="Header - Purchase Order"/>
     <filterClause xsi:nil="true"/>
@@ -24,7 +24,7 @@ order by 1</sql>
   </ADAlertRule>
   <ADAlertRule id="7F3831D3C7C547DA9ED871756AC3BBEF" identifier="Wrong Sales Order Payment Plan">
     <id>7F3831D3C7C547DA9ED871756AC3BBEF</id>
-    <active>true</active>
+    <active>false</active>
     <name>Wrong Sales Order Payment Plan</name>
     <tab id="186" entity-name="ADTab" identifier="Header - Sales Order"/>
     <filterClause xsi:nil="true"/>
@@ -46,7 +46,7 @@ order by 1</sql>
   </ADAlertRule>
   <ADAlertRule id="F4EB0B136EC84E73AE6B1B7C2F8F01EC" identifier="Wrong Sales Invoice Payment Plan">
     <id>F4EB0B136EC84E73AE6B1B7C2F8F01EC</id>
-    <active>true</active>
+    <active>false</active>
     <name>Wrong Sales Invoice Payment Plan</name>
     <tab id="263" entity-name="ADTab" identifier="Header - Sales Invoice"/>
     <filterClause xsi:nil="true"/>
@@ -67,7 +67,7 @@ order by 1</sql>
   </ADAlertRule>
   <ADAlertRule id="FB29D12BB3D344E482DA6C3FC3262C48" identifier="Wrong Purchase Invoice Payment Plan">
     <id>FB29D12BB3D344E482DA6C3FC3262C48</id>
-    <active>true</active>
+    <active>false</active>
     <name>Wrong Purchase Invoice Payment Plan</name>
     <tab id="290" entity-name="ADTab" identifier="Header - Purchase Invoice"/>
     <filterClause xsi:nil="true"/>
