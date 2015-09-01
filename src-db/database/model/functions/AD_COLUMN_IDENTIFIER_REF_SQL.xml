@@ -140,7 +140,6 @@ BEGIN
   END IF;
   IF p_Reference_ID IN('19', '32', '30', '31', '35', '25', '800011','95E2A8B50A254B2AAE6774B8C2F28120') THEN
     DECLARE
-      v_PartialDisplay VARCHAR2(2000) ;
       v_KeyName        VARCHAR2(50) ;
 TYPE RECORD IS REF CURSOR;
       Cur_Columns RECORD;

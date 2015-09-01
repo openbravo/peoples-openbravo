@@ -19,10 +19,6 @@
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
-  devTemplate NUMBER;
-  devModule   CHAR(1);
-  currentModuleID  VARCHAR2(32);
-  vAux NUMBER;
 
 BEGIN
     

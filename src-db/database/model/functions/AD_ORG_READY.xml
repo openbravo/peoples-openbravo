@@ -27,7 +27,6 @@
   v_Record_ID VARCHAR2(32);
   v_Client_ID VARCHAR2(32);
   v_IsRecursive AD_Org.IsActive%TYPE:='N';
-  v_IsAcctLE AD_ORGTYPE.IsAcctLegalEntity%TYPE:='N';
   v_isperiodcontrol AD_Org.IsPeriodControlAllowed%TYPE;
   v_calendar_id AD_Org.C_Calendar_ID%TYPE;
 

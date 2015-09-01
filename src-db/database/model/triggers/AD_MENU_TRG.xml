@@ -27,7 +27,6 @@
 
   v_xTree_ID VARCHAR2(32);
   v_xParent_ID VARCHAR2(32);
-  v_NextNo     VARCHAR2(32);
     
 BEGIN
     

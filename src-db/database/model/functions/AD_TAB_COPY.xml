@@ -47,7 +47,6 @@
     v_NextNo_F VARCHAR2(32);
     -- Copy
     Cur_Fields RECORD;
-    v_name VARCHAR(2000);
     Row_Src_Field AD_Field%ROWTYPE;
     Row_Dest_Field_Trl AD_Field_Trl%ROWTYPE;
 

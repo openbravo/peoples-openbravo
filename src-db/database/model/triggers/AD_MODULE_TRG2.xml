@@ -18,8 +18,6 @@
   * All Rights Reserved.
   * Contributor(s):  ______________________________________.
   ************************************************************************/
-  V_Char char;
-    
 BEGIN
     
     IF AD_isTriggerEnabled()='N' THEN RETURN;

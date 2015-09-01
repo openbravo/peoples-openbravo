@@ -20,8 +20,6 @@
 * Contributor(s):  ______________________________________.
 ************************************************************************/
   devTemplate NUMBER;
-  fieldCount NUMBER;
-  selectorCount NUMBER;
   devModule   CHAR(1);
   currentModuleID  VARCHAR2(32);
   vAux NUMBER;

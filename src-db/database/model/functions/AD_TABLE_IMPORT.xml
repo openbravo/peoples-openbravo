@@ -68,7 +68,6 @@
     v_LastColumnName VARCHAR2(40) ;
     v_varchar2 VARCHAR2(32767) ;
     v_FieldLength NUMBER(10) ;
-    v_PInstance_Log_ID VARCHAR2(32);
     v_Client_ID VARCHAR2(32);
     v_Aux NUMBER;
     v_missingColumns boolean;
