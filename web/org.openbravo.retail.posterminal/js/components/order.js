@@ -966,15 +966,29 @@ enyo.kind({
           line.get('relatedLines').forEach(function (rl) {
             var l = me.order.get('lines').get(rl.orderlineId);
             if (me.order.get('priceIncludesTax')) {
-              amountBeforeDiscounts += Math.abs(l.get('gross'));
-              amountAfterDiscounts += Math.abs(l.get('gross') - _.reduce(l.get('promotions'), function (memo, promo) {
-                return memo + promo.amt;
-              }, 0));
+              if (l) {
+                amountBeforeDiscounts += Math.abs(l.get('gross'));
+                amountAfterDiscounts += Math.abs(l.get('gross') - _.reduce(l.get('promotions'), function (memo, promo) {
+                  return memo + promo.amt;
+                }, 0));
+              } else {
+                amountBeforeDiscounts += Math.abs(rl.gross);
+                amountAfterDiscounts += Math.abs(rl.gross - _.reduce(rl.promotions, function (memo, promo) {
+                  return memo + promo.amt;
+                }, 0));
+              }
             } else {
-              amountBeforeDiscounts += Math.abs(l.get('net'));
-              amountAfterDiscounts += Math.abs(l.get('net') - _.reduce(l.get('promotions'), function (memo, promo) {
-                return memo + promo.amt;
-              }, 0));
+              if (l) {
+                amountBeforeDiscounts += Math.abs(l.get('net'));
+                amountAfterDiscounts += Math.abs(l.get('net') - _.reduce(l.get('promotions'), function (memo, promo) {
+                  return memo + promo.amt;
+                }, 0));
+              } else {
+                amountBeforeDiscounts += Math.abs(rl.net);
+                amountAfterDiscounts += Math.abs(rl.net - _.reduce(rl.promotions, function (memo, promo) {
+                  return memo + promo.amt;
+                }, 0));
+              }
             }
           });
           if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.product', true)) {

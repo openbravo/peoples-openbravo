@@ -460,6 +460,9 @@ enyo.kind({
                 return line.id === relatedLine.orderlineId;
               });
               relatedLine.qty = currentLine[0].get('qty');
+              relatedLine.gross = currentLine[0].get('gross');
+              relatedLine.net = currentLine[0].get('net');
+              relatedLine.promotions = currentLine[0].get('promotions').slice();
             });
 
             // Select open ticket or create a new one
