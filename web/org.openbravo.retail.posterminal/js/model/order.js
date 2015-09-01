@@ -1270,22 +1270,26 @@
           options: options,
           newLine: newLine
         }, function (args) {
-          if (args.newLine) {
-            args.receipt._loadRelatedServices(args.productToAdd.get('productType'), args.productToAdd.get('id'), args.productToAdd.get('productCategory'), function (data) {
-              if (data) {
-                if (data.hasservices) {
-                  args.orderline.set('hasRelatedServices', true);
-                  args.orderline.trigger('showServicesButton');
-                } else {
-                  args.orderline.set('hasRelatedServices', false);
+          new SubscribeToCalculateGross(me, function () {
+            if (args.newLine && me.get('lines').contains(line)) {
+              // Display related services after calculate gross, if it is new line and if the line has not been deleted.
+              // The line might has been deleted during calculate gross for examples if there was an error in taxes.
+              args.receipt._loadRelatedServices(args.productToAdd.get('productType'), args.productToAdd.get('id'), args.productToAdd.get('productCategory'), function (data) {
+                if (data) {
+                  if (data.hasservices) {
+                    args.orderline.set('hasRelatedServices', true);
+                    args.orderline.trigger('showServicesButton');
+                  } else {
+                    args.orderline.set('hasRelatedServices', false);
+                  }
+                  args.receipt.save();
+                  if (data.hasmandatoryservices) {
+                    args.receipt.trigger('showProductList', args.orderline, 'mandatory');
+                  }
                 }
-                args.receipt.save();
-                if (data.hasmandatoryservices) {
-                  args.receipt.trigger('showProductList', args.orderline, 'mandatory');
-                }
-              }
-            });
-          }
+              });
+            }
+          });
         });
       }
       if (((options && options.line) ? options.line.get('qty') + qty : qty) < 0 && p.get('productType') === 'S') {
@@ -3546,6 +3550,17 @@
   var TaxLine = Backbone.Model.extend();
   OB.Data.Registry.registerModel(OrderLine);
   OB.Data.Registry.registerModel(PaymentLine);
+
+  var SubscribeToCalculateGross = function (receipt, f) {
+      this.f = f;
+      this.receipt = receipt;
+      this.receipt.on('calculategross', this._callback, this);
+      };
+
+  SubscribeToCalculateGross.prototype._callback = function () {
+    this.receipt.off('calculategross', this._callback);
+    this.f();
+  };
 
   // order model is not registered using standard Registry method becasue list is
   // becasue collection is specific
