@@ -752,6 +752,10 @@
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgCannotAddNegative'));
           return;
         }
+        if (qty > 0 && oldqty < 0 && this.get('orderType') === 1) {
+          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgCannotAddPostiveToReturn'));
+          return;
+        }
         if (line.get('product').get('groupProduct') === false) {
           this.addProduct(line.get('product'));
           return true;
