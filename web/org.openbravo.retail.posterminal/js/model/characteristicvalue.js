@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2015 Openbravo S.L.U.
+ * Copyright (C) 2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -11,15 +11,15 @@
 
 (function () {
 
-  var ProductChValue = OB.Data.ExtensibleModel.extend({
-    modelName: 'ProductChValue',
+  var CharacteristicValue = OB.Data.ExtensibleModel.extend({
+    modelName: 'CharacteristicValue',
     tableName: 'm_ch_value',
-    entityName: 'ProductChValue',
-    source: 'org.openbravo.retail.posterminal.master.ProductChValue',
+    entityName: 'CharacteristicValue',
+    source: 'org.openbravo.retail.posterminal.master.CharacteristicValue',
     remote: 'OBPOS_remote.product'
   });
 
-  ProductChValue.addProperties([{
+  CharacteristicValue.addProperties([{
     name: 'id',
     column: 'id',
     primaryKey: true,
@@ -42,5 +42,5 @@
     type: 'TEXT'
   }]);
 
-  OB.Data.Registry.registerModel(ProductChValue);
+  OB.Data.Registry.registerModel(CharacteristicValue);
 }());

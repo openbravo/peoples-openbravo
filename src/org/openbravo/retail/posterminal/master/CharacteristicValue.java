@@ -29,12 +29,12 @@ import org.openbravo.retail.posterminal.ProcessHQLQuery;
 /*
  * This class fills the m_ch_value table in WebSQL even if it is called productChValue.
  */
-public class ProductChValue extends ProcessHQLQuery {
-  public static final String productChValuePropertyExtension = "OBPOS_ProductChValueExtension";
+public class CharacteristicValue extends ProcessHQLQuery {
+  public static final String characteristicValuePropertyExtension = "OBPOS_CharacteristicValueExtension";
 
   @Inject
   @Any
-  @Qualifier(productChValuePropertyExtension)
+  @Qualifier(characteristicValuePropertyExtension)
   private Instance<ModelExtension> extensions;
 
   @Override

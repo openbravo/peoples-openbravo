@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2014 Openbravo S.L.U.
+ * Copyright (C) 2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -26,16 +26,12 @@ import org.openbravo.retail.config.OBRETCOProductList;
 import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
-/*
- * This class fills the m_product_ch_value table in WebSQL it is called productProductChValue because the one that 
- * fills m_ch_cvalue is called ProductChValue.
- */
-public class ProductProductChValue extends ProcessHQLQuery {
-  public static final String productChValuePropertyExtension = "OBPOS_ProductCharacteristicValueExtension";
+public class ProductCharacteristicValue extends ProcessHQLQuery {
+  public static final String productCharacteristicValuePropertyExtension = "OBPOS_ProductCharacteristicValueExtension";
 
   @Inject
   @Any
-  @Qualifier(productChValuePropertyExtension)
+  @Qualifier(productCharacteristicValuePropertyExtension)
   private Instance<ModelExtension> extensions;
 
   @Override

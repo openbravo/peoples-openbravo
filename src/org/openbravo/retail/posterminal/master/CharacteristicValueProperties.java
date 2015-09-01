@@ -7,8 +7,8 @@ import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.mobile.core.model.HQLProperty;
 import org.openbravo.mobile.core.model.ModelExtension;
 
-@Qualifier(ProductChValue.productChValuePropertyExtension)
-public class ProductChValueProperties extends ModelExtension {
+@Qualifier(CharacteristicValue.characteristicValuePropertyExtension)
+public class CharacteristicValueProperties extends ModelExtension {
 
   @Override
   public List<HQLProperty> getHQLProperties(Object params) {

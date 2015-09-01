@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2015 Openbravo S.L.U.
+ * Copyright (C) 2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -11,43 +11,38 @@
 
 (function () {
 
-  var ProductCharacteristic = OB.Data.ExtensibleModel.extend({
-    modelName: 'ProductCharacteristic',
-    tableName: 'm_product_ch',
-    entityName: 'ProductCharacteristic',
-    source: 'org.openbravo.retail.posterminal.master.ProductCharacteristic',
+  var ProductCharacteristicValue = OB.Data.ExtensibleModel.extend({
+    modelName: 'ProductCharacteristicValue',
+    tableName: 'm_product_ch_value',
+    entityName: 'ProductCharacteristicValue',
+    source: 'org.openbravo.retail.posterminal.master.ProductCharacteristicValue',
     remote: 'OBPOS_remote.product',
     dataLimit: OB.Dal.DATALIMIT
   });
 
-  ProductCharacteristic.addProperties([{
-    name: 'm_product_ch_id',
+  ProductCharacteristicValue.addProperties([{
+    name: 'id',
+    column: 'm_product_ch_value_id',
+    type: 'TEXT'
+  }, {
+    name: 'product',
     column: 'm_product_id',
-    primaryKey: true,
-    type: 'TEXT'
-  }, {
-    name: 'm_product',
-    column: 'm_product',
-    type: 'TEXT'
-  }, {
-    name: 'characteristic_id',
-    column: 'characteristic_id',
     type: 'TEXT'
   }, {
     name: 'characteristic',
-    column: 'characteristic',
+    column: 'm_characteristic_id',
     type: 'TEXT'
   }, {
-    name: 'ch_value_id',
-    column: 'ch_value_id',
-    type: 'TEXT'
-  }, {
-    name: 'ch_value',
-    column: 'ch_value',
+    name: 'characteristicValue',
+    column: 'm_ch_value_id',
     type: 'TEXT'
   }, {
     name: '_identifier',
     column: '_identifier',
+    type: 'TEXT'
+  }, {
+    name: 'active',
+    column: 'active',
     type: 'TEXT'
   }, {
     name: 'obposFilteronwebpos',
@@ -55,5 +50,5 @@
     type: 'TEXT'
   }]);
 
-  OB.Data.Registry.registerModel(ProductCharacteristic);
+  OB.Data.Registry.registerModel(ProductCharacteristicValue);
 }());
