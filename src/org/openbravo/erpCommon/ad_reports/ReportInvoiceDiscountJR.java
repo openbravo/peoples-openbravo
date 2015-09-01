@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2015 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -94,33 +94,41 @@ public class ReportInvoiceDiscountJR extends HttpSecureAppServlet {
 
     // Checks if there is a conversion rate for each of the transactions of
     // the report
-    ReportInvoiceDiscountData[] data = null;
-    String strConvRateErrorMsg = "";
-    OBError myMessage = null;
-    myMessage = new OBError();
+    ReportInvoiceDiscountData data = null;
     try {
-      data = ReportInvoiceDiscountData.select(this, strCurrencyId,
-          Utility.getContext(this, vars, "#User_Client", "ReportInvoiceDiscountJR"),
-          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoiceDiscountJR"),
-          strDateFrom, strDateTo, strcBpartnerId, (strDiscount.equals("N")) ? "" : "discount");
-    } catch (ServletException ex) {
-      myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
-    }
-    strConvRateErrorMsg = myMessage.getMessage();
-    // If a conversion rate is missing for a certain transaction, an error
-    // message window pops-up.
-    if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
-      advisePopUp(request, response, "ERROR",
-          Utility.messageBD(this, "NoConversionRateHeader", vars.getLanguage()),
-          strConvRateErrorMsg);
-    } else { // Launch the report as usual, calling the JRXML file
-      HashMap<String, Object> parameters = new HashMap<String, Object>();
-      String strSubTitle = Utility.messageBD(this, "From", vars.getLanguage()) + " " + strDateFrom
-          + " " + Utility.messageBD(this, "To", vars.getLanguage()) + " " + strDateTo;
-      parameters.put("REPORT_SUBTITLE", strSubTitle);
+      String strConvRateErrorMsg = "";
+      OBError myMessage = null;
+      myMessage = new OBError();
+      try {
+        data = ReportInvoiceDiscountData.select(this, strCurrencyId,
+            Utility.getContext(this, vars, "#User_Client", "ReportInvoiceDiscountJR"),
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoiceDiscountJR"),
+            strDateFrom, strDateTo, strcBpartnerId, (strDiscount.equals("N")) ? "" : "discount");
+      } catch (ServletException ex) {
+        myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+      }
+      strConvRateErrorMsg = myMessage.getMessage();
+      // If a conversion rate is missing for a certain transaction, an error
+      // message window pops-up.
+      if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
+        advisePopUp(request, response, "ERROR",
+            Utility.messageBD(this, "NoConversionRateHeader", vars.getLanguage()),
+            strConvRateErrorMsg);
+      } else { // Launch the report as usual, calling the JRXML file
+        HashMap<String, Object> parameters = new HashMap<String, Object>();
+        String strSubTitle = Utility.messageBD(this, "From", vars.getLanguage()) + " "
+            + strDateFrom + " " + Utility.messageBD(this, "To", vars.getLanguage()) + " "
+            + strDateTo;
+        parameters.put("REPORT_SUBTITLE", strSubTitle);
 
-      renderJR(vars, response, strReportName, strOutput, parameters, data, null);
+        renderJR(vars, response, strReportName, null, strOutput, parameters, data, null);
+      }
+    } finally {
+      if (data != null) {
+        data.close();
+      }
     }
+
   }
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
