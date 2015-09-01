@@ -133,6 +133,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "data/dataorderdiscount",
         "components/modalreceipts",
         "components/modalmultiorderslayaway",
+        "components/modalcategorytree",
         "components/rendercategory",
         "components/renderproduct",
         "components/renderproductch",
