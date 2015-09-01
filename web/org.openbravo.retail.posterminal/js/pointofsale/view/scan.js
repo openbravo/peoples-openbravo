@@ -89,6 +89,9 @@ enyo.kind({
               if (this.undoclick) {
                 this.undoclick();
               }
+            },
+            init: function (model) {
+              this.model = model;
             }
           }]
         }]

@@ -743,7 +743,7 @@
     },
 
     setUnit: function (line, qty, text, doNotSave) {
-      var permission;
+      var permission, me = this;
 
       if (OB.DEC.isNumber(qty) && qty !== 0) {
         var oldqty = line.get('qty');
@@ -760,7 +760,6 @@
           this.addProduct(line.get('product'));
           return true;
         } else {
-          var me = this;
           // sets the new quantity
           line.set('qty', qty);
           // sets the undo action
@@ -779,7 +778,18 @@
           this.save();
         }
       } else {
-        this.deleteLine(line);
+        if (line.get('deleteApproved')) {
+          // The approval to delete the line has already been granted
+          line.unset('deleteApproved');
+          this.deleteLine(line);
+        } else {
+          // We don't have the approval to delete the line yet; request it
+          OB.UTIL.Approval.requestApproval(OB.MobileApp.view.$.containerWindow.$.pointOfSale.model, 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
+            if (approved) {
+              me.deleteLine(line);
+            }
+          });
+        }
       }
     },
 
@@ -1359,9 +1369,14 @@
         text: OB.I18N.getLabel('OBPOS_AddLine', [newline.get('qty'), newline.get('product').get('_identifier')]),
         line: newline,
         undo: function () {
-          me.get('lines').remove(newline);
-          me.calculateGross();
-          me.set('undo', null);
+          OB.UTIL.Approval.requestApproval(
+          this.model, 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
+            if (approved) {
+              me.get('lines').remove(newline);
+              me.calculateGross();
+              me.set('undo', null);
+            }
+          });
         }
       });
       this.adjustPayment();

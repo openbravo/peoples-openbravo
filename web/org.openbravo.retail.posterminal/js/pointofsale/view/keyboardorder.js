@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2012-2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -173,6 +173,7 @@ enyo.kind({
           if (value === 0) { // If final quantity will be 0 then request approval
             OB.UTIL.Approval.requestApproval(me.model, 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
               if (approved) {
+                keyboard.line.set('deleteApproved', true);
                 actionAddProduct(keyboard, toadd);
               }
             });
@@ -271,11 +272,23 @@ enyo.kind({
     this.addCommand('+', {
       stateless: true,
       action: function (keyboard, txt) {
-        var qty = 1;
+        var qty = 1, value;
         if ((!_.isNull(txt) || !_.isUndefined(txt)) && !_.isNaN(OB.I18N.parseNumber(txt))) {
           qty = OB.I18N.parseNumber(txt);
         }
-        actionAddProduct(keyboard, qty);
+        if (!_.isUndefined(keyboard.line)) {
+          value = (keyboard.receipt.get('orderType') === 1 ? keyboard.line.get('qty') - qty : keyboard.line.get('qty') + qty);
+        }
+        if (value === 0) { // If final quantity will be 0 then request approval
+          OB.UTIL.Approval.requestApproval(me.model, 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
+            if (approved) {
+              keyboard.line.set('deleteApproved', true);
+              actionAddProduct(keyboard, qty);
+            }
+          });
+        } else {
+          actionAddProduct(keyboard, qty);
+        }
       }
     });
     this.addCommand('-', {
@@ -287,11 +300,12 @@ enyo.kind({
           qty = OB.I18N.parseNumber(txt);
         }
         if (!_.isUndefined(keyboard.line)) {
-          value = keyboard.line.get('qty') - qty;
+          value = (keyboard.receipt.get('orderType') === 1 ? keyboard.line.get('qty') + qty : keyboard.line.get('qty') - qty);
         }
         if (value === 0) { // If final quantity will be 0 then request approval
           OB.UTIL.Approval.requestApproval(me.model, 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
             if (approved) {
+              keyboard.line.set('deleteApproved', true);
               actionAddProduct(keyboard, -qty);
             }
           });
@@ -306,6 +320,7 @@ enyo.kind({
       action: function (keyboard) {
         OB.UTIL.Approval.requestApproval(me.model, 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
           if (approved) {
+            keyboard.line.set('deleteApproved', true);
             actionDeleteLine(keyboard);
           }
         });
