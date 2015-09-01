@@ -3020,8 +3020,10 @@
           order.set('net', model.totalNetAmount);
           order.trigger('calculategross');
 
+          var linepos = 0;
           _.each(model.receiptLines, function (iter) {
             var price;
+            iter.linepos = linepos;
             if (order.get('priceIncludesTax')) {
               price = OB.DEC.number(iter.unitPrice);
             } else {
@@ -3067,7 +3069,7 @@
 
                 newline.calculateGross();
                 // add the created line
-                lines.add(newline);
+                lines.add(newline, {at: iter.linepos});
                 numberOfLines--;
                 orderQty = OB.DEC.add(iter.quantity, orderQty);
                 if (numberOfLines === 0) {
@@ -3089,6 +3091,7 @@
                 }]);
               }
             });
+            linepos++;
           });
           //order.set('payments', model.receiptPayments);
           payments = new PaymentLineList();
