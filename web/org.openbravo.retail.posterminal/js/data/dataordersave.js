@@ -267,7 +267,7 @@
       receipt.set('posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.MobileApp.model.get('terminal')._identifier);
 
       this.receipt.set('obposAppCashup', OB.MobileApp.model.get('terminal').cashUpId);
-      this.receipt.set('json', JSON.stringify(this.receipt.toJSON()));
+      this.receipt.set('json', JSON.stringify(this.receipt.serializeToJSON()));
 
       OB.trace('Executing pre order save hook.');
 

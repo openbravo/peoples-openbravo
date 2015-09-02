@@ -1,3 +1,12 @@
+/*
+ ************************************************************************************
+ * Copyright (C) 2015 Openbravo S.L.U.
+ * Licensed under the Openbravo Commercial License version 1.0
+ * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
+ * or in the legal folder of this module distribution.
+ ************************************************************************************
+ */
+
 package org.openbravo.retail.posterminal.stock;
 
 import java.math.BigDecimal;
@@ -31,7 +40,8 @@ public class OtherStoresDetailedStock extends JSONProcessSimple {
       orgId = jsonData.getString("organization");
       prodId = jsonData.getString("product");
 
-      String hqlQuery = "select ow.organization.id, ow.organization.name, ow.warehouse.id, ow.warehouse.name, sum(ms.quantityOnHand) as qtyonhand "
+      String hqlQuery = "select ow.organization.id, ow.organization.name, ow.warehouse.id, ow.warehouse.name, "
+          + "sum(ms.quantityOnHand - ms.reservedQty) as qtyonhand "
           + "from OrganizationWarehouse as ow, MaterialMgmtStorageDetail as ms "
           + "where ow.organization.id <> ' "
           + orgId

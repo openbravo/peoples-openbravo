@@ -2571,7 +2571,6 @@
                 if (order.get('orderType') === 1) {
                   order.changeSignToShowReturns();
                 }
-                order.set('json', JSON.stringify(order.toJSON()));
                 callback(order);
               }
             }, null, function () {
