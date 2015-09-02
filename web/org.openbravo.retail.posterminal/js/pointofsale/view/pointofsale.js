@@ -26,6 +26,7 @@ enyo.kind({
     onShowCreateOrderPopup: 'showCreateOrderPopup',
     onReactivateQuotation: 'reactivateQuotation',
     onShowReactivateQuotation: 'showReactivateQuotation',
+    onShowRejectQuotation: 'showRejectQuotation',
     onRejectQuotation: 'rejectQuotation',
     onQuotations: 'quotations',
     onShowDivText: 'showDivText',
@@ -141,6 +142,9 @@ enyo.kind({
     }, {
       kind: 'OB.UI.ModalReactivateQuotation',
       name: 'modalReactivateQuotation'
+    }, {
+      kind: 'OB.UI.ModalRejectQuotation',
+      name: 'modalRejectQuotation'
     }, {
       kind: 'OB.UI.ModalReceiptPropertiesImpl',
       name: 'receiptPropertiesDialog'
@@ -513,6 +517,12 @@ enyo.kind({
     });
   },
 
+  showRejectQuotation: function () {
+    this.doShowPopup({
+      popup: 'modalRejectQuotation'
+    });
+  },
+
   reactivateQuotation: function () {
     this.model.get('order').reactivateQuotation();
     this.model.get('orderList').saveCurrent();
@@ -521,9 +531,12 @@ enyo.kind({
     }
     return true;
   },
-  rejectQuotation: function () {
-    this.model.get('order').rejectQuotation();
-    this.model.get('orderList').saveCurrent();
+  rejectQuotation: function (inSender, inEvent) {
+    this.model.get('order').rejectQuotation(inEvent.rejectReason, this, function (success) {
+      if (success) {
+        this.deleteCurrentOrder(inSender, inEvent);
+      }
+    });
     return true;
   },
   showDivText: function (inSender, inEvent) {
