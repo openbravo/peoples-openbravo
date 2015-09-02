@@ -81,8 +81,6 @@ public class ApplicationCacheComponent extends MobileCoreApplicationCacheCompone
         .add("../../org.openbravo.mobile.core/OBMOBC_Main/ClientModel?entity=OBDISC_Offer_Role&modelName=DiscountFilterRole&source=org.openbravo.retail.posterminal.master.DiscountFilterRole");
     resources
         .add("../../org.openbravo.mobile.core/OBMOBC_Main/ClientModel?entity=PricingAdjustmentCharacteristic&modelName=DiscountFilterCharacteristic&source=org.openbravo.retail.posterminal.master.DiscountFilterCharacteristic");
-    resources
-        .add("../../org.openbravo.mobile.core/OBMOBC_Main/ClientModel?entity=ProductCharacteristicValue&modelName=ProductCharacteristicValue&source=org.openbravo.retail.posterminal.master.ProductProductChValue");
 
     // default print templates
     resources.add("../../web/org.openbravo.retail.posterminal/res/printcashup.xml");

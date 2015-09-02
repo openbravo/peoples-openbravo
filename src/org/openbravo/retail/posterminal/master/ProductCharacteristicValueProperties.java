@@ -15,8 +15,8 @@ import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.mobile.core.model.HQLProperty;
 import org.openbravo.mobile.core.model.ModelExtension;
 
-@Qualifier(ProductProductChValue.productChValuePropertyExtension)
-public class ProductProductChValueProperties extends ModelExtension {
+@Qualifier(ProductCharacteristicValue.productCharacteristicValuePropertyExtension)
+public class ProductCharacteristicValueProperties extends ModelExtension {
 
   @Override
   public List<HQLProperty> getHQLProperties(Object params) {
@@ -29,6 +29,7 @@ public class ProductProductChValueProperties extends ModelExtension {
         add(new HQLProperty("pcv.characteristicValue.id", "characteristicValue"));
         add(new HQLProperty("pcv.characteristic.name", "_identifier"));
         add(new HQLProperty("pcv.characteristic.active", "active"));
+        add(new HQLProperty("pcv.characteristic.obposFilteronwebpos", "obposFilteronwebpos"));
       }
     };
     return list;

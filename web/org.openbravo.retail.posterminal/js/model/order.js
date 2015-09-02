@@ -1733,11 +1733,24 @@
       this.set('id', null);
       this.save();
     },
-
-    rejectQuotation: function () {
-      OB.UTIL.showWarning('reject!!');
+    rejectQuotation: function (rejectReasonId, scope, callback) {
+      var process = new OB.DS.Process('org.openbravo.retail.posterminal.QuotationsReject');
+      OB.UTIL.showLoading(true);
+      process.exec({
+        orderid: this.get('id'),
+        rejectReasonId: rejectReasonId
+      }, function (data) {
+        OB.UTIL.showLoading(false);
+        if (!data || data.exception) {
+          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_ErrRejectQuotation'));
+        } else {
+          OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_SuccessRejectQuotation'));
+        }
+        if (callback) {
+          callback.call(scope, data !== null);
+        }
+      });
     },
-
     resetOrderInvoice: function () {
       if (OB.MobileApp.model.hasPermission('OBPOS_receipt.invoice')) {
         this.set('generateInvoice', false);
@@ -2226,8 +2239,6 @@
       this.calculateGross();
       this.trigger('promotionsUpdated');
     },
-
-
     // for each line, decrease the qtyOffer of promotions and remove the lines with qty 0
     removeQtyOffer: function () {
       var linesPending = new Backbone.Collection();
@@ -2305,7 +2316,6 @@
         return false;
       }
     },
-
     // if there is a promtion of type "applyNext" that it has been applied previously in the line, then It is replaced
     // by the first promotion applied. Ex:
     // Ex: prod1 - qty 5 - disc3x2 & discPriceAdj -> priceAdj is applied first to 5 units
@@ -2360,7 +2370,6 @@
       desc += ']';
       return desc;
     }
-
   });
 
   var OrderList = Backbone.Collection.extend({

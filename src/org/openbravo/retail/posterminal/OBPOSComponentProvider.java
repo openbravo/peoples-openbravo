@@ -103,8 +103,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "model/bplocation", // Model for Customer Address
         "model/currencypanel",
         "model/salesrepresentative",
-        "model/productcharacteristic",
-        "model/productchvalue",
+        "model/productcharacteristicvalue",
+        "model/characteristicvalue",
         "model/brand",
         "model/returnreasons",
         "model/executor",
@@ -156,6 +156,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         // Quotations
         "components/modalcreateorderfromquotation",
         "components/modalreactivatequotation",
+        "components/modalrejectquotation",
         // Detection of change in context
         "components/modalcontextchanged",
         "components/modalproductcharacteristic",

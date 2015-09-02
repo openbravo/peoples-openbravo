@@ -236,6 +236,22 @@
         }
       });
 
+      this.addPropertiesLoader({
+        properties: ['rejectReasons'],
+        loadFunction: function (terminalModel) {
+          OB.info('[terminal] Loading... ' + this.properties);
+          var me = this;
+          new OB.DS.Request('org.openbravo.retail.posterminal.term.RejectReason').exec(null, function (data) {
+            if (data && data.exception) {
+              terminalModel.set(me.properties[0], []);
+            } else {
+              terminalModel.set(me.properties[0], data);
+            }
+            terminalModel.propertiesReady(me.properties);
+          });
+        }
+      });
+
       this.get('dataSyncModels').push({
         name: 'Customer',
         model: OB.Model.ChangedBusinessPartners,
