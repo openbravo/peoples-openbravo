@@ -42,16 +42,7 @@ enyo.kind({
   sizing: "constrain",
   position: 'center',
   width: 32,
-  height: 32,
-  events: {
-    onCategoryExpandCollapse: ''
-  },
-  tap: function () {
-    this.doCategoryExpandCollapse({
-      categoryId: this.owner.model.get('id'),
-      expand: true
-    });
-  }
+  height: 32
 });
 
 enyo.kind({
@@ -61,30 +52,46 @@ enyo.kind({
   sizing: "cover",
   width: 26,
   height: 26,
-  showing: false,
-  events: {
-    onCategoryExpandCollapse: ''
-  },
-  tap: function () {
-    this.doCategoryExpandCollapse({
-      categoryId: this.owner.model.get('id'),
-      expand: false
-    });
-  }
+  showing: false
 });
 
 enyo.kind({
   name: 'OB.UI.RenderCategoryTree',
   kind: 'OB.UI.listItemButton',
   style: 'height: 41px;',
+  handlers: {
+    onkeydown: 'keydownHandler'
+  },
+  keydownHandler: function (inSender, inEvent) {
+    var keyCode = inEvent.keyCode;
+    if (keyCode === 13) { // Handle ENTER key in list item
+      this.tap();
+      return true;
+    }
+    if (keyCode === 32) { // Handle SPACE key in list item
+      if (this.model.get('issummary')) {
+        this.categoryExpandCollapse();
+      } else {
+        this.tap();
+      }
+      return true;
+    }
+    return false;
+  },
+  categoryExpandCollapse: function () {
+    this.bubble('onCategoryExpandCollapse', {
+      categoryId: this.model.get('id'),
+      expand: this.$.expand.getShowing()
+    });
+  },
   components: [{
-    style: 'float:left; width: 80%;',
+    style: 'float:left; width: calc(100% - 40px);',
     components: [{
       classes: 'product_category_tree_identifier',
       name: 'identifier'
     }]
   }, {
-    style: 'float:left; width: 20%; text-align: right; margin-top: -8px;',
+    style: 'float:left; width: 40px; text-align: right; margin-top: -8px;',
     components: [{
       name: 'expandCollapse',
       style: 'height: 41px; padding-right: 7px; padding-top: 7px;',
@@ -96,10 +103,7 @@ enyo.kind({
         name: 'collapse'
       }],
       tap: function () {
-        this.bubble('onCategoryExpandCollapse', {
-          categoryId: this.owner.model.get('id'),
-          expand: this.owner.$.expand.getShowing()
-        });
+        this.owner.categoryExpandCollapse();
         return true;
       }
     }]
@@ -109,7 +113,7 @@ enyo.kind({
     this.inherited(arguments);
     this.addClass('btnselect-browse');
     this.$.identifier.setContent(this.model.get('_identifier'));
-    this.$.identifier.setStyle('padding-left: ' + (14 * this.model.get('level')) + 'px;');
+    this.$.identifier.setStyle('padding-left: ' + (14 * this.model.get('level')) + 'px; ' + (this.model.id === '__all__' ? 'font-weight: bold; ' : ''));
     this.$.expandCollapse.setShowing(this.model.get('issummary'));
   }
 });
