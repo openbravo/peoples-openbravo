@@ -446,7 +446,7 @@
       }).then(function () {
         // Calculate linerate
         if (orggross === 0 && line.get('net') === 0) {
-          line.set('linerate', BigDecimal.prototype.ZERO, {
+          line.set('linerate', BigDecimal.prototype.ONE, {
             silent: true
           });
         } else {
@@ -705,7 +705,7 @@
       return resultpromise.then(function () {
         // Calculate linerate and taxamount
         if (line.get('gross') === 0 && line.get('net') === 0) {
-          line.set('linerate', BigDecimal.prototype.ZERO, {
+          line.set('linerate', BigDecimal.prototype.ONE, {
             silent: true
           });
         } else {
