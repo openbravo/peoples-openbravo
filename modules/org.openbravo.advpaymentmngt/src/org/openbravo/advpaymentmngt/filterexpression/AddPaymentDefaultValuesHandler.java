@@ -282,32 +282,64 @@ public abstract class AddPaymentDefaultValuesHandler {
         && StringUtils.isNotEmpty(context.getString("Fin_Financial_Account_ID"))) {
       return context.getString("Fin_Financial_Account_ID");
     }
-    String strBPartnerId = getDefaultReceivedFrom(requestMap);
 
-    if (StringUtils.isNotEmpty(strBPartnerId)) {
-      BusinessPartner businessPartner = OBDal.getInstance().get(BusinessPartner.class,
-          strBPartnerId);
-      boolean isSOTrx = "Y".equals(getDefaultIsSOTrx(requestMap));
-      if (context.has("inpadClientId") && context.has("inpadOrgId")) {
-        final OrganizationStructureProvider osp = OBContext.getOBContext()
-            .getOrganizationStructureProvider(context.getString("inpadClientId"));
-        if (isSOTrx && businessPartner.getAccount() != null) {
-          if (osp.isInNaturalTree(businessPartner.getAccount().getOrganization(), OBDal
-              .getInstance().get(Organization.class, context.getString("inpadOrgId")))) {
-            return businessPartner.getAccount().getId();
-          } else {
-            return "";
-          }
+    String paymentMethodId = getDefaultPaymentMethod(requestMap);
+    if (StringUtils.isNotEmpty(paymentMethodId) && context.has("inpadClientId")
+        && context.has("inpadOrgId")) {
 
-        } else if (!isSOTrx && businessPartner.getPOFinancialAccount() != null) {
-          if (osp.isInNaturalTree(businessPartner.getPOFinancialAccount().getOrganization(), OBDal
-              .getInstance().get(Organization.class, context.getString("inpadOrgId")))) {
-            return businessPartner.getPOFinancialAccount().getId();
-          } else {
-            return "";
-          }
+      final OrganizationStructureProvider osp = OBContext.getOBContext()
+          .getOrganizationStructureProvider(context.getString("inpadClientId"));
+      String strBPartnerId = getDefaultReceivedFrom(requestMap);
+      if (StringUtils.isNotEmpty(strBPartnerId)) {
+
+        BusinessPartner businessPartner = OBDal.getInstance().get(BusinessPartner.class,
+            strBPartnerId);
+        boolean isSOTrx = "Y".equals(getDefaultIsSOTrx(requestMap));
+
+        if (isSOTrx
+            && businessPartner.getAccount() != null
+            && getFinancialAccountPaymentMethod(paymentMethodId, businessPartner.getAccount()
+                .getId()) != null
+            && osp.isInNaturalTree(businessPartner.getAccount().getOrganization(), OBDal
+                .getInstance().get(Organization.class, context.getString("inpadOrgId")))) {
+          return businessPartner.getAccount().getId();
+        }
+
+        else if (!isSOTrx
+            && businessPartner.getPOFinancialAccount() != null
+            && getFinancialAccountPaymentMethod(paymentMethodId, businessPartner
+                .getPOFinancialAccount().getId()) != null
+            && osp.isInNaturalTree(businessPartner.getPOFinancialAccount().getOrganization(), OBDal
+                .getInstance().get(Organization.class, context.getString("inpadOrgId")))) {
+          return businessPartner.getPOFinancialAccount().getId();
         }
       }
+
+      FinAccPaymentMethod fpm = getFinancialAccountPaymentMethod(paymentMethodId, null);
+      if (fpm != null
+          && osp.isInNaturalTree(fpm.getAccount().getOrganization(),
+              OBDal.getInstance().get(Organization.class, context.getString("inpadOrgId")))) {
+        return fpm.getAccount().getId();
+      }
+    }
+
+    return null;
+  }
+
+  private String getContextFinancialAccount(Map<String, String> requestMap) throws JSONException {
+    String strContext = requestMap.get("context");
+    if (strContext == null) {
+      return null;
+    }
+    JSONObject context = new JSONObject(strContext);
+    if (context.has("inpfinFinancialAccountId")
+        && context.get("inpfinFinancialAccountId") != JSONObject.NULL
+        && StringUtils.isNotEmpty(context.getString("inpfinFinancialAccountId"))) {
+      return context.getString("inpfinFinancialAccountId");
+    } else if (context.has("Fin_Financial_Account_ID")
+        && context.get("Fin_Financial_Account_ID") != JSONObject.NULL
+        && StringUtils.isNotEmpty(context.getString("Fin_Financial_Account_ID"))) {
+      return context.getString("Fin_Financial_Account_ID");
     }
     return null;
   }
@@ -331,26 +363,38 @@ public abstract class AddPaymentDefaultValuesHandler {
         && StringUtils.isNotEmpty(context.getString("inpfinPaymentmethodId"))) {
       strFinPaymentMethodId = context.getString("inpfinPaymentmethodId");
     }
-    strFinancialAccountId = getDefaultFinancialAccount(requestMap);
-    if (strFinPaymentMethodId != null && strFinancialAccountId != null) {
-      if (getFinancialAccountPaymentMethod(strFinPaymentMethodId, strFinancialAccountId) != null) {
-        return strFinPaymentMethodId;
-      }
+
+    strFinancialAccountId = getContextFinancialAccount(requestMap);
+    if (strFinPaymentMethodId != null
+        && getFinancialAccountPaymentMethod(strFinPaymentMethodId, strFinancialAccountId) != null) {
+      return strFinPaymentMethodId;
     }
+
     String strBPartnerId = getDefaultReceivedFrom(requestMap);
-    if (StringUtils.isNotEmpty(strBPartnerId)) {
+    if (StringUtils.isNotEmpty(strBPartnerId) && context.has("inpadClientId")
+        && context.has("inpadOrgId")) {
+
+      final OrganizationStructureProvider osp = OBContext.getOBContext()
+          .getOrganizationStructureProvider(context.getString("inpadClientId"));
       BusinessPartner businessPartner = OBDal.getInstance().get(BusinessPartner.class,
           strBPartnerId);
       boolean isSOTrx = "Y".equals(getDefaultIsSOTrx(requestMap));
+
       if (isSOTrx
           && businessPartner.getPaymentMethod() != null
           && getFinancialAccountPaymentMethod(businessPartner.getPaymentMethod().getId(),
-              strFinancialAccountId) != null) {
+              strFinancialAccountId) != null
+          && osp.isInNaturalTree(businessPartner.getPaymentMethod().getOrganization(), OBDal
+              .getInstance().get(Organization.class, context.getString("inpadOrgId")))) {
         return businessPartner.getPaymentMethod().getId();
-      } else if (!isSOTrx
+      }
+
+      else if (!isSOTrx
           && businessPartner.getPOPaymentMethod() != null
           && getFinancialAccountPaymentMethod(businessPartner.getPOPaymentMethod().getId(),
-              strFinancialAccountId) != null) {
+              strFinancialAccountId) != null
+          && osp.isInNaturalTree(businessPartner.getPOPaymentMethod().getOrganization(), OBDal
+              .getInstance().get(Organization.class, context.getString("inpadOrgId")))) {
         return businessPartner.getPOPaymentMethod().getId();
       }
     }
@@ -428,8 +472,10 @@ public abstract class AddPaymentDefaultValuesHandler {
         FinAccPaymentMethod.class);
     obc.setFilterOnReadableOrganization(false);
     obc.setMaxResults(1);
-    obc.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT,
-        OBDal.getInstance().get(FIN_FinancialAccount.class, financialAccountId)));
+    if (!StringUtils.isEmpty(financialAccountId)) {
+      obc.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT,
+          OBDal.getInstance().get(FIN_FinancialAccount.class, financialAccountId)));
+    }
     obc.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD,
         OBDal.getInstance().get(FIN_PaymentMethod.class, paymentMethodId)));
     return (FinAccPaymentMethod) obc.uniqueResult();
