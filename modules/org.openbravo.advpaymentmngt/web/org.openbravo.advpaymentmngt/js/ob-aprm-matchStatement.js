@@ -26,9 +26,36 @@ OB.APRM.MatchStatement.addPreference = function (view) {
 };
 
 OB.APRM.MatchStatement.onLoad = function (view) {
-  var execute, grid = view.theForm.getItem('match_statement').canvas.viewGrid;
+  var execute, grid = view.theForm.getItem('match_statement').canvas.viewGrid,
+      buttons = view.popupButtons.members[0].members,
+      i, button;
   view.cancelButton.hide();
   view.parentElement.parentElement.closeButton.hide();
+
+  for (i = 0; i < buttons.length; i++) {
+    button = buttons[i];
+    if (button._buttonValue === 'UN') {
+      view.unmatchButton = button;
+      button.hide();
+      break;
+    }
+  }
+
+  button.action = function () {
+    var callback = function (response, data, request) {
+        view.onRefreshFunction(view);
+        if (data && data.message && data.message.severity === 'error') {
+          view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, data.message.title, data.message.text);
+        } else if (data && data.message && data.message.severity === 'success') {
+          view.messageBar.setMessage(isc.OBMessageBar.TYPE_SUCCESS, data.message.title, data.message.text);
+        } else if (data && data.message && data.message.severity === 'warning') {
+          view.messageBar.setMessage(isc.OBMessageBar.TYPE_WARNING, data.message.title, data.message.text);
+        }
+        };
+    OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.UnMatchSelectedTransactionsActionHandler', {
+      bankStatementLineIds: grid.getSelectedRecords()
+    }, {}, callback);
+  };
 
   grid.dataSourceOrig = grid.dataSource;
   grid.dataSource = null;
@@ -73,6 +100,13 @@ OB.APRM.MatchStatement.onProcess = function (view, actionHandlerCall, clientSide
   actionHandlerCall();
 };
 
+OB.APRM.MatchStatement.selectionChanged = function (grid, record, recordList) {
+  if (grid.getSelectedRecords().length > 0) {
+    grid.view.unmatchButton.show();
+  } else {
+    grid.view.unmatchButton.hide();
+  }
+};
 
 isc.ClassFactory.defineClass('APRMMatchStatGridButtonsComponent', isc.HLayout);
 
