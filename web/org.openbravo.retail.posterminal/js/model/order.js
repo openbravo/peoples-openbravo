@@ -1368,9 +1368,9 @@
       this.set('undo', {
         text: OB.I18N.getLabel('OBPOS_AddLine', [newline.get('qty'), newline.get('product').get('_identifier')]),
         line: newline,
-        undo: function () {
+        undo: function (modelObj) {
           OB.UTIL.Approval.requestApproval(
-          this.model, 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
+          (modelObj ? modelObj : this.model), 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
             if (approved) {
               me.get('lines').remove(newline);
               me.calculateGross();
