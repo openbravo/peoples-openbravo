@@ -176,7 +176,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       Invoice invoice = null;
       boolean createInvoice = false;
       TriggerHandler.getInstance().disable();
-      newLayaway = jsonorder.has("orderType") && jsonorder.getLong("orderType") == 2;
+      newLayaway = jsonorder.has("orderType") && jsonorder.getLong("orderType") == 2
+          && jsonorder.getDouble("payment") <= 0;
       notpaidLayaway = (jsonorder.getBoolean("isLayaway") || jsonorder.optLong("orderType") == 2)
           && jsonorder.getDouble("payment") < jsonorder.getDouble("gross")
           && !jsonorder.optBoolean("paidOnCredit");
