@@ -99,6 +99,7 @@ import org.openbravo.model.financialmgmt.tax.TaxRate;
 import org.openbravo.model.materialmgmt.cost.CostAdjustment;
 import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
 import org.openbravo.model.materialmgmt.cost.Costing;
+import org.openbravo.model.materialmgmt.cost.CostingAlgorithm;
 import org.openbravo.model.materialmgmt.cost.CostingRule;
 import org.openbravo.model.materialmgmt.cost.InventoryAmountUpdate;
 import org.openbravo.model.materialmgmt.cost.InventoryAmountUpdateLine;
@@ -195,6 +196,8 @@ public class TestCosting extends WeldBaseTest {
   private static String LANDEDCOSTTYPE3_ID = "CB473A64934B4D1583008D52DD0FBC49";
   // Business partner with name: Vendor USA
   private static String BUSINESSPARTNER_ID = "C8AD0EAF3052415BB1E15EFDEFBFD4AF";
+  // Costing Algorithm with name: Average Algorithm
+  private static String COSTINGALGORITHM_ID = "B069080A0AE149A79CF1FA0E24F16AB6";
   // General Ledger Configuration with name: Main US/A/Euro
   private static String GENERALLEDGER_ID = "9A68A0F8D72D4580B3EC3CAA00A5E1F0";
   // Table with name: MaterialMgmtInternalConsumption
@@ -286,28 +289,20 @@ public class TestCosting extends WeldBaseTest {
       OBDal.getInstance().flush();
 
       // Create costing rule
-      final OBCriteria<CostingRule> criteria2 = OBDal.getInstance().createCriteria(
-          CostingRule.class);
-      criteria2.add(Restrictions.eq(CostingRule.PROPERTY_CLIENT,
-          OBDal.getInstance().get(Client.class, CLIENT_ID)));
-      criteria2.add(Restrictions.eq(CostingRule.PROPERTY_ORGANIZATION,
-          OBDal.getInstance().get(Organization.class, ORGANIZATION_ID)));
-      criteria2.addOrderBy(CostingRule.PROPERTY_CREATIONDATE, true);
-      criteria2.setFilterOnActive(false);
-      criteria2.setFilterOnReadableClients(false);
-      criteria2.setFilterOnReadableOrganization(false);
-      CostingRule costingRule = criteria2.list().get(0);
-      CostingRule costingRuleClone = (CostingRule) DalUtil.copy(costingRule, false);
-      new TestCosting().setGeneralData(costingRuleClone);
-      costingRuleClone.setWarehouseDimension(true);
-      costingRuleClone.setBackdatedTransactionsFixed(true);
-      costingRuleClone.setValidated(false);
-      costingRuleClone.setEndingDate(null);
-      OBDal.getInstance().save(costingRuleClone);
+      CostingRule costingRule = OBProvider.getInstance().get(CostingRule.class);
+      setGeneralData(costingRule);
+      costingRule.setCostingAlgorithm(OBDal.getInstance().get(CostingAlgorithm.class,
+          COSTINGALGORITHM_ID));
+      costingRule.setWarehouseDimension(true);
+      costingRule.setBackdatedTransactionsFixed(true);
+      costingRule.setValidated(false);
+      costingRule.setStartingDate(null);
+      costingRule.setEndingDate(null);
+      OBDal.getInstance().save(costingRule);
       OBDal.getInstance().flush();
-      OBDal.getInstance().refresh(costingRuleClone);
-      new TestCosting().runCostingBackground();
-      validateCostingRule(costingRuleClone.getId());
+      OBDal.getInstance().refresh(costingRule);
+      runCostingBackground();
+      validateCostingRule(costingRule.getId());
 
       OBDal.getInstance().commitAndClose();
     } catch (Exception e) {
@@ -11180,15 +11175,10 @@ public class TestCosting extends WeldBaseTest {
   }
 
   // Set common fields in all tables
-  private void setGeneralData(BaseOBObject document) {
+  private static void setGeneralData(BaseOBObject document) {
     try {
       document.set("client", OBDal.getInstance().get(Client.class, CLIENT_ID));
       document.set("organization", OBDal.getInstance().get(Organization.class, ORGANIZATION_ID));
-      document.set("active", true);
-      document.set("creationDate", new Date());
-      document.set("createdBy", OBDal.getInstance().get(User.class, USER_ID));
-      document.set("updated", new Date());
-      document.set("updatedBy", OBDal.getInstance().get(User.class, USER_ID));
     } catch (Exception e) {
       throw new OBException(e);
     }
@@ -11410,7 +11400,7 @@ public class TestCosting extends WeldBaseTest {
   }
 
   // Run Costing Background process
-  private void runCostingBackground() {
+  private static void runCostingBackground() {
     try {
       VariablesSecureApp vars = null;
       vars = new VariablesSecureApp(OBContext.getOBContext().getUser().getId(), OBContext
@@ -11428,7 +11418,7 @@ public class TestCosting extends WeldBaseTest {
   }
 
   // Run Price Correction Background
-  private void runPriceBackground() {
+  private static void runPriceBackground() {
     try {
       VariablesSecureApp vars = null;
       vars = new VariablesSecureApp(OBContext.getOBContext().getUser().getId(), OBContext
