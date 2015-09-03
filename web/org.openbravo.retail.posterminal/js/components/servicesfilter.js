@@ -30,8 +30,10 @@ enyo.kind({
         filters = [],
         auxProdFilters = [],
         auxCatFilters = [],
-        auxStr = '(',
-        appendComma = false,
+        auxProdStr = '(',
+        auxCatStr = '(',
+        appendProdComma = false,
+        appendCatComma = false,
         existingServices, lineIdList;
 
     if (this.productList && this.productList.length > 0) {
@@ -48,33 +50,46 @@ enyo.kind({
         return line.get('product').get('id');
       });
 
-      //build auxiliar string for the filter:
+      //build auxiliar string for the products filter and for the categories filter:
       this.orderlineList.forEach(function (l) {
-        if (appendComma) {
-          auxStr += ', ';
+        if (appendProdComma) {
+          auxProdStr += ', ';
         } else {
-          appendComma = true;
+          appendProdComma = true;
         }
-        auxStr += '?';
+        auxProdStr += '?';
 
         auxProdFilters.push(l.get('product').get('id'));
-        auxCatFilters.push(l.get('product').get('productCategory'));
+
+        if (auxCatFilters.indexOf(l.get('product').get('productCategory')) < 0) {
+          if (appendCatComma) {
+            auxCatStr += ', ';
+          } else {
+            appendCatComma = true;
+          }
+          auxCatStr += '?';
+
+          auxCatFilters.push(l.get('product').get('productCategory'));
+        }
       });
-      auxStr += ')';
+
+      auxProdStr += ')';
+      auxCatStr += ')';
 
       where = " and product.productType = 'S' and (product.isLinkedToProduct = 'true' and ";
+
       if (this.productList.length > 1) {
         where += " product.availableForMultiline = 'true' and ";
       }
 
       //including/excluding products
-      where += "((product.includeProducts = 'Y' and not exists (select 1 from m_product_service sp where product.m_product_id = sp.m_product_id and sp.m_related_product_id in " + auxStr + " ))";
-      where += "or (product.includeProducts = 'N' and " + auxProdFilters.length + " = (select count(*) from m_product_service sp where product.m_product_id = sp.m_product_id and sp.m_related_product_id in " + auxStr + " ))";
+      where += "((product.includeProducts = 'Y' and not exists (select 1 from m_product_service sp where product.m_product_id = sp.m_product_id and sp.m_related_product_id in " + auxProdStr + " )) ";
+      where += "or (product.includeProducts = 'N' and " + auxProdFilters.length + " = (select count(*) from m_product_service sp where product.m_product_id = sp.m_product_id and sp.m_related_product_id in " + auxProdStr + " )) ";
       where += "or product.includeProducts is null) ";
 
       //including/excluding product categories
-      where += "and ((product.includeProductCategories = 'Y' and not exists (select 1 from m_product_category_service spc where product.m_product_id = spc.m_product_id and spc.m_product_category_id in " + auxStr + " )) ";
-      where += "or (product.includeProductCategories = 'N' and " + auxCatFilters.length + " = (select count(*) from m_product_category_service spc where product.m_product_id = spc.m_product_id and spc.m_product_category_id in " + auxStr + " )) ";
+      where += "and ((product.includeProductCategories = 'Y' and not exists (select 1 from m_product_category_service spc where product.m_product_id = spc.m_product_id and spc.m_product_category_id in " + auxCatStr + " )) ";
+      where += "or (product.includeProductCategories = 'N' and " + auxCatFilters.length + " = (select count(*) from m_product_category_service spc where product.m_product_id = spc.m_product_id and spc.m_product_category_id in " + auxCatStr + " )) ";
       where += "or product.includeProductCategories is null)) ";
       where += "and product.m_product_id not in ('" + existingServices.join("','") + "')";
 
@@ -97,8 +112,8 @@ enyo.kind({
       where = " and product.productType = 'S' and (product.isLinkedToProduct = 'true' and ";
 
       //including/excluding products
-      where += "((product.includeProducts = 'Y' and not exists (select 1 from m_product_service sp where product.m_product_id = sp.m_product_id and sp.m_related_product_id = ? ))";
-      where += "or (product.includeProducts = 'N' and exists (select 1 from m_product_service sp where product.m_product_id = sp.m_product_id and sp.m_related_product_id = ? ))";
+      where += "((product.includeProducts = 'Y' and not exists (select 1 from m_product_service sp where product.m_product_id = sp.m_product_id and sp.m_related_product_id = ? )) ";
+      where += "or (product.includeProducts = 'N' and exists (select 1 from m_product_service sp where product.m_product_id = sp.m_product_id and sp.m_related_product_id = ? )) ";
       where += "or product.includeProducts is null) ";
 
       //including/excluding product categories
@@ -128,6 +143,9 @@ enyo.kind({
       catList = this.orderlineList.map(function (line) {
         return line.get('product').get('productCategory');
       });
+      catList = catList.sort().filter(function (item, pos, ary) {
+        return !pos || item != ary[pos - 1];
+      });
       lineIdList = this.orderlineList.map(function (line) {
         return line.get('id');
       });
@@ -143,7 +161,7 @@ enyo.kind({
         columns: [],
         operator: OB.Dal.FILTER,
         value: (this.orderlineList.length > 1 ? 'Services_Filter_Multi' : 'Services_Filter'),
-        params: [prodList.join("','"), catList.join("','"), prodList.length, existingServices.join("','")]
+        params: [prodList.join("','"), catList.join("','"), prodList.length, catList.length, existingServices.join("','")]
       }, {
         columns: ['ispack'],
         operator: 'equals',
@@ -163,7 +181,7 @@ enyo.kind({
         columns: [],
         operator: OB.Dal.FILTER,
         value: 'Services_Filter',
-        params: [this.orderline.get('product').get('id'), this.orderline.get('product').get('productCategory'), '', existingServices.join("','")]
+        params: [this.orderline.get('product').get('id'), this.orderline.get('product').get('productCategory'), '', '', existingServices.join("','")]
       }, {
         columns: ['ispack'],
         operator: 'equals',

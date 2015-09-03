@@ -24,7 +24,7 @@ public class ServicesMultiselectionHQLCriteria extends HQLCriteriaProcess {
         + "or (product.includedProducts = 'N' and $3 = (select count(*) from ServiceProduct sp where product.id = sp.product.id and sp.relatedProduct.id in ('$1') )) "
         + "or product.includedProducts is null) "
         + "and ((product.includedProductCategories = 'Y' and not exists (select 1 from ServiceProductCategory spc where product.id = spc.product.id and spc.productCategory.id in ('$2') )) "
-        + "or (product.includedProductCategories = 'N' and $3 = (select count(*) from ServiceProductCategory spc where product.id = spc.product.id and spc.productCategory.id in ('$2') )) "
-        + "or product.includedProductCategories is null) " + "and product.id not in ('$4'))";
+        + "or (product.includedProductCategories = 'N' and $4 = (select count(*) from ServiceProductCategory spc where product.id = spc.product.id and spc.productCategory.id in ('$2') )) "
+        + "or product.includedProductCategories is null) " + "and product.id not in ('$5'))";
   }
 }
