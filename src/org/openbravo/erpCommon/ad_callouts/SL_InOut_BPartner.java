@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,6 +27,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -63,10 +64,12 @@ public class SL_InOut_BPartner extends HttpSecureAppServlet {
       String strProjectId = vars.getStringParameter("inpcProjectId");
       String strIsSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
       String strTabId = vars.getStringParameter("inpTabId");
+      String strDeliveryTerms = vars.getStringParameter("inpdeliveryrule");
+      String strDeliveryMethod = vars.getStringParameter("inpdeliveryviarule");
 
       try {
-        printPage(response, vars, strBPartner, strLocation, strContact, strWindowId, strProjectId,
-            strIsSOTrx, strTabId);
+        printPage(response, vars, strBPartner, strLocation, strDeliveryTerms, strDeliveryMethod,
+            strContact, strWindowId, strProjectId, strIsSOTrx, strTabId);
       } catch (ServletException ex) {
         pageErrorCallOut(response);
       }
@@ -75,8 +78,9 @@ public class SL_InOut_BPartner extends HttpSecureAppServlet {
   }
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strBPartner,
-      String strLocation, String strContact, String strWindowId, String strProjectId,
-      String strIsSOTrx, String strTabId) throws IOException, ServletException {
+      String strLocation, String strDeliveryTerms, String strDeliveryMethod, String strContact,
+      String strWindowId, String strProjectId, String strIsSOTrx, String strTabId)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -219,6 +223,15 @@ public class SL_InOut_BPartner extends HttpSecureAppServlet {
     }
     resultado.append("\n)");
     BusinessPartner bpartner = OBDal.getInstance().get(BusinessPartner.class, strBPartner);
+    if (StringUtils.isNotEmpty(bpartner.getDeliveryTerms())
+        && !StringUtils.equals(strDeliveryTerms, bpartner.getDeliveryTerms())) {
+      resultado.append(", new Array(\"inpdeliveryrule\", \"" + bpartner.getDeliveryTerms() + "\")");
+    }
+    if (StringUtils.isNotEmpty(bpartner.getDeliveryMethod())
+        && !StringUtils.equals(strDeliveryMethod, bpartner.getDeliveryMethod())) {
+      resultado.append(", new Array(\"inpdeliveryviarule\", \"" + bpartner.getDeliveryMethod()
+          + "\")");
+    }
     final String rtvendorship = "273673D2ED914C399A6C51DB758BE0F9";
     final String rMatReceipt = "123271B9AD60469BAE8A924841456B63";
     String strwindow = vars.getStringParameter("inpwindowId");
