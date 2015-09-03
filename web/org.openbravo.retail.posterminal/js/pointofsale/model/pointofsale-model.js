@@ -242,8 +242,11 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     this.set('leftColumnViewManager', new LeftColumnViewManager());
     this.set('subWindowManager', new ViewManager());
 
-    OB.RR.processMessages();
-    me.loadCheckedMultiorders();
+    OB.MobileApp.model.runSyncProcess(function () {
+      me.loadCheckedMultiorders();
+    }, function () {
+      me.loadCheckedMultiorders();
+    });
 
     receipt.on('paymentAccepted', function () {
       receipt.setIsCalculateGrossLockState(true);
