@@ -147,8 +147,6 @@ public class ProductProperties extends ModelExtension {
           add(new HQLProperty("product.ispricerulebased", "isPriceRuleBased"));
           add(new HQLProperty("product.obposProposalType", "proposalType"));
           add(new HQLProperty("product.obposIsmultiselectable", "availableForMultiline"));
-          add(new HQLProperty("product.obposPrintrelatedattachm", "printRelatedAttachments"));
-          add(new HQLProperty("product.obposNumberOfCopies", "numberOfCopies"));
           add(new HQLProperty("pli.bestseller", "bestseller"));
           add(new HQLProperty("product.linkedToProduct", "isLinkedToProduct"));
           add(new HQLProperty("product.allowDeferredSell", "allowDeferredSell"));

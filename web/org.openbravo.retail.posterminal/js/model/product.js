@@ -173,14 +173,6 @@
     column: 'availableForMultiline',
     type: 'TEXT'
   }, {
-    name: 'printRelatedAttachments',
-    column: 'printRelatedAttachments',
-    type: 'TEXT'
-  }, {
-    name: 'numberOfCopies',
-    column: 'numberOfCopies',
-    type: 'TEXT'
-  }, {
     name: 'isLinkedToProduct',
     column: 'isLinkedToProduct',
     type: 'BOOL'
