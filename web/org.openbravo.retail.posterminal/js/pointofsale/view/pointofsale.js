@@ -144,6 +144,9 @@ enyo.kind({
       kind: 'OB.UI.ModalBPLocation',
       name: "modalcustomeraddress"
     }, {
+      kind: 'OB.UI.ModalBPLocationShip',
+      name: "modalcustomershipaddress"
+    }, {
       kind: 'OB.UI.ModalReceipts',
       name: 'modalreceipts'
     }, {

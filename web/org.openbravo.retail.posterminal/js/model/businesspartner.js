@@ -219,6 +219,15 @@
     column: 'invoicerule',
     type: 'TEXT'
   }, {
+    name: 'locShipId',
+    column: 'locShipId',    
+    type: 'TEXT'
+  }, {
+    name: 'locShipName',
+    column: 'locShipName',
+    filter: true,
+    type: 'TEXT'
+  }, {
     name: 'locId',
     column: 'c_bpartnerlocation_id',
     type: 'TEXT'

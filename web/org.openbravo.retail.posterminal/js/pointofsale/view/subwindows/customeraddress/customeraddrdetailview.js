@@ -66,8 +66,18 @@ enyo.kind({
   },
   tap: function () {
     var me = this;
-    me.customer.set('locId', me.customerAddr.get('id'));
-    me.customer.set('locName', me.customerAddr.get('name'));
+    if (me.customerAddr.get('isBillTo') && me.customerAddr.get('isShipTo')) {
+      me.customer.set('locId', me.customerAddr.get('id'));
+      me.customer.set('locName', me.customerAddr.get('name'));
+      me.customer.set('locShipId', me.customerAddr.get('id'));
+      me.customer.set('locShipName', me.customerAddr.get('name'));
+    } else if (me.customerAddr.get('isBillTo')) {
+      me.customer.set('locId', me.customerAddr.get('id'));
+      me.customer.set('locName', me.customerAddr.get('name'));
+    } else if (me.customerAddr.get('isShipTo')) {
+      me.customer.set('locShipId', me.customerAddr.get('id'));
+      me.customer.set('locShipName', me.customerAddr.get('name'));
+    }
     me.customer.set('postalCode', me.customerAddr.get('postalCode'));
     me.customer.set('cityName', me.customerAddr.get('cityName'));
     me.customer.set('countryName', me.customerAddr.get('countryName'));
@@ -189,6 +199,18 @@ enyo.kind({
     name: 'customerAddrCountry',
     modelProperty: 'countryName',
     i18nLabel: 'OBPOS_LblCountry',
+    readOnly: true
+  }, {
+    kind: 'OB.UI.CustomerAddrCheckProperty',
+    name: 'customerAddrShip',
+    modelProperty: 'isShipTo',
+    i18nLabel: 'OBPOS_LblShippAddr',
+    readOnly: true
+  }, {
+    kind: 'OB.UI.CustomerAddrCheckProperty',
+    name: 'customerAddrBill',
+    modelProperty: 'isBillTo',
+    i18nLabel: 'OBPOS_LblBillAddr',
     readOnly: true
   }]
 });

@@ -175,7 +175,16 @@ public class CustomerAddrLoader extends POSDataSynchronizationProcess implements
         }
         rootLocation.setPostalCode(jsonCustomerAddr.getString("postalCode"));
         rootLocation.setCityName(jsonCustomerAddr.getString("cityName"));
-
+        if (jsonCustomerAddr.getBoolean("isBillTo")) {
+          location.setInvoiceToAddress(true);
+        } else {
+          location.setInvoiceToAddress(false);
+        }
+        if (jsonCustomerAddr.getBoolean("isShipTo")) {
+          location.setShipToAddress(true);
+        } else {
+          location.setShipToAddress(false);
+        }
         Entity baseLocationEntity = ModelProvider.getInstance().getEntity(
             org.openbravo.model.common.geography.Location.class);
         JSONPropertyToEntity.fillBobFromJSON(baseLocationEntity, rootLocation, jsonCustomerAddr);

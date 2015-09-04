@@ -37,10 +37,20 @@ public class BusinessPartnerProperties extends ModelExtension {
         add(new HQLProperty("bpl.businessPartner.paymentMethod.id", "paymentMethod"));
         add(new HQLProperty("bpl.businessPartner.paymentTerms.id", "paymentTerms"));
         add(new HQLProperty("bpl.businessPartner.invoiceTerms", "invoiceTerms"));
-        add(new HQLProperty("bpl.id", "locId"));
         add(new HQLProperty(
-            "COALESCE(bpl.locationAddress.addressLine1, bpl.locationAddress.addressLine2, bpl.locationAddress.postalCode, bpl.locationAddress.cityName)",
+            "(select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls where bpls.businessPartner.id=bpl.businessPartner.id and bpls.invoiceToAddress = true and bpls.$readableSimpleClientCriteria AND "
+                + " bpls.$naturalOrgCriteria group by bpls.businessPartner.id)", "locId"));
+        add(new HQLProperty(
+            "(select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls where bpls.businessPartner.id=bpl.businessPartner.id and bpls.shipToAddress = true and bpls.$readableSimpleClientCriteria AND "
+                + " bpls.$naturalOrgCriteria group by bpls.businessPartner.id)", "locShipId"));
+        add(new HQLProperty(
+            "(select COALESCE(bpls.locationAddress.addressLine1, bpls.locationAddress.addressLine2, bpls.locationAddress.postalCode, bpls.locationAddress.cityName) from BusinessPartnerLocation AS bpls where bpls.businessPartner.id=bpl.businessPartner.id and bpls.invoiceToAddress = true and bpls.$readableSimpleClientCriteria AND "
+                + " bpls.$naturalOrgCriteria group by bpls.businessPartner.id, bpls.locationAddress.addressLine1, bpls.locationAddress.addressLine2, bpls.locationAddress.postalCode, bpls.locationAddress.cityName)",
             "locName", false));
+        add(new HQLProperty(
+            "(select COALESCE(bpls.locationAddress.addressLine1, bpls.locationAddress.addressLine2, bpls.locationAddress.postalCode, bpls.locationAddress.cityName) from BusinessPartnerLocation AS bpls where bpls.businessPartner.id=bpl.businessPartner.id and bpls.shipToAddress = true and bpls.$readableSimpleClientCriteria AND "
+                + " bpls.$naturalOrgCriteria group by bpls.businessPartner.id, bpls.locationAddress.addressLine1, bpls.locationAddress.addressLine2, bpls.locationAddress.postalCode, bpls.locationAddress.cityName)",
+            "locShipName", false));
         add(new HQLProperty("ulist.email", "email"));
         add(new HQLProperty("ulist.id", "contactId"));
         add(new HQLProperty("ulist.phone", "phone"));

@@ -195,8 +195,20 @@ enyo.kind({
                 customerAddr: customerAddr
               });
               if (customerAddr.get('id') === me.customer.get("locId")) {
-                me.customer.set('locId', customerAddr.get('id'));
-                me.customer.set('locName', customerAddr.get('name'));
+            	if (customerAddr.get('isBillTo')) {
+            	  me.customer.set('locId', customerAddr.get('id'));
+            	  me.customer.set('locName', customerAddr.get('name'));
+            	} else {
+            	  me.customer.set('locId', null);
+            	  me.customer.set('locName', null);
+            	}
+            	if (customerAddr.get('isShipTo')) {
+            	  me.customer.set('locShipId', customerAddr.get('id'));
+            	  me.customer.set('locShipName', customerAddr.get('name'));
+            	} else {
+            	  me.customer.set('locShipId', null);
+            	  me.customer.set('locShipName', null);
+            	}
                 me.customer.set('locationModel', customerAddr);
                 OB.Dal.save(me.customer, function success(tx) {
                   me.doChangeBusinessPartner({
@@ -244,5 +256,42 @@ enyo.kind({
   },
   init: function (model) {
     this.model = model;
+  }
+});
+
+enyo.kind({
+  name: 'OB.UI.CustomerAddrCheckProperty',
+  kind: 'OB.UI.CheckboxButton',
+  handlers: {
+    onLoadValue: 'loadValue',
+    onSaveChange: 'saveChange'
+  },
+  events: {
+    onSaveProperty: ''
+  },
+  loadValue: function (inSender, inEvent) {
+    var me = this;
+    if (inEvent.customerAddr !== undefined) {
+      if (inEvent.customerAddr.get(me.modelProperty) !== undefined) {
+        me.checked = inEvent.customerAddr.get(me.modelProperty);
+      }
+      if (me.checked) {
+        me.addClass('active');
+      } else {
+        me.removeClass('active');
+      }
+    }
+  },
+  saveChange: function (inSender, inEvent) {
+    var me = this;
+    inEvent.customerAddr.set(me.modelProperty, me.checked);
+  },
+  initComponents: function () {
+    if (this.readOnly) {
+      this.setAttribute('readonly', 'readonly');
+    }
+    if (this.maxlength) {
+      this.setAttribute('maxlength', this.maxlength);
+    }
   }
 });

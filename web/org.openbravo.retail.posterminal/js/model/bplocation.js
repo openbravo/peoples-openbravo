@@ -23,7 +23,10 @@
     remote: 'OBPOS_remote.customer',
     saveCustomerAddr: function (callback) {
       var nameLength, newSk;
-
+      if (!this.get('isBillTo') && !this.get('isShipTo')) {
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorSavingCustomerAddrChn', [this.get('_identifier')]));
+        return;
+      }
       this.set('_identifier', this.get('name'));
 
       if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
@@ -125,6 +128,18 @@
   }, {
     name: 'regionId',
     column: 'regionId',
+    type: 'TEXT'
+  }, {
+    name: 'isBillTo',
+    column: 'isBillTo',
+    primaryKey: false,
+    filter: false,
+    type: 'TEXT'
+  }, {
+    name: 'isShipTo',
+    column: 'isShipTo',
+    primaryKey: false,
+    filter: false,
     type: 'TEXT'
   }, {
     name: '_identifier',

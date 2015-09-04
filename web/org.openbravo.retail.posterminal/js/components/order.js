@@ -106,6 +106,9 @@ enyo.kind({
   }, {
     kind: 'OB.UI.BPLocation',
     name: 'bplocbutton'
+  }, {
+    kind: 'OB.UI.BPLocationShip',
+    name: 'bplocshipbutton'
   }],
   style: 'border-bottom: 1px solid #cccccc;',
   components: [{

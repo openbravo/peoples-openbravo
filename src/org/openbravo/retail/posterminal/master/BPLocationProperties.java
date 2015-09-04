@@ -33,6 +33,8 @@ public class BPLocationProperties extends ModelExtension {
         add(new HQLProperty("bploc.locationAddress.cityName", "cityName"));
         add(new HQLProperty("bploc.locationAddress.country.name", "countryName"));
         add(new HQLProperty("bploc.locationAddress.country.id", "countryId"));
+        add(new HQLProperty("bploc.invoiceToAddress", "isBillTo"));
+        add(new HQLProperty("bploc.shipToAddress", "isShipTo"));
         add(new HQLProperty(
             "(select bploc.locationAddress.region.name from BusinessPartnerLocation bploc2 where bploc2 = bploc)",
             "regionName"));

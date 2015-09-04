@@ -179,5 +179,15 @@ enyo.kind({
     modelProperty: 'countryName',
     i18nLabel: 'OBPOS_LblCountry',
     readOnly: true
+  }, {
+    kind: 'OB.UI.CustomerAddrCheckProperty',
+    name: 'customerAddrShip',
+    modelProperty: 'isShipTo',
+    i18nLabel: 'OBPOS_LblShippAddr'
+  }, {
+    kind: 'OB.UI.CustomerAddrCheckProperty',
+    name: 'customerAddrFactura',
+    modelProperty: 'isBillTo',
+    i18nLabel: 'OBPOS_LblBillAddr'
   }]
 });

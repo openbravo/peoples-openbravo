@@ -108,8 +108,20 @@
           function successCallbackBPs(dataBps) {
             if (dataBps.length === 0) {
               OB.Dal.get(OB.Model.BusinessPartner, customerAddr.get('bpartner'), function success(dataBps) {
-                dataBps.set('locId', customerAddr.get('id'));
-                dataBps.set('locName', customerAddr.get('name'));
+            	if (me.customerAddr.get('isBillTo')) {
+            	  dataBps.set('locId', me.customerAddr.get('id'));
+            	  dataBps.set('locName', me.customerAddr.get('name'));
+            	} else {
+            	  dataBps.set('locId', null);
+            	  dataBps.set('locName', null);
+            	}
+            	if (me.customerAddr.get('isShipTo')) {
+            	  dataBps.set('locShipId', me.customerAddr.get('id'));
+                  dataBps.set('locShipName', me.customerAddr.get('name'));
+            	} else {
+            	  dataBps.set('locShipId', null);
+            	  dataBps.set('locShipName', null);
+            	}
                 OB.Dal.save(dataBps, function () {}, function (tx) {
                   OB.error(tx);
                 });
