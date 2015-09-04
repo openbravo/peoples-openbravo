@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -249,6 +249,8 @@ public class CostAdjustmentProcess {
     critLines.add(Restrictions.eq("ca.id", strCostAdjustmentId));
     critLines.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_ISRELATEDTRANSACTIONADJUSTED, false));
     critLines.addOrder(Order.asc("trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE));
+    critLines.addOrder(Order.asc("ca." + CostAdjustment.PROPERTY_DOCUMENTNO));
+    critLines.addOrder(Order.asc(CostAdjustmentLine.PROPERTY_LINENO));
     critLines.addOrder(Order.asc(CostAdjustmentLine.PROPERTY_ADJUSTMENTAMOUNT));
     critLines.addOrder(Order.asc("trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE));
     critLines.setMaxResults(1);

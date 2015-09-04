@@ -21,7 +21,6 @@ package org.openbravo.test;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
-import org.openbravo.test.costing.TestCosting;
 import org.openbravo.test.datasource.ExtendedNavigationModelTest;
 import org.openbravo.test.datasource.FICTest;
 import org.openbravo.test.datasource.FKDropDownDatasource;
@@ -62,7 +61,6 @@ WSReadTest.class, //
     HQLDataSourceTest.class, //
     TestAllowUnpagedDatasourcePreference.class, //
     TestNoteDatasource.class, //
-    TestCosting.class, //
     WebServicesWithNoActiveFilterTest.class, //
     ExtendedNavigationModelTest.class })
 public class AllWebserviceTests {
