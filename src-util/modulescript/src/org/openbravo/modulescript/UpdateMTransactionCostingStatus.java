@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2014 Openbravo SLU
+ * All portions are Copyright (C) 2012-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -42,5 +42,11 @@ public class UpdateMTransactionCostingStatus extends ModuleScript {
     } catch (Exception e) {
       handleError(e);
     }
+  }
+  
+  @Override
+  protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
+    return new ModuleScriptExecutionLimits("0", null, 
+        new OpenbravoVersion(3,0,22338));
   }
 }

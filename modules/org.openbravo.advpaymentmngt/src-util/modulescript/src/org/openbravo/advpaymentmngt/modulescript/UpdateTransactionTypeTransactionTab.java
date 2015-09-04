@@ -20,6 +20,8 @@ package org.openbravo.advpaymentmngt.modulescript;
 
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.modulescript.ModuleScript;
+import org.openbravo.modulescript.ModuleScriptExecutionLimits;
+import org.openbravo.modulescript.OpenbravoVersion;
 
 // This modulescript initializes the colum TRXTYPE (Transaction Type) in FIN_FINACC_TRANSACTION TABLE
 public class UpdateTransactionTypeTransactionTab extends ModuleScript {
@@ -37,5 +39,11 @@ public class UpdateTransactionTypeTransactionTab extends ModuleScript {
     } catch (Exception e) {
       handleError(e);
     }   
+  }
+  
+  @Override
+  protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
+    return new ModuleScriptExecutionLimits("A918E3331C404B889D69AA9BFAFB23AC", null, 
+        new OpenbravoVersion(3,0,26174));
   }
 }

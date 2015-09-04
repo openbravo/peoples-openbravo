@@ -22,7 +22,6 @@
   devTemplate NUMBER;
   devModule   CHAR(1);
   cuerrentModuleID  VARCHAR2(32);
-  vAux NUMBER;
     
 BEGIN
     

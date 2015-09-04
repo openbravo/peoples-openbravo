@@ -247,6 +247,10 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
       throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoJRTemplateFound"));
     }
 
+    if (!strJRPath.startsWith("/")) {
+      // Tomcat 8 forces getRealPath to start with a slash
+      strJRPath = "/" + strJRPath;
+    }
     final String jrTemplatePath = DalContextListener.getServletContext().getRealPath(strJRPath);
     HashMap<String, Object> jrParams = new HashMap<String, Object>();
     loadFilterParams(jrParams, report, params);

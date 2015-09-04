@@ -50,7 +50,6 @@ $BODY$
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
-  DECLARE i integer;
 begin
   for i in 1..array_upper(conkey,1)
   loop     
@@ -1360,7 +1359,6 @@ $BODY$
 * Contributor(s):  ______________________________________.
 ************************************************************************/
 declare
-  proc_name varchar(50000);
   c numeric;
   v_md5 varchar(32);
   i record;

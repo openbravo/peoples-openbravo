@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,6 +26,9 @@ import org.openbravo.database.ConnectionProvider;
  * data for instances that have Hearbeat enabled.
  * 
  */
+
+// FIXME: https://issues.openbravo.com/view.php?id=30706
+// Data should not be crashed any more and modulescript should be updated to be executed only once
 public class HBFix extends ModuleScript {
 
   private static String HB_PROCESS_ID = "1005800000";

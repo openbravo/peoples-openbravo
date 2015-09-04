@@ -40,4 +40,10 @@ public class UpdatePaymentPlan extends ModuleScript {
       handleError(e);
     }
   }
+  
+  @Override
+  protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
+    return new ModuleScriptExecutionLimits("0", new OpenbravoVersion(3,0,21939), 
+        new OpenbravoVersion(3,0,27021));
+  }
 }

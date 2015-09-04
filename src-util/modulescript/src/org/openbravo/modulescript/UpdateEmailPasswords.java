@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -43,30 +43,25 @@ public class UpdateEmailPasswords extends ModuleScript {
     try {
       ConnectionProvider cp = getConnectionProvider();
 
-      OpenbravoVersion versionCurrent = new OpenbravoVersion(CheckCoreVersionData.select(cp));
-      OpenbravoVersion version250MP18 = new OpenbravoVersion(2, 50, 17410);
-
-      log4j.debug("Starting Update SMTP server passwords module script.");
-      log4j.debug("Current version: " + versionCurrent.toString());
-      log4j.debug("2.50 MP18 version:" + version250MP18.toString());
-
-      if (versionCurrent.compareTo(version250MP18) <= 0) {
-        log4j.debug("Encrypting SMPT server password fields.");
-        UpdateEmailPasswordsData[] emails = UpdateEmailPasswordsData.select(cp);
-        for (UpdateEmailPasswordsData email : emails) {
-          if (email.smtpserverpassword != null) {
-            UpdateEmailPasswordsData.update(cp,
-                FormatUtilities.encryptDecrypt(email.smtpserverpassword, true),
-                email.cPocConfigurationId);
-          }
+      log4j.debug("Encrypting SMPT server password fields.");
+      UpdateEmailPasswordsData[] emails = UpdateEmailPasswordsData.select(cp);
+      for (UpdateEmailPasswordsData email : emails) {
+        if (email.smtpserverpassword != null) {
+          UpdateEmailPasswordsData.update(cp,
+              FormatUtilities.encryptDecrypt(email.smtpserverpassword, true),
+              email.cPocConfigurationId);
         }
-      } else {
-        log4j.debug("No need to encrypt SMTP server password fields.");
       }
 
     } catch (Exception e) {
       handleError(e);
     }
+  }
+  
+  @Override
+  protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
+    return new ModuleScriptExecutionLimits("0", null, 
+        new OpenbravoVersion(2,50,17724));
   }
 
   public static void main(String[] args) {

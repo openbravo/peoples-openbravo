@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011 Openbravo SLU
+ * All portions are Copyright (C) 2011-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -25,6 +25,8 @@ import javax.servlet.ServletException;
 import org.apache.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.modulescript.ModuleScript;
+import org.openbravo.modulescript.ModuleScriptExecutionLimits;
+import org.openbravo.modulescript.OpenbravoVersion;
 
 public class LinkCreditPayments extends ModuleScript {
   private static final Logger log4j = Logger.getLogger(LinkCreditPayments.class);
@@ -43,6 +45,12 @@ public class LinkCreditPayments extends ModuleScript {
       handleError(e);
     }
 
+  }
+  
+  @Override
+  protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
+    return new ModuleScriptExecutionLimits("A918E3331C404B889D69AA9BFAFB23AC", null, 
+        new OpenbravoVersion(3,0,15853));
   }
 
   private void linkCreditPayments(ConnectionProvider cp, String cbPartnerId, String cbPartnerName,

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2012-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -23,7 +23,8 @@ import org.openbravo.modulescript.ModuleScript;
 import java.sql.Connection;
 import javax.servlet.ServletException;
 
-
+// FIXME: https://issues.openbravo.com/view.php?id=30706
+// Costing Migration process should create preference properly and modulescript should be removed
 public class InitializeCostingMigrationPreference extends ModuleScript {
 
   /**
