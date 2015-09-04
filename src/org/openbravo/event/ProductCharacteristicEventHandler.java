@@ -18,15 +18,12 @@
  */
 package org.openbravo.event;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.enterprise.event.Observes;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
@@ -39,7 +36,6 @@ import org.openbravo.client.kernel.event.EntityDeleteEvent;
 import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
@@ -85,18 +81,28 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
       }
       if (prCh.isDefinesPrice()) {
         // Check there is only 1.
-        for (ProductCharacteristic prChAux : prCh.getProduct().getProductCharacteristicList()) {
-          if (prChAux.isDefinesPrice() && !prChAux.getId().equals(prCh.getId())) {
-            throw new OBException(OBMessageUtils.messageBD("DuplicateDefinesPrice"));
-          }
+        OBCriteria<ProductCharacteristic> criteria = OBDal.getInstance().createCriteria(
+            ProductCharacteristic.class);
+        criteria.add(Restrictions.eq(ProductCharacteristic.PROPERTY_PRODUCT, prCh.getProduct()));
+        criteria.add(Restrictions.eq(ProductCharacteristic.PROPERTY_DEFINESPRICE, true));
+        criteria.add(Restrictions.ne(ProductCharacteristic.PROPERTY_ID, prCh.getId()));
+        criteria.setFilterOnActive(false);
+        criteria.setMaxResults(1);
+        if (criteria.uniqueResult() != null) {
+          throw new OBException(OBMessageUtils.messageBD("DuplicateDefinesPrice"));
         }
       }
       if (prCh.isDefinesImage()) {
         // Check there is only 1.
-        for (ProductCharacteristic prChAux : prCh.getProduct().getProductCharacteristicList()) {
-          if (prChAux.isDefinesImage() && !prChAux.getId().equals(prCh.getId())) {
-            throw new OBException(OBMessageUtils.messageBD("DuplicateDefinesImage"));
-          }
+        OBCriteria<ProductCharacteristic> criteria = OBDal.getInstance().createCriteria(
+            ProductCharacteristic.class);
+        criteria.add(Restrictions.eq(ProductCharacteristic.PROPERTY_PRODUCT, prCh.getProduct()));
+        criteria.add(Restrictions.eq(ProductCharacteristic.PROPERTY_DEFINESIMAGE, true));
+        criteria.add(Restrictions.ne(ProductCharacteristic.PROPERTY_ID, prCh.getId()));
+        criteria.setFilterOnActive(false);
+        criteria.setMaxResults(1);
+        if (criteria.uniqueResult() != null) {
+          throw new OBException(OBMessageUtils.messageBD("DuplicateDefinesImage"));
         }
       }
       final Entity prodCharEntity = ModelProvider.getInstance().getEntity(
@@ -107,10 +113,18 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
       @SuppressWarnings("unchecked")
       List<ProductCharacteristicConf> prChConfs = (List<ProductCharacteristicConf>) event
           .getCurrentState(charConfListProperty);
-      Set<String[]> newChValues = getValuesToAdd(prCh);
-      for (String[] strChValueId : newChValues) {
-        prChConfs
-            .add(getCharacteristicConf(prCh, strChValueId[0], strChValueId[1], strChValueId[2]));
+
+      ScrollableResults scroll = getValuesToAdd(prCh);
+      try {
+        while (scroll.next()) {
+          Object[] strChValue = scroll.get();
+          String chValueId = (String) strChValue[0];
+          String chValueCode = (String) strChValue[1];
+          Boolean chValueActive = (Boolean) strChValue[2];
+          prChConfs.add(getCharacteristicConf(prCh, chValueId, chValueCode, chValueActive));
+        }
+      } finally {
+        scroll.close();
       }
     }
   }
@@ -130,10 +144,16 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
 
     if (!event.getPreviousState(chProp).equals(event.getCurrentState(chProp))) {
       final Product prd = (Product) event.getCurrentState(prdProp);
-      for (ProductCharacteristicValue pChV : prd.getProductCharacteristicValueList()) {
-        if (pChV.getCharacteristic().equals(event.getPreviousState(chProp))) {
-          throw new OBException(OBMessageUtils.messageBD("UpdateProductChWithValue"));
-        }
+      // Check there is only 1.
+      OBCriteria<ProductCharacteristicValue> criteria = OBDal.getInstance().createCriteria(
+          ProductCharacteristicValue.class);
+      criteria.add(Restrictions.eq(ProductCharacteristicValue.PROPERTY_PRODUCT, prd));
+      criteria.add(Restrictions.eq(ProductCharacteristicValue.PROPERTY_CHARACTERISTIC,
+          event.getPreviousState(chProp)));
+      criteria.setFilterOnActive(false);
+      criteria.setMaxResults(1);
+      if (criteria.uniqueResult() != null) {
+        throw new OBException(OBMessageUtils.messageBD("UpdateProductChWithValue"));
       }
     }
 
@@ -151,18 +171,28 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
       }
       if (prCh.isDefinesPrice()) {
         // Check there is only 1.
-        for (ProductCharacteristic prChAux : prCh.getProduct().getProductCharacteristicList()) {
-          if (prChAux.isDefinesPrice() && !prChAux.getId().equals(prCh.getId())) {
-            throw new OBException(OBMessageUtils.messageBD("DuplicateDefinesPrice"));
-          }
+        OBCriteria<ProductCharacteristic> criteria = OBDal.getInstance().createCriteria(
+            ProductCharacteristic.class);
+        criteria.add(Restrictions.eq(ProductCharacteristic.PROPERTY_PRODUCT, prCh.getProduct()));
+        criteria.add(Restrictions.eq(ProductCharacteristic.PROPERTY_DEFINESPRICE, true));
+        criteria.add(Restrictions.ne(ProductCharacteristic.PROPERTY_ID, prCh.getId()));
+        criteria.setFilterOnActive(false);
+        criteria.setMaxResults(1);
+        if (criteria.uniqueResult() != null) {
+          throw new OBException(OBMessageUtils.messageBD("DuplicateDefinesPrice"));
         }
       }
       if (prCh.isDefinesImage()) {
         // Check there is only 1.
-        for (ProductCharacteristic prChAux : prCh.getProduct().getProductCharacteristicList()) {
-          if (prChAux.isDefinesImage() && !prChAux.getId().equals(prCh.getId())) {
-            throw new OBException(OBMessageUtils.messageBD("DuplicateDefinesImage"));
-          }
+        OBCriteria<ProductCharacteristic> criteria = OBDal.getInstance().createCriteria(
+            ProductCharacteristic.class);
+        criteria.add(Restrictions.eq(ProductCharacteristic.PROPERTY_PRODUCT, prCh.getProduct()));
+        criteria.add(Restrictions.eq(ProductCharacteristic.PROPERTY_DEFINESIMAGE, true));
+        criteria.add(Restrictions.ne(ProductCharacteristic.PROPERTY_ID, prCh.getId()));
+        criteria.setFilterOnActive(false);
+        criteria.setMaxResults(1);
+        if (criteria.uniqueResult() != null) {
+          throw new OBException(OBMessageUtils.messageBD("DuplicateDefinesImage"));
         }
       }
 
@@ -172,29 +202,46 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
       List<ProductCharacteristicConf> prChConfs = (List<ProductCharacteristicConf>) event
           .getCurrentState(charConfListProperty);
 
-      final List<String> existingValues = new ArrayList<String>();
-      for (ProductCharacteristicConf prChConf : prCh.getProductCharacteristicConfList()) {
-        existingValues.add((String) DalUtil.getId(prChConf.getCharacteristicValue()));
-      }
-      Set<String[]> valuesToAdd = getValuesToAdd(prCh);
-      for (String[] strNewValue : valuesToAdd) {
-        if (existingValues.remove(strNewValue[0])) {
-          OBCriteria<ProductCharacteristicConf> prChConfCrit = OBDal.getInstance().createCriteria(
-              ProductCharacteristicConf.class);
-          prChConfCrit.add(Restrictions.eq(
-              ProductCharacteristicConf.PROPERTY_CHARACTERISTICOFPRODUCT, prCh));
-          prChConfCrit.add(Restrictions.eq(ProductCharacteristicConf.PROPERTY_CHARACTERISTICVALUE,
-              OBDal.getInstance().get(CharacteristicValue.class, strNewValue[0])));
-          prChConfCrit.setFilterOnActive(false);
-          ProductCharacteristicConf prChConf = (ProductCharacteristicConf) prChConfCrit
-              .uniqueResult();
-          prChConf.setCode(strNewValue[1]);
-          prChConf.setActive(Boolean.parseBoolean(strNewValue[2]));
-          OBDal.getInstance().save(prChConf);
-          continue;
+      StringBuffer hql = new StringBuffer();
+      hql.append(" select cv." + CharacteristicValue.PROPERTY_ID);
+      hql.append(" from " + ProductCharacteristicConf.ENTITY_NAME + " as pcc");
+      hql.append(" join pcc." + ProductCharacteristicConf.PROPERTY_CHARACTERISTICVALUE + " as cv");
+      hql.append(" where pcc." + ProductCharacteristicConf.PROPERTY_CHARACTERISTICOFPRODUCT
+          + " = :pc");
+      Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
+      query.setParameter("pc", prCh);
+      @SuppressWarnings("unchecked")
+      final List<String> existingValues = query.list();
+
+      ScrollableResults scroll = getValuesToAdd(prCh);
+      try {
+        while (scroll.next()) {
+          Object[] strChValue = scroll.get();
+          String chValueId = (String) strChValue[0];
+          String chValueCode = (String) strChValue[1];
+          Boolean chValueActive = (Boolean) strChValue[2];
+
+          if (existingValues.remove(chValueId)) {
+            OBCriteria<ProductCharacteristicConf> prChConfCrit = OBDal.getInstance()
+                .createCriteria(ProductCharacteristicConf.class);
+            prChConfCrit.add(Restrictions.eq(
+                ProductCharacteristicConf.PROPERTY_CHARACTERISTICOFPRODUCT, prCh));
+            prChConfCrit.add(Restrictions.eq(
+                ProductCharacteristicConf.PROPERTY_CHARACTERISTICVALUE,
+                OBDal.getInstance().get(CharacteristicValue.class, chValueId)));
+            prChConfCrit.setFilterOnActive(false);
+            ProductCharacteristicConf prChConf = (ProductCharacteristicConf) prChConfCrit
+                .uniqueResult();
+            prChConf.setCode(chValueCode);
+            prChConf.setActive(chValueActive);
+            continue;
+          }
+          prChConfs.add(getCharacteristicConf(prCh, chValueId, chValueCode, chValueActive));
         }
-        prChConfs.add(getCharacteristicConf(prCh, strNewValue[0], strNewValue[1], strNewValue[2]));
+      } finally {
+        scroll.close();
       }
+
       // remove not needed
       if (!existingValues.isEmpty()) {
         for (String strChValueId : existingValues) {
@@ -215,35 +262,40 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
     }
   }
 
-  private Set<String[]> getValuesToAdd(ProductCharacteristic prCh) {
+  private ScrollableResults getValuesToAdd(ProductCharacteristic prCh) {
+
     // If a subset is defined insert only values of it.
-    Set<String[]> chValues = new HashSet<String[]>();
     if (prCh.getCharacteristicSubset() != null) {
-      for (CharacteristicSubsetValue subsetValue : prCh.getCharacteristicSubset()
-          .getCharacteristicSubsetValueList()) {
-        String strCode = subsetValue.getCode();
-        if (StringUtils.isBlank(strCode)) {
-          strCode = subsetValue.getCharacteristicValue().getCode();
-        }
-        String[] strValues = { subsetValue.getCharacteristicValue().getId(), strCode,
-            subsetValue.getCharacteristicValue().isActive().toString() };
-        chValues.add(strValues);
-      }
-      return chValues;
+      StringBuffer hql = new StringBuffer();
+      hql.append(" select cv." + CharacteristicValue.PROPERTY_ID);
+      hql.append(" , coalesce(csv." + CharacteristicSubsetValue.PROPERTY_CODE + ", cv."
+          + CharacteristicValue.PROPERTY_CODE + ")");
+      hql.append(" , cv." + CharacteristicValue.PROPERTY_ACTIVE);
+      hql.append(" from " + CharacteristicSubsetValue.ENTITY_NAME + " as csv");
+      hql.append(" join csv." + CharacteristicSubsetValue.PROPERTY_CHARACTERISTICVALUE + " as cv");
+      hql.append(" where csv." + CharacteristicSubsetValue.PROPERTY_CHARACTERISTICSUBSET + " = :cs");
+      Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
+      query.setParameter("cs", prCh.getCharacteristicSubset());
+      return query.scroll(ScrollMode.FORWARD_ONLY);
     }
+
     // Add all not summary values.
-    for (CharacteristicValue chValue : prCh.getCharacteristic().getCharacteristicValueList()) {
-      if (!chValue.isSummaryLevel()) {
-        String[] strValues = { chValue.getId(), chValue.getCode(),
-            chValue.get(CharacteristicValue.PROPERTY_ACTIVE).toString() };
-        chValues.add(strValues);
-      }
+    else {
+      StringBuffer hql = new StringBuffer();
+      hql.append(" select cv." + CharacteristicValue.PROPERTY_ID);
+      hql.append(" , cv." + CharacteristicValue.PROPERTY_CODE);
+      hql.append(" , cv." + CharacteristicValue.PROPERTY_ACTIVE);
+      hql.append(" from " + CharacteristicValue.ENTITY_NAME + " as cv");
+      hql.append(" where cv." + CharacteristicValue.PROPERTY_CHARACTERISTIC + " = :c");
+      hql.append(" and cv." + CharacteristicValue.PROPERTY_SUMMARYLEVEL + " = false");
+      Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
+      query.setParameter("c", prCh.getCharacteristic());
+      return query.scroll(ScrollMode.FORWARD_ONLY);
     }
-    return chValues;
   }
 
   private ProductCharacteristicConf getCharacteristicConf(ProductCharacteristic prCh,
-      String strCharacteristicValueId, String strCode, String strActive) {
+      String strCharacteristicValueId, String strCode, Boolean strActive) {
     ProductCharacteristicConf charConf = OBProvider.getInstance().get(
         ProductCharacteristicConf.class);
     charConf.setCharacteristicOfProduct(prCh);
@@ -251,7 +303,7 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
     charConf.setCharacteristicValue((CharacteristicValue) OBDal.getInstance().getProxy(
         CharacteristicValue.ENTITY_NAME, strCharacteristicValueId));
     charConf.setCode(strCode);
-    charConf.setActive(Boolean.parseBoolean(strActive));
+    charConf.setActive(strActive);
     return charConf;
   }
 
