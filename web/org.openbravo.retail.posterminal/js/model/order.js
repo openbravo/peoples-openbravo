@@ -1334,7 +1334,7 @@
       }
       // Get prices from BP pricelist 
       var newline = new OrderLine({
-        id: OB.Dal.get_uuid(),
+        id: OB.UTIL.get_UUID(),
         product: p,
         uOM: p.get('uOM'),
         qty: OB.DEC.number(units),

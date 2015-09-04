@@ -38,7 +38,7 @@
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) { //With high volume we only save adress we it is assigned to the order
         if (isNew) {
           me.customerAddr.set('posTerminal', OB.MobileApp.model.get('terminal').id);
-          var uuid = OB.Dal.get_uuid();
+          var uuid = OB.UTIL.get_UUID();
           me.customerAddr.set('id', uuid);
           me.customerAddr.id = uuid;
           bpLocToSave.set('json', JSON.stringify(me.customerAddr.serializeToJSON()));

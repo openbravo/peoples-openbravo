@@ -231,7 +231,7 @@
 
   OB.UTIL.createNewCashup = function (callback) {
     // Create the cashup empty
-    var uuid = OB.Dal.get_uuid();
+    var uuid = OB.UTIL.get_UUID();
     OB.Dal.save(new OB.Model.CashUp({
       id: uuid,
       netSales: OB.DEC.Zero,
@@ -329,7 +329,7 @@
           startingCash = OB.DEC.Zero;
         }
         OB.Dal.save(new OB.Model.PaymentMethodCashUp({
-          id: OB.Dal.get_uuid(),
+          id: OB.UTIL.get_UUID(),
           paymentmethod_id: payment.payment.id,
           searchKey: payment.payment.searchKey,
           name: payment.payment._identifier,
@@ -399,7 +399,7 @@
               })[0];
               if (OB.UTIL.isNullOrUndefined(pAux) && payment.payment.active === true) {
                 OB.Dal.save(new OB.Model.PaymentMethodCashUp({
-                  id: OB.Dal.get_uuid(),
+                  id: OB.UTIL.get_UUID(),
                   paymentmethod_id: payment.payment.id,
                   searchKey: payment.payment.searchKey,
                   name: payment.payment._identifier,

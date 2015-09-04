@@ -49,7 +49,7 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
         'isprocessed': 'N'
       }, function (cashUp) {
         var addedCashMgmt = new OB.Model.CashManagement({
-          id: OB.Dal.get_uuid(),
+          id: OB.UTIL.get_UUID(),
           description: p.identifier + ' - ' + model.get('name'),
           amount: p.amount,
           origAmount: OB.DEC.mul(p.amount, p.rate),

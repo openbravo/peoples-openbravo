@@ -40,7 +40,7 @@
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) { //With high volume we only save localy when it is assigned to the order
         if (isNew) {
           me.customer.set('posTerminal', OB.MobileApp.model.get('terminal').id);
-          var uuid = OB.Dal.get_uuid();
+          var uuid = OB.UTIL.get_UUID();
           me.customer.set('id', uuid);
           me.customer.id = uuid;
           bpToSave.set('json', JSON.stringify(me.customer.serializeToJSON()));
