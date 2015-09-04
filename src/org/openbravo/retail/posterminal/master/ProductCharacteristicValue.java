@@ -50,7 +50,6 @@ public class ProductCharacteristicValue extends ProcessHQLQuery {
             + "where pcv.product.id in (select product.id from OBRETCO_Prol_Product assort where obretcoProductlist.id= '"
             + productList.getId()
             + "') "
-            + "and pcv.characteristicValue.characteristic.obposFilteronwebpos = true "
             + "and $naturalOrgCriteria and $readableSimpleClientCriteria and (pcv.$incrementalUpdateCriteria"
             + "OR pcv.characteristic.$incrementalUpdateCriteria OR pcv.characteristicValue.$incrementalUpdateCriteria)");
 
