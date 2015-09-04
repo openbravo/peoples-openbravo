@@ -898,9 +898,12 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       BigDecimal pendingQty = orderLine.getOrderedQuantity().abs();
       boolean negativeLine = orderLine.getOrderedQuantity().compareTo(BigDecimal.ZERO) < 0;
 
-      boolean useSingleBin = foundSingleBin != null && orderLine.getAttributeSetValue() == null
+      boolean useSingleBin = foundSingleBin != null
+          && orderLine.getAttributeSetValue() == null
           && orderLine.getProduct().getAttributeSet() == null
-          && orderLine.getWarehouseRule() == null;
+          && orderLine.getWarehouseRule() == null
+          && (orderLine.getWarehouse() == null || DalUtil.getId(order.getWarehouse()).equals(
+              DalUtil.getId(orderLine.getWarehouse())));
 
       AttributeSetInstance oldAttributeSetValues = null;
 
