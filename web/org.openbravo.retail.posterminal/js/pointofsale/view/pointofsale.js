@@ -80,7 +80,8 @@ enyo.kind({
     onShowLeftHeader: 'doShowLeftHeader',
     onWarehouseSelected: 'warehouseSelected',
     onClearUserInput: 'clearUserInput',
-    onPricelistChanged: 'pricelistChanged'
+    onPricelistChanged: 'pricelistChanged',
+    onChangeDiscount: 'changeDiscount'
   },
   events: {
     onShowPopup: '',
@@ -581,6 +582,9 @@ enyo.kind({
       this.waterfall('onCheckedTicketLine', inEvent);
       return true;
     }
+  },
+  changeDiscount: function (inSender, inEvent) {
+    this.waterfall('onDiscountChanged', inEvent);
   },
   discountQtyChanged: function (inSender, inEvent) {
     this.waterfall('onDiscountQtyChanged', inEvent);
