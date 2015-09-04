@@ -51,7 +51,8 @@ public class ProductCharacteristicValue extends ProcessHQLQuery {
             + productList.getId()
             + "') "
             + "and pcv.characteristicValue.characteristic.obposFilteronwebpos = true "
-            + "and $naturalOrgCriteria and $readableSimpleClientCriteria and (pcv.$incrementalUpdateCriteria)");
+            + "and $naturalOrgCriteria and $readableSimpleClientCriteria and (pcv.$incrementalUpdateCriteria"
+            + "OR pcv.characteristic.$incrementalUpdateCriteria OR pcv.characteristicValue.$incrementalUpdateCriteria)");
 
     return hqlQueries;
   }
