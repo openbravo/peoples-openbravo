@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013 Openbravo SLU
+ * All portions are Copyright (C) 2013-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -19,13 +19,21 @@
 
 package org.openbravo.materialmgmt;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
+import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
@@ -33,6 +41,8 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.RoleOrganization;
 import org.openbravo.service.datasource.DefaultDataSourceService;
+import org.openbravo.service.json.AdvancedQueryBuilder;
+import org.openbravo.service.json.DataEntityQueryService;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonUtils;
 import org.slf4j.Logger;
@@ -62,57 +72,15 @@ public class ProductCharacteristicsDS extends DefaultDataSourceService {
   public String fetch(Map<String, String> parameters) {
     OBContext.setAdminMode(true);
     try {
+      String entityName = parameters.get("_parentDSIdentifier");
 
-      StringBuilder hqlBuilder = new StringBuilder();
-      hqlBuilder.append(" select c.id, c.name, v.id, v.name, tn.reportSet ");
-      hqlBuilder.append(" from ADTreeNode tn, ");
-      hqlBuilder.append("      CharacteristicValue v, ");
-      hqlBuilder.append("      Characteristic c ");
-      hqlBuilder.append(" where tn.tree.typeArea ='CH'");
-      hqlBuilder.append(" and tn.node = v.id");
-      hqlBuilder.append(" and v.characteristic = c");
-      hqlBuilder.append(this.getClientOrgFilter());
-      hqlBuilder.append(" order by c.name, ");
-      hqlBuilder.append("          coalesce(tn.reportSet, '-1'), ");
-      hqlBuilder.append("          tn.sequenceNumber ");
+      Entity parentGridEntity = ModelProvider.getInstance().getEntity(entityName, false);
+      String productPath = parameters.get("_propertyPath");
+      List<String> allNodes = new ArrayList<String>();
+      Set<String> missingNodes = new HashSet<String>();
 
-      String hql = hqlBuilder.toString();
-
-      Query qTree = OBDal.getInstance().getSession().createQuery(hql);
-
-      String currentCharId = null;
-      JSONArray responseData = new JSONArray();
-      for (Object rawNode : qTree.list()) {
-        Object[] node = (Object[]) rawNode;
-        String charId = (String) node[CHAR_ID];
-
-        if (!charId.equals(currentCharId)) {
-          currentCharId = charId;
-          // new characteristic
-          JSONObject characteristic = new JSONObject();
-          characteristic.put("id", charId);
-          characteristic.put("_identifier", node[CHAR_NAME]);
-          characteristic.put("showOpenIcon", true);
-          characteristic.put("isCharacteristic", true);
-          characteristic
-              .put(
-                  "icon",
-                  "../web/org.openbravo.userinterface.smartclient/openbravo/skins/Default/org.openbravo.client.application/images/form/sectionItem-ico.png");
-          // TODO: skinnable icon
-          responseData.put(characteristic);
-        }
-
-        JSONObject value = new JSONObject();
-        String parentId = (String) node[VAL_PARENT];
-        parentId = "0".equals(parentId) ? charId : parentId;
-        value.put("id", node[VAL_ID]);
-        value.put("_identifier", node[VAL_NAME]);
-        value.put("parentId", parentId);
-        value.put("characteristic", charId);
-        value.put("characteristic$_identifier", node[CHAR_NAME]);
-
-        responseData.put(value);
-      }
+      JSONArray responseData = getAllNodes(parameters, parentGridEntity, productPath, allNodes,
+          missingNodes, false);
 
       final JSONObject jsonResult = new JSONObject();
       final JSONObject jsonResponse = new JSONObject();
@@ -122,6 +90,7 @@ public class ProductCharacteristicsDS extends DefaultDataSourceService {
       jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, responseData.length());
       jsonResponse.put(JsonConstants.RESPONSE_STARTROW, 0);
       jsonResponse.put(JsonConstants.RESPONSE_ENDROW, responseData.length() - 1);
+      jsonResponse.put(JsonConstants.ENTITYNAME, entityName);
       jsonResult.put(JsonConstants.RESPONSE_RESPONSE, jsonResponse);
 
       return jsonResult.toString();
@@ -131,6 +100,135 @@ public class ProductCharacteristicsDS extends DefaultDataSourceService {
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  private JSONArray getAllNodes(Map<String, String> parameters, Entity parentGridEntity,
+      String productPath, List<String> allNodes, Set<String> missingNodes, boolean addMissingNodes)
+      throws JSONException {
+
+    String gridWhereClause = null;
+    AdvancedQueryBuilder qb = null;
+    int initialNumOfMissingNodes = 0;
+    if (!addMissingNodes && parentGridEntity != null) {
+      final DataEntityQueryService queryService = OBProvider.getInstance().get(
+          DataEntityQueryService.class);
+
+      queryService.setEntityName(parentGridEntity.getName());
+      queryService.setFilterOnReadableOrganizations(true);
+      if (parameters.containsKey(JsonConstants.USE_ALIAS)) {
+        queryService.setUseAlias();
+      }
+
+      final JSONObject criteria = JsonUtils.buildCriteria(parameters);
+      queryService.setCriteria(criteria);
+
+      qb = queryService.getQueryBuilder();
+      qb.setMainAlias("e");
+      if (StringUtils.isNotBlank(qb.getWhereClause())) {
+        gridWhereClause = queryService.getWhereClause();
+      }
+    } else {
+      initialNumOfMissingNodes = missingNodes.size();
+    }
+
+    StringBuilder hqlBuilder = new StringBuilder();
+    hqlBuilder.append(" select c.id, c.name, v.id, v.name, tn.reportSet ");
+    hqlBuilder.append(" from ADTreeNode tn, ");
+    hqlBuilder.append("      CharacteristicValue v, ");
+    hqlBuilder.append("      Characteristic c ");
+    hqlBuilder.append(" where tn.tree.typeArea ='CH'");
+    hqlBuilder.append(" and tn.node = v.id");
+    if (addMissingNodes) {
+      hqlBuilder.append(" and v.id in (:missingNodes)");
+    }
+    hqlBuilder.append(" and v.characteristic = c");
+    hqlBuilder.append(this.getClientOrgFilter());
+
+    if (StringUtils.isNotBlank(gridWhereClause)) {
+      hqlBuilder.append("  and exists (from ProductCharacteristicValue pcv, " + parentGridEntity
+          + gridWhereClause + "  and pcv.characteristicValue = v and pcv.product = " + productPath
+          + ")");
+
+    }
+
+    hqlBuilder.append(" order by c.name, ");
+    hqlBuilder.append("          coalesce(tn.reportSet, '-1'), ");
+    hqlBuilder.append("          tn.sequenceNumber ");
+
+    String hql = hqlBuilder.toString();
+    log.info("HQL:\n " + hql);
+
+    Query qTree = OBDal.getInstance().getSession().createQuery(hql);
+    if (StringUtils.isNotBlank(gridWhereClause)) {
+      for (Entry<String, Object> param : qb.getNamedParameters().entrySet()) {
+        qTree.setParameter(param.getKey(), param.getValue());
+      }
+    } else if (addMissingNodes) {
+      qTree.setParameterList("missingNodes", missingNodes);
+    }
+
+    String currentCharId = null;
+    JSONArray responseData = new JSONArray();
+    for (Object rawNode : qTree.list()) {
+      Object[] node = (Object[]) rawNode;
+      String charId = (String) node[CHAR_ID];
+      String nodeId = (String) node[VAL_ID];
+
+      if (!charId.equals(currentCharId) && !allNodes.contains(charId)) {
+        currentCharId = charId;
+        // new characteristic
+        JSONObject characteristic = new JSONObject();
+        characteristic.put("id", charId);
+        characteristic.put("_identifier", node[CHAR_NAME]);
+        characteristic.put("showOpenIcon", true);
+        characteristic.put("isCharacteristic", true);
+        characteristic
+            .put(
+                "icon",
+                "../web/org.openbravo.userinterface.smartclient/openbravo/skins/Default/org.openbravo.client.application/images/form/sectionItem-ico.png");
+        // TODO: skinnable icon
+        responseData.put(characteristic);
+        allNodes.add(charId);
+      }
+
+      if (allNodes.contains(nodeId)) {
+        continue;
+      }
+
+      JSONObject value = new JSONObject();
+      String parentId = (String) node[VAL_PARENT];
+      parentId = "0".equals(parentId) ? charId : parentId;
+
+      value.put("id", nodeId);
+      value.put("_identifier", node[VAL_NAME]);
+      value.put("parentId", parentId);
+      value.put("characteristic", charId);
+      value.put("characteristic$_identifier", node[CHAR_NAME]);
+
+      allNodes.add(nodeId);
+      missingNodes.remove(nodeId);
+      if (!allNodes.contains(parentId)) {
+        missingNodes.add(parentId);
+      }
+
+      responseData.put(value);
+    }
+
+    if (missingNodes.size() > 0) {
+      // we can have missing nodes in case grid criteria has been applied, in this case query for
+      // them recursively
+      if (addMissingNodes && initialNumOfMissingNodes == missingNodes.size()) {
+        log.warn("Could not find all missing nodes in product characteristics {}", missingNodes);
+      } else {
+        JSONArray foundNodes = getAllNodes(parameters, parentGridEntity, productPath, allNodes,
+            missingNodes, true);
+        for (int i = 0; i < foundNodes.length(); i++) {
+          responseData.put(foundNodes.get(i));
+        }
+      }
+    }
+
+    return responseData;
   }
 
   private String getClientOrgFilter() {

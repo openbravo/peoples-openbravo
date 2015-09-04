@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2014 Openbravo SLU
+ * All portions are Copyright (C) 2013-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -344,7 +344,11 @@ isc.OBCharacteristicsFilterDialog.addProperties({
           treeField.escapeHTML = true;
           fields = [treeField];
         }
-        return this.Super("setDataSource", [ds, fields]);
+
+        ds.requestProperties.params._parentDSIdentifier = me.parentDSIdentifier;
+        ds.requestProperties.params._propertyPath = me.propertyName;
+
+        return this.Super('setDataSource', [ds, fields]);
       }
     });
 
@@ -408,6 +412,7 @@ isc.OBCharacteristicsFilterItem.addProperties({
   hqlExists: 'exists (from ProductCharacteristicValue v where {productInEntity} = v.product and v.characteristicValue.id in ($value))',
   showPickerIcon: false,
   filterDialogConstructor: isc.OBCharacteristicsFilterDialog,
+  propertyName: null,
   pickerIconDefaults: {
     name: 'showDateRange',
     src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/productCharacteristicsFilter_ico.png',
@@ -449,6 +454,7 @@ isc.OBCharacteristicsFilterItem.addProperties({
       _constructor: 'AdvancedCriteria',
       operator: 'and',
       internalValue: this.internalValue,
+      isProductCharacteristicsCriteria: true,
       criteria: []
     };
 
@@ -510,22 +516,34 @@ isc.OBCharacteristicsFilterItem.addProperties({
   },
 
   init: function () {
-    var propertyPath, propertyName, i;
+    var propertyPath, i, parentDSIdentifier = null;
 
     // Getting the product property in the entity we are filtering it.
     // It is obtained based on fieldName, in case its path is compound (i.e.
     // product$characteristicDescription), path is included up to the element
     // previous to the last one
-    propertyName = 'e'; // "e" is the base entity
+    this.propertyName = 'e'; // "e" is the base entity
     propertyPath = this.getFieldName().split(OB.Constants.FIELDSEPARATOR);
     for (i = 0; i < propertyPath.length - 1; i++) {
-      propertyName += '.' + propertyPath[i];
+      this.propertyName += '.' + propertyPath[i];
     }
-    this.hqlExists = this.hqlExists.replace('{productInEntity}', propertyName);
+    this.hqlExists = this.hqlExists.replace('{productInEntity}', this.propertyName);
+
+    if (this.grid.parentElement.view && this.grid.parentElement.view.viewGrid) {
+      this.parentGrid = this.grid.parentElement.view.viewGrid;
+    } else {
+      this.parentGrid = this.grid.parentElement;
+    }
+
+    if (this.parentGrid.getDataSource().dataURL.indexOf('org.openbravo.service.datasource') !== -1) {
+      parentDSIdentifier = this.parentGrid.getDataSource().dataURL.substr(this.parentGrid.getDataSource().dataURL.lastIndexOf('/') + 1);
+    }
 
     this.addAutoChild('filterDialog', {
       title: this.title,
-      callback: this.getID() + '.filterDialogCallback(value)'
+      callback: this.getID() + '.filterDialogCallback(value)',
+      parentDSIdentifier: parentDSIdentifier,
+      propertyName: this.propertyName
     });
 
     this.icons = [isc.addProperties({
@@ -535,7 +553,17 @@ isc.OBCharacteristicsFilterItem.addProperties({
     this.Super('init', arguments);
   },
 
+  removeProductCharacteristicsCriteria: function (fullCriteria) {
+    var newCriteria = isc.shallowClone(fullCriteria);
+    if (fullCriteria.criteria && fullCriteria.criteria.find('isProductCharacteristicsCriteria', true)) {
+      newCriteria.criteria.remove(newCriteria.criteria.find('isProductCharacteristicsCriteria', true));
+    }
+    return newCriteria;
+  },
+
   showDialog: function () {
+    var criteria = this.removeProductCharacteristicsCriteria(this.parentGrid.getCriteria());
+    this.filterDialog.tree.fetchData(criteria);
     this.filterDialog.show();
   },
 
