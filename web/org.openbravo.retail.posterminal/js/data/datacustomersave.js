@@ -88,6 +88,8 @@
             });
           } else {
             //create bploc from scratch
+            bpLocToSave.set('id', me.customer.get('locId'));
+            bpLocToSave.set('bpartner', me.customer.get('id'));
             bpLocToSave.set('name', me.customer.get('locName'));
             bpLocToSave.set('postalCode', me.customer.get('postalCode'));
             bpLocToSave.set('cityName', me.customer.get('cityName'));
