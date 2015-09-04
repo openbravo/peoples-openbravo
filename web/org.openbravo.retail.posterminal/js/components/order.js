@@ -949,6 +949,7 @@ enyo.kind({
           onHideFunction: function () {
             me.order.get('lines').remove(line);
             me.order.set('undo', null);
+            me.$.totalReceiptLine.renderQty();
           }
         });
       };
