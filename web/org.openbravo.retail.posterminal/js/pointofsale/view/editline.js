@@ -15,9 +15,11 @@ enyo.kind({
     style: 'clear: both;',
     components: [{
       classes: 'span4',
+      style: 'width: 95px;',
       name: 'propertyLabel'
     }, {
       classes: 'span8',
+      style: 'width: 60%;',
       components: [{
         tag: 'span',
         name: 'propertyValue'
@@ -320,7 +322,7 @@ enyo.kind({
         kind: 'OB.UI.List',
         name: 'returnreason',
         classes: 'combo',
-        style: 'width: 100%; margin-bottom: 0px; height: 30px ',
+        style: 'width: 90%; margin-bottom: 2px; margin-left: 2%; height: 30px ',
         events: {
           onSetReason: ''
         },
@@ -360,9 +362,9 @@ enyo.kind({
           maxHeight: '134px',
           thumb: true,
           horizontal: 'hidden',
-          style: 'padding: 8px 0px 4px 10px; line-height: 120%;'
+          style: 'padding: 1% 0px 2px 2%; line-height: 120%; width: 65%;'
         }, {
-          classes: 'span4',
+          classes: 'span3',
           sytle: 'text-align: right',
           components: [{
             style: 'padding: 2px 10px 10px 10px;',
