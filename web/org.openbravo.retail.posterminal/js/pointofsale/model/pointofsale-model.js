@@ -926,6 +926,13 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               dataBps.set('postalCode', bpLoc.get('postalCode'));
               dataBps.set('locationModel', bpLoc);
               OB.MobileApp.model.set('businessPartner', dataBps);
+              OB.Dal.remove(new OB.Model.BusinessPartner(dataBps), function () {
+                OB.Dal.save(dataBps, function () {}, function () {
+                  OB.error(arguments);
+                }, true);
+              }, function () {
+                OB.UTIL.showError('Error removing');
+              });
               me.loadUnpaidOrders(callback);
             };
             OB.Dal.get(OB.Model.BPLocation, partnerAddressId, successCallbackBPLoc, errorCallback, errorCallback);
@@ -950,6 +957,13 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                 dataBps.set('postalCode', bpLoc.get('postalCode'));
                 dataBps.set('locationModel', bpLoc);
                 OB.MobileApp.model.set('businessPartner', dataBps);
+                OB.Dal.remove(new OB.Model.BusinessPartner(dataBps), function () {
+                  OB.Dal.save(dataBps, function () {}, function () {
+                    OB.error(arguments);
+                  }, true);
+                }, function () {
+                  OB.UTIL.showError('Error removing');
+                });
                 me.loadUnpaidOrders(callback);
               };
               OB.Dal.get(OB.Model.BPLocation, dataBps.get('locId'), successCallbackBPLoc, errorCallback, errorCallback);

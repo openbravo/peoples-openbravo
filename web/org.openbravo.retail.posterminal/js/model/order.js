@@ -2243,6 +2243,13 @@
         }
       } else {
         this.set('bp', businessPartner);
+        OB.Dal.remove(new OB.Model.BusinessPartner(businessPartner), function () {
+          OB.Dal.save(businessPartner, function () {}, function () {
+            OB.error(arguments);
+          }, true);
+        }, function () {
+          OB.UTIL.showError('Error removing');
+        });
         this.save();
       }
       // set the undo action
