@@ -195,7 +195,7 @@ enyo.kind({
       name: "modalproductbrand"
     }, {
       kind: 'OB.UI.ModalCategoryTree',
-      name: "modalcategorytree"
+      name: 'modalcategorytree'
     }, {
       kind: 'OB.UI.ModalSearchFilterBuilder',
       name: 'modalsearchfilterbuilder'
