@@ -107,16 +107,21 @@
             bpToSave.set('c_bpartner_id', me.customer.get('id'));
           }
           bpToSave.set('isbeingprocessed', 'Y');
-          OB.Dal.save(bpToSave, function () {
-            bpToSave.set('json', me.customer.serializeToJSON());
-            var successCallback, errorCallback, List;
-            successCallback = function () {
-              OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_customerSaved', [me.customer.get('_identifier')]));
-            };
-            OB.MobileApp.model.runSyncProcess(successCallback);
-          }, function () {
-            //error saving BP changes with changes in changedbusinesspartners
-            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorSavingCustomerChanges', [me.customer.get('_identifier')]));
+          OB.UTIL.HookManager.executeHooks('OBPOS_PostCustomerSave', {
+            customer: me.customer,
+            bpToSave: bpToSave
+          }, function (args) {
+            OB.Dal.save(bpToSave, function () {
+              bpToSave.set('json', me.customer.serializeToJSON());
+              var successCallback, errorCallback, List;
+              successCallback = function () {
+                OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_customerSaved', [me.customer.get('_identifier')]));
+              };
+              OB.MobileApp.model.runSyncProcess(successCallback);
+            }, function () {
+              //error saving BP changes with changes in changedbusinesspartners
+              OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorSavingCustomerChanges', [me.customer.get('_identifier')]));
+            });
           });
         }, function () {
           //error saving BP with new values in c_bpartner
