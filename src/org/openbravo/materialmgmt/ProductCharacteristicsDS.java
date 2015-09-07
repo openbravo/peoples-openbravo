@@ -26,11 +26,15 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.Hibernate;
 import org.hibernate.Query;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBProvider;
@@ -38,13 +42,20 @@ import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBDao;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.RoleOrganization;
+import org.openbravo.service.datasource.DataSourceService;
+import org.openbravo.service.datasource.DataSourceServiceProvider;
 import org.openbravo.service.datasource.DefaultDataSourceService;
 import org.openbravo.service.json.AdvancedQueryBuilder;
 import org.openbravo.service.json.DataEntityQueryService;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonUtils;
+import org.openbravo.userinterface.selector.CustomQuerySelectorDatasource;
+import org.openbravo.userinterface.selector.Selector;
+import org.openbravo.userinterface.selector.SelectorConstants;
+import org.openbravo.userinterface.selector.SelectorField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,18 +79,20 @@ public class ProductCharacteristicsDS extends DefaultDataSourceService {
   final static int VAL_NAME = 3;
   final static int VAL_PARENT = 4;
 
+  @Inject
+  private DataSourceServiceProvider dataSourceServiceProvider;
+
   @Override
   public String fetch(Map<String, String> parameters) {
     OBContext.setAdminMode(true);
     try {
-      String entityName = parameters.get("_parentDSIdentifier");
+      String dsIdentifier = parameters.get("_parentDSIdentifier");
 
-      Entity parentGridEntity = ModelProvider.getInstance().getEntity(entityName, false);
       String productPath = parameters.get("_propertyPath");
       List<String> allNodes = new ArrayList<String>();
       Set<String> missingNodes = new HashSet<String>();
 
-      JSONArray responseData = getAllNodes(parameters, parentGridEntity, productPath, allNodes,
+      JSONArray responseData = getAllNodes(parameters, dsIdentifier, productPath, allNodes,
           missingNodes, false);
 
       final JSONObject jsonResult = new JSONObject();
@@ -90,7 +103,6 @@ public class ProductCharacteristicsDS extends DefaultDataSourceService {
       jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, responseData.length());
       jsonResponse.put(JsonConstants.RESPONSE_STARTROW, 0);
       jsonResponse.put(JsonConstants.RESPONSE_ENDROW, responseData.length() - 1);
-      jsonResponse.put(JsonConstants.ENTITYNAME, entityName);
       jsonResult.put(JsonConstants.RESPONSE_RESPONSE, jsonResponse);
 
       return jsonResult.toString();
@@ -102,30 +114,62 @@ public class ProductCharacteristicsDS extends DefaultDataSourceService {
     }
   }
 
-  private JSONArray getAllNodes(Map<String, String> parameters, Entity parentGridEntity,
+  private JSONArray getAllNodes(Map<String, String> parameters, String dsIdentifier,
       String productPath, List<String> allNodes, Set<String> missingNodes, boolean addMissingNodes)
       throws JSONException {
 
     String gridWhereClause = null;
+    String customSelectorWhereClause = null;
     AdvancedQueryBuilder qb = null;
     int initialNumOfMissingNodes = 0;
-    if (!addMissingNodes && parentGridEntity != null) {
-      final DataEntityQueryService queryService = OBProvider.getInstance().get(
-          DataEntityQueryService.class);
+    Entity parentGridEntity = null;
+    final List<Object> selectorParameters = new ArrayList<Object>();
+    if (!addMissingNodes && dsIdentifier != null) {
+      parentGridEntity = ModelProvider.getInstance().getEntity(dsIdentifier, false);
+      if (parentGridEntity != null) {
+        final DataEntityQueryService queryService = OBProvider.getInstance().get(
+            DataEntityQueryService.class);
 
-      queryService.setEntityName(parentGridEntity.getName());
-      queryService.setFilterOnReadableOrganizations(true);
-      if (parameters.containsKey(JsonConstants.USE_ALIAS)) {
-        queryService.setUseAlias();
-      }
+        queryService.setEntityName(parentGridEntity.getName());
+        queryService.setFilterOnReadableOrganizations(true);
+        if (parameters.containsKey(JsonConstants.USE_ALIAS)) {
+          queryService.setUseAlias();
+        }
 
-      final JSONObject criteria = JsonUtils.buildCriteria(parameters);
-      queryService.setCriteria(criteria);
+        final JSONObject criteria = JsonUtils.buildCriteria(parameters);
+        queryService.setCriteria(criteria);
 
-      qb = queryService.getQueryBuilder();
-      qb.setMainAlias("e");
-      if (StringUtils.isNotBlank(qb.getWhereClause())) {
-        gridWhereClause = queryService.getWhereClause();
+        qb = queryService.getQueryBuilder();
+        qb.setMainAlias("e");
+        if (StringUtils.isNotBlank(qb.getWhereClause())) {
+          gridWhereClause = queryService.getWhereClause();
+        }
+      } else {
+        // check if this is a custom HQL selector
+        DataSourceService ds = dataSourceServiceProvider.getDataSource(dsIdentifier);
+        if (ds != null && ds instanceof CustomQuerySelectorDatasource) {
+          CustomQuerySelectorDatasource selDS = (CustomQuerySelectorDatasource) ds;
+          String selectorId = parameters.get("_selectorDefinition");
+          Selector sel = OBDal.getInstance().get(Selector.class, selectorId);
+          List<SelectorField> fields = OBDao.getActiveOBObjectList(sel,
+              Selector.PROPERTY_OBUISELSELECTORFIELDLIST);
+
+          // Forcing object initialization to prevent LazyInitializationException in case session is
+          // cleared when number of records is big enough
+          Hibernate.initialize(fields);
+
+          // forces to use AND instead of OR in case of multiple fields with filter
+          parameters.put(SelectorConstants.DS_REQUEST_TYPE_PARAMETER, "Window");
+
+          customSelectorWhereClause = selDS.parseOptionalFilters(parameters, sel,
+              JsonUtils.createDateFormat(), selectorParameters);
+
+          if (StringUtils.isNotBlank(customSelectorWhereClause)
+              && customSelectorWhereClause.indexOf("from ") != -1) {
+            customSelectorWhereClause = customSelectorWhereClause
+                .substring(customSelectorWhereClause.indexOf("from ") + 5);
+          }
+        }
       }
     } else {
       initialNumOfMissingNodes = missingNodes.size();
@@ -149,6 +193,10 @@ public class ProductCharacteristicsDS extends DefaultDataSourceService {
           + gridWhereClause + "  and pcv.characteristicValue = v and pcv.product = " + productPath
           + ")");
 
+    } else if (StringUtils.isNotBlank(customSelectorWhereClause)) {
+      hqlBuilder.append("  and exists (from ProductCharacteristicValue pcv, "
+          + customSelectorWhereClause + "  and pcv.characteristicValue = v and pcv.product = "
+          + productPath + ")");
     }
 
     hqlBuilder.append(" order by c.name, ");
@@ -156,12 +204,35 @@ public class ProductCharacteristicsDS extends DefaultDataSourceService {
     hqlBuilder.append("          tn.sequenceNumber ");
 
     String hql = hqlBuilder.toString();
-    log.info("HQL:\n " + hql);
+    log.debug("HQL:\n " + hql);
 
-    Query qTree = OBDal.getInstance().getSession().createQuery(hql);
+    Query qTree;
+    try {
+      qTree = OBDal.getInstance().getSession().createQuery(hql);
+    } catch (Exception e) {
+      if (StringUtils.isNotBlank(customSelectorWhereClause)
+          || StringUtils.isNotBlank(gridWhereClause)) {
+        log.error(
+            "Error in product characteristics tree generated query, trying to generate it without parent grid limit {}",
+            hql, e);
+        // fallback: if it is not possible to restrict nodes to the filters applied in parent grid,
+        // try to at least show all nodes
+        return getAllNodes(parameters, null, productPath, allNodes, missingNodes, false);
+      } else {
+        throw new OBException(e);
+      }
+    }
     if (StringUtils.isNotBlank(gridWhereClause)) {
       for (Entry<String, Object> param : qb.getNamedParameters().entrySet()) {
         qTree.setParameter(param.getKey(), param.getValue());
+        log.debug("Param {}:{}", param.getKey(), param.getValue());
+      }
+    } else if (StringUtils.isNotBlank(customSelectorWhereClause)) {
+      for (int i = 0; i < selectorParameters.size(); i++) {
+        qTree.setParameter(CustomQuerySelectorDatasource.ALIAS_PREFIX + Integer.toString(i),
+            selectorParameters.get(i));
+        log.debug("Param {}:{}", CustomQuerySelectorDatasource.ALIAS_PREFIX + Integer.toString(i)
+            + " ", selectorParameters.get(i));
       }
     } else if (addMissingNodes) {
       qTree.setParameterList("missingNodes", missingNodes);
@@ -220,7 +291,7 @@ public class ProductCharacteristicsDS extends DefaultDataSourceService {
       if (addMissingNodes && initialNumOfMissingNodes == missingNodes.size()) {
         log.warn("Could not find all missing nodes in product characteristics {}", missingNodes);
       } else {
-        JSONArray foundNodes = getAllNodes(parameters, parentGridEntity, productPath, allNodes,
+        JSONArray foundNodes = getAllNodes(parameters, dsIdentifier, productPath, allNodes,
             missingNodes, true);
         for (int i = 0; i < foundNodes.length(); i++) {
           responseData.put(foundNodes.get(i));

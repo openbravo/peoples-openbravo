@@ -65,7 +65,7 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
   private static final String ADDITIONAL_FILTERS = "@additional_filters@";
   private static final String NEW_FILTER_CLAUSE = "\n AND ";
   private static final String NEW_OR_FILTER_CLAUSE = "\n OR ";
-  private static final String ALIAS_PREFIX = "alias_";
+  public static final String ALIAS_PREFIX = "alias_";
 
   @Override
   protected int getCount(Map<String, String> parameters) {
@@ -185,7 +185,7 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
    * @return a String with the HQL to be executed.
    */
 
-  private String parseOptionalFilters(Map<String, String> parameters, Selector sel,
+  public String parseOptionalFilters(Map<String, String> parameters, Selector sel,
       SimpleDateFormat xmlDateFormat, List<Object> typedParameters) {
     String HQL = sel.getHQL();
     if (!HQL.contains(ADDITIONAL_FILTERS)) {

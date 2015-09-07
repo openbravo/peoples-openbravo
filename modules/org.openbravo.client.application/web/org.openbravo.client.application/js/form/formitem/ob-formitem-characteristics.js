@@ -347,6 +347,7 @@ isc.OBCharacteristicsFilterDialog.addProperties({
 
         ds.requestProperties.params._parentDSIdentifier = me.parentDSIdentifier;
         ds.requestProperties.params._propertyPath = me.propertyName;
+        ds.requestProperties.params._selectorDefinition = me.selectorDefinition;
 
         return this.Super('setDataSource', [ds, fields]);
       }
@@ -516,7 +517,8 @@ isc.OBCharacteristicsFilterItem.addProperties({
   },
 
   init: function () {
-    var propertyPath, i, parentDSIdentifier = null;
+    var propertyPath, i, parentDSIdentifier = null,
+        selectorDefinition = null;
 
     // Getting the product property in the entity we are filtering it.
     // It is obtained based on fieldName, in case its path is compound (i.e.
@@ -539,10 +541,16 @@ isc.OBCharacteristicsFilterItem.addProperties({
       parentDSIdentifier = this.parentGrid.getDataSource().dataURL.substr(this.parentGrid.getDataSource().dataURL.lastIndexOf('/') + 1);
     }
 
+    if (this.parentGrid.selector) {
+      // parent grid is a selector
+      selectorDefinition = this.parentGrid.selector.selectorDefinitionId;
+    }
+
     this.addAutoChild('filterDialog', {
       title: this.title,
       callback: this.getID() + '.filterDialogCallback(value)',
       parentDSIdentifier: parentDSIdentifier,
+      selectorDefinition: selectorDefinition,
       propertyName: this.propertyName
     });
 
