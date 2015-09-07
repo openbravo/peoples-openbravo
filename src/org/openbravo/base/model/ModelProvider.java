@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -37,6 +37,7 @@ import org.hibernate.Transaction;
 import org.hibernate.classic.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.base.ConnectionProviderContextListener;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.domaintype.BaseDomainType;
 import org.openbravo.base.model.domaintype.ForeignKeyDomainType;
@@ -355,8 +356,14 @@ public class ModelProvider implements OBSingleton {
   private void initializeReferenceClasses(ModelSessionFactoryController sessionFactoryController) {
     ConnectionProviderImpl con = null;
     Connection connection = null;
+    boolean createdNewPool = false;
     try {
-      con = new ConnectionProviderImpl(OBPropertiesProvider.getInstance().getOpenbravoProperties());
+      con = (ConnectionProviderImpl) ConnectionProviderContextListener.getPool();
+      if (con == null) {
+        con = new ConnectionProviderImpl(OBPropertiesProvider.getInstance()
+            .getOpenbravoProperties());
+        createdNewPool = true;
+      }
       connection = con.getConnection();
       PreparedStatement ps = null;
       try {
@@ -389,7 +396,7 @@ public class ModelProvider implements OBSingleton {
         // do nothing
       }
       try {
-        if (con != null) {
+        if (con != null && createdNewPool) {
           con.destroy();
         }
       } catch (Exception e) {

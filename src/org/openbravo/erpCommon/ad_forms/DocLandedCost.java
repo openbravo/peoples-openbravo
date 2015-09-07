@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -24,11 +24,15 @@ import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
+import org.openbravo.model.materialmgmt.cost.LCReceiptLineAmt;
+import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 
 public class DocLandedCost extends AcctServer {
 
@@ -51,8 +55,8 @@ public class DocLandedCost extends AcctServer {
     super(AD_Client_ID, AD_Org_ID, connectionProvider);
   }
 
-  public void loadObjectFieldProvider(ConnectionProvider conn,
-      @SuppressWarnings("hiding") String AD_Client_ID, String Id) throws ServletException {
+  public void loadObjectFieldProvider(ConnectionProvider conn, @SuppressWarnings("hiding")
+  String AD_Client_ID, String Id) throws ServletException {
     setObjectFieldProvider(DocLandedCostData.selectRegistro(conn, AD_Client_ID, Id));
   }
 
@@ -179,9 +183,21 @@ public class DocLandedCost extends AcctServer {
       amtDebit = "";
       amtCredit = amount.toString();
 
-      fact.createLine(line, p.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
-          line.m_C_Currency_ID, amtCredit, amtDebit, fact_Acct_Group_ID, nextSeqNo(SeqNo),
-          DocumentType, line.m_DateAcct, null, conn);
+      // If transaction uses Standard Algorithm IPD account will be used, else Asset account
+      LCReceiptLineAmt landedCostReceiptLine = OBDal.getInstance().get(LCReceiptLineAmt.class,
+          line.m_TrxLine_ID);
+      MaterialTransaction transaction = landedCostReceiptLine.getGoodsShipmentLine()
+          .getMaterialMgmtMaterialTransactionList().get(0);
+      Account account = null;
+      if (StringUtils.equals(transaction.getCostingAlgorithm().getJavaClassName(),
+          "org.openbravo.costing.StandardAlgorithm")) {
+        account = p.getAccount(ProductInfo.ACCTTYPE_P_IPV, as, conn);
+      } else {
+        account = p.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn);
+      }
+
+      fact.createLine(line, account, line.m_C_Currency_ID, amtCredit, amtDebit, fact_Acct_Group_ID,
+          nextSeqNo(SeqNo), DocumentType, line.m_DateAcct, null, conn);
 
       DocLine line2 = new DocLine(DocumentType, Record_ID, line.m_TrxLine_ID);
       line2.copyInfo(line);

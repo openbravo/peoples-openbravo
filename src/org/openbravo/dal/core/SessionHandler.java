@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2015 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,6 +27,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.FlushMode;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.provider.OBNotSingleton;
@@ -56,7 +57,7 @@ public class SessionHandler implements OBNotSingleton {
   {
     String poolClassName = OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .getProperty("db.externalPoolClassName");
-    if (poolClassName != null) {
+    if (poolClassName != null && !"".equals(poolClassName)) {
       try {
         externalConnectionPool = ExternalConnectionPool.getInstance(poolClassName);
       } catch (Throwable e) {
@@ -136,19 +137,26 @@ public class SessionHandler implements OBNotSingleton {
   }
 
   protected Session createSession() {
+    SessionFactory sf = SessionFactoryController.getInstance().getSessionFactory();
     // Checks if the session connection has to be obtained using an external connection pool
     if (externalConnectionPool != null && this.getConnection() == null) {
       Connection externalConnection = externalConnectionPool.getConnection();
+      try {
+        // Autocommit is disabled because DAL is taking into account his logical and DAL is setting
+        // autoCommint to false to maintain transactional way of working.
+        externalConnection.setAutoCommit(false);
+      } catch (SQLException e) {
+        log.error("Error setting this connection's to auto-commit mode", e);
+      }
       this.setConnection(externalConnection);
     }
     if (this.connection != null) {
       // If the connection has been obtained using an external connection pool it is passed to
       // openSession, to prevent a new connection to be created using the Hibernate default
       // connection pool
-      return SessionFactoryController.getInstance().getSessionFactory()
-          .openSession(this.connection);
+      return sf.openSession(this.connection);
     } else {
-      return SessionFactoryController.getInstance().getSessionFactory().openSession();
+      return sf.openSession();
     }
   }
 

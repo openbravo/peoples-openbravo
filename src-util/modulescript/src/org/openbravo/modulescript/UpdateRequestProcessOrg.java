@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -30,12 +30,16 @@ public class UpdateRequestProcessOrg extends ModuleScript {
   @Override
   public void execute() {
     try {    	
-    	  ConnectionProvider cp = getConnectionProvider();
-    	  if("P".equals(UpdateRequestProcessOrgData.getModuleStatus(cp))) {
-    	    UpdateRequestProcessOrgData.createPreference(cp);
-    	  }        
-        }catch (Exception e) {
-             handleError(e);
-        }
+      ConnectionProvider cp = getConnectionProvider();
+      UpdateRequestProcessOrgData.createPreference(cp);
+    } catch (Exception e) {
+      handleError(e);
+    }
+  }
+  
+  @Override
+  protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
+    return new ModuleScriptExecutionLimits("0", null, 
+        new OpenbravoVersion(0,0,0));
   }
 }

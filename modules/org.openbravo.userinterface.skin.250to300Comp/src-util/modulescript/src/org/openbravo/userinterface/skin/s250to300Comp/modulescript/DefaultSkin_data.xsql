@@ -12,23 +12,13 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011 Openbravo SLU
+ * All portions are Copyright (C) 2011-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
 -->
 <SqlClass name="DefaultSkinData" package="org.openbravo.userinterface.skin.s250to300Comp.modulescript">
-   <SqlMethod name="isUpdating" type="preparedStatement" return="boolean">
-    <Sql>
-      <![CDATA[
-      select count(*) as t
-        from ad_module_dependency
-       where ad_module_id = '96998CBC42744B3DBEE28AC8095C9335'
-      ]]>
-    </Sql>
-  </SqlMethod>
-  
-  <SqlMethod name="selectCurrentSkin" type="preparedStatement" return="string">
+   <SqlMethod name="selectCurrentSkin" type="preparedStatement" return="string">
     <Sql><![CDATA[
        SELECT tad_theme as t
        FROM AD_system

@@ -25,7 +25,6 @@
   v_xTree_ID VARCHAR2(32);
   v_xParent_ID VARCHAR2(32);
   TYPE RECORD IS REF CURSOR;
-    CUR_PeriodControl RECORD;
     v_count NUMBER;
 
 BEGIN

@@ -46,6 +46,12 @@ public class Locator extends HttpSecureAppServlet {
       "priorityno", "isdefault", "rowkey" };
   private static final RequestFilter columnFilter = new ValueListFilter(colNames);
   private static final RequestFilter directionFilter = new ValueListFilter("asc", "desc");
+  private static final String WINDOWID_GOODSRECEIPT = "184";
+  private static final String WINDOWID_GOODSSHIPMENT = "169";
+  private static final String WINDOWID_INCOMINGSHIPMENT = "800013";
+  private static final String WINDOWID_OUTGOINGSHIPMENT = "800014";
+  private static final String WINDOWID_PHYSICALINVENTORY = "168";
+  private static final String WINDOWID_GOODSMOVEMENT = "170";
 
   public void init(ServletConfig config) {
     super.init(config);
@@ -62,33 +68,30 @@ public class Locator extends HttpSecureAppServlet {
       String strWarehouse = "";
       String windowId = vars.getRequestGlobalVariable("WindowID", "Locator.windowId");
 
-      if (!windowId.equals("") && windowId != null) {
+      if (windowId != null && !windowId.equals("")) {
         strWarehouse = LocatorData.selectname(this,
             Utility.getContext(this, vars, "M_Warehouse_ID", windowId));
       }
-      if ("168".equals(windowId)) {
-        strWarehouse = LocatorData.selectname(this,
-            vars.getGlobalVariable("inpmWarehouseId", "168|m_warehouse_id", ""));
-      }
+
       strName = strName + "%";
       strWarehouse = strWarehouse + "%";
+      String strOrg = vars.getGlobalVariable("inpadOrgId", "Locator.adorgid", "");
+      if (strOrg == null || "".equals(strOrg)) {
+        if (WINDOWID_GOODSRECEIPT.equals(windowId) || WINDOWID_GOODSSHIPMENT.equals(windowId)
+            || WINDOWID_INCOMINGSHIPMENT.equals(windowId)
+            || WINDOWID_OUTGOINGSHIPMENT.equals(windowId)) {
+          strOrg = vars.getGlobalVariable("inpadOrgId", "CreateFrom|adOrgId", "");
+        } else if (WINDOWID_PHYSICALINVENTORY.equals(windowId)
+            || WINDOWID_GOODSMOVEMENT.equals(windowId)) {
+          strOrg = vars.getGlobalVariable("inpadOrgId", windowId + "|ad_org_id", "");
+        } else {
+          strOrg = vars.getStringParameter("paramOrgTree");
+        }
+      }
+
       vars.setSessionValue("Locator.name", strName);
       vars.setSessionValue("Locator.warehousename", strWarehouse);
-      String strOrg = vars.getGlobalVariable("inpadOrgId", "Locator.adorgid", "");
       vars.setSessionValue("Locator.adorgid", strOrg);
-      if ("".equals(strOrg) || strOrg == null) {
-        if ("184".equals(windowId) || "169".equals(windowId) || "800013".equals(windowId)
-            || "800014".equals(windowId)) {
-          strOrg = vars.getGlobalVariable("inpadOrgId", "CreateFrom|adOrgId", "");
-        }
-        if ("168".equals(windowId)) {
-          strOrg = vars.getGlobalVariable("inpadOrgId", "168|ad_org_id", "");
-        }
-
-      }
-      if ("".equals(strOrg) || strOrg == null) {
-        strOrg = vars.getStringParameter("paramOrgTree");
-      }
       printPage(response, vars, strName, strWarehouse, strOrg);
     } else if (vars.commandIn("KEY")) {
       removePageSessionVariables(vars);

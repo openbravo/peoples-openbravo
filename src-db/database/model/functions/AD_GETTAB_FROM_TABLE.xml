@@ -29,7 +29,6 @@
   -- Logistice
   v_count NUMBER;
   v_return VARCHAR2(32);
-  v_record_ID VARCHAR2(32);
  
 BEGIN
 

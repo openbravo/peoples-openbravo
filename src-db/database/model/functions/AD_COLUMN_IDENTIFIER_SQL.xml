@@ -21,7 +21,6 @@
 * Contributor(s):  ______________________________________.
 ************************************************************************/
   v_KeyName     VARCHAR2(50) ;
-  v_Value       VARCHAR2(4000) ;
   v_SQL         VARCHAR2(4000):='';
   v_firstColumn BOOLEAN:=TRUE;
   TYPE RECORD IS REF CURSOR;

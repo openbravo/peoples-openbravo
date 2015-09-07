@@ -28,6 +28,7 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
@@ -48,6 +49,7 @@ import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.common.currency.ConversionRate;
 import org.openbravo.model.common.currency.ConversionRateDoc;
 import org.openbravo.model.common.currency.Currency;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.materialmgmt.cost.CostAdjustment;
 import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
 import org.openbravo.model.materialmgmt.cost.LCDistributionAlgorithm;
@@ -57,6 +59,7 @@ import org.openbravo.model.materialmgmt.cost.LCReceiptLineAmt;
 import org.openbravo.model.materialmgmt.cost.LandedCost;
 import org.openbravo.model.materialmgmt.cost.LandedCostCost;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
+import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,14 +97,23 @@ public class LandedCostProcess {
       log.debug("Start Distribute Amounts");
       distributeAmounts(landedCost);
       log.debug("Start generateCostAdjustment");
-      CostAdjustment ca = generateCostAdjustment(landedCost.getId(), message);
 
       landedCost = OBDal.getInstance().get(LandedCost.class, landedCost.getId());
-      landedCost.setCostAdjustment(ca);
+
+      // If active costing rule uses Standard Algorithm, cost adjustment will not be created
+      Organization org = OBContext.getOBContext()
+          .getOrganizationStructureProvider(landedCost.getClient().getId())
+          .getLegalEntity(landedCost.getOrganization());
+      if (!StringUtils.equals(CostingUtils.getCostDimensionRule(org, new Date())
+          .getCostingAlgorithm().getJavaClassName(), "org.openbravo.costing.StandardAlgorithm")) {
+        CostAdjustment ca = generateCostAdjustment(landedCost.getId(), message);
+        landedCost.setCostAdjustment(ca);
+        message.put("documentNo", ca.getDocumentNo());
+      }
+
       landedCost.setDocumentStatus("CO");
       landedCost.setProcessed(Boolean.TRUE);
       OBDal.getInstance().save(landedCost);
-      message.put("documentNo", ca.getDocumentNo());
     } catch (JSONException ignore) {
     } finally {
       OBContext.restorePreviousMode();
@@ -127,23 +139,20 @@ public class LandedCostProcess {
 
     // Check that all related receipt lines with movementqty >=0 have their cost already calculated.
     StringBuffer where = new StringBuffer();
-    where.append(" as lcr ");
+    where.append("\n  as lcr ");
     where.append("\n  left join lcr." + LCReceipt.PROPERTY_GOODSSHIPMENT + " lcrr");
     where.append("\n  left join lcr." + LCReceipt.PROPERTY_GOODSSHIPMENTLINE + " lcrrl");
-    where.append("\n where exists (");
-    where.append("\n  select 1");
-    where.append("\n   from " + MaterialTransaction.ENTITY_NAME + " as trx");
-    where.append("\n     join trx." + MaterialTransaction.PROPERTY_GOODSSHIPMENTLINE + " as iol");
-    where.append("\n   where trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = false");
-    where.append("\n   and iol." + ShipmentInOutLine.PROPERTY_MOVEMENTQUANTITY + " >= 0");
-    where.append("\n   and (lcrrl is null");
-    where.append("\n        or iol = lcrrl)");
-    where.append("\n   and (lcrr is null");
-    where.append("\n        or (lcrrl is null ");
-    where.append("\n            and iol." + ShipmentInOutLine.PROPERTY_SHIPMENTRECEIPT + " = lcrr");
-    where.append("\n          ))");
-    where.append("\n   )");
-    where.append("\n   and lcr." + LCReceipt.PROPERTY_LANDEDCOST + " = :landedcost");
+    where.append("\n  where exists (");
+    where.append("\n    select 1");
+    where.append("\n    from " + MaterialTransaction.ENTITY_NAME + " as trx");
+    where.append("\n    join trx." + MaterialTransaction.PROPERTY_GOODSSHIPMENTLINE + " as iol");
+    where.append("\n    join iol." + ShipmentInOutLine.PROPERTY_SHIPMENTRECEIPT + " as io");
+    where.append("\n    where trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = false");
+    where.append("\n    and iol." + ShipmentInOutLine.PROPERTY_MOVEMENTQUANTITY + " >= 0");
+    where.append("\n    and ((lcrrl is not null and lcrrl = iol)");
+    where.append("\n    or (lcrrl is null and lcrr = io))");
+    where.append("\n  )");
+    where.append("\n  and lcr." + LCReceipt.PROPERTY_LANDEDCOST + " = :landedcost");
     OBQuery<LCReceipt> qryTrx = OBDal.getInstance().createQuery(LCReceipt.class, where.toString());
     qryTrx.setNamedParameter("landedcost", landedCost);
     if (qryTrx.count() > 0) {
@@ -208,18 +217,25 @@ public class LandedCostProcess {
     hql.append(" select sum(rla." + LCReceiptLineAmt.PROPERTY_AMOUNT + ") as amt");
     hql.append("   , rla." + LCReceiptLineAmt.PROPERTY_LANDEDCOSTCOST
         + ".currency.id as lcCostCurrency");
-    hql.append("   , rla." + LCReceipt.PROPERTY_GOODSSHIPMENTLINE + ".id as receipt");
+    hql.append("   , gsl." + ShipmentInOutLine.PROPERTY_ID + " as receipt");
     hql.append("   , (select " + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " from "
         + MaterialTransaction.ENTITY_NAME + " as transaction where "
-        + MaterialTransaction.PROPERTY_GOODSSHIPMENTLINE + ".id = rla."
-        + LCReceipt.PROPERTY_GOODSSHIPMENTLINE + ".id) as trxprocessdate");
+        + MaterialTransaction.PROPERTY_GOODSSHIPMENTLINE + ".id = gsl."
+        + ShipmentInOutLine.PROPERTY_ID + ") as trxprocessdate");
     hql.append(" from " + LCReceiptLineAmt.ENTITY_NAME + " as rla");
     hql.append("   join rla." + LCReceiptLineAmt.PROPERTY_LANDEDCOSTRECEIPT + " as rl");
+    hql.append("   join rl." + LCReceipt.PROPERTY_GOODSSHIPMENT + " as gs");
+    hql.append("   join rla." + LCReceiptLineAmt.PROPERTY_GOODSSHIPMENTLINE + " as gsl");
     hql.append(" where rl." + LCReceipt.PROPERTY_LANDEDCOST + " = :lc");
     hql.append("   and rla." + LCReceiptLineAmt.PROPERTY_ISMATCHINGADJUSTMENT + " = false ");
     hql.append(" group by rla." + LCReceiptLineAmt.PROPERTY_LANDEDCOSTCOST + ".currency.id");
-    hql.append(" , rla." + LCReceipt.PROPERTY_GOODSSHIPMENTLINE + ".id");
-    hql.append(" order by trxprocessdate, amt");
+    hql.append(" , gsl." + ShipmentInOutLine.PROPERTY_ID);
+    hql.append(" , gs." + ShipmentInOut.PROPERTY_DOCUMENTNO);
+    hql.append(" , gsl." + ShipmentInOutLine.PROPERTY_LINENO);
+    hql.append(" order by trxprocessdate");
+    hql.append(" , gs." + ShipmentInOut.PROPERTY_DOCUMENTNO);
+    hql.append(" , gsl." + ShipmentInOutLine.PROPERTY_LINENO);
+    hql.append(" , amt");
 
     Query qryLCRLA = OBDal.getInstance().getSession().createQuery(hql.toString());
     qryLCRLA.setParameter("lc", landedCost);
@@ -334,6 +350,5 @@ public class LandedCostProcess {
       matchedAmt = lcc.getAmount();
     }
     lcc.setMatchingAmount(matchedAmt);
-    OBDal.getInstance().save(lcc);
   }
 }

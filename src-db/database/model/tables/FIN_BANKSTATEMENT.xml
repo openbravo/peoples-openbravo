@@ -96,6 +96,9 @@
       <foreign-key foreignTable="FIN_RECONCILIATION" name="FIN_BANKSTAT_FINRECONCILIATION">
         <reference local="FIN_RECONCILIATION_ID" foreign="FIN_RECONCILIATION_ID"/>
       </foreign-key>
+      <index name="FIN_BANKSTATEMENT_POSTED" unique="false">
+        <index-column name="POSTED"/>
+      </index>
       <index name="FIN_BNKSTMT_FINACCT_IDX" unique="false">
         <index-column name="FIN_FINANCIAL_ACCOUNT_ID"/>
       </index>

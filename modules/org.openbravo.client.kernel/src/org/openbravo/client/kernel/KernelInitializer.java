@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -68,7 +68,7 @@ public class KernelInitializer {
     // If an external connection pool is used, its injected interceptors are added to the pool
     String poolClassName = OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .getProperty("db.externalPoolClassName");
-    if (poolClassName != null) {
+    if (poolClassName != null && !"".equals(poolClassName)) {
       try {
         ExternalConnectionPool pool = ExternalConnectionPool.getInstance(poolClassName);
         List<PoolInterceptorProvider> poolInterceptorList = new ArrayList<PoolInterceptorProvider>();

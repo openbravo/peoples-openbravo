@@ -72,6 +72,9 @@ public class DefaultJsonDataService implements JsonDataService {
 
   private static final String ADD_FLAG = "_doingAdd";
 
+  @Inject
+  private UnpagedRequestCachedPreference unpagedRequestPreference;
+
   private static DefaultJsonDataService instance = WeldUtils
       .getInstanceFromStaticBeanManager(DefaultJsonDataService.class);
 
@@ -142,6 +145,8 @@ public class DefaultJsonDataService implements JsonDataService {
         @SuppressWarnings("unchecked")
         Map<String, String> paramsCount = (Map<String, String>) ((HashMap<String, String>) parameters)
             .clone();
+        // _isWsCall can not be used as an URL parameter, we prevent its usage by removing it
+        paramsCount.remove(JsonConstants.IS_WS_CALL);
         DataEntityQueryService queryService = createSetQueryService(paramsCount, true);
         queryService.setEntityName(entityName);
 
@@ -182,8 +187,8 @@ public class DefaultJsonDataService implements JsonDataService {
         if (parameters.containsKey(JsonConstants.SUMMARY_PARAMETER)) {
           final JSONObject singleResult = new JSONObject();
           if (queryService.getSummaryFields().size() == 1) {
-            singleResult.put(queryService.getSummaryFields().get(0),
-                queryService.buildOBQuery().createQuery().uniqueResult());
+            singleResult.put(queryService.getSummaryFields().get(0), queryService.buildOBQuery()
+                .createQuery().uniqueResult());
           } else {
             final Object[] os = (Object[]) queryService.buildOBQuery().createQuery().uniqueResult();
             int i = 0;
@@ -229,8 +234,8 @@ public class DefaultJsonDataService implements JsonDataService {
         }
 
         jsonResponse.put(JsonConstants.RESPONSE_STARTROW, startRow);
-        jsonResponse.put(JsonConstants.RESPONSE_ENDROW,
-            (bobs.size() > 0 ? bobs.size() + startRow - 1 : 0));
+        jsonResponse.put(JsonConstants.RESPONSE_ENDROW, (bobs.size() > 0 ? bobs.size() + startRow
+            - 1 : 0));
         // bobs can be empty and count > 0 if the order by forces a join without results
         if (bobs.isEmpty()) {
           if (startRow > 0) {
@@ -245,12 +250,11 @@ public class DefaultJsonDataService implements JsonDataService {
         }
       }
 
-      final DataToJsonConverter toJsonConverter = OBProvider.getInstance()
-          .get(DataToJsonConverter.class);
+      final DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(
+          DataToJsonConverter.class);
       toJsonConverter.setAdditionalProperties(JsonUtils.getAdditionalProperties(parameters));
       toJsonConverter.setSelectedProperties(selectedProperties);
-      if (StringUtils.isNotEmpty(displayField)
-          && (!displayField.equals(JsonConstants.IDENTIFIER))) {
+      if (StringUtils.isNotEmpty(displayField) && (!displayField.equals(JsonConstants.IDENTIFIER))) {
         toJsonConverter.setDisplayProperty(displayField);
       }
       final List<JSONObject> jsonObjects = toJsonConverter.toJsonObjects(bobs);
@@ -276,8 +280,8 @@ public class DefaultJsonDataService implements JsonDataService {
 
     String selectedProperties = parameters.get(JsonConstants.SELECTEDPROPERTIES_PARAMETER);
 
-    final DataToJsonConverter toJsonConverter = OBProvider.getInstance()
-        .get(DataToJsonConverter.class);
+    final DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(
+        DataToJsonConverter.class);
     toJsonConverter.setAdditionalProperties(JsonUtils.getAdditionalProperties(parameters));
     // Convert to Json only the properties specified in the request. If no properties are specified,
     // all of them will be converted to Json
@@ -303,8 +307,7 @@ public class DefaultJsonDataService implements JsonDataService {
         // Clear session every 1000 records to prevent huge memory consumption in case of big loops
         if (i % 1000 == 0) {
           OBDal.getInstance().getSession().clear();
-          log.debug(
-              "clearing in record " + i + " elapsed time " + (System.currentTimeMillis() - t));
+          log.debug("clearing in record " + i + " elapsed time " + (System.currentTimeMillis() - t));
         }
       }
     } finally {
@@ -322,8 +325,8 @@ public class DefaultJsonDataService implements JsonDataService {
       boolean forCountOperation, boolean forSubEntity, boolean filterOnReadableOrganizations) {
     boolean hasSubentity = false;
     String entityName = parameters.get(JsonConstants.ENTITYNAME);
-    final DataEntityQueryService queryService = OBProvider.getInstance()
-        .get(DataEntityQueryService.class);
+    final DataEntityQueryService queryService = OBProvider.getInstance().get(
+        DataEntityQueryService.class);
 
     if (!forSubEntity && parameters.get(JsonConstants.DISTINCT_PARAMETER) != null) {
       // this is the main entity of a 'contains' (used in FK drop down lists), it will create also
@@ -335,12 +338,12 @@ public class DefaultJsonDataService implements JsonDataService {
         // Showing the records unfiltered improves the performance if the referenced table has just
         // a few records and the referencing table has lots
         final String distinctPropertyPath = parameters.get(JsonConstants.DISTINCT_PARAMETER);
-        final Property distinctProperty = DalUtil.getPropertyFromPath(
-            ModelProvider.getInstance().getEntity(entityName), distinctPropertyPath);
+        final Property distinctProperty = DalUtil.getPropertyFromPath(ModelProvider.getInstance()
+            .getEntity(entityName), distinctPropertyPath);
         final Entity distinctEntity = distinctProperty.getTargetEntity();
         queryService.setEntityName(distinctEntity.getName());
-        queryService.addFilterParameter(JsonConstants.SHOW_FK_DROPDOWN_UNFILTERED_PARAMETER,
-            "true");
+        queryService
+            .addFilterParameter(JsonConstants.SHOW_FK_DROPDOWN_UNFILTERED_PARAMETER, "true");
         queryService.setFilterOnReadableOrganizations(filterOnReadableOrganizations);
         if (parameters.containsKey(JsonConstants.USE_ALIAS)) {
           queryService.setUseAlias();
@@ -355,8 +358,8 @@ public class DefaultJsonDataService implements JsonDataService {
           for (String criterion : criteria.split(JsonConstants.IN_PARAMETER_SEPARATOR)) {
             try {
               JSONObject jsonCriterion = new JSONObject(criterion);
-              if (jsonCriterion.getString("fieldName")
-                  .equals(distinctPropertyPath + "$" + JsonConstants.IDENTIFIER)) {
+              if (jsonCriterion.getString("fieldName").equals(
+                  distinctPropertyPath + "$" + JsonConstants.IDENTIFIER)) {
                 jsonCriterion.put("fieldName", JsonConstants.IDENTIFIER);
                 baseCriteria = jsonCriterion.toString();
               }
@@ -376,8 +379,8 @@ public class DefaultJsonDataService implements JsonDataService {
       } else {
 
         final String distinctPropertyPath = parameters.get(JsonConstants.DISTINCT_PARAMETER);
-        final Property distinctProperty = DalUtil.getPropertyFromPath(
-            ModelProvider.getInstance().getEntity(entityName), distinctPropertyPath);
+        final Property distinctProperty = DalUtil.getPropertyFromPath(ModelProvider.getInstance()
+            .getEntity(entityName), distinctPropertyPath);
         final Entity distinctEntity = distinctProperty.getTargetEntity();
 
         // criteria needs to be split in two parts:
@@ -391,8 +394,8 @@ public class DefaultJsonDataService implements JsonDataService {
           for (String criterion : criteria.split(JsonConstants.IN_PARAMETER_SEPARATOR)) {
             try {
               JSONObject jsonCriterion = new JSONObject(criterion);
-              if (jsonCriterion.getString("fieldName")
-                  .equals(distinctPropertyPath + "$" + JsonConstants.IDENTIFIER)) {
+              if (jsonCriterion.getString("fieldName").equals(
+                  distinctPropertyPath + "$" + JsonConstants.IDENTIFIER)) {
                 jsonCriterion.put("fieldName", JsonConstants.IDENTIFIER);
                 baseCriteria = jsonCriterion.toString();
               } else {
@@ -434,9 +437,10 @@ public class DefaultJsonDataService implements JsonDataService {
         queryService.setFilterOnActive(false);
 
         // create now subentity
-        queryService.setSubEntity(entityName, createSetQueryService(paramSubCriteria,
-            forCountOperation, true, filterOnReadableOrganizations), distinctProperty,
-            distinctPropertyPath);
+        queryService.setSubEntity(
+            entityName,
+            createSetQueryService(paramSubCriteria, forCountOperation, true,
+                filterOnReadableOrganizations), distinctProperty, distinctPropertyPath);
       }
     } else {
       queryService.setEntityName(entityName);
@@ -456,11 +460,16 @@ public class DefaultJsonDataService implements JsonDataService {
       log.warn("Fetching data without pagination, this can cause perfomance issues. Parameters: "
           + convertParameterToString(parameters));
 
+      boolean isWsCall = parameters.containsKey(JsonConstants.IS_WS_CALL)
+          && "true".equals(parameters.get(JsonConstants.IS_WS_CALL));
+
       if (parameters.containsKey(JsonConstants.TAB_PARAMETER)
           || parameters.containsKey(SelectorConstants.DS_REQUEST_SELECTOR_ID_PARAMETER)) {
 
         // for standard tab and selector datasources pagination is mandatory
         throw new OBException(OBMessageUtils.messageBD("OBJSON_NoPagedFetch"));
+      } else if (!"Y".equals(unpagedRequestPreference.getPreferenceValue()) && !isWsCall) {
+        throw new OBException(OBMessageUtils.messageBD("OBJSON_NoPagedFetchManual"));
       }
     }
 
@@ -472,19 +481,19 @@ public class DefaultJsonDataService implements JsonDataService {
         && parameters.get(JsonConstants.TARGETRECORDID_PARAMETER) != null
         && !"null".equals(parameters.get(JsonConstants.TARGETRECORDID_PARAMETER))
         && !"true".equals(parameters.get("_directNavigation"))) {
-      log.warn(
-          "Datasource request with targetRecordId but without directNavigation detected. This type of requests should be avoided because they result in a query that performs poorly. Parameters: "
-              + convertParameterToString(parameters));
+      log.warn("Datasource request with targetRecordId but without directNavigation detected. This type of requests should be avoided because they result in a query that performs poorly. Parameters: "
+          + convertParameterToString(parameters));
     }
 
     if (!directNavigation) {
       // set the where/org filter parameters and the @ parameters
       for (String key : parameters.keySet()) {
-        if (key.equals(JsonConstants.WHERE_PARAMETER) || key.equals(JsonConstants.IDENTIFIER)
+        if (key.equals(JsonConstants.WHERE_PARAMETER)
+            || key.equals(JsonConstants.IDENTIFIER)
             || key.equals(JsonConstants.ORG_PARAMETER)
             || key.equals(JsonConstants.TARGETRECORDID_PARAMETER)
-            || (key.startsWith(DataEntityQueryService.PARAM_DELIMITER)
-                && key.endsWith(DataEntityQueryService.PARAM_DELIMITER))) {
+            || (key.startsWith(DataEntityQueryService.PARAM_DELIMITER) && key
+                .endsWith(DataEntityQueryService.PARAM_DELIMITER))) {
           queryService.addFilterParameter(key, parameters.get(key));
         }
 
@@ -630,10 +639,10 @@ public class DefaultJsonDataService implements JsonDataService {
 
       try {
         // create the result info before deleting to prevent Hibernate errors
-        final DataToJsonConverter toJsonConverter = OBProvider.getInstance()
-            .get(DataToJsonConverter.class);
-        final List<JSONObject> jsonObjects = toJsonConverter
-            .toJsonObjects(Collections.singletonList(bob));
+        final DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(
+            DataToJsonConverter.class);
+        final List<JSONObject> jsonObjects = toJsonConverter.toJsonObjects(Collections
+            .singletonList(bob));
 
         final JSONObject jsonResult = new JSONObject();
         final JSONObject jsonResponse = new JSONObject();
@@ -682,11 +691,11 @@ public class DefaultJsonDataService implements JsonDataService {
    */
   public String update(Map<String, String> parameters, String content) {
     try {
-      final boolean sendOriginalIdBack = "true"
-          .equals(parameters.get(JsonConstants.SEND_ORIGINAL_ID_BACK));
+      final boolean sendOriginalIdBack = "true".equals(parameters
+          .get(JsonConstants.SEND_ORIGINAL_ID_BACK));
 
-      final JsonToDataConverter fromJsonConverter = OBProvider.getInstance()
-          .get(JsonToDataConverter.class);
+      final JsonToDataConverter fromJsonConverter = OBProvider.getInstance().get(
+          JsonToDataConverter.class);
 
       String localContent = content;
       if (parameters.containsKey(ADD_FLAG)) {
@@ -774,8 +783,8 @@ public class DefaultJsonDataService implements JsonDataService {
 
         // almost successfull, now create the response
         // needs to be done before the close of the session
-        final DataToJsonConverter toJsonConverter = OBProvider.getInstance()
-            .get(DataToJsonConverter.class);
+        final DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(
+            DataToJsonConverter.class);
         toJsonConverter.setAdditionalProperties(JsonUtils.getAdditionalProperties(parameters));
         final List<JSONObject> jsonObjects = toJsonConverter.toJsonObjects(refreshedBobs);
 
@@ -783,8 +792,8 @@ public class DefaultJsonDataService implements JsonDataService {
           // now it is assumed that the jsonObjects are the same size and the same location
           // in the array
           if (jsonObjects.size() != originalData.size()) {
-            throw new OBException("Unequal sizes in json data processed " + jsonObjects.size() + " "
-                + originalData.size());
+            throw new OBException("Unequal sizes in json data processed " + jsonObjects.size()
+                + " " + originalData.size());
           }
 
           // now add the old id back
@@ -807,8 +816,7 @@ public class DefaultJsonDataService implements JsonDataService {
         if (parameters.containsKey(ADD_FLAG)) {
           result = doPostAction(parameters, jsonResult.toString(), DataSourceAction.ADD, content);
         } else {
-          result = doPostAction(parameters, jsonResult.toString(), DataSourceAction.UPDATE,
-              content);
+          result = doPostAction(parameters, jsonResult.toString(), DataSourceAction.UPDATE, content);
         }
 
         OBDal.getInstance().commitAndClose();
@@ -1089,8 +1097,7 @@ public class DefaultJsonDataService implements JsonDataService {
       JSONArray criteria = jsonCriteria.getJSONArray("criteria");
       for (int i = 0; i < criteria.length(); i++) {
         JSONObject criterion = criteria.getJSONObject(i);
-        if (criterion.has("fieldName")
-            && JsonConstants.ID.equals(criterion.getString("fieldName"))) {
+        if (criterion.has("fieldName") && JsonConstants.ID.equals(criterion.getString("fieldName"))) {
           return true;
         }
       }

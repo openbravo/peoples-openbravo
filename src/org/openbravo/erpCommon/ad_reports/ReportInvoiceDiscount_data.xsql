@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,7 +24,7 @@
 
 <SqlClass name="ReportInvoiceDiscountData" package="org.openbravo.erpCommon.ad_reports">
   <SqlClassComment></SqlClassComment>
-  <SqlMethod name="select" type="preparedStatement" return="multiple">
+  <SqlMethod name="select" type="preparedStatement" return="scrollable">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[

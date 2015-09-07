@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -22,6 +22,8 @@ import javax.servlet.ServletException;
 
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.modulescript.ModuleScript;
+import org.openbravo.modulescript.ModuleScriptExecutionLimits;
+import org.openbravo.modulescript.OpenbravoVersion;
 
 public class WrongPaymentsFromJournalLine extends ModuleScript {
   
@@ -39,6 +41,12 @@ public class WrongPaymentsFromJournalLine extends ModuleScript {
      } catch (Exception e) {
       handleError(e);
     }
+  }
+  
+  @Override
+  protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
+    return new ModuleScriptExecutionLimits("A918E3331C404B889D69AA9BFAFB23AC", null, 
+        new OpenbravoVersion(3,0,24269));
   }
 
   private void createAlert(ConnectionProvider cp, WrongPaymentsFromJournalLineData wrongPayment)

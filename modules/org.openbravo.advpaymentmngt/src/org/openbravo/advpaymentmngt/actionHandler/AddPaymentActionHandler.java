@@ -28,6 +28,7 @@ import java.util.Map;
 
 import javax.servlet.ServletException;
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -565,6 +566,19 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
     }
     FIN_Payment refundPayment = FIN_AddPayment.createRefundPayment(conn, vars, payment,
         refundAmount.negate(), exchangeRate);
+
+    // If refunded credit is generated in the same payment, add payment id to
+    // strSelectedCreditLinesIds
+    BigDecimal actualPayment = new BigDecimal(jsonparams.getString("actual_payment"));
+    if (actualPayment.compareTo(BigDecimal.ZERO) != 0) {
+      if (!StringUtils.isEmpty(strSelectedCreditLinesIds)) {
+        strSelectedCreditLinesIds = "(" + payment.getId() + ", "
+            + strSelectedCreditLinesIds.substring(1);
+      } else {
+        strSelectedCreditLinesIds = "(" + payment.getId() + ")";
+      }
+    }
+
     OBError auxMessage = FIN_AddPayment.processPayment(vars, conn,
         (strAction.equals("PRP") || strAction.equals("PPP")) ? "P" : "D", refundPayment,
         comingFrom, strSelectedCreditLinesIds);

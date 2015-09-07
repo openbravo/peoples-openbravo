@@ -26,7 +26,6 @@
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
-p NUMBER(3);
   vp VARCHAR2(32);
   vExists NUMBER;
 BEGIN

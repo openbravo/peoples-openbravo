@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,6 +22,8 @@ import java.sql.PreparedStatement;
 import javax.servlet.ServletException;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.modulescript.ModuleScript;
+import org.openbravo.modulescript.ModuleScriptExecutionLimits;
+import org.openbravo.modulescript.OpenbravoVersion;
 
 /**
  * Set the default role to "Finance" for the "Openbravo" user, if the role exists. This is useful
@@ -41,5 +43,11 @@ public class SetDefaultRole extends ModuleScript {
     } catch (Exception e) {
       handleError(e);
     }
+  }
+  
+  @Override
+  protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
+    return new ModuleScriptExecutionLimits("883B5872CA0548F9AF2BBBE7D2DDFA61", null, 
+        new OpenbravoVersion(3,0,16111));
   }
 }

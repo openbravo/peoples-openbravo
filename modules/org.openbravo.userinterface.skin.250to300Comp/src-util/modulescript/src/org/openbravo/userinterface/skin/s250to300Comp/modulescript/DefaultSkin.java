@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011 Openbravo SLU
+ * All portions are Copyright (C) 2011-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -22,6 +22,8 @@ import javax.servlet.ServletException;
 
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.modulescript.ModuleScript;
+import org.openbravo.modulescript.ModuleScriptExecutionLimits;
+import org.openbravo.modulescript.OpenbravoVersion;
 
 public class DefaultSkin extends ModuleScript {
 
@@ -32,15 +34,18 @@ public class DefaultSkin extends ModuleScript {
 
       // Change skin to this one in case of installing (not updating) and the
       // used skin is 'Default' one.
-
-      if (!DefaultSkinData.isUpdating(cp)) {
-        String currentSkin = DefaultSkinData.selectCurrentSkin(cp);
-        if ("Default".equals(currentSkin)) {
-          DefaultSkinData.setSkin(cp, "org.openbravo.userinterface.skin.250to300Comp/250to300Comp");
-        }
+      String currentSkin = DefaultSkinData.selectCurrentSkin(cp);
+      if ("Default".equals(currentSkin)) {
+        DefaultSkinData.setSkin(cp, "org.openbravo.userinterface.skin.250to300Comp/250to300Comp");
       }
     } catch (Exception e) {
       handleError(e);
     }
+  }
+  
+  @Override
+  protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
+    return new ModuleScriptExecutionLimits("96998CBC42744B3DBEE28AC8095C9335", null, 
+        new OpenbravoVersion(0,0,0));
   }
 }

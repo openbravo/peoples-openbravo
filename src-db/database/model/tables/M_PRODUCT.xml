@@ -471,32 +471,17 @@
       <index name="M_PRODUCT_BPARTNER" unique="false">
         <index-column name="C_BPARTNER_ID"/>
       </index>
-      <index name="M_PRODUCT_BRAND_ID" unique="false">
-        <index-column name="M_BRAND_ID"/>
-      </index>
       <index name="M_PRODUCT_GEN_PROD" unique="false">
         <index-column name="GENERIC_PRODUCT_ID"/>
       </index>
       <index name="M_PRODUCT_NAME" unique="false">
         <index-column name="NAME"/>
       </index>
-      <index name="M_PRODUCT_NAME_ID" unique="false">
-        <index-column name="NAME"/>
-        <index-column name="M_PRODUCT_ID"/>
-      </index>
       <index name="M_PRODUCT_PRODUCTCATEGORY" unique="false">
         <index-column name="M_PRODUCT_CATEGORY_ID"/>
       </index>
       <index name="M_PRODUCT_UPC" unique="false">
         <index-column name="UPC"/>
-      </index>
-      <index name="M_PRODUCT_UPC_ID" unique="false">
-        <index-column name="UPC"/>
-        <index-column name="M_PRODUCT_ID"/>
-      </index>
-      <index name="M_PRODUCT_VALUE_ID" unique="false">
-        <index-column name="VALUE"/>
-        <index-column name="M_PRODUCT_ID"/>
       </index>
       <unique name="M_PRODUCT_EXPENSETYPE">
         <unique-column name="S_EXPENSETYPE_ID"/>
@@ -511,26 +496,26 @@
       <check name="M_PROD_LINKEDTOPROD_QRUL_CHECK"><![CDATA[((ISLINKEDTOPRODUCT = 'Y') AND (QUANTITY_RULE IS NOT NULL)) OR (ISLINKEDTOPRODUCT = 'N')]]></check>
       <check name="M_PROD_LINKEDTOPROD_SEL_CHECK"><![CDATA[((ISLINKEDTOPRODUCT = 'Y') AND ((PROD_CAT_SELECTION IS NOT NULL) OR (PRODUCT_SELECTION IS NOT NULL))) OR (ISLINKEDTOPRODUCT = 'N')]]></check>
       <check name="M_PROD_LINKEDTOPRODUCT_CHECK"><![CDATA[ISLINKEDTOPRODUCT IN ('Y', 'N')]]></check>
-      <check name="M_PRODUCT_ATSETVALTYPE_CHK"><![CDATA[(M_ATTRIBUTESETINSTANCE_ID IS NULL) OR (ATTRSETVALUETYPE IS NOT NULL)]]></check>
+      <check name="M_PRODUCT_ATSETVALTYPE_CHK"><![CDATA[M_ATTRIBUTESETINSTANCE_ID IS NULL OR ATTRSETVALUETYPE IS NOT NULL]]></check>
       <check name="M_PRODUCT_DISCONTINUED_CHECK"><![CDATA[DISCONTINUED IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_EDITABLE_PRICE_CHECK"><![CDATA[EDITABLE_PRICE IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ENFORCE_ATTRIBUT_CHK"><![CDATA[ENFORCE_ATTRIBUTE IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ISBOM_CHECK"><![CDATA[ISBOM IN ('Y', 'N')]]></check>
-      <check name="M_PRODUCT_ISEXPDEFCOMPLETE_CHK"><![CDATA[(ISDEFERREDEXPENSE = 'N') OR ((((ISDEFERREDEXPENSE = 'Y') AND (EXPPLANTYPE IS NOT NULL)) AND (DEFAULTPERIOD_EXP IS NOT NULL)) AND (PERIODNUMBER_EXP IS NOT NULL))]]></check>
+      <check name="M_PRODUCT_ISEXPDEFCOMPLETE_CHK"><![CDATA[ISDEFERREDEXPENSE = 'N' OR ISDEFERREDEXPENSE = 'Y' AND EXPPLANTYPE IS NOT NULL AND DEFAULTPERIOD_EXP IS NOT NULL AND PERIODNUMBER_EXP IS NOT NULL]]></check>
       <check name="M_PRODUCT_ISEXPDEFERRED_CHK"><![CDATA[ISDEFERREDEXPENSE IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ISGENERIC"><![CDATA[ISGENERIC IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ISINVOICEPRINTDE_CHK"><![CDATA[ISINVOICEPRINTDETAILS IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ISPICKLISTPRINTD_CHK"><![CDATA[ISPICKLISTPRINTDETAILS IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ISPURCHASED_CHECK"><![CDATA[ISPURCHASED IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ISQTYVAR_CHECK"><![CDATA[ISQUANTITYVARIABLE IN ('Y', 'N')]]></check>
-      <check name="M_PRODUCT_ISREVDEFCOMPLETE_CHK"><![CDATA[(ISDEFERREDREVENUE = 'N') OR ((((ISDEFERREDREVENUE = 'Y') AND (REVPLANTYPE IS NOT NULL)) AND (DEFAULTPERIOD IS NOT NULL)) AND (PERIODNUMBER IS NOT NULL))]]></check>
+      <check name="M_PRODUCT_ISREVDEFCOMPLETE_CHK"><![CDATA[ISDEFERREDREVENUE = 'N' OR ISDEFERREDREVENUE = 'Y' AND REVPLANTYPE IS NOT NULL AND DEFAULTPERIOD IS NOT NULL AND PERIODNUMBER IS NOT NULL]]></check>
       <check name="M_PRODUCT_ISREVDEFERRED_CHK"><![CDATA[ISDEFERREDREVENUE IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ISSOLD_CHECK"><![CDATA[ISSOLD IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ISSTOCKED_CHECK"><![CDATA[ISSTOCKED IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ISVERIFIED_CHECK"><![CDATA[ISVERIFIED IN ('Y', 'N')]]></check>
-      <check name="M_PRODUCT_PERIODNUMBER_CHK"><![CDATA[((ISDEFERREDREVENUE = 'Y') AND (PERIODNUMBER > 0)) OR (ISDEFERREDREVENUE = 'N')]]></check>
-      <check name="M_PRODUCT_PERIODNUMEXP_CHK"><![CDATA[((ISDEFERREDEXPENSE = 'Y') AND (PERIODNUMBER_EXP > 0)) OR (ISDEFERREDEXPENSE = 'N')]]></check>
+      <check name="M_PRODUCT_PERIODNUMBER_CHK"><![CDATA[ISDEFERREDREVENUE = 'Y' AND PERIODNUMBER > 0 OR ISDEFERREDREVENUE = 'N']]></check>
+      <check name="M_PRODUCT_PERIODNUMEXP_CHK"><![CDATA[ISDEFERREDEXPENSE = 'Y' AND PERIODNUMBER_EXP > 0 OR ISDEFERREDEXPENSE = 'N']]></check>
       <check name="M_PRODUCT_PRICERULEBASED_CHECK"><![CDATA[ISPRICERULEBASED IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_PRINT_DESCRIP_CHECK"><![CDATA[PRINT_DESCRIPTION IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_RETURNABLE_CHECK"><![CDATA[RETURNABLE IN ('Y', 'N')]]></check>

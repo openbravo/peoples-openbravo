@@ -77,7 +77,7 @@ BEGIN
                   AND dateto > p_movementdate
                   AND m_product_id = p_product_id
                   AND COALESCE(m_warehouse_id, p_warehouse_id, '-1') = COALESCE(p_warehouse_id, m_warehouse_id, '-1')
-                  AND ad_org_id = v_legal_entity
+                  AND ad_org_id IN (v_legal_entity,'0')
                   AND cost IS NOT NULL
                   AND costtype IN ('STA', 'AVA')
                   AND costtype = COALESCE(v_CostType, costtype)
@@ -93,7 +93,7 @@ BEGIN
         AND dateto > p_movementdate
         AND m_product_id = p_product_id
         AND COALESCE(m_warehouse_id, p_warehouse_id, '-1') = COALESCE(p_warehouse_id, m_warehouse_id, '-1')
-        AND ad_org_id = v_legal_entity
+        AND ad_org_id IN (v_legal_entity,'0')
         AND cost IS NOT NULL
         AND costtype IN ('STA', 'AVA')
         AND costtype = COALESCE(v_CostType, costtype)

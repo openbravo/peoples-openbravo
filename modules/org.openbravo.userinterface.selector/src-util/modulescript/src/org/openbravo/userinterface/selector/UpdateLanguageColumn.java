@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,6 +23,8 @@ import java.sql.Statement;
 import org.apache.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.modulescript.ModuleScript;
+import org.openbravo.modulescript.ModuleScriptExecutionLimits;
+import org.openbravo.modulescript.OpenbravoVersion;
 
 public class UpdateLanguageColumn extends ModuleScript {
 
@@ -60,5 +62,11 @@ public class UpdateLanguageColumn extends ModuleScript {
       log4j.error("Error executing moduleScript: " + t.getMessage());
     }
 
+  }
+  
+  @Override
+  protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
+    return new ModuleScriptExecutionLimits("5EB4F15C80684ACA904756BDC12ADBE5", null, 
+        new OpenbravoVersion(2,1,9091));
   }
 }

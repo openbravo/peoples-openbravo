@@ -262,6 +262,10 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
     if (!strFinal.endsWith("/" + strNewAddBase)) {
       strFinal += "/" + strNewAddBase;
     }
+
+    if (!globalParameters.prefix.endsWith("/")) {
+      strFinal = "/" + strFinal;
+    }
     if (log4j.isDebugEnabled()) {
       log4j.debug("*********************Base path: " + strFinal);
     }

@@ -335,22 +335,17 @@
       <index name="M_INOUT_DOCUMENTNO" unique="false">
         <index-column name="DOCUMENTNO"/>
       </index>
-      <index name="M_INOUT_DOCUMENTNO_ID" unique="false">
-        <index-column name="DOCUMENTNO"/>
-        <index-column name="M_INOUT_ID"/>
-      </index>
-      <index name="M_INOUT_MOVEMENTDATE_ID" unique="false">
-        <index-column name="MOVEMENTDATE"/>
-        <index-column name="M_INOUT_ID"/>
-      </index>
       <index name="M_INOUT_ORDER" unique="false">
         <index-column name="C_ORDER_ID"/>
+      </index>
+      <index name="M_INOUT_POSTED" unique="false">
+        <index-column name="POSTED"/>
       </index>
       <index name="M_INOUT_UPDATED" unique="false">
         <index-column name="UPDATED"/>
       </index>
       <check name="M_INOUT_CREATEFROM_CHECK"><![CDATA[CREATEFROM IN ('Y', 'N')]]></check>
-      <check name="M_INOUT_CURRENCY_CHECK"><![CDATA[((FREIGHTAMT = 0) OR (FREIGHTAMT IS NULL)) OR (FREIGHT_CURRENCY_ID IS NOT NULL)]]></check>
+      <check name="M_INOUT_CURRENCY_CHECK"><![CDATA[FREIGHTAMT = 0 OR FREIGHTAMT IS NULL OR FREIGHT_CURRENCY_ID IS NOT NULL]]></check>
       <check name="M_INOUT_GENERATELINES_CHECK"><![CDATA[GENERATELINES IN ('N', 'Y')]]></check>
       <check name="M_INOUT_GENERATETO_CHECK"><![CDATA[GENERATETO IN ('Y', 'N')]]></check>
       <check name="M_INOUT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>

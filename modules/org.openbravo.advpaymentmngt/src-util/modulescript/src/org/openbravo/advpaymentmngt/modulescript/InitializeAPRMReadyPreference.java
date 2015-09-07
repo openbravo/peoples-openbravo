@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011 Openbravo SLU
+ * All portions are Copyright (C) 2011-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -21,6 +21,8 @@ package org.openbravo.advpaymentmngt.modulescript;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.modulescript.ModuleScript;
 
+// FIXME: https://issues.openbravo.com/view.php?id=30706
+// APRM process should create preference properly and modulescript should be removed
 public class InitializeAPRMReadyPreference extends ModuleScript {
 
   /**

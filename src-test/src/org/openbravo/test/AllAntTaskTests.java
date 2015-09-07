@@ -35,6 +35,7 @@ import org.openbravo.client.kernel.freemarker.test.LabelTest;
 import org.openbravo.erpCommon.info.ClassicSelectorTest;
 import org.openbravo.test.accounting.PostDocumentTest;
 import org.openbravo.test.accounting.RecordID2Test;
+import org.openbravo.test.costing.TestCosting;
 import org.openbravo.test.dal.AdminContextTest;
 import org.openbravo.test.dal.ComputedColumnsTest;
 import org.openbravo.test.dal.DalComplexQueryRequisitionTest;
@@ -66,6 +67,7 @@ import org.openbravo.test.model.UniqueConstraintTest;
 import org.openbravo.test.modularity.DBPrefixTest;
 import org.openbravo.test.modularity.DatasetServiceTest;
 import org.openbravo.test.modularity.MergePropertiesTest;
+import org.openbravo.test.modularity.ModuleScriptsVersions;
 import org.openbravo.test.modularity.TableNameTest;
 import org.openbravo.test.preference.PreferenceTest;
 import org.openbravo.test.scheduling.ProcessSchedulingTest;
@@ -175,6 +177,9 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     // Taxes
     TaxesTest.class, //
 
+    // costing
+    TestCosting.class, //
+
     // scheduling
     ProcessSchedulingTest.class, //
 
@@ -193,7 +198,10 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     // client kernel
     FreemarkerTemplateProcessorTest.class, //
     GenerateComponentTest.class, //
-    LabelTest.class
+    LabelTest.class, //
+
+    // moduleScripts
+    ModuleScriptsVersions.class
 
 })
 public class AllAntTaskTests {

@@ -61,10 +61,8 @@
     v_SeqNoCounter NUMBER;
     v_gridSeqno NUMBER;
     v_sortNo NUMBER(10) ;
-    v_columnName VARCHAR2(40) ;
     v_LastColumnName VARCHAR2(40) ;
     v_DisplayLength NUMBER(10) ;
-    v_PInstance_Log_ID VARCHAR2(32);
     v_Client_ID VARCHAR2(32);
     v_IgnoreInWad CHAR(1):='N';
   BEGIN

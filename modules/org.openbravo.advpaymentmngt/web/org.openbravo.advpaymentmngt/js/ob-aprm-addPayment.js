@@ -375,99 +375,102 @@ OB.APRM.AddPayment.distributeAmount = function (view, form, onActualPaymentChang
       glitemamt = new BigDecimal(String(form.getItem('amount_gl_items').getValue() || 0)),
       orderInvoiceData = orderInvoice.data.localData,
       total = orderInvoice.data.totalRows,
+      autoDistributeAmt = OB.PropertyStore.get("APRM_AutoDistributeAmt"),
       writeoff, amt, outstandingAmount, i, showMessageProperty, showMessage, message;
 
-  if (orderInvoice.data.cachedRows < (orderInvoice.data.totalRows)) {
-    showMessageProperty = OB.PropertyStore.get('APRM_ShowNoDistributeMsg');
-    showMessage = (showMessageProperty !== 'N' && showMessageProperty !== '"N"');
-    if (showMessage) {
-      orderInvoice.contentView.messageBar.setMessage(isc.OBMessageBar.TYPE_INFO, '<div><div class="' + OB.Styles.MessageBar.leftMsgContainerStyle + '">' + OB.I18N.getLabel('APRM_NoDistributeMsg') + '</div><div class="' + OB.Styles.MessageBar.rightMsgContainerStyle + '"><a href="#" class="' + OB.Styles.MessageBar.rightMsgTextStyle + '" onclick="' + 'window[\'' + orderInvoice.contentView.messageBar.ID + '\'].hide(); OB.PropertyStore.set(\'APRM_ShowNoDistributeMsg\', \'N\');">' + OB.I18N.getLabel('OBUIAPP_NeverShowMessageAgain') + '</a></div></div>', ' ');
-    }
-    return;
-  } else {
-    // hide the message bar if it is still showing the APRM_NoDistributeMsg message and the distribution is about to be done
-    message = orderInvoice.contentView.messageBar.text.contents;
-    if (message.contains(OB.I18N.getLabel('APRM_NoDistributeMsg'))) {
-      orderInvoice.contentView.messageBar.hide();
-    }
-  }
-  // subtract glitem amount
-  amount = amount.subtract(glitemamt);
-  // add credit amount
-  amount = amount.add(creditamt);
-
-  for (i = 0; i < total; i++) {
-    if (isc.isA.Object(orderInvoiceData[i]) && !isc.isA.emptyObject(orderInvoiceData[i])) {
-      outstandingAmount = new BigDecimal(String(orderInvoiceData[i].outstandingAmount));
-      if (outstandingAmount.signum() < 0) {
-        negativeamt = negativeamt.add(new BigDecimal(Math.abs(outstandingAmount).toString()));
+  if (autoDistributeAmt !== 'N' && autoDistributeAmt !== '"N"') {
+    if (orderInvoice.data.cachedRows < (orderInvoice.data.totalRows)) {
+      showMessageProperty = OB.PropertyStore.get('APRM_ShowNoDistributeMsg');
+      showMessage = (showMessageProperty !== 'N' && showMessageProperty !== '"N"');
+      if (showMessage) {
+        orderInvoice.contentView.messageBar.setMessage(isc.OBMessageBar.TYPE_INFO, '<div><div class="' + OB.Styles.MessageBar.leftMsgContainerStyle + '">' + OB.I18N.getLabel('APRM_NoDistributeMsg') + '</div><div class="' + OB.Styles.MessageBar.rightMsgContainerStyle + '"><a href="#" class="' + OB.Styles.MessageBar.rightMsgTextStyle + '" onclick="' + 'window[\'' + orderInvoice.contentView.messageBar.ID + '\'].hide(); OB.PropertyStore.set(\'APRM_ShowNoDistributeMsg\', \'N\');">' + OB.I18N.getLabel('OBUIAPP_NeverShowMessageAgain') + '</a></div></div>', ' ');
       }
-    }
-  }
-
-  if (amount.compareTo(negativeamt.negate()) > 0 && (onActualPaymentChange || payment)) {
-    amount = amount.add(negativeamt);
-  }
-
-  for (i = 0; i < total; i++) {
-    if (!isc.isA.Object(orderInvoiceData[i]) || isc.isA.emptyObject(orderInvoiceData[i])) {
-      continue;
-    }
-    writeoff = orderInvoice.getEditValues(i).writeoff;
-    amt = new BigDecimal(String(orderInvoice.getEditValues(i).amount || 0));
-    if (writeoff === null || writeoff === undefined) {
-      writeoff = orderInvoice.getRecord(i).writeoff;
-      amt = new BigDecimal(String(orderInvoice.getRecord(i).amount || 0));
-    }
-    if (writeoff && issotrx) {
-      amount = amount.subtract(amt);
-      continue;
+      return;
     } else {
-      outstandingAmount = new BigDecimal(String(orderInvoice.getRecord(i).outstandingAmount));
-      if (payment && !onActualPaymentChange && orderInvoice.getRecord(i).obSelected) {
-        outstandingAmount = new BigDecimal(String(orderInvoice.getRecord(i).amount));
-      } else if ((outstandingAmount.signum() < 0) && (amount.signum() < 0)) {
-        if (Math.abs(outstandingAmount) > Math.abs(amount)) {
-          differenceamt = outstandingAmount.subtract(amount);
-          outstandingAmount = amount;
-          amount = amount.subtract(differenceamt);
-        }
-      } else if (outstandingAmount.signum() > -1 && amount.signum() > -1 && outstandingAmount.compareTo(amount) > 0) {
-        outstandingAmount = amount;
+      // hide the message bar if it is still showing the APRM_NoDistributeMsg message and the distribution is about to be done
+      message = orderInvoice.contentView.messageBar.text.contents;
+      if (message.contains(OB.I18N.getLabel('APRM_NoDistributeMsg'))) {
+        orderInvoice.contentView.messageBar.hide();
       }
-      // do not distribute again when the selectionChanged method is invoked
-      orderInvoice.preventDistributingOnSelectionChanged = true;
-      if (amount.signum() === 0) {
-        if (outstandingAmount.signum() < 0 && (onActualPaymentChange || payment)) {
-          orderInvoice.setEditValue((i), 'amount', Number(outstandingAmount.toString()));
-          orderInvoice.selectRecord(i);
-        } else {
-          orderInvoice.setEditValue((i), 'amount', Number('0'));
-          orderInvoice.deselectRecord(i);
-        }
-      } else if (amount.signum() === 1) {
-        orderInvoice.setEditValue((i), 'amount', Number(outstandingAmount.toString()));
-        orderInvoice.selectRecord(i);
-        if (outstandingAmount.signum() >= 0 || amount.signum() <= 0) {
-          amount = amount.subtract(outstandingAmount);
-        }
-      } else {
+    }
+    // subtract glitem amount
+    amount = amount.subtract(glitemamt);
+    // add credit amount
+    amount = amount.add(creditamt);
+
+    for (i = 0; i < total; i++) {
+      if (isc.isA.Object(orderInvoiceData[i]) && !isc.isA.emptyObject(orderInvoiceData[i])) {
+        outstandingAmount = new BigDecimal(String(orderInvoiceData[i].outstandingAmount));
         if (outstandingAmount.signum() < 0) {
+          negativeamt = negativeamt.add(new BigDecimal(Math.abs(outstandingAmount).toString()));
+        }
+      }
+    }
+
+    if (amount.compareTo(negativeamt.negate()) > 0 && (onActualPaymentChange || payment)) {
+      amount = amount.add(negativeamt);
+    }
+
+    for (i = 0; i < total; i++) {
+      if (!isc.isA.Object(orderInvoiceData[i]) || isc.isA.emptyObject(orderInvoiceData[i])) {
+        continue;
+      }
+      writeoff = orderInvoice.getEditValues(i).writeoff;
+      amt = new BigDecimal(String(orderInvoice.getEditValues(i).amount || 0));
+      if (writeoff === null || writeoff === undefined) {
+        writeoff = orderInvoice.getRecord(i).writeoff;
+        amt = new BigDecimal(String(orderInvoice.getRecord(i).amount || 0));
+      }
+      if (writeoff && issotrx) {
+        amount = amount.subtract(amt);
+        continue;
+      } else {
+        outstandingAmount = new BigDecimal(String(orderInvoice.getRecord(i).outstandingAmount));
+        if (payment && !onActualPaymentChange && orderInvoice.getRecord(i).obSelected) {
+          outstandingAmount = new BigDecimal(String(orderInvoice.getRecord(i).amount));
+        } else if ((outstandingAmount.signum() < 0) && (amount.signum() < 0)) {
+          if (Math.abs(outstandingAmount) > Math.abs(amount)) {
+            differenceamt = outstandingAmount.subtract(amount);
+            outstandingAmount = amount;
+            amount = amount.subtract(differenceamt);
+          }
+        } else if (outstandingAmount.signum() > -1 && amount.signum() > -1 && outstandingAmount.compareTo(amount) > 0) {
+          outstandingAmount = amount;
+        }
+        // do not distribute again when the selectionChanged method is invoked
+        orderInvoice.preventDistributingOnSelectionChanged = true;
+        if (amount.signum() === 0) {
+          if (outstandingAmount.signum() < 0 && (onActualPaymentChange || payment)) {
+            orderInvoice.setEditValue((i), 'amount', Number(outstandingAmount.toString()));
+            orderInvoice.selectRecord(i);
+          } else {
+            orderInvoice.setEditValue((i), 'amount', Number('0'));
+            orderInvoice.deselectRecord(i);
+          }
+        } else if (amount.signum() === 1) {
           orderInvoice.setEditValue((i), 'amount', Number(outstandingAmount.toString()));
           orderInvoice.selectRecord(i);
-          if (outstandingAmount.signum() <= 0 || amount.signum() <= 0) {
+          if (outstandingAmount.signum() >= 0 || amount.signum() <= 0) {
             amount = amount.subtract(outstandingAmount);
           }
         } else {
-          orderInvoice.setEditValue((i), 'amount', Number('0'));
-          orderInvoice.deselectRecord(i);
+          if (outstandingAmount.signum() < 0) {
+            orderInvoice.setEditValue((i), 'amount', Number(outstandingAmount.toString()));
+            orderInvoice.selectRecord(i);
+            if (outstandingAmount.signum() <= 0 || amount.signum() <= 0) {
+              amount = amount.subtract(outstandingAmount);
+            }
+          } else {
+            orderInvoice.setEditValue((i), 'amount', Number('0'));
+            orderInvoice.deselectRecord(i);
+          }
         }
+        delete orderInvoice.preventDistributingOnSelectionChanged;
       }
-      delete orderInvoice.preventDistributingOnSelectionChanged;
     }
+    OB.APRM.AddPayment.updateActualExpected(form);
+    OB.APRM.AddPayment.updateInvOrderTotal(form, orderInvoice);
   }
-  OB.APRM.AddPayment.updateActualExpected(form);
-  OB.APRM.AddPayment.updateInvOrderTotal(form, orderInvoice);
 };
 
 OB.APRM.AddPayment.updateTotal = function (form) {
@@ -985,13 +988,17 @@ OB.APRM.AddPayment.receivedFromOnChange = function (item, view, form, grid) {
       isSOTrx = form.getItem('issotrx').getValue(),
       financialAccount = form.getItem('fin_financial_account_id').getValue(),
       ordinvgrid = form.getItem('order_invoice').canvas.viewGrid,
+      paymentMethodItem = form.getItem('fin_paymentmethod_id'),
       newCriteria = {};
   affectedParams.push(form.getField('credit_to_use_display_logic').paramId);
   OB.APRM.AddPayment.recalcDisplayLogicOrReadOnlyLogic(form, view, affectedParams);
 
   callback = function (response, data, request) {
     if (data.paymentMethodId !== '') {
-      form.getItem('fin_paymentmethod_id').setValue(data.paymentMethodId);
+      paymentMethodItem.setValue(data.paymentMethodId);
+      paymentMethodItem.valueMap[data.paymentMethodId] = data.paymentMethodName;
+      form.redraw();
+      OB.APRM.AddPayment.paymentMethodOnChange(paymentMethodItem, view, form, grid);
     }
   };
 

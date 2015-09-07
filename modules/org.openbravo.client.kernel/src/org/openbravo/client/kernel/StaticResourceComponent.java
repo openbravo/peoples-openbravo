@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -46,7 +46,7 @@ import org.openbravo.service.web.WebServiceUtil;
 public class StaticResourceComponent extends BaseComponent {
   private static final Logger log = Logger.getLogger(StaticResourceComponent.class);
 
-  public static final String GEN_TARGET_LOCATION = "web/js/gen";
+  public static final String GEN_TARGET_LOCATION = "/web/js/gen";
 
   @Inject
   @Any
@@ -107,7 +107,7 @@ public class StaticResourceComponent extends BaseComponent {
       }
 
       StringBuilder result = new StringBuilder();
-      final String scriptPath = getContextUrl() + GEN_TARGET_LOCATION + "/"
+      final String scriptPath = getContextUrl() + GEN_TARGET_LOCATION.substring(1) + "/"
           + getStaticResourceFileName() + ".js";
 
       if (isClassicMode()) {
@@ -194,6 +194,11 @@ public class StaticResourceComponent extends BaseComponent {
                   resourcePath = resourcePath.replaceAll(KernelConstants.SKIN_PARAMETER, skinParam);
                 }
 
+                if (!resourcePath.startsWith("/")) {
+                  // Tomcat 8 forces getRealPath to start with a slash
+                  resourcePath = "/" + resourcePath;
+                }
+
                 try {
                   final File file = new File(context.getRealPath(resourcePath));
                   if (!file.exists() || !file.canRead()) {
@@ -243,9 +248,17 @@ public class StaticResourceComponent extends BaseComponent {
        * 
        * TODO: don't load the ob-debug.js file if not in use
        */
-      if (isInDevelopment() || OBPropertiesProvider.getInstance().getBooleanProperty("test.environment")) {
-        // append a global isDebug var and the causes that provoked the application to enter Debug mode
-        sb.insert(0, String.format("var isDebug = true;\nvar debugCauses = {\n  isInDevelopment: %s,\n  isTestEnvironment: %s\n};\n\n", isInDevelopment(), OBPropertiesProvider.getInstance().getBooleanProperty("test.environment")));
+      if (isInDevelopment()
+          || OBPropertiesProvider.getInstance().getBooleanProperty("test.environment")) {
+        // append a global isDebug var and the causes that provoked the application to enter Debug
+        // mode
+        sb.insert(
+            0,
+            String
+                .format(
+                    "var isDebug = true;\nvar debugCauses = {\n  isInDevelopment: %s,\n  isTestEnvironment: %s\n};\n\n",
+                    isInDevelopment(),
+                    OBPropertiesProvider.getInstance().getBooleanProperty("test.environment")));
       }
       sb.append("if (window.onerror && window.onerror.name === '"
           + KernelConstants.BOOTSTRAP_ERROR_HANDLER_NAME + "') { window.onerror = null; }");
@@ -272,11 +285,12 @@ public class StaticResourceComponent extends BaseComponent {
       output = sb.toString();
     }
     final String md5 = DigestUtils.md5Hex(output);
-    final File dir = new File(context.getRealPath(GEN_TARGET_LOCATION));
+    final String getTargetLocation = context.getRealPath(GEN_TARGET_LOCATION);
+    final File dir = new File(getTargetLocation);
     if (!dir.exists()) {
       dir.mkdir();
     }
-    File outFile = new File(context.getRealPath(GEN_TARGET_LOCATION + "/" + md5 + ".js"));
+    File outFile = new File(getTargetLocation + "/" + md5 + ".js");
     if (!outFile.exists()) {
       try {
         log.debug("Writing file: " + outFile.getAbsolutePath());

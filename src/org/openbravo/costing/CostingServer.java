@@ -90,59 +90,57 @@ public class CostingServer {
    * 
    */
   public void process() {
-    if (trxCost != null) {
-      // Transaction cost has already been calculated. Nothing to do.
-      return;
-    }
-    log4j.debug("Process cost");
     try {
-      OBContext.setAdminMode(false);
-      // Get needed algorithm. And set it in the M_Transaction.
-      CostingAlgorithm costingAlgorithm = getCostingAlgorithm();
-      costingAlgorithm.init(this);
-      log4j.debug("  *** Algorithm initializated: " + costingAlgorithm.getClass());
-
-      trxCost = costingAlgorithm.getTransactionCost();
-      if (trxCost == null && !transaction.getCostingStatus().equals("P")) {
-        throw new OBException("@NoCostCalculated@: " + transaction.getIdentifier());
-      }
-      if (transaction.getCostingStatus().equals("P")) {
-        transaction.setProcessed(true);
-        OBDal.getInstance().flush();
+      if (trxCost != null) {
+        // Transaction cost has already been calculated. Nothing to do.
         return;
       }
+      log4j.debug("Process cost");
+      try {
+        OBContext.setAdminMode(false);
+        // Get needed algorithm. And set it in the M_Transaction.
+        CostingAlgorithm costingAlgorithm = getCostingAlgorithm();
+        costingAlgorithm.init(this);
+        log4j.debug("  *** Algorithm initializated: " + costingAlgorithm.getClass());
 
-      trxCost = trxCost.setScale(costingAlgorithm.getCostCurrency().getStandardPrecision()
-          .intValue(), RoundingMode.HALF_UP);
-      log4j.debug("  *** Transaction cost amount: " + trxCost.toString());
-      // Save calculated cost on M_Transaction.
-      transaction.setTransactionCost(trxCost);
-      transaction.setCurrency(currency);
-      transaction.setCostCalculated(true);
-      transaction.setCostingStatus("CC");
-      // insert on m_transaction_cost
-      createTransactionCost();
-      transaction.setProcessed(true);
-      OBDal.getInstance().save(transaction);
-      OBDal.getInstance().flush();
+        trxCost = costingAlgorithm.getTransactionCost();
+        if (trxCost == null && !transaction.getCostingStatus().equals("P")) {
+          throw new OBException("@NoCostCalculated@: " + transaction.getIdentifier());
+        }
+        if (transaction.getCostingStatus().equals("P")) {
+          return;
+        }
 
-      setNotPostedTransaction();
-      checkCostAdjustments();
+        trxCost = trxCost.setScale(costingAlgorithm.getCostCurrency().getStandardPrecision()
+            .intValue(), RoundingMode.HALF_UP);
+        log4j.debug("  *** Transaction cost amount: " + trxCost.toString());
+        // Save calculated cost on M_Transaction.
+        OBDal.getInstance().flush();
+        transaction = OBDal.getInstance().get(MaterialTransaction.class, transaction.getId());
+        transaction.setTransactionCost(trxCost);
+        transaction.setCurrency(currency);
+        transaction.setCostCalculated(true);
+        transaction.setCostingStatus("CC");
+        // insert on m_transaction_cost
+        createTransactionCost();
+        OBDal.getInstance().flush();
+
+        setNotPostedTransaction();
+        checkCostAdjustments();
+      } finally {
+        OBContext.restorePreviousMode();
+      }
+      return;
     } finally {
-      OBContext.restorePreviousMode();
+      // Every Transaction must be set as Processed = 'Y' after going through this method
+      transaction.setProcessed(true);
+      OBDal.getInstance().flush();
     }
-    return;
   }
 
   private void checkCostAdjustments() {
     TrxType trxType = TrxType.getTrxType(transaction);
     boolean adjustmentAlreadyCreated = false;
-
-    // With Standard Algorithm, no cost adjustment is needed
-    if (StringUtils.equals(transaction.getCostingAlgorithm().getJavaClassName(),
-        "org.openbravo.costing.StandardAlgorithm")) {
-      return;
-    }
 
     if (trxType == TrxType.InventoryClosing) {
       OBDal.getInstance().refresh(transaction.getPhysicalInventoryLine().getPhysInventory());
@@ -164,7 +162,10 @@ public class CostingServer {
     } catch (PropertyException e1) {
       checkPriceCorrectionTrxs = false;
     }
-    if (checkPriceCorrectionTrxs && transaction.isCheckpricedifference()) {
+    if (checkPriceCorrectionTrxs
+        && transaction.isCheckpricedifference()
+        && !StringUtils.equals(transaction.getCostingAlgorithm().getJavaClassName(),
+            "org.openbravo.costing.StandardAlgorithm")) {
       JSONObject message = PriceDifferenceProcess.processPriceDifferenceTransaction(transaction);
       if (message.has("documentNo")) {
         adjustmentAlreadyCreated = true;
@@ -237,6 +238,12 @@ public class CostingServer {
       } finally {
         lcLines.close();
       }
+    }
+
+    // With Standard Algorithm, no cost adjustment is needed
+    if (StringUtils.equals(transaction.getCostingAlgorithm().getJavaClassName(),
+        "org.openbravo.costing.StandardAlgorithm")) {
+      return;
     }
 
     if (getCostingRule().isBackdatedTransactionsFixed()

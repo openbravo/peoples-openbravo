@@ -72,6 +72,8 @@ public class ImportEntryArchiveManager {
   private ImportEntryArchiveThread archiveThread;
   private ExecutorService executorService;
 
+  private boolean isShutDown = false;
+
   public ImportEntryArchiveManager() {
     instance = this;
   }
@@ -83,8 +85,13 @@ public class ImportEntryArchiveManager {
   }
 
   public void shutdown() {
+    if (executorService == null) {
+      return;
+    }
+    isShutDown = true;
     log.debug("Shutting down Import Entry Archive Framework");
     executorService.shutdownNow();
+    executorService = null;
   }
 
   private static class ImportEntryArchiveThread implements Runnable {
@@ -114,6 +121,11 @@ public class ImportEntryArchiveManager {
       Date lastCreated = null;
       while (true) {
         try {
+
+          if (manager.isShutDown) {
+            return;
+          }
+
           boolean dataProcessed = false;
           try {
             // stored is used in the whereclause to make sure that the system will continue
@@ -144,6 +156,10 @@ public class ImportEntryArchiveManager {
               lastCreated = importEntry.getCreationDate();
 
               ImportEntryArchive archiveEntry = createArchiveEntry(importEntry);
+
+              if (manager.isShutDown) {
+                return;
+              }
 
               for (ImportEntryArchivePreProcessor processor : manager.archiveEntryPreProcessors) {
                 processor.beforeArchive(importEntry, archiveEntry);

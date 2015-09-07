@@ -67,8 +67,15 @@ public class CharacteristicsUIDefinition extends TextUIDefinition {
       JSONObject jsnobject = new JSONObject(result);
 
       RequestContext rq = RequestContext.get();
-      String columnValue = rq.getRequestParameter("inp"
-          + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName()));
+      String fieldId;
+      if (field.getProperty() != null && !field.getProperty().isEmpty()) {
+        fieldId = "inp" + "_propertyField_"
+            + Sqlc.TransformaNombreColumna(field.getName()).replace(" ", "") + "_"
+            + field.getColumn().getDBColumnName();
+      } else {
+        fieldId = "inp" + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName());
+      }
+      String columnValue = rq.getRequestParameter(fieldId);
       if (StringUtils.isEmpty(columnValue)) {
         return result;
       }

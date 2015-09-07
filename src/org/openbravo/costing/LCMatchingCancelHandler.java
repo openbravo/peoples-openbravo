@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -97,9 +97,12 @@ public class LCMatchingCancelHandler extends BaseActionHandler {
     JSONObject message = new JSONObject();
     if (lcCost.getMatchingCostAdjustment() != null) {
       message = CancelCostAdjustment.doCancelCostAdjustment(lcCost.getMatchingCostAdjustment());
-      lcCost = OBDal.getInstance().get(LandedCostCost.class, strLcCostId);
-      doDeleteReceiptLineAmtMatched(lcCost);
+    } else {
+      message.put("severity", "success");
+      message.put("title", OBMessageUtils.messageBD("Success"));
     }
+    lcCost = OBDal.getInstance().get(LandedCostCost.class, strLcCostId);
+    doDeleteReceiptLineAmtMatched(lcCost);
 
     // Reload in case the cancel cost adjustment has cleared the session.
     lcCost = OBDal.getInstance().get(LandedCostCost.class, strLcCostId);

@@ -211,7 +211,7 @@
       <index name="S_TIMEEXPENSELN_TIMEEXPESE_IDX" unique="false">
         <index-column name="S_TIMEEXPENSE_ID"/>
       </index>
-      <check name="S_TIMEEXPENSELINE_CHECK1"><![CDATA[(ISINVOICED = 'N') OR (C_BPARTNER_ID IS NOT NULL)]]></check>
+      <check name="S_TIMEEXPENSELINE_CHECK1"><![CDATA[ISINVOICED = 'N' OR C_BPARTNER_ID IS NOT NULL]]></check>
       <check name="S_TIMEEXPENSELINE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="S_TIMEEXPENSELINE_ISINVOIC_CHK"><![CDATA[ISINVOICED IN ('Y', 'N')]]></check>
       <check name="S_TIMEEXPENSELINE_ISTIMERE_CHK"><![CDATA[ISTIMEREPORT IN ('Y', 'N')]]></check>

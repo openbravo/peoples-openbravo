@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,18 +23,20 @@ import java.sql.Connection;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.modulescript.ModuleScript;
+import org.openbravo.modulescript.ModuleScriptExecutionLimits;
+import org.openbravo.modulescript.OpenbravoVersion;
 
 public class DeleteWrongTransactions extends ModuleScript {
 
   @Override
   public void execute() {
-  try {
-    ConnectionProvider cp = getConnectionProvider();
-    Connection conn = cp.getTransactionConnection();
+    try {
+      ConnectionProvider cp = getConnectionProvider();
+      Connection conn = cp.getTransactionConnection();
       try {
-        boolean isDeleteWrongTransactionsExecuted= DeleteWrongTransactionsData.isDeleteWrongTransactionsExecuted(cp);
-        if (!isDeleteWrongTransactionsExecuted){
-          for (DeleteWrongTransactionsData paymentTransaction : DeleteWrongTransactionsData.selectPaymentTransactions(cp)) {    
+        boolean isDeleteWrongTransactionsExecuted = DeleteWrongTransactionsData.isDeleteWrongTransactionsExecuted(cp);
+        if (!isDeleteWrongTransactionsExecuted) {
+          for (DeleteWrongTransactionsData paymentTransaction : DeleteWrongTransactionsData.selectPaymentTransactions(cp)) {
             DeleteWrongTransactionsData.updatePaymentStatus(conn, cp, paymentTransaction.finPaymentId);          
           }
           DeleteWrongTransactionsData.updateWrongTransactions(conn, cp);
@@ -42,14 +44,19 @@ public class DeleteWrongTransactions extends ModuleScript {
           DeleteWrongTransactionsData.createPreference(conn, cp); 
         } 
         cp.releaseCommitConnection(conn);
- 
       } catch (Exception e) {
-      cp.releaseRollbackConnection(conn);
-      handleError(e);
+        cp.releaseRollbackConnection(conn);
+        handleError(e);
       }
- } catch (Exception e) {
-   handleError(e);
- }
-}
+    } catch (Exception e) {
+      handleError(e);
+    }
+  }
+  
+  @Override
+  protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
+    return new ModuleScriptExecutionLimits("A918E3331C404B889D69AA9BFAFB23AC", null, 
+        new OpenbravoVersion(3,0,24735));
+  }
 }
 
