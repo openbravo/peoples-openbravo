@@ -1,19 +1,15 @@
 <?xml version="1.0"?>
-  <database name="TABLE AD_ROLE_ORGACCESS">
-    <table name="AD_ROLE_ORGACCESS" primaryKey="AD_ROLE_ORGACCESS_KEY">
-      <column name="AD_ROLE_ORGACCESS_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
-        <default/>
-        <onCreateDefault><![CDATA[get_uuid()]]></onCreateDefault>
-      </column>
-      <column name="AD_ROLE_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="AD_ORG_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+  <database name="TABLE AD_ROLE_INHERITANCE">
+    <table name="AD_ROLE_INHERITANCE" primaryKey="AD_ROLE_INHERITANCE_KEY">
+      <column name="AD_ROLE_INHERITANCE_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="AD_ORG_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -37,31 +33,34 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="IS_ORG_ADMIN" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="SEQNO" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="INHERITED_FROM" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+      <column name="INHERIT_FROM" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="AD_ROLE_ORGACCESS_AD_CLIENT">
+      <column name="AD_ROLE_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <foreign-key foreignTable="AD_CLIENT" name="AD_ROLE_INHERITANCE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="AD_ROLE_ORGACCESS_AD_ORG" onDelete="cascade">
+      <foreign-key foreignTable="AD_ORG" name="AD_ROLE_INHERITANCE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ROLE" name="AD_ROLE_ORGACCESS_AD_ROLE" onDelete="cascade">
+      <foreign-key foreignTable="AD_ROLE" name="AD_ROLE_INHERITANCE_AD_ROLE" onDelete="cascade">
         <reference local="AD_ROLE_ID" foreign="AD_ROLE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ROLE" name="AD_ROLE_ORGACCESS_INH_FROM">
-        <reference local="INHERITED_FROM" foreign="AD_ROLE_ID"/>
+      <foreign-key foreignTable="AD_ROLE" name="AD_ROLE_INHERITANCE_INH_FROM">
+        <reference local="INHERIT_FROM" foreign="AD_ROLE_ID"/>
       </foreign-key>
-      <unique name="AD_ROLE_ORGACCESS_ROLE_ORG_UN">
+      <unique name="AD_ROLE_INHERITANCE_ROLE_UN">
         <unique-column name="AD_ROLE_ID"/>
-        <unique-column name="AD_ORG_ID"/>
+        <unique-column name="INHERIT_FROM"/>
       </unique>
-      <check name="AD_ROLE_ORGACCE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="AD_ROLE_ORGACCESS_ORGADMIN_CHK"><![CDATA[IS_ORG_ADMIN IN ('Y', 'N')]]></check>
+      <check name="AD_ROLE_INHERIT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

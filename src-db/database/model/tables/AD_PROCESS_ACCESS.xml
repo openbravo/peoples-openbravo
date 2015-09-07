@@ -45,11 +45,18 @@
         <default><![CDATA[Y]]></default>
         <onCreateDefault/>
       </column>
+      <column name="INHERITED_FROM" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_PROCESS" name="AD_PROCESS_ACCESS_AD_PROCESS" onDelete="cascade">
         <reference local="AD_PROCESS_ID" foreign="AD_PROCESS_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ROLE" name="AD_PROCESS_ACCESS_AD_ROLE" onDelete="cascade">
         <reference local="AD_ROLE_ID" foreign="AD_ROLE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ROLE" name="AD_PROCESS_ACCESS_INH_FROM">
+        <reference local="INHERITED_FROM" foreign="AD_ROLE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="AD_PROCESSACCESS_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>

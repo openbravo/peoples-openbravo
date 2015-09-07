@@ -45,6 +45,13 @@
         <default><![CDATA[Y]]></default>
         <onCreateDefault/>
       </column>
+      <column name="INHERITED_FROM" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <foreign-key foreignTable="AD_ROLE" name="OBUIAPP_PROC_ACC_INH_FROM">
+        <reference local="INHERITED_FROM" foreign="AD_ROLE_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_ROLE" name="OBUIAPP_PROC_ACCESS_AD_ROLE" onDelete="cascade">
         <reference local="AD_ROLE_ID" foreign="AD_ROLE_ID"/>
       </foreign-key>
