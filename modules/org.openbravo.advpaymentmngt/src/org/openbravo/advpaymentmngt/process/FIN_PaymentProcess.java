@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.dao.TransactionsDao;
@@ -877,7 +878,12 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
               OBDal.getInstance().getSession().refresh(paymentDetail);
             }
             // If there is any schedule detail with amount zero, those are deleted
+            // Besides it removes the payment proposal lines linked to the PSD when
+            // a) we are removing the PSD and
+            // b) if we are reactivating a payment (deleting lines only) and we don't come from
+            // payment proposal reactivation process
             for (FIN_PaymentScheduleDetail psd : removedPDS) {
+              int proposalLinesRemoved = 0;
               if (BigDecimal.ZERO.compareTo(psd.getAmount()) == 0
                   && BigDecimal.ZERO.compareTo(psd.getWriteoffAmount()) == 0) {
                 paymentDetail.getFINPaymentScheduleDetailList().remove(psd);
@@ -890,7 +896,21 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                   psd.getOrderPaymentSchedule()
                       .getFINPaymentScheduleDetailOrderPaymentScheduleList().remove(psd);
                 }
+
+                // Before deleting the PSD, we must delete any payment proposal line linked to it
+                proposalLinesRemoved = removePaymentProposalLines(psd);
+
                 OBDal.getInstance().remove(psd);
+              }
+
+              // Delete any payment proposal line linked to the PSD if we are reactivating a payment
+              // (deleting lines only), we haven't removed it in a previous step and we don't come
+              // from payment proposal reactivation process
+              if (strAction.equals("R")
+                  && proposalLinesRemoved == 0
+                  && !StringUtils.equals(comingFrom,
+                      FIN_PaymentProposalProcess.COMINGFROM_PAYMENTPROPOSALPROCESS)) {
+                removePaymentProposalLines(psd);
               }
             }
             if (paymentDetail.getFINPaymentScheduleDetailList().size() == 0) {
@@ -955,20 +975,6 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
           }
           if (strAction.equals("R")) {
             payment.setUsedCredit(BigDecimal.ZERO);
-            for (FIN_PaymentScheduleDetail psd : removedPDS) {
-              List<FIN_PaymentPropDetail> ppds = psd.getFINPaymentPropDetailList();
-              if (ppds.size() > 0) {
-                for (FIN_PaymentPropDetail ppd : ppds) {
-                  FIN_PaymentProposal paymentProposal = OBDal.getInstance().get(
-                      FIN_PaymentProposal.class, ppd.getFinPaymentProposal().getId());
-                  paymentProposal.setProcessed(false);
-                  OBDal.getInstance().save(paymentProposal);
-                  OBDal.getInstance().remove(ppd);
-                  OBDal.getInstance().flush();
-                  paymentProposal.setProcessed(true);
-                }
-              }
-            }
           }
         } finally {
           OBDal.getInstance().flush();
@@ -1406,6 +1412,39 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
       exchangeRate = BigDecimal.ZERO;
     }
     return exchangeRate;
+  }
+
+  /**
+   * Removes the Payment Proposal Lines linked to the Payment Schedule Detail. If the payment
+   * proposal is already processed, the record is unprocessed first, then affected lines are
+   * deleted, and finally it gets back to processed status. This is done to avoid trigger validation
+   * errors.
+   * 
+   * A common scenario where you want to delete a payment proposal line is when the payment schedule
+   * detail has been deleted
+   * 
+   * @param psd
+   *          Payment Schedule Detail
+   * @return number of Payment Proposal Lines removed
+   */
+  public static int removePaymentProposalLines(FIN_PaymentScheduleDetail psd) {
+    int proposalLinesRemoved = 0;
+    for (FIN_PaymentPropDetail ppd : psd.getFINPaymentPropDetailList()) {
+      final FIN_PaymentProposal paymentProposal = ppd.getFinPaymentProposal();
+      if (paymentProposal.isProcessed()) {
+        // Hack to delete Payment Proposal lines when you reactivate a payment linked to
+        // a processed payment proposal.
+        paymentProposal.setProcessed(false);
+        OBDal.getInstance().save(paymentProposal);
+        OBDal.getInstance().remove(ppd);
+        OBDal.getInstance().flush();
+        paymentProposal.setProcessed(true);
+      } else {
+        OBDal.getInstance().remove(ppd);
+      }
+      proposalLinesRemoved++;
+    }
+    return proposalLinesRemoved;
   }
 
 }

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -50,6 +50,8 @@ import org.openbravo.service.db.CallStoredProcedure;
 
 public class FIN_PaymentProposalProcess implements org.openbravo.scheduling.Process {
   private static AdvPaymentMngtDao dao;
+
+  public static final String COMINGFROM_PAYMENTPROPOSALPROCESS = "PAYMENT_PROPOSAL";
 
   @Override
   public void execute(ProcessBundle bundle) throws Exception {
@@ -231,11 +233,13 @@ public class FIN_PaymentProposalProcess implements org.openbravo.scheduling.Proc
 
       } else if (strAction.equals("RE")) { // REACTIVATE
         paymentProposal.setProcessNow(true);
+        paymentProposal.setProcessed(false); // Needed to set it here: used by processPayment()
 
         List<String> paymentIdList = FIN_AddPayment.getPaymentFromPaymentProposal(paymentProposal);
         for (String id : paymentIdList) {
           FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, id);
-          message = FIN_AddPayment.processPayment(vars, conProvider, "R", payment);
+          message = FIN_AddPayment.processPayment(vars, conProvider, "R", payment,
+              COMINGFROM_PAYMENTPROPOSALPROCESS);
           if (message.getType().equals("Error")) {
             bundle.setResult(message);
             return;
@@ -247,7 +251,6 @@ public class FIN_PaymentProposalProcess implements org.openbravo.scheduling.Proc
           OBDal.getInstance().remove(OBDal.getInstance().get(FIN_Payment.class, id));
         }
         paymentProposal.setStatus("RPAP");
-        paymentProposal.setProcessed(false);
         paymentProposal.setAPRMProcessProposal("G");
       }
 

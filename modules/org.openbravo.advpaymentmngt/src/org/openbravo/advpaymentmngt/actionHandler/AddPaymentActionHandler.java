@@ -509,6 +509,8 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
           }
         }
 
+        FIN_PaymentProcess.removePaymentProposalLines(psd);
+
         pd.getFINPaymentScheduleDetailList().remove(psd);
         OBDal.getInstance().save(pd);
         OBDal.getInstance().remove(psd);
