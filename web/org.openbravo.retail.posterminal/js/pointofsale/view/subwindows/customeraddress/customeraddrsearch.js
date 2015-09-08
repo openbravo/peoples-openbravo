@@ -234,6 +234,7 @@ enyo.kind({
       };
     }
     criteria.bpartner = this.bPartnerId;
+    criteria.isBillTo = true;
     if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
       var filterIdentifier = {
         columns: ['_filter'],

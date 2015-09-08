@@ -267,13 +267,28 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ListBpsLocLine',
   kind: 'OB.UI.SelectButton',
+  style: 'background-color:#fbf6d1;',
   components: [{
     name: 'line',
     style: 'line-height: 30px;',
     components: [{
-      name: 'identifier'
-    }, {
-      style: 'clear: both;'
+      style: 'display: table;',
+      components: [{
+        name: 'identifier',
+        style: 'display: table-cell;'
+      }, {
+        name: 'bottomShipIcon',
+        style: 'display: table-cell;',
+        width: '30px',
+        height: '40px'
+      }, {
+        name: 'bottomBillIcon',
+        style: 'display: table-cell;',
+        width: '30px',
+        height: '30px'
+      }, {
+        style: 'clear: both;'
+      }]
     }]
   }],
   events: {
@@ -286,6 +301,26 @@ enyo.kind({
   create: function () {
     this.inherited(arguments);
     this.$.identifier.setContent(this.model.get('name'));
+    if (this.model.get('isBillTo') && this.model.get('isShipTo')) {
+      this.$.bottomShipIcon.applyStyle('background-image', 'url(img/ShippingAddress.png)');
+      this.$.bottomShipIcon.applyStyle('background-repeat', 'no-repeat');
+      this.$.bottomShipIcon.applyStyle('height', this.$.bottomShipIcon.heigth);
+      this.$.bottomShipIcon.applyStyle('width', this.$.bottomShipIcon.width);
+      this.$.bottomBillIcon.applyStyle('background-image', 'url(img/InvoicingAddress.png)');
+      this.$.bottomShipIcon.applyStyle('background-repeat', 'no-repeat');
+      this.$.bottomBillIcon.applyStyle('height', this.$.bottomBillIcon.heigth);
+      this.$.bottomBillIcon.applyStyle('width', this.$.bottomBillIcon.width);
+    } else if (this.model.get('isBillTo')) {
+      this.$.bottomBillIcon.applyStyle('background-image', 'url(img/InvoicingAddress.png)');
+      this.$.bottomShipIcon.applyStyle('background-repeat', 'no-repeat');
+      this.$.bottomBillIcon.applyStyle('height', this.$.bottomBillIcon.heigth);
+      this.$.bottomBillIcon.applyStyle('width', this.$.bottomBillIcon.width);
+    } else if (this.model.get('isShipTo')) {
+      this.$.bottomShipIcon.applyStyle('background-image', 'url(img/ShippingAddress.png)');
+      this.$.bottomShipIcon.applyStyle('background-repeat', 'no-repeat');
+      this.$.bottomShipIcon.applyStyle('height', this.$.bottomShipIcon.heigth);
+      this.$.bottomShipIcon.applyStyle('width', this.$.bottomShipIcon.width);
+    }
   }
 });
 

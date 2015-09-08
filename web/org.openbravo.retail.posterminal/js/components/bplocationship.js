@@ -80,67 +80,7 @@ enyo.kind({
 
 enyo.kind({
   kind: 'OB.UI.Button',
-  name: 'OB.UI.NewCustomerAddressWindowButton',
-  events: {
-    onChangeSubWindow: '',
-    onHideThisPopup: ''
-  },
-  disabled: false,
-  style: 'width: 170px; margin: 0px 5px 8px 19px;',
-  classes: 'btnlink-yellow btnlink btnlink-small',
-  i18nLabel: 'OBPOS_LblNewCustomerAddress',
-  handlers: {
-    onSetModel: 'setModel',
-    onNewBPLocDisabled: 'doDisableNewBPLoc'
-  },
-  setModel: function (inSender, inEvent) {
-    this.model = inEvent.model;
-  },
-  doDisableNewBPLoc: function (inSender, inEvent) {
-    this.putDisabled(inEvent.status);
-  },
-  tap: function (model) {
-    if (this.disabled) {
-      return true;
-    }
-    this.doHideThisPopup();
-    var me = this;
-
-    function errorCallback(tx, error) {
-      OB.error(tx);
-      OB.error(error);
-    }
-
-    function successCallbackBPs(dataBps) {
-      me.doChangeSubWindow({
-        newWindow: {
-          name: 'customerAddrCreateAndEdit',
-          params: {
-            navigateOnClose: 'mainSubWindow',
-            businessPartner: dataBps
-          }
-        }
-      });
-    }
-    OB.Dal.get(OB.Model.BusinessPartner, this.model.get('order').get('bp').get('id'), successCallbackBPs, errorCallback);
-  },
-  putDisabled: function (status) {
-    if (status === false) {
-      this.disabled = false;
-      this.setDisabled(false);
-      this.removeClass('disabled');
-      return;
-    } else {
-      this.disabled = true;
-      this.setDisabled(true);
-      this.addClass('disabled');
-    }
-  }
-});
-
-enyo.kind({
-  kind: 'OB.UI.Button',
-  name: 'OB.UI.SearchCustomerAddressWindowButton',
+  name: 'OB.UI.SearchCustomerShipAddressWindowButton',
   style: 'width: 170px; margin: 0px 0px 8px 5px;',
   classes: 'btnlink-yellow btnlink btnlink-small',
   i18nLabel: 'OBPOS_LblEditAddress',
@@ -164,7 +104,7 @@ enyo.kind({
     }
     this.doHideThisPopup();
     this.model.get('subWindowManager').set('currentWindow', {
-      name: 'customerAddressSearch',
+      name: 'customerShipAddressSearch',
       params: {
         caller: 'mainSubWindow',
         bPartner: this.model.get('order').get('bp').get('id')
@@ -190,7 +130,7 @@ enyo.kind({
 });
 
 enyo.kind({
-  name: 'OB.UI.ModalBpLocScrollableHeader',
+  name: 'OB.UI.ModalBpShipLocScrollableHeader',
   kind: 'OB.UI.ScrollableTableHeader',
   events: {
     onSearchAction: '',
@@ -242,7 +182,7 @@ enyo.kind({
       }, {
         style: 'display: table-cell;',
         components: [{
-          kind: 'OB.UI.SearchCustomerAddressWindowButton'
+          kind: 'OB.UI.SearchCustomerShipAddressWindowButton'
         }]
       }]
     }]
@@ -259,32 +199,6 @@ enyo.kind({
       locName: this.$.filterText.getValue()
     });
     return true;
-  }
-});
-
-/*items of collection*/
-enyo.kind({
-  name: 'OB.UI.ListBpsLocLine',
-  kind: 'OB.UI.SelectButton',
-  components: [{
-    name: 'line',
-    style: 'line-height: 30px;',
-    components: [{
-      name: 'identifier'
-    }, {
-      style: 'clear: both;'
-    }]
-  }],
-  events: {
-    onHideThisPopup: ''
-  },
-  tap: function () {
-    this.inherited(arguments);
-    this.doHideThisPopup();
-  },
-  create: function () {
-    this.inherited(arguments);
-    this.$.identifier.setContent(this.model.get('name'));
   }
 });
 
@@ -313,7 +227,7 @@ enyo.kind({
           name: 'bpsloclistitemprinter',
           kind: 'OB.UI.ScrollableTable',
           scrollAreaMaxHeight: '400px',
-          renderHeader: 'OB.UI.ModalBpLocScrollableHeader',
+          renderHeader: 'OB.UI.ModalBpShipLocScrollableHeader',
           renderLine: 'OB.UI.ListBpsLocLine',
           renderEmpty: 'OB.UI.RenderEmpty'
         }]
@@ -409,12 +323,12 @@ enyo.kind({
   kind: 'OB.UI.Modal',
   executeOnShow: function () {
     this.$.body.$.listBpsShipLoc.setBPartnerId(this.model.get('order').get('bp').get('id'));
-    this.$.body.$.listBpsShipLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.searchAction();
-    this.$.body.$.listBpsShipLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.$.newAction.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers'));
+    this.$.body.$.listBpsShipLoc.$.bpsloclistitemprinter.$.theader.$.modalBpShipLocScrollableHeader.searchAction();
+    this.$.body.$.listBpsShipLoc.$.bpsloclistitemprinter.$.theader.$.modalBpShipLocScrollableHeader.$.newAction.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers'));
     return true;
   },
   executeOnHide: function () {
-    this.$.body.$.listBpsShipLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.clearAction();
+    this.$.body.$.listBpsShipLoc.$.bpsloclistitemprinter.$.theader.$.modalBpShipLocScrollableHeader.clearAction();
   },
   i18nHeader: 'OBPOS_LblAssignCustomerShipAddress',
   body: {
