@@ -251,6 +251,20 @@
       } else {
         receipt.clearWith(me.receipt);
       }
+
+      var linesToRemove = [];
+      receipt.get('lines').forEach(function (line) {
+        if (!line.isPrintableService()) {
+          //Prevent service lines with prices different than zero to be removed:
+          if (line.get('net') || line.get('gross')) {
+            return;
+          }
+          linesToRemove.push(line);
+        }
+      });
+
+      receipt.get('lines').remove(linesToRemove);
+
       if (args.forcedtemplate) {
         args.template = args.forcedtemplate;
       } else if (receipt.get('generateInvoice') && receipt.get('orderType') !== 2 && receipt.get('orderType') !== 3 && !receipt.get('isLayaway')) {

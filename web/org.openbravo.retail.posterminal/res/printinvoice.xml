@@ -65,7 +65,6 @@
       for (var i = 0; i < lines.length; i++) {
         line = lines.at(i);
     %>
-      <%if(line.isPrintableService()){%>
       <line>
         <text align ="left" length="21"><%= OB.UTIL.encodeXMLComponent(line.get('product').get('_identifier')) %></text>
         <text align ="right" length="5"><%= line.printQty() %></text>
@@ -76,7 +75,6 @@
         <text align ="right" length="8"><%= line.printNet() %></text>
     <%}%>
       </line>
-      <%}%>
     <%
         promotions = line.get('promotions');
         if (promotions){
