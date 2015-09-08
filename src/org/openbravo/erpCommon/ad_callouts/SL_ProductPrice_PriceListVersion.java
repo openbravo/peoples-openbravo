@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2012 Openbravo SLU 
+ * All portions are Copyright (C) 2012-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -33,6 +33,7 @@ import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.pricing.pricelist.PriceListVersion;
 import org.openbravo.xmlEngine.XmlDocument;
 
+@Deprecated
 public class SL_ProductPrice_PriceListVersion extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
