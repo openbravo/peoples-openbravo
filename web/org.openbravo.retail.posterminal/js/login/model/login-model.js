@@ -331,6 +331,15 @@
             OB.UTIL.deleteCashUps(data);
             callback();
           });
+        },
+        // skip the syncing of the cashup if it is the same as the last one
+        preSendModel: function (me, dataToSync) {
+          if (dataToSync.length === 1 && this.model === OB.Model.CashUp && localStorage.lastCashupInfo === dataToSync.models[0].get('objToSend')) {
+            localStorage.lastCashupInfo = dataToSync.models[0].get('objToSend');
+            me.skipSyncModel = true;
+          } else {
+            localStorage.lastCashupInfo = dataToSync.models[0].get('objToSend');
+          }
         }
       });
 
