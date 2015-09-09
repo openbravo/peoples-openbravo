@@ -243,8 +243,10 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     this.set('subWindowManager', new ViewManager());
 
     OB.MobileApp.model.runSyncProcess(function () {
+      OB.RR.RequestRouter.sendAllMessages();
       me.loadCheckedMultiorders();
     }, function () {
+      OB.RR.RequestRouter.sendAllMessages();
       me.loadCheckedMultiorders();
     });
 
