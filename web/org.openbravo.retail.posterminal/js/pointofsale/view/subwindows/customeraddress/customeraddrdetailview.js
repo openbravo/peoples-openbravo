@@ -18,11 +18,13 @@ enyo.kind({
     onShowPopup: ''
   },
   beforeSetShowing: function (params) {
+    this.waterfall('onAddressChanged', {
+      address: params.bPLocation
+    });
     this.waterfall('onSetCustomerAddr', {
       customer: params.businessPartner,
       customerAddr: params.bPLocation
     });
-
     return true;
   },
   defaultNavigateOnClose: 'customerAddressSearch',
@@ -54,7 +56,8 @@ enyo.kind({
   style: 'margin: 0px 0px 8px 5px;',
   classes: 'btnlink btnlink-small',
   handlers: {
-    onSetCustomerAddr: 'setCustomerAddr'
+    onSetCustomerAddr: 'setCustomerAddr',
+    onAddressChanged: 'addressChanged'
   },
   events: {
     onChangeBusinessPartner: ''
@@ -93,7 +96,27 @@ enyo.kind({
     });
   },
   init: function (model) {
+    this.inherited(arguments);
+    var me = this;
     this.model = model;
+    this.model.get('customerAddr').on('customerAddrSaved', function () {
+      me.waterfall('onAddressChanged', {
+        address: this
+      });
+    });
+  },
+  renderAssignToticket: function (newLabel) {
+    this.setContent(newLabel);
+  },
+  addressChanged: function (inSender, inEvent) {
+    var customerAddr = inEvent.address;
+    if (customerAddr.get('isBillTo') && !customerAddr.get('isShipTo')) {
+      this.renderAssignToticket(OB.I18N.getLabel('OBPOS_LblAssignBillAddress'));
+    } else if (customerAddr.get('isShipTo') && !customerAddr.get('isBillTo')) {
+      this.renderAssignToticket(OB.I18N.getLabel('OBPOS_LblAssignShipAddress'));
+    } else {
+      this.renderAssignToticket(OB.I18N.getLabel('OBPOS_LblAssignAddress'));
+    }
   },
   initComponents: function () {
     this.inherited(arguments);
