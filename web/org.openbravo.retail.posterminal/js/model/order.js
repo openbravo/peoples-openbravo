@@ -17,11 +17,11 @@
       };
 
   SubscribeToCalculateGross.prototype.doSubscription = function () {
-    this.receipt.on('calculategross', this._callback, this);
+    this.receipt.on('saveCurrent', this._callback, this);
   };
 
   SubscribeToCalculateGross.prototype._callback = function () {
-    this.receipt.off('calculategross', this._callback);
+    this.receipt.off('saveCurrent', this._callback);
     this.f();
   };
 

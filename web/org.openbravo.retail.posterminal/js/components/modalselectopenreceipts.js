@@ -87,14 +87,14 @@ enyo.kind({
               onCalculategross;
 
           onCalculategross = function () {
-            orderModel.off('calculategross', onCalculategross);
+            orderModel.off('saveCurrent', onCalculategross);
             me.owner.owner.doChangeCurrentOrder({
               newCurrentOrder: orderModel
             });
             me.owner.owner.owner.model.get('order').trigger('updateServicePrices');
           };
 
-          orderModel.on('calculategross', onCalculategross);
+          orderModel.on('saveCurrent', onCalculategross);
         }
         this.owner.owner.doHideThisPopup();
       }
