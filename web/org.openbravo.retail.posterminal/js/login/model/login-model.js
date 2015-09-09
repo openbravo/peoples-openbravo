@@ -579,7 +579,7 @@
       if (OB.POS.hwserver !== undefined) {
         OB.POS.hwserver.print(new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.GoodByeTemplate), {});
       }
-      if (!OB.MobileApp.model.attributes.permissions ||  !OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
+      if (!OB.MobileApp.model.attributes.permissions || !OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
         this.cleanSessionInfo();
       }
     },
