@@ -59,11 +59,13 @@ enyo.kind({
       buttons: [{
         command: 'cashpayments',
         i18nLabel: 'OBPOS_SetQuantity',
+        stateless: true,
         definition: {
+          stateless: true,
           action: function (keyboard, amt) {
-            keyboard.model.trigger('action:addUnitToCollection', {
-              coin: keyboard.selectedCoin,
-              amount: parseInt(amt, 10)
+            keyboard.model.trigger('action:SelectCoin', {
+              keyboard: keyboard,
+              txt: amt
             });
           }
         }
