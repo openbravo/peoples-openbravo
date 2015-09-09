@@ -197,8 +197,8 @@
             var criteria = {},
                 productId = line.get('product').id;
             if (line.get('qty') > 0) {
-              if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.obposfiles', true)) {
-                criteria.hgVolFilters = [{
+              if (OB.MobileApp.model.hasPermission('OBPOS_remote.obposfiles', true)) {
+                criteria.remoteFilters = [{
                   columns: ['product'],
                   operator: 'equals',
                   value: productId,

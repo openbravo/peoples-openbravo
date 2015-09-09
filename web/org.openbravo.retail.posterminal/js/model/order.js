@@ -1337,7 +1337,7 @@
 
     _loadRelatedServices: function (productType, productId, productCategory, callback) {
       if (productType !== 'S') {
-        if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.product', true)) {
+        if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
           var process = new OB.DS.Process('org.openbravo.retail.posterminal.process.HasServices');
           var params = {},
               date = new Date(),

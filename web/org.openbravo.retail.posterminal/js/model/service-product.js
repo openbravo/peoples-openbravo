@@ -18,7 +18,7 @@
     source: 'org.openbravo.retail.posterminal.master.ServiceProduct',
     dataLimit: 100,
     includeTerminalDate: true,
-    hgvol: 'OBPOS_highVolume.product'
+    remote: 'OBPOS_remote.product'
   });
 
   ServiceProduct.addProperties([{

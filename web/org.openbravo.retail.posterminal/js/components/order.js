@@ -1058,15 +1058,15 @@ enyo.kind({
             rangeAmountBeforeDiscounts = amountBeforeDiscounts;
             rangeAmountAfterDiscounts = amountAfterDiscounts;
           }
-          if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.product', true)) {
-            criteria.hgVolFilters = [];
-            criteria.hgVolFilters.push({
+          if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
+            criteria.remoteFilters = [];
+            criteria.remoteFilters.push({
               columns: ['product'],
               operator: 'equals',
               value: line.get('product').get('id'),
               isId: true
             });
-            criteria.hgVolFilters.push({
+            criteria.remoteFilters.push({
               columns: [],
               operator: 'filter',
               value: 'ServicePriceRuleVersion_DateFilter',
@@ -1099,15 +1099,15 @@ enyo.kind({
                   });
                 } else { //ruletype = 'R'
                   var rangeCriteria = {};
-                  if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.product', true)) {
-                    rangeCriteria.hgVolFilters = [];
-                    rangeCriteria.hgVolFilters.push({
+                  if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.remote', true)) {
+                    rangeCriteria.remoteFilters = [];
+                    rangeCriteria.remoteFilters.push({
                       columns: ['servicepricerule'],
                       operator: 'equals',
                       value: spr.get('id'),
                       isId: true
                     });
-                    rangeCriteria.hgVolFilters.push({
+                    rangeCriteria.remoteFilters.push({
                       columns: [],
                       operator: 'filter',
                       value: 'ServicePriceRuleRange_AmountFilter',
@@ -1137,15 +1137,15 @@ enyo.kind({
                           setUndo: false
                         });
                       } else { //ruleType = 'F'
-                        if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.product', true)) {
-                          priceCriteria.hgVolFilters = [];
-                          priceCriteria.hgVolFilters.push({
+                        if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
+                          priceCriteria.remoteFilters = [];
+                          priceCriteria.remoteFilters.push({
                             columns: ['product'],
                             operator: 'equals',
                             value: prod.get('id'),
                             isId: true
                           });
-                          priceCriteria.hgVolFilters.push({
+                          priceCriteria.remoteFilters.push({
                             columns: ['priceList'],
                             operator: 'equals',
                             value: range.get('priceList'),

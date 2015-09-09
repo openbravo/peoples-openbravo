@@ -18,7 +18,7 @@
     source: 'org.openbravo.retail.posterminal.master.POSProdFiles',
     dataLimit: OB.Dal.DATALIMIT,
     includeTerminalDate: true,
-    hgvol: 'OBPOS_highVolume.obposfiles'
+    remote: 'OBPOS_remote.obposfiles'
   });
 
   OBPOSProdFiles.addProperties([{
