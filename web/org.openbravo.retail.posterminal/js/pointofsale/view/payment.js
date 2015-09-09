@@ -57,7 +57,8 @@ enyo.kind({
         this.bubble('onMaxLimitAmountError', {
           show: false,
           maxLimitAmount: 0,
-          currency: ''
+          currency: '',
+          symbolAtRight: true
         });
       }
       isMultiOrders = this.model.isValidMultiOrderState();
@@ -121,11 +122,7 @@ enyo.kind({
   maxLimitAmountError: function (inSender, inEvent) {
     var maxHeight;
     if (inEvent.show) {
-      if (inEvent.currency !== '$') {
-        this.$.errorMaxlimitamount.setContent(OB.I18N.getLabel('OBPOS_PaymentMaxLimitAmount', [inEvent.maxLimitAmount, inEvent.currency]));
-      } else {
-        this.$.errorMaxlimitamount.setContent(OB.I18N.getLabel('OBPOS_PaymentMaxLimitAmount', [inEvent.currency, inEvent.maxLimitAmount]));
-      }
+      this.$.errorMaxlimitamount.setContent(OB.I18N.getLabel('OBPOS_PaymentMaxLimitAmount', [OB.I18N.formatCurrencyWithSymbol(inEvent.maxLimitAmount, inEvent.currency, inEvent.symbolAtRight)]));
     } else {
       this.$.errorMaxlimitamount.setContent('');
     }
@@ -953,7 +950,8 @@ enyo.kind({
       this.bubble('onMaxLimitAmountError', {
         show: false,
         maxLimitAmount: 0,
-        currency: ''
+        currency: '',
+        symbolAtRight: true
       });
       this.bubble('onClearPaymentSelect');
       this.doRemovePayment({
