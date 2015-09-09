@@ -15,7 +15,16 @@ enyo.kind({
   kind: 'OB.UI.SmallButton',
   name: 'OB.UI.BPLocationShip',
   classes: 'btnlink-gray',
-  style: 'float: right;width: 120px;text-overflow:ellipsis;white-space: nowrap;overflow: hidden;padding-left: -;padding-left: 0px;margin-left: 0px;margin-bottom: 0px;padding-bottom: 0px;margin-top: 10px; padding-right: 0px;',
+  style: 'display: table; float: right;',
+  components: [{
+    name: 'bottomAddrIcon',
+    style: 'display: table-cell; background-image: url(img/ShippingAddress.png); background-repeat: no-repeat;  width: 35px; height: 40px;'
+  }, {
+    name: 'identifier',
+    style: 'display: table-cell; text-overflow:ellipsis; white-space: nowrap; overflow: hidden; padding-bottom: 10px;padding-left: 10px;'
+  }, {
+    style: 'clear: both;'
+  }],
   published: {
     order: null
   },
@@ -43,9 +52,11 @@ enyo.kind({
       });
     }
   },
-  initComponents: function () {},
+  initComponents: function () {
+    this.inherited(arguments);
+  },
   renderBPLocation: function (newLocation) {
-    this.setContent(newLocation);
+    this.$.identifier.setContent(newLocation);
   },
   orderChanged: function (oldValue) {
     if (this.order.get('bp')) {
@@ -56,26 +67,12 @@ enyo.kind({
 
     this.order.on('change:bp', function (model) {
       if (model.get('bp')) {
-        this.renderBPLocation(_.isNull(model.get('bp').get('locShipName')) ? this.drawingImg(OB.I18N.getLabel('OBPOS_LblEmptyAddress')) : this.drawingImg(model.get('bp').get('locShipName')));
+        this.renderBPLocation(_.isNull(model.get('bp').get('locShipName')) ? OB.I18N.getLabel('OBPOS_LblEmptyAddress') : model.get('bp').get('locShipName'));
       } else {
         this.renderBPLocation(OB.I18N.getLabel('OBPOS_LblEmptyAddress'));
       }
     }, this);
-  },
-  drawingImg: function (name) {
-    var components = this.getComponents();
-    if (components.length > 0) {
-      components[0].destroy();
-    }
-    this.createComponent({
-      classes: 'addressitems',
-      tag: 'div',
-      allowHtml: true,
-      content: '<img class="addressimage" src="img/ShippingAddress.png"/><div class="addressitemstext">' + name + '</div>'
-    });
-    this.render();
   }
-
 });
 
 enyo.kind({
@@ -202,12 +199,76 @@ enyo.kind({
   }
 });
 
+/*items of collection*/
+enyo.kind({
+  name: 'OB.UI.ListBpsShipLocLine',
+  kind: 'OB.UI.SelectButton',
+  components: [{
+    name: 'line',
+    style: 'line-height: 30px;',
+    components: [{
+      style: 'display: table;',
+      components: [{
+        name: 'identifier',
+        style: 'display: table-cell;'
+      }, {
+        name: 'bottomShipIcon',
+        style: 'display: table-cell;',
+        width: '40px',
+        height: '40px'
+      }, {
+        name: 'bottomBillIcon',
+        style: 'display: table-cell;',
+        width: '30px',
+        height: '30px'
+      }, {
+        style: 'clear: both;'
+      }]
+    }]
+  }],
+  events: {
+    onHideThisPopup: ''
+  },
+  tap: function () {
+    this.inherited(arguments);
+    this.doHideThisPopup();
+  },
+  create: function () {
+    this.inherited(arguments);
+    this.$.identifier.setContent(this.model.get('name'));
+    var locId = this.owner.owner.owner.owner.bPartner.get('locShipId');
+    if (locId === this.model.get('id')) {
+      this.applyStyle('background-color', '#fbf6d1');
+    }
+    if (this.model.get('isBillTo') && this.model.get('isShipTo')) {
+      this.$.bottomShipIcon.applyStyle('background-image', 'url(img/ShippingAddress.png)');
+      this.$.bottomShipIcon.applyStyle('background-repeat', 'no-repeat');
+      this.$.bottomShipIcon.applyStyle('height', this.$.bottomShipIcon.heigth);
+      this.$.bottomShipIcon.applyStyle('width', this.$.bottomShipIcon.width);
+      this.$.bottomBillIcon.applyStyle('background-image', 'url(img/InvoicingAddress.png)');
+      this.$.bottomShipIcon.applyStyle('background-repeat', 'no-repeat');
+      this.$.bottomBillIcon.applyStyle('height', this.$.bottomBillIcon.heigth);
+      this.$.bottomBillIcon.applyStyle('width', this.$.bottomBillIcon.width);
+    } else if (this.model.get('isBillTo')) {
+      this.$.bottomBillIcon.applyStyle('background-image', 'url(img/InvoicingAddress.png)');
+      this.$.bottomShipIcon.applyStyle('background-repeat', 'no-repeat');
+      this.$.bottomBillIcon.applyStyle('height', this.$.bottomBillIcon.heigth);
+      this.$.bottomBillIcon.applyStyle('width', this.$.bottomBillIcon.width);
+    } else if (this.model.get('isShipTo')) {
+      this.$.bottomShipIcon.applyStyle('background-image', 'url(img/ShippingAddress.png)');
+      this.$.bottomShipIcon.applyStyle('background-repeat', 'no-repeat');
+      this.$.bottomShipIcon.applyStyle('height', this.$.bottomShipIcon.heigth);
+      this.$.bottomShipIcon.applyStyle('width', this.$.bottomShipIcon.width);
+    }
+  }
+});
+
 /*scrollable table (body of modal)*/
 enyo.kind({
   name: 'OB.UI.ListBpsShipLoc',
   classes: 'row-fluid',
   published: {
-    bPartnerId: null
+    bPartner: null
   },
   handlers: {
     onSearchAction: 'searchAction',
@@ -228,7 +289,7 @@ enyo.kind({
           kind: 'OB.UI.ScrollableTable',
           scrollAreaMaxHeight: '400px',
           renderHeader: 'OB.UI.ModalBpShipLocScrollableHeader',
-          renderLine: 'OB.UI.ListBpsLocLine',
+          renderLine: 'OB.UI.ListBpsShipLocLine',
           renderEmpty: 'OB.UI.RenderEmpty'
         }]
       }]
@@ -258,7 +319,7 @@ enyo.kind({
       operator: OB.Dal.CONTAINS,
       value: filter
     };
-    criteria.bpartner = this.bPartnerId;
+    criteria.bpartner = this.bPartner.get('id');
     criteria.isShipTo = true;
     if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
       var filterIdentifier = {
@@ -269,7 +330,7 @@ enyo.kind({
           bPartnerId = {
           columns: ['bpartner'],
           operator: 'equals',
-          value: this.bPartnerId,
+          value: this.bPartner.get('id'),
           isId: true
           };
       var remoteCriteria = [filterIdentifier, bPartnerId];
@@ -291,18 +352,8 @@ enyo.kind({
       }
 
       function successCallbackBPs(dataBps) {
-        if (model.get('isBillTo') && model.get('isShipTo')) {
-          dataBps.set('locId', model.get('id'));
-          dataBps.set('locName', model.get('name'));
-          dataBps.set('locShipId', model.get('id'));
-          dataBps.set('locShipName', model.get('name'));
-        } else if (model.get('isBillTo')) {
-          dataBps.set('locId', model.get('id'));
-          dataBps.set('locName', model.get('name'));
-        } else if (model.get('isShipTo')) {
-          dataBps.set('locShipId', model.get('id'));
-          dataBps.set('locShipName', model.get('name'));
-        }
+        dataBps.set('locShipId', model.get('id'));
+        dataBps.set('locShipName', model.get('name'));
         dataBps.set('locationModel', model);
         dataBps.set('postalCode', model.get('postalCode'));
         dataBps.set('cityName', model.get('cityName'));
@@ -311,7 +362,7 @@ enyo.kind({
           businessPartner: dataBps
         });
       }
-      OB.Dal.get(OB.Model.BusinessPartner, this.bPartnerId, successCallbackBPs, errorCallback);
+      OB.Dal.get(OB.Model.BusinessPartner, this.bPartner.get('id'), successCallbackBPs, errorCallback);
     }, this);
   }
 });
@@ -322,7 +373,7 @@ enyo.kind({
   topPosition: '125px',
   kind: 'OB.UI.Modal',
   executeOnShow: function () {
-    this.$.body.$.listBpsShipLoc.setBPartnerId(this.model.get('order').get('bp').get('id'));
+    this.$.body.$.listBpsShipLoc.setBPartner(this.model.get('order').get('bp'));
     this.$.body.$.listBpsShipLoc.$.bpsloclistitemprinter.$.theader.$.modalBpShipLocScrollableHeader.searchAction();
     this.$.body.$.listBpsShipLoc.$.bpsloclistitemprinter.$.theader.$.modalBpShipLocScrollableHeader.$.newAction.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers'));
     return true;

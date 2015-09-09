@@ -85,7 +85,7 @@ enyo.kind({
           bPartnerId = {
           columns: ['bpartner'],
           operator: 'equals',
-          value: this.bPartnerId,
+          value: this.bPartner,
           isId: true
           };
       var remoteCriteria = [filterIdentifier, bPartnerId];

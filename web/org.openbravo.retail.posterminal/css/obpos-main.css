@@ -211,26 +211,6 @@
   font-size: 20px;
   font-weight:bold;
 }
-
-.addressitems {
-  position: relative;
-  float: left; 
-  min-width: 25%;
-}
-
-.addressimage {
-  width: 30px;
-  margin: 0 auto;
-  float: left;
-}
-.addressitemstext { 
-  width: 70px;
-  margin-top: 5px;
-  text-overflow:ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-  word-wrap: break-word;
-}
 .iconServices_unreviewed {
   width: 27px;
   height: 26px;
