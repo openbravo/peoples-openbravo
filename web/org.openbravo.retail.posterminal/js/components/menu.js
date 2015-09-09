@@ -157,6 +157,10 @@ enyo.kind({
       return true;
     }
     this.inherited(arguments); // Manual dropdown menu closure
+    if (OB.UTIL.isNullOrUndefined(this.model.get('order').get('bp'))) {
+      OB.UTIL.showError(OB.I18N.getLabel('OBPOS_layawaysOrderWithNotBP'));
+      return true;
+    }
     negativeLines = _.find(this.model.get('order').get('lines').models, function (line) {
       return line.get('qty') < 0;
     });
