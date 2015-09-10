@@ -23,6 +23,7 @@
   ProductCharacteristicValue.addProperties([{
     name: 'id',
     column: 'm_product_ch_value_id',
+    primaryKey: true,
     type: 'TEXT'
   }, {
     name: 'product',
