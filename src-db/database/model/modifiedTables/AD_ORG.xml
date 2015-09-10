@@ -45,6 +45,14 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="EM_OBPOS_SELECT_CC_WAREHOUSE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="EM_OBPOS_WAREHOUSE_SELECTION" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="OBPOS_PRINT_TEMPLATE" name="EM_OBPOS_ORG_CASHUPTEMP">
         <reference local="EM_OBPOS_CASHUP_TEMPLATE_ID" foreign="OBPOS_PRINT_TEMPLATE_ID"/>
       </foreign-key>

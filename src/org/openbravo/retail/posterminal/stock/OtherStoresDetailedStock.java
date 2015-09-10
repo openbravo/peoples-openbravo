@@ -25,12 +25,14 @@ import org.hibernate.Session;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.retail.posterminal.JSONProcessSimple;
+import org.openbravo.retail.posterminal.POSConstants;
 
 public class OtherStoresDetailedStock extends JSONProcessSimple {
   @Override
   public JSONObject exec(JSONObject jsonData) throws JSONException, ServletException {
-    String orgId, prodId;
+    String orgId, prodId, hqlQuery;
     OBContext.setAdminMode(true);
     JSONArray responseArray = new JSONArray();
     BigDecimal totalQtyCounter = BigDecimal.ZERO;
@@ -40,26 +42,28 @@ public class OtherStoresDetailedStock extends JSONProcessSimple {
       orgId = jsonData.getString("organization");
       prodId = jsonData.getString("product");
 
-      String hqlQuery = "select ow.organization.id, ow.organization.name, ow.warehouse.id, ow.warehouse.name, "
+      Organization organization = OBDal.getInstance().get(Organization.class, orgId);
+      String hqlQueryGetWarehouseList;
+      if ("N".equals(organization.getObposIncludedCCWarehouses())) {
+        hqlQueryGetWarehouseList = "exists (SELECT 1 " + "FROM OrganizationWarehouse as ow "
+            + "WHERE " + "ow.organization.id = '" + orgId + "' and ow.warehouseType = '"
+            + POSConstants.CROSS_CHANNEL + "' "
+            + "AND  ms.storageBin.warehouse.id= ow.warehouse.id ) ";
+      } else {
+        hqlQueryGetWarehouseList = "not exists (SELECT 1 FROM OrganizationWarehouse as ow WHERE ow.organization.id = '"
+            + orgId + "' AND ow.warehouse.id = ms.storageBin.warehouse.id) ";
+      }
+
+      hqlQuery = "select ms.storageBin.warehouse.id, ms.storageBin.warehouse.name, ms.storageBin.id, ms.storageBin.searchKey, "
           + "sum(ms.quantityOnHand - ms.reservedQty) as qtyonhand "
-          + "from OrganizationWarehouse as ow, MaterialMgmtStorageDetail as ms "
-          + "where ow.organization.id <> ' "
-          + orgId
-          + "' and "
-          + "ow.warehouse.id = ms.storageBin.warehouse.id and "
-          + "ms.storageBin.warehouse in ( "
-          + "select oww.warehouse.id from OrganizationWarehouse as oww where oww.organization.id <> '"
-          + orgId
-          + "' "
-          + ") and ms.storageBin.warehouse not in ( "
-          + "select owww.warehouse.id from OrganizationWarehouse as owww where owww.organization.id = '"
-          + orgId
-          + "') "
+          + "from MaterialMgmtStorageDetail ms "
+          + "where "
+          + hqlQueryGetWarehouseList
           + "and ms.product.id = '"
           + prodId
           + "' "
-          + "group by ow.organization.id, ow.organization.name, ow.warehouse.id, ow.warehouse.name "
-          + "order by ow.organization.id ";
+          + "group by ms.storageBin.warehouse.id, ms.storageBin.warehouse.name, ms.storageBin.warehouse.id, ms.storageBin.id, ms.storageBin.searchKey "
+          + "order by ms.storageBin.warehouse.name";
 
       final Session session = OBDal.getInstance().getSession();
       final Query query = session.createQuery(hqlQuery);

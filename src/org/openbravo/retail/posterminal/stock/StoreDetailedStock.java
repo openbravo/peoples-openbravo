@@ -24,6 +24,7 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.retail.posterminal.JSONProcessSimple;
+import org.openbravo.retail.posterminal.POSConstants;
 
 public class StoreDetailedStock extends JSONProcessSimple {
   @Override
@@ -46,7 +47,9 @@ public class StoreDetailedStock extends JSONProcessSimple {
           + "WHERE "
           + "ow.organization.id = '"
           + orgId
-          + "') "
+          + "' and ow.warehouseType <> '"
+          + POSConstants.CROSS_CHANNEL
+          + "' ) "
           + "and ms.product.id = '"
           + prodId
           + "'"
