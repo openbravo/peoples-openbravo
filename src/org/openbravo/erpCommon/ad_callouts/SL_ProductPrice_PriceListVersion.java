@@ -20,20 +20,22 @@ package org.openbravo.erpCommon.ad_callouts;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.StringTokenizer;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.pricing.pricelist.PriceListVersion;
 import org.openbravo.xmlEngine.XmlDocument;
 
-@Deprecated
 public class SL_ProductPrice_PriceListVersion extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
@@ -59,22 +61,39 @@ public class SL_ProductPrice_PriceListVersion extends HttpSecureAppServlet {
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
 
-    StringBuilder resultado = new StringBuilder();
-    boolean hasAccessTo = false;
+    try {
+      OBContext.setAdminMode();
+      StringBuilder resultado = new StringBuilder();
+      boolean hasAccessTo = false;
 
-    PriceListVersion plv = OBDal.getInstance().get(PriceListVersion.class, strPriceListV);
-    Role role = OBDal.getInstance().get(Role.class, vars.getRole());
-    hasAccessTo = role.getOrganizationList().indexOf(plv.getOrganization().getId()) > 0;
+      // If the role has access to the Price List Version Organization, we set this organization to
+      // the record.
+      PriceListVersion plv = OBDal.getInstance().get(PriceListVersion.class, strPriceListV);
+      final String plvOrgId = plv.getOrganization().getId();
+      Role role = OBDal.getInstance().get(Role.class, vars.getRole());
+      String roleOrgListStr = role.getOrganizationList();
+      if (StringUtils.contains(role.getUserLevel(), "C")) {
+        // If the role is for Client or Client + Organization, we add * organization to the list
+        roleOrgListStr = roleOrgListStr + ",0";
+      }
+      StringTokenizer roleOrgList = new StringTokenizer(
+          StringUtils.deleteWhitespace(roleOrgListStr), ",");
+      while (!hasAccessTo && roleOrgList.hasMoreTokens()) {
+        hasAccessTo = StringUtils.equals(roleOrgList.nextToken(), plvOrgId);
+      }
 
-    resultado.append("var calloutName='SL_ProductPrice_PriceListVersion';\n\n");
-    resultado.append("var respuesta = new Array(");
-    resultado.append("new Array(\"inpadOrgId\", \""
-        + ((hasAccessTo) ? plv.getOrganization().getId() : strOrg) + "\"));");
-    xmlDocument.setParameter("array", resultado.toString());
-    xmlDocument.setParameter("frameName", "appFrame");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
+      resultado.append("var calloutName='SL_ProductPrice_PriceListVersion';\n\n");
+      resultado.append("var respuesta = new Array(");
+      resultado.append("new Array(\"inpadOrgId\", \"" + ((hasAccessTo) ? plvOrgId : strOrg)
+          + "\"));");
+      xmlDocument.setParameter("array", resultado.toString());
+      xmlDocument.setParameter("frameName", "appFrame");
+      response.setContentType("text/html; charset=UTF-8");
+      PrintWriter out = response.getWriter();
+      out.println(xmlDocument.print());
+      out.close();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 }
