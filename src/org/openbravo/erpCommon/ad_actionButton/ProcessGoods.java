@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2012-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -21,28 +21,41 @@ package org.openbravo.erpCommon.ad_actionButton;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.Query;
 import org.openbravo.base.filter.IsIDFilter;
+import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.reference.PInstanceProcessData;
+import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.materialmgmt.InventoryCountProcess;
 import org.openbravo.model.ad.process.ProcessInstance;
+import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.ui.Process;
+import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
+import org.openbravo.model.materialmgmt.transaction.InventoryCount;
+import org.openbravo.model.materialmgmt.transaction.InventoryCountLine;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
+import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.service.db.CallProcess;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -52,6 +65,10 @@ public class ProcessGoods extends HttpSecureAppServlet {
   private static final String M_Inout_Table_ID = "319";
   private static final String Goods_Document_Action = "135";
   private static final String Goods_Receipt_Window = "184";
+  private List<String> receiptLineIdList = new ArrayList<String>();
+  private String docaction;
+  private String voidMinoutDate;
+  private String voidMinoutAcctDate;
 
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
@@ -94,77 +111,115 @@ public class ProcessGoods extends HttpSecureAppServlet {
           IsIDFilter.instance);
       final String strTabId = vars.getGlobalVariable("inpTabId", "ProcessGoods|Tab_ID",
           IsIDFilter.instance);
-      final String strM_Inout_ID = vars
-          .getGlobalVariable("inpKey", strWindowId + "|M_Inout_ID", "");
+      final String receiptId = vars.getGlobalVariable("inpKey", strWindowId + "|M_Inout_ID", "");
+      final String strdocaction = vars.getStringParameter("inpdocaction");
       final String strVoidMinoutDate = vars.getStringParameter("inpVoidedDocumentDate");
       final String strVoidMinoutAcctDate = vars.getStringParameter("inpVoidedDocumentAcctDate");
-      String strdocaction = vars.getStringParameter("inpdocaction");
+      Client client = OBDal.getInstance().get(Client.class, vars.getClient());
 
-      OBError myMessage = null;
-      try {
-        ShipmentInOut goods = (ShipmentInOut) OBDal.getInstance().getProxy(
-            ShipmentInOut.ENTITY_NAME, strM_Inout_ID);
-        goods.setDocumentAction(strdocaction);
-        OBDal.getInstance().save(goods);
-        OBDal.getInstance().flush();
-
-        Process process = null;
-        try {
-          OBContext.setAdminMode(true);
-          process = (Process) OBDal.getInstance().getProxy(Process.ENTITY_NAME, M_Inout_Post_ID);
-        } finally {
-          OBContext.restorePreviousMode();
-        }
-
-        Map<String, String> parameters = null;
-        if (!strVoidMinoutDate.isEmpty() && !strVoidMinoutAcctDate.isEmpty()) {
-          Date voidDate = null;
-          Date voidAcctDate = null;
-          try {
-            voidDate = OBDateUtils.getDate(strVoidMinoutDate);
-            voidAcctDate = OBDateUtils.getDate(strVoidMinoutAcctDate);
-          } catch (ParseException pe) {
-            voidDate = new Date();
-            voidAcctDate = new Date();
-            log4j.error("Not possible to parse the following date: " + strVoidMinoutDate, pe);
-            log4j.error("Not possible to parse the following date: " + strVoidMinoutAcctDate, pe);
-          }
-          parameters = new HashMap<String, String>();
-          parameters.put("voidedDocumentDate", OBDateUtils.formatDate(voidDate, "yyyy-MM-dd"));
-          parameters.put("voidedDocumentAcctDate",
-              OBDateUtils.formatDate(voidAcctDate, "yyyy-MM-dd"));
-        }
-
-        final ProcessInstance pinstance = CallProcess.getInstance().call(process, strM_Inout_ID,
-            parameters);
-        OBDal.getInstance().getSession().refresh(goods);
-        goods.setProcessGoodsJava(goods.getDocumentAction());
-        OBDal.getInstance().save(goods);
-        OBDal.getInstance().flush();
-        OBDal.getInstance().commitAndClose();
-
-        final PInstanceProcessData[] pinstanceData = PInstanceProcessData.select(this,
-            pinstance.getId());
-        myMessage = Utility.getProcessInstanceMessage(this, vars, pinstanceData);
-        log4j.debug(myMessage.getMessage());
-        vars.setMessage(strTabId, myMessage);
-
-        String strWindowPath = Utility.getTabURL(strTabId, "R", true);
-        if (strWindowPath.equals("")) {
-          strWindowPath = strDefaultServlet;
-        }
-        printPageClosePopUp(response, vars, strWindowPath);
-
-      } catch (ServletException ex) {
-        myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
-        if (!myMessage.isConnectionAvailable()) {
-          bdErrorConnection(response);
-          return;
+      if (StringUtils.equals(strWindowId, Goods_Receipt_Window)
+          && StringUtils.equals(strdocaction, "RC")
+          && !client.getClientInformationList().get(0).isAllowNegativeStock()) {
+        receiptLineIdList = getReceiptLinesWithoutStock(receiptId);
+        if (!receiptLineIdList.isEmpty()) {
+          ShipmentInOut receipt = OBDal.getInstance().get(ShipmentInOut.class, receiptId);
+          docaction = strdocaction;
+          voidMinoutDate = strVoidMinoutDate;
+          voidMinoutAcctDate = strVoidMinoutAcctDate;
+          printPagePhysicalInventoryGrid(response, vars, strWindowId, strTabId, receipt
+              .getOrganization().getId());
         } else {
-          vars.setMessage(strTabId, myMessage);
+          processReceipt(response, vars, strdocaction, strVoidMinoutDate, strVoidMinoutAcctDate);
         }
+      } else {
+        processReceipt(response, vars, strdocaction, strVoidMinoutDate, strVoidMinoutAcctDate);
+      }
+    } else if (vars.commandIn("LOAD_PHYSICALINVENTORY")) {
+      printGrid(response, vars);
+    } else if (vars.commandIn("CANCEL_PHYSICALINVENTORY")) {
+      processReceipt(response, vars, docaction, voidMinoutDate, voidMinoutAcctDate);
+    } else if (vars.commandIn("SAVE_PHYSICALINVENTORY")) {
+      final String strWindowId = vars.getGlobalVariable("inpwindowId", "ProcessGoods|Window_ID",
+          IsIDFilter.instance);
+      final String receiptId = vars.getGlobalVariable("inpKey", strWindowId + "|M_Inout_ID", "");
+      ShipmentInOut receipt = OBDal.getInstance().get(ShipmentInOut.class, receiptId);
+      createInventory(receipt);
+      processReceipt(response, vars, docaction, voidMinoutDate, voidMinoutAcctDate);
+    }
+  }
+
+  private void processReceipt(HttpServletResponse response, VariablesSecureApp vars,
+      String strdocaction, String strVoidMinoutDate, String strVoidMinoutAcctDate)
+      throws ServletException, IOException {
+    final String strWindowId = vars.getGlobalVariable("inpwindowId", "ProcessGoods|Window_ID",
+        IsIDFilter.instance);
+    final String strTabId = vars.getGlobalVariable("inpTabId", "ProcessGoods|Tab_ID",
+        IsIDFilter.instance);
+    final String strM_Inout_ID = vars.getGlobalVariable("inpKey", strWindowId + "|M_Inout_ID", "");
+
+    OBError myMessage = null;
+    try {
+      ShipmentInOut goods = (ShipmentInOut) OBDal.getInstance().getProxy(ShipmentInOut.ENTITY_NAME,
+          strM_Inout_ID);
+      goods.setDocumentAction(strdocaction);
+      OBDal.getInstance().save(goods);
+      OBDal.getInstance().flush();
+
+      Process process = null;
+      try {
+        OBContext.setAdminMode(true);
+        process = (Process) OBDal.getInstance().getProxy(Process.ENTITY_NAME, M_Inout_Post_ID);
+      } finally {
+        OBContext.restorePreviousMode();
       }
 
+      Map<String, String> parameters = null;
+      if (!strVoidMinoutDate.isEmpty() && !strVoidMinoutAcctDate.isEmpty()) {
+        Date voidDate = null;
+        Date voidAcctDate = null;
+        try {
+          voidDate = OBDateUtils.getDate(strVoidMinoutDate);
+          voidAcctDate = OBDateUtils.getDate(strVoidMinoutAcctDate);
+        } catch (ParseException pe) {
+          voidDate = new Date();
+          voidAcctDate = new Date();
+          log4j.error("Not possible to parse the following date: " + strVoidMinoutDate, pe);
+          log4j.error("Not possible to parse the following date: " + strVoidMinoutAcctDate, pe);
+        }
+        parameters = new HashMap<String, String>();
+        parameters.put("voidedDocumentDate", OBDateUtils.formatDate(voidDate, "yyyy-MM-dd"));
+        parameters
+            .put("voidedDocumentAcctDate", OBDateUtils.formatDate(voidAcctDate, "yyyy-MM-dd"));
+      }
+
+      final ProcessInstance pinstance = CallProcess.getInstance().call(process, strM_Inout_ID,
+          parameters);
+      OBDal.getInstance().getSession().refresh(goods);
+      goods.setProcessGoodsJava(goods.getDocumentAction());
+      OBDal.getInstance().save(goods);
+      OBDal.getInstance().flush();
+      OBDal.getInstance().commitAndClose();
+
+      final PInstanceProcessData[] pinstanceData = PInstanceProcessData.select(this,
+          pinstance.getId());
+      myMessage = Utility.getProcessInstanceMessage(this, vars, pinstanceData);
+      log4j.debug(myMessage.getMessage());
+      vars.setMessage(strTabId, myMessage);
+
+      String strWindowPath = Utility.getTabURL(strTabId, "R", true);
+      if (strWindowPath.equals("")) {
+        strWindowPath = strDefaultServlet;
+      }
+      printPageClosePopUp(response, vars, strWindowPath);
+
+    } catch (ServletException ex) {
+      myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+      if (!myMessage.isConnectionAvailable()) {
+        bdErrorConnection(response);
+        return;
+      } else {
+        vars.setMessage(strTabId, myMessage);
+      }
     }
   }
 
@@ -245,6 +300,135 @@ public class ProcessGoods extends HttpSecureAppServlet {
     out.println(xmlDocument.print());
     out.close();
 
+  }
+
+  void printPagePhysicalInventoryGrid(HttpServletResponse response, VariablesSecureApp vars,
+      String strWindowId, String strTabId, String strOrg) throws IOException, ServletException {
+    log4j.debug("Output: Credit Payment Grid popup");
+    String[] discard = { "" };
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/ad_actionButton/PhysicalInventory", discard).createXmlDocument();
+    xmlDocument.setParameter("css", vars.getTheme());
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("cancel", Utility.messageBD(this, "Cancel", vars.getLanguage()));
+    xmlDocument.setParameter("ok", Utility.messageBD(this, "OK", vars.getLanguage()));
+    xmlDocument.setParameter("processId", M_Inout_Post_ID);
+    out.println(xmlDocument.print());
+    out.close();
+  }
+
+  private void printGrid(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
+      ServletException {
+    String[] discard = {};
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/ad_actionButton/PhysicalInventoryGrid", discard)
+        .createXmlDocument();
+    xmlDocument.setData("structure", getFieldsForGrid());
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+  }
+
+  private FieldProvider[] getFieldsForGrid() {
+    FieldProvider[] data = FieldProviderFactory.getFieldProviderArray(receiptLineIdList);
+    try {
+      OBContext.setAdminMode(true);
+      for (int i = 0; i < data.length; i++) {
+        ShipmentInOutLine receiptLine = OBDal.getInstance().get(ShipmentInOutLine.class,
+            receiptLineIdList.get(i));
+        FieldProviderFactory.setField(data[i], "receiptLineId", receiptLine.getId());
+        FieldProviderFactory.setField(data[i], "lineNo", receiptLine.getLineNo().toString());
+        FieldProviderFactory.setField(data[i], "product", receiptLine.getProduct().getName());
+        FieldProviderFactory.setField(data[i], "attribute",
+            receiptLine.getAttributeSetValue() != null ? receiptLine.getAttributeSetValue()
+                .getDescription() : "");
+        FieldProviderFactory.setField(data[i], "quantity", receiptLine.getMovementQuantity()
+            .toString());
+        FieldProviderFactory.setField(data[i], "uom", receiptLine.getUOM().getName());
+        FieldProviderFactory
+            .setField(data[i], "orderQuantity",
+                receiptLine.getOrderQuantity() != null ? receiptLine.getOrderQuantity().toString()
+                    : "");
+        FieldProviderFactory.setField(data[i], "orderUom",
+            receiptLine.getOrderUOM() != null ? receiptLine.getOrderUOM().getUOM().getName() : "");
+        FieldProviderFactory.setField(data[i], "locator", receiptLine.getStorageBin()
+            .getSearchKey());
+      }
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return data;
+  }
+
+  @SuppressWarnings("unchecked")
+  private List<String> getReceiptLinesWithoutStock(String receiptId) {
+    StringBuffer where = new StringBuffer();
+    where.append(" select iol." + ShipmentInOutLine.PROPERTY_ID);
+    where.append(" from " + ShipmentInOutLine.ENTITY_NAME + " as iol");
+    where.append(" where iol." + ShipmentInOutLine.PROPERTY_SHIPMENTRECEIPT + " = :receipt");
+    where.append(" and iol." + ShipmentInOutLine.PROPERTY_ATTRIBUTESETVALUE + " is not null");
+    where.append(" and not exists (");
+    where.append("   select 1 ");
+    where.append("   from " + StorageDetail.ENTITY_NAME + " as sd");
+    where.append("   where sd." + StorageDetail.PROPERTY_PRODUCT + " = iol."
+        + ShipmentInOutLine.PROPERTY_PRODUCT);
+    where.append("   and sd." + StorageDetail.PROPERTY_STORAGEBIN + " = iol."
+        + ShipmentInOutLine.PROPERTY_STORAGEBIN);
+    where.append("   and sd." + StorageDetail.PROPERTY_ATTRIBUTESETVALUE + " = iol."
+        + ShipmentInOutLine.PROPERTY_ATTRIBUTESETVALUE);
+    where.append("   and sd." + StorageDetail.PROPERTY_UOM + " = iol."
+        + ShipmentInOutLine.PROPERTY_UOM);
+    where.append("   and coalesce(sd." + StorageDetail.PROPERTY_ORDERUOM + ", '0') = coalesce(iol."
+        + ShipmentInOutLine.PROPERTY_ORDERUOM + ", '0')");
+    where.append(" )");
+
+    Query qry = OBDal.getInstance().getSession().createQuery(where.toString());
+    qry.setParameter("receipt", OBDal.getInstance().get(ShipmentInOut.class, receiptId));
+    return qry.list();
+  }
+
+  private void createInventory(ShipmentInOut receipt) {
+
+    // Create physical inventory
+    InventoryCount inv = OBProvider.getInstance().get(InventoryCount.class);
+    inv.setClient(receipt.getClient());
+    inv.setOrganization(receipt.getOrganization());
+    inv.setName(OBDateUtils.formatDate(new Date()));
+    inv.setWarehouse(receipt.getWarehouse());
+    inv.setMovementDate(new Date());
+    inv.setInventoryType("N");
+    OBDal.getInstance().save(inv);
+
+    // Add a line for each receipt line without related stock line
+    int i = 0;
+    for (String receiptLineId : receiptLineIdList) {
+      ShipmentInOutLine receiptLine = OBDal.getInstance().get(ShipmentInOutLine.class,
+          receiptLineId);
+      InventoryCountLine invLine = OBProvider.getInstance().get(InventoryCountLine.class);
+      invLine.setClient(receiptLine.getClient());
+      invLine.setOrganization(receiptLine.getOrganization());
+      invLine.setPhysInventory(inv);
+      invLine.setLineNo((i + 1) * 10L);
+      invLine.setProduct(receiptLine.getProduct());
+      invLine.setStorageBin(receiptLine.getStorageBin());
+      invLine.setAttributeSetValue(receiptLine.getAttributeSetValue());
+      invLine.setUOM(receiptLine.getUOM());
+      invLine.setOrderUOM(receiptLine.getOrderUOM());
+      invLine.setBookQuantity(BigDecimal.ZERO);
+      invLine.setQuantityCount(receiptLine.getMovementQuantity());
+      invLine.setQuantityOrderBook(BigDecimal.ZERO);
+      invLine.setOrderQuantity(receiptLine.getOrderQuantity());
+      OBDal.getInstance().save(invLine);
+      i++;
+    }
+
+    // Process inventory
+    OBDal.getInstance().flush();
+    new InventoryCountProcess().processInventory(inv);
   }
 
   public String getServletInfo() {
