@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global enyo, Backbone, OB */
+/*global enyo, Backbone, OB, _ */
 
 
 enyo.kind({
@@ -238,6 +238,13 @@ enyo.kind({
     }]
   }, {
     style: 'padding: 10px;',
+    showing: true,
+    handlers: {
+      onSetShow: 'setShow'
+    },
+    setShow: function (inSender, inEvent) {
+      this.setShowing(inEvent.visibility);
+    },
     components: [{
       style: 'display: table;',
       components: [{
@@ -411,6 +418,12 @@ enyo.kind({
   topPosition: '125px',
   kind: 'OB.UI.Modal',
   executeOnShow: function () {
+    if (_.isUndefined(this.args.visibilityButtons)) {
+      this.args.visibilityButtons = true;
+    }
+    this.waterfall('onSetShow', {
+      visibility: this.args.visibilityButtons
+    });
     this.$.body.$.listBps.$.stBPAssignToReceipt.$.theader.$.modalBpScrollableHeader.$.newAction.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers'));
     return true;
   },

@@ -228,6 +228,13 @@ enyo.kind({
     }]
   }, {
     style: 'padding: 10px;',
+    showing: true,
+    handlers: {
+      onSetShow: 'setShow'
+    },
+    setShow: function (inSender, inEvent) {
+      this.setShowing(inEvent.visibility);
+    },
     components: [{
       style: 'display: table;',
       components: [{
@@ -433,6 +440,12 @@ enyo.kind({
   topPosition: '125px',
   kind: 'OB.UI.Modal',
   executeOnShow: function () {
+    if (_.isUndefined(this.args.visibilityButtons)) {
+      this.args.visibilityButtons = true;
+    }
+    this.waterfall('onSetShow', {
+      visibility: this.args.visibilityButtons
+    });
     this.$.body.$.listBpsLoc.setBPartner(this.model.get('order').get('bp'));
     this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.searchAction();
     this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.$.newAction.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers'));

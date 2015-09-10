@@ -90,6 +90,18 @@ enyo.kind({
     i18nLabel: 'OBPOS_SalesRepresentative',
     permission: 'OBPOS_salesRepresentative.receipt',
     permissionOption: 'OBPOS_SR.comboOrModal'
+  }, {
+    kind: 'OB.UI.Customer',
+    name: 'customerbutton',
+    i18nLabel: 'OBPOS_LblCustomer'
+  }, {
+    kind: 'OB.UI.ShipTo',
+    name: 'addressshipbutton',
+    i18nLabel: 'OBPOS_LblShippAddr'
+  }, {
+    kind: 'OB.UI.BillTo',
+    name: 'addressbillbutton',
+    i18nLabel: 'OBPOS_LblBillAddr'
   }],
 
   resetProperties: function () {
