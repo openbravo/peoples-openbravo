@@ -99,7 +99,7 @@ enyo.kind({
         OB.MobileApp.model.hookManager.executeHooks('OBPOS_PostAddNewReceipt', {
           model: me.model,
           context: me
-        }, function (args2) {
+        }, function () {
           //Nothing to do
         });
         return true;
@@ -153,7 +153,7 @@ enyo.kind({
       me.doDeleteOrder();
     } else {
       OB.UTIL.Approval.requestApproval(
-      this.model, 'OBPOS_approval.removereceipts', function (approved, supervisor, approvalType) {
+      this.model, 'OBPOS_approval.removereceipts', function (approved) {
         if (approved) {
           me.doShowPopup({
             popup: 'modalConfirmReceiptDelete'
@@ -421,7 +421,7 @@ enyo.kind({
       this.tabPanel = 'payment';
       this.disabledChanged(false);
     }, this);
-    this.model.get('order').on('change:id', function (newValue) {
+    this.model.get('order').on('change:id', function () {
       this.disabledChanged(false);
     }, this);
     // the button state must be set only once, in the initialization

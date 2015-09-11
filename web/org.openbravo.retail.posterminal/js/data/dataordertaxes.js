@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global window,Promise,Backbone,_ */
+/*global OB, Promise, _, BigDecimal */
 
 (function () {
 
@@ -115,13 +115,13 @@
           line: line,
           sql: sql
         }, function (args) {
-          OB.Dal.queryUsingCache(OB.Model.TaxRate, args.sql, [], function (coll, args) { // success
+          OB.Dal.queryUsingCache(OB.Model.TaxRate, args.sql, [], function (coll) { // success
             if (coll && coll.length > 0) {
               fulfill(coll);
             } else {
               reject(OB.I18N.getLabel('OBPOS_TaxNotFound_Message', [taxCategory]));
             }
-          }, function (tx, error) { // error
+          }, function () { // error
             reject(OB.I18N.getLabel('OBPOS_TaxCalculationError_Message'));
           });
         });
@@ -306,7 +306,7 @@
         var summedTaxAmt = 0;
         var expectedGross = (_.isNull(discountedGross) || _.isUndefined(discountedGross)) ? orggross : discountedGross;
         var greaterTax = null;
-        _.each(coll, function (taxRate, taxIndex, taxList) {
+        _.each(coll, function (taxRate) {
           if (!taxRate.get('summaryLevel')) {
             var taxId = taxRate.get('id');
             summedTaxAmt = OB.DEC.add(summedTaxAmt, taxesline[taxId].amount);
@@ -347,11 +347,11 @@
 
         // Calculate receipt taxes
         var taxes = receipt.get('taxes');
-        _.each(coll, function (taxRate, taxIndex) {
+        _.each(coll, function (taxRate) {
           var taxId = taxRate.get('id');
 
           delete taxes[taxId];
-          receipt.get('lines').each(function (line, lineindex) {
+          receipt.get('lines').each(function (line) {
             var taxLines = line.get('taxLines');
             if (!taxLines || !taxLines[taxId]) {
               return;
@@ -370,7 +370,7 @@
             }
           });
         });
-        _.each(coll, function (taxRate, taxIndex) {
+        _.each(coll, function (taxRate) {
           var taxId = taxRate.get('id');
           if (taxes[taxId]) {
             taxes[taxId].net = OB.DEC.toNumber(taxes[taxId].net);
@@ -479,7 +479,7 @@
       });
 
       // Calculate
-      return Promise.all(_.map(receipt.get('lines').models, function (line, index, list) {
+      return Promise.all(_.map(receipt.get('lines').models, function (line) {
         return calcLineTaxesIncPrice(receipt, line);
       }));
       };
@@ -740,7 +740,7 @@
       });
 
       // Calculate
-      return Promise.all(_.map(receipt.get('lines').models, function (line, index, list) {
+      return Promise.all(_.map(receipt.get('lines').models, function (line) {
         return calcLineTaxesExcPrice(receipt, line);
       }));
       };
@@ -754,30 +754,9 @@
       }
       };
 
-  var getTaxesInfo = function (receipt) {
-      return {
-        taxlines: receipt.get('lines').map(function (line) {
-          return {
-            linerate: line.get('linerate'),
-            tax: line.get('tax'),
-            taxAmount: line.get('taxAmount'),
-            net: line.get('net'),
-            pricenet: line.get('pricenet'),
-            discountedNet: line.get('discountedNet'),
-            taxes: line.get('taxLines')
-          };
-        }),
-        net: receipt.get('net'),
-        taxes: receipt.get('taxes')
-      };
-      };
-
-  OB = window.OB || {};
-  OB.DATA = window.OB.DATA || {};
-  OB.DATA.OrderTaxes = function (modelOrder) {
-    modelOrder.calculateTaxes = function (callback) {
+  OB.DATA.OrderTaxes = function (modelOfAnOrder) {
+    modelOfAnOrder.calculateTaxes = function (callback) {
       var me = this;
-      var mytaxes, mytaxesold;
       var synchId;
       synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('taxescalculation');
       calcTaxes(me).then(function () {

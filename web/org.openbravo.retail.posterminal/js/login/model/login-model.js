@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, _, enyo, Backbone, console, BigDecimal, localStorage */
+/*global OB, _, enyo, BigDecimal, localStorage */
 
 (function () {
   // initialize the WebPOS terminal model that extends the core terminal model. after this, OB.MobileApp.model will be available
@@ -211,7 +211,7 @@
                 }
               }
             },
-            fail: function (inSender, inResponse) {
+            fail: function () {
               if (OB.MobileApp.model.get('isLoggingIn') === true) {
                 var msg = OB.I18N.getLabel('OBMOBC_ContextErrorBody') + OB.I18N.getLabel('OBMOBC_LoadingErrorBody');
                 OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), msg, [{
@@ -398,7 +398,7 @@
           terminalName: window.localStorage.getItem('terminalName'),
           terminalKeyIdentifier: window.localStorage.getItem('terminalKeyIdentifier'),
           terminalAuthentication: window.localStorage.getItem('terminalAuthentication')
-        }, function (data, message) {
+        }, function (data) {
           if (data && data.exception) {
             //ERROR or no connection
             OB.error("runSyncProcess", OB.I18N.getLabel('OBPOS_TerminalAuthError'));
@@ -505,7 +505,7 @@
             terminalName: window.localStorage.getItem('terminalName'),
             terminalKeyIdentifier: window.localStorage.getItem('terminalKeyIdentifier'),
             terminalAuthentication: window.localStorage.getItem('terminalAuthentication')
-          }, function (data, message) {
+          }, function (data) {
             if (data && data.exception) {
               //ERROR or no connection
               OB.error("renderMain", OB.I18N.getLabel('OBPOS_TerminalAuthError'));
@@ -848,7 +848,7 @@
           callback();
         }
 
-      }).error(function (inSender, inResponse) {
+      }).error(function () {
         callback();
       }).go(params);
     },
@@ -870,7 +870,7 @@
 
         me.setTerminalName(window.localStorage.getItem('terminalAuthentication') === 'Y' ? window.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"));
         callback();
-      }).error(function (inSender, inResponse) {
+      }).error(function () {
         callback();
       }).go(params);
     }
@@ -888,10 +888,10 @@
     hrefWindow: function (windowname) {
       return '?terminal=' + window.encodeURIComponent(OB.MobileApp.model.get('terminalName')) + '&window=' + window.encodeURIComponent(windowname);
     },
-    logout: function (callback) {
+    logout: function () {
       OB.MobileApp.model.logout();
     },
-    lock: function (callback) {
+    lock: function () {
       OB.MobileApp.model.lock();
     },
     windows: null,
@@ -913,7 +913,7 @@
 
 }());
 var origTap = OB.UI.ProfileDialogApply.prototype.tap;
-OB.UI.ProfileDialogApply.prototype.tap = _.wrap(OB.UI.ProfileDialogApply.prototype.tap, function (wrapped) {
+OB.UI.ProfileDialogApply.prototype.tap = _.wrap(OB.UI.ProfileDialogApply.prototype.tap, function () {
   var tap = _.bind(origTap, this),
       widgetForm = this.owner.owner.$.bodyContent.$,
       newRoleId = widgetForm.roleList.getValue(),

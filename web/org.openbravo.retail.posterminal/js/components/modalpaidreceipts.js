@@ -244,7 +244,7 @@ enyo.kind({
 
     OB.UTIL.HookManager.executeHooks('OBPOS_RenderPaidReceiptLine', {
       paidReceiptLine: this
-    }, function (args) {
+    }, function () {
       //All should be done in module side
     });
 
@@ -291,7 +291,7 @@ enyo.kind({
       }]
     }]
   }],
-  clearAction: function (inSender, inEvent) {
+  clearAction: function () {
     this.prsList.reset();
     return true;
   },
@@ -389,7 +389,7 @@ enyo.kind({
   published: {
     params: null
   },
-  changedParams: function (value) {
+  changedParams: function () {
 
   },
   body: {

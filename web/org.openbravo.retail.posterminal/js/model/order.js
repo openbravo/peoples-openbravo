@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, _, moment, Backbone, enyo, BigDecimal, alert, localStorage */
+/*global OB, _, moment, Backbone, enyo, BigDecimal, localStorage */
 
 (function () {
 
@@ -267,8 +267,7 @@
         attributes = JSON.parse(attributes.json);
         attributes.id = orderId;
       }
-      var me = this,
-          bpModel;
+      var bpModel;
       if (attributes && attributes.documentNo) {
         this.set('id', attributes.id);
         this.set('client', attributes.client);
@@ -349,7 +348,7 @@
       this.set('undo', undoCopy);
     },
 
-    calculateTaxes: function (callback, doNotSave) {
+    calculateTaxes: function (callback) {
       OB.DATA.OrderTaxes(this);
       this.calculateTaxes(callback);
     },
@@ -436,7 +435,6 @@
       }, this);
 
       var totalnet = this.get('lines').reduce(function (memo, e) {
-        var netLine = e.get('discountedNet');
         if (e.get('net')) {
           return memo.add(new BigDecimal(String(e.get('net'))));
         } else {
@@ -786,7 +784,7 @@
           this.deleteLine(line);
         } else {
           // We don't have the approval to delete the line yet; request it
-          OB.UTIL.Approval.requestApproval(OB.MobileApp.view.$.containerWindow.$.pointOfSale.model, 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
+          OB.UTIL.Approval.requestApproval(OB.MobileApp.view.$.containerWindow.$.pointOfSale.model, 'OBPOS_approval.deleteLine', function (approved) {
             if (approved) {
               me.deleteLine(line);
             }
@@ -830,7 +828,6 @@
     },
 
     setLineProperty: function (line, property, value) {
-      var me = this;
       var index = this.get('lines').indexOf(line);
       this.get('lines').at(index).set(property, value);
     },
@@ -972,7 +969,7 @@
         qtyToAdd: qty,
         options: options,
         newLine: newLine
-      }, function (args) {});
+      }, function () {});
     },
 
     _drawLinesDistribution: function (data) {
@@ -1112,7 +1109,6 @@
           merged = false;
       line.set('promotions', null);
       lines.forEach(function (l) {
-        var promos = l.get('promotions');
         if (l === line) {
           return;
         }
@@ -1137,7 +1133,7 @@
      */
     mergeLinesWithSamePromotions: function () {
       var lines = this.get('lines'),
-          l, line, i, j, k, p, otherLine, toRemove = [],
+          line, i, j, k, otherLine, toRemove = [],
           matches, otherPromos, found, compareRule;
 
       compareRule = function (p) {
@@ -1372,7 +1368,7 @@
         line: newline,
         undo: function (modelObj) {
           OB.UTIL.Approval.requestApproval(
-          (modelObj ? modelObj : this.model), 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
+          (modelObj ? modelObj : this.model), 'OBPOS_approval.deleteLine', function (approved) {
             if (approved) {
               me.get('lines').remove(newline);
               me.calculateGross();
@@ -1667,8 +1663,6 @@
     },
 
     createOrderFromQuotation: function (updatePrices) {
-      var documentseq, documentseqstr;
-
       this.get('lines').each(function (line) {
         //issue 25055 -> If we don't do the following prices and taxes are calculated
         //wrongly because the calculation starts with discountedNet instead of
@@ -1779,7 +1773,6 @@
       }
     },
     getPrecision: function (payment) {
-      var precision = 2;
       var i, p, max;
       for (i = 0, max = OB.MobileApp.model.get('payments').length; i < max; i++) {
         p = OB.MobileApp.model.get('payments')[i];
@@ -1980,8 +1973,7 @@
     },
 
     groupLinesByProduct: function () {
-      var me = this,
-          lineToMerge, lines = this.get('lines'),
+      var lineToMerge, lines = this.get('lines'),
           auxLines = lines.models.slice(0),
           localSkipApplyPromotions;
 
@@ -2018,7 +2010,7 @@
     },
     fillPromotionsWith: function (groupedOrder, isFirstTime) {
       var me = this,
-          copiedPromo, pendingQtyOffer, undf, linesToMerge, auxPromo, idx, actProm, linesToCreate = [],
+          copiedPromo, linesToMerge, auxPromo, idx, actProm, linesToCreate = [],
           qtyToReduce, lineToEdit, lineProm, linesToReduce, linesCreated = false,
           localSkipApplyPromotions;
 
@@ -2416,8 +2408,7 @@
 
     newOrder: function () {
       var order = new Order(),
-          me = this,
-          documentseq, documentseqstr, receiptProperties, i, p;
+          receiptProperties, i, p;
 
       // reset in new order properties defined in Receipt Properties dialog
       if (OB.MobileApp.view.$.containerWindow && OB.MobileApp.view.$.containerWindow.getRoot() && OB.MobileApp.view.$.containerWindow.getRoot().$.receiptPropertiesDialog) {
@@ -2498,8 +2489,7 @@
 
     newPaidReceipt: function (model, callback) {
       var order = new Order(),
-          lines, me = this,
-          documentseq, documentseqstr, bp, newline, prod, payments, curPayment, taxes, bpId, bpLocId, numberOfLines = model.receiptLines.length,
+          lines, newline, payments, curPayment, taxes, bpId, bpLocId, numberOfLines = model.receiptLines.length,
           orderQty = 0,
           NoFoundProduct = true;
 
@@ -2671,7 +2661,6 @@
     },
 
     addNewOrder: function (isFirstOrder) {
-      var me = this;
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true) && (!isFirstOrder || (isFirstOrder && !localStorage.remoteCustomers))) {
         this.doRemoteBPSettings(OB.MobileApp.model.get('businessPartner'));
       }
@@ -2694,8 +2683,6 @@
     },
 
     addPaidReceipt: function (model) {
-
-      var me = this;
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
         this.doRemoteBPSettings(model.get('bp'));
       } else {
@@ -2748,7 +2735,6 @@
     },
 
     addNewQuotation: function () {
-      var documentseq, documentseqstr;
       this.saveCurrent();
       this.current = this.newOrder();
       this.current.set('isQuotation', true);
@@ -2907,7 +2893,6 @@
       };
     },
     getPrecision: function (payment) {
-      var precision = 2;
       var i, p, max;
       for (i = 0, max = OB.MobileApp.model.get('payments').length; i < max; i++) {
         p = OB.MobileApp.model.get('payments')[i];
