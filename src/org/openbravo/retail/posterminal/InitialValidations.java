@@ -42,6 +42,11 @@ public class InitialValidations {
       throw new JSONException("OBPOS_ConversionRateNotConfigured");
     }
 
+    // Make sure. At least one payment method in the terminal.
+    if (!POSUtils.hasPaymentMethod(posTerminal.getId())) {
+      throw new JSONException("OBPOS_OnePaymentMethod");
+    }
+
     if (posTerminal.getOrganization().getCurrency() == null) {
       throw new JSONException("OBPOS_OrgCurrencyConfigured");
     }
