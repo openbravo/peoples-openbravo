@@ -280,6 +280,9 @@ enyo.kind({
       } else {
         me.removeClass('active');
       }
+    } else {
+      me.checked = true;
+      me.addClass('active');
     }
   },
   saveChange: function (inSender, inEvent) {
