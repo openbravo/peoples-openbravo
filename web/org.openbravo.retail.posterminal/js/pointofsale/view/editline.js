@@ -680,7 +680,7 @@ enyo.kind({
       var proposedServices, existRelatedServices;
       existRelatedServices = this.selectedModels.filter(function (line) {
         return line.get('hasRelatedServices');
-      }).length > 0;
+      }).length ===  this.selectedModels.length;
       proposedServices = this.selectedModels.filter(function (line) {
         return !line.get('hasRelatedServices') || line.get('obposServiceProposed');
       }).length === this.selectedModels.length;
