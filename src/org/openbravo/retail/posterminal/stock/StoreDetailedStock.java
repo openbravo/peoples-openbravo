@@ -47,12 +47,12 @@ public class StoreDetailedStock extends JSONProcessSimple {
           + "WHERE "
           + "ow.organization.id = '"
           + orgId
-          + "' and ow.warehouseType <> '"
+          + "' and (ow.warehouseType <> '"
           + POSConstants.CROSS_CHANNEL
-          + "' ) "
+          + "' or ow.warehouseType is null)) "
           + "and ms.product.id = '"
           + prodId
-          + "'"
+          + "' "
           + "group by ms.storageBin.warehouse.id, ms.storageBin.warehouse.name, ms.storageBin.warehouse.id, ms.storageBin.id, ms.storageBin.searchKey "
           + "order by ms.storageBin.warehouse.name";
 

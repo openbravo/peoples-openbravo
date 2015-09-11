@@ -101,7 +101,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ProductDetailsView_ButtonClose',
   style: 'float: right; cursor: pointer; font-size: 150%; font-weight: bold; color: #CCCCCC; width: 40px; height: 40px; margin: -10px; text-align: right; padding: 8px;',
-  content: '??',
+  content: 'x',
   tap: function () {
     this.leftSubWindow.doCloseLeftSubWindow();
   }
