@@ -68,6 +68,7 @@ import org.openbravo.model.common.businesspartner.Location;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.invoice.InvoiceLine;
 import org.openbravo.model.common.invoice.InvoiceLineOffer;
@@ -903,12 +904,13 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       BigDecimal pendingQty = orderLine.getOrderedQuantity().abs();
       boolean negativeLine = orderLine.getOrderedQuantity().compareTo(BigDecimal.ZERO) < 0;
 
-      boolean useSingleBin = foundSingleBin != null
-          && orderLine.getAttributeSetValue() == null
+      final Warehouse warehouse = (orderLine.getWarehouse() != null ? orderLine.getWarehouse()
+          : order.getWarehouse());
+
+      boolean useSingleBin = foundSingleBin != null && orderLine.getAttributeSetValue() == null
           && orderLine.getProduct().getAttributeSet() == null
           && orderLine.getWarehouseRule() == null
-          && (orderLine.getWarehouse() == null || DalUtil.getId(order.getWarehouse()).equals(
-              DalUtil.getId(orderLine.getWarehouse())));
+          && (DalUtil.getId(order.getWarehouse()).equals(DalUtil.getId(warehouse)));
 
       AttributeSetInstance oldAttributeSetValues = null;
 
@@ -930,7 +932,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
               (String) DalUtil.getId(orderLine.getOrganization()),
               (String) DalUtil.getId(orderLine.getProduct()),
               (String) DalUtil.getId(orderLine.getUOM()),
-              (String) DalUtil.getId(orderLine.getWarehouse()),
+              (String) DalUtil.getId(warehouse),
               orderLine.getAttributeSetValue() != null ? (String) DalUtil.getId(orderLine
                   .getAttributeSetValue()) : null,
               pendingQty,
@@ -1003,7 +1005,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           hqlWhereClause = " l where l.warehouse = :warehouse order by l.relativePriority, l.id";
           OBQuery<Locator> queryLoc = OBDal.getInstance()
               .createQuery(Locator.class, hqlWhereClause);
-          queryLoc.setNamedParameter("warehouse", orderLine.getWarehouse());
+          queryLoc.setNamedParameter("warehouse", warehouse);
           queryLoc.setMaxResult(1);
           lineNo += 10;
           if (jsonorder.getLong("orderType") == 1) {
