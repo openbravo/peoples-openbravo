@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -65,10 +64,6 @@ public class ProcessGoods extends HttpSecureAppServlet {
   private static final String M_Inout_Table_ID = "319";
   private static final String Goods_Document_Action = "135";
   private static final String Goods_Receipt_Window = "184";
-  private List<String> receiptLineIdList = new ArrayList<String>();
-  private String docaction;
-  private String voidMinoutDate;
-  private String voidMinoutAcctDate;
 
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
@@ -120,14 +115,11 @@ public class ProcessGoods extends HttpSecureAppServlet {
       if (StringUtils.equals(strWindowId, Goods_Receipt_Window)
           && StringUtils.equals(strdocaction, "RC")
           && !client.getClientInformationList().get(0).isAllowNegativeStock()) {
-        receiptLineIdList = getReceiptLinesWithoutStock(receiptId);
+        List<String> receiptLineIdList = getReceiptLinesWithoutStock(receiptId);
         if (!receiptLineIdList.isEmpty()) {
           ShipmentInOut receipt = OBDal.getInstance().get(ShipmentInOut.class, receiptId);
-          docaction = strdocaction;
-          voidMinoutDate = strVoidMinoutDate;
-          voidMinoutAcctDate = strVoidMinoutAcctDate;
           printPagePhysicalInventoryGrid(response, vars, strWindowId, strTabId, receipt
-              .getOrganization().getId());
+              .getOrganization().getId(), strdocaction, strVoidMinoutAcctDate, strVoidMinoutDate);
         } else {
           processReceipt(response, vars, strdocaction, strVoidMinoutDate, strVoidMinoutAcctDate);
         }
@@ -135,16 +127,27 @@ public class ProcessGoods extends HttpSecureAppServlet {
         processReceipt(response, vars, strdocaction, strVoidMinoutDate, strVoidMinoutAcctDate);
       }
     } else if (vars.commandIn("LOAD_PHYSICALINVENTORY")) {
-      printGrid(response, vars);
+      final String strWindowId = vars.getGlobalVariable("inpwindowId", "ProcessGoods|Window_ID",
+          IsIDFilter.instance);
+      final String receiptId = vars.getGlobalVariable("inpKey", strWindowId + "|M_Inout_ID", "");
+      List<String> receiptLineIdList = getReceiptLinesWithoutStock(receiptId);
+      printGrid(response, vars, receiptLineIdList);
     } else if (vars.commandIn("CANCEL_PHYSICALINVENTORY")) {
-      processReceipt(response, vars, docaction, voidMinoutDate, voidMinoutAcctDate);
+      final String strdocaction = vars.getStringParameter("inpdocaction");
+      final String strVoidMinoutDate = vars.getStringParameter("inpVoidedDocumentDate");
+      final String strVoidMinoutAcctDate = vars.getStringParameter("inpVoidedDocumentAcctDate");
+      processReceipt(response, vars, strdocaction, strVoidMinoutDate, strVoidMinoutAcctDate);
     } else if (vars.commandIn("SAVE_PHYSICALINVENTORY")) {
+      final String strdocaction = vars.getStringParameter("inpdocaction");
+      final String strVoidMinoutDate = vars.getStringParameter("inpVoidedDocumentDate");
+      final String strVoidMinoutAcctDate = vars.getStringParameter("inpVoidedDocumentAcctDate");
       final String strWindowId = vars.getGlobalVariable("inpwindowId", "ProcessGoods|Window_ID",
           IsIDFilter.instance);
       final String receiptId = vars.getGlobalVariable("inpKey", strWindowId + "|M_Inout_ID", "");
       ShipmentInOut receipt = OBDal.getInstance().get(ShipmentInOut.class, receiptId);
-      createInventory(receipt);
-      processReceipt(response, vars, docaction, voidMinoutDate, voidMinoutAcctDate);
+      List<String> receiptLineIdList = getReceiptLinesWithoutStock(receiptId);
+      createInventory(receipt, receiptLineIdList, vars.getLanguage());
+      processReceipt(response, vars, strdocaction, strVoidMinoutDate, strVoidMinoutAcctDate);
     }
   }
 
@@ -303,7 +306,8 @@ public class ProcessGoods extends HttpSecureAppServlet {
   }
 
   void printPagePhysicalInventoryGrid(HttpServletResponse response, VariablesSecureApp vars,
-      String strWindowId, String strTabId, String strOrg) throws IOException, ServletException {
+      String strWindowId, String strTabId, String strOrg, String strdocaction,
+      String strVoidMinoutAcctDate, String strVoidMinoutDate) throws IOException, ServletException {
     log4j.debug("Output: Credit Payment Grid popup");
     String[] discard = { "" };
     response.setContentType("text/html; charset=UTF-8");
@@ -316,24 +320,27 @@ public class ProcessGoods extends HttpSecureAppServlet {
     xmlDocument.setParameter("cancel", Utility.messageBD(this, "Cancel", vars.getLanguage()));
     xmlDocument.setParameter("ok", Utility.messageBD(this, "OK", vars.getLanguage()));
     xmlDocument.setParameter("processId", M_Inout_Post_ID);
+    xmlDocument.setParameter("docAction", strdocaction);
+    xmlDocument.setParameter("minDate", strVoidMinoutDate);
+    xmlDocument.setParameter("minAcctDate", strVoidMinoutAcctDate);
     out.println(xmlDocument.print());
     out.close();
   }
 
-  private void printGrid(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
-      ServletException {
+  private void printGrid(HttpServletResponse response, VariablesSecureApp vars,
+      List<String> receiptLineIdList) throws IOException, ServletException {
     String[] discard = {};
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_actionButton/PhysicalInventoryGrid", discard)
         .createXmlDocument();
-    xmlDocument.setData("structure", getFieldsForGrid());
+    xmlDocument.setData("structure", getFieldsForGrid(receiptLineIdList));
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
   }
 
-  private FieldProvider[] getFieldsForGrid() {
+  private FieldProvider[] getFieldsForGrid(List<String> receiptLineIdList) {
     FieldProvider[] data = FieldProviderFactory.getFieldProviderArray(receiptLineIdList);
     try {
       OBContext.setAdminMode(true);
@@ -391,7 +398,8 @@ public class ProcessGoods extends HttpSecureAppServlet {
     return qry.list();
   }
 
-  private void createInventory(ShipmentInOut receipt) {
+  private void createInventory(ShipmentInOut receipt, List<String> receiptLineIdList,
+      String language) {
 
     // Create physical inventory
     InventoryCount inv = OBProvider.getInstance().get(InventoryCount.class);
@@ -401,6 +409,7 @@ public class ProcessGoods extends HttpSecureAppServlet {
     inv.setWarehouse(receipt.getWarehouse());
     inv.setMovementDate(new Date());
     inv.setInventoryType("N");
+    inv.setDescription(Utility.messageBD(this, "AutoInventory", language));
     OBDal.getInstance().save(inv);
 
     // Add a line for each receipt line without related stock line

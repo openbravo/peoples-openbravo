@@ -32,6 +32,9 @@
     <PARAMETER id="adOrgId" name="adOrgId" default="" attribute="value"/>
     <PARAMETER id="processHelp" name="processDescription" default=""/>
     <PARAMETER id="paramDirectory" name="directory" default=""/>
+    <PARAMETER id="paramDocAction" name="docAction" default="" attribute="value"/>
+    <PARAMETER id="paramMinDate" name="minDate" default="" attribute="value"/>
+    <PARAMETER id="paramMinAcctDate" name="minAcctDate" default="" attribute="value"/>
     
     <PARAMETER id="buttonOK" name="processId" default="" attribute="onclick" replace="xx"/>
     
