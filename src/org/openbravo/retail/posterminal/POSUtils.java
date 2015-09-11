@@ -608,4 +608,29 @@ public class POSUtils {
     return false;
   }
 
+  public static Boolean hasPaymentMethod(String posTerminalId) {
+    try {
+      OBContext.setAdminMode(true);
+      Query paymentMethodQuery = OBDal
+          .getInstance()
+          .getSession()
+          .createQuery(
+              "select p " + " from OBPOS_App_Payment as p where p.obposApplications.id ='"
+                  + posTerminalId + "'");
+
+      if (paymentMethodQuery.list().size() > 0) {
+        return true;
+      } else {
+        return false;
+      }
+
+    } catch (Exception e) {
+      log.error("Error getting Currency Rate: " + e.getMessage(), e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    // The query failed, then the check is not valid.
+    return false;
+  }
+
 }

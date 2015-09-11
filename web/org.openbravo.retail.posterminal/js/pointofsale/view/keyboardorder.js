@@ -165,7 +165,11 @@ enyo.kind({
           return true;
         }
         if (value || value === 0) {
-          toadd = value - keyboard.line.get('qty');
+          if (keyboard.receipt.get('orderType') === 1) {
+            toadd = value - (-keyboard.line.get('qty'));
+          } else {
+            toadd = value - keyboard.line.get('qty');
+          }
           if (toadd === 0) { // If nothing to add then return
             return;
           }
