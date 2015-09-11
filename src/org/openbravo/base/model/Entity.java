@@ -87,6 +87,9 @@ public class Entity {
   private boolean isHQLBased;
   private boolean isVirtualEntity = false;
 
+  private boolean hasRole;
+  private boolean hasInheritedFrom;
+
   private EntityValidator entityValidator;
   private AccessLevelChecker accessLevelChecker;
   private AccessLevel accessLevel;
@@ -438,6 +441,14 @@ public class Entity {
     this.isClientEnabled = isClientEnabled;
   }
 
+  public void setHasRole(boolean hasRole) {
+    this.hasRole = hasRole;
+  }
+
+  public void setHasInheritedFrom(boolean hasInheritedFrom) {
+    this.hasInheritedFrom = hasInheritedFrom;
+  }
+
   /**
    * Returns the list of interfaces implemented by instances of this Entity. It is used by the
    * entity code generation to determine which interfaces to add to the class definition.
@@ -470,6 +481,12 @@ public class Entity {
         sb.append(", ");
       }
       sb.append("ActiveEnabled");
+    }
+    if (isInheritedAccessEnabled()) {
+      if (sb.length() > 0) {
+        sb.append(", ");
+      }
+      sb.append("InheritedAccessEnabled");
     }
     if (sb.length() == 0) {
       return "";
@@ -640,6 +657,13 @@ public class Entity {
    */
   public boolean isOrganizationEnabled() {
     return isOrganizationEnabled;
+  }
+
+  /**
+   * @return true if this Entity has a role property and a inheritedfrom property.
+   */
+  public boolean isInheritedAccessEnabled() {
+    return hasRole && hasInheritedFrom;
   }
 
   /**
@@ -853,6 +877,10 @@ public class Entity {
     if (isActiveEnabled()) {
       imports.add("org.openbravo.base.structure.ActiveEnabled");
       simpleImports.add("ActiveEnabled");
+    }
+    if (isInheritedAccessEnabled()) {
+      imports.add("org.openbravo.base.structure.InheritedAccessEnabled");
+      simpleImports.add("InheritedAccessEnabled");
     }
 
     // collect types of properties
