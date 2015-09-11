@@ -18,10 +18,10 @@ enyo.kind({
   style: 'display: table; float: right;',
   components: [{
     name: 'bottomAddrIcon',
-    style: 'display: table-cell; background-image: url(img/InvoicingAddress.png); background-repeat: no-repeat;  width: 30px;'
+    style: 'display: table-cell; background-image: url(img/InvoicingAddress.png); background-repeat: no-repeat; background-size: 100%; width: 18px;'
   }, {
     name: 'identifier',
-    style: 'display: table-cell; text-overflow:ellipsis; white-space: nowrap; overflow: hidden; padding-bottom: 12px; max-width: 70px;'
+    style: 'display: table-cell; text-overflow:ellipsis; white-space: nowrap; overflow: hidden; max-width: 70px;'
   }, {
     style: 'clear: both;'
   }],
@@ -281,13 +281,11 @@ enyo.kind({
       }, {
         name: 'bottomShipIcon',
         style: 'display: table-cell;',
-        width: '40px',
-        height: '40px'
+        width: '38px'
       }, {
         name: 'bottomBillIcon',
         style: 'display: table-cell;',
-        width: '30px',
-        height: '30px'
+        width: '26px'
       }, {
         style: 'clear: both;'
       }]
@@ -310,20 +308,24 @@ enyo.kind({
     if (this.model.get('isBillTo') && this.model.get('isShipTo')) {
       this.$.bottomShipIcon.applyStyle('background-image', 'url(img/ShippingAddress.png)');
       this.$.bottomShipIcon.applyStyle('background-repeat', 'no-repeat');
+      this.$.bottomShipIcon.applyStyle('background-size', '38px 27px');
       this.$.bottomShipIcon.applyStyle('height', this.$.bottomShipIcon.heigth);
       this.$.bottomShipIcon.applyStyle('width', this.$.bottomShipIcon.width);
       this.$.bottomBillIcon.applyStyle('background-image', 'url(img/InvoicingAddress.png)');
-      this.$.bottomShipIcon.applyStyle('background-repeat', 'no-repeat');
+      this.$.bottomBillIcon.applyStyle('background-repeat', 'no-repeat');
+      this.$.bottomBillIcon.applyStyle('background-size', '26px 30px');
       this.$.bottomBillIcon.applyStyle('height', this.$.bottomBillIcon.heigth);
       this.$.bottomBillIcon.applyStyle('width', this.$.bottomBillIcon.width);
     } else if (this.model.get('isBillTo')) {
       this.$.bottomBillIcon.applyStyle('background-image', 'url(img/InvoicingAddress.png)');
-      this.$.bottomShipIcon.applyStyle('background-repeat', 'no-repeat');
+      this.$.bottomBillIcon.applyStyle('background-repeat', 'no-repeat');
+      this.$.bottomBillIcon.applyStyle('background-size', '26px 30px');
       this.$.bottomBillIcon.applyStyle('height', this.$.bottomBillIcon.heigth);
       this.$.bottomBillIcon.applyStyle('width', this.$.bottomBillIcon.width);
     } else if (this.model.get('isShipTo')) {
       this.$.bottomShipIcon.applyStyle('background-image', 'url(img/ShippingAddress.png)');
       this.$.bottomShipIcon.applyStyle('background-repeat', 'no-repeat');
+      this.$.bottomShipIcon.applyStyle('background-size', '38px 27px');
       this.$.bottomShipIcon.applyStyle('height', this.$.bottomShipIcon.heigth);
       this.$.bottomShipIcon.applyStyle('width', this.$.bottomShipIcon.width);
     }
