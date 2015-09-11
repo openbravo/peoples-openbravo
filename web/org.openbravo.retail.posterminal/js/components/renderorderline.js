@@ -27,6 +27,9 @@ enyo.kind({
   events: {
     onLineChecked: ''
   },
+  handlers: {
+    onSetMultiSelected: 'setMultiSelected'
+  },
   components: [{
     name: 'checkBoxColumn',
     kind: 'OB.UI.CheckboxButton',
@@ -161,6 +164,15 @@ enyo.kind({
     }, function (args) {
       //All should be done in module side
     });
+  },
+  setMultiSelected: function (inSender, inEvent) {
+    if (inEvent.models && inEvent.models.length > 0 && inEvent.models[0] instanceof OB.Model.OrderLine && this.$.showServicesButton) {
+      if (inEvent.models.length > 1) {
+        this.$.showServicesButton.hide();
+      } else {
+        this.$.showServicesButton.show();
+      }
+    }
   },
   changeEditMode: function (inSender, inEvent) {
     this.addRemoveClass('btnselect-orderline-edit', inEvent.edit);
