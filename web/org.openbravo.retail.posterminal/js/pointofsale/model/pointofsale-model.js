@@ -334,12 +334,13 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             });
 
             // Verify that the receipt has not been changed while the ticket has being closed
-            // We create a copy of the living receipt because the cloning process sort the properties in a different way and could lead to false positives
-            // Verify that the returned frozen receipt (that is a copy of the receipt when the creationDate, etc was set) equals the information of the current live receipt (that should have not been modified)
-            var receiptCopyForVerification = new OB.Model.Order();
-            OB.UTIL.clone(receipt, receiptCopyForVerification);
-            if (JSON.stringify(receiptCopyForVerification.serializeToJSON()) !== JSON.stringify(frozenReceipt.serializeToJSON())) {
-              OB.error("The receipt has been modified while it was being closed\nExpected:\n" + JSON.stringify(receiptCopyForVerification.serializeToJSON()) + "\n\nbut was:" + JSON.stringify(frozenReceipt.serializeToJSON()) + "\n");
+            var diff = OB.UTIL.diffJson(receipt.serializeToJSON(), frozenReceipt.serializeToJSON());
+            // hasBeenPaid is the only difference allowed in the receipt
+            delete diff.hasbeenpaid;
+            // verify if there have been any modification to the receipt
+            var diffStringified = JSON.stringify(diff, undefined, 2);
+            if (diffStringified !== '{}') {
+              OB.error("The receipt has been modified while it was being closed:\n" + diffStringified + "\n");
             }
 
             //In case the processed document is a quotation, we remove its id so it can be reactivated
