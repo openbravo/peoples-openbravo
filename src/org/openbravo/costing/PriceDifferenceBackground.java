@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
  */
 public class PriceDifferenceBackground extends DalBaseProcess {
   private static final Logger log4j = LoggerFactory.getLogger(PriceDifferenceBackground.class);
+  public static final String AD_PROCESS_ID = "BA574D8A4CF54AFF8B7BC2E6FACA161E";
   private ProcessLogger logger;
 
   @Override

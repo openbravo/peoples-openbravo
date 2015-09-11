@@ -3425,7 +3425,8 @@ For example, if you want to create different invoices for each ship location for
 <!--800060-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800060-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800060-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800060-->  <NAME><![CDATA[Product]]></NAME>
+<!--800060-->  <NAME><![CDATA[Product (by Price and Warehouse)]]></NAME>
+<!--800060-->  <HELP><![CDATA[This is a complex selector which displays information related to Prices and Warehouses. If you don't need that information, you should be using instead the "Simple Product" reference.]]></HELP>
 <!--800060-->  <VALIDATIONTYPE><![CDATA[S]]></VALIDATIONTYPE>
 <!--800060-->  <VFORMAT><![CDATA[L]]></VFORMAT>
 <!--800060-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>

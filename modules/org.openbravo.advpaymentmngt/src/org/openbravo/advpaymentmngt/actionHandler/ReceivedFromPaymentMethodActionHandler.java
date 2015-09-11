@@ -21,10 +21,11 @@ package org.openbravo.advpaymentmngt.actionHandler;
 
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.client.kernel.BaseActionHandler;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
@@ -40,9 +41,9 @@ public class ReceivedFromPaymentMethodActionHandler extends BaseActionHandler {
       JSONObject result = new JSONObject();
       FIN_FinancialAccount financialAccount = OBDal.getInstance().get(FIN_FinancialAccount.class,
           jsonData.getString("financialAccount"));
-      boolean contains = false;
-      String paymentMethod = null;
-      String paymentMethodName = null;
+      FIN_PaymentMethod paymentMethod = null;
+      String paymentMethodId = "";
+      String paymentMethodName = "";
 
       if (financialAccount != null) {
         if (jsonData.has("receivedFrom") && jsonData.get("receivedFrom") != JSONObject.NULL) {
@@ -50,35 +51,31 @@ public class ReceivedFromPaymentMethodActionHandler extends BaseActionHandler {
           BusinessPartner businessPartner = OBDal.getInstance().get(BusinessPartner.class,
               receivedFrom);
           if (jsonData.getString("isSOTrx").toString().equals("true")) {
-            paymentMethod = businessPartner.getPaymentMethod() != null ? businessPartner
-                .getPaymentMethod().getId() : "";
+            paymentMethod = businessPartner.getPaymentMethod();
           } else {
-            paymentMethod = businessPartner.getPOPaymentMethod() != null ? businessPartner
-                .getPOPaymentMethod().getId() : "";
+            paymentMethod = businessPartner.getPOPaymentMethod();
           }
-          for (FinAccPaymentMethod finAccPaymentMethod : financialAccount
-              .getFinancialMgmtFinAccPaymentMethodList()) {
-            if (StringUtils.equals(finAccPaymentMethod.getPaymentMethod().getId(), paymentMethod)) {
-              contains = true;
-              break;
-            } else {
-              contains = false;
+
+          if (paymentMethod != null) {
+            OBCriteria<FinAccPaymentMethod> criteria = OBDal.getInstance().createCriteria(
+                FinAccPaymentMethod.class);
+            criteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, financialAccount));
+            criteria
+                .add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, paymentMethod));
+            criteria.setFilterOnReadableOrganization(false);
+            criteria.setFilterOnActive(true);
+            criteria.setMaxResults(1);
+            FinAccPaymentMethod finAccPaymentMethod = (FinAccPaymentMethod) criteria.uniqueResult();
+
+            if (finAccPaymentMethod != null) {
+              paymentMethodId = finAccPaymentMethod.getPaymentMethod().getId();
+              paymentMethodName = finAccPaymentMethod.getPaymentMethod().getName();
             }
           }
         }
-      } else {
-        contains = false;
       }
 
-      if (!contains) {
-        paymentMethod = "";
-        paymentMethodName = "";
-      } else {
-        paymentMethodName = OBDal.getInstance().get(FIN_PaymentMethod.class, paymentMethod)
-            .getName();
-      }
-
-      result.put("paymentMethodId", paymentMethod);
+      result.put("paymentMethodId", paymentMethodId);
       result.put("paymentMethodName", paymentMethodName);
       return result;
     } catch (Exception e) {

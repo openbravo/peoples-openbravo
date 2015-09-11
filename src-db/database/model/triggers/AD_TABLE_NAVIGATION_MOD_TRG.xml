@@ -69,7 +69,7 @@ BEGIN
         COALESCE(:NEW.AD_Client_ID , '.') != COALESCE(:OLD.AD_Client_ID , '.') OR
         COALESCE(:NEW.AD_Org_ID , '.') != COALESCE(:OLD.AD_Org_ID , '.') OR
         COALESCE(:NEW.IsActive , '.') != COALESCE(:OLD.IsActive , '.') OR
-        COALESCE(:NEW.SeqNo , '.') != COALESCE(:OLD.SeqNo , '.') OR
+        :NEW.SeqNo != :OLD.SeqNo OR
         COALESCE(:NEW.AD_Tab_ID , '.') != COALESCE(:OLD.AD_Tab_ID , '.') OR
         COALESCE(:NEW.HqlLogic , '.') != COALESCE(:OLD.HqlLogic , '.') OR
         COALESCE(:NEW.AD_Table_ID , '.') != COALESCE(:OLD.AD_Table_ID , '.')) THEN

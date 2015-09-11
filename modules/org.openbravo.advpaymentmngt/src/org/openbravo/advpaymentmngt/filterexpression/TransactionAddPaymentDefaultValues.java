@@ -20,7 +20,6 @@ package org.openbravo.advpaymentmngt.filterexpression;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 
@@ -222,8 +221,7 @@ public class TransactionAddPaymentDefaultValues extends AddPaymentDefaultValuesH
         strTransactionDate = context.getString("inpstatementdate");
       }
       if (strTransactionDate != null) {
-
-        Date date = new SimpleDateFormat("dd-MM-yyyy").parse(strTransactionDate);
+        Date date = OBDateUtils.getDate(strTransactionDate);
         return OBDateUtils.formatDate(date);
       } else {
         return OBDateUtils.formatDate(new Date());

@@ -23,6 +23,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.text.SimpleDateFormat;
@@ -35,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.time.DateUtils;
+import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.junit.AfterClass;
@@ -44,7 +46,18 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.base.weld.test.WeldBaseTest;
+import org.openbravo.costing.CancelCostAdjustment;
+import org.openbravo.costing.CostingBackground;
 import org.openbravo.costing.CostingRuleProcess;
+import org.openbravo.costing.InventoryAmountUpdateProcess;
+import org.openbravo.costing.LCCostMatchFromInvoiceHandler;
+import org.openbravo.costing.LCMatchingCancelHandler;
+import org.openbravo.costing.LCMatchingProcessHandler;
+import org.openbravo.costing.LandedCostProcessHandler;
+import org.openbravo.costing.ManualCostAdjustmentProcessHandler;
+import org.openbravo.costing.PriceDifferenceBackground;
+import org.openbravo.costing.ReactivateLandedCost;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -58,8 +71,6 @@ import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.process.ProcessInstance;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.ui.Process;
-import org.openbravo.model.ad.ui.ProcessRequest;
-import org.openbravo.model.ad.ui.ProcessRun;
 import org.openbravo.model.ad.utility.Sequence;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.currency.ConversionRate;
@@ -88,6 +99,7 @@ import org.openbravo.model.financialmgmt.tax.TaxRate;
 import org.openbravo.model.materialmgmt.cost.CostAdjustment;
 import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
 import org.openbravo.model.materialmgmt.cost.Costing;
+import org.openbravo.model.materialmgmt.cost.CostingAlgorithm;
 import org.openbravo.model.materialmgmt.cost.CostingRule;
 import org.openbravo.model.materialmgmt.cost.InventoryAmountUpdate;
 import org.openbravo.model.materialmgmt.cost.InventoryAmountUpdateLine;
@@ -114,7 +126,6 @@ import org.openbravo.model.procurement.ReceiptInvoiceMatch;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DalConnectionProvider;
-import org.openbravo.test.datasource.BaseDataSourceTestDal;
 
 /**
  * Test cases to verify Cost Adjustment Project
@@ -122,7 +133,7 @@ import org.openbravo.test.datasource.BaseDataSourceTestDal;
  * @author aferraz
  */
 
-public class TestCosting extends BaseDataSourceTestDal {
+public class TestCosting extends WeldBaseTest {
 
   // User System
   private static String USERADMIN_ID = "0";
@@ -138,8 +149,6 @@ public class TestCosting extends BaseDataSourceTestDal {
   private static String WAREHOUSE1_ID = "4028E6C72959682B01295ECFEF4502A0";
   // Warehouse with name: Spain East warehouse
   private static String WAREHOUSE2_ID = "4D7B97565A024DB7B4C61650FA2B9560";
-  // Language English (USA)
-  private static String LANGUAGE_ID = "192";
 
   // Document Sequence with name: DocumentNo_M_InOut
   private static String SHIPMENTIN_SEQUENCE_ID = "910E14E8BA4A419B92DF9973ACDB8A8F";
@@ -169,10 +178,6 @@ public class TestCosting extends BaseDataSourceTestDal {
   private static String LANDEDCOSTCOST_DOCUMENTTYPE_ID = "F66B960D26C64215B1F4A09C3417FB16";
   // Landed Cost Distribution Algorithm with name: Distribution by Amount
   private static String LANDEDCOSTCOST_ALGORITHM_ID = "CF9B55BD159B474A9F79849C48715540";
-  // Process request with name: Costing Background process
-  private static String COSTING_PROCESSREQUEST_ID = "502EF7AF73264B9B8F76A1AAA4BE8887";
-  // Process request with name: Price Correction Background
-  private static String PRICECORRECTION_PROCESSREQUEST_ID = "B1274EEAEF1E4A069C1F6A65B9B06652";
   // Process with name: Validate Costing Rule
   private static String VALIDATECOSTINGRULE_PROCESS_ID = "A269DCA4DE114E438695B66E166999B4";
   // Process with name: Verify BOM
@@ -191,6 +196,8 @@ public class TestCosting extends BaseDataSourceTestDal {
   private static String LANDEDCOSTTYPE3_ID = "CB473A64934B4D1583008D52DD0FBC49";
   // Business partner with name: Vendor USA
   private static String BUSINESSPARTNER_ID = "C8AD0EAF3052415BB1E15EFDEFBFD4AF";
+  // Costing Algorithm with name: Average Algorithm
+  private static String COSTINGALGORITHM_ID = "B069080A0AE149A79CF1FA0E24F16AB6";
   // General Ledger Configuration with name: Main US/A/Euro
   private static String GENERALLEDGER_ID = "9A68A0F8D72D4580B3EC3CAA00A5E1F0";
   // Table with name: MaterialMgmtInternalConsumption
@@ -218,11 +225,6 @@ public class TestCosting extends BaseDataSourceTestDal {
   private static String MOVEMENTIN_ID = "0450583047434254835B2B36B2E5B018";
   // Goods Shipment with documentNo: 500014
   private static String MOVEMENTOUT_ID = "2BCCC64DA82A48C3976B4D007315C2C9";
-
-  // Today's date
-  static final Date today = new Date();
-  // Amount 0
-  final BigDecimal amount0 = BigDecimal.ZERO;
 
   /********************************************** Automated tests **********************************************/
 
@@ -281,32 +283,21 @@ public class TestCosting extends BaseDataSourceTestDal {
 
       OBDal.getInstance().flush();
 
-      // Change Openbravo profile
-      new TestCosting().changeProfile(ROLE_ID, LANGUAGE_ID, ORGANIZATION_ID, WAREHOUSE1_ID);
-
       // Create costing rule
-      final OBCriteria<CostingRule> criteria2 = OBDal.getInstance().createCriteria(
-          CostingRule.class);
-      criteria2.add(Restrictions.eq(CostingRule.PROPERTY_CLIENT,
-          OBDal.getInstance().get(Client.class, CLIENT_ID)));
-      criteria2.add(Restrictions.eq(CostingRule.PROPERTY_ORGANIZATION,
-          OBDal.getInstance().get(Organization.class, ORGANIZATION_ID)));
-      criteria2.addOrderBy(CostingRule.PROPERTY_CREATIONDATE, true);
-      criteria2.setFilterOnActive(false);
-      criteria2.setFilterOnReadableClients(false);
-      criteria2.setFilterOnReadableOrganization(false);
-      CostingRule costingRule = criteria2.list().get(0);
-      CostingRule costingRuleClone = (CostingRule) DalUtil.copy(costingRule, false);
-      new TestCosting().setGeneralData(costingRuleClone);
-      costingRuleClone.setWarehouseDimension(true);
-      costingRuleClone.setBackdatedTransactionsFixed(true);
-      costingRuleClone.setValidated(false);
-      costingRuleClone.setEndingDate(null);
-      OBDal.getInstance().save(costingRuleClone);
+      CostingRule costingRule = OBProvider.getInstance().get(CostingRule.class);
+      setGeneralData(costingRule);
+      costingRule.setCostingAlgorithm(OBDal.getInstance().get(CostingAlgorithm.class,
+          COSTINGALGORITHM_ID));
+      costingRule.setWarehouseDimension(true);
+      costingRule.setBackdatedTransactionsFixed(true);
+      costingRule.setValidated(false);
+      costingRule.setStartingDate(null);
+      costingRule.setEndingDate(null);
+      OBDal.getInstance().save(costingRule);
       OBDal.getInstance().flush();
-      OBDal.getInstance().refresh(costingRuleClone);
-      new TestCosting().runCostingBackground();
-      validateCostingRule(costingRuleClone.getId());
+      OBDal.getInstance().refresh(costingRule);
+      runCostingBackground();
+      validateCostingRule(costingRule.getId());
 
       OBDal.getInstance().commitAndClose();
     } catch (Exception e) {
@@ -404,7 +395,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingAAA", price1);
 
       // Create purchase order and book it
       Order purchaseOrder1 = createPurchaseOrder(product, price1, quantity1, day0);
@@ -458,10 +449,10 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Post cost adjustment and assert it
       postDocument(costAdjustmentList.get(0));
       List<DocumentPostAssert> documentPostAssertList = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList.add(new DocumentPostAssert("99904", amount0, quantity2
+      documentPostAssertList.add(new DocumentPostAssert("99904", BigDecimal.ZERO, quantity2
           .multiply(price3).add(quantity2.multiply(price2).negate()), null));
       documentPostAssertList.add(new DocumentPostAssert("35000", quantity2.multiply(price3).add(
-          quantity2.multiply(price2).negate()), amount0, null));
+          quantity2.multiply(price2).negate()), BigDecimal.ZERO, null));
       CostAdjustment costAdjustment = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList.get(0).getId());
       assertDocumentPost(costAdjustment, product.getId(), documentPostAssertList);
@@ -496,7 +487,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingCC", price1);
 
       // Create purchase order and book it
       Order purchaseOrder = createPurchaseOrder(product, price1, quantity1, day0);
@@ -550,13 +541,13 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Post cost adjustment and assert it
       postDocument(costAdjustmentList.get(0));
       List<DocumentPostAssert> documentPostAssertList = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList.add(new DocumentPostAssert("99904", amount0, quantity1
+      documentPostAssertList.add(new DocumentPostAssert("99904", BigDecimal.ZERO, quantity1
           .multiply(price2).add(quantity1.multiply(price1).negate()), null));
       documentPostAssertList.add(new DocumentPostAssert("35000", quantity1.multiply(price2).add(
-          quantity1.multiply(price1).negate()), amount0, null));
+          quantity1.multiply(price1).negate()), BigDecimal.ZERO, null));
       documentPostAssertList.add(new DocumentPostAssert("99900", quantity2.multiply(price2).add(
-          quantity2.multiply(price1).negate()), amount0, null));
-      documentPostAssertList.add(new DocumentPostAssert("35000", amount0, quantity2
+          quantity2.multiply(price1).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList.add(new DocumentPostAssert("35000", BigDecimal.ZERO, quantity2
           .multiply(price2).add(quantity2.multiply(price1).negate()), null));
       CostAdjustment costAdjustment = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList.get(0).getId());
@@ -592,7 +583,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingC1", price1);
 
       // Create purchase order and book it
       Order purchaseOrder = createPurchaseOrder(product, price1, quantity1, day0);
@@ -643,13 +634,13 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Post cost adjustment and assert it
       postDocument(costAdjustmentList.get(0));
       List<DocumentPostAssert> documentPostAssertList = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList.add(new DocumentPostAssert("99904", amount0, quantity1
+      documentPostAssertList.add(new DocumentPostAssert("99904", BigDecimal.ZERO, quantity1
           .multiply(price2).add(quantity1.multiply(price1).negate()), null));
       documentPostAssertList.add(new DocumentPostAssert("35000", quantity1.multiply(price2).add(
-          quantity1.multiply(price1).negate()), amount0, null));
+          quantity1.multiply(price1).negate()), BigDecimal.ZERO, null));
       documentPostAssertList.add(new DocumentPostAssert("99900", quantity2.multiply(price2).add(
-          quantity2.multiply(price1).negate()), amount0, null));
-      documentPostAssertList.add(new DocumentPostAssert("35000", amount0, quantity2
+          quantity2.multiply(price1).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList.add(new DocumentPostAssert("35000", BigDecimal.ZERO, quantity2
           .multiply(price2).add(quantity2.multiply(price1).negate()), null));
       CostAdjustment costAdjustment = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList.get(0).getId());
@@ -687,7 +678,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingDDD", price1);
 
       // Create purchase order and book it
       Order purchaseOrder = createPurchaseOrder(product, price1, quantity1, day0);
@@ -746,9 +737,9 @@ public class TestCosting extends BaseDataSourceTestDal {
       postDocument(costAdjustmentList.get(0));
       List<DocumentPostAssert> documentPostAssertList1 = new ArrayList<DocumentPostAssert>();
       documentPostAssertList1.add(new DocumentPostAssert("99904", quantity2.multiply(price1).add(
-          quantity2.multiply(price2).negate()), amount0, null));
-      documentPostAssertList1.add(new DocumentPostAssert("35000", amount0, quantity2.multiply(
-          price1).add(quantity2.multiply(price2).negate()), null));
+          quantity2.multiply(price2).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList1.add(new DocumentPostAssert("35000", BigDecimal.ZERO, quantity2
+          .multiply(price1).add(quantity2.multiply(price2).negate()), null));
       CostAdjustment costAdjustment1 = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList.get(0).getId());
       assertDocumentPost(costAdjustment1, product.getId(), documentPostAssertList1);
@@ -757,9 +748,9 @@ public class TestCosting extends BaseDataSourceTestDal {
       postDocument(costAdjustmentList.get(1));
       List<DocumentPostAssert> documentPostAssertList2 = new ArrayList<DocumentPostAssert>();
       documentPostAssertList2.add(new DocumentPostAssert("99904", quantity3.multiply(price1).add(
-          quantity3.multiply(price2).negate()), amount0, null));
-      documentPostAssertList2.add(new DocumentPostAssert("35000", amount0, quantity3.multiply(
-          price1).add(quantity3.multiply(price2).negate()), null));
+          quantity3.multiply(price2).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList2.add(new DocumentPostAssert("35000", BigDecimal.ZERO, quantity3
+          .multiply(price1).add(quantity3.multiply(price2).negate()), null));
       CostAdjustment costAdjustment2 = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList.get(1).getId());
       assertDocumentPost(costAdjustment2, product.getId(), documentPostAssertList2);
@@ -798,7 +789,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1, price2, costType);
+      Product product = createProduct("testCostingV911", price1, price2, costType);
 
       // Create purchase invoice, post it and assert it
       Invoice purchaseInvoice = createPurchaseInvoice(product, price1, quantity1, day0);
@@ -847,7 +838,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       costAdjustmentAssertList.add(costAdjustmentAssertLineList1);
       List<CostAdjustmentAssert> costAdjustmentAssertLineList2 = new ArrayList<CostAdjustmentAssert>();
       costAdjustmentAssertLineList2.add(new CostAdjustmentAssert(transactionList.get(2), "NSC",
-          amount0, day3, true, false));
+          BigDecimal.ZERO, day3, true, false));
       costAdjustmentAssertList.add(costAdjustmentAssertLineList2);
       assertCostAdjustment(costAdjustmentList, costAdjustmentAssertList);
 
@@ -855,13 +846,13 @@ public class TestCosting extends BaseDataSourceTestDal {
       postDocument(costAdjustmentList.get(0));
       List<DocumentPostAssert> documentPostAssertList1 = new ArrayList<DocumentPostAssert>();
       documentPostAssertList1.add(new DocumentPostAssert("99904", quantity3.multiply(price2).add(
-          quantity3.multiply(price1).negate()), amount0, null));
-      documentPostAssertList1.add(new DocumentPostAssert("35000", amount0, quantity3.multiply(
-          price2).add(quantity3.multiply(price1).negate()), null));
-      documentPostAssertList1.add(new DocumentPostAssert("61000", amount0, quantity3.multiply(
-          price3).add(quantity3.multiply(price1).negate()), null));
+          quantity3.multiply(price1).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList1.add(new DocumentPostAssert("35000", BigDecimal.ZERO, quantity3
+          .multiply(price2).add(quantity3.multiply(price1).negate()), null));
+      documentPostAssertList1.add(new DocumentPostAssert("61000", BigDecimal.ZERO, quantity3
+          .multiply(price3).add(quantity3.multiply(price1).negate()), null));
       documentPostAssertList1.add(new DocumentPostAssert("35000", quantity3.multiply(price3).add(
-          quantity3.multiply(price1).negate()), amount0, null));
+          quantity3.multiply(price1).negate()), BigDecimal.ZERO, null));
       CostAdjustment costAdjustment1 = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList.get(0).getId());
       assertDocumentPost(costAdjustment1, product.getId(), documentPostAssertList1);
@@ -914,7 +905,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingV10", price1);
 
       // Create purchase order and book it
       Order purchaseOrder = createPurchaseOrder(product, price1, quantity1, day0);
@@ -1033,18 +1024,18 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Post cost adjustment 1 and assert it
       postDocument(costAdjustmentList.get(0));
       List<DocumentPostAssert> documentPostAssertList1 = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList1.add(new DocumentPostAssert("99904", amount0, quantity2.multiply(
-          price2).add(quantity2.multiply(price1).negate()), null));
+      documentPostAssertList1.add(new DocumentPostAssert("99904", BigDecimal.ZERO, quantity2
+          .multiply(price2).add(quantity2.multiply(price1).negate()), null));
       documentPostAssertList1.add(new DocumentPostAssert("35000", quantity2.multiply(price2).add(
-          quantity2.multiply(price1).negate()), amount0, null));
-      documentPostAssertList1.add(new DocumentPostAssert("99904", amount0, quantity3.multiply(
-          price2).add(quantity3.multiply(price1).negate()), null));
+          quantity2.multiply(price1).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList1.add(new DocumentPostAssert("99904", BigDecimal.ZERO, quantity3
+          .multiply(price2).add(quantity3.multiply(price1).negate()), null));
       documentPostAssertList1.add(new DocumentPostAssert("35000", quantity3.multiply(price2).add(
-          quantity3.multiply(price1).negate()), amount0, null));
+          quantity3.multiply(price1).negate()), BigDecimal.ZERO, null));
       documentPostAssertList1.add(new DocumentPostAssert("99900", quantity4.multiply(price2).add(
-          quantity4.multiply(price1).negate()), amount0, null));
-      documentPostAssertList1.add(new DocumentPostAssert("35000", amount0, quantity4.multiply(
-          price2).add(quantity4.multiply(price1).negate()), null));
+          quantity4.multiply(price1).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList1.add(new DocumentPostAssert("35000", BigDecimal.ZERO, quantity4
+          .multiply(price2).add(quantity4.multiply(price1).negate()), null));
       CostAdjustment costAdjustment1 = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList.get(0).getId());
       assertDocumentPost(costAdjustment1, product.getId(), documentPostAssertList1);
@@ -1052,18 +1043,18 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Post cost adjustment 2 and assert it
       postDocument(costAdjustmentList.get(1));
       List<DocumentPostAssert> documentPostAssertList2 = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList2.add(new DocumentPostAssert("99904", amount0, quantity5.multiply(
-          price4).add(quantity5.multiply(price1).negate()), null));
+      documentPostAssertList2.add(new DocumentPostAssert("99904", BigDecimal.ZERO, quantity5
+          .multiply(price4).add(quantity5.multiply(price1).negate()), null));
       documentPostAssertList2.add(new DocumentPostAssert("35000", quantity5.multiply(price4).add(
-          quantity5.multiply(price1).negate()), amount0, null));
-      documentPostAssertList2.add(new DocumentPostAssert("99904", amount0, quantity6.multiply(
-          price4).add(quantity6.multiply(price1).negate()), null));
+          quantity5.multiply(price1).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList2.add(new DocumentPostAssert("99904", BigDecimal.ZERO, quantity6
+          .multiply(price4).add(quantity6.multiply(price1).negate()), null));
       documentPostAssertList2.add(new DocumentPostAssert("35000", quantity6.multiply(price4).add(
-          quantity6.multiply(price1).negate()), amount0, null));
+          quantity6.multiply(price1).negate()), BigDecimal.ZERO, null));
       documentPostAssertList2.add(new DocumentPostAssert("99900", quantity7.multiply(price7).add(
-          quantity7.multiply(price3).negate()), amount0, null));
-      documentPostAssertList2.add(new DocumentPostAssert("35000", amount0, quantity7.multiply(
-          price7).add(quantity7.multiply(price3).negate()), null));
+          quantity7.multiply(price3).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList2.add(new DocumentPostAssert("35000", BigDecimal.ZERO, quantity7
+          .multiply(price7).add(quantity7.multiply(price3).negate()), null));
       CostAdjustment costAdjustment2 = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList.get(1).getId());
       assertDocumentPost(costAdjustment2, product.getId(), documentPostAssertList2);
@@ -1110,7 +1101,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingBD3", price1);
 
       // Create purchase order and book it
       Order purchaseOrder1 = createPurchaseOrder(product, price1, quantity1, day0);
@@ -1175,7 +1166,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       List<List<CostAdjustmentAssert>> costAdjustmentAssertList = new ArrayList<List<CostAdjustmentAssert>>();
       List<CostAdjustmentAssert> costAdjustmentAssertLineList1 = new ArrayList<CostAdjustmentAssert>();
       costAdjustmentAssertLineList1.add(new CostAdjustmentAssert(transactionList.get(0), "BDT",
-          amount0, day2, true));
+          BigDecimal.ZERO, day2, true));
       costAdjustmentAssertList.add(costAdjustmentAssertLineList1);
       List<CostAdjustmentAssert> costAdjustmentAssertLineList2 = new ArrayList<CostAdjustmentAssert>();
       costAdjustmentAssertLineList2.add(new CostAdjustmentAssert(transactionList.get(1), "BDT",
@@ -1196,10 +1187,10 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Post cost adjustment 1 and assert it
       postDocument(costAdjustmentList.get(1));
       List<DocumentPostAssert> documentPostAssertList1 = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList1.add(new DocumentPostAssert("99900", amount0, quantity2.multiply(
-          price3).add(quantity2.multiply(price1).negate()), null));
+      documentPostAssertList1.add(new DocumentPostAssert("99900", BigDecimal.ZERO, quantity2
+          .multiply(price3).add(quantity2.multiply(price1).negate()), null));
       documentPostAssertList1.add(new DocumentPostAssert("35000", quantity2.multiply(price3).add(
-          quantity2.multiply(price1).negate()), amount0, null));
+          quantity2.multiply(price1).negate()), BigDecimal.ZERO, null));
       CostAdjustment costAdjustment1 = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList.get(1).getId());
       assertDocumentPost(costAdjustment1, product.getId(), documentPostAssertList1);
@@ -1207,10 +1198,10 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Post cost adjustment 2 and assert it
       postDocument(costAdjustmentList.get(2));
       List<DocumentPostAssert> documentPostAssertList2 = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList2.add(new DocumentPostAssert("99900", amount0, quantity3.multiply(
-          price4).add(quantity3.multiply(price1).negate()), null));
+      documentPostAssertList2.add(new DocumentPostAssert("99900", BigDecimal.ZERO, quantity3
+          .multiply(price4).add(quantity3.multiply(price1).negate()), null));
       documentPostAssertList2.add(new DocumentPostAssert("35000", quantity3.multiply(price4).add(
-          quantity3.multiply(price1).negate()), amount0, null));
+          quantity3.multiply(price1).negate()), BigDecimal.ZERO, null));
       CostAdjustment costAdjustment2 = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList.get(2).getId());
       assertDocumentPost(costAdjustment2, product.getId(), documentPostAssertList2);
@@ -1218,14 +1209,14 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Post cost adjustment 3 and assert it
       postDocument(costAdjustmentList.get(3));
       List<DocumentPostAssert> documentPostAssertList3 = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList3.add(new DocumentPostAssert("99900", amount0, quantity4.multiply(
-          price5).add(quantity4.multiply(price1).negate()), null));
+      documentPostAssertList3.add(new DocumentPostAssert("99900", BigDecimal.ZERO, quantity4
+          .multiply(price5).add(quantity4.multiply(price1).negate()), null));
       documentPostAssertList3.add(new DocumentPostAssert("35000", quantity4.multiply(price5).add(
-          quantity4.multiply(price1).negate()), amount0, null));
+          quantity4.multiply(price1).negate()), BigDecimal.ZERO, null));
       documentPostAssertList3.add(new DocumentPostAssert("61000", quantity1.multiply(price2).add(
-          quantity1.multiply(price7).negate()), amount0, null));
-      documentPostAssertList3.add(new DocumentPostAssert("35000", amount0, quantity1.multiply(
-          price2).add(quantity1.multiply(price7).negate()), null));
+          quantity1.multiply(price7).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList3.add(new DocumentPostAssert("35000", BigDecimal.ZERO, quantity1
+          .multiply(price2).add(quantity1.multiply(price7).negate()), null));
       CostAdjustment costAdjustment3 = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList.get(3).getId());
       assertDocumentPost(costAdjustment3, product.getId(), documentPostAssertList3);
@@ -1261,7 +1252,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingE1", price1);
 
       // Create purchase order and book it
       Order purchaseOrder = createPurchaseOrder(product, price1, quantity1, day0);
@@ -1329,6 +1320,7 @@ public class TestCosting extends BaseDataSourceTestDal {
     final int day1 = 5;
     final int day2 = 10;
     final int day3 = 15;
+    final int day4 = 20;
     final BigDecimal price1 = new BigDecimal("1230.00");
     final BigDecimal price2 = new BigDecimal("1200.00");
     final BigDecimal price3 = new BigDecimal("1500.00");
@@ -1342,7 +1334,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingF2", price1);
 
       // Create purchase order and book it
       Order purchaseOrder = createPurchaseOrder(product, price1, quantity1, day0);
@@ -1350,15 +1342,21 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt = createGoodsReceipt(purchaseOrder, price1, quantity1, day1);
 
+      // Add sleep to avoid assert errors
+      Thread.sleep(1000);
+
       // Create goods shipment, run costing background, post it and assert it
-      ShipmentInOut goodsShipment = createGoodsShipment(product, price1, quantity2, day3);
+      ShipmentInOut goodsShipment = createGoodsShipment(product, price1, quantity2, day4);
+
+      // Add sleep to avoid assert errors
+      Thread.sleep(1000);
 
       // Create inventory amount update and run costing background
       InventoryAmountUpdate inventoryAmountUpdate = createInventoryAmountUpdate(product, price1,
           price2, quantity1, day2);
 
       // Create purchase invoice, post it and assert it
-      createPurchaseInvoice(goodsReceipt, price3, quantity1, day2);
+      createPurchaseInvoice(goodsReceipt, price3, quantity1, day3);
 
       // Run price correction background
       runPriceBackground();
@@ -1393,29 +1391,29 @@ public class TestCosting extends BaseDataSourceTestDal {
       List<List<CostAdjustmentAssert>> costAdjustmentAssertList = new ArrayList<List<CostAdjustmentAssert>>();
       List<CostAdjustmentAssert> costAdjustmentAssertLineList1 = new ArrayList<CostAdjustmentAssert>();
       costAdjustmentAssertLineList1.add(new CostAdjustmentAssert(transactionList.get(1), "BDT",
-          amount0, day2, true));
+          BigDecimal.ZERO, day2, true));
       costAdjustmentAssertList.add(costAdjustmentAssertLineList1);
       List<CostAdjustmentAssert> costAdjustmentAssertLineList2 = new ArrayList<CostAdjustmentAssert>();
       costAdjustmentAssertLineList2.add(new CostAdjustmentAssert(transactionList.get(2), "BDT",
-          amount0, day2, true));
+          BigDecimal.ZERO, day2, true));
       costAdjustmentAssertLineList2.add(new CostAdjustmentAssert(transactionList.get(3), "PDC",
-          quantity2.multiply(price2).add(quantity2.multiply(price1).negate()), day3, false));
+          quantity2.multiply(price2).add(quantity2.multiply(price1).negate()), day4, false));
       costAdjustmentAssertList.add(costAdjustmentAssertLineList2);
       List<CostAdjustmentAssert> costAdjustmentAssertLineList3 = new ArrayList<CostAdjustmentAssert>();
       costAdjustmentAssertLineList3.add(new CostAdjustmentAssert(transactionList.get(0), "PDC",
-          quantity1.multiply(price3).add(quantity1.multiply(price1).negate()), day2, true));
+          quantity1.multiply(price3).add(quantity1.multiply(price1).negate()), day3, true));
       costAdjustmentAssertLineList3.add(new CostAdjustmentAssert(transactionList.get(1), "PDC",
-          quantity1.multiply(price3).add(quantity1.multiply(price1).negate()), day2, false));
+          quantity1.multiply(price3).add(quantity1.multiply(price1).negate()), day3, false));
       costAdjustmentAssertList.add(costAdjustmentAssertLineList3);
       assertCostAdjustment(costAdjustmentList, costAdjustmentAssertList);
 
       // Post cost adjustment 2 and assert it
       postDocument(costAdjustmentList.get(1));
       List<DocumentPostAssert> documentPostAssertList1 = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList1.add(new DocumentPostAssert("99900", amount0, quantity2.multiply(
-          price1).add(quantity2.multiply(price2).negate()), null));
+      documentPostAssertList1.add(new DocumentPostAssert("99900", BigDecimal.ZERO, quantity2
+          .multiply(price1).add(quantity2.multiply(price2).negate()), null));
       documentPostAssertList1.add(new DocumentPostAssert("35000", quantity2.multiply(price1).add(
-          quantity2.multiply(price2).negate()), amount0, null));
+          quantity2.multiply(price2).negate()), BigDecimal.ZERO, null));
       CostAdjustment costAdjustment1 = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList.get(1).getId());
       assertDocumentPost(costAdjustment1, product.getId(), documentPostAssertList1);
@@ -1423,14 +1421,14 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Post cost adjustment 3 and assert it
       postDocument(costAdjustmentList.get(2));
       List<DocumentPostAssert> documentPostAssertList2 = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList2.add(new DocumentPostAssert("99904", amount0, quantity1.multiply(
-          price3).add(quantity1.multiply(price1).negate()), null));
+      documentPostAssertList2.add(new DocumentPostAssert("99904", BigDecimal.ZERO, quantity1
+          .multiply(price3).add(quantity1.multiply(price1).negate()), null));
       documentPostAssertList2.add(new DocumentPostAssert("35000", quantity1.multiply(price3).add(
-          quantity1.multiply(price1).negate()), amount0, null));
-      documentPostAssertList2.add(new DocumentPostAssert("61000", amount0, quantity1.multiply(
-          price3).add(quantity1.multiply(price1).negate()), null));
+          quantity1.multiply(price1).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList2.add(new DocumentPostAssert("61000", BigDecimal.ZERO, quantity1
+          .multiply(price3).add(quantity1.multiply(price1).negate()), null));
       documentPostAssertList2.add(new DocumentPostAssert("35000", quantity1.multiply(price3).add(
-          quantity1.multiply(price1).negate()), amount0, null));
+          quantity1.multiply(price1).negate()), BigDecimal.ZERO, null));
       CostAdjustment costAdjustment2 = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList.get(2).getId());
       assertDocumentPost(costAdjustment2, product.getId(), documentPostAssertList2);
@@ -1468,7 +1466,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingGG", price1);
 
       // Create purchase order and book it
       Order purchaseOrder1 = createPurchaseOrder(product, price1, quantity1, day0);
@@ -1526,10 +1524,10 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Post cost adjustment 1 and assert it
       postDocument(costAdjustmentList.get(0));
       List<DocumentPostAssert> documentPostAssertList = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList.add(new DocumentPostAssert("61000", amount0, quantity1
+      documentPostAssertList.add(new DocumentPostAssert("61000", BigDecimal.ZERO, quantity1
           .multiply(price1).add(quantity1.multiply(price2).negate()), null));
       documentPostAssertList.add(new DocumentPostAssert("35000", quantity1.multiply(price1).add(
-          quantity1.multiply(price2).negate()), amount0, null));
+          quantity1.multiply(price2).negate()), BigDecimal.ZERO, null));
       CostAdjustment costAdjustment = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList.get(0).getId());
       assertDocumentPost(costAdjustment, product.getId(), documentPostAssertList);
@@ -1570,7 +1568,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingH1", price1);
 
       // Create purchase order and book it
       Order purchaseOrder1 = createPurchaseOrder(product, price1, quantity1, day0);
@@ -1636,13 +1634,13 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Post cost adjustment 1 and assert it
       postDocument(costAdjustmentList.get(0));
       List<DocumentPostAssert> documentPostAssertList = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList.add(new DocumentPostAssert("61000", amount0, quantity1
+      documentPostAssertList.add(new DocumentPostAssert("61000", BigDecimal.ZERO, quantity1
           .multiply(price4).add(quantity1.multiply(price2).negate()), null));
       documentPostAssertList.add(new DocumentPostAssert("35000", quantity1.multiply(price4).add(
-          quantity1.multiply(price2).negate()), amount0, null));
+          quantity1.multiply(price2).negate()), BigDecimal.ZERO, null));
       documentPostAssertList.add(new DocumentPostAssert("99900", quantity3.multiply(price2).add(
-          quantity3.multiply(price3).negate()), amount0, null));
-      documentPostAssertList.add(new DocumentPostAssert("35000", amount0, quantity3
+          quantity3.multiply(price3).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList.add(new DocumentPostAssert("35000", BigDecimal.ZERO, quantity3
           .multiply(price2).add(quantity3.multiply(price3).negate()), null));
       CostAdjustment costAdjustment = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList.get(0).getId());
@@ -1679,7 +1677,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1, price2, costType, year);
+      Product product = createProduct("testCostingII", price1, price2, costType, year);
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt = createGoodsReceipt(product, price2, quantity1, day0);
@@ -1727,13 +1725,13 @@ public class TestCosting extends BaseDataSourceTestDal {
       postDocument(costAdjustmentList.get(0));
       List<DocumentPostAssert> documentPostAssertList = new ArrayList<DocumentPostAssert>();
       documentPostAssertList.add(new DocumentPostAssert("99904", quantity1.multiply(price2).add(
-          quantity1.multiply(price1).negate()), amount0, null));
-      documentPostAssertList.add(new DocumentPostAssert("35000", amount0, quantity1
+          quantity1.multiply(price1).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList.add(new DocumentPostAssert("35000", BigDecimal.ZERO, quantity1
           .multiply(price2).add(quantity1.multiply(price1).negate()), null));
-      documentPostAssertList.add(new DocumentPostAssert("99900", amount0, quantity2
+      documentPostAssertList.add(new DocumentPostAssert("99900", BigDecimal.ZERO, quantity2
           .multiply(price2).add(quantity2.multiply(price1).negate()), null));
       documentPostAssertList.add(new DocumentPostAssert("35000", quantity2.multiply(price2).add(
-          quantity2.multiply(price1).negate()), amount0, null));
+          quantity2.multiply(price1).negate()), BigDecimal.ZERO, null));
       CostAdjustment costAdjustment = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList.get(0).getId());
       assertDocumentPost(costAdjustment, product.getId(), documentPostAssertList);
@@ -1770,7 +1768,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1, price2, costType, year);
+      Product product = createProduct("testCostingJJ", price1, price2, costType, year);
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt = createGoodsReceipt(product, price1, quantity1, day0);
@@ -1817,13 +1815,13 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Post cost adjustment and assert it
       postDocument(costAdjustmentList.get(0));
       List<DocumentPostAssert> documentPostAssertList = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList.add(new DocumentPostAssert("99904", amount0, quantity1
+      documentPostAssertList.add(new DocumentPostAssert("99904", BigDecimal.ZERO, quantity1
           .multiply(price3).add(quantity1.multiply(price1).negate()), null));
       documentPostAssertList.add(new DocumentPostAssert("35000", quantity1.multiply(price3).add(
-          quantity1.multiply(price1).negate()), amount0, null));
+          quantity1.multiply(price1).negate()), BigDecimal.ZERO, null));
       documentPostAssertList.add(new DocumentPostAssert("99900", quantity2.multiply(price3).add(
-          quantity2.multiply(price1).negate()), amount0, null));
-      documentPostAssertList.add(new DocumentPostAssert("35000", amount0, quantity2
+          quantity2.multiply(price1).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList.add(new DocumentPostAssert("35000", BigDecimal.ZERO, quantity2
           .multiply(price3).add(quantity2.multiply(price1).negate()), null));
       CostAdjustment costAdjustment = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList.get(0).getId());
@@ -1863,7 +1861,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1, price2, costType, year);
+      Product product = createProduct("testCostingJJJ", price1, price2, costType, year);
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt = createGoodsReceipt(product, price1, quantity1, day0);
@@ -1919,13 +1917,13 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Post cost adjustment and assert it
       postDocument(costAdjustmentList.get(0));
       List<DocumentPostAssert> documentPostAssertList = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList.add(new DocumentPostAssert("99904", amount0, quantity1
+      documentPostAssertList.add(new DocumentPostAssert("99904", BigDecimal.ZERO, quantity1
           .multiply(price3).add(quantity1.multiply(price1).negate()), null));
       documentPostAssertList.add(new DocumentPostAssert("35000", quantity1.multiply(price3).add(
-          quantity1.multiply(price1).negate()), amount0, null));
+          quantity1.multiply(price1).negate()), BigDecimal.ZERO, null));
       documentPostAssertList.add(new DocumentPostAssert("99900", quantity2.multiply(price3).add(
-          quantity2.multiply(price1).negate()), amount0, null));
-      documentPostAssertList.add(new DocumentPostAssert("35000", amount0, quantity2
+          quantity2.multiply(price1).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList.add(new DocumentPostAssert("35000", BigDecimal.ZERO, quantity2
           .multiply(price3).add(quantity2.multiply(price1).negate()), null));
       CostAdjustment costAdjustment = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList.get(0).getId());
@@ -1964,7 +1962,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1, price2, costType, year);
+      Product product = createProduct("testCostingK2", price1, price2, costType, year);
 
       // Create purchase order and book it
       createPurchaseOrder(product, price3, quantity1, day0);
@@ -2014,14 +2012,14 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Post cost adjustment and assert it
       postDocument(costAdjustmentList1.get(0));
       List<DocumentPostAssert> documentPostAssertList1 = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList1.add(new DocumentPostAssert("99904", amount0, quantity2.multiply(
-          price1).add(quantity2.multiply(price3).negate()), null));
+      documentPostAssertList1.add(new DocumentPostAssert("99904", BigDecimal.ZERO, quantity2
+          .multiply(price1).add(quantity2.multiply(price3).negate()), null));
       documentPostAssertList1.add(new DocumentPostAssert("35000", quantity2.multiply(price1).add(
-          quantity2.multiply(price3).negate()), amount0, null));
+          quantity2.multiply(price3).negate()), BigDecimal.ZERO, null));
       documentPostAssertList1.add(new DocumentPostAssert("99900", quantity3.multiply(price1).add(
-          quantity3.multiply(price3).negate()), amount0, null));
-      documentPostAssertList1.add(new DocumentPostAssert("35000", amount0, quantity3.multiply(
-          price1).add(quantity3.multiply(price3).negate()), null));
+          quantity3.multiply(price3).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList1.add(new DocumentPostAssert("35000", BigDecimal.ZERO, quantity3
+          .multiply(price1).add(quantity3.multiply(price3).negate()), null));
       CostAdjustment costAdjustment = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList1.get(0).getId());
       assertDocumentPost(costAdjustment, product.getId(), documentPostAssertList1);
@@ -2067,14 +2065,14 @@ public class TestCosting extends BaseDataSourceTestDal {
 
       // Post cost adjustment 1 and assert it
       List<DocumentPostAssert> documentPostAssertList21 = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList21.add(new DocumentPostAssert("99904", amount0, quantity2.multiply(
-          price1).add(quantity2.multiply(price3).negate()), null));
+      documentPostAssertList21.add(new DocumentPostAssert("99904", BigDecimal.ZERO, quantity2
+          .multiply(price1).add(quantity2.multiply(price3).negate()), null));
       documentPostAssertList21.add(new DocumentPostAssert("35000", quantity2.multiply(price1).add(
-          quantity2.multiply(price3).negate()), amount0, null));
+          quantity2.multiply(price3).negate()), BigDecimal.ZERO, null));
       documentPostAssertList21.add(new DocumentPostAssert("99900", quantity3.multiply(price1).add(
-          quantity3.multiply(price3).negate()), amount0, null));
-      documentPostAssertList21.add(new DocumentPostAssert("35000", amount0, quantity3.multiply(
-          price1).add(quantity3.multiply(price3).negate()), null));
+          quantity3.multiply(price3).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList21.add(new DocumentPostAssert("35000", BigDecimal.ZERO, quantity3
+          .multiply(price1).add(quantity3.multiply(price3).negate()), null));
       CostAdjustment costAdjustment21 = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList2.get(0).getId());
       assertDocumentPost(costAdjustment21, product.getId(), documentPostAssertList21);
@@ -2083,13 +2081,13 @@ public class TestCosting extends BaseDataSourceTestDal {
       postDocument(costAdjustmentList2.get(1));
       List<DocumentPostAssert> documentPostAssertList22 = new ArrayList<DocumentPostAssert>();
       documentPostAssertList22.add(new DocumentPostAssert("99904", quantity2.multiply(price1).add(
-          quantity2.multiply(price3).negate()), amount0, null));
-      documentPostAssertList22.add(new DocumentPostAssert("35000", amount0, quantity2.multiply(
-          price1).add(quantity2.multiply(price3).negate()), null));
-      documentPostAssertList22.add(new DocumentPostAssert("99900", amount0, quantity3.multiply(
-          price1).add(quantity3.multiply(price3).negate()), null));
+          quantity2.multiply(price3).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList22.add(new DocumentPostAssert("35000", BigDecimal.ZERO, quantity2
+          .multiply(price1).add(quantity2.multiply(price3).negate()), null));
+      documentPostAssertList22.add(new DocumentPostAssert("99900", BigDecimal.ZERO, quantity3
+          .multiply(price1).add(quantity3.multiply(price3).negate()), null));
       documentPostAssertList22.add(new DocumentPostAssert("35000", quantity3.multiply(price1).add(
-          quantity3.multiply(price3).negate()), amount0, null));
+          quantity3.multiply(price3).negate()), BigDecimal.ZERO, null));
       CostAdjustment costAdjustment22 = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList2.get(1).getId());
       assertDocumentPost(costAdjustment22, product.getId(), documentPostAssertList22);
@@ -2128,7 +2126,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingN0", price1);
 
       // Create purchase order and book it
       Order purchaseOrder1 = createPurchaseOrder(product, price1, quantity1, day0);
@@ -2186,9 +2184,9 @@ public class TestCosting extends BaseDataSourceTestDal {
       postDocument(costAdjustmentList.get(0));
       List<DocumentPostAssert> documentPostAssertList1 = new ArrayList<DocumentPostAssert>();
       documentPostAssertList1.add(new DocumentPostAssert("61000", quantity3.multiply(price2).add(
-          quantity3.multiply(price4).negate()), amount0, null));
-      documentPostAssertList1.add(new DocumentPostAssert("35000", amount0, quantity3.multiply(
-          price2).add(quantity3.multiply(price4).negate()), null));
+          quantity3.multiply(price4).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList1.add(new DocumentPostAssert("35000", BigDecimal.ZERO, quantity3
+          .multiply(price2).add(quantity3.multiply(price4).negate()), null));
       CostAdjustment costAdjustment = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList.get(0).getId());
       assertDocumentPost(costAdjustment, product.getId(), documentPostAssertList1);
@@ -2225,7 +2223,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1, price1, costType, year);
+      Product product = createProduct("testCostingN0", price1, price1, costType, year);
 
       // Create goods shipment, run costing background, post it and assert it
       ShipmentInOut goodsShipment = createGoodsShipment(product, price1, quantity1, day0);
@@ -2267,10 +2265,10 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Post cost adjustment and assert it
       postDocument(costAdjustmentList.get(0));
       List<DocumentPostAssert> documentPostAssertList1 = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList1.add(new DocumentPostAssert("61000", amount0, quantity2.multiply(
-          price4).add(quantity2.multiply(price2).negate()), null));
+      documentPostAssertList1.add(new DocumentPostAssert("61000", BigDecimal.ZERO, quantity2
+          .multiply(price4).add(quantity2.multiply(price2).negate()), null));
       documentPostAssertList1.add(new DocumentPostAssert("35000", quantity2.multiply(price4).add(
-          quantity2.multiply(price2).negate()), amount0, null));
+          quantity2.multiply(price2).negate()), BigDecimal.ZERO, null));
       CostAdjustment costAdjustment = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList.get(0).getId());
       assertDocumentPost(costAdjustment, product.getId(), documentPostAssertList1);
@@ -2305,7 +2303,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingN2", price1);
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt1 = createGoodsReceipt(product, price1, quantity1, day0);
@@ -2349,7 +2347,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       List<List<CostAdjustmentAssert>> costAdjustmentAssertList = new ArrayList<List<CostAdjustmentAssert>>();
       List<CostAdjustmentAssert> costAdjustmentAssertLineList = new ArrayList<CostAdjustmentAssert>();
       costAdjustmentAssertLineList.add(new CostAdjustmentAssert(transactionList.get(1), "BDT",
-          amount0, day1, true));
+          BigDecimal.ZERO, day1, true));
       costAdjustmentAssertList.add(costAdjustmentAssertLineList);
       assertCostAdjustment(costAdjustmentList, costAdjustmentAssertList);
 
@@ -2387,7 +2385,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingN5", price1);
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt1 = createGoodsReceipt(product, price1, quantity1, day0);
@@ -2446,14 +2444,14 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Post cost adjustment and assert it
       postDocument(costAdjustmentList.get(0));
       List<DocumentPostAssert> documentPostAssertList1 = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList1.add(new DocumentPostAssert("99900", amount0, quantity1.multiply(
-          price3).add(quantity1.multiply(price1).negate()), null));
+      documentPostAssertList1.add(new DocumentPostAssert("99900", BigDecimal.ZERO, quantity1
+          .multiply(price3).add(quantity1.multiply(price1).negate()), null));
       documentPostAssertList1.add(new DocumentPostAssert("35000", quantity1.multiply(price3).add(
-          quantity1.multiply(price1).negate()), amount0, null));
+          quantity1.multiply(price1).negate()), BigDecimal.ZERO, null));
       documentPostAssertList1.add(new DocumentPostAssert("61000", quantity1.multiply(price2).add(
-          quantity1.multiply(price4).negate()), amount0, null));
-      documentPostAssertList1.add(new DocumentPostAssert("35000", amount0, quantity1.multiply(
-          price2).add(quantity1.multiply(price4).negate()), null));
+          quantity1.multiply(price4).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList1.add(new DocumentPostAssert("35000", BigDecimal.ZERO, quantity1
+          .multiply(price2).add(quantity1.multiply(price4).negate()), null));
       CostAdjustment costAdjustment = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList.get(0).getId());
       assertDocumentPost(costAdjustment, product.getId(), documentPostAssertList1);
@@ -2496,7 +2494,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingV11", price1);
 
       // Create purchase order and book it
       Order purchaseOrder1 = createPurchaseOrder(product, price1, quantity1, day0);
@@ -2567,14 +2565,14 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Post cost adjustment 1 and assert it
       postDocument(costAdjustmentList.get(0));
       List<DocumentPostAssert> documentPostAssertList1 = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList1.add(new DocumentPostAssert("99904", amount0, quantity1.multiply(
-          price4).add(quantity1.multiply(price1).negate()), null));
+      documentPostAssertList1.add(new DocumentPostAssert("99904", BigDecimal.ZERO, quantity1
+          .multiply(price4).add(quantity1.multiply(price1).negate()), null));
       documentPostAssertList1.add(new DocumentPostAssert("35000", quantity1.multiply(price4).add(
-          quantity1.multiply(price1).negate()), amount0, null));
+          quantity1.multiply(price1).negate()), BigDecimal.ZERO, null));
       documentPostAssertList1.add(new DocumentPostAssert("99900", quantity4.multiply(price5).add(
-          quantity4.multiply(price3).negate()), amount0, null));
-      documentPostAssertList1.add(new DocumentPostAssert("35000", amount0, quantity4.multiply(
-          price5).add(quantity4.multiply(price3).negate()), null));
+          quantity4.multiply(price3).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList1.add(new DocumentPostAssert("35000", BigDecimal.ZERO, quantity4
+          .multiply(price5).add(quantity4.multiply(price3).negate()), null));
       CostAdjustment costAdjustment1 = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList.get(0).getId());
       assertDocumentPost(costAdjustment1, product.getId(), documentPostAssertList1);
@@ -2582,14 +2580,14 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Post cost adjustment 2 and assert it
       postDocument(costAdjustmentList.get(1));
       List<DocumentPostAssert> documentPostAssertList2 = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList2.add(new DocumentPostAssert("99904", amount0, quantity2.multiply(
-          price1).add(quantity2.multiply(price2).negate()), null));
+      documentPostAssertList2.add(new DocumentPostAssert("99904", BigDecimal.ZERO, quantity2
+          .multiply(price1).add(quantity2.multiply(price2).negate()), null));
       documentPostAssertList2.add(new DocumentPostAssert("35000", quantity2.multiply(price1).add(
-          quantity2.multiply(price2).negate()), amount0, null));
+          quantity2.multiply(price2).negate()), BigDecimal.ZERO, null));
       documentPostAssertList2.add(new DocumentPostAssert("99900", quantity4.multiply(price6).add(
-          quantity4.multiply(price5).negate()), amount0, null));
-      documentPostAssertList2.add(new DocumentPostAssert("35000", amount0, quantity4.multiply(
-          price6).add(quantity4.multiply(price5).negate()), null));
+          quantity4.multiply(price5).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList2.add(new DocumentPostAssert("35000", BigDecimal.ZERO, quantity4
+          .multiply(price6).add(quantity4.multiply(price5).negate()), null));
       CostAdjustment costAdjustment2 = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList.get(1).getId());
       assertDocumentPost(costAdjustment2, product.getId(), documentPostAssertList2);
@@ -2633,7 +2631,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingV221", price1);
 
       // Create purchase order and book it
       Order purchaseOrder1 = createPurchaseOrder(product, price1, quantity1, day0);
@@ -2709,8 +2707,8 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Post cost adjustment and assert it
       postDocument(costAdjustmentList.get(0));
       List<DocumentPostAssert> documentPostAssertList1 = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList1.add(new DocumentPostAssert("61000", amount0, amount1, null));
-      documentPostAssertList1.add(new DocumentPostAssert("35000", amount1, amount0, null));
+      documentPostAssertList1.add(new DocumentPostAssert("61000", BigDecimal.ZERO, amount1, null));
+      documentPostAssertList1.add(new DocumentPostAssert("35000", amount1, BigDecimal.ZERO, null));
       CostAdjustment costAdjustment1 = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList.get(0).getId());
       assertDocumentPost(costAdjustment1, product.getId(), documentPostAssertList1);
@@ -2718,20 +2716,22 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Post cost adjustment and assert it
       postDocument(costAdjustmentList.get(1));
       List<DocumentPostAssert> documentPostAssertList2 = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList2.add(new DocumentPostAssert("99904", amount0, quantity3.multiply(
-          price3).add(quantity3.multiply(price1).negate()), null));
+      documentPostAssertList2.add(new DocumentPostAssert("99904", BigDecimal.ZERO, quantity3
+          .multiply(price3).add(quantity3.multiply(price1).negate()), null));
       documentPostAssertList2.add(new DocumentPostAssert("35000", quantity3.multiply(price3).add(
-          quantity3.multiply(price1).negate()), amount0, null));
-      documentPostAssertList2.add(new DocumentPostAssert("99904", amount0, quantity4.multiply(
-          price3).add(quantity4.multiply(price1).negate()), null));
+          quantity3.multiply(price1).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList2.add(new DocumentPostAssert("99904", BigDecimal.ZERO, quantity4
+          .multiply(price3).add(quantity4.multiply(price1).negate()), null));
       documentPostAssertList2.add(new DocumentPostAssert("35000", quantity4.multiply(price3).add(
-          quantity4.multiply(price1).negate()), amount0, null));
+          quantity4.multiply(price1).negate()), BigDecimal.ZERO, null));
       documentPostAssertList2.add(new DocumentPostAssert("99900", quantity1.multiply(price4).add(
-          quantity1.multiply(price2).negate()), amount0, null));
-      documentPostAssertList2.add(new DocumentPostAssert("35000", amount0, quantity1.multiply(
-          price4).add(quantity1.multiply(price2).negate()), null));
-      documentPostAssertList2.add(new DocumentPostAssert("61000", amount2.negate(), amount0, null));
-      documentPostAssertList2.add(new DocumentPostAssert("35000", amount0, amount2.negate(), null));
+          quantity1.multiply(price2).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList2.add(new DocumentPostAssert("35000", BigDecimal.ZERO, quantity1
+          .multiply(price4).add(quantity1.multiply(price2).negate()), null));
+      documentPostAssertList2.add(new DocumentPostAssert("61000", amount2.negate(),
+          BigDecimal.ZERO, null));
+      documentPostAssertList2.add(new DocumentPostAssert("35000", BigDecimal.ZERO,
+          amount2.negate(), null));
       CostAdjustment costAdjustment2 = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList.get(1).getId());
       assertDocumentPost(costAdjustment2, product.getId(), documentPostAssertList2);
@@ -2771,7 +2771,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingGM11", price1);
 
       // Create purchase order and book it
       Order purchaseOrder = createPurchaseOrder(product, price1, quantity1, day0);
@@ -2811,10 +2811,10 @@ public class TestCosting extends BaseDataSourceTestDal {
       List<ProductCostingAssert> productCostingAssertList = new ArrayList<ProductCostingAssert>();
       productCostingAssertList.add(new ProductCostingAssert(transactionList.get(0), WAREHOUSE1_ID,
           price3, price1, price3, quantity1));
-      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(2), WAREHOUSE2_ID,
-          price2, price1, price2, quantity2));
       productCostingAssertList.add(new ProductCostingAssert(transactionList.get(1), WAREHOUSE1_ID,
           price2, price5, price4, quantity3));
+      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(2), WAREHOUSE2_ID,
+          price2, price1, price2, quantity2));
       assertProductCosting(product.getId(), productCostingAssertList);
 
       // Assert cost adjustment
@@ -2836,13 +2836,13 @@ public class TestCosting extends BaseDataSourceTestDal {
       postDocument(costAdjustmentList.get(0));
       List<DocumentPostAssert> documentPostAssertList1 = new ArrayList<DocumentPostAssert>();
       documentPostAssertList1.add(new DocumentPostAssert("35000", quantity2.multiply(price1).add(
-          quantity2.multiply(price2).negate()), amount0, null));
-      documentPostAssertList1.add(new DocumentPostAssert("61000", amount0, quantity2.multiply(
-          price1).add(quantity2.multiply(price2).negate()), null));
+          quantity2.multiply(price2).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList1.add(new DocumentPostAssert("61000", BigDecimal.ZERO, quantity2
+          .multiply(price1).add(quantity2.multiply(price2).negate()), null));
       documentPostAssertList1.add(new DocumentPostAssert("61000", quantity2.multiply(price1).add(
-          quantity2.multiply(price2).negate()), amount0, null));
-      documentPostAssertList1.add(new DocumentPostAssert("35000", amount0, quantity2.multiply(
-          price1).add(quantity2.multiply(price2).negate()), null));
+          quantity2.multiply(price2).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList1.add(new DocumentPostAssert("35000", BigDecimal.ZERO, quantity2
+          .multiply(price1).add(quantity2.multiply(price2).negate()), null));
       CostAdjustment costAdjustment1 = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList.get(0).getId());
       assertDocumentPost(costAdjustment1, product.getId(), documentPostAssertList1);
@@ -2850,10 +2850,10 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Post cost adjustment and assert it
       postDocument(costAdjustmentList.get(1));
       List<DocumentPostAssert> documentPostAssertList2 = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList2.add(new DocumentPostAssert("99904", amount0, quantity1.multiply(
-          price3).add(quantity1.multiply(price1).negate()), null));
+      documentPostAssertList2.add(new DocumentPostAssert("99904", BigDecimal.ZERO, quantity1
+          .multiply(price3).add(quantity1.multiply(price1).negate()), null));
       documentPostAssertList2.add(new DocumentPostAssert("35000", quantity1.multiply(price3).add(
-          quantity1.multiply(price1).negate()), amount0, null));
+          quantity1.multiply(price1).negate()), BigDecimal.ZERO, null));
       CostAdjustment costAdjustment2 = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList.get(1).getId());
       assertDocumentPost(costAdjustment2, product.getId(), documentPostAssertList2);
@@ -2895,7 +2895,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingGM12", price1);
 
       // Create purchase order and book it
       Order purchaseOrder = createPurchaseOrder(product, price1, quantity1, day0);
@@ -2935,10 +2935,10 @@ public class TestCosting extends BaseDataSourceTestDal {
       List<ProductCostingAssert> productCostingAssertList = new ArrayList<ProductCostingAssert>();
       productCostingAssertList.add(new ProductCostingAssert(transactionList.get(0), WAREHOUSE1_ID,
           price3, price1, price3, quantity1));
-      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(2), WAREHOUSE2_ID,
-          price4, price1, price4, quantity2));
       productCostingAssertList.add(new ProductCostingAssert(transactionList.get(1), WAREHOUSE1_ID,
           price3, price6, price5, quantity3));
+      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(2), WAREHOUSE2_ID,
+          price4, price1, price4, quantity2));
       assertProductCosting(product.getId(), productCostingAssertList);
 
       // Assert cost adjustment
@@ -2964,13 +2964,13 @@ public class TestCosting extends BaseDataSourceTestDal {
       postDocument(costAdjustmentList.get(0));
       List<DocumentPostAssert> documentPostAssertList1 = new ArrayList<DocumentPostAssert>();
       documentPostAssertList1.add(new DocumentPostAssert("35000", quantity2.multiply(price1).add(
-          quantity2.multiply(price2).negate()), amount0, null));
-      documentPostAssertList1.add(new DocumentPostAssert("61000", amount0, quantity2.multiply(
-          price1).add(quantity2.multiply(price2).negate()), null));
+          quantity2.multiply(price2).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList1.add(new DocumentPostAssert("61000", BigDecimal.ZERO, quantity2
+          .multiply(price1).add(quantity2.multiply(price2).negate()), null));
       documentPostAssertList1.add(new DocumentPostAssert("61000", quantity2.multiply(price1).add(
-          quantity2.multiply(price2).negate()), amount0, null));
-      documentPostAssertList1.add(new DocumentPostAssert("35000", amount0, quantity2.multiply(
-          price1).add(quantity2.multiply(price2).negate()), null));
+          quantity2.multiply(price2).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList1.add(new DocumentPostAssert("35000", BigDecimal.ZERO, quantity2
+          .multiply(price1).add(quantity2.multiply(price2).negate()), null));
       CostAdjustment costAdjustment1 = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList.get(0).getId());
       assertDocumentPost(costAdjustment1, product.getId(), documentPostAssertList1);
@@ -2978,18 +2978,18 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Post cost adjustment and assert it
       postDocument(costAdjustmentList.get(1));
       List<DocumentPostAssert> documentPostAssertList2 = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList2.add(new DocumentPostAssert("99904", amount0, quantity1.multiply(
-          price3).add(quantity1.multiply(price1).negate()), null));
+      documentPostAssertList2.add(new DocumentPostAssert("99904", BigDecimal.ZERO, quantity1
+          .multiply(price3).add(quantity1.multiply(price1).negate()), null));
       documentPostAssertList2.add(new DocumentPostAssert("35000", quantity1.multiply(price3).add(
-          quantity1.multiply(price1).negate()), amount0, null));
-      documentPostAssertList2.add(new DocumentPostAssert("35000", amount0, quantity2.multiply(
-          price3).add(quantity2.multiply(price1).negate()), null));
+          quantity1.multiply(price1).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList2.add(new DocumentPostAssert("35000", BigDecimal.ZERO, quantity2
+          .multiply(price3).add(quantity2.multiply(price1).negate()), null));
       documentPostAssertList2.add(new DocumentPostAssert("61000", quantity2.multiply(price3).add(
-          quantity2.multiply(price1).negate()), amount0, null));
-      documentPostAssertList2.add(new DocumentPostAssert("61000", amount0, quantity2.multiply(
-          price3).add(quantity2.multiply(price1).negate()), null));
+          quantity2.multiply(price1).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList2.add(new DocumentPostAssert("61000", BigDecimal.ZERO, quantity2
+          .multiply(price3).add(quantity2.multiply(price1).negate()), null));
       documentPostAssertList2.add(new DocumentPostAssert("35000", quantity2.multiply(price3).add(
-          quantity2.multiply(price1).negate()), amount0, null));
+          quantity2.multiply(price1).negate()), BigDecimal.ZERO, null));
       CostAdjustment costAdjustment2 = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList.get(1).getId());
       assertDocumentPost(costAdjustment2, product.getId(), documentPostAssertList2);
@@ -3029,7 +3029,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingGM13", price1);
 
       // Create purchase order and book it
       Order purchaseOrder = createPurchaseOrder(product, price1, quantity1, day0);
@@ -3069,10 +3069,10 @@ public class TestCosting extends BaseDataSourceTestDal {
       List<ProductCostingAssert> productCostingAssertList = new ArrayList<ProductCostingAssert>();
       productCostingAssertList.add(new ProductCostingAssert(transactionList.get(0), WAREHOUSE1_ID,
           price3, price1, price3, quantity1));
-      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(2), WAREHOUSE2_ID,
-          price3, price1, price3, quantity2));
       productCostingAssertList.add(new ProductCostingAssert(transactionList.get(1), WAREHOUSE1_ID,
           price3, price4, price3, quantity3));
+      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(2), WAREHOUSE2_ID,
+          price3, price1, price3, quantity2));
       assertProductCosting(product.getId(), productCostingAssertList);
 
       // Assert cost adjustment
@@ -3098,13 +3098,13 @@ public class TestCosting extends BaseDataSourceTestDal {
       postDocument(costAdjustmentList.get(0));
       List<DocumentPostAssert> documentPostAssertList1 = new ArrayList<DocumentPostAssert>();
       documentPostAssertList1.add(new DocumentPostAssert("35000", quantity2.multiply(price1).add(
-          quantity2.multiply(price2).negate()), amount0, null));
-      documentPostAssertList1.add(new DocumentPostAssert("61000", amount0, quantity2.multiply(
-          price1).add(quantity2.multiply(price2).negate()), null));
+          quantity2.multiply(price2).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList1.add(new DocumentPostAssert("61000", BigDecimal.ZERO, quantity2
+          .multiply(price1).add(quantity2.multiply(price2).negate()), null));
       documentPostAssertList1.add(new DocumentPostAssert("61000", quantity2.multiply(price1).add(
-          quantity2.multiply(price2).negate()), amount0, null));
-      documentPostAssertList1.add(new DocumentPostAssert("35000", amount0, quantity2.multiply(
-          price1).add(quantity2.multiply(price2).negate()), null));
+          quantity2.multiply(price2).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList1.add(new DocumentPostAssert("35000", BigDecimal.ZERO, quantity2
+          .multiply(price1).add(quantity2.multiply(price2).negate()), null));
       CostAdjustment costAdjustment1 = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList.get(0).getId());
       assertDocumentPost(costAdjustment1, product.getId(), documentPostAssertList1);
@@ -3112,18 +3112,18 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Post cost adjustment and assert it
       postDocument(costAdjustmentList.get(1));
       List<DocumentPostAssert> documentPostAssertList2 = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList2.add(new DocumentPostAssert("99904", amount0, quantity1.multiply(
-          price3).add(quantity1.multiply(price1).negate()), null));
+      documentPostAssertList2.add(new DocumentPostAssert("99904", BigDecimal.ZERO, quantity1
+          .multiply(price3).add(quantity1.multiply(price1).negate()), null));
       documentPostAssertList2.add(new DocumentPostAssert("35000", quantity1.multiply(price3).add(
-          quantity1.multiply(price1).negate()), amount0, null));
-      documentPostAssertList2.add(new DocumentPostAssert("35000", amount0, quantity2.multiply(
-          price3).add(quantity2.multiply(price2).negate()), null));
+          quantity1.multiply(price1).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList2.add(new DocumentPostAssert("35000", BigDecimal.ZERO, quantity2
+          .multiply(price3).add(quantity2.multiply(price2).negate()), null));
       documentPostAssertList2.add(new DocumentPostAssert("61000", quantity2.multiply(price3).add(
-          quantity2.multiply(price2).negate()), amount0, null));
-      documentPostAssertList2.add(new DocumentPostAssert("61000", amount0, quantity2.multiply(
-          price3).add(quantity2.multiply(price2).negate()), null));
+          quantity2.multiply(price2).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList2.add(new DocumentPostAssert("61000", BigDecimal.ZERO, quantity2
+          .multiply(price3).add(quantity2.multiply(price2).negate()), null));
       documentPostAssertList2.add(new DocumentPostAssert("35000", quantity2.multiply(price3).add(
-          quantity2.multiply(price2).negate()), amount0, null));
+          quantity2.multiply(price2).negate()), BigDecimal.ZERO, null));
       CostAdjustment costAdjustment2 = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList.get(1).getId());
       assertDocumentPost(costAdjustment2, product.getId(), documentPostAssertList2);
@@ -3152,6 +3152,7 @@ public class TestCosting extends BaseDataSourceTestDal {
     final int day6 = 30;
     final int day7 = 35;
     final int day8 = 40;
+    final int day9 = 45;
     final BigDecimal price1 = new BigDecimal("120.00");
     final BigDecimal price2 = new BigDecimal("150.00");
     final BigDecimal price3 = new BigDecimal("100.00");
@@ -3175,17 +3176,17 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingGM5", price1);
 
       // Create purchase order and book it
       Order purchaseOrder1 = createPurchaseOrder(product, price1, quantity1, day0);
 
       // Create purchase order and book it
-      Order purchaseOrder2 = createPurchaseOrder(product, price2, quantity1, day1);
+      Order purchaseOrder2 = createPurchaseOrder(product, price2, quantity1, day0);
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt1 = createGoodsReceipt(purchaseOrder1, price1, quantity1,
-          LOCATOR1_ID, day2);
+          LOCATOR1_ID, day1);
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt2 = createGoodsReceipt(purchaseOrder2, price2, quantity1,
@@ -3197,7 +3198,7 @@ public class TestCosting extends BaseDataSourceTestDal {
 
       // Create goods shipment, run costing background, post it and assert it
       ShipmentInOut goodsShipment2 = createGoodsShipment(product, price2, quantity3, LOCATOR2_ID,
-          day3);
+          day4);
 
       // Create purchase invoice, post it and assert it
       List<ShipmentInOut> goodsReceiptList = new ArrayList<ShipmentInOut>();
@@ -3206,28 +3207,28 @@ public class TestCosting extends BaseDataSourceTestDal {
       List<BigDecimal> priceList = new ArrayList<BigDecimal>();
       priceList.add(price3);
       priceList.add(price3);
-      createPurchaseInvoice(goodsReceiptList, priceList, quantity1.add(quantity1), day4);
+      createPurchaseInvoice(goodsReceiptList, priceList, quantity1.add(quantity1), day5);
 
       // Run price correction background
       runPriceBackground();
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt3 = createGoodsReceipt(product, price3, quantity4, LOCATOR1_ID,
-          day5);
+          day6);
 
       // Create purchase invoice, post it and assert it
-      createPurchaseInvoice(goodsReceipt3, price4, quantity4, day6);
+      createPurchaseInvoice(goodsReceipt3, price4, quantity4, day7);
 
       // Run price correction background
       runPriceBackground();
 
       // Create goods movement, run costing background, post it and assert it
       InternalMovement goodsMovement = createGoodsMovement(product, price3, quantity5, LOCATOR2_ID,
-          LOCATOR1_ID, day7);
+          LOCATOR1_ID, day8);
 
       // Update transaction total cost amount
       manualCostAdjustment(getProductTransactions(product.getId()).get(5),
-          quantity5.multiply(price5), false, day8);
+          quantity5.multiply(price5), false, day9);
 
       // Assert product transactions
       List<ProductTransactionAssert> productTransactionAssertList = new ArrayList<ProductTransactionAssert>();
@@ -3259,12 +3260,12 @@ public class TestCosting extends BaseDataSourceTestDal {
       List<ProductCostingAssert> productCostingAssertList = new ArrayList<ProductCostingAssert>();
       productCostingAssertList.add(new ProductCostingAssert(transactionList.get(0), WAREHOUSE1_ID,
           price3, price1, price3, quantity1));
-      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(1), WAREHOUSE2_ID,
-          price3, price2, price3, quantity1));
       productCostingAssertList.add(new ProductCostingAssert(transactionList.get(4), WAREHOUSE1_ID,
           price4, price3, price6, quantity6));
       productCostingAssertList.add(new ProductCostingAssert(transactionList.get(6), WAREHOUSE1_ID,
           price5, price8, price7, quantity7));
+      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(1), WAREHOUSE2_ID,
+          price3, price2, price3, quantity1));
       productCostingAssertList.add(new ProductCostingAssert(transactionList.get(5), WAREHOUSE2_ID,
           price9, null, price9, quantity2));
       assertProductCosting(product.getId(), productCostingAssertList);
@@ -3274,23 +3275,23 @@ public class TestCosting extends BaseDataSourceTestDal {
       List<List<CostAdjustmentAssert>> costAdjustmentAssertList = new ArrayList<List<CostAdjustmentAssert>>();
       List<CostAdjustmentAssert> costAdjustmentAssertLineList1 = new ArrayList<CostAdjustmentAssert>();
       costAdjustmentAssertLineList1.add(new CostAdjustmentAssert(transactionList.get(0), "PDC",
-          quantity1.multiply(price3).add(quantity1.multiply(price1).negate()), day4, true));
+          quantity1.multiply(price3).add(quantity1.multiply(price1).negate()), day5, true));
       costAdjustmentAssertLineList1.add(new CostAdjustmentAssert(transactionList.get(1), "PDC",
-          quantity1.multiply(price3).add(quantity1.multiply(price2).negate()), day4, true));
+          quantity1.multiply(price3).add(quantity1.multiply(price2).negate()), day5, true));
       costAdjustmentAssertLineList1.add(new CostAdjustmentAssert(transactionList.get(2), "PDC",
-          quantity2.multiply(price3).add(quantity2.multiply(price1).negate()), day4, false));
+          quantity2.multiply(price3).add(quantity2.multiply(price1).negate()), day5, false));
       costAdjustmentAssertLineList1.add(new CostAdjustmentAssert(transactionList.get(3), "PDC",
-          quantity3.multiply(price3).add(quantity3.multiply(price2).negate()), day4, false));
+          quantity3.multiply(price3).add(quantity3.multiply(price2).negate()), day5, false));
       costAdjustmentAssertList.add(costAdjustmentAssertLineList1);
       List<CostAdjustmentAssert> costAdjustmentAssertLineList2 = new ArrayList<CostAdjustmentAssert>();
       costAdjustmentAssertLineList2.add(new CostAdjustmentAssert(transactionList.get(4), "PDC",
-          quantity4.multiply(price4).add(quantity4.multiply(price3).negate()), day6, true));
+          quantity4.multiply(price4).add(quantity4.multiply(price3).negate()), day7, true));
       costAdjustmentAssertList.add(costAdjustmentAssertLineList2);
       List<CostAdjustmentAssert> costAdjustmentAssertLineList3 = new ArrayList<CostAdjustmentAssert>();
       costAdjustmentAssertLineList3.add(new CostAdjustmentAssert(transactionList.get(5), "MCC",
-          quantity5.multiply(price5).add(quantity5.multiply(price3).negate()), day8, true));
+          quantity5.multiply(price5).add(quantity5.multiply(price3).negate()), day9, true));
       costAdjustmentAssertLineList3.add(new CostAdjustmentAssert(transactionList.get(6), "MCC",
-          quantity5.multiply(price5).add(quantity5.multiply(price3).negate()), day8, false));
+          quantity5.multiply(price5).add(quantity5.multiply(price3).negate()), day9, false));
       costAdjustmentAssertList.add(costAdjustmentAssertLineList3);
       assertCostAdjustment(costAdjustmentList, costAdjustmentAssertList);
 
@@ -3298,21 +3299,21 @@ public class TestCosting extends BaseDataSourceTestDal {
       postDocument(costAdjustmentList.get(0));
       List<DocumentPostAssert> documentPostAssertList1 = new ArrayList<DocumentPostAssert>();
       documentPostAssertList1.add(new DocumentPostAssert("99904", quantity1.multiply(price1).add(
-          quantity1.multiply(price3).negate()), amount0, null));
-      documentPostAssertList1.add(new DocumentPostAssert("35000", amount0, quantity1.multiply(
-          price1).add(quantity1.multiply(price3).negate()), null));
+          quantity1.multiply(price3).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList1.add(new DocumentPostAssert("35000", BigDecimal.ZERO, quantity1
+          .multiply(price1).add(quantity1.multiply(price3).negate()), null));
       documentPostAssertList1.add(new DocumentPostAssert("99904", quantity1.multiply(price2).add(
-          quantity1.multiply(price3).negate()), amount0, null));
-      documentPostAssertList1.add(new DocumentPostAssert("35000", amount0, quantity1.multiply(
-          price2).add(quantity1.multiply(price3).negate()), null));
-      documentPostAssertList1.add(new DocumentPostAssert("99900", amount0, quantity2.multiply(
-          price1).add(quantity2.multiply(price3).negate()), null));
+          quantity1.multiply(price3).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList1.add(new DocumentPostAssert("35000", BigDecimal.ZERO, quantity1
+          .multiply(price2).add(quantity1.multiply(price3).negate()), null));
+      documentPostAssertList1.add(new DocumentPostAssert("99900", BigDecimal.ZERO, quantity2
+          .multiply(price1).add(quantity2.multiply(price3).negate()), null));
       documentPostAssertList1.add(new DocumentPostAssert("35000", quantity2.multiply(price1).add(
-          quantity2.multiply(price3).negate()), amount0, null));
-      documentPostAssertList1.add(new DocumentPostAssert("99900", amount0, quantity3.multiply(
-          price2).add(quantity3.multiply(price3).negate()), null));
+          quantity2.multiply(price3).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList1.add(new DocumentPostAssert("99900", BigDecimal.ZERO, quantity3
+          .multiply(price2).add(quantity3.multiply(price3).negate()), null));
       documentPostAssertList1.add(new DocumentPostAssert("35000", quantity3.multiply(price2).add(
-          quantity3.multiply(price3).negate()), amount0, null));
+          quantity3.multiply(price3).negate()), BigDecimal.ZERO, null));
       CostAdjustment costAdjustment1 = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList.get(0).getId());
       assertDocumentPost(costAdjustment1, product.getId(), documentPostAssertList1);
@@ -3321,9 +3322,9 @@ public class TestCosting extends BaseDataSourceTestDal {
       postDocument(costAdjustmentList.get(1));
       List<DocumentPostAssert> documentPostAssertList2 = new ArrayList<DocumentPostAssert>();
       documentPostAssertList2.add(new DocumentPostAssert("99904", quantity4.multiply(price3).add(
-          quantity4.multiply(price4).negate()), amount0, null));
-      documentPostAssertList2.add(new DocumentPostAssert("35000", amount0, quantity4.multiply(
-          price3).add(quantity4.multiply(price4).negate()), null));
+          quantity4.multiply(price4).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList2.add(new DocumentPostAssert("35000", BigDecimal.ZERO, quantity4
+          .multiply(price3).add(quantity4.multiply(price4).negate()), null));
       CostAdjustment costAdjustment2 = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList.get(1).getId());
       assertDocumentPost(costAdjustment2, product.getId(), documentPostAssertList2);
@@ -3332,13 +3333,13 @@ public class TestCosting extends BaseDataSourceTestDal {
       postDocument(costAdjustmentList.get(2));
       List<DocumentPostAssert> documentPostAssertList3 = new ArrayList<DocumentPostAssert>();
       documentPostAssertList3.add(new DocumentPostAssert("35000", quantity5.multiply(price3).add(
-          quantity5.multiply(price5).negate()), amount0, null));
-      documentPostAssertList3.add(new DocumentPostAssert("61000", amount0, quantity5.multiply(
-          price3).add(quantity5.multiply(price5).negate()), null));
+          quantity5.multiply(price5).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList3.add(new DocumentPostAssert("61000", BigDecimal.ZERO, quantity5
+          .multiply(price3).add(quantity5.multiply(price5).negate()), null));
       documentPostAssertList3.add(new DocumentPostAssert("61000", quantity5.multiply(price3).add(
-          quantity5.multiply(price5).negate()), amount0, null));
-      documentPostAssertList3.add(new DocumentPostAssert("35000", amount0, quantity5.multiply(
-          price3).add(quantity5.multiply(price5).negate()), null));
+          quantity5.multiply(price5).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList3.add(new DocumentPostAssert("35000", BigDecimal.ZERO, quantity5
+          .multiply(price3).add(quantity5.multiply(price5).negate()), null));
       CostAdjustment costAdjustment3 = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList.get(2).getId());
       assertDocumentPost(costAdjustment3, product.getId(), documentPostAssertList3);
@@ -3376,7 +3377,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingIC4", price1);
 
       // Create purchase order and book it
       Order purchaseOrder = createPurchaseOrder(product, price1, quantity1, day0);
@@ -3424,13 +3425,13 @@ public class TestCosting extends BaseDataSourceTestDal {
       postDocument(costAdjustmentList1.get(0));
       List<DocumentPostAssert> documentPostAssertList1 = new ArrayList<DocumentPostAssert>();
       documentPostAssertList1.add(new DocumentPostAssert("61000", quantity1.multiply(price1).add(
-          quantity1.multiply(price2).negate()), amount0, null));
-      documentPostAssertList1.add(new DocumentPostAssert("35000", amount0, quantity1.multiply(
-          price1).add(quantity1.multiply(price2).negate()), null));
+          quantity1.multiply(price2).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList1.add(new DocumentPostAssert("35000", BigDecimal.ZERO, quantity1
+          .multiply(price1).add(quantity1.multiply(price2).negate()), null));
       documentPostAssertList1.add(new DocumentPostAssert("35000", quantity2.multiply(price1).add(
-          quantity2.multiply(price2).negate()), amount0, null));
-      documentPostAssertList1.add(new DocumentPostAssert("61000", amount0, quantity2.multiply(
-          price1).add(quantity2.multiply(price2).negate()), null));
+          quantity2.multiply(price2).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList1.add(new DocumentPostAssert("61000", BigDecimal.ZERO, quantity2
+          .multiply(price1).add(quantity2.multiply(price2).negate()), null));
       CostAdjustment costAdjustment = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList1.get(0).getId());
       assertDocumentPost(costAdjustment, product.getId(), documentPostAssertList1);
@@ -3486,13 +3487,13 @@ public class TestCosting extends BaseDataSourceTestDal {
       postDocument(costAdjustmentList2.get(0));
       List<DocumentPostAssert> documentPostAssertList21 = new ArrayList<DocumentPostAssert>();
       documentPostAssertList21.add(new DocumentPostAssert("61000", quantity1.multiply(price1).add(
-          quantity1.multiply(price2).negate()), amount0, null));
-      documentPostAssertList21.add(new DocumentPostAssert("35000", amount0, quantity1.multiply(
-          price1).add(quantity1.multiply(price2).negate()), null));
+          quantity1.multiply(price2).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList21.add(new DocumentPostAssert("35000", BigDecimal.ZERO, quantity1
+          .multiply(price1).add(quantity1.multiply(price2).negate()), null));
       documentPostAssertList21.add(new DocumentPostAssert("35000", quantity2.multiply(price1).add(
-          quantity2.multiply(price2).negate()), amount0, null));
-      documentPostAssertList21.add(new DocumentPostAssert("61000", amount0, quantity2.multiply(
-          price1).add(quantity2.multiply(price2).negate()), null));
+          quantity2.multiply(price2).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList21.add(new DocumentPostAssert("61000", BigDecimal.ZERO, quantity2
+          .multiply(price1).add(quantity2.multiply(price2).negate()), null));
       CostAdjustment costAdjustment21 = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList2.get(0).getId());
       assertDocumentPost(costAdjustment21, product.getId(), documentPostAssertList21);
@@ -3500,14 +3501,14 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Post cost adjustment 2 and assert it
       postDocument(costAdjustmentList2.get(1));
       List<DocumentPostAssert> documentPostAssertList22 = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList22.add(new DocumentPostAssert("61000", amount0, quantity1.multiply(
-          price1).add(quantity1.multiply(price2).negate()), null));
+      documentPostAssertList22.add(new DocumentPostAssert("61000", BigDecimal.ZERO, quantity1
+          .multiply(price1).add(quantity1.multiply(price2).negate()), null));
       documentPostAssertList22.add(new DocumentPostAssert("35000", quantity1.multiply(price1).add(
-          quantity1.multiply(price2).negate()), amount0, null));
-      documentPostAssertList22.add(new DocumentPostAssert("35000", amount0, quantity2.multiply(
-          price1).add(quantity2.multiply(price2).negate()), null));
+          quantity1.multiply(price2).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList22.add(new DocumentPostAssert("35000", BigDecimal.ZERO, quantity2
+          .multiply(price1).add(quantity2.multiply(price2).negate()), null));
       documentPostAssertList22.add(new DocumentPostAssert("61000", quantity2.multiply(price1).add(
-          quantity2.multiply(price2).negate()), amount0, null));
+          quantity2.multiply(price2).negate()), BigDecimal.ZERO, null));
       CostAdjustment costAdjustment22 = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList2.get(1).getId());
       assertDocumentPost(costAdjustment22, product.getId(), documentPostAssertList22);
@@ -3515,14 +3516,14 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Post cost adjustment 3 and assert it
       postDocument(costAdjustmentList2.get(2));
       List<DocumentPostAssert> documentPostAssertList3 = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList3.add(new DocumentPostAssert("61000", amount0, quantity1.multiply(
-          price4).add(quantity1.multiply(price1).negate()), null));
+      documentPostAssertList3.add(new DocumentPostAssert("61000", BigDecimal.ZERO, quantity1
+          .multiply(price4).add(quantity1.multiply(price1).negate()), null));
       documentPostAssertList3.add(new DocumentPostAssert("35000", quantity1.multiply(price4).add(
-          quantity1.multiply(price1).negate()), amount0, null));
-      documentPostAssertList3.add(new DocumentPostAssert("35000", amount0, quantity2.multiply(
-          price4).add(quantity2.multiply(price1).negate()), null));
+          quantity1.multiply(price1).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList3.add(new DocumentPostAssert("35000", BigDecimal.ZERO, quantity2
+          .multiply(price4).add(quantity2.multiply(price1).negate()), null));
       documentPostAssertList3.add(new DocumentPostAssert("61000", quantity2.multiply(price4).add(
-          quantity2.multiply(price1).negate()), amount0, null));
+          quantity2.multiply(price1).negate()), BigDecimal.ZERO, null));
       CostAdjustment costAdjustment3 = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList2.get(2).getId());
       assertDocumentPost(costAdjustment3, product.getId(), documentPostAssertList3);
@@ -3561,7 +3562,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1, price2);
+      Product product = createProduct("testCostingR10", price1, price2);
 
       // Create purchase order and book it
       Order purchaseOrder = createPurchaseOrder(product, price1, quantity1, day0);
@@ -3632,13 +3633,13 @@ public class TestCosting extends BaseDataSourceTestDal {
       postDocument(costAdjustmentList.get(0));
       List<DocumentPostAssert> documentPostAssertList1 = new ArrayList<DocumentPostAssert>();
       documentPostAssertList1.add(new DocumentPostAssert("99904", quantity1.multiply(price1).add(
-          quantity1.multiply(price3).negate()), amount0, null));
-      documentPostAssertList1.add(new DocumentPostAssert("35000", amount0, quantity1.multiply(
-          price1).add(quantity1.multiply(price3).negate()), null));
-      documentPostAssertList1.add(new DocumentPostAssert("99900", amount0, quantity2.multiply(
-          price1).add(quantity2.multiply(price3).negate()), null));
+          quantity1.multiply(price3).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList1.add(new DocumentPostAssert("35000", BigDecimal.ZERO, quantity1
+          .multiply(price1).add(quantity1.multiply(price3).negate()), null));
+      documentPostAssertList1.add(new DocumentPostAssert("99900", BigDecimal.ZERO, quantity2
+          .multiply(price1).add(quantity2.multiply(price3).negate()), null));
       documentPostAssertList1.add(new DocumentPostAssert("35000", quantity2.multiply(price1).add(
-          quantity2.multiply(price3).negate()), amount0, null));
+          quantity2.multiply(price3).negate()), BigDecimal.ZERO, null));
       CostAdjustment costAdjustment1 = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList.get(0).getId());
       assertDocumentPost(costAdjustment1, product.getId(), documentPostAssertList1);
@@ -3671,7 +3672,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingIC3", price1);
 
       // Create purchase order and book it
       Order purchaseOrder = createPurchaseOrder(product, price1, quantity1, day0);
@@ -3742,7 +3743,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingR2", price1);
 
       // Create purchase order and book it
       Order purchaseOrder = createPurchaseOrder(product, price1, quantity1, day0);
@@ -3798,13 +3799,13 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Post cost adjustment 1 and assert it
       postDocument(costAdjustmentList.get(0));
       List<DocumentPostAssert> documentPostAssertList = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList.add(new DocumentPostAssert("99904", amount0, quantity1
+      documentPostAssertList.add(new DocumentPostAssert("99904", BigDecimal.ZERO, quantity1
           .multiply(price2).add(quantity1.multiply(price1).negate()), null));
       documentPostAssertList.add(new DocumentPostAssert("35000", quantity1.multiply(price2).add(
-          quantity1.multiply(price1).negate()), amount0, null));
+          quantity1.multiply(price1).negate()), BigDecimal.ZERO, null));
       documentPostAssertList.add(new DocumentPostAssert("99900", quantity2.multiply(price2).add(
-          quantity2.multiply(price1).negate()), amount0, null));
-      documentPostAssertList.add(new DocumentPostAssert("35000", amount0, quantity2
+          quantity2.multiply(price1).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList.add(new DocumentPostAssert("35000", BigDecimal.ZERO, quantity2
           .multiply(price2).add(quantity2.multiply(price1).negate()), null));
       CostAdjustment costAdjustment = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList.get(0).getId());
@@ -3840,7 +3841,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingR22", price1);
 
       // Create purchase order and book it
       Order purchaseOrder = createPurchaseOrder(product, price1, quantity1, day0);
@@ -3850,6 +3851,9 @@ public class TestCosting extends BaseDataSourceTestDal {
 
       // Create goods shipment, run costing background, post it and assert it
       ShipmentInOut goodsShipment1 = createGoodsShipment(product, price1, quantity2, day3);
+
+      // Add sleep to avoid assert errors
+      Thread.sleep(1000);
 
       // Cancel goods shipment
       ShipmentInOut goodsShipment2 = cancelGoodsShipment(goodsShipment1, price1);
@@ -3895,8 +3899,8 @@ public class TestCosting extends BaseDataSourceTestDal {
       postDocument(costAdjustmentList.get(0));
       List<DocumentPostAssert> documentPostAssertList = new ArrayList<DocumentPostAssert>();
       documentPostAssertList.add(new DocumentPostAssert("99904", quantity1.multiply(price1).add(
-          quantity1.multiply(price2).negate()), amount0, null));
-      documentPostAssertList.add(new DocumentPostAssert("35000", amount0, quantity1
+          quantity1.multiply(price2).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList.add(new DocumentPostAssert("35000", BigDecimal.ZERO, quantity1
           .multiply(price1).add(quantity1.multiply(price2).negate()), null));
       CostAdjustment costAdjustment = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList.get(0).getId());
@@ -3929,7 +3933,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingR3", price1);
 
       // Create purchase order and book it
       Order purchaseOrder = createPurchaseOrder(product, price1, quantity1, day0);
@@ -3949,27 +3953,27 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Assert product transactions
       List<ProductTransactionAssert> productTransactionAssertList = new ArrayList<ProductTransactionAssert>();
       productTransactionAssertList.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt1.getId()).getMaterialMgmtShipmentInOutLineList()
-          .get(0), price1, price2, true));
-      productTransactionAssertList.add(new ProductTransactionAssert(OBDal.getInstance()
           .get(ShipmentInOut.class, goodsReceipt2.getId()).getMaterialMgmtShipmentInOutLineList()
           .get(0), price2, price2, true));
+      productTransactionAssertList.add(new ProductTransactionAssert(OBDal.getInstance()
+          .get(ShipmentInOut.class, goodsReceipt1.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(0), price1, price2, true));
       assertProductTransaction(product.getId(), productTransactionAssertList);
 
       // Assert product costing
       List<MaterialTransaction> transactionList = getProductTransactions(product.getId());
       List<ProductCostingAssert> productCostingAssertList = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(0), price2, price1,
+      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(1), price2, price1,
           price2, quantity1));
-      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(1), price2, null,
-          price2, amount0));
+      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(0), price2, null,
+          price2, BigDecimal.ZERO));
       assertProductCosting(product.getId(), productCostingAssertList);
 
       // Assert cost adjustment
       List<CostAdjustment> costAdjustmentList = getCostAdjustment(product.getId());
       List<List<CostAdjustmentAssert>> costAdjustmentAssertList = new ArrayList<List<CostAdjustmentAssert>>();
       List<CostAdjustmentAssert> costAdjustmentAssertLineList = new ArrayList<CostAdjustmentAssert>();
-      costAdjustmentAssertLineList.add(new CostAdjustmentAssert(transactionList.get(0), "PDC",
+      costAdjustmentAssertLineList.add(new CostAdjustmentAssert(transactionList.get(1), "PDC",
           quantity1.multiply(price2).add(quantity1.multiply(price1).negate()), day1, true));
       costAdjustmentAssertList.add(costAdjustmentAssertLineList);
       assertCostAdjustment(costAdjustmentList, costAdjustmentAssertList);
@@ -3978,8 +3982,8 @@ public class TestCosting extends BaseDataSourceTestDal {
       postDocument(costAdjustmentList.get(0));
       List<DocumentPostAssert> documentPostAssertList = new ArrayList<DocumentPostAssert>();
       documentPostAssertList.add(new DocumentPostAssert("99904", quantity1.multiply(price1).add(
-          quantity1.multiply(price2).negate()), amount0, null));
-      documentPostAssertList.add(new DocumentPostAssert("35000", amount0, quantity1
+          quantity1.multiply(price2).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList.add(new DocumentPostAssert("35000", BigDecimal.ZERO, quantity1
           .multiply(price1).add(quantity1.multiply(price2).negate()), null));
       CostAdjustment costAdjustment = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList.get(0).getId());
@@ -4022,7 +4026,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingMCC1", price1);
 
       // Create purchase order and book it
       Order purchaseOrder = createPurchaseOrder(product, price1, quantity1, day1);
@@ -4086,8 +4090,8 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Post cost adjustment 1 and assert it
       postDocument(costAdjustmentList.get(0));
       List<DocumentPostAssert> documentPostAssertList1 = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList1.add(new DocumentPostAssert("99900", amount1, amount0, null));
-      documentPostAssertList1.add(new DocumentPostAssert("35000", amount0, amount1, null));
+      documentPostAssertList1.add(new DocumentPostAssert("99900", amount1, BigDecimal.ZERO, null));
+      documentPostAssertList1.add(new DocumentPostAssert("35000", BigDecimal.ZERO, amount1, null));
       CostAdjustment costAdjustment1 = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList.get(0).getId());
       assertDocumentPost(costAdjustment1, product.getId(), documentPostAssertList1);
@@ -4095,14 +4099,14 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Post cost adjustment 1 and assert it
       postDocument(costAdjustmentList.get(1));
       List<DocumentPostAssert> documentPostAssertList2 = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList2.add(new DocumentPostAssert("99904", amount0, quantity1.multiply(
-          price2).add(quantity1.multiply(price1).negate()), null));
+      documentPostAssertList2.add(new DocumentPostAssert("99904", BigDecimal.ZERO, quantity1
+          .multiply(price2).add(quantity1.multiply(price1).negate()), null));
       documentPostAssertList2.add(new DocumentPostAssert("35000", quantity1.multiply(price2).add(
-          quantity1.multiply(price1).negate()), amount0, null));
+          quantity1.multiply(price1).negate()), BigDecimal.ZERO, null));
       documentPostAssertList2.add(new DocumentPostAssert("99900", quantity2.multiply(price2).add(
-          quantity2.multiply(price1).negate()), amount0, null));
-      documentPostAssertList2.add(new DocumentPostAssert("35000", amount0, quantity2.multiply(
-          price2).add(quantity2.multiply(price1).negate()), null));
+          quantity2.multiply(price1).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList2.add(new DocumentPostAssert("35000", BigDecimal.ZERO, quantity2
+          .multiply(price2).add(quantity2.multiply(price1).negate()), null));
       CostAdjustment costAdjustment2 = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList.get(1).getId());
       assertDocumentPost(costAdjustment2, product.getId(), documentPostAssertList2);
@@ -4126,6 +4130,7 @@ public class TestCosting extends BaseDataSourceTestDal {
     final int day1 = 5;
     final int day2 = 10;
     final int day3 = 15;
+    final int day4 = 20;
     final BigDecimal price1 = new BigDecimal("15.00");
     final BigDecimal price2 = new BigDecimal("25.00");
     final BigDecimal price3 = new BigDecimal("17.50");
@@ -4144,10 +4149,10 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product1 = createProduct(price1);
+      Product product1 = createProduct("testCostingBOMA", price1);
 
       // Create a new product for the test
-      Product product2 = createProduct(price2);
+      Product product2 = createProduct("testCostingBOMB", price2);
 
       // Create a new product for the test
       List<Product> productList = new ArrayList<Product>();
@@ -4156,7 +4161,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       List<BigDecimal> quantityList = new ArrayList<BigDecimal>();
       quantityList.add(quantity1);
       quantityList.add(quantity2);
-      Product product3 = createProduct(productList, quantityList);
+      Product product3 = createProduct("testCostingBOMC", productList, quantityList);
 
       // Create purchase order and book it
       Order purchaseOrder1 = createPurchaseOrder(product1, price1, quantity3, day0);
@@ -4170,11 +4175,11 @@ public class TestCosting extends BaseDataSourceTestDal {
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt2 = createGoodsReceipt(purchaseOrder2, price2, quantity4,
-          LOCATOR2_ID, day1);
+          LOCATOR2_ID, day2);
 
       // Create bill of materials production, run costing background, post it and assert it
       ProductionTransaction billOfMaterialsProduction = createBillOfMaterialsProduction(product3,
-          quantity5, LOCATOR1_ID, day2);
+          quantity5, LOCATOR1_ID, day3);
 
       // Create purchase invoice, post it and assert it
       List<ShipmentInOut> goodsReceiptList = new ArrayList<ShipmentInOut>();
@@ -4183,7 +4188,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       List<BigDecimal> priceList = new ArrayList<BigDecimal>();
       priceList.add(price3);
       priceList.add(price4);
-      createPurchaseInvoice(goodsReceiptList, priceList, quantity3.add(quantity4), day3);
+      createPurchaseInvoice(goodsReceiptList, priceList, quantity3.add(quantity4), day4);
 
       // Run price correction background
       runPriceBackground();
@@ -4238,17 +4243,17 @@ public class TestCosting extends BaseDataSourceTestDal {
       List<List<CostAdjustmentAssert>> costAdjustmentAssertList1 = new ArrayList<List<CostAdjustmentAssert>>();
       List<CostAdjustmentAssert> costAdjustmentAssertLineList11 = new ArrayList<CostAdjustmentAssert>();
       costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList1.get(0), "PDC",
-          quantity3.multiply(price3).add(quantity3.multiply(price1).negate()), day3, true));
+          quantity3.multiply(price3).add(quantity3.multiply(price1).negate()), day4, true));
       costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList2.get(0), "PDC",
-          quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), day3, true));
+          quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), day4, true));
       costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList1.get(1), "PDC",
-          quantity3.multiply(price3).add(quantity3.multiply(price1).negate()), day3, false));
+          quantity3.multiply(price3).add(quantity3.multiply(price1).negate()), day4, false));
       costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList3.get(0), "PDC",
-          quantity3.multiply(price3).add(quantity3.multiply(price1).negate()), day3, false));
+          quantity3.multiply(price3).add(quantity3.multiply(price1).negate()), day4, false));
       costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList2.get(1), "PDC",
-          quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), day3, false));
+          quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), day4, false));
       costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList3.get(0), "PDC",
-          quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), day3, false));
+          quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), day4, false));
       costAdjustmentAssertList1.add(costAdjustmentAssertLineList11);
       assertCostAdjustment(costAdjustmentList1, costAdjustmentAssertList1);
 
@@ -4257,17 +4262,17 @@ public class TestCosting extends BaseDataSourceTestDal {
       List<List<CostAdjustmentAssert>> costAdjustmentAssertList2 = new ArrayList<List<CostAdjustmentAssert>>();
       List<CostAdjustmentAssert> costAdjustmentAssertLineList21 = new ArrayList<CostAdjustmentAssert>();
       costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList1.get(0), "PDC",
-          quantity3.multiply(price3).add(quantity3.multiply(price1).negate()), day3, true));
+          quantity3.multiply(price3).add(quantity3.multiply(price1).negate()), day4, true));
       costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList2.get(0), "PDC",
-          quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), day3, true));
+          quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), day4, true));
       costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList1.get(1), "PDC",
-          quantity3.multiply(price3).add(quantity3.multiply(price1).negate()), day3, false));
+          quantity3.multiply(price3).add(quantity3.multiply(price1).negate()), day4, false));
       costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList3.get(0), "PDC",
-          quantity3.multiply(price3).add(quantity3.multiply(price1).negate()), day3, false));
+          quantity3.multiply(price3).add(quantity3.multiply(price1).negate()), day4, false));
       costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList2.get(1), "PDC",
-          quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), day3, false));
+          quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), day4, false));
       costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList3.get(0), "PDC",
-          quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), day3, false));
+          quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), day4, false));
       costAdjustmentAssertList2.add(costAdjustmentAssertLineList21);
       assertCostAdjustment(costAdjustmentList2, costAdjustmentAssertList2);
 
@@ -4276,47 +4281,53 @@ public class TestCosting extends BaseDataSourceTestDal {
       List<List<CostAdjustmentAssert>> costAdjustmentAssertList3 = new ArrayList<List<CostAdjustmentAssert>>();
       List<CostAdjustmentAssert> costAdjustmentAssertLineList31 = new ArrayList<CostAdjustmentAssert>();
       costAdjustmentAssertLineList31.add(new CostAdjustmentAssert(transactionList1.get(0), "PDC",
-          quantity3.multiply(price3).add(quantity3.multiply(price1).negate()), day3, true));
+          quantity3.multiply(price3).add(quantity3.multiply(price1).negate()), day4, true));
       costAdjustmentAssertLineList31.add(new CostAdjustmentAssert(transactionList2.get(0), "PDC",
-          quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), day3, true));
+          quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), day4, true));
       costAdjustmentAssertLineList31.add(new CostAdjustmentAssert(transactionList1.get(1), "PDC",
-          quantity3.multiply(price3).add(quantity3.multiply(price1).negate()), day3, false));
+          quantity3.multiply(price3).add(quantity3.multiply(price1).negate()), day4, false));
       costAdjustmentAssertLineList31.add(new CostAdjustmentAssert(transactionList3.get(0), "PDC",
-          quantity3.multiply(price3).add(quantity3.multiply(price1).negate()), day3, false));
+          quantity3.multiply(price3).add(quantity3.multiply(price1).negate()), day4, false));
       costAdjustmentAssertLineList31.add(new CostAdjustmentAssert(transactionList2.get(1), "PDC",
-          quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), day3, false));
+          quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), day4, false));
       costAdjustmentAssertLineList31.add(new CostAdjustmentAssert(transactionList3.get(0), "PDC",
-          quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), day3, false));
+          quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), day4, false));
       costAdjustmentAssertList3.add(costAdjustmentAssertLineList31);
       assertCostAdjustment(costAdjustmentList3, costAdjustmentAssertList3);
 
       // Post cost adjustment 1 and assert it
       postDocument(costAdjustmentList1.get(0));
       List<DocumentPostAssert> documentPostAssertList1 = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList1.add(new DocumentPostAssert(product1.getId(), "99904", amount0,
-          quantity3.multiply(price3).add(quantity3.multiply(price1).negate()), null));
+      documentPostAssertList1.add(new DocumentPostAssert(product1.getId(), "99904",
+          BigDecimal.ZERO, quantity3.multiply(price3).add(quantity3.multiply(price1).negate()),
+          null));
       documentPostAssertList1.add(new DocumentPostAssert(product1.getId(), "35000", quantity3
-          .multiply(price3).add(quantity3.multiply(price1).negate()), amount0, null));
-      documentPostAssertList1.add(new DocumentPostAssert(product2.getId(), "99904", amount0,
-          quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), null));
+          .multiply(price3).add(quantity3.multiply(price1).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList1.add(new DocumentPostAssert(product2.getId(), "99904",
+          BigDecimal.ZERO, quantity4.multiply(price4).add(quantity4.multiply(price2).negate()),
+          null));
       documentPostAssertList1.add(new DocumentPostAssert(product2.getId(), "35000", quantity4
-          .multiply(price4).add(quantity4.multiply(price2).negate()), amount0, null));
+          .multiply(price4).add(quantity4.multiply(price2).negate()), BigDecimal.ZERO, null));
       documentPostAssertList1.add(new DocumentPostAssert(product1.getId(), "61000", quantity3
-          .multiply(price3).add(quantity3.multiply(price1).negate()), amount0, null));
-      documentPostAssertList1.add(new DocumentPostAssert(product1.getId(), "35000", amount0,
-          quantity3.multiply(price3).add(quantity3.multiply(price1).negate()), null));
-      documentPostAssertList1.add(new DocumentPostAssert(product3.getId(), "61000", amount0,
-          quantity3.multiply(price3).add(quantity3.multiply(price1).negate()), null));
+          .multiply(price3).add(quantity3.multiply(price1).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList1.add(new DocumentPostAssert(product1.getId(), "35000",
+          BigDecimal.ZERO, quantity3.multiply(price3).add(quantity3.multiply(price1).negate()),
+          null));
+      documentPostAssertList1.add(new DocumentPostAssert(product3.getId(), "61000",
+          BigDecimal.ZERO, quantity3.multiply(price3).add(quantity3.multiply(price1).negate()),
+          null));
       documentPostAssertList1.add(new DocumentPostAssert(product3.getId(), "35000", quantity3
-          .multiply(price3).add(quantity3.multiply(price1).negate()), amount0, null));
+          .multiply(price3).add(quantity3.multiply(price1).negate()), BigDecimal.ZERO, null));
       documentPostAssertList1.add(new DocumentPostAssert(product2.getId(), "61000", quantity4
-          .multiply(price4).add(quantity4.multiply(price2).negate()), amount0, null));
-      documentPostAssertList1.add(new DocumentPostAssert(product2.getId(), "35000", amount0,
-          quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), null));
-      documentPostAssertList1.add(new DocumentPostAssert(product3.getId(), "61000", amount0,
-          quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), null));
+          .multiply(price4).add(quantity4.multiply(price2).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList1.add(new DocumentPostAssert(product2.getId(), "35000",
+          BigDecimal.ZERO, quantity4.multiply(price4).add(quantity4.multiply(price2).negate()),
+          null));
+      documentPostAssertList1.add(new DocumentPostAssert(product3.getId(), "61000",
+          BigDecimal.ZERO, quantity4.multiply(price4).add(quantity4.multiply(price2).negate()),
+          null));
       documentPostAssertList1.add(new DocumentPostAssert(product3.getId(), "35000", quantity4
-          .multiply(price4).add(quantity4.multiply(price2).negate()), amount0, null));
+          .multiply(price4).add(quantity4.multiply(price2).negate()), BigDecimal.ZERO, null));
       CostAdjustment costAdjustment1 = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList1.get(0).getId());
       assertDocumentPost(costAdjustment1, null, documentPostAssertList1);
@@ -4353,7 +4364,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingLC1", price1);
 
       // Create purchase order and book it
       Order purchaseOrder = createPurchaseOrder(product, price1, quantity1, day0);
@@ -4413,10 +4424,10 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Post cost adjustment 1 and assert it
       postDocument(costAdjustmentList.get(0));
       List<DocumentPostAssert> documentPostAssertList1 = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList1.add(new DocumentPostAssert("99904", amount0, quantity1.multiply(
-          price2).add(quantity1.multiply(price1).negate()), null));
+      documentPostAssertList1.add(new DocumentPostAssert("99904", BigDecimal.ZERO, quantity1
+          .multiply(price2).add(quantity1.multiply(price1).negate()), null));
       documentPostAssertList1.add(new DocumentPostAssert("35000", quantity1.multiply(price2).add(
-          quantity1.multiply(price1).negate()), amount0, null));
+          quantity1.multiply(price1).negate()), BigDecimal.ZERO, null));
       CostAdjustment costAdjustment1 = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList.get(0).getId());
       assertDocumentPost(costAdjustment1, product.getId(), documentPostAssertList1);
@@ -4458,7 +4469,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingLC2", price1);
 
       // Create purchase order and book it
       Order purchaseOrder = createPurchaseOrder(product, price1, quantity1, day0);
@@ -4548,18 +4559,18 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Post cost adjustment 1 and assert it
       postDocument(costAdjustmentList.get(1));
       List<DocumentPostAssert> documentPostAssertList1 = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList1.add(new DocumentPostAssert("99904", amount0, quantity2.multiply(
-          price4).add(quantity2.multiply(price1).negate()), null));
+      documentPostAssertList1.add(new DocumentPostAssert("99904", BigDecimal.ZERO, quantity2
+          .multiply(price4).add(quantity2.multiply(price1).negate()), null));
       documentPostAssertList1.add(new DocumentPostAssert("35000", quantity2.multiply(price4).add(
-          quantity2.multiply(price1).negate()), amount0, null));
-      documentPostAssertList1.add(new DocumentPostAssert("99904", amount0, quantity3.multiply(
-          price4).add(quantity3.multiply(price1).negate()), null));
+          quantity2.multiply(price1).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList1.add(new DocumentPostAssert("99904", BigDecimal.ZERO, quantity3
+          .multiply(price4).add(quantity3.multiply(price1).negate()), null));
       documentPostAssertList1.add(new DocumentPostAssert("35000", quantity3.multiply(price4).add(
-          quantity3.multiply(price1).negate()), amount0, null));
-      documentPostAssertList1.add(new DocumentPostAssert("99904", amount0, quantity4.multiply(
-          price4).add(quantity4.multiply(price1).negate()), null));
+          quantity3.multiply(price1).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList1.add(new DocumentPostAssert("99904", BigDecimal.ZERO, quantity4
+          .multiply(price4).add(quantity4.multiply(price1).negate()), null));
       documentPostAssertList1.add(new DocumentPostAssert("35000", quantity4.multiply(price4).add(
-          quantity4.multiply(price1).negate()), amount0, null));
+          quantity4.multiply(price1).negate()), BigDecimal.ZERO, null));
       CostAdjustment costAdjustment1 = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList.get(1).getId());
       assertDocumentPost(costAdjustment1, product.getId(), documentPostAssertList1);
@@ -4684,10 +4695,10 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product1 = createProduct(price1, price1, costType);
+      Product product1 = createProduct("testCostingLC3LC4A", price1, price1, costType);
 
       // Create a new product for the test
-      Product product2 = createProduct(price2, price2, costType);
+      Product product2 = createProduct("testCostingLC3LC4B", price2, price2, costType);
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt11 = createGoodsReceipt(product1, price1, quantity1, day1);
@@ -4858,8 +4869,8 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Post cost adjustment 3 and assert it
       postDocument(costAdjustmentList2.get(2));
       List<DocumentPostAssert> documentPostAssertList1 = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList1.add(new DocumentPostAssert("61000", amount0, amount1, null));
-      documentPostAssertList1.add(new DocumentPostAssert("35000", amount1, amount0, null));
+      documentPostAssertList1.add(new DocumentPostAssert("61000", BigDecimal.ZERO, amount1, null));
+      documentPostAssertList1.add(new DocumentPostAssert("35000", amount1, BigDecimal.ZERO, null));
       CostAdjustment costAdjustment1 = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList2.get(2).getId());
       assertDocumentPost(costAdjustment1, product2.getId(), documentPostAssertList1);
@@ -4899,10 +4910,10 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product1 = createProduct(price1);
+      Product product1 = createProduct("testCostingLC100LC200A", price1);
 
       // Create a new product for the test
-      Product product2 = createProduct(price2);
+      Product product2 = createProduct("testCostingLC100LC200B", price2);
 
       // Create purchase order and book it
       Order purchaseOrder1 = createPurchaseOrder(product1, price1, quantity1, day0);
@@ -5021,10 +5032,10 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product1 = createProduct(price1);
+      Product product1 = createProduct("testCostingLC101LC201A", price1);
 
       // Create a new product for the test
-      Product product2 = createProduct(price2);
+      Product product2 = createProduct("testCostingLC101LC201B", price2);
 
       // Create purchase order and book it
       Order purchaseOrder1 = createPurchaseOrder(product1, price1, quantity1, day0);
@@ -5087,11 +5098,11 @@ public class TestCosting extends BaseDataSourceTestDal {
       costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList1.get(0),
           CURRENCY2_ID, "LC", quantity1.multiply(price1).add(quantity1.multiply(price8).negate()),
           day0, true, false));
-      costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList2.get(0),
-          CURRENCY2_ID, "LC", quantity2.multiply(price2).add(quantity2.multiply(price9).negate()),
-          day0, true, false));
       costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList1.get(0),
           CURRENCY1_ID, "LC", quantity1.multiply(price1).add(quantity1.multiply(price10).negate()),
+          day0, true, false));
+      costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList2.get(0),
+          CURRENCY2_ID, "LC", quantity2.multiply(price2).add(quantity2.multiply(price9).negate()),
           day0, true, false));
       costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList2.get(0),
           CURRENCY1_ID, "LC", quantity2.multiply(price2).add(quantity2.multiply(price11).negate()),
@@ -5106,11 +5117,11 @@ public class TestCosting extends BaseDataSourceTestDal {
       costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList1.get(0),
           CURRENCY2_ID, "LC", quantity1.multiply(price1).add(quantity1.multiply(price8).negate()),
           day0, true, false));
-      costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList2.get(0),
-          CURRENCY2_ID, "LC", quantity2.multiply(price2).add(quantity2.multiply(price9).negate()),
-          day0, true, false));
       costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList1.get(0),
           CURRENCY1_ID, "LC", quantity1.multiply(price1).add(quantity1.multiply(price10).negate()),
+          day0, true, false));
+      costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList2.get(0),
+          CURRENCY2_ID, "LC", quantity2.multiply(price2).add(quantity2.multiply(price9).negate()),
           day0, true, false));
       costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList2.get(0),
           CURRENCY1_ID, "LC", quantity2.multiply(price2).add(quantity2.multiply(price11).negate()),
@@ -5170,10 +5181,10 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product1 = createProduct(price1, CURRENCY1_ID);
+      Product product1 = createProduct("testCostingLC400A", price1, CURRENCY1_ID);
 
       // Create a new product for the test
-      Product product2 = createProduct(price2, CURRENCY2_ID);
+      Product product2 = createProduct("testCostingLC400B", price2, CURRENCY2_ID);
 
       // Create purchase order and book it
       Order purchaseOrder = createPurchaseOrder(product2, price2, quantity1, day0);
@@ -5360,7 +5371,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingLC300", price1);
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt = createGoodsReceipt(product, price1, quantity1, day0);
@@ -5455,7 +5466,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingLC500", price1);
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt = createGoodsReceipt(product, price1, quantity1, day0);
@@ -5532,7 +5543,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingLC600", price1);
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt = createGoodsReceipt(product, price1, quantity1, day0);
@@ -5629,7 +5640,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingLC701", price1);
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt = createGoodsReceipt(product, price1, quantity1, day0);
@@ -5729,7 +5740,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingLC801", price1);
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt = createGoodsReceipt(product, price1, quantity1, day0);
@@ -5834,7 +5845,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingLC900", price1);
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt = createGoodsReceipt(product, price1, quantity1, day0);
@@ -5922,10 +5933,11 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product1 = createProduct(price1);
+      Product product1 = createProduct("testCostingLC1000A", price1);
 
       // Create a new product for the test
-      Product product2 = createProduct(productType, price2, price3, costType, year);
+      Product product2 = createProduct("testCostingLC1000B", productType, price2, price3, costType,
+          year);
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt1 = createGoodsReceipt(product1, price1, quantity1, day0);
@@ -6014,7 +6026,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingLC802", price1);
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt = createGoodsReceipt(product, price1, quantity1, day0);
@@ -6186,7 +6198,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingLC702", price1);
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt = createGoodsReceipt(product, price1, quantity1, day0);
@@ -6359,13 +6371,13 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product1 = createProduct(price1);
+      Product product1 = createProduct("testCostingLC1111A", price1);
 
       // Create a new product for the test
-      Product product2 = createProduct(price2);
+      Product product2 = createProduct("testCostingLC1111B", price2);
 
       // Create a new product for the test
-      Product product3 = createProduct(price3);
+      Product product3 = createProduct("testCostingLC1111C", price3);
 
       // Create purchase order and book it
       Order purchaseOrder1 = createPurchaseOrder(product1, price1, quantity1, day0);
@@ -6541,13 +6553,13 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product1 = createProduct(price1);
+      Product product1 = createProduct("testCostingLC1112A", price1);
 
       // Create a new product for the test
-      Product product2 = createProduct(price2);
+      Product product2 = createProduct("testCostingLC1112B", price2);
 
       // Create a new product for the test
-      Product product3 = createProduct(price3);
+      Product product3 = createProduct("testCostingLC1112C", price3);
 
       // Create purchase order and book it
       Order purchaseOrder1 = createPurchaseOrder(product1, price1, quantity1, day0);
@@ -6726,13 +6738,13 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product1 = createProduct(price1);
+      Product product1 = createProduct("testCostingLC1113A", price1);
 
       // Create a new product for the test
-      Product product2 = createProduct(price2);
+      Product product2 = createProduct("testCostingLC1113B", price2);
 
       // Create a new product for the test
-      Product product3 = createProduct(price3);
+      Product product3 = createProduct("testCostingLC1113C", price3);
 
       // Create purchase order and book it
       Order purchaseOrder1 = createPurchaseOrder(product1, price1, quantity1, day0);
@@ -6915,13 +6927,13 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product1 = createProduct(price1);
+      Product product1 = createProduct("testCostingLC1114A", price1);
 
       // Create a new product for the test
-      Product product2 = createProduct(price2);
+      Product product2 = createProduct("testCostingLC1114B", price2);
 
       // Create a new product for the test
-      Product product3 = createProduct(price3);
+      Product product3 = createProduct("testCostingLC1114C", price3);
 
       // Create purchase order and book it
       Order purchaseOrder1 = createPurchaseOrder(product1, price1, quantity1, day0);
@@ -7108,13 +7120,13 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product1 = createProduct(price1);
+      Product product1 = createProduct("testCostingLC1115A", price1);
 
       // Create a new product for the test
-      Product product2 = createProduct(price2);
+      Product product2 = createProduct("testCostingLC1115B", price2);
 
       // Create a new product for the test
-      Product product3 = createProduct(price3);
+      Product product3 = createProduct("testCostingLC1115C", price3);
 
       // Create purchase order and book it
       Order purchaseOrder1 = createPurchaseOrder(product1, price1, quantity1, day0);
@@ -7325,13 +7337,13 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product1 = createProduct(price1);
+      Product product1 = createProduct("testCostingLC1116A", price1);
 
       // Create a new product for the test
-      Product product2 = createProduct(price2);
+      Product product2 = createProduct("testCostingLC1116B", price2);
 
       // Create a new product for the test
-      Product product3 = createProduct(price3);
+      Product product3 = createProduct("testCostingLC1116C", price3);
 
       // Create purchase order and book it
       Order purchaseOrder1 = createPurchaseOrder(product1, price1, quantity1, day0);
@@ -7528,7 +7540,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingLC5551", price1);
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt = createGoodsReceipt(product, price1, quantity1, day0);
@@ -7613,7 +7625,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingLC5552", price1);
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt = createGoodsReceipt(product, price1, quantity1, day0);
@@ -7687,7 +7699,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingLC5553", price1);
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt = createGoodsReceipt(product, price1, quantity1, day0);
@@ -7772,7 +7784,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingLC5554", price1);
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt = createGoodsReceipt(product, price1, quantity1, day0);
@@ -7856,7 +7868,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingLC9", price1);
 
       // Create purchase order and book it
       Order purchaseOrder = createPurchaseOrder(product, price1, quantity1, day0);
@@ -7947,9 +7959,9 @@ public class TestCosting extends BaseDataSourceTestDal {
       postDocument(costAdjustmentList.get(0));
       List<DocumentPostAssert> documentPostAssertList1 = new ArrayList<DocumentPostAssert>();
       documentPostAssertList1.add(new DocumentPostAssert("99900", quantity3.multiply(price3).add(
-          quantity3.multiply(price1).negate()), amount0, null));
-      documentPostAssertList1.add(new DocumentPostAssert("35000", amount0, quantity3.multiply(
-          price3).add(quantity3.multiply(price1).negate()), null));
+          quantity3.multiply(price1).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList1.add(new DocumentPostAssert("35000", BigDecimal.ZERO, quantity3
+          .multiply(price3).add(quantity3.multiply(price1).negate()), null));
       CostAdjustment costAdjustment1 = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList.get(0).getId());
       assertDocumentPost(costAdjustment1, product.getId(), documentPostAssertList1);
@@ -7958,13 +7970,13 @@ public class TestCosting extends BaseDataSourceTestDal {
       postDocument(costAdjustmentList.get(1));
       List<DocumentPostAssert> documentPostAssertList2 = new ArrayList<DocumentPostAssert>();
       documentPostAssertList2.add(new DocumentPostAssert("99900", quantity3.multiply(price5).add(
-          quantity3.multiply(price3).negate()), amount0, null));
-      documentPostAssertList2.add(new DocumentPostAssert("35000", amount0, quantity3.multiply(
-          price5).add(quantity3.multiply(price3).negate()), null));
+          quantity3.multiply(price3).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList2.add(new DocumentPostAssert("35000", BigDecimal.ZERO, quantity3
+          .multiply(price5).add(quantity3.multiply(price3).negate()), null));
       documentPostAssertList2.add(new DocumentPostAssert("99900", quantity3.multiply(price5).add(
-          quantity3.multiply(price3).negate()), amount0, null));
-      documentPostAssertList2.add(new DocumentPostAssert("35000", amount0, quantity3.multiply(
-          price5).add(quantity3.multiply(price3).negate()), null));
+          quantity3.multiply(price3).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList2.add(new DocumentPostAssert("35000", BigDecimal.ZERO, quantity3
+          .multiply(price5).add(quantity3.multiply(price3).negate()), null));
       CostAdjustment costAdjustment2 = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList.get(1).getId());
       assertDocumentPost(costAdjustment2, product.getId(), documentPostAssertList2);
@@ -7972,12 +7984,12 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Post cost adjustment and assert it
       postDocument(costAdjustmentList.get(2));
       List<DocumentPostAssert> documentPostAssertList3 = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList3.add(new DocumentPostAssert("99900", amount1, amount0, null));
-      documentPostAssertList3.add(new DocumentPostAssert("35000", amount0, amount1, null));
-      documentPostAssertList3.add(new DocumentPostAssert("99900", amount0, quantity3.multiply(
-          price5).add(quantity3.multiply(price7).negate()), null));
+      documentPostAssertList3.add(new DocumentPostAssert("99900", amount1, BigDecimal.ZERO, null));
+      documentPostAssertList3.add(new DocumentPostAssert("35000", BigDecimal.ZERO, amount1, null));
+      documentPostAssertList3.add(new DocumentPostAssert("99900", BigDecimal.ZERO, quantity3
+          .multiply(price5).add(quantity3.multiply(price7).negate()), null));
       documentPostAssertList3.add(new DocumentPostAssert("35000", quantity3.multiply(price5).add(
-          quantity3.multiply(price7).negate()), amount0, null));
+          quantity3.multiply(price7).negate()), BigDecimal.ZERO, null));
       CostAdjustment costAdjustment3 = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList.get(2).getId());
       assertDocumentPost(costAdjustment3, product.getId(), documentPostAssertList3);
@@ -8012,7 +8024,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1, CURRENCY2_ID);
+      Product product = createProduct("testCostingMC444", price1, CURRENCY2_ID);
 
       // Create purchase order and book it
       Order purchaseOrder = createPurchaseOrder(product, price1, quantity1, day0);
@@ -8052,10 +8064,10 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Post cost adjustment and assert it
       postDocument(costAdjustmentList.get(0));
       List<DocumentPostAssert> documentPostAssertList1 = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList1.add(new DocumentPostAssert("99904", amount0, quantity1.multiply(
-          price2).add(quantity1.multiply(price3).negate()), null));
+      documentPostAssertList1.add(new DocumentPostAssert("99904", BigDecimal.ZERO, quantity1
+          .multiply(price2).add(quantity1.multiply(price3).negate()), null));
       documentPostAssertList1.add(new DocumentPostAssert("35000", quantity1.multiply(price2).add(
-          quantity1.multiply(price3).negate()), amount0, null));
+          quantity1.multiply(price3).negate()), BigDecimal.ZERO, null));
       CostAdjustment costAdjustment1 = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList.get(0).getId());
       assertDocumentPost(costAdjustment1, product.getId(), documentPostAssertList1);
@@ -8095,7 +8107,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct(price1);
+      Product product = createProduct("testCostingMC445", price1);
 
       // Create purchase order and book it
       Order purchaseOrder1 = createPurchaseOrder(product, price1, quantity1, day0);
@@ -8153,10 +8165,10 @@ public class TestCosting extends BaseDataSourceTestDal {
       // Post cost adjustment and assert it
       postDocument(costAdjustmentList.get(0));
       List<DocumentPostAssert> documentPostAssertList1 = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList1.add(new DocumentPostAssert("99904", amount0, quantity1.multiply(
-          price3).add(quantity1.multiply(price2).negate()), null));
+      documentPostAssertList1.add(new DocumentPostAssert("99904", BigDecimal.ZERO, quantity1
+          .multiply(price3).add(quantity1.multiply(price2).negate()), null));
       documentPostAssertList1.add(new DocumentPostAssert("35000", quantity1.multiply(price3).add(
-          quantity1.multiply(price2).negate()), amount0, null));
+          quantity1.multiply(price2).negate()), BigDecimal.ZERO, null));
       CostAdjustment costAdjustment1 = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList.get(0).getId());
       assertDocumentPost(costAdjustment1, product.getId(), documentPostAssertList1);
@@ -8179,53 +8191,59 @@ public class TestCosting extends BaseDataSourceTestDal {
   /********************************************** General methods for tests **********************************************/
 
   // Create a Product cloning a created one
-  private Product createProduct(BigDecimal purchasePrice) {
-    return createProduct(purchasePrice, purchasePrice);
+  private Product createProduct(String name, BigDecimal purchasePrice) {
+    return createProduct(name, purchasePrice, purchasePrice);
   }
 
   // Create a Product cloning a created one
-  private Product createProduct(BigDecimal purchasePrice, String currencyId) {
-    return createProduct("I", purchasePrice, purchasePrice, null, null, 0, currencyId, null, null);
+  private Product createProduct(String name, BigDecimal purchasePrice, String currencyId) {
+    return createProduct(name, "I", purchasePrice, purchasePrice, null, null, 0, currencyId, null,
+        null);
   }
 
   // Create a Product cloning a created one
-  private Product createProduct(BigDecimal purchasePrice, BigDecimal salesPrice) {
-    return createProduct("I", purchasePrice, salesPrice, null, null, 0, CURRENCY1_ID, null, null);
+  private Product createProduct(String name, BigDecimal purchasePrice, BigDecimal salesPrice) {
+    return createProduct(name, "I", purchasePrice, salesPrice, null, null, 0, CURRENCY1_ID, null,
+        null);
   }
 
   // Create a Product cloning a created one
-  private Product createProduct(BigDecimal purchasePrice, BigDecimal cost, String costType) {
-    return createProduct(purchasePrice, cost, costType, 0);
+  private Product createProduct(String name, BigDecimal purchasePrice, BigDecimal cost,
+      String costType) {
+    return createProduct(name, purchasePrice, cost, costType, 0);
   }
 
   // Create a Product cloning a created one
-  private Product createProduct(BigDecimal purchasePrice, BigDecimal cost, String costType, int year) {
-    return createProduct("I", purchasePrice, purchasePrice, cost, costType, year, CURRENCY1_ID,
-        null, null);
-  }
-
-  // Create a Product cloning a created one
-  private Product createProduct(String productType, BigDecimal purchasePrice, BigDecimal cost,
+  private Product createProduct(String name, BigDecimal purchasePrice, BigDecimal cost,
       String costType, int year) {
-    return createProduct(productType, purchasePrice, purchasePrice, cost, costType, year,
+    return createProduct(name, "I", purchasePrice, purchasePrice, cost, costType, year,
         CURRENCY1_ID, null, null);
   }
 
   // Create a Product cloning a created one
-  private Product createProduct(List<Product> productList, List<BigDecimal> quantityList) {
-    return createProduct(null, null, null, null, null, 0, CURRENCY1_ID, productList, quantityList);
+  private Product createProduct(String name, String productType, BigDecimal purchasePrice,
+      BigDecimal cost, String costType, int year) {
+    return createProduct(name, productType, purchasePrice, purchasePrice, cost, costType, year,
+        CURRENCY1_ID, null, null);
   }
 
   // Create a Product cloning a created one
-  private Product createProduct(String productType, BigDecimal purchasePrice,
+  private Product createProduct(String name, List<Product> productList,
+      List<BigDecimal> quantityList) {
+    return createProduct(name, null, null, null, null, null, 0, CURRENCY1_ID, productList,
+        quantityList);
+  }
+
+  // Create a Product cloning a created one
+  private Product createProduct(String name, String productType, BigDecimal purchasePrice,
       BigDecimal salesPrice, BigDecimal cost, String costType, int year, String currencyId,
       List<Product> productList, List<BigDecimal> quantityList) {
     List<String> productIdList = new ArrayList<String>();
     if (productList != null)
       for (Product product : productList)
         productIdList.add(product.getId());
-    return cloneProduct(getNumberOfCostingProducts() + 1, productType, purchasePrice, salesPrice,
-        cost, costType, year, currencyId, productIdList, quantityList);
+    return cloneProduct(name, getNumberOfCostingProducts(name) + 1, productType, purchasePrice,
+        salesPrice, cost, costType, year, currencyId, productIdList, quantityList);
   }
 
   // Create a Purchase Order cloning a created one and book it
@@ -8383,12 +8401,12 @@ public class TestCosting extends BaseDataSourceTestDal {
       postDocument(purchaseInvoice);
       Invoice invoice = OBDal.getInstance().get(Invoice.class, purchaseInvoice.getId());
       List<DocumentPostAssert> documentPostAssertList = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList.add(new DocumentPostAssert("40000", amount0, quantity.multiply(price),
-          null));
+      documentPostAssertList.add(new DocumentPostAssert("40000", BigDecimal.ZERO, quantity
+          .multiply(price), null));
       for (InvoiceLine purchaseInvoiceLine : invoice.getInvoiceLineList())
         documentPostAssertList.add(new DocumentPostAssert(purchaseInvoiceLine.getProduct().getId(),
             "60000", purchaseInvoiceLine.getInvoicedQuantity().multiply(
-                purchaseInvoiceLine.getUnitPrice()), amount0, purchaseInvoiceLine
+                purchaseInvoiceLine.getUnitPrice()), BigDecimal.ZERO, purchaseInvoiceLine
                 .getInvoicedQuantity()));
       assertDocumentPost(invoice, null, documentPostAssertList);
 
@@ -8528,18 +8546,18 @@ public class TestCosting extends BaseDataSourceTestDal {
       for (ShipmentInOutLine goodsReceiptLine : receipt.getMaterialMgmtShipmentInOutLineList()) {
         if (receipt.getMaterialMgmtShipmentInOutLineList().size() == 1) {
           documentPostAssertList.add(new DocumentPostAssert(goodsReceiptLine.getProduct().getId(),
-              "35000", goodsReceiptLine.getMovementQuantity().multiply(price), amount0,
+              "35000", goodsReceiptLine.getMovementQuantity().multiply(price), BigDecimal.ZERO,
               goodsReceiptLine.getMovementQuantity()));
           documentPostAssertList.add(new DocumentPostAssert(goodsReceiptLine.getProduct().getId(),
-              "40090", amount0, goodsReceiptLine.getMovementQuantity().multiply(price),
+              "40090", BigDecimal.ZERO, goodsReceiptLine.getMovementQuantity().multiply(price),
               goodsReceiptLine.getMovementQuantity()));
         } else {
           documentPostAssertList.add(new DocumentPostAssert(goodsReceiptLine.getProduct().getId(),
               "35000", goodsReceiptLine.getMovementQuantity().multiply(
-                  goodsReceiptLine.getSalesOrderLine().getUnitPrice()), amount0, goodsReceiptLine
-                  .getMovementQuantity()));
+                  goodsReceiptLine.getSalesOrderLine().getUnitPrice()), BigDecimal.ZERO,
+              goodsReceiptLine.getMovementQuantity()));
           documentPostAssertList.add(new DocumentPostAssert(goodsReceiptLine.getProduct().getId(),
-              "40090", amount0, goodsReceiptLine.getMovementQuantity().multiply(
+              "40090", BigDecimal.ZERO, goodsReceiptLine.getMovementQuantity().multiply(
                   goodsReceiptLine.getSalesOrderLine().getUnitPrice()), goodsReceiptLine
                   .getMovementQuantity()));
         }
@@ -8594,18 +8612,18 @@ public class TestCosting extends BaseDataSourceTestDal {
 
       List<DocumentPostAssert> documentPostAssertList = new ArrayList<DocumentPostAssert>();
       documentPostAssertList.add(new DocumentPostAssert("40090", receiptPrice
-          .multiply(receiptInvoiceMatch.getQuantity()), amount0, goodsReceiptLine
+          .multiply(receiptInvoiceMatch.getQuantity()), BigDecimal.ZERO, goodsReceiptLine
           .getMovementQuantity()));
-      documentPostAssertList.add(new DocumentPostAssert("60000", amount0, invoicePrice
+      documentPostAssertList.add(new DocumentPostAssert("60000", BigDecimal.ZERO, invoicePrice
           .multiply(receiptInvoiceMatch.getQuantity()), purchaseInvoiceLine.getInvoicedQuantity()));
       if (!invoicePrice.equals(receiptPrice))
         if (invoicePrice.compareTo(receiptPrice) > 0)
           documentPostAssertList.add(new DocumentPostAssert("99904", invoicePrice.multiply(
               receiptInvoiceMatch.getQuantity()).add(
-              receiptPrice.multiply(receiptInvoiceMatch.getQuantity()).negate()), amount0,
+              receiptPrice.multiply(receiptInvoiceMatch.getQuantity()).negate()), BigDecimal.ZERO,
               goodsReceiptLine.getMovementQuantity()));
         else
-          documentPostAssertList.add(new DocumentPostAssert("99904", amount0, receiptPrice
+          documentPostAssertList.add(new DocumentPostAssert("99904", BigDecimal.ZERO, receiptPrice
               .multiply(receiptInvoiceMatch.getQuantity()).add(
                   invoicePrice.multiply(receiptInvoiceMatch.getQuantity()).negate()),
               goodsReceiptLine.getMovementQuantity()));
@@ -8674,16 +8692,17 @@ public class TestCosting extends BaseDataSourceTestDal {
       for (ShipmentInOutLine goodsShipmentLine : shipment.getMaterialMgmtShipmentInOutLineList()) {
         if (shipment.getMaterialMgmtShipmentInOutLineList().size() == 1) {
           documentPostAssertList.add(new DocumentPostAssert("99900", goodsShipmentLine
-              .getMovementQuantity().multiply(price), amount0, goodsShipmentLine
+              .getMovementQuantity().multiply(price), BigDecimal.ZERO, goodsShipmentLine
               .getMovementQuantity()));
-          documentPostAssertList.add(new DocumentPostAssert("35000", amount0, goodsShipmentLine
-              .getMovementQuantity().multiply(price), goodsShipmentLine.getMovementQuantity()));
+          documentPostAssertList.add(new DocumentPostAssert("35000", BigDecimal.ZERO,
+              goodsShipmentLine.getMovementQuantity().multiply(price), goodsShipmentLine
+                  .getMovementQuantity()));
         } else {
           documentPostAssertList.add(new DocumentPostAssert("99900",
               goodsShipmentLine.getMovementQuantity().multiply(
-                  goodsShipmentLine.getSalesOrderLine().getUnitPrice()), amount0, goodsShipmentLine
-                  .getMovementQuantity()));
-          documentPostAssertList.add(new DocumentPostAssert("35000", amount0,
+                  goodsShipmentLine.getSalesOrderLine().getUnitPrice()), BigDecimal.ZERO,
+              goodsShipmentLine.getMovementQuantity()));
+          documentPostAssertList.add(new DocumentPostAssert("35000", BigDecimal.ZERO,
               goodsShipmentLine.getMovementQuantity().multiply(
                   goodsShipmentLine.getSalesOrderLine().getUnitPrice()), goodsShipmentLine
                   .getMovementQuantity()));
@@ -8719,11 +8738,11 @@ public class TestCosting extends BaseDataSourceTestDal {
       receipt = OBDal.getInstance().get(ShipmentInOut.class, receipt.getId());
       List<DocumentPostAssert> documentPostAssertList = new ArrayList<DocumentPostAssert>();
       for (ShipmentInOutLine goodsReceiptLine : receipt.getMaterialMgmtShipmentInOutLineList()) {
-        documentPostAssertList
-            .add(new DocumentPostAssert("35000", amount0, goodsReceiptLine.getMovementQuantity()
-                .negate().multiply(price), goodsReceiptLine.getMovementQuantity()));
+        documentPostAssertList.add(new DocumentPostAssert("35000", BigDecimal.ZERO,
+            goodsReceiptLine.getMovementQuantity().negate().multiply(price), goodsReceiptLine
+                .getMovementQuantity()));
         documentPostAssertList.add(new DocumentPostAssert("40090", goodsReceiptLine
-            .getMovementQuantity().negate().multiply(price), amount0, goodsReceiptLine
+            .getMovementQuantity().negate().multiply(price), BigDecimal.ZERO, goodsReceiptLine
             .getMovementQuantity()));
       }
       assertDocumentPost(receipt, productId, documentPostAssertList);
@@ -8757,11 +8776,11 @@ public class TestCosting extends BaseDataSourceTestDal {
       shipment = OBDal.getInstance().get(ShipmentInOut.class, shipment.getId());
       List<DocumentPostAssert> documentPostAssertList = new ArrayList<DocumentPostAssert>();
       for (ShipmentInOutLine goodsShipmentLine : shipment.getMaterialMgmtShipmentInOutLineList()) {
-        documentPostAssertList.add(new DocumentPostAssert("99900", amount0, goodsShipmentLine
-            .getMovementQuantity().negate().multiply(price), goodsShipmentLine
-            .getMovementQuantity()));
+        documentPostAssertList.add(new DocumentPostAssert("99900", BigDecimal.ZERO,
+            goodsShipmentLine.getMovementQuantity().negate().multiply(price), goodsShipmentLine
+                .getMovementQuantity()));
         documentPostAssertList.add(new DocumentPostAssert("35000", goodsShipmentLine
-            .getMovementQuantity().negate().multiply(price), amount0, goodsShipmentLine
+            .getMovementQuantity().negate().multiply(price), BigDecimal.ZERO, goodsShipmentLine
             .getMovementQuantity()));
       }
       assertDocumentPost(shipment, productId, documentPostAssertList);
@@ -8786,10 +8805,10 @@ public class TestCosting extends BaseDataSourceTestDal {
       postDocument(movement);
       movement = OBDal.getInstance().get(InternalMovement.class, goodsMovement.getId());
       List<DocumentPostAssert> documentPostAssertList = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList.add(new DocumentPostAssert("35000", amount0, quantity.multiply(price),
-          quantity));
-      documentPostAssertList.add(new DocumentPostAssert("35000", quantity.multiply(price), amount0,
-          quantity));
+      documentPostAssertList.add(new DocumentPostAssert("35000", BigDecimal.ZERO, quantity
+          .multiply(price), quantity));
+      documentPostAssertList.add(new DocumentPostAssert("35000", quantity.multiply(price),
+          BigDecimal.ZERO, quantity));
       assertDocumentPost(movement, product.getId(), documentPostAssertList);
       return movement;
     } catch (Exception e) {
@@ -8823,10 +8842,10 @@ public class TestCosting extends BaseDataSourceTestDal {
       postDocument(consumption);
       consumption = OBDal.getInstance().get(InternalConsumption.class, consumption.getId());
       List<DocumentPostAssert> documentPostAssertList = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList.add(new DocumentPostAssert("99900", quantity.multiply(price), amount0,
-          quantity));
-      documentPostAssertList.add(new DocumentPostAssert("35000", amount0, quantity.multiply(price),
-          quantity));
+      documentPostAssertList.add(new DocumentPostAssert("99900", quantity.multiply(price),
+          BigDecimal.ZERO, quantity));
+      documentPostAssertList.add(new DocumentPostAssert("35000", BigDecimal.ZERO, quantity
+          .multiply(price), quantity));
       assertDocumentPost(consumption, product.getId(), documentPostAssertList);
       return consumption;
     } catch (Exception e) {
@@ -8861,16 +8880,16 @@ public class TestCosting extends BaseDataSourceTestDal {
 
       postDocument(inventoryCountList.get(0));
       List<DocumentPostAssert> documentPostAssertList1 = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList1.add(new DocumentPostAssert("35000", amount0, quantity
+      documentPostAssertList1.add(new DocumentPostAssert("35000", BigDecimal.ZERO, quantity
           .multiply(originalPrice), quantity.negate()));
       documentPostAssertList1.add(new DocumentPostAssert("61000", quantity.multiply(originalPrice),
-          amount0, quantity.negate()));
+          BigDecimal.ZERO, quantity.negate()));
       assertDocumentPost(inventoryCountList.get(0), product.getId(), documentPostAssertList1);
       postDocument(inventoryCountList.get(1));
       List<DocumentPostAssert> documentPostAssertList2 = new ArrayList<DocumentPostAssert>();
       documentPostAssertList2.add(new DocumentPostAssert("35000", quantity.multiply(finalPrice),
-          amount0, quantity));
-      documentPostAssertList2.add(new DocumentPostAssert("61000", amount0, quantity
+          BigDecimal.ZERO, quantity));
+      documentPostAssertList2.add(new DocumentPostAssert("61000", BigDecimal.ZERO, quantity
           .multiply(finalPrice), quantity));
       assertDocumentPost(inventoryCountList.get(1), product.getId(), documentPostAssertList2);
       return inventoryAmountUpdate;
@@ -8922,7 +8941,7 @@ public class TestCosting extends BaseDataSourceTestDal {
 
       int i = 0;
       for (ProductionLine productionLine : productionLinesList) {
-        BigDecimal amountTotal = amount0;
+        BigDecimal amountTotal = BigDecimal.ZERO;
 
         if (i == 0) {
           OBCriteria<ProductBOM> criteria2 = OBDal.getInstance().createCriteria(ProductBOM.class);
@@ -8933,9 +8952,9 @@ public class TestCosting extends BaseDataSourceTestDal {
           }
           amountTotal = amountTotal.multiply(productionLine.getMovementQuantity());
           documentPostAssertList1.add(new DocumentPostAssert(productionLine.getProduct().getId(),
-              "35000", amountTotal, amount0, productionLine.getMovementQuantity()));
+              "35000", amountTotal, BigDecimal.ZERO, productionLine.getMovementQuantity()));
           documentPostAssertList1.add(new DocumentPostAssert(productionLine.getProduct().getId(),
-              "61000", amount0, amountTotal, productionLine.getMovementQuantity()));
+              "61000", BigDecimal.ZERO, amountTotal, productionLine.getMovementQuantity()));
         }
 
         else {
@@ -8946,9 +8965,9 @@ public class TestCosting extends BaseDataSourceTestDal {
                   productionLine.getProduct().getPricingProductPriceList().get(0)
                       .getStandardPrice()));
           documentPostAssertList1.add(new DocumentPostAssert(productionLine.getProduct().getId(),
-              "35000", amount0, amountTotal, productionLine.getMovementQuantity()));
+              "35000", BigDecimal.ZERO, amountTotal, productionLine.getMovementQuantity()));
           documentPostAssertList1.add(new DocumentPostAssert(productionLine.getProduct().getId(),
-              "61000", amountTotal, amount0, productionLine.getMovementQuantity()));
+              "61000", amountTotal, BigDecimal.ZERO, productionLine.getMovementQuantity()));
         }
 
         i++;
@@ -9022,10 +9041,10 @@ public class TestCosting extends BaseDataSourceTestDal {
       postDocument(returnReceipt);
       returnReceipt = OBDal.getInstance().get(ShipmentInOut.class, returnMaterialReceipt.getId());
       List<DocumentPostAssert> documentPostAssertList = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList.add(new DocumentPostAssert("99900", amount0, quantity.multiply(price),
-          quantity.negate()));
-      documentPostAssertList.add(new DocumentPostAssert("35000", quantity.multiply(price), amount0,
-          quantity.negate()));
+      documentPostAssertList.add(new DocumentPostAssert("99900", BigDecimal.ZERO, quantity
+          .multiply(price), quantity.negate()));
+      documentPostAssertList.add(new DocumentPostAssert("35000", quantity.multiply(price),
+          BigDecimal.ZERO, quantity.negate()));
       assertDocumentPost(returnReceipt, productId, documentPostAssertList);
       return returnReceipt;
     } catch (Exception e) {
@@ -9057,28 +9076,28 @@ public class TestCosting extends BaseDataSourceTestDal {
 
       List<DocumentPostAssert> documentPostAssertList = new ArrayList<DocumentPostAssert>();
       if (landedCostTypeId.equals(LANDEDCOSTTYPE1_ID)) {
-        documentPostAssertList.add(new DocumentPostAssert("40000", amount0, quantity
+        documentPostAssertList.add(new DocumentPostAssert("40000", BigDecimal.ZERO, quantity
             .multiply(price), null));
         documentPostAssertList.add(new DocumentPostAssert("62900", quantity.multiply(price),
-            amount0, quantity));
+            BigDecimal.ZERO, quantity));
         assertDocumentPost(invoice, null, documentPostAssertList);
       }
 
       else if (landedCostTypeId.equals(LANDEDCOSTTYPE2_ID)) {
-        documentPostAssertList.add(new DocumentPostAssert("40000", amount0, quantity
+        documentPostAssertList.add(new DocumentPostAssert("40000", BigDecimal.ZERO, quantity
             .multiply(price).add(quantity.multiply(price).divide(new BigDecimal("10"))), null));
         documentPostAssertList.add(new DocumentPostAssert("47200", quantity.multiply(price).divide(
-            new BigDecimal("10")), amount0, null));
+            new BigDecimal("10")), BigDecimal.ZERO, null));
         documentPostAssertList.add(new DocumentPostAssert("62400", quantity.multiply(price),
-            amount0, quantity));
+            BigDecimal.ZERO, quantity));
         assertDocumentPost(invoice, landedCostTypeId, documentPostAssertList);
       }
 
       else {
-        documentPostAssertList.add(new DocumentPostAssert("40000", amount0, quantity
+        documentPostAssertList.add(new DocumentPostAssert("40000", BigDecimal.ZERO, quantity
             .multiply(price), null));
         documentPostAssertList.add(new DocumentPostAssert("62800", quantity.multiply(price),
-            amount0, quantity));
+            BigDecimal.ZERO, quantity));
         assertDocumentPost(invoice, landedCostTypeId, documentPostAssertList);
       }
 
@@ -9199,7 +9218,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       criteria2.addOrderBy(LandedCostCost.PROPERTY_LINENO, true);
       List<LandedCostCost> landedCostCostList = criteria2.list();
 
-      BigDecimal receiptTotalAmount = amount0;
+      BigDecimal receiptTotalAmount = BigDecimal.ZERO;
       for (LCReceipt landedCostReceipt : landedCostReceiptList)
         if (!landedCostReceipt.getGoodsShipment().getMaterialMgmtShipmentInOutLineList().get(0)
             .getProduct().getProductType().equals("S"))
@@ -9293,7 +9312,7 @@ public class TestCosting extends BaseDataSourceTestDal {
         landedCostReceiptLineAmountAssertListList.add(landedCostReceiptLineAmountAssertList);
       }
 
-      BigDecimal landedCostCostAmount = amount0;
+      BigDecimal landedCostCostAmount = BigDecimal.ZERO;
       for (LandedCostCost landedCostCost : landedCostCostList)
         if (landedCostCost.getLandedCostMatchedList().size() == 1)
           landedCostCostAmount = landedCostCost.isMatchingAdjusted() ? landedCostCost
@@ -9303,8 +9322,8 @@ public class TestCosting extends BaseDataSourceTestDal {
             landedCostCostAmount = landedCostCostAmount.add(landedCostMatched.getAmount());
 
       for (LandedCostCost landedCostCost : landedCostCostList) {
-        BigDecimal totalAmount = amount0;
-        BigDecimal maxAmount = amount0;
+        BigDecimal totalAmount = BigDecimal.ZERO;
+        BigDecimal maxAmount = BigDecimal.ZERO;
         int maxI = 0;
         int maxJ = 0;
         int i = 0;
@@ -9395,8 +9414,10 @@ public class TestCosting extends BaseDataSourceTestDal {
                   .divide(receiptTotalAmount, 4, BigDecimal.ROUND_HALF_UP);
 
               documentPostAssertList.add(new DocumentPostAssert(landedCostReceipt
-                  .getGoodsShipmentLine().getProduct().getId(), "35000", amount, amount0, null));
-              documentPostAssertList.add(new DocumentPostAssert(account, amount0, amount, null));
+                  .getGoodsShipmentLine().getProduct().getId(), "35000", amount, BigDecimal.ZERO,
+                  null));
+              documentPostAssertList.add(new DocumentPostAssert(account, BigDecimal.ZERO, amount,
+                  null));
 
             } else {
 
@@ -9413,8 +9434,9 @@ public class TestCosting extends BaseDataSourceTestDal {
                     .divide(receiptTotalAmount, 4, BigDecimal.ROUND_HALF_UP);
 
                 documentPostAssertList.add(new DocumentPostAssert(receiptLine.getProduct().getId(),
-                    "35000", amount, amount0, null));
-                documentPostAssertList.add(new DocumentPostAssert(account, amount0, amount, null));
+                    "35000", amount, BigDecimal.ZERO, null));
+                documentPostAssertList.add(new DocumentPostAssert(account, BigDecimal.ZERO, amount,
+                    null));
 
               }
             }
@@ -9466,15 +9488,15 @@ public class TestCosting extends BaseDataSourceTestDal {
 
       if (lcCost.getLandedCostMatchedList().size() == 1) {
 
-        documentPostAssertList.add(new DocumentPostAssert(productId, account, amount0, lcCost
-            .getMatchingAmount(), null));
+        documentPostAssertList.add(new DocumentPostAssert(productId, account, BigDecimal.ZERO,
+            lcCost.getMatchingAmount(), null));
 
         if (!lcCost.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP)
             .equals(lcCost.getMatchingAmount().setScale(2, BigDecimal.ROUND_HALF_UP))
             && lcCost.isMatchingAdjusted()) {
 
-          documentPostAssertList.add(new DocumentPostAssert(account, lcCost.getAmount(), amount0,
-              null));
+          documentPostAssertList.add(new DocumentPostAssert(account, lcCost.getAmount(),
+              BigDecimal.ZERO, null));
 
           if (OBDal.getInstance().get(LandedCost.class, landedCostCost.getLandedCost().getId())
               .getLandedCostReceiptList().size() > 1
@@ -9540,7 +9562,7 @@ public class TestCosting extends BaseDataSourceTestDal {
                               getTransactionAmount(OBDal.getInstance()
                                   .get(LandedCost.class, landedCostCost.getLandedCost().getId())
                                   .getLandedCostReceiptList().get(1).getGoodsShipment())), 2,
-                          BigDecimal.ROUND_HALF_UP), amount0, null));
+                          BigDecimal.ROUND_HALF_UP), BigDecimal.ZERO, null));
 
               documentPostAssertList.add(new DocumentPostAssert(OBDal.getInstance()
                   .get(LandedCost.class, landedCostCost.getLandedCost().getId())
@@ -9561,7 +9583,7 @@ public class TestCosting extends BaseDataSourceTestDal {
                               getTransactionAmount(OBDal.getInstance()
                                   .get(LandedCost.class, landedCostCost.getLandedCost().getId())
                                   .getLandedCostReceiptList().get(1).getGoodsShipment())), 2,
-                          BigDecimal.ROUND_HALF_UP), amount0, null));
+                          BigDecimal.ROUND_HALF_UP), BigDecimal.ZERO, null));
             }
 
             else {
@@ -9584,7 +9606,7 @@ public class TestCosting extends BaseDataSourceTestDal {
                               getTransactionAmount(OBDal.getInstance()
                                   .get(LandedCost.class, landedCostCost.getLandedCost().getId())
                                   .getLandedCostReceiptList().get(1).getGoodsShipment())), 2,
-                          BigDecimal.ROUND_HALF_UP), amount0, null));
+                          BigDecimal.ROUND_HALF_UP), BigDecimal.ZERO, null));
 
               documentPostAssertList.add(new DocumentPostAssert(OBDal.getInstance()
                   .get(LandedCost.class, landedCostCost.getLandedCost().getId())
@@ -9605,26 +9627,29 @@ public class TestCosting extends BaseDataSourceTestDal {
                               getTransactionAmount(OBDal.getInstance()
                                   .get(LandedCost.class, landedCostCost.getLandedCost().getId())
                                   .getLandedCostReceiptList().get(1).getGoodsShipment())), 2,
-                          BigDecimal.ROUND_HALF_UP), amount0, null));
+                          BigDecimal.ROUND_HALF_UP), BigDecimal.ZERO, null));
             }
 
           } else {
-            if (lcCost.getAmount().add(lcCost.getMatchingAmount().negate()).compareTo(amount0) > 0)
+            if (lcCost.getAmount().add(lcCost.getMatchingAmount().negate())
+                .compareTo(BigDecimal.ZERO) > 0)
               documentPostAssertList.add(new DocumentPostAssert(OBDal.getInstance()
                   .get(LandedCost.class, landedCostCost.getLandedCost().getId())
                   .getLandedCostReceiptList().get(0).getGoodsShipment()
                   .getMaterialMgmtShipmentInOutLineList().get(0).getProduct().getId(), "35000",
-                  amount0, lcCost.getAmount().add(lcCost.getMatchingAmount().negate()), null));
+                  BigDecimal.ZERO, lcCost.getAmount().add(lcCost.getMatchingAmount().negate()),
+                  null));
             else
               documentPostAssertList.add(new DocumentPostAssert(OBDal.getInstance()
                   .get(LandedCost.class, landedCostCost.getLandedCost().getId())
                   .getLandedCostReceiptList().get(0).getGoodsShipment()
                   .getMaterialMgmtShipmentInOutLineList().get(0).getProduct().getId(), "35000",
-                  lcCost.getMatchingAmount().add(lcCost.getAmount().negate()), amount0, null));
+                  lcCost.getMatchingAmount().add(lcCost.getAmount().negate()), BigDecimal.ZERO,
+                  null));
           }
         } else {
           documentPostAssertList.add(new DocumentPostAssert(account, lcCost.getMatchingAmount(),
-              amount0, null));
+              BigDecimal.ZERO, null));
         }
       }
 
@@ -9658,11 +9683,11 @@ public class TestCosting extends BaseDataSourceTestDal {
           Collections.reverse(landedCostCostMatchedList);
 
         for (LCMatched landedCostCostMatched : landedCostCostMatchedList) {
-          if (landedCostCostMatched.getAmount().compareTo(amount0) < 0)
+          if (landedCostCostMatched.getAmount().compareTo(BigDecimal.ZERO) < 0)
             documentPostAssertList.add(new DocumentPostAssert(productId, account,
-                landedCostCostMatched.getAmount().negate(), amount0, null));
+                landedCostCostMatched.getAmount().negate(), BigDecimal.ZERO, null));
           else
-            documentPostAssertList.add(new DocumentPostAssert(productId, account, amount0,
+            documentPostAssertList.add(new DocumentPostAssert(productId, account, BigDecimal.ZERO,
                 landedCostCostMatched.getAmount(), null));
         }
 
@@ -9686,21 +9711,22 @@ public class TestCosting extends BaseDataSourceTestDal {
         int i = 0;
         for (LCMatched landedCostCostMatched : landedCostCostMatchedList) {
           if (i == 0) {
-            if (landedCostCostMatched.getAmount().compareTo(amount0) < 0)
-              documentPostAssertList.add(new DocumentPostAssert(account, amount0,
+            if (landedCostCostMatched.getAmount().compareTo(BigDecimal.ZERO) < 0)
+              documentPostAssertList.add(new DocumentPostAssert(account, BigDecimal.ZERO,
                   landedCostCostMatched.getAmount().negate(), null));
             else
               documentPostAssertList.add(new DocumentPostAssert(account, landedCostCostMatched
-                  .getAmount(), amount0, null));
+                  .getAmount(), BigDecimal.ZERO, null));
           } else {
-            if (landedCostCostMatched.getAmount().compareTo(amount0) < 0)
+            if (landedCostCostMatched.getAmount().compareTo(BigDecimal.ZERO) < 0)
               documentPostAssertList.add(new DocumentPostAssert(lcCost
                   .getLandedCostReceiptLineAmtList().get(0).getGoodsShipmentLine().getProduct()
-                  .getId(), "35000", amount0, landedCostCostMatched.getAmount().negate(), null));
+                  .getId(), "35000", BigDecimal.ZERO, landedCostCostMatched.getAmount().negate(),
+                  null));
             else
               documentPostAssertList.add(new DocumentPostAssert(lcCost
                   .getLandedCostReceiptLineAmtList().get(0).getGoodsShipmentLine().getProduct()
-                  .getId(), "35000", landedCostCostMatched.getAmount(), amount0, null));
+                  .getId(), "35000", landedCostCostMatched.getAmount(), BigDecimal.ZERO, null));
           }
           i++;
         }
@@ -9772,7 +9798,7 @@ public class TestCosting extends BaseDataSourceTestDal {
   /********************************************** Specific methods for tests **********************************************/
 
   // Create a new product cloning costing Product 1
-  private Product cloneProduct(int num, String productType, BigDecimal purchasePrice,
+  private Product cloneProduct(String name, int num, String productType, BigDecimal purchasePrice,
       BigDecimal salesPrice, BigDecimal cost, String costType, int year, String currencyId,
       List<String> productIdList, List<BigDecimal> quantityList) {
     try {
@@ -9780,8 +9806,8 @@ public class TestCosting extends BaseDataSourceTestDal {
       Product productClone = (Product) DalUtil.copy(product, false);
       setGeneralData(productClone);
 
-      productClone.setSearchKey("costingProduct" + num);
-      productClone.setName("costing Product " + num);
+      productClone.setSearchKey(name + "-" + num);
+      productClone.setName(name + "-" + num);
       productClone.setMaterialMgmtMaterialTransactionList(null);
       productClone.setProductType(productType);
       OBDal.getInstance().save(productClone);
@@ -9818,7 +9844,7 @@ public class TestCosting extends BaseDataSourceTestDal {
             productCosting.setStartingDate(DateUtils.addYears(product.getPricingProductPriceList()
                 .get(0).getPriceListVersion().getValidFromDate(), year));
           else
-            productCosting.setStartingDate(today);
+            productCosting.setStartingDate(new Date());
           Calendar calendar = Calendar.getInstance();
           calendar.set(9999, 11, 31);
           productCosting.setEndingDate(calendar.getTime());
@@ -9878,10 +9904,10 @@ public class TestCosting extends BaseDataSourceTestDal {
   }
 
   // Returns the number of products with name costing Product
-  private int getNumberOfCostingProducts() {
+  private int getNumberOfCostingProducts(String name) {
     try {
       final OBCriteria<Product> criteria = OBDal.getInstance().createCriteria(Product.class);
-      criteria.add(Restrictions.like(Product.PROPERTY_NAME, "costing Product%"));
+      criteria.add(Restrictions.like(Product.PROPERTY_NAME, name + "-%"));
       return criteria.list().size();
     } catch (Exception e) {
       throw new OBException(e);
@@ -9901,8 +9927,8 @@ public class TestCosting extends BaseDataSourceTestDal {
 
       orderClone
           .setDocumentNo(getDocumentNo(order.getDocumentType().getDocumentSequence().getId()));
-      orderClone.setOrderDate(DateUtils.addDays(today, day));
-      orderClone.setScheduledDeliveryDate(DateUtils.addDays(today, day));
+      orderClone.setOrderDate(DateUtils.addDays(new Date(), day));
+      orderClone.setScheduledDeliveryDate(DateUtils.addDays(new Date(), day));
       orderClone.setSummedLineAmount(BigDecimal.ZERO);
       orderClone.setGrandTotalAmount(BigDecimal.ZERO);
 
@@ -9911,8 +9937,8 @@ public class TestCosting extends BaseDataSourceTestDal {
       OrderLine orderCloneLine = (OrderLine) DalUtil.copy(orderLine, false);
 
       setGeneralData(orderCloneLine);
-      orderCloneLine.setOrderDate(DateUtils.addDays(today, day));
-      orderCloneLine.setScheduledDeliveryDate(DateUtils.addDays(today, day));
+      orderCloneLine.setOrderDate(DateUtils.addDays(new Date(), day));
+      orderCloneLine.setScheduledDeliveryDate(DateUtils.addDays(new Date(), day));
 
       orderCloneLine.setProduct(product);
       orderCloneLine.setOrderedQuantity(quantity);
@@ -9996,7 +10022,7 @@ public class TestCosting extends BaseDataSourceTestDal {
     try {
       OrderLine orderLine = order.getOrderLineList().get(0);
 
-      orderLine.setUpdated(today);
+      orderLine.setUpdated(new Date());
       orderLine.setUnitPrice(price);
       orderLine.setListPrice(price);
       orderLine.setStandardPrice(price);
@@ -10039,8 +10065,8 @@ public class TestCosting extends BaseDataSourceTestDal {
       else
         invoiceClone.setDocumentNo(getDocumentNo(INVOICEIN_SEQUENCE_ID));
 
-      invoiceClone.setInvoiceDate(DateUtils.addDays(today, day));
-      invoiceClone.setAccountingDate(DateUtils.addDays(today, day));
+      invoiceClone.setInvoiceDate(DateUtils.addDays(new Date(), day));
+      invoiceClone.setAccountingDate(DateUtils.addDays(new Date(), day));
       invoiceClone.setSummedLineAmount(BigDecimal.ZERO);
       invoiceClone.setGrandTotalAmount(BigDecimal.ZERO);
       invoiceClone.setPriceList(OBDal.getInstance().get(Product.class, productId)
@@ -10408,7 +10434,7 @@ public class TestCosting extends BaseDataSourceTestDal {
     try {
       InvoiceLine invoiceLine = invoice.getInvoiceLineList().get(0);
 
-      invoiceLine.setUpdated(today);
+      invoiceLine.setUpdated(new Date());
       invoiceLine.setUnitPrice(price);
       invoiceLine.setStandardPrice(price);
       invoiceLine.setLineNetAmount(invoiceLine.getInvoicedQuantity().multiply(price));
@@ -10451,8 +10477,8 @@ public class TestCosting extends BaseDataSourceTestDal {
       else
         movementClone.setDocumentNo(getDocumentNo(SHIPMENTIN_SEQUENCE_ID));
 
-      movementClone.setMovementDate(DateUtils.addDays(today, day));
-      movementClone.setAccountingDate(DateUtils.addDays(today, day));
+      movementClone.setMovementDate(DateUtils.addDays(new Date(), day));
+      movementClone.setAccountingDate(DateUtils.addDays(new Date(), day));
       movementClone.setWarehouse(OBDal.getInstance().get(Locator.class, locatorId).getWarehouse());
       if (bpartnerId != null) {
         movementClone
@@ -10494,8 +10520,8 @@ public class TestCosting extends BaseDataSourceTestDal {
       InternalMovement movement = OBProvider.getInstance().get(InternalMovement.class);
       setGeneralData(movement);
       movement.setName(OBDal.getInstance().get(Product.class, productId).getName() + " - "
-          + formatDate(DateUtils.addDays(today, day)));
-      movement.setMovementDate(DateUtils.addDays(today, day));
+          + formatDate(DateUtils.addDays(new Date(), day)));
+      movement.setMovementDate(DateUtils.addDays(new Date(), day));
       movement.setPosted("N");
       movement.setDocumentNo(getDocumentNo(MOVEMENT_SEQUENCE_ID));
 
@@ -10527,8 +10553,8 @@ public class TestCosting extends BaseDataSourceTestDal {
       InternalConsumption consumption = OBProvider.getInstance().get(InternalConsumption.class);
       setGeneralData(consumption);
       consumption.setName(OBDal.getInstance().get(Product.class, productId).getName() + " - "
-          + formatDate(DateUtils.addDays(today, day)));
-      consumption.setMovementDate(DateUtils.addDays(today, day));
+          + formatDate(DateUtils.addDays(new Date(), day)));
+      consumption.setMovementDate(DateUtils.addDays(new Date(), day));
 
       InternalConsumptionLine consumptionLine = OBProvider.getInstance().get(
           InternalConsumptionLine.class);
@@ -10697,13 +10723,13 @@ public class TestCosting extends BaseDataSourceTestDal {
       inventoryAmountUpdate.setDocumentType(documentType);
       inventoryAmountUpdate.setDocumentNo(getDocumentNo(inventoryAmountUpdate.getDocumentType()
           .getDocumentSequence().getId()));
-      inventoryAmountUpdate.setDocumentDate(DateUtils.addDays(today, day));
+      inventoryAmountUpdate.setDocumentDate(DateUtils.addDays(new Date(), day));
       OBDal.getInstance().save(inventoryAmountUpdate);
 
       InventoryAmountUpdateLine inventoryAmountUpdateLine = OBProvider.getInstance().get(
           InventoryAmountUpdateLine.class);
       setGeneralData(inventoryAmountUpdateLine);
-      inventoryAmountUpdateLine.setReferenceDate(DateUtils.addDays(today, day));
+      inventoryAmountUpdateLine.setReferenceDate(DateUtils.addDays(new Date(), day));
       inventoryAmountUpdateLine.setProduct(OBDal.getInstance().get(Product.class, productId));
       inventoryAmountUpdateLine.setWarehouse(OBDal.getInstance()
           .get(Warehouse.class, WAREHOUSE1_ID));
@@ -10736,7 +10762,7 @@ public class TestCosting extends BaseDataSourceTestDal {
 
       billOfMaterialsProduction.setName("BOM - "
           + OBDal.getInstance().get(Product.class, productId).getName());
-      billOfMaterialsProduction.setMovementDate(DateUtils.addDays(today, day));
+      billOfMaterialsProduction.setMovementDate(DateUtils.addDays(new Date(), day));
       billOfMaterialsProduction.setDocumentNo(getDocumentNo(PRODUCTION_DOCUMENTSEQUENCE_ID));
       billOfMaterialsProduction.setSalesTransaction(true);
 
@@ -10874,7 +10900,7 @@ public class TestCosting extends BaseDataSourceTestDal {
     try {
       LandedCost landedCost = OBProvider.getInstance().get(LandedCost.class);
       setGeneralData(landedCost);
-      landedCost.setReferenceDate(DateUtils.addDays(today, day));
+      landedCost.setReferenceDate(DateUtils.addDays(new Date(), day));
       landedCost.setDocumentType(OBDal.getInstance().get(DocumentType.class,
           LANDEDCOST_DOCUMENTTYPE_ID));
       landedCost.setDocumentNo(getDocumentNo(landedCost.getDocumentType().getDocumentSequence()
@@ -10923,7 +10949,7 @@ public class TestCosting extends BaseDataSourceTestDal {
 
         landedCostCost.setLandedCostDistributionAlgorithm(OBDal.getInstance().get(
             LCDistributionAlgorithm.class, LANDEDCOSTCOST_ALGORITHM_ID));
-        landedCostCost.setAccountingDate(DateUtils.addDays(today, day));
+        landedCostCost.setAccountingDate(DateUtils.addDays(new Date(), day));
         landedCostCost.setLineNo(new Long((i + 1) * 10));
         landedCostCost.setDocumentType(OBDal.getInstance().get(DocumentType.class,
             LANDEDCOSTCOST_DOCUMENTTYPE_ID));
@@ -10985,7 +11011,7 @@ public class TestCosting extends BaseDataSourceTestDal {
         landedCostCost.setLandedCostDistributionAlgorithm(OBDal.getInstance().get(
             LCDistributionAlgorithm.class, LANDEDCOSTCOST_ALGORITHM_ID));
         landedCostCost.setCurrency(invoiceLine.getInvoice().getCurrency());
-        landedCostCost.setAccountingDate(today);
+        landedCostCost.setAccountingDate(new Date());
         landedCostCost.setLineNo(new Long((i + 1) * 10));
 
         landedCostCostList.add(landedCostCost);
@@ -11042,10 +11068,13 @@ public class TestCosting extends BaseDataSourceTestDal {
   private void cancelLandedCostCost(String landedCostCostId, String error) {
     try {
       OBDal.getInstance().commitAndClose();
-      String url = "/org.openbravo.client.kernel?processId=DDB20065809843FF92835E59ADB2234C&windowId=D1B11CBC0FEF4CA0B44D3BECEBA219BC&_action=org.openbravo.costing.LCMatchingCancelHandler";
+      HashMap<String, Object> parameters = new HashMap<String, Object>();
       String content = "{\r    'M_LC_Cost_ID':'" + landedCostCostId + "', \r}";
-      String type = "application/json;charset=UTF-8";
-      String response = doRequest(url, content, 200, "POST", type);
+      Object object = new LCMatchingCancelHandler();
+      Class<? extends Object> clazz = object.getClass();
+      Method method = clazz.getDeclaredMethod("execute", Map.class, String.class);
+      method.setAccessible(true);
+      String response = ((JSONObject) method.invoke(object, parameters, content)).toString();
       if (error == null) {
         assertTrue(response.contains("success"));
         assertFalse(response.contains("error"));
@@ -11054,6 +11083,7 @@ public class TestCosting extends BaseDataSourceTestDal {
         assertTrue(response.contains("error"));
         assertFalse(response.contains("success"));
       }
+      OBDal.getInstance().commitAndClose();
     } catch (Exception e) {
       throw new OBException(e);
     }
@@ -11063,10 +11093,13 @@ public class TestCosting extends BaseDataSourceTestDal {
   private void reactivateLandedCost(String landedCostId, String error) {
     try {
       OBDal.getInstance().commitAndClose();
-      String url = "/org.openbravo.client.kernel?processId=C600DAD457664EFDA6B1AA76931552BA&windowId=D1B11CBC0FEF4CA0B44D3BECEBA219BC&_action=org.openbravo.costing.ReactivateLandedCost";
+      HashMap<String, Object> parameters = new HashMap<String, Object>();
       String content = "{\r    'inpmLandedcostId':'" + landedCostId + "', \r}";
-      String type = "application/json;charset=UTF-8";
-      String response = doRequest(url, content, 200, "POST", type);
+      Object object = new ReactivateLandedCost();
+      Class<? extends Object> clazz = object.getClass();
+      Method method = clazz.getDeclaredMethod("execute", Map.class, String.class);
+      method.setAccessible(true);
+      String response = ((JSONObject) method.invoke(object, parameters, content)).toString();
       if (error == null) {
         assertTrue(response.contains("success"));
         assertFalse(response.contains("error"));
@@ -11075,6 +11108,7 @@ public class TestCosting extends BaseDataSourceTestDal {
         assertTrue(response.contains("error"));
         assertFalse(response.contains("success"));
       }
+      OBDal.getInstance().commitAndClose();
     } catch (Exception e) {
       throw new OBException(e);
     }
@@ -11085,7 +11119,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       String landedCostCostId, BigDecimal amount, String landedCostMatchedId, boolean matching) {
     try {
       OBDal.getInstance().commitAndClose();
-      String url = "/org.openbravo.client.kernel?processId=281FFDFAB31C4394A2EAA73A6F9F3A3F&windowId=183&_action=org.openbravo.costing.LCCostMatchFromInvoiceHandler";
+      HashMap<String, Object> parameters = new HashMap<String, Object>();
       String content = "{\r    'C_InvoiceLine_ID':'" + purchaseInvoiceLineLandedCostId + "', \r ";
       content += "'_params':{\r 'LCCosts':{\r '_selection':[\r {\r 'matched':false, \r ";
       content += "'isMatchingAdjusted':" + matching + ", \r 'processMatching':true, \r ";
@@ -11094,10 +11128,14 @@ public class TestCosting extends BaseDataSourceTestDal {
       content += "'matchedLandedCost':'";
       content += landedCostMatchedId == null ? "" : landedCostMatchedId;
       content += "', \r}\r ]\r }\r }\r }";
-      String type = "application/json;charset=UTF-8";
-      String response = doRequest(url, content, 200, "POST", type);
+      Object object = new LCCostMatchFromInvoiceHandler();
+      Class<? extends Object> clazz = object.getClass();
+      Method method = clazz.getDeclaredMethod("doExecute", Map.class, String.class);
+      method.setAccessible(true);
+      String response = ((JSONObject) method.invoke(object, parameters, content)).toString();
       assertTrue(response.contains("success"));
       assertFalse(response.contains("error"));
+      OBDal.getInstance().commitAndClose();
     } catch (Exception e) {
       throw new OBException(e);
     }
@@ -11107,11 +11145,14 @@ public class TestCosting extends BaseDataSourceTestDal {
   private void matchInvoiceLandedCost(String landedCostCostId, boolean matching, String error) {
     try {
       OBDal.getInstance().commitAndClose();
-      String url = "/org.openbravo.client.kernel?processId=24E052E6FEB64295B64E683B5196230B&windowId=D1B11CBC0FEF4CA0B44D3BECEBA219BC&_action=org.openbravo.costing.LCMatchingProcessHandler";
+      HashMap<String, Object> parameters = new HashMap<String, Object>();
       String content = "{\r    'M_LC_Cost_ID':'" + landedCostCostId + "', \r ";
       content += "'_params':{\r 'IsMatchingAdjusted':" + matching + "\r }\r}";
-      String type = "application/json;charset=UTF-8";
-      String response = doRequest(url, content, 200, "POST", type);
+      Object object = new LCMatchingProcessHandler();
+      Class<? extends Object> clazz = object.getClass();
+      Method method = clazz.getDeclaredMethod("execute", Map.class, String.class);
+      method.setAccessible(true);
+      String response = ((JSONObject) method.invoke(object, parameters, content)).toString();
       if (error == null) {
         assertTrue(response.contains("success"));
         assertFalse(response.contains("error"));
@@ -11120,6 +11161,7 @@ public class TestCosting extends BaseDataSourceTestDal {
         assertTrue(response.contains("error"));
         assertFalse(response.contains("success"));
       }
+      OBDal.getInstance().commitAndClose();
     } catch (Exception e) {
       throw new OBException(e);
     }
@@ -11144,15 +11186,10 @@ public class TestCosting extends BaseDataSourceTestDal {
   }
 
   // Set common fields in all tables
-  private void setGeneralData(BaseOBObject document) {
+  private static void setGeneralData(BaseOBObject document) {
     try {
       document.set("client", OBDal.getInstance().get(Client.class, CLIENT_ID));
       document.set("organization", OBDal.getInstance().get(Organization.class, ORGANIZATION_ID));
-      document.set("active", true);
-      document.set("creationDate", new Date());
-      document.set("createdBy", OBDal.getInstance().get(User.class, USER_ID));
-      document.set("updated", new Date());
-      document.set("updatedBy", OBDal.getInstance().get(User.class, USER_ID));
     } catch (Exception e) {
       throw new OBException(e);
     }
@@ -11267,13 +11304,17 @@ public class TestCosting extends BaseDataSourceTestDal {
   private void processInventoryAmountUpdate(String inventoryAmountUpdateId) {
     try {
       OBDal.getInstance().commitAndClose();
-      String url = "/org.openbravo.client.kernel?processId=726D2F8961314B4C9E9D3E4121C75CD0&windowId=E7754848A0314B018B37C1428ECB4D21&_action=org.openbravo.costing.InventoryAmountUpdateProcess";
+      HashMap<String, Object> parameters = new HashMap<String, Object>();
       String content = "{\r    'M_Ca_Inventoryamt_ID':'" + inventoryAmountUpdateId
           + "', \r    'inpadOrgId':'" + ORGANIZATION_ID + "', \r}";
-      String type = "application/json;charset=UTF-8";
-      String response = doRequest(url, content, 200, "POST", type);
+      Object object = new InventoryAmountUpdateProcess();
+      Class<? extends Object> clazz = object.getClass();
+      Method method = clazz.getDeclaredMethod("execute", Map.class, String.class);
+      method.setAccessible(true);
+      String response = ((JSONObject) method.invoke(object, parameters, content)).toString();
       assertTrue(response.contains("success"));
       assertFalse(response.contains("error"));
+      OBDal.getInstance().commitAndClose();
     } catch (Exception e) {
       throw new OBException(e);
     }
@@ -11312,16 +11353,20 @@ public class TestCosting extends BaseDataSourceTestDal {
       boolean incremental, boolean unitCost, int day) {
     try {
       OBDal.getInstance().commitAndClose();
-      String url = "/org.openbravo.client.kernel?processId=D395B727675C45C98320F8A40E0768E7&windowId=140&_action=org.openbravo.costing.ManualCostAdjustmentProcessHandler";
+      HashMap<String, Object> parameters = new HashMap<String, Object>();
       String content = "{\r    'M_Transaction_ID':'" + materialTransactionId
           + "', \r    '_params':{\r        'Cost':" + amount.toString()
-          + ", \r        'DateAcct':'" + formatDate(DateUtils.addDays(today, day))
+          + ", \r        'DateAcct':'" + formatDate(DateUtils.addDays(new Date(), day))
           + "', \r        'IsIncremental':" + incremental + ", \r        'IsUnitCost':" + unitCost
           + "\r    }\r}";
-      String type = "application/json;charset=UTF-8";
-      String response = doRequest(url, content, 200, "POST", type);
+      Object object = new ManualCostAdjustmentProcessHandler();
+      Class<? extends Object> clazz = object.getClass();
+      Method method = clazz.getDeclaredMethod("execute", Map.class, String.class);
+      method.setAccessible(true);
+      String response = ((JSONObject) method.invoke(object, parameters, content)).toString();
       assertTrue(response.contains("success"));
       assertFalse(response.contains("error"));
+      OBDal.getInstance().commitAndClose();
     } catch (Exception e) {
       throw new OBException(e);
     }
@@ -11331,12 +11376,16 @@ public class TestCosting extends BaseDataSourceTestDal {
   private void cancelCostAdjustment(String costAdjusmentId) {
     try {
       OBDal.getInstance().commitAndClose();
-      String url = "/org.openbravo.client.kernel?processId=5F7C5316CB7E4598898150AC88061B1B&windowId=1688A758BDA04C88A5C1D370EB979C53&_action=org.openbravo.costing.CancelCostAdjustment";
+      HashMap<String, Object> parameters = new HashMap<String, Object>();
       String content = "{\r    'inpmCostadjustmentId':'" + costAdjusmentId + "', \r}";
-      String type = "application/json;charset=UTF-8";
-      String response = doRequest(url, content, 200, "POST", type);
+      Object object = new CancelCostAdjustment();
+      Class<? extends Object> clazz = object.getClass();
+      Method method = clazz.getDeclaredMethod("execute", Map.class, String.class);
+      method.setAccessible(true);
+      String response = ((JSONObject) method.invoke(object, parameters, content)).toString();
       assertTrue(response.contains("success"));
       assertFalse(response.contains("error"));
+      OBDal.getInstance().commitAndClose();
     } catch (Exception e) {
       throw new OBException(e);
     }
@@ -11346,60 +11395,53 @@ public class TestCosting extends BaseDataSourceTestDal {
   private void processLandedCost(String landedCostId) {
     try {
       OBDal.getInstance().commitAndClose();
-      String url = "/org.openbravo.client.kernel?processId=96FE01F2F12F45FC8ED4A1978EBD034C&windowId=D1B11CBC0FEF4CA0B44D3BECEBA219BC&_action=org.openbravo.costing.LandedCostProcessHandler";
+      HashMap<String, Object> parameters = new HashMap<String, Object>();
       String content = "{\r    'M_Landedcost_ID':'" + landedCostId + "', \r}";
-      String type = "application/json;charset=UTF-8";
-      String response = doRequest(url, content, 200, "POST", type);
+      Object object = new LandedCostProcessHandler();
+      Class<? extends Object> clazz = object.getClass();
+      Method method = clazz.getDeclaredMethod("execute", Map.class, String.class);
+      method.setAccessible(true);
+      String response = ((JSONObject) method.invoke(object, parameters, content)).toString();
       assertTrue(response.contains("success"));
       assertFalse(response.contains("error"));
+      OBDal.getInstance().commitAndClose();
     } catch (Exception e) {
       throw new OBException(e);
     }
   }
 
   // Run Costing Background process
-  // FIXME https://issues.openbravo.com/view.php?id=28625
-  // Costing Background process is called by a request instead of directly because WeldUtils class
-  // is not yet supported without tomcat running
-  private void runCostingBackground() {
+  private static void runCostingBackground() {
     try {
-      OBDal.getInstance().commitAndClose();
-      String url = "/ad_process/RescheduleProcess.html?IsPopUpCall=1";
-      Map<String, String> params = new HashMap<String, String>();
-      params.put("AD_Process_Request_ID", COSTING_PROCESSREQUEST_ID);
-      int numCosting = getProcessExecutionsNumber(COSTING_PROCESSREQUEST_ID);
-      String response = doRequest(url, params, 200, "POST");
-      assertTrue(response.contains("success"));
-      assertFalse(response.contains("error"));
-      Thread.sleep(5000);
-      for (int i = 0; i < 30
-          && getProcessExecutionsNumber(COSTING_PROCESSREQUEST_ID) < numCosting + 1; i++) {
-        Thread.sleep(1000);
-      }
+      VariablesSecureApp vars = null;
+      vars = new VariablesSecureApp(OBContext.getOBContext().getUser().getId(), OBContext
+          .getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
+          .getCurrentOrganization().getId(), OBContext.getOBContext().getRole().getId(), OBContext
+          .getOBContext().getLanguage().getLanguage());
+      ConnectionProvider conn = new DalConnectionProvider(true);
+      ProcessBundle pb = new ProcessBundle(CostingBackground.AD_PROCESS_ID, vars).init(conn);
+      HashMap<String, Object> parameters = new HashMap<String, Object>();
+      pb.setParams(parameters);
+      new CostingBackground().execute(pb);
     } catch (Exception e) {
       throw new OBException(e);
     }
   }
 
   // Run Price Correction Background
-  // FIXME https://issues.openbravo.com/view.php?id=28625
-  // Price Background process is called by a request instead of directly because WeldUtils class
-  // is not yet supported without tomcat running
-  private void runPriceBackground() {
+  private static void runPriceBackground() {
     try {
-      OBDal.getInstance().commitAndClose();
-      String url = "/ad_process/RescheduleProcess.html?IsPopUpCall=1";
-      Map<String, String> params = new HashMap<String, String>();
-      params.put("AD_Process_Request_ID", PRICECORRECTION_PROCESSREQUEST_ID);
-      int numCosting = getProcessExecutionsNumber(PRICECORRECTION_PROCESSREQUEST_ID);
-      String response = doRequest(url, params, 200, "POST");
-      assertTrue(response.contains("success"));
-      assertFalse(response.contains("error"));
-      Thread.sleep(5000);
-      for (int i = 0; i < 30
-          && getProcessExecutionsNumber(PRICECORRECTION_PROCESSREQUEST_ID) < numCosting + 1; i++) {
-        Thread.sleep(1000);
-      }
+      VariablesSecureApp vars = null;
+      vars = new VariablesSecureApp(OBContext.getOBContext().getUser().getId(), OBContext
+          .getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
+          .getCurrentOrganization().getId(), OBContext.getOBContext().getRole().getId(), OBContext
+          .getOBContext().getLanguage().getLanguage());
+      ConnectionProvider conn = new DalConnectionProvider(true);
+      ProcessBundle pb = new ProcessBundle(PriceDifferenceBackground.AD_PROCESS_ID, vars)
+          .init(conn);
+      HashMap<String, Object> parameters = new HashMap<String, Object>();
+      pb.setParams(parameters);
+      new PriceDifferenceBackground().execute(pb);
     } catch (Exception e) {
       throw new OBException(e);
     }
@@ -11442,7 +11484,7 @@ public class TestCosting extends BaseDataSourceTestDal {
   // Calculates the average price of a price list
   private BigDecimal getAveragePrice(List<BigDecimal> priceList) {
     try {
-      BigDecimal priceAvg = amount0;
+      BigDecimal priceAvg = BigDecimal.ZERO;
       for (BigDecimal price : priceList)
         priceAvg = priceAvg.add(price);
       return priceAvg.divide(new BigDecimal(priceList.size()));
@@ -11454,7 +11496,7 @@ public class TestCosting extends BaseDataSourceTestDal {
   // Calculates the average price of a price list
   private BigDecimal getAveragePrice(List<BigDecimal> priceList, List<BigDecimal> quantityList) {
     try {
-      BigDecimal priceTotal = amount0;
+      BigDecimal priceTotal = BigDecimal.ZERO;
       for (int i = 0; i < quantityList.size(); i++)
         priceTotal = priceTotal.add(quantityList.get(i).multiply(priceList.get(i)));
       return priceTotal.divide(getTotalQuantity(quantityList), 5, BigDecimal.ROUND_HALF_UP);
@@ -11466,7 +11508,7 @@ public class TestCosting extends BaseDataSourceTestDal {
   // Calculates the total amount of a quantity list
   private BigDecimal getTotalQuantity(List<BigDecimal> quantityList) {
     try {
-      BigDecimal quantityTotal = amount0;
+      BigDecimal quantityTotal = BigDecimal.ZERO;
       for (BigDecimal quantity : quantityList)
         quantityTotal = quantityTotal.add(quantity);
       return quantityTotal;
@@ -11507,21 +11549,6 @@ public class TestCosting extends BaseDataSourceTestDal {
     }
   }
 
-  // Get process executions number
-  private int getProcessExecutionsNumber(String processRequestId) {
-    try {
-      OBCriteria<ProcessRun> criteria = OBDal.getInstance().createCriteria(ProcessRun.class);
-      criteria.add(Restrictions.eq(ProcessRun.PROPERTY_CLIENT,
-          OBDal.getInstance().get(Client.class, CLIENT_ID)));
-      criteria.add(Restrictions.eq(ProcessRun.PROPERTY_PROCESSREQUEST,
-          OBDal.getInstance().get(ProcessRequest.class, processRequestId)));
-      criteria.add(Restrictions.eq(ProcessRun.PROPERTY_STATUS, "SUC"));
-      return criteria.list().size();
-    } catch (Exception e) {
-      throw new OBException(e);
-    }
-  }
-
   // Get Product Transaction list
   private List<MaterialTransaction> getProductTransactions(String productId) {
     try {
@@ -11530,7 +11557,6 @@ public class TestCosting extends BaseDataSourceTestDal {
       criteria.add(Restrictions.eq(MaterialTransaction.PROPERTY_PRODUCT,
           OBDal.getInstance().get(Product.class, productId)));
       criteria.addOrderBy(MaterialTransaction.PROPERTY_MOVEMENTDATE, true);
-      criteria.addOrderBy(MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE, true);
       criteria.addOrderBy(MaterialTransaction.PROPERTY_MOVEMENTQUANTITY, true);
       return criteria.list();
     } catch (Exception e) {
@@ -11562,13 +11588,19 @@ public class TestCosting extends BaseDataSourceTestDal {
   // Get Product Costing list
   private List<Costing> getProductCostings(String productId) {
     try {
-      OBCriteria<Costing> criteria = OBDal.getInstance().createCriteria(Costing.class);
-      criteria.add(Restrictions.eq(Costing.PROPERTY_PRODUCT,
-          OBDal.getInstance().get(Product.class, productId)));
-      criteria.addOrderBy(Costing.PROPERTY_STARTINGDATE, true);
-      criteria.addOrderBy(Costing.PROPERTY_ENDINGDATE, true);
-      criteria.addOrderBy(Costing.PROPERTY_CREATIONDATE, true);
-      return criteria.list();
+      // Ordenar por la inventory transaction también
+      StringBuffer where = new StringBuffer();
+      where.append(" as t1 ");
+      where.append("\n join t1." + Costing.PROPERTY_WAREHOUSE + " t2");
+      where.append("\n where t1." + Costing.PROPERTY_PRODUCT + " = :product");
+      where.append("\n order by t1." + Costing.PROPERTY_MANUAL + " desc");
+      where.append("\n , t1." + Costing.PROPERTY_COSTTYPE + " desc");
+      where.append("\n , t2." + Warehouse.PROPERTY_NAME + " desc");
+      where.append("\n , t1." + Costing.PROPERTY_ENDINGDATE);
+      where.append("\n , t1." + Costing.PROPERTY_TOTALMOVEMENTQUANTITY);
+      OBQuery<Costing> hql = OBDal.getInstance().createQuery(Costing.class, where.toString());
+      hql.setNamedParameter("product", OBDal.getInstance().get(Product.class, productId));
+      return hql.list();
     } catch (Exception e) {
       throw new OBException(e);
     }
@@ -11597,7 +11629,7 @@ public class TestCosting extends BaseDataSourceTestDal {
   // Get transaction amount
   private BigDecimal getTransactionAmount(ShipmentInOut transaction) {
     try {
-      BigDecimal amount = amount0;
+      BigDecimal amount = BigDecimal.ZERO;
       for (ShipmentInOutLine transactionLine : transaction.getMaterialMgmtShipmentInOutLineList())
         amount = amount.add(getTransactionLineAmount(transactionLine));
       return amount;
@@ -11626,9 +11658,7 @@ public class TestCosting extends BaseDataSourceTestDal {
       assertEquals(((Client) document.get("client")).getId(), CLIENT_ID);
       assertEquals(((Organization) document.get("organization")).getName(), "Spain");
       assertTrue(((Boolean) document.get("active")));
-      assertEquals(formatDate((Date) document.get("creationDate")), formatDate(new Date()));
       assertEquals(((User) document.get("createdBy")).getId(), USER_ID);
-      assertEquals(formatDate((Date) document.get("updated")), formatDate(new Date()));
       assertEquals(((User) document.get("updatedBy")).getId(), USER_ID);
     } catch (Exception e) {
       throw new OBException(e);
@@ -11646,8 +11676,8 @@ public class TestCosting extends BaseDataSourceTestDal {
       assertEquals(receiptInvoiceMatch.getProduct(), matchedInvoicesAssert.getInvoiceLine()
           .getProduct());
 
-      assertEquals(receiptInvoiceMatch.getTransactionDate(), matchedInvoicesAssert.getInvoiceLine()
-          .getInvoice().getInvoiceDate());
+      assertEquals(formatDate(receiptInvoiceMatch.getTransactionDate()),
+          formatDate(matchedInvoicesAssert.getInvoiceLine().getInvoice().getInvoiceDate()));
       assertEquals(receiptInvoiceMatch.getQuantity(), matchedInvoicesAssert.getMovementLine()
           .getMovementQuantity());
 
@@ -11673,7 +11703,7 @@ public class TestCosting extends BaseDataSourceTestDal {
           assertEquals(physicalInventory.getMaterialMgmtInventoryCountLineList().get(0)
               .getBookQuantity(), physicalInventoryAssert.getQuantity());
           assertEquals(physicalInventory.getMaterialMgmtInventoryCountLineList().get(0)
-              .getQuantityCount(), amount0);
+              .getQuantityCount(), BigDecimal.ZERO);
           assertEquals(physicalInventory.getMaterialMgmtInventoryCountLineList().get(0).getCost(),
               null);
           assertEquals(physicalInventory.getMaterialMgmtInventoryCountLineList().get(0)
@@ -11686,7 +11716,7 @@ public class TestCosting extends BaseDataSourceTestDal {
           assertEquals(physicalInventory.getInventoryType(), "O");
 
           assertEquals(physicalInventory.getMaterialMgmtInventoryCountLineList().get(0)
-              .getBookQuantity(), amount0);
+              .getBookQuantity(), BigDecimal.ZERO);
           assertEquals(physicalInventory.getMaterialMgmtInventoryCountLineList().get(0)
               .getQuantityCount(), physicalInventoryAssert.getQuantity());
           assertEquals(physicalInventory.getMaterialMgmtInventoryCountLineList().get(0).getCost()
@@ -11699,7 +11729,7 @@ public class TestCosting extends BaseDataSourceTestDal {
         assertEquals(physicalInventory.getWarehouse(),
             OBDal.getInstance().get(Warehouse.class, WAREHOUSE1_ID));
         assertEquals(formatDate(physicalInventory.getMovementDate()),
-            formatDate(DateUtils.addDays(today, physicalInventoryAssert.getDay())));
+            formatDate(DateUtils.addDays(new Date(), physicalInventoryAssert.getDay())));
         assertTrue(physicalInventory.isProcessed());
         assertFalse(physicalInventory.isUpdateQuantities());
         assertFalse(physicalInventory.isGenerateList());
@@ -11892,7 +11922,8 @@ public class TestCosting extends BaseDataSourceTestDal {
         assertEquals(materialTransaction.getOrderUOM(), null);
         assertEquals(materialTransaction.getOrderQuantity(), null);
 
-        assertEquals(formatDate(materialTransaction.getTransactionProcessDate()), formatDate(today));
+        assertEquals(formatDate(materialTransaction.getTransactionProcessDate()),
+            formatDate(new Date()));
         assertFalse(materialTransaction.isManualcostadjustment());
         assertEquals(materialTransaction.isCheckpricedifference(),
             productTransactionAssert.isPriceDifference());
@@ -11981,8 +12012,9 @@ public class TestCosting extends BaseDataSourceTestDal {
               .getShipmentReceiptLine().getStorageBin());
           assertEquals(materialTransaction.getProduct(), productTransactionAssert
               .getShipmentReceiptLine().getProduct());
-          assertEquals(materialTransaction.getMovementDate(), productTransactionAssert
-              .getShipmentReceiptLine().getShipmentReceipt().getMovementDate());
+          assertEquals(formatDate(materialTransaction.getMovementDate()),
+              formatDate(productTransactionAssert.getShipmentReceiptLine().getShipmentReceipt()
+                  .getMovementDate()));
           assertEquals(materialTransaction.getUOM(), productTransactionAssert
               .getShipmentReceiptLine().getUOM());
           assertTrue(materialTransaction.isCheckReservedQuantity());
@@ -12046,8 +12078,9 @@ public class TestCosting extends BaseDataSourceTestDal {
               .getCloseInventory().getMaterialMgmtInventoryCountLineList().get(0).getStorageBin());
           assertEquals(materialTransaction.getProduct(), productTransactionAssert
               .getInventoryLine().getProduct());
-          assertEquals(materialTransaction.getMovementDate(), productTransactionAssert
-              .getInventoryLine().getCaInventoryamt().getDocumentDate());
+          assertEquals(formatDate(materialTransaction.getMovementDate()),
+              formatDate(productTransactionAssert.getInventoryLine().getCaInventoryamt()
+                  .getDocumentDate()));
           assertEquals(materialTransaction.getUOM(), productTransactionAssert.getInventoryLine()
               .getInventoryAmountUpdateLineInventoriesList().get(0).getCloseInventory()
               .getMaterialMgmtInventoryCountLineList().get(0).getUOM());
@@ -12109,8 +12142,9 @@ public class TestCosting extends BaseDataSourceTestDal {
               productTransactionAssert.getProductionLine());
           assertEquals(materialTransaction.getProduct(), productTransactionAssert.getMovementLine()
               .getProduct());
-          assertEquals(materialTransaction.getMovementDate(), productTransactionAssert
-              .getMovementLine().getMovement().getMovementDate());
+          assertEquals(
+              formatDate(materialTransaction.getMovementDate()),
+              formatDate(productTransactionAssert.getMovementLine().getMovement().getMovementDate()));
           assertEquals(materialTransaction.getUOM(), productTransactionAssert.getMovementLine()
               .getUOM());
           assertTrue(materialTransaction.isCheckReservedQuantity());
@@ -12149,8 +12183,9 @@ public class TestCosting extends BaseDataSourceTestDal {
               productTransactionAssert.getConsumptionLine());
           assertEquals(materialTransaction.getProduct(), productTransactionAssert
               .getProductionLine().getProduct());
-          assertEquals(materialTransaction.getMovementDate(), productTransactionAssert
-              .getProductionLine().getProductionPlan().getProduction().getMovementDate());
+          assertEquals(formatDate(materialTransaction.getMovementDate()),
+              formatDate(productTransactionAssert.getProductionLine().getProductionPlan()
+                  .getProduction().getMovementDate()));
           assertEquals(materialTransaction.getUOM(), productTransactionAssert.getProductionLine()
               .getUOM());
           assertTrue(materialTransaction.isCheckReservedQuantity());
@@ -12210,8 +12245,9 @@ public class TestCosting extends BaseDataSourceTestDal {
               .getConsumptionLine().getStorageBin());
           assertEquals(materialTransaction.getProduct(), productTransactionAssert
               .getConsumptionLine().getProduct());
-          assertEquals(materialTransaction.getMovementDate(), productTransactionAssert
-              .getConsumptionLine().getInternalConsumption().getMovementDate());
+          assertEquals(formatDate(materialTransaction.getMovementDate()),
+              formatDate(productTransactionAssert.getConsumptionLine().getInternalConsumption()
+                  .getMovementDate()));
           assertEquals(materialTransaction.getUOM(), productTransactionAssert.getConsumptionLine()
               .getUOM());
 
@@ -12251,8 +12287,8 @@ public class TestCosting extends BaseDataSourceTestDal {
             assertEquals(materialTransactionCost.getCost(),
                 materialTransaction.getTransactionCost());
             assertEquals(materialTransactionCost.getCostAdjustmentLine(), null);
-            assertEquals(materialTransactionCost.getAccountingDate(),
-                materialTransaction.getMovementDate());
+            assertEquals(formatDate(materialTransactionCost.getAccountingDate()),
+                formatDate(materialTransaction.getMovementDate()));
             assertTrue(materialTransactionCost.isUnitCost());
           }
 
@@ -12284,8 +12320,8 @@ public class TestCosting extends BaseDataSourceTestDal {
 
             assertEquals(materialTransactionCost.getCostAdjustmentLine(),
                 costAdjustmentLineList.get(k - 1));
-            assertEquals(materialTransactionCost.getAccountingDate(),
-                costAdjustmentLineList.get(k - 1).getAccountingDate());
+            assertEquals(formatDate(materialTransactionCost.getAccountingDate()),
+                formatDate(costAdjustmentLineList.get(k - 1).getAccountingDate()));
             assertEquals(materialTransactionCost.isUnitCost(), costAdjustmentLineList.get(k - 1)
                 .isUnitCost());
           }
@@ -12379,7 +12415,7 @@ public class TestCosting extends BaseDataSourceTestDal {
                   .getPriceListVersion().getValidFromDate(), productCostingAssert.getYear())));
 
         else
-          assertEquals(formatDate(productCosting.getStartingDate()), formatDate(today));
+          assertEquals(formatDate(productCosting.getStartingDate()), formatDate(new Date()));
 
         if (productCostingAssert.getType().equals("STA") || i == indexWarehouse1
             || i == indexWarehouse2) {
@@ -12411,7 +12447,7 @@ public class TestCosting extends BaseDataSourceTestDal {
         List<CostAdjustmentAssert> costAdjustmentAssertLineList = costAdjustmentAssertList.get(i);
         assertGeneralData(costAdjustment);
         assertEquals(costAdjustment.getDocumentType().getName(), "Cost Adjustment");
-        assertEquals(formatDate(costAdjustment.getReferenceDate()), formatDate(today));
+        assertEquals(formatDate(costAdjustment.getReferenceDate()), formatDate(new Date()));
         assertEquals(costAdjustment.getSourceProcess(), costAdjustmentAssertLineList.get(0)
             .getType());
         assertTrue(costAdjustment.isProcessed());
@@ -12454,7 +12490,7 @@ public class TestCosting extends BaseDataSourceTestDal {
           assertEquals(costAdjustmentLine.isSource(), costAdjustmentAssertLine.isSource());
           assertEquals(costAdjustmentLine.isUnitCost(), costAdjustmentAssertLine.isUnit());
           assertEquals(formatDate(costAdjustmentLine.getAccountingDate()),
-              formatDate(DateUtils.addDays(today, costAdjustmentAssertLine.getDay())));
+              formatDate(DateUtils.addDays(new Date(), costAdjustmentAssertLine.getDay())));
           assertTrue(costAdjustmentLine.isRelatedTransactionAdjusted());
           assertEquals(costAdjustmentLine.getCurrency(), costAdjustmentAssertLine.getCurrency());
 
@@ -12470,7 +12506,7 @@ public class TestCosting extends BaseDataSourceTestDal {
           }
 
           if (costAdjustmentAssertLine.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP)
-              .equals(amount0.setScale(2, BigDecimal.ROUND_HALF_UP))
+              .equals(BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_UP))
               || costAdjustmentAssertLine.getType().equals("LC"))
             assertFalse(costAdjustmentLine.isNeedsPosting());
           else
@@ -12584,27 +12620,15 @@ public class TestCosting extends BaseDataSourceTestDal {
       List<DocumentPostAssert> documentPostAssertList) {
     try {
 
-      BaseOBObject doc = OBDal.getInstance().get(document.getClass(), document.getId());
-      if (!doc.get("posted").equals("Y")) {
-        OBDal.getInstance().refresh(doc);
-        Thread.sleep(5000);
-        for (int i = 0; i < 10 && !doc.get("posted").equals("Y"); i++) {
-          postDocument(doc);
-          doc = OBDal.getInstance().get(doc.getClass(), doc.getId());
-          OBDal.getInstance().refresh(doc);
-          Thread.sleep(1000);
-        }
-      }
-
-      assertEquals(doc.get("posted"), "Y");
+      assertEquals(document.get("posted"), "Y");
 
       final OBCriteria<Table> criteria1 = OBDal.getInstance().createCriteria(Table.class);
-      criteria1.add(Restrictions.eq(Table.PROPERTY_NAME, doc.getEntityName()));
+      criteria1.add(Restrictions.eq(Table.PROPERTY_NAME, document.getEntityName()));
       Table table = criteria1.list().get(0);
 
       final OBCriteria<AccountingFact> criteria2 = OBDal.getInstance().createCriteria(
           AccountingFact.class);
-      criteria2.add(Restrictions.eq(AccountingFact.PROPERTY_RECORDID, doc.getId()));
+      criteria2.add(Restrictions.eq(AccountingFact.PROPERTY_RECORDID, document.getId()));
       criteria2.add(Restrictions.eq(AccountingFact.PROPERTY_TABLE, table));
       criteria2.addOrderBy(AccountingFact.PROPERTY_SEQUENCENUMBER, true);
       String groupId = criteria2.list().get(0).getGroupID();
@@ -12614,17 +12638,17 @@ public class TestCosting extends BaseDataSourceTestDal {
       int i = 0;
       for (AccountingFact accountingFact : criteria2.list()) {
 
-        String lineListProperty = Character.toLowerCase(doc.getEntityName().charAt(0))
-            + doc.getEntityName().substring(1) + "LineList";
+        String lineListProperty = Character.toLowerCase(document.getEntityName().charAt(0))
+            + document.getEntityName().substring(1) + "LineList";
 
         BaseOBObject line = null;
-        if (doc.getEntityName().equals(ReceiptInvoiceMatch.ENTITY_NAME)) {
+        if (document.getEntityName().equals(ReceiptInvoiceMatch.ENTITY_NAME)) {
           if (i % 2 == 0) {
-            line = ((ReceiptInvoiceMatch) doc).getGoodsShipmentLine();
+            line = ((ReceiptInvoiceMatch) document).getGoodsShipmentLine();
           } else {
-            line = ((ReceiptInvoiceMatch) doc).getInvoiceLine();
+            line = ((ReceiptInvoiceMatch) document).getInvoiceLine();
           }
-        } else if (doc.getEntityName().equals(ProductionTransaction.ENTITY_NAME)) {
+        } else if (document.getEntityName().equals(ProductionTransaction.ENTITY_NAME)) {
           StringBuffer where = new StringBuffer();
           where.append(" as t1 ");
           where.append("\n left join t1." + ProductionLine.PROPERTY_PRODUCTIONPLAN + " t2");
@@ -12634,21 +12658,21 @@ public class TestCosting extends BaseDataSourceTestDal {
           OBQuery<ProductionLine> hql = OBDal.getInstance().createQuery(ProductionLine.class,
               where.toString());
           hql.setNamedParameter("productionTransaction",
-              OBDal.getInstance().get(ProductionTransaction.class, doc.getId()));
+              OBDal.getInstance().get(ProductionTransaction.class, document.getId()));
           line = hql.list().get(i / 2);
-        } else if (doc.getEntityName().equals(CostAdjustment.ENTITY_NAME)) {
+        } else if (document.getEntityName().equals(CostAdjustment.ENTITY_NAME)) {
           final OBCriteria<CostAdjustmentLine> criteria3 = OBDal.getInstance().createCriteria(
               CostAdjustmentLine.class);
-          criteria3.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_COSTADJUSTMENT, doc));
+          criteria3.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_COSTADJUSTMENT, document));
           criteria3.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_NEEDSPOSTING, true));
           criteria3.addOrderBy(CostAdjustmentLine.PROPERTY_LINENO, true);
           line = criteria3.list().get(i / 2);
         } else if (productId != null
             && (productId.equals(LANDEDCOSTTYPE1_ID) || productId.equals(LANDEDCOSTTYPE2_ID) || productId
                 .equals(LANDEDCOSTTYPE3_ID))) {
-          line = ((List<BaseOBObject>) OBDal.getInstance().get(doc.getClass(), doc.getId())
-              .get(lineListProperty)).get(0);
-        } else if (doc.getEntityName().equals(LandedCost.ENTITY_NAME)) {
+          line = ((List<BaseOBObject>) OBDal.getInstance()
+              .get(document.getClass(), document.getId()).get(lineListProperty)).get(0);
+        } else if (document.getEntityName().equals(LandedCost.ENTITY_NAME)) {
           StringBuffer where = new StringBuffer();
           where.append(" as t1 ");
           where.append("\n join t1." + LCReceiptLineAmt.PROPERTY_LANDEDCOSTRECEIPT + " t2");
@@ -12661,32 +12685,33 @@ public class TestCosting extends BaseDataSourceTestDal {
           where.append("\n , t4." + ShipmentInOutLine.PROPERTY_LINENO);
           OBQuery<LCReceiptLineAmt> hql = OBDal.getInstance().createQuery(LCReceiptLineAmt.class,
               where.toString());
-          LandedCost landedCost = OBDal.getInstance().get(LandedCost.class, doc.getId());
+          LandedCost landedCost = OBDal.getInstance().get(LandedCost.class, document.getId());
           hql.setNamedParameter("landedCost", landedCost);
           line = hql.list().get(i / 2);
-        } else if (doc.getEntityName().equals(LandedCostCost.ENTITY_NAME)) {
-          if (((LandedCostCost) doc).getLandedCostMatchedList().size() == 1) {
-            line = ((LandedCostCost) doc).getLandedCostMatchedList().get(0);
-          } else if (!((LandedCostCost) doc)
+        } else if (document.getEntityName().equals(LandedCostCost.ENTITY_NAME)) {
+          if (((LandedCostCost) document).getLandedCostMatchedList().size() == 1) {
+            line = ((LandedCostCost) document).getLandedCostMatchedList().get(0);
+          } else if (!((LandedCostCost) document)
               .getAmount()
               .setScale(2, BigDecimal.ROUND_HALF_UP)
               .equals(
-                  ((LandedCostCost) doc).getMatchingAmount().setScale(2, BigDecimal.ROUND_HALF_UP))
-              && ((LandedCostCost) doc).isMatchingAdjusted()) {
+                  ((LandedCostCost) document).getMatchingAmount().setScale(2,
+                      BigDecimal.ROUND_HALF_UP))
+              && ((LandedCostCost) document).isMatchingAdjusted()) {
             if (i == 0) {
-              line = ((LandedCostCost) doc).getLandedCostMatchedList().get(0);
+              line = ((LandedCostCost) document).getLandedCostMatchedList().get(0);
             } else {
-              line = ((LandedCostCost) doc).getLandedCostMatchedList().get(1);
+              line = ((LandedCostCost) document).getLandedCostMatchedList().get(1);
             }
           } else {
-            line = ((LandedCostCost) doc).getLandedCostMatchedList().get(i / 2);
+            line = ((LandedCostCost) document).getLandedCostMatchedList().get(i / 2);
           }
-        } else if (doc.getEntityName().equals(Invoice.ENTITY_NAME) && i > 0) {
-          line = ((List<BaseOBObject>) OBDal.getInstance().get(doc.getClass(), doc.getId())
-              .get(lineListProperty)).get(i - 1);
+        } else if (document.getEntityName().equals(Invoice.ENTITY_NAME) && i > 0) {
+          line = ((List<BaseOBObject>) OBDal.getInstance()
+              .get(document.getClass(), document.getId()).get(lineListProperty)).get(i - 1);
         } else {
-          line = ((List<BaseOBObject>) OBDal.getInstance().get(doc.getClass(), doc.getId())
-              .get(lineListProperty)).get(i / 2);
+          line = ((List<BaseOBObject>) OBDal.getInstance()
+              .get(document.getClass(), document.getId()).get(lineListProperty)).get(i / 2);
         }
         DocumentPostAssert documentPostAssert = documentPostAssertList.get(i);
         assertGeneralData(accountingFact);
@@ -12694,7 +12719,7 @@ public class TestCosting extends BaseDataSourceTestDal {
         /* Accounting window fields assert */
 
         assertEquals(accountingFact.getTable(), table);
-        assertEquals(accountingFact.getRecordID(), doc.getId());
+        assertEquals(accountingFact.getRecordID(), document.getId());
         assertEquals(accountingFact.getAccountingSchema().getName(), "Main US/A/Euro");
 
         assertEquals(accountingFact.getAccount().getSearchKey(), documentPostAssert.getAccount());
@@ -12702,19 +12727,19 @@ public class TestCosting extends BaseDataSourceTestDal {
 
         BigDecimal rate;
         if ((productId != null && productId.equals(LANDEDCOSTTYPE3_ID))
-            || (doc.getEntityName().equals(Invoice.ENTITY_NAME) && ((Invoice) doc).getCurrency()
-                .getId().equals(CURRENCY2_ID))
-            || (doc.getEntityName().equals(LandedCost.ENTITY_NAME) && ((LCReceiptLineAmt) line)
+            || (document.getEntityName().equals(Invoice.ENTITY_NAME) && ((Invoice) document)
+                .getCurrency().getId().equals(CURRENCY2_ID))
+            || (document.getEntityName().equals(LandedCost.ENTITY_NAME) && ((LCReceiptLineAmt) line)
                 .getLandedCostCost()
                 .getLandedCostType()
                 .equals(
                     OBDal.getInstance().get(Product.class, LANDEDCOSTTYPE3_ID)
                         .getLandedCostTypeList().get(0)))
-            || (doc.getEntityName().equals(LandedCostCost.ENTITY_NAME)
+            || (document.getEntityName().equals(LandedCostCost.ENTITY_NAME)
                 && ((LCMatched) line).getInvoiceLine().getProduct() != null && ((LCMatched) line)
                 .getInvoiceLine().getProduct().getId().equals(LANDEDCOSTTYPE3_ID))
-            || (!doc.getEntityName().equals(LandedCostCost.ENTITY_NAME)
-                && !doc.getEntityName().equals(LandedCost.ENTITY_NAME)
+            || (!document.getEntityName().equals(LandedCostCost.ENTITY_NAME)
+                && !document.getEntityName().equals(LandedCost.ENTITY_NAME)
                 && documentPostAssert.getProductId() != null
                 && !OBDal.getInstance().get(Product.class, documentPostAssert.getProductId())
                     .getPricingProductPriceList().isEmpty() && OBDal
@@ -12727,9 +12752,9 @@ public class TestCosting extends BaseDataSourceTestDal {
                     OBDal.getInstance().get(Product.class, LANDEDCOSTTYPE3_ID)
                         .getPricingProductPriceList().get(0).getPriceListVersion()))) {
 
-          if (doc.getEntityName().equals(Invoice.ENTITY_NAME)
-              && ((Invoice) doc).getCurrencyConversionRateDocList().size() != 0) {
-            rate = ((Invoice) doc).getCurrencyConversionRateDocList().get(0).getRate();
+          if (document.getEntityName().equals(Invoice.ENTITY_NAME)
+              && ((Invoice) document).getCurrencyConversionRateDocList().size() != 0) {
+            rate = ((Invoice) document).getCurrencyConversionRateDocList().get(0).getRate();
           } else {
             Calendar calendar = Calendar.getInstance();
             calendar.set(9999, 0, 1);
@@ -12757,7 +12782,7 @@ public class TestCosting extends BaseDataSourceTestDal {
                 .multiply(rate)
                 .setScale(
                     2,
-                    doc.getEntityName().equals(LandedCost.ENTITY_NAME) ? BigDecimal.ROUND_HALF_EVEN
+                    document.getEntityName().equals(LandedCost.ENTITY_NAME) ? BigDecimal.ROUND_HALF_EVEN
                         : BigDecimal.ROUND_HALF_UP));
         assertEquals(
             accountingFact.getCredit().setScale(2, BigDecimal.ROUND_HALF_UP),
@@ -12766,26 +12791,26 @@ public class TestCosting extends BaseDataSourceTestDal {
                 .multiply(rate)
                 .setScale(
                     2,
-                    doc.getEntityName().equals(LandedCost.ENTITY_NAME) ? BigDecimal.ROUND_HALF_EVEN
+                    document.getEntityName().equals(LandedCost.ENTITY_NAME) ? BigDecimal.ROUND_HALF_EVEN
                         : BigDecimal.ROUND_HALF_UP));
 
         if ((productId != null && productId.equals(LANDEDCOSTTYPE3_ID))
-            || (doc.getEntityName().equals(Invoice.ENTITY_NAME) && ((Invoice) doc).getCurrency()
-                .getId().equals(CURRENCY2_ID))
-            || (doc.getEntityName().equals(LandedCost.ENTITY_NAME) && ((LCReceiptLineAmt) line)
+            || (document.getEntityName().equals(Invoice.ENTITY_NAME) && ((Invoice) document)
+                .getCurrency().getId().equals(CURRENCY2_ID))
+            || (document.getEntityName().equals(LandedCost.ENTITY_NAME) && ((LCReceiptLineAmt) line)
                 .getLandedCostCost()
                 .getLandedCostType()
                 .equals(
                     OBDal.getInstance().get(Product.class, LANDEDCOSTTYPE3_ID)
                         .getLandedCostTypeList().get(0)))
-            || (doc.getEntityName().equals(LandedCostCost.ENTITY_NAME)
+            || (document.getEntityName().equals(LandedCostCost.ENTITY_NAME)
                 && ((LCMatched) line).getInvoiceLine().getProduct() != null && ((LCMatched) line)
                 .getInvoiceLine().getProduct().getId().equals(LANDEDCOSTTYPE3_ID))) {
           rate = BigDecimal.ONE;
         }
 
-        else if ((doc.getEntityName().equals(ShipmentInOut.ENTITY_NAME) || doc.getEntityName()
-            .equals(CostAdjustment.ENTITY_NAME))
+        else if ((document.getEntityName().equals(ShipmentInOut.ENTITY_NAME) || document
+            .getEntityName().equals(CostAdjustment.ENTITY_NAME))
             && OBDal.getInstance().get(Organization.class, ORGANIZATION_ID).getCurrency() != null
             && OBDal.getInstance().get(Organization.class, ORGANIZATION_ID).getCurrency().getId()
                 .equals(CURRENCY2_ID)) {
@@ -12810,7 +12835,7 @@ public class TestCosting extends BaseDataSourceTestDal {
                 .multiply(rate)
                 .setScale(
                     2,
-                    doc.getEntityName().equals(LandedCost.ENTITY_NAME) ? BigDecimal.ROUND_HALF_EVEN
+                    document.getEntityName().equals(LandedCost.ENTITY_NAME) ? BigDecimal.ROUND_HALF_EVEN
                         : BigDecimal.ROUND_HALF_UP));
         assertEquals(
             accountingFact.getForeignCurrencyCredit().setScale(2, BigDecimal.ROUND_HALF_UP),
@@ -12819,7 +12844,7 @@ public class TestCosting extends BaseDataSourceTestDal {
                 .multiply(rate)
                 .setScale(
                     2,
-                    doc.getEntityName().equals(LandedCost.ENTITY_NAME) ? BigDecimal.ROUND_HALF_EVEN
+                    document.getEntityName().equals(LandedCost.ENTITY_NAME) ? BigDecimal.ROUND_HALF_EVEN
                         : BigDecimal.ROUND_HALF_UP));
 
         Calendar calendar1 = Calendar.getInstance();
@@ -12833,8 +12858,8 @@ public class TestCosting extends BaseDataSourceTestDal {
         criteria3.add(Restrictions.eq(Period.PROPERTY_ENDINGDATE, calendar2.getTime()));
         assertEquals(accountingFact.getPeriod(), criteria3.list().get(0));
 
-        if (doc.getEntityName().equals(CostAdjustment.ENTITY_NAME)) {
-          assertEquals(formatDate(accountingFact.getTransactionDate()), formatDate(today));
+        if (document.getEntityName().equals(CostAdjustment.ENTITY_NAME)) {
+          assertEquals(formatDate(accountingFact.getTransactionDate()), formatDate(new Date()));
           assertEquals(formatDate(accountingFact.getAccountingDate()),
               formatDate(((CostAdjustmentLine) line).getAccountingDate()));
           if (((CostAdjustmentLine) line).getInventoryTransaction().getGoodsShipmentLine() != null) {
@@ -12844,42 +12869,42 @@ public class TestCosting extends BaseDataSourceTestDal {
           } else {
             assertEquals(accountingFact.getBusinessPartner(), null);
           }
-        } else if (doc.getEntityName().equals(InventoryCount.ENTITY_NAME)) {
+        } else if (document.getEntityName().equals(InventoryCount.ENTITY_NAME)) {
           assertEquals(formatDate(accountingFact.getTransactionDate()),
-              formatDate(((InventoryCount) doc).getMovementDate()));
+              formatDate(((InventoryCount) document).getMovementDate()));
           assertEquals(formatDate(accountingFact.getAccountingDate()),
-              formatDate(((InventoryCount) doc).getMovementDate()));
+              formatDate(((InventoryCount) document).getMovementDate()));
           assertEquals(accountingFact.getBusinessPartner(), null);
-        } else if (doc.getEntityName().equals(ReceiptInvoiceMatch.ENTITY_NAME)) {
+        } else if (document.getEntityName().equals(ReceiptInvoiceMatch.ENTITY_NAME)) {
           assertEquals(formatDate(accountingFact.getTransactionDate()),
-              formatDate(((ReceiptInvoiceMatch) doc).getTransactionDate()));
+              formatDate(((ReceiptInvoiceMatch) document).getTransactionDate()));
           assertEquals(formatDate(accountingFact.getAccountingDate()),
-              formatDate(((ReceiptInvoiceMatch) doc).getTransactionDate()));
-          assertEquals(accountingFact.getBusinessPartner(), ((ReceiptInvoiceMatch) doc)
+              formatDate(((ReceiptInvoiceMatch) document).getTransactionDate()));
+          assertEquals(accountingFact.getBusinessPartner(), ((ReceiptInvoiceMatch) document)
               .getInvoiceLine().getBusinessPartner());
-        } else if (doc.getEntityName().equals(InternalMovement.ENTITY_NAME)) {
+        } else if (document.getEntityName().equals(InternalMovement.ENTITY_NAME)) {
           assertEquals(formatDate(accountingFact.getTransactionDate()),
-              formatDate(((InternalMovement) doc).getMovementDate()));
+              formatDate(((InternalMovement) document).getMovementDate()));
           assertEquals(formatDate(accountingFact.getAccountingDate()),
-              formatDate(((InternalMovement) doc).getMovementDate()));
+              formatDate(((InternalMovement) document).getMovementDate()));
           assertEquals(accountingFact.getBusinessPartner(), null);
-        } else if (doc.getEntityName().equals(InternalConsumption.ENTITY_NAME)) {
+        } else if (document.getEntityName().equals(InternalConsumption.ENTITY_NAME)) {
           assertEquals(formatDate(accountingFact.getTransactionDate()),
-              formatDate(((InternalConsumption) doc).getMovementDate()));
+              formatDate(((InternalConsumption) document).getMovementDate()));
           assertEquals(formatDate(accountingFact.getAccountingDate()),
-              formatDate(((InternalConsumption) doc).getMovementDate()));
+              formatDate(((InternalConsumption) document).getMovementDate()));
           assertEquals(accountingFact.getBusinessPartner(), null);
-        } else if (doc.getEntityName().equals(ProductionTransaction.ENTITY_NAME)) {
+        } else if (document.getEntityName().equals(ProductionTransaction.ENTITY_NAME)) {
           assertEquals(formatDate(accountingFact.getTransactionDate()),
-              formatDate(((ProductionTransaction) doc).getMovementDate()));
+              formatDate(((ProductionTransaction) document).getMovementDate()));
           assertEquals(formatDate(accountingFact.getAccountingDate()),
-              formatDate(((ProductionTransaction) doc).getMovementDate()));
+              formatDate(((ProductionTransaction) document).getMovementDate()));
           assertEquals(accountingFact.getBusinessPartner(), null);
-        } else if (doc.getEntityName().equals(LandedCost.ENTITY_NAME)) {
+        } else if (document.getEntityName().equals(LandedCost.ENTITY_NAME)) {
           assertEquals(formatDate(accountingFact.getTransactionDate()),
-              formatDate(((LandedCost) doc).getReferenceDate()));
+              formatDate(((LandedCost) document).getReferenceDate()));
           assertEquals(formatDate(accountingFact.getAccountingDate()),
-              formatDate(((LandedCost) doc).getReferenceDate()));
+              formatDate(((LandedCost) document).getReferenceDate()));
           if (i % 2 == 0) {
             assertEquals(
                 accountingFact.getBusinessPartner(),
@@ -12891,25 +12916,25 @@ public class TestCosting extends BaseDataSourceTestDal {
           } else {
             assertEquals(accountingFact.getBusinessPartner(), null);
           }
-        } else if (doc.getEntityName().equals(LandedCostCost.ENTITY_NAME)) {
+        } else if (document.getEntityName().equals(LandedCostCost.ENTITY_NAME)) {
           assertEquals(formatDate(accountingFact.getTransactionDate()),
-              formatDate(((LandedCostCost) doc).getAccountingDate()));
+              formatDate(((LandedCostCost) document).getAccountingDate()));
           assertEquals(formatDate(accountingFact.getAccountingDate()),
-              formatDate(((LandedCostCost) doc).getAccountingDate()));
+              formatDate(((LandedCostCost) document).getAccountingDate()));
           if (i == 0
               || (documentPostAssert.getProductId() != null
                   && OBDal
                       .getInstance()
                       .get(
                           InvoiceLine.class,
-                          ((LandedCostCost) doc).getLandedCostMatchedList().get(0).getInvoiceLine()
-                              .getId()).getProduct() != null && documentPostAssert.getProductId()
-                  .equals(
+                          ((LandedCostCost) document).getLandedCostMatchedList().get(0)
+                              .getInvoiceLine().getId()).getProduct() != null && documentPostAssert
+                  .getProductId().equals(
                       OBDal
                           .getInstance()
                           .get(
                               InvoiceLine.class,
-                              ((LandedCostCost) doc).getLandedCostMatchedList().get(0)
+                              ((LandedCostCost) document).getLandedCostMatchedList().get(0)
                                   .getInvoiceLine().getId()).getProduct().getId()))) {
             assertEquals(
                 accountingFact.getBusinessPartner(),
@@ -12917,33 +12942,33 @@ public class TestCosting extends BaseDataSourceTestDal {
                     .getInstance()
                     .get(
                         InvoiceLine.class,
-                        ((LandedCostCost) doc).getLandedCostMatchedList().get(0).getInvoiceLine()
-                            .getId()).getBusinessPartner());
+                        ((LandedCostCost) document).getLandedCostMatchedList().get(0)
+                            .getInvoiceLine().getId()).getBusinessPartner());
           } else {
             assertEquals(accountingFact.getBusinessPartner(), null);
           }
         } else {
           assertEquals(formatDate(accountingFact.getTransactionDate()),
-              formatDate((Date) doc.get("accountingDate")));
+              formatDate((Date) document.get("accountingDate")));
           assertEquals(formatDate(accountingFact.getAccountingDate()),
-              formatDate((Date) doc.get("accountingDate")));
-          assertEquals(accountingFact.getBusinessPartner(), doc.get("businessPartner"));
+              formatDate((Date) document.get("accountingDate")));
+          assertEquals(accountingFact.getBusinessPartner(), document.get("businessPartner"));
         }
 
         if ((productId != null && productId.equals(LANDEDCOSTTYPE3_ID))
-            || (doc.getEntityName().equals(Invoice.ENTITY_NAME) && ((Invoice) doc).getCurrency()
-                .getId().equals(CURRENCY2_ID))
-            || (doc.getEntityName().equals(LandedCost.ENTITY_NAME) && ((LCReceiptLineAmt) line)
+            || (document.getEntityName().equals(Invoice.ENTITY_NAME) && ((Invoice) document)
+                .getCurrency().getId().equals(CURRENCY2_ID))
+            || (document.getEntityName().equals(LandedCost.ENTITY_NAME) && ((LCReceiptLineAmt) line)
                 .getLandedCostCost()
                 .getLandedCostType()
                 .equals(
                     OBDal.getInstance().get(Product.class, LANDEDCOSTTYPE3_ID)
                         .getLandedCostTypeList().get(0)))
-            || (doc.getEntityName().equals(LandedCostCost.ENTITY_NAME)
+            || (document.getEntityName().equals(LandedCostCost.ENTITY_NAME)
                 && ((LCMatched) line).getInvoiceLine().getProduct() != null && ((LCMatched) line)
                 .getInvoiceLine().getProduct().getId().equals(LANDEDCOSTTYPE3_ID))
-            || (!doc.getEntityName().equals(Invoice.ENTITY_NAME)
-                && !doc.getEntityName().equals(ReceiptInvoiceMatch.ENTITY_NAME)
+            || (!document.getEntityName().equals(Invoice.ENTITY_NAME)
+                && !document.getEntityName().equals(ReceiptInvoiceMatch.ENTITY_NAME)
                 && OBDal.getInstance().get(Organization.class, ORGANIZATION_ID).getCurrency() != null && OBDal
                 .getInstance().get(Organization.class, ORGANIZATION_ID).getCurrency().getId()
                 .equals(CURRENCY2_ID))) {
@@ -12981,7 +13006,7 @@ public class TestCosting extends BaseDataSourceTestDal {
         }
 
         else {
-          if (doc.getEntityName().equals(Invoice.ENTITY_NAME) && i == 0) {
+          if (document.getEntityName().equals(Invoice.ENTITY_NAME) && i == 0) {
             assertEquals(accountingFact.getProduct(), null);
             assertEquals(accountingFact.getUOM(), null);
             assertEquals(accountingFact.getTax(), null);
@@ -12999,7 +13024,7 @@ public class TestCosting extends BaseDataSourceTestDal {
             } else {
               assertEquals(accountingFact.getUOM(), line.get("uOM"));
             }
-            if (!doc.getEntityName().equals(LandedCost.ENTITY_NAME)) {
+            if (!document.getEntityName().equals(LandedCost.ENTITY_NAME)) {
               assertEquals(accountingFact.getLineID(), line.getId());
             }
             assertEquals(accountingFact.getRecordID2(), null);
@@ -13015,11 +13040,11 @@ public class TestCosting extends BaseDataSourceTestDal {
 
         /* Rest of fields assert */
 
-        if (doc.getEntityName().equals(ShipmentInOut.ENTITY_NAME)) {
+        if (document.getEntityName().equals(ShipmentInOut.ENTITY_NAME)) {
           assertEquals(accountingFact.getGLCategory().getName(), "Material Management");
-        } else if (doc.getEntityName().equals(Invoice.ENTITY_NAME)) {
+        } else if (document.getEntityName().equals(Invoice.ENTITY_NAME)) {
           assertEquals(accountingFact.getGLCategory().getName(), "AP Invoice");
-        } else if (doc.getEntityName().equals(CostAdjustment.ENTITY_NAME)) {
+        } else if (document.getEntityName().equals(CostAdjustment.ENTITY_NAME)) {
           assertEquals(accountingFact.getGLCategory().getName(), "None");
         } else {
           assertEquals(accountingFact.getGLCategory().getName(), "Standard");
@@ -13027,9 +13052,9 @@ public class TestCosting extends BaseDataSourceTestDal {
 
         assertEquals(accountingFact.getPostingType(), "A");
 
-        if (doc.getEntityName().equals(ReceiptInvoiceMatch.ENTITY_NAME)) {
+        if (document.getEntityName().equals(ReceiptInvoiceMatch.ENTITY_NAME)) {
           assertEquals(accountingFact.getStorageBin(), null);
-        } else if (doc.getEntityName().equals(InternalMovement.ENTITY_NAME)) {
+        } else if (document.getEntityName().equals(InternalMovement.ENTITY_NAME)) {
           if (i % 2 == 0) {
             assertEquals(accountingFact.getStorageBin(),
                 line.get(InternalMovementLine.PROPERTY_STORAGEBIN));
@@ -13043,31 +13068,31 @@ public class TestCosting extends BaseDataSourceTestDal {
           assertEquals(accountingFact.getStorageBin(), line.get("storageBin"));
         }
 
-        if (doc.getEntityName().equals(InventoryCount.ENTITY_NAME)) {
+        if (document.getEntityName().equals(InventoryCount.ENTITY_NAME)) {
           assertEquals(accountingFact.getDocumentType(), null);
           assertEquals(accountingFact.getDocumentCategory(), "MMI");
-        } else if (doc.getEntityName().equals(ReceiptInvoiceMatch.ENTITY_NAME)) {
+        } else if (document.getEntityName().equals(ReceiptInvoiceMatch.ENTITY_NAME)) {
           assertEquals(accountingFact.getDocumentType(), null);
           assertEquals(accountingFact.getDocumentCategory(), "MXI");
-        } else if (doc.getEntityName().equals(InternalMovement.ENTITY_NAME)) {
+        } else if (document.getEntityName().equals(InternalMovement.ENTITY_NAME)) {
           assertEquals(accountingFact.getDocumentType(), null);
           assertEquals(accountingFact.getDocumentCategory(), "MMM");
-        } else if (doc.getEntityName().equals(InternalConsumption.ENTITY_NAME)) {
+        } else if (document.getEntityName().equals(InternalConsumption.ENTITY_NAME)) {
           assertEquals(accountingFact.getDocumentType(), null);
           assertEquals(accountingFact.getDocumentCategory(), "MIC");
-        } else if (doc.getEntityName().equals(ProductionTransaction.ENTITY_NAME)) {
+        } else if (document.getEntityName().equals(ProductionTransaction.ENTITY_NAME)) {
           assertEquals(accountingFact.getDocumentType(), null);
           assertEquals(accountingFact.getDocumentCategory(), "MMP");
-        } else if (doc.getEntityName().equals(LandedCost.ENTITY_NAME)) {
+        } else if (document.getEntityName().equals(LandedCost.ENTITY_NAME)) {
           assertEquals(accountingFact.getDocumentType(), null);
           assertEquals(accountingFact.getDocumentCategory(), "LDC");
-        } else if (doc.getEntityName().equals(LandedCostCost.ENTITY_NAME)) {
+        } else if (document.getEntityName().equals(LandedCostCost.ENTITY_NAME)) {
           assertEquals(accountingFact.getDocumentType(), null);
           assertEquals(accountingFact.getDocumentCategory(), "LCC");
         } else {
-          assertEquals(accountingFact.getDocumentType(), doc.get("documentType"));
+          assertEquals(accountingFact.getDocumentType(), document.get("documentType"));
           assertEquals(accountingFact.getDocumentCategory(),
-              ((DocumentType) doc.get("documentType")).getDocumentCategory());
+              ((DocumentType) document.get("documentType")).getDocumentCategory());
         }
 
         assertEquals(accountingFact.getSalesRegion(), null);
