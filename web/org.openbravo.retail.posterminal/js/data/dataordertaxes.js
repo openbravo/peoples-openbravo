@@ -401,7 +401,7 @@
       line.set('discountedNet', OB.DEC.Zero, {
         silent: true
       });
-      line.set('linerate', BigDecimal.prototype.ZERO, {
+      line.set('linerate', OB.DEC.One, {
         silent: true
       });
 
@@ -445,8 +445,8 @@
         }
       }).then(function () {
         // Calculate linerate
-        if (orggross === 0 && line.get('net') === 0) {
-          line.set('linerate', BigDecimal.prototype.ZERO, {
+        if (orggross === 0 || line.get('net') === 0) {
+          line.set('linerate', OB.DEC.One, {
             silent: true
           });
         } else {
@@ -618,7 +618,7 @@
       line.set({
         'pricenet': line.get('price'),
         'net': OB.DEC.mul(line.get('price'), line.get('qty')),
-        'linerate': OB.DEC.Zero,
+        'linerate': OB.DEC.One,
         'tax': null,
         'taxAmount': OB.DEC.Zero,
         'taxLines': {}
@@ -707,7 +707,7 @@
       return resultpromise.then(function () {
         // Calculate linerate and taxamount
         if (line.get('gross') === 0 && line.get('net') === 0) {
-          line.set('linerate', BigDecimal.prototype.ZERO, {
+          line.set('linerate', OB.DEC.One, {
             silent: true
           });
         } else {
