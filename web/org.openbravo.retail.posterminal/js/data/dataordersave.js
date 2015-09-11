@@ -95,13 +95,13 @@
         model: model,
         receipt: model.get('order')
       }, function (args) {
+        var receipt = args.context.receipt;
         if (args && args.cancellation && args.cancellation === true) {
           args.context.receipt.set('isbeingprocessed', 'N');
           args.context.receipt.set('hasbeenpaid', 'N');
           args.context.receipt.trigger('paymentCancel');
           return true;
         }
-        var receipt = args.context.receipt;
 
         OB.trace('Execution of pre order save hook OK.');
 
@@ -138,9 +138,12 @@
         OB.trace('Calculationg cashup information.');
 
         // Important: at this point, the receipt is considered final. Nothing must alter it
+        var frozenReceipt = new OB.Model.Order();
+        OB.UTIL.clone(receipt, frozenReceipt);
         OB.info("[receipt.closed] Starting transaction. ReceiptId: " + receipt.get('id'));
         OB.Dal.transaction(function (tx) {
           receipt.set('hasbeenpaid', 'Y');
+          // when all the properties of the receipt have been set, keep a copy
           OB.UTIL.cashUpReport(receipt, function () {
             OB.UTIL.calculateCurrentCash(null, tx);
             OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(receipt.get('documentnoSuffix'), receipt.get('quotationnoSuffix'), function () {
@@ -156,6 +159,9 @@
           OB.error("[receipt.closed] The transaction failed to be commited. ReceiptId: " + receipt.get('id'));
           // rollback other changes
           receipt.set('hasbeenpaid', 'N');
+          if (eventParams && eventParams.callback) {
+            eventParams.callback(frozenReceipt);
+          }
         }, function () {
           // success transaction...
           OB.info("[receipt.closed] Transaction success. ReceiptId: " + receipt.get('id'));
@@ -177,9 +183,6 @@
           }
 
           // create a clone of the receipt to be used when executing the final callback
-          var receiptForCallback = new OB.Model.Order();
-          OB.UTIL.clone(receipt, receiptForCallback);
-
           if (OB.UTIL.HookManager.get('OBPOS_PostSyncReceipt')) {
             // create a clone of the receipt to be used within the hook
             var receiptForPostSyncReceipt = new OB.Model.Order();
@@ -194,7 +197,7 @@
               }, function () {
                 serverMessageForQuotation(receipt);
                 if (eventParams && eventParams.callback) {
-                  eventParams.callback(receiptForCallback);
+                  eventParams.callback(frozenReceipt);
                 }
               });
             }, function () {
@@ -202,7 +205,7 @@
                 receipt: receiptForPostSyncReceipt
               }, function () {
                 if (eventParams && eventParams.callback) {
-                  eventParams.callback(receiptForCallback);
+                  eventParams.callback(frozenReceipt);
                 }
               });
             });
@@ -210,7 +213,7 @@
             OB.trace('Execution Sync process.');
             //If there are no elements in the hook, we can execute the callback asynchronusly with the synchronization process
             if (eventParams && eventParams.callback) {
-              eventParams.callback(receiptForCallback);
+              eventParams.callback(frozenReceipt);
             }
             OB.MobileApp.model.runSyncProcess(function () {
               serverMessageForQuotation(receipt);
