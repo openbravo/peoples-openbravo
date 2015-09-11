@@ -1003,7 +1003,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           hqlWhereClause = " l where l.warehouse = :warehouse order by l.relativePriority, l.id";
           OBQuery<Locator> queryLoc = OBDal.getInstance()
               .createQuery(Locator.class, hqlWhereClause);
-          queryLoc.setNamedParameter("warehouse", order.getWarehouse());
+          queryLoc.setNamedParameter("warehouse", orderLine.getWarehouse());
           queryLoc.setMaxResult(1);
           lineNo += 10;
           if (jsonorder.getLong("orderType") == 1) {
@@ -1376,7 +1376,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       BigDecimal amt = BigDecimal.valueOf(jsonorder.getDouble("payment"));
       FIN_PaymentSchedule paymentSchedule = OBProvider.getInstance().get(FIN_PaymentSchedule.class);
       int stdPrecision = order.getCurrency().getStandardPrecision().intValue();
-      if ((!newLayaway && (notpaidLayaway || creditpaidLayaway || fullypaidLayaway)) || partialpaidLayaway) {
+      if ((!newLayaway && (notpaidLayaway || creditpaidLayaway || fullypaidLayaway))
+          || partialpaidLayaway) {
         paymentSchedule = order.getFINPaymentScheduleList().get(0);
         stdPrecision = order.getCurrency().getStandardPrecision().intValue();
       } else {
