@@ -22,17 +22,18 @@ enyo.kind({
     kind: 'OB.UI.ListCategories',
     classes: 'product_category_search',
     showBestSellers: false,
-    showAllCategories: true
+    showAllCategories: true,
+    tableName: 'searchCategoryTable'
   },
   initComponents: function () {
     this.inherited(arguments);
-    this.$.body.$.listCategories.$.categoryTable.$.theader.hide();
+    this.$.body.$.listCategories.$[this.$.body.$.listCategories.tableName].$.theader.hide();
     this.$.closebutton.hide();
     this.$.header.hide();
   },
   executeOnShow: function () {
     this.$.body.$.listCategories.setStyle('margin-top: -10px');
-    if (this.$.body.$.listCategories.$.categoryTable.selected) {
+    if (this.$.body.$.listCategories.$[this.$.body.$.listCategories.tableName].selected) {
       this.$.body.$.listCategories.categoryExpandSelected();
     }
   },
