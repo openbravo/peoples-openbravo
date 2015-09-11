@@ -18,10 +18,10 @@ enyo.kind({
   style: 'display: table; float: right;',
   components: [{
     name: 'bottomAddrIcon',
-    style: 'display: table-cell; background-image: url(img/ShippingAddress.png); background-repeat: no-repeat;  width: 35px; height: 40px;'
+    style: 'display: table-cell; background-image: url(img/ShippingAddress.png); background-repeat: no-repeat;  width: 35px;'
   }, {
     name: 'identifier',
-    style: 'display: table-cell; text-overflow:ellipsis; white-space: nowrap; overflow: hidden; padding-bottom: 10px;padding-left: 10px;'
+    style: 'display: table-cell; text-overflow:ellipsis; white-space: nowrap; overflow: hidden; padding-bottom: 12px; max-width: 70px;'
   }, {
     style: 'clear: both;'
   }],
