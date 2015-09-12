@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, enyo */
+/*global OB, enyo, _ */
 
 enyo.kind({
   name: 'OB.UI.OrderDetails',
@@ -24,7 +24,12 @@ enyo.kind({
   renderData: function (docNo) {
     var content, orderDate = this.order.get('orderDate');
     if (this.order.get('hasbeenpaid') === 'Y' || this.order.get('isLayaway')) {
-      orderDate = this.order.get('creationDate');
+      orderDate = OB.I18N.normalizeDate(this.order.get('creationDate'));
+      if (_.isNull(orderDate)) {
+        orderDate = new Date();
+      } else {
+        orderDate = OB.I18N.formatHour(new Date(orderDate));
+      }
     }
     if (orderDate instanceof Date) {
       content = OB.I18N.formatHour(orderDate) + ' - ' + docNo;
@@ -34,7 +39,7 @@ enyo.kind({
     this.setContentDetail(content, docNo, orderDate);
   },
   renderDataFromModel: function (order) {
-    var content, me = this,
+    var content,
         orderDate = order.get('orderDate'),
         docNo = order.get('documentNo');
     if (order.get('hasbeenpaid') === 'Y' || order.get('isLayaway')) {
@@ -72,7 +77,7 @@ enyo.kind({
       });
     }
   },
-  orderChanged: function (oldValue) {
+  orderChanged: function () {
     this.renderData(this.order.get('documentNo'));
     this.order.on('change:documentNo', function (model) {
       this.renderData(model.get('documentNo'));
