@@ -32,6 +32,7 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.access.User;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
@@ -60,6 +61,7 @@ public class CashCloseProcessor {
     long t0 = System.currentTimeMillis();
 
     String cashUpId = jsonCashup.getString("id");
+    String userId = jsonCashup.getString("userId");
     JSONArray cashCloseInfo = jsonCashup.getJSONArray("cashCloseInfo");
     OBPOSAppCashup cashUp = OBDal.getInstance().get(OBPOSAppCashup.class, cashUpId);
     ArrayList<FIN_Reconciliation> arrayReconciliations = new ArrayList<FIN_Reconciliation>();
@@ -127,6 +129,9 @@ public class CashCloseProcessor {
       reconciliation.setDocumentNo(getReconciliationDocumentNo(reconciliation.getDocumentType()));
       OBDal.getInstance().save(reconciliation);
     }
+
+    User user = OBDal.getInstance().get(User.class, userId);
+    cashUp.setUserContact(user);
 
     long t1 = System.currentTimeMillis();
 
