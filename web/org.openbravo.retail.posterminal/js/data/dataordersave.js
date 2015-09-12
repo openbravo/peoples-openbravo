@@ -61,6 +61,13 @@
         if (!cashupId) {
           OB.error("The receipt has been closed with empty cashUpId (current value: " + cashupId + ")");
         }
+        
+        // 5. verify that the net is a valid amount
+        _.each(this.get('lines').models, function (line) {
+          if(OB.UTIL.isNullOrUndefined(line.get('net')) || line.get('net') === '') {
+            OB.error("The receipt has been closed with an empty 'net' amount in a line (value: " + line.get('net') + ")");
+          }
+        });
 
       } catch (e) {
         // do nothing, we do not want to generate another error
