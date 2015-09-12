@@ -136,7 +136,7 @@ OB.Model.Executor = Backbone.Model.extend({
 OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
   // parameters that will be used in the SQL to get promotions, in case this SQL is extended,
   // these parameters might be required to be extended too
-  criteriaParams: ['bpId', 'bpId', 'bpId', 'bpId', 'productId', 'productId', 'productId', 'productId', 'productId', 'productId', 'priceListId', 'priceListId'],
+  criteriaParams: ['date', 'bpId', 'bpId', 'bpId', 'bpId', 'productId', 'productId', 'productId', 'productId', 'productId', 'productId', 'priceListId', 'priceListId'],
 
   // defines the property each of the parameters in criteriaParams is translated to, in case of
   // different parameters than standard ones this should be extended
@@ -152,6 +152,10 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
     priceListId: {
       model: 'receipt',
       property: 'priceList'
+    },
+    date: {
+      model: 'receipt',
+      property: 'orderDate'
     }
   },
 
@@ -174,7 +178,11 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
         model = evt.get(paraTrl.model);
       }
 
-      translatedParams.push(model.get(paraTrl.property).id ? model.get(paraTrl.property).id : model.get(paraTrl.property));
+      if (param === 'date') {
+        translatedParams.push(OB.I18N.formatDateISO(new Date()));
+      } else {
+        translatedParams.push(model.get(paraTrl.property).id ? model.get(paraTrl.property).id : model.get(paraTrl.property));
+      }
     });
     return translatedParams;
   },

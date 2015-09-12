@@ -259,7 +259,7 @@
       this.discountRules[name] = rule;
     },
 
-    standardFilter: "WHERE date('now') BETWEEN DATEFROM AND COALESCE(date(DATETO), date('9999-12-31'))" //
+    standardFilter: "WHERE date(?) BETWEEN DATEFROM AND COALESCE(date(DATETO), date('9999-12-31'))" //
     + " AND((BPARTNER_SELECTION = 'Y'" //
     + " AND NOT EXISTS" //
     + " (SELECT 1" //
