@@ -332,8 +332,13 @@
       <index name="M_INOUT_BPARTNER" unique="false">
         <index-column name="C_BPARTNER_ID"/>
       </index>
-      <index name="M_INOUT_DOCUMENTNO" unique="false">
+      <index name="M_INOUT_DOCUMENTNO_ID" unique="false">
         <index-column name="DOCUMENTNO"/>
+        <index-column name="M_INOUT_ID"/>
+      </index>
+      <index name="M_INOUT_MOVEMENTDATE_ID" unique="false">
+        <index-column name="MOVEMENTDATE"/>
+        <index-column name="M_INOUT_ID"/>
       </index>
       <index name="M_INOUT_ORDER" unique="false">
         <index-column name="C_ORDER_ID"/>
