@@ -15,9 +15,8 @@ enyo.kind({
     order: null
   },
   attributes: {
-    style: 'padding: 13px 0px 15px 10px; font-weight: bold; color: #6CB33F; float: left; width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;'
+    style: 'padding: 13px 0px 15px 10px; font-weight: bold; color: #6CB33F; float: left; calc(100% - 50px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;'
   },
-    style: 'padding: 13px 0px 15px 10px; font-weight: bold; color: #6CB33F; float: left; width: calc(100% - 50px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;'ursor: pointer;
   events: {
     onPricelistChanged: ''
   },
