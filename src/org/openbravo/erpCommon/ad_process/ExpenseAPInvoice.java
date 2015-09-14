@@ -21,7 +21,6 @@ package org.openbravo.erpCommon.ad_process;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
-import java.sql.Connection;
 import java.util.HashMap;
 
 import javax.servlet.ServletConfig;
@@ -32,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.ad_actionButton.ActionButtonDefaultData;
 import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
@@ -44,7 +44,6 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class ExpenseAPInvoice extends HttpSecureAppServlet {
@@ -118,9 +117,7 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
     String strProd = "";
     String strEmpl = "";
 
-    Connection conn = null;
     try {
-      conn = new DalConnectionProvider(false).getTransactionConnection();
 
       ExpenseAPInvoiceData[] data = ExpenseAPInvoiceData.select(this,
           Utility.getContext(this, vars, "#User_Client", "ExpenseAPInvoice"),
@@ -172,18 +169,19 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
         // In order to make different purchase invoices for expense
         // lines assigned to different projects
         if (data[i].cProjectId.equals("")) {
-          strcInvoiceIdOld = ExpenseAPInvoiceData.selectInvoiceHeaderNoProject(conn, this,
-              data[i].adClientId, data[i].adOrgId, strDateInvoiced, data[i].cBpartnerId,
-              strBPCCurrencyId, data[i].cActivityId, data[i].cCampaignId, strcBpartnerLocationId,
-              strPaymentRule, strPaymentMethodId, strPaymentterm, data[i].cCostcenterId,
-              data[i].aAssetId, data[i].user1Id, data[i].user2Id);
-
-        } else {
-          strcInvoiceIdOld = ExpenseAPInvoiceData.selectInvoiceHeader(conn, this,
-              data[i].adClientId, data[i].adOrgId, strDateInvoiced, data[i].cBpartnerId,
-              strBPCCurrencyId, data[i].cProjectId, data[i].cActivityId, data[i].cCampaignId,
+          strcInvoiceIdOld = ExpenseAPInvoiceData.selectInvoiceHeaderNoProject(OBDal.getInstance()
+              .getConnection(), this, data[i].adClientId, data[i].adOrgId, strDateInvoiced,
+              data[i].cBpartnerId, strBPCCurrencyId, data[i].cActivityId, data[i].cCampaignId,
               strcBpartnerLocationId, strPaymentRule, strPaymentMethodId, strPaymentterm,
               data[i].cCostcenterId, data[i].aAssetId, data[i].user1Id, data[i].user2Id);
+
+        } else {
+          strcInvoiceIdOld = ExpenseAPInvoiceData.selectInvoiceHeader(OBDal.getInstance()
+              .getConnection(), this, data[i].adClientId, data[i].adOrgId, strDateInvoiced,
+              data[i].cBpartnerId, strBPCCurrencyId, data[i].cProjectId, data[i].cActivityId,
+              data[i].cCampaignId, strcBpartnerLocationId, strPaymentRule, strPaymentMethodId,
+              strPaymentterm, data[i].cCostcenterId, data[i].aAssetId, data[i].user1Id,
+              data[i].user2Id);
         }
 
         if (strcInvoiceIdOld.equals("")) {
@@ -197,17 +195,17 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
 
           // Catch database error message
           try {
-            ExpenseAPInvoiceData.insert(conn, this, strcInvoiceId, "N", "", "N", "N", "N", "N",
-                "N", data[i].adClientId, data[i].adOrgId, "", "", strDocumentno, "", "", "Y",
-                docTargetType, strDateInvoiced, strDateInvoiced, data[i].cBpartnerId,
-                strcBpartnerLocationId, "", strPricelistId, strBPCCurrencyId, strSalesrepId, "N",
-                "", "", strPaymentRule, strPaymentMethodId, strPaymentterm, "N", "N",
-                data[i].cProjectId, data[i].cActivityId, data[i].cCampaignId, vars.getOrg(),
-                data[i].user1Id, data[i].user2Id, "0", "0", "DR", strDocType, "N", "CO", "N",
-                vars.getUser(), vars.getUser(), data[i].cCostcenterId, data[i].aAssetId);
+            ExpenseAPInvoiceData.insert(OBDal.getInstance().getConnection(), this, strcInvoiceId,
+                "N", "", "N", "N", "N", "N", "N", data[i].adClientId, data[i].adOrgId, "", "",
+                strDocumentno, "", "", "Y", docTargetType, strDateInvoiced, strDateInvoiced,
+                data[i].cBpartnerId, strcBpartnerLocationId, "", strPricelistId, strBPCCurrencyId,
+                strSalesrepId, "N", "", "", strPaymentRule, strPaymentMethodId, strPaymentterm,
+                "N", "N", data[i].cProjectId, data[i].cActivityId, data[i].cCampaignId,
+                vars.getOrg(), data[i].user1Id, data[i].user2Id, "0", "0", "DR", strDocType, "N",
+                "CO", "N", vars.getUser(), vars.getUser(), data[i].cCostcenterId, data[i].aAssetId);
           } catch (ServletException ex) {
             myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
-            releaseRollbackConnection(conn);
+            OBDal.getInstance().rollbackAndClose();
             return myMessage;
           }
 
@@ -300,9 +298,10 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
 
         // Checks if there are lines with the same conditions in the
         // current invoice
-        ExpenseAPInvoiceData[] dataInvoiceline = ExpenseAPInvoiceData.selectInvoiceLine(conn, this,
-            strcInvoiceId, data[i].adClientId, data[i].adOrgId, data[i].mProductId, data[i].cUomId,
-            strPricestd, strPricelist, strPricelimit, data[i].description, strcTaxID);
+        ExpenseAPInvoiceData[] dataInvoiceline = ExpenseAPInvoiceData.selectInvoiceLine(OBDal
+            .getInstance().getConnection(), this, strcInvoiceId, data[i].adClientId,
+            data[i].adOrgId, data[i].mProductId, data[i].cUomId, strPricestd, strPricelist,
+            strPricelimit, data[i].description, strcTaxID);
 
         if (log4j.isDebugEnabled())
           log4j.debug("dataInvoiceline: " + dataInvoiceline.length);
@@ -310,7 +309,8 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
           // If it is a new line, calculates c_invoiceline_id and qty
           strcInvoiceLineId = SequenceIdData.getUUID();
           qty = new BigDecimal(data[i].qty);
-          String strLine = ExpenseAPInvoiceData.selectLine(conn, this, strcInvoiceId);
+          String strLine = ExpenseAPInvoiceData.selectLine(OBDal.getInstance().getConnection(),
+              this, strcInvoiceId);
           if (strLine.equals(""))
             strLine = "10";
           line += Integer.valueOf(strLine);
@@ -337,18 +337,18 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
           // Catch database error message
           try {
             int stdPrecision = Integer.parseInt(strStdPrecision);
-            ExpenseAPInvoiceData.insertLine(conn, this, data[i].adClientId, data[i].adOrgId,
-                strcInvoiceId, "", String.valueOf(line), "", data[i].mProductId, "",
-                data[i].description, "", strmProductUomId, String.valueOf(qty), data[i].cUomId,
-                strPricestd, strPricelist, strcTaxID, ((new BigDecimal(strPricestd).setScale(
-                    stdPrecision, BigDecimal.ROUND_HALF_UP)).multiply(qty)).toPlainString(), "",
-                strPricestd, strPricelimit, "", "", "", "Y", "0", "", "", strcInvoiceLineId, "N",
-                vars.getUser(), vars.getUser(), isDeferred, planType, periodNumber,
-                startingPeriodId, data[i].cProjectId, data[i].cCostcenterId, data[i].aAssetId,
-                data[i].user1Id, data[i].user2Id);
+            ExpenseAPInvoiceData.insertLine(OBDal.getInstance().getConnection(), this,
+                data[i].adClientId, data[i].adOrgId, strcInvoiceId, "", String.valueOf(line), "",
+                data[i].mProductId, "", data[i].description, "", strmProductUomId, String
+                    .valueOf(qty), data[i].cUomId, strPricestd, strPricelist, strcTaxID,
+                ((new BigDecimal(strPricestd).setScale(stdPrecision, BigDecimal.ROUND_HALF_UP))
+                    .multiply(qty)).toPlainString(), "", strPricestd, strPricelimit, "", "", "",
+                "Y", "0", "", "", strcInvoiceLineId, "N", vars.getUser(), vars.getUser(),
+                isDeferred, planType, periodNumber, startingPeriodId, data[i].cProjectId,
+                data[i].cCostcenterId, data[i].aAssetId, data[i].user1Id, data[i].user2Id);
           } catch (ServletException ex) {
             myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
-            releaseRollbackConnection(conn);
+            OBDal.getInstance().rollbackAndClose();
             return myMessage;
           }
         } else {
@@ -358,11 +358,12 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
           qty = new BigDecimal(dataInvoiceline[0].qtyinvoiced).add(new BigDecimal(data[i].qty));
           // Catch database error message
           try {
-            ExpenseAPInvoiceData.updateInvoiceline(conn, this, String.valueOf(qty),
-                (new BigDecimal(strPricestd).multiply(qty)).toPlainString(), strcInvoiceLineId);
+            ExpenseAPInvoiceData.updateInvoiceline(OBDal.getInstance().getConnection(), this,
+                String.valueOf(qty), (new BigDecimal(strPricestd).multiply(qty)).toPlainString(),
+                strcInvoiceLineId);
           } catch (ServletException ex) {
             myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
-            releaseRollbackConnection(conn);
+            OBDal.getInstance().rollbackAndClose();
             return myMessage;
           }
         }
@@ -370,10 +371,10 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
         if (!data[i].cProjectId.equals("")) {
           // If there are acctdimensions that full filled the
           // requirements
-          ExpenseAPInvoiceData[] dataAcctdimension = ExpenseAPInvoiceData.selectAcctdimension(conn,
-              this, data[i].adClientId, data[i].adOrgId, strcInvoiceLineId, data[i].cProjectId,
-              data[i].cCampaignId, data[i].cCostcenterId, data[i].aAssetId, data[i].user1Id,
-              data[i].user2Id);
+          ExpenseAPInvoiceData[] dataAcctdimension = ExpenseAPInvoiceData.selectAcctdimension(OBDal
+              .getInstance().getConnection(), this, data[i].adClientId, data[i].adOrgId,
+              strcInvoiceLineId, data[i].cProjectId, data[i].cCampaignId, data[i].cCostcenterId,
+              data[i].aAssetId, data[i].user1Id, data[i].user2Id);
           int StdPrecision = Integer.valueOf(strStdPrecision).intValue();
           if (dataAcctdimension == null || dataAcctdimension.length == 0) {
             String strcInvoicelineAcctdimension = SequenceIdData.getUUID();
@@ -381,14 +382,14 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
             try {
               BigDecimal roundPriceStd = qty.multiply(new BigDecimal(strPricestd));
               roundPriceStd = roundPriceStd.setScale(StdPrecision, BigDecimal.ROUND_HALF_UP);
-              ExpenseAPInvoiceData.insertInvoicelineAcctdimension(conn, this,
-                  strcInvoicelineAcctdimension, data[i].adClientId, data[i].adOrgId, "Y",
-                  vars.getUser(), vars.getUser(), strcInvoiceLineId, roundPriceStd.toPlainString(),
-                  data[i].cProjectId, data[i].cCampaignId, data[i].user1Id, data[i].user2Id,
-                  data[i].cCostcenterId, data[i].aAssetId);
+              ExpenseAPInvoiceData.insertInvoicelineAcctdimension(OBDal.getInstance()
+                  .getConnection(), this, strcInvoicelineAcctdimension, data[i].adClientId,
+                  data[i].adOrgId, "Y", vars.getUser(), vars.getUser(), strcInvoiceLineId,
+                  roundPriceStd.toPlainString(), data[i].cProjectId, data[i].cCampaignId,
+                  data[i].user1Id, data[i].user2Id, data[i].cCostcenterId, data[i].aAssetId);
             } catch (ServletException ex) {
               myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
-              releaseRollbackConnection(conn);
+              OBDal.getInstance().rollbackAndClose();
               return myMessage;
             }
           } else {
@@ -399,11 +400,11 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
             amount = amount.setScale(StdPrecision, BigDecimal.ROUND_HALF_UP);
             // Catch database error message
             try {
-              ExpenseAPInvoiceData.updateAcctdimension(conn, this, String.valueOf(amount),
-                  dataAcctdimension[0].cInvoicelineAcctdimensionId);
+              ExpenseAPInvoiceData.updateAcctdimension(OBDal.getInstance().getConnection(), this,
+                  String.valueOf(amount), dataAcctdimension[0].cInvoicelineAcctdimensionId);
             } catch (ServletException ex) {
               myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
-              releaseRollbackConnection(conn);
+              OBDal.getInstance().rollbackAndClose();
               return myMessage;
             }
           }
@@ -411,15 +412,15 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
         // Catch database error message
         try {
           // Updates expense line with the invoice line ID
-          ExpenseAPInvoiceData.updateExpense(conn, this, strcInvoiceLineId,
-              data[i].sTimeexpenselineId);
+          ExpenseAPInvoiceData.updateExpense(OBDal.getInstance().getConnection(), this,
+              strcInvoiceLineId, data[i].sTimeexpenselineId);
         } catch (ServletException ex) {
           myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
-          releaseRollbackConnection(conn);
+          OBDal.getInstance().rollbackAndClose();
           return myMessage;
         }
       }
-      releaseCommitConnection(conn);
+      OBDal.getInstance().commitAndClose();
 
       myMessage.setType("Success");
       myMessage.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
@@ -430,7 +431,7 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
       return myMessage;
     } catch (ArrayIndexOutOfBoundsException f) {
       try {
-        releaseRollbackConnection(conn);
+        OBDal.getInstance().rollbackAndClose();
       } catch (Exception ignored) {
       }
       f.printStackTrace();
@@ -447,7 +448,7 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
       return myMessage;
     } catch (Exception e) {
       try {
-        releaseRollbackConnection(conn);
+        OBDal.getInstance().rollbackAndClose();
       } catch (Exception ignored) {
       }
       e.printStackTrace();
