@@ -119,6 +119,8 @@ function displayAdvancedFilters(){
         displayLogicElement('advancedFiltersrow3', true);
         displayLogicElement('advancedFiltersrow4', true);
         displayLogicElement('advancedFiltersrow5', true);
+        displayLogicElement('advancedFiltersrow6', true);
+        displayDocumentNo();
     }
     else{
         displayLogicElement('advancedFiltersrow0', false);
@@ -127,6 +129,40 @@ function displayAdvancedFilters(){
         displayLogicElement('advancedFiltersrow3', false);
         displayLogicElement('advancedFiltersrow4', false);
         displayLogicElement('advancedFiltersrow5', false);
+        displayLogicElement('advancedFiltersrow6', false);
+    }
+}
+
+function displayDocumentNo(){
+    switch (inpDocument.options[inpDocument.selectedIndex].value) {
+      case "APC":
+      case "API":
+      case "APP":
+      case "ARC":
+      case "ARI":
+      case "ARI_RM":
+      case "ARR":
+      case "BSF":
+      case "CAD":
+      case "DDB":
+      case "GLJ":
+      case "LDC":
+      case "REC":
+      case "REM_REM":
+        displayLogicElement('advancedFiltersrow2', true);
+        break;
+      case "AMZ":
+      case "CMC":
+      case "FAT":
+      case "LCC":
+      case "REM_REMCANCEL":
+      case "REM_REMRETURN":
+        displayLogicElement('advancedFiltersrow2', false);
+        paramDocumentNo.value = "";
+        break;
+      default:
+        displayLogicElement('advancedFiltersrow2', false);
+        paramDocumentNo.value = "";
     }    
 }
 
@@ -253,6 +289,7 @@ function callback(paramXMLParticular, XMLHttpRequestObj) {
         updateMenuIcon('buttonMenu');
 
         setWindowElementFocus('firstElement');
+        displayDocumentNo();
         displayAdvancedFilters();
         selectDocument();
         openTabWhenPost();
@@ -550,14 +587,18 @@ function callback(paramXMLParticular, XMLHttpRequestObj) {
             </tr>
             <tr id=advancedFiltersrow1>
              <td class="TitleCell"><span class="LabelText">Document</span></td>
-              <td class="Combo_ContentCell" colspan="2"> <select  name="inpDocument" id="inpDocument" class="Combo Combo_TwoCells_width">
+              <td class="Combo_ContentCell" colspan="2"> <select  name="inpDocument" id="inpDocument" class="Combo Combo_TwoCells_width" onchange="displayDocumentNo();">
                   <option value=""> <div id="reportDocument"></div></option>
                 </select></td>
                  <td class="TitleCell"><span class="LabelText">Initial Page Number</span></td>
               <td class="TextBox_ContentCell"> <input dojoType="openbravo:Textbox"  class="dojoValidateValid TextBox_OneCell_width" type="text" name="inpPageNo" id="paramPageNo" size="10" maxlength="10" value=""></input><script>djConfig.searchIds.push("paramPageNo");</script>
               </td>
             </tr>
-             <tr id=advancedFiltersrow2>              
+            <tr id=advancedFiltersrow2>
+               <td class="TitleCell"><span class="LabelText">Document No.</span></td>
+               <td class="TextBox_ContentCell"><input dojoType="openbravo:Textbox"  class="dojoValidateValid TextBox_OneCell_width" type="text" name="inpDocumentNo" id="paramDocumentNo" size="10" maxlength="10" value=""></input><script>djConfig.searchIds.push("paramPageNo");</script></td>
+            </tr>
+             <tr id=advancedFiltersrow3>
               <td class="TitleCell"><span class="LabelText">Initial Entry Number</span></td>
               <td class="TextBox_ContentCell">
                 <input dojoType="openbravo:Textbox" class="dojoValidateValid TextBox_OneCell_width" type="text" name="inpEntryNo"
@@ -569,14 +610,14 @@ function callback(paramXMLParticular, XMLHttpRequestObj) {
             <td class="Radio_Check_ContentCell"><input TYPE="checkbox" id="paramShowRegular" name="inpShowRegular" value="Y"/></td>
             </tr>
             
-        <tr id=advancedFiltersrow3>      
+        <tr id=advancedFiltersrow4>
           <td class="TitleCell"><span class="LabelText">Show P&L Closing Entries</span></td>
           <td class="Radio_Check_ContentCell"><input TYPE="checkbox" id="paramShowReg" name="inpShowReg" value="Y"/></td>
           <td class="ContentCell"></td>
            <td class="TitleCell"><span class="LabelText">Show Opening Entries</span></td>
           <td class="Radio_Check_ContentCell"><input TYPE="checkbox" id="paramShowOpening" name="inpShowOpening" value="Y"/></td>
         </tr>
-        <tr id=advancedFiltersrow4>          
+        <tr id=advancedFiltersrow5>
           <td class="TitleCell"><span class="LabelText">Show Closing Entries</span></td>
           <td class="Radio_Check_ContentCell"><input TYPE="checkbox" id="paramShowClosing" name="inpShowClosing" value="Y"/></td>
           <td class="ContentCell"></td>
@@ -584,7 +625,7 @@ function callback(paramXMLParticular, XMLHttpRequestObj) {
           <td class="Radio_Check_ContentCell"><input TYPE="checkbox" id="paramShowDescription" name="inpShowDescription" value="Y"/></td>
           <td class="ContentCell"></td>
         </tr>
-        <tr id=advancedFiltersrow5>
+        <tr id=advancedFiltersrow6>
           <td class="TitleCell"><span class="LabelText">Show Divide Up Entries</span></td>
           <td class="Radio_Check_ContentCell"><input TYPE="checkbox" id="paramShowDivideUp" name="inpShowDivideUp" value="Y"/></td>
           <td class="ContentCell"></td>
