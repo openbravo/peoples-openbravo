@@ -115,6 +115,10 @@ enyo.kind({
     name: 'receiptButtons',
     style: 'clear: both; '
   }],
+  resizeHandler: function () {
+    this.inherited(arguments);
+    this.setOrderDetailWidth(this.showPin, this.showSelectAll);
+  },
   orderChanged: function (oldValue) {
     _.each(this.$.receiptLabels.$, function (comp) {
       if (comp.setOrder) {
@@ -128,6 +132,8 @@ enyo.kind({
     }, this);
   },
   setOrderDetailWidth: function (pin, selectAll) {
+    this.showPin = pin;
+    this.showSelectAll = selectAll;
     var w = $("#" + this.$.receiptLabels.id).width() - 25;
     if (pin) {
       w = w - $("#" + this.$.receiptLabels.$.btnSingleSelection.id).width() - 20;
@@ -168,6 +174,8 @@ enyo.kind({
   },
   initComponents: function () {
     this.inherited(arguments);
+    this.showPin = false;
+    this.showSelectAll = false;
     enyo.forEach(this.newLabelComponents, function (comp) {
       this.$.receiptLabels.createComponent(comp);
     }, this);
