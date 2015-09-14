@@ -236,10 +236,18 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
           order.setObposAppCashup(jsonorder.getString("obposAppCashup"));
           order.setDelivered(true);
-          for (int i = 0; i < order.getOrderLineList().size(); i++) {
-            lineReferences.add(order.getOrderLineList().get(i));
-            orderLine = order.getOrderLineList().get(i);
-            orderLine.setDeliveredQuantity(orderLine.getOrderedQuantity());
+          for (int i = 0; i < orderlines.length(); i++) {
+            JSONObject jsonOrderLine = orderlines.getJSONObject(i);
+            JSONObject jsonProduct = jsonOrderLine.getJSONObject("product");
+            String productId = jsonProduct.getString("id");
+            for (int j = 0; j < order.getOrderLineList().size(); j++) {
+              orderLine = order.getOrderLineList().get(j);
+              if (orderLine.getProduct().getId().equals(productId)) {
+                orderLine.setDeliveredQuantity(orderLine.getOrderedQuantity());
+                lineReferences.add(orderLine);
+                break;
+              }
+            }
           }
         } else if (partialpaidLayaway) {
           order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
