@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, enyo */
+/*global OB, enyo, _ */
 
 enyo.kind({
   name: 'OB.UI.ModalReceiptPropertiesImpl',
@@ -118,17 +118,35 @@ enyo.kind({
   },
 
   init: function (model) {
+    var me = this,
+        criteria = {};
     this.setHeader(OB.I18N.getLabel('OBPOS_ReceiptPropertiesDialogTitle'));
 
     this.model = model.get('order');
     this.model.on('change', function () {
       var diff = this.model.changedAttributes(),
-          att;
+          att, bp = this.model.get('bp');
       for (att in diff) {
         if (diff.hasOwnProperty(att)) {
           this.loadValue(att);
         }
       }
+      if (!_.isNull(bp)) {
+        criteria.bpartner = bp.get('id');
+        OB.Dal.find(OB.Model.BPLocation, criteria, function (dataBps) {
+          if (dataBps && dataBps.length === 1 && (dataBps.models[0].get('isBillTo') && dataBps.models[0].get('isShipTo'))) {
+            me.$.bodyContent.$.attributes.$.line_addressshipbutton.hide();
+            me.$.bodyContent.$.attributes.$.line_addressbillbutton.$.labelLine.setContent(OB.I18N.getLabel('OBPOS_LblAddress'));
+          } else {
+            me.$.bodyContent.$.attributes.$.line_addressshipbutton.show();
+            me.$.bodyContent.$.attributes.$.line_addressbillbutton.$.labelLine.setContent(OB.I18N.getLabel('OBPOS_LblBillAddr'));
+          }
+        }, function (tx, error) {
+          OB.UTIL.showError("OBDAL error: " + error);
+        });
+      }
+
+
     }, this);
 
     this.model.on('paymentAccepted', function () {

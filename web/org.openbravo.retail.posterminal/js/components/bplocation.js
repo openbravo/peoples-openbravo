@@ -448,6 +448,7 @@ enyo.kind({
     this.waterfall('onSetShow', {
       visibility: this.args.visibilityButtons
     });
+    this.changedTitle(this.model.get('order').get('bp'));
     this.$.body.$.listBpsLoc.setBPartner(this.model.get('order').get('bp'));
     this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.searchAction();
     this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.$.newAction.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers'));
@@ -456,7 +457,27 @@ enyo.kind({
   executeOnHide: function () {
     this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.$.bpsLocationSearchfilterText.setValue('');
   },
-  i18nHeader: 'OBPOS_LblAssignCustomerAddress',
+  changedTitle: function (bp) {
+    var me = this,
+        criteria = {};
+
+    function successCallbackBPsLoc(dataBps) {
+      if (dataBps && dataBps.length > 1) {
+        me.$.header.setContent(OB.I18N.getLabel('OBPOS_LblAssignCustomerBillAddress'));
+      } else if (dataBps.models[0].get('isBillTo') && dataBps.models[0].get('isShipTo')) {
+        me.$.header.setContent(OB.I18N.getLabel('OBPOS_LblAssignCustomerAddress'));
+      } else {
+        me.$.header.setContent(OB.I18N.getLabel('OBPOS_LblAssignCustomerBillAddress'));
+      }
+    }
+
+    function errorCallback(tx, error) {
+      OB.UTIL.showError("OBDAL error: " + error);
+    }
+    criteria.bpartner = bp.get('id');
+    OB.Dal.find(OB.Model.BPLocation, criteria, successCallbackBPsLoc, errorCallback);
+  },
+  i18nHeader: '',
   body: {
     kind: 'OB.UI.ListBpsLoc'
   },

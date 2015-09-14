@@ -15,6 +15,7 @@ enyo.kind({
   kind: 'OB.UI.SmallButton',
   name: 'OB.UI.BPLocationShip',
   classes: 'btnlink-gray',
+  showing: false,
   style: 'display: table; float: right;',
   components: [{
     name: 'bottomAddrIcon',
@@ -45,6 +46,38 @@ enyo.kind({
       this.addClass('btnlink');
     }
   },
+  chagedStyle: function (status) {
+    var me = this;
+    if (!status) {
+      me.setShowing(status);
+      me.parent.$.bplocbutton.$.bottomAddrIcon.applyStyle('display', 'none');
+      me.parent.$.bplocbutton.$.identifier.applyStyle('max-width', '200px');
+    } else {
+      me.setShowing(status);
+      me.parent.$.bplocbutton.$.bottomAddrIcon.applyStyle('display', 'table-cell');
+      me.parent.$.bplocbutton.$.identifier.applyStyle('max-width', '70px');
+    }
+  },
+  buttonShowing: function (bp) {
+    var criteria = {},
+        me = this;
+    if (!bp.get('locShipId') && !bp.get('locId')) {
+      me.chagedStyle(false);
+    } else if (bp.get('locShipId') === bp.get('locId')) {
+      criteria.bpartner = bp.get('id');
+      OB.Dal.find(OB.Model.BPLocation, criteria, function (dataBps) {
+        if (dataBps && dataBps.length > 1) {
+          me.chagedStyle(true);
+        } else {
+          me.chagedStyle(false);
+        }
+      }, function (tx, error) {
+        OB.UTIL.showError("OBDAL error: " + error);
+      });
+    } else {
+      me.chagedStyle(true);
+    }
+  },
   tap: function () {
     if (!this.disabled) {
       this.doShowPopup({
@@ -67,6 +100,7 @@ enyo.kind({
 
     this.order.on('change:bp', function (model) {
       if (model.get('bp')) {
+        this.buttonShowing(model.get('bp'));
         this.renderBPLocation(_.isNull(model.get('bp').get('locShipName')) ? OB.I18N.getLabel('OBPOS_LblEmptyAddress') : model.get('bp').get('locShipName'));
       } else {
         this.renderBPLocation(OB.I18N.getLabel('OBPOS_LblEmptyAddress'));
