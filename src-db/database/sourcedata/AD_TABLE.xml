@@ -133,13 +133,16 @@
 <!--28BE992AF4EF44728E1C7E72377B3785-->  <DATAORIGINTYPE><![CDATA[HQL]]></DATAORIGINTYPE>
 <!--28BE992AF4EF44728E1C7E72377B3785-->  <ISTREE><![CDATA[N]]></ISTREE>
 <!--28BE992AF4EF44728E1C7E72377B3785-->  <HQLQUERY><![CDATA[select e.id as id, e.organization as organization, e.name as name, 
-e.searchKey as searchKey, e.locationAddress as locationAddress, 
+e.searchKey as searchKey, locationAddress, 
 e.allocated as allocated, 
 (select (case when count(*) = 0 then false else true end) 
 from OrganizationWarehouse as ow where ow.organization.id = 'replace_org_id'
 and ow.warehouseType = 'cross_channel' and ow.warehouse.id= e.id) as OB_Selected, 
-e.locationAddress.postalCode as postalCode, e.locationAddress.region as region, e.locationAddress.country as country
+locationAddress.postalCode as postalCode, region, country
 from Warehouse as e
+left join e.locationAddress as locationAddress 
+left join locationAddress.country as country
+left join locationAddress.region as region
 where @additional_filters@]]></HQLQUERY>
 <!--28BE992AF4EF44728E1C7E72377B3785-->  <ENTITY_ALIAS><![CDATA[e]]></ENTITY_ALIAS>
 <!--28BE992AF4EF44728E1C7E72377B3785--></AD_TABLE>
