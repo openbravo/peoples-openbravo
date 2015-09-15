@@ -187,7 +187,7 @@ enyo.kind({
                 }]
               }]
             }, {
-              style: 'overflow:auto; height: 454px;',
+              style: 'overflow:auto; height: 454px; align:left; width:100%',
               components: [{
                 name: 'paymentsList',
                 kind: 'OB.UI.Table',
@@ -205,10 +205,9 @@ enyo.kind({
             }, {
               classes: 'row-fluid',
               components: [{
-                classes: 'span12',
                 style: 'border-bottom: 1px solid #cccccc; border-top: 1px solid #cccccc; height: 70px;',
                 components: [{
-                  style: 'float:left; display: table-row;',
+                  style: 'float:left; display: table-row; width: 33%',
                   components: [{
                     name: 'totalLbl',
                     style: 'padding: 10px 20px 10px 10px; display: table-cell;',
@@ -223,7 +222,7 @@ enyo.kind({
                     }]
                   }]
                 }, {
-                  style: 'float:left; display: table-row;',
+                  style: 'float:left; display: table-row; width: 33%',
                   components: [{
                     name: 'countedLbl',
                     style: 'padding: 10px 20px 10px 10px; display: table-cell;',
@@ -238,7 +237,7 @@ enyo.kind({
                     }]
                   }]
                 }, {
-                  style: 'float:left; display: table-row;',
+                  style: 'float:left; display: table-row; width: 33%',
                   components: [{
                     name: 'differenceLbl',
                     style: 'padding: 10px 20px 10px 10px; display: table-cell;',
