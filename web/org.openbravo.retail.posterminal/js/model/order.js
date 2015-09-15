@@ -1098,7 +1098,7 @@
               if (OB.MobileApp.model.get('terminal').businessPartner === me.get('bp').get('id')) {
                 for (i = 0; i < me.get('undo').lines.length; i++) {
                   if (!me.get('undo').lines[i].get('product').get('oBPOSAllowAnonymousSale')) {
-                    OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_AnonymousSaleForProductNotAllowed', [me.get('undo').lines[i].get('product').get('_identifier')]));
+                    OB.UTIL.showConfirmation.display("Error", OB.I18N.getLabel('OBPOS_AnonymousSaleForProductNotAllowed', [me.get('undo').lines[i].get('product').get('_identifier')]));
                     return;
                   }
                 }
@@ -1136,7 +1136,7 @@
             line: line,
             undo: function () {
               if (!line.get('product').get('oBPOSAllowAnonymousSale') && OB.MobileApp.model.get('terminal').businessPartner === me.get('bp').get('id')) {
-                OB.UTIL.showI18NWarning('OBPOS_AnonymousSaleNotAllowed');
+                OB.UTIL.showConfirmation.display("Error", OB.I18N.getLabel('OBPOS_AnonymousSaleNotAllowed'));
                 return;
               }
               line.unset('obposIsDeleted');
@@ -1489,7 +1489,7 @@
           return;
         }
         if (OB.MobileApp.model.get('terminal').businessPartner === me.get('bp').get('id') && args && args.productToAdd && !args.productToAdd.get('oBPOSAllowAnonymousSale')) {
-          OB.UTIL.showI18NWarning('OBPOS_AnonymousSaleNotAllowed');
+          OB.UTIL.showConfirmation.display("Error", OB.I18N.getLabel('OBPOS_AnonymousSaleNotAllowed'));
           if (callback) {
             callback(false);
           }
@@ -1909,7 +1909,15 @@
     setBPandBPLoc: function (businessPartner, showNotif, saveChange, callback) {
       var me = this,
           undef;
-      var oldbp = this.get('bp');
+      var i, oldbp = this.get('bp');
+      if (OB.MobileApp.model.get('terminal').businessPartner === businessPartner.id) {
+        for (i = 0; i < me.get('lines').models.length; i++) {
+          if (!me.get('lines').models[i].get('product').get('oBPOSAllowAnonymousSale')) {
+            OB.UTIL.showConfirmation.display("Error", OB.I18N.getLabel('OBPOS_AnonymousSaleForProductNotAllowed', [me.get('lines').models[i].get('product').get('_identifier')]));
+            return;
+          }
+        }
+      }
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
         if (oldbp.id !== businessPartner.id) { //Business Partner have changed
           OB.Dal.removeTemporally(new OB.Model.BusinessPartner(oldbp), function () {}, function () {
