@@ -153,6 +153,8 @@
             bpLocToSave.set('id', customer.get('locId'));
             bpLocToSave.set('bpartner', customer.get('id'));
             bpLocToSave.set('name', customer.get('locName'));
+            bpLocToSave.set('isBillTo', true);
+            bpLocToSave.set('isShipTo', true);
             bpLocToSave.set('postalCode', customer.get('postalCode'));
             bpLocToSave.set('cityName', customer.get('cityName'));
             bpLocToSave.set('_identifier', customer.get('locName'));
