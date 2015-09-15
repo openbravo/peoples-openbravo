@@ -195,26 +195,35 @@ public class Fact {
       return null;
     }
     if (strNegate.equals("N") && (DebitAmt.compareTo(ZERO) < 0 || CreditAmt.compareTo(ZERO) < 0)) {
-      BigDecimal convertedDebitAmt = StringUtils.isBlank(docLine.m_AmtAcctDr) ? ZERO
-          : new BigDecimal(docLine.m_AmtAcctDr);
-      BigDecimal convertedCreditAmt = StringUtils.isBlank(docLine.m_AmtAcctCr) ? ZERO
-          : new BigDecimal(docLine.m_AmtAcctCr);
+      BigDecimal convertedDebitAmt = BigDecimal.ZERO;
+      BigDecimal convertedCreditAmt = BigDecimal.ZERO;
+      if ("GLJ".equals(DocBaseType) && docLine != null) {
+        convertedDebitAmt = StringUtils.isBlank(docLine.m_AmtAcctDr) ? ZERO : new BigDecimal(
+            docLine.m_AmtAcctDr);
+        convertedCreditAmt = StringUtils.isBlank(docLine.m_AmtAcctCr) ? ZERO : new BigDecimal(
+            docLine.m_AmtAcctCr);
+      }
 
       if (DebitAmt.compareTo(ZERO) < 0) {
         CreditAmt = CreditAmt.add(DebitAmt.abs());
         creditAmt = CreditAmt.toString();
         DebitAmt = BigDecimal.ZERO;
         debitAmt = DebitAmt.toString();
-        convertedCreditAmt = convertedCreditAmt.add(convertedDebitAmt.abs());
-        convertedDebitAmt = BigDecimal.ZERO;
+        if ("GLJ".equals(DocBaseType)) {
+          convertedCreditAmt = convertedCreditAmt.add(convertedDebitAmt.abs());
+          convertedDebitAmt = BigDecimal.ZERO;
+        }
+
       }
       if (CreditAmt.compareTo(ZERO) < 0) {
         DebitAmt = DebitAmt.add(CreditAmt.abs());
         debitAmt = DebitAmt.toString();
         CreditAmt = BigDecimal.ZERO;
         creditAmt = CreditAmt.toString();
-        convertedDebitAmt = convertedDebitAmt.add(convertedCreditAmt.abs());
-        convertedCreditAmt = BigDecimal.ZERO;
+        if ("GLJ".equals(DocBaseType)) {
+          convertedDebitAmt = convertedDebitAmt.add(convertedCreditAmt.abs());
+          convertedCreditAmt = BigDecimal.ZERO;
+        }
       }
 
       // If this is a manual entry then we need to recompute Amounts which were set in loadLines for
@@ -265,8 +274,8 @@ public class Fact {
     if (conversionRate != null) {
       line.convertByRate(m_acctSchema.getC_Currency_ID(), conversionRate);
     } else {
-      line.convert(m_acctSchema.getC_Currency_ID(), conversionDate, m_acctSchema
-          .getCurrencyRateType(), conn);
+      line.convert(m_acctSchema.getC_Currency_ID(), conversionDate,
+          m_acctSchema.getCurrencyRateType(), conn);
     }
     // Optionally overwrite Acct Amount
     if (docLine != null && !docLine.m_AmtAcctDr.equals("") && !docLine.m_AmtAcctCr.equals(""))
@@ -425,8 +434,8 @@ public class Fact {
       // positive balance => CR
       line.setAmtSource(m_doc.C_Currency_ID, ZERO.toString(), diff.toString());
     // Convert
-    line.convert(m_acctSchema.getC_Currency_ID(), m_doc.DateAcct, m_acctSchema
-        .getCurrencyRateType(), conn);
+    line.convert(m_acctSchema.getC_Currency_ID(), m_doc.DateAcct,
+        m_acctSchema.getCurrencyRateType(), conn);
     line.setAccount(m_acctSchema, m_acctSchema.getSuspenseBalancing_Acct());
     //
     log4jFact.debug("balanceSource - ");
@@ -600,8 +609,8 @@ public class Fact {
             line.setAmtSource(m_doc.C_Currency_ID, ZERO.toString(), diff.abs().toString());
             line.setAccount(m_acctSchema, m_acctSchema.m_DueTo_Acct);
           }
-          line.convert(m_acctSchema.getC_Currency_ID(), m_doc.DateAcct, m_acctSchema
-              .getCurrencyRateType(), conn);
+          line.convert(m_acctSchema.getC_Currency_ID(), m_doc.DateAcct,
+              m_acctSchema.getCurrencyRateType(), conn);
           line.setAD_Org_ID(key);
           log4jFact.debug("balanceSegment (" + segmentType + ") - ");
           log4jFact.debug("************* fact - balanceSegment - m_lines.size() - "
@@ -673,8 +682,8 @@ public class Fact {
 
       // Amount
       line.setAmtSource(m_doc.C_Currency_ID, ZERO.toString(), ZERO.toString());
-      line.convert(m_acctSchema.getC_Currency_ID(), m_doc.DateAcct, m_acctSchema
-          .getCurrencyRateType(), conn);
+      line.convert(m_acctSchema.getC_Currency_ID(), m_doc.DateAcct,
+          m_acctSchema.getCurrencyRateType(), conn);
       if (diff.compareTo(ZERO) < 0)
         line.setAmtAcct(diff.abs().toString(), ZERO.toString());
       else
