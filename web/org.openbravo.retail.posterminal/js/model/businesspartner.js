@@ -36,6 +36,10 @@
         this.set('locId', OB.UTIL.get_UUID());
       }
 
+      if (!this.get("locShipId")) {
+        this.set('locShipId', this.get('locId'));
+      }
+
       if (!this.get("contactId")) {
         this.set('contactId', OB.UTIL.get_UUID());
       }
@@ -220,7 +224,7 @@
     type: 'TEXT'
   }, {
     name: 'locShipId',
-    column: 'locShipId',    
+    column: 'locShipId',
     type: 'TEXT'
   }, {
     name: 'locShipName',
