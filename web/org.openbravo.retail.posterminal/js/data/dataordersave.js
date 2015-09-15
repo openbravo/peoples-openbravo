@@ -78,7 +78,6 @@
 
       OB.info('Ticket closed: ', OB.UTIL.argumentsToStringifyed(this.receipt.getOrderDescription()), "caller: " + OB.UTIL.getStackTrace('Backbone.Events.trigger', true));
 
-      var orderDate = new Date();
       var normalizedCreationDate = OB.I18N.normalizeDate(this.receipt.get('creationDate'));
       var creationDate;
       if (normalizedCreationDate === null) {
@@ -110,7 +109,6 @@
         receipt.set('timezoneOffset', creationDate.getTimezoneOffset());
         receipt.set('created', creationDate.getTime());
         receipt.set('obposCreatedabsolute', OB.I18N.formatDateISO(creationDate));
-        receipt.set('orderDate', orderDate);
 
         // multiterminal support
         // be sure that the active terminal is the one set as the order proprietary
