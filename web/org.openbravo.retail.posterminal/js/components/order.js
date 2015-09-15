@@ -642,6 +642,7 @@ enyo.kind({
     }, this);
     this.order.get('lines').on('add change:qty change:relatedLines updateRelations', function () {
       var approvalNeeded = false,
+          linesToRemove = [],
           servicesToApprove = '',
           line, k, oldUndo = this.order.get('undo');
 
@@ -659,9 +660,6 @@ enyo.kind({
           });
         } else {
           serviceLines = [service];
-          if (service.get('mirrorLine')) {
-            serviceLines.push(service.get('mirrorLine'));
-          }
         }
         return serviceLines;
       }
@@ -670,6 +668,39 @@ enyo.kind({
         return _.filter(newRelatedLines, function (rl) {
           return _.indexOf(_.pluck(lines, 'id'), rl.orderlineId) !== -1;
         });
+      }
+
+      function getSiblingServicesLines(productId, orderlineId) {
+        var serviceLines = _.filter(me.order.get('lines').models, function (l) {
+          return l.has('relatedLines') && l.get('relatedLines').length > 0 && !l.get('originalOrderLineId') //
+          && l.get('product').id === productId && l.get('relatedLines')[0].orderlineId === orderlineId;
+        });
+        return serviceLines;
+      }
+
+      function adjustNotGroupedServices(line, qty) {
+        if (line.get('product').get('quantityRule') === 'PP' && !line.get('groupService')) {
+          var qtyService = OB.DEC.abs(qty),
+              qtyLineServ = qty > 0 ? 1 : -1;
+          // Split/Remove services lines
+          var siblingServicesLines = getSiblingServicesLines(line.get('product').id, line.get('relatedLines')[0].orderlineId);
+          if (siblingServicesLines.length < qtyService) {
+            var i, insertAt = me.order.getOrderlLineIndex(line.get('relatedLines')[0].orderlineId) + 1;
+            for (i = 0; i < qtyService - siblingServicesLines.length; i++) {
+              var p = line.get('product').clone();
+              p.set('groupProduct', false);
+              var newLine = me.order.createLine(p, qtyLineServ, {
+                at: insertAt
+              });
+              newLine.set('relatedLines', siblingServicesLines[0].get('relatedLines'));
+              newLine.set('groupService', false);
+            }
+          } else if (siblingServicesLines.length > qtyService) {
+            linesToRemove = OB.UTIL.mergeArrays(linesToRemove, _.initial(siblingServicesLines, qtyService));
+          }
+          return qtyLineServ;
+        }
+        return qty;
       }
 
       if (!OB.MobileApp.model.receipt.get('notApprove')) {
@@ -731,7 +762,7 @@ enyo.kind({
       }
 
       function fixServiceOrderLines(approved) {
-        var linesToRemove = [];
+        linesToRemove = [];
         me.order.get('lines').forEach(function (line) {
           var prod = line.get('product'),
               newLine, i, j, l, rlp, rln, deferredLines, deferredQty, notDeferredRelatedLines, positiveLine, newqtyplus = 0,
@@ -807,6 +838,7 @@ enyo.kind({
                       newLine.set('qty', deferredQty);
                     }
                     l.set('relatedLines', rln);
+                    newqtyminus = adjustNotGroupedServices(l, newqtyminus, linesToRemove);
                     l.set('qty', newqtyminus);
                   } else {
                     linesToRemove.push(l);
@@ -819,9 +851,13 @@ enyo.kind({
                   rlp = OB.UTIL.mergeArrays(rlp, (deferredLines || []));
                   l.set('relatedLines', rlp);
                   if (line.get('product').get('quantityRule') === 'PP') {
-                    _.each(deferredLines, function (deferredLine) {
-                      newqtyplus += deferredLine.qty;
-                    });
+                    if (line.get('groupService')) {
+                      _.each(deferredLines, function (deferredLine) {
+                        newqtyplus += deferredLine.qty;
+                      });
+                    } else {
+                      newqtyplus = adjustNotGroupedServices(line, newqtyplus, linesToRemove);
+                    }
                   }
                   l.set('qty', newqtyplus);
                 } else if (newqtyplus && newqtyminus && me.positiveLineUpdated) {
@@ -848,10 +884,6 @@ enyo.kind({
                     l.set('qty', deferredQty);
                   }
                 }
-                if (!line.get('groupService') && newLine) {
-                  newLine.set('mirrorLine', line);
-                  line.set('mirrorLine', newLine);
-                }
               } else {
                 if (serviceLines.length === 1 && newqtyminus && newqtyplus) {
                   newLine = me.order.createLine(prod, newqtyplus);
@@ -860,10 +892,12 @@ enyo.kind({
                   l.set('qty', newqtyminus);
                 } else if (serviceLines.length === 1 && newqtyplus) {
                   l.set('relatedLines', rlp);
+                  newqtyplus = adjustNotGroupedServices(l, newqtyplus, linesToRemove);
                   l.set('qty', newqtyplus);
                 } else if (newqtyminus && !me.negativeLineUpdated) {
                   me.negativeLineUpdated = true;
                   l.set('relatedLines', rln);
+                  newqtyminus = adjustNotGroupedServices(l, newqtyminus, linesToRemove);
                   l.set('qty', newqtyminus);
                 } else if (newqtyplus && newqtyminus && me.negativeLineUpdated) {
                   positiveLine = me.order.get('lines').filter(function getLine(currentLine) {
@@ -888,10 +922,6 @@ enyo.kind({
                   if (!deferredLines.length) {
                     me.order.get('lines').remove(l);
                   }
-                }
-                if (!line.get('groupService') && newLine) {
-                  newLine.set('mirrorLine', line);
-                  line.set('mirrorLine', newLine);
                 }
               }
             });
@@ -1153,8 +1183,7 @@ enyo.kind({
       }
     }, this);
   }
-});
-enyo.kind({
+});enyo.kind({
   name: 'OB.UI.MultiOrderView',
   published: {
     order: null

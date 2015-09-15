@@ -1784,8 +1784,7 @@
         text: OB.I18N.getLabel('OBPOS_AddLine', [newline.get('qty'), newline.get('product').get('_identifier')]),
         line: newline,
         undo: function () {
-          OB.UTIL.Approval.requestApproval(
-          this.model, 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
+          OB.UTIL.Approval.requestApproval(this.model, 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
             if (approved) {
               // If the OBPOS_remove_ticket preference is active then mark the line as deleted
               if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
@@ -2882,6 +2881,16 @@
         // Not is a service
         callback.call(scope, 'ABORT');
       }
+    },
+
+    getOrderlLineIndex: function (orderlineId) {
+      var index = 0;
+      this.get('lines').forEach(function (line, indx) {
+        if (line.id === orderlineId) {
+          index = indx;
+        }
+      });
+      return index;
     }
   });
 
