@@ -76,8 +76,11 @@ enyo.kind({
         this.owner.owner.doAddProduct({
           targetOrder: orderModel,
           product: this.owner.owner.args.product,
-          attrs: this.owner.owner.args.attrs
+          attrs: this.owner.owner.args.attrs,
+          context: this.owner.owner.args.context,
+          callback: this.owner.owner.args.callback
         });
+        this.owner.owner.args.callback = null;
         if (this.owner.owner.$.bodyContent.$.chkSelectOpenedReceiptModal.checked) {
           orderModel.calculateGross();
           var me = this,
@@ -102,6 +105,9 @@ enyo.kind({
   executeOnHide: function () {
     //executed when popup is hiden.
     //to access to argumens -> this.args
+    if (this.args.callback) {
+      this.args.callback.call(this.args.context, false);
+    }
   },
   executeOnShow: function () {
     //executed when popup is shown.

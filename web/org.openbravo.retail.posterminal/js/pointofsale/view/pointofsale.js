@@ -471,7 +471,9 @@ enyo.kind({
               args: {
                 product: inEvent.product,
                 approval: deferedSellApproval,
-                attrs: inEvent.attrs
+                attrs: inEvent.attrs,
+                context: inEvent.context,
+                callback: inEvent.callback
               }
             });
             // Remove approval from not editable ticket
@@ -481,11 +483,18 @@ enyo.kind({
                 targetOrder.get('approvals').splice(index, 1);
               }
             }
+          } else {
+            if (inEvent.callback) {
+              inEvent.callback.call(inEvent.context, false);
+            }
           }
         } else {
           this.doShowPopup({
             popup: 'modalNotEditableOrder'
           });
+          if (inEvent.callback) {
+            inEvent.callback.call(inEvent.context, false);
+          }
         }
       }, this);
       return true;
@@ -520,10 +529,17 @@ enyo.kind({
       attrs: inEvent.attrs
     }, function (args) {
       if (args.cancelOperation && args.cancelOperation === true) {
+        if (inEvent.callback) {
+          inEvent.callback.call(inEvent.context, false);
+        }
         return true;
       }
-      args.receipt.addProduct(args.productToAdd, args.qtyToAdd, args.options, args.attrs);
-      args.context.model.get('orderList').saveCurrent();
+      args.receipt.addProduct(args.productToAdd, args.qtyToAdd, args.options, args.attrs, function (success) {
+        args.context.model.get('orderList').saveCurrent();
+        if (inEvent.callback) {
+          inEvent.callback.call(inEvent.context, true);
+        }
+      });
     });
     return true;
   },
