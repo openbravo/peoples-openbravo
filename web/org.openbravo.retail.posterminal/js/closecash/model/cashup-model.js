@@ -118,7 +118,24 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
       cashUpReport = cashUp.at(0);
       cashUpReport.set('deposits', []);
       cashUpReport.set('drops', []);
-
+      OB.Dal.find(OB.Model.CashManagement, {
+        'cashup_id': cashUpReport.get('id'),
+        'type': 'deposit'
+      }, function (cashMgmts) {
+        cashUpReport.set('deposits', cashMgmts.models);
+        cashUpReport.set('totalDeposits', _.reduce(cashMgmts.models, function (accum, trx) {
+          return OB.DEC.add(accum, trx.get('origAmount'));
+        }, 0));
+      }, this);
+      OB.Dal.find(OB.Model.CashManagement, {
+        'cashup_id': cashUpReport.get('id'),
+        'type': 'drop'
+      }, function (cashMgmts) {
+        cashUpReport.set('drops', cashMgmts.models);
+        cashUpReport.set('totalDrops', _.reduce(cashMgmts.models, function (accum, trx) {
+          return OB.DEC.add(accum, trx.get('origAmount'));
+        }, 0));
+      }, this);
       OB.Dal.find(OB.Model.TaxCashUp, {
         'cashup_id': cashUpReport.get('id'),
         'orderType': {
