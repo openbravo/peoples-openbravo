@@ -15,21 +15,32 @@
    * catches application wide uncaught exceptions
    * overrides the mobile.core's 'onerror' assignment
    */
-  window.onerror = function (e, url, line) {
-    if (typeof (e) === 'string') {
-      var errorMessage = "posterminal.main.js: " + e + "; line: " + url + ":" + line;
-      // try to log the error in the backend
-      if (OB.error) {
-        OB.error(errorMessage);
-        if (OB.UTIL && OB.UTIL.showError) {
-          OB.UTIL.showError(errorMessage);
-        }
-      } else {
-        console.error(errorMessage);
+  window.onerror = function (message, url, line, column, errorObj) {
+    if (!errorObj) {
+      if (typeof (message) !== 'string') {
+        return;
       }
     }
+    var errorMessage;
+    if (errorObj) {
+      // the last 2 arguments may not be implemented by the browser
+      errorMessage = errorObj.stack;
+      console.log(line, column);
+    } else {
+      errorMessage = message + "; line: " + url + ":" + line;
+    }
+    // try to log the error in the backend
+    if (OB.error) {
+      if (OB.UTIL && OB.UTIL.showError) {
+        OB.UTIL.showError(errorMessage);
+      } else {
+        // the OB.error is already being sent in the showError method
+        OB.error(errorMessage);
+      }
+    } else {
+      console.error(errorMessage);
+    }
   };
-
 
   /**
    * Global versions for WebPOS
