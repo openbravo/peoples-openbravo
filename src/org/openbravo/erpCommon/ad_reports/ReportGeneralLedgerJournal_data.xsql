@@ -82,7 +82,6 @@
     <Parameter name="parDateFrom" optional="true" after="AND 3=3"><![CDATA[ AND dateacct >= TO_DATE(?)]]></Parameter>
     <Parameter name="parDateTo" optional="true" after="AND 3=3"><![CDATA[ AND dateacct < TO_DATE(?)]]></Parameter>
     <Parameter name="docbasetype" optional="true" after="AND 3=3"><![CDATA[ AND DOCBASETYPE = ?]]></Parameter>
-    <Parameter name="documentNo" optional="true" after="AND 3=3" type="argument"><![CDATA[ AND EXISTS ]]></Parameter>
     <Parameter name="acctschema" optional="true" after="AND 3=3"><![CDATA[ AND C_ACCTSCHEMA_ID = ?]]></Parameter>
     <Parameter name="orgFamily" type="replace" optional="true" after="AND AD_ORG_ID IN(" text="'4'"/>
     <Parameter name="checks" type="replace" optional="true" after="AND FactAcctType IN (" text="'C','N','O','R','D'"/>
@@ -151,7 +150,6 @@
     <Parameter name="parDateFrom" optional="true" after="AND 3=3"><![CDATA[ AND dateacct >= TO_DATE(?)]]></Parameter>
     <Parameter name="parDateTo" optional="true" after="AND 3=3"><![CDATA[ AND dateacct < TO_DATE(?)]]></Parameter>
     <Parameter name="docbasetype" optional="true" after="AND 3=3"><![CDATA[ AND DOCBASETYPE = ?]]></Parameter>
-    <Parameter name="documentNo" optional="true" after="AND 3=3" type="argument"><![CDATA[ AND EXISTS ]]></Parameter>
     <Parameter name="acctschema" optional="true" after="AND 3=3"><![CDATA[ AND C_ACCTSCHEMA_ID = ?]]></Parameter>
     <Parameter name="orgFamily" type="replace" optional="true" after="AND AD_ORG_ID IN(" text="'4'"/>
     <Parameter name="checks" type="replace" optional="true" after="AND FactAcctType IN (" text="'C','N','O','R','D'"/>
@@ -209,7 +207,6 @@
     <Parameter name="parDateFrom" optional="true" after="AND 3=3"><![CDATA[ AND dateacct >= TO_DATE(?)]]></Parameter>
     <Parameter name="parDateTo" optional="true" after="AND 3=3"><![CDATA[ AND dateacct < TO_DATE(?)]]></Parameter>
     <Parameter name="docbasetype" optional="true" after="AND 3=3"><![CDATA[ AND DOCBASETYPE = ?]]></Parameter>
-    <Parameter name="documentNo" optional="true" after="AND 3=3" type="argument"><![CDATA[ AND EXISTS ]]></Parameter>
     <Parameter name="acctschema" optional="true" after="AND 3=3"><![CDATA[ AND C_ACCTSCHEMA_ID = ?]]></Parameter>
     <Parameter name="orgFamily" type="replace" optional="true" after="AND AD_ORG_ID IN(" text="'4'"/>
     <Parameter name="checks" type="replace" optional="true" after="AND FactAcctType IN (" text="'C','N','O','R','D'"/>   

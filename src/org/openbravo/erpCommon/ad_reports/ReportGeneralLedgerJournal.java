@@ -58,7 +58,6 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.datamodel.Table;
-import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.financialmgmt.accounting.coa.AcctSchema;
 import org.openbravo.model.financialmgmt.accounting.coa.AcctSchemaTable;
@@ -910,32 +909,46 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
 
   }
 
+  /**
+   * Builds dynamic SQL to filter by document No
+   */
   private String getDocumentNo(String strClient, String strDocument, String strDocumentNo) {
-    if (StringUtils.isEmpty(strDocument) || StringUtils.isEmpty(strDocumentNo)) {
+    if (StringUtils.isBlank(strDocument) || StringUtils.isBlank(strDocumentNo)) {
       return null;
-    } else {
+    }
+
+    try {
+      OBContext.setAdminMode();
       String documentNo = StringEscapeUtils.escapeSql(strDocumentNo);
       documentNo = documentNo.replaceAll(";", "");
-      String string = "( SELECT 1 FROM ";
 
       StringBuffer where = new StringBuffer();
       where.append(" select t." + Table.PROPERTY_DBTABLENAME);
       where.append(" from " + DocumentType.ENTITY_NAME + " as d");
       where.append(" join d." + DocumentType.PROPERTY_TABLE + " as t");
       where.append(" where d." + DocumentType.PROPERTY_DOCUMENTCATEGORY + " = :document");
-      where.append(" and d." + DocumentType.PROPERTY_CLIENT + " = :client");
+      where.append(" and d." + DocumentType.PROPERTY_CLIENT + ".id = :client");
       where.append(" group by d." + DocumentType.PROPERTY_DOCUMENTCATEGORY);
       where.append(" , t." + Table.PROPERTY_DBTABLENAME);
       Query qry = OBDal.getInstance().getSession().createQuery(where.toString());
       qry.setMaxResults(1);
       qry.setParameter("document", strDocument);
-      qry.setParameter("client", OBDal.getInstance().get(Client.class, strClient));
+      qry.setParameter("client", strClient);
       String tablename = (String) qry.uniqueResult();
 
-      string += tablename;
-      string += " dt WHERE record_id = dt." + tablename + "_id";
-      string += " AND dt.documentno = '" + documentNo + "' )";
-      return string;
+      if (StringUtils.isBlank(tablename)) {
+        return null;
+      }
+
+      StringBuffer existsSubQuery = new StringBuffer("( SELECT 1 FROM ");
+      existsSubQuery.append(tablename);
+      existsSubQuery.append(" dt WHERE f.record_id = dt.").append(tablename).append("_id");
+      existsSubQuery.append(" AND dt.documentno = '").append(documentNo).append("' )");
+      return existsSubQuery.toString();
+    } catch (Exception ignore) {
+      return null;
+    } finally {
+      OBContext.restorePreviousMode();
     }
   }
 
