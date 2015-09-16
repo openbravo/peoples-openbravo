@@ -15,7 +15,8 @@ enyo.kind({
   classes: 'btnselect-orderline',
   handlers: {
     onChangeEditMode: 'changeEditMode',
-    onCheckBoxBehaviorForTicketLine: 'checkBoxForTicketLines'
+    onCheckBoxBehaviorForTicketLine: 'checkBoxForTicketLines',
+    onSetMultiSelected: 'setMultiSelected'
   },
   tap: function () {
     this.model.trigger('selected', this.model);
@@ -26,9 +27,6 @@ enyo.kind({
   },
   events: {
     onLineChecked: ''
-  },
-  handlers: {
-    onSetMultiSelected: 'setMultiSelected'
   },
   components: [{
     name: 'checkBoxColumn',

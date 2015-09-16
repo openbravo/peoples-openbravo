@@ -21,7 +21,6 @@ enyo.kind({
   },
   handlers: {
     onCheckBoxBehaviorForTicketLine: 'checkBoxBehavior',
-    onAllTicketLinesChecked: 'allTicketLinesChecked',
     onToggleSelectionMode: 'toggleSelectionMode',
     onTableMultiSelectAll: 'tableMultiSelectAll'
   },
