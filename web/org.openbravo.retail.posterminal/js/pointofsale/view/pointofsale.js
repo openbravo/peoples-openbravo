@@ -537,7 +537,7 @@ enyo.kind({
       args.receipt.addProduct(args.productToAdd, args.qtyToAdd, args.options, args.attrs, function (success) {
         args.context.model.get('orderList').saveCurrent();
         if (inEvent.callback) {
-          inEvent.callback.call(inEvent.context, true);
+          inEvent.callback.call(inEvent.context, success);
         }
       });
     });

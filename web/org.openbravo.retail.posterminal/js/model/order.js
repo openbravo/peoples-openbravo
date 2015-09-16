@@ -1177,7 +1177,7 @@
     },
 
     //Attrs is an object of attributes that will be set in order
-    _addProduct: function (p, qty, options, attrs) {
+    _addProduct: function (p, qty, options, attrs, callback) {
       var newLine = true,
           line = null,
           me = this;
@@ -1186,6 +1186,9 @@
       }
       if (p.get('ispack')) {
         OB.Model.Discounts.discountRules[p.get('productCategory')].addProductToOrder(this, p);
+        if (callback) {
+          callback(true);
+        }
         return;
       }
       if (this.get('orderType') === 1) {
@@ -1195,13 +1198,19 @@
       }
       if (((options && options.line) ? options.line.get('qty') + qty : qty) < 0 && p.get('productType') === 'S' && !p.get('returnable')) {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_UnreturnableProduct'), OB.I18N.getLabel('OBPOS_UnreturnableProductMessage', [p.get('_identifier')]));
+        if (callback) {
+          callback(false);
+        }
         return;
       }
 
       function addProductToOrder() {
         if (me.get('isQuotation') && me.get('hasbeenpaid') === 'Y') {
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationClosed'));
-          return;
+          if (callback) {
+            callback(false);
+          }
+          return false;
         }
         if (p.get('obposScale')) {
           OB.POS.hwserver.getWeight(function (data) {
@@ -1240,6 +1249,9 @@
               attrs: attrs
             }, function (args) {
               if (args && args.cancelOperation) {
+                if (callback) {
+                  callback(false);
+                }
                 return;
               }
               if (args.line && (qty !== 1 || args.line.get('qty') !== -1 || args.p.get('productType') !== 'S' || (args.p.get('productType') === 'S' && !args.p.get('isLinkedToProduct')))) {
@@ -1285,6 +1297,9 @@
           options: options,
           newLine: newLine
         }, function (args) {
+          if (callback) {
+            callback(true);
+          }
           var subs = new SubscribeToCalculateGross(me, function () {
             if (args.newLine && me.get('lines').contains(line)) {
               // Display related services after calculate gross, if it is new line and if the line has not been deleted.
@@ -1421,7 +1436,7 @@
     },
 
     //Attrs is an object of attributes that will be set in order
-    addProduct: function (p, qty, options, attrs) {
+    addProduct: function (p, qty, options, attrs, callback) {
       OB.debug('_addProduct');
       var me = this;
       OB.UTIL.HookManager.executeHooks('OBPOS_AddProductToOrder', {
@@ -1433,17 +1448,27 @@
         // do not allow generic products to be added to the receipt
         if (args && args.productToAdd && args.productToAdd.get('isGeneric')) {
           OB.UTIL.showI18NWarning('OBPOS_GenericNotAllowed');
+          if (callback) {
+            callback(false);
+          }
           return;
         }
         if (OB.MobileApp.model.get('terminal').businessPartner === me.get('bp').get('id') && args && args.productToAdd && !args.productToAdd.get('oBPOSAllowAnonymousSale')) {
           OB.UTIL.showI18NWarning('OBPOS_AnonymousSaleNotAllowed');
+          if (callback) {
+            callback(false);
+          }
           return;
         }
         if (args && args.useLines) {
           me._drawLinesDistribution(args);
           return;
         }
-        me._addProduct(p, qty, options, attrs);
+        me._addProduct(p, qty, options, attrs, function (success) {
+          if (callback) {
+            callback(success);
+          }
+        });
       });
     },
 
@@ -3069,7 +3094,9 @@
 
                 newline.calculateGross();
                 // add the created line
-                lines.add(newline, {at: iter.linepos});
+                lines.add(newline, {
+                  at: iter.linepos
+                });
                 numberOfLines--;
                 orderQty = OB.DEC.add(iter.quantity, orderQty);
                 if (numberOfLines === 0) {
