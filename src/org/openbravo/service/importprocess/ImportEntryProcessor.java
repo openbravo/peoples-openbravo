@@ -163,9 +163,11 @@ public abstract class ImportEntryProcessor {
     // waiting to be processed, but not yet started
     if (runnable != null) {
       // there is runnable which can handle this ImportEntry
-      if (log.isDebugEnabled()) {
-        log.debug("Adding entry to runnable with key " + key);
+      if (runnable.importEntryIds.contains(importEntry.getId())) {
+        // already queued
+        return;
       }
+      log.debug("Adding entry to runnable with key " + key);
       // give it to the runnable
       runnable.addEntry(importEntry);
 
