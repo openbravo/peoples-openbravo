@@ -545,37 +545,24 @@
       var me = this,
           loadModelsIncFunc;
       //MASTER DATA REFRESH
-      var minIncRefresh = this.get('terminal').terminalType.minutestorefreshdatainc * 60 * 1000;
-      if (minIncRefresh) {
-        if (this.get('loggedUsingCache')) {
-          OB.MobileApp.model.set('minIncRefreshSynchronized', false);
-          OB.MobileApp.model.on('synchronized', function () {
-            if (OB.MobileApp.model.get('minIncRefreshSynchronized')) {
-              return;
-            }
-            OB.MobileApp.model.set('minIncRefreshSynchronized', true);
-            OB.MobileApp.model.loadModels(null, true);
-            if (me.get('loggedUsingCache')) {
-              me.set('loggedUsingCache', false);
-              me.set('isLoggingIn', false);
-              me.renderTerminalMain();
-            }
-          });
-        } else {
-          if (me.get('loggedUsingCache')) {
-            me.set('loggedUsingCache', false);
-            me.set('isLoggingIn', false);
-            me.renderTerminalMain();
+      var minIncRefresh = this.get('terminal').terminalType.minutestorefreshdatainc * 60 * 1000,
+          minTotalRefresh = this.get('terminal').terminalType.minutestorefreshdatatotal * 60 * 1000,
+          lastTotalRefresh = window.localStorage.getItem('POSLastTotalRefresh'),
+          lastIncRefresh = window.localStorage.getItem('POSLastIncRefresh');
+      if ((minTotalRefresh || minIncRefresh) && (lastTotalRefresh || lastIncRefresh)) {
+        OB.MobileApp.model.set('minIncRefreshSynchronized', false);
+        OB.MobileApp.model.on('synchronized', function () {
+          if (OB.MobileApp.model.get('minIncRefreshSynchronized')) {
+            return;
           }
-        }
+          OB.MobileApp.model.set('minIncRefreshSynchronized', true);
+          OB.MobileApp.model.loadModels(null, true);
+        });
+
         loadModelsIncFunc = function () {
           OB.MobileApp.model.loadModels(null, true);
         };
         setInterval(loadModelsIncFunc, minIncRefresh);
-      } else if (me.get('loggedUsingCache')) {
-        me.set('loggedUsingCache', false);
-        me.set('isLoggingIn', false);
-        me.renderTerminalMain();
       }
 
       if (!this.sessionPing && this.get('terminal').sessionTimeout) {
