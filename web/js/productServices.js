@@ -34,22 +34,40 @@ OB.ProductServices.onLoadGrid = function (grid) {
 OB.ProductServices.updateTotalLinesAmount = function (form) {
   var totalLinesAmt = BigDecimal.prototype.ZERO,
       totalLinesDiscountAmt = BigDecimal.prototype.ZERO,
+      totalLinesPriceAmt = BigDecimal.prototype.ZERO,
+      totalLinesRelatedQty = BigDecimal.prototype.ZERO,
+      totalLinesUnitDiscountAmt = BigDecimal.prototype.ZERO,
       grid = form.getItem('grid').canvas.viewGrid,
       amountField = grid.getFieldByColumnName('amount'),
       discountField = grid.getFieldByColumnName('discountsAmt'),
+      priceField = grid.getFieldByColumnName('price'),
+      relatedQtyField = grid.getFieldByColumnName('relatedQuantity'),
+      unitDiscountAmtField = grid.getFieldByColumnName('unitDiscountsAmt'),
       selectedRecords = grid.getSelectedRecords(),
       totalLinesAmountlItem = form.getItem('totallinesamount'),
       totalDiscountsAmountItem = form.getItem('totaldiscountsamount'),
-      i, lineAmt;
+      totalPriceAmountItem = form.getItem('totapriceamount'),
+      totalRelatedQtyItem = form.getItem('totalrelatedqty'),
+      totalUnitDiscountAmtItem = form.getItem('totalUnitDiscountsAmt'),
+      i, lineAmt, lineDiscountAmt, linePriceAmt;
 
   for (i = 0; i < selectedRecords.length; i++) {
     lineAmt = new BigDecimal(String(grid.getEditedCell(grid.getRecordIndex(selectedRecords[i]), amountField)));
     lineDiscountAmt = new BigDecimal(String(grid.getEditedCell(grid.getRecordIndex(selectedRecords[i]), discountField)));
+    linePriceAmt = new BigDecimal(String(grid.getEditedCell(grid.getRecordIndex(selectedRecords[i]), priceField)));
+    lineRelatedQty = new BigDecimal(String(grid.getEditedCell(grid.getRecordIndex(selectedRecords[i]), relatedQtyField)));
+    lineUnitDiscountAmt = new BigDecimal(String(grid.getEditedCell(grid.getRecordIndex(selectedRecords[i]), unitDiscountAmtField)));
     totalLinesAmt = totalLinesAmt.add(lineAmt);
     totalLinesDiscountAmt = totalLinesDiscountAmt.add(lineDiscountAmt);
+    totalLinesPriceAmt = totalLinesPriceAmt.add(linePriceAmt);
+    totalLinesRelatedQty = totalLinesRelatedQty.add(lineRelatedQty);
+    totalLinesUnitDiscountAmt = totalLinesUnitDiscountAmt.add(lineUnitDiscountAmt);
   }
   totalLinesAmountlItem.setValue(Number(totalLinesAmt.toString()));
   totalDiscountsAmountItem.setValue(Number(totalLinesDiscountAmt.toString()));
+  totalPriceAmountItem.setValue(Number(totalLinesPriceAmt.toString()));
+  totalRelatedQtyItem.setValue(Number(totalLinesRelatedQty.toString()));
+  totalUnitDiscountAmtItem.setValue(Number(totalLinesUnitDiscountAmt.toString()));
   return true;
 };
 
@@ -59,32 +77,14 @@ OB.ProductServices.orderLinesGridQtyOnChange = function (item, view, form, grid)
       originalQty = new BigDecimal(String(item.record.originalOrderedQuantity)),
       newQty = new BigDecimal(String(item.getValue())),
       oldDiscount = grid.getEditValues(grid.getRecordIndex(item.record)).discountsAmount,
-      precision = form.getItem('pricePrecision').getValue(),
-      newDiscount;
+      newDiscount = new BigDecimal(String(item.getValue())).multiply(new BigDecimal(String(item.record.unitDiscountsAmt))),
+      precision = form.getItem('pricePrecision').getValue();
   newAmount = newAmount.setScale(precision, BigDecimal.prototype.ROUND_HALF_UP);
-  if (item.getValue() !== 0) {
-    if (!oldDiscount && oldDiscount !== 0) {
-      oldDiscount = new BigDecimal(String(item.record.discountsAmount));
-    } else {
-      oldDiscount = new BigDecimal(String(grid.getEditValues(grid.getRecordIndex(item.record)).discountsAmount));
-    }
-    newDiscount = oldDiscount.divide(originalQty).multiply(newQty);
-    newDiscount = newDiscount.setScale(precision, BigDecimal.prototype.ROUND_HALF_UP);
-  } else {
-    newDiscount = BigDecimal.prototype.ZERO;
-  }
-
-  if (!oldAmount && oldAmount !== 0) {
-    oldAmount = new BigDecimal(String(item.record.amount));
-  } else {
-    oldAmount = new BigDecimal(String(grid.getEditValues(grid.getRecordIndex(item.record)).amount));
-  }
-  if (newAmount.compareTo(oldAmount) !== 0) {
-    grid.setEditValue(grid.getRecordIndex(item.record), 'amount', Number(newAmount));
-    grid.setEditValue(grid.getRecordIndex(item.record), 'discountsAmount', Number(newDiscount));
-    OB.ProductServices.updateTotalLinesAmount(form);
-    OB.ProductServices.updateServicePrice(view, item.record);
-  }
+  newDiscount = newDiscount.setScale(precision, BigDecimal.prototype.ROUND_HALF_UP);
+  grid.setEditValue(grid.getRecordIndex(item.record), 'amount', Number(newAmount));
+  grid.setEditValue(grid.getRecordIndex(item.record), 'discountsAmount', Number(newDiscount));
+  OB.ProductServices.updateTotalLinesAmount(form);
+  OB.ProductServices.updateServicePrice(view, item.record, null);
 };
 
 OB.ProductServices.QuantityValidate = function (item, validator, value, record) {
@@ -147,9 +147,7 @@ OB.ProductServices.doRelateOrderLinesSelectionChanged = function (record, state,
 
 OB.ProductServices.updateServicePrice = function (view, record) {
   var callback, totalServiceAmount = view.theForm.getItem('totalserviceamount'),
-      totalDiscountsAmount = view.theForm.getItem('totaldiscountsamount'),
       orderLinesGrid = view.theForm.getItem('grid').canvas.viewGrid,
-      totalLinesAmountValue = new BigDecimal(String(view.theForm.getItem('totallinesamount').getValue() || 0)),
       recordId, contextInfo;
   if (record) {
     recordId = record.id;
@@ -180,6 +178,9 @@ OB.ProductServices.updateServicePrice = function (view, record) {
     orderlineId: view.theForm.getItem('orderlineId').getValue(),
     amount: view.theForm.getItem('totallinesamount').getValue(),
     discounts: view.theForm.getItem('totaldiscountsamount').getValue(),
+    priceamount: view.theForm.getItem('totapriceamount').getValue(),
+    relatedqty: view.theForm.getItem('totalrelatedqty').getValue(),
+    unitdiscountsamt: view.theForm.getItem('totalUnitDiscountsAmt').getValue(),
     orderLineToRelateId: recordId,
     tabId: contextInfo.inpTabId
   }, {}, callback);
