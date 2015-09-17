@@ -254,3 +254,34 @@ button.btnbp:disabled {
   background-color: #f8e859;
   color: #000000;
 }
+
+.addressbillbuttom {
+  background-image: url('./../../org.openbravo.retail.posterminal/img/InvoicingAddress.png'); 
+  background-repeat: no-repeat;
+  background-size: 100%;
+  width: 18px;
+ }
+ 
+ .addressbilltext {
+  text-overflow: ellipsis;
+  white-space: nowrap; 
+  overflow: hidden; 
+  max-width: 70px;
+ }
+ 
+.addresshipitems {
+  display: table-cell;
+  background-image: url('./../../org.openbravo.retail.posterminal/img/ShippingAddress.png'); 
+  background-repeat: no-repeat;
+  background-size: 38px 27px;
+  width: 38px;
+ }
+ 
+.addressbillitems {
+  display: table-cell;
+  background-image: url('./../../org.openbravo.retail.posterminal/img/InvoicingAddress.png'); 
+  background-repeat: no-repeat;
+  background-size: 26px 30px;
+  width: 26px;
+ }
+ 

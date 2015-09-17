@@ -583,6 +583,9 @@ enyo.kind({
       });
       return true;
     }
+    if (OB.MobileApp.model.get('terminal').businessPartner === inEvent.businessPartner.get('id')) {
+      OB.MobileApp.model.set('businessPartner', inEvent.businessPartner);
+    }
     this.model.get('order').setBPandBPLoc(inEvent.businessPartner, false, true);
     this.model.get('orderList').saveCurrent();
     return true;
