@@ -383,18 +383,21 @@ enyo.kind({
       var receipt = context.model.get('order');
       if (receipt.get('id') && !isPaidQuotation && receipt.get('lines') && receipt.get('lines').length > 0) {
         if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
+          receipt.setIsCalculateGrossLockState(true);
           receipt.set('obposIsDeleted', true);
           var i;
           for (i = 0; i < receipt.get('lines').length; i++) {
             receipt.get('lines').at(i).set('obposIsDeleted', true);
           }
-          receipt.calculateGross();
-          receipt.save();
-          receipt.trigger('closed', {
-            callback: function () {
-              context.model.get('orderList').deleteCurrent();
-              context.model.get('orderList').synchronizeCurrentOrder();
-            }
+
+          receipt.prepareToSend(function () {
+            receipt.trigger('closed', {
+              callback: function () {
+                context.model.get('orderList').deleteCurrent();
+                context.model.get('orderList').synchronizeCurrentOrder();
+                receipt.setIsCalculateGrossLockState(false);
+              }
+            });
           });
         } else {
           context.model.get('orderList').saveCurrent();
@@ -403,14 +406,16 @@ enyo.kind({
         }
       } else if (receipt.has('deletedLines')) {
         if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
+          receipt.setIsCalculateGrossLockState(true);
           receipt.set('obposIsDeleted', true);
-          receipt.calculateGross();
-          receipt.save();
-          receipt.trigger('closed', {
-            callback: function () {
-              context.model.get('orderList').deleteCurrent();
-              context.model.get('orderList').synchronizeCurrentOrder();
-            }
+          receipt.prepareToSend(function () {
+            receipt.trigger('closed', {
+              callback: function () {
+                context.model.get('orderList').deleteCurrent();
+                context.model.get('orderList').synchronizeCurrentOrder();
+                receipt.setIsCalculateGrossLockState(false);
+              }
+            });
           });
         } else {
           context.model.get('orderList').deleteCurrent();
