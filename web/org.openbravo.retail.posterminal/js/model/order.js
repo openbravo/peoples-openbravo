@@ -1749,6 +1749,9 @@
       this.save();
     },
     rejectQuotation: function (rejectReasonId, scope, callback) {
+      if (!this.get('id')) {
+        OB.error("The Id of the order is not defined (current value: " + this.get('id') + "'");
+      }
       var process = new OB.DS.Process('org.openbravo.retail.posterminal.QuotationsReject');
       OB.UTIL.showLoading(true);
       process.exec({
@@ -2488,10 +2491,13 @@
     },
 
     newPaidReceipt: function (model, callback) {
+      var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('newPaidReceipt');
+      enyo.$.scrim.show();
       var order = new Order(),
           lines, newline, payments, curPayment, taxes, bpId, bpLocId, numberOfLines = model.receiptLines.length,
           orderQty = 0,
           NoFoundProduct = true;
+
 
       // Call orderLoader plugings to adjust remote model to local model first
       // ej: sales on credit: Add a new payment if total payment < total receipt
@@ -2592,6 +2598,8 @@
                   order.changeSignToShowReturns();
                 }
                 callback(order);
+                enyo.$.scrim.hide();
+                OB.UTIL.SynchronizationHelper.finished(synchId, 'newPaidReceipt');
               }
             }, null, function () {
               if (NoFoundProduct) {
@@ -2683,6 +2691,8 @@
     },
 
     addPaidReceipt: function (model) {
+      var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('addPaidReceipt');
+      enyo.$.scrim.show();
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
         this.doRemoteBPSettings(model.get('bp'));
       } else {
@@ -2694,7 +2704,10 @@
       this.add(this.current);
       this.loadCurrent(true);
       // OB.Dal.save is done here because we want to force to save with the original od, only this time.
-      OB.Dal.save(model, function () {}, function () {
+      OB.Dal.save(model, function () {
+        enyo.$.scrim.hide();
+        OB.UTIL.SynchronizationHelper.finished(synchId, 'addPaidReceipt');
+      }, function () {
         OB.error(arguments);
       }, model.get('isLayaway'));
     },
