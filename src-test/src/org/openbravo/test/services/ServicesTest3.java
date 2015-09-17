@@ -148,7 +148,7 @@ public class ServicesTest3 extends WeldBaseTest {
               .getServiceAmount(
                   serviceOrderLine,
                   isPriceIncludingTaxes ? orderLine.getLineGrossAmount() : orderLine
-                      .getLineNetAmount(), null);
+                      .getLineNetAmount(), null, null, null, null);
         } catch (OBException e) {
           assertEquals("ServicePriceUtils.getServiceAmount not properly handled error",
               e.getMessage(), parameter.getErrorMessage());
