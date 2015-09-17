@@ -23,15 +23,18 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.InheritedAccessEnabled;
 import org.openbravo.client.application.ViewRoleAccess;
 import org.openbravo.client.myob.WidgetClassAccess;
 import org.openbravo.dal.core.DalUtil;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.FieldAccess;
 import org.openbravo.model.ad.access.FormAccess;
 import org.openbravo.model.ad.access.Role;
@@ -42,35 +45,75 @@ import org.openbravo.model.ad.access.TableAccess;
 import org.openbravo.model.ad.access.WindowAccess;
 import org.openbravo.model.ad.alert.AlertRecipient;
 
-public class AccessManager {
+public class RoleInheritanceManager {
 
-  private static final Logger log4j = Logger.getLogger(AccessManager.class);
-  private RoleInheritance inheritance;
-  private List<String> inheritanceInheritFromIdList;
+  private static final Logger log4j = Logger.getLogger(RoleInheritanceManager.class);
 
-  public AccessManager(RoleInheritance inheritance, List<String> inheritanceInheritFromIdList) {
-    this.inheritance = inheritance;
-    this.inheritanceInheritFromIdList = inheritanceInheritFromIdList;
+  public static void applyNewInheritance(RoleInheritance inheritance) {
+    List<RoleInheritance> inheritanceList = getUpdatedRoleInheritancesList(inheritance, false);
+    List<String> inheritanceRoleIdList = getRoleInheritancesRoleIdList(inheritanceList);
+    List<RoleInheritance> newInheritanceList = new ArrayList<RoleInheritance>();
+    newInheritanceList.add(inheritance);
+    calculateAccesses(newInheritanceList, AccessType.WINDOW_ACCESS, inheritanceRoleIdList);
   }
 
-  public void calculateAccesses(List<RoleInheritance> inheritanceList, AccessType accessType,
-      boolean delete) {
+  public static void applyRemoveInheritance(RoleInheritance inheritance) {
+    List<RoleInheritance> inheritanceList = getUpdatedRoleInheritancesList(inheritance, true);
+    List<String> inheritanceRoleIdList = getRoleInheritancesRoleIdList(inheritanceList);
+    calculateAccesses(inheritanceList, AccessType.WINDOW_ACCESS, inheritanceRoleIdList, inheritance);
+  }
+
+  public static void propagateAllAccesses(Role role) {
+    for (RoleInheritance ri : role.getADRoleInheritanceInheritFromList()) {
+      List<RoleInheritance> inheritanceList = getRoleInheritancesList(ri.getRole());
+      List<String> inheritanceRoleIdList = getRoleInheritancesRoleIdList(inheritanceList);
+      calculateAccesses(inheritanceList, AccessType.WINDOW_ACCESS, inheritanceRoleIdList);
+    }
+  }
+
+  public static void propagateNewAccess(Role role, InheritedAccessEnabled access,
+      AccessType accessType) {
+    for (RoleInheritance ri : role.getADRoleInheritanceInheritFromList()) {
+      List<RoleInheritance> inheritanceList = getRoleInheritancesList(ri.getRole());
+      List<String> inheritanceRoleIdList = getRoleInheritancesRoleIdList(inheritanceList);
+      handleAccess(ri, access, accessType, inheritanceRoleIdList);
+    }
+  }
+
+  public static void propagateUpdatedAccess(Role role, InheritedAccessEnabled access,
+      AccessType accessType) {
+    for (RoleInheritance ri : role.getADRoleInheritanceInheritFromList()) {
+      for (InheritedAccessEnabled childAccess : accessType.getAccessList(ri.getRole())) {
+        accessType.updateRoleAccess(childAccess, access);
+      }
+    }
+  }
+
+  private static void calculateAccesses(List<RoleInheritance> inheritanceList,
+      AccessType accessType, List<String> inheritanceInheritFromIdList) {
+    calculateAccesses(inheritanceList, accessType, inheritanceInheritFromIdList, null);
+  }
+
+  private static void calculateAccesses(List<RoleInheritance> inheritanceList,
+      AccessType accessType, List<String> inheritanceInheritFromIdList,
+      RoleInheritance roleInheritanceToDelete) {
     for (RoleInheritance roleInheritance : inheritanceList) {
       for (InheritedAccessEnabled inheritedAccess : accessType.getAccessList(roleInheritance
           .getInheritFrom())) {
-        handleAccess(roleInheritance, inheritedAccess, accessType);
+        handleAccess(roleInheritance, inheritedAccess, accessType, inheritanceInheritFromIdList);
       }
     }
-    if (delete) {
+    if (roleInheritanceToDelete != null) {
       // delete accesses not inherited anymore
-      accessType.deleteRoleAccess(inheritance.getInheritFrom(),
-          accessType.getAccessList(inheritance.getRole()));
+      accessType.deleteRoleAccess(roleInheritanceToDelete.getInheritFrom(),
+          accessType.getAccessList(roleInheritanceToDelete.getRole()));
     }
     // OBDal.getInstance().getSession().clear();
   }
 
-  public void handleAccess(RoleInheritance roleInheritance, InheritedAccessEnabled inheritedAccess,
-      AccessType accessType) {
+  private static void handleAccess(RoleInheritance roleInheritance,
+      InheritedAccessEnabled inheritedAccess, AccessType accessType,
+      List<String> inheritanceInheritFromIdList) {
     String inheritedAccessElementId = accessType.getSecuredElementIdentifier(inheritedAccess);
     String newInheritedFromId = (String) DalUtil.getId(roleInheritance.getInheritFrom());
     boolean found = false;
@@ -80,7 +123,7 @@ public class AccessManager {
           .getId(access.getInheritedFrom()) : "";
       if (accessElementId.equals(inheritedAccessElementId)) {
         if (!StringUtils.isEmpty(currentInheritedFromId)
-            && isPrecedent(currentInheritedFromId, newInheritedFromId)) {
+            && isPrecedent(inheritanceInheritFromIdList, currentInheritedFromId, newInheritedFromId)) {
           accessType.updateRoleAccess(access, inheritedAccess);
         }
         found = true;
@@ -92,7 +135,8 @@ public class AccessManager {
     }
   }
 
-  private boolean isPrecedent(String role1, String role2) {
+  private static boolean isPrecedent(List<String> inheritanceInheritFromIdList, String role1,
+      String role2) {
     if (inheritanceInheritFromIdList.indexOf(role1) == -1) {
       // Not found, need to override (this can happen on delete or on update)
       return true;
@@ -101,6 +145,48 @@ public class AccessManager {
       return true;
     }
     return false;
+  }
+
+  public static List<RoleInheritance> getRoleInheritancesList(Role role) {
+    final OBCriteria<RoleInheritance> obCriteria = OBDal.getInstance().createCriteria(
+        RoleInheritance.class);
+    obCriteria.add(Restrictions.eq(RoleInheritance.PROPERTY_ROLE, role));
+    obCriteria.addOrderBy(RoleInheritance.PROPERTY_SEQUENCENUMBER, true);
+    return obCriteria.list();
+  }
+
+  public static List<RoleInheritance> getUpdatedRoleInheritancesList(RoleInheritance inheritance,
+      boolean deleting) {
+    final ArrayList<RoleInheritance> roleInheritancesList = new ArrayList<RoleInheritance>();
+    final OBCriteria<RoleInheritance> obCriteria = OBDal.getInstance().createCriteria(
+        RoleInheritance.class);
+    obCriteria.add(Restrictions.eq(RoleInheritance.PROPERTY_ROLE, inheritance.getRole()));
+    obCriteria.add(Restrictions.ne(RoleInheritance.PROPERTY_ID, inheritance.getId()));
+    obCriteria.addOrderBy(RoleInheritance.PROPERTY_SEQUENCENUMBER, true);
+    boolean added = false;
+    for (RoleInheritance rh : obCriteria.list()) {
+      if (rh.getInheritFrom().getId().equals(inheritance.getInheritFrom().getId())) {
+        Utility.throwErrorMessage("RoleInheritanceInheritFromDuplicated");
+      }
+      if (!deleting && !added
+          && rh.getSequenceNumber().longValue() > inheritance.getSequenceNumber().longValue()) {
+        roleInheritancesList.add(inheritance);
+        added = true;
+      }
+      roleInheritancesList.add(rh);
+    }
+    if (!deleting && !added) {
+      roleInheritancesList.add(inheritance);
+    }
+    return roleInheritancesList;
+  }
+
+  public static List<String> getRoleInheritancesRoleIdList(List<RoleInheritance> roleInheritanceList) {
+    final ArrayList<String> roleIdsList = new ArrayList<String>();
+    for (RoleInheritance roleInheritance : roleInheritanceList) {
+      roleIdsList.add((String) DalUtil.getId(roleInheritance.getInheritFrom()));
+    }
+    return roleIdsList;
   }
 
   public enum AccessType {
@@ -219,7 +305,9 @@ public class AccessManager {
       query.setNamedParameter("windowId", parentTabAccess.getWindowAccess().getWindow().getId());
       query.setMaxResult(1);
       WindowAccess parent = (WindowAccess) query.uniqueResult();
-      newTabAccess.setWindowAccess(parent);
+      if (parent != null) {
+        newTabAccess.setWindowAccess(parent);
+      }
     }
 
     private void setParentTab(InheritedAccessEnabled newAccess,
@@ -236,7 +324,9 @@ public class AccessManager {
       query.setNamedParameter("tabId", parentFieldAccess.getTabAccess().getTab().getId());
       query.setMaxResult(1);
       TabAccess parent = (TabAccess) query.uniqueResult();
-      newFieldAccess.setTabAccess(parent);
+      if (parent != null) {
+        newFieldAccess.setTabAccess(parent);
+      }
     }
 
     public Role getRole(InheritedAccessEnabled access) {
@@ -303,9 +393,11 @@ public class AccessManager {
       inheritFromToDelete.getADWindowAccessList();
       List<InheritedAccessEnabled> iaeToDelete = new ArrayList<InheritedAccessEnabled>();
       for (InheritedAccessEnabled ih : roleAccessList) {
-        String inheritedFromId = (String) DalUtil.getId(ih.getInheritedFrom());
-        if (inheritFromId.equals(inheritedFromId)) {
-          iaeToDelete.add(ih);
+        if (ih.getInheritedFrom() != null) { // Non inherited records are not deleted
+          String inheritedFromId = (String) DalUtil.getId(ih.getInheritedFrom());
+          if (inheritFromId.equals(inheritedFromId)) {
+            iaeToDelete.add(ih);
+          }
         }
       }
       for (InheritedAccessEnabled ih : iaeToDelete) {

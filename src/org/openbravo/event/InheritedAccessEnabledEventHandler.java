@@ -18,8 +18,6 @@
  */
 package org.openbravo.event;
 
-import java.util.List;
-
 import javax.enterprise.event.Observes;
 
 import org.openbravo.base.model.Entity;
@@ -32,18 +30,17 @@ import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.client.myob.WidgetClassAccess;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.FieldAccess;
 import org.openbravo.model.ad.access.FormAccess;
 import org.openbravo.model.ad.access.Role;
-import org.openbravo.model.ad.access.RoleInheritance;
 import org.openbravo.model.ad.access.RoleOrganization;
 import org.openbravo.model.ad.access.TabAccess;
 import org.openbravo.model.ad.access.TableAccess;
 import org.openbravo.model.ad.access.WindowAccess;
 import org.openbravo.model.ad.alert.AlertRecipient;
-import org.openbravo.roleInheritance.AccessManager;
-import org.openbravo.roleInheritance.AccessManager.AccessType;
-import org.openbravo.roleInheritance.RoleInheritanceUtils;
+import org.openbravo.roleInheritance.RoleInheritanceManager;
+import org.openbravo.roleInheritance.RoleInheritanceManager.AccessType;
 
 public class InheritedAccessEnabledEventHandler extends EntityPersistenceEventObserver {
   private static Entity[] entities = {
@@ -77,7 +74,7 @@ public class InheritedAccessEnabledEventHandler extends EntityPersistenceEventOb
     final AccessType accessType = AccessType.getAccessType(entityName);
     final Role role = accessType.getRole(access);
     if (role.isTemplate()) { // Propagate permissions just for roles marked as template
-      propagateNewAccess(role, access, accessType);
+      RoleInheritanceManager.propagateNewAccess(role, access, accessType);
     }
   }
 
@@ -92,7 +89,7 @@ public class InheritedAccessEnabledEventHandler extends EntityPersistenceEventOb
     final AccessType accessType = AccessType.getAccessType(entityName);
     final Role role = accessType.getRole(access);
     if (role.isTemplate()) { // Propagate permissions just for roles marked as template
-      propagateUpdatedAccess(role, access, accessType);
+      RoleInheritanceManager.propagateUpdatedAccess(role, access, accessType);
     }
   }
 
@@ -100,25 +97,11 @@ public class InheritedAccessEnabledEventHandler extends EntityPersistenceEventOb
     if (!isValidEvent(event)) {
       return;
     }
-  }
-
-  private void propagateNewAccess(Role role, InheritedAccessEnabled access, AccessType accessType) {
-    for (RoleInheritance ri : role.getADRoleInheritanceInheritFromList()) {
-      List<RoleInheritance> inheritanceList = RoleInheritanceUtils.getRoleInheritancesList(ri
-          .getRole());
-      List<String> inheritanceRoleIdList = RoleInheritanceUtils
-          .getRoleInheritancesRoleIdList(inheritanceList);
-      AccessManager wam = new AccessManager(ri, inheritanceRoleIdList);
-      wam.handleAccess(ri, access, accessType);
-    }
-  }
-
-  private void propagateUpdatedAccess(Role role, InheritedAccessEnabled access,
-      AccessType accessType) {
-    for (RoleInheritance ri : role.getADRoleInheritanceInheritFromList()) {
-      for (InheritedAccessEnabled childAccess : accessType.getAccessList(ri.getRole())) {
-        accessType.updateRoleAccess(childAccess, access);
-      }
+    final BaseOBObject bob = event.getTargetInstance();
+    final InheritedAccessEnabled access = (InheritedAccessEnabled) bob;
+    if (access.getInheritedFrom() != null) {
+      // Avoid inherited access deletion, for the moment
+      Utility.throwErrorMessage("NotDeleteInheritedAccess");
     }
   }
 }

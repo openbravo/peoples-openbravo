@@ -140,7 +140,7 @@ public class RoleInheritanceRestrictionsTest extends WeldBaseTest {
         template.setTemplate(false);
         OBDal.getInstance().commitAndClose();
       } catch (Exception ex) {
-        // Expected exception, a trigger avoids this save
+        // Expected exception, the trigger ad_role_trg avoids this save
       }
 
       template = OBDal.getInstance().get(Role.class, templateId);
