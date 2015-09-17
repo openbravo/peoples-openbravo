@@ -1345,6 +1345,13 @@ enyo.kind({
         negativeLines, me = this,
         myModel = this.owner.model,
         payments;
+    if (_.isNull(myModel.get('order').get('bp').get('locId'))) {
+      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_InformationTitle'), OB.I18N.getLabel('OBPOS_TextEmptyAddrBillTo'), [{
+        label: OB.I18N.getLabel('OBPOS_LblOk')
+      }]);
+      return;
+    }
+
     this.allowOpenDrawer = false;
 
     if (receipt.get('bp').id === OB.MobileApp.model.get('terminal').businessPartner && !OB.MobileApp.model.get('terminal').layaway_anonymouscustomer) {

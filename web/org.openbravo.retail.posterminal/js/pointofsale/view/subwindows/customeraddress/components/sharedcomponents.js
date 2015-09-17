@@ -194,7 +194,7 @@ enyo.kind({
                 customer: me.customer,
                 customerAddr: customerAddr
               });
-              if (customerAddr.get('id') === me.customer.get("locId")) {
+              if (customerAddr.get('id') === me.customer.get("locId") || customerAddr.get('id') === me.customer.get("locShipId")) {
             	if (customerAddr.get('isBillTo')) {
             	  me.customer.set('locId', customerAddr.get('id'));
             	  me.customer.set('locName', customerAddr.get('name'));
