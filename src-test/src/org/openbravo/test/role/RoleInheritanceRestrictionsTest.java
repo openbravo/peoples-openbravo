@@ -114,4 +114,49 @@ public class RoleInheritanceRestrictionsTest extends WeldBaseTest {
       OBContext.restorePreviousMode();
     }
   }
+
+  @Test
+  public void testUncheckTemplateInUse() {
+    Role template = null;
+    Role role = null;
+    try {
+      OBContext.setAdminMode(true);
+      template = RoleInheritanceTestUtils.createRole("template",
+          RoleInheritanceTestUtils.CLIENT_ID, RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true,
+          true);
+      String templateId = (String) DalUtil.getId(template);
+      role = RoleInheritanceTestUtils.createRole("role", RoleInheritanceTestUtils.CLIENT_ID,
+          RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true, false);
+      String roleId = (String) DalUtil.getId(role);
+
+      // Add inheritance
+      RoleInheritanceTestUtils.addInheritance(role, template, new Long(10));
+      OBDal.getInstance().commitAndClose();
+
+      template = OBDal.getInstance().get(Role.class, templateId);
+      role = OBDal.getInstance().get(Role.class, roleId);
+
+      try {
+        template.setTemplate(false);
+        OBDal.getInstance().commitAndClose();
+      } catch (Exception ex) {
+        // Expected exception, a trigger avoids this save
+      }
+
+      template = OBDal.getInstance().get(Role.class, templateId);
+      role = OBDal.getInstance().get(Role.class, roleId);
+
+      assertThat("A template role in use can not be set as non template", template.isTemplate(),
+          equalTo(true));
+
+    } finally {
+      // Delete roles
+      RoleInheritanceTestUtils.deleteRole(role);
+      RoleInheritanceTestUtils.deleteRole(template);
+
+      OBDal.getInstance().commitAndClose();
+
+      OBContext.restorePreviousMode();
+    }
+  }
 }
