@@ -22,29 +22,23 @@ enyo.kind({
   },
   initComponents: function () {},
   renderData: function (docNo) {
-    var content, orderDate = this.order.get('orderDate');
-    if (this.order.get('hasbeenpaid') === 'Y' || this.order.get('isLayaway')) {
-      orderDate = OB.I18N.normalizeDate(this.order.get('creationDate'));
-      if (_.isNull(orderDate)) {
-        orderDate = new Date();
-      } else {
-        orderDate = OB.I18N.formatHour(new Date(orderDate));
-      }
-    }
-    if (orderDate instanceof Date) {
-      content = OB.I18N.formatHour(orderDate) + ' - ' + docNo;
-    } else {
-      content = orderDate + ' - ' + docNo;
-    }
-    this.setContentDetail(content, docNo, orderDate);
+    this.preSetContentDetail(this.order, docNo);
   },
   renderDataFromModel: function (order) {
-    var content,
-        orderDate = order.get('orderDate'),
-        docNo = order.get('documentNo');
+    var docNo = order.get('documentNo');
+    this.preSetContentDetail(order, docNo);
+  },
+  preSetContentDetail: function (order, docNo) {
+    var orderDate = order.get('orderDate');
     if (order.get('hasbeenpaid') === 'Y' || order.get('isLayaway')) {
-      orderDate = order.get('creationDate');
+      orderDate = OB.I18N.normalizeDate(this.order.get('creationDate'));
+      if (_.isNull(orderDate)) {
+        OB.error("The creationDate cannot be null");
+      } else {
+        orderDate = new Date(orderDate);
+      }
     }
+    var content;
     if (orderDate instanceof Date) {
       content = OB.I18N.formatHour(orderDate) + ' - ' + docNo;
     } else {
