@@ -87,7 +87,6 @@ public class Entity {
   private boolean isHQLBased;
   private boolean isVirtualEntity = false;
 
-  private boolean hasRole;
   private boolean hasInheritedFrom;
 
   private EntityValidator entityValidator;
@@ -441,10 +440,6 @@ public class Entity {
     this.isClientEnabled = isClientEnabled;
   }
 
-  public void setHasRole(boolean hasRole) {
-    this.hasRole = hasRole;
-  }
-
   public void setHasInheritedFrom(boolean hasInheritedFrom) {
     this.hasInheritedFrom = hasInheritedFrom;
   }
@@ -660,10 +655,10 @@ public class Entity {
   }
 
   /**
-   * @return true if this Entity has a role property and a inheritedfrom property.
+   * @return true if this Entity has an inheritedFrom property.
    */
   public boolean isInheritedAccessEnabled() {
-    return hasRole && hasInheritedFrom;
+    return hasInheritedFrom;
   }
 
   /**

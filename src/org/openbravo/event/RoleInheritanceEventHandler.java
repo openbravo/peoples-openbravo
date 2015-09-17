@@ -23,8 +23,6 @@ import java.util.List;
 
 import javax.enterprise.event.Observes;
 
-import org.hibernate.criterion.Restrictions;
-import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.client.kernel.event.EntityDeleteEvent;
@@ -32,15 +30,12 @@ import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.dal.core.DalUtil;
-import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.database.ConnectionProvider;
-import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.RoleInheritance;
-import org.openbravo.roleInheritance.WindowAccessManager;
-import org.openbravo.service.db.DalConnectionProvider;
+import org.openbravo.roleInheritance.AccessManager;
+import org.openbravo.roleInheritance.AccessManager.AccessType;
+import org.openbravo.roleInheritance.RoleInheritanceUtils;
 
 public class RoleInheritanceEventHandler extends EntityPersistenceEventObserver {
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(
@@ -57,8 +52,17 @@ public class RoleInheritanceEventHandler extends EntityPersistenceEventObserver 
     }
     final RoleInheritance inheritance = (RoleInheritance) event.getTargetInstance();
     String inheritFromId = (String) DalUtil.getId(inheritance.getInheritFrom());
+    // Check correct Inherit From
+    if (!inheritance.getInheritFrom().isTemplate()) {
+      RoleInheritanceUtils.showErrorMessage("InheritFromNotTemplate");
+    }
+    // Check User Level
+    if (!isSameUserLevel(inheritance.getRole(), inheritance.getInheritFrom())) {
+      RoleInheritanceUtils.showErrorMessage("DifferentUserLevelRoleInheritance");
+    }
+    // Check cycles
     if (existCycles(inheritance.getRole(), inheritFromId)) {
-      showErrorMessage("CyclesInRoleInheritance");
+      RoleInheritanceUtils.showErrorMessage("CyclesInRoleInheritance");
     } else {
       doSaveAccesses(inheritance);
     }
@@ -68,7 +72,7 @@ public class RoleInheritanceEventHandler extends EntityPersistenceEventObserver 
     if (!isValidEvent(event)) {
       return;
     }
-    showErrorMessage("RoleInheritanceNotEdit");
+    RoleInheritanceUtils.showErrorMessage("RoleInheritanceNotEdit");
   }
 
   public void onDelete(@Observes EntityDeleteEvent event) {
@@ -79,63 +83,34 @@ public class RoleInheritanceEventHandler extends EntityPersistenceEventObserver 
     boolean notDeletingParent = OBDal.getInstance().exists(Role.ENTITY_NAME,
         (String) DalUtil.getId(inheritance.getRole()));
     if (notDeletingParent) {
-      // checkings
       doDeleteAccesses(inheritance);
     }
   }
 
   private void doSaveAccesses(RoleInheritance inheritance) {
-    // Window Access
-    List<RoleInheritance> inheritanceList = getRoleInheritancesList(inheritance, false);
-    List<String> inheritanceRoleIdList = getRoleInheritancesRoleIdList(inheritanceList);
+    List<RoleInheritance> inheritanceList = RoleInheritanceUtils.getUpdatedRoleInheritancesList(
+        inheritance, false);
+    List<String> inheritanceRoleIdList = RoleInheritanceUtils
+        .getRoleInheritancesRoleIdList(inheritanceList);
+    AccessManager wam = new AccessManager(inheritance, inheritanceRoleIdList);
     List<RoleInheritance> newInheritanceList = new ArrayList<RoleInheritance>();
     newInheritanceList.add(inheritance);
-    WindowAccessManager wam = new WindowAccessManager(inheritance, newInheritanceList,
-        inheritanceRoleIdList);
-    wam.calculateAccesses(false);
+    wam.calculateAccesses(newInheritanceList, AccessType.WINDOW_ACCESS, false); // Window Access
   }
 
   private void doDeleteAccesses(RoleInheritance inheritance) {
-    // Window Access
-    List<RoleInheritance> inheritanceList = getRoleInheritancesList(inheritance, true);
-    List<String> inheritanceRoleIdList = getRoleInheritancesRoleIdList(inheritanceList);
-    WindowAccessManager wam = new WindowAccessManager(inheritance, inheritanceList,
-        inheritanceRoleIdList);
-    wam.calculateAccesses(true);
+    List<RoleInheritance> inheritanceList = RoleInheritanceUtils.getUpdatedRoleInheritancesList(
+        inheritance, true);
+    List<String> inheritanceRoleIdList = RoleInheritanceUtils
+        .getRoleInheritancesRoleIdList(inheritanceList);
+    AccessManager wam = new AccessManager(inheritance, inheritanceRoleIdList);
+    wam.calculateAccesses(inheritanceList, AccessType.WINDOW_ACCESS, true); // Window Access
   }
 
-  private List<RoleInheritance> getRoleInheritancesList(RoleInheritance inheritance,
-      boolean deleting) {
-    final ArrayList<RoleInheritance> roleInheritancesList = new ArrayList<RoleInheritance>();
-    final OBCriteria<RoleInheritance> obCriteria = OBDal.getInstance().createCriteria(
-        RoleInheritance.class);
-    obCriteria.add(Restrictions.eq(RoleInheritance.PROPERTY_ROLE, inheritance.getRole()));
-    obCriteria.add(Restrictions.ne(RoleInheritance.PROPERTY_ID, inheritance.getId()));
-    obCriteria.addOrderBy(RoleInheritance.PROPERTY_SEQUENCENUMBER, true);
-    boolean added = false;
-    for (RoleInheritance rh : obCriteria.list()) {
-      if (rh.getInheritFrom().getId().equals(inheritance.getInheritFrom().getId())) {
-        showErrorMessage("RoleInheritanceInheritFromDuplicated");
-      }
-      if (!deleting && !added
-          && rh.getSequenceNumber().longValue() > inheritance.getSequenceNumber().longValue()) {
-        roleInheritancesList.add(inheritance);
-        added = true;
-      }
-      roleInheritancesList.add(rh);
-    }
-    if (!deleting && !added) {
-      roleInheritancesList.add(inheritance);
-    }
-    return roleInheritancesList;
-  }
-
-  private List<String> getRoleInheritancesRoleIdList(List<RoleInheritance> roleInheritanceList) {
-    final ArrayList<String> roleIdsList = new ArrayList<String>();
-    for (RoleInheritance roleInheritance : roleInheritanceList) {
-      roleIdsList.add((String) DalUtil.getId(roleInheritance.getInheritFrom()));
-    }
-    return roleIdsList;
+  private boolean isSameUserLevel(Role role1, Role role2) {
+    String roleAccessLevel = role1.getUserLevel();
+    String inheritFromAccessLevel = role2.getUserLevel();
+    return roleAccessLevel.equals(inheritFromAccessLevel);
   }
 
   private boolean existCycles(Role role, String roleIdToFind) {
@@ -147,11 +122,5 @@ public class RoleInheritanceEventHandler extends EntityPersistenceEventObserver 
       result = existCycles(ri.getRole(), roleIdToFind);
     }
     return result;
-  }
-
-  private void showErrorMessage(String message) {
-    String language = OBContext.getOBContext().getLanguage().getLanguage();
-    ConnectionProvider conn = new DalConnectionProvider(false);
-    throw new OBException(Utility.messageBD(conn, message, language));
   }
 }

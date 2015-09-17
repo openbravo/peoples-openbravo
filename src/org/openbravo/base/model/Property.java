@@ -285,9 +285,6 @@ public class Property {
       getEntity().setActiveEnabled(true);
       setActiveColumn(true);
     }
-    if (getName().equals("role")) {
-      getEntity().setHasRole(true);
-    }
     if (getName().equals("inheritedFrom")) {
       getEntity().setHasInheritedFrom(true);
     }
