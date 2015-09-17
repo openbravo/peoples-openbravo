@@ -100,6 +100,12 @@
           args.context.receipt.set('isbeingprocessed', 'N');
           args.context.receipt.set('hasbeenpaid', 'N');
           args.context.receipt.trigger('paymentCancel');
+          if (eventParams && eventParams.callback) {
+            eventParams.callback({
+              frozenReceipt: receipt,
+              isCancelled: true
+            });
+          }
           return true;
         }
 
@@ -160,7 +166,10 @@
           // rollback other changes
           receipt.set('hasbeenpaid', 'N');
           if (eventParams && eventParams.callback) {
-            eventParams.callback(frozenReceipt);
+            eventParams.callback({
+              frozenReceipt: frozenReceipt,
+              isCancelled: false
+            });
           }
         }, function () {
           // success transaction...
@@ -197,7 +206,10 @@
               }, function () {
                 serverMessageForQuotation(receipt);
                 if (eventParams && eventParams.callback) {
-                  eventParams.callback(frozenReceipt);
+                  eventParams.callback({
+                    frozenReceipt: frozenReceipt,
+                    isCancelled: false
+                  });
                 }
               });
             }, function () {
@@ -205,7 +217,10 @@
                 receipt: receiptForPostSyncReceipt
               }, function () {
                 if (eventParams && eventParams.callback) {
-                  eventParams.callback(frozenReceipt);
+                  eventParams.callback({
+                    frozenReceipt: frozenReceipt,
+                    isCancelled: false
+                  });
                 }
               });
             });
@@ -213,7 +228,10 @@
             OB.trace('Execution Sync process.');
             //If there are no elements in the hook, we can execute the callback asynchronusly with the synchronization process
             if (eventParams && eventParams.callback) {
-              eventParams.callback(frozenReceipt);
+              eventParams.callback({
+                frozenReceipt: frozenReceipt,
+                isCancelled: false
+              });
             }
             OB.MobileApp.model.runSyncProcess(function () {
               serverMessageForQuotation(receipt);

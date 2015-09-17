@@ -321,37 +321,43 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
         // There is only 1 receipt object.
         receipt.trigger('closed', {
-          callback: function (frozenReceipt) {
+          callback: function (args) {
             OB.UTIL.Debug.execute(function () {
-              if (!frozenReceipt) {
+              if (!args.frozenReceipt) {
                 throw "A clone of the receipt must be provided because it is possible that some rogue process could have changed it";
               }
-            });
-
-            var orderToPrint = OB.UTIL.clone(frozenReceipt);
-            receipt.trigger('print', orderToPrint, {
-              offline: true
-            });
-
-            // Verify that the receipt has not been changed while the ticket has being closed
-            var diff = OB.UTIL.diffJson(receipt.serializeToJSON(), frozenReceipt.serializeToJSON());
-            // hasBeenPaid is the only difference allowed in the receipt
-            delete diff.hasbeenpaid;
-            // verify if there have been any modification to the receipt
-            var diffStringified = JSON.stringify(diff, undefined, 2);
-            if (diffStringified !== '{}') {
-              OB.error("The receipt has been modified while it was being closed:\n" + diffStringified + "\n");
-            }
-
-            //In case the processed document is a quotation, we remove its id so it can be reactivated
-            if (receipt.get('isQuotation')) {
-              if (!(receipt.get('oldId') && receipt.get('oldId').length > 0)) {
-                receipt.set('oldId', receipt.get('id'));
+              if (OB.UTIL.isNullOrUndefined(args.isCancelled)) { // allow boolean values
+                throw "The isCancelled flag must be set";
               }
-              receipt.set('isbeingprocessed', 'N');
+            });
+
+            // verify that the receipt was not cancelled
+            if (args.isCancelled !== true) {
+              var orderToPrint = OB.UTIL.clone(args.frozenReceipt);
+              receipt.trigger('print', orderToPrint, {
+                offline: true
+              });
+
+              // Verify that the receipt has not been changed while the ticket has being closed
+              var diff = OB.UTIL.diffJson(receipt.serializeToJSON(), args.frozenReceipt.serializeToJSON());
+              // hasBeenPaid is the only difference allowed in the receipt
+              delete diff.hasbeenpaid;
+              // verify if there have been any modification to the receipt
+              var diffStringified = JSON.stringify(diff, undefined, 2);
+              if (diffStringified !== '{}') {
+                OB.error("The receipt has been modified while it was being closed:\n" + diffStringified + "\n");
+              }
+
+              //In case the processed document is a quotation, we remove its id so it can be reactivated
+              if (receipt.get('isQuotation')) {
+                if (!(receipt.get('oldId') && receipt.get('oldId').length > 0)) {
+                  receipt.set('oldId', receipt.get('id'));
+                }
+                receipt.set('isbeingprocessed', 'N');
+              }
+              orderList.deleteCurrent();
+              orderList.synchronizeCurrentOrder();
             }
-            orderList.deleteCurrent();
-            orderList.synchronizeCurrentOrder();
             receipt.setIsCalculateGrossLockState(false);
             enyo.$.scrim.hide();
           }
