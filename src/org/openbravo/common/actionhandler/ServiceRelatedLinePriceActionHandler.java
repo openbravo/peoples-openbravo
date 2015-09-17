@@ -53,6 +53,9 @@ public class ServiceRelatedLinePriceActionHandler extends BaseActionHandler {
           jsonRequest.getString("orderlineId"));
       BigDecimal amount = new BigDecimal(jsonRequest.getString("amount"));
       BigDecimal discounts = new BigDecimal(jsonRequest.getString("discounts"));
+      BigDecimal priceamount = new BigDecimal(jsonRequest.getString("priceamount"));
+      BigDecimal relatedQty = new BigDecimal(jsonRequest.getString("relatedqty"));
+      BigDecimal unitDiscountsAmt = new BigDecimal(jsonRequest.getString("unitdiscountsamt"));
       final OrderLine orderLineToRelate = OBDal.getInstance().get(OrderLine.class,
           jsonRequest.getString("orderLineToRelateId"));
       String tabId = jsonRequest.getString("tabId");
@@ -62,7 +65,7 @@ public class ServiceRelatedLinePriceActionHandler extends BaseActionHandler {
       }
       JSONObject deferredSale = null;
       BigDecimal serviceTotalAmount = ServicePriceUtils.getServiceAmount(serviceOrderline, amount,
-          discounts);
+          discounts, priceamount, relatedQty, unitDiscountsAmt);
       if (jsonRequest.has("orderLineToRelateId")
           && jsonRequest.get("orderLineToRelateId") != JSONObject.NULL
           && !RFC_ORDERLINE_TAB_ID.equals(tabId) && state) {

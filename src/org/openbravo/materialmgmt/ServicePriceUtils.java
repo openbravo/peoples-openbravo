@@ -53,6 +53,7 @@ public class ServicePriceUtils {
   private static final Logger log = LoggerFactory.getLogger(ServicePriceUtils.class);
   private static final String PERCENTAGE = "P";
   private static String SERVICEPRODUCT = "S";
+  public static final String UNIQUE_QUANTITY = "UQ";
 
   /**
    * Method to obtain Service Amount to be added for a certain service order line based on selected
@@ -64,7 +65,8 @@ public class ServicePriceUtils {
    * @return
    */
   public static BigDecimal getServiceAmount(OrderLine orderline, BigDecimal linesTotalAmount,
-      BigDecimal totalDiscounts) {
+      BigDecimal totalDiscounts, BigDecimal totalPrice, BigDecimal relatedQty,
+      BigDecimal unitDiscountsAmt) {
     final Product serviceProduct = orderline.getProduct();
     if (linesTotalAmount != null && linesTotalAmount.compareTo(BigDecimal.ZERO) == 0) {
       return BigDecimal.ZERO;
@@ -89,7 +91,7 @@ public class ServicePriceUtils {
             + OBDateUtils.formatDate(orderline.getOrderDate()));
       }
       BigDecimal relatedAmount = BigDecimal.ZERO;
-      BigDecimal relatedQty = BigDecimal.ZERO;
+      BigDecimal findRangeAmount = BigDecimal.ZERO;
       if (linesTotalAmount != null) {
         relatedAmount = linesTotalAmount;
       } else {
@@ -100,25 +102,37 @@ public class ServicePriceUtils {
       }
 
       if (PERCENTAGE.equals(servicePriceRule.getRuletype())) {
-        if (!servicePriceRule.isAfterdiscounts() && totalDiscounts != null) {
-          relatedAmount = relatedAmount.add(totalDiscounts);
+        if (!servicePriceRule.isAfterdiscounts() && totalDiscounts != null
+            && unitDiscountsAmt != null) {
+          relatedAmount = UNIQUE_QUANTITY.equals(serviceProduct.getQuantityRule()) ? relatedAmount
+              .add(totalDiscounts) : relatedAmount.add(unitDiscountsAmt);
         }
         serviceRelatedPrice = relatedAmount.multiply(new BigDecimal(servicePriceRule
-            .getPercentage()).divide(new BigDecimal("100.00"), orderline.getCurrency()
-            .getStandardPrecision().intValue(), RoundingMode.HALF_UP));
+            .getPercentage()).divide(new BigDecimal("100.00")));
       } else {
-        ServicePriceRuleRange range = getRange(servicePriceRule, relatedAmount);
+        if (!servicePriceRule.isAfterdiscounts() && totalDiscounts != null
+            && unitDiscountsAmt != null) {
+          findRangeAmount = UNIQUE_QUANTITY.equals(serviceProduct.getQuantityRule()) ? linesTotalAmount
+              .add(totalDiscounts) : totalPrice.add(unitDiscountsAmt);
+        } else {
+          findRangeAmount = UNIQUE_QUANTITY.equals(serviceProduct.getQuantityRule()) ? linesTotalAmount
+              : totalPrice;
+        }
+        ServicePriceRuleRange range = getRange(servicePriceRule, findRangeAmount);
         if (range == null) {
           throw new OBException("@ServicePriceRuleRangeNotFound@. @ServicePriceRule@: "
               + servicePriceRule.getIdentifier() + ", @AmountUpTo@: " + linesTotalAmount);
         }
         if (PERCENTAGE.equals(range.getRuleType())) {
-          if (!servicePriceRule.isAfterdiscounts() && totalDiscounts != null) {
-            relatedAmount = relatedAmount.add(totalDiscounts);
+          if (!range.isAfterDiscounts() && totalDiscounts != null && unitDiscountsAmt != null) {
+            relatedAmount = UNIQUE_QUANTITY.equals(serviceProduct.getQuantityRule()) ? linesTotalAmount
+                .add(totalDiscounts) : totalPrice.add(unitDiscountsAmt);
+          } else {
+            relatedAmount = UNIQUE_QUANTITY.equals(serviceProduct.getQuantityRule()) ? linesTotalAmount
+                : totalPrice;
           }
           serviceRelatedPrice = relatedAmount.multiply(new BigDecimal(range.getPercentage())
-              .divide(new BigDecimal("100.00"), orderline.getCurrency().getStandardPrecision()
-                  .intValue(), RoundingMode.HALF_UP));
+              .divide(new BigDecimal("100.00")));
         } else {
           serviceRelatedPrice = getProductPrice(orderline.getOrderDate(), range.getPriceList(),
               serviceProduct);
@@ -128,8 +142,12 @@ public class ServicePriceUtils {
                 + OBDateUtils.formatDate(orderline.getOrderDate()));
           }
         }
+        if (!UNIQUE_QUANTITY.equals(serviceProduct.getQuantityRule())) {
+          serviceRelatedPrice = serviceRelatedPrice.multiply(relatedQty);
+        }
       }
-      return serviceRelatedPrice;
+      return serviceRelatedPrice.setScale(orderline.getCurrency().getPricePrecision().intValue(),
+          RoundingMode.HALF_UP);
     }
   }
 
@@ -162,8 +180,12 @@ public class ServicePriceUtils {
 
   public static HashMap<String, BigDecimal> getRelatedAmountAndQty(OrderLine orderLine) {
     StringBuffer strQuery = new StringBuffer();
-    strQuery.append("select coalesce(sum(e.amount),0), coalesce(sum(e.quantity),0)");
+    strQuery
+        .append("select coalesce(sum(e.amount),0), coalesce(sum(e.quantity),0), coalesce(sum(case when pl.priceIncludesTax = false then ol.unitPrice else ol.grossUnitPrice end), 0)");
     strQuery.append(" from OrderlineServiceRelation as e");
+    strQuery.append(" join e.orderlineRelated as ol");
+    strQuery.append(" join ol.salesOrder as o");
+    strQuery.append(" join o.priceList as pl");
     strQuery.append(" where e.salesOrderLine.id = :orderLineId");
     Query query = OBDal.getInstance().getSession().createQuery(strQuery.toString());
     query.setParameter("orderLineId", orderLine.getId());
@@ -172,6 +194,7 @@ public class ServicePriceUtils {
     Object[] values = (Object[]) query.uniqueResult();
     result.put("amount", (BigDecimal) values[0]);
     result.put("quantity", (BigDecimal) values[1]);
+    result.put("price", (BigDecimal) values[2]);
     return result;
   }
 
@@ -375,7 +398,8 @@ public class ServicePriceUtils {
    * @return
    */
   public static boolean servicePriceRuleIsAfterDiscounts(OrderLine orderline,
-      BigDecimal linesTotalAmount) {
+      BigDecimal linesTotalAmount, BigDecimal totalPrice, BigDecimal totalDiscounts,
+      BigDecimal unitDiscountsAmt) {
 
     final Product serviceProduct = orderline.getProduct();
     if (linesTotalAmount != null && linesTotalAmount.compareTo(BigDecimal.ZERO) == 0) {
@@ -391,7 +415,7 @@ public class ServicePriceUtils {
     BigDecimal serviceRelatedPrice = BigDecimal.ZERO;
     boolean isPriceRuleBased = serviceProduct.isPricerulebased();
     if (!isPriceRuleBased) {
-      return true;
+      return false;
     } else {
       ServicePriceRule servicePriceRule = getServicePriceRule(serviceProduct,
           orderline.getOrderDate());
@@ -400,20 +424,22 @@ public class ServicePriceUtils {
             + orderline.getProduct().getIdentifier() + ", @Date@: "
             + OBDateUtils.formatDate(orderline.getOrderDate()));
       }
-      BigDecimal relatedAmount = BigDecimal.ZERO;
-      if (linesTotalAmount != null) {
-        relatedAmount = linesTotalAmount;
-      } else {
-        HashMap<String, BigDecimal> relatedAmountAndQuatity = getRelatedAmountAndQty(orderline);
-        relatedAmount = relatedAmountAndQuatity.get("amount");
-      }
+      BigDecimal findRangeAmount = BigDecimal.ZERO;
 
       if (PERCENTAGE.equals(servicePriceRule.getRuletype())) {
         if (servicePriceRule.isAfterdiscounts()) {
           return true;
         }
       } else {
-        ServicePriceRuleRange range = getRange(servicePriceRule, relatedAmount);
+        if (!servicePriceRule.isAfterdiscounts() && totalDiscounts != null
+            && unitDiscountsAmt != null) {
+          findRangeAmount = UNIQUE_QUANTITY.equals(serviceProduct.getQuantityRule()) ? linesTotalAmount
+              .add(totalDiscounts) : totalPrice.add(unitDiscountsAmt);
+        } else {
+          findRangeAmount = UNIQUE_QUANTITY.equals(serviceProduct.getQuantityRule()) ? linesTotalAmount
+              : totalPrice;
+        }
+        ServicePriceRuleRange range = getRange(servicePriceRule, findRangeAmount);
         if (range == null) {
           throw new OBException("@ServicePriceRuleRangeNotFound@. @ServicePriceRule@: "
               + servicePriceRule.getIdentifier() + ", @AmountUpTo@: " + linesTotalAmount);

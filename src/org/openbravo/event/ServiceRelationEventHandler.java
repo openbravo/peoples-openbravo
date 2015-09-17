@@ -40,7 +40,6 @@ import org.openbravo.model.common.order.OrderlineServiceRelation;
 import org.openbravo.model.common.plm.Product;
 
 public class ServiceRelationEventHandler extends EntityPersistenceEventObserver {
-  private static final Object UNIQUE_QUANTITY = "UQ";
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(
       OrderlineServiceRelation.ENTITY_NAME) };
   protected Logger logger = Logger.getLogger(ServiceRelationEventHandler.class);
@@ -115,16 +114,26 @@ public class ServiceRelationEventHandler extends EntityPersistenceEventObserver 
         .getRelatedAmountAndQty(currentOrderLine);
     BigDecimal dbAmount = dbValues.get("amount");
     BigDecimal dbQuantity = dbValues.get("quantity");
+    BigDecimal dbPrice = dbValues.get("price");
+    BigDecimal currentPrice = currentqty.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO
+        : currentAmount.divide(currentqty, currency.getPricePrecision().intValue(),
+            RoundingMode.HALF_UP);
+    BigDecimal oldPrice = oldQuantity.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO : oldAmount
+        .divide(oldQuantity, currency.getPricePrecision().intValue(), RoundingMode.HALF_UP);
     BigDecimal baseProductPrice = ServicePriceUtils.getProductPrice(currentOrderLine
         .getSalesOrder().getOrderDate(), currentOrderLine.getSalesOrder().getPriceList(),
         currentOrderLine.getProduct());
     BigDecimal serviceAmount = ServicePriceUtils.getServiceAmount(
         currentOrderLine,
         dbAmount.add(currentAmount.subtract(oldAmount)).setScale(
-            currency.getPricePrecision().intValue(), RoundingMode.HALF_UP), null);
+            currency.getPricePrecision().intValue(), RoundingMode.HALF_UP),
+        null,
+        dbPrice.add(currentPrice.subtract(oldPrice)).setScale(
+            currency.getPricePrecision().intValue(), RoundingMode.HALF_UP),
+        dbQuantity.add(currentqty.subtract(oldQuantity)), null);
     Product service = currentOrderLine.getProduct();
 
-    if (UNIQUE_QUANTITY.equals(service.getQuantityRule())) {
+    if (ServicePriceUtils.UNIQUE_QUANTITY.equals(service.getQuantityRule())) {
       if (currentqty.compareTo(BigDecimal.ZERO) > 0) {
         serviceQty = BigDecimal.ONE;
       } else if (currentqty.compareTo(BigDecimal.ZERO) < 0) {
