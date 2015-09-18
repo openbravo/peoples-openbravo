@@ -35,17 +35,18 @@ public class CCSelectWarehouseQueryTransformer extends HqlQueryTransformer {
       Map<String, Object> queryNamedParameters) {
     VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
     String organizationId = vars.getStringParameter("@Organization.id@");
-    hqlQuery = hqlQuery
+    String transformedHql = hqlQuery
         .replaceAll(
             "where e.client",
-            "where not exists (select 1 from OrganizationWarehouse as oww where oww.organization.id = 'replace_org_id' "
-                + "and oww.warehouse.id = e.id and (oww.warehouseType <> 'cross_channel' OR oww.warehouseType is null)) and e.client");
-    hqlQuery = hqlQuery.replaceAll("replace_org_id", organizationId);
-    hqlQuery = hqlQuery.replaceAll("join_0.name", "e.organization.name");
-    hqlQuery = hqlQuery.replaceAll("join_0", "e.locationAddress");
-    hqlQuery = hqlQuery.replaceAll("join_1", "e.locationAddress.region");
-    hqlQuery = hqlQuery.replaceAll("join_2", "e.locationAddress.country");
-    hqlQuery = hqlQuery.replaceAll("AND e.organization in \\(.*?\\)", "");
-    return hqlQuery;
+            "where not exists (select 1 from OBPOS_OrgWarehouseExtra as oww where oww.organization.id = 'replace_org_id' and oww.warehouse.id = e.id and oww.warehouseType <> 'cross_channel')"
+                + " and not exists (select 1 from OrganizationWarehouse as oww where oww.organization.id = 'replace_org_id' and oww.warehouse.id = e.id)"
+                + " and e.client");
+    transformedHql = transformedHql.replaceAll("replace_org_id", organizationId);
+    transformedHql = transformedHql.replaceAll("join_0.name", "e.organization.name");
+    transformedHql = transformedHql.replaceAll("join_0", "e.locationAddress");
+    transformedHql = transformedHql.replaceAll("join_1", "e.locationAddress.region");
+    transformedHql = transformedHql.replaceAll("join_2", "e.locationAddress.country");
+    transformedHql = transformedHql.replaceAll("AND e.organization in \\(.*?\\)", "");
+    return transformedHql;
   }
 }

@@ -45,12 +45,15 @@ public class OtherStoresDetailedStock extends JSONProcessSimple {
       Organization organization = OBDal.getInstance().get(Organization.class, orgId);
       String hqlQueryGetWarehouseList;
       if ("N".equals(organization.getObposIncludedCCWarehouses())) {
-        hqlQueryGetWarehouseList = "exists (SELECT 1 " + "FROM OrganizationWarehouse as ow "
+        hqlQueryGetWarehouseList = "exists (SELECT 1 " + "FROM OBPOS_OrgWarehouseExtra as ow "
             + "WHERE " + "ow.organization.id = '" + orgId + "' and ow.warehouseType = '"
             + POSConstants.CROSS_CHANNEL + "' "
             + "AND  ms.storageBin.warehouse.id= ow.warehouse.id ) ";
       } else {
-        hqlQueryGetWarehouseList = "not exists (SELECT 1 FROM OrganizationWarehouse as ow WHERE ow.organization.id = '"
+        hqlQueryGetWarehouseList = "not exists (SELECT 1 FROM OBPOS_OrgWarehouseExtra as ow WHERE ow.organization.id = '"
+            + orgId
+            + "' AND ow.warehouse.id = ms.storageBin.warehouse.id) "
+            + "AND not exists (SELECT 1 FROM OrganizationWarehouse as ow WHERE ow.organization.id = '"
             + orgId + "' AND ow.warehouse.id = ms.storageBin.warehouse.id) ";
       }
 

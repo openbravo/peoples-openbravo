@@ -20,20 +20,17 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.model.common.enterprise.OrgWarehouse;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
+import org.openbravo.retail.posterminal.OBPOS_OrgWarehouseExtra;
 import org.openbravo.retail.posterminal.POSConstants;
 
 public class ChooseWarehouseActionHandler extends BaseActionHandler {
 
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) {
-    JSONObject JSONObject = null;
     JSONObject result = new JSONObject();
     JSONArray actions = new JSONArray();
-    JSONObject msg = new JSONObject();
-    JSONObject showMsgInView = new JSONObject();
     JSONObject refreshAction = new JSONObject();
     JSONObject selectedObject = new JSONObject();
     JSONObject selectedTed = new JSONObject();
@@ -53,15 +50,16 @@ public class ChooseWarehouseActionHandler extends BaseActionHandler {
         selectedTed = selectArray.getJSONObject(i);
         selectedWarehouseList.add(selectedTed.getString("id"));
       }
-      OBCriteria<OrgWarehouse> orgWarehouseCrit = OBDal.getInstance().createCriteria(
-          OrgWarehouse.class);
-      orgWarehouseCrit.add(Restrictions.eq(OrgWarehouse.PROPERTY_ORGANIZATION, organization));
-      orgWarehouseCrit.add(Restrictions.eq(OrgWarehouse.PROPERTY_WAREHOUSETYPE,
+      OBCriteria<OBPOS_OrgWarehouseExtra> orgWarehouseCrit = OBDal.getInstance().createCriteria(
+          OBPOS_OrgWarehouseExtra.class);
+      orgWarehouseCrit.add(Restrictions.eq(OBPOS_OrgWarehouseExtra.PROPERTY_ORGANIZATION,
+          organization));
+      orgWarehouseCrit.add(Restrictions.eq(OBPOS_OrgWarehouseExtra.PROPERTY_WAREHOUSETYPE,
           POSConstants.CROSS_CHANNEL));
 
-      List<OrgWarehouse> currentOrgWarehouseList = orgWarehouseCrit.list();
+      List<OBPOS_OrgWarehouseExtra> currentOrgWarehouseList = orgWarehouseCrit.list();
       boolean isInTheList = false;
-      for (OrgWarehouse warehouse : currentOrgWarehouseList) {
+      for (OBPOS_OrgWarehouseExtra warehouse : currentOrgWarehouseList) {
         isInTheList = false;
         for (String warehouseSelected : selectedWarehouseList) {
           if (warehouse.getWarehouse().getId().equals(warehouseSelected)) {
@@ -75,13 +73,13 @@ public class ChooseWarehouseActionHandler extends BaseActionHandler {
 
       for (String warehouseSelected : selectedWarehouseList) {
         isInTheList = false;
-        for (OrgWarehouse warehouse : currentOrgWarehouseList) {
+        for (OBPOS_OrgWarehouseExtra warehouse : currentOrgWarehouseList) {
           if (warehouse.getWarehouse().getId().equals(warehouseSelected)) {
             isInTheList = true;
           }
         }
         if (!isInTheList) {
-          createWarehouseEntry(warehouseSelected, organization);
+          createExtraWarehouseEntry(warehouseSelected, organization);
         }
       }
 
@@ -98,11 +96,12 @@ public class ChooseWarehouseActionHandler extends BaseActionHandler {
     return result;
   }
 
-  private void createWarehouseEntry(String warehouseSelected, Organization organization) {
-    OrgWarehouse orgWarehouse = OBProvider.getInstance().get(OrgWarehouse.class);
-    orgWarehouse.setOrganization(organization);
-    orgWarehouse.setWarehouseType(POSConstants.CROSS_CHANNEL);
-    orgWarehouse.setWarehouse(OBDal.getInstance().get(Warehouse.class, warehouseSelected));
-    OBDal.getInstance().save(orgWarehouse);
+  private void createExtraWarehouseEntry(String warehouseSelected, Organization organization) {
+    OBPOS_OrgWarehouseExtra orgWarehouseExtra = OBProvider.getInstance().get(
+        OBPOS_OrgWarehouseExtra.class);
+    orgWarehouseExtra.setOrganization(organization);
+    orgWarehouseExtra.setWarehouseType(POSConstants.CROSS_CHANNEL);
+    orgWarehouseExtra.setWarehouse(OBDal.getInstance().get(Warehouse.class, warehouseSelected));
+    OBDal.getInstance().save(orgWarehouseExtra);
   }
 }

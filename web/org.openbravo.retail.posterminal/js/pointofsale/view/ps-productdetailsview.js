@@ -40,7 +40,7 @@ enyo.kind({
   style: 'min-width: 200px; margin: 2px 5px 2px 5px;',
   tap: function () {
     var me = this;
-    if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.product', true)) {
+    if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
       var serverCallStoreDetailedStock = new OB.DS.Process('org.openbravo.retail.posterminal.stock.OtherStoresDetailedStock'),
           leftSubWindow = this.parent.leftSubWindow;
       leftSubWindow.bodyComponent.$.stockOthers.setContent(OB.I18N.getLabel('OBPOS_loadingStock'));
@@ -262,7 +262,7 @@ enyo.kind({
   getOtherStock: function () {
     var serverCallStoreDetailedStock = new OB.DS.Process('org.openbravo.retail.posterminal.stock.OtherStoresDetailedStock'),
         me = this;
-    if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.product', true)) {
+    if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
       this.bodyComponent.$.stockOthers.setContent(OB.I18N.getLabel('OBPOS_otherStoresStock_NotCalculated'));
     } else {
       this.bodyComponent.$.stockOthers.setContent(OB.I18N.getLabel('OBPOS_loadingStock'));
