@@ -1346,7 +1346,7 @@ enyo.kind({
         myModel = this.owner.model,
         payments;
     if (_.isNull(myModel.get('order').get('bp').get('locId'))) {
-      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_InformationTitle'), OB.I18N.getLabel('OBPOS_TextEmptyAddrBillTo'), [{
+      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_InformationTitle'), OB.I18N.getLabel('OBPOS_EmptyAddrBillToText'), [{
         label: OB.I18N.getLabel('OBPOS_LblOk')
       }]);
       return;
