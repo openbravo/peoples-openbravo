@@ -50,11 +50,13 @@ OB.DS.HWServer.prototype.setActiveURL = function (url) {
   this.activeurl = url;
 
   // validate urls
-  var validurl = _.some(this.urllist, function (item) {
-    return item.hasReceiptPrinter && item.hardwareURL === this.activeurl;
-  }, this);
-  if (!validurl) {
-    this.activeurl = this.mainurl;
+  if (this.urllist) { // Check only in the case urllist is a valid to prevent wrong initializations
+    var validurl = _.some(this.urllist, function (item) {
+      return item.hasReceiptPrinter && item.hardwareURL === this.activeurl;
+    }, this);
+    if (!validurl) {
+      this.activeurl = this.mainurl;
+    }
   }
 
   // save
