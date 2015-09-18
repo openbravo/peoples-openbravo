@@ -63,12 +63,16 @@ public class RoleInheritanceManager {
     calculateAccesses(inheritanceList, AccessType.WINDOW_ACCESS, inheritanceRoleIdList, inheritance);
   }
 
-  public static void propagateAllAccesses(Role role) {
-    for (RoleInheritance ri : role.getADRoleInheritanceInheritFromList()) {
-      List<RoleInheritance> inheritanceList = getRoleInheritancesList(ri.getRole());
-      List<String> inheritanceRoleIdList = getRoleInheritancesRoleIdList(inheritanceList);
-      calculateAccesses(inheritanceList, AccessType.WINDOW_ACCESS, inheritanceRoleIdList);
+  public static void recalculateAllAccessesFromTemplate(Role template) {
+    for (RoleInheritance ri : template.getADRoleInheritanceInheritFromList()) {
+      recalculateAllAccessesForRole(ri.getRole());
     }
+  }
+
+  public static void recalculateAllAccessesForRole(Role role) {
+    List<RoleInheritance> inheritanceList = getRoleInheritancesList(role);
+    List<String> inheritanceRoleIdList = getRoleInheritancesRoleIdList(inheritanceList);
+    calculateAccesses(inheritanceList, AccessType.WINDOW_ACCESS, inheritanceRoleIdList);
   }
 
   public static void propagateNewAccess(Role role, InheritedAccessEnabled access,

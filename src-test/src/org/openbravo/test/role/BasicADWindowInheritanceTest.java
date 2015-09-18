@@ -36,11 +36,11 @@ import org.openbravo.model.ad.access.WindowAccess;
 import org.openbravo.model.ad.ui.Window;
 
 public class BasicADWindowInheritanceTest extends WeldBaseTest {
-  private final static String BUSINESS_PARTNER_ID = "123";
-  private final static String SALES_ORDER_ID = "143";
-  private final static String SALES_INVOICE_ID = "167";
-  private final static String PURCHASE_ORDER_ID = "181";
-  private final static String PURCHASE_INVOICE_ID = "183";
+  public final static String BUSINESS_PARTNER_ID = "123";
+  public final static String SALES_ORDER_ID = "143";
+  public final static String SALES_INVOICE_ID = "167";
+  public final static String PURCHASE_ORDER_ID = "181";
+  public final static String PURCHASE_INVOICE_ID = "183";
 
   @Test
   public void testBasicHorizontalInheritance() {
@@ -234,7 +234,7 @@ public class BasicADWindowInheritanceTest extends WeldBaseTest {
     }
   }
 
-  private void addWindowAccess(Role role, String windowName, boolean editableField) {
+  public static void addWindowAccess(Role role, String windowName, boolean editableField) {
     final WindowAccess windowAccess = OBProvider.getInstance().get(WindowAccess.class);
     final OBCriteria<Window> obCriteria = OBDal.getInstance().createCriteria(Window.class);
     obCriteria.add(Restrictions.eq(Window.PROPERTY_NAME, windowName));
@@ -249,7 +249,7 @@ public class BasicADWindowInheritanceTest extends WeldBaseTest {
     OBDal.getInstance().refresh(role);
   }
 
-  private void updateWindowAccess(Role role, String windowName, boolean editableField,
+  public static void updateWindowAccess(Role role, String windowName, boolean editableField,
       boolean isActive) {
     final OBCriteria<Window> windowCriteria = OBDal.getInstance().createCriteria(Window.class);
     windowCriteria.add(Restrictions.eq(Window.PROPERTY_NAME, windowName));
@@ -282,7 +282,7 @@ public class BasicADWindowInheritanceTest extends WeldBaseTest {
     return result;
   }
 
-  private WindowAccess getWindowAccessForWindowName(List<WindowAccess> list, String windowName) {
+  public static WindowAccess getWindowAccessForWindowName(List<WindowAccess> list, String windowName) {
     for (WindowAccess wa : list) {
       if (windowName.equals(wa.getWindow().getName())) {
         return wa;
