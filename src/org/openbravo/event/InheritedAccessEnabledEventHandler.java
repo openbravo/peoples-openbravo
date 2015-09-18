@@ -99,7 +99,10 @@ public class InheritedAccessEnabledEventHandler extends EntityPersistenceEventOb
     }
     final BaseOBObject bob = event.getTargetInstance();
     final InheritedAccessEnabled access = (InheritedAccessEnabled) bob;
-    if (access.getInheritedFrom() != null) {
+    final String entityName = bob.getEntity().getName();
+    final AccessType accessType = AccessType.getAccessType(entityName);
+    final Role role = accessType.getRole(access);
+    if (role.isTemplate() || access.getInheritedFrom() != null) {
       // Avoid inherited access deletion, for the moment
       Utility.throwErrorMessage("NotDeleteInheritedAccess");
     }
