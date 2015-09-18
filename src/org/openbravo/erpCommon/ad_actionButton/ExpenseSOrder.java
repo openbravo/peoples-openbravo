@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2014 Openbravo SLU
+ * All portions are Copyright (C) 2001-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -367,6 +367,7 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
 
     String priceactual = "";
     String grossprice = "";
+    String grosspricelist = "";
     String pricelist = "";
     String pricelimit = "";
 
@@ -403,7 +404,7 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
         String strPricePrecision = "0";
         String strDiscount = "";
 
-        BigDecimal priceActual, grossPrice, priceList, priceLimit, discount;
+        BigDecimal priceActual, grossPrice, priceList, grossPriceList, priceLimit, discount;
 
         // Looks for the prices in the pricelist of the business partner
         ExpenseSOrderData[] data3 = ExpenseSOrderData.selectPrice(this, data.mProductId,
@@ -464,9 +465,10 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
           priceLimit = priceLimit.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
 
           grossPrice = BigDecimal.ZERO;
+          grossPriceList = BigDecimal.ZERO;
           if (isPriceIncludingTaxes) {
             grossPrice = priceActual;
-            priceActual = BigDecimal.ZERO;
+            grossPriceList = priceList;
           }
 
           // Calculating discount
@@ -500,6 +502,7 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
           priceactual = priceActual.toString();
           grossprice = grossPrice.toString();
           pricelist = priceList.toString();
+          grosspricelist = grossPriceList.toString();
           pricelimit = priceLimit.toString();
           strDiscount = discount.toString();
 
@@ -514,7 +517,7 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
               data.cUomId.equals("") ? Utility.getContext(this, vars, "#C_UOM_ID", "ExpenseSOrder")
                   : data.cUomId, data.qty, strBPCCurrencyId, pricelist, priceactual,
               data.mPricelistId, pricelimit, strCTaxID, data.sResourceassignmentId, strDiscount,
-              grossprice, data.lineCProjectId, data.lineUser1Id, data.lineUser2Id,
+              grossprice, grosspricelist, data.lineCProjectId, data.lineUser1Id, data.lineUser2Id,
               data.lineCCostcenterId, data.lineAAssetId);
 
           // Updates expense line with the sales order line ID
