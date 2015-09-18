@@ -428,7 +428,7 @@
           OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_OfflineLogin'));
         }
 
-        OB.POS.hwserver.print(new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.WelcomeTemplate), {});
+        OB.POS.hwserver.print(new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.WelcomeTemplate), {}, null, OB.DS.HWServer.DISPLAY);
       });
 
       OB.Model.Terminal.prototype.initialize.call(me);
@@ -698,7 +698,7 @@
 
     preLogoutActions: function () {
       if (OB.POS.hwserver !== undefined) {
-        OB.POS.hwserver.print(new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.GoodByeTemplate), {});
+        OB.POS.hwserver.print(new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.GoodByeTemplate), {}, null, OB.DS.HWServer.DISPLAY);
       }
       if (!OB.MobileApp.model.attributes.permissions || !OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
         this.cleanSessionInfo();

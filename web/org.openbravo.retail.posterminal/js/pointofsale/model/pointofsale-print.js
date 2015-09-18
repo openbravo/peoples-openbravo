@@ -319,7 +319,7 @@
     OB.UTIL.clone(this.receipt, receipt);
     OB.POS.hwserver.print(this.templatetotal, {
       order: receipt
-    });
+    }, null, OB.DS.HWServer.DISPLAY);
   };
 
   PrintReceipt.prototype.displayTotalMultiorders = function () {
@@ -328,7 +328,7 @@
     multiOrders = this.multiOrders;
     OB.POS.hwserver.print(this.templatetotal, {
       order: multiOrders
-    });
+    }, null, OB.DS.HWServer.DISPLAY);
   };
 
   var PrintReceiptLine = function (receipt) {
@@ -358,7 +358,7 @@
     if (this.line) {
       OB.POS.hwserver.print(this.templateline, {
         line: this.line
-      });
+      }, null, OB.DS.HWServer.DISPLAY);
     }
   };
 
