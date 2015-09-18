@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, $, Backbone, _, enyo, Audio, setTimeout, setInterval, clearTimeout, clearInterval, Promise */
+/*global OB, $, Backbone, _, enyo, Audio, setTimeout, setInterval, clearTimeout, clearInterval, Promise, localStorage */
 
 // HWServer: TODO: this should be implemented in HW Manager module
 OB.DS.HWResource = function (res) {
@@ -26,9 +26,35 @@ OB.DS.HWResource.prototype.getData = function (callback) {
   }
 };
 
-OB.DS.HWServer = function (url, scaleurl) {
-  this.url = url;
+OB.DS.HWServer = function (urllist, url, scaleurl) {
+  this.urllist = urllist;
+  this.defaulturl = url;
   this.scaleurl = scaleurl;
+
+  // Remove suffix if needed
+  if (this.defaulturl.indexOf('/printer', this.defaulturl.length - 8) !== -1) { // endswith '/printer'
+    this.defaulturl = this.defaulturl.substring(0, this.defaulturl.length - 8);
+  }
+
+  // load activeurl from localStorage
+  this.setActiveURL(localStorage.getItem('hw_activeurl'));
+};
+
+OB.DS.HWServer.prototype.setActiveURL = function (url) {
+
+  // assign the active url
+  this.activeurl = url;
+
+  // validate urls
+  var validurl = _.some(this.urllist, function (item) {
+    return item.hasReceiptPrinter && item.hardwareURL === this.activeurl;
+  }, this);
+  if (!validurl) {
+    this.activeurl = this.defaulturl;
+  }
+
+  // save
+  localStorage.setItem('hw_activeurl', this.activeurl);
 };
 
 OB.DS.HWServer.prototype.getWeight = function (callback) {
@@ -276,10 +302,10 @@ OB.DS.HWServer.prototype._template = function (templatedata, params) {
 };
 
 OB.DS.HWServer.prototype._send = function (data, callback) {
-  if (this.url) {
+  if (this.activeurl) {
     var me = this;
     var ajaxRequest = new enyo.Ajax({
-      url: me.url,
+      url: me.activeurl + '/printer',
       cacheBust: false,
       method: 'POST',
       handleAs: 'json',
@@ -323,10 +349,10 @@ OB.DS.HWServer.prototype._printPDF = function (params, callback) {
 };
 
 OB.DS.HWServer.prototype._sendPDF = function (data, callback) {
-  if (this.url) {
+  if (this.activeurl) {
     var me = this;
     var ajaxRequest = new enyo.Ajax({
-      url: me.url + 'pdf',
+      url: me.activeurl + '/printerpdf',
       cacheBust: false,
       method: 'POST',
       handleAs: 'json',
