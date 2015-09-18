@@ -32,7 +32,7 @@ OB.DS.HWServer = function (urllist, url, scaleurl) {
   this.scaleurl = scaleurl;
 
   // Remove suffix if needed
-  if (this.mainurl.indexOf('/printer', this.mainurl.length - 8) !== -1) { // endswith '/printer'
+  if (this.mainurl && this.mainurl.indexOf('/printer', this.mainurl.length - 8) !== -1) { // endswith '/printer'
     this.mainurl = this.mainurl.substring(0, this.mainurl.length - 8);
   }
 
@@ -58,7 +58,11 @@ OB.DS.HWServer.prototype.setActiveURL = function (url) {
   }
 
   // save
-  localStorage.setItem('hw_activeurl', this.activeurl);
+  if (this.activeurl) {
+    localStorage.setItem('hw_activeurl', this.activeurl);
+  } else {
+    localStorage.removeItem('hw_activeurl');
+  }
 };
 
 OB.DS.HWServer.prototype.getWeight = function (callback) {
