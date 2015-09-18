@@ -991,7 +991,9 @@ enyo.kind({
       this.order.get('lines').forEach(function (line) {
         var prod = line.get('product'),
             amountBeforeDiscounts = 0,
-            amountAfterDiscounts = 0;
+            amountAfterDiscounts = 0,
+            rangeAmountBeforeDiscounts = 0,
+            rangeAmountAfterDiscounts = 0;
         if (prod.get('productType') === 'S' && prod.get('isPriceRuleBased') && !line.get('originalOrderLineId')) {
           var criteria = {};
           line.get('relatedLines').forEach(function (rl) {
@@ -1002,11 +1004,23 @@ enyo.kind({
                 amountAfterDiscounts += Math.abs(l.get('gross') - _.reduce(l.get('promotions'), function (memo, promo) {
                   return memo + promo.amt;
                 }, 0));
+                if (prod.get('quantityRule') === 'PP') {
+                  rangeAmountBeforeDiscounts += Math.abs(OB.DEC.div(l.get('gross'), l.get('qty')));
+                  rangeAmountAfterDiscounts += Math.abs(OB.DEC.div(l.get('gross') - _.reduce(l.get('promotions'), function (memo, promo) {
+                    return memo + promo.amt;
+                  }, 0), l.get('qty')));
+                }
               } else {
                 amountBeforeDiscounts += Math.abs(rl.gross);
                 amountAfterDiscounts += Math.abs(rl.gross - _.reduce(rl.promotions, function (memo, promo) {
                   return memo + promo.amt;
                 }, 0));
+                if (prod.get('quantityRule') === 'PP') {
+                  rangeAmountBeforeDiscounts += Math.abs(OB.DEC.div(rl.gross, rl.qty));
+                  rangeAmountAfterDiscounts += Math.abs(OB.DEC.div(rl.gross - _.reduce(rl.promotions, function (memo, promo) {
+                    return memo + promo.amt;
+                  }, 0), rl.qty));
+                }
               }
             } else {
               if (l) {
@@ -1014,14 +1028,30 @@ enyo.kind({
                 amountAfterDiscounts += Math.abs(l.get('net') - _.reduce(l.get('promotions'), function (memo, promo) {
                   return memo + promo.amt;
                 }, 0));
+                if (prod.get('quantityRule') === 'PP') {
+                  rangeAmountBeforeDiscounts += Math.abs(OB.DEC.div(l.get('net'), l.get('qty')));
+                  rangeAmountAfterDiscounts += Math.abs(OB.DEC.div(l.get('net') - _.reduce(l.get('promotions'), function (memo, promo) {
+                    return memo + promo.amt;
+                  }, 0), l.get('qty')));
+                }
               } else {
                 amountBeforeDiscounts += Math.abs(rl.net);
                 amountAfterDiscounts += Math.abs(rl.net - _.reduce(rl.promotions, function (memo, promo) {
                   return memo + promo.amt;
                 }, 0));
+                if (prod.get('quantityRule') === 'PP') {
+                  rangeAmountBeforeDiscounts += Math.abs(OB.DEC.div(rl.net, rl.qty));
+                  rangeAmountAfterDiscounts += Math.abs(OB.DEC.div(rl.net - _.reduce(rl.promotions, function (memo, promo) {
+                    return memo + promo.amt;
+                  }, 0), rl.qty));
+                }
               }
             }
           });
+          if (prod.get('quantityRule') === 'UQ') {
+            rangeAmountBeforeDiscounts = amountBeforeDiscounts;
+            rangeAmountAfterDiscounts = amountAfterDiscounts;
+          }
           if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.product', true)) {
             criteria.hgVolFilters = [];
             criteria.hgVolFilters.push({
@@ -1072,11 +1102,10 @@ enyo.kind({
                       columns: [],
                       operator: 'filter',
                       value: 'ServicePriceRuleRange_AmountFilter',
-                      params: [amountBeforeDiscounts, amountAfterDiscounts]
-                      //TODO: _limit -1
+                      params: [spr.get('afterdiscounts') ? rangeAmountAfterDiscounts : rangeAmountBeforeDiscounts]
                     });
                   } else {
-                    rangeCriteria._whereClause = "where servicepricerule = '" + spr.get('id') + "' and ((afterdiscounts = 'false' and amountUpTo >= " + amountBeforeDiscounts + ") or (afterdiscounts = 'true' and amountUpTo >= " + amountAfterDiscounts + ") or (amountUpTo is null))";
+                    rangeCriteria._whereClause = "where servicepricerule = '" + spr.get('id') + "' and (( amountUpTo >= " + (spr.get('afterdiscounts') ? rangeAmountAfterDiscounts : rangeAmountBeforeDiscounts) + ") or (amountUpTo is null))";
                     rangeCriteria._orderByClause = 'amountUpTo is null, amountUpTo';
                     rangeCriteria._limit = 1;
                   }

@@ -19,6 +19,6 @@ import org.openbravo.mobile.core.process.HQLCriteriaProcess;
 public class ServicePriceRuleRangeHQLCriteria extends HQLCriteriaProcess {
 
   public String getHQLFilter() {
-    return " ((afterDiscounts = false and amountUpTo >= $1) or (afterDiscounts = true and amountUpTo >= $2) or (amountUpTo is null))";
+    return " ((amountUpTo >= $1) or (amountUpTo is null))";
   }
 }
