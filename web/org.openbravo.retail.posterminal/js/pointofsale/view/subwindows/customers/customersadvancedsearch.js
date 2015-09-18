@@ -362,8 +362,7 @@ enyo.kind({
 
     function successCallbackBPs(dataBps, args) {
       me.$.renderLoading.hide();
-      me.bpsList.reset();
-      if (args === 0) {
+      if (args === 0 && (!dataBps || dataBps.length === 0)) {
         me.$.stBPAdvSearch.$.tempty.show();
       }
       if (dataBps && dataBps.length > 0) {
@@ -397,6 +396,9 @@ enyo.kind({
       return reset(this);
     }
 
+    // clear the current search results
+    me.bpsList.reset();
+
     filter = OB.UTIL.unAccent(inEvent.bpName);
     splitFilter = filter.split(",");
     splitFilterLength = splitFilter.length;
@@ -404,10 +406,20 @@ enyo.kind({
 
     if (filter && filter !== '') {
       for (i = 0; i < splitFilter.length; i++) {
-        criteria._filter = {
-          operator: _operator,
-          value: splitFilter[i]
-        };
+        // with starts with always search using identifier
+        // as this is more logical, the filter column can start 
+        // with any value
+        if (_operator === 'startsWith') {
+          criteria._identifier = {
+            operator: _operator,
+            value: splitFilter[i]
+          };
+        } else {
+          criteria._filter = {
+            operator: _operator,
+            value: splitFilter[i]
+          };
+        }
         if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
           var filterIdentifier = {
             columns: ['_identifier', 'searchKey'],
