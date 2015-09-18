@@ -140,7 +140,7 @@ public class RoleInheritanceRestrictionsTest extends WeldBaseTest {
         template.setTemplate(false);
         OBDal.getInstance().commitAndClose();
       } catch (Exception ex) {
-        // Expected exception, the trigger ad_role_trg avoids this save
+        // Expected exception, the AD_ROLE_TRG avoids this save
       }
 
       template = OBDal.getInstance().get(Role.class, templateId);
@@ -154,6 +154,34 @@ public class RoleInheritanceRestrictionsTest extends WeldBaseTest {
       RoleInheritanceTestUtils.deleteRole(role);
       RoleInheritanceTestUtils.deleteRole(template);
 
+      OBDal.getInstance().commitAndClose();
+
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  @Test
+  public void testTemplateRoleNotAutomatic() {
+    Role template = null;
+    try {
+      OBContext.setAdminMode(true);
+      template = RoleInheritanceTestUtils.createRole("template",
+          RoleInheritanceTestUtils.CLIENT_ID, RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C",
+          false, true);
+      String templateId = (String) DalUtil.getId(template);
+      try {
+        OBDal.getInstance().commitAndClose();
+      } catch (Exception ex) {
+        // Expected exception, the AD_ROLE_TEMPLATE_ISMANUAL_CHK constraint avoids this save
+      }
+      template = OBDal.getInstance().get(Role.class, templateId);
+      assertThat("A template role can not be automatic", template, equalTo(null));
+
+    } finally {
+      // Delete role (if exists)
+      if (template != null) {
+        RoleInheritanceTestUtils.deleteRole(template);
+      }
       OBDal.getInstance().commitAndClose();
 
       OBContext.restorePreviousMode();
