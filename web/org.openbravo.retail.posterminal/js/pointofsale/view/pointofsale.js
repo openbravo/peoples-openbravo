@@ -584,7 +584,22 @@ enyo.kind({
       return true;
     }
     if (OB.MobileApp.model.get('terminal').businessPartner === inEvent.businessPartner.get('id')) {
-      OB.MobileApp.model.set('businessPartner', inEvent.businessPartner);
+      if (OB.MobileApp.model.get('terminal').partnerAddress === inEvent.businessPartner.get('locationModel').get('id')) {
+        if (inEvent.businessPartner.get('locationModel').get('isShipTo')) {
+          OB.MobileApp.model.get('businessPartner').set('locShipId', inEvent.businessPartner.get('locationModel').get('id'));
+          OB.MobileApp.model.get('businessPartner').set('locShipName', inEvent.businessPartner.get('locationModel').get('name'));
+        } else {
+          OB.MobileApp.model.get('businessPartner').set('locShipId', null);
+          OB.MobileApp.model.get('businessPartner').set('locShipName', null);
+        }
+        if (inEvent.businessPartner.get('locationModel').get('isBillTo')) {
+          OB.MobileApp.model.get('businessPartner').set('locId', inEvent.businessPartner.get('locationModel').get('id'));
+          OB.MobileApp.model.get('businessPartner').set('locName', inEvent.businessPartner.get('locationModel').get('name'));
+        } else {
+          OB.MobileApp.model.get('businessPartner').set('locId', null);
+          OB.MobileApp.model.get('businessPartner').set('locName', null);
+        }
+      }
     }
     this.model.get('order').setBPandBPLoc(inEvent.businessPartner, false, true);
     this.model.get('orderList').saveCurrent();
