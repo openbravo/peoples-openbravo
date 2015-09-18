@@ -196,8 +196,9 @@ public class BasicADWindowInheritanceTest extends WeldBaseTest {
 
       // Add window access
       addWindowAccess(template, "Sales Invoice", true);
+      addWindowAccess(role, "Sales Order", true);
 
-      String[] expected = { SALES_INVOICE_ID, templateId };
+      String[] expected = { SALES_INVOICE_ID, templateId, SALES_ORDER_ID, "" };
       String[] result = getWindowAccessesOrderedByWindowName(role);
       assertThat("New window access has been propagated", result, equalTo(expected));
 
@@ -208,11 +209,19 @@ public class BasicADWindowInheritanceTest extends WeldBaseTest {
       role = OBDal.getInstance().get(Role.class, roleId);
       template = OBDal.getInstance().get(Role.class, templateId);
 
-      WindowAccess wa = role.getADWindowAccessList().get(0);
-
-      boolean[] expected2 = { false, false };
-      boolean[] result2 = { wa.isEditableField(), wa.isActive() };
+      WindowAccess wa = getWindowAccessForWindowName(role.getADWindowAccessList(), "Sales Invoice");
+      String[] expected2 = { "false", "false", templateId };
+      String[] result2 = { wa.isEditableField().toString(), wa.isActive().toString(),
+          wa.getInheritedFrom().getId() };
       assertThat("Updated window access has been propagated", result2, equalTo(expected2));
+
+      WindowAccess wa2 = getWindowAccessForWindowName(role.getADWindowAccessList(), "Sales Order");
+      String[] expected3 = { "true", "true", "" };
+      String inheritedFromid = wa2.getInheritedFrom() != null ? wa2.getInheritedFrom().getId() : "";
+      String[] result3 = { wa2.isEditableField().toString(), wa2.isActive().toString(),
+          inheritedFromid };
+      assertThat("Non inherited access remains unchanged after propagation", result3,
+          equalTo(expected3));
 
     } finally {
       // Delete roles
@@ -223,7 +232,6 @@ public class BasicADWindowInheritanceTest extends WeldBaseTest {
 
       OBContext.restorePreviousMode();
     }
-
   }
 
   private void addWindowAccess(Role role, String windowName, boolean editableField) {
@@ -272,5 +280,14 @@ public class BasicADWindowInheritanceTest extends WeldBaseTest {
       i += 2;
     }
     return result;
+  }
+
+  private WindowAccess getWindowAccessForWindowName(List<WindowAccess> list, String windowName) {
+    for (WindowAccess wa : list) {
+      if (windowName.equals(wa.getWindow().getName())) {
+        return wa;
+      }
+    }
+    return null;
   }
 }

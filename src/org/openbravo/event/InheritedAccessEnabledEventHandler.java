@@ -30,7 +30,6 @@ import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.client.myob.WidgetClassAccess;
-import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.FieldAccess;
 import org.openbravo.model.ad.access.FormAccess;
 import org.openbravo.model.ad.access.Role;
@@ -96,15 +95,6 @@ public class InheritedAccessEnabledEventHandler extends EntityPersistenceEventOb
   public void onDelete(@Observes EntityDeleteEvent event) {
     if (!isValidEvent(event)) {
       return;
-    }
-    final BaseOBObject bob = event.getTargetInstance();
-    final InheritedAccessEnabled access = (InheritedAccessEnabled) bob;
-    final String entityName = bob.getEntity().getName();
-    final AccessType accessType = AccessType.getAccessType(entityName);
-    final Role role = accessType.getRole(access);
-    if (role.isTemplate() || access.getInheritedFrom() != null) {
-      // Avoid inherited access deletion, for the moment
-      Utility.throwErrorMessage("NotDeleteInheritedAccess");
     }
   }
 }

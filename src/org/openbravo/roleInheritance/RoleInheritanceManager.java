@@ -84,7 +84,14 @@ public class RoleInheritanceManager {
       AccessType accessType) {
     for (RoleInheritance ri : role.getADRoleInheritanceInheritFromList()) {
       for (InheritedAccessEnabled childAccess : accessType.getAccessList(ri.getRole())) {
-        accessType.updateRoleAccess(childAccess, access);
+        String accessElementId = accessType.getSecuredElementIdentifier(access);
+        String childAccessElementId = accessType.getSecuredElementIdentifier(childAccess);
+        String accessRole = (String) DalUtil.getId(accessType.getRole(access));
+        String inheritFromRole = childAccess.getInheritedFrom() != null ? (String) DalUtil
+            .getId(childAccess.getInheritedFrom()) : "";
+        if (accessElementId.equals(childAccessElementId) && accessRole.equals(inheritFromRole)) {
+          accessType.updateRoleAccess(childAccess, access);
+        }
       }
     }
   }
@@ -389,15 +396,13 @@ public class RoleInheritanceManager {
 
     public void deleteRoleAccess(Role inheritFromToDelete,
         List<? extends InheritedAccessEnabled> roleAccessList) {
-      String inheritFromId = inheritFromToDelete.getId();
-      inheritFromToDelete.getADWindowAccessList();
+      String inheritFromId = (String) DalUtil.getId(inheritFromToDelete);
       List<InheritedAccessEnabled> iaeToDelete = new ArrayList<InheritedAccessEnabled>();
       for (InheritedAccessEnabled ih : roleAccessList) {
-        if (ih.getInheritedFrom() != null) { // Non inherited records are not deleted
-          String inheritedFromId = (String) DalUtil.getId(ih.getInheritedFrom());
-          if (inheritFromId.equals(inheritedFromId)) {
-            iaeToDelete.add(ih);
-          }
+        String inheritedFromId = ih.getInheritedFrom() != null ? (String) DalUtil.getId(ih
+            .getInheritedFrom()) : "";
+        if (!StringUtils.isEmpty(inheritedFromId) && inheritFromId.equals(inheritedFromId)) {
+          iaeToDelete.add(ih);
         }
       }
       for (InheritedAccessEnabled ih : iaeToDelete) {
