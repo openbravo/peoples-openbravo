@@ -305,7 +305,7 @@ enyo.kind({
               return;
             }
             receipt.trigger('print', receipt, {
-              force: true
+              forcePrint: true
             });
           });
 
@@ -313,7 +313,7 @@ enyo.kind({
         }
         receipt.calculateTaxes(function () {
           receipt.trigger('print', receipt, {
-            force: true
+            forcePrint: true
           });
         });
         return;
@@ -321,7 +321,7 @@ enyo.kind({
       if (this.model.get('leftColumnViewManager').isMultiOrder()) {
         _.each(this.model.get('multiOrders').get('multiOrdersList').models, function (order) {
           this.model.get('multiOrders').trigger('print', order, {
-            force: true
+            forcePrint: true
           });
         }, this);
       }
