@@ -115,8 +115,20 @@ enyo.kind({
     var me = this,
         i, j, whereClause = '',
         params = [];
+
+    var products = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.products;
+    // Get all the products id
+    var productsIdsList = "('";
+    for (i = 0; i < products.collection.length; i++) {
+      productsIdsList += products.collection.models[i].id + "'";
+      if (i < products.collection.length - 1) {
+        productsIdsList += ",'";
+      }
+    }
+    productsIdsList += ")";
+
     params.push(this.parent.parent.characteristic.get('characteristic'));
-    OB.Dal.query(OB.Model.CharacteristicValue, "select distinct(id), name, characteristic_id, parent from m_ch_value where parent = '" + this.parentValue + "' and characteristic_id = ?" + whereClause + ' order by UPPER(name) asc', params, function (dataValues, me) {
+    OB.Dal.query(OB.Model.CharacteristicValue, "select distinct(id), name, characteristic_id, parent from m_ch_value chv left join m_product_ch_value pchv on id=m_ch_value_id where parent = '" + this.parentValue + "' and characteristic_id = ? and m_product_id in " + productsIdsList + " " + whereClause + ' order by UPPER(name) asc', params, function (dataValues, me) {
       if (dataValues && dataValues.length > 0) {
         for (i = 0; i < dataValues.length; i++) {
           for (j = 0; j < me.parent.parent.model.get('filter').length; j++) {

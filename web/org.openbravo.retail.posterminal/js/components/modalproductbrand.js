@@ -90,7 +90,18 @@ enyo.kind({
       }]
     };
 
-    OB.Dal.find(OB.Model.Brand, criteria, successCallbackBrands, errorCallback);
+    var products = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.products;
+    // Get all the products id
+    var productsIdsList = "('";
+    for (i = 0; i < products.collection.length; i++) {
+      productsIdsList += products.collection.models[i].id + "'";
+      if (i < products.collection.length - 1) {
+        productsIdsList += ",'";
+      }
+    }
+    productsIdsList += ")";
+    //OB.Dal.find(OB.Model.Brand, criteria, successCallbackBrands, errorCallback);
+    OB.Dal.query(OB.Model.Brand, "select distinct(b.m_product_id),b.name,b._identifier,b._filter,b._idx from m_brand b left join m_product p on p.brand=b.m_product_id where p.m_product_id in " + productsIdsList + " order by UPPER(name) asc", null,successCallbackBrands, errorCallback, this);
     return true;
   },
   brandsList: null,
