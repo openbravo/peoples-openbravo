@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2014 Openbravo SLU
+ * All portions are Copyright (C) 2001-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -366,6 +366,8 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
     String strExpenseSheetLineno = data.line;
 
     String priceactual = "";
+    String grossprice = "";
+    String grosspricelist = "";
     String pricelist = "";
     String pricelimit = "";
 
@@ -374,6 +376,9 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
       // Determines the date of the expense (strDateExpense)
       String strDateexpense = data.dateexpense.equals("") ? data.datereport : data.dateexpense;
       strDateexpense = strDateexpense.equals("") ? DateTimeData.today(this) : strDateexpense;
+
+      boolean isPriceIncludingTaxes = "Y".equals(ExpenseSOrderData.selectisPriceIncludingTaxes(
+          this, data.mPricelistId));
 
       // Gets the tax for the sales order line
       String strCTaxID = Tax.get(this, data.mProductId, strDateOrdered, data.adOrgId,
@@ -399,7 +404,7 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
         String strPricePrecision = "0";
         String strDiscount = "";
 
-        BigDecimal priceActual, priceList, priceLimit, discount;
+        BigDecimal priceActual, grossPrice, priceList, grossPriceList, priceLimit, discount;
 
         // Looks for the prices in the pricelist of the business partner
         ExpenseSOrderData[] data3 = ExpenseSOrderData.selectPrice(this, data.mProductId,
@@ -459,16 +464,32 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
           priceLimit = (pricelimit.equals("") ? ZERO : (new BigDecimal(pricelimit)));
           priceLimit = priceLimit.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
 
+          grossPrice = BigDecimal.ZERO;
+          grossPriceList = BigDecimal.ZERO;
+          if (isPriceIncludingTaxes) {
+            grossPrice = priceActual;
+            grossPriceList = priceList;
+          }
+
           // Calculating discount
           if (priceList.compareTo(BigDecimal.ZERO) == 0)
             discount = ZERO;
           else {
-            if (log4j.isDebugEnabled())
+            if (log4j.isDebugEnabled()) {
               log4j.debug("pricelist:" + Double.toString(priceList.doubleValue()));
-            if (log4j.isDebugEnabled())
+            }
+            if (isPriceIncludingTaxes) {
+              log4j.debug("grossPrice:" + Double.toString(grossPrice.doubleValue()));
+            } else {
               log4j.debug("priceActual:" + Double.toString(priceActual.doubleValue()));
-            discount = ((priceList.subtract(priceActual)).divide(priceList, 12,
-                BigDecimal.ROUND_HALF_EVEN)).multiply(new BigDecimal("100"));
+            }
+            if (isPriceIncludingTaxes) {
+              discount = ((priceList.subtract(grossPrice)).divide(priceList, 12,
+                  BigDecimal.ROUND_HALF_EVEN)).multiply(new BigDecimal("100"));
+            } else {
+              discount = ((priceList.subtract(priceActual)).divide(priceList, 12,
+                  BigDecimal.ROUND_HALF_EVEN)).multiply(new BigDecimal("100"));
+            }
           }
           if (log4j.isDebugEnabled())
             log4j.debug("Discount: " + discount.toString());
@@ -479,7 +500,9 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
             log4j.debug("Discount rounded: " + discount.toString());
 
           priceactual = priceActual.toString();
+          grossprice = grossPrice.toString();
           pricelist = priceList.toString();
+          grosspricelist = grossPriceList.toString();
           pricelimit = priceLimit.toString();
           strDiscount = discount.toString();
 
@@ -494,8 +517,8 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
               data.cUomId.equals("") ? Utility.getContext(this, vars, "#C_UOM_ID", "ExpenseSOrder")
                   : data.cUomId, data.qty, strBPCCurrencyId, pricelist, priceactual,
               data.mPricelistId, pricelimit, strCTaxID, data.sResourceassignmentId, strDiscount,
-              data.lineCProjectId, data.lineUser1Id, data.lineUser2Id, data.lineCCostcenterId,
-              data.lineAAssetId);
+              grossprice, grosspricelist, data.lineCProjectId, data.lineUser1Id, data.lineUser2Id,
+              data.lineCCostcenterId, data.lineAAssetId);
 
           // Updates expense line with the sales order line ID
           ExpenseSOrderData.updateTimeExpenseLine(conn, this, strCOrderlineID,
