@@ -390,7 +390,8 @@ enyo.kind({
     onDisableUserInterface: '',
     onEnableUserInterface: '',
     onFinishServiceProposal: '',
-    onToggleLineSelection: ''
+    onToggleLineSelection: '',
+    onShowActionIcons: ''
   },
   handlers: {
     onRightToolbarDisabled: 'disabledButton',
@@ -414,11 +415,17 @@ enyo.kind({
     this.$.lbl.setContent(OB.I18N.getLabel('OBPOS_LblContinue'));
     this.doDisableUserInterface();
     this.setDisabled(false);
+    this.doShowActionIcons({
+      show: false
+    });
   },
   tap: function (options) {
     if (OB.MobileApp.model.get('serviceSearchMode')) {
       this.$.lbl.setContent(OB.I18N.getLabel('OBPOS_LblEdit'));
       this.doEnableUserInterface();
+      this.doShowActionIcons({
+        show: true
+      });
       this.doToggleLineSelection({
         status: false
       });

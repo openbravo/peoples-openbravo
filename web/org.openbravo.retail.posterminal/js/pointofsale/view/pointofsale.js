@@ -86,6 +86,7 @@ enyo.kind({
     onManageServiceProposal: 'manageServiceProposal',
     onDisableUserInterface: 'disableUserInterface',
     onEnableUserInterface: 'enableUserInterface',
+    onShowActionIcons: 'showActionIcons',
     onSetMultiSelection: 'setMultiSelection',
     onShowMultiSelection: 'showMultiSelection',
     onSetMultiSelectionItems: 'setMultiSelectionItems',
@@ -808,6 +809,9 @@ enyo.kind({
     this.orderSelectionDisabled(inSender, {
       status: false
     });
+  },
+  showActionIcons: function (inSender, inEvent) {
+    this.waterfall('onShowingActionIcons', inEvent);
   },
   tabChange: function (inSender, inEvent) {
 
