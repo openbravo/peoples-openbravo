@@ -11,27 +11,29 @@
 
 (function () {
 
+  function dumyFunction() {}
+
+  function extendHWResource(resource, template) {
+    var terminal = OB.MobileApp.model.get('terminal');
+
+    if (terminal[template + 'IsPdf'] === 'true') {
+      resource.ispdf = true;
+      resource.printer = terminal[template + 'Printer'];
+      var i = 0,
+          subreports = [];
+
+      while (terminal.hasOwnProperty(template + 'Subrep' + i)) {
+        subreports[i] = new OB.DS.HWResource(terminal[template + 'Subrep' + i]);
+        subreports[i].getData(dumyFunction);
+        i++;
+      }
+      resource.subreports = subreports;
+      resource.getData(dumyFunction);
+    }
+  }
+
   var PrintReceipt = function (model) {
       var terminal = OB.MobileApp.model.get('terminal');
-
-      function dumyFunction() {}
-
-      function extendHWResource(resource, template) {
-        if (terminal[template + "IsPdf"] === 'true') {
-          resource.ispdf = true;
-          resource.printer = terminal[template + "Printer"];
-          var i = 0,
-              subreports = [];
-
-          while (terminal.hasOwnProperty(template + "Subrep" + i)) {
-            subreports[i] = new OB.DS.HWResource(terminal[template + "Subrep" + i]);
-            subreports[i].getData(dumyFunction);
-            i++;
-          }
-          resource.subreports = subreports;
-          resource.getData(function () {});
-        }
-      }
 
       this.receipt = model.get('order');
       this.multiOrders = model.get('multiOrders');
@@ -72,8 +74,6 @@
 
       this.templatetotal = new OB.DS.HWResource(terminal.printDisplayTotalTemplate || OB.OBPOSPointOfSale.Print.DisplayTotal);
       extendHWResource(this.templatetotal, "printDisplayTotalTemplate");
-      this.templateline = new OB.DS.HWResource(terminal.printReceiptLineTemplate || OB.OBPOSPointOfSale.Print.ReceiptLineTemplate);
-      extendHWResource(this.templateline, "printReceiptLineTemplate");
 
       this.templategoodbye = new OB.DS.HWResource(terminal.printGoodByeTemplate || OB.OBPOSPointOfSale.Print.GoodByeTemplate);
       extendHWResource(this.templategoodbye, "printGoodByeTemplate");
@@ -300,6 +300,8 @@
   };
 
   var PrintReceiptLine = function (receipt) {
+      var terminal = OB.MobileApp.model.get('terminal');
+
       this.receipt = receipt;
       this.line = null;
 
@@ -316,6 +318,9 @@
         }
         this.print();
       }, this);
+
+      this.templateline = new OB.DS.HWResource(terminal.printReceiptLineTemplate || OB.OBPOSPointOfSale.Print.ReceiptLineTemplate);
+      extendHWResource(this.templateline, 'printReceiptLineTemplate');
       };
 
   PrintReceiptLine.prototype.print = function () {
