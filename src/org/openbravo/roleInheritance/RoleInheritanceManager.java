@@ -54,13 +54,23 @@ public class RoleInheritanceManager {
     List<String> inheritanceRoleIdList = getRoleInheritancesRoleIdList(inheritanceList);
     List<RoleInheritance> newInheritanceList = new ArrayList<RoleInheritance>();
     newInheritanceList.add(inheritance);
-    calculateAccesses(newInheritanceList, AccessType.WINDOW_ACCESS, inheritanceRoleIdList);
+    for (AccessType accessType : AccessType.values()) {
+      calculateAccesses(newInheritanceList, accessType, inheritanceRoleIdList);
+    }
   }
 
   public static void applyRemoveInheritance(RoleInheritance inheritance) {
     List<RoleInheritance> inheritanceList = getUpdatedRoleInheritancesList(inheritance, true);
     List<String> inheritanceRoleIdList = getRoleInheritancesRoleIdList(inheritanceList);
-    calculateAccesses(inheritanceList, AccessType.WINDOW_ACCESS, inheritanceRoleIdList, inheritance);
+    for (AccessType accessType : AccessType.values()) {
+      calculateAccesses(inheritanceList, accessType, inheritanceRoleIdList, inheritance);
+    }
+  }
+
+  public static void recalculateAccessFromTemplate(Role template, AccessType accessType) {
+    for (RoleInheritance ri : template.getADRoleInheritanceInheritFromList()) {
+      recalculateAccessForRole(ri.getRole(), accessType);
+    }
   }
 
   public static void recalculateAllAccessesFromTemplate(Role template) {
@@ -69,10 +79,18 @@ public class RoleInheritanceManager {
     }
   }
 
+  public static void recalculateAccessForRole(Role role, AccessType accessType) {
+    List<RoleInheritance> inheritanceList = getRoleInheritancesList(role);
+    List<String> inheritanceRoleIdList = getRoleInheritancesRoleIdList(inheritanceList);
+    calculateAccesses(inheritanceList, accessType, inheritanceRoleIdList);
+  }
+
   public static void recalculateAllAccessesForRole(Role role) {
     List<RoleInheritance> inheritanceList = getRoleInheritancesList(role);
     List<String> inheritanceRoleIdList = getRoleInheritancesRoleIdList(inheritanceList);
-    calculateAccesses(inheritanceList, AccessType.WINDOW_ACCESS, inheritanceRoleIdList);
+    for (AccessType accessType : AccessType.values()) {
+      calculateAccesses(inheritanceList, accessType, inheritanceRoleIdList);
+    }
   }
 
   public static void propagateNewAccess(Role role, InheritedAccessEnabled access,
@@ -382,6 +400,7 @@ public class RoleInheritanceManager {
         whereClause.append(" where p.").append(roleProperty).append(" = :roleId");
         final OBQuery<T> query = OBDal.getInstance().createQuery(clazz, whereClause.toString());
         query.setNamedParameter("roleId", role.getId());
+        query.setFilterOnActive(false);
         return (List<? extends InheritedAccessEnabled>) query.list();
       } catch (Exception ex) {
         log4j.error("Error getting access list of class " + className, ex);
@@ -416,13 +435,10 @@ public class RoleInheritanceManager {
     }
 
     public void updateRoleAccess(InheritedAccessEnabled access, InheritedAccessEnabled inherited) {
-      access.setInheritedFrom(getRole(inherited));
-      if (className.equals("org.openbravo.model.ad.access.WindowAccess")) {
-        WindowAccess windowAccess = (WindowAccess) access;
-        WindowAccess inheritedWindowAccess = (WindowAccess) inherited;
-        windowAccess.setActive(inheritedWindowAccess.isActive());
-        windowAccess.setEditableField(inheritedWindowAccess.isEditableField());
-      }
+      final InheritedAccessEnabled updatedAccess = (InheritedAccessEnabled) DalUtil.copyToTarget(
+          (BaseOBObject) inherited, (BaseOBObject) access, false);
+      // update the inherit from field, to indicate from which role we are inheriting now
+      updatedAccess.setInheritedFrom(getRole(inherited));
     }
 
     public static AccessType getAccessType(String entityName) throws OBException {

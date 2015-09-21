@@ -72,7 +72,7 @@ public class InheritedAccessEnabledEventHandler extends EntityPersistenceEventOb
     final String entityName = bob.getEntity().getName();
     final AccessType accessType = AccessType.getAccessType(entityName);
     final Role role = accessType.getRole(access);
-    if (role.isTemplate()) { // Propagate permissions just for roles marked as template
+    if (role.isTemplate()) { // Propagate new access just for roles marked as template
       RoleInheritanceManager.propagateNewAccess(role, access, accessType);
     }
   }
@@ -87,7 +87,7 @@ public class InheritedAccessEnabledEventHandler extends EntityPersistenceEventOb
     final String entityName = bob.getEntity().getName();
     final AccessType accessType = AccessType.getAccessType(entityName);
     final Role role = accessType.getRole(access);
-    if (role.isTemplate()) { // Propagate permissions just for roles marked as template
+    if (role.isTemplate()) { // Propagate updated access just for roles marked as template
       RoleInheritanceManager.propagateUpdatedAccess(role, access, accessType);
     }
   }
@@ -95,6 +95,15 @@ public class InheritedAccessEnabledEventHandler extends EntityPersistenceEventOb
   public void onDelete(@Observes EntityDeleteEvent event) {
     if (!isValidEvent(event)) {
       return;
+    }
+
+    final BaseOBObject bob = event.getTargetInstance();
+    final InheritedAccessEnabled access = (InheritedAccessEnabled) bob;
+    final String entityName = bob.getEntity().getName();
+    final AccessType accessType = AccessType.getAccessType(entityName);
+    final Role role = accessType.getRole(access);
+    if (role.isTemplate()) { // Propagate access removal just for roles marked as template
+      RoleInheritanceManager.propagateUpdatedAccess(role, access, accessType);
     }
   }
 }

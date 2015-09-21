@@ -50,7 +50,7 @@ OB.RoleInheritance = {
       params.action = 'DEFAULT';
       message = 'RecalculateRolePermissions';
     }
-    params.actionHandler = 'org.openbravo.roleInheritance.RecalculatePermissionsEventHandler';
+    params.actionHandler = 'org.openbravo.roleInheritance.RecalculatePermissionsHandler';
     isc.confirm(OB.I18N.getLabel(message, [name]), {
       isModal: true,
       showModalMask: true,

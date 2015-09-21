@@ -30,9 +30,8 @@ import org.openbravo.service.db.DbUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RecalculatePermissionsEventHandler extends BaseActionHandler {
-  final static private Logger log = LoggerFactory
-      .getLogger(RecalculatePermissionsEventHandler.class);
+public class RecalculatePermissionsHandler extends BaseActionHandler {
+  final static private Logger log = LoggerFactory.getLogger(RecalculatePermissionsHandler.class);
 
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) {

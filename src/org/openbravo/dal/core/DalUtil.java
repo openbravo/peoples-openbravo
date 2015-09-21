@@ -297,14 +297,14 @@ public class DalUtil {
         if (p.isOneToMany()) {
           @SuppressWarnings("unchecked")
           final List<BaseOBObject> bobs = (List<BaseOBObject>) value;
-            if (bobs != null) {
+          if (bobs != null) {
             for (int i = 0; i < bobs.size(); i++) {
               final BaseOBObject curValue = bobs.get(i);
               if (fromTo.containsKey(curValue)) {
                 bobs.set(i, fromTo.get(curValue));
               }
             }
-          } 
+          }
         } else if (fromTo.containsKey(value)) {
           to.setValue(p.getName(), fromTo.get(value));
         }
@@ -356,6 +356,71 @@ public class DalUtil {
     }
     if (resetId) {
       target.setId(null);
+    }
+    return target;
+  }
+
+  /**
+   * Copies one object into another existing object. The id and the parent properties of the target
+   * object remain unchanged. The copyChildren parameter controls if the children of the object are
+   * also copied. The resetId parameter controls if the id of the copied object (and its children)
+   * is set to null.
+   * 
+   * @param source
+   *          the object to be copied
+   * @param target
+   *          the object where the original properties will be copied
+   * @param copyChildren
+   *          this parameter controls if the children of the source are also copied (recursively)
+   * @return the copied object
+   */
+  public static BaseOBObject copyToTarget(BaseOBObject source, BaseOBObject target,
+      boolean copyChildren) {
+    final Map<BaseOBObject, BaseOBObject> fromTo = new HashMap<BaseOBObject, BaseOBObject>();
+    copyToTarget(source, target, copyChildren, fromTo);
+    repairReferences(fromTo);
+    return fromTo.get(source);
+  }
+
+  /**
+   * Copies a single object into an existing target object, including its children (if the relevant
+   * parameter is set to true), all properties are copied except of the ID and the parent
+   * properties. The source and its copy are added to the fromTo map.
+   * 
+   * @param source
+   *          the object to copy
+   * @param target
+   *          the object where the original properties will be copied
+   * @param copyChildren
+   *          if true then all the child objects (which have this object as parent) are copied
+   *          recursively
+   * @param fromTo
+   *          the map which maintains the relation between the to-copy and the copied object
+   * @return the copied object
+   * @see #copy(BaseOBObject, boolean, boolean)
+   * @see #repairReferences(Map)
+   */
+  public static BaseOBObject copyToTarget(BaseOBObject source, BaseOBObject target,
+      boolean copyChildren, Map<BaseOBObject, BaseOBObject> fromTo) {
+
+    fromTo.put(source, target);
+    for (final Property p : source.getEntity().getProperties()) {
+      final Object value = source.getValue(p.getName());
+      if (p.isOneToMany()) {
+        if (copyChildren && !p.getTargetEntity().isView()) {
+          if (p.isChild()) {
+            final List<BaseOBObject> targetChildren = new ArrayList<BaseOBObject>();
+            target.setValue(p.getName(), targetChildren);
+            @SuppressWarnings("unchecked")
+            final List<BaseOBObject> sourceChildren = (List<BaseOBObject>) value;
+            for (final BaseOBObject sourceChild : sourceChildren) {
+              targetChildren.add(copy(sourceChild, copyChildren, false, fromTo));
+            }
+          }
+        }
+      } else if (!p.isId() && !p.isParent()) {
+        target.setValue(p.getName(), value);
+      }
     }
     return target;
   }
