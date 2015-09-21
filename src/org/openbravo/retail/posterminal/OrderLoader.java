@@ -796,6 +796,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         stdPrecision, RoundingMode.HALF_UP));
     invoice.setDueAmount((BigDecimal.valueOf(jsonorder.getDouble("gross"))).setScale(stdPrecision,
         RoundingMode.HALF_UP));
+    invoice.setUserContact(order.getUserContact());
 
     // Create invoice tax lines
     JSONObject taxes = jsonorder.getJSONObject("taxes");
