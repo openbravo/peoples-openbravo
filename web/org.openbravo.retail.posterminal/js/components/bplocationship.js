@@ -65,6 +65,16 @@ enyo.kind({
       me.chagedStyle(false);
     } else if (bp.get('locShipId') === bp.get('locId')) {
       criteria.bpartner = bp.get('id');
+      if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+        var bPartnerId = {
+          columns: ['bpartner'],
+          operator: 'equals',
+          value: bp.get('id'),
+          isId: true
+        };
+        var remoteCriteria = [bPartnerId];
+        criteria.remoteFilters = remoteCriteria;
+      }
       OB.Dal.find(OB.Model.BPLocation, criteria, function (dataBps) {
         if (dataBps && dataBps.length > 1) {
           me.chagedStyle(true);
@@ -355,8 +365,14 @@ enyo.kind({
           operator: 'equals',
           value: this.bPartner.get('id'),
           isId: true
+          },
+          isShipTo = {
+          columns: ['isShipTo'],
+          operator: 'equals',
+          value: true,
+          boolean: true
           };
-      var remoteCriteria = [filterIdentifier, bPartnerId];
+      var remoteCriteria = [filterIdentifier, bPartnerId, isShipTo];
       criteria.remoteFilters = remoteCriteria;
     }
     OB.Dal.find(OB.Model.BPLocation, criteria, successCallbackBPsLoc, errorCallback);

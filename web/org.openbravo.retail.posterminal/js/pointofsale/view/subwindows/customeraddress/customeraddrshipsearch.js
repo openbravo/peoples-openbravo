@@ -85,10 +85,16 @@ enyo.kind({
           bPartnerId = {
           columns: ['bpartner'],
           operator: 'equals',
-          value: this.bPartner,
+          value: this.bPartnerId,
           isId: true
+          },
+          isShipTo = {
+          columns: ['isShipTo'],
+          operator: 'equals',
+          value: true,
+          boolean: true
           };
-      var remoteCriteria = [filterIdentifier, bPartnerId];
+      var remoteCriteria = [filterIdentifier, bPartnerId, isShipTo];
       criteria.remoteFilters = remoteCriteria;
     }
     OB.Dal.find(OB.Model.BPLocation, criteria, successCallbackBPsLoc, errorCallback);

@@ -133,6 +133,16 @@ enyo.kind({
       }
       if (!_.isNull(bp)) {
         criteria.bpartner = bp.get('id');
+        if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+          var bPartnerId = {
+            columns: ['bpartner'],
+            operator: 'equals',
+            value: bp.get('id'),
+            isId: true
+          };
+          var remoteCriteria = [bPartnerId];
+          criteria.remoteFilters = remoteCriteria;
+        }
         OB.Dal.find(OB.Model.BPLocation, criteria, function (dataBps) {
           if (dataBps && dataBps.length === 1 && (dataBps.models[0].get('isBillTo') && dataBps.models[0].get('isShipTo'))) {
             me.$.bodyContent.$.attributes.$.line_addressshipbutton.hide();
@@ -145,8 +155,6 @@ enyo.kind({
           OB.UTIL.showError("OBDAL error: " + error);
         });
       }
-
-
     }, this);
 
     this.model.on('paymentAccepted', function () {
