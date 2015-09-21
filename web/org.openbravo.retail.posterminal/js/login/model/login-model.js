@@ -745,13 +745,13 @@
     getLastDocumentnoSuffixInOrderlist: function () {
       var lastSuffix = null;
       if (OB.MobileApp.model.orderList && OB.MobileApp.model.orderList.length > 0) {
-        var i = OB.MobileApp.model.orderList.models.length - 1;
-        while (lastSuffix === null && i >= 0) {
+        var i = 0;
+        while (lastSuffix === null && i <= OB.MobileApp.model.orderList.models.length - 1) {
           var order = OB.MobileApp.model.orderList.models[i];
           if (!order.get('isPaid') && !order.get('isQuotation') && order.get('documentnoPrefix') === OB.MobileApp.model.get('terminal').docNoPrefix) {
             lastSuffix = order.get('documentnoSuffix');
           }
-          i--;
+          i++;
         }
       }
       if (lastSuffix === null || lastSuffix < this.documentnoThreshold) {
@@ -763,13 +763,13 @@
     getLastQuotationnoSuffixInOrderlist: function () {
       var lastSuffix = null;
       if (OB.MobileApp.model.orderList && OB.MobileApp.model.orderList.length > 0) {
-        var i = OB.MobileApp.model.orderList.models.length - 1;
-        while (lastSuffix === null && i >= 0) {
+        var i = 0;
+        while (lastSuffix === null && i <= OB.MobileApp.model.orderList.models.length - 1) {
           var order = OB.MobileApp.model.orderList.models[i];
           if (order.get('isQuotation') && order.get('quotationnoPrefix') === OB.MobileApp.model.get('terminal').quotationDocNoPrefix) {
             lastSuffix = order.get('quotationnoSuffix');
           }
-          i--;
+          i++;
         }
       }
       if (lastSuffix === null || lastSuffix < this.quotationnoThreshold) {

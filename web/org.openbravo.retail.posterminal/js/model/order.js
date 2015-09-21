@@ -3284,14 +3284,14 @@
 
       this.saveCurrent();
       this.current = this.newOrder();
-      this.add(this.current);
+      this.unshift(this.current);
       this.loadCurrent(true);
     },
 
     addThisOrder: function (model) {
       this.saveCurrent();
       this.current = model;
-      this.add(this.current);
+      this.unshift(this.current);
       this.loadCurrent();
     },
 
@@ -3310,7 +3310,7 @@
 
       this.saveCurrent();
       this.current = model;
-      this.add(this.current);
+      this.unshift(this.current);
       this.loadCurrent(true);
 
       if (model.get('isLayaway')) {
@@ -3372,7 +3372,7 @@
       this.current.set('quotationnoSuffix', nextQuotationno.quotationnoSuffix);
       this.current.set('documentNo', nextQuotationno.documentNo);
 
-      this.add(this.current);
+      this.unshift(this.current);
       this.loadCurrent();
     },
     deleteCurrentFromDatabase: function (orderToDelete) {
