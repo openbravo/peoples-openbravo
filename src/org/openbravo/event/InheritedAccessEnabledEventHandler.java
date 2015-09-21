@@ -103,7 +103,6 @@ public class InheritedAccessEnabledEventHandler extends EntityPersistenceEventOb
     final AccessType accessType = AccessType.getAccessType(entityName);
     final Role role = accessType.getRole(access);
     if (role.isTemplate()) { // Propagate access removal just for roles marked as template
-      RoleInheritanceManager.propagateUpdatedAccess(role, access, accessType);
     }
   }
 }
