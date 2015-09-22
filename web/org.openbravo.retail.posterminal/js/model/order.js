@@ -998,6 +998,18 @@
       });
     },
 
+    removeDeleteLine: function (line) {
+      var deleteIndex = -1;
+      _.each(this.get('deletedLines'), function (d, index) {
+        if (d.id === line.id) {
+          deleteIndex = index;
+        }
+      });
+      if (deleteIndex !== -1) {
+        this.get('deletedLines').splice(deleteIndex, 1);
+      }
+    },
+
     deleteLine: function (line, doNotSave, callback) {
       var me = this;
       var index = this.get('lines').indexOf(line);
@@ -1115,6 +1127,7 @@
 
               sortedLines.forEach(function (line, idx) {
                 line.unset('obposIsDeleted');
+                me.removeDeleteLine(line);
                 me.get('lines').add(line, {
                   at: me.get('undo').indexes[idx]
                 });
@@ -1139,6 +1152,7 @@
                 OB.UTIL.showConfirmation.display("Error", OB.I18N.getLabel('OBPOS_AnonymousSaleNotAllowed'));
                 return;
               }
+              me.removeDeleteLine(line);
               line.unset('obposIsDeleted');
               me.get('lines').add(line, {
                 at: index
@@ -3008,8 +3022,8 @@
 
     newOrder: function (bp) {
       var order = new Order(),
-          bp = bp ? bp : OB.MobileApp.model.get('businessPartner'),
           receiptProperties, i, p;
+      bp = bp ? bp : OB.MobileApp.model.get('businessPartner');
 
       // reset in new order properties defined in Receipt Properties dialog
       if (OB.MobileApp.view.$.containerWindow && OB.MobileApp.view.$.containerWindow.getRoot() && OB.MobileApp.view.$.containerWindow.getRoot().$.receiptPropertiesDialog) {
