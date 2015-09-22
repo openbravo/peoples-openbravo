@@ -60,7 +60,7 @@ enyo.kind({
       var me = this,
           actualUser;
 
-      OB.Dal.find(OB.Model.SalesRepresentative, null, function (data, args) {
+      OB.Dal.find(OB.Model.SalesRepresentative, null, function (data) {
         if (me.destroyed) {
           return;
         }
