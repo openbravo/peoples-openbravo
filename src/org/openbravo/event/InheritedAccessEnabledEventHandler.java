@@ -21,46 +21,23 @@ package org.openbravo.event;
 import javax.enterprise.event.Observes;
 
 import org.openbravo.base.model.Entity;
-import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.InheritedAccessEnabled;
-import org.openbravo.client.application.ViewRoleAccess;
 import org.openbravo.client.kernel.event.EntityDeleteEvent;
 import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
-import org.openbravo.client.myob.WidgetClassAccess;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.model.ad.access.FieldAccess;
-import org.openbravo.model.ad.access.FormAccess;
 import org.openbravo.model.ad.access.Role;
-import org.openbravo.model.ad.access.RoleOrganization;
-import org.openbravo.model.ad.access.TabAccess;
-import org.openbravo.model.ad.access.TableAccess;
-import org.openbravo.model.ad.access.WindowAccess;
-import org.openbravo.model.ad.alert.AlertRecipient;
 import org.openbravo.roleInheritance.RoleInheritanceManager;
 import org.openbravo.roleInheritance.RoleInheritanceManager.AccessType;
 
 public class InheritedAccessEnabledEventHandler extends EntityPersistenceEventObserver {
-  private static Entity[] entities = {
-      ModelProvider.getInstance().getEntity(RoleOrganization.ENTITY_NAME),
-      ModelProvider.getInstance().getEntity(WindowAccess.ENTITY_NAME),
-      ModelProvider.getInstance().getEntity(TabAccess.ENTITY_NAME),
-      ModelProvider.getInstance().getEntity(FieldAccess.ENTITY_NAME),
-      ModelProvider.getInstance()
-          .getEntity(org.openbravo.model.ad.access.ProcessAccess.ENTITY_NAME),
-      ModelProvider.getInstance().getEntity(FormAccess.ENTITY_NAME),
-      ModelProvider.getInstance().getEntity(WidgetClassAccess.ENTITY_NAME),
-      ModelProvider.getInstance().getEntity(ViewRoleAccess.ENTITY_NAME),
-      ModelProvider.getInstance().getEntity(
-          org.openbravo.client.application.ProcessAccess.ENTITY_NAME),
-      ModelProvider.getInstance().getEntity(TableAccess.ENTITY_NAME),
-      ModelProvider.getInstance().getEntity(AlertRecipient.ENTITY_NAME) };
+  private static Entity[] entities = {};
 
   @Override
   protected Entity[] getObservedEntities() {
