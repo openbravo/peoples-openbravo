@@ -993,11 +993,17 @@ enyo.kind({
             amountBeforeDiscounts = 0,
             amountAfterDiscounts = 0,
             rangeAmountBeforeDiscounts = 0,
-            rangeAmountAfterDiscounts = 0;
+            rangeAmountAfterDiscounts = 0,
+            relatedQuantity = 0;
         if (prod.get('productType') === 'S' && prod.get('isPriceRuleBased') && !line.get('originalOrderLineId')) {
           var criteria = {};
           line.get('relatedLines').forEach(function (rl) {
             var l = me.order.get('lines').get(rl.orderlineId);
+            if (l) {
+              relatedQuantity += l.get('qty');
+            } else {
+              relatedQuantity += rl.qty;
+            }
             if (me.order.get('priceIncludesTax')) {
               if (l) {
                 amountBeforeDiscounts += Math.abs(l.get('gross'));
@@ -1084,6 +1090,9 @@ enyo.kind({
                   } else {
                     amount = amountBeforeDiscounts * spr.get('percentage') / 100;
                   }
+                  if (!line.get('groupService')) {
+                    amount = amount / relatedQuantity;
+                  }
                   newprice = OB.Utilities.Number.roundJSNumber(oldprice + amount / line.get('qty'), 2);
                   me.order.setPrice(line, newprice, {
                     setUndo: false
@@ -1119,6 +1128,9 @@ enyo.kind({
                           amount = amountAfterDiscounts * range.get('percentage') / 100;
                         } else {
                           amount = amountBeforeDiscounts * range.get('percentage') / 100;
+                        }
+                        if (!line.get('groupService')) {
+                          amount = amount / relatedQuantity;
                         }
                         newprice = OB.Utilities.Number.roundJSNumber(oldprice + amount / line.get('qty'), 2);
                         me.order.setPrice(line, newprice, {
