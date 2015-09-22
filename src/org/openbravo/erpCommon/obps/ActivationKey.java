@@ -51,6 +51,8 @@ import java.util.UUID;
 import java.util.zip.CRC32;
 
 import javax.crypto.Cipher;
+import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanManager;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Appender;
@@ -64,6 +66,7 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.DalContextListener;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -141,7 +144,7 @@ public class ActivationKey {
   private static final int REFRESH_MIN_TIME = 60;
 
   public enum LicenseRestriction {
-    NO_RESTRICTION, OPS_INSTANCE_NOT_ACTIVE, NUMBER_OF_SOFT_USERS_REACHED, NUMBER_OF_CONCURRENT_USERS_REACHED, MODULE_EXPIRED, NOT_MATCHED_INSTANCE, HB_NOT_ACTIVE, EXPIRED_GOLDEN, CONCURRENT_NAMED_USER, ON_DEMAND_OFF_PLATFORM
+    NO_RESTRICTION, OPS_INSTANCE_NOT_ACTIVE, NUMBER_OF_SOFT_USERS_REACHED, NUMBER_OF_CONCURRENT_USERS_REACHED, MODULE_EXPIRED, NOT_MATCHED_INSTANCE, HB_NOT_ACTIVE, EXPIRED_GOLDEN, CONCURRENT_NAMED_USER, ON_DEMAND_OFF_PLATFORM, POS_TERMINALS_EXCEEDED
   }
 
   public enum CommercialModuleStatus {
@@ -883,6 +886,22 @@ public class ActivationKey {
     if (licenseType == LicenseType.ON_DEMAND && outOfPlatform
         && !"true".equals(getProperty("limited.on.demand"))) {
       result = LicenseRestriction.ON_DEMAND_OFF_PLATFORM;
+    }
+
+    if (result == LicenseRestriction.NO_RESTRICTION) {
+      // no restrictions so far, checking now if any of the installed modules adds a new restriction
+      BeanManager bm = WeldUtils.getStaticInstanceBeanManager();
+      for (Bean<?> restrictionBean : bm.getBeans(ModuleLicenseRestrictions.class)) {
+        ModuleLicenseRestrictions moduleRestriction = (ModuleLicenseRestrictions) bm.getReference(
+            restrictionBean, ModuleLicenseRestrictions.class,
+            bm.createCreationalContext(restrictionBean));
+        result = moduleRestriction.checkRestrinctions(this, currentSession);
+        if (result == null) {
+          result = LicenseRestriction.NO_RESTRICTION;
+        } else if (result != LicenseRestriction.NO_RESTRICTION) {
+          return result;
+        }
+      }
     }
 
     return result;
