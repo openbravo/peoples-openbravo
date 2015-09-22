@@ -28,8 +28,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.access.Role;
+import org.openbravo.roleInheritance.RoleInheritanceManager;
+import org.openbravo.roleInheritance.RoleInheritanceManager.AccessType;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class InsertAcces extends HttpSecureAppServlet {
@@ -136,6 +140,7 @@ public class InsertAcces extends HttpSecureAppServlet {
     try {
       final InsertAccesData[] accesData = InsertAccesData.select(this);
       generateAcces(vars, accesData, strKey, strModule, strType);
+      propagateAccess(strKey, strType);// Propagate accesses based on role inheritance
       myMessage.setType("Success");
       myMessage.setMessage(Utility.messageBD(this, "ProcessOK", vars.getLanguage()));
       return myMessage;
@@ -217,6 +222,21 @@ public class InsertAcces extends HttpSecureAppServlet {
                 vars.getUser());
           }
         }
+      }
+    }
+  }
+
+  private void propagateAccess(String roleId, String type) {
+    Role role = OBDal.getInstance().get(Role.class, roleId);
+    if (role.isTemplate()) {
+      if ("W".equals(type) || "".equals(type)) {
+        RoleInheritanceManager.recalculateAccessFromTemplate(role, AccessType.WINDOW_ACCESS);
+      }
+      if ("P".equals(type) || "R".equals(type) || "W".equals(type) || "".equals(type)) {
+        RoleInheritanceManager.recalculateAccessFromTemplate(role, AccessType.PROCESS_ACCESS);
+      }
+      if ("X".equals(type) || "".equals(type)) {
+        RoleInheritanceManager.recalculateAccessFromTemplate(role, AccessType.FORM_ACCESS);
       }
     }
   }
