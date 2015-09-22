@@ -34,8 +34,6 @@ import javax.servlet.http.HttpSession;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import net.sf.jasperreports.engine.JRDataSource;
-
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.authentication.AuthenticationManager;
@@ -78,6 +76,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import net.sf.jasperreports.engine.JRDataSource;
 
 public class HttpSecureAppServlet extends HttpBaseServlet {
   private static final long serialVersionUID = 1L;
@@ -254,7 +254,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
               || limitation == LicenseRestriction.MODULE_EXPIRED
               || limitation == LicenseRestriction.NOT_MATCHED_INSTANCE
               || limitation == LicenseRestriction.HB_NOT_ACTIVE
-              || limitation == LicenseRestriction.ON_DEMAND_OFF_PLATFORM || !correctSystemStatus) {
+              || limitation == LicenseRestriction.ON_DEMAND_OFF_PLATFORM
+              || limitation == LicenseRestriction.POS_TERMINALS_EXCEEDED || !correctSystemStatus) {
             // it is only allowed to log as system administrator
             strRole = DefaultOptionsData.getDefaultSystemRole(this, strUserAuth);
             if (strRole == null || strRole.equals("")) {

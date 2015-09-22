@@ -295,7 +295,8 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler implements Po
           || limitation == LicenseRestriction.MODULE_EXPIRED
           || limitation == LicenseRestriction.NOT_MATCHED_INSTANCE
           || limitation == LicenseRestriction.HB_NOT_ACTIVE
-          || limitation == LicenseRestriction.ON_DEMAND_OFF_PLATFORM) {
+          || limitation == LicenseRestriction.ON_DEMAND_OFF_PLATFORM
+          || limitation == LicenseRestriction.POS_TERMINALS_EXCEEDED) {
         return Collections.singletonList(OBDal.getInstance().get(Role.class, "0"));
       }
     }
