@@ -117,6 +117,7 @@ public class ActivationKey {
   private boolean limitNamedUsers = false;
   private boolean outOfPlatform = false;
   private Long maxUsers;
+  private Long posTerminals;
 
   private boolean notActiveYet = false;
   private boolean inconsistentInstance = false;
@@ -502,6 +503,7 @@ public class ActivationKey {
       return;
     }
 
+    posTerminals = new Long(getProperty("posTerminals"));
     checkDates();
   }
 
