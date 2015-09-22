@@ -203,7 +203,7 @@ OB.UTIL.currency = {
     }
     return found;
   },
-  /**
+/**
    * Returns a converter whose original currency is not the WebPOS currency. e.g: USD in sampledata
    * and whose destiny curency is the WebPOS default currency. i.e: OB.MobileApp.model.get('currency').id
     return this.getConverter(webPOSDefaultCurrencyId(), toCurrencyId);
