@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -100,6 +100,7 @@ public class About extends HttpSecureAppServlet {
         xmlDocument.setParameter("paraOPSPurpose", ak.getPurpose(vars.getLanguage()));
         xmlDocument.setParameter("paraOPSType", ak.getLicenseExplanation(this, vars.getLanguage()));
         xmlDocument.setParameter("paraOPSWSAccess", ak.getWSExplanation(this, vars.getLanguage()));
+        xmlDocument.setParameter("paraOPSPOSAccess", ak.getPOSTerminalsExplanation());
         xmlDocument.setParameter("paraOBPSStatus",
             ak.getSubscriptionStatus().getStatusName(vars.getLanguage()));
       }

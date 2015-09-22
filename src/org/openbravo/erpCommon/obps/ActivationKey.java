@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -72,6 +72,7 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.obps.DisabledModules.Artifacts;
 import org.openbravo.erpCommon.utility.HttpsUtils;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.SystemInfo;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.Session;
@@ -1102,6 +1103,11 @@ public class ActivationKey {
       sb.append(getWSExplanation(conn, lang));
       sb.append("</td></tr>");
 
+      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSPOSLimitation", lang))
+          .append("</td><td>");
+      sb.append(getPOSTerminalsExplanation());
+      sb.append("</td></tr>");
+
     } else {
       sb.append(Utility.messageBD(conn, "OPSNonActiveInstance", lang));
     }
@@ -1132,6 +1138,16 @@ public class ActivationKey {
       String unitsPack = getProperty("wsUnitsPerUnit");
       return Utility.messageBD(conn, "OPWSLimited", lang).replace("@packs@", packs)
           .replace("@unitsPerPack@", unitsPack);
+    }
+  }
+
+  public String getPOSTerminalsExplanation() {
+    if (posTerminals == null) {
+      return OBMessageUtils.messageBD("OPSNone");
+    } else if (posTerminals == 0) {
+      return OBMessageUtils.messageBD("OPSWSUnlimited");
+    } else {
+      return posTerminals.toString();
     }
   }
 
