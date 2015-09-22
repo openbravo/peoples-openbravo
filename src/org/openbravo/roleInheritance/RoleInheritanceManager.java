@@ -42,6 +42,8 @@ import org.openbravo.model.ad.access.RoleInheritance;
 import org.openbravo.model.ad.access.RoleOrganization;
 import org.openbravo.model.ad.access.TabAccess;
 import org.openbravo.model.ad.access.TableAccess;
+import org.openbravo.model.ad.access.User;
+import org.openbravo.model.ad.access.UserRoles;
 import org.openbravo.model.ad.access.WindowAccess;
 import org.openbravo.model.ad.alert.AlertRecipient;
 
@@ -96,6 +98,12 @@ public class RoleInheritanceManager {
   public static void propagateNewAccess(Role role, InheritedAccessEnabled access,
       AccessType accessType) {
     for (RoleInheritance ri : role.getADRoleInheritanceInheritFromList()) {
+      if ("org.openbravo.model.ad.alert.AlertRecipient".equals(accessType.getClassName())
+          && !userAssignedToRole(role, (AlertRecipient) access)) {
+        // If we are adding an Alert Recipient, check if roles using the template are assigned to
+        // the user
+        Utility.throwErrorMessage("UserNotAssignedToRole");
+      }
       List<RoleInheritance> inheritanceList = getRoleInheritancesList(ri.getRole());
       List<String> inheritanceRoleIdList = getRoleInheritancesRoleIdList(inheritanceList);
       handleAccess(ri, access, accessType, inheritanceRoleIdList);
@@ -105,6 +113,12 @@ public class RoleInheritanceManager {
   public static void propagateUpdatedAccess(Role role, InheritedAccessEnabled access,
       AccessType accessType) {
     for (RoleInheritance ri : role.getADRoleInheritanceInheritFromList()) {
+      if ("org.openbravo.model.ad.alert.AlertRecipient".equals(accessType.getClassName())
+          && !userAssignedToRole(role, (AlertRecipient) access)) {
+        // If we are updating an Alert Recipient, check if roles using the template are assigned to
+        // the user
+        Utility.throwErrorMessage("UserNotAssignedToRole");
+      }
       List<? extends InheritedAccessEnabled> roleAccessList = accessType
           .getAccessList(ri.getRole());
       InheritedAccessEnabled childAccess = findInheritedAccess(roleAccessList, access, accessType);
@@ -164,6 +178,31 @@ public class RoleInheritanceManager {
       }
     }
     return null;
+  }
+
+  private static boolean userAssignedToRole(Role template, AlertRecipient alertRecipient) {
+    User user = alertRecipient.getUserContact();
+    if (user == null) {
+      return true;
+    }
+    for (RoleInheritance ri : template.getADRoleInheritanceInheritFromList()) {
+      if (!isUserAssignedToRole(ri.getRole(), user)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  private static boolean isUserAssignedToRole(Role role, User user) {
+    final OBCriteria<UserRoles> obCriteria = OBDal.getInstance().createCriteria(UserRoles.class);
+    obCriteria.add(Restrictions.eq(UserRoles.PROPERTY_ROLE, role));
+    obCriteria.add(Restrictions.eq(UserRoles.PROPERTY_USERCONTACT, user));
+    obCriteria.setMaxResults(1);
+    if (obCriteria.count() > 0) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   private static void calculateAccesses(List<RoleInheritance> inheritanceList,
@@ -337,10 +376,15 @@ public class RoleInheritanceManager {
 
     private final String className;
     private final String securedElement;
+    private final List<String> skippedProperties;
 
     AccessType(String className, String securedElement) {
       this.className = className;
       this.securedElement = securedElement;
+      this.skippedProperties = new ArrayList<String>();
+      if ("org.openbravo.model.ad.alert.AlertRecipient".equals(className)) {
+        skippedProperties.add("role");
+      }
     }
 
     public String getClassName() {
@@ -508,7 +552,7 @@ public class RoleInheritanceManager {
 
     public void updateRoleAccess(InheritedAccessEnabled access, InheritedAccessEnabled inherited) {
       final InheritedAccessEnabled updatedAccess = (InheritedAccessEnabled) DalUtil.copyToTarget(
-          (BaseOBObject) inherited, (BaseOBObject) access, false);
+          (BaseOBObject) inherited, (BaseOBObject) access, false, skippedProperties);
       // update the inherit from field, to indicate from which role we are inheriting now
       updatedAccess.setInheritedFrom(getRole(inherited));
     }

@@ -87,10 +87,11 @@ public class InheritedAccessEnabledEventHandler extends EntityPersistenceEventOb
     boolean notDeletingParent = OBDal.getInstance().exists(Role.ENTITY_NAME,
         (String) DalUtil.getId(accessType.getRole(access)));
     if (notDeletingParent) {
+      if (access.getInheritedFrom() != null) {
+        Utility.throwErrorMessage("NotDeleteInheritedAccess");
+      }
       if (role.isTemplate()) { // Propagate access removal just for roles marked as template
         RoleInheritanceManager.propagateDeletedAccess(role, access, accessType);
-      } else if (access.getInheritedFrom() != null) {
-        Utility.throwErrorMessage("NotDeleteInheritedAccess");
       }
     }
   }

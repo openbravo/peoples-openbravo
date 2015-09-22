@@ -372,12 +372,14 @@ public class DalUtil {
    *          the object where the original properties will be copied
    * @param copyChildren
    *          this parameter controls if the children of the source are also copied (recursively)
+   * @param notCopiedProperties
+   *          list of property names that will not be copied into the target
    * @return the copied object
    */
   public static BaseOBObject copyToTarget(BaseOBObject source, BaseOBObject target,
-      boolean copyChildren) {
+      boolean copyChildren, List<String> notCopiedProperties) {
     final Map<BaseOBObject, BaseOBObject> fromTo = new HashMap<BaseOBObject, BaseOBObject>();
-    copyToTarget(source, target, copyChildren, fromTo);
+    copyToTarget(source, target, copyChildren, fromTo, notCopiedProperties);
     repairReferences(fromTo);
     return fromTo.get(source);
   }
@@ -396,12 +398,14 @@ public class DalUtil {
    *          recursively
    * @param fromTo
    *          the map which maintains the relation between the to-copy and the copied object
+   * @param notCopiedProperties
+   *          list of property names that will not be copied into the target
    * @return the copied object
    * @see #copy(BaseOBObject, boolean, boolean)
    * @see #repairReferences(Map)
    */
   public static BaseOBObject copyToTarget(BaseOBObject source, BaseOBObject target,
-      boolean copyChildren, Map<BaseOBObject, BaseOBObject> fromTo) {
+      boolean copyChildren, Map<BaseOBObject, BaseOBObject> fromTo, List<String> notCopiedProperties) {
 
     fromTo.put(source, target);
     for (final Property p : source.getEntity().getProperties()) {
@@ -418,7 +422,7 @@ public class DalUtil {
             }
           }
         }
-      } else if (!p.isId() && !p.isParent()) {
+      } else if (!p.isId() && !p.isParent() && !notCopiedProperties.contains(p.getName())) {
         target.setValue(p.getName(), value);
       }
     }
