@@ -5972,8 +5972,8 @@ Please contact your system administrator.]]></MSGTEXT>
 <!--DCC231C5843A4C6591339B11CEC82FD8-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--DCC231C5843A4C6591339B11CEC82FD8-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--DCC231C5843A4C6591339B11CEC82FD8-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--DCC231C5843A4C6591339B11CEC82FD8-->  <VALUE><![CDATA[OBPOS_AnonymousSaleNotAllowed]]></VALUE>
-<!--DCC231C5843A4C6591339B11CEC82FD8-->  <MSGTEXT><![CDATA[Anonymous Sale is not allowed for selected product. Change business partner to be able to add this product]]></MSGTEXT>
+<!--DCC231C5843A4C6591339B11CEC82FD8-->  <VALUE><![CDATA[OBPOS_AnonymousSaleNotAllowedDeferredSale]]></VALUE>
+<!--DCC231C5843A4C6591339B11CEC82FD8-->  <MSGTEXT><![CDATA[Anonymous Sale is not allowed for selected product in this deferred sale. Change business partner of the new created ticket and assign again the product to this ticket in the Deferred Sale Window.]]></MSGTEXT>
 <!--DCC231C5843A4C6591339B11CEC82FD8-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--DCC231C5843A4C6591339B11CEC82FD8-->  <AD_MODULE_ID><![CDATA[FF808181326CC34901326D53DBCF0018]]></AD_MODULE_ID>
 <!--DCC231C5843A4C6591339B11CEC82FD8-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>

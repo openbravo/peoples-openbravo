@@ -1489,11 +1489,24 @@
           return;
         }
         if (OB.MobileApp.model.get('terminal').businessPartner === me.get('bp').get('id') && args && args.productToAdd && !args.productToAdd.get('oBPOSAllowAnonymousSale')) {
-          OB.UTIL.showConfirmation.display("Error", OB.I18N.getLabel('OBPOS_AnonymousSaleNotAllowed'));
+          if (args.receipt && args.receipt.get('deferredOrder')) {
+            args.receipt.unset("deferredOrder", {
+              silent: true
+            });
+            OB.UTIL.showConfirmation.display("Error", OB.I18N.getLabel('OBPOS_AnonymousSaleNotAllowedDeferredSale'));
+          } else {
+            OB.UTIL.showConfirmation.display("Error", OB.I18N.getLabel('OBPOS_AnonymousSaleNotAllowed'));
+          }
+
           if (callback) {
             callback(false);
           }
           return;
+        }
+        if (args && args.receipt && args.receipt.get('deferredOrder')) {
+          args.receipt.unset("deferredOrder", {
+            silent: true
+          });
         }
         if (args && args.useLines) {
           me._drawLinesDistribution(args);
@@ -2993,8 +3006,9 @@
       }
     },
 
-    newOrder: function () {
+    newOrder: function (bp) {
       var order = new Order(),
+          bp = bp ? bp : OB.MobileApp.model.get('businessPartner'),
           receiptProperties, i, p;
 
       // reset in new order properties defined in Receipt Properties dialog
@@ -3022,11 +3036,11 @@
       order.set('isQuotation', false);
       order.set('oldId', null);
       order.set('session', OB.MobileApp.model.get('session'));
-      order.set('bp', OB.MobileApp.model.get('businessPartner'));
+      order.set('bp', bp);
       if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true)) {
         // Set price list for order
-        order.set('priceList', OB.MobileApp.model.get('businessPartner').get('priceList'));
-        var priceIncludesTax = OB.MobileApp.model.get('businessPartner').get('priceIncludesTax');
+        order.set('priceList', bp.get('priceList'));
+        var priceIncludesTax = bp.get('priceIncludesTax');
         if (OB.UTIL.isNullOrUndefined(priceIncludesTax)) {
           priceIncludesTax = OB.MobileApp.model.get('pricelist').priceIncludesTax;
         }
@@ -3036,7 +3050,7 @@
         order.set('priceIncludesTax', OB.MobileApp.model.get('pricelist').priceIncludesTax);
       }
       if (OB.MobileApp.model.hasPermission('OBPOS_receipt.invoice')) {
-        if (OB.MobileApp.model.hasPermission('OBPOS_retail.restricttaxidinvoice', true) && !OB.MobileApp.model.get('businessPartner').get('taxID')) {
+        if (OB.MobileApp.model.hasPermission('OBPOS_retail.restricttaxidinvoice', true) && !bp.get('taxID')) {
           if (OB.MobileApp.model.get('terminal').terminalType.generateInvoice) {
             OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BP_No_Taxid'));
           } else {

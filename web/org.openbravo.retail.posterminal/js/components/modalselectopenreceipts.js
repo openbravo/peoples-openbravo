@@ -69,9 +69,10 @@ enyo.kind({
           // 'Create New One' case
           var orderList = this.owner.owner.owner.model.get('orderList');
           orderList.saveCurrent();
-          var newOrder = orderList.newOrder();
+          var newOrder = orderList.newOrder(orderList.current.get('bp'));
           orderList.add(newOrder);
           orderModel = newOrder;
+          orderModel.set('deferredOrder', true);
         }
         this.owner.owner.doAddProduct({
           targetOrder: orderModel,
