@@ -27,9 +27,14 @@ import org.openbravo.base.structure.InheritedAccessEnabled;
 import org.openbravo.client.application.ViewRoleAccess;
 import org.openbravo.client.kernel.event.EntityDeleteEvent;
 import org.openbravo.client.kernel.event.EntityNewEvent;
+import org.openbravo.client.kernel.event.EntityPersistenceEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.client.myob.WidgetClassAccess;
+import org.openbravo.dal.core.DalUtil;
+import org.openbravo.dal.core.TriggerHandler;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.FieldAccess;
 import org.openbravo.model.ad.access.FormAccess;
 import org.openbravo.model.ad.access.Role;
@@ -63,7 +68,7 @@ public class InheritedAccessEnabledEventHandler extends EntityPersistenceEventOb
   }
 
   public void onSave(@Observes EntityNewEvent event) {
-    if (!isValidEvent(event)) {
+    if (!isInheritedAccessEnabled(event)) {
       return;
     }
 
@@ -78,7 +83,7 @@ public class InheritedAccessEnabledEventHandler extends EntityPersistenceEventOb
   }
 
   public void onUpdate(@Observes EntityUpdateEvent event) {
-    if (!isValidEvent(event)) {
+    if (!isInheritedAccessEnabled(event)) {
       return;
     }
 
@@ -93,7 +98,7 @@ public class InheritedAccessEnabledEventHandler extends EntityPersistenceEventOb
   }
 
   public void onDelete(@Observes EntityDeleteEvent event) {
-    if (!isValidEvent(event)) {
+    if (!isInheritedAccessEnabled(event)) {
       return;
     }
 
@@ -102,7 +107,26 @@ public class InheritedAccessEnabledEventHandler extends EntityPersistenceEventOb
     final String entityName = bob.getEntity().getName();
     final AccessType accessType = AccessType.getAccessType(entityName);
     final Role role = accessType.getRole(access);
-    if (role.isTemplate()) { // Propagate access removal just for roles marked as template
+    boolean notDeletingParent = OBDal.getInstance().exists(Role.ENTITY_NAME,
+        (String) DalUtil.getId(accessType.getRole(access)));
+    if (notDeletingParent) {
+      if (role.isTemplate()) { // Propagate access removal just for roles marked as template
+        RoleInheritanceManager.propagateDeletedAccess(role, access, accessType);
+      } else if (access.getInheritedFrom() != null) {
+        Utility.throwErrorMessage("NotDeleteInheritedAccess");
+      }
+    }
+  }
+
+  protected boolean isInheritedAccessEnabled(EntityPersistenceEvent event) {
+    // Disable event handlers if data is being imported
+    if (TriggerHandler.getInstance().isDisabled()) {
+      return false;
+    }
+    if (event.getTargetInstance() instanceof InheritedAccessEnabled) {
+      return true;
+    } else {
+      return false;
     }
   }
 }
