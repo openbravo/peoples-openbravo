@@ -227,6 +227,7 @@ public class ActivationKey {
   /**
    * Session types that are considered for user concurrency
    */
+  @SuppressWarnings("serial")
   private static final List<String> ACTIVE_SESSION_TYPES = new ArrayList<String>() {
     {
       add("S");
