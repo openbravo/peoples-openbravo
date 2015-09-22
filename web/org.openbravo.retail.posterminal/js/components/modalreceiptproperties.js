@@ -41,7 +41,7 @@ enyo.kind({
         this.doLoadValueNeeded = false;
         this.parent.parent.parent.hide();
       } else {
-        if (OB.MobileApp.model.hasPermission(this.permissionOption)) {
+        if (OB.MobileApp.model.hasPermission(this.permissionOption, true)) {
           this.doLoadValueNeeded = false;
           this.parent.parent.parent.hide();
         }
