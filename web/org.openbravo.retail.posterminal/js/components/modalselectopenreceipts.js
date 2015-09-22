@@ -270,10 +270,10 @@ enyo.kind({
   }],
   create: function () {
     this.inherited(arguments);
-    if (this.model.get('isPaid')) {
+    if (this.model.get('isPaid') || this.model.get('isLayaway')) {
       this.setStyle('display: none');
     }
-    if (this.model.get('isPaid')) {
+    if (this.model.get('isPaid') || this.model.get('isLayaway')) {
       this.$.time.setContent(OB.I18N.formatDate(this.model.get('orderDate')));
     } else {
       this.$.time.setContent(OB.I18N.formatHour(this.model.get('orderDate')));
