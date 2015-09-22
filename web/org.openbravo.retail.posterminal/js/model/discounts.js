@@ -148,8 +148,12 @@
           });
 
           _.each(receipt.get('lines').models, function (line) {
-            line.set('promotions', []);
-            line.set('promotionCandidates', []);
+            if (line.get('gross') > 0) {
+              // Clean the promotions only if the line is not a return
+              line.set('promotions', []);
+              line.set('promotionCandidates', []);
+            }
+
           });
         }
         this.applyPromotionsImp(auxReceipt, null, true);
