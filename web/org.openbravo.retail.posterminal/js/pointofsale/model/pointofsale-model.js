@@ -944,9 +944,13 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             	} else if (bpLoc.get('isBillTo')) {
             	  dataBps.set('locId', bpLoc.get('id'));
             	  dataBps.set('locName', bpLoc.get('name'));
+            	  dataBps.set('locShipId', null);
+            	  dataBps.set('locShipName', null);
             	} else if (bpLoc.get('isShipTo')) {
             	  dataBps.set('locShipId', bpLoc.get('id'));
             	  dataBps.set('locShipName', bpLoc.get('name'));
+            	  dataBps.set('locId', null);
+            	  dataBps.set('locName', null);
             	}
                 dataBps.set('cityName', bpLoc.get('cityName'));
                 dataBps.set('countryName', bpLoc.get('countryName'));

@@ -93,6 +93,7 @@ enyo.kind({
     me.customer.set('cityName', me.customerAddr.get('cityName'));
     me.customer.set('countryName', me.customerAddr.get('countryName'));
     me.customer.set('locationModel', me.customerAddr);
+    me.model.get('order').trigger('change:bp', me.model.get('order'));
     me.doChangeBusinessPartner({
       businessPartner: me.customer
     });

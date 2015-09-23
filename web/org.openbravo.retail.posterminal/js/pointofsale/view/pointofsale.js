@@ -584,7 +584,7 @@ enyo.kind({
       return true;
     }
     if (OB.MobileApp.model.get('terminal').businessPartner === inEvent.businessPartner.get('id')) {
-      if (OB.MobileApp.model.get('terminal').partnerAddress === inEvent.businessPartner.get('locationModel').get('id')) {
+      if (!_.isUndefined(inEvent.businessPartner.get('locationModel')) && OB.MobileApp.model.get('terminal').partnerAddress === inEvent.businessPartner.get('locationModel').get('id')) {
         if (inEvent.businessPartner.get('locationModel').get('isShipTo')) {
           OB.MobileApp.model.get('businessPartner').set('locShipId', inEvent.businessPartner.get('locationModel').get('id'));
           OB.MobileApp.model.get('businessPartner').set('locShipName', inEvent.businessPartner.get('locationModel').get('name'));

@@ -74,11 +74,14 @@ enyo.kind({
   kind: 'OB.UI.SelectButton',
   classes: 'btnselect-customer',
   components: [{
-    name: 'line',
-    style: 'line-height: 23px;',
+    style: 'display: table; line-height: 24px;',
     components: [{
-      style: 'float: left; font-weight: bold;',
-      name: 'identifier'
+      name: 'identifier',
+      style: 'display: table-cell; float: left; font-weight: bold;'
+    }, {
+      name: 'bottomShipIcon'
+    }, {
+      name: 'bottomBillIcon'
     }, {
       style: 'clear: both;'
     }]
@@ -89,6 +92,14 @@ enyo.kind({
       this.$.identifier.setContent(this.model.get('name') + ' - ' + this.model.get('countryName'));
     } else {
       this.$.identifier.setContent(OB.I18N.getLabel('OBPOS_EmptyLocation') + ' - ' + this.model.get('countryName'));
+    }
+    if (this.model.get('isBillTo') && this.model.get('isShipTo')) {
+      this.$.bottomShipIcon.addClass('addresshipitems');
+      this.$.bottomBillIcon.addClass('addressbillitems');
+    } else if (this.model.get('isBillTo')) {
+      this.$.bottomBillIcon.addClass('addressbillitems');
+    } else if (this.model.get('isShipTo')) {
+      this.$.bottomShipIcon.addClass('addresshipitems');
     }
   }
 });
