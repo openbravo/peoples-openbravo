@@ -12012,7 +12012,7 @@ public class TestCosting extends BaseDataSourceTestDal {
                 materialTransaction.getUnitCost().setScale(2, BigDecimal.ROUND_HALF_UP),
                 productTransactionAssert.getUnitPrice().multiply(
                     materialTransaction.getMovementQuantity().negate()));
-            assertTrue(materialTransaction.isCheckReservedQuantity());
+            assertFalse(materialTransaction.isCheckReservedQuantity());
           }
 
           else {
