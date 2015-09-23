@@ -1009,7 +1009,11 @@
       });
       if (deleteIndex !== -1) {
         this.get('deletedLines').splice(deleteIndex, 1);
+        if (this.get('deletedLines').length === 0) {
+          this.unset('deletedLines');
+        }
       }
+      line.unset('obposIsDeleted');
     },
 
     deleteLine: function (line, doNotSave, callback) {
@@ -1128,7 +1132,6 @@
               });
 
               sortedLines.forEach(function (line, idx) {
-                line.unset('obposIsDeleted');
                 me.removeDeleteLine(line);
                 me.get('lines').add(line, {
                   at: me.get('undo').indexes[idx]
@@ -1155,7 +1158,6 @@
                 return;
               }
               me.removeDeleteLine(line);
-              line.unset('obposIsDeleted');
               me.get('lines').add(line, {
                 at: index
               });
