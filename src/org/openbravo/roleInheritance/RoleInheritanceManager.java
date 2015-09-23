@@ -19,7 +19,10 @@
 package org.openbravo.roleInheritance;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -46,10 +49,14 @@ import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.access.UserRoles;
 import org.openbravo.model.ad.access.WindowAccess;
 import org.openbravo.model.ad.alert.AlertRecipient;
+import org.openbravo.model.ad.domain.Preference;
 
 public class RoleInheritanceManager {
 
   private static final Logger log4j = Logger.getLogger(RoleInheritanceManager.class);
+  private static final Set<String> propertyBlackList = new HashSet<String>(Arrays.asList(
+      "OBUIAPP_RecentDocumentsList", "OBUIAPP_RecentViewList", "OBUIAPP_GridConfiguration",
+      "OBUIAPP_DefaultSavedView", "UINAVBA_RecentLaunchList"));
 
   public static void applyNewInheritance(RoleInheritance inheritance) {
     List<RoleInheritance> inheritanceList = getUpdatedRoleInheritancesList(inheritance, false);
@@ -97,6 +104,10 @@ public class RoleInheritanceManager {
 
   public static void propagateNewAccess(Role role, InheritedAccessEnabled access,
       AccessType accessType) {
+    if ("org.openbravo.model.ad.domain.Preference".equals(accessType.getClassName())
+        && !isInheritablePreference((Preference) access)) {
+      return;
+    }
     for (RoleInheritance ri : role.getADRoleInheritanceInheritFromList()) {
       if ("org.openbravo.model.ad.alert.AlertRecipient".equals(accessType.getClassName())
           && !userAssignedToRole(role, (AlertRecipient) access)) {
@@ -112,6 +123,10 @@ public class RoleInheritanceManager {
 
   public static void propagateUpdatedAccess(Role role, InheritedAccessEnabled access,
       AccessType accessType) {
+    if ("org.openbravo.model.ad.domain.Preference".equals(accessType.getClassName())
+        && !isInheritablePreference((Preference) access)) {
+      return;
+    }
     for (RoleInheritance ri : role.getADRoleInheritanceInheritFromList()) {
       if ("org.openbravo.model.ad.alert.AlertRecipient".equals(accessType.getClassName())
           && !userAssignedToRole(role, (AlertRecipient) access)) {
@@ -202,6 +217,19 @@ public class RoleInheritanceManager {
       return true;
     } else {
       return false;
+    }
+  }
+
+  private static boolean isInheritablePreference(Preference preference) {
+    if (preference.getVisibleAtClient() == null && preference.getVisibleAtOrganization() == null
+        && preference.getUserContact() == null && preference.getWindow() == null
+        && preference.getVisibleAtRole() != null) {
+      return true;
+    }
+    if (preference.isPropertyList()) {
+      return !propertyBlackList.contains(preference.getProperty());
+    } else {
+      return true;
     }
   }
 
@@ -372,7 +400,11 @@ public class RoleInheritanceManager {
     /**
      * Alert Recipient Access
      */
-    ALERT_RECIPIENT("org.openbravo.model.ad.alert.AlertRecipient", "getAlertRule");
+    ALERT_RECIPIENT("org.openbravo.model.ad.alert.AlertRecipient", "getAlertRule"),
+    /**
+     * Preference
+     */
+    PREFERENCE("org.openbravo.model.ad.domain.Preference", "getIdentifier");
 
     private final String className;
     private final String securedElement;
@@ -384,6 +416,8 @@ public class RoleInheritanceManager {
       this.skippedProperties = new ArrayList<String>();
       if ("org.openbravo.model.ad.alert.AlertRecipient".equals(className)) {
         skippedProperties.add("role");
+      } else if ("org.openbravo.model.ad.domain.Preference".equals(className)) {
+        skippedProperties.add("visibleAtRole");
       }
     }
 
@@ -398,6 +432,9 @@ public class RoleInheritanceManager {
     public String getSecuredElementIdentifier(InheritedAccessEnabled access) {
       try {
         Class<?> myClass = Class.forName(className);
+        if ("org.openbravo.model.ad.domain.Preference".equals(className)) {
+          return (String) myClass.getMethod(securedElement).invoke(access);
+        }
         BaseOBObject bob = (BaseOBObject) myClass.getMethod(securedElement).invoke(access);
         String securedElementIndentifier = (String) DalUtil.getId(bob);
         return securedElementIndentifier;
@@ -407,7 +444,7 @@ public class RoleInheritanceManager {
       }
     }
 
-    public void setParent(InheritedAccessEnabled newAccess, InheritedAccessEnabled parentAccess,
+    public void setRole(InheritedAccessEnabled newAccess, InheritedAccessEnabled parentAccess,
         Role role) {
       try {
         // TabAccess and Field Access does not have role property as parent
@@ -415,6 +452,8 @@ public class RoleInheritanceManager {
           setParentWindow(newAccess, parentAccess, role);
         } else if ("org.openbravo.model.ad.access.FieldAccess".equals(className)) {
           setParentTab(newAccess, parentAccess, role);
+        } else if ("org.openbravo.model.ad.domain.Preference".equals(className)) {
+          ((Preference) (newAccess)).setVisibleAtRole(role);
         } else {
           setParentRole(newAccess, role);
         }
@@ -481,6 +520,9 @@ public class RoleInheritanceManager {
       } else if ("org.openbravo.model.ad.access.FieldAccess".equals(className)) {
         FieldAccess fieldAccess = (FieldAccess) access;
         return fieldAccess.getTabAccess().getWindowAccess().getRole();
+      } else if ("org.openbravo.model.ad.domain.Preference".equals(className)) {
+        Preference preference = (Preference) access;
+        return preference.getVisibleAtRole();
       } else {
         return getParentRole(access);
       }
@@ -506,6 +548,8 @@ public class RoleInheritanceManager {
           roleProperty = "windowAccess.role.id";
         } else if ("org.openbravo.model.ad.access.FieldAccess".equals(className)) {
           roleProperty = "tabAccess.windowAccess.role.id";
+        } else if ("org.openbravo.model.ad.domain.Preference".equals(className)) {
+          roleProperty = "visibleAtRole.id";
         } else {
           roleProperty = "role.id";
         }
@@ -513,8 +557,17 @@ public class RoleInheritanceManager {
         final StringBuilder whereClause = new StringBuilder();
         whereClause.append(" as p ");
         whereClause.append(" where p.").append(roleProperty).append(" = :roleId");
+        if ("org.openbravo.model.ad.domain.Preference".equals(className)) {
+          // Inheritable preferences are those that only define the visibility at role level
+          whereClause.append(" and p.visibleAtClient = null and p.visibleAtOrganization = null"
+              + " and p.userContact = null and p.window = null");
+          whereClause.append(" and p.property not in (:blackList)");
+        }
         final OBQuery<T> query = OBDal.getInstance().createQuery(clazz, whereClause.toString());
         query.setNamedParameter("roleId", role.getId());
+        if ("org.openbravo.model.ad.domain.Preference".equals(className)) {
+          query.setNamedParameter("blackList", propertyBlackList);
+        }
         query.setFilterOnActive(false);
         return (List<? extends InheritedAccessEnabled>) query.list();
       } catch (Exception ex) {
@@ -527,7 +580,7 @@ public class RoleInheritanceManager {
       // copy the new access
       final InheritedAccessEnabled newAccess = (InheritedAccessEnabled) DalUtil.copy(
           (BaseOBObject) parentAccess, false);
-      setParent(newAccess, parentAccess, roleInheritance.getRole());
+      setRole(newAccess, parentAccess, roleInheritance.getRole());
       newAccess.setInheritedFrom(getRole(parentAccess));
       OBDal.getInstance().save(newAccess);
     }
@@ -580,6 +633,8 @@ public class RoleInheritanceManager {
         return AccessType.TABLE_ACCESS;
       } else if (AlertRecipient.ENTITY_NAME.equals(entityName)) {
         return AccessType.ALERT_RECIPIENT;
+      } else if (Preference.ENTITY_NAME.equals(entityName)) {
+        return AccessType.PREFERENCE;
       } else {
         throw new OBException(OBMessageUtils.getI18NMessage("UnsupportedAccessType",
             new String[] { entityName }));

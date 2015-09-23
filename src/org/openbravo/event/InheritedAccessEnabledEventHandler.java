@@ -54,7 +54,8 @@ public class InheritedAccessEnabledEventHandler extends EntityPersistenceEventOb
     final String entityName = bob.getEntity().getName();
     final AccessType accessType = AccessType.getAccessType(entityName);
     final Role role = accessType.getRole(access);
-    if (role.isTemplate()) { // Propagate new access just for roles marked as template
+    if (role != null && role.isTemplate()) {
+      // Propagate new access just for roles marked as template
       RoleInheritanceManager.propagateNewAccess(role, access, accessType);
     }
   }
@@ -69,7 +70,8 @@ public class InheritedAccessEnabledEventHandler extends EntityPersistenceEventOb
     final String entityName = bob.getEntity().getName();
     final AccessType accessType = AccessType.getAccessType(entityName);
     final Role role = accessType.getRole(access);
-    if (role.isTemplate()) { // Propagate updated access just for roles marked as template
+    if (role != null && role.isTemplate()) {
+      // Propagate updated access just for roles marked as template
       RoleInheritanceManager.propagateUpdatedAccess(role, access, accessType);
     }
   }
@@ -84,13 +86,12 @@ public class InheritedAccessEnabledEventHandler extends EntityPersistenceEventOb
     final String entityName = bob.getEntity().getName();
     final AccessType accessType = AccessType.getAccessType(entityName);
     final Role role = accessType.getRole(access);
-    boolean notDeletingParent = OBDal.getInstance().exists(Role.ENTITY_NAME,
-        (String) DalUtil.getId(accessType.getRole(access)));
-    if (notDeletingParent) {
+    if (notDeletingParent(accessType, access)) {
       if (access.getInheritedFrom() != null) {
         Utility.throwErrorMessage("NotDeleteInheritedAccess");
       }
-      if (role.isTemplate()) { // Propagate access removal just for roles marked as template
+      if (role != null && role.isTemplate()) {
+        // Propagate access removal just for roles marked as template
         RoleInheritanceManager.propagateDeletedAccess(role, access, accessType);
       }
     }
@@ -106,5 +107,14 @@ public class InheritedAccessEnabledEventHandler extends EntityPersistenceEventOb
     } else {
       return false;
     }
+  }
+
+  private boolean notDeletingParent(AccessType accessType, InheritedAccessEnabled access) {
+    Role role = accessType.getRole(access);
+    if (role == null) {
+      return true;
+    }
+    return OBDal.getInstance().exists(Role.ENTITY_NAME,
+        (String) DalUtil.getId(accessType.getRole(access)));
   }
 }
