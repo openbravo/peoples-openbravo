@@ -273,6 +273,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.CustomerAddrCheckProperty',
   kind: 'OB.UI.CheckboxButton',
+  style: 'margin: 5px 0px 0px 5px;',
   handlers: {
     onLoadValue: 'loadValue',
     onSaveChange: 'saveChange'
