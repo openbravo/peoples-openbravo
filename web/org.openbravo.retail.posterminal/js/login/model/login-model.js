@@ -608,9 +608,11 @@
             for (i = 0; i < model.get('lines').length; i++) {
               model.get('lines').at(i).set('obposIsDeleted', true);
             }
-            model.calculateGross();
             model.set('hasbeenpaid', 'Y');
-            model.save(saveCallback);
+            OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(model.get('documentnoSuffix'), model.get('quotationnoSuffix'), function () {
+              model.save(saveCallback);
+            });
+
           }
         } else {
           me.cleanSessionInfo();
