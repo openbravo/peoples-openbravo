@@ -33,8 +33,7 @@ OB.DS.HWServer = function (url, scaleurl) {
 
 OB.DS.HWServer.prototype.getWeight = function (callback) {
   if (this.scaleurl) {
-    var me = this,
-        rr;
+    var me = this;
     var ajaxRequest = new enyo.Ajax({
       url: me.scaleurl,
       cacheBust: false,
@@ -55,10 +54,7 @@ OB.DS.HWServer.prototype.getWeight = function (callback) {
         }
       }
     });
-    rr = new OB.RR.Request({
-      ajaxRequest: ajaxRequest
-    });
-    rr.exec(this.scaleurl);
+    ajaxRequest.go().response('success').error('fail');
   } else {
     callback({
       result: 1
@@ -242,8 +238,7 @@ OB.DS.HWServer.prototype._template = function (templatedata, params) {
 
 OB.DS.HWServer.prototype._send = function (data, callback) {
   if (this.url) {
-    var me = this,
-        rr;
+    var me = this;
     var ajaxRequest = new enyo.Ajax({
       url: me.url,
       cacheBust: false,
@@ -276,10 +271,7 @@ OB.DS.HWServer.prototype._send = function (data, callback) {
         }
       }
     });
-    rr = new OB.RR.Request({
-      ajaxRequest: ajaxRequest
-    });
-    rr.exec(this.url);
+    ajaxRequest.go(ajaxRequest.data).response('success').error('fail');
   }
 };
 
@@ -289,8 +281,7 @@ OB.DS.HWServer.prototype._printPDF = function (params, callback) {
 
 OB.DS.HWServer.prototype._sendPDF = function (data, callback) {
   if (this.url) {
-    var me = this,
-        rr;
+    var me = this;
     var ajaxRequest = new enyo.Ajax({
       url: me.url + 'pdf',
       cacheBust: false,
@@ -370,9 +361,6 @@ OB.DS.HWServer.prototype._sendFile = function (data, callback) {
         }
       }
     });
-    rr = new OB.RR.Request({
-      ajaxRequest: ajaxRequest
-    });
-    rr.exec(this.url);
+    ajaxRequest.go(ajaxRequest.data).response('success').error('fail');
   }
 };
