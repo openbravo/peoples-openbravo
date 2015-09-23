@@ -146,7 +146,7 @@ public class InventoryCountProcess implements Process {
 
   public OBError processInventory(InventoryCount inventory, boolean checkReservationQty)
       throws OBException {
-    return processInventory(inventory, true, false);
+    return processInventory(inventory, checkReservationQty, false);
   }
 
   public OBError processInventory(InventoryCount inventory, boolean checkReservationQty,
