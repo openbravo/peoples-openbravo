@@ -2223,6 +2223,8 @@
     },
 
     createOrderFromQuotation: function (updatePrices) {
+      var idMap = {},
+          me = this;
       this.get('lines').each(function (line) {
         //issue 25055 -> If we don't do the following prices and taxes are calculated
         //wrongly because the calculation starts with discountedNet instead of
@@ -2245,7 +2247,8 @@
         line.unset('grossListPrice');
         line.unset('grossUnitPrice');
         line.unset('lineGrossAmount');
-        line.set('id', OB.Dal.get_uuid());
+        idMap[line.get('id')] = OB.Dal.get_uuid();
+        line.set('id', idMap[line.get('id')]);
       }, this);
 
       this.set('id', null);
@@ -2269,6 +2272,18 @@
       this.set('posTerminal', OB.MobileApp.model.get('terminal').id);
       this.set('session', OB.MobileApp.model.get('session'));
       this.save();
+
+      this.get('lines').each(function (line) {
+        if (line.get('relatedLines')) {
+          line.get('relatedLines').forEach(function (rl) {
+            rl.orderId = me.get('id');
+            if (idMap[rl.orderlineId]) {
+              rl.orderlineId = idMap[rl.orderlineId];
+            }
+          });
+        }
+      }, this);
+
       if (updatePrices) {
         this.updatePrices(function (order) {
           OB.Model.Discounts.applyPromotions(order);
