@@ -424,8 +424,10 @@
 
     prepareToSend: function (callback) {
       var me = this;
+      this.set('preventServicesUpdate', true);
       this.calculateTaxes(function () {
         me.adjustPrices();
+        me.unset('preventServicesUpdate');
         callback(me);
       });
     },
@@ -2119,37 +2121,39 @@
         me.unset('preventServicesUpdate');
         finishSetOrderType();
       }
-      if (orderType === OB.DEC.One && options.saveOrder !== false) {
+      if (orderType === OB.DEC.One) {
         this.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentTypeForReturns);
-        approvalNeeded = false;
-        servicesToApprove = '';
-        for (i = 0; i < this.get('lines').models.length; i++) {
-          var line = this.get('lines').models[i];
-          if (line.get('product').get('productType') === 'S' && !line.isReturnable()) {
-            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_UnreturnableProduct'), OB.I18N.getLabel('OBPOS_UnreturnableProductMessage', [line.get('product').get('_identifier')]));
-            return;
-          } else {
-            if (line.get('product').get('productType') === 'S') {
-              if (!approvalNeeded) {
-                approvalNeeded = true;
+        if (options.saveOrder !== false) {
+          approvalNeeded = false;
+          servicesToApprove = '';
+          for (i = 0; i < this.get('lines').models.length; i++) {
+            var line = this.get('lines').models[i];
+            if (line.get('product').get('productType') === 'S' && !line.isReturnable()) {
+              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_UnreturnableProduct'), OB.I18N.getLabel('OBPOS_UnreturnableProductMessage', [line.get('product').get('_identifier')]));
+              return;
+            } else {
+              if (line.get('product').get('productType') === 'S') {
+                if (!approvalNeeded) {
+                  approvalNeeded = true;
+                }
+                servicesToApprove += '<br>· ' + line.get('product').get('_identifier');
               }
-              servicesToApprove += '<br>· ' + line.get('product').get('_identifier');
             }
           }
-        }
-        if (approvalNeeded) {
-          OB.UTIL.Approval.requestApproval(
-          OB.MobileApp.view.$.containerWindow.$.pointOfSale.model, [{
-            approval: 'OBPOS_approval.returnService',
-            message: 'OBPOS_approval.returnService',
-            params: [servicesToApprove]
-          }], function (approved, supervisor, approvalType) {
-            if (approved) {
-              returnLines();
-            }
-          });
-        } else {
-          returnLines();
+          if (approvalNeeded) {
+            OB.UTIL.Approval.requestApproval(
+            OB.MobileApp.view.$.containerWindow.$.pointOfSale.model, [{
+              approval: 'OBPOS_approval.returnService',
+              message: 'OBPOS_approval.returnService',
+              params: [servicesToApprove]
+            }], function (approved, supervisor, approvalType) {
+              if (approved) {
+                returnLines();
+              }
+            });
+          } else {
+            returnLines();
+          }
         }
       } else {
         this.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentType);
