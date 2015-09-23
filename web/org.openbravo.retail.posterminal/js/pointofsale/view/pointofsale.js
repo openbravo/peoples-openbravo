@@ -95,7 +95,8 @@ enyo.kind({
     onFinishServiceProposal: 'finishServiceProposal',
     onkeydown: 'keyDownHandler',
     onkeyup: 'keyUpHandler',
-    onRearrangeEditButtonBar: 'rearrangeEditButtonBar'
+    onRearrangeEditButtonBar: 'rearrangeEditButtonBar',
+    onModalSelectPrinters: 'modalSelectPrinters'
   },
   events: {
     onShowPopup: '',
@@ -221,6 +222,9 @@ enyo.kind({
     }, {
       kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalPaymentsSelect',
       name: 'modalPaymentsSelect'
+    }, {
+      kind: 'OB.UI.ModalSelectPrinters',
+      name: 'modalSelectPrinters'
     }, {
       kind: 'OB.UI.ModalModulesInDev',
       name: 'modalModulesInDev'
@@ -1044,6 +1048,12 @@ enyo.kind({
   showModalReceiptProperties: function (inSender, inEvent) {
     this.doShowPopup({
       popup: 'receiptPropertiesDialog'
+    });
+    return true;
+  },
+  modalSelectPrinters: function (inSender, inEvent) {
+    this.doShowPopup({
+      popup: 'modalSelectPrinters'
     });
     return true;
   },
