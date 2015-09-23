@@ -1179,9 +1179,9 @@ public class ActivationKey {
   }
 
   public String getPOSTerminalsExplanation() {
-    if (posTerminals == null) {
+    if (posTerminals == 0) {
       return OBMessageUtils.messageBD("OPSNone");
-    } else if (posTerminals == 0) {
+    } else if (posTerminals == NO_LIMIT) {
       return OBMessageUtils.messageBD("OPSWSUnlimited");
     } else {
       return posTerminals.toString();
