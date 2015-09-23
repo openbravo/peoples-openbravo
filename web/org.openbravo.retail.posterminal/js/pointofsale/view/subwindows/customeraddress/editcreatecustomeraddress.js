@@ -183,7 +183,7 @@ enyo.kind({
     kind: 'OB.UI.CustomerAddrCheckProperty',
     name: 'customerAddrShip',
     modelProperty: 'isShipTo',
-    i18nLabel: 'OBPOS_LblShippAddr'
+    i18nLabel: 'OBPOS_LblShipAddr'
   }, {
     kind: 'OB.UI.CustomerAddrCheckProperty',
     name: 'customerAddrFactura',

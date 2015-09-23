@@ -97,7 +97,7 @@ enyo.kind({
   }, {
     kind: 'OB.UI.ShipTo',
     name: 'addressshipbutton',
-    i18nLabel: 'OBPOS_LblShippAddr'
+    i18nLabel: 'OBPOS_LblShipAddr'
   }, {
     kind: 'OB.UI.BillTo',
     name: 'addressbillbutton',
