@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2012-2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -24,11 +24,25 @@ enyo.kind({
     onSetReceiptsList: ''
   },
   renderNrItems: function (nrItems) {
+    var receiptLabels;
+    try {
+      receiptLabels = OB.POS.terminal.$.containerWindow.$.pointOfSale.$.multiColumn.$.leftPanel.$.receiptview.$.receiptheader.$.receiptLabels;
+    } catch (e) {
+      OB.error('receiptLabels not found');
+    }
     if (nrItems > 1) {
       this.$.receiptsCounterButton.$.counter.setContent(nrItems - 1);
+      if (receiptLabels) {
+        // If the receipt counter button is shown, the receipt top labels should have a right padding to avoid overlapping
+        receiptLabels.applyStyle('padding-right', '55px');
+      }
       this.show();
     } else {
       this.$.receiptsCounterButton.$.counter.setContent('');
+      if (receiptLabels) {
+        // If the receipt counter button is not shown, the receipt top labels should reach the right of the receipt area
+        receiptLabels.applyStyle('padding-right', '5px');
+      }
       this.hide();
     }
   },

@@ -109,8 +109,7 @@ enyo.kind({
   }],
   style: 'border-bottom: 1px solid #cccccc;',
   components: [{
-    name: 'receiptLabels',
-    style: 'padding-right: 50px;'
+    name: 'receiptLabels'
   }, {
     name: 'receiptButtons',
     style: 'clear: both; '
