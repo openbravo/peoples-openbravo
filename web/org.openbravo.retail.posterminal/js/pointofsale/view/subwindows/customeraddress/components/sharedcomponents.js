@@ -190,41 +190,52 @@ enyo.kind({
           return false;
         } else {
           var callback = function () {
-              goToViewWindow(sw, {
-                customer: me.customer,
-                customerAddr: customerAddr
-              });
-              if (customerAddr.get('id') === me.customer.get("locId") || customerAddr.get('id') === me.customer.get("locShipId")) {
-            	if (customerAddr.get('isBillTo')) {
-            	  me.customer.set('locId', customerAddr.get('id'));
-            	  me.customer.set('locName', customerAddr.get('name'));
-            	} else {
-            	  me.customer.set('locId', null);
-            	  me.customer.set('locName', null);
-            	}
-            	if (customerAddr.get('isShipTo')) {
-            	  me.customer.set('locShipId', customerAddr.get('id'));
-            	  me.customer.set('locShipName', customerAddr.get('name'));
-            	} else {
-            	  me.customer.set('locShipId', null);
-            	  me.customer.set('locShipName', null);
-            	}
-                me.customer.set('locationModel', customerAddr);
-                OB.Dal.save(me.customer, function success(tx) {
-                  me.doChangeBusinessPartner({
-                    businessPartner: me.customer
-                  });
-                }, function error(tx) {
-                  OB.error(tx);
-                });
-
+            goToViewWindow(sw, {
+              customer: me.customer,
+              customerAddr: customerAddr
+            });
+            if (customerAddr.get('id') === me.customer.get("locId") || customerAddr.get('id') === me.customer.get("locShipId")) {
+              if (!customerAddr.get('isBillTo')) {
+                me.customer.set('locId', null);
+                me.customer.set('locName', null);
               }
-
-              };
+              if (!customerAddr.get('isShipTo')) {
+                me.customer.set('locShipId', null);
+                me.customer.set('locShipName', null);
+              }
+              me.customer.set('locationModel', customerAddr);
+              OB.Dal.save(me.customer, function success(tx) {
+                me.doChangeBusinessPartner({
+                  businessPartner: me.customer
+                });
+              }, function error(tx) {
+                OB.error(tx);
+              });
+            }
+          };
+          
           getCustomerAddrValues({
             customerAddr: customerAddr
           });
-          customerAddr.saveCustomerAddr(callback);
+          
+          if (OB.MobileApp.model.receipt.get('lines').length > 0 && OB.MobileApp.model.receipt.get('bp').get('locShipId') === customerAddr.get('id') && !customerAddr.get('isShipTo')) {
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_InformationTitle'), OB.I18N.getLabel('OBPOS_UncheckShipToText'), [{
+              label: OB.I18N.getLabel('OBPOS_LblOk'),
+              isConfirmButton: true,
+              action: function () {
+            	customerAddr.saveCustomerAddr(callback);
+              }
+            }, {
+              label: OB.I18N.getLabel('OBMOBC_LblCancel')
+            }], {
+              autoDismiss: false,
+              onHideFunction: function () {
+                return;
+              }
+            });
+          } else {
+            customerAddr.saveCustomerAddr(callback);
+          }
         }
       });
     }

@@ -40,6 +40,10 @@
         this.set('locShipId', this.get('locId'));
       }
 
+      if (!this.get("locShipName")) {
+        this.set('locShipName', this.get('locName'));
+      }
+
       if (!this.get("contactId")) {
         this.set('contactId', OB.UTIL.get_UUID());
       }

@@ -147,7 +147,7 @@ enyo.kind({
           if (dataBps && dataBps.length === 1 && (dataBps.models[0].get('isBillTo') && dataBps.models[0].get('isShipTo'))) {
             me.$.bodyContent.$.attributes.$.line_addressshipbutton.hide();
             me.$.bodyContent.$.attributes.$.line_addressbillbutton.$.labelLine.setContent(OB.I18N.getLabel('OBPOS_LblAddress'));
-          } else {
+          } else if (!_.isUndefined(me.$.bodyContent)){
             me.$.bodyContent.$.attributes.$.line_addressshipbutton.show();
             me.$.bodyContent.$.attributes.$.line_addressbillbutton.$.labelLine.setContent(OB.I18N.getLabel('OBPOS_LblBillAddr'));
           }

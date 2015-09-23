@@ -63,7 +63,7 @@ enyo.kind({
         me = this;
     if (!bp.get('locShipId') && !bp.get('locId')) {
       me.chagedStyle(false);
-    } else if (bp.get('locShipId') === bp.get('locId')) {
+    } else {
       criteria.bpartner = bp.get('id');
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
         var bPartnerId = {
@@ -78,14 +78,14 @@ enyo.kind({
       OB.Dal.find(OB.Model.BPLocation, criteria, function (dataBps) {
         if (dataBps && dataBps.length > 1) {
           me.chagedStyle(true);
+        } else if ((dataBps.models[0].get('isBillTo') && !dataBps.models[0].get('isShipTo')) || (!dataBps.models[0].get('isBillTo') && dataBps.models[0].get('isShipTo'))) {
+          me.chagedStyle(true);
         } else {
           me.chagedStyle(false);
         }
       }, function (tx, error) {
         OB.UTIL.showError("OBDAL error: " + error);
       });
-    } else {
-      me.chagedStyle(true);
     }
   },
   tap: function () {
