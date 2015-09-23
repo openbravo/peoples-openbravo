@@ -14,15 +14,15 @@
 enyo.kind({
   kind: 'OB.UI.SmallButton',
   name: 'OB.UI.BPLocationShip',
-  classes: 'btnlink-gray',
+  classes: 'btnlink-gray addressshipbutton_fixpadding',
   showing: false,
   style: 'display: table; float: right;',
   components: [{
     name: 'bottomAddrIcon',
-    style: 'display: table-cell; background-image: url(img/ShippingAddress.png); background-repeat: no-repeat; background-size: 100%; width: 25px;'
+    classes: 'addressshipbutton'
   }, {
     name: 'identifier',
-    style: 'display: table-cell; text-overflow:ellipsis; white-space: nowrap; overflow: hidden; max-width: 70px;'
+    classes: 'addressshiptext'
   }, {
     style: 'clear: both;'
   }],
@@ -46,15 +46,17 @@ enyo.kind({
       this.addClass('btnlink');
     }
   },
-  chagedStyle: function (status) {
+  changeStyle: function (status) {
     var me = this;
     if (!status) {
       me.setShowing(status);
       me.parent.$.bplocbutton.$.bottomAddrIcon.applyStyle('display', 'none');
+      me.parent.$.bplocbutton.removeClass('addressbillbutton_fixpadding');
       me.parent.$.bplocbutton.$.identifier.applyStyle('max-width', '200px');
     } else {
       me.setShowing(status);
       me.parent.$.bplocbutton.$.bottomAddrIcon.applyStyle('display', 'table-cell');
+      me.parent.$.bplocbutton.addClass('addressbillbutton_fixpadding');
       me.parent.$.bplocbutton.$.identifier.applyStyle('max-width', '70px');
     }
   },
@@ -62,7 +64,7 @@ enyo.kind({
     var criteria = {},
         me = this;
     if (!bp.get('locShipId') && !bp.get('locId')) {
-      me.chagedStyle(false);
+      me.changeStyle(false);
     } else {
       criteria.bpartner = bp.get('id');
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
@@ -77,11 +79,11 @@ enyo.kind({
       }
       OB.Dal.find(OB.Model.BPLocation, criteria, function (dataBps) {
         if (dataBps && dataBps.length > 1) {
-          me.chagedStyle(true);
+          me.changeStyle(true);
         } else if ((dataBps.models[0].get('isBillTo') && !dataBps.models[0].get('isShipTo')) || (!dataBps.models[0].get('isBillTo') && dataBps.models[0].get('isShipTo'))) {
-          me.chagedStyle(true);
+          me.changeStyle(true);
         } else {
-          me.chagedStyle(false);
+          me.changeStyle(false);
         }
       }, function (tx, error) {
         OB.UTIL.showError("OBDAL error: " + error);

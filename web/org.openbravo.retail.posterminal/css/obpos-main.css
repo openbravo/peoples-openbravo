@@ -255,33 +255,64 @@ button.btnbp:disabled {
   color: #000000;
 }
 
-.addressbillbuttom {
-  background-image: url('./../../org.openbravo.retail.posterminal/img/InvoicingAddress.png'); 
+.addressbillbutton_fixpadding,
+.addressshipbutton_fixpadding {
+  padding: 5px 7px 7px 7px !important;
+}
+
+.addressshipbutton_fixpadding {
+  margin-right: 0px !important;
+}
+
+.addressbillbutton {
+  background-image: url('./../../org.openbravo.retail.posterminal/img/iconInvoicingAddress.png');
   background-repeat: no-repeat;
-  background-size: 100%;
-  width: 18px;
- }
- 
+  background-size: 22px 22px;
+  background-position: 0px -1px;
+  width: 26px;
+  height: 22px;
+}
+
  .addressbilltext {
+  display: table-cell !important;
   text-overflow: ellipsis;
-  white-space: nowrap; 
-  overflow: hidden; 
+  white-space: nowrap;
+  overflow: hidden;
   max-width: 70px;
- }
- 
+}
+
+.addressshipbutton {
+  display: table-cell !important;
+  background-image: url('./../../org.openbravo.retail.posterminal/img/iconShippingAddress.png');
+  background-repeat: no-repeat;
+  background-size: 22px 22px;
+  background-position: 0px -1px;
+  width: 26px;
+  height: 22px;
+}
+
+ .addressshiptext {
+  display: table-cell !important;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 70px;
+}
+
 .addresshipitems {
   display: table-cell;
-  background-image: url('./../../org.openbravo.retail.posterminal/img/ShippingAddress.png'); 
+  background-image: url('./../../org.openbravo.retail.posterminal/img/iconShippingAddress.png');
   background-repeat: no-repeat;
-  background-size: 38px 27px;
-  width: 38px;
- }
- 
+  background-size: 22px 22px;
+  background-position: 17px 3px;
+  width: 45px;
+}
+
 .addressbillitems {
   display: table-cell;
-  background-image: url('./../../org.openbravo.retail.posterminal/img/InvoicingAddress.png'); 
+  background-image: url('./../../org.openbravo.retail.posterminal/img/iconInvoicingAddress.png');
   background-repeat: no-repeat;
-  background-size: 26px 30px;
-  width: 26px;
- }
- 
+  background-size: 22px 22px;
+  background-position: center 3px;
+  width: 28px;
+} 

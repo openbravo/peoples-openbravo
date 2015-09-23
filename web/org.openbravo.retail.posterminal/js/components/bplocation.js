@@ -18,11 +18,9 @@ enyo.kind({
   style: 'display: table; float: right;',
   components: [{
     name: 'bottomAddrIcon',
-    style: 'display: table-cell;',
-    classes: 'addressbillbuttom'
+    classes: 'addressbillbutton'
   }, {
     name: 'identifier',
-    style: 'display: table-cell;',
     classes: 'addressbilltext'
   }, {
     style: 'clear: both;'
