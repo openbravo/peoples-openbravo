@@ -895,7 +895,7 @@ public class ActivationKey {
         ModuleLicenseRestrictions moduleRestriction = (ModuleLicenseRestrictions) bm.getReference(
             restrictionBean, ModuleLicenseRestrictions.class,
             bm.createCreationalContext(restrictionBean));
-        result = moduleRestriction.checkRestrinctions(this, currentSession);
+        result = moduleRestriction.checkRestrictions(this, currentSession);
         if (result == null) {
           result = LicenseRestriction.NO_RESTRICTION;
         } else if (result != LicenseRestriction.NO_RESTRICTION) {
