@@ -238,6 +238,7 @@ public class ActivationKey {
       add("SUR");
     }
   };
+  public static final Long NO_LIMIT = -1L;
 
   private static ActivationKey instance = new ActivationKey();
 
@@ -508,7 +509,23 @@ public class ActivationKey {
       return;
     }
 
-    posTerminals = new Long(getProperty("posTerminals"));
+    if (instanceProperties.containsKey("posTerminals")
+        && !StringUtils.isBlank(getProperty("posTerminals"))) {
+      try {
+        posTerminals = new Long(getProperty("posTerminals"));
+        if (posTerminals == 0L) {
+          posTerminals = NO_LIMIT;
+        }
+      } catch (Exception e) {
+        log.error("Couldn't read number of terminals " + getProperty("posTerminals"), e);
+        posTerminals = 0L;
+      }
+    } else {
+      // it can be old license without terminal info, or terminal being empty which stands for no
+      // terminal allowed
+      posTerminals = 0L;
+    }
+
     checkDates();
   }
 
@@ -1848,5 +1865,9 @@ public class ActivationKey {
 
   public boolean isOffPlatform() {
     return outOfPlatform;
+  }
+
+  public Long getAllowedPosTerminals() {
+    return posTerminals;
   }
 }
