@@ -35,4 +35,7 @@ public interface ModuleLicenseRestrictions {
    * LicenseRestriction.NO_RESTRICTION in case of no restriction.
    */
   public LicenseRestriction checkRestrinctions(ActivationKey activationKey, String currentSession);
+
+  /** Returns a message to show in login page, or empty if none required */
+  public String getLoginPageMessage(ActivationKey activationKey, String lang);
 }

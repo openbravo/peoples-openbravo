@@ -1605,6 +1605,20 @@ public class ActivationKey {
 
       // Community or professional without expiration
       if (pendingTime == null || subscriptionActuallyConverted) {
+        // no restrictions so far, checking now if any of the installed modules adds a new
+        // restriction
+        BeanManager bm = WeldUtils.getStaticInstanceBeanManager();
+        for (Bean<?> restrictionBean : bm.getBeans(ModuleLicenseRestrictions.class)) {
+          ModuleLicenseRestrictions moduleRestriction = (ModuleLicenseRestrictions) bm
+              .getReference(restrictionBean, ModuleLicenseRestrictions.class,
+                  bm.createCreationalContext(restrictionBean));
+          String msg = moduleRestriction.getLoginPageMessage(this, lang);
+
+          if (StringUtils.isNotBlank(msg)) {
+            result.put("type", "Error");
+            result.put("text", msg);
+          }
+        }
         return result;
       }
 
