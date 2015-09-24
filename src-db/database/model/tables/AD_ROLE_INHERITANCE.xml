@@ -61,6 +61,10 @@
         <unique-column name="AD_ROLE_ID"/>
         <unique-column name="INHERIT_FROM"/>
       </unique>
+      <unique name="AD_ROLE_INHERITANCE_SEQNO_UN">
+        <unique-column name="AD_ROLE_ID"/>
+        <unique-column name="SEQNO"/>
+      </unique>
       <check name="AD_ROLE_INHERIT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

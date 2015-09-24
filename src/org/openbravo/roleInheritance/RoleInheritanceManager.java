@@ -790,7 +790,8 @@ public class RoleInheritanceManager {
   }
 
   /**
-   * Returns the list of inheritances of the role owner of the inheritance passed as parameter.
+   * Returns the list of inheritances of the role owner of the inheritance passed as parameter. It
+   * also verifies if this inheritance fulfills the unique constraints.
    * 
    * @param inheritance
    *          inheritance that contains the role information
@@ -811,6 +812,8 @@ public class RoleInheritanceManager {
     for (RoleInheritance rh : obCriteria.list()) {
       if (rh.getInheritFrom().getId().equals(inheritance.getInheritFrom().getId())) {
         Utility.throwErrorMessage("RoleInheritanceInheritFromDuplicated");
+      } else if (rh.getSequenceNumber().equals(inheritance.getSequenceNumber())) {
+        Utility.throwErrorMessage("RoleInheritanceSequenceNumberDuplicated");
       }
       if (!deleting && !added
           && rh.getSequenceNumber().longValue() > inheritance.getSequenceNumber().longValue()) {
