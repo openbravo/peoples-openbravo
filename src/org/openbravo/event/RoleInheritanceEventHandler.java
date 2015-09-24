@@ -33,6 +33,10 @@ import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.RoleInheritance;
 import org.openbravo.roleInheritance.RoleInheritanceManager;
 
+/**
+ * Listens to delete, update and save events for the {@link RoleInheritance} entity. This handler
+ * takes care of recalculating the access of the role affected by the changes on its inheritance.
+ */
 public class RoleInheritanceEventHandler extends EntityPersistenceEventObserver {
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(
       RoleInheritance.ENTITY_NAME) };

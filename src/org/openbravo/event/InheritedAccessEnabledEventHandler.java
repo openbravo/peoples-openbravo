@@ -36,6 +36,11 @@ import org.openbravo.model.ad.access.Role;
 import org.openbravo.roleInheritance.RoleInheritanceManager;
 import org.openbravo.roleInheritance.RoleInheritanceManager.AccessType;
 
+/**
+ * Listens to delete, update and save events for all classes implementing the
+ * {@link InheritedAccessEnabled} interface. This handler takes care of propagating the changes
+ * according to the affected role inheritance settings.
+ */
 public class InheritedAccessEnabledEventHandler extends EntityPersistenceEventObserver {
   private static Entity[] entities = {};
 
