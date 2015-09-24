@@ -45,8 +45,6 @@ import org.openbravo.model.ad.access.RoleInheritance;
 import org.openbravo.model.ad.access.RoleOrganization;
 import org.openbravo.model.ad.access.TabAccess;
 import org.openbravo.model.ad.access.TableAccess;
-import org.openbravo.model.ad.access.User;
-import org.openbravo.model.ad.access.UserRoles;
 import org.openbravo.model.ad.access.WindowAccess;
 import org.openbravo.model.ad.alert.AlertRecipient;
 import org.openbravo.model.ad.domain.Preference;
@@ -277,37 +275,72 @@ public class RoleInheritanceManager {
   @SuppressWarnings("unchecked")
   private <T extends BaseOBObject> List<? extends InheritedAccessEnabled> getAccessList(Role role) {
     try {
-      String roleProperty;
-      // TabAccess and Field Access does not have role property as parent
-      if ("org.openbravo.model.ad.access.TabAccess".equals(className)) {
-        roleProperty = "windowAccess.role.id";
-      } else if ("org.openbravo.model.ad.access.FieldAccess".equals(className)) {
-        roleProperty = "tabAccess.windowAccess.role.id";
-      } else if ("org.openbravo.model.ad.domain.Preference".equals(className)) {
-        roleProperty = "visibleAtRole.id";
-      } else {
-        roleProperty = "role.id";
-      }
+      String roleProperty = getRoleProperty(className);
       Class<T> clazz = (Class<T>) Class.forName(className);
       final StringBuilder whereClause = new StringBuilder();
       whereClause.append(" as p ");
       whereClause.append(" where p.").append(roleProperty).append(" = :roleId");
-      if ("org.openbravo.model.ad.domain.Preference".equals(className)) {
-        // Inheritable preferences are those that only define the visibility at role level
-        whereClause.append(" and p.visibleAtClient = null and p.visibleAtOrganization = null"
-            + " and p.userContact = null and p.window = null");
-        whereClause.append(" and p.property not in (:blackList)");
-      }
+      addEntityWhereClause(whereClause, className);
       final OBQuery<T> query = OBDal.getInstance().createQuery(clazz, whereClause.toString());
       query.setNamedParameter("roleId", role.getId());
-      if ("org.openbravo.model.ad.domain.Preference".equals(className)) {
-        query.setNamedParameter("blackList", propertyBlackList);
-      }
+      doEntityParameterReplacement(query, className);
       query.setFilterOnActive(false);
       return (List<? extends InheritedAccessEnabled>) query.list();
     } catch (Exception ex) {
       log4j.error("Error getting access list of class " + className, ex);
       throw new OBException("Error getting access list of class " + className);
+    }
+  }
+
+  /**
+   * Returns the role property retrieved from the class name.
+   * 
+   * @return the role property that can be retrieved according to the input class name.
+   */
+  private String getRoleProperty(String clazzName) {
+    // TabAccess and Field Access does not have role property as parent
+    if ("org.openbravo.model.ad.access.TabAccess".equals(clazzName)) {
+      return "windowAccess.role.id";
+    } else if ("org.openbravo.model.ad.access.FieldAccess".equals(clazzName)) {
+      return "tabAccess.windowAccess.role.id";
+    } else if ("org.openbravo.model.ad.domain.Preference".equals(clazzName)) {
+      return "visibleAtRole.id";
+    } else {
+      return "role.id";
+    }
+  }
+
+  /**
+   * Includes in the where clause some filtering needed for same cases.
+   * 
+   * @param whereClause
+   *          The where clause where the particular filtering will be included
+   * @param clazzName
+   *          The class name used to identify which filtering must be returned
+   */
+  private void addEntityWhereClause(StringBuilder whereClause, String clazzName) {
+    if ("org.openbravo.model.ad.domain.Preference".equals(clazzName)) {
+      // Inheritable preferences are those that only define the visibility at role level
+      whereClause.append(" and p.visibleAtClient = null and p.visibleAtOrganization = null"
+          + " and p.userContact = null and p.window = null");
+      whereClause.append(" and p.property not in (:blackList)");
+    } else if ("org.openbravo.model.ad.alert.AlertRecipient".equals(clazzName)) {
+      whereClause.append(" and p.userContact is null");
+    }
+  }
+
+  /**
+   * Performs the needed parameter substitution according to the input class name.
+   * 
+   * @param query
+   *          The query where to perform the parameter substitution
+   * @param clazzName
+   *          The class name used to identify if the parameter substitution is needed
+   */
+  private <T extends BaseOBObject> void doEntityParameterReplacement(OBQuery<T> query,
+      String clazzName) {
+    if ("org.openbravo.model.ad.domain.Preference".equals(clazzName)) {
+      query.setNamedParameter("blackList", propertyBlackList);
     }
   }
 
@@ -468,13 +501,11 @@ public class RoleInheritanceManager {
         && !isInheritablePreference((Preference) access)) {
       return;
     }
+    if ("org.openbravo.model.ad.alert.AlertRecipient".equals(className)
+        && !isInheritableAlertRecipient((AlertRecipient) access)) {
+      return;
+    }
     for (RoleInheritance ri : role.getADRoleInheritanceInheritFromList()) {
-      if ("org.openbravo.model.ad.alert.AlertRecipient".equals(className)
-          && !allUsersAssignedToRole(role, ((AlertRecipient) access).getUserContact())) {
-        // If we are adding an Alert Recipient, check if roles using the template are assigned to
-        // the user
-        Utility.throwErrorMessage("UserNotAssignedToRole");
-      }
       List<RoleInheritance> inheritanceList = getRoleInheritancesList(ri.getRole());
       List<String> inheritanceRoleIdList = getRoleInheritancesInheritFromIdList(inheritanceList);
       handleAccess(ri, access, inheritanceRoleIdList);
@@ -494,13 +525,11 @@ public class RoleInheritanceManager {
         && !isInheritablePreference((Preference) access)) {
       return;
     }
+    if ("org.openbravo.model.ad.alert.AlertRecipient".equals(className)
+        && !isInheritableAlertRecipient((AlertRecipient) access)) {
+      return;
+    }
     for (RoleInheritance ri : role.getADRoleInheritanceInheritFromList()) {
-      if ("org.openbravo.model.ad.alert.AlertRecipient".equals(className)
-          && !allUsersAssignedToRole(role, ((AlertRecipient) access).getUserContact())) {
-        // If we are updating an Alert Recipient, check if roles using the template are assigned to
-        // the user
-        Utility.throwErrorMessage("UserNotAssignedToRole");
-      }
       List<? extends InheritedAccessEnabled> roleAccessList = getAccessList(ri.getRole());
       InheritedAccessEnabled childAccess = findInheritedAccess(roleAccessList, access);
       if (childAccess != null) {
@@ -577,54 +606,12 @@ public class RoleInheritanceManager {
   }
 
   /**
-   * Utility method to determine if all roles using a particular template are assigned to a user
-   * 
-   * @param template
-   *          The template role
-   * @param user
-   *          The user which all the roles should be assigned
-   * @return true if all roles are assigned to the user, false otherwise
-   */
-  private boolean allUsersAssignedToRole(Role template, User user) {
-    if (user == null) {
-      return true;
-    }
-    for (RoleInheritance ri : template.getADRoleInheritanceInheritFromList()) {
-      if (!isUserAssignedToRole(ri.getRole(), user)) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  /**
-   * Utility method to determine if a particular role is assigned to a user
-   * 
-   * @param role
-   *          The role
-   * @param user
-   *          The user which the role should be assigned
-   * @return true if the role is assigned to the user, false otherwise
-   */
-  private boolean isUserAssignedToRole(Role role, User user) {
-    final OBCriteria<UserRoles> obCriteria = OBDal.getInstance().createCriteria(UserRoles.class);
-    obCriteria.add(Restrictions.eq(UserRoles.PROPERTY_ROLE, role));
-    obCriteria.add(Restrictions.eq(UserRoles.PROPERTY_USERCONTACT, user));
-    obCriteria.setMaxResults(1);
-    if (obCriteria.count() > 0) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  /**
    * Utility method to determine if a preference is inheritable. An inheritable preference should
    * only define the role on its visibility settings and it must not be present in the black list.
    * 
    * @param preference
    *          The preference
-   * @return true if the preference is inheritable, false otherwise
+   * @return true if the Preference is inheritable, false otherwise
    */
   private boolean isInheritablePreference(Preference preference) {
     if (preference.getVisibleAtClient() == null && preference.getVisibleAtOrganization() == null
@@ -634,6 +621,22 @@ public class RoleInheritanceManager {
     }
     if (preference.isPropertyList()) {
       return !propertyBlackList.contains(preference.getProperty());
+    } else {
+      return true;
+    }
+  }
+
+  /**
+   * Utility method to determine if an alert recipient is inheritable. An inheritable alert
+   * recipient should have the User/Contact field empty.
+   * 
+   * @param alertRecipient
+   *          The alert recipient instance
+   * @return true if the AlertRecipient is inheritable, false otherwise
+   */
+  private boolean isInheritableAlertRecipient(AlertRecipient alertRecipient) {
+    if (alertRecipient.getUserContact() != null) {
+      return false;
     } else {
       return true;
     }
