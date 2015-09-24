@@ -21342,6 +21342,7 @@ If one of the trees of a table uses the ADTree tree structure, that must be the 
 <!--0FAB9FAA9D204B8AB9FA36C663842DAF-->  <COLUMNNAME><![CDATA[Inherited_From]]></COLUMNNAME>
 <!--0FAB9FAA9D204B8AB9FA36C663842DAF-->  <NAME><![CDATA[Inherited From]]></NAME>
 <!--0FAB9FAA9D204B8AB9FA36C663842DAF-->  <PRINTNAME><![CDATA[Inherited From]]></PRINTNAME>
+<!--0FAB9FAA9D204B8AB9FA36C663842DAF-->  <DESCRIPTION><![CDATA[Inherited From]]></DESCRIPTION>
 <!--0FAB9FAA9D204B8AB9FA36C663842DAF-->  <HELP><![CDATA[The role from which a permission has been inherited]]></HELP>
 <!--0FAB9FAA9D204B8AB9FA36C663842DAF-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--0FAB9FAA9D204B8AB9FA36C663842DAF-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
@@ -32878,6 +32879,8 @@ Processes with "Requires Explicit Access Permission" flag set to true, do not in
 <!--DDF26EA272F8476F82E54B49D9823165-->  <COLUMNNAME><![CDATA[AD_Role_Inheritance_ID]]></COLUMNNAME>
 <!--DDF26EA272F8476F82E54B49D9823165-->  <NAME><![CDATA[AD_Role_Inheritance_ID]]></NAME>
 <!--DDF26EA272F8476F82E54B49D9823165-->  <PRINTNAME><![CDATA[AD_Role_Inheritance_ID]]></PRINTNAME>
+<!--DDF26EA272F8476F82E54B49D9823165-->  <DESCRIPTION><![CDATA[Role Inheritance]]></DESCRIPTION>
+<!--DDF26EA272F8476F82E54B49D9823165-->  <HELP><![CDATA[Refers to a role inheritance. Role inheritance is a relationship between a role and a template (parent) role. This relationship is used by the role to automatically get (inherit) access to the application objects (Organizations, Windows, Processes etc.) which the template has access to.]]></HELP>
 <!--DDF26EA272F8476F82E54B49D9823165-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--DDF26EA272F8476F82E54B49D9823165-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--DDF26EA272F8476F82E54B49D9823165--></AD_ELEMENT>
@@ -32928,6 +32931,7 @@ Processes with "Requires Explicit Access Permission" flag set to true, do not in
 <!--DE965C6322B04FCAAC6DDCB4334CE52A-->  <COLUMNNAME><![CDATA[Recalculatepermissions]]></COLUMNNAME>
 <!--DE965C6322B04FCAAC6DDCB4334CE52A-->  <NAME><![CDATA[Recalculate Permissions]]></NAME>
 <!--DE965C6322B04FCAAC6DDCB4334CE52A-->  <PRINTNAME><![CDATA[Recalculate Permissions]]></PRINTNAME>
+<!--DE965C6322B04FCAAC6DDCB4334CE52A-->  <DESCRIPTION><![CDATA[Recalculate Permissions]]></DESCRIPTION>
 <!--DE965C6322B04FCAAC6DDCB4334CE52A-->  <HELP><![CDATA[A process which recalculates role permissions using role inheritance]]></HELP>
 <!--DE965C6322B04FCAAC6DDCB4334CE52A-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--DE965C6322B04FCAAC6DDCB4334CE52A-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
@@ -33598,6 +33602,7 @@ This field is populated in case the used price list includes taxes.]]></HELP>
 <!--F2351D18492C42A6AE6F01F74831D617-->  <COLUMNNAME><![CDATA[Inherit_From]]></COLUMNNAME>
 <!--F2351D18492C42A6AE6F01F74831D617-->  <NAME><![CDATA[Inherit From]]></NAME>
 <!--F2351D18492C42A6AE6F01F74831D617-->  <PRINTNAME><![CDATA[Inherit From]]></PRINTNAME>
+<!--F2351D18492C42A6AE6F01F74831D617-->  <DESCRIPTION><![CDATA[Inherit From]]></DESCRIPTION>
 <!--F2351D18492C42A6AE6F01F74831D617-->  <HELP><![CDATA[A role whose permissions will be inherited]]></HELP>
 <!--F2351D18492C42A6AE6F01F74831D617-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--F2351D18492C42A6AE6F01F74831D617-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
