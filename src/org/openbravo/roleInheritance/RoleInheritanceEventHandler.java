@@ -16,7 +16,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-package org.openbravo.event;
+package org.openbravo.roleInheritance;
 
 import javax.enterprise.event.Observes;
 
@@ -31,7 +31,6 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.RoleInheritance;
-import org.openbravo.roleInheritance.RoleInheritanceManager;
 
 /**
  * Listens to delete, update and save events for the {@link RoleInheritance} entity. This handler

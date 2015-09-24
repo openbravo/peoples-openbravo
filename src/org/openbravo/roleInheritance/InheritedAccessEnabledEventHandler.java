@@ -16,7 +16,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-package org.openbravo.event;
+package org.openbravo.roleInheritance;
 
 import javax.enterprise.event.Observes;
 
@@ -33,7 +33,6 @@ import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.Role;
-import org.openbravo.roleInheritance.RoleInheritanceManager;
 import org.openbravo.roleInheritance.RoleInheritanceManager.AccessType;
 
 /**
