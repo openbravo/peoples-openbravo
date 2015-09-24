@@ -615,9 +615,14 @@ enyo.kind({
       kind: 'OB.UI.MenuBackOffice'
     });
 
-    this.menuEntries.push({
-      kind: 'OB.UI.MenuSelectPrinter'
-    });
+    if (_.any(OB.POS.modelterminal.get('hardwareURL'), function (printer) {
+      return printer.active && printer.hasReceiptPrinter;
+    })) {
+      // Show this menu entry only if there are 
+      this.menuEntries.push({
+        kind: 'OB.UI.MenuSelectPrinter'
+      });
+    }
 
     //remove duplicates
     this.menuEntries = _.uniq(this.menuEntries, false, function (p) {

@@ -63,7 +63,11 @@ enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'SelectPrintersCancel',
   i18nLabel: 'OBMOBC_LblCancel',
+  events: {
+    onCancelChanges: ''
+  },
   tap: function () {
+    this.doCancelChanges();
     this.doHideThisPopup();
   }
 });
@@ -72,7 +76,8 @@ enyo.kind({
   name: 'OB.UI.ModalSelectPrinters',
   kind: 'OB.UI.ModalAction',
   handlers: {
-    onApplyChanges: 'applyChanges'
+    onApplyChanges: 'applyChanges',
+    onCancelChanges: 'cancelChanges'
   },
   bodyContent: {
     kind: 'Scroller',
@@ -115,7 +120,18 @@ enyo.kind({
 
   applyChanges: function (inSender, inEvent) {
     OB.POS.hwserver.setActiveURL(this.printerscontainer.getActiveURL());
+    this.args.actionExecuted = true;
+    if (this.args.onSuccess) {
+      this.args.onSuccess();
+    }
     return true;
+  },
+
+  cancelChanges: function (inSender, inEvent) {
+    this.args.actionExecuted = true;
+    if (this.args.onCancel) {
+      this.args.onCancel();
+    }
   },
 
   initComponents: function () {
@@ -156,17 +172,24 @@ enyo.kind({
 
     // Add the rest of URLs
     _.each(printers, function (printer) {
-      this.printerscontainer.createComponent({
-        kind: 'SelectPrintersLine',
-        name: 'printerLine' + printer.id,
-        printerscontainer: this.printerscontainer,
-        printer: printer
-      });
+      if (printer.active && printer.hasReceiptPrinter) {
+        this.printerscontainer.createComponent({
+          kind: 'SelectPrintersLine',
+          name: 'printerLine' + printer.id,
+          printerscontainer: this.printerscontainer,
+          printer: printer
+        });
+      }
     }, this);
   },
   executeOnShow: function () {
     // Select the active URL
+    this.autoDismiss = false;
     this.printerscontainer.selectURL(OB.POS.hwserver.activeurl);
   },
-  executeOnHide: function () {}
+  executeOnHide: function () {
+    if (!this.args.actionExecuted && this.args.onHide) {
+      this.args.onHide();
+    }
+  }
 });

@@ -51,19 +51,24 @@ OB.DS.HWServer.prototype.setActiveURL = function (url) {
 
   // validate urls
   if (this.urllist) { // Check only in the case urllist is a valid to prevent wrong initializations
-    var validurl = _.some(this.urllist, function (item) {
-      return item.hasReceiptPrinter && item.hardwareURL === this.activeurl;
+    var validprinter = _.find(this.urllist, function (item) {
+      return item.active && item.hasReceiptPrinter && item.hardwareURL === this.activeurl;
     }, this);
-    if (!validurl) {
+    if (validprinter) {
+      this.activeidentifier = validprinter._identifier;
+    } else {
       this.activeurl = this.mainurl;
+      this.activeidentifier = OB.I18N.getLabel('OBPOS_MainPrinter');
     }
   }
 
   // save
   if (this.activeurl) {
     localStorage.setItem('hw_activeurl', this.activeurl);
+    localStorage.setItem('hw_activeidentifier', this.activeidentifier);
   } else {
     localStorage.removeItem('hw_activeurl');
+    localStorage.removeItem('hw_activeidentifier');
   }
 };
 

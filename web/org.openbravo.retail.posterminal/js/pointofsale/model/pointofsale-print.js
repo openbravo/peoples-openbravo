@@ -111,26 +111,53 @@
         }, function (result) {
           var myreceipt = receipt;
           if (result && result.exception) {
-            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'), OB.I18N.getLabel('OBPOS_MsgPrintAgain'), [{
-              label: OB.I18N.getLabel('OBMOBC_LblOk'),
-              action: function () {
+            // callbacks definition
+            var successfunc = function () {
                 me.print(receipt, printargs);
                 if (args.callback) {
                   args.callback();
                 }
                 return true;
-              }
-            }, {
-              label: OB.I18N.getLabel('OBMOBC_LblCancel')
-            }], {
-              onHideFunction: function (dialog) {
+                };
+            var hidefunc = function () {
                 if (printargs.offline && OB.MobileApp.model.get('terminal').printoffline) {
                   OB.Dal.save(new OB.Model.OfflinePrinter({
                     data: result.data,
                     sendfunction: '_sendPDF'
                   }));
                 }
-              }
+                };
+            // Create dialog buttons
+            var dialogbuttons = [];
+            dialogbuttons.push({
+              label: OB.I18N.getLabel('OBPOS_LblRetry'),
+              isConfirmButton: true,
+              action: successfunc
+            });
+            if (_.any(OB.POS.modelterminal.get('hardwareURL'), function (printer) {
+              return printer.active && printer.hasReceiptPrinter;
+            })) {
+              // Show this button entry only if there are             
+              dialogbuttons.push({
+                label: OB.I18N.getLabel('OBPOS_SelectAnotherPrinter'),
+                action: function () {
+                  OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
+                    popup: 'modalSelectPrinters',
+                    args: {
+                      onSuccess: successfunc,
+                      onHide: hidefunc
+                    }
+                  });
+                  return true;
+                }
+              }, {
+                label: OB.I18N.getLabel('OBMOBC_LblCancel')
+              });
+            }
+            // Display error message
+            OB.UTIL.showConfirmation.display(
+            OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'), OB.I18N.getLabel('OBPOS_MsgPrintAgain', [OB.POS.hwserver.activeidentifier]), dialogbuttons, {
+              onHideFunction: hidefunc
             });
           } else {
             // Success. Try to print the pending receipts.
@@ -222,23 +249,18 @@
           }, function (result, printedReceipt) {
             var myreceipt = receipt;
             if (result && result.exception) {
-              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'), OB.I18N.getLabel('OBPOS_MsgPrintAgain'), [{
-                label: OB.I18N.getLabel('OBMOBC_LblOk'),
-                isConfirmButton: true,
-                action: function () {
+              // callbacks definition
+              var successfunc = function () {
                   me.print(receipt, printargs);
                   return true;
-                }
-              }, {
-                label: OB.I18N.getLabel('OBMOBC_LblCancel'),
-                action: function () {
+                  };
+              var cancelfunc = function () {
                   if (args.callback) {
                     args.callback();
                   }
                   return true;
-                }
-              }], {
-                onHideFunction: function (dialog) {
+                  };
+              var hidefunc = function () {
                   if (printargs.offline && OB.MobileApp.model.get('terminal').printoffline) {
                     OB.Dal.save(new OB.Model.OfflinePrinter({
                       data: result.data,
@@ -248,7 +270,41 @@
                   if (args.callback) {
                     args.callback();
                   }
-                }
+                  };
+              // Create dialog buttons
+              var dialogbuttons = [];
+              dialogbuttons.push({
+                label: OB.I18N.getLabel('OBPOS_LblRetry'),
+                isConfirmButton: true,
+                action: successfunc
+              });
+              if (_.any(OB.POS.modelterminal.get('hardwareURL'), function (printer) {
+                return printer.active && printer.hasReceiptPrinter;
+              })) {
+                // Show this button entry only if there are 
+                dialogbuttons.push({
+                  label: OB.I18N.getLabel('OBPOS_SelectAnotherPrinter'),
+                  action: function () {
+                    OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
+                      popup: 'modalSelectPrinters',
+                      args: {
+                        onSuccess: successfunc,
+                        onCancel: cancelfunc,
+                        onHide: hidefunc
+                      }
+                    });
+                    return true;
+                  }
+                });
+              }
+              dialogbuttons.push({
+                label: OB.I18N.getLabel('OBMOBC_LblCancel'),
+                action: cancelfunc
+              });
+              // Display error message
+              OB.UTIL.showConfirmation.display(
+              OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'), OB.I18N.getLabel('OBPOS_MsgPrintAgain', [OB.POS.hwserver.activeidentifier]), dialogbuttons, {
+                onHideFunction: hidefunc
               });
             } else {
               // Success. Try to print the pending receipts.
@@ -281,16 +337,12 @@
             }, function (result) {
               var myreceipt = receipt;
               if (result && result.exception) {
-                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'), OB.I18N.getLabel('OBPOS_MsgPrintAgain'), [{
-                  label: OB.I18N.getLabel('OBMOBC_LblOk'),
-                  action: function () {
+                // callbacks definition
+                var successfunc = function () {
                     me.print(receipt, printargs);
                     return true;
-                  }
-                }, {
-                  label: OB.I18N.getLabel('OBMOBC_LblCancel')
-                }], {
-                  onHideFunction: function (dialog) {
+                    };
+                var hidefunc = function (dialog) {
                     if (printargs.offline && OB.MobileApp.model.get('terminal').printoffline) {
                       OB.Dal.save(new OB.Model.OfflinePrinter({
                         data: result.data,
@@ -300,7 +352,38 @@
                     if (args.callback) {
                       args.callback();
                     }
-                  }
+                    };
+                // Create dialog buttons
+                var dialogbuttons = [];
+                dialogbuttons.push({
+                  label: OB.I18N.getLabel('OBPOS_LblRetry'),
+                  isConfirmButton: true,
+                  action: successfunc
+                });
+                if (_.any(OB.POS.modelterminal.get('hardwareURL'), function (printer) {
+                  return printer.active && printer.hasReceiptPrinter;
+                })) {
+                  // Show this button entry only if there are                 
+                  dialogbuttons.push({
+                    label: OB.I18N.getLabel('OBPOS_SelectAnotherPrinter'),
+                    action: function () {
+                      OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
+                        popup: 'modalSelectPrinters',
+                        args: {
+                          onSuccess: successfunc,
+                          onHide: hidefunc
+                        }
+                      });
+                      return true;
+                    }
+                  }, {
+                    label: OB.I18N.getLabel('OBMOBC_LblCancel')
+                  });
+                }
+                // Display error message
+                OB.UTIL.showConfirmation.display(
+                OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'), OB.I18N.getLabel('OBPOS_MsgPrintAgain', [OB.POS.hwserver.activeidentifier]), dialogbuttons, {
+                  onHideFunction: hidefunc
                 });
               } else {
                 // Success. Try to print the pending receipts.
