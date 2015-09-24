@@ -609,11 +609,15 @@
               model.get('lines').at(i).set('obposIsDeleted', true);
             }
             model.set('hasbeenpaid', 'Y');
-            OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(model.get('documentnoSuffix'), model.get('quotationnoSuffix'), function () {
-              model.save(saveCallback);
-            });
-
+            if (j == collection.length - 1) {
+              OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(model.get('documentnoSuffix'), model.get('quotationnoSuffix'), function () {
+                model.save(saveCallback);
+              });
+            } else {
+              model.save();
+            }
           }
+
         } else {
           me.cleanSessionInfo();
           OB.MobileApp.model.triggerLogout();
