@@ -791,7 +791,8 @@ public class RoleInheritanceManager {
 
   /**
    * Returns the list of inheritances of the role owner of the inheritance passed as parameter. It
-   * also verifies if this inheritance fulfills the unique constraints.
+   * also verifies if this inheritance fulfills the unique constraints, before adding it to the
+   * list.
    * 
    * @param inheritance
    *          inheritance that contains the role information
