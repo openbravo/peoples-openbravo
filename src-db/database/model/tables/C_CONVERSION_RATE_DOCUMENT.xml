@@ -65,6 +65,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="GL_JOURNAL_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="FIN_FINACC_TRANSACTION" name="C_CONVERSIONRATEDOC_TXN">
         <reference local="APRM_FINACC_TRANSACTION_V_ID" foreign="FIN_FINACC_TRANSACTION_ID"/>
       </foreign-key>
@@ -80,6 +84,9 @@
       <foreign-key foreignTable="AD_ORG" name="C_CURRENCYRATEDOC_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="GL_JOURNAL" name="C_CURRENCYRATEDOCGLJOURNAL">
+        <reference local="GL_JOURNAL_ID" foreign="GL_JOURNAL_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="C_INVOICE" name="C_CURRENCYRATEDOCINV">
         <reference local="C_INVOICE_ID" foreign="C_INVOICE_ID"/>
       </foreign-key>
@@ -92,6 +99,9 @@
       <index name="C_CONVRATEDOC_FINACCTRX_IDX" unique="false">
         <index-column name="FIN_FINACC_TRANSACTION_ID"/>
       </index>
+      <index name="C_CONVRATEDOC_GLJOURNAL_IDX" unique="false">
+        <index-column name="GL_JOURNAL_ID"/>
+      </index>
       <index name="C_CONVRATEDOC_PAYMENT_IDX" unique="false">
         <index-column name="FIN_PAYMENT_ID"/>
       </index>
@@ -101,6 +111,7 @@
         <unique-column name="C_CURRENCY_ID_TO"/>
         <unique-column name="FIN_PAYMENT_ID"/>
         <unique-column name="APRM_FINACC_TRANSACTION_V_ID"/>
+        <unique-column name="GL_JOURNAL_ID"/>
       </unique>
       <check name="C_CONVERSIONRATEDOC_ACTIVE"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>

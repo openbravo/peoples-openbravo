@@ -70,6 +70,8 @@ public class PostDocumentTest extends OBBaseTest {
   private final String ROLE_ID = "4028E6C72959682B01295A071429011E";
   // Table INVOICE
   private static final String TABLE_INVOICE = "318";
+  // Table GL_JOURNAL
+  private static final String TABLE_GLJOURNAL = "224";
   // Accounting Schemas
   private static final String MAIN_EURO_LEGDER = "9A68A0F8D72D4580B3EC3CAA00A5E1F0";
   private static final String USA_DOLLAR_LEGDER = "432EAC71E1B8451E97C7F54718C4A06B";
@@ -81,6 +83,16 @@ public class PostDocumentTest extends OBBaseTest {
   private static final String INVOICE_TEST3 = "E6C9AAC2D2384521AFD4716CE970587C";
   // Sales Invoice with documentNo: Issue 29505
   private static final String INVOICE_TEST4 = "5E9C3D827CF54E94BDE088DC8977ECCC";
+  // G/L Journal Test with documentNo: 1000
+  private static final String GLJOURNAL_TEST5 = "572E1C2ED680447987B234C78980158E";
+  // G/L Journal Test with documentNo: 1001
+  private static final String GLJOURNAL_TEST6 = "B6E47F412BB74C94B676921858D3AAED";
+  // G/L Journal Test with documentNo: 1002
+  private static final String GLJOURNAL_TEST7 = "F284DBAF46F244EB8CCA145A0CC47ACD";
+  // G/L Journal Test with documentNo: 1003
+  private static final String GLJOURNAL_TEST8 = "12857A9C03AD49D795F05A889CBEC0F2";
+  // G/L Journal Test with documentNo: 1004
+  private static final String GLJOURNAL_TEST9 = "8F27C4F6393A4457AA07E8D7754CEDF9";
   // ACCOUNTS USED FOR TEST RESULTS
   private static String TAX_RECEIVABLES = "FABD8D6CF3F04EE7A0389C2BAA1D620E";
   private static String SERVICE_COST = "F7B96292FB5842FBB51143BA659008B0";
@@ -92,6 +104,10 @@ public class PostDocumentTest extends OBBaseTest {
   private static String COMPRA_MERCADERIAS = "FB2A7CD68876462BAED0D3FB2840E182";
   private static String IVA_REPERCUTIDO = "3544375BB8414739B93813F54246B2E1";
   private static String IVA_SOPORTADO = "D04185C47CCA43B1A59DF318A6921E2B";
+  private static String CAPITAL_SOCIAL = "E35DCFD53E064A2DAAEB35D80DFEDB74";
+  private static String FONDO_SOCIAL = "B1C14BA52F7D4E73B3F4D950A04CDD52";
+  private static String PRETTY_CASH = "627A1291274F4BCF838588BB2F2102AD";
+  private static String BANK_ACCOUNT = "58D66F384F7549D995523BF116F29BA0";
 
   private String testNumber;
   private String testDescription;
@@ -143,6 +159,29 @@ public class PostDocumentTest extends OBBaseTest {
         { MAIN_EURO_LEGDER, CLIENTES, "05-05-2015", "102", "310.50", "0.00", "310.50", "0.00" },
         { MAIN_EURO_LEGDER, VENTA_MERCADERIAS, "05-05-2015", "102", "0.00", "300.00", "0.00",
             "300.00" } };
+    String[][] resultTest5 = {
+        { USA_DOLLAR_LEGDER, BANK_ACCOUNT, "02-06-2015", "100", "0.00", "100.00", "0.00", "100.00" },
+        { USA_DOLLAR_LEGDER, PRETTY_CASH, "02-06-2015", "100", "100.00", "0.00", "100.00", "0.00" },
+        { MAIN_EURO_LEGDER, FONDO_SOCIAL, "02-06-2015", "100", "0.00", "100.00", "0.00", "200.00" },
+        { MAIN_EURO_LEGDER, CAPITAL_SOCIAL, "02-06-2015", "100", "100.00", "0.00", "200.00", "0.00" } };
+    String[][] resultTest6 = {
+        { USA_DOLLAR_LEGDER, BANK_ACCOUNT, "03-06-2015", "100", "0.00", "100.00", "0.00", "100.00" },
+        { USA_DOLLAR_LEGDER, PRETTY_CASH, "03-06-2015", "100", "100.00", "0.00", "100.00", "0.00" },
+        { MAIN_EURO_LEGDER, FONDO_SOCIAL, "03-06-2015", "100", "0.00", "100.00", "0.00", "40.00" },
+        { MAIN_EURO_LEGDER, CAPITAL_SOCIAL, "03-06-2015", "100", "100.00", "0.00", "40.00", "0.00" } };
+    String[][] resultTest7 = {
+        { MAIN_EURO_LEGDER, FONDO_SOCIAL, "03-06-2015", "100", "0.00", "100.00", "0.00", "40.00" },
+        { MAIN_EURO_LEGDER, CAPITAL_SOCIAL, "03-06-2015", "100", "100.00", "0.00", "40.00", "0.00" } };
+    String[][] resultTest8 = {
+        { USA_DOLLAR_LEGDER, BANK_ACCOUNT, "03-06-2015", "100", "0.00", "100.00", "0.00", "100.00" },
+        { USA_DOLLAR_LEGDER, PRETTY_CASH, "03-06-2015", "100", "100.00", "0.00", "100.00", "0.00" },
+        { MAIN_EURO_LEGDER, FONDO_SOCIAL, "03-06-2015", "100", "0.00", "100.00", "0.00", "200.00" },
+        { MAIN_EURO_LEGDER, CAPITAL_SOCIAL, "03-06-2015", "100", "100.00", "0.00", "200.00", "0.00" } };
+    String[][] resultTest9 = {
+        { USA_DOLLAR_LEGDER, BANK_ACCOUNT, "03-06-2015", "100", "0.00", "100.00", "0.00", "100.00" },
+        { USA_DOLLAR_LEGDER, PRETTY_CASH, "03-06-2015", "100", "100.00", "0.00", "100.00", "0.00" },
+        { MAIN_EURO_LEGDER, FONDO_SOCIAL, "03-06-2015", "100", "0.00", "100.00", "0.00", "200.00" },
+        { MAIN_EURO_LEGDER, CAPITAL_SOCIAL, "03-06-2015", "100", "100.00", "0.00", "200.00", "0.00" } };
 
     return Arrays.asList(new Object[][] {
         { "1", "Sales invoice I/29", INVOICE_TEST1, TABLE_INVOICE, ORGANIZATION_SPAIN_ID,
@@ -155,7 +194,20 @@ public class PostDocumentTest extends OBBaseTest {
             resultTest3 },
         // Sales invoice with canceled payment: Issue 29505
         { "4", "Sales Invoice Issue 29505", INVOICE_TEST4, TABLE_INVOICE, ORGANIZATION_SPAIN_ID,
-            resultTest4 } });
+            resultTest4 },
+        { "5", "Simple GL Journal with multi general ledge and exchange rates", GLJOURNAL_TEST5,
+            TABLE_GLJOURNAL, ORGANIZATION_USA_ID, resultTest5 },
+        { "6", "Simple GL Journal with multi general ledge and without exchange rates",
+            GLJOURNAL_TEST6, TABLE_GLJOURNAL, ORGANIZATION_USA_ID, resultTest6 },
+        { "7", "Simple GL Journal without multi general ledge", GLJOURNAL_TEST7, TABLE_GLJOURNAL,
+            ORGANIZATION_USA_ID, resultTest7 },
+        { "8", "Simple GL Journal with the same exchange rate than test 5", GLJOURNAL_TEST8,
+            TABLE_GLJOURNAL, ORGANIZATION_USA_ID, resultTest8 }
+    /*
+     * , { "9", "Simple GL Journal with a currency without global conversion" , GLJOURNAL_TEST9,
+     * TABLE_GLJOURNAL, ORGANIZATION_USA_ID, resultTest9 }
+     */
+    });
   }
 
   /*
