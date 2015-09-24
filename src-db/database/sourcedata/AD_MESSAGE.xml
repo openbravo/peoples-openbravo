@@ -4846,7 +4846,7 @@ Please contact your system administrator.]]></MSGTEXT>
 <!--9DF6BF0CE2954682BC5683AAEEB6F529-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--9DF6BF0CE2954682BC5683AAEEB6F529-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--9DF6BF0CE2954682BC5683AAEEB6F529-->  <VALUE><![CDATA[OBPOS_UncheckShipToText]]></VALUE>
-<!--9DF6BF0CE2954682BC5683AAEEB6F529-->  <MSGTEXT><![CDATA[Are you sure you want to uncheck Address Shipping? After pressed buttom OK, the product lines are deleted automatically. Because that Address Shipping is necesary for calculate taxes.]]></MSGTEXT>
+<!--9DF6BF0CE2954682BC5683AAEEB6F529-->  <MSGTEXT><![CDATA[Are you sure you want to uncheck Shipping Address? After pressing OK, product lines on the ticket will be deleted automatically, because a Shipping Address is necessary for tax calculation.]]></MSGTEXT>
 <!--9DF6BF0CE2954682BC5683AAEEB6F529-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--9DF6BF0CE2954682BC5683AAEEB6F529-->  <AD_MODULE_ID><![CDATA[FF808181326CC34901326D53DBCF0018]]></AD_MODULE_ID>
 <!--9DF6BF0CE2954682BC5683AAEEB6F529-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
