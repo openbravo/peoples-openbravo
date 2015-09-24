@@ -624,6 +624,15 @@ enyo.kind({
       });
     }
 
+    if (_.any(OB.POS.modelterminal.get('hardwareURL'), function (printer) {
+      return printer.active && printer.hasPDFPrinter;
+    })) {
+      // Show this menu entry only if there are 
+      this.menuEntries.push({
+        kind: 'OB.UI.MenuSelectPDFPrinter'
+      });
+    }
+
     //remove duplicates
     this.menuEntries = _.uniq(this.menuEntries, false, function (p) {
       return p.kind + p.name;

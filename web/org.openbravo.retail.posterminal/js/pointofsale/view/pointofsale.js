@@ -96,7 +96,8 @@ enyo.kind({
     onkeydown: 'keyDownHandler',
     onkeyup: 'keyUpHandler',
     onRearrangeEditButtonBar: 'rearrangeEditButtonBar',
-    onModalSelectPrinters: 'modalSelectPrinters'
+    onModalSelectPrinters: 'modalSelectPrinters',
+    onModalSelectPDFPrinters: 'modalSelectPDFPrinters'    
   },
   events: {
     onShowPopup: '',
@@ -1053,7 +1054,25 @@ enyo.kind({
   },
   modalSelectPrinters: function (inSender, inEvent) {
     this.doShowPopup({
-      popup: 'modalSelectPrinters'
+      popup: 'modalSelectPrinters',
+      args: {
+        title: OB.I18N.getLabel('OBPOS_SelectPrintersTitle'),
+        hasPrinterProperty: 'hasReceiptPrinter',
+        serverURLProperty: 'activeurl',
+        serverURLSetter: 'setActiveURL'
+      }
+    });
+    return true;
+  },
+  modalSelectPDFPrinters: function (inSender, inEvent) {
+    this.doShowPopup({
+      popup: 'modalSelectPrinters',
+      args: {
+        title: OB.I18N.getLabel('OBPOS_SelectPDFPrintersTitle'),
+        hasPrinterProperty: 'hasPDFPrinter',
+        serverURLProperty: 'activepdfurl',
+        serverURLSetter: 'setActivePDFURL'
+      }
     });
     return true;
   },

@@ -144,16 +144,21 @@
                   OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
                     popup: 'modalSelectPrinters',
                     args: {
+                      title: OB.I18N.getLabel('OBPOS_SelectPrintersTitle'),
+                      hasPrinterProperty: 'hasReceiptPrinter',
+                      serverURLProperty: 'activeurl',
+                      serverURLSetter: 'setActiveURL',
                       onSuccess: successfunc,
                       onHide: hidefunc
                     }
                   });
                   return true;
                 }
-              }, {
-                label: OB.I18N.getLabel('OBMOBC_LblCancel')
               });
             }
+            dialogbuttons.push({
+              label: OB.I18N.getLabel('OBMOBC_LblCancel')
+            });
             // Display error message
             OB.UTIL.showConfirmation.display(
             OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'), OB.I18N.getLabel('OBPOS_MsgPrintAgain', [OB.POS.hwserver.activeidentifier]), dialogbuttons, {
@@ -172,6 +177,141 @@
             });
           }
         });
+      }
+
+      function printFiles(receipt, args) {
+        var filesArray = [],
+            callbackGetFiles, callbackGetBinaryData, recursivePrintFiles, i = 0;
+
+        if (receipt.get('isPaid') || receipt.get('payment') >= receipt.get('gross') || (receipt.isLayaway() && receipt.get('payment') > 0)) {
+
+          recursivePrintFiles = function () {
+            if (filesArray.length > 0) {
+              OB.POS.hwserver._printFile({
+                name: filesArray[i].name,
+                printer: filesArray[i].printer,
+                document: filesArray[i].document
+              }, function (result) {
+                if (result && result.exception) {
+                  // callbacks definition
+                  var successfunc = function () {
+                      me.print(receipt, printargs);
+                      if (args.callback) {
+                        args.callback();
+                      }
+                      return true;
+                      };
+                  var hidefunc = function () {
+                      if (printargs.offline && OB.MobileApp.model.get('terminal').printoffline) {
+                        OB.Dal.save(new OB.Model.OfflinePrinter({
+                          data: result.data,
+                          sendfunction: '_sendFile'
+                        }));
+                      }
+                      };
+                  // Create dialog buttons
+                  var dialogbuttons = [];
+                  dialogbuttons.push({
+                    label: OB.I18N.getLabel('OBPOS_LblRetry'),
+                    isConfirmButton: true,
+                    action: successfunc
+                  });
+                  if (_.any(OB.POS.modelterminal.get('hardwareURL'), function (printer) {
+                    return printer.active && printer.hasPDFPrinter;
+                  })) {
+                    // Show this button entry only if there are 
+                    dialogbuttons.push({
+                      label: OB.I18N.getLabel('OBPOS_SelectAnotherPrinter'),
+                      action: function () {
+                        OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
+                          popup: 'modalSelectPrinters',
+                          args: {
+                            title: OB.I18N.getLabel('OBPOS_SelectPDFPrintersTitle'),
+                            hasPrinterProperty: 'hasPDFPrinter',
+                            serverURLProperty: 'activepdfurl',
+                            serverURLSetter: 'setActivePDFURL',
+                            onSuccess: successfunc,
+                            onHide: hidefunc
+                          }
+                        });
+                        return true;
+                      }
+                    });
+                  }
+                  dialogbuttons.push({
+                    label: OB.I18N.getLabel('OBMOBC_LblCancel')
+                  });
+                  // Display error message
+                  OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'), OB.I18N.getLabel('OBPOS_MsgPDFPrintAgain', [OB.POS.hwserver.activepdfidentifier]), dialogbuttons, {
+                    onHideFunction: hidefunc
+                  });
+                } else {
+                  i++;
+                  if (i < filesArray.length) {
+                    recursivePrintFiles();
+                  } else {
+                    // Success. Try to print the pending receipts.
+                    OB.Model.OfflinePrinter.printPendingJobs();
+                    if (args.callback) {
+                      args.callback();
+                    }
+                  }
+                }
+              });
+            }
+          };
+
+          callbackGetFiles = _.after(receipt.get('lines').length, function () {
+            recursivePrintFiles();
+          });
+
+          _.each(receipt.get('lines').models, function (line) {
+            var criteria = {},
+                productId = line.get('product').id;
+            if (line.get('qty') > 0) {
+              if (OB.MobileApp.model.hasPermission('OBPOS_remote.obposfiles', true)) {
+                criteria.remoteFilters = [{
+                  columns: ['product'],
+                  operator: 'equals',
+                  value: productId,
+                  isId: true
+                }];
+              } else {
+                criteria.product = productId;
+              }
+              OB.Dal.find(OB.Model.OBPOSProdFiles, criteria, function (productFiles) {
+                if (productFiles.length > 0) {
+                  callbackGetBinaryData = _.after(productFiles.length, function () {
+                    callbackGetFiles();
+                  });
+
+                  _.each(productFiles.models, function (productFile) {
+                    var printer = 1;
+                    OB.Dal.get(OB.Model.OBPOSFiles, productFile.get('posfile'), function (posFile) {
+                      if (productFile.get('printer')) {
+                        printer = productFile.get('printer');
+                      }
+                      filesArray.push({
+                        name: posFile.get('name'),
+                        printer: printer,
+                        document: posFile.get('binaryData')
+                      });
+                      callbackGetBinaryData();
+                    }, function () {
+                      OB.error(arguments);
+                    });
+                  });
+                } else {
+                  callbackGetFiles();
+                }
+              }, function () {
+                OB.error(arguments);
+              });
+            } else {
+              callbackGetFiles();
+            }
+          });
+        }
       }
 
       if (args.cancelOperation && args.cancelOperation === true) {
@@ -288,6 +428,10 @@
                     OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
                       popup: 'modalSelectPrinters',
                       args: {
+                        title: OB.I18N.getLabel('OBPOS_SelectPrintersTitle'),
+                        hasPrinterProperty: 'hasReceiptPrinter',
+                        serverURLProperty: 'activeurl',
+                        serverURLSetter: 'setActiveURL',
                         onSuccess: successfunc,
                         onCancel: cancelfunc,
                         onHide: hidefunc
@@ -370,16 +514,21 @@
                       OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
                         popup: 'modalSelectPrinters',
                         args: {
+                          title: OB.I18N.getLabel('OBPOS_SelectPrintersTitle'),
+                          hasPrinterProperty: 'hasReceiptPrinter',
+                          serverURLProperty: 'activeurl',
+                          serverURLSetter: 'setActiveURL',
                           onSuccess: successfunc,
                           onHide: hidefunc
                         }
                       });
                       return true;
                     }
-                  }, {
-                    label: OB.I18N.getLabel('OBMOBC_LblCancel')
                   });
                 }
+                dialogbuttons.push({
+                  label: OB.I18N.getLabel('OBMOBC_LblCancel')
+                });
                 // Display error message
                 OB.UTIL.showConfirmation.display(
                 OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'), OB.I18N.getLabel('OBPOS_MsgPrintAgain', [OB.POS.hwserver.activeidentifier]), dialogbuttons, {

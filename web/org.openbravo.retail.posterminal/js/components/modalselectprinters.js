@@ -119,7 +119,7 @@ enyo.kind({
   },
 
   applyChanges: function (inSender, inEvent) {
-    OB.POS.hwserver.setActiveURL(this.printerscontainer.getActiveURL());
+    OB.POS.hwserver[this.args.serverURLSetter](this.printerscontainer.getActiveURL());
     this.args.actionExecuted = true;
     if (this.args.onSuccess) {
       this.args.onSuccess();
@@ -136,12 +136,16 @@ enyo.kind({
 
   initComponents: function () {
     this.inherited(arguments);
-    this.attributeContainer = this.$.bodyContent.$.attributes;
-    this.setHeader(OB.I18N.getLabel('OBPOS_SelectPrintersTitle'));
+    this.printerscontainer = this.$.bodyContent.$.printerslist;
+  },
+
+  executeOnShow: function () {
+
+    this.autoDismiss = false;
+    this.setHeader(this.args.title);
 
     // list all printers
     var printers = OB.POS.modelterminal.get('hardwareURL');
-    this.printerscontainer = this.$.bodyContent.$.printerslist;
 
     //    _identifier: "The other printer"
     //      active: true
@@ -168,26 +172,28 @@ enyo.kind({
         _identifier: OB.I18N.getLabel('OBPOS_MainPrinter'),
         hardwareURL: OB.POS.hwserver.mainurl
       }
-    });
+    }).render();
 
     // Add the rest of URLs
     _.each(printers, function (printer) {
-      if (printer.active && printer.hasReceiptPrinter) {
+      if (printer.active && printer[this.args.hasPrinterProperty]) {
         this.printerscontainer.createComponent({
           kind: 'SelectPrintersLine',
           name: 'printerLine' + printer.id,
           printerscontainer: this.printerscontainer,
           printer: printer
-        });
+        }).render();
       }
     }, this);
-  },
-  executeOnShow: function () {
+
     // Select the active URL
-    this.autoDismiss = false;
-    this.printerscontainer.selectURL(OB.POS.hwserver.activeurl);
+    this.printerscontainer.selectURL(OB.POS.hwserver[this.args.serverURLProperty]);
   },
   executeOnHide: function () {
+
+    // Clear printers list
+    this.printerscontainer.destroyComponents();
+
     if (!this.args.actionExecuted && this.args.onHide) {
       this.args.onHide();
     }

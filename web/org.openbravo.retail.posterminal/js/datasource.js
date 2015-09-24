@@ -38,6 +38,8 @@ OB.DS.HWServer = function (urllist, url, scaleurl) {
 
   // load activeurl from localStorage
   this.setActiveURL(localStorage.getItem('hw_activeurl'));
+  //load activepdfurl from localStorage
+  this.setActivePDFURL(localStorage.getItem('hw_activepdfurl'));
 };
 
 OB.DS.HWServer.PRINTER = 0;
@@ -69,6 +71,34 @@ OB.DS.HWServer.prototype.setActiveURL = function (url) {
   } else {
     localStorage.removeItem('hw_activeurl');
     localStorage.removeItem('hw_activeidentifier');
+  }
+};
+
+OB.DS.HWServer.prototype.setActivePDFURL = function (url) {
+
+  // assign the active PDF url
+  this.activepdfurl = url;
+
+  // validate urls
+  if (this.urllist) { // Check only in the case urllist is a valid to prevent wrong initializations
+    var validprinter = _.find(this.urllist, function (item) {
+      return item.active && item.hasPDFPrinter && item.hardwareURL === this.activepdfurl;
+    }, this);
+    if (validprinter) {
+      this.activepdfidentifier = validprinter._identifier;
+    } else {
+      this.activepdfurl = this.mainurl;
+      this.activepdfidentifier = OB.I18N.getLabel('OBPOS_MainPrinter');
+    }
+  }
+
+  // save
+  if (this.activepdfurl) {
+    localStorage.setItem('hw_activepdfurl', this.activepdfurl);
+    localStorage.setItem('hw_activepdfidentifier', this.activepdfidentifier);
+  } else {
+    localStorage.removeItem('hw_activepdfurl');
+    localStorage.removeItem('hw_activepdfidentifier');
   }
 };
 
@@ -413,5 +443,52 @@ OB.DS.HWServer.prototype._sendPDF = function (data, callback) {
     if (callback) {
       callback();
     }
+  }
+};
+
+OB.DS.HWServer.prototype._printFile = function (params, callback) {
+  this._sendFile(JSON.stringify(params), callback);
+};
+
+OB.DS.HWServer.prototype._sendFile = function (data, callback) {
+  if (this.activepdfurl) {
+    var me = this,
+        rr;
+    var ajaxRequest = new enyo.Ajax({
+      url: me.activepdfurl + '/process/printpdf',
+      cacheBust: false,
+      method: 'POST',
+      handleAs: 'json',
+      timeout: 20000,
+      contentType: 'application/json;charset=utf-8',
+      data: data,
+      success: function (inSender, inResponse) {
+        if (callback) {
+          callback(inResponse);
+        }
+      },
+      fail: function (inSender, inResponse) {
+        // prevent more than one entry.
+        if (this.failed) {
+          return;
+        }
+        this.failed = true;
+
+        if (callback) {
+          callback({
+            exception: {
+              data: data,
+              message: (OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'))
+            }
+          });
+        } else {
+          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'));
+        }
+      }
+    });
+    rr = new OB.RR.Request({
+      ajaxRequest: ajaxRequest
+    });
+    rr.exec(me.activepdfurl + '/process/printpdf');
   }
 };
