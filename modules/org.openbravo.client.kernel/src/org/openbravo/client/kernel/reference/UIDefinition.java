@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -387,6 +387,10 @@ public abstract class UIDefinition {
         && !this.getGridEditorType().equals(this.getFormEditorType())) {
       result.append(", editorType: '" + this.getGridEditorType() + "'");
     }
+    // Fixes issues 30507: SC Regression: When clicking on a field on edit mode on the grid the
+    // value is properly selected.
+    result.append(", selectOnClick: true");
+
     Boolean canSort = (Boolean) readGridConfigurationSetting("canSort");
     Boolean canFilter = (Boolean) readGridConfigurationSetting("canFilter");
 
