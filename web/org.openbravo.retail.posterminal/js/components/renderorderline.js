@@ -16,7 +16,8 @@ enyo.kind({
   handlers: {
     onChangeEditMode: 'changeEditMode',
     onCheckBoxBehaviorForTicketLine: 'checkBoxForTicketLines',
-    onSetMultiSelected: 'setMultiSelected'
+    onSetMultiSelected: 'setMultiSelected',
+    onkeyup: 'keyupHandler'
   },
   tap: function () {
     this.model.trigger('selected', this.model);
@@ -162,6 +163,14 @@ enyo.kind({
     }, function (args) {
       //All should be done in module side
     });
+  },
+  keyupHandler: function (inSender, inEvent) {
+    var keyCode = inEvent.keyCode;
+    if (keyCode === 13 || keyCode === 32) { //Handle ENTER and SPACE keys in buttons
+      this.executeTapAction();
+      return true;
+    }
+    OB.MobileApp.view.keypressHandler(inSender, inEvent);
   },
   setMultiSelected: function (inSender, inEvent) {
     if (inEvent.models && inEvent.models.length > 0 && inEvent.models[0] instanceof OB.Model.OrderLine && this.$.showServicesButton) {
