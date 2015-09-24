@@ -30,6 +30,8 @@ OB.RoleInheritance = {
       } else {
         view.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, data.message.title, data.message.text);
       }
+      //refresh child tabs
+      view.view.refresh();
     };
     // Retrieves the role id and sends it to the handler to recalculate 
     OB.RemoteCallManager.call(params.actionHandler, {
