@@ -230,13 +230,16 @@ public class InsertAcces extends HttpSecureAppServlet {
     Role role = OBDal.getInstance().get(Role.class, roleId);
     if (role.isTemplate()) {
       if ("W".equals(type) || "".equals(type)) {
-        RoleInheritanceManager.recalculateAccessFromTemplate(role, AccessType.WINDOW_ACCESS);
+        RoleInheritanceManager manager = new RoleInheritanceManager(AccessType.WINDOW_ACCESS);
+        manager.recalculateAccessFromTemplate(role);
       }
       if ("P".equals(type) || "R".equals(type) || "W".equals(type) || "".equals(type)) {
-        RoleInheritanceManager.recalculateAccessFromTemplate(role, AccessType.PROCESS_ACCESS);
+        RoleInheritanceManager manager = new RoleInheritanceManager(AccessType.PROCESS_ACCESS);
+        manager.recalculateAccessFromTemplate(role);
       }
       if ("X".equals(type) || "".equals(type)) {
-        RoleInheritanceManager.recalculateAccessFromTemplate(role, AccessType.FORM_ACCESS);
+        RoleInheritanceManager manager = new RoleInheritanceManager(AccessType.FORM_ACCESS);
+        manager.recalculateAccessFromTemplate(role);
       }
     }
   }

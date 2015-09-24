@@ -53,10 +53,11 @@ public class InheritedAccessEnabledEventHandler extends EntityPersistenceEventOb
     final InheritedAccessEnabled access = (InheritedAccessEnabled) bob;
     final String entityName = bob.getEntity().getName();
     final AccessType accessType = AccessType.getAccessType(entityName);
-    final Role role = accessType.getRole(access);
+    final RoleInheritanceManager manager = new RoleInheritanceManager(accessType);
+    final Role role = manager.getRole(access);
     if (role != null && role.isTemplate()) {
       // Propagate new access just for roles marked as template
-      RoleInheritanceManager.propagateNewAccess(role, access, accessType);
+      manager.propagateNewAccess(role, access);
     }
   }
 
@@ -69,10 +70,11 @@ public class InheritedAccessEnabledEventHandler extends EntityPersistenceEventOb
     final InheritedAccessEnabled access = (InheritedAccessEnabled) bob;
     final String entityName = bob.getEntity().getName();
     final AccessType accessType = AccessType.getAccessType(entityName);
-    final Role role = accessType.getRole(access);
+    final RoleInheritanceManager manager = new RoleInheritanceManager(accessType);
+    final Role role = manager.getRole(access);
     if (role != null && role.isTemplate()) {
       // Propagate updated access just for roles marked as template
-      RoleInheritanceManager.propagateUpdatedAccess(role, access, accessType);
+      manager.propagateUpdatedAccess(role, access);
     }
   }
 
@@ -85,14 +87,15 @@ public class InheritedAccessEnabledEventHandler extends EntityPersistenceEventOb
     final InheritedAccessEnabled access = (InheritedAccessEnabled) bob;
     final String entityName = bob.getEntity().getName();
     final AccessType accessType = AccessType.getAccessType(entityName);
-    final Role role = accessType.getRole(access);
-    if (notDeletingParent(accessType, access)) {
+    final RoleInheritanceManager manager = new RoleInheritanceManager(accessType);
+    final Role role = manager.getRole(access);
+    if (notDeletingParent(role, access)) {
       if (access.getInheritedFrom() != null) {
         Utility.throwErrorMessage("NotDeleteInheritedAccess");
       }
       if (role != null && role.isTemplate()) {
         // Propagate access removal just for roles marked as template
-        RoleInheritanceManager.propagateDeletedAccess(role, access, accessType);
+        manager.propagateDeletedAccess(role, access);
       }
     }
   }
@@ -109,12 +112,10 @@ public class InheritedAccessEnabledEventHandler extends EntityPersistenceEventOb
     }
   }
 
-  private boolean notDeletingParent(AccessType accessType, InheritedAccessEnabled access) {
-    Role role = accessType.getRole(access);
+  private boolean notDeletingParent(Role role, InheritedAccessEnabled access) {
     if (role == null) {
       return true;
     }
-    return OBDal.getInstance().exists(Role.ENTITY_NAME,
-        (String) DalUtil.getId(accessType.getRole(access)));
+    return OBDal.getInstance().exists(Role.ENTITY_NAME, (String) DalUtil.getId(role));
   }
 }
