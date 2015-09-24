@@ -26,6 +26,11 @@
         return false;
       }
 
+      if (!this.get('locName')) {
+        OB.UTIL.showWarning('Address is required for BPartner');
+        return false;
+      }
+
       if (!this.get("locId")) {
         this.set('locId', OB.UTIL.get_UUID());
       }
