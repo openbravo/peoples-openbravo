@@ -134,7 +134,7 @@
               isConfirmButton: true,
               action: successfunc
             });
-            if (_.any(OB.POS.modelterminal.get('hardwareURL'), function (printer) {
+            if (OB.POS.modelterminal.hasPermission('OBPOS_retail.selectprinter') && _.any(OB.POS.modelterminal.get('hardwareURL'), function (printer) {
               return printer.active && printer.hasReceiptPrinter;
             })) {
               // Show this button entry only if there are             
@@ -216,7 +216,7 @@
                     isConfirmButton: true,
                     action: successfunc
                   });
-                  if (_.any(OB.POS.modelterminal.get('hardwareURL'), function (printer) {
+                  if (OB.POS.modelterminal.hasPermission('OBPOS_retail.selectprinter') && _.any(OB.POS.modelterminal.get('hardwareURL'), function (printer) {
                     return printer.active && printer.hasPDFPrinter;
                   })) {
                     // Show this button entry only if there are 
@@ -418,7 +418,7 @@
                 isConfirmButton: true,
                 action: successfunc
               });
-              if (_.any(OB.POS.modelterminal.get('hardwareURL'), function (printer) {
+              if (OB.POS.modelterminal.hasPermission('OBPOS_retail.selectprinter') && _.any(OB.POS.modelterminal.get('hardwareURL'), function (printer) {
                 return printer.active && printer.hasReceiptPrinter;
               })) {
                 // Show this button entry only if there are 
@@ -504,7 +504,7 @@
                   isConfirmButton: true,
                   action: successfunc
                 });
-                if (_.any(OB.POS.modelterminal.get('hardwareURL'), function (printer) {
+                if (OB.POS.modelterminal.hasPermission('OBPOS_retail.selectprinter') && _.any(OB.POS.modelterminal.get('hardwareURL'), function (printer) {
                   return printer.active && printer.hasReceiptPrinter;
                 })) {
                   // Show this button entry only if there are                 
