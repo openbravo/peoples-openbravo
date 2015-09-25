@@ -19,7 +19,7 @@
     * under the License.
     * The Original Code is Openbravo ERP.
     * The Initial Developer of the Original Code is Openbravo SLU
-    * All portions are Copyright (C) 2001-2013 Openbravo SLU
+    * All portions are Copyright (C) 2001-2015 Openbravo SLU
     * All Rights Reserved.
     * Contributor(s):  ______________________________________.
     ************************************************************************/
@@ -65,6 +65,12 @@ BEGIN
 		WHERE aprm_finacc_transaction_v_id = :NEW.aprm_finacc_transaction_v_id;
 	END IF;
 
+	IF :NEW.gl_journal_id IS NOT NULL THEN
+		SELECT POSTED INTO v_Posted 
+		FROM gl_journal
+		WHERE gl_journal_id = :NEW.gl_journal_id;
+	END IF;
+
 	IF(v_Posted='Y')
 		THEN  RAISE_APPLICATION_ERROR(-20000, '@20501@');
 	END IF;
@@ -87,6 +93,13 @@ BEGIN
 		FROM aprm_finacc_transaction_v
 		WHERE aprm_finacc_transaction_v_id = :OLD.aprm_finacc_transaction_v_id;
 	END IF;
+
+	IF :OLD.gl_journal_id IS NOT NULL THEN
+		SELECT POSTED INTO v_Posted 
+		FROM gl_journal
+		WHERE gl_journal_id = :OLD.gl_journal_id;
+	END IF;
+	
 	IF(v_Posted='Y')
 		THEN  RAISE_APPLICATION_ERROR(-20000, '@20501@');
 	END IF;
@@ -121,6 +134,12 @@ BEGIN
 		SELECT POSTED INTO v_Posted 
 		FROM aprm_finacc_transaction_v
 		WHERE aprm_finacc_transaction_v_id = :OLD.aprm_finacc_transaction_v_id;
+	END IF;
+
+	IF :OLD.gl_journal_id IS NOT NULL THEN
+		SELECT POSTED INTO v_Posted 
+		FROM gl_journal
+		WHERE gl_journal_id = :OLD.gl_journal_id;
 	END IF;
 
 	IF(v_Posted='Y')

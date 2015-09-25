@@ -302,10 +302,20 @@ isc.OBTreeFilterItem.addProperties({
     }
   },
 
-  filterDialogCallback: function (criteria) {
-    this.grid.parentElement.setFilterEditorCriteria(criteria);
+  filterDialogCallback: function (criterion) {
+    this.updateCriterion(criterion);
     this.lastValueFromPopup = this.getValue();
     this.form.grid.performAction();
+  },
+
+  //This function updates the criterion of the tree filter, deletes the old
+  //criterion and adds the new criterion.
+  updateCriterion: function (criterion) {
+    if (!criterion.criteria) {
+      this.setValue(null);
+    } else {
+      this.setCriterion(criterion);
+    }
   },
 
   init: function () {
