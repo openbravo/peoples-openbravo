@@ -306,7 +306,7 @@ enyo.kind({
     if (this.model.get('customerBlocking') && this.model.get('salesOrderBlocking')) {
       this.$.onHold.setContent('(' + OB.I18N.getLabel('OBPOS_OnHold') + ')');
     }
-    this.$.address.setContent(this.model.get('locName'));
+    this.$.address.setContent(this.model.get('locShipName'));
   }
 });
 

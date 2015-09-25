@@ -409,10 +409,6 @@ enyo.kind({
       function successCallbackBPs(dataBps) {
         dataBps.set('locId', model.get('id'));
         dataBps.set('locName', model.get('name'));
-        dataBps.set('locationModel', model);
-        dataBps.set('postalCode', model.get('postalCode'));
-        dataBps.set('cityName', model.get('cityName'));
-        dataBps.set('countryName', model.get('countryName'));
         me.doChangeBusinessPartner({
           businessPartner: dataBps
         });

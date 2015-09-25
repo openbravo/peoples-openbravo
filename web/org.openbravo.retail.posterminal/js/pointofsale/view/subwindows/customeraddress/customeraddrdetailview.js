@@ -74,6 +74,9 @@ enyo.kind({
       me.customer.set('locName', me.customerAddr.get('name'));
       me.customer.set('locShipId', me.customerAddr.get('id'));
       me.customer.set('locShipName', me.customerAddr.get('name'));
+      me.customer.set('postalCode', me.customerAddr.get('postalCode'));
+      me.customer.set('cityName', me.customerAddr.get('cityName'));
+      me.customer.set('locationModel', me.customerAddr);
     } else if (me.customerAddr.get('isBillTo')) {
       me.customer.set('locId', me.customerAddr.get('id'));
       me.customer.set('locName', me.customerAddr.get('name'));
@@ -84,15 +87,16 @@ enyo.kind({
     } else if (me.customerAddr.get('isShipTo')) {
       me.customer.set('locShipId', me.customerAddr.get('id'));
       me.customer.set('locShipName', me.customerAddr.get('name'));
+      me.customer.set('postalCode', me.customerAddr.get('postalCode'));
+      me.customer.set('cityName', me.customerAddr.get('cityName'));
       if (me.customer.get('locShipId') === me.customer.get('locId')) {
         me.customer.set('locId', null);
         me.customer.set('locName', null);
       }
+      me.customer.set('locationModel', me.customerAddr);
     }
-    me.customer.set('postalCode', me.customerAddr.get('postalCode'));
-    me.customer.set('cityName', me.customerAddr.get('cityName'));
+
     me.customer.set('countryName', me.customerAddr.get('countryName'));
-    me.customer.set('locationModel', me.customerAddr);
     me.model.get('order').trigger('change:bp', me.model.get('order'));
     me.doChangeBusinessPartner({
       businessPartner: me.customer

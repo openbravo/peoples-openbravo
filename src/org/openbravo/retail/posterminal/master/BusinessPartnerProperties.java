@@ -39,16 +39,20 @@ public class BusinessPartnerProperties extends ModelExtension {
         add(new HQLProperty("bpl.businessPartner.invoiceTerms", "invoiceTerms"));
         add(new HQLProperty(
             "(select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls where bpls.businessPartner.id=bpl.businessPartner.id and bpls.invoiceToAddress = true and bpls.$readableSimpleClientCriteria AND "
-                + " bpls.$naturalOrgCriteria group by bpls.businessPartner.id)", "locId"));
+                + " bpls.$naturalOrgCriteria group by bpls.businessPartner.id)",
+            "locId"));
         add(new HQLProperty(
             "(select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls where bpls.businessPartner.id=bpl.businessPartner.id and bpls.shipToAddress = true and bpls.$readableSimpleClientCriteria AND "
-                + " bpls.$naturalOrgCriteria group by bpls.businessPartner.id)", "locShipId"));
+                + " bpls.$naturalOrgCriteria group by bpls.businessPartner.id)",
+            "locShipId"));
         add(new HQLProperty(
             "(select max(COALESCE(bpls.locationAddress.addressLine1, bpls.locationAddress.addressLine2, bpls.locationAddress.postalCode, bpls.locationAddress.cityName)) from BusinessPartnerLocation AS bpls where bpls.businessPartner.id=bpl.businessPartner.id and bpls.invoiceToAddress = true and bpls.$readableSimpleClientCriteria AND "
-                + " bpls.$naturalOrgCriteria group by bpls.businessPartner.id)", "locName"));
+                + " bpls.$naturalOrgCriteria group by bpls.businessPartner.id)",
+            "locName"));
         add(new HQLProperty(
             "(select max(COALESCE(bpls.locationAddress.addressLine1, bpls.locationAddress.addressLine2, bpls.locationAddress.postalCode, bpls.locationAddress.cityName)) as nameShipTo from BusinessPartnerLocation AS bpls where bpls.businessPartner.id=bpl.businessPartner.id and bpls.shipToAddress = true and bpls.$readableSimpleClientCriteria AND "
-                + " bpls.$naturalOrgCriteria group by bpls.businessPartner.id)", "locShipName"));
+                + " bpls.$naturalOrgCriteria group by bpls.businessPartner.id)",
+            "locShipName"));
         add(new HQLProperty("ulist.email", "email"));
         add(new HQLProperty("ulist.id", "contactId"));
         add(new HQLProperty("ulist.phone", "phone"));
@@ -56,9 +60,15 @@ public class BusinessPartnerProperties extends ModelExtension {
         add(new HQLProperty("ulist.lastName", "lastName"));
         add(new HQLProperty("plist.priceIncludesTax", "priceIncludesTax"));
         add(new HQLProperty("plist.name", "priceListName"));
-        add(new HQLProperty("bpl.locationAddress.cityName", "cityName"));
+        add(new HQLProperty(
+            "(select max(bpls.locationAddress.cityName) from BusinessPartnerLocation AS bpls where bpls.businessPartner.id=bpl.businessPartner.id and bpls.shipToAddress = true and bpls.$readableSimpleClientCriteria AND "
+                + " bpls.$naturalOrgCriteria group by bpls.businessPartner.id)",
+            "cityName"));
+        add(new HQLProperty(
+            "(select max(bpls.locationAddress.postalCode) from BusinessPartnerLocation AS bpls where bpls.businessPartner.id=bpl.businessPartner.id and bpls.shipToAddress = true and bpls.$readableSimpleClientCriteria AND "
+                + " bpls.$naturalOrgCriteria group by bpls.businessPartner.id)",
+            "postalCode"));
         add(new HQLProperty("bpl.locationAddress.country.name", "countryName"));
-        add(new HQLProperty("bpl.locationAddress.postalCode", "postalCode"));
         add(new HQLProperty("bpl.businessPartner.businessPartnerCategory.id",
             "businessPartnerCategory"));
         add(new HQLProperty("bpl.businessPartner.businessPartnerCategory.name",

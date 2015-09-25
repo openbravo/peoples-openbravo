@@ -23,28 +23,31 @@
       var nameLength, newSk;
 
       if (!this.get("name")) {
-        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_BPartnerNameRequired'));
+        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NameReqForBP'));
         return false;
       }
 
-      if (!this.get('locName')) {
-        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_BPartnerAddressRequired'));
-        return false;
+      if (!this.get('locShipName')) {
+    	OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NameReqForBPAddress'));
+    	return false;
+      } else if (this.get('locShipName') === OB.I18N.getLabel('OBPOS_LblEmptyAddress')) {
+    	this.set('locShipId', null);
+    	this.set('locShipName', null);
       }
 
       if (!this.get("locId")) {
         this.set('locId', OB.UTIL.get_UUID());
       }
 
-      if (!this.get("locShipId")) {
+      if (!this.get('locShipId') && this.get('locShipName') === OB.I18N.getLabel('OBPOS_LblEmptyAddress')) {
         this.set('locShipId', this.get('locId'));
       }
 
-      if (!this.get("locShipName")) {
-        this.set('locShipName', this.get('locName'));
+      if (!this.get('locName')) {
+    	  this.set('locName', this.get('locShipName'));
       }
-
-      if (!this.get("contactId")) {
+      
+      if (!this.get('contactId')) {
         this.set('contactId', OB.UTIL.get_UUID());
       }
 
@@ -75,12 +78,15 @@
         if (!customerCol || customerCol.length === 0) {
           me.clearModelWith(null);
           userCallback(me);
-        } else {
-          OB.Dal.get(OB.Model.BPLocation, customerCol.get('locId'), function (location) { //OB.Dal.find success
+        } else if (!_.isNull(customerCol.get('locShipId'))) {
+          OB.Dal.get(OB.Model.BPLocation, customerCol.get('locShipId'), function (location) { //OB.Dal.find success
             customerCol.set('locationModel', location);
             me.clearModelWith(customerCol);
             userCallback(me);
           });
+        } else {
+          me.clearModelWith(customerCol);
+          userCallback(me);
         }
       });
     },

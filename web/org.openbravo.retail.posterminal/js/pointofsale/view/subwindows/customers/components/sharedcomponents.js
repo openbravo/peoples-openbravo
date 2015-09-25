@@ -80,6 +80,29 @@ enyo.kind({
 });
 
 enyo.kind({
+  name: 'OB.UI.CustomerTextPropertyAddr',
+  kind: 'OB.UI.CustomerTextProperty',
+  handlers: {
+    onLoadValue: 'loadValue'
+  },
+  loadValue: function (inSender, inEvent) {
+    if (inEvent.customer !== undefined) {
+      if (inEvent.customer.get(this.modelProperty) !== undefined) {
+        if (_.isNull(inEvent.customer.get(this.modelProperty))) {
+          this.setValue(OB.I18N.getLabel('OBPOS_LblEmptyAddress'));
+          this.setAttribute('readonly', 'readonly');
+        } else {
+          this.setValue(inEvent.customer.get(this.modelProperty));
+        }
+      }
+    } else {
+      this.setValue('');
+      this.setAttribute('readonly', '');
+    }
+  }
+});
+
+enyo.kind({
   name: 'OB.UI.CustomerComboProperty',
   handlers: {
     onLoadValue: 'loadValue',

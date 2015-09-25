@@ -105,9 +105,9 @@
           // Saving Customer Address locally
           if (!isNew) {
             //load the BPlocation and then update it
-            OB.Dal.get(OB.Model.BPLocation, customer.get('locId'), function (bpLocToUpdate) {
+            OB.Dal.get(OB.Model.BPLocation, customer.get('locShipId'), function (bpLocToUpdate) {
               if (bpLocToUpdate) {
-                bpLocToUpdate.set('name', customer.get('locName'));
+                bpLocToUpdate.set('name', customer.get('locShipName'));
                 bpLocToUpdate.set('postalCode', customer.get('postalCode'));
                 bpLocToUpdate.set('cityName', customer.get('cityName'));
                 bpLocToUpdate.set('_identifier', customer.get('locName'));

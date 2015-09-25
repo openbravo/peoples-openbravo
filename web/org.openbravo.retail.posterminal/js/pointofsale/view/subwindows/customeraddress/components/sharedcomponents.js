@@ -172,7 +172,7 @@ enyo.kind({
         customerAddr: this.model.get('customerAddr')
       });
       if (this.model.get('customerAddr').get('name') === '') {
-        OB.UTIL.showWarning('Address is required for BPartner');
+    	OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NameReqForBPAddress'));
         return false;
       } else {
         var callback = function () {
@@ -180,39 +180,44 @@ enyo.kind({
               customer: OB.UTIL.clone(me.customer),
               customerAddr: OB.UTIL.clone(me.model.get('customerAddr'))
             });
-            };
+        };
         this.model.get('customerAddr').saveCustomerAddr(callback);
       }
     } else {
       this.model.get('customerAddr').loadById(this.customerAddr.get('id'), function (customerAddr) {
-        if (customerAddr.get('name') === "") {
-          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_BPartnerAddressRequired'));
+        if (customerAddr.get('name') === '') {
+          OB.UTIL.showWarning('Address field is required for Customer Address'); //TODO: Use I18N label
           return false;
         } else {
-          var callback = function () {
-            goToViewWindow(sw, {
-              customer: me.customer,
-              customerAddr: customerAddr
-            });
-            if (customerAddr.get('id') === me.customer.get("locId") || customerAddr.get('id') === me.customer.get("locShipId")) {
-              if (!customerAddr.get('isBillTo')) {
-                me.customer.set('locId', null);
-                me.customer.set('locName', null);
-              }
-              if (!customerAddr.get('isShipTo')) {
-                me.customer.set('locShipId', null);
-                me.customer.set('locShipName', null);
-              }
-              me.customer.set('locationModel', customerAddr);
-              OB.Dal.save(me.customer, function success(tx) {
-                me.doChangeBusinessPartner({
-                  businessPartner: me.customer
+        	
+          function continueSaving() {
+        	  customerAddr.saveCustomerAddr(function () {
+                goToViewWindow(sw, {
+                  customer: me.customer,
+                  customerAddr: customerAddr
                 });
-              }, function error(tx) {
-                OB.error(tx);
-              });
-            }
-          };
+                if (customerAddr.get('id') === me.customer.get("locId") || customerAddr.get('id') === me.customer.get("locShipId")) {
+                  if (!customerAddr.get('isBillTo')) {
+                    me.customer.set('locId', null);
+                    me.customer.set('locName', null);
+                  }
+                  if (!customerAddr.get('isShipTo')) {
+                    me.customer.set('locShipId', null);
+                    me.customer.set('locShipName', null);
+                    me.customer.set('postalCode', null);
+                    me.customer.set('cityName', null);
+                  }
+                  me.customer.set('locationModel', customerAddr);
+                  OB.Dal.save(me.customer, function success(tx) {
+                    me.doChangeBusinessPartner({
+                      businessPartner: me.customer
+                    });
+                  }, function error(tx) {
+                    OB.error(tx);
+                  });
+                }
+        	  }); 	  
+          }
           
           getCustomerAddrValues({
             customerAddr: customerAddr
@@ -223,7 +228,7 @@ enyo.kind({
               label: OB.I18N.getLabel('OBPOS_LblOk'),
               isConfirmButton: true,
               action: function () {
-            	customerAddr.saveCustomerAddr(callback);
+                continueSaving();
               }
             }, {
               label: OB.I18N.getLabel('OBMOBC_LblCancel')
@@ -234,7 +239,7 @@ enyo.kind({
               }
             });
           } else {
-            customerAddr.saveCustomerAddr(callback);
+              continueSaving();
           }
         }
       });

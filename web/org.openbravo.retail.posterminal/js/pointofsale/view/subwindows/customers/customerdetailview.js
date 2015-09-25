@@ -219,19 +219,19 @@ enyo.kind({
       return OB.MobileApp.model.get('terminal').bp_showtaxid;
     }
   }, {
-    kind: 'OB.UI.CustomerTextProperty',
+    kind: 'OB.UI.CustomerTextPropertyAddr',
     name: 'customerLocName',
-    modelProperty: 'locName',
+    modelProperty: 'locShipName',
     i18nLabel: 'OBPOS_LblAddress',
     readOnly: true
   }, {
-    kind: 'OB.UI.CustomerTextProperty',
+    kind: 'OB.UI.CustomerTextPropertyAddr',
     name: 'customerPostalCode',
     modelProperty: 'postalCode',
     i18nLabel: 'OBPOS_LblPostalCode',
     readOnly: true
   }, {
-    kind: 'OB.UI.CustomerTextProperty',
+    kind: 'OB.UI.CustomerTextPropertyAddr',
     name: 'customerCity',
     modelProperty: 'cityName',
     i18nLabel: 'OBPOS_LblCity',

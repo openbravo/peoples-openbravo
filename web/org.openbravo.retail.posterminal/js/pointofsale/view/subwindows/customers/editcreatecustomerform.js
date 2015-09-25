@@ -195,19 +195,19 @@ enyo.kind({
     },
     maxlength: 20
   }, {
-    kind: 'OB.UI.CustomerTextProperty',
+    kind: 'OB.UI.CustomerTextPropertyAddr',
     name: 'customerLocName',
-    modelProperty: 'locName',
+    modelProperty: 'locShipName',
     i18nLabel: 'OBPOS_LblAddress',
     maxlength: 60
   }, {
-    kind: 'OB.UI.CustomerTextProperty',
+    kind: 'OB.UI.CustomerTextPropertyAddr',
     name: 'customerPostalCode',
     modelProperty: 'postalCode',
     i18nLabel: 'OBPOS_LblPostalCode',
     maxlength: 10
   }, {
-    kind: 'OB.UI.CustomerTextProperty',
+    kind: 'OB.UI.CustomerTextPropertyAddr',
     name: 'customerCity',
     modelProperty: 'cityName',
     i18nLabel: 'OBPOS_LblCity',
