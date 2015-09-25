@@ -27,6 +27,10 @@
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorSavingCustomerAddrChn', [this.get('_identifier')]));
         return;
       }
+      if (this.get('name') === '') {
+        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NameReqForBPAddress'));
+        return false;
+      }
       this.set('_identifier', this.get('name'));
 
       if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {

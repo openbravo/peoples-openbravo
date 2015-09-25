@@ -104,14 +104,15 @@
           //OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_customerSavedSuccessfullyLocally',[customer.get('_identifier')]));
           // Saving Customer Address locally
           if (!isNew) {
-            //load the BPlocation and then update it
-            OB.Dal.get(OB.Model.BPLocation, customer.get('locShipId'), function (bpLocToUpdate) {
-              if (bpLocToUpdate) {
-                bpLocToUpdate.set('name', customer.get('locShipName'));
-                bpLocToUpdate.set('postalCode', customer.get('postalCode'));
-                bpLocToUpdate.set('cityName', customer.get('cityName'));
-                bpLocToUpdate.set('_identifier', customer.get('locName'));
-                OB.Dal.save(bpLocToUpdate, function () {
+        	if (me.customer.get('locShipId')) {
+	            //load the BPlocation and then update it
+	            OB.Dal.get(OB.Model.BPLocation, customer.get('locShipId'), function (bpLocToUpdate) {
+	              if (bpLocToUpdate) {
+	                bpLocToUpdate.set('name', customer.get('locShipName'));
+	                bpLocToUpdate.set('postalCode', customer.get('postalCode'));
+	                bpLocToUpdate.set('cityName', customer.get('cityName'));
+	                bpLocToUpdate.set('_identifier', customer.get('locName'));
+	                OB.Dal.save(bpLocToUpdate, function () {
                   // update each order also so that new name is shown and the bp
                   // in the order is the same as what got saved
                   if (OB.MobileApp.model.orderList) {
@@ -139,15 +140,16 @@
                     });
                   }
 
-                }, function () {
-                  OB.error(arguments);
-                }, isNew);
-              } else {
-                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_errorSavingBPLoc_header'), OB.I18N.getLabel('OBPOS_errorSavingBPLoc_body'));
-              }
-            }, function () {
-              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_errorSavingBPLoc_header'), OB.I18N.getLabel('OBPOS_errorSavingBPLoc_body'));
-            });
+	                }, function () {
+	                  OB.error(arguments);
+	                }, isNew);
+	              } else {
+	                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_errorSavingBPLoc_header'), OB.I18N.getLabel('OBPOS_errorSavingBPLoc_body'));
+	              }
+	            }, function () {
+	              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_errorSavingBPLoc_header'), OB.I18N.getLabel('OBPOS_errorSavingBPLoc_body'));
+	            });
+        	}
           } else {
             //create bploc from scratch
             bpLocToSave.set('id', customer.get('locId'));

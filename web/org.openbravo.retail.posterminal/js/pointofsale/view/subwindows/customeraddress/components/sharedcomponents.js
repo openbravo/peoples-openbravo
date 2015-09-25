@@ -185,11 +185,7 @@ enyo.kind({
       }
     } else {
       this.model.get('customerAddr').loadById(this.customerAddr.get('id'), function (customerAddr) {
-        if (customerAddr.get('name') === '') {
-          OB.UTIL.showWarning('Address field is required for Customer Address'); //TODO: Use I18N label
-          return false;
-        } else {
-        	
+
           function continueSaving() {
         	  customerAddr.saveCustomerAddr(function () {
                 goToViewWindow(sw, {
@@ -241,7 +237,6 @@ enyo.kind({
           } else {
               continueSaving();
           }
-        }
       });
     }
   },
