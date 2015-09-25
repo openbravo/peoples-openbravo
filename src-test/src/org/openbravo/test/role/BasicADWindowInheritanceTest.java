@@ -43,58 +43,6 @@ public class BasicADWindowInheritanceTest extends WeldBaseTest {
   public final static String PURCHASE_INVOICE_ID = "183";
 
   @Test
-  public void testBasicVerticalInheritance() {
-    Role roleA = null;
-    Role roleB = null;
-    Role roleC = null;
-    try {
-      OBContext.setAdminMode(true);
-      // Create roles
-      roleA = RoleInheritanceTestUtils.createRole("roleA", RoleInheritanceTestUtils.CLIENT_ID,
-          RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true, true);
-      String roleAId = (String) DalUtil.getId(roleA);
-      roleB = RoleInheritanceTestUtils.createRole("roleB", RoleInheritanceTestUtils.CLIENT_ID,
-          RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true, true);
-      String roleBId = (String) DalUtil.getId(roleB);
-      roleC = RoleInheritanceTestUtils.createRole("roleC", RoleInheritanceTestUtils.CLIENT_ID,
-          RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true, false);
-      String roleCId = (String) DalUtil.getId(roleC);
-
-      // Add window accesses for template roles
-      addWindowAccess(roleA, "Sales Order", true);
-      addWindowAccess(roleB, "Purchase Order", true);
-
-      // Add inheritances
-      RoleInheritanceTestUtils.addInheritance(roleB, roleA, new Long(10));
-      RoleInheritanceTestUtils.addInheritance(roleC, roleB, new Long(20));
-
-      OBDal.getInstance().commitAndClose();
-
-      roleA = OBDal.getInstance().get(Role.class, roleAId);
-      roleB = OBDal.getInstance().get(Role.class, roleBId);
-      roleC = OBDal.getInstance().get(Role.class, roleCId);
-
-      String[] expected = { PURCHASE_ORDER_ID, "", SALES_ORDER_ID, roleAId };
-      String[] result = getWindowAccessesOrderedByWindowName(roleB);
-      assertThat("Window accesses inherited for role B ", result, equalTo(expected));
-
-      String[] expected2 = { PURCHASE_ORDER_ID, roleBId, SALES_ORDER_ID, roleBId };
-      result = getWindowAccessesOrderedByWindowName(roleC);
-      assertThat("Window accesses inherited for role C ", result, equalTo(expected2));
-
-    } finally {
-      // Delete roles
-      RoleInheritanceTestUtils.deleteRole(roleC);
-      RoleInheritanceTestUtils.deleteRole(roleB);
-      RoleInheritanceTestUtils.deleteRole(roleA);
-
-      OBDal.getInstance().commitAndClose();
-
-      OBContext.restorePreviousMode();
-    }
-  }
-
-  @Test
   public void testBasicAccessPropagation() {
     Role role = null;
     Role template = null;
