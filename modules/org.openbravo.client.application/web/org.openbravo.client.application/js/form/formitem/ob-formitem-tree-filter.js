@@ -302,35 +302,22 @@ isc.OBTreeFilterItem.addProperties({
     }
   },
 
-  filterDialogCallback: function (criteria) {
-    var finalCriteria, theCriteria;
-    this.setCurrentCriterion(criteria);
-    theCriteria = this.grid.parentElement.getFilterEditorCriteria();
-    if (theCriteria && theCriteria.criteria) {
-      finalCriteria = theCriteria;
-    } else {
-      if (criteria.operator === 'or') {
-        finalCriteria = {};
-        finalCriteria.operator = "and";
-        finalCriteria._constructor = "AdvancedCriteria";
-        finalCriteria.criteria = [];
-        finalCriteria = theCriteria;
-      } else {
-        finalCriteria = criteria;
-      }
-    }
-    this.grid.parentElement.setFilterEditorCriteria(finalCriteria);
+  filterDialogCallback: function (criterion) {
+    this.updateCriterion(criterion);
     this.lastValueFromPopup = this.getValue();
     this.form.grid.performAction();
   },
 
-  setCurrentCriterion: function (criteria) {
-    if (!criteria.criteria) {
+  //This function updates the criterion of the tree filter, deletes the old
+  //criterion and adds the new criterion.
+  updateCriterion: function (criterion) {
+    if (!criterion.criteria) {
       this.setValue(null);
     } else {
-      this.setCriterion(criteria);
+      this.setCriterion(criterion);
     }
   },
+
   init: function () {
     var field;
     this.pickerIconSrc = OB.Styles.OBFormField.DefaultSearch.pickerIconSrc;
