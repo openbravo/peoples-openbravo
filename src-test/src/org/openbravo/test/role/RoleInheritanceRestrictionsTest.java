@@ -163,24 +163,50 @@ public class RoleInheritanceRestrictionsTest extends WeldBaseTest {
   @Test
   public void testTemplateRoleNotAutomatic() {
     Role template = null;
+    Role template2 = null;
     try {
       OBContext.setAdminMode(true);
+      // Try to create an automatic template
       template = RoleInheritanceTestUtils.createRole("template",
           RoleInheritanceTestUtils.CLIENT_ID, RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C",
           false, true);
       String templateId = (String) DalUtil.getId(template);
       try {
+        OBDal.getInstance().flush();
         OBDal.getInstance().commitAndClose();
       } catch (Exception ex) {
         // Expected exception, the AD_ROLE_TEMPLATE_ISMANUAL_CHK constraint avoids this save
+        OBDal.getInstance().rollbackAndClose();
       }
       template = OBDal.getInstance().get(Role.class, templateId);
       assertThat("A template role can not be automatic", template, equalTo(null));
 
+      // Create a manual template
+      template2 = RoleInheritanceTestUtils.createRole("template2",
+          RoleInheritanceTestUtils.CLIENT_ID, RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true,
+          true);
+      String template2Id = (String) DalUtil.getId(template2);
+      OBDal.getInstance().commitAndClose();
+      try {
+        template2 = OBDal.getInstance().get(Role.class, template2Id);
+        template2.setManual(false);
+        OBDal.getInstance().flush();
+        OBDal.getInstance().commitAndClose();
+      } catch (Exception ex) {
+        // Expected exception, the AD_ROLE_TEMPLATE_ISMANUAL_CHK constraint avoids this update
+        OBDal.getInstance().rollbackAndClose();
+      }
+      template2 = OBDal.getInstance().get(Role.class, template2Id);
+      assertThat("Is not possible to uncheck the Manual flag for a template role",
+          template2.isManual(), equalTo(true));
+
     } finally {
-      // Delete role (if exists)
+      // Delete roles (if exists)
       if (template != null) {
         RoleInheritanceTestUtils.deleteRole(template);
+      }
+      if (template2 != null) {
+        RoleInheritanceTestUtils.deleteRole(template2);
       }
       OBDal.getInstance().commitAndClose();
 
