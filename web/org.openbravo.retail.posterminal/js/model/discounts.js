@@ -24,24 +24,33 @@
     applyPromotions: function (receipt, line) {
       var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('applyPromotions');
       if (!receipt.get('isBeingDiscounted')) {
-        receipt.set('isBeingDiscounted', true);
+        receipt.set('isBeingDiscounted', true, {
+          silent: true
+        });
         // if the discount algorithm already started, stop pending computations...
         this.executor.removeGroup('discounts');
         // ... and start over
         this.applyPromotionsLat(receipt, line);
       } else {
-        receipt.set('reApplyDiscounts', true);
+        receipt.set('reApplyDiscounts', true, {
+          silent: true
+        });
       }
       OB.UTIL.SynchronizationHelper.finished(synchId, 'applyPromotions');
     },
     finishPromotions: function (receipt, line) {
+      receipt.set('isBeingDiscounted', false, {
+        silent: true
+      });
       if (receipt.get('reApplyDiscounts') === true) {
-        receipt.set('isBeingDiscounted', false);
-        receipt.set('reApplyDiscounts', false);
+        receipt.set('reApplyDiscounts', false, {
+          silent: true
+        });
         OB.Model.Discounts.applyPromotions(receipt, line);
       } else {
-        receipt.set('isBeingDiscounted', false);
-        receipt.set('reApplyDiscounts', false);
+        receipt.set('reApplyDiscounts', false, {
+          silent: true
+        });
         receipt.trigger('applyPromotionsFinished');
       }
     },
