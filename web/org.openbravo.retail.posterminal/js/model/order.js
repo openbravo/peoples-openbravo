@@ -2837,6 +2837,7 @@
     saveCurrent: function () {
       if (this.current) {
         OB.UTIL.clone(this.modelorder, this.current);
+        this.current.trigger('updateView');
       }
     },
     loadCurrent: function (isNew) {
