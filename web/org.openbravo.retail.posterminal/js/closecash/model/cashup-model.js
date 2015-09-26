@@ -330,7 +330,6 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
           cashUpReport: cashUpReport
         }, function (args) {
           me.get('cashUpReport').add(args.cashUpReport);
-          initModelsCallback();
           OB.UTIL.SynchronizationHelper.finished(synchId2, 'cashup-model.init2');
         });
       }, this);
