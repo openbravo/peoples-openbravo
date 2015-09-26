@@ -22,6 +22,7 @@
     preventApplyPromotions: false,
     applyPromotionsTimeout: {},
     applyPromotions: function (receipt, line) {
+      var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('applyPromotions');
       if (!receipt.get('isBeingDiscounted')) {
         receipt.set('isBeingDiscounted', true);
         // if the discount algorithm already started, stop pending computations...
@@ -31,6 +32,7 @@
       } else {
         receipt.set('reApplyDiscounts', true);
       }
+      OB.UTIL.SynchronizationHelper.finished(synchId, 'applyPromotions');
     },
     finishPromotions: function (receipt, line) {
       if (receipt.get('reApplyDiscounts') === true) {
