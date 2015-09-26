@@ -534,6 +534,10 @@
           });
           };
 
+      this.get('lines').forEach(function (line) {
+        line.calculateGross();
+      });
+
       if (this.get('priceIncludesTax')) {
         this.calculateTaxes(function () {
           var gross = me.get('lines').reduce(function (memo, e) {
@@ -2247,9 +2251,6 @@
         'skipApplyPromotions': localSkipApplyPromotions
       }, {
         silent: true
-      });
-      this.get('lines').forEach(function (l) {
-        l.calculateGross();
       });
       this.calculateGross();
       this.trigger('promotionsUpdated');

@@ -170,9 +170,6 @@
         this.applyPromotionsImp(auxReceipt, null, true);
       } else {
         this.applyPromotionsImp(receipt, line, false);
-        receipt.get('lines').forEach(function (l) {
-          l.calculateGross();
-        });
         receipt.calculateGross();
       }
     },
