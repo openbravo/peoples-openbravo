@@ -53,10 +53,10 @@ enyo.kind({
     }
   },
   initComponents: function () {
-	this.inherited(arguments);
+    this.inherited(arguments);
   },
   renderBPLocation: function (newLocation) {
-	this.$.identifier.setContent(newLocation);
+    this.$.identifier.setContent(newLocation);
   },
   orderChanged: function (oldValue) {
     if (this.order.get('bp')) {

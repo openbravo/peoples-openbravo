@@ -17,8 +17,10 @@ enyo.kind({
   },
   beforeSetShowing: function (params) {
     if (OB.MobileApp.model.get('terminal').defaultbp_paymentmethod !== null && OB.MobileApp.model.get('terminal').defaultbp_bpcategory !== null && OB.MobileApp.model.get('terminal').defaultbp_paymentterm !== null && OB.MobileApp.model.get('terminal').defaultbp_invoiceterm !== null && OB.MobileApp.model.get('terminal').defaultbp_bpcountry !== null && OB.MobileApp.model.get('terminal').defaultbp_bporg !== null) {
-
       this.waterfall('onSetCustomer', {
+        customer: params.businessPartner
+      });
+      this.waterfall('onSwitchImg', {
         customer: params.businessPartner
       });
       //show

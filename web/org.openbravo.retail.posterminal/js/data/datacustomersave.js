@@ -104,15 +104,15 @@
           //OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_customerSavedSuccessfullyLocally',[customer.get('_identifier')]));
           // Saving Customer Address locally
           if (!isNew) {
-        	if (me.customer.get('locShipId')) {
-	            //load the BPlocation and then update it
-	            OB.Dal.get(OB.Model.BPLocation, customer.get('locShipId'), function (bpLocToUpdate) {
-	              if (bpLocToUpdate) {
-	                bpLocToUpdate.set('name', customer.get('locShipName'));
-	                bpLocToUpdate.set('postalCode', customer.get('postalCode'));
-	                bpLocToUpdate.set('cityName', customer.get('cityName'));
-	                bpLocToUpdate.set('_identifier', customer.get('locName'));
-	                OB.Dal.save(bpLocToUpdate, function () {
+            if (me.customer.get('locShipId')) {
+              //load the BPlocation and then update it
+              OB.Dal.get(OB.Model.BPLocation, customer.get('locShipId'), function (bpLocToUpdate) {
+                if (bpLocToUpdate) {
+                  bpLocToUpdate.set('name', customer.get('locShipName'));
+                  bpLocToUpdate.set('postalCode', customer.get('postalCode'));
+                  bpLocToUpdate.set('cityName', customer.get('cityName'));
+                  bpLocToUpdate.set('_identifier', customer.get('locName'));
+                  OB.Dal.save(bpLocToUpdate, function () {
                   // update each order also so that new name is shown and the bp
                   // in the order is the same as what got saved
                   if (OB.MobileApp.model.orderList) {
@@ -140,26 +140,26 @@
                     });
                   }
 
-	                }, function () {
-	                  OB.error(arguments);
-	                }, isNew);
-	              } else {
-	                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_errorSavingBPLoc_header'), OB.I18N.getLabel('OBPOS_errorSavingBPLoc_body'));
-	              }
-	            }, function () {
-	              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_errorSavingBPLoc_header'), OB.I18N.getLabel('OBPOS_errorSavingBPLoc_body'));
-	            });
-        	}
+                  }, function () {
+                    OB.error(arguments);
+                  }, isNew);
+                } else {
+                  OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_errorSavingBPLoc_header'), OB.I18N.getLabel('OBPOS_errorSavingBPLoc_body'));
+                }
+              }, function () {
+                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_errorSavingBPLoc_header'), OB.I18N.getLabel('OBPOS_errorSavingBPLoc_body'));
+              });
+            }
           } else {
             //create bploc from scratch
-            bpLocToSave.set('id', customer.get('locId'));
+            bpLocToSave.set('id', customer.get('locShipId'));
             bpLocToSave.set('bpartner', customer.get('id'));
-            bpLocToSave.set('name', customer.get('locName'));
+            bpLocToSave.set('name', customer.get('locShipName'));
             bpLocToSave.set('isBillTo', true);
             bpLocToSave.set('isShipTo', true);
             bpLocToSave.set('postalCode', customer.get('postalCode'));
             bpLocToSave.set('cityName', customer.get('cityName'));
-            bpLocToSave.set('_identifier', customer.get('locName'));
+            bpLocToSave.set('_identifier', customer.get('locShipName'));
             bpLocToSave.set('countryName', OB.MobileApp.model.get('terminal').defaultbp_bpcountry_name);
             bpLocToSave.set('countryId', OB.MobileApp.model.get('terminal').defaultbp_bpcountry);
             OB.Dal.save(bpLocToSave, function () {

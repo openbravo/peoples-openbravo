@@ -262,7 +262,7 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
     Entity baseLocationEntity = ModelProvider.getInstance().getEntity(
         org.openbravo.model.common.geography.Location.class);
     final Location location = OBDal.getInstance().get(Location.class,
-        jsonCustomer.getString("locId"));
+        jsonCustomer.getString("locShipId"));
     if (location != null) {
       // location exist > modify it
       final org.openbravo.model.common.geography.Location rootLocation = location
@@ -270,9 +270,9 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
 
       JSONPropertyToEntity.fillBobFromJSON(baseLocationEntity, rootLocation, jsonCustomer);
 
-      if (jsonCustomer.has("locName") && jsonCustomer.getString("locName") != null
-          && !jsonCustomer.getString("locName").equals("")) {
-        rootLocation.setAddressLine1(jsonCustomer.getString("locName"));
+      if (jsonCustomer.has("locShipName") && jsonCustomer.getString("locShipName") != null
+          && !jsonCustomer.getString("locShipName").equals("")) {
+        rootLocation.setAddressLine1(jsonCustomer.getString("locShipName"));
       }
 
       OBDal.getInstance().save(rootLocation);
@@ -283,9 +283,9 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
 
       JSONPropertyToEntity.fillBobFromJSON(baseLocationEntity, rootLocation, jsonCustomer);
 
-      if (jsonCustomer.has("locName") && jsonCustomer.getString("locName") != null
-          && !jsonCustomer.getString("locName").equals("")) {
-        rootLocation.setAddressLine1(jsonCustomer.getString("locName"));
+      if (jsonCustomer.has("locShipName") && jsonCustomer.getString("locShipName") != null
+          && !jsonCustomer.getString("locShipName").equals("")) {
+        rootLocation.setAddressLine1(jsonCustomer.getString("locShipName"));
       }
 
       OBDal.getInstance().save(rootLocation);
@@ -294,16 +294,16 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
 
       JSONPropertyToEntity.fillBobFromJSON(locationEntity, newLocation, jsonCustomer);
 
-      if (jsonCustomer.has("locId")) {
-        newLocation.setId(jsonCustomer.getString("locId"));
+      if (jsonCustomer.has("locShipId")) {
+        newLocation.setId(jsonCustomer.getString("locShipId"));
       } else {
         String errorMessage = "Business partner Location ID is a mandatory field to create a new customer from Web Pos";
         log.error(errorMessage);
         throw new OBException(errorMessage, null);
       }
-      if (jsonCustomer.has("locName") && jsonCustomer.getString("locName") != null
-          && !jsonCustomer.getString("locName").equals("")) {
-        newLocation.setName(jsonCustomer.getString("locName"));
+      if (jsonCustomer.has("locShipName") && jsonCustomer.getString("locShipName") != null
+          && !jsonCustomer.getString("locShipName").equals("")) {
+        newLocation.setName(jsonCustomer.getString("locShipName"));
       } else {
         newLocation.setName(jsonCustomer.getString("searchKey"));
       }

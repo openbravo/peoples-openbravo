@@ -19,7 +19,9 @@ enyo.kind({
     this.waterfall('onSetCustomer', {
       customer: params.businessPartner
     });
-
+    this.waterfall('onSwitchImg', {
+      customer: params.businessPartner
+    });
     return true;
   },
   defaultNavigateOnClose: 'customerAdvancedSearch',

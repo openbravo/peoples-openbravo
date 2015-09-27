@@ -45,6 +45,62 @@ enyo.kind({
 });
 
 enyo.kind({
+  name: 'OB.UI.CustomerPropertyLineAddr',
+  handlers: {
+    onSwitchImg: 'switchImg'
+  },
+  components: [{
+    name: 'bottomShipIcon',
+    style: 'font-size: 15px; color: black; text-align: right; background-color: #E2E2E2; width: 5%; height: 28px; padding: 12px 5px 1px 0; float: left;'
+  }, {
+    name: 'bottomBillIcon',
+    style: 'font-size: 15px; color: black; text-align: right; background-color: #E2E2E2; width: 5%; height: 28px; padding: 12px 5px 1px 0; float: left;'
+  }, {
+    name: 'labelLine',
+    style: 'font-size: 15px; color: black; text-align: right; background-color: #E2E2E2; width: 9%; height: 28px; padding: 12px 5px 1px 0; float: left;'
+  }, {
+    style: 'border: 1px solid #FFFFFF; float: left; width: 75%;',
+    name: 'newAttribute'
+  }, {
+    style: 'clear: both'
+  }],
+  initComponents: function () {
+    this.inherited(arguments);
+    this.$.newAttribute.createComponent(this.newAttribute);
+    this.$.labelLine.content = this.newAttribute.i18nLabel ? OB.I18N.getLabel(this.newAttribute.i18nLabel) : this.newAttribute.label;
+  },
+  switchImg: function (inSender, inEvent) {
+    var criteria = {},
+        me = this;
+    if (!_.isUndefined(inEvent.customer)) {
+      if (inEvent.customer.get('locShipId') === inEvent.customer.get('locId')) {
+        me.$.bottomShipIcon.addClass('addresshipitems');
+        me.$.bottomBillIcon.addClass('addressbillitems');
+        return;
+      } else if (_.isNull(inEvent.customer.get('locShipId'))) {
+        me.$.bottomShipIcon.removeClass('addresshipitems');
+        me.$.bottomBillIcon.removeClass('addressbillitems');
+        return;
+      }
+      OB.Dal.get(OB.Model.BPLocation, inEvent.customer.get('locShipId'), function (dataBpLoc) {
+        if (dataBpLoc && (dataBpLoc.get('isBillTo') && dataBpLoc.get('isShipTo'))) {
+          me.$.bottomShipIcon.addClass('addresshipitems');
+          me.$.bottomBillIcon.addClass('addressbillitems');
+        } else if (dataBpLoc && (!dataBpLoc.get('isBillTo') && dataBpLoc.get('isShipTo'))) {
+          me.$.bottomShipIcon.addClass('addresshipitems');
+          me.$.bottomBillIcon.removeClass('addressbillitems');
+        }
+      }, function (tx, error) {
+        OB.UTIL.showError("OBDAL error: " + error);
+      });
+    } else {
+      me.$.bottomShipIcon.addClass('addresshipitems');
+      me.$.bottomBillIcon.addClass('addressbillitems');
+    }
+  }
+});
+
+enyo.kind({
   name: 'OB.UI.CustomerTextProperty',
   kind: 'enyo.Input',
   type: 'text',
@@ -313,11 +369,20 @@ enyo.kind({
         }
       }
       if (resultDisplay) {
-        this.$.customerAttributes.createComponent({
-          kind: 'OB.UI.CustomerPropertyLine',
-          name: 'line_' + natt.name,
-          newAttribute: natt
-        });
+        if (natt.name === "customerLocName") {
+          this.$.customerAttributes.createComponent({
+            kind: 'OB.UI.CustomerPropertyLineAddr',
+            name: 'line_' + natt.name,
+            newAttribute: natt
+          });
+        } else {
+          this.$.customerAttributes.createComponent({
+            kind: 'OB.UI.CustomerPropertyLine',
+            name: 'line_' + natt.name,
+            newAttribute: natt
+          });
+        }
+
       }
     }, this);
   },
