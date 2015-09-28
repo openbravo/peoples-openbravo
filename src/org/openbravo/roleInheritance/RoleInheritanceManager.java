@@ -229,7 +229,7 @@ public class RoleInheritanceManager {
    * @return the Role owner of the access
    */
   public Role getRole(InheritedAccessEnabled access) {
-    // TabAccess and Field Access does not have role property as parent
+    // TabAccess, FieldAccess and Preference do not have role property as parent
     if ("org.openbravo.model.ad.access.TabAccess".equals(className)) {
       TabAccess tabAccess = (TabAccess) access;
       return tabAccess.getWindowAccess().getRole();
@@ -298,7 +298,7 @@ public class RoleInheritanceManager {
    * @return the role property that can be retrieved according to the input class name.
    */
   private String getRoleProperty(String clazzName) {
-    // TabAccess and Field Access does not have role property as parent
+    // TabAccess, FieldAccess and Preference do not have role property as parent
     if ("org.openbravo.model.ad.access.TabAccess".equals(clazzName)) {
       return "windowAccess.role.id";
     } else if ("org.openbravo.model.ad.access.FieldAccess".equals(clazzName)) {
@@ -964,7 +964,7 @@ public class RoleInheritanceManager {
     private final String securedElement;
 
     /**
-     * Basi constructor.
+     * Basic constructor.
      * 
      * @param className
      *          a String with the name of the class
