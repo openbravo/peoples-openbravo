@@ -3120,9 +3120,6 @@
       order.set('print', true);
       order.set('sendEmail', false);
       order.set('openDrawer', false);
-      if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
-        order.save();
-      }
       return order;
     },
 
@@ -3332,10 +3329,11 @@
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true) && (!isFirstOrder || (isFirstOrder && !localStorage.remoteCustomers))) {
         this.doRemoteBPSettings(OB.MobileApp.model.get('businessPartner'));
       }
-
-
       this.saveCurrent();
       this.current = this.newOrder();
+      if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
+        this.current.save();
+      }
       this.unshift(this.current);
       this.loadCurrent(true);
     },
@@ -3450,7 +3448,11 @@
         me.remove(me.current);
         var createNew = forceCreateNew || me.length === 0;
         if (createNew) {
-          me.add(me.newOrder());
+          var order = me.newOrder();
+          if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
+            order.save();
+          }
+          me.add(order);
           if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
             me.doRemoteBPSettings(OB.MobileApp.model.get('businessPartner'));
           }
@@ -3493,7 +3495,7 @@
         });
       }
 
-      if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && OB.MobileApp.model.receipt.id === this.current.id && this.current.get('lines').length === 0 && (this.current.get('documentnoSuffix') <= OB.MobileApp.model.documentnoThreshold || OB.MobileApp.model.documentnoThreshold === 0)) {
+      if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && !this.current.get('isQuotation') && OB.MobileApp.model.receipt.id === this.current.id && this.current.get('lines').length === 0 && (this.current.get('documentnoSuffix') <= OB.MobileApp.model.documentnoThreshold || OB.MobileApp.model.documentnoThreshold === 0)) {
         OB.MobileApp.model.receipt.setIsCalculateGrossLockState(true);
         OB.MobileApp.model.receipt.set('obposIsDeleted', true);
         OB.MobileApp.model.receipt.prepareToSend(function () {
