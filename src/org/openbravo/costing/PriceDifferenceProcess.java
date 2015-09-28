@@ -30,6 +30,7 @@ import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.costing.CostingServer.TrxType;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
@@ -47,8 +48,8 @@ import org.openbravo.model.procurement.ReceiptInvoiceMatch;
 public class PriceDifferenceProcess {
   private static CostAdjustment costAdjHeader = null;
 
-  private static boolean calculateTransactionPriceDifference(MaterialTransaction materialTransaction)
-      throws OBException {
+  private static boolean calculateTransactionPriceDifferenceLogic(
+      MaterialTransaction materialTransaction) throws OBException {
     boolean costAdjCreated = false;
     if (materialTransaction.isCostPermanent()) {
       // Permanently adjusted transaction costs are not checked for price differences.
@@ -59,10 +60,12 @@ public class PriceDifferenceProcess {
     Date trxDate = materialTransaction.getMovementDate();
     int costCurPrecission = trxCurrency.getCostingPrecision().intValue();
     ShipmentInOutLine receiptLine = materialTransaction.getGoodsShipmentLine();
-    if (receiptLine == null || receiptLine.getShipmentReceipt().isSalesTransaction()) {
+    if (receiptLine == null
+        || !isValidPriceAdjTrx(receiptLine.getMaterialMgmtMaterialTransactionList().get(0))) {
       // We can only adjust cost of receipt lines.
       return false;
     }
+
     BigDecimal receiptQty = receiptLine.getMovementQuantity();
     boolean isNegativeReceipt = receiptQty.signum() == -1;
     if (isNegativeReceipt) {
@@ -145,10 +148,20 @@ public class PriceDifferenceProcess {
       costAdjCreated = true;
     }
 
+    return costAdjCreated;
+  }
+
+  private static boolean calculateTransactionPriceDifference(MaterialTransaction materialTransaction)
+      throws OBException {
+
+    boolean costAdjCreated = calculateTransactionPriceDifferenceLogic(materialTransaction);
+
     materialTransaction.setCheckpricedifference(Boolean.FALSE);
     OBDal.getInstance().save(materialTransaction);
     OBDal.getInstance().flush();
+
     return costAdjCreated;
+
   }
 
   public static JSONObject processPriceDifferenceTransaction(MaterialTransaction materialTransaction)
@@ -258,6 +271,19 @@ public class PriceDifferenceProcess {
     if (costAdjHeader == null) {
       costAdjHeader = CostAdjustmentUtils.insertCostAdjustmentHeader(org, "PDC");
       // PDC: Price Dif Correction
+    }
+  }
+
+  /**
+   * True if is an Incoming Transaction
+   */
+  private static boolean isValidPriceAdjTrx(MaterialTransaction trx) {
+    TrxType transacctionType = TrxType.getTrxType(trx);
+    switch (transacctionType) {
+    case Receipt:
+      return true;
+    default:
+      return false;
     }
   }
 }
