@@ -121,7 +121,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   HashMap<String, DocumentType> paymentDocTypes = new HashMap<String, DocumentType>();
   HashMap<String, DocumentType> invoiceDocTypes = new HashMap<String, DocumentType>();
   HashMap<String, DocumentType> shipmentDocTypes = new HashMap<String, DocumentType>();
-  HashMap<String, JSONArray> orderLineServiceList = new HashMap<String, JSONArray>();
+  HashMap<String, JSONArray> orderLineServiceList;
   String paymentDescription = null;
   boolean newLayaway = false;
   boolean notpaidLayaway = false;
@@ -171,6 +171,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
     boolean isDeleted = false;
     documentNoHandlers.set(new ArrayList<OrderLoader.DocumentNoHandler>());
+    orderLineServiceList = new HashMap<String, JSONArray>();
     try {
       executeHooks(orderPreProcesses, jsonorder, null, null, null);
       boolean wasPaidOnCredit = false;
