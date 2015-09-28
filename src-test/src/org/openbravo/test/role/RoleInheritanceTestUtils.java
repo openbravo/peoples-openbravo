@@ -30,6 +30,7 @@ import org.openbravo.client.myob.WidgetClassAccess;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.access.FieldAccess;
 import org.openbravo.model.ad.access.FormAccess;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.RoleInheritance;
@@ -40,6 +41,7 @@ import org.openbravo.model.ad.alert.AlertRecipient;
 import org.openbravo.model.ad.alert.AlertRule;
 import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.model.ad.system.Client;
+import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Form;
 import org.openbravo.model.ad.ui.Process;
 import org.openbravo.model.ad.ui.Tab;
@@ -50,7 +52,7 @@ public class RoleInheritanceTestUtils {
   public final static String CLIENT_ID = "23C59575B9CF467C9620760EB255B389";
   public final static String ASTERISK_ORG_ID = "0";
   public final static List<String> ACCESS_NAMES = Arrays.asList("ORGANIZATION", "WINDOW", "TAB",
-      "REPORT", "FORM", "WIDGET", "VIEW", "PROCESS", "ALERT", "PREFERENCE");
+      "FIELD", "REPORT", "FORM", "WIDGET", "VIEW", "PROCESS", "ALERT", "PREFERENCE");
 
   public static Role createRole(String name, String clientId, String organizationId,
       String userLevel, boolean isManual, boolean isTemplate) {
@@ -93,8 +95,6 @@ public class RoleInheritanceTestUtils {
     obCriteria.setMaxResults(1);
     RoleInheritance roleInheritance = (RoleInheritance) obCriteria.uniqueResult();
     OBDal.getInstance().remove(roleInheritance);
-    // OBDal.getInstance().flush();
-    // OBDal.getInstance().refresh(role);
   }
 
   public static void addAccess(String type, Role role, String accessName) {
@@ -105,6 +105,10 @@ public class RoleInheritanceTestUtils {
     } else if ("TAB".equals(type)) {
       // Create tab access for Business Partner window
       addTabAccess(role, "Business Partner", accessName, true, true);
+    } else if ("FIELD".equals(type)) {
+      // Create field access for header tab of Business Partner window
+      addFieldAccess(role, "Business Partner", "Business Partner", accessName, true, true, true,
+          true);
     } else if ("REPORT".equals(type)) {
       addReportAndProcessAccess(role, accessName);
     } else if ("FORM".equals(type)) {
@@ -146,7 +150,7 @@ public class RoleInheritanceTestUtils {
     return windowAccess;
   }
 
-  private static void addTabAccess(Role role, String windowName, String tabName,
+  private static TabAccess addTabAccess(Role role, String windowName, String tabName,
       boolean editableField, boolean editableTab) {
 
     final OBCriteria<Window> windowCriteria = OBDal.getInstance().createCriteria(Window.class);
@@ -178,6 +182,59 @@ public class RoleInheritanceTestUtils {
     tabAccess.setTab(tab);
     tabAccess.setEditableField(editableTab);
     OBDal.getInstance().save(tabAccess);
+    OBDal.getInstance().flush();
+    OBDal.getInstance().refresh(role);
+    return tabAccess;
+  }
+
+  private static void addFieldAccess(Role role, String windowName, String tabName,
+      String fieldName, boolean editableField, boolean editableTab, boolean editableInField,
+      boolean checkOnSave) {
+
+    final OBCriteria<Window> windowCriteria = OBDal.getInstance().createCriteria(Window.class);
+    windowCriteria.add(Restrictions.eq(Window.PROPERTY_NAME, windowName));
+    windowCriteria.setMaxResults(1);
+    Window window = (Window) windowCriteria.uniqueResult();
+
+    final OBCriteria<WindowAccess> waCriteria = OBDal.getInstance().createCriteria(
+        WindowAccess.class);
+    waCriteria.add(Restrictions.eq(WindowAccess.PROPERTY_ROLE, role));
+    waCriteria.add(Restrictions.eq(WindowAccess.PROPERTY_WINDOW, window));
+    waCriteria.setMaxResults(1);
+
+    final OBCriteria<Tab> tabCriteria = OBDal.getInstance().createCriteria(Tab.class);
+    tabCriteria.add(Restrictions.eq(Tab.PROPERTY_NAME, tabName));
+    tabCriteria.add(Restrictions.eq(Tab.PROPERTY_WINDOW, window));
+    tabCriteria.setMaxResults(1);
+    Tab tab = (Tab) tabCriteria.uniqueResult();
+
+    final OBCriteria<TabAccess> taCriteria = OBDal.getInstance().createCriteria(TabAccess.class);
+    taCriteria.add(Restrictions.eq(TabAccess.PROPERTY_WINDOWACCESS,
+        (WindowAccess) waCriteria.uniqueResult()));
+    taCriteria.add(Restrictions.eq(TabAccess.PROPERTY_TAB, tab));
+    taCriteria.setMaxResults(1);
+
+    TabAccess ta = (TabAccess) taCriteria.uniqueResult();
+    if (ta == null) {
+      // Window access does not exists, create it
+      ta = addTabAccess(role, windowName, tabName, editableField, editableTab);
+    }
+
+    final FieldAccess fieldAccess = OBProvider.getInstance().get(FieldAccess.class);
+
+    final OBCriteria<Field> obCriteria = OBDal.getInstance().createCriteria(Field.class);
+    obCriteria.add(Restrictions.eq(Field.PROPERTY_NAME, fieldName));
+    obCriteria.add(Restrictions.eq(Field.PROPERTY_TAB, tab));
+    obCriteria.setMaxResults(1);
+    Field field = (Field) obCriteria.uniqueResult();
+
+    fieldAccess.setClient(role.getClient());
+    fieldAccess.setOrganization(role.getOrganization());
+    fieldAccess.setTabAccess(ta);
+    fieldAccess.setField(field);
+    fieldAccess.setEditableField(editableInField);
+    fieldAccess.setCheckonsave(checkOnSave);
+    OBDal.getInstance().save(fieldAccess);
     OBDal.getInstance().flush();
     OBDal.getInstance().refresh(role);
   }
@@ -329,6 +386,9 @@ public class RoleInheritanceTestUtils {
     } else if ("TAB".equals(type)) {
       // Get tab accesses for Business Partner window
       return getTabFromTabAccesses(role, "Business Partner");
+    } else if ("FIELD".equals(type)) {
+      // Get field accesses for Business Partner header tab
+      return getFieldFromFieldAccesses(role, "Business Partner", "Business Partner");
     } else if ("REPORT".equals(type)) {
       return getReportsFromReportAccesses(role);
     } else if ("FORM".equals(type)) {
@@ -404,6 +464,48 @@ public class RoleInheritanceTestUtils {
     for (TabAccess ta : list) {
       result[i] = ta.getTab().getName();
       result[i + 1] = ta.getInheritedFrom() != null ? (String) DalUtil.getId(ta.getInheritedFrom())
+          : "";
+      i += 2;
+    }
+    return result;
+  }
+
+  private static String[] getFieldFromFieldAccesses(Role role, String windowName, String tabName) {
+    final OBCriteria<Window> windowCriteria = OBDal.getInstance().createCriteria(Window.class);
+    windowCriteria.add(Restrictions.eq(Window.PROPERTY_NAME, windowName));
+    windowCriteria.setMaxResults(1);
+    Window window = (Window) windowCriteria.uniqueResult();
+
+    final OBCriteria<Tab> tabCriteria = OBDal.getInstance().createCriteria(Tab.class);
+    tabCriteria.add(Restrictions.eq(Tab.PROPERTY_NAME, tabName));
+    tabCriteria.add(Restrictions.eq(Tab.PROPERTY_WINDOW, window));
+    tabCriteria.setMaxResults(1);
+    Tab tab = (Tab) tabCriteria.uniqueResult();
+
+    final OBCriteria<WindowAccess> waCriteria = OBDal.getInstance().createCriteria(
+        WindowAccess.class);
+    waCriteria.add(Restrictions.eq(WindowAccess.PROPERTY_ROLE, role));
+    waCriteria.add(Restrictions.eq(WindowAccess.PROPERTY_WINDOW, window));
+    waCriteria.setMaxResults(1);
+    WindowAccess windowAccess = (WindowAccess) waCriteria.uniqueResult();
+
+    final OBCriteria<TabAccess> taCriteria = OBDal.getInstance().createCriteria(TabAccess.class);
+    taCriteria.add(Restrictions.eq(TabAccess.PROPERTY_WINDOWACCESS, windowAccess));
+    taCriteria.add(Restrictions.eq(TabAccess.PROPERTY_TAB, tab));
+    taCriteria.setMaxResults(1);
+    TabAccess tabAccess = (TabAccess) taCriteria.uniqueResult();
+
+    final OBCriteria<FieldAccess> faCriteria = OBDal.getInstance()
+        .createCriteria(FieldAccess.class);
+    faCriteria.add(Restrictions.eq(FieldAccess.PROPERTY_TABACCESS, tabAccess));
+    faCriteria.addOrderBy(FieldAccess.PROPERTY_FIELD + "." + Field.PROPERTY_NAME, true);
+
+    List<FieldAccess> list = faCriteria.list();
+    String[] result = new String[list.size() * 2];
+    int i = 0;
+    for (FieldAccess fa : list) {
+      result[i] = fa.getField().getName();
+      result[i + 1] = fa.getInheritedFrom() != null ? (String) DalUtil.getId(fa.getInheritedFrom())
           : "";
       i += 2;
     }

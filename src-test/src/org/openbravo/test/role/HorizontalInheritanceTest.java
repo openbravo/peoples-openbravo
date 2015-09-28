@@ -52,6 +52,8 @@ public class HorizontalInheritanceTest extends WeldBaseTest {
       "Purchase Order", "Sales Invoice", "Sales Order");
   private final List<String> TABS = Arrays.asList("Bank Account", "Basic Discount", "Contact",
       "Customer", "Employee");
+  private final List<String> FIELDS = Arrays.asList("Business Partner Category", "Commercial Name",
+      "Credit Line Limit", "Description", "URL");
   private final List<String> REPORTS = Arrays.asList("Alert Process", "Create Variants",
       "Journal Entries Report", "Print orders process", "Set as Ready");
   private final List<String> FORMS = Arrays.asList("About", "Heartbeat", "Logout", "Menu",
@@ -70,8 +72,8 @@ public class HorizontalInheritanceTest extends WeldBaseTest {
       "AllowMultiTab", "OBSERDS_CSVTextEncoding", "StartPage");
 
   @SuppressWarnings("unchecked")
-  private final List<List<String>> ACCESSES = Arrays.asList(ORGANIZATIONS, WINDOWS, TABS, REPORTS,
-      FORMS, WIDGETS, VIEWS, PROCESSES, ALERTS, PREFERENCES);
+  private final List<List<String>> ACCESSES = Arrays.asList(ORGANIZATIONS, WINDOWS, TABS, FIELDS,
+      REPORTS, FORMS, WIDGETS, VIEWS, PROCESSES, ALERTS, PREFERENCES);
   private static int counterHorizontalTest = 0;
 
   /** defines the values the parameter will take. */
@@ -124,8 +126,14 @@ public class HorizontalInheritanceTest extends WeldBaseTest {
         RoleInheritanceTestUtils.addAccess(parameter, template3, accesses.get(0));
         RoleInheritanceTestUtils.addAccess(parameter, template3, accesses.get(1));
       }
+      OBDal.getInstance().commitAndClose();
 
-      // Save
+      template1 = OBDal.getInstance().get(Role.class, template1Id);
+      template2 = OBDal.getInstance().get(Role.class, template2Id);
+      template3 = OBDal.getInstance().get(Role.class, template3Id);
+      inheritedRole = OBDal.getInstance().get(Role.class, inheritedRoleId);
+
+      // Save Inheritances
       RoleInheritanceTestUtils.addInheritance(inheritedRole, template1, new Long(10));
       RoleInheritanceTestUtils.addInheritance(inheritedRole, template2, new Long(20));
       RoleInheritanceTestUtils.addInheritance(inheritedRole, template3, new Long(30));
@@ -149,7 +157,7 @@ public class HorizontalInheritanceTest extends WeldBaseTest {
       String[] result = RoleInheritanceTestUtils.getOrderedAccessNames(parameter, inheritedRole);
       assertThat("Inheritances added. Accesses have been inherited", result, equalTo(expected));
 
-      // Delete
+      // Delete Inheritance
       RoleInheritanceTestUtils.removeInheritance(inheritedRole, template3);
       OBDal.getInstance().commitAndClose();
 

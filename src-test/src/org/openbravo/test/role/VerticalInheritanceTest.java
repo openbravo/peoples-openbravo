@@ -49,6 +49,8 @@ public class VerticalInheritanceTest extends WeldBaseTest {
   private final List<String> ORGANIZATIONS = Arrays.asList("F&B España - Región Norte",
       "F&B España - Región Sur");
   private final List<String> WINDOWS = Arrays.asList("Purchase Order", "Sales Order");
+  private final List<String> TABS = Arrays.asList("Bank Account", "Basic Discount");
+  private final List<String> FIELDS = Arrays.asList("Business Partner Category", "Commercial Name");
   private final List<String> REPORTS = Arrays.asList("Alert Process", "Create Variants");
   private final List<String> FORMS = Arrays.asList("About", "Heartbeat");
   private final List<String> WIDGETS = Arrays.asList("Best Sellers", "Invoices to collect");
@@ -61,8 +63,8 @@ public class VerticalInheritanceTest extends WeldBaseTest {
   private final List<String> PREFERENCES = Arrays.asList("AllowAttachment", "AllowDelete");
 
   @SuppressWarnings("unchecked")
-  private final List<List<String>> ACCESSES = Arrays.asList(ORGANIZATIONS, WINDOWS, REPORTS, FORMS,
-      WIDGETS, VIEWS, PROCESSES, ALERTS, PREFERENCES);
+  private final List<List<String>> ACCESSES = Arrays.asList(ORGANIZATIONS, WINDOWS, TABS, FIELDS,
+      REPORTS, FORMS, WIDGETS, VIEWS, PROCESSES, ALERTS, PREFERENCES);
   private static int counterHorizontalTest = 0;
 
   /** defines the values the parameter will take. */
@@ -96,6 +98,12 @@ public class VerticalInheritanceTest extends WeldBaseTest {
       // Add window accesses for template roles
       RoleInheritanceTestUtils.addAccess(parameter, roleA, accesses.get(0));
       RoleInheritanceTestUtils.addAccess(parameter, roleB, accesses.get(1));
+
+      OBDal.getInstance().commitAndClose();
+
+      roleA = OBDal.getInstance().get(Role.class, roleAId);
+      roleB = OBDal.getInstance().get(Role.class, roleBId);
+      roleC = OBDal.getInstance().get(Role.class, roleCId);
 
       // Add inheritances
       RoleInheritanceTestUtils.addInheritance(roleB, roleA, new Long(10));

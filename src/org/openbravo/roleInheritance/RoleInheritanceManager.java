@@ -135,7 +135,12 @@ public class RoleInheritanceManager {
     try {
       // TabAccess, FieldAccess and Preference do not have role property as parent
       if ("org.openbravo.model.ad.access.TabAccess".equals(className)) {
-        setParentWindow((TabAccess) newAccess, (TabAccess) parentAccess, role);
+        TabAccess newTabAccess = (TabAccess) newAccess;
+        TabAccess parentTabAccess = (TabAccess) parentAccess;
+        setParentWindow(newTabAccess, parentTabAccess, role);
+        // We need to have the new tab access in memory for the case where we are
+        // adding field accesses also (when adding a new inheritance)
+        newTabAccess.getWindowAccess().getADTabAccessList().add(newTabAccess);
       } else if ("org.openbravo.model.ad.access.FieldAccess".equals(className)) {
         setParentTab((FieldAccess) newAccess, (FieldAccess) parentAccess, role);
       } else if ("org.openbravo.model.ad.domain.Preference".equals(className)) {
@@ -205,18 +210,15 @@ public class RoleInheritanceManager {
    *          Parent role
    */
   private void setParentTab(FieldAccess newFieldAccess, FieldAccess parentFieldAccess, Role role) {
-    final StringBuilder whereClause = new StringBuilder();
-    whereClause.append(" as ta ");
-    whereClause.append(" where ta.windowAccess.role.id = :roleId");
-    whereClause.append(" and ta.tab.id = :tabId");
-    final OBQuery<TabAccess> query = OBDal.getInstance().createQuery(TabAccess.class,
-        whereClause.toString());
-    query.setNamedParameter("roleId", role.getId());
-    query.setNamedParameter("tabId", parentFieldAccess.getTabAccess().getTab().getId());
-    query.setMaxResult(1);
-    TabAccess parent = (TabAccess) query.uniqueResult();
-    if (parent != null) {
-      newFieldAccess.setTabAccess(parent);
+    String parentTabId = (String) DalUtil.getId(parentFieldAccess.getTabAccess().getTab());
+    for (WindowAccess wa : role.getADWindowAccessList()) {
+      for (TabAccess ta : wa.getADTabAccessList()) {
+        String currentTabId = (String) DalUtil.getId(ta.getTab());
+        if (currentTabId.equals(parentTabId)) {
+          newFieldAccess.setTabAccess(ta);
+          break;
+        }
+      }
     }
   }
 
