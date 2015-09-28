@@ -251,7 +251,9 @@ enyo.kind({
       };
     }
     criteria.bpartner = this.bPartnerId;
-    criteria.isBillTo = true;
+    if (!this.showShipAndInv) {
+      criteria.isBillTo = true;
+    }
     if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
       var filterIdentifier = {
         columns: ['_filter'],
@@ -270,7 +272,10 @@ enyo.kind({
           value: true,
           boolean: true
           };
-      var remoteCriteria = [filterIdentifier, bPartnerId, isBillTo];
+      var remoteCriteria = [filterIdentifier, bPartnerId];
+      if (!this.showShipAndInv) {
+        remoteCriteria.push(isBillTo);
+      }
       criteria.remoteFilters = remoteCriteria;
     }
     OB.Dal.find(OB.Model.BPLocation, criteria, successCallbackBPsLoc, errorCallback);
@@ -315,6 +320,11 @@ enyo.kind({
   beforeSetShowing: function (params) {
     if (params.bPartner) {
       var listCustAddr = this.$.subWindowBody.$.casbody.$.listCustomerAddress;
+      if (params.showShipAndInv) {
+        listCustAddr.showShipAndInv = true;
+      } else {
+        listCustAddr.showShipAndInv = false;
+      }
       listCustAddr.setBPartnerId(params.bPartner);
       OB.Dal.get(OB.Model.BusinessPartner, params.bPartner, function successCallbackBPs(dataBps) {
         listCustAddr.setBPartnerModel(dataBps);

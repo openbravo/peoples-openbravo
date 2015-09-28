@@ -135,7 +135,8 @@ enyo.kind({
       name: 'customerAddressSearch',
       params: {
         caller: 'mainSubWindow',
-        bPartner: this.customer.get('id')
+        bPartner: this.customer.get('id'),
+        showShipAndInv: true
       }
     });
   },
