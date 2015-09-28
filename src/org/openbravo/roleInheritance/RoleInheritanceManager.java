@@ -449,7 +449,7 @@ public class RoleInheritanceManager {
   public static void applyRemoveInheritance(RoleInheritance inheritance) {
     List<RoleInheritance> inheritanceList = getUpdatedRoleInheritancesList(inheritance, true);
     List<String> inheritanceRoleIdList = getRoleInheritancesInheritFromIdList(inheritanceList);
-    for (AccessType accessType : AccessType.values()) {
+    for (AccessType accessType : getAccessTypeForDelete()) {
       RoleInheritanceManager manager = new RoleInheritanceManager(accessType);
       manager.calculateAccesses(inheritanceList, inheritanceRoleIdList, inheritance);
     }
@@ -566,6 +566,14 @@ public class RoleInheritanceManager {
    *          The removed access to be propagated
    */
   public void propagateDeletedAccess(Role role, InheritedAccessEnabled access) {
+    if ("org.openbravo.model.ad.domain.Preference".equals(className)
+        && !isInheritablePreference((Preference) access)) {
+      return;
+    }
+    if ("org.openbravo.model.ad.alert.AlertRecipient".equals(className)
+        && !isInheritableAlertRecipient((AlertRecipient) access)) {
+      return;
+    }
     for (RoleInheritance ri : role.getADRoleInheritanceInheritFromList()) {
       Role childRole = ri.getRole();
       List<? extends InheritedAccessEnabled> roleAccessList = getAccessList(childRole);
@@ -686,6 +694,14 @@ public class RoleInheritanceManager {
       List<String> inheritanceInheritFromIdList, RoleInheritance roleInheritanceToDelete) {
     for (RoleInheritance roleInheritance : inheritanceList) {
       for (InheritedAccessEnabled inheritedAccess : getAccessList(roleInheritance.getInheritFrom())) {
+        if ("org.openbravo.model.ad.domain.Preference".equals(className)
+            && !isInheritablePreference((Preference) inheritedAccess)) {
+          continue;
+        }
+        if ("org.openbravo.model.ad.alert.AlertRecipient".equals(className)
+            && !isInheritableAlertRecipient((AlertRecipient) inheritedAccess)) {
+          continue;
+        }
         handleAccess(roleInheritance, inheritedAccess, inheritanceInheritFromIdList);
       }
     }
@@ -865,6 +881,29 @@ public class RoleInheritanceManager {
       roleIdsList.add((String) DalUtil.getId(roleInheritance.getInheritFrom()));
     }
     return roleIdsList;
+  }
+
+  /**
+   * Returns the list of access types in the order which they should be processed when deleting an
+   * inheritance.
+   * 
+   * @return the list of template access types
+   */
+  private static List<AccessType> getAccessTypeForDelete() {
+    List<AccessType> list = new ArrayList<AccessType>();
+    list.add(AccessType.ORG_ACCESS);
+    list.add(AccessType.FIELD_ACCESS);
+    list.add(AccessType.TAB_ACCESS);
+    list.add(AccessType.WINDOW_ACCESS);
+    list.add(AccessType.PROCESS_ACCESS);
+    list.add(AccessType.FORM_ACCESS);
+    list.add(AccessType.WIDGET_ACCESS);
+    list.add(AccessType.VIEW_ACCESS);
+    list.add(AccessType.PROCESS_DEF_ACCESS);
+    list.add(AccessType.TABLE_ACCESS);
+    list.add(AccessType.ALERT_RECIPIENT);
+    list.add(AccessType.PREFERENCE);
+    return list;
   }
 
   /**
