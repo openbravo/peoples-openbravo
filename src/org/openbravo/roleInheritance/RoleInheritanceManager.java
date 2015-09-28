@@ -70,7 +70,7 @@ public class RoleInheritanceManager {
   public RoleInheritanceManager(AccessType accessType) {
     this.className = accessType.getClassName();
     this.securedElement = accessType.getSecuredElement();
-    this.skippedProperties = new ArrayList<String>();
+    this.skippedProperties = new ArrayList<String>(Arrays.asList("creationDate", "createdBy"));
     if ("org.openbravo.model.ad.alert.AlertRecipient".equals(className)) {
       skippedProperties.add("role");
     } else if ("org.openbravo.model.ad.domain.Preference".equals(className)) {
@@ -133,7 +133,7 @@ public class RoleInheritanceManager {
   private void setParent(InheritedAccessEnabled newAccess, InheritedAccessEnabled parentAccess,
       Role role) {
     try {
-      // TabAccess and Field Access does not have role property as parent
+      // TabAccess, FieldAccess and Preference do not have role property as parent
       if ("org.openbravo.model.ad.access.TabAccess".equals(className)) {
         setParentWindow((TabAccess) newAccess, (TabAccess) parentAccess, role);
       } else if ("org.openbravo.model.ad.access.FieldAccess".equals(className)) {
@@ -142,6 +142,11 @@ public class RoleInheritanceManager {
         ((Preference) (newAccess)).setVisibleAtRole(role);
       } else {
         setParentRole(newAccess, role);
+        if ("org.openbravo.model.ad.access.WindowAccess".equals(className)) {
+          // We need to have the new window access in memory for the case where we are
+          // adding tab accesses also (when adding a new inheritance)
+          role.getADWindowAccessList().add((WindowAccess) newAccess);
+        }
       }
     } catch (Exception ex) {
       log4j.error("Error setting parent ", ex);
@@ -179,18 +184,13 @@ public class RoleInheritanceManager {
    *          Parent role
    */
   private void setParentWindow(TabAccess newTabAccess, TabAccess parentTabAccess, Role role) {
-    final StringBuilder whereClause = new StringBuilder();
-    whereClause.append(" as wa ");
-    whereClause.append(" where wa.role.id = :roleId");
-    whereClause.append(" and wa.window.id = :windowId");
-    final OBQuery<WindowAccess> query = OBDal.getInstance().createQuery(WindowAccess.class,
-        whereClause.toString());
-    query.setNamedParameter("roleId", role.getId());
-    query.setNamedParameter("windowId", parentTabAccess.getWindowAccess().getWindow().getId());
-    query.setMaxResult(1);
-    WindowAccess parent = (WindowAccess) query.uniqueResult();
-    if (parent != null) {
-      newTabAccess.setWindowAccess(parent);
+    String parentWindowId = (String) DalUtil.getId(parentTabAccess.getWindowAccess().getWindow());
+    for (WindowAccess wa : role.getADWindowAccessList()) {
+      String currentWindowId = (String) DalUtil.getId(wa.getWindow());
+      if (currentWindowId.equals(parentWindowId)) {
+        newTabAccess.setWindowAccess(wa);
+        break;
+      }
     }
   }
 
@@ -383,8 +383,27 @@ public class RoleInheritanceManager {
     }
     for (InheritedAccessEnabled iae : iaeToDelete) {
       iae.setInheritedFrom(null);
+      removeChildReferences(iae);
       roleAccessList.remove(iae);
       OBDal.getInstance().remove(iae);
+    }
+  }
+
+  /**
+   * Removes references to child elements (TabAccess and FieldAccess) from the parent list. Using
+   * this method prevents the "deleted object would be re-saved by cascade" error after deleting an
+   * inherited TabAccess or a FieldAccess
+   * 
+   * @param access
+   *          The access to be removed from the parent list
+   */
+  private void removeChildReferences(InheritedAccessEnabled access) {
+    if ("org.openbravo.model.ad.access.TabAccess".equals(className)) {
+      TabAccess ta = (TabAccess) access;
+      ta.getWindowAccess().getADTabAccessList().remove(ta);
+    } else if ("org.openbravo.model.ad.access.FieldAccess".equals(className)) {
+      FieldAccess fa = (FieldAccess) access;
+      fa.getTabAccess().getADFieldAccessList().remove(fa);
     }
   }
 
@@ -574,6 +593,7 @@ public class RoleInheritanceManager {
         if (!updated) {
           // access not present in other inheritances, remove it
           iaeToDelete.setInheritedFrom(null);
+          removeChildReferences(iaeToDelete);
           roleAccessList.remove(iaeToDelete);
           OBDal.getInstance().remove(iaeToDelete);
         }
@@ -674,7 +694,6 @@ public class RoleInheritanceManager {
       deleteRoleAccess(roleInheritanceToDelete.getInheritFrom(),
           getAccessList(roleInheritanceToDelete.getRole()));
     }
-    // OBDal.getInstance().getSession().clear();
   }
 
   /**

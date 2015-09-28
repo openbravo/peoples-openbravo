@@ -34,6 +34,7 @@ import org.openbravo.model.ad.access.FormAccess;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.RoleInheritance;
 import org.openbravo.model.ad.access.RoleOrganization;
+import org.openbravo.model.ad.access.TabAccess;
 import org.openbravo.model.ad.access.WindowAccess;
 import org.openbravo.model.ad.alert.AlertRecipient;
 import org.openbravo.model.ad.alert.AlertRule;
@@ -41,14 +42,15 @@ import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.ui.Form;
 import org.openbravo.model.ad.ui.Process;
+import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.model.common.enterprise.Organization;
 
 public class RoleInheritanceTestUtils {
   public final static String CLIENT_ID = "23C59575B9CF467C9620760EB255B389";
   public final static String ASTERISK_ORG_ID = "0";
-  public final static List<String> ACCESS_NAMES = Arrays.asList("ORGANIZATION", "WINDOW", "REPORT",
-      "FORM", "WIDGET", "VIEW", "PROCESS", "ALERT", "PREFERENCE");
+  public final static List<String> ACCESS_NAMES = Arrays.asList("ORGANIZATION", "WINDOW", "TAB",
+      "REPORT", "FORM", "WIDGET", "VIEW", "PROCESS", "ALERT", "PREFERENCE");
 
   public static Role createRole(String name, String clientId, String organizationId,
       String userLevel, boolean isManual, boolean isTemplate) {
@@ -91,6 +93,8 @@ public class RoleInheritanceTestUtils {
     obCriteria.setMaxResults(1);
     RoleInheritance roleInheritance = (RoleInheritance) obCriteria.uniqueResult();
     OBDal.getInstance().remove(roleInheritance);
+    // OBDal.getInstance().flush();
+    // OBDal.getInstance().refresh(role);
   }
 
   public static void addAccess(String type, Role role, String accessName) {
@@ -98,6 +102,9 @@ public class RoleInheritanceTestUtils {
       addOrgAccess(role, accessName, true);
     } else if ("WINDOW".equals(type)) {
       addWindowAccess(role, accessName, true);
+    } else if ("TAB".equals(type)) {
+      // Create tab access for Business Partner window
+      addTabAccess(role, "Business Partner", accessName, true, true);
     } else if ("REPORT".equals(type)) {
       addReportAndProcessAccess(role, accessName);
     } else if ("FORM".equals(type)) {
@@ -123,7 +130,7 @@ public class RoleInheritanceTestUtils {
     }
   }
 
-  private static void addWindowAccess(Role role, String windowName, boolean editableField) {
+  private static WindowAccess addWindowAccess(Role role, String windowName, boolean editableField) {
     final WindowAccess windowAccess = OBProvider.getInstance().get(WindowAccess.class);
     final OBCriteria<Window> obCriteria = OBDal.getInstance().createCriteria(Window.class);
     obCriteria.add(Restrictions.eq(Window.PROPERTY_NAME, windowName));
@@ -134,6 +141,43 @@ public class RoleInheritanceTestUtils {
     windowAccess.setWindow((Window) obCriteria.uniqueResult());
     windowAccess.setEditableField(editableField);
     OBDal.getInstance().save(windowAccess);
+    OBDal.getInstance().flush();
+    OBDal.getInstance().refresh(role);
+    return windowAccess;
+  }
+
+  private static void addTabAccess(Role role, String windowName, String tabName,
+      boolean editableField, boolean editableTab) {
+
+    final OBCriteria<Window> windowCriteria = OBDal.getInstance().createCriteria(Window.class);
+    windowCriteria.add(Restrictions.eq(Window.PROPERTY_NAME, windowName));
+    windowCriteria.setMaxResults(1);
+    Window window = (Window) windowCriteria.uniqueResult();
+
+    final OBCriteria<WindowAccess> waCriteria = OBDal.getInstance().createCriteria(
+        WindowAccess.class);
+    waCriteria.add(Restrictions.eq(WindowAccess.PROPERTY_ROLE, role));
+    waCriteria.add(Restrictions.eq(WindowAccess.PROPERTY_WINDOW, window));
+    waCriteria.setMaxResults(1);
+    WindowAccess wa = (WindowAccess) waCriteria.uniqueResult();
+    if (wa == null) {
+      // Window access does not exists, create it
+      wa = addWindowAccess(role, windowName, editableField);
+    }
+
+    final TabAccess tabAccess = OBProvider.getInstance().get(TabAccess.class);
+    final OBCriteria<Tab> obCriteria = OBDal.getInstance().createCriteria(Tab.class);
+    obCriteria.add(Restrictions.eq(Tab.PROPERTY_NAME, tabName));
+    obCriteria.add(Restrictions.eq(Tab.PROPERTY_WINDOW, window));
+    obCriteria.setMaxResults(1);
+    Tab tab = (Tab) obCriteria.uniqueResult();
+
+    tabAccess.setClient(role.getClient());
+    tabAccess.setOrganization(role.getOrganization());
+    tabAccess.setWindowAccess(wa);
+    tabAccess.setTab(tab);
+    tabAccess.setEditableField(editableTab);
+    OBDal.getInstance().save(tabAccess);
     OBDal.getInstance().flush();
     OBDal.getInstance().refresh(role);
   }
@@ -282,6 +326,9 @@ public class RoleInheritanceTestUtils {
       return getOrgsFromOrgAccesses(role);
     } else if ("WINDOW".equals(type)) {
       return getWindowsFromWindowAccesses(role);
+    } else if ("TAB".equals(type)) {
+      // Get tab accesses for Business Partner window
+      return getTabFromTabAccesses(role, "Business Partner");
     } else if ("REPORT".equals(type)) {
       return getReportsFromReportAccesses(role);
     } else if ("FORM".equals(type)) {
@@ -329,6 +376,34 @@ public class RoleInheritanceTestUtils {
     for (WindowAccess wa : list) {
       result[i] = wa.getWindow().getName();
       result[i + 1] = wa.getInheritedFrom() != null ? (String) DalUtil.getId(wa.getInheritedFrom())
+          : "";
+      i += 2;
+    }
+    return result;
+  }
+
+  private static String[] getTabFromTabAccesses(Role role, String windowName) {
+    final OBCriteria<Window> windowCriteria = OBDal.getInstance().createCriteria(Window.class);
+    windowCriteria.add(Restrictions.eq(Window.PROPERTY_NAME, windowName));
+    windowCriteria.setMaxResults(1);
+    Window window = (Window) windowCriteria.uniqueResult();
+
+    final OBCriteria<WindowAccess> obCriteria = OBDal.getInstance().createCriteria(
+        WindowAccess.class);
+    obCriteria.add(Restrictions.eq(WindowAccess.PROPERTY_ROLE, role));
+    obCriteria.add(Restrictions.eq(WindowAccess.PROPERTY_WINDOW, window));
+    obCriteria.setMaxResults(1);
+
+    final OBCriteria<TabAccess> tabCriteria = OBDal.getInstance().createCriteria(TabAccess.class);
+    tabCriteria.add(Restrictions.eq(TabAccess.PROPERTY_WINDOWACCESS,
+        (WindowAccess) obCriteria.uniqueResult()));
+    tabCriteria.addOrderBy(TabAccess.PROPERTY_TAB + "." + Tab.PROPERTY_NAME, true);
+    List<TabAccess> list = tabCriteria.list();
+    String[] result = new String[list.size() * 2];
+    int i = 0;
+    for (TabAccess ta : list) {
+      result[i] = ta.getTab().getName();
+      result[i + 1] = ta.getInheritedFrom() != null ? (String) DalUtil.getId(ta.getInheritedFrom())
           : "";
       i += 2;
     }

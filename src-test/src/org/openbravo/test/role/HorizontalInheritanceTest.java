@@ -50,6 +50,8 @@ public class HorizontalInheritanceTest extends WeldBaseTest {
       "F&B España - Región Sur", "F&B España, S.A", "F&B International Group", "F&B US East Coast");
   private final List<String> WINDOWS = Arrays.asList("Business Partner", "Purchase Invoice",
       "Purchase Order", "Sales Invoice", "Sales Order");
+  private final List<String> TABS = Arrays.asList("Bank Account", "Basic Discount", "Contact",
+      "Customer", "Employee");
   private final List<String> REPORTS = Arrays.asList("Alert Process", "Create Variants",
       "Journal Entries Report", "Print orders process", "Set as Ready");
   private final List<String> FORMS = Arrays.asList("About", "Heartbeat", "Logout", "Menu",
@@ -68,8 +70,8 @@ public class HorizontalInheritanceTest extends WeldBaseTest {
       "AllowMultiTab", "OBSERDS_CSVTextEncoding", "StartPage");
 
   @SuppressWarnings("unchecked")
-  private final List<List<String>> ACCESSES = Arrays.asList(ORGANIZATIONS, WINDOWS, REPORTS, FORMS,
-      WIDGETS, VIEWS, PROCESSES, ALERTS, PREFERENCES);
+  private final List<List<String>> ACCESSES = Arrays.asList(ORGANIZATIONS, WINDOWS, TABS, REPORTS,
+      FORMS, WIDGETS, VIEWS, PROCESSES, ALERTS, PREFERENCES);
   private static int counterHorizontalTest = 0;
 
   /** defines the values the parameter will take. */
