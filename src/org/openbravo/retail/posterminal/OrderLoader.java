@@ -532,7 +532,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           }
         }
       }
-      if ((!jsonorder.has("gross") || jsonorder.getString("gross").equals("0"))
+      if ((!jsonorder.has("obposIsDeleted") || !jsonorder.getBoolean("obposIsDeleted"))
+          && (!jsonorder.has("gross") || jsonorder.getString("gross").equals("0"))
           && (jsonorder.isNull("lines") || (jsonorder.getJSONArray("lines") != null && jsonorder
               .getJSONArray("lines").length() == 0))) {
         log.error("Detected order without lines and total amount zero. Document number "

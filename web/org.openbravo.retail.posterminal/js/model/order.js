@@ -3120,6 +3120,9 @@
       order.set('print', true);
       order.set('sendEmail', false);
       order.set('openDrawer', false);
+      if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
+        order.save();
+      }
       return order;
     },
 
@@ -3432,7 +3435,8 @@
       });
     },
     deleteCurrent: function (forceCreateNew) {
-      var i, max, successCallback = function () {
+      var i, max, me = this,
+          successCallback = function () {
           return true;
           },
           errorCallback = function () {
@@ -3440,6 +3444,19 @@
           };
       if (!this.current) {
         return;
+      }
+
+      function finishDeleteCurrent() {
+        me.remove(me.current);
+        var createNew = forceCreateNew || me.length === 0;
+        if (createNew) {
+          me.add(me.newOrder());
+          if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+            me.doRemoteBPSettings(OB.MobileApp.model.get('businessPartner'));
+          }
+        }
+        me.current = me.at(me.length - 1);
+        me.loadCurrent(createNew);
       }
 
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
@@ -3476,16 +3493,20 @@
         });
       }
 
-      this.remove(this.current);
-      var createNew = forceCreateNew || this.length === 0;
-      if (createNew) {
-        this.add(this.newOrder());
-        if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
-          this.doRemoteBPSettings(OB.MobileApp.model.get('businessPartner'));
-        }
+      if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && OB.MobileApp.model.receipt.id === this.current.id && this.current.get('lines').length === 0 && (this.current.get('documentnoSuffix') <= OB.MobileApp.model.documentnoThreshold || OB.MobileApp.model.documentnoThreshold === 0)) {
+        OB.MobileApp.model.receipt.setIsCalculateGrossLockState(true);
+        OB.MobileApp.model.receipt.set('obposIsDeleted', true);
+        OB.MobileApp.model.receipt.prepareToSend(function () {
+          OB.MobileApp.model.receipt.trigger('closed', {
+            callback: function () {
+              OB.MobileApp.model.receipt.setIsCalculateGrossLockState(false);
+              finishDeleteCurrent();
+            }
+          });
+        });
+      } else {
+        finishDeleteCurrent();
       }
-      this.current = this.at(this.length - 1);
-      this.loadCurrent(createNew);
     },
 
     load: function (model) {
