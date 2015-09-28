@@ -206,7 +206,7 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
   }
 
   private void updateOrCreateCashupInfo(String cashUpId, JSONObject jsonCashup, Date cashUpDate)
-      throws JSONException {
+      throws JSONException, OBException {
     OBPOSAppCashup cashup = OBDal.getInstance().get(OBPOSAppCashup.class, cashUpId);
     // Update cashup info
     updateCashUpInfo(cashup, jsonCashup, cashUpDate);
@@ -251,8 +251,11 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
    * @throws JSONException
    */
   private void updateCashUpInfo(OBPOSAppCashup cashup, JSONObject jsonCashup, Date cashUpDate)
-      throws JSONException {
+      throws JSONException, OBException {
 
+    if (cashup.isProcessed() && jsonCashup.getString("isprocessed").equalsIgnoreCase("N")) {
+      throw new OBException("The cashup is processed, and it can not be set as unprocessed");
+    }
     cashup.setNetsales(new BigDecimal(jsonCashup.getString("netSales")));
     cashup.setGrosssales(new BigDecimal(jsonCashup.getString("grossSales")));
     cashup.setNetreturns(new BigDecimal(jsonCashup.getString("netReturns")));
