@@ -255,6 +255,7 @@
       this.get('dataSyncModels').push({
         name: 'Customer',
         model: OB.Model.ChangedBusinessPartners,
+        modelFunc: 'OB.Model.ChangedBusinessPartners',
         className: 'org.openbravo.retail.posterminal.CustomerLoader',
         criteria: {},
         getIdentifier: function (model) {
@@ -265,6 +266,7 @@
       this.get('dataSyncModels').push({
         name: 'Customer Address',
         model: OB.Model.ChangedBPlocation,
+        modelFunc: 'OB.Model.ChangedBPlocation',
         className: 'org.openbravo.retail.posterminal.CustomerAddrLoader',
         criteria: {},
         getIdentifier: function (model) {
@@ -275,6 +277,7 @@
       this.get('dataSyncModels').push({
         name: 'Order',
         model: OB.Model.Order,
+        modelFunc: 'OB.Model.Order',
         className: 'org.openbravo.retail.posterminal.OrderLoader',
         timeout: 20000,
         timePerRecord: 1000,
@@ -289,6 +292,7 @@
       this.get('dataSyncModels').push({
         name: 'Cash Management',
         model: OB.Model.CashManagement,
+        modelFunc: 'OB.Model.CashManagement',
         isPersistent: true,
         className: 'org.openbravo.retail.posterminal.ProcessCashMgmt',
         criteria: {
@@ -302,6 +306,7 @@
       this.get('dataSyncModels').push({
         name: 'Cash Up',
         model: OB.Model.CashUp,
+        modelFunc: 'OB.Model.CashUp',
         isPersistent: true,
         className: 'org.openbravo.retail.posterminal.ProcessCashClose',
         timeout: 600000,
