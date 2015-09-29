@@ -14,6 +14,8 @@ import java.sql.CallableStatement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -236,18 +238,17 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
           order.setObposAppCashup(jsonorder.getString("obposAppCashup"));
           order.setDelivered(true);
-          for (int i = 0; i < orderlines.length(); i++) {
-            JSONObject jsonOrderLine = orderlines.getJSONObject(i);
-            JSONObject jsonProduct = jsonOrderLine.getJSONObject("product");
-            String productId = jsonProduct.getString("id");
-            for (int j = 0; j < order.getOrderLineList().size(); j++) {
-              orderLine = order.getOrderLineList().get(j);
-              if (orderLine.getProduct().getId().equals(productId)) {
-                orderLine.setDeliveredQuantity(orderLine.getOrderedQuantity());
-                lineReferences.add(orderLine);
-                break;
-              }
+          List<OrderLine> lineList = order.getOrderLineList();
+          Collections.sort(lineList, new Comparator<OrderLine>() {
+            public int compare(OrderLine line1, OrderLine line2) {
+              return line1.getLineNo().compareTo(line2.getLineNo());
             }
+          });
+
+          for (int i = 0; i < lineList.size(); i++) {
+            orderLine = lineList.get(i);
+            orderLine.setDeliveredQuantity(orderLine.getOrderedQuantity());
+            lineReferences.add(orderLine);
           }
         } else if (partialpaidLayaway) {
           order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
