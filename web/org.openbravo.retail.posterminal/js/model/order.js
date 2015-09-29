@@ -1715,7 +1715,6 @@
       } else {
         OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationCreatedOrder'));
         this.calculateGross();
-        this.trigger('orderCreatedFromQuotation');
       }
     },
 
