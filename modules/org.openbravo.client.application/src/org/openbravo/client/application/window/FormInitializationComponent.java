@@ -256,7 +256,9 @@ public class FormInitializationComponent extends BaseActionHandler {
 
       // Computation of the Auxiliary Input values
       long t4 = System.currentTimeMillis();
-      computeAuxiliaryInputs(mode, tab, allColumns, columnValues, overwrittenAuxiliaryInputs);
+      // allColumns cannot be used here because in change mode it only contains the modified columns
+      List<String> allColumnsInTab = getAllColumnsInTab(tab);
+      computeAuxiliaryInputs(mode, tab, allColumnsInTab, columnValues, overwrittenAuxiliaryInputs);
 
       // Computation of Column Values (using UIDefinition, so including combo values and all
       // relevant additional information)
@@ -276,7 +278,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       if (mode.equals("NEW") || mode.equals("CHANGE")) {
         // In the case of NEW mode, we compute auxiliary inputs again to take into account that
         // auxiliary inputs could depend on a default value
-        computeAuxiliaryInputs(mode, tab, allColumns, columnValues, overwrittenAuxiliaryInputs);
+        computeAuxiliaryInputs(mode, tab, allColumnsInTab, columnValues, overwrittenAuxiliaryInputs);
       }
 
       if (changedCols.size() > 0) {
@@ -327,6 +329,18 @@ public class FormInitializationComponent extends BaseActionHandler {
       OBContext.restorePreviousMode();
     }
     return null;
+  }
+
+  /** Returns an unsorted list of all columns present in the tab */
+  private List<String> getAllColumnsInTab(Tab tab) {
+    List<String> allColumns = new ArrayList<String>();
+    for (Field field : getADFieldList(tab.getId())) {
+      if (field.getColumn() == null) {
+        continue;
+      }
+      allColumns.add(field.getColumn().getDBColumnName());
+    }
+    return allColumns;
   }
 
   private void analyzeResponse(Tab tab, Map<String, JSONObject> columnValues) {
