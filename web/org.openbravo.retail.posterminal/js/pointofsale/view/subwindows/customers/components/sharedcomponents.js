@@ -51,13 +51,13 @@ enyo.kind({
   },
   components: [{
     name: 'bottomShipIcon',
-    style: 'font-size: 15px; color: black; text-align: right; background-color: #E2E2E2; width: 5%; height: 28px; padding: 12px 5px 1px 0; float: left;'
+    style: 'font-size: 15px; color: black; text-align: right; border-bottom: 1px solid #FFFFFF; border-top: 1px solid #FFFFFF; border-left: 1px solid #FFFFFF; background-color: #E2E2E2; width: 3%; height: 28px; padding: 12px 5px 1px 0; float: left;'
   }, {
     name: 'bottomBillIcon',
-    style: 'font-size: 15px; color: black; text-align: right; background-color: #E2E2E2; width: 5%; height: 28px; padding: 12px 5px 1px 0; float: left;'
+    style: 'font-size: 15px; color: black; text-align: right; border-bottom: 1px solid #FFFFFF; border-top: 1px solid #FFFFFF; background-color: #E2E2E2; width: 3%; height: 28px; padding: 12px 5px 1px 0; float: left;'
   }, {
     name: 'labelLine',
-    style: 'font-size: 15px; color: black; text-align: right; background-color: #E2E2E2; width: 9%; height: 28px; padding: 12px 5px 1px 0; float: left;'
+    style: 'font-size: 15px; color: black; text-align: right; border-right: 1px solid #FFFFFF; border-bottom: 1px solid #FFFFFF; border-top: 1px solid #FFFFFF; background-color: #E2E2E2; width: 13%; height: 28px; padding: 12px 6px 1px 0; float: left;'
   }, {
     style: 'border: 1px solid #FFFFFF; float: left; width: 75%;',
     name: 'newAttribute'
@@ -75,7 +75,9 @@ enyo.kind({
     if (!_.isUndefined(inEvent.customer)) {
       if (inEvent.customer.get('locShipId') === inEvent.customer.get('locId')) {
         me.$.bottomShipIcon.addClass('addresshipitems');
+        me.$.bottomShipIcon.applyStyle('background-position', '5px 8px');
         me.$.bottomBillIcon.addClass('addressbillitems');
+        me.$.bottomBillIcon.applyStyle('background-position', '0px 9px');
         return;
       } else if (_.isNull(inEvent.customer.get('locShipId'))) {
         me.$.bottomShipIcon.removeClass('addresshipitems');
@@ -85,9 +87,12 @@ enyo.kind({
       OB.Dal.get(OB.Model.BPLocation, inEvent.customer.get('locShipId'), function (dataBpLoc) {
         if (dataBpLoc && (dataBpLoc.get('isBillTo') && dataBpLoc.get('isShipTo'))) {
           me.$.bottomShipIcon.addClass('addresshipitems');
+          me.$.bottomShipIcon.applyStyle('background-position', '5px 8px');
           me.$.bottomBillIcon.addClass('addressbillitems');
+          me.$.bottomBillIcon.applyStyle('background-position', '0px 9px');
         } else if (dataBpLoc && (!dataBpLoc.get('isBillTo') && dataBpLoc.get('isShipTo'))) {
           me.$.bottomShipIcon.addClass('addresshipitems');
+          me.$.bottomShipIcon.applyStyle('background-position', '5px 8px');
           me.$.bottomBillIcon.removeClass('addressbillitems');
         }
       }, function (tx, error) {
@@ -95,7 +100,9 @@ enyo.kind({
       });
     } else {
       me.$.bottomShipIcon.addClass('addresshipitems');
+      me.$.bottomShipIcon.applyStyle('background-position', '5px 8px');
       me.$.bottomBillIcon.addClass('addressbillitems');
+      me.$.bottomBillIcon.applyStyle('background-position', '0px 9px');
     }
   }
 });
