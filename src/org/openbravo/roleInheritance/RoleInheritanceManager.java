@@ -394,7 +394,7 @@ public class RoleInheritanceManager {
   /**
    * Removes references to child elements (TabAccess and FieldAccess) from the parent list. Using
    * this method prevents the "deleted object would be re-saved by cascade" error after deleting an
-   * inherited TabAccess or a FieldAccess
+   * inherited TabAccess or FieldAccess
    * 
    * @param access
    *          The access to be removed from the parent list

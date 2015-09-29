@@ -43,68 +43,6 @@ public class BasicADWindowInheritanceTest extends WeldBaseTest {
   public final static String PURCHASE_INVOICE_ID = "183";
 
   @Test
-  public void testBasicAccessPropagation() {
-    Role role = null;
-    Role template = null;
-    try {
-      OBContext.setAdminMode(true);
-      // Create roles
-      role = RoleInheritanceTestUtils.createRole("role", RoleInheritanceTestUtils.CLIENT_ID,
-          RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true, false);
-      String roleId = (String) DalUtil.getId(role);
-      template = RoleInheritanceTestUtils.createRole("template",
-          RoleInheritanceTestUtils.CLIENT_ID, RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true,
-          true);
-      String templateId = (String) DalUtil.getId(template);
-
-      // Add inheritance
-      RoleInheritanceTestUtils.addInheritance(role, template, new Long(10));
-
-      OBDal.getInstance().commitAndClose();
-      role = OBDal.getInstance().get(Role.class, roleId);
-      template = OBDal.getInstance().get(Role.class, templateId);
-
-      // Add window access
-      addWindowAccess(template, "Sales Invoice", true);
-      addWindowAccess(role, "Sales Order", true);
-
-      String[] expected = { SALES_INVOICE_ID, templateId, SALES_ORDER_ID, "" };
-      String[] result = getWindowAccessesOrderedByWindowName(role);
-      assertThat("New window access has been propagated", result, equalTo(expected));
-
-      // Perform an update in the window access of the parent
-      updateWindowAccess(template, "Sales Invoice", false, false);
-      OBDal.getInstance().commitAndClose();
-
-      role = OBDal.getInstance().get(Role.class, roleId);
-      template = OBDal.getInstance().get(Role.class, templateId);
-
-      WindowAccess wa = getWindowAccessForWindowName(role.getADWindowAccessList(), "Sales Invoice");
-      String[] expected2 = { "false", "false", templateId };
-      String[] result2 = { wa.isEditableField().toString(), wa.isActive().toString(),
-          wa.getInheritedFrom().getId() };
-      assertThat("Updated window access has been propagated", result2, equalTo(expected2));
-
-      WindowAccess wa2 = getWindowAccessForWindowName(role.getADWindowAccessList(), "Sales Order");
-      String[] expected3 = { "true", "true", "" };
-      String inheritedFromid = wa2.getInheritedFrom() != null ? wa2.getInheritedFrom().getId() : "";
-      String[] result3 = { wa2.isEditableField().toString(), wa2.isActive().toString(),
-          inheritedFromid };
-      assertThat("Non inherited access remains unchanged after propagation", result3,
-          equalTo(expected3));
-
-    } finally {
-      // Delete roles
-      RoleInheritanceTestUtils.deleteRole(role);
-      RoleInheritanceTestUtils.deleteRole(template);
-
-      OBDal.getInstance().commitAndClose();
-
-      OBContext.restorePreviousMode();
-    }
-  }
-
-  @Test
   public void testBasicAccessDeletePropagation() {
     Role role = null;
     Role template1 = null;
@@ -214,22 +152,6 @@ public class BasicADWindowInheritanceTest extends WeldBaseTest {
     wa.setInheritedFrom(null);
     role.getADWindowAccessList().remove(wa);
     OBDal.getInstance().remove(wa);
-  }
-
-  public static void updateWindowAccess(Role role, String windowName, boolean editableField,
-      boolean isActive) {
-    final OBCriteria<Window> windowCriteria = OBDal.getInstance().createCriteria(Window.class);
-    windowCriteria.add(Restrictions.eq(Window.PROPERTY_NAME, windowName));
-    windowCriteria.setMaxResults(1);
-    final OBCriteria<WindowAccess> windowAccessCriteria = OBDal.getInstance().createCriteria(
-        WindowAccess.class);
-    windowAccessCriteria.add(Restrictions.eq(WindowAccess.PROPERTY_ROLE, role));
-    windowAccessCriteria.add(Restrictions.eq(WindowAccess.PROPERTY_WINDOW,
-        (Window) windowCriteria.uniqueResult()));
-    windowAccessCriteria.setMaxResults(1);
-    WindowAccess wa = (WindowAccess) windowAccessCriteria.uniqueResult();
-    wa.setEditableField(editableField);
-    wa.setActive(isActive);
   }
 
   private String[] getWindowAccessesOrderedByWindowName(Role role) {
