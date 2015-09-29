@@ -14,8 +14,6 @@ import java.sql.CallableStatement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -238,15 +236,15 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
           order.setObposAppCashup(jsonorder.getString("obposAppCashup"));
           order.setDelivered(true);
-          List<OrderLine> lineList = order.getOrderLineList();
-          Collections.sort(lineList, new Comparator<OrderLine>() {
-            public int compare(OrderLine line1, OrderLine line2) {
-              return line1.getLineNo().compareTo(line2.getLineNo());
-            }
-          });
 
-          for (int i = 0; i < lineList.size(); i++) {
-            orderLine = lineList.get(i);
+          String olsHqlWhereClause = " ol where ol.salesOrder.id = :orderId order by lineNo";
+          OBQuery<OrderLine> queryOls = OBDal.getInstance().createQuery(OrderLine.class,
+              olsHqlWhereClause);
+          queryOls.setNamedParameter("orderId", order.getId());
+          List<OrderLine> lstResultOL = queryOls.list();
+
+          for (int i = 0; i < lstResultOL.size(); i++) {
+            orderLine = lstResultOL.get(i);
             orderLine.setDeliveredQuantity(orderLine.getOrderedQuantity());
             lineReferences.add(orderLine);
           }
