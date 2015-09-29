@@ -692,13 +692,11 @@ enyo.kind({
           // Split/Remove services lines
           var siblingServicesLines = getSiblingServicesLines(line.get('product').id, line.get('relatedLines')[0].orderlineId);
           if (siblingServicesLines.length < qtyService) {
-            var i, insertAt = me.order.getOrderlLineIndex(line.get('relatedLines')[0].orderlineId) + 1;
+            var i;
             for (i = 0; i < qtyService - siblingServicesLines.length; i++) {
               var p = line.get('product').clone();
               p.set('groupProduct', false);
-              var newLine = me.order.createLine(p, qtyLineServ, {
-                at: insertAt
-              });
+              var newLine = me.order.createLine(p, qtyLineServ);
               newLine.set('relatedLines', siblingServicesLines[0].get('relatedLines'));
               newLine.set('groupService', false);
             }
