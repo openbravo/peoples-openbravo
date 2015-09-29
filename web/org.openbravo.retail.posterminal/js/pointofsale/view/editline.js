@@ -502,6 +502,7 @@ enyo.kind({
   },
   toggleLineSelection: function (inSender, inEvent) {
     if (inEvent.status) {
+      this.selectedLine = this.line;
       this.line = null;
       this.selectedCallbacks = this.receipt.get('lines')._callbacks.selected;
       this.clickCallbacks = this.receipt.get('lines')._callbacks.click;
@@ -512,7 +513,7 @@ enyo.kind({
       this.receipt.get('lines')._callbacks.selected = this.selectedCallbacks;
       this.receipt.get('lines')._callbacks.click = this.clickCallbacks;
       if (this.receipt.get('lines').length > 0) {
-        var line = this.receipt.get('lines').at(0);
+        var line = this.selectedLine;
         line.trigger('selected', line);
       }
     }
