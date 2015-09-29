@@ -3265,6 +3265,8 @@
                   }
                   order.set('json', JSON.stringify(order.toJSON()));
                   callback(order);
+                  enyo.$.scrim.hide();
+                  OB.UTIL.SynchronizationHelper.finished(synchId, 'newPaidReceipt');
                 }
               });
             }, null, function () {
