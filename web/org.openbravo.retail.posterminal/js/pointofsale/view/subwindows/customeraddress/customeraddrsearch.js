@@ -95,11 +95,15 @@ enyo.kind({
     }
     if (this.model.get('isBillTo') && this.model.get('isShipTo')) {
       this.$.bottomShipIcon.addClass('addresshipitems');
+      this.$.bottomShipIcon.applyStyle('background-position', '17px 0px');
       this.$.bottomBillIcon.addClass('addressbillitems');
+      this.$.bottomBillIcon.applyStyle('background-position', 'center 0px');
     } else if (this.model.get('isBillTo')) {
       this.$.bottomBillIcon.addClass('addressbillitems');
+      this.$.bottomBillIcon.applyStyle('background-position', 'center 0px');
     } else if (this.model.get('isShipTo')) {
       this.$.bottomShipIcon.addClass('addresshipitems');
+      this.$.bottomShipIcon.applyStyle('background-position', '17px 0px');
     }
   }
 });
