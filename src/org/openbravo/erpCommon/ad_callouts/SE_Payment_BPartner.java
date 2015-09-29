@@ -56,29 +56,40 @@ public class SE_Payment_BPartner extends SimpleCallout {
       paymentMethod = bpartner.getPOPaymentMethod();
       financialAccount = bpartner.getPOFinancialAccount();
     }
-    final OBCriteria<FinAccPaymentMethod> apmCriteria = OBDal.getInstance().createCriteria(FinAccPaymentMethod.class);
-    apmCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, paymentMethod));
-    apmCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, financialAccount));
-    apmCriteria.setFilterOnActive(false);
-    FinAccPaymentMethod accPaymentMethod = (FinAccPaymentMethod) apmCriteria.uniqueResult();
-    if (financialAccount.isActive() && accPaymentMethod.isActive()) {
-      try {
-        info.addResult("inpfinPaymentmethodId", isReceipt ? bpartner.getPaymentMethod().getId()
-            : bpartner.getPOPaymentMethod().getId());
-        info.addResult("inpfinFinancialAccountId", isReceipt ? bpartner.getAccount().getId()
-            : bpartner.getPOFinancialAccount().getId());
-      } catch (Exception e) {
+
+    if (paymentMethod != null && financialAccount != null) {
+      final OBCriteria<FinAccPaymentMethod> apmCriteria = OBDal.getInstance().createCriteria(
+          FinAccPaymentMethod.class);
+      apmCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, paymentMethod));
+      apmCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, financialAccount));
+      apmCriteria.setFilterOnActive(false);
+      FinAccPaymentMethod accPaymentMethod = (FinAccPaymentMethod) apmCriteria.uniqueResult();
+      if (accPaymentMethod != null) {
+        if (financialAccount.isActive() && accPaymentMethod.isActive()) {
+          info.addResult("inpfinPaymentmethodId", paymentMethod.getId());
+          info.addResult("inpfinFinancialAccountId", financialAccount.getId());
+        } else if (!financialAccount.isActive() && !accPaymentMethod.isActive()) {
+          info.addResult(
+              "WARNING",
+              String.format(
+                  Utility.messageBD(new DalConnectionProvider(), "finnac_paymet_inact",
+                      vars.getLanguage()), financialAccount.getIdentifier(),
+                  paymentMethod.getIdentifier()));
+        } else if (!financialAccount.isActive()) {
+          info.addResult(
+              "WARNING",
+              String.format(Utility.messageBD(new DalConnectionProvider(), "finnac_inact",
+                  vars.getLanguage()), financialAccount.getIdentifier()));
+        } else if (!accPaymentMethod.isActive()) {
+          info.addResult("WARNING", String.format(
+              Utility.messageBD(new DalConnectionProvider(), "paymet_inact", vars.getLanguage()),
+              paymentMethod.getIdentifier(), financialAccount.getIdentifier()));
+        }
+      } else {
         log4j.info("No default info for the selected business partner");
       }
-    } else if (!financialAccount.isActive() && !accPaymentMethod.isActive()) {
-      info.addResult("WARNING", String.format(
-          Utility.messageBD(new DalConnectionProvider(), "finnac_paymet_inact", vars.getLanguage()), financialAccount.getIdentifier(), paymentMethod.getIdentifier()));
-    } else if (!financialAccount.isActive()) {
-      info.addResult("WARNING", String.format(
-          Utility.messageBD(new DalConnectionProvider(), "finnac_inact", vars.getLanguage()), financialAccount.getIdentifier()));
-    } else if (!accPaymentMethod.isActive()) {
-      info.addResult("WARNING", String.format(
-          Utility.messageBD(new DalConnectionProvider(), "paymet_inact", vars.getLanguage()), paymentMethod.getIdentifier(), financialAccount.getIdentifier()));
+    } else {
+      log4j.info("No default info for the selected business partner");
     }
     if ((!strcBpartnerId.equals(""))
         && (FIN_Utility.isBlockedBusinessPartner(strcBpartnerId, "Y".equals(strisreceipt), 4))) {
