@@ -2263,7 +2263,11 @@
       this.set('generateInvoice', OB.MobileApp.model.get('terminal').terminalType.generateInvoice);
       this.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentType);
       this.set('createdBy', OB.MobileApp.model.get('orgUserId'));
-      this.set('salesRepresentative', OB.MobileApp.model.get('context').user.id);
+      if (OB.MobileApp.model.get('context').isSalesRepresentative) {
+        this.set('salesRepresentative', OB.MobileApp.model.get('context').user.id);
+      } else {
+        this.set('salesRepresentative', null);
+      }
       this.set('hasbeenpaid', 'N');
       this.set('isPaid', false);
       this.set('isEditable', true);
@@ -3101,8 +3105,13 @@
       order.set('currency', OB.MobileApp.model.get('terminal').currency);
       order.set('currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.MobileApp.model.get('terminal')['currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER]);
       order.set('warehouse', OB.MobileApp.model.get('terminal').warehouse);
-      order.set('salesRepresentative', OB.MobileApp.model.get('context').user.id);
-      order.set('salesRepresentative' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.MobileApp.model.get('context').user._identifier);
+      if (OB.MobileApp.model.get('context').isSalesRepresentative) {
+        order.set('salesRepresentative', OB.MobileApp.model.get('context').user.id);
+        order.set('salesRepresentative' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.MobileApp.model.get('context').user._identifier);
+      } else {
+        order.set('salesRepresentative', null);
+        order.set('salesRepresentative' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, null);
+      }
       order.set('posTerminal', OB.MobileApp.model.get('terminal').id);
       order.set('posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.MobileApp.model.get('terminal')._identifier);
       order.set('orderDate', new Date());

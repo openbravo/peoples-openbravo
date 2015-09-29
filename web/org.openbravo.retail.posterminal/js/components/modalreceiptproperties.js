@@ -49,10 +49,11 @@ enyo.kind({
     },
 
     // override to not load things upfront when not needed
-    loadValue: function () {
+    loadValue: function (inSender, inEvent) {
       if (this.doLoadValueNeeded) {
         // call the super implementation in the prototype directly
-        OB.UI.renderComboProperty.prototype.loadValue.apply(this, arguments);
+        this.$.renderCombo.setCollection(this.collection);
+        this.fetchDataFunction(inEvent);
       }
     },
 
@@ -65,6 +66,10 @@ enyo.kind({
           return;
         }
         if (data.length > 0) {
+          data.unshift({
+            id: null,
+            _identifier: null
+          });
           me.dataReadyFunction(data, args);
         } else {
           actualUser = new OB.Model.SalesRepresentative();
