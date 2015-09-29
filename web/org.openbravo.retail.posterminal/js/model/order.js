@@ -2692,7 +2692,7 @@
     },
 
     addPaidReceipt: function (model) {
-      var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('addPaidReceipt');
+      var synchId = null;
       enyo.$.scrim.show();
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
         this.doRemoteBPSettings(model.get('bp'));
@@ -2704,13 +2704,17 @@
       this.current = model;
       this.add(this.current);
       this.loadCurrent(true);
-      // OB.Dal.save is done here because we want to force to save with the original od, only this time.
-      OB.Dal.save(model, function () {
-        enyo.$.scrim.hide();
-        OB.UTIL.SynchronizationHelper.finished(synchId, 'addPaidReceipt');
-      }, function () {
-        OB.error(arguments);
-      }, model.get('isLayaway'));
+
+      if (model.get('isLayaway')) {
+        synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('addPaidReceipt');
+        // OB.Dal.save is done here because we want to force to save with the original od, only this time.
+        OB.Dal.save(model, function () {
+          enyo.$.scrim.hide();
+          OB.UTIL.SynchronizationHelper.finished(synchId, 'addPaidReceipt');
+        }, function () {
+          OB.error(arguments);
+        }, true);
+      }
     },
     addMultiReceipt: function (model) {
       OB.Dal.save(model, function () {}, function () {
