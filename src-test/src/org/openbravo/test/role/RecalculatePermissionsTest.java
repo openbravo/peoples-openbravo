@@ -19,7 +19,6 @@
 package org.openbravo.test.role;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
@@ -27,7 +26,6 @@ import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.access.Role;
-import org.openbravo.model.ad.access.WindowAccess;
 import org.openbravo.roleInheritance.RoleInheritanceManager;
 import org.openbravo.test.base.OBBaseTest;
 
@@ -55,7 +53,7 @@ public class RecalculatePermissionsTest extends OBBaseTest {
       RoleInheritanceTestUtils.addInheritance(role, template, new Long(10));
 
       // Add permission (it will not be propagated as event handlers will not be fired)
-      BasicADWindowInheritanceTest.addWindowAccess(template, "Sales Order", true);
+      RoleInheritanceTestUtils.addAccess("WINDOW", template, "Sales Order");
 
       OBDal.getInstance().commitAndClose();
       role = OBDal.getInstance().get(Role.class, roleId);
@@ -65,15 +63,11 @@ public class RecalculatePermissionsTest extends OBBaseTest {
       role = OBDal.getInstance().get(Role.class, roleId);
       template = OBDal.getInstance().get(Role.class, templateId);
 
-      WindowAccess wa = BasicADWindowInheritanceTest.getWindowAccessForWindowName(
-          role.getADWindowAccessList(), "Sales Order");
-
-      assertThat("There is a new access created with the recalculation", wa, not(equalTo(null)));
+      assertThat("There is a new access created with the recalculation", role
+          .getADWindowAccessList().size(), equalTo(1));
 
       String[] expected = { "true", "true", templateId };
-      String inheritedFromid = wa.getInheritedFrom() != null ? wa.getInheritedFrom().getId() : "";
-      String[] result = { wa.isEditableField().toString(), wa.isActive().toString(),
-          inheritedFromid };
+      String[] result = RoleInheritanceTestUtils.getAccessInfo("WINDOW", role, "Sales Order");
       assertThat("New access recalculated properly", expected, equalTo(result));
 
     } finally {
@@ -110,7 +104,7 @@ public class RecalculatePermissionsTest extends OBBaseTest {
       RoleInheritanceTestUtils.addInheritance(role2, template, new Long(20));
 
       // Add permission (it will not be propagated as event handlers will not be fired)
-      BasicADWindowInheritanceTest.addWindowAccess(template, "Sales Order", true);
+      RoleInheritanceTestUtils.addAccess("WINDOW", template, "Sales Order");
 
       OBDal.getInstance().commitAndClose();
       template = OBDal.getInstance().get(Role.class, templateId);
@@ -121,24 +115,18 @@ public class RecalculatePermissionsTest extends OBBaseTest {
       role2 = OBDal.getInstance().get(Role.class, role2Id);
       template = OBDal.getInstance().get(Role.class, templateId);
 
-      WindowAccess wa = BasicADWindowInheritanceTest.getWindowAccessForWindowName(
-          role1.getADWindowAccessList(), "Sales Order");
-      assertThat("There is a new access created with the recalculation for role1", wa,
-          not(equalTo(null)));
+      assertThat("There is a new access created with the recalculation for role1", role1
+          .getADWindowAccessList().size(), equalTo(1));
 
-      WindowAccess wa2 = BasicADWindowInheritanceTest.getWindowAccessForWindowName(
-          role1.getADWindowAccessList(), "Sales Order");
-      assertThat("There is a new access created with the recalculation for role2", wa2,
-          not(equalTo(null)));
+      assertThat("There is a new access created with the recalculation for role2", role2
+          .getADWindowAccessList().size(), equalTo(1));
 
-      String[] expected = { "true", "true", templateId, "true", "true", templateId };
-      String inheritedFromid1 = wa.getInheritedFrom() != null ? wa.getInheritedFrom().getId() : "";
-      String inheritedFromid2 = wa2.getInheritedFrom() != null ? wa2.getInheritedFrom().getId()
-          : "";
-      String[] result = { wa.isEditableField().toString(), wa.isActive().toString(),
-          inheritedFromid1, wa2.isEditableField().toString(), wa2.isActive().toString(),
-          inheritedFromid2 };
-      assertThat("New accesses recalculated properly", expected, equalTo(result));
+      String[] expected = { "true", "true", templateId };
+      String[] result = RoleInheritanceTestUtils.getAccessInfo("WINDOW", role1, "Sales Order");
+      assertThat("New accesses recalculated properly for role 1", expected, equalTo(result));
+
+      String[] result2 = RoleInheritanceTestUtils.getAccessInfo("WINDOW", role2, "Sales Order");
+      assertThat("New accesses recalculated properly for role 2", expected, equalTo(result2));
 
     } finally {
       // Delete roles

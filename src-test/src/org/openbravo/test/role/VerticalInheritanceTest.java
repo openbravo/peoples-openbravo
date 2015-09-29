@@ -65,7 +65,7 @@ public class VerticalInheritanceTest extends WeldBaseTest {
   @SuppressWarnings("unchecked")
   private final List<List<String>> ACCESSES = Arrays.asList(ORGANIZATIONS, WINDOWS, TABS, FIELDS,
       REPORTS, FORMS, WIDGETS, VIEWS, PROCESSES, ALERTS, PREFERENCES);
-  private static int counterHorizontalTest = 0;
+  private static int testCounter = 0;
 
   /** defines the values the parameter will take. */
   @Rule
@@ -94,7 +94,7 @@ public class VerticalInheritanceTest extends WeldBaseTest {
           RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true, false);
       String roleCId = (String) DalUtil.getId(roleC);
 
-      List<String> accesses = ACCESSES.get(counterHorizontalTest);
+      List<String> accesses = ACCESSES.get(testCounter);
       // Add window accesses for template roles
       RoleInheritanceTestUtils.addAccess(parameter, roleA, accesses.get(0));
       RoleInheritanceTestUtils.addAccess(parameter, roleB, accesses.get(1));
@@ -125,7 +125,7 @@ public class VerticalInheritanceTest extends WeldBaseTest {
 
       RoleInheritanceTestUtils.removeAccesses(parameter, roleA);
       RoleInheritanceTestUtils.removeAccesses(parameter, roleB);
-      counterHorizontalTest++;
+      testCounter++;
 
     } finally {
       // Delete roles

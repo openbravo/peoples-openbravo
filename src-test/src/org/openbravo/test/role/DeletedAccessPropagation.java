@@ -21,26 +21,60 @@ package org.openbravo.test.role;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
+import java.util.Arrays;
 import java.util.List;
 
-import org.hibernate.criterion.Restrictions;
+import org.junit.Rule;
 import org.junit.Test;
-import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.weld.test.ParameterCdiTest;
+import org.openbravo.base.weld.test.ParameterCdiTestRule;
 import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.access.Role;
-import org.openbravo.model.ad.access.WindowAccess;
-import org.openbravo.model.ad.ui.Window;
 
-public class BasicADWindowInheritanceTest extends WeldBaseTest {
-  public final static String BUSINESS_PARTNER_ID = "123";
-  public final static String SALES_ORDER_ID = "143";
-  public final static String SALES_INVOICE_ID = "167";
-  public final static String PURCHASE_ORDER_ID = "181";
-  public final static String PURCHASE_INVOICE_ID = "183";
+/**
+ * Test case for deleted access propagation
+ * 
+ * We have a role which inherits from three different templates. All these templates have permission
+ * to the same particular access.
+ * 
+ * We are removing the access for each template starting from the one with highest priority. Thus
+ * the inherited access for the role will be updated with every deletion.
+ * 
+ * 
+ */
+public class DeletedAccessPropagation extends WeldBaseTest {
+  private final List<String> ORGANIZATIONS = Arrays.asList("F&B España - Región Norte",
+      "F&B España - Región Sur");
+  private final List<String> WINDOWS = Arrays.asList("Sales Invoice", "Sales Order");
+  private final List<String> TABS = Arrays.asList("Bank Account", "Basic Discount");
+  private final List<String> FIELDS = Arrays.asList("Business Partner Category", "Commercial Name");
+  private final List<String> REPORTS = Arrays.asList("Alert Process", "Create Variants");
+  private final List<String> FORMS = Arrays.asList("About", "Heartbeat");
+  private final List<String> WIDGETS = Arrays.asList("Best Sellers", "Invoices to collect");
+  private final List<String> VIEWS = Arrays.asList("OBUIAPP_AlertManagement",
+      "OBUIAPP_RegistrationView");
+  private final List<String> PROCESSES = Arrays.asList("Create Purchase Order Lines",
+      "Grant Portal Access");
+  private final List<String> ALERTS = Arrays.asList("Alert Taxes: Inversión del Sujeto Pasivo",
+      "CUSTOMER WITHOUT ACCOUNTING");
+  private final List<String> PREFERENCES = Arrays.asList("AllowAttachment", "AllowDelete");
+
+  @SuppressWarnings("unchecked")
+  private final List<List<String>> ACCESSES = Arrays.asList(ORGANIZATIONS, WINDOWS, TABS, FIELDS,
+      REPORTS, FORMS, WIDGETS, VIEWS, PROCESSES, ALERTS, PREFERENCES);
+  private static int testCounter = 0;
+
+  /** defines the values the parameter will take. */
+  @Rule
+  public ParameterCdiTestRule<String> parameterValuesRule = new ParameterCdiTestRule<String>(
+      RoleInheritanceTestUtils.ACCESS_NAMES);
+
+  /** this field will take the values defined by parameterValuesRule field. */
+  private @ParameterCdiTest
+  String parameter;
 
   @Test
   public void testBasicAccessDeletePropagation() {
@@ -67,11 +101,12 @@ public class BasicADWindowInheritanceTest extends WeldBaseTest {
           true);
       String template3Id = (String) DalUtil.getId(template3);
 
-      // Add window accesses
-      addWindowAccess(template1, "Sales Invoice", true);
-      addWindowAccess(template1, "Sales Order", true);
-      addWindowAccess(template2, "Sales Invoice", true);
-      addWindowAccess(template3, "Sales Invoice", true);
+      List<String> accesses = ACCESSES.get(testCounter);
+      // Add accesses
+      RoleInheritanceTestUtils.addAccess(parameter, template1, accesses.get(0));
+      RoleInheritanceTestUtils.addAccess(parameter, template1, accesses.get(1));
+      RoleInheritanceTestUtils.addAccess(parameter, template2, accesses.get(0));
+      RoleInheritanceTestUtils.addAccess(parameter, template3, accesses.get(0));
 
       // Add inheritances
       RoleInheritanceTestUtils.addInheritance(role, template1, new Long(10));
@@ -79,34 +114,34 @@ public class BasicADWindowInheritanceTest extends WeldBaseTest {
       RoleInheritanceTestUtils.addInheritance(role, template3, new Long(30));
       OBDal.getInstance().commitAndClose();
 
-      String[] expected = { SALES_INVOICE_ID, template3Id, SALES_ORDER_ID, template1Id };
-      String[] result = getWindowAccessesOrderedByWindowName(role);
+      String[] expected = { accesses.get(0), template3Id, accesses.get(1), template1Id };
+      String[] result = RoleInheritanceTestUtils.getOrderedAccessNames(parameter, role);
       assertThat("Inherited access created properly", result, equalTo(expected));
 
       // Remove window access for template 3
       template3 = OBDal.getInstance().get(Role.class, template3Id);
-      removeWindowAccess(template3, "Sales Invoice");
+      RoleInheritanceTestUtils.removeAccesses(parameter, template3);
       OBDal.getInstance().commitAndClose();
 
-      String[] expected2 = { SALES_INVOICE_ID, template2Id, SALES_ORDER_ID, template1Id };
-      String[] result2 = getWindowAccessesOrderedByWindowName(role);
+      String[] expected2 = { accesses.get(0), template2Id, accesses.get(1), template1Id };
+      String[] result2 = RoleInheritanceTestUtils.getOrderedAccessNames(parameter, role);
       assertThat("Inherited access updated properly after first removal", result2,
           equalTo(expected2));
 
       // Remove window access for template 2
       template2 = OBDal.getInstance().get(Role.class, template2Id);
-      removeWindowAccess(template2, "Sales Invoice");
+      RoleInheritanceTestUtils.removeAccesses(parameter, template2);
       OBDal.getInstance().commitAndClose();
 
-      String[] expected3 = { SALES_INVOICE_ID, template1Id, SALES_ORDER_ID, template1Id };
-      String[] result3 = getWindowAccessesOrderedByWindowName(role);
+      String[] expected3 = { accesses.get(0), template1Id, accesses.get(1), template1Id };
+      String[] result3 = RoleInheritanceTestUtils.getOrderedAccessNames(parameter, role);
       assertThat("Inherited access updated properly after second removal", result3,
           equalTo(expected3));
       OBDal.getInstance().commitAndClose();
 
       // Remove window access for template 1
       template1 = OBDal.getInstance().get(Role.class, template1Id);
-      removeWindowAccess(template1, "Sales Invoice");
+      RoleInheritanceTestUtils.removeAccesses(parameter, template1);
       OBDal.getInstance().commitAndClose();
 
       role = OBDal.getInstance().get(Role.class, roleId);
@@ -114,10 +149,12 @@ public class BasicADWindowInheritanceTest extends WeldBaseTest {
       template2 = OBDal.getInstance().get(Role.class, template2Id);
       template3 = OBDal.getInstance().get(Role.class, template3Id);
 
-      String[] expected4 = { SALES_ORDER_ID, template1Id };
-      String[] result4 = getWindowAccessesOrderedByWindowName(role);
+      String[] expected4 = {};
+      String[] result4 = RoleInheritanceTestUtils.getOrderedAccessNames(parameter, role);
       assertThat("Inherited access updated properly after third removal", result4,
           equalTo(expected4));
+
+      testCounter++;
 
     } finally {
       // Delete roles
@@ -130,53 +167,5 @@ public class BasicADWindowInheritanceTest extends WeldBaseTest {
 
       OBContext.restorePreviousMode();
     }
-  }
-
-  public static void addWindowAccess(Role role, String windowName, boolean editableField) {
-    final WindowAccess windowAccess = OBProvider.getInstance().get(WindowAccess.class);
-    final OBCriteria<Window> obCriteria = OBDal.getInstance().createCriteria(Window.class);
-    obCriteria.add(Restrictions.eq(Window.PROPERTY_NAME, windowName));
-    obCriteria.setMaxResults(1);
-    windowAccess.setClient(role.getClient());
-    windowAccess.setOrganization(role.getOrganization());
-    windowAccess.setRole(role);
-    windowAccess.setWindow((Window) obCriteria.uniqueResult());
-    windowAccess.setEditableField(editableField);
-    OBDal.getInstance().save(windowAccess);
-    OBDal.getInstance().flush();
-    OBDal.getInstance().refresh(role);
-  }
-
-  public static void removeWindowAccess(Role role, String windowName) {
-    WindowAccess wa = getWindowAccessForWindowName(role.getADWindowAccessList(), windowName);
-    wa.setInheritedFrom(null);
-    role.getADWindowAccessList().remove(wa);
-    OBDal.getInstance().remove(wa);
-  }
-
-  private String[] getWindowAccessesOrderedByWindowName(Role role) {
-    final OBCriteria<WindowAccess> obCriteria = OBDal.getInstance().createCriteria(
-        WindowAccess.class);
-    obCriteria.add(Restrictions.eq(WindowAccess.PROPERTY_ROLE, role));
-    obCriteria.addOrderBy(WindowAccess.PROPERTY_WINDOW + "." + Window.PROPERTY_NAME, true);
-    List<WindowAccess> list = obCriteria.list();
-    String[] result = new String[list.size() * 2];
-    int i = 0;
-    for (WindowAccess wa : list) {
-      result[i] = (String) DalUtil.getId(wa.getWindow());
-      result[i + 1] = wa.getInheritedFrom() != null ? (String) DalUtil.getId(wa.getInheritedFrom())
-          : "";
-      i += 2;
-    }
-    return result;
-  }
-
-  public static WindowAccess getWindowAccessForWindowName(List<WindowAccess> list, String windowName) {
-    for (WindowAccess wa : list) {
-      if (windowName.equals(wa.getWindow().getName())) {
-        return wa;
-      }
-    }
-    return null;
   }
 }

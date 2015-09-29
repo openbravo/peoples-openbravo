@@ -18,6 +18,7 @@
  */
 package org.openbravo.test.role;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -127,7 +128,27 @@ public class RoleInheritanceTestUtils {
   }
 
   public static void removeAccesses(String type, Role role) {
-    if ("ALERT".equals(type)) {
+    if ("ORGANIZATION".equals(type)) {
+      removeOrgAccesses(role);
+    } else if ("WINDOW".equals(type)) {
+      removeWindowAccesses(role);
+    } else if ("TAB".equals(type)) {
+      // Remove tab access for Business Partner window
+      removeTabAccesses(role, "Business Partner");
+    } else if ("FIELD".equals(type)) {
+      // Remove field access for header tab of Business Partner window
+      removeFieldAccesses(role, "Business Partner", "Business Partner");
+    } else if ("REPORT".equals(type)) {
+      removeReportAndProcessAccesses(role);
+    } else if ("FORM".equals(type)) {
+      removeFormAccesses(role);
+    } else if ("WIDGET".equals(type)) {
+      removeWidgetClassAccesses(role);
+    } else if ("VIEW".equals(type)) {
+      removeViewImplementationAccesses(role);
+    } else if ("PROCESS".equals(type)) {
+      removeProcessDefinitionAccesses(role);
+    } else if ("ALERT".equals(type)) {
       removeAlertRecipients(role);
     } else if ("PREFERENCE".equals(type)) {
       removePreferences(role);
@@ -226,6 +247,17 @@ public class RoleInheritanceTestUtils {
     ro.setActive(isActive);
   }
 
+  private static void removeOrgAccesses(Role role) {
+    final OBCriteria<RoleOrganization> obCriteria = OBDal.getInstance().createCriteria(
+        RoleOrganization.class);
+    obCriteria.add(Restrictions.eq(RoleOrganization.PROPERTY_ROLE, role));
+    obCriteria.setFilterOnActive(false);
+    for (RoleOrganization ro : obCriteria.list()) {
+      OBDal.getInstance().remove(ro);
+    }
+    OBDal.getInstance().flush();
+  }
+
   private static String[] getOrgAccessInfo(Role role, String orgName) {
     String result[] = new String[3];
     for (RoleOrganization ro : role.getADRoleOrganizationList()) {
@@ -269,6 +301,17 @@ public class RoleInheritanceTestUtils {
     WindowAccess wa = (WindowAccess) windowAccessCriteria.uniqueResult();
     wa.setEditableField(editableField);
     wa.setActive(isActive);
+  }
+
+  private static void removeWindowAccesses(Role role) {
+    final OBCriteria<WindowAccess> obCriteria = OBDal.getInstance().createCriteria(
+        WindowAccess.class);
+    obCriteria.add(Restrictions.eq(WindowAccess.PROPERTY_ROLE, role));
+    obCriteria.setFilterOnActive(false);
+    for (WindowAccess wa : obCriteria.list()) {
+      OBDal.getInstance().remove(wa);
+    }
+    OBDal.getInstance().flush();
   }
 
   private static String[] getWindowAccessInfo(Role role, String windowName) {
@@ -349,6 +392,29 @@ public class RoleInheritanceTestUtils {
     TabAccess ta = (TabAccess) tabAccessCriteria.uniqueResult();
     ta.setEditableField(editableTab);
     ta.setActive(isActive);
+  }
+
+  private static void removeTabAccesses(Role role, String windowName) {
+    final OBCriteria<Window> windowCriteria = OBDal.getInstance().createCriteria(Window.class);
+    windowCriteria.add(Restrictions.eq(Window.PROPERTY_NAME, windowName));
+    windowCriteria.setMaxResults(1);
+    Window window = (Window) windowCriteria.uniqueResult();
+
+    final OBCriteria<WindowAccess> obCriteria = OBDal.getInstance().createCriteria(
+        WindowAccess.class);
+    obCriteria.add(Restrictions.eq(WindowAccess.PROPERTY_ROLE, role));
+    obCriteria.add(Restrictions.eq(WindowAccess.PROPERTY_WINDOW, window));
+    obCriteria.setFilterOnActive(false);
+    WindowAccess wa = (WindowAccess) obCriteria.uniqueResult();
+    List<TabAccess> tabAccessToDelete = new ArrayList<TabAccess>();
+    for (TabAccess ta : wa.getADTabAccessList()) {
+      tabAccessToDelete.add(ta);
+    }
+    for (TabAccess ta : tabAccessToDelete) {
+      wa.getADTabAccessList().remove(ta);
+      OBDal.getInstance().remove(ta);
+    }
+    OBDal.getInstance().flush();
   }
 
   private static String[] getTabAccessInfo(Role role, String windowName, String tabName) {
@@ -464,6 +530,42 @@ public class RoleInheritanceTestUtils {
     fa.setActive(isActive);
   }
 
+  private static void removeFieldAccesses(Role role, String windowName, String tabName) {
+    final OBCriteria<Window> windowCriteria = OBDal.getInstance().createCriteria(Window.class);
+    windowCriteria.add(Restrictions.eq(Window.PROPERTY_NAME, windowName));
+    windowCriteria.setMaxResults(1);
+    Window window = (Window) windowCriteria.uniqueResult();
+
+    final OBCriteria<Tab> tabCriteria = OBDal.getInstance().createCriteria(Tab.class);
+    tabCriteria.add(Restrictions.eq(Tab.PROPERTY_WINDOW, window));
+    tabCriteria.add(Restrictions.eq(Tab.PROPERTY_NAME, tabName));
+    tabCriteria.setMaxResults(1);
+    Tab tab = (Tab) tabCriteria.uniqueResult();
+
+    final OBCriteria<WindowAccess> waCriteria = OBDal.getInstance().createCriteria(
+        WindowAccess.class);
+    waCriteria.add(Restrictions.eq(WindowAccess.PROPERTY_ROLE, role));
+    waCriteria.add(Restrictions.eq(WindowAccess.PROPERTY_WINDOW, window));
+    waCriteria.setFilterOnActive(false);
+    WindowAccess wa = (WindowAccess) waCriteria.uniqueResult();
+
+    final OBCriteria<TabAccess> taCriteria = OBDal.getInstance().createCriteria(TabAccess.class);
+    taCriteria.add(Restrictions.eq(TabAccess.PROPERTY_WINDOWACCESS, wa));
+    taCriteria.add(Restrictions.eq(TabAccess.PROPERTY_TAB, tab));
+    taCriteria.setFilterOnActive(false);
+    TabAccess ta = (TabAccess) taCriteria.uniqueResult();
+
+    List<FieldAccess> fieldAccessToDelete = new ArrayList<FieldAccess>();
+    for (FieldAccess fa : ta.getADFieldAccessList()) {
+      fieldAccessToDelete.add(fa);
+    }
+    for (FieldAccess fa : fieldAccessToDelete) {
+      ta.getADFieldAccessList().remove(fa);
+      OBDal.getInstance().remove(fa);
+    }
+    OBDal.getInstance().flush();
+  }
+
   private static String[] getFieldAccessInfo(Role role, String windowName, String tabName,
       String fieldName) {
     String result[] = new String[3];
@@ -518,6 +620,18 @@ public class RoleInheritanceTestUtils {
     pa.setActive(isActive);
   }
 
+  private static void removeReportAndProcessAccesses(Role role) {
+    final OBCriteria<org.openbravo.model.ad.access.ProcessAccess> obCriteria = OBDal.getInstance()
+        .createCriteria(org.openbravo.model.ad.access.ProcessAccess.class);
+    obCriteria
+        .add(Restrictions.eq(org.openbravo.model.ad.access.ProcessAccess.PROPERTY_ROLE, role));
+    obCriteria.setFilterOnActive(false);
+    for (org.openbravo.model.ad.access.ProcessAccess pa : obCriteria.list()) {
+      OBDal.getInstance().remove(pa);
+    }
+    OBDal.getInstance().flush();
+  }
+
   private static String[] getReportAndProcessAccessInfo(Role role, String reportName) {
     String result[] = new String[3];
     for (org.openbravo.model.ad.access.ProcessAccess pa : role.getADProcessAccessList()) {
@@ -557,6 +671,16 @@ public class RoleInheritanceTestUtils {
     formAccessCriteria.setMaxResults(1);
     FormAccess fa = (FormAccess) formAccessCriteria.uniqueResult();
     fa.setActive(isActive);
+  }
+
+  private static void removeFormAccesses(Role role) {
+    final OBCriteria<FormAccess> obCriteria = OBDal.getInstance().createCriteria(FormAccess.class);
+    obCriteria.add(Restrictions.eq(FormAccess.PROPERTY_ROLE, role));
+    obCriteria.setFilterOnActive(false);
+    for (FormAccess fa : obCriteria.list()) {
+      OBDal.getInstance().remove(fa);
+    }
+    OBDal.getInstance().flush();
   }
 
   private static String[] getFormAccessInfo(Role role, String formName) {
@@ -602,6 +726,17 @@ public class RoleInheritanceTestUtils {
     wa.setActive(isActive);
   }
 
+  private static void removeWidgetClassAccesses(Role role) {
+    final OBCriteria<WidgetClassAccess> obCriteria = OBDal.getInstance().createCriteria(
+        WidgetClassAccess.class);
+    obCriteria.add(Restrictions.eq(WidgetClassAccess.PROPERTY_ROLE, role));
+    obCriteria.setFilterOnActive(false);
+    for (WidgetClassAccess wa : obCriteria.list()) {
+      OBDal.getInstance().remove(wa);
+    }
+    OBDal.getInstance().flush();
+  }
+
   private static String[] getWidgetAccessInfo(Role role, String widgetTitle) {
     String result[] = new String[3];
     for (WidgetClassAccess wa : role.getOBKMOWidgetClassAccessList()) {
@@ -644,6 +779,17 @@ public class RoleInheritanceTestUtils {
     viewAccessCriteria.setMaxResults(1);
     ViewRoleAccess va = (ViewRoleAccess) viewAccessCriteria.uniqueResult();
     va.setActive(isActive);
+  }
+
+  private static void removeViewImplementationAccesses(Role role) {
+    final OBCriteria<ViewRoleAccess> obCriteria = OBDal.getInstance().createCriteria(
+        ViewRoleAccess.class);
+    obCriteria.add(Restrictions.eq(ViewRoleAccess.PROPERTY_ROLE, role));
+    obCriteria.setFilterOnActive(false);
+    for (ViewRoleAccess va : obCriteria.list()) {
+      OBDal.getInstance().remove(va);
+    }
+    OBDal.getInstance().flush();
   }
 
   private static String[] getViewImplementationAccessInfo(Role role, String viewName) {
@@ -694,6 +840,18 @@ public class RoleInheritanceTestUtils {
     org.openbravo.client.application.ProcessAccess pa = (org.openbravo.client.application.ProcessAccess) processAccessCriteria
         .uniqueResult();
     pa.setActive(isActive);
+  }
+
+  private static void removeProcessDefinitionAccesses(Role role) {
+    final OBCriteria<org.openbravo.client.application.ProcessAccess> obCriteria = OBDal
+        .getInstance().createCriteria(org.openbravo.client.application.ProcessAccess.class);
+    obCriteria.add(Restrictions.eq(org.openbravo.client.application.ProcessAccess.PROPERTY_ROLE,
+        role));
+    obCriteria.setFilterOnActive(false);
+    for (org.openbravo.client.application.ProcessAccess pa : obCriteria.list()) {
+      OBDal.getInstance().remove(pa);
+    }
+    OBDal.getInstance().flush();
   }
 
   private static String[] getProcessDefinitonAccessInfo(Role role, String processName) {

@@ -61,7 +61,7 @@ public class AccessPropagationNotInheritedTest extends WeldBaseTest {
   @SuppressWarnings("unchecked")
   private final List<List<String>> ACCESSES = Arrays.asList(ORGANIZATIONS, WINDOWS, TABS, FIELDS,
       REPORTS, FORMS, WIDGETS, VIEWS, PROCESSES, ALERTS, PREFERENCES);
-  private static int counterHorizontalTest = 0;
+  private static int testCounter = 0;
 
   /** defines the values the parameter will take. */
   @Rule
@@ -94,7 +94,7 @@ public class AccessPropagationNotInheritedTest extends WeldBaseTest {
       role = OBDal.getInstance().get(Role.class, roleId);
       template = OBDal.getInstance().get(Role.class, templateId);
 
-      List<String> accesses = ACCESSES.get(counterHorizontalTest);
+      List<String> accesses = ACCESSES.get(testCounter);
       // Add accesses
       RoleInheritanceTestUtils.addAccess(parameter, role, accesses.get(0));
       RoleInheritanceTestUtils.addAccess(parameter, template, accesses.get(0));
@@ -130,7 +130,7 @@ public class AccessPropagationNotInheritedTest extends WeldBaseTest {
 
       RoleInheritanceTestUtils.removeAccesses(parameter, template);
       RoleInheritanceTestUtils.removeAccesses(parameter, role);
-      counterHorizontalTest++;
+      testCounter++;
 
     } finally {
       // Delete roles

@@ -74,7 +74,7 @@ public class HorizontalInheritanceTest extends WeldBaseTest {
   @SuppressWarnings("unchecked")
   private final List<List<String>> ACCESSES = Arrays.asList(ORGANIZATIONS, WINDOWS, TABS, FIELDS,
       REPORTS, FORMS, WIDGETS, VIEWS, PROCESSES, ALERTS, PREFERENCES);
-  private static int counterHorizontalTest = 0;
+  private static int testCounter = 0;
 
   /** defines the values the parameter will take. */
   @Rule
@@ -111,7 +111,7 @@ public class HorizontalInheritanceTest extends WeldBaseTest {
           false);
       String inheritedRoleId = (String) DalUtil.getId(inheritedRole);
 
-      List<String> accesses = ACCESSES.get(counterHorizontalTest);
+      List<String> accesses = ACCESSES.get(testCounter);
       if (!parameter.equals("VIEW")) {
         RoleInheritanceTestUtils.addAccess(parameter, template1, accesses.get(3));
         RoleInheritanceTestUtils.addAccess(parameter, template1, accesses.get(4));
@@ -183,7 +183,7 @@ public class HorizontalInheritanceTest extends WeldBaseTest {
       RoleInheritanceTestUtils.removeAccesses(parameter, template2);
       RoleInheritanceTestUtils.removeAccesses(parameter, template3);
 
-      counterHorizontalTest++;
+      testCounter++;
 
     } finally {
       // Delete roles
