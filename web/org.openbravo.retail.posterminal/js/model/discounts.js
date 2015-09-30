@@ -169,8 +169,10 @@
         }
         this.applyPromotionsImp(auxReceipt, null, true);
       } else {
+        receipt.on('discountsApplied', function () {
+          OB.Model.Discounts.finishPromotions(receipt, line);
+        });
         this.applyPromotionsImp(receipt, line, false);
-        receipt.calculateGross();
       }
     },
 
