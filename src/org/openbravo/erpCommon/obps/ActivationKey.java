@@ -122,6 +122,7 @@ public class ActivationKey {
   private boolean outOfPlatform = false;
   private Long maxUsers;
   private Long posTerminals;
+  private Long posTerminalsWarn;
 
   private boolean notActiveYet = false;
   private boolean inconsistentInstance = false;
@@ -524,6 +525,17 @@ public class ActivationKey {
       // it can be old license without terminal info, or terminal being empty which stands for no
       // terminal allowed
       posTerminals = 0L;
+    }
+
+    if (instanceProperties.containsKey("posTerminalsWarn")
+        && !StringUtils.isBlank(getProperty("posTerminalsWarn"))) {
+      try {
+        posTerminalsWarn = new Long(getProperty("posTerminalsWarn"));
+      } catch (Exception e) {
+        log.error("Couldn't read number of terminals warn " + getProperty("posTerminalsWarn"), e);
+      }
+    } else {
+      posTerminalsWarn = null;
     }
 
     checkDates();
@@ -1869,5 +1881,9 @@ public class ActivationKey {
 
   public Long getAllowedPosTerminals() {
     return posTerminals;
+  }
+
+  public Long getPosTerminalsWarn() {
+    return posTerminalsWarn;
   }
 }
