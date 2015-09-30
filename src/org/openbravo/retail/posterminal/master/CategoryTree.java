@@ -22,9 +22,13 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
+import org.openbravo.retail.config.OBRETCOProductList;
+import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
 public class CategoryTree extends ProcessHQLQuery {
@@ -42,6 +46,8 @@ public class CategoryTree extends ProcessHQLQuery {
 
     String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
 
+    final OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
+
     SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
     Calendar now = Calendar.getInstance();
 
@@ -50,14 +56,35 @@ public class CategoryTree extends ProcessHQLQuery {
     HQLPropertyList regularProductsCategoriesTreeHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions);
 
-    hqlQueries
-        .add("select"
-            + regularProductsCategoriesTreeHQLProperties.getHqlSelect() //
-            + "from ADTreeNode tn, ProductCategory pc "
-            + "where tn.$incrementalUpdateCriteria and tn.$naturalOrgCriteria and tn.$readableSimpleClientCriteria "
-            + " and tn.node = pc.id and tn.tree.table.id = '" + productCategoryTableId + "' "
-            + "order by tn.sequenceNumber");
+    boolean isRemote = false;
+    try {
+      OBContext.setAdminMode(true);
+      isRemote = "Y".equals(Preferences.getPreferenceValue("OBPOS_remote.product", true, OBContext
+          .getOBContext().getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(),
+          OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null));
+    } catch (PropertyException e) {
+      log.error("Error getting preference OBPOS_remote.product " + e.getMessage(), e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    if (isRemote) {
+      hqlQueries
+          .add("select"
+              + regularProductsCategoriesTreeHQLProperties.getHqlSelect() //
+              + "from ADTreeNode tn, OBRETCO_Productcategory pc "
+              + "where tn.$incrementalUpdateCriteria and tn.$naturalOrgCriteria and tn.$readableSimpleClientCriteria "
+              + " and tn.node = pc.productCategory.id and tn.tree.table.id = '"
+              + productCategoryTableId + "' " + "order by tn.sequenceNumber");
 
+    } else {
+      hqlQueries
+          .add("select"
+              + regularProductsCategoriesTreeHQLProperties.getHqlSelect() //
+              + "from ADTreeNode tn, ProductCategory pc "
+              + "where tn.$incrementalUpdateCriteria and tn.$naturalOrgCriteria and tn.$readableSimpleClientCriteria "
+              + " and tn.node = pc.id and tn.tree.table.id = '" + productCategoryTableId + "' "
+              + "order by tn.sequenceNumber");
+    }
     // Discounts marked as category
     hqlQueries.add("select pt.id as id, pt.id as categoryId, '0' as parentId, 999999999 as seqNo "
         + "from PromotionType as pt left outer join pt.obposImage img " //
