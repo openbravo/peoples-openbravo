@@ -360,49 +360,44 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     }, this);
 
     receipt.on('paymentDone', function (openDrawer) {
-      OB.UTIL.SynchronizationHelper.executeWhenSynchronized({
-        makeSynchronous: true
-      }, function (args, callback) {
-        if (receipt.overpaymentExists()) {
-          var symbol = OB.MobileApp.model.get('terminal').symbol;
-          var symbolAtRight = OB.MobileApp.model.get('terminal').currencySymbolAtTheRight;
-          var amount = receipt.getPaymentStatus().overpayment;
-          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_OverpaymentWarningTitle'), OB.I18N.getLabel('OBPOS_OverpaymentWarningBody', [OB.I18N.formatCurrencyWithSymbol(amount, symbol, symbolAtRight)]), [{
-            label: OB.I18N.getLabel('OBMOBC_LblOk'),
-            isConfirmButton: true,
-            action: function () {
-              if (openDrawer) {
-                OB.POS.hwserver.openDrawer({
-                  openFirst: false,
-                  receipt: receipt
-                }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
-              }
-              receipt.trigger('paymentAccepted');
+      if (receipt.overpaymentExists()) {
+        var symbol = OB.MobileApp.model.get('terminal').symbol;
+        var symbolAtRight = OB.MobileApp.model.get('terminal').currencySymbolAtTheRight;
+        var amount = receipt.getPaymentStatus().overpayment;
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_OverpaymentWarningTitle'), OB.I18N.getLabel('OBPOS_OverpaymentWarningBody', [OB.I18N.formatCurrencyWithSymbol(amount, symbol, symbolAtRight)]), [{
+          label: OB.I18N.getLabel('OBMOBC_LblOk'),
+          isConfirmButton: true,
+          action: function () {
+            if (openDrawer) {
+              OB.POS.hwserver.openDrawer({
+                openFirst: false,
+                receipt: receipt
+              }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
             }
-          }, {
-            label: OB.I18N.getLabel('OBMOBC_LblCancel')
-          }]);
-        } else if ((OB.DEC.abs(receipt.getPayment()) !== OB.DEC.abs(receipt.getGross())) && (!receipt.isLayaway() && !receipt.get('paidOnCredit'))) {
-          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_PaymentAmountDistinctThanReceiptAmountTitle'), OB.I18N.getLabel('OBPOS_PaymentAmountDistinctThanReceiptAmountBody'), [{
-            label: OB.I18N.getLabel('OBMOBC_LblOk'),
-            isConfirmButton: true,
-            action: function () {
-              receipt.trigger('paymentAccepted');
-            }
-          }, {
-            label: OB.I18N.getLabel('OBMOBC_LblCancel')
-          }]);
-        } else {
-          if (openDrawer) {
-            OB.POS.hwserver.openDrawer({
-              openFirst: true,
-              receipt: receipt
-            }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
+            receipt.trigger('paymentAccepted');
           }
-          receipt.trigger('paymentAccepted');
+        }, {
+          label: OB.I18N.getLabel('OBMOBC_LblCancel')
+        }]);
+      } else if ((OB.DEC.abs(receipt.getPayment()) !== OB.DEC.abs(receipt.getGross())) && (!receipt.isLayaway() && !receipt.get('paidOnCredit'))) {
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_PaymentAmountDistinctThanReceiptAmountTitle'), OB.I18N.getLabel('OBPOS_PaymentAmountDistinctThanReceiptAmountBody'), [{
+          label: OB.I18N.getLabel('OBMOBC_LblOk'),
+          isConfirmButton: true,
+          action: function () {
+            receipt.trigger('paymentAccepted');
+          }
+        }, {
+          label: OB.I18N.getLabel('OBMOBC_LblCancel')
+        }]);
+      } else {
+        if (openDrawer) {
+          OB.POS.hwserver.openDrawer({
+            openFirst: true,
+            receipt: receipt
+          }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
         }
-        callback();
-      }, {});
+        receipt.trigger('paymentAccepted');
+      }
     }, this);
 
     this.get('multiOrders').on('paymentAccepted', function () {
