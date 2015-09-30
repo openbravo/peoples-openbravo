@@ -1704,6 +1704,7 @@
       var nextDocumentno = OB.MobileApp.model.getNextDocumentno();
       this.set('documentnoPrefix', OB.MobileApp.model.get('terminal').docNoPrefix);
       this.set('documentnoSuffix', nextDocumentno.documentnoSuffix);
+      this.set('quotationnoPrefix', -1);
       this.set('quotationnoSuffix', -1);
       this.set('documentNo', nextDocumentno.documentNo);
       this.set('posTerminal', OB.MobileApp.model.get('terminal').id);
