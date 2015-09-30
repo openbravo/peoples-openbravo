@@ -156,6 +156,9 @@ enyo.kind({
           this.setAttribute('readonly', 'readonly');
         } else {
           this.setValue(inEvent.customer.get(this.modelProperty));
+          if (_.isUndefined(this.readOnly)) {
+            this.setAttribute('readonly', '');
+          }
         }
       }
     } else {

@@ -102,7 +102,7 @@ enyo.kind({
     }
     this.doHideThisPopup();
     this.model.get('subWindowManager').set('currentWindow', {
-      name: 'customerAddressSearch',
+      name: 'customerShipAddressSearch',
       params: {
         caller: 'mainSubWindow',
         bPartner: this.customer.get('id')
