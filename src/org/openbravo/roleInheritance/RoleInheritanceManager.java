@@ -20,8 +20,10 @@ package org.openbravo.roleInheritance;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -55,6 +57,10 @@ public class RoleInheritanceManager {
   private static final Set<String> propertyBlackList = new HashSet<String>(Arrays.asList(
       "OBUIAPP_RecentDocumentsList", "OBUIAPP_RecentViewList", "OBUIAPP_GridConfiguration",
       "OBUIAPP_DefaultSavedView", "UINAVBA_RecentLaunchList"));
+
+  private static final int ACCESS_NOT_CHANGED = 0;
+  private static final int ACCESS_UPDATED = 1;
+  private static final int ACCESS_CREATED = 2;
 
   private final String className;
   private final String securedElement;
@@ -392,9 +398,33 @@ public class RoleInheritanceManager {
   }
 
   /**
+   * Sets to null the Inherit From field to child elements (TabAccess and FieldAccess). This allows
+   * the cascade deletion of these elements when removing a Window Access or a Tab Access.
+   * 
+   * @param access
+   *          The access to be removed from the parent list
+   */
+  private void clearInheritFromFieldInChilds(InheritedAccessEnabled access) {
+    if ("org.openbravo.model.ad.access.WindowAccess".equals(className)) {
+      WindowAccess wa = (WindowAccess) access;
+      for (TabAccess ta : wa.getADTabAccessList()) {
+        ta.setInheritedFrom(null);
+        for (FieldAccess fa : ta.getADFieldAccessList()) {
+          fa.setInheritedFrom(null);
+        }
+      }
+    } else if ("org.openbravo.model.ad.access.TabAccess".equals(className)) {
+      TabAccess ta = (TabAccess) access;
+      for (FieldAccess fa : ta.getADFieldAccessList()) {
+        fa.setInheritedFrom(null);
+      }
+    }
+  }
+
+  /**
    * Removes references to child elements (TabAccess and FieldAccess) from the parent list. Using
    * this method prevents the "deleted object would be re-saved by cascade" error after deleting an
-   * inherited TabAccess or FieldAccess
+   * inherited TabAccess or FieldAccess.
    * 
    * @param access
    *          The access to be removed from the parent list
@@ -462,11 +492,22 @@ public class RoleInheritanceManager {
    * 
    * @param template
    *          The template role used by the roles whose accesses will be recalculated
+   * @return a list of the child roles which have accesses that have been updated or created
    */
-  public static void recalculateAllAccessesFromTemplate(Role template) {
+  public static List<Role> recalculateAllAccessesFromTemplate(Role template) {
+    List<Role> updatedRoles = new ArrayList<Role>();
     for (RoleInheritance ri : template.getADRoleInheritanceInheritFromList()) {
-      recalculateAllAccessesForRole(ri.getRole());
+      Map<AccessType, List<Integer>> result = recalculateAllAccessesForRole(ri.getRole());
+      for (AccessType accessType : result.keySet()) {
+        List<Integer> counters = (List<Integer>) result.get(accessType);
+        int updated = counters.get(0);
+        int created = counters.get(1);
+        if (updated > 0 || created > 0) {
+          updatedRoles.add(ri.getRole());
+        }
+      }
     }
+    return updatedRoles;
   }
 
   /**
@@ -474,14 +515,19 @@ public class RoleInheritanceManager {
    * 
    * @param role
    *          The role whose accesses will be recalculated
+   * @return a map with the number of accesses updated an created for every access type
    */
-  public static void recalculateAllAccessesForRole(Role role) {
+  public static Map<AccessType, List<Integer>> recalculateAllAccessesForRole(Role role) {
+    Map<AccessType, List<Integer>> result = new HashMap<AccessType, List<Integer>>();
     List<RoleInheritance> inheritanceList = getRoleInheritancesList(role);
     List<String> inheritanceRoleIdList = getRoleInheritancesInheritFromIdList(inheritanceList);
     for (AccessType accessType : AccessType.values()) {
       RoleInheritanceManager manager = new RoleInheritanceManager(accessType);
-      manager.calculateAccesses(inheritanceList, inheritanceRoleIdList);
+      List<Integer> accessCounters = manager.calculateAccesses(inheritanceList,
+          inheritanceRoleIdList);
+      result.put(accessType, accessCounters);
     }
+    return result;
   }
 
   /**
@@ -603,6 +649,7 @@ public class RoleInheritanceManager {
         if (!updated) {
           // access not present in other inheritances, remove it
           iaeToDelete.setInheritedFrom(null);
+          clearInheritFromFieldInChilds(iaeToDelete);
           removeChildReferences(iaeToDelete);
           roleAccessList.remove(iaeToDelete);
           OBDal.getInstance().remove(iaeToDelete);
@@ -676,9 +723,9 @@ public class RoleInheritanceManager {
    * @see RoleInheritanceManager#calculateAccesses(List<RoleInheritance>, List<String>,
    *      RoleInheritance)
    */
-  private void calculateAccesses(List<RoleInheritance> inheritanceList,
+  private List<Integer> calculateAccesses(List<RoleInheritance> inheritanceList,
       List<String> inheritanceInheritFromIdList) {
-    calculateAccesses(inheritanceList, inheritanceInheritFromIdList, null);
+    return calculateAccesses(inheritanceList, inheritanceInheritFromIdList, null);
   }
 
   /**
@@ -691,9 +738,12 @@ public class RoleInheritanceManager {
    *          priority when applying their related inheritances.
    * @param roleInheritanceToDelete
    *          If not null, the accesses introduced by this inheritance will be removed
+   * @return a list with two Integers containing the number of accesses updated and created
+   *         respectively.
    */
-  private void calculateAccesses(List<RoleInheritance> inheritanceList,
+  private List<Integer> calculateAccesses(List<RoleInheritance> inheritanceList,
       List<String> inheritanceInheritFromIdList, RoleInheritance roleInheritanceToDelete) {
+    int[] counters = new int[] { 0, 0, 0 };
     for (RoleInheritance roleInheritance : inheritanceList) {
       for (InheritedAccessEnabled inheritedAccess : getAccessList(roleInheritance.getInheritFrom())) {
         if ("org.openbravo.model.ad.domain.Preference".equals(className)
@@ -704,7 +754,8 @@ public class RoleInheritanceManager {
             && !isInheritableAlertRecipient((AlertRecipient) inheritedAccess)) {
           continue;
         }
-        handleAccess(roleInheritance, inheritedAccess, inheritanceInheritFromIdList);
+        int res = handleAccess(roleInheritance, inheritedAccess, inheritanceInheritFromIdList);
+        counters[res]++;
       }
     }
     if (roleInheritanceToDelete != null) {
@@ -712,6 +763,10 @@ public class RoleInheritanceManager {
       deleteRoleAccess(roleInheritanceToDelete.getInheritFrom(),
           getAccessList(roleInheritanceToDelete.getRole()));
     }
+    List<Integer> result = new ArrayList<Integer>();
+    result.add(new Integer(counters[ACCESS_UPDATED])); // number of accesses updated
+    result.add(new Integer(counters[ACCESS_CREATED])); // number of accesses created
+    return result;
   }
 
   /**
@@ -723,13 +778,15 @@ public class RoleInheritanceManager {
    *          An existing access candidate to be overridden
    * @param inheritanceInheritFromIdList
    *          A list of template role ids which determines the priority of the template roles
+   * @return an integer that indicates the final action done with the access: not changed
+   *         (ACCESS_NOT_CHANGED), updated (ACCESS_UPDATED) or created (ACCESS_CREATED).
    */
-  private void handleAccess(RoleInheritance roleInheritance,
-      InheritedAccessEnabled inheritedAccess, List<String> inheritanceInheritFromIdList) {
+  private int handleAccess(RoleInheritance roleInheritance, InheritedAccessEnabled inheritedAccess,
+      List<String> inheritanceInheritFromIdList) {
     String inheritedAccessElementId = getSecuredElementIdentifier(inheritedAccess);
     String newInheritedFromId = (String) DalUtil.getId(roleInheritance.getInheritFrom());
-    boolean found = false;
-    for (InheritedAccessEnabled access : getAccessList(roleInheritance.getRole())) {
+    Role role = roleInheritance.getRole();
+    for (InheritedAccessEnabled access : getAccessList(role)) {
       String accessElementId = getSecuredElementIdentifier(access);
       String currentInheritedFromId = access.getInheritedFrom() != null ? (String) DalUtil
           .getId(access.getInheritedFrom()) : "";
@@ -737,14 +794,17 @@ public class RoleInheritanceManager {
         if (!StringUtils.isEmpty(currentInheritedFromId)
             && isPrecedent(inheritanceInheritFromIdList, currentInheritedFromId, newInheritedFromId)) {
           updateRoleAccess(access, inheritedAccess);
+          log4j.debug("Updated access for role " + role.getName() + ": class = " + className
+              + " secured element id = " + inheritedAccessElementId);
+          return ACCESS_UPDATED;
         }
-        found = true;
-        break;
+        return ACCESS_NOT_CHANGED;
       }
     }
-    if (!found) {
-      copyRoleAccess(inheritedAccess, roleInheritance.getRole());
-    }
+    copyRoleAccess(inheritedAccess, roleInheritance.getRole());
+    log4j.debug("Created access for role " + role.getName() + ": class = " + className
+        + " secured element id = " + inheritedAccessElementId);
+    return ACCESS_CREATED;
   }
 
   /**
