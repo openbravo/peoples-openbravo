@@ -165,7 +165,7 @@ enyo.kind({
     } else {
       this.model.get('customerAddr').loadById(this.customerAddr.get('id'), function (customerAddr) {
         if (customerAddr.get('name') === "") {
-          OB.UTIL.showWarning('Address is required for BPartner');
+          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_BPartnerAddressRequired'));
           return false;
         } else {
           getCustomerAddrValues({

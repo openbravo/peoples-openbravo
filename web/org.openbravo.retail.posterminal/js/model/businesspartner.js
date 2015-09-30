@@ -27,7 +27,7 @@
       }
 
       if (!this.get('locName')) {
-        OB.UTIL.showWarning('Address is required for BPartner');
+        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_BPartnerAddressRequired'));
         return false;
       }
 
