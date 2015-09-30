@@ -65,6 +65,8 @@ public class HorizontalInheritanceTest extends WeldBaseTest {
   private final List<String> PROCESSES = Arrays
       .asList("Create Purchase Order Lines", "Grant Portal Access", "Manage Variants",
           "Modify Payment In Plan", "Process Cost Adjustment");
+  private final List<String> TABLES = Arrays.asList("A_Amortization", "AD_User", "C_Order",
+      "FIN_Payment", "M_Warehouse");
   private final List<String> ALERTS = Arrays.asList("Alert Taxes: Inversión del Sujeto Pasivo",
       "CUSTOMER WITHOUT ACCOUNTING", "Process Execution Failed", "Updates Available",
       "Wrong Purchase Order Payment Plan");
@@ -73,7 +75,7 @@ public class HorizontalInheritanceTest extends WeldBaseTest {
 
   @SuppressWarnings("unchecked")
   private final List<List<String>> ACCESSES = Arrays.asList(ORGANIZATIONS, WINDOWS, TABS, FIELDS,
-      REPORTS, FORMS, WIDGETS, VIEWS, PROCESSES, ALERTS, PREFERENCES);
+      REPORTS, FORMS, WIDGETS, VIEWS, PROCESSES, TABLES, ALERTS, PREFERENCES);
   private static int testCounter = 0;
 
   /** defines the values the parameter will take. */
@@ -182,6 +184,8 @@ public class HorizontalInheritanceTest extends WeldBaseTest {
       RoleInheritanceTestUtils.removeAccesses(parameter, template1);
       RoleInheritanceTestUtils.removeAccesses(parameter, template2);
       RoleInheritanceTestUtils.removeAccesses(parameter, template3);
+      RoleInheritanceTestUtils.removeAccesses(parameter, inheritedRole);
+      OBDal.getInstance().flush();
 
       testCounter++;
 

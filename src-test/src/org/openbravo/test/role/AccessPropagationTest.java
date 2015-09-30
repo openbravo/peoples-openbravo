@@ -58,13 +58,14 @@ public class AccessPropagationTest extends WeldBaseTest {
       "OBUIAPP_RegistrationView");
   private final List<String> PROCESSES = Arrays.asList("Create Purchase Order Lines",
       "Grant Portal Access");
+  private final List<String> TABLES = Arrays.asList("AD_User", "C_Order");
   private final List<String> ALERTS = Arrays.asList("Alert Taxes: Inversión del Sujeto Pasivo",
       "CUSTOMER WITHOUT ACCOUNTING");
   private final List<String> PREFERENCES = Arrays.asList("AllowAttachment", "AllowDelete");
 
   @SuppressWarnings("unchecked")
   private final List<List<String>> ACCESSES = Arrays.asList(ORGANIZATIONS, WINDOWS, TABS, FIELDS,
-      REPORTS, FORMS, WIDGETS, VIEWS, PROCESSES, ALERTS, PREFERENCES);
+      REPORTS, FORMS, WIDGETS, VIEWS, PROCESSES, TABLES, ALERTS, PREFERENCES);
   private static int testCounter = 0;
 
   /** defines the values the parameter will take. */
@@ -102,6 +103,10 @@ public class AccessPropagationTest extends WeldBaseTest {
       // Add accesses
       RoleInheritanceTestUtils.addAccess(parameter, template, accesses.get(0));
       RoleInheritanceTestUtils.addAccess(parameter, role, accesses.get(1));
+
+      OBDal.getInstance().commitAndClose();
+      role = OBDal.getInstance().get(Role.class, roleId);
+      template = OBDal.getInstance().get(Role.class, templateId);
 
       String[] expected = { accesses.get(0), templateId, accesses.get(1), "" };
       String[] result = RoleInheritanceTestUtils.getOrderedAccessNames(parameter, role);
@@ -144,6 +149,7 @@ public class AccessPropagationTest extends WeldBaseTest {
 
       RoleInheritanceTestUtils.removeAccesses(parameter, template);
       RoleInheritanceTestUtils.removeAccesses(parameter, role);
+      OBDal.getInstance().flush();
       testCounter++;
 
     } finally {

@@ -37,9 +37,11 @@ import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.RoleInheritance;
 import org.openbravo.model.ad.access.RoleOrganization;
 import org.openbravo.model.ad.access.TabAccess;
+import org.openbravo.model.ad.access.TableAccess;
 import org.openbravo.model.ad.access.WindowAccess;
 import org.openbravo.model.ad.alert.AlertRecipient;
 import org.openbravo.model.ad.alert.AlertRule;
+import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.ui.Field;
@@ -53,7 +55,7 @@ public class RoleInheritanceTestUtils {
   public final static String CLIENT_ID = "23C59575B9CF467C9620760EB255B389";
   public final static String ASTERISK_ORG_ID = "0";
   public final static List<String> ACCESS_NAMES = Arrays.asList("ORGANIZATION", "WINDOW", "TAB",
-      "FIELD", "REPORT", "FORM", "WIDGET", "VIEW", "PROCESS", "ALERT", "PREFERENCE");
+      "FIELD", "REPORT", "FORM", "WIDGET", "VIEW", "PROCESS", "TABLE", "ALERT", "PREFERENCE");
 
   public static Role createRole(String name, String clientId, String organizationId,
       String userLevel, boolean isManual, boolean isTemplate) {
@@ -120,6 +122,8 @@ public class RoleInheritanceTestUtils {
       addViewImplementationAccess(role, accessName);
     } else if ("PROCESS".equals(type)) {
       addProcessDefinitionAccess(role, accessName);
+    } else if ("TABLE".equals(type)) {
+      addTableAccess(role, accessName, true);
     } else if ("ALERT".equals(type)) {
       addAlertRecipient(role, accessName);
     } else if ("PREFERENCE".equals(type)) {
@@ -148,6 +152,8 @@ public class RoleInheritanceTestUtils {
       removeViewImplementationAccesses(role);
     } else if ("PROCESS".equals(type)) {
       removeProcessDefinitionAccesses(role);
+    } else if ("TABLE".equals(type)) {
+      removeTableAccesses(role);
     } else if ("ALERT".equals(type)) {
       removeAlertRecipients(role);
     } else if ("PREFERENCE".equals(type)) {
@@ -178,6 +184,8 @@ public class RoleInheritanceTestUtils {
       updateViewImplementationAccess(role, accessName, isActive);
     } else if ("PROCESS".equals(type)) {
       updateProcessDefinitionAccess(role, accessName, isActive);
+    } else if ("TABLE".equals(type)) {
+      updateTableAccess(role, accessName, editedValue, isActive);
     } else if ("ALERT".equals(type)) {
       updateAlertRecipientAccess(role, accessName, editedValue, isActive);
     } else if ("PREFERENCE".equals(type)) {
@@ -206,6 +214,8 @@ public class RoleInheritanceTestUtils {
       return getViewImplementationAccessInfo(role, accessName);
     } else if ("PROCESS".equals(type)) {
       return getProcessDefinitonAccessInfo(role, accessName);
+    } else if ("TABLE".equals(type)) {
+      return getTableAccessInfo(role, accessName);
     } else if ("ALERT".equals(type)) {
       return getAlertRecipientAccessInfo(role, accessName);
     } else if ("PREFERENCE".equals(type)) {
@@ -253,9 +263,9 @@ public class RoleInheritanceTestUtils {
     obCriteria.add(Restrictions.eq(RoleOrganization.PROPERTY_ROLE, role));
     obCriteria.setFilterOnActive(false);
     for (RoleOrganization ro : obCriteria.list()) {
+      role.getADRoleOrganizationList().remove(ro);
       OBDal.getInstance().remove(ro);
     }
-    OBDal.getInstance().flush();
   }
 
   private static String[] getOrgAccessInfo(Role role, String orgName) {
@@ -309,9 +319,9 @@ public class RoleInheritanceTestUtils {
     obCriteria.add(Restrictions.eq(WindowAccess.PROPERTY_ROLE, role));
     obCriteria.setFilterOnActive(false);
     for (WindowAccess wa : obCriteria.list()) {
+      role.getADWindowAccessList().remove(wa);
       OBDal.getInstance().remove(wa);
     }
-    OBDal.getInstance().flush();
   }
 
   private static String[] getWindowAccessInfo(Role role, String windowName) {
@@ -414,7 +424,6 @@ public class RoleInheritanceTestUtils {
       wa.getADTabAccessList().remove(ta);
       OBDal.getInstance().remove(ta);
     }
-    OBDal.getInstance().flush();
   }
 
   private static String[] getTabAccessInfo(Role role, String windowName, String tabName) {
@@ -563,7 +572,6 @@ public class RoleInheritanceTestUtils {
       ta.getADFieldAccessList().remove(fa);
       OBDal.getInstance().remove(fa);
     }
-    OBDal.getInstance().flush();
   }
 
   private static String[] getFieldAccessInfo(Role role, String windowName, String tabName,
@@ -627,9 +635,9 @@ public class RoleInheritanceTestUtils {
         .add(Restrictions.eq(org.openbravo.model.ad.access.ProcessAccess.PROPERTY_ROLE, role));
     obCriteria.setFilterOnActive(false);
     for (org.openbravo.model.ad.access.ProcessAccess pa : obCriteria.list()) {
+      role.getADProcessAccessList().remove(pa);
       OBDal.getInstance().remove(pa);
     }
-    OBDal.getInstance().flush();
   }
 
   private static String[] getReportAndProcessAccessInfo(Role role, String reportName) {
@@ -678,9 +686,9 @@ public class RoleInheritanceTestUtils {
     obCriteria.add(Restrictions.eq(FormAccess.PROPERTY_ROLE, role));
     obCriteria.setFilterOnActive(false);
     for (FormAccess fa : obCriteria.list()) {
+      role.getADFormAccessList().remove(fa);
       OBDal.getInstance().remove(fa);
     }
-    OBDal.getInstance().flush();
   }
 
   private static String[] getFormAccessInfo(Role role, String formName) {
@@ -732,9 +740,9 @@ public class RoleInheritanceTestUtils {
     obCriteria.add(Restrictions.eq(WidgetClassAccess.PROPERTY_ROLE, role));
     obCriteria.setFilterOnActive(false);
     for (WidgetClassAccess wa : obCriteria.list()) {
+      role.getOBKMOWidgetClassAccessList().remove(wa);
       OBDal.getInstance().remove(wa);
     }
-    OBDal.getInstance().flush();
   }
 
   private static String[] getWidgetAccessInfo(Role role, String widgetTitle) {
@@ -787,9 +795,9 @@ public class RoleInheritanceTestUtils {
     obCriteria.add(Restrictions.eq(ViewRoleAccess.PROPERTY_ROLE, role));
     obCriteria.setFilterOnActive(false);
     for (ViewRoleAccess va : obCriteria.list()) {
+      role.getObuiappViewRoleAccessList().remove(va);
       OBDal.getInstance().remove(va);
     }
-    OBDal.getInstance().flush();
   }
 
   private static String[] getViewImplementationAccessInfo(Role role, String viewName) {
@@ -849,9 +857,9 @@ public class RoleInheritanceTestUtils {
         role));
     obCriteria.setFilterOnActive(false);
     for (org.openbravo.client.application.ProcessAccess pa : obCriteria.list()) {
+      role.getOBUIAPPProcessAccessList().remove(pa);
       OBDal.getInstance().remove(pa);
     }
-    OBDal.getInstance().flush();
   }
 
   private static String[] getProcessDefinitonAccessInfo(Role role, String processName) {
@@ -865,6 +873,61 @@ public class RoleInheritanceTestUtils {
       }
     }
     return result;
+  }
+
+  private static void addTableAccess(Role role, String tableName, boolean isReadOnly) {
+    final TableAccess tableAccess = OBProvider.getInstance().get(TableAccess.class);
+    final OBCriteria<Table> obCriteria = OBDal.getInstance().createCriteria(Table.class);
+    obCriteria.add(Restrictions.eq(Table.PROPERTY_DBTABLENAME, tableName));
+    obCriteria.setMaxResults(1);
+    tableAccess.setClient(role.getClient());
+    tableAccess.setOrganization(role.getOrganization());
+    tableAccess.setRole(role);
+    tableAccess.setTable((Table) obCriteria.uniqueResult());
+    tableAccess.setReadOnly(isReadOnly);
+    OBDal.getInstance().save(tableAccess);
+    OBDal.getInstance().flush();
+    OBDal.getInstance().refresh(role);
+  }
+
+  private static void updateTableAccess(Role role, String tableName, boolean isReadOnly,
+      boolean isActive) {
+    final OBCriteria<Table> tableCriteria = OBDal.getInstance().createCriteria(Table.class);
+    tableCriteria.add(Restrictions.eq(Table.PROPERTY_DBTABLENAME, tableName));
+    tableCriteria.setMaxResults(1);
+    final OBCriteria<TableAccess> tableAccessCriteria = OBDal.getInstance().createCriteria(
+        TableAccess.class);
+    tableAccessCriteria.add(Restrictions.eq(TableAccess.PROPERTY_ROLE, role));
+    tableAccessCriteria.add(Restrictions.eq(TableAccess.PROPERTY_TABLE,
+        (Table) tableCriteria.uniqueResult()));
+    tableAccessCriteria.setMaxResults(1);
+    TableAccess ta = (TableAccess) tableAccessCriteria.uniqueResult();
+    ta.setReadOnly(isReadOnly);
+    ta.setActive(isActive);
+  }
+
+  private static String[] getTableAccessInfo(Role role, String tableName) {
+    String result[] = new String[3];
+    for (TableAccess ta : role.getADTableAccessList()) {
+      if (tableName.equals(ta.getTable().getDBTableName())) {
+        result[0] = ta.isReadOnly().toString();
+        result[1] = ta.isActive().toString();
+        result[2] = ta.getInheritedFrom() != null ? ta.getInheritedFrom().getId() : "";
+        break;
+      }
+    }
+    return result;
+  }
+
+  private static void removeTableAccesses(Role role) {
+    final OBCriteria<TableAccess> obCriteria = OBDal.getInstance()
+        .createCriteria(TableAccess.class);
+    obCriteria.add(Restrictions.eq(TableAccess.PROPERTY_ROLE, role));
+    obCriteria.setFilterOnActive(false);
+    for (TableAccess ta : obCriteria.list()) {
+      role.getADTableAccessList().remove(ta);
+      OBDal.getInstance().remove(ta);
+    }
   }
 
   private static void addAlertRecipient(Role role, String alertName) {
@@ -990,6 +1053,8 @@ public class RoleInheritanceTestUtils {
       return getViewsFromViewAccesses(role);
     } else if ("PROCESS".equals(type)) {
       return getProcessFromProcessAccesses(role);
+    } else if ("TABLE".equals(type)) {
+      return getTablesFromTableAccesses(role);
     } else if ("ALERT".equals(type)) {
       return getAlertRulesFromAlertRecipients(role);
     } else if ("PREFERENCE".equals(type)) {
@@ -1187,6 +1252,23 @@ public class RoleInheritanceTestUtils {
     for (org.openbravo.client.application.ProcessAccess pa : list) {
       result[i] = pa.getObuiappProcess().getName();
       result[i + 1] = pa.getInheritedFrom() != null ? (String) DalUtil.getId(pa.getInheritedFrom())
+          : "";
+      i += 2;
+    }
+    return result;
+  }
+
+  private static String[] getTablesFromTableAccesses(Role role) {
+    final OBCriteria<TableAccess> obCriteria = OBDal.getInstance()
+        .createCriteria(TableAccess.class);
+    obCriteria.add(Restrictions.eq(TableAccess.PROPERTY_ROLE, role));
+    obCriteria.addOrderBy(TableAccess.PROPERTY_TABLE + "." + Table.PROPERTY_DBTABLENAME, true);
+    List<TableAccess> list = obCriteria.list();
+    String[] result = new String[list.size() * 2];
+    int i = 0;
+    for (TableAccess ta : list) {
+      result[i] = ta.getTable().getDBTableName();
+      result[i + 1] = ta.getInheritedFrom() != null ? (String) DalUtil.getId(ta.getInheritedFrom())
           : "";
       i += 2;
     }

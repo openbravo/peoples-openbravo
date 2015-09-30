@@ -55,12 +55,13 @@ public class AccessPropagationNotInheritedTest extends WeldBaseTest {
   private final List<String> WIDGETS = Arrays.asList("Best Sellers");
   private final List<String> VIEWS = Arrays.asList("OBUIAPP_AlertManagement");
   private final List<String> PROCESSES = Arrays.asList("Create Purchase Order Lines");
+  private final List<String> TABLES = Arrays.asList("C_Order");
   private final List<String> ALERTS = Arrays.asList("Alert Taxes: Inversión del Sujeto Pasivo");
   private final List<String> PREFERENCES = Arrays.asList("AllowAttachment");
 
   @SuppressWarnings("unchecked")
   private final List<List<String>> ACCESSES = Arrays.asList(ORGANIZATIONS, WINDOWS, TABS, FIELDS,
-      REPORTS, FORMS, WIDGETS, VIEWS, PROCESSES, ALERTS, PREFERENCES);
+      REPORTS, FORMS, WIDGETS, VIEWS, PROCESSES, TABLES, ALERTS, PREFERENCES);
   private static int testCounter = 0;
 
   /** defines the values the parameter will take. */
@@ -99,6 +100,10 @@ public class AccessPropagationNotInheritedTest extends WeldBaseTest {
       RoleInheritanceTestUtils.addAccess(parameter, role, accesses.get(0));
       RoleInheritanceTestUtils.addAccess(parameter, template, accesses.get(0));
 
+      OBDal.getInstance().commitAndClose();
+      role = OBDal.getInstance().get(Role.class, roleId);
+      template = OBDal.getInstance().get(Role.class, templateId);
+
       String[] expected = { accesses.get(0), "" };
       String[] result = RoleInheritanceTestUtils.getOrderedAccessNames(parameter, role);
       assertThat("New access has not affected non inherited access", result, equalTo(expected));
@@ -128,8 +133,14 @@ public class AccessPropagationNotInheritedTest extends WeldBaseTest {
       assertThat("Updated access has not affected non inherited access", result2,
           equalTo(expected2));
 
+      // NOTE: At this point, if we remove the access of "role", it will not inherit automatically
+      // the access from the template because is not possible to handle the removal and the insert
+      // of the record at the same time inside the event handler. So, in this case the user should
+      // call the "Recalculate Process" after removing the non inherited access.
+
       RoleInheritanceTestUtils.removeAccesses(parameter, template);
       RoleInheritanceTestUtils.removeAccesses(parameter, role);
+      OBDal.getInstance().flush();
       testCounter++;
 
     } finally {

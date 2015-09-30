@@ -58,13 +58,14 @@ public class VerticalInheritanceTest extends WeldBaseTest {
       "OBUIAPP_RegistrationView");
   private final List<String> PROCESSES = Arrays.asList("Create Purchase Order Lines",
       "Grant Portal Access");
+  private final List<String> TABLES = Arrays.asList("AD_User", "C_Order");
   private final List<String> ALERTS = Arrays.asList("Alert Taxes: Inversión del Sujeto Pasivo",
       "CUSTOMER WITHOUT ACCOUNTING");
   private final List<String> PREFERENCES = Arrays.asList("AllowAttachment", "AllowDelete");
 
   @SuppressWarnings("unchecked")
   private final List<List<String>> ACCESSES = Arrays.asList(ORGANIZATIONS, WINDOWS, TABS, FIELDS,
-      REPORTS, FORMS, WIDGETS, VIEWS, PROCESSES, ALERTS, PREFERENCES);
+      REPORTS, FORMS, WIDGETS, VIEWS, PROCESSES, TABLES, ALERTS, PREFERENCES);
   private static int testCounter = 0;
 
   /** defines the values the parameter will take. */
@@ -125,6 +126,8 @@ public class VerticalInheritanceTest extends WeldBaseTest {
 
       RoleInheritanceTestUtils.removeAccesses(parameter, roleA);
       RoleInheritanceTestUtils.removeAccesses(parameter, roleB);
+      RoleInheritanceTestUtils.removeAccesses(parameter, roleC);
+      OBDal.getInstance().flush();
       testCounter++;
 
     } finally {

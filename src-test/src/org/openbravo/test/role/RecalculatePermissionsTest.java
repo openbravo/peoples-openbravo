@@ -31,9 +31,9 @@ import org.openbravo.test.base.OBBaseTest;
 
 public class RecalculatePermissionsTest extends OBBaseTest {
   // This test case is intended to simulate the "Recalculate Permissions" process
-  // We make use a extension of the OBBaseTest to avoid the execution of the related event handlers
-  // This way, we can simulate the process of adding of a permission without using DAL, for example,
-  // like when using the Grant Access process which is based on a DB stored procedure
+  // We make use of a extension of the OBBaseTest to avoid the execution of the related event
+  // handlers. This way, we can simulate the process of adding a permission without using DAL, like
+  // for example, when using the "Grant Access" process which uses xsql to insert data.
 
   @Test
   public void testRolePermissionRecalculate() {
