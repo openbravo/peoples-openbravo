@@ -763,8 +763,43 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.DoneButton',
   kind: 'OB.OBPOSPointOfSale.UI.ProcessButton',
-  drawerOpened: true,
   style: 'width: 120px; float: right; margin: 5px 5px 15px 0px; height: 2.5em; display:block; clear: right',
+  handlers: {
+    synchronizing: 'isSynchronizing',
+    synchronized: 'isSynchronized'
+  },
+  drawerOpened: true,
+  isLocked: true,
+  lasDisabledPetition: true,
+  isSynchronizing: function () {
+    this.isLocked = true;
+    this.setDisabledIfSynchronized();
+  },
+  isSynchronized: function () {
+    this.isLocked = false;
+    this.setDisabledIfSynchronized();
+  },
+  setDisabled: function (value) {
+    this.lasDisabledPetition = value;
+    this.setDisabledIfSynchronized(value);
+  },
+  setDisabledIfSynchronized: function () {
+    var value = this.lasDisabledPetition;
+    // check arguments
+    if (value === undefined) {
+      // be sure that the value is always valid
+      OB.UTIL.Debug.execute(function () {
+        throw "The disabled value must be true or false";
+      });
+      value = false;
+    }
+    // force disabled is there are pending synchronizations
+    if (this.isLocked) {
+      value = true;
+    }
+    this.disabled = value; // for getDisabled() to return the correct value
+    this.setAttribute('disabled', value); // to effectively turn the button enabled or disabled    
+  },
   init: function (model) {
     this.model = model;
     this.setContent(OB.I18N.getLabel('OBPOS_LblDone'));
