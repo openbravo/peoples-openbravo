@@ -71,6 +71,10 @@ public class CostingBackground extends DalBaseProcess implements KillableProcess
     int counter = 0, total = 0, batch = 0;
     try {
       OBContext.setAdminMode(false);
+
+      CostingUtils.checkValidOrganization(AD_PROCESS_ID, OBContext.getOBContext()
+          .getCurrentOrganization());
+
       result.setType("Success");
       result.setTitle(OBMessageUtils.messageBD("Success"));
 

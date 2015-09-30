@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2014 Openbravo SLU
+ * All portions are Copyright (C) 2012-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -28,6 +28,7 @@ import java.util.Set;
 
 import javax.servlet.ServletException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
@@ -582,5 +583,25 @@ public class CostingUtils {
       }
     }
     return rule.getStartingDate();
+  }
+
+  /**
+   * Throws an OBException when the processId is the CostingBackground and it is being executed by
+   * an organization which has a legal entity as an ancestor.
+   * 
+   * @param processId
+   *          This is the process Id being executed. The method only runs the validation when the
+   *          process ID is equal to CostingBackground.AD_PROCESS_ID
+   * @param scheduledOrg
+   *          the organization that runs the process
+   */
+  public static void checkValidOrganization(final String processId, final Organization scheduledOrg) {
+    if (StringUtils.equals(processId, CostingBackground.AD_PROCESS_ID)) {
+      final Organization legalEntity = OBContext.getOBContext().getOrganizationStructureProvider()
+          .getLegalEntity(scheduledOrg);
+      if (legalEntity != null && !StringUtils.equals(legalEntity.getId(), scheduledOrg.getId())) {
+        throw new OBException(OBMessageUtils.messageBD("CostBackgroundWrongOrganization"));
+      }
+    }
   }
 }
