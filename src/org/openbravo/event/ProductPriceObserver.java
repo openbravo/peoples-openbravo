@@ -66,11 +66,11 @@ public class ProductPriceObserver extends EntityPersistenceEventObserver {
    */
   private void overrideProductPriceOrganization(EntityPersistenceEvent event) {
     if (event instanceof EntityNewEvent || event instanceof EntityUpdateEvent) {
-      final Entity processRequestEntity = ModelProvider.getInstance().getEntity(
+      final Entity productPriceEntity = ModelProvider.getInstance().getEntity(
           ProductPrice.ENTITY_NAME);
-      final Property orgProperty = processRequestEntity
+      final Property orgProperty = productPriceEntity
           .getProperty(ProductPrice.PROPERTY_ORGANIZATION);
-      final Property plvProperty = processRequestEntity
+      final Property plvProperty = productPriceEntity
           .getProperty(ProductPrice.PROPERTY_PRICELISTVERSION);
 
       final Organization org = (Organization) event.getCurrentState(orgProperty);
