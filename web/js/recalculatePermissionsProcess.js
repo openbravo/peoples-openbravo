@@ -25,6 +25,7 @@ OB.RoleInheritance = {
     var roleId, selection = params.button.contextView.viewGrid.getSelectedRecords(),
         callback;
     callback = function (rpcResponse, data, rpcRequest) {
+      isc.clearPrompt();
       if (data.message.severity === 'success') {
         view.view.messageBar.setMessage(isc.OBMessageBar.TYPE_SUCCESS, data.message.title, data.message.text);
       } else {
@@ -38,6 +39,7 @@ OB.RoleInheritance = {
       roleId: params.roleId,
       action: params.action
     }, {}, callback);
+    isc.showPrompt(OB.I18N.getLabel('OBUIAPP_PROCESSING') + isc.Canvas.imgHTML({src: OB.Styles.LoadingPrompt.loadingImage.src}));
   },
 
   recalculatePermissions: function (params, view) {
