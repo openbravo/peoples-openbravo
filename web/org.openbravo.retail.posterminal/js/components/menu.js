@@ -984,6 +984,17 @@ enyo.kind({
     this.inherited(arguments); // Manual dropdown menu closure
   },
   updateVisibility: function (model) {
+    var isPaidReceipt, isLayaway;
+
+    isPaidReceipt = model.get('isPaid') === true && !model.get('isQuotation');
+    isLayaway = model.get('isLayaway');
+
+    if (!model.get('replacedorder_id') && (isPaidReceipt || isLayaway)) {
+      this.show();
+    } else {
+      this.hide();
+    }
+
     this.adjustVisibilityBasedOnPermissions();
   },
   init: function (model) {
@@ -999,6 +1010,10 @@ enyo.kind({
       me.hide();
     }, this);
 
-    this.updateVisibility();
+    receipt.on('change:isLayaway change:isPaid change:isQuotation', function (model) {
+      this.updateVisibility(receipt);
+    }, this);
+
+    this.updateVisibility(receipt);
   }
 });
