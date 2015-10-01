@@ -971,3 +971,34 @@ enyo.kind({
     }
   }
 });
+
+enyo.kind({
+  name: 'OB.UI.MenuCancelAndReplace',
+  kind: 'OB.UI.MenuAction',
+  permission: 'OBPOS_receipt.cancelreplace',
+  i18nLabel: 'OBPOS_CancelReplace',
+  tap: function () {
+    if (this.disabled) {
+      return true;
+    }
+    this.inherited(arguments); // Manual dropdown menu closure
+  },
+  updateVisibility: function (model) {
+    this.adjustVisibilityBasedOnPermissions();
+  },
+  init: function (model) {
+    var receipt = model.get('order'),
+        me = this;
+
+    model.get('leftColumnViewManager').on('order', function () {
+      this.updateVisibility(receipt);
+      this.adjustVisibilityBasedOnPermissions();
+    }, this);
+
+    model.get('leftColumnViewManager').on('multiorder', function () {
+      me.hide();
+    }, this);
+
+    this.updateVisibility();
+  }
+});
