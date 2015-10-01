@@ -126,6 +126,7 @@
       <check name="AD_ROLE_ISCLIENTADMIN_CHECK"><![CDATA[IS_CLIENT_ADMIN IN ('Y', 'N')]]></check>
       <check name="AD_ROLE_ISPORTAL_CHECK"><![CDATA[ISPORTAL IN ('Y', 'N')]]></check>
       <check name="AD_ROLE_ISPORTALADMIN_CHECK"><![CDATA[ISPORTALADMIN IN ('Y', 'N')]]></check>
+      <check name="AD_ROLE_ISTEMPLATE_CHECK"><![CDATA[ISTEMPLATE IN ('Y', 'N')]]></check>
       <check name="AD_ROLE_ISWEBSERVICEENABLED"><![CDATA[ISWEBSERVICEENABLED IN ('Y', 'N')]]></check>
       <check name="AD_ROLE_MANUALTEMPLATE_CHECK"><![CDATA[ISTEMPLATE = 'Y' AND ISMANUAL = 'Y' OR ISTEMPLATE <> 'Y']]></check>
       <check name="AD_ROLE_RESTRICTBACKEND"><![CDATA[ISRESTRICTBACKEND IN ('Y', 'N')]]></check>

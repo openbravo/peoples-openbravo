@@ -104,7 +104,7 @@ public class InheritedAccessEnabledEventHandler extends EntityPersistenceEventOb
     }
   }
 
-  protected boolean isInheritedAccessEnabled(EntityPersistenceEvent event) {
+  private boolean isInheritedAccessEnabled(EntityPersistenceEvent event) {
     // Disable event handlers if data is being imported
     if (TriggerHandler.getInstance().isDisabled()) {
       return false;
