@@ -436,14 +436,12 @@ public class FormInitializationComponent extends BaseActionHandler {
       int noteCount, List<String> overwrittenAuxiliaryInputs) {
     JSONObject finalObject = new JSONObject();
     try {
-      if (mode.equals("NEW") || mode.equals("CHANGE")) {
-        if (!hiddenInputs.isEmpty()) {
-          JSONObject jsonHiddenInputs = new JSONObject();
-          for (String key : hiddenInputs.keySet()) {
-            jsonHiddenInputs.put(key, hiddenInputs.get(key));
-          }
-          finalObject.put("hiddenInputs", jsonHiddenInputs);
+      if ((mode.equals("NEW") || mode.equals("CHANGE")) && !hiddenInputs.isEmpty()) {
+        JSONObject jsonHiddenInputs = new JSONObject();
+        for (String key : hiddenInputs.keySet()) {
+          jsonHiddenInputs.put(key, hiddenInputs.get(key));
         }
+        finalObject.put("hiddenInputs", jsonHiddenInputs);
       }
       if (mode.equals("NEW") || mode.equals("EDIT") || mode.equals("CHANGE")) {
         JSONArray arrayMessages = new JSONArray(calloutMessages);
