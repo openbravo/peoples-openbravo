@@ -57,11 +57,11 @@
                 OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_customerSaved', [me.customer.get('_identifier')]));
                 };
             OB.MobileApp.model.runSyncProcess(successCallback);
-          });
-        }, function () {
-          //error saving BP changes with changes in changedbusinesspartners
-          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorSavingCustomerChanges', [me.customer.get('_identifier')]));
-        }, isNew);
+          }, function () {
+            //error saving BP changes with changes in changedbusinesspartners
+            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorSavingCustomerChanges', [me.customer.get('_identifier')]));
+          }, isNew);
+        });
       } else {
         //save that the customer is being processed by server
         OB.Dal.save(this.customer, function () {
