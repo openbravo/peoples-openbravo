@@ -91,7 +91,9 @@ enyo.kind({
     onShowMultiSelection: 'showMultiSelection',
     onSetMultiSelectionItems: 'setMultiSelectionItems',
     onToggleLineSelection: 'toggleLineSelection',
-    onFinishServiceProposal: 'finishServiceProposal'
+    onFinishServiceProposal: 'finishServiceProposal',
+    onkeydown: 'keyDownHandler',
+    onkeyup: 'keyUpHandler'
   },
   events: {
     onShowPopup: '',
@@ -338,6 +340,20 @@ enyo.kind({
           });
         }, this);
       }
+    }
+  },
+  keyDownHandler: function (inSender, inEvent) {
+    var keyCode = inEvent.keyCode;
+    OB.MobileApp.model.ctrlPressed = keyCode === 17;
+    OB.MobileApp.model.shiftPressed = keyCode === 16;
+  },
+  keyUpHandler: function (inSender, inEvent) {
+    var keyCode = inEvent.keyCode;
+    if (keyCode === 17) {
+      OB.MobileApp.model.ctrlPressed = false;
+    }
+    if (keyCode === 16) {
+      OB.MobileApp.model.shiftPressed = false;
     }
   },
   paidReceipts: function (inSender, inEvent) {
