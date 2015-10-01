@@ -27,10 +27,13 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.client.kernel.BaseActionHandler;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.roleInheritance.RoleInheritanceManager.AccessType;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.db.DbUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +61,9 @@ public class RecalculatePermissionsHandler extends BaseActionHandler {
         if (updatedRoles.size() > 0) {
           textMessage = composeTemplateAccessMessageText(updatedRoles);
         } else {
-          textMessage = "PermissionsNotModified";
+          textMessage = Utility.messageBD(new DalConnectionProvider(false),
+              "TemplatePermissionsNotModified", OBContext.getOBContext().getLanguage()
+                  .getLanguage());
         }
         successMessage = "RecalculateTemplatePermissionsSuccess";
       } else {
@@ -66,7 +71,8 @@ public class RecalculatePermissionsHandler extends BaseActionHandler {
             .recalculateAllAccessesForRole(role);
         textMessage = composeAccessMessageText(accessCount);
         if (StringUtils.isEmpty(textMessage)) {
-          textMessage = "PermissionsNotModified";
+          textMessage = Utility.messageBD(new DalConnectionProvider(false),
+              "PermissionsNotModified", OBContext.getOBContext().getLanguage().getLanguage());
         }
         successMessage = "RecalculatePermissionsSuccess";
       }
