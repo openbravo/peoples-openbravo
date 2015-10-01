@@ -331,7 +331,7 @@
             OB.UTIL.deleteCashUps(data);
             callback();
           });
-        },
+        }
       });
 
       this.on('ready', function () {
@@ -533,8 +533,7 @@
 
     postLoginActions: function () {
       OB.debug("next process: renderTerminalMain");
-      var me = this,
-          loadModelsIncFunc;
+      var loadModelsIncFunc;
       //MASTER DATA REFRESH
       var minIncRefresh = this.get('terminal').terminalType.minutestorefreshdatainc * 60 * 1000,
           minTotalRefresh = this.get('terminal').terminalType.minutestorefreshdatatotal * 60 * 1000,
