@@ -475,10 +475,9 @@ public abstract class AddPaymentDefaultValuesHandler {
       String financialAccountId, boolean issotrx, String currencyId) {
     StringBuffer where = new StringBuffer();
     where.append(" as fapm");
-    if (!StringUtils.isEmpty(currencyId)) {
-      where.append(" join fapm." + FinAccPaymentMethod.PROPERTY_ACCOUNT + " as fa");
-    }
+    where.append(" join fapm." + FinAccPaymentMethod.PROPERTY_ACCOUNT + " as fa");
     where.append(" where fapm." + FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD + " = :paymentMethod");
+    where.append(" and fa." + FIN_FinancialAccount.PROPERTY_ACTIVE + " = true");
     if (issotrx) {
       where.append(" and fapm." + FinAccPaymentMethod.PROPERTY_PAYINALLOW + " = true");
     } else {
