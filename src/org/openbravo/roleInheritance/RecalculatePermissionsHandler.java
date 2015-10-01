@@ -56,12 +56,7 @@ public class RecalculatePermissionsHandler extends BaseActionHandler {
       if ("TEMPLATE".equals(action)) {
         List<Role> updatedRoles = RoleInheritanceManager.recalculateAllAccessesFromTemplate(role);
         if (updatedRoles.size() > 0) {
-          String updatedRoleList = "";
-          for (Role updatedRole : updatedRoles) {
-            updatedRoleList += ", " + updatedRole.getName();
-          }
-          String[] msgParam = { updatedRoleList.substring(1) };
-          textMessage = OBMessageUtils.getI18NMessage("PermissionsModifiedForRoles", msgParam);
+          textMessage = composeTemplateAccessMessageText(updatedRoles);
         } else {
           textMessage = "PermissionsNotModified";
         }
@@ -118,6 +113,16 @@ public class RecalculatePermissionsHandler extends BaseActionHandler {
     } catch (Exception ex) {
       log.error("Error creating the text for the returned message", ex);
     }
+    return text;
+  }
+
+  private String composeTemplateAccessMessageText(List<Role> updatedRoles) {
+    String text, updatedRoleList = "";
+    for (Role updatedRole : updatedRoles) {
+      updatedRoleList += ", " + updatedRole.getName();
+    }
+    String[] msgParam = { updatedRoleList.substring(1) };
+    text = OBMessageUtils.getI18NMessage("PermissionsModifiedForRoles", msgParam);
     return text;
   }
 }

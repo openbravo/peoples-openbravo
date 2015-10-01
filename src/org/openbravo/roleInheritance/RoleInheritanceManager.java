@@ -399,7 +399,7 @@ public class RoleInheritanceManager {
 
   /**
    * Sets to null the Inherit From field to child elements (TabAccess and FieldAccess). This allows
-   * the cascade deletion of these elements when removing a Window Access or a Tab Access.
+   * the cascade deletion of these elements when removing an inherited Window Access or Tab Access.
    * 
    * @param access
    *          The access to be removed from the parent list
@@ -515,7 +515,7 @@ public class RoleInheritanceManager {
    * 
    * @param role
    *          The role whose accesses will be recalculated
-   * @return a map with the number of accesses updated an created for every access type
+   * @return a map with the number of accesses updated and created for every access type
    */
   public static Map<AccessType, List<Integer>> recalculateAllAccessesForRole(Role role) {
     Map<AccessType, List<Integer>> result = new HashMap<AccessType, List<Integer>>();
