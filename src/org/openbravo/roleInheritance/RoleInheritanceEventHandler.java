@@ -95,7 +95,7 @@ public class RoleInheritanceEventHandler extends EntityPersistenceEventObserver 
   private boolean existCycles(Role role, String roleIdToFind) {
     boolean result = false;
     for (RoleInheritance ri : role.getADRoleInheritanceInheritFromList()) {
-      if (roleIdToFind.equals(ri.getRole().getId())) {
+      if (roleIdToFind.equals((String) DalUtil.getId(ri.getRole()))) {
         return true;
       }
       result = existCycles(ri.getRole(), roleIdToFind);

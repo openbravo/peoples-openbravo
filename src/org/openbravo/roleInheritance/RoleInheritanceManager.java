@@ -290,7 +290,7 @@ public class RoleInheritanceManager {
       whereClause.append(" where p.").append(roleProperty).append(" = :roleId");
       addEntityWhereClause(whereClause, className);
       final OBQuery<T> query = OBDal.getInstance().createQuery(clazz, whereClause.toString());
-      query.setNamedParameter("roleId", role.getId());
+      query.setNamedParameter("roleId", (String) DalUtil.getId(role));
       doEntityParameterReplacement(query, className);
       query.setFilterOnActive(false);
       return (List<? extends InheritedAccessEnabled>) query.list();
@@ -907,11 +907,14 @@ public class RoleInheritanceManager {
     final OBCriteria<RoleInheritance> obCriteria = OBDal.getInstance().createCriteria(
         RoleInheritance.class);
     obCriteria.add(Restrictions.eq(RoleInheritance.PROPERTY_ROLE, inheritance.getRole()));
-    obCriteria.add(Restrictions.ne(RoleInheritance.PROPERTY_ID, inheritance.getId()));
+    obCriteria
+        .add(Restrictions.ne(RoleInheritance.PROPERTY_ID, (String) DalUtil.getId(inheritance)));
     obCriteria.addOrderBy(RoleInheritance.PROPERTY_SEQUENCENUMBER, true);
     boolean added = false;
     for (RoleInheritance rh : obCriteria.list()) {
-      if (rh.getInheritFrom().getId().equals(inheritance.getInheritFrom().getId())) {
+      String inheritFromId = (String) DalUtil.getId(rh.getInheritFrom());
+      String inheritanceInheritFromId = (String) DalUtil.getId(inheritance.getInheritFrom());
+      if (inheritFromId.equals(inheritanceInheritFromId)) {
         Utility.throwErrorMessage("RoleInheritanceInheritFromDuplicated");
       } else if (rh.getSequenceNumber().equals(inheritance.getSequenceNumber())) {
         Utility.throwErrorMessage("RoleInheritanceSequenceNumberDuplicated");
