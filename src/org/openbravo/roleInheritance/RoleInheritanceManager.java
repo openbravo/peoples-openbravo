@@ -979,51 +979,57 @@ public class RoleInheritanceManager {
     /**
      * Organization Access
      */
-    ORG_ACCESS("org.openbravo.model.ad.access.RoleOrganization", "getOrganization"),
+    ORG_ACCESS(org.openbravo.model.ad.access.RoleOrganization.class.getCanonicalName(),
+        "getOrganization"),
     /**
      * Window Access
      */
-    WINDOW_ACCESS("org.openbravo.model.ad.access.WindowAccess", "getWindow"),
+    WINDOW_ACCESS(org.openbravo.model.ad.access.WindowAccess.class.getCanonicalName(), "getWindow"),
     /**
      * Tab Access
      */
-    TAB_ACCESS("org.openbravo.model.ad.access.TabAccess", "getTab"),
+    TAB_ACCESS(org.openbravo.model.ad.access.TabAccess.class.getCanonicalName(), "getTab"),
     /**
      * Field Access
      */
-    FIELD_ACCESS("org.openbravo.model.ad.access.FieldAccess", "getField"),
+    FIELD_ACCESS(org.openbravo.model.ad.access.FieldAccess.class.getCanonicalName(), "getField"),
     /**
      * Process Access
      */
-    PROCESS_ACCESS("org.openbravo.model.ad.access.ProcessAccess", "getProcess"),
+    PROCESS_ACCESS(org.openbravo.model.ad.access.ProcessAccess.class.getCanonicalName(),
+        "getProcess"),
     /**
      * Form Access
      */
-    FORM_ACCESS("org.openbravo.model.ad.access.FormAccess", "getSpecialForm"),
+    FORM_ACCESS(org.openbravo.model.ad.access.FormAccess.class.getCanonicalName(), "getSpecialForm"),
     /**
      * Widget Class Access
      */
-    WIDGET_ACCESS("org.openbravo.client.myob.WidgetClassAccess", "getWidgetClass"),
+    WIDGET_ACCESS(org.openbravo.client.myob.WidgetClassAccess.class.getCanonicalName(),
+        "getWidgetClass"),
     /**
      * View Implementation Access
      */
-    VIEW_ACCESS("org.openbravo.client.application.ViewRoleAccess", "getViewImplementation"),
+    VIEW_ACCESS(org.openbravo.client.application.ViewRoleAccess.class.getCanonicalName(),
+        "getViewImplementation"),
     /**
      * Process Definition Access
      */
-    PROCESS_DEF_ACCESS("org.openbravo.client.application.ProcessAccess", "getObuiappProcess"),
+    PROCESS_DEF_ACCESS(org.openbravo.client.application.ProcessAccess.class.getCanonicalName(),
+        "getObuiappProcess"),
     /**
      * Table Access
      */
-    TABLE_ACCESS("org.openbravo.model.ad.access.TableAccess", "getTable"),
+    TABLE_ACCESS(org.openbravo.model.ad.access.TableAccess.class.getCanonicalName(), "getTable"),
     /**
      * Alert Recipient Access
      */
-    ALERT_RECIPIENT("org.openbravo.model.ad.alert.AlertRecipient", "getAlertRule"),
+    ALERT_RECIPIENT(org.openbravo.model.ad.alert.AlertRecipient.class.getCanonicalName(),
+        "getAlertRule"),
     /**
      * Preference
      */
-    PREFERENCE("org.openbravo.model.ad.domain.Preference", "getIdentifier");
+    PREFERENCE(org.openbravo.model.ad.domain.Preference.class.getCanonicalName(), "getIdentifier");
 
     private final String className;
     private final String securedElement;
