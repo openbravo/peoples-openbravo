@@ -437,8 +437,6 @@ public class FormInitializationComponent extends BaseActionHandler {
     JSONObject finalObject = new JSONObject();
     try {
       if (mode.equals("NEW") || mode.equals("CHANGE")) {
-        JSONArray arrayMessages = new JSONArray(calloutMessages);
-        finalObject.put("calloutMessages", arrayMessages);
         if (!hiddenInputs.isEmpty()) {
           JSONObject jsonHiddenInputs = new JSONObject();
           for (String key : hiddenInputs.keySet()) {
@@ -448,6 +446,9 @@ public class FormInitializationComponent extends BaseActionHandler {
         }
       }
       if (mode.equals("NEW") || mode.equals("EDIT") || mode.equals("CHANGE")) {
+        JSONArray arrayMessages = new JSONArray(calloutMessages);
+        finalObject.put("calloutMessages", arrayMessages);
+
         JSONObject jsonColumnValues = new JSONObject();
         for (Field field : getADFieldList(tab.getId())) {
           if (field.getColumn() == null) {
