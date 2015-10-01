@@ -45,7 +45,7 @@ import org.openbravo.model.ad.access.Role;
  * 
  * 
  */
-public class DeletedAccessPropagation extends WeldBaseTest {
+public class DeletedAccessPropagationTest extends WeldBaseTest {
   private final List<String> ORGANIZATIONS = Arrays.asList("F&B España - Región Norte",
       "F&B España - Región Sur");
   private final List<String> WINDOWS = Arrays.asList("Sales Invoice", "Sales Order");
