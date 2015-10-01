@@ -57,6 +57,9 @@
       <foreign-key foreignTable="AD_ROLE" name="AD_ROLE_INHERITANCE_INH_FROM">
         <reference local="INHERIT_FROM" foreign="AD_ROLE_ID"/>
       </foreign-key>
+      <index name="AD_ROLE_INHERITANCE_ROLE" unique="false">
+        <index-column name="AD_ROLE_ID"/>
+      </index>
       <unique name="AD_ROLE_INHERITANCE_ROLE_UN">
         <unique-column name="AD_ROLE_ID"/>
         <unique-column name="INHERIT_FROM"/>
