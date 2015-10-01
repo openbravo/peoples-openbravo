@@ -19,6 +19,7 @@
 package org.openbravo.test.role;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
@@ -58,8 +59,8 @@ public class RoleInheritanceRestrictionsTest extends WeldBaseTest {
       }
       inherited = OBDal.getInstance().get(Role.class, inheritedId);
       template = OBDal.getInstance().get(Role.class, templateId);
-      assertThat("Inherit From not duplicated in Role Inheritance", inherited
-          .getADRoleInheritanceList().size(), equalTo(1));
+      assertThat("Inherit From not duplicated in Role Inheritance",
+          inherited.getADRoleInheritanceList(), hasSize(1));
 
     } finally {
       // Delete roles
@@ -100,8 +101,8 @@ public class RoleInheritanceRestrictionsTest extends WeldBaseTest {
       }
       template1 = OBDal.getInstance().get(Role.class, template1Id);
       template2 = OBDal.getInstance().get(Role.class, template2Id);
-      assertThat("Template 1 does not have inheritances", template1.getADRoleInheritanceList()
-          .size(), equalTo(0));
+      assertThat("Template 1 does not have inheritances", template1.getADRoleInheritanceList(),
+          hasSize(0));
 
     } finally {
       // Delete roles

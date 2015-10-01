@@ -19,6 +19,7 @@
 package org.openbravo.test.role;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
@@ -63,8 +64,8 @@ public class RecalculatePermissionsTest extends OBBaseTest {
       role = OBDal.getInstance().get(Role.class, roleId);
       template = OBDal.getInstance().get(Role.class, templateId);
 
-      assertThat("There is a new access created with the recalculation", role
-          .getADWindowAccessList().size(), equalTo(1));
+      assertThat("There is a new access created with the recalculation",
+          role.getADWindowAccessList(), hasSize(1));
 
       String[] expected = { "true", "true", templateId };
       String[] result = RoleInheritanceTestUtils.getAccessInfo("WINDOW", role, "Sales Order");
@@ -115,11 +116,11 @@ public class RecalculatePermissionsTest extends OBBaseTest {
       role2 = OBDal.getInstance().get(Role.class, role2Id);
       template = OBDal.getInstance().get(Role.class, templateId);
 
-      assertThat("There is a new access created with the recalculation for role1", role1
-          .getADWindowAccessList().size(), equalTo(1));
+      assertThat("There is a new access created with the recalculation for role1",
+          role1.getADWindowAccessList(), hasSize(1));
 
-      assertThat("There is a new access created with the recalculation for role2", role2
-          .getADWindowAccessList().size(), equalTo(1));
+      assertThat("There is a new access created with the recalculation for role2",
+          role2.getADWindowAccessList(), hasSize(1));
 
       String[] expected = { "true", "true", templateId };
       String[] result = RoleInheritanceTestUtils.getAccessInfo("WINDOW", role1, "Sales Order");
