@@ -42,14 +42,19 @@ public final class POSLicenseRestrictions implements ModuleLicenseRestrictions {
   }
 
   @Override
-  public String getLoginPageMessage(ActivationKey activationKey, String lang) {
+  public ActivationMsg getActivationMessage(ActivationKey activationKey, String lang) {
     String msg = getPOSTerminalRestrictionMsg(activationKey, lang, 0);
 
     if (StringUtils.isNotEmpty(msg)) {
-      return msg;
+      return new ActivationMsg(MsgSeverity.ERROR, msg);
     }
 
-    return getPOSTerminalsWarningMsg(activationKey, lang);
+    msg = getPOSTerminalsWarningMsg(activationKey, lang);
+
+    if (StringUtils.isNotEmpty(msg)) {
+      return new ActivationMsg(MsgSeverity.WARN, msg);
+    }
+    return null;
   }
 
   /**
