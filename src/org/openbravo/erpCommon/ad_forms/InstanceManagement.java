@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -322,14 +323,13 @@ public class InstanceManagement extends HttpSecureAppServlet {
     // Message
     {
       OBError myMessage = null;
-      if (activationKey.isActive() || activationKey.getErrorMessage() == null
-          || activationKey.getErrorMessage().equals("")) {
+      String msgTxt = activationKey.getErrorMessage();
+      if (StringUtils.isEmpty(msgTxt)) {
         myMessage = vars.getMessage("InstanceManagement");
       } else {
         myMessage = new OBError();
         myMessage.setType(activationKey.getMessageType());
-        String msgTxt = Utility.parseTranslation(this, vars, vars.getLanguage(),
-            activationKey.getErrorMessage());
+        msgTxt = Utility.parseTranslation(this, vars, vars.getLanguage(), msgTxt);
 
         OBError originalMessage = vars.getMessage("InstanceManagement");
         if (originalMessage != null) {
