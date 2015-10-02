@@ -848,11 +848,7 @@ public class ActivationKey {
     // look for messages defined by modules
     String customMsg = "";
     MsgSeverity severity = MsgSeverity.ERROR;
-    BeanManager bm = WeldUtils.getStaticInstanceBeanManager();
-    for (Bean<?> restrictionBean : bm.getBeans(ModuleLicenseRestrictions.class)) {
-      ModuleLicenseRestrictions moduleRestriction = (ModuleLicenseRestrictions) bm.getReference(
-          restrictionBean, ModuleLicenseRestrictions.class,
-          bm.createCreationalContext(restrictionBean));
+    for (ModuleLicenseRestrictions moduleRestriction : getModuleLicenseRestrictions()) {
       ActivationMsg moduleMsg = moduleRestriction.getActivationMessage(this, OBContext
           .getOBContext().getLanguage().getLanguage());
 
@@ -873,11 +869,7 @@ public class ActivationKey {
   public String getInstanceActivationExtraActionsHtml(XmlEngine xmlEngine) {
     String html = "";
 
-    BeanManager bm = WeldUtils.getStaticInstanceBeanManager();
-    for (Bean<?> restrictionBean : bm.getBeans(ModuleLicenseRestrictions.class)) {
-      ModuleLicenseRestrictions moduleRestriction = (ModuleLicenseRestrictions) bm.getReference(
-          restrictionBean, ModuleLicenseRestrictions.class,
-          bm.createCreationalContext(restrictionBean));
+    for (ModuleLicenseRestrictions moduleRestriction : getModuleLicenseRestrictions()) {
       String moduleHtml = moduleRestriction.getInstanceActivationExtraActionsHtml(xmlEngine);
       if (moduleHtml != null) {
         html += moduleHtml;
@@ -971,11 +963,7 @@ public class ActivationKey {
 
     if (result == LicenseRestriction.NO_RESTRICTION) {
       // no restrictions so far, checking now if any of the installed modules adds a new restriction
-      BeanManager bm = WeldUtils.getStaticInstanceBeanManager();
-      for (Bean<?> restrictionBean : bm.getBeans(ModuleLicenseRestrictions.class)) {
-        ModuleLicenseRestrictions moduleRestriction = (ModuleLicenseRestrictions) bm.getReference(
-            restrictionBean, ModuleLicenseRestrictions.class,
-            bm.createCreationalContext(restrictionBean));
+      for (ModuleLicenseRestrictions moduleRestriction : getModuleLicenseRestrictions()) {
         result = moduleRestriction.checkRestrictions(this, currentSession);
         if (result == null) {
           result = LicenseRestriction.NO_RESTRICTION;
@@ -1691,11 +1679,7 @@ public class ActivationKey {
       if (pendingTime == null || subscriptionActuallyConverted) {
         // no restrictions so far, checking now if any of the installed modules adds a new
         // restriction
-        BeanManager bm = WeldUtils.getStaticInstanceBeanManager();
-        for (Bean<?> restrictionBean : bm.getBeans(ModuleLicenseRestrictions.class)) {
-          ModuleLicenseRestrictions moduleRestriction = (ModuleLicenseRestrictions) bm
-              .getReference(restrictionBean, ModuleLicenseRestrictions.class,
-                  bm.createCreationalContext(restrictionBean));
+        for (ModuleLicenseRestrictions moduleRestriction : getModuleLicenseRestrictions()) {
           ActivationMsg msg = moduleRestriction.getActivationMessage(this, lang);
 
           if (msg != null) {
@@ -1940,5 +1924,15 @@ public class ActivationKey {
 
   public Long getPosTerminalsWarn() {
     return posTerminalsWarn;
+  }
+
+  private List<ModuleLicenseRestrictions> getModuleLicenseRestrictions() {
+    List<ModuleLicenseRestrictions> result = new ArrayList<ModuleLicenseRestrictions>();
+    BeanManager bm = WeldUtils.getStaticInstanceBeanManager();
+    for (Bean<?> restrictionBean : bm.getBeans(ModuleLicenseRestrictions.class)) {
+      result.add((ModuleLicenseRestrictions) bm.getReference(restrictionBean,
+          ModuleLicenseRestrictions.class, bm.createCreationalContext(restrictionBean)));
+    }
+    return result;
   }
 }
