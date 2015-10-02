@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,7 +29,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.lang.StringUtils;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -42,6 +41,7 @@ import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.ActivationKey.LicenseRestriction;
 import org.openbravo.erpCommon.obps.ActiveInstanceProcess;
+import org.openbravo.erpCommon.obps.ModuleLicenseRestrictions.ActivationMsg;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
@@ -323,19 +323,20 @@ public class InstanceManagement extends HttpSecureAppServlet {
     // Message
     {
       OBError myMessage = null;
-      String msgTxt = activationKey.getErrorMessage();
-      if (StringUtils.isEmpty(msgTxt)) {
+      ActivationMsg msg = activationKey.getActivationMessage();
+      if (msg == null) {
         myMessage = vars.getMessage("InstanceManagement");
       } else {
         myMessage = new OBError();
         myMessage.setType(activationKey.getMessageType());
-        msgTxt = Utility.parseTranslation(this, vars, vars.getLanguage(), msgTxt);
+        String msgTxt = Utility.parseTranslation(this, vars, vars.getLanguage(), msg.getMsgText());
 
         OBError originalMessage = vars.getMessage("InstanceManagement");
         if (originalMessage != null) {
           msgTxt = originalMessage.getMessage() + "<br/>" + msgTxt;
         }
         myMessage.setMessage(msgTxt);
+        myMessage.setType(msg.getSeverity().toString());
       }
 
       if (myMessage == null
@@ -343,7 +344,6 @@ public class InstanceManagement extends HttpSecureAppServlet {
         myMessage = new OBError();
         myMessage.setType("Warning");
         myMessage.setMessage(Utility.messageBD(this, "OffDemandPlatform", vars.getLanguage()));
-
       }
 
       vars.removeMessage("InstanceManagement");

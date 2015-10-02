@@ -36,6 +36,56 @@ public interface ModuleLicenseRestrictions {
    */
   public LicenseRestriction checkRestrictions(ActivationKey activationKey, String currentSession);
 
-  /** Returns a message to show in login page, or empty if none required */
-  public String getLoginPageMessage(ActivationKey activationKey, String lang);
+  /**
+   * Returns a message related to activation key or null none required. It will be shown in:
+   * <ul>
+   * <li>Login Page
+   * <li>Instance Activation window
+   * </ul>
+   */
+  public ActivationMsg getActivationMessage(ActivationKey activationKey, String lang);
+
+  public enum MsgSeverity {
+    WARN("Warning"), ERROR("Error");
+
+    private String type;
+
+    MsgSeverity(String type) {
+      this.type = type;
+    }
+
+    MsgSeverity forType(String typeToCheck) {
+      for (MsgSeverity severity : MsgSeverity.values()) {
+        if (typeToCheck.equals(severity.toString())) {
+          return severity;
+        }
+      }
+      // fallback, if not found return error
+      return ERROR;
+    }
+
+    @Override
+    public String toString() {
+      return type;
+    }
+  }
+
+  /** holder for activation key messages */
+  public class ActivationMsg {
+    private MsgSeverity severity;
+    private String msgText;
+
+    public ActivationMsg(MsgSeverity severity, String msgText) {
+      this.severity = severity;
+      this.msgText = msgText;
+    }
+
+    public MsgSeverity getSeverity() {
+      return severity;
+    }
+
+    public String getMsgText() {
+      return msgText;
+    }
+  }
 }

@@ -73,6 +73,8 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.obps.DisabledModules.Artifacts;
+import org.openbravo.erpCommon.obps.ModuleLicenseRestrictions.ActivationMsg;
+import org.openbravo.erpCommon.obps.ModuleLicenseRestrictions.MsgSeverity;
 import org.openbravo.erpCommon.utility.HttpsUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
@@ -833,6 +835,37 @@ public class ActivationKey {
 
   public String getMessageType() {
     return messageType;
+  }
+
+  /** activation message to be displayed in Instance Activation window */
+  public ActivationMsg getActivationMessage() {
+    if (StringUtils.isNotEmpty(errorMessage)) {
+      // there is a core message (expiration, etc.), return it
+      return new ActivationMsg(MsgSeverity.valueOf(messageType), errorMessage);
+    }
+
+    // look for messages defined by modules
+    String customMsg = "";
+    MsgSeverity severity = MsgSeverity.ERROR;
+    BeanManager bm = WeldUtils.getStaticInstanceBeanManager();
+    for (Bean<?> restrictionBean : bm.getBeans(ModuleLicenseRestrictions.class)) {
+      ModuleLicenseRestrictions moduleRestriction = (ModuleLicenseRestrictions) bm.getReference(
+          restrictionBean, ModuleLicenseRestrictions.class,
+          bm.createCreationalContext(restrictionBean));
+      ActivationMsg moduleMsg = moduleRestriction.getActivationMessage(this, OBContext
+          .getOBContext().getLanguage().getLanguage());
+
+      if (moduleMsg != null) {
+        customMsg += moduleMsg.getMsgText();
+        severity = moduleMsg.getSeverity();
+      }
+    }
+
+    if (StringUtils.isEmpty(customMsg)) {
+      return null;
+    }
+
+    return new ActivationMsg(severity, customMsg);
   }
 
   /**
@@ -1619,7 +1652,8 @@ public class ActivationKey {
   }
 
   /**
-   * Returns a JSONObject with a message warning about near expiration or already expired instance.
+   * Returns a JSONObject with a message warning about near expiration or already expired instance
+   * to be displayed in Login page.
    * 
    */
   public JSONObject getExpirationMessage(String lang) {
@@ -1641,11 +1675,11 @@ public class ActivationKey {
           ModuleLicenseRestrictions moduleRestriction = (ModuleLicenseRestrictions) bm
               .getReference(restrictionBean, ModuleLicenseRestrictions.class,
                   bm.createCreationalContext(restrictionBean));
-          String msg = moduleRestriction.getLoginPageMessage(this, lang);
+          ActivationMsg msg = moduleRestriction.getActivationMessage(this, lang);
 
-          if (StringUtils.isNotBlank(msg)) {
-            result.put("type", "Error");
-            result.put("text", msg);
+          if (msg != null) {
+            result.put("type", "Error"); // always error for login page (warn is shown as an alert)
+            result.put("text", msg.getMsgText());
           }
         }
         return result;
