@@ -368,6 +368,9 @@ public class InstanceManagement extends HttpSecureAppServlet {
             Utility.messageBD(this, "OPSUnlimitedUsers", vars.getLanguage()).replace("\\n", "\n"));
     }
 
+    xmlDocument
+        .setParameter("moduleActions", activationKey.getInstanceActivationExtraActionsHtml());
+
     String cacheMsg = Utility.messageBD(this, "OUTDATED_FILES_CACHED", vars.getLanguage()).replace(
         "\\n", "\n");
     cacheMsg = "var cacheMsg = \"" + cacheMsg + "\"";

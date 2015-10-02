@@ -868,6 +868,24 @@ public class ActivationKey {
     return new ActivationMsg(severity, customMsg);
   }
 
+  /** gets HTML to be injected in Instance Activation window with additional actions to be performed */
+  public String getInstanceActivationExtraActionsHtml() {
+    String html = "";
+
+    BeanManager bm = WeldUtils.getStaticInstanceBeanManager();
+    for (Bean<?> restrictionBean : bm.getBeans(ModuleLicenseRestrictions.class)) {
+      ModuleLicenseRestrictions moduleRestriction = (ModuleLicenseRestrictions) bm.getReference(
+          restrictionBean, ModuleLicenseRestrictions.class,
+          bm.createCreationalContext(restrictionBean));
+      String moduleHtml = moduleRestriction.getInstanceActivationExtraActionsHtml();
+      if (moduleHtml != null) {
+        html += moduleHtml;
+      }
+    }
+
+    return html;
+  }
+
   /**
    * Deprecated, use instead {@link ActivationKey#checkOPSLimitations(String)}
    * 
