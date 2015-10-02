@@ -32,7 +32,6 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.Role;
-import org.openbravo.roleInheritance.RoleInheritanceManager.AccessType;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.db.DbUtility;
 import org.slf4j.Logger;
@@ -67,7 +66,7 @@ public class RecalculatePermissionsHandler extends BaseActionHandler {
         }
         successMessage = "RecalculateTemplatePermissionsSuccess";
       } else {
-        Map<AccessType, List<Integer>> accessCount = RoleInheritanceManager
+        Map<String, List<Integer>> accessCount = RoleInheritanceManager
             .recalculateAllAccessesForRole(role);
         textMessage = composeAccessMessageText(accessCount);
         if (StringUtils.isEmpty(textMessage)) {
@@ -101,15 +100,15 @@ public class RecalculatePermissionsHandler extends BaseActionHandler {
     return response;
   }
 
-  private String composeAccessMessageText(Map<AccessType, List<Integer>> map) {
+  private String composeAccessMessageText(Map<String, List<Integer>> map) {
     String text = "";
     try {
-      for (AccessType accessType : map.keySet()) {
-        List<Integer> counters = (List<Integer>) map.get(accessType);
+      for (String className : map.keySet()) {
+        List<Integer> counters = (List<Integer>) map.get(className);
         int updated = counters.get(0);
         int created = counters.get(1);
         if (updated > 0 || created > 0) {
-          Class<?> myClass = Class.forName(accessType.getClassName());
+          Class<?> myClass = Class.forName(className);
           Entity entity = ModelProvider.getInstance().getEntity(myClass);
           String[] params = { updated + "", created + "" };
           text += OBMessageUtils.getI18NMessage(entity.getName() + "_PermissionsCount", params)

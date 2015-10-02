@@ -21,8 +21,10 @@ package org.openbravo.roleInheritance;
 import javax.enterprise.event.Observes;
 
 import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.InheritedAccessEnabled;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.kernel.event.EntityDeleteEvent;
 import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEvent;
@@ -33,7 +35,6 @@ import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.Role;
-import org.openbravo.roleInheritance.RoleInheritanceManager.AccessType;
 
 /**
  * Listens to delete, update and save events for all classes implementing the
@@ -54,10 +55,8 @@ public class InheritedAccessEnabledEventHandler extends EntityPersistenceEventOb
     }
 
     final BaseOBObject bob = event.getTargetInstance();
+    final RoleInheritanceManager manager = getManager(bob);
     final InheritedAccessEnabled access = (InheritedAccessEnabled) bob;
-    final String entityName = bob.getEntity().getName();
-    final AccessType accessType = AccessType.getAccessType(entityName);
-    final RoleInheritanceManager manager = new RoleInheritanceManager(accessType);
     final Role role = manager.getRole(access);
     if (role != null && role.isTemplate()) {
       // Propagate new access just for roles marked as template
@@ -71,10 +70,8 @@ public class InheritedAccessEnabledEventHandler extends EntityPersistenceEventOb
     }
 
     final BaseOBObject bob = event.getTargetInstance();
+    final RoleInheritanceManager manager = getManager(bob);
     final InheritedAccessEnabled access = (InheritedAccessEnabled) bob;
-    final String entityName = bob.getEntity().getName();
-    final AccessType accessType = AccessType.getAccessType(entityName);
-    final RoleInheritanceManager manager = new RoleInheritanceManager(accessType);
     final Role role = manager.getRole(access);
     if (role != null && role.isTemplate()) {
       // Propagate updated access just for roles marked as template
@@ -88,10 +85,8 @@ public class InheritedAccessEnabledEventHandler extends EntityPersistenceEventOb
     }
 
     final BaseOBObject bob = event.getTargetInstance();
+    final RoleInheritanceManager manager = getManager(bob);
     final InheritedAccessEnabled access = (InheritedAccessEnabled) bob;
-    final String entityName = bob.getEntity().getName();
-    final AccessType accessType = AccessType.getAccessType(entityName);
-    final RoleInheritanceManager manager = new RoleInheritanceManager(accessType);
     final Role role = manager.getRole(access);
     if (notDeletingParent(role, access)) {
       if (access.getInheritedFrom() != null) {
@@ -121,5 +116,18 @@ public class InheritedAccessEnabledEventHandler extends EntityPersistenceEventOb
       return true;
     }
     return OBDal.getInstance().exists(Role.ENTITY_NAME, (String) DalUtil.getId(role));
+  }
+
+  private RoleInheritanceManager getManager(BaseOBObject bob) {
+    String entityClassName = ModelProvider.getInstance().getEntity(bob.getEntity().getName())
+        .getClassName();
+    RoleInheritanceManager manager = WeldUtils
+        .getInstanceFromStaticBeanManager(RoleInheritanceManager.class);
+    try {
+      manager.init(entityClassName);
+    } catch (Exception ex) {
+      // Do nothing, the manager will be always initialized without errors in this class
+    }
+    return manager;
   }
 }

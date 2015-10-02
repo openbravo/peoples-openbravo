@@ -23,17 +23,18 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
+import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.access.Role;
+import org.openbravo.model.ad.access.WindowAccess;
 import org.openbravo.roleInheritance.RoleInheritanceManager;
-import org.openbravo.test.base.OBBaseTest;
 
-public class RecalculatePermissionsTest extends OBBaseTest {
+public class RecalculatePermissionsTest extends WeldBaseTest {
   // This test case is intended to simulate the "Recalculate Permissions" process
-  // We make use of a extension of the OBBaseTest to avoid the execution of the related event
-  // handlers. This way, we can simulate the process of adding a permission without using DAL, like
+  // We remove an inherited access on purpose (this can not be done from the UI), this way we can
+  // simulate the process of adding a permission without using DAL, like
   // for example, when using the "Grant Access" process which uses xsql to insert data.
 
   @Test
@@ -50,11 +51,24 @@ public class RecalculatePermissionsTest extends OBBaseTest {
           RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true, true);
       String roleId = (String) DalUtil.getId(role);
 
+      OBDal.getInstance().commitAndClose();
+      template = OBDal.getInstance().get(Role.class, templateId);
+      role = OBDal.getInstance().get(Role.class, roleId);
+
       // Add inheritance
       RoleInheritanceTestUtils.addInheritance(role, template, new Long(10));
+      OBDal.getInstance().commitAndClose();
+      template = OBDal.getInstance().get(Role.class, templateId);
 
-      // Add permission (it will not be propagated as event handlers will not be fired)
+      // Add permission
       RoleInheritanceTestUtils.addAccess("WINDOW", template, "Sales Order");
+
+      OBDal.getInstance().commitAndClose();
+      role = OBDal.getInstance().get(Role.class, roleId);
+
+      // Remove inherited permission for role (to simulate not propagated access)
+      deleteInheritedWindowAccess(role);
+      assertThat("Access not propagated for role", role.getADWindowAccessList(), hasSize(0));
 
       OBDal.getInstance().commitAndClose();
       role = OBDal.getInstance().get(Role.class, roleId);
@@ -99,13 +113,29 @@ public class RecalculatePermissionsTest extends OBBaseTest {
       role2 = RoleInheritanceTestUtils.createRole("role2", RoleInheritanceTestUtils.CLIENT_ID,
           RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true, false);
       String role2Id = (String) DalUtil.getId(role2);
+      OBDal.getInstance().commitAndClose();
+
+      template = OBDal.getInstance().get(Role.class, templateId);
+      role1 = OBDal.getInstance().get(Role.class, role1Id);
+      role2 = OBDal.getInstance().get(Role.class, role2Id);
 
       // Add inheritance
       RoleInheritanceTestUtils.addInheritance(role1, template, new Long(10));
       RoleInheritanceTestUtils.addInheritance(role2, template, new Long(20));
+      OBDal.getInstance().commitAndClose();
 
-      // Add permission (it will not be propagated as event handlers will not be fired)
+      template = OBDal.getInstance().get(Role.class, templateId);
+      // Add permission
       RoleInheritanceTestUtils.addAccess("WINDOW", template, "Sales Order");
+
+      OBDal.getInstance().commitAndClose();
+      role1 = OBDal.getInstance().get(Role.class, role1Id);
+      role2 = OBDal.getInstance().get(Role.class, role2Id);
+      // Remove inherited permission for roles (to simulate not propagated accesses)
+      deleteInheritedWindowAccess(role1);
+      deleteInheritedWindowAccess(role2);
+      assertThat("Access not propagated for role 1", role1.getADWindowAccessList(), hasSize(0));
+      assertThat("Access not propagated for role 2", role2.getADWindowAccessList(), hasSize(0));
 
       OBDal.getInstance().commitAndClose();
       template = OBDal.getInstance().get(Role.class, templateId);
@@ -118,7 +148,6 @@ public class RecalculatePermissionsTest extends OBBaseTest {
 
       assertThat("There is a new access created with the recalculation for role1",
           role1.getADWindowAccessList(), hasSize(1));
-
       assertThat("There is a new access created with the recalculation for role2",
           role2.getADWindowAccessList(), hasSize(1));
 
@@ -139,5 +168,12 @@ public class RecalculatePermissionsTest extends OBBaseTest {
 
       OBContext.restorePreviousMode();
     }
+  }
+
+  private void deleteInheritedWindowAccess(Role role) {
+    WindowAccess wa = role.getADWindowAccessList().get(0);
+    wa.setInheritedFrom(null);
+    role.getADWindowAccessList().remove(wa);
+    OBDal.getInstance().remove(wa);
   }
 }

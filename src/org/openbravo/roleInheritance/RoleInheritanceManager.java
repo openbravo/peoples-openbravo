@@ -20,11 +20,16 @@ package org.openbravo.roleInheritance;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -32,21 +37,16 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.InheritedAccessEnabled;
-import org.openbravo.client.application.ViewRoleAccess;
-import org.openbravo.client.myob.WidgetClassAccess;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
-import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.FieldAccess;
-import org.openbravo.model.ad.access.FormAccess;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.RoleInheritance;
-import org.openbravo.model.ad.access.RoleOrganization;
 import org.openbravo.model.ad.access.TabAccess;
-import org.openbravo.model.ad.access.TableAccess;
 import org.openbravo.model.ad.access.WindowAccess;
 import org.openbravo.model.ad.alert.AlertRecipient;
 import org.openbravo.model.ad.domain.Preference;
@@ -62,20 +62,44 @@ public class RoleInheritanceManager {
   private static final int ACCESS_UPDATED = 1;
   private static final int ACCESS_CREATED = 2;
 
-  private final String className;
-  private final String securedElement;
-  private final List<String> skippedProperties;
+  private String className;
+  private String securedElement;
+  private List<String> skippedProperties;
+  @Inject
+  @Any
+  private Instance<AccessTypeInjector> accessTypeInjectors;
 
   /**
-   * Basic constructor of the class.
-   * 
-   * @param accessType
-   *          AccessType type which define the inheritable access that will be handled by the
-   *          manager
+   * Constructor of the class.
    */
-  public RoleInheritanceManager(AccessType accessType) {
-    this.className = accessType.getClassName();
-    this.securedElement = accessType.getSecuredElement();
+  public RoleInheritanceManager() {
+  }
+
+  /**
+   * Initializes the manager according to the entered class name of the access type.
+   * 
+   * @param classCanonicalName
+   *          class name of the permissions that will be handled by the manager
+   * @throws Exception
+   */
+  public void init(String classCanonicalName) throws Exception {
+    AccessTypeInjector injector = getInjector(classCanonicalName);
+    if (injector != null) {
+      initialize(injector);
+    } else {
+      throw new Exception("No injector found for class name " + classCanonicalName);
+    }
+  }
+
+  /**
+   * Initializes the required elements of the manager.
+   * 
+   * @param injector
+   *          injector used to retrieve the access type information
+   */
+  private void initialize(AccessTypeInjector injector) {
+    this.className = injector.getClassName();
+    this.securedElement = injector.getSecuredElement();
     this.skippedProperties = new ArrayList<String>(Arrays.asList("creationDate", "createdBy"));
     if ("org.openbravo.model.ad.alert.AlertRecipient".equals(className)) {
       skippedProperties.add("role");
@@ -466,8 +490,14 @@ public class RoleInheritanceManager {
     List<String> inheritanceRoleIdList = getRoleInheritancesInheritFromIdList(inheritanceList);
     List<RoleInheritance> newInheritanceList = new ArrayList<RoleInheritance>();
     newInheritanceList.add(inheritance);
-    for (AccessType accessType : AccessType.values()) {
-      RoleInheritanceManager manager = new RoleInheritanceManager(accessType);
+    for (AccessTypeInjector accessType : getAccessTypeOrderByPriority(true)) {
+      RoleInheritanceManager manager = WeldUtils
+          .getInstanceFromStaticBeanManager(RoleInheritanceManager.class);
+      try {
+        manager.init(accessType.getClassName());
+      } catch (Exception ex) {
+        // Do nothing, the manager will be always initialized without errors in this method
+      }
       manager.calculateAccesses(newInheritanceList, inheritanceRoleIdList);
     }
   }
@@ -481,8 +511,18 @@ public class RoleInheritanceManager {
   public static void applyRemoveInheritance(RoleInheritance inheritance) {
     List<RoleInheritance> inheritanceList = getUpdatedRoleInheritancesList(inheritance, true);
     List<String> inheritanceRoleIdList = getRoleInheritancesInheritFromIdList(inheritanceList);
-    for (AccessType accessType : getAccessTypeForDelete()) {
-      RoleInheritanceManager manager = new RoleInheritanceManager(accessType);
+    for (AccessTypeInjector accessType : getAccessTypeOrderByPriority(false)) {
+      // We need to retrieve the access types ordered descending by their priority, to force to
+      // handle first 'child' accesses like TabAccess or ChildAccess which have a
+      // priority number higher than their parent, WindowAccess. This way, child instances will be
+      // deleted first when it applies.
+      RoleInheritanceManager manager = WeldUtils
+          .getInstanceFromStaticBeanManager(RoleInheritanceManager.class);
+      try {
+        manager.init(accessType.getClassName());
+      } catch (Exception ex) {
+        // Do nothing, the manager will be always initialized without errors in this method
+      }
       manager.calculateAccesses(inheritanceList, inheritanceRoleIdList, inheritance);
     }
   }
@@ -497,9 +537,9 @@ public class RoleInheritanceManager {
   public static List<Role> recalculateAllAccessesFromTemplate(Role template) {
     List<Role> updatedRoles = new ArrayList<Role>();
     for (RoleInheritance ri : template.getADRoleInheritanceInheritFromList()) {
-      Map<AccessType, List<Integer>> result = recalculateAllAccessesForRole(ri.getRole());
-      for (AccessType accessType : result.keySet()) {
-        List<Integer> counters = (List<Integer>) result.get(accessType);
+      Map<String, List<Integer>> result = recalculateAllAccessesForRole(ri.getRole());
+      for (String accessClassName : result.keySet()) {
+        List<Integer> counters = (List<Integer>) result.get(accessClassName);
         int updated = counters.get(0);
         int created = counters.get(1);
         if (updated > 0 || created > 0) {
@@ -517,15 +557,21 @@ public class RoleInheritanceManager {
    *          The role whose accesses will be recalculated
    * @return a map with the number of accesses updated and created for every access type
    */
-  public static Map<AccessType, List<Integer>> recalculateAllAccessesForRole(Role role) {
-    Map<AccessType, List<Integer>> result = new HashMap<AccessType, List<Integer>>();
+  public static Map<String, List<Integer>> recalculateAllAccessesForRole(Role role) {
+    Map<String, List<Integer>> result = new HashMap<String, List<Integer>>();
     List<RoleInheritance> inheritanceList = getRoleInheritancesList(role);
     List<String> inheritanceRoleIdList = getRoleInheritancesInheritFromIdList(inheritanceList);
-    for (AccessType accessType : AccessType.values()) {
-      RoleInheritanceManager manager = new RoleInheritanceManager(accessType);
+    for (AccessTypeInjector accessType : getAccessTypeOrderByPriority(true)) {
+      RoleInheritanceManager manager = WeldUtils
+          .getInstanceFromStaticBeanManager(RoleInheritanceManager.class);
+      try {
+        manager.init(accessType.getClassName());
+      } catch (Exception e) {
+        // Do nothing, the manager will be always initialized without errors in this method
+      }
       List<Integer> accessCounters = manager.calculateAccesses(inheritanceList,
           inheritanceRoleIdList);
-      result.put(accessType, accessCounters);
+      result.put(accessType.getClassName(), accessCounters);
     }
     return result;
   }
@@ -949,161 +995,38 @@ public class RoleInheritanceManager {
   }
 
   /**
-   * Returns the list of access types in the order which they should be processed when deleting an
-   * inheritance.
+   * Returns the list of access types ordered by their priority value
    * 
    * @return the list of template access types
    */
-  private static List<AccessType> getAccessTypeForDelete() {
-    List<AccessType> list = new ArrayList<AccessType>();
-    list.add(AccessType.ORG_ACCESS);
-    list.add(AccessType.FIELD_ACCESS);
-    list.add(AccessType.TAB_ACCESS);
-    list.add(AccessType.WINDOW_ACCESS);
-    list.add(AccessType.PROCESS_ACCESS);
-    list.add(AccessType.FORM_ACCESS);
-    list.add(AccessType.WIDGET_ACCESS);
-    list.add(AccessType.VIEW_ACCESS);
-    list.add(AccessType.PROCESS_DEF_ACCESS);
-    list.add(AccessType.TABLE_ACCESS);
-    list.add(AccessType.ALERT_RECIPIENT);
-    list.add(AccessType.PREFERENCE);
+  private static List<AccessTypeInjector> getAccessTypeOrderByPriority(boolean ascending) {
+    RoleInheritanceManager manager = WeldUtils
+        .getInstanceFromStaticBeanManager(RoleInheritanceManager.class);
+    List<AccessTypeInjector> list = new ArrayList<AccessTypeInjector>();
+    for (AccessTypeInjector injector : manager.accessTypeInjectors) {
+      if (injector.hasValidAccess()) {
+        list.add(injector);
+      }
+    }
+    Collections.sort(list);
+    if (!ascending) {
+      Collections.reverse(list);
+    }
     return list;
   }
 
   /**
-   * Enumeration type which defines all inheritable accesses.
+   * Returns the injector for the access type related to the canonical name of the class entered as
+   * parameter
    * 
+   * @return the AccessTypeInjector used to retrieve the access type to be handled by the manager
    */
-  public enum AccessType {
-    /**
-     * Organization Access
-     */
-    ORG_ACCESS(org.openbravo.model.ad.access.RoleOrganization.class.getCanonicalName(),
-        "getOrganization"),
-    /**
-     * Window Access
-     */
-    WINDOW_ACCESS(org.openbravo.model.ad.access.WindowAccess.class.getCanonicalName(), "getWindow"),
-    /**
-     * Tab Access
-     */
-    TAB_ACCESS(org.openbravo.model.ad.access.TabAccess.class.getCanonicalName(), "getTab"),
-    /**
-     * Field Access
-     */
-    FIELD_ACCESS(org.openbravo.model.ad.access.FieldAccess.class.getCanonicalName(), "getField"),
-    /**
-     * Process Access
-     */
-    PROCESS_ACCESS(org.openbravo.model.ad.access.ProcessAccess.class.getCanonicalName(),
-        "getProcess"),
-    /**
-     * Form Access
-     */
-    FORM_ACCESS(org.openbravo.model.ad.access.FormAccess.class.getCanonicalName(), "getSpecialForm"),
-    /**
-     * Widget Class Access
-     */
-    WIDGET_ACCESS(org.openbravo.client.myob.WidgetClassAccess.class.getCanonicalName(),
-        "getWidgetClass"),
-    /**
-     * View Implementation Access
-     */
-    VIEW_ACCESS(org.openbravo.client.application.ViewRoleAccess.class.getCanonicalName(),
-        "getViewImplementation"),
-    /**
-     * Process Definition Access
-     */
-    PROCESS_DEF_ACCESS(org.openbravo.client.application.ProcessAccess.class.getCanonicalName(),
-        "getObuiappProcess"),
-    /**
-     * Table Access
-     */
-    TABLE_ACCESS(org.openbravo.model.ad.access.TableAccess.class.getCanonicalName(), "getTable"),
-    /**
-     * Alert Recipient Access
-     */
-    ALERT_RECIPIENT(org.openbravo.model.ad.alert.AlertRecipient.class.getCanonicalName(),
-        "getAlertRule"),
-    /**
-     * Preference
-     */
-    PREFERENCE(org.openbravo.model.ad.domain.Preference.class.getCanonicalName(), "getIdentifier");
-
-    private final String className;
-    private final String securedElement;
-
-    /**
-     * Basic constructor.
-     * 
-     * @param className
-     *          a String with the name of the class
-     * @param securedElement
-     *          a String with the name of the method to retrieve the secured element
-     */
-    AccessType(String className, String securedElement) {
-      this.className = className;
-      this.securedElement = securedElement;
-    }
-
-    /**
-     * Returns the name of the inheritable class.
-     * 
-     * @return A String with the class name
-     */
-    public String getClassName() {
-      return this.className;
-    }
-
-    /**
-     * Returns the secured object.
-     * 
-     * @return a String with the name of the method to retrieve the secured element
-     */
-    public String getSecuredElement() {
-      return this.securedElement;
-    }
-
-    /**
-     * Returns the corresponding AccessType based on the entity name.
-     * 
-     * @param entityName
-     *          a String with the entity name.
-     * @return the AccessType associated to the input entity.
-     * @throws OBException
-     *           In case the input String parameter does not correspond with any valid AccessType,
-     *           an exception is thrown with the error message.
-     */
-    public static AccessType getAccessType(String entityName) throws OBException {
-      if (RoleOrganization.ENTITY_NAME.equals(entityName)) {
-        return AccessType.ORG_ACCESS;
-      } else if (WindowAccess.ENTITY_NAME.equals(entityName)) {
-        return AccessType.WINDOW_ACCESS;
-      } else if (TabAccess.ENTITY_NAME.equals(entityName)) {
-        return AccessType.TAB_ACCESS;
-      } else if (FieldAccess.ENTITY_NAME.equals(entityName)) {
-        return AccessType.FIELD_ACCESS;
-      } else if (org.openbravo.model.ad.access.ProcessAccess.ENTITY_NAME.equals(entityName)) {
-        return AccessType.PROCESS_ACCESS;
-      } else if (FormAccess.ENTITY_NAME.equals(entityName)) {
-        return AccessType.FORM_ACCESS;
-      } else if (WidgetClassAccess.ENTITY_NAME.equals(entityName)) {
-        return AccessType.WIDGET_ACCESS;
-      } else if (ViewRoleAccess.ENTITY_NAME.equals(entityName)) {
-        return AccessType.VIEW_ACCESS;
-      } else if (org.openbravo.client.application.ProcessAccess.ENTITY_NAME.equals(entityName)) {
-        return AccessType.PROCESS_DEF_ACCESS;
-      } else if (TableAccess.ENTITY_NAME.equals(entityName)) {
-        return AccessType.TABLE_ACCESS;
-      } else if (AlertRecipient.ENTITY_NAME.equals(entityName)) {
-        return AccessType.ALERT_RECIPIENT;
-      } else if (Preference.ENTITY_NAME.equals(entityName)) {
-        return AccessType.PREFERENCE;
-      } else {
-        throw new OBException(OBMessageUtils.getI18NMessage("UnsupportedAccessType",
-            new String[] { entityName }));
+  private AccessTypeInjector getInjector(String classCanonicalName) {
+    for (AccessTypeInjector injector : accessTypeInjectors) {
+      if (injector.hasValidAccess() && classCanonicalName.equals(injector.getClassName())) {
+        return injector;
       }
     }
+    return null;
   }
 }

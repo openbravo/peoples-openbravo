@@ -28,12 +28,15 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.access.FormAccess;
+import org.openbravo.model.ad.access.ProcessAccess;
 import org.openbravo.model.ad.access.Role;
+import org.openbravo.model.ad.access.WindowAccess;
 import org.openbravo.roleInheritance.RoleInheritanceManager;
-import org.openbravo.roleInheritance.RoleInheritanceManager.AccessType;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class InsertAcces extends HttpSecureAppServlet {
@@ -227,20 +230,30 @@ public class InsertAcces extends HttpSecureAppServlet {
   }
 
   private void propagateAccess(String roleId, String type) {
-    Role role = OBDal.getInstance().get(Role.class, roleId);
-    if (role.isTemplate()) {
-      if ("W".equals(type) || "".equals(type)) {
-        RoleInheritanceManager manager = new RoleInheritanceManager(AccessType.WINDOW_ACCESS);
-        manager.recalculateAccessFromTemplate(role);
+    try {
+      Role role = OBDal.getInstance().get(Role.class, roleId);
+      if (role.isTemplate()) {
+        if ("W".equals(type) || "".equals(type)) {
+          RoleInheritanceManager manager = WeldUtils
+              .getInstanceFromStaticBeanManager(RoleInheritanceManager.class);
+          manager.init(WindowAccess.class.getCanonicalName());
+          manager.recalculateAccessFromTemplate(role);
+        }
+        if ("P".equals(type) || "R".equals(type) || "W".equals(type) || "".equals(type)) {
+          RoleInheritanceManager manager = WeldUtils
+              .getInstanceFromStaticBeanManager(RoleInheritanceManager.class);
+          manager.init(ProcessAccess.class.getCanonicalName());
+          manager.recalculateAccessFromTemplate(role);
+        }
+        if ("X".equals(type) || "".equals(type)) {
+          RoleInheritanceManager manager = WeldUtils
+              .getInstanceFromStaticBeanManager(RoleInheritanceManager.class);
+          manager.init(FormAccess.class.getCanonicalName());
+          manager.recalculateAccessFromTemplate(role);
+        }
       }
-      if ("P".equals(type) || "R".equals(type) || "W".equals(type) || "".equals(type)) {
-        RoleInheritanceManager manager = new RoleInheritanceManager(AccessType.PROCESS_ACCESS);
-        manager.recalculateAccessFromTemplate(role);
-      }
-      if ("X".equals(type) || "".equals(type)) {
-        RoleInheritanceManager manager = new RoleInheritanceManager(AccessType.FORM_ACCESS);
-        manager.recalculateAccessFromTemplate(role);
-      }
+    } catch (Exception ex) {
+      // Do nothing, as the managers will be always initialized without errors in this method
     }
   }
 
