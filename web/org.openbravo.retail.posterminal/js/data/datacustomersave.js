@@ -23,7 +23,7 @@
           customersList, customerId = this.customer.get('id'),
           isNew = false,
           bpToSave = new OB.Model.ChangedBusinessPartners(),
-          bpLocToSave = new OB.Model.BPLocation(),
+          bpLocation, bpLocToSave = new OB.Model.BPLocation(),
           customersListToChange;
 
       bpToSave.set('isbeingprocessed', 'N');
@@ -55,6 +55,23 @@
             bpToSave.set('json', me.customer.serializeToJSON());
             var successCallback = function () {
                 OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_customerSaved', [me.customer.get('_identifier')]));
+                // the location is sent to the server as part of the BP save, but when the BP is 
+                // added directly to the ticket it also needs the location object in the BP, in the
+                // locationModel
+                // This can be done by creating the object as below or requesting it again from the server
+                // but this takes another request, that's why it is created here as an object
+                if (!bpToSave.get('locationModel')) {
+                  bpLocation = new OB.Model.BPLocation();
+                  bpLocation.set('id', me.customer.get('locId'));
+                  bpLocation.set('bpartner', me.customer.get('id'));
+                  bpLocation.set('name', me.customer.get('locName'));
+                  bpLocation.set('postalCode', me.customer.get('postalCode'));
+                  bpLocation.set('cityName', me.customer.get('cityName'));
+                  bpLocation.set('_identifier', me.customer.get('locName'));
+                  bpLocation.set('countryName', OB.MobileApp.model.get('terminal').defaultbp_bpcountry_name);
+                  bpLocation.set('countryId', OB.MobileApp.model.get('terminal').defaultbp_bpcountry);
+                  bpToSave.set('locationModel', bpLocation);
+                }
                 };
             OB.MobileApp.model.runSyncProcess(successCallback);
           }, function () {
