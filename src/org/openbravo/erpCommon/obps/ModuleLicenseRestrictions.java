@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.obps;
 import javax.enterprise.context.ApplicationScoped;
 
 import org.openbravo.erpCommon.obps.ActivationKey.LicenseRestriction;
+import org.openbravo.xmlEngine.XmlEngine;
 
 /**
  * Modules can check for License restrictions. To do so this interface should be implemented.
@@ -46,7 +47,7 @@ public interface ModuleLicenseRestrictions {
   public ActivationMsg getActivationMessage(ActivationKey activationKey, String lang);
 
   /** Provides the HTML to be injected in Instance Activation window to perform additional actions */
-  public String getInstanceActivationExtraActionsHtml();
+  public String getInstanceActivationExtraActionsHtml(XmlEngine xmlEngine);
 
   public enum MsgSeverity {
     WARN("Warning"), ERROR("Error");

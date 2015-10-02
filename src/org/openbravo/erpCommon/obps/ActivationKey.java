@@ -87,6 +87,7 @@ import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.service.db.DalConnectionProvider;
+import org.openbravo.xmlEngine.XmlEngine;
 
 public class ActivationKey {
   private final static String OB_PUBLIC_KEY = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCPwCM5RfisLvWhujHajnLEjEpLC7DOXLySuJmHBqcQ8AQ63yZjlcv3JMkHMsPqvoHF3s2ztxRcxBRLc9C2T3uXQg0PTH5IAxsV4tv05S+tNXMIajwTeYh1LCoQyeidiid7FwuhtQNQST9/FqffK1oVFBnWUfgZKLMO2ZSHoEAORwIDAQAB";
@@ -869,7 +870,7 @@ public class ActivationKey {
   }
 
   /** gets HTML to be injected in Instance Activation window with additional actions to be performed */
-  public String getInstanceActivationExtraActionsHtml() {
+  public String getInstanceActivationExtraActionsHtml(XmlEngine xmlEngine) {
     String html = "";
 
     BeanManager bm = WeldUtils.getStaticInstanceBeanManager();
@@ -877,7 +878,7 @@ public class ActivationKey {
       ModuleLicenseRestrictions moduleRestriction = (ModuleLicenseRestrictions) bm.getReference(
           restrictionBean, ModuleLicenseRestrictions.class,
           bm.createCreationalContext(restrictionBean));
-      String moduleHtml = moduleRestriction.getInstanceActivationExtraActionsHtml();
+      String moduleHtml = moduleRestriction.getInstanceActivationExtraActionsHtml(xmlEngine);
       if (moduleHtml != null) {
         html += moduleHtml;
       }
