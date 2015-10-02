@@ -1433,7 +1433,9 @@ public class ActivationKey {
     if (hasActivationKey
         && !subscriptionConvertedProperty
         && !trial
-        && (hasExpired || checkNewWSCall(false) != WSRestriction.NO_RESTRICTION || checkOPSLimitations(null) == LicenseRestriction.NUMBER_OF_CONCURRENT_USERS_REACHED)) {
+        && (hasExpired || checkNewWSCall(false) != WSRestriction.NO_RESTRICTION
+            || checkOPSLimitations(null) == LicenseRestriction.NUMBER_OF_CONCURRENT_USERS_REACHED || !instanceProperties
+              .containsKey("posTerminals"))) {
       refreshLicense(24 * 60);
     } else {
       if (licenseType == LicenseType.ON_DEMAND && outOfPlatform) {
