@@ -358,6 +358,21 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
           selectedCreditLines, selectedCreditPayment);
 
       for (final FIN_Payment creditPayment : selectedCreditPayment) {
+        BusinessPartner businessPartner = creditPayment.getBusinessPartner();
+        if (businessPartner == null) {
+          throw new OBException(OBMessageUtils.messageBD("APRM_CreditWithoutBPartner"));
+        }
+        String currency = null;
+        if (businessPartner.getCurrency() == null) {
+          currency = creditPayment.getCurrency().getId();
+          businessPartner.setCurrency(creditPayment.getCurrency());
+        } else {
+          currency = businessPartner.getCurrency().getId();
+        }
+        if (!creditPayment.getCurrency().getId().equals(currency)) {
+          throw new OBException(String.format(OBMessageUtils.messageBD("APRM_CreditCurrency"),
+              businessPartner.getCurrency().getISOCode()));
+        }
         BigDecimal usedCreditAmt = selectedCreditPaymentAmounts.get(creditPayment.getId());
         if (strDifferenceAction.equals("refund")) {
           if (remainingRefundAmt.compareTo(usedCreditAmt) > 0) {
