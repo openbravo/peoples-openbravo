@@ -19,6 +19,8 @@ import org.openbravo.erpCommon.obps.ModuleLicenseRestrictions;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.retail.posterminal.OBPOSApplications;
 import org.openbravo.service.db.DalConnectionProvider;
+import org.openbravo.xmlEngine.XmlDocument;
+import org.openbravo.xmlEngine.XmlEngine;
 
 /**
  * Implements license restrictions for Retail based on defining a maximum number of active POS
@@ -55,6 +57,19 @@ public final class POSLicenseRestrictions implements ModuleLicenseRestrictions {
       return new ActivationMsg(MsgSeverity.WARN, msg);
     }
     return null;
+  }
+
+  @Override
+  public String getInstanceActivationExtraActionsHtml(XmlEngine xmlEngine) {
+    if (checkRestrictions(ActivationKey.getInstance(), null) != LicenseRestriction.POS_TERMINALS_EXCEEDED) {
+      return "";
+    }
+
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/retail/posterminal/security/DeactivateAllTerminalsButton")
+        .createXmlDocument();
+    return xmlDocument.print().replace("<HTML><BODY><TABLE>", "")
+        .replace("</TABLE></BODY></HTML>", "");
   }
 
   /**
@@ -122,5 +137,4 @@ public final class POSLicenseRestrictions implements ModuleLicenseRestrictions {
       OBContext.restorePreviousMode();
     }
   }
-
 }

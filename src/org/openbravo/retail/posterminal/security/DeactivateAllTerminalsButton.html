@@ -1,0 +1,55 @@
+<!--
+ ************************************************************************************
+ * Copyright (C) 2015 Openbravo S.L.U.
+ * Licensed under the Openbravo Commercial License version 1.0
+ * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
+ * or in the legal folder of this module distribution.
+ ************************************************************************************
+-->
+
+<tr>
+  <td/>
+  <td colspan="5" class="TitleCell" style="text-align:left;">
+    <span class="Label_ReadOnly_Text" >
+    <p class="Label_ReadOnly_Text">The number of active POS Terminals in this instance is bigger than the maximum number allowed.</p> 
+    <p class="Label_ReadOnly_Text">
+      You may acquire more terminals for your license.
+      </p>
+      <p class="Label_ReadOnly_Text">
+      You can also deactivate all active terminals in order to allow standard Admin role login
+      to activate only those ones that are really required. Note inactive terminals cannot be used. 
+    </p>
+    </span>
+  </td>
+                   <tr>
+                  <td>&nbsp;</td>
+                </tr> 
+                <tr>
+                <td/>
+                <td class="Button_LeftAlign_ContentCell" colspan="2">
+                    <div id="OPSExpiredCancel">
+                      <button type="button" 
+                        id="buttonCancel" 
+                        class="ButtonLink" 
+                        onclick="openServletNewWindow('SHOW_DEACTIVATE_TERMINALS', false, '../org.openbravo.retail.posterminal.ad_forms/InstanceActivationExtensions.html', 'BUTTON', null, true, 600, 900, null, null, null, null, true); return false;" 
+                        onfocus="buttonEvent('onfocus', this);" 
+                        onblur="buttonEvent('onblur', this);" 
+                        onkeyup="buttonEvent('onkeyup', this);" 
+                        onkeydown="buttonEvent('onkeydown', this);" 
+                        onkeypress="buttonEvent('onkeypress', this);" 
+                        onmouseup="buttonEvent('onmouseup', this);" 
+                        onmousedown="buttonEvent('onmousedown', this);" 
+                        onmouseover="buttonEvent('onmouseover', this);" 
+                        onmouseout="buttonEvent('onmouseout', this);">
+                        <table class="Button">
+                          <tr>
+                            <td class="Button_left"><img class="Button_Icon Button_Icon" src="../../../../../web/images/blank.gif" border="0" /></td>
+                            <td class="Button_text">Deactivate all POS Terminals</td>
+                            <td class="Button_right"></td>
+                          </tr>
+                        </table>
+                      </button>
+                    </div>
+                  </td>
+                  </tr>
+</tr>
