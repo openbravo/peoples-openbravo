@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -60,10 +60,9 @@ public class TransactionsToMatchTransformer extends HqlQueryTransformer {
     final StringBuffer whereClause = new StringBuffer();
     whereClause.append("e.reconciliation is null ");
     whereClause.append("and e.account.id = :account  ");
-    whereClause.append("and e.transactionDate <= :dateTo  ");
 
     queryNamedParameters.put("account", accountId);
-    queryNamedParameters.put("dateTo", date);
+    queryNamedParameters.put("dateTo", date); // In HQL filter clause
 
     return whereClause.toString();
   }

@@ -36,6 +36,12 @@ import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.pricing.pricelist.PriceListVersion;
 import org.openbravo.xmlEngine.XmlDocument;
 
+/* Replaced by {@link org.openbravo.event.ProductPriceObserver.ProductPriceObserver},
+ * which always overrides the organization by the price list version one. Note that the
+ * UI has a validation to display only Price List Versions belonging to organizations
+ * with access for the role
+ */
+@Deprecated
 public class SL_ProductPrice_PriceListVersion extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 

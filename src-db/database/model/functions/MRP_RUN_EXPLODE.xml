@@ -37,7 +37,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2012 Openbravo SLU
+* All portions are Copyright (C) 2001-2015 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -60,6 +60,8 @@
   Cur_Dependants RECORD;
   Cur_Parents RECORD;
   v_planneddate DATE;
+  Cur_ProcessPlanVersion RECORD;
+  v_ProcessPlan_Version_ID VARCHAR(32);
 BEGIN
   BEGIN --BODY
 
@@ -109,11 +111,24 @@ BEGIN
 	  Mrp_Run_Insertlines(p_Client_ID, p_Org_ID, p_User_ID, p_Run_ID, Cur_Run_Lines.M_Product_ID, -1*Cur_Run_Lines.Qty, -1*Cur_Run_Lines.Qty, Cur_Run_Lines.MRP_RUN_Line_ID, (CASE Cur_Run_Lines.ispurchased WHEN 'Y' THEN 'MP' ELSE 'WP' END), 'N', NULL, NULL, NULL, NULL, Cur_Run_Lines.MA_Processplan_ID, v_planneddate, (CASE Cur_Run_Lines.ispurchased WHEN 'Y' THEN (v_planneddate) ELSE v_planneddate - (CASE Cur_Run_Lines.DELAYMIN > (CASE WHEN Cur_Run_Lines.CAPACITY IS NULL THEN 0 ELSE CEIL(Cur_Run_Lines.Qty/Cur_Run_Lines.CAPACITY) END) WHEN true THEN Cur_Run_Lines.DELAYMIN ELSE (CASE WHEN Cur_Run_Lines.CAPACITY IS NULL THEN 0 ELSE CEIL(Cur_Run_Lines.Qty/Cur_Run_Lines.CAPACITY) END) END) END), 'Y', (CASE WHEN Cur_Run_Lines.ispurchased = 'Y' THEN 'Y' ELSE 'N' END), NULL, v_Aux_ID);
         ELSE
           v_ResultStr := 'Explode dependant products';
+          FOR Cur_ProcessPlanVersion IN (
+           select ma_processplan_version_id
+             FROM ma_processplan_totalized
+           where datefrom <= Cur_Run_Lines.plannedorderdate
+             and dateto > Cur_Run_Lines.plannedorderdate
+             and produced = Cur_Run_Lines.M_Product_ID
+             order by datefrom desc
+          )
+          LOOP
+            v_ProcessPlan_Version_ID:=Cur_ProcessPlanVersion.ma_processplan_version_id;
+            EXIT;
+          END LOOP;
           FOR Cur_Dependants IN (SELECT MA_PROCESSPLAN_TOT_AUX.DEPENDANTPRODUCT, DEPQTY/PROQTY AS qty,
                                         M_PRODUCT.ISPURCHASED
                                  FROM MA_PROCESSPLAN_TOT_AUX, M_PRODUCT
                                  WHERE PRODUCED = Cur_Run_Lines.M_Product_ID
-                                   AND MA_PROCESSPLAN_TOT_AUX.DEPENDANTPRODUCT = M_PRODUCT.M_PRODUCT_ID) LOOP
+                                   AND MA_PROCESSPLAN_TOT_AUX.DEPENDANTPRODUCT = M_PRODUCT.M_PRODUCT_ID
+                                   AND MA_PROCESSPLAN_TOT_AUX.MA_PROCESSPLAN_VERSION_ID = v_ProcessPlan_Version_ID) LOOP
             MRP_RUN_INITIALIZE(p_User_ID, p_Org_ID, p_Client_ID, p_Run_ID, p_Planner_ID, Cur_Dependants.DependantProduct,
                        NULL, NULL, NULL, NULL, p_TimeHorizon,
                        p_PlanningDate, 'Y');

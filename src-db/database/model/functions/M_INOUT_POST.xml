@@ -231,6 +231,24 @@
              RAISE_APPLICATION_ERROR(-20000, '@Inline@ '||v_Message_Qty||' '||'@ProductNotNullAndMovementQtyZero@') ;
           END IF;
 	     End ;
+      DECLARE
+      v_Message_Inactive_Products VARCHAR(2000) :='';
+      BEGIN
+        FOR Cur_Lines IN (
+          SELECT IOL.line
+          FROM M_InOutLine IOL, M_PRODUCT P
+          WHERE IOL.M_INOUT_ID=v_Record_ID
+          AND P.M_PRODUCT_ID = IOL.M_PRODUCT_ID
+          AND IOL.M_PRODUCT_ID IS NOT NULL AND P.ISACTIVE='N'
+          ORDER BY IOL.line
+          )
+        LOOP
+          v_Message_Inactive_Products:=v_Message_Inactive_Products||Cur_Lines.line||', ';
+        END LOOP;
+        IF v_Message_Inactive_Products != '' THEN
+          RAISE_APPLICATION_ERROR(-20000, '@Inline@ '||v_Message_Inactive_Products||' '||'@InActiveProducts@') ;
+        END IF;
+      END;
       SELECT CASE WHEN COALESCE(instr(M_INOUT.Description,'*R*:'),0) = 0 THEN 'N' ELSE 'Y' END
             INTO v_IsReversedDoc
             FROM M_INOUT

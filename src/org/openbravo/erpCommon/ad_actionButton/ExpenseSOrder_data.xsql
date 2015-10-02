@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2012 Openbravo SLU
+ * All portions are Copyright (C) 2001-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -173,6 +173,7 @@
            PRICELIST, PRICEACTUAL, PRICELIMIT,
            C_TAX_ID, S_RESOURCEASSIGNMENT_ID, DISCOUNT,
            PRICESTD, LINENETAMT,
+           GROSS_UNIT_PRICE, LINE_GROSS_AMOUNT, GROSSPRICELIST, GROSSPRICESTD,
            C_PROJECT_ID, USER1_ID, USER2_ID, C_COSTCENTER_ID, A_ASSET_ID)
         VALUES
           (?,?,?,
@@ -184,6 +185,7 @@
            TO_NUMBER(?), M_GET_OFFERS_PRICE(to_date(?),?,?,TO_NUMBER(?),TO_NUMBER(?),?),TO_NUMBER(?),
            ?, ?,TO_NUMBER(?),
            TO_NUMBER(?), (to_number(?) * to_number(?)),
+           TO_NUMBER(?), (to_number(?) * to_number(?)), TO_NUMBER(?), TO_NUMBER(?),
            ?, ?, ?, ?, ?)
       ]]>
     </Sql>
@@ -218,6 +220,11 @@
     <Parameter name="priceactual"/>
     <Parameter name="qtyordered"/>
     <Parameter name="priceactual"/>
+    <Parameter name="grossprice"/>
+    <Parameter name="qtyordered"/>
+    <Parameter name="grossprice"/>
+    <Parameter name="grosspricelist"/>
+    <Parameter name="grossprice"/>
     <Parameter name="cProjectId"/>
     <Parameter name="user1Id"/>
     <Parameter name="user2Id"/>
@@ -281,6 +288,15 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[
       SELECT C_Currency_ID
+      FROM M_PriceList
+      WHERE M_PriceList_ID = ?
+    ]]></Sql>
+    <Parameter name="mPricelistId"/>
+   </SqlMethod>
+   <SqlMethod name="selectisPriceIncludingTaxes" type="preparedStatement" return="String" default="">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql><![CDATA[
+      SELECT istaxincluded
       FROM M_PriceList
       WHERE M_PriceList_ID = ?
     ]]></Sql>

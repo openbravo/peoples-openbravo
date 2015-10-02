@@ -546,6 +546,37 @@ BEGIN --BODY
       v_Message:= '@ConsumedProductWithPostiveQty@' || ' @ReferProductionPlanLines@' || ': ' || v_Message;
       RAISE_APPLICATION_ERROR(-20000, v_Message);
     END IF;
+
+    DECLARE
+        v_Message_ProductionRun VARCHAR(2000) :='';
+        v_Message_ProductLine VARCHAR(2000) :='';
+        BEGIN
+          FOR CUR_ProductionPlan IN
+            (SELECT pp.Line, pp.M_PRODUCTIONPLAN_ID
+            FROM M_PRODUCTION p, M_PRODUCTIONPLAN pp
+            WHERE p.M_Production_ID=pp.M_Production_ID
+            AND pp.M_Production_ID=v_Record_ID
+            ORDER BY pp.Line)
+          LOOP
+            FOR CUR_PL_Post IN
+              (SELECT pl.Line
+              FROM M_PRODUCTIONLINE pl, M_PRODUCT pr
+              WHERE Cur_ProductionPlan.M_ProductionPlan_ID=pl.M_ProductionPlan_ID
+              AND pl.M_PRODUCT_ID=pr.M_PRODUCT_ID
+              AND pr.ISACTIVE='N'
+              ORDER BY pl.Line)
+            LOOP
+              v_Message_ProductLine:=v_Message_ProductLine||CUR_PL_Post.line||', ';
+            END LOOP;
+            IF(v_Message_ProductLine != '') THEN
+              v_Message_ProductionRun:=v_Message_ProductionRun||'@ProductionRunLine@'||Cur_ProductionPlan.line||' @ProductLine@'||v_Message_ProductLine;
+              v_Message_ProductLine:='';
+            END IF;
+          END LOOP;
+          IF v_Message_ProductionRun != '' THEN
+            RAISE_APPLICATION_ERROR(-20000, v_Message_ProductionRun||'@InActiveProducts@');
+          END IF;
+        END;
     
     SELECT count(*) INTO v_count
     FROM dual

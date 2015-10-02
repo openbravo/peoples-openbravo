@@ -19,7 +19,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2008 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2015 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -36,6 +36,7 @@
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
+    Cur_Tax RECORD;
     -- Parameter Variables
     v_M_Warehouse_ID VARCHAR2(32);
     --
@@ -184,15 +185,20 @@
           END IF;
           -- Get UOM - Tax -- VERY simplified, but should work in most cases
           v_ResultStr:='NoUOM+Tax';
-          SELECT COALESCE(MAX(C_UOM_ID), '100'),
-            MAX(C_Tax_ID) -- UOM 100=EA
-          INTO v_C_UOM_ID,
-            v_C_Tax_ID
-          FROM M_PRODUCT p,
-            C_TAX t
-          WHERE P.C_TaxCategory_ID=t.C_TaxCategory_ID
-            AND P.M_Product_ID=CUR_PLines.M_Product_ID
-          ORDER BY t.IsDefault DESC;
+          FOR Cur_Tax IN (
+            SELECT COALESCE(MAX(C_UOM_ID), '100') AS C_UOM_ID,
+              MAX(C_Tax_ID) AS C_Tax_ID-- UOM 100=EA
+            FROM M_PRODUCT p,
+              C_TAX t
+            WHERE P.C_TaxCategory_ID=t.C_TaxCategory_ID
+              AND P.M_Product_ID=CUR_PLines.M_Product_ID
+            GROUP BY t.IsDefault
+            ORDER BY t.IsDefault DESC )
+          LOOP
+            v_C_UOM_ID:=Cur_Tax.C_UOM_ID;
+            v_C_Tax_ID:=Cur_Tax.C_Tax_ID;
+            EXIT; -- set first values and exit
+          END LOOP;
           IF(v_C_Tax_ID IS NULL) THEN
             v_ResultStr:='NoTax';
             SELECT C_Tax_ID

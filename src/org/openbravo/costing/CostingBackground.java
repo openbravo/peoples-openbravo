@@ -43,6 +43,7 @@ import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.cost.CostingRule;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
+import org.openbravo.scheduling.KillableProcess;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.scheduling.ProcessLogger;
 import org.openbravo.service.db.DalBaseProcess;
@@ -52,12 +53,13 @@ import org.openbravo.service.db.DalConnectionProvider;
  * @author gorkaion
  * 
  */
-public class CostingBackground extends DalBaseProcess {
+public class CostingBackground extends DalBaseProcess implements KillableProcess {
   private static final Logger log4j = Logger.getLogger(CostingBackground.class);
   public static final String AD_PROCESS_ID = "3F2B4AAC707B4CE7B98D2005CF7310B5";
   private ProcessLogger logger;
   private int maxTransactions = 0;
   public static final String TRANSACTION_COST_DATEACCT_INITIALIZED = "TransactionCostDateacctInitialized";
+  private boolean killProcess = false;
 
   @Override
   protected void doExecute(ProcessBundle bundle) throws Exception {
@@ -107,6 +109,9 @@ public class CostingBackground extends DalBaseProcess {
       while (counter < maxTransactions) {
         batch++;
         for (String trxId : trxs) {
+          if (killProcess) {
+            throw new OBException("Process killed");
+          }
           counter++;
           MaterialTransaction transaction = OBDal.getInstance().get(MaterialTransaction.class,
               trxId);
@@ -115,9 +120,10 @@ public class CostingBackground extends DalBaseProcess {
           transactionCost.process();
           log4j.debug("Transaction processed: " + counter + "/" + maxTransactions + " batch: "
               + batch);
+          OBDal.getInstance().getSession().clear();
+          OBDal.getInstance().getConnection(true).commit();
         }
-        OBDal.getInstance().getConnection(true).commit();
-        OBDal.getInstance().getSession().clear();
+
         if (counter < maxTransactions) {
           trxs = getTransactionsBatch(orgsWithRule);
           total += trxs.size();
@@ -128,7 +134,7 @@ public class CostingBackground extends DalBaseProcess {
       bundle.setResult(result);
     } catch (OBException e) {
       OBDal.getInstance().rollbackAndClose();
-      calculateCorrectTrxWhileRollback(trxs, counter, total);
+      // calculateCorrectTrxWhileRollback(trxs, counter, total);
       String message = OBMessageUtils.parseTranslation(bundle.getConnection(), bundle.getContext()
           .toVars(), OBContext.getOBContext().getLanguage().getLanguage(), e.getMessage());
       result.setMessage(message);
@@ -139,7 +145,7 @@ public class CostingBackground extends DalBaseProcess {
       return;
     } catch (Exception e) {
       OBDal.getInstance().rollbackAndClose();
-      calculateCorrectTrxWhileRollback(trxs, counter, total);
+      // calculateCorrectTrxWhileRollback(trxs, counter, total);
       result = OBMessageUtils.translateError(bundle.getConnection(), bundle.getContext().toVars(),
           OBContext.getOBContext().getLanguage().getLanguage(), e.getMessage());
       result.setType("Error");
@@ -204,7 +210,7 @@ public class CostingBackground extends DalBaseProcess {
     if (maxTransactions == 0) {
       maxTransactions = count(orgsWithRule);
     }
-    trxQry.setMaxResults(1000);
+    trxQry.setMaxResults(10000);
     return trxQry.list();
   }
 
@@ -305,5 +311,10 @@ public class CostingBackground extends DalBaseProcess {
       OBDal.getInstance().flush();
       OBDal.getInstance().getConnection(true).commit();
     }
+  }
+
+  @Override
+  public void kill(ProcessBundle processBundle) throws Exception {
+    this.killProcess = true;
   }
 }

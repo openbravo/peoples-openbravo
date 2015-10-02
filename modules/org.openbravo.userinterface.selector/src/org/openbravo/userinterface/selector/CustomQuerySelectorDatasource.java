@@ -380,17 +380,11 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
       }
     } else {
       if ("iStartsWith".equals(operator)) {
-        whereClause = "upper("
-            + field.getClauseLeftPart()
-            + ") LIKE upper("
-            + getTypedParameterAlias(typedParameters, value.toLowerCase().replaceAll(" ", "%")
-                + "%") + ")";
+        whereClause = "upper(" + field.getClauseLeftPart() + ") LIKE upper("
+            + getTypedParameterAlias(typedParameters, value.replaceAll(" ", "%") + "%") + ")";
       } else {
-        whereClause = "upper("
-            + field.getClauseLeftPart()
-            + ") LIKE upper("
-            + getTypedParameterAlias(typedParameters, "%"
-                + value.toLowerCase().replaceAll(" ", "%") + "%") + ")";
+        whereClause = "upper(" + field.getClauseLeftPart() + ") LIKE upper("
+            + getTypedParameterAlias(typedParameters, "%" + value.replaceAll(" ", "%") + "%") + ")";
       }
     }
     return whereClause;

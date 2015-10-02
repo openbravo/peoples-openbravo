@@ -115,7 +115,6 @@ public class CostingServer {
             .intValue(), RoundingMode.HALF_UP);
         log4j.debug("  *** Transaction cost amount: " + trxCost.toString());
         // Save calculated cost on M_Transaction.
-        OBDal.getInstance().flush();
         transaction = OBDal.getInstance().get(MaterialTransaction.class, transaction.getId());
         transaction.setTransactionCost(trxCost);
         transaction.setCurrency(currency);

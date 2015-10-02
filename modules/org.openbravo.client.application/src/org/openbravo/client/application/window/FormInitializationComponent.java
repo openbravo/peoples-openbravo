@@ -256,7 +256,9 @@ public class FormInitializationComponent extends BaseActionHandler {
 
       // Computation of the Auxiliary Input values
       long t4 = System.currentTimeMillis();
-      computeAuxiliaryInputs(mode, tab, columnValues, overwrittenAuxiliaryInputs);
+      // allColumns cannot be used here because in change mode it only contains the modified columns
+      List<String> allColumnsInTab = getAllColumnsInTab(tab);
+      computeAuxiliaryInputs(mode, tab, allColumnsInTab, columnValues, overwrittenAuxiliaryInputs);
 
       // Computation of Column Values (using UIDefinition, so including combo values and all
       // relevant additional information)
@@ -276,7 +278,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       if (mode.equals("NEW") || mode.equals("CHANGE")) {
         // In the case of NEW mode, we compute auxiliary inputs again to take into account that
         // auxiliary inputs could depend on a default value
-        computeAuxiliaryInputs(mode, tab, columnValues, overwrittenAuxiliaryInputs);
+        computeAuxiliaryInputs(mode, tab, allColumnsInTab, columnValues, overwrittenAuxiliaryInputs);
       }
 
       if (changedCols.size() > 0) {
@@ -327,6 +329,18 @@ public class FormInitializationComponent extends BaseActionHandler {
       OBContext.restorePreviousMode();
     }
     return null;
+  }
+
+  /** Returns an unsorted list of all columns present in the tab */
+  private List<String> getAllColumnsInTab(Tab tab) {
+    List<String> allColumns = new ArrayList<String>();
+    for (Field field : getADFieldList(tab.getId())) {
+      if (field.getColumn() == null) {
+        continue;
+      }
+      allColumns.add(field.getColumn().getDBColumnName());
+    }
+    return allColumns;
   }
 
   private void analyzeResponse(Tab tab, Map<String, JSONObject> columnValues) {
@@ -422,18 +436,17 @@ public class FormInitializationComponent extends BaseActionHandler {
       int noteCount, List<String> overwrittenAuxiliaryInputs) {
     JSONObject finalObject = new JSONObject();
     try {
-      if (mode.equals("NEW") || mode.equals("CHANGE")) {
-        JSONArray arrayMessages = new JSONArray(calloutMessages);
-        finalObject.put("calloutMessages", arrayMessages);
-        if (!hiddenInputs.isEmpty()) {
-          JSONObject jsonHiddenInputs = new JSONObject();
-          for (String key : hiddenInputs.keySet()) {
-            jsonHiddenInputs.put(key, hiddenInputs.get(key));
-          }
-          finalObject.put("hiddenInputs", jsonHiddenInputs);
+      if ((mode.equals("NEW") || mode.equals("CHANGE")) && !hiddenInputs.isEmpty()) {
+        JSONObject jsonHiddenInputs = new JSONObject();
+        for (String key : hiddenInputs.keySet()) {
+          jsonHiddenInputs.put(key, hiddenInputs.get(key));
         }
+        finalObject.put("hiddenInputs", jsonHiddenInputs);
       }
       if (mode.equals("NEW") || mode.equals("EDIT") || mode.equals("CHANGE")) {
+        JSONArray arrayMessages = new JSONArray(calloutMessages);
+        finalObject.put("calloutMessages", arrayMessages);
+
         JSONObject jsonColumnValues = new JSONObject();
         for (Field field : getADFieldList(tab.getId())) {
           if (field.getColumn() == null) {
@@ -906,14 +919,22 @@ public class FormInitializationComponent extends BaseActionHandler {
 
   }
 
-  private void computeAuxiliaryInputs(String mode, Tab tab, Map<String, JSONObject> columnValues,
-      List<String> overwrittenAuxiliaryInputs) {
+  private void computeAuxiliaryInputs(String mode, Tab tab, List<String> allColumns,
+      Map<String, JSONObject> columnValues, List<String> overwrittenAuxiliaryInputs) {
     for (AuxiliaryInput auxIn : getAuxiliaryInputList(tab.getId())) {
       if (mode.equals("CHANGE") || mode.equals("NEW")) {
         // Don't compute the auxiliary inputs that have been overwritten by callouts
         if (overwrittenAuxiliaryInputs.contains(auxIn.getName())) {
           continue;
         }
+      }
+
+      if ((mode.equals("EDIT") || mode.equals("CHANGE"))
+          && containsIgnoreCase(allColumns, auxIn.getName())) {
+        // Don't recalculate auxiliary inputs with same name than a column in the tab because it
+        // would overwrite its actual value
+        log.debug("Skip aux input in mode " + mode + " " + auxIn.getName());
+        continue;
       }
       Object value = computeAuxiliaryInput(auxIn, tab.getWindow().getId());
       log.debug("Final Computed Value. Name: " + auxIn.getName() + " Value: " + value);

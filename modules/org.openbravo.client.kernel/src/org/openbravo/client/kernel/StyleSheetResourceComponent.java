@@ -155,8 +155,8 @@ public class StyleSheetResourceComponent extends BaseComponent {
                 }
                 String resourceContents = FileUtils.readFileToString(file, "UTF-8");
 
-                final String contextPath = getContextUrl()
-                    + resourcePath.substring(0, resourcePath.lastIndexOf("/"));
+                final String contextPath = (getContextUrl() + resourcePath.substring(0,
+                    resourcePath.lastIndexOf("/"))).replaceAll("//", "/");
                 String realPath = "";
                 if (realResourcePath.lastIndexOf("/") != -1) {
                   realPath = realResourcePath.substring(0, realResourcePath.lastIndexOf("/"));

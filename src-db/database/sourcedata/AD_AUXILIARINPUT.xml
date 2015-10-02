@@ -282,9 +282,7 @@
 <!--800019-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800019-->  <AD_TAB_ID><![CDATA[800052]]></AD_TAB_ID>
 <!--800019-->  <NAME><![CDATA[C_BPARTNER_ID]]></NAME>
-<!--800019-->  <CODE><![CDATA[@SQL=SELECT COALESCE(M_InOutLine.C_BPartner_ID, M_InOut.C_BPartner_ID) AS C_BPartner_ID
-FROM M_InOut JOIN M_InOutLine ON (M_InOut.M_InOut_ID = M_InOutLine.M_InOut_ID)
-WHERE M_InOutLine_ID=@M_InOutLine_ID@]]></CODE>
+<!--800019-->  <CODE><![CDATA[@C_BPARTNER_ID@]]></CODE>
 <!--800019-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800019--></AD_AUXILIARINPUT>
 
@@ -295,9 +293,7 @@ WHERE M_InOutLine_ID=@M_InOutLine_ID@]]></CODE>
 <!--800020-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800020-->  <AD_TAB_ID><![CDATA[800049]]></AD_TAB_ID>
 <!--800020-->  <NAME><![CDATA[C_BPARTNER_ID]]></NAME>
-<!--800020-->  <CODE><![CDATA[@SQL=SELECT COALESCE(M_InOutLine.C_BPartner_ID, M_InOut.C_BPartner_ID) AS C_BPartner_ID
-FROM M_InOut JOIN M_InOutLine ON (M_InOut.M_InOut_ID = M_InOutLine.M_InOut_ID)
-WHERE M_InOutLine_ID=@M_InOutLine_ID@]]></CODE>
+<!--800020-->  <CODE><![CDATA[@C_BPARTNER_ID@]]></CODE>
 <!--800020-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800020--></AD_AUXILIARINPUT>
 
@@ -308,9 +304,7 @@ WHERE M_InOutLine_ID=@M_InOutLine_ID@]]></CODE>
 <!--800021-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800021-->  <AD_TAB_ID><![CDATA[258]]></AD_TAB_ID>
 <!--800021-->  <NAME><![CDATA[C_BPARTNER_ID]]></NAME>
-<!--800021-->  <CODE><![CDATA[@SQL=SELECT COALESCE(M_InOutLine.C_BPartner_ID, M_InOut.C_BPartner_ID) AS C_BPartner_ID
-FROM M_InOut JOIN M_InOutLine ON (M_InOut.M_InOut_ID = M_InOutLine.M_InOut_ID)
-WHERE M_InOutLine_ID=@M_InOutLine_ID@]]></CODE>
+<!--800021-->  <CODE><![CDATA[@C_BPARTNER_ID@]]></CODE>
 <!--800021-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800021--></AD_AUXILIARINPUT>
 
@@ -321,9 +315,7 @@ WHERE M_InOutLine_ID=@M_InOutLine_ID@]]></CODE>
 <!--800022-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800022-->  <AD_TAB_ID><![CDATA[297]]></AD_TAB_ID>
 <!--800022-->  <NAME><![CDATA[C_BPARTNER_ID]]></NAME>
-<!--800022-->  <CODE><![CDATA[@SQL=SELECT COALESCE(M_InOutLine.C_BPartner_ID, M_InOut.C_BPartner_ID) AS C_BPartner_ID
-FROM M_InOut JOIN M_InOutLine ON (M_InOut.M_InOut_ID = M_InOutLine.M_InOut_ID)
-WHERE M_InOutLine_ID=@M_InOutLine_ID@]]></CODE>
+<!--800022-->  <CODE><![CDATA[@C_BPARTNER_ID@]]></CODE>
 <!--800022-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800022--></AD_AUXILIARINPUT>
 
@@ -356,9 +348,7 @@ WHERE M_InOutLine_ID=@M_InOutLine_ID@]]></CODE>
 <!--800026-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800026-->  <AD_TAB_ID><![CDATA[291]]></AD_TAB_ID>
 <!--800026-->  <NAME><![CDATA[C_BPARTNER_ID]]></NAME>
-<!--800026-->  <CODE><![CDATA[@SQL=SELECT COALESCE(C_InvoiceLine.C_BPartner_ID, C_Invoice.C_BPartner_ID) AS C_BPartner_ID
-FROM C_Invoice JOIN C_InvoiceLine ON (C_Invoice.C_Invoice_ID = C_InvoiceLine.C_Invoice_ID)
-WHERE C_InvoiceLine_ID=@C_InvoiceLine_ID@]]></CODE>
+<!--800026-->  <CODE><![CDATA[@C_BPARTNER_ID@]]></CODE>
 <!--800026-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800026--></AD_AUXILIARINPUT>
 
@@ -369,9 +359,7 @@ WHERE C_InvoiceLine_ID=@C_InvoiceLine_ID@]]></CODE>
 <!--800027-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800027-->  <AD_TAB_ID><![CDATA[270]]></AD_TAB_ID>
 <!--800027-->  <NAME><![CDATA[C_BPARTNER_ID]]></NAME>
-<!--800027-->  <CODE><![CDATA[@SQL=SELECT COALESCE(C_InvoiceLine.C_BPartner_ID, C_Invoice.C_BPartner_ID) AS C_BPartner_ID
-FROM C_Invoice JOIN C_InvoiceLine ON (C_Invoice.C_Invoice_ID = C_InvoiceLine.C_Invoice_ID)
-WHERE C_InvoiceLine_ID=@C_InvoiceLine_ID@]]></CODE>
+<!--800027-->  <CODE><![CDATA[@C_BPARTNER_ID@]]></CODE>
 <!--800027-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800027--></AD_AUXILIARINPUT>
 

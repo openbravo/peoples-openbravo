@@ -73,6 +73,7 @@ import org.openbravo.model.financialmgmt.accounting.FIN_FinancialAccountAccounti
 import org.openbravo.model.financialmgmt.accounting.coa.AcctSchemaTable;
 import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.gl.GLItemAccounts;
+import org.openbravo.model.financialmgmt.gl.GLJournal;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
@@ -204,6 +205,7 @@ public abstract class AcctServer {
   public static final String TABLEID_Invoice = "318";
   public static final String TABLEID_Payment = "D1A97202E832470285C9B1EB026D54E2";
   public static final String TABLEID_Transaction = "4D8C3B3C31D1410DA046140C9F024D17";
+  public static final String TABLEID_GLJournal = "224";
   public static final String TABLEID_Reconciliation = "B1B7075C46934F0A9FD4C4D0F1457B42";
 
   @Deprecated
@@ -1261,6 +1263,11 @@ public abstract class AcctServer {
               ConversionRateDoc.class,
               "financialAccountTransaction = '" + Record_ID + "' and currency='" + currency
                   + "' and toCurrency='" + acctSchema.m_C_Currency_ID + "'");
+        } else if (AD_Table_ID.equals(TABLEID_GLJournal)) {
+          conversionQuery = OBDal.getInstance().createQuery(
+              ConversionRateDoc.class,
+              "journalEntry = '" + Record_ID + "' and currency='" + currency + "' and toCurrency='"
+                  + acctSchema.m_C_Currency_ID + "'");
         }
         if (conversionQuery != null) {
           conversionCount = conversionQuery.count();
@@ -2342,18 +2349,16 @@ public abstract class AcctServer {
     if (record_ID != null) {
       if (table_ID.equals(TABLEID_Invoice)) {
         docRateCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_INVOICE, OBDal.getInstance()
-            .get(Invoice.class, OBDal.getInstance().get(Invoice.class, record_ID).getId())));
+            .get(Invoice.class, record_ID)));
       } else if (table_ID.equals(TABLEID_Payment)) {
-        docRateCriteria
-            .add(Restrictions.eq(
-                ConversionRateDoc.PROPERTY_PAYMENT,
-                OBDal.getInstance().get(FIN_Payment.class,
-                    OBDal.getInstance().get(FIN_Payment.class, record_ID).getId())));
+        docRateCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_PAYMENT, OBDal.getInstance()
+            .get(FIN_Payment.class, record_ID)));
       } else if (table_ID.equals(TABLEID_Transaction)) {
-        docRateCriteria.add(Restrictions.eq(
-            ConversionRateDoc.PROPERTY_FINANCIALACCOUNTTRANSACTION,
-            OBDal.getInstance().get(FIN_FinaccTransaction.class,
-                OBDal.getInstance().get(FIN_FinaccTransaction.class, record_ID).getId())));
+        docRateCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_FINANCIALACCOUNTTRANSACTION,
+            OBDal.getInstance().get(FIN_FinaccTransaction.class, record_ID)));
+      } else if (table_ID.equals(TABLEID_GLJournal)) {
+        docRateCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_JOURNALENTRY, OBDal
+            .getInstance().get(GLJournal.class, record_ID)));
       } else {
         return null;
       }

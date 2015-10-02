@@ -12,6 +12,7 @@
   <NAME><![CDATA[IVA Super Reducido Servicios]]></NAME>
   <DESCRIPTION><![CDATA[IVA Super Reducido Servicios]]></DESCRIPTION>
   <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
+  <ASBOM><![CDATA[N]]></ASBOM>
 </C_TAXCATEGORY>
 
 <C_TAXCATEGORY>
@@ -26,6 +27,7 @@
   <NAME><![CDATA[IVA Reducido B.Inmuebles]]></NAME>
   <DESCRIPTION><![CDATA[IVA Reducido B.Inmuebles]]></DESCRIPTION>
   <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
+  <ASBOM><![CDATA[N]]></ASBOM>
 </C_TAXCATEGORY>
 
 <C_TAXCATEGORY>
@@ -40,6 +42,7 @@
   <NAME><![CDATA[IVA Normal Bienes Inversión]]></NAME>
   <DESCRIPTION><![CDATA[IVA Normal Bienes Inversión]]></DESCRIPTION>
   <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
+  <ASBOM><![CDATA[N]]></ASBOM>
 </C_TAXCATEGORY>
 
 <C_TAXCATEGORY>
@@ -54,6 +57,7 @@
   <NAME><![CDATA[Exento Servicios]]></NAME>
   <DESCRIPTION><![CDATA[Exento Servicios]]></DESCRIPTION>
   <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
+  <ASBOM><![CDATA[N]]></ASBOM>
 </C_TAXCATEGORY>
 
 <C_TAXCATEGORY>
@@ -68,6 +72,7 @@
   <NAME><![CDATA[US State Sales Tax]]></NAME>
   <DESCRIPTION><![CDATA[This category is for sales tax by state in the United States]]></DESCRIPTION>
   <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
+  <ASBOM><![CDATA[N]]></ASBOM>
 </C_TAXCATEGORY>
 
 <C_TAXCATEGORY>
@@ -82,6 +87,7 @@
   <NAME><![CDATA[IVA Reducido]]></NAME>
   <DESCRIPTION><![CDATA[IVA Reducido]]></DESCRIPTION>
   <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
+  <ASBOM><![CDATA[N]]></ASBOM>
 </C_TAXCATEGORY>
 
 <C_TAXCATEGORY>
@@ -96,6 +102,7 @@
   <NAME><![CDATA[Exento]]></NAME>
   <DESCRIPTION><![CDATA[Exento]]></DESCRIPTION>
   <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
+  <ASBOM><![CDATA[N]]></ASBOM>
 </C_TAXCATEGORY>
 
 <C_TAXCATEGORY>
@@ -110,6 +117,7 @@
   <NAME><![CDATA[IVA Normal Servicios]]></NAME>
   <DESCRIPTION><![CDATA[IVA Normal Servicios]]></DESCRIPTION>
   <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
+  <ASBOM><![CDATA[N]]></ASBOM>
 </C_TAXCATEGORY>
 
 <C_TAXCATEGORY>
@@ -124,6 +132,7 @@
   <NAME><![CDATA[Exempt]]></NAME>
   <DESCRIPTION><![CDATA[Exempt taxes]]></DESCRIPTION>
   <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
+  <ASBOM><![CDATA[N]]></ASBOM>
 </C_TAXCATEGORY>
 
 <C_TAXCATEGORY>
@@ -138,6 +147,7 @@
   <NAME><![CDATA[IVA Reducido Servicios]]></NAME>
   <DESCRIPTION><![CDATA[IVA Reducido Servicios]]></DESCRIPTION>
   <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
+  <ASBOM><![CDATA[N]]></ASBOM>
 </C_TAXCATEGORY>
 
 <C_TAXCATEGORY>
@@ -152,6 +162,7 @@
   <NAME><![CDATA[IVA Super Reducido]]></NAME>
   <DESCRIPTION><![CDATA[IVA Super Reducido]]></DESCRIPTION>
   <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
+  <ASBOM><![CDATA[N]]></ASBOM>
 </C_TAXCATEGORY>
 
 <C_TAXCATEGORY>
@@ -166,6 +177,7 @@
   <NAME><![CDATA[IVA Normal]]></NAME>
   <DESCRIPTION><![CDATA[IVA Normal]]></DESCRIPTION>
   <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
+  <ASBOM><![CDATA[N]]></ASBOM>
 </C_TAXCATEGORY>
 
 <C_TAXCATEGORY>
@@ -180,6 +192,7 @@
   <NAME><![CDATA[IVA Normal B.Inmuebles]]></NAME>
   <DESCRIPTION><![CDATA[IVA Normal B.Inmuebles]]></DESCRIPTION>
   <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
+  <ASBOM><![CDATA[N]]></ASBOM>
 </C_TAXCATEGORY>
 
 </data>

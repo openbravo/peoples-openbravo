@@ -162,11 +162,8 @@ public abstract class ImportEntryProcessor {
     // as runnable can already be in a queue of the executorservice
     // waiting to be processed, but not yet started
     if (runnable != null) {
-      // there is runnable which can handle this ImportEntry
-      if (log.isDebugEnabled()) {
-        log.debug("Adding entry to runnable with key " + key);
-      }
-      // give it to the runnable
+      // give it to the runnable, the addEntry checks if the import entry
+      // is not already being handled, if so it is skipped
       runnable.addEntry(importEntry);
 
       // done
@@ -268,10 +265,12 @@ public abstract class ImportEntryProcessor {
     // when the garbagecollector runs
     private Map<String, OBContext> cachedOBContexts = new HashMap<String, OBContext>();
 
+    public ImportEntryProcessRunnable() {
+      logger = Logger.getLogger(this.getClass());
+    }
+
     @Override
     public void run() {
-
-      logger = Logger.getLogger(this.getClass());
       while (true) {
         try {
           int cnt = 0;
@@ -469,6 +468,8 @@ public abstract class ImportEntryProcessor {
       }
 
       if (!importEntryIds.contains(importEntry.getId())) {
+        logger.debug("Adding entry to runnable with key " + key);
+
         importEntryIds.add(importEntry.getId());
         // cache a queued entry as it has a much lower mem foot print than the import
         // entry itself
