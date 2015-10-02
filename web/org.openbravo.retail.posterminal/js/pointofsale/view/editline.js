@@ -152,10 +152,12 @@ enyo.kind({
     I18NLabel: 'OBPOS_LineTotal',
     render: function (line) {
       if (line) {
-        if (line.get('priceIncludesTax')) {
-          this.$.propertyValue.setContent(OB.I18N.formatCurrency(OB.DEC.sub(line.get('gross'), line.getTotalAmountOfPromotions())));
+        if (line.get('editlinetotal')) { // Is has been calculated, (by multiline)
+          this.$.propertyValue.setContent(OB.I18N.formatCurrency(line.get('editlinetotal')));
+        } else if (line.get('priceIncludesTax')) {
+          this.$.propertyValue.setContent(line.printTotalLine());
         } else {
-          this.$.propertyValue.setContent(OB.I18N.formatCurrency(OB.DEC.sub(line.get('net'), line.getTotalAmountOfPromotions())));
+          this.$.propertyValue.setContent(OB.I18N.formatCurrency(line.get('discountedNet')));
         }
       } else {
         this.$.propertyValue.setContent('');
@@ -801,6 +803,7 @@ enyo.kind({
           disc = OB.DEC.mul(OB.DEC.sub(this.selectedModels[0].get('product').get('standardPrice'), this.selectedModels[0].get('price')), this.selectedModels[0].get('qty')),
           discount = this.selectedModels[0].getTotalAmountOfPromotions(),
           warehousename = this.selectedModels[0].get('warehouse') ? this.selectedModels[0].get('warehouse').warehousename : '',
+          editlinetotal = this.selectedModels[0].get('priceIncludesTax') ? this.selectedModels[0].getTotalLine() : this.selectedModels[0].get('discountedNet'),
           orderLine = this.selectedModels[0].clone();
       for (i = 1; i < this.selectedModels.length; i++) {
         if (price && price !== this.selectedModels[i].get('price')) {
@@ -821,6 +824,7 @@ enyo.kind({
           quantity = 0;
         }
         priceTotal += this.selectedModels[i].get('price') * this.selectedModels[i].get('qty');
+        editlinetotal = OB.DEC.add(editlinetotal, this.selectedModels[i].get('priceIncludesTax') ? this.selectedModels[i].getTotalLine() : this.selectedModels[i].get('discountedNet'));
       }
       orderLine.get('product').set('_identifier', OB.I18N.getLabel('OBPOS_lblMultiSelectDescription', [this.selectedModels.length]));
       orderLine.set('qty', quantity);
@@ -853,6 +857,7 @@ enyo.kind({
       if (!orderLine.get('priceIncludesTax')) {
         orderLine.set('net', priceTotal);
       }
+      orderLine.set('editlinetotal', editlinetotal);
       this.$.linePropertiesContainer.$.grossLine.render(orderLine);
     } else {
       enyo.forEach(this.$.linePropertiesContainer.getComponents(), function (compToRender) {

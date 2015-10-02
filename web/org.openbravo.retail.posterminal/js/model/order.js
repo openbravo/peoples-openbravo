@@ -168,8 +168,8 @@
     },
 
     getTotalLine: function () {
-      if (!OB.UTIL.isNullOrUndefined(this.get('grossListPrice'))) {
-        return (OB.DEC.mul(this.get('grossListPrice'), this.get('qty'))) - this.getDiscount();
+      if (!OB.UTIL.isNullOrUndefined(this.get('price'))) {
+        return (OB.DEC.mul(this.get('price'), this.get('qty'))) - this.getDiscount();
       }
     },
 
