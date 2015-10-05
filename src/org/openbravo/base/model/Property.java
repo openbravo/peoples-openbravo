@@ -287,7 +287,7 @@ public class Property {
     }
     if (getName().equals("inheritedFrom") && !isPrimitive()
         && "ADRole".equals(getReferencedProperty().getEntity().getName())) {
-      log.info("Entity inheriting from role: " + getEntity().getName());
+      log.debug("Entity inheriting from role: " + getEntity().getName());
       getEntity().setHasInheritedFrom(true);
     }
   }
