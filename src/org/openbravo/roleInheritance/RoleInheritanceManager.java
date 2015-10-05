@@ -415,7 +415,6 @@ public class RoleInheritanceManager {
     }
     for (InheritedAccessEnabled iae : iaeToDelete) {
       iae.setInheritedFrom(null);
-      removeChildReferences(iae);
       roleAccessList.remove(iae);
       OBDal.getInstance().remove(iae);
     }
@@ -428,19 +427,29 @@ public class RoleInheritanceManager {
    * @param access
    *          The access to be removed from the parent list
    */
-  private void clearInheritFromFieldInChilds(InheritedAccessEnabled access) {
+  public void clearInheritFromFieldInChilds(InheritedAccessEnabled access) {
+    String inheritedFromId = (String) DalUtil.getId(access.getInheritedFrom());
     if ("org.openbravo.model.ad.access.WindowAccess".equals(className)) {
       WindowAccess wa = (WindowAccess) access;
       for (TabAccess ta : wa.getADTabAccessList()) {
-        ta.setInheritedFrom(null);
+        String taInheritedFromId = (String) DalUtil.getId(ta.getInheritedFrom());
+        if (ta.getInheritedFrom() != null && inheritedFromId.equals(taInheritedFromId)) {
+          ta.setInheritedFrom(null);
+        }
         for (FieldAccess fa : ta.getADFieldAccessList()) {
-          fa.setInheritedFrom(null);
+          String faInheritedFromId = (String) DalUtil.getId(fa.getInheritedFrom());
+          if (fa.getInheritedFrom() != null && inheritedFromId.equals(faInheritedFromId)) {
+            fa.setInheritedFrom(null);
+          }
         }
       }
     } else if ("org.openbravo.model.ad.access.TabAccess".equals(className)) {
       TabAccess ta = (TabAccess) access;
       for (FieldAccess fa : ta.getADFieldAccessList()) {
-        fa.setInheritedFrom(null);
+        String faInheritedFromId = (String) DalUtil.getId(fa.getInheritedFrom());
+        if (fa.getInheritedFrom() != null && inheritedFromId.equals(faInheritedFromId)) {
+          fa.setInheritedFrom(null);
+        }
       }
     }
   }
@@ -453,7 +462,7 @@ public class RoleInheritanceManager {
    * @param access
    *          The access to be removed from the parent list
    */
-  private void removeChildReferences(InheritedAccessEnabled access) {
+  public void removeReferenceInParentList(InheritedAccessEnabled access) {
     if ("org.openbravo.model.ad.access.TabAccess".equals(className)) {
       TabAccess ta = (TabAccess) access;
       ta.getWindowAccess().getADTabAccessList().remove(ta);
@@ -694,9 +703,8 @@ public class RoleInheritanceManager {
         }
         if (!updated) {
           // access not present in other inheritances, remove it
-          iaeToDelete.setInheritedFrom(null);
           clearInheritFromFieldInChilds(iaeToDelete);
-          removeChildReferences(iaeToDelete);
+          iaeToDelete.setInheritedFrom(null);
           roleAccessList.remove(iaeToDelete);
           OBDal.getInstance().remove(iaeToDelete);
         }
