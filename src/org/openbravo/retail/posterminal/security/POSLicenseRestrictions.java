@@ -8,6 +8,11 @@
  */
 package org.openbravo.retail.posterminal.security;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+
+import javax.enterprise.context.ApplicationScoped;
+
 import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.OBContext;
@@ -21,6 +26,12 @@ import org.openbravo.retail.posterminal.OBPOSApplications;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.xmlEngine.XmlDocument;
 import org.openbravo.xmlEngine.XmlEngine;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 
 /**
  * Implements license restrictions for Retail based on defining a maximum number of active POS
@@ -29,7 +40,25 @@ import org.openbravo.xmlEngine.XmlEngine;
  * @author alostale
  *
  */
-public final class POSLicenseRestrictions implements ModuleLicenseRestrictions {
+@ApplicationScoped
+public class POSLicenseRestrictions implements ModuleLicenseRestrictions {
+
+  /** keeping count in cache to prevent DB queries each time it is accessed */
+  private LoadingCache<String, Integer> countCache;
+
+  private static final String CACHE_KEY = "count";
+  private static final Logger log = LoggerFactory.getLogger(POSLicenseRestrictions.class);
+
+  public POSLicenseRestrictions() {
+    // initializing cache, keep last count for 10 minutes
+    countCache = CacheBuilder.newBuilder().expireAfterWrite(10L, TimeUnit.MINUTES)
+        .build(new CacheLoader<String, Integer>() {
+          @Override
+          public Integer load(String key) throws Exception {
+            return countNumberOfActiveTerminals();
+          }
+        });
+  }
 
   @Override
   public LicenseRestriction checkRestrictions(ActivationKey activationKey, String currentSession) {
@@ -106,6 +135,11 @@ public final class POSLicenseRestrictions implements ModuleLicenseRestrictions {
     return "";
   }
 
+  /** resets count cache by reading actual count from DB */
+  void resetNumberOfTerminals() {
+    countCache.invalidateAll();
+  }
+
   private String getPOSTerminalRestrictionMsg(ActivationKey activationKey, String lang,
       int addingTerminals) {
     Long allowedNumberOfTerminals = activationKey.getAllowedPosTerminals();
@@ -124,7 +158,22 @@ public final class POSLicenseRestrictions implements ModuleLicenseRestrictions {
     return "";
   }
 
+  /** gets current number of active terminals from cache */
   private int getNumberOfActiveTerminals() {
+    long t = System.currentTimeMillis();
+    try {
+      return countCache.get(CACHE_KEY);
+    } catch (ExecutionException e) {
+      e.printStackTrace();
+      return countNumberOfActiveTerminals();
+    } finally {
+      log.debug("read active terminals from cache, took {} ms", System.currentTimeMillis() - t);
+    }
+  }
+
+  /** counts current number of active terminals from DB */
+  private int countNumberOfActiveTerminals() {
+    long t = System.currentTimeMillis();
     // admin mode without client check in order to count all terminals in the system
     OBContext.setAdminMode(false);
     try {
@@ -134,6 +183,7 @@ public final class POSLicenseRestrictions implements ModuleLicenseRestrictions {
       q.setFilterOnActive(true);
       return q.count();
     } finally {
+      log.debug("count active terminals from DB, took {} ms", System.currentTimeMillis() - t);
       OBContext.restorePreviousMode();
     }
   }

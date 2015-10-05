@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.ad_forms.InstanceManagement;
 import org.openbravo.erpCommon.obps.ActivationKey;
@@ -57,6 +58,9 @@ public class InstanceActivationExtensions extends InstanceManagement {
       int deactivatedTerminals = OBDal.getInstance().getSession()
           .createQuery("update OBPOS_Applications set active = false where active = true")
           .executeUpdate();
+      POSLicenseRestrictions r = WeldUtils
+          .getInstanceFromStaticBeanManager(POSLicenseRestrictions.class);
+      r.resetNumberOfTerminals();
       log4j.info("Deactivated " + deactivatedTerminals + " POS Terminals");
       msg.setType("Success");
       msg.setTitle(Utility.messageBD(this, "OBPOS_AllTermianlsDeactivatedTitle", vars.getLanguage()));

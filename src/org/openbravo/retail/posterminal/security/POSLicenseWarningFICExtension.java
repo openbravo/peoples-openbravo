@@ -47,7 +47,7 @@ public class POSLicenseWarningFICExtension implements FICExtension {
     if (!isValidEvent(mode, tab)) {
       return;
     }
-
+    restrictions.resetNumberOfTerminals();
     try {
       JSONObject msg = new JSONObject();
       msg.put(

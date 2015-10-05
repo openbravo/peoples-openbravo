@@ -14,6 +14,7 @@ import javax.inject.Inject;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
+import org.openbravo.client.kernel.event.EntityDeleteEvent;
 import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
@@ -46,6 +47,7 @@ public class TerminalRestrictionsEventHandler extends EntityPersistenceEventObse
     if (!isValidEvent(event)) {
       return;
     }
+    licenseRestrictions.resetNumberOfTerminals();
     licenseRestrictions.checkRestrictionForNewTerminal();
   }
 
@@ -54,11 +56,19 @@ public class TerminalRestrictionsEventHandler extends EntityPersistenceEventObse
     if (!isValidEvent(event)) {
       return;
     }
-
+    licenseRestrictions.resetNumberOfTerminals();
     Boolean wasActive = (Boolean) event.getPreviousState(activeProperty);
     Boolean isActive = (Boolean) event.getCurrentState(activeProperty);
     if (!wasActive && isActive) {
       licenseRestrictions.checkRestrictionForNewTerminal();
     }
+  }
+
+  /** Checks it is allowed to create a new terminal */
+  public void onDelete(@Observes EntityDeleteEvent event) {
+    if (!isValidEvent(event)) {
+      return;
+    }
+    licenseRestrictions.resetNumberOfTerminals();
   }
 }
