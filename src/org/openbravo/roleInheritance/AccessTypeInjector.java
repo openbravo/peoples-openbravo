@@ -20,6 +20,8 @@ package org.openbravo.roleInheritance;
 import javax.enterprise.context.ApplicationScoped;
 
 import org.openbravo.base.structure.InheritedAccessEnabled;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An AccessTypeInjector is used by {@link RoleInheritanceManager} to retrieve the access types that
@@ -27,8 +29,8 @@ import org.openbravo.base.structure.InheritedAccessEnabled;
  */
 
 @ApplicationScoped
-public abstract class AccessTypeInjector extends AccessTypePriorityHandler implements
-    Comparable<AccessTypeInjector> {
+public abstract class AccessTypeInjector implements Comparable<AccessTypeInjector> {
+  private static final Logger log = LoggerFactory.getLogger(AccessTypeInjector.class);
 
   /**
    * Returns the name of the inheritable class.
@@ -43,6 +45,16 @@ public abstract class AccessTypeInjector extends AccessTypePriorityHandler imple
    * @return a String with the name of the method to retrieve the secured element
    */
   public abstract String getSecuredElement();
+
+  /**
+   * Returns the priority of this injector. It is used to determine the order when adding, updating
+   * or removing a particular access, if needed.
+   * 
+   * @return an integer that represents the priority of this injector
+   */
+  public int getPriority() {
+    return 100;
+  }
 
   /**
    * Allows comparation between AccessTypeInjector classes. The getPriority() method is used to
@@ -63,7 +75,7 @@ public abstract class AccessTypeInjector extends AccessTypePriorityHandler imple
       Class<?> accessClass = Class.forName(getClassName());
       return InheritedAccessEnabled.class.isAssignableFrom(accessClass);
     } catch (ClassNotFoundException e) {
-      // Class name not valid
+      log.debug("Invalid class name for AccessTypeInjector: ", getClassName());
       return false;
     }
   }

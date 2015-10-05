@@ -236,20 +236,17 @@ public class InsertAcces extends HttpSecureAppServlet {
         if ("W".equals(type) || "".equals(type)) {
           RoleInheritanceManager manager = WeldUtils
               .getInstanceFromStaticBeanManager(RoleInheritanceManager.class);
-          manager.init(WindowAccess.class.getCanonicalName());
-          manager.recalculateAccessFromTemplate(role);
+          manager.recalculateAccessFromTemplate(role, WindowAccess.class.getCanonicalName());
         }
         if ("P".equals(type) || "R".equals(type) || "W".equals(type) || "".equals(type)) {
           RoleInheritanceManager manager = WeldUtils
               .getInstanceFromStaticBeanManager(RoleInheritanceManager.class);
-          manager.init(ProcessAccess.class.getCanonicalName());
-          manager.recalculateAccessFromTemplate(role);
+          manager.recalculateAccessFromTemplate(role, ProcessAccess.class.getCanonicalName());
         }
         if ("X".equals(type) || "".equals(type)) {
           RoleInheritanceManager manager = WeldUtils
               .getInstanceFromStaticBeanManager(RoleInheritanceManager.class);
-          manager.init(FormAccess.class.getCanonicalName());
-          manager.recalculateAccessFromTemplate(role);
+          manager.recalculateAccessFromTemplate(role, FormAccess.class.getCanonicalName());
         }
       }
     } catch (Exception ex) {

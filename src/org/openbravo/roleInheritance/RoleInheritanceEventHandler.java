@@ -19,6 +19,7 @@
 package org.openbravo.roleInheritance;
 
 import javax.enterprise.event.Observes;
+import javax.inject.Inject;
 
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -39,6 +40,9 @@ import org.openbravo.model.ad.access.RoleInheritance;
 public class RoleInheritanceEventHandler extends EntityPersistenceEventObserver {
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(
       RoleInheritance.ENTITY_NAME) };
+
+  @Inject
+  private RoleInheritanceManager manager;
 
   @Override
   protected Entity[] getObservedEntities() {
@@ -63,7 +67,7 @@ public class RoleInheritanceEventHandler extends EntityPersistenceEventObserver 
     if (existCycles(inheritance.getRole(), inheritFromId)) {
       Utility.throwErrorMessage("CyclesInRoleInheritance");
     } else {
-      RoleInheritanceManager.applyNewInheritance(inheritance);
+      manager.applyNewInheritance(inheritance);
     }
   }
 
@@ -82,7 +86,7 @@ public class RoleInheritanceEventHandler extends EntityPersistenceEventObserver 
     boolean notDeletingParent = OBDal.getInstance().exists(Role.ENTITY_NAME,
         (String) DalUtil.getId(inheritance.getRole()));
     if (notDeletingParent) {
-      RoleInheritanceManager.applyRemoveInheritance(inheritance);
+      manager.applyRemoveInheritance(inheritance);
     }
   }
 

@@ -55,12 +55,15 @@ public class InheritedAccessEnabledEventHandler extends EntityPersistenceEventOb
     }
 
     final BaseOBObject bob = event.getTargetInstance();
-    final RoleInheritanceManager manager = getManager(bob);
+    String entityClassName = ModelProvider.getInstance().getEntity(bob.getEntity().getName())
+        .getClassName();
+    RoleInheritanceManager manager = WeldUtils
+        .getInstanceFromStaticBeanManager(RoleInheritanceManager.class);
     final InheritedAccessEnabled access = (InheritedAccessEnabled) bob;
-    final Role role = manager.getRole(access);
+    final Role role = manager.getRole(access, entityClassName);
     if (role != null && role.isTemplate()) {
       // Propagate new access just for roles marked as template
-      manager.propagateNewAccess(role, access);
+      manager.propagateNewAccess(role, access, entityClassName);
     }
   }
 
@@ -70,12 +73,15 @@ public class InheritedAccessEnabledEventHandler extends EntityPersistenceEventOb
     }
 
     final BaseOBObject bob = event.getTargetInstance();
-    final RoleInheritanceManager manager = getManager(bob);
+    String entityClassName = ModelProvider.getInstance().getEntity(bob.getEntity().getName())
+        .getClassName();
+    RoleInheritanceManager manager = WeldUtils
+        .getInstanceFromStaticBeanManager(RoleInheritanceManager.class);
     final InheritedAccessEnabled access = (InheritedAccessEnabled) bob;
-    final Role role = manager.getRole(access);
+    final Role role = manager.getRole(access, entityClassName);
     if (role != null && role.isTemplate()) {
       // Propagate updated access just for roles marked as template
-      manager.propagateUpdatedAccess(role, access);
+      manager.propagateUpdatedAccess(role, access, entityClassName);
     }
   }
 
@@ -85,18 +91,21 @@ public class InheritedAccessEnabledEventHandler extends EntityPersistenceEventOb
     }
 
     final BaseOBObject bob = event.getTargetInstance();
-    final RoleInheritanceManager manager = getManager(bob);
+    String entityClassName = ModelProvider.getInstance().getEntity(bob.getEntity().getName())
+        .getClassName();
+    RoleInheritanceManager manager = WeldUtils
+        .getInstanceFromStaticBeanManager(RoleInheritanceManager.class);
     final InheritedAccessEnabled access = (InheritedAccessEnabled) bob;
-    final Role role = manager.getRole(access);
+    final Role role = manager.getRole(access, entityClassName);
     if (notDeletingParent(role, access)) {
       if (access.getInheritedFrom() != null) {
         Utility.throwErrorMessage("NotDeleteInheritedAccess");
       }
       if (role != null && role.isTemplate()) {
         // Propagate access removal just for roles marked as template
-        manager.propagateDeletedAccess(role, access);
+        manager.propagateDeletedAccess(role, access, entityClassName);
       }
-      manager.removeReferenceInParentList(access);
+      manager.removeReferenceInParentList(access, entityClassName);
     }
   }
 
@@ -117,18 +126,5 @@ public class InheritedAccessEnabledEventHandler extends EntityPersistenceEventOb
       return true;
     }
     return OBDal.getInstance().exists(Role.ENTITY_NAME, (String) DalUtil.getId(role));
-  }
-
-  private RoleInheritanceManager getManager(BaseOBObject bob) {
-    String entityClassName = ModelProvider.getInstance().getEntity(bob.getEntity().getName())
-        .getClassName();
-    RoleInheritanceManager manager = WeldUtils
-        .getInstanceFromStaticBeanManager(RoleInheritanceManager.class);
-    try {
-      manager.init(entityClassName);
-    } catch (Exception ex) {
-      // Do nothing, the manager will be always initialized without errors in this class
-    }
-    return manager;
   }
 }

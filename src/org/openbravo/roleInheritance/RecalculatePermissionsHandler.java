@@ -21,6 +21,8 @@ package org.openbravo.roleInheritance;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -39,6 +41,8 @@ import org.slf4j.LoggerFactory;
 
 public class RecalculatePermissionsHandler extends BaseActionHandler {
   final static private Logger log = LoggerFactory.getLogger(RecalculatePermissionsHandler.class);
+  @Inject
+  private RoleInheritanceManager manager;
 
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) {
@@ -56,7 +60,7 @@ public class RecalculatePermissionsHandler extends BaseActionHandler {
       // - DEFAULT: Recalculate permissions for the selected (non template) role
       // - TEMPLATE: Recalculate permissions for all roles inheriting by the selected template role
       if ("TEMPLATE".equals(action)) {
-        List<Role> updatedRoles = RoleInheritanceManager.recalculateAllAccessesFromTemplate(role);
+        List<Role> updatedRoles = manager.recalculateAllAccessesFromTemplate(role);
         if (updatedRoles.size() > 0) {
           textMessage = composeTemplateAccessMessageText(updatedRoles);
         } else {
@@ -66,8 +70,7 @@ public class RecalculatePermissionsHandler extends BaseActionHandler {
         }
         successMessage = "RecalculateTemplatePermissionsSuccess";
       } else {
-        Map<String, List<Integer>> accessCount = RoleInheritanceManager
-            .recalculateAllAccessesForRole(role);
+        Map<String, List<Integer>> accessCount = manager.recalculateAllAccessesForRole(role);
         textMessage = composeAccessMessageText(accessCount);
         if (StringUtils.isEmpty(textMessage)) {
           textMessage = Utility.messageBD(new DalConnectionProvider(false),

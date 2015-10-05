@@ -17,8 +17,11 @@
  */
 package org.openbravo.roleInheritance;
 
+import javax.enterprise.context.ApplicationScoped;
+
 import org.openbravo.model.ad.alert.AlertRecipient;
 
+@ApplicationScoped
 public class AlertRecipientAccessInjector extends AccessTypeInjector {
 
   @Override

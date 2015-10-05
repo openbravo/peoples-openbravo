@@ -58,14 +58,11 @@ public class RoleInheritanceWarningFICExtension implements FICExtension {
           .getEntityByTableId((String) DalUtil.getId(tab.getTable())).getClassName();
       RoleInheritanceManager manager = WeldUtils
           .getInstanceFromStaticBeanManager(RoleInheritanceManager.class);
-      try {
-        manager.init(entityClassName);
-      } catch (Exception ex) {
-        // Expected exception for not valid access types
+      if (!manager.existsInjector(entityClassName)) {
         return;
       }
       InheritedAccessEnabled access = (InheritedAccessEnabled) row;
-      Role role = manager.getRole(access);
+      Role role = manager.getRole(access, entityClassName);
       String childRoleList = "";
       if (role.isTemplate()) {
         for (RoleInheritance inheritance : role.getADRoleInheritanceInheritFromList()) {

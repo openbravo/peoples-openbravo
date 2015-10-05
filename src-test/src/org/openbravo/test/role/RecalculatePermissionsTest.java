@@ -22,6 +22,8 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
 
+import javax.inject.Inject;
+
 import org.junit.Test;
 import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.dal.core.DalUtil;
@@ -36,6 +38,8 @@ public class RecalculatePermissionsTest extends WeldBaseTest {
   // We remove an inherited access on purpose (this can not be done from the UI), this way we can
   // simulate the process of adding a permission without using DAL, like
   // for example, when using the "Grant Access" process which uses xsql to insert data.
+  @Inject
+  private RoleInheritanceManager manager;
 
   @Test
   public void testRolePermissionRecalculate() {
@@ -73,7 +77,7 @@ public class RecalculatePermissionsTest extends WeldBaseTest {
       OBDal.getInstance().commitAndClose();
       role = OBDal.getInstance().get(Role.class, roleId);
 
-      RoleInheritanceManager.recalculateAllAccessesForRole(role);
+      manager.recalculateAllAccessesForRole(role);
       OBDal.getInstance().commitAndClose();
       role = OBDal.getInstance().get(Role.class, roleId);
       template = OBDal.getInstance().get(Role.class, templateId);
@@ -85,6 +89,8 @@ public class RecalculatePermissionsTest extends WeldBaseTest {
       String[] result = RoleInheritanceTestUtils.getAccessInfo("WINDOW", role, "Sales Order");
       assertThat("New access recalculated properly", expected, equalTo(result));
 
+    } catch (Exception ex) {
+      ex.printStackTrace();
     } finally {
       // Delete roles
       RoleInheritanceTestUtils.deleteRole(role);
@@ -140,7 +146,7 @@ public class RecalculatePermissionsTest extends WeldBaseTest {
       OBDal.getInstance().commitAndClose();
       template = OBDal.getInstance().get(Role.class, templateId);
 
-      RoleInheritanceManager.recalculateAllAccessesFromTemplate(template);
+      manager.recalculateAllAccessesFromTemplate(template);
       OBDal.getInstance().commitAndClose();
       role1 = OBDal.getInstance().get(Role.class, role1Id);
       role2 = OBDal.getInstance().get(Role.class, role2Id);
