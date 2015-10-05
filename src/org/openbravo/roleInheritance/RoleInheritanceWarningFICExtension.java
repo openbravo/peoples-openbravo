@@ -21,6 +21,7 @@ package org.openbravo.roleInheritance;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.model.ModelProvider;
@@ -70,8 +71,10 @@ public class RoleInheritanceWarningFICExtension implements FICExtension {
         for (RoleInheritance inheritance : role.getADRoleInheritanceInheritFromList()) {
           childRoleList += ", " + inheritance.getRole().getName();
         }
-        String[] msgParam = { childRoleList.substring(1) };
-        addWarningMessage(calloutMessages, "EditTemplateRoleAccess", msgParam);
+        if (!StringUtils.isEmpty(childRoleList)) {
+          String[] msgParam = { childRoleList.substring(1) };
+          addWarningMessage(calloutMessages, "EditTemplateRoleAccess", msgParam);
+        }
       }
     }
   }
