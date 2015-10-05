@@ -19,20 +19,11 @@ package org.openbravo.roleInheritance;
 
 import org.openbravo.model.ad.access.TableAccess;
 
+@AccessTypeInjector.Qualifier(TableAccess.class)
 public class TableAccessInjector extends AccessTypeInjector {
-
-  @Override
-  public String getClassName() {
-    return TableAccess.class.getCanonicalName();
-  }
 
   @Override
   public String getSecuredElement() {
     return "getTable";
-  }
-
-  @Override
-  public int getPriority() {
-    return 1000;
   }
 }

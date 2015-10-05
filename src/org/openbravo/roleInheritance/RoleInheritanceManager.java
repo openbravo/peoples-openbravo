@@ -365,7 +365,7 @@ public class RoleInheritanceManager {
    *          The list of accesses to remove from
    */
   private void deleteRoleAccess(Role inheritFromToDelete,
-      List<? extends InheritedAccessEnabled> roleAccessList) {
+      List<? extends InheritedAccessEnabled> roleAccessList, String className) {
     String inheritFromId = (String) DalUtil.getId(inheritFromToDelete);
     List<InheritedAccessEnabled> iaeToDelete = new ArrayList<InheritedAccessEnabled>();
     for (InheritedAccessEnabled ih : roleAccessList) {
@@ -378,6 +378,7 @@ public class RoleInheritanceManager {
     for (InheritedAccessEnabled iae : iaeToDelete) {
       iae.setInheritedFrom(null);
       roleAccessList.remove(iae);
+      removeReferenceInParentList(iae, className);
       OBDal.getInstance().remove(iae);
     }
   }
@@ -394,25 +395,33 @@ public class RoleInheritanceManager {
     if ("org.openbravo.model.ad.access.WindowAccess".equals(className)) {
       WindowAccess wa = (WindowAccess) access;
       for (TabAccess ta : wa.getADTabAccessList()) {
-        String taInheritedFromId = (String) DalUtil.getId(ta.getInheritedFrom());
-        if (ta.getInheritedFrom() != null && inheritedFromId.equals(taInheritedFromId)) {
-          ta.setInheritedFrom(null);
-        }
+        clearInheritedFromField(ta, inheritedFromId);
         for (FieldAccess fa : ta.getADFieldAccessList()) {
-          String faInheritedFromId = (String) DalUtil.getId(fa.getInheritedFrom());
-          if (fa.getInheritedFrom() != null && inheritedFromId.equals(faInheritedFromId)) {
-            fa.setInheritedFrom(null);
-          }
+          clearInheritedFromField(fa, inheritedFromId);
         }
       }
     } else if ("org.openbravo.model.ad.access.TabAccess".equals(className)) {
       TabAccess ta = (TabAccess) access;
       for (FieldAccess fa : ta.getADFieldAccessList()) {
-        String faInheritedFromId = (String) DalUtil.getId(fa.getInheritedFrom());
-        if (fa.getInheritedFrom() != null && inheritedFromId.equals(faInheritedFromId)) {
-          fa.setInheritedFrom(null);
-        }
+        clearInheritedFromField(fa, inheritedFromId);
       }
+    }
+  }
+
+  /**
+   * Sets to null the Inherited From field of an access whenever the value of the field is equal to
+   * the entered role id.
+   * 
+   * @param access
+   *          The access with the Inherit From field to be nullified
+   * @param roleId
+   *          The id of the role used to decide whether the field should be nullified or not
+   */
+  private void clearInheritedFromField(InheritedAccessEnabled access, String roleId) {
+    String inheritedFromId = access.getInheritedFrom() != null ? (String) DalUtil.getId(access
+        .getInheritedFrom()) : "";
+    if (!StringUtils.isEmpty(inheritedFromId) && roleId.equals(inheritedFromId)) {
+      access.setInheritedFrom(null);
     }
   }
 
@@ -782,7 +791,8 @@ public class RoleInheritanceManager {
     if (roleInheritanceToDelete != null) {
       // delete accesses not inherited anymore
       deleteRoleAccess(roleInheritanceToDelete.getInheritFrom(),
-          getAccessList(roleInheritanceToDelete.getRole(), injector.getClassName()));
+          getAccessList(roleInheritanceToDelete.getRole(), injector.getClassName()),
+          injector.getClassName());
     }
     List<Integer> result = new ArrayList<Integer>();
     result.add(new Integer(counters[ACCESS_UPDATED])); // number of accesses updated
@@ -977,9 +987,7 @@ public class RoleInheritanceManager {
   private List<AccessTypeInjector> getAccessTypeOrderByPriority(boolean ascending) {
     List<AccessTypeInjector> list = new ArrayList<AccessTypeInjector>();
     for (AccessTypeInjector injector : accessTypeInjectors) {
-      if (injector.hasValidAccess()) {
-        list.add(injector);
-      }
+      list.add(injector);
     }
     Collections.sort(list);
     if (!ascending) {
@@ -995,10 +1003,13 @@ public class RoleInheritanceManager {
    * @return the AccessTypeInjector used to retrieve the access type to be handled by the manager
    */
   private AccessTypeInjector getInjector(String classCanonicalName) {
-    for (AccessTypeInjector injector : accessTypeInjectors) {
-      if (classCanonicalName.equals(injector.getClassName()) && injector.hasValidAccess()) {
+    try {
+      for (AccessTypeInjector injector : accessTypeInjectors
+          .select(new AccessTypeInjector.Selector(classCanonicalName))) {
         return injector;
       }
+    } catch (Exception e) {
+      log.error("No access type injector found for class name: " + classCanonicalName, e);
     }
     return null;
   }

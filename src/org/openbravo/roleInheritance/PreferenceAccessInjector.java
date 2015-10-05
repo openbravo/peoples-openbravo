@@ -19,20 +19,11 @@ package org.openbravo.roleInheritance;
 
 import org.openbravo.model.ad.domain.Preference;
 
+@AccessTypeInjector.Qualifier(Preference.class)
 public class PreferenceAccessInjector extends AccessTypeInjector {
-
-  @Override
-  public String getClassName() {
-    return Preference.class.getCanonicalName();
-  }
 
   @Override
   public String getSecuredElement() {
     return "getIdentifier";
-  }
-
-  @Override
-  public int getPriority() {
-    return 1200;
   }
 }

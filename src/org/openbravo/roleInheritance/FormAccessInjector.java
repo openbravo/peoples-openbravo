@@ -19,20 +19,11 @@ package org.openbravo.roleInheritance;
 
 import org.openbravo.model.ad.access.FormAccess;
 
+@AccessTypeInjector.Qualifier(FormAccess.class)
 public class FormAccessInjector extends AccessTypeInjector {
-
-  @Override
-  public String getClassName() {
-    return FormAccess.class.getCanonicalName();
-  }
 
   @Override
   public String getSecuredElement() {
     return "getSpecialForm";
-  }
-
-  @Override
-  public int getPriority() {
-    return 600;
   }
 }

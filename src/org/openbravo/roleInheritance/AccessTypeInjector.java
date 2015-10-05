@@ -17,11 +17,15 @@
  */
 package org.openbravo.roleInheritance;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.util.AnnotationLiteral;
 
 import org.openbravo.base.structure.InheritedAccessEnabled;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * An AccessTypeInjector is used by {@link RoleInheritanceManager} to retrieve the access types that
@@ -30,14 +34,15 @@ import org.slf4j.LoggerFactory;
 
 @ApplicationScoped
 public abstract class AccessTypeInjector implements Comparable<AccessTypeInjector> {
-  private static final Logger log = LoggerFactory.getLogger(AccessTypeInjector.class);
 
   /**
    * Returns the name of the inheritable class.
    * 
    * @return A String with the class name
    */
-  public abstract String getClassName();
+  public String getClassName() {
+    return getClass().getAnnotation(AccessTypeInjector.Qualifier.class).value().getCanonicalName();
+  }
 
   /**
    * Returns the secured object.
@@ -70,13 +75,32 @@ public abstract class AccessTypeInjector implements Comparable<AccessTypeInjecto
     return this.getPriority() - accessTypePriority;
   }
 
-  public boolean hasValidAccess() {
-    try {
-      Class<?> accessClass = Class.forName(getClassName());
-      return InheritedAccessEnabled.class.isAssignableFrom(accessClass);
-    } catch (ClassNotFoundException e) {
-      log.debug("Invalid class name for AccessTypeInjector: ", getClassName());
-      return false;
+  /**
+   * Defines the qualifier used to register an access type.
+   */
+  @javax.inject.Qualifier
+  @Retention(RetentionPolicy.RUNTIME)
+  @Target({ ElementType.TYPE })
+  public @interface Qualifier {
+    Class<? extends InheritedAccessEnabled> value();
+  }
+
+  /**
+   * A class used to select the correct access type injector.
+   */
+  @SuppressWarnings("all")
+  public static class Selector extends AnnotationLiteral<AccessTypeInjector.Qualifier> implements
+      AccessTypeInjector.Qualifier {
+    private static final long serialVersionUID = 1L;
+
+    Class<? extends InheritedAccessEnabled> clazz;
+
+    public <T extends InheritedAccessEnabled> Selector(String className) throws Exception {
+      this.clazz = (Class<? extends InheritedAccessEnabled>) Class.forName(className);
+    }
+
+    public Class<? extends InheritedAccessEnabled> value() {
+      return this.clazz;
     }
   }
 }

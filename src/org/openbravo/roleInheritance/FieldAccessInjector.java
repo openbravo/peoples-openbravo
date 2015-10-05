@@ -19,12 +19,8 @@ package org.openbravo.roleInheritance;
 
 import org.openbravo.model.ad.access.FieldAccess;
 
+@AccessTypeInjector.Qualifier(FieldAccess.class)
 public class FieldAccessInjector extends AccessTypeInjector {
-
-  @Override
-  public String getClassName() {
-    return FieldAccess.class.getCanonicalName();
-  }
 
   @Override
   public String getSecuredElement() {

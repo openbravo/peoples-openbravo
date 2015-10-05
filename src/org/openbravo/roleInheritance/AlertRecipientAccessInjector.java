@@ -22,20 +22,11 @@ import javax.enterprise.context.ApplicationScoped;
 import org.openbravo.model.ad.alert.AlertRecipient;
 
 @ApplicationScoped
+@AccessTypeInjector.Qualifier(AlertRecipient.class)
 public class AlertRecipientAccessInjector extends AccessTypeInjector {
-
-  @Override
-  public String getClassName() {
-    return AlertRecipient.class.getCanonicalName();
-  }
 
   @Override
   public String getSecuredElement() {
     return "getAlertRule";
-  }
-
-  @Override
-  public int getPriority() {
-    return 1100;
   }
 }

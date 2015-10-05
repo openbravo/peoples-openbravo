@@ -19,12 +19,8 @@ package org.openbravo.roleInheritance;
 
 import org.openbravo.model.ad.access.WindowAccess;
 
+@AccessTypeInjector.Qualifier(WindowAccess.class)
 public class WindowAccessInjector extends AccessTypeInjector {
-
-  @Override
-  public String getClassName() {
-    return WindowAccess.class.getCanonicalName();
-  }
 
   @Override
   public String getSecuredElement() {

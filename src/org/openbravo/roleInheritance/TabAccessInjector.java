@@ -19,12 +19,8 @@ package org.openbravo.roleInheritance;
 
 import org.openbravo.model.ad.access.TabAccess;
 
+@AccessTypeInjector.Qualifier(TabAccess.class)
 public class TabAccessInjector extends AccessTypeInjector {
-
-  @Override
-  public String getClassName() {
-    return TabAccess.class.getCanonicalName();
-  }
 
   @Override
   public String getSecuredElement() {

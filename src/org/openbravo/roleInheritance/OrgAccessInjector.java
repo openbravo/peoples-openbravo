@@ -19,12 +19,8 @@ package org.openbravo.roleInheritance;
 
 import org.openbravo.model.ad.access.RoleOrganization;
 
+@AccessTypeInjector.Qualifier(RoleOrganization.class)
 public class OrgAccessInjector extends AccessTypeInjector {
-
-  @Override
-  public String getClassName() {
-    return RoleOrganization.class.getCanonicalName();
-  }
 
   @Override
   public String getSecuredElement() {

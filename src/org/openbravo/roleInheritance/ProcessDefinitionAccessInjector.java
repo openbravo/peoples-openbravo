@@ -19,20 +19,11 @@ package org.openbravo.roleInheritance;
 
 import org.openbravo.client.application.ProcessAccess;
 
+@AccessTypeInjector.Qualifier(ProcessAccess.class)
 public class ProcessDefinitionAccessInjector extends AccessTypeInjector {
-
-  @Override
-  public String getClassName() {
-    return ProcessAccess.class.getCanonicalName();
-  }
 
   @Override
   public String getSecuredElement() {
     return "getObuiappProcess";
-  }
-
-  @Override
-  public int getPriority() {
-    return 900;
   }
 }

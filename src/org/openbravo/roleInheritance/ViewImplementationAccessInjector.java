@@ -19,20 +19,11 @@ package org.openbravo.roleInheritance;
 
 import org.openbravo.client.application.ViewRoleAccess;
 
+@AccessTypeInjector.Qualifier(ViewRoleAccess.class)
 public class ViewImplementationAccessInjector extends AccessTypeInjector {
-
-  @Override
-  public String getClassName() {
-    return ViewRoleAccess.class.getCanonicalName();
-  }
 
   @Override
   public String getSecuredElement() {
     return "getViewImplementation";
-  }
-
-  @Override
-  public int getPriority() {
-    return 800;
   }
 }

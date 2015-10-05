@@ -19,20 +19,11 @@ package org.openbravo.roleInheritance;
 
 import org.openbravo.client.myob.WidgetClassAccess;
 
+@AccessTypeInjector.Qualifier(WidgetClassAccess.class)
 public class WidgetClassAccessInjector extends AccessTypeInjector {
-
-  @Override
-  public String getClassName() {
-    return WidgetClassAccess.class.getCanonicalName();
-  }
 
   @Override
   public String getSecuredElement() {
     return "getWidgetClass";
-  }
-
-  @Override
-  public int getPriority() {
-    return 700;
   }
 }
