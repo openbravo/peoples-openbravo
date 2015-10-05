@@ -397,7 +397,7 @@ enyo.kind({
     }, {
       tag: 'li',
       components: [{
-        style: 'padding: 10px; border-top: 1px solid #cccccc; height: 40px;',
+        style: 'padding: 10px; border-top: 1px solid #cccccc; min-height: 40px;',
         components: [{
           kind: 'btninvoice',
           name: 'divbtninvoice',
@@ -559,9 +559,14 @@ enyo.kind({
           this.$.divText.setContent(OB.I18N.getLabel('OBPOS_ToBeReturned'));
           this.$.divText.show();
         }
-      } else if (model.get('orderType') === 2) {
+      } else if (model.get('orderType') === 2 && !model.get('replacedorder_id')) {
         this.$.divText.addStyles('width: 60%; color: lightblue;');
         this.$.divText.setContent(OB.I18N.getLabel('OBPOS_ToBeLaidaway'));
+        this.$.divText.show();
+        //We have to ensure that there is not another handler showing this div
+      } else if (model.get('orderType') === 2 && model.get('replacedorder_id')) {
+        this.$.divText.addStyles('width: 90%; color: darkblue; line-height:30px');
+        this.$.divText.setContent("'Cancel and Replace' of " + model.get('replacedorder_documentNo'));
         this.$.divText.show();
         //We have to ensure that there is not another handler showing this div
       } else if (model.get('orderType') === 3) {
@@ -574,7 +579,7 @@ enyo.kind({
         this.$.divText.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
         this.$.divText.show();
         //We have to ensure that there is not another handler showing this div
-      } else if (this.$.divText.content === OB.I18N.getLabel('OBPOS_ToBeReturned') || this.$.divText.content === OB.I18N.getLabel('OBPOS_ToBeLaidaway') || this.$.divText.content === OB.I18N.getLabel('OBPOS_VoidLayaway')) {
+      } else if (this.$.divText.content === OB.I18N.getLabel('OBPOS_ToBeReturned') || this.$.divText.content === OB.I18N.getLabel('OBPOS_ToBeLaidaway') || this.$.divText.content === OB.I18N.getLabel('OBPOS_VoidLayaway') || this.$.divText.content.indexOf("Cancel and Replace") !== -1) {
         this.$.divText.hide();
       }
     }, this);
@@ -625,7 +630,7 @@ enyo.kind({
         this.$.listPaymentLines.show();
         this.$.paymentBreakdown.show();
         //We have to ensure that there is not another handler showing this div
-      } else if (this.$.divText.content === OB.I18N.getLabel('OBPOS_paid') || this.$.divText.content === OB.I18N.getLabel('OBPOS_paidReturn') || this.$.divText.content === OB.I18N.getLabel('OBPOS_paidOnCredit')) {
+      } else if (this.$.divText.content === OB.I18N.getLabel('OBPOS_paid') || this.$.divText.content === OB.I18N.getLabel('OBPOS_paidReturn') || this.$.divText.content === OB.I18N.getLabel('OBPOS_paidOnCredit') || (this.$.divText.content.indexOf("Cancel and Replace") !== -1 && !model.get('replacedorder_id'))) {
         this.$.divText.hide();
         this.$.listPaymentLines.hide();
         this.$.paymentBreakdown.hide();
@@ -640,6 +645,19 @@ enyo.kind({
         this.$.paymentBreakdown.show();
         //We have to ensure that there is not another handler showing this div
       } else if (this.$.divText.content === OB.I18N.getLabel('OBPOS_LblLayaway')) {
+        this.$.divText.hide();
+        this.$.listPaymentLines.hide();
+        this.$.paymentBreakdown.hide();
+      }
+    }, this);
+    this.order.on('change:replacedorder_id', function (model) {
+      if (model.get('replacedorder_id')) {
+        this.$.divText.addStyles('width: 90%; color: darkblue; line-height:30px');
+        this.$.divText.setContent("'Cancel and Replace' of " + model.get('replacedorder_documentNo'));
+        this.$.divText.show();
+        this.$.listPaymentLines.show();
+        this.$.paymentBreakdown.show();
+      } else if (this.$.divText.content.indexOf("Cancel and Replace") !== -1) {
         this.$.divText.hide();
         this.$.listPaymentLines.hide();
         this.$.paymentBreakdown.hide();

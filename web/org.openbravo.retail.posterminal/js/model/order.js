@@ -2431,6 +2431,64 @@
       });
     },
 
+    cancelAndReplaceOrder: function () {
+      var documentseq, documentseqstr, idMap = {},
+          me = this;
+
+      this.get('lines').each(function (line) {
+        idMap[line.get('id')] = OB.Dal.get_uuid();
+        line.set('id', idMap[line.get('id')]);
+      }, this);
+
+      this.set('replacedorder_documentNo', this.get('documentNo'));
+      this.set('replacedorder_id', this.get('id'));
+      this.set('id', null);
+      this.set('session', OB.MobileApp.model.get('session'));
+
+      this.set('generateInvoice', OB.MobileApp.model.get('terminal').terminalType.generateInvoice);
+      this.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentType);
+
+      if (this.get('isLayaway')) {
+        this.set('orderType', 2);
+      }
+      this.set('isLayaway', false);
+
+      this.set('createdBy', OB.MobileApp.model.get('orgUserId'));
+      if (OB.MobileApp.model.get('context').isSalesRepresentative) {
+        this.set('salesRepresentative', OB.MobileApp.model.get('context').user.id);
+      } else {
+        this.set('salesRepresentative', null);
+      }
+
+      this.set('hasbeenpaid', 'N');
+      this.set('isPaid', false);
+      this.set('isEditable', true);
+
+      this.set('orderDate', new Date());
+      this.set('creationDate', null);
+
+      var nextDocumentno = OB.MobileApp.model.getNextDocumentno();
+      this.set('documentnoPrefix', OB.MobileApp.model.get('terminal').docNoPrefix);
+      this.set('documentnoSuffix', nextDocumentno.documentnoSuffix);
+      this.set('documentNo', nextDocumentno.documentNo);
+      this.set('posTerminal', OB.MobileApp.model.get('terminal').id);
+      this.save();
+
+      this.get('lines').each(function (line) {
+        if (line.get('relatedLines')) {
+          line.get('relatedLines').forEach(function (rl) {
+            rl.orderId = me.get('id');
+            if (idMap[rl.orderlineId]) {
+              rl.orderlineId = idMap[rl.orderlineId];
+            }
+          });
+        }
+      }, this);
+
+      OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_OrderReplaced', [this.get('replacedorder_documentNo'), this.get('documentNo')]));
+      this.calculateGross();
+    },
+
     createQuotation: function () {
       if (OB.MobileApp.model.hasPermission('OBPOS_receipt.quotation')) {
         this.set('isQuotation', true);

@@ -982,14 +982,17 @@ enyo.kind({
       return true;
     }
     this.inherited(arguments); // Manual dropdown menu closure
+    this.model.get('order').cancelAndReplaceOrder();
   },
-  updateVisibility: function (model) {
-    var isPaidReceipt, isLayaway;
+  updateVisibility: function () {
+    var isPaidReceipt, isLayaway, receipt;
 
-    isPaidReceipt = model.get('isPaid') === true && !model.get('isQuotation');
-    isLayaway = model.get('isLayaway');
+    receipt = this.model.get('order');
 
-    if (!model.get('replacedorder_id') && (isPaidReceipt || isLayaway)) {
+    isPaidReceipt = receipt.get('isPaid') === true && !receipt.get('isQuotation');
+    isLayaway = receipt.get('isLayaway');
+
+    if (!receipt.get('replacedorder_id') && (isPaidReceipt || isLayaway)) {
       this.show();
     } else {
       this.hide();
@@ -1001,19 +1004,21 @@ enyo.kind({
     var receipt = model.get('order'),
         me = this;
 
-    model.get('leftColumnViewManager').on('order', function () {
-      this.updateVisibility(receipt);
+    this.model = model;
+
+    this.model.get('leftColumnViewManager').on('order', function () {
+      this.updateVisibility();
       this.adjustVisibilityBasedOnPermissions();
     }, this);
 
-    model.get('leftColumnViewManager').on('multiorder', function () {
+    this.model.get('leftColumnViewManager').on('multiorder', function () {
       me.hide();
     }, this);
 
-    receipt.on('change:isLayaway change:isPaid change:isQuotation', function (model) {
-      this.updateVisibility(receipt);
+    receipt.on('change:isLayaway change:isPaid change:isQuotation', function () {
+      this.updateVisibility();
     }, this);
 
-    this.updateVisibility(receipt);
+    this.updateVisibility();
   }
 });
