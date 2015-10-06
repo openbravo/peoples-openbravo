@@ -13,36 +13,17 @@
  * The Initial Developer of the Original Code is Openbravo SLU 
  * All portions are Copyright (C) 2015 Openbravo SLU 
  * All Rights Reserved. 
- * Contributor(s):  ______________________________________.
  ************************************************************************
  */
+package org.openbravo.role.inheritance.access;
 
-package org.openbravo.test.role;
+import org.openbravo.client.application.ViewRoleAccess;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+@AccessTypeInjector.Qualifier(ViewRoleAccess.class)
+public class ViewImplementationAccessInjector extends AccessTypeInjector {
 
-/**
- * 
- * Test Suite for Role Inheritance
- * 
- */
-
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
-
-// Propagation Tests
-    AccessPropagationNotInheritedTest.class, //
-    AccessPropagationTest.class, //
-    DeletedAccessPropagationTest.class,
-    // Inheritance Tests
-    HorizontalInheritanceTest.class, //
-    VerticalInheritanceTest.class, //
-    // Restrictions Test
-    RoleInheritanceRestrictionsTest.class, //
-    // Recalculate Permissions Process Test
-    RecalculatePermissionsTest.class, //
-})
-public class RoleInheritanceTestSuite {
-
+  @Override
+  public String getSecuredElement() {
+    return "getViewImplementation";
+  }
 }

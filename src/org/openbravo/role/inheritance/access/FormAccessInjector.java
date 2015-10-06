@@ -15,15 +15,15 @@
  * All Rights Reserved. 
  ************************************************************************
  */
-package org.openbravo.roleInheritance;
+package org.openbravo.role.inheritance.access;
 
-import org.openbravo.model.ad.domain.Preference;
+import org.openbravo.model.ad.access.FormAccess;
 
-@AccessTypeInjector.Qualifier(Preference.class)
-public class PreferenceAccessInjector extends AccessTypeInjector {
+@AccessTypeInjector.Qualifier(FormAccess.class)
+public class FormAccessInjector extends AccessTypeInjector {
 
   @Override
   public String getSecuredElement() {
-    return "getIdentifier";
+    return "getSpecialForm";
   }
 }

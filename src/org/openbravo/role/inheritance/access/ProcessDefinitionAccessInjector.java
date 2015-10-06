@@ -15,15 +15,15 @@
  * All Rights Reserved. 
  ************************************************************************
  */
-package org.openbravo.roleInheritance;
+package org.openbravo.role.inheritance.access;
 
-import org.openbravo.client.application.ViewRoleAccess;
+import org.openbravo.client.application.ProcessAccess;
 
-@AccessTypeInjector.Qualifier(ViewRoleAccess.class)
-public class ViewImplementationAccessInjector extends AccessTypeInjector {
+@AccessTypeInjector.Qualifier(ProcessAccess.class)
+public class ProcessDefinitionAccessInjector extends AccessTypeInjector {
 
   @Override
   public String getSecuredElement() {
-    return "getViewImplementation";
+    return "getObuiappProcess";
   }
 }

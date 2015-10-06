@@ -16,7 +16,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-package org.openbravo.roleInheritance;
+package org.openbravo.role.inheritance;
 
 import javax.enterprise.event.Observes;
 

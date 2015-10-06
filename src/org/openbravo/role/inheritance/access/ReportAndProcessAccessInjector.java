@@ -15,18 +15,15 @@
  * All Rights Reserved. 
  ************************************************************************
  */
-package org.openbravo.roleInheritance;
+package org.openbravo.role.inheritance.access;
 
-import javax.enterprise.context.ApplicationScoped;
+import org.openbravo.model.ad.access.ProcessAccess;
 
-import org.openbravo.model.ad.alert.AlertRecipient;
-
-@ApplicationScoped
-@AccessTypeInjector.Qualifier(AlertRecipient.class)
-public class AlertRecipientAccessInjector extends AccessTypeInjector {
+@AccessTypeInjector.Qualifier(ProcessAccess.class)
+public class ReportAndProcessAccessInjector extends AccessTypeInjector {
 
   @Override
   public String getSecuredElement() {
-    return "getAlertRule";
+    return "getProcess";
   }
 }

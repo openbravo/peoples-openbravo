@@ -15,15 +15,15 @@
  * All Rights Reserved. 
  ************************************************************************
  */
-package org.openbravo.roleInheritance;
+package org.openbravo.role.inheritance.access;
 
-import org.openbravo.model.ad.access.ProcessAccess;
+import org.openbravo.model.ad.domain.Preference;
 
-@AccessTypeInjector.Qualifier(ProcessAccess.class)
-public class ReportAndProcessAccessInjector extends AccessTypeInjector {
+@AccessTypeInjector.Qualifier(Preference.class)
+public class PreferenceAccessInjector extends AccessTypeInjector {
 
   @Override
   public String getSecuredElement() {
-    return "getProcess";
+    return "getIdentifier";
   }
 }

@@ -36,7 +36,7 @@ import org.openbravo.model.ad.access.FormAccess;
 import org.openbravo.model.ad.access.ProcessAccess;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.WindowAccess;
-import org.openbravo.roleInheritance.RoleInheritanceManager;
+import org.openbravo.role.inheritance.RoleInheritanceManager;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class InsertAcces extends HttpSecureAppServlet {

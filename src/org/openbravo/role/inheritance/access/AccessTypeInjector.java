@@ -15,7 +15,7 @@
  * All Rights Reserved. 
  ************************************************************************
  */
-package org.openbravo.roleInheritance;
+package org.openbravo.role.inheritance.access;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -26,6 +26,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.util.AnnotationLiteral;
 
 import org.openbravo.base.structure.InheritedAccessEnabled;
+import org.openbravo.role.inheritance.RoleInheritanceManager;
 
 /**
  * An AccessTypeInjector is used by {@link RoleInheritanceManager} to retrieve the access types that

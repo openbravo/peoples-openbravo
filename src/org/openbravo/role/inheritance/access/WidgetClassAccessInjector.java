@@ -15,15 +15,15 @@
  * All Rights Reserved. 
  ************************************************************************
  */
-package org.openbravo.roleInheritance;
+package org.openbravo.role.inheritance.access;
 
-import org.openbravo.client.application.ProcessAccess;
+import org.openbravo.client.myob.WidgetClassAccess;
 
-@AccessTypeInjector.Qualifier(ProcessAccess.class)
-public class ProcessDefinitionAccessInjector extends AccessTypeInjector {
+@AccessTypeInjector.Qualifier(WidgetClassAccess.class)
+public class WidgetClassAccessInjector extends AccessTypeInjector {
 
   @Override
   public String getSecuredElement() {
-    return "getObuiappProcess";
+    return "getWidgetClass";
   }
 }

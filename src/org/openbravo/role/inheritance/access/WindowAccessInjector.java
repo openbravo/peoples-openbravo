@@ -15,15 +15,20 @@
  * All Rights Reserved. 
  ************************************************************************
  */
-package org.openbravo.roleInheritance;
+package org.openbravo.role.inheritance.access;
 
-import org.openbravo.model.ad.access.TableAccess;
+import org.openbravo.model.ad.access.WindowAccess;
 
-@AccessTypeInjector.Qualifier(TableAccess.class)
-public class TableAccessInjector extends AccessTypeInjector {
+@AccessTypeInjector.Qualifier(WindowAccess.class)
+public class WindowAccessInjector extends AccessTypeInjector {
 
   @Override
   public String getSecuredElement() {
-    return "getTable";
+    return "getWindow";
+  }
+
+  @Override
+  public int getPriority() {
+    return 200;
   }
 }

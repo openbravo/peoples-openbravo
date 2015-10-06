@@ -15,15 +15,20 @@
  * All Rights Reserved. 
  ************************************************************************
  */
-package org.openbravo.roleInheritance;
+package org.openbravo.role.inheritance.access;
 
-import org.openbravo.client.myob.WidgetClassAccess;
+import org.openbravo.model.ad.access.FieldAccess;
 
-@AccessTypeInjector.Qualifier(WidgetClassAccess.class)
-public class WidgetClassAccessInjector extends AccessTypeInjector {
+@AccessTypeInjector.Qualifier(FieldAccess.class)
+public class FieldAccessInjector extends AccessTypeInjector {
 
   @Override
   public String getSecuredElement() {
-    return "getWidgetClass";
+    return "getField";
+  }
+
+  @Override
+  public int getPriority() {
+    return 400;
   }
 }

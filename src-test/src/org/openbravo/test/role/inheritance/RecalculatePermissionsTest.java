@@ -16,7 +16,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-package org.openbravo.test.role;
+package org.openbravo.test.role.inheritance;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
@@ -31,7 +31,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.WindowAccess;
-import org.openbravo.roleInheritance.RoleInheritanceManager;
+import org.openbravo.role.inheritance.RoleInheritanceManager;
 
 public class RecalculatePermissionsTest extends WeldBaseTest {
   // This test case is intended to simulate the "Recalculate Permissions" process

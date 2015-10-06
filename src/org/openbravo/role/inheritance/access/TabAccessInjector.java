@@ -15,7 +15,7 @@
  * All Rights Reserved. 
  ************************************************************************
  */
-package org.openbravo.roleInheritance;
+package org.openbravo.role.inheritance.access;
 
 import org.openbravo.model.ad.access.TabAccess;
 

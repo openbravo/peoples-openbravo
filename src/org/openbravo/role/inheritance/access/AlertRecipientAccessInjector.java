@@ -15,15 +15,18 @@
  * All Rights Reserved. 
  ************************************************************************
  */
-package org.openbravo.roleInheritance;
+package org.openbravo.role.inheritance.access;
 
-import org.openbravo.model.ad.access.RoleOrganization;
+import javax.enterprise.context.ApplicationScoped;
 
-@AccessTypeInjector.Qualifier(RoleOrganization.class)
-public class OrgAccessInjector extends AccessTypeInjector {
+import org.openbravo.model.ad.alert.AlertRecipient;
+
+@ApplicationScoped
+@AccessTypeInjector.Qualifier(AlertRecipient.class)
+public class AlertRecipientAccessInjector extends AccessTypeInjector {
 
   @Override
   public String getSecuredElement() {
-    return "getOrganization";
+    return "getAlertRule";
   }
 }

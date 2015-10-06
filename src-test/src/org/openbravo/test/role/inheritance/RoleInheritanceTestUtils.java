@@ -16,7 +16,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-package org.openbravo.test.role;
+package org.openbravo.test.role.inheritance;
 
 import java.util.ArrayList;
 import java.util.Arrays;
