@@ -535,12 +535,10 @@ public class RoleInheritanceManager {
     long t = System.currentTimeMillis();
     List<Role> updatedRoles = new ArrayList<Role>();
     for (RoleInheritance ri : template.getADRoleInheritanceInheritFromList()) {
-      Map<String, List<Integer>> result = recalculateAllAccessesForRole(ri.getRole());
+      Map<String, CalculationResult> result = recalculateAllAccessesForRole(ri.getRole());
       for (String accessClassName : result.keySet()) {
-        List<Integer> counters = (List<Integer>) result.get(accessClassName);
-        int updated = counters.get(0);
-        int created = counters.get(1);
-        if (updated > 0 || created > 0) {
+        CalculationResult counters = (CalculationResult) result.get(accessClassName);
+        if (counters.getUpdated() > 0 || counters.getCreated() > 0) {
           updatedRoles.add(ri.getRole());
         }
       }
@@ -557,15 +555,15 @@ public class RoleInheritanceManager {
    *          The role whose accesses will be recalculated
    * @return a map with the number of accesses updated and created for every access type
    */
-  public Map<String, List<Integer>> recalculateAllAccessesForRole(Role role) {
+  public Map<String, CalculationResult> recalculateAllAccessesForRole(Role role) {
     long t = System.currentTimeMillis();
-    Map<String, List<Integer>> result = new HashMap<String, List<Integer>>();
+    Map<String, CalculationResult> result = new HashMap<String, CalculationResult>();
     List<RoleInheritance> inheritanceList = getRoleInheritancesList(role);
     List<String> inheritanceRoleIdList = getRoleInheritancesInheritFromIdList(inheritanceList);
     for (AccessTypeInjector accessType : getAccessTypeOrderByPriority(true)) {
-      List<Integer> accessCounters = calculateAccesses(inheritanceList, inheritanceRoleIdList,
+      CalculationResult counters = calculateAccesses(inheritanceList, inheritanceRoleIdList,
           accessType);
-      result.put(accessType.getClassName(), accessCounters);
+      result.put(accessType.getClassName(), counters);
     }
     log.debug("recalculate all accesses for role " + role.getName() + " time: "
         + (System.currentTimeMillis() - t));
@@ -812,7 +810,7 @@ public class RoleInheritanceManager {
    * @see RoleInheritanceManager#calculateAccesses(List<RoleInheritance>, List<String>,
    *      RoleInheritance)
    */
-  private List<Integer> calculateAccesses(List<RoleInheritance> inheritanceList,
+  private CalculationResult calculateAccesses(List<RoleInheritance> inheritanceList,
       List<String> inheritanceInheritFromIdList, AccessTypeInjector injector) {
     return calculateAccesses(inheritanceList, inheritanceInheritFromIdList, null, injector);
   }
@@ -832,7 +830,7 @@ public class RoleInheritanceManager {
    * @return a list with two Integers containing the number of accesses updated and created
    *         respectively.
    */
-  private List<Integer> calculateAccesses(List<RoleInheritance> inheritanceList,
+  private CalculationResult calculateAccesses(List<RoleInheritance> inheritanceList,
       List<String> inheritanceInheritFromIdList, RoleInheritance roleInheritanceToDelete,
       AccessTypeInjector injector) {
     int[] counters = new int[] { 0, 0, 0 };
@@ -858,9 +856,8 @@ public class RoleInheritanceManager {
           getAccessList(roleInheritanceToDelete.getRole(), injector.getClassName()),
           injector.getClassName());
     }
-    List<Integer> result = new ArrayList<Integer>();
-    result.add(new Integer(counters[ACCESS_UPDATED])); // number of accesses updated
-    result.add(new Integer(counters[ACCESS_CREATED])); // number of accesses created
+    CalculationResult result = new CalculationResult(counters[ACCESS_UPDATED],
+        counters[ACCESS_CREATED]);
     return result;
   }
 
@@ -1100,5 +1097,46 @@ public class RoleInheritanceManager {
       return false;
     }
     return true;
+  }
+
+  /**
+   * A class used to hold the results of the recalculation done for a particular access of a role
+   */
+  class CalculationResult {
+    private int updated;
+    private int created;
+
+    /**
+     * Basic constructor
+     * 
+     * @param updated
+     *          An integer that represents the number of accesses updated during an access
+     *          recalculation
+     * @param created
+     *          An integer that represents the number of new accesses created during an access
+     *          recalculation
+     */
+    public CalculationResult(int updated, int created) {
+      this.updated = updated;
+      this.created = created;
+    }
+
+    /**
+     * Returns the updated number
+     * 
+     * @return the value of the updated field
+     */
+    public int getUpdated() {
+      return updated;
+    }
+
+    /**
+     * Returns the created number
+     * 
+     * @return the value of the created field
+     */
+    public int getCreated() {
+      return created;
+    }
   }
 }

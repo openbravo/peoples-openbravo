@@ -21,6 +21,9 @@ OB = OB || {};
 
 OB.RoleInheritance = {
 
+  /**
+   * A generic function used to make a remote call to the server side using the passed parameters
+   */
   execute: function (params, view) {
     var roleId, selection = params.button.contextView.viewGrid.getSelectedRecords(),
         callback;
@@ -36,26 +39,38 @@ OB.RoleInheritance = {
     };
     // Retrieves the role id and sends it to the handler to recalculate 
     OB.RemoteCallManager.call(params.actionHandler, {
-      roleId: params.roleId,
-      action: params.action
+      roles: params.roles
     }, {}, callback);
-    isc.showPrompt(OB.I18N.getLabel('OBUIAPP_PROCESSING') + isc.Canvas.imgHTML({src: OB.Styles.LoadingPrompt.loadingImage.src}));
+    isc.showPrompt(OB.I18N.getLabel('OBUIAPP_PROCESSING') + isc.Canvas.imgHTML({
+      src: OB.Styles.LoadingPrompt.loadingImage.src
+    }));
   },
 
+  /**
+   * Retrieves the list of roles selected by the user and performs a request to the server in order to
+   * recalculate their permissions
+   */
   recalculatePermissions: function (params, view) {
-    var isTemplate, message, name, selection = params.button.contextView.viewGrid.getSelectedRecords();
-    params.roleId = selection[0].id;
-    name = selection[0].name;
-    isTemplate = selection[0].template;
-    if (isTemplate) {
-      params.action = 'TEMPLATE';
-      message = 'RecalculateTemplateRolePermissions';
+    var isTemplate, message, messagetxt, name, selection = params.button.contextView.viewGrid.getSelectedRecords(),
+        roles = [];
+    for (i = 0; i < selection.length; i++) {
+      roles.push(selection[i].id);
+    };
+    params.roles = roles;
+    params.actionHandler = 'org.openbravo.role.inheritance.RecalculatePermissionsHandler';
+    if (selection.length == 1) {
+      name = selection[0].name;
+      isTemplate = selection[0].template;
+      if (isTemplate) {
+        message = 'RecalculateTemplateRolePermissions';
+      } else {
+        message = 'RecalculateRolePermissions';
+      }
+      messagetxt = OB.I18N.getLabel(message, [name]);
     } else {
-      params.action = 'DEFAULT';
-      message = 'RecalculateRolePermissions';
+      messagetxt = OB.I18N.getLabel('RecalculateMultipleRolesPermissions');
     }
-    params.actionHandler = 'org.openbravo.roleInheritance.RecalculatePermissionsHandler';
-    isc.confirm(OB.I18N.getLabel(message, [name]), {
+    isc.confirm(messagetxt, {
       isModal: true,
       showModalMask: true,
       title: OB.I18N.getLabel('RecalculatePermissions')

@@ -18,12 +18,12 @@
  */
 package org.openbravo.role.inheritance;
 
-import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.model.Entity;
@@ -34,6 +34,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.Role;
+import org.openbravo.role.inheritance.RoleInheritanceManager.CalculationResult;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.db.DbUtility;
 import org.slf4j.Logger;
@@ -49,53 +50,35 @@ public class RecalculatePermissionsHandler extends BaseActionHandler {
     JSONObject response = new JSONObject();
     try {
       final JSONObject request = new JSONObject(content);
-      final String action = request.getString("action");
-      String roleId = request.getString("roleId");
-      Role role = OBDal.getInstance().get(Role.class, roleId);
+      final JSONArray roleIds = request.getJSONArray("roles");
+      JSONObject message;
 
-      String[] successMessageParameter = { role.getName() };
-      String successMessage;
-      String textMessage;
-      // Possible actions:
-      // - DEFAULT: Recalculate permissions for the selected (non template) role
-      // - TEMPLATE: Recalculate permissions for all roles inheriting by the selected template role
-      if ("TEMPLATE".equals(action)) {
-        List<Role> updatedRoles = manager.recalculateAllAccessesFromTemplate(role);
-        if (updatedRoles.size() > 0) {
-          textMessage = composeTemplateAccessMessageText(updatedRoles);
-        } else {
-          textMessage = Utility.messageBD(new DalConnectionProvider(false),
-              "TemplatePermissionsNotModified", OBContext.getOBContext().getLanguage()
-                  .getLanguage());
-        }
-        successMessage = "RecalculateTemplatePermissionsSuccess";
+      // Recalculate permissions for the selected role, if the role is a template the
+      // changes will be propagated
+      if (roleIds.length() == 1) {
+        message = recalculateForSingleRole(roleIds.getString(0));
+      } else if (roleIds.length() > 1) {
+        message = recalculateForMultipleRoles(roleIds);
       } else {
-        Map<String, List<Integer>> accessCount = manager.recalculateAllAccessesForRole(role);
-        textMessage = composeAccessMessageText(accessCount);
-        if (StringUtils.isEmpty(textMessage)) {
-          textMessage = Utility.messageBD(new DalConnectionProvider(false),
-              "PermissionsNotModified", OBContext.getOBContext().getLanguage().getLanguage());
-        }
-        successMessage = "RecalculatePermissionsSuccess";
+        message = new JSONObject();
+        message.put("severity", "error");
+        message.put("title", "Error");
+        message.put("text", "NoRoleSelected");
       }
 
       // Create success message
-      JSONObject message = new JSONObject();
-      message.put("severity", "success");
-      message.put("title", OBMessageUtils.getI18NMessage(successMessage, successMessageParameter));
-      message.put("text", textMessage);
       response.put("message", message);
 
     } catch (Exception e) {
       OBDal.getInstance().rollbackAndClose();
       log.error("RecalculatePermissionsEventHandler error: " + e.getMessage(), e);
       Throwable ex = DbUtility.getUnderlyingSQLException(e);
-      String message = OBMessageUtils.translateError(ex.getMessage()).getMessage();
+      String textMessage = OBMessageUtils.translateError(ex.getMessage()).getMessage();
       try {
         JSONObject errorMessage = new JSONObject();
         errorMessage.put("severity", "error");
         errorMessage.put("title", "Error");
-        errorMessage.put("text", message);
+        errorMessage.put("text", textMessage);
         response.put("message", errorMessage);
       } catch (JSONException ignore) {
       }
@@ -103,17 +86,51 @@ public class RecalculatePermissionsHandler extends BaseActionHandler {
     return response;
   }
 
-  private String composeAccessMessageText(Map<String, List<Integer>> map) {
+  private JSONObject recalculateForSingleRole(String roleId) throws JSONException {
+    final Role role = OBDal.getInstance().get(Role.class, roleId);
+    Map<String, CalculationResult> accessCount = manager.recalculateAllAccessesForRole(role);
+    String text = composeAccessMessageText(accessCount);
+    if (StringUtils.isEmpty(text)) {
+      text = Utility.messageBD(new DalConnectionProvider(false), "PermissionsNotModified",
+          OBContext.getOBContext().getLanguage().getLanguage());
+    }
+    String msgParam[] = { role.getName() };
+    String title = OBMessageUtils.getI18NMessage("RecalculatePermissionsSuccess", msgParam);
+    JSONObject message = new JSONObject();
+    message.put("severity", "success");
+    message.put("title", title);
+    message.put("text", text);
+    return message;
+  }
+
+  private JSONObject recalculateForMultipleRoles(JSONArray roleIds) throws JSONException {
+    String roleNames = "";
+    for (int i = 0; i < roleIds.length(); i++) {
+      final Role role = OBDal.getInstance().get(Role.class, roleIds.getString(i));
+      manager.recalculateAllAccessesForRole(role);
+      roleNames += ", " + role.getName();
+    }
+    String msgParam[] = { roleNames.substring(1) };
+    String title = Utility.messageBD(new DalConnectionProvider(false),
+        "RecalculatePermissionsMultipleSuccess", OBContext.getOBContext().getLanguage()
+            .getLanguage());
+    String text = OBMessageUtils.getI18NMessage("RecalculatePermissionsMultipleRoles", msgParam);
+    JSONObject message = new JSONObject();
+    message.put("severity", "success");
+    message.put("title", title);
+    message.put("text", text);
+    return message;
+  }
+
+  private String composeAccessMessageText(Map<String, CalculationResult> map) {
     String text = "";
     try {
       for (String className : map.keySet()) {
-        List<Integer> counters = (List<Integer>) map.get(className);
-        int updated = counters.get(0);
-        int created = counters.get(1);
-        if (updated > 0 || created > 0) {
+        CalculationResult counters = (CalculationResult) map.get(className);
+        if (counters.getUpdated() > 0 || counters.getCreated() > 0) {
           Class<?> myClass = Class.forName(className);
           Entity entity = ModelProvider.getInstance().getEntity(myClass);
-          String[] params = { updated + "", created + "" };
+          String[] params = { counters.getUpdated() + "", counters.getCreated() + "" };
           text += OBMessageUtils.getI18NMessage(entity.getName() + "_PermissionsCount", params)
               + " ";
         }
@@ -121,16 +138,6 @@ public class RecalculatePermissionsHandler extends BaseActionHandler {
     } catch (Exception ex) {
       log.error("Error creating the text for the returned message", ex);
     }
-    return text;
-  }
-
-  private String composeTemplateAccessMessageText(List<Role> updatedRoles) {
-    String text, updatedRoleList = "";
-    for (Role updatedRole : updatedRoles) {
-      updatedRoleList += ", " + updatedRole.getName();
-    }
-    String[] msgParam = { updatedRoleList.substring(1) };
-    text = OBMessageUtils.getI18NMessage("PermissionsModifiedForRoles", msgParam);
     return text;
   }
 }
