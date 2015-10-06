@@ -154,6 +154,7 @@ public class CostAdjustmentUtils {
         + MaterialTransaction.PROPERTY_MOVEMENTTYPE);
     where.append("   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
         + " > :crStartDate");
+    where.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = 'Y' ");
     // If there are more than one trx on the same trx process date filter out those types with less
     // priority and / or higher quantity.
     where.append(" and (");
