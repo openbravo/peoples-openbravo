@@ -49,8 +49,15 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="EM_OBPOS_CLO_INV_TEMPLATE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="OBPOS_PRINT_TEMPLATE" name="EM_OBPOS_ORG_CASHUPTEMP">
         <reference local="EM_OBPOS_CASHUP_TEMPLATE_ID" foreign="OBPOS_PRINT_TEMPLATE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="OBPOS_PRINT_TEMPLATE" name="EM_OBPOS_ORG_CLOINVTEMP">
+        <reference local="EM_OBPOS_CLO_INV_TEMPLATE_ID" foreign="OBPOS_PRINT_TEMPLATE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="OBPOS_PRINT_TEMPLATE" name="EM_OBPOS_ORG_CLOSERCPTEMP">
         <reference local="EM_OBPOS_CLOSEDRECEIPT_TEM_ID" foreign="OBPOS_PRINT_TEMPLATE_ID"/>

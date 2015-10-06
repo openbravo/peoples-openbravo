@@ -81,6 +81,8 @@
       extendHWResource(this.templategoodbye, "printGoodByeTemplate");
       this.templatewelcome = new OB.DS.HWResource(terminal.printWelcomeTemplate || OB.OBPOSPointOfSale.Print.WelcomeTemplate);
       extendHWResource(this.templatewelcome, "printWelcomeTemplate");
+      this.templateclosedinvoice = new OB.DS.HWResource(terminal.printClosedInvoiceTemplate || OB.OBPOSPointOfSale.Print.ClosedInvoiceTemplate);
+      extendHWResource(this.templateclosedinvoice, "printClosedInvoiceTemplate");
       };
 
   PrintReceipt.prototype.print = function (order, printargs) {
@@ -274,6 +276,8 @@
           args.template = me.templatereturninvoice;
         } else if (receipt.get('isQuotation')) {
           args.template = me.templatequotation;
+        } else if (receipt.get('isPaid')) {
+          args.template = me.templateclosedinvoice;
         } else {
           args.template = me.templateinvoice;
         }
@@ -476,4 +480,5 @@
   OB.OBPOSPointOfSale.Print.GoodByeTemplate = '../org.openbravo.retail.posterminal/res/goodbye.xml';
   OB.OBPOSPointOfSale.Print.WelcomeTemplate = '../org.openbravo.retail.posterminal/res/welcome.xml';
   OB.OBPOSPointOfSale.Print.QuotationTemplate = '../org.openbravo.retail.posterminal/res/printquotation.xml';
+  OB.OBPOSPointOfSale.Print.ClosedInvoiceTemplate = '../org.openbravo.retail.posterminal/res/printclosedinvoice.xml';
 }());
