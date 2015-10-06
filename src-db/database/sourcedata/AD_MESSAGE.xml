@@ -26069,7 +26069,7 @@ Lines: @lines@]]></MSGTEXT>
 <!--E7EBD616ABA7417DB1759D8B7E901405-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--E7EBD616ABA7417DB1759D8B7E901405-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--E7EBD616ABA7417DB1759D8B7E901405-->  <VALUE><![CDATA[CannotUncheckTemplateRole]]></VALUE>
-<!--E7EBD616ABA7417DB1759D8B7E901405-->  <MSGTEXT><![CDATA[Is not possible to uncheck the Template flag because this role is being used by other roles to inherit their permissions]]></MSGTEXT>
+<!--E7EBD616ABA7417DB1759D8B7E901405-->  <MSGTEXT><![CDATA[Is not possible to uncheck the Template or the Active flags for a role which is being used by other roles to inherit their permissions]]></MSGTEXT>
 <!--E7EBD616ABA7417DB1759D8B7E901405-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--E7EBD616ABA7417DB1759D8B7E901405-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--E7EBD616ABA7417DB1759D8B7E901405-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
