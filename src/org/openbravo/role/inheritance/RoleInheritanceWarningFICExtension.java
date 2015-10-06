@@ -64,7 +64,7 @@ public class RoleInheritanceWarningFICExtension implements FICExtension {
       InheritedAccessEnabled access = (InheritedAccessEnabled) row;
       Role role = manager.getRole(access, entityClassName);
       String childRoleList = "";
-      if (role.isTemplate()) {
+      if (role != null && role.isTemplate()) {
         for (RoleInheritance inheritance : role.getADRoleInheritanceInheritFromList()) {
           childRoleList += ", " + inheritance.getRole().getName();
         }
