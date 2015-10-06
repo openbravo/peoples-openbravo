@@ -143,7 +143,7 @@ public class POSLicenseRestrictions implements ModuleLicenseRestrictions {
   private String getPOSTerminalRestrictionMsg(ActivationKey activationKey, String lang,
       int addingTerminals) {
     Long allowedNumberOfTerminals = activationKey.getAllowedPosTerminals();
-    if (allowedNumberOfTerminals == ActivationKey.NO_LIMIT) {
+    if (allowedNumberOfTerminals == ActivationKey.NO_LIMIT || allowedNumberOfTerminals == null) {
       return "";
     }
 
