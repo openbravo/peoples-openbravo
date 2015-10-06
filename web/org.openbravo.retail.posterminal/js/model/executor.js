@@ -56,6 +56,9 @@ OB.Model.Executor = Backbone.Model.extend({
           this.set('eventQueue');
           actionQueue.remove(actionQueue.models);
         }
+        if (evt.reportSynchronizationHelper) {
+          evt.reportSynchronizationHelper();
+        }
         evtQueue.remove(evt);
         currentExecutionQueue = (this.get('exec') || 0) - 1;
         this.set('exec', currentExecutionQueue);
