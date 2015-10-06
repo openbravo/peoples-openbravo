@@ -36,7 +36,7 @@
 <!--0218A1424DED490CBC424E03F66B29C9-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--0218A1424DED490CBC424E03F66B29C9-->  <NAME><![CDATA[Inherited From]]></NAME>
 <!--0218A1424DED490CBC424E03F66B29C9-->  <DESCRIPTION><![CDATA[Inherited From]]></DESCRIPTION>
-<!--0218A1424DED490CBC424E03F66B29C9-->  <HELP><![CDATA[The role from which a permission has been inherited]]></HELP>
+<!--0218A1424DED490CBC424E03F66B29C9-->  <HELP><![CDATA[The role from which a permission has been inherited. If a permission has this field set it means that this is an inherited permission, an therefore that the role owner of the permission is able to access it because it inherits from the role defined in this field.]]></HELP>
 <!--0218A1424DED490CBC424E03F66B29C9-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
 <!--0218A1424DED490CBC424E03F66B29C9-->  <AD_TAB_ID><![CDATA[6D732D027FFA4FB1BD0140ED3B606C0E]]></AD_TAB_ID>
 <!--0218A1424DED490CBC424E03F66B29C9-->  <AD_COLUMN_ID><![CDATA[D4E406C7318E49A0B6F51B73A01BB687]]></AD_COLUMN_ID>
@@ -4623,7 +4623,7 @@ The 'Compatibility with Legacy Grids' flag should only be checked if its handler
 <!--C843F0927A904B869F3C77F4887D3A85-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--C843F0927A904B869F3C77F4887D3A85-->  <NAME><![CDATA[Inherited From]]></NAME>
 <!--C843F0927A904B869F3C77F4887D3A85-->  <DESCRIPTION><![CDATA[Inherited From]]></DESCRIPTION>
-<!--C843F0927A904B869F3C77F4887D3A85-->  <HELP><![CDATA[The role from which a permission has been inherited]]></HELP>
+<!--C843F0927A904B869F3C77F4887D3A85-->  <HELP><![CDATA[The role from which a permission has been inherited. If a permission has this field set it means that this is an inherited permission, an therefore that the role owner of the permission is able to access it because it inherits from the role defined in this field.]]></HELP>
 <!--C843F0927A904B869F3C77F4887D3A85-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
 <!--C843F0927A904B869F3C77F4887D3A85-->  <AD_TAB_ID><![CDATA[FF8080812EFBEA81012EFBED3F58000C]]></AD_TAB_ID>
 <!--C843F0927A904B869F3C77F4887D3A85-->  <AD_COLUMN_ID><![CDATA[841E7280C3B246A58E5A194AF41D5796]]></AD_COLUMN_ID>

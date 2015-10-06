@@ -18432,6 +18432,8 @@ AND e.pending <> 0 AND (e.storageBin is null OR ad_org_isinnaturaltree(@Material
 <!--C4135E277A2F407E82A1C6E3CE9F6021-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--C4135E277A2F407E82A1C6E3CE9F6021-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--C4135E277A2F407E82A1C6E3CE9F6021-->  <NAME><![CDATA[Role Inheritance]]></NAME>
+<!--C4135E277A2F407E82A1C6E3CE9F6021-->  <DESCRIPTION><![CDATA[Create and remove inheritances of a role]]></DESCRIPTION>
+<!--C4135E277A2F407E82A1C6E3CE9F6021-->  <HELP><![CDATA[Allows to define an inheritance for a role. An inheritance is a relationship between two roles: if role A inherits from role B, that means that all the permissions that role B has for different application elements like organizations, windows, reports, processes, widgets etc. will be automatically inherited by role A, allowing it to access those elements in the same way as B. It is also possible to define an inheritance hierarchy, i.e., a role can inherit from different roles, and the priority (order) to inherit the permissions is defined by the sequence number. This means that if two inheritances have accesses in common, the accesses of the inheritance with lower sequence number will be overridden with the accesses of the inheritance with higher sequence number.]]></HELP>
 <!--C4135E277A2F407E82A1C6E3CE9F6021-->  <AD_TABLE_ID><![CDATA[75E7047D448E4DEB9B080357A5A85FDA]]></AD_TABLE_ID>
 <!--C4135E277A2F407E82A1C6E3CE9F6021-->  <AD_WINDOW_ID><![CDATA[111]]></AD_WINDOW_ID>
 <!--C4135E277A2F407E82A1C6E3CE9F6021-->  <SEQNO><![CDATA[130]]></SEQNO>

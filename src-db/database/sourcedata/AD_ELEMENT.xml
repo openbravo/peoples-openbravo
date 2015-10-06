@@ -21343,7 +21343,7 @@ If one of the trees of a table uses the ADTree tree structure, that must be the 
 <!--0FAB9FAA9D204B8AB9FA36C663842DAF-->  <NAME><![CDATA[Inherited From]]></NAME>
 <!--0FAB9FAA9D204B8AB9FA36C663842DAF-->  <PRINTNAME><![CDATA[Inherited From]]></PRINTNAME>
 <!--0FAB9FAA9D204B8AB9FA36C663842DAF-->  <DESCRIPTION><![CDATA[Inherited From]]></DESCRIPTION>
-<!--0FAB9FAA9D204B8AB9FA36C663842DAF-->  <HELP><![CDATA[The role from which a permission has been inherited]]></HELP>
+<!--0FAB9FAA9D204B8AB9FA36C663842DAF-->  <HELP><![CDATA[The role from which a permission has been inherited. If a permission has this field set it means that this is an inherited permission, an therefore that the role owner of the permission is able to access it because it inherits from the role defined in this field.]]></HELP>
 <!--0FAB9FAA9D204B8AB9FA36C663842DAF-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--0FAB9FAA9D204B8AB9FA36C663842DAF-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--0FAB9FAA9D204B8AB9FA36C663842DAF--></AD_ELEMENT>
@@ -33603,7 +33603,7 @@ This field is populated in case the used price list includes taxes.]]></HELP>
 <!--F2351D18492C42A6AE6F01F74831D617-->  <NAME><![CDATA[Inherit From]]></NAME>
 <!--F2351D18492C42A6AE6F01F74831D617-->  <PRINTNAME><![CDATA[Inherit From]]></PRINTNAME>
 <!--F2351D18492C42A6AE6F01F74831D617-->  <DESCRIPTION><![CDATA[Inherit From]]></DESCRIPTION>
-<!--F2351D18492C42A6AE6F01F74831D617-->  <HELP><![CDATA[A role whose permissions will be inherited]]></HELP>
+<!--F2351D18492C42A6AE6F01F74831D617-->  <HELP><![CDATA[A role whose permissions will be inherited. It defines the role that will be used by others to retrieve access to its permissions automatically.]]></HELP>
 <!--F2351D18492C42A6AE6F01F74831D617-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--F2351D18492C42A6AE6F01F74831D617-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--F2351D18492C42A6AE6F01F74831D617--></AD_ELEMENT>

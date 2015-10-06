@@ -3345,7 +3345,7 @@ or All (AD_CLIENT=anything, AD_ORG_ID=anything)]]></HELP>
 <!--9BC5CB44F16746C8AA62A8544A20060E-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--9BC5CB44F16746C8AA62A8544A20060E-->  <NAME><![CDATA[Inherited From]]></NAME>
 <!--9BC5CB44F16746C8AA62A8544A20060E-->  <DESCRIPTION><![CDATA[Inherited From]]></DESCRIPTION>
-<!--9BC5CB44F16746C8AA62A8544A20060E-->  <HELP><![CDATA[The role from which a permission has been inherited]]></HELP>
+<!--9BC5CB44F16746C8AA62A8544A20060E-->  <HELP><![CDATA[The role from which a permission has been inherited. If a permission has this field set it means that this is an inherited permission, an therefore that the role owner of the permission is able to access it because it inherits from the role defined in this field.]]></HELP>
 <!--9BC5CB44F16746C8AA62A8544A20060E-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
 <!--9BC5CB44F16746C8AA62A8544A20060E-->  <AD_TAB_ID><![CDATA[70D3C99A3C1144B0A7EAAF0A42EAFE31]]></AD_TAB_ID>
 <!--9BC5CB44F16746C8AA62A8544A20060E-->  <AD_COLUMN_ID><![CDATA[E44D090E7C7449148439FBA28412FF9D]]></AD_COLUMN_ID>
