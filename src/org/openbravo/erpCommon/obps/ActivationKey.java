@@ -1919,7 +1919,8 @@ public class ActivationKey {
   }
 
   public Long getAllowedPosTerminals() {
-    return posTerminals;
+    // posTerminals not set if community: do not apply restriction
+    return posTerminals == null ? NO_LIMIT : posTerminals;
   }
 
   public Long getPosTerminalsWarn() {
