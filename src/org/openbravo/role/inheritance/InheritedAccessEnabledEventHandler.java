@@ -19,12 +19,12 @@
 package org.openbravo.role.inheritance;
 
 import javax.enterprise.event.Observes;
+import javax.inject.Inject;
 
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.InheritedAccessEnabled;
-import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.kernel.event.EntityDeleteEvent;
 import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEvent;
@@ -42,7 +42,13 @@ import org.openbravo.model.ad.access.Role;
  * according to the affected role inheritance settings.
  */
 public class InheritedAccessEnabledEventHandler extends EntityPersistenceEventObserver {
+  private static final String SAVE = "save";
+  private static final String UPDATE = "update";
+  private static final String DELETE = "delete";
   private static Entity[] entities = {};
+
+  @Inject
+  private RoleInheritanceManager manager;
 
   @Override
   protected Entity[] getObservedEntities() {
@@ -53,55 +59,38 @@ public class InheritedAccessEnabledEventHandler extends EntityPersistenceEventOb
     if (!isInheritedAccessEnabled(event)) {
       return;
     }
-
-    final BaseOBObject bob = event.getTargetInstance();
-    String entityClassName = ModelProvider.getInstance().getEntity(bob.getEntity().getName())
-        .getClassName();
-    RoleInheritanceManager manager = WeldUtils
-        .getInstanceFromStaticBeanManager(RoleInheritanceManager.class);
-    final InheritedAccessEnabled access = (InheritedAccessEnabled) bob;
-    final Role role = manager.getRole(access, entityClassName);
-    if (role != null && role.isTemplate()) {
-      // Propagate new access just for roles marked as template
-      manager.propagateNewAccess(role, access, entityClassName);
-    }
+    doAction(SAVE, event.getTargetInstance());
   }
 
   public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isInheritedAccessEnabled(event)) {
       return;
     }
-
-    final BaseOBObject bob = event.getTargetInstance();
-    String entityClassName = ModelProvider.getInstance().getEntity(bob.getEntity().getName())
-        .getClassName();
-    RoleInheritanceManager manager = WeldUtils
-        .getInstanceFromStaticBeanManager(RoleInheritanceManager.class);
-    final InheritedAccessEnabled access = (InheritedAccessEnabled) bob;
-    final Role role = manager.getRole(access, entityClassName);
-    if (role != null && role.isTemplate()) {
-      // Propagate updated access just for roles marked as template
-      manager.propagateUpdatedAccess(role, access, entityClassName);
-    }
+    doAction(UPDATE, event.getTargetInstance());
   }
 
   public void onDelete(@Observes EntityDeleteEvent event) {
     if (!isInheritedAccessEnabled(event)) {
       return;
     }
+    doAction(DELETE, event.getTargetInstance());
+  }
 
-    final BaseOBObject bob = event.getTargetInstance();
+  public void doAction(String action, final BaseOBObject bob) {
     String entityClassName = ModelProvider.getInstance().getEntity(bob.getEntity().getName())
         .getClassName();
-    RoleInheritanceManager manager = WeldUtils
-        .getInstanceFromStaticBeanManager(RoleInheritanceManager.class);
-    final InheritedAccessEnabled access = (InheritedAccessEnabled) bob;
-    final Role role = manager.getRole(access, entityClassName);
-    if (notDeletingParent(role, access)) {
+    InheritedAccessEnabled access = (InheritedAccessEnabled) bob;
+    Role role = manager.getRole(access, entityClassName);
+    boolean isTemplate = role != null && role.isTemplate();
+    if (SAVE.equals(action) && isTemplate) {
+      manager.propagateNewAccess(role, access, entityClassName);
+    } else if (UPDATE.equals(action) && isTemplate) {
+      manager.propagateUpdatedAccess(role, access, entityClassName);
+    } else if (DELETE.equals(action) && notDeletingParent(role, access)) {
       if (access.getInheritedFrom() != null) {
         Utility.throwErrorMessage("NotDeleteInheritedAccess");
       }
-      if (role != null && role.isTemplate()) {
+      if (isTemplate) {
         // Propagate access removal just for roles marked as template
         manager.propagateDeletedAccess(role, access, entityClassName);
       }
