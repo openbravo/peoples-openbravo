@@ -55,7 +55,7 @@ enyo.kind({
       me.parent.$.bplocbutton.$.identifier.applyStyle('max-width', '200px');
     } else {
       me.setShowing(status);
-      me.parent.$.bplocbutton.$.bottomAddrIcon.applyStyle('display', 'table-cell');
+      me.parent.$.bplocbutton.$.bottomAddrIcon.applyStyle('display', '');
       me.parent.$.bplocbutton.addClass('addressbillbutton_fixpadding');
       me.parent.$.bplocbutton.$.identifier.applyStyle('max-width', '70px');
     }

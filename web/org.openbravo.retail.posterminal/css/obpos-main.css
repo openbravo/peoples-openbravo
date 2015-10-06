@@ -274,7 +274,6 @@ button.btnbp:disabled {
 }
 
  .addressbilltext {
-  display: table-cell !important;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
@@ -282,7 +281,6 @@ button.btnbp:disabled {
 }
 
 .addressshipbutton {
-  display: table-cell !important;
   background-image: url('./../../org.openbravo.retail.posterminal/img/iconShippingAddress.png');
   background-repeat: no-repeat;
   background-size: 22px 22px;
@@ -292,7 +290,6 @@ button.btnbp:disabled {
 }
 
  .addressshiptext {
-  display: table-cell !important;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
