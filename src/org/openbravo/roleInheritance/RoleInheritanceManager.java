@@ -69,10 +69,11 @@ public class RoleInheritanceManager {
   private Instance<AccessTypeInjector> accessTypeInjectors;
 
   /**
-   * Initializes the required elements of the manager.
+   * Retrieves the properties of the entity related to the entered class name that will not be
+   * copied.
    * 
-   * @param injector
-   *          injector used to retrieve the access type information
+   * @param className
+   *          the name of the class
    */
   private List<String> getSkippedProperties(String className) {
     List<String> skippedProperties = new ArrayList<String>(Arrays.asList("creationDate",
@@ -86,16 +87,17 @@ public class RoleInheritanceManager {
   }
 
   /**
-   * Returns the id of the secured object by the given inheritable class.
+   * Returns the id of the secured object for the given inheritable access.
    * 
    * @param access
    *          An object of an inheritable class,i.e., a class that implements
    *          InheritedAccessEnabled.
+   * @param injector
+   *          An AccessTypeInjector used to retrieve the access elements
    * 
    * @return A String with the id of the secured object
    */
-  public String getSecuredElementIdentifier(InheritedAccessEnabled access,
-      AccessTypeInjector injector) {
+  String getSecuredElementIdentifier(InheritedAccessEnabled access, AccessTypeInjector injector) {
     try {
       Class<?> myClass = Class.forName(injector.getClassName());
       if ("org.openbravo.model.ad.domain.Preference".equals(injector.getClassName())) {
@@ -120,6 +122,8 @@ public class RoleInheritanceManager {
    *          Access that is used in some cases to find the correct parent
    * @param role
    *          Parent role to set directly when applies
+   * @param className
+   *          the name of the class
    */
   private void setParent(InheritedAccessEnabled newAccess, InheritedAccessEnabled parentAccess,
       Role role, String className) {
@@ -157,6 +161,8 @@ public class RoleInheritanceManager {
    *          Access whose parent role will be set
    * @param role
    *          Parent role
+   * @param className
+   *          the name of the class
    */
   private void setParentRole(InheritedAccessEnabled access, Role role, String className) {
     try {
@@ -218,10 +224,12 @@ public class RoleInheritanceManager {
    * 
    * @param access
    *          An inheritable access
+   * @param className
+   *          the name of the class
    * 
    * @return the Role owner of the access
    */
-  public Role getRole(InheritedAccessEnabled access, String className) {
+  Role getRole(InheritedAccessEnabled access, String className) {
     // TabAccess, FieldAccess and Preference do not have role property as parent
     if ("org.openbravo.model.ad.access.TabAccess".equals(className)) {
       TabAccess tabAccess = (TabAccess) access;
@@ -243,6 +251,8 @@ public class RoleInheritanceManager {
    * 
    * @param access
    *          An inheritable access
+   * @param className
+   *          the name of the class
    * 
    * @return the parent Role of the access
    */
@@ -262,6 +272,8 @@ public class RoleInheritanceManager {
    * 
    * @param role
    *          The role whose list of accesses of a particular type will be retrieved
+   * @param className
+   *          the name of the class
    * 
    * @return a list of accesses
    */
@@ -289,15 +301,18 @@ public class RoleInheritanceManager {
   /**
    * Returns the role property retrieved from the class name.
    * 
+   * @param className
+   *          the name of the class
+   * 
    * @return the role property that can be retrieved according to the input class name.
    */
-  private String getRoleProperty(String clazzName) {
+  private String getRoleProperty(String className) {
     // TabAccess, FieldAccess and Preference do not have role property as parent
-    if ("org.openbravo.model.ad.access.TabAccess".equals(clazzName)) {
+    if ("org.openbravo.model.ad.access.TabAccess".equals(className)) {
       return "windowAccess.role.id";
-    } else if ("org.openbravo.model.ad.access.FieldAccess".equals(clazzName)) {
+    } else if ("org.openbravo.model.ad.access.FieldAccess".equals(className)) {
       return "tabAccess.windowAccess.role.id";
-    } else if ("org.openbravo.model.ad.domain.Preference".equals(clazzName)) {
+    } else if ("org.openbravo.model.ad.domain.Preference".equals(className)) {
       return "visibleAtRole.id";
     } else {
       return "role.id";
@@ -309,16 +324,16 @@ public class RoleInheritanceManager {
    * 
    * @param whereClause
    *          The where clause where the particular filtering will be included
-   * @param clazzName
+   * @param className
    *          The class name used to identify which filtering must be returned
    */
-  private void addEntityWhereClause(StringBuilder whereClause, String clazzName) {
-    if ("org.openbravo.model.ad.domain.Preference".equals(clazzName)) {
+  private void addEntityWhereClause(StringBuilder whereClause, String className) {
+    if ("org.openbravo.model.ad.domain.Preference".equals(className)) {
       // Inheritable preferences are those that only define the visibility at role level
       whereClause.append(" and p.visibleAtClient = null and p.visibleAtOrganization = null"
           + " and p.userContact = null and p.window = null");
       whereClause.append(" and p.property not in (:blackList)");
-    } else if ("org.openbravo.model.ad.alert.AlertRecipient".equals(clazzName)) {
+    } else if ("org.openbravo.model.ad.alert.AlertRecipient".equals(className)) {
       whereClause.append(" and p.userContact is null");
     }
   }
@@ -328,12 +343,12 @@ public class RoleInheritanceManager {
    * 
    * @param query
    *          The query where to perform the parameter substitution
-   * @param clazzName
+   * @param className
    *          The class name used to identify if the parameter substitution is needed
    */
   private <T extends BaseOBObject> void doEntityParameterReplacement(OBQuery<T> query,
-      String clazzName) {
-    if ("org.openbravo.model.ad.domain.Preference".equals(clazzName)) {
+      String className) {
+    if ("org.openbravo.model.ad.domain.Preference".equals(className)) {
       query.setNamedParameter("blackList", propertyBlackList);
     }
   }
@@ -346,6 +361,8 @@ public class RoleInheritanceManager {
    *          The access to be copied
    * @param role
    *          The role used to set the parent of the new access
+   * @param className
+   *          the name of the class
    */
   private void copyRoleAccess(InheritedAccessEnabled parentAccess, Role role, String className) {
     // copy the new access
@@ -363,6 +380,8 @@ public class RoleInheritanceManager {
    *          The role whose inherited accesses will be removed from the list
    * @param roleAccessList
    *          The list of accesses to remove from
+   * @param className
+   *          the name of the class
    */
   private void deleteRoleAccess(Role inheritFromToDelete,
       List<? extends InheritedAccessEnabled> roleAccessList, String className) {
@@ -389,8 +408,10 @@ public class RoleInheritanceManager {
    * 
    * @param access
    *          The access to be removed from the parent list
+   * @param className
+   *          the name of the class
    */
-  public void clearInheritFromFieldInChilds(InheritedAccessEnabled access, String className) {
+  void clearInheritFromFieldInChilds(InheritedAccessEnabled access, String className) {
     String inheritedFromId = (String) DalUtil.getId(access.getInheritedFrom());
     if ("org.openbravo.model.ad.access.WindowAccess".equals(className)) {
       WindowAccess wa = (WindowAccess) access;
@@ -432,8 +453,10 @@ public class RoleInheritanceManager {
    * 
    * @param access
    *          The access to be removed from the parent list
+   * @param className
+   *          the name of the class
    */
-  public void removeReferenceInParentList(InheritedAccessEnabled access, String className) {
+  void removeReferenceInParentList(InheritedAccessEnabled access, String className) {
     if ("org.openbravo.model.ad.access.TabAccess".equals(className)) {
       TabAccess ta = (TabAccess) access;
       ta.getWindowAccess().getADTabAccessList().remove(ta);
@@ -451,6 +474,8 @@ public class RoleInheritanceManager {
    *          The access to be updated
    * @param inherited
    *          The access with the values to update
+   * @param className
+   *          the name of the class
    */
   private void updateRoleAccess(InheritedAccessEnabled access, InheritedAccessEnabled inherited,
       String className) {
@@ -466,7 +491,7 @@ public class RoleInheritanceManager {
    * @param inheritance
    *          The inheritance used to calculate the possible new accesses
    */
-  public void applyNewInheritance(RoleInheritance inheritance) {
+  void applyNewInheritance(RoleInheritance inheritance) {
     List<RoleInheritance> inheritanceList = getUpdatedRoleInheritancesList(inheritance, false);
     List<String> inheritanceRoleIdList = getRoleInheritancesInheritFromIdList(inheritanceList);
     List<RoleInheritance> newInheritanceList = new ArrayList<RoleInheritance>();
@@ -482,7 +507,7 @@ public class RoleInheritanceManager {
    * @param inheritance
    *          The inheritance being removed
    */
-  public void applyRemoveInheritance(RoleInheritance inheritance) {
+  void applyRemoveInheritance(RoleInheritance inheritance) {
     List<RoleInheritance> inheritanceList = getUpdatedRoleInheritancesList(inheritance, true);
     List<String> inheritanceRoleIdList = getRoleInheritancesInheritFromIdList(inheritanceList);
     for (AccessTypeInjector accessType : getAccessTypeOrderByPriority(false)) {
@@ -572,8 +597,10 @@ public class RoleInheritanceManager {
    *          The template role whose new access will be propagated
    * @param access
    *          The new access to be propagated
+   * @param classCanonicalName
+   *          the name of the class
    */
-  public void propagateNewAccess(Role role, InheritedAccessEnabled access, String classCanonicalName) {
+  void propagateNewAccess(Role role, InheritedAccessEnabled access, String classCanonicalName) {
     AccessTypeInjector injector = getInjector(classCanonicalName);
     if (injector == null) {
       return;
@@ -600,9 +627,10 @@ public class RoleInheritanceManager {
    *          The template role whose updated access will be propagated
    * @param access
    *          The updated access with the changes to propagate
+   * @param classCanonicalName
+   *          the name of the class
    */
-  public void propagateUpdatedAccess(Role role, InheritedAccessEnabled access,
-      String classCanonicalName) {
+  void propagateUpdatedAccess(Role role, InheritedAccessEnabled access, String classCanonicalName) {
     AccessTypeInjector injector = getInjector(classCanonicalName);
     if (injector == null) {
       return;
@@ -632,9 +660,10 @@ public class RoleInheritanceManager {
    *          The template role whose deleted access will be propagated
    * @param access
    *          The removed access to be propagated
+   * @param classCanonicalName
+   *          the name of the class
    */
-  public void propagateDeletedAccess(Role role, InheritedAccessEnabled access,
-      String classCanonicalName) {
+  void propagateDeletedAccess(Role role, InheritedAccessEnabled access, String classCanonicalName) {
     AccessTypeInjector injector = getInjector(classCanonicalName);
     if (injector == null) {
       return;
@@ -691,6 +720,8 @@ public class RoleInheritanceManager {
    *          The accessList to look for
    * @param access
    *          The access to be found
+   * @param injector
+   *          An AccessTypeInjector used to retrieve the access elements
    * @return the access being searched or null if not found
    */
   private InheritedAccessEnabled findInheritedAccess(
@@ -765,6 +796,8 @@ public class RoleInheritanceManager {
    *          priority when applying their related inheritances.
    * @param roleInheritanceToDelete
    *          If not null, the accesses introduced by this inheritance will be removed
+   * @param injector
+   *          An AccessTypeInjector used to retrieve the access elements
    * @return a list with two Integers containing the number of accesses updated and created
    *         respectively.
    */
@@ -809,6 +842,8 @@ public class RoleInheritanceManager {
    *          An existing access candidate to be overridden
    * @param inheritanceInheritFromIdList
    *          A list of template role ids which determines the priority of the template roles
+   * @param injector
+   *          An AccessTypeInjector used to retrieve the access elements
    * @return an integer that indicates the final action done with the access: not changed
    *         (ACCESS_NOT_CHANGED), updated (ACCESS_UPDATED) or created (ACCESS_CREATED).
    */
@@ -864,14 +899,14 @@ public class RoleInheritanceManager {
   /**
    * @see RoleInheritanceManager#getRoleInheritancesList(Role, boolean)
    */
-  public static List<RoleInheritance> getRoleInheritancesList(Role role) {
+  List<RoleInheritance> getRoleInheritancesList(Role role) {
     return getRoleInheritancesList(role, true);
   }
 
   /**
    * @see RoleInheritanceManager#getRoleInheritancesList(Role, Role, boolean)
    */
-  public static List<RoleInheritance> getRoleInheritancesList(Role role, boolean seqNoAscending) {
+  List<RoleInheritance> getRoleInheritancesList(Role role, boolean seqNoAscending) {
     return getRoleInheritancesList(role, null, true);
   }
 
@@ -886,7 +921,7 @@ public class RoleInheritanceManager {
    *          Determines of the list is returned by sequence number ascending (true) or descending
    * @return the list of inheritances of the role
    */
-  public static List<RoleInheritance> getRoleInheritancesList(Role role, Role excludedInheritFrom,
+  List<RoleInheritance> getRoleInheritancesList(Role role, Role excludedInheritFrom,
       boolean seqNoAscending) {
     final OBCriteria<RoleInheritance> obCriteria = OBDal.getInstance().createCriteria(
         RoleInheritance.class);
@@ -909,7 +944,7 @@ public class RoleInheritanceManager {
    *          Determines of the list is returned by sequence number ascending (true) or descending
    * @return the list of template roles used by role
    */
-  public static List<Role> getRoleInheritancesInheritFromList(Role role, Role excludedInheritFrom,
+  List<Role> getRoleInheritancesInheritFromList(Role role, Role excludedInheritFrom,
       boolean seqNoAscending) {
     List<RoleInheritance> inheritancesList = getRoleInheritancesList(role, excludedInheritFrom,
         seqNoAscending);
@@ -932,7 +967,7 @@ public class RoleInheritanceManager {
    *          in the returned list.
    * @return the list of role inheritances
    */
-  private static List<RoleInheritance> getUpdatedRoleInheritancesList(RoleInheritance inheritance,
+  private List<RoleInheritance> getUpdatedRoleInheritancesList(RoleInheritance inheritance,
       boolean deleting) {
     final ArrayList<RoleInheritance> roleInheritancesList = new ArrayList<RoleInheritance>();
     final OBCriteria<RoleInheritance> obCriteria = OBDal.getInstance().createCriteria(
@@ -970,7 +1005,7 @@ public class RoleInheritanceManager {
    *          a list of inheritances
    * @return the list of template role ids
    */
-  private static List<String> getRoleInheritancesInheritFromIdList(
+  private List<String> getRoleInheritancesInheritFromIdList(
       List<RoleInheritance> roleInheritanceList) {
     final ArrayList<String> roleIdsList = new ArrayList<String>();
     for (RoleInheritance roleInheritance : roleInheritanceList) {
@@ -981,6 +1016,9 @@ public class RoleInheritanceManager {
 
   /**
    * Returns the list of access types ordered by their priority value
+   * 
+   * @param ascending
+   *          determines the sorting of the list, ascending (true) or descending (false)
    * 
    * @return the list of template access types
    */
@@ -1000,6 +1038,9 @@ public class RoleInheritanceManager {
    * Returns the injector for the access type related to the canonical name of the class entered as
    * parameter
    * 
+   * @param classCanonicalName
+   *          the name of the class to identify the injector
+   * 
    * @return the AccessTypeInjector used to retrieve the access type to be handled by the manager
    */
   private AccessTypeInjector getInjector(String classCanonicalName) {
@@ -1017,6 +1058,9 @@ public class RoleInheritanceManager {
   /**
    * Returns true if there exists an injector for the access type related to the canonical name of
    * the class entered as parameter
+   * 
+   * @param classCanonicalName
+   *          the name of the class to identify the injector
    * 
    * @return true if exists an injector for the entered class name, false otherwise
    */
