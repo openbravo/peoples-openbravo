@@ -517,9 +517,6 @@ public class ActivationKey {
         && !StringUtils.isBlank(getProperty("posTerminals"))) {
       try {
         posTerminals = new Long(getProperty("posTerminals"));
-        if (posTerminals == 0L) {
-          posTerminals = NO_LIMIT;
-        }
       } catch (Exception e) {
         log.error("Couldn't read number of terminals " + getProperty("posTerminals"), e);
         posTerminals = 0L;
