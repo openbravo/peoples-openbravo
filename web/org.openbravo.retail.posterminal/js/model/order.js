@@ -1117,7 +1117,7 @@
               if (OB.MobileApp.model.get('terminal').businessPartner === me.get('bp').get('id')) {
                 for (i = 0; i < me.get('undo').lines.length; i++) {
                   if (!me.get('undo').lines[i].get('product').get('oBPOSAllowAnonymousSale')) {
-                    OB.UTIL.showConfirmation.display("Error", OB.I18N.getLabel('OBPOS_AnonymousSaleForProductNotAllowed', [me.get('undo').lines[i].get('product').get('_identifier')]));
+                    OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_AnonymousSaleForProductNotAllowed', [me.get('undo').lines[i].get('product').get('_identifier')]));
                     return;
                   }
                 }
@@ -1156,7 +1156,7 @@
             line: line,
             undo: function () {
               if (!line.get('product').get('oBPOSAllowAnonymousSale') && OB.MobileApp.model.get('terminal').businessPartner === me.get('bp').get('id')) {
-                OB.UTIL.showConfirmation.display("Error", OB.I18N.getLabel('OBPOS_AnonymousSaleNotAllowed'));
+                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_AnonymousSaleNotAllowed'));
                 return;
               }
               me.removeDeleteLine(line);
@@ -1514,9 +1514,9 @@
             args.receipt.unset("deferredOrder", {
               silent: true
             });
-            OB.UTIL.showConfirmation.display("Error", OB.I18N.getLabel('OBPOS_AnonymousSaleNotAllowedDeferredSale'));
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_AnonymousSaleNotAllowedDeferredSale'));
           } else {
-            OB.UTIL.showConfirmation.display("Error", OB.I18N.getLabel('OBPOS_AnonymousSaleNotAllowed'));
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_AnonymousSaleNotAllowed'));
           }
 
           if (callback) {
@@ -1947,7 +1947,7 @@
       if (OB.MobileApp.model.get('terminal').businessPartner === businessPartner.id) {
         for (i = 0; i < me.get('lines').models.length; i++) {
           if (!me.get('lines').models[i].get('product').get('oBPOSAllowAnonymousSale')) {
-            OB.UTIL.showConfirmation.display("Error", OB.I18N.getLabel('OBPOS_AnonymousSaleForProductNotAllowed', [me.get('lines').models[i].get('product').get('_identifier')]));
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_AnonymousSaleForProductNotAllowed', [me.get('lines').models[i].get('product').get('_identifier')]));
             return;
           }
         }

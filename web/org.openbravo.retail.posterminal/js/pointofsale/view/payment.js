@@ -1091,7 +1091,6 @@ enyo.kind({
     }
   }
 });
-
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.LayawayButton',
   kind: 'OB.OBPOSPointOfSale.UI.ProcessButton',
