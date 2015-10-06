@@ -566,7 +566,9 @@ public class RoleInheritanceManager {
    * template the role passed as parameter
    * 
    * @param template
-   *          The template role used by the roles whose accesses will be recalculated
+   *          The template role used by the roles whose accesses will be recalculated * @param
+   * @param classCanonicalName
+   *          the name of the class
    */
   public void recalculateAccessFromTemplate(Role template, String classCanonicalName) {
     AccessTypeInjector injector = getInjector(classCanonicalName);
@@ -583,6 +585,9 @@ public class RoleInheritanceManager {
    * 
    * @param role
    *          The role whose accesses will be recalculated
+   * @param injector
+   *          An AccessTypeInjector used to retrieve the access elements
+   * 
    */
   public void recalculateAccessForRole(Role role, AccessTypeInjector injector) {
     List<RoleInheritance> inheritanceList = getRoleInheritancesList(role);
@@ -964,7 +969,7 @@ public class RoleInheritanceManager {
    *          inheritance that contains the role information
    * @param deleting
    *          a flag which determines whether the inheritance passed as parameter should be included
-   *          in the returned list.
+   *          in the returned list or not.
    * @return the list of role inheritances
    */
   private List<RoleInheritance> getUpdatedRoleInheritancesList(RoleInheritance inheritance,
