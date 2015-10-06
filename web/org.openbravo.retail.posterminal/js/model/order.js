@@ -989,6 +989,15 @@
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgCannotAddPostiveToReturn'));
           return;
         }
+        if (this.get('replacedorder_id')) {
+          if (oldqty > 0 && qty < line.get('remainingQuantity')) {
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceQtyEdit'));
+            return;
+          } else if ((oldqty < 0 && qty > line.get('remainingQuantity'))) {
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceQtyEditReturn'));
+            return;
+          }
+        }
         if (line.get('product').get('groupProduct') === false) {
           this.addProduct(line.get('product'));
           return true;
@@ -1159,8 +1168,18 @@
 
     deleteLines: function (lines, idx, length, callback) {
       var me = this,
-          line = lines[idx];
+          line = lines[idx],
+          i;
       if (idx === 0) {
+        for (i = 0; i < lines.length; i++) {
+          if (me.get('replacedorder') && lines[i].get('remainingQuantity')) {
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceDeleteLine'));
+            if (callback) {
+              callback();
+            }
+            return;
+          }
+        }
         this.set('undo', null);
       }
       idx++;
@@ -1206,6 +1225,11 @@
           pack = line.isAffectedByPack(),
           productId = line.get('product').id;
 
+
+      if (me.get('replacedorder_id') && line.get('remainingQuantity')) {
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceDeleteLine'));
+        return;
+      }
 
       if (pack) {
         // When deleting a line, check lines with other product that are affected by

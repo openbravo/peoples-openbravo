@@ -924,6 +924,10 @@ enyo.kind({
       });
       return true;
     }
+    if (this.model.get('order').get('replacedorder_id') && inEvent.line.get('remainingQuantity')) {
+      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceReturnLines'));
+      return;
+    }
     this.model.get('order').returnLine(inEvent.line);
   },
   exactPayment: function (inSender, inEvent) {

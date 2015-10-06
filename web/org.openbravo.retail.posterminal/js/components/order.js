@@ -565,7 +565,7 @@ enyo.kind({
         this.$.divText.show();
         //We have to ensure that there is not another handler showing this div
       } else if (model.get('orderType') === 2 && model.get('replacedorder_id')) {
-        this.$.divText.addStyles('width: 90%; color: darkblue; line-height:30px');
+        this.$.divText.addStyles('width: 90%; color: #5353C5; line-height:30px');
         this.$.divText.setContent("'Cancel and Replace' of " + model.get('replacedorder_documentNo'));
         this.$.divText.show();
         //We have to ensure that there is not another handler showing this div
@@ -652,7 +652,7 @@ enyo.kind({
     }, this);
     this.order.on('change:replacedorder_id', function (model) {
       if (model.get('replacedorder_id')) {
-        this.$.divText.addStyles('width: 90%; color: darkblue; line-height:30px');
+        this.$.divText.addStyles('width: 90%; color: #5353C5; line-height:30px');
         this.$.divText.setContent("'Cancel and Replace' of " + model.get('replacedorder_documentNo'));
         this.$.divText.show();
         this.$.listPaymentLines.show();

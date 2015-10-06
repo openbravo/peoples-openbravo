@@ -362,6 +362,20 @@ enyo.kind({
       }
 
       function returnLines() {
+        var cancelReturn = false;
+
+        if (order.get('replacedorder_id')) {
+          _.each(me.owner.owner.selectedModels, function (l) {
+            if (l.get('remainingQuantity')) {
+              cancelReturn = true;
+            }
+          });
+        }
+        if (cancelReturn) {
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceReturnLines'));
+          return;
+        }
+
         order.set('undo', null);
         order.set('multipleUndo', true);
         order.set('preventServicesUpdate', true);

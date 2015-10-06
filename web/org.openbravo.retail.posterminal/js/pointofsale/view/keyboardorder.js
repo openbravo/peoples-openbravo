@@ -145,7 +145,30 @@ enyo.kind({
         };
 
     var actionAddMultiProduct = function (keyboard, qty) {
+        var cancelQtyChange = false,
+            cancelQtyChangeReturn = false;
         if (me.selectedModelsSameQty) {
+
+          if (keyboard.receipt.get('replacedorder_id')) {
+            _.each(me.selectedModels, function (l) {
+              var oldqty = l.get('qty'),
+                  newqty = oldqty + qty;
+
+              if (oldqty > 0 && newqty < l.get('remainingQuantity')) {
+                cancelQtyChange = true;
+              } else if (oldqty < 0 && newqty > l.get('remainingQuantity')) {
+                cancelQtyChangeReturn = true;
+              }
+            });
+          }
+          if (cancelQtyChange) {
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceQtyEdit'));
+            return;
+          } else if (cancelQtyChangeReturn) {
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceQtyEditReturn'));
+            return;
+          }
+
           keyboard.receipt.set('undo', null);
           keyboard.receipt.set('multipleUndo', true);
           var selection = [];
