@@ -493,6 +493,7 @@ public class RoleInheritanceManager {
    *          The inheritance used to calculate the possible new accesses
    */
   void applyNewInheritance(RoleInheritance inheritance) {
+    long t = System.currentTimeMillis();
     List<RoleInheritance> inheritanceList = getUpdatedRoleInheritancesList(inheritance, false);
     List<String> inheritanceRoleIdList = getRoleInheritancesInheritFromIdList(inheritanceList);
     List<RoleInheritance> newInheritanceList = new ArrayList<RoleInheritance>();
@@ -500,6 +501,7 @@ public class RoleInheritanceManager {
     for (AccessTypeInjector accessType : getAccessTypeOrderByPriority(true)) {
       calculateAccesses(newInheritanceList, inheritanceRoleIdList, accessType);
     }
+    log.debug("add new inheritance time: " + (System.currentTimeMillis() - t));
   }
 
   /**
@@ -509,6 +511,7 @@ public class RoleInheritanceManager {
    *          The inheritance being removed
    */
   void applyRemoveInheritance(RoleInheritance inheritance) {
+    long t = System.currentTimeMillis();
     List<RoleInheritance> inheritanceList = getUpdatedRoleInheritancesList(inheritance, true);
     List<String> inheritanceRoleIdList = getRoleInheritancesInheritFromIdList(inheritanceList);
     for (AccessTypeInjector accessType : getAccessTypeOrderByPriority(false)) {
@@ -518,6 +521,7 @@ public class RoleInheritanceManager {
       // deleted first when it applies.
       calculateAccesses(inheritanceList, inheritanceRoleIdList, inheritance, accessType);
     }
+    log.debug("remove inheritance time: " + (System.currentTimeMillis() - t));
   }
 
   /**
@@ -528,6 +532,7 @@ public class RoleInheritanceManager {
    * @return a list of the child roles which have accesses that have been updated or created
    */
   public List<Role> recalculateAllAccessesFromTemplate(Role template) {
+    long t = System.currentTimeMillis();
     List<Role> updatedRoles = new ArrayList<Role>();
     for (RoleInheritance ri : template.getADRoleInheritanceInheritFromList()) {
       Map<String, List<Integer>> result = recalculateAllAccessesForRole(ri.getRole());
@@ -540,6 +545,8 @@ public class RoleInheritanceManager {
         }
       }
     }
+    log.debug("recalculate all accesses from template " + template.getName() + " time: "
+        + (System.currentTimeMillis() - t));
     return updatedRoles;
   }
 
@@ -551,6 +558,7 @@ public class RoleInheritanceManager {
    * @return a map with the number of accesses updated and created for every access type
    */
   public Map<String, List<Integer>> recalculateAllAccessesForRole(Role role) {
+    long t = System.currentTimeMillis();
     Map<String, List<Integer>> result = new HashMap<String, List<Integer>>();
     List<RoleInheritance> inheritanceList = getRoleInheritancesList(role);
     List<String> inheritanceRoleIdList = getRoleInheritancesInheritFromIdList(inheritanceList);
@@ -559,6 +567,8 @@ public class RoleInheritanceManager {
           accessType);
       result.put(accessType.getClassName(), accessCounters);
     }
+    log.debug("recalculate all accesses for role " + role.getName() + " time: "
+        + (System.currentTimeMillis() - t));
     return result;
   }
 
@@ -572,6 +582,7 @@ public class RoleInheritanceManager {
    *          the name of the class
    */
   public void recalculateAccessFromTemplate(Role template, String classCanonicalName) {
+    long t = System.currentTimeMillis();
     AccessTypeInjector injector = getInjector(classCanonicalName);
     if (injector == null) {
       return;
@@ -579,6 +590,8 @@ public class RoleInheritanceManager {
     for (RoleInheritance ri : template.getADRoleInheritanceInheritFromList()) {
       recalculateAccessForRole(ri.getRole(), injector);
     }
+    log.debug("recalculate access for " + classCanonicalName + " from template "
+        + template.getName() + " time: " + (System.currentTimeMillis() - t));
   }
 
   /**
@@ -591,9 +604,12 @@ public class RoleInheritanceManager {
    * 
    */
   public void recalculateAccessForRole(Role role, AccessTypeInjector injector) {
+    long t = System.currentTimeMillis();
     List<RoleInheritance> inheritanceList = getRoleInheritancesList(role);
     List<String> inheritanceRoleIdList = getRoleInheritancesInheritFromIdList(inheritanceList);
     calculateAccesses(inheritanceList, inheritanceRoleIdList, injector);
+    log.debug("recalculate access for " + injector.getClassName() + " for role " + role.getName()
+        + " time: " + (System.currentTimeMillis() - t));
   }
 
   /**
@@ -607,6 +623,7 @@ public class RoleInheritanceManager {
    *          the name of the class
    */
   void propagateNewAccess(Role role, InheritedAccessEnabled access, String classCanonicalName) {
+    long t = System.currentTimeMillis();
     AccessTypeInjector injector = getInjector(classCanonicalName);
     if (injector == null) {
       return;
@@ -624,6 +641,8 @@ public class RoleInheritanceManager {
       List<String> inheritanceRoleIdList = getRoleInheritancesInheritFromIdList(inheritanceList);
       handleAccess(ri, access, inheritanceRoleIdList, injector);
     }
+    log.debug("propagate new access from template " + role.getName() + " time: "
+        + (System.currentTimeMillis() - t));
   }
 
   /**
@@ -637,6 +656,7 @@ public class RoleInheritanceManager {
    *          the name of the class
    */
   void propagateUpdatedAccess(Role role, InheritedAccessEnabled access, String classCanonicalName) {
+    long t = System.currentTimeMillis();
     AccessTypeInjector injector = getInjector(classCanonicalName);
     if (injector == null) {
       return;
@@ -657,6 +677,8 @@ public class RoleInheritanceManager {
         updateRoleAccess(childAccess, access, injector.getClassName());
       }
     }
+    log.debug("propagate updated access from template " + role.getName() + " time: "
+        + (System.currentTimeMillis() - t));
   }
 
   /**
@@ -670,6 +692,7 @@ public class RoleInheritanceManager {
    *          the name of the class
    */
   void propagateDeletedAccess(Role role, InheritedAccessEnabled access, String classCanonicalName) {
+    long t = System.currentTimeMillis();
     AccessTypeInjector injector = getInjector(classCanonicalName);
     if (injector == null) {
       return;
@@ -717,6 +740,8 @@ public class RoleInheritanceManager {
         }
       }
     }
+    log.debug("propagate deleted access from template " + role.getName() + " time: "
+        + (System.currentTimeMillis() - t));
   }
 
   /**
