@@ -416,6 +416,10 @@ enyo.kind({
     });
   },
   addProductToOrder: function (inSender, inEvent) {
+    if (inEvent.product.get('ignoreAddProduct')) {
+      inEvent.product.unset('ignoreAddProduct');
+      return;
+    }
     var targetOrder;
     if (inEvent && inEvent.targetOrder) {
       targetOrder = inEvent.targetOrder;

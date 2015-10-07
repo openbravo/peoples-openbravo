@@ -315,4 +315,14 @@ button.btnbp:disabled {
   background-size: 22px 22px;
   background-position: center 3px;
   width: 28px;
+}
+
+.listcontextmenu-icon {
+  background-image: url('./../../org.openbravo.retail.posterminal/img/iconContextMenu.png');
+  background-repeat: no-repeat;
+}
+
+.listcontextmenu-icon-pressed {
+  background-image: url('./../../org.openbravo.retail.posterminal/img/iconContextMenu_pressed.png');
+  background-repeat: no-repeat;
 } 
