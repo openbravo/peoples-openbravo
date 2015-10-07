@@ -636,6 +636,13 @@ public class FormInitializationComponent extends BaseActionHandler {
     }
     List<String> changedCols = new ArrayList<String>();
     for (String col : allColumns) {
+      if (mode.equals("NEW") && containsIgnoreCase(getAuxiliaryInputNamesList(tab.getId()), col)) {
+        // creating a new record, there is an auxiliary input that has the same name than the
+        // field's column, in this case auxiliary input is used to calculate the default, so there
+        // is no need of calculating it here as it will be done in computeAuxiliaryInputs
+        continue;
+      }
+
       checkNamingCollisionWithAuxiliaryInput(tab, col);
       Field field = columnsOfFields.get(col);
       try {
@@ -945,10 +952,38 @@ public class FormInitializationComponent extends BaseActionHandler {
       } catch (JSONException e) {
         log.error("Error while computing auxiliary input " + auxIn.getName(), e);
       }
+
       columnValues.put("inp" + Sqlc.TransformaNombreColumna(auxIn.getName()), jsonObj);
       RequestContext.get().setRequestParameter(
           "inp" + Sqlc.TransformaNombreColumna(auxIn.getName()),
           value == null || value.equals("null") ? null : value.toString());
+
+      if (mode.equals("NEW") && containsIgnoreCase(allColumns, auxIn.getName())) {
+        // auxiliary input used to calculate default value for a field, let's obtain the complete
+        // value from ui definition in order to obtain also its identifier
+        try {
+          Field field = null;
+          for (Field f : getADFieldList(tab.getId())) {
+            if (f.getColumn() != null
+                && auxIn.getName().equalsIgnoreCase(f.getColumn().getDBColumnName())) {
+              field = f;
+              break;
+            }
+          }
+          if (field != null) {
+            String columnId = field.getColumn().getId();
+            UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(columnId);
+            JSONObject jsonDefinition = new JSONObject(uiDef.getFieldProperties(field, true));
+            if (jsonDefinition.has("identifier")) {
+              jsonObj.put("identifier", jsonDefinition.get("identifier"));
+            }
+          }
+        } catch (Exception e) {
+          log.error("Error trying to calculate identifier for auxiliary input tab " + tab
+              + " aux input " + auxIn, e);
+        }
+      }
+
       // Now we insert session values for auxiliary inputs
       if (mode.equals("NEW") || mode.equals("EDIT") || mode.equals("SETSESSION")) {
         setSessionValue(tab.getWindow().getId() + "|" + auxIn.getName(), value);
@@ -1904,6 +1939,14 @@ public class FormInitializationComponent extends BaseActionHandler {
 
   private List<AuxiliaryInput> getAuxiliaryInputList(String tabId) {
     return cachedStructures.getAuxiliarInputList(tabId);
+  }
+
+  private List<String> getAuxiliaryInputNamesList(String tabId) {
+    List<String> result = new ArrayList<String>();
+    for (AuxiliaryInput ai : cachedStructures.getAuxiliarInputList(tabId)) {
+      result.add(ai.getName());
+    }
+    return result;
   }
 
   private String readParameter(Map<String, Object> parameters, String parameterName) {
