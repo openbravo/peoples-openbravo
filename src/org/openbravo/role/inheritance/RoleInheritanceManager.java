@@ -534,9 +534,9 @@ public class RoleInheritanceManager {
    *          The template role used by the roles whose accesses will be recalculated
    * @return a list of the child roles which have accesses that have been updated or created
    */
-  public List<Role> recalculateAllAccessesFromTemplate(Role template) {
+  public Set<Role> recalculateAllAccessesFromTemplate(Role template) {
     long t = System.currentTimeMillis();
-    List<Role> updatedRoles = new ArrayList<Role>();
+    Set<Role> updatedRoles = new HashSet<Role>();
     for (RoleInheritance ri : template.getADRoleInheritanceInheritFromList()) {
       if (ri.isActive()) {
         Map<String, CalculationResult> result = recalculateAllAccessesForRole(ri.getRole());
