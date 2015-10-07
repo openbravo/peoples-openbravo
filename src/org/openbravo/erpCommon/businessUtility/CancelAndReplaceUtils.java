@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
@@ -68,13 +67,10 @@ public class CancelAndReplaceUtils {
   private static Date today = null;
   private static final BigDecimal NEGATIVE_ONE = new BigDecimal(-1);
   private static final String DONT_CREATE_NETTING_SHIPMENT = "CancelAndReplaceNoNetShipment";
+  private static OrganizationStructureProvider osp = null;
 
-  public static JSONObject cancelAndReplaceOrder(Map<String, Object> parameters, String content) {
+  public static JSONObject cancelAndReplaceOrder(String newOrderId) {
     try {
-      HashMap<String, List<ShipmentInOutLine>> orderLineShipmentLineRelations = null;
-      // Get request parameters
-      JSONObject request = new JSONObject(content);
-      String newOrderId = request.getString("inpcOrderId");
 
       // Get new Order
       Order newOrder = OBDal.getInstance().get(Order.class, newOrderId);
@@ -84,6 +80,9 @@ public class CancelAndReplaceUtils {
 
       today = new Date();
 
+      osp = OBContext.getOBContext().getOrganizationStructureProvider(
+          oldOrder.getOrganization().getClient().getId());
+
       // Create inverse Order header
       Order inverseOrder = createOrder(oldOrder);
 
@@ -91,28 +90,24 @@ public class CancelAndReplaceUtils {
       ShipmentInOut nettingGoodsShipment = null;
       ShipmentInOutLine newGoodsShipmentLine1 = null;
 
-      // Assign the original goods shipment lines to the new order lines
-      orderLineShipmentLineRelations = swapShipmentLines(newOrder);
+      // TODO, Replace Reservations or Create New Reservations and Release old ones??
+      // createReservations();
 
       // Iterate old order lines
       List<OrderLine> oldOrderLineList = oldOrder.getOrderLineList();
       long lineNoCounter = 1;
       for (OrderLine oldOrderLine : oldOrderLineList) {
 
-        // Set old order delivered quantity zero
-        BigDecimal orderedQuantity = oldOrderLine.getOrderedQuantity();
-        oldOrderLine.setDeliveredQuantity(BigDecimal.ZERO);
-        // BigDecimal deliveredQuantity = oldOrderLine.getDeliveredQuantity();
-        // oldOrderLine.setOrderedQuantity(BigDecimal.ZERO);
-        OBDal.getInstance().save(oldOrderLine);
-        OBDal.getInstance().flush();
-
         // Create inverse Order line
         OrderLine inverseOrderLine = createOrderLine(oldOrderLine, inverseOrder);
 
-        // Create new lines on the nettingGoodsShipment
-        List<ShipmentInOutLine> goodsShipmentLineList = orderLineShipmentLineRelations != null ? orderLineShipmentLineRelations
-            .get(oldOrderLine.getId()) : null;
+        // Get Shipment lines of old order line
+        OBCriteria<ShipmentInOutLine> goodsShipmentLineCriteria = OBDal.getInstance()
+            .createCriteria(ShipmentInOutLine.class);
+        goodsShipmentLineCriteria.add(Restrictions.eq(ShipmentInOutLine.PROPERTY_SALESORDERLINE,
+            oldOrderLine));
+        goodsShipmentLineCriteria.addOrderBy(ShipmentInOutLine.PROPERTY_UPDATED, true);
+        List<ShipmentInOutLine> goodsShipmentLineList = goodsShipmentLineCriteria.list();
 
         // check "Don't create netting shipment in Cancel and Replace" preference value
         boolean dontCreateNettingGoodsShipment = false;
@@ -131,28 +126,45 @@ public class CancelAndReplaceUtils {
             nettingGoodsShipment = createShipment(oldOrder, goodsShipmentLineList);
           }
           // Create Netting goods shipment Line for the old order line
-          newGoodsShipmentLine1 = createShipmentLine(
-              nettingGoodsShipment,
-              goodsShipmentLineList != null && goodsShipmentLineList.size() > 0 ? goodsShipmentLineList
-                  .get(0) : null, oldOrderLine, false, lineNoCounter);
+          BigDecimal movementQty = oldOrderLine.getOrderedQuantity().subtract(
+              oldOrderLine.getDeliveredQuantity());
+          newGoodsShipmentLine1 = createShipmentLine(nettingGoodsShipment,
+              goodsShipmentLineList.size() > 0 ? goodsShipmentLineList.get(0) : null, oldOrderLine,
+              lineNoCounter++, movementQty);
           // Create Netting goods shipment Line for the inverse order line
-          createShipmentLine(nettingGoodsShipment, newGoodsShipmentLine1, inverseOrderLine, true,
-              lineNoCounter);
+          movementQty = inverseOrderLine.getOrderedQuantity().subtract(
+              inverseOrderLine.getDeliveredQuantity());
+          createShipmentLine(nettingGoodsShipment, newGoodsShipmentLine1, inverseOrderLine,
+              lineNoCounter++, movementQty);
+
+          // Get the the new order line that replaces the old order line, should be only one
+          OBCriteria<OrderLine> olc = OBDal.getInstance().createCriteria(OrderLine.class);
+          olc.add(Restrictions.eq(OrderLine.PROPERTY_REPLACEDORDERLINE, oldOrderLine));
+          olc.add(Restrictions.eq(OrderLine.PROPERTY_SALESORDER, newOrder));
+          olc.setMaxResults(1);
+          OrderLine newOrderLine = (OrderLine) olc.uniqueResult();
+          if (newOrderLine != null) {
+            // TODO, What happens if the original shipment has 2 lines for the same order line, but
+            // with different locator? 2 lines also for the new order?
+            // Create Netting goods shipment Line for the new order line
+            movementQty = oldOrderLine.getDeliveredQuantity();
+            if (movementQty.compareTo(BigDecimal.ZERO) != 0) {
+              createShipmentLine(nettingGoodsShipment, newGoodsShipmentLine1, newOrderLine,
+                  lineNoCounter++, movementQty);
+            }
+            // Set new order line delivered quantity to old order line ordered quantity
+            newOrderLine.setDeliveredQuantity(movementQty);
+            OBDal.getInstance().save(newOrderLine);
+          }
         }
 
         // Set old order delivered quantity to the ordered quantity
-        // oldOrderLine.setOrderedQuantity(deliveredQuantity);
-        oldOrderLine.setDeliveredQuantity(orderedQuantity);
-        // OBDal.getInstance().save(oldOrderLine);
-        // OBDal.getInstance().flush();
+        oldOrderLine.setDeliveredQuantity(oldOrderLine.getOrderedQuantity());
+        OBDal.getInstance().save(oldOrderLine);
 
-        // Set inverse order delivered quantity to zero
+        // Set inverse order delivered quantity to ordered quantity
         inverseOrderLine.setDeliveredQuantity(inverseOrderLine.getOrderedQuantity());
         OBDal.getInstance().save(inverseOrderLine);
-        // OBDal.getInstance().flush();
-
-        // Increase counter
-        lineNoCounter++;
       }
       if (nettingGoodsShipment != null) {
         processShipment(nettingGoodsShipment);
@@ -269,8 +281,8 @@ public class CancelAndReplaceUtils {
   protected static ShipmentInOut createShipment(Order oldOrder,
       List<ShipmentInOutLine> goodsShipmentLineList) {
     ShipmentInOut nettingGoodsShipment = null;
-    // TODO, is it necessary to create a shipment if the original order has no shipment??
-    if (goodsShipmentLineList != null && goodsShipmentLineList.size() == 0) {
+    // if (goodsShipmentLineList != null && goodsShipmentLineList.size() == 0) {
+    if (goodsShipmentLineList.size() == 0) {
       // Create new Shipment
       nettingGoodsShipment = OBProvider.getInstance().get(ShipmentInOut.class);
       nettingGoodsShipment.setOrganization(oldOrder.getOrganization());
@@ -290,8 +302,10 @@ public class CancelAndReplaceUtils {
           goodsShipmentTable));
       goodsShipmentDocumentTypeCriteria.add(Restrictions.eq(DocumentType.PROPERTY_SALESTRANSACTION,
           true));
-      goodsShipmentDocumentTypeCriteria.add(Restrictions.eq(DocumentType.PROPERTY_ORGANIZATION,
-          oldOrder.getOrganization()));
+      List<String> parentOrganizationIdList = osp.getParentList(oldOrder.getOrganization().getId(),
+          true);
+      goodsShipmentDocumentTypeCriteria.add(Restrictions.in(DocumentType.PROPERTY_ORGANIZATION
+          + ".id", parentOrganizationIdList));
       goodsShipmentDocumentTypeCriteria.add(Restrictions.eq(DocumentType.PROPERTY_ACTIVE, true));
       goodsShipmentDocumentTypeCriteria.addOrderBy(DocumentType.PROPERTY_DEFAULT, false);
       List<DocumentType> goodsShipmentDocumentTypeList = goodsShipmentDocumentTypeCriteria.list();
@@ -306,12 +320,9 @@ public class CancelAndReplaceUtils {
         throw new OBException("The business partner location can not be null");
       }
       nettingGoodsShipment.setPartnerAddress(oldOrder.getPartnerAddress());
-    } else if (goodsShipmentLineList.size() == 1) {
-      // Copy the existing shipment
+    } else {
       nettingGoodsShipment = (ShipmentInOut) DalUtil.copy(goodsShipmentLineList.get(0)
           .getShipmentReceipt(), false, true);
-    } else {
-      throw new OBException("More than two goods shipment lines associated to a order line");
     }
     nettingGoodsShipment.setMovementDate(today);
     nettingGoodsShipment.setAccountingDate(today);
@@ -322,7 +333,6 @@ public class CancelAndReplaceUtils {
     nettingGoodsShipment.setDocumentAction("CO");
     nettingGoodsShipment.setMovementType("C-");
     nettingGoodsShipment.setProcessGoodsJava("--");
-    // OBDal.getInstance().flush();
     String nettingGoodsShipmentDocumentNo = FIN_Utility.getDocumentNo(
         nettingGoodsShipment.getDocumentType(), ShipmentInOut.TABLE_NAME);
     nettingGoodsShipment.setDocumentNo(nettingGoodsShipmentDocumentNo);
@@ -331,8 +341,8 @@ public class CancelAndReplaceUtils {
   }
 
   protected static ShipmentInOutLine createShipmentLine(ShipmentInOut nettingGoodsShipment,
-      ShipmentInOutLine nettingGoodsShipmentLine, OrderLine orderLine, boolean isInverse,
-      long lineNoCounter) {
+      ShipmentInOutLine nettingGoodsShipmentLine, OrderLine orderLine, long lineNoCounter,
+      BigDecimal movementQty) {
     ShipmentInOutLine newGoodsShipmentLine = null;
     if (nettingGoodsShipmentLine == null) {
       newGoodsShipmentLine = OBProvider.getInstance().get(ShipmentInOutLine.class);
@@ -346,23 +356,15 @@ public class CancelAndReplaceUtils {
       newGoodsShipmentLine = (ShipmentInOutLine) DalUtil
           .copy(nettingGoodsShipmentLine, false, true);
     }
-    if (isInverse) {
-      // For the inverseOrderLine
-      newGoodsShipmentLine.setLineNo(10 * lineNoCounter);
-    } else {
-      // For the oldOrderLine
-      newGoodsShipmentLine.setLineNo(10 * lineNoCounter + 10);
-    }
+    newGoodsShipmentLine.setLineNo(10 * lineNoCounter);
     newGoodsShipmentLine.setSalesOrderLine(orderLine);
     newGoodsShipmentLine.setShipmentReceipt(nettingGoodsShipment);
-    // OBDal.getInstance().flush();
-    newGoodsShipmentLine.setMovementQuantity(orderLine.getOrderedQuantity());
+    newGoodsShipmentLine.setMovementQuantity(movementQty);
 
     // Create Material Transaction record
     createMTransaction(newGoodsShipmentLine);
 
     OBDal.getInstance().save(newGoodsShipmentLine);
-    // OBDal.getInstance().flush();
     return newGoodsShipmentLine;
   }
 
@@ -514,10 +516,7 @@ public class CancelAndReplaceUtils {
               paymentTable));
           arReceiptDocumentTypeCriteria.add(Restrictions.eq(DocumentType.PROPERTY_SALESTRANSACTION,
               true));
-          // Parent organization list
-          OrganizationStructureProvider osp = OBContext.getOBContext()
-              .getOrganizationStructureProvider(oldOrder.getOrganization().getClient().getId());
-          ;
+
           List<String> parentOrganizationIdList = osp.getParentList(oldOrder.getOrganization()
               .getId(), true);
 
@@ -608,13 +607,11 @@ public class CancelAndReplaceUtils {
   protected static void processShipment(ShipmentInOut shipment) {
     if (shipment.isProcessed()) {
       shipment.setPosted("N");
-      // shipment.setProcessNow(true);
       shipment.setProcessed(false);
       shipment.setDocumentStatus("DR");
       shipment.setDocumentAction("CO");
     } else {
       shipment.setPosted("Y");
-      // shipment.setProcessNow(false);
       shipment.setProcessed(true);
       shipment.setDocumentStatus("CO");
       shipment.setDocumentAction("--");

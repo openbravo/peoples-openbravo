@@ -33,7 +33,11 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseActionHandler {
   protected JSONObject execute(Map<String, Object> parameters, String content) throws OBException {
     try {
 
-      JSONObject result = CancelAndReplaceUtils.cancelAndReplaceOrder(parameters, content);
+      // Get request parameters
+      JSONObject request = new JSONObject(content);
+      String newOrderId = request.getString("inpcOrderId");
+
+      JSONObject result = CancelAndReplaceUtils.cancelAndReplaceOrder(newOrderId);
 
       return result;
     } catch (Exception e1) {
