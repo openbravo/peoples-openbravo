@@ -969,7 +969,8 @@ enyo.kind({
   tap: function () {
     var myModel = this.owner.model,
         me = this,
-        payments, avoidPayment = false,
+        payments, process = new OB.DS.Process('org.openbravo.retail.posterminal.process.IsOrderCancelled'),
+        avoidPayment = false,
         orderDesc = '';
     if (this && this.owner && this.owner.receipt && this.owner.receipt.getOrderDescription) {
       orderDesc = this.owner.receipt.getOrderDescription();
@@ -1303,7 +1304,7 @@ enyo.kind({
     var receipt = this.owner.receipt,
         negativeLines, me = this,
         myModel = this.owner.model,
-        payments;
+        payments, process = new OB.DS.Process('org.openbravo.retail.posterminal.process.IsOrderCancelled');
     this.allowOpenDrawer = false;
 
     if (receipt.get('bp').id === OB.MobileApp.model.get('terminal').businessPartner && !OB.MobileApp.model.get('terminal').layaway_anonymouscustomer) {
@@ -1315,32 +1316,53 @@ enyo.kind({
       return true;
     }
 
+    function continuePaymentProcess() {
+      payments.each(function (payment) {
+        if (payment.get('allowOpenDrawer') || payment.get('isCash')) {
+          me.allowOpenDrawer = true;
+        }
+      });
+      if (receipt) {
+        negativeLines = _.find(receipt.get('lines').models, function (line) {
+          return line.get('qty') < 0;
+        });
+        if (negativeLines) {
+          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_layawaysOrdersWithReturnsNotAllowed'));
+          return true;
+        }
+        if (receipt.get('generateInvoice')) {
+          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_noInvoiceIfLayaway'));
+          receipt.set('generateInvoice', false);
+        }
+      }
+      this.hide();
+      enyo.$.scrim.show();
+      receipt.trigger('paymentDone', me.allowOpenDrawer);
+    }
+
     if (myModel.get('leftColumnViewManager').isOrder()) {
       payments = this.owner.receipt.get('payments');
     } else {
       payments = this.owner.model.get('multiOrders').get('payments');
     }
 
-    payments.each(function (payment) {
-      if (payment.get('allowOpenDrawer') || payment.get('isCash')) {
-        me.allowOpenDrawer = true;
-      }
-    });
-    if (receipt) {
-      negativeLines = _.find(receipt.get('lines').models, function (line) {
-        return line.get('qty') < 0;
+    if (this.owner.receipt.get('replacedorder_id')) {
+      process.exec({
+        orderId: this.owner.receipt.get('replacedorder_id'),
+        setCancelled: true
+      }, function (data) {
+        if (data && data.exception) {
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
+          return;
+        } else if (data && data.orderCancelled) {
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_OrderReplacedError'));
+          return;
+        } else {
+          continuePaymentProcess();
+        }
       });
-      if (negativeLines) {
-        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_layawaysOrdersWithReturnsNotAllowed'));
-        return true;
-      }
-      if (receipt.get('generateInvoice')) {
-        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_noInvoiceIfLayaway'));
-        receipt.set('generateInvoice', false);
-      }
+    } else {
+      continuePaymentProcess();
     }
-    this.hide();
-    enyo.$.scrim.show();
-    receipt.trigger('paymentDone', me.allowOpenDrawer);
   }
 });

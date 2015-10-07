@@ -978,11 +978,26 @@ enyo.kind({
   permission: 'OBPOS_receipt.cancelreplace',
   i18nLabel: 'OBPOS_CancelReplace',
   tap: function () {
+    var me = this,
+        process = new OB.DS.Process('org.openbravo.retail.posterminal.process.IsOrderCancelled');
     if (this.disabled) {
       return true;
     }
     this.inherited(arguments); // Manual dropdown menu closure
-    this.model.get('order').cancelAndReplaceOrder();
+    process.exec({
+      orderId: this.model.get('order').get('id'),
+      setCancelled: false
+    }, function (data) {
+      if (data && data.exception) {
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
+        return;
+      } else if (data && data.orderCancelled) {
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_OrderReplacedError'));
+        return;
+      } else {
+        me.model.get('order').cancelAndReplaceOrder();
+      }
+    });
   },
   updateVisibility: function () {
     var isPaidReceipt, isLayaway, receipt;
