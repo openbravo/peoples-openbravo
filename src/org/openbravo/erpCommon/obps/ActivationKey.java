@@ -1213,9 +1213,7 @@ public class ActivationKey {
     }
   }
 
-  /**
-   * Returns a message explaining WS call limitations
-   */
+  /** Returns a message explaining WS call limitations */
   public String getWSExplanation(ConnectionProvider conn, String lang) {
     if (!limitedWsAccess) {
       return Utility.messageBD(conn, "OPSWSUnlimited", lang);
@@ -1227,6 +1225,7 @@ public class ActivationKey {
     }
   }
 
+  /** Returns a message for POS Terminals limitations */
   public String getPOSTerminalsExplanation() {
     if (posTerminals == 0) {
       return OBMessageUtils.messageBD("OPSNone");
