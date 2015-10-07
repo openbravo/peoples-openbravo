@@ -348,13 +348,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                 OB.error("The receipt has been modified while it was being closed:\n" + diffStringified + "\n");
               }
 
-              //In case the processed document is a quotation, we remove its id so it can be reactivated
-              if (receipt.get('isQuotation')) {
-                if (!(receipt.get('oldId') && receipt.get('oldId').length > 0)) {
-                  receipt.set('oldId', receipt.get('id'));
-                }
-                receipt.set('isbeingprocessed', 'N');
-              }
               orderList.deleteCurrent();
               orderList.synchronizeCurrentOrder();
             }
@@ -367,49 +360,44 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     }, this);
 
     receipt.on('paymentDone', function (openDrawer) {
-      OB.UTIL.SynchronizationHelper.executeWhenSynchronized({
-        makeSynchronous: true
-      }, function (args, callback) {
-        if (receipt.overpaymentExists()) {
-          var symbol = OB.MobileApp.model.get('terminal').symbol;
-          var symbolAtRight = OB.MobileApp.model.get('terminal').currencySymbolAtTheRight;
-          var amount = receipt.getPaymentStatus().overpayment;
-          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_OverpaymentWarningTitle'), OB.I18N.getLabel('OBPOS_OverpaymentWarningBody', [OB.I18N.formatCurrencyWithSymbol(amount, symbol, symbolAtRight)]), [{
-            label: OB.I18N.getLabel('OBMOBC_LblOk'),
-            isConfirmButton: true,
-            action: function () {
-              if (openDrawer) {
-                OB.POS.hwserver.openDrawer({
-                  openFirst: false,
-                  receipt: receipt
-                }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
-              }
-              receipt.trigger('paymentAccepted');
+      if (receipt.overpaymentExists()) {
+        var symbol = OB.MobileApp.model.get('terminal').symbol;
+        var symbolAtRight = OB.MobileApp.model.get('terminal').currencySymbolAtTheRight;
+        var amount = receipt.getPaymentStatus().overpayment;
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_OverpaymentWarningTitle'), OB.I18N.getLabel('OBPOS_OverpaymentWarningBody', [OB.I18N.formatCurrencyWithSymbol(amount, symbol, symbolAtRight)]), [{
+          label: OB.I18N.getLabel('OBMOBC_LblOk'),
+          isConfirmButton: true,
+          action: function () {
+            if (openDrawer) {
+              OB.POS.hwserver.openDrawer({
+                openFirst: false,
+                receipt: receipt
+              }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
             }
-          }, {
-            label: OB.I18N.getLabel('OBMOBC_LblCancel')
-          }]);
-        } else if ((OB.DEC.abs(receipt.getPayment()) !== OB.DEC.abs(receipt.getGross())) && (!receipt.isLayaway() && !receipt.get('paidOnCredit'))) {
-          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_PaymentAmountDistinctThanReceiptAmountTitle'), OB.I18N.getLabel('OBPOS_PaymentAmountDistinctThanReceiptAmountBody'), [{
-            label: OB.I18N.getLabel('OBMOBC_LblOk'),
-            isConfirmButton: true,
-            action: function () {
-              receipt.trigger('paymentAccepted');
-            }
-          }, {
-            label: OB.I18N.getLabel('OBMOBC_LblCancel')
-          }]);
-        } else {
-          if (openDrawer) {
-            OB.POS.hwserver.openDrawer({
-              openFirst: true,
-              receipt: receipt
-            }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
+            receipt.trigger('paymentAccepted');
           }
-          receipt.trigger('paymentAccepted');
+        }, {
+          label: OB.I18N.getLabel('OBMOBC_LblCancel')
+        }]);
+      } else if ((OB.DEC.abs(receipt.getPayment()) !== OB.DEC.abs(receipt.getGross())) && (!receipt.isLayaway() && !receipt.get('paidOnCredit'))) {
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_PaymentAmountDistinctThanReceiptAmountTitle'), OB.I18N.getLabel('OBPOS_PaymentAmountDistinctThanReceiptAmountBody'), [{
+          label: OB.I18N.getLabel('OBMOBC_LblOk'),
+          isConfirmButton: true,
+          action: function () {
+            receipt.trigger('paymentAccepted');
+          }
+        }, {
+          label: OB.I18N.getLabel('OBMOBC_LblCancel')
+        }]);
+      } else {
+        if (openDrawer) {
+          OB.POS.hwserver.openDrawer({
+            openFirst: true,
+            receipt: receipt
+          }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
         }
-        callback();
-      }, {});
+        receipt.trigger('paymentAccepted');
+      }
     }, this);
 
     this.get('multiOrders').on('paymentAccepted', function () {
@@ -684,13 +672,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       OB.Dal.get(OB.Model.BusinessPartner, OB.MobileApp.model.get('businesspartner'), successCallbackBPs, errorCallback, errorCallback);
     }
 
-
-    // force the initialization of the document sequence info and wait until is set
-    OB.MobileApp.model.saveDocumentSequence(-1, -1, function () {
-      //Because in terminal we've the BP id and we want to have the BP model.
-      //In this moment we can ensure data is already loaded in the local database
-      searchCurrentBP(loadModelsCallback);
-    });
+    //Because in terminal we've the BP id and we want to have the BP model.
+    //In this moment we can ensure data is already loaded in the local database
+    searchCurrentBP(loadModelsCallback);
 
   },
 

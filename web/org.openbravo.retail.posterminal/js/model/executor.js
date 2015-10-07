@@ -363,6 +363,7 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
         return p.get('receipt') === evt.get('receipt');
       }).length === 0) {
         evt.get('receipt').calculateGross();
+        evt.get('receipt').trigger('discountsApplied');
       }
     }
 

@@ -22,7 +22,12 @@
       var nameLength, newSk;
 
       if (!this.get("name")) {
-        OB.UTIL.showWarning('Name is required for BPartner');
+        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_BPartnerNameRequired'));
+        return false;
+      }
+
+      if (!this.get('locName')) {
+        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_BPartnerAddressRequired'));
         return false;
       }
 

@@ -335,6 +335,13 @@ enyo.kind({
         receipt.prepareToSend(function () {
           receipt.trigger('closed', {
             callback: function () {
+              //In case the processed document is a quotation, we remove its id so it can be reactivated
+              if (receipt.get('isQuotation')) {
+                if (!(receipt.get('oldId') && receipt.get('oldId').length > 0)) {
+                  receipt.set('oldId', receipt.get('id'));
+                }
+                receipt.set('isbeingprocessed', 'N');
+              }
               if (OB.MobileApp.model.get('permissions')['OBPOS_print.quotation']) {
                 receipt.trigger('print');
               }

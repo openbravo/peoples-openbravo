@@ -9,6 +9,7 @@
 package org.openbravo.retail.posterminal.master;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.enterprise.inject.Any;
@@ -22,6 +23,9 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
+import org.openbravo.mobile.core.utils.OBMOBCUtils;
+import org.openbravo.model.pricing.pricelist.PriceList;
+import org.openbravo.model.pricing.pricelist.PriceListVersion;
 import org.openbravo.retail.config.OBRETCOProductList;
 import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.retail.posterminal.ProcessHQLQuery;
@@ -38,6 +42,15 @@ public class ProductCharacteristicValue extends ProcessHQLQuery {
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
     String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
     final OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
+
+    final Date terminalDate = OBMOBCUtils.calculateServerDate(jsonsent.getJSONObject("parameters")
+        .getString("terminalTime"),
+        jsonsent.getJSONObject("parameters").getJSONObject("terminalTimeOffset").getLong("value"));
+
+    final PriceList priceList = POSUtils.getPriceListByOrgId(orgId);
+    final PriceListVersion priceListVersion = POSUtils.getPriceListVersionByOrgId(orgId,
+        terminalDate);
+
     List<String> hqlQueries = new ArrayList<String>();
 
     HQLPropertyList regularProductsCharacteristicHQLProperties = ModelExtensionUtils
@@ -50,6 +63,9 @@ public class ProductCharacteristicValue extends ProcessHQLQuery {
             + "where pcv.product.id in (select product.id from OBRETCO_Prol_Product assort where obretcoProductlist.id= '"
             + productList.getId()
             + "') "
+            + "AND exists (select 1 from PricingProductPrice ppp WHERE (ppp.priceListVersion.id='"
+            + priceListVersion.getId()
+            + "') AND (ppp.product.id=pcv.product.id) ) "
             + "and $naturalOrgCriteria and $readableSimpleClientCriteria and (pcv.$incrementalUpdateCriteria"
             + "OR pcv.characteristic.$incrementalUpdateCriteria OR pcv.characteristicValue.$incrementalUpdateCriteria)");
 

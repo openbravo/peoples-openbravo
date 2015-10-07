@@ -417,16 +417,14 @@ enyo.kind({
       context: this,
       receipt: this.model.get('order'),
       productToAdd: inEvent.product,
-      qtyToAdd: inEvent.qty,
+      qtyToAdd: inEvent.qty ? inEvent.qty : 1,
       options: inEvent.options,
       attrs: inEvent.attrs
     }, function (args) {
       if (args.cancelOperation && args.cancelOperation === true) {
         return true;
       }
-      args.context.model.get('order').addProduct(args.productToAdd, args.qtyToAdd, args.options, args.attrs, function (success) {
-        args.context.model.get('orderList').saveCurrent();
-      });
+      args.context.model.get('order').addProduct(args.productToAdd, args.qtyToAdd, args.options, args.attrs, null);
     });
     return true;
   },

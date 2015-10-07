@@ -32,7 +32,7 @@ enyo.kind({
     if (!OB.MobileApp.model.hasPermission(this.permission)) {
       this.parent.parent.parent.hide();
     } else {
-      if (!OB.MobileApp.model.hasPermission(this.permissionOption)) {
+      if (!OB.MobileApp.model.hasPermission(this.permissionOption, true)) {
         this.parent.parent.parent.hide();
       }
     }

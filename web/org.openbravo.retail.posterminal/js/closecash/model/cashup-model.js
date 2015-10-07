@@ -330,7 +330,6 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
           cashUpReport: cashUpReport
         }, function (args) {
           me.get('cashUpReport').add(args.cashUpReport);
-          initModelsCallback();
           OB.UTIL.SynchronizationHelper.finished(synchId2, 'cashup-model.init2');
         });
       }, this);
@@ -735,13 +734,99 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
 });
 
 OB.OBPOSCashUp.Model.CashUpPartial = OB.OBPOSCashUp.Model.CashUp.extend({
-  initialStep: 5,
+  initialStep: 6,
   finishButtonLabel: 'OBPOS_LblPrintClose',
   reportTitleLabel: 'OBPOS_LblPartialCashUpTitle',
+  getCountCashSummary: function () {
+    var countCashSummary, counter, enumConcepts, enumSecondConcepts, enumSummarys, i, undf, model, value = OB.DEC.Zero,
+        second = OB.DEC.Zero;
+    countCashSummary = {
+      expectedSummary: [],
+      countedSummary: [],
+      differenceSummary: [],
+      qtyToKeepSummary: [],
+      qtyToDepoSummary: [],
+      totalCounted: this.get('totalCounted'),
+      totalExpected: this.get('totalExpected'),
+      totalDifference: this.get('totalDifference'),
+      totalQtyToKeep: OB.DEC.Zero,
+      totalQtyToDepo: OB.DEC.Zero
+    };
+    //First we fix the qty to keep for non-automated payment methods
+    _.each(this.get('paymentList').models, function (model) {
+      if (OB.UTIL.isNullOrUndefined(model.get('qtyToKeep'))) {
+        model.set('qtyToKeep', model.get('counted'));
+      }
+    });
+
+    enumSummarys = ['expectedSummary', 'countedSummary', 'differenceSummary', 'qtyToKeepSummary', 'qtyToDepoSummary'];
+    enumConcepts = ['expected', 'counted', 'difference', 'qtyToKeep', 'foreignCounted'];
+    enumSecondConcepts = ['foreignExpected', 'foreignCounted', 'foreignDifference', 'qtyToKeep', 'qtyToKeep'];
+    var sortedPays = _.sortBy(this.get('paymentList').models, function (p) {
+      return p.get('name');
+    });
+    for (counter = 0; counter < 5; counter++) {
+      for (i = 0; i < sortedPays.length; i++) {
+        model = sortedPays[i];
+        if (!model.get(enumConcepts[counter])) {
+          countCashSummary[enumSummarys[counter]].push(new Backbone.Model({
+            searchKey: model.get('searchKey'),
+            name: model.get('name'),
+            value: 0,
+            second: 0,
+            isocode: ''
+          }));
+        } else {
+          var fromCurrencyId = model.get('paymentMethod').currency;
+          switch (enumSummarys[counter]) {
+          case 'qtyToKeepSummary':
+            if (model.get(enumSecondConcepts[counter]) !== null && model.get(enumSecondConcepts[counter]) !== undf) {
+              value = OB.DEC.Zero;
+              second = OB.DEC.Zero;
+            }
+            break;
+          case 'qtyToDepoSummary':
+            if (model.get(enumSecondConcepts[counter]) !== null && model.get(enumSecondConcepts[counter]) !== undf && model.get('rate') !== '1') {
+              second = OB.DEC.Zero;
+            }
+            if (model.get(enumSecondConcepts[counter]) !== null && model.get(enumSecondConcepts[counter]) !== undf) {
+              value = OB.DEC.Zero;
+            }
+            break;
+          default:
+            value = model.get(enumConcepts[counter]);
+            second = model.get(enumSecondConcepts[counter]);
+          }
+          countCashSummary[enumSummarys[counter]].push(new Backbone.Model({
+            searchKey: model.get('searchKey'),
+            name: model.get('name'),
+            value: value,
+            second: second,
+            isocode: model.get('isocode')
+          }));
+        }
+      }
+    }
+    return countCashSummary;
+  },
   processAndFinishCashUp: function () {
     if (OB.MobileApp.model.hasPermission('OBPOS_print.cashup')) {
       this.printCashUp.print(this.get('cashUpReport').at(0), this.getCountCashSummary(), false);
     }
     this.set('finished', true);
+  },
+  allowPrevious: function () {
+    return false;
+  },
+  finishLoad: function () {
+    var finish = true;
+    _.each(this.cashupStepsDefinition, function (step) {
+      if (!step.loaded) {
+        finish = false;
+      }
+    });
+    if (finish && !this.get('loadFinished')) {
+      this.set('loadFinished', true);
+    }
   }
 });

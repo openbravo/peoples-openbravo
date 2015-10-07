@@ -36,20 +36,31 @@ enyo.kind({
     init: function (model) {
       this.collection = new OB.Collection.SalesRepresentativeList();
       this.model = model;
+      this.doLoadValueNeeded = true;
       if (!OB.MobileApp.model.hasPermission(this.permission)) {
+        this.doLoadValueNeeded = false;
         this.parent.parent.parent.hide();
       } else {
-        if (OB.MobileApp.model.hasPermission(this.permissionOption)) {
+        if (OB.MobileApp.model.hasPermission(this.permissionOption, true)) {
+          this.doLoadValueNeeded = false;
           this.parent.parent.parent.hide();
         }
       }
     },
-    // override to not load things upfront
-    loadValue: function () {},
+
+    // override to not load things upfront when not needed
+    loadValue: function () {
+      if (this.doLoadValueNeeded) {
+        // call the super implementation in the prototype directly
+        OB.UI.renderComboProperty.prototype.loadValue.apply(this, arguments);
+      }
+    },
+
     fetchDataFunction: function (args) {
       var me = this,
           actualUser;
-      OB.Dal.find(OB.Model.SalesRepresentative, null, function (data, args) {
+
+      OB.Dal.find(OB.Model.SalesRepresentative, null, function (data) {
         if (me.destroyed) {
           return;
         }

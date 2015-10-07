@@ -22,24 +22,35 @@
     preventApplyPromotions: false,
     applyPromotionsTimeout: {},
     applyPromotions: function (receipt, line) {
+      var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('applyPromotions');
       if (!receipt.get('isBeingDiscounted')) {
-        receipt.set('isBeingDiscounted', true);
+        receipt.set('isBeingDiscounted', true, {
+          silent: true
+        });
         // if the discount algorithm already started, stop pending computations...
         this.executor.removeGroup('discounts');
         // ... and start over
         this.applyPromotionsLat(receipt, line);
       } else {
-        receipt.set('reApplyDiscounts', true);
+        receipt.set('reApplyDiscounts', true, {
+          silent: true
+        });
       }
+      OB.UTIL.SynchronizationHelper.finished(synchId, 'applyPromotions');
     },
     finishPromotions: function (receipt, line) {
+      receipt.set('isBeingDiscounted', false, {
+        silent: true
+      });
       if (receipt.get('reApplyDiscounts') === true) {
-        receipt.set('isBeingDiscounted', false);
-        receipt.set('reApplyDiscounts', false);
+        receipt.set('reApplyDiscounts', false, {
+          silent: true
+        });
         OB.Model.Discounts.applyPromotions(receipt, line);
       } else {
-        receipt.set('isBeingDiscounted', false);
-        receipt.set('reApplyDiscounts', false);
+        receipt.set('reApplyDiscounts', false, {
+          silent: true
+        });
         receipt.trigger('applyPromotionsFinished');
       }
     },
@@ -148,17 +159,20 @@
           });
 
           _.each(receipt.get('lines').models, function (line) {
-            line.set('promotions', []);
-            line.set('promotionCandidates', []);
+            if (line.get('gross') > 0) {
+              // Clean the promotions only if the line is not a return
+              line.set('promotions', []);
+              line.set('promotionCandidates', []);
+            }
+
           });
         }
         this.applyPromotionsImp(auxReceipt, null, true);
       } else {
-        this.applyPromotionsImp(receipt, line, false);
-        receipt.get('lines').forEach(function (l) {
-          l.calculateGross();
+        receipt.on('discountsApplied', function () {
+          OB.Model.Discounts.finishPromotions(receipt, line);
         });
-        receipt.calculateGross();
+        this.applyPromotionsImp(receipt, line, false);
       }
     },
 

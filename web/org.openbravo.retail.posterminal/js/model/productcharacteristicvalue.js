@@ -16,6 +16,7 @@
     tableName: 'm_product_ch_value',
     entityName: 'ProductCharacteristicValue',
     source: 'org.openbravo.retail.posterminal.master.ProductCharacteristicValue',
+    includeTerminalDate: true,
     remote: 'OBPOS_remote.product',
     dataLimit: OB.Dal.DATALIMIT
   });

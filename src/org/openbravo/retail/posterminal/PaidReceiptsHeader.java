@@ -93,10 +93,12 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
       hqlPaidReceipts += " and ord.documentStatus='" + json.getString("docstatus") + "'";
     }
     if (!json.getString("startDate").isEmpty()) {
-      hqlPaidReceipts += " and ord.orderDate >='" + json.getString("startDate") + "'";
+      hqlPaidReceipts += " and ord.orderDate >= to_date('" + json.getString("startDate")
+          + "', 'YYYY/MM/DD')";
     }
     if (!json.getString("endDate").isEmpty()) {
-      hqlPaidReceipts += " and ord.orderDate <='" + json.getString("endDate") + "'";
+      hqlPaidReceipts += " and ord.orderDate <= to_date('" + json.getString("endDate")
+          + "', 'YYYY/MM/DD')";
     }
 
     if (json.has("isQuotation") && json.getBoolean("isQuotation")) {

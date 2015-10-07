@@ -153,7 +153,10 @@ enyo.kind({
       this.waterfall('onSaveChange', {
         customerAddr: this.model.get('customerAddr')
       });
-      if (this.model.get('customerAddr').saveCustomerAddr()) {
+      if (this.model.get('customerAddr').get('name') === '') {
+        OB.UTIL.showWarning('Address is required for BPartner');
+        return false;
+      } else if (this.model.get('customerAddr').saveCustomerAddr()) {
         goToViewWindow(sw, {
           customer: this.customer,
           customerAddr: this.model.get('customerAddr')
@@ -161,26 +164,31 @@ enyo.kind({
       }
     } else {
       this.model.get('customerAddr').loadById(this.customerAddr.get('id'), function (customerAddr) {
-        getCustomerAddrValues({
-          customerAddr: customerAddr
-        });
-        if (customerAddr.saveCustomerAddr()) {
-          goToViewWindow(sw, {
-            customer: me.customer,
+        if (customerAddr.get('name') === "") {
+          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_BPartnerAddressRequired'));
+          return false;
+        } else {
+          getCustomerAddrValues({
             customerAddr: customerAddr
           });
-          if (customerAddr.get('id') === me.customer.get("locId")) {
-
-            me.customer.set('locId', customerAddr.get('id'));
-            me.customer.set('locName', customerAddr.get('name'));
-            me.customer.set('locationModel', customerAddr);
-            OB.Dal.save(me.customer, function success(tx) {
-              me.doChangeBusinessPartner({
-                businessPartner: me.customer
-              });
-            }, function error(tx) {
-              OB.error(tx);
+          if (customerAddr.saveCustomerAddr()) {
+            goToViewWindow(sw, {
+              customer: me.customer,
+              customerAddr: customerAddr
             });
+            if (customerAddr.get('id') === me.customer.get("locId")) {
+              me.customer.set('locId', customerAddr.get('id'));
+              me.customer.set('locName', customerAddr.get('name'));
+              me.customer.set('locationModel', customerAddr);
+              OB.Dal.save(me.customer, function success(tx) {
+                me.doChangeBusinessPartner({
+                  businessPartner: me.customer
+                });
+              }, function error(tx) {
+                OB.error(tx);
+              });
+
+            }
           }
         }
       });

@@ -534,6 +534,10 @@
           });
           };
 
+      this.get('lines').forEach(function (line) {
+        line.calculateGross();
+      });
+
       if (this.get('priceIncludesTax')) {
         this.calculateTaxes(function () {
           var gross = me.get('lines').reduce(function (memo, e) {
@@ -1367,8 +1371,7 @@
         text: OB.I18N.getLabel('OBPOS_AddLine', [newline.get('qty'), newline.get('product').get('_identifier')]),
         line: newline,
         undo: function (modelObj) {
-          OB.UTIL.Approval.requestApproval(
-          (modelObj ? modelObj : this.model), 'OBPOS_approval.deleteLine', function (approved) {
+          OB.UTIL.Approval.requestApproval((modelObj ? modelObj : this.model), 'OBPOS_approval.deleteLine', function (approved) {
             if (approved) {
               me.get('lines').remove(newline);
               me.calculateGross();
@@ -1701,6 +1704,8 @@
       var nextDocumentno = OB.MobileApp.model.getNextDocumentno();
       this.set('documentnoPrefix', OB.MobileApp.model.get('terminal').docNoPrefix);
       this.set('documentnoSuffix', nextDocumentno.documentnoSuffix);
+      this.set('quotationnoPrefix', -1);
+      this.set('quotationnoSuffix', -1);
       this.set('documentNo', nextDocumentno.documentNo);
       this.set('posTerminal', OB.MobileApp.model.get('terminal').id);
       this.save();
@@ -1712,7 +1717,6 @@
       } else {
         OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationCreatedOrder'));
         this.calculateGross();
-        this.trigger('orderCreatedFromQuotation');
       }
     },
 
@@ -2249,9 +2253,6 @@
       }, {
         silent: true
       });
-      this.get('lines').forEach(function (l) {
-        l.calculateGross();
-      });
       this.calculateGross();
       this.trigger('promotionsUpdated');
     },
@@ -2691,7 +2692,7 @@
     },
 
     addPaidReceipt: function (model) {
-      var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('addPaidReceipt');
+      var synchId = null;
       enyo.$.scrim.show();
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
         this.doRemoteBPSettings(model.get('bp'));
@@ -2703,13 +2704,17 @@
       this.current = model;
       this.add(this.current);
       this.loadCurrent(true);
-      // OB.Dal.save is done here because we want to force to save with the original od, only this time.
-      OB.Dal.save(model, function () {
-        enyo.$.scrim.hide();
-        OB.UTIL.SynchronizationHelper.finished(synchId, 'addPaidReceipt');
-      }, function () {
-        OB.error(arguments);
-      }, model.get('isLayaway'));
+
+      if (model.get('isLayaway')) {
+        synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('addPaidReceipt');
+        // OB.Dal.save is done here because we want to force to save with the original od, only this time.
+        OB.Dal.save(model, function () {
+          enyo.$.scrim.hide();
+          OB.UTIL.SynchronizationHelper.finished(synchId, 'addPaidReceipt');
+        }, function () {
+          OB.error(arguments);
+        }, true);
+      }
     },
     addMultiReceipt: function (model) {
       OB.Dal.save(model, function () {}, function () {
@@ -2838,6 +2843,7 @@
     saveCurrent: function () {
       if (this.current) {
         OB.UTIL.clone(this.modelorder, this.current);
+        this.current.trigger('updateView');
       }
     },
     loadCurrent: function (isNew) {
