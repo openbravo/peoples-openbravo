@@ -51,6 +51,19 @@ BEGIN
         RAISE_APPLICATION_ERROR(-20000, '@CannotChangeVisibleAtTemplate@');
       END IF;
     END IF;
+    IF (COALESCE(:NEW.VISIBLEAT_CLIENT_ID , '.') != COALESCE(:OLD.VISIBLEAT_CLIENT_ID , '.') OR
+        COALESCE(:NEW.VISIBLEAT_ORG_ID , '.') != COALESCE(:OLD.VISIBLEAT_ORG_ID , '.') OR
+        COALESCE(:NEW.AD_USER_ID , '.') != COALESCE(:OLD.AD_USER_ID , '.') OR
+        COALESCE(:NEW.AD_WINDOW_ID , '.') != COALESCE(:OLD.AD_WINDOW_ID , '.')) THEN
+      SELECT COUNT(*)
+        INTO vAux
+        FROM dual
+      WHERE EXISTS (SELECT 1 FROM AD_ROLE_INHERITANCE
+                    WHERE INHERIT_FROM = :NEW.VISIBLEAT_ROLE_ID);
+      IF (vAux!=0) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@CannotChangeVisibilityTemplate@');
+      END IF;
+    END IF;
   END IF;
 
   SELECT COUNT(*)

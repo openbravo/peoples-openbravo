@@ -41,6 +41,7 @@ import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.FieldAccess;
 import org.openbravo.model.ad.access.Role;
@@ -109,9 +110,16 @@ public class RoleInheritanceManager {
         // same preference with different visibility settings
         String identifier = (String) myClass.getMethod(injector.getSecuredElement()).invoke(access);
         Preference preference = (Preference) access;
+        String visibleAtClient = preference.getVisibleAtClient() != null ? (String) DalUtil
+            .getId(preference.getVisibleAtClient()) : "";
+        String visibleAtOrg = preference.getVisibleAtOrganization() != null ? (String) DalUtil
+            .getId(preference.getVisibleAtOrganization()) : "";
+        String visibleAtUser = preference.getUserContact() != null ? (String) DalUtil
+            .getId(preference.getUserContact()) : "";
         String visibleAtWindow = preference.getWindow() != null ? (String) DalUtil.getId(preference
             .getWindow()) : "";
-        return identifier + "_" + visibleAtWindow;
+        return identifier + "_" + visibleAtClient + "_" + visibleAtOrg + "_" + visibleAtUser + "_"
+            + visibleAtWindow;
       }
       BaseOBObject bob = (BaseOBObject) myClass.getMethod(injector.getSecuredElement()).invoke(
           access);
@@ -339,11 +347,12 @@ public class RoleInheritanceManager {
    */
   private void addEntityWhereClause(StringBuilder whereClause, String className) {
     if ("org.openbravo.model.ad.domain.Preference".equals(className)) {
-      // Inheritable preferences are those that only define the visibility at role level
-      whereClause.append(" and p.visibleAtClient = null and p.visibleAtOrganization = null"
-          + " and p.userContact = null");
+      // Inheritable preferences are those that are not in the black list and also has a value in
+      // the Visible At Role field
+      whereClause.append(" and p.visibleAtRole is not null");
       whereClause.append(" and p.property not in (:blackList)");
     } else if ("org.openbravo.model.ad.alert.AlertRecipient".equals(className)) {
+      // Inheritable alert recipients are those with empty User/Contact field
       whereClause.append(" and p.userContact is null");
     }
   }
@@ -639,9 +648,14 @@ public class RoleInheritanceManager {
     if (injector == null) {
       return;
     }
-    if ("org.openbravo.model.ad.domain.Preference".equals(injector.getClassName())
-        && !isInheritablePreference((Preference) access)) {
-      return;
+    if ("org.openbravo.model.ad.domain.Preference".equals(injector.getClassName())) {
+      Preference preference = (Preference) access;
+      if (Preferences.existsPreference(preference)) {
+        Utility.throwErrorMessage("DuplicatedPreferenceForTemplate");
+      }
+      if (!isInheritablePreference(preference)) {
+        return;
+      }
     }
     if ("org.openbravo.model.ad.alert.AlertRecipient".equals(injector.getClassName())
         && !isInheritableAlertRecipient((AlertRecipient) access)) {
@@ -798,8 +812,7 @@ public class RoleInheritanceManager {
    * @return true if the Preference is inheritable, false otherwise
    */
   private boolean isInheritablePreference(Preference preference) {
-    if (preference.getVisibleAtClient() == null && preference.getVisibleAtOrganization() == null
-        && preference.getUserContact() == null && preference.getVisibleAtRole() != null) {
+    if (preference.getVisibleAtRole() != null) {
       return true;
     }
     if (preference.isPropertyList()) {
