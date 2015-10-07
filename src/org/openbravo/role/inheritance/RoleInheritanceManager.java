@@ -532,7 +532,7 @@ public class RoleInheritanceManager {
    * 
    * @param template
    *          The template role used by the roles whose accesses will be recalculated
-   * @return a list of the child roles which have accesses that have been updated or created
+   * @return a set of the child roles which have accesses that have been updated or created
    */
   public Set<Role> recalculateAllAccessesFromTemplate(Role template) {
     long t = System.currentTimeMillis();
