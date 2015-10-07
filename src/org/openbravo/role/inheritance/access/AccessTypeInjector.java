@@ -83,6 +83,9 @@ public abstract class AccessTypeInjector implements Comparable<AccessTypeInjecto
   @Retention(RetentionPolicy.RUNTIME)
   @Target({ ElementType.TYPE })
   public @interface Qualifier {
+    /**
+     * Retrieves the class of the access type
+     */
     Class<? extends InheritedAccessEnabled> value();
   }
 

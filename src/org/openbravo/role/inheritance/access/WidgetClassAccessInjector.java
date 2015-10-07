@@ -19,6 +19,9 @@ package org.openbravo.role.inheritance.access;
 
 import org.openbravo.client.myob.WidgetClassAccess;
 
+/**
+ * AccessTypeInjector for the WidgetClassAccess class
+ */
 @AccessTypeInjector.Qualifier(WidgetClassAccess.class)
 public class WidgetClassAccessInjector extends AccessTypeInjector {
 

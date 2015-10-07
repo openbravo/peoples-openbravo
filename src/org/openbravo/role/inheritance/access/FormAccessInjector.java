@@ -19,6 +19,9 @@ package org.openbravo.role.inheritance.access;
 
 import org.openbravo.model.ad.access.FormAccess;
 
+/**
+ * AccessTypeInjector for the FormAccess class
+ */
 @AccessTypeInjector.Qualifier(FormAccess.class)
 public class FormAccessInjector extends AccessTypeInjector {
 

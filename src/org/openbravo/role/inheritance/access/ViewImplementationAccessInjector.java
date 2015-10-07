@@ -19,6 +19,9 @@ package org.openbravo.role.inheritance.access;
 
 import org.openbravo.client.application.ViewRoleAccess;
 
+/**
+ * AccessTypeInjector for the ViewRoleAccess class
+ */
 @AccessTypeInjector.Qualifier(ViewRoleAccess.class)
 public class ViewImplementationAccessInjector extends AccessTypeInjector {
 

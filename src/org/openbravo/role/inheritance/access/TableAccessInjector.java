@@ -19,6 +19,9 @@ package org.openbravo.role.inheritance.access;
 
 import org.openbravo.model.ad.access.TableAccess;
 
+/**
+ * AccessTypeInjector for the TableAccess class
+ */
 @AccessTypeInjector.Qualifier(TableAccess.class)
 public class TableAccessInjector extends AccessTypeInjector {
 

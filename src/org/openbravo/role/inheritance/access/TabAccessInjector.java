@@ -19,6 +19,9 @@ package org.openbravo.role.inheritance.access;
 
 import org.openbravo.model.ad.access.TabAccess;
 
+/**
+ * AccessTypeInjector for the TabAccess class
+ */
 @AccessTypeInjector.Qualifier(TabAccess.class)
 public class TabAccessInjector extends AccessTypeInjector {
 

@@ -19,6 +19,9 @@ package org.openbravo.role.inheritance.access;
 
 import org.openbravo.model.ad.access.RoleOrganization;
 
+/**
+ * AccessTypeInjector for the RoleOrganization class
+ */
 @AccessTypeInjector.Qualifier(RoleOrganization.class)
 public class OrgAccessInjector extends AccessTypeInjector {
 

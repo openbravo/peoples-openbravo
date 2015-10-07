@@ -19,6 +19,9 @@ package org.openbravo.role.inheritance.access;
 
 import org.openbravo.model.ad.domain.Preference;
 
+/**
+ * AccessTypeInjector for the Preference class
+ */
 @AccessTypeInjector.Qualifier(Preference.class)
 public class PreferenceAccessInjector extends AccessTypeInjector {
 

@@ -53,6 +53,9 @@ import org.openbravo.role.inheritance.access.AccessTypeInjector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * This class contains all the methods required to manage the Role Inheritance functionality
+ */
 @ApplicationScoped
 public class RoleInheritanceManager {
 
@@ -807,8 +810,7 @@ public class RoleInheritanceManager {
   }
 
   /**
-   * @see RoleInheritanceManager#calculateAccesses(List<RoleInheritance>, List<String>,
-   *      RoleInheritance)
+   * @see RoleInheritanceManager#calculateAccesses(List, List, RoleInheritance, AccessTypeInjector)
    */
   private CalculationResult calculateAccesses(List<RoleInheritance> inheritanceList,
       List<String> inheritanceInheritFromIdList, AccessTypeInjector injector) {

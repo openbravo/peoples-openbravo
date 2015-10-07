@@ -19,6 +19,9 @@ package org.openbravo.role.inheritance.access;
 
 import org.openbravo.model.ad.access.FieldAccess;
 
+/**
+ * AccessTypeInjector for the FieldAccess class
+ */
 @AccessTypeInjector.Qualifier(FieldAccess.class)
 public class FieldAccessInjector extends AccessTypeInjector {
 

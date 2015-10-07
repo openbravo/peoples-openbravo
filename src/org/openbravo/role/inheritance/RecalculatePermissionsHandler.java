@@ -40,6 +40,10 @@ import org.openbravo.service.db.DbUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Handler for the Recalculate Permissions process which is intended to launch that process to one
+ * or multiple roles
+ */
 public class RecalculatePermissionsHandler extends BaseActionHandler {
   final static private Logger log = LoggerFactory.getLogger(RecalculatePermissionsHandler.class);
   @Inject

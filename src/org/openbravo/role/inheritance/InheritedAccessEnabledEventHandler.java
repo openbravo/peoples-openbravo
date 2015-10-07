@@ -55,6 +55,13 @@ public class InheritedAccessEnabledEventHandler extends EntityPersistenceEventOb
     return entities;
   }
 
+  /**
+   * Save event method launched when saving a class implementing the {@link InheritedAccessEnabled}
+   * interface
+   * 
+   * @param event
+   *          the new event
+   */
   public void onSave(@Observes EntityNewEvent event) {
     if (!isInheritedAccessEnabled(event)) {
       return;
@@ -62,6 +69,13 @@ public class InheritedAccessEnabledEventHandler extends EntityPersistenceEventOb
     doAction(SAVE, event.getTargetInstance());
   }
 
+  /**
+   * Update event method launched when updating a class implementing the
+   * {@link InheritedAccessEnabled} interface
+   * 
+   * @param event
+   *          the update event
+   */
   public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isInheritedAccessEnabled(event)) {
       return;
@@ -69,6 +83,13 @@ public class InheritedAccessEnabledEventHandler extends EntityPersistenceEventOb
     doAction(UPDATE, event.getTargetInstance());
   }
 
+  /**
+   * Delete event method launched when deleting a class implementing the
+   * {@link InheritedAccessEnabled} interface
+   * 
+   * @param event
+   *          the delete event
+   */
   public void onDelete(@Observes EntityDeleteEvent event) {
     if (!isInheritedAccessEnabled(event)) {
       return;
@@ -76,7 +97,7 @@ public class InheritedAccessEnabledEventHandler extends EntityPersistenceEventOb
     doAction(DELETE, event.getTargetInstance());
   }
 
-  public void doAction(String action, final BaseOBObject bob) {
+  private void doAction(String action, final BaseOBObject bob) {
     String entityClassName = ModelProvider.getInstance().getEntity(bob.getEntity().getName())
         .getClassName();
     InheritedAccessEnabled access = (InheritedAccessEnabled) bob;

@@ -49,6 +49,12 @@ public class RoleInheritanceEventHandler extends EntityPersistenceEventObserver 
     return entities;
   }
 
+  /**
+   * Save event method launched when saving a {@link RoleInheritance} object
+   * 
+   * @param event
+   *          the new event
+   */
   public void onSave(@Observes EntityNewEvent event) {
     if (!isValidEvent(event)) {
       return;
@@ -71,6 +77,12 @@ public class RoleInheritanceEventHandler extends EntityPersistenceEventObserver 
     }
   }
 
+  /**
+   * Update event method launched when updating a {@link RoleInheritance} object
+   * 
+   * @param event
+   *          the update event
+   */
   public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
@@ -78,6 +90,12 @@ public class RoleInheritanceEventHandler extends EntityPersistenceEventObserver 
     Utility.throwErrorMessage("RoleInheritanceNotEdit");
   }
 
+  /**
+   * Delete event method launched when deleting a {@link RoleInheritance} object
+   * 
+   * @param event
+   *          the delete event
+   */
   public void onDelete(@Observes EntityDeleteEvent event) {
     if (!isValidEvent(event)) {
       return;

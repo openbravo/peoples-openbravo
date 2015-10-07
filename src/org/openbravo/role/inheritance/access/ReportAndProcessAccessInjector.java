@@ -19,6 +19,9 @@ package org.openbravo.role.inheritance.access;
 
 import org.openbravo.model.ad.access.ProcessAccess;
 
+/**
+ * AccessTypeInjector for the org.openbravo.model.ad.access.ProcessAccess class
+ */
 @AccessTypeInjector.Qualifier(ProcessAccess.class)
 public class ReportAndProcessAccessInjector extends AccessTypeInjector {
 

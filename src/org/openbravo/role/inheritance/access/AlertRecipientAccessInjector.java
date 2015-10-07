@@ -21,6 +21,9 @@ import javax.enterprise.context.ApplicationScoped;
 
 import org.openbravo.model.ad.alert.AlertRecipient;
 
+/**
+ * AccessTypeInjector for the AlertRecipient class
+ */
 @ApplicationScoped
 @AccessTypeInjector.Qualifier(AlertRecipient.class)
 public class AlertRecipientAccessInjector extends AccessTypeInjector {

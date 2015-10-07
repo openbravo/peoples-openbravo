@@ -19,6 +19,9 @@ package org.openbravo.role.inheritance.access;
 
 import org.openbravo.model.ad.access.WindowAccess;
 
+/**
+ * AccessTypeInjector for the WindowAccess class
+ */
 @AccessTypeInjector.Qualifier(WindowAccess.class)
 public class WindowAccessInjector extends AccessTypeInjector {
 
