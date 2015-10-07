@@ -396,7 +396,7 @@ public class RoleInheritanceManager {
    * Deletes all accesses which are inheriting from a particular role.
    * 
    * @param inheritFromToDelete
-   *          The role whose inherited accesses will be removed from the list
+   *          The role which the accesses about to delete are inherited from
    * @param roleAccessList
    *          The list of accesses to remove from
    * @param className
@@ -416,7 +416,12 @@ public class RoleInheritanceManager {
     for (InheritedAccessEnabled iae : iaeToDelete) {
       iae.setInheritedFrom(null);
       roleAccessList.remove(iae);
-      removeReferenceInParentList(iae, className);
+      Role owner = getRole(iae, className);
+      if (!owner.isTemplate()) {
+        // Perform this operation for not template roles, because for template roles is already done
+        // in the event handler
+        removeReferenceInParentList(iae, className);
+      }
       OBDal.getInstance().remove(iae);
     }
   }
@@ -476,12 +481,21 @@ public class RoleInheritanceManager {
    *          the name of the class
    */
   void removeReferenceInParentList(InheritedAccessEnabled access, String className) {
+    boolean accessExists;
     if ("org.openbravo.model.ad.access.TabAccess".equals(className)) {
       TabAccess ta = (TabAccess) access;
-      ta.getWindowAccess().getADTabAccessList().remove(ta);
+      accessExists = OBDal.getInstance().exists(WindowAccess.ENTITY_NAME,
+          (String) DalUtil.getId(ta.getWindowAccess()));
+      if (accessExists) {
+        ta.getWindowAccess().getADTabAccessList().remove(ta);
+      }
     } else if ("org.openbravo.model.ad.access.FieldAccess".equals(className)) {
       FieldAccess fa = (FieldAccess) access;
-      fa.getTabAccess().getADFieldAccessList().remove(fa);
+      accessExists = OBDal.getInstance().exists(TabAccess.ENTITY_NAME,
+          (String) DalUtil.getId(fa.getTabAccess()));
+      if (accessExists) {
+        fa.getTabAccess().getADFieldAccessList().remove(fa);
+      }
     }
   }
 
@@ -766,7 +780,12 @@ public class RoleInheritanceManager {
             clearInheritFromFieldInChilds(iaeToDelete, injector.getClassName());
             iaeToDelete.setInheritedFrom(null);
             roleAccessList.remove(iaeToDelete);
-            removeReferenceInParentList(iaeToDelete, injector.getClassName());
+            Role owner = getRole(iaeToDelete, injector.getClassName());
+            if (!owner.isTemplate()) {
+              // Perform this operation for not template roles, because for template roles is
+              // already done in the event handler
+              removeReferenceInParentList(iaeToDelete, injector.getClassName());
+            }
             OBDal.getInstance().remove(iaeToDelete);
           }
         }

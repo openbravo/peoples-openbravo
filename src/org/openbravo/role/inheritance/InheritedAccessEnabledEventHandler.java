@@ -114,6 +114,7 @@ public class InheritedAccessEnabledEventHandler extends EntityPersistenceEventOb
       if (isTemplate) {
         // Propagate access removal just for roles marked as template
         manager.propagateDeletedAccess(role, access, entityClassName);
+        manager.removeReferenceInParentList(access, entityClassName);
       }
     }
   }
