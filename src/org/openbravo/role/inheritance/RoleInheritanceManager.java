@@ -105,7 +105,13 @@ public class RoleInheritanceManager {
     try {
       Class<?> myClass = Class.forName(injector.getClassName());
       if ("org.openbravo.model.ad.domain.Preference".equals(injector.getClassName())) {
-        return (String) myClass.getMethod(injector.getSecuredElement()).invoke(access);
+        // Preference requires a special identifier management, because it is possible to define the
+        // same preference with different visibility settings
+        String identifier = (String) myClass.getMethod(injector.getSecuredElement()).invoke(access);
+        Preference preference = (Preference) access;
+        String visibleAtWindow = preference.getWindow() != null ? (String) DalUtil.getId(preference
+            .getWindow()) : "";
+        return identifier + "_" + visibleAtWindow;
       }
       BaseOBObject bob = (BaseOBObject) myClass.getMethod(injector.getSecuredElement()).invoke(
           access);
@@ -335,7 +341,7 @@ public class RoleInheritanceManager {
     if ("org.openbravo.model.ad.domain.Preference".equals(className)) {
       // Inheritable preferences are those that only define the visibility at role level
       whereClause.append(" and p.visibleAtClient = null and p.visibleAtOrganization = null"
-          + " and p.userContact = null and p.window = null");
+          + " and p.userContact = null");
       whereClause.append(" and p.property not in (:blackList)");
     } else if ("org.openbravo.model.ad.alert.AlertRecipient".equals(className)) {
       whereClause.append(" and p.userContact is null");
@@ -793,8 +799,7 @@ public class RoleInheritanceManager {
    */
   private boolean isInheritablePreference(Preference preference) {
     if (preference.getVisibleAtClient() == null && preference.getVisibleAtOrganization() == null
-        && preference.getUserContact() == null && preference.getWindow() == null
-        && preference.getVisibleAtRole() != null) {
+        && preference.getUserContact() == null && preference.getVisibleAtRole() != null) {
       return true;
     }
     if (preference.isPropertyList()) {
