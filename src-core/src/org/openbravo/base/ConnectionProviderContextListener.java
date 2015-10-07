@@ -65,12 +65,12 @@ public class ConnectionProviderContextListener implements ServletContextListener
   }
 
   public static void reloadPool(ServletContext context) throws Exception {
-    ConnectionProvider pool = getPool(context);
-    if (pool instanceof ConnectionProviderImpl) {
+    ConnectionProvider connectionPool = getPool(context);
+    if (connectionPool instanceof ConnectionProviderImpl) {
       ConfigParameters configParameters = ConfigParameters.retrieveFrom(context);
       String strPoolFile = configParameters.getPoolFilePath();
       boolean isRelative = !strPoolFile.startsWith("/") && !strPoolFile.substring(1, 1).equals(":");
-      ((ConnectionProviderImpl) pool).reload(strPoolFile, isRelative, configParameters.strContext);
+      ((ConnectionProviderImpl) connectionPool).reload(strPoolFile, isRelative, configParameters.strContext);
       ;
     }
   }
@@ -112,16 +112,16 @@ public class ConnectionProviderContextListener implements ServletContextListener
     return ("yes".equals(jndiUsage) ? true : false);
   }
 
-  private static void destroyPool(ConnectionProvider pool) {
-    if (pool != null && pool instanceof JNDIConnectionProvider) {
+  private static void destroyPool(ConnectionProvider connectionPool) {
+    if (connectionPool != null && connectionPool instanceof JNDIConnectionProvider) {
       try {
-        ((JNDIConnectionProvider) pool).destroy();
+        ((JNDIConnectionProvider) connectionPool).destroy();
       } catch (Exception e) {
         e.printStackTrace();
       }
-    } else if (pool != null && pool instanceof ConnectionProvider) {
+    } else if (connectionPool != null && connectionPool instanceof ConnectionProvider) {
       try {
-        (pool).destroy();
+        (connectionPool).destroy();
       } catch (Exception e) {
         e.printStackTrace();
       }
