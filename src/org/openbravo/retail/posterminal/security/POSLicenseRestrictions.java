@@ -126,7 +126,7 @@ public class POSLicenseRestrictions implements ModuleLicenseRestrictions {
     if (warnLimit == 0) {
       return OBMessageUtils.messageBD(new DalConnectionProvider(false), "OBPOS_TerminalNotAllowed",
           lang);
-    } else if (actualNumberOfTerminals > warnLimit) {
+    } else if (actualNumberOfTerminals >= warnLimit) {
       return OBMessageUtils
           .messageBD(new DalConnectionProvider(false), "OBPOS_TerminalLimitWarn", lang)
           .replace("%0", Integer.toString(actualNumberOfTerminals))
