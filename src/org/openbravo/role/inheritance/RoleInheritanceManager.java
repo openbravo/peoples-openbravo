@@ -671,9 +671,14 @@ public class RoleInheritanceManager {
         return;
       }
     }
-    if ("org.openbravo.model.ad.alert.AlertRecipient".equals(injector.getClassName())
-        && !isInheritableAlertRecipient((AlertRecipient) access)) {
-      return;
+    if ("org.openbravo.model.ad.alert.AlertRecipient".equals(injector.getClassName())) {
+      AlertRecipient alertRecipient = (AlertRecipient) access;
+      if (existsAlertRecipient(alertRecipient)) {
+        Utility.throwErrorMessage("DuplicatedAlertRecipientForTemplate");
+      }
+      if (!isInheritableAlertRecipient(alertRecipient)) {
+        return;
+      }
     }
     for (RoleInheritance ri : role.getADRoleInheritanceInheritFromList()) {
       if (ri.isActive()) {
@@ -855,6 +860,31 @@ public class RoleInheritanceManager {
     } else {
       return true;
     }
+  }
+
+  /**
+   * Utility method to determine if already exists an alert recipient with the same settings (alert
+   * rule, role and user) as the alertRecipient passed as parameter
+   * 
+   * @param alertRecipient
+   *          The alert recipient with the settings to find
+   * @return true if already exists an alert recipient with the same settings as the entered alert
+   *         recipient, false otherwise
+   */
+  private boolean existsAlertRecipient(AlertRecipient alertRecipient) {
+    final OBCriteria<AlertRecipient> obCriteria = OBDal.getInstance().createCriteria(
+        AlertRecipient.class);
+    obCriteria
+        .add(Restrictions.eq(AlertRecipient.PROPERTY_ALERTRULE, alertRecipient.getAlertRule()));
+    obCriteria.add(Restrictions.eq(AlertRecipient.PROPERTY_ROLE, alertRecipient.getRole()));
+    if (alertRecipient.getUserContact() == null) {
+      obCriteria.add(Restrictions.isNull(AlertRecipient.PROPERTY_USERCONTACT));
+    } else {
+      obCriteria.add(Restrictions.eq(AlertRecipient.PROPERTY_USERCONTACT,
+          alertRecipient.getUserContact()));
+    }
+    obCriteria.setMaxResults(1);
+    return (obCriteria.list().size() > 0);
   }
 
   /**

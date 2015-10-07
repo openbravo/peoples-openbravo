@@ -52,6 +52,16 @@ BEGIN
         RAISE_APPLICATION_ERROR(-20000, '@CannotChangeTemplateRoleRecipient@');
       END IF;
     END IF;
+    IF (COALESCE(:NEW.AD_USER_ID , '.') != COALESCE(:OLD.AD_USER_ID , '.')) THEN
+      SELECT COUNT(*)
+        INTO n
+        FROM dual
+      WHERE EXISTS (SELECT 1 FROM AD_ROLE_INHERITANCE
+                    WHERE INHERIT_FROM = :NEW.AD_ROLE_ID);
+      IF (n!=0) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@CannotChangeUserTemplate@');
+      END IF;
+    END IF;
   END IF;
 END AD_ALERTRECIPIENT_TRG
 ]]></body>
