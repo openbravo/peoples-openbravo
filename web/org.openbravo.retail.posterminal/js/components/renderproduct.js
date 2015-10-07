@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2016 Openbravo S.L.U.
+ * Copyright (C) 2012-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -87,18 +87,30 @@ enyo.kind({
             }, {
               name: 'priceList',
               style: 'text-align: right; font-weight: bold; color: grey;'
+            }, {
+              style: 'width: 100%;',
+              components: [{
+                kind: 'OB.UI.ProductContextMenu',
+                name: 'btnProductContextMenu'
+              }]
             }]
           }]
+        }, {
+          style: 'clear:both;'
+        }, {
+          name: 'generic',
+          // style: 'text-align: right; font-style: italic; color: grey; font-weight: bold;',
+          style: 'float: right; width: 20%; text-align: right; font-style: italic; color: grey; padding: 15px; font-weight: bold;',
+          showing: false
+        }, {
+          style: 'clear:both;'
+        }, {
+          //style: 'color: #888888; text-align: left; font-style: italic; color: grey; font-size: 13px; padding-top: 10px;',
+          style: 'color: #888888; float: left; width: 100%; text-align: left; font-style: italic; color: grey; font-size: 13px; padding-top: 10px;',
+          name: 'bottonLine'
         }]
       }]
     }]
-  }, {
-    name: 'generic',
-    style: 'text-align: right; font-style: italic; color: grey; font-weight: bold;',
-    showing: false
-  }, {
-    style: 'color: #888888; text-align: left; font-style: italic; color: grey; font-size: 13px; padding-top: 10px;',
-    name: 'bottonLine'
   }],
   drawPriceBasedOnSize: function () {
     var shouldResizeWork = ((enyo.Panels.isScreenNarrow() && document.body.clientWidth <= 466) || (!enyo.Panels.isScreenNarrow() && document.body.clientWidth <= 925));
@@ -170,6 +182,12 @@ enyo.kind({
         }
       }
       this.$.price.setContent(OB.I18N.formatCurrency(this.model.get('standardPrice')));
+    }
+    // Context menu
+    if (this.model.get('productType') !== 'I' || this.$.btnProductContextMenu.$.menu.itemsCount === 0) {
+      this.$.btnProductContextMenu.hide();
+    } else {
+      this.$.btnProductContextMenu.setProduct(this.model);
     }
   },
   initComponents: function () {
@@ -263,5 +281,14 @@ enyo.kind({
   initComponents: function () {
     this.inherited(arguments);
     this.removeClass('image-wrap');
+  }
+});
+
+enyo.kind({
+  kind: 'OB.UI.ListContextMenu',
+  name: 'OB.UI.ProductContextMenu',
+  initComponents: function () {
+    this.inherited(arguments);
+    this.$.menu.setItems(OB.MobileApp.model.get('productContextMenuOptions'));
   }
 });
