@@ -924,7 +924,7 @@ enyo.kind({
       });
       return true;
     }
-    if (this.model.get('order').get('replacedorder_id') && inEvent.line.get('remainingQuantity')) {
+    if (this.model.get('order').get('replacedorder') && inEvent.line.get('remainingQuantity')) {
       OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceReturnLines'));
       return;
     }

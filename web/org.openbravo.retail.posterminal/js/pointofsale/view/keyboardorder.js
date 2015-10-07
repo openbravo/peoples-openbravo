@@ -149,7 +149,7 @@ enyo.kind({
             cancelQtyChangeReturn = false;
         if (me.selectedModelsSameQty) {
 
-          if (keyboard.receipt.get('replacedorder_id')) {
+          if (keyboard.receipt.get('replacedorder')) {
             _.each(me.selectedModels, function (l) {
               var oldqty = l.get('qty'),
                   newqty = oldqty + qty;

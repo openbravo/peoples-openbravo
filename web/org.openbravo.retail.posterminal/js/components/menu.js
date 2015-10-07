@@ -1007,7 +1007,7 @@ enyo.kind({
     isPaidReceipt = receipt.get('isPaid') === true && !receipt.get('isQuotation');
     isLayaway = receipt.get('isLayaway');
 
-    if (!receipt.get('replacedorder_id') && (isPaidReceipt || isLayaway)) {
+    if (!receipt.get('replacedorder') && (isPaidReceipt || isLayaway)) {
       this.show();
     } else {
       this.hide();

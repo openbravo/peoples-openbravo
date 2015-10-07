@@ -364,7 +364,7 @@ enyo.kind({
       function returnLines() {
         var cancelReturn = false;
 
-        if (order.get('replacedorder_id')) {
+        if (order.get('replacedorder')) {
           _.each(me.owner.owner.selectedModels, function (l) {
             if (l.get('remainingQuantity')) {
               cancelReturn = true;

@@ -1346,9 +1346,9 @@ enyo.kind({
       payments = this.owner.model.get('multiOrders').get('payments');
     }
 
-    if (this.owner.receipt.get('replacedorder_id')) {
+    if (this.owner.receipt.get('replacedorder')) {
       process.exec({
-        orderId: this.owner.receipt.get('replacedorder_id'),
+        orderId: this.owner.receipt.get('replacedorder'),
         setCancelled: true
       }, function (data) {
         if (data && data.exception) {

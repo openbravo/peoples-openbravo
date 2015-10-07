@@ -989,7 +989,7 @@
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgCannotAddPostiveToReturn'));
           return;
         }
-        if (this.get('replacedorder_id')) {
+        if (this.get('replacedorder')) {
           if (oldqty > 0 && qty < line.get('remainingQuantity')) {
             OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceQtyEdit'));
             return;
@@ -1226,7 +1226,7 @@
           productId = line.get('product').id;
 
 
-      if (me.get('replacedorder_id') && line.get('remainingQuantity')) {
+      if (me.get('replacedorder') && line.get('remainingQuantity')) {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceDeleteLine'));
         return;
       }
@@ -2465,7 +2465,7 @@
       }, this);
 
       this.set('replacedorder_documentNo', this.get('documentNo'));
-      this.set('replacedorder_id', this.get('id'));
+      this.set('replacedorder', this.get('id'));
       this.set('id', null);
       this.set('session', OB.MobileApp.model.get('session'));
 
