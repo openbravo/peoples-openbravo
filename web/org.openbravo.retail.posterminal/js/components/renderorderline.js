@@ -113,6 +113,21 @@ enyo.kind({
         }]
       });
     }
+
+    if (this.model.get('remainingQuantity')) {
+      this.createComponent({
+        style: 'display: block;',
+        components: [{
+          content: '-- ' + 'Delivered Quantity: ' + this.model.get('remainingQuantity'),
+          attributes: {
+            style: 'float: left; width: 100%; clear: left;'
+          }
+        }, {
+          style: 'clear: both;'
+        }]
+      });
+    }
+
     if (this.model.get('promotions')) {
       enyo.forEach(this.model.get('promotions'), function (d) {
         if (d.hidden) {
