@@ -538,11 +538,13 @@ public class RoleInheritanceManager {
     long t = System.currentTimeMillis();
     List<Role> updatedRoles = new ArrayList<Role>();
     for (RoleInheritance ri : template.getADRoleInheritanceInheritFromList()) {
-      Map<String, CalculationResult> result = recalculateAllAccessesForRole(ri.getRole());
-      for (String accessClassName : result.keySet()) {
-        CalculationResult counters = (CalculationResult) result.get(accessClassName);
-        if (counters.getUpdated() > 0 || counters.getCreated() > 0) {
-          updatedRoles.add(ri.getRole());
+      if (ri.isActive()) {
+        Map<String, CalculationResult> result = recalculateAllAccessesForRole(ri.getRole());
+        for (String accessClassName : result.keySet()) {
+          CalculationResult counters = (CalculationResult) result.get(accessClassName);
+          if (counters.getUpdated() > 0 || counters.getCreated() > 0) {
+            updatedRoles.add(ri.getRole());
+          }
         }
       }
     }
@@ -589,7 +591,9 @@ public class RoleInheritanceManager {
       return;
     }
     for (RoleInheritance ri : template.getADRoleInheritanceInheritFromList()) {
-      recalculateAccessForRole(ri.getRole(), injector);
+      if (ri.isActive()) {
+        recalculateAccessForRole(ri.getRole(), injector);
+      }
     }
     log.debug("recalculate access for " + classCanonicalName + " from template "
         + template.getName() + " time: " + (System.currentTimeMillis() - t));
@@ -638,9 +642,11 @@ public class RoleInheritanceManager {
       return;
     }
     for (RoleInheritance ri : role.getADRoleInheritanceInheritFromList()) {
-      List<RoleInheritance> inheritanceList = getRoleInheritancesList(ri.getRole());
-      List<String> inheritanceRoleIdList = getRoleInheritancesInheritFromIdList(inheritanceList);
-      handleAccess(ri, access, inheritanceRoleIdList, injector);
+      if (ri.isActive()) {
+        List<RoleInheritance> inheritanceList = getRoleInheritancesList(ri.getRole());
+        List<String> inheritanceRoleIdList = getRoleInheritancesInheritFromIdList(inheritanceList);
+        handleAccess(ri, access, inheritanceRoleIdList, injector);
+      }
     }
     log.debug("propagate new access from template " + role.getName() + " time: "
         + (System.currentTimeMillis() - t));
@@ -671,11 +677,13 @@ public class RoleInheritanceManager {
       return;
     }
     for (RoleInheritance ri : role.getADRoleInheritanceInheritFromList()) {
-      List<? extends InheritedAccessEnabled> roleAccessList = getAccessList(ri.getRole(),
-          injector.getClassName());
-      InheritedAccessEnabled childAccess = findInheritedAccess(roleAccessList, access, injector);
-      if (childAccess != null) {
-        updateRoleAccess(childAccess, access, injector.getClassName());
+      if (ri.isActive()) {
+        List<? extends InheritedAccessEnabled> roleAccessList = getAccessList(ri.getRole(),
+            injector.getClassName());
+        InheritedAccessEnabled childAccess = findInheritedAccess(roleAccessList, access, injector);
+        if (childAccess != null) {
+          updateRoleAccess(childAccess, access, injector.getClassName());
+        }
       }
     }
     log.debug("propagate updated access from template " + role.getName() + " time: "
@@ -707,37 +715,40 @@ public class RoleInheritanceManager {
       return;
     }
     for (RoleInheritance ri : role.getADRoleInheritanceInheritFromList()) {
-      Role childRole = ri.getRole();
-      List<? extends InheritedAccessEnabled> roleAccessList = getAccessList(childRole,
-          injector.getClassName());
-      InheritedAccessEnabled iaeToDelete = findInheritedAccess(roleAccessList, access, injector);
-      if (iaeToDelete != null) {
-        // need to recalculate, look for this access in other inheritances
-        String iaeToDeleteElementId = getSecuredElementIdentifier(iaeToDelete, injector);
-        boolean updated = false;
-        // retrieve the list of templates, ordered by sequence number descending, to update the
-        // access with the first one available (highest sequence number)
-        List<Role> inheritFromList = getRoleInheritancesInheritFromList(childRole, role, false);
-        for (Role inheritFrom : inheritFromList) {
-          for (InheritedAccessEnabled inheritFromAccess : getAccessList(inheritFrom,
-              injector.getClassName())) {
-            String accessElementId = getSecuredElementIdentifier(inheritFromAccess, injector);
-            if (accessElementId.equals(iaeToDeleteElementId)) {
-              updateRoleAccess(iaeToDelete, inheritFromAccess, injector.getClassName());
-              updated = true;
+      if (ri.isActive()) {
+        Role childRole = ri.getRole();
+        List<? extends InheritedAccessEnabled> roleAccessList = getAccessList(childRole,
+            injector.getClassName());
+        InheritedAccessEnabled iaeToDelete = findInheritedAccess(roleAccessList, access, injector);
+        if (iaeToDelete != null) {
+          // need to recalculate, look for this access in other inheritances
+          String iaeToDeleteElementId = getSecuredElementIdentifier(iaeToDelete, injector);
+          boolean updated = false;
+          // retrieve the list of templates, ordered by sequence number descending, to update the
+          // access with the first one available (highest sequence number)
+          List<Role> inheritFromList = getRoleInheritancesInheritFromList(childRole, role, false);
+          for (Role inheritFrom : inheritFromList) {
+            for (InheritedAccessEnabled inheritFromAccess : getAccessList(inheritFrom,
+                injector.getClassName())) {
+              String accessElementId = getSecuredElementIdentifier(inheritFromAccess, injector);
+              if (accessElementId.equals(iaeToDeleteElementId)) {
+                updateRoleAccess(iaeToDelete, inheritFromAccess, injector.getClassName());
+                updated = true;
+                break;
+              }
+            }
+            if (updated) {
               break;
             }
           }
-          if (updated) {
-            break;
+          if (!updated) {
+            // access not present in other inheritances, remove it
+            clearInheritFromFieldInChilds(iaeToDelete, injector.getClassName());
+            iaeToDelete.setInheritedFrom(null);
+            roleAccessList.remove(iaeToDelete);
+            removeReferenceInParentList(iaeToDelete, injector.getClassName());
+            OBDal.getInstance().remove(iaeToDelete);
           }
-        }
-        if (!updated) {
-          // access not present in other inheritances, remove it
-          clearInheritFromFieldInChilds(iaeToDelete, injector.getClassName());
-          iaeToDelete.setInheritedFrom(null);
-          roleAccessList.remove(iaeToDelete);
-          OBDal.getInstance().remove(iaeToDelete);
         }
       }
     }

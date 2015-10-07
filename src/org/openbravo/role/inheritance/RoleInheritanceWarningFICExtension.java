@@ -66,7 +66,9 @@ public class RoleInheritanceWarningFICExtension implements FICExtension {
       String childRoleList = "";
       if (role != null && role.isTemplate()) {
         for (RoleInheritance inheritance : role.getADRoleInheritanceInheritFromList()) {
-          childRoleList += ", " + inheritance.getRole().getName();
+          if (inheritance.isActive()) {
+            childRoleList += ", " + inheritance.getRole().getName();
+          }
         }
         if (!StringUtils.isEmpty(childRoleList)) {
           String[] msgParam = { childRoleList.substring(1) };
