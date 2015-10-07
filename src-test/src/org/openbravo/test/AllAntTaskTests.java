@@ -70,6 +70,7 @@ import org.openbravo.test.modularity.MergePropertiesTest;
 import org.openbravo.test.modularity.ModuleScriptsVersions;
 import org.openbravo.test.modularity.TableNameTest;
 import org.openbravo.test.preference.PreferenceTest;
+import org.openbravo.test.role.inheritance.RoleInheritanceTestSuite;
 import org.openbravo.test.scheduling.ProcessSchedulingTest;
 import org.openbravo.test.security.AccessLevelTest;
 import org.openbravo.test.security.AllowedOrganizationsTest;
@@ -201,7 +202,10 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     LabelTest.class, //
 
     // moduleScripts
-    ModuleScriptsVersions.class
+    ModuleScriptsVersions.class, //
+
+    // role inheritance
+    RoleInheritanceTestSuite.class
 
 })
 public class AllAntTaskTests {
