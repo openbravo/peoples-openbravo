@@ -33,14 +33,20 @@ import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.WindowAccess;
 import org.openbravo.role.inheritance.RoleInheritanceManager;
 
+/**
+ * Test case for horizontal inheritance This test case is intended to simulate the
+ * "Recalculate Permissions" process We remove an inherited access on purpose (this can not be done
+ * from the UI), this way we can simulate the process of adding a permission without using DAL, like
+ * for example, when using the "Grant Access" process which uses xsql to insert data.
+ */
 public class RecalculatePermissionsTest extends WeldBaseTest {
-  // This test case is intended to simulate the "Recalculate Permissions" process
-  // We remove an inherited access on purpose (this can not be done from the UI), this way we can
-  // simulate the process of adding a permission without using DAL, like
-  // for example, when using the "Grant Access" process which uses xsql to insert data.
+
   @Inject
   private RoleInheritanceManager manager;
 
+  /**
+   * Test case to simulate the "Recalculate Permissions" process, launched for a not template role
+   */
   @Test
   public void testRolePermissionRecalculate() {
     Role template = null;
@@ -102,6 +108,9 @@ public class RecalculatePermissionsTest extends WeldBaseTest {
     }
   }
 
+  /**
+   * Test case to simulate the "Recalculate Permissions" process, launched for a template role
+   */
   @Test
   public void testTemplatePermissionsRecalculate() {
     Role template = null;

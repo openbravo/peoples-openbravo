@@ -29,8 +29,14 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.access.Role;
 
+/**
+ * This class contains some tests to check the restrictions of the Role Inheritance functionality
+ */
 public class RoleInheritanceRestrictionsTest extends WeldBaseTest {
 
+  /**
+   * Test case to check that is not possible to inherit directly for the same role more than once
+   */
   @Test
   public void testUniqueRoleInheritance() {
     Role inherited = null;
@@ -73,6 +79,9 @@ public class RoleInheritanceRestrictionsTest extends WeldBaseTest {
     }
   }
 
+  /**
+   * Test case to check cycle definition on inheritance
+   */
   @Test
   public void testCycles() {
     Role template1 = null;
@@ -116,6 +125,9 @@ public class RoleInheritanceRestrictionsTest extends WeldBaseTest {
     }
   }
 
+  /**
+   * Test case to check that is not possible to deactivate the template flag for a template in use
+   */
   @Test
   public void testUncheckTemplateInUse() {
     Role template = null;
@@ -161,6 +173,9 @@ public class RoleInheritanceRestrictionsTest extends WeldBaseTest {
     }
   }
 
+  /**
+   * Test case to check that is not possible to define a template role as automatic
+   */
   @Test
   public void testTemplateRoleNotAutomatic() {
     Role template = null;

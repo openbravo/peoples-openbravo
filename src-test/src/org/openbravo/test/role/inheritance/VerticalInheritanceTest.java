@@ -77,6 +77,9 @@ public class VerticalInheritanceTest extends WeldBaseTest {
   private @ParameterCdiTest
   String parameter;
 
+  /**
+   * Test case for vertical inheritance
+   */
   @Test
   public void testBasicVerticalInheritance() {
     Role roleA = null;

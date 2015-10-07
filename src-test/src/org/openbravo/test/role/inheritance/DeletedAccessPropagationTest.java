@@ -77,6 +77,9 @@ public class DeletedAccessPropagationTest extends WeldBaseTest {
   private @ParameterCdiTest
   String parameter;
 
+  /**
+   * Test case for deleted access propagation
+   */
   @Test
   public void testBasicAccessDeletePropagation() {
     Role role = null;

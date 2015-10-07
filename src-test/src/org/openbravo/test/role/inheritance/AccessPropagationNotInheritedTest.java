@@ -73,6 +73,9 @@ public class AccessPropagationNotInheritedTest extends WeldBaseTest {
   private @ParameterCdiTest
   String parameter;
 
+  /**
+   * Test case to check that non inherited accesses are not affected by access propagation.
+   */
   @Test
   public void testNotInheritedAccessPropagation() {
     Role role = null;

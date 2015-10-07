@@ -87,6 +87,9 @@ public class HorizontalInheritanceTest extends WeldBaseTest {
   private @ParameterCdiTest
   String parameter;
 
+  /**
+   * Test case for horizontal inheritance
+   */
   @Test
   public void testBasicHorizontalInheritance() {
     Role template1 = null;

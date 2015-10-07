@@ -51,12 +51,43 @@ import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.model.common.enterprise.Organization;
 
+/**
+ * This class provides some utility methods used to test the Role Inheritance functionality
+ * 
+ */
 public class RoleInheritanceTestUtils {
+  /**
+   * F&B International Group client id
+   */
   public final static String CLIENT_ID = "23C59575B9CF467C9620760EB255B389";
+  /**
+   * zero organization id
+   */
   public final static String ASTERISK_ORG_ID = "0";
+  /**
+   * list with the available access types
+   */
   public final static List<String> ACCESS_NAMES = Arrays.asList("ORGANIZATION", "WINDOW", "TAB",
       "FIELD", "REPORT", "FORM", "WIDGET", "VIEW", "PROCESS", "TABLE", "ALERT", "PREFERENCE");
 
+  /**
+   * Creates a new role
+   * 
+   * @param name
+   *          the name of the role
+   * @param clientId
+   *          role client id
+   * @param organizationId
+   *          role organization id
+   * @param userLevel
+   *          user level of the role's organization
+   * @param isManual
+   *          defines if the role is manual (true) or automatic (false)
+   * @param isTemplate
+   *          defines if the role is template (true) or not (false)
+   * 
+   * @return the new created role
+   */
   public static Role createRole(String name, String clientId, String organizationId,
       String userLevel, boolean isManual, boolean isTemplate) {
     final Role role = OBProvider.getInstance().get(Role.class);
@@ -74,10 +105,26 @@ public class RoleInheritanceTestUtils {
     return role;
   }
 
+  /**
+   * Deletes a role
+   * 
+   * @param role
+   *          A Role object which will be deleted
+   */
   public static void deleteRole(Role role) {
     OBDal.getInstance().remove(role);
   }
 
+  /**
+   * Adds a new inheritance between two roles
+   * 
+   * @param role
+   *          The role owner of the inheritance
+   * @param template
+   *          The template role whose permissions will be inherited
+   * @param sequenceNumber
+   *          Sequence number to assign to the inheritance
+   */
   public static void addInheritance(Role role, Role template, Long sequenceNumber) {
     final RoleInheritance inheritance = OBProvider.getInstance().get(RoleInheritance.class);
     inheritance.setClient(role.getClient());
@@ -90,6 +137,14 @@ public class RoleInheritanceTestUtils {
     OBDal.getInstance().refresh(role);
   }
 
+  /**
+   * Removes an existing inheritance
+   * 
+   * @param role
+   *          The role owner of the inheritance
+   * @param template
+   *          The template role whose permissions are being inherited
+   */
   public static void removeInheritance(Role role, Role template) {
     final OBCriteria<RoleInheritance> obCriteria = OBDal.getInstance().createCriteria(
         RoleInheritance.class);
@@ -100,6 +155,16 @@ public class RoleInheritanceTestUtils {
     OBDal.getInstance().remove(roleInheritance);
   }
 
+  /**
+   * Creates a new permission and assigns it to a role
+   * 
+   * @param type
+   *          A String which represents the type of the access
+   * @param role
+   *          The role to assign the permission
+   * @param accessName
+   *          The name of the particular permission to assign
+   */
   public static void addAccess(String type, Role role, String accessName) {
     if ("ORGANIZATION".equals(type)) {
       addOrgAccess(role, accessName, true);
@@ -131,6 +196,14 @@ public class RoleInheritanceTestUtils {
     }
   }
 
+  /**
+   * Removes a permission assigned to a role
+   * 
+   * @param type
+   *          A String which represents the type of the access
+   * @param role
+   *          The role owner of the permission
+   */
   public static void removeAccesses(String type, Role role) {
     if ("ORGANIZATION".equals(type)) {
       removeOrgAccesses(role);
@@ -161,6 +234,20 @@ public class RoleInheritanceTestUtils {
     }
   }
 
+  /**
+   * Updates an existing permission assigned to a role
+   * 
+   * @param type
+   *          A String which represents the type of the access
+   * @param role
+   *          The role owner of the permission
+   * @param accessName
+   *          The name of the particular permission to update
+   * @param editedValue
+   *          The edited value to assign to the permission
+   * @param isActive
+   *          a flag to activate (true) or deactivate (false) the permission
+   */
   public static void updateAccess(String type, Role role, String accessName, boolean editedValue,
       boolean isActive) {
     if ("ORGANIZATION".equals(type)) {
@@ -193,6 +280,17 @@ public class RoleInheritanceTestUtils {
     }
   }
 
+  /**
+   * Retrieves the information of a permission assigned to a role
+   * 
+   * @param type
+   *          A String which represents the type of the access
+   * @param role
+   *          The role owner of the permission
+   * @param accessName
+   *          The name of the particular permission to retrieve
+   * @return An array of Strings with the permission information
+   */
   public static String[] getAccessInfo(String type, Role role, String accessName) {
     if ("ORGANIZATION".equals(type)) {
       return getOrgAccessInfo(role, accessName);
@@ -1032,6 +1130,15 @@ public class RoleInheritanceTestUtils {
     OBDal.getInstance().flush();
   }
 
+  /**
+   * Retrieves an array with permissions information assigned to a role, ordered by name
+   * 
+   * @param type
+   *          A String which represents the type of the access
+   * @param role
+   *          The role to assign the permission
+   * @return an array of Strings with the permissions information
+   */
   public static String[] getOrderedAccessNames(String type, Role role) {
     if ("ORGANIZATION".equals(type)) {
       return getOrgsFromOrgAccesses(role);

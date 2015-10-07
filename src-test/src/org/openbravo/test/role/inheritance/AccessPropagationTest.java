@@ -77,6 +77,9 @@ public class AccessPropagationTest extends WeldBaseTest {
   private @ParameterCdiTest
   String parameter;
 
+  /**
+   * Test case for access propagation
+   */
   @Test
   public void testAccessPropagation() {
     Role role = null;
