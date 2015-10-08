@@ -164,7 +164,7 @@ public class POSLicenseRestrictions implements ModuleLicenseRestrictions {
     try {
       return countCache.get(CACHE_KEY);
     } catch (ExecutionException e) {
-      e.printStackTrace();
+      log.error("Error reading cache", e);
       return countNumberOfActiveTerminals();
     } finally {
       log.debug("read active terminals from cache, took {} ms", System.currentTimeMillis() - t);
