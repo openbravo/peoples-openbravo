@@ -63,8 +63,8 @@ public abstract class AccessTypeInjector implements Comparable<AccessTypeInjecto
   }
 
   /**
-   * Allows comparation between AccessTypeInjector classes. The getPriority() method is used to
-   * determine the comparation result.
+   * Allows the comparison between AccessTypeInjector classes. The getPriority() method is used to
+   * determine the comparison result.
    * 
    * @return a negative integer, zero, or a positive integer as this object priority is less than,
    *         equal to, or greater than the priority of the specified AccessTypeInjector object.
@@ -99,6 +99,17 @@ public abstract class AccessTypeInjector implements Comparable<AccessTypeInjecto
 
     Class<? extends InheritedAccessEnabled> clazz;
 
+    /**
+     * Basic constructor
+     * 
+     * @param className
+     *          The name of the class handled by the injector
+     * 
+     * @throws Exception
+     *           In case the class is not found or is not an instance of InheritedAccessEnabled an
+     *           exception is thrown
+     */
+    @SuppressWarnings("unchecked")
     public <T extends InheritedAccessEnabled> Selector(String className) throws Exception {
       this.clazz = (Class<? extends InheritedAccessEnabled>) Class.forName(className);
     }
