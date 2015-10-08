@@ -1039,7 +1039,7 @@ enyo.kind({
       me.hide();
     }, this);
 
-    receipt.on('change:isLayaway change:isPaid change:isQuotation', function () {
+    receipt.on('change:isLayaway change:isPaid change:isQuotation change:replacedorder', function () {
       this.updateVisibility();
     }, this);
 
