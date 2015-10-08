@@ -39,7 +39,7 @@ import org.junit.runners.Suite;
     HorizontalInheritanceTest.class, //
     VerticalInheritanceTest.class, //
     // Restrictions Test
-    RoleInheritanceRestrictionsTest.class, //
+    RoleInheritanceRestrictions.class, //
     // Recalculate Permissions Process Test
     RecalculatePermissionsTest.class, //
 })
