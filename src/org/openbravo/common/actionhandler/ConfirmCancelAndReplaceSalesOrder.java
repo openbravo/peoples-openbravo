@@ -37,7 +37,7 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseActionHandler {
       JSONObject request = new JSONObject(content);
       String newOrderId = request.getString("inpcOrderId");
 
-      JSONObject result = CancelAndReplaceUtils.cancelAndReplaceOrder(newOrderId);
+      JSONObject result = CancelAndReplaceUtils.cancelAndReplaceOrder(newOrderId, null, false);
 
       return result;
     } catch (Exception e1) {
