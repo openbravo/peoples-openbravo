@@ -20,6 +20,11 @@ package org.openbravo.role.inheritance;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
@@ -27,7 +32,6 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.InheritedAccessEnabled;
-import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.window.FICExtension;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
@@ -43,39 +47,59 @@ import org.slf4j.LoggerFactory;
  * propagated to the roles which are using that template to inherit permissions. With this class,
  * the user will be warned before saving the changes.
  */
+@ApplicationScoped
 public class RoleInheritanceWarningFICExtension implements FICExtension {
   private static final Logger log = LoggerFactory
       .getLogger(RoleInheritanceWarningFICExtension.class);
+  private final static String EDIT_MODE = "EDIT";
+  @Inject
+  private RoleInheritanceManager manager;
+  private ConcurrentMap<String, Boolean> validTabsCache = new ConcurrentHashMap<String, Boolean>();
 
   @Override
   public void execute(String mode, Tab tab, Map<String, JSONObject> columnValues, BaseOBObject row,
       List<String> changeEventCols, List<JSONObject> calloutMessages, List<JSONObject> attachments,
       List<String> jsExcuteCode, Map<String, Object> hiddenInputs, int noteCount,
       List<String> overwrittenAuxiliaryInputs) {
-
-    if ("EDIT".equals(mode)) {
-      String entityClassName = ModelProvider.getInstance()
-          .getEntityByTableId((String) DalUtil.getId(tab.getTable())).getClassName();
-      RoleInheritanceManager manager = WeldUtils
-          .getInstanceFromStaticBeanManager(RoleInheritanceManager.class);
-      if (!manager.existsInjector(entityClassName)) {
-        return;
+    long t = System.nanoTime();
+    // check if an edit action has been done in a tab related with an access type
+    if (!isValidEvent(mode, tab)) {
+      log.debug("took {} ns", (System.nanoTime() - t));
+      return;
+    }
+    String entityClassName = ModelProvider.getInstance()
+        .getEntityByTableId((String) DalUtil.getId(tab.getTable())).getClassName();
+    InheritedAccessEnabled access = (InheritedAccessEnabled) row;
+    Role role = manager.getRole(access, entityClassName);
+    String childRoleList = "";
+    if (role != null && role.isTemplate()) {
+      for (RoleInheritance inheritance : role.getADRoleInheritanceInheritFromList()) {
+        if (inheritance.isActive()) {
+          childRoleList += ", " + inheritance.getRole().getName();
+        }
       }
-      InheritedAccessEnabled access = (InheritedAccessEnabled) row;
-      Role role = manager.getRole(access, entityClassName);
-      String childRoleList = "";
-      if (role != null && role.isTemplate()) {
-        for (RoleInheritance inheritance : role.getADRoleInheritanceInheritFromList()) {
-          if (inheritance.isActive()) {
-            childRoleList += ", " + inheritance.getRole().getName();
-          }
-        }
-        if (!StringUtils.isEmpty(childRoleList)) {
-          String[] msgParam = { childRoleList.substring(1) };
-          addWarningMessage(calloutMessages, "EditTemplateRoleAccess", msgParam);
-        }
+      if (!StringUtils.isEmpty(childRoleList)) {
+        String[] msgParam = { childRoleList.substring(1) };
+        addWarningMessage(calloutMessages, "EditTemplateRoleAccess", msgParam);
       }
     }
+    log.debug("took {} ns", (System.nanoTime() - t));
+  }
+
+  private boolean isValidEvent(String mode, Tab tab) {
+    if (EDIT_MODE.equals(mode)) {
+      final String tabId = (String) DalUtil.getId(tab.getTable());
+      Boolean valid = validTabsCache.get(tabId);
+      if (valid != null) {
+        return valid;
+      }
+
+      String entityClassName = ModelProvider.getInstance().getEntityByTableId(tabId).getClassName();
+      valid = manager.existsInjector(entityClassName);
+      validTabsCache.put(tabId, valid);
+      return valid;
+    }
+    return false;
   }
 
   private void addWarningMessage(List<JSONObject> calloutMessages, String message,
