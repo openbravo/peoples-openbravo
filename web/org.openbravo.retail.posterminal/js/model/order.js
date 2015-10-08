@@ -2493,9 +2493,12 @@
       this.set('creationDate', null);
 
       var nextDocumentno = OB.MobileApp.model.getNextDocumentno();
+
+      this.set('negativeDocNo', nextDocumentno);
+
       this.set('documentnoPrefix', OB.MobileApp.model.get('terminal').docNoPrefix);
-      this.set('documentnoSuffix', nextDocumentno.documentnoSuffix);
-      this.set('documentNo', nextDocumentno.documentNo);
+      this.set('documentnoSuffix', nextDocumentno.documentnoSuffix + 1);
+      this.set('documentNo', OB.MobileApp.model.get('terminal').docNoPrefix + '/' + OB.UTIL.padNumber(nextDocumentno.documentnoSuffix + 1, 7));
       this.set('posTerminal', OB.MobileApp.model.get('terminal').id);
       this.save();
 
