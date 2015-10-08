@@ -1004,16 +1004,21 @@ enyo.kind({
     });
   },
   updateVisibility: function () {
-    var isPaidReceipt, isLayaway, receipt;
+    var isPaidReceipt, isLayaway, isReturn, receipt;
 
     receipt = this.model.get('order');
 
     isPaidReceipt = receipt.get('isPaid') === true && !receipt.get('isQuotation');
     isLayaway = receipt.get('isLayaway');
+    isReturn = receipt.get('orderType') === 1 || receipt.get('documentType') === OB.MobileApp.model.get('terminal').terminalType.documentTypeForReturns || receipt.get('documentType') === 'VBS RFC Order';
 
     if (!receipt.get('replacedorder') && (isPaidReceipt || isLayaway)) {
       this.show();
     } else {
+      this.hide();
+    }
+
+    if (isReturn) {
       this.hide();
     }
 
