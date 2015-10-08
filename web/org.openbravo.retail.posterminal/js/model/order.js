@@ -26,6 +26,34 @@
       description: ''
     },
 
+    // When copying a line coming from servers these properties are copied manually
+    // the rest are considered extra information coming from modules and are copied verbatim.
+    ownProperties: {
+      id: true,
+      lineId: true,
+      product: true,
+      productidentifier: true,
+      name: true,
+      qty: true,
+      quantity: true,
+      uOM: true,
+      price: true,
+      unitPrice: true,
+      baseNetUnitPrice: true,
+      priceList: true,
+      priceIncludesTax: true,
+      gross: true,
+      linegrossamount: true,
+      grossListPrice: true,
+      description: true,
+      promotions: true,
+      shipmentlines: true,
+      relatedLines: true,
+      hasRelatedServices: true,
+      warehouse: true,
+      warehousename: true
+    },
+
     initialize: function (attributes) {
       if (attributes && attributes.product) {
         this.set('product', new OB.Model.Product(attributes.product));
@@ -2587,6 +2615,14 @@
                   warehousename: iter.warehousename
                 }
               });
+
+              // copy verbatim not owned properties -> modular properties.
+              _.each(iter, function (value, key) {
+                if (!newline.ownProperties[key]) {
+                  newline.set(key, value);
+                }
+              });
+
               newline.calculateGross();
               // add the created line
               lines.add(newline);
