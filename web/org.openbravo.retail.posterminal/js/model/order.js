@@ -1049,7 +1049,7 @@
         var text, lines, indexes, relations, rl, rls, i;
 
         me.set('preventServicesUpdate', true);
-        me.set('deleting',true);
+        me.set('deleting', true);
         me.get('lines').remove(line);
         if (me.get('multipleUndo')) {
           var undo = me.get('undo');
@@ -1325,7 +1325,8 @@
             if (args.newLine && me.get('lines').contains(line)) {
               // Display related services after calculate gross, if it is new line and if the line has not been deleted.
               // The line might has been deleted during calculate gross for examples if there was an error in taxes.
-              args.receipt._loadRelatedServices(args.productToAdd.get('productType'), args.productToAdd.get('id'), args.productToAdd.get('productCategory'), function (data) {
+              var productId = args.productToAdd.get('forceFilterId') ? args.productToAdd.get('forceFilterId') : args.productToAdd.id;
+              args.receipt._loadRelatedServices(args.productToAdd.get('productType'), productId, args.productToAdd.get('productCategory'), function (data) {
                 if (data) {
                   if (data.hasservices) {
                     args.orderline.set('hasRelatedServices', true);

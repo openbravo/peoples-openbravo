@@ -249,6 +249,10 @@
     name: 'priceIncludesTax',
     column: 'priceIncludesTax',
     type: 'TEXT'
+  }, {
+    name: 'priceListName',
+    column: 'priceListName',
+    type: 'TEXT'
   }]);
 
   BusinessPartner.addIndex([{
