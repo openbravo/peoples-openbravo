@@ -96,12 +96,24 @@ enyo.kind({
     }
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.LineProperty',
+    position: 35,
+    name: 'priceStdLine',
+    I18NLabel: 'OBPOS_LinePriceStd',
+    render: function (line) {
+      if (line) {
+        this.$.propertyValue.setContent(OB.I18N.formatCurrency(line.get('product').get('standardPrice')));
+      } else {
+        this.$.propertyValue.setContent('');
+      }
+    }
+  }, {
+    kind: 'OB.OBPOSPointOfSale.UI.LineProperty',
     position: 30,
     name: 'priceLine',
     I18NLabel: 'OBPOS_LinePrice',
     render: function (line) {
       if (line) {
-        this.$.propertyValue.setContent(OB.I18N.formatCurrency(line.get('priceList')));
+        this.$.propertyValue.setContent(line.printPrice());
       } else {
         this.$.propertyValue.setContent('');
       }
@@ -113,7 +125,12 @@ enyo.kind({
     I18NLabel: 'OBPOS_LineDiscount',
     render: function (line) {
       if (line) {
-        this.$.propertyValue.setContent(line.printDiscount());
+        var discount = line.getTotalAmountOfPromotions();
+        if (discount === 0) {
+          this.$.propertyValue.setContent('');
+        } else {
+          this.$.propertyValue.setContent(OB.I18N.formatCurrency(discount));
+        }
       } else {
         this.$.propertyValue.setContent('');
       }
@@ -126,9 +143,9 @@ enyo.kind({
     render: function (line) {
       if (line) {
         if (line.get('priceIncludesTax')) {
-          this.$.propertyValue.setContent(line.printTotalLine());
+          this.$.propertyValue.setContent(OB.I18N.formatCurrency(OB.DEC.sub(line.get('gross'), line.getTotalAmountOfPromotions())));
         } else {
-          this.$.propertyValue.setContent(line.printNet());
+          this.$.propertyValue.setContent(OB.I18N.formatCurrency(OB.DEC.sub(line.get('net'), line.getTotalAmountOfPromotions())));
         }
       } else {
         this.$.propertyValue.setContent('');
