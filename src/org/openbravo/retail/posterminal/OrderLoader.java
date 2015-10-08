@@ -52,6 +52,7 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.ad_forms.AcctServer;
+import org.openbravo.erpCommon.businessUtility.CancelAndReplaceUtils;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.PropertyException;
@@ -447,6 +448,11 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         JSONObject paymentResponse = handlePayments(jsonorder, order, invoice, wasPaidOnCredit);
         if (paymentResponse != null) {
           return paymentResponse;
+        }
+
+        if (order.getReplacedorder() != null) {
+          CancelAndReplaceUtils.cancelAndReplaceOrder(order.getId(), jsonorder,
+              useOrderDocumentNoForRelatedDocs);
         }
 
         // Call all OrderProcess injected.
