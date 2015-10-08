@@ -51,13 +51,17 @@ enyo.kind({
       this.setShowing(false);
       return;
     }
+    if (this.model.get('order').get('replacedorder')) {
+      this.hide();
+      return;
+    }
 
     this.adjustVisibilityBasedOnPermissions();
   },
   init: function (model) {
     this.model = model;
     var receipt = model.get('order');
-    receipt.on('change:isEditable change:isQuotation change:gross change:orderType', function (changedModel) {
+    receipt.on('change:isEditable change:isQuotation change:gross change:orderType change:replacedorder', function (changedModel) {
       this.displayLogic();
     }, this);
     this.model.get('leftColumnViewManager').on('change:currentView', function (changedModel) {
@@ -274,13 +278,13 @@ enyo.kind({
         me.updateVisibility(true);
       }
     }, this);
-    receipt.on('change:isEditable', function (newValue) {
+    receipt.on('change:isEditable change:replacedorder', function (newValue) {
       if (newValue) {
         if (newValue.get('isEditable') === false) {
           me.updateVisibility(false);
           return;
         }
-        if (newValue.get('isEditable') === true && newValue.get('isQuotation')) {
+        if (newValue.get('isEditable') === true && (newValue.get('isQuotation') || newValue.get('replacedorder'))) {
           me.updateVisibility(false);
           return;
         }
