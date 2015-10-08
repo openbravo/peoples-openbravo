@@ -156,7 +156,7 @@ enyo.kind({
 
               if (oldqty > 0 && newqty < l.get('remainingQuantity')) {
                 cancelQtyChange = true;
-              } else if (oldqty < 0 && newqty > l.get('remainingQuantity')) {
+              } else if (oldqty < 0 && l.get('remainingQuantity')) {
                 cancelQtyChangeReturn = true;
               }
             });
@@ -308,10 +308,23 @@ enyo.kind({
           OB.UTIL.Approval.requestApproval(
           me.model, 'OBPOS_approval.setPrice', function (approved, supervisor, approvalType) {
             if (approved) {
-              var price = OB.I18N.parseNumber(txt);
+              var price = OB.I18N.parseNumber(txt),
+                  cancelChange = false;
               if (me.selectedModels.length > 1) {
                 keyboard.receipt.set('undo', null);
                 keyboard.receipt.set('multipleUndo', true);
+
+                _.each(me.selectedModels, function (model) {
+                  if (model.get('replacedorderline') && model.get('qty') < 0) {
+                    cancelChange = true;
+                  }
+                });
+
+                if (cancelChange) {
+                  OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceReturnPriceChange'));
+                  return;
+                }
+
                 _.each(me.selectedModels, function (model) {
                   keyboard.receipt.setPrice(model, price);
                 });

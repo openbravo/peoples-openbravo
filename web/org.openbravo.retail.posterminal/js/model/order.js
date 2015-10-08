@@ -1096,6 +1096,9 @@
 
         if (!OB.UTIL.isNullOrUndefined(args.line.get('originalOrderLineId'))) {
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_CannotChangePrice'));
+        } else if (args.line.get('replacedorderline') && args.line.get('qty') < 0) {
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceReturnPriceChange'));
+          return;
         } else if (OB.DEC.isNumber(args.price)) {
           var oldprice = args.line.get('price');
           if (OB.DEC.compare(args.price) >= 0) {
@@ -1688,6 +1691,10 @@
           if (callback) {
             callback(false);
           }
+          return;
+        }
+        if (args && args.options && args.options.line && args.options.line.get('replacedorderline') && args.options.line.get('qty') < 0) {
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceQtyEditReturn'));
           return;
         }
         if (OB.MobileApp.model.get('terminal').businessPartner === me.get('bp').get('id') && args && args.productToAdd && args.productToAdd.has('oBPOSAllowAnonymousSale') && !args.productToAdd.get('oBPOSAllowAnonymousSale')) {
