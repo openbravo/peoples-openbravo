@@ -183,7 +183,21 @@ public abstract class UIDefinition {
                 field.getTab().getWindow().getId(), field.getColumn().getTable().getDBTableName(),
                 docTypeTarget, docType, false, false) + ">";
       } else {
-        String defaultS = field.getColumn().getDefaultValue();
+        final String windowId = field.getTab().getWindow().getId();
+        final String colName = field.getColumn().getDBColumnName();
+
+        final String prefValue = Utility.getPreference(rq.getVariablesSecureApp(), colName,
+            windowId);
+
+        String defaultS;
+        if (StringUtils.isNotBlank(prefValue)) {
+          // if there is a preference for this field, use it instead of the one that might be
+          // defined at column level
+          defaultS = prefValue;
+        } else {
+          defaultS = field.getColumn().getDefaultValue();
+        }
+
         if (defaultS == null || defaultS.equals("\"\"")) {
           defaultS = "";
         }
@@ -191,8 +205,7 @@ public abstract class UIDefinition {
           return setNOWDefault();
         } else if (!defaultS.startsWith("@SQL=")) {
           columnValue = Utility.getDefault(new DalConnectionProvider(false),
-              rq.getVariablesSecureApp(), field.getColumn().getDBColumnName(), defaultS, field
-                  .getTab().getWindow().getId(), "");
+              rq.getVariablesSecureApp(), colName, defaultS, windowId, "");
         } else {
           ArrayList<String> params = new ArrayList<String>();
           String sql = parseSQL(defaultS, params);
