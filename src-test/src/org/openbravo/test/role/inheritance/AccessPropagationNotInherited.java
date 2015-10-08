@@ -45,7 +45,7 @@ import org.openbravo.model.ad.access.Role;
  * has not been inherited
  * 
  */
-public class AccessPropagationNotInheritedTest extends WeldBaseTest {
+public class AccessPropagationNotInherited extends WeldBaseTest {
   private final List<String> ORGANIZATIONS = Arrays.asList("F&B España - Región Norte");
   private final List<String> WINDOWS = Arrays.asList("Sales Invoice");
   private final List<String> TABS = Arrays.asList("Bank Account");
@@ -77,7 +77,7 @@ public class AccessPropagationNotInheritedTest extends WeldBaseTest {
    * Test case to check that non inherited accesses are not affected by access propagation.
    */
   @Test
-  public void testNotInheritedAccessPropagation() {
+  public void notInheritedAccessNotAffectedByPropagation() {
     Role role = null;
     Role template = null;
     try {

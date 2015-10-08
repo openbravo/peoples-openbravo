@@ -45,7 +45,7 @@ import org.openbravo.model.ad.access.Role;
  * 
  * After removing the inheritance of T3, access for Role A must be {A1(T2), A2(T2), A3(T1), A4(T1)}
  */
-public class HorizontalInheritanceTest extends WeldBaseTest {
+public class HorizontalInheritance extends WeldBaseTest {
   private final List<String> ORGANIZATIONS = Arrays.asList("F&B España - Región Norte",
       "F&B España - Región Sur", "F&B España, S.A", "F&B International Group", "F&B US East Coast");
   private final List<String> WINDOWS = Arrays.asList("Business Partner", "Purchase Invoice",
@@ -91,7 +91,7 @@ public class HorizontalInheritanceTest extends WeldBaseTest {
    * Test case for horizontal inheritance
    */
   @Test
-  public void testBasicHorizontalInheritance() {
+  public void createBasicHorizontalInheritance() {
     Role template1 = null;
     Role template2 = null;
     Role template3 = null;

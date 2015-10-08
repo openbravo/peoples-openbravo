@@ -32,16 +32,16 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
 
 // Propagation Tests
-    AccessPropagationNotInheritedTest.class, //
-    AccessPropagationTest.class, //
-    DeletedAccessPropagationTest.class,
+    AccessPropagationNotInherited.class, //
+    AccessPropagation.class, //
+    DeletedAccessPropagation.class,
     // Inheritance Tests
-    HorizontalInheritanceTest.class, //
-    VerticalInheritanceTest.class, //
+    HorizontalInheritance.class, //
+    VerticalInheritance.class, //
     // Restrictions Test
     RoleInheritanceRestrictions.class, //
     // Recalculate Permissions Process Test
-    RecalculatePermissionsTest.class, //
+    RecalculatePermissions.class, //
 })
 public class RoleInheritanceTestSuite {
 

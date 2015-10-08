@@ -35,20 +35,20 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.access.Role;
 
 /**
- * Test case for access propagation
+ * Test case for vertical inheritance
  * 
- * We start having Role "role" which inherits from Role "template"
+ * Role B inherits from Role A and Role C from Role B : A -> B -> C
  * 
- * We add access A1 for "template" and access A2 for "role"
+ * A Access {A1} , B Access {A2}
  * 
- * If we update access A1 for "template" this change must be propagated for "role". In addition, A2
- * access for "role" must remain without changes
+ * With this settings, Role B Accesses must be {A1(A), A2} and Role C Accesses must be {A1(B),
+ * A2(B)}
  * 
  */
-public class AccessPropagationTest extends WeldBaseTest {
+public class VerticalInheritance extends WeldBaseTest {
   private final List<String> ORGANIZATIONS = Arrays.asList("F&B España - Región Norte",
       "F&B España - Región Sur");
-  private final List<String> WINDOWS = Arrays.asList("Sales Invoice", "Sales Order");
+  private final List<String> WINDOWS = Arrays.asList("Purchase Order", "Sales Order");
   private final List<String> TABS = Arrays.asList("Bank Account", "Basic Discount");
   private final List<String> FIELDS = Arrays.asList("Business Partner Category", "Commercial Name");
   private final List<String> REPORTS = Arrays.asList("Alert Process", "Create Variants");
@@ -78,87 +78,66 @@ public class AccessPropagationTest extends WeldBaseTest {
   String parameter;
 
   /**
-   * Test case for access propagation
+   * Test case for vertical inheritance
    */
   @Test
-  public void testAccessPropagation() {
-    Role role = null;
-    Role template = null;
+  public void createBasicVerticalInheritance() {
+    Role roleA = null;
+    Role roleB = null;
+    Role roleC = null;
     try {
       OBContext.setAdminMode(true);
       // Create roles
-      role = RoleInheritanceTestUtils.createRole("role", RoleInheritanceTestUtils.CLIENT_ID,
+      roleA = RoleInheritanceTestUtils.createRole("roleA", RoleInheritanceTestUtils.CLIENT_ID,
+          RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true, true);
+      String roleAId = (String) DalUtil.getId(roleA);
+      roleB = RoleInheritanceTestUtils.createRole("roleB", RoleInheritanceTestUtils.CLIENT_ID,
+          RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true, true);
+      String roleBId = (String) DalUtil.getId(roleB);
+      roleC = RoleInheritanceTestUtils.createRole("roleC", RoleInheritanceTestUtils.CLIENT_ID,
           RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true, false);
-      String roleId = (String) DalUtil.getId(role);
-      template = RoleInheritanceTestUtils.createRole("template",
-          RoleInheritanceTestUtils.CLIENT_ID, RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true,
-          true);
-      String templateId = (String) DalUtil.getId(template);
-
-      // Add inheritance
-      RoleInheritanceTestUtils.addInheritance(role, template, new Long(10));
-
-      OBDal.getInstance().commitAndClose();
-      role = OBDal.getInstance().get(Role.class, roleId);
-      template = OBDal.getInstance().get(Role.class, templateId);
+      String roleCId = (String) DalUtil.getId(roleC);
 
       List<String> accesses = ACCESSES.get(testCounter);
-      // Add accesses
-      RoleInheritanceTestUtils.addAccess(parameter, template, accesses.get(0));
-      RoleInheritanceTestUtils.addAccess(parameter, role, accesses.get(1));
+      // Add window accesses for template roles
+      RoleInheritanceTestUtils.addAccess(parameter, roleA, accesses.get(0));
+      RoleInheritanceTestUtils.addAccess(parameter, roleB, accesses.get(1));
 
       OBDal.getInstance().commitAndClose();
-      role = OBDal.getInstance().get(Role.class, roleId);
-      template = OBDal.getInstance().get(Role.class, templateId);
 
-      String[] expected = { accesses.get(0), templateId, accesses.get(1), "" };
-      String[] result = RoleInheritanceTestUtils.getOrderedAccessNames(parameter, role);
-      assertThat("New access has been propagated", result, equalTo(expected));
+      roleA = OBDal.getInstance().get(Role.class, roleAId);
+      roleB = OBDal.getInstance().get(Role.class, roleBId);
+      roleC = OBDal.getInstance().get(Role.class, roleCId);
 
-      boolean value = false;
-      if (parameter.equals("ALERT") || parameter.equals("PREFERENCE")) {
-        value = true;
-      }
-      // Perform an update in the access of the parent
-      RoleInheritanceTestUtils.updateAccess(parameter, template, accesses.get(0), value, false);
+      // Add inheritances
+      RoleInheritanceTestUtils.addInheritance(roleB, roleA, new Long(10));
+      RoleInheritanceTestUtils.addInheritance(roleC, roleB, new Long(20));
+
       OBDal.getInstance().commitAndClose();
 
-      role = OBDal.getInstance().get(Role.class, roleId);
-      template = OBDal.getInstance().get(Role.class, templateId);
+      roleA = OBDal.getInstance().get(Role.class, roleAId);
+      roleB = OBDal.getInstance().get(Role.class, roleBId);
+      roleC = OBDal.getInstance().get(Role.class, roleCId);
 
-      String editedValue = value + "";
-      String isActive = "false";
-      if (parameter.equals("REPORT") || parameter.equals("FORM") || parameter.equals("WIDGET")
-          || parameter.equals("VIEW") || parameter.equals("PROCESS")) {
-        // Accesses for Report, Form, Widget, View and Process just have the active flag
-        editedValue = "";
-      }
+      String[] expected = { accesses.get(0), roleAId, accesses.get(1), "" };
+      String[] result = RoleInheritanceTestUtils.getOrderedAccessNames(parameter, roleB);
+      assertThat("Accesses inherited for role B ", result, equalTo(expected));
 
-      String[] expected2 = { editedValue, isActive, templateId };
-      String[] result2 = RoleInheritanceTestUtils.getAccessInfo(parameter, role, accesses.get(0));
-      assertThat("Updated access has been propagated", result2, equalTo(expected2));
+      String[] expected2 = { accesses.get(0), roleBId, accesses.get(1), roleBId };
+      result = RoleInheritanceTestUtils.getOrderedAccessNames(parameter, roleC);
+      assertThat("Accesses inherited for role C ", result, equalTo(expected2));
 
-      editedValue = !value + "";
-      isActive = "true";
-      if (parameter.equals("REPORT") || parameter.equals("FORM") || parameter.equals("WIDGET")
-          || parameter.equals("VIEW") || parameter.equals("PROCESS")) {
-        editedValue = "";
-      }
-
-      String[] expected3 = { editedValue, isActive, "" };
-      String[] result3 = RoleInheritanceTestUtils.getAccessInfo(parameter, role, accesses.get(1));
-      assertThat("Non inherited access remains unchanged after propagation", result3,
-          equalTo(expected3));
-
-      RoleInheritanceTestUtils.removeAccesses(parameter, template);
-      RoleInheritanceTestUtils.removeAccesses(parameter, role);
+      RoleInheritanceTestUtils.removeAccesses(parameter, roleA);
+      RoleInheritanceTestUtils.removeAccesses(parameter, roleB);
+      RoleInheritanceTestUtils.removeAccesses(parameter, roleC);
       OBDal.getInstance().flush();
       testCounter++;
 
     } finally {
       // Delete roles
-      RoleInheritanceTestUtils.deleteRole(role);
-      RoleInheritanceTestUtils.deleteRole(template);
+      RoleInheritanceTestUtils.deleteRole(roleC);
+      RoleInheritanceTestUtils.deleteRole(roleB);
+      RoleInheritanceTestUtils.deleteRole(roleA);
 
       OBDal.getInstance().commitAndClose();
 

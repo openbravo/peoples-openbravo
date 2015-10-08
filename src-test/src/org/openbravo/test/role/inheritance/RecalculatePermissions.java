@@ -39,7 +39,7 @@ import org.openbravo.role.inheritance.RoleInheritanceManager;
  * from the UI), this way we can simulate the process of adding a permission without using DAL, like
  * for example, when using the "Grant Access" process which uses xsql to insert data.
  */
-public class RecalculatePermissionsTest extends WeldBaseTest {
+public class RecalculatePermissions extends WeldBaseTest {
 
   @Inject
   private RoleInheritanceManager manager;
@@ -48,7 +48,7 @@ public class RecalculatePermissionsTest extends WeldBaseTest {
    * Test case to simulate the "Recalculate Permissions" process, launched for a not template role
    */
   @Test
-  public void testRolePermissionRecalculate() {
+  public void recalculatePermissionsForRole() {
     Role template = null;
     Role role = null;
     try {
@@ -112,7 +112,7 @@ public class RecalculatePermissionsTest extends WeldBaseTest {
    * Test case to simulate the "Recalculate Permissions" process, launched for a template role
    */
   @Test
-  public void testTemplatePermissionsRecalculate() {
+  public void recalculatePermissionsForTemplateRole() {
     Role template = null;
     Role role1 = null;
     Role role2 = null;
