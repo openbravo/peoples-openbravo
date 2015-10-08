@@ -2461,6 +2461,7 @@
 
       this.get('lines').each(function (line) {
         idMap[line.get('id')] = OB.Dal.get_uuid();
+        line.set('replacedorderline', line.get('id'));
         line.set('id', idMap[line.get('id')]);
       }, this);
 
