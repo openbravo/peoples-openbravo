@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -65,18 +65,20 @@ public class SL_InvAmtUpd_ProductRefDate extends SimpleCallout {
       referenceDate = outputFormat.parse(info.getStringParameter("inpreferencedate", null));
 
       CostingRule costRule = CostingUtils.getCostDimensionRule(organization, referenceDate);
+      if (costRule.isWarehouseDimension()) {
+        info.addResult("inpiswarehousedimension", "Y");
+      } else {
+        info.addResult("inpiswarehousedimension", "N");
+        info.addResult("inpmWarehouseId", null);
+      }
+
       if (product == null) {
         return;
       }
       costDimensions = CostingUtils.getEmptyDimensions();
-      if (costRule.isWarehouseDimension()) {
-        info.addResult("inpiswarehousedimension", "Y");
-        if (warehouseId != null && !warehouseId.isEmpty()) {
-          Warehouse warehouse = OBDal.getInstance().get(Warehouse.class, warehouseId);
-          costDimensions.put(CostDimension.Warehouse, warehouse);
-        }
-      } else {
-        info.addResult("inpiswarehousedimension", "N");
+      if (costRule.isWarehouseDimension() && warehouseId != null && !warehouseId.isEmpty()) {
+        Warehouse warehouse = OBDal.getInstance().get(Warehouse.class, warehouseId);
+        costDimensions.put(CostDimension.Warehouse, warehouse);
       }
       currentValuedStock = CostAdjustmentUtils.getValuedStockOnMovementDate(product, organization,
           referenceDate, costDimensions, currency, costRule.isBackdatedTransactionsFixed());

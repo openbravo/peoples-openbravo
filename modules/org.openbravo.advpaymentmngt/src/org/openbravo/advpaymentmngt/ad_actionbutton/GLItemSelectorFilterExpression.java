@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2012 Openbravo SLU 
+ * All portions are Copyright (C) 2012-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,10 +21,13 @@ package org.openbravo.advpaymentmngt.ad_actionbutton;
 
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.client.application.FilterExpression;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
+
 import org.openbravo.erpCommon.utility.Utility;
+
 
 public class GLItemSelectorFilterExpression implements FilterExpression {
   final static String FINANCIAL_ACCOUNT_WINDOW = "94EAA455D2644E04AB25D93BE5157B6D";
@@ -37,6 +40,9 @@ public class GLItemSelectorFilterExpression implements FilterExpression {
     StringBuilder whereClause = new StringBuilder();
     String orgId = (String) RequestContext.get().getSession()
         .getAttribute(FINANCIAL_ACCOUNT_WINDOW + "|AD_ORG_ID");
+    if(StringUtils.isEmpty(orgId)) {
+    	orgId = requestMap.get("inpadOrgId");
+    }
     String orgList = Utility.getInStrSet(OBContext.getOBContext()
         .getOrganizationStructureProvider().getNaturalTree(orgId));
     if (!orgList.isEmpty()) {
