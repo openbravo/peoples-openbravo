@@ -81,7 +81,8 @@ enyo.kind({
     onWarehouseSelected: 'warehouseSelected',
     onClearUserInput: 'clearUserInput',
     onPricelistChanged: 'pricelistChanged',
-    onChangeDiscount: 'changeDiscount'
+    onChangeDiscount: 'changeDiscount',
+    onReceiptLineSelected: 'receiptLineSelected'
   },
   events: {
     onShowPopup: '',
@@ -970,6 +971,20 @@ enyo.kind({
   },
   pricelistChanged: function (inSender, inEvent) {
     this.waterfall('onChangePricelist', inEvent);
+  },
+  receiptLineSelected: function (inSender, inEvent) {
+    if (inEvent.isGift) {
+      // The line selected is a gift card, so hide the return line button.
+      this.waterfall('onHideReturnLineButton', {
+        hide: true
+      });
+    } else {
+      // The line selected is not a gift card, so show the return line button.
+      this.waterfall('onHideReturnLineButton', {
+        hide: false
+      });
+    }
+
   },
   init: function () {
     var receipt, receiptList, LeftColumnCurrentView;

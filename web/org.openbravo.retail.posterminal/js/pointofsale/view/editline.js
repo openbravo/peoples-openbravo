@@ -286,7 +286,8 @@ enyo.kind({
     onShowPopup: ''
   },
   handlers: {
-    onCheckBoxBehaviorForTicketLine: 'checkBoxBehavior'
+    onCheckBoxBehaviorForTicketLine: 'checkBoxBehavior',
+    onHideReturnLineButton: 'hideReturnLineButton'
   },
   checkBoxBehavior: function (inSender, inEvent) {
     if (inEvent.status) {
@@ -305,6 +306,13 @@ enyo.kind({
         var line = this.receipt.get('lines').at(0);
         line.trigger('selected', line);
       }
+    }
+  },
+  hideReturnLineButton: function (inSender, inEvent) {
+    if (inEvent.hide) {
+      this.$.actionButtonsContainer.$.returnLine.hide();
+    } else {
+      this.$.actionButtonsContainer.$.returnLine.show();
     }
   },
   executeOnShow: function (args) {

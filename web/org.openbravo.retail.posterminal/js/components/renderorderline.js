@@ -17,6 +17,19 @@ enyo.kind({
     onChangeEditMode: 'changeEditMode',
     onCheckBoxBehaviorForTicketLine: 'checkBoxForTicketLines'
   },
+  tap: function () {
+    this.model.trigger('selected', this.model);
+    this.model.trigger('click', this.model);
+    if (typeof (this.model.get('product').get('giftCardTransaction')) === "undefined") {
+      this.bubble('onReceiptLineSelected', {
+        isGift: false
+      });
+    } else {
+      this.bubble('onReceiptLineSelected', {
+        isGift: true
+      });
+    }
+  },
   events: {
     onLineChecked: ''
   },
