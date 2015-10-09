@@ -31,29 +31,29 @@ public class CheckTerminalAuth extends JSONProcessSimple {
   private static final Logger log = Logger.getLogger(CheckTerminalAuth.class);
 
   @Override
-  public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
+  public JSONObject exec(final JSONObject jsonsent) throws JSONException, ServletException {
     String value = new String();
-    JSONObject respArray = new JSONObject();
-    JSONObject result = new JSONObject();
+    final JSONObject respArray = new JSONObject();
+    final JSONObject result = new JSONObject();
     result.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
     try {
-      String terminalName = jsonsent.getString("terminalName");
-      String terminalKeyIdentifier = jsonsent.getString("terminalKeyIdentifier");
-      String terminalAuthentication = jsonsent.getString("terminalAuthentication");
+      final String terminalName = jsonsent.getString("terminalName");
+      final String terminalKeyIdentifier = jsonsent.getString("terminalKeyIdentifier");
+      final String terminalAuthentication = jsonsent.getString("terminalAuthentication");
 
-      OBCriteria<OBPOSApplications> qApp = OBDal.getInstance().createCriteria(
+      final OBCriteria<OBPOSApplications> qApp = OBDal.getInstance().createCriteria(
           OBPOSApplications.class);
       qApp.add(Restrictions.eq(OBPOSApplications.PROPERTY_SEARCHKEY, terminalName));
-      List<OBPOSApplications> apps = qApp.list();
+      final List<OBPOSApplications> apps = qApp.list();
       if (apps.size() == 1) {
-        OBPOSApplications terminal = ((OBPOSApplications) apps.get(0));
+        final OBPOSApplications terminal = (apps.get(0));
         if (!terminal.isLinked() || !terminal.getTerminalKey().equals(terminalKeyIdentifier)) {
           respArray.put("isLinked", false);
         }
         try {
           value = Preferences.getPreferenceValue("OBPOS_TerminalAuthentication", true, null, null,
               null, null, (String) null);
-        } catch (PropertyException e) {
+        } catch (final PropertyException e) {
           if (!terminalAuthentication.equals("N")) {
             respArray.put("terminalAuthentication", terminalAuthentication);
             result.put(JsonConstants.RESPONSE_DATA, respArray);
@@ -66,7 +66,7 @@ public class CheckTerminalAuth extends JSONProcessSimple {
           }
         }
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       log.error("There was an error Checking Terminal Authentication: ", e);
     }
     result.put(JsonConstants.RESPONSE_DATA, respArray);
@@ -75,6 +75,6 @@ public class CheckTerminalAuth extends JSONProcessSimple {
 
   @Override
   protected String getProperty() {
-    return "OBPOS_receipt.voidLayaway";
+    return "";
   }
 }
