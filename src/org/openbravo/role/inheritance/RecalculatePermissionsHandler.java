@@ -92,7 +92,7 @@ public class RecalculatePermissionsHandler extends BaseActionHandler {
 
   private JSONObject recalculateForSingleRole(String roleId) throws JSONException {
     final Role role = OBDal.getInstance().get(Role.class, roleId);
-    Map<String, CalculationResult> accessCount = manager.recalculateAllAccessesForRole(role);
+    Map<String, CalculationResult> accessCount = manager.recalculateAllAccessesForRole(role, true);
     String text = composeAccessMessageText(accessCount);
     if (StringUtils.isEmpty(text)) {
       text = Utility.messageBD(new DalConnectionProvider(false), "PermissionsNotModified",
@@ -111,7 +111,8 @@ public class RecalculatePermissionsHandler extends BaseActionHandler {
     String roleNames = "";
     for (int i = 0; i < roleIds.length(); i++) {
       final Role role = OBDal.getInstance().get(Role.class, roleIds.getString(i));
-      manager.recalculateAllAccessesForRole(role);
+      manager.recalculateAllAccessesForRole(role, true);
+      OBDal.getInstance().commitAndClose();
       roleNames += ", " + role.getName();
     }
     String msgParam[] = { roleNames.substring(1) };
@@ -134,7 +135,7 @@ public class RecalculatePermissionsHandler extends BaseActionHandler {
         if (counters.getUpdated() > 0 || counters.getCreated() > 0) {
           Class<?> myClass = Class.forName(className);
           Entity entity = ModelProvider.getInstance().getEntity(myClass);
-          String[] params = { counters.getUpdated() + "", counters.getCreated() + "" };
+          String[] params = { counters.getCreated() + "" };
           text += OBMessageUtils.getI18NMessage(entity.getName() + "_PermissionsCount", params)
               + " ";
         }

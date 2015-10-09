@@ -436,19 +436,21 @@ public class RoleInheritanceManager {
    *          the name of the class
    */
   void clearInheritFromFieldInChilds(InheritedAccessEnabled access, String className) {
-    String inheritedFromId = (String) DalUtil.getId(access.getInheritedFrom());
-    if ("org.openbravo.model.ad.access.WindowAccess".equals(className)) {
-      WindowAccess wa = (WindowAccess) access;
-      for (TabAccess ta : wa.getADTabAccessList()) {
-        clearInheritedFromField(ta, inheritedFromId);
+    if (access.getInheritedFrom() != null) {
+      String inheritedFromId = (String) DalUtil.getId(access.getInheritedFrom());
+      if ("org.openbravo.model.ad.access.WindowAccess".equals(className)) {
+        WindowAccess wa = (WindowAccess) access;
+        for (TabAccess ta : wa.getADTabAccessList()) {
+          clearInheritedFromField(ta, inheritedFromId);
+          for (FieldAccess fa : ta.getADFieldAccessList()) {
+            clearInheritedFromField(fa, inheritedFromId);
+          }
+        }
+      } else if ("org.openbravo.model.ad.access.TabAccess".equals(className)) {
+        TabAccess ta = (TabAccess) access;
         for (FieldAccess fa : ta.getADFieldAccessList()) {
           clearInheritedFromField(fa, inheritedFromId);
         }
-      }
-    } else if ("org.openbravo.model.ad.access.TabAccess".equals(className)) {
-      TabAccess ta = (TabAccess) access;
-      for (FieldAccess fa : ta.getADFieldAccessList()) {
-        clearInheritedFromField(fa, inheritedFromId);
       }
     }
   }
@@ -583,14 +585,30 @@ public class RoleInheritanceManager {
   }
 
   /**
+   * @see RoleInheritanceManager#recalculateAllAccessesForRole(Role, boolean)
+   * @param role
+   *          The role whose accesses will be recalculated
+   * @return a map with the number of accesses updated and created for every access type
+   * 
+   */
+  public Map<String, CalculationResult> recalculateAllAccessesForRole(Role role) {
+    return recalculateAllAccessesForRole(role, false);
+  }
+
+  /**
    * Recalculates all accesses for a given role
    * 
    * @param role
    *          The role whose accesses will be recalculated
+   * @param delete
+   *          A flag to indicate if all the role accesses should be deleted before the recalculation
    * @return a map with the number of accesses updated and created for every access type
    */
-  public Map<String, CalculationResult> recalculateAllAccessesForRole(Role role) {
+  public Map<String, CalculationResult> recalculateAllAccessesForRole(Role role, boolean delete) {
     long t = System.currentTimeMillis();
+    if (delete) {
+      deleteAllAccesses(role);
+    }
     Map<String, CalculationResult> result = new HashMap<String, CalculationResult>();
     List<RoleInheritance> inheritanceList = getRoleInheritancesList(role);
     List<String> inheritanceRoleIdList = getRoleInheritancesInheritFromIdList(inheritanceList);
@@ -605,8 +623,35 @@ public class RoleInheritanceManager {
   }
 
   /**
-   * Recalculates the accesses whose type is assigned to the manager, for those roles using as
-   * template the role passed as parameter
+   * Deletes all the permissions for a role
+   * 
+   * @param role
+   *          The role whose accesses will be deleted
+   */
+  public void deleteAllAccesses(Role role) {
+    for (AccessTypeInjector accessType : getAccessTypeOrderByPriority(true)) {
+      List<? extends InheritedAccessEnabled> roleAccessList = getAccessList(role,
+          accessType.getClassName());
+      List<InheritedAccessEnabled> iaeToDelete = new ArrayList<InheritedAccessEnabled>();
+      for (InheritedAccessEnabled iae : roleAccessList) {
+        // Not inherited accesses should not be deleted
+        if (iae.getInheritedFrom() != null) {
+          iaeToDelete.add(iae);
+        }
+      }
+      for (InheritedAccessEnabled iae : iaeToDelete) {
+        clearInheritFromFieldInChilds(iae, accessType.getClassName());
+        iae.setInheritedFrom(null);
+        roleAccessList.remove(iae);
+        OBDal.getInstance().remove(iae);
+      }
+    }
+    OBDal.getInstance().commitAndClose();
+  }
+
+  /**
+   * Recalculates the accesses of a particular class, for those roles using as template the role
+   * passed as parameter
    * 
    * @param template
    *          The template role used by the roles whose accesses will be recalculated * @param
@@ -629,7 +674,7 @@ public class RoleInheritanceManager {
   }
 
   /**
-   * Recalculates the accesses whose type is assigned to the manager for a given role
+   * Recalculates the accesses of a particular class for a given role
    * 
    * @param role
    *          The role whose accesses will be recalculated
@@ -641,9 +686,10 @@ public class RoleInheritanceManager {
     long t = System.currentTimeMillis();
     List<RoleInheritance> inheritanceList = getRoleInheritancesList(role);
     List<String> inheritanceRoleIdList = getRoleInheritancesInheritFromIdList(inheritanceList);
-    calculateAccesses(inheritanceList, inheritanceRoleIdList, injector);
+    CalculationResult counters = calculateAccesses(inheritanceList, inheritanceRoleIdList, injector);
     log.debug("recalculate access for " + injector.getClassName() + " for role " + role.getName()
-        + " time: " + (System.currentTimeMillis() - t));
+        + ": " + counters.getUpdated() + " updated, " + counters.getCreated()
+        + " created in time: " + (System.currentTimeMillis() - t));
   }
 
   /**
@@ -781,7 +827,7 @@ public class RoleInheritanceManager {
             }
           }
           if (!updated) {
-            // access not present in other inheritances, remove it
+            // Access not present in other inheritances, remove it
             clearInheritFromFieldInChilds(iaeToDelete, injector.getClassName());
             iaeToDelete.setInheritedFrom(null);
             roleAccessList.remove(iaeToDelete);
