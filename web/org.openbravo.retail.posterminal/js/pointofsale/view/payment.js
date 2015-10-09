@@ -517,7 +517,7 @@ enyo.kind({
             requiredCash = OB.DEC.add(requiredCash, payment.get('origAmount'));
           } else {
             paymentmethod = OB.POS.terminal.terminal.paymentnames[payment.get('kind')];
-            if (paymentmethod && payment.get('amount') > paymentmethod.currentCash) {
+            if (paymentmethod && payment.get('amount') > paymentmethod.currentCash && payment.get('isCash')) {
               hasAllEnoughCash = false;
             }
           }
