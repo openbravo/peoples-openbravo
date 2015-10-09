@@ -140,14 +140,22 @@ public class CancelAndReplaceUtils {
           // Create Netting goods shipment Line for the old order line
           BigDecimal movementQty = oldOrderLine.getOrderedQuantity().subtract(
               oldOrderLine.getDeliveredQuantity());
-          newGoodsShipmentLine1 = createShipmentLine(nettingGoodsShipment,
-              goodsShipmentLineList.size() > 0 ? goodsShipmentLineList.get(0) : null, oldOrderLine,
-              lineNoCounter++, movementQty);
+          BigDecimal oldOrderLineDeliveredQty = oldOrderLine.getDeliveredQuantity();
+          oldOrderLine.setDeliveredQuantity(BigDecimal.ZERO);
+          OBDal.getInstance().save(oldOrderLine);
+          OBDal.getInstance().flush();
+          if (movementQty.compareTo(BigDecimal.ZERO) != 0) {
+            newGoodsShipmentLine1 = createShipmentLine(nettingGoodsShipment,
+                goodsShipmentLineList.size() > 0 ? goodsShipmentLineList.get(0) : null,
+                oldOrderLine, lineNoCounter++, movementQty);
+          }
           // Create Netting goods shipment Line for the inverse order line
           movementQty = inverseOrderLine.getOrderedQuantity().subtract(
               inverseOrderLine.getDeliveredQuantity());
-          createShipmentLine(nettingGoodsShipment, newGoodsShipmentLine1, inverseOrderLine,
-              lineNoCounter++, movementQty);
+          if (movementQty.compareTo(BigDecimal.ZERO) != 0) {
+            createShipmentLine(nettingGoodsShipment, newGoodsShipmentLine1, inverseOrderLine,
+                lineNoCounter++, movementQty);
+          }
 
           // Get the the new order line that replaces the old order line, should be only one
           OBCriteria<OrderLine> olc = OBDal.getInstance().createCriteria(OrderLine.class);
@@ -157,13 +165,24 @@ public class CancelAndReplaceUtils {
           OrderLine newOrderLine = (OrderLine) olc.uniqueResult();
           if (newOrderLine != null) {
             // Create Netting goods shipment Line for the new order line
-            movementQty = oldOrderLine.getDeliveredQuantity();
+            movementQty = oldOrderLineDeliveredQty;
+            BigDecimal newOrderLineDeliveredQty = newOrderLine.getDeliveredQuantity();
+            newOrderLine.setDeliveredQuantity(BigDecimal.ZERO);
+            OBDal.getInstance().save(newOrderLine);
+            OBDal.getInstance().flush();
             if (movementQty.compareTo(BigDecimal.ZERO) != 0) {
               createShipmentLine(nettingGoodsShipment, newGoodsShipmentLine1, newOrderLine,
                   lineNoCounter++, movementQty);
             }
-            // Set new order line delivered quantity to old order line ordered quantity
-            newOrderLine.setDeliveredQuantity(movementQty);
+            if (newOrderLineDeliveredQty.compareTo(BigDecimal.ZERO) == 0) {
+              // Set new order line delivered quantity to old order line ordered quantity, this case
+              // coming from Backend (nothing is delivered)
+              newOrderLine.setDeliveredQuantity(movementQty);
+            } else {
+              // Set new order line delivered quantity to previous delivery quantity, this case
+              // coming from Web POS (everything is delivered)
+              newOrderLine.setDeliveredQuantity(newOrderLineDeliveredQty);
+            }
             OBDal.getInstance().save(newOrderLine);
           }
         }
