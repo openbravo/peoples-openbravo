@@ -311,9 +311,7 @@
         className: 'org.openbravo.retail.posterminal.ProcessCashClose',
         timeout: 600000,
         timePerRecord: 10000,
-        criteria: {
-          'objToSend': OB.Dal.ISNOTNULL
-        },
+        criteria: {},
         getIdentifier: function (model) {
           return model.creationDate;
         },
