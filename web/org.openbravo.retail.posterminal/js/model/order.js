@@ -1692,6 +1692,7 @@
 
       this.set('id', null);
       this.set('isQuotation', false);
+      this.set('orderType', OB.MobileApp.model.get('terminal').terminalType.layawayorder ? 2 : 0);
       this.set('generateInvoice', OB.MobileApp.model.get('terminal').terminalType.generateInvoice);
       this.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentType);
       this.set('createdBy', OB.MobileApp.model.get('orgUserId'));
@@ -2759,6 +2760,7 @@
       this.current = this.newOrder();
       this.current.set('isQuotation', true);
       this.current.set('generateInvoice', false);
+      this.current.set('orderType', 0);
       this.current.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentTypeForQuotations);
       var nextQuotationno = OB.MobileApp.model.getNextQuotationno();
       this.current.set('quotationnoPrefix', OB.MobileApp.model.get('terminal').quotationDocNoPrefix);
