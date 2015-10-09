@@ -65,8 +65,8 @@ public class HorizontalInheritance extends WeldBaseTest {
   private final List<String> PROCESSES = Arrays
       .asList("Create Purchase Order Lines", "Grant Portal Access", "Manage Variants",
           "Modify Payment In Plan", "Process Cost Adjustment");
-  private final List<String> TABLES = Arrays.asList("A_Amortization", "AD_User", "C_Order",
-      "FIN_Payment", "M_Warehouse");
+  private final List<String> TABLES = Arrays.asList("AD_User", "C_Order",
+      "FIN_Payment", "M_Warehouse" , "OBUIAPP_Note");
   private final List<String> ALERTS = Arrays.asList("Alert Taxes: Inversión del Sujeto Pasivo",
       "CUSTOMER WITHOUT ACCOUNTING", "Process Execution Failed", "Updates Available",
       "Wrong Purchase Order Payment Plan");
