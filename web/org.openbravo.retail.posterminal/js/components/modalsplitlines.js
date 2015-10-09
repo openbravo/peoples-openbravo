@@ -483,7 +483,7 @@ enyo.kind({
       });
       sum += remainingQuantity;
 
-      proposed = Math.floor((qty - remainingQuantity) / lines);
+      proposed = Math.floor((qty - remainingQuantity) / lines + 1);
       if (proposed < 1) {
         proposed = 1;
       }
