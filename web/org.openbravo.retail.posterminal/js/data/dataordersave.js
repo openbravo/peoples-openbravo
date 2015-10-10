@@ -241,7 +241,7 @@
               });
             }
             OB.MobileApp.model.runSyncProcess(function () {
-              serverMessageForQuotation(receipt);
+              serverMessageForQuotation(frozenReceipt);
               OB.debug("Ticket closed: runSyncProcess executed");
             });
           }
