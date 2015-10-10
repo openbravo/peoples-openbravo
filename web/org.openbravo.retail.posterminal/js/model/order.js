@@ -1708,6 +1708,7 @@
       this.set('quotationnoSuffix', -1);
       this.set('documentNo', nextDocumentno.documentNo);
       this.set('posTerminal', OB.MobileApp.model.get('terminal').id);
+      this.set('session', OB.MobileApp.model.get('session'));
       this.save();
       if (updatePrices) {
         this.updatePrices(function (order) {
