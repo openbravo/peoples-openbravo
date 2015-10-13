@@ -570,8 +570,12 @@ enyo.kind({
         this.$.divText.show();
         //We have to ensure that there is not another handler showing this div
       } else if (model.get('orderType') === 3) {
-        this.$.divText.addStyles('width: 50%; color: lightblue;');
-        this.$.divText.setContent(OB.I18N.getLabel('OBPOS_VoidLayaway'));
+        this.$.divText.addStyles('width: 60%; color: lightblue;');
+        if (model.get('cancelLayaway')) {
+          this.$.divText.setContent(OB.I18N.getLabel('OBPOS_CancelLayaway'));
+        } else {
+          this.$.divText.setContent(OB.I18N.getLabel('OBPOS_VoidLayaway'));
+        }
         this.$.divText.show();
         //We have to ensure that there is not another handler showing this div
       } else if (model.get('isLayaway')) {
@@ -579,7 +583,7 @@ enyo.kind({
         this.$.divText.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
         this.$.divText.show();
         //We have to ensure that there is not another handler showing this div
-      } else if (this.$.divText.content === OB.I18N.getLabel('OBPOS_ToBeReturned') || this.$.divText.content === OB.I18N.getLabel('OBPOS_ToBeLaidaway') || this.$.divText.content === OB.I18N.getLabel('OBPOS_VoidLayaway') || this.$.divText.content.indexOf("Cancel and Replace") !== -1) {
+      } else if (this.$.divText.content === OB.I18N.getLabel('OBPOS_ToBeReturned') || this.$.divText.content === OB.I18N.getLabel('OBPOS_ToBeLaidaway') || this.$.divText.content === OB.I18N.getLabel('OBPOS_VoidLayaway') || this.$.divText.content === OB.I18N.getLabel('OBPOS_CancelLayaway') || this.$.divText.content.indexOf("Cancel and Replace") !== -1) {
         this.$.divText.hide();
       }
     }, this);
@@ -731,7 +735,7 @@ enyo.kind({
               }
             }
           } else if (siblingServicesLines.length > qtyService) {
-            linesToRemove = OB.UTIL.mergeArrays(linesToRemove, _.last(siblingServicesLines, siblingServicesLines.length-qtyService));
+            linesToRemove = OB.UTIL.mergeArrays(linesToRemove, _.last(siblingServicesLines, siblingServicesLines.length - qtyService));
           }
 
           return qtyLineServ;

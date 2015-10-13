@@ -93,15 +93,6 @@ enyo.kind({
       return true;
     }
     this.inherited(arguments); // Manual dropdown menu closure
-    // check if this order has been voided previously
-    if (this.model.get('order').get('orderType') === 3) {
-      return;
-    }
-    var haspayments = this.model.get('order').get('payments').length > 0;
-    if (!OB.MobileApp.model.get('terminal').layaway_voidpartiallypaid && haspayments) {
-      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_LayawayPartpaid'));
-      return;
-    }
     enyo.forEach(this.model.get('order').get('payments').models, function (curPayment) {
       if (_.isUndefined(curPayment.get('isPrePayment')) || _.isNull(curPayment.get('isPrePayment'))) {
         voidAllowed = false;
@@ -125,10 +116,17 @@ enyo.kind({
     }
   },
   displayLogic: function () {
-    if (this.model.get('order').get('isLayaway')) {
+    var haspayments;
+
+    if (this.model.get('order').get('isLayaway') && this.model.get('order').get('orderType') !== 3) {
       this.show();
       this.adjustVisibilityBasedOnPermissions();
     } else {
+      this.hide();
+    }
+
+    haspayments = this.model.get('order').get('payments').length > 0;
+    if (!OB.MobileApp.model.get('terminal').layaway_voidpartiallypaid && haspayments) {
       this.hide();
     }
   },
@@ -137,6 +135,10 @@ enyo.kind({
     var receipt = model.get('order');
     this.setShowing(false);
     receipt.on('change:isLayaway', function (model) {
+      this.displayLogic();
+    }, this);
+
+    receipt.on('change:orderType', function (model) {
       this.displayLogic();
     }, this);
 
@@ -214,6 +216,80 @@ enyo.kind({
         return;
       }
     }, this);
+  }
+});
+
+enyo.kind({
+  name: 'OB.UI.MenuCancelLayaway',
+  kind: 'OB.UI.MenuAction',
+  permission: 'OBPOS_receipt.cancelLayaway',
+  events: {
+    onShowDivText: '',
+    onTabChange: ''
+  },
+  i18nLabel: 'OBPOS_CancelLayaway',
+  tap: function () {
+    var cancelAllowed = true,
+        notValid;
+    if (this.disabled) {
+      return true;
+    }
+    this.inherited(arguments); // Manual dropdown menu closure
+    enyo.forEach(this.model.get('order').get('payments').models, function (curPayment) {
+      if (_.isUndefined(curPayment.get('isPrePayment')) || _.isNull(curPayment.get('isPrePayment'))) {
+        cancelAllowed = false;
+        notValid = curPayment;
+        return;
+      }
+    }, this);
+
+    if (cancelAllowed) {
+      this.model.get('order').set('cancelLayaway', true);
+      this.doShowDivText({
+        permission: this.permission,
+        orderType: 3
+      });
+      this.doTabChange({
+        tabPanel: 'payment',
+        keyboard: 'toolbarpayment',
+        edit: false
+      });
+    } else {
+      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_lblPaymentNotProcessedHeader'), OB.I18N.getLabel('OBPOS_lblPaymentNotProcessedMessage', [notValid.get('name'), notValid.get('origAmount'), OB.MobileApp.model.paymentnames[notValid.get('kind')].isocode]));
+    }
+  },
+  displayLogic: function () {
+    if (this.model.get('order').get('isLayaway') && this.model.get('order').get('orderType') !== 3) {
+      this.show();
+      this.adjustVisibilityBasedOnPermissions();
+    } else {
+      this.hide();
+    }
+  },
+  init: function (model) {
+    this.model = model;
+    var receipt = model.get('order'),
+        me = this;
+    receipt.on('change:isLayaway', function (model) {
+      this.displayLogic();
+    }, this);
+
+    receipt.on('change:orderType', function (model) {
+      this.displayLogic();
+    }, this);
+
+    this.model.get('leftColumnViewManager').on('change:currentView', function (changedModel) {
+      if (changedModel.isOrder()) {
+        this.displayLogic();
+        return;
+      }
+      if (changedModel.isMultiOrder()) {
+        this.hide();
+        return;
+      }
+    }, this);
+
+    this.displayLogic();
   }
 });
 

@@ -539,6 +539,9 @@ enyo.kind({
       kind: 'OB.UI.MenuReceiptLayaway'
     });
     this.menuEntries.push({
+      kind: 'OB.UI.MenuCancelLayaway'
+    });
+    this.menuEntries.push({
       kind: 'OB.UI.MenuProperties'
     });
     this.menuEntries.push({
