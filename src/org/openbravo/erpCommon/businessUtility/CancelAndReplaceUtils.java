@@ -26,6 +26,8 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.ScrollMode;
+import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
 import org.openbravo.advpaymentmngt.process.FIN_PaymentProcess;
@@ -75,6 +77,7 @@ public class CancelAndReplaceUtils {
 
   public static JSONObject cancelAndReplaceOrder(String newOrderId, JSONObject jsonorder,
       boolean useOrderDocumentNoForRelatedDocs) {
+    ScrollableResults orderLines = null;
     try {
 
       // Get new Order
@@ -107,9 +110,10 @@ public class CancelAndReplaceUtils {
       // createReservations();
 
       // Iterate old order lines
-      List<OrderLine> oldOrderLineList = oldOrder.getOrderLineList();
+      orderLines = getOrderLineList(oldOrder);
       long lineNoCounter = 1;
-      for (OrderLine oldOrderLine : oldOrderLineList) {
+      while (orderLines.next()) {
+        OrderLine oldOrderLine = (OrderLine) orderLines.get(0);
 
         // Create inverse Order line
         OrderLine inverseOrderLine = createOrderLine(oldOrderLine, inverseOrder);
@@ -253,6 +257,8 @@ public class CancelAndReplaceUtils {
       }
       Throwable e3 = DbUtility.getUnderlyingSQLException(e1);
       throw new OBException(e3);
+    } finally {
+      orderLines.close();
     }
   }
 
@@ -404,6 +410,14 @@ public class CancelAndReplaceUtils {
       newReservation.setReleased(BigDecimal.ZERO);
       OBDal.getInstance().save(newReservation);
     }
+  }
+
+  private static ScrollableResults getOrderLineList(Order order) {
+    OBCriteria<OrderLine> orderLinesCriteria = OBDal.getInstance().createCriteria(OrderLine.class);
+    orderLinesCriteria.add(Restrictions.eq(OrderLine.PROPERTY_SALESORDER, order));
+
+    ScrollableResults orderLines = orderLinesCriteria.scroll(ScrollMode.FORWARD_ONLY);
+    return orderLines;
   }
 
   protected static void beforePosting(Order inverseOrder) {
