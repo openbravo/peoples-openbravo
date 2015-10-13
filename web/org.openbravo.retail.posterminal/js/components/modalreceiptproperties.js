@@ -144,7 +144,7 @@ enyo.kind({
           criteria.remoteFilters = remoteCriteria;
         }
         OB.Dal.find(OB.Model.BPLocation, criteria, function (dataBps) {
-          if (dataBps && dataBps.length === 1 && (dataBps.models[0].get('isBillTo') && dataBps.models[0].get('isShipTo'))) {
+        	if (dataBps && dataBps.length === 1 && !_.isUndefined(me.$.bodyContent) && (dataBps.models[0].get('isBillTo') && dataBps.models[0].get('isShipTo'))) {
             me.$.bodyContent.$.attributes.$.line_addressshipbutton.hide();
             me.$.bodyContent.$.attributes.$.line_addressbillbutton.$.labelLine.setContent(OB.I18N.getLabel('OBPOS_LblAddress'));
           } else if (!_.isUndefined(me.$.bodyContent)) {
