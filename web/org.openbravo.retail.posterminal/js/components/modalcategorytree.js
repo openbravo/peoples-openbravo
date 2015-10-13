@@ -33,6 +33,12 @@ enyo.kind({
   },
   executeOnShow: function () {
     this.$.body.$.listCategories.setStyle('margin-top: -10px');
+    var showOnlyReal = this.args.showOnlyReal || false;
+    _.each(this.$.body.$.listCategories.$[this.$.body.$.listCategories.tableName].$.tbody.children, function (item) {
+      if (item.renderline.model.get('realCategory') === 'N') {
+        item.setShowing(!showOnlyReal);
+      }
+    }, this);
     if (this.args.selectCategory) {
       var category = this.$.body.$.listCategories.categories.get(this.args.selectCategory);
       if (category) {
