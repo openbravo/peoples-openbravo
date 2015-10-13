@@ -86,6 +86,17 @@ public class Category extends ProcessHQLQuery {
               + "from OBRETCO_Productcategory aCat  left outer join aCat.productCategory as pCat left outer join pCat.image as img"
               + " where ( aCat.obretcoProductlist.id = '" + productList.getId() + "') "
               + " order by pCat.name");
+      hqlQueries
+          .add("select"
+              + regularProductsCategoriesHQLProperties.getHqlSelect() //
+              + "from ADTreeNode tn, ProductCategory pCat left outer join pCat.image as img "
+              + "where tn.$incrementalUpdateCriteria and tn.$naturalOrgCriteria and tn.$readableSimpleClientCriteria "
+              + " and tn.node = pCat.id and tn.tree.table.id = '"
+              + CategoryTree.productCategoryTableId
+              + "' and pCat.summaryLevel = 'Y'"
+              + " and not exists (select pc.id from OBRETCO_Productcategory pc where tn.node = pc.productCategory.id) "
+              + "order by tn.sequenceNumber");
+
     } else {
       hqlQueries.add("select"
           + regularProductsCategoriesHQLProperties.getHqlSelect() //
