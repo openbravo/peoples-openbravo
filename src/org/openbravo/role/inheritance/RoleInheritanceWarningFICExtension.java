@@ -32,6 +32,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.InheritedAccessEnabled;
+import org.openbravo.client.application.ApplicationConstants;
 import org.openbravo.client.application.window.FICExtension;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
@@ -94,8 +95,13 @@ public class RoleInheritanceWarningFICExtension implements FICExtension {
         return valid;
       }
 
-      String entityClassName = ModelProvider.getInstance().getEntityByTableId(tabId).getClassName();
-      valid = manager.existsInjector(entityClassName);
+      if (!ApplicationConstants.TABLEBASEDTABLE.equals(tab.getTable().getDataOriginType())) {
+        valid = Boolean.FALSE;
+      } else {
+        String entityClassName = ModelProvider.getInstance().getEntityByTableId(tabId)
+            .getClassName();
+        valid = manager.existsInjector(entityClassName);
+      }
       validTabsCache.put(tabId, valid);
       return valid;
     }
