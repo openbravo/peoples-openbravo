@@ -1050,6 +1050,11 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
       OrderLine orderLine = lineReferences.get(i);
       BigDecimal pendingQty = orderLine.getOrderedQuantity().abs();
+      if (orderlines.getJSONObject(i).has("remainingQuantity")
+          && orderlines.getJSONObject(i).get("remainingQuantity") != JSONObject.NULL) {
+        pendingQty = pendingQty.subtract(new BigDecimal(orderlines.getJSONObject(i).getLong(
+            "remainingQuantity")));
+      }
       boolean negativeLine = orderLine.getOrderedQuantity().compareTo(BigDecimal.ZERO) < 0;
 
       final Warehouse warehouse = (orderLine.getWarehouse() != null ? orderLine.getWarehouse()
