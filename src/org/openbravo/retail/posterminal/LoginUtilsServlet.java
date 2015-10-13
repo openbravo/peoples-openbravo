@@ -29,6 +29,7 @@ import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.mobile.core.MobileServerDefinition;
+import org.openbravo.mobile.core.MobileServerOrganization;
 import org.openbravo.mobile.core.MobileServerService;
 import org.openbravo.mobile.core.MobileServiceDefinition;
 import org.openbravo.mobile.core.login.MobileCoreLoginUtilsServlet;
@@ -381,15 +382,24 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
 
     OBQuery<MobileServerDefinition> servers = OBDal.getInstance().createQuery(
         MobileServerDefinition.class,
-        MobileServerDefinition.PROPERTY_ALLORGS + "='Y' or :org in elements("
-            + MobileServerDefinition.PROPERTY_OBMOBCSERVERORGSLIST
-            + ")  and client.id=:clientId order by " + MobileServerDefinition.PROPERTY_PRIORITY);
+        "client.id=:clientId order by " + MobileServerDefinition.PROPERTY_PRIORITY);
     servers.setFilterOnReadableClients(false);
     servers.setFilterOnReadableOrganization(false);
-    servers.setNamedParameter("org", terminal.getOrganization().getId());
     servers.setNamedParameter("clientId", terminal.getClient().getId());
     for (MobileServerDefinition server : servers.list()) {
-      respArray.put(createServerJSON(server));
+      if (server.isAllorgs()) {
+        respArray.put(createServerJSON(server));
+      } else {
+        Query filterQuery = OBDal
+            .getInstance()
+            .getSession()
+            .createFilter(server.getOBMOBCSERVERORGSList(),
+                "where this." + MobileServerOrganization.PROPERTY_SERVERORG + "=:org");
+        filterQuery.setParameter("org", terminal.getOrganization());
+        if (filterQuery.list().size() > 0) {
+          respArray.put(createServerJSON(server));
+        }
+      }
     }
 
     return respArray;
