@@ -1945,6 +1945,7 @@
 
       _.forEach(jsonorder.lines, function (item) {
         delete item.product.img;
+        delete item.product._filter;
       });
 
       return jsonorder;
