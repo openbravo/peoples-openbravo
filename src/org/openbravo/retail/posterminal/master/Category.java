@@ -83,7 +83,7 @@ public class Category extends ProcessHQLQuery {
       hqlQueries
           .add("select"
               + regularProductsCategoriesHQLProperties.getHqlSelect() //
-              + "from OBRETCO_Productcategory aCat  left outer join aCat.productCategory as pCat left outer join pCat.image as img"
+              + "from OBRETCO_Productcategory aCat left outer join aCat.productCategory as pCat left outer join pCat.image as img"
               + " where ( aCat.obretcoProductlist.id = '" + productList.getId() + "') "
               + " order by pCat.name");
       hqlQueries
@@ -125,7 +125,8 @@ public class Category extends ProcessHQLQuery {
         + promoNameTrl
         + " as name, img.bindaryData as img, "
         + promoNameTrl
-        + " as _identifier"
+        + " as _identifier, "
+        + "'N' as realCategory "
         + " from PromotionType as pt left outer join pt.obposImage img " //
         + "where pt.obposIsCategory = true "//
         + "  and pt.$readableSimpleClientCriteria" //

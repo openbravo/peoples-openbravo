@@ -69,7 +69,7 @@ public class CategoryTree extends ProcessHQLQuery {
     }
     if (isRemote) {
       hqlQueries
-          .add("select"
+          .add("select distinct "
               + regularProductsCategoriesTreeHQLProperties.getHqlSelect() //
               + "from ADTreeNode tn, OBRETCO_Productcategory pc "
               + "where tn.$incrementalUpdateCriteria and tn.$naturalOrgCriteria and tn.$readableSimpleClientCriteria "

@@ -48,6 +48,10 @@
     name: '_identifier',
     column: '_identifier',
     type: 'TEXT'
+  }, {
+    name: 'realCategory',
+    column: 'real_category',
+    type: 'TEXT'
   }]);
 
   OB.Data.Registry.registerModel(ProductCategory);
