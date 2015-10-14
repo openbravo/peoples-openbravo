@@ -566,7 +566,7 @@ enyo.kind({
         //We have to ensure that there is not another handler showing this div
       } else if (model.get('orderType') === 2 && model.get('replacedorder')) {
         this.$.divText.addStyles('width: 90%; color: #5353C5; line-height:30px');
-        this.$.divText.setContent("'Cancel and Replace' of " + model.get('replacedorder_documentNo'));
+        this.$.divText.setContent(OB.I18N.getLabel('OBPOS_CancelAndReplaceOf', [model.get('replacedorder_documentNo')]));
         this.$.divText.show();
         //We have to ensure that there is not another handler showing this div
       } else if (model.get('orderType') === 3) {
@@ -583,7 +583,7 @@ enyo.kind({
         this.$.divText.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
         this.$.divText.show();
         //We have to ensure that there is not another handler showing this div
-      } else if (this.$.divText.content === OB.I18N.getLabel('OBPOS_ToBeReturned') || this.$.divText.content === OB.I18N.getLabel('OBPOS_ToBeLaidaway') || this.$.divText.content === OB.I18N.getLabel('OBPOS_VoidLayaway') || this.$.divText.content === OB.I18N.getLabel('OBPOS_CancelLayaway') || this.$.divText.content.indexOf("Cancel and Replace") !== -1) {
+      } else if (this.$.divText.content === OB.I18N.getLabel('OBPOS_ToBeReturned') || this.$.divText.content === OB.I18N.getLabel('OBPOS_ToBeLaidaway') || this.$.divText.content === OB.I18N.getLabel('OBPOS_VoidLayaway') || this.$.divText.content === OB.I18N.getLabel('OBPOS_CancelLayaway') || this.$.divText.content.indexOf(OB.I18N.getLabel('OBPOS_CancelReplace')) !== -1) {
         this.$.divText.hide();
       }
     }, this);
@@ -634,7 +634,7 @@ enyo.kind({
         this.$.listPaymentLines.show();
         this.$.paymentBreakdown.show();
         //We have to ensure that there is not another handler showing this div
-      } else if (this.$.divText.content === OB.I18N.getLabel('OBPOS_paid') || this.$.divText.content === OB.I18N.getLabel('OBPOS_paidReturn') || this.$.divText.content === OB.I18N.getLabel('OBPOS_paidOnCredit') || (this.$.divText.content.indexOf("Cancel and Replace") !== -1 && !model.get('replacedorder'))) {
+      } else if (this.$.divText.content === OB.I18N.getLabel('OBPOS_paid') || this.$.divText.content === OB.I18N.getLabel('OBPOS_paidReturn') || this.$.divText.content === OB.I18N.getLabel('OBPOS_paidOnCredit') || (this.$.divText.content.indexOf(OB.I18N.getLabel('OBPOS_CancelReplace')) !== -1 && !model.get('replacedorder'))) {
         this.$.divText.hide();
         this.$.listPaymentLines.hide();
         this.$.paymentBreakdown.hide();
@@ -657,11 +657,11 @@ enyo.kind({
     this.order.on('change:replacedorder', function (model) {
       if (model.get('replacedorder')) {
         this.$.divText.addStyles('width: 90%; color: #5353C5; line-height:30px');
-        this.$.divText.setContent("'Cancel and Replace' of " + model.get('replacedorder_documentNo'));
+        this.$.divText.setContent(OB.I18N.getLabel('OBPOS_CancelAndReplaceOf', [model.get('replacedorder_documentNo')]));
         this.$.divText.show();
         this.$.listPaymentLines.show();
         this.$.paymentBreakdown.show();
-      } else if (this.$.divText.content.indexOf("Cancel and Replace") !== -1) {
+      } else if (this.$.divText.content.indexOf(OB.I18N.getLabel('OBPOS_CancelReplace')) !== -1) {
         this.$.divText.hide();
         this.$.listPaymentLines.hide();
         this.$.paymentBreakdown.hide();
