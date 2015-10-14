@@ -1085,7 +1085,7 @@ enyo.kind({
     receipt = this.model.get('order');
 
     isPaidReceipt = receipt.get('isPaid') === true && !receipt.get('isQuotation');
-    isLayaway = receipt.get('isLayaway');
+    isLayaway = receipt.get('isLayaway') && receipt.get('orderType') !== 3;
     isReturn = receipt.get('orderType') === 1 || receipt.get('documentType') === OB.MobileApp.model.get('terminal').terminalType.documentTypeForReturns || receipt.get('documentType') === 'VBS RFC Order';
 
     if (!receipt.get('replacedorder') && (isPaidReceipt || isLayaway)) {
@@ -1115,7 +1115,7 @@ enyo.kind({
       me.hide();
     }, this);
 
-    receipt.on('change:isLayaway change:isPaid change:isQuotation change:replacedorder', function () {
+    receipt.on('change:isLayaway change:isPaid change:isQuotation change:replacedorder change:orderType', function () {
       this.updateVisibility();
     }, this);
 
