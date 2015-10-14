@@ -1013,8 +1013,12 @@ enyo.kind({
       if (myModel.get('leftColumnViewManager').isOrder()) {
         if (this.drawerpreference && this.allowOpenDrawer) {
           if (this.drawerOpened) {
-            if (this.owner.receipt.get('orderType') === 3) {
+            if (this.owner.receipt.get('orderType') === 3 && !this.owner.receipt.get('cancelLayaway')) {
+              //Void Layaway
               this.owner.receipt.trigger('voidLayaway');
+            } else if (this.owner.receipt.get('orderType') === 3) {
+              //Cancel Layaway
+              this.owner.receipt.trigger('cancelLayaway');
             } else {
               this.setDisabled(true);
               enyo.$.scrim.show();
@@ -1031,9 +1035,12 @@ enyo.kind({
             this.setContent(OB.I18N.getLabel('OBPOS_LblDone'));
           }
         } else {
-          //Void Layaway
-          if (this.owner.receipt.get('orderType') === 3) {
+          if (this.owner.receipt.get('orderType') === 3 && !this.owner.receipt.get('cancelLayaway')) {
+            //Void Layaway
             this.owner.receipt.trigger('voidLayaway');
+          } else if (this.owner.receipt.get('orderType') === 3) {
+            //Cancel Layaway
+            this.owner.receipt.trigger('cancelLayaway');
           } else {
             this.setDisabled(true);
             enyo.$.scrim.show();

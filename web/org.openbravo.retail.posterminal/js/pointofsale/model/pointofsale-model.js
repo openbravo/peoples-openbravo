@@ -736,6 +736,19 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       }
     }, this);
 
+    receipt.on('cancelLayaway', function () {
+      var cancelLayawayObj = {},
+          cancelLayawayModel = new Backbone.Model();
+
+      cancelLayawayObj.negativeDocNo = {
+        negativeDocNo: OB.MobileApp.model.getNextDocumentno()
+      };
+      cancelLayawayObj.orderId = receipt.get('id');
+
+      cancelLayawayModel.set('json', JSON.stringify(cancelLayawayObj));
+
+    }, this);
+
     callback();
   },
   loadModels: function (loadModelsCallback) {
