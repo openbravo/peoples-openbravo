@@ -63,6 +63,7 @@ public class RoleInheritanceEventHandler extends EntityPersistenceEventObserver 
       return;
     }
     final RoleInheritance inheritance = (RoleInheritance) event.getTargetInstance();
+    String roleId = (String) DalUtil.getId(inheritance.getRole());
     String inheritFromId = (String) DalUtil.getId(inheritance.getInheritFrom());
     // Check correct Inherit From
     if (!inheritance.getInheritFrom().isTemplate()) {
@@ -75,7 +76,7 @@ public class RoleInheritanceEventHandler extends EntityPersistenceEventObserver 
     // Check if new role to inherit from is an ancestor in the inheritance hierarchy
     checkAncestors(inheritance.getRole(), inheritance.getInheritFrom());
     // Check cycles
-    if (existCycles(inheritance.getRole(), inheritFromId)) {
+    if (roleId.equals(inheritFromId) || existCycles(inheritance.getRole(), inheritFromId)) {
       Utility.throwErrorMessage("CyclesInRoleInheritance");
     } else {
       manager.applyNewInheritance(inheritance);
