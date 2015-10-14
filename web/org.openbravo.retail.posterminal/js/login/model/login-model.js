@@ -307,6 +307,14 @@
       });
 
       this.get('dataSyncModels').push({
+        name: 'Cancel Layaway',
+        model: OB.Model.CancelLayaway,
+        className: 'org.openbravo.retail.posterminal.CancelLayawayLoader',
+        criteria: {},
+        isPersistent: false
+      });
+
+      this.get('dataSyncModels').push({
         name: 'Cash Management',
         model: OB.Model.CashManagement,
         modelFunc: 'OB.Model.CashManagement',
