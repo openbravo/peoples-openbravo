@@ -591,8 +591,9 @@ function openTabToReportTrialBalanceDetails(procId, recordId){
             <tr id=advancedFiltersrow2>
               <td width="25%" class="TitleCell"><span class="LabelText">Opening Entry Amount to Initial Balance</span></td>
               <td width="20%" class="Radio_Check_ContentCell"><input name="inpNotInitialBalance" type="checkbox" id="fieldNotInitialBalance" value="Y" checked></input></td>
-              <td width="35%" class="ContentCell"></td>
+              <td width="35%" class="ContentCell" colspan="2"></td>
               <td width="20%" class="ContentCell"></td>
+              <td class="TitleCell"></td>
             </tr>
             <tr id="AcctFromTo"> 
               <td class="TitleCell"><span class="LabelText">From Account</span></td>
@@ -944,13 +945,13 @@ function openTabToReportTrialBalanceDetails(procId, recordId){
                 </select>
                 <input type="hidden" value="" id="paramSelectedGroupBy"/>
               </td>
-              <td class="TitleCell"/>
-              <td class="TitleCell"><span class="LabelText">Include Zero Figures</span></td>
-              <td class="Radio_Check_ContentCell">
+              <td width="35%" class="TitleCell" colspan="2"><span class="LabelText">Include Zero Figures</span></td>
+              <td width="20%" class="Radio_Check_ContentCell">
                 <span class="Checkbox_container_NOT_Focused">
                   <input type="checkbox" name="inpIncludeZeroFigures" id="paramIncludeZeroFigures" value="Y"></input>
                 </span>
               </td>
+              <td class="TitleCell"></td>
             </tr>
             
             <tr>
