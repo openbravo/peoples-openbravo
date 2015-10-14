@@ -1308,12 +1308,12 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         RoundingMode.HALF_UP));
 
     order.setSalesTransaction(true);
-    if (jsonorder.getBoolean("isQuotation")) {
-      order.setDocumentStatus("UE");
-    } else if (jsonorder.has("obposIsDeleted") && jsonorder.getBoolean("obposIsDeleted")) {
+    if (jsonorder.has("obposIsDeleted") && jsonorder.getBoolean("obposIsDeleted")) {
       order.setDocumentStatus("CL");
       order.setGrandTotalAmount(BigDecimal.ZERO);
       order.setSummedLineAmount(BigDecimal.ZERO);
+    } else if (jsonorder.getBoolean("isQuotation")) {
+      order.setDocumentStatus("UE");
     } else {
       order.setDocumentStatus("CO");
     }
