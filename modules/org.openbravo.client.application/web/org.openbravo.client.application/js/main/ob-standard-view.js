@@ -2289,7 +2289,7 @@ isc.OBStandardView.addProperties({
     var actionObject = {
       target: this,
       method: this.editRecord,
-      parameters: null
+      parameters: {isNewDocument: true}
     };
     this.standardWindow.doActionAfterAutoSave(actionObject, false);
   },
