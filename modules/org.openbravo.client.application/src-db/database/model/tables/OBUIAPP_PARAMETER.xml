@@ -141,8 +141,27 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="ATT_SHOWINDESCRIPTION" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="ATT_PROPERTYPATH" primaryKey="false" required="false" type="VARCHAR" size="255" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="C_ATTACHMENT_METHOD_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="AD_TAB_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_VAL_RULE" name="OBUIAPP_PARAM_AD_VALRULE">
         <reference local="AD_VAL_RULE_ID" foreign="AD_VAL_RULE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_ATTACHMENT_METHOD" name="OBUIAPP_PARAM_C_ATTACH_METHOD">
+        <reference local="C_ATTACHMENT_METHOD_ID" foreign="C_ATTACHMENT_METHOD_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="OBUIAPP_PARAMETER_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
@@ -156,6 +175,9 @@
       <foreign-key foreignTable="AD_ORG" name="OBUIAPP_PARAMETER_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="AD_TAB" name="OBUIAPP_PARAMETER_AD_TAB">
+        <reference local="AD_TAB_ID" foreign="AD_TAB_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_FIELDGROUP" name="OBUIAPP_PARAMETER_FLDGRP">
         <reference local="AD_FIELDGROUP_ID" foreign="AD_FIELDGROUP_ID"/>
       </foreign-key>
@@ -168,8 +190,14 @@
       <foreign-key foreignTable="AD_REFERENCE" name="OBUIAPP_PARAMETER_REFERENCE_V">
         <reference local="AD_REFERENCE_VALUE_ID" foreign="AD_REFERENCE_ID"/>
       </foreign-key>
+      <index name="OBUIAPP_PARAMETER_ATTMET_IDX" unique="false">
+        <index-column name="C_ATTACHMENT_METHOD_ID"/>
+      </index>
       <index name="OBUIAPP_PARAMETER_PROCESS" unique="false">
         <index-column name="OBUIAPP_PROCESS_ID"/>
+      </index>
+      <index name="OBUIAPP_PARAMETER_TAB_IDX" unique="false">
+        <index-column name="AD_TAB_ID"/>
       </index>
       <check name="OBUIAPP_PARAM_SHOWTITLE_CHK"><![CDATA[DISPLAYTITLE IN ('Y', 'N')]]></check>
       <check name="OBUIAPP_PARAMETER_CENTR_CHK"><![CDATA[ISCENTRALLYMAINTAINED IN ('Y', 'N')]]></check>
@@ -177,7 +205,9 @@
       <check name="OBUIAPP_PARAMETER_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="OBUIAPP_PARAMETER_ISFIXED_CHK"><![CDATA[ISFIXED IN ('Y', 'N')]]></check>
       <check name="OBUIAPP_PARAMETER_MANDAT_CHK"><![CDATA[ISMANDATORY IN ('Y', 'N')]]></check>
+      <check name="OBUIAPP_PARAMETER_METADATA_CHK"><![CDATA[AD_TAB_ID IS NULL OR AD_TAB_ID IS NOT NULL AND C_ATTACHMENT_METHOD_ID IS NOT NULL]]></check>
       <check name="OBUIAPP_PARAMETER_NEWLINE_CHK"><![CDATA[STARTINNEWLINE IN ('Y', 'N')]]></check>
       <check name="OBUIAPP_PARAMETER_NUMCOL_CHK"><![CDATA[NUMCOLUMN >= 1 AND NUMCOLUMN <= 4]]></check>
+      <check name="OBUIAPP_PARAMETER_SHOWDESC_CHK"><![CDATA[ATT_SHOWINDESCRIPTION IN ('Y', 'N')]]></check>
     </table>
   </database>

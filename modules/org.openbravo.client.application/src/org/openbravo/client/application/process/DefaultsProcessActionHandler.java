@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2014 Openbravo SLU
+ * All portions are Copyright (C) 2012-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -31,22 +31,16 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
-import org.openbravo.base.model.domaintype.BooleanDomainType;
-import org.openbravo.base.model.domaintype.DomainType;
-import org.openbravo.base.model.domaintype.ForeignKeyDomainType;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.ParameterUtils;
 import org.openbravo.client.application.Process;
 import org.openbravo.client.kernel.KernelConstants;
 import org.openbravo.client.kernel.KernelUtils;
-import org.openbravo.client.kernel.reference.UIDefinition;
-import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.Sqlc;
-import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
@@ -78,6 +72,7 @@ public class DefaultsProcessActionHandler extends BaseProcessActionHandler {
           log.error("Error getting context for process definition " + processDefinition, e);
         }
       }
+      final Map<String, String> fixedParameters = fixRequestMap(parameters, context);
 
       JSONObject defaults = new JSONObject();
       JSONObject filterExpressions = new JSONObject();
@@ -91,61 +86,9 @@ public class DefaultsProcessActionHandler extends BaseProcessActionHandler {
 
         for (Parameter param : orderedParams) {
           if (param.getDefaultValue() != null) {
-
-            Reference reference = param.getReferenceSearchKey();
-            if (reference == null) {
-              reference = param.getReference();
-            }
-
-            UIDefinition uiDefinition = UIDefinitionController.getInstance().getUIDefinition(
-                reference);
-
-            String rawDefaultValue = param.getDefaultValue();
-
-            Object defaultValue;
-            String inpName = null;
-            if (isSessionDefaultValue(rawDefaultValue) && context != null) {
-              // Transforms the default value from @columnName@ to the column inp name
-              inpName = "inp"
-                  + Sqlc.TransformaNombreColumna(getDependentDefaultValue(rawDefaultValue));
-              defaultValue = context.get(inpName);
-              inpName = "inp" + Sqlc.TransformaNombreColumna(param.getDBColumnName());
-            } else {
-              Map<String, String> requestMap = fixRequestMap(parameters, context);
-              requestMap.put("currentParam", param.getDBColumnName());
-              defaultValue = ParameterUtils.getJSExpressionResult(requestMap,
-                  (HttpSession) parameters.get(KernelConstants.HTTP_SESSION), rawDefaultValue);
-              if (context == null) {
-                context = new JSONObject();
-              }
-              inpName = "inp" + Sqlc.TransformaNombreColumna(param.getDBColumnName());
-            }
-            if (!context.has(inpName)) {
-              context.put(inpName, defaultValue);
-            }
-            DomainType domainType = uiDefinition.getDomainType();
-            if (defaultValue != null && defaultValue instanceof String
-                && domainType instanceof ForeignKeyDomainType) {
-              // default value is ID of a FK, look for the identifier
-              Entity referencedEntity = ((ForeignKeyDomainType) domainType)
-                  .getForeignKeyColumn(param.getDBColumnName()).getProperty().getEntity();
-
-              BaseOBObject record = OBDal.getInstance().get(referencedEntity.getName(),
-                  defaultValue);
-              if (record != null) {
-                String identifier = record.getIdentifier();
-                JSONObject def = new JSONObject();
-                def.put("value", defaultValue);
-                def.put("identifier", identifier);
-                defaults.put(param.getDBColumnName(), def);
-              }
-            } else {
-              if (domainType instanceof BooleanDomainType) {
-                defaultValue = ((BooleanDomainType) domainType)
-                    .createFromString((String) defaultValue);
-              }
-              defaults.put(param.getDBColumnName(), defaultValue);
-            }
+            Object defValue = ParameterUtils.getParameterDefaultValue(fixedParameters, param,
+                (HttpSession) parameters.get(KernelConstants.HTTP_SESSION), context);
+            defaults.put(param.getDBColumnName(), defValue);
           }
           if (WINDOW_REFERENCE_ID.equals(param.getReference().getId())) {
             if (param.getReferenceSearchKey().getOBUIAPPRefWindowList().size() > 0) {
@@ -161,8 +104,7 @@ public class DefaultsProcessActionHandler extends BaseProcessActionHandler {
                   String rawDefaultExpression = field.getObuiappDefaultExpression();
                   Object defaultExpression;
                   parameters.put("filterExpressionColumnName", field.getColumn().getDBColumnName());
-                  defaultExpression = ParameterUtils.getJSExpressionResult(
-                      fixRequestMap(parameters, context),
+                  defaultExpression = ParameterUtils.getJSExpressionResult(fixedParameters,
                       (HttpSession) parameters.get(KernelConstants.HTTP_SESSION),
                       rawDefaultExpression);
 

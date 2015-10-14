@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,24 +20,36 @@ package org.openbravo.client.application;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.domaintype.BigDecimalDomainType;
 import org.openbravo.base.model.domaintype.BooleanDomainType;
 import org.openbravo.base.model.domaintype.DateDomainType;
 import org.openbravo.base.model.domaintype.DomainType;
+import org.openbravo.base.model.domaintype.ForeignKeyDomainType;
 import org.openbravo.base.model.domaintype.LongDomainType;
 import org.openbravo.base.model.domaintype.StringDomainType;
+import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.util.Check;
+import org.openbravo.client.kernel.reference.UIDefinition;
+import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.data.Sqlc;
+import org.openbravo.model.ad.domain.Reference;
 
 /**
  * Utility class for Parameters handling
@@ -49,7 +61,11 @@ public class ParameterUtils {
 
   public static void setParameterValue(ParameterValue parameterValue, JSONObject requestValue) {
     try {
-      setValue(parameterValue, requestValue.getString("value"));
+      String value = null;
+      if (!requestValue.isNull("value")) {
+        value = requestValue.getString("value");
+      }
+      setValue(parameterValue, value);
     } catch (Exception e) {
       log.error("Error trying to set value for paramter: "
           + parameterValue.getParameter().getName(), e);
@@ -62,6 +78,12 @@ public class ParameterUtils {
   }
 
   private static void setValue(ParameterValue parameterValue, String stringValue) {
+    if (stringValue == null) {
+      parameterValue.setValueString(null);
+      parameterValue.setValueDate(null);
+      parameterValue.setValueNumber(null);
+      return;
+    }
     DomainType domainType = getParameterDomainType(parameterValue.getParameter());
     try {
       if (domainType.getClass().equals(StringDomainType.class)) {
@@ -89,7 +111,7 @@ public class ParameterUtils {
 
   /**
    * Returns an Object with the Value of the Parameter Value. This object can be a String, a
-   * java.util.Data or a BigDecimal.
+   * java.util.Date, boolean or a BigDecimal.
    * 
    * @param parameterValue
    *          the Parameter Value we want to get the Value from.
@@ -101,9 +123,11 @@ public class ParameterUtils {
       return parameterValue.getValueString();
     } else if (domainType.getClass().equals(DateDomainType.class)) {
       return parameterValue.getValueDate();
-    } else if (domainType.getClass().getSuperclass().equals(BigDecimalDomainType.class)
-        || domainType.getClass().equals(LongDomainType.class)) {
+    } else if (domainType.getClass().getSuperclass().equals(BigDecimalDomainType.class)) {
       return parameterValue.getValueNumber();
+    } else if (domainType.getClass().equals(LongDomainType.class)) {
+      return parameterValue.getValueNumber() != null ? parameterValue.getValueNumber().longValue()
+          : null;
     } else if (domainType.getClass().equals(BooleanDomainType.class)) {
       return "true".equals(parameterValue.getValueString());
     } else { // default
@@ -135,6 +159,84 @@ public class ParameterUtils {
   }
 
   /**
+   * Returns the default value of the given parameter based on the request information.
+   * 
+   * @param parameters
+   *          the parameters passed in from the request
+   * @param parameter
+   *          the parameter to get the Default Value from
+   * @param session
+   *          the HttpSession of the request
+   * @param context
+   *          the JSONObject with the context information of the request.
+   * @return the DefaultValue of the Parameter.
+   * @throws ScriptException
+   *           Error occurred executing the script to calculate the defaultValue of the parameter
+   */
+  public static Object getParameterDefaultValue(Map<String, String> parameters,
+      Parameter parameter, HttpSession session, JSONObject _context) throws ScriptException {
+    JSONObject context = _context;
+    Reference reference = parameter.getReferenceSearchKey();
+    if (reference == null) {
+      reference = parameter.getReference();
+    }
+
+    UIDefinition uiDefinition = UIDefinitionController.getInstance().getUIDefinition(reference);
+
+    String rawDefaultValue = parameter.getDefaultValue();
+
+    Object defaultValue = null;
+    if (isSessionDefaultValue(rawDefaultValue) && context != null) {
+      // Transforms the default value from @columnName@ to the column inp name
+      String inpName = "inp"
+          + Sqlc.TransformaNombreColumna(getDependentDefaultValue(rawDefaultValue));
+      try {
+        defaultValue = context.get(inpName);
+      } catch (JSONException e) {
+        log.error("The value \"" + inpName + "\" does not exist in context", e);
+      }
+    } else {
+      parameters.put("currentParam", parameter.getDBColumnName());
+      defaultValue = getJSExpressionResult(parameters, session, rawDefaultValue);
+      if (context == null) {
+        context = new JSONObject();
+      }
+    }
+    String inpName = "inp" + Sqlc.TransformaNombreColumna(parameter.getDBColumnName());
+    if (!context.has(inpName)) {
+      try {
+        context.put(inpName, defaultValue);
+      } catch (JSONException ignore) {
+      }
+    }
+
+    DomainType domainType = uiDefinition.getDomainType();
+    if (defaultValue != null && defaultValue instanceof String
+        && domainType instanceof ForeignKeyDomainType) {
+      // default value is ID of a FK, look for the identifier
+      Entity referencedEntity = ((ForeignKeyDomainType) domainType)
+          .getForeignKeyColumn(parameter.getDBColumnName()).getProperty().getEntity();
+
+      BaseOBObject record = OBDal.getInstance().get(referencedEntity.getName(), defaultValue);
+      if (record != null) {
+        String identifier = record.getIdentifier();
+        JSONObject def = new JSONObject();
+        try {
+          def.put("value", defaultValue);
+          def.put("identifier", identifier);
+        } catch (JSONException ignore) {
+        }
+        return def;
+      } else {
+        return null;
+      }
+    } else if (defaultValue != null && domainType instanceof BooleanDomainType) {
+      defaultValue = ((BooleanDomainType) domainType).createFromString((String) defaultValue);
+    }
+    return defaultValue;
+  }
+
+  /**
    * Returns the result of evaluating the given JavaScript expression.
    * 
    * @param parameters
@@ -143,7 +245,8 @@ public class ParameterUtils {
    *          optional HttpSession object.
    * @param expression
    *          String with the JavaScript expression to be evaluated.
-   * @return an Object with the result of the expression evaluation.
+   * @return an Object with the result of the expression evaluation. Error occurred in the script
+   *         execution
    * @throws ScriptException
    */
   @SuppressWarnings("rawtypes")
@@ -164,5 +267,53 @@ public class ParameterUtils {
       result = new JSONObject((Map) result);
     }
     return result;
+  }
+
+  /**
+   * Returns if a default value is a session value.
+   * 
+   * @param rawDefaultValue
+   *          value to check if is session value.
+   * @return Returns true if the value of the parameter default value matches "@*@"
+   */
+  private static boolean isSessionDefaultValue(String rawDefaultValue) {
+    if ("@".equals(rawDefaultValue.substring(0, 1))
+        && "@".equals(rawDefaultValue.substring(rawDefaultValue.length() - 1))
+        && rawDefaultValue.length() > 2) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  /**
+   * Returns a Map<String, String> with all parameters in the servlet request.
+   * 
+   * @param request
+   *          request taken in the servlet.
+   * @return a Map with all parameters in request.
+   */
+  public static Map<String, String> buildRequestMap(HttpServletRequest request) {
+    final Map<String, String> parameterMap = new HashMap<String, String>();
+    for (Enumeration<?> keys = request.getParameterNames(); keys.hasMoreElements();) {
+      final String key = (String) keys.nextElement();
+      if (request.getParameterValues(key) != null && request.getParameterValues(key).length > 1) {
+        parameterMap.put(key, request.getParameterValues(key).toString());
+      } else {
+        parameterMap.put(key, request.getParameter(key).toString());
+      }
+    }
+    return parameterMap;
+  }
+
+  /**
+   * Removes the leading and preceding '@' from a default value
+   * 
+   * @param rawDefaultValue
+   *          defaultValue surrounded by '@', i.e. '@AD_USER_ID@'
+   * @return the rawDefaultValue, after removing the first and the last caracters
+   */
+  private static String getDependentDefaultValue(String rawDefaultValue) {
+    return rawDefaultValue.substring(1, rawDefaultValue.length() - 1);
   }
 }

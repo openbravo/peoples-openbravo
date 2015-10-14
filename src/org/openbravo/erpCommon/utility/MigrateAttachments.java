@@ -25,8 +25,8 @@ import java.sql.PreparedStatement;
 
 import org.apache.tools.ant.Task;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.client.application.window.CoreAttachImplementation;
 import org.openbravo.database.ConnectionProviderImpl;
-import org.openbravo.erpCommon.businessUtility.TabAttachments;
 import org.openbravo.utils.FileUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,7 +95,8 @@ public class MigrateAttachments extends Task {
               if (names.length == 2) {
                 tableId = names[0];
                 recordId = names[1];
-                newDirectoryStructure = tableId + "/" + TabAttachments.splitPath(recordId);
+                newDirectoryStructure = tableId + "/"
+                    + CoreAttachImplementation.splitPath(recordId);
                 attachmentDirectory = attachPath + "/" + newDirectoryStructure;
                 if (!new File(attachmentDirectory).exists()) {
                   createDirectory = new File(attachmentDirectory).mkdirs();

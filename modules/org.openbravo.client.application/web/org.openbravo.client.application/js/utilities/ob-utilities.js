@@ -189,6 +189,12 @@ OB.Utilities.uploadFinished = function (target, data) {
     origButton.callback(data);
   }
 };
+
+OB.Utilities.writeErrorMessage = function (target, message) {
+  var origView = window[target];
+  origView.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, '', message);
+};
+
 OB.Utilities.currentUploader = null;
 // ** {{{OB.Utilities.createLoadingLayout}}} **
 // Creates a layout with the loading image.

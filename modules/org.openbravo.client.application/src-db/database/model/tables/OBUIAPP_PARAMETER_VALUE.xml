@@ -49,8 +49,19 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="ATT_VALUE_KEY" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="C_FILE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="OBUIAPP_PARAMVAL_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_FILE" name="OBUIAPP_PARAMVAL_FILE" onDelete="cascade">
+        <reference local="C_FILE_ID" foreign="C_FILE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="OBUIAPP_PARAMVAL_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
@@ -58,6 +69,12 @@
       <foreign-key foreignTable="OBUIAPP_PARAMETER" name="OBUIAPP_PARAMVAL_PARAM" onDelete="cascade">
         <reference local="OBUIAPP_PARAMETER_ID" foreign="OBUIAPP_PARAMETER_ID"/>
       </foreign-key>
+      <index name="OBUIAPP_PARAMVAL_FILE_IDX" unique="false">
+        <index-column name="C_FILE_ID"/>
+      </index>
+      <index name="OBUIAPP_PARAMVAL_PARAM_IDX" unique="false">
+        <index-column name="OBUIAPP_PARAMETER_ID"/>
+      </index>
       <check name="OBUIAPP_PARAMVAL_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>
