@@ -63,7 +63,7 @@
       v_C_Currency_ID VARCHAR2(32);
       v_M_PriceList_ID VARCHAR2(32);
       v_Billto_ID VARCHAR2(32);
-      v_InvoiceRule CHAR;
+      v_InvoiceRule C_BPartner.InvoiceRule%TYPE;
       v_M_PriceList_Version_ID VARCHAR2(32);
       v_PriceActual NUMBER;
       v_Discount NUMBER;
