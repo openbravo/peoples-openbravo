@@ -1355,7 +1355,7 @@
       newline.calculateGross();
 
       //issue 25655: ungroup feature is just needed when the line is created. Then lines work as grouped lines.
-      newline.get('product').set("groupProduct", true);
+      //newline.get('product').set("groupProduct", true);
 
       //issue 25448: Show stock screen is just shown when a new line is created.
       if (newline.get('product').get("showstock") === true) {
