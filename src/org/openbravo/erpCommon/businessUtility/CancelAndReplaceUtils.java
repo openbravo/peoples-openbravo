@@ -44,6 +44,7 @@ import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.ad_forms.AcctServer;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.Utility;
@@ -219,7 +220,8 @@ public class CancelAndReplaceUtils {
                 createShipmentLine(nettingGoodsShipment, newGoodsShipmentLine1, newOrderLine,
                     lineNoCounter++, movementQty);
               }
-              if (newOrderLineDeliveredQty.compareTo(BigDecimal.ZERO) == 0) {
+              if (newOrderLineDeliveredQty == null
+                  || newOrderLineDeliveredQty.compareTo(BigDecimal.ZERO) == 0) {
                 // Set new order line delivered quantity to old order line ordered quantity, this
                 // case
                 // coming from Backend (nothing is delivered)
@@ -563,16 +565,8 @@ public class CancelAndReplaceUtils {
           FIN_FinancialAccount financialAccount = payment.getAccount();
           BigDecimal paymentTotalAmount = BigDecimal.ZERO;
 
-          if (jsonorder != JSONObject.NULL) {
-            // Get Payment DocumentNo
-            Entity paymentEntity = ModelProvider.getInstance().getEntity(FIN_Payment.class);
-
-            if (useOrderDocumentNoForRelatedDocs) {
-              paymentDocumentNo = oldOrder.getDocumentNo();
-            } else {
-              paymentDocumentNo = getDocumentNo(paymentEntity, null, paymentDocumentType);
-            }
-          }
+          paymentDocumentNo = getPaymentDocumentNo(jsonorder, useOrderDocumentNoForRelatedDocs,
+              oldOrder, paymentDocumentType);
 
           // Get Payment Description
           String description = getPaymentDescription();
@@ -620,6 +614,54 @@ public class CancelAndReplaceUtils {
           if (error.getType().equals("Error")) {
             throw new OBException(error.getMessage());
           }
+        }
+        // There aren't any payments on original order, pay original order and inverse order
+        // completely.
+        if (paymentScheduleDetailList.size() == 0) {
+          newPayment = null;
+          String paymentDocumentNo = null;
+          FIN_PaymentMethod paymentPaymentMethod = (FIN_PaymentMethod) jsonorder.getJSONObject(
+              "defaultPaymentType").get("paymentMethod");
+          FIN_FinancialAccount financialAccount = (FIN_FinancialAccount) jsonorder.getJSONObject(
+              "defaultPaymentType").get("financialAccount");
+          BigDecimal negativeAmount = paymentSchedule.getAmount().negate();
+          BigDecimal outstandingAmount = paymentSchedule.getOutstandingAmount();
+          final DocumentType paymentDocumentType = FIN_Utility.getDocumentType(
+              oldOrder.getOrganization(), AcctServer.DOCTYPE_ARReceipt);
+          if (paymentDocumentType == null) {
+            throw new OBException("No document type found for the new payment");
+          }
+
+          paymentDocumentNo = getPaymentDocumentNo(jsonorder, useOrderDocumentNoForRelatedDocs,
+              oldOrder, paymentDocumentType);
+
+          // Get Payment Description
+          String description = getPaymentDescription();
+          description += ": " + inverseOrder.getDocumentNo();
+
+          // Duplicate payment with negative amount
+          newPayment = createPayment(newPayment, inverseOrder, paymentPaymentMethod,
+              negativeAmount, paymentDocumentType, financialAccount, paymentDocumentNo);
+
+          // Create if needed a second payment for the partially paid
+          if (outstandingAmount.compareTo(BigDecimal.ZERO) != 0) {
+
+            // Duplicate payment with positive amount
+            newPayment = createPayment(newPayment, oldOrder, paymentPaymentMethod,
+                outstandingAmount, paymentDocumentType, financialAccount, paymentDocumentNo);
+            description += ": " + oldOrder.getDocumentNo() + "\n";
+          }
+
+          // Set amount and used credit to zero
+          newPayment.setAmount(BigDecimal.ZERO);
+          newPayment.setUsedCredit(BigDecimal.ZERO);
+          newPayment.setDescription(description);
+          OBDal.getInstance().save(newPayment);
+
+          OBDal.getInstance().flush();
+
+          // Call to processPayment in order to process it
+          FIN_PaymentProcess.doProcessPayment(newPayment, "P", true, null, null);
         }
 
       } else {
@@ -783,5 +825,21 @@ public class CancelAndReplaceUtils {
         new DalConnectionProvider(false), RequestContext.get().getVariablesSecureApp(), "", entity
             .getTableName(), doctypeTarget == null ? "" : doctypeTarget.getId(),
         doctype == null ? "" : doctype.getId(), false, true);
+  }
+
+  protected static String getPaymentDocumentNo(JSONObject jsonorder,
+      boolean useOrderDocumentNoForRelatedDocs, Order order, DocumentType paymentDocumentType) {
+    String paymentDocumentNo = null;
+    if (jsonorder != JSONObject.NULL) {
+      // Get Payment DocumentNo
+      Entity paymentEntity = ModelProvider.getInstance().getEntity(FIN_Payment.class);
+
+      if (useOrderDocumentNoForRelatedDocs) {
+        paymentDocumentNo = order.getDocumentNo();
+      } else {
+        paymentDocumentNo = getDocumentNo(paymentEntity, null, paymentDocumentType);
+      }
+    }
+    return paymentDocumentNo;
   }
 }
