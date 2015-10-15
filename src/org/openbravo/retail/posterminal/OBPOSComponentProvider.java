@@ -76,6 +76,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "model/order",
         "model/cashup",
         "model/cashmanagement",
+        "model/cancelLayaway",
         "login/model/login-model",
         // Common components
         "datasource",
@@ -107,7 +108,6 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "model/offlineprinter",
         "model/productbom",
         "model/taxcategorybom",
-        "model/cancelLayaway",
         "components/modalcancel",
         "components/subwindow",
         "components/leftsubwindow",

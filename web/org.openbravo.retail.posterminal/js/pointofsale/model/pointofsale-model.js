@@ -22,7 +22,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     generatedModel: true,
     modelName: 'TaxZone'
   },
-  OB.Model.Product, OB.Model.ProductCategory, OB.Model.ProductCategoryTree, OB.Model.PriceList, OB.Model.ProductPrice, OB.Model.OfferPriceList, OB.Model.ServiceProduct, OB.Model.ServiceProductCategory, OB.Model.ServicePriceRule, OB.Model.ServicePriceRuleRange, OB.Model.ServicePriceRuleRangePrices, OB.Model.ServicePriceRuleVersion, OB.Model.BusinessPartner, OB.Model.BPCategory, OB.Model.BPLocation, OB.Model.Order, OB.Model.DocumentSequence, OB.Model.ChangedBusinessPartners, OB.Model.ChangedBPlocation, OB.Model.ProductBOM, OB.Model.TaxCategoryBOM,
+  OB.Model.Product, OB.Model.ProductCategory, OB.Model.ProductCategoryTree, OB.Model.PriceList, OB.Model.ProductPrice, OB.Model.OfferPriceList, OB.Model.ServiceProduct, OB.Model.ServiceProductCategory, OB.Model.ServicePriceRule, OB.Model.ServicePriceRuleRange, OB.Model.ServicePriceRuleRangePrices, OB.Model.ServicePriceRuleVersion, OB.Model.BusinessPartner, OB.Model.BPCategory, OB.Model.BPLocation, OB.Model.Order, OB.Model.DocumentSequence, OB.Model.ChangedBusinessPartners, OB.Model.ChangedBPlocation, OB.Model.ProductBOM, OB.Model.TaxCategoryBOM, OB.Model.CancelLayaway,
   {
     generatedModel: true,
     modelName: 'Discount'
@@ -738,14 +738,27 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
     receipt.on('cancelLayaway', function () {
       var cancelLayawayObj = {},
-          cancelLayawayModel = new Backbone.Model();
+          cancelLayawayModel = new OB.Model.CancelLayaway(),
+          docNo = OB.MobileApp.model.getNextDocumentno();
 
       cancelLayawayObj.negativeDocNo = {
-        negativeDocNo: OB.MobileApp.model.getNextDocumentno()
+        negativeDocNo: docNo
       };
       cancelLayawayObj.orderId = receipt.get('id');
 
       cancelLayawayModel.set('json', JSON.stringify(cancelLayawayObj));
+
+      OB.Dal.save(cancelLayawayModel, function () {
+        OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(docNo.documentnoSuffix, OB.MobileApp.model.set('quotationDocumentSequence'), function () {
+          OB.MobileApp.model.runSyncProcess();
+          orderList.deleteCurrent();
+          OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessCancelLayaway'));
+        });
+
+
+      }, function () {
+        OB.error(arguments);
+      });
 
     }, this);
 

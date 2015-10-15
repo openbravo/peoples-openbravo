@@ -14,7 +14,8 @@
     modelName: 'CancelLayaway',
     tableName: 'cancellayaway',
     entityName: 'CancelLayaway',
-    local: true
+    local: true,
+    source: ''
   });
 
   CancelLayaway.addProperties([{

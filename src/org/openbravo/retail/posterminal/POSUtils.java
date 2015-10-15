@@ -6,6 +6,15 @@
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
+/*
+ ************************************************************************************
+ * Copyright (C) 2015 Openbravo S.L.U.
+ * Licensed under the Openbravo Commercial License version 1.0
+ * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
+ * or in the legal folder of this module distribution.
+ ************************************************************************************
+ */
+
 package org.openbravo.retail.posterminal;
 
 import java.math.BigDecimal;
@@ -16,6 +25,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
@@ -36,6 +46,7 @@ import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.OrgWarehouse;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
+import org.openbravo.model.common.order.Order;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.model.pricing.pricelist.PriceListVersion;
 import org.openbravo.retail.config.OBRETCOProductList;
@@ -720,6 +731,27 @@ public class POSUtils {
     }
     // The query failed, then the check is not valid.
     return false;
+  }
+
+  public static void setDefaultPaymentType(JSONObject jsonorder, Order order) {
+    try {
+      OBCriteria<OBPOSAppPayment> paymentTypes = OBDal.getInstance().createCriteria(
+          OBPOSAppPayment.class);
+      paymentTypes.add(Restrictions.eq(OBPOSAppPayment.PROPERTY_OBPOSAPPLICATIONS,
+          order.getObposApplications()));
+      paymentTypes.addOrderBy(OBPOSAppPayment.PROPERTY_ID, false);
+      paymentTypes.setMaxResults(1);
+      OBPOSAppPayment defaultPaymentType = (OBPOSAppPayment) paymentTypes.uniqueResult();
+      if (defaultPaymentType != null) {
+        JSONObject paymentTypeValues = new JSONObject();
+        paymentTypeValues.put("paymentMethod", defaultPaymentType.getPaymentMethod()
+            .getPaymentMethod());
+        paymentTypeValues.put("financialAccount", defaultPaymentType.getFinancialAccount());
+        jsonorder.put("defaultPaymentType", paymentTypeValues);
+      }
+    } catch (JSONException e) {
+      log.error("Error setting default payment type to order" + order, e);
+    }
   }
 
 }

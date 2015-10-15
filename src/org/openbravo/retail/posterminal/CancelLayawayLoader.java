@@ -11,14 +11,16 @@ package org.openbravo.retail.posterminal;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.CancelAndReplaceUtils;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.mobile.core.process.DataSynchronizationImportProcess;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchronization;
+import org.openbravo.model.common.order.Order;
 import org.openbravo.service.json.JsonConstants;
 
-@DataSynchronization(entity = "CancelLayaway")
+@DataSynchronization(entity = "OBPOS_CancelLayaway")
 public class CancelLayawayLoader extends POSDataSynchronizationProcess implements
     DataSynchronizationImportProcess {
 
@@ -38,6 +40,8 @@ public class CancelLayawayLoader extends POSDataSynchronizationProcess implement
           "Error getting OBPOS_UseOrderDocumentNoForRelatedDocs preference: " + e1.getMessage(), e1);
     }
 
+    Order order = OBDal.getInstance().get(Order.class, json.getString("orderId"));
+    POSUtils.setDefaultPaymentType(json, order);
     CancelAndReplaceUtils.cancelOrder(json.getString("orderId"), json,
         useOrderDocumentNoForRelatedDocs);
 
@@ -45,5 +49,9 @@ public class CancelLayawayLoader extends POSDataSynchronizationProcess implement
     jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
     jsonResponse.put("result", "0");
     return jsonResponse;
+  }
+
+  protected String getImportQualifier() {
+    return "OBPOS_CancelLayaway";
   }
 }
