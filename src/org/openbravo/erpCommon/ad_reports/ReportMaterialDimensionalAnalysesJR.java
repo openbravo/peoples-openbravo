@@ -27,6 +27,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.filter.IsPositiveIntFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -39,6 +40,7 @@ import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
+import org.openbravo.erpCommon.utility.OBCurrencyUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
@@ -54,6 +56,7 @@ public class ReportMaterialDimensionalAnalysesJR extends HttpSecureAppServlet {
 
     // Get user Client's base currency
     String strUserCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
+
     if (vars.commandIn("DEFAULT", "DEFAULT_COMPARATIVE")) {
       String strDateFrom = vars.getGlobalVariable("inpDateFrom",
           "ReportMaterialDimensionalAnalysesJR|dateFrom", "");
@@ -162,6 +165,16 @@ public class ReportMaterialDimensionalAnalysesJR extends HttpSecureAppServlet {
           strPartnerGroup, strcBpartnerId, strProductCategory, strmProductId, strNotShown,
           strShown, strDateFromRef, strDateToRef, strOrg, strOrder, strMayor, strMenor,
           strCurrencyId, "pdf");
+    } else if (vars.commandIn("CUR")) {
+      String orgId = vars.getStringParameter("inpOrg");
+      String strOrgCurrencyId = OBCurrencyUtils.getOrgCurrency(orgId);
+      if (StringUtils.isEmpty(strOrgCurrencyId)) {
+        strOrgCurrencyId = strUserCurrencyId;
+      }
+      response.setContentType("text/html; charset=UTF-8");
+      PrintWriter out = response.getWriter();
+      out.print(strOrgCurrencyId);
+      out.close();
     } else
       pageErrorPopUp(response);
   }
