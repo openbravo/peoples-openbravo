@@ -451,6 +451,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         }
 
         if (order.getReplacedorder() != null) {
+          // Set default payment type to order in case there is no payment on the order
+          setDefaultPaymentType(jsonorder, order);
+          // Cancel and Replace the order
           CancelAndReplaceUtils.cancelAndReplaceOrder(order.getId(), jsonorder,
               useOrderDocumentNoForRelatedDocs);
         }
@@ -2288,4 +2291,24 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     }
   }
 
+  protected void setDefaultPaymentType(JSONObject jsonorder, Order order) {
+    try {
+      OBCriteria<OBPOSAppPayment> paymentTypes = OBDal.getInstance().createCriteria(
+          OBPOSAppPayment.class);
+      paymentTypes.add(Restrictions.eq(OBPOSAppPayment.PROPERTY_OBPOSAPPLICATIONS,
+          order.getObposApplications()));
+      paymentTypes.addOrderBy(OBPOSAppPayment.PROPERTY_ID, false);
+      paymentTypes.setMaxResults(1);
+      OBPOSAppPayment defaultPaymentType = (OBPOSAppPayment) paymentTypes.uniqueResult();
+      if (defaultPaymentType != null) {
+        JSONObject paymentTypeValues = new JSONObject();
+        paymentTypeValues.put("paymentMethod", defaultPaymentType.getPaymentMethod()
+            .getPaymentMethod());
+        paymentTypeValues.put("financialAccount", defaultPaymentType.getFinancialAccount());
+        jsonorder.put("defaultPaymentType", paymentTypeValues);
+      }
+    } catch (JSONException e) {
+      log.error("Error setting default payment type to order" + order, e);
+    }
+  }
 }
