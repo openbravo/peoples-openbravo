@@ -116,7 +116,8 @@ public class RoleInheritanceManager {
       String securedElementIndentifier = (String) DalUtil.getId(bob);
       return securedElementIndentifier;
     } catch (Exception ex) {
-      log.error("Error getting secured element identifier", ex);
+      log.error("Error getting secured element identifier with method {}",
+          injector.getSecuredElementGetter(), ex);
       throw new OBException("Error getting secured element identifier");
     }
   }
@@ -181,7 +182,7 @@ public class RoleInheritanceManager {
         }
       }
     } catch (Exception ex) {
-      log.error("Error setting parent ", ex);
+      log.error("Error setting parent for access of class {}", className, ex);
       throw new OBException("Error setting parent");
     }
   }
@@ -202,7 +203,7 @@ public class RoleInheritanceManager {
       myClass.getMethod("setRole", new Class[] { Role.class })
           .invoke(access, new Object[] { role });
     } catch (Exception ex) {
-      log.error("Error setting parent role ", ex);
+      log.error("Error setting {} as parent role", role, ex);
       throw new OBException("Error setting parent role");
     }
   }
@@ -294,7 +295,7 @@ public class RoleInheritanceManager {
       Role role = (Role) myClass.getMethod("getRole").invoke(access);
       return role;
     } catch (Exception ex) {
-      log.error("Error getting role ", ex);
+      log.error("Error getting role for access with class {}", className, ex);
       throw new OBException("Error getting role");
     }
   }
@@ -325,7 +326,7 @@ public class RoleInheritanceManager {
       query.setFilterOnActive(false);
       return (List<? extends InheritedAccessEnabled>) query.list();
     } catch (Exception ex) {
-      log.error("Error getting access list of class " + className, ex);
+      log.error("Error getting access list of class {}", className, ex);
       throw new OBException("Error getting access list of class " + className);
     }
   }
@@ -651,7 +652,7 @@ public class RoleInheritanceManager {
     for (AccessTypeInjector accessType : getAccessTypeOrderByPriority(true)) {
       calculateAccesses(newInheritanceList, inheritanceRoleIdList, accessType);
     }
-    log.debug("add new inheritance time: " + (System.currentTimeMillis() - t));
+    log.debug("add new inheritance time: {}", (System.currentTimeMillis() - t));
   }
 
   /**
@@ -671,7 +672,7 @@ public class RoleInheritanceManager {
       // deleted first when it applies.
       calculateAccesses(inheritanceList, inheritanceRoleIdList, inheritance, accessType);
     }
-    log.debug("remove inheritance time: " + (System.currentTimeMillis() - t));
+    log.debug("remove inheritance time: {}", (System.currentTimeMillis() - t));
   }
 
   /**
@@ -695,8 +696,8 @@ public class RoleInheritanceManager {
         }
       }
     }
-    log.debug("recalculate all accesses from template " + template.getName() + " time: "
-        + (System.currentTimeMillis() - t));
+    log.debug("recalculate all accesses from template {} time: {}", template,
+        (System.currentTimeMillis() - t));
     return updatedRoles;
   }
 
@@ -733,8 +734,8 @@ public class RoleInheritanceManager {
           accessType);
       result.put(accessType.getClassName(), counters);
     }
-    log.debug("recalculate all accesses for role " + role.getName() + " time: "
-        + (System.currentTimeMillis() - t));
+    log.debug("recalculate all accesses for role {} time: {}", role,
+        (System.currentTimeMillis() - t));
     return result;
   }
 
@@ -786,8 +787,8 @@ public class RoleInheritanceManager {
         recalculateAccessForRole(ri.getRole(), injector);
       }
     }
-    log.debug("recalculate access for " + classCanonicalName + " from template "
-        + template.getName() + " time: " + (System.currentTimeMillis() - t));
+    log.debug("recalculate access from template {} time: {}", template,
+        (System.currentTimeMillis() - t));
   }
 
   /**
@@ -804,9 +805,9 @@ public class RoleInheritanceManager {
     List<RoleInheritance> inheritanceList = getRoleInheritancesList(role);
     List<String> inheritanceRoleIdList = getRoleInheritancesInheritFromIdList(inheritanceList);
     CalculationResult counters = calculateAccesses(inheritanceList, inheritanceRoleIdList, injector);
-    log.debug("recalculate access for " + injector.getClassName() + " for role " + role.getName()
-        + ": " + counters.getUpdated() + " updated, " + counters.getCreated()
-        + " created in time: " + (System.currentTimeMillis() - t));
+    log.debug("recalculate access for role {} time: {}", role, (System.currentTimeMillis() - t));
+    log.debug("accesses created: {}, accesses updated: {}", counters.getCreated(),
+        counters.getUpdated());
   }
 
   /**
@@ -850,8 +851,8 @@ public class RoleInheritanceManager {
         handleAccess(ri, access, inheritanceRoleIdList, injector);
       }
     }
-    log.debug("propagate new access from template " + role.getName() + " time: "
-        + (System.currentTimeMillis() - t));
+    log.debug("propagate new access from template {} time: {}", role,
+        +(System.currentTimeMillis() - t));
   }
 
   /**
@@ -886,8 +887,8 @@ public class RoleInheritanceManager {
         }
       }
     }
-    log.debug("propagate updated access from template " + role.getName() + " time: "
-        + (System.currentTimeMillis() - t));
+    log.debug("propagate updated access from template {} time: {}", role,
+        (System.currentTimeMillis() - t));
   }
 
   /**
@@ -947,8 +948,8 @@ public class RoleInheritanceManager {
         }
       }
     }
-    log.debug("propagate deleted access from template " + role.getName() + " time: "
-        + (System.currentTimeMillis() - t));
+    log.debug("propagate deleted access from template {} time: {}", role,
+        (System.currentTimeMillis() - t));
   }
 
   /**
@@ -1115,14 +1116,13 @@ public class RoleInheritanceManager {
       if (!StringUtils.isEmpty(currentInheritedFromId)
           && isPrecedent(inheritanceInheritFromIdList, currentInheritedFromId, newInheritedFromId)) {
         updateRoleAccess(access, inheritedAccess, injector.getClassName());
-        log.debug("Updated access for role " + role.getName() + ": class = "
-            + injector.getClassName());
+        log.debug("Updated access of class {} for role {}", injector.getClassName(), role);
         return ACCESS_UPDATED;
       }
       return ACCESS_NOT_CHANGED;
     }
     copyRoleAccess(inheritedAccess, roleInheritance.getRole(), injector.getClassName());
-    log.debug("Created access for role " + role.getName() + ": class = " + injector.getClassName());
+    log.debug("Created access of class {} for role {}", injector.getClassName(), role);
     return ACCESS_CREATED;
   }
 
@@ -1303,7 +1303,7 @@ public class RoleInheritanceManager {
         return injector;
       }
     } catch (Exception e) {
-      log.error("No access type injector found for class name: " + classCanonicalName, e);
+      log.error("No access type injector found for class name: {}", classCanonicalName, e);
     }
     return null;
   }

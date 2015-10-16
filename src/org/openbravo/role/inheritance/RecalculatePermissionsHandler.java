@@ -75,7 +75,7 @@ public class RecalculatePermissionsHandler extends BaseActionHandler {
 
     } catch (Exception e) {
       OBDal.getInstance().rollbackAndClose();
-      log.error("RecalculatePermissionsEventHandler error: " + e.getMessage(), e);
+      log.error("Error recalculating permissions", e);
       Throwable ex = DbUtility.getUnderlyingSQLException(e);
       String textMessage = OBMessageUtils.translateError(ex.getMessage()).getMessage();
       try {
