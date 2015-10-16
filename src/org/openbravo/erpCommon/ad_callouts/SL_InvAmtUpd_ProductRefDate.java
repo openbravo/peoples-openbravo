@@ -59,7 +59,7 @@ public class SL_InvAmtUpd_ProductRefDate extends SimpleCallout {
       Currency currency = organization.getCurrency() != null ? organization.getCurrency()
           : organization.getClient().getCurrency();
       String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
-          .getProperty("dateFormat.java");
+          .getProperty("dateTimeFormat.java");
       SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
 
       referenceDate = outputFormat.parse(info.getStringParameter("inpreferencedate", null));

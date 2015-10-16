@@ -54,10 +54,6 @@ public class DocInvoice extends AcctServer {
   DocTax[] m_taxes = null;
   DocLine_FinPaymentSchedule[] m_payments = null;
 
-  public DocLine_FinPaymentSchedule[] getM_payments() {
-    return m_payments;
-  }
-
   DocLine[] p_lines_taxes = null;
 
   boolean isCashVAT = false;
@@ -1404,6 +1400,38 @@ public class DocInvoice extends AcctServer {
    */
   public void setSeqNo(String seqNo) {
     SeqNo = seqNo;
+  }
+
+  public DocLine_FinPaymentSchedule[] getM_payments() {
+    return m_payments;
+  }
+
+  public void setM_payments(DocLine_FinPaymentSchedule[] m_payments) {
+    this.m_payments = m_payments;
+  }
+
+  public DocLine[] getP_lines_taxes() {
+    return p_lines_taxes;
+  }
+
+  public void setP_lines_taxes(DocLine[] p_lines_taxes) {
+    this.p_lines_taxes = p_lines_taxes;
+  }
+
+  public boolean isCashVAT() {
+    return isCashVAT;
+  }
+
+  public void setCashVAT(boolean isCashVAT) {
+    this.isCashVAT = isCashVAT;
+  }
+
+  public String getPrepaymentamt() {
+    return prepaymentamt;
+  }
+
+  public void setPrepaymentamt(String prepaymentamt) {
+    this.prepaymentamt = prepaymentamt;
   }
 
   /**

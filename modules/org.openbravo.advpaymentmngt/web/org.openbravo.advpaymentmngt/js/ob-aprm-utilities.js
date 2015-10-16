@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2012 Openbravo SLU
+ * All portions are Copyright (C) 2011-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -114,7 +114,7 @@ OB.APRM.validatePaymentProposalPickAndEdit = function (item, validator, value, r
     return false;
   }
 
-  var i, row, allRows = item.grid.data.allRows,
+  var i, row, allRows = item.grid.data.allRows || item.grid.data.localData,
       outstanding = new BigDecimal(String(record.outstanding)),
       paidamount = new BigDecimal(String(record.payment));
 
