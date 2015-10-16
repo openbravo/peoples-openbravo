@@ -53,6 +53,7 @@ public class RoleInheritanceWarningFICExtension implements FICExtension {
   private static final Logger log = LoggerFactory
       .getLogger(RoleInheritanceWarningFICExtension.class);
   private final static String EDIT_MODE = "EDIT";
+  private final static String NEW_MODE = "NEW";
   @Inject
   private RoleInheritanceManager manager;
   private ConcurrentMap<String, Boolean> validTabsCache = new ConcurrentHashMap<String, Boolean>();
@@ -88,7 +89,7 @@ public class RoleInheritanceWarningFICExtension implements FICExtension {
   }
 
   private boolean isValidEvent(String mode, Tab tab) {
-    if (EDIT_MODE.equals(mode)) {
+    if (EDIT_MODE.equals(mode) || NEW_MODE.equals(mode)) {
       final String tabId = (String) DalUtil.getId(tab.getTable());
       Boolean valid = validTabsCache.get(tabId);
       if (valid != null) {

@@ -15940,7 +15940,7 @@ Do you want to enable the Heartbeat?]]></MSGTEXT>
 <!--04FDAC6783954F24805680BC6137EE68-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--04FDAC6783954F24805680BC6137EE68-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--04FDAC6783954F24805680BC6137EE68-->  <VALUE><![CDATA[EditTemplateRoleAccess]]></VALUE>
-<!--04FDAC6783954F24805680BC6137EE68-->  <MSGTEXT><![CDATA[This record is related with a role marked as template. The changes will be propagated to the following roles (and to the roles inheriting from them): %0]]></MSGTEXT>
+<!--04FDAC6783954F24805680BC6137EE68-->  <MSGTEXT><![CDATA[This record is related with a role marked as template. The saved/updated content will be propagated to the following roles (and to the roles inheriting from them): %0]]></MSGTEXT>
 <!--04FDAC6783954F24805680BC6137EE68-->  <MSGTYPE><![CDATA[W]]></MSGTYPE>
 <!--04FDAC6783954F24805680BC6137EE68-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--04FDAC6783954F24805680BC6137EE68-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
