@@ -101,29 +101,8 @@ enyo.kind({
           return true;
         }
         if (keyboard.line) {
-          if ((_.isNaN(value) || value > 0) && keyboard.line.get('product').get('groupProduct') === false) {
-            if (_.isNaN(value) || value > 10) {
-              // Show a message because cannot add more than 10 lines
-              OB.UTIL.showWarning("When the product is not grouped, the quantity to add should be less or equal than 10");
-              return true;
-            } else {
-              // Add the lines one by one because the product is not grouped
-              OB.MobileApp.model.receipt.set('skipApplyPromotions', true);
-              var i;
-              for (i = 0; i < value; i++) {
-                if (i === value - 1) {
-                  OB.MobileApp.model.receipt.set('skipApplyPromotions', false);
-                }
-                me.doAddProduct({
-                  product: keyboard.line.get('product'),
-                  qty: 1,
-                  options: {
-                    line: keyboard.line
-                  }
-                });
-              }
-              keyboard.receipt.trigger('scan');
-            }
+          if (_.isNaN(value)) {
+            return true;
           } else {
             me.doAddProduct({
               product: keyboard.line.get('product'),
@@ -134,7 +113,6 @@ enyo.kind({
             });
             keyboard.receipt.trigger('scan');
           }
-
         }
         };
 
@@ -185,29 +163,25 @@ enyo.kind({
           return true;
         }
         if (value || value === 0) {
-          if (keyboard.line.get('product').get('groupProduct')) {
-            if (keyboard.receipt.get('orderType') === 1) {
-              toadd = value - (-keyboard.line.get('qty'));
-            } else {
-              toadd = value - keyboard.line.get('qty');
-            }
+          if (keyboard.receipt.get('orderType') === 1) {
+            toadd = value - (-keyboard.line.get('qty'));
           } else {
-            toadd = value;
+            toadd = value - keyboard.line.get('qty');
           }
-          if (toadd === 0) { // If nothing to add then return
-            return;
-          }
+        }
+        if (toadd === 0) { // If nothing to add then return
+          return;
+        }
 
-          if (value === 0) { // If final quantity will be 0 then request approval
-            OB.UTIL.Approval.requestApproval(me.model, 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
-              if (approved) {
-                keyboard.line.set('deleteApproved', true);
-                actionAddProduct(keyboard, toadd);
-              }
-            });
-          } else {
-            actionAddProduct(keyboard, toadd);
-          }
+        if (value === 0) { // If final quantity will be 0 then request approval
+          OB.UTIL.Approval.requestApproval(me.model, 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
+            if (approved) {
+              keyboard.line.set('deleteApproved', true);
+              actionAddProduct(keyboard, toadd);
+            }
+          });
+        } else {
+          actionAddProduct(keyboard, toadd);
         }
       }
     });

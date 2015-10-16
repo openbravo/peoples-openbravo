@@ -426,6 +426,17 @@ enyo.kind({
         return true;
       }
       args.context.model.get('order').addProduct(args.productToAdd, args.qtyToAdd, args.options, args.attrs, null);
+      if (args.productToAdd.get('groupProduct')) {
+        // The product added is grouped, so enable the quantity button
+        args.context.waterfall('onEnableQtyButton', {
+          enable: true
+        });
+      } else {
+        // The product added is not grouped, so disable the quantity button
+        args.context.waterfall('onEnableQtyButton', {
+          enable: false
+        });
+      }
     });
     return true;
   },
@@ -973,18 +984,21 @@ enyo.kind({
     this.waterfall('onChangePricelist', inEvent);
   },
   receiptLineSelected: function (inSender, inEvent) {
-    if (inEvent.isGift) {
-      // The line selected is a gift card, so hide the return line button.
-      this.waterfall('onHideReturnLineButton', {
-        hide: true
+    if (inEvent.product.get('groupProduct')) {
+      // The line selected is a grouped product, so enable the quantity button
+      this.waterfall('onEnableQtyButton', {
+        enable: true
       });
     } else {
-      // The line selected is not a gift card, so show the return line button.
-      this.waterfall('onHideReturnLineButton', {
-        hide: false
+      // The line selected is not a grouped product, so disable the quantity button
+      this.waterfall('onEnableQtyButton', {
+        enable: false
       });
     }
-
+    OB.UTIL.HookManager.executeHooks('OBPOS_HideReturnLineButton', {
+      product: inEvent.product,
+      context: this
+    }, function (args) {});
   },
   init: function () {
     var receipt, receiptList, LeftColumnCurrentView;
