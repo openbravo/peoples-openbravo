@@ -836,6 +836,10 @@ enyo.kind({
         payments;
     this.allowOpenDrawer = false;
 
+    if (this.disabled) {
+      return true;
+    }
+
     if (myModel.get('leftColumnViewManager').isOrder()) {
       payments = this.owner.receipt.get('payments');
     } else {
