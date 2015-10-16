@@ -26,7 +26,12 @@ import org.openbravo.client.myob.WidgetClassAccess;
 public class WidgetClassAccessInjector extends AccessTypeInjector {
 
   @Override
-  public String getSecuredElement() {
+  public String getSecuredElementGetter() {
     return "getWidgetClass";
+  }
+
+  @Override
+  public String getSecuredElementName() {
+    return WidgetClassAccess.PROPERTY_WIDGETCLASS;
   }
 }

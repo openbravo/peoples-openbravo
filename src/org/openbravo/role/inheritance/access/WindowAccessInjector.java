@@ -26,12 +26,17 @@ import org.openbravo.model.ad.access.WindowAccess;
 public class WindowAccessInjector extends AccessTypeInjector {
 
   @Override
-  public String getSecuredElement() {
+  public String getSecuredElementGetter() {
     return "getWindow";
   }
 
   @Override
   public int getPriority() {
     return 200;
+  }
+
+  @Override
+  public String getSecuredElementName() {
+    return WindowAccess.PROPERTY_WINDOW;
   }
 }

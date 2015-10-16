@@ -26,7 +26,14 @@ import org.openbravo.model.ad.domain.Preference;
 public class PreferenceAccessInjector extends AccessTypeInjector {
 
   @Override
-  public String getSecuredElement() {
+  public String getSecuredElementGetter() {
     return "getIdentifier";
+  }
+
+  @Override
+  public String getSecuredElementName() {
+    // This method is not explicitly use, as preferences are handled in a special way
+    // See RoleInheritanceManager.findPreference()
+    return Preference.PROPERTY_PROPERTY + "-" + Preference.PROPERTY_ATTRIBUTE;
   }
 }

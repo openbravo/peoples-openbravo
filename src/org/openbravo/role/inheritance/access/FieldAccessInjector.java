@@ -26,12 +26,17 @@ import org.openbravo.model.ad.access.FieldAccess;
 public class FieldAccessInjector extends AccessTypeInjector {
 
   @Override
-  public String getSecuredElement() {
+  public String getSecuredElementGetter() {
     return "getField";
   }
 
   @Override
   public int getPriority() {
     return 400;
+  }
+
+  @Override
+  public String getSecuredElementName() {
+    return FieldAccess.PROPERTY_FIELD;
   }
 }

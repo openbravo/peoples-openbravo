@@ -50,7 +50,14 @@ public abstract class AccessTypeInjector implements Comparable<AccessTypeInjecto
    * 
    * @return a String with the name of the method to retrieve the secured element
    */
-  public abstract String getSecuredElement();
+  public abstract String getSecuredElementGetter();
+
+  /**
+   * Returns the secured element name.
+   * 
+   * @return a String with the name of the secured element
+   */
+  public abstract String getSecuredElementName();
 
   /**
    * Returns the priority of this injector. It is used to determine the order when adding, updating
@@ -95,7 +102,6 @@ public abstract class AccessTypeInjector implements Comparable<AccessTypeInjecto
   @SuppressWarnings("all")
   public static class Selector extends AnnotationLiteral<AccessTypeInjector.Qualifier> implements
       AccessTypeInjector.Qualifier {
-    private static final long serialVersionUID = 1L;
 
     Class<? extends InheritedAccessEnabled> clazz;
 

@@ -26,7 +26,12 @@ import org.openbravo.model.ad.access.RoleOrganization;
 public class OrgAccessInjector extends AccessTypeInjector {
 
   @Override
-  public String getSecuredElement() {
+  public String getSecuredElementGetter() {
     return "getOrganization";
+  }
+
+  @Override
+  public String getSecuredElementName() {
+    return RoleOrganization.PROPERTY_ORGANIZATION;
   }
 }

@@ -26,7 +26,12 @@ import org.openbravo.client.application.ViewRoleAccess;
 public class ViewImplementationAccessInjector extends AccessTypeInjector {
 
   @Override
-  public String getSecuredElement() {
+  public String getSecuredElementGetter() {
     return "getViewImplementation";
+  }
+
+  @Override
+  public String getSecuredElementName() {
+    return ViewRoleAccess.PROPERTY_VIEWIMPLEMENTATION;
   }
 }

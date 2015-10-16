@@ -26,7 +26,12 @@ import org.openbravo.model.ad.access.TableAccess;
 public class TableAccessInjector extends AccessTypeInjector {
 
   @Override
-  public String getSecuredElement() {
+  public String getSecuredElementGetter() {
     return "getTable";
+  }
+
+  @Override
+  public String getSecuredElementName() {
+    return TableAccess.PROPERTY_TABLE;
   }
 }

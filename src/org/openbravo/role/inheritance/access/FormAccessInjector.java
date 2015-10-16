@@ -26,7 +26,12 @@ import org.openbravo.model.ad.access.FormAccess;
 public class FormAccessInjector extends AccessTypeInjector {
 
   @Override
-  public String getSecuredElement() {
+  public String getSecuredElementGetter() {
     return "getSpecialForm";
+  }
+
+  @Override
+  public String getSecuredElementName() {
+    return FormAccess.PROPERTY_SPECIALFORM;
   }
 }

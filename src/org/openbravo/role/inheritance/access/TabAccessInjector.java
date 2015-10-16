@@ -26,12 +26,17 @@ import org.openbravo.model.ad.access.TabAccess;
 public class TabAccessInjector extends AccessTypeInjector {
 
   @Override
-  public String getSecuredElement() {
+  public String getSecuredElementGetter() {
     return "getTab";
   }
 
   @Override
   public int getPriority() {
     return 300;
+  }
+
+  @Override
+  public String getSecuredElementName() {
+    return TabAccess.PROPERTY_TAB;
   }
 }

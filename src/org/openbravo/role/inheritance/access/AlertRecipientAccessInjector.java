@@ -29,7 +29,12 @@ import org.openbravo.model.ad.alert.AlertRecipient;
 public class AlertRecipientAccessInjector extends AccessTypeInjector {
 
   @Override
-  public String getSecuredElement() {
+  public String getSecuredElementGetter() {
     return "getAlertRule";
+  }
+
+  @Override
+  public String getSecuredElementName() {
+    return AlertRecipient.PROPERTY_ALERTRULE;
   }
 }

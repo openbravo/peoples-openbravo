@@ -26,7 +26,12 @@ import org.openbravo.client.application.ProcessAccess;
 public class ProcessDefinitionAccessInjector extends AccessTypeInjector {
 
   @Override
-  public String getSecuredElement() {
+  public String getSecuredElementGetter() {
     return "getObuiappProcess";
+  }
+
+  @Override
+  public String getSecuredElementName() {
+    return ProcessAccess.PROPERTY_OBUIAPPPROCESS;
   }
 }

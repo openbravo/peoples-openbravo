@@ -26,7 +26,12 @@ import org.openbravo.model.ad.access.ProcessAccess;
 public class ReportAndProcessAccessInjector extends AccessTypeInjector {
 
   @Override
-  public String getSecuredElement() {
+  public String getSecuredElementGetter() {
     return "getProcess";
+  }
+
+  @Override
+  public String getSecuredElementName() {
+    return ProcessAccess.PROPERTY_PROCESS;
   }
 }
