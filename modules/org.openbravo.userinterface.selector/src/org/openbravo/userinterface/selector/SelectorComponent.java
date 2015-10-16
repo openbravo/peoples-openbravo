@@ -44,12 +44,14 @@ import org.openbravo.base.model.domaintype.ForeignKeyDomainType;
 import org.openbravo.base.model.domaintype.PrimitiveDomainType;
 import org.openbravo.base.model.domaintype.StringEnumerateDomainType;
 import org.openbravo.base.util.Check;
+import org.openbravo.client.application.window.OBTreeReferenceComponent;
 import org.openbravo.client.kernel.BaseTemplateComponent;
 import org.openbravo.client.kernel.Component;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.Template;
 import org.openbravo.client.kernel.reference.FKComboUIDefinition;
+import org.openbravo.client.kernel.reference.FKTreeUIDefinition;
 import org.openbravo.client.kernel.reference.NumberUIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
@@ -60,6 +62,7 @@ import org.openbravo.dal.service.OBDao;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.Sqlc;
 import org.openbravo.model.ad.datamodel.Column;
+import org.openbravo.model.ad.domain.ReferencedTree;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
@@ -812,9 +815,44 @@ public class SelectorComponent extends BaseTemplateComponent {
           return ", canFilter:true, required: false, filterEditorType: 'OBSelectorFilterSelectItem', filterEditorProperties: {entity: '"
               + getEntityName() + "'}";
         }
+        if (getUIDefinition() instanceof FKTreeUIDefinition && isSelectorItem) {
+          org.openbravo.model.ad.domain.Reference reference = selectorField.getColumn()
+              .getReferenceSearchKey();
+          OBTreeReferenceComponent treeReferenceComponent = new OBTreeReferenceComponent();
+          // The component is used to obtain the Id of the Datasource
+          ReferencedTree referencedTree = new ReferencedTree();
+          referencedTree = FKTreeUIDefinition.getReferencedTreeFromReference(reference);
+          treeReferenceComponent.setReferencedTree(referencedTree);
+          return ", treeGridFields:" + getTreeGridFieldsDefinition() + ", treeReferenceId: '"
+              + referencedTree.getId() + "', dataSourceId: '"
+              + treeReferenceComponent.getDataSourceId() + "'";
+        }
         return getUIDefinition().getFilterEditorProperties(null);
       }
       return ", filterEditorType: 'OBTextItem'";
+    }
+
+    private String getTreeGridFieldsDefinition() {
+      StringBuilder treeGridFieldDefinition = new StringBuilder();
+      treeGridFieldDefinition.append("[");
+      org.openbravo.model.ad.domain.Reference reference = selectorField.getColumn()
+          .getReferenceSearchKey();
+      ReferencedTree referencedTree = FKTreeUIDefinition.getReferencedTreeFromReference(reference);
+      // The component is used to obtain the definition of the tree grid fields
+      OBTreeReferenceComponent treeReferenceComponent = new OBTreeReferenceComponent();
+      treeReferenceComponent.setReferencedTree(referencedTree);
+      List<OBTreeReferenceComponent.LocalTreeField> localTreeFieldList = treeReferenceComponent
+          .getTreeGridFields();
+      for (int i = 0; i < localTreeFieldList.size(); i++) {
+        treeGridFieldDefinition.append("{ title: '" + localTreeFieldList.get(i).getTitle() + "', ");
+        treeGridFieldDefinition.append("name: '" + localTreeFieldList.get(i).getName() + "', ");
+        treeGridFieldDefinition.append("type: '" + localTreeFieldList.get(i).getType() + "' }");
+        if (i < localTreeFieldList.size() - 1) {
+          treeGridFieldDefinition.append(", ");
+        }
+      }
+      treeGridFieldDefinition.append("]");
+      return treeGridFieldDefinition.toString();
     }
 
     public List<LocalSelectorFieldProperty> getProperties() {
