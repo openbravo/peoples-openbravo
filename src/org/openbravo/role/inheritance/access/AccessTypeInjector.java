@@ -76,11 +76,8 @@ public abstract class AccessTypeInjector implements Comparable<AccessTypeInjecto
    * @return a negative integer, zero, or a positive integer as this object priority is less than,
    *         equal to, or greater than the priority of the specified AccessTypeInjector object.
    */
-  public int compareTo(AccessTypeInjector accessType) throws ClassCastException {
-    if (!(accessType instanceof AccessTypeInjector))
-      throw new ClassCastException("An AccessTypeInjector object was expected");
-    int accessTypePriority = ((AccessTypeInjector) accessType).getPriority();
-    return this.getPriority() - accessTypePriority;
+  public int compareTo(AccessTypeInjector accessType) {
+    return this.getPriority() - accessType.getPriority();
   }
 
   /**
