@@ -11,30 +11,18 @@
 
 (function () {
 
-  var CharacteristicValue = OB.Data.ExtensibleModel.extend({
-    modelName: 'CharacteristicValue',
-    tableName: 'm_ch_value',
-    entityName: 'CharacteristicValue',
+  var Characteristic = OB.Data.ExtensibleModel.extend({
+    modelName: 'Characteristic',
+    tableName: 'm_characteristic',
+    entityName: 'Characteristic',
     remote: 'OBPOS_remote.product',
-    source: 'org.openbravo.retail.posterminal.master.CharacteristicValue'
+    source: 'org.openbravo.retail.posterminal.master.Characteristic'
   });
 
-  CharacteristicValue.addProperties([{
+  Characteristic.addProperties([{
     name: 'id',
     column: 'id',
     primaryKey: true,
-    type: 'TEXT'
-  }, {
-    name: 'name',
-    column: 'name',
-    type: 'TEXT'
-  }, {
-    name: 'characteristic_id',
-    column: 'characteristic_id',
-    type: 'TEXT'
-  },  {
-    name: 'parent',
-    column: 'parent',
     type: 'TEXT'
   }, {
     name: '_identifier',
@@ -42,5 +30,5 @@
     type: 'TEXT'
   }]);
 
-  OB.Data.Registry.registerModel(CharacteristicValue);
+  OB.Data.Registry.registerModel(Characteristic);
 }());

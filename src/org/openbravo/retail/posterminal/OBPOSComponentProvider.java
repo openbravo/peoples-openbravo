@@ -105,6 +105,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "model/salesrepresentative",
         "model/productcharacteristicvalue",
         "model/characteristicvalue",
+        "model/characteristic",
         "model/brand",
         "model/returnreasons",
         "model/executor",

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013 Openbravo S.L.U.
+ * Copyright (C) 2013-2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -9,7 +9,9 @@
 package org.openbravo.retail.posterminal.master;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -39,6 +41,18 @@ public class Brand extends ProcessHQLQuery {
   private Instance<ModelExtension> extensions;
 
   @Override
+  protected List<HQLPropertyList> getHqlProperties() {
+    // Get Product Properties
+    List<HQLPropertyList> propertiesList = new ArrayList<HQLPropertyList>();
+    Map<String, Object> args = new HashMap<String, Object>();
+    HQLPropertyList brandHQLProperties = ModelExtensionUtils
+        .getPropertyExtensions(extensions, args);
+    propertiesList.add(brandHQLProperties);
+
+    return propertiesList;
+  }
+
+  @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
     String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
     final OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
@@ -47,7 +61,6 @@ public class Brand extends ProcessHQLQuery {
     HQLPropertyList regularBrandsHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions);
 
-    // TODO: Sandra replace the hgvol with brand reading from separate table
     boolean isRemote = false;
     try {
       OBContext.setAdminMode(false);
@@ -61,11 +74,12 @@ public class Brand extends ProcessHQLQuery {
     }
 
     if (isRemote) {
-      hqlQueries.add("select"
-          + regularBrandsHQLProperties.getHqlSelect() //
-          + "from Brand brand " //
-          + "where $naturalOrgCriteria and $incrementalUpdateCriteria and brand.active = true "
-          + "order by brand.name");
+      hqlQueries
+          .add("select"
+              + regularBrandsHQLProperties.getHqlSelect() //
+              + "from Brand brand " //
+              + "where  $filtersCriteria AND $hqlCriteria and  $naturalOrgCriteria and $incrementalUpdateCriteria and brand.active = true "
+              + "order by brand.name");
     } else {
       hqlQueries.add("select"
           + regularBrandsHQLProperties.getHqlSelect() //

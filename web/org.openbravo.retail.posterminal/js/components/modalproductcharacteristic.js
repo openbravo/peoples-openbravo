@@ -115,50 +115,120 @@ enyo.kind({
     var me = this,
         i, j, whereClause = '',
         params = [];
+    if (!OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
+      var products = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.products;
+      var sql, productsIdsList;
 
-    params.push(this.parent.parent.characteristic.get('characteristic'));
-
-    var products = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.products;
-    var sql;
-    if (products.collection.length > 0) {
-      // There is a product in search
-      // Get all the products id
-      var productsIdsList = "('";
-      for (i = 0; i < products.collection.length; i++) {
-        productsIdsList += products.collection.models[i].id + "'";
-        if (i < products.collection.length - 1) {
-          productsIdsList += ",'";
-        }
-      }
-      productsIdsList += ")";
-      sql = "select distinct(id), name, characteristic_id, parent from m_ch_value chv left join m_product_ch_value pchv on id=m_ch_value_id where parent = '" + this.parentValue + "' and characteristic_id = ? and m_product_id in " + productsIdsList + " " + whereClause + ' order by UPPER(name) asc';
-    } else {
-      // There is no product in search
-      sql = "select distinct(id), name, characteristic_id, parent from m_ch_value where parent = '" + this.parentValue + "' and characteristic_id = ?" + whereClause + ' order by UPPER(name) asc';
-    }
-    OB.Dal.query(OB.Model.CharacteristicValue, sql, params, function (dataValues, me) {
-      if (dataValues && dataValues.length > 0) {
-        for (i = 0; i < dataValues.length; i++) {
-          for (j = 0; j < me.parent.parent.model.get('filter').length; j++) {
-            if (dataValues.models[i].get('id') === me.parent.parent.model.get('filter')[j].id) {
-              dataValues.models[i].set('checked', true);
-              dataValues.models[i].set('selected', me.parent.parent.model.get('filter')[j].selected);
-              break;
-            } else {
-              dataValues.models[i].set('checked', false);
-            }
-            dataValues.models[i].set('childrenSelected', null);
-            me.hasSelectedChildrenTree([dataValues.models[i]], dataValues.models[i]);
+      if (products.collection.length > 0) {
+        // There is a product in search
+        // Get all the products id
+        productsIdsList = "('";
+        for (i = 0; i < products.collection.length; i++) {
+          productsIdsList += products.collection.models[i].id + "'";
+          if (i < products.collection.length - 1) {
+            productsIdsList += ",'";
           }
         }
-        me.parent.parent.$.body.$.listValues.valuesList.reset(dataValues.models);
-      } else {
-        me.parent.parent.$.body.$.listValues.valuesList.reset();
+        productsIdsList += ")";
       }
-    }, function (tx, error) {
-      OB.UTIL.showError("OBDAL error: " + error);
-    }, this);
-    return true;
+
+      if (products.collection.length > 0) {
+        sql = "select distinct(id), name, characteristic_id, parent from m_ch_value chv left join m_product_ch_value pchv on id=m_ch_value_id where parent = '" + this.parentValue + "' and characteristic_id = ? and m_product_id in " + productsIdsList + " " + whereClause + ' order by UPPER(name) asc';
+      } else {
+        // There is no product in search
+        sql = "select distinct(id), name, characteristic_id, parent from m_ch_value where parent = '" + this.parentValue + "' and characteristic_id = ?" + whereClause + ' order by UPPER(name) asc';
+      }
+      params.push(this.parent.parent.characteristic.get('characteristic'));
+      OB.Dal.query(OB.Model.CharacteristicValue, sql, params, function (dataValues, me) {
+        if (dataValues && dataValues.length > 0) {
+          for (i = 0; i < dataValues.length; i++) {
+            for (j = 0; j < me.parent.parent.model.get('filter').length; j++) {
+              if (dataValues.models[i].get('id') === me.parent.parent.model.get('filter')[j].id) {
+                dataValues.models[i].set('checked', true);
+                dataValues.models[i].set('selected', me.parent.parent.model.get('filter')[j].selected);
+                break;
+              } else {
+                dataValues.models[i].set('checked', false);
+              }
+              dataValues.models[i].set('childrenSelected', null);
+              me.hasSelectedChildrenTree([dataValues.models[i]], dataValues.models[i]);
+            }
+          }
+          me.parent.parent.$.body.$.listValues.valuesList.reset(dataValues.models);
+        } else {
+          me.parent.parent.$.body.$.listValues.valuesList.reset();
+        }
+      }, function (tx, error) {
+        OB.UTIL.showError("OBDAL error: " + error);
+      }, this);
+      return true;
+
+    } else {
+      var productFilterText = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.$.productFilterText.getValue();
+      var productcategory = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.$.productcategory.getValue();
+      var productCharacteristicModel = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.parent.model;
+
+      var remoteCriteria = [],
+          brandparams = [];
+      var productFilter = {},
+          criteria = {},
+          brandfilter = {},
+          characteristicfilter = {
+          columns: ['characteristic_id'],
+          operator: 'equals',
+          value: this.parent.parent.characteristic.get('id'),
+          isId: true
+          };
+      if (productCharacteristicModel.get('brandFilter').length > 0) {
+        for (i = 0; i < productCharacteristicModel.get('brandFilter').length; i++) {
+          if (productCharacteristicModel.get('brandFilter')[i]) {
+            brandparams.push("'" + productCharacteristicModel.get('brandFilter')[i].id + "'");
+          }
+        }
+      }
+
+      if (productFilterText !== "" || productcategory !== "__all__") {
+        productFilter.columns = [];
+        productFilter.operator = OB.Dal.FILTER;
+        productFilter.value = 'ProductCH_Filter';
+        productFilter.params = [productFilterText, productcategory];
+        remoteCriteria.push(productFilter);
+      }
+      if (brandparams.length > 0) {
+        brandfilter.columns = [];
+        brandfilter.operator = OB.Dal.FILTER;
+        brandfilter.value = 'BChV_Filter';
+        brandfilter.params = [brandparams.toString()];
+        remoteCriteria.push(brandfilter);
+      }
+      remoteCriteria.push(characteristicfilter);
+      criteria.remoteFilters = remoteCriteria;
+      OB.Dal.find(OB.Model.CharacteristicValue, criteria, function (dataValues) {
+        if (dataValues && dataValues.length > 0) {
+          for (i = 0; i < dataValues.length; i++) {
+            for (j = 0; j < me.parent.parent.model.get('filter').length; j++) {
+              if (dataValues.models[i].get('id') === me.parent.parent.model.get('filter')[j].id) {
+                dataValues.models[i].set('checked', true);
+                dataValues.models[i].set('selected', me.parent.parent.model.get('filter')[j].selected);
+                break;
+              } else {
+                dataValues.models[i].set('checked', false);
+              }
+              dataValues.models[i].set('childrenSelected', null);
+              me.hasSelectedChildrenTree([dataValues.models[i]], dataValues.models[i]);
+            }
+          }
+          me.parent.parent.$.body.$.listValues.valuesList.reset(dataValues.models);
+        } else {
+          me.parent.parent.$.body.$.listValues.valuesList.reset();
+        }
+      }, function (tx, error) {
+        OB.UTIL.showError("OBDAL error: " + error);
+      }, this);
+      return true;
+
+    }
+
   },
   parentValue: 0,
   setCollection: function (inSender, inEvent) {
@@ -507,3 +577,4 @@ enyo.kind({
     });
   }
 });
+

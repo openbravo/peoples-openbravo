@@ -17,23 +17,25 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
 import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
-/*
- * This class fills the m_ch_value table in WebSQL even if it is called productChValue.
- */
-public class CharacteristicValue extends ProcessHQLQuery {
-  public static final String characteristicValuePropertyExtension = "OBPOS_CharacteristicValueExtension";
+public class Characteristic extends ProcessHQLQuery {
+  public static final String characteristicPropertyExtension = "OBPOS_CharacteristicExtension";
+  public static final Logger log = Logger.getLogger(Characteristic.class);
 
   @Inject
   @Any
-  @Qualifier(characteristicValuePropertyExtension)
+  @Qualifier(characteristicPropertyExtension)
   private Instance<ModelExtension> extensions;
 
   @Override
@@ -55,13 +57,33 @@ public class CharacteristicValue extends ProcessHQLQuery {
     HQLPropertyList regularProductsChValueHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions);
 
+    boolean isRemote = false;
+    try {
+      OBContext.setAdminMode(false);
+      isRemote = "Y".equals(Preferences.getPreferenceValue("OBPOS_remote.product", true, OBContext
+          .getOBContext().getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(),
+          OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null));
+    } catch (PropertyException e) {
+      log.error("Error getting preference OBPOS_remote.product " + e.getMessage(), e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+
+    String isFilterOnWebPos = "";
+    if (isRemote) {
+      // only need to filter if remote as in the case it is stored in the client
+      // the filtering is done on the client
+      isFilterOnWebPos = " ch.obposFilteronwebpos=true AND ";
+    }
+
     hqlQueries
         .add("select"
             + regularProductsChValueHQLProperties.getHqlSelect()
-            + "from CharacteristicValue cv, ADTreeNode node "
-            + "where cv.characteristic.tree =  node.tree and cv.id = node.node and  $filtersCriteria AND $hqlCriteria "
-            + "and cv.$naturalOrgCriteria and cv.$readableSimpleClientCriteria and (cv.$incrementalUpdateCriteria) "
-            + "order by cv.name");
+            + "from Characteristic ch "
+            + "where  $filtersCriteria AND $hqlCriteria and "
+            + isFilterOnWebPos
+            + " ch.$naturalOrgCriteria and ch.$readableSimpleClientCriteria and (ch.$incrementalUpdateCriteria) "
+            + "order by ch.name");
 
     return hqlQueries;
   }

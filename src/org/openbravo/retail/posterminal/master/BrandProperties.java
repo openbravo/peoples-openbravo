@@ -35,7 +35,7 @@ public class BrandProperties extends ModelExtension {
       list = new ArrayList<HQLProperty>() {
         private static final long serialVersionUID = 1L;
         {
-          add(new HQLProperty("brand", "id"));
+          add(new HQLProperty("brand.id", "id"));
           add(new HQLProperty("brand.name", "name"));
           add(new HQLProperty("brand.name", "_identifier"));
         }
