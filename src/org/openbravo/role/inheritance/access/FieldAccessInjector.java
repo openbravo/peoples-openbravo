@@ -17,7 +17,13 @@
  */
 package org.openbravo.role.inheritance.access;
 
+import org.openbravo.base.structure.InheritedAccessEnabled;
+import org.openbravo.dal.core.DalUtil;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.access.FieldAccess;
+import org.openbravo.model.ad.access.Role;
+import org.openbravo.model.ad.access.TabAccess;
+import org.openbravo.model.ad.access.WindowAccess;
 
 /**
  * AccessTypeInjector for the FieldAccess class
@@ -38,5 +44,61 @@ public class FieldAccessInjector extends AccessTypeInjector {
   @Override
   public String getSecuredElementName() {
     return FieldAccess.PROPERTY_FIELD;
+  }
+
+  @Override
+  public Role getRole(InheritedAccessEnabled access) {
+    // FieldAccess does not have role property as parent
+    FieldAccess fieldAccess = (FieldAccess) access;
+    if (fieldAccess.getTabAccess() == null || fieldAccess.getTabAccess().getWindowAccess() == null) {
+      return null;
+    }
+    return fieldAccess.getTabAccess().getWindowAccess().getRole();
+  }
+
+  @Override
+  public String getRoleProperty() {
+    // FieldAccess does not have role property as parent
+    return "tabAccess.windowAccess.role.id";
+  }
+
+  @Override
+  public void setParent(InheritedAccessEnabled newAccess, InheritedAccessEnabled parentAccess,
+      Role role) {
+    // FieldAccess does not have role property as parent
+    setParentTab((FieldAccess) newAccess, (FieldAccess) parentAccess, role);
+  }
+
+  /**
+   * Sets the parent tab for a FieldAccess.
+   * 
+   * @param newFieldAccess
+   *          FieldAccess whose parent tab will be set
+   * @param parentFieldAccess
+   *          FieldAccess used to retrieve the parent tab
+   * @param role
+   *          Parent role
+   */
+  private void setParentTab(FieldAccess newFieldAccess, FieldAccess parentFieldAccess, Role role) {
+    String parentTabId = (String) DalUtil.getId(parentFieldAccess.getTabAccess().getTab());
+    for (WindowAccess wa : role.getADWindowAccessList()) {
+      for (TabAccess ta : wa.getADTabAccessList()) {
+        String currentTabId = (String) DalUtil.getId(ta.getTab());
+        if (currentTabId.equals(parentTabId)) {
+          newFieldAccess.setTabAccess(ta);
+          break;
+        }
+      }
+    }
+  }
+
+  @Override
+  public void removeReferenceInParentList(InheritedAccessEnabled access) {
+    FieldAccess fa = (FieldAccess) access;
+    boolean accessExists = OBDal.getInstance().exists(TabAccess.ENTITY_NAME,
+        (String) DalUtil.getId(fa.getTabAccess()));
+    if (accessExists) {
+      fa.getTabAccess().getADFieldAccessList().remove(fa);
+    }
   }
 }

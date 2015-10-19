@@ -17,6 +17,18 @@
  */
 package org.openbravo.role.inheritance.access;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.base.structure.InheritedAccessEnabled;
+import org.openbravo.dal.core.DalUtil;
+import org.openbravo.dal.service.OBQuery;
+import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.domain.Preference;
 
 /**
@@ -24,6 +36,10 @@ import org.openbravo.model.ad.domain.Preference;
  */
 @AccessTypeInjector.Qualifier(Preference.class)
 public class PreferenceAccessInjector extends AccessTypeInjector {
+
+  private static final Set<String> propertyBlackList = new HashSet<String>(Arrays.asList(
+      "OBUIAPP_RecentDocumentsList", "OBUIAPP_RecentViewList", "OBUIAPP_GridConfiguration",
+      "OBUIAPP_DefaultSavedView", "UINAVBA_RecentLaunchList"));
 
   @Override
   public String getSecuredElementGetter() {
@@ -35,5 +51,115 @@ public class PreferenceAccessInjector extends AccessTypeInjector {
     // This method is not explicitly use, as preferences are handled in a special way
     // See RoleInheritanceManager.findPreference()
     return Preference.PROPERTY_PROPERTY + "-" + Preference.PROPERTY_ATTRIBUTE;
+  }
+
+  @Override
+  public boolean isInheritable(InheritedAccessEnabled access) {
+    // An inheritable preference should define a role on its visibility settings and it must
+    // not be present in the black list.
+    Preference preference = (Preference) access;
+    if (preference.getVisibleAtRole() != null) {
+      return true;
+    }
+    if (preference.isPropertyList()) {
+      return !propertyBlackList.contains(preference.getProperty());
+    } else {
+      return true;
+    }
+  }
+
+  @Override
+  public Role getRole(InheritedAccessEnabled access) {
+    // Preference does not have role property as parent
+    Preference preference = (Preference) access;
+    return preference.getVisibleAtRole();
+  }
+
+  @Override
+  public String getRoleProperty() {
+    // Preference does not have role property as parent
+    return "visibleAtRole.id";
+  }
+
+  @Override
+  public void setParent(InheritedAccessEnabled newAccess, InheritedAccessEnabled parentAccess,
+      Role role) {
+    // Preference does not have role property as parent
+    ((Preference) (newAccess)).setVisibleAtRole(role);
+  }
+
+  @Override
+  public void addEntityWhereClause(StringBuilder whereClause) {
+    // Inheritable preferences are those that are not in the black list and also has a value in
+    // the Visible At Role field
+    whereClause.append(" and p.visibleAtRole is not null");
+    whereClause.append(" and p.property not in (:blackList)");
+  }
+
+  @Override
+  public <T extends BaseOBObject> void doEntityParameterReplacement(OBQuery<T> query) {
+    query.setNamedParameter("blackList", propertyBlackList);
+  }
+
+  @Override
+  public String getSecuredElementIdentifier(InheritedAccessEnabled access) {
+    Preference preference = (Preference) access;
+    String identifier = preference.isPropertyList() ? preference.getProperty() : preference
+        .getAttribute();
+    String isPropertyList = preference.isPropertyList() ? "Y" : "N";
+    String visibleAtClient = preference.getVisibleAtClient() != null ? (String) DalUtil
+        .getId(preference.getVisibleAtClient()) : " ";
+    String visibleAtOrg = preference.getVisibleAtOrganization() != null ? (String) DalUtil
+        .getId(preference.getVisibleAtOrganization()) : " ";
+    String visibleAtUser = preference.getUserContact() != null ? (String) DalUtil.getId(preference
+        .getUserContact()) : " ";
+    String visibleAtWindow = preference.getWindow() != null ? (String) DalUtil.getId(preference
+        .getWindow()) : " ";
+    return identifier + "_" + isPropertyList + "_" + visibleAtClient + "_" + visibleAtOrg + "_"
+        + visibleAtUser + "_" + visibleAtWindow;
+  }
+
+  @Override
+  public InheritedAccessEnabled findAccess(InheritedAccessEnabled access, String roleId) {
+    Preference preference = (Preference) access;
+    String property = preference.isPropertyList() ? preference.getProperty() : preference
+        .getAttribute();
+    if (propertyBlackList.contains(property)) {
+      return null;
+    }
+    String clientId = preference.getVisibleAtClient() != null ? (String) DalUtil.getId(preference
+        .getVisibleAtClient()) : null;
+    String orgId = preference.getVisibleAtOrganization() != null ? (String) DalUtil
+        .getId(preference.getVisibleAtOrganization()) : null;
+    String userId = preference.getUserContact() != null ? (String) DalUtil.getId(preference
+        .getUserContact()) : null;
+    String windowId = preference.getWindow() != null ? (String) DalUtil.getId(preference
+        .getWindow()) : null;
+    List<Preference> prefList = Preferences.getPreferences(property, preference.isPropertyList(),
+        clientId, orgId, userId, roleId, windowId);
+    if (prefList.size() == 0) {
+      return null;
+    }
+    for (Preference pref : prefList) {
+      if (pref.getInheritedFrom() != null) {
+        return pref;
+      }
+    }
+    return prefList.get(0);
+  }
+
+  @Override
+  public List<String> getSkippedProperties() {
+    List<String> skippedProperties = super.getSkippedProperties();
+    skippedProperties.add("visibleAtRole");
+    return skippedProperties;
+  }
+
+  @Override
+  public void checkAccessExistence(InheritedAccessEnabled access) {
+    Preference preference = (Preference) access;
+    if (Preferences.existsPreference(preference)) {
+      Utility.throwErrorMessage("DuplicatedPreferenceForTemplate");
+    }
   }
 }

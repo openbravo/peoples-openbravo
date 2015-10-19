@@ -17,6 +17,11 @@
  */
 package org.openbravo.role.inheritance.access;
 
+import org.openbravo.base.structure.InheritedAccessEnabled;
+import org.openbravo.dal.core.DalUtil;
+import org.openbravo.model.ad.access.FieldAccess;
+import org.openbravo.model.ad.access.Role;
+import org.openbravo.model.ad.access.TabAccess;
 import org.openbravo.model.ad.access.WindowAccess;
 
 /**
@@ -38,5 +43,28 @@ public class WindowAccessInjector extends AccessTypeInjector {
   @Override
   public String getSecuredElementName() {
     return WindowAccess.PROPERTY_WINDOW;
+  }
+
+  @Override
+  public void setParent(InheritedAccessEnabled newAccess, InheritedAccessEnabled parentAccess,
+      Role role) {
+    super.setParent(newAccess, parentAccess, role);
+    // We need to have the new window access in memory for the case where we are
+    // adding tab accesses also (when adding a new inheritance)
+    role.getADWindowAccessList().add((WindowAccess) newAccess);
+  }
+
+  @Override
+  public void clearInheritFromFieldInChilds(InheritedAccessEnabled access) {
+    if (access.getInheritedFrom() != null) {
+      String inheritedFromId = (String) DalUtil.getId(access.getInheritedFrom());
+      WindowAccess wa = (WindowAccess) access;
+      for (TabAccess ta : wa.getADTabAccessList()) {
+        clearInheritedFromField(ta, inheritedFromId);
+        for (FieldAccess fa : ta.getADFieldAccessList()) {
+          clearInheritedFromField(fa, inheritedFromId);
+        }
+      }
+    }
   }
 }

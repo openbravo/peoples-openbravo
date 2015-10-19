@@ -17,7 +17,13 @@
  */
 package org.openbravo.role.inheritance.access;
 
+import org.openbravo.base.structure.InheritedAccessEnabled;
+import org.openbravo.dal.core.DalUtil;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.access.FieldAccess;
+import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.TabAccess;
+import org.openbravo.model.ad.access.WindowAccess;
 
 /**
  * AccessTypeInjector for the TabAccess class
@@ -38,5 +44,75 @@ public class TabAccessInjector extends AccessTypeInjector {
   @Override
   public String getSecuredElementName() {
     return TabAccess.PROPERTY_TAB;
+  }
+
+  @Override
+  public Role getRole(InheritedAccessEnabled access) {
+    // TabAccess does not have role property as parent
+    TabAccess tabAccess = (TabAccess) access;
+    if (tabAccess.getWindowAccess() == null) {
+      return null;
+    }
+    return tabAccess.getWindowAccess().getRole();
+  }
+
+  @Override
+  public String getRoleProperty() {
+    // TabAccess does not have role property as parent
+    return "windowAccess.role.id";
+  }
+
+  @Override
+  public void setParent(InheritedAccessEnabled newAccess, InheritedAccessEnabled parentAccess,
+      Role role) {
+    // TabAccess does not have role property as parent
+    TabAccess newTabAccess = (TabAccess) newAccess;
+    TabAccess parentTabAccess = (TabAccess) parentAccess;
+    setParentWindow(newTabAccess, parentTabAccess, role);
+    // We need to have the new tab access in memory for the case where we are
+    // adding field accesses also (when adding a new inheritance)
+    newTabAccess.getWindowAccess().getADTabAccessList().add(newTabAccess);
+  }
+
+  /**
+   * Sets the parent window for a TabAccess.
+   * 
+   * @param newTabAccess
+   *          TabAccess whose parent window will be set
+   * @param parentTabAccess
+   *          TabAccess used to retrieve the parent window
+   * @param role
+   *          Parent role
+   */
+  private void setParentWindow(TabAccess newTabAccess, TabAccess parentTabAccess, Role role) {
+    String parentWindowId = (String) DalUtil.getId(parentTabAccess.getWindowAccess().getWindow());
+    for (WindowAccess wa : role.getADWindowAccessList()) {
+      String currentWindowId = (String) DalUtil.getId(wa.getWindow());
+      if (currentWindowId.equals(parentWindowId)) {
+        newTabAccess.setWindowAccess(wa);
+        break;
+      }
+    }
+  }
+
+  @Override
+  public void clearInheritFromFieldInChilds(InheritedAccessEnabled access) {
+    if (access.getInheritedFrom() != null) {
+      String inheritedFromId = (String) DalUtil.getId(access.getInheritedFrom());
+      TabAccess ta = (TabAccess) access;
+      for (FieldAccess fa : ta.getADFieldAccessList()) {
+        clearInheritedFromField(fa, inheritedFromId);
+      }
+    }
+  }
+
+  @Override
+  public void removeReferenceInParentList(InheritedAccessEnabled access) {
+    TabAccess ta = (TabAccess) access;
+    boolean accessExists = OBDal.getInstance().exists(WindowAccess.ENTITY_NAME,
+        (String) DalUtil.getId(ta.getWindowAccess()));
+    if (accessExists) {
+      ta.getWindowAccess().getADTabAccessList().remove(ta);
+    }
   }
 }

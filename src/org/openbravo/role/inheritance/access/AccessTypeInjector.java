@@ -21,12 +21,24 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.util.AnnotationLiteral;
 
+import org.apache.commons.lang.StringUtils;
+import org.openbravo.base.exception.OBException;
+import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.InheritedAccessEnabled;
+import org.openbravo.dal.core.DalUtil;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
+import org.openbravo.model.ad.access.Role;
 import org.openbravo.role.inheritance.RoleInheritanceManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An AccessTypeInjector is used by {@link RoleInheritanceManager} to retrieve the access types that
@@ -35,6 +47,8 @@ import org.openbravo.role.inheritance.RoleInheritanceManager;
 
 @ApplicationScoped
 public abstract class AccessTypeInjector implements Comparable<AccessTypeInjector> {
+
+  private static final Logger log = LoggerFactory.getLogger(AccessTypeInjector.class);
 
   /**
    * Returns the name of the inheritable class.
@@ -50,14 +64,14 @@ public abstract class AccessTypeInjector implements Comparable<AccessTypeInjecto
    * 
    * @return a String with the name of the method to retrieve the secured element
    */
-  public abstract String getSecuredElementGetter();
+  protected abstract String getSecuredElementGetter();
 
   /**
    * Returns the secured element name.
    * 
    * @return a String with the name of the secured element
    */
-  public abstract String getSecuredElementName();
+  protected abstract String getSecuredElementName();
 
   /**
    * Returns the priority of this injector. It is used to determine the order when adding, updating
@@ -78,6 +92,229 @@ public abstract class AccessTypeInjector implements Comparable<AccessTypeInjecto
    */
   public int compareTo(AccessTypeInjector accessType) {
     return this.getPriority() - accessType.getPriority();
+  }
+
+  /**
+   * Determines if a particular access can be inherited according to this injector
+   * 
+   * @param access
+   *          the permission to decide whether is inheritable or not
+   * 
+   * @return true if the access is inheritable, false otherwise
+   */
+  public boolean isInheritable(InheritedAccessEnabled access) {
+    return true;
+  }
+
+  /**
+   * Checks if a particular access already exists
+   * 
+   * @param access
+   *          the permission to decide whether exists or not
+   * 
+   */
+  public void checkAccessExistence(InheritedAccessEnabled access) {
+  }
+
+  /**
+   * Sets the parent for an inheritable access object.
+   * 
+   * @param newAccess
+   *          Access whose parent object will be set
+   * @param parentAccess
+   *          Access that is used in some cases to find the correct parent
+   * @param role
+   *          Parent role to set directly when applies
+   */
+  public void setParent(InheritedAccessEnabled newAccess, InheritedAccessEnabled parentAccess,
+      Role role) {
+    try {
+      Class<?> myClass = Class.forName(getClassName());
+      myClass.getMethod("setRole", new Class[] { Role.class }).invoke(newAccess,
+          new Object[] { role });
+    } catch (Exception ex) {
+      log.error("Error setting {} as parent role", role, ex);
+      throw new OBException("Error setting parent role");
+    }
+  }
+
+  /**
+   * Returns the role which the access given as parameter is assigned to. In general, the most part
+   * of inheritable accesses have Role as their parent entity. If not, this method must be
+   * overridden to retrieve the Role property for their particular case.
+   * 
+   * @param access
+   *          An inheritable access
+   * 
+   * @return the Role owner of the access
+   */
+  public Role getRole(InheritedAccessEnabled access) {
+    try {
+      Class<?> myClass = Class.forName(getClassName());
+      Role role = (Role) myClass.getMethod("getRole").invoke(access);
+      return role;
+    } catch (Exception ex) {
+      log.error("Error getting role for access with class {}", getClassName(), ex);
+      throw new OBException("Error getting role");
+    }
+  }
+
+  /**
+   * Returns the role property related to the entity represented by the injector.
+   * 
+   * @return the role property that can be retrieved according to the entity of the injector.
+   */
+  public String getRoleProperty() {
+    return "role.id";
+  }
+
+  /**
+   * Returns the id of the secured object for the given inheritable access.
+   * 
+   * @param access
+   *          An object of an inheritable class,i.e., a class that implements
+   *          InheritedAccessEnabled.
+   * @param injector
+   *          An AccessTypeInjector used to retrieve the access elements
+   * 
+   * @return A String with the id of the secured object
+   */
+  protected String getSecuredElementIdentifier(InheritedAccessEnabled access) {
+    try {
+      Class<?> myClass = Class.forName(getClassName());
+      BaseOBObject bob = (BaseOBObject) myClass.getMethod(getSecuredElementGetter()).invoke(access);
+      String securedElementIndentifier = (String) DalUtil.getId(bob);
+      return securedElementIndentifier;
+    } catch (Exception ex) {
+      log.error("Error getting secured element identifier with method {}",
+          getSecuredElementGetter(), ex);
+      throw new OBException("Error getting secured element identifier");
+    }
+  }
+
+  /**
+   * Returns the list of accesses of a particular type for the Role given as parameter.
+   * 
+   * @param role
+   *          The role whose list of accesses of a particular type will be retrieved
+   * 
+   * @return a list of accesses
+   */
+  @SuppressWarnings("unchecked")
+  public <T extends BaseOBObject> List<? extends InheritedAccessEnabled> getAccessList(Role role) {
+    String className = getClassName();
+    try {
+      String roleProperty = getRoleProperty();
+      Class<T> clazz = (Class<T>) Class.forName(className);
+      final StringBuilder whereClause = new StringBuilder();
+      whereClause.append(" as p ");
+      whereClause.append(" where p.").append(roleProperty).append(" = :roleId");
+      addEntityWhereClause(whereClause);
+      final OBQuery<T> query = OBDal.getInstance().createQuery(clazz, whereClause.toString());
+      query.setNamedParameter("roleId", (String) DalUtil.getId(role));
+      doEntityParameterReplacement(query);
+      query.setFilterOnActive(false);
+      return (List<? extends InheritedAccessEnabled>) query.list();
+    } catch (Exception ex) {
+      log.error("Error getting access list of class {}", className, ex);
+      throw new OBException("Error getting access list of class " + className);
+    }
+  }
+
+  /**
+   * @param access
+   *          The access with the secured element to be found
+   * @param roleId
+   *          Id of the role owner of the access to be found
+   * @return The searched access or null if not found
+   * 
+   * @throws ClassNotFoundException
+   */
+  @SuppressWarnings("unchecked")
+  public <T extends BaseOBObject> InheritedAccessEnabled findAccess(InheritedAccessEnabled access,
+      String roleId) throws ClassNotFoundException {
+    String roleProperty = getRoleProperty();
+    Class<T> clazz = (Class<T>) Class.forName(getClassName());
+    final StringBuilder whereClause = new StringBuilder();
+    whereClause.append(" as p");
+    whereClause.append(" where p.").append(roleProperty).append(" = :roleId");
+    whereClause.append(" and p.").append(getSecuredElementName()).append(".id = :elementId");
+    addEntityWhereClause(whereClause);
+    final OBQuery<T> query = OBDal.getInstance().createQuery(clazz, whereClause.toString());
+    query.setNamedParameter("roleId", roleId);
+    query.setNamedParameter("elementId", getSecuredElementIdentifier(access));
+    query.setFilterOnActive(false);
+    query.setMaxResult(1);
+    return (InheritedAccessEnabled) query.uniqueResult();
+  }
+
+  /**
+   * Includes in the where clause some filtering needed for same cases.
+   * 
+   * @param whereClause
+   *          The where clause where the particular filtering will be included
+   */
+  public void addEntityWhereClause(StringBuilder whereClause) {
+  }
+
+  /**
+   * Performs the needed parameter substitution according to the entity represented by the injector.
+   * 
+   * @param query
+   *          The query where to perform the parameter substitution
+   */
+  public <T extends BaseOBObject> void doEntityParameterReplacement(OBQuery<T> query) {
+  }
+
+  /**
+   * Retrieves the properties of the entity related to the injector that will not be copied when
+   * updating an access by propagation.
+   * 
+   * @return the list of the properties that will not be copied
+   */
+  public List<String> getSkippedProperties() {
+    List<String> skippedProperties = new ArrayList<String>(Arrays.asList("creationDate",
+        "createdBy"));
+    return skippedProperties;
+  }
+
+  /**
+   * Sets to null the Inherit From field to child elements when applies (for example, this is used
+   * for TabAccess and FieldAccess). This allows the cascade deletion of these elements when
+   * removing an inherited Window Access or Tab Access.
+   * 
+   * @param access
+   *          The access to be removed from the parent list
+   */
+  public void clearInheritFromFieldInChilds(InheritedAccessEnabled access) {
+  }
+
+  /**
+   * Removes references to child elements from the parent list. Using this method prevents the
+   * "deleted object would be re-saved by cascade" error. This can happen, for example, after
+   * deleting an inherited TabAccess or FieldAccess.
+   * 
+   * @param access
+   *          The access to be removed from the parent list
+   */
+  public void removeReferenceInParentList(InheritedAccessEnabled access) {
+  }
+
+  /**
+   * Sets to null the Inherited From field of an access whenever the value of the field is equal to
+   * the entered role id.
+   * 
+   * @param access
+   *          The access with the Inherit From field to be nullified
+   * @param roleId
+   *          The id of the role used to decide whether the field should be nullified or not
+   */
+  protected void clearInheritedFromField(InheritedAccessEnabled access, String roleId) {
+    String inheritedFromId = access.getInheritedFrom() != null ? (String) DalUtil.getId(access
+        .getInheritedFrom()) : "";
+    if (!StringUtils.isEmpty(inheritedFromId) && roleId.equals(inheritedFromId)) {
+      access.setInheritedFrom(null);
+    }
   }
 
   /**

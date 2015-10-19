@@ -19,7 +19,6 @@
 package org.openbravo.role.inheritance;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -40,16 +39,9 @@ import org.openbravo.base.structure.InheritedAccessEnabled;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
-import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.model.ad.access.FieldAccess;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.RoleInheritance;
-import org.openbravo.model.ad.access.TabAccess;
-import org.openbravo.model.ad.access.WindowAccess;
-import org.openbravo.model.ad.alert.AlertRecipient;
-import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.role.inheritance.access.AccessTypeInjector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,10 +53,6 @@ import org.slf4j.LoggerFactory;
 public class RoleInheritanceManager {
 
   private static final Logger log = LoggerFactory.getLogger(RoleInheritanceManager.class);
-  private static final Set<String> propertyBlackList = new HashSet<String>(Arrays.asList(
-      "OBUIAPP_RecentDocumentsList", "OBUIAPP_RecentViewList", "OBUIAPP_GridConfiguration",
-      "OBUIAPP_DefaultSavedView", "UINAVBA_RecentLaunchList"));
-
   private static final int ACCESS_NOT_CHANGED = 0;
   private static final int ACCESS_UPDATED = 1;
   private static final int ACCESS_CREATED = 2;
@@ -72,185 +60,6 @@ public class RoleInheritanceManager {
   @Inject
   @Any
   private Instance<AccessTypeInjector> accessTypeInjectors;
-
-  /**
-   * Retrieves the properties of the entity related to the entered class name that will not be
-   * copied.
-   * 
-   * @param className
-   *          the name of the class
-   */
-  private List<String> getSkippedProperties(String className) {
-    List<String> skippedProperties = new ArrayList<String>(Arrays.asList("creationDate",
-        "createdBy"));
-    if ("org.openbravo.model.ad.alert.AlertRecipient".equals(className)) {
-      skippedProperties.add("role");
-    } else if ("org.openbravo.model.ad.domain.Preference".equals(className)) {
-      skippedProperties.add("visibleAtRole");
-    }
-    return skippedProperties;
-  }
-
-  /**
-   * Returns the id of the secured object for the given inheritable access.
-   * 
-   * @param access
-   *          An object of an inheritable class,i.e., a class that implements
-   *          InheritedAccessEnabled.
-   * @param injector
-   *          An AccessTypeInjector used to retrieve the access elements
-   * 
-   * @return A String with the id of the secured object
-   */
-  String getSecuredElementIdentifier(InheritedAccessEnabled access, AccessTypeInjector injector) {
-    try {
-      Class<?> myClass = Class.forName(injector.getClassName());
-      if ("org.openbravo.model.ad.domain.Preference".equals(injector.getClassName())) {
-        // Preference requires a special identifier management, because it is possible to define the
-        // same preference with different visibility settings
-        Preference preference = (Preference) access;
-        return getPreferenceIdentifier(preference);
-      }
-      BaseOBObject bob = (BaseOBObject) myClass.getMethod(injector.getSecuredElementGetter())
-          .invoke(access);
-      String securedElementIndentifier = (String) DalUtil.getId(bob);
-      return securedElementIndentifier;
-    } catch (Exception ex) {
-      log.error("Error getting secured element identifier with method {}",
-          injector.getSecuredElementGetter(), ex);
-      throw new OBException("Error getting secured element identifier");
-    }
-  }
-
-  /**
-   * Generates the identifier of the preference.
-   * 
-   * @param preference
-   *          The preference whose identifier will be returned
-   * 
-   * @return A String which represents the identifier of the preference
-   */
-  private String getPreferenceIdentifier(Preference preference) {
-    String identifier = preference.isPropertyList() ? preference.getProperty() : preference
-        .getAttribute();
-    String isPropertyList = preference.isPropertyList() ? "Y" : "N";
-    String visibleAtClient = preference.getVisibleAtClient() != null ? (String) DalUtil
-        .getId(preference.getVisibleAtClient()) : " ";
-    String visibleAtOrg = preference.getVisibleAtOrganization() != null ? (String) DalUtil
-        .getId(preference.getVisibleAtOrganization()) : " ";
-    String visibleAtUser = preference.getUserContact() != null ? (String) DalUtil.getId(preference
-        .getUserContact()) : " ";
-    String visibleAtWindow = preference.getWindow() != null ? (String) DalUtil.getId(preference
-        .getWindow()) : " ";
-    return identifier + "_" + isPropertyList + "_" + visibleAtClient + "_" + visibleAtOrg + "_"
-        + visibleAtUser + "_" + visibleAtWindow;
-  }
-
-  /**
-   * Sets the parent for an inheritable access object.
-   * 
-   * @param newAccess
-   *          Access whose parent object will be set
-   * @param parentAccess
-   *          Access that is used in some cases to find the correct parent
-   * @param role
-   *          Parent role to set directly when applies
-   * @param className
-   *          the name of the class
-   */
-  private void setParent(InheritedAccessEnabled newAccess, InheritedAccessEnabled parentAccess,
-      Role role, String className) {
-    try {
-      // TabAccess, FieldAccess and Preference do not have role property as parent
-      if ("org.openbravo.model.ad.access.TabAccess".equals(className)) {
-        TabAccess newTabAccess = (TabAccess) newAccess;
-        TabAccess parentTabAccess = (TabAccess) parentAccess;
-        setParentWindow(newTabAccess, parentTabAccess, role);
-        // We need to have the new tab access in memory for the case where we are
-        // adding field accesses also (when adding a new inheritance)
-        newTabAccess.getWindowAccess().getADTabAccessList().add(newTabAccess);
-      } else if ("org.openbravo.model.ad.access.FieldAccess".equals(className)) {
-        setParentTab((FieldAccess) newAccess, (FieldAccess) parentAccess, role);
-      } else if ("org.openbravo.model.ad.domain.Preference".equals(className)) {
-        ((Preference) (newAccess)).setVisibleAtRole(role);
-      } else {
-        setParentRole(newAccess, role, className);
-        if ("org.openbravo.model.ad.access.WindowAccess".equals(className)) {
-          // We need to have the new window access in memory for the case where we are
-          // adding tab accesses also (when adding a new inheritance)
-          role.getADWindowAccessList().add((WindowAccess) newAccess);
-        }
-      }
-    } catch (Exception ex) {
-      log.error("Error setting parent for access of class {}", className, ex);
-      throw new OBException("Error setting parent");
-    }
-  }
-
-  /**
-   * Sets the parent role for an inheritable access object.
-   * 
-   * @param access
-   *          Access whose parent role will be set
-   * @param role
-   *          Parent role
-   * @param className
-   *          the name of the class
-   */
-  private void setParentRole(InheritedAccessEnabled access, Role role, String className) {
-    try {
-      Class<?> myClass = Class.forName(className);
-      myClass.getMethod("setRole", new Class[] { Role.class })
-          .invoke(access, new Object[] { role });
-    } catch (Exception ex) {
-      log.error("Error setting {} as parent role", role, ex);
-      throw new OBException("Error setting parent role");
-    }
-  }
-
-  /**
-   * Sets the parent window for a TabAccess.
-   * 
-   * @param newTabAccess
-   *          TabAccess whose parent window will be set
-   * @param parentTabAccess
-   *          TabAccess used to retrieve the parent window
-   * @param role
-   *          Parent role
-   */
-  private void setParentWindow(TabAccess newTabAccess, TabAccess parentTabAccess, Role role) {
-    String parentWindowId = (String) DalUtil.getId(parentTabAccess.getWindowAccess().getWindow());
-    for (WindowAccess wa : role.getADWindowAccessList()) {
-      String currentWindowId = (String) DalUtil.getId(wa.getWindow());
-      if (currentWindowId.equals(parentWindowId)) {
-        newTabAccess.setWindowAccess(wa);
-        break;
-      }
-    }
-  }
-
-  /**
-   * Sets the parent tab for a FieldAccess.
-   * 
-   * @param newFieldAccess
-   *          FieldAccess whose parent tab will be set
-   * @param parentFieldAccess
-   *          FieldAccess used to retrieve the parent tab
-   * @param role
-   *          Parent role
-   */
-  private void setParentTab(FieldAccess newFieldAccess, FieldAccess parentFieldAccess, Role role) {
-    String parentTabId = (String) DalUtil.getId(parentFieldAccess.getTabAccess().getTab());
-    for (WindowAccess wa : role.getADWindowAccessList()) {
-      for (TabAccess ta : wa.getADTabAccessList()) {
-        String currentTabId = (String) DalUtil.getId(ta.getTab());
-        if (currentTabId.equals(parentTabId)) {
-          newFieldAccess.setTabAccess(ta);
-          break;
-        }
-      }
-    }
-  }
 
   /**
    * Returns the role which the access given as parameter is assigned to.
@@ -263,128 +72,11 @@ public class RoleInheritanceManager {
    * @return the Role owner of the access
    */
   Role getRole(InheritedAccessEnabled access, String className) {
-    // TabAccess, FieldAccess and Preference do not have role property as parent
-    if ("org.openbravo.model.ad.access.TabAccess".equals(className)) {
-      TabAccess tabAccess = (TabAccess) access;
-      return tabAccess.getWindowAccess().getRole();
-    } else if ("org.openbravo.model.ad.access.FieldAccess".equals(className)) {
-      FieldAccess fieldAccess = (FieldAccess) access;
-      return fieldAccess.getTabAccess().getWindowAccess().getRole();
-    } else if ("org.openbravo.model.ad.domain.Preference".equals(className)) {
-      Preference preference = (Preference) access;
-      return preference.getVisibleAtRole();
-    } else {
-      return getParentRole(access, className);
+    AccessTypeInjector injector = getInjector(className);
+    if (injector == null) {
+      return null;
     }
-  }
-
-  /**
-   * Returns the role which the access given as parameter is assigned to. This method is used for
-   * those inheritable accesses which Role is their parent entity.
-   * 
-   * @param access
-   *          An inheritable access
-   * @param className
-   *          the name of the class
-   * 
-   * @return the parent Role of the access
-   */
-  private Role getParentRole(InheritedAccessEnabled access, String className) {
-    try {
-      Class<?> myClass = Class.forName(className);
-      Role role = (Role) myClass.getMethod("getRole").invoke(access);
-      return role;
-    } catch (Exception ex) {
-      log.error("Error getting role for access with class {}", className, ex);
-      throw new OBException("Error getting role");
-    }
-  }
-
-  /**
-   * Returns the list of accesses of a particular type for the Role given as parameter.
-   * 
-   * @param role
-   *          The role whose list of accesses of a particular type will be retrieved
-   * @param className
-   *          the name of the class
-   * 
-   * @return a list of accesses
-   */
-  @SuppressWarnings("unchecked")
-  private <T extends BaseOBObject> List<? extends InheritedAccessEnabled> getAccessList(Role role,
-      String className) {
-    try {
-      String roleProperty = getRoleProperty(className);
-      Class<T> clazz = (Class<T>) Class.forName(className);
-      final StringBuilder whereClause = new StringBuilder();
-      whereClause.append(" as p ");
-      whereClause.append(" where p.").append(roleProperty).append(" = :roleId");
-      addEntityWhereClause(whereClause, className);
-      final OBQuery<T> query = OBDal.getInstance().createQuery(clazz, whereClause.toString());
-      query.setNamedParameter("roleId", (String) DalUtil.getId(role));
-      doEntityParameterReplacement(query, className);
-      query.setFilterOnActive(false);
-      return (List<? extends InheritedAccessEnabled>) query.list();
-    } catch (Exception ex) {
-      log.error("Error getting access list of class {}", className, ex);
-      throw new OBException("Error getting access list of class " + className);
-    }
-  }
-
-  /**
-   * Returns the role property retrieved from the class name.
-   * 
-   * @param className
-   *          the name of the class
-   * 
-   * @return the role property that can be retrieved according to the input class name.
-   */
-  private String getRoleProperty(String className) {
-    // TabAccess, FieldAccess and Preference do not have role property as parent
-    if ("org.openbravo.model.ad.access.TabAccess".equals(className)) {
-      return "windowAccess.role.id";
-    } else if ("org.openbravo.model.ad.access.FieldAccess".equals(className)) {
-      return "tabAccess.windowAccess.role.id";
-    } else if ("org.openbravo.model.ad.domain.Preference".equals(className)) {
-      return "visibleAtRole.id";
-    } else {
-      return "role.id";
-    }
-  }
-
-  /**
-   * Includes in the where clause some filtering needed for same cases.
-   * 
-   * @param whereClause
-   *          The where clause where the particular filtering will be included
-   * @param className
-   *          The class name used to identify which filtering must be returned
-   */
-  private void addEntityWhereClause(StringBuilder whereClause, String className) {
-    if ("org.openbravo.model.ad.domain.Preference".equals(className)) {
-      // Inheritable preferences are those that are not in the black list and also has a value in
-      // the Visible At Role field
-      whereClause.append(" and p.visibleAtRole is not null");
-      whereClause.append(" and p.property not in (:blackList)");
-    } else if ("org.openbravo.model.ad.alert.AlertRecipient".equals(className)) {
-      // Inheritable alert recipients are those with empty User/Contact field
-      whereClause.append(" and p.userContact is null");
-    }
-  }
-
-  /**
-   * Performs the needed parameter substitution according to the input class name.
-   * 
-   * @param query
-   *          The query where to perform the parameter substitution
-   * @param className
-   *          The class name used to identify if the parameter substitution is needed
-   */
-  private <T extends BaseOBObject> void doEntityParameterReplacement(OBQuery<T> query,
-      String className) {
-    if ("org.openbravo.model.ad.domain.Preference".equals(className)) {
-      query.setNamedParameter("blackList", propertyBlackList);
-    }
+    return injector.getRole(access);
   }
 
   /**
@@ -402,90 +94,10 @@ public class RoleInheritanceManager {
       InheritedAccessEnabled access) {
     String roleId = (String) DalUtil.getId(role);
     try {
-      if ("org.openbravo.model.ad.domain.Preference".equals(injector.getClassName())) {
-        return findPreference(access, roleId);
-      } else {
-        return findAccess(injector, access, roleId);
-      }
+      return injector.findAccess(access, roleId);
     } catch (Exception ex) {
       log.error("Error getting access list of class {}", injector.getClassName(), ex);
       throw new OBException("Error getting access list of class " + injector.getClassName());
-    }
-  }
-
-  /**
-   * @param injector
-   *          AccessTypeInjector used to retrieve the particular access information
-   * @param access
-   *          The access with the secured element to be found
-   * @param roleId
-   *          Id of the role owner of the access to be found
-   * @return The searched access or null if not found
-   */
-  @SuppressWarnings("unchecked")
-  private <T extends BaseOBObject> InheritedAccessEnabled findAccess(AccessTypeInjector injector,
-      InheritedAccessEnabled access, String roleId) throws ClassNotFoundException {
-    String roleProperty = getRoleProperty(injector.getClassName());
-    Class<T> clazz = (Class<T>) Class.forName(injector.getClassName());
-    final StringBuilder whereClause = new StringBuilder();
-    whereClause.append(" as p");
-    whereClause.append(" where p.").append(roleProperty).append(" = :roleId");
-    whereClause.append(" and p.").append(injector.getSecuredElementName())
-        .append(".id = :elementId");
-    addWhereClause(whereClause, injector.getClassName());
-    final OBQuery<T> query = OBDal.getInstance().createQuery(clazz, whereClause.toString());
-    query.setNamedParameter("roleId", roleId);
-    query.setNamedParameter("elementId", getSecuredElementIdentifier(access, injector));
-    query.setFilterOnActive(false);
-    query.setMaxResult(1);
-    return (InheritedAccessEnabled) query.uniqueResult();
-  }
-
-  /**
-   * @param access
-   *          The access used to retrieve the preference information to find
-   * @param roleId
-   *          The id of the role owner of the preference to find
-   * @return The searched preference or null if not found
-   */
-  private InheritedAccessEnabled findPreference(InheritedAccessEnabled access, String roleId) {
-    Preference preference = (Preference) access;
-    String property = preference.isPropertyList() ? preference.getProperty() : preference
-        .getAttribute();
-    if (propertyBlackList.contains(property)) {
-      return null;
-    }
-    String clientId = preference.getVisibleAtClient() != null ? (String) DalUtil.getId(preference
-        .getVisibleAtClient()) : null;
-    String orgId = preference.getVisibleAtOrganization() != null ? (String) DalUtil
-        .getId(preference.getVisibleAtOrganization()) : null;
-    String userId = preference.getUserContact() != null ? (String) DalUtil.getId(preference
-        .getUserContact()) : null;
-    String windowId = preference.getWindow() != null ? (String) DalUtil.getId(preference
-        .getWindow()) : null;
-    List<Preference> prefList = Preferences.getPreferences(property, preference.isPropertyList(),
-        clientId, orgId, userId, roleId, windowId);
-    if (prefList.size() == 0) {
-      return null;
-    }
-    for (Preference pref : prefList) {
-      if (pref.getInheritedFrom() != null) {
-        return pref;
-      }
-    }
-    return prefList.get(0);
-  }
-
-  /**
-   * @param whereClause
-   *          The where clause where the particular filtering will be included
-   * @param className
-   *          The class name used in case any special filtering clause is needed
-   */
-  private void addWhereClause(StringBuilder whereClause, String className) {
-    if ("org.openbravo.model.ad.alert.AlertRecipient".equals(className)) {
-      // Inheritable alert recipients are those with empty User/Contact field
-      whereClause.append(" and p.userContact is null");
     }
   }
 
@@ -498,15 +110,23 @@ public class RoleInheritanceManager {
    * @param role
    *          The role used to set the parent of the new access
    * @param className
-   *          the name of the class
+   *          an AccessTypeInjector object used to retrieve and set the access information
    */
-  private void copyRoleAccess(InheritedAccessEnabled parentAccess, Role role, String className) {
+  private void copyRoleAccess(InheritedAccessEnabled parentAccess, Role role,
+      AccessTypeInjector injector) {
     // copy the new access
     final InheritedAccessEnabled newAccess = (InheritedAccessEnabled) DalUtil.copy(
         (BaseOBObject) parentAccess, false);
-    setParent(newAccess, parentAccess, role, className);
-    newAccess.setInheritedFrom(getRole(parentAccess, className));
+    injector.setParent(newAccess, parentAccess, role);
+    newAccess.setInheritedFrom(injector.getRole(parentAccess));
     OBDal.getInstance().save(newAccess);
+  }
+
+  void removeReferenceInParentList(InheritedAccessEnabled access, String className) {
+    AccessTypeInjector injector = getInjector(className);
+    if (injector != null) {
+      injector.removeReferenceInParentList(access);
+    }
   }
 
   /**
@@ -516,11 +136,11 @@ public class RoleInheritanceManager {
    *          The role which the accesses about to delete are inherited from
    * @param roleAccessList
    *          The list of accesses to remove from
-   * @param className
-   *          the name of the class
+   * @param injector
+   *          An AccessTypeInjector used to retrieve the access elements
    */
   private void deleteRoleAccess(Role inheritFromToDelete,
-      List<? extends InheritedAccessEnabled> roleAccessList, String className) {
+      List<? extends InheritedAccessEnabled> roleAccessList, AccessTypeInjector injector) {
     String inheritFromId = (String) DalUtil.getId(inheritFromToDelete);
     List<InheritedAccessEnabled> iaeToDelete = new ArrayList<InheritedAccessEnabled>();
     for (InheritedAccessEnabled ih : roleAccessList) {
@@ -533,88 +153,13 @@ public class RoleInheritanceManager {
     for (InheritedAccessEnabled iae : iaeToDelete) {
       iae.setInheritedFrom(null);
       roleAccessList.remove(iae);
-      Role owner = getRole(iae, className);
+      Role owner = injector.getRole(iae);
       if (!owner.isTemplate()) {
         // Perform this operation for not template roles, because for template roles is already done
         // in the event handler
-        removeReferenceInParentList(iae, className);
+        injector.removeReferenceInParentList(iae);
       }
       OBDal.getInstance().remove(iae);
-    }
-  }
-
-  /**
-   * Sets to null the Inherit From field to child elements (TabAccess and FieldAccess). This allows
-   * the cascade deletion of these elements when removing an inherited Window Access or Tab Access.
-   * 
-   * @param access
-   *          The access to be removed from the parent list
-   * @param className
-   *          the name of the class
-   */
-  void clearInheritFromFieldInChilds(InheritedAccessEnabled access, String className) {
-    if (access.getInheritedFrom() != null) {
-      String inheritedFromId = (String) DalUtil.getId(access.getInheritedFrom());
-      if ("org.openbravo.model.ad.access.WindowAccess".equals(className)) {
-        WindowAccess wa = (WindowAccess) access;
-        for (TabAccess ta : wa.getADTabAccessList()) {
-          clearInheritedFromField(ta, inheritedFromId);
-          for (FieldAccess fa : ta.getADFieldAccessList()) {
-            clearInheritedFromField(fa, inheritedFromId);
-          }
-        }
-      } else if ("org.openbravo.model.ad.access.TabAccess".equals(className)) {
-        TabAccess ta = (TabAccess) access;
-        for (FieldAccess fa : ta.getADFieldAccessList()) {
-          clearInheritedFromField(fa, inheritedFromId);
-        }
-      }
-    }
-  }
-
-  /**
-   * Sets to null the Inherited From field of an access whenever the value of the field is equal to
-   * the entered role id.
-   * 
-   * @param access
-   *          The access with the Inherit From field to be nullified
-   * @param roleId
-   *          The id of the role used to decide whether the field should be nullified or not
-   */
-  private void clearInheritedFromField(InheritedAccessEnabled access, String roleId) {
-    String inheritedFromId = access.getInheritedFrom() != null ? (String) DalUtil.getId(access
-        .getInheritedFrom()) : "";
-    if (!StringUtils.isEmpty(inheritedFromId) && roleId.equals(inheritedFromId)) {
-      access.setInheritedFrom(null);
-    }
-  }
-
-  /**
-   * Removes references to child elements (TabAccess and FieldAccess) from the parent list. Using
-   * this method prevents the "deleted object would be re-saved by cascade" error after deleting an
-   * inherited TabAccess or FieldAccess.
-   * 
-   * @param access
-   *          The access to be removed from the parent list
-   * @param className
-   *          the name of the class
-   */
-  void removeReferenceInParentList(InheritedAccessEnabled access, String className) {
-    boolean accessExists;
-    if ("org.openbravo.model.ad.access.TabAccess".equals(className)) {
-      TabAccess ta = (TabAccess) access;
-      accessExists = OBDal.getInstance().exists(WindowAccess.ENTITY_NAME,
-          (String) DalUtil.getId(ta.getWindowAccess()));
-      if (accessExists) {
-        ta.getWindowAccess().getADTabAccessList().remove(ta);
-      }
-    } else if ("org.openbravo.model.ad.access.FieldAccess".equals(className)) {
-      FieldAccess fa = (FieldAccess) access;
-      accessExists = OBDal.getInstance().exists(TabAccess.ENTITY_NAME,
-          (String) DalUtil.getId(fa.getTabAccess()));
-      if (accessExists) {
-        fa.getTabAccess().getADFieldAccessList().remove(fa);
-      }
     }
   }
 
@@ -626,15 +171,15 @@ public class RoleInheritanceManager {
    *          The access to be updated
    * @param inherited
    *          The access with the values to update
-   * @param className
-   *          the name of the class
+   * @param injector
+   *          an AccessTypeInjector used to retrieve the access information
    */
   private void updateRoleAccess(InheritedAccessEnabled access, InheritedAccessEnabled inherited,
-      String className) {
+      AccessTypeInjector injector) {
     final InheritedAccessEnabled updatedAccess = (InheritedAccessEnabled) DalUtil.copyToTarget(
-        (BaseOBObject) inherited, (BaseOBObject) access, false, getSkippedProperties(className));
+        (BaseOBObject) inherited, (BaseOBObject) access, false, injector.getSkippedProperties());
     // update the inherit from field, to indicate from which role we are inheriting now
-    updatedAccess.setInheritedFrom(getRole(inherited, className));
+    updatedAccess.setInheritedFrom(injector.getRole(inherited));
   }
 
   /**
@@ -748,8 +293,7 @@ public class RoleInheritanceManager {
 
   void deleteAllAccesses(Role role) {
     for (AccessTypeInjector accessType : getAccessTypeOrderByPriority(true)) {
-      List<? extends InheritedAccessEnabled> roleAccessList = getAccessList(role,
-          accessType.getClassName());
+      List<? extends InheritedAccessEnabled> roleAccessList = accessType.getAccessList(role);
       List<InheritedAccessEnabled> iaeToDelete = new ArrayList<InheritedAccessEnabled>();
       for (InheritedAccessEnabled iae : roleAccessList) {
         // Not inherited accesses should not be deleted
@@ -758,7 +302,7 @@ public class RoleInheritanceManager {
         }
       }
       for (InheritedAccessEnabled iae : iaeToDelete) {
-        clearInheritFromFieldInChilds(iae, accessType.getClassName());
+        accessType.clearInheritFromFieldInChilds(iae);
         iae.setInheritedFrom(null);
         roleAccessList.remove(iae);
         OBDal.getInstance().remove(iae);
@@ -826,23 +370,9 @@ public class RoleInheritanceManager {
     if (injector == null) {
       return;
     }
-    if ("org.openbravo.model.ad.domain.Preference".equals(injector.getClassName())) {
-      Preference preference = (Preference) access;
-      if (Preferences.existsPreference(preference)) {
-        Utility.throwErrorMessage("DuplicatedPreferenceForTemplate");
-      }
-      if (!isInheritablePreference(preference)) {
-        return;
-      }
-    }
-    if ("org.openbravo.model.ad.alert.AlertRecipient".equals(injector.getClassName())) {
-      AlertRecipient alertRecipient = (AlertRecipient) access;
-      if (existsAlertRecipient(alertRecipient)) {
-        Utility.throwErrorMessage("DuplicatedAlertRecipientForTemplate");
-      }
-      if (!isInheritableAlertRecipient(alertRecipient)) {
-        return;
-      }
+    injector.checkAccessExistence(access);
+    if (!injector.isInheritable(access)) {
+      return;
     }
     for (RoleInheritance ri : role.getADRoleInheritanceInheritFromList()) {
       if (ri.isActive()) {
@@ -871,19 +401,14 @@ public class RoleInheritanceManager {
     if (injector == null) {
       return;
     }
-    if ("org.openbravo.model.ad.domain.Preference".equals(injector.getClassName())
-        && !isInheritablePreference((Preference) access)) {
-      return;
-    }
-    if ("org.openbravo.model.ad.alert.AlertRecipient".equals(injector.getClassName())
-        && !isInheritableAlertRecipient((AlertRecipient) access)) {
+    if (!injector.isInheritable(access)) {
       return;
     }
     for (RoleInheritance ri : role.getADRoleInheritanceInheritFromList()) {
       if (ri.isActive()) {
         InheritedAccessEnabled childAccess = findInheritedAccess(ri.getRole(), access, injector);
         if (childAccess != null) {
-          updateRoleAccess(childAccess, access, injector.getClassName());
+          updateRoleAccess(childAccess, access, injector);
         }
       }
     }
@@ -907,12 +432,7 @@ public class RoleInheritanceManager {
     if (injector == null) {
       return;
     }
-    if ("org.openbravo.model.ad.domain.Preference".equals(injector.getClassName())
-        && !isInheritablePreference((Preference) access)) {
-      return;
-    }
-    if ("org.openbravo.model.ad.alert.AlertRecipient".equals(injector.getClassName())
-        && !isInheritableAlertRecipient((AlertRecipient) access)) {
+    if (!injector.isInheritable(access)) {
       return;
     }
     for (RoleInheritance ri : role.getADRoleInheritanceInheritFromList()) {
@@ -928,20 +448,20 @@ public class RoleInheritanceManager {
           for (Role inheritFrom : inheritFromList) {
             InheritedAccessEnabled inheritFromAccess = getAccess(inheritFrom, injector, iaeToDelete);
             if (inheritFromAccess != null) {
-              updateRoleAccess(iaeToDelete, inheritFromAccess, injector.getClassName());
+              updateRoleAccess(iaeToDelete, inheritFromAccess, injector);
               updated = true;
               break;
             }
           }
           if (!updated) {
             // Access not present in other inheritances, remove it
-            clearInheritFromFieldInChilds(iaeToDelete, injector.getClassName());
+            injector.clearInheritFromFieldInChilds(iaeToDelete);
             iaeToDelete.setInheritedFrom(null);
-            Role owner = getRole(iaeToDelete, injector.getClassName());
+            Role owner = injector.getRole(iaeToDelete);
             if (!owner.isTemplate()) {
               // Perform this operation for not template roles, because for template roles is
               // already done in the event handler
-              removeReferenceInParentList(iaeToDelete, injector.getClassName());
+              injector.removeReferenceInParentList(iaeToDelete);
             }
             OBDal.getInstance().remove(iaeToDelete);
           }
@@ -965,7 +485,7 @@ public class RoleInheritanceManager {
    */
   private InheritedAccessEnabled findInheritedAccess(Role role, InheritedAccessEnabled access,
       AccessTypeInjector injector) {
-    String accessRole = (String) DalUtil.getId(getRole(access, injector.getClassName()));
+    String accessRole = (String) DalUtil.getId(injector.getRole(access));
     InheritedAccessEnabled iae = getAccess(role, injector, access);
     if (iae != null) {
       String inheritFromRole = iae.getInheritedFrom() != null ? (String) DalUtil.getId(iae
@@ -975,66 +495,6 @@ public class RoleInheritanceManager {
       }
     }
     return null;
-  }
-
-  /**
-   * Utility method to determine if a preference is inheritable. An inheritable preference should
-   * only define the role on its visibility settings and it must not be present in the black list.
-   * 
-   * @param preference
-   *          The preference
-   * @return true if the Preference is inheritable, false otherwise
-   */
-  private boolean isInheritablePreference(Preference preference) {
-    if (preference.getVisibleAtRole() != null) {
-      return true;
-    }
-    if (preference.isPropertyList()) {
-      return !propertyBlackList.contains(preference.getProperty());
-    } else {
-      return true;
-    }
-  }
-
-  /**
-   * Utility method to determine if an alert recipient is inheritable. An inheritable alert
-   * recipient should have the User/Contact field empty.
-   * 
-   * @param alertRecipient
-   *          The alert recipient instance
-   * @return true if the AlertRecipient is inheritable, false otherwise
-   */
-  private boolean isInheritableAlertRecipient(AlertRecipient alertRecipient) {
-    if (alertRecipient.getUserContact() != null) {
-      return false;
-    } else {
-      return true;
-    }
-  }
-
-  /**
-   * Utility method to determine if already exists an alert recipient with the same settings (alert
-   * rule, role and user) as the alertRecipient passed as parameter
-   * 
-   * @param alertRecipient
-   *          The alert recipient with the settings to find
-   * @return true if already exists an alert recipient with the same settings as the entered alert
-   *         recipient, false otherwise
-   */
-  private boolean existsAlertRecipient(AlertRecipient alertRecipient) {
-    final OBCriteria<AlertRecipient> obCriteria = OBDal.getInstance().createCriteria(
-        AlertRecipient.class);
-    obCriteria
-        .add(Restrictions.eq(AlertRecipient.PROPERTY_ALERTRULE, alertRecipient.getAlertRule()));
-    obCriteria.add(Restrictions.eq(AlertRecipient.PROPERTY_ROLE, alertRecipient.getRole()));
-    if (alertRecipient.getUserContact() == null) {
-      obCriteria.add(Restrictions.isNull(AlertRecipient.PROPERTY_USERCONTACT));
-    } else {
-      obCriteria.add(Restrictions.eq(AlertRecipient.PROPERTY_USERCONTACT,
-          alertRecipient.getUserContact()));
-    }
-    obCriteria.setMaxResults(1);
-    return (obCriteria.list().size() > 0);
   }
 
   /**
@@ -1065,14 +525,9 @@ public class RoleInheritanceManager {
       AccessTypeInjector injector) {
     int[] counters = new int[] { 0, 0, 0 };
     for (RoleInheritance roleInheritance : inheritanceList) {
-      for (InheritedAccessEnabled inheritedAccess : getAccessList(roleInheritance.getInheritFrom(),
-          injector.getClassName())) {
-        if ("org.openbravo.model.ad.domain.Preference".equals(injector.getClassName())
-            && !isInheritablePreference((Preference) inheritedAccess)) {
-          continue;
-        }
-        if ("org.openbravo.model.ad.alert.AlertRecipient".equals(injector.getClassName())
-            && !isInheritableAlertRecipient((AlertRecipient) inheritedAccess)) {
+      for (InheritedAccessEnabled inheritedAccess : injector.getAccessList(roleInheritance
+          .getInheritFrom())) {
+        if (!injector.isInheritable(inheritedAccess)) {
           continue;
         }
         int res = handleAccess(roleInheritance, inheritedAccess, inheritanceInheritFromIdList,
@@ -1083,8 +538,7 @@ public class RoleInheritanceManager {
     if (roleInheritanceToDelete != null) {
       // delete accesses not inherited anymore
       deleteRoleAccess(roleInheritanceToDelete.getInheritFrom(),
-          getAccessList(roleInheritanceToDelete.getRole(), injector.getClassName()),
-          injector.getClassName());
+          injector.getAccessList(roleInheritanceToDelete.getRole()), injector);
     }
     CalculationResult result = new CalculationResult(counters[ACCESS_UPDATED],
         counters[ACCESS_CREATED]);
@@ -1115,13 +569,13 @@ public class RoleInheritanceManager {
           .getId(access.getInheritedFrom()) : "";
       if (!StringUtils.isEmpty(currentInheritedFromId)
           && isPrecedent(inheritanceInheritFromIdList, currentInheritedFromId, newInheritedFromId)) {
-        updateRoleAccess(access, inheritedAccess, injector.getClassName());
+        updateRoleAccess(access, inheritedAccess, injector);
         log.debug("Updated access of class {} for role {}", injector.getClassName(), role);
         return ACCESS_UPDATED;
       }
       return ACCESS_NOT_CHANGED;
     }
-    copyRoleAccess(inheritedAccess, roleInheritance.getRole(), injector.getClassName());
+    copyRoleAccess(inheritedAccess, roleInheritance.getRole(), injector);
     log.debug("Created access of class {} for role {}", injector.getClassName(), role);
     return ACCESS_CREATED;
   }
