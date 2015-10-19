@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,25 +20,24 @@
 package org.openbravo.common.actionhandler;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 import org.codehaus.jettison.json.JSONObject;
-import org.openbravo.base.exception.OBException;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.manufacturing.processplan.Operation;
 import org.openbravo.model.manufacturing.processplan.OperationProduct;
 import org.openbravo.model.manufacturing.processplan.OperationProductAttribute;
 import org.openbravo.model.manufacturing.processplan.ProcessPlan;
 import org.openbravo.model.manufacturing.processplan.Version;
-import org.openbravo.service.db.CallStoredProcedure;
+import org.openbravo.service.db.DalConnectionProvider;
+import org.openbravo.service.db.DbUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +46,6 @@ public class CopyProcessPlanVersion extends BaseProcessActionHandler {
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
-    // TODO Auto-generated method stub
     JSONObject jsonRequest = null;
     Boolean dataInconsistency = false;
     String message = "";
@@ -92,7 +90,7 @@ public class CopyProcessPlanVersion extends BaseProcessActionHandler {
         Version objCloneVersion = (Version) DalUtil.copy(objVersion, false);
         // Set Parent record as Process Plan on which the copy process is being called.
         objCloneVersion.setProcessPlan(processPlan);
-        objCloneVersion.setDocumentNo((String) callAdSequenceDoc(objCloneVersion));
+        objCloneVersion.setDocumentNo(callAdSequenceDoc(objCloneVersion));
         // Set Organization as the Organization of parent tab record i.e Process Plan on which copy
         // process is being called
         objCloneVersion.setOrganization(processPlan.getOrganization());
@@ -167,6 +165,11 @@ public class CopyProcessPlanVersion extends BaseProcessActionHandler {
 
     } catch (Exception e) {
       log.error("Error in Copy Process Plan Version Action Handler", e);
+      try {
+        Throwable ex = DbUtility.getUnderlyingSQLException(e);
+        return getErrorMessage(OBMessageUtils.translateError(ex.getMessage()).getMessage());
+      } catch (Exception ignore) {
+      }
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -178,16 +181,25 @@ public class CopyProcessPlanVersion extends BaseProcessActionHandler {
   /**
    * Call AD_Sequence_Doc
    */
-  private Object callAdSequenceDoc(Version objCloneVersion) {
+  private String callAdSequenceDoc(Version objCloneVersion) {
+    return Utility.getDocumentNo(new DalConnectionProvider(false), objCloneVersion.getClient()
+        .getId(), "MA_ProcessPlan_Version", true);
+  }
+
+  /**
+   * Returns a JSONObject with the error message to be printed and retry execution
+   */
+  private static JSONObject getErrorMessage(final String msgText) {
+    final JSONObject result = new JSONObject();
     try {
-      final List<Object> parameters = new ArrayList<Object>();
-      parameters.add("DocumentNo_MA_ProcessPlan_Version");
-      parameters.add(objCloneVersion.getClient().getId());
-      parameters.add("Y");
-      final String procedureName = "Ad_Sequence_Doc";
-      return CallStoredProcedure.getInstance().call(procedureName, parameters, null, true, true);
+      final JSONObject msg = new JSONObject();
+      msg.put("severity", "error");
+      msg.put("text", msgText);
+      result.put("message", msg);
+      result.put("retryExecution", false);
     } catch (Exception e) {
-      throw new OBException(e);
+      log.error(e.getMessage());
     }
+    return result;
   }
 }
