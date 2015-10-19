@@ -105,6 +105,14 @@ enyo.kind({
     }
 
     tab = getButtonByName(tabName, this);
+    if (options) {
+      options.isManual = true;
+    } else {
+      options = {
+        isManual: true
+      };
+    }
+
     if (tab) {
       tab.tap(options);
     }
@@ -378,8 +386,19 @@ enyo.kind({
   disabledButton: function (inSender, inEvent) {
     this.setDisabled(inEvent.status);
   },
-  tap: function () {
+  tap: function (options) {
     OB.MobileApp.view.scanningFocus(true);
+    if (!options.isManual) {
+      // The tap was not manual. So consider the last line added
+      var lines = this.model.get('order').get('lines');
+      var lastLine;
+      if (lines && lines.length > 0) {
+        lastLine = lines.models[lines.length - 1];
+      }
+      if (lastLine) {
+        lastLine.trigger('selected', lastLine);
+      }
+    }
     if (!this.disabled) {
       this.doTabChange({
         tabPanel: this.tabPanel,

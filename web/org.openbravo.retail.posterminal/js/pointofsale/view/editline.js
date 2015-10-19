@@ -447,6 +447,8 @@ enyo.kind({
           //lines with just discrectionary discounts can be removed.
           this.$.actionButtonsContainer.$.removeDiscountButton.show();
         }
+      } else {
+        this.$.actionButtonsContainer.$.removeDiscountButton.hide();
       }
     } else {
       this.$.actionButtonsContainer.$.removeDiscountButton.hide();
