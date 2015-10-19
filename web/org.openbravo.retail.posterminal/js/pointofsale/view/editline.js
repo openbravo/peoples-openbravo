@@ -96,7 +96,7 @@ enyo.kind({
     }
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.LineProperty',
-    position: 35,
+    position: 25,
     name: 'priceStdLine',
     I18NLabel: 'OBPOS_LinePriceStd',
     render: function (line) {
