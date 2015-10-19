@@ -191,7 +191,7 @@ enyo.kind({
       columns: [],
       operator: OB.Dal.FILTER,
       value: 'Services_Filter',
-      params: [product.get('forceFilterId') || product.get('id'), product.get('productCategory'), '', '', (existingServices.length > 0 ? existingServices.join("','") : '-')]
+      params: [product.get('isNew') ? null : (product.get('forceFilterId') ? product.get('forceFilterId') : product.get('id')), product.get('productCategory'), '', '', existingServices.join("','")]
     }, {
       columns: ['ispack'],
       operator: 'equals',
