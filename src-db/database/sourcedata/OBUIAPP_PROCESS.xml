@@ -555,8 +555,8 @@ Sets all transactions prior to the reference date as permanently adjusted.]]></H
 <!--F1EC1AB61DCD4858BAD3A52BE60006F9-->  <VALUE><![CDATA[RecalculateRolePermissions]]></VALUE>
 <!--F1EC1AB61DCD4858BAD3A52BE60006F9-->  <NAME><![CDATA[Recalculate Role Permissions]]></NAME>
 <!--F1EC1AB61DCD4858BAD3A52BE60006F9-->  <HELP><![CDATA[This process recalculates role permissions, based on the role inheritance defined. Depending on the role type the behavior varies:
-- If the role is a template one, the permissions for all the roles inheriting from it are recalculated.
-- If the role is not template, just the permissions for this role are recalculated. ]]></HELP>
+- If the role is a template one, the permissions for the role will be recalculated and also propagated to every role which is currently inheriting from this template.
+- If the role is not marked as template, just the permissions for this role are recalculated. ]]></HELP>
 <!--F1EC1AB61DCD4858BAD3A52BE60006F9-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--F1EC1AB61DCD4858BAD3A52BE60006F9-->  <CLASSNAME><![CDATA[OB.RoleInheritance.recalculatePermissions]]></CLASSNAME>
 <!--F1EC1AB61DCD4858BAD3A52BE60006F9-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
