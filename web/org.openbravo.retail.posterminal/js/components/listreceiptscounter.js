@@ -26,7 +26,7 @@ enyo.kind({
   renderNrItems: function (nrItems) {
     var receiptLabels;
     try {
-      receiptLabels = OB.POS.terminal.$.containerWindow.$.pointOfSale.$.multiColumn.$.leftPanel.$.receiptview.$.receiptheader.$.receiptLabels;
+      receiptLabels = OB.POS.terminal.$.containerWindow.getRoot().$.multiColumn.$.leftPanel.$.receiptview.$.receiptheader.$.receiptLabels;
     } catch (e) {
       OB.error('receiptLabels not found');
     }
