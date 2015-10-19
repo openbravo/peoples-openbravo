@@ -73,8 +73,4 @@ public class CheckTerminalAuth extends JSONProcessSimple {
     return result;
   }
 
-  @Override
-  protected String getProperty() {
-    return "";
-  }
 }
