@@ -739,7 +739,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     receipt.on('cancelLayaway', function () {
       var cancelLayawayObj = {},
           cancelLayawayModel = new OB.Model.CancelLayaway(),
-          docNo = OB.MobileApp.model.getNextDocumentno();
+          docNo = OB.MobileApp.model.getNextDocumentno(),
+          documentNo = receipt.get('documentNo');
 
       cancelLayawayObj.negativeDocNo = {
         negativeDocNo: docNo
@@ -752,10 +753,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(docNo.documentnoSuffix, OB.MobileApp.model.set('quotationDocumentSequence'), function () {
           OB.MobileApp.model.runSyncProcess();
           orderList.deleteCurrent();
-          OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessCancelLayaway'));
+          OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessCancelLayaway', [documentNo]));
         });
-
-
       }, function () {
         OB.error(arguments);
       });
