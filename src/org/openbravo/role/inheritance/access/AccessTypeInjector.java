@@ -174,8 +174,6 @@ public abstract class AccessTypeInjector implements Comparable<AccessTypeInjecto
    * @param access
    *          An object of an inheritable class,i.e., a class that implements
    *          InheritedAccessEnabled.
-   * @param injector
-   *          An AccessTypeInjector used to retrieve the access elements
    * 
    * @return A String with the id of the secured object
    */

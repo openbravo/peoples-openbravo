@@ -49,7 +49,7 @@ public class PreferenceAccessInjector extends AccessTypeInjector {
   @Override
   public String getSecuredElementName() {
     // This method is not explicitly use, as preferences are handled in a special way
-    // See RoleInheritanceManager.findPreference()
+    // See PreferenceAccessInjector.findAccess() method
     return Preference.PROPERTY_PROPERTY + "-" + Preference.PROPERTY_ATTRIBUTE;
   }
 

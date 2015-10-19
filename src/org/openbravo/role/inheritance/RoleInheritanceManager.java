@@ -109,7 +109,7 @@ public class RoleInheritanceManager {
    *          The access to be copied
    * @param role
    *          The role used to set the parent of the new access
-   * @param className
+   * @param injector
    *          an AccessTypeInjector object used to retrieve and set the access information
    */
   private void copyRoleAccess(InheritedAccessEnabled parentAccess, Role role,
