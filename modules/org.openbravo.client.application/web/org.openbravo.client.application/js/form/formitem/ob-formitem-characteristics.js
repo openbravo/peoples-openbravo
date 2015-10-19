@@ -562,9 +562,13 @@ isc.OBCharacteristicsFilterItem.addProperties({
   },
 
   showDialog: function () {
-    var criteria = this.removeProductCharacteristicsCriteria(this.parentGrid.getCriteria());
-    this.filterDialog.tree.fetchData(criteria);
-    this.filterDialog.show();
+    if (this.showFkDropdownUnfiltered) {
+      this.filterDialog.show();
+    } else {
+      var criteria = this.removeProductCharacteristicsCriteria(this.parentGrid.getCriteria());
+      this.filterDialog.tree.fetchData(criteria);
+      this.filterDialog.show();
+    }
   },
 
   destroy: function () {

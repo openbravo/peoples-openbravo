@@ -109,6 +109,16 @@ public class CharacteristicsUIDefinition extends TextUIDefinition {
     }
   }
 
+  @Override
+  public String getFilterEditorPropertiesProperty(Field field) {
+    String append = "";
+    Boolean showFkDropdownUnfiltered = (Boolean) readGridConfigurationSetting("showFkDropdownUnfiltered");
+    if (Boolean.TRUE.equals(showFkDropdownUnfiltered)) {
+      append = append + ", showFkDropdownUnfiltered: " + showFkDropdownUnfiltered.toString();
+    }
+    return super.getFilterEditorPropertiesProperty(field) + append;
+  }
+
   private String getValue(CharacteristicValue characValue) {
     int levels = 0;
 
