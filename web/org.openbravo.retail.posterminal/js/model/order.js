@@ -2486,10 +2486,12 @@
       this.set('isLayaway', false);
 
       this.set('createdBy', OB.MobileApp.model.get('orgUserId'));
-      if (OB.MobileApp.model.get('context').isSalesRepresentative) {
-        this.set('salesRepresentative', OB.MobileApp.model.get('context').user.id);
-      } else {
-        this.set('salesRepresentative', null);
+      if (!this.get('salesRepresentative')) {
+        if (OB.MobileApp.model.get('context').isSalesRepresentative) {
+          this.set('salesRepresentative', OB.MobileApp.model.get('context').user.id);
+        } else {
+          this.set('salesRepresentative', null);
+        }
       }
 
       this.set('hasbeenpaid', 'N');
