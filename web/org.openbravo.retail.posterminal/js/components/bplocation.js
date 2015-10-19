@@ -458,6 +458,16 @@ enyo.kind({
       OB.UTIL.showError("OBDAL error: " + error);
     }
     criteria.bpartner = bp.get('id');
+    if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+      var bPartnerId = {
+        columns: ['bpartner'],
+        operator: 'equals',
+        value: bp.get('id'),
+        isId: true
+      };
+      var remoteCriteria = [bPartnerId];
+      criteria.remoteFilters = remoteCriteria;
+    }
     OB.Dal.find(OB.Model.BPLocation, criteria, successCallbackBPsLoc, errorCallback);
   },
   i18nHeader: '',
