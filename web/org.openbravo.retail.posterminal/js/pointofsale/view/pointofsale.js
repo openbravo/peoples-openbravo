@@ -995,7 +995,7 @@ enyo.kind({
         enable: false
       });
     }
-    OB.UTIL.HookManager.executeHooks('OBPOS_HideReturnLineButton', {
+    OB.UTIL.HookManager.executeHooks('OBPOS_LineSelected', {
       product: inEvent.product,
       context: this
     }, function (args) {});
