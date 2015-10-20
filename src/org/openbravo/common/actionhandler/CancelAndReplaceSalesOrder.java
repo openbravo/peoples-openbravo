@@ -24,12 +24,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 
@@ -38,6 +40,12 @@ public class CancelAndReplaceSalesOrder extends BaseActionHandler {
 
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) {
+
+    // Declare json to be returned
+    JSONObject result = new JSONObject();
+    JSONObject openDirectTab = new JSONObject();
+    JSONObject showMsgInProcessView = new JSONObject();
+    JSONObject showMsgInView = new JSONObject();
     try {
 
       // Get request parameters
@@ -80,15 +88,58 @@ public class CancelAndReplaceSalesOrder extends BaseActionHandler {
       // Get new Order id
       String newOrderId = newOrder.getId();
 
-      // New record info
-      JSONObject recordInfo = new JSONObject();
-      recordInfo.put("tabId", tabId);
-      recordInfo.put("recordId", newOrderId);
+      // Execute process and prepare an array with actions to be executed after execution
+      JSONArray actions = new JSONArray();
 
-      return recordInfo;
+      // Message in tab from where the process is executed
+      showMsgInProcessView.put("msgType", "success");
+      showMsgInProcessView.put("msgTitle", OBMessageUtils.messageBD("Success"));
+      showMsgInProcessView.put("msgText", OBMessageUtils.messageBD("Success"));
+      showMsgInProcessView.put("wait", true);
+
+      JSONObject showMsgInProcessViewAction = new JSONObject();
+      showMsgInProcessViewAction.put("showMsgInProcessView", showMsgInProcessView);
+
+      actions.put(showMsgInProcessViewAction);
+
+      // New record info
+      openDirectTab.put("tabId", tabId);
+      openDirectTab.put("recordId", newOrderId);
+      openDirectTab.put("wait", true);
+
+      JSONObject openDirectTabAction = new JSONObject();
+      openDirectTabAction.put("openDirectTab", openDirectTab);
+
+      actions.put(openDirectTabAction);
+
+      // result.put("openDirectTab", openDirectTab);
+
+      // Message of the new opened tab
+      showMsgInView.put("msgType", "success");
+      showMsgInView.put("msgTitle", "Process execution");
+      showMsgInView.put("msgText", "This record was opened from process execution");
+
+      JSONObject showMsgInViewAction = new JSONObject();
+      showMsgInViewAction.put("showMsgInView", showMsgInView);
+
+      actions.put(showMsgInViewAction);
+
+      result.put("responseActions", actions);
+
+      // result.put("showMsgInView", showMsgInView);
+
     } catch (JSONException e) {
       log.error("Error in process", e);
-      return new JSONObject();
+      try {
+        result = new JSONObject();
+        // errorMessage = new JSONObject();
+        // errorMessage.put("severity", "error");
+        // errorMessage.put("title", OBMessageUtils.messageBD("Error"));
+        // errorMessage.put("text", OBMessageUtils.messageBD("Error"));
+        // result.put("message", errorMessage);
+      } catch (Exception ignore) {
+      }
     }
+    return result;
   }
 }

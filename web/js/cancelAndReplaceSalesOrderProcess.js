@@ -19,20 +19,23 @@
 
 OB = OB || {};
 
+OB.CancelAndReplaceSalesOrder = OB.CancelAndReplaceSalesOrder || {};
+
 OB.CancelAndReplaceSalesOrder = {
   execute: function (params, view) {
     var selection = params.button.contextView.viewGrid.getSelectedRecords(),
         tabId = view.view.tabId,
         callback;
 
-    callback = function (rpcResponse, recordInfo, rpcRequest) {
-      // open new tab
-      OB.Utilities.Action.execute('openDirectTab', recordInfo, 100);
-      // close process to refresh the selected record
+    callback = function (rpcResponse, result, rpcRequest) {
+      result.responseActions._processView = params.button.view;
+      OB.Utilities.Action.executeJSON(result.responseActions, null, null, params.button.view);
       params.button.closeProcessPopup();
     };
+    
     OB.RemoteCallManager.call('org.openbravo.common.actionhandler.CancelAndReplaceSalesOrder', {
-      inpcOrderId: selection[0].id, inpTabId: tabId
+      inpcOrderId: selection[0].id,
+      inpTabId: tabId
     }, {}, callback);
   },
 
