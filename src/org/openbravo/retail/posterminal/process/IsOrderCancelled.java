@@ -32,12 +32,12 @@ public class IsOrderCancelled extends JSONProcessSimple {
       Order order = OBDal.getInstance().get(Order.class, orderId);
 
       if (order != null) {
-        if (order.isCancelledandreplaced()) {
+        if (order.isCancelled()) {
           data.put("orderCancelled", true);
         } else {
           data.put("orderCancelled", false);
           if (cancelOrder) {
-            order.setCancelledandreplaced(true);
+            order.setCancelled(true);
           }
         }
       } else {
