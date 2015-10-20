@@ -49,6 +49,10 @@
         <default><![CDATA[Y]]></default>
         <onCreateDefault/>
       </column>
+      <column name="INHERITED_FROM" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="AD_DATAACCESSCLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -60,6 +64,9 @@
       </foreign-key>
       <foreign-key foreignTable="AD_TABLE" name="AD_TABLE_ACCESS_AD_TABLE" onDelete="cascade">
         <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ROLE" name="AD_TABLE_ACCESS_INH_FROM">
+        <reference local="INHERITED_FROM" foreign="AD_ROLE_ID"/>
       </foreign-key>
       <index name="AD_TABLEACCESS_TABLE_IDX" unique="false">
         <index-column name="AD_TABLE_ID"/>

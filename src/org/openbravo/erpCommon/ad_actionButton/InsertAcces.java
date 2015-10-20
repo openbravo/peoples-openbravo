@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,8 +28,15 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.access.FormAccess;
+import org.openbravo.model.ad.access.ProcessAccess;
+import org.openbravo.model.ad.access.Role;
+import org.openbravo.model.ad.access.WindowAccess;
+import org.openbravo.role.inheritance.RoleInheritanceManager;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class InsertAcces extends HttpSecureAppServlet {
@@ -136,6 +143,7 @@ public class InsertAcces extends HttpSecureAppServlet {
     try {
       final InsertAccesData[] accesData = InsertAccesData.select(this);
       generateAcces(vars, accesData, strKey, strModule, strType);
+      propagateAccess(strKey, strType);// Propagate accesses based on role inheritance
       myMessage.setType("Success");
       myMessage.setMessage(Utility.messageBD(this, "ProcessOK", vars.getLanguage()));
       return myMessage;
@@ -218,6 +226,31 @@ public class InsertAcces extends HttpSecureAppServlet {
           }
         }
       }
+    }
+  }
+
+  private void propagateAccess(String roleId, String type) {
+    try {
+      Role role = OBDal.getInstance().get(Role.class, roleId);
+      if (role.isTemplate()) {
+        if ("W".equals(type) || "".equals(type)) {
+          RoleInheritanceManager manager = WeldUtils
+              .getInstanceFromStaticBeanManager(RoleInheritanceManager.class);
+          manager.recalculateAccessFromTemplate(role, WindowAccess.class.getCanonicalName());
+        }
+        if ("P".equals(type) || "R".equals(type) || "W".equals(type) || "".equals(type)) {
+          RoleInheritanceManager manager = WeldUtils
+              .getInstanceFromStaticBeanManager(RoleInheritanceManager.class);
+          manager.recalculateAccessFromTemplate(role, ProcessAccess.class.getCanonicalName());
+        }
+        if ("X".equals(type) || "".equals(type)) {
+          RoleInheritanceManager manager = WeldUtils
+              .getInstanceFromStaticBeanManager(RoleInheritanceManager.class);
+          manager.recalculateAccessFromTemplate(role, FormAccess.class.getCanonicalName());
+        }
+      }
+    } catch (Exception ex) {
+      // Do nothing, as the managers will be always initialized without errors in this method
     }
   }
 

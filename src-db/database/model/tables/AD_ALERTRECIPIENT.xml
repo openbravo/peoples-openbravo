@@ -49,6 +49,10 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
+      <column name="INHERITED_FROM" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_ALERTRULE" name="AD_ALERTRECIPIENT_AD_ALERTRULE" onDelete="cascade">
         <reference local="AD_ALERTRULE_ID" foreign="AD_ALERTRULE_ID"/>
       </foreign-key>
@@ -63,6 +67,9 @@
       </foreign-key>
       <foreign-key foreignTable="AD_USER" name="AD_ALERTRECIPIENT_AD_USER">
         <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ROLE" name="AD_ALERTRECIPIENT_INH_FROM">
+        <reference local="INHERITED_FROM" foreign="AD_ROLE_ID"/>
       </foreign-key>
       <index name="AD_ALERTRECIP_ALERTRULE_IDX" unique="false">
         <index-column name="AD_ALERTRULE_ID"/>

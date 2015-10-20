@@ -285,6 +285,11 @@ public class Property {
       getEntity().setActiveEnabled(true);
       setActiveColumn(true);
     }
+    if (getName().equals("inheritedFrom") && !isPrimitive()
+        && "ADRole".equals(getReferencedProperty().getEntity().getName())) {
+      log.debug("Entity inheriting from role: " + getEntity().getName());
+      getEntity().setHasInheritedFrom(true);
+    }
   }
 
   public boolean isBoolean() {
