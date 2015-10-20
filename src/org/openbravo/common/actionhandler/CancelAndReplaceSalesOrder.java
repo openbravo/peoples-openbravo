@@ -94,7 +94,8 @@ public class CancelAndReplaceSalesOrder extends BaseActionHandler {
       // Message in tab from where the process is executed
       showMsgInProcessView.put("msgType", "success");
       showMsgInProcessView.put("msgTitle", OBMessageUtils.messageBD("Success"));
-      showMsgInProcessView.put("msgText", OBMessageUtils.messageBD("Success"));
+      showMsgInProcessView.put("msgText", OBMessageUtils.messageBD("OrderCreatedInTemporalStatus")
+          + " " + newDocumentNo);
       showMsgInProcessView.put("wait", true);
 
       JSONObject showMsgInProcessViewAction = new JSONObject();
@@ -116,8 +117,8 @@ public class CancelAndReplaceSalesOrder extends BaseActionHandler {
 
       // Message of the new opened tab
       showMsgInView.put("msgType", "success");
-      showMsgInView.put("msgTitle", "Process execution");
-      showMsgInView.put("msgText", "This record was opened from process execution");
+      showMsgInView.put("msgTitle", OBMessageUtils.messageBD("Success"));
+      showMsgInView.put("msgText", OBMessageUtils.messageBD("OrderInTemporalStatus"));
 
       JSONObject showMsgInViewAction = new JSONObject();
       showMsgInViewAction.put("showMsgInView", showMsgInView);
