@@ -117,16 +117,14 @@ enyo.kind({
       var remoteCriteria = [],
           brandfilter = {};
       criteria = {};
-      if (productCharacteristicModel.get('brandFilter').length > 0) {
-        if (productFilterText !== "" || productcategory !== "__all__") {
-          brandfilter.columns = [];
-          brandfilter.operator = OB.Dal.FILTER;
-          brandfilter.value = 'PBrand_Filter';
-          brandfilter.params = [productFilterText, productcategory];
-          remoteCriteria.push(brandfilter);
-        }
-        criteria.remoteFilters = remoteCriteria;
+      if (productFilterText !== "" || productcategory !== "__all__") {
+        brandfilter.columns = [];
+        brandfilter.operator = OB.Dal.FILTER;
+        brandfilter.value = 'PBrand_Filter';
+        brandfilter.params = [productFilterText, productcategory];
+        remoteCriteria.push(brandfilter);
       }
+      criteria.remoteFilters = remoteCriteria;
       OB.Dal.find(OB.Model.Brand, criteria, successCallbackBrands, errorCallback);
     }
     return true;
