@@ -25701,11 +25701,11 @@ Glossary orphan elements are preserved when running Synchronize Terminology proc
 <!--5BD4AC040C044BB1A5817915C0961F35-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--5BD4AC040C044BB1A5817915C0961F35-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--5BD4AC040C044BB1A5817915C0961F35-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--5BD4AC040C044BB1A5817915C0961F35-->  <COLUMNNAME><![CDATA[Iscancelledandreplaced]]></COLUMNNAME>
-<!--5BD4AC040C044BB1A5817915C0961F35-->  <NAME><![CDATA[Cancelled and Replaced]]></NAME>
-<!--5BD4AC040C044BB1A5817915C0961F35-->  <PRINTNAME><![CDATA[Cancelled and Replaced]]></PRINTNAME>
-<!--5BD4AC040C044BB1A5817915C0961F35-->  <DESCRIPTION><![CDATA[The Sales Order has been cancelled and replaced.]]></DESCRIPTION>
-<!--5BD4AC040C044BB1A5817915C0961F35-->  <HELP><![CDATA[The Sales Order has been cancelled and replaced. A new Cancellation Sales Order has been created in Closed Status and a new Sales Order in Book Status has been created replacing the original one.]]></HELP>
+<!--5BD4AC040C044BB1A5817915C0961F35-->  <COLUMNNAME><![CDATA[Iscancelled]]></COLUMNNAME>
+<!--5BD4AC040C044BB1A5817915C0961F35-->  <NAME><![CDATA[Is Cancelled]]></NAME>
+<!--5BD4AC040C044BB1A5817915C0961F35-->  <PRINTNAME><![CDATA[Is Cancelled]]></PRINTNAME>
+<!--5BD4AC040C044BB1A5817915C0961F35-->  <DESCRIPTION><![CDATA[The Sales Order has been cancelled or cancelled and replaced.]]></DESCRIPTION>
+<!--5BD4AC040C044BB1A5817915C0961F35-->  <HELP><![CDATA[The Sales Order has been cancelled and cancelled and replaced. A new Cancellation Sales Order has been created in Closed Status and if it is replaced also a new Sales Order in Book Status has been created replacing the original one.]]></HELP>
 <!--5BD4AC040C044BB1A5817915C0961F35-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--5BD4AC040C044BB1A5817915C0961F35-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--5BD4AC040C044BB1A5817915C0961F35--></AD_ELEMENT>
