@@ -186,7 +186,10 @@
     max-height: 110px !important;
   }
 }
-.paymentmethoditemstext {
+
+.onyx-menu-item:hover {
+  background-color: #e2e2e2 !important;
+}.paymentmethoditemstext {
   font-family: 'Helvetica Neue', 'Nimbus Sans L', Arial, sans-serif;
   font-size: 16px;
   height: 40px;
