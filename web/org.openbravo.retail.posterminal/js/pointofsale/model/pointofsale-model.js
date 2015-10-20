@@ -742,9 +742,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           docNo = OB.MobileApp.model.getNextDocumentno(),
           documentNo = receipt.get('documentNo');
 
-      cancelLayawayObj.negativeDocNo = {
-        negativeDocNo: docNo
-      };
+      cancelLayawayObj.negativeDocNo = docNo;
       cancelLayawayObj.orderId = receipt.get('id');
 
       cancelLayawayModel.set('json', JSON.stringify(cancelLayawayObj));
