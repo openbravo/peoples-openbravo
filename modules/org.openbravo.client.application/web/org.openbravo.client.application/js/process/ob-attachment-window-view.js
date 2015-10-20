@@ -59,12 +59,13 @@ isc.OBAttachmentWindowView.addProperties({
   },
 
   initWidget: function () {
-    var i, attachFields;
+    var i, attachFields, form, fileItemFormFields, fileItemForm;
     if (this.uploadMode) {
       attachFields = [{
         name: 'inpname',
         title: OB.I18N.getLabel('OBUIAPP_AttachmentFile'),
-        type: 'upload',
+        // Upload type item cannot be used as it is not possible to redraw() the DynamicForm
+        type: 'file',
         multiple: false,
         canFocus: false
       }, {
@@ -154,6 +155,27 @@ isc.OBAttachmentWindowView.addProperties({
 
     this.Super('initWidget', arguments);
 
+    // To submit the file is needed a DynamicForm that contains a UploadFile item. In this case it
+    // is used the FileItemForm that it is automatically generated for the FileItem. To submit all
+    // the values it is needed to create in this form all the needed hidden inputs.
+    form = this.theForm;
+    fileItemForm = form.getFileItemForm();
+    fileItemFormFields = isc.shallowClone(fileItemForm.getItems());
+    // Do not include the "inpname" input as it is automatically created by the FileItem
+    fileItemFormFields.addAll(isc.shallowClone(attachFields.splice(1)));
+    for (i = 0; i < this.viewProperties.additionalFields.length; i++) {
+      // The items included in the file item form are always hidden.
+      fileItemFormFields.push(isc.addProperties({}, this.viewProperties.additionalFields[i], {
+        type: 'hidden'
+      }));
+    }
+
+    fileItemForm.setItems(fileItemFormFields);
+    // redraw to ensure that the new items are added to the html form. If this not happens then the 
+    // values are not included in the submitForm.
+    fileItemForm.redraw();
+    fileItemForm.setAction('./businessUtility/TabAttachments_FS.html');
+    fileItemForm.setTarget('background_target');
   },
 
   buildButtonLayout: function () {
@@ -163,7 +185,7 @@ isc.OBAttachmentWindowView.addProperties({
 
     function doClick() {
       var view = this.view,
-          value = view.theForm.getItem('inpname').getElement().value,
+          value = view.theForm.getItem('inpname').getValue(),
           lastChar, fileName;
 
       if (view.uploadMode === false) {
@@ -240,7 +262,10 @@ isc.OBAttachmentWindowView.addProperties({
       }
     }
     OB.Utilities.currentUploader = this.attachSection.ID;
-    form.submitForm();
+    // Updates the hidden inputs of the FileItemForm with the current values in the main Form.
+    form.updateFileItemForm();
+    form.getFileItemForm().submitForm();
+
     this.closeClick();
   },
 
