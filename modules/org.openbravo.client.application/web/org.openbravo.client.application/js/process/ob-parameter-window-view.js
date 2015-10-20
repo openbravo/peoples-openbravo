@@ -52,6 +52,9 @@ isc.OBParameterWindowView.addProperties({
   gridFields: [],
   members: [],
 
+  // allows to calculate extra context info (ie. when invoking from menu)
+  additionalContextInfo: {},
+
   initWidget: function () {
     var i, field, items = [],
         buttonLayout = [],
@@ -721,7 +724,8 @@ isc.OBParameterWindowView.addProperties({
   },
 
   getUnderLyingRecordContext: function (onlySessionProperties, classicMode, forceSettingContextVars, convertToClassicFormat) {
-    return (this.buttonOwnerView && this.buttonOwnerView.getContextInfo(onlySessionProperties, classicMode, forceSettingContextVars, convertToClassicFormat)) || {};
+    var ctxInfo = (this.buttonOwnerView && this.buttonOwnerView.getContextInfo(onlySessionProperties, classicMode, forceSettingContextVars, convertToClassicFormat)) || {};
+    return isc.addProperties(ctxInfo, this.additionalContextInfo);
   },
 
 
