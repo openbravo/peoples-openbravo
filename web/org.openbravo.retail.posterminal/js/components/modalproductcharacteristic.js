@@ -164,9 +164,12 @@ enyo.kind({
       return true;
 
     } else {
-      var productFilterText = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.$.productFilterText.getValue();
-      var productcategory = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.$.productcategory.getValue();
-      var productCharacteristicModel = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.parent.model;
+      var productFilterText, productcategory, productCharacteristicModel, productCharacteristic;
+
+      productFilterText = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.$.productFilterText.getValue();
+      productcategory = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.$.productcategory.getValue();
+      productCharacteristicModel = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.parent.model;
+      productCharacteristic = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.parent;
 
       var remoteCriteria = [],
           brandparams = [];
@@ -201,6 +204,21 @@ enyo.kind({
         brandfilter.params = [brandparams.toString()];
         remoteCriteria.push(brandfilter);
       }
+
+      criteria.hqlCriteria = [];
+      productCharacteristic.customFilters.forEach(function (hqlFilter) {
+        if (!_.isUndefined(hqlFilter.hqlCriteriaCharacteristicsValue)) {
+          var hqlCriteriaFilter = hqlFilter.hqlCriteriaCharacteristicsValue();
+          if (!_.isUndefined(hqlCriteriaFilter)) {
+            hqlCriteriaFilter.forEach(function (filter) {
+              if (filter) {
+                remoteCriteria.push(filter);
+              }
+            });
+          }
+        }
+      });
+
       remoteCriteria.push(characteristicfilter);
       criteria.remoteFilters = remoteCriteria;
       OB.Dal.find(OB.Model.CharacteristicValue, criteria, function (dataValues) {
@@ -227,8 +245,8 @@ enyo.kind({
       }, this);
       return true;
 
-    }
 
+    }
   },
   parentValue: 0,
   setCollection: function (inSender, inEvent) {
