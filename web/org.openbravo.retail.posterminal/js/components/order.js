@@ -689,20 +689,24 @@ enyo.kind({
         if (line.get('product').get('quantityRule') === 'PP' && !line.get('groupService')) {
           var qtyService = OB.DEC.abs(qty),
               qtyLineServ = qty > 0 ? 1 : -1;
+
           // Split/Remove services lines
           var siblingServicesLines = getSiblingServicesLines(line.get('product').id, line.get('relatedLines')[0].orderlineId);
-          if (siblingServicesLines.length < qtyService) {
-            var i;
-            for (i = 0; i < qtyService - siblingServicesLines.length; i++) {
-              var p = line.get('product').clone();
-              p.set('groupProduct', false);
-              var newLine = me.order.createLine(p, qtyLineServ);
-              newLine.set('relatedLines', siblingServicesLines[0].get('relatedLines'));
-              newLine.set('groupService', false);
+          if (!me.order.get('deleting')) {
+            if (siblingServicesLines.length < qtyService) {
+              var i;
+              for (i = 0; i < qtyService - siblingServicesLines.length; i++) {
+                var p = line.get('product').clone();
+                p.set('groupProduct', false);
+                var newLine = me.order.createLine(p, qtyLineServ);
+                newLine.set('relatedLines', siblingServicesLines[0].get('relatedLines'));
+                newLine.set('groupService', false);
+              }
             }
           } else if (siblingServicesLines.length > qtyService) {
             linesToRemove = OB.UTIL.mergeArrays(linesToRemove, _.initial(siblingServicesLines, qtyService));
           }
+
           return qtyLineServ;
         }
         return qty;
@@ -1196,6 +1200,7 @@ enyo.kind({
     }, this);
     this.order.get('lines').on('remove', function (model, list, index) {
       var removedId = model.get('id'),
+          me = this,
           removedIndex = index.index,
           serviceLinesToCheck = [],
           deletedServices = [],
@@ -1204,6 +1209,18 @@ enyo.kind({
       this.order.unset('changedServices');
       this.order.unset('deletedServices');
 
+      function getSiblingServicesLines(productId, orderlineId) {
+        _.forEach(me.order.get('lines').models, function (l) {
+          if (l.has('relatedLines') && l.get('relatedLines').length > 0 && !l.get('originalOrderLineId') //
+          && l.get('product').id === productId && l.get('relatedLines')[0].orderlineId === orderlineId) {
+            serviceLinesToCheck.push([l, 0]);
+          }
+        });
+
+      }
+      if (model.get('product').get('quantityRule') === 'PP' && !model.get('groupService')) {
+        getSiblingServicesLines(model.get('product').id, model.get('relatedLines')[0].orderlineId);
+      }
       this.order.get('lines').forEach(function (line, idx) {
         var prod = line.get('product');
         if (line.has('relatedLines') && line.get('relatedLines').length > 0) {

@@ -1049,6 +1049,7 @@
         var text, lines, indexes, relations, rl, rls, i;
 
         me.set('preventServicesUpdate', true);
+        me.set('deleting',true);
         me.get('lines').remove(line);
         if (me.get('multipleUndo')) {
           var undo = me.get('undo');
@@ -1145,6 +1146,7 @@
               me.calculateGross();
               me.set('undo', null);
               me.unset('preventServicesUpdate');
+              me.unset('deleting');
               me.get('lines').trigger('updateRelations');
             }
           });
@@ -1167,6 +1169,7 @@
           });
         }
         me.unset('preventServicesUpdate');
+        me.unset('deleting');
         me.unset('currentLineIndexes');
         me.get('lines').trigger('updateRelations');
         me.adjustPayment();
