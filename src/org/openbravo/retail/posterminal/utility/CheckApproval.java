@@ -59,7 +59,7 @@ public class CheckApproval extends JSONProcessSimple {
         String whereClause = "as p"
             + " where property IS NOT NULL "
             + "   and active = true" //
-            + "   and to_char(searchKey) = 'Y'" //
+            + "   and to_char(case when length(searchKey)<>1 then 'X' else searchKey end) = 'Y'" //
             + "   and (userContact = :user" //
             + "        or exists (from ADUserRoles r"
             + "                  where r.role = p.visibleAtRole"
