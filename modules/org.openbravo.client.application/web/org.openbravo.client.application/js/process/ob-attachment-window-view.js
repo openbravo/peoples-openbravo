@@ -64,7 +64,8 @@ isc.OBAttachmentWindowView.addProperties({
       attachFields = [{
         name: 'inpname',
         title: OB.I18N.getLabel('OBUIAPP_AttachmentFile'),
-        // Upload type item cannot be used as it is not possible to redraw() the DynamicForm
+        // Upload type item cannot be used as it is not possible to redraw() the DynamicForm which
+        // is needed to run the display and read only logics
         type: 'file',
         multiple: false,
         canFocus: false
@@ -155,27 +156,29 @@ isc.OBAttachmentWindowView.addProperties({
 
     this.Super('initWidget', arguments);
 
-    // To submit the file is needed a DynamicForm that contains a UploadFile item. In this case it
-    // is used the FileItemForm that it is automatically generated for the FileItem. To submit all
-    // the values it is needed to create in this form all the needed hidden inputs.
-    form = this.theForm;
-    fileItemForm = form.getFileItemForm();
-    fileItemFormFields = isc.shallowClone(fileItemForm.getItems());
-    // Do not include the "inpname" input as it is automatically created by the FileItem
-    fileItemFormFields.addAll(isc.shallowClone(attachFields.splice(1)));
-    for (i = 0; i < this.viewProperties.additionalFields.length; i++) {
-      // The items included in the file item form are always hidden.
-      fileItemFormFields.push(isc.addProperties({}, this.viewProperties.additionalFields[i], {
-        type: 'hidden'
-      }));
-    }
+    if (this.uploadMode) {
+      // To submit the file is needed a DynamicForm that contains a UploadFile item. In this case it
+      // is used the FileItemForm that it is automatically generated for the FileItem. To submit all
+      // the values it is needed to create in this form all the needed hidden inputs.
+      form = this.theForm;
+      fileItemForm = form.getFileItemForm();
+      fileItemFormFields = isc.shallowClone(fileItemForm.getItems());
+      // Do not include the "inpname" input as it is automatically created by the FileItem
+      fileItemFormFields.addAll(isc.shallowClone(attachFields.splice(1)));
+      for (i = 0; i < this.viewProperties.additionalFields.length; i++) {
+        // The items included in the file item form are always hidden.
+        fileItemFormFields.push(isc.addProperties({}, this.viewProperties.additionalFields[i], {
+          type: 'hidden'
+        }));
+      }
 
-    fileItemForm.setItems(fileItemFormFields);
-    // redraw to ensure that the new items are added to the html form. If this not happens then the 
-    // values are not included in the submitForm.
-    fileItemForm.redraw();
-    fileItemForm.setAction('./businessUtility/TabAttachments_FS.html');
-    fileItemForm.setTarget('background_target');
+      fileItemForm.setItems(fileItemFormFields);
+      // redraw to ensure that the new items are added to the html form. If this not happens then the 
+      // values are not included in the submitForm.
+      fileItemForm.redraw();
+      fileItemForm.setAction('./businessUtility/TabAttachments_FS.html');
+      fileItemForm.setTarget('background_target');
+    }
   },
 
   buildButtonLayout: function () {
