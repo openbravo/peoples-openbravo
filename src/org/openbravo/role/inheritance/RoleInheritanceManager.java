@@ -47,7 +47,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class contains all the methods required to manage the Role Inheritance functionality
+ * This class contains all the methods required to manage the Role Inheritance functionality. It is
+ * not intended to handle large volumes of objects (permissions) within this class. For this reason
+ * it makes use of DAL lists instead of ScrollableResults.
  */
 @ApplicationScoped
 public class RoleInheritanceManager {
