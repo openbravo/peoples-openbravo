@@ -229,7 +229,8 @@ public class ConnectionProviderImpl implements ConnectionProvider {
     if (poolName == null || poolName.equals(""))
       throw new NoConnectionAvailableException("Couldn´t get a connection for an unnamed pool");
 
-    // try to get the connection from the session to use a single connection for the whole request
+    // try to get the connection from the session to use a single connection for the
+    // whole request
     Connection conn = SessionInfo.getSessionConnection();
     if (conn == null) {
       conn = getNewConnection(poolName);
@@ -278,7 +279,8 @@ public class ConnectionProviderImpl implements ConnectionProvider {
     try {
       conn = DriverManager
           .getConnection("jdbc:apache:commons:dbcp:" + contextName + "_" + poolName);
-      // Set session info for the connection, but do not attach the connection to the session since
+      // Set session info for the connection, but do not attach the connection to
+      // the session since
       // it shouldn't be reused
       SessionInfo.setDBSessionInfo(conn);
     } catch (SQLException ex) {
@@ -298,11 +300,13 @@ public class ConnectionProviderImpl implements ConnectionProvider {
     if (conn == null)
       return false;
     try {
-      // Set autocommit, this makes not necessary to explicitly commit, all prepared statements are
+      // Set autocommit, this makes not necessary to explicitly commit, all
+      // prepared statements are
       // commited
       conn.setAutoCommit(true);
       if (SessionInfo.getSessionConnection() == null) {
-        // close connection if it's not attached to session, other case it will be closed when the
+        // close connection if it's not attached to session, other case it
+        // will be closed when the
         // request is done
         log4j.debug("close connection directly (no connection in session)");
         if (!conn.isClosed()) {

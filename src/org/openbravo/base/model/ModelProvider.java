@@ -50,6 +50,7 @@ import org.openbravo.base.session.SessionFactoryController;
 import org.openbravo.base.session.UniqueConstraintColumn;
 import org.openbravo.base.util.Check;
 import org.openbravo.base.util.CheckException;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.database.ConnectionProviderImpl;
 
 /**
@@ -352,11 +353,11 @@ public class ModelProvider implements OBSingleton {
    * the SessionFactoryController
    */
   private void initializeReferenceClasses(ModelSessionFactoryController sessionFactoryController) {
-    ConnectionProviderImpl con = null;
+    ConnectionProvider con = null;
     Connection connection = null;
     boolean createdNewPool = false;
     try {
-      con = (ConnectionProviderImpl) ConnectionProviderContextListener.getPool();
+      con = ConnectionProviderContextListener.getPool();
       if (con == null) {
         con = new ConnectionProviderImpl(OBPropertiesProvider.getInstance()
             .getOpenbravoProperties());

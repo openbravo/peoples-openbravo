@@ -1,6 +1,6 @@
 /*
  * 
- * Copyright (C) 2001-2010 Openbravo S.L.U. Licensed under the Apache Software
+ * Copyright (C) 2001-2015 Openbravo S.L.U. Licensed under the Apache Software
  * License version 2.0 You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
  * or agreed to in writing, software distributed under the License is
@@ -105,7 +105,7 @@ public class JNDIConnectionProvider implements ConnectionProvider {
       log4j.debug("Created JNDI ConnectionProvider");
 
     } catch (Exception e) {
-      log4j.error(e);
+      log4j.error("Error creating JNDI connection", e);
       throw new PoolNotFoundException("Failed when creating database connections pool: "
           + e.getMessage());
     }

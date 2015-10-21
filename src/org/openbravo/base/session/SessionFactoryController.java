@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -244,11 +244,11 @@ public abstract class SessionFactoryController {
         "java:/comp/env/" + obProps.getProperty("JNDI.resourceName"));
   }
 
-  // jndi should only be used if the application is running in a webcontainer
-  // in all other cases (ant etc.) jndi should not be used, but the direct
-  // openbravo.properties
-  // should be used.
-  private boolean isJNDIModeOn(Properties obProps) {
+  /**
+   * jndi should only be used if the application is running in a webcontainer in all other cases
+   * (ant etc.) jndi should not be used, but the direct openbravo.properties should be used.
+   */
+  public static boolean isJNDIModeOn(Properties obProps) {
     if (!isRunningInWebContainer()) {
       return false;
     }
