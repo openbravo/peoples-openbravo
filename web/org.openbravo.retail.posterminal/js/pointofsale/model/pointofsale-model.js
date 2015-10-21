@@ -303,12 +303,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               receipt.set('paidOnCredit', true);
             }
           }
-          receipt.get('payments').reset();
-          clonedCollection.each(function (model) {
-            receipt.get('payments').add(new Backbone.Model(model.toJSON()), {
-              silent: true
-            });
-          });
         } else {
           for (i = 0; i < receipt.get('payments').length; i++) {
             paymentKind = OB.MobileApp.model.paymentnames[receipt.get('payments').models[i].get('kind')];
@@ -334,6 +328,12 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             // verify that the receipt was not cancelled
             if (args.isCancelled !== true) {
               var orderToPrint = OB.UTIL.clone(args.frozenReceipt);
+              orderToPrint.get('payments').reset();
+              clonedCollection.each(function (model) {
+                orderToPrint.get('payments').add(new Backbone.Model(model.toJSON()), {
+                  silent: true
+                });
+              });
               receipt.trigger('print', orderToPrint, {
                 offline: true
               });
