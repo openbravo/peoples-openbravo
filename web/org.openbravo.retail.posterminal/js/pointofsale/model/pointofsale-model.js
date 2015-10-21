@@ -740,19 +740,35 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       var cancelLayawayObj = {},
           cancelLayawayModel = new OB.Model.CancelLayaway(),
           docNo = OB.MobileApp.model.getNextDocumentno(),
-          documentNo = receipt.get('documentNo');
+          documentNo = receipt.get('documentNo'),
+          process = new OB.DS.Process('org.openbravo.retail.posterminal.process.IsOrderCancelled');
 
-      cancelLayawayObj.negativeDocNo = docNo;
-      cancelLayawayObj.orderId = receipt.get('id');
+      process.exec({
+        orderId: receipt.get('id'),
+        setCancelled: true
+      }, function (data) {
+        if (data && data.exception) {
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
+          return;
+        } else if (data && data.orderCancelled) {
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_LayawayCancelledError'));
+          return;
+        } else {
+          cancelLayawayObj.negativeDocNo = docNo;
+          cancelLayawayObj.orderId = receipt.get('id');
 
-      cancelLayawayModel.set('json', JSON.stringify(cancelLayawayObj));
+          cancelLayawayModel.set('json', JSON.stringify(cancelLayawayObj));
 
-      OB.Dal.save(cancelLayawayModel, function () {
-        OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(docNo.documentnoSuffix, OB.MobileApp.model.set('quotationDocumentSequence'), function () {
-          OB.MobileApp.model.runSyncProcess();
-          orderList.deleteCurrent();
-          OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessCancelLayaway', [documentNo]));
-        });
+          OB.Dal.save(cancelLayawayModel, function () {
+            OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(docNo.documentnoSuffix, OB.MobileApp.model.set('quotationDocumentSequence'), function () {
+              OB.MobileApp.model.runSyncProcess();
+              orderList.deleteCurrent();
+              OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessCancelLayaway', [documentNo]));
+            });
+          }, function () {
+            OB.error(arguments);
+          });
+        }
       }, function () {
         OB.error(arguments);
       });
