@@ -404,10 +404,10 @@ OB.DS.HWServer.prototype._printPDF = function (params, callback) {
 };
 
 OB.DS.HWServer.prototype._sendPDF = function (data, callback) {
-  if (this.activeurl) {
+  if (this.activepdfurl) {
     var me = this;
     var ajaxRequest = new enyo.Ajax({
-      url: me.activeurl + '/printerpdf',
+      url: me.activepdfurl + '/printerpdf',
       cacheBust: false,
       method: 'POST',
       handleAs: 'json',
