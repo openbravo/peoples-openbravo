@@ -451,11 +451,18 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         }
 
         if (order.getReplacedorder() != null) {
-          // Set default payment type to order in case there is no payment on the order
-          POSUtils.setDefaultPaymentType(jsonorder, order);
-          // Cancel and Replace the order
-          CancelAndReplaceUtils.cancelAndReplaceOrder(order.getId(), jsonorder,
-              useOrderDocumentNoForRelatedDocs);
+          TriggerHandler.getInstance().disable();
+          try {
+            // Set default payment type to order in case there is no payment on the order
+            POSUtils.setDefaultPaymentType(jsonorder, order);
+            // Cancel and Replace the order
+            CancelAndReplaceUtils.cancelAndReplaceOrder(order.getId(), jsonorder,
+                useOrderDocumentNoForRelatedDocs);
+          } catch (Exception ex) {
+            throw new OBException("CancelAndReplaceUtils.cancelAndReplaceOrder: ", ex);
+          } finally {
+            TriggerHandler.getInstance().enable();
+          }
         }
 
         // Call all OrderProcess injected.
