@@ -240,7 +240,7 @@ enyo.kind({
       var success = this.model.get('customer').saveCustomer();
       if (success) {
         goToViewWindow(sw, {
-          customer: this.model.get('customer')
+          customer: OB.UTIL.clone(this.model.get('customer'))
         });
       }
     } else {
