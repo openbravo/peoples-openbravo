@@ -1520,7 +1520,7 @@
             OB.error(arguments);
           }, true);
 
-        } else { //Location have changed
+        } else if (businessPartner.get('locationModel')) { //Location has changed or we are assigning current bp
           var location = oldbp.get('locationModel');
           OB.Dal.removeTemporally(location, function () {}, function () {
             OB.UTIL.showError('Error removing');
