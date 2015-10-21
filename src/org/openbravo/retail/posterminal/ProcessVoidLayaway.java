@@ -28,6 +28,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.advpaymentmngt.dao.TransactionsDao;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBProvider;
@@ -189,11 +190,12 @@ public class ProcessVoidLayaway extends JSONProcessSimple {
         OBDal.getInstance().save(transaction);
         acc.setCurrentBalance(account.getCurrentBalance().subtract(foreignAmount.negate()));
 
+        OBDal.getInstance().getConnection(true).commit();
       }
     } catch (Exception e) {
-      log.error("There was an error voiding the orde Layaway: ", e);
+      throw new OBException("There was an error voiding the orde Layaway: ", e);
     } finally {
-      OBDal.getInstance().flush();
+      OBDal.getInstance().rollbackAndClose();
       OBContext.restorePreviousMode();
       TriggerHandler.getInstance().enable();
     }
