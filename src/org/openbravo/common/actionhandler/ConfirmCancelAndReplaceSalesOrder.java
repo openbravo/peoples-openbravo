@@ -25,29 +25,38 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.CancelAndReplaceUtils;
-import org.openbravo.service.db.DbUtility;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 
 public class ConfirmCancelAndReplaceSalesOrder extends BaseActionHandler {
 
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) throws OBException {
+    JSONObject result = new JSONObject();
     try {
 
       // Get request parameters
       JSONObject request = new JSONObject(content);
       String newOrderId = request.getString("inpcOrderId");
 
-      JSONObject result = CancelAndReplaceUtils.cancelAndReplaceOrder(newOrderId, null, false);
+      CancelAndReplaceUtils.cancelAndReplaceOrder(newOrderId, null, false);
 
-      return result;
+      JSONObject resultMessage = new JSONObject();
+      resultMessage.put("severity", "success");
+      resultMessage.put("title", OBMessageUtils.messageBD("Success"));
+      result.put("message", resultMessage);
+
     } catch (Exception e1) {
       try {
         OBDal.getInstance().getConnection().rollback();
+        JSONObject resultMessage = new JSONObject();
+        resultMessage.put("severity", "error");
+        resultMessage.put("title", OBMessageUtils.messageBD("Error"));
+        resultMessage.put("text", OBMessageUtils.translateError(e1.getMessage()).getMessage());
+        result.put("message", resultMessage);
       } catch (Exception e2) {
         throw new OBException(e2);
       }
-      Throwable e3 = DbUtility.getUnderlyingSQLException(e1);
-      throw new OBException(e3);
     }
+    return result;
   }
 }

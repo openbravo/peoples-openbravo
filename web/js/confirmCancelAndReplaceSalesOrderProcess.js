@@ -27,6 +27,7 @@ OB.ConfirmCancelAndReplaceSalesOrder = {
     callback = function (rpcResponse, data, rpcRequest) {
       // close process to refresh the selected record
       params.button.closeProcessPopup();
+      view.view.messageBar.setMessage(data.message.severity, data.message.title, data.message.text);
     };
 
     OB.RemoteCallManager.call('org.openbravo.common.actionhandler.ConfirmCancelAndReplaceSalesOrder', {

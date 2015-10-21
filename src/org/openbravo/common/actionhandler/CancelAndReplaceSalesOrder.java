@@ -25,15 +25,16 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
+import org.openbravo.service.db.DbUtility;
 
 public class CancelAndReplaceSalesOrder extends BaseActionHandler {
   private static final Logger log = Logger.getLogger(CancelAndReplaceSalesOrder.class);
@@ -129,17 +130,21 @@ public class CancelAndReplaceSalesOrder extends BaseActionHandler {
 
       // result.put("showMsgInView", showMsgInView);
 
-    } catch (JSONException e) {
+    } catch (Exception e) {
       log.error("Error in process", e);
       try {
+        OBDal.getInstance().getConnection().rollback();
         result = new JSONObject();
-        // errorMessage = new JSONObject();
-        // errorMessage.put("severity", "error");
-        // errorMessage.put("title", OBMessageUtils.messageBD("Error"));
-        // errorMessage.put("text", OBMessageUtils.messageBD("Error"));
-        // result.put("message", errorMessage);
-      } catch (Exception ignore) {
+        JSONObject errorMessage = new JSONObject();
+        errorMessage.put("severity", "error");
+        errorMessage.put("title", OBMessageUtils.messageBD("Error"));
+        errorMessage.put("text", e.getMessage());
+        result.put("message", errorMessage);
+      } catch (Exception e2) {
+        throw new OBException(e2);
       }
+      Throwable e3 = DbUtility.getUnderlyingSQLException(e);
+      throw new OBException(e3);
     }
     return result;
   }
