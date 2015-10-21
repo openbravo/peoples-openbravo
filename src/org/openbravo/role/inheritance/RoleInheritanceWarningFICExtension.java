@@ -35,6 +35,7 @@ import org.openbravo.base.structure.InheritedAccessEnabled;
 import org.openbravo.client.application.ApplicationConstants;
 import org.openbravo.client.application.window.FICExtension;
 import org.openbravo.dal.core.DalUtil;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.RoleInheritance;
@@ -71,8 +72,20 @@ public class RoleInheritanceWarningFICExtension implements FICExtension {
     }
     String entityClassName = ModelProvider.getInstance()
         .getEntityByTableId((String) DalUtil.getId(tab.getTable())).getClassName();
-    InheritedAccessEnabled access = (InheritedAccessEnabled) row;
-    Role role = manager.getRole(access, entityClassName);
+    Role role;
+    JSONObject roleColumn = columnValues.get("inpadRoleId");
+    if (roleColumn != null && roleColumn.has("value")) {
+      try {
+        String roleId = (String) roleColumn.get("value");
+        role = OBDal.getInstance().get(Role.class, roleId);
+      } catch (JSONException e) {
+        role = null;
+        log.error("Error retrieving role id in tab {}" + tab.getName(), e);
+      }
+    } else {
+      InheritedAccessEnabled access = (InheritedAccessEnabled) row;
+      role = manager.getRole(access, entityClassName);
+    }
     String childRoleList = "";
     if (role != null && role.isTemplate()) {
       for (RoleInheritance inheritance : role.getADRoleInheritanceInheritFromList()) {
