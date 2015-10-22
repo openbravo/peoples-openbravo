@@ -269,6 +269,77 @@ public class RoleInheritanceRestrictions extends WeldBaseTest {
   }
 
   /**
+   * Test case to check that is not possible to assign an already used ancestor on top of the
+   * hierarchy
+   */
+  @Test
+  public void assignAncestorOnTop() {
+    Role roleA = null;
+    Role roleB = null;
+    Role roleC = null;
+    Role roleD = null;
+    try {
+      OBContext.setAdminMode(true);
+      roleA = RoleInheritanceTestUtils.createRole("roleA", RoleInheritanceTestUtils.CLIENT_ID,
+          RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true, true);
+      String roleAId = (String) DalUtil.getId(roleA);
+      roleB = RoleInheritanceTestUtils.createRole("roleB", RoleInheritanceTestUtils.CLIENT_ID,
+          RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true, true);
+      String roleBId = (String) DalUtil.getId(roleB);
+      roleC = RoleInheritanceTestUtils.createRole("roleC", RoleInheritanceTestUtils.CLIENT_ID,
+          RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true, false);
+      String roleCId = (String) DalUtil.getId(roleC);
+      roleD = RoleInheritanceTestUtils.createRole("roleD", RoleInheritanceTestUtils.CLIENT_ID,
+          RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true, true);
+      String roleDId = (String) DalUtil.getId(roleD);
+
+      // Add inheritances
+      // roleB inherits from roleA
+      RoleInheritanceTestUtils.addInheritance(roleB, roleA, new Long(10));
+      // roleC inherits from roleB
+      RoleInheritanceTestUtils.addInheritance(roleC, roleB, new Long(10));
+      // roleC inherits from roleD
+      RoleInheritanceTestUtils.addInheritance(roleC, roleD, new Long(20));
+      OBDal.getInstance().commitAndClose();
+      roleA = OBDal.getInstance().get(Role.class, roleAId);
+      roleB = OBDal.getInstance().get(Role.class, roleBId);
+      roleC = OBDal.getInstance().get(Role.class, roleCId);
+      roleD = OBDal.getInstance().get(Role.class, roleDId);
+      assertThat("Inheritance for roleB created successfully", roleB.getADRoleInheritanceList(),
+          hasSize(1));
+      assertThat("Inheritance for roleC created successfully", roleC.getADRoleInheritanceList(),
+          hasSize(2));
+      assertThat("roleA does not have role inheritances", roleA.getADRoleInheritanceList(),
+          hasSize(0));
+      try {
+        // We try to add an inheritance for roleA with roleD. This should not be possible as roleD
+        // is already an ancestor of roleC, which is a child of roleA.
+        RoleInheritanceTestUtils.addInheritance(roleA, roleD, new Long(10));
+        OBDal.getInstance().commitAndClose();
+      } catch (Exception ex) {
+        OBDal.getInstance().rollbackAndClose();
+      }
+      roleA = OBDal.getInstance().get(Role.class, roleAId);
+      roleB = OBDal.getInstance().get(Role.class, roleBId);
+      roleC = OBDal.getInstance().get(Role.class, roleCId);
+      roleD = OBDal.getInstance().get(Role.class, roleDId);
+      assertThat("Inheritance for roleA with roleD has not been created",
+          roleA.getADRoleInheritanceList(), hasSize(0));
+
+    } finally {
+      // Delete roles
+      RoleInheritanceTestUtils.deleteRole(roleC);
+      RoleInheritanceTestUtils.deleteRole(roleB);
+      RoleInheritanceTestUtils.deleteRole(roleA);
+      RoleInheritanceTestUtils.deleteRole(roleD);
+
+      OBDal.getInstance().commitAndClose();
+
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  /**
    * Test case to check that is not possible to deactivate the template flag for a template in use
    */
   @Test
