@@ -28,7 +28,7 @@ OB.ProductServices.onLoad = function (view) {
 
 OB.ProductServices.onLoadGrid = function (grid) {
   OB.ProductServices.updateTotalLinesAmount(this.view.theForm);
-  OB.ProductServices.updateServicePrice(this.view, null);
+  OB.ProductServices.updateServicePrice(this.view, null, null);
 };
 
 OB.ProductServices.updateTotalLinesAmount = function (form) {
@@ -142,10 +142,10 @@ OB.ProductServices.doRelateOrderLinesSelectionChanged = function (record, state,
     }
   }
   OB.ProductServices.updateTotalLinesAmount(view.theForm);
-  OB.ProductServices.updateServicePrice(view, record);
+  OB.ProductServices.updateServicePrice(view, record, state);
 };
 
-OB.ProductServices.updateServicePrice = function (view, record) {
+OB.ProductServices.updateServicePrice = function (view, record, state) {
   var callback, totalServiceAmount = view.theForm.getItem('totalserviceamount'),
       orderLinesGrid = view.theForm.getItem('grid').canvas.viewGrid,
       recordId, contextInfo;
@@ -182,6 +182,7 @@ OB.ProductServices.updateServicePrice = function (view, record) {
     relatedqty: view.theForm.getItem('totalrelatedqty').getValue(),
     unitdiscountsamt: view.theForm.getItem('totalUnitDiscountsAmt').getValue(),
     orderLineToRelateId: recordId,
-    tabId: contextInfo.inpTabId
+    tabId: contextInfo.inpTabId,
+    state: state
   }, {}, callback);
 };
