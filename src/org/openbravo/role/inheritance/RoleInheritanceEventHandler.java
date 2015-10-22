@@ -126,7 +126,9 @@ public class RoleInheritanceEventHandler extends EntityPersistenceEventObserver 
       if (ri.isActive() && roleIdToFind.equals((String) DalUtil.getId(ri.getRole()))) {
         return true;
       }
-      result = existCycles(ri.getRole(), roleIdToFind);
+      if (!result) {
+        result = existCycles(ri.getRole(), roleIdToFind);
+      }
     }
     return result;
   }
@@ -134,22 +136,27 @@ public class RoleInheritanceEventHandler extends EntityPersistenceEventObserver 
   private void checkAncestors(Role role, Role parent) {
     Set<String> ancestorList = new HashSet<String>();
     getAncestorList(parent, ancestorList);
+    ancestorList.add((String) DalUtil.getId(parent));
     // check if the role is inheriting from the new parent role
     if (findAncestor(role, ancestorList)) {
       Utility.throwErrorMessage("RoleExistsInRoleInheritance");
     } else {
       // check any the role descendants is inheriting from the new parent role
-      ancestorList.add((String) DalUtil.getId(parent));
       Set<String> descendantsAncestorList = new HashSet<String>();
-      // get descendants list of the current role
-      for (RoleInheritance ri : role.getADRoleInheritanceInheritFromList()) {
-        getAncestorList(ri.getRole(), descendantsAncestorList);
-      }
+      getAncestorListWithChildrenAncestors(role, descendantsAncestorList);
       for (String ancestorId : ancestorList) {
         if (descendantsAncestorList.contains(ancestorId)) {
           Utility.throwErrorMessage("RoleExistsInDescentansInheritance");
         }
       }
+    }
+  }
+
+  private void getAncestorListWithChildrenAncestors(Role role, Set<String> result) {
+    // get descendants list of the current role
+    for (RoleInheritance ri : role.getADRoleInheritanceInheritFromList()) {
+      getAncestorList(ri.getRole(), result);
+      getAncestorListWithChildrenAncestors(ri.getRole(), result);
     }
   }
 
@@ -166,7 +173,9 @@ public class RoleInheritanceEventHandler extends EntityPersistenceEventObserver 
       if (ri.isActive() && roleIdsToFind.contains((String) DalUtil.getId(ri.getInheritFrom()))) {
         return true;
       }
-      result = findAncestor(ri.getInheritFrom(), roleIdsToFind);
+      if (!result) {
+        result = findAncestor(ri.getInheritFrom(), roleIdsToFind);
+      }
     }
     return result;
   }

@@ -289,6 +289,27 @@
     v_rowcount:=SQL%ROWCOUNT;
     v_Created:=v_Created + v_rowcount;
     DBMS_OUTPUT.PUT_LINE('- AD_Process_Para ' || v_rowcount) ;
+    -- Process Definition
+    INSERT
+    INTO OBUIAPP_Process_Trl
+      (
+        OBUIAPP_Process_Trl_ID, OBUIAPP_Process_ID, AD_Language, Name, Description,
+        Help, IsTranslated, Createdby, UpdatedBy,
+        AD_Client_ID, AD_Org_ID
+      )
+    SELECT get_uuid(), OBUIAPP_Process_ID, AD_Language.AD_Language, OBUIAPP_Process.Name, OBUIAPP_Process.Description, OBUIAPP_Process.Help, 'N', '0', '0', '0', '0'
+    FROM OBUIAPP_Process, AD_Language, AD_Module M
+    WHERE AD_Language.IsActive='Y'  
+    AND AD_Language.IsSystemLanguage='Y'  
+    AND M.AD_MODULE_ID = OBUIAPP_Process.AD_MODULE_ID
+    AND M.AD_LANGUAGE != AD_Language.AD_Language
+    AND NOT EXISTS (SELECT 1 FROM OBUIAPP_Process_trl
+                 WHERE OBUIAPP_Process_ID = OBUIAPP_Process.OBUIAPP_Process_ID
+                   AND AD_LANGUAGE = AD_Language.AD_Language);
+
+    v_rowcount:=SQL%ROWCOUNT;
+    v_Created:=v_Created + v_rowcount;
+    DBMS_OUTPUT.PUT_LINE('- OBUIAPP_Process ' || v_rowcount) ;
     -- Reference
     INSERT
     INTO AD_Reference_Trl
