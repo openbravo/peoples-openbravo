@@ -43,9 +43,9 @@ enyo.kind({
   components: [{
     classes: 'tab-pane',
     components: [{
-      style: 'overflow:auto; height: 500px; margin: 5px',
+      style: 'overflow:auto; height: 400px; margin: 5px',
       components: [{
-        style: 'background-color: #ffffff; color: black; padding: 5px;',
+        style: 'background-color: #ffffff; color: black; padding: 5px; height:90%',
         components: [{
           classes: 'row-fluid',
           components: [{
