@@ -614,6 +614,7 @@ enyo.kind({
         if (this.$.multiColumn.$.leftPanel.$[inEvent.leftSubWindow].mainBeforeSetShowing(inEvent) && allHidden) {
           this.$.multiColumn.$.leftPanel.$.receiptview.setShowing(false);
           this.$.multiColumn.$.leftPanel.$[inEvent.leftSubWindow].setShowing(true);
+          this.$.multiColumn.$.leftPanel.$[inEvent.leftSubWindow].inEvent = inEvent;
         }
       }
     }

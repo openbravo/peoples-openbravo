@@ -58,14 +58,14 @@ enyo.kind({
       if (this.leftSubWindow && this.leftSubWindow.line) {
         line = this.leftSubWindow.line;
       }
+      var attrs = (this.leftSubWindow.inEvent && this.leftSubWindow.inEvent.attrs) ? this.leftSubWindow.inEvent.attrs : {};
+      attrs.warehouse = {
+        id: this.leftSubWindow.warehouse.warehouseid,
+        warehousename: this.leftSubWindow.warehouse.warehousename,
+        warehouseqty: this.leftSubWindow.warehouse.warehouseqty
+      };
       this.doAddProduct({
-        attrs: {
-          warehouse: {
-            id: this.leftSubWindow.warehouse.warehouseid,
-            warehousename: this.leftSubWindow.warehouse.warehousename,
-            warehouseqty: this.leftSubWindow.warehouse.warehouseqty
-          }
-        },
+        attrs: attrs,
         options: {
           line: line
         },
