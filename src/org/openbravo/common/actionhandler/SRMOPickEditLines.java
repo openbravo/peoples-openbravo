@@ -61,6 +61,7 @@ import org.openbravo.service.db.DbUtility;
  */
 public class SRMOPickEditLines extends BaseProcessActionHandler {
   private static Logger log = Logger.getLogger(SRMOPickEditLines.class);
+  private static String SERVICEPRODUCT = "S";
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
@@ -138,6 +139,13 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
     for (long i = 0; i < selectedLines.length(); i++) {
       JSONObject selectedLine = selectedLines.getJSONObject((int) i);
       log.debug(selectedLine);
+
+      Product product = OBDal.getInstance().get(Product.class, selectedLine.getString("product"));
+      if (SERVICEPRODUCT.equals(product.getProductType()) && !product.isReturnable()) {
+        throw new OBException("@Service@ '" + product.getIdentifier()
+            + "' @ServiceIsNotReturnable@");
+      }
+
       if (selectedLine.get("returned").equals(null)) {
         continue;
       }
@@ -161,7 +169,6 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
 
       ShipmentInOutLine shipmentLine = OBDal.getInstance().get(ShipmentInOutLine.class,
           selectedLine.getString("goodsShipmentLine"));
-      Product product = OBDal.getInstance().get(Product.class, selectedLine.getString("product"));
       AttributeSetInstance asi = null;
       if (!selectedLine.get("attributeSetValue").equals(null)) {
         asi = OBDal.getInstance().get(AttributeSetInstance.class,

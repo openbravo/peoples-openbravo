@@ -158,8 +158,8 @@
   BEGIN --BODY
   
   /*Orderline acct dimension*/
-  SELECT C_ORDER.ISSOTRX , C_ORDER.c_bpartner_id
-  INTO v_IsSOTrx, v_c_Bpartner_ID
+  SELECT C_ORDER.ISSOTRX , C_ORDER.c_bpartner_id, DocAction
+  INTO v_IsSOTrx, v_c_Bpartner_ID, v_DocAction
   FROM C_ORDER
   WHERE C_ORDER_ID = v_Record_ID;
   
@@ -179,6 +179,23 @@
         RAISE_APPLICATION_ERROR(-20000, '@QuantitiesNotMatch@') ;
       END IF;
     END LOOP;
+  ELSE
+     IF (v_DocAction IN ('CO', 'PR')) THEN
+				SELECT COUNT(1) 
+				INTO v_Count
+				FROM DUAL 
+				WHERE EXISTS(
+											SELECT 1
+											FROM C_ORDERLINE, M_PRODUCT
+											WHERE C_ORDERLINE.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID 
+											AND ISLINKEDTOPRODUCT = 'Y'
+											AND C_ORDER_ID = v_Record_ID
+											AND NOT EXISTS (SELECT 1 FROM C_ORDERLINE_SERVICERELATION WHERE C_ORDERLINE_SERVICERELATION.C_ORDERLINE_ID = C_ORDERLINE.C_ORDERLINE_ID));
+			 IF (v_Count <> 0) THEN
+         v_Message:='@MissingServiceRelation@';
+         RAISE_APPLICATION_ERROR(-20000, '@MissingServiceRelation@') ;
+       END IF;
+     END IF;
   END IF;
 
   /* Check active business partner*/
