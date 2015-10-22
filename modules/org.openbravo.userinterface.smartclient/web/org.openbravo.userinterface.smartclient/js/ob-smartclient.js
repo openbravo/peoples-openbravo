@@ -71,6 +71,15 @@ isc.DataSource.addSearchOperator({
     } else {
       return -1;
     }
+  },
+
+  // condition function is used for local filtering, it returns true in case the field value
+  // fulfills the criterion. As 'exists' operator is always evaluated in backend, it can be
+  // safely assumed all records fulfill the criteria, not being necessary to recalculate it in
+  // client. Note this function is invoked in case there is already an 'exists' applied in the
+  // criteria and a more restrictive one is set so local filtering can be performed.
+  condition: function (fieldName, fieldValue, criterionValues) {
+    return true;
   }
 });
 
