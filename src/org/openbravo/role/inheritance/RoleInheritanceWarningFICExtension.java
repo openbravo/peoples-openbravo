@@ -70,22 +70,7 @@ public class RoleInheritanceWarningFICExtension implements FICExtension {
       log.debug("took {} ns", (System.nanoTime() - t));
       return;
     }
-    String entityClassName = ModelProvider.getInstance()
-        .getEntityByTableId((String) DalUtil.getId(tab.getTable())).getClassName();
-    Role role;
-    JSONObject roleColumn = columnValues.get("inpadRoleId");
-    if (roleColumn != null && roleColumn.has("value")) {
-      try {
-        String roleId = (String) roleColumn.get("value");
-        role = OBDal.getInstance().get(Role.class, roleId);
-      } catch (JSONException e) {
-        role = null;
-        log.error("Error retrieving role id in tab {}" + tab.getName(), e);
-      }
-    } else {
-      InheritedAccessEnabled access = (InheritedAccessEnabled) row;
-      role = manager.getRole(access, entityClassName);
-    }
+    Role role = getRoleofAccess(columnValues, tab, row);
     String childRoleList = "";
     if (role != null && role.isTemplate()) {
       for (RoleInheritance inheritance : role.getADRoleInheritanceInheritFromList()) {
@@ -120,6 +105,24 @@ public class RoleInheritanceWarningFICExtension implements FICExtension {
       return valid;
     }
     return false;
+  }
+
+  private Role getRoleofAccess(Map<String, JSONObject> columnValues, Tab tab, BaseOBObject row) {
+    JSONObject roleColumn = columnValues.get("inpadRoleId");
+    if (roleColumn != null && roleColumn.has("value")) {
+      try {
+        String roleId = (String) roleColumn.get("value");
+        return OBDal.getInstance().get(Role.class, roleId);
+      } catch (JSONException e) {
+        log.error("Error retrieving role id in tab {}" + tab.getName(), e);
+        return null;
+      }
+    } else {
+      String entityClassName = ModelProvider.getInstance()
+          .getEntityByTableId((String) DalUtil.getId(tab.getTable())).getClassName();
+      InheritedAccessEnabled access = (InheritedAccessEnabled) row;
+      return manager.getRole(access, entityClassName);
+    }
   }
 
   private void addWarningMessage(List<JSONObject> calloutMessages, String message,
