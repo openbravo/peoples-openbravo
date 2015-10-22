@@ -298,6 +298,7 @@ enyo.kind({
   searchAction: function (inSender, inEvent) {
     var me = this,
         ordersLoaded = [],
+        existentOrders = [],
         process = new OB.DS.Process('org.openbravo.retail.posterminal.PaidReceiptsHeader');
     me.filters = inEvent.filters;
     this.clearAction();
@@ -305,6 +306,13 @@ enyo.kind({
     this.$.prslistitemprinter.$.tbody.hide();
     this.$.prslistitemprinter.$.tlimit.hide();
     this.$.renderLoading.show();
+    var i;
+    for (i = 0; i < this.model.get('orderList').length; i++) {
+      // Get the id of each order
+      if (this.model.get('orderList').models[i].get('id')) {
+        existentOrders.push(this.model.get('orderList').models[i].get('id'));
+      }
+    }
     process.exec({
       filters: me.filters,
       _limit: OB.Model.Order.prototype.dataLimit,
@@ -314,8 +322,10 @@ enyo.kind({
         ordersLoaded = [];
         _.each(data, function (iter) {
           me.model.get('orderList').newDynamicOrder(iter, function (order) {
-            ordersLoaded.push(order);
-
+            if (existentOrders.indexOf(order.id) === -1) {
+              // Only push the order if not exists in previous receipts
+              ordersLoaded.push(order);
+            }
           });
         });
         me.prsList.reset(ordersLoaded);
@@ -326,8 +336,6 @@ enyo.kind({
           me.$.prslistitemprinter.$.tempty.show();
         }
         me.$.prslistitemprinter.getScrollArea().scrollToTop();
-
-
       } else {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
       }
