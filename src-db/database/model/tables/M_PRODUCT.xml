@@ -384,6 +384,7 @@
       <column name="UNIQUE_PER_DOCUMENT" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
         <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
       <column name="RELATEPRODCATTOSERVICE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
         <default/>
         <onCreateDefault/>
@@ -484,20 +485,8 @@
         <index-column name="NAME"/>
         <index-column name="M_PRODUCT_ID"/>
       </index>
-      <index name="M_PRODUCT_NAME_ID" unique="false">
-        <index-column name="NAME"/>
-        <index-column name="M_PRODUCT_ID"/>
-      </index>
       <index name="M_PRODUCT_PRODUCTCATEGORY" unique="false">
         <index-column name="M_PRODUCT_CATEGORY_ID"/>
-      </index>
-      <index name="M_PRODUCT_UPC_ID" unique="false">
-        <index-column name="UPC"/>
-        <index-column name="M_PRODUCT_ID"/>
-      </index>
-      <index name="M_PRODUCT_VALUE_ID" unique="false">
-        <index-column name="VALUE"/>
-        <index-column name="M_PRODUCT_ID"/>
       </index>
       <index name="M_PRODUCT_UPC_ID" unique="false">
         <index-column name="UPC"/>
