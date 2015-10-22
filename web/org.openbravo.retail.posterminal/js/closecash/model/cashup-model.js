@@ -68,8 +68,10 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
         newstep, expected = 0,
         startings = [],
         cashUpReport, tempList = new Backbone.Collection(),
-        activePaymentsList = [], finish,
-        synch1 = false, synch2 = false, synch3 = false;
+        activePaymentsList = [],
+        finish, synch1 = false,
+        synch2 = false,
+        synch3 = false;
 
     this.cashupStepsDefinition[this.stepIndex('OB.CashUp.Master')].active = OB.POS.modelterminal.get('terminal').ismaster;
     this.cashupStepsDefinition[this.stepIndex('OB.CashUp.StepPendingOrders')].loaded = false;

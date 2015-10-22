@@ -32,7 +32,7 @@
     name: 'characteristic_id',
     column: 'characteristic_id',
     type: 'TEXT'
-  },  {
+  }, {
     name: 'parent',
     column: 'parent',
     type: 'TEXT'
