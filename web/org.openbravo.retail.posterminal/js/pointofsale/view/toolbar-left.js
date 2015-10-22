@@ -69,7 +69,7 @@ enyo.kind({
   },
   tap: function () {
     var me = this;
-    OB.MobileApp.model.hookManager.executeHooks('OBPOS_PreCreateNewReceipt', {
+    OB.UTIL.HookManager.executeHooks('OBPOS_PreCreateNewReceipt', {
       model: this.model,
       context: this
     }, function (args) {
@@ -96,7 +96,7 @@ enyo.kind({
           }
         }
         me.doAddNewOrder();
-        OB.MobileApp.model.hookManager.executeHooks('OBPOS_PostAddNewReceipt', {
+        OB.UTIL.HookManager.executeHooks('OBPOS_PostAddNewReceipt', {
           model: me.model,
           context: me
         }, function () {
