@@ -22,11 +22,15 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.secureApp.LoginUtils;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.PropertyException;
+import org.openbravo.mobile.core.MobileServerDefinition;
+import org.openbravo.mobile.core.MobileServerService;
+import org.openbravo.mobile.core.MobileServiceDefinition;
 import org.openbravo.mobile.core.login.MobileCoreLoginUtilsServlet;
 import org.openbravo.model.ad.access.FormAccess;
 import org.openbravo.model.ad.access.User;
@@ -271,7 +275,7 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
           result.put("appCaption", terminal.getIdentifier() + " - "
               + terminal.getOrganization().getIdentifier());
           result.put("servers", getServers(terminal));
-          result.put("services", getServices(terminal));
+          result.put("services", getServices());
           terminal.setLinked(true);
 
           OBDal.getInstance().save(terminal);
@@ -300,6 +304,23 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
   @Override
   protected JSONObject initActions(HttpServletRequest request) throws JSONException {
     JSONObject result = super.initActions(request);
+
+    final String terminalName = request.getParameter("terminalName");
+    if (terminalName != null) {
+      OBPOSApplications terminal = null;
+      OBCriteria<OBPOSApplications> qApp = OBDal.getInstance().createCriteria(
+          OBPOSApplications.class);
+      qApp.add(Restrictions.eq(OBPOSApplications.PROPERTY_SEARCHKEY, terminalName));
+      qApp.setFilterOnReadableOrganization(false);
+      qApp.setFilterOnReadableClients(false);
+      List<OBPOSApplications> apps = qApp.list();
+      if (apps.size() == 1) {
+        terminal = ((OBPOSApplications) apps.get(0));
+        result.put("servers", getServers(terminal));
+        result.put("services", getServices());
+      }
+    }
+
     String value;
     try {
       value = Preferences.getPreferenceValue("OBPOS_TerminalAuthentication", true, null, null,
@@ -310,6 +331,84 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
     }
     result.put("terminalAuthentication", value);
     return result;
+  }
+
+  private JSONObject createServerJSON(MobileServerDefinition server) throws JSONException {
+    final JSONObject jsonObject = new JSONObject();
+    jsonObject.put("name", server.getName());
+    // strip the http:// part if there, is not needed in the client
+    String serverUrl = server.getURL() != null ? server.getURL().trim() : null;
+    if (serverUrl != null && serverUrl.toLowerCase().trim().startsWith("http://")) {
+      serverUrl = serverUrl.substring("http://".length());
+    }
+    jsonObject.put("address", serverUrl);
+    jsonObject.put("online", true);
+    jsonObject.put("priority", server.getPriority());
+    jsonObject.put("allServices", server.isAllservices());
+    if ("MAIN".equals(server.getServerType())) {
+      jsonObject.put("mainServer", true);
+    } else {
+      jsonObject.put("mainServer", false);
+    }
+    JSONArray services = new JSONArray();
+    if (!server.isAllservices() && server.getOBMOBCSERVERSERVICESList().size() > 0) {
+      for (MobileServerService service : server.getOBMOBCSERVERSERVICESList()) {
+        services.put(service.getObmobcServices().getService());
+      }
+    }
+    jsonObject.put("services", services);
+    return jsonObject;
+  }
+
+  protected JSONArray getServers(OBPOSApplications terminal) throws JSONException {
+    JSONArray respArray = new JSONArray();
+
+    boolean multiServerEnabled = false;
+    try {
+      OBContext.setAdminMode(false);
+      multiServerEnabled = "Y".equals(Preferences.getPreferenceValue(
+          "OBMOBC_MultiServerArchitecture", true, terminal.getClient(), terminal.getOrganization(),
+          null, null, null).trim());
+    } catch (PropertyException ignore) {
+      // ignore on purpose
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+
+    if (!multiServerEnabled) {
+      return respArray;
+    }
+
+    OBQuery<MobileServerDefinition> servers = OBDal.getInstance().createQuery(
+        MobileServerDefinition.class,
+        MobileServerDefinition.PROPERTY_ALLORGS + "='Y' or :org in elements("
+            + MobileServerDefinition.PROPERTY_OBMOBCSERVERORGSLIST
+            + ")  and client.id=:clientId order by " + MobileServerDefinition.PROPERTY_PRIORITY);
+    servers.setFilterOnReadableClients(false);
+    servers.setFilterOnReadableOrganization(false);
+    servers.setNamedParameter("org", terminal.getOrganization().getId());
+    servers.setNamedParameter("clientId", terminal.getClient().getId());
+    for (MobileServerDefinition server : servers.list()) {
+      respArray.put(createServerJSON(server));
+    }
+
+    return respArray;
+  }
+
+  protected JSONArray getServices() throws JSONException {
+    JSONArray respArray = new JSONArray();
+
+    OBQuery<MobileServiceDefinition> services = OBDal.getInstance().createQuery(
+        MobileServiceDefinition.class, "");
+    services.setFilterOnReadableOrganization(false);
+
+    for (MobileServiceDefinition service : services.list()) {
+      final JSONObject jsonObject = new JSONObject();
+      jsonObject.put("name", service.getService());
+      jsonObject.put("type", service.getRoutingtype());
+      respArray.put(jsonObject);
+    }
+    return respArray;
   }
 
   @Override
