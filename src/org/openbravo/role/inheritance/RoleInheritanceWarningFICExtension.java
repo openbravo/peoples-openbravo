@@ -70,7 +70,7 @@ public class RoleInheritanceWarningFICExtension implements FICExtension {
       log.debug("took {} ns", (System.nanoTime() - t));
       return;
     }
-    Role role = getRoleofAccess(columnValues, tab, row);
+    Role role = getRoleOfAccess(columnValues, tab, row);
     String childRoleList = "";
     if (role != null && role.isTemplate()) {
       for (RoleInheritance inheritance : role.getADRoleInheritanceInheritFromList()) {
@@ -107,7 +107,7 @@ public class RoleInheritanceWarningFICExtension implements FICExtension {
     return false;
   }
 
-  private Role getRoleofAccess(Map<String, JSONObject> columnValues, Tab tab, BaseOBObject row) {
+  private Role getRoleOfAccess(Map<String, JSONObject> columnValues, Tab tab, BaseOBObject row) {
     JSONObject roleColumn = columnValues.get("inpadRoleId");
     if (roleColumn != null && roleColumn.has("value")) {
       try {
