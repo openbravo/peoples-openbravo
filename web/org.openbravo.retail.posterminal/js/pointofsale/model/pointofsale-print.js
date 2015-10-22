@@ -135,7 +135,7 @@
               action: successfunc
             });
             if (OB.POS.modelterminal.hasPermission('OBPOS_retail.selectprinter') && _.any(OB.POS.modelterminal.get('hardwareURL'), function (printer) {
-              return printer.active && printer.hasReceiptPrinter;
+              return printer.active && printer.hasPDFPrinter;
             })) {
               // Show this button entry only if there are             
               dialogbuttons.push({
@@ -144,10 +144,10 @@
                   OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
                     popup: 'modalSelectPrinters',
                     args: {
-                      title: OB.I18N.getLabel('OBPOS_SelectPrintersTitle'),
-                      hasPrinterProperty: 'hasReceiptPrinter',
-                      serverURLProperty: 'activeurl',
-                      serverURLSetter: 'setActiveURL',
+                      title: OB.I18N.getLabel('OBPOS_SelectPDFPrintersTitle'),
+                      hasPrinterProperty: 'hasPDFPrinter',
+                      serverURLProperty: 'activepdfurl',
+                      serverURLSetter: 'setActivePDFURL',
                       onSuccess: successfunc,
                       onHide: hidefunc
                     }
