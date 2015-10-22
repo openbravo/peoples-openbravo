@@ -235,7 +235,7 @@ enyo.kind({
     criteria.bpartner = this.bPartnerId;
     if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
       var filterIdentifier = {
-        columns: ['_identifier'],
+        columns: ['_filter'],
         operator: 'startsWith',
         value: filter
       },

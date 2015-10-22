@@ -422,7 +422,7 @@ enyo.kind({
         }
         if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
           var filterIdentifier = {
-            columns: ['_identifier', 'searchKey'],
+            columns: ['_filter'],
             operator: 'startsWith',
             value: splitFilter[i]
           };
