@@ -281,9 +281,10 @@ enyo.kind({
       }
       var payment = OB.MobileApp.model.paymentnames[OB.MobileApp.model.get('paymentcash')];
       if ((model.get('orderType') === 2 || (model.get('isLayaway'))) && model.get('orderType') !== 3 && !model.getPaymentStatus().done) {
-        this.$.creditsalesaction.show();
+        this.$.creditsalesaction.hide();
         this.$.layawayaction.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
         this.$.layawayaction.show();
+        this.$.exactbutton.hide();
       } else if (model.get('orderType') === 3) {
         this.$.creditsalesaction.hide();
         this.$.layawayaction.hide();
