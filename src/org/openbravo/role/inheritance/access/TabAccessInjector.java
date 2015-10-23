@@ -96,12 +96,16 @@ public class TabAccessInjector extends AccessTypeInjector {
   }
 
   @Override
-  public void clearInheritFromFieldInChilds(InheritedAccessEnabled access) {
+  public void clearInheritFromFieldInChilds(InheritedAccessEnabled access, boolean clearAll) {
     if (access.getInheritedFrom() != null) {
       String inheritedFromId = (String) DalUtil.getId(access.getInheritedFrom());
       TabAccess ta = (TabAccess) access;
       for (FieldAccess fa : ta.getADFieldAccessList()) {
-        clearInheritedFromField(fa, inheritedFromId);
+        if (clearAll) {
+          clearInheritedFromField(fa);
+        } else {
+          clearInheritedFromField(fa, inheritedFromId);
+        }
       }
     }
   }

@@ -55,14 +55,22 @@ public class WindowAccessInjector extends AccessTypeInjector {
   }
 
   @Override
-  public void clearInheritFromFieldInChilds(InheritedAccessEnabled access) {
+  public void clearInheritFromFieldInChilds(InheritedAccessEnabled access, boolean clearAll) {
     if (access.getInheritedFrom() != null) {
       String inheritedFromId = (String) DalUtil.getId(access.getInheritedFrom());
       WindowAccess wa = (WindowAccess) access;
       for (TabAccess ta : wa.getADTabAccessList()) {
-        clearInheritedFromField(ta, inheritedFromId);
+        if (clearAll) {
+          clearInheritedFromField(ta);
+        } else {
+          clearInheritedFromField(ta, inheritedFromId);
+        }
         for (FieldAccess fa : ta.getADFieldAccessList()) {
-          clearInheritedFromField(fa, inheritedFromId);
+          if (clearAll) {
+            clearInheritedFromField(fa);
+          } else {
+            clearInheritedFromField(fa, inheritedFromId);
+          }
         }
       }
     }
