@@ -546,6 +546,10 @@
     calculateGross: function () {
       var me = this;
 
+      if (this.get('deleting')) {
+        return; // do not calculate gross and taxes while deleting processes
+      }
+
       // verify that the ui receipt is the only one in which calculateGross is executed
       OB.UTIL.Debug.execute(function () {
         var isTheUIReceipt = this.cid === OB.MobileApp.model.receipt.cid;
@@ -1143,11 +1147,11 @@
                 rls.push(rel[1]);
                 rel[0].set('relatedLines', rls);
               });
-              me.calculateGross();
               me.set('undo', null);
               me.unset('preventServicesUpdate');
               me.unset('deleting');
               me.get('lines').trigger('updateRelations');
+              me.calculateGross();
             }
           });
         } else {
