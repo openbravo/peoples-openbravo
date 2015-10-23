@@ -3134,6 +3134,25 @@
   OB.Data.Registry.registerModel(OrderLine);
   OB.Data.Registry.registerModel(PaymentLine);
 
+  OB.Collection.OrderLineList = OB.Collection.OrderLineList.extend({
+    isProductPresent: function (product) {
+      var result = null;
+      if (this.length > 0) {
+        result = _.find(this.models, function (line) {
+          if (line.get('product').get('id') === product.get('id')) {
+            return true;
+          }
+        }, this);
+        if (_.isUndefined(result) || _.isNull(result)) {
+          return false;
+        } else {
+          return true;
+        }
+      } else {
+        return false;
+      }
+    }
+  });
   // order model is not registered using standard Registry method becasue list is
   // becasue collection is specific
   window.OB.Model.Order = Order;
