@@ -26,9 +26,9 @@ isc.defineClass('OBAttachmentWindowView', isc.OBBaseParameterWindowView);
 isc.OBAttachmentWindowView.addProperties({
   // Set default properties for the OBPopup container
   showMinimizeButton: false,
-  showMaximizeButton: true,
-  popupWidth: '90%',
-  popupHeight: '90%',
+  showMaximizeButton: false,
+  popupWidth: '390',
+  popupHeight: '330',
   showsItself: true,
 
   // Set now pure P&E layout properties
@@ -52,7 +52,7 @@ isc.OBAttachmentWindowView.addProperties({
     encoding: 'multipart',
     action: './businessUtility/TabAttachments_FS.html',
     target: 'background_target',
-    //numCols: 2,
+    numCols: 1,
     align: 'center'
     //redraw: function () {}
     //theCanvas: this.canvas
@@ -232,7 +232,7 @@ isc.OBAttachmentWindowView.addProperties({
 
     buttons.push(isc.LayoutSpacer.create({}));
     buttons.push(submitbutton);
-    buttons.push(isc.LayoutSpacer.create({}));
+    buttons.push(isc.LayoutSpacer.create({width: '30'})); // 30px width
     buttons.push(cancelButton);
     buttons.push(isc.LayoutSpacer.create({}));
 
