@@ -42,6 +42,7 @@ isc.OBBaseParameterWindowView.addProperties({
   toolBarLayout: null,
   members: [],
   baseParams: {},
+  formProps: {},
 
   initWidget: function () {
     var i, field, items = [],
@@ -164,10 +165,9 @@ isc.OBBaseParameterWindowView.addProperties({
       }
 
       if (items.length !== 0) {
-        // create form if there items to include
-        this.theForm = isc.OBParameterWindowForm.create({
-          paramWindow: this
-        });
+        // create form if there are items to include
+        this.formProps.paramWindow = this;
+        this.theForm = isc.OBParameterWindowForm.create(this.formProps);
         // If there is only one paremeter, it is a grid and the window is opened in a popup, then the window is a P&E window
         if (items && items.length === 1 && items[0].type === 'OBPickEditGridItem' && this.popup) {
           this.isPickAndExecuteWindow = true;
