@@ -188,6 +188,9 @@ enyo.kind({
       this.$.btnProductContextMenu.hide();
     } else {
       this.$.btnProductContextMenu.setProduct(this.model);
+      if (this.model.get('showchdesc') && !this.model.get('characteristicDescription')) {
+        this.setStyle('padding: 8px 10px 0 10px');
+      }
     }
   },
   initComponents: function () {
