@@ -252,10 +252,12 @@
   }, {
     name: 'postalCode',
     column: 'postalCode',
+    filter: true,
     type: 'TEXT'
   }, {
     name: 'cityName',
     column: 'cityName',
+    filter: true,
     type: 'TEXT'
   }, {
     name: 'countryName',
