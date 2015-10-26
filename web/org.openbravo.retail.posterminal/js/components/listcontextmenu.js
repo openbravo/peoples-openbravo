@@ -19,19 +19,10 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.ListButtonContextMenu',
-  style: 'float:right; width: 40px; height: 40px;',
   classes: 'listcontextmenu-icon',
   active: true,
   tap: function () {
-    this.addClass('listcontextmenu-icon', false);
-    this.addClass('listcontextmenu-icon-pressed', true);
     this.bubble("onActivate");
-    var me = this;
-    setTimeout(function () {
-      me.addClass('listcontextmenu-icon-pressed', false);
-      me.addClass('listcontextmenu-icon', true);
-      me.render();
-    }, 1000);
     return true;
   },
   setActive: function (act) {
