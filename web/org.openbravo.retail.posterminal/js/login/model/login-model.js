@@ -313,7 +313,7 @@
         timePerRecord: 10000,
         criteria: {},
         getIdentifier: function (model) {
-          return model.creationDate;
+          return OB.I18N.formatDateISO(new Date(model.creationDate));
         },
         changesPendingCriteria: {
           'isprocessed': 'Y'
