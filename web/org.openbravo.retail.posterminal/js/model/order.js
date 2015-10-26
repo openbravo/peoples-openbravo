@@ -3085,7 +3085,7 @@
           // this avoids to merge for example card payments of different cards.
           for (i = 0, max = payments.length; i < max; i++) {
             p = payments.at(i);
-            if (p.get('kind') === payment.get('kind') && !p.get('isPrePayment')) {
+            if (p.get('kind') === payment.get('kind') && !p.get('isPrePayment') && !p.get('reversedPaymentId')) {
               p.set('amount', OB.DEC.add(payment.get('amount'), p.get('amount')));
               if (p.get('rate') && p.get('rate') !== '1') {
                 p.set('origAmount', OB.DEC.add(payment.get('origAmount'), OB.DEC.mul(p.get('origAmount'), p.get('rate'))));
@@ -3167,6 +3167,7 @@
         'isCash': payment.get('isCash'),
         'openDrawer': payment.get('openDrawer'),
         'printtwice': payment.get('printtwice'),
+        'origAmount': OB.DEC.sub(0, payment.get('origAmount')),
         'reversedPaymentId': payment.get('paymentId')
       }));
       payment.set('isReversed', true);
