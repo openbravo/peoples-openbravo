@@ -185,6 +185,12 @@ enyo.kind({
                 me.customer.set('postalCode', null);
                 me.customer.set('cityName', null);
               }
+              if (customerAddr.get('id') === me.customer.get('locId')) {
+                me.customer.set('locName', customerAddr.get('name'));
+              }
+              if (customerAddr.get('id') === me.customer.get('locShipId')) {
+                me.customer.set('locShipName', customerAddr.get('name'));
+              }
               me.customer.set('locationModel', customerAddr);
               OB.Dal.save(me.customer, function success(tx) {
                 me.doChangeBusinessPartner({
