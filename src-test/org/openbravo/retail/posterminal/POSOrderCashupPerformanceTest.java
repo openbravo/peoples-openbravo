@@ -23,6 +23,12 @@ import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
+import org.openbravo.retail.posterminal.CashCloseProcessor;
+import org.openbravo.retail.posterminal.OBBaseRetailTest;
+import org.openbravo.retail.posterminal.OBPOSAppCashup;
+import org.openbravo.retail.posterminal.OBPOSApplications;
+import org.openbravo.retail.posterminal.OrderLoader;
+import org.openbravo.retail.posterminal.ProcessCashClose;
 
 /**
  * A testcase of testing performance of order loading and cashups.

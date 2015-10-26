@@ -38,6 +38,7 @@ public class PaidReceipts extends JSONProcessSimple {
   public static final String paidReceiptsPropertyExtension = "PRExtension";
   public static final String paidReceiptsLinesPropertyExtension = "PRExtensionLines";
   public static final String paidReceiptsShipLinesPropertyExtension = "PRExtensionShipLines";
+  public static final String paidReceiptsRelatedLinesPropertyExtension = "PRExtensionRelatedLines";
 
   @Inject
   @Any
@@ -51,6 +52,10 @@ public class PaidReceipts extends JSONProcessSimple {
   @Any
   @Qualifier(paidReceiptsShipLinesPropertyExtension)
   private Instance<ModelExtension> extensionsShipLines;
+  @Inject
+  @Any
+  @Qualifier(paidReceiptsRelatedLinesPropertyExtension)
+  private Instance<ModelExtension> extensionsRelatedLines;
 
   @Override
   public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
@@ -175,6 +180,33 @@ public class PaidReceipts extends JSONProcessSimple {
           paidReceiptLine.put("linegrossamount", lineAmount);
 
           paidReceiptLine.put("promotions", promotions);
+
+          // Related lines
+          HQLPropertyList hqlPropertiesRelatedLines = ModelExtensionUtils
+              .getPropertyExtensions(extensionsRelatedLines);
+          String hqlPaidReceiptsRelatedLines = "select " + hqlPropertiesRelatedLines.getHqlSelect() //
+              + " from OrderlineServiceRelation as olsr where salesOrderLine.id = ? " //
+              + " order by olsr.orderlineRelated.lineNo";
+          OBDal.getInstance().getSession().createQuery(hqlPaidReceiptsShipLines);
+          Query paidReceiptsRelatedLinesQuery = OBDal.getInstance().getSession()
+              .createQuery(hqlPaidReceiptsRelatedLines);
+          paidReceiptsRelatedLinesQuery.setString(0, (String) objpaidReceiptsLines[6]);
+
+          JSONArray relatedLines = new JSONArray();
+          for (Object objRelatedLines : paidReceiptsRelatedLinesQuery.list()) {
+
+            JSONObject jsonRelatedline = new JSONObject();
+            Object[] objpaidReceiptsRelatedLines = (Object[]) objRelatedLines;
+            jsonRelatedline.put("orderlineId", objpaidReceiptsRelatedLines[0]);
+            jsonRelatedline.put("productName", objpaidReceiptsRelatedLines[1]);
+            jsonRelatedline.put("orderDocumentNo", objpaidReceiptsRelatedLines[2]);
+            jsonRelatedline.put("orderId", objpaidReceiptsRelatedLines[3]);
+            jsonRelatedline.put("otherTicket", !orderid.equals(objpaidReceiptsRelatedLines[3]));
+            relatedLines.put(jsonRelatedline);
+          }
+          if (relatedLines.length() > 0) {
+            paidReceiptLine.put("relatedLines", relatedLines);
+          }
 
           listpaidReceiptsLines.put(paidReceiptLine);
         }

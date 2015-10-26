@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013 Openbravo S.L.U.
+ * Copyright (C) 2013-2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -137,7 +137,24 @@ public class ProductProperties extends ModelExtension {
           add(new HQLProperty("product.brand.id", "brand"));
           add(new HQLProperty("product.characteristicDescription", "characteristicDescription"));
           add(new HQLProperty("product.obposShowChDesc", "showchdesc"));
+          add(new HQLProperty("product.productType", "productType"));
+          add(new HQLProperty("product.includedProductCategories", "includeProductCategories"));
+          add(new HQLProperty("product.includedProducts", "includeProducts"));
+          add(new HQLProperty("product.printDescription", "printDescription"));
+          add(new HQLProperty("product.oBPOSAllowAnonymousSale", "oBPOSAllowAnonymousSale"));
+          add(new HQLProperty("product.returnable", "returnable"));
+          add(new HQLProperty("product.overdueReturnDays", "overdueReturnDays"));
+          add(new HQLProperty("product.ispricerulebased", "isPriceRuleBased"));
+          add(new HQLProperty("product.obposProposalType", "proposalType"));
+          add(new HQLProperty("product.obposIsmultiselectable", "availableForMultiline"));
+          add(new HQLProperty("product.obposPrintrelatedattachm", "printRelatedAttachments"));
+          add(new HQLProperty("product.obposNumberOfCopies", "numberOfCopies"));
           add(new HQLProperty("pli.bestseller", "bestseller"));
+          add(new HQLProperty("product.linkedToProduct", "isLinkedToProduct"));
+          add(new HQLProperty("product.allowDeferredSell", "allowDeferredSell"));
+          add(new HQLProperty("product.deferredSellMaxDays", "deferredSellMaxDays"));
+          add(new HQLProperty("product.quantityRule", "quantityRule"));
+          add(new HQLProperty("product.obposPrintservices", "isPrintServices"));
           add(new HQLProperty("'false'", "ispack"));
           if (posPrecision != null && !"".equals(posPrecision)) {
             add(new HQLProperty("round(ppp.listPrice, " + posPrecision + ")", "listPrice"));

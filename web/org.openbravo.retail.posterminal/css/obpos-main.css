@@ -57,3 +57,22 @@
   font-size: 20px;
   font-weight:bold;
 }
+
+.iconServices_unreviewed {
+  width: 27px;
+  height: 26px;
+  background-image: url('./../img/iconServices_unreviewed.png');
+}
+
+.iconServices_reviewed {
+  width: 27px;
+  height: 26px;
+  background-image: url('./../img/iconServices_reviewed.png');
+}
+
+button.btnbp:disabled {
+  text-decoration: none;
+  background-color: white;
+  color: #000;
+  min-width: 115px;
+}

@@ -82,7 +82,7 @@
       });
 
       this.addPropertiesLoader({
-        properties: ['terminal'],
+        properties: ['terminal', 'payments', 'cashMgmtDepositEvents', 'cashMgmtDropEvents', 'businesspartner', 'location', 'pricelist', 'warehouses', 'writableOrganizations', 'pricelistversion', 'currency'],
         loadFunction: function (terminalModel) {
           OB.info('[terminal] Loading... ' + this.properties);
           var me = this,
@@ -579,20 +579,62 @@
       if (OB.POS.hwserver !== undefined) {
         OB.POS.hwserver.print(new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.GoodByeTemplate), {});
       }
-      this.cleanSessionInfo();
+      if (!OB.MobileApp.model.attributes.permissions ||  !OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
+        this.cleanSessionInfo();
+      }
     },
 
     postCloseSession: function (session) {
-      //All pending to be paid orders will be removed on logout
-      OB.Dal.removeAll(OB.Model.Order, {
-        'session': session.get('id'),
-        'hasbeenpaid': 'N'
-      }, function () {
+      var criteria = {},
+          model;
+      var me = this;
+
+      function saveCallback() {
+        me.cleanSessionInfo();
         OB.MobileApp.model.triggerLogout();
-      }, function () {
+      }
+
+      function success(collection) {
+        var i, j;
+        if (collection.length > 0) {
+          for (j = 0; j < collection.length; j++) {
+            model = collection.models[j];
+            var creationDate = new Date();
+            model.set('creationDate', creationDate);
+            model.set('timezoneOffset', creationDate.getTimezoneOffset());
+            model.set('created', creationDate.getTime());
+            model.set('obposCreatedabsolute', OB.I18N.formatDateISO(creationDate));
+            model.set('obposIsDeleted', true);
+            for (i = 0; i < model.get('lines').length; i++) {
+              model.get('lines').at(i).set('obposIsDeleted', true);
+            }
+            model.calculateGross();
+            model.set('hasbeenpaid', 'Y');
+            model.save(saveCallback);
+          }
+        } else {
+          me.cleanSessionInfo();
+          OB.MobileApp.model.triggerLogout();
+        }
+      }
+
+      function error() {
         OB.error("postCloseSession", arguments);
         OB.MobileApp.model.triggerLogout();
-      });
+      }
+      //All pending to be paid orders will be removed on logout
+      if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
+        criteria.session = session.get('id');
+        criteria.hasbeenpaid = 'N';
+        OB.Dal.find(OB.Model.Order, criteria, success, error);
+      } else {
+        OB.Dal.removeAll(OB.Model.Order, {
+          'session': session.get('id'),
+          'hasbeenpaid': 'N'
+        }, function () {
+          OB.MobileApp.model.triggerLogout();
+        }, error);
+      }
       this.set('currentView', {
         name: 'order',
         params: null

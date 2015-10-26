@@ -336,6 +336,8 @@ enyo.kind({
           me.$.prslistitemprinter.$.tempty.show();
         }
         me.$.prslistitemprinter.getScrollArea().scrollToTop();
+
+
       } else {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
       }

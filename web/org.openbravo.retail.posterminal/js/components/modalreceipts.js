@@ -32,9 +32,6 @@ enyo.kind({
   published: {
     receiptsList: null
   },
-  events: {
-    onChangeCurrentOrder: ''
-  },
   components: [{
     classes: 'span12',
     components: [{
@@ -51,11 +48,6 @@ enyo.kind({
   }],
   receiptsListChanged: function (oldValue) {
     this.$.receiptslistitemprinter.setCollection(this.receiptsList);
-    this.receiptsList.on('click', function (model) {
-      this.doChangeCurrentOrder({
-        newCurrentOrder: model
-      });
-    }, this);
   }
 });
 
@@ -63,10 +55,14 @@ enyo.kind({
   name: 'OB.UI.ListReceiptLine',
   kind: 'OB.UI.SelectButton',
   events: {
-    onHideThisPopup: ''
+    onHideThisPopup: '',
+    onChangeCurrentOrder: ''
   },
   tap: function () {
     this.inherited(arguments);
+    this.doChangeCurrentOrder({
+      newCurrentOrder: this.model
+    });
     this.doHideThisPopup();
   },
   components: [{

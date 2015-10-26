@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global enyo */
+/*global enyo _ */
 
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.RenderPaymentsLine',
@@ -101,7 +101,8 @@ enyo.kind({
     onAnyCounted: 'anyCounted'
   },
   events: {
-    onCountAllOK: ''
+    onCountAllOK: '',
+    onShowPopup: ''
   },
   components: [{
     classes: 'tab-pane',
@@ -246,22 +247,86 @@ enyo.kind({
     }
   },
   verifyStep: function (model, callback) {
+    this.model = model;
     // this function is invoked when going next, invokes callback to continue
     // do not invoke callback to cancel going next.
-    var firstdiff = model.get('paymentList').find(function (payment) {
-      return payment.get('difference') !== 0;
+    var totalCashDiff = 0,
+        cashDiff = [],
+        me = this;
+    _.each(model.get('paymentList').models, function (payment) {
+      var paymentMethod = payment.get('paymentMethod'),
+          difference = OB.DEC.abs(payment.get('difference'));
+      if (difference !== 0) {
+        totalCashDiff += difference;
+        var countDiffLimit = paymentMethod.countDiffLimit ? paymentMethod.countDiffLimit : 0;
+        if (difference > countDiffLimit) {
+          cashDiff.push({
+            _identifier: paymentMethod._identifier,
+            searchKey: paymentMethod.searchKey,
+            difference: difference,
+            countDiffLimit: countDiffLimit
+          });
+        }
+      }
     });
-
-    if (firstdiff) {
-      // there is at leat 1 payment with differences
+    var serverMsg = '',
+        approvals = [];
+    if (cashDiff.length > 0) {
+      // Approval count differences by payment method
+      var message = [{
+        message: OB.I18N.getLabel('OBPOS_approval.cashupdifferences')
+      }];
+      _.each(cashDiff, function (diff) {
+        var msg = OB.I18N.getLabel('OBPOS_approval.paymentmethod.countdifferences', [diff._identifier, OB.I18N.formatCurrency(diff.difference), OB.I18N.formatCurrency(diff.countDiffLimit)]);
+        message.push({
+          message: msg,
+          padding: '1em',
+          fontSize: '16px'
+        });
+        serverMsg += msg + "\r\n";
+      });
+      approvals.push({
+        approval: 'OBPOS_approval.cashupdifferences',
+        message: message
+      });
+      serverMsg = OB.I18N.getLabel('OBPOS_approval.cashupdifferences') + "\r\n" + serverMsg;
+    } else {
+      var organizationCountDiffLimit = OB.MobileApp.model.get('terminal').organizationCountDiffLimit ? OB.MobileApp.model.get('terminal').organizationCountDiffLimit : 0;
+      if (totalCashDiff > organizationCountDiffLimit) {
+        approvals.push({
+          approval: 'OBPOS_approval.cashupdifferences',
+          message: 'OBPOS_approval.global.countdifferences',
+          params: [OB.I18N.formatCurrency(totalCashDiff), OB.I18N.formatCurrency(organizationCountDiffLimit)]
+        });
+        serverMsg = OB.I18N.getLabel('OBPOS_approval.global.countdifferences', [OB.I18N.formatCurrency(totalCashDiff), OB.I18N.formatCurrency(organizationCountDiffLimit)]);
+      }
+    }
+    if (approvals.length > 0) {
       OB.UTIL.Approval.requestApproval(
-      model, 'OBPOS_approval.cashupdifferences', function (approved, supervisor, approvalType) {
+      model, approvals, function (approved, supervisor, approvalType) {
         if (approved) {
-          callback();
+          // Get Approval reason
+          if (OB.POS.modelterminal.get('approvalReason').length > 0) {
+            me.doShowPopup({
+              popup: 'OBPOS_modalApprovalReason',
+              args: {
+                supervisor: supervisor.id,
+                message: serverMsg,
+                callback: callback
+              }
+            });
+          } else {
+            model.set('approvals', {
+              supervisor: supervisor.id,
+              message: serverMsg
+            });
+            callback();
+          }
         }
       });
     } else {
       callback();
     }
   }
+
 });

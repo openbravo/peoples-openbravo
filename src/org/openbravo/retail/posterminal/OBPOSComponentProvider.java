@@ -151,6 +151,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/menu",
         "components/modalselectterminal",
         "components/popupdraweropened",
+        "components/servicesfilter",
+        "components/modalselectopenreceipts",
         // Old Tickets
         "components/modalpaidreceipts",
         "components/modalmultiorders",
@@ -169,13 +171,23 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "model/product",
         "model/productprice",
         "model/offerpricelist",
+        "model/service-product",
+        "model/service-category",
         "model/businesspartner",
         "model/document-sequence",
         "model/taxRate",
         "model/taxZone",
         "model/promotions",
 
+        "model/servicepricerule",
+        "model/servicepricerulerange",
+        "model/servicepricerulerangeprices",
+        "model/servicepriceruleversion",
+
         "model/obpos-supervisor-model",
+
+        "model/obposfiles",
+        "model/obposprodfiles",
 
         // Point of sale
         "pointofsale/model/pointofsale-print",
@@ -216,7 +228,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "pointofsale/view/modals/modalmessage",
 
         // Cash Management window
-        "cashmgmt/model/cashmgmt-print", "cashmgmt/model/cashmgmt-model",
+        "cashmgmt/model/cashmgmt-print",
+        "cashmgmt/model/cashmgmt-model",
 
         "cashmgmt/view/cashmgmtkeyboard",
         "cashmgmt/view/listevents",
@@ -233,6 +246,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "closecash/view/tabcashmaster", "closecash/view/tabcashpayments",
         "closecash/view/tabcountcash", "closecash/view/tabcashtokeep",
         "closecash/view/tabpostprintclose", "closecash/components/cashup-modals",
+        "closecash/components/approvalreason-modal",
 
         "closecash/model/daycash",
         // Core resources

@@ -132,6 +132,74 @@
     column: '_identifier',
     filter: true,
     type: 'TEXT'
+  }, {
+    name: 'productType',
+    column: 'productType',
+    type: 'TEXT'
+  }, {
+    name: 'includeProductCategories',
+    column: 'includeProductCategories',
+    type: 'TEXT'
+  }, {
+    name: 'includeProducts',
+    column: 'includeProducts',
+    type: 'TEXT'
+  }, {
+    name: 'printDescription',
+    column: 'printDescription',
+    type: 'BOOL'
+  }, {
+    name: 'oBPOSAllowAnonymousSale',
+    column: 'oBPOSAllowAnonymousSale',
+    type: 'BOOL'
+  }, {
+    name: 'returnable',
+    column: 'returnable',
+    type: 'BOOL'
+  }, {
+    name: 'overdueReturnDays',
+    column: 'overdueReturnDays',
+    type: 'NUMBER'
+  }, {
+    name: 'isPriceRuleBased',
+    column: 'isPriceRuleBased',
+    type: 'BOOL'
+  }, {
+    name: 'proposalType',
+    column: 'proposalType',
+    type: 'TEXT'
+  }, {
+    name: 'availableForMultiline',
+    column: 'availableForMultiline',
+    type: 'TEXT'
+  }, {
+    name: 'printRelatedAttachments',
+    column: 'printRelatedAttachments',
+    type: 'TEXT'
+  }, {
+    name: 'numberOfCopies',
+    column: 'numberOfCopies',
+    type: 'TEXT'
+  }, {
+    name: 'isLinkedToProduct',
+    column: 'isLinkedToProduct',
+    type: 'BOOL'
+  }, {
+    name: 'allowDeferredSell',
+    column: 'allowDeferredSell',
+    type: 'BOOL'
+  }, {
+    name: 'deferredSellMaxDays',
+    column: 'deferredSellMaxDays',
+    type: 'NUMBER'
+  }, {
+    name: 'quantityRule',
+    column: 'quantityRule',
+    type: 'TEXT'
+  }, {
+    name: 'isPrintServices',
+    column: 'isPrintServices',
+    type: 'BOOL'
   }]);
 
   Product.addIndex([{
@@ -150,6 +218,12 @@
     name: 'obpos_in_upc',
     columns: [{
       name: 'upc',
+      sort: 'asc'
+    }]
+  }, {
+    name: 'obpos_in_productType',
+    columns: [{
+      name: 'productType',
       sort: 'asc'
     }]
   }]);

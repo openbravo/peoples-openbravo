@@ -38,6 +38,7 @@ import org.openbravo.mobile.core.process.DataSynchronizationImportProcess;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchronization;
 import org.openbravo.mobile.core.process.JSONPropertyToEntity;
 import org.openbravo.mobile.core.process.PropertyByType;
+import org.openbravo.model.ad.access.User;
 import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonToDataConverter;
@@ -45,6 +46,8 @@ import org.openbravo.service.json.JsonToDataConverter;
 @DataSynchronization(entity = "OBPOS_App_Cashup")
 public class ProcessCashClose extends POSDataSynchronizationProcess implements
     DataSynchronizationImportProcess {
+
+  public static final String CASHUP_COUNT_DIFF = "CASHUP_COUNT_DIFF";
 
   private static final Logger log = Logger.getLogger(ProcessCashClose.class);
   JSONObject jsonResponse = new JSONObject();
@@ -57,7 +60,6 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
     String cashUpId = jsonCashup.getString("id");
     JSONObject jsonData = new JSONObject();
     Date cashUpDate = new Date();
-    Date currentDate = new Date();
     OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
         jsonCashup.getString("posterminal"));
 
@@ -80,7 +82,7 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
         }
 
         DateFormat isodatefmt = new SimpleDateFormat(dateFormatStr);
-        currentDate = isodatefmt.parse(strCurrentDate);
+        Date currentDate = isodatefmt.parse(strCurrentDate);
       } else {
         log.debug("Error processing cash close: error retrieving current date. Using server current date");
       }
@@ -90,6 +92,21 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
 
     OBPOSAppCashup cashUp = getCashUp(cashUpId, jsonCashup, cashUpDate);
 
+    if (jsonCashup.has("approvals")) {
+      JSONObject jsonApprovals = jsonCashup.getJSONObject("approvals");
+      OBPOSCashupApproval cashupApproval = OBProvider.getInstance().get(OBPOSCashupApproval.class);
+      cashupApproval.setCashUp(cashUp);
+      cashupApproval.setActive(true);
+      cashupApproval.setApprovalType(CASHUP_COUNT_DIFF);
+      cashupApproval.setApprovalMessage(jsonApprovals.getString("message"));
+      if (jsonApprovals.has("approvalReason")) {
+        cashupApproval.setApprovalReason(OBDal.getInstance().get(OBPOSApprovalReason.class,
+            jsonApprovals.getString("approvalReason")));
+      }
+      cashupApproval.setSupervisor(OBDal.getInstance().get(User.class,
+          jsonApprovals.getString("supervisor")));
+      OBDal.getInstance().save(cashupApproval);
+    }
     if (cashUp.isProcessed() && !cashUp.isProcessedbo()) {
       cashUp.setJsoncashup(jsonCashup.toString());
       if (posTerminal.getMasterterminal() != null) {
@@ -253,11 +270,12 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
     try {
       getOrderGroupingProcessor().groupOrders(posTerminal, cashUpId, currentDate);
 
+      posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
+          jsonCashup.getString("posterminal"));
       CashCloseProcessor processor = getCashCloseProcessor();
       JSONArray cashMgmtIds = jsonCashup.getJSONArray("cashMgmtIds");
-      JSONObject result = processor.processCashClose(
-          OBDal.getInstance().get(OBPOSApplications.class, jsonCashup.getString("posterminal")),
-          jsonCashup, cashMgmtIds, currentDate, slaveCashupIds);
+      JSONObject result = processor.processCashClose(posTerminal, jsonCashup, cashMgmtIds,
+          currentDate, slaveCashupIds);
       // add the messages returned by processCashClose...
       jsonData.put("messages", result.opt("messages"));
       jsonData.put("next", result.opt("next"));

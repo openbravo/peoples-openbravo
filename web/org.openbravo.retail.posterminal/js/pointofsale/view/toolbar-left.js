@@ -152,16 +152,23 @@ enyo.kind({
     if (me.hasClass('paidticket')) {
       me.doDeleteOrder();
     } else {
-      OB.UTIL.Approval.requestApproval(
-      this.model, 'OBPOS_approval.removereceipts', function (approved) {
-        if (approved) {
-          me.doShowPopup({
-            popup: 'modalConfirmReceiptDelete'
-          });
-        }
-      });
+      if (OB.MobileApp.model.hasPermission('OBPOS_approval.removereceipts', true)) {
+        //Show the pop up to delete or not
+        me.doShowPopup({
+          popup: 'modalConfirmReceiptDelete'
+        });
+      } else {
+        OB.UTIL.Approval.requestApproval(
+        this.model, 'OBPOS_approval.removereceipts', function (approved) {
+          if (approved) {
+            //Delete the order without the popup
+            me.doDeleteOrder({
+              notSavedOrder: true
+            });
+          }
+        });
+      }
     }
-
   },
   init: function (model) {
     this.model = model;
@@ -290,10 +297,13 @@ enyo.kind({
     if (requirementsAreMet(this.model)) {
       newIsDisabledState = false;
       this.$.totalPrinter.show();
+      this.$.totalPrinter.addStyles('color: white!important;');
     } else {
       newIsDisabledState = true;
       if (discountEdit) {
         this.$.totalPrinter.hide();
+      } else if (OB.MobileApp.model.get('serviceSearchMode')) {
+        this.$.totalPrinter.addStyles('color: black!important;');
       }
     }
 
@@ -385,6 +395,8 @@ enyo.kind({
     });
   },
   tap: function () {
+    var me = this,
+        criteria = {};
     if (this.disabled === false) {
       this.model.on('approvalChecked', function (event) {
         this.model.off('approvalChecked');
@@ -392,8 +404,38 @@ enyo.kind({
           this.showPaymentTab();
         }
       }, this);
-      this.model.completePayment(this);
-      this.doClearUserInput();
+
+      if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.product', true)) {
+        criteria.hgVolFilters = [];
+        criteria.hgVolFilters.push({
+          columns: ['productType'],
+          operator: 'equals',
+          value: 'S'
+        });
+
+        criteria.hgVolFilters.push({
+          columns: ['proposalType'],
+          operator: 'equals',
+          value: 'FMA'
+        });
+      } else {
+        criteria.productType = 'S';
+        criteria.proposalType = 'FMA';
+      }
+      OB.Dal.find(OB.Model.Product, criteria, function (data) {
+        if (data && data.length > 0) {
+          me.model.get('order').trigger('showProductList', null, 'final', function () {
+            me.model.completePayment();
+            me.doClearUserInput();
+          });
+        } else {
+          me.model.completePayment(this);
+          me.doClearUserInput();
+        }
+      }, function (trx, error) {
+        me.model.completePayment(this);
+        me.doClearUserInput();
+      });
     }
   },
   attributes: {
