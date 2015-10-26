@@ -277,14 +277,17 @@ public abstract class AccessTypeInjector implements Comparable<AccessTypeInjecto
   }
 
   /**
-   * Sets to null the Inherit From field to child elements when applies (for example, this is used
+   * Sets to null the Inherited From field to child elements when applies (for example, this is used
    * for TabAccess and FieldAccess). This allows the cascade deletion of these elements when
    * removing an inherited Window Access or Tab Access.
    * 
    * @param access
    *          The access to be removed from the parent list
+   * @param clearAll
+   *          Flag to indicate if the Inherited From field should be nullified in every child
+   *          inherited access or not
    */
-  public void clearInheritFromFieldInChilds(InheritedAccessEnabled access) {
+  public void clearInheritFromFieldInChilds(InheritedAccessEnabled access, boolean clearAll) {
   }
 
   /**
@@ -296,6 +299,20 @@ public abstract class AccessTypeInjector implements Comparable<AccessTypeInjecto
    *          The access to be removed from the parent list
    */
   public void removeReferenceInParentList(InheritedAccessEnabled access) {
+  }
+
+  /**
+   * Sets to null the Inherited From field of an inherited access.
+   * 
+   * @param access
+   *          The access with the Inherit From field to be nullified
+   */
+  protected void clearInheritedFromField(InheritedAccessEnabled access) {
+    String inheritedFromId = access.getInheritedFrom() != null ? (String) DalUtil.getId(access
+        .getInheritedFrom()) : "";
+    if (!StringUtils.isEmpty(inheritedFromId)) {
+      access.setInheritedFrom(null);
+    }
   }
 
   /**

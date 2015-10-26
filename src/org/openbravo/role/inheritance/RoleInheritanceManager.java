@@ -197,7 +197,7 @@ public class RoleInheritanceManager {
     List<RoleInheritance> newInheritanceList = new ArrayList<RoleInheritance>();
     newInheritanceList.add(inheritance);
     for (AccessTypeInjector accessType : getAccessTypeOrderByPriority(true)) {
-      calculateAccesses(newInheritanceList, inheritanceRoleIdList, accessType);
+      calculateAccesses(newInheritanceList, inheritanceRoleIdList, accessType, false);
     }
     log.debug("add new inheritance time: {}", (System.currentTimeMillis() - t));
   }
@@ -217,7 +217,7 @@ public class RoleInheritanceManager {
       // handle first 'child' accesses like TabAccess or ChildAccess which have a
       // priority number higher than their parent, WindowAccess. This way, child instances will be
       // deleted first when it applies.
-      calculateAccesses(inheritanceList, inheritanceRoleIdList, inheritance, accessType);
+      calculateAccesses(inheritanceList, inheritanceRoleIdList, inheritance, accessType, false);
     }
     log.debug("remove inheritance time: {}", (System.currentTimeMillis() - t));
   }
@@ -278,7 +278,7 @@ public class RoleInheritanceManager {
     List<String> inheritanceRoleIdList = getRoleInheritancesInheritFromIdList(inheritanceList);
     for (AccessTypeInjector accessType : getAccessTypeOrderByPriority(true)) {
       CalculationResult counters = calculateAccesses(inheritanceList, inheritanceRoleIdList,
-          accessType);
+          accessType, delete);
       result.put(accessType.getClassName(), counters);
     }
     log.debug("recalculate all accesses for role {} time: {}", role,
@@ -304,7 +304,7 @@ public class RoleInheritanceManager {
         }
       }
       for (InheritedAccessEnabled iae : iaeToDelete) {
-        accessType.clearInheritFromFieldInChilds(iae);
+        accessType.clearInheritFromFieldInChilds(iae, true);
         iae.setInheritedFrom(null);
         roleAccessList.remove(iae);
         OBDal.getInstance().remove(iae);
@@ -350,7 +350,8 @@ public class RoleInheritanceManager {
     long t = System.currentTimeMillis();
     List<RoleInheritance> inheritanceList = getRoleInheritancesList(role);
     List<String> inheritanceRoleIdList = getRoleInheritancesInheritFromIdList(inheritanceList);
-    CalculationResult counters = calculateAccesses(inheritanceList, inheritanceRoleIdList, injector);
+    CalculationResult counters = calculateAccesses(inheritanceList, inheritanceRoleIdList,
+        injector, false);
     log.debug("recalculate access for role {} time: {}", role, (System.currentTimeMillis() - t));
     log.debug("accesses created: {}, accesses updated: {}", counters.getCreated(),
         counters.getUpdated());
@@ -457,7 +458,7 @@ public class RoleInheritanceManager {
           }
           if (!updated) {
             // Access not present in other inheritances, remove it
-            injector.clearInheritFromFieldInChilds(iaeToDelete);
+            injector.clearInheritFromFieldInChilds(iaeToDelete, false);
             iaeToDelete.setInheritedFrom(null);
             Role owner = injector.getRole(iaeToDelete);
             if (!owner.isTemplate()) {
@@ -500,11 +501,12 @@ public class RoleInheritanceManager {
   }
 
   /**
-   * @see RoleInheritanceManager#calculateAccesses(List, List, RoleInheritance, AccessTypeInjector)
+   * @see RoleInheritanceManager#calculateAccesses(List, List, RoleInheritance, AccessTypeInjector,
+   *      boolean)
    */
   private CalculationResult calculateAccesses(List<RoleInheritance> inheritanceList,
-      List<String> inheritanceInheritFromIdList, AccessTypeInjector injector) {
-    return calculateAccesses(inheritanceList, inheritanceInheritFromIdList, null, injector);
+      List<String> inheritanceInheritFromIdList, AccessTypeInjector injector, boolean doFlush) {
+    return calculateAccesses(inheritanceList, inheritanceInheritFromIdList, null, injector, doFlush);
   }
 
   /**
@@ -519,12 +521,14 @@ public class RoleInheritanceManager {
    *          If not null, the accesses introduced by this inheritance will be removed
    * @param injector
    *          An AccessTypeInjector used to retrieve the access elements
+   * @param doFlush
+   *          a flag to indicate if a flush must be done after applying every inheritance
    * @return a list with two Integers containing the number of accesses updated and created
    *         respectively.
    */
   private CalculationResult calculateAccesses(List<RoleInheritance> inheritanceList,
       List<String> inheritanceInheritFromIdList, RoleInheritance roleInheritanceToDelete,
-      AccessTypeInjector injector) {
+      AccessTypeInjector injector, boolean doFlush) {
     int[] counters = new int[] { 0, 0, 0 };
     for (RoleInheritance roleInheritance : inheritanceList) {
       for (InheritedAccessEnabled inheritedAccess : injector.getAccessList(roleInheritance
@@ -535,6 +539,9 @@ public class RoleInheritanceManager {
         int res = handleAccess(roleInheritance, inheritedAccess, inheritanceInheritFromIdList,
             injector);
         counters[res]++;
+      }
+      if (doFlush) {
+        OBDal.getInstance().flush();
       }
     }
     if (roleInheritanceToDelete != null) {

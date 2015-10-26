@@ -102,7 +102,7 @@ public class ConnectionProviderContextListener implements ServletContextListener
     try {
       properties.load(new FileInputStream(strPoolFile));
       String externalPool = properties.getProperty("db.externalPoolClassName");
-      if (externalPool == null || "".equals(externalPool)) {
+      if (externalPool != null && !"".equals(externalPool)) {
         // external pools should handle jndi datasources
         return false;
       }
