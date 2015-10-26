@@ -604,4 +604,17 @@ public class CostingUtils {
       }
     }
   }
+
+  /**
+   * Check if exists processed transactions for this product
+   */
+  public static boolean existsProcessedTransactions(Product product) {
+    OBCriteria<MaterialTransaction> criteria = OBDal.getInstance().createCriteria(
+        MaterialTransaction.class);
+    criteria.add(Restrictions.eq(MaterialTransaction.PROPERTY_PRODUCT, product));
+    criteria.add(Restrictions.eq(MaterialTransaction.PROPERTY_ISPROCESSED, true));
+    criteria.setFilterOnReadableOrganization(false);
+    criteria.setMaxResults(1);
+    return criteria.uniqueResult() != null;
+  }
 }
