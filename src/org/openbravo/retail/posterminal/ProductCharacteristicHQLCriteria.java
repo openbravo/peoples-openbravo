@@ -23,13 +23,13 @@ public class ProductCharacteristicHQLCriteria extends HQLCriteriaProcess {
     String sql = null;
     if (array_params[1].equals("__all__") && !array_params[0].equals("")) {
       sql = "   cv.id in (select pchv.characteristicValue.id from ProductCharacteristicValue as pchv where cv.characteristic = pchv.characteristic "
-          + " and upper(pchv.product.name) like upper('$1%')) ";
+          + " and upper(pchv.product.name) like upper('$1')) ";
     } else if (array_params[0].equals("")) {
       sql = "   cv.id in (select pchv.characteristicValue.id from ProductCharacteristicValue as pchv where cv.characteristic = pchv.characteristic "
           + " and pchv.product.productCategory.id in ( '$2')) ";
     } else {
       sql = "   cv.id in (select pchv.characteristicValue.id from ProductCharacteristicValue as pchv where cv.characteristic = pchv.characteristic "
-          + " and upper(pchv.product.name) like upper('$1%') and pchv.product.productCategory.id in ( '$2') ) ";
+          + " and upper(pchv.product.name) like upper('$1') and pchv.product.productCategory.id in ( '$2') ) ";
     }
     return sql;
   }

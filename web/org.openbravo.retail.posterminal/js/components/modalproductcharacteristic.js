@@ -176,7 +176,7 @@ enyo.kind({
       var productFilter = {},
           criteria = {},
           brandfilter = {},
-          characteristicfilter = {
+          productText, characteristicfilter = {
           columns: ['characteristic_id'],
           operator: 'equals',
           value: this.parent.parent.characteristic.get('id'),
@@ -194,7 +194,8 @@ enyo.kind({
         productFilter.columns = [];
         productFilter.operator = OB.Dal.FILTER;
         productFilter.value = 'ProductCH_Filter';
-        productFilter.params = [productFilterText, productcategory];
+        productText = (OB.MobileApp.model.hasPermission('OBPOS_remote.product' + OB.Dal.USESCONTAINS, true) ? '%' : '') + productFilterText + '%';
+        productFilter.params = [productText, productcategory];
         remoteCriteria.push(productFilter);
       }
       if (brandparams.length > 0) {
