@@ -264,7 +264,14 @@
     },
     printForeignAmount: function () {
       return '(' + OB.I18N.formatCurrency(this.get('amount')) + ' ' + this.get('isocode') + ')';
-    }
+    },
+    printAmountWitSignum: function () {
+      if (this.get('rate')) {
+        return OB.I18N.formatCurrency(OB.DEC.mul(this.get('amount'), this.get('rate')));
+      } else {
+        return OB.I18N.formatCurrency(this.get('amount'));
+      }
+    },
   });
 
   // Sales.OrderLineCol Model.
@@ -3130,12 +3137,40 @@
           return true;
         }
         payments.remove(payment);
+        // Remove isReversed attribute from payment reversed by removed payment
+        if (payment.get('reversedPaymentId')) {
+          for (i = 0, max = payments.length; i < max; i++) {
+            p = payments.at(i);
+            if (p.get('paymentId') === payment.get('reversedPaymentId')) {
+              p.unset('isReversed');
+              break;
+            }
+          }
+        }
         if (payment.get('openDrawer')) {
           args.receipt.set('openDrawer', false);
         }
         args.receipt.adjustPayment();
         args.receipt.save();
       });
+    },
+
+    reversePayment: function (payment) {
+      this.addPayment(new OB.Model.PaymentLine({
+        'kind': payment.get('kind'),
+        'amount': OB.DEC.sub(0, payment.get('amount')),
+        'name': payment.get('kind'),
+        'rate': payment.get('rate'),
+        'mulrate': payment.get('mulrate'),
+        'isocode': payment.get('isocode'),
+        'allowOpenDrawer': payment.get('allowOpenDrawer'),
+        'isCash': payment.get('isCash'),
+        'openDrawer': payment.get('openDrawer'),
+        'printtwice': payment.get('printtwice'),
+        'reversedPaymentId': payment.get('paymentId')
+      }));
+      payment.set('isReversed', true);
+      this.save();
     },
 
     serializeToJSON: function () {

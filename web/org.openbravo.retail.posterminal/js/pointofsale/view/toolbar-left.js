@@ -303,8 +303,7 @@ enyo.kind({
       requirements.receiptBpId = receipt.get('bp').get('id');
       requirements.isReceiptDocnoLengthGreaterThanThree = receipt.get('documentNo').length > 3;
       requirements.isReceiptLinesLengthGreaterThanZero = receipt.get('lines').length > 0;
-      requirements.isReceiptHasbeenpaidEqualToN = receipt.get('hasbeenpaid') === 'N';
-      if (OB.UTIL.isNullOrUndefined(requirements.receiptBpId) || !requirements.isReceiptDocnoLengthGreaterThanThree || !requirements.isReceiptLinesLengthGreaterThanZero || !requirements.isReceiptHasbeenpaidEqualToN) {
+      if (OB.UTIL.isNullOrUndefined(requirements.receiptBpId) || !requirements.isReceiptDocnoLengthGreaterThanThree || !requirements.isReceiptLinesLengthGreaterThanZero) {
         return false;
       }
       // All requirements are met
@@ -388,7 +387,7 @@ enyo.kind({
       OB.UTIL.SynchronizationHelper.finished(synchId, 'showPaymentTab');
       return;
     }
-    if (this.model.get('order').get('isEditable') === false && !this.model.get('order').get('isLayaway')) {
+    if (this.model.get('order').get('isEditable') === false && !this.model.get('order').get('isLayaway') && !this.model.get('order').get('isPaid')) {
       OB.UTIL.SynchronizationHelper.finished(synchId, 'showPaymentTab');
       return true;
     }
@@ -491,7 +490,7 @@ enyo.kind({
     this.model = model;
     this.model.get('order').on('change:isEditable change:isLayaway', function (newValue) {
       if (newValue) {
-        if (newValue.get('isEditable') === false && !newValue.get('isLayaway')) {
+        if (newValue.get('isEditable') === false && !newValue.get('isLayaway') && !newValue.get('isPaid')) {
           this.tabPanel = null;
           this.disabledChanged(true);
           return;

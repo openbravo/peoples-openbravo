@@ -1156,13 +1156,26 @@ enyo.kind({
         style: 'width: 75%; max-width: 50px; height: 25px; margin-left: 10%;'
       }]
     }, {
+      style: 'float: left; width: 20%; text-align: right;',
+      components: [{
+        kind: 'OB.OBPOSPointOfSale.UI.ReversePayment'
+      }]
+    }, {
       style: 'clear: both;'
     }]
   }],
   initComponents: function () {
     this.inherited(arguments);
-    this.$.name.setContent(OB.MobileApp.model.getPaymentName(this.model.get('kind')) || this.model.get('name'));
-    this.$.amount.setContent(this.model.printAmount());
+    if (this.model.get('reversedPaymentId')) {
+      this.$.name.setContent('*' + (OB.MobileApp.model.getPaymentName(this.model.get('kind')) || this.model.get('name')));
+      this.$.amount.setContent(this.model.printAmountWitSignum());
+    } else if (this.model.get('isReversed')) {
+      this.$.name.setContent((OB.MobileApp.model.getPaymentName(this.model.get('kind')) || this.model.get('name')) + OB.I18N.getLabel('OBPOS_ReversedPayment'));
+      this.$.amount.setContent(this.model.printAmount());
+    } else {
+      this.$.name.setContent(OB.MobileApp.model.getPaymentName(this.model.get('kind')) || this.model.get('name'));
+      this.$.amount.setContent(this.model.printAmount());
+    }
     if (this.model.get('rate') && this.model.get('rate') !== '1') {
       this.$.foreignAmount.setContent(this.model.printForeignAmount());
     } else {
@@ -1186,7 +1199,14 @@ enyo.kind({
       this.$.removePayment.style = this.$.removePayment.style + ' margin-top: 10px;';
     }
     if (this.model.get('isPrePayment')) {
-      this.hide();
+      this.$.removePayment.hide();
+      this.$.reversePayment.show();
+    } else {
+      this.$.reversePayment.hide();
+    }
+    if (this.model.get('isReversed')) {
+      this.$.removePayment.hide();
+      this.$.reversePayment.hide();
     }
   }
 });
@@ -1216,6 +1236,38 @@ enyo.kind({
           me.deleting = false;
           me.removeClass('btn-icon-loading');
           me.addClass('btn-icon-clearPayment');
+        }
+      });
+    }
+  }
+});
+
+enyo.kind({
+  name: 'OB.OBPOSPointOfSale.UI.ReversePayment',
+  events: {
+    onReversePayment: ''
+  },
+  kind: 'OB.UI.SmallButton',
+  classes: 'btnlink-darkgray btnlink-payment-clear btn-icon-small btn-icon-reversePayment',
+  tap: function () {
+    var me = this;
+    if ((_.isUndefined(this.deleting) || this.deleting === false)) {
+      this.deleting = true;
+      this.removeClass('btn-icon-reversePayment');
+      this.addClass('btn-icon-loading');
+      this.bubble('onMaxLimitAmountError', {
+        show: false,
+        maxLimitAmount: 0,
+        currency: '',
+        symbolAtRight: true
+      });
+      this.bubble('onClearPaymentSelect');
+      this.doReversePayment({
+        payment: this.owner.model,
+        removeCallback: function () {
+          me.deleting = false;
+          me.removeClass('btn-icon-loading');
+          me.addClass('btn-icon-reversePayment');
         }
       });
     }

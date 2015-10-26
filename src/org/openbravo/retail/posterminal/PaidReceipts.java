@@ -267,6 +267,7 @@ public class PaidReceipts extends JSONProcessSimple {
               paidReceiptPayment.put("isocode", objectType.get("isocode"));
               paidReceiptPayment.put("openDrawer", objectType.get("openDrawer"));
               paidReceiptPayment.put("isPrePayment", true);
+              paidReceiptPayment.put("paymentId", objectIn.get("paymentId"));
               paidReceiptPayment.put("paymentAmount", new BigDecimal(objectIn.get("paymentAmount")
                   .toString()).multiply(new BigDecimal(objectType.get("mulrate").toString())));
               added = true;
@@ -314,6 +315,7 @@ public class PaidReceipts extends JSONProcessSimple {
               paidReceiptPayment.put("isocode", paymentsType.get("isocode"));
               paidReceiptPayment.put("openDrawer", paymentsType.get("openDrawer"));
               paidReceiptPayment.put("isPrePayment", true);
+              paidReceiptPayment.put("paymentId", objectIn.get("paymentId"));
               added = true;
               listpaidReceiptsPayments.put(paidReceiptPayment);
             }
