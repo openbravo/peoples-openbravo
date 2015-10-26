@@ -158,8 +158,8 @@ enyo.kind({
         return false;
       } else if (this.model.get('customerAddr').saveCustomerAddr()) {
         goToViewWindow(sw, {
-          customer: this.customer,
-          customerAddr: this.model.get('customerAddr')
+          customer: OB.UTIL.clone(this.customer),
+          customerAddr: OB.UTIL.clone(this.model.get('customerAddr'))
         });
       }
     } else {
