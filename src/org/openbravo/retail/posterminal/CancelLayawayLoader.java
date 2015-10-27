@@ -10,7 +10,9 @@ package org.openbravo.retail.posterminal;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.CancelAndReplaceUtils;
 import org.openbravo.erpCommon.businessUtility.Preferences;
@@ -40,10 +42,17 @@ public class CancelLayawayLoader extends POSDataSynchronizationProcess implement
           "Error getting OBPOS_UseOrderDocumentNoForRelatedDocs preference: " + e1.getMessage(), e1);
     }
 
-    Order order = OBDal.getInstance().get(Order.class, json.getString("orderId"));
-    POSUtils.setDefaultPaymentType(json, order);
-    CancelAndReplaceUtils.cancelOrder(json.getString("orderId"), json,
-        useOrderDocumentNoForRelatedDocs);
+    TriggerHandler.getInstance().disable();
+    try {
+      Order order = OBDal.getInstance().get(Order.class, json.getString("orderId"));
+      POSUtils.setDefaultPaymentType(json, order);
+      CancelAndReplaceUtils.cancelOrder(json.getString("orderId"), json,
+          useOrderDocumentNoForRelatedDocs);
+    } catch (Exception ex) {
+      throw new OBException("CancelLayawayLoader.cancelOrder: ", ex);
+    } finally {
+      TriggerHandler.getInstance().enable();
+    }
 
     final JSONObject jsonResponse = new JSONObject();
     jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
