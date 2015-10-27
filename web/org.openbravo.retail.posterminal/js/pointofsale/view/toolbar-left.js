@@ -405,7 +405,7 @@ enyo.kind({
         }
       }, this);
 
-      if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.product', true)) {
+      if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
         criteria.hgVolFilters = [];
         criteria.hgVolFilters.push({
           columns: ['productType'],

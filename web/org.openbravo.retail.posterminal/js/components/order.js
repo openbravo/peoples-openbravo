@@ -1108,7 +1108,7 @@ enyo.kind({
                   });
                 } else { //ruletype = 'R'
                   var rangeCriteria = {};
-                  if (OB.MobileApp.model.hasPermission('OBPOS_highVolume.remote', true)) {
+                  if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
                     rangeCriteria.remoteFilters = [];
                     rangeCriteria.remoteFilters.push({
                       columns: ['servicepricerule'],
