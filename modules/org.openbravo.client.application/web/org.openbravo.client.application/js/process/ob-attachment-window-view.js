@@ -200,7 +200,7 @@ isc.OBAttachmentWindowView.addProperties({
         return;
       }
 
-      lastChar = value.lastIndexOf("\\") + 1;
+      lastChar = value.lastIndexOf('\\') + 1;
       fileName = lastChar === -1 ? value : value.substring(lastChar);
 
       if (view.attachSection.fileExists(fileName, view.attachSection.savedAttachments)) {
@@ -254,7 +254,7 @@ isc.OBAttachmentWindowView.addProperties({
     hTempLayout.addMember(uploading);
     var button = this.attachSection.getForm().view.toolBar.getLeftMember(isc.OBToolbar.TYPE_ATTACHMENTS);
     if (!button) {
-      button = this.attachSection.getForm().view.toolBar.getLeftMember("attachExists");
+      button = this.attachSection.getForm().view.toolBar.getLeftMember('attachExists');
     }
     button.customState = 'Progress';
     button.resetBaseStyle();
