@@ -127,6 +127,7 @@ public class AttachmentUtils {
     where.append(" and (" + Parameter.PROPERTY_TAB + " is null or " + Parameter.PROPERTY_TAB
         + " = :tab)");
     where.append(" order by CASE WHEN " + Parameter.PROPERTY_FIXED + " is true THEN 1 ELSE 2 END");
+    where.append(" , " + Parameter.PROPERTY_SEQUENCENUMBER);
     final OBQuery<Parameter> qryParams = OBDal.getInstance().createQuery(Parameter.class,
         where.toString());
     qryParams.setNamedParameter("attMethod", attachMethod);
