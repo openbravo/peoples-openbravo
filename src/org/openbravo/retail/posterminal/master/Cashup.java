@@ -8,7 +8,10 @@
  */
 package org.openbravo.retail.posterminal.master;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.TimeZone;
 
 import javax.servlet.ServletException;
 
@@ -80,7 +83,11 @@ public class Cashup extends JSONProcessSimple {
         cashupJSON.put("netReturns", cashup[3]);
         cashupJSON.put("grossReturns", cashup[4]);
         cashupJSON.put("totalRetailTransactions", cashup[5]);
-        cashupJSON.put("creationDate", cashup[6]);
+        TimeZone tz = TimeZone.getTimeZone("UTC");
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
+        df.setTimeZone(tz);
+        String nowAsISO = df.format(cashup[6]);
+        cashupJSON.put("creationDate", nowAsISO);
         cashupJSON.put("userId", cashup[7]);
         cashupJSON.put("isbeingprocessed", ((Boolean) cashup[8]) ? "Y" : "N");
         cashupJSON.put("isprocessed", ((Boolean) cashup[9]) ? "Y" : "N");
