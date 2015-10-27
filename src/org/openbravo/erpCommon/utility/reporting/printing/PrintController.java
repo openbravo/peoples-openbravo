@@ -40,6 +40,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.export.SimplePdfExporterConfiguration;
 
 import org.apache.commons.fileupload.FileItem;
 import org.codehaus.jettison.json.JSONException;
@@ -54,8 +55,10 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.email.EmailUtils;
+import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.BasicUtility;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.erpCommon.utility.poc.EmailManager;
@@ -70,6 +73,7 @@ import org.openbravo.erpCommon.utility.reporting.TemplateInfo;
 import org.openbravo.erpCommon.utility.reporting.TemplateInfo.EmailDefinition;
 import org.openbravo.exception.NoConnectionAvailableException;
 import org.openbravo.model.ad.system.Language;
+import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.enterprise.EmailServerConfiguration;
 import org.openbravo.model.common.enterprise.EmailTemplate;
@@ -224,7 +228,7 @@ public class PrintController extends HttpSecureAppServlet {
             reportManager.saveTempReport(report, vars);
           }
         }
-        printReports(response, jrPrintReports, savedReports);
+        printReports(response, jrPrintReports, savedReports, isDirectPrint(vars));
       } else if (vars.commandIn("ARCHIVE")) {
         // Order documents by Document No.
         if (multiReports)
@@ -253,7 +257,7 @@ public class PrintController extends HttpSecureAppServlet {
           reportManager.saveTempReport(report, vars);
           savedReports.add(report);
         }
-        printReports(response, jrPrintReports, savedReports);
+        printReports(response, jrPrintReports, savedReports, isDirectPrint(vars));
       } else {
         if (vars.commandIn("DEFAULT")) {
 
@@ -468,9 +472,10 @@ public class PrintController extends HttpSecureAppServlet {
   }
 
   public void printReports(HttpServletResponse response, Collection<JasperPrint> jrPrintReports,
-      Collection<Report> reports) {
+      Collection<Report> reports, boolean directPrint) {
     ServletOutputStream os = null;
     String filename = "";
+    Map<Object, Object> parameters = new HashMap<Object, Object>();
     try {
       os = response.getOutputStream();
       response.setContentType("application/pdf");
@@ -479,12 +484,16 @@ public class PrintController extends HttpSecureAppServlet {
         for (Report report : reports) {
           filename = report.getFilename();
         }
-        response.setHeader("Content-disposition", "attachment" + "; filename=" + filename);
+        if (!directPrint) {
+          response.setHeader("Content-disposition", "attachment" + "; filename=" + filename);
+        } else {
+          parameters.put(ReportingUtils.PDF_JAVASCRIPT, "this.print();");
+        }
         for (JasperPrint jasperPrint : jrPrintReports) {
-          ReportingUtils.saveReport(jasperPrint, ExportType.PDF, null, os);
+          ReportingUtils.saveReport(jasperPrint, ExportType.PDF, parameters, os);
         }
       } else {
-        concatReport(reports.toArray(new Report[] {}), jrPrintReports, response);
+        concatReport(reports.toArray(new Report[] {}), jrPrintReports, response, directPrint);
       }
       for (Report report : reports) {
         switch (report.getDocumentType()) {
@@ -523,11 +532,17 @@ public class PrintController extends HttpSecureAppServlet {
     }
   }
 
+  public void printReports(HttpServletResponse response, Collection<JasperPrint> jrPrintReports,
+      Collection<Report> reports) {
+    printReports(response, jrPrintReports, reports, false);
+  }
+
   private void concatReport(Report[] reports, Collection<JasperPrint> jrPrintReports,
-      HttpServletResponse response) {
+      HttpServletResponse response, boolean directPrint) {
     try {
       String filename = "";
       boolean createBookmarks = true;
+      SimplePdfExporterConfiguration configuration = new SimplePdfExporterConfiguration();
       if (reports.length == 1) {
         filename = reports[0].getFilename();
         createBookmarks = false;
@@ -539,9 +554,13 @@ public class PrintController extends HttpSecureAppServlet {
         filename = filename.replaceAll("-", "");
         filename = filename + ".pdf";
       }
-      response.setHeader("Content-disposition", "attachment" + "; filename=" + filename);
+      if (!directPrint) {
+        response.setHeader("Content-disposition", "attachment" + "; filename=" + filename);
+      } else {
+        configuration.setPdfJavaScript("this.print();");
+      }
       ReportingUtils.concatPDFReport(new ArrayList<JasperPrint>(jrPrintReports), createBookmarks,
-          response.getOutputStream());
+          response.getOutputStream(), configuration);
     } catch (Exception e) {
       log4j.error(e);
     }
@@ -1451,6 +1470,26 @@ public class PrintController extends HttpSecureAppServlet {
       return documentIds;
 
     return documentIdsOrdered;
+  }
+
+  private boolean isDirectPrint(VariablesSecureApp vars) {
+    OBContext context = OBContext.getOBContext();
+    String preferenceValue = "";
+    try {
+      OBContext.setAdminMode(true);
+      String tabId = vars.getSessionValue("inpTabId");
+      Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+      try {
+        preferenceValue = Preferences.getPreferenceValue("DirectPrint", true,
+            context.getCurrentClient(), context.getCurrentOrganization(), context.getUser(),
+            context.getRole(), tab.getWindow());
+      } catch (PropertyException e) {
+        return false;
+      }
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return "Y".equals(preferenceValue);
   }
 
   @Override

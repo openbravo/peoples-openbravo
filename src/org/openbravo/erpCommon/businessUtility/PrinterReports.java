@@ -29,7 +29,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.Sqlc;
+import org.openbravo.erpCommon.utility.PropertyException;
+import org.openbravo.model.ad.ui.Window;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -57,12 +61,14 @@ public class PrinterReports extends HttpSecureAppServlet {
       String strHiddenValue = vars.getGlobalVariable("inphiddenvalue", strWindowId + "|"
           + strKeyColumnId);
       String strIsDirectPDF = vars.getStringParameter("inpIsDirectPDF");
+      Window window = OBDal.getInstance().get(Window.class, strWindowId);
+      String directAttachPref = isDirectAttach(OBContext.getOBContext(), window);
       if (strIsDirectPDF == null || "".equals(strIsDirectPDF)) {
-        strIsDirectPDF = "false";
+        strIsDirectPDF = "N".equals(directAttachPref) ? "true" : "false";
       }
       String strIsDirectAttach = vars.getStringParameter("inpIsDirectAttach");
       if (strIsDirectAttach == null || "".equals(strIsDirectAttach)) {
-        strIsDirectAttach = "false";
+        strIsDirectAttach = "Y".equals(directAttachPref) ? "true" : "false";
       }
 
       printPage(response, vars, strDirectPrint, strPDFPath, strHiddenKey, strHiddenValue, inptabId,
@@ -134,5 +140,17 @@ public class PrinterReports extends HttpSecureAppServlet {
       quoted.append("'").append(ids[i]).append("'");
     }
     return quoted.toString();
+  }
+
+  private String isDirectAttach(OBContext context, Window window) {
+    String preferenceValue;
+    try {
+      preferenceValue = Preferences.getPreferenceValue("AttachByDefault", true,
+          context.getCurrentClient(), context.getCurrentOrganization(), context.getUser(),
+          context.getRole(), window);
+    } catch (PropertyException e) {
+      return "";
+    }
+    return preferenceValue;
   }
 }

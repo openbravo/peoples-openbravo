@@ -221,7 +221,7 @@ if(role !=null && role.isRestrictbackend()){
 <script src="./web/org.openbravo.userinterface.smartclient/isomorphic/ISC_Combined<%=(uncompSC ? ".uncompressed" : "")%>.js"></script>
 <script src="./web/org.openbravo.userinterface.smartclient/isomorphic/ISC_History<%=(uncompSC ? ".uncompressed" : "")%>.js"></script>
 <script src="./org.openbravo.client.kernel/OBCLKER_Kernel/StaticResources?_appName=OB3&_skinVersion=Default"></script>
-<iframe name="background_target" id="background_target" height="0" width="0" style="display:none;"></iframe>
+<iframe name="background_target" id="background_target" height="0" width="0"></iframe>
 <form name="OBGlobalHiddenForm" method="post" action="blank.html" target="background_target">
 </form>
 </body>
