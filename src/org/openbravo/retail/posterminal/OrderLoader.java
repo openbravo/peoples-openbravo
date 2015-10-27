@@ -2150,6 +2150,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       } else {
         paymentDocNo = getDocumentNo(paymentEntity, null, paymentDocType);
       }
+      if (payment.has("reversedPaymentId") && payment.getString("reversedPaymentId") != null) {
+        paymentDocNo = "*R*" + paymentDocNo;
+      }
 
       // get date
       Date calculatedDate = (payment.has("date") && !payment.isNull("date")) ? OBMOBCUtils
@@ -2201,6 +2204,13 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           throw new OBException("paymentData attached to payment " + finPayment.getIdentifier()
               + " is not a valid JSON.");
         }
+      }
+
+      if (payment.has("reversedPaymentId") && payment.getString("reversedPaymentId") != null) {
+        FIN_Payment reversedPayment = OBDal.getInstance().get(FIN_Payment.class,
+            payment.getString("reversedPaymentId"));
+        reversedPayment.setReversedPayment(finPayment);
+        OBDal.getInstance().save(reversedPayment);
       }
 
       OBDal.getInstance().save(finPayment);
