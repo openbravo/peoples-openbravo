@@ -123,7 +123,10 @@ public class DefaultsAttachmentActionHandler extends BaseActionHandler {
       }
 
       log.debug("Defaults for tab {} \n {}", tab, defaults.toString());
-      return defaults;
+      JSONObject results = new JSONObject();
+      results.put("defaults", defaults);
+
+      return results;
     } catch (Exception e) {
       log.error("Error trying getting defaults for process: " + e.getMessage(), e);
       return new JSONObject();
