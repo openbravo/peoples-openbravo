@@ -95,6 +95,12 @@
   filter:alpha(opacity=20);  /* Hack to set opacity in IE7/8 */
 }
 
+html[data-useragent*=' Edge/'] .OBToolbarIconButtonDisabled,
+html[data-useragent*=' Edge/'] .OBToolbarIconButtonSelectedDisabled {
+  /* Hack to apply the border transparency in MS Edge */
+  border: 1px solid rgba(150, 197, 95, .2);
+}
+
 .OBToolbarIconButtonMenu {
   padding: 10px 1px 0px 0px !important;
   width: 23px;  /* Hack to avoid an IE7/8 off-center */
