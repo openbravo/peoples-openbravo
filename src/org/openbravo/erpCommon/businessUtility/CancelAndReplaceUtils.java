@@ -407,7 +407,6 @@ public class CancelAndReplaceUtils {
       inverseOrderLineTax.setSalesOrder(inverseOrder);
       inverseOrderLineTax.setSalesOrderLine(inverseOrderLine);
       inverseOrderLine.getOrderLineTaxList().add(inverseOrderLineTax);
-      inverseOrderLine.getOrderLineTaxList().add(inverseOrderLineTax);
       inverseOrder.getOrderLineTaxList().add(inverseOrderLineTax);
       OBDal.getInstance().save(inverseOrderLineTax);
     }
