@@ -28,6 +28,8 @@
   v_stdPrecision C_CURRENCY.STDPRECISION%TYPE;
   v_PriceList m_productprice.pricelist%type;
   v_OrderPricelist C_ORDER.M_PRICELIST_ID%TYPE;
+  -- Parameter
+  TYPE RECORD IS REF CURSOR;
   Cur_Rule RECORD;
   Cur_Range RECORD;
   BEGIN
