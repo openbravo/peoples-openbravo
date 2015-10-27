@@ -589,16 +589,14 @@
           model;
       var me = this;
 
-      function saveCallback() {
-        me.cleanSessionInfo();
-        OB.MobileApp.model.triggerLogout();
-      }
-
       function success(collection) {
-        var i, j;
+        var i, j, saveCallback;
         if (collection.length > 0) {
-          for (j = 0; j < collection.length; j++) {
-            model = collection.models[j];
+          saveCallback = _.after(collection.length, function () {
+            me.cleanSessionInfo();
+            OB.MobileApp.model.triggerLogout();
+          });
+          _.forEach(collection.models, function (model) {
             var creationDate = new Date();
             model.set('creationDate', creationDate);
             model.set('timezoneOffset', creationDate.getTimezoneOffset());
@@ -609,15 +607,10 @@
               model.get('lines').at(i).set('obposIsDeleted', true);
             }
             model.set('hasbeenpaid', 'Y');
-            if (j == collection.length - 1) {
-              OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(model.get('documentnoSuffix'), model.get('quotationnoSuffix'), function () {
-                model.save(saveCallback);
-              });
-            } else {
-              model.save();
-            }
-          }
-
+            OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(model.get('documentnoSuffix'), model.get('quotationnoSuffix'), function () {
+              model.save(saveCallback);
+            });
+          });
         } else {
           me.cleanSessionInfo();
           OB.MobileApp.model.triggerLogout();
