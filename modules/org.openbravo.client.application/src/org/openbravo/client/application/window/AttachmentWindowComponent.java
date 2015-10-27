@@ -111,9 +111,9 @@ public class AttachmentWindowComponent extends BaseTemplateComponent {
    * @param attMethod
    *          Method to set.
    */
-  public void initialize(Tab tab, AttachmentMethod attMethod) {
-    this.attMethod = attMethod;
-    this.tab = tab;
+  public void initialize(Tab _tab, AttachmentMethod _attMethod) {
+    this.attMethod = _attMethod;
+    this.tab = _tab;
     paramHandler.setParameters(getTabMetadataFields());
     paramHandler.setParamWindow(this);
   }
