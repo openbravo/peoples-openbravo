@@ -23,11 +23,11 @@ public class BrandProductHQLCriteria extends HQLCriteriaProcess {
     String sql = null;
 
     if (array_params[1].equals("__all__") && !array_params[0].equals("")) {
-      sql = "  brand.id in (select p.brand.id from Product as p where p.brand.id = brand.id and upper(p.name) like upper ('$1%'))";
+      sql = "  brand.id in (select p.brand.id from Product as p where p.brand.id = brand.id and upper(p.name) like upper ('$1'))";
     } else if (array_params[0].equals("")) {
       sql = "  brand.id in (select p.brand.id from Product as p where p.brand.id = brand.id and p.productCategory.id =  '$2')";
     } else {
-      sql = " brand.id in (select p.brand.id from Product as p where p.brand.id = brand.id and upper(p.name) like upper ('$1%') and p.productCategory.id = '$2')";
+      sql = " brand.id in (select p.brand.id from Product as p where p.brand.id = brand.id and upper(p.name) like upper ('$1') and p.productCategory.id = '$2')";
     }
     return sql;
   }

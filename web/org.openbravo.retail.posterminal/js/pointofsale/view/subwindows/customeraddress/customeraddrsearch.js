@@ -31,7 +31,7 @@ enyo.kind({
         style: 'display: table-cell; width: 100%;',
         components: [{
           kind: 'OB.UI.SearchInputAutoFilter',
-          name: 'filterText',
+          name: 'customerAddressSearchfilterText',
           style: 'width: 100%',
           isFirstFocus: true
         }]
@@ -49,18 +49,19 @@ enyo.kind({
           kind: 'OB.UI.SmallButton',
           classes: 'btnlink-yellow btn-icon-small btn-icon-search',
           style: 'width: 100px; margin: 0px 0px 8px 5px;',
+          name: 'CustomerAddressSearchButton',
           ontap: 'searchAction'
         }]
       }]
     }]
   }],
   clearAction: function () {
-    this.$.filterText.setValue('');
+    this.$.customerAddressSearchfilterText.setValue('');
     this.doClearAction();
   },
   searchAction: function () {
     this.doSearchAction({
-      locName: this.$.filterText.getValue(),
+      locName: this.$.customerAddressSearchfilterText.getValue(),
       operator: OB.Dal.CONTAINS
     });
     return true;

@@ -1634,6 +1634,30 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           paymentScheduleDetail.setInvoicePaymentSchedule(paymentScheduleInvoice);
         }
         OBDal.getInstance().save(paymentScheduleDetail);
+      } else if (notpaidLayaway || fullypaidLayaway) {
+        // Unlinked PaymentScheduleDetail records will be recreated
+        // First all non linked PaymentScheduleDetail records are deleted
+        List<FIN_PaymentScheduleDetail> pScheduleDetails = new ArrayList<FIN_PaymentScheduleDetail>();
+        pScheduleDetails.addAll(paymentSchedule
+            .getFINPaymentScheduleDetailOrderPaymentScheduleList());
+        for (FIN_PaymentScheduleDetail pSched : pScheduleDetails) {
+          if (pSched.getPaymentDetails() == null) {
+            paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().remove(pSched);
+            OBDal.getInstance().remove(pSched);
+          }
+        }
+        // Then a new one for the amount remaining to be paid is created if there is still something
+        // to be paid
+        if (diffPaid.compareTo(BigDecimal.ZERO) != 0) {
+          FIN_PaymentScheduleDetail paymentScheduleDetail = OBProvider.getInstance().get(
+              FIN_PaymentScheduleDetail.class);
+          paymentScheduleDetail.setOrderPaymentSchedule(paymentSchedule);
+          paymentScheduleDetail.setAmount(diffPaid);
+          if (paymentScheduleInvoice != null) {
+            paymentScheduleDetail.setInvoicePaymentSchedule(paymentScheduleInvoice);
+          }
+          OBDal.getInstance().save(paymentScheduleDetail);
+        }
       }
 
       return null;

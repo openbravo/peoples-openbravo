@@ -115,13 +115,15 @@ enyo.kind({
       var productCharacteristicModel = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.parent.model;
 
       var remoteCriteria = [],
-          brandfilter = {};
+          brandfilter = {},
+          productText;
       criteria = {};
       if (productFilterText !== "" || productcategory !== "__all__") {
         brandfilter.columns = [];
         brandfilter.operator = OB.Dal.FILTER;
         brandfilter.value = 'PBrand_Filter';
-        brandfilter.params = [productFilterText, productcategory];
+        productText = (OB.MobileApp.model.hasPermission('OBPOS_remote.product' + OB.Dal.USESCONTAINS, true) ? '%' : '') + productFilterText + '%';
+        brandfilter.params = [productText, productcategory];
         remoteCriteria.push(brandfilter);
       }
       criteria.remoteFilters = remoteCriteria;
