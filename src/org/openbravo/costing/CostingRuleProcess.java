@@ -508,6 +508,7 @@ public class CostingRuleProcess implements Process {
           if (trx.getMovementQuantity().compareTo(BigDecimal.ZERO) != 0) {
             cost = trxCost.divide(trx.getMovementQuantity().abs(), cur.getCostingPrecision()
                 .intValue(), RoundingMode.HALF_UP);
+            trx = OBDal.getInstance().get(MaterialTransaction.class, trx.getId());
           }
         } else {
           // Insert transaction cost record big ZERO cost.
@@ -533,6 +534,7 @@ public class CostingRuleProcess implements Process {
         trx.setCurrency(cur);
         trx.setTransactionCost(trxCost);
         OBDal.getInstance().save(trx);
+        icl = OBDal.getInstance().get(InventoryCountLine.class, icl.getId());
         InventoryCountLine initICL = getInitIcl(cri.getInitInventory(), icl);
         initICL.setCost(cost);
         OBDal.getInstance().save(initICL);

@@ -141,14 +141,6 @@ public class CostingServer {
     TrxType trxType = TrxType.getTrxType(transaction);
     boolean adjustmentAlreadyCreated = false;
 
-    if (trxType == TrxType.InventoryClosing) {
-      OBDal.getInstance().refresh(transaction.getPhysicalInventoryLine().getPhysInventory());
-      if (transaction.getPhysicalInventoryLine().getPhysInventory()
-          .getCostingRuleInitCloseInventoryList().size() > 0) {
-        // Closing inventories from costing rule process are not automatically adjusted.
-        return;
-      }
-    }
     boolean checkPriceCorrectionTrxs = false;
     boolean checkNegativeStockCorrectionTrxs = false;
     // check if price correction is needed
@@ -320,6 +312,41 @@ public class CostingServer {
         throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@"));
       }
     }
+
+    // check if closing inventory needs to be adjusted due to a remainder value
+    if (trxType == TrxType.InventoryClosing && BigDecimal.ZERO.compareTo(currentStock) == 0) {
+
+      BigDecimal currentValuedStock = CostAdjustmentUtils.getValuedStockOnTransactionDate(
+          getOrganization(), transaction, getCostingAlgorithm().costDimensions, transaction
+              .getProduct().isProduction(), costingRule.isBackdatedTransactionsFixed(), transaction
+              .getCurrency());
+
+      if (BigDecimal.ZERO.compareTo(currentValuedStock) != 0) {
+
+        CostAdjustment costAdjustmentHeader = CostAdjustmentUtils.insertCostAdjustmentHeader(
+            transaction.getOrganization(), "NSC");
+
+        Date acctDate = transaction.getMovementDate();
+        CostAdjustmentLine cal = CostAdjustmentUtils.insertCostAdjustmentLine(transaction,
+            costAdjustmentHeader, currentValuedStock, Boolean.TRUE, acctDate);
+        cal.setNegativeStockCorrection(Boolean.TRUE);
+        cal.setUnitCost(Boolean.FALSE);
+        OBDal.getInstance().save(cal);
+        OBDal.getInstance().flush();
+
+        JSONObject message = CostAdjustmentProcess.doProcessCostAdjustment(costAdjustmentHeader);
+
+        try {
+          if (!"success".equals(message.get("severity"))) {
+            throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@")
+                + ": " + costAdjustmentHeader.getDocumentNo() + " - " + message.getString("text"));
+          }
+        } catch (JSONException e) {
+          throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@"));
+        }
+      }
+    }
+
     // update trxCost after cost adjustments
     transaction = OBDal.getInstance().get(MaterialTransaction.class, transaction.getId());
     trxCost = CostAdjustmentUtils.getTrxCost(transaction, false, getCostCurrency());

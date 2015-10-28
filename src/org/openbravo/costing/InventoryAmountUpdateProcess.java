@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -200,8 +200,9 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
         } else {
           inv = OBDal.getInstance().get(InvAmtUpdLnInventories.class, invId);
         }
-        Long lineNo = (maxLineNumbers.get(invId) == null ? 0L : maxLineNumbers.get(invId)) + 10L;
-        maxLineNumbers.put(invId, lineNo);
+        Long lineNo = (maxLineNumbers.get(inv.getId()) == null ? 0L : maxLineNumbers.get(inv
+            .getId())) + 10L;
+        maxLineNumbers.put(inv.getId(), lineNo);
 
         if (BigDecimal.ZERO.compareTo(qty) < 0) {
           // Do not insert negative values in Inventory lines, instead reverse the Quantity Count

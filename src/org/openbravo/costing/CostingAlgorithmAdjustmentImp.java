@@ -144,8 +144,9 @@ public abstract class CostingAlgorithmAdjustmentImp {
       calculateBackdatedTrxAdjustment(costAdjLine);
     }
 
-    // Negative stock correction are inserted with a null adjustment amount.
-    if (costAdjLine.isNegativeStockCorrection()) {
+    // Negative stock correction are inserted with a null adjustment amount, in case we are not
+    // adjusting a Inventory Closing transaction.
+    if (costAdjLine.isNegativeStockCorrection() && costAdjLine.getAdjustmentAmount() == null) {
       calculateNegativeStockCorrectionAdjustmentAmount(costAdjLine);
     }
 
