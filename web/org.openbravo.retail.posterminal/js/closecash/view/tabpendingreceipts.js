@@ -186,11 +186,11 @@ enyo.kind({
     for (i = 0; i < model.get('lines').length; i++) {
       model.get('lines').at(i).set('obposIsDeleted', true);
     }
-    model.calculateGross();
     model.set('hasbeenpaid', 'Y');
     model.save();
-    OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(model.get('documentnoSuffix'), model.get('quotationnoSuffix'));
-    me.collection.remove(model);
+    OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(model.get('documentnoSuffix'), model.get('quotationnoSuffix'), function () {
+      me.collection.remove(model);
+    });
   },
   voidAllPendingReceipts: function (inSender, inEvent) {
     var me = this;
