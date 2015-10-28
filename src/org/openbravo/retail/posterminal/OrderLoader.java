@@ -1902,7 +1902,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           continue;
         }
         BigDecimal paid = BigDecimal.valueOf(payment.getDouble("paid"));
-        if (paid.compareTo(BigDecimal.ZERO) == 0) {
+        // This is due to negative cash payments are set as paid = 0
+        BigDecimal paymentAmt = BigDecimal.valueOf(payment.getDouble("amount"));
+        if (paid.compareTo(BigDecimal.ZERO) == 0 && paymentAmt.compareTo(BigDecimal.ZERO) >= 0) {
           continue;
         }
         String paymentTypeName = payment.getString("kind");

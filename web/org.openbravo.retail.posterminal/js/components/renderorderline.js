@@ -400,12 +400,21 @@ enyo.kind({
   initComponents: function () {
     var paymentDate;
     this.inherited(arguments);
-    this.$.name.setContent(OB.MobileApp.model.getPaymentName(this.model.get('kind')) || this.model.get('name'));
-    if (!this.model.get('paymentAmount') && this.model.get('isPrePayment')) {
-      this.$.name.setContent(OB.I18N.getLabel('OBPOS_Cancelled'));
+    if (this.model.get('reversedPaymentId')) {
+      this.$.name.setContent((OB.MobileApp.model.getPaymentName(this.model.get('kind')) || this.model.get('name')) + OB.I18N.getLabel('OBPOS_ReversedPayment'));
+      this.$.amount.setContent(this.model.printAmountWithSignum(this.model.get('isNegativeOrder')));
+    } else if (this.model.get('isReversed')) {
+      this.$.name.setContent('*' + (OB.MobileApp.model.getPaymentName(this.model.get('kind')) || this.model.get('name')));
+      this.$.amount.setContent(this.model.printAmountWithSignum(this.model.get('isNegativeOrder')));
+    } else {
+      this.$.name.setContent(OB.MobileApp.model.getPaymentName(this.model.get('kind')) || this.model.get('name'));
+      this.$.amount.setContent(this.model.printAmount());
     }
     if (this && this.model && this.model.get('paymentData') && this.model.get('paymentData').name && this.model.get('paymentData').name.length > 0) {
       this.$.name.setContent((OB.MobileApp.model.getPaymentName(this.model.get('kind')) || this.model.get('name')) + ' (' + this.model.get('paymentData').name + ')');
+    }
+    if (!this.model.get('paymentAmount') && this.model.get('isPrePayment')) {
+      this.$.name.setContent(OB.I18N.getLabel('OBPOS_Cancelled'));
     }
     if (OB.UTIL.isNullOrUndefined(this.model.get('paymentDate'))) {
       paymentDate = new Date();
@@ -423,7 +432,7 @@ enyo.kind({
     } else {
       this.$.foreignAmount.setContent('');
     }
-    this.$.amount.setContent(this.model.printAmount());
+
   }
 });
 enyo.kind({

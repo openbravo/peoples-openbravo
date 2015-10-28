@@ -206,9 +206,12 @@ public class PaidReceipts extends JSONProcessSimple {
 
         HQLPropertyList hqlPropertiesPayments = ModelExtensionUtils
             .getPropertyExtensions(extensionsPayments);
-        String hqlPaymentsIn = "select "
-            + hqlPropertiesPayments.getHqlSelect()
-            + "from FIN_Payment_ScheduleDetail as scheduleDetail where scheduleDetail.orderPaymentSchedule.order.id=? "
+        String hqlPaymentsIn = "select " + hqlPropertiesPayments.getHqlSelect()
+            + "from FIN_Payment_ScheduleDetail as scheduleDetail "
+            + "join scheduleDetail.paymentDetails as paymentDetail "
+            + "join paymentDetail.finPayment as finPayment "
+            + "left join finPayment.reversedPayment as reversedPayment "
+            + "where scheduleDetail.orderPaymentSchedule.order.id=? "
             + "order by scheduleDetail.paymentDetails.finPayment.documentNo";
         Query paidReceiptsPaymentsQuery = OBDal.getInstance().getSession()
             .createQuery(hqlPaymentsIn);
@@ -270,6 +273,12 @@ public class PaidReceipts extends JSONProcessSimple {
               paidReceiptPayment.put("paymentId", objectIn.get("paymentId"));
               paidReceiptPayment.put("paymentAmount", new BigDecimal(objectIn.get("paymentAmount")
                   .toString()).multiply(new BigDecimal(objectType.get("mulrate").toString())));
+              if (objectIn.has("reversedPaymentId")) {
+                paidReceiptPayment.put("isReversed", true);
+              }
+              if (objectIn.has("reversalPayment")) {
+                paidReceiptPayment.put("reversedPaymentId", objectIn.get("paymentId"));
+              }
               added = true;
               listpaidReceiptsPayments.put(paidReceiptPayment);
             }
@@ -316,6 +325,12 @@ public class PaidReceipts extends JSONProcessSimple {
               paidReceiptPayment.put("openDrawer", paymentsType.get("openDrawer"));
               paidReceiptPayment.put("isPrePayment", true);
               paidReceiptPayment.put("paymentId", objectIn.get("paymentId"));
+              if (objectIn.has("reversedPaymentId")) {
+                paidReceiptPayment.put("isReversed", true);
+              }
+              if (objectIn.has("reversalPayment")) {
+                paidReceiptPayment.put("reversedPaymentId", objectIn.get("paymentId"));
+              }
               added = true;
               listpaidReceiptsPayments.put(paidReceiptPayment);
             }

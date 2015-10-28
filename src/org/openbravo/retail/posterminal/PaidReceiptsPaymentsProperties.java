@@ -25,12 +25,17 @@ public class PaidReceiptsPaymentsProperties extends ModelExtension {
       private static final long serialVersionUID = 1L;
       {
         add(new HQLProperty("scheduleDetail.amount", "amount"));
-        add(new HQLProperty("scheduleDetail.paymentDetails.finPayment.account.id", "account"));
-        add(new HQLProperty("scheduleDetail.paymentDetails.finPayment.paymentDate", "paymentDate"));
-        add(new HQLProperty("scheduleDetail.paymentDetails.finPayment.id", "paymentId"));
-        add(new HQLProperty("scheduleDetail.paymentDetails.finPayment.amount", "paymentAmount"));
+        add(new HQLProperty("finPayment.account.id", "account"));
+        add(new HQLProperty("finPayment.paymentDate", "paymentDate"));
+        add(new HQLProperty("finPayment.id", "paymentId"));
+        add(new HQLProperty("finPayment.amount", "paymentAmount"));
+        add(new HQLProperty("finPayment.obposPaymentdata", "paymentData"));
         add(new HQLProperty("scheduleDetail.paymentDetails.finPayment.obposPaymentdata",
             "paymentData"));
+        add(new HQLProperty("reversedPayment.id", "reversedPaymentId"));
+        add(new HQLProperty(
+            "(select f.id from FIN_Payment as f where f.reversedPayment.id = finPayment.id)",
+            "reversalPayment"));
       }
     };
 

@@ -265,7 +265,7 @@
     printForeignAmount: function () {
       return '(' + OB.I18N.formatCurrency(this.get('amount')) + ' ' + this.get('isocode') + ')';
     },
-    printAmountWitSignum: function () {
+    printAmountWithSignum: function () {
       if (this.get('rate')) {
         return OB.I18N.formatCurrency(OB.DEC.mul(this.get('amount'), this.get('rate')));
       } else {
@@ -3080,7 +3080,7 @@
         payments: payments,
         receipt: this
       }, function () {
-        if (!payment.get('paymentData')) {
+        if (!payment.get('paymentData') && !payment.get('reversedPaymentId')) {
           // search for an existing payment only if there is not paymentData info.
           // this avoids to merge for example card payments of different cards.
           for (i = 0, max = payments.length; i < max; i++) {
@@ -3115,7 +3115,9 @@
         }
         payment.set('date', new Date());
         payment.set('id', OB.UTIL.get_UUID());
-        payments.add(payment);
+        payments.add(payment, {
+          at: payment.get('index')
+        });
         order.adjustPayment();
         order.trigger('displayTotal');
         order.save();
@@ -3156,6 +3158,7 @@
     },
 
     reversePayment: function (payment) {
+      var payments = this.get('payments');
       this.addPayment(new OB.Model.PaymentLine({
         'kind': payment.get('kind'),
         'amount': OB.DEC.sub(0, payment.get('amount')),
@@ -3168,7 +3171,9 @@
         'openDrawer': payment.get('openDrawer'),
         'printtwice': payment.get('printtwice'),
         'origAmount': OB.DEC.sub(0, payment.get('origAmount')),
-        'reversedPaymentId': payment.get('paymentId')
+        'paid': OB.DEC.sub(0, payment.get('paid')),
+        'reversedPaymentId': payment.get('paymentId'),
+        'index': OB.DEC.add(1, payments.indexOf(payment))
       }));
       payment.set('isReversed', true);
       this.save();
