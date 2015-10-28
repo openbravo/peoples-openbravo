@@ -33,7 +33,7 @@
         supportsOffline: true,
         loginUtilsUrl: '../../org.openbravo.retail.posterminal.service.loginutils',
         loginHandlerUrl: '../../org.openbravo.retail.posterminal/POSLoginHandler',
-        applicationFormatUrl: '../../org.openbravo.client.kernel/OBPOS_Main/ApplicationFormats',
+        applicationFormatUrl: '../../org.openbravo.mobile.core/OBPOS_Main/ApplicationFormats',
         logoutUrlParams: window.localStorage.getItem('terminalAuthentication') === 'Y' ? {} : {
           terminal: OB.UTIL.getParameterByName("terminal")
         },
