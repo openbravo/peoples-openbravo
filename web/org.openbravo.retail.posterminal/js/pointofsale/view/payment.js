@@ -1166,6 +1166,7 @@ enyo.kind({
   }],
   initComponents: function () {
     this.inherited(arguments);
+    this.addStyles('min-height: 29px;');
     if (this.model.get('reversedPaymentId')) {
       this.$.name.setContent('*' + (OB.MobileApp.model.getPaymentName(this.model.get('kind')) || this.model.get('name')));
       this.$.amount.setContent(this.model.printAmountWithSignum());
@@ -1198,7 +1199,7 @@ enyo.kind({
     if (this.$.foreignAmount.content || this.$.info.content) {
       this.$.removePayment.style = this.$.removePayment.style + ' margin-top: 10px;';
     }
-    if (this.model.get('isPrePayment') && (this.model.get('reversedPaymentId')) || this.model.get('isReversed')) {
+    if ((this.model.get('isPrePayment') && (this.model.get('reversedPaymentId'))) || this.model.get('isReversed')) {
       this.$.removePayment.hide();
       this.$.reversePayment.hide();
     } else if (this.model.get('isPrePayment')) {
