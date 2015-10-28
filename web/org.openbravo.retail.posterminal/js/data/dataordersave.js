@@ -124,6 +124,8 @@
         receipt.set('created', creationDate.getTime());
         receipt.set('obposCreatedabsolute', OB.I18N.formatDateISO(creationDate));
         receipt.set('orderDate', orderDate);
+        receipt.set('movementDate', OB.I18N.normalizeDate(new Date()));
+        receipt.set('accountingDate', OB.I18N.normalizeDate(new Date()));
 
         // multiterminal support
         // be sure that the active terminal is the one set as the order proprietary
@@ -270,6 +272,8 @@
       }
 
       this.receipt.set('creationDate', normalizedCreationDate);
+      this.receipt.set('movementDate', OB.I18N.normalizeDate(new Date()));
+      this.receipt.set('accountingDate', OB.I18N.normalizeDate(new Date()));
       this.receipt.set('hasbeenpaid', 'Y');
       this.context.get('multiOrders').trigger('integrityOk', this.receipt);
       OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(this.receipt.get('documentnoSuffix'), this.receipt.get('quotationnoSuffix'));

@@ -1073,9 +1073,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     } else {
       addDocumentNoHandler(shipment, shpEntity, null, shipment.getDocumentType());
     }
-
-    shipment.setAccountingDate(order.getOrderDate());
-    shipment.setMovementDate(order.getOrderDate());
     shipment.setPartnerAddress(OBDal.getInstance().get(Location.class,
         jsonorder.getJSONObject("bp").getString("locId")));
     shipment.setSalesTransaction(true);
