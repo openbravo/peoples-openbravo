@@ -159,16 +159,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           "Error getting OBPOS_UseOrderDocumentNoForRelatedDocs preference: " + e1.getMessage(), e1);
     }
 
-    try {
-      useOrderDocumentNoForRelatedDocs = "Y".equals(Preferences.getPreferenceValue(
-          "OBPOS_UseOrderDocumentNoForRelatedDocs", true, OBContext.getOBContext()
-              .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
-              .getOBContext().getUser(), OBContext.getOBContext().getRole(), null));
-    } catch (PropertyException e1) {
-      log.error(
-          "Error getting OBPOS_UseOrderDocumentNoForRelatedDocs preference: " + e1.getMessage(), e1);
-    }
-
     boolean isDeleted = false;
     documentNoHandlers.set(new ArrayList<OrderLoader.DocumentNoHandler>());
     orderLineServiceList = new HashMap<String, JSONArray>();
@@ -287,7 +277,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         }
         if (log.isDebugEnabled()) {
           t112 = System.currentTimeMillis();
-        }
         }
 
         // Order lines

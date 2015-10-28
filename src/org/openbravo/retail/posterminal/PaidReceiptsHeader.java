@@ -72,7 +72,6 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
 
     if (!json.getString("filterText").isEmpty()) {
       String hqlFilter = "ord.documentNo like :filterT1 or REPLACE(ord.documentNo, '/', '') like :filterT1 or upper(ord.businessPartner.name) like upper(:filterT1)";
-            + "%' or upper(ord.businessPartner.name) like upper('%" + filterText + "%')";
         for (PaidReceiptsHeaderHook hook : paidReceiptHeaderHooks) {
           try {
           String hql = hook.exec(hqlFilter, json.getString("filterText"));
@@ -82,9 +81,7 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
           }
         }
         hqlPaidReceipts += " and (" + hqlFilter + ") ";
-      }
-
-    }
+       }
     if (!json.isNull("documentType")) {
       JSONArray docTypes = json.getJSONArray("documentType");
       hqlPaidReceipts += " and ( ";
