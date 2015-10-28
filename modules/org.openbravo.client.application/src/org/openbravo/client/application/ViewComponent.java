@@ -24,6 +24,7 @@ import java.util.List;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
+import org.apache.axis.utils.StringUtils;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
@@ -156,7 +157,12 @@ public class ViewComponent extends BaseComponent {
     AttachmentMethod attMethod;
     if (keys.length >= 3) {
       String strAttMethodId = keys[2];
-      attMethod = OBDal.getInstance().get(AttachmentMethod.class, strAttMethodId);
+      if (StringUtils.isEmpty(strAttMethodId)) {
+        // In case the attachment was created with old attachments.
+        attMethod = AttachmentUtils.getDefaultAttachmentMethod();
+      } else {
+        attMethod = OBDal.getInstance().get(AttachmentMethod.class, strAttMethodId);
+      }
     } else {
       // When uploading an attachment ("Add" button) AttachmentMethod is not sent, so there are less
       // than 3 elements in the array

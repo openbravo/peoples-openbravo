@@ -173,14 +173,20 @@ public class AttachImplementationManager {
 
       checkReadableAccess(attachment);
 
-      AttachImplementation handler = getHandler(attachment.getAttachmentConf() == null ? "Default"
-          : attachment.getAttachmentConf().getAttachmentMethod().getValue());
+      AttachmentMethod attachMethod;
+      if (attachment.getAttachmentConf() == null) {
+        attachMethod = AttachmentUtils.getDefaultAttachmentMethod();
+      } else {
+        attachMethod = attachment.getAttachmentConf().getAttachmentMethod();
+      }
+      AttachImplementation handler = getHandler(attachMethod.getValue());
 
       if (handler == null) {
         throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoMethod"));
       }
+
       Map<String, Object> typifiedParameters = saveMetadata(requestParams, attachment, tabId,
-          attachment.getRecord(), attachment.getAttachmentConf().getAttachmentMethod());
+          attachment.getRecord(), attachMethod);
       handler.updateFile(attachment, tabId, typifiedParameters);
       OBDal.getInstance().save(attachment);
       OBDal.getInstance().flush();

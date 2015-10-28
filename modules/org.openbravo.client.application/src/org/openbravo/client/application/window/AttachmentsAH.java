@@ -25,6 +25,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -72,8 +73,12 @@ public class AttachmentsAH extends BaseActionHandler {
         recordIds = params.getString("inpKey");
         final String attachmentId = (String) parameters.get("attachmentId");
         final String strAttMethodId = (String) parameters.get("attachmentMethod");
-        AttachmentMethod attachMethod = OBDal.getInstance().get(AttachmentMethod.class,
-            strAttMethodId);
+        AttachmentMethod attachMethod;
+        if (StringUtils.isBlank(strAttMethodId)) {
+          attachMethod = AttachmentUtils.getDefaultAttachmentMethod();
+        } else {
+          attachMethod = OBDal.getInstance().get(AttachmentMethod.class, strAttMethodId);
+        }
         Map<String, String> requestParams = fixRequestMap(parameters, request);
         for (Parameter param : AttachmentUtils.getMethodMetadataParameters(attachMethod, tab)) {
           if (param.isFixed()) {

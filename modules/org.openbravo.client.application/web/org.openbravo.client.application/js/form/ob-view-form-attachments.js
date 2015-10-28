@@ -421,7 +421,7 @@ isc.OBAttachmentsLayout.addProperties({
           layout: this,
           width: '*',
           length: 2000,
-          value: attachment.description,
+          value: attachment.description || '',
           disabled: true
         }]
       });

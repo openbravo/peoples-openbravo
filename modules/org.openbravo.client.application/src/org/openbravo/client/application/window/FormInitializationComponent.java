@@ -428,7 +428,7 @@ public class FormInitializationComponent extends BaseActionHandler {
         obj.put("age", (new Date().getTime() - ((Date) array[2]).getTime()));
         obj.put("updatedby", array[3]);
         obj.put("description", array[4]);
-        obj.put("attmethod", array[5]);
+        obj.put("attmethod", array[5] != null ? array[5] : AttachmentUtils.DEFAULT_METHOD_ID);
       } catch (JSONException e) {
         log.error("Error while reading attachments", e);
       }
