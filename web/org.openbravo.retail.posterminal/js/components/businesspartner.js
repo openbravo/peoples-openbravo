@@ -50,7 +50,10 @@ enyo.kind({
 
     if (!this.disabled) {
       this.doShowPopup({
-        popup: 'modalcustomer'
+        popup: 'modalcustomer',
+        args: {
+          target: 'order'
+        }
       });
     }
   },
@@ -307,6 +310,10 @@ enyo.kind({
       this.$.onHold.setContent('(' + OB.I18N.getLabel('OBPOS_OnHold') + ')');
     }
     this.$.address.setContent(this.model.get('locShipName'));
+    var bPartner = this.owner.owner.owner.bPartner;
+    if (bPartner && bPartner.get('id') === this.model.get('id')) {
+      this.applyStyle('background-color', '#fbf6d1');
+    }
   }
 });
 
@@ -405,7 +412,8 @@ enyo.kind({
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BPartnerOnHold', [model.get('_identifier')]));
       } else {
         this.doChangeBusinessPartner({
-          businessPartner: model
+          businessPartner: model,
+          target: this.owner.owner.args.target
         });
       }
     }, this);
@@ -425,6 +433,12 @@ enyo.kind({
       visibility: this.args.visibilityButtons
     });
     this.$.body.$.listBps.$.stBPAssignToReceipt.$.theader.$.modalBpScrollableHeader.$.newAction.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers'));
+    if (this.args.businessPartner) {
+      this.$.body.$.listBps.$.stBPAssignToReceipt.$.theader.$.modalBpScrollableHeader.searchAction();
+      this.$.body.$.listBps.$.stBPAssignToReceipt.bPartner = this.args.businessPartner;
+    } else {
+      this.$.body.$.listBps.$.stBPAssignToReceipt.bPartner = null;
+    }
     return true;
   },
 

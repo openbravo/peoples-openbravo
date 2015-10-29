@@ -317,6 +317,14 @@
     name: 'loaded',
     column: 'loaded',
     type: 'TEXT'
+  }, {
+    name: 'birthDay',
+    column: 'birthDay',
+    type: 'TEXT'
+  }, {
+    name: 'birthPlace',
+    column: 'birthPlace',
+    type: 'TEXT'
   }]);
 
   BusinessPartner.addIndex([{

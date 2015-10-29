@@ -49,7 +49,10 @@ enyo.kind({
   tap: function () {
     if (!this.disabled) {
       this.doShowPopup({
-        popup: 'modalcustomeraddress'
+        popup: 'modalcustomeraddress',
+        args: {
+          target: 'order'
+        }
       });
     }
   },
@@ -411,7 +414,8 @@ enyo.kind({
         dataBps.set('locId', model.get('id'));
         dataBps.set('locName', model.get('name'));
         me.doChangeBusinessPartner({
-          businessPartner: dataBps
+          businessPartner: dataBps,
+          target: me.owner.owner.args.target
         });
       }
       OB.Dal.get(OB.Model.BusinessPartner, this.bPartner.get('id'), successCallbackBPs, errorCallback);
@@ -432,7 +436,7 @@ enyo.kind({
       visibility: this.args.visibilityButtons
     });
     this.changedTitle(this.model.get('order').get('bp'));
-    this.$.body.$.listBpsLoc.setBPartner(this.model.get('order').get('bp'));
+    this.$.body.$.listBpsLoc.setBPartner(this.args.businessPartner ? this.args.businessPartner : this.model.get('order').get('bp'));
     this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.searchAction();
     this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.$.newAction.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers'));
     return true;

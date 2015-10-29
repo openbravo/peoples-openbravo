@@ -78,6 +78,8 @@ public class BusinessPartnerProperties extends ModelExtension {
         add(new HQLProperty("bpl.businessPartner.taxExempt", "taxExempt"));
         add(new HQLProperty("bpl.businessPartner.customerBlocking", "customerBlocking"));
         add(new HQLProperty("bpl.businessPartner.salesOrder", "salesOrderBlocking"));
+        add(new HQLProperty("to_char(bpl.businessPartner.birthDay, 'yyyy-mm-dd')", "birthDay"));
+        add(new HQLProperty("bpl.businessPartner.birthPlace", "birthPlace"));
         add(new HQLProperty(
             "(case when bpl.active = 'Y' and bpl.businessPartner.active = 'Y' then true else false end)",
             "active"));
