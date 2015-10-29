@@ -162,8 +162,12 @@ public class TestCosting extends WeldBaseTest {
   private static String CURRENCY2_ID = "100";
   // Storage Bin with name: L01
   private static String LOCATOR1_ID = "193476BDD14E4A11B651B4E3E8D767C8";
+  // Storage Bin with name: L02
+  private static String LOCATOR2_ID = "1A11102F318D4720957B52C8719A34F2";
+  // Storage Bin with name: L03
+  private static String LOCATOR3_ID = "FB4D5926A1B443E68CC2DB2BBAE3315D";
   // Storage Bin with name: M01
-  private static String LOCATOR2_ID = "96DEDCC179504711A81497DE68900F49";
+  private static String LOCATOR4_ID = "96DEDCC179504711A81497DE68900F49";
   // UOM with name: Unit
   private static String UOM_ID = "100";
   // Document sequence with name: DocumentNo_M_Production
@@ -2781,7 +2785,7 @@ public class TestCosting extends WeldBaseTest {
 
       // Create goods movement, run costing background, post it and assert it
       InternalMovement goodsMovement = createGoodsMovement(product, price1, quantity2, LOCATOR1_ID,
-          LOCATOR2_ID, day3);
+          LOCATOR4_ID, day3);
 
       // Update transaction total cost amount
       manualCostAdjustment(getProductTransactions(product.getId()).get(1),
@@ -2905,7 +2909,7 @@ public class TestCosting extends WeldBaseTest {
 
       // Create goods movement, run costing background, post it and assert it
       InternalMovement goodsMovement = createGoodsMovement(product, price1, quantity2, LOCATOR1_ID,
-          LOCATOR2_ID, day3);
+          LOCATOR4_ID, day3);
 
       // Update transaction total cost amount
       manualCostAdjustment(getProductTransactions(product.getId()).get(1), amount1, true, false,
@@ -3039,7 +3043,7 @@ public class TestCosting extends WeldBaseTest {
 
       // Create goods movement, run costing background, post it and assert it
       InternalMovement goodsMovement = createGoodsMovement(product, price1, quantity2, LOCATOR1_ID,
-          LOCATOR2_ID, day3);
+          LOCATOR4_ID, day3);
 
       // Update transaction total cost amount
       manualCostAdjustment(getProductTransactions(product.getId()).get(1), amount1, true, true,
@@ -3190,14 +3194,14 @@ public class TestCosting extends WeldBaseTest {
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt2 = createGoodsReceipt(purchaseOrder2, price2, quantity1,
-          LOCATOR2_ID, day2);
+          LOCATOR4_ID, day2);
 
       // Create goods shipment, run costing background, post it and assert it
       ShipmentInOut goodsShipment1 = createGoodsShipment(product, price1, quantity2, LOCATOR1_ID,
           day3);
 
       // Create goods shipment, run costing background, post it and assert it
-      ShipmentInOut goodsShipment2 = createGoodsShipment(product, price2, quantity3, LOCATOR2_ID,
+      ShipmentInOut goodsShipment2 = createGoodsShipment(product, price2, quantity3, LOCATOR4_ID,
           day4);
 
       // Create purchase invoice, post it and assert it
@@ -3223,7 +3227,7 @@ public class TestCosting extends WeldBaseTest {
       runPriceBackground();
 
       // Create goods movement, run costing background, post it and assert it
-      InternalMovement goodsMovement = createGoodsMovement(product, price3, quantity5, LOCATOR2_ID,
+      InternalMovement goodsMovement = createGoodsMovement(product, price3, quantity5, LOCATOR4_ID,
           LOCATOR1_ID, day8);
 
       // Update transaction total cost amount
@@ -4171,11 +4175,11 @@ public class TestCosting extends WeldBaseTest {
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt1 = createGoodsReceipt(purchaseOrder1, price1, quantity3,
-          LOCATOR2_ID, day1);
+          LOCATOR4_ID, day1);
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt2 = createGoodsReceipt(purchaseOrder2, price2, quantity4,
-          LOCATOR2_ID, day2);
+          LOCATOR4_ID, day2);
 
       // Create bill of materials production, run costing background, post it and assert it
       ProductionTransaction billOfMaterialsProduction = createBillOfMaterialsProduction(product3,
@@ -8188,6 +8192,140 @@ public class TestCosting extends WeldBaseTest {
     }
   }
 
+  @Test
+  public void testCostingE2() throws Exception {
+
+    final int day0 = 0;
+    final int day1 = 5;
+    final int day2 = 10;
+    final int day3 = 15;
+    final BigDecimal price1 = new BigDecimal("4.00");
+    final BigDecimal price2 = new BigDecimal("3.00");
+    final BigDecimal price3 = new BigDecimal("3.3333");
+    final BigDecimal price4 = new BigDecimal("8.00");
+    final BigDecimal price5 = new BigDecimal("7.99");
+    final BigDecimal price6 = new BigDecimal("3.50");
+    final BigDecimal price7 = new BigDecimal("8.01");
+    final BigDecimal quantity1 = new BigDecimal("1");
+
+    try {
+
+      OBContext.setOBContext(USER_ID, ROLE_ID, CLIENT_ID, ORGANIZATION_ID);
+      OBContext.setAdminMode(true);
+
+      // Create a new product for the test
+      Product product = createProduct("testCostingE2", price1);
+
+      // Create purchase order and book it
+      Order purchaseOrder1 = createPurchaseOrder(product, price1, quantity1, day0);
+
+      // Create purchase order and book it
+      Order purchaseOrder2 = createPurchaseOrder(product, price2, quantity1, day0);
+
+      // Create purchase order and book it
+      Order purchaseOrder3 = createPurchaseOrder(product, price2, quantity1, day0);
+
+      // Create goods receipt, run costing background, post it and assert it
+      ShipmentInOut goodsReceipt1 = createGoodsReceipt(purchaseOrder1, price1, quantity1,
+          LOCATOR1_ID, day1);
+
+      // Create goods receipt, run costing background, post it and assert it
+      ShipmentInOut goodsReceipt2 = createGoodsReceipt(purchaseOrder2, price2, quantity1,
+          LOCATOR2_ID, day1);
+
+      // Create goods receipt, run costing background, post it and assert it
+      ShipmentInOut goodsReceipt3 = createGoodsReceipt(purchaseOrder3, price2, quantity1,
+          LOCATOR3_ID, day1);
+
+      // Create goods shipment, run costing background, post it and assert it
+      ShipmentInOut goodsShipment1 = createGoodsShipment(product, price3, quantity1, LOCATOR1_ID,
+          day2);
+
+      // Create goods shipment, run costing background, post it and assert it
+      ShipmentInOut goodsShipment2 = createGoodsShipment(product, price3, quantity1, LOCATOR2_ID,
+          day2);
+
+      // Create goods shipment, run costing background, post it and assert it
+      ShipmentInOut goodsShipment3 = createGoodsShipment(product, price3, quantity1, LOCATOR3_ID,
+          day2);
+
+      // Create purchase order and book it
+      Order purchaseOrder4 = createPurchaseOrder(product, price4, quantity1, day3);
+
+      // Create goods receipt, run costing background, post it and assert it
+      ShipmentInOut goodsReceipt4 = createGoodsReceipt(purchaseOrder4, price4, quantity1,
+          LOCATOR1_ID, day3);
+
+      // Assert product transactions
+      List<ProductTransactionAssert> productTransactionAssertList = new ArrayList<ProductTransactionAssert>();
+      productTransactionAssertList.add(new ProductTransactionAssert(OBDal.getInstance()
+          .get(ShipmentInOut.class, goodsReceipt1.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(0), price1, price1));
+      productTransactionAssertList.add(new ProductTransactionAssert(OBDal.getInstance()
+          .get(ShipmentInOut.class, goodsReceipt2.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(0), price2, price2));
+      productTransactionAssertList.add(new ProductTransactionAssert(OBDal.getInstance()
+          .get(ShipmentInOut.class, goodsReceipt3.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(0), price2, price2));
+      productTransactionAssertList.add(new ProductTransactionAssert(OBDal.getInstance()
+          .get(ShipmentInOut.class, goodsShipment1.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(0), price3, price3));
+      productTransactionAssertList.add(new ProductTransactionAssert(OBDal.getInstance()
+          .get(ShipmentInOut.class, goodsShipment2.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(0), price3, price3));
+      productTransactionAssertList.add(new ProductTransactionAssert(OBDal.getInstance()
+          .get(ShipmentInOut.class, goodsShipment3.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(0), price3, price3));
+      productTransactionAssertList.add(new ProductTransactionAssert(OBDal.getInstance()
+          .get(ShipmentInOut.class, goodsReceipt4.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(0), price4, price5, price4));
+      assertProductTransaction(product.getId(), productTransactionAssertList);
+
+      // Assert product costing
+      List<MaterialTransaction> transactionList = getProductTransactions(product.getId());
+      List<ProductCostingAssert> productCostingAssertList = new ArrayList<ProductCostingAssert>();
+      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(0), price1, null,
+          price1, quantity1));
+      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(1), price2, null,
+          price6, quantity1.add(quantity1)));
+      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(2), price2, null,
+          price3, quantity1.add(quantity1).add(quantity1)));
+      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(6), price4, price7,
+          price4, quantity1));
+      assertProductCosting(product.getId(), productCostingAssertList);
+
+      // Assert cost adjustment
+      List<CostAdjustment> costAdjustmentList = getCostAdjustment(product.getId());
+      List<List<CostAdjustmentAssert>> costAdjustmentAssertList = new ArrayList<List<CostAdjustmentAssert>>();
+      List<CostAdjustmentAssert> costAdjustmentAssertLineList1 = new ArrayList<CostAdjustmentAssert>();
+      costAdjustmentAssertLineList1.add(new CostAdjustmentAssert(transactionList.get(6), "NSC",
+          quantity1.multiply(price5).add(quantity1.multiply(price4).negate()), day3, true, false));
+      costAdjustmentAssertList.add(costAdjustmentAssertLineList1);
+      assertCostAdjustment(costAdjustmentList, costAdjustmentAssertList);
+
+      // Post cost adjustment and assert it
+      postDocument(costAdjustmentList.get(0));
+      List<DocumentPostAssert> documentPostAssertList1 = new ArrayList<DocumentPostAssert>();
+      documentPostAssertList1.add(new DocumentPostAssert("61000", quantity1.multiply(price4).add(
+          quantity1.multiply(price5).negate()), BigDecimal.ZERO, null));
+      documentPostAssertList1.add(new DocumentPostAssert("35000", BigDecimal.ZERO, quantity1
+          .multiply(price4).add(quantity1.multiply(price5).negate()), null));
+      CostAdjustment costAdjustment1 = OBDal.getInstance().get(CostAdjustment.class,
+          costAdjustmentList.get(0).getId());
+      assertDocumentPost(costAdjustment1, product.getId(), documentPostAssertList1);
+
+      OBDal.getInstance().commitAndClose();
+
+    } catch (Exception e) {
+      System.out.println(e.getMessage());
+      throw new OBException(e);
+    }
+
+    finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
   /********************************************** General methods for tests **********************************************/
 
   // Create a Product cloning a created one
@@ -12030,16 +12168,19 @@ public class TestCosting extends WeldBaseTest {
                 .getInventoryLine().getOnHandQty().negate());
             assertEquals(
                 materialTransaction.getTransactionCost().setScale(2, BigDecimal.ROUND_HALF_UP),
-                productTransactionAssert.getOriginalPrice().multiply(
-                    materialTransaction.getMovementQuantity().negate()));
+                productTransactionAssert.getOriginalPrice()
+                    .multiply(materialTransaction.getMovementQuantity().negate())
+                    .setScale(2, BigDecimal.ROUND_HALF_UP));
             assertEquals(
                 materialTransaction.getTotalCost().setScale(2, BigDecimal.ROUND_HALF_UP),
-                productTransactionAssert.getTotalPrice().multiply(
-                    materialTransaction.getMovementQuantity().negate()));
+                productTransactionAssert.getTotalPrice()
+                    .multiply(materialTransaction.getMovementQuantity().negate())
+                    .setScale(2, BigDecimal.ROUND_HALF_UP));
             assertEquals(
                 materialTransaction.getUnitCost().setScale(2, BigDecimal.ROUND_HALF_UP),
-                productTransactionAssert.getUnitPrice().multiply(
-                    materialTransaction.getMovementQuantity().negate()));
+                productTransactionAssert.getUnitPrice()
+                    .multiply(materialTransaction.getMovementQuantity().negate())
+                    .setScale(2, BigDecimal.ROUND_HALF_UP));
             assertFalse(materialTransaction.isCheckReservedQuantity());
           }
 
