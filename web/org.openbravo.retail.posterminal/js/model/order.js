@@ -1242,6 +1242,7 @@
       disc.doNotMerge = discount.doNotMerge;
 
       disc.hidden = discount.hidden === true || (discount.actualAmt && !disc.amt);
+      disc.preserve = discount.preserve === true;
 
       if (OB.UTIL.isNullOrUndefined(discount.actualAmt) && !disc.amt && disc.pack) {
         disc.hidden = true;
@@ -1287,9 +1288,11 @@
 
       for (i = 0; i < promotions.length; i++) {
         if (promotions[i].ruleId === rule.id) {
-          promotions[i] = disc;
-          replaced = true;
-          break;
+          if (promotions[i].hidden !== true) {
+            promotions[i] = disc;
+            replaced = true;
+            break;
+          }
         }
       }
 
@@ -2215,6 +2218,7 @@
                   if (line.get('promotions')) {
                     auxPromo = _.find(line.get('promotions'), function (promo) {
                       return promo.ruleId === copiedPromo.ruleId;
+                      // return promo.ruleId === copiedPromo.ruleId && promo.hidden !== true && promo.actualAmt > 0;
                     });
                     if (auxPromo) {
                       idx = line.get('promotions').indexOf(auxPromo);
@@ -2244,7 +2248,8 @@
 
                   if (line.get('promotions')) {
                     auxPromo = _.find(line.get('promotions'), function (promo) {
-                      return promo.ruleId === copiedPromo.ruleId;
+                      return promo.ruleId === copiedPromo.ruleId && promo.preserve !== true;
+                      // return promo.ruleId === copiedPromo.ruleId;
                     });
                     if (auxPromo) {
                       idx = line.get('promotions').indexOf(auxPromo);
