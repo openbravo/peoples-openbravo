@@ -304,8 +304,9 @@ enyo.kind({
       requirements.receiptBpId = receipt.get('bp').get('id');
       requirements.isReceiptDocnoLengthGreaterThanThree = receipt.get('documentNo').length > 3;
       requirements.isReceiptLinesLengthGreaterThanZero = receipt.get('lines').length > 0;
-      hasBeenPaid = receipt.get('isPaid');
-      if (OB.UTIL.isNullOrUndefined(requirements.receiptBpId) || !requirements.isReceiptDocnoLengthGreaterThanThree || !requirements.isReceiptLinesLengthGreaterThanZero) {
+      requirements.isReceiptHasbeenpaidEqualToN = receipt.get('hasbeenpaid') === 'N';
+      hasBeenPaid = receipt.get('isPaid') && !receipt.get('isQuotation');
+      if (OB.UTIL.isNullOrUndefined(requirements.receiptBpId) || !requirements.isReceiptDocnoLengthGreaterThanThree || !requirements.isReceiptLinesLengthGreaterThanZero || !requirements.isReceiptHasbeenpaidEqualToN) {
         return false;
       }
       // All requirements are met
