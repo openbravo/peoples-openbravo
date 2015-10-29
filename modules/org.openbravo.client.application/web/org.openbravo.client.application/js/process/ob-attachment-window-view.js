@@ -66,6 +66,8 @@ isc.OBAttachmentWindowView.addProperties({
         title: OB.I18N.getLabel('OBUIAPP_AttachmentFile'),
         // Upload type item cannot be used as it is not possible to redraw() the DynamicForm which
         // is needed to run the display and read only logics
+        titleStyle: 'OBFormFieldLabel',
+        cellStyle: 'OBFormField',
         type: 'file',
         multiple: false,
         canFocus: false
