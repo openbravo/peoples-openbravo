@@ -249,7 +249,8 @@ enyo.kind({
   disabledChanged: function (isDisabled) {
     // logic decide if the button will be allowed to be enabled
     // the decision to enable the button is made based on several requirements that must be met
-    var requirements, me = this;
+    var requirements, me = this,
+        hasBeenPaid;
 
     function requirementsAreMet(model) {
       // This function is in charge of managing all the requirements of the pay button to be enabled and disabled
@@ -303,6 +304,7 @@ enyo.kind({
       requirements.receiptBpId = receipt.get('bp').get('id');
       requirements.isReceiptDocnoLengthGreaterThanThree = receipt.get('documentNo').length > 3;
       requirements.isReceiptLinesLengthGreaterThanZero = receipt.get('lines').length > 0;
+      hasBeenPaid = receipt.get('hasbeenpaid') === 'Y';
       if (OB.UTIL.isNullOrUndefined(requirements.receiptBpId) || !requirements.isReceiptDocnoLengthGreaterThanThree || !requirements.isReceiptLinesLengthGreaterThanZero) {
         return false;
       }
@@ -314,7 +316,13 @@ enyo.kind({
     if (requirementsAreMet(this.model)) {
       newIsDisabledState = false;
       this.$.totalPrinter.show();
-      this.$.totalPrinter.addStyles('color: white!important;');
+      if (!hasBeenPaid) {
+        this.$.totalPrinter.addClass('whitecolor');
+      } else {
+        if (this.$.totalPrinter.hasClass('whitecolor')) {
+          this.$.totalPrinter.removeClass('whitecolor');
+        }
+      }
     } else {
       newIsDisabledState = true;
       if (discountEdit) {
@@ -347,6 +355,13 @@ enyo.kind({
 
     this.disabled = newIsDisabledState; // for getDisabled() to return the correct value
     this.setAttribute('disabled', newIsDisabledState); // to effectively turn the button enabled or disabled
+    if (hasBeenPaid) {
+      this.addClass('btnlink-gray');
+    } else {
+      if (this.hasClass('btnlink-gray')) {
+        this.removeClass('btnlink-gray');
+      }
+    }
   },
   events: {
     onTabChange: '',
