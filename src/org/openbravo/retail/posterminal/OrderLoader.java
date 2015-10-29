@@ -372,9 +372,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           return paymentResponse;
         }
 
-        // Call all OrderProcess injected.
-        executeHooks(orderProcesses, jsonorder, order, shipment, invoice);
       }
+      // Call all OrderProcess injected.
+      executeHooks(orderProcesses, jsonorder, order, shipment, invoice);
+
       if (log.isDebugEnabled()) {
         t6 = System.currentTimeMillis();
       }
