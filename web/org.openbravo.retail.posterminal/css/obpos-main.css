@@ -257,5 +257,9 @@ button.btnbp:disabled {
 }
 
 .whitecolor {
-  color: white!important;
+  color: white;
+}
+
+.blackecolor {
+  color: black;
 }

@@ -304,7 +304,7 @@ enyo.kind({
       requirements.receiptBpId = receipt.get('bp').get('id');
       requirements.isReceiptDocnoLengthGreaterThanThree = receipt.get('documentNo').length > 3;
       requirements.isReceiptLinesLengthGreaterThanZero = receipt.get('lines').length > 0;
-      hasBeenPaid = receipt.get('hasbeenpaid') === 'Y';
+      hasBeenPaid = receipt.get('isPaid');
       if (OB.UTIL.isNullOrUndefined(requirements.receiptBpId) || !requirements.isReceiptDocnoLengthGreaterThanThree || !requirements.isReceiptLinesLengthGreaterThanZero) {
         return false;
       }
@@ -317,18 +317,16 @@ enyo.kind({
       newIsDisabledState = false;
       this.$.totalPrinter.show();
       if (!hasBeenPaid) {
+        this.$.totalPrinter.removeClass('blackcolor');
         this.$.totalPrinter.addClass('whitecolor');
-      } else {
-        if (this.$.totalPrinter.hasClass('whitecolor')) {
-          this.$.totalPrinter.removeClass('whitecolor');
-        }
       }
     } else {
       newIsDisabledState = true;
       if (discountEdit) {
         this.$.totalPrinter.hide();
       } else if (OB.MobileApp.model.get('serviceSearchMode')) {
-        this.$.totalPrinter.addStyles('color: black!important;');
+        this.$.totalPrinter.removeClass('whitecolor');
+        this.$.totalPrinter.addClass('blackcolor');
       }
     }
 
@@ -356,11 +354,10 @@ enyo.kind({
     this.disabled = newIsDisabledState; // for getDisabled() to return the correct value
     this.setAttribute('disabled', newIsDisabledState); // to effectively turn the button enabled or disabled
     if (hasBeenPaid) {
+      this.$.totalPrinter.removeClass('whitecolor');
       this.addClass('btnlink-gray');
     } else {
-      if (this.hasClass('btnlink-gray')) {
-        this.removeClass('btnlink-gray');
-      }
+      this.removeClass('btnlink-gray');
     }
   },
   events: {
