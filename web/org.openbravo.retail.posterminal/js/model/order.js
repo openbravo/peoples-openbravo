@@ -4108,7 +4108,7 @@
 
       // setting specific properties
       order.set('isbeingprocessed', 'N');
-      order.set('hasbeenpaid', 'Y');
+      order.set('hasbeenpaid', 'N');
       order.set('isEditable', false);
       order.set('checked', model.checked); //TODO: what is this for, where it comes from?
       order.set('orderDate', OB.I18N.normalizeDate(model.orderDate));
@@ -4429,18 +4429,16 @@
       this.unshift(this.current);
       this.loadCurrent(true);
 
-      if (model.get('isLayaway')) {
-        synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('addPaidReceipt');
-        // OB.Dal.save is done here because we want to force to save with the original id, only this time.
-        OB.Dal.save(model, function () {
-          enyo.$.scrim.hide();
-          OB.UTIL.SynchronizationHelper.finished(synchId, 'addPaidReceipt');
-        }, function () {
-          OB.error(arguments);
-        }, true);
-      }
-
+      synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('addPaidReceipt');
+      // OB.Dal.save is done here because we want to force to save with the original id, only this time.
+      OB.Dal.save(model, function () {
+        enyo.$.scrim.hide();
+        OB.UTIL.SynchronizationHelper.finished(synchId, 'addPaidReceipt');
+      }, function () {
+        OB.error(arguments);
+      }, true);
     },
+
     addMultiReceipt: function (model) {
       OB.Dal.save(model, function () {}, function () {
         OB.error(arguments);

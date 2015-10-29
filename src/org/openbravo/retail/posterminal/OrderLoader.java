@@ -133,6 +133,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   private boolean isQuotation = false;
   private boolean isDeleted = false;
   private boolean doCancelAndReplace = false;
+  private boolean paidReceipt = false;
 
   @Inject
   @Any
@@ -174,6 +175,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
     isQuotation = jsonorder.has("isQuotation") && jsonorder.getBoolean("isQuotation");
 
+    paidReceipt = jsonorder.getLong("orderType") == 0 && jsonorder.getBoolean("isPaid");
+
     newLayaway = jsonorder.has("orderType") && jsonorder.getLong("orderType") == 2;
     notpaidLayaway = (jsonorder.getBoolean("isLayaway") || jsonorder.optLong("orderType") == 2)
         && jsonorder.getDouble("payment") < jsonorder.getDouble("gross")
@@ -188,7 +191,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
     isDeleted = jsonorder.has("obposIsDeleted") && jsonorder.getBoolean("obposIsDeleted");
 
-    createShipment = !isQuotation && !notpaidLayaway;
+    createShipment = !isQuotation && !notpaidLayaway && !paidReceipt;
     if (jsonorder.has("generateShipment")) {
       createShipment &= jsonorder.getBoolean("generateShipment");
     }
@@ -222,7 +225,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
       if (jsonorder.getLong("orderType") != 2 && !jsonorder.getBoolean("isLayaway") && !isQuotation
           && verifyOrderExistance(jsonorder)
-          && (!jsonorder.has("preserveId") || jsonorder.getBoolean("preserveId"))) {
+          && (!jsonorder.has("preserveId") || jsonorder.getBoolean("preserveId")) && !paidReceipt) {
         return successMessage(jsonorder);
       }
 
@@ -267,11 +270,13 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         }
         // An invoice will be automatically created if:
         // - The order is not a layaway and is not completely paid (ie. it's paid on credit)
-        // - Or, the order is a normal order or a fully paid layaway, and has the "generateInvoice"
+        // - Or, the order is a normal order or a fully paid layaway, and has the
+        // "generateInvoice"
         // flag
         wasPaidOnCredit = !isQuotation
             && !isDeleted
             && !notpaidLayaway
+            && !paidReceipt
             && Math.abs(jsonorder.getDouble("payment")) < Math.abs(new Double(jsonorder
                 .getDouble("gross")));
         if (jsonorder.has("oBPOSNotInvoiceOnCashUp")
@@ -310,7 +315,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         ArrayList<OrderLine> lineReferences = new ArrayList<OrderLine>();
         JSONArray orderlines = jsonorder.getJSONArray("lines");
 
-        if (!newLayaway && notpaidLayaway) {
+        if ((!newLayaway && notpaidLayaway) || paidReceipt) {
           order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
           order.setObposAppCashup(jsonorder.getString("obposAppCashup"));
         } else if (!newLayaway && (creditpaidLayaway || fullypaidLayaway)) {
@@ -398,13 +403,17 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         if (log.isDebugEnabled()) {
           t116 = System.currentTimeMillis();
         }
-        createApprovals(order, jsonorder);
+        if (!paidReceipt) {
+          createApprovals(order, jsonorder);
+        }
 
         if (log.isDebugEnabled()) {
           t11 = System.currentTimeMillis();
           t2 = System.currentTimeMillis();
         }
-        updateAuditInfo(order, invoice, jsonorder);
+        if (!paidReceipt) {
+          updateAuditInfo(order, invoice, jsonorder);
+        }
         if (log.isDebugEnabled()) {
           t3 = System.currentTimeMillis();
         }
@@ -430,17 +439,19 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
               + (t11 - t116) + "; stock" + (t4 - t3));
         }
 
-        // do the docnumbers at the end
-        OBContext.setAdminMode(false);
-        try {
-          for (DocumentNoHandler documentNoHandler : documentNoHandlers.get()) {
-            documentNoHandler.setDocumentNoAndSave();
+        if (!paidReceipt) {
+          // do the docnumbers at the end
+          OBContext.setAdminMode(false);
+          try {
+            for (DocumentNoHandler documentNoHandler : documentNoHandlers.get()) {
+              documentNoHandler.setDocumentNoAndSave();
+            }
+            OBDal.getInstance().flush();
+          } finally {
+            // set to null, should not be used anymore after this.
+            documentNoHandlers.set(null);
+            OBContext.restorePreviousMode();
           }
-          OBDal.getInstance().flush();
-        } finally {
-          // set to null, should not be used anymore after this.
-          documentNoHandlers.set(null);
-          OBContext.restorePreviousMode();
         }
 
       } catch (Exception ex) {
