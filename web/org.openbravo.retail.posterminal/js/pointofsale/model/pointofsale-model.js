@@ -467,24 +467,27 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             }
           }
           receipt.trigger('closed', {
-            callback: function () {
-              receipt.get('payments').reset();
-              clonedCollection.each(function (model) {
-                receipt.get('payments').add(new Backbone.Model(model.toJSON()), {
-                  silent: true
+            callback: function (args) {
+              // verify that the receipt was not cancelled
+              if (args.isCancelled !== true) {
+                receipt.get('payments').reset();
+                clonedCollection.each(function (model) {
+                  receipt.get('payments').add(new Backbone.Model(model.toJSON()), {
+                    silent: true
+                  });
                 });
-              });
-              // receipt is cloned because the receipt is deleted in the next sentence (orderList.deleteCurrent();)
-              // so, if exists a method no synchronous (for example, hook OBPOS_PrePrint) the "receipt" has changed
-              receipt.set('cloningReceipt', true);
-              var orderToPrint = OB.UTIL.clone(receipt);
-              receipt.set('cloningReceipt', false);
-              orderToPrint.set('cloningReceipt', false);
-              receipt.trigger('print', orderToPrint, {
-                offline: true
-              });
-              orderList.deleteCurrent();
-              orderList.synchronizeCurrentOrder();
+                // receipt is cloned because the receipt is deleted in the next sentence (orderList.deleteCurrent(true);)
+                // so, if exists a method no synchronous (for example, hook OBPOS_PrePrint) the "receipt" has changed
+                receipt.set('cloningReceipt', true);
+                var orderToPrint = OB.UTIL.clone(receipt);
+                receipt.set('cloningReceipt', false);
+                orderToPrint.set('cloningReceipt', false);
+                receipt.trigger('print', orderToPrint, {
+                  offline: true
+                });
+                orderList.deleteCurrent(true);
+                orderList.synchronizeCurrentOrder();
+              }
               enyo.$.scrim.hide();
             }
           });
@@ -497,18 +500,21 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             }
           }
           receipt.trigger('closed', {
-            callback: function () {
-              // receipt is cloned because the receipt is deleted when event "closed" is triggered
-              // so, if exists a method no synchronous, the "receipt" has changed
-              receipt.set('cloningReceipt', true);
-              var orderToPrint = OB.UTIL.clone(receipt);
-              receipt.set('cloningReceipt', false);
-              orderToPrint.set('cloningReceipt', false);
-              receipt.trigger('print', orderToPrint, {
-                offline: true
-              });
-              orderList.deleteCurrent();
-              orderList.synchronizeCurrentOrder();
+            callback: function (args) {
+              // verify that the receipt was not cancelled
+              if (args.isCancelled !== true) {
+                // receipt is cloned because the receipt is deleted when event "closed" is triggered
+                // so, if exists a method no synchronous, the "receipt" has changed
+                receipt.set('cloningReceipt', true);
+                var orderToPrint = OB.UTIL.clone(receipt);
+                receipt.set('cloningReceipt', false);
+                orderToPrint.set('cloningReceipt', false);
+                receipt.trigger('print', orderToPrint, {
+                  offline: true
+                });
+                orderList.deleteCurrent(true);
+                orderList.synchronizeCurrentOrder();
+              }
               enyo.$.scrim.hide();
             }
           });

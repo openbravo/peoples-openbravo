@@ -90,6 +90,11 @@
           args.context.receipt.set('isbeingprocessed', 'N');
           args.context.receipt.set('hasbeenpaid', 'N');
           args.context.receipt.trigger('paymentCancel');
+          if (eventParams && eventParams.callback) {
+            eventParams.callback({
+              isCancelled: true
+            });
+          }
           return true;
         }
         var receipt = args.context.receipt,
@@ -178,7 +183,9 @@
               }, function (args) {
                 successCallback();
                 if (eventParams && eventParams.callback) {
-                  eventParams.callback();
+                  eventParams.callback({
+                    isCancelled: false
+                  });
                 }
               });
             }, function () {
@@ -186,7 +193,9 @@
                 receipt: auxReceipt
               }, function (args) {
                 if (eventParams && eventParams.callback) {
-                  eventParams.callback();
+                  eventParams.callback({
+                    isCancelled: false
+                  });
                 }
               });
             });
@@ -199,7 +208,9 @@
               successCallback(model);
             });
             if (eventParams && eventParams.callback) {
-              eventParams.callback();
+              eventParams.callback({
+                isCancelled: false
+              });
             }
           }
         });
