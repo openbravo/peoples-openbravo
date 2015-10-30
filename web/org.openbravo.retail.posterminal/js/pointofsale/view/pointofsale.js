@@ -93,6 +93,9 @@ enyo.kind({
     onSetMultiSelectionItems: 'setMultiSelectionItems',
     onToggleLineSelection: 'toggleLineSelection',
     onFinishServiceProposal: 'finishServiceProposal',
+    onSetBusinessPartnerTarget: 'setBusinessPartnerTarget',
+    onPreSetCustomer: 'preSetCustomer',
+    onPreSaveCustomer: 'preSaveCustomer',
     onkeydown: 'keyDownHandler',
     onkeyup: 'keyUpHandler',
     onRearrangeEditButtonBar: 'rearrangeEditButtonBar'
@@ -1252,6 +1255,15 @@ enyo.kind({
   },
   finishServiceProposal: function (inSender, inEvent) {
     this.waterfallDown('onFinishServiceProposal', inEvent);
+  },
+  setBusinessPartnerTarget: function (inSender, inEvent) {
+    this.waterfallDown('onSetBPartnerTarget', inEvent);
+  },
+  preSetCustomer: function (inSender, inEvent) {
+    this.waterfallDown('onSetCustomer', inEvent);
+  },
+  preSaveCustomer: function (inSender, inEvent) {
+    this.waterfallDown('onSaveCustomer', inEvent);
   },
   setMultiSelection: function (inSender, inEvent) {
     this.waterfall('onSetMultiSelected', inEvent);

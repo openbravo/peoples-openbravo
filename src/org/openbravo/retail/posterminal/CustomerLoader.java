@@ -9,6 +9,8 @@
 package org.openbravo.retail.posterminal;
 
 import java.math.BigDecimal;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 
@@ -38,8 +40,8 @@ import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
 
 @DataSynchronization(entity = "BusinessPartner")
-public class CustomerLoader extends POSDataSynchronizationProcess implements
-    DataSynchronizationImportProcess {
+public class CustomerLoader extends POSDataSynchronizationProcess
+    implements DataSynchronizationImportProcess {
 
   private static final Logger log = Logger.getLogger(CustomerLoader.class);
 
@@ -55,14 +57,29 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
     BusinessPartner customer = null;
     OBContext.setAdminMode(false);
     try {
+      if (jsoncustomer.has("birthDay")) {
+        SimpleDateFormat dFormat = new SimpleDateFormat("yyyy-MM-dd");
+        ParsePosition pos = new ParsePosition(0);
+        Date birthDay = dFormat.parse(jsoncustomer.getString("birthDay"), pos);
+        if (birthDay != null) {
+          dFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+          jsoncustomer.put("birthDay", dFormat.format(birthDay));
+        } else {
+          jsoncustomer.remove("birthDay");
+        }
+      }
       customer = getCustomer(jsoncustomer.getString("id"));
       if (customer.getId() == null) {
         customer = createBPartner(jsoncustomer);
       } else {
+        final Date updated = OBMOBCUtils.calculateClientDatetime(jsoncustomer.getString("updated"),
+            Long.parseLong(jsoncustomer.getString("timezoneOffset")));
+
         final Date loaded = OBMOBCUtils.calculateClientDatetime(jsoncustomer.getString("loaded"),
             Long.parseLong(jsoncustomer.getString("timezoneOffset")));
 
-        if (!(loaded.compareTo(customer.getUpdated()) >= 0)) {
+        if (!((updated.compareTo(customer.getUpdated()) >= 0)
+            && (loaded.compareTo(customer.getUpdated()) >= 0))) {
           log.warn(Utility.messageBD(new DalConnectionProvider(false), "OBPOS_outdatedbp",
               OBContext.getOBContext().getLanguage().getLanguage()));
         }
@@ -101,7 +118,8 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
 
     // customer.setClient(OBDal.getInstance().get(Client.class, jsonCustomer.getString("client")));
     // BP org (required)
-    if (!jsonCustomer.has("organization") && jsonCustomer.getString("organization").equals("null")) {
+    if (!jsonCustomer.has("organization")
+        && jsonCustomer.getString("organization").equals("null")) {
       String errorMessage = "Business partner organization is a mandatory field to create a new customer from Web Pos";
       log.error(errorMessage);
       throw new OBException(errorMessage, null);
@@ -132,8 +150,8 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
 
       int bpsWithPossibleSK = 0;
 
-      final OBCriteria<BusinessPartner> bpCriteria = OBDal.getInstance().createCriteria(
-          BusinessPartner.class);
+      final OBCriteria<BusinessPartner> bpCriteria = OBDal.getInstance()
+          .createCriteria(BusinessPartner.class);
       bpCriteria.setFilterOnActive(false);
       bpCriteria.setFilterOnReadableOrganization(false);
       bpCriteria.add(Restrictions.eq("searchKey", possibleSK));
@@ -185,10 +203,10 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
 
   private void editBPartnerContact(BusinessPartner customer, JSONObject jsonCustomer)
       throws JSONException {
-    Entity userEntity = ModelProvider.getInstance().getEntity(
-        org.openbravo.model.ad.access.User.class);
-    final org.openbravo.model.ad.access.User user = OBDal.getInstance().get(
-        org.openbravo.model.ad.access.User.class, jsonCustomer.getString("contactId"));
+    Entity userEntity = ModelProvider.getInstance()
+        .getEntity(org.openbravo.model.ad.access.User.class);
+    final org.openbravo.model.ad.access.User user = OBDal.getInstance()
+        .get(org.openbravo.model.ad.access.User.class, jsonCustomer.getString("contactId"));
     if (user != null) {
 
       JSONPropertyToEntity.fillBobFromJSON(userEntity, user, jsonCustomer);
@@ -230,8 +248,8 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
 
       // create the user
 
-      final org.openbravo.model.ad.access.User usr = OBProvider.getInstance().get(
-          org.openbravo.model.ad.access.User.class);
+      final org.openbravo.model.ad.access.User usr = OBProvider.getInstance()
+          .get(org.openbravo.model.ad.access.User.class);
 
       JSONPropertyToEntity.fillBobFromJSON(userEntity, usr, jsonCustomer);
 
@@ -257,10 +275,11 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
     }
   }
 
-  private void editLocation(BusinessPartner customer, JSONObject jsonCustomer) throws JSONException {
+  private void editLocation(BusinessPartner customer, JSONObject jsonCustomer)
+      throws JSONException {
     Entity locationEntity = ModelProvider.getInstance().getEntity(Location.class);
-    Entity baseLocationEntity = ModelProvider.getInstance().getEntity(
-        org.openbravo.model.common.geography.Location.class);
+    Entity baseLocationEntity = ModelProvider.getInstance()
+        .getEntity(org.openbravo.model.common.geography.Location.class);
     final Location location = OBDal.getInstance().get(Location.class,
         jsonCustomer.getString("locShipId"));
     if (location != null) {

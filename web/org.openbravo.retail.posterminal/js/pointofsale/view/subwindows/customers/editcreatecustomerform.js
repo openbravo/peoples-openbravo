@@ -227,6 +227,44 @@ enyo.kind({
     i18nLabel: 'OBPOS_LblEmail',
     maxlength: 255
   }, {
+    kind: 'onyx.DatePicker',
+    name: 'birthDay',
+    modelProperty: 'birthDay',
+    i18nLabel: 'OBPOS_LblBirthday',
+    handlers: {
+      onLoadValue: 'loadValue',
+      onSaveChange: 'saveChange'
+    },
+    displayLogic: function () {
+      return OB.MobileApp.model.hasPermission('OBPOS_ShowBusinessPartnerBirthInfo', true);
+    },
+    loadValue: function (inSender, inEvent) {
+      this.setLocale(OB.Application.language_string);
+      if (inEvent.customer && inEvent.customer.get(this.modelProperty)) {
+        this.setValue(new Date(inEvent.customer.get(this.modelProperty)));
+      }
+    },
+    saveChange: function (inSender, inEvent) {
+      var value = this.getValue(),
+          fragments = [
+        value.getFullYear(), value.getMonth() + 1, value.getDate()];
+      if (fragments[1] < 10) {
+        fragments[1] = '0' + fragments[1];
+      }
+      if (fragments[2] < 10) {
+        fragments[2] = '0' + fragments[2];
+      }
+      inEvent.customer.set(this.modelProperty, fragments.join('-'));
+    }
+  }, {
+    kind: 'OB.UI.CustomerTextProperty',
+    name: 'birthPlace',
+    modelProperty: 'birthPlace',
+    i18nLabel: 'OBPOS_LblBirthplace',
+    displayLogic: function () {
+      return OB.MobileApp.model.hasPermission('OBPOS_ShowBusinessPartnerBirthInfo', true);
+    }
+  }, {
     kind: 'OB.UI.CustomerComboProperty',
     name: 'customerPriceList',
     modelProperty: 'priceList',

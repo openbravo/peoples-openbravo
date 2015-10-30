@@ -93,7 +93,10 @@ enyo.kind({
   tap: function () {
     if (!this.disabled) {
       this.doShowPopup({
-        popup: 'modalcustomershipaddress'
+        popup: 'modalcustomershipaddress',
+        args: {
+          target: 'order'
+        }
       });
     }
   },
@@ -126,7 +129,7 @@ enyo.kind({
   name: 'OB.UI.SearchCustomerShipAddressWindowButton',
   style: 'width: 170px; margin: 0px 0px 8px 5px;',
   classes: 'btnlink-yellow btnlink btnlink-small',
-  i18nLabel: 'OBPOS_LblEditAddress',
+  i18nLabel: 'OBPOS_LblAdvancedSearch',
   disabled: false,
   handlers: {
     onSetModel: 'setModel',
@@ -400,7 +403,8 @@ enyo.kind({
         dataBps.set('cityName', model.get('cityName'));
         dataBps.set('countryName', model.get('countryName'));
         me.doChangeBusinessPartner({
-          businessPartner: dataBps
+          businessPartner: dataBps,
+          target: me.owner.owner.args.target
         });
       }
       OB.Dal.get(OB.Model.BusinessPartner, this.bPartner.get('id'), successCallbackBPs, errorCallback);
@@ -419,6 +423,9 @@ enyo.kind({
     }
     this.waterfall('onSetShow', {
       visibility: this.args.visibilityButtons
+    });
+    this.bubble('onSetBusinessPartnerTarget', {
+      target: this.args.target
     });
     this.$.body.$.listBpsShipLoc.setBPartner(this.model.get('order').get('bp'));
     this.$.body.$.listBpsShipLoc.$.bpsloclistitemprinter.$.theader.$.modalBpShipLocScrollableHeader.searchAction();

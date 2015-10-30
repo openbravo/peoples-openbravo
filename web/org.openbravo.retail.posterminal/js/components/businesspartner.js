@@ -432,6 +432,9 @@ enyo.kind({
     this.waterfall('onSetShow', {
       visibility: this.args.visibilityButtons
     });
+    this.bubble('onSetBusinessPartnerTarget', {
+      target: this.args.target
+    });
     this.$.body.$.listBps.$.stBPAssignToReceipt.$.theader.$.modalBpScrollableHeader.$.newAction.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers'));
     if (this.args.businessPartner) {
       this.$.body.$.listBps.$.stBPAssignToReceipt.$.theader.$.modalBpScrollableHeader.searchAction();

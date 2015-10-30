@@ -57,7 +57,8 @@ enyo.kind({
   classes: 'btnlink btnlink-small',
   handlers: {
     onSetCustomerAddr: 'setCustomerAddr',
-    onAddressChanged: 'addressChanged'
+    onAddressChanged: 'addressChanged',
+    onSetBPartnerTarget: 'setBPartnerTarget'
   },
   events: {
     onChangeBusinessPartner: ''
@@ -66,6 +67,9 @@ enyo.kind({
     this.customer = inEvent.customer;
     this.customerAddr = inEvent.customerAddr;
     this.model.attributes.customerAddr.set('loaded', OB.I18N.formatDateISO(new Date()));
+  },
+  setBPartnerTarget: function (inSender, inEvent) {
+    this.target = inEvent.target;
   },
   tap: function () {
     var me = this;
@@ -99,7 +103,8 @@ enyo.kind({
     me.customer.set('countryName', me.customerAddr.get('countryName'));
     me.model.get('order').trigger('change:bp', me.model.get('order'));
     me.doChangeBusinessPartner({
-      businessPartner: me.customer
+      businessPartner: me.customer,
+      target: this.target
     });
     var sw = me.subWindow;
     sw.doChangeSubWindow({

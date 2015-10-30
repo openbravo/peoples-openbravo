@@ -143,7 +143,7 @@ enyo.kind({
   name: 'OB.UI.SearchCustomerAddressWindowButton',
   style: 'width: 170px; margin: 0px 0px 8px 5px;',
   classes: 'btnlink-yellow btnlink btnlink-small',
-  i18nLabel: 'OBPOS_LblEditAddress',
+  i18nLabel: 'OBPOS_LblAdvancedSearch',
   disabled: false,
   handlers: {
     onSetModel: 'setModel',
@@ -434,6 +434,9 @@ enyo.kind({
     }
     this.waterfall('onSetShow', {
       visibility: this.args.visibilityButtons
+    });
+    this.bubble('onSetBusinessPartnerTarget', {
+      target: this.args.target
     });
     this.changedTitle(this.model.get('order').get('bp'));
     this.$.body.$.listBpsLoc.setBPartner(this.args.businessPartner ? this.args.businessPartner : this.model.get('order').get('bp'));

@@ -53,13 +53,17 @@ enyo.kind({
   style: 'margin: 0px 0px 8px 5px;',
   classes: 'btnlink btnlink-small',
   handlers: {
-    onSetCustomer: 'setCustomer'
+    onSetCustomer: 'setCustomer',
+    onSetBPartnerTarget: 'setBPartnerTarget'
   },
   events: {
     onChangeBusinessPartner: ''
   },
   setCustomer: function (inSender, inEvent) {
     this.customer = inEvent.customer;
+  },
+  setBPartnerTarget: function (inSender, inEvent) {
+    this.target = inEvent.target;
   },
   tap: function () {
     var sw = this.subWindow;
@@ -69,7 +73,8 @@ enyo.kind({
       }
     });
     this.doChangeBusinessPartner({
-      businessPartner: this.customer
+      businessPartner: this.customer,
+      target: this.target
     });
   },
   init: function (model) {

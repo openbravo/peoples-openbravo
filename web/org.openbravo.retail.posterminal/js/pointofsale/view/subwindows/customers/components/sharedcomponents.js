@@ -354,9 +354,11 @@ enyo.kind({
             return true;
           }
           args.customer.saveCustomer(function () {
-            goToViewWindow(sw, {
-              customer: args.customer
-            });
+        	if (!inEvent.silent) {  
+        	  goToViewWindow(sw, {
+                customer: args.customer
+              });
+        	}
           });
         });
       });
