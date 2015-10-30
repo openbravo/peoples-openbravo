@@ -3720,6 +3720,14 @@ isc.OBViewGrid.addProperties({
     }
   },
 
+  // Set "allowEditCellRefresh" parameter to force a completely
+  // redrawn in combo type fields when refreshing an editing cell
+  // with the the focus on it.
+  // See issue https://issues.openbravo.com/view.php?id=31198
+  refreshCell: function (rowNum, colNum, refreshingRow) {
+    return this.Super('refreshCell', [rowNum, colNum, refreshingRow, true]);
+  },
+
   // having a valueMap property results in setValueMap to be called
   // on an item. On items with a picklist this causes calls to the
   // server side
