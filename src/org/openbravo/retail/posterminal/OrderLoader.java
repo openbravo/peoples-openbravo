@@ -216,10 +216,17 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
           order.setObposAppCashup(jsonorder.getString("obposAppCashup"));
           order.setDelivered(true);
-          for (int i = 0; i < order.getOrderLineList().size(); i++) {
-            lineReferences.add(order.getOrderLineList().get(i));
-            orderLine = order.getOrderLineList().get(i);
+
+          String olsHqlWhereClause = " ol where ol.salesOrder.id = :orderId order by lineNo";
+          OBQuery<OrderLine> queryOls = OBDal.getInstance().createQuery(OrderLine.class,
+              olsHqlWhereClause);
+          queryOls.setNamedParameter("orderId", order.getId());
+          List<OrderLine> lstResultOL = queryOls.list();
+
+          for (int i = 0; i < lstResultOL.size(); i++) {
+            orderLine = lstResultOL.get(i);
             orderLine.setDeliveredQuantity(orderLine.getOrderedQuantity());
+            lineReferences.add(orderLine);
           }
         } else {
           OBCriteria<Order> ordercrit = OBDal.getInstance().createCriteria(Order.class);
