@@ -252,11 +252,11 @@ isc.OBBaseParameterWindowView.addProperties({
   setFieldFormProperties: function () {},
 
   validate: function () {
-    var viewGrid, validForm;
+    var isValid;
     if (this.theForm) {
-      validForm = this.theForm.validate();
-      if (!validForm) {
-        return validForm;
+      isValid = this.theForm.validate();
+      if (!isValid) {
+        return isValid;
       }
     }
     return true;
@@ -289,7 +289,6 @@ isc.OBBaseParameterWindowView.addProperties({
       this.loading.hide();
     }
   },
-
 
   // Checks params with readonly logic enabling or disabling them based on it
   handleReadOnlyLogic: function () {
