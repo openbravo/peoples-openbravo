@@ -30,6 +30,7 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.ComponentProvider;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -50,7 +51,7 @@ public class CoreAttachImplementation extends AttachImplementation {
   public void uploadFile(Attachment attachment, String strDataType, Map<String, Object> parameters,
       File file, String strTab) throws OBException {
     log.debug("CoreAttachImplemententation - Uploading files");
-    String tableId = attachment.getTable().getId();
+    String tableId = (String) DalUtil.getId(attachment.getTable());
     String strKey = attachment.getRecord();
     String strFileDir = getAttachmentDirectoryForNewAttachments(tableId, strKey);
 
@@ -75,8 +76,8 @@ public class CoreAttachImplementation extends AttachImplementation {
   @Override
   public File downloadFile(Attachment attachment) {
     log.debug("CoreAttachImplemententation - download file");
-    String fileDir = getAttachmentDirectory(attachment.getTable().getId(), attachment.getRecord(),
-        attachment.getName());
+    String fileDir = getAttachmentDirectory((String) DalUtil.getId(attachment.getTable()),
+        attachment.getRecord(), attachment.getName());
     String attachmentFolder = OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .getProperty("attach.path");
     final File file = new File(attachmentFolder + File.separator + fileDir, attachment.getName());
@@ -88,8 +89,8 @@ public class CoreAttachImplementation extends AttachImplementation {
     log.debug("CoreAttachImplemententation - Removing files");
     String attachmentFolder = OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .getProperty("attach.path");
-    String fileDir = getAttachmentDirectory(attachment.getTable().getId(), attachment.getRecord(),
-        attachment.getName());
+    String fileDir = getAttachmentDirectory((String) DalUtil.getId(attachment.getTable()),
+        attachment.getRecord(), attachment.getName());
     String fileDirPath = attachmentFolder + "/" + fileDir;
     final File file = new File(fileDirPath, attachment.getName());
     if (file.exists()) {
@@ -176,11 +177,11 @@ public class CoreAttachImplementation extends AttachImplementation {
       attachmentCriteria.add(Restrictions.eq(Attachment.PROPERTY_NAME, fileName));
 
       attachmentCriteria.setFilterOnReadableOrganization(false);
-      if (attachmentCriteria.count() > 0) {
-        Attachment attachment = attachmentCriteria.list().get(0);
-        if (attachment.getPath() != null) {
-          fileDir = attachment.getPath();
-        }
+      attachmentCriteria.setMaxResults(1);
+
+      Attachment attachment = (Attachment) attachmentCriteria.uniqueResult();
+      if (attachment != null && attachment.getPath() != null) {
+        fileDir = attachment.getPath();
       }
     } catch (Exception e) {
       log.error(e.getMessage(), e);
