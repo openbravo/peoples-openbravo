@@ -66,7 +66,6 @@ isc.OBFKFilterTextItem.addProperties({
     // the value for the filter and the display are the same: the identifier
     this.displayField = this.criteriaDisplayField || OB.Constants.IDENTIFIER;
     this.valueField = this.criteriaDisplayField || OB.Constants.IDENTIFIER;
-
     // if this field was being filtered by its id before being recreated, reset its filter type an its filterAuxCache
     if (this.grid && this.grid.sourceWidget && this.grid.sourceWidget.filterByIdFields && this.grid.sourceWidget.filterByIdFields.contains(this.name)) {
       this.filterType = 'id';
@@ -554,6 +553,17 @@ isc.OBFKFilterTextItem.addProperties({
     }
   },
 
+  // for Table reference the displayProperty is used in the filtering criteria instead of OB.Constants.IDENTIFIER
+  // see issue https://issues.openbravo.com/view.php?id=30800
+  getDisplayProperty: function () {
+    var theGrid = this.grid,
+        name = this.name;
+    if (theGrid && name && theGrid.getField(name) && theGrid.getField(name).displayProperty) {
+      return name + OB.Constants.FIELDSEPARATOR + theGrid.getField(name).displayProperty;
+    }
+    return null;
+  },
+
   // make sure that the correct field name is used to filter the main grid
   // if this is not here then the value will be removed by smartclient as it
   // sets the criterion back into the item
@@ -563,7 +573,7 @@ isc.OBFKFilterTextItem.addProperties({
     if (this.filterType === 'id') {
       return this.name;
     } else {
-      return this.criteriaField || this.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER;
+      return this.criteriaField || this.getDisplayProperty() || this.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER;
     }
   },
 

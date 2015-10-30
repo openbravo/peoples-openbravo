@@ -65,7 +65,11 @@ public class FKComboUIDefinition extends ForeignKeyUIDefinition {
           Property referencedProp = KernelUtils.getInstance().getPropertyFromColumn(
               referencedTable.getDisplayedColumn());
           if (prop != null && referencedProp != null) {
-            if (isTableWithMultipleIdentifierColumns(referencedTable.getTable())) {
+            if (isTableWithMultipleIdentifierColumns(referencedTable.getTable())
+                && !isPropertyField(field)) {
+              // For property fields we do not set the criteriaField, this way we can retrieve the
+              // complete path from the client side.
+              // See issue https://issues.openbravo.com/view.php?id=30800
               criteriaField = ", criteriaField: " + "'" + prop.getName() + DalUtil.FIELDSEPARATOR
                   + referencedProp.getName() + "', criteriaDisplayField: '"
                   + referencedProp.getName() + "'";
@@ -95,6 +99,13 @@ public class FKComboUIDefinition extends ForeignKeyUIDefinition {
       }
     }
     // there is only one identifier column
+    return false;
+  }
+
+  private boolean isPropertyField(Field field) {
+    if (field.getProperty() != null) {
+      return true;
+    }
     return false;
   }
 
