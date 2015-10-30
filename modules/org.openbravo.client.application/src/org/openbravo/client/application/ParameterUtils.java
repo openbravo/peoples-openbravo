@@ -30,6 +30,7 @@ import javax.script.ScriptException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.axis.utils.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -78,7 +79,7 @@ public class ParameterUtils {
   }
 
   private static void setValue(ParameterValue parameterValue, String stringValue) {
-    if (stringValue == null) {
+    if (StringUtils.isEmpty(stringValue)) {
       parameterValue.setValueString(null);
       parameterValue.setValueDate(null);
       parameterValue.setValueNumber(null);
@@ -111,7 +112,7 @@ public class ParameterUtils {
 
   /**
    * Returns an Object with the Value of the Parameter Value. This object can be a String, a
-   * java.util.Date, boolean or a BigDecimal.
+   * java.util.Date, long, boolean or a BigDecimal.
    * 
    * @param parameterValue
    *          the Parameter Value we want to get the Value from.
@@ -175,7 +176,7 @@ public class ParameterUtils {
    */
   public static Object getParameterDefaultValue(Map<String, String> parameters,
       Parameter parameter, HttpSession session, JSONObject _context) throws ScriptException {
-    JSONObject context = _context;
+    JSONObject context = _context != null ? _context : new JSONObject();
     Reference reference = parameter.getReferenceSearchKey();
     if (reference == null) {
       reference = parameter.getReference();
@@ -186,7 +187,7 @@ public class ParameterUtils {
     String rawDefaultValue = parameter.getDefaultValue();
 
     Object defaultValue = null;
-    if (isSessionDefaultValue(rawDefaultValue) && context != null) {
+    if (isSessionDefaultValue(rawDefaultValue)) {
       // Transforms the default value from @columnName@ to the column inp name
       String inpName = "inp"
           + Sqlc.TransformaNombreColumna(getDependentDefaultValue(rawDefaultValue));
@@ -198,9 +199,6 @@ public class ParameterUtils {
     } else {
       parameters.put("currentParam", parameter.getDBColumnName());
       defaultValue = getJSExpressionResult(parameters, session, rawDefaultValue);
-      if (context == null) {
-        context = new JSONObject();
-      }
     }
     String inpName = "inp" + Sqlc.TransformaNombreColumna(parameter.getDBColumnName());
     if (!context.has(inpName)) {
@@ -245,9 +243,9 @@ public class ParameterUtils {
    *          optional HttpSession object.
    * @param expression
    *          String with the JavaScript expression to be evaluated.
-   * @return an Object with the result of the expression evaluation. Error occurred in the script
-   *         execution
+   * @return an Object with the result of the expression evaluation.
    * @throws ScriptException
+   *           Error occurred in the script execution
    */
   @SuppressWarnings("rawtypes")
   public static Object getJSExpressionResult(Map<String, String> parameters, HttpSession session,
@@ -311,7 +309,7 @@ public class ParameterUtils {
    * 
    * @param rawDefaultValue
    *          defaultValue surrounded by '@', i.e. '@AD_USER_ID@'
-   * @return the rawDefaultValue, after removing the first and the last caracters
+   * @return the rawDefaultValue, after removing the first and the last characters
    */
   private static String getDependentDefaultValue(String rawDefaultValue) {
     return rawDefaultValue.substring(1, rawDefaultValue.length() - 1);

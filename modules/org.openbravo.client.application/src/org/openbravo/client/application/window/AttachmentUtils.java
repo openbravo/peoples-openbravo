@@ -78,6 +78,14 @@ public class AttachmentUtils {
     return OBDal.getInstance().get(AttachmentConfig.class, strAttachmentConfigId);
   }
 
+  /**
+   * Updates the current active attachment configuration for the client.
+   * 
+   * @param strClient
+   *          The Client whose attachment configuration has changed.
+   * @param strAttConfig
+   *          The new Attachment Configuration.
+   */
   public static void setAttachmentConfig(String strClient, String strAttConfig) {
     if (strAttConfig == null) {
       clientConfigs.remove(strClient);
@@ -89,7 +97,7 @@ public class AttachmentUtils {
   /**
    * Gets the Attachment Configuration associated to the context client
    * 
-   * @return Activated Attachment Configuration for this context
+   * @return Active Attachment Configuration for this context
    */
   public static AttachmentConfig getAttachmentConfig() {
     Client client = OBContext.getOBContext().getCurrentClient();
@@ -103,11 +111,10 @@ public class AttachmentUtils {
    */
   public static AttachmentMethod getDefaultAttachmentMethod() {
     AttachmentMethod attMethod = OBDal.getInstance().get(AttachmentMethod.class, DEFAULT_METHOD_ID);
-    if (attMethod != null) {
-      return attMethod;
-    } else {
+    if (attMethod == null) {
       throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoMethod"));
     }
+    return attMethod;
   }
 
   /**
@@ -118,12 +125,12 @@ public class AttachmentUtils {
    *          active attachment method
    * @param tab
    *          tab to take metadata
-   * @return List of parameters by attachment method and tab sorted by Fixed where fixed paremeters
-   *         are first.
+   * @return List of parameters by attachment method and tab sorted by Fixed and Sequence Number
+   *         where fixed parameters are first.
    */
   public static List<Parameter> getMethodMetadataParameters(AttachmentMethod attachMethod, Tab tab) {
     StringBuilder where = new StringBuilder();
-    where.append(Parameter.PROPERTY_ATTACHMENTMETHOD + "= :attMethod");
+    where.append(Parameter.PROPERTY_ATTACHMENTMETHOD + " = :attMethod");
     where.append(" and (" + Parameter.PROPERTY_TAB + " is null or " + Parameter.PROPERTY_TAB
         + " = :tab)");
     where.append(" order by CASE WHEN " + Parameter.PROPERTY_FIXED + " is true THEN 1 ELSE 2 END");
@@ -197,7 +204,6 @@ public class AttachmentUtils {
         + " AS a WHERE a.id=:recordId";
     final Query query = OBDal.getInstance().getSession().createQuery(hql);
     query.setString("recordId", recordId);
-    query.setMaxResults(1);
     try {
       return query.uniqueResult();
     } catch (Exception e) {
