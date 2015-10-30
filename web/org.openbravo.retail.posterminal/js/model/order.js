@@ -2398,25 +2398,39 @@
     },
 
     getOrderDescription: function () {
-      var desc = 'Id: ' + this.get('id') + ". Docno: " + this.get('documentNo') + ". Total gross: " + this.get('gross') + ". Lines: [";
+      var desc = '{id: \'' + this.get('id') + '\', Docno: \'' + this.get('documentNo') + '\', Total gross: ' + this.get('gross') + ', Lines: [';
       var i = 0;
+      var propt;
       this.get('lines').forEach(function (l) {
         if (i !== 0) {
           desc += ",";
         }
-        desc += '{Product: ' + l.get('product').get('_identifier') + ', Quantity: ' + l.get('qty') + ' Gross: ' + l.get('gross') + '}';
+        desc += '{Product: \'' + l.get('product').get('_identifier') + '\', Quantity: ' + l.get('qty') + ', Gross: ' + l.get('gross') + ', LineGrossAmount: ' + l.get('lineGrossAmount') + ', DiscountedGross: ' + l.get('discountedGross') + ', Net: ' + l.get('net') + ', DiscountedNet: ' + l.get('discountedNet') + ', NonDiscountedNet: ' + l.get('nondiscountednet') + ', TaxAmount: ' + l.get('taxAmount') + ', GrossUnitPrice: ' + l.get('grossUnitPrice') + '}';
         i++;
       });
-      desc += '] Payments: [';
+      desc += '], Payments: [';
       i = 0;
       this.get('payments').forEach(function (l) {
         if (i !== 0) {
           desc += ",";
         }
-        desc += '{PaymentMethod: ' + l.get('kind') + ', Amount: ' + l.get('amount') + ' OrigAmount: ' + l.get('origAmount') + ' Date: ' + l.get('date') + ' isocode: ' + l.get('isocode') + '}';
+        desc += '{PaymentMethod: \'' + l.get('kind') + '\', Amount: ' + l.get('amount') + ', OrigAmount: ' + l.get('origAmount') + ', Date: \'' + l.get('date') + '\', isocode: \'' + l.get('isocode') + '\'}';
         i++;
       });
+      desc += '], Taxes: [';
+      i = 0;
+      for (propt in this.get('taxes')) {
+        if (this.get('taxes').hasOwnProperty(propt)) {
+          var obj = this.get('taxes')[propt];
+          if (i !== 0) {
+            desc += ",";
+          }
+          desc += '{TaxId: \'' + propt + '\', TaxRate: ' + obj.rate + ', TaxNet: ' + obj.net + ', TaxAmount: ' + obj.amount + ', TaxName: \'' + obj.name + '\'}';
+          i++;
+        }
+      }
       desc += ']';
+      desc += '}';
       return desc;
     }
   });
