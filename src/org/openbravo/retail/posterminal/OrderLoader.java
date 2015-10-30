@@ -121,6 +121,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   boolean newLayaway = false;
   boolean notpaidLayaway = false;
   boolean creditpaidLayaway = false;
+  boolean partialpaidLayaway = false;
   boolean fullypaidLayaway = false;
   boolean createShipment = true;
   Locator binForRetuns = null;
@@ -170,6 +171,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       creditpaidLayaway = (jsonorder.getBoolean("isLayaway") || jsonorder.optLong("orderType") == 2)
           && jsonorder.getDouble("payment") < jsonorder.getDouble("gross")
           && jsonorder.optBoolean("paidOnCredit");
+      partialpaidLayaway = jsonorder.getBoolean("isLayaway")
+          && jsonorder.getDouble("payment") < jsonorder.getDouble("gross");
       fullypaidLayaway = (jsonorder.getBoolean("isLayaway") || jsonorder.optLong("orderType") == 2)
           && jsonorder.getDouble("payment") >= jsonorder.getDouble("gross");
       try {
@@ -228,6 +231,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
             orderLine.setDeliveredQuantity(orderLine.getOrderedQuantity());
             lineReferences.add(orderLine);
           }
+        } else if (partialpaidLayaway) {
+          order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
+          order.setObposAppCashup(jsonorder.getString("obposAppCashup"));
         } else {
           OBCriteria<Order> ordercrit = OBDal.getInstance().createCriteria(Order.class);
           ordercrit.add(Restrictions.eq(Order.PROPERTY_ID, jsonorder.getString("id")));
@@ -1357,7 +1363,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         paymentSchedule = OBProvider.getInstance().get(FIN_PaymentSchedule.class);
       }
       int stdPrecision = order.getCurrency().getStandardPrecision().intValue();
-      if (!newLayaway && (notpaidLayaway || creditpaidLayaway || fullypaidLayaway)) {
+      if ((!newLayaway && (notpaidLayaway || creditpaidLayaway || fullypaidLayaway)) || partialpaidLayaway) {
         paymentSchedule = order.getFINPaymentScheduleList().get(0);
         stdPrecision = order.getCurrency().getStandardPrecision().intValue();
       } else {
