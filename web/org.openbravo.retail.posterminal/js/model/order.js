@@ -271,7 +271,7 @@
       } else {
         return OB.I18N.formatCurrency(this.get('amount'));
       }
-    },
+    }
   });
 
   // Sales.OrderLineCol Model.
@@ -3129,7 +3129,8 @@
     },
 
     removePayment: function (payment) {
-      var payments = this.get('payments');
+      var payments = this.get('payments'),
+          max, i, p;
       OB.UTIL.HookManager.executeHooks('OBPOS_preRemovePayment', {
         paymentToRem: payment,
         payments: payments,
@@ -4155,7 +4156,8 @@
 
               var linepos = 0,
                   hasDeliveredProducts = false,
-                  hasNotDeliveredProducts = false;
+                  hasNotDeliveredProducts = false,
+                  i, sortedPayments = false;
               _.each(model.receiptLines, function (iter) {
                 var price;
                 iter.linepos = linepos;
@@ -4301,6 +4303,39 @@
                 if (order.get('deliveredQuantityAmount') && order.get('deliveredQuantityAmount') > order.get('gross')) {
                   order.set('isDeliveredGreaterThanGross', true);
                 }
+              }
+
+              function getReverserPayment(payment, Payments) {
+                return _.filter(model.receiptPayments, function (receiptPayment) {
+                  return receiptPayment.paymentId === payment.reversedPaymentId;
+                })[0];
+              }
+              i = 0;
+              // Sort payments array, puting reverser payments inmediatly after their reversed payment
+              while (i < model.receiptPayments.length) {
+                var payment = model.receiptPayments[i];
+                if (payment.reversedPaymentId && !payment.isSorted) {
+                  var reversed_index = model.receiptPayments.indexOf(getReverserPayment(payment, model.receiptPayments));
+                  payment.isSorted = true;
+                  if (i < reversed_index) {
+                    model.receiptPayments.splice(i, 1);
+                    model.receiptPayments.splice(reversed_index, 0, payment);
+                    sortedPayments = true;
+                  } else if (i > reversed_index + 1) {
+                    model.receiptPayments.splice(i, 1);
+                    model.receiptPayments.splice(reversed_index + 1, 0, payment);
+                    sortedPayments = true;
+                  }
+                } else {
+                  i++;
+                }
+              }
+              if (sortedPayments) {
+                model.receiptPayments.forEach(function (receitPayment) {
+                  if (receitPayment.isSorted) {
+                    delete receitPayment.isSorted;
+                  }
+                });
               }
               //order.set('payments', model.receiptPayments);
               payments = new PaymentLineList();
