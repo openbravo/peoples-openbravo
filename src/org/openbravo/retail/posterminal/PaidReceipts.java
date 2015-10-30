@@ -277,7 +277,7 @@ public class PaidReceipts extends JSONProcessSimple {
                 paidReceiptPayment.put("isReversed", true);
               }
               if (objectIn.has("reversalPayment")) {
-                paidReceiptPayment.put("reversedPaymentId", objectIn.get("paymentId"));
+                paidReceiptPayment.put("reversedPaymentId", objectIn.get("reversalPayment"));
               }
               added = true;
               listpaidReceiptsPayments.put(paidReceiptPayment);

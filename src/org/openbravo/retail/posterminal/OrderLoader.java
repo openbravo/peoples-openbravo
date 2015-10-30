@@ -1829,7 +1829,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       int pricePrecision = order.getCurrency().getObposPosprecision() == null ? order.getCurrency()
           .getPricePrecision().intValue() : order.getCurrency().getObposPosprecision().intValue();
       if ((!newLayaway && (notpaidLayaway || creditpaidLayaway || fullypaidLayaway))
-          || partialpaidLayaway) {
+          || partialpaidLayaway || paidReceipt) {
         paymentSchedule = order.getFINPaymentScheduleList().get(0);
       } else {
         paymentSchedule = OBProvider.getInstance().get(FIN_PaymentSchedule.class);
