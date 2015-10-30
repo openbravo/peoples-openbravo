@@ -60,26 +60,24 @@ public class DefaultsAttachmentActionHandler extends BaseActionHandler {
       final String strTabId = (String) parameters.get("tabId");
       final String strAttachmentId = (String) parameters.get("attachmentId");
       final String strAction = (String) parameters.get("action");
+      final String strKeyId = (String) parameters.get("keyId");
       final Tab tab = OBDal.getInstance().get(Tab.class, strTabId);
       final Attachment attachment = OBDal.getInstance().get(Attachment.class, strAttachmentId);
       final AttachmentMethod attMethod = OBDal.getInstance().get(AttachmentMethod.class,
           strAttMethodID);
-
-      JSONObject context = new JSONObject();
-      if (parameters.get("context") != null) {
-        context = new JSONObject((String) parameters.get("context"));
-      }
-      final Map<String, String> fixedParameters = fixRequestMap(parameters, new JSONObject(content));
+      JSONObject context = new JSONObject(content);
+      final Map<String, String> fixedParameters = fixRequestMap(parameters, context);
 
       // The parameter list is sorted so the fixed parameters are evaluated before. This is needed
       // to be able to define parameters with default values based on the fixed parameters.
       for (Parameter param : AttachmentUtils.getMethodMetadataParameters(attMethod, tab)) {
         if (param.isFixed()) {
           if (param.getPropertyPath() != null) {
-            parameters.put(param.getDBColumnName(), "Property Path");
+            parameters.put(param.getDBColumnName(),
+                AttachmentUtils.getPropertyPathValue(param, strTabId, strKeyId));
           } else if (param.isEvaluateFixedValue()) {
             parameters.put(param.getDBColumnName(),
-                ParameterUtils.getParameterFixedValue(fixRequestMap(parameters, context), param));
+                ParameterUtils.getParameterFixedValue(fixedParameters, param));
           } else {
             parameters.put(param.getDBColumnName(), param.getFixedValue());
           }

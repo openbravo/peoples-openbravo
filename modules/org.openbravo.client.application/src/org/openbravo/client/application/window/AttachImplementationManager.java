@@ -57,7 +57,6 @@ import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.domain.List;
 import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.domain.Selector;
-import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.Attachment;
 import org.openbravo.model.ad.utility.AttachmentConfig;
@@ -347,23 +346,6 @@ public class AttachImplementationManager {
     }
   }
 
-  public AttachmentConfig getAttachmenConfig(Client client) {
-    OBCriteria<AttachmentConfig> obc = OBDal.getInstance().createCriteria(AttachmentConfig.class);
-    obc.add(Restrictions.eq(AttachmentConfig.PROPERTY_CLIENT, client));
-    obc.setMaxResults(1);
-    if (obc.uniqueResult() != null) {
-      return ((AttachmentConfig) obc.uniqueResult());
-    }
-    OBCriteria<AttachmentMethod> am = OBDal.getInstance().createCriteria(AttachmentMethod.class);
-    am.add(Restrictions.eq(AttachmentMethod.PROPERTY_VALUE, "Default"));
-    am.setMaxResults(1);
-    if (am.uniqueResult() != null) {
-      return (AttachmentConfig) am.uniqueResult();
-    } else {
-      throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoMethod"));
-    }
-  }
-
   /**
    * It gets the sequence number for the attachment
    * 
@@ -380,12 +362,11 @@ public class AttachImplementationManager {
     obc.addOrderBy(Attachment.PROPERTY_SEQUENCENUMBER, false);
     obc.setFilterOnReadableOrganization(false);
     obc.setMaxResults(1);
-    if (obc.uniqueResult() != null) {
-      Attachment attach = (Attachment) obc.uniqueResult();
-      return attach.getSequenceNumber() + 10L;
-    } else {
+    Attachment attach = (Attachment) obc.uniqueResult();
+    if (attach == null) {
       return 10L;
     }
+    return attach.getSequenceNumber() + 10L;
   }
 
   /**
@@ -495,7 +476,6 @@ public class AttachImplementationManager {
         // parameters.
         if (parameter.isFixed()) {
           if (parameter.getPropertyPath() != null) {
-            // not relevant value
             value = AttachmentUtils.getPropertyPathValue(parameter, tabId, strKey);
           } else if (parameter.isEvaluateFixedValue()) {
             value = ParameterUtils.getParameterFixedValue(requestParams, parameter);
@@ -520,12 +500,11 @@ public class AttachImplementationManager {
             strValue = (String) value;
             Reference reference = parameter.getReferenceSearchKey();
             for (List currentList : reference.getADListList()) {
-              // TODO: Check if the compare must be done against the search key
               if (currentList.getName().equals(strValue)) {
                 metadataStoredValue.setValueKey(currentList.getId());
                 metadataStoredValue.setValueString(currentList.getName());
                 JSONObject jsonValue = new JSONObject();
-                jsonValue.put("id", currentList.getId());
+                jsonValue.put("id", currentList.getSearchKey());
                 jsonValue.put("name", currentList.getName());
                 metadataValues.put(strMetadataId, jsonValue);
                 break;
@@ -566,6 +545,7 @@ public class AttachImplementationManager {
             attachmentText += delimiter;
           }
           Map<String, String> paramValues = new HashMap<String, String>();
+          // Get translated parameter name.
           paramValues.put("paramName", (String) parameter.get(Parameter.PROPERTY_NAME, OBContext
               .getOBContext().getLanguage()));
           paramValues.put("paramValue", strValue);

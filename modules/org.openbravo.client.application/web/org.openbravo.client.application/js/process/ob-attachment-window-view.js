@@ -143,6 +143,7 @@ isc.OBAttachmentWindowView.addProperties({
     this.baseParams.clientId = this.attachSection.docClient;
     this.baseParams.attachmentMethod = this.attachmentMethod;
     this.baseParams.attachmentId = this.attachmentId;
+    this.baseParams.keyId = this.attachSection.recordId;
     if (this.uploadMode) {
       this.baseParams.action = 'upload';
     } else {
