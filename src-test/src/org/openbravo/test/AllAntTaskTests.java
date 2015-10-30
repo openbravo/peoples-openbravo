@@ -57,6 +57,7 @@ import org.openbravo.test.dal.OBContextTest;
 import org.openbravo.test.dal.ReadByNameTest;
 import org.openbravo.test.dal.ValidationTest;
 import org.openbravo.test.dal.ViewTest;
+import org.openbravo.test.db.model.functions.SqlCallableStatement;
 import org.openbravo.test.expression.EvaluationTest;
 import org.openbravo.test.model.ClassLoaderTest;
 import org.openbravo.test.model.IndexesTest;
@@ -103,7 +104,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 
-    // dal
+// dal
     DalComplexQueryRequisitionTest.class, //
     DalComplexQueryTestOrderLine.class, //
     DalPerformanceInventoryLineTest.class, //
@@ -205,7 +206,10 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     ModuleScriptsVersions.class, //
 
     // role inheritance
-    RoleInheritanceTestSuite.class
+    RoleInheritanceTestSuite.class, //
+
+    // db
+    SqlCallableStatement.class
 
 })
 public class AllAntTaskTests {
