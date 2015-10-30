@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2014 Openbravo S.L.U.
+ * Copyright (C) 2001-2015 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -1481,7 +1481,7 @@ public class Sqlc extends DefaultHandler {
     } else {
       if (sql.sqlType.equals("statement"))
         out2.append("        connectionProvider.releaseTransactionalStatement(st);\n");
-      else if (sql.sqlType.equalsIgnoreCase("preparedstatement"))
+      else
         out2.append("        connectionProvider.releaseTransactionalPreparedStatement(st);\n");
     }
     out2.append("      } catch(Exception ignore){\n");
