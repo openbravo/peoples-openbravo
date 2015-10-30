@@ -838,6 +838,9 @@
         } else {
           OB.appCaption = inResponse.appCaption;
           me.setTerminalName(inResponse.terminalName);
+          if (me.get('logConfiguration') && me.get('logConfiguration').deviceIdentifier === null) {
+            me.get('logConfiguration').deviceIdentifier = inResponse.terminalName;
+          }
           window.localStorage.setItem('terminalName', inResponse.terminalName);
           window.localStorage.setItem('terminalKeyIdentifier', inResponse.terminalKeyIdentifier);
           callback();
