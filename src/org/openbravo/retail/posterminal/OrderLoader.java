@@ -1016,8 +1016,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     shipment.setDocumentNo(getDummyDocumentNo());
     addDocumentNoHandler(shipment, shpEntity, null, shipment.getDocumentType());
 
-    shipment.setAccountingDate(order.getOrderDate());
-    shipment.setMovementDate(order.getOrderDate());
     shipment.setPartnerAddress(OBDal.getInstance().get(Location.class,
         jsonorder.getJSONObject("bp").getString("locId")));
     shipment.setSalesTransaction(true);
@@ -1363,7 +1361,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         paymentSchedule = OBProvider.getInstance().get(FIN_PaymentSchedule.class);
       }
       int stdPrecision = order.getCurrency().getStandardPrecision().intValue();
-      if ((!newLayaway && (notpaidLayaway || creditpaidLayaway || fullypaidLayaway)) || partialpaidLayaway) {
+      if ((!newLayaway && (notpaidLayaway || creditpaidLayaway || fullypaidLayaway))
+          || partialpaidLayaway) {
         paymentSchedule = order.getFINPaymentScheduleList().get(0);
         stdPrecision = order.getCurrency().getStandardPrecision().intValue();
       } else {
