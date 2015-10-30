@@ -292,7 +292,7 @@ enyo.kind({
   tabPanel: 'catalog',
   i18nLabel: 'OBMOBC_LblBrowse',
   tap: function () {
-    OB.MobileApp.view.scanningFocus(false);
+    OB.MobileApp.view.scanningFocus(true);
     if (!this.disabled) {
       this.doTabChange({
         tabPanel: this.tabPanel,
@@ -387,7 +387,7 @@ enyo.kind({
     this.setDisabled(inEvent.status);
   },
   tap: function (options) {
-    OB.MobileApp.view.scanningFocus(true);
+    OB.MobileApp.view.scanningFocus(false);
     if (!options.isManual) {
       // The tap was not manual. So consider the last line added
       var lines = this.model.get('order').get('lines');
