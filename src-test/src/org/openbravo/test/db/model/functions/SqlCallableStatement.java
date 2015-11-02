@@ -26,11 +26,14 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeThat;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Properties;
 
 import org.junit.Test;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.DocumentNoData;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -58,7 +61,7 @@ public class SqlCallableStatement extends OBBaseTest {
           "23C59575B9CF467C9620760EB255B389", "Y");
     }
 
-    assertOpenCursors(cp);
+    assertOpenCursors();
   }
 
   /**
@@ -75,17 +78,24 @@ public class SqlCallableStatement extends OBBaseTest {
           "23C59575B9CF467C9620760EB255B389", "Y");
     }
 
-    assertOpenCursors(cp);
+    assertOpenCursors();
   }
 
-  private void assertOpenCursors(DalConnectionProvider cp) throws Exception, SQLException {
+  private void assertOpenCursors() throws Exception, SQLException {
+    // getting a direct jdbc connection to system DB user because DBA privileges are required to
+    // query open_cursor view
+    Properties props = OBPropertiesProvider.getInstance().getOpenbravoProperties();
+    Connection con = DriverManager.getConnection(props.getProperty("bbdd.url"),
+        props.getProperty("bbdd.systemUser"), props.getProperty("bbdd.systemPassword"));
+
     String query = "select count(*) from v$open_cursor where sql_text like 'CALL AD_Sequence_DocType%'";
-    PreparedStatement st = cp.getPreparedStatement(query);
+    PreparedStatement st = con.prepareStatement(query);
     ResultSet rs = st.executeQuery();
     rs.next();
     int openCursors = rs.getInt(1);
     rs.close();
-    cp.releasePreparedStatement(st);
+    st.close();
+    con.close();
 
     assertThat("# of open cursors for the statement", openCursors, is(lessThanOrEqualTo(1)));
   }
