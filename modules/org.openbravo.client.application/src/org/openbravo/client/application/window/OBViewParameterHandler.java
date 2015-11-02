@@ -67,7 +67,7 @@ public class OBViewParameterHandler {
     for (Parameter param : parameters) {
       if (param.isActive() && param.getDisplayLogic() != null && !param.getDisplayLogic().isEmpty()) {
         final DynamicExpressionParser parser = new DynamicExpressionParser(param.getDisplayLogic(),
-            param, true);
+            param, parameters, true);
         displayLogicMap.put(param, parser.getJSExpression());
         for (Parameter parameterExpression : parser.getParameters()) {
           if (!parametersInExpression.contains(parameterExpression)) {
@@ -83,7 +83,7 @@ public class OBViewParameterHandler {
       if (param.isActive() && !param.isFixed() && param.getReadOnlyLogic() != null
           && !param.getReadOnlyLogic().isEmpty()) {
         final DynamicExpressionParser parser = new DynamicExpressionParser(
-            param.getReadOnlyLogic(), param, true);
+            param.getReadOnlyLogic(), param, parameters, true);
         readOnlyLogicMap.put(param, parser.getJSExpression());
         for (Parameter parameterExpression : parser.getParameters()) {
           if (!parametersInExpression.contains(parameterExpression)) {
