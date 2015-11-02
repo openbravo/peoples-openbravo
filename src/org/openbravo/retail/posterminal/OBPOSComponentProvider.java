@@ -260,7 +260,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "model/discounts",
 
         // Hook
-        "components/menuhook" };
+        "components/menuhook", "components/hookPreDeleteLine" };
 
     // Unlink onLoad in the ERP
     globalResources.add(createComponentResource(ComponentResourceType.Static, prefix

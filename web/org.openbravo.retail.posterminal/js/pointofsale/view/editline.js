@@ -182,26 +182,45 @@ enyo.kind({
     i18nContent: 'OBPOS_ButtonDelete',
     classes: 'btnlink-orange',
     tap: function () {
-      var me = this;
-      if (me.owner.owner && me.owner.ownerreceipt && me.owner.owner.receipt.get('isQuotation') && me.owner.owner.receipt.get('hasbeenpaid') === 'Y') {
-        me.owner.owner.doShowPopup({
-          popup: 'modalNotEditableOrder'
+      var me = this,
+          order = this.model.get('order');
+
+      function callback() {
+        OB.UTIL.HookManager.executeHooks('OBPOS_PostDeleteLine', {
+          order: order,
+          selectedLines: me.owner.owner.selectedModels
+        }, function () {
+          order.unset('preventServicesUpdate');
+          order.get('lines').trigger('updateRelations');
+          enyo.$.scrim.hide();
         });
-        return;
       }
-      OB.UTIL.Approval.requestApproval(
-      me.model, 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
-        if (approved) {
-          if (me.owner.owner.selectedModels && me.owner.owner.selectedModels.length > 1) {
-            var order = me.model.get('order');
-            order.deleteLines(me.owner.owner.selectedModels);
-            order.trigger('scan');
-          } else {
-            me.owner.owner.doDeleteLine({
-              line: me.owner.owner.line
-            });
-          }
+      OB.UTIL.HookManager.executeHooks('OBPOS_PreDeleteLine', {
+        order: me.owner.owner.receipt,
+        selectedLines: me.owner.owner.selectedModels
+      }, function () {
+        me.owner.owner.receipt.set('undo', null);
+        if (order && order.get('isQuotation') && order.get('hasbeenpaid') === 'Y') {
+          me.owner.owner.doShowPopup({
+            popup: 'modalNotEditableOrder'
+          });
+          return;
         }
+        OB.UTIL.Approval.requestApproval(
+        me.model, 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
+          if (approved) {
+            order.set('preventServicesUpdate', true);
+            if (me.owner.owner.selectedModels && me.owner.owner.selectedModels.length > 1) {
+              order.deleteLines(me.owner.owner.selectedModels, 0, me.owner.owner.selectedModels.length, callback);
+              order.trigger('scan');
+            } else {
+              me.owner.owner.doDeleteLine({
+                line: me.owner.owner.line,
+                callback: callback
+              });
+            }
+          }
+        });
       });
     },
     init: function (model) {

@@ -954,7 +954,7 @@ enyo.kind({
           me.order.get('lines').remove(l);
           OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_DeletedService', [l.get('product').get('_identifier')]));
         });
-        me.order.set('undo', oldUndo);
+        me.order.setUndo('FixOrderLines', oldUndo);
         me.updating = false;
         me.order.get('lines').trigger('updateServicePrices');
       }
@@ -1199,29 +1199,42 @@ enyo.kind({
       });
     }, this);
     this.order.get('lines').on('remove', function (model, list, index) {
-      var removedId = model.get('id'),
-          me = this,
-          removedIndex = index.index,
+      var lineToDelete = model,
+          removedId = model.get('id'),
           serviceLinesToCheck = [],
-          deletedServices = [],
-          changedServices = [];
+          text, linesToDelete, relations;
 
-      this.order.unset('changedServices');
-      this.order.unset('deletedServices');
-
-      function getSiblingServicesLines(productId, orderlineId) {
-        _.forEach(me.order.get('lines').models, function (l) {
-          if (l.has('relatedLines') && l.get('relatedLines').length > 0 && !l.get('originalOrderLineId') //
-          && l.get('product').id === productId && l.get('relatedLines')[0].orderlineId === orderlineId) {
-            serviceLinesToCheck.push([l, 0]);
-          }
+      if (!me.order.get('undo')) {
+        text = OB.I18N.getLabel('OBRECP_UndoComplementary') + ': ' + model.get('qty') + ' x ' + model.get('product').get('_identifier');
+        linesToDelete = [model];
+        relations = [];
+        me.order.setUndo('DeleteLine', {
+          text: text,
+          lines: linesToDelete,
+          relations: relations
         });
+      } else {
+        linesToDelete = me.order.get('undo').lines;
+        if (!linesToDelete) {
+          linesToDelete = [];
+        }
+        linesToDelete.push(model);
+        text = me.order.get('undo').text;
+        if (text) {
+          text += ', ' + model.get('qty') + ' x ' + model.get('product').get('_identifier');
+        } else {
+          text = OB.I18N.getLabel('OBRECP_UndoComplementary') + ': ' + model.get('qty') + ' x ' + model.get('product').get('_identifier');
+        }
+        relations = me.order.get('undo').relations;
+        if (!relations) {
+          relations = [];
+        }
+        me.order.get('undo').text = text;
+        me.order.get('undo').lines = linesToDelete;
+        me.order.get('undo').relations = relations;
+      }
 
-      }
-      if (model.get('product').get('quantityRule') === 'PP' && !model.get('groupService')) {
-        getSiblingServicesLines(model.get('product').id, model.get('relatedLines')[0].orderlineId);
-      }
-      this.order.get('lines').forEach(function (line, idx) {
+      me.order.get('lines').forEach(function (line, idx) {
         var prod = line.get('product');
         if (line.has('relatedLines') && line.get('relatedLines').length > 0) {
           var i, l = 0,
@@ -1233,15 +1246,25 @@ enyo.kind({
       });
       if (serviceLinesToCheck.length > 0) {
         serviceLinesToCheck.forEach(function (lineToCheck) {
+          var rl, rls;
           if (lineToCheck[0].get('relatedLines').length > 1) {
-            changedServices.push(lineToCheck[0]);
+            rl = _.filter(lineToCheck[0].get('relatedLines'), function (rl) {
+              return rl.orderlineId === lineToDelete.get('id');
+            });
+            relations.push([lineToCheck[0], rl[0]]);
+            //Effectively remove the relation from the service line
+            rls = lineToCheck[0].get('relatedLines').slice();
+            rls.splice(lineToCheck[0].get('relatedLines').indexOf(rl[0]), 1);
+            lineToCheck[0].set('relatedLines', rls);
+            if (lineToCheck[0].get('product').get('quantityRule') === 'PP') {
+              text += ', ' + model.get('qty') + ' x ' + lineToCheck[0].get('product').get('_identifier');
+              me.order.get('undo').text = text;
+            }
           } else {
-            deletedServices.push(lineToCheck[0]);
+            me.order.deleteLine(lineToCheck[0], true, null, {
+              makeUndo: false
+            });
           }
-        });
-        this.order.set({
-          changedServices: changedServices,
-          deletedServices: deletedServices
         });
       }
     }, this);

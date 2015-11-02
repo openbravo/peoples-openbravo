@@ -456,7 +456,10 @@
       })['catch'](function (reason) {
         var title = OB.I18N.getLabel('OBPOS_TaxNotFound_Header');
         OB.error(title + ":" + reason);
+        receipt.set('preventServicesUpdate', true);
         receipt.deleteLine(line);
+        receipt.unset('preventServicesUpdate');
+        receipt.get('lines').trigger('updateRelations');
         OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
           popup: 'OB_UI_MessageDialog',
           args: {
@@ -720,7 +723,10 @@
       })['catch'](function (reason) {
         var title = OB.I18N.getLabel('OBPOS_TaxNotFound_Header');
         OB.error(title + ":" + reason);
+        receipt.set('preventServicesUpdate', true);
         receipt.deleteLine(line);
+        receipt.unset('preventServicesUpdate');
+        receipt.get('lines').trigger('updateRelations');
         OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
           popup: 'OB_UI_MessageDialog',
           args: {

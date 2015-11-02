@@ -362,7 +362,7 @@
         this.set('documentnoSuffix', attributes.documentnoSuffix);
         this.set('quotationnoSuffix', attributes.quotationnoSuffix);
         this.set('documentNo', attributes.documentNo);
-        this.set('undo', attributes.undo);
+        this.setUndo('InitializeAttr', attributes.undo);
         bpModel = new Backbone.Model(attributes.bp);
         bpModel.set('locationModel', new OB.Model.BPLocation(attributes.bp.locationModel));
         this.set('bp', bpModel);
@@ -414,7 +414,7 @@
           callback();
         }
       }
-      this.set('undo', undoCopy);
+      this.setUndo('SaveOrder', undoCopy);
     },
 
     calculateTaxes: function (callback) {
@@ -861,7 +861,7 @@
             undoText += text || OB.I18N.getLabel('OBPOS_SetUnits', [line.get('qty'), line.get('product').get('_identifier')]);
             oldqtys.push(oldqty);
             lines.push(line);
-            this.set('undo', {
+            this.setUndo('EditLine', {
               text: undoText,
               oldqtys: oldqtys,
               lines: lines,
@@ -876,7 +876,7 @@
               }
             });
           } else {
-            this.set('undo', {
+            this.setUndo('EditLine', {
               text: text || OB.I18N.getLabel('OBPOS_SetUnits', [line.get('qty'), line.get('product').get('_identifier')]),
               oldqty: oldqty,
               line: line,
@@ -896,12 +896,22 @@
         if (line.get('deleteApproved')) {
           // The approval to delete the line has already been granted
           line.unset('deleteApproved');
+          this.set('preventServicesUpdate', true);
+          this.set('deleting', true);
           this.deleteLine(line);
+          this.unset('preventServicesUpdate');
+          this.unset('deleting');
+          this.get('lines').trigger('updateRelations');
         } else {
           // We don't have the approval to delete the line yet; request it
           OB.UTIL.Approval.requestApproval(OB.MobileApp.view.$.containerWindow.$.pointOfSale.model, 'OBPOS_approval.deleteLine', function (approved) {
             if (approved) {
+              me.set('preventServicesUpdate', true);
+              me.set('deleting', true);
               me.deleteLine(line);
+              me.unset('preventServicesUpdate');
+              me.unset('deleting');
+              me.get('lines').trigger('updateRelations');
             }
           });
         }
@@ -939,7 +949,7 @@
               text += OB.I18N.getLabel('OBPOS_SetPrice', [line.printPrice(), line.get('product').get('_identifier')]);
               oldprices.push(oldprice);
               lines.push(line);
-              this.set('undo', {
+              this.setUndo('EditLine', {
                 text: text,
                 oldprices: oldprices,
                 lines: lines,
@@ -953,7 +963,7 @@
                 }
               });
             } else {
-              this.set('undo', {
+              this.setUndo('EditLine', {
                 text: OB.I18N.getLabel('OBPOS_SetPrice', [line.printPrice(), line.get('product').get('_identifier')]),
                 oldprice: oldprice,
                 line: line,
@@ -976,32 +986,47 @@
       this.get('lines').at(index).set(property, value);
     },
 
-    deleteLines: function (lines, doNotSave) {
-      var me = this,
-          lineDeleted = 0;
-      me.set('undo', null);
-      me.set('multipleUndo', true);
-      me.set('lineIndexes', {});
-      me.get('lines').forEach(function (line, idx) {
-        me.get('lineIndexes')[line.get('id')] = idx;
+    setUndo: function (action, data) {
+      var me = this;
+      if (data) {
+        data.action = action;
+      }
+      OB.UTIL.HookManager.executeHooks('OBPOS_PreSetUndo_' + action, {
+        data: data
+      }, function (args) {
+        me.set('undo', args.data);
       });
-      _.each(lines, function (line) {
-        if (me.get('lines').get(line)) {
-          me.deleteLine(line, false, function () {
-            lineDeleted++;
-            if (lineDeleted === lines.length) {
-              me.set('multipleUndo', null);
-              me.unset('lineIndexes');
-            }
-          });
-        } else {
-          lineDeleted++;
-          if (lineDeleted === lines.length) {
-            me.set('multipleUndo', null);
-            me.unset('lineIndexes');
+    },
+
+    deleteLines: function (lines, idx, length, callback) {
+      var me = this,
+          line = lines[idx],
+          i, cancelReplaceLine = false;
+      if (idx === 0) {
+        for (i = 0; i < lines.length; i++) {
+          if (me.get('replacedorder') && lines[i].get('remainingQuantity')) {
+            cancelReplaceLine = true;
+            break;
           }
         }
-      });
+
+        if (cancelReplaceLine) {
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceDeleteLine'));
+          if (callback) {
+            callback();
+          }
+          return;
+        }
+        this.set('undo', null);
+      }
+      if (this.get('lines').get(line)) {
+        if (idx < length) {
+          this.deleteLine(line, true);
+          this.deleteLines(lines, idx, length, callback);
+        } else {
+          this.deleteLine(line, false, callback);
+        }
+      }
     },
 
     removeDeleteLine: function (line) {
@@ -1041,149 +1066,73 @@
         }, this);
       }
 
-      me.set('currentLineIndexes', {});
-      me.get('lines').forEach(function (line, idx) {
-        me.get('currentLineIndexes')[line.get('id')] = idx;
-      });
-
       // trigger
       line.trigger('removed', line);
 
       function finishDelete() {
         var text, lines, indexes, relations, rl, rls, i;
 
-        me.set('preventServicesUpdate', true);
-        me.set('deleting', true);
         me.get('lines').remove(line);
-        if (me.get('multipleUndo')) {
-          var undo = me.get('undo');
+        text = me.get('undo').text;
+        lines = me.get('undo').lines;
+        relations = me.get('undo').relations;
 
-          if (undo && undo.lines) {
-            text = undo.text + ', ';
-            lines = undo.lines;
-            indexes = undo.indexes || indexes;
-            relations = undo.relations || relations;
-          } else {
-            text = '';
-            lines = [];
-            indexes = [];
-            relations = [];
-          }
-          text += OB.I18N.getLabel('OBPOS_DeleteLine', [line.get('qty'), line.get('product').get('_identifier')]);
-          lines.push(line);
-          if (me.get('lineIndexes')) {
-            indexes.push(me.get('lineIndexes')[line.get('id')]);
-          } else {
-            indexes.push(me.get('currentLineIndexes')[line.get('id')]);
-          }
-        } else {
-          text = OB.I18N.getLabel('OBPOS_DeleteLine', [line.get('qty'), line.get('product').get('_identifier')]);
-          lines = [line];
-          indexes = [index];
-          relations = [];
-        }
-        if (me.get('multipleUndo') || me.get('changedServices')) {
-          if (me.get('changedServices')) {
-            me.get('changedServices').forEach(function (changedService) {
-
-              //Mark the service line relation to be restored on Undo	
-              rl = _.filter(changedService.get('relatedLines'), function (rl) {
-                return rl.orderlineId === line.get('id');
-              });
-              relations.push([changedService, rl[0]]);
-
-              //Effectively remove the relation from the service line
-              rls = changedService.get('relatedLines').slice();
-              rls.splice(changedService.get('relatedLines').indexOf(rl[0]), 1);
-              changedService.set('relatedLines', rls);
-            });
-            me.get('deletedServices').forEach(function (deletedService, idx) {
-              text += ', ' + OB.I18N.getLabel('OBPOS_DeleteLine', [deletedService.get('qty'), deletedService.get('product').get('_identifier')]);
-              lines.push(deletedService);
-              if (me.get('multipleUndo') && me.get('lineIndexes')) {
-                indexes.push(me.get('lineIndexes')[deletedService.get('id')]);
-              } else {
-                indexes.push(me.get('currentLineIndexes')[deletedService.get('id')]);
-              }
-              me.get('lines').remove(deletedService);
-              if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
-                deletedService.set('obposIsDeleted', true);
-                me.get('deletedLines').push(new OrderLine(deletedService.attributes));
-              }
-            });
-          }
-          me.set('undo', {
-            text: text,
-            lines: lines,
-            indexes: indexes,
-            relations: relations,
-            undo: function () {
-              if (OB.MobileApp.model.get('terminal').businessPartner === me.get('bp').get('id')) {
-                for (i = 0; i < me.get('undo').lines.length; i++) {
-                  if (!me.get('undo').lines[i].get('product').get('oBPOSAllowAnonymousSale')) {
-                    OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_AnonymousSaleForProductNotAllowed', [me.get('undo').lines[i].get('product').get('_identifier')]));
-                    return;
-                  }
+        me.setUndo('DeleteLine', {
+          text: text,
+          lines: lines,
+          relations: relations,
+          undo: function () {
+            enyo.$.scrim.show();
+            me.set('preventServicesUpdate', true);
+            me.set('deleting', true);
+            if (OB.MobileApp.model.get('terminal').businessPartner === me.get('bp').get('id')) {
+              for (i = 0; i < me.get('undo').lines.length; i++) {
+                if (!me.get('undo').lines[i].get('product').get('oBPOSAllowAnonymousSale')) {
+                  OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_AnonymousSaleForProductNotAllowed', [me.get('undo').lines[i].get('product').get('_identifier')]));
+                  return;
                 }
               }
-              var sortedLines;
-              me.set('preventServicesUpdate', true);
-
-              sortedLines = _.sortBy(me.get('undo').lines, function (line, i) {
-                return me.get('undo').indexes[i];
-              });
-              me.get('undo').indexes.sort(function (a, b) {
-                return a - b;
-              });
-
-              sortedLines.forEach(function (line, idx) {
-                me.removeDeleteLine(line);
-                me.get('lines').add(line, {
-                  at: me.get('undo').indexes[idx]
-                });
-              });
-              me.get('undo').relations.forEach(function (rel, idx) {
-                var rls = rel[0].get('relatedLines').slice();
-                rls.push(rel[1]);
-                rel[0].set('relatedLines', rls);
-              });
-              me.set('undo', null);
-              me.unset('preventServicesUpdate');
-              me.unset('deleting');
-              me.get('lines').trigger('updateRelations');
-              me.calculateGross();
             }
-          });
-        } else {
-          me.set('undo', {
-            text: text,
-            line: line,
-            undo: function () {
-              if (!line.get('product').get('oBPOSAllowAnonymousSale') && OB.MobileApp.model.get('terminal').businessPartner === me.get('bp').get('id')) {
-                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_AnonymousSaleNotAllowed'));
-                return;
+            me.get('undo').lines.sort(function (a, b) {
+              if (a.get('undoPosition') > b.get('undoPosition')) {
+                return 1;
               }
+              if (a.get('undoPosition') < b.get('undoPosition')) {
+                return -1;
+              }
+              // a must be equal to b
+              return 0;
+            });
+
+            lines.forEach(function (line) {
               me.removeDeleteLine(line);
               me.get('lines').add(line, {
-                at: index
+                at: line.get('undoPosition')
               });
-              me.calculateGross();
-              me.set('undo', null);
-            }
-          });
-        }
-        me.unset('preventServicesUpdate');
-        me.unset('deleting');
-        me.unset('currentLineIndexes');
-        me.get('lines').trigger('updateRelations');
+            });
+            relations.forEach(function (rel) {
+              var rls = rel[0].get('relatedLines').slice(),
+                  lineToAddRelated = _.filter(me.get('lines').models, function (line) {
+                  return line.id === rel[0].id;
+                });
+              rls.push(rel[1]);
+              lineToAddRelated[0].set('relatedLines', rls);
+            });
+            me.set('undo', null);
+            me.unset('preventServicesUpdate');
+            me.unset('deleting');
+            me.get('lines').trigger('updateRelations');
+            enyo.$.scrim.hide();
+            me.calculateGross();
+            enyo.$.scrim.hide();
+          }
+        });
+
         me.adjustPayment();
         if (!doNotSave) {
           me.save(callback);
-          me.calculateGross();
-        } else {
-          if (callback) {
-            callback();
-          }
+        } else if (callback) {
+          callback();
         }
       }
 
@@ -1194,11 +1143,9 @@
         }
         line.set('obposIsDeleted', true);
         this.get('deletedLines').push(new OrderLine(line.attributes));
-        this.save(finishDelete);
-      } else {
-        // remove the line
-        finishDelete();
       }
+      // remove the line
+      finishDelete();
     },
 
     //Attrs is an object of attributes that will be set in order
@@ -1451,7 +1398,12 @@
       if (data && data.linesToRemove && data.linesToRemove.length > 0) {
         _.each(data.linesToRemove, function (lineCidToRemove) {
           var line = this.get('lines').getByCid(lineCidToRemove);
+          this.set('preventServicesUpdate', true);
+          this.set('deleting', true);
           this.deleteLine(line);
+          this.unset('preventServicesUpdate');
+          this.unset('deleting');
+          this.get('lines').trigger('updateRelations');
         }, this);
       }
       if (data && data.linesToAdd && data.linesToAdd.length > 0) {
@@ -1849,7 +1801,7 @@
       this.get('lines').add(newline, options);
       newline.trigger('created', newline);
       // set the undo action
-      this.set('undo', {
+      this.setUndo('CreateLine', {
         text: OB.I18N.getLabel('OBPOS_AddLine', [newline.get('qty'), newline.get('product').get('_identifier')]),
         line: newline,
         undo: function (modelObj) {
@@ -1916,7 +1868,7 @@
         }
         text += OB.I18N.getLabel('OBPOS_ReturnLine', [line.get('qty'), line.get('product').get('_identifier')]);
         lines.push(line);
-        me.set('undo', {
+        me.setUndo('ReturnLine', {
           text: text,
           lines: lines,
           undo: function () {
@@ -1928,7 +1880,7 @@
           }
         });
       } else {
-        this.set('undo', {
+        this.setUndo('ReturnLine', {
           text: OB.I18N.getLabel('OBPOS_ReturnLine', [line.get('product').get('_identifier')]),
           line: line,
           undo: function () {
@@ -2039,7 +1991,7 @@
       }
       // set the undo action
       if (showNotif === undef || showNotif === true) {
-        this.set('undo', {
+        this.setUndo('SetBPartner', {
           text: businessPartner ? OB.I18N.getLabel('OBPOS_SetBP', [businessPartner.get('_identifier')]) : OB.I18N.getLabel('OBPOS_ResetBP'),
           bp: businessPartner,
           undo: function () {
@@ -2080,9 +2032,14 @@
       _.each(me.get('lines').models, function (line) {
         orderlines.push(line);
       });
+      this.set('preventServicesUpdate', true);
+      this.set('deleting', true);
       _.each(orderlines, function (line) {
         me.deleteLine(line, true);
       });
+      this.unset('preventServicesUpdate');
+      this.unset('deleting');
+      this.get('lines').trigger('updateRelations');
       var productAdded = 0;
       _.each(orderlines, function (line) {
         // TODO: Lost options and attributes, maybe has problems with other modules (like Complementary Products)
@@ -2507,7 +2464,8 @@
     },
 
     removePayment: function (payment) {
-      var payments = this.get('payments');
+      var payments = this.get('payments'),
+          i, max, p;
       OB.UTIL.HookManager.executeHooks('OBPOS_preRemovePayment', {
         paymentToRem: payment,
         payments: payments,

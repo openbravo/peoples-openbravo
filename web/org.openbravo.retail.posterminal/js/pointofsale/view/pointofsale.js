@@ -895,7 +895,7 @@ enyo.kind({
     var line = inEvent.line,
         receipt = this.model.get('order');
     if (line && receipt) {
-      receipt.deleteLine(line);
+      receipt.deleteLine(line, false, inEvent.callback);
       receipt.trigger('scan');
     }
   },

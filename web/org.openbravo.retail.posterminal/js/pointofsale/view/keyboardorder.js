@@ -183,6 +183,16 @@ enyo.kind({
 
     // action bindable to a command that completely deletes a product from the order list
     var actionDeleteLine = function (keyboard) {
+        function callback() {
+          OB.UTIL.HookManager.executeHooks('OBPOS_PostDeleteLine', {
+            order: me.receipt,
+            selectedLines: me.selectedModels
+          }, function () {
+            keyboard.receipt.unset('preventServicesUpdate');
+            keyboard.receipt.get('lines').trigger('updateRelations');
+            enyo.$.scrim.hide();
+          });
+        }
         if (keyboard.receipt.get('isEditable') === false) {
           me.doShowPopup({
             popup: 'modalNotEditableOrder'
@@ -196,12 +206,18 @@ enyo.kind({
           return true;
         }
         if (keyboard.line) {
-          if (me.selectedModels.length > 1) {
-            keyboard.receipt.deleteLines(me.selectedModels);
-          } else {
-            keyboard.receipt.deleteLine(keyboard.line);
-          }
-          keyboard.receipt.trigger('scan');
+          OB.UTIL.HookManager.executeHooks('OBPOS_PreDeleteLine', {
+            order: me.receipt,
+            selectedLines: me.selectedModels
+          }, function () {
+            keyboard.receipt.set('preventServicesUpdate', true);
+            if (me.selectedModels.length > 1) {
+              keyboard.receipt.deleteLines(me.selectedModels, 0, me.selectedModels.length, callback);
+            } else {
+              keyboard.receipt.deleteLine(keyboard.line, false, callback);
+            }
+            keyboard.receipt.trigger('scan');
+          });
         }
         };
 
@@ -209,12 +225,24 @@ enyo.kind({
       action: function (keyboard, txt) {
         var value = OB.I18N.parseNumber(txt),
             toadd;
+
+        function callback() {
+          OB.UTIL.HookManager.executeHooks('OBPOS_PostDeleteLine', {
+            order: me.receipt,
+            selectedLines: me.selectedModels
+          }, function () {
+            keyboard.receipt.unset('preventServicesUpdate');
+            keyboard.receipt.unset('deleting');
+            keyboard.receipt.get('lines').trigger('updateRelations');
+            enyo.$.scrim.hide();
+          });
+        }
+
         if (!keyboard.line) {
           return true;
         }
         if (value || value === 0) {
           keyboard.receipt.set('undo', null);
-          keyboard.receipt.set('multipleUndo', true);
           var selection = [];
           _.each(me.selectedModels, function (model) {
             selection.push(model);
@@ -224,8 +252,19 @@ enyo.kind({
               if (value === 0) { // If final quantity will be 0 then request approval
                 OB.UTIL.Approval.requestApproval(me.model, 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
                   if (approved) {
-                    keyboard.line.set('deleteApproved', true);
-                    actionAddProduct(keyboard, toadd);
+                    OB.UTIL.HookManager.executeHooks('OBPOS_PreDeleteLine', {
+                      order: me.receipt,
+                      selectedLines: me.selectedModels
+                    }, function () {
+                      keyboard.receipt.set('preventServicesUpdate', true);
+                      keyboard.receipt.set('deleting', true);
+                      if (me.selectedModels.length > 1) {
+                        keyboard.receipt.deleteLines(me.selectedModels, 0, me.selectedModels.length, callback);
+                      } else {
+                        keyboard.receipt.deleteLine(me.line, false, callback);
+                      }
+                      keyboard.receipt.trigger('scan');
+                    });
                   }
                 });
               } else {
@@ -345,6 +384,19 @@ enyo.kind({
       stateless: true,
       action: function (keyboard, txt) {
         var qty = 1;
+
+        function callback() {
+          OB.UTIL.HookManager.executeHooks('OBPOS_PostDeleteLine', {
+            order: me.receipt,
+            selectedLines: me.selectedModels
+          }, function () {
+            keyboard.receipt.unset('preventServicesUpdate');
+            keyboard.receipt.unset('deleting');
+            keyboard.receipt.get('lines').trigger('updateRelations');
+            enyo.$.scrim.hide();
+          });
+        }
+
         if ((!_.isNull(txt) || !_.isUndefined(txt)) && !_.isNaN(OB.I18N.parseNumber(txt))) {
           qty = OB.I18N.parseNumber(txt);
         }
@@ -362,6 +414,18 @@ enyo.kind({
       action: function (keyboard, txt) {
         var qty = 1,
             value, i, j, k, h, line, relatedLine, lineFromSelected;
+
+        function callback() {
+          OB.UTIL.HookManager.executeHooks('OBPOS_PostDeleteLine', {
+            order: me.receipt,
+            selectedLines: me.selectedModels
+          }, function () {
+            keyboard.receipt.unset('preventServicesUpdate');
+            keyboard.receipt.unset('deleting');
+            keyboard.receipt.get('lines').trigger('updateRelations');
+            enyo.$.scrim.hide();
+          });
+        }
 
         function actionAddProducts() {
           if (me.selectedModels.length > 1) {
@@ -383,14 +447,20 @@ enyo.kind({
         if (value === 0) { // If final quantity will be 0 then request approval
           OB.UTIL.Approval.requestApproval(me.model, 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
             if (approved) {
-              keyboard.line.set('deleteApproved', true);
-              if (me.selectedModels.length > 1) {
-                keyboard.receipt.deleteLines(me.selectedModels);
+              OB.UTIL.HookManager.executeHooks('OBPOS_PreDeleteLine', {
+                order: me.receipt,
+                selectedLines: me.selectedModels
+              }, function () {
+                keyboard.line.set('deleteApproved', true);
+                keyboard.receipt.set('preventServicesUpdate', true);
+                keyboard.receipt.set('deleting', true);
+                if (me.selectedModels.length > 1) {
+                  keyboard.receipt.deleteLines(me.selectedModels, 0, me.selectedModels.length, callback);
+                } else {
+                  keyboard.receipt.deleteLine(me.line, false, callback);
+                }
                 keyboard.receipt.trigger('scan');
-              } else {
-                keyboard.receipt.set('multipleUndo', null);
-                actionAddProduct(keyboard, -qty);
-              }
+              });
             }
           });
         } else {
