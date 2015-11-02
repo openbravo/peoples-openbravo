@@ -3163,7 +3163,7 @@
       this.addPayment(new OB.Model.PaymentLine({
         'kind': payment.get('kind'),
         'amount': OB.DEC.sub(0, payment.get('amount')),
-        'name': payment.get('kind'),
+        'name': payment.get('name'),
         'rate': payment.get('rate'),
         'mulrate': payment.get('mulrate'),
         'isocode': payment.get('isocode'),
