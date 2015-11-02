@@ -4115,6 +4115,7 @@
       order.set('orderDate', OB.I18N.normalizeDate(model.orderDate));
       order.set('creationDate', OB.I18N.normalizeDate(model.creationDate));
       order.set('paidOnCredit', false);
+      order.set('session', OB.MobileApp.model.get('session'));
       order.set('skipApplyPromotions', true);
       if (model.isQuotation) {
         order.set('isQuotation', true);
@@ -4131,7 +4132,6 @@
         order.set('id', model.orderid);
         order.set('createdBy', OB.MobileApp.model.usermodel.id);
         order.set('hasbeenpaid', 'N');
-        order.set('session', OB.MobileApp.model.get('session'));
       } else {
         order.set('isPaid', true);
         if (model.receiptPayments.length === 0 && model.totalamount > 0 && !model.isQuotation) {
