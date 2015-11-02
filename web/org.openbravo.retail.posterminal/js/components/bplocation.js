@@ -211,6 +211,7 @@ enyo.kind({
           kind: 'OB.UI.SmallButton',
           classes: 'btnlink-yellow btn-icon-small btn-icon-search',
           style: 'width: 100px; margin: 0px 0px 8px 5px;',
+          name: 'bpsLocationSearchButton',
           ontap: 'searchAction'
         }]
       }]
@@ -389,7 +390,7 @@ enyo.kind({
     return true;
   },
   executeOnHide: function () {
-    this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.$.filterText.setValue('');
+    this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.$.bpsLocationSearchfilterText.setValue('');
   },
   i18nHeader: 'OBPOS_LblAssignCustomerAddress',
   body: {
