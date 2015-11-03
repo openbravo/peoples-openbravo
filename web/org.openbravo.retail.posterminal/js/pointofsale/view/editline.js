@@ -191,6 +191,7 @@ enyo.kind({
           selectedLines: me.owner.owner.selectedModels
         }, function () {
           order.unset('preventServicesUpdate');
+          order.unset('deleting');
           order.get('lines').trigger('updateRelations');
           enyo.$.scrim.hide();
         });
@@ -210,6 +211,7 @@ enyo.kind({
         me.model, 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
           if (approved) {
             order.set('preventServicesUpdate', true);
+            order.set('deleting', true);
             if (me.owner.owner.selectedModels && me.owner.owner.selectedModels.length > 1) {
               order.deleteLines(me.owner.owner.selectedModels, 0, me.owner.owner.selectedModels.length, callback);
               order.trigger('scan');
