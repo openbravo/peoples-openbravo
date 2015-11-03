@@ -463,7 +463,7 @@ enyo.kind({
         criteria.proposalType = 'FMA';
       }
       OB.Dal.find(OB.Model.Product, criteria, function (data) {
-        if (data && data.length > 0) {
+        if (data && data.length > 0 && !me.model.get('order').get('isPaid') && !me.model.get('order').get('isLayaway')) {
           me.model.get('order').trigger('showProductList', null, 'final', function () {
             me.model.completePayment();
             me.doClearUserInput();

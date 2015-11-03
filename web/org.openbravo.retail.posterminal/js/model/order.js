@@ -4127,6 +4127,7 @@
         order.set('oldId', model.orderid);
         order.set('id', null);
         order.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentTypeForQuotations);
+        order.set('hasbeenpaid', 'Y');
         // TODO: this commented lines are kept just in case this issue happens again
         // Set creationDate milliseconds to 0, if the date is with milisecond, the date with miliseconds is rounded to seconds:
         // so, the second can change, and the creationDate in quotation should not be changed when quotation is reactivated
