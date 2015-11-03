@@ -57,13 +57,16 @@ public class CoreAttachImplementation extends AttachImplementation {
 
     String attachmentFolder = OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .getProperty("attach.path");
-    File uploadedFile = null;
-    uploadedFile = new File(attachmentFolder + File.separator + strFileDir);
-    log.debug("Destination file before renaming: {}", uploadedFile);
+    File uploadDir = null;
+    uploadDir = new File(attachmentFolder + File.separator + strFileDir);
+    log.debug("Destination file before renaming: {}", uploadDir);
     try {
-      FileUtils.moveFileToDirectory(file, uploadedFile, true);
+      // moveFileToDirectory not used as it does not allow to overwrite the destination file if it
+      // exists.
+      FileUtils.copyFileToDirectory(file, uploadDir, true);
+      FileUtils.deleteQuietly(file);
     } catch (IOException e) {
-      log.error("Error moving the file to: " + uploadedFile, e);
+      log.error("Error moving the file to: " + uploadDir, e);
       throw new OBException(OBMessageUtils.messageBD("UnreachableDestination") + " "
           + e.getMessage(), e);
     }
