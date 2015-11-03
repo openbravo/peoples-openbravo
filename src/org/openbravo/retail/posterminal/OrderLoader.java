@@ -24,6 +24,7 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
@@ -1176,6 +1177,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
   protected void createOrder(Order order, JSONObject jsonorder) throws JSONException {
     Entity orderEntity = ModelProvider.getInstance().getEntity(Order.class);
+    if (jsonorder.has("description") && StringUtils.length(jsonorder.getString("description")) > 255) {
+      jsonorder.put("description", StringUtils.substring(jsonorder.getString("description"), 0, 255));
+    }
     JSONPropertyToEntity.fillBobFromJSON(orderEntity, order, jsonorder,
         jsonorder.getLong("timezoneOffset"));
     order.setNewOBObject(true);
