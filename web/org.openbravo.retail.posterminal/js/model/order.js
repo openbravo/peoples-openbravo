@@ -2271,7 +2271,8 @@
     },
 
     reactivateQuotation: function () {
-      var nextQuotationno;
+      var nextQuotationno, idMap = {},
+          me = this;
       this.get('lines').each(function (line) {
         if (!this.get('priceIncludesTax')) {
           line.set('net', line.get('nondiscountednet'));
@@ -2282,6 +2283,8 @@
         line.unset('grossListPrice');
         line.unset('grossUnitPrice');
         line.unset('lineGrossAmount');
+        idMap[line.get('id')] = OB.Dal.get_uuid();
+        line.set('id', idMap[line.get('id')]);
       }, this);
       this.set('hasbeenpaid', 'N');
       this.set('isEditable', true);
@@ -2299,6 +2302,16 @@
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_QuotationCannotBeReactivated_title'), OB.I18N.getLabel('OBPOS_QuotationCannotBeReactivated_body'));
         return;
       }
+      this.get('lines').each(function (line) {
+        if (line.get('relatedLines')) {
+          line.get('relatedLines').forEach(function (rl) {
+            rl.orderId = me.get('id');
+            if (idMap[rl.orderlineId]) {
+              rl.orderlineId = idMap[rl.orderlineId];
+            }
+          });
+        }
+      }, this);
       this.set('id', null);
       this.save();
     },
