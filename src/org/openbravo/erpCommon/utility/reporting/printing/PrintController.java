@@ -86,6 +86,9 @@ public class PrintController extends HttpSecureAppServlet {
   private final Map<String, TemplateData[]> differentDocTypes = new HashMap<String, TemplateData[]>();
   private boolean multiReports = false;
   private boolean archivedReports = false;
+  private static final String PRINT_PATH = "print.html";
+  private static final String PRINT_OPTIONS_PATH = "printoptions.html";
+  private static final String SEND_PATH = "send.html";
 
   @Override
   public void init(ServletConfig config) {
@@ -277,7 +280,8 @@ public class PrintController extends HttpSecureAppServlet {
                   report.getOrgId());
               boolean moreThanOnesalesRep = checks.get("moreThanOnesalesRep").booleanValue();
 
-              if (request.getServletPath().toLowerCase().indexOf("print.html") == -1) {
+              if (request.getServletPath().toLowerCase().indexOf(PRINT_PATH) == -1
+                  && request.getServletPath().toLowerCase().indexOf(PRINT_OPTIONS_PATH) == -1) {
                 if ("".equals(senderAddress) || senderAddress == null) {
                   final OBError on = new OBError();
                   on.setMessage(Utility.messageBD(this, "NoSender", vars.getLanguage()));
@@ -307,18 +311,18 @@ public class PrintController extends HttpSecureAppServlet {
 
           vars.setSessionObject(sessionValuePrefix + ".Documents", reports);
 
-          if (request.getServletPath().toLowerCase().indexOf("print.html") != -1)
+          if (request.getServletPath().toLowerCase().indexOf(PRINT_PATH) != -1)
             createPrintOptionsPage(request, response, vars, documentType,
                 getComaSeparatedString(documentIds), reports);
-          else
+          else if (request.getServletPath().toLowerCase().indexOf(SEND_PATH) != -1)
             createEmailOptionsPage(request, response, vars, documentType,
                 getComaSeparatedString(documentIds), reports, checks, fullDocumentIdentifier);
 
         } else if (vars.commandIn("ADD")) {
-          if (request.getServletPath().toLowerCase().indexOf("print.html") != -1)
+          if (request.getServletPath().toLowerCase().indexOf(PRINT_PATH) != -1)
             createPrintOptionsPage(request, response, vars, documentType,
                 getComaSeparatedString(documentIds), reports);
-          else {
+          else if (request.getServletPath().toLowerCase().indexOf(SEND_PATH) != -1) {
             createEmailOptionsPage(request, response, vars, documentType,
                 getComaSeparatedString(documentIds), reports, checks, fullDocumentIdentifier);
           }
