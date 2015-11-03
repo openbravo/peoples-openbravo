@@ -462,8 +462,7 @@ isc.OBAttachmentsLayout.addProperties({
 
         standardWindow.runningProcess = data.create(isc.addProperties({}, {
           parentWindow: standardWindow,
-          sourceView: ownerView,
-          ownerView: ownerView,
+          buttonOwnerView: ownerView,
           attachSection: attachSection,
           uploadMode: uploadMode
         }, editParams));

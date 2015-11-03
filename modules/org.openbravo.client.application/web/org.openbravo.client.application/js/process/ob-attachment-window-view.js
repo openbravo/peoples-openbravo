@@ -42,7 +42,7 @@ isc.OBAttachmentWindowView.addProperties({
   members: [],
 
   attachSection: null,
-  ownerView: null,
+  buttonOwnerView: null,
   uploadMode: null,
   attachmentId: null,
   attachmentName: null,
@@ -82,7 +82,7 @@ isc.OBAttachmentWindowView.addProperties({
       }, {
         name: 'viewId',
         type: 'hidden',
-        value: this.ownerView.ID
+        value: this.buttonOwnerView.ID
       }, {
         name: 'inpKey',
         type: 'hidden',
@@ -116,7 +116,7 @@ isc.OBAttachmentWindowView.addProperties({
       }, {
         name: 'viewId',
         type: 'hidden',
-        value: this.ownerView.ID
+        value: this.buttonOwnerView.ID
       }, {
         name: 'inpKey',
         type: 'hidden',
