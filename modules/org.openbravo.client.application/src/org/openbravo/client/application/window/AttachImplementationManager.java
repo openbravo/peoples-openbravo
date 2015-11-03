@@ -34,6 +34,7 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.apache.tika.Tika;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
@@ -97,7 +98,7 @@ public class AttachImplementationManager {
    *           any exception thrown during the attachment uploading
    */
   public void upload(Map<String, String> requestParams, String strTab, String strKey,
-      String strDataType, String strDocumentOrganization, File file) throws OBException {
+      String strDocumentOrganization, File file) throws OBException {
     Organization org = OBDal.getInstance().get(Organization.class, strDocumentOrganization);
 
     Tab tab = OBDal.getInstance().get(Tab.class, strTab);
@@ -129,6 +130,12 @@ public class AttachImplementationManager {
       attachment.setAttachmentConf(attachConf);
       attachment.setOrganization(org);
       attachment.setActive(true);
+      String strDataType = null;
+      try {
+        strDataType = new Tika().detect(file);
+      } catch (IOException ignore) {
+      }
+      attachment.setDataType(strDataType);
 
       OBDal.getInstance().save(attachment);
 

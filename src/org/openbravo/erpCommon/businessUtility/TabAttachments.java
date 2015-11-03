@@ -83,7 +83,6 @@ public class TabAttachments extends HttpSecureAppServlet {
 
       final String strTab = vars.getStringParameter("inpTabId");
       final String key = vars.getStringParameter("inpKey");
-      final String strDataType = vars.getStringParameter("inpadDatatypeId");
       final String strDocumentOrganization = vars.getStringParameter("inpDocumentOrg");
       final FileItem file = vars.getMultiFile("inpname");
       if (file == null) {
@@ -135,7 +134,7 @@ public class TabAttachments extends HttpSecureAppServlet {
           requestParams.put(param.getId(), value);
         }
 
-        aim.upload(requestParams, strTab, key, strDataType, strDocumentOrganization, tempFile);
+        aim.upload(requestParams, strTab, key, strDocumentOrganization, tempFile);
         obj = AttachmentsAH.getAttachmentJSONObject(tab, key);
       } catch (OBException e) {
         OBDal.getInstance().rollbackAndClose();
@@ -158,7 +157,7 @@ public class TabAttachments extends HttpSecureAppServlet {
         aim.download(strFileReference, os);
         Attachment attachment = OBDal.getInstance().get(Attachment.class, strFileReference);
 
-        if (attachment.getDataType().equals("")) {
+        if (StringUtils.isEmpty(attachment.getDataType())) {
           response.setContentType("application/txt");
         } else {
           response.setContentType(attachment.getDataType());

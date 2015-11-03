@@ -177,7 +177,7 @@ public class ReportManager {
         .getInstanceFromStaticBeanManager(AttachImplementationManager.class);
 
     aim.upload(new HashMap<String, String>(), vars.getSessionValue("inpTabId"),
-        report.getDocumentId(), "103", vars.getOrg(), sourceFile);
+        report.getDocumentId(), vars.getOrg(), sourceFile);
 
     report.setAttached(true);
 
