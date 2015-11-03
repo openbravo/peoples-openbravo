@@ -106,16 +106,9 @@ public class AttachImplementationManager {
       throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoFileToAttach"));
     }
 
-    AttachmentConfig attachConf = AttachmentUtils.getAttachmentConfig(org.getClient());
-    AttachmentMethod attachMethod;
-    if (attachConf == null) {
-      attachMethod = AttachmentUtils.getDefaultAttachmentMethod();
-    } else {
-      attachMethod = attachConf.getAttachmentMethod();
-    }
-
     String strName = file.getName();
 
+    AttachmentMethod attachMethod;
     Attachment attachment = null;
     try {
       OBContext.setAdminMode(true);
@@ -126,10 +119,25 @@ public class AttachImplementationManager {
         attachment.setName(strName);
         attachment.setTable(tab.getTable());
         attachment.setRecord(strKey);
+
+        AttachmentConfig attachConf = AttachmentUtils.getAttachmentConfig(org.getClient());
+        if (attachConf == null) {
+          attachMethod = AttachmentUtils.getDefaultAttachmentMethod();
+        } else {
+          attachMethod = attachConf.getAttachmentMethod();
+        }
+
+        attachment.setAttachmentConf(attachConf);
+      } else {
+        // There is an attachment with the same file name for the record. Overwrite the file and
+        // update the existing attachment.
+        if (attachment.getAttachmentConf() != null) {
+          attachMethod = attachment.getAttachmentConf().getAttachmentMethod();
+        } else {
+          attachMethod = AttachmentUtils.getDefaultAttachmentMethod();
+        }
       }
-      attachment.setAttachmentConf(attachConf);
       attachment.setOrganization(org);
-      attachment.setActive(true);
       String strDataType = null;
       try {
         strDataType = new Tika().detect(file);
@@ -139,8 +147,7 @@ public class AttachImplementationManager {
 
       OBDal.getInstance().save(attachment);
 
-      AttachImplementation handler = getHandler(attachMethod == null ? "Default" : attachMethod
-          .getValue());
+      AttachImplementation handler = getHandler(attachMethod.getValue());
 
       if (handler == null) {
         throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoMethod"));
@@ -562,6 +569,7 @@ public class AttachImplementationManager {
         attachmentText = attachmentText.substring(0, 1997) + "...";
       }
       attachment.setText(attachmentText.trim());
+      OBDal.getInstance().save(attachment);
 
       return metadataValues;
     } catch (Exception e) {
