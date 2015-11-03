@@ -444,7 +444,7 @@ isc.OBAttachmentsLayout.addProperties({
         ownerView = this.getForm().view,
         standardWindow = ownerView.standardWindow,
         clientContext = null,
-        windowTitle = OB.I18N.getLabel('OBUIAPP_AttachFile'),
+        windowTitle = OB.I18N.getLabel(uploadMode ? 'OBUIAPP_AttachFile' : 'OBUIAPP_AttachmentEditDesc'),
         params = {},
         editParams = {},
         attachSection = this,
