@@ -824,6 +824,7 @@
       var total = OB.DEC.abs(this.getTotal()),
           pay = this.getPayment(),
           isReturn = true,
+          isReversal = false,
           processedPaymentsAmount = OB.DEC.Zero,
           paymentsAmount = OB.DEC.Zero,
           isNegative, paidInNegativeStatus, done, pending, overpayment, totalToReturn, pendingAmt;
@@ -840,8 +841,11 @@
         } else {
           paymentsAmount = OB.DEC.add(paymentsAmount, payment.get('origAmount'));
         }
+        if (payment.get('reversedPaymentId')) {
+          isReversal = true;
+        }
       });
-
+      pay = (this.get('gross') < 0 || (this.get('gross') > 0 && this.get('orderType') === 3)) ? OB.DEC.abs(pay) : pay;
       isNegative = this.get('gross') < 0 || (this.get('gross') > 0 && this.get('orderType') === 3 && (!this.get('isPartiallyDelivered') || (this.get('isPartiallyDelivered') && this.get('isDeliveredGreaterThanGross'))));
       // Check if the total amount is lower than the already paid (processed)
       if (!isNegative && this.get('gross') >= 0 && OB.DEC.compare(OB.DEC.sub(processedPaymentsAmount, total)) === 1) {
@@ -874,7 +878,8 @@
         'isNegative': isNegative,
         'changeAmt': this.getChange(),
         'pendingAmt': OB.DEC.compare(OB.DEC.sub(pay, total)) >= 0 ? OB.DEC.Zero : OB.DEC.sub(total, pay),
-        'payments': this.get('payments')
+        'payments': this.get('payments'),
+        'isReversal': isReversal
       };
     },
 
