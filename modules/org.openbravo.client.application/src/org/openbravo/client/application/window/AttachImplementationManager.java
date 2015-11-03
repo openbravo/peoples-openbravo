@@ -338,9 +338,8 @@ public class AttachImplementationManager {
     try {
       OBContext.setAdminMode(true);
       checkReadableAccess(attachment);
-      AttachImplementation handler = getHandler(attachment.getAttachmentConf()
-          .getAttachmentMethod() == null ? "Default" : attachment.getAttachmentConf()
-          .getAttachmentMethod().getValue());
+      AttachImplementation handler = getHandler(attachment.getAttachmentConf() == null ? "Default"
+          : attachment.getAttachmentConf().getAttachmentMethod().getValue());
       if (handler == null) {
         throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoMethod"));
       }
