@@ -245,7 +245,7 @@
     },
     printAmount: function () {
       if (this.get('rate')) {
-        return OB.I18N.formatCurrency(OB.DEC.mul(this.get('amount') < 0 ? OB.DEC.mul(this.get('amount'), -1) : this.get('amount'), this.get('rate')));
+        return OB.I18N.formatCurrency(OB.DEC.mul(this.get('amount'), this.get('rate')));
       } else {
         return OB.I18N.formatCurrency(this.get('amount'));
       }
@@ -2600,7 +2600,7 @@
         }
         order.set('id', model.orderid);
         if (order.get('documentType') === OB.MobileApp.model.get('terminal').terminalType.documentTypeForReturns) {
-          //return
+          //It's a return
           order.set('orderType', 1);
         }
       }
@@ -2659,9 +2659,6 @@
               if (numberOfLines === 0) {
                 order.set('lines', lines);
                 order.set('qty', orderQty);
-                if (order.get('orderType') === 1) {
-                  order.changeSignToShowReturns();
-                }
                 order.set('json', JSON.stringify(order.toJSON()));
                 callback(order);
                 enyo.$.scrim.hide();
