@@ -24,6 +24,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.client.application.Parameter;
@@ -72,15 +73,18 @@ public class DefaultsAttachmentActionHandler extends BaseActionHandler {
       // to be able to define parameters with default values based on the fixed parameters.
       for (Parameter param : AttachmentUtils.getMethodMetadataParameters(attMethod, tab)) {
         if (param.isFixed()) {
+          Object value = null;
           if (param.getPropertyPath() != null) {
-            parameters.put(param.getDBColumnName(),
-                AttachmentUtils.getPropertyPathValue(param, strTabId, strKeyId));
+            value = AttachmentUtils.getPropertyPathValue(param, strTabId, strKeyId);
           } else if (param.isEvaluateFixedValue()) {
-            parameters.put(param.getDBColumnName(),
-                ParameterUtils.getParameterFixedValue(fixedParameters, param));
+            value = ParameterUtils.getParameterFixedValue(fixedParameters, param);
           } else {
-            parameters.put(param.getDBColumnName(), param.getFixedValue());
+            value = param.getFixedValue();
           }
+          parameters.put(param.getDBColumnName(), value);
+          // Add the value as a String in the fixedParameters so they can be used in Default Values
+          // expressions of other parameters.
+          fixedParameters.put(param.getDBColumnName(), ObjectUtils.toString(value, null));
           continue;
         }
 
