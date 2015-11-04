@@ -36,6 +36,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.model.domaintype.BasePrimitiveDomainType;
 import org.openbravo.base.model.domaintype.BigDecimalDomainType;
 import org.openbravo.base.model.domaintype.BooleanDomainType;
 import org.openbravo.base.model.domaintype.DateDomainType;
@@ -134,6 +135,24 @@ public class ParameterUtils {
     } else { // default
       return parameterValue.getValueString();
     }
+  }
+
+  /**
+   * Returns the String representation of the Value.
+   * 
+   * @param parameterValue
+   *          the Parameter Value we want to get the Value from.
+   * @return the Value of the Parameter Value.
+   */
+  public static String getParameterStringValue(ParameterValue parameterValue) {
+    DomainType domainType = getParameterDomainType(parameterValue.getParameter());
+    if (domainType instanceof BasePrimitiveDomainType) {
+      BasePrimitiveDomainType basePrimitive = (BasePrimitiveDomainType) domainType;
+      return basePrimitive.convertToString(getParameterValue(parameterValue));
+    }
+
+    // Non primitive domain types are Foreign Keys and Lists. Value returned as String
+    return parameterValue.getValueString();
   }
 
   /**

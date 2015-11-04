@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
@@ -33,6 +34,8 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.client.application.Parameter;
+import org.openbravo.client.application.ParameterUtils;
+import org.openbravo.client.application.ParameterValue;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -168,13 +171,13 @@ public class AttachmentUtils {
         attachmentobj.put("name", attachment.getName());
         attachmentobj.put("age", (new Date().getTime() - attachment.getUpdated().getTime()));
         attachmentobj.put("updatedby", attachment.getUpdatedBy().getName());
-        attachmentobj.put("description", attachment.getText());
         String attachmentMethod = DEFAULT_METHOD_ID;
         if (attachment.getAttachmentConf() != null) {
           attachmentMethod = (String) DalUtil.getId(attachment.getAttachmentConf()
               .getAttachmentMethod());
         }
         attachmentobj.put("attmethod", attachmentMethod);
+        attachmentobj.put("description", buildDescription(attachment, attachmentMethod, tab));
       } catch (JSONException ignore) {
       }
       attachments.add(attachmentobj);
@@ -211,4 +214,49 @@ public class AttachmentUtils {
     }
   }
 
+  private static String buildDescription(Attachment attachment, String strAttMethodId, Tab tab) {
+    StringBuilder description = new StringBuilder();
+    try {
+      OBContext.setAdminMode(true);
+      List<Parameter> parameters = getMethodMetadataParameters(
+          OBDal.getInstance().get(AttachmentMethod.class, strAttMethodId), tab);
+      boolean isfirst = true;
+      final String delimiter = OBMessageUtils.messageBD("OBUIAPP_Attach_Description_Delimiter");
+      final String paramDesc = OBMessageUtils.messageBD("OBUIAPP_Attach_Description");
+      for (Parameter param : parameters) {
+        if (!param.isShowInDescription()) {
+          continue;
+        }
+
+        final OBCriteria<ParameterValue> critStoredMetadata = OBDal.getInstance().createCriteria(
+            ParameterValue.class);
+        critStoredMetadata.add(Restrictions.eq(ParameterValue.PROPERTY_FILE, attachment));
+        critStoredMetadata.add(Restrictions.eq(ParameterValue.PROPERTY_PARAMETER, param));
+        critStoredMetadata.setMaxResults(1);
+        ParameterValue metadataStoredValue = (ParameterValue) critStoredMetadata.uniqueResult();
+        if (metadataStoredValue == null) {
+          continue;
+        }
+        String value = ParameterUtils.getParameterStringValue(metadataStoredValue);
+        if (StringUtils.isBlank(value)) {
+          continue;
+        }
+        if (isfirst) {
+          isfirst = false;
+        } else {
+          description.append(delimiter);
+        }
+        Map<String, String> paramValues = new HashMap<String, String>();
+        // Get translated parameter name.
+        paramValues.put("paramName",
+            (String) param.get(Parameter.PROPERTY_NAME, OBContext.getOBContext().getLanguage()));
+        paramValues.put("paramValue", value);
+        description.append(OBMessageUtils.parseTranslation(paramDesc, paramValues));
+      }
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+
+    return description.toString();
+  }
 }
