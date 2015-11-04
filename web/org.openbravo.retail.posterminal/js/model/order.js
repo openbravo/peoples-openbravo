@@ -1122,7 +1122,6 @@
             me.unset('preventServicesUpdate');
             me.unset('deleting');
             me.get('lines').trigger('updateRelations');
-            enyo.$.scrim.hide();
             me.calculateGross();
             enyo.$.scrim.hide();
           }

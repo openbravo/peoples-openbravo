@@ -189,7 +189,9 @@ enyo.kind({
             selectedLines: me.selectedModels
           }, function () {
             keyboard.receipt.unset('preventServicesUpdate');
+            keyboard.receipt.unset('deleting');
             keyboard.receipt.get('lines').trigger('updateRelations');
+            keyboard.receipt.calculateGross();
             enyo.$.scrim.hide();
           });
         }
@@ -211,6 +213,7 @@ enyo.kind({
             selectedLines: me.selectedModels
           }, function () {
             keyboard.receipt.set('preventServicesUpdate', true);
+            keyboard.receipt.set('deleting', true);
             if (me.selectedModels.length > 1) {
               keyboard.receipt.deleteLines(me.selectedModels, 0, me.selectedModels.length, callback);
             } else {
@@ -234,6 +237,7 @@ enyo.kind({
             keyboard.receipt.unset('preventServicesUpdate');
             keyboard.receipt.unset('deleting');
             keyboard.receipt.get('lines').trigger('updateRelations');
+            keyboard.receipt.calculateGross();
             enyo.$.scrim.hide();
           });
         }
@@ -393,6 +397,7 @@ enyo.kind({
             keyboard.receipt.unset('preventServicesUpdate');
             keyboard.receipt.unset('deleting');
             keyboard.receipt.get('lines').trigger('updateRelations');
+            keyboard.receipt.calculateGross();
             enyo.$.scrim.hide();
           });
         }
@@ -423,6 +428,7 @@ enyo.kind({
             keyboard.receipt.unset('preventServicesUpdate');
             keyboard.receipt.unset('deleting');
             keyboard.receipt.get('lines').trigger('updateRelations');
+            keyboard.receipt.calculateGross();
             enyo.$.scrim.hide();
           });
         }
