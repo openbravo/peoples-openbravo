@@ -227,6 +227,14 @@ enyo.kind({
     i18nLabel: 'OBPOS_LblEmail',
     maxlength: 255
   }, {
+    kind: 'OB.UI.CustomerTextProperty',
+    name: 'birthPlace',
+    modelProperty: 'birthPlace',
+    i18nLabel: 'OBPOS_LblBirthplace',
+    displayLogic: function () {
+      return OB.MobileApp.model.hasPermission('OBPOS_ShowBusinessPartnerBirthInfo', true);
+    }
+  }, {
     kind: 'onyx.DatePicker',
     name: 'birthDay',
     modelProperty: 'birthDay',
@@ -255,14 +263,6 @@ enyo.kind({
         fragments[2] = '0' + fragments[2];
       }
       inEvent.customer.set(this.modelProperty, fragments.join('-'));
-    }
-  }, {
-    kind: 'OB.UI.CustomerTextProperty',
-    name: 'birthPlace',
-    modelProperty: 'birthPlace',
-    i18nLabel: 'OBPOS_LblBirthplace',
-    displayLogic: function () {
-      return OB.MobileApp.model.hasPermission('OBPOS_ShowBusinessPartnerBirthInfo', true);
     }
   }, {
     kind: 'OB.UI.CustomerComboProperty',

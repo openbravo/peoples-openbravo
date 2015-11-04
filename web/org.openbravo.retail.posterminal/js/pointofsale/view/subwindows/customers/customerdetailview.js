@@ -257,18 +257,18 @@ enyo.kind({
     readOnly: true
   }, {
     kind: 'OB.UI.CustomerTextProperty',
-    name: 'birthDay',
-    modelProperty: 'birthDay',
-    i18nLabel: 'OBPOS_LblBirthday',
+    name: 'birthPlace',
+    modelProperty: 'birthPlace',
+    i18nLabel: 'OBPOS_LblBirthplace',
     readOnly: true,
     displayLogic: function () {
       return OB.MobileApp.model.hasPermission('OBPOS_ShowBusinessPartnerBirthInfo', true);
     }
   }, {
     kind: 'OB.UI.CustomerTextProperty',
-    name: 'birthPlace',
-    modelProperty: 'birthPlace',
-    i18nLabel: 'OBPOS_LblBirthplace',
+    name: 'birthDay',
+    modelProperty: 'birthDay',
+    i18nLabel: 'OBPOS_LblBirthday',
     readOnly: true,
     displayLogic: function () {
       return OB.MobileApp.model.hasPermission('OBPOS_ShowBusinessPartnerBirthInfo', true);
