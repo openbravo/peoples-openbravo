@@ -23,7 +23,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -37,7 +36,6 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeArray;
@@ -288,7 +286,12 @@ public class FormInitializationComponent extends BaseActionHandler {
 
       // Attachment information
       long t7 = System.currentTimeMillis();
-      List<JSONObject> attachments = attachmentForRows(tab, rowId, multipleRowIds);
+      List<JSONObject> attachments;
+      if (multipleRowIds != null) {
+        attachments = AttachmentUtils.getTabAttachmentsForRows(tab, multipleRowIds);
+      } else {
+        attachments = AttachmentUtils.getTabAttachmentsForRows(tab, new String[] { rowId });
+      }
 
       // Notes information
       long t8 = System.currentTimeMillis();
@@ -395,46 +398,6 @@ public class FormInitializationComponent extends BaseActionHandler {
       }
     }
     return visibleProperties;
-  }
-
-  private List<JSONObject> attachmentForRows(Tab tab, String rowId, String[] multipleRowIds) {
-    String tableId = (String) DalUtil.getId(tab.getTable());
-    List<JSONObject> attachmentList = new ArrayList<JSONObject>();
-    Query q;
-    StringBuilder hql = new StringBuilder();
-    hql.append("select n.name, n.id, n.updated, n.updatedBy.name, n.text ");
-    hql.append(" , case when ac is not null then ac.attachmentMethod.id else null end");
-    hql.append(" from org.openbravo.model.ad.utility.Attachment n");
-    hql.append(" left join n.attachmentConf ac");
-    hql.append(" where n.table.id = :tableId");
-    if (multipleRowIds == null) {
-      hql.append(" and n.record = :recordId");
-    } else {
-      hql.append(" and n.record in :recordId");
-    }
-    q = OBDal.getInstance().getSession().createQuery(hql.toString());
-    q.setParameter("tableId", tableId);
-    if (multipleRowIds == null) {
-      q.setParameter("recordId", rowId);
-    } else {
-      q.setParameterList("recordId", multipleRowIds);
-    }
-    for (Object qobj : q.list()) {
-      Object[] array = (Object[]) qobj;
-      JSONObject obj = new JSONObject();
-      try {
-        obj.put("name", array[0]);
-        obj.put("id", array[1]);
-        obj.put("age", (new Date().getTime() - ((Date) array[2]).getTime()));
-        obj.put("updatedby", array[3]);
-        obj.put("description", array[4]);
-        obj.put("attmethod", array[5] != null ? array[5] : AttachmentUtils.DEFAULT_METHOD_ID);
-      } catch (JSONException e) {
-        log.error("Error while reading attachments", e);
-      }
-      attachmentList.add(obj);
-    }
-    return attachmentList;
   }
 
   private JSONObject buildJSONObject(String mode, Tab tab, Map<String, JSONObject> columnValues,
