@@ -8329,6 +8329,131 @@ public class TestCosting extends WeldBaseTest {
     }
   }
 
+  @Test
+  public void testCostingE3() throws Exception {
+
+    final int day0 = 0;
+    final int day1 = 5;
+    final int day2 = 10;
+    final int day3 = 15;
+    final BigDecimal price1 = new BigDecimal("4.00");
+    final BigDecimal price2 = new BigDecimal("3.00");
+    final BigDecimal price3 = new BigDecimal("3.3333");
+    final BigDecimal price4 = new BigDecimal("3.34");
+    final BigDecimal price5 = new BigDecimal("8.00");
+    final BigDecimal price6 = new BigDecimal("3.34");
+    final BigDecimal price7 = new BigDecimal("3.50");
+    final BigDecimal quantity1 = new BigDecimal("1");
+
+    try {
+
+      OBContext.setOBContext(USER_ID, ROLE_ID, CLIENT_ID, ORGANIZATION_ID);
+      OBContext.setAdminMode(true);
+
+      // Create a new product for the test
+      Product product = createProduct("testCostingE3", price1);
+
+      // Create purchase order and book it
+      Order purchaseOrder1 = createPurchaseOrder(product, price1, quantity1, day0);
+
+      // Create purchase order and book it
+      Order purchaseOrder2 = createPurchaseOrder(product, price2, quantity1, day0);
+
+      // Create purchase order and book it
+      Order purchaseOrder3 = createPurchaseOrder(product, price2, quantity1, day0);
+
+      // Create goods receipt, run costing background, post it and assert it
+      ShipmentInOut goodsReceipt1 = createGoodsReceipt(purchaseOrder1, price1, quantity1, day1);
+
+      // Create goods receipt, run costing background, post it and assert it
+      ShipmentInOut goodsReceipt2 = createGoodsReceipt(purchaseOrder2, price2, quantity1, day1);
+
+      // Create goods receipt, run costing background, post it and assert it
+      ShipmentInOut goodsReceipt3 = createGoodsReceipt(purchaseOrder3, price2, quantity1, day1);
+
+      // Create goods shipment, run costing background, post it and assert it
+      ShipmentInOut goodsShipment1 = createGoodsShipment(product, price3, quantity1, day2);
+
+      // Create goods shipment, run costing background, post it and assert it
+      ShipmentInOut goodsShipment2 = createGoodsShipment(product, price3, quantity1, day2);
+
+      // Add sleep to avoid assert errors
+      Thread.sleep(1000);
+
+      // Create inventory amount update and run costing background
+      InventoryAmountUpdate inventoryAmountUpdate = createInventoryAmountUpdate(product, price3,
+          price4, price5, quantity1, day3);
+
+      // Assert product transactions
+      List<ProductTransactionAssert> productTransactionAssertList = new ArrayList<ProductTransactionAssert>();
+      productTransactionAssertList.add(new ProductTransactionAssert(OBDal.getInstance()
+          .get(ShipmentInOut.class, goodsReceipt1.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(0), price1, price1));
+      productTransactionAssertList.add(new ProductTransactionAssert(OBDal.getInstance()
+          .get(ShipmentInOut.class, goodsReceipt2.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(0), price2, price2));
+      productTransactionAssertList.add(new ProductTransactionAssert(OBDal.getInstance()
+          .get(ShipmentInOut.class, goodsReceipt3.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(0), price2, price2));
+      productTransactionAssertList.add(new ProductTransactionAssert(OBDal.getInstance()
+          .get(ShipmentInOut.class, goodsShipment1.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(0), price3, price3));
+      productTransactionAssertList.add(new ProductTransactionAssert(OBDal.getInstance()
+          .get(ShipmentInOut.class, goodsShipment2.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(0), price3, price3));
+      productTransactionAssertList.add(new ProductTransactionAssert(OBDal.getInstance()
+          .get(InventoryAmountUpdate.class, inventoryAmountUpdate.getId())
+          .getInventoryAmountUpdateLineList().get(0), price3, price6, price3));
+      productTransactionAssertList.add(new ProductTransactionAssert(OBDal.getInstance()
+          .get(InventoryAmountUpdate.class, inventoryAmountUpdate.getId())
+          .getInventoryAmountUpdateLineList().get(0), price5, price5, true));
+      assertProductTransaction(product.getId(), productTransactionAssertList);
+
+      // Assert product costing
+      List<MaterialTransaction> transactionList = getProductTransactions(product.getId());
+      List<ProductCostingAssert> productCostingAssertList = new ArrayList<ProductCostingAssert>();
+      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(0), price1, null,
+          price1, quantity1));
+      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(1), price2, null,
+          price7, quantity1.add(quantity1)));
+      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(2), price2, null,
+          price3, quantity1.add(quantity1).add(quantity1)));
+      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(6), price5, null,
+          price5, quantity1));
+      assertProductCosting(product.getId(), productCostingAssertList);
+
+      // Assert cost adjustment
+      List<CostAdjustment> costAdjustmentList = getCostAdjustment(product.getId());
+      List<List<CostAdjustmentAssert>> costAdjustmentAssertList = new ArrayList<List<CostAdjustmentAssert>>();
+      List<CostAdjustmentAssert> costAdjustmentAssertLineList1 = new ArrayList<CostAdjustmentAssert>();
+      costAdjustmentAssertLineList1.add(new CostAdjustmentAssert(transactionList.get(5), "NSC",
+          quantity1.multiply(price4).add(quantity1.multiply(price3).negate()), day3, true, false));
+      costAdjustmentAssertList.add(costAdjustmentAssertLineList1);
+      assertCostAdjustment(costAdjustmentList, costAdjustmentAssertList);
+
+      // Post cost adjustment and assert it
+      postDocument(costAdjustmentList.get(0));
+      List<DocumentPostAssert> documentPostAssertList1 = new ArrayList<DocumentPostAssert>();
+      documentPostAssertList1.add(new DocumentPostAssert("61000", BigDecimal.ZERO, quantity1
+          .multiply(price4).add(quantity1.multiply(price3).negate()), null));
+      documentPostAssertList1.add(new DocumentPostAssert("35000", quantity1.multiply(price4).add(
+          quantity1.multiply(price3).negate()), BigDecimal.ZERO, null));
+      CostAdjustment costAdjustment1 = OBDal.getInstance().get(CostAdjustment.class,
+          costAdjustmentList.get(0).getId());
+      assertDocumentPost(costAdjustment1, product.getId(), documentPostAssertList1);
+
+      OBDal.getInstance().commitAndClose();
+
+    } catch (Exception e) {
+      System.out.println(e.getMessage());
+      throw new OBException(e);
+    }
+
+    finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
   /********************************************** General methods for tests **********************************************/
 
   // Create a Product cloning a created one
@@ -9010,6 +9135,17 @@ public class TestCosting extends WeldBaseTest {
   private InventoryAmountUpdate createInventoryAmountUpdate(Product product,
       BigDecimal originalPrice, BigDecimal finalPrice, BigDecimal quantity, int day) {
     try {
+      return createInventoryAmountUpdate(product, originalPrice, originalPrice, finalPrice,
+          quantity, day);
+    } catch (Exception e) {
+      throw new OBException(e);
+    }
+  }
+
+  // Create a Inventory Amount Update and process it
+  private InventoryAmountUpdate createInventoryAmountUpdate(Product product, BigDecimal cost,
+      BigDecimal originalPrice, BigDecimal finalPrice, BigDecimal quantity, int day) {
+    try {
       InventoryAmountUpdate inventoryAmountUpdate = createInventoryAmountUpdate(product.getId(),
           originalPrice, finalPrice, quantity, day);
       processInventoryAmountUpdate(inventoryAmountUpdate.getId());
@@ -9022,8 +9158,8 @@ public class TestCosting extends WeldBaseTest {
       postDocument(inventoryCountList.get(0));
       List<DocumentPostAssert> documentPostAssertList1 = new ArrayList<DocumentPostAssert>();
       documentPostAssertList1.add(new DocumentPostAssert("35000", BigDecimal.ZERO, quantity
-          .multiply(originalPrice), quantity.negate()));
-      documentPostAssertList1.add(new DocumentPostAssert("61000", quantity.multiply(originalPrice),
+          .multiply(cost), quantity.negate()));
+      documentPostAssertList1.add(new DocumentPostAssert("61000", quantity.multiply(cost),
           BigDecimal.ZERO, quantity.negate()));
       assertDocumentPost(inventoryCountList.get(0), product.getId(), documentPostAssertList1);
       postDocument(inventoryCountList.get(1));
