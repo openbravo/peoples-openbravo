@@ -34,8 +34,8 @@ public class SalesRepresentative extends ProcessHQLQuery {
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
     Long lastUpdated = jsonsent.has("lastUpdated")
-        && !jsonsent.get("lastUpdated").equals("undefined") ? jsonsent.getLong("lastUpdated")
-        : null;
+        && !jsonsent.get("lastUpdated").equals("undefined")
+        && !jsonsent.get("lastUpdated").equals("null") ? jsonsent.getLong("lastUpdated") : null;
     List<String> hqlQueries = new ArrayList<String>();
     HQLPropertyList regularSalesRepresentativeHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions);
