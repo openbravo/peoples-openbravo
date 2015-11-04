@@ -1804,25 +1804,28 @@
         text: OB.I18N.getLabel('OBPOS_AddLine', [newline.get('qty'), newline.get('product').get('_identifier')]),
         line: newline,
         undo: function (modelObj) {
+          // Instead of using 'me' as order, is necessary to use 'OB.MobileApp.model.receipt' to avoid references to not active orders
+          // This happends while adding a deferred sale to a paid receipt
+          var order = OB.MobileApp.model.receipt;
           OB.UTIL.Approval.requestApproval((modelObj ? modelObj : this.model), 'OBPOS_approval.deleteLine', function (approved) {
             if (approved) {
               // If the OBPOS_remove_ticket preference is active then mark the line as deleted
               if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
-                if (!me.get('deletedLines')) {
-                  me.set('deletedLines', []);
+                if (!order.get('deletedLines')) {
+                  order.set('deletedLines', []);
                 }
                 newline.set('obposIsDeleted', true);
-                me.get('deletedLines').push(new OrderLine(newline.attributes));
-                me.save(function () {
-                  me.get('lines').remove(newline);
-                  me.calculateGross();
-                  me.set('undo', null);
+                order.get('deletedLines').push(new OrderLine(newline.attributes));
+                order.save(function () {
+                  order.get('lines').remove(newline);
+                  order.calculateGross();
+                  order.set('undo', null);
                 });
               } else {
                 // remove the line
-                me.get('lines').remove(newline);
-                me.calculateGross();
-                me.set('undo', null);
+                order.get('lines').remove(newline);
+                order.calculateGross();
+                order.set('undo', null);
               }
             }
           });
