@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -55,9 +55,13 @@ public class ExecutePendingPayments extends DalBaseProcess {
       List<APRMPendingPaymentFromInvoice> pendingPayments = dao.getPendingPayments();
       List<FIN_Payment> payments = new ArrayList<FIN_Payment>();
       // If there are no pending payments to process, return and skip this process.
-      if (pendingPayments.size() == 0) {
+      if (pendingPayments.isEmpty()) {
         return;
       }
+      // FIXME: this code is not properly written and it's impossible to understand.
+      // The comparations of objects are wrong (!=), probably they are always false in runtime.
+      // The first time we iterate the for, the executionProcess is null, so it won't enter the if.
+      // Is it right?
       try {
         for (APRMPendingPaymentFromInvoice pendingPayment : pendingPayments) {
           if (executionProcess != null

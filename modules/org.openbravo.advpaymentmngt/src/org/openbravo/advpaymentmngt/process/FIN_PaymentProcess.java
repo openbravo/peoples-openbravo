@@ -31,7 +31,6 @@ import java.util.TreeSet;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.criterion.Restrictions;
-import org.openbravo.advpaymentmngt.APRMPendingPaymentFromInvoice;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.dao.TransactionsDao;
 import org.openbravo.advpaymentmngt.exception.NoExecutionProcessFoundException;
@@ -324,50 +323,6 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                   payment.isReceipt())) {
             try {
               payment.setStatus("RPAE");
-
-              // Before executing payment if there is no entry in APRMPendingPaymentsFromInvoice
-              // make entry
-
-              OBCriteria<APRMPendingPaymentFromInvoice> ppfiCriteria = OBDal.getInstance()
-                  .createCriteria(APRMPendingPaymentFromInvoice.class);
-              ppfiCriteria.add(Restrictions.eq(APRMPendingPaymentFromInvoice.PROPERTY_PAYMENT,
-                  payment));
-              List<APRMPendingPaymentFromInvoice> ppfiList = ppfiCriteria.list();
-              if (ppfiList.isEmpty()) {
-                Invoice inv = null;
-                if (!payment.getFINPaymentDetailList().isEmpty()) {
-                  for (FIN_PaymentDetail pd : payment.getFINPaymentDetailList()) {
-                    if (!pd.getFINPaymentScheduleDetailList().isEmpty()) {
-                      for (FIN_PaymentScheduleDetail psd : pd.getFINPaymentScheduleDetailList()) {
-                        if (psd.getInvoicePaymentSchedule() != null
-                            && psd.getInvoicePaymentSchedule().getInvoice() != null) {
-                          inv = psd.getInvoicePaymentSchedule().getInvoice();
-                          break;
-                        }
-                        if (inv != null) {
-                          break;
-                        }
-                      }
-                    }
-                  }
-                }
-                if (inv != null) {
-                  APRMPendingPaymentFromInvoice appfi = OBProvider.getInstance().get(
-                      APRMPendingPaymentFromInvoice.class);
-                  appfi.setPayment(payment);
-                  appfi.setPaymentExecutionProcess(dao.getExecutionProcess(payment));
-                  appfi.setInvoice(inv);
-                  OBDal.getInstance().save(appfi);
-                }
-              } else {
-                PaymentExecutionProcess executionProcess = dao.getExecutionProcess(payment);
-                for (APRMPendingPaymentFromInvoice ppfi : ppfiList) {
-                  if (!ppfi.getPaymentExecutionProcess().equals(executionProcess)) {
-                    ppfi.setPaymentExecutionProcess(executionProcess);
-                    OBDal.getInstance().save(ppfi);
-                  }
-                }
-              }
 
               if (dao.hasNotDeferredExecutionProcess(payment.getAccount(),
                   payment.getPaymentMethod(), payment.isReceipt())) {
