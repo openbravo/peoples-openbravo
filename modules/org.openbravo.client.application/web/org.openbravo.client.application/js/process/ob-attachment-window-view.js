@@ -72,7 +72,7 @@ isc.OBAttachmentWindowView.addProperties({
         type: 'file',
         multiple: false,
         canFocus: false
-      },{
+      }, {
         name: 'Command',
         type: 'hidden',
         value: 'SAVE_NEW_OB3'
@@ -93,30 +93,30 @@ isc.OBAttachmentWindowView.addProperties({
       }];
     }
     hiddenFields = [{
-        name: 'buttonId',
-        type: 'hidden',
-        value: this.attachSection.ID
-      }, {
-        name: 'viewId',
-        type: 'hidden',
-        value: this.buttonOwnerView.ID
-      }, {
-        name: 'inpKey',
-        type: 'hidden',
-        value: this.attachSection.recordId
-      }, {
-        name: 'inpTabId',
-        type: 'hidden',
-        value: this.attachSection.tabId
-      }, {
-        name: 'inpDocumentOrg',
-        type: 'hidden',
-        value: this.attachSection.docOrganization
-      }, {
-        name: 'inpwindowId',
-        type: 'hidden',
-        value: this.attachSection.windowId
-      }];
+      name: 'buttonId',
+      type: 'hidden',
+      value: this.attachSection.ID
+    }, {
+      name: 'viewId',
+      type: 'hidden',
+      value: this.buttonOwnerView.ID
+    }, {
+      name: 'inpKey',
+      type: 'hidden',
+      value: this.attachSection.recordId
+    }, {
+      name: 'inpTabId',
+      type: 'hidden',
+      value: this.attachSection.tabId
+    }, {
+      name: 'inpDocumentOrg',
+      type: 'hidden',
+      value: this.attachSection.docOrganization
+    }, {
+      name: 'inpwindowId',
+      type: 'hidden',
+      value: this.attachSection.windowId
+    }];
     attachFields.addAll(hiddenFields);
 
     this.baseParams.tabId = this.attachSection.tabId;
@@ -219,7 +219,9 @@ isc.OBAttachmentWindowView.addProperties({
 
     buttons.push(isc.LayoutSpacer.create({}));
     buttons.push(submitbutton);
-    buttons.push(isc.LayoutSpacer.create({width: '30'})); // 30px width
+    buttons.push(isc.LayoutSpacer.create({
+      width: '30'
+    })); // 30px width
     buttons.push(cancelButton);
     buttons.push(isc.LayoutSpacer.create({}));
 
