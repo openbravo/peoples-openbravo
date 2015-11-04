@@ -512,7 +512,7 @@ public class AttachImplementationManager {
             strValue = (String) value;
             Reference reference = parameter.getReferenceSearchKey();
             for (List currentList : reference.getADListList()) {
-              if (currentList.getName().equals(strValue)) {
+              if (currentList.getSearchKey().equals(strValue)) {
                 metadataStoredValue.setValueKey(currentList.getId());
                 metadataStoredValue.setValueString(currentList.getName());
                 JSONObject jsonValue = new JSONObject();

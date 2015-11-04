@@ -59,7 +59,8 @@ isc.OBAttachmentWindowView.addProperties({
   },
 
   initWidget: function () {
-    var i, attachFields, form, fileItemFormFields, fileItemForm;
+    var attachFields = [],
+        i, form, hiddenFields, fileItemFormFields, fileItemForm;
     if (this.uploadMode) {
       attachFields = [{
         name: 'inpname',
@@ -71,34 +72,10 @@ isc.OBAttachmentWindowView.addProperties({
         type: 'file',
         multiple: false,
         canFocus: false
-      }, {
+      },{
         name: 'Command',
         type: 'hidden',
         value: 'SAVE_NEW_OB3'
-      }, {
-        name: 'buttonId',
-        type: 'hidden',
-        value: this.attachSection.ID
-      }, {
-        name: 'viewId',
-        type: 'hidden',
-        value: this.buttonOwnerView.ID
-      }, {
-        name: 'inpKey',
-        type: 'hidden',
-        value: this.attachSection.recordId
-      }, {
-        name: 'inpTabId',
-        type: 'hidden',
-        value: this.attachSection.tabId
-      }, {
-        name: 'inpDocumentOrg',
-        type: 'hidden',
-        value: this.attachSection.docOrganization
-      }, {
-        name: 'inpwindowId',
-        type: 'hidden',
-        value: this.attachSection.windowId
       }];
     } else {
       attachFields = [{
@@ -110,6 +87,12 @@ isc.OBAttachmentWindowView.addProperties({
         type: 'hidden',
         value: 'EDIT'
       }, {
+        name: 'inpAttachId',
+        type: 'hidden',
+        value: this.attachmentId
+      }];
+    }
+    hiddenFields = [{
         name: 'buttonId',
         type: 'hidden',
         value: this.attachSection.ID
@@ -133,12 +116,9 @@ isc.OBAttachmentWindowView.addProperties({
         name: 'inpwindowId',
         type: 'hidden',
         value: this.attachSection.windowId
-      }, {
-        name: 'inpAttachId',
-        type: 'hidden',
-        value: this.attachmentId
       }];
-    }
+    attachFields.addAll(hiddenFields);
+
     this.baseParams.tabId = this.attachSection.tabId;
     this.baseParams.clientId = this.attachSection.docClient;
     this.baseParams.attachmentMethod = this.attachmentMethod;
@@ -166,14 +146,18 @@ isc.OBAttachmentWindowView.addProperties({
       form = this.theForm;
       fileItemForm = form.getFileItemForm();
       fileItemFormFields = isc.shallowClone(fileItemForm.getItems());
-      // Do not include the "inpname" input as it is automatically created by the FileItem
-      fileItemFormFields.addAll(isc.shallowClone(attachFields.splice(1)));
-      for (i = 0; i < this.viewProperties.additionalFields.length; i++) {
-        // The items included in the file item form are always hidden.
-        fileItemFormFields.push(isc.addProperties({}, this.viewProperties.additionalFields[i], {
-          type: 'hidden'
-        }));
-      }
+      // paramValues has a String representation of a JSONObject with the values of all the metadata values.
+      // Command and hiddenFields are needed in the Request of TabAttachment servlet.
+      fileItemFormFields.addAll([{
+        name: 'paramValues',
+        type: 'hidden',
+        value: ''
+      }, {
+        name: 'Command',
+        type: 'hidden',
+        value: 'SAVE_NEW_OB3'
+      }]);
+      fileItemFormFields.addAll(hiddenFields);
 
       fileItemForm.setItems(fileItemFormFields);
       // redraw to ensure that the new items are added to the html form. If this not happens then the 
@@ -270,6 +254,7 @@ isc.OBAttachmentWindowView.addProperties({
     OB.Utilities.currentUploader = this.attachSection.ID;
     // Updates the hidden inputs of the FileItemForm with the current values in the main Form.
     form.updateFileItemForm();
+    form.getFileItemForm().getItem('paramValues').setValue(isc.JSON.encode(this.getContextInfo()));
     form.getFileItemForm().submitForm();
 
     this.closeClick();

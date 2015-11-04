@@ -34,6 +34,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -80,37 +81,38 @@ public class TabAttachments extends HttpSecureAppServlet {
     AttachImplementationManager aim = WeldUtils
         .getInstanceFromStaticBeanManager(AttachImplementationManager.class);
     if (vars.getCommand().startsWith("SAVE_NEW")) {
-
-      final String strTab = vars.getStringParameter("inpTabId");
-      final String key = vars.getStringParameter("inpKey");
-      final String strDocumentOrganization = vars.getStringParameter("inpDocumentOrg");
-      final FileItem file = vars.getMultiFile("inpname");
-      if (file == null) {
-        throw new ServletException("Empty file");
-      }
-      final String tmpFolder = System.getProperty("java.io.tmpdir");
-
-      String strName = file.getName();
-      int i = strName.lastIndexOf(File.separator);
-      if (i != -1) {
-        strName = strName.substring(i + 1);
-      }
-      File tempFile = new File(tmpFolder, strName);
-      OBContext.setAdminMode(true);
-      Tab tab = null;
-      JSONObject obj = new JSONObject();
+      File tempFile = null;
       String strMessage = "";
-
+      JSONObject obj = null;
       try {
-        tab = OBDal.getInstance().get(Tab.class, strTab);
-        obj = AttachmentsAH.getAttachmentJSONObject(tab, key);
+        OBContext.setAdminMode(true);
+
+        final String strParamValues = vars.getStringParameter("paramValues");
+        JSONObject paramValues;
+        paramValues = new JSONObject(strParamValues);
+        final String strTab = paramValues.getString("inpTabId");
+        Tab tab = OBDal.getInstance().get(Tab.class, strTab);
+        final String key = paramValues.getString("inpKey");
+        final String strDocumentOrganization = paramValues.getString("inpDocumentOrg");
+        final FileItem file = vars.getMultiFile("inpname");
+        if (file == null) {
+          throw new ServletException("Empty file");
+        }
+        final String tmpFolder = System.getProperty("java.io.tmpdir");
+
+        String strName = file.getName();
+        int i = strName.lastIndexOf(File.separator);
+        if (i != -1) {
+          strName = strName.substring(i + 1);
+        }
+        tempFile = new File(tmpFolder, strName);
         try {
           file.write(tempFile);
         } catch (Exception e) {
           log.error("Error creating temp file", e);
           throw new OBException(OBMessageUtils.messageBD("ErrorUploadingFile"), e);
         }
-        //
+
         AttachmentConfig attConfig = AttachmentUtils.getAttachmentConfig();
         AttachmentMethod attachMethod;
         if (attConfig == null) {
@@ -124,25 +126,27 @@ public class TabAttachments extends HttpSecureAppServlet {
           if (param.isFixed()) {
             continue;
           }
-          value = vars.getStringParameter(param.getDBColumnName()).toString();
-          if (value != null && value.startsWith("$$DATE$$:")) {
-            value = value.substring(9);
-          } else if ("undefined".equals(value)) {
-            value = "";
-
+          if (paramValues.isNull(param.getDBColumnName())) {
+            continue;
           }
+
+          value = paramValues.getString(param.getDBColumnName());
+
           requestParams.put(param.getId(), value);
         }
 
         aim.upload(requestParams, strTab, key, strDocumentOrganization, tempFile);
         obj = AttachmentsAH.getAttachmentJSONObject(tab, key);
+      } catch (JSONException e) {
+        throw new OBException(OBMessageUtils.messageBD("ErrorUploadingFile"), e);
       } catch (OBException e) {
         OBDal.getInstance().rollbackAndClose();
         log.error("Error uploading the file", e);
         strMessage = e.getMessage();
       } finally {
         OBContext.restorePreviousMode();
-        if (tempFile.exists()) { // If tempFile still exists in attachments/tmp must be removed
+        if (tempFile != null && tempFile.exists()) {
+          // If tempFile still exists in attachments/tmp must be removed
           tempFile.delete();
         }
       }
